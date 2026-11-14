@@ -104,37 +104,56 @@ export const AcvpFormatPrototypePanel = ({
   const [prepared, setPrepared] = useState<PrepareResult | null>(null)
   const [engineId, setEngineId] = useState<PrototypeEngineId>('rust')
   const [running, setRunning] = useState(false)
-  const [output, setOutput] = useState<RunOutput | null>(null)
+  // A finished run keeps the engine it ran on: the selector may change afterwards,
+  // but the result, its label and its downloads still describe the run that produced them.
+  const [completed, setCompleted] = useState<{
+    output: RunOutput
+    engineId: PrototypeEngineId
+  } | null>(null)
+  const output = completed?.output ?? null
   const [runError, setRunError] = useState<string | null>(null)
+  // Each import, clear or run starts a new operation; a slower, older one never shows its result.
+  const operation = useRef(0)
+  // A file dialog opened before Run was clicked can still deliver a file mid-run; ignore it.
+  const runningRef = useRef(false)
 
   const clear = () => {
+    operation.current++
     setFileName(null)
     setPrepared(null)
-    setOutput(null)
+    setCompleted(null)
     setRunError(null)
   }
 
   const onFile = async (file: File) => {
+    if (runningRef.current) return
     clear()
+    const op = operation.current
     setFileName(file.name)
-    setPrepared(await preparePrompt(await readFileText(file), 'extended'))
+    const result = await preparePrompt(await readFileText(file), 'extended')
+    if (op === operation.current) setPrepared(result)
   }
 
   const run = async () => {
     if (!prepared?.ok) return
+    const op = ++operation.current
+    const runEngine = engineId
+    runningRef.current = true
     setRunning(true)
-    setOutput(null)
+    setCompleted(null)
     setRunError(null)
     // Let the "running" state paint before the synchronous WASM work.
     await new Promise((r) => setTimeout(r, 0))
     let engine: AcvpEngine | null = null
     try {
-      engine = await loadEngine(engineId)
-      setOutput(await executePrepared(prepared, { engine, codePath: 'browser', appVersion }))
+      engine = await loadEngine(runEngine)
+      const out = await executePrepared(prepared, { engine, codePath: 'browser', appVersion })
+      if (op === operation.current) setCompleted({ output: out, engineId: runEngine })
     } catch (e) {
-      setRunError(e instanceof Error ? e.message : String(e))
+      if (op === operation.current) setRunError(e instanceof Error ? e.message : String(e))
     } finally {
       engine?.close()
+      runningRef.current = false
       setRunning(false)
     }
   }
@@ -230,13 +249,19 @@ export const AcvpFormatPrototypePanel = ({
           accept="application/json,.json"
           aria-label="ACVP prompt file"
           className="hidden"
+          disabled={running}
           onChange={(e) => {
             const f = e.target.files?.[0]
             if (f) void onFile(f)
             e.target.value = ''
           }}
         />
-        <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={running}
+        >
           <Upload className="mr-1 h-3.5 w-3.5" aria-hidden="true" /> Import prompt.json
         </Button>
         <div role="group" aria-label="Engine" className="flex items-center gap-1">
@@ -306,16 +331,22 @@ export const AcvpFormatPrototypePanel = ({
           </p>
         )}
 
-        {output && summary && (
+        {completed && output && summary && (
           <div className="space-y-2 rounded-md border border-border bg-muted/30 p-3">
             <p className="font-medium text-foreground" data-testid="acvp-io-summary">
-              {summary.testCases} test cases on the {BROWSER_ENGINES[engineId].label}:{' '}
+              {summary.testCases} test cases on the {BROWSER_ENGINES[completed.engineId].label}:{' '}
               <span className="text-status-success">{summary.answered} answered</span> ·{' '}
               <span className="text-status-warning">{summary.unsupported} unsupported</span> ·{' '}
               <span className={clsx(summary.error > 0 ? 'text-status-error' : 'text-foreground')}>
                 {summary.error} error
               </span>
             </p>
+            {completed.engineId !== engineId && (
+              <p className="text-muted-foreground" data-testid="acvp-io-engine-changed">
+                This result is from the {BROWSER_ENGINES[completed.engineId].label}. Run again to
+                answer the prompt on the {BROWSER_ENGINES[engineId].label}.
+              </p>
+            )}
             {summary.byInputKind && summary.answered > 0 && (
               <p className="text-muted-foreground" data-testid="acvp-io-kinds">
                 How the {summary.answered} answers were obtained: {kinds.standardV32} through

@@ -219,6 +219,7 @@ Public Key Hex: ${pubHex} `,
       eccPub = '',
       eccDer = '',
       eccHex = ''
+    delete ctx.state.hnEccPrivPemHex // pure mode has no X25519 key; never keep one from a previous run
 
     if (pqcMode === 'hybrid') {
       // 1. Generate X25519 Keypair (Standard OpenSSL)
@@ -244,6 +245,8 @@ Public Key Hex: ${pubHex} `,
       } else {
         eccHex = await ctx.readFileHex(eccDer)
       }
+      // The receiving side's own X25519 private key (PEM bytes), used only by the SIDF step.
+      ctx.state.hnEccPrivPemHex = await ctx.readFileHex(eccPriv)
     }
 
     // 2. Generate ML-KEM-768 Keypair using OpenSSL (Same as Profile A/B patterns)

@@ -30162,7 +30162,7 @@
     {
       "id": "mlkem_ekcheck_depth_test",
       "path": "src/data/acvp/mlkem_ekcheck_depth_test.json",
-      "sha256": "ec5a90d200271d015d40ecf410e7369c14907951fa74d05d18744210b0198ca5",
+      "sha256": "f392b30d2a122baf6152584a699bccd86c7146d021d59873066ea2cc392cc16c",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -30469,7 +30469,7 @@
           "id": "mlkem-ekcheck-depth-test-1",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/0/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30489,7 +30489,7 @@
           "id": "mlkem-ekcheck-depth-test-2",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/0/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30509,7 +30509,7 @@
           "id": "mlkem-ekcheck-depth-test-3",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/0/tests/2"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30529,7 +30529,7 @@
           "id": "mlkem-ekcheck-depth-test-4",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/0/tests/3"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30549,7 +30549,7 @@
           "id": "mlkem-ekcheck-depth-test-5",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/1/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30569,7 +30569,7 @@
           "id": "mlkem-ekcheck-depth-test-6",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/1/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30589,7 +30589,7 @@
           "id": "mlkem-ekcheck-depth-test-7",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/1/tests/2"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30609,7 +30609,7 @@
           "id": "mlkem-ekcheck-depth-test-8",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/1/tests/3"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30629,7 +30629,7 @@
           "id": "mlkem-ekcheck-depth-test-9",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/2/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30649,7 +30649,7 @@
           "id": "mlkem-ekcheck-depth-test-10",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/2/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30669,7 +30669,7 @@
           "id": "mlkem-ekcheck-depth-test-11",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/2/tests/2"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30689,7 +30689,7 @@
           "id": "mlkem-ekcheck-depth-test-12",
           "appliesTo": ["mlkem_ekcheck_depth_test#/testGroups/2/tests/3"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be rejected at import or at encapsulation (any error, no ciphertext)",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); the invalid key must be refused at import with CKR_ATTRIBUTE_VALUE_INVALID (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -30712,7 +30712,7 @@
     {
       "id": "mlkem_encapdecap_val_test",
       "path": "src/data/acvp/mlkem_encapdecap_val_test.json",
-      "sha256": "50428fb2ff91c2288791525ee613cac204ced379cf22ddadc9f7e1b90f20eb92",
+      "sha256": "ba874cade8388abf5a2e2326cb231d9dd0e253300307690ed4aeed46d5391b79",
       "status": "active",
       "evidenceClass": "nist-acvp-reference-sample",
       "source": {
@@ -31535,7 +31535,7 @@
           "id": "mlkem-encapdecap-val-test-13",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/3/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=decapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or decapsulation",
+          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31559,7 +31559,7 @@
           "id": "mlkem-encapdecap-val-test-14",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/3/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=decapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or decapsulation",
+          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31583,7 +31583,7 @@
           "id": "mlkem-encapdecap-val-test-15",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/4/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or encapsulation",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31607,7 +31607,7 @@
           "id": "mlkem-encapdecap-val-test-16",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/4/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or encapsulation",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31631,7 +31631,7 @@
           "id": "mlkem-encapdecap-val-test-17",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/5/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=decapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or decapsulation",
+          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31655,7 +31655,7 @@
           "id": "mlkem-encapdecap-val-test-18",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/5/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=decapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or decapsulation",
+          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31679,7 +31679,7 @@
           "id": "mlkem-encapdecap-val-test-19",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/6/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or encapsulation",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31703,7 +31703,7 @@
           "id": "mlkem-encapdecap-val-test-20",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/6/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or encapsulation",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31727,7 +31727,7 @@
           "id": "mlkem-encapdecap-val-test-21",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/7/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=decapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or decapsulation",
+          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31751,7 +31751,7 @@
           "id": "mlkem-encapdecap-val-test-22",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/7/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=decapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or decapsulation",
+          "localOperation": "C_CreateObject(dk) + C_DecapsulateKey on an all-zero ciphertext of the parameter set length; testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31775,7 +31775,7 @@
           "id": "mlkem-encapdecap-val-test-23",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/8/tests/0"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or encapsulation",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -31799,7 +31799,7 @@
           "id": "mlkem-encapdecap-val-test-24",
           "appliesTo": ["mlkem_encapdecap_val_test#/testGroups/8/tests/1"],
           "upstreamOperation": "ML-KEM encapDecap FIPS203 VAL (function=encapsulationKeyCheck)",
-          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects a rejection (any error, no key object) at import or encapsulation",
+          "localOperation": "C_CreateObject(ek) + C_EncapsulateKey(CKM_ML_KEM); testPassed=true expects CKR_OK, testPassed=false expects CKR_ATTRIBUTE_VALUE_INVALID at import (any other answer is an error)",
           "transformations": [
             {
               "type": "subset",
@@ -105575,7 +105575,7 @@
     {
       "id": "wycheproof_mlkem_512_semi_expanded_decaps_test",
       "path": "src/data/acvp/wycheproof_mlkem_512_semi_expanded_decaps_test.json",
-      "sha256": "5e184f82d5b243f3b94c3d46468ae123dae7b5bfe1dcacdb60e6896aa15b5fa7",
+      "sha256": "4eda4a08d2de6e9ae3c27b2cc16b952d4e682c7fe5f903aaf7580a35d6170684",
       "status": "active",
       "evidenceClass": "independent-oracle",
       "source": {
@@ -105865,7 +105865,7 @@
             "wycheproof_mlkem_512_semi_expanded_decaps_test#/testGroups/1/tests/1"
           ],
           "upstreamOperation": "MLKEMDecapsValidationTest (expanded dk, c -> K)",
-          "localOperation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused at C_CreateObject or at C_DecapsulateKey.",
+          "localOperation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused: the dk at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID, a wrong-length c by C_DecapsulateKey with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID. Any other answer is an error, never a refusal.",
           "transformations": [
             {
               "type": "field-add",
@@ -105881,7 +105881,7 @@
     {
       "id": "wycheproof_mlkem_512_encaps_test",
       "path": "src/data/acvp/wycheproof_mlkem_512_encaps_test.json",
-      "sha256": "7c14f85a2c2200c6fea353945cc80cbbdac48d52bef422ebd0f91364b0f56b41",
+      "sha256": "8e8ce9c5f37402c7702b9ba3ca2d7f182530a467eceb746141fc288070094146",
       "status": "active",
       "evidenceClass": "independent-oracle",
       "source": {
@@ -109137,7 +109137,7 @@
             "wycheproof_mlkem_512_encaps_test#/testGroups/1/tests/119"
           ],
           "upstreamOperation": "MLKEMEncapsTest (ek, m -> c, K)",
-          "localOperation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length), at C_CreateObject or at C_EncapsulateKey.",
+          "localOperation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length) at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. Any other answer, including a key that imports and then fails C_EncapsulateKey, is an error, never a refusal.",
           "transformations": [
             {
               "type": "field-add",
@@ -117107,7 +117107,7 @@
     {
       "id": "wycheproof_mlkem_768_semi_expanded_decaps_test",
       "path": "src/data/acvp/wycheproof_mlkem_768_semi_expanded_decaps_test.json",
-      "sha256": "d9140e20f9e026b4dbe4f15f58b9d2b33eda7c666507bb3c61ec5013e6f2e9a6",
+      "sha256": "aa8ec744a51f13c74520b99d242ce070560a57a1d4753356aacbdbb77d29a452",
       "status": "active",
       "evidenceClass": "independent-oracle",
       "source": {
@@ -117397,7 +117397,7 @@
             "wycheproof_mlkem_768_semi_expanded_decaps_test#/testGroups/1/tests/1"
           ],
           "upstreamOperation": "MLKEMDecapsValidationTest (expanded dk, c -> K)",
-          "localOperation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused at C_CreateObject or at C_DecapsulateKey.",
+          "localOperation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused: the dk at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID, a wrong-length c by C_DecapsulateKey with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID. Any other answer is an error, never a refusal.",
           "transformations": [
             {
               "type": "field-add",
@@ -117413,7 +117413,7 @@
     {
       "id": "wycheproof_mlkem_768_encaps_test",
       "path": "src/data/acvp/wycheproof_mlkem_768_encaps_test.json",
-      "sha256": "689c18e2d7392d36e5cc7035f31e215e254c5adc99bb3aa4aa4fc5ce6890f50b",
+      "sha256": "3ae052bcd1e74e91e64d042b706133203b9569e62a0ef9e74f277758af2bc354",
       "status": "active",
       "evidenceClass": "independent-oracle",
       "source": {
@@ -120769,7 +120769,7 @@
             "wycheproof_mlkem_768_encaps_test#/testGroups/1/tests/119"
           ],
           "upstreamOperation": "MLKEMEncapsTest (ek, m -> c, K)",
-          "localOperation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length), at C_CreateObject or at C_EncapsulateKey.",
+          "localOperation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length) at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. Any other answer, including a key that imports and then fails C_EncapsulateKey, is an error, never a refusal.",
           "transformations": [
             {
               "type": "field-add",
@@ -128765,7 +128765,7 @@
     {
       "id": "wycheproof_mlkem_1024_semi_expanded_decaps_test",
       "path": "src/data/acvp/wycheproof_mlkem_1024_semi_expanded_decaps_test.json",
-      "sha256": "b496afab4c0a62181e01524ce38bddf5bdedf161cdc815a5e9178c6c43ac9cd3",
+      "sha256": "6a03e210ee0e199e8158d7fad474b09020f4d9ec86e18ea2f2295bb85f1997fb",
       "status": "active",
       "evidenceClass": "independent-oracle",
       "source": {
@@ -129055,7 +129055,7 @@
             "wycheproof_mlkem_1024_semi_expanded_decaps_test#/testGroups/1/tests/1"
           ],
           "upstreamOperation": "MLKEMDecapsValidationTest (expanded dk, c -> K)",
-          "localOperation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused at C_CreateObject or at C_DecapsulateKey.",
+          "localOperation": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused: the dk at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID, a wrong-length c by C_DecapsulateKey with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID. Any other answer is an error, never a refusal.",
           "transformations": [
             {
               "type": "field-add",
@@ -129071,7 +129071,7 @@
     {
       "id": "wycheproof_mlkem_1024_encaps_test",
       "path": "src/data/acvp/wycheproof_mlkem_1024_encaps_test.json",
-      "sha256": "94c1db023f2188d8237ac685baeb7dd3c22462fecb75cf4aab6451c05f8731ea",
+      "sha256": "1c0423e387bdd46be4a3f59a8c0a2e882859bb5d076f2cabc7400424a59b1dc8",
       "status": "active",
       "evidenceClass": "independent-oracle",
       "source": {
@@ -132527,7 +132527,7 @@
             "wycheproof_mlkem_1024_encaps_test#/testGroups/1/tests/119"
           ],
           "upstreamOperation": "MLKEMEncapsTest (ek, m -> c, K)",
-          "localOperation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length), at C_CreateObject or at C_EncapsulateKey.",
+          "localOperation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length) at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. Any other answer, including a key that imports and then fails C_EncapsulateKey, is an error, never a refusal.",
           "transformations": [
             {
               "type": "field-add",

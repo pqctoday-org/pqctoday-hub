@@ -54,6 +54,17 @@ import {
   CYCLONEDX_REGISTRY,
   type MechanismGroup,
 } from '../../data/cryptoMechanisms'
+import { constructionsUsingAlgorithm, findConstruction } from '../../data/cryptoConstructions'
+import { constructionUsage, constructionsInIndustry } from '../../data/constructionUsage'
+import {
+  AlgorithmExplanationBlock,
+  ConstructionCard,
+  ConstructionChip,
+  ConstructionChipRows,
+  ConstructionPairing,
+  ConstructionsOverview,
+  TransitionMap,
+} from './ConstructionLens'
 import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
 import { Button } from '../ui/button'
@@ -562,12 +573,15 @@ function UseCaseCard({
   uc,
   standards,
   onPickMechanism,
+  onPickConstruction,
   showIndustry,
   industryDefaultModuleId,
 }: {
   uc: IndustryUseCase
   standards: IndustryStandard[]
   onPickMechanism: (f: string) => void
+  /** Opens the construction lens (2026-11-13). */
+  onPickConstruction?: (id: string) => void
   showIndustry?: boolean
   /** The industry's most common module; a row naming a different one gets
    *  its own Learn chip (per-row mapping, 2026-09-17). */
@@ -629,6 +643,7 @@ function UseCaseCard({
         pqc={uc.pqcMechanisms}
         onPickMechanism={onPickMechanism}
       />
+      <ConstructionPairing uc={uc} onPick={onPickConstruction} />
       {uc.pqcMechanisms.length > 0 && (
         <div className="mt-1.5 flex items-center gap-1.5">
           {/* WS10: says whether the PQC claim above is deployed, merely
@@ -1056,7 +1071,13 @@ export function IndustryLandscapeView() {
   // deep link lands on the signature half rather than an empty lens.
   const rawMechanism = searchParams.get('mechanism')
   const selectedMechanism = rawMechanism === 'RSA' ? 'RSA-sig' : rawMechanism
-  const mode: 'industry' | 'mechanism' = selectedMechanism ? 'mechanism' : 'industry'
+  // ?construction=<id> (2026-11-13): the construction lens. An empty value
+  // opens the lens with nothing picked (transition map and overview).
+  const rawConstruction = searchParams.get('construction')
+  const selectedConstruction = rawConstruction ? rawConstruction : null
+  const constructionDef = selectedConstruction ? findConstruction(selectedConstruction) : undefined
+  const mode: 'industry' | 'mechanism' | 'construction' =
+    rawConstruction !== null ? 'construction' : selectedMechanism ? 'mechanism' : 'industry'
 
   const marketByIndustry = useMemo(
     () => new Map(marketSizes.map((m) => [m.industry, m])),
@@ -1121,7 +1142,7 @@ export function IndustryLandscapeView() {
     pendingFocus.current = industry
       ? { kind: 'industry' }
       : { kind: 'grid', from: selectedIndustry }
-    update({ industry, mechanism: null, usecase: null, standard: null })
+    update({ industry, mechanism: null, construction: null, usecase: null, standard: null })
   }
   useEffect(() => {
     const target = pendingFocus.current
@@ -1137,7 +1158,16 @@ export function IndustryLandscapeView() {
     ;(from ?? tiles[0]).focus()
   }, [selectedIndustry])
   const pickMechanism = (mechanism: string | null) =>
-    update({ mechanism, industry: null, usecase: null, standard: null })
+    update({ mechanism, construction: null, industry: null, usecase: null, standard: null })
+  const pickConstruction = (construction: string | null) =>
+    update({
+      construction: construction ?? '',
+      mechanism: null,
+      industry: null,
+      usecase: null,
+      standard: null,
+    })
+  const usage = useMemo(() => constructionUsage(useCases, standards), [useCases, standards])
 
   // ?usecase=<useCaseId>: open its industry (unless the mechanism lens
   // already lists it), then scroll to and ring its card. Case-insensitive.
@@ -1151,7 +1181,10 @@ export function IndustryLandscapeView() {
     (mode === 'mechanism'
       ? linkedUseCase.classicalMechanisms.includes(selectedMechanism ?? '') ||
         linkedUseCase.pqcMechanisms.includes(selectedMechanism ?? '')
-      : selectedIndustry === linkedUseCase.industry)
+      : mode === 'construction'
+        ? linkedUseCase.classicalConstructions.includes(constructionDef?.id ?? '') ||
+          linkedUseCase.pqcConstructions.includes(constructionDef?.id ?? '')
+        : selectedIndustry === linkedUseCase.industry)
   useEffect(() => {
     if (!linkedUseCase || linkedUseCaseShown) return
     setSearchParams(
@@ -1159,6 +1192,7 @@ export function IndustryLandscapeView() {
         const next = new URLSearchParams(prev)
         next.set('industry', linkedUseCase.industry)
         next.delete('mechanism')
+        next.delete('construction')
         return next
       },
       { replace: true }
@@ -1181,7 +1215,9 @@ export function IndustryLandscapeView() {
     !!linkedStandard &&
     (mode === 'mechanism'
       ? linkedStandard.mechanismsReferenced.includes(selectedMechanism ?? '')
-      : selectedIndustry === linkedStandard.industry)
+      : mode === 'construction'
+        ? linkedStandard.constructionsReferenced.includes(constructionDef?.id ?? '')
+        : selectedIndustry === linkedStandard.industry)
   useEffect(() => {
     if (!linkedStandard || linkedStandardShown || linkedUseCase) return
     setSearchParams(
@@ -1189,6 +1225,7 @@ export function IndustryLandscapeView() {
         const next = new URLSearchParams(prev)
         next.set('industry', linkedStandard.industry)
         next.delete('mechanism')
+        next.delete('construction')
         return next
       },
       { replace: true }
@@ -1231,6 +1268,13 @@ export function IndustryLandscapeView() {
           onDismiss={() => update({ standard: null })}
         />
       )}
+      {selectedConstruction && !constructionDef && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={`No construction matches "${selectedConstruction}" — it may have been renamed or retired.`}
+          onDismiss={() => update({ construction: '' })}
+        />
+      )}
       <p
         className="mb-3 text-xs leading-relaxed text-muted-foreground"
         data-testid="landscape-scope-note"
@@ -1245,8 +1289,10 @@ export function IndustryLandscapeView() {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => update({ mechanism: null, usecase: null, standard: null })}
-            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
+            onClick={() =>
+              update({ mechanism: null, construction: null, usecase: null, standard: null })
+            }
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'industry' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Industry
           </Button>
@@ -1256,9 +1302,22 @@ export function IndustryLandscapeView() {
             onClick={() => {
               if (mode !== 'mechanism') pickMechanism('RSA')
             }}
-            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'mechanism' ? 'bg-primary text-primary-foreground hover:bg-primary' : 'bg-card text-foreground hover:bg-muted'}`}
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'mechanism' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
           >
             Mechanism
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              // From another mode, or from a picked construction: back to the
+              // lens overview (transition map + industries table).
+              if (mode !== 'construction' || selectedConstruction) pickConstruction(null)
+            }}
+            className={`h-auto rounded-none px-3 py-1.5 text-sm ${mode === 'construction' ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}
+            data-testid="mode-construction"
+          >
+            Construction
           </Button>
         </div>
         {meta.landscape && (
@@ -1324,6 +1383,7 @@ export function IndustryLandscapeView() {
                   </span>
                 )}
               </div>
+              <AlgorithmExplanationBlock family={mechanismDef.family} />
               {(() => {
                 const replacedBy = mechanismDef.classical
                   ? pqcReplacementsFor(mechanismDef.family)
@@ -1364,6 +1424,19 @@ export function IndustryLandscapeView() {
                   </div>
                 )
               })()}
+              {constructionsUsingAlgorithm(mechanismDef.family).length > 0 && (
+                <div
+                  className="mt-1.5 flex flex-wrap items-center gap-1.5"
+                  data-testid="lens-used-inside"
+                >
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Used inside
+                  </span>
+                  {constructionsUsingAlgorithm(mechanismDef.family).map((c) => (
+                    <ConstructionChip key={c.id} id={c.id} onSelect={pickConstruction} />
+                  ))}
+                </div>
+              )}
               <p className="mt-1 text-xs text-muted-foreground">
                 Used in {mechanismHits.length} use case{mechanismHits.length === 1 ? '' : 's'}{' '}
                 across {new Set(mechanismHits.map((u) => u.industry)).size} industries
@@ -1411,6 +1484,7 @@ export function IndustryLandscapeView() {
                           uc={uc}
                           standards={standards}
                           onPickMechanism={pickMechanism}
+                          onPickConstruction={pickConstruction}
                           industryDefaultModuleId={defaultLearnModuleForIndustry(ind, useCases)}
                         />
                       ))}
@@ -1419,6 +1493,122 @@ export function IndustryLandscapeView() {
                 )
               })}
           </div>
+        </>
+      )}
+
+      {mode === 'construction' && (
+        <>
+          <ConstructionChipRows
+            usage={usage}
+            selected={constructionDef?.id ?? null}
+            onPick={(id) => pickConstruction(id === constructionDef?.id ? null : id)}
+          />
+          {!constructionDef && (
+            <>
+              <TransitionMap usage={usage} onPick={pickConstruction} />
+              <ConstructionsOverview
+                industries={industries}
+                usage={usage}
+                onPick={pickConstruction}
+              />
+            </>
+          )}
+          {constructionDef && (
+            <>
+              <ConstructionCard
+                c={constructionDef}
+                usage={usage.get(constructionDef.id)}
+                onPick={pickConstruction}
+              />
+              {(usage.get(constructionDef.id)?.standards.length ?? 0) > 0 && (
+                <div
+                  className="mb-4 flex flex-wrap items-center gap-1.5"
+                  data-testid="construction-standards"
+                >
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Cited by standards
+                  </span>
+                  {usage.get(constructionDef.id)!.standards.map((st) => (
+                    <AddressableStandardChip key={`${st.industry}-${st.standardId}`} std={st} />
+                  ))}
+                </div>
+              )}
+              <div className="space-y-6">
+                {industries
+                  .filter((ind) =>
+                    usage.get(constructionDef.id)?.direct.some((d) => d.useCase.industry === ind)
+                  )
+                  .map((ind) => {
+                    const IndIcon = INDUSTRY_ICONS[ind] ?? Globe
+                    const hits = usage
+                      .get(constructionDef.id)!
+                      .direct.filter((d) => d.useCase.industry === ind)
+                    return (
+                      <div key={ind} data-testid={`construction-industry-${ind}`}>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => pickIndustry(ind)}
+                          className="mb-2 flex h-auto min-w-0 flex-wrap items-center gap-2 whitespace-normal p-0 text-left hover:bg-transparent"
+                          title={`Open ${ind} in industry view`}
+                        >
+                          <IndIcon size={18} className="text-primary" />
+                          <span className="font-medium text-foreground hover:text-primary">
+                            {ind}
+                          </span>
+                        </Button>
+                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                          {hits.map(({ useCase: uc, side }) => (
+                            <div key={uc.useCaseId}>
+                              <p className="mb-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                                {side === 'today'
+                                  ? 'Used today'
+                                  : side === 'target'
+                                    ? 'Migration target'
+                                    : 'Used today and as the target'}
+                              </p>
+                              <UseCaseCard
+                                uc={uc}
+                                standards={standards}
+                                onPickMechanism={pickMechanism}
+                                onPickConstruction={pickConstruction}
+                                industryDefaultModuleId={defaultLearnModuleForIndustry(
+                                  ind,
+                                  useCases
+                                )}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })}
+                {(usage.get(constructionDef.id)?.inside.length ?? 0) > 0 && (
+                  <div data-testid="construction-inside">
+                    <p className="mb-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Used inside another construction
+                    </p>
+                    <ul className="space-y-1 text-xs">
+                      {usage.get(constructionDef.id)!.inside.map(({ useCase: uc, via }) => (
+                        <li key={uc.useCaseId} className="flex flex-wrap items-center gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => update({ usecase: uc.useCaseId })}
+                            className="h-auto p-0 text-xs text-primary hover:underline"
+                          >
+                            {uc.useCaseLabel}
+                          </Button>
+                          <span className="text-muted-foreground">({uc.industry}) via</span>
+                          <ConstructionChip id={via} onSelect={pickConstruction} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
 
@@ -1518,6 +1708,24 @@ export function IndustryLandscapeView() {
                   cases={cases}
                   standards={standards}
                 />
+                {constructionsInIndustry(selectedIndustry, usage).length > 0 && (
+                  <div
+                    className="mb-4 flex flex-wrap items-center gap-1.5"
+                    data-testid="industry-constructions"
+                  >
+                    <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Constructions in this industry
+                    </span>
+                    {constructionsInIndustry(selectedIndustry, usage).map(({ id, count }) => (
+                      <ConstructionChip
+                        key={id}
+                        id={id}
+                        count={count}
+                        onSelect={pickConstruction}
+                      />
+                    ))}
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {cases.map((uc) => (
@@ -1526,6 +1734,7 @@ export function IndustryLandscapeView() {
                       uc={uc}
                       standards={standards}
                       onPickMechanism={pickMechanism}
+                      onPickConstruction={pickConstruction}
                       industryDefaultModuleId={defaultLearnModuleForIndustry(
                         selectedIndustry,
                         useCases

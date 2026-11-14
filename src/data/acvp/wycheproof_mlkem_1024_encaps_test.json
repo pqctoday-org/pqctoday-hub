@@ -15,7 +15,7 @@
     "evidence_class": "independent-oracle",
     "evidence_class_reason": "Google/C2SP is not a standards body and no standard prints these values. A passing case supports only 'agrees with Project Wycheproof 3fa63dd0 for this case', never a conformance claim.",
     "upstream_operation": "MLKEMEncapsTest (ek, m -> c, K)",
-    "local_operation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length), at C_CreateObject or at C_EncapsulateKey.",
+    "local_operation": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length) at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. Any other answer, including a key that imports and then fails C_EncapsulateKey, is an error, never a refusal.",
     "local_mechanisms": "CKM_ML_KEM (CKP_ML_KEM_1024)",
     "transformation": "this `_provenance` key added, and a DECLARED subset: the upstream cases listed in `excluded_cases` are dropped by the rule named there, because PKCS#11 has no input for a value they fix. Every kept testGroup, test, tcId, flag, result and hex value is byte-copied from the upstream file in upstream order; no kept case is renumbered, re-derived or normalized.",
     "result_policy": "Wycheproof `valid` must be accepted and `invalid` must be refused. `acceptable` is a case upstream states either outcome is defensible: the observed behaviour is RECORDED and no pass/fail assertion is made on it.",

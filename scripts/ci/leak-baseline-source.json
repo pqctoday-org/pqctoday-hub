@@ -11,6 +11,7 @@
     "agent-config-path",
     "internal-key",
     "decision-citation",
+    "decision-quote",
     "session-handle"
   ],
   "files": {
@@ -118,7 +119,7 @@
       "session-handle": 26
     },
     "public/threats/claim-status.json": {
-      "run-id": 209
+      "run-id": 189
     },
     "public/threats/manifest.json": {
       "evidence-cache": 1,
@@ -256,7 +257,7 @@
       "internal-key": 3
     },
     "src/data/archive/leaders_#.csv": {
-      "internal-key": 9
+      "internal-key": 19
     },
     "src/data/archive/library_#.csv": {
       "decision-citation": 43,
@@ -317,9 +318,6 @@
       "evidence-cache": 1,
       "private-repo": 1
     },
-    "src/data/fhe/fhe-hsm-scenarios.v1.json": {
-      "decision-citation": 1
-    },
     "src/data/forceClusterGraph.ts": {
       "private-repo": 1
     },
@@ -330,9 +328,6 @@
     "src/data/kat/gsma_suci_ts33501_annex_c.json": {
       "evidence-cache": 1,
       "private-repo": 1
-    },
-    "src/data/leaders_#.csv": {
-      "internal-key": 19
     },
     "src/data/learningPersonas.ts": {
       "private-repo": 1
@@ -362,19 +357,11 @@
       "evidence-cache": 4,
       "private-repo": 5
     },
-    "src/data/role_board_content_#.csv": {
-      "decision-citation": 7,
-      "run-id": 1
-    },
     "src/data/role_board_ctas_#.csv": {
       "decision-citation": 1
     },
     "src/data/role_board_variants_#.csv": {
       "decision-citation": 1
-    },
-    "src/data/trusted_sources_#.csv": {
-      "decision-citation": 1,
-      "run-id": 4
     },
     "src/data/validation/nativeConformance.ts": {
       "private-repo": 1
@@ -384,7 +371,6 @@
       "private-repo": 1
     },
     "src/data/validation/vector-manifest.json": {
-      "decision-citation": 2,
       "private-repo": 3
     },
     "src/services/chat/factVerification.ts": {

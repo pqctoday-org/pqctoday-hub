@@ -114,7 +114,7 @@ export const FileEditor = () => {
           <Button
             variant="ghost"
             onClick={handleToggleMode}
-            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-colors border border-input"
+            className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-colors border border-input"
             title={`Switch to ${viewMode === 'ascii' ? 'Hex' : 'ASCII'} mode`}
           >
             <ArrowRightLeft size={12} />
@@ -124,7 +124,7 @@ export const FileEditor = () => {
           <Button
             variant="ghost"
             onClick={() => setEditingFile(null)}
-            className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
             title="Close Editor"
           >
             <X size={16} />
@@ -148,7 +148,7 @@ export const FileEditor = () => {
           placeholder={viewMode === 'hex' ? '00 01 02 03...' : 'Type content here...'}
         />
         {error && (
-          <div className="absolute bottom-4 left-4 right-4 bg-destructive/20 border border-destructive/50 text-destructive-foreground text-xs p-2 rounded backdrop-blur-md">
+          <div className="absolute bottom-4 left-4 right-4 bg-destructive/20 border border-destructive/50 text-foreground text-xs p-2 rounded backdrop-blur-md">
             {error}
           </div>
         )}
@@ -159,14 +159,14 @@ export const FileEditor = () => {
         <Button
           variant="ghost"
           onClick={() => setEditingFile(null)}
-          className="px-3 py-1.5 rounded hover:bg-accent text-foreground transition-colors text-xs font-medium"
+          className="px-3 py-1.5 rounded hover:bg-muted text-foreground transition-colors text-xs font-medium"
         >
           Cancel
         </Button>
         <Button
           variant="ghost"
           onClick={handleSave}
-          className="px-3 py-1.5 rounded bg-primary hover:bg-primary/90 text-foreground transition-colors flex items-center gap-2 text-xs font-medium shadow-lg shadow-primary/20"
+          className="px-3 py-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-colors flex items-center gap-2 text-xs font-medium shadow-lg shadow-primary/20"
         >
           <Save size={14} />
           Save Changes

@@ -552,7 +552,7 @@ const IKE_PHASE_CLASS: Record<IkePhase, string> = {
   SETUP: 'bg-muted text-muted-foreground',
   IKE_SA_INIT: 'bg-primary/20 text-primary',
   IKE_INTERMEDIATE: 'bg-secondary/20 text-secondary',
-  IKE_AUTH: 'bg-accent/20 text-accent-foreground',
+  IKE_AUTH: 'bg-accent/20 text-foreground',
 }
 
 export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialMode }) => {
@@ -4282,7 +4282,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         : generateCerts
                     }
                     disabled={certGenLoading}
-                    className="px-4 py-2 bg-secondary text-secondary-foreground font-bold rounded shadow-sm hover:bg-secondary/90 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-secondary text-secondary-foreground hover:text-secondary-foreground font-bold rounded shadow-sm hover:bg-secondary/90 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {certGenLoading
                       ? 'Generating…'

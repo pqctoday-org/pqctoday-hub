@@ -206,7 +206,7 @@ interface ComplianceCheck {
   evidence: string
 }
 
-// Canonical KAT specs for the ACVP-driven primitive layer.
+// Mixed primitive evidence: fresh-key functional checks plus an external HMAC sample.
 const PRIMITIVE_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'jose-mldsa65-acvp',
@@ -1146,8 +1146,8 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
 
       <KatValidationPanel
         specs={PRIMITIVE_KAT_SPECS}
-        label="Primitive KATs — FIPS 203 / 204 / 198-1"
-        authorityNote="Vectors imported from src/data/acvp/{mldsa,mlkem,hmac}_test.json — green = our primitive output matches NIST's expected output byte-for-byte."
+        label="Primitive checks — functional round-trips and HMAC reference sample"
+        authorityNote="ML-DSA and ML-KEM rows use fresh sample keys for functional round-trips; they do not compare an output with a NIST expected answer. Only the HMAC-SHA256 row checks a published NIST reference sample. Read each row's evidence class and result; a passing sample does not establish algorithm validation or protocol compliance."
       />
 
       {/* Audit results */}

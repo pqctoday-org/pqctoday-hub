@@ -17,11 +17,13 @@ import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { EMVPaymentPQCModule } from './index'
 import { PAYMENT_NETWORKS } from './data/paymentNetworkData'
-import { sumVolumeTrillions } from './workshop/NetworkComparator'
+import { comparePurchaseVolume } from './data/networkVolumeComparison'
 
 describe('EMVPaymentPQC render parity', () => {
-  it('normalizes billion- and trillion-denominated network volumes', () => {
-    expect(sumVolumeTrillions(PAYMENT_NETWORKS)).toBeCloseTo(46.6)
+  it('adds only the same-period purchase volumes (2 of 5 networks) instead of every network', () => {
+    const result = comparePurchaseVolume(PAYMENT_NETWORKS)
+    expect(result.totalUsdBn).toBe(23_366)
+    expect(result.coverageLabel).toBe('2 of 5 networks')
   })
 
   it('renders the gradient header, the in-page description, and all six tabs', () => {

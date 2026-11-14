@@ -19,7 +19,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 | Rust: advertised capability cells (denominator)         |              2,235 | `public/data/validation/coverage-matrix.json`                     |
 | Coverage waivers (entries; all statuses)                |                 19 | `src/data/validation/coverage-waivers.json`                       |
 | Waivers approved                                        |                 19 | `src/data/validation/coverage-waivers.json`                       |
-| Open gaps (register entries)                            |                 71 | `public/data/validation/coverage-matrix.json`                     |
+| Open gaps (register entries)                            |                 95 | `public/data/validation/coverage-matrix.json`                     |
 | Workbench test groups / families                        |             71 / 8 | `src/components/Playground/hsm/acvp/useAcvpSuite.ts (CATEGORIES)` |
 
 **Waivers:** 0 of 19 waivers are baseline-pending-review (not approvals); 19 approved.
@@ -57,7 +57,7 @@ Every number below is read from a generated file; `npm run gen:release-evidence:
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,189 |         2,188 |             1 |
+| wasm          | registered |            2,189 |         2,188 |             4 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -80,7 +80,7 @@ Artifacts:
 
 | Artifact kind | Status     | Registered cells | Recorded pass | Recorded fail |
 | ------------- | ---------- | ---------------: | ------------: | ------------: |
-| wasm          | registered |            2,209 |         2,197 |             2 |
+| wasm          | registered |            2,209 |         2,197 |             5 |
 | native        | not-run    |                0 |             0 |             0 |
 | hardware      | not-run    |                0 |             0 |             0 |
 
@@ -93,7 +93,7 @@ Artifacts:
 
 - `src/data/validation/run-results/wasm-node-errorPathProbes.json` — errorPathProbes (every registered error-path case, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `9e61dd12cd10`; 4,988 results: cpp 2,434 pass, 60 skip; rust 2,469 pass, 25 skip.
 - `src/data/validation/run-results/wasm-node-katRunner.json` — katRunner (every registered KatKind); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `9e61dd12cd10`; 96 results: rust 96 pass.
-- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-10-30 at hub `e64a414cb9e7`; 14,092 results: cpp 7,041 pass, 1 fail, 4 skip; rust 7,027 pass, 19 fail.
+- `src/data/validation/run-results/wasm-node-useAcvpSuite.json` — useAcvpSuite (all categories, dual engine); wasm on Node.js via vitest local venue (not a browser); recorded 2026-11-13 at hub `d6011cede34e`; 14,092 results: cpp 7,029 pass, 13 fail, 4 skip; rust 7,015 pass, 31 fail.
   - **fail** on cpp: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.18b#pbkdf2_acvp_test#/testGroups/0/tests/3`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/0/tests/0`
@@ -114,6 +114,30 @@ Artifacts:
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/7`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/8`
   - **fail** on rust: `acvp.36#rsa_oaep_test#/testGroups/1/tests/9`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/1/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/2/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/3/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/4/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/1/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/2/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/24/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/25/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/1/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/2/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/3/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/4/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/1/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/2/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/22/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/23/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/1/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/2/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/3/tests/0`
+  - **fail** on cpp: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/4/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/1/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/2/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/22/tests/0`
+  - **fail** on rust: `acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/23/tests/0`
 
 ## Native engine conformance suites (imported, not executed by the Hub)
 
@@ -245,7 +269,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 
 ## Open-gaps register
 
-71 entries — by status: open 62, in-progress 1, accepted-limitation 8; by origin: curated 30, generated 41; owner unassigned: 71.
+95 entries — by status: open 86, in-progress 1, accepted-limitation 8; by origin: curated 30, generated 65; owner unassigned: 95.
 
 | Curated gap                                                                                                                                          | Status              | Plan item       | Owner      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | --------------- | ---------- |
@@ -255,7 +279,7 @@ Statuses are kept separate: `not run`, `unsupported` and `not comparable` are ne
 | Rust dispatches CKM_BIP32__\_LEGACY without advertising them; C++ still dispatches RIPEMD160_ only under its own non-advertised build flag           | open                | G-7             | unassigned |
 | Native targets not run                                                                                                                               | open                | H-2             | unassigned |
 | Hardware targets not run                                                                                                                             | open                | H-3 / Q3        | unassigned |
-| Run results recorded only for the workbench and katRunner, on the wasm engines, in Node                                                              | open                | C-4 / H-1 / H-7 | unassigned |
+| Run results recorded for the workbench ACVP suite, the known-answer checks and the error-path probes, on the wasm engines, in Node                   | open                | C-4 / H-1 / H-7 | unassigned |
 | Native 976/815-check engine suites not in the evidence pipeline                                                                                      | open                | G-6             | unassigned |
 | PKCS #11 API-behavior matrix not built                                                                                                               | open                | G-3 / G-4       | unassigned |
 | SLH-DSA NIST sigGen cases registered but not executed                                                                                                | open                | D3-4            | unassigned |
@@ -288,7 +312,7 @@ Valid review records: 96.
 
 | Kind                      | Items not approved |
 | ------------------------- | -----------------: |
-| vector-source             |                  5 |
+| vector-source             |                  2 |
 | coverage-waiver           |                 19 |
 | public-claim              |                  3 |
 | learn-module-practitioner |                  1 |
@@ -335,12 +359,12 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `c2c08cfafe3207e39f9cb445a4359172c8e219924a712f54a542a861501afcd5` |
+| `public/data/validation/coverage-matrix.json`                           | `76122b82dab0acb0f74968de4c41cc8f59a6bdd7834488559de18a915a61952b` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700` |
-| `src/data/validation/open-gaps.json`                                    | `b1fedc67f0072f5af92e14f075bc0c31c03f06f163dbcc5d538ac05e5b4ffb6a` |
+| `src/data/validation/open-gaps.json`                                    | `fdb9f768b8901caf0f5e2f044e00688796bc3d39bfedcb7185f4d00fc0fde7d1` |
 | `src/data/validation/run-results/wasm-node-errorPathProbes.json`        | `b0b7ed7661e07bef8039fa4fc35b6388b1c992c494664fdf068148e4d21a0b4a` |
 | `src/data/validation/run-results/wasm-node-katRunner.json`              | `f8c458ba8f79c9065cb5dc14e2c425fb073f00f2cf78acef2363af98230b9ebb` |
-| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `88a03cd5ad6306be37e63ba523e56add1cb71dad2a1a837d0d42772de3eb768d` |
-| `src/data/validation/validation-counts.generated.json`                  | `f023b845002988f141320149a591858bc0567f32cca774e9785d4c9ae566398d` |
-| `src/data/validation/vector-manifest.json`                              | `8cbeb36566320ad9c72520b76a93caf446091271c8024373465b28990acfdf95` |
+| `src/data/validation/run-results/wasm-node-useAcvpSuite.json`           | `27de80b7569bbad21255e6305a7f751314f2626db6e18d8940b11722bb9f104e` |
+| `src/data/validation/validation-counts.generated.json`                  | `7c611e26745eca8191a97fb0ba645c1667b49e57fb1395eba203c1c8fde3a8ec` |
+| `src/data/validation/vector-manifest.json`                              | `a3ae937eaf449b12a8d2823373e37cc679032f2be0259cca6a6bc68442467352` |

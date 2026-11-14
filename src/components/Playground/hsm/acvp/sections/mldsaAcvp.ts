@@ -189,6 +189,9 @@ export interface AcvpCaseMeta {
   tcId?: number
   source: { repo: string; commit: string; path: string; sha256: string }
   observed?: string
+  /** true on a failed row whose engine call failed for an operational reason (not a
+   * wrong answer): the group summary counts these apart from the other failures. */
+  error?: boolean
   /** Set when the row handed the HSM a value the standard has no field for (an
    * optional test input outside PKCS#11: ML-KEM m, ECDSA k, ML-DSA rnd, SLH-DSA
    * addrnd, or SLH-DSA internal message encoding). Rows that set it also carry

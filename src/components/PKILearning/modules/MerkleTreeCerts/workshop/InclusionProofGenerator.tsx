@@ -337,7 +337,7 @@ export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = (
                                     : annotation.type === 'provided'
                                       ? 'bg-warning text-black'
                                       : annotation.type === 'root'
-                                        ? 'bg-accent text-black'
+                                        ? 'bg-accent text-accent-foreground'
                                         : 'bg-success text-black'
                                 }`}
                                 title={annotation.label}

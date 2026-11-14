@@ -14528,6 +14528,40 @@
       "admittedAt": "2026-09-18T05:09:27.783031+00:00",
       "admittedBy": "admit.py",
       "identity": "MATCH"
+    },
+    {
+      "refId": "apra",
+      "file": "trusted-sources/apra-625352f2.html",
+      "filename": "apra-625352f2.html",
+      "url": "https://www.apra.gov.au/",
+      "status": "downloaded",
+      "sizeBytes": 346249,
+      "contentType": "text/html",
+      "sha256": "084e82c37b17739e6983e4471a329c6461f5ee63d2a7fb59c55767768c7c382a",
+      "addedAt": "2026-11-12T12:33:13.637883+00:00",
+      "addedBy": "evidence admission (existing copy, record added)",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "stampedAt": "2026-11-12T12:33:13.908166+00:00",
+      "admittedBy": "evidence admission (existing copy)",
+      "identity": "MATCH",
+      "admittedAt": "2026-11-12T12:33:13.637883+00:00"
+    },
+    {
+      "refId": "mit-csail",
+      "file": "mit-csail-408667b7.html",
+      "sizeBytes": 18220,
+      "content_type": "text/html",
+      "url": "https://cis.csail.mit.edu/",
+      "sha256": "325bf0d967da0e78592ce76e14cf48c64d1e1367be2a3fd4468d5b6f7e64a072",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-12T13:07:00.214249+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "replacedAt": "2026-11-12T13:07:00.020386+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "the saved page was another MIT group's site; the row's address now points at the Cryptography and Information Security group"
     }
   ]
 }

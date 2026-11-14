@@ -49,7 +49,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'genpkey'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Key size={16} /> Key Generation
@@ -62,7 +62,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'req'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <FileText size={16} /> CSR (Request)
@@ -74,7 +74,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'x509'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Shield size={16} /> Certificate
@@ -86,7 +86,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'dgst'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Settings size={16} /> Sign / Verify
@@ -98,7 +98,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'rand'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Shield size={16} /> Random Data
@@ -110,7 +110,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'enc'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Lock size={16} /> Encryption
@@ -122,7 +122,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'hash'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Hash size={16} /> Hashing
@@ -134,7 +134,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'kem'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Database size={16} /> Key Encap
@@ -146,7 +146,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'pkcs12'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <FileArchive size={16} /> PKCS#12 Bundle
@@ -158,7 +158,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'lms'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Shield size={16} /> LMS (HSS)
@@ -170,7 +170,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'pkcs11'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Cpu size={16} /> PKCS#11 (HSM)
@@ -182,7 +182,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'configutl'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Settings size={16} /> Config Audit
@@ -194,7 +194,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'kdf'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Key size={16} /> Key Derivation
@@ -206,7 +206,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             category === 'version'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <Info size={16} /> Version Info
@@ -221,7 +221,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
             activeTab === 'logs'
               ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-muted border-border hover:bg-accent text-muted-foreground'
+              : 'bg-muted border-border hover:bg-muted/60 text-muted-foreground'
           )}
         >
           <FileText size={16} /> Operation Logs

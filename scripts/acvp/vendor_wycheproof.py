@@ -227,16 +227,18 @@ for _ps in ("512", "768", "1024"):
         "upstream_operation": "MLKEMDecapsValidationTest (expanded dk, c -> K)",
         "local": "C_CreateObject(CKO_PRIVATE_KEY, CKK_ML_KEM, CKA_VALUE = dk) then "
         "C_DecapsulateKey(CKM_ML_KEM, c), K byte-compared. An `invalid` case (wrong dk or c length, "
-        "dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused at "
-        "C_CreateObject or at C_DecapsulateKey.",
+        "dk whose embedded H(ek) or ek is corrupted — FIPS 203 §7.3) must be refused: the dk at "
+        "C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID, a wrong-length c by C_DecapsulateKey with "
+        "CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID. Any other answer is an error, never a refusal.",
     }
     VENDORED[f"mlkem_{_ps}_encaps_test.json"] = {
         "mechanisms": f"CKM_ML_KEM (CKP_ML_KEM_{_ps})",
         "upstream_operation": "MLKEMEncapsTest (ek, m -> c, K)",
         "local": "C_CreateObject(CKO_PUBLIC_KEY, CKK_ML_KEM, CKA_VALUE = ek) then "
         "C_EncapsulateKey(CKM_ML_KEM). Only the `invalid` cases are vendored (see excluded_cases): "
-        "each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length), "
-        "at C_CreateObject or at C_EncapsulateKey.",
+        "each carries an ek that must be refused (FIPS 203 §7.2 modulus check, or a wrong length) "
+        "at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. Any other answer, including a key that "
+        "imports and then fails C_EncapsulateKey, is an error, never a refusal.",
     }
 for _ps in ("44", "65", "87"):
     VENDORED[f"mldsa_{_ps}_verify_test.json"] = {

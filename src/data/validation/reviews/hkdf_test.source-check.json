@@ -1,7 +1,7 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:hkdf_test",
-  "subjectSha256": "c82d66e58517951f999a1c18371bc7a8e6ae7e5133536324514c76ccf6cfa9c1",
+  "subjectSha256": "0d054631e9e8ab76afc9359388f456cab371be655599af36718beacc2a9b0894",
   "fileSha256": "256c14abcce082ddc4819742e0970b66b5cc09630e49ed416552c28f7650f937",
   "result": "match",
   "tool": "scripts/acvp/check_rfc5869_hkdf.py",
@@ -23,5 +23,5 @@
   "compared": {
     "cases": 3
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-13"
 }

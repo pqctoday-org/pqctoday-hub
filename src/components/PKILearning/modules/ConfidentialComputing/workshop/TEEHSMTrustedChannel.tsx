@@ -71,6 +71,16 @@ import {
   type AttrDef,
 } from '@/wasm/softhsm'
 import { EstimateNote } from '@/components/ui/EstimateNote'
+import { ChallengeLedger } from './amdSnpVerifier'
+import {
+  CHALLENGE_BYTES,
+  SIMULATED_LABEL,
+  bindingDigest,
+  channelStatement,
+  checkChannelBinding,
+} from './channelBinding'
+import { bytesToHex } from '@noble/hashes/utils.js'
+import { sha256 } from '@noble/hashes/sha2.js'
 
 const TEE_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -87,6 +97,11 @@ const TEE_LIVE_OPERATIONS = [
   'C_GenerateKey',
   'C_CreateObject',
 ]
+
+/** Context string mixed into the sample channel binding. */
+const TEE_CHANNEL_CONTEXT = 'tee-hsm-kek-v1'
+
+type ChannelFault = 'none' | 'swap-ciphertext' | 'wrong-recipient-key' | 'replayed-challenge'
 
 // Preserve the local sample failure; generic crypto hints may describe an unrelated workflow.
 class SampleProvisioningCheckError extends Error {}
@@ -316,6 +331,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
   const [liveRunning, setLiveRunning] = useState(false)
   const [liveError, setLiveError] = useState<string | null>(null)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+  const [channelFault, setChannelFault] = useState<ChannelFault>('none')
 
   const runLiveDemo = useCallback(async () => {
     if (!hsm.moduleRef.current) return
@@ -381,7 +397,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'Attestation Key Generated (ML-DSA-65)',
           pkcs11Call: 'C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)',
           detail: `pub = ${dsaPubBytes.length} B (1952 B) · priv = 4032 B`,
-          note: 'Used to sign TEE attestation reports and authenticate to relying parties. The private key never leaves the HSM.',
+          note: 'Sample key generated in this session; step 4 signs a channel statement with it. It is not a vendor attestation key and says nothing about real hardware. The private key stays in the HSM.',
         })
 
         // Step 2: TLS transport via ML-KEM-768
@@ -486,23 +502,65 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           note: 'KEK is derived from the ML-KEM-768 shared secret via HKDF-SHA256 (RFC 5869, info="tee-hsm-kek-v1"). The enclave re-derives the same KEK after decapsulating — no KEK is ever transmitted.',
         })
 
-        // Step 4: Sign attestation report
-        const teeReport = `TEE-attestation:kem-ct=${ciphertextBytes.length}B:ks-handle=0x${secretHandle.toString(16)}`
+        // Step 4: Sign the channel statement. The statement commits to report_data (a SHA-512 over
+        // the recipient ML-KEM key, a single-use challenge and the context) and to the SHA-256 of the
+        // complete ciphertext. It does not use the ciphertext length or a local handle.
+        const challengeLedger = new ChallengeLedger()
+        const challenge = crypto.getRandomValues(new Uint8Array(CHALLENGE_BYTES))
+        challengeLedger.issue(challenge)
+        const reportData = bindingDigest(kemPubBytes, challenge, TEE_CHANNEL_CONTEXT)
+        const teeReport = channelStatement(reportData, ciphertextBytes)
         const sigBytes = hsm_sign(M, hSession, dsaKeys.privHandle, teeReport)
         addResult({
           step: 4,
           purpose: 'attestation',
-          title: 'Attestation Report Signed (ML-DSA)',
+          title: 'Channel Statement Signed (ML-DSA-65, sample key)',
           pkcs11Call: `C_MessageSignInit(CKM_ML_DSA) + C_SignMessage("${teeReport.slice(0, 40)}…")`,
-          detail: `message = "${teeReport.slice(0, 50)}…" · signature = ${sigBytes.length} B`,
-          note: 'Simplified attestation payload — real SGX/TDX quotes are binary structures with an ECDSA signature (Intel TDX DCAP Quoting Library guide). The HSM signs the report; the enclave verifies before unsealing.',
+          detail: `report_data = SHA-512(ML-KEM key || challenge || context) = ${bytesToHex(reportData).slice(0, 24)}… · ciphertext SHA-256 = ${bytesToHex(sha256(ciphertextBytes)).slice(0, 16)}… · signature = ${sigBytes.length} B`,
+          note: `${SIMULATED_LABEL}. This is not an SGX, TDX or SEV-SNP quote: the signing key is a sample key generated in this session, so it proves nothing about real hardware. What it shows is what a signed statement must commit to so that a different recipient key or a different ciphertext, even of the same length, is detected before unwrap. For a real AMD SEV-SNP report verified step by step, open the Attestation workshop.`,
         })
 
-        // Step 5: Receiver side — verify signature, decapsulate, re-derive KEK, unwrap provisioning key
+        // Step 5: Receiver side - verify the signature over the committed statement, check the
+        // challenge was issued and unused, recompute the binding from the key and ciphertext
+        // actually in use, then decapsulate and unwrap.
+        // Optional fault injection shows each failure on its own before any unwrap.
+        let receivedCiphertext = ciphertextBytes
+        let recipientKeyUsed = kemPubBytes
+        if (channelFault === 'swap-ciphertext') {
+          receivedCiphertext = hsm_encapsulate(M, hSession, kemKeys.pubHandle, 768).ciphertextBytes
+        } else if (channelFault === 'wrong-recipient-key') {
+          const otherKem = hsm_generateMLKEMKeyPair(M, hSession, 768)
+          recipientKeyUsed = hsm_extractKeyValue(M, hSession, otherKem.pubHandle)
+        }
+        if (channelFault === 'replayed-challenge') {
+          // Simulated earlier use of the same challenge, so the receiver sees a replay.
+          challengeLedger.consume(challenge)
+        }
         const verifyOk = hsm_verify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
         if (!verifyOk) {
           throw new SampleProvisioningCheckError(
             'Sample attestation signature verification failed; provisioning stopped.'
+          )
+        }
+        if (challengeLedger.consume(challenge) !== 'fresh') {
+          throw new SampleProvisioningCheckError(
+            'Sample challenge was not fresh; provisioning stopped.'
+          )
+        }
+        const binding = checkChannelBinding({
+          reportData,
+          recipientEk: recipientKeyUsed,
+          challenge,
+          context: TEE_CHANNEL_CONTEXT,
+          ciphertext: receivedCiphertext,
+          committedStatement: teeReport,
+        })
+        if (!binding.passed) {
+          throw new SampleProvisioningCheckError(
+            `Channel binding failed (${binding.checks
+              .filter((c) => !c.passed)
+              .map((c) => c.id)
+              .join(', ')}); provisioning stopped.`
           )
         }
         const recoveredSecretHandle = hsm_decapsulate(
@@ -566,8 +624,8 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'Enclave: Verify + Decap + Re-derive KEK + Unwrap',
           pkcs11Call: `C_MessageVerifyInit(CKM_ML_DSA) → C_VerifyMessage → ${verifyOk ? '✓ PASS' : '✗ FAIL'}\nC_DecapsulateKey(CKM_ML_KEM) → shared secret = ${recoveredSecretBytes.length} B\nC_DeriveKey(CKM_HKDF) → KEK (same derivation)\nC_UnwrapKey(CKM_AES_KEY_WRAP) → prov key handle`,
           // eslint-disable-next-line security/detect-object-injection
-          detail: `sig verify = ${verifyOk ? 'PASS ✓' : 'FAIL ✗'} · recovered secret match = ${recoveredSecretBytes.every((b, i) => b === sharedSecretBytes[i]) ? 'YES ✓' : 'NO ✗'} · prov key handle = 0x${recoveredProvHandle.toString(16)}`,
-          note: 'Protocol complete. The enclave verified the HSM attestation, decapsulated the KEM ciphertext to recover the shared secret, re-derived the KEK via HKDF (same info string), and unwrapped the provisioning key — all without the KEK ever leaving either party.',
+          detail: `sig verify = ${verifyOk ? 'PASS ✓' : 'FAIL ✗'} · channel binding (simulated) = ${binding.passed ? 'PASS ✓' : 'FAIL ✗'} · recovered secret match = ${recoveredSecretBytes.every((b, i) => b === sharedSecretBytes[i]) ? 'YES ✓' : 'NO ✗'} · prov key handle = 0x${recoveredProvHandle.toString(16)}`,
+          note: 'Protocol complete. The enclave verified the sample signed statement, checked the single-use challenge and the channel binding (simulated, see step 4), decapsulated the KEM ciphertext to recover the shared secret, re-derived the KEK via HKDF (same info string), and unwrapped the provisioning key — all without the KEK ever leaving either party.',
         })
       } else {
         // ── Classical flow ────────────────────────────────────────────────────
@@ -680,23 +738,41 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           note: "The Key Encryption Key wraps the provisioning key for secure transmission. AES-256 symmetric keys are quantum-safe (Grover's requires 2^128 ops).",
         })
 
-        // Step 4: Sign attestation report
-        const teeReport = `TEE-attestation:ecdh-ephem:ks-handle=0x${wrapKeyHandle.toString(16)}`
+        // Step 4: Sign a statement over a single-use challenge and the SHA-256 of the wrapped blob.
+        // This branch has no key agreement, so there is no recipient key to bind here.
+        const classicalLedger = new ChallengeLedger()
+        const classicalChallenge = crypto.getRandomValues(new Uint8Array(CHALLENGE_BYTES))
+        classicalLedger.issue(classicalChallenge)
+        const classicalStatement = (blob: Uint8Array) =>
+          `tee-hsm-channel-v1|classical|challenge=${bytesToHex(classicalChallenge)}|wrapped_sha256=${bytesToHex(sha256(blob))}`
+        const teeReport = classicalStatement(wrappedKey)
         const sigBytes = hsm_ecdsaSign(M, hSession, dsaKeys.privHandle, teeReport)
         addResult({
           step: 4,
           purpose: 'attestation',
-          title: 'Attestation Report Signed (ECDSA)',
+          title: 'Channel Statement Signed (ECDSA P-256, sample key)',
           pkcs11Call: `C_MessageSignInit(CKM_ECDSA) + C_SignMessage("${teeReport.slice(0, 35)}…")`,
           detail: `message = "${teeReport.slice(0, 50)}…" · signature ≈ ${sigBytes.length} B`,
-          note: 'Simplified attestation payload — real SGX/TDX quotes are binary structures with an ECDSA signature (r and s, 2 x 32 bytes). ECDSA signature on the attestation report. In PQC mode this uses ML-DSA-65 (3,309 B signature per FIPS 204 Table 2, about 3.3 KB, vs ~72 B here).',
+          note: 'Sample statement over a single-use challenge and the SHA-256 of the wrapped blob, signed with a key generated in this session. It is not an SGX, TDX or SEV-SNP quote and proves nothing about real hardware. Real vendor reports carry an ECDSA signature too (AMD SEV-SNP: P-384). In PQC mode this uses ML-DSA-65 (3,309 B signature per FIPS 204 Table 2, about 3.3 KB, vs ~72 B here).',
         })
 
-        // Step 5: Receiver side — verify signature + unwrap provisioning key
-        const verifyOk = hsm_ecdsaVerify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
+        // Step 5: Receiver side - verify the signature over the recomputed statement, check the
+        // challenge was issued and unused, then unwrap the provisioning key
+        const verifyOk = hsm_ecdsaVerify(
+          M,
+          hSession,
+          dsaKeys.pubHandle,
+          classicalStatement(wrappedKey),
+          sigBytes
+        )
         if (!verifyOk) {
           throw new SampleProvisioningCheckError(
             'Sample ECDSA attestation signature verification failed; provisioning stopped.'
+          )
+        }
+        if (classicalLedger.consume(classicalChallenge) !== 'fresh') {
+          throw new SampleProvisioningCheckError(
+            'Sample challenge was not fresh; provisioning stopped.'
           )
         }
         const recoveredProvHandle = hsm_unwrapKeyMech(
@@ -721,7 +797,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'Enclave: Verify ECDSA + Unwrap Provisioning Key',
           pkcs11Call: `C_Verify(CKM_ECDSA_SHA256) → ${verifyOk ? '✓ PASS' : '✗ FAIL'}\nC_UnwrapKey(CKM_AES_KEY_WRAP) → prov key handle`,
           detail: `sig verify = ${verifyOk ? 'PASS ✓' : 'FAIL ✗'} · recovered prov key handle = 0x${recoveredProvHandle.toString(16)}`,
-          note: 'Sample sequence complete (classical). The generated ECDSA attestation message was verified before key unwrap. This sample uses an independently generated AES KEK, not an ECDH-derived session key. Production tools also need peer key agreement, KDF context binding and trusted quote, freshness and measurement-policy checks.',
+          note: 'Sample sequence complete (classical). The signature over the sample statement and its single-use challenge were checked before key unwrap. This sample uses an independently generated AES KEK, not an ECDH-derived session key, and has no recipient key to bind. Production tools also need peer key agreement, KDF context binding and a trusted vendor quote with certificate chain and measurement-policy checks.',
         })
       }
       // Resolve the overall pending entry to success.
@@ -760,7 +836,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
     } finally {
       setLiveRunning(false)
     }
-  }, [hsm, pqcMode, AES_UNWRAP_TEMPLATE])
+  }, [hsm, pqcMode, channelFault, AES_UNWRAP_TEMPLATE])
 
   const bothSelected = selectedTeeVendor !== 'All' && selectedHsmVendor !== 'All'
 
@@ -777,17 +853,17 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
       <ScopeTransparencyBanner
         realOps={[
           pqcMode
-            ? 'ML-DSA-65 sample attestation-message signing via softhsmv3 C_Sign'
-            : 'ECDSA P-256 sample attestation-message signing via softhsmv3 C_Sign',
+            ? 'ML-DSA-65 signing of a sample channel statement (report_data and ciphertext digest) via softhsmv3 C_Sign'
+            : 'ECDSA P-256 signing of a sample channel statement via softhsmv3 C_Sign',
           pqcMode
             ? 'ML-KEM-768 encapsulation via softhsmv3 C_EncapsulateKey'
             : 'EC key-pair generation; peer ECDH exchange and KEK derivation are not executed',
           'AES-256 key wrap / unwrap via softhsmv3 CKM_AES_KEY_WRAP',
-          'Signature verification of a generated sample attestation message',
+          'Signature verification, single-use challenge check and channel-binding recomputation on the sample statement',
         ]}
         simulatedOps={[
           'TEE measurement digest generation (simulated enclave boundary)',
-          'Remote attestation quote format (illustrative, not DCAP/TDX wire format)',
+          `The report_data binding value and the sample signer (${SIMULATED_LABEL}); no SGX, TDX or SEV-SNP quote is parsed here. A recorded AMD SEV-SNP report is verified in the Attestation workshop`,
           'HSM provisioning channel framing (topology diagram only)',
         ]}
       />
@@ -1365,6 +1441,32 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
 
           {logEntries.length > 0 && (
             <WorkshopOperationLog entries={logEntries} className="max-h-48" />
+          )}
+
+          {pqcMode && (
+            <fieldset className="text-xs space-y-1" data-testid="channel-fault">
+              <legend className="font-semibold text-foreground">
+                Channel check (simulated fault injection)
+              </legend>
+              {(
+                [
+                  ['none', 'No fault: right recipient key, committed ciphertext'],
+                  ['swap-ciphertext', 'Receiver gets a different ciphertext of the same length'],
+                  ['wrong-recipient-key', 'Statement names a different recipient ML-KEM key'],
+                  ['replayed-challenge', 'The challenge was already used once (replay)'],
+                ] as const
+              ).map(([id, label]) => (
+                <label key={id} className="flex items-center gap-2 text-muted-foreground">
+                  <input
+                    type="radio"
+                    name="channel-fault"
+                    checked={channelFault === id}
+                    onChange={() => setChannelFault(id)}
+                  />
+                  {label}
+                </label>
+              ))}
+            </fieldset>
           )}
 
           {liveError && <ErrorAlert message={liveError} onRetry={() => void runLiveDemo()} />}

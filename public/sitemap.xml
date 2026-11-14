@@ -8,13 +8,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/about</loc>
-    <lastmod>2026-11-08</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/algorithms</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -26,13 +26,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/business</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/business/tools</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -260,13 +260,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/changelog</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/compliance</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -290,19 +290,19 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/leaders</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/5g-security</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -320,13 +320,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/ai-security-pqc</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/api-security-jwt</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -338,7 +338,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/automotive-pqc</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -368,7 +368,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/confidential-computing</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -410,19 +410,19 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/database-encryption-pqc</loc>
-    <lastmod>2026-11-08</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/dev-quantum-impact</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/digital-assets</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -494,25 +494,25 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/hybrid-crypto</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/iam-pqc</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/iot-pqc</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/kms-pqc</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -524,7 +524,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/merkle-tree-certs</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -542,7 +542,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/network-security-pqc</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -572,31 +572,31 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/pki-enrollment-protocols</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/pki-workshop</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/platform-eng-pqc</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/pqc-101</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/pqc-business-case</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -626,19 +626,19 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/pqc-risk-management</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/pqc-testing-validation</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/qkd</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -668,7 +668,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/secrets-management-pqc</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -710,7 +710,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/stateful-signatures</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -752,19 +752,19 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/learn/web-gateway-pqc</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/library</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/migrate</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -776,19 +776,19 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/openssl</loc>
-    <lastmod>2026-11-08</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/patents</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/playground</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -806,7 +806,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/playground/cacp</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -866,7 +866,7 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/playground/hsm</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1016,13 +1016,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/report</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/revisions</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1046,13 +1046,13 @@
   </url>
   <url>
     <loc>https://www.pqctoday.com/threats</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.pqctoday.com/timeline</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>

@@ -122,7 +122,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({
             <AlertTriangle size={13} className="shrink-0 mt-0.5" aria-hidden="true" />
             <span>
               The OpenSSL WASM engine failed to load, so commands can&apos;t run in this session.
-              {loadError && <span className="block text-destructive/70 mt-0.5">{loadError}</span>}
+              {loadError && <span className="block text-destructive mt-0.5">{loadError}</span>}
               Click &ldquo;WASM failed to load&rdquo; above to retry, or reload the page.
             </span>
           </div>

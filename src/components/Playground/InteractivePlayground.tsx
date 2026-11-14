@@ -251,7 +251,7 @@ export const InteractivePlayground = () => {
               'whitespace-nowrap',
               activeTab === 'keystore'
                 ? 'bg-primary/20 text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             <KeyIcon size={16} className="shrink-0" aria-hidden="true" />
@@ -273,7 +273,7 @@ export const InteractivePlayground = () => {
               'whitespace-nowrap',
               activeTab === 'data'
                 ? 'bg-primary/20 text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             <Database size={16} className="shrink-0" aria-hidden="true" />{' '}
@@ -292,7 +292,7 @@ export const InteractivePlayground = () => {
               'whitespace-nowrap',
               activeTab === 'kem_ops'
                 ? 'bg-primary/20 text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             <Activity size={16} className="shrink-0" aria-hidden="true" />{' '}
@@ -314,7 +314,7 @@ export const InteractivePlayground = () => {
               'whitespace-nowrap',
               activeTab === 'symmetric'
                 ? 'bg-primary/20 text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             <Lock size={16} className="shrink-0" aria-hidden="true" />{' '}
@@ -336,7 +336,7 @@ export const InteractivePlayground = () => {
               'whitespace-nowrap',
               activeTab === 'hashing'
                 ? 'bg-primary/20 text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             <Hash size={16} className="shrink-0" aria-hidden="true" />{' '}
@@ -355,7 +355,7 @@ export const InteractivePlayground = () => {
               'whitespace-nowrap',
               activeTab === 'sign_verify'
                 ? 'bg-primary/20 text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             <FileSignature size={16} className="shrink-0" aria-hidden="true" />{' '}
@@ -377,7 +377,7 @@ export const InteractivePlayground = () => {
               'whitespace-nowrap',
               activeTab === 'logs'
                 ? 'bg-primary/20 text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             <FileText size={16} className="shrink-0" aria-hidden="true" />{' '}

@@ -5,9 +5,9 @@
   "inputs": {
     "src/data/validation/mechanism-inventory.generated.json": "7030d2a4dbd2b54b7f5ffd7da1c83ad556e390be13b59c21f7a3b9f1c9c68c68",
     "src/data/validation/capability-map.json": "1048fb1080cc877891d59ff825d98b26d220bde12781c98cdaf97749a27b926a",
-    "src/data/validation/vector-manifest.json": "8cbeb36566320ad9c72520b76a93caf446091271c8024373465b28990acfdf95",
+    "src/data/validation/vector-manifest.json": "a3ae937eaf449b12a8d2823373e37cc679032f2be0259cca6a6bc68442467352",
     "src/data/validation/coverage-waivers.json": "67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99",
-    "src/data/validation/open-gaps.json": "b1fedc67f0072f5af92e14f075bc0c31c03f06f163dbcc5d538ac05e5b4ffb6a",
+    "src/data/validation/open-gaps.json": "fdb9f768b8901caf0f5e2f044e00688796bc3d39bfedcb7185f4d00fc0fde7d1",
     "src/data/validation/testRegistry.ts": "2e4bb93416906300a42b865c66c859004ac0405a1b841c749cb8c46dd5e53e96"
   },
   "statuses": [
@@ -46,7 +46,7 @@
     "sampled": "Sampled = at least one registered case, but the covered rule is not met. One happy-path case is always \"sampled\", never \"covered\" (plan Q5).",
     "polarity": "Polarities are counted separately: a positive case never counts toward negative, boundary or state-error. Boundary = a registered case whose recorded parameters hit a declared boundary of the cell (e.g. context length 0 or 255, empty message); it may also be a positive or negative case. State-error = a case asserting a PKCS #11 state or argument error.",
     "parity": "Parity = both engines have a RECORDED PASS of the same registered case on the same artifact kind. Skipped, unsupported and not-run never count as a pass, and a recorded result counts only for the exact artifact (sha256) the mechanism inventory records. Rows with no such pair are \"not established\".",
-    "artifacts": "Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — registered tests run in the browser), native, hardware. Native and hardware targets have not been run: they are \"not run\" and never counted as pass.",
+    "artifacts": "Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — the recorded registered-test runs execute in Node.js, not in a browser), native, hardware. Native and hardware targets have not been run: they are \"not run\" and never counted as pass.",
     "dimensions": "Plan G-3 — two further columns per cell, from the same registered cases. Algorithm correctness = cases whose expected value is checked (acvts-issued, nist-reference, standard-kat, oracle, differential, round-trip; state-error cases excluded); covered when at least 2 distinct cases exist and one has an externally expected value. PKCS #11 API behaviour = cases that assert only PKCS #11 behaviour (behavior-only evidence: return codes, operation state, buffers, attributes) plus every state-error case; covered when at least 2 distinct cases exist and one is a state-error case. Neither column says a test passed.",
     "inventory": "Per engine and artifact kind the matrix counts, separately: advertised cells (the denominator — C_GetMechanismList × operation × parameter set × variant), registered cells (≥ 1 registered case, by evidence status), cells with a recorded pass, with a recorded fail, and with a recorded skip (the engine did not advertise a mechanism the case needs, so it was not run), unsupported cells (not advertised) and untested cells (advertised, no registered case). A skip is never a pass and is never folded into untested."
   },
@@ -92,7 +92,7 @@
   "artifactKinds": {
     "wasm": {
       "status": "registered; partly recorded",
-      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 14092 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub e64a414cb). Tests without a recorded result are never reported as passed."
+      "note": "Registered tests target the shipped WebAssembly engines. Recorded results: 4988 from errorPathProbes (every registered error-path case, dual engine) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 96 from katRunner (every registered KatKind) (Node.js via vitest local venue (not a browser), 2026-10-30, hub 9e61dd12c); 14092 from useAcvpSuite (all categories, dual engine) (Node.js via vitest local venue (not a browser), 2026-11-13, hub d6011cede). Tests without a recorded result are never reported as passed."
     },
     "native": {
       "status": "not-run",
@@ -142,8 +142,8 @@
         "platform": "darwin",
         "arch": "arm64"
       },
-      "hubCommit": "e64a414cb9e7ad3feb076ef6efefd7e7a1addf57",
-      "recordedAt": "2026-10-30",
+      "hubCommit": "d6011cede34ec94acb361e0feb6f7d34aca457c3",
+      "recordedAt": "2026-11-13",
       "results": 14092
     }
   ],
@@ -242,7 +242,7 @@
             "status": "registered",
             "registeredCells": 2189,
             "passedCells": 2188,
-            "failedCells": 1,
+            "failedCells": 4,
             "skippedCells": 0
           },
           "native": {
@@ -352,7 +352,7 @@
             "status": "registered",
             "registeredCells": 2209,
             "passedCells": 2197,
-            "failedCells": 2,
+            "failedCells": 5,
             "skippedCells": 0
           },
           "native": {
@@ -380,14 +380,14 @@
         "single-engine": 39
       },
       "negative": {
-        "parity": 156,
-        "divergent": 0,
+        "parity": 150,
+        "divergent": 6,
         "not-established": 2048,
         "single-engine": 39
       },
       "boundary": {
-        "parity": 239,
-        "divergent": 0,
+        "parity": 236,
+        "divergent": 3,
         "not-established": 1965,
         "single-engine": 39
       },
@@ -467,8 +467,8 @@
     },
     {
       "id": "run-results-partial",
-      "title": "Run results recorded only for the workbench and katRunner, on the wasm engines, in Node",
-      "detail": "src/data/validation/run-results/ holds one recorded run each of useAcvpSuite (all categories, both engines), every registered katRunner case (both engines asserted, the Rust engine recorded — the engine the KAT surfaces use), and the error-path mechanism probes (4502 entries, 2251 per engine: 3867 pass, 635 skip), all executed in Node against the shipped .wasm bytes. Updated 2026-09-26: the error-path probes DO now have recorded results (this row previously said the mechanism probes had none). Still unrecorded: the PKCS #11 v3.2 conformance cases, so their cells are never reported as passed. A browser-host run and a signed evidence bundle (H-1, H-7) do not exist yet. Note the 635 skips are reported as skip, never as pass.",
+      "title": "Run results recorded for the workbench ACVP suite, the known-answer checks and the error-path probes, on the wasm engines, in Node",
+      "detail": "src/data/validation/run-results/ holds one recorded run each of useAcvpSuite (all categories, both engines), every registered katRunner case (both engines asserted, the Rust engine recorded — the engine the KAT surfaces use), and the error-path mechanism probes. Current recorded totals (the useAcvpSuite run re-recorded 2026-11-13, the katRunner and error-path runs of 2026-10-30): 19176 results, 19043 pass, 44 fail, 89 skip, all executed in Node against the shipped .wasm bytes. The earlier 2026-09-26 investigation recorded 4502 entries (3867 pass, 635 skip); that count is historical and superseded by the current runs. Updated 2026-09-26: the error-path probes DO now have recorded results (this row previously said the mechanism probes had none). Still unrecorded: the PKCS #11 v3.2 conformance cases, so their cells are never reported as passed. A browser-host run and a signed evidence bundle (H-1, H-7) do not exist yet. Skips are reported as skip, never as pass.",
       "planItem": "C-4 / H-1 / H-7",
       "owner": "unassigned",
       "status": "open",
@@ -927,7 +927,7 @@
     },
     {
       "id": "unsupported-cells",
-      "title": "40 unsupported (row × engine) cells kept in the denominator",
+      "title": "40 unsupported (row × engine) cells counted separately, outside the denominator",
       "detail": "Cells one engine does not advertise (mechanism absent, CKF_ flag not set, or parameter set outside its key-size range) and declared capabilities no PKCS #11 mechanism can express. Listed per row in the matrix; never dropped.",
       "planItem": "J-7 / G-9",
       "owner": "unassigned",
@@ -1130,6 +1130,246 @@
       "id": "recorded-fail:acvp.36#rsa_oaep_test#/testGroups/1/tests/9:rust",
       "title": "Recorded FAIL on Rust: acvp.36 (rsa_oaep_test#/testGroups/1/tests/9)",
       "detail": "The committed wasm run result for this registered case is fail (row rsaoaep-nist-tg3-tc30-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/1/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_sign_noseed_test#/testGroups/1/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44signnoseed-tg2-tc50-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/2/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_sign_noseed_test#/testGroups/2/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44signnoseed-tg3-tc51-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/3/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_sign_noseed_test#/testGroups/3/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44signnoseed-tg4-tc52-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_sign_noseed_test#/testGroups/4/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_sign_noseed_test#/testGroups/4/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44signnoseed-tg5-tc53-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/1/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_verify_test#/testGroups/1/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44verify-tg2-tc64-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/2/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_verify_test#/testGroups/2/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44verify-tg3-tc65-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/24/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_verify_test#/testGroups/24/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44verify-tg25-tc145-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_44_verify_test#/testGroups/25/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_44_verify_test#/testGroups/25/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa44verify-tg26-tc146-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/1/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_sign_noseed_test#/testGroups/1/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65signnoseed-tg2-tc54-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/2/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_sign_noseed_test#/testGroups/2/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65signnoseed-tg3-tc55-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/3/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_sign_noseed_test#/testGroups/3/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65signnoseed-tg4-tc56-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_sign_noseed_test#/testGroups/4/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_sign_noseed_test#/testGroups/4/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65signnoseed-tg5-tc57-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/1/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_verify_test#/testGroups/1/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65verify-tg2-tc69-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/2/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_verify_test#/testGroups/2/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65verify-tg3-tc70-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/22/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_verify_test#/testGroups/22/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65verify-tg23-tc158-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_65_verify_test#/testGroups/23/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_65_verify_test#/testGroups/23/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa65verify-tg24-tc159-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/1/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_sign_noseed_test#/testGroups/1/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87signnoseed-tg2-tc45-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/2/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_sign_noseed_test#/testGroups/2/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87signnoseed-tg3-tc46-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/3/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_sign_noseed_test#/testGroups/3/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87signnoseed-tg4-tc47-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_sign_noseed_test#/testGroups/4/tests/0:cpp",
+      "title": "Recorded FAIL on C++: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_sign_noseed_test#/testGroups/4/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87signnoseed-tg5-tc48-C++). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "C++ (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/1/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_verify_test#/testGroups/1/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87verify-tg2-tc62-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/2/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_verify_test#/testGroups/2/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87verify-tg3-tc63-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/22/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_verify_test#/testGroups/22/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87verify-tg23-tc171-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
+      "planItem": "G-9 / J-2",
+      "owner": "unassigned",
+      "status": "open",
+      "scope": "Rust (wasm)",
+      "origin": "generated"
+    },
+    {
+      "id": "recorded-fail:acvp.37.wycheproof-mldsa#wycheproof_mldsa_87_verify_test#/testGroups/23/tests/0:rust",
+      "title": "Recorded FAIL on Rust: acvp.37.wycheproof-mldsa (wycheproof_mldsa_87_verify_test#/testGroups/23/tests/0)",
+      "detail": "The committed wasm run result for this registered case is fail (row wyc-mldsa87verify-tg24-tc172-Rust). Its cells keep their registered-evidence status but are never counted as passed.",
       "planItem": "G-9 / J-2",
       "owner": "unassigned",
       "status": "open",
@@ -11157,14 +11397,14 @@
     {"k":"CKM_ML_DSA_KEY_PAIR_GEN|generate-key-pair|ML-DSA-65|*","c":"CKM_ML_DSA_KEY_PAIR_GEN","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[572,694,2310,5976,5977,5978,5979,5981,5982,5983,5984,5985,5986,5987,5988,5989,5990,5991,5992,5993,5994,5995,5996,5997,5998,5999,6000,6001,6002,6003,6004,6005,6006,6007,6008,6009,6010,6011,6012,6013,6014,6015,6016,6017,6018,6019,6020,6021,6022,6023,6024,6025,6026,6027,6028,6029,6030,6031,6032,6033,6034,6035,6036,6037,6038,6039,6040,6041,6042,6043,6044,6045,6046,6047,6048,6049,6050,6051,6052,6053,6054,6055,6056,6057,6058,6059,6060,6061,6065,6066,6067,6068,6069,6070,6071,6072,6073,6074,6075,6076,6077,6078,6079,7142]],"negative":["oracle","covered",[5980,6062,6063,6064]],"state-error":["behavior-only","covered",[7181,7189,7197,7205]]},"run":[111,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[572,694,2310,5976,5977,5978,5979,5981,5982,5983,5984,5985,5986,5987,5988,5989,5990,5991,5992,5993,5994,5995,5996,5997,5998,5999,6000,6001,6002,6003,6004,6005,6006,6007,6008,6009,6010,6011,6012,6013,6014,6015,6016,6017,6018,6019,6020,6021,6022,6023,6024,6025,6026,6027,6028,6029,6030,6031,6032,6033,6034,6035,6036,6037,6038,6039,6040,6041,6042,6043,6044,6045,6046,6047,6048,6049,6050,6051,6052,6053,6054,6055,6056,6057,6058,6059,6060,6061,6065,6066,6067,6068,6069,6070,6071,6072,6073,6074,6075,6076,6077,6078,6079,7062,7142]],"negative":["oracle","covered",[5980,6062,6063,6064]],"state-error":["behavior-only","covered",[7181,7189,7197,7205]]},"run":[112,0]}},"par":{"positive":"parity","negative":"parity","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_ML_DSA_KEY_PAIR_GEN|generate-key-pair|ML-DSA-87|*","c":"CKM_ML_DSA_KEY_PAIR_GEN","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[573,695,2311,6389,6390,6391,6392,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6443,6444,6445,6446,6447,6448,6449,6450,6451,6452,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6469,6470,6471,6472,6473,6474,6475,6476,6477,6478,6479,6480,6481,6482,6483]],"negative":["oracle","covered",[6393,6466,6467,6468]],"state-error":["behavior-only","covered",[7181,7189,7197,7205]]},"run":[102,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["nist-reference","covered",[573,695,2311,6389,6390,6391,6392,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6443,6444,6445,6446,6447,6448,6449,6450,6451,6452,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6469,6470,6471,6472,6473,6474,6475,6476,6477,6478,6479,6480,6481,6482,6483,7063]],"negative":["oracle","covered",[6393,6466,6467,6468]],"state-error":["behavior-only","covered",[7181,7189,7197,7205]]},"run":[103,0]}},"par":{"positive":"parity","negative":"parity","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_ML_DSA|sign|ML-DSA-44|hedged","c":"CKM_ML_DSA","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[577,675,676,678,679,693]],"negative":["behavior-only","covered",[677,680]],"boundary":["oracle","covered",[675,676,677,678,679,680]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[14,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[577,675,676,678,679,693,7061]],"negative":["behavior-only","covered",[677,680]],"boundary":["oracle","covered",[675,676,677,678,679,680]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[15,0]}},"par":"parity"},
-    {"k":"CKM_ML_DSA|sign|ML-DSA-44|deterministic","c":"CKM_ML_DSA","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[562,598,599,600,614,5532,5533,5534,5535,5537,5538,5539,5540,5541,5542,5543,5544,5545,5546,5547,5548,5549,5550,5551,5552,5553,5554,5555,5556,5557,5558,5559,5560,5561,5562,5563,5564,5565,5566,5567,5568,5569,5570,5571,5572,5573,5574,5575,5576,5577,5578,5579,5580,5585,5586,5587,5588,5589,5590,5591,5592,5593,5594,5595,5596,5604,5605,5606,5607,5609,5610,5611,5612,5613,5614,5615,5616,5617,5618,5619,5620,5621,5622,5623,5624,5625,5626,5627,5628,5629,5630,5631,5632,5633,5634,5635,5636,5637,5638,5639,5640,5641,5642,5643,5644,5645,5646,5647,5648,5649,5650,5651,5652,5653,5654,5655,5656,5657,5658,5659,5660,5661,5662,5670,5671,5672,5673,5674,5675,5676,5677,5678,5679,5680,5681,5682,5686,5688]],"negative":["oracle","covered",[669,670,5536,5581,5582,5583,5584,5608,5683,5684,5685]],"boundary":["nist-reference","covered",[599,600,669,5533,5535,5605,5607,5670,5671,5672,5683,5684,5685,5688]],"state-error":["behavior-only","covered",[616,7521,7607,7693,7779,7865,7951]]},"run":[156,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[562,598,599,600,614,5532,5533,5534,5535,5537,5538,5539,5540,5541,5542,5543,5544,5545,5546,5547,5548,5549,5550,5551,5552,5553,5554,5555,5556,5557,5558,5559,5560,5561,5562,5563,5564,5565,5566,5567,5568,5569,5570,5571,5572,5573,5574,5575,5576,5577,5578,5579,5580,5585,5586,5587,5588,5589,5590,5591,5592,5593,5594,5595,5596,5604,5605,5606,5607,5609,5610,5611,5612,5613,5614,5615,5616,5617,5618,5619,5620,5621,5622,5623,5624,5625,5626,5627,5628,5629,5630,5631,5632,5633,5634,5635,5636,5637,5638,5639,5640,5641,5642,5643,5644,5645,5646,5647,5648,5649,5650,5651,5652,5653,5654,5655,5656,5657,5658,5659,5660,5661,5662,5670,5671,5672,5673,5674,5675,5676,5677,5678,5679,5680,5681,5682,5686,5688]],"negative":["oracle","covered",[669,670,5536,5581,5582,5583,5584,5608,5683,5684,5685]],"boundary":["nist-reference","covered",[599,600,669,5533,5535,5605,5607,5670,5671,5672,5683,5684,5685,5688]],"state-error":["behavior-only","covered",[616,7521,7607,7693,7779,7865,7951]]},"run":[156,0]}},"par":"parity"},
+    {"k":"CKM_ML_DSA|sign|ML-DSA-44|deterministic","c":"CKM_ML_DSA","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[562,598,599,600,614,5532,5533,5534,5535,5537,5538,5539,5540,5541,5542,5543,5544,5545,5546,5547,5548,5549,5550,5551,5552,5553,5554,5555,5556,5557,5558,5559,5560,5561,5562,5563,5564,5565,5566,5567,5568,5569,5570,5571,5572,5573,5574,5575,5576,5577,5578,5579,5580,5585,5586,5587,5588,5589,5590,5591,5592,5593,5594,5595,5596,5604,5605,5606,5607,5609,5610,5611,5612,5613,5614,5615,5616,5617,5618,5619,5620,5621,5622,5623,5624,5625,5626,5627,5628,5629,5630,5631,5632,5633,5634,5635,5636,5637,5638,5639,5640,5641,5642,5643,5644,5645,5646,5647,5648,5649,5650,5651,5652,5653,5654,5655,5656,5657,5658,5659,5660,5661,5662,5670,5671,5672,5673,5674,5675,5676,5677,5678,5679,5680,5681,5682,5686,5688]],"negative":["oracle","covered",[669,670,5536,5581,5582,5583,5584,5608,5683,5684,5685]],"boundary":["nist-reference","covered",[599,600,669,5533,5535,5605,5607,5670,5671,5672,5683,5684,5685,5688]],"state-error":["behavior-only","covered",[616,7521,7607,7693,7779,7865,7951]]},"run":[152,4]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[562,598,599,600,614,5532,5533,5534,5535,5537,5538,5539,5540,5541,5542,5543,5544,5545,5546,5547,5548,5549,5550,5551,5552,5553,5554,5555,5556,5557,5558,5559,5560,5561,5562,5563,5564,5565,5566,5567,5568,5569,5570,5571,5572,5573,5574,5575,5576,5577,5578,5579,5580,5585,5586,5587,5588,5589,5590,5591,5592,5593,5594,5595,5596,5604,5605,5606,5607,5609,5610,5611,5612,5613,5614,5615,5616,5617,5618,5619,5620,5621,5622,5623,5624,5625,5626,5627,5628,5629,5630,5631,5632,5633,5634,5635,5636,5637,5638,5639,5640,5641,5642,5643,5644,5645,5646,5647,5648,5649,5650,5651,5652,5653,5654,5655,5656,5657,5658,5659,5660,5661,5662,5670,5671,5672,5673,5674,5675,5676,5677,5678,5679,5680,5681,5682,5686,5688]],"negative":["oracle","covered",[669,670,5536,5581,5582,5583,5584,5608,5683,5684,5685]],"boundary":["nist-reference","covered",[599,600,669,5533,5535,5605,5607,5670,5671,5672,5683,5684,5685,5688]],"state-error":["behavior-only","covered",[616,7521,7607,7693,7779,7865,7951]]},"run":[156,0]}},"par":{"positive":"parity","negative":"divergent","boundary":"parity","state-error":"parity"}},
     {"k":"CKM_ML_DSA|sign|ML-DSA-65|hedged","c":"CKM_ML_DSA","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[580,681,682,684,685,694]],"negative":["behavior-only","covered",[683,686]],"boundary":["oracle","covered",[681,682,683,684,685,686]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[14,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[580,681,682,684,685,694,7062]],"negative":["behavior-only","covered",[683,686]],"boundary":["oracle","covered",[681,682,683,684,685,686]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[15,0]}},"par":"parity"},
-    {"k":"CKM_ML_DSA|sign|ML-DSA-65|deterministic","c":"CKM_ML_DSA","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[564,601,602,603,5899,5900,5901,5902,5904,5905,5906,5907,5908,5909,5910,5911,5912,5913,5914,5915,5916,5917,5918,5919,5920,5921,5922,5923,5924,5925,5926,5927,5928,5929,5930,5931,5932,5933,5934,5935,5936,5937,5938,5939,5940,5941,5942,5943,5944,5945,5946,5947,5948,5949,5950,5951,5956,5957,5958,5959,5960,5961,5962,5963,5964,5965,5976,5977,5978,5979,5981,5982,5983,5984,5985,5986,5987,5988,5989,5990,5991,5992,5993,5994,5995,5996,5997,5998,5999,6000,6001,6002,6003,6004,6005,6006,6007,6008,6009,6010,6011,6012,6013,6014,6015,6016,6017,6018,6019,6020,6021,6022,6023,6024,6025,6026,6027,6028,6029,6030,6031,6032,6033,6034,6035,6036,6037,6038,6049,6050,6051,6052,6053,6054,6055,6056,6057,6058,6059,6060,6061,6065,6066,6067,6068,6069,6070,6071,6079]],"negative":["oracle","covered",[671,672,5903,5952,5953,5954,5955,5980,6062,6063,6064]],"boundary":["nist-reference","covered",[601,603,671,5900,5902,5977,5979,6049,6050,6051,6062,6063,6064,6079]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[166,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[564,601,602,603,5899,5900,5901,5902,5904,5905,5906,5907,5908,5909,5910,5911,5912,5913,5914,5915,5916,5917,5918,5919,5920,5921,5922,5923,5924,5925,5926,5927,5928,5929,5930,5931,5932,5933,5934,5935,5936,5937,5938,5939,5940,5941,5942,5943,5944,5945,5946,5947,5948,5949,5950,5951,5956,5957,5958,5959,5960,5961,5962,5963,5964,5965,5976,5977,5978,5979,5981,5982,5983,5984,5985,5986,5987,5988,5989,5990,5991,5992,5993,5994,5995,5996,5997,5998,5999,6000,6001,6002,6003,6004,6005,6006,6007,6008,6009,6010,6011,6012,6013,6014,6015,6016,6017,6018,6019,6020,6021,6022,6023,6024,6025,6026,6027,6028,6029,6030,6031,6032,6033,6034,6035,6036,6037,6038,6049,6050,6051,6052,6053,6054,6055,6056,6057,6058,6059,6060,6061,6065,6066,6067,6068,6069,6070,6071,6079]],"negative":["oracle","covered",[671,672,5903,5952,5953,5954,5955,5980,6062,6063,6064]],"boundary":["nist-reference","covered",[601,603,671,5900,5902,5977,5979,6049,6050,6051,6062,6063,6064,6079]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[166,0]}},"par":"parity"},
+    {"k":"CKM_ML_DSA|sign|ML-DSA-65|deterministic","c":"CKM_ML_DSA","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[564,601,602,603,5899,5900,5901,5902,5904,5905,5906,5907,5908,5909,5910,5911,5912,5913,5914,5915,5916,5917,5918,5919,5920,5921,5922,5923,5924,5925,5926,5927,5928,5929,5930,5931,5932,5933,5934,5935,5936,5937,5938,5939,5940,5941,5942,5943,5944,5945,5946,5947,5948,5949,5950,5951,5956,5957,5958,5959,5960,5961,5962,5963,5964,5965,5976,5977,5978,5979,5981,5982,5983,5984,5985,5986,5987,5988,5989,5990,5991,5992,5993,5994,5995,5996,5997,5998,5999,6000,6001,6002,6003,6004,6005,6006,6007,6008,6009,6010,6011,6012,6013,6014,6015,6016,6017,6018,6019,6020,6021,6022,6023,6024,6025,6026,6027,6028,6029,6030,6031,6032,6033,6034,6035,6036,6037,6038,6049,6050,6051,6052,6053,6054,6055,6056,6057,6058,6059,6060,6061,6065,6066,6067,6068,6069,6070,6071,6079]],"negative":["oracle","covered",[671,672,5903,5952,5953,5954,5955,5980,6062,6063,6064]],"boundary":["nist-reference","covered",[601,603,671,5900,5902,5977,5979,6049,6050,6051,6062,6063,6064,6079]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[162,4]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[564,601,602,603,5899,5900,5901,5902,5904,5905,5906,5907,5908,5909,5910,5911,5912,5913,5914,5915,5916,5917,5918,5919,5920,5921,5922,5923,5924,5925,5926,5927,5928,5929,5930,5931,5932,5933,5934,5935,5936,5937,5938,5939,5940,5941,5942,5943,5944,5945,5946,5947,5948,5949,5950,5951,5956,5957,5958,5959,5960,5961,5962,5963,5964,5965,5976,5977,5978,5979,5981,5982,5983,5984,5985,5986,5987,5988,5989,5990,5991,5992,5993,5994,5995,5996,5997,5998,5999,6000,6001,6002,6003,6004,6005,6006,6007,6008,6009,6010,6011,6012,6013,6014,6015,6016,6017,6018,6019,6020,6021,6022,6023,6024,6025,6026,6027,6028,6029,6030,6031,6032,6033,6034,6035,6036,6037,6038,6049,6050,6051,6052,6053,6054,6055,6056,6057,6058,6059,6060,6061,6065,6066,6067,6068,6069,6070,6071,6079]],"negative":["oracle","covered",[671,672,5903,5952,5953,5954,5955,5980,6062,6063,6064]],"boundary":["nist-reference","covered",[601,603,671,5900,5902,5977,5979,6049,6050,6051,6062,6063,6064,6079]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[166,0]}},"par":{"positive":"parity","negative":"divergent","boundary":"parity","state-error":"parity"}},
     {"k":"CKM_ML_DSA|sign|ML-DSA-87|hedged","c":"CKM_ML_DSA","tt":["AFT"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[583,687,688,690,691,695]],"negative":["behavior-only","covered",[689,692]],"boundary":["oracle","covered",[687,688,689,690,691,692]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[14,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[583,687,688,690,691,695,7063]],"negative":["behavior-only","covered",[689,692]],"boundary":["oracle","covered",[687,688,689,690,691,692]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[15,0]}},"par":"parity"},
-    {"k":"CKM_ML_DSA|sign|ML-DSA-87|deterministic","c":"CKM_ML_DSA","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[566,604,605,606,6321,6322,6323,6324,6326,6327,6328,6329,6330,6331,6332,6333,6334,6335,6336,6337,6338,6339,6340,6341,6342,6343,6344,6345,6346,6347,6348,6349,6350,6351,6352,6353,6354,6355,6356,6357,6358,6359,6360,6361,6362,6363,6364,6369,6370,6371,6372,6373,6374,6375,6376,6377,6378,6389,6390,6391,6392,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6469,6470,6471,6472,6473,6474,6475,6483]],"negative":["oracle","covered",[673,674,6325,6365,6366,6367,6368,6393,6466,6467,6468]],"boundary":["nist-reference","covered",[604,605,673,6322,6324,6390,6392,6453,6454,6455,6466,6467,6468,6483]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[148,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[566,604,605,606,6321,6322,6323,6324,6326,6327,6328,6329,6330,6331,6332,6333,6334,6335,6336,6337,6338,6339,6340,6341,6342,6343,6344,6345,6346,6347,6348,6349,6350,6351,6352,6353,6354,6355,6356,6357,6358,6359,6360,6361,6362,6363,6364,6369,6370,6371,6372,6373,6374,6375,6376,6377,6378,6389,6390,6391,6392,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6469,6470,6471,6472,6473,6474,6475,6483]],"negative":["oracle","covered",[673,674,6325,6365,6366,6367,6368,6393,6466,6467,6468]],"boundary":["nist-reference","covered",[604,605,673,6322,6324,6390,6392,6453,6454,6455,6466,6467,6468,6483]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[148,0]}},"par":"parity"},
-    {"k":"CKM_ML_DSA|verify|ML-DSA-44|*","c":"CKM_ML_DSA","tt":["AFT","MlDsaVerify","product-mutation"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[518,521,527,614,675,678,693,5352,5353,5354,5355,5371,5372,5373,5374,5375,5376,5377,5378,5379,5380,5381,5382,5383,5384,5385,5386,5387,5388,5389,5390,5391,5392,5393,5394,5395,5396,5397,5398,5399,5400,5401,5402,5403,5404,5405,5406,5407,5408,5409,5410,5411,5412,5413,5414,5417,5418,5419,5420,5421,5422,5423,5424,5425,5426,5427,5428,5429,5430,5431,5475,5476,5477,5478,5479,5480,5481,5482,5483,5484,5485,5486,5487,5498]],"negative":["nist-reference","covered",[528,529,530,531,556,557,615,618,619,669,670,677,680,5356,5357,5358,5359,5360,5361,5362,5363,5364,5365,5366,5367,5368,5369,5370,5415,5416,5432,5433,5434,5435,5436,5437,5438,5439,5440,5441,5442,5443,5444,5445,5446,5447,5448,5449,5450,5451,5452,5453,5454,5455,5456,5457,5458,5459,5460,5461,5462,5463,5464,5465,5466,5467,5468,5469,5470,5471,5472,5473,5474,5488,5489,5490,5491,5492,5493,5494,5495,5496,5497,5499,5500,5501,5502,5503,5504,5505,5506,5507,5508,5509,5510,5511,5512,5513,5514,5515,5516,5517,5518,5519,5520,5521,5522,5523,5524,5525,5526,5527,5528,5529,5530,5531]],"boundary":["nist-reference","covered",[521,615,618,619,669,675,677,678,680,5353,5355,5475,5476,5477,5491,5492,5493,5494,5495,5496,5497]],"state-error":["behavior-only","covered",[617,8098,8184,8270,8356,8442]]},"run":[206,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[518,521,527,614,675,678,693,5352,5353,5354,5355,5371,5372,5373,5374,5375,5376,5377,5378,5379,5380,5381,5382,5383,5384,5385,5386,5387,5388,5389,5390,5391,5392,5393,5394,5395,5396,5397,5398,5399,5400,5401,5402,5403,5404,5405,5406,5407,5408,5409,5410,5411,5412,5413,5414,5417,5418,5419,5420,5421,5422,5423,5424,5425,5426,5427,5428,5429,5430,5431,5475,5476,5477,5478,5479,5480,5481,5482,5483,5484,5485,5486,5487,5498,7052,7055,7061]],"negative":["nist-reference","covered",[528,529,530,531,556,557,615,618,619,669,670,677,680,5356,5357,5358,5359,5360,5361,5362,5363,5364,5365,5366,5367,5368,5369,5370,5415,5416,5432,5433,5434,5435,5436,5437,5438,5439,5440,5441,5442,5443,5444,5445,5446,5447,5448,5449,5450,5451,5452,5453,5454,5455,5456,5457,5458,5459,5460,5461,5462,5463,5464,5465,5466,5467,5468,5469,5470,5471,5472,5473,5474,5488,5489,5490,5491,5492,5493,5494,5495,5496,5497,5499,5500,5501,5502,5503,5504,5505,5506,5507,5508,5509,5510,5511,5512,5513,5514,5515,5516,5517,5518,5519,5520,5521,5522,5523,5524,5525,5526,5527,5528,5529,5530,5531,7056]],"boundary":["nist-reference","covered",[521,615,618,619,669,675,677,678,680,5353,5355,5475,5476,5477,5491,5492,5493,5494,5495,5496,5497]],"state-error":["behavior-only","covered",[617,8098,8184,8270,8356,8442]]},"run":[210,0]}},"par":"parity"},
-    {"k":"CKM_ML_DSA|verify|ML-DSA-65|*","c":"CKM_ML_DSA","tt":["AFT","MlDsaVerify","product-mutation"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[519,522,532,681,684,694,5689,5690,5691,5692,5709,5710,5711,5712,5713,5714,5715,5716,5717,5718,5719,5720,5721,5722,5723,5724,5725,5726,5727,5728,5729,5730,5731,5732,5733,5734,5735,5736,5737,5738,5739,5740,5741,5742,5743,5744,5745,5746,5747,5748,5749,5750,5751,5752,5753,5754,5755,5756,5759,5760,5761,5762,5763,5764,5765,5766,5767,5768,5769,5770,5771,5825,5826,5827,5828,5829,5830,5831,5832,5833,5834,5835,5836,5837,5849]],"negative":["nist-reference","covered",[533,534,535,536,558,559,632,633,671,672,683,686,5693,5694,5695,5696,5697,5698,5699,5700,5701,5702,5703,5704,5705,5706,5707,5708,5757,5758,5772,5773,5774,5775,5776,5777,5778,5779,5780,5781,5782,5783,5784,5785,5786,5787,5788,5789,5790,5791,5792,5793,5794,5795,5796,5797,5798,5799,5800,5801,5802,5803,5804,5805,5806,5807,5808,5809,5810,5811,5812,5813,5814,5815,5816,5817,5818,5819,5820,5821,5822,5823,5824,5838,5839,5840,5841,5842,5843,5844,5845,5846,5847,5848,5850,5851,5852,5853,5854,5855,5856,5857,5858,5859,5860,5861,5862,5863,5864,5865,5866,5867,5868,5869,5870,5871,5872,5873,5874,5875,5876,5877,5878,5879,5880,5881,5882,5883,5884,5885,5886,5887,5888,5889,5890,5891,5892,5893,5894,5895,5896,5897,5898]],"boundary":["nist-reference","covered",[632,633,671,681,683,684,686,5690,5692,5825,5826,5827,5842,5843,5844,5845,5846,5847,5848]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[233,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[519,522,532,681,684,694,5689,5690,5691,5692,5709,5710,5711,5712,5713,5714,5715,5716,5717,5718,5719,5720,5721,5722,5723,5724,5725,5726,5727,5728,5729,5730,5731,5732,5733,5734,5735,5736,5737,5738,5739,5740,5741,5742,5743,5744,5745,5746,5747,5748,5749,5750,5751,5752,5753,5754,5755,5756,5759,5760,5761,5762,5763,5764,5765,5766,5767,5768,5769,5770,5771,5825,5826,5827,5828,5829,5830,5831,5832,5833,5834,5835,5836,5837,5849,7053,7057,7062]],"negative":["nist-reference","covered",[533,534,535,536,558,559,632,633,671,672,683,686,5693,5694,5695,5696,5697,5698,5699,5700,5701,5702,5703,5704,5705,5706,5707,5708,5757,5758,5772,5773,5774,5775,5776,5777,5778,5779,5780,5781,5782,5783,5784,5785,5786,5787,5788,5789,5790,5791,5792,5793,5794,5795,5796,5797,5798,5799,5800,5801,5802,5803,5804,5805,5806,5807,5808,5809,5810,5811,5812,5813,5814,5815,5816,5817,5818,5819,5820,5821,5822,5823,5824,5838,5839,5840,5841,5842,5843,5844,5845,5846,5847,5848,5850,5851,5852,5853,5854,5855,5856,5857,5858,5859,5860,5861,5862,5863,5864,5865,5866,5867,5868,5869,5870,5871,5872,5873,5874,5875,5876,5877,5878,5879,5880,5881,5882,5883,5884,5885,5886,5887,5888,5889,5890,5891,5892,5893,5894,5895,5896,5897,5898,7058]],"boundary":["nist-reference","covered",[632,633,671,681,683,684,686,5690,5692,5825,5826,5827,5842,5843,5844,5845,5846,5847,5848]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[237,0]}},"par":"parity"},
-    {"k":"CKM_ML_DSA|verify|ML-DSA-87|*","c":"CKM_ML_DSA","tt":["AFT","MlDsaVerify","product-mutation"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[520,523,537,647,687,690,695,6080,6081,6082,6083,6102,6103,6104,6105,6106,6107,6108,6109,6110,6111,6112,6113,6114,6115,6116,6117,6118,6119,6120,6121,6122,6123,6124,6125,6126,6127,6128,6129,6130,6131,6132,6133,6134,6135,6136,6137,6138,6139,6140,6143,6144,6145,6146,6147,6148,6149,6150,6151,6152,6153,6154,6155,6229,6230,6231,6232,6233,6234,6235,6236,6237,6238,6239,6240,6241,6253,6319]],"negative":["nist-reference","covered",[538,539,540,541,560,561,646,673,674,689,692,6084,6085,6086,6087,6088,6089,6090,6091,6092,6093,6094,6095,6096,6097,6098,6099,6100,6101,6141,6142,6156,6157,6158,6159,6160,6161,6162,6163,6164,6165,6166,6167,6168,6169,6170,6171,6172,6173,6174,6175,6176,6177,6178,6179,6180,6181,6182,6183,6184,6185,6186,6187,6188,6189,6190,6191,6192,6193,6194,6195,6196,6197,6198,6199,6200,6201,6202,6203,6204,6205,6206,6207,6208,6209,6210,6211,6212,6213,6214,6215,6216,6217,6218,6219,6220,6221,6222,6223,6224,6225,6226,6227,6228,6242,6243,6244,6245,6246,6247,6248,6249,6250,6251,6252,6254,6255,6256,6257,6258,6259,6260,6261,6262,6263,6264,6265,6266,6267,6268,6269,6270,6271,6272,6273,6274,6275,6276,6277,6278,6279,6280,6281,6282,6283,6284,6285,6286,6287,6288,6289,6290,6291,6292,6293,6294,6295,6296,6297,6298,6299,6300,6301,6302,6303,6304,6305,6306,6307,6308,6309,6310,6311,6312,6313,6314,6315,6316,6317,6318,6320]],"boundary":["nist-reference","covered",[646,647,673,687,689,690,692,6081,6083,6229,6230,6231,6246,6247,6248,6249,6250,6251,6252]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[264,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[520,523,537,647,687,690,695,6080,6081,6082,6083,6102,6103,6104,6105,6106,6107,6108,6109,6110,6111,6112,6113,6114,6115,6116,6117,6118,6119,6120,6121,6122,6123,6124,6125,6126,6127,6128,6129,6130,6131,6132,6133,6134,6135,6136,6137,6138,6139,6140,6143,6144,6145,6146,6147,6148,6149,6150,6151,6152,6153,6154,6155,6229,6230,6231,6232,6233,6234,6235,6236,6237,6238,6239,6240,6241,6253,6319,7054,7059,7063]],"negative":["nist-reference","covered",[538,539,540,541,560,561,646,673,674,689,692,6084,6085,6086,6087,6088,6089,6090,6091,6092,6093,6094,6095,6096,6097,6098,6099,6100,6101,6141,6142,6156,6157,6158,6159,6160,6161,6162,6163,6164,6165,6166,6167,6168,6169,6170,6171,6172,6173,6174,6175,6176,6177,6178,6179,6180,6181,6182,6183,6184,6185,6186,6187,6188,6189,6190,6191,6192,6193,6194,6195,6196,6197,6198,6199,6200,6201,6202,6203,6204,6205,6206,6207,6208,6209,6210,6211,6212,6213,6214,6215,6216,6217,6218,6219,6220,6221,6222,6223,6224,6225,6226,6227,6228,6242,6243,6244,6245,6246,6247,6248,6249,6250,6251,6252,6254,6255,6256,6257,6258,6259,6260,6261,6262,6263,6264,6265,6266,6267,6268,6269,6270,6271,6272,6273,6274,6275,6276,6277,6278,6279,6280,6281,6282,6283,6284,6285,6286,6287,6288,6289,6290,6291,6292,6293,6294,6295,6296,6297,6298,6299,6300,6301,6302,6303,6304,6305,6306,6307,6308,6309,6310,6311,6312,6313,6314,6315,6316,6317,6318,6320,7060]],"boundary":["nist-reference","covered",[646,647,673,687,689,690,692,6081,6083,6229,6230,6231,6246,6247,6248,6249,6250,6251,6252]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[268,0]}},"par":"parity"},
+    {"k":"CKM_ML_DSA|sign|ML-DSA-87|deterministic","c":"CKM_ML_DSA","tt":["AFT","MlDsaSign"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[566,604,605,606,6321,6322,6323,6324,6326,6327,6328,6329,6330,6331,6332,6333,6334,6335,6336,6337,6338,6339,6340,6341,6342,6343,6344,6345,6346,6347,6348,6349,6350,6351,6352,6353,6354,6355,6356,6357,6358,6359,6360,6361,6362,6363,6364,6369,6370,6371,6372,6373,6374,6375,6376,6377,6378,6389,6390,6391,6392,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6469,6470,6471,6472,6473,6474,6475,6483]],"negative":["oracle","covered",[673,674,6325,6365,6366,6367,6368,6393,6466,6467,6468]],"boundary":["nist-reference","covered",[604,605,673,6322,6324,6390,6392,6453,6454,6455,6466,6467,6468,6483]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[144,4]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[566,604,605,606,6321,6322,6323,6324,6326,6327,6328,6329,6330,6331,6332,6333,6334,6335,6336,6337,6338,6339,6340,6341,6342,6343,6344,6345,6346,6347,6348,6349,6350,6351,6352,6353,6354,6355,6356,6357,6358,6359,6360,6361,6362,6363,6364,6369,6370,6371,6372,6373,6374,6375,6376,6377,6378,6389,6390,6391,6392,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,6416,6417,6418,6419,6420,6421,6422,6423,6424,6425,6426,6427,6428,6429,6430,6431,6432,6433,6434,6435,6436,6437,6438,6439,6440,6441,6442,6453,6454,6455,6456,6457,6458,6459,6460,6461,6462,6463,6464,6465,6469,6470,6471,6472,6473,6474,6475,6483]],"negative":["oracle","covered",[673,674,6325,6365,6366,6367,6368,6393,6466,6467,6468]],"boundary":["nist-reference","covered",[604,605,673,6322,6324,6390,6392,6453,6454,6455,6466,6467,6468,6483]],"state-error":["behavior-only","covered",[7521,7607,7693,7779,7865,7951]]},"run":[148,0]}},"par":{"positive":"parity","negative":"divergent","boundary":"parity","state-error":"parity"}},
+    {"k":"CKM_ML_DSA|verify|ML-DSA-44|*","c":"CKM_ML_DSA","tt":["AFT","MlDsaVerify","product-mutation"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[518,521,527,614,675,678,693,5352,5353,5354,5355,5371,5372,5373,5374,5375,5376,5377,5378,5379,5380,5381,5382,5383,5384,5385,5386,5387,5388,5389,5390,5391,5392,5393,5394,5395,5396,5397,5398,5399,5400,5401,5402,5403,5404,5405,5406,5407,5408,5409,5410,5411,5412,5413,5414,5417,5418,5419,5420,5421,5422,5423,5424,5425,5426,5427,5428,5429,5430,5431,5475,5476,5477,5478,5479,5480,5481,5482,5483,5484,5485,5486,5487,5498]],"negative":["nist-reference","covered",[528,529,530,531,556,557,615,618,619,669,670,677,680,5356,5357,5358,5359,5360,5361,5362,5363,5364,5365,5366,5367,5368,5369,5370,5415,5416,5432,5433,5434,5435,5436,5437,5438,5439,5440,5441,5442,5443,5444,5445,5446,5447,5448,5449,5450,5451,5452,5453,5454,5455,5456,5457,5458,5459,5460,5461,5462,5463,5464,5465,5466,5467,5468,5469,5470,5471,5472,5473,5474,5488,5489,5490,5491,5492,5493,5494,5495,5496,5497,5499,5500,5501,5502,5503,5504,5505,5506,5507,5508,5509,5510,5511,5512,5513,5514,5515,5516,5517,5518,5519,5520,5521,5522,5523,5524,5525,5526,5527,5528,5529,5530,5531]],"boundary":["nist-reference","covered",[521,615,618,619,669,675,677,678,680,5353,5355,5475,5476,5477,5491,5492,5493,5494,5495,5496,5497]],"state-error":["behavior-only","covered",[617,8098,8184,8270,8356,8442]]},"run":[206,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[518,521,527,614,675,678,693,5352,5353,5354,5355,5371,5372,5373,5374,5375,5376,5377,5378,5379,5380,5381,5382,5383,5384,5385,5386,5387,5388,5389,5390,5391,5392,5393,5394,5395,5396,5397,5398,5399,5400,5401,5402,5403,5404,5405,5406,5407,5408,5409,5410,5411,5412,5413,5414,5417,5418,5419,5420,5421,5422,5423,5424,5425,5426,5427,5428,5429,5430,5431,5475,5476,5477,5478,5479,5480,5481,5482,5483,5484,5485,5486,5487,5498,7052,7055,7061]],"negative":["nist-reference","covered",[528,529,530,531,556,557,615,618,619,669,670,677,680,5356,5357,5358,5359,5360,5361,5362,5363,5364,5365,5366,5367,5368,5369,5370,5415,5416,5432,5433,5434,5435,5436,5437,5438,5439,5440,5441,5442,5443,5444,5445,5446,5447,5448,5449,5450,5451,5452,5453,5454,5455,5456,5457,5458,5459,5460,5461,5462,5463,5464,5465,5466,5467,5468,5469,5470,5471,5472,5473,5474,5488,5489,5490,5491,5492,5493,5494,5495,5496,5497,5499,5500,5501,5502,5503,5504,5505,5506,5507,5508,5509,5510,5511,5512,5513,5514,5515,5516,5517,5518,5519,5520,5521,5522,5523,5524,5525,5526,5527,5528,5529,5530,5531,7056]],"boundary":["nist-reference","covered",[521,615,618,619,669,675,677,678,680,5353,5355,5475,5476,5477,5491,5492,5493,5494,5495,5496,5497]],"state-error":["behavior-only","covered",[617,8098,8184,8270,8356,8442]]},"run":[206,4]}},"par":{"positive":"parity","negative":"divergent","boundary":"divergent","state-error":"parity"}},
+    {"k":"CKM_ML_DSA|verify|ML-DSA-65|*","c":"CKM_ML_DSA","tt":["AFT","MlDsaVerify","product-mutation"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[519,522,532,681,684,694,5689,5690,5691,5692,5709,5710,5711,5712,5713,5714,5715,5716,5717,5718,5719,5720,5721,5722,5723,5724,5725,5726,5727,5728,5729,5730,5731,5732,5733,5734,5735,5736,5737,5738,5739,5740,5741,5742,5743,5744,5745,5746,5747,5748,5749,5750,5751,5752,5753,5754,5755,5756,5759,5760,5761,5762,5763,5764,5765,5766,5767,5768,5769,5770,5771,5825,5826,5827,5828,5829,5830,5831,5832,5833,5834,5835,5836,5837,5849]],"negative":["nist-reference","covered",[533,534,535,536,558,559,632,633,671,672,683,686,5693,5694,5695,5696,5697,5698,5699,5700,5701,5702,5703,5704,5705,5706,5707,5708,5757,5758,5772,5773,5774,5775,5776,5777,5778,5779,5780,5781,5782,5783,5784,5785,5786,5787,5788,5789,5790,5791,5792,5793,5794,5795,5796,5797,5798,5799,5800,5801,5802,5803,5804,5805,5806,5807,5808,5809,5810,5811,5812,5813,5814,5815,5816,5817,5818,5819,5820,5821,5822,5823,5824,5838,5839,5840,5841,5842,5843,5844,5845,5846,5847,5848,5850,5851,5852,5853,5854,5855,5856,5857,5858,5859,5860,5861,5862,5863,5864,5865,5866,5867,5868,5869,5870,5871,5872,5873,5874,5875,5876,5877,5878,5879,5880,5881,5882,5883,5884,5885,5886,5887,5888,5889,5890,5891,5892,5893,5894,5895,5896,5897,5898]],"boundary":["nist-reference","covered",[632,633,671,681,683,684,686,5690,5692,5825,5826,5827,5842,5843,5844,5845,5846,5847,5848]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[233,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[519,522,532,681,684,694,5689,5690,5691,5692,5709,5710,5711,5712,5713,5714,5715,5716,5717,5718,5719,5720,5721,5722,5723,5724,5725,5726,5727,5728,5729,5730,5731,5732,5733,5734,5735,5736,5737,5738,5739,5740,5741,5742,5743,5744,5745,5746,5747,5748,5749,5750,5751,5752,5753,5754,5755,5756,5759,5760,5761,5762,5763,5764,5765,5766,5767,5768,5769,5770,5771,5825,5826,5827,5828,5829,5830,5831,5832,5833,5834,5835,5836,5837,5849,7053,7057,7062]],"negative":["nist-reference","covered",[533,534,535,536,558,559,632,633,671,672,683,686,5693,5694,5695,5696,5697,5698,5699,5700,5701,5702,5703,5704,5705,5706,5707,5708,5757,5758,5772,5773,5774,5775,5776,5777,5778,5779,5780,5781,5782,5783,5784,5785,5786,5787,5788,5789,5790,5791,5792,5793,5794,5795,5796,5797,5798,5799,5800,5801,5802,5803,5804,5805,5806,5807,5808,5809,5810,5811,5812,5813,5814,5815,5816,5817,5818,5819,5820,5821,5822,5823,5824,5838,5839,5840,5841,5842,5843,5844,5845,5846,5847,5848,5850,5851,5852,5853,5854,5855,5856,5857,5858,5859,5860,5861,5862,5863,5864,5865,5866,5867,5868,5869,5870,5871,5872,5873,5874,5875,5876,5877,5878,5879,5880,5881,5882,5883,5884,5885,5886,5887,5888,5889,5890,5891,5892,5893,5894,5895,5896,5897,5898,7058]],"boundary":["nist-reference","covered",[632,633,671,681,683,684,686,5690,5692,5825,5826,5827,5842,5843,5844,5845,5846,5847,5848]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[233,4]}},"par":{"positive":"parity","negative":"divergent","boundary":"divergent","state-error":"parity"}},
+    {"k":"CKM_ML_DSA|verify|ML-DSA-87|*","c":"CKM_ML_DSA","tt":["AFT","MlDsaVerify","product-mutation"],"e":{"cpp":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[520,523,537,647,687,690,695,6080,6081,6082,6083,6102,6103,6104,6105,6106,6107,6108,6109,6110,6111,6112,6113,6114,6115,6116,6117,6118,6119,6120,6121,6122,6123,6124,6125,6126,6127,6128,6129,6130,6131,6132,6133,6134,6135,6136,6137,6138,6139,6140,6143,6144,6145,6146,6147,6148,6149,6150,6151,6152,6153,6154,6155,6229,6230,6231,6232,6233,6234,6235,6236,6237,6238,6239,6240,6241,6253,6319]],"negative":["nist-reference","covered",[538,539,540,541,560,561,646,673,674,689,692,6084,6085,6086,6087,6088,6089,6090,6091,6092,6093,6094,6095,6096,6097,6098,6099,6100,6101,6141,6142,6156,6157,6158,6159,6160,6161,6162,6163,6164,6165,6166,6167,6168,6169,6170,6171,6172,6173,6174,6175,6176,6177,6178,6179,6180,6181,6182,6183,6184,6185,6186,6187,6188,6189,6190,6191,6192,6193,6194,6195,6196,6197,6198,6199,6200,6201,6202,6203,6204,6205,6206,6207,6208,6209,6210,6211,6212,6213,6214,6215,6216,6217,6218,6219,6220,6221,6222,6223,6224,6225,6226,6227,6228,6242,6243,6244,6245,6246,6247,6248,6249,6250,6251,6252,6254,6255,6256,6257,6258,6259,6260,6261,6262,6263,6264,6265,6266,6267,6268,6269,6270,6271,6272,6273,6274,6275,6276,6277,6278,6279,6280,6281,6282,6283,6284,6285,6286,6287,6288,6289,6290,6291,6292,6293,6294,6295,6296,6297,6298,6299,6300,6301,6302,6303,6304,6305,6306,6307,6308,6309,6310,6311,6312,6313,6314,6315,6316,6317,6318,6320]],"boundary":["nist-reference","covered",[646,647,673,687,689,690,692,6081,6083,6229,6230,6231,6246,6247,6248,6249,6250,6251,6252]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[264,0]},"rust":{"adv":true,"lvl":"covered","pol":{"positive":["nist-reference","covered",[520,523,537,647,687,690,695,6080,6081,6082,6083,6102,6103,6104,6105,6106,6107,6108,6109,6110,6111,6112,6113,6114,6115,6116,6117,6118,6119,6120,6121,6122,6123,6124,6125,6126,6127,6128,6129,6130,6131,6132,6133,6134,6135,6136,6137,6138,6139,6140,6143,6144,6145,6146,6147,6148,6149,6150,6151,6152,6153,6154,6155,6229,6230,6231,6232,6233,6234,6235,6236,6237,6238,6239,6240,6241,6253,6319,7054,7059,7063]],"negative":["nist-reference","covered",[538,539,540,541,560,561,646,673,674,689,692,6084,6085,6086,6087,6088,6089,6090,6091,6092,6093,6094,6095,6096,6097,6098,6099,6100,6101,6141,6142,6156,6157,6158,6159,6160,6161,6162,6163,6164,6165,6166,6167,6168,6169,6170,6171,6172,6173,6174,6175,6176,6177,6178,6179,6180,6181,6182,6183,6184,6185,6186,6187,6188,6189,6190,6191,6192,6193,6194,6195,6196,6197,6198,6199,6200,6201,6202,6203,6204,6205,6206,6207,6208,6209,6210,6211,6212,6213,6214,6215,6216,6217,6218,6219,6220,6221,6222,6223,6224,6225,6226,6227,6228,6242,6243,6244,6245,6246,6247,6248,6249,6250,6251,6252,6254,6255,6256,6257,6258,6259,6260,6261,6262,6263,6264,6265,6266,6267,6268,6269,6270,6271,6272,6273,6274,6275,6276,6277,6278,6279,6280,6281,6282,6283,6284,6285,6286,6287,6288,6289,6290,6291,6292,6293,6294,6295,6296,6297,6298,6299,6300,6301,6302,6303,6304,6305,6306,6307,6308,6309,6310,6311,6312,6313,6314,6315,6316,6317,6318,6320,7060]],"boundary":["nist-reference","covered",[646,647,673,687,689,690,692,6081,6083,6229,6230,6231,6246,6247,6248,6249,6250,6251,6252]],"state-error":["behavior-only","covered",[8098,8184,8270,8356,8442]]},"run":[264,4]}},"par":{"positive":"parity","negative":"divergent","boundary":"divergent","state-error":"parity"}},
     {"k":"CKM_ML_DSA|message-sign|ML-DSA-44|hedged","c":"CKM_ML_DSA","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[8821]],"state-error":["behavior-only","covered",[8900,8980,9060,9140,9220]]},"run":[6,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[8821]],"state-error":["behavior-only","covered",[8900,8980,9060,9140,9220]]},"run":[6,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_ML_DSA|message-sign|ML-DSA-44|deterministic","c":"CKM_ML_DSA","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[8821]],"state-error":["behavior-only","covered",[8900,8980,9060,9140,9220]]},"run":[6,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[8821]],"state-error":["behavior-only","covered",[8900,8980,9060,9140,9220]]},"run":[6,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},
     {"k":"CKM_ML_DSA|message-sign|ML-DSA-65|hedged","c":"CKM_ML_DSA","e":{"cpp":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[8821]],"state-error":["behavior-only","covered",[8900,8980,9060,9140,9220]]},"run":[6,0]},"rust":{"adv":true,"lvl":"sampled","pol":{"positive":["behavior-only","sampled",[8821]],"state-error":["behavior-only","covered",[8900,8980,9060,9140,9220]]},"run":[6,0]}},"par":{"positive":"parity","negative":"not-established","boundary":"not-established","state-error":"parity"}},

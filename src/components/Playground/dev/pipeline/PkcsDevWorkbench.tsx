@@ -25,7 +25,7 @@
  * the shared suites/SuiteShell.tsx chrome — same header/Builder/Code shape
  * as this component. This one stays the Standard (p11 sequence) suite.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { Play, Loader2, Download, Save, Upload, Trash2, X, Pencil } from 'lucide-react'
 import { Button } from '../../../ui/button'
@@ -508,16 +508,25 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
     hsmCtx,
   ])
 
+  // Ctrl/Cmd+Enter must always run the CURRENT runAll. A native listener
+  // re-attached in a passive effect stays on the previous render's closure
+  // until React flushes that effect, and a native event does not trigger the
+  // flush. The ref is updated in a layout effect, so it is current as soon as
+  // the render commits (same fix as the KMIP builder).
+  const runAllRef = useRef(runAll)
+  useLayoutEffect(() => {
+    runAllRef.current = runAll
+  })
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault()
-        void runAll()
+        void runAllRef.current()
       }
     }
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
-  }, [runAll])
+  }, [])
 
   /* ── export / save / load (D2) ── */
   const downloadFile = (content: string, filename: string, type: string) => {

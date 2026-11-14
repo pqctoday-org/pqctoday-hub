@@ -381,7 +381,7 @@ export function AlgorithmExplorerPanel({
               <AlertTriangle size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
               <span>
                 The OpenSSL WASM engine failed to load, so this build can&apos;t be queried.
-                <span className="block text-destructive/70 mt-0.5">{loadError}</span>
+                <span className="block text-destructive mt-0.5">{loadError}</span>
                 Click &ldquo;WASM failed to load&rdquo; above to retry, or reload the page.
               </span>
             </p>

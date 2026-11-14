@@ -204,7 +204,13 @@ it('keeps existing Profile A and research C output behavior separate', async () 
   expect(await assembleSUCI(a, 'A')).toContain('aa'.repeat(32))
   const c = context('aa'.repeat(32))
   c.state.profile = 'C'
+  c.state.pqcMode = 'hybrid'
   c.state.ciphertextHex = 'bb'.repeat(1088)
-  expect(await assembleSUCI(c, 'C')).toContain('SUCI ASSEMBLY (Profile C)')
+  c.state.encryptedMSINHex = '2143658799'
+  c.state.macTagHex = '0011223344556677'
+  const assembled = await assembleSUCI(c, 'C')
+  expect(assembled).toContain('PSC1 ENVELOPE ASSEMBLY (PROFILE C)')
+  expect(assembled).toContain('Project sample format, not a standard')
+  expect(c.state.psc1WireHex!.length / 2).toBe(1148)
   expect(() => normalizeProfileBPoint('aa'.repeat(32))).toThrow()
 })

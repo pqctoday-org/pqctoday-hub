@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:eb7cf830-0705-4bf3-9f05-592c69c7f789",
+  "serialNumber": "urn:uuid:578b11c0-0a61-4f17-848c-38efb1b17a70",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-12T00:00:00.000Z",
+    "timestamp": "2026-11-13T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -30678,9 +30678,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "430559eb6e4753d5",
+      "bom-ref": "e6d0b81c4e987a2e",
       "name": "OpenBao",
-      "version": "2.5.4",
+      "version": "2.7.2",
       "cpe": "cpe:2.3:a:openbao:openbao:2.0.0:-:*:*:*:*:*:*",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
@@ -30690,7 +30690,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "OpenBao is an open-source fork of HashiCorp Vault (donated to LF Edge / OpenBao project, Apache-2.0). It supports PQC TLS for its listener via Go crypto stack (X25519MLKEM768 in Go 1.24+ tls package). The transit secrets engine does NOT yet natively support ML-DSA key generation (unlike Vault Enterprise 1.19+). Migration path: use OpenBao 2.x with Go 1.24+ for PQC transport; pair with oqs-provider for ML-DSA signing via OpenSSL subprocess. Actively tracked in OpenBao GitHub issues. Suitable for OSS-only deployments requiring open-source secrets management.",
+      "description": "OpenBao is an open-source fork of HashiCorp Vault (donated to LF Edge / OpenBao project, Apache-2.0). OpenBao 2.7.0 (released September 23, 2026; newest release 2.7.2, October 26, 2026) introduced ML-DSA (FIPS 204). The Transit secrets engine can generate, import and export keys of type mldsa-44, mldsa-65 and mldsa-87 and can create and verify pure ML-DSA signatures. The PKI engine supports ML-DSA for all CA, CSR and leaf actions; Go's OCSP implementation does not support ML-DSA, so OCSP is unusable with ML-DSA typed issuers. Server, agent and proxy listeners accept tls_key_exchange_preferences with SecP256r1MLKEM768, SecP384r1MLKEM1024, X25519MLKEM768 and MLKEM1024, and can use ML-DSA certificates; outbound TLS connections can reach servers using those key exchanges or presenting an ML-DSA server or CA certificate. Suitable for OSS-only deployments requiring open-source secrets management.",
       "externalReferences": [
         {
           "type": "vcs",

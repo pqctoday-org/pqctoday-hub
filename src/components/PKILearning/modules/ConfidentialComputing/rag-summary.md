@@ -21,9 +21,9 @@ workshop_steps: 5
 ## Workshop
 
 1. TEE Architecture Explorer — Compare 7 TEE platforms by isolation, encryption, attestation, and PQC readiness
-2. Attestation Workshop — Interactive remote attestation flow simulator with quantum vulnerability highlighting
+2. Attestation Workshop — Attestation flow stepper with quantum vulnerability highlighting, plus a browser check of a recorded AMD SEV-SNP report from an open-source project (certificate chain, report signature, measurement, challenge replay and tampering, each reported separately)
 3. Encryption Mechanisms — Memory encryption engine comparison, sealing key derivation, Grover impact calculator
-4. TEE-HSM Trusted Channel — Design mutual attestation and PQC key provisioning between TEE and HSM
+4. TEE-HSM Trusted Channel — Design mutual attestation and PQC key provisioning between TEE and HSM, with a sample signed statement that binds the recipient key, a single-use challenge and the ciphertext digest (simulated, not a vendor quote)
 5. Quantum Threat Migration — Threat severity matrix, vendor PQC timeline, migration priority planner
 
 ## Key Standards

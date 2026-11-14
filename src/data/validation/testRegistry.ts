@@ -963,7 +963,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
           `mlkem-keycheck-${isDk ? 'dk' : 'ek'}-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
         )
       }),
-    'A negative case passes when the invalid key is rejected anywhere on the path — at C_CreateObject or at the C_DecapsulateKey / C_EncapsulateKey that must perform the check.'
+    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID (the FIPS 203 §7.2 / §7.3 input check). This is the contract of the engines tested here: PKCS#11 itself does not require a key check at import. Any other error on the path is an error row, never a pass.'
   ),
   acvp(
     '07b.implicit-reject',
@@ -1042,7 +1042,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         `mlkem-ekcheck-depth-${param(c, 'parameterSet')}-${upstreamIds(c)}-{engine}`
       )
     ),
-    'A negative case passes when the invalid key is rejected at C_CreateObject or at C_EncapsulateKey. ML-KEM inputs have fixed lengths: the capability map declares no length boundary for these cells.'
+    'A negative case passes only when the engine refuses the invalid key at C_CreateObject with CKR_ATTRIBUTE_VALUE_INVALID. This is the contract of the engines tested here: PKCS#11 itself does not require a key check at import. Any other error on the path is an error row, never a pass. ML-KEM inputs have fixed lengths: the capability map declares no length boundary for these cells.'
   ),
   acvp(
     '08',
@@ -2089,12 +2089,15 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
   ),
   // ── Project Wycheproof ML-KEM / ML-DSA — sections/wycheproofPqc.ts ──
   // Same evidence class and result policy as the classical files above. A
-  // negative case passes when the engine refuses it anywhere on the path (key
-  // import, key generation, init or the operation) — the same rule as the NIST
-  // key-check rows (§7b.4 / §7c), so the operation the path ends in is listed
-  // even when the refusal comes at C_CreateObject. Seed-length negatives of
-  // mlkem_<ps>_test are refused by C_GenerateKeyPair and register key
-  // generation only. Cases PKCS #11 cannot reproduce (valid encaps cases need
+  // negative ML-KEM case passes only when the engine refuses it with the code
+  // for that check: a key input (a dk or ek at import, the FIPS 203 §7.2 / §7.3
+  // check, as in the NIST key-check rows §7b.4 / §7c) or a CKA_SEED template of
+  // the wrong length, with CKR_ATTRIBUTE_VALUE_INVALID; or a wrong-length
+  // ciphertext, with CKR_WRAPPED_KEY_LEN_RANGE or CKR_WRAPPED_KEY_INVALID from
+  // C_DecapsulateKey. These are the contract of the engines tested here: PKCS#11
+  // itself does not require a key check at import. Any other error is an error
+  // row. Seed-length negatives of mlkem_<ps>_test are refused by
+  // C_GenerateKeyPair and register key generation only. Cases PKCS #11 cannot reproduce (valid encaps cases need
   // the randomness m; `Randomized` sign cases need rnd) are not vendored: see
   // each file's _provenance.excluded_cases.
   acvp(
@@ -2184,7 +2187,7 @@ const USE_ACVP_SUITE: RegisteredTest[] = [
         ),
       ]
     }),
-    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. `Internal` cases sign µ with the vendor CKM_ML_DSA_EXTERNAL_MU (0x403c). `Randomized` cases are not vendored (no PKCS #11 input for rnd).'
+    'Source: https://github.com/C2SP/wycheproof @ 3fa63dd0, Apache-2.0. `Internal` cases sign µ with the vendor CKM_ML_DSA_EXTERNAL_MU (0x403c). `Randomized` cases are not vendored (no PKCS #11 input for rnd). A negative case passes only when the engine refuses it with the code for that step: a key or seed at C_CreateObject / C_GenerateKeyPair with CKR_ATTRIBUTE_VALUE_INVALID, a context over 255 bytes at C_SignInit / C_VerifyInit with CKR_MECHANISM_PARAM_INVALID, or a signature at C_Verify with CKR_SIGNATURE_INVALID or CKR_SIGNATURE_LEN_RANGE. A refusal counts only at the step the flaw of the case belongs to. A public key of the wrong length passes if it is refused at import, or if the engine imports it and C_Verify then rejects the signature. These are the contract of the engines tested here. Any other error, including a key that imports and then fails C_Sign or C_Verify, is an error row, never a pass.'
   ),
   // ── Multi-part message signing round-trip — sections/multiMessageSign.ts ──
   // Both engines advertise CKF_MULTI_MESSAGE on every signing mechanism since

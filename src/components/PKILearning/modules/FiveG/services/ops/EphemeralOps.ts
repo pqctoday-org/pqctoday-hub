@@ -2,6 +2,7 @@
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { bytesToHex } from '@/services/crypto/FileUtils'
 import type { FiveGService } from '../FiveGService'
+import { normalizeX25519Public } from '../pscEnvelope'
 
 let sharedSecretRunSequence = 0
 
@@ -168,6 +169,7 @@ function clearAgreementResults(ctx: FiveGService) {
     'macTagHex',
     'ciphertextHex',
     'cipherFile',
+    'psc1WireHex',
   ] as const) {
     delete ctx.state[key]
   }
@@ -407,6 +409,10 @@ ${finalSharedHex} `
       ctx.state.sharedSecretHex = finalSharedHex
       ctx.state.profile = profile
       ctx.state.ciphertextHex = ctHex
+      ctx.state.pqcMode = pqcMode
+      // Pure mode has no ephemeral key; drop any left over from an earlier hybrid run so it can
+      // never enter the KDF, the MAC input or the envelope.
+      if (pqcMode === 'pure') delete ctx.state.ephemeralPubKeyHex
 
       outputLog += `
 
@@ -538,12 +544,20 @@ export function buildKdfInput(
 //   key as SharedInfo; this demo currently passes the 65-byte uncompressed point below.
 //   Profile C hybrid: SharedInfo = raw X25519 ephemeral key (same offset as Profile A)
 //   Profile C pure PQC: SharedInfo = empty (no ephemeral EC key to bind in)
-function extractRawPubKeyBytes(spkiHex: string, profile: 'A' | 'B' | 'C'): Uint8Array {
+function extractRawPubKeyBytes(
+  spkiHex: string,
+  profile: 'A' | 'B' | 'C',
+  pqcMode?: 'hybrid' | 'pure'
+): Uint8Array {
   const spki = (spkiHex.match(/.{1,2}/g) ?? []).map((b) => parseInt(b, 16))
   if (profile === 'A' && spki.length === 44) return new Uint8Array(spki.slice(12)) // X25519: 32 bytes
   if (profile === 'B' && spki.length === 91) return new Uint8Array(spki.slice(26)) // P-256: 65 bytes (incl. 04 prefix)
-  if (profile === 'C' && spki.length === 44) return new Uint8Array(spki.slice(12)) // hybrid: X25519 raw key
-  if (profile === 'C') return new Uint8Array(0) // pure PQC: SharedInfo = empty
+  if (profile === 'C') {
+    if (pqcMode === 'pure') return new Uint8Array(0) // pure PQC: SharedInfo = empty
+    // Hybrid: the 32-byte X25519 ephemeral key that is also transmitted. Accepts the raw key or
+    // the exact X25519 SPKI and refuses anything else rather than guessing.
+    return normalizeX25519Public(new Uint8Array(spki))
+  }
   return new Uint8Array(spki) // unexpected length fallback
 }
 
@@ -561,6 +575,7 @@ export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
     delete ctx.state.encryptedMSINHex
     delete ctx.state.macTagHex
     delete ctx.state.cipherFile
+    delete ctx.state.psc1WireHex
     const secret = requireSharedSecret(ctx.state.sharedSecretHex ?? '')
     const z = new Uint8Array(secret.match(/.{2}/g)!.map((byte) => parseInt(byte, 16)))
     const zHex = bytesToHex(z)
@@ -568,7 +583,9 @@ export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
     // 2. SharedInfo = raw ephemeral public key bytes (per 3GPP TS 33.501 §C.3.4)
     // Strip the ASN.1 SubjectPublicKeyInfo wrapper — X25519 offset=12, P-256 offset=26
     const ephPubHex = ctx.state.ephemeralPubKeyHex || ''
-    const sharedInfo = ephPubHex ? extractRawPubKeyBytes(ephPubHex, profile) : new Uint8Array(0)
+    const sharedInfo = ephPubHex
+      ? extractRawPubKeyBytes(ephPubHex, profile, ctx.state.pqcMode)
+      : new Uint8Array(0)
 
     // 3. Iteration 1: Hash(Z || 0x00000001 || SharedInfo) => K_enc (128 bits)
     const kdfInput1 = ctx.buildKdfInput(z, 1, sharedInfo)

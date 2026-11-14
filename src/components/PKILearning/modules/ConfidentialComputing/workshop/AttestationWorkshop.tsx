@@ -17,33 +17,37 @@ import { ATTESTATION_FLOWS } from '../data/attestationData'
 import { ACTOR_LABELS, ACTOR_COLORS } from '../data/ccConstants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { AmdSnpReportVerifier } from './AmdSnpReportVerifier'
 
+// These four checks run generic algorithm operations on the engine. None of them parses an
+// attestation quote, verifies a certificate chain, appraises a measurement, runs DICE or uses
+// hardware sealing, so each label says only what the operation does.
 const CC_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'cc-attestation-sign',
-    useCase: 'TEE attestation quote signing (ML-DSA-65)',
-    standard: 'TCG DICE + FIPS 204',
+    useCase: 'ML-DSA-65 sign and verify of a sample text message (not a quote)',
+    standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
-    message: 'SGX attestation quote: MRENCLAVE=4a7b3c,MRSIGNER=9c2d1e,ISV_SVN=3',
+    message: 'Sample text message for an ML-DSA-65 round trip (not a TEE quote)',
   },
   {
     id: 'cc-enclave-kem',
-    useCase: 'Enclave key provisioning (ML-KEM-768)',
-    standard: 'TCG DICE + FIPS 203',
+    useCase: 'ML-KEM-768 encapsulate and decapsulate round trip (not enclave provisioning)',
+    standard: 'FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
   {
     id: 'cc-measurement-hash',
-    useCase: 'Enclave measurement integrity',
+    useCase: 'SHA-256 digest of an ACVP test vector (not an enclave measurement)',
     standard: 'FIPS 180-4 ACVP',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
     kind: { type: 'sha256-hash', testIndex: 2 },
   },
   {
     id: 'cc-sealing-kwp',
-    useCase: 'Enclave sealing key wrap (AES-KWP)',
+    useCase: 'AES-KWP wrap and unwrap of a generic secret (not hardware sealing)',
     standard: 'RFC 5649 + SP 800-38F',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5649',
     kind: { type: 'aes-kwp-wrap' },
@@ -159,9 +163,10 @@ export const AttestationWorkshop: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Attestation Flow Simulator</h3>
         <p className="text-sm text-muted-foreground">
-          Step through real attestation protocols to understand how TEEs prove their identity to
-          relying parties. Quantum-vulnerable steps are highlighted with PQC replacement
-          recommendations.
+          Step through the stages of real attestation protocols to understand how TEEs prove their
+          identity to relying parties. The stepper only displays each flow; the AMD SEV-SNP
+          verification below it is the part that runs real checks on real evidence.
+          Quantum-vulnerable steps are highlighted with PQC replacement recommendations.
         </p>
       </div>
 
@@ -405,10 +410,12 @@ export const AttestationWorkshop: React.FC = () => {
         </p>
       </div>
 
+      <AmdSnpReportVerifier />
+
       <KatValidationPanel
         specs={CC_KAT_SPECS}
-        label="Confidential Computing Known Answer Tests"
-        authorityNote="TCG DICE · FIPS 203 · FIPS 204"
+        label="Algorithm checks used in attestation systems"
+        authorityNote="FIPS 203 · FIPS 204 · FIPS 180-4 · RFC 5649. Algorithm checks only: they do not parse a quote, verify a certificate chain, run TCG DICE or seal anything."
       />
     </div>
   )

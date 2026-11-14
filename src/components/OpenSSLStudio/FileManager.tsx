@@ -153,7 +153,7 @@ export const FileManager = () => {
           files.map((file) => (
             <div
               key={file.name}
-              className="flex items-center justify-between p-2 rounded hover:bg-accent group transition-colors"
+              className="flex items-center justify-between p-2 rounded hover:bg-muted group transition-colors"
             >
               <div className="flex items-center gap-3 overflow-hidden flex-1">
                 {getIcon(file.type)}
@@ -178,7 +178,7 @@ export const FileManager = () => {
                 <Button
                   variant="ghost"
                   onClick={() => setEditingFile(file)}
-                  className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
+                  className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground"
                   title="Edit / View"
                 >
                   <Edit2 size={14} />
@@ -186,7 +186,7 @@ export const FileManager = () => {
                 <Button
                   variant="ghost"
                   onClick={() => handleDownload(file)}
-                  className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
+                  className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground"
                   title="Download"
                 >
                   <Download size={14} />
@@ -248,7 +248,7 @@ export const FileManager = () => {
               <Button
                 variant="ghost"
                 onClick={() => setEditingFile(null)}
-                className="p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground rounded transition-colors"
+                className="p-1.5 hover:bg-muted text-muted-foreground hover:text-foreground rounded transition-colors"
                 title="Close"
               >
                 <X size={14} />

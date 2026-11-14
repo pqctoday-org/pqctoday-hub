@@ -271,6 +271,16 @@ test.describe('HPKE workshop — three sequences in a real browser', () => {
 
 /** axe on the screen as it is now: serious or critical WCAG 2 A/AA violations fail. */
 async function assertNoSeriousViolations(page: Page, where: string): Promise<void> {
+  // Let colour transitions (150 ms on buttons) finish first, so axe reads the
+  // colours a learner sees, not a frame halfway between two states.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((a) => a instanceof CSSTransition)
+        .map((a) => a.finished.catch(() => undefined))
+    )
+  )
   await injectAxe(page)
   const violations = await getViolations(page, undefined, {
     runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
@@ -302,6 +312,11 @@ test.describe('accessibility of the two screens this work changed', () => {
     await page.getByRole('button', { name: GROUP_V33 }).click()
     await runAllSteps(page)
     await assertNoSeriousViolations(page, 'HPKE step after a v3.3 draft run')
+    // The last click leaves the pointer where the step button was, so the
+    // Completed button that replaces it is often hovered. Check that state on
+    // purpose: its label must stay readable on the green background.
+    await page.getByRole('button', { name: 'Completed', exact: true }).hover()
+    await assertNoSeriousViolations(page, 'HPKE step, Completed button hovered')
   })
 
   test('composite certificate screen: no serious or critical violations', async ({ page }) => {

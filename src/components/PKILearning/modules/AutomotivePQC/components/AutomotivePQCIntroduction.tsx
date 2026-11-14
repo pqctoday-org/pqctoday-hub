@@ -1038,7 +1038,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                     <span className="text-status-error font-medium">Severely constrained</span>
                   </td>
                   <td className="py-2 px-3 text-muted-foreground">
-                    ML-KEM public key (1,184 B) + ciphertext (1,088 B) requires 9+ APDU fragments
+                    ML-KEM public key (1,184 B) takes 5 fragments and the returned ciphertext (1,088
+                    B) 5 more, 10 in all
                   </td>
                 </tr>
                 <tr className="border-b border-border/50">
@@ -1049,7 +1050,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                     <span className="text-status-warning font-medium">Marginal</span>
                   </td>
                   <td className="py-2 px-3 text-muted-foreground">
-                    3&ndash;4 PDU fragments; acceptable with connection parameter optimization
+                    3 fragments for the public key and 3 for the ciphertext at a 512 B bound;
+                    acceptable with connection parameter optimization
                   </td>
                 </tr>
                 <tr>
@@ -1074,11 +1076,12 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             digital car keys. Short APDUs (Application Protocol Data Units) carry about 256 bytes.
             An <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip>-768 public key is 1,184 bytes,
             and the resulting ciphertext requires another 1,088 bytes. A car and phone that support
-            only short APDUs need at least 5 exchanges for the key alone and at least 9 for the key
-            and ciphertext together; APDUs with extended length fields (which ICAO Doc 9303-11
-            requires for large cryptographic objects) avoid the split where both sides support them.
-            Each exchange adds ~50 ms of round-trip latency, potentially pushing the total NFC
-            transaction time beyond the 500 ms user experience threshold that CCC requires for
+            only short APDUs need 5 fragments for the key and 5 more for the ciphertext, 10 in all,
+            because the two travel as separate messages; APDUs with extended length fields (which
+            ICAO Doc 9303-11 requires for large cryptographic objects) avoid the split where both
+            sides support them. Each extra fragment adds time that depends on the phone, the NFC
+            controller and the vehicle, so measure it on your own hardware; it can push the total
+            NFC transaction time beyond the 500 ms user experience threshold that CCC requires for
             &ldquo;tap and go&rdquo; unlock. Solutions under investigation include extended-length
             APDUs (supported by some NFC controllers but not all smartphones), pre-cached key
             material, and hybrid protocols where NFC bootstraps a BLE connection for the PQC

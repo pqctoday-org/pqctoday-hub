@@ -172,7 +172,7 @@ export const WorkbenchFileManager: React.FC<{
           <Button
             aria-label="Add File"
             variant="ghost"
-            className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-background hover:bg-muted border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('add-file-input')?.click()}
           >
             <Plus size={14} aria-hidden="true" /> <span className="hidden sm:inline">Add File</span>
@@ -232,7 +232,7 @@ export const WorkbenchFileManager: React.FC<{
             className={clsx(
               'px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-2',
               confirmClear
-                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border border-destructive'
+                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:text-destructive-foreground border border-destructive'
                 : 'bg-status-error text-status-error',
               files.length === 0 &&
                 'opacity-50 cursor-not-allowed bg-muted border-border text-muted-foreground'
@@ -262,7 +262,7 @@ export const WorkbenchFileManager: React.FC<{
           <Button
             aria-label="Import ZIP"
             variant="ghost"
-            className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
+            className="px-3 py-1.5 bg-background hover:bg-muted border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('import-zip-input')?.click()}
           >
             <Upload size={14} aria-hidden="true" />{' '}
@@ -290,7 +290,7 @@ export const WorkbenchFileManager: React.FC<{
                 <th className="p-0 hidden sm:table-cell">
                   <Button
                     variant="ghost"
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'timestamp') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -306,7 +306,7 @@ export const WorkbenchFileManager: React.FC<{
                 <th className="p-0">
                   <Button
                     variant="ghost"
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'type') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -322,7 +322,7 @@ export const WorkbenchFileManager: React.FC<{
                 <th className="p-0">
                   <Button
                     variant="ghost"
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'name') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -338,7 +338,7 @@ export const WorkbenchFileManager: React.FC<{
                 <th className="p-0 hidden sm:table-cell">
                   <Button
                     variant="ghost"
-                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
+                    className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-muted transition-colors flex items-center gap-2"
                     onClick={() => {
                       if (sortBy === 'size') {
                         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
@@ -375,7 +375,7 @@ export const WorkbenchFileManager: React.FC<{
                 .map((file) => (
                   <tr
                     key={file.name}
-                    className="border-b border-border hover:bg-accent/50 transition-colors"
+                    className="border-b border-border hover:bg-muted transition-colors"
                   >
                     <td className="p-3 text-foreground/70 font-mono text-xs whitespace-nowrap hidden sm:table-cell">
                       {formatCompactDate(file.timestamp)}
@@ -445,7 +445,7 @@ export const WorkbenchFileManager: React.FC<{
                             setEditingFile(file)
                             setViewingFile(null) // Close viewer if open
                           }}
-                          className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
+                          className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
                           title="Edit"
                         >
                           <Edit2 size={14} />
@@ -469,7 +469,7 @@ export const WorkbenchFileManager: React.FC<{
                             URL.revokeObjectURL(url)
                             logEvent('OpenSSL Studio', 'Download File', file.type)
                           }}
-                          className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
+                          className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
                           title="Download"
                         >
                           <Download size={14} />

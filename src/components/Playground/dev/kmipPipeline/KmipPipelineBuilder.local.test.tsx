@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { KmipPipelineBuilder } from './KmipPipelineBuilder'
 import { KMIP_TEMPLATES } from './kmipPipelineTemplates'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
@@ -280,5 +280,34 @@ describe('KMIP builder recorded sample attempts', () => {
       JSON.parse(localStorage.getItem('pqctoday-hub-kmip-pipelines-v1')!)['legacy sample']
         .messageMode
     ).toBe('hex')
+  })
+  it('Ctrl+Enter attached at mount honours the legacy-input guard of the current render', async () => {
+    // The shortcut listener attached at mount must not act on that render's
+    // closure: right after a legacy import it has to see the import's
+    // "choose Text or Hex" guard. Calling the mount-time handler directly makes
+    // this deterministic instead of depending on when React flushes effects.
+    const add = vi.spyOn(window, 'addEventListener')
+    render(<KmipPipelineBuilder engine={engine} />)
+    const registered = add.mock.calls.filter(([type]) => String(type) === 'keydown')
+    expect(registered).toHaveLength(1)
+    const mountHandler = registered[0][1] as (e: KeyboardEvent) => void
+    const text = JSON.stringify({
+      schema: 'pqctoday-hub-kmip-pipeline-v1',
+      name: 'legacy sample',
+      pipeline: { steps: KMIP_TEMPLATES['Governed lifecycle'], input: '00ff80' },
+    })
+    const file = new File([text], 'legacy.json', { type: 'application/json' })
+    Object.defineProperty(file, 'text', { value: async () => text })
+    fireEvent.change(screen.getByLabelText('Import KMIP pipeline JSON'), {
+      target: { files: [file] },
+    })
+    await screen.findByText('Imported "legacy sample"')
+    act(() => mountHandler(new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true })))
+    await Promise.resolve()
+    expect(state.run).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Run' })).toBeDisabled()
+    // Registered once: re-renders must not attach further keydown listeners.
+    expect(add.mock.calls.filter(([type]) => String(type) === 'keydown')).toHaveLength(1)
+    add.mockRestore()
   })
 })

@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:wycheproof_mlkem_512_semi_expanded_decaps_test",
-  "subjectSha256": "bfa97e84e51d1a9bd6b18edcc23b9b66f1d565a2f591b7fdcd513a458154b0c1",
-  "fileSha256": "5e184f82d5b243f3b94c3d46468ae123dae7b5bfe1dcacdb60e6896aa15b5fa7",
+  "subjectSha256": "d84b83e41008e0a23e15e96c7b76829fc4b29372633d4163f6f891b3df768e4c",
+  "fileSha256": "4eda4a08d2de6e9ae3c27b2cc16b952d4e682c7fe5f903aaf7580a35d6170684",
   "result": "match",
   "tool": "scripts/acvp/vendor_wycheproof.py",
   "command": "python3 scripts/acvp/vendor_wycheproof.py --clone <clone of C2SP/wycheproof at the pinned commit> --check",
@@ -19,5 +19,5 @@
   "compared": {
     "cases": 9
   },
-  "checkedAt": "2026-10-01"
+  "checkedAt": "2026-11-13"
 }

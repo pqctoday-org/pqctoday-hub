@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'confidential-computing',
   version: '1.0.0',
   lastReviewed: '2026-08-29',
-  lastEdited: '2026-11-09',
+  lastEdited: '2026-11-13',
 
   standards: [
     getStandard('FIPS 203'),
@@ -81,7 +81,7 @@ export const content: ModuleContent = {
     overview:
       'TEE fundamentals and threat model (hardware isolation, TCB, data-in-use protection). Vendor architectures (Intel SGX/TDX, ARM TrustZone/CCA, AMD SEV/SEV-SNP, RISC-V Keystone, AWS Nitro Enclaves). Remote attestation flows (DCAP, CCA Realm, SEV-SNP VCEK, Nitro PCR). Memory encryption engines (TME-MK, SME/SEV, TrustZone crypto) and sealing key derivation. TEE-HSM trusted channel design (mutual attestation, TLS channel binding, PKCS#11 over attested channel).',
     workshopSummary:
-      'TEE Architecture Explorer — Compare 7 TEE platforms by isolation, encryption, attestation, and PQC readiness. Attestation Workshop — Interactive remote attestation flow simulator with quantum vulnerability highlighting. Encryption Mechanisms — Memory encryption engine comparison, sealing key derivation, Grover impact calculator. TEE-HSM Trusted Channel — Design mutual attestation and PQC key provisioning between TEE and HSM.',
+      'TEE Architecture Explorer — Compare 7 TEE platforms by isolation, encryption, attestation, and PQC readiness. Attestation Workshop — Attestation flow stepper with quantum vulnerability highlighting, plus a browser check of a recorded AMD SEV-SNP report from an open-source project (certificate chain, report signature, measurement, challenge replay and tampering, each reported separately). Encryption Mechanisms — Memory encryption engine comparison, sealing key derivation, Grover impact calculator. TEE-HSM Trusted Channel — Design mutual attestation and PQC key provisioning between TEE and HSM, with a sample signed statement that binds the recipient key, a single-use challenge and the ciphertext digest (simulated, not a vendor quote).',
     relatedStandards:
       'NIST IR 8320E (Hardware-Enabled Security: Confidential Computing of Data in Cloud Workloads — Initial Public Draft) defines the TEE + remote-attestation + key-release workflow this module teaches. TCG TPM 2.0 Library Specification v1.85, Part 1: Architecture — the hardware root-of-trust model (four-hierarchy TPM architecture; EK/SRK/AIK/IDevID key roles) underlying remote attestation and sealing key derivation. FIPS 203/204 (ML-KEM, ML-DSA for attestation key migration). Intel SGX/TDX SDK, DCAP attestation. ARM CCA (Confidential Compute Architecture). AMD SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging). AWS Nitro Enclaves attestation framework. PKCS#11 v3.2 (TEE-HSM integration)',
   },

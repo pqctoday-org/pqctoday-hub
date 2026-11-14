@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   type LucideIcon,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button, type ButtonProps } from '../../ui/button'
 import { TONE_CLASS, type Tone } from '@/data/migrateToneClass'
 
@@ -92,6 +93,16 @@ export function ConfirmButton({
     <Button
       {...buttonProps}
       variant={armed ? confirmVariant : variant}
+      // A caller's resting text colour (e.g. text-muted-foreground) would
+      // otherwise survive the switch and sit on the solid red fill.
+      className={
+        armed && confirmVariant === 'destructive'
+          ? cn(
+              buttonProps.className,
+              'bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:text-destructive-foreground'
+            )
+          : buttonProps.className
+      }
       onClick={() => {
         if (!armed) {
           setArmed(true)

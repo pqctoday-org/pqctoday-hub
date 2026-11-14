@@ -567,7 +567,7 @@ mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
           label: 'K_mac',
           value: 'block2 (32 bytes) → HMAC-SHA3-256, truncated to 8 bytes on-air',
           description:
-            'Profile C uses HMAC-SHA3-256 instead of HMAC-SHA-256. The full 32-byte tag is used for local MAC verification; only 8 bytes are included in the over-the-air SUCI.',
+            'Profile C uses HMAC-SHA3-256 instead of HMAC-SHA-256. Only the first 8 bytes of the tag are kept in the PSC1 sample envelope.',
         },
       ],
     },
@@ -588,18 +588,18 @@ const ciphertext = hsm_aesEncrypt(
       id: 'compute_mac',
       title: '8. Compute MAC Tag (HMAC-SHA3)',
       description:
-        'Compute HMAC-SHA3-256 over the ciphertext using K_mac, then truncate to 8 bytes (64 bits). Truncation is intentional: SUCI is an over-the-air identifier where space is constrained, and a 64-bit authentication code provides sufficient integrity protection for this use case.',
-      code: `// SoftHSMv3 WASM: C_Sign (HMAC-SHA3-256)
+        'Compute HMAC-SHA3-256 with K_mac over the whole PSC1 message before the tag: the 15-byte header, the ephemeral key (hybrid), the ML-KEM ciphertext and the encrypted MSIN. Then keep the first 8 bytes (64 bits). Covering the header and both public components means altering any of them is caught, which a MAC over the MSIN ciphertext alone would not do. PSC1 is a project sample format, not a standard.',
+      code: `// SoftHSMv3 WASM: C_Sign (HMAC-SHA3-256) over header ‖ [ephPub] ‖ kemCt ‖ msinCt
 const macTagFull = hsm_hmac(
-  hsmd, sessionHandle, hKmac, ciphertext, 'SHA3-256'
+  hsmd, sessionHandle, hKmac, psc1BeforeTag, 'SHA3-256'
 );`,
       output: `[USIM] Computed PQC MAC Tag: 0x...`,
     },
     {
       id: 'visualize_suci',
-      title: '9. Visual Inspection: SUPI vs SUCI (PQC)',
+      title: '9. Visual Inspection: SUPI vs PSC1 Envelope (PQC)',
       description:
-        'Compare the SUPI with the much larger PQC SUCI structure. Notice the ciphertext size (ML-KEM Encapsulation is 1088 bytes).',
+        "Compare the SUPI with the much larger PSC1 envelope: 1,116 bytes pure or 1,148 bytes hybrid for a 9-digit MSIN. PSC1 is this project's own sample format, not a standard and not a TS 23.003 SUCI encoding; Profile A and B encodings are unchanged.",
       code: '# Visual Verification',
       output: '[Visualizing PQC Data Structures...]',
       explanationTable: [
@@ -625,30 +625,36 @@ const macTagFull = hsm_hmac(
             'Encrypted MSIN (AES-256-CTR, zero IV). Length-preserving — same byte count as BCD-encoded MSIN.',
         },
         {
-          label: 'SUCI',
-          value: 'suci-0-310-260-3-1-0x...',
-          description: 'Post-quantum secure identifier.',
+          label: 'PSC1 envelope',
+          value:
+            '"PSC1" ‖ mode ‖ MCC ‖ MNC ‖ routing ‖ key ID ‖ length ‖ [ephPub] ‖ kemCt ‖ msinCt ‖ tag',
+          description:
+            'Project sample format, not a standard. The 15-byte header, the optional 32-byte X25519 ephemeral key, the 1,088-byte ML-KEM ciphertext, the encrypted MSIN and the 8-byte MAC. The hybrid envelope carries the ephemeral key because the receiver needs it for ECDH.',
         },
         {
-          label: 'SUCI Hex',
-          value: '737563692d302d3331302d3236302d33...',
-          description: 'Raw Hex of PQC SUCI.',
+          label: 'Size',
+          value: '1,116 bytes (pure) / 1,148 bytes (hybrid), 9-digit MSIN',
+          description: 'Counted from the serialized bytes, not added up from selected fields.',
         },
       ],
     },
     {
       id: 'assemble_suci',
-      title: '10. Assemble SUCI (Profile C)',
-      description: 'Combine parameters. Note significantly larger SUCI size.',
-      code: `const suci = {\n  scheme: 3,\n  ciphertext: ciphertext,\n  encMSIN: encryptedMSIN,\n  macTag: macTag\n};`,
-      output: `[USIM] SUCI-0-310-260-3-1-0x...(1KB+)-0x...`,
+      title: '10. Assemble PSC1 Envelope (Profile C)',
+      description:
+        'Concatenate the header, the ephemeral key (hybrid), the KEM ciphertext, the encrypted MSIN and the 8-byte MAC into one byte string. These bytes are all the network side receives. PSC1 is a project sample format, not a standard, and it does not use an assigned 3GPP protection-scheme identifier.',
+      code: `const psc1 = concat(header, ephPub /* hybrid only */, kemCt, encMSIN, macTag);`,
+      output: `[USIM] PSC1 envelope: 1,116 bytes (pure) / 1,148 bytes (hybrid)`,
     },
     {
       id: 'sidf_decryption',
-      title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
+      title: '11. Network SIDF: Decrypt PSC1 Envelope (Decryption Point)',
       description:
-        'For Profile C, the SIDF re-derives the same combined shared secret and verifies integrity before decrypting. Authenticate-then-decrypt follows the ECIES pattern TS 33.501 Annex C uses for Profiles A and B: the MAC MUST pass before decryption begins.',
+        'For Profile C, the SIDF parses the received PSC1 bytes, decapsulates the ML-KEM ciphertext with its own private key, derives the ECDH secret from the transmitted ephemeral key (hybrid), and verifies the MAC over the whole message before decrypting. It uses nothing the sender derived. Authenticate-then-decrypt follows the ECIES pattern TS 33.501 Annex C uses for Profiles A and B: the MAC MUST pass before decryption begins.',
       code: `// SoftHSMv3 WASM: Profile C SIDF — Hybrid Deconcealment
+
+// 0. Parse ONLY the received PSC1 bytes: header, [ephPub], kemCiphertext, encMsin, tag
+const { ephPub, kemCiphertext, encMsin, tag, macInput } = parsePsc1(receivedBytes)
 
 // 1. ML-KEM-768 Decapsulation → Z_kem
 // → C_DecapsulateKey(CKM_ML_KEM)
@@ -659,8 +665,8 @@ const zKemBytes = hsm_extractKeyValue(M, hSession, zKemHandle)
 // PKCS#11 v3.2: CKM_ECDH1_DERIVE (0x1050) is used for both X25519 and P-256.
 // SoftHSMv3 routes to Montgomery DH because hnEccPrivHandle has CKA_KEY_TYPE=CKK_EC_MONTGOMERY.
 // → C_DeriveKey(CKM_ECDH1_DERIVE) — X25519 path selected by key type
-const ephPubBytes = hsm_extractECPoint(M, hSession, ephPubHandle)
-const zEcdhHandle = hsm_ecdhDerive(M, hSession, hnEccPrivHandle, ephPubBytes)
+// ephPub comes from the received bytes, not from a sender handle
+const zEcdhHandle = hsm_ecdhDerive(M, hSession, hnEccPrivHandle, ephPub)
 const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
 const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)
 
@@ -669,9 +675,9 @@ const kEnc = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA3
 const kMac = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA3_256)
 
 // 4. Authenticate-then-decrypt: verify MAC BEFORE decryption
-const macBytes = hsm_hmac(M, hSession, kMacHandle, encMsin, CKM_SHA3_256_HMAC)
-const recomputedTag = Array.from(macBytes.slice(0, 8)).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase()
-if (recomputedTag !== storedMacTag) throw new Error('MAC mismatch — SUCI rejected by SIDF')
+// The MAC covers every byte before the tag, not just the MSIN ciphertext
+const macBytes = hsm_hmac(M, hSession, kMacHandle, macInput, CKM_SHA3_256_HMAC)
+if (!timingSafeEqual(macBytes.slice(0, 8), tag)) throw new Error('MAC mismatch — envelope rejected by SIDF')
 
 // 5. Decrypt MSIN only after MAC passes (AES-256-CTR, zero IV)
 const msinBcd = hsm_aesDecrypt(M, hSession, kEncHandle, encMsin, zeroIv, 'ctr')

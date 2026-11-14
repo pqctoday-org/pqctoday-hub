@@ -103,8 +103,19 @@ export const CYCLONEDX_REGISTRY = {
    * 2026-08-15: fetched https://cyclonedx.org/schema/cryptography-defs.json —
    * upstream `lastUpdated` still 2026-02-24, still 96 families, and FN-DSA,
    * HQC, FrodoKEM and Classic McEliece all still absent.
+   *
+   * 2026-11-13: fetched it again. `lastUpdated` still reads 2026-02-24, but
+   * the data had changed: two new families (RSA-X931, SSH-KDF; 98 in all),
+   * the BLS curve pattern corrected from 13-381/13-377 to 12-381/12-377, and
+   * the GOST block cipher and MAC patterns corrected from GOST38147 to
+   * GOST28147. FN-DSA, HQC, FrodoKEM and Classic McEliece are still absent,
+   * and no mapped family changed; neither new family matches a mechanism
+   * listed here, so this mapping still holds. The vendored copy
+   * (cyclonedxCryptoRegistry.json, read by the Crypto Registry lesson's tools)
+   * is NOT refreshed here: the lesson and its Library row state 96 families,
+   * so refreshing it is a lesson update of its own.
    */
-  verifiedOn: '2026-08-15',
+  verifiedOn: '2026-11-13',
 } as const
 
 /**
@@ -441,6 +452,48 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     oids: [],
     quantumSafeNote:
       'Select hash output length for the required security goal and application profile. Classical collision bounds are not quantum resource estimates; SHA-384 alone does not establish 192-bit quantum collision strength. SHA-1 is broken classically.',
+  },
+  {
+    // Added 2026-11-13 for the construction layer (cryptoConstructions.ts):
+    // the AEAD construction's ChaCha20-Poly1305 instantiation (RFC 8439) needs
+    // a family to resolve to. Poly1305 is covered here because the landscape
+    // only ever meets it inside ChaCha20-Poly1305. Symmetric, so no
+    // ALGORITHM_REGISTRY members (SYMMETRIC_EXEMPT in the driftguard).
+    family: 'ChaCha20',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [],
+    cycloneDxFamilies: ['ChaCha20', 'Poly1305'],
+    oids: [],
+    quantumSafeNote:
+      'Symmetric stream cipher with a 256-bit key — not replaced; it keeps 128-bit post-quantum strength.',
+  },
+  {
+    // Added 2026-11-13 for the construction layer: the AEAD construction's
+    // Ascon instantiation (NIST SP 800-232, lightweight cryptography).
+    family: 'Ascon',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [],
+    cycloneDxFamilies: ['Ascon'],
+    oids: [],
+    quantumSafeNote:
+      'Lightweight symmetric AEAD (NIST SP 800-232) — not replaced; its 128-bit key gives the security level SP 800-232 states.',
+  },
+  {
+    // Added 2026-11-13 for the construction layer: TDEA still appears in
+    // payment key blocks and DUKPT. Named '3DES' exactly, because the private
+    // proof matcher has always keyed it '3DES' (the EdDSA naming lesson
+    // above: a family whose name differs from its matcher key fails every
+    // proof silently).
+    family: '3DES',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [],
+    cycloneDxFamilies: ['3DES'],
+    oids: [],
+    quantumSafeNote:
+      'Being retired for classical reasons (small block and key size), not because of quantum computers; payment systems move to AES key blocks and AES DUKPT.',
   },
 ]
 

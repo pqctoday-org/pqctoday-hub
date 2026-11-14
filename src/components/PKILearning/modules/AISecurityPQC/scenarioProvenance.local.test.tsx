@@ -186,7 +186,7 @@ describe('Authored AI scenario calculations and evidence boundaries', () => {
     )
     expect(
       screen.getByText(/1,088 bytes of ML-KEM-768 ciphertext plus 40 bytes/)
-    ).toHaveTextContent('1,128 bytes')
+    ).toHaveTextContent('1,128 bytes of data fields (not a complete envelope')
     expect(screen.getByText(/10,001,502/)).toHaveTextContent('2033 is Medium')
     expect(screen.getByText(/2,620,000 bytes/)).toHaveTextContent('ML-DSA-44 is category 2')
     expect(screen.queryByText(/NIST Level 3 security is achieved/)).not.toBeInTheDocument()

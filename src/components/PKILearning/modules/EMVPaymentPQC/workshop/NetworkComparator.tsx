@@ -13,6 +13,13 @@ import {
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { PAYMENT_NETWORKS } from '../data/paymentNetworkData'
+import {
+  compareCardCounts,
+  comparePurchaseVolume,
+  formatCardTotal,
+  formatUsdBillions,
+} from '../data/networkVolumeComparison'
+import { RADAR_RUBRIC, RADAR_SCORES_NOTICE } from '../data/networkRadarRubric'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   PQC_POSTURE_COLORS,
@@ -55,24 +62,6 @@ const COMPARE_ROWS = [
   'Public / Tentative Plan',
 ] as const
 
-/** Format large numbers for summary stats */
-function sumCards(networks: PaymentNetwork[]): string {
-  const total = networks.reduce((s, n) => s + n.cardsInCirculationNum, 0)
-  if (total >= 1_000_000_000) return `${(total / 1_000_000_000).toFixed(1)}B`
-  if (total >= 1_000_000) return `${(total / 1_000_000).toFixed(0)}M`
-  return total.toLocaleString()
-}
-
-/** Normalize the network-reported annual volumes to trillions. */
-export function sumVolumeTrillions(networks: PaymentNetwork[]): number {
-  return networks.reduce((sum, network) => {
-    const match = network.annualTransactionVolume.match(/\$([\d.]+)\s*(trillion|billion)/i)
-    if (!match) return sum
-    const value = Number.parseFloat(match[1])
-    return sum + (match[2].toLowerCase() === 'billion' ? value / 1_000 : value)
-  }, 0)
-}
-
 // ---------------------------------------------------------------------------
 // Radar Chart (SVG)
 // ---------------------------------------------------------------------------
@@ -96,9 +85,14 @@ function radarPoint(axisIndex: number, value: number, total: number): [number, n
   return [RADAR_CX + r * Math.cos(angle), RADAR_CY + r * Math.sin(angle)]
 }
 
-function radarPolygon(network: PaymentNetwork): string {
-  const scores = RADAR_AXES.map((a) => network.radarScores[a.key])
-  return scores.map((s, i) => radarPoint(i, s, scores.length).join(',')).join(' ')
+/** Points for the axes that have a score. An axis that is "not scored" is skipped, never plotted as 0. */
+function radarScoredPoints(network: PaymentNetwork): [number, number][] {
+  const points: [number, number][] = []
+  RADAR_AXES.forEach((axis, i) => {
+    const score = network.radarScores[axis.key]
+    if (score !== null) points.push(radarPoint(i, score, RADAR_AXES.length))
+  })
+  return points
 }
 
 const RadarChart: React.FC<{ networks: PaymentNetwork[] }> = ({ networks }) => {
@@ -161,16 +155,26 @@ const RadarChart: React.FC<{ networks: PaymentNetwork[] }> = ({ networks }) => {
       })}
 
       {/* Network polygons */}
-      {networks.map((net) => (
-        <polygon
-          key={net.id}
-          points={radarPolygon(net)}
-          fill={NETWORK_STROKE_COLORS[net.id] ?? '#888'}
-          fillOpacity={0.12}
-          stroke={NETWORK_STROKE_COLORS[net.id] ?? '#888'}
-          strokeWidth={1.5}
-        />
-      ))}
+      {networks.map((net) => {
+        const points = radarScoredPoints(net)
+        const color = NETWORK_STROKE_COLORS[net.id] ?? '#888'
+        return (
+          <g key={net.id}>
+            {points.length >= 3 && (
+              <polygon
+                points={points.map((pt) => pt.join(',')).join(' ')}
+                fill={color}
+                fillOpacity={0.12}
+                stroke={color}
+                strokeWidth={1.5}
+              />
+            )}
+            {points.map(([x, y], i) => (
+              <circle key={i} cx={x} cy={y} r={2.5} fill={color} />
+            ))}
+          </g>
+        )
+      })}
     </svg>
   )
 }
@@ -216,9 +220,16 @@ export const NetworkComparator: React.FC = () => {
   )
 
   // Summary stats
-  const totalCards = sumCards(filtered)
+  const unscoredForAll = useMemo(
+    () =>
+      RADAR_AXES.filter((axis) =>
+        PAYMENT_NETWORKS.every((n) => n.radarScores[axis.key] === null)
+      ).map((axis) => axis.label),
+    []
+  )
+  const cardComparison = useMemo(() => compareCardCounts(filtered), [filtered])
   const reviewedProfileCount = filtered.filter((n) => n.officialSources.length > 0).length
-  const totalVolume = sumVolumeTrillions(filtered)
+  const volumeComparison = useMemo(() => comparePurchaseVolume(filtered), [filtered])
 
   const compareValue = (net: PaymentNetwork, row: (typeof COMPARE_ROWS)[number]): string => {
     switch (row) {
@@ -243,9 +254,11 @@ export const NetworkComparator: React.FC = () => {
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         Reported network card counts may overlap; their sum is not a count of unique cards at risk.
-        The radar uses authored illustrative scores, not measured readiness, certification or a
-        validated ranking. Evaluate the criteria, scope, dates and source evidence with your own
-        tools before comparing real networks.
+        Each network&rsquo;s figures below carry their own date, unit and scope, and only figures
+        that describe the same thing for the same period are added together. The radar plots only
+        scores that have a sourced basis and leaves other axes unscored. It is not measured
+        readiness, certification or a validated ranking. Evaluate the criteria, scope, dates and
+        source evidence with your own tools before comparing real networks.
       </p>
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
@@ -289,8 +302,29 @@ export const NetworkComparator: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="glass-panel p-4 text-center">
           <CreditCard size={20} className="mx-auto text-primary mb-1" />
-          <div className="text-2xl font-bold text-foreground">{totalCards}</div>
+          <div className="text-2xl font-bold text-foreground">
+            {cardComparison.total === null
+              ? 'no compatible total'
+              : formatCardTotal(cardComparison.total)}
+          </div>
           <div className="text-xs text-muted-foreground">Gross Reported Network Card Counts</div>
+          <div className="text-xs text-muted-foreground">
+            At 31 Dec 2025 ({cardComparison.coverageLabel})
+          </div>
+          <div className="text-[11px] text-muted-foreground mt-1">
+            Only exact counts dated the same day are added. Cards and accounts are defined a little
+            differently and can overlap, so this is not a count of unique or at-risk cards.
+          </div>
+          {cardComparison.excluded.length > 0 && (
+            <ul className="text-[11px] text-muted-foreground mt-1 text-left list-disc list-inside">
+              {cardComparison.excluded.map((e) => (
+                <li key={e.id}>
+                  <span className="font-medium text-foreground">{e.name}</span> is not in the card
+                  total: {e.reason.charAt(0).toLowerCase() + e.reason.slice(1)}.
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="glass-panel p-4 text-center">
           <ShieldCheck size={20} className="mx-auto text-status-success mb-1" />
@@ -299,8 +333,28 @@ export const NetworkComparator: React.FC = () => {
         </div>
         <div className="glass-panel p-4 text-center">
           <TrendingUp size={20} className="mx-auto text-primary mb-1" />
-          <div className="text-2xl font-bold text-foreground">${totalVolume.toFixed(1)}T</div>
-          <div className="text-xs text-muted-foreground">Transaction Volume</div>
+          <div className="text-2xl font-bold text-foreground">
+            {volumeComparison.totalUsdBn === null
+              ? 'no compatible total'
+              : formatUsdBillions(volumeComparison.totalUsdBn)}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Purchase volume, {volumeComparison.periodLabel} ({volumeComparison.coverageLabel})
+          </div>
+          <div className="text-[11px] text-muted-foreground mt-1">
+            Gross purchases of the networks that report them on the same basis, in US dollars. Not
+            an all-network market total, unique spend or cryptographic risk.
+          </div>
+          {volumeComparison.excluded.length > 0 && (
+            <ul className="text-[11px] text-muted-foreground mt-1 text-left list-disc list-inside">
+              {volumeComparison.excluded.map((e) => (
+                <li key={e.id}>
+                  <span className="font-medium text-foreground">{e.name}</span> is not in the total:{' '}
+                  {e.reason.charAt(0).toLowerCase() + e.reason.slice(1)}.
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
@@ -365,6 +419,41 @@ export const NetworkComparator: React.FC = () => {
                 </span>
               </div>
 
+              {/* Dated, sourced figures */}
+              <div className="text-xs text-muted-foreground space-y-1">
+                <h5 className="font-medium text-secondary">Figures and their scope</h5>
+                <p>
+                  <span className="font-medium text-foreground">Cards:</span>{' '}
+                  {net.figures.cards.scope}
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Volume:</span>{' '}
+                  {net.figures.volumeNote}
+                </p>
+                {net.figures.otherFacts.map((fact) => (
+                  <p key={fact}>{fact}</p>
+                ))}
+                {net.figures.source && (
+                  <p>
+                    Source:{' '}
+                    <a
+                      href={net.figures.source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      {net.figures.source.label}
+                    </a>
+                    {net.figures.source.published
+                      ? `, published ${net.figures.source.published}`
+                      : net.figures.source.checked
+                        ? `, checked ${net.figures.source.checked}`
+                        : ''}
+                    {` (${net.figures.source.location})`}
+                  </p>
+                )}
+              </div>
+
               {/* Crypto summary */}
               <div className="text-xs text-muted-foreground space-y-1">
                 <div>
@@ -423,6 +512,49 @@ export const NetworkComparator: React.FC = () => {
         )}
       </div>
 
+      {/* Radar score rubric */}
+      <details className="glass-panel p-4">
+        <summary className="cursor-pointer text-sm font-semibold text-foreground">
+          How the six radar scores are assigned (authored rubric)
+        </summary>
+        <p className="text-xs text-muted-foreground mt-2">{RADAR_SCORES_NOTICE}</p>
+        <div className="overflow-x-auto mt-3">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-border text-left text-muted-foreground">
+                <th className="p-2">Criterion</th>
+                <th className="p-2">Question and direction</th>
+                <th className="p-2">0</th>
+                <th className="p-2">1</th>
+                <th className="p-2">3</th>
+                <th className="p-2">5</th>
+                <th className="p-2">Rule used</th>
+                <th className="p-2">Check</th>
+              </tr>
+            </thead>
+            <tbody>
+              {RADAR_RUBRIC.map((entry) => (
+                <tr key={entry.key} className="border-b border-border last:border-0 align-top">
+                  <td className="p-2 font-medium text-foreground">{entry.label}</td>
+                  <td className="p-2 text-muted-foreground">
+                    {entry.question} {entry.direction}
+                  </td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.zero}</td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.one}</td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.three}</td>
+                  <td className="p-2 text-muted-foreground">{entry.anchors.five}</td>
+                  <td className="p-2 text-muted-foreground">{entry.rule}</td>
+                  <td className="p-2 text-muted-foreground">{entry.evidenceToCheck}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-2">
+          Scores 2 and 4 sit between the anchors on either side.
+        </p>
+      </details>
+
       {/* Side-by-side comparison */}
       {compareMode && comparedNetworks.length >= 2 && (
         <div className="space-y-4">
@@ -472,16 +604,27 @@ export const NetworkComparator: React.FC = () => {
                     <td className="p-3 text-muted-foreground font-medium">{axis.label}</td>
                     {comparedNetworks.map((net) => (
                       <td key={net.id} className="p-3 text-foreground">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-primary"
-                              style={{ width: `${(net.radarScores[axis.key] / 5) * 100}%` }}
-                            />
+                        {net.radarScores[axis.key] === null ? (
+                          <div className="text-xs text-muted-foreground">
+                            <span className="font-medium text-foreground">not scored</span>
                           </div>
-                          <span className="text-xs text-muted-foreground w-5 text-right">
-                            {net.radarScores[axis.key]}/5
-                          </span>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-primary"
+                                style={{
+                                  width: `${((net.radarScores[axis.key] ?? 0) / 5) * 100}%`,
+                                }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground w-5 text-right">
+                              {net.radarScores[axis.key]}/5
+                            </span>
+                          </div>
+                        )}
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {net.radarBasis[axis.key]}
                         </div>
                       </td>
                     ))}
@@ -496,6 +639,14 @@ export const NetworkComparator: React.FC = () => {
             <h4 className="text-sm font-semibold text-foreground mb-3 text-center">
               Illustrative Score Overlay
             </h4>
+            <p className="text-xs text-muted-foreground mb-3 text-center">{RADAR_SCORES_NOTICE}</p>
+            <p className="text-xs text-muted-foreground mb-3 text-center">
+              Axes that are not scored are left out of the chart.{' '}
+              {unscoredForAll.length > 0 &&
+                `${unscoredForAll.join(', ')} ${unscoredForAll.length === 1 ? 'is' : 'are'} not scored for any network. `}
+              A network with fewer than three scored axes appears as points only, without an
+              outline.
+            </p>
             <RadarChart networks={comparedNetworks} />
             <div className="flex justify-center gap-4 mt-3">
               {comparedNetworks.map((net) => (

@@ -121,7 +121,7 @@ export const MATRIX_RULES = {
   parity:
     'Parity = both engines have a RECORDED PASS of the same registered case on the same artifact kind. Skipped, unsupported and not-run never count as a pass, and a recorded result counts only for the exact artifact (sha256) the mechanism inventory records. Rows with no such pair are "not established".',
   artifacts:
-    'Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — registered tests run in the browser), native, hardware. Native and hardware targets have not been run: they are "not run" and never counted as pass.',
+    'Artifact kinds are reported separately: wasm (the two shipped WebAssembly engines — the recorded registered-test runs execute in Node.js, not in a browser), native, hardware. Native and hardware targets have not been run: they are "not run" and never counted as pass.',
   dimensions: `Plan G-3 — two further columns per cell, from the same registered cases. Algorithm correctness = cases whose expected value is checked (acvts-issued, nist-reference, standard-kat, oracle, differential, round-trip; state-error cases excluded); covered when at least ${COVERED_MIN_CASES} distinct cases exist and one has an externally expected value. PKCS #11 API behaviour = cases that assert only PKCS #11 behaviour (behavior-only evidence: return codes, operation state, buffers, attributes) plus every state-error case; covered when at least ${COVERED_MIN_CASES} distinct cases exist and one is a state-error case. Neither column says a test passed.`,
   inventory:
     'Per engine and artifact kind the matrix counts, separately: advertised cells (the denominator — C_GetMechanismList × operation × parameter set × variant), registered cells (≥ 1 registered case, by evidence status), cells with a recorded pass, with a recorded fail, and with a recorded skip (the engine did not advertise a mechanism the case needs, so it was not run), unsupported cells (not advertised) and untested cells (advertised, no registered case). A skip is never a pass and is never folded into untested.',
@@ -323,7 +323,10 @@ export interface OpenGap {
   scope: string
   /** 'curated' = reviewed entry in open-gaps.json; 'generated' = derived from the matrix. */
   origin?: 'curated' | 'generated'
-  /** Capability cells (row × engine) this gap stands for in the denominators. */
+  /**
+   * Capability cells (row × engine) this gap counts. For a gap on advertised cells, these cells are
+   * inside the denominator; for the unsupported-cells gap they are outside it, counted separately.
+   */
   cells?: number
 }
 
@@ -1232,6 +1235,10 @@ export function buildCoverageMatrix(inp: MatrixInputs): BuildResult {
   return { matrix, gate: { errors, warnings } }
 }
 
+/** The title of the generated gap for unsupported (row × engine) cells: counted outside the denominator. */
+export const unsupportedCellsGapTitle = (count: number): string =>
+  `${count} unsupported (row × engine) cells counted separately, outside the denominator`
+
 /** J-7: one generated gap per mechanism with untested advertised cells, plus per-polarity aggregates. */
 function generatedGaps(rows: MatrixRow[]): OpenGap[] {
   const out: OpenGap[] = []
@@ -1301,7 +1308,7 @@ function generatedGaps(rows: MatrixRow[]): OpenGap[] {
   }
   out.push({
     id: 'unsupported-cells',
-    title: `${unsupported} unsupported (row × engine) cells kept in the denominator`,
+    title: unsupportedCellsGapTitle(unsupported),
     detail:
       'Cells one engine does not advertise (mechanism absent, CKF_ flag not set, or parameter set outside its key-size range) and declared capabilities no PKCS #11 mechanism can express. Listed per row in the matrix; never dropped.',
     planItem: 'J-7 / G-9',

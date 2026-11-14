@@ -57,16 +57,19 @@ async function suppressToast(page: Page) {
 
 /** Wait for the StatusBanner to leave the "loading" state and return body text. */
 async function waitForProviderInit(page: Page): Promise<string> {
-  await expect(
-    page.getByText(/Loading openssl\.wasm and registering pkcs11-provider/i).first()
-  ).not.toBeVisible({ timeout: PROVIDER_INIT_TIMEOUT })
+  // Wait for the status banner's own terminal phrase. Case-sensitive on purpose:
+  // the page also carries explanatory prose such as "must have the provider
+  // registered", which a case-insensitive match accepts before init finishes.
   await expect(
     page
       .getByText(
-        /Provider registered|Provider already registered|does not export pqctoday_cms_init|Provider init failed/i
+        /Provider registered|Provider already registered|does not export pqctoday_cms_init|Provider init failed/
       )
       .first()
-  ).toBeVisible({ timeout: 30_000 })
+  ).toBeVisible({ timeout: PROVIDER_INIT_TIMEOUT })
+  await expect(
+    page.getByText(/Loading openssl\.wasm and registering pkcs11-provider/i).first()
+  ).not.toBeVisible({ timeout: 30_000 })
   return page.evaluate(() => document.body.innerText)
 }
 

@@ -38,6 +38,7 @@ export const THIRD_PARTY: readonly string[] = [
   'public/monaco/',
   'public/flags/',
   'src/data/acvp/',
+  'src/data/attestation-samples/',
   'src/data/licenses/texts/',
   'src/vendor/softhsm-wasm/wasm/',
   'pqc-references/',

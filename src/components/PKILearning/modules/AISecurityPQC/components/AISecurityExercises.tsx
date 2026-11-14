@@ -54,7 +54,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Model',
     badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
     observe:
-      'The model wraps an independent 32-byte symmetric DEK: 1,088 bytes of ML-KEM-768 ciphertext plus 40 bytes of AES-KW wrapped DEK = 1,128 bytes. The ML-DSA-65 signature is 3,309 bytes against 64 bytes for the sample raw ECDSA P-256 signature. Compare these per-key and per-signature bytes with the 140 GB model file, then consider how many keys, models and operations your system needs. The time cells are authored scenario inputs, not a benchmark.',
+      'The model wraps an independent 32-byte symmetric DEK: 1,088 bytes of ML-KEM-768 ciphertext plus 40 bytes of AES-KW wrapped DEK = 1,128 bytes of data fields (not a complete envelope; a complete HKE1 project sample envelope for ML-KEM-768 is 1,191 bytes). The ML-DSA-65 signature is 3,309 bytes against 64 bytes for the sample raw ECDSA P-256 signature. Compare these per-key and per-signature bytes with the 140 GB model file, then consider how many keys, models and operations your system needs. The time cells are authored scenario inputs, not a benchmark.',
     config: { step: 2 },
   },
   {

@@ -891,7 +891,7 @@ function FrameworkCard({
                     <li key={ref} className="space-y-0.5">
                       <Link
                         to={href}
-                        className="text-accent hover:text-accent/80 underline underline-offset-2"
+                        className="text-accent hover:underline underline underline-offset-2"
                       >
                         {resolved.country
                           ? `${resolved.country} — ${resolved.org}`

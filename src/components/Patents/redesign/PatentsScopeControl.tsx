@@ -39,7 +39,7 @@ export function PatentsScopeControl({
           onClick={() => onChange(true)}
           className={`${SEG_BASE} ${
             pqcOnly
-              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+              ? 'bg-primary text-primary-foreground hover:text-primary-foreground hover:bg-primary/90'
               : 'border border-input text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -54,7 +54,7 @@ export function PatentsScopeControl({
           onClick={() => onChange(false)}
           className={`${SEG_BASE} ${
             !pqcOnly
-              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+              ? 'bg-primary text-primary-foreground hover:text-primary-foreground hover:bg-primary/90'
               : 'border border-input text-muted-foreground hover:text-foreground'
           }`}
         >

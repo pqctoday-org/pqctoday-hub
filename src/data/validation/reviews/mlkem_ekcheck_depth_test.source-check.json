@@ -1,8 +1,8 @@
 {
   "schema": "pqctoday.validation-source-check/v1",
   "item": "vector-source:mlkem_ekcheck_depth_test",
-  "subjectSha256": "155c1a799a4221aa0d2c0c58a78ae7b25f50ce9fd7765cfb5d844c89fa6c019a",
-  "fileSha256": "ec5a90d200271d015d40ecf410e7369c14907951fa74d05d18744210b0198ca5",
+  "subjectSha256": "0ae393b9cc0e0a591bf6ff067ee364b185b04238c2e20e4e87f92a9e1947d59b",
+  "fileSha256": "f392b30d2a122baf6152584a699bccd86c7146d021d59873066ea2cc392cc16c",
   "result": "match",
   "tool": "scripts/acvp/subset_reproduce.py",
   "command": "python3 scripts/acvp/subset_reproduce.py --id mlkem_ekcheck_depth_test --strict",
@@ -20,5 +20,5 @@
     "cases": 12,
     "values": 60
   },
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-13"
 }
