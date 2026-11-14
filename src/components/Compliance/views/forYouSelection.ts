@@ -19,6 +19,11 @@ export const DEVELOPER_ROWS = 12
 export const OPS_PHASE_LANE = 4
 export const OPS_TABLE_ROWS = 10
 
+/** The applicability results grouped by tier, as the Executive view and the default panel group them. */
+export function tierGroups<T>(results: ApplicabilityResult<T>[]) {
+  return groupByTier(results)
+}
+
 /** Applicable frameworks in the order the For You views list them: mandatory, recognised, cross-border, advisory. */
 export function applicableInTierOrder(
   results: ApplicabilityResult<ComplianceFramework>[]
@@ -251,7 +256,7 @@ export function forYouViewRows(
       const rows = sortedByConfidence(results, direction).map((r) =>
         frameworkRow('', r.item, r.tier, r.reason)
       )
-      return [...rows, ...derivedRows(derived)]
+      return [...rows, ...(forYouShowsDerived(persona) ? derivedRows(derived) : [])]
     }
     case 'curious':
       return ruleMakerBodies().map((b) => ({

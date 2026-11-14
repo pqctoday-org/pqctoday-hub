@@ -40,6 +40,25 @@ const derived: DerivedResult[] = [
 const ids = (rows: { id: string }[]) => rows.map((r) => r.id)
 
 describe('For You rows by persona', () => {
+  it.each(['architect', 'developer', 'ops', 'cert-engineer', 'curious'])(
+    '%s: derived frameworks are not listed (its view does not show them)',
+    (persona) => {
+      const rows = forYouViewRows(persona, results, derived)
+      expect(rows.some((r) => r.id === 'DERIVED-X')).toBe(false)
+      expect(rows.some((r) => r.section === 'reached through a trust path')).toBe(false)
+    }
+  )
+
+  it.each(['default', 'executive', 'grc', 'researcher'])(
+    '%s: derived frameworks are listed (its view shows them) and carry their reason',
+    (persona) => {
+      const rows = forYouViewRows(persona === 'default' ? null : persona, results, derived)
+      const last = rows[rows.length - 1]
+      expect(last.id).toBe('DERIVED-X')
+      expect(last.reason).toMatch(/trust path/)
+    }
+  )
+
   it('default panel: the applicable set in tier order, then the derived frameworks', () => {
     const rows = forYouViewRows(null, results, derived)
     expect(ids(rows.slice(0, -1))).toEqual(applicableInTierOrder(results).map((r) => r.item.id))
@@ -74,7 +93,7 @@ describe('For You rows by persona', () => {
   })
 
   it('architect: up to the per-region limit, in region order, each framework with its tier', () => {
-    const rows = forYouViewRows('architect', results, [])
+    const rows = forYouViewRows('architect', results, derived)
     const byRegion = frameworksByRegion(applicableFrameworks(results))
     const expected = REGION_ORDER.filter((r) => byRegion.has(r)).flatMap((region) =>
       (byRegion.get(region) ?? []).slice(0, ARCHITECT_PER_REGION).map((fw) => `${region}|${fw.id}`)
@@ -84,7 +103,7 @@ describe('For You rows by persona', () => {
   })
 
   it('developer: the first twelve applicable frameworks, in tier order', () => {
-    const rows = forYouViewRows('developer', results, [])
+    const rows = forYouViewRows('developer', results, derived)
     expect(ids(rows)).toEqual(
       applicableFrameworks(results)
         .slice(0, DEVELOPER_ROWS)
@@ -93,7 +112,7 @@ describe('For You rows by persona', () => {
   })
 
   it('ops: deadline lanes of the per-phase limit, in phase order, then the table of its limit', () => {
-    const rows = forYouViewRows('ops', results, [])
+    const rows = forYouViewRows('ops', results, derived)
     const byPhase = frameworksByPhase(applicableFrameworks(results))
     const lanes = [...byPhase.keys()].length
     const lanesRows = rows.filter((r) => r.section !== 'table')
@@ -113,7 +132,7 @@ describe('For You rows by persona', () => {
   })
 
   it('cert-engineer: only PQC-expecting certification schemes, in the engine order', () => {
-    const rows = forYouViewRows('cert-engineer', results, [])
+    const rows = forYouViewRows('cert-engineer', results, derived)
     const expected = results
       .map((r) => r.item)
       .filter((fw) => fw.bodyType === 'certification_body')
@@ -123,7 +142,7 @@ describe('For You rows by persona', () => {
   })
 
   it('curious: the six enforcement bodies with the most PQC-requiring frameworks, earliest first', () => {
-    const rows = forYouViewRows('curious', results, [])
+    const rows = forYouViewRows('curious', results, derived)
     const bodies = ruleMakerBodies()
     expect(ids(rows)).toEqual(bodies.map((b) => b.body))
     expect(rows.length).toBeLessThanOrEqual(6)

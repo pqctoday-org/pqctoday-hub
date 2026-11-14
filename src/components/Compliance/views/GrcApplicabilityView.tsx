@@ -16,11 +16,12 @@
  * because that is what most needs a direct source check before treating a
  * row as settled.
  */
+import { sortedByConfidence } from './forYouSelection'
 import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useMemo } from 'react'
 import { Link2, ShieldAlert, Calendar, BookOpen } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import { groupByTier, TIER_META, type UserProfile } from '../../../utils/applicabilityEngine'
+import { TIER_META, type UserProfile } from '../../../utils/applicabilityEngine'
 import { bindingChipFor, bindingChipMeta } from '../../../utils/bindingSplit'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
@@ -52,22 +53,9 @@ export function GrcApplicabilityView({
   const { profile, isEmpty, frameworks, library, timeline, derivedFrameworks } =
     useApplicabilityWithPaths(profileOverride)
 
-  const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
   // Flatten to a single array sorted by confidenceScore ascending — least
   // confident (most in need of a direct source check) leads.
-  const sorted = useMemo(() => {
-    const all = [
-      ...grouped.mandatory,
-      ...grouped.recognized,
-      ...grouped['cross-border'],
-      ...grouped.advisory,
-    ]
-    return all.slice().sort((a, b) => {
-      const cA = a.item.confidenceScore ?? Number.MAX_SAFE_INTEGER
-      const cB = b.item.confidenceScore ?? Number.MAX_SAFE_INTEGER
-      return cA - cB
-    })
-  }, [grouped])
+  const sorted = useMemo(() => sortedByConfidence(frameworks, 'ascending'), [frameworks])
 
   if (isEmpty) {
     return (
