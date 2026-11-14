@@ -804,7 +804,7 @@ export function CommandBuilder({
                 </span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">{cmdDef.description}</p>
-              <p className="text-xs text-accent/90 leading-relaxed">
+              <p className="text-xs text-accent leading-relaxed">
                 <span className="font-semibold">Why: </span>
                 {cmdDef.why}
               </p>

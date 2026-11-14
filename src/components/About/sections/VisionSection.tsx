@@ -274,7 +274,7 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
         <Button
           variant="ghost"
           onClick={() => setIsJourneyModalOpen(true)}
-          className="inline-flex items-center gap-2 text-accent hover:text-accent/80 group"
+          className="inline-flex items-center gap-2 text-accent hover:underline group"
         >
           <Sparkles size={16} className="group-hover:animate-pulse" />
           <span className="font-semibold underline decoration-2 underline-offset-4">

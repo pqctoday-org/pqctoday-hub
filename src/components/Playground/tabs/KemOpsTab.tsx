@@ -843,7 +843,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 }}
                 disabled={Boolean(decUnavailable) || loading}
                 title={decUnavailable ?? ''}
-                className="w-full py-3 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
+                className="w-full py-3 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Decapsulate
               </Button>

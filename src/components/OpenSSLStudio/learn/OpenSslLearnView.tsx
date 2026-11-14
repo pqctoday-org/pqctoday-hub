@@ -390,7 +390,7 @@ export function OpenSslLearnView({
                 <AlertTriangle size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
                 <span>
                   The OpenSSL WASM engine failed to load, so steps can&apos;t run in this session.
-                  <span className="block text-destructive/70 mt-0.5">{loadError}</span>
+                  <span className="block text-destructive mt-0.5">{loadError}</span>
                   <Button
                     variant="ghost"
                     type="button"

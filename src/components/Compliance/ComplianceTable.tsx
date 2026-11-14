@@ -1266,7 +1266,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                   variant="link"
                                   size="sm"
                                   onClick={() => setSourceFilters([])}
-                                  className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                  className="w-full text-xs text-center text-destructive hover:underline py-1 border-t border-border mt-1 pt-2"
                                 >
                                   Clear
                                 </Button>
@@ -1393,7 +1393,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                     variant="link"
                                     size="sm"
                                     onClick={() => setCategoryFilters([])}
-                                    className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                    className="w-full text-xs text-center text-destructive hover:underline py-1 border-t border-border mt-1 pt-2"
                                   >
                                     Clear
                                   </Button>
@@ -1475,7 +1475,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                     variant="link"
                                     size="sm"
                                     onClick={() => setMigrateCatFilters([])}
-                                    className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                    className="w-full text-xs text-center text-destructive hover:underline py-1 border-t border-border mt-1 pt-2"
                                   >
                                     Clear
                                   </Button>
@@ -1585,7 +1585,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                     setVendorFilters([])
                                     setVendorSearch('')
                                   }}
-                                  className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                  className="w-full text-xs text-center text-destructive hover:underline py-1 border-t border-border mt-1 pt-2"
                                 >
                                   Clear
                                 </Button>
@@ -1667,7 +1667,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                   variant="link"
                                   size="sm"
                                   onClick={() => setPqcFilters([])}
-                                  className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                  className="w-full text-xs text-center text-destructive hover:underline py-1 border-t border-border mt-1 pt-2"
                                 >
                                   Clear
                                 </Button>
