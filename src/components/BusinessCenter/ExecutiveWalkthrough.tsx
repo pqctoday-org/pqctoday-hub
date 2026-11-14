@@ -18,7 +18,7 @@ import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboard
 // don't exist; see the plan's §3.1 correction.
 const WALKTHROUGH_TOOL_IDS = ['board-pitch', 'roi-calculator', 'policy-generator']
 
-export function ExecutiveWalkthrough() {
+export function ExecutiveWalkthrough({ onJumpToZoneMap }: { onJumpToZoneMap: () => void }) {
   const dismiss = useCommandCenterOnboardingStore((s) => s.dismissExecWalkthrough)
   const steps = WALKTHROUGH_TOOL_IDS.map((id) => BUSINESS_TOOLS.find((t) => t.id === id)).filter(
     (t): t is (typeof BUSINESS_TOOLS)[number] => Boolean(t)
@@ -39,8 +39,16 @@ export function ExecutiveWalkthrough() {
       </Button>
       <h2 className="text-base font-bold text-foreground mb-1">Board pack in 3 steps</h2>
       <p className="text-sm text-muted-foreground mb-4 max-w-lg">
-        The fastest path to a board-ready package — build these in order, or jump straight to the
-        full zone map below.
+        The fastest path to a board-ready package — build these in order, or{' '}
+        <Button
+          variant="link"
+          size="sm"
+          onClick={onJumpToZoneMap}
+          className="h-auto p-0 align-baseline text-sm font-normal"
+        >
+          jump straight to the full zone map below
+        </Button>
+        .
       </p>
       <div className="grid gap-3 sm:grid-cols-3">
         {steps.map((tool, i) => {

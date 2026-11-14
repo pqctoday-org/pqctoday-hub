@@ -4,6 +4,8 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router'
 import { BusinessCenterView } from './BusinessCenterView'
 import '@testing-library/jest-dom'
+import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_ORDER } from '@/data/cswp39ZoneData'
+import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -485,3 +487,127 @@ describe('BusinessCenterView ?zone= deep link', () => {
     expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
   })
 })
+
+// An empty profile (nothing saved, not started) that arrives on a zone link, or
+// that opens the zone map on purpose, sees the zone map rather than only the
+// welcome screen.
+describe('BusinessCenterView empty profile with zone links', () => {
+  const WELCOME = 'Welcome to your PQC Command Center'
+
+  function renderEmptyAt(url: string) {
+    return render(
+      <MemoryRouter initialEntries={[url]}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'not-started'
+    mockAssessmentStore.industry = ''
+    mockAssessmentStore.country = ''
+    mockAssessmentStore.completedAt = null
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = 'curious'
+    useCommandCenterOnboardingStore.setState({ hasSeenExecWalkthrough: true })
+    window.history.replaceState(null, '', '/')
+  })
+
+  afterEach(() => {
+    window.history.replaceState(null, '', '/')
+  })
+
+  it('shows the zone map with the linked zone open for ?zone= on an empty profile', () => {
+    renderEmptyAt('/business?zone=mitigation')
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
+  })
+
+  it('keeps the zone map after ?zone= is stripped from the URL', () => {
+    renderEmptyAt('/business?zone=mitigation')
+
+    // The param is removed by the page; the map and the open zone stay.
+    expect(screen.getByTestId('location-search')).not.toHaveTextContent('zone=')
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+  })
+
+  it('shows the zone map with the linked zone open for a #zone- hash on an empty profile', () => {
+    window.history.replaceState(null, '', '/business#zone-mitigation')
+    renderEmptyAt('/business#zone-mitigation')
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalled()
+  })
+
+  it('maps a legacy #step- hash to its zone on an empty profile', () => {
+    window.history.replaceState(null, '', '/business#step-implement')
+    renderEmptyAt('/business#step-implement')
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Migration' })).toBeInTheDocument()
+  })
+
+  it('keeps the welcome screen for a zone link that names no real zone', () => {
+    window.history.replaceState(null, '', '/business#zone-nonsense')
+    renderEmptyAt('/business?zone=bogus')
+
+    expect(screen.getByText(WELCOME)).toBeInTheDocument()
+  })
+
+  it('shows the welcome screen with no link, and "Explore the six zones" shows the six zones', () => {
+    renderEmptyAt('/business')
+
+    expect(screen.getByText(WELCOME)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Explore the six zones' }))
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    for (const zone of CSWP39_ZONE_ORDER) {
+      // eslint-disable-next-line security/detect-object-injection -- zone is a ZoneId, a closed union
+      const title = CSWP39_ZONE_DETAILS[zone].title
+      expect(
+        screen.getByRole('button', {
+          name: (name) => name === `Expand ${title}` || name === `Collapse ${title}`,
+        })
+      ).toBeInTheDocument()
+    }
+  })
+
+  it('still switches zones after the map has been opened from the welcome screen', () => {
+    renderEmptyAt('/business')
+    fireEvent.click(screen.getByRole('button', { name: 'Explore the six zones' }))
+
+    // Basic density opens Assets by default; a click moves the open zone.
+    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Governance' }))
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Assets' })).toBeInTheDocument()
+  })
+
+  it('still switches zones after a ?zone= link opened the map', () => {
+    renderEmptyAt('/business?zone=mitigation')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Governance' }))
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Mitigation' })).toBeInTheDocument()
+  })
+
+  it('the walkthrough jump link reveals the zone map on an empty profile', () => {
+    useCommandCenterOnboardingStore.setState({ hasSeenExecWalkthrough: false })
+    renderEmptyAt('/business')
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'jump straight to the full zone map below' })
+    )
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
+  })
+})
+

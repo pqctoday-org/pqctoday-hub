@@ -8,6 +8,7 @@ import {
   BookOpen,
   Download,
   Filter,
+  Layers,
   X,
   PlayCircle,
 } from 'lucide-react'
@@ -32,7 +33,8 @@ import {
   CSWP39_ZONE_ORDER,
   CSWP39_ZONE_DETAILS,
   CSWP39_ZONE_STYLES,
-  legacyToZoneId,
+  zoneFromHash,
+  zoneFromQueryParam,
   type ZoneId,
 } from '@/data/cswp39ZoneData'
 import { usePhaseFilter } from '@/hooks/usePhaseFilter'
@@ -94,7 +96,11 @@ function topToolCountFor(persona: PersonaId | null): number {
   return 3
 }
 
-function WelcomeState() {
+// Id of the zone map (the strategic plan). "Explore the six zones" and the
+// walkthrough's jump link scroll here once the map is shown.
+const ZONE_MAP_ANCHOR = 'command-center-zone-map'
+
+function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const intro = commandCenterIntroFor(selectedPersona)
@@ -179,6 +185,10 @@ function WelcomeState() {
       )}
 
       <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button variant="outline" onClick={onExploreZones}>
+          <Layers size={16} className="mr-2" />
+          Explore the six zones
+        </Button>
         <Button variant="outline" onClick={() => navigate('/compliance?tab=compliance')}>
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance
@@ -378,11 +388,10 @@ export function BusinessCenterView() {
   // ?zone=<id> deep-link (used by the Workshop Video Mode and external links).
   // Only valid CSWP-39 zone ids are honoured; anything else is ignored.
   // Resolved synchronously during render so we avoid set-state-in-effect.
-  const zoneFromQuery = useMemo<ZoneId | null>(() => {
-    const requested = searchParams.get('zone')
-    if (!requested) return null
-    return CSWP39_ZONE_ORDER.includes(requested as ZoneId) ? (requested as ZoneId) : null
-  }, [searchParams])
+  const zoneFromQuery = useMemo<ZoneId | null>(
+    () => zoneFromQueryParam(searchParams.get('zone')),
+    [searchParams]
+  )
 
   useEffect(() => {
     if (!zoneFromQuery) return
@@ -398,9 +407,28 @@ export function BusinessCenterView() {
   // Derived during render (not in an effect) so the zone is already open in the
   // first committed frame, which the scroll effect above relies on.
   const [appliedZoneQuery, setAppliedZoneQuery] = useState<ZoneId | null>(null)
+
+  // Whether the full zone map shows on an empty profile. A zone link (?zone=, or a
+  // #zone-/#step- hash naming a real zone) or "Explore the six zones" turns it on.
+  // It is state captured at arrival, so removing ?zone= from the URL below does not
+  // send the page back to the welcome screen.
+  const [showZoneMap, setShowZoneMap] = useState<boolean>(
+    () => zoneFromQuery !== null || zoneFromHash(window.location.hash) !== null
+  )
+  // Scroll request, handled after the map is in the DOM. A new object each time,
+  // so a repeat request for the same target still scrolls.
+  const [scrollRequest, setScrollRequest] = useState<{ id: string } | null>(null)
+  const requestZoneMap = useCallback(() => {
+    setShowZoneMap(true)
+    setScrollRequest({ id: ZONE_MAP_ANCHOR })
+  }, [])
+
   if (zoneFromQuery !== appliedZoneQuery) {
     setAppliedZoneQuery(zoneFromQuery)
-    if (zoneFromQuery) setOpenZone(zoneFromQuery)
+    if (zoneFromQuery) {
+      setOpenZone(zoneFromQuery)
+      setShowZoneMap(true)
+    }
   }
 
   // Remove the consumed param (other params kept) so later user navigation is
@@ -423,21 +451,27 @@ export function BusinessCenterView() {
   // `legacyToZoneId`.
   useEffect(() => {
     const remapHash = () => {
-      const hash = window.location.hash
-      const match = hash.match(/^#(?:step|section|zone)-([a-z-]+)$/)
-      if (!match) return
-      const zoneId = legacyToZoneId(match[1])
-      const target = document.getElementById(`zone-${zoneId}`)
-      if (target) {
-        window.history.replaceState(null, '', `#zone-${zoneId}`)
-        setOpenZone(zoneId)
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
+      const zoneId = zoneFromHash(window.location.hash)
+      if (!zoneId) return
+      window.history.replaceState(null, '', `#zone-${zoneId}`)
+      setOpenZone(zoneId)
+      setShowZoneMap(true)
+      setScrollRequest({ id: `zone-${zoneId}` })
     }
     remapHash()
     window.addEventListener('hashchange', remapHash)
     return () => window.removeEventListener('hashchange', remapHash)
   }, [])
+
+  // Scrolls to the requested target once it is rendered. Declared after the
+  // effects that set a request, so a request made on mount is handled in the
+  // same commit.
+  useEffect(() => {
+    if (!scrollRequest) return
+    document
+      .getElementById(scrollRequest.id)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [scrollRequest])
 
   const handleZoneSelect = useCallback((zone: ZoneId) => {
     logEvent('Business Center', 'Zone Select', personaLabel(zone))
@@ -626,7 +660,9 @@ export function BusinessCenterView() {
       {/* "Board pack in 3 steps" — shown once on an executive's first visit
           (design_handoff_2026_pages/IMPLEMENTATION-PLAN-COMMAND-CENTER-2026-
           08-01.md §3.1); the zone map below is unaffected either way. */}
-      {selectedPersona === 'executive' && !hasSeenExecWalkthrough && <ExecutiveWalkthrough />}
+      {selectedPersona === 'executive' && !hasSeenExecWalkthrough && (
+        <ExecutiveWalkthrough onJumpToZoneMap={requestZoneMap} />
+      )}
 
       {/* ?phase=<id> overlay — when a phase is active, replace the zone body
            with a compact phase header + the tools narrowed to that phase. When
@@ -667,8 +703,8 @@ export function BusinessCenterView() {
           {/* Page-level empty state — bypassed when a workshop is active so the
            cue tour can target zone panels + artifact placeholders even when
            the user hasn't yet completed an assessment. */}
-          {metrics.isFullyEmpty && !workshopActive ? (
-            <WelcomeState />
+          {metrics.isFullyEmpty && !workshopActive && !showZoneMap ? (
+            <WelcomeState onExploreZones={requestZoneMap} />
           ) : (
             <div className="space-y-6">
               {/* HERO: personalised next steps — first content slot. Cap by density
@@ -683,11 +719,13 @@ export function BusinessCenterView() {
               {showSectionsNav(density) && <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />}
 
               {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
-              <CommandCenterStrategicPlan
-                metrics={metrics}
-                activeZone={effectiveOpenZone}
-                onZoneSelect={handleZoneSelect}
-              />
+              <div id={ZONE_MAP_ANCHOR}>
+                <CommandCenterStrategicPlan
+                  metrics={metrics}
+                  activeZone={effectiveOpenZone}
+                  onZoneSelect={handleZoneSelect}
+                />
+              </div>
 
               {/* Per-zone artifact panels — left sidebar nav (desktop) + scrollable tab bar (mobile) */}
               <div>
