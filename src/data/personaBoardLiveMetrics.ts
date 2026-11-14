@@ -60,6 +60,19 @@ export const REGULATORY_SOURCE_COVERAGE_PHRASE =
   ].join('. ') +
   '. Metadata coverage, not independent review.'
 
+/**
+ * The same coverage, short enough for a proof chip (2026-11-14). The full
+ * phrase above is two sentences — 222 characters on the day this was added —
+ * and was sitting in small pill-shaped chips on ten role boards. Boards
+ * switch to `{regulatory_checking_dates_chip}` through the reviewed
+ * role-board edit route; the full phrase stays available as its own token.
+ */
+export const REGULATORY_SOURCE_COVERAGE_CHIP =
+  `Checking dates on ${REGULATORY_SOURCE_DATE_COVERAGE.timeline.datedRows}/` +
+  `${REGULATORY_SOURCE_DATE_COVERAGE.timeline.totalRows} timeline and ` +
+  `${REGULATORY_SOURCE_DATE_COVERAGE.compliance.datedRows}/` +
+  `${REGULATORY_SOURCE_DATE_COVERAGE.compliance.totalRows} compliance rows`
+
 /** Compatibility newest-date value; never use alone as a whole-corpus review claim. */
 export const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {
   const latest = [

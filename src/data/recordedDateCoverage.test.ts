@@ -5,6 +5,7 @@ import { expandTokens } from '../../scripts/lib/roleBoardTokens'
 import {
   REGULATORY_SOURCE_DATE_COVERAGE,
   REGULATORY_SOURCE_COVERAGE_PHRASE,
+  REGULATORY_SOURCE_COVERAGE_CHIP,
 } from './personaBoardLiveMetrics'
 import { EXEC_MOSCA_FOOTNOTE, EXEC_EXPOSURE, EXEC_MOSCA_START_BY_YEAR } from './personaConfig'
 import { getCrqcForecast } from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
@@ -59,6 +60,14 @@ describe('recorded checking-date coverage', () => {
       expandTokens('{regulatory_verified_phrase}', { REGULATORY_SOURCE_COVERAGE_PHRASE })
     ).toBe(REGULATORY_SOURCE_COVERAGE_PHRASE)
     expect(expandTokens('{regulatory_verified_phrase}', {})).toContain('coverage is unavailable')
+    // Chip form: same counts, short enough for a pill.
+    expect(
+      expandTokens('{regulatory_checking_dates_chip}', { REGULATORY_SOURCE_COVERAGE_CHIP })
+    ).toBe(
+      `Checking dates on ${timeline.datedRows}/${timeline.totalRows} timeline and ` +
+        `${compliance.datedRows}/${compliance.totalRows} compliance rows`
+    )
+    expect(REGULATORY_SOURCE_COVERAGE_CHIP.length).toBeLessThan(80)
     expect(expandTokens('{regulatory_verified_phrase}', {})).not.toContain(
       'verified against source'
     )
