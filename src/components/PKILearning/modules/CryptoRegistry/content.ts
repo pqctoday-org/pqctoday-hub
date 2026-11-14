@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-registry',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-14',
 
   standards: [
     getStandard('CycloneDX-Cryptography-Registry'),
