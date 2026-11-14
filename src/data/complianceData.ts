@@ -302,10 +302,10 @@ function classifyDeadline(deadline: string, year: number | undefined): DeadlineP
  * applying: an empty list, so it never shows as a tag.
  */
 export function parseCswp39Tags(raw: string | undefined | null): string[] | undefined {
-  const text = (raw ?? '').trim()
-  if (!text) return undefined
-  if (text.toLowerCase() === 'none') return []
-  return splitSemicolon(text).filter((tag) => tag.length > 0)
+  // Split first: "none", "none;" and "none;cswp39:x" all name the same thing as a whole cell.
+  const pieces = splitSemicolon(raw ?? '').filter((piece) => piece.length > 0)
+  if (pieces.length === 0) return undefined
+  return pieces.filter((piece) => piece.toLowerCase() !== 'none')
 }
 
 /** The line a view shows where the tags would be: null when there are tags to show as chips. */

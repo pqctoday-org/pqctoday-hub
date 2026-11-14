@@ -20,9 +20,14 @@ vi.mock('@/components/ui/RevisionDrilldownPanel', () => ({
 
 vi.mock('@/hooks/useRevisions', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks/useRevisions')>()
+  const revisions = [
+    { domain: 'timeline', record_ids: ['EVT-EU-2026-001'], pr_number: 1 },
+    { domain: 'timeline', record_ids: ['EVT-OTHER'], pr_number: 2 },
+    { domain: 'compliance', record_ids: ['EVT-EU-2026-001'], pr_number: 3 },
+  ]
   return {
     ...actual,
-    useRevisions: () => ({ revisions: [], isLoading: false }),
+    useRevisions: () => ({ revisions, isLoading: false }),
   }
 })
 
@@ -68,6 +73,9 @@ describe('timeline record: binding force, status and revision history', () => {
     expect(last).toBeDefined()
     expect(last.domain).toBe('timeline')
     expect(last.entityId).toBe('EVT-EU-2026-001')
+    // Only this event's timeline revision, not another event's or a compliance row's.
+    expect(last.revisions).toHaveLength(1)
+    expect(last.revisions[0]).toMatchObject({ domain: 'timeline', pr_number: 1 })
   })
 
   it('offers no revision history for a row without an event id', () => {

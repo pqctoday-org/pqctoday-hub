@@ -34,6 +34,7 @@ describe('timelineEventToRow', () => {
     expect(row.complianceRefs).toEqual(['EU-REC-2024-1101'])
     expect(row.org).toBe('ENISA')
     expect(row.countryName).toBe('European Union')
+    expect(row.status).toBe('Active')
   })
 
   it('leaves a field absent when the event has none', () => {

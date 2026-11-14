@@ -16,6 +16,17 @@ describe('parseCswp39Tags', () => {
     expect(parseCswp39Tags('NONE')).toEqual([])
   })
 
+  it('drops none wherever it appears in the cell, and keeps any real tags', () => {
+    expect(parseCswp39Tags('none;')).toEqual([])
+    expect(parseCswp39Tags('none; ')).toEqual([])
+    expect(parseCswp39Tags('none;cswp39:governance')).toEqual(['cswp39:governance'])
+  })
+
+  it('a cell of separators only is not classified yet', () => {
+    expect(parseCswp39Tags(';')).toBeUndefined()
+    expect(parseCswp39Tags(' ; ')).toBeUndefined()
+  })
+
   it('splits tags on semicolons and drops empty pieces', () => {
     expect(parseCswp39Tags('cswp39:governance;cswp39:inventory')).toEqual([
       'cswp39:governance',
