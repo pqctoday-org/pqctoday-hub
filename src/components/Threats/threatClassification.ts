@@ -313,18 +313,17 @@ const FAMILY_TIERS: [RegExp, ShorTier][] = [
   ],
   [/(?<![\w-])(p-?521|rsa-?4096)\b/, 'near'],
   [/(?<![\w-])(rsa|dsa|dh|diffie|p-?384)\b/, 'imminent'],
-  // Generic wording for the classical public-key estate ("public-key
-  // cryptography", "asymmetric algorithms", and NIST IR 8547's
-  // "quantum-vulnerable", which it uses for public-key algorithms). That estate includes RSA-2048 and P-256, so its most urgent
-  // member is a lower-resource Shor target. Post-quantum / quantum-resistant
-  // public-key wording is excluded — it names the fix, not the risk.
-  [
-    /(?<!(?:post-quantum|quantum-resistant|quantum-safe|pqc)[\s-])(?<![\w-])(public[\s-]key|asymmetric|quantum[\s-]vulnerable)\b/,
-    'imminent',
-  ],
   [/(?<![\w-])(aes|sha-?\d|sha3|hmac|symmetric)\b/, 'grover'],
   [/\b(ml-kem|ml-dsa|slh-dsa|fn-dsa|kyber|dilithium|sphincs|falcon|hqc)\b/, 'safe'],
 ]
+
+// Generic wording for the classical public-key estate ("public-key
+// cryptography", "asymmetric algorithms", and NIST IR 8547's
+// "quantum-vulnerable", which it uses for public-key algorithms). That estate includes RSA-2048 and P-256, so its most urgent
+// member is a lower-resource Shor target. Post-quantum / quantum-resistant
+// public-key wording is excluded — it names the fix, not the risk.
+const GENERIC_PUBLIC_KEY =
+  /(?<!(?:post-quantum|quantum-resistant|quantum-safe|pqc)[\s-])(?<![\w-])(public[\s-]key|asymmetric|quantum[\s-]vulnerable)\b/
 
 /**
  * Grade a whole threat by the *most urgent* algorithm it puts at risk, read
@@ -362,6 +361,14 @@ export function getShorTier(threat: ThreatItem): ShorTier {
   for (const [re, tier] of FAMILY_TIERS) {
     // eslint-disable-next-line security/detect-object-injection
     if (re.test(text) && TIER_RANK[tier] > TIER_RANK[best]) best = tier
+  }
+  // Generic public-key wording is graded only when nothing more specific was:
+  // next to a PQC algorithm alone ("ML-KEM-768 public-key encryption") it may
+  // describe the fix, so the row is Unscored for manual review — neither
+  // "Standardized PQC" nor a Shor target.
+  if (GENERIC_PUBLIC_KEY.test(text)) {
+    if (best === 'unknown') return 'imminent'
+    if (best === 'safe') return 'unknown'
   }
   return best
 }

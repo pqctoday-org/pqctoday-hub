@@ -210,6 +210,16 @@ describe('getShorTier (Threats #4)', () => {
     }
   })
 
+  it('leaves generic public-key wording next to a PQC algorithm alone Unscored, not a Shor target', () => {
+    for (const cryptoAtRisk of [
+      'ML-KEM-768 public-key encryption',
+      'lattice-based public-key KEM such as Kyber',
+      'ML-KEM asymmetric key encapsulation',
+    ]) {
+      expect(getShorTier(threat({ cryptoAtRisk })), cryptoAtRisk).toBe('unknown')
+    }
+  })
+
   it('does not read post-quantum public-key wording as a Shor target', () => {
     expect(
       getShorTier(threat({ cryptoAtRisk: 'post-quantum public-key algorithms ML-KEM-768' }))

@@ -161,6 +161,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'protocol',
       'threattab',
       'type',
+      'cross',
     ],
     description: 'Threats',
   },

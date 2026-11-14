@@ -151,6 +151,7 @@ const EXPECTED_KEYS: Record<string, readonly string[]> = {
     'protocol',
     'threattab',
     'type',
+    'cross',
   ],
   '/leaders': [
     'leader',

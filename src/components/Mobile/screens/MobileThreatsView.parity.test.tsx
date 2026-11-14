@@ -8,6 +8,7 @@ import '@testing-library/jest-dom'
 import { knownThreatIndustries, threatsData } from '@/data/threatsData'
 import { compareThreats } from '@/components/Threats/threatSort'
 import { MobileThreatsView } from './MobileThreatsView'
+import { getTrustScore } from '@/data/trustScore'
 
 const renderView = (url: string) =>
   render(
@@ -38,5 +39,21 @@ describe('MobileThreatsView ordering and sector notices', () => {
     expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent(
       `No published threats for ${awaiting[0]} yet`
     )
+  })
+
+  const notAuthoritative = threatsData.find(
+    (t) => getTrustScore('threats', t.threatId)?.tier !== 'Authoritative'
+  )
+  it.runIf(!!notAuthoritative)(
+    'a ?tier= link that hides the linked threat is widened, and listed',
+    () => {
+      renderView(`/threats?id=${notAuthoritative!.threatId}&tier=Authoritative`)
+      expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(/trust-tier/)
+    }
+  )
+
+  it('lists a link\'s trust tier in the "From your link" strip', () => {
+    renderView('/threats?tier=Authoritative')
+    expect(screen.getByText(/Trust tier: Authoritative/)).toBeInTheDocument()
   })
 })

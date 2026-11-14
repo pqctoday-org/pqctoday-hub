@@ -141,7 +141,7 @@ const CROSS_INDUSTRY_COUNT = threatsData.filter((t) => t.industry === CROSS_INDU
 
 /** The notice for an `?industry=` value naming sectors the page knows but
  *  has no published threat for (every record drafted, awaiting a source);
- *  null when every named sector has published threats, or none is known. */
+ *  null when any named sector has published threats, or none is known. */
 function awaitingSourceNotice(param: string | null): string | null {
   if (!param) return null
   const known = resolveIndustryParam(
@@ -149,7 +149,12 @@ function awaitingSourceNotice(param: string | null): string | null {
     [...knownThreatIndustries].map((industry) => ({ industry }))
   )
   const awaiting = known.filter((ind) => !threatsData.some((t) => t.industry === ind))
-  return awaiting.length > 0 ? sectorAwaitingSourceMessage(awaiting) : null
+  // Only when NONE of the named sectors has a published threat — the case the
+  // page used to answer by silently showing everything. A mixed list (Energy's
+  // links name Water / Wastewater too) filters to the published ones as asked.
+  return awaiting.length > 0 && awaiting.length === known.length
+    ? sectorAwaitingSourceMessage(awaiting)
+    : null
 }
 
 export const ThreatsDashboard: React.FC<{
@@ -298,8 +303,17 @@ export const ThreatsDashboard: React.FC<{
   // A link or sector pick that names only sectors with no published threat
   // yet (all drafted, awaiting a source) says so instead of silently showing
   // every industry.
-  const [sectorNotice, setSectorNotice] = useState<string | null>(() =>
+  const [sectorNotice, setSectorNoticeState] = useState<string | null>(() =>
     awaitingSourceNotice(searchParams.get('industry'))
+  )
+  // Whether the notice describes the URL's sectors (vs. a pick or the store).
+  const sectorNoticeFromUrlRef = useRef(sectorNotice !== null)
+  const setSectorNotice = useCallback(
+    (next: string | null | ((prev: string | null) => string | null), fromUrl = false) => {
+      setSectorNoticeState(next)
+      sectorNoticeFromUrlRef.current = fromUrl
+    },
+    []
   )
 
   // The reader's sector set in the top bar AFTER the page loaded used to be
@@ -349,9 +363,12 @@ export const ThreatsDashboard: React.FC<{
       }
       // Only when ?industry= itself changed, so a dismissed notice stays
       // dismissed while the reader changes other filters.
-      if (indParam !== prevIndustryParamRef.current) setSectorNotice(awaitingSourceNotice(indParam))
+      if (indParam !== prevIndustryParamRef.current)
+        setSectorNotice(awaitingSourceNotice(indParam), true)
     } else if (prevIndustryParamRef.current) {
-      setSectorNotice(null)
+      // Drop a notice about the sectors the URL named; keep one about a sector
+      // just picked on the exposure card (that pick is what removed ?industry=).
+      setSectorNotice((prev) => (prev && sectorNoticeFromUrlRef.current ? null : prev))
       // The URL had an industry and no longer does: the page shows every
       // industry again instead of keeping a filter the address bar dropped.
       setSelectedIndustries((prev) => (prev.length > 0 ? [] : prev))
@@ -707,7 +724,11 @@ export const ThreatsDashboard: React.FC<{
     if (!key) return undefined
     for (const [sector, mapped] of Object.entries(INDUSTRY_TO_THREATS_MAP)) {
       const present = mapped.filter((ind) => threatsData.some((d) => d.industry === ind))
-      if (present.length > 0 && present.join('|') === key) return sector
+      // The sector's own label (first in its map) must be among them, so a lone
+      // "Payment Card Industry" pick is not named "Retail & E-Commerce", whose
+      // own threats are all still awaiting a source.
+      if (!present.includes(mapped[0])) continue
+      if (present.join('|') === key) return sector
     }
     return undefined
   }, [heroScopedIndustries])
@@ -833,7 +854,11 @@ export const ThreatsDashboard: React.FC<{
     const industries = urlIndustries.length > 0 ? urlIndustries : selectedIndustries
     const urlLens = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
     const exclusions: ThreatExclusion[] = threatExclusions(threat, {
-      industries,
+      // Under ?cross=1 the Cross-Industry records are already on screen.
+      industries:
+        industries.length > 0 && searchParams.get('cross') === '1'
+          ? [...industries, CROSS_INDUSTRY]
+          : industries,
       personaScope: industries.length > 0 ? [] : personaDefaultThreatIndustries,
       criticality: searchParams.get('criticality'),
       threatClass: searchParams.get('class'),
@@ -918,6 +943,10 @@ export const ThreatsDashboard: React.FC<{
     deepLinkArrivalRef.current = null
     // Restore the reader's URL filters; the threat they hid is closed with them.
     const restored = new URLSearchParams(snap.params)
+    // The URL→state sync clears the industry filter when ?industry= drops out
+    // of the URL. Undo restoring a URL without one is not that: a sector seeded
+    // from the store never was in the URL, and snap.selectedIndustries holds it.
+    prevIndustryParamRef.current = restored.get('industry')
     restored.delete('id')
     restored.delete('threat')
     restored.delete('threattab')

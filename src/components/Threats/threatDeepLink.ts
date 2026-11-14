@@ -100,8 +100,6 @@ export function threatNotFoundMessage(
  * or pick naming it used to show the whole catalogue with no word of why.
  */
 export function sectorAwaitingSourceMessage(sectors: readonly string[]): string {
-  const names = sectors.join(', ')
-  return sectors.length === 1
-    ? `No published threats for ${names} yet — its records are awaiting a source document that states the quantum risk. Showing all industries; the Cross-Industry threats apply to every sector.`
-    : `No published threats for ${names} yet — their records are awaiting a source document that states the quantum risk. Showing all industries; the Cross-Industry threats apply to every sector.`
+  const its = sectors.length === 1 ? 'its' : 'their'
+  return `No published threats for ${sectors.join(', ')} yet — ${its} records are awaiting a source document that states the quantum risk. Showing all industries; the Cross-Industry threats apply to every sector.`
 }

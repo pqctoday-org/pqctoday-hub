@@ -138,3 +138,57 @@ describe('ThreatsDashboard follows the top-bar sector (UX-2)', () => {
     expect(shownCount()).toBe(expected)
   })
 })
+
+describe('ThreatsDashboard review fixes', () => {
+  afterEach(() => act(() => usePersonaStore.getState().setIndustries([])))
+
+  it('a mixed ?industry= list filters to the published sector with no notice', () => {
+    const awaiting = [...knownThreatIndustries].find(
+      (ind) => !threatsData.some((t) => t.industry === ind)
+    )
+    if (!awaiting) return
+    const published = threatsData[0].industry
+    render(
+      <MemoryRouter
+        initialEntries={[`/threats?industry=${encodeURIComponent(`${published},${awaiting}`)}`]}
+      >
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
+    expect(screen.queryByTestId('deeplink-notice-not-found')).toBeNull()
+    expect(shownCount()).toBe(threatsData.filter((t) => t.industry === published).length)
+  })
+
+  it('a ?cross=1 link to a Cross-Industry threat is not "widened"', () => {
+    const crossThreat = threatsData.find((t) => t.industry === 'Cross-Industry')
+    const sector = threatsData.find((t) => t.industry !== 'Cross-Industry')!.industry
+    if (!crossThreat) return
+    render(
+      <MemoryRouter
+        initialEntries={[
+          `/threats?industry=${encodeURIComponent(sector)}&cross=1&id=${crossThreat.threatId}`,
+        ]}
+      >
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
+    expect(screen.queryByTestId('deeplink-notice-widened')).toBeNull()
+  })
+
+  it('Undo after a deep-link widen keeps a sector seeded from the store', async () => {
+    const [sector, mapped] = Object.entries(INDUSTRY_TO_THREATS_MAP).find(([, inds]) =>
+      inds.some((ind) => threatsData.some((t) => t.industry === ind))
+    )!
+    const outside = threatsData.find((t) => !mapped.includes(t.industry))!
+    const seeded = threatsData.filter((t) => mapped.includes(t.industry)).length
+    act(() => usePersonaStore.getState().setIndustries([sector]))
+    render(
+      <MemoryRouter initialEntries={[`/threats?id=${outside.threatId}`]}>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
+    const undo = await screen.findByRole('button', { name: 'Undo' })
+    act(() => undo.click())
+    expect(shownCount()).toBe(seeded)
+  })
+})

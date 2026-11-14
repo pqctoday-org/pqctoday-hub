@@ -166,7 +166,8 @@ const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
  * functions/data every desktop Threats-page component reads, not
  * re-derived. Distilled, not a port of ThreatsDashboard.tsx's ~4,300-line
  * component tree: no protocol-lens picker (a shared `?protocol=` link is
- * still applied, shown in the "From your link" strip), no trust-tier filter, no
+ * still applied, shown in the "From your link" strip; so are ?tier= and
+ * ?cross=), no trust-tier picker, no
  * CRQC capability strip / trajectory chart, no CSV/related-modules detail,
  * and only ONE working calculator control (the CRQC year) rather than
  * desktop's four sliders — stated below, not silently dropped.
@@ -198,8 +199,16 @@ export function MobileThreatsView() {
   const myThreats = useBookmarkStore((s) => s.myThreats)
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
   // The same saved "My threats only" preference the desktop page uses.
-  const showOnlyMine = useBookmarkStore((s) => s.showOnlyThreats)
-  const setShowOnlyMine = useBookmarkStore((s) => s.setShowOnlyThreats)
+  const savedShowOnlyMine = useBookmarkStore((s) => s.showOnlyThreats)
+  const saveShowOnlyMine = useBookmarkStore((s) => s.setShowOnlyThreats)
+  // As on desktop: a deep link to a threat the saved "My threats only" hides
+  // turns it off for this visit only; an explicit toggle is saved.
+  const [mineSessionOff, setMineSessionOff] = useState(false)
+  const showOnlyMine = savedShowOnlyMine && !mineSessionOff
+  const setShowOnlyMine = (val: boolean) => {
+    setMineSessionOff(false)
+    saveShowOnlyMine(val)
+  }
 
   const forecast = useMemo(() => getCrqcForecast(), [])
   const [crqcYear, setCrqcYear] = useState(forecast.planningYear)
@@ -240,6 +249,8 @@ export function MobileThreatsView() {
   const sortField = threatSortFieldParam(searchParams.get('sort'))
   const sortDir = threatSortDirParam(searchParams.get('dir'))
   const tierFilter = useMemo(() => trustTiersFromParams(searchParams), [searchParams])
+  // ?cross=1: a sector-scoped link that also includes the Cross-Industry records.
+  const urlCross = searchParams.get('cross') === '1'
   // Desktop's developer protocol lens (deep-link PR 2): unknown values are ignored.
   const urlProtocol = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
   const linkedId = threatIdParam(searchParams)
@@ -303,7 +314,11 @@ export function MobileThreatsView() {
     kind: 'widened' | 'not-found'
     message: string
   } | null>(null)
-  const undoRef = useRef<{ params: string; personaScopeExtra: string | null } | null>(null)
+  const undoRef = useRef<{
+    params: string
+    personaScopeExtra: string | null
+    mineSessionOff: boolean
+  } | null>(null)
   const resolvedIdRef = useRef<string | null>(null)
   const arrivalIdRef = useRef<string | null>(null)
   useEffect(() => {
@@ -325,19 +340,23 @@ export function MobileThreatsView() {
     }
     arrivalIdRef.current = selected.threatId
     const exclusions = threatExclusions(selected, {
-      industries: urlIndustries,
+      industries:
+        urlCross && urlIndustries.length > 0 ? [...urlIndustries, 'Cross-Industry'] : urlIndustries,
       personaScope: urlIndustries.length === 0 ? (personaIndustries ?? []) : [],
       criticality,
       threatClass: classFilter,
       recordType: recordTypeFilter,
       query: urlQuery,
       lensExcludes: !!urlProtocol && !threatTouchesProtocol(selected, urlProtocol),
+      onlyMine: showOnlyMine && myThreats.length > 0 ? myThreats : null,
+      tierExcludes:
+        tierFilter.length > 0 && !matchesTrustTierFilter(tierFilter, 'threats', selected.threatId),
     })
     if (exclusions.length === 0) {
       setDeepLinkNotice(null)
       return
     }
-    undoRef.current = { params: searchParams.toString(), personaScopeExtra }
+    undoRef.current = { params: searchParams.toString(), personaScopeExtra, mineSessionOff }
     const updates: Record<string, string | null> = {}
     for (const ex of exclusions) {
       if (ex === 'industry') updates.industry = [...urlIndustries, selected.industry].join(',')
@@ -347,6 +366,8 @@ export function MobileThreatsView() {
       else if (ex === 'record-type') updates.type = null
       else if (ex === 'q') updates.q = null
       else if (ex === 'lens') updates.protocol = null
+      else if (ex === 'tier') updates.tier = null
+      else if (ex === 'mine') setMineSessionOff(true)
     }
     if (Object.keys(updates).length > 0) setParam(updates)
     setDeepLinkNotice({
@@ -364,6 +385,7 @@ export function MobileThreatsView() {
     if (!snap) return
     arrivalIdRef.current = null
     setPersonaScopeExtra(snap.personaScopeExtra)
+    setMineSessionOff(snap.mineSessionOff)
     const restored = new URLSearchParams(snap.params)
     restored.delete('id')
     restored.delete('threat')
@@ -390,11 +412,14 @@ export function MobileThreatsView() {
   const scopedData = useMemo(
     () =>
       urlIndustries.length > 0
-        ? threatsData.filter((t) => urlIndustries.includes(t.industry))
+        ? threatsData.filter(
+            (t) =>
+              urlIndustries.includes(t.industry) || (urlCross && t.industry === 'Cross-Industry')
+          )
         : personaIndustries
           ? threatsData.filter((t) => personaIndustries.includes(t.industry))
           : threatsData,
-    [urlIndustries, personaIndustries]
+    [urlIndustries, personaIndustries, urlCross]
   )
 
   const filteredData = useMemo(() => {
@@ -434,9 +459,11 @@ export function MobileThreatsView() {
       searchParams.get('industry') || personaIndustries
         ? []
         : storeIndustries.flatMap((k) => INDUSTRY_TO_THREATS_MAP[k] ?? []) // eslint-disable-line security/detect-object-injection
-    return [...fromUrl, ...fromStore].filter(
-      (ind, i, all) => all.indexOf(ind) === i && !threatsData.some((t) => t.industry === ind)
-    )
+    const named = [...fromUrl, ...fromStore].filter((ind, i, all) => all.indexOf(ind) === i)
+    const awaiting = named.filter((ind) => !threatsData.some((t) => t.industry === ind))
+    // Only when none of the named sectors has a published threat (a mixed list
+    // filters to the published ones as asked).
+    return awaiting.length === named.length ? awaiting : []
   }, [searchParams, personaIndustries, storeIndustries])
   const [awaitingDismissed, setAwaitingDismissed] = useState<string | null>(null)
   const awaitingKey = awaitingSectors.join('|')
@@ -518,20 +545,24 @@ export function MobileThreatsView() {
       {/* A shared link's industry / search scope — there is no picker or
           search box for these on this screen, so say what is applied and
           offer the way out. */}
-      {(urlIndustries.length > 0 || urlQuery || urlProtocol) && (
+      {(urlIndustries.length > 0 || urlQuery || urlProtocol || tierFilter.length > 0) && (
         <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-[11.5px] text-foreground">
           <span className="font-semibold">From your link:</span>
           <span className="flex-1">
             {[
               ...urlIndustries,
               ...(urlQuery ? [`“${urlQuery}”`] : []),
+              ...(urlIndustries.length > 0 && urlCross ? ['+ Cross-Industry'] : []),
               ...(urlProtocol ? [`Protocol: ${urlProtocol}`] : []),
+              ...(tierFilter.length > 0 ? [`Trust tier: ${tierFilter.join(', ')}`] : []),
             ].join(' · ')}
           </span>
           <Button
             type="button"
             variant="ghost"
-            onClick={() => setParam({ industry: null, q: null, protocol: null })}
+            onClick={() =>
+              setParam({ industry: null, q: null, protocol: null, tier: null, cross: null })
+            }
             className="h-11 rounded-full border border-border px-3 text-[11px] font-semibold"
           >
             Show all
