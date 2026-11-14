@@ -182,7 +182,7 @@ describe('impact score (owner decision 2026-11-14)', () => {
   })
 
   it('keeps the thresholds and lets post-quantum-only patents reach High', () => {
-    expect([toImpactLevel(65), toImpactLevel(64), toImpactLevel(35), toImpactLevel(34)]).toEqual([
+    expect([toImpactLevel(72), toImpactLevel(71), toImpactLevel(35), toImpactLevel(34)]).toEqual([
       'High',
       'Medium',
       'Medium',
@@ -195,6 +195,11 @@ describe('impact score (owner decision 2026-11-14)', () => {
     expect(
       patentsData.some((p) => p.cryptoAgilityMode === 'pqc_only' && p.impactLevel === 'High')
     ).toBe(true)
+    // Owner decision: High is roughly the top 15–20% of the catalogue.
+    const highShare =
+      patentsData.filter((p) => p.impactLevel === 'High').length / patentsData.length
+    expect(highShare).toBeGreaterThanOrEqual(0.15)
+    expect(highShare).toBeLessThanOrEqual(0.2)
   })
 })
 

@@ -242,7 +242,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Impact level and PQC migration score',
-        body: 'Each record has a 1–10 PQC migration score with a one-sentence reason, shown in the detail panel. The Hub impact score (0–100) takes half from what the record names (FIPS 203/204/205 standards, protocols, hardware, application domains, data types protected) and half from the migration score; High is 65 or more, Medium 35–64, Low below 35. Both are reading aids for this catalogue, not measures of patent value.',
+        body: 'Each record has a 1–10 PQC migration score with a one-sentence reason, shown in the detail panel. The Hub impact score (0–100) takes half from what the record names (FIPS 203/204/205 standards, protocols, hardware, application domains, data types protected) and half from the migration score; High is 72 or more (about the top fifth of the catalogue), Medium 35–71, Low below 35. Both are reading aids for this catalogue, not measures of patent value.',
       },
       {
         heading: 'Explore, Insights and Search',

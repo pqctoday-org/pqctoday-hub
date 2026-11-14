@@ -190,7 +190,7 @@ function NistBadge({ entry }: { entry: NistStatus }) {
 function ImpactBar({ score }: { score: number }) {
   const pct = Math.min(score, 100)
   const color =
-    pct >= 65 ? 'bg-status-error' : pct >= 35 ? 'bg-status-warning' : 'bg-status-success'
+    pct >= 72 ? 'bg-status-error' : pct >= 35 ? 'bg-status-warning' : 'bg-status-success'
   return (
     <div className="flex items-center gap-2">
       <div className="h-2 flex-1 rounded-full bg-muted overflow-hidden">
@@ -525,7 +525,7 @@ export function PatentDetail({
           <p className="text-xs text-muted-foreground">
             Half of this Hub score comes from what the record names (FIPS 203/204/205 standards,
             protocols, hardware, application domains and data types protected), half from its
-            1&ndash;10 PQC migration score. High is 65 or more, Medium 35&ndash;64. It is a reading
+            1&ndash;10 PQC migration score. High is 72 or more, Medium 35&ndash;71. It is a reading
             aid for this catalogue: it does not establish patent validity, enforceability, licensing
             terms or IP value.
           </p>
