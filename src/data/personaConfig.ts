@@ -674,6 +674,15 @@ export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
   global: ['Global', 'International', 'G7', 'NATO', 'BIS', 'GSMA'],
 }
 
+/**
+ * Paths the rail and the phone's group menus show for every role even though
+ * no PERSONA_NAV_PATHS list names them: railNav's computeGroupDisplayPaths
+ * adds Business Tools to the Practice group unconditionally. They are not
+ * "left out of your menus", so personaTradeSentence must not count them
+ * (it did until 2026-11-14 — every role's sentence was one page too high).
+ */
+export const RAIL_GROUP_DISPLAY_ADDITIONS = ['/business/tools']
+
 /** Nav paths that are always shown regardless of persona. */
 export const ALWAYS_VISIBLE_PATHS = [
   '/',
@@ -2424,7 +2433,9 @@ export function describePersonaAdaptation(personaId: PersonaId): PersonaAdaptati
     (p) => !ALWAYS_VISIBLE_PATHS.includes(p) && !RAIL_HIDDEN_PATHS.includes(p)
   )
   const focus = navPaths ?? gateable
-  const behindSearch = gateable.filter((p) => !focus.includes(p) && !(p in absenceMap))
+  const behindSearch = gateable.filter(
+    (p) => !focus.includes(p) && !(p in absenceMap) && !RAIL_GROUP_DISPLAY_ADDITIONS.includes(p)
+  )
 
   // eslint-disable-next-line security/detect-object-injection
   const reportOverrides = PERSONA_REPORT_CONFIG[personaId]
@@ -2481,7 +2492,12 @@ export function personaTradeSentence(personaId: PersonaId): string {
   const movedCount = a.behindSearchLabels.length
   const movedPart =
     movedCount > 0
-      ? `${toWordIfSmall(movedCount)} other ${movedCount === 1 ? 'page moves' : 'pages move'} behind More and search`
+      ? // Neither the desktop rail (no MORE rows for a role since the owner's
+        // 2026-08-01 "remove more and revisions from the left bar") nor the
+        // phone's group menus list these pages; search does. The sentence said
+        // "behind More and search" until 2026-11-14 (owner chose to keep the
+        // rail and fix the sentence).
+        `${toWordIfSmall(movedCount)} other ${movedCount === 1 ? 'page is' : 'pages are'} left out of your menus, and search still finds ${movedCount === 1 ? 'it' : 'them'}`
       : 'nothing is moved out of reach'
   const absencePart =
     a.absences.length > 0
