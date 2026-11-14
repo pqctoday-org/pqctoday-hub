@@ -4,14 +4,16 @@
  *
  * E2E tests for the PKI Enrollment Protocols workshop.
  * Every assertion here is a CRYPTOGRAPHIC property — byte sizes, PEM headers,
- * algorithm OIDs in decoded cert text, and byte-exact shared-secret equality.
+ * algorithm OIDs in decoded cert text, and the key update's accepted confirmation
+ * or its refusal.
  * No colour, layout, or smoke-only assertions.
  *
  * Crypto operations are real:
  *   - KeyGen: OpenSSL 3.6 WASM `genpkey` (EVP backend)
  *   - CMP IR: in-process OSSL_CMP_CTX client ↔ OSSL_CMP_SRV_CTX server via C shim
  *   - EST: CSR from `openssl req -new` + issuance via CMP shim + PKCS#7 via crl2pkcs7
- *   - ML-KEM sample agreement: pkeyutl -encap / -decap byte comparison
+ *   - CMP key update: signed KUR to a fresh ML-KEM key, encrypted-certificate
+ *     recovery and explicit hash confirmation via the same C shim
  */
 import { test, expect, type Page } from '@playwright/test'
 
