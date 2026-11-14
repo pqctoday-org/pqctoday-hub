@@ -1069,7 +1069,7 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
     defaultActiveZone: 'migration',
     headline: 'Migration & Mitigation — Run View',
     tagline:
-      'Track migration phases, deployment playbooks, and KPI burndown. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
+      'Track migration phases, deployment playbooks, and KPI burndown.',
     featuredArtifacts: {
       migration: ['migration-roadmap'],
       mitigation: ['deployment-playbook'],
