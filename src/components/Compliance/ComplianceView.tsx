@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { timelineEventToRow } from './timelineRow'
 import { lazy, Suspense, useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -151,22 +152,6 @@ function SectionHeader({ icon, title, description }: SectionHeaderProps) {
       </div>
     </div>
   )
-}
-
-function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
-  return {
-    countryName: ev.countryName,
-    org: ev.orgName,
-    phase: ev.phase,
-    type: ev.type,
-    title: ev.title,
-    startYear: ev.startYear,
-    endYear: ev.endYear,
-    description: ev.description,
-    sourceUrl: ev.sourceUrl,
-    sourceDate: ev.sourceDate,
-    status: ev.status,
-  }
 }
 
 /**

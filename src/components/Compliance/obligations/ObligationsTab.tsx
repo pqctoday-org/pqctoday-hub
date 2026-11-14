@@ -15,6 +15,7 @@
  *    sector-matched global standards against 12 mandatory; expanded by default
  *    it would recreate the catalogue-browser problem this tab replaces.
  */
+import { cswp39Note } from '@/data/complianceData'
 import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, ExternalLink, Info, ShieldCheck } from 'lucide-react'
@@ -447,6 +448,11 @@ function ObligationListRow({
               {ind}
             </span>
           ))}
+          {cswp39Note(fw.cswp39Tags) !== null && (
+            <span className="rounded bg-muted px-1.5 py-0.5 text-muted-foreground">
+              {cswp39Note(fw.cswp39Tags)}
+            </span>
+          )}
           {(fw.cswp39Tags ?? []).slice(0, 2).map((tag) => (
             <span key={tag} className="rounded bg-muted px-1.5 py-0.5 font-mono">
               {tag.replace('cswp39:', '')}

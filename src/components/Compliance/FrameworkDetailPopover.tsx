@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { cswp39Note } from '@/data/complianceData'
 import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useRef } from 'react'
 import { createPortal } from 'react-dom'
@@ -219,6 +220,18 @@ export const FrameworkDetailPopover = ({
                   <p className="text-xs text-muted-foreground mt-2">{framework.notes}</p>
                 )}
               </section>
+
+              {cswp39Note(framework.cswp39Tags) !== null && (
+                <section>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <Tag size={12} aria-hidden="true" />
+                    Crypto Posture Pillars
+                  </h4>
+                  <p className="text-xs text-muted-foreground">
+                    {cswp39Note(framework.cswp39Tags)}
+                  </p>
+                </section>
+              )}
 
               {framework.cswp39Tags && framework.cswp39Tags.length > 0 && (
                 <section>

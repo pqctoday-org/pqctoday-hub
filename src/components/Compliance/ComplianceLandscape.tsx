@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { cswp39Note } from '@/data/complianceData'
 import { certRecordSourceFor, certRecordsHref } from './certRecordLinks'
 import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useState, useMemo, useEffect, useRef } from 'react'
@@ -705,6 +706,10 @@ function FrameworkCard({
             </span>
           ))}
         </div>
+      )}
+
+      {cswp39Note(fw.cswp39Tags) !== null && (
+        <div className="text-[10px] text-muted-foreground">{cswp39Note(fw.cswp39Tags)}</div>
       )}
 
       {fw.cswp39Tags && fw.cswp39Tags.length > 0 && (
