@@ -135,13 +135,14 @@ describe('useLearnerEvidenceRecorder', () => {
     act(() => useSimulationStore.getState().markRefVisited('migrate'))
     act(() => useSimulationStore.getState().markWorkshopVisited('ws-1'))
     act(() => useSimulationStore.getState().setEdgeDecision('a->b', 'hybrid'))
+    act(() => useSimulationStore.getState().setEdgeDecision('c->d', 'pure'))
     const kinds = useSimulationStore
       .getState()
       .evidence.map((r) => `${r.kind}:${r.resourceId}:${r.origin}`)
     expect(kinds).toEqual([
       'reference:migrate:learner',
       'workshop:ws-1:learner',
-      'architecture:a->b:learner',
+      'architecture:edge-decisions:learner',
     ])
   })
 })
@@ -157,5 +158,41 @@ describe('change detection', () => {
   it('reports only newly added items and newly decided edges', () => {
     expect(addedItems(['a'], ['a', 'b'])).toEqual(['b'])
     expect(newlyDecidedEdges({ x: 'hybrid' }, { x: 'pure', y: 'hybrid' })).toEqual(['y'])
+  })
+})
+
+describe('re-saving an unchanged result through a tool', () => {
+  beforeEach(() => {
+    useModuleStore.getState().resetProgress()
+    useSimulationStore.getState().reset()
+  })
+
+  it('still counts as operating the activity in the new quarter', () => {
+    renderHook(() => useLearnerEvidenceRecorder(() => false))
+    act(() => useModuleStore.getState().addExecutiveDocument(doc({ inputs: { a: 1 } })))
+    nextQuarter()
+    // The shared tool save path updates in place with the same data but fresh inputs.
+    act(() =>
+      useModuleStore
+        .getState()
+        .updateExecutiveDocument('board-pitch-1', { data: '# v1', inputs: { a: 1 } })
+    )
+    expect(distinctRunQuarters(useSimulationStore.getState().evidence, 'board-deck')).toHaveLength(
+      2
+    )
+  })
+
+  it('an approval change in a later quarter does not', () => {
+    renderHook(() => useLearnerEvidenceRecorder(() => false))
+    act(() => useModuleStore.getState().addExecutiveDocument(doc()))
+    nextQuarter()
+    act(() =>
+      useModuleStore
+        .getState()
+        .updateExecutiveDocument('board-pitch-1', { approvalStatus: 'approved' })
+    )
+    expect(distinctRunQuarters(useSimulationStore.getState().evidence, 'board-deck')).toHaveLength(
+      1
+    )
   })
 })

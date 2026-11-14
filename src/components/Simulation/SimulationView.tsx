@@ -2387,7 +2387,10 @@ export function SimulationView() {
   // A `measure` step is a condition read from the run, not a resource: show
   // its live value against the criterion's threshold, plus the action that
   // moves it when the sim has one to open (the phase's architecture panel).
-  const renderMeasure = (step: TreeStep, opts: { canOpen: boolean; compact?: boolean }) => {
+  const renderMeasure = (
+    step: TreeStep,
+    opts: { canOpen: boolean; compact?: boolean; hideLabel?: boolean }
+  ) => {
     const value = step.metricId ? stepCompletionCtx.metricValue(step.metricId) : null
     const tree = SIM_TREES[sel as PhaseId]
     const archStep =
@@ -2399,6 +2402,7 @@ export function SimulationView() {
         step={step}
         value={value}
         compact={opts.compact}
+        hideLabel={opts.hideLabel}
         onAct={opts.canOpen && archStep ? () => openStep(archStep) : undefined}
         actLabel="Open the architecture"
       />
@@ -2406,7 +2410,12 @@ export function SimulationView() {
   }
   const renderPhoneCompletion = (step: TreeStep, act: TreeActivity | undefined) => {
     if (step.kind === 'measure') {
-      return <div className="mt-2">{renderMeasure(step, { canOpen: false, compact: true })}</div>
+      // The phone rows that call this already show the step label above it.
+      return (
+        <div className="mt-2">
+          {renderMeasure(step, { canOpen: false, compact: true, hideLabel: true })}
+        </div>
+      )
     }
     if (step.kind === 'recurrence' && step.recurrenceOf) {
       const type = step.recurrenceOf

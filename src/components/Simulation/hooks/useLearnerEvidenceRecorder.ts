@@ -53,8 +53,15 @@ export function changedDocuments(
   return next.filter((d) => {
     const before = byId.get(d.id)
     if (!before) return true
-    // An approval-status or reviewer change is not operating the activity again.
-    return before.data !== d.data || before.createdAt !== d.createdAt
+    // A tool save passes its content again (data / inputs / output), even when
+    // the result is byte-identical to last quarter's — that IS operating the
+    // activity again. An approval, reviewer or title change passes none of them.
+    return (
+      before.data !== d.data ||
+      before.createdAt !== d.createdAt ||
+      before.inputs !== d.inputs ||
+      before.output !== d.output
+    )
   })
 }
 
@@ -156,8 +163,14 @@ export function useLearnerEvidenceRecorder(isAutoRunning: () => boolean): void {
         recordRunEvidence({ kind: 'scenario', resourceId: id, status: 'practiced' })
       for (const id of addedItems(prevState.catalogCompleted, state.catalogCompleted))
         recordRunEvidence({ kind: 'catalog', resourceId: id, status: 'practiced' })
-      for (const key of newlyDecidedEdges(prevState.edgeDecisions, state.edgeDecisions))
-        recordRunEvidence({ kind: 'architecture', resourceId: key, status: 'practiced' })
+      // One record per phase, not per connection: "migrate all" decides dozens
+      // of edges in one click, and the run-end share counts records.
+      if (newlyDecidedEdges(prevState.edgeDecisions, state.edgeDecisions).length > 0)
+        recordRunEvidence({
+          kind: 'architecture',
+          resourceId: 'edge-decisions',
+          status: 'practiced',
+        })
     })
 
     return () => {

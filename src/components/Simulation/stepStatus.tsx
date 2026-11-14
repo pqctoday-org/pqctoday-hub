@@ -70,6 +70,7 @@ export function MeasureStatus({
   onAct,
   actLabel,
   compact = false,
+  hideLabel = false,
 }: {
   step: TreeStep
   /** Current metric value, or null when the run cannot measure it yet. */
@@ -78,6 +79,8 @@ export function MeasureStatus({
   onAct?: () => void
   actLabel?: string
   compact?: boolean
+  /** Hide the step label when the caller's row already shows it. */
+  hideLabel?: boolean
 }) {
   const def = step.metricId ? metricDef(step.metricId) : null
   const target = step.minValue
@@ -93,11 +96,13 @@ export function MeasureStatus({
       }`}
     >
       <span className="min-w-0 flex-1">
-        <span
-          className={`block font-semibold text-foreground ${compact ? 'text-[11.5px]' : 'text-sim-body'}`}
-        >
-          {step.label}
-        </span>
+        {!hideLabel && (
+          <span
+            className={`block font-semibold text-foreground ${compact ? 'text-[11.5px]' : 'text-sim-body'}`}
+          >
+            {step.label}
+          </span>
+        )}
         <span className="block font-mono text-sim-micro text-muted-foreground">
           {met ? '✓ ' : ''}Measured now: {now}
           {goal ? ` · needs ${goal}` : ''}
