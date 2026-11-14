@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { Link, MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 
 vi.mock('@/data/libraryData', () => ({ REFERENCE_ID_ALIASES: {}, libraryData: [] }))
@@ -25,5 +25,24 @@ describe('ResearchWorkspacePanel', () => {
     ]) {
       expect(screen.getByTestId(id)).toBeInTheDocument()
     }
+  })
+})
+
+describe('ResearchWorkspacePanel same-page link', () => {
+  it('scrolls into view when an already-mounted panel gets its own hash', () => {
+    const scrollIntoView = vi.fn()
+    Element.prototype.scrollIntoView = scrollIntoView
+    render(
+      <MemoryRouter>
+        <Link to="/business#operations-pack">ops</Link>
+        <Link to="/business#research-workspace">research</Link>
+        <ResearchWorkspacePanel />
+      </MemoryRouter>
+    )
+    expect(scrollIntoView).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByText('ops'))
+    expect(scrollIntoView).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByText('research'))
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
   })
 })
