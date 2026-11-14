@@ -6,6 +6,7 @@ import { BusinessCenterView } from './BusinessCenterView'
 import '@testing-library/jest-dom'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_ORDER } from '@/data/cswp39ZoneData'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
+import { BUSINESS_TOOLS } from './businessToolsRegistry'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -259,6 +260,14 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Start with these tools')).toBeInTheDocument()
     expect(screen.getByText('Explore Compliance')).toBeInTheDocument()
     expect(screen.getByText('Start Executive Learning')).toBeInTheDocument()
+  })
+
+  it('the welcome state links to the full planning tools list', () => {
+    renderView()
+    const link = screen.getByRole('link', {
+      name: `Browse all ${BUSINESS_TOOLS.length} planning tools →`,
+    })
+    expect(link).toHaveAttribute('href', '/business/tools')
   })
 
   it('shows a developer the engineering questions and tools, not board questions', () => {

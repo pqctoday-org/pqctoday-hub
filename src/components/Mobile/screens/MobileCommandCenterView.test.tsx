@@ -48,6 +48,25 @@ describe('MobileCommandCenterView', () => {
     expect(screen.getByText('Who owns it?')).toBeInTheDocument()
   })
 
+  it('the tiered dashboard links to the full planning tools list instead of a laptop note', () => {
+    completeMinimalAssessment()
+    renderView()
+    const link = screen.getByRole('link', {
+      name: `Browse all ${BUSINESS_TOOLS.length} planning tools →`,
+    })
+    expect(link).toHaveAttribute('href', '/business/tools')
+    expect(screen.queryByText(/on a laptop/)).not.toBeInTheDocument()
+  })
+
+  it('the phone view offers no role packs or artifact drawer; it stays read-only', () => {
+    completeMinimalAssessment()
+    renderView()
+    expect(
+      screen.queryByText(/Architecture pack|Operations pack|Role pack/i)
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Create')).not.toBeInTheDocument()
+  })
+
   it('shows the tiered dashboard once the reader has started (assessment complete)', () => {
     completeMinimalAssessment()
     renderView()
@@ -83,7 +102,7 @@ describe('MobileCommandCenterView', () => {
     renderView()
     expect(BUSINESS_TOOLS.length).toBeGreaterThan(0)
     expect(
-      screen.getByText(new RegExp(`The ${BUSINESS_TOOLS.length} planning tools`))
+      screen.getByText(`Browse all ${BUSINESS_TOOLS.length} planning tools →`)
     ).toBeInTheDocument()
     expect(screen.queryByText(/The 34 planning tools/)).not.toBeInTheDocument()
   })
@@ -132,4 +151,3 @@ describe('MobileCommandCenterView empty profile with zone links', () => {
     }
   })
 })
-

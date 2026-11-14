@@ -198,6 +198,12 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
           {learnCta.label}
         </Button>
       </div>
+
+      <div className="text-center">
+        <Link to="/business/tools" className="text-sm font-medium text-primary hover:underline">
+          Browse all {BUSINESS_TOOLS.length} planning tools →
+        </Link>
+      </div>
     </div>
   )
 }

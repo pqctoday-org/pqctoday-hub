@@ -241,10 +241,11 @@ export function MobileCommandCenterView() {
         })}
       </div>
 
-      <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        Read your maturity here. The {BUSINESS_TOOLS.length} planning tools, the CBOM builder, and
-        the artifact drawer that produce these artifacts are on a laptop.
-      </p>
+      <div className="mt-4 border-t border-border pt-3">
+        <Link to="/business/tools" className="text-[11.5px] font-bold text-primary">
+          Browse all {BUSINESS_TOOLS.length} planning tools →
+        </Link>
+      </div>
     </div>
   )
 }
