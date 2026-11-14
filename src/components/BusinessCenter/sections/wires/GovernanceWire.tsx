@@ -17,6 +17,8 @@ import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
 import { HiddenFrameworksToggle } from '../../widgets/HiddenFrameworksToggle'
 import type { ThreatData } from '@/data/threatsData'
 import { useThreatsData } from '@/hooks/useThreatsData'
+import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
+import { threatsIndustryHref } from '@/components/Threats/threatsUrlParams'
 
 export interface GovernanceWireProps {
   metrics: BusinessMetrics
@@ -102,20 +104,33 @@ function FrameworksBlock({ metrics }: { metrics: BusinessMetrics }) {
   )
 }
 
+/**
+ * Threat-row industry labels for an assessment industry, through the same map
+ * the applicability lens uses. An industry the map does not know keeps its own
+ * name. There is no cross-industry fallback: a sector with no mapped rows shows
+ * nothing here.
+ */
+function threatLabelsFor(industry: string): string[] {
+  return Object.prototype.hasOwnProperty.call(INDUSTRY_TO_THREATS_MAP, industry)
+    ? (INDUSTRY_TO_THREATS_MAP[industry] ?? []) // eslint-disable-line security/detect-object-injection
+    : [industry]
+}
+
 function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
   const { data: threatsData } = useThreatsData()
   const industry = metrics.industry
+  const labels = useMemo(() => (industry ? threatLabelsFor(industry) : []), [industry])
   const matched = useMemo(() => {
-    if (!industry) return []
-    const lower = industry.toLowerCase()
+    if (labels.length === 0) return []
+    const wanted = new Set(labels.map((l) => l.toLowerCase()))
     return threatsData
-      .filter((t) => t.industry.toLowerCase() === lower)
+      .filter((t) => wanted.has(t.industry.toLowerCase()))
       .sort(
         (a, b) => (CRITICALITY_RANK[b.criticality] ?? 0) - (CRITICALITY_RANK[a.criticality] ?? 0)
       )
       .slice(0, 5)
-  }, [industry, threatsData])
+  }, [labels, threatsData])
 
   if (!industry || matched.length === 0) return null
 
@@ -131,7 +146,7 @@ function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
         <Button
           variant="link"
           size="sm"
-          onClick={() => navigate(`/threats?industry=${encodeURIComponent(matched[0].industry)}`)}
+          onClick={() => navigate(threatsIndustryHref(labels.join(','), threatsData) ?? '/threats')}
           className="h-auto p-0 text-xs"
         >
           Open Threats <ArrowRight size={12} className="ml-0.5" />
