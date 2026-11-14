@@ -36,8 +36,6 @@ const SPEC_ALIASES: Record<string, string> = {
   // content of its own, so the underlying PQC-readiness story is identical.
   'UEFI-2.11': 'UEFI-SPEC-2.10-SecureBoot',
   '3GPP-TR-33.938': '3GPP-PQC-Study-2025',
-  // The matrix's "…Part3-Published" was superseded in the Library by the v1.85 Errata.
-  'TCG-TPM-2.0-Library-v1.85-Part3-Published': 'TCG-TPM-2.0-Library-v1.85-Errata',
   // Per-cell references (DimensionRef.id) use the space-separated vendor form that
   // the matrix audit requires, so they need their own entries next to the
   // hyphenated ProtocolDoc ids above.

@@ -55,6 +55,19 @@ describe('resolveLibraryRef', () => {
     expect(LIBRARY_IDS.has(ref!), `${id} -> ${ref}`).toBe(true)
   })
 
+  it('sends both TPM Library v1.85 citations to the Part 3 (Commands) entry, not the v1.84 errata', () => {
+    // Part 3 v1.85 defines TPM2_Encapsulate / TPM2_Decapsulate; the Errata entry is a
+    // different document (Errata Version 1 for v1.84, August 2026).
+    expect(resolveLibraryRef('TCG-TPM-2.0-Library-v1.85-Part3-Published')).toBe(
+      'TCG-TPM-2.0-Library-v1.85-Part3-Published'
+    )
+    expect(resolveLibraryRef('TCG TPM 2.0 v1.85')).toBe('TCG-TPM-2.0-Library-v1.85-Part3-Published')
+    // The matrix's own Errata citation still reaches the Errata entry.
+    expect(resolveLibraryRef('TCG-TPM-2.0-Library-v1.85-Errata')).toBe(
+      'TCG-TPM-2.0-Library-v1.85-Errata'
+    )
+  })
+
   it('does not alias KMIP 3.0 to the pre-quantum KMIP 2.1 entry', () => {
     expect(resolveLibraryRef('KMIP 3.0 CSD02')).toBeNull()
     expect(
