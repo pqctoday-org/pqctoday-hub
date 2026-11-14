@@ -28,7 +28,7 @@ export const COLUMN_LABELS: Record<ColumnId, string> = {
   assignee: 'Assignee',
   agility: 'Crypto Agility',
   impact: 'Impact',
-  issueDate: 'Issue Date',
+  issueDate: 'Granted / Published',
   priorityDate: 'Priority Date',
   pqcAlgorithms: 'PQC Algorithms',
   classicalAlgorithms: 'Classical Algorithms',
@@ -88,7 +88,13 @@ export const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Filing Bibliographic Source', accessor: (p) => p.filingJurisdictionSourceUrl ?? '' },
   { header: 'Inventors', accessor: (p) => p.inventors },
   { header: 'Priority Date', accessor: (p) => p.priorityDate },
-  { header: 'Issue Date', accessor: (p) => p.issueDate },
+  {
+    header: 'Publication Type',
+    accessor: (p) =>
+      p.publicationKind === 'published_application' ? 'Published application' : 'Granted patent',
+  },
+  { header: 'Filing Date', accessor: (p) => p.filingDate },
+  { header: 'Grant or Publication Date', accessor: (p) => p.issueDate },
   { header: 'Crypto Agility', accessor: (p) => p.cryptoAgilityMode },
   { header: 'Quantum Relevance', accessor: (p) => p.quantumRelevance },
   { header: 'Impact Level', accessor: (p) => p.impactLevel },
@@ -99,6 +105,12 @@ export const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Application Domain', accessor: (p) => p.applicationDomain.join('; ') },
   { header: 'Threat Model', accessor: (p) => p.threatModel.join('; ') },
   { header: 'Summary', accessor: (p) => p.summary },
+  {
+    header: 'PQC Migration Score (1-10)',
+    accessor: (p) => (p.pqcMigrationScore == null ? '' : String(p.pqcMigrationScore)),
+  },
+  { header: 'PQC Migration Reason', accessor: (p) => p.pqcMigrationReason },
+  { header: 'Performance Claims', accessor: (p) => p.performanceClaims.join('; ') },
 ]
 
 // "PQC only" keeps patents that actually involve post-quantum crypto:

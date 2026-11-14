@@ -36,6 +36,7 @@ export const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
   '/openssl': 'openssl-studio',
   '/threats': 'threats',
   '/leaders': 'leaders',
+  '/patents': 'patents',
   '/compliance': 'compliance',
   '/migrate': 'migrate',
   '/assess': 'assess',

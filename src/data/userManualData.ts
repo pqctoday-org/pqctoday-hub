@@ -8,6 +8,7 @@ export type PageId =
   | 'openssl-studio'
   | 'threats'
   | 'leaders'
+  | 'patents'
   | 'compliance'
   | 'migrate'
   | 'assess'
@@ -227,6 +228,38 @@ export const pageManuals: Record<PageId, PageManual> = {
     tips: [
       'Profiles are compiled from cited public sources and from people who ask to be listed; anyone listed can ask for a correction or removal from the page.',
       "Export CSV includes each profile's Library refs, external sources, patents and catalog products, so you can check them in bulk.",
+    ],
+  },
+
+  patents: {
+    title: 'PQC Patents',
+    summary:
+      'An educational catalogue of US patent records that touch post-quantum cryptography. Use it to see which algorithms, protocols and hardware the claims describe and who holds them. It records what each filing discloses and claims; it does not tell you whether a patent is valid, enforceable against you, or licensed, and it is not legal or IP advice.',
+    sections: [
+      {
+        heading: 'Scope: PQC & hybrid or All crypto',
+        body: 'The page opens on records that use post-quantum or hybrid cryptography. All crypto adds the remaining records, including ones that are quantum-safe without a PQC algorithm (AES-256 or SHA-2/3 strength, lattice homomorphic encryption, quantum key distribution) and classical-only ones. Records outside the patents scope were retired from the catalogue, not deleted. A shared link to a record outside your current scope widens it (with Undo on a computer).',
+      },
+      {
+        heading: 'Granted patents and published applications',
+        body: 'A granted patent has been examined and its claims allowed on the grant date. A published application (an 11-digit US number beginning with the year) is an application the patent office has published; its claims are still under examination and may be narrowed, refused or abandoned. The Granted / pub. column, the detail panel and the export say which each record is.',
+      },
+      {
+        heading: 'Impact level and PQC migration score',
+        body: 'Each record has a 1–10 PQC migration score with a one-sentence reason, shown in the detail panel. The Hub impact score (0–100) takes half from what the record names (FIPS 203/204/205 standards, protocols, hardware, application domains, data types protected) and half from the migration score; High is 72 or more (about the top fifth of the catalogue), Medium 35–71, Low below 35. Both are reading aids for this catalogue, not measures of patent value.',
+      },
+      {
+        heading: 'Explore, Insights and Search',
+        body: 'Explore lists the records with filters for filing office, agility, impact and domain; More filters adds assignee, PQC algorithm, protocol, classical algorithm, hardware, NIST status, publication type and, under All crypto, quantum-safe basis. Algorithms named by their filing-era name (Kyber, Dilithium, SPHINCS+, Falcon) are counted and filtered together with their FIPS name. Insights charts the corpus; clicking a bar opens Explore filtered to it. Search finds records by meaning as well as words.',
+      },
+      {
+        heading: 'What a record does not tell you',
+        body: 'The catalogue records assignees, claims and dates. It records no licensing terms, patent-pledge commitments or history of assertion, and it is not a complete search of patent offices. Treat the holders it lists as people to ask, and take questions of freedom to operate to your own counsel.',
+      },
+    ],
+    tips: [
+      'In the detail panel, click an algorithm, protocol or hardware tag to see every record that names it; a standard the Library holds opens there.',
+      'The role panel above the list links a holder to /migrate only when the holder is a vendor in the Migrate catalogue.',
     ],
   },
 

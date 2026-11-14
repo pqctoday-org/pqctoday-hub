@@ -17,7 +17,7 @@ import { PageHeader } from '@/components/common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
-import { patentsData, patentsMetadata } from '@/data/patentsData'
+import { latestGrantsAndPublications, patentsData, patentsMetadata } from '@/data/patentsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { logPatentExport, logPatentInsightsFilter } from '@/utils/analytics'
@@ -88,6 +88,11 @@ const FILTER_PARAMS = [
   'pqc',
   'fips',
   'filingYear',
+  'publication',
+  'quantumSafeBasis',
+  'threatModel',
+  'standard',
+  'migrationStrategy',
 ]
 
 /** Explicit columns/preset from a shared-link URL, if present. */
@@ -206,10 +211,10 @@ export function PatentsViewRedesign({
     () => (pqcOnly ? patentsData.filter(isPqcPatent) : patentsData),
     [pqcOnly]
   )
-  const inCorpusIds = useMemo(
-    () => new Set(displayPatents.map((p) => p.patentNumber)),
-    [displayPatents]
-  )
+  // Every catalogue record, not just the scoped list: a citation to a
+  // record outside the PQC scope still opens here, and the ?patent handler
+  // below widens the scope to show it (with Undo).
+  const inCorpusIds = useMemo(() => new Set(patentsData.map((p) => p.patentNumber)), [])
 
   const sortKey = useMemo<SortKey>(() => {
     const s = params.get('sort') as SortKey | null
@@ -226,13 +231,7 @@ export function PatentsViewRedesign({
 
   const exploreResults = usePatentResults(displayPatents, params, sortKey, sortDir)
   const kpis = usePatentKpis(displayPatents)
-  const recentlyAdded = useMemo(
-    () =>
-      displayPatents
-        .filter((p) => p.status === 'New')
-        .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()),
-    [displayPatents]
-  )
+  const recentlyAdded = useMemo(() => latestGrantsAndPublications(displayPatents), [displayPatents])
 
   const setTab = useCallback(
     (tab: string, opts?: { keepPatent?: boolean }) => {
@@ -453,6 +452,31 @@ export function PatentsViewRedesign({
     },
     [params, setParams]
   )
+  // Detail-panel tag → Explore filtered by it; the drawer closes so the
+  // filtered list is what the reader sees (push, so Back reopens the patent).
+  const handleFilterTag = useCallback(
+    (param: string, value: string) => {
+      const next = new URLSearchParams(params)
+      next.set(param, value)
+      next.set('tab', 'explore')
+      next.delete('patent')
+      setParams(next)
+    },
+    [params, setParams]
+  )
+
+  // Role Lens holder name → that holder's patents in Explore (push, so Back
+  // returns to the unfiltered list).
+  const handleSelectAssignee = useCallback(
+    (assignee: string) => {
+      const next = new URLSearchParams(params)
+      next.set('assignee', assignee)
+      next.set('tab', 'explore')
+      next.delete('patent')
+      setParams(next)
+    },
+    [params, setParams]
+  )
   const handleKpiDrill = useCallback(
     (drill: KpiDrill) => {
       if (drill === 'clear') {
@@ -581,7 +605,7 @@ export function PatentsViewRedesign({
           framing for anybody. This says how much of it touches the algorithms
           the reader's own path uses, who holds that, and — explicitly — what
           the catalog cannot tell them about enforceability. */}
-      <PatentsRoleLens patents={displayPatents} persona={selectedPersona} />
+      <PatentsRoleLens patents={displayPatents} onSelectAssignee={handleSelectAssignee} />
 
       <PatentsRecentlyAdded items={recentlyAdded} onOpen={handleSelect} />
 
@@ -648,6 +672,7 @@ export function PatentsViewRedesign({
         onClose={closeDrawer}
         onNavigate={handleDrawerNavigate}
         onOpenCitation={handleOpenCitation}
+        onFilterTag={handleFilterTag}
       />
     </div>
   )

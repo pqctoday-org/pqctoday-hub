@@ -15,32 +15,29 @@
  * touches the standards you are actually migrating to, and who holds it — and
  * says plainly that it is a list of people to ask, not a legal opinion.
  *
- * The second half is the review's "flag only patents touching algorithms the
- * reader's own path teaches": the relevant-algorithm set comes from
- * `ALGORITHM_PERSONA_DEFAULTS[persona].highlight`, the same config that decides
- * what /algorithms pre-highlights, so the two pages agree by construction.
+ * The second half counts the patents that name the three NIST-standardised
+ * algorithms (ML-KEM, ML-DSA, SLH-DSA, or their filing-era names) — the same
+ * set for every role (owner decision 2026-11-14).
  */
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Scale, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import type { PatentItem } from '@/types/PatentTypes'
-import { ALGORITHM_PERSONA_DEFAULTS } from '@/data/personaConfig'
-import type { PersonaId } from '@/data/learningPersonas'
 import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
+import { vendorIdForPatentHolder } from '@/data/patentHolderVendor'
 
-/** The NIST-standardised algorithms every role's migration actually depends on.
- *  Used as the fallback when a persona has no `highlight` set of its own. */
+/** The three NIST-standardised algorithms every migration depends on. */
 const STANDARDISED = ['ML-KEM', 'ML-DSA', 'SLH-DSA']
 
 /**
- * Algorithm names this persona's own learning path teaches, normalised to
- * family prefixes so 'ML-KEM-768' in the persona config matches 'ML-KEM' in a
- * patent's algorithm list.
+ * The algorithm families the panel counts. One set for every role (owner
+ * decision 2026-11-14): the per-role "highlight" lists exist for only two
+ * roles and both hold these three, so a per-role framing promised a
+ * difference the page never made.
  */
-export function relevantAlgorithmFamilies(persona: PersonaId | null): string[] {
-  const highlight = persona ? ALGORITHM_PERSONA_DEFAULTS[persona].highlight : undefined
-  const source = highlight?.length ? highlight : STANDARDISED
-  return Array.from(new Set(source.map((name) => name.split('-').slice(0, 2).join('-'))))
+export function relevantAlgorithmFamilies(): string[] {
+  return [...STANDARDISED]
 }
 
 /** Lower-case a catalogue algorithm name and drop the "CRYSTALS-" prefix some filings use. */
@@ -68,7 +65,7 @@ export function algorithmNameMatchesFamily(algorithm: string, family: string): b
   })
 }
 
-/** True when any of the patent's PQC algorithms is in the persona's own set. */
+/** True when any of the patent's PQC algorithms is in the given families. */
 export function patentTouchesPersonaAlgorithms(patent: PatentItem, families: string[]): boolean {
   return (patent.pqcAlgorithms ?? []).some((algo: string) =>
     families.some((family) => algorithmNameMatchesFamily(algo, family))
@@ -77,12 +74,13 @@ export function patentTouchesPersonaAlgorithms(patent: PatentItem, families: str
 
 export function PatentsRoleLens({
   patents,
-  persona,
+  onSelectAssignee,
 }: {
   patents: PatentItem[]
-  persona: PersonaId | null
+  /** Filters the Explore list to this holder's patents. */
+  onSelectAssignee?: (assignee: string) => void
 }) {
-  const families = useMemo(() => relevantAlgorithmFamilies(persona), [persona])
+  const families = useMemo(() => relevantAlgorithmFamilies(), [])
   // Filing-era names that are counted alongside the families, taken from the shared alias table.
   const filingEraNames = useMemo(() => expandAlgorithmAliases(families), [families])
 
@@ -96,6 +94,11 @@ export function PatentsRoleLens({
     const topHolders = [...byAssignee.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5)
     return { relevantCount: relevant.length, holderCount: byAssignee.size, topHolders }
   }, [patents, families])
+
+  const vendorIds = useMemo(
+    () => new Map(summary.topHolders.map(([a]) => [a, vendorIdForPatentHolder(a)])),
+    [summary.topHolders]
+  )
 
   // Nothing relevant means nothing to say. An empty framing panel above an
   // empty result is the "structural hole" pattern this programme removes.
@@ -114,7 +117,7 @@ export function PatentsRoleLens({
         <span className="font-semibold text-foreground">{summary.relevantCount}</span> of the
         patents below name {families.join(', ')}
         {filingEraNames.length > 0 && <> (or the filing-era names {filingEraNames.join(', ')})</>} —
-        the algorithms your own path uses — and they are held by{' '}
+        the three NIST-standardised algorithms every migration depends on — and they are held by{' '}
         <span className="font-semibold text-foreground">{summary.holderCount}</span> organisations.
         This counts catalogue records only: a record that names just a general class such as
         &ldquo;lattice-based&rdquo;, or that lists no algorithm, is not counted, and the catalogue
@@ -133,25 +136,41 @@ export function PatentsRoleLens({
       {summary.topHolders.length > 0 && (
         <div className="mt-3">
           <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Who holds the most in your area
+            Who holds the most of these
           </p>
           <ul className="space-y-1">
             {summary.topHolders.map(([assignee, count]) => (
               <li key={assignee} className="flex flex-wrap items-baseline gap-x-2 text-sm">
-                <span className="font-medium text-foreground">{assignee}</span>
+                {onSelectAssignee ? (
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={() => onSelectAssignee(assignee)}
+                    className="h-auto p-0 text-sm font-medium text-foreground hover:text-primary"
+                    title={`Show only ${assignee}'s patents`}
+                  >
+                    {assignee}
+                  </Button>
+                ) : (
+                  <span className="font-medium text-foreground">{assignee}</span>
+                )}
                 <span className="font-mono text-xs text-muted-foreground">
                   {count} patent{count === 1 ? '' : 's'}
                 </span>
                 {/* The review's "cross-link to the vendors in the migration
                     catalog": if this holder also supplies something you run,
-                    that is a single conversation, not two. */}
-                <Link
-                  to={`/migrate?tab=roadmaps&vendor=${encodeURIComponent(assignee)}`}
-                  className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline"
-                >
-                  do they supply you?
-                  <ArrowRight size={11} aria-hidden="true" />
-                </Link>
+                    that is a single conversation, not two. Shown only when
+                    the holder IS a catalogue vendor — a bank or an inventor
+                    gets no link rather than a "no vendor matching" page. */}
+                {vendorIds.get(assignee) && (
+                  <Link
+                    to={`/migrate?tab=roadmaps&vendor=${encodeURIComponent(vendorIds.get(assignee)!)}`}
+                    className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline"
+                  >
+                    do they supply you?
+                    <ArrowRight size={11} aria-hidden="true" />
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

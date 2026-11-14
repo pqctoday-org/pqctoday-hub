@@ -66,7 +66,7 @@ export function PatentsScopeControl({
         {pqcOnly
           ? `Showing patents that use post-quantum or hybrid cryptography.${
               quantumSafeOutsideScope > 0
-                ? ` ${quantumSafeOutsideScope} more are quantum-safe without a PQC algorithm — AES-256, SHA-2/3 or QKD — and appear under “All crypto”.`
+                ? ` ${quantumSafeOutsideScope} more are quantum-safe without a PQC algorithm — AES-256 or SHA-2/3 strength, lattice homomorphic encryption, or quantum key distribution — and appear under “All crypto”.`
                 : ''
             }`
           : 'Showing the full corpus, including classical-only patents.'}
