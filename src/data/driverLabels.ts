@@ -62,6 +62,10 @@ export function formatDriver(tag: string): string {
       if (value === 'heavy-vendor') return 'Heavy vendor dependency across crypto stack'
       if (value === 'unknown') return 'Vendor posture not yet assessed'
       return `Vendor model: ${value}`
+    case 'cryptoLibraries':
+      return `Crypto libraries in your stack: ${value.split(',').join(', ')}`
+    case 'infraAutomation':
+      return `Crypto / certificate automation: ${value.split(',').join(', ')}`
     case 'cryptoAgility':
       return `Crypto agility level: ${value}`
     case 'timelinePressure':

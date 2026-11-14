@@ -90,7 +90,7 @@ describe('saved state', () => {
     const raw = localStorage.getItem('pqc-assessment-form')!
     const saved = JSON.parse(raw)
     expect(saved.state.timelineMilestone).toEqual(pair)
-    expect(saved.version).toBe(3)
+    expect(saved.version).toBe(4)
     useAssessmentFormStore.setState({ timelineMilestone: null })
     localStorage.setItem('pqc-assessment-form', raw)
     await useAssessmentFormStore.persist.rehydrate()

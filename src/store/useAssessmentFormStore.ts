@@ -224,6 +224,11 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           ...INITIAL_STATE,
           ...estate.answers,
           scenarioEstateId: estate.id,
+          // The estate brings its own frameworks and products: don't let the Compliance or
+          // Infrastructure step overwrite them from the visitor's unrelated Compliance/Migrate
+          // selections on mount.
+          importComplianceSelection: false,
+          importProductSelection: false,
           assessmentMode: 'comprehensive' as AssessmentMode,
           assessmentStatus: 'in-progress' as const,
           currentStep: 0,
@@ -255,6 +260,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           updates.infrastructure = []
           updates.infrastructureSubCategories = {}
           updates.infrastructureUnknown = false
+          updates.cryptoLibraries = []
+          updates.infraAutomation = []
           updates.vendorDependency = ''
           updates.vendorUnknown = false
           updates.timelinePressure = ''
@@ -733,6 +740,9 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           complianceRequirements: state.complianceRequirements,
           migrationStatus: state.migrationStatus as AssessmentInput['migrationStatus'],
         }
+        if (state.scenarioEstateId) input.scenarioEstateId = state.scenarioEstateId
+        if (state.currentCryptoCategories.length > 0)
+          input.currentCryptoCategories = state.currentCryptoCategories
         if (state.cryptoUnknown) input.currentCryptoUnknown = true
         if (state.sensitivityUnknown) input.sensitivityUnknown = true
         if (state.country) input.country = state.country
@@ -754,6 +764,13 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         if (state.infrastructureUnknown) input.infrastructureUnknown = true
         if (Object.keys(state.infrastructureSubCategories).length > 0)
           input.infrastructureSubCategories = state.infrastructureSubCategories
+        // The toolchain answers belong to the full assessment; a quick run never asks them.
+        // The mode can be null while a persona's recommended full track is running (the
+        // wizard applies it without writing it), so only an explicit quick run drops them.
+        if (state.assessmentMode !== 'quick') {
+          if (state.cryptoLibraries.length > 0) input.cryptoLibraries = state.cryptoLibraries
+          if (state.infraAutomation.length > 0) input.infraAutomation = state.infraAutomation
+        }
         if (state.vendorDependency)
           input.vendorDependency = state.vendorDependency as NonNullable<
             AssessmentInput['vendorDependency']
@@ -779,7 +796,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
     {
       name: 'pqc-assessment-form',
       storage: createJSONStorage(() => localStorage),
-      version: 3,
+      version: 4,
       migrate: (persistedState: unknown, version: number) => {
         let state = (persistedState ?? {}) as Record<string, unknown>
 
@@ -810,11 +827,18 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           state.timelineMilestone = sanitizeTimelineMilestone(state.timelineMilestone)
         }
 
+        // V4: the reference-estate label now survives a reload. A state saved before
+        // it was kept simply has none — nothing else about it changes.
+        if (version < 4) {
+          if (typeof state.scenarioEstateId !== 'string') state.scenarioEstateId = null
+        }
+
         return state
       },
       partialize: (state) => ({
         currentStep: state.currentStep,
         assessmentMode: state.assessmentMode,
+        scenarioEstateId: state.scenarioEstateId,
         industry: state.industry,
         country: state.country,
         currentCrypto: state.currentCrypto,
@@ -858,3 +882,29 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
     }
   )
 )
+
+/**
+ * A reference-estate run is labelled as one only while its answers are the estate's.
+ * The first time the reader changes an answer the label is dropped, so a report that is
+ * no longer the estate is never exported as if it were. Loading an estate and `reset`
+ * change the id itself, so they are not mistaken for an edit.
+ */
+const NON_ANSWER_KEYS = new Set([
+  'currentStep',
+  'assessmentMode',
+  'scenarioEstateId',
+  'assessmentStatus',
+  'lastWizardUpdate',
+  'importComplianceSelection',
+  'importProductSelection',
+])
+const ANSWER_KEYS = Object.keys(INITIAL_STATE).filter((k) => !NON_ANSWER_KEYS.has(k))
+function answerFingerprint(state: AssessmentFormState): string {
+  return JSON.stringify(ANSWER_KEYS.map((k) => state[k as keyof AssessmentFormState]))
+}
+useAssessmentFormStore.subscribe((state, prev) => {
+  if (!state.scenarioEstateId || state.scenarioEstateId !== prev.scenarioEstateId) return
+  if (answerFingerprint(state) !== answerFingerprint(prev)) {
+    useAssessmentFormStore.setState({ scenarioEstateId: null })
+  }
+})

@@ -6,6 +6,8 @@ export type KpiValueOrigin =
   | 'learner-override'
   | 'calculated-current'
   | 'calculated-snapshot'
+  /** A fictional value the learner loaded with "Load sample baseline". */
+  | 'sample-baseline'
   | 'unrecorded'
 
 export function currentKpiValueOrigin(
@@ -28,6 +30,7 @@ export function kpiValueOriginLabel(origin: KpiValueOrigin, disabled = false): s
     'learner-override': 'Learner override of calculated sample value',
     'calculated-current': 'Calculated from current selected sample inputs',
     'calculated-snapshot': 'Saved calculated sample snapshot — not a current calculation',
+    'sample-baseline': 'Hub sample baseline value — fictional; replace it with your own',
     unrecorded: 'Value origin not recorded',
   }
   return labels[origin]
@@ -47,7 +50,8 @@ export function restoredKpiValueOrigins(
           ? 'calculated-snapshot'
           : origin === 'learner-entered' ||
               origin === 'learner-override' ||
-              origin === 'not-entered'
+              origin === 'not-entered' ||
+              origin === 'sample-baseline'
             ? origin
             : 'unrecorded',
       ]
@@ -57,6 +61,9 @@ export function restoredKpiValueOrigins(
 
 export function isKpiValueAssessed(origin: KpiValueOrigin): boolean {
   return (
-    origin === 'learner-entered' || origin === 'learner-override' || origin === 'calculated-current'
+    origin === 'learner-entered' ||
+    origin === 'learner-override' ||
+    origin === 'calculated-current' ||
+    origin === 'sample-baseline'
   )
 }

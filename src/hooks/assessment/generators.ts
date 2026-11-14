@@ -390,6 +390,55 @@ export function generateExtendedActions(
     })
   }
 
+  // Crypto toolchain (Infrastructure step): libraries decide which PQC algorithms are
+  // reachable without new code; automation decides whether certificates can be rotated
+  // at the pace PQC and shortening certificate lifetimes require.
+  const libraries = input.cryptoLibraries ?? []
+  if (libraries.includes('OpenSSL')) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Upgrade OpenSSL to 3.5 or newer, which ships ML-KEM, ML-DSA and SLH-DSA natively. Earlier releases have no post-quantum algorithms, and 1.1.1 has been end-of-life since September 2023.',
+      category: 'short-term',
+      relatedModule: '/migrate',
+      effort: 'medium',
+      drivers: ['cryptoLibraries:OpenSSL'],
+    })
+  }
+  const otherLibraries = libraries.filter((l) => l !== 'OpenSSL')
+  if (otherLibraries.length > 0) {
+    actions.push({
+      priority: priority++,
+      action: `Record the versions of ${otherLibraries.join(', ')} in use and check each against its post-quantum support in the migration catalog; libraries without ML-KEM or ML-DSA need an upgrade or a replacement.`,
+      category: 'short-term',
+      relatedModule: '/migrate',
+      effort: 'medium',
+      drivers: [`cryptoLibraries:${otherLibraries.join(',')}`],
+    })
+  }
+  const automation = input.infraAutomation ?? []
+  const automationTools = automation.filter((t) => t !== 'None' && t !== 'Manual / scripted')
+  if (automation.length > 0 && automationTools.length === 0) {
+    actions.push({
+      priority: priority++,
+      action:
+        'Automate certificate issuance and rotation (for example ACME-based tooling or a managed PKI) before PQC certificates arrive: larger keys and signatures and shortening certificate lifetimes make manual renewal unsustainable.',
+      category: 'short-term',
+      relatedModule: '/migrate',
+      effort: 'medium',
+      drivers: [`infraAutomation:${automation.join(',')}`],
+    })
+  } else if (automationTools.length > 0) {
+    actions.push({
+      priority: priority++,
+      action: `Confirm that ${automationTools.join(', ')} can request, deploy and rotate post-quantum and hybrid keys and certificates once your CAs and key stores offer them, and plan the upgrade where they cannot.`,
+      category: 'long-term',
+      relatedModule: '/migrate',
+      effort: 'low',
+      drivers: [`infraAutomation:${automationTools.join(',')}`],
+    })
+  }
+
   if (pqcCompliance.length > 0) {
     actions.push({
       priority: priority++,

@@ -25,8 +25,8 @@ import {
   sampleReportView,
   REPORT_LINK_PARAMS,
 } from '@/hooks/useResolvedSharedReport'
-import { getReportSectionConfig, type ReportSectionId } from '../../data/personaConfig'
-import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
+import { buildReportToc } from './reportTocModel'
+import { usePhaseFilter } from '@/hooks/usePhaseFilter'
 import { PageHeader } from '../common/PageHeader'
 import { logReportViewed, logReportCta } from '@/utils/analytics'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
@@ -36,50 +36,6 @@ import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildReportShareUrl } from './sections/reportContentActions'
-
-/**
- * Sections that render outside the persona-config-gated REPORT_SECTION_ORDER
- * list (QRA, ROI, KPI trending, NICE workforce gap) — they render
- * unconditionally, not through `getReportSectionConfig`, so they were
- * previously unreachable from the TOC entirely. Each entry names the
- * REPORT_SECTION_ORDER id it renders immediately after, in true page order.
- *
- * ACCURACY-0708-2: these entries used to only appear in the TOC when their
- * anchor id's own base entry survived the persona hidden-state filter (e.g.
- * the ROI/KPI-trending entries were nested under `vendorRisk`) — but the
- * sections they name render unconditionally regardless of that anchor's
- * visibility, so if any persona config ever hid `vendorRisk`, the TOC would
- * silently drop two sections still visible on the page. `tocSections` below
- * now appends these independently of the anchor's own filtered visibility.
- */
-interface TocExtra {
-  id: string
-  label: string
-  /** QRA and the NICE gap report both key off `getInput()` — the RECIPIENT's
-   *  own live assessment input — so ReportContent skips rendering them
-   *  entirely on a shared/example view (see the `shared` guards there) to
-   *  avoid mixing the sender's result with the recipient's own inputs.
-   *  Their TOC entries must be dropped too, or they'd point at an anchor
-   *  that was never rendered. */
-  hideWhenShared?: boolean
-}
-
-const EXTRA_TOC_AFTER: Partial<Record<ReportSectionId, TocExtra[]>> = {
-  riskScore: [
-    { id: 'report-section-qra', label: 'Quantum Readiness Assessment', hideWhenShared: true },
-  ],
-  vendorRisk: [
-    { id: 'report-section-roiCalculator', label: 'ROI & Financial Case' },
-    { id: 'report-section-kpiTrending', label: 'Progress Over Time' },
-  ],
-}
-
-/** Renders after every other section (including threatLandscape) — appended
- *  at the end of the TOC unconditionally (except on a shared/example view —
- *  see `hideWhenShared` above). */
-const TOC_TRAILING: TocExtra[] = [
-  { id: 'report-section-niceGap', label: 'NICE Workforce Gap Report', hideWhenShared: true },
-]
 
 /**
  * Persona-flavored maturity tier chip rendered just under the page header
@@ -167,11 +123,14 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // First-mount on a comprehensive assessment is 800-1500ms on slow machines;
   // each yield gives the browser ~16ms to paint, so the bar animates.
   const [computeState, setComputeState] = useState<{
+    /** The input the pipeline is running (or last ran) for. */
     inputKey: string | null
     result: ReturnType<typeof computeAssessment> | null
+    /** The input `result` was computed from — lags `inputKey` while a recompute runs. */
+    resultInputKey: string | null
     log: LogEntry[]
     computing: boolean
-  }>({ inputKey: null, result: null, log: [], computing: false })
+  }>({ inputKey: null, result: null, resultInputKey: null, log: [], computing: false })
 
   useEffect(() => {
     let cancelled = false
@@ -180,15 +139,20 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       // Re-using a previously-computed result if the inputKey is unchanged
       // (avoids re-running the pipeline on every render — same purpose the
       // earlier useMemo served).
-      if (computeState.inputKey === inputKey && computeState.result) return
+      // A run still in flight is restarted rather than skipped: this effect's
+      // cleanup cancels it, so skipping would leave the stale result on screen.
+      if (computeState.inputKey === inputKey && computeState.result && !computeState.computing)
+        return
       setComputeState((prev) => ({
         inputKey,
-        result: null,
+        // Keep the previously-computed result on screen while we re-run, so a
+        // persona toggle or answer edit updates the report in place instead of
+        // swapping it for the loading screen (which also drops scroll position
+        // and every section's open/closed state).
+        result: prev.result,
+        resultInputKey: prev.resultInputKey,
         log: [],
         computing: true,
-        // Keep the previously-computed result while we re-run so the UI
-        // doesn't flicker an empty state between persona toggles.
-        ...(prev.inputKey === inputKey ? { result: prev.result } : {}),
       }))
       computeAssessmentAsync(input, (label, durationMs) => {
         if (cancelled) return
@@ -199,7 +163,12 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       })
         .then((r) => {
           if (cancelled) return
-          setComputeState((prev) => ({ ...prev, result: r, computing: false }))
+          setComputeState((prev) => ({
+            ...prev,
+            result: r,
+            resultInputKey: inputKey,
+            computing: false,
+          }))
         })
         .catch((err) => {
           if (cancelled) return
@@ -219,11 +188,18 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       setComputeState({
         inputKey: null,
         result: lastResult,
+        resultInputKey: null,
         log: [],
         computing: false,
       })
     } else {
-      setComputeState({ inputKey: null, result: null, log: [], computing: false })
+      setComputeState({
+        inputKey: null,
+        result: null,
+        resultInputKey: null,
+        log: [],
+        computing: false,
+      })
     }
     return () => {
       cancelled = true
@@ -234,7 +210,10 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   const ownResult = computeState.result
   const reportComputing = computeState.computing
   const reportLogEntries = computeState.log
-  const persistedRef = useRef(false)
+  const resultInputKey = computeState.resultInputKey
+  // The input key whose result was last persisted (`undefined` = nothing yet),
+  // so a recompute after an answer edit or persona change is written again.
+  const persistedKeyRef = useRef<string | null | undefined>(undefined)
   const [expandToken, setExpandToken] = useState(0)
   const [collapseToken, setCollapseToken] = useState(0)
   const handleExpandAll = useCallback(() => setExpandToken((t) => t + 1), [])
@@ -264,20 +243,24 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
 
   const selectedPersona = sharedView ? sharedView.persona : livePersona
   const isShared = !!sharedView
-  const tocSections = useMemo(() => {
-    const keep = (extra: TocExtra) => !(extra.hideWhenShared && isShared)
-    const base = REPORT_SECTION_ORDER.flatMap((id) => [
-      ...(getReportSectionConfig(selectedPersona, id).state !== 'hidden'
-        ? [{ id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] }]
-        : []),
-      // These extras render unconditionally on the page (see EXTRA_TOC_AFTER
-      // doc comment) — always include them here too, independent of whether
-      // their anchor id's own entry survived the hidden-state filter above.
-      // eslint-disable-next-line security/detect-object-injection
-      ...(EXTRA_TOC_AFTER[id] ?? []).filter(keep),
-    ])
-    return [...base, ...TOC_TRAILING.filter(keep)]
-  }, [selectedPersona, isShared])
+  // The summary/full switch lives here so the contents list follows it.
+  const [showFullReport, setShowFullReport] = useState(false)
+  const { activePhase } = usePhaseFilter()
+  const hasOwnInput = !!input
+  const tocSections = useMemo(
+    () =>
+      sharedView || ownResult
+        ? buildReportToc({
+            result: (sharedView ? sharedView.result : ownResult)!,
+            persona: selectedPersona,
+            showFullReport,
+            activePhase,
+            shared: isShared,
+            hasOwnInput,
+          })
+        : [],
+    [sharedView, ownResult, selectedPersona, showFullReport, activePhase, isShared, hasOwnInput]
+  )
 
   // Persist result and mark module complete. Deliberately keyed on
   // `ownResult` (the recipient's own live-store-driven compute), never on
@@ -286,12 +269,16 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   useEffect(() => {
     if (linkedScope || sharedView) return
     if (assessmentStatus === 'not-started') {
-      persistedRef.current = false
+      persistedKeyRef.current = undefined
       return
     }
-    if (ownResult && !persistedRef.current) {
-      persistedRef.current = true
-      logReportViewed(useAssessmentStore.getState().industry, ownResult.riskLevel)
+    // `ownResult` can be the previous input's result while a recompute runs;
+    // persist only once it belongs to the current input.
+    if (ownResult && resultInputKey === inputKey && persistedKeyRef.current !== inputKey) {
+      if (persistedKeyRef.current === undefined) {
+        logReportViewed(useAssessmentStore.getState().industry, ownResult.riskLevel)
+      }
+      persistedKeyRef.current = inputKey
       setResult(ownResult)
       // Tag with the input that produced this result so the sim's self-unlock
       // effect can tell it's already current and skip its own (coarser) recompute.
@@ -316,7 +303,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
         })
       }
     }
-  }, [assessmentStatus, ownResult, setResult, linkedScope, sharedView, inputKey])
+  }, [assessmentStatus, ownResult, resultInputKey, setResult, linkedScope, sharedView, inputKey])
 
   // What actually renders: the sender's ephemeral snapshot when viewing a
   // shared/example link, otherwise the recipient's own live result.
@@ -593,6 +580,8 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
             result={result}
             expandToken={expandToken}
             collapseToken={collapseToken}
+            showFullReport={showFullReport}
+            onShowFullReportChange={setShowFullReport}
             sharedView={
               sharedView ? { persona: sharedView.persona, sample: sharedView.sample } : undefined
             }

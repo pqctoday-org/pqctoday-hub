@@ -12,7 +12,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.4.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-09',
+  lastEdited: '2026-11-14',
 
   standards: [
     getStandard('FIPS 203'),
@@ -45,7 +45,7 @@ export const content: ModuleContent = {
     getStandard('RFC 9180'), // HPKE base spec — see the HPKE section + Step 3 workshop
     getStandard('draft-ietf-hpke-hpke-06'), // RFC 9180 successor (RFC Editor queue): removes the Auth and AuthPSK modes
     getStandard('draft-ietf-hpke-pq'), // PQ/PQ-T hybrid HPKE KEM IDs (MLKEM768-X25519/P256, MLKEM1024-P384)
-    getStandard('draft-ietf-cose-hpke'), // HPKE use case: COSE
+    getStandard('draft-ietf-cose-hpke-27'), // HPKE use case: COSE
     getStandard('draft-ietf-jose-hpke-encrypt'), // HPKE use case: JOSE
     getStandard('RFC-9955-Hybrid-Signature-Spectrums'),
     // X25519MLKEM768 deployment and measured cost (sourced 2026-10-22, owner: "source or trim")
@@ -109,7 +109,7 @@ export const content: ModuleContent = {
     getStandard('ETSI TS 103 744'),
     getStandard('ETSI-TR-103-966'),
     getStandard('RFC-10024'),
-    getStandard('draft-ietf-tls-mlkem-07'),
+    getStandard('draft-ietf-tls-mlkem-11'),
     getStandard('GSMA PQ.03 PQC Guidelines'),
     getStandard('Cloudflare-PostQuantum-Roadmap-2026'),
     getStandard('Bernstein-MLDSA-Bugs-2026'),

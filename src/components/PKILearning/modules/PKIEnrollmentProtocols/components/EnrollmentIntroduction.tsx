@@ -103,9 +103,8 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
             POST a PKCS#10 CSR through a simulated EST <code>simpleenroll</code> endpoint
           </li>
           <li>
-            Enroll an ML-KEM certificate, then run a separate sample ML-KEM
-            encapsulation/decapsulation (not a KUR request or completed RFC 9810 proof of
-            possession)
+            Update an ML-KEM certificate with a signed CMP key update request, recover the encrypted
+            certificate and confirm its hash
           </li>
           <li>Decode and chain-verify the issued certificate</li>
         </ul>

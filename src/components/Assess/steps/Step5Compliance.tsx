@@ -93,17 +93,15 @@ const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedSte
   // Bidirectional sync: when import ON, sync complianceRequirements from myFrameworks
   useEffect(() => {
     if (!importComplianceSelection || complianceUnknown) return
+    // Every framework in the selection goes through, including one added from the
+    // "describe your context" search (which by design lists frameworks outside the
+    // industry/country list). The report decides applicability and names any
+    // framework it leaves out, so dropping one here would do it silently.
     const labels = complianceFrameworks
-      .filter((fw) => myFrameworks.includes(fw.id) && filteredFrameworkIds.has(fw.id))
+      .filter((fw) => myFrameworks.includes(fw.id))
       .map((fw) => fw.label)
     setComplianceRequirements(labels)
-  }, [
-    importComplianceSelection,
-    myFrameworks,
-    filteredFrameworkIds,
-    complianceUnknown,
-    setComplianceRequirements,
-  ])
+  }, [importComplianceSelection, myFrameworks, complianceUnknown, setComplianceRequirements])
 
   // Toggle handler: bidirectional when import ON
   const handleToggle = useCallback(

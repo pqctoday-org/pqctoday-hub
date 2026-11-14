@@ -777,7 +777,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </strong>{' '}
                 and{' '}
                 <strong>
-                  <Link to="/library?ref=draft-ietf-cose-hpke" className="text-primary underline">
+                  <Link
+                    to="/library?ref=draft-ietf-cose-hpke-27"
+                    className="text-primary underline"
+                  >
                     COSE
                   </Link>
                 </strong>{' '}

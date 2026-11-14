@@ -27,3 +27,56 @@ describe('report share links carry the frameworks that were left out', () => {
     expect(decoded.result.omittedCompliance).toBeUndefined()
   })
 })
+
+describe('report share links: profile lists are checked on the way in', () => {
+  it('drops a list field that is not a list of strings and keeps the report readable', () => {
+    const result = computeAssessment({
+      industry: 'Finance & Banking',
+      country: 'United States',
+      currentCrypto: [],
+      dataSensitivity: ['high'],
+      complianceRequirements: [],
+      migrationStatus: 'planning',
+    })
+    const tampered = {
+      ...result,
+      assessmentProfile: {
+        ...result.assessmentProfile!,
+        algorithmsSelected: { length: 1 },
+        algorithmsImplied: { length: 1 },
+        cryptoLibraries: [1, 2],
+        infraAutomation: 'None',
+        scenarioEstateId: 42,
+      },
+    } as unknown as typeof result
+    const decoded = decodeShareToken(encodeShareToken({ result: tampered }))
+    expect(decoded && decoded.v === 2).toBe(true)
+    const profile = (decoded as { result: typeof result }).result.assessmentProfile!
+    expect(profile.algorithmsSelected).toEqual([])
+    expect(profile).not.toHaveProperty('algorithmsImplied')
+    expect(profile).not.toHaveProperty('cryptoLibraries')
+    expect(profile).not.toHaveProperty('infraAutomation')
+    expect(profile).not.toHaveProperty('scenarioEstateId')
+  })
+
+  it('keeps well-formed lists and the estate id', () => {
+    const result = computeAssessment({
+      industry: 'Finance & Banking',
+      country: 'United States',
+      currentCrypto: [],
+      currentCryptoCategories: ['Key Exchange'],
+      dataSensitivity: ['high'],
+      complianceRequirements: [],
+      migrationStatus: 'planning',
+      cryptoLibraries: ['OpenSSL'],
+      infraAutomation: ['None'],
+      scenarioEstateId: 'retail-bank',
+    } as never)
+    const decoded = decodeShareToken(encodeShareToken({ result })) as { result: typeof result }
+    const profile = decoded.result.assessmentProfile!
+    expect(profile.cryptoLibraries).toEqual(['OpenSSL'])
+    expect(profile.infraAutomation).toEqual(['None'])
+    expect(profile.algorithmsImplied?.length).toBeGreaterThan(0)
+    expect(profile.scenarioEstateId).toBe('retail-bank')
+  })
+})
