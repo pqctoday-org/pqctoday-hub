@@ -56,8 +56,8 @@ import {
   showTopToolbar,
   actionItemCap,
   collapseLowerSections,
-  BASIC_DENSITY_DEFAULT_ZONE,
 } from './lib/density'
+import { defaultOpenZoneFor } from './lib/lensZone'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
@@ -358,13 +358,14 @@ export function BusinessCenterView() {
   )
 
   // openZone — single source of truth for which zone panel is expanded.
-  // Initialised to the persona-derived default; user nav/toggle overrides it.
-  // At basic density we always anchor on the Assets zone — the audit-recommended
-  // "start here" entry point for first-time learners. Other densities honour
-  // the persona-derived default.
-  const [openZone, setOpenZone] = useState<ZoneId | null>(() =>
-    density === 'basic' ? BASIC_DENSITY_DEFAULT_ZONE : zoneEmphasis.defaultActiveZone
-  )
+  // Initialised to the role's default zone (lib/lensZone.ts); user nav/toggle
+  // overrides it. Switching role moves it to the new role's default.
+  const [openZone, setOpenZone] = useState<ZoneId | null>(() => defaultOpenZoneFor(selectedPersona))
+  const [zoneRolePersona, setZoneRolePersona] = useState<PersonaId | null>(selectedPersona)
+  if (selectedPersona !== zoneRolePersona) {
+    setZoneRolePersona(selectedPersona)
+    setOpenZone(defaultOpenZoneFor(selectedPersona))
+  }
   const [searchParams, setSearchParams] = useSearchParams()
 
   // ?phase=<id> overlay — when active, the page swaps its zone body for a
@@ -392,6 +393,9 @@ export function BusinessCenterView() {
     () => zoneFromQueryParam(searchParams.get('zone')),
     [searchParams]
   )
+  // The zone the selected role opens (see lens-zone). Same zone the open-zone
+  // state starts on, so the footer and the open panel name the same zone.
+  const lensZone = defaultOpenZoneFor(selectedPersona)
 
   useEffect(() => {
     if (!zoneFromQuery) return
@@ -853,18 +857,20 @@ export function BusinessCenterView() {
                 defaultCollapsed={collapseLowerSections(density)}
               />
 
-              {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zones
-               this persona emphasizes so the user knows other lenses exist.
-               Renders only when a persona is selected. Acts as a soft invite
-               to switch role via the chip in the page header. */}
+              {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zone
+               this persona's lens opens and the zones it features, so the user
+               knows other lenses exist. Renders only when a persona with a lens
+               is selected. Acts as a soft invite to switch role via the chip in
+               the page header. */}
               {selectedPersona && Object.keys(zoneEmphasis.featuredArtifacts).length > 0 && (
                 <div className="px-1 text-xs text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
                   <span className="font-medium text-foreground">Your {selectedPersona} lens</span>{' '}
-                  emphasizes the{' '}
-                  <span className="text-primary">{zoneEmphasis.defaultActiveZone}</span> zone and a
-                  curated artifact set ({Object.keys(zoneEmphasis.featuredArtifacts).length} of{' '}
-                  {CSWP39_ZONE_ORDER.length} zones featured). Switch persona via the chip in the
-                  page header to see other lenses — every zone and artifact stays reachable.
+                  opens the{' '}
+                  <span className="text-primary">{CSWP39_ZONE_DETAILS[lensZone].title}</span> zone
+                  and features a curated artifact set (
+                  {Object.keys(zoneEmphasis.featuredArtifacts).length} of {CSWP39_ZONE_ORDER.length}{' '}
+                  zones featured). Switch persona via the chip in the page header to see other
+                  lenses — every zone and artifact stays reachable.
                 </div>
               )}
 

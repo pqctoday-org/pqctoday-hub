@@ -583,11 +583,11 @@ describe('BusinessCenterView empty profile with zone links', () => {
     renderEmptyAt('/business')
     fireEvent.click(screen.getByRole('button', { name: 'Explore the six zones' }))
 
-    // Basic density opens Assets by default; a click moves the open zone.
-    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Expand Governance' }))
+    // An executive's lens opens Governance by default; a click moves the open zone.
     expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Expand Assets' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Assets' }))
+    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
   })
 
   it('still switches zones after a ?zone= link opened the map', () => {
@@ -607,7 +607,99 @@ describe('BusinessCenterView empty profile with zone links', () => {
     )
 
     expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
+    // The executive's lens zone (Governance) is the one that opens.
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
   })
 })
 
+// Which zone opens on arrival follows the role's own lens (lib/lensZone.ts),
+// at any density. Curious, or no role, opens Assets. A switch of role moves the
+// open zone, and the footer names the zone that opens.
+describe('BusinessCenterView open zone by role', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockAssessmentStore.industry = 'Technology'
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = null
+  })
+
+  function renderAt(url = '/business') {
+    return render(
+      <MemoryRouter initialEntries={[url]}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+  }
+
+  const openTitles = () =>
+    CSWP39_ZONE_ORDER.filter((z) =>
+      screen.queryByRole('button', { name: `Collapse ${CSWP39_ZONE_DETAILS[z].title}` })
+    ).map((z) => CSWP39_ZONE_DETAILS[z].title)
+
+  it('an executive opens Governance at basic density', () => {
+    mockPersonaStore.experienceLevel = 'curious'
+    renderAt()
+    expect(openTitles()).toEqual(['Governance'])
+  })
+
+  it('an executive still opens Governance at advanced density', () => {
+    mockPersonaStore.experienceLevel = 'expert'
+    renderAt()
+    expect(openTitles()).toEqual(['Governance'])
+  })
+
+  it('a developer opens Migration, the zone of their lens', () => {
+    mockPersonaStore.selectedPersona = 'developer'
+    mockPersonaStore.experienceLevel = null
+    renderAt()
+    expect(openTitles()).toEqual(['Migration'])
+  })
+
+  it('curious opens Assets', () => {
+    mockPersonaStore.selectedPersona = 'curious'
+    mockPersonaStore.experienceLevel = 'curious'
+    renderAt()
+    expect(openTitles()).toEqual(['Assets'])
+  })
+
+  it('no role picked opens Assets', () => {
+    mockPersonaStore.selectedPersona = null
+    mockPersonaStore.experienceLevel = null
+    renderAt()
+    expect(openTitles()).toEqual(['Assets'])
+  })
+
+  it('switching role moves the open zone to the new role default', () => {
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = null
+    const { rerender } = renderAt()
+    expect(openTitles()).toEqual(['Governance'])
+
+    mockPersonaStore.selectedPersona = 'ops'
+    rerender(
+      <MemoryRouter initialEntries={['/business']}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+    expect(openTitles()).toEqual(['Migration'])
+  })
+
+  it('the footer names the zone that opens for the role', () => {
+    mockPersonaStore.selectedPersona = 'executive'
+    renderAt()
+    expect(screen.getByText(/Your executive lens/).closest('div')).toHaveTextContent(
+      `opens the ${CSWP39_ZONE_DETAILS.governance.title} zone`
+    )
+    expect(openTitles()).toEqual([CSWP39_ZONE_DETAILS.governance.title])
+  })
+
+  it('a zone deep link still opens its zone on arrival, over the role default', () => {
+    mockPersonaStore.selectedPersona = 'executive'
+    renderAt('/business?zone=mitigation')
+    expect(openTitles()).toEqual(['Mitigation'])
+  })
+})
