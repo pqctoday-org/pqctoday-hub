@@ -40,6 +40,60 @@ export function getTimelineEnrichmentKey(countryName: string, org: string, title
   return `${countryName}:${org} — ${title}`
 }
 
+const libraryById = new Map(libraryData.map((item) => [item.referenceId, item]))
+// A superseded Library id resolves to the record that replaced it.
+for (const item of libraryData)
+  for (const prior of item.priorRevisions ?? [])
+    if (!libraryById.has(prior.referenceId)) libraryById.set(prior.referenceId, item)
+
+export interface TimelineLibraryLink {
+  referenceId: string
+  title: string
+}
+
+/**
+ * The Library records a timeline event points to: its curated `library_refs`
+ * first, then a Library document whose download URL is the event's source URL.
+ * Ids with no Library record (retired with no successor) are left out.
+ */
+export function timelineLibraryLinks(event: {
+  libraryRefs?: string[]
+  sourceUrl?: string
+}): TimelineLibraryLink[] {
+  const ids = [
+    ...(event.libraryRefs ?? []),
+    ...(event.sourceUrl && timelineToLibraryRef[event.sourceUrl]
+      ? [timelineToLibraryRef[event.sourceUrl]]
+      : []),
+  ]
+  const out = new Map<string, TimelineLibraryLink>()
+  for (const id of ids) {
+    const item = libraryById.get(id)
+    if (item && !out.has(item.referenceId))
+      out.set(item.referenceId, { referenceId: item.referenceId, title: item.documentTitle })
+  }
+  return [...out.values()]
+}
+
+/**
+ * The enrichment-lookup key a timeline row's enrichment lives under: its
+ * current label, else an earlier label of the same event_id; undefined when
+ * the row has no enrichment.
+ */
+export function getTimelineEnrichmentKeyFor(
+  eventId: string | undefined,
+  countryName: string,
+  org: string,
+  title: string
+): string | undefined {
+  const direct = getTimelineEnrichmentKey(countryName, org, title)
+  // eslint-disable-next-line security/detect-object-injection -- lookup by built key
+  if (timelineEnrichments[direct]) return direct
+  if (!eventId) return undefined
+  // eslint-disable-next-line security/detect-object-injection
+  return (TIMELINE_LABEL_ALIASES[eventId] ?? []).find((label) => !!timelineEnrichments[label])
+}
+
 /**
  * The enrichment for a timeline row: by its current label first, then by any
  * label the same event_id carried in an earlier CSV generation. Enrichment

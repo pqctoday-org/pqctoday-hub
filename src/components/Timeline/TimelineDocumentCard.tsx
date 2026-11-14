@@ -21,6 +21,7 @@ import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { periodLabel } from '@/utils/timelinePeriod'
+import { BindingForcePill, MandatePill } from './TimelineRecordFacts'
 
 interface TimelineDocumentCardProps {
   row: TimelineDocumentRow
@@ -110,6 +111,8 @@ export const TimelineDocumentCard = ({
             Enriched
           </span>
         )}
+        {isSourceEvent && <MandatePill value={row.mandateType} />}
+        {isSourceEvent && <BindingForcePill value={row.bindingForce} />}
         {isSourceEvent && (
           // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
           <span onClick={(e) => e.stopPropagation()}>

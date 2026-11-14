@@ -17,7 +17,7 @@ import { matchesCategoryFilter } from '@/components/Timeline/CategoryFilter'
 import { matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
 import type { TrustTier } from '@/data/trustScore'
 import { CATEGORY_DEFAULT } from '@/components/Timeline/CategoryFilter'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
+import { timelineRegionCountries } from '@/data/timelineRegionCountries'
 
 const VALID_CATEGORIES: ReadonlySet<EntityType> = new Set(['government', 'standards', 'vendor'])
 
@@ -49,7 +49,7 @@ export function applyTimelineScope(
   if (country && country !== 'All') {
     narrowed = countries.filter((c) => c.countryName === country)
   } else if (region && region !== 'All') {
-    const inRegion = REGION_COUNTRIES_MAP[region as keyof typeof REGION_COUNTRIES_MAP] ?? []
+    const inRegion = timelineRegionCountries(region)
     narrowed = countries.filter((c) => inRegion.includes(c.countryName))
   }
 

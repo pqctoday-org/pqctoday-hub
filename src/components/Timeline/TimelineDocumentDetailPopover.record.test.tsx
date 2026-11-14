@@ -55,10 +55,11 @@ describe('timeline record: binding force, status and revision history', () => {
       </MemoryRouter>
     )
     const dialog = screen.getByRole('dialog')
-    expect(within(dialog).getByText('Binding force')).toBeInTheDocument()
-    expect(within(dialog).getByText('binding')).toBeInTheDocument()
-    expect(within(dialog).getByText('HARD')).toBeInTheDocument()
-    expect(within(dialog).getByText('Reviewed')).toBeInTheDocument()
+    // The shared record facts render the binding force as a plain-language pill,
+    // the mandate as its own pill and the review status as "Status: …".
+    expect(within(dialog).getByText('Binding')).toBeInTheDocument()
+    expect(within(dialog).getByTestId('mandate-type')).toHaveTextContent('binding mandate')
+    expect(within(dialog).getByText(/^Status:/)).toHaveTextContent('Status: Reviewed')
   })
 
   it('opens the revision history for the event id', () => {
@@ -68,7 +69,8 @@ describe('timeline record: binding force, status and revision history', () => {
         <TimelineDocumentDetailPopover isOpen row={row} onClose={vi.fn()} />
       </MemoryRouter>
     )
-    fireEvent.click(screen.getByRole('button', { name: 'Revision history' }))
+    // The Reviewed badge opens the event's revision history.
+    fireEvent.click(screen.getByTitle(/^Reviewed by/))
     const last = captured.props[captured.props.length - 1]
     expect(last).toBeDefined()
     expect(last.domain).toBe('timeline')
@@ -91,6 +93,7 @@ describe('timeline record: binding force, status and revision history', () => {
         />
       </MemoryRouter>
     )
-    expect(screen.queryByRole('button', { name: 'Revision history' })).not.toBeInTheDocument()
+    // Without an event id no revision matches, so no Reviewed badge opens a history.
+    expect(screen.queryByTitle(/^Reviewed by/)).not.toBeInTheDocument()
   })
 })

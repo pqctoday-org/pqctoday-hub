@@ -34,26 +34,37 @@ export const pageManuals: Record<PageId, PageManual> = {
   timeline: {
     title: 'Global Migration Timeline',
     summary:
-      'Compare post-quantum cryptography migration roadmaps across nations and track phases from discovery to full migration.',
+      'Compare published post-quantum migration records — standards, guidance, policy and deadlines — across countries and international bodies, each linked to its source.',
     sections: [
       {
         heading: 'Region & Country Filters',
-        body: 'Use the region dropdown to filter by Americas, EU, APAC, or Global. Select a specific country to see its migration phases highlighted on the Gantt chart. Filters sync with the URL so you can share filtered views.',
+        body: 'Use the region dropdown, or a Coverage-by-region tile, to show Americas, EU (the Europe group, including the UK, Norway and Switzerland), MENA, APAC or Global (international bodies such as the G7, IETF, ITU-T and ETSI). Pick a country to narrow further and to open its Documents panel. Filters are kept in the URL (?region=, ?country=, ?q=) so a filtered view can be shared.',
       },
       {
         heading: 'Gantt Chart',
-        body: 'Each row represents a country. Colored bars show migration phases (Research, Planning, Early Adoption, Transition, Full Migration). Hover over a bar to see phase dates and details. Click a row to expand milestones.',
+        body: "Each country has one row per phase type: Discovery, Testing, POC, Migration, Standardization, Guidance, Policy, Regulation, Research or Deadline. Bars are phases with a start and end year; flags are dated milestones, with a number when one year holds several, and a thin line when a milestone states a span. The Organization column names the body behind each row. Click a bar or flag to open that year's record; when a row groups several records, the popover lists them all so each can be opened.",
+      },
+      {
+        heading: 'Search & Quick Filters',
+        body: 'Search matches countries, issuing bodies and each record\'s title, description and identifiers (for example "FIPS 203" or "TR-02102"). The phase and type dropdowns narrow the chart (?phase=, ?etype=), and Deadlines (?deadlines=1) shows deadline records only. A deadline that states a range counts at its end year.',
+      },
+      {
+        heading: 'Records, Binding Force & Evidence',
+        body: 'A record shows who issued it, its period, how binding the source is (binding, mandatory in scope, official target, recommendation, draft or informational), its HARD/SOFT mandate label where one has been reviewed, its evidence score, its review history, and links to the Library documents and compliance frameworks that cite it. In the Documents panel, switch between Cards and Table (?docview=table). A link to one record is /timeline?event=<record id>; a link to a retired record opens the record that replaced it when the dataset names one.',
       },
       {
         heading: 'Export & Sharing',
-        body: 'Use the Export button in the header to download the full timeline dataset as CSV. The Share button copies a deep link to your current filtered view.',
+        body: 'Export (in the header or the chart toolbar) downloads one CSV row per record in the current view, with its issuer, dates, source, mandate label and binding force. The operations view also offers a calendar (.ics) export of the same records. Years are year-level: a calendar entry marks the year, not a day.',
       },
       {
-        heading: 'Sources & Endorsements',
-        body: 'Click Sources to see the authoritative government documents behind each data point. Use the Endorse/Flag buttons to provide community feedback on data accuracy.',
+        heading: 'Endorsements & Flags',
+        body: 'Use Endorse or Flag on a country row or a record to send feedback about its accuracy.',
       },
     ],
-    tips: ['Bookmark a filtered URL to quickly return to a specific region view.'],
+    tips: [
+      'Bookmark a filtered URL to quickly return to a specific region view.',
+      'A country-level record does not establish that a milestone applies to your organization; open its source to check scope.',
+    ],
   },
 
   algorithms: {

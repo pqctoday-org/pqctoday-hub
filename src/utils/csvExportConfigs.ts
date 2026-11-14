@@ -122,6 +122,7 @@ export const TRANSITION_CSV_COLUMNS: CsvColumnConfig<AlgorithmTransition>[] = [
 ]
 
 export const TIMELINE_CSV_COLUMNS: CsvColumnConfig<TimelineEvent>[] = [
+  { header: 'Event ID', accessor: (i) => i.eventId ?? '' },
   { header: 'Country', accessor: (i) => i.countryName },
   { header: 'Organization', accessor: (i) => i.orgName },
   { header: 'Organization Full Name', accessor: (i) => i.orgFullName },
@@ -133,6 +134,14 @@ export const TIMELINE_CSV_COLUMNS: CsvColumnConfig<TimelineEvent>[] = [
   { header: 'Description', accessor: (i) => i.description },
   { header: 'Source URL', accessor: (i) => i.sourceUrl },
   { header: 'Source Date', accessor: (i) => i.sourceDate },
+  { header: 'Mandate Type', accessor: (i) => i.mandateType ?? '' },
+  { header: 'Binding Force', accessor: (i) => i.bindingForce ?? '' },
+  { header: 'Status', accessor: (i) => i.reviewStatus ?? '' },
+  { header: 'Peer Reviewed', accessor: (i) => i.peerReviewed ?? '' },
+  { header: 'Vetting Body', accessor: (i) => (i.vettingBody ?? []).join('; ') },
+  { header: 'Confidence Score', accessor: (i) => i.confidenceScore ?? '' },
+  { header: 'Sources Checked', accessor: (i) => i.lastVerified ?? '' },
+  { header: 'Library Refs', accessor: (i) => (i.libraryRefs ?? []).join('; ') },
 ]
 
 /**

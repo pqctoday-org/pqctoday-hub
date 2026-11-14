@@ -19,7 +19,8 @@ vi.mock('@/components/ui/RevisionDrilldownPanel', () => ({
 
 vi.mock('@/hooks/useRevisions', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks/useRevisions')>()
-  return { ...actual, useRevisions: () => ({ revisions: [], isLoading: false }) }
+  const revisions = [{ domain: 'timeline', record_ids: ['EVT-EU-2026-001'], pr_number: 1 }]
+  return { ...actual, useRevisions: () => ({ revisions, isLoading: false }) }
 })
 
 vi.mock('@/embed/platform', () => ({ isNativeApp: () => false }))
@@ -61,9 +62,10 @@ describe('timeline event popover: binding force, status and revision history', (
       </MemoryRouter>
     )
     const dialog = screen.getByRole('dialog')
-    expect(within(dialog).getByText('Binding force')).toBeInTheDocument()
-    expect(within(dialog).getByText('binding')).toBeInTheDocument()
-    expect(within(dialog).getByText('Reviewed')).toBeInTheDocument()
+    // Shown once, by the shared record facts.
+    expect(within(dialog).getAllByTestId('timeline-record-facts')).toHaveLength(1)
+    expect(within(dialog).getByText('Binding')).toBeInTheDocument()
+    expect(within(dialog).getByText(/^Status:/)).toHaveTextContent('Status: Reviewed')
   })
 
   it('opens the revision history for the event id', () => {
@@ -73,7 +75,7 @@ describe('timeline event popover: binding force, status and revision history', (
         <GanttDetailPopover isOpen onClose={vi.fn()} phase={phase} focusEvent={event} />
       </MemoryRouter>
     )
-    fireEvent.click(screen.getByRole('button', { name: 'Revision history' }))
+    fireEvent.click(screen.getByTitle(/^Reviewed by/))
     const last = captured.props[captured.props.length - 1]
     expect(last).toBeDefined()
     expect(last.domain).toBe('timeline')
