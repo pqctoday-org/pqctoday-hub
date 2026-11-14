@@ -11,6 +11,7 @@ import { screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { renderWithRouter } from '@/test/utils'
 import type { PatentItem } from '@/types/PatentTypes'
+import { COLUMN_PRESETS, COLUMN_WIDTH_PX, TITLE_MIN_PX } from './patentColumns'
 
 vi.unmock('@tanstack/react-virtual')
 
@@ -197,5 +198,36 @@ describe('PatentsTable virtualisation', () => {
   it('tells assistive technology the full row count', () => {
     renderTable()
     expect(screen.getByRole('table')).toHaveAttribute('aria-rowcount', String(ALL.length + 1))
+  })
+
+  it('gives every column but Title a fixed width, and Title the rest', () => {
+    renderTable()
+    const table = screen.getByRole('table')
+    expect(table.className).toContain('table-fixed')
+    const headers = screen.getAllByRole('columnheader')
+    // eslint-disable-next-line testing-library/no-node-access -- <col> has no role to query by
+    const cols = Array.from(table.querySelectorAll('colgroup col'))
+    // One <col> per header cell, so widths line up with the columns they size.
+    expect(cols).toHaveLength(headers.length)
+    expect(cols.map((c) => c.getAttribute('data-column'))).toEqual(['num', 'title', 'issueDate'])
+    const titleCol = cols[1] as HTMLElement
+    expect(titleCol.style.width).toBe('')
+    expect((cols[0] as HTMLElement).style.width).toBe(`${COLUMN_WIDTH_PX.num}px`)
+    expect((cols[2] as HTMLElement).style.width).toBe(`${COLUMN_WIDTH_PX.issueDate}px`)
+    // Title keeps at least its minimum; past that the table scrolls sideways.
+    expect(table.style.minWidth).toBe(
+      `${COLUMN_WIDTH_PX.num + TITLE_MIN_PX + COLUMN_WIDTH_PX.issueDate}px`
+    )
+  })
+
+  it('leaves Title a readable share at 1440 px with the default columns', () => {
+    // The table box is 1206 px wide at a 1440 px window (measured in the app).
+    // The desktop default is the 'algorithms' preset.
+    const defaults = COLUMN_PRESETS.algorithms.filter((id) => id !== 'title')
+    const fixed = defaults.reduce(
+      (sum, id) => sum + COLUMN_WIDTH_PX[id as Exclude<typeof id, 'title'>],
+      0
+    )
+    expect(1206 - fixed).toBeGreaterThanOrEqual(TITLE_MIN_PX)
   })
 })

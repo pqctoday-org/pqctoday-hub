@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PatentDetail } from './PatentDetail'
 import { ColumnPicker } from './ColumnPicker'
+import { COLUMN_ORDER, COLUMN_WIDTH_PX, TITLE_MIN_PX } from './patentColumns'
 import type { ColumnId, PresetKey } from './patentColumns'
 import type { PatentItem, ImpactLevel, CryptoAgilityMode } from '@/types/PatentTypes'
 import { filingJurisdictionLabel, NIST_STATUS_LABELS } from './PatentsInsights'
@@ -194,7 +195,7 @@ interface ThColProps {
 function ThCol({ label, sortable, className = '', sortKey, sortDir, onSort }: ThColProps) {
   return (
     <th
-      className={`px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap ${sortable ? 'cursor-pointer select-none hover:text-foreground' : ''} ${className}`}
+      className={`px-3 py-2.5 text-left align-bottom text-xs font-semibold text-muted-foreground break-words ${sortable ? 'cursor-pointer select-none hover:text-foreground' : ''} ${className}`}
       onClick={sortable ? () => onSort(sortable) : undefined}
     >
       <span className="inline-flex items-center gap-1">
@@ -534,6 +535,13 @@ export function PatentsTable({
 
   const hasFilters = activeFilters.length > 0 || search !== ''
   const show = (id: ColumnId) => visibleColumns.includes(id)
+  const renderedColumns = COLUMN_ORDER.filter(
+    (id) => show(id) && !(id === 'assignee' && collapseForDetail)
+  )
+  const tableMinWidth = renderedColumns.reduce(
+    (sum, id) => sum + (id === 'title' ? TITLE_MIN_PX : COLUMN_WIDTH_PX[id]),
+    0
+  )
 
   const thProps = { sortKey, sortDir, onSort: handleSort }
 
@@ -615,25 +623,34 @@ export function PatentsTable({
           ) : (
             // Only the rows in view are in the DOM; the row count and indices
             // tell assistive technology how large the table really is.
-            <table className="w-full text-sm border-collapse" aria-rowcount={sorted.length + 1}>
+            <table
+              className="w-full table-fixed text-sm border-collapse"
+              style={{ minWidth: `${tableMinWidth}px` }}
+              aria-rowcount={sorted.length + 1}
+            >
+              <colgroup>
+                {renderedColumns.map((id) => (
+                  <col
+                    key={id}
+                    data-column={id}
+                    style={id === 'title' ? undefined : { width: `${COLUMN_WIDTH_PX[id]}px` }}
+                  />
+                ))}
+              </colgroup>
               <thead className="sticky top-0 z-10 bg-card border-b border-border">
                 <tr aria-rowindex={1}>
-                  {show('num') && <ThCol label="#" className="w-12 min-w-12" {...thProps} />}
+                  {show('num') && <ThCol label="#" {...thProps} />}
                   {show('title') && <ThCol label="Title" sortable="title" {...thProps} />}
                   {show('assignee') && !collapseForDetail && (
                     <ThCol label="Assignee" className="hidden sm:table-cell" {...thProps} />
                   )}
                   {show('pqcAlgorithms') && (
-                    <ThCol
-                      label="PQC Algorithms"
-                      className="hidden sm:table-cell min-w-[175px] max-w-[175px]"
-                      {...thProps}
-                    />
+                    <ThCol label="PQC Algorithms" className="hidden sm:table-cell" {...thProps} />
                   )}
                   {show('classicalAlgorithms') && (
                     <ThCol
                       label="Classical Algorithms"
-                      className="hidden sm:table-cell min-w-[175px] max-w-[175px]"
+                      className="hidden sm:table-cell"
                       {...thProps}
                     />
                   )}
@@ -718,7 +735,7 @@ export function PatentsTable({
               <tbody>
                 {paddingTop > 0 && (
                   <tr aria-hidden="true">
-                    <td style={{ height: `${paddingTop}px` }} colSpan={visibleColumns.length} />
+                    <td style={{ height: `${paddingTop}px` }} colSpan={renderedColumns.length} />
                   </tr>
                 )}
                 {virtualRows.map((virtualRow) => {
@@ -885,7 +902,7 @@ export function PatentsTable({
                 })}
                 {paddingBottom > 0 && (
                   <tr aria-hidden="true">
-                    <td style={{ height: `${paddingBottom}px` }} colSpan={visibleColumns.length} />
+                    <td style={{ height: `${paddingBottom}px` }} colSpan={renderedColumns.length} />
                   </tr>
                 )}
               </tbody>
