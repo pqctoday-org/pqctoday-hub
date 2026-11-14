@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { useNavigate, useSearchParams } from 'react-router'
 import { downloadCsv } from '@/utils/csvExport'
-import { buildTabCsv, exportTabFor, tabExportFileName } from './tabExport'
+import { buildTabCsv, exportTabFor, forYouRows, tabExportFileName } from './tabExport'
 import { useApplicabilityWithPaths } from '@/hooks/useApplicabilityWithPaths'
 import { buildObligations } from './obligations/obligationsModel'
 import { buildProgress } from './progress/progressModel'
@@ -318,7 +318,8 @@ export const ComplianceView = ({
   }, [myFrameworks.length, addHistoryEvent])
 
   const navigate = useNavigate()
-  const [exportError, setExportError] = useState<string | null>(null)
+  // The error keeps the tab it came from, so it is not shown on another tab.
+  const [exportError, setExportError] = useState<{ message: string; tab: string } | null>(null)
   // What the visible tab lists, reported by the table and the landscape; see tabExport.ts.
   const [landscapeVisible, setLandscapeVisible] = useState<ComplianceFramework[]>([])
   const [recordsVisible, setRecordsVisible] = useState<ComplianceRecord[]>([])
@@ -587,7 +588,11 @@ export const ComplianceView = ({
   )
   const { profile: forYouProfile } = useApplicability(forYouProfileOverride)
   // The rows each tab lists, for its Export CSV (the same data the tabs themselves build).
-  const forYouApplicable = useApplicabilityWithPaths().frameworks
+  const forYouPaths = useApplicabilityWithPaths()
+  const forYouApplicable = useMemo(
+    () => forYouRows(forYouPaths.frameworks, forYouPaths.derivedFrameworks),
+    [forYouPaths.frameworks, forYouPaths.derivedFrameworks]
+  )
   const obligationRows = useMemo(() => buildObligations(forYouProfile), [forYouProfile])
   const progressEntries = useMemo(
     () => buildProgress(obligationRows, new Date().getFullYear()),
@@ -749,7 +754,7 @@ export const ComplianceView = ({
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error generating CSV export.'
       console.error('Compliance CSV export failed:', err)
-      setExportError(message)
+      setExportError({ message, tab: exportTab })
     }
   }, [
     exportTab,
@@ -866,7 +871,7 @@ export const ComplianceView = ({
           useTrustTierFilter reads the URL; what is gone is the second on-screen
           place to change it. The other four pages that use it are untouched. */}
 
-      {exportError && (
+      {exportError && exportError.tab === activeStableTab && (
         <div
           role="alert"
           className="flex items-start gap-3 rounded-lg border border-status-error/40 bg-status-error/5 p-3 text-sm"
@@ -874,7 +879,7 @@ export const ComplianceView = ({
           <Info size={16} className="mt-0.5 shrink-0 text-status-error" />
           <div className="flex-1">
             <p className="font-medium text-status-error">CSV export failed</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{exportError}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{exportError.message}</p>
           </div>
           <Button
             type="button"

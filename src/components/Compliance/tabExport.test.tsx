@@ -9,7 +9,13 @@ import { complianceFrameworks, type ComplianceFramework } from '@/data/complianc
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { downloadCsv } from '@/utils/csvExport'
-import { exportTabFor, tabExportFileName, buildTabCsv, type TabExportInput } from './tabExport'
+import {
+  exportTabFor,
+  forYouRows,
+  tabExportFileName,
+  buildTabCsv,
+  type TabExportInput,
+} from './tabExport'
 
 vi.mock('@/utils/csvExport', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/utils/csvExport')>()
@@ -72,13 +78,29 @@ describe('tab export: each tab writes the rows it lists', () => {
   it('For You writes the applicable frameworks with their tier and binding status', () => {
     const csv = buildTabCsv('foryou', {
       ...emptyInput,
-      forYou: [{ item: FW, tier: 'mandatory', reason: 'In your scope' }],
+      forYou: forYouRows([{ item: FW, tier: 'mandatory', reason: 'In your scope' }], []),
     })
     const [header, row] = csv.split('\n')
     expect(header).toContain('Applicability tier')
     expect(row).toContain(FW.id)
     expect(row).toContain('mandatory')
     expect(csv.split('\n')).toHaveLength(2)
+  })
+
+  it('For You includes the trust-path-derived frameworks the tab lists, after the applicable ones', () => {
+    const derived = {
+      standardId: 'DERIVED-STD',
+      standardLabel: 'Derived Standard',
+      paths: [],
+      bestPath: {} as never,
+      derivedTier: 'derived' as const,
+    }
+    const rows = forYouRows([{ item: FW, tier: 'mandatory', reason: 'In your scope' }], [derived])
+    expect(rows.map((r) => r.id)).toEqual([FW.id, 'DERIVED-STD'])
+    expect(rows[1].tier).toBe('derived')
+    const csv = buildTabCsv('foryou', { ...emptyInput, forYou: rows })
+    expect(csv).toContain('Derived Standard')
+    expect(csv.split('\n')).toHaveLength(3)
   })
 
   it('Landscape writes exactly the framework rows it was given', () => {

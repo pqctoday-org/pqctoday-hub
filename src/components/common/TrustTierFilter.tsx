@@ -73,13 +73,13 @@ function isTrustTier(value: string): value is TrustTier {
  *  URLSearchParams override (for the sim embed). */
 export function useTrustTierFilter(paramsOverride?: URLSearchParams): TrustTier[] {
   const [urlParams] = useSearchParams()
-  const selected = (paramsOverride ?? urlParams).getAll('tier')
+  const selected = (paramsOverride ?? urlParams).getAll('tier').filter(isTrustTier)
   // Keep the same array while the selected tiers do not change. A new array on every
   // render would be a new dependency for every memo and effect that reads it: the
   // records table reports its rows back up, which re-renders the page with a new array,
-  // and that repeats without end.
-  const key = selected.join('\n')
-  return useMemo(() => (key ? key.split('\n').filter(isTrustTier) : []), [key])
+  // and that repeats without end. Only known tiers are keyed, and tier names have no comma.
+  const key = selected.join(',')
+  return useMemo(() => (key ? (key.split(',') as TrustTier[]) : []), [key])
 }
 
 /**

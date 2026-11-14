@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ApplicabilityResult } from '@/utils/applicabilityEngine'
+import type { DerivedResult } from '@/utils/trustPathTraversal'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { ObligationRow } from './obligations/obligationsModel'
 import type { ProgressEntry } from './progress/progressModel'
@@ -32,8 +33,8 @@ export function tabExportFileName(tab: ExportTab, now = new Date()): string {
 }
 
 export interface TabExportInput {
-  /** The For You tab's applicable frameworks, as the tab lists them. */
-  forYou: ApplicabilityResult<ComplianceFramework>[]
+  /** The For You tab's rows: applicable frameworks, then the trust-path-derived ones (see forYouRows). */
+  forYou: ForYouExportRow[]
   /** The landscape rows currently shown (after the landscape's own filters). */
   landscape: ComplianceFramework[]
   /** The Rules & Standards rows for this reader's profile. */
@@ -47,15 +48,54 @@ export interface TabExportInput {
   newestRecordDate: Date | null
 }
 
-const FOR_YOU_COLUMNS: CsvColumnConfig<ApplicabilityResult<ComplianceFramework>>[] = [
-  { header: 'Framework ID', accessor: (r) => r.item.id },
-  { header: 'Framework', accessor: (r) => r.item.label },
+/** One For You row, as the tab lists it. */
+export interface ForYouExportRow {
+  id: string
+  label: string
+  tier: string
+  reason: string
+  bindingStatus?: string
+  deadline?: string
+  confidenceScore?: number
+  trustedSource?: string
+}
+
+/**
+ * The For You rows: the applicable frameworks, then the frameworks the trust paths reach
+ * from them (the tab's "derived" section), each with its tier and reason.
+ */
+export function forYouRows(
+  applicable: ApplicabilityResult<ComplianceFramework>[],
+  derived: DerivedResult[]
+): ForYouExportRow[] {
+  const direct: ForYouExportRow[] = applicable.map((r) => ({
+    id: r.item.id,
+    label: r.item.label,
+    tier: r.tier,
+    reason: r.reason,
+    bindingStatus: r.item.bindingStatus,
+    deadline: r.item.deadline,
+    confidenceScore: r.item.confidenceScore,
+    trustedSource: r.item.trustedSourceId,
+  }))
+  const reached: ForYouExportRow[] = derived.map((d) => ({
+    id: d.standardId,
+    label: d.standardLabel,
+    tier: d.derivedTier,
+    reason: 'Reached through a trust path from your applicable frameworks',
+  }))
+  return [...direct, ...reached]
+}
+
+const FOR_YOU_COLUMNS: CsvColumnConfig<ForYouExportRow>[] = [
+  { header: 'Framework ID', accessor: (r) => r.id },
+  { header: 'Framework', accessor: (r) => r.label },
   { header: 'Applicability tier', accessor: (r) => r.tier },
   { header: 'Reason', accessor: (r) => r.reason },
-  { header: 'Binding status', accessor: (r) => r.item.bindingStatus },
-  { header: 'Deadline', accessor: (r) => r.item.deadline },
-  { header: 'Data confidence', accessor: (r) => r.item.confidenceScore },
-  { header: 'Trusted source', accessor: (r) => r.item.trustedSourceId },
+  { header: 'Binding status', accessor: (r) => r.bindingStatus },
+  { header: 'Deadline', accessor: (r) => r.deadline },
+  { header: 'Data confidence', accessor: (r) => r.confidenceScore },
+  { header: 'Trusted source', accessor: (r) => r.trustedSource },
 ]
 
 const LANDSCAPE_COLUMNS: CsvColumnConfig<ComplianceFramework>[] = [
