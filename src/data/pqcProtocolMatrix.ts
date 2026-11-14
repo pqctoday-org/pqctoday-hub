@@ -530,10 +530,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-08-21',
       },
       {
-        id: 'draft-becker-cnsa2-ssh-profile-05',
-        title: 'draft-becker-cnsa2-ssh-profile-05 — CNSA 2.0 Profile for SSH (In IESG Review)',
+        id: 'draft-becker-cnsa2-ssh-profile-07',
+        title:
+          'draft-becker-cnsa2-ssh-profile-07 — CNSA 2.0 Profile for SSH (Independent Submission, sent to the RFC Editor)',
         url: 'https://datatracker.ietf.org/doc/draft-becker-cnsa2-ssh-profile/',
-        date: '2026-05-08',
+        date: '2026-10-30',
       },
     ],
     dimensions: {
