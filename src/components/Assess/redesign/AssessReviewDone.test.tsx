@@ -114,6 +114,13 @@ describe('AssessReview', () => {
     store.setIndustry('Finance & Banking')
     store.setCountry('United States')
     store.setMigrationUnknown(true)
+    store.setCryptoUnknown(true)
+    store.setSensitivityUnknown(true)
+    store.setRetentionUnknown(true)
+    store.setCredentialLifetimeUnknown(true)
+    store.setScaleUnknown(true)
+    store.setAgilityUnknown(true)
+    store.setTimelineUnknown(true)
 
     const onGenerate = vi.fn()
     render(
@@ -133,6 +140,47 @@ describe('AssessReview', () => {
 
     await user.click(screen.getByRole('button', { name: /generate my report/i }))
     expect(onGenerate).toHaveBeenCalled()
+  })
+
+  it('will not generate while required questions are blank, and jumps to the first one', async () => {
+    const user = userEvent.setup()
+    const store = useAssessmentStore.getState()
+    // A finished fast-track set moved to the full track: retention and the
+    // credential question (and the rest of the readiness block) are still empty.
+    store.setIndustry('Finance & Banking')
+    store.setCountry('United States')
+    store.setCryptoUnknown(true)
+    store.setSensitivityUnknown(true)
+    store.setMigrationUnknown(true)
+
+    const onGenerate = vi.fn()
+    const onEdit = vi.fn()
+    render(
+      <AssessReview mode="comprehensive" onEdit={onEdit} onBack={vi.fn()} onGenerate={onGenerate} />
+    )
+
+    expect(screen.getByRole('status')).toHaveTextContent('5 questions still need an answer')
+    const generate = screen.getByRole('button', { name: /generate my report/i })
+    expect(generate).toBeDisabled()
+    await user.click(generate)
+    expect(onGenerate).not.toHaveBeenCalled()
+
+    // Render order puts retention first among the blanks (use-cases is optional).
+    await user.click(screen.getByRole('button', { name: /^Answer Data retention/i }))
+    expect(onEdit).toHaveBeenCalledWith('retention')
+  })
+
+  it('offers no jump and no warning once every required question is answered', () => {
+    const store = useAssessmentStore.getState()
+    store.setIndustry('Healthcare')
+    store.setCountry('United States')
+    store.setCryptoUnknown(true)
+    store.setSensitivityUnknown(true)
+    store.setMigrationUnknown(true)
+    render(<AssessReview mode="quick" onEdit={vi.fn()} onBack={vi.fn()} onGenerate={vi.fn()} />)
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Answer /i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /generate my report/i })).toBeEnabled()
   })
 
   it('edits a specific step', async () => {
