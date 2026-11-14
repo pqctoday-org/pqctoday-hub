@@ -45,9 +45,13 @@ import {
   generateKeyFindings,
   classifyCswp39Step,
 } from './generators'
+import { withEffectiveCrypto, impliedAlgorithms } from './cryptoCategories'
 import { reframeActionsForPersona, generatePersonaNarrative } from './personas'
 
-export function computeAssessment(input: AssessmentInput): AssessmentResult {
+export function computeAssessment(rawInput: AssessmentInput): AssessmentResult {
+  // A crypto family ticked without a specific algorithm stands for that family's
+  // algorithms (the wizard's "none selected = all included"); score and list those.
+  const input = withEffectiveCrypto(rawInput)
   const algorithmMigrations: AlgorithmMigration[] = input.currentCryptoUnknown
     ? [
         {
@@ -351,7 +355,7 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     pqcCompliance.length
   )
 
-  const assessmentProfile = buildAssessmentProfile(input, hasExtendedInput)
+  const assessmentProfile = buildAssessmentProfile(rawInput, hasExtendedInput)
 
   const keyFindings = generateKeyFindings(
     input,
@@ -421,9 +425,10 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
  * RETURN value is the same AssessmentResult.
  */
 export async function computeAssessmentAsync(
-  input: AssessmentInput,
+  rawInput: AssessmentInput,
   onStage?: (label: string, durationMs: number) => void
 ): Promise<AssessmentResult> {
+  const input = withEffectiveCrypto(rawInput)
   const yieldToPaint = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
   const stage = async <T>(label: string, fn: () => T): Promise<T> => {
     const startedAt = performance.now()
@@ -561,7 +566,7 @@ export async function computeAssessmentAsync(
     )
   } else {
     // ── Legacy additive scoring path — fast, single stage ──
-    const sync = computeAssessment(input)
+    const sync = computeAssessment(rawInput)
     onStage?.('Computing legacy quick assessment', 0)
     return sync
   }
@@ -602,7 +607,7 @@ export async function computeAssessmentAsync(
       pqcCompliance.length
     )
   )
-  const assessmentProfile = buildAssessmentProfile(input, hasExtendedInput)
+  const assessmentProfile = buildAssessmentProfile(rawInput, hasExtendedInput)
   const keyFindings = await stage('Identifying key findings', () =>
     generateKeyFindings(
       input,
@@ -666,6 +671,7 @@ export function buildAssessmentProfile(
     country: input.country,
     algorithmsSelected: input.currentCrypto,
     algorithmCategories: input.currentCryptoCategories,
+    algorithmsImplied: impliedAlgorithms(input),
     algorithmUnknown: !!input.currentCryptoUnknown,
     sensitivityLevels: input.dataSensitivity,
     sensitivityUnknown: !!input.sensitivityUnknown,
@@ -682,6 +688,8 @@ export function buildAssessmentProfile(
     infrastructure: input.infrastructure,
     infrastructureUnknown: !!input.infrastructureUnknown,
     infrastructureSubCategories: input.infrastructureSubCategories,
+    cryptoLibraries: input.cryptoLibraries,
+    infraAutomation: input.infraAutomation,
     cryptoAgility: input.cryptoAgility,
     vendorDependency: input.vendorDependency,
     vendorUnknown: !!input.vendorUnknown,

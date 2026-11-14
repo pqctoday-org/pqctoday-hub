@@ -255,6 +255,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           updates.infrastructure = []
           updates.infrastructureSubCategories = {}
           updates.infrastructureUnknown = false
+          updates.cryptoLibraries = []
+          updates.infraAutomation = []
           updates.vendorDependency = ''
           updates.vendorUnknown = false
           updates.timelinePressure = ''
@@ -733,6 +735,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           complianceRequirements: state.complianceRequirements,
           migrationStatus: state.migrationStatus as AssessmentInput['migrationStatus'],
         }
+        if (state.currentCryptoCategories.length > 0)
+          input.currentCryptoCategories = state.currentCryptoCategories
         if (state.cryptoUnknown) input.currentCryptoUnknown = true
         if (state.sensitivityUnknown) input.sensitivityUnknown = true
         if (state.country) input.country = state.country
@@ -754,6 +758,11 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         if (state.infrastructureUnknown) input.infrastructureUnknown = true
         if (Object.keys(state.infrastructureSubCategories).length > 0)
           input.infrastructureSubCategories = state.infrastructureSubCategories
+        // The toolchain answers belong to the full assessment; a quick run never asks them.
+        if (state.assessmentMode === 'comprehensive') {
+          if (state.cryptoLibraries.length > 0) input.cryptoLibraries = state.cryptoLibraries
+          if (state.infraAutomation.length > 0) input.infraAutomation = state.infraAutomation
+        }
         if (state.vendorDependency)
           input.vendorDependency = state.vendorDependency as NonNullable<
             AssessmentInput['vendorDependency']

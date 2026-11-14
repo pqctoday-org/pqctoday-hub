@@ -177,9 +177,15 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const dataSensitivity = shared
     ? (profile?.sensitivityLevels ?? EMPTY_STRING_ARRAY)
     : liveDataSensitivity
-  const currentCrypto = shared
+  const namedCrypto = shared
     ? (profile?.algorithmsSelected ?? EMPTY_STRING_ARRAY)
     : liveCurrentCrypto
+  // Algorithms scored from a ticked family alone count as in use here too.
+  const impliedCrypto = profile?.algorithmsImplied
+  const currentCrypto = useMemo(
+    () => (impliedCrypto?.length ? [...(namedCrypto ?? []), ...impliedCrypto] : namedCrypto),
+    [namedCrypto, impliedCrypto]
+  )
   const cryptoUnknown = shared ? !!profile?.algorithmUnknown : liveCryptoUnknown
   const hasSigningAlgos =
     (currentCrypto ?? []).some((a) => SIGNING_ALGORITHMS.has(a)) || cryptoUnknown

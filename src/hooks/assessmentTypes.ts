@@ -65,6 +65,10 @@ export interface AssessmentInput {
   infrastructureUnknown?: boolean
   /** Sub-categories per infrastructure layer (e.g., { Cloud: ['AWS KMS', 'Azure Key Vault'] }). */
   infrastructureSubCategories?: Record<string, string[]>
+  /** Crypto libraries named in the infrastructure step (comprehensive assessments). */
+  cryptoLibraries?: string[]
+  /** Crypto / certificate automation named in the infrastructure step (comprehensive assessments). */
+  infraAutomation?: string[]
   /** Active persona at assessment time — drives narrative framing and scoring adjustments. */
   persona?: PersonaId
 }
@@ -201,6 +205,9 @@ export interface AssessmentProfile {
    *  Useful when specific algos aren't known; feeds quantum-exposure scoring
    *  via a fallback branch in `computeQuantumExposure`. */
   algorithmCategories?: string[]
+  /** Algorithms the report scored on the strength of a ticked family alone (no
+   *  specific algorithm picked in it). Not part of `algorithmsSelected`. */
+  algorithmsImplied?: string[]
   algorithmUnknown: boolean
   sensitivityLevels: string[]
   sensitivityUnknown: boolean
@@ -218,6 +225,8 @@ export interface AssessmentProfile {
   infrastructure?: string[]
   infrastructureUnknown: boolean
   infrastructureSubCategories?: Record<string, string[]>
+  cryptoLibraries?: string[]
+  infraAutomation?: string[]
   cryptoAgility?: string
   agilityUnknown: boolean
   vendorDependency?: string

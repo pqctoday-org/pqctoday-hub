@@ -4,6 +4,8 @@
 // a flag for answers that came from the "I'm not sure" smart default.
 import type { AssessStepKey } from './assessFlowModel'
 import { industryRetentionConfigs, universalRetentionConfigs } from '@/data/industryAssessConfig'
+import { timelineAnswerLabel } from '@/utils/timelineMilestone'
+import type { TimelineMilestone } from '@/hooks/assessmentTypes'
 
 /** The store fields the review reads (the real store satisfies it structurally). */
 export interface AssessReviewState {
@@ -31,7 +33,14 @@ export interface AssessReviewState {
   infrastructure: string[]
   infrastructureUnknown: boolean
   timelinePressure: string
+  /** The published milestone picked in the timeline step, when one was. */
+  timelineMilestone?: TimelineMilestone | null
   timelineUnknown: boolean
+  /** The rest of the infrastructure step; absent in states built before it was read here. */
+  vendorDependency?: string
+  vendorUnknown?: boolean
+  cryptoLibraries?: string[]
+  infraAutomation?: string[]
 }
 
 export interface AnswerSummary {
@@ -98,6 +107,14 @@ const systemCountLabel = labelFrom(SCALE_SYSTEM_LABELS)
 const teamSizeLabel = labelFrom(SCALE_TEAM_LABELS)
 const timelineLabel = labelFrom(TIMELINE_LABELS)
 const migrationLabel = labelFrom(MIGRATION_LABELS)
+/** Vendor model: the wording of the options on the infrastructure step. */
+const VENDOR_LABELS: ReadonlyMap<string, string> = new Map([
+  ['heavy-vendor', 'Heavy Vendor Dependency'],
+  ['open-source', 'Open Source Libraries'],
+  ['mixed', 'Mixed'],
+  ['in-house', 'In-House Implementations'],
+])
+const vendorLabel = labelFrom(VENDOR_LABELS)
 const agilityLabel = labelFrom(AGILITY_LABELS)
 
 function listText(values: string[]): string {
@@ -155,14 +172,34 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
       return s.agilityUnknown
         ? def(recommended)
         : val(agilityLabel(s.cryptoAgility) || 'Not answered')
-    case 'infra':
-      return s.infrastructureUnknown
+    case 'infra': {
+      // The step asks four things; the step is answered when any of them is.
+      const layers = s.infrastructureUnknown
+        ? recommended
+        : listText(s.infrastructure.map(prettify))
+      const vendor = s.vendorUnknown
+        ? 'Vendor model: recommended default'
+        : s.vendorDependency
+          ? vendorLabel(s.vendorDependency)
+          : ''
+      const libraries = listText(s.cryptoLibraries ?? [])
+      const automation = listText(s.infraAutomation ?? [])
+      const parts = [layers, vendor, libraries, automation].filter(Boolean)
+      if (parts.length === 0) return val(skipped)
+      return parts.length === 1 && s.infrastructureUnknown
         ? def(recommended)
-        : val(listText(s.infrastructure.map(prettify)) || skipped)
+        : val(parts.join(' · '))
+    }
     case 'timeline':
       return s.timelineUnknown
         ? def(recommended)
-        : val(timelineLabel(s.timelinePressure) || 'Not answered')
+        : val(
+            timelineAnswerLabel(
+              s.timelinePressure,
+              s.timelineMilestone,
+              timelineLabel(s.timelinePressure)
+            ) || 'Not answered'
+          )
     default:
       return val('—')
   }
