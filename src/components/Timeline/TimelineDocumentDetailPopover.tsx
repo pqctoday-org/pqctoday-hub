@@ -96,7 +96,8 @@ export const TimelineDocumentDetailPopover = ({
 
   // Revision history is found by the event's id, the key revisions.jsonl uses for the timeline.
   const { revisions } = useRevisions()
-  const [revisionsOpen, setRevisionsOpen] = useState(false)
+  // The event whose revision history is open. Keyed by event id: it cannot carry over to another event.
+  const [revisionsFor, setRevisionsFor] = useState<string | null>(null)
 
   if (!isOpen || !row) return null
 
@@ -375,20 +376,20 @@ export const TimelineDocumentDetailPopover = ({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => setRevisionsOpen(true)}
+                      onClick={() => setRevisionsFor(row.eventId ?? null)}
                       className="h-auto px-0 text-xs text-primary hover:underline"
                     >
                       Revision history
                     </Button>
                   )}
-                  {revisionsOpen && row.eventId && (
+                  {isOpen && row.eventId && revisionsFor === row.eventId && (
                     <div className="relative" style={{ zIndex: 10000 }}>
                       <RevisionDrilldownPanel
                         domain="timeline"
                         entityId={row.eventId}
                         entityLabel={row.title}
                         revisions={byRecord(revisions, 'timeline', row.eventId)}
-                        onClose={() => setRevisionsOpen(false)}
+                        onClose={() => setRevisionsFor(null)}
                         sharePath={`/timeline?event=${encodeURIComponent(row.eventId)}`}
                       />
                     </div>
