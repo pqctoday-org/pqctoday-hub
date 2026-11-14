@@ -5,27 +5,47 @@ import { CmpKemKeyUpdate } from './CmpKemKeyUpdate'
 import { CompositeEnroll } from './CompositeEnroll'
 import { WORKSHOP_STEPS } from '../constants'
 
-const mocks = vi.hoisted(() => ({ execute: vi.fn(), simulateCmp: vi.fn(), ensureMockCA: vi.fn() }))
+const mocks = vi.hoisted(() => ({
+  execute: vi.fn(),
+  simulateCmp: vi.fn(),
+  executeCmpSignedKeyUpdate: vi.fn(),
+  ensureMockCA: vi.fn(),
+  generateCaRoot: vi.fn(),
+}))
 vi.mock('@/services/crypto/OpenSSLService', () => ({ openSSLService: mocks }))
 vi.mock('../mock-ca/mockCA', () => ({ ensureMockCA: mocks.ensureMockCA }))
 const bytes = (text: string) => new TextEncoder().encode(text)
-let mismatch = false
 
 beforeEach(() => {
-  mismatch = false
   mocks.ensureMockCA.mockResolvedValue({ certPem: bytes('sample CA'), keyPem: bytes('sample key') })
+  mocks.generateCaRoot.mockResolvedValue({
+    ok: true,
+    certPem: bytes('sample CA'),
+    keyPem: bytes('sample key'),
+  })
   mocks.simulateCmp.mockResolvedValue({ ok: true, certPem: bytes('sample leaf') })
+  mocks.executeCmpSignedKeyUpdate.mockResolvedValue({
+    ok: true,
+    operation: 'KUR',
+    proofVerified: true,
+    confirmationAccepted: true,
+    certPem: bytes('renewed sample'),
+    transcript: [],
+  })
   mocks.execute.mockImplementation(async (cmd: string) => {
     const files: { name: string; data: Uint8Array }[] = []
     const add = (name: string, text: string) => files.push({ name, data: bytes(text) })
-    if (cmd.includes('genpkey -algorithm ML-KEM')) add('ee-mlkem.key.pem', 'kem key')
+    if (cmd.includes('genpkey -algorithm ML-KEM') || cmd.includes('genpkey -algorithm ML-DSA'))
+      add(cmd.split(' -out ')[1].replace(/^\//, ''), 'kem key')
+    else if (cmd.includes('-out /cmp-signer.cert.pem'))
+      add('cmp-signer.cert.pem', 'signing certificate')
     else if (cmd.includes('genpkey -algorithm EC')) add('ee-ecdsa.key.pem', 'ec key')
-    else if (cmd.startsWith('openssl pkey ')) add('ee-mlkem.pub.pem', 'kem public')
+    else if (cmd.startsWith('openssl pkey '))
+      add(cmd.includes('cmp-new') ? 'cmp-new.pub.pem' : 'ee-mlkem.pub.pem', 'kem public')
     else if (cmd.includes(' -encap ')) {
       add('kem.ct.bin', 'ciphertext')
       add('secret_ca.bin', 'sample secret')
-    } else if (cmd.includes(' -decap '))
-      add('secret_ee.bin', mismatch ? 'different' : 'sample secret')
+    } else if (cmd.includes(' -decap ')) add('secret_ee.bin', 'sample secret')
     return {
       files,
       stdout: cmd.includes('verify') ? 'sample verification output' : 'sample cert text',
@@ -40,53 +60,81 @@ afterEach(() => {
 describe('enrollment sample scope labels', () => {
   it('keeps saved step IDs while describing the actual operations', () => {
     expect(WORKSHOP_STEPS.find((s) => s.id === 'cmp-kur')?.title).toContain(
-      'enrollment and ML-KEM round trip'
+      'ML-KEM certificate key update'
     )
     expect(WORKSHOP_STEPS.find((s) => s.id === 'composite')?.title).toContain(
       'Parallel certificate issuance'
     )
   })
 
-  it.each([false, true])(
-    'reports sample agreement without claiming KUR POP, mismatch=%s',
-    async (different) => {
-      mismatch = different
-      render(<CmpKemKeyUpdate />)
-      expect(screen.getByText(/It does not send a KUR/)).toBeInTheDocument()
-      fireEvent.click(
-        screen.getByRole('button', { name: 'Run sample enrollment and KEM round trip' })
+  it('runs the separate key update and clears its result after scenario changes', async () => {
+    render(<CmpKemKeyUpdate />)
+    fireEvent.click(screen.getByRole('button', { name: 'Run key update' }))
+    expect(
+      await screen.findByText(
+        'New-key possession and explicit confirmation verified for this sample.'
       )
+    ).toBeInTheDocument()
+    expect(mocks.executeCmpSignedKeyUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        oldCertPath: '/cmp-request-prior.pem',
+        authorizedPriorPath: '/cmp-authorized-prior.pem',
+        eeKeyPath: '/cmp-new.key.pem',
+        signerCertPath: '/cmp-signer.cert.pem',
+        authorizedSignerPath: '/cmp-authorized-signer.pem',
+        profile: 'MLKEM768-MLDSA65-explicit-confirm-v1',
+      })
+    )
+    expect(mocks.simulateCmp).toHaveBeenCalledTimes(2)
+    expect(mocks.execute.mock.calls.some(([command]) => command.includes(' -encap '))).toBe(false)
+    fireEvent.click(screen.getByRole('button', { name: /Sample prior-certificate authorization/ }))
+    fireEvent.click(
+      screen.getByRole('option', { name: 'Different prior enrollment — expect rejection' })
+    )
+    expect(
+      screen.queryByText('New-key possession and explicit confirmation verified for this sample.')
+    ).not.toBeInTheDocument()
+  })
+
+  it.each(['proof', 'confirmation', 'engine error'])(
+    'keeps the lesson incomplete after missing %s',
+    async (fault) => {
+      mocks.executeCmpSignedKeyUpdate.mockResolvedValue({
+        ok: fault !== 'engine error',
+        operation: 'KUR',
+        proofVerified: fault !== 'proof',
+        confirmationAccepted: fault !== 'confirmation',
+        certPem: bytes('sample leaf'),
+        transcript: [],
+        error: fault === 'engine error' ? 'sample check failed' : undefined,
+      })
+      render(<CmpKemKeyUpdate />)
+      fireEvent.click(screen.getByRole('button', { name: 'Run key update' }))
       expect(
         await screen.findByText(
-          different ? /Sample shared secrets differ/ : 'Sample shared secrets match.'
+          fault === 'engine error'
+            ? 'sample check failed'
+            : 'Key update did not complete explicit confirmation'
         )
       ).toBeInTheDocument()
-      expect(screen.queryByText(/encrCert POP successful/)).not.toBeInTheDocument()
-      expect(mocks.simulateCmp).toHaveBeenCalledWith(
-        expect.objectContaining({
-          eeKeyPath: '/ee-mlkem.key.pem',
-          outCertPath: '/ee-mlkem.cert.pem',
-        })
-      )
-      expect(mocks.execute.mock.calls.map(([cmd]) => cmd)).toEqual([
-        'openssl genpkey -algorithm ML-KEM-768 -out /ee-mlkem.key.pem',
-        'openssl pkey -in /ee-mlkem.key.pem -pubout -out /ee-mlkem.pub.pem',
-        'openssl x509 -in /ee-mlkem.cert.pem -text -noout',
-        'openssl pkeyutl -encap -inkey /ee-mlkem.pub.pem -pubin -out /kem.ct.bin -secret /secret_ca.bin',
-        'openssl pkeyutl -decap -inkey /ee-mlkem.key.pem -in /kem.ct.bin -out /secret_ee.bin',
-      ])
+      expect(
+        screen.queryByText('New-key possession and explicit confirmation verified for this sample.')
+      ).not.toBeInTheDocument()
+      expect(
+        mocks.execute.mock.calls.some(([command]) =>
+          command.includes('x509 -in /cmp-renewed.cert.pem')
+        )
+      ).toBe(false)
     }
   )
 
-  it('retains the existing error and retry path without a protocol success message', async () => {
+  it('retains the error and retry path', async () => {
     mocks.execute.mockRejectedValueOnce(new Error('sample engine unavailable'))
     render(<CmpKemKeyUpdate />)
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Run sample enrollment and KEM round trip' })
-    )
+    fireEvent.click(screen.getByRole('button', { name: 'Run key update' }))
     expect(await screen.findByText('sample engine unavailable')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Retry/ })).toBeInTheDocument()
-    expect(screen.queryByText('Sample shared secrets match.')).not.toBeInTheDocument()
+    expect(mocks.executeCmpSignedKeyUpdate).not.toHaveBeenCalled()
   })
 
   it.each([null, bytes('previous ML-DSA leaf')])(

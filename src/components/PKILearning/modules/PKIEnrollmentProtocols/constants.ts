@@ -33,9 +33,9 @@ export const WORKSHOP_STEPS: WorkshopStep[] = [
   },
   {
     id: 'cmp-kur',
-    title: 'Step 4: CMP enrollment and ML-KEM round trip',
+    title: 'Step 4: ML-KEM certificate key update',
     description:
-      'Enroll an ML-KEM certificate with CMP IR, then compare a separate sample KEM round trip.',
+      'Authorize a fresh ML-KEM key update with a separate signing identity, recover the encrypted certificate and confirm its hash.',
     icon: RefreshCw,
   },
   {

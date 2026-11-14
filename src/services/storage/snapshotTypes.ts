@@ -58,6 +58,11 @@ export interface AssessmentData {
   infrastructureSubCategories: Record<string, string[]>
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
+  /** The three below are optional so a snapshot saved before they existed still restores
+   *  (they reset to empty / null). */
+  cryptoLibraries?: string[]
+  infraAutomation?: string[]
+  scenarioEstateId?: string | null
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
   /** Optional so a snapshot saved before the field existed still restores. */
   timelineMilestone?: TimelineMilestone | null

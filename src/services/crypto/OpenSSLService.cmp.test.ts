@@ -277,3 +277,131 @@ describe('OpenSSLService.generateCaRoot', () => {
     expect(result.certPem).toBeUndefined()
   })
 })
+
+describe('OpenSSLService.executeCmpKeyUpdate', () => {
+  const args = {
+    eeKeyPath: '/new.key',
+    oldCertPath: '/old.pem',
+    authorizedPriorPath: '/authorized.pem',
+    subjectDn: '/CN=Fictional',
+    reference: 'fictional',
+    secret: 'fictional-secret',
+    caCertPath: '/ca.pem',
+    caKeyPath: '/ca.key',
+    outCertPath: '/renewed.pem',
+    files: [],
+  }
+  it('uses the separate versioned operation and requires confirmed proof plus a certificate', async () => {
+    const worker = await readyService()
+    const pending = openSSLService.executeCmpKeyUpdate(args)
+    await new Promise((r) => setTimeout(r, 0))
+    const request = mockPostMessage.mock.calls.at(-1)?.[0]
+    expect(request).toMatchObject({ ...args, type: 'CMP_KEY_UPDATE', version: 1 })
+    sendWorkerResult(
+      worker,
+      request.requestId,
+      'CMP_KEY_UPDATE_RESULT',
+      {
+        ok: true,
+        operation: 'KUR',
+        proofVerified: true,
+        confirmationAccepted: true,
+        certPath: '/renewed.pem',
+      },
+      [{ name: 'renewed.pem', data: new Uint8Array([1]) }]
+    )
+    expect(await pending).toMatchObject({ ok: true, operation: 'KUR', confirmationAccepted: true })
+  })
+  it.each([
+    'missing proof',
+    'missing confirmation',
+    'wrong operation',
+    'missing certificate',
+    'wrong path',
+  ])('rejects a claimed success with %s', async (fault) => {
+    const worker = await readyService()
+    const pending = openSSLService.executeCmpKeyUpdate(args)
+    const rejected = expect(pending).rejects.toThrow('lacks confirmed proof')
+    await new Promise((r) => setTimeout(r, 0))
+    const request = mockPostMessage.mock.calls.at(-1)?.[0]
+    sendWorkerResult(
+      worker,
+      request.requestId,
+      'CMP_KEY_UPDATE_RESULT',
+      {
+        ok: true,
+        operation: fault === 'wrong operation' ? 'IR' : 'KUR',
+        proofVerified: fault !== 'missing proof',
+        confirmationAccepted: fault !== 'missing confirmation',
+        certPath: fault === 'wrong path' ? '/different.pem' : '/renewed.pem',
+      },
+      fault === 'missing certificate' ? [] : [{ name: 'renewed.pem', data: new Uint8Array([1]) }]
+    )
+    await rejected
+  })
+})
+
+describe('OpenSSLService.executeCmpSignedKeyUpdate', () => {
+  const args = {
+    eeKeyPath: '/new.key',
+    oldCertPath: '/old.pem',
+    authorizedPriorPath: '/authorized.pem',
+    subjectDn: '/CN=Fictional',
+    signerCertPath: '/signer.pem',
+    signerKeyPath: '/signer.key',
+    authorizedSignerPath: '/pinned-signer.pem',
+    profile: 'MLKEM768-MLDSA65-explicit-confirm-v1',
+    caCertPath: '/ca.pem',
+    caKeyPath: '/ca.key',
+    outCertPath: '/renewed.pem',
+    files: [],
+  }
+  it('uses the separate versioned operation and requires confirmed proof plus a certificate', async () => {
+    const worker = await readyService()
+    const pending = openSSLService.executeCmpSignedKeyUpdate(args)
+    await new Promise((r) => setTimeout(r, 0))
+    const request = mockPostMessage.mock.calls.at(-1)?.[0]
+    expect(request).toMatchObject({ ...args, type: 'CMP_SIGNED_KEY_UPDATE', version: 2 })
+    sendWorkerResult(
+      worker,
+      request.requestId,
+      'CMP_SIGNED_KEY_UPDATE_RESULT',
+      {
+        ok: true,
+        operation: 'KUR',
+        proofVerified: true,
+        confirmationAccepted: true,
+        certPath: '/renewed.pem',
+      },
+      [{ name: 'renewed.pem', data: new Uint8Array([1]) }]
+    )
+    expect(await pending).toMatchObject({ ok: true, operation: 'KUR', confirmationAccepted: true })
+  })
+  it.each([
+    'missing proof',
+    'missing confirmation',
+    'wrong operation',
+    'missing certificate',
+    'wrong path',
+  ])('rejects a claimed success with %s', async (fault) => {
+    const worker = await readyService()
+    const pending = openSSLService.executeCmpSignedKeyUpdate(args)
+    const rejected = expect(pending).rejects.toThrow('lacks confirmed proof')
+    await new Promise((r) => setTimeout(r, 0))
+    const request = mockPostMessage.mock.calls.at(-1)?.[0]
+    sendWorkerResult(
+      worker,
+      request.requestId,
+      'CMP_SIGNED_KEY_UPDATE_RESULT',
+      {
+        ok: true,
+        operation: fault === 'wrong operation' ? 'IR' : 'KUR',
+        proofVerified: fault !== 'missing proof',
+        confirmationAccepted: fault !== 'missing confirmation',
+        certPath: fault === 'wrong path' ? '/different.pem' : '/renewed.pem',
+      },
+      fault === 'missing certificate' ? [] : [{ name: 'renewed.pem', data: new Uint8Array([1]) }]
+    )
+    await rejected
+  })
+})

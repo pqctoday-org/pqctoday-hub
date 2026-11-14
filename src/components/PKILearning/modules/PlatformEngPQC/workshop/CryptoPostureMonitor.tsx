@@ -10,6 +10,7 @@ import {
   ACME_STATUS_COLORS,
   ACME_STATUS_LABELS,
 } from '../data/monitoringToolsData'
+import { TlsObservationLab } from './TlsObservationLab'
 import { Button } from '@/components/ui/button'
 
 type MonitorTab = 'metrics' | 'siem' | 'capacity' | 'acme'
@@ -48,6 +49,8 @@ const MetricsTab: React.FC = () => {
         Check source versions, field availability and collection coverage before relying on a rule.
         A labelled capability checklist is not executable telemetry.
       </p>
+
+      <TlsObservationLab />
 
       {MONITORING_TOOLS.map((tool) => {
         const isExpanded = expandedId === tool.id
@@ -609,9 +612,10 @@ export const CryptoPostureMonitor: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Crypto Posture Monitor</h3>
         <p className="text-sm text-muted-foreground">
-          Explore non-executable monitoring and SIEM capability checklists, illustrative capacity
-          planning, and an educational ACME lifecycle. Use the examples to evaluate production
-          tools; this resource does not collect telemetry or automate certificate issuance.
+          Test captured TLS observations with copyable Prometheus rules, then explore monitoring and
+          SIEM capability checklists, illustrative capacity planning, and an educational ACME
+          lifecycle. Use the examples to evaluate production tools; this resource does not collect
+          telemetry or automate certificate issuance.
         </p>
       </div>
 

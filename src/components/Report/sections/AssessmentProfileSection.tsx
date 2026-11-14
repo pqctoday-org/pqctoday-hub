@@ -39,7 +39,9 @@ export const AssessmentProfileSummary = ({
               ? 'Unknown (conservative defaults)'
               : profile.algorithmsSelected.length > 0
                 ? `${profile.algorithmsSelected.length} selected`
-                : 'None'
+                : profile.algorithmCategories?.length
+                  ? `${profile.algorithmCategories.join(', ')} (all algorithms assumed)`
+                  : 'None'
           }
         />
         <ProfileField
@@ -118,6 +120,18 @@ export const AssessmentProfileSummary = ({
                   : profile.infrastructure?.length
                     ? `${profile.infrastructure.length} layer${profile.infrastructure.length !== 1 ? 's' : ''}`
                     : 'None'
+              }
+            />
+            <ProfileField
+              label="Crypto Libraries"
+              value={
+                profile.cryptoLibraries?.length ? profile.cryptoLibraries.join(', ') : undefined
+              }
+            />
+            <ProfileField
+              label="Automation"
+              value={
+                profile.infraAutomation?.length ? profile.infraAutomation.join(', ') : undefined
               }
             />
             <ProfileField

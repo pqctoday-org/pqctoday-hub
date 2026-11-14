@@ -7,6 +7,7 @@
  * Output: NiceGapReport
  */
 import type { AssessmentInput, AssessmentResult } from '../hooks/assessmentTypes'
+import { withEffectiveCrypto } from '../hooks/assessment/cryptoCategories'
 import {
   NICE_COMPETENCY_AREAS,
   NICE_COMPONENTS_VERSION,
@@ -89,7 +90,9 @@ function deriveCaSignals(input: AssessmentInput, result: AssessmentResult): CaSi
   const signals: CaSignal[] = []
 
   // CA-CRYPTO: always relevant; weight increases with algorithm breadth and testing gap
-  const cryptoAlgoCount = input.currentCrypto?.length ?? 0
+  // A reader who ticked only crypto families stands for those families' algorithms,
+  // the same expansion the report itself uses.
+  const cryptoAlgoCount = withEffectiveCrypto(input).currentCrypto?.length ?? 0
   const cryptoWeight =
     0.6 +
     (cryptoAlgoCount >= 4 ? 0.3 : cryptoAlgoCount >= 2 ? 0.15 : 0) +

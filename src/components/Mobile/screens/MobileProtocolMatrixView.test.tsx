@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { MobileProtocolMatrixView } from './MobileProtocolMatrixView'
@@ -14,7 +14,13 @@ import {
 // Real data throughout — every assertion derives from the SAME PROTOCOL_MATRIX
 // PQCProtocolMatrix.tsx (desktop) renders from, not invented counts.
 function Probe() {
-  return <span data-testid="url-search">{useLocation().search}</span>
+  const location = useLocation()
+  return (
+    <>
+      <span data-testid="url-search">{location.search}</span>
+      <span data-testid="url-path">{location.pathname}</span>
+    </>
+  )
 }
 function GoTo({ to }: { to: string }) {
   const navigate = useNavigate()
@@ -173,5 +179,68 @@ describe('MobileProtocolMatrixView — desktop matrix* URL state', () => {
     expect(searchBox().value).toBe('tls')
     fireEvent.click(screen.getByRole('button', { name: `go ${next}` }))
     expect(searchBox().value).toBe('ssh')
+  })
+})
+
+describe('MobileProtocolMatrixView — deprecated rows, migration links and citations', () => {
+  const sheet = () => screen.getByTestId('protocol-matrix-detail-sheet')
+  const searchBox = () => screen.getByPlaceholderText('Search protocols') as HTMLInputElement
+
+  it('typing a deprecated protocol name finds it; clearing the search hides it again', () => {
+    renderAt()
+    expect(screen.queryByText('IKEv1')).not.toBeInTheDocument()
+    fireEvent.change(searchBox(), { target: { value: 'IKEv1' } })
+    expect(screen.getByRole('button', { name: /IKEv1/ })).toBeInTheDocument()
+    expect(screen.queryByText(/No protocols match/)).not.toBeInTheDocument()
+    expect(screen.getByText(/1 of \d+ protocols/)).toBeInTheDocument()
+    fireEvent.change(searchBox(), { target: { value: '' } })
+    expect(screen.queryByRole('button', { name: /IKEv1/ })).not.toBeInTheDocument()
+  })
+
+  it('a deprecated row opened by link offers the successor and follows it into ?protocol', () => {
+    renderAt('/algorithms?tab=support&protocol=ikev1')
+    const way = within(sheet()).getByTestId('mobile-successor')
+    expect(way).toHaveTextContent('no PQC path → IKE / IPsec')
+    fireEvent.click(way)
+    expect(urlSearch()).toContain('protocol=ike-ipsec')
+  })
+
+  it('the successor lists what it replaces, and each name opens that row', () => {
+    renderAt('/algorithms?tab=support&protocol=tls-1-3')
+    const replaces = within(sheet()).getByTestId('mobile-replaces')
+    fireEvent.click(within(replaces).getByRole('button', { name: 'SSL 3.0' }))
+    expect(urlSearch()).toContain('protocol=ssl-3-0')
+  })
+
+  it('an inheriting row names the posture it shares and opens the parent', () => {
+    renderAt('/algorithms?tab=support&protocol=dtls-1-3')
+    const banner = within(sheet()).getByTestId('mobile-inherits-from')
+    expect(banner).toHaveTextContent(/Same post-quantum posture as\s*TLS 1\.3/)
+    fireEvent.click(within(banner).getByRole('button', { name: 'TLS 1.3' }))
+    expect(urlSearch()).toContain('protocol=tls-1-3')
+  })
+
+  it('lists the libraries behind a protocol as in-app product links', () => {
+    renderAt('/algorithms?tab=support&protocol=wireguard')
+    const mullvad = within(sheet()).getByRole('link', { name: 'Mullvad VPN App' })
+    expect(mullvad).toHaveAttribute('href', '/migrate?product=mullvad-vpn-app')
+  })
+
+  it('a Library citation is an in-app link: tapping it navigates without a page load', () => {
+    renderAt('/algorithms?tab=support&protocol=pkcs11')
+    const ref = within(sheet()).getAllByRole('link', { name: 'PKCS#11 v3.2 OS' })[0]
+    expect(ref).toHaveAttribute('href', '/library?ref=PKCS11-V32-OS-OASIS')
+    expect(ref).not.toHaveAttribute('target')
+    fireEvent.click(ref)
+    expect(screen.getByTestId('url-path')).toHaveTextContent('/library')
+    expect(urlSearch()).toBe('?ref=PKCS11-V32-OS-OASIS')
+  })
+
+  it('a citation the Library does not hold opens the cited page in a new tab', () => {
+    renderAt('/algorithms?tab=support&protocol=kmip')
+    const ref = within(sheet()).getAllByRole('link', { name: /KMIP 3\.0 CSD02/ })[0]
+    expect(ref).toHaveAttribute('href', 'https://docs.oasis-open.org/kmip/kmip-spec/v3.0/')
+    expect(ref).toHaveAttribute('target', '_blank')
+    expect(ref).toHaveAttribute('rel', 'noopener noreferrer')
   })
 })

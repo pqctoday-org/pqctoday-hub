@@ -371,6 +371,10 @@ export default defineConfig([
                 // helpers (no JSX), shared so a ?matrixStatus/matrixSort/…
                 // link selects the same rows on the phone as on desktop.
                 '!@/components/Algorithms/protocolMatrixState',
+                // matrixToolLink.ts — pure playground-chip destination helper (no
+                // JSX) over the workshop registry, shared so a phone chip opens
+                // the same page the laptop chip does.
+                '!@/components/Algorithms/matrixToolLink',
                 // Glossary.tsx / UserManualPanel.tsx (common) — same category
                 // as RoleHomeView: self-contained isOpen/onClose content
                 // panels already responsive (w-full with a max-w cap), reused

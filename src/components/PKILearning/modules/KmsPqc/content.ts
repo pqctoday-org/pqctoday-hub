@@ -16,7 +16,7 @@ export const content: ModuleContent = {
   moduleId: 'kms-pqc',
   version: '1.1.0',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-09',
+  lastEdited: '2026-11-14',
 
   standards: [
     getStandard('FIPS 203'),
@@ -84,7 +84,10 @@ export const content: ModuleContent = {
     getStandard('Google-Cloud-KMS-Release-Notes'),
     getStandard('Azure-Key-Vault-BYOK-Specification'),
     getStandard('Azure-Managed-HSM-BYOK'),
+    // The migration runbook's Vault commands follow HashiCorp's Transit API; the provider
+    // lifecycle and KMIP-explorer examples run OpenBao 2.7.2 Transit commands.
     getStandard('HashiCorp-Vault-Transit-API'),
+    getStandard('OpenBao-Transit-Secrets-Engine'),
     // HPKE (RFC 9180) is the wrapping format of Google's quantum-safe import; RFC 10024 names the
     // TLS hybrid groups the lesson separates from the KMS key-wrap combiners.
     getStandard('RFC 9180'),

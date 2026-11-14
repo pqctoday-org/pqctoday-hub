@@ -372,22 +372,29 @@ interface PqcRoadmapEntry {
  *  KMS/HSM + TLS surface. No PQC status lives here; it is read from the catalog
  *  below. An empty list means the catalog has no product for that surface yet,
  *  so the cell is reported as 'unverified' (an honest no-claim). */
-const CLOUD_PROVIDER_PRODUCTS: Record<string, { kmsHsm: string[]; tls: string[] }> = {
+export const CLOUD_PROVIDER_PRODUCTS: Record<string, { kmsHsm: string[]; tls: string[] }> = {
   AWS: {
     kmsHsm: ['AWS KMS', 'AWS CloudHSM'],
     tls: ['AWS KMS (Cloud Gateway)', 'AWS Application Load Balancer (ALB)'],
   },
   GCP: {
     kmsHsm: ['Google Cloud KMS', 'Google Cloud HSM'],
-    tls: ['Google Cloud KMS (Cloud Gateway)'],
+    // 'Google Cloud KMS (Cloud Gateway)' was retired as a duplicate of Cloud KMS;
+    // the TLS surface is the load-balancer/API-endpoint and CDN rows.
+    tls: ['Google Cloud Platform (GCP)', 'Google Cloud CDN'],
   },
   Azure: {
+    // 'Azure Dedicated HSM (Thales Luna 7)' is deliberately not listed: PQC in
+    // Luna 7 firmware is not part of Azure Dedicated HSM's supported firmware.
     kmsHsm: ['Azure Key Vault', 'Azure Managed HSM'],
     tls: [],
   },
   Oracle: { kmsHsm: ['Oracle Key Vault'], tls: [] },
   IBM: { kmsHsm: ['IBM Hyper Protect Crypto Services'], tls: [] },
-  Alibaba: { kmsHsm: ['Alibaba Cloud GVSM'], tls: [] },
+  Alibaba: {
+    kmsHsm: ['Alibaba Cloud GVSM'],
+    tls: ['Alibaba Cloud ESA (Edge Security Acceleration)'],
+  },
   'on-prem': { kmsHsm: [], tls: [] },
   'multi-cloud': { kmsHsm: [], tls: [] },
 }

@@ -51,7 +51,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
     const expected = {
       ...golden.WORKSHOP_STEPS,
       'pki-enrollment-protocols': enrollment.map((step) => {
-        if (step.id === 'cmp-kur') return { ...step, label: 'CMP enrollment and ML-KEM round trip' }
+        if (step.id === 'cmp-kur') return { ...step, label: 'ML-KEM certificate key update' }
         if (step.id === 'composite') return { ...step, label: 'Parallel certificate issuance' }
         return step
       }),
