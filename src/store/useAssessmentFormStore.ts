@@ -224,6 +224,11 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           ...INITIAL_STATE,
           ...estate.answers,
           scenarioEstateId: estate.id,
+          // The estate brings its own frameworks and products: don't let the Compliance or
+          // Infrastructure step overwrite them from the visitor's unrelated Compliance/Migrate
+          // selections on mount.
+          importComplianceSelection: false,
+          importProductSelection: false,
           assessmentMode: 'comprehensive' as AssessmentMode,
           assessmentStatus: 'in-progress' as const,
           currentStep: 0,
@@ -760,7 +765,9 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
         if (Object.keys(state.infrastructureSubCategories).length > 0)
           input.infrastructureSubCategories = state.infrastructureSubCategories
         // The toolchain answers belong to the full assessment; a quick run never asks them.
-        if (state.assessmentMode === 'comprehensive') {
+        // The mode can be null while a persona's recommended full track is running (the
+        // wizard applies it without writing it), so only an explicit quick run drops them.
+        if (state.assessmentMode !== 'quick') {
           if (state.cryptoLibraries.length > 0) input.cryptoLibraries = state.cryptoLibraries
           if (state.infraAutomation.length > 0) input.infraAutomation = state.infraAutomation
         }

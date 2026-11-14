@@ -28,7 +28,7 @@ beforeEach(() => {
 })
 
 describe('completing the wizard computes this run (confirmation screen, trend)', () => {
-  function completeWith(sensitivity: string[]) {
+  async function completeWith(sensitivity: string[]) {
     answerRequired()
     useAssessmentFormStore.setState({
       dataSensitivity: sensitivity,
@@ -37,12 +37,12 @@ describe('completing the wizard computes this run (confirmation screen, trend)',
       timelinePressure: 'within-2-3y',
     })
     form().toggleCryptoCategory('Key Exchange')
-    useAssessmentStore.getState().markComplete()
+    await useAssessmentStore.getState().markComplete()
   }
 
-  it('first run: lastResult exists as soon as the wizard is complete', () => {
+  it('first run: lastResult exists as soon as the wizard is complete', async () => {
     expect(useAssessmentResultStore.getState().lastResult).toBeNull()
-    completeWith(['high'])
+    await completeWith(['high'])
     const state = useAssessmentResultStore.getState()
     expect(form().assessmentStatus).toBe('complete')
     expect(state.lastResult?.riskScore).toBe(computeAssessment(form().getInput()!).riskScore)
@@ -51,17 +51,17 @@ describe('completing the wizard computes this run (confirmation screen, trend)',
     expect(state.sourceInputKey).toBe(JSON.stringify(form().getInput()))
   })
 
-  it('repeat run: lastResult is the new run, previousRiskScore the old one', () => {
-    completeWith(['low'])
+  it('repeat run: lastResult is the new run, previousRiskScore the old one', async () => {
+    await completeWith(['low'])
     const first = useAssessmentResultStore.getState().lastResult!.riskScore
     useAssessmentFormStore.setState({ dataSensitivity: ['critical'] })
-    useAssessmentStore.getState().markComplete()
+    await useAssessmentStore.getState().markComplete()
     const state = useAssessmentResultStore.getState()
     expect(state.lastResult!.riskScore).not.toBe(first)
     expect(state.previousRiskScore).toBe(first)
   })
 
-  it('an answer edit records a new history point; reopening or recompleting unchanged does not', () => {
+  it('an answer edit records a new history point; reopening or recompleting unchanged does not', async () => {
     vi.useFakeTimers()
     try {
       const push = (res: ReturnType<typeof computeAssessment>) => {
@@ -77,24 +77,25 @@ describe('completing the wizard computes this run (confirmation screen, trend)',
       }
       const history = () => useAssessmentResultStore.getState().assessmentHistory
       vi.setSystemTime(new Date('2026-05-01T10:00:00.000Z'))
-      completeWith(['low'])
-      push(useAssessmentResultStore.getState().lastResult!)
+      // completing records the run even if the report is never opened
+      await completeWith(['low'])
       expect(history()).toHaveLength(1)
 
-      // the report is opened again: same completion, nothing added
+      // the report is opened: it pushes the same completion, nothing added
       push(useAssessmentResultStore.getState().lastResult!)
       expect(history()).toHaveLength(1)
 
       // generated again a day later with nothing changed: a new completion time, the same point
       vi.setSystemTime(new Date('2026-05-02T10:00:00.000Z'))
-      useAssessmentStore.getState().markComplete()
+      await useAssessmentStore.getState().markComplete()
       push(useAssessmentResultStore.getState().lastResult!)
       expect(history()).toHaveLength(1)
 
-      // a genuine edit: a second point
+      // a genuine edit: a second point, recorded at completion
       vi.setSystemTime(new Date('2026-05-03T10:00:00.000Z'))
       useAssessmentFormStore.setState({ dataSensitivity: ['critical'] })
-      useAssessmentStore.getState().markComplete()
+      await useAssessmentStore.getState().markComplete()
+      expect(history()).toHaveLength(2)
       push(useAssessmentResultStore.getState().lastResult!)
       expect(history()).toHaveLength(2)
       expect(history()[1].riskScore).not.toBe(history()[0].riskScore)

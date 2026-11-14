@@ -6,6 +6,7 @@ import { AssessReview } from './AssessReview'
 import { AssessDone } from './AssessDone'
 import { summarizeAnswer, type AssessReviewState } from './reviewModel'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
+import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useAssessmentResultStore } from '../../../store/useAssessmentResultStore'
 import type { AssessmentResult } from '../../../hooks/assessmentTypes'
 
@@ -257,7 +258,17 @@ describe('AssessDone', () => {
 
   it('renders the Track A / Track B split from the assessment', async () => {
     const user = userEvent.setup()
-    useAssessmentResultStore.setState({ lastResult: MOCK_ASSESS_RESULT })
+    useAssessmentFormStore.setState({
+      industry: 'Finance & Banking',
+      country: 'United States',
+      dataSensitivity: ['high'],
+      migrationStatus: 'planning',
+      assessmentStatus: 'complete',
+    })
+    useAssessmentResultStore.setState({
+      lastResult: MOCK_ASSESS_RESULT,
+      sourceInputKey: JSON.stringify(useAssessmentFormStore.getState().getInput()),
+    })
     render(
       <AssessDone
         mode="comprehensive"
@@ -273,6 +284,34 @@ describe('AssessDone', () => {
     expect(screen.getByText(/Track B — Integrity/)).toBeInTheDocument()
     // HNDL is at risk, TNFL is not → Track A leads.
     expect(screen.getAllByText('Lead')).toHaveLength(1)
+  })
+
+  it("does not show a previous run's sequencing while this run is still being computed", async () => {
+    const user = userEvent.setup()
+    useAssessmentFormStore.setState({
+      industry: 'Finance & Banking',
+      country: 'United States',
+      dataSensitivity: ['high'],
+      migrationStatus: 'planning',
+      assessmentStatus: 'complete',
+    })
+    // lastResult belongs to different answers (the previous run)
+    useAssessmentResultStore.setState({
+      lastResult: MOCK_ASSESS_RESULT,
+      sourceInputKey: '{"old":1}',
+    })
+    render(
+      <AssessDone
+        mode="comprehensive"
+        onViewReport={vi.fn()}
+        onRetake={vi.fn()}
+        onContinueToFull={vi.fn()}
+        onPlaySimulation={vi.fn()}
+      />
+    )
+    await user.click(screen.getByRole('button', { name: /Diagnostic preview/i }))
+    expect(screen.queryByText(/Two-track sequencing/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Level 0/)).not.toBeInTheDocument()
   })
 
   it('fast track foreshadows the locked sections and wires the buttons', async () => {

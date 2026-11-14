@@ -10,39 +10,59 @@ import {
   type AssessmentResultState,
   type AssessmentSnapshot,
 } from './useAssessmentResultStore'
-import { computeAssessment } from '../hooks/assessment/orchestrator'
+
+import type { AssessmentResult } from '../hooks/assessmentTypes'
 
 export type { AssessmentMode, AssessmentStatus, AssessmentSnapshot }
 
 export interface AssessmentState
   extends Omit<AssessmentFormState, 'setAssessmentStatus'>, AssessmentResultState {
-  markComplete: () => void
+  /** Resolves once this run's result is computed and stored. */
+  markComplete: () => Promise<void>
   reset: () => void
 }
 
 /**
  * Finishing the wizard: mark the form complete and compute THIS run's result right away,
  * so the confirmation screen (and anything else reading `lastResult`) shows the run that
- * just finished rather than nothing (first run) or the previous run (a repeat). The
- * report recomputes from the same answers when it opens.
+ * just finished rather than nothing (first run) or the previous run (a repeat), and so
+ * the run is recorded in the progress history even if the report is never opened.
+ *
+ * The scoring engine is loaded on demand: this store is imported by layout-level code
+ * on every route, and a static import would pull the whole engine into the main bundle.
  */
-function completeAssessment() {
+async function completeAssessment(): Promise<void> {
   const form = useAssessmentFormStore.getState()
-  const result = useAssessmentResultStore.getState()
+  const previous = useAssessmentResultStore.getState().lastResult
   form.setAssessmentStatus('complete')
   const input = form.getInput()
-  let fresh: ReturnType<typeof computeAssessment> | null = null
+  const inputKey = input ? JSON.stringify(input) : null
+  let fresh: AssessmentResult | null = null
   if (input) {
     try {
+      const { computeAssessment } = await import('../hooks/assessment/orchestrator')
       fresh = computeAssessment(input)
     } catch (err) {
       console.error('Assessment could not be computed at completion:', err)
     }
   }
-  result.markComplete(
-    result.lastResult,
-    fresh ? { result: fresh, inputKey: JSON.stringify(input) } : undefined
-  )
+  // The answers changed while the engine loaded: that later edit owns the result.
+  const current = useAssessmentFormStore.getState().getInput()
+  if (inputKey && (current ? JSON.stringify(current) : null) !== inputKey) fresh = null
+  const result = useAssessmentResultStore.getState()
+  result.markComplete(previous, fresh && inputKey ? { result: fresh, inputKey } : undefined)
+  if (fresh?.categoryScores) {
+    const stamped = useAssessmentResultStore.getState()
+    stamped.pushSnapshot({
+      completedAt: stamped.completedAt ?? fresh.generatedAt,
+      riskScore: fresh.riskScore,
+      categoryScores: fresh.categoryScores,
+      riskLevel: fresh.riskLevel,
+      industry: useAssessmentFormStore.getState().industry,
+      preBoostScore: fresh.preBoostScore,
+      boosts: fresh.boosts,
+    })
+  }
 }
 
 /**

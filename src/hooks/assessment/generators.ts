@@ -431,7 +431,7 @@ export function generateExtendedActions(
   } else if (automationTools.length > 0) {
     actions.push({
       priority: priority++,
-      action: `Confirm that ${automationTools.join(', ')} can issue and rotate post-quantum and hybrid certificates once your CAs offer them, and plan the upgrade where they cannot.`,
+      action: `Confirm that ${automationTools.join(', ')} can request, deploy and rotate post-quantum and hybrid keys and certificates once your CAs and key stores offer them, and plan the upgrade where they cannot.`,
       category: 'long-term',
       relatedModule: '/migrate',
       effort: 'low',

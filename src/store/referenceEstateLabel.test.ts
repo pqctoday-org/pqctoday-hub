@@ -102,3 +102,19 @@ describe('reference-estate label (persistence, edits, report profile)', () => {
     ).toBeUndefined()
   })
 })
+
+describe('a loaded reference estate keeps its own frameworks', () => {
+  it("turns off importing the visitor's Compliance and Migrate selections", () => {
+    useAssessmentFormStore.setState({
+      importComplianceSelection: true,
+      importProductSelection: true,
+    })
+    useAssessmentFormStore.getState().loadReferenceEstate(REFERENCE_ESTATES[0].id)
+    const s = useAssessmentFormStore.getState()
+    expect(s.importComplianceSelection).toBe(false)
+    expect(s.importProductSelection).toBe(false)
+    expect(s.complianceRequirements).toEqual(
+      REFERENCE_ESTATES[0].answers.complianceRequirements ?? []
+    )
+  })
+})

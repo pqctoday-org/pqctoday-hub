@@ -120,6 +120,18 @@ describe('crypto toolchain reaches the report (Infrastructure step)', () => {
     expect(profile.infraAutomation).toEqual(['cert-manager'])
   })
 
+  it('a persona-recommended full track (mode not yet written to the store) keeps them', () => {
+    answerRequired()
+    useAssessmentFormStore.setState({ assessmentMode: null, cryptoAgility: 'hardcoded' })
+    form().toggleCryptoLibrary('OpenSSL')
+    form().toggleInfraAutomation('None')
+    const input = form().getInput()!
+    expect(input.cryptoLibraries).toEqual(['OpenSSL'])
+    expect(input.infraAutomation).toEqual(['None'])
+    const actions = computeAssessment(input).recommendedActions.map((a) => a.action)
+    expect(actions.some((a) => a.includes('Upgrade OpenSSL to 3.5'))).toBe(true)
+  })
+
   it('OpenSSL produces an upgrade action naming 3.5 and the native algorithms', () => {
     comprehensive()
     form().toggleCryptoLibrary('OpenSSL')
@@ -154,7 +166,7 @@ describe('crypto toolchain reaches the report (Infrastructure step)', () => {
     const tooled = computeAssessment(form().getInput()!).recommendedActions.find((a) =>
       a.drivers?.some((d) => d.startsWith('infraAutomation:'))
     )
-    expect(tooled?.action).toMatch(/Confirm that HashiCorp Vault can issue and rotate/)
+    expect(tooled?.action).toMatch(/Confirm that HashiCorp Vault can request, deploy and rotate/)
   })
 
   it('a quick run never carries them, and switching to quick clears them', () => {

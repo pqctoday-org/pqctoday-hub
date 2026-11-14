@@ -73,8 +73,12 @@ export function findCountryNextMilestone(countryName: string): CountryMilestone 
 export function selectedMilestoneIn(
   ganttData: GanttCountryData[],
   countryName: string,
-  chosen: TimelineMilestone
+  chosen: TimelineMilestone,
+  currentYear: number = CURRENT_YEAR
 ): CountryMilestone | null {
+  // A deadline that has already passed can't pace a roadmap; the caller falls back to
+  // the country's next milestone.
+  if (chosen.year !== undefined && chosen.year < currentYear) return null
   const countryData = ganttData.find(
     (g) => g.country.countryName.toLowerCase() === countryName.toLowerCase()
   )
@@ -85,7 +89,7 @@ export function selectedMilestoneIn(
       p.title === chosen.id &&
       (chosen.year === undefined || p.endYear === chosen.year)
   )
-  if (!phase) return null
+  if (!phase || phase.endYear < currentYear) return null
   const binding = (phase.events ?? []).some(
     (ev) => (ev.mandateType ?? COUNTRY_PLANNING_MANDATE[countryData.country.countryName]) === 'HARD'
   )

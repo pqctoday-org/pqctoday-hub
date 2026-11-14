@@ -94,6 +94,44 @@ function withCleanTimelineMilestone(schema: ReportShareSchemaV2): ReportShareSch
   }
 }
 
+/** Profile list fields the report spreads or joins: keep only real string lists. */
+const PROFILE_STRING_LISTS = [
+  'algorithmsSelected',
+  'algorithmsImplied',
+  'algorithmCategories',
+  'cryptoLibraries',
+  'infraAutomation',
+] as const
+
+/**
+ * The same rule for the other profile fields a link carries into the page: a list that
+ * isn't a list of strings is dropped (the report treats it as not answered), and a
+ * reference-estate id that isn't a string is dropped.
+ */
+function withCleanProfileLists(schema: ReportShareSchemaV2): ReportShareSchemaV2 {
+  const profile = schema.result.assessmentProfile as Record<string, unknown> | undefined
+  if (!profile || typeof profile !== 'object') return schema
+  const clean: Record<string, unknown> = { ...profile }
+  for (const key of PROFILE_STRING_LISTS) {
+    if (!(key in clean)) continue
+    const value = clean[key]
+    if (Array.isArray(value) && value.every((v) => typeof v === 'string')) continue
+    // algorithmsSelected is always present on a profile; the others are optional.
+    if (key === 'algorithmsSelected') clean[key] = []
+    else delete clean[key]
+  }
+  if ('scenarioEstateId' in clean && clean.scenarioEstateId !== null) {
+    if (typeof clean.scenarioEstateId !== 'string') delete clean.scenarioEstateId
+  }
+  return {
+    ...schema,
+    result: {
+      ...schema.result,
+      assessmentProfile: clean as unknown as typeof schema.result.assessmentProfile,
+    },
+  }
+}
+
 export function decodeShareToken(token: string): ReportShareSchema | null {
   try {
     const raw = fromBase64url(token)
@@ -116,7 +154,7 @@ export function decodeShareToken(token: string): ReportShareSchema | null {
           Math.max(0, Math.min(100, additive.total)) !== v2.result.riskScore)
       )
         return null
-      return withCleanTimelineMilestone(v2)
+      return withCleanProfileLists(withCleanTimelineMilestone(v2))
     }
     return null
   } catch {
