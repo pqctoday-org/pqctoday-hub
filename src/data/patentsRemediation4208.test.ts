@@ -8,6 +8,7 @@ import {
   canonicalizeTags,
   computeImpactParts,
   toImpactLevel,
+  IMPACT_HIGH_MIN,
   latestGrantsAndPublications,
 } from './patentsData'
 import { filterPatents, hasPqcAlgorithm, hasTag, pqcCountingName, tagKey } from './patentFilters'
@@ -192,14 +193,23 @@ describe('impact score (owner decision 2026-11-14)', () => {
       expect(p.impactScore).toBe(p.impactFacts + p.impactMigration)
       expect(p.impactLevel).toBe(toImpactLevel(p.impactScore))
     }
-    expect(
-      patentsData.some((p) => p.cryptoAgilityMode === 'pqc_only' && p.impactLevel === 'High')
-    ).toBe(true)
-    // Owner decision: High is roughly the top 15–20% of the catalogue.
-    const highShare =
-      patentsData.filter((p) => p.impactLevel === 'High').length / patentsData.length
-    expect(highShare).toBeGreaterThanOrEqual(0.15)
-    expect(highShare).toBeLessThanOrEqual(0.2)
+    expect(IMPACT_HIGH_MIN).toBe(72)
+    // Fixed fixtures, not the live catalogue: a post-quantum-only record that
+    // names one FIPS standard, a protocol and two domains, scored 8/10, is
+    // 12 + 8 + 4 + 40 = 64 (Medium); scored 10/10 it is 74 (High).
+    const pqcOnly = {
+      ...bare,
+      cryptoAgilityMode: 'pqc_only' as const,
+      nistRoundStatus: [{ algorithm: 'ML-KEM', status: 'fips_203' as const }],
+      protocols: ['TLS'],
+      applicationDomain: ['finance', 'telecom'],
+    }
+    const at = (score: number) => {
+      const { facts, migration } = computeImpactParts({ ...pqcOnly, pqcMigrationScore: score })
+      return toImpactLevel(facts + migration)
+    }
+    expect(at(8)).toBe('Medium')
+    expect(at(10)).toBe('High')
   })
 })
 
