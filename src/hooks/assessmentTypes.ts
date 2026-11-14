@@ -71,6 +71,8 @@ export interface AssessmentInput {
   infraAutomation?: string[]
   /** Active persona at assessment time — drives narrative framing and scoring adjustments. */
   persona?: PersonaId
+  /** Set when the answers are a reference estate's (a fictional sample), not the reader's own. */
+  scenarioEstateId?: string
 }
 
 export interface AlgorithmMigration {
@@ -238,6 +240,9 @@ export interface AssessmentProfile {
   /** The published milestone the visitor picked, when they picked one. Shared links and exports carry it. */
   timelineMilestone?: TimelineMilestone
   timelineUnknown: boolean
+  /** Set when the answers are a reference estate's (a fictional sample), not the reader's own;
+   *  shared links and exports carry it so the report can label itself. */
+  scenarioEstateId?: string
 }
 
 /** A situational boost condition that raised the composite score above the

@@ -8,6 +8,8 @@ import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/assessment/orchestrator'
 import type { SharedReportView } from '@/hooks/useResolvedSharedReport'
+import type { AssessmentInput } from '@/hooks/assessmentTypes'
+import { REFERENCE_ESTATES } from '@/data/assessmentScenarios'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 
 // Real data throughout. The target screenshot is a pastiche — real elements
@@ -179,5 +181,27 @@ describe('MobileReportView', () => {
       'href',
       '/assess?mode=comprehensive'
     )
+  })
+
+  it('labels a report produced from a reference estate, on the viewer’s own run and on a shared link', () => {
+    const estate = REFERENCE_ESTATES[0]
+    useAssessmentFormStore.getState().loadReferenceEstate(estate.id)
+    useAssessmentFormStore.getState().setAssessmentStatus('complete')
+    const view = renderView()
+    expect(screen.getByText(`Reference estate: ${estate.label}`)).toBeInTheDocument()
+    expect(screen.getByText(estate.caveat)).toBeInTheDocument()
+    view.unmount()
+
+    // the sender's profile carries the label, so a recipient who has no estate loaded sees it too
+    useAssessmentFormStore.getState().reset()
+    const input = { ...estate.answers, scenarioEstateId: estate.id } as AssessmentInput
+    renderView(quickSharedView({ result: computeAssessment(input) }))
+    expect(screen.getByText(`Reference estate: ${estate.label}`)).toBeInTheDocument()
+  })
+
+  it('shows no reference-estate notice on an ordinary report', () => {
+    completeQuick()
+    renderView()
+    expect(screen.queryByText(/Reference estate:/)).not.toBeInTheDocument()
   })
 })

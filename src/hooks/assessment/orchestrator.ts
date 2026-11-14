@@ -701,5 +701,6 @@ export function buildAssessmentProfile(
     migrationUnknown: !!input.migrationUnknown,
     agilityUnknown: !!input.agilityUnknown,
     timelineUnknown: !!input.timelineUnknown,
+    ...(input.scenarioEstateId ? { scenarioEstateId: input.scenarioEstateId } : {}),
   }
 }

@@ -7,6 +7,7 @@ import '@testing-library/jest-dom'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_IDS, pathModuleCount } from '../../data/learningPersonas'
+import { REFERENCE_ESTATES } from '../../data/assessmentScenarios'
 
 // Mock framer-motion
 vi.mock(
@@ -439,6 +440,75 @@ describe('ReportContent', () => {
       fireEvent.click(screen.getByText('Start Over'))
       expect(mockStore.reset).toHaveBeenCalledOnce()
       expect(mockNavigate).toHaveBeenCalledWith('/assess')
+    })
+  })
+
+  describe('reference-estate banner', () => {
+    const estate = REFERENCE_ESTATES[0]
+    const withProfile = (scenarioEstateId?: string): AssessmentResult => ({
+      ...baseResult,
+      assessmentProfile: {
+        industry: 'Technology',
+        algorithmsSelected: [],
+        algorithmUnknown: false,
+        sensitivityLevels: ['high'],
+        sensitivityUnknown: false,
+        complianceFrameworks: [],
+        complianceUnknown: false,
+        migrationStatus: 'planning',
+        migrationUnknown: false,
+        mode: 'quick',
+        useCasesUnknown: false,
+        retentionUnknown: false,
+        credentialLifetimeUnknown: false,
+        infrastructureUnknown: false,
+        agilityUnknown: false,
+        vendorUnknown: false,
+        scaleUnknown: false,
+        timelineUnknown: false,
+        ...(scenarioEstateId ? { scenarioEstateId } : {}),
+      },
+    })
+    const live = mockStore as unknown as { scenarioEstateId?: string | null }
+
+    it('comes from the result itself, so a reload or another tab keeps it', () => {
+      live.scenarioEstateId = null
+      renderReport(withProfile(estate.id))
+      expect(screen.getByText(`Reference estate: ${estate.label}`)).toBeInTheDocument()
+    })
+
+    it('comes from a shared link too, whatever the recipient has loaded', () => {
+      live.scenarioEstateId = null
+      render(
+        <MemoryRouter>
+          <ReportContent result={withProfile(estate.id)} sharedView={{ persona: null }} />
+        </MemoryRouter>
+      )
+      expect(screen.getByText(`Reference estate: ${estate.label}`)).toBeInTheDocument()
+    })
+
+    it('falls back to the live estate for a result computed before profiles carried it', () => {
+      live.scenarioEstateId = estate.id
+      try {
+        renderReport(withProfile())
+        expect(screen.getByText(`Reference estate: ${estate.label}`)).toBeInTheDocument()
+      } finally {
+        live.scenarioEstateId = null
+      }
+    })
+
+    it('never labels a recipient’s shared report from the recipient’s own estate', () => {
+      live.scenarioEstateId = estate.id
+      try {
+        render(
+          <MemoryRouter>
+            <ReportContent result={withProfile()} sharedView={{ persona: null }} />
+          </MemoryRouter>
+        )
+        expect(screen.queryByText(/Reference estate:/)).not.toBeInTheDocument()
+      } finally {
+        live.scenarioEstateId = null
+      }
     })
   })
 })

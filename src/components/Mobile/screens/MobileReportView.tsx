@@ -11,6 +11,7 @@ import { ReportUpgradeNudge } from '@/components/Report/redesign/ReportUpgradeNu
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { riskConfig as RISK_TIER } from '@/data/riskConfig'
+import { findReferenceEstate } from '@/data/assessmentScenarios'
 import type { SharedReportView } from '@/hooks/useResolvedSharedReport'
 import { BoardPackExport } from '@/components/common/BoardPackExport'
 
@@ -128,6 +129,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
     !result.hndlRiskWindow &&
     (dataSensitivity.includes('critical') || dataSensitivity.includes('high'))
   const tier = RISK_TIER[result.riskLevel]
+  const referenceEstate = findReferenceEstate(result.assessmentProfile?.scenarioEstateId ?? null)
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -150,6 +152,17 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
             <ClipboardCheck size={14} aria-hidden="true" />
             Start Assessment
           </Link>
+        </div>
+      )}
+
+      {referenceEstate && (
+        <div className="mb-3 rounded-xl border border-status-warning/40 bg-status-warning/10 p-3">
+          <p className="text-[12px] font-semibold text-foreground">
+            Reference estate: {referenceEstate.label}
+          </p>
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            {referenceEstate.caveat}
+          </p>
         </div>
       )}
 

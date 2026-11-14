@@ -171,8 +171,13 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const industry = shared ? (profile?.industry ?? '') : liveIndustry
   // A SHARED report is the sender's; we deliberately do not claim their run was
   // a scenario just because the recipient happens to have one loaded.
+  // The run's own profile carries the label (so reloads, shared links and exports keep it);
+  // the live store covers a result computed before the profile recorded it.
   const liveScenarioId = useAssessmentStore((s) => s.scenarioEstateId)
-  const scenarioEstate = shared ? undefined : findReferenceEstate(liveScenarioId)
+  const profileScenarioId = profile?.scenarioEstateId
+  const scenarioEstate = findReferenceEstate(
+    (shared ? profileScenarioId : (profileScenarioId ?? liveScenarioId)) ?? null
+  )
   const country = shared ? (profile?.country ?? '') : liveCountry
   const dataSensitivity = shared
     ? (profile?.sensitivityLevels ?? EMPTY_STRING_ARRAY)
