@@ -1,7 +1,7 @@
 ---
 generated: 2026-11-14
 collection: library
-documents_processed: 8
+documents_processed: 21
 enrichment_method: automated extraction
 ---
 
@@ -97478,6 +97478,786 @@ enrichment_method: automated extraction
 - **Evidence SHA256**: 171ba990331c7c43
 - **Reader**: unified/5 head
 - **Window Chars**: 20000
+
+---
+
+## Toss-Payments-Fully-Adopts-Post-Quantum-Cryptography-First-i
+
+- **Reference ID**: Toss-Payments-Fully-Adopts-Post-Quantum-Cryptography-First-i
+- **Title**: Toss Payments Fully Adopts Post-Quantum Cryptography, First in Korea's Finance and IT Sectors
+- **Authors**: Toss
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Toss Payments announces it is the first company in Korea's financial and IT sectors to fully adopt post-quantum cryptography, deploying a hybrid ML-KEM key exchange across all payment data segments.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later; quantum computers breaking currently encrypted communications
+- **Migration Timeline Info**: Milestones: 2035: target by the National Intelligence Service and Ministry of Science and ICT to transition critical infrastructure to PQC; Toss Payments completed full PQC deployment roughly ten years ahead of this plan (announced 2026.04.03); 2022: first PG to adopt HTTP/3; 2025: full TLS 1.3 deployment
+- **Applicable Regions / Bodies**: Regions: Korea; Bodies: NIST, National Intelligence Service, Ministry of Science and ICT
+- **Leaders Contributions Mentioned**: Yong Seok Shin (CISO of Toss Payments) – quoted on the company's role as an industry leader establishing a standard for "future-ready security"
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3; HTTP/3
+- **Infrastructure Layers**: Data centers; AWS cloud; Payment window; Browsers
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Hybrid ML-KEM key exchange can be deployed across on-premises data centers and cloud without infrastructure constraints; Browser-side PQC support (Chrome, Edge, Safari, Firefox) enables automatic protection with no merchant action while preserving compatibility; Protecting financial data against harvest-now-decrypt-later attacks matters because card and transaction data retain value for decades; A dedicated technical account manager team can guide merchants through migration and verify legacy compatibility without service disruption
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid key-exchange method based on ML-KEM; preserved compatibility with existing environments; tailored migration guidance for individual merchants via the TAM organization
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "adopted a hybrid key-exchange method based on "ML-KEM," a standard established by the U.S. NIST" (paraphrase — not found verbatim in the document)
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: Browsers supporting post-quantum cryptography (Chrome, Edge, Safari, Firefox); compatibility verification with legacy merchant environments
+- **Relevant PQC Today Features**: Timeline; Threats; hybrid-crypto; tls-basics; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Technical compatibility verification with a wide range of legacy environments
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Deployment completed across all segments including own data centers and AWS cloud; no technical action or setting changes required for supported browsers; TAM organization provided tailored merchant migration guidance; stable transition without service disruption
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Dedicated Technical Account Manager (TAM) support team for merchant migration; four-year security advancement journey (HTTP/3 in 2022, TLS 1.3 in 2025, PQC in 2026)
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: Toss-Payments-Fully-Adopts-Post-Quantum-Cryptography-First-i.html (107,631 bytes, 4,261 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:48:54
+- **Evidence SHA-256**: ecad8d68ad1513dc4917b13ad0b7cdb6fe78df9aade23e510c200144303b08c2
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: ecad8d68ad1513dc
+- **Reader**: unified/5 full
+- **Window Chars**: 4261
+
+---
+
+## New-GnuPG-Repositories-for-Debian-Ubuntu-and-Devuan-Stable-a
+
+- **Reference ID**: New-GnuPG-Repositories-for-Debian-Ubuntu-and-Devuan-Stable-a
+- **Title**: New GnuPG Repositories for Debian, Ubuntu, and Devuan: Stable and Development Branches Available
+- **Authors**: The GnuPG Project
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Announcement and installation guide for official GnuPG upstream package repositories (stable and development branches) for Debian, Ubuntu, and Devuan, including Kyber support in GnuPG 2.5.x.
+- **PQC Algorithms Covered**: Kyber
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Milestones: 2.4.x reached end of life on June 30, 2026; 2.5.x currently serves as both stable and development branch until PQC support is complete; a split into 2.6 (stable) and 2.7 (development) is planned afterward
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: Heike Jurzik (author of the article)
+- **PQC Products Mentioned**: GnuPG; gpg; gpg-agent; dirmngr; scdaemon; libgcrypt; libgpgme; gpg-wks-client
+- **Protocols Covered**: OpenPGP
+- **Infrastructure Layers**: Package repositories; Key Management; Smartcards
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ELG; DSA; ECDH; ECDSA; EDDSA; IDEA; 3DES; CAST5; BLOWFISH; AES; AES192; AES256; TWOFISH; CAMELLIA128; CAMELLIA192; CAMELLIA256; SHA1; RIPEMD160; SHA256; SHA384; SHA512; SHA224
+- **Key Takeaways**: Use the official GnuPG repositories to obtain upstream, unpatched builds instead of heavily modified distribution versions; GnuPG 2.4.x reached end of life on June 30, 2026, so move to 2.5.x; PQC (Kyber) support in 2.5.x is not yet complete, so the branch doubles as the development version; Check apt priorities and install with apt install -t <suite> gnupg2, then restart components with gpgconf --kill all after upgrading
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: OpenPGP
+- **PQC Heatmap Protocols Evidence**: OpenPGP: "Pubkey: RSA, Kyber, ELG, DSA, ECDH, ECDSA, EDDSA" in gpg --version output for GnuPG 2.5.9
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Operations; Security Architect
+- **Implementation Prerequisites**: Debian, Ubuntu or Devuan system with apt; existing GnuPG installation or curl/wget to import signing key; sudo privileges; scdaemon package installed manually for smartcard use
+- **Relevant PQC Today Features**: Algorithms; Migrate; email-signing; kms-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Distribution-shipped GnuPG versions are older or heavily patched and diverge from upstream; signed upstream repositories with a dedicated package signing key (GnuPG.org Package Signing Key) provide unmodified builds
+- **Deployment & Migration Complexity**: Requires adding signing key and apt sources file, checking apt policy priorities, and selecting suite with apt install -t; gpg-agent and dirmngr must be restarted via gpgconf --kill all; packages no longer use systemd integration; systemd units from 2.2.x are removed automatically on upgrade
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: New-GnuPG-Repositories-for-Debian-Ubuntu-and-Devuan-Stable-a.html (23,145 bytes, 11,858 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:48:54
+- **Evidence SHA-256**: e521916d4b5420ce88bad0b45ec292fe8b33aab4b055a4d0b9ad32fe6aa6f24d
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: e521916d4b5420ce
+- **Reader**: unified/5 full
+- **Window Chars**: 11858
+
+---
+
+## RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra
+
+- **Reference ID**: RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra
+- **Title**: RFC 10073: Composite ML-DSA for Use in X.509 Public Key Infrastructure
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Defines Composite ML-DSA, a PQ/T hybrid signature scheme combining ML-DSA with RSASSA-PKCS1-v1_5, RSASSA-PSS, ECDSA, Ed25519 and Ed448 for use in X.509/PKIX, including key generation, encodings, OIDs and security considerations.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: Traditional signature algorithms (RSA, DSA, elliptic curve variants) becoming vulnerable to quantum attacks; hedging against breaks or catastrophic bugs in ML-DSA implementations
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: US NIST, BSI, ANSSI, NLNCSA, Swedish National Communications Security Authority/Swedish Armed Forces, CA/Browser Forum, European Parliament/Council of the European Union (eIDAS)
+- **Leaders Contributions Mentioned**: Dr. Britta Hale (helped strengthen the signature combiner construction and analyzed EUF-CMA, SUF-CMA and non-separability, with Peter C and John Preuß Mattsson); Carl Wallace and Daniel Van Geest (reviewed and implemented each iteration at the Hackathon); Giacomo Pope (ML-DSA and ML-KEM implementations used to generate test vectors)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: X.509; PKIX; PKCS #10; CMP; CMS; TLS 1.3; IKEv2; S/MIME
+- **Infrastructure Layers**: PKI; Certification Authorities; Cryptographic modules (FIPS)
+- **Standardization Bodies**: IETF; NIST; ITU-T; ISO/IEC; IESG
+- **Compliance Frameworks Referenced**: FIPS 204; FIPS 186-5; FIPS 202; FIPS (FIPS-approved DRBG and module certification); eIDAS
+- **Classical Algorithms Referenced**: RSASSA-PKCS1-v1_5; RSASSA-PSS; RSA; ECDSA; Ed25519; Ed448; DSA; SHA-256; SHA-384; SHA-512; SHAKE256; SHA1; MGF1; Brainpool curves; secp256r1
+- **Key Takeaways**: Composite ML-DSA offers EUF-CMA security as long as at least one component is secure, but does not provide SUF-CMA; Component keys MUST be freshly generated and never reused between composite and standalone keys; CAs should check both component keys independently for prior revocation; No algorithm is mandatory to implement, but id-MLDSA65-ECDSA-P256-SHA512 is recommended for general use and profiles should narrow the many combinations; The mechanisms provide no application backwards compatibility since only upgraded systems understand the new OIDs
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87; NIST PQC Level 5; RSA 2048/3072/4096-bit; ECDSA P-256/P-384/P-521; brainpoolP256r1/brainpoolP384r1; RSA exponent 65537; RSASSA-PSS salt length 32 (SHA-256) or 48 (SHA-384)
+- **Hybrid & Transition Approaches**: Composite signatures presenting a single public key and signature (protocol backwards compatibility); profiling down the number of composite options; policy handling of deprecated component algorithms; prefix-based non-separability mitigation
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "combine the US NIST ML-DSA with traditional algorithms RSASSA-PKCS1-v1_5, RSASSA-PSS, ECDSA, Ed25519, and Ed448" (Abstract) (paraphrase — not found verbatim in the document)
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: "Use Within X.509 and PKIX" (§5); "Use within the Cryptographic Message Syntax (CMS) will be covered in a separate specification" (§5)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: ML-DSA-44 public key 1312 bytes, signature 2420 bytes; ML-DSA-65 public key 1952 bytes, signature 3309 bytes; ML-DSA-87 public key 2592 bytes, signature 4627 bytes; id-MLDSA44-Ed25519-SHA512 public key 1344 bytes, signature 2484 bytes; id-MLDSA65-ECDSA-P256-SHA512 public key 2017 bytes, signature up to 3381 bytes; id-MLDSA87-RSA4096-PSS-SHA512 public key up to 3118 bytes, signature 5139 bytes; composite private keys store 32-byte ML-DSA seed plus traditional key; pre-hashing avoids streaming the full message to both components
+- **Target Audience**: Developer; Security Architect; PKI Operator; Researcher; Compliance Officer
+- **Implementation Prerequisites**: ML-DSA implementation (ideally seed-based KeyGen_internal); FIPS-approved DRBG for seed generation; existing implementations of the traditional component algorithms; X.509/PKIX support for new OIDs; hash functions SHA-256, SHA-384, SHA-512 and SHAKE256
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; pki-certificates; pki-workshop; Migrate
+- **Implementation Attack Surface**: Stripping attacks on hybrid signatures; cross-protocol attacks arising from key reuse; signature separability (removal of a component signature)
+- **Cryptographic Discovery & Inventory**: Cryptographic Bills of Materials showing deprecated component algorithms still in use
+- **Testing & Validation Methods**: Known-answer test vectors in ACVP-like format for each composite algorithm; FIPS certification guidance; reference implementation in Python
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: FIPS-approved DRBG output required for the ML-DSA seed
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: No application backwards compatibility; large number of algorithm combinations risks ecosystem fracturing; profiles recommended to narrow options; multiple hash functions per composite increase implementation burden
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Standardised
+- **Source Document**: RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra.html (805,719 bytes, 60,842 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:48:56
+- **Evidence SHA-256**: fc32ff88ef35e02e427fd2ad812c024e2b811b3f181ff37cdd5161004549d99f
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: fc32ff88ef35e02e
+- **Reader**: unified/5 selection
+- **Window Chars**: 60842
+
+---
+
+## RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS
+
+- **Reference ID**: RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS
+- **Title**: RFC 9591: The Flexible Round-Optimized Schnorr Threshold (FROST) Protocol for Two-Round Schnorr Signatures
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Specification of the FROST two-round threshold Schnorr signing protocol over prime-order groups, with ciphersuites and security considerations
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected (document explicitly states FROST does not provide post-quantum security because it relies on the Discrete Logarithm Problem)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IRTF; CFRG; IRSG
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: FROST; Schnorr signatures; EdDSA; TLS 1.3 (mentioned only as use case for threshold signing of transcript hashes and as encoding notation reference)
+- **Infrastructure Layers**: Key Management; Distributed key generation; Trusted dealer key generation
+- **Standardization Bodies**: IRTF; CFRG; IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Schnorr signatures; Ed25519; Ed448; ECDSA; ristretto255; P-256; secp256k1; SHA-512; SHA-256; SHAKE256; EdDSA; Shamir secret sharing
+- **Key Takeaways**: FROST is a threshold Schnorr signing protocol that needs only a prime-order group and a hash function; FROST is not post-quantum secure since it requires the hardness of the Discrete Logarithm Problem; FROST provides EUF-CMA security assuming secure key share generation and at most MIN_PARTICIPANTS-1 corrupted participants plus Coordinator; Applications should validate input messages so participants do not act as signing oracles; The RECOMMENDED ciphersuite is (ristretto255, SHA-512)
+- **Security Levels & Parameters**: EUF-CMA security; ciphersuites (ristretto255, SHA-512), (Ed25519, SHA-512), (Ed448, SHAKE256), (P-256, SHA-256), (secp256k1, SHA-256)
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Two-round signing protocol; hash_to_field with L = 48 for P-256 ciphersuite
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: Prime-order group implementation; cryptographic hash function; CSPRNG; secure key share generation via trusted dealer or distributed key generation; authenticated and reliable communication channel
+- **Relevant PQC Today Features**: Algorithms; Threats
+- **Implementation Attack Surface**: Denial-of-service by misbehaving participants or Coordinator; signing oracle abuse for arbitrary messages
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors (Appendix E)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: CSPRNG-based random scalar generation (rejection sampling and wide reduction, Appendix D)
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9591-The-Flexible-Round-Optimized-Schnorr-Threshold-FROS.html (211,551 bytes, 20,585 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:48:57
+- **Evidence SHA-256**: eaafd358f42472b9ddf50298840c5e70c2b458537f80daaad35e5c395f7129d9
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: eaafd358f42472b9
+- **Reader**: unified/5 selection
+- **Window Chars**: 20585
+
+---
+
+## RFC-9381-Verifiable-Random-Functions-VRFs
+
+- **Reference ID**: RFC-9381-Verifiable-Random-Functions-VRFs
+- **Title**: RFC 9381: Verifiable Random Functions (VRFs)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Specifies Verifiable Random Function (VRF) constructions based on RSA (RSA-FDH-VRF) and elliptic curves (ECVRF) that are secure in the random oracle model.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IRTF, CFRG
+- **Leaders Contributions Mentioned**: S. Goldberg, L. Reyzin, D. Papadopoulos, J. Včelák (document authors); no specific contributions described in the text
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IRTF; CFRG; IRSG; IETF Trust; NIST; SECG
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; RSA-FDH; ECVRF; NIST P-256; SHA-256; SHA-384; SHA-512; MGF1; ECDSA; EdDSA; DSA
+- **Key Takeaways**: RSA-FDH-VRF and ECVRF are classical (non-PQC) VRFs secure in the random oracle model; VRF keys must be generated correctly with good randomness; Only some of the specified VRFs satisfy unpredictability under malicious key generation; Security levels depend on RSA key length/hash length (RSA-FDH-VRF) and curve/challenge sizes qLen/cLen (ECVRF); Pseudorandomness cannot hold against malicious key generation
+- **Security Levels & Parameters**: RSA-FDH-VRF collision resistance approx. 8*min(k/2, hLen/2) bits; ECVRF uniqueness approx. 8*min(qLen, cLen) bits; ECVRF collision resistance approx. 8*min(qLen/2, hLen/2) bits; ECVRF-P256-SHA256-TAI: fLen=qLen=32, cLen=16, hLen=32; 2048-bit, 3072-bit and 4096-bit RSA test keys
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: ECVRF-P256: ptLen = 33 bytes (compressed point); fLen = qLen = 32; cLen = 16; hLen 32/48/64 bytes for SHA-256/384/512; RSA-FDH-VRF test keys of 2048, 3072 and 4096 bits
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: RSA key pair satisfying RFC 8017 Section 3 conditions; Correct VRF key generation with good randomness; Cryptographic hash function (SHA-256/384/512); Validation of public keys for full uniqueness and collision resistance
+- **Relevant PQC Today Features**: Algorithms; entropy-randomness
+- **Implementation Attack Surface**: Biased or weak nonce generation in ECDSA-like signatures (BreHen19 referenced); Poor randomness in VRF key generation; Malicious key generation
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors for RSA-FDH-VRF ciphersuites (Appendix A) and ECVRF ciphersuites (Appendix B)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Requirement for good randomness in VRF key generation; no specific entropy sources discussed
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9381-Verifiable-Random-Functions-VRFs.html (237,177 bytes, 20,459 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:48:59
+- **Evidence SHA-256**: b84720a9f540192f20aec46090945e41a314efc4916fcf9063415f7384eea003
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: b84720a9f540192f
+- **Reader**: unified/5 selection
+- **Window Chars**: 20459
+
+---
+
+## RFC-9497-Oblivious-Pseudorandom-Functions-OPRFs-Using-Prime
+
+- **Reference ID**: RFC-9497-Oblivious-Pseudorandom-Functions-OPRFs-Using-Prime
+- **Title**: RFC 9497: Oblivious Pseudorandom Functions (OPRFs) Using Prime-Order Groups
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Specification of an OPRF, VOPRF, and POPRF protocol instantiated within standard prime-order groups (elliptic curves), including ciphersuites, security considerations and test vectors.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IRTF, CFRG, IRSG
+- **Leaders Contributions Mentioned**: A. Davidson, A. Faz-Hernandez, N. Sullivan, C. A. Wood (document authors)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: OPRF; VOPRF; POPRF
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IRTF; CFRG; IETF Trust
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: P-256; P-384; P-521; decaf448; ristretto255; SHA-256; SHA-384; SHA-512; SHAKE-256; Diffie-Hellman; RSA
+- **Key Takeaways**: Static Diffie-Hellman oracle attacks reduce security of the group instantiation by log_2(Q)/2 bits, where Q is the number of BlindEvaluate calls; Applications that cannot tolerate less than 128-bit discrete-log security are RECOMMENDED to choose decaf448, P-384 or P-521; Rate-limiting client BlindEvaluate queries or rotating private keys can mitigate the static DH attack; Ciphersuites are combinations of a prime-order Group and a Hash, and future documents may add more
+- **Security Levels & Parameters**: 128-bit security level (reduced to 128 - log_2(Q)/2 bits); Nh = 32 (SHA-256); Nh = 48 (SHA-384); Nh = 64 (SHA-512, SHAKE-256); Ne = 56 and Ns = 56 for decaf448
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Scalar serialization of 56 bytes for decaf448; Hash output Nh of 32, 48 and 64 bytes depending on ciphersuite; PublicInput/PrivateInput limited to 2^16 - 1 bytes; Order of decaf448 group about 2^446
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: Prime-order group implementing the specified Group API; Cryptographic hash function with Nh-byte output; Hash-to-curve per RFC 9380; ristretto255/decaf448 encodings per RFC 9496
+- **Relevant PQC Today Features**: Algorithms; api-security-jwt
+- **Implementation Attack Surface**: Static Diffie-Hellman oracle attacks via BlindEvaluate queries; input validation of deserialized elements and scalars
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors for OPRF, VOPRF and POPRF modes per ciphersuite (Appendix A)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9497-Oblivious-Pseudorandom-Functions-OPRFs-Using-Prime.html (250,319 bytes, 20,661 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:00
+- **Evidence SHA-256**: 8256d770d9ebdd5d68b3c6ccf8ff4e037a69feba50f99b771782db85b5cf8d24
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 8256d770d9ebdd5d
+- **Reader**: unified/5 selection
+- **Window Chars**: 20661
+
+---
+
+## RFC-9474-RSA-Blind-Signatures
+
+- **Reference ID**: RFC-9474-RSA-Blind-Signatures
+- **Title**: RFC 9474: RSA Blind Signatures
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: RFC 9474 specifies an RSA-based blind signature protocol (RSABSSA) whose resulting signatures can be verified as standard RSA-PSS signatures.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IRTF; CFRG
+- **Leaders Contributions Mentioned**: Chaum (introduced RSA blind signatures for untraceable payments); Lysyanskaya (proved one-more-forgery security of RSABSSA variants in the random oracle model)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: RSABSSA; RSA-PSS (RSASSA-PSS); Privacy Pass; X.509
+- **Infrastructure Layers**: PKI; Hardware Security Module; Key Management
+- **Standardization Bodies**: IRTF; CFRG; IETF
+- **Compliance Frameworks Referenced**: FIPS 186-5
+- **Classical Algorithms Referenced**: RSA; RSA-PSS; SHA-384; MGF1
+- **Key Takeaways**: Use randomized-preparation variants (RSABSSA-SHA384-PSS-Randomized or RSABSSA-SHA384-PSSZERO-Randomized) unless input messages have high entropy; Never reuse a server signing key for other protocols or for different RSABSSA encoding options; Server keys in X.509 certificates must use the id-RSASSA-PSS OID, not rsaEncryption; Resulting signatures verify with a standard RSA-PSS library, easing deployment; Generate server keys per FIPS 186-5 and retry Blind on "blinding error"
+- **Security Levels & Parameters**: SHA-384 hash; 48-byte salt (sLen); 0-byte salt (PSSZERO variants); 32-byte random message prefix; MGF1 with SHA-384
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: If the server public key is carried in an X.509 certificate, it MUST use the id-RSASSA-PSS OID (§6.2)
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: PrepareRandomize output is 32 bytes longer than msg; blinded_msg and blind_sig are modulus_len bytes; BlindSign performs an extra RSAVP1 check, adding one public-key operation
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Standard RSA-PSS library for verification; RSA key pair generated per FIPS 186-5; cryptographically secure random number generator; distinct key pair per RSABSSA encoding option
+- **Relevant PQC Today Features**: pki-certificates; api-security-jwt
+- **Implementation Attack Surface**: Timing side channels and fault attacks on the RSA private key operation in BlindSign (section 7.1)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9474-RSA-Blind-Signatures.html (137,654 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:00
+- **Evidence SHA-256**: 5d2204a97fbf93c64a0e1997d90da47b714415ad67d676e84dde6228c7723a1f
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 5d2204a97fbf93c6
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## RFC-9576-The-Privacy-Pass-Architecture
+
+- **Reference ID**: RFC-9576-The-Privacy-Pass-Architecture
+- **Title**: RFC 9576: The Privacy Pass Architecture
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The Privacy Pass architecture, specifying its redemption and issuance protocols, privacy goals, threat model, and deployment considerations for privacy-preserving authorization tokens.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IESG
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Privacy Pass redemption protocol; Privacy Pass issuance protocol; Oblivious HTTP; TLS (mutually authenticated); Tor
+- **Infrastructure Layers**: Token issuance and attestation infrastructure; Anonymization services
+- **Standardization Bodies**: IETF; IESG
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Privacy Pass authorizes Clients via unlinkable tokens instead of linkable state such as cookies; Unlinkability goals cover Origin-Client, Issuer-Client, Attester-Origin and redemption context; Anonymization services such as Tor are needed to hide Client IP addresses and avoid partitioning anonymity sets; Clients must trust Attesters but assume Issuers and Origins are malicious; Client-specific Issuer Public Keys can be abused by malicious Origins to link redemptions
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Researcher
+- **Implementation Prerequisites**: Deployment-specific attestation procedure; Trust relationships between Origin, Issuer and Attester; Anonymization service for Client IP addresses
+- **Relevant PQC Today Features**: api-security-jwt; digital-id
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Deployment models vary by whether Attester and Issuer are on the same server; Token caching versus interactive issuance affects redemption flow
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9576-The-Privacy-Pass-Architecture.html (160,536 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:01
+- **Evidence SHA-256**: 6070dcabef857222361ea995fd8e45919f872c7aeb5084c963191d13e45b626b
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 6070dcabef857222
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## RFC-9578-Privacy-Pass-Issuance-Protocols
+
+- **Reference ID**: RFC-9578-Privacy-Pass-Issuance-Protocols
+- **Title**: RFC 9578: Privacy Pass Issuance Protocols
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: RFC 9578 specifies two variants of the two-message Privacy Pass token issuance protocol: a privately verifiable one based on a VOPRF (P-384, SHA-384) and a publicly verifiable one based on blind RSA signatures (2048-bit).
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IESG, NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Privacy Pass issuance protocols (TokenRequest/TokenResponse); Privacy Pass HTTP Authentication Scheme; OPRF/VOPRF; Blind RSA signatures; TLS notation (TLS 1.3 encoding); HTTP
+- **Infrastructure Layers**: Token issuance/Issuer key management; Attestation (outside scope); PKI-style key encoding (SPKI)
+- **Standardization Bodies**: IETF; IESG; IANA; NIST
+- **Compliance Frameworks Referenced**: FIPS 186-5 (Digital Signature Standard)
+- **Classical Algorithms Referenced**: RSA; RSASSA-PSS; RSA blind signatures; SHA-256; SHA-384; MGF1; P-384 (OPRF over P-384); VOPRF
+- **Key Takeaways**: Two issuance variants exist: privately verifiable (VOPRF P-384/SHA-384, token type 0x0001) and publicly verifiable (blind RSA 2048-bit, token type 0x0002); Issuer keys must be generated securely (e.g. per FIPS 186-5) and must not be reused in other protocols; The truncated_token_key_id (last 8 bits of token_key_id) prevents Issuers from uniquely identifying Clients; Both variants rely on classical cryptography only, so neither is post-quantum secure; Security considerations of the underlying VOPRF and blind RSA documents also apply
+- **Security Levels & Parameters**: OPRF(P-384, SHA-384) ciphersuite; Blind RSA 2048-bit key; SHA-384 with MGF1 and 48-byte PSS salt; 32-byte nonce; Nk 48 (VOPRF) and 256 (Blind RSA); Nid 32
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: 32-byte nonce; 48-byte PSS salt; Nk 48 (VOPRF token key) and 256 (Blind RSA); Nid 32; truncated_token_key_id is 1 byte; token_type is 2 bytes; Blind RSA uses 2048-bit keys; one-round (two-message) issuance
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: OPRF (RFC 9497) implementation; RSA Blind Signatures (RFC 9474) implementation; RSASSA-PSS per RFC 8017; DER-encoded SPKI key encoding; Privacy Pass architecture and HTTP authentication scheme (RFC 9576, RFC 9577)
+- **Relevant PQC Today Features**: Algorithms; api-security-jwt; pki-workshop
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors for both issuance protocols (Appendix A)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-9578-Privacy-Pass-Issuance-Protocols.html (194,519 bytes, 20,594 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:01
+- **Evidence SHA-256**: ef857d83a8c8cc5e8b1d736a311abb06cf67021a38c3a73c61fdaef8a66b7cd7
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: ef857d83a8c8cc5e
+- **Reader**: unified/5 selection
+- **Window Chars**: 20594
+
+---
+
+## RFC-5753-Use-of-Elliptic-Curve-Cryptography-ECC-Algorithms-i
+
+- **Reference ID**: RFC-5753-Use-of-Elliptic-Curve-Cryptography-ECC-Algorithms-i
+- **Title**: RFC 5753: Use of Elliptic Curve Cryptography (ECC) Algorithms in Cryptographic Message Syntax (CMS)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Specifies how to use Elliptic Curve Cryptography (ECDSA signatures, ECDH and ECMQV key agreement) in CMS SignedData, EnvelopedData, AuthenticatedData and AuthEnvelopedData, obsoleting RFC 3278.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IESG, NIST, SECG, ANSI, ITU-T, ISO/IEC
+- **Leaders Contributions Mentioned**: S. Turner (IECA) and D. Brown (Certicom) are the authors; no other named individuals with described contributions
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: CMS; S/MIME; X.509
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF; NIST; SECG; ANSI; ITU-T; ISO/IEC
+- **Compliance Frameworks Referenced**: NIST FIPS 186-3; NIST FIPS 180-3; NIST SP 800-56A; SEC1
+- **Classical Algorithms Referenced**: ECDSA; ECDH; ECMQV; SHA-1; SHA-224; SHA-256; SHA-384; SHA-512; Triple-DES; AES-128; AES-192; AES-256; HMAC; RSA; DSA
+- **Key Takeaways**: Implementations supporting SignedData with ECDSA MUST support ECDSA with SHA-256; Ephemeral-static ECDH standard primitive MUST be supported if EnvelopedData is supported, while ECDH cofactor and 1-Pass ECMQV are optional; 1-Pass ECMQV data origin authentication in AuthenticatedData/AuthEnvelopedData is only valid with a single recipient, so use separate messages per recipient; Use curve domain parameters from RFC 5480 and pair P-256 with SHA-256, P-384 with SHA-384, P-521 with SHA-512
+- **Security Levels & Parameters**: P-192; P-224; P-256; P-384; P-521 curves; AES-128/192/256 key wrap
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: S/MIME; X.509
+- **PQC Heatmap Protocols Evidence**: S/MIME: CMS ECC usage with [MSG] S/MIME 3.2 (RFC 5751) cited among references; X.509: Section 5 "Internet X.509 certificates [PKI] can be used in conjunction with this specification"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: CMS (RFC 5652) support; ECC subject public key information per RFC 5480; SHA-2 algorithms with CMS (RFC 5754); AES key wrap/content encryption per RFC 3565
+- **Relevant PQC Today Features**: email-signing; pki-workshop; Algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: RFC-5753-Use-of-Elliptic-Curve-Cryptography-ECC-Algorithms-i.html (145,293 bytes, 20,644 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:02
+- **Evidence SHA-256**: bbede973ac90d6444dacb295435a16d99b8523ebc250f0099b146886160348ea
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: bbede973ac90d644
+- **Reader**: unified/5 selection
+- **Window Chars**: 20644
+
+---
+
+## NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche
+
+- **Reference ID**: NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche
+- **Title**: NIST IR 8214C: NIST First Call for Multi-Party Threshold Schemes
+- **Authors**: CSRC | NIST
+- **Publication Date**: 2026-01
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: NIST's call for public submissions of multi-party threshold schemes (signing, encryption, decryption, key generation) and related crypto-systems such as FHE and ZKP, interchangeable with reference non-threshold primitives.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST
+- **Leaders Contributions Mentioned**: Luís T. A. N. Brandão (author, NIST/Strativia); Rene Peralta (author, NIST)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIST solicits public submissions of threshold schemes across Class N (NIST-specified primitives) and Class S (special primitives); Submission packages require a technical specification, reference implementation, and experimental evaluation report; Threshold scheme outputs must be interchangeable with the reference non-threshold primitive; A public analysis phase will produce a characterization report that may inform future recommendations
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Leaders; Compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: NIST-IR-8214C-NIST-First-Call-for-Multi-Party-Threshold-Sche.html (47,841 bytes, 4,497 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:03
+- **Evidence SHA-256**: 4535557931c71de5c8546f9ac8e7d23e7937d7d8e44f9fa5874bd08d43e5b014
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 4535557931c71de5
+- **Reader**: unified/5 full
+- **Window Chars**: 4497
+
+---
+
+## Post-Quantum-Noise-IACR-ePrint-2022-539
+
+- **Reference ID**: Post-Quantum-Noise-IACR-ePrint-2022-539
+- **Title**: Post-Quantum Noise (IACR ePrint 2022/539)
+- **Authors**: IACR Cryptology ePrint Archive
+- **Publication Date**: 2022
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: PQNoise, a post-quantum variant of the Noise protocol framework that replaces Diffie-Hellman key exchanges with KEMs, with a generic pattern-conversion recipe, a fACCE-model security proof, and benchmarks.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: Yawning Angel (author, Oasis Labs); Benjamin Dowling (author, University of Sheffield); Andreas Hülsing (author, TU Eindhoven); Peter Schwabe (author, MPI-SP); Fiona Johanna Weber (author, Eindhoven University of Technology)
+- **PQC Products Mentioned**: PQNoise
+- **Protocols Covered**: Noise framework; PQNoise
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman
+- **Key Takeaways**: Diffie-Hellman key exchanges in Noise can be securely replaced with KEMs; The inability to combine KEM key pairs is resolved by randomness-hardening, for which a formal abstraction is introduced; A generic recipe turns classical Noise patterns into PQNoise patterns; PQNoise patterns achieve confidentiality and authenticity in the fACCE-model; Hash chains used in Noise are a secure hash-object, and benchmarks show practicality
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Replacing Diffie-Hellman with KEMs in Noise patterns via a generic recipe converting classical Noise patterns into PQNoise patterns; randomness-hardening to work around KEM key pairs not being combinable
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "replace the Diffie-Hellman key-exchanges in Noise with KEMs in a secure way" (Abstract)
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Playground
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Benchmarks for several base patterns
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Post-Quantum-Noise-IACR-ePrint-2022-539.html (16,829 bytes, 2,510 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:03
+- **Evidence SHA-256**: 73bf2c8d198face7b419c207e0c7ec37b1fc5e8d22eb67b9d9eec39ece677119
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 73bf2c8d198face7
+- **Reader**: unified/5 full
+- **Window Chars**: 2510
+
+---
+
+## Post-quantum-WireGuard-IACR-ePrint-2020-379
+
+- **Reference ID**: Post-quantum-WireGuard-IACR-ePrint-2020-379
+- **Title**: Post-quantum WireGuard (IACR ePrint 2020/379)
+- **Authors**: IACR Cryptology ePrint Archive
+- **Publication Date**: 2020
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: PQ-WireGuard, a post-quantum variant of the WireGuard VPN handshake that replaces Diffie-Hellman with a KEM-only construction to achieve post-quantum confidentiality and authentication.
+- **PQC Algorithms Covered**: Classic McEliece; Saber
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: PQ-WireGuard; WireGuard
+- **Protocols Covered**: WireGuard
+- **Infrastructure Layers**: VPN
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman
+- **Key Takeaways**: The WireGuard handshake can be made fully post-quantum, including authentication, by using only KEMs instead of Diffie-Hellman; Security of the construction is established in the symbolic model and the standard model; KEMs were selected for high security and speed (McEliece and Saber are listed as keywords); Benchmarks show PQ-WireGuard is competitive with widely deployed VPN solutions
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "we replace the Diffie-Hellman-based handshake by a more generic approach only using key-encapsulation mechanisms (KEMs)"
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Extensive benchmarking results comparing PQ-WireGuard to widely deployed VPN solutions (no concrete values given in the extract)
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: vpn-ssh-pqc; Algorithms; pqc-candidates; Playground
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Formal verification (security proofs in the symbolic model and the standard model); Benchmarking against widely deployed VPN solutions
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Code-based; Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: Post-quantum-WireGuard-IACR-ePrint-2020-379.html (16,177 bytes, 2,170 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T16:49:04
+- **Evidence SHA-256**: f5353b7c05dface2f58c092de2f1c7efdd76dff23a5fd844d1955e37d3b94430
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: f5353b7c05dface2
+- **Reader**: unified/5 full
+- **Window Chars**: 2170
 
 ---
 
