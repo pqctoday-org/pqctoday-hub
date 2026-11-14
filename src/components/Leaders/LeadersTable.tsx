@@ -116,7 +116,7 @@ export const LeadersTable = ({
                 </span>
               </th>
               <th
-                className={clsx(thClass, 'hidden xl:table-cell')}
+                className={clsx(thClass, 'hidden lg:table-cell')}
                 onClick={() => handleSort('category')}
               >
                 <span className="flex items-center gap-1.5">Category {sortIcon('category')}</span>
@@ -227,14 +227,14 @@ const LeaderRow = ({
       </td>
 
       {/* Category */}
-      <td className="px-3 py-3 hidden xl:table-cell">
+      <td className="px-3 py-3 hidden lg:table-cell">
         <span className="text-muted-foreground text-xs">{leader.category}</span>
       </td>
 
       {/* Country */}
       <td className="px-3 py-3">
         <div className="flex items-center gap-2">
-          <CountryFlag code={flagCode} width={18} height={12} />
+          {leader.country && <CountryFlag code={flagCode} width={18} height={12} />}
           <span className="text-muted-foreground text-xs">{leader.country}</span>
         </div>
       </td>

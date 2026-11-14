@@ -63,9 +63,11 @@ export const LeaderCard = ({
               <User size={24} />
             </div>
           )}
-          <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border shadow-sm">
-            <CountryFlag code={FLAG_CODE_MAP[leader.country] ?? 'un'} width={16} height={11} />
-          </div>
+          {leader.country && (
+            <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border shadow-sm">
+              <CountryFlag code={FLAG_CODE_MAP[leader.country] ?? 'un'} width={16} height={11} />
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <span

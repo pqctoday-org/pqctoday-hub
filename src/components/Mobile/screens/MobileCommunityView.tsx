@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { leadersData, deprecatedLeaderSuccessors, type Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { cn } from '@/lib/utils'
+import { canonicalLeaderCountry } from '@/data/leaderCountry'
 import { MobileSheet } from '../primitives/Sheet'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
@@ -50,7 +51,8 @@ const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string
   { key: 'sector', label: 'Sector' },
   // eslint-disable-next-line security/detect-object-injection -- region is a filter id
   { key: 'region', label: 'Region', format: (v) => LEADERS_REGION_LABELS[v] ?? v },
-  { key: 'country', label: 'Country' },
+  // Shown in the rows' spelling: an old ?country=USA link reads "United States".
+  { key: 'country', label: 'Country', format: (v) => canonicalLeaderCountry(v) },
   { key: 'q', label: 'Search' },
 ]
 

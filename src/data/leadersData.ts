@@ -171,7 +171,9 @@ const DUPLICATE_OF_NAMED_ROW = /^duplicate of '([^']+)'/i
  *  "… Superseded by the row named 'David Joseph' — …", "Superseded by 'Jan
  *  Klaußner' — …", or "… see the active \"Martin Habovštiak\" row …". Their
  *  ids must keep working ("the key must survive"), so links forward too. */
-const SUPERSEDED_BY_NAMED_ROW = /superseded by (?:the row named )?'([^']+)'/i
+// The closing quote is the one followed by a space, punctuation or the end, so
+// a name with an apostrophe ("X O'Connor") is read whole.
+const SUPERSEDED_BY_NAMED_ROW = /superseded by (?:the row named )?'(.+?)'(?=[\s.,;:—–-]|$)/i
 const SEE_ACTIVE_ROW = /see the active "([^"]+)" row/i
 
 /**
