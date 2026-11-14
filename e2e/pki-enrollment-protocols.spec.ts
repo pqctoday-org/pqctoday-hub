@@ -138,50 +138,53 @@ test('Step 2: CMP IR issues a real X.509 cert with ML-DSA-65 CA signature (opens
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. ML-KEM-768 encrCert POP — byte-exact shared secret equality (RFC 9810)
+// 3. ML-KEM-768 certificate key update — encrypted certificate + explicit confirmation (RFC 9810)
 // ─────────────────────────────────────────────────────────────────────────────
-test('Step 4: ML-KEM-768 encap → decap yields byte-identical 32-byte sample shared secrets', async ({
+test('Step 4: ML-KEM-768 key update recovers the encrypted certificate and confirms it', async ({
   page,
 }) => {
   test.setTimeout(WASM_TIMEOUT)
   await openWorkshop(page)
 
-  // CmpKemKeyUpdate has no dependency on Steps 1-3 — it provisions the mock CA
-  // internally via ensureMockCA() inside the button handler.
+  // CmpKemKeyUpdate has no dependency on Steps 1-3 — it provisions its own
+  // fictional CA, signing identity and prior enrollment inside the button handler.
+  await goToStep(page, 4)
+  await expect(page.getByText('ML-KEM certificate key update', { exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Run key update', exact: true }).click()
+  await expect(
+    page.getByText('New-key possession and explicit confirmation verified for this sample.', {
+      exact: true,
+    })
+  ).toBeVisible({ timeout: WASM_TIMEOUT })
+
+  // The server accepts completion only after the client confirms the certificate hash.
+  await page.getByText('Actual transaction events', { exact: true }).click()
+  await expect(page.getByText('server: confirmation_accepted', { exact: true })).toBeVisible()
+})
+
+test('Step 4: key update for a different prior enrollment is rejected with no certificate', async ({
+  page,
+}) => {
+  test.setTimeout(WASM_TIMEOUT)
+  await openWorkshop(page)
   await goToStep(page, 4)
 
+  await page.getByRole('button', { name: /Sample prior-certificate authorization/ }).click()
   await page
-    .getByRole('button', {
-      name: 'Run sample enrollment and KEM round trip',
-    })
+    .getByRole('option', { name: 'Different prior enrollment — expect rejection', exact: true })
     .click()
+  await page.getByRole('button', { name: 'Run key update', exact: true }).click()
 
-  // Agreement requires the actual encapsulated and decapsulated sample bytes to match.
-  await expect(page.getByText(/Sample shared secrets match/)).toBeVisible({ timeout: WASM_TIMEOUT })
-
-  // Extract the two hex-encoded 32-byte shared secrets.
-  // Structure: <div label> followed immediately by <pre hex> as siblings inside the panel.
-  // Use XPath following-sibling to avoid matching ancestor divs that also contain
-  // the cert-decode <pre> (which uses colon-separated hex and would fail the regex).
-  const encapHex = await page
-    .getByText('CA-side shared secret (encap)', { exact: true })
-    .locator('xpath=following-sibling::pre[1]')
-    .textContent()
-
-  const decapHex = await page
-    .getByText('EE-side shared secret (decap)', { exact: true })
-    .locator('xpath=following-sibling::pre[1]')
-    .textContent()
-
-  const encap = (encapHex ?? '').trim()
-  const decap = (decapHex ?? '').trim()
-
-  // ML-KEM-768 shared secret (FIPS 203) is exactly 32 bytes = 64 lower-case hex chars.
-  expect(encap).toMatch(/^[0-9a-f]{64}$/)
-  expect(decap).toMatch(/^[0-9a-f]{64}$/)
-
-  // Byte-for-byte sample agreement; this separate KEM check does not establish CMP proof of possession.
-  expect(encap).toBe(decap)
+  await expect(
+    page.getByText('prior certificate is not authorized for the sample identity', { exact: true })
+  ).toBeVisible({ timeout: WASM_TIMEOUT })
+  await expect(page.getByText('Recovered certificate', { exact: true })).toHaveCount(0)
+  await expect(
+    page.getByText('New-key possession and explicit confirmation verified for this sample.', {
+      exact: true,
+    })
+  ).toHaveCount(0)
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
