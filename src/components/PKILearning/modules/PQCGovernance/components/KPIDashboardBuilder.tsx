@@ -36,6 +36,7 @@ import {
 import { KpiSampleBaselineControl } from '@/components/PKILearning/common/executive/KpiSampleBaselineControl'
 import {
   hasKpiSampleBaseline,
+  sampleBaselineScoreNote,
   withKpiSampleBaseline,
   withoutKpiSampleBaseline,
 } from '@/components/PKILearning/common/executive/kpiSampleBaseline'
@@ -107,9 +108,11 @@ export function buildKpiDashboardMarkdown(
 
   let weightedSum = 0
   let totalWeight = 0
+  const countedIds: string[] = []
   for (const d of dimensions) {
     const value = scores[d.id] ?? d.autoScore
     if (!isReadinessDimension(d) || isPending(d) || value === undefined) continue
+    countedIds.push(d.id)
     weightedSum += value * ew(d)
     totalWeight += ew(d)
   }
@@ -126,6 +129,7 @@ export function buildKpiDashboardMarkdown(
     coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
       : `**Overall Score: not available — scored-value coverage ${Math.round(coverage * 100)}%**\n\n`
+  md += sampleBaselineScoreNote(countedIds, (id) => valueOrigins?.[id])
   md += `Generated: ${new Date().toLocaleDateString()}\n\n`
   md +=
     'Scored-value coverage measures available worksheet values, not evidence verification or production readiness. Optional sample notes are learner supplied.\n\n'

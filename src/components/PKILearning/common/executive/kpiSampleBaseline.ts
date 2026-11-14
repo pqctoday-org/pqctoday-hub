@@ -76,3 +76,17 @@ export function withoutKpiSampleBaseline(
 export function hasKpiSampleBaseline(origins: Record<string, KpiValueOrigin> | undefined): boolean {
   return Object.values(origins ?? {}).some((origin) => origin === 'sample-baseline')
 }
+
+/**
+ * Export line stating how many of the values in the Overall Score are fictional
+ * sample-baseline values, so a saved worksheet never reads as the learner's own
+ * assessment. Returns '' when no counted value is a sample.
+ */
+export function sampleBaselineScoreNote(
+  countedIds: readonly string[],
+  origin: (id: string) => KpiValueOrigin | undefined
+): string {
+  const n = countedIds.filter((id) => origin(id) === 'sample-baseline').length
+  if (n === 0) return ''
+  return `_Includes ${n} fictional sample baseline value${n === 1 ? '' : 's'}; not your assessment._\n\n`
+}

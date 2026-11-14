@@ -124,6 +124,15 @@ describe('KPITrackerTemplate sample baseline', () => {
     expect(overall()).toMatch(/Not yet available/)
     expect(screen.getByRole('button', { name: 'Load sample baseline' })).toBeInTheDocument()
   })
+  it('says in the saved worksheet that the score includes sample values', () => {
+    mockPersona = 'executive'
+    render(<KPITrackerTemplate />)
+    fireEvent.click(screen.getByRole('button', { name: 'Load sample baseline' }))
+    fireEvent.click(screen.getAllByRole('button', { name: /^save$/i })[0])
+    const doc = addExecutiveDocument.mock.calls.at(-1)![0] as { data: string }
+    expect(doc.data).toMatch(/Overall Score: \d+\/100/)
+    expect(doc.data).toMatch(/Includes \d+ fictional sample baseline values?; not your assessment/)
+  })
   it('keeps a restored score with no recorded origin through Load and Clear', () => {
     mockPersona = 'executive'
     mockStoreState.artifacts.executiveDocuments = [

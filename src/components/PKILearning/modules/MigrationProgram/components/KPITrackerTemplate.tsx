@@ -26,6 +26,7 @@ import type { ScorecardObservation } from '@/components/PKILearning/common/execu
 import { KpiSampleBaselineControl } from '@/components/PKILearning/common/executive/KpiSampleBaselineControl'
 import {
   hasKpiSampleBaseline,
+  sampleBaselineScoreNote,
   withKpiSampleBaseline,
   withoutKpiSampleBaseline,
 } from '@/components/PKILearning/common/executive/kpiSampleBaseline'
@@ -128,8 +129,10 @@ export function buildKpiTrackerMarkdown({
       : d.notYetScored === true && !touchedIds.has(d.id)
   let totalWeight = 0
   let weightedSum = 0
+  const countedIds: string[] = []
   for (const d of dimensions) {
     if (!isReadinessDimension(d) || isPending(d)) continue
+    countedIds.push(d.id)
     const score = scores[d.id] ?? d.autoScore ?? 0
     weightedSum += score * ew(d)
     totalWeight += ew(d)
@@ -142,6 +145,7 @@ export function buildKpiTrackerMarkdown({
     coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
       : `**Overall Score: not available — scored-value coverage ${Math.round(coverage * 100)}%**\n\n`
+  md += sampleBaselineScoreNote(countedIds, (id) => valueOrigins?.[id])
   md += `Educational planning worksheet; entered values and catalogue status are not verified migration progress.\n\n`
   md += '## KPI Dimensions\n\n'
   md += '| KPI | Score | Weight | Target | Framework Mappings | Description | Value origin |\n'

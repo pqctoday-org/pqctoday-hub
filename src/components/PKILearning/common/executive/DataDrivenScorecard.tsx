@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useId } from 'react'
 import { ChevronDown, ChevronUp, Lock, Target } from 'lucide-react'
 import { ExportableArtifact } from './ExportableArtifact'
+import { sampleBaselineScoreNote } from './kpiSampleBaseline'
 import { rowsToCsv, spreadsheetSafeText } from '@/services/export/csvExport'
 import { Button } from '@/components/ui/button'
 import {
@@ -399,6 +400,13 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     md += overallAvailable
       ? `**Overall Score: ${weightedTotal}/100**\n\n`
       : `**Overall Score: not available — scored-value coverage ${Math.round(scoredValueCoverage * 100)}%**\n\n`
+    md += sampleBaselineScoreNote(
+      dimensions.filter((d) => isReadinessDimension(d) && !isPending(d)).map((d) => d.id),
+      (id) => {
+        const d = dimensions.find((x) => x.id === id)
+        return d ? valueOrigin(d) : undefined
+      }
+    )
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
     md +=
       'Scored-value coverage is value availability, not evidence verification or production readiness. Sample notes and review labels are learner supplied.\n\n'
@@ -438,6 +446,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     scoredValueCoverage,
     observations,
     originLabel,
+    valueOrigin,
   ])
 
   // Markdown/PDF read the markdown body; `.csv` reads a structured rows export

@@ -139,6 +139,8 @@ describe('KPIDashboardBuilder', () => {
     expect(doc.inputs.scores['systems-inventoried']).toBe(65)
     expect(doc.data).toMatch(/Overall Score: 48\/100/)
     expect(doc.data).toMatch(/Hub sample baseline value/)
+    // The score line itself says it is built from fictional values.
+    expect(doc.data).toMatch(/Includes \d+ fictional sample baseline values?; not your assessment/)
   })
   it('keeps a restored score with no recorded origin through Load and Clear', () => {
     mockModuleState.artifacts.executiveDocuments = [
