@@ -648,7 +648,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'You know which of your own tools would have to change before a single production key does.',
     workedExample:
-      'Rate your coverage — None, Manual, Partial or Automated — for each of the seven categories from Asset Management (CMDB / SBOM pipeline) to Zero-Trust Enforcement: the gap list, ordered by importance, says which tool has to change before a production key does.',
+      "Rate each of the seven categories — None, Manual, Partial or Automated — and set Systems covered: an Automated Crypto Scanner that reaches only 30% of systems keeps its Hub Tool-Category Rating but lowers Coverage-Adjusted Readiness and stays on the gap list, ordered by importance, as 'Automated, but only 30% of systems covered'.",
     name: 'Management Tools Audit',
     description:
       'Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5',
@@ -676,7 +676,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A CBOM you can regenerate repeatably. Its accuracy depends on source coverage, input freshness and reconciliation with the scoped inventory; generation alone does not establish completeness.',
     workedExample:
-      'Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get a FIPS, ESV, PQC and posture reading, and one click downloads a CycloneDX 1.7 CBOM.',
+      'Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get an end-of-life, FIPS, ESV, PQC and posture reading (OpenSSL 1.1.1w shows EoL (2023-09-11)), and one click downloads a CycloneDX 1.7 CBOM.',
     name: 'Crypto BOM (CBOM) Builder',
     description:
       'Build a CBOM slice from an SBOM, library posture, or HSM inventory; feeds the Assets pipeline',
@@ -831,7 +831,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'The assets whose refresh lands AFTER your deadline are named. Those need a decision now, not later.',
     workedExample:
-      "Keep the 3-year horizon, give 'HSM replacement' a next refresh of 2027 and 'Data center hardware' 2031: the first badge reads On budget, the second After horizon, and the banner counts how many of the seven programs need separate PQC spend.",
+      "Keep the 3-year horizon, give 'HSM replacement' a next refresh of 2027 and 'Data center hardware' 2031: the first badge reads Within planning window, the second After horizon, and the banner counts how many of the seven programs refresh after the planning horizon.",
     name: 'Refresh-Cycle Alignment',
     description:
       'Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals) so PQC work rides existing budgets',
