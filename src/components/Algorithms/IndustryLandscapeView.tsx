@@ -55,7 +55,12 @@ import {
   type MechanismGroup,
 } from '../../data/cryptoMechanisms'
 import { constructionsUsingAlgorithm, findConstruction } from '../../data/cryptoConstructions'
-import { constructionUsage, constructionsInIndustry } from '../../data/constructionUsage'
+import {
+  constructionUsage,
+  constructionsCitedByIndustryStandards,
+  constructionsInIndustry,
+  linkedUseCasesFromStandards,
+} from '../../data/constructionUsage'
 import {
   AlgorithmExplanationBlock,
   ConstructionCard,
@@ -1533,6 +1538,51 @@ export function IndustryLandscapeView() {
                   ))}
                 </div>
               )}
+              {(usage.get(constructionDef.id)?.direct.length ?? 0) === 0 && (
+                <div
+                  className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-xs"
+                  data-testid="construction-standard-links"
+                >
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Use cases linked from the citing standards
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    No use case names {constructionDef.id} itself. The use cases below are linked to
+                    the standards that cite it, so they show where those standards apply. They are
+                    not use cases that run or plan this construction.
+                  </p>
+                  {linkedUseCasesFromStandards(usage.get(constructionDef.id), useCases).length ===
+                  0 ? (
+                    <p className="mt-2 text-muted-foreground">
+                      The citing standards do not link a use case yet.
+                    </p>
+                  ) : (
+                    <ul className="mt-2 space-y-1.5">
+                      {linkedUseCasesFromStandards(usage.get(constructionDef.id), useCases).map(
+                        ({ useCase: uc, standards: via }) => (
+                          <li key={uc.useCaseId} className="flex flex-wrap items-center gap-1">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              onClick={() => update({ usecase: uc.useCaseId })}
+                              className="h-auto p-0 text-xs text-primary hover:underline"
+                            >
+                              {uc.useCaseLabel}
+                            </Button>
+                            <span className="text-muted-foreground">({uc.industry}) via</span>
+                            {via.map((st) => (
+                              <AddressableStandardChip
+                                key={`${st.industry}-${st.standardId}`}
+                                std={st}
+                              />
+                            ))}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  )}
+                </div>
+              )}
               <div className="space-y-6">
                 {industries
                   .filter((ind) =>
@@ -1726,6 +1776,35 @@ export function IndustryLandscapeView() {
                     ))}
                   </div>
                 )}
+
+                {(() => {
+                  const named = new Set(
+                    constructionsInIndustry(selectedIndustry, usage).map((r) => r.id)
+                  )
+                  const cited = constructionsCitedByIndustryStandards(
+                    selectedIndustry,
+                    usage
+                  ).filter((r) => !named.has(r.id))
+                  return cited.length > 0 ? (
+                    <div
+                      className="mb-4 flex flex-wrap items-center gap-1.5"
+                      data-testid="industry-standard-constructions"
+                    >
+                      <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                        In this industry&apos;s standards
+                      </span>
+                      {cited.map(({ id, count }) => (
+                        <ConstructionChip
+                          key={id}
+                          id={id}
+                          count={count}
+                          countTitle="Standards of this industry that cite the construction"
+                          onSelect={pickConstruction}
+                        />
+                      ))}
+                    </div>
+                  ) : null
+                })()}
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {cases.map((uc) => (
