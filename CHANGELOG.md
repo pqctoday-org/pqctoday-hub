@@ -49,6 +49,7 @@ Secrets, key-management and platform lessons now carry examples that were run ag
 ### Data
 
 - **The CycloneDX registry lists 98 algorithm families** [view:/learn/crypto-registry] [view:/library] [persona:developer] [persona:architect] [persona:researcher]: the Crypto Registry lesson and its Library entry follow the current CycloneDX cryptography registry, which has 98 families (adding RSA-X931 and SSH-KDF) instead of 96, with the BLS and GOST name patterns corrected.
+- **Known vulnerabilities re-checked for every tracked product version** [view:/migrate] [view:/business] [persona:developer] [persona:ops] [persona:architect]: the Vulnerabilities tab on the Migrate page and the vulnerability watch tool were refreshed from the US National Vulnerability Database on 14 November 2026. All 167 tracked product versions were re-checked, and the lists now hold 1,371 distinct CVEs across 1,434 product entries. The product identifiers behind those lists show the date they were last verified.
 
 ## [4.206.0] - 2026-11-13
 
