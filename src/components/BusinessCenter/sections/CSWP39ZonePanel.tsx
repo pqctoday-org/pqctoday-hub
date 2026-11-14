@@ -85,29 +85,21 @@ function orderTypesByFeatured(
 
 interface SubGroup {
   label: string
-  artifacts: ExecutiveDocument[]
   missingTypes: ExecutiveDocumentType[]
 }
 
-/** Group artifacts + missing types by zone sub-element. The sub-element order
- *  follows `CSWP39_ZONE_DETAILS[zone].contains` so visual order matches Fig 3. */
-function buildSubGroups(
-  zone: ZoneId,
-  artifacts: ExecutiveDocument[],
-  missingTypes: ExecutiveDocumentType[]
-): SubGroup[] {
+/** Group the placeholder (not-yet-created) types by zone sub-element. The
+ *  sub-element order follows `CSWP39_ZONE_DETAILS[zone].contains` so visual
+ *  order matches Fig 3. Created documents are not grouped here; they lead the
+ *  zone list as one block (see the render below). */
+function buildSubGroups(zone: ZoneId, missingTypes: ExecutiveDocumentType[]): SubGroup[] {
   const order = CSWP39_ZONE_DETAILS[zone].contains
   const groupOrder = [...order, UNGROUPED_LABEL]
   const map = new Map<string, SubGroup>()
   for (const label of groupOrder) {
-    map.set(label, { label, artifacts: [], missingTypes: [] })
+    map.set(label, { label, missingTypes: [] })
   }
 
-  for (const doc of artifacts) {
-    const sub = getZoneSubElement(doc.type) ?? UNGROUPED_LABEL
-    const group = map.get(sub) ?? map.get(UNGROUPED_LABEL)!
-    group.artifacts.push(doc)
-  }
   for (const type of missingTypes) {
     const sub = getZoneSubElement(type) ?? UNGROUPED_LABEL
     const group = map.get(sub) ?? map.get(UNGROUPED_LABEL)!
@@ -115,9 +107,7 @@ function buildSubGroups(
   }
 
   // Drop empty groups; keep ungrouped only if it has content.
-  return groupOrder
-    .map((label) => map.get(label)!)
-    .filter((g) => g.artifacts.length > 0 || g.missingTypes.length > 0)
+  return groupOrder.map((label) => map.get(label)!).filter((g) => g.missingTypes.length > 0)
 }
 
 export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
@@ -155,12 +145,13 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
     sectionTypes.filter((t) => !existing.has(t)),
     featuredArtifacts
   )
-  // Created artifacts always come before the placeholders, featured first in
-  // each. Basic and intermediate density show one flat list; advanced keeps the
-  // sub-element groups, each ordered the same way.
-  const subGroups: SubGroup[] = showSubElementGroups(density)
-    ? buildSubGroups(zone, artifacts, missing)
-    : [{ label: UNGROUPED_LABEL, artifacts, missingTypes: missing }]
+  // Created artifacts always come before the placeholders, featured first: they
+  // render as one leading block. Advanced density then lists the placeholders
+  // under their sub-element headings; basic and intermediate density show them
+  // as one flat list.
+  const placeholderGroups: SubGroup[] = showSubElementGroups(density)
+    ? buildSubGroups(zone, missing)
+    : [{ label: UNGROUPED_LABEL, missingTypes: missing }]
   const hasContent = artifacts.length > 0 || missing.length > 0
   // Completeness framing (design_handoff_2026_pages/IMPLEMENTATION-PLAN-
   // COMMAND-CENTER-2026-08-01.md §3.2): the "N/M created" count alone doesn't
@@ -284,7 +275,22 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
                 Artifacts
               </div>
               <div className="space-y-3">
-                {subGroups.map((group) => (
+                {artifacts.length > 0 && (
+                  <div className="space-y-1.5">
+                    {artifacts.map((doc) => (
+                      <ArtifactCard
+                        key={doc.id}
+                        document={doc}
+                        pillar={getPillarForType(doc.type)}
+                        onView={onViewArtifact}
+                        onEdit={onEditArtifact}
+                        onDelete={onDeleteArtifact}
+                        onRename={onRenameArtifact}
+                      />
+                    ))}
+                  </div>
+                )}
+                {placeholderGroups.map((group) => (
                   <div key={group.label}>
                     {group.label !== UNGROUPED_LABEL && showSubElementGroups(density) && (
                       <div className="text-[10px] font-semibold text-muted-foreground/80 uppercase tracking-wide mb-1">
@@ -292,17 +298,6 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
                       </div>
                     )}
                     <div className="space-y-1.5">
-                      {group.artifacts.map((doc) => (
-                        <ArtifactCard
-                          key={doc.id}
-                          document={doc}
-                          pillar={getPillarForType(doc.type)}
-                          onView={onViewArtifact}
-                          onEdit={onEditArtifact}
-                          onDelete={onDeleteArtifact}
-                          onRename={onRenameArtifact}
-                        />
-                      ))}
                       {group.missingTypes.map((type) => (
                         <ArtifactPlaceholder
                           key={type}

@@ -10,6 +10,7 @@ import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import type { Density } from '../lib/density'
 import { BC_ZONE_EMPHASIS_BY_PERSONA } from '@/data/personaConfig'
+import { TYPE_LABELS } from '@/data/artifactLabels'
 
 // The tier calculation reads many metric fields this test does not need; the
 // header count under test does not depend on it.
@@ -115,7 +116,7 @@ describe('CSWP39ZonePanel artifact order (U-2)', () => {
     expect(created.compareDocumentPosition(roi) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it('advanced density: keeps the sub-element groups and puts created items before placeholders in each', () => {
+  it('advanced density: keeps the sub-element groups for placeholders, with created items ahead of them', () => {
     renderZone('governance', [titled('policy-draft', 'p1', 'Our policy')], {
       density: 'advanced',
       featured: EXECUTIVE_GOVERNANCE,
@@ -128,12 +129,31 @@ describe('CSWP39ZonePanel artifact order (U-2)', () => {
       .getAllByText(subElement!)
       .find((el) => el.tagName === 'DIV' && el.className.includes('uppercase'))
     expect(heading).toBeDefined()
+    // The group's placeholders are still listed under their sub-element heading.
     const group = heading!.parentElement!
-    const created = within(group).getByText('Our policy')
     const placeholders = within(group).getAllByText('Not created')
     expect(placeholders.length).toBeGreaterThan(0)
-    for (const ph of placeholders) {
+    // The created document is not inside that group, but precedes every placeholder.
+    const created = screen.getByText('Our policy')
+    expect(within(group).queryByText('Our policy')).not.toBeInTheDocument()
+    for (const ph of screen.getAllByText('Not created')) {
       expect(created.compareDocumentPosition(ph) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    }
+  })
+
+  it('advanced density: a created document in a later sub-element group still precedes earlier groups placeholders', () => {
+    // policy-draft sits in "Crypto Policies", after "Business Requirements" where
+    // board-deck and roi-model placeholders live.
+    renderZone('governance', [titled('policy-draft', 'p1', 'Our policy')], {
+      density: 'advanced',
+      featured: EXECUTIVE_GOVERNANCE,
+    })
+    const created = screen.getByText('Our policy')
+    for (const type of ['board-deck', 'roi-model', 'audit-checklist'] as const) {
+      const placeholder = screen.getByText(TYPE_LABELS[type])
+      expect(
+        created.compareDocumentPosition(placeholder) & Node.DOCUMENT_POSITION_FOLLOWING
+      ).toBeTruthy()
     }
   })
 })
