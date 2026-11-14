@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MeasureStatus, RecurrenceProgressBanner } from './stepStatus'
+import { MeasureStatus, OtherWorldNote, RecurrenceProgressBanner } from './stepStatus'
 import type { TreeStep } from '@/simulation/types'
 
 const measure: TreeStep = {
@@ -56,5 +56,12 @@ describe('RecurrenceProgressBanner', () => {
       />
     )
     expect(screen.getByText(/complete/)).toBeInTheDocument()
+  })
+})
+
+describe('OtherWorldNote', () => {
+  it('says why a saved document does not count for this run', () => {
+    render(<OtherWorldNote />)
+    expect(screen.getByRole('note')).toHaveTextContent(/different organisation profile/)
   })
 })

@@ -241,7 +241,7 @@ import {
 } from './sampleOrganisation'
 import { useLearnerEvidenceRecorder } from './hooks/useLearnerEvidenceRecorder'
 import { isAutoRunFillActive } from './autorun/autoRunFill'
-import { MeasureStatus, RecurrenceProgressBanner } from './stepStatus'
+import { MeasureStatus, OtherWorldNote, RecurrenceProgressBanner } from './stepStatus'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
@@ -1528,6 +1528,19 @@ export function SimulationView() {
     })
     return app.present && app.matchesWorld
   }
+  // A document of this type exists but was saved for a different organisation
+  // profile (e.g. the sample), so it does not count for this run. Said on
+  // screen, because otherwise a step just looks un-done for no reason.
+  const artifactOtherWorld = (t?: ExecutiveDocumentType) => {
+    if (!t) return false
+    const app = documentApplicability({
+      type: t,
+      docs: docs ?? [],
+      records: evidence,
+      fingerprint: runFp,
+    })
+    return app.present && !app.matchesWorld
+  }
   const refDone = (id?: string) => !!id && visitedRefs.includes(id)
   // W1.5: the learner's own work, recorded in the RUN. A Simulation check
   // records comprehension of what the sim asked; it deliberately does NOT mark
@@ -2502,7 +2515,7 @@ export function SimulationView() {
       const toolLabel = step.artifactType
         ? TOOL_LABELS_BY_ARTIFACT_TYPE[step.artifactType]?.name
         : undefined
-      return (
+      const button = (
         <Button
           type="button"
           variant="ghost"
@@ -2511,6 +2524,14 @@ export function SimulationView() {
         >
           Read the brief{toolLabel ? ` — ${toolLabel}` : ''}
         </Button>
+      )
+      return artifactOtherWorld(step.artifactType) ? (
+        <>
+          <OtherWorldNote compact />
+          {button}
+        </>
+      ) : (
+        button
       )
     }
     if (step.kind === 'workshop' && step.workshopId) {
@@ -4209,6 +4230,9 @@ export function SimulationView() {
                     </div>
                   ) : ActivityComp ? (
                     <>
+                      {activityEmbed && artifactOtherWorld(activityEmbed.artifactType) ? (
+                        <OtherWorldNote />
+                      ) : null}
                       {activityEmbed?.recurrenceNeeded ? (
                         <RecurrenceProgressBanner
                           quarters={distinctRunQuarters(evidence, activityEmbed.artifactType)}

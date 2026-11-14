@@ -117,3 +117,20 @@ export function MeasureStatus({
     </div>
   )
 }
+
+/** A saved document of the right type that belongs to a different organisation
+ *  profile (size, country, sector) — e.g. one made while the sample was loaded. */
+export function OtherWorldNote({ compact = false }: { compact?: boolean }) {
+  return (
+    <p
+      role="note"
+      data-testid="other-world-note"
+      className={`rounded-md border border-warning/40 bg-warning/5 px-3 py-2 text-muted-foreground ${
+        compact ? 'mt-2 text-[11px]' : 'mb-3 text-xs'
+      }`}
+    >
+      You already saved one, but for a different organisation profile (for example the sample
+      organisation), so it does not count for this run. Save it again here for this organisation.
+    </p>
+  )
+}
