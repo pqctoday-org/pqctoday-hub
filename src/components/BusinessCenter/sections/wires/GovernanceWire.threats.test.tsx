@@ -17,6 +17,8 @@ const rows = [
   { threatId: 'T-OT', industry: 'Critical Infrastructure / OT', description: 'OT threat' },
   { threatId: 'T-IOT', industry: 'Internet of Things (IoT)', description: 'IoT threat' },
   { threatId: 'T-SUPPLY', industry: 'Supply Chain / Logistics', description: 'Supply threat' },
+  { threatId: 'T-CROSS', industry: 'Cross-Industry', description: 'Cross threat' },
+  { threatId: 'T-CROSS-HSM', industry: 'Cross-Industry / HSM', description: 'HSM cross threat' },
 ].map((r) => ({
   ...r,
   criticality: 'High',
@@ -71,8 +73,39 @@ describe('GovernanceWire industry threats', () => {
     expect(screen.queryByText('Clinical threat')).not.toBeInTheDocument()
   })
 
-  it('shows nothing for an industry with no mapped rows (no cross-industry fallback)', () => {
+  it('shows only the cross-industry heading for an industry with no rows of its own', () => {
     renderFor('Automotive')
+    expect(screen.queryByText(/Threats ·/)).not.toBeInTheDocument()
+    expect(screen.getByText('Applies to every sector')).toBeInTheDocument()
+    expect(screen.getByText('Cross threat')).toBeInTheDocument()
+  })
+
+  it('Retail & E-Commerce shows only the cross-industry heading', () => {
+    renderFor('Retail & E-Commerce')
+    expect(screen.queryByText(/Threats ·/)).not.toBeInTheDocument()
+    expect(screen.getAllByText('Applies to every sector')).toHaveLength(1)
+    expect(screen.getByText('Cross threat')).toBeInTheDocument()
+    expect(screen.getByText('HSM cross threat')).toBeInTheDocument()
+  })
+
+  it('Finance shows its own threats, then the cross-industry heading', () => {
+    renderFor('Finance & Banking')
+    const own = screen.getByText('Bank threat')
+    const heading = screen.getByText('Applies to every sector')
+    const cross = screen.getByText('Cross threat')
+    expect(own.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(heading.compareDocumentPosition(cross) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('never shows a cross-industry row twice', () => {
+    renderFor('Finance & Banking')
+    expect(screen.getAllByText('Cross threat')).toHaveLength(1)
+    expect(screen.getAllByText('HSM cross threat')).toHaveLength(1)
+  })
+
+  it('shows no threats block without an industry', () => {
+    renderFor('')
+    expect(screen.queryByText('Applies to every sector')).not.toBeInTheDocument()
     expect(screen.queryByText(/Threats ·/)).not.toBeInTheDocument()
   })
 })

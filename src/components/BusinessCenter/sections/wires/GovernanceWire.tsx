@@ -19,6 +19,7 @@ import type { ThreatData } from '@/data/threatsData'
 import { useThreatsData } from '@/hooks/useThreatsData'
 import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { threatsIndustryHref } from '@/components/Threats/threatsUrlParams'
+import { isCrossIndustry } from '@/data/industryMatch'
 
 export interface GovernanceWireProps {
   metrics: BusinessMetrics
@@ -107,8 +108,8 @@ function FrameworksBlock({ metrics }: { metrics: BusinessMetrics }) {
 /**
  * Threat-row industry labels for an assessment industry, through the same map
  * the applicability lens uses. An industry the map does not know keeps its own
- * name. There is no cross-industry fallback: a sector with no mapped rows shows
- * nothing here.
+ * name. Cross-industry rows are not part of this set; ThreatsBlock shows them
+ * under their own heading.
  */
 function threatLabelsFor(industry: string): string[] {
   return Object.prototype.hasOwnProperty.call(INDUSTRY_TO_THREATS_MAP, industry)
@@ -116,60 +117,111 @@ function threatLabelsFor(industry: string): string[] {
     : [industry]
 }
 
+/** Highest criticality first, at most five rows per block. */
+function rankThreats(rows: ThreatData[]): ThreatData[] {
+  return [...rows]
+    .sort((a, b) => (CRITICALITY_RANK[b.criticality] ?? 0) - (CRITICALITY_RANK[a.criticality] ?? 0))
+    .slice(0, 5)
+}
+
+function ThreatRows({ rows }: { rows: ThreatData[] }) {
+  return (
+    <div className="space-y-1.5">
+      {rows.map((t) => (
+        <Link
+          key={t.threatId}
+          to={`/threats?id=${encodeURIComponent(t.threatId)}`}
+          className="flex items-start gap-2 p-2 rounded border border-border bg-card/50 hover:border-primary/40 transition-colors"
+        >
+          <span
+            className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0 ${CRITICALITY_STYLE[t.criticality]}`}
+          >
+            {t.criticality}
+          </span>
+          <p className="text-xs text-foreground/85 leading-relaxed flex-1 min-w-0">
+            {t.description}
+          </p>
+        </Link>
+      ))}
+    </div>
+  )
+}
+
+/**
+ * The industry's own threats first, then the cross-industry threats under
+ * "Applies to every sector". A cross-industry row never appears under the
+ * industry heading as well, so an industry with no rows of its own shows only
+ * the cross-industry heading.
+ */
 function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
   const { data: threatsData } = useThreatsData()
   const industry = metrics.industry
   const labels = useMemo(() => (industry ? threatLabelsFor(industry) : []), [industry])
-  const matched = useMemo(() => {
+  const own = useMemo(() => {
     if (labels.length === 0) return []
     const wanted = new Set(labels.map((l) => l.toLowerCase()))
-    return threatsData
-      .filter((t) => wanted.has(t.industry.toLowerCase()))
-      .sort(
-        (a, b) => (CRITICALITY_RANK[b.criticality] ?? 0) - (CRITICALITY_RANK[a.criticality] ?? 0)
+    return rankThreats(
+      threatsData.filter(
+        (t) => !isCrossIndustry(t.industry) && wanted.has(t.industry.toLowerCase())
       )
-      .slice(0, 5)
+    )
   }, [labels, threatsData])
+  const crossIndustry = useMemo(
+    () => rankThreats(threatsData.filter((t) => isCrossIndustry(t.industry))),
+    [threatsData]
+  )
 
-  if (!industry || matched.length === 0) return null
+  if (!industry || (own.length === 0 && crossIndustry.length === 0)) return null
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ShieldAlert size={14} className="text-muted-foreground" />
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
-            Threats · {industry} · top {matched.length}
-          </span>
-        </div>
-        <Button
-          variant="link"
-          size="sm"
-          onClick={() => navigate(threatsIndustryHref(labels.join(','), threatsData) ?? '/threats')}
-          className="h-auto p-0 text-xs"
-        >
-          Open Threats <ArrowRight size={12} className="ml-0.5" />
-        </Button>
-      </div>
-      <div className="space-y-1.5">
-        {matched.map((t) => (
-          <Link
-            key={t.threatId}
-            to={`/threats?id=${encodeURIComponent(t.threatId)}`}
-            className="flex items-start gap-2 p-2 rounded border border-border bg-card/50 hover:border-primary/40 transition-colors"
-          >
-            <span
-              className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0 ${CRITICALITY_STYLE[t.criticality]}`}
+    <div className="space-y-4">
+      {own.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldAlert size={14} className="text-muted-foreground" />
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                Threats · {industry} · top {own.length}
+              </span>
+            </div>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() =>
+                navigate(threatsIndustryHref(labels.join(','), threatsData) ?? '/threats')
+              }
+              className="h-auto p-0 text-xs"
             >
-              {t.criticality}
-            </span>
-            <p className="text-xs text-foreground/85 leading-relaxed flex-1 min-w-0">
-              {t.description}
-            </p>
-          </Link>
-        ))}
-      </div>
+              Open Threats <ArrowRight size={12} className="ml-0.5" />
+            </Button>
+          </div>
+          <ThreatRows rows={own} />
+        </div>
+      )}
+      {crossIndustry.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldAlert size={14} className="text-muted-foreground" />
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                Applies to every sector
+              </span>
+            </div>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() =>
+                navigate(threatsIndustryHref('Cross-Industry', threatsData) ?? '/threats')
+              }
+              className="h-auto p-0 text-xs"
+            >
+              Open Threats <ArrowRight size={12} className="ml-0.5" />
+            </Button>
+          </div>
+          <ThreatRows rows={crossIndustry} />
+        </div>
+      )}
     </div>
   )
 }
