@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useState } from 'react'
 import { Info } from 'lucide-react'
-import { useSearchParams } from 'react-router'
+import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import { SuciFlow } from '@/components/PKILearning/modules/FiveG/SuciFlow'
 import { Button } from '@/components/ui/button'
 
@@ -12,6 +12,16 @@ import { Button } from '@/components/ui/button'
  */
 export function SuciFlowRoute() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // A visitor who opened this page from a shared link has no in-app history:
+  // window.history.back() would take them off the site, so send them to the
+  // Crypto Lab catalog instead. React Router marks that first entry 'default'.
+  const handleBack = useCallback(() => {
+    if (location.key === 'default') navigate('/playground')
+    else navigate(-1)
+  }, [location.key, navigate])
 
   const p = searchParams.get('profile')
   const mode = searchParams.get('pqcMode')
@@ -86,7 +96,7 @@ export function SuciFlowRoute() {
       )}
       <SuciFlow
         key={`${profile}-${pqcMode}`}
-        onBack={() => window.history.back()}
+        onBack={handleBack}
         initialProfile={profile}
         initialPqcMode={pqcMode}
         onProfileChange={handleProfileChange}

@@ -57,6 +57,7 @@ import {
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
+import { clampStep } from '@/utils/clampStep'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -527,7 +528,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // StepWizard state
-  const [wizardStep, setWizardStep] = useState(initialStep)
+  // Four wizard steps (0-3), matching handleWizardNext's `wizardStep < 3` bound.
+  const [wizardStep, setWizardStep] = useState(() => clampStep(initialStep, 4))
   const [isWizardExecuting, setIsWizardExecuting] = useState(false)
   const [wizardOutput, setWizardOutput] = useState<string | null>(null)
   const [wizardError, setWizardError] = useState<string | null>(null)
