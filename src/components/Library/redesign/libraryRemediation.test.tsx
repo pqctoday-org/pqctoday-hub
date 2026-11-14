@@ -30,6 +30,7 @@ import { libraryClassificationFacts, relatedLearnModules } from './libraryDetail
 import { LibraryRecentlyChanged } from './LibraryRecentlyChanged'
 import { LibraryFacetRail } from './LibraryFacetRail'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
+import { documentTypeDescription } from '@/components/Library/libraryDocumentTypes'
 
 vi.mock('@/embed/platform', () => ({ isNativeApp: () => false }))
 vi.mock('react-hot-toast', () => ({ default: { success: vi.fn() } }))
@@ -401,5 +402,27 @@ describe('spec drawer on another page', () => {
     fireEvent.click(within(section).getByRole('button', { name: dep }))
     const search = new URLSearchParams(screen.getByTestId('loc').textContent!)
     expect(search.get('spec')).toBe(findLibraryItemByRef(dep)!.referenceId)
+  })
+})
+
+describe('detail drawer: document type, assistant and pillar note', () => {
+  const noop = () => undefined
+  it('explains the document type and offers Ask Assistant', () => {
+    const item = libraryData.find((i) => documentTypeDescription(i.documentType))
+    if (!item) return
+    render(
+      <MemoryRouter>
+        <LibraryDetailDrawer
+          item={item}
+          bookmarked={false}
+          onToggleBookmark={noop}
+          onClose={noop}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getByTestId('drawer-type-description')).toHaveTextContent(
+      documentTypeDescription(item.documentType)!
+    )
+    expect(screen.getByRole('button', { name: 'Ask Assistant' })).toBeInTheDocument()
   })
 })

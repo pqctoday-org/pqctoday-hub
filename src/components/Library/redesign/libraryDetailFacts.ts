@@ -58,3 +58,17 @@ export function relatedLearnModules(item: LibraryItem): RelatedLearnModule[] {
   }
   return out
 }
+
+/** The question the "Ask Assistant" button sends for a document (same wording
+ *  as the table popover's button). */
+export function libraryAssistantQuestion(
+  item: Pick<
+    LibraryItem,
+    'documentTitle' | 'authorsOrOrganization' | 'documentType' | 'shortDescription'
+  >
+): string {
+  const by = item.authorsOrOrganization ? ` by ${item.authorsOrOrganization}` : ''
+  const type = item.documentType ? ` (${item.documentType})` : ''
+  const summary = item.shortDescription ? ` Summary: ${item.shortDescription}` : ''
+  return `What is the significance of "${item.documentTitle?.trim()}"${by}${type} for PQC migration?${summary}`
+}

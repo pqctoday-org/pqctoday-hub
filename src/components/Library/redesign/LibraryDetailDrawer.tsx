@@ -18,7 +18,14 @@ import { X, ExternalLink, Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { findLibraryItemByRef, findLibrarySuccessor, type LibraryItem } from '@/data/libraryData'
-import { libraryClassificationFacts, relatedLearnModules } from './libraryDetailFacts'
+import {
+  libraryAssistantQuestion,
+  libraryClassificationFacts,
+  relatedLearnModules,
+} from './libraryDetailFacts'
+import { documentTypeDescription } from '@/components/Library/libraryDocumentTypes'
+import { PillarDisclaimer } from '@/components/BusinessCenter/widgets/PillarDisclaimer'
+import { AskAssistantButton } from '@/components/ui/AskAssistantButton'
 import { ruleBasedConfidenceLabel } from '../ruleBasedConfidence'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
@@ -208,6 +215,7 @@ function DrawerPanel({
   const relatedLeaders = relatedLeadersFor(item)
   const classificationFacts = libraryClassificationFacts(item)
   const learnModules = relatedLearnModules(item)
+  const typeDescription = documentTypeDescription(item.documentType)
 
   return (
     // Focus stays inside the drawer. Nested pop-ups keep working: the revision
@@ -329,6 +337,7 @@ function DrawerPanel({
               )}
             </div>
             <div className="flex shrink-0 items-center gap-1">
+              <AskAssistantButton question={libraryAssistantQuestion(item)} />
               <ItemShareButton
                 title={itemShareTitle(item.documentTitle)}
                 path={`/library?ref=${encodeURIComponent(item.referenceId)}`}
@@ -393,6 +402,17 @@ function DrawerPanel({
               <p className="text-[11px] leading-relaxed text-muted-foreground">
                 Catalog classifications and impact tags are pqctoday analysis. They may not be
                 statements made by the publisher.
+              </p>
+            )}
+            {typeDescription && (
+              <p
+                data-testid="drawer-type-description"
+                className="text-[11.5px] leading-relaxed text-muted-foreground"
+              >
+                <span className="font-semibold text-foreground/80">
+                  Document type, {item.documentType.trim()}:
+                </span>{' '}
+                {typeDescription}
               </p>
             )}
 
@@ -555,6 +575,7 @@ function DrawerPanel({
                     )
                   })}
                 </div>
+                <PillarDisclaimer className="mt-3" />
                 {/* Evidence-reference deep link, restored (same plan §3.2) —
                   jumps to this document's own governance evidence inside the
                   CSWP.39 Agility explorer. */}

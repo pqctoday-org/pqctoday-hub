@@ -488,6 +488,9 @@ export default defineConfig([
                 // rule-set confidence score, no JSX. Both shells must show the
                 // same "set by document-type rule" wording.
                 '!@/components/Library/ruleBasedConfidence',
+                // libraryDocumentTypes.ts (2026-11-14) — the document-type
+                // explanations, plain strings, no JSX; both shells show them.
+                '!@/components/Library/libraryDocumentTypes',
                 '!@/components/Library/redesign',
                 '@/components/Library/redesign/*',
                 '!@/components/Library/redesign/useLibraryPipeline',

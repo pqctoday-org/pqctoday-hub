@@ -49,6 +49,7 @@ import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollTo
 import { MobileSheet } from '../primitives/Sheet'
 import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
 import { ruleBasedConfidenceLabel } from '@/components/Library/ruleBasedConfidence'
+import { documentTypeDescription } from '@/components/Library/libraryDocumentTypes'
 import {
   MISSING_REVIEWED_SUMMARY,
   SCOPE_VERIFICATION_NOTE,
@@ -680,6 +681,17 @@ export function MobileLibraryView() {
               <p className="text-[10.5px] leading-relaxed text-muted-foreground">
                 Catalog classifications and impact tags are pqctoday analysis, not necessarily
                 publisher statements.
+              </p>
+            )}
+            {documentTypeDescription(selected.documentType) && (
+              <p
+                data-testid="sheet-type-description"
+                className="text-[10.5px] leading-relaxed text-muted-foreground"
+              >
+                <span className="font-semibold text-foreground/80">
+                  Document type, {selected.documentType.trim()}:
+                </span>{' '}
+                {documentTypeDescription(selected.documentType)}
               </p>
             )}
             {selected.categories?.length > 0 && (
