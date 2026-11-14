@@ -46,8 +46,13 @@ Secrets, key-management and platform lessons now carry examples that were run ag
 - **OpenBao permission examples use its own policy language** [view:/learn/platform-eng-pqc] [persona:ops] [persona:grc] [persona:architect]: the policy-as-code workshop adds a native OpenBao access policy that lets a scoped test token create one named key, and only as an ML-DSA-65 key; other paths stay denied unless another policy grants them. Its certificate role uses parameters OpenBao accepts (key type ML-DSA, parameter set 44).
 - **Key-provider lifecycle commands match what OpenBao supports** [view:/learn/kms-pqc] [persona:ops] [persona:developer]: the KMS provider comparison and the KMIP explorer list OpenBao 2.7.2 with its own command-line operations (create, read, sign and verify, encrypt a data key, rotate, delete) instead of implying a KMIP endpoint. An ML-DSA key is used only to sign; a separate AES key encrypts the data key, and the page no longer presents a signing key as an ML-KEM encapsulation key.
 
+### Fixed
+
+- **Protocol Support Matrix links go somewhere useful** [view:/algorithms] [persona:architect] [persona:developer] [persona:researcher]: a specification link now opens its Library entry when the Library has one, and the cited external page when it does not, instead of an empty search. Deprecated protocols such as IKEv1 and SSL 3.0 can be opened by link and found by search, and "no PQC path" jumps to the protocol that replaces it.
+
 ### Data
 
+- **Protocol Support Matrix entries follow current drafts** [view:/algorithms] [persona:architect] [persona:researcher] [persona:ops]: retired and mislabelled Library references are corrected; DTLS 1.3, FIDO2, MACsec, EST and CMP, and Kerberos now follow the current TLS and composite-certificate drafts; and every applicable cell shows its progress stage.
 - **The CycloneDX registry lists 98 algorithm families** [view:/learn/crypto-registry] [view:/library] [persona:developer] [persona:architect] [persona:researcher]: the Crypto Registry lesson and its Library entry follow the current CycloneDX cryptography registry, which has 98 families (adding RSA-X931 and SSH-KDF) instead of 96, with the BLS and GOST name patterns corrected.
 - **Known vulnerabilities re-checked for every tracked product version** [view:/migrate] [view:/business] [persona:developer] [persona:ops] [persona:architect]: the Vulnerabilities tab on the Migrate page and the vulnerability watch tool were refreshed from the US National Vulnerability Database on 14 November 2026. All 167 tracked product versions were re-checked, and the lists now hold 1,371 distinct CVEs across 1,434 product entries.
 
