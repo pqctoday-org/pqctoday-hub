@@ -103,8 +103,19 @@ export const CYCLONEDX_REGISTRY = {
    * 2026-08-15: fetched https://cyclonedx.org/schema/cryptography-defs.json —
    * upstream `lastUpdated` still 2026-02-24, still 96 families, and FN-DSA,
    * HQC, FrodoKEM and Classic McEliece all still absent.
+   *
+   * 2026-11-13: fetched it again. `lastUpdated` still reads 2026-02-24, but
+   * the data had changed: two new families (RSA-X931, SSH-KDF; 98 in all),
+   * the BLS curve pattern corrected from 13-381/13-377 to 12-381/12-377, and
+   * the GOST block cipher and MAC patterns corrected from GOST38147 to
+   * GOST28147. FN-DSA, HQC, FrodoKEM and Classic McEliece are still absent,
+   * and no mapped family changed; neither new family matches a mechanism
+   * listed here, so this mapping still holds. The vendored copy
+   * (cyclonedxCryptoRegistry.json, read by the Crypto Registry lesson's tools)
+   * is NOT refreshed here: the lesson and its Library row state 96 families,
+   * so refreshing it is a lesson update of its own.
    */
-  verifiedOn: '2026-08-15',
+  verifiedOn: '2026-11-13',
 } as const
 
 /**
