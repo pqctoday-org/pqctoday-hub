@@ -23,6 +23,17 @@
  *  C) REF ID SHAPE — every `refs[].id` must match the canonical IETF /
  *     vendor-spec naming pattern.
  *
+ *  D) DOCUMENT PLACEMENT — a published RFC must not sit under `latestDraft`,
+ *     and an Internet-Draft must not sit under `latestRelease`.
+ *
+ *  E) PRODUCT LINKS — every `productId` in `ossLibraries` /
+ *     `commercialLibraries` must be an active row of the newest product
+ *     catalog (a retired id opens a "not found" page), and its catalog
+ *     `license_type` must not contradict the bucket it sits in.
+ *
+ *  A) also scans each row's `description`, `recommendedReason` and
+ *     `implementationAvailability[].what`.
+ *
  * Usage:
  *   npx tsx scripts/audit-matrix-refs.ts          # human report
  *   npx tsx scripts/audit-matrix-refs.ts --json   # machine-readable
@@ -32,7 +43,10 @@
  *   1 — violations found
  */
 
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import Papa from 'papaparse'
 import {
   PROTOCOL_MATRIX,
   type DimensionRef,
@@ -40,6 +54,7 @@ import {
   type ProtocolMatrixRow,
 } from '../src/data/pqcProtocolMatrix'
 import { STAGE_VALUE_CONSISTENCY } from '../src/data/pqcProtocolMatrixStageConsistency'
+import { latestDatedCsv } from './lib/latestDatedCsv'
 
 export { STAGE_VALUE_CONSISTENCY }
 
@@ -82,6 +97,12 @@ function extractRefs(text: string | undefined): string[] {
 
 function gatherTextFields(row: ProtocolMatrixRow): { field: string; text: string }[] {
   const items: { field: string; text: string }[] = []
+  if (row.description) items.push({ field: 'description', text: row.description })
+  if (row.recommendedReason) items.push({ field: 'recommendedReason', text: row.recommendedReason })
+  for (const ia of row.implementationAvailability ?? []) {
+    if (ia.what)
+      items.push({ field: `implementationAvailability[${ia.provider}].what`, text: ia.what })
+  }
   for (const dim of ['pureKem', 'hybridKem', 'pureSig', 'hybridSig'] as const) {
     const s = row.dimensions[dim]
     if (s.note) items.push({ field: `${dim}.note`, text: s.note })
@@ -190,10 +211,160 @@ export function auditProseHygiene(row: ProtocolMatrixRow): Finding[] {
   return findings
 }
 
-function audit(): Finding[] {
+// ---------------------------------------------------------------------------
+// D) document placement
+// ---------------------------------------------------------------------------
+
+const RFC_DOC_ID_RE = /^RFC[\s-]?\d{3,5}(?:-|$)/i
+const DRAFT_DOC_ID_RE = /^draft-/i
+
+/** A published RFC under `latestDraft`, or an Internet-Draft under
+ *  `latestRelease`, is listed under the wrong heading. */
+export function auditDocPlacement(row: ProtocolMatrixRow): Finding[] {
   const findings: Finding[] = []
+  for (const d of row.latestDraft) {
+    if (RFC_DOC_ID_RE.test(d.id)) {
+      findings.push({
+        rowId: row.id,
+        field: `latestDraft[${d.id}]`,
+        ref: d.id,
+        detail: `"${d.id}" is a published RFC but is listed under latestDraft — move it to latestRelease`,
+        severity: 'error',
+      })
+    }
+  }
+  for (const d of row.latestRelease) {
+    if (DRAFT_DOC_ID_RE.test(d.id)) {
+      findings.push({
+        rowId: row.id,
+        field: `latestRelease[${d.id}]`,
+        ref: d.id,
+        detail: `"${d.id}" is an Internet-Draft but is listed under latestRelease — move it to latestDraft`,
+        severity: 'error',
+      })
+    }
+  }
+  return findings
+}
+
+// ---------------------------------------------------------------------------
+// E) product links
+// ---------------------------------------------------------------------------
+
+export interface CatalogProduct {
+  licenseType: string
+  /** 'active' or the retired state; a row with no state counts as active. */
+  status: string
+  deprecatedReason: string
+}
+
+export type LicenceClass = 'open' | 'commercial' | 'mixed' | 'unknown'
+
+/** Reads a catalog `license_type` into the three meanings a bucket can contradict. */
+export function licenceClass(licenseType: string): LicenceClass {
+  const t = (licenseType || '').toLowerCase().trim()
+  if (!t) return 'unknown'
+  const open = /open source|public domain|free\/open|cc0/.test(t)
+  const commercial = /commercial|proprietary|freemium/.test(t)
+  if (/dual|mixed/.test(t) || (open && commercial)) return 'mixed'
+  if (open) return 'open'
+  if (commercial) return 'commercial'
+  return 'unknown'
+}
+
+/** Every product id in a row's library lists must be an active catalog row whose
+ *  licence does not contradict the list it sits in. */
+export function auditProductRefs(
+  row: ProtocolMatrixRow,
+  catalog: ReadonlyMap<string, CatalogProduct>
+): Finding[] {
+  const findings: Finding[] = []
+  const lists = [
+    ['ossLibraries', row.ossLibraries],
+    ['commercialLibraries', row.commercialLibraries],
+  ] as const
+  for (const [bucket, libs] of lists) {
+    for (const lib of libs) {
+      const field = `${bucket}[${lib.productId}]`
+      const product = catalog.get(lib.productId)
+      if (!product) {
+        findings.push({
+          rowId: row.id,
+          field,
+          ref: lib.productId,
+          detail: `productId "${lib.productId}" is not in the product catalog`,
+          severity: 'error',
+        })
+        continue
+      }
+      if (product.status && product.status !== 'active') {
+        findings.push({
+          rowId: row.id,
+          field,
+          ref: lib.productId,
+          detail: `productId "${lib.productId}" is ${product.status} in the product catalog${
+            product.deprecatedReason ? ` (${product.deprecatedReason})` : ''
+          } — point at its active record`,
+          severity: 'error',
+        })
+        continue
+      }
+      const cls = licenceClass(product.licenseType)
+      if (bucket === 'ossLibraries' && cls === 'commercial') {
+        findings.push({
+          rowId: row.id,
+          field,
+          ref: lib.productId,
+          detail: `"${lib.productId}" is listed as open source but the catalog licence is "${product.licenseType}" — move it to commercialLibraries`,
+          severity: 'error',
+        })
+      }
+      if (bucket === 'commercialLibraries' && cls === 'open') {
+        findings.push({
+          rowId: row.id,
+          field,
+          ref: lib.productId,
+          detail: `"${lib.productId}" is listed as commercial but the catalog licence is "${product.licenseType}" — move it to ossLibraries`,
+          severity: 'error',
+        })
+      }
+    }
+  }
+  return findings
+}
+
+const PRODUCT_CATALOG_RE = /^pqc_product_catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
+/** The newest product catalog, keyed by product_id. */
+export function loadProductCatalog(
+  // Run from the repository root (npm run audit:matrix-refs, vitest).
+  dataDir = join(process.cwd(), 'src', 'data')
+): Map<string, CatalogProduct> {
+  const file = latestDatedCsv(dataDir, PRODUCT_CATALOG_RE)
+  if (!file) throw new Error(`no pqc_product_catalog_*.csv under ${dataDir}`)
+  const parsed = Papa.parse<Record<string, string>>(readFileSync(file, 'utf8'), {
+    header: true,
+    skipEmptyLines: true,
+  })
+  const catalog = new Map<string, CatalogProduct>()
+  for (const r of parsed.data) {
+    if (!r.product_id) continue
+    catalog.set(r.product_id, {
+      licenseType: r.license_type ?? '',
+      status: r.status ?? '',
+      deprecatedReason: r.deprecated_reason ?? '',
+    })
+  }
+  return catalog
+}
+
+export function audit(): Finding[] {
+  const findings: Finding[] = []
+  const catalog = loadProductCatalog()
   for (const row of PROTOCOL_MATRIX) {
     findings.push(...auditProseHygiene(row))
+    findings.push(...auditDocPlacement(row))
+    findings.push(...auditProductRefs(row, catalog))
     for (const dim of ['pureKem', 'hybridKem', 'pureSig', 'hybridSig'] as const) {
       const s = row.dimensions[dim]
       findings.push(...auditStageValueConsistency(row.id, dim, s))

@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-12'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-14'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -4675,7 +4675,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'ikev1',
     name: 'IKEv1',
     description:
-      'Deprecated by RFC 9395. IKEv2 (see IKE / IPsec) carries all PQC work — RFC 8784 PPKs and the ML-KEM/ML-DSA drafts.',
+      'Deprecated by RFC 9395. IKEv2 (see IKE / IPsec) carries all PQC work — post-quantum preshared keys and the ML-KEM/ML-DSA drafts.',
     historical: true,
     latestRelease: [
       {
