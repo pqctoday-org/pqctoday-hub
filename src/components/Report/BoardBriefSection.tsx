@@ -2,6 +2,7 @@
 import React from 'react'
 import type { AssessmentResult } from '../../hooks/assessmentTypes'
 import type { ROISummary } from '../shared/ROICalculatorSection'
+import { findReferenceEstate } from '../../data/assessmentScenarios'
 
 interface BoardBriefOwnership {
   programOwner: string
@@ -114,6 +115,7 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
   // so the executive brief must not print them either.
   const categoryScores =
     result.assessmentProfile?.mode === 'comprehensive' ? result.categoryScores : undefined
+  const referenceEstate = findReferenceEstate(result.assessmentProfile?.scenarioEstateId ?? null)
 
   return (
     <div className="exec-brief-content">
@@ -160,6 +162,22 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
           compliance determination, certification result, measured loss probability, quote, or
           finance-approved forecast.
         </div>
+
+        {referenceEstate && (
+          <div
+            style={{
+              marginBottom: '14pt',
+              padding: '8pt 10pt',
+              border: '1px solid #f59e0b',
+              background: '#fffbeb',
+              color: '#78350f',
+              fontSize: '8.5pt',
+              lineHeight: 1.4,
+            }}
+          >
+            <strong>Reference estate: {referenceEstate.label}.</strong> {referenceEstate.caveat}
+          </div>
+        )}
 
         {shared && (
           <p style={{ marginBottom: '14pt', fontSize: '9pt', color: '#374151' }}>

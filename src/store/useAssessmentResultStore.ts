@@ -40,7 +40,17 @@ export interface AssessmentResultState {
   hideThreat: (threatId: string) => void
   restoreThreat: (threatId: string) => void
   restoreAllThreats: () => void
-  markComplete: (result: AssessmentResult | null) => void
+  /**
+   * Records a completion. `result` is the result the visitor had BEFORE this run (it
+   * becomes `previousRiskScore`, the baseline "change since last assessment" is read
+   * against). `completion` is this run's own result and the answers' serialization,
+   * stored so the confirmation screen and anything else that reads `lastResult`
+   * sees the run that just finished, not the one before it.
+   */
+  markComplete: (
+    result: AssessmentResult | null,
+    completion?: { result: AssessmentResult | null; inputKey: string | null }
+  ) => void
   setResult: (result: AssessmentResult) => void
   pushSnapshot: (snapshot: AssessmentSnapshot) => void
   reset: () => void
@@ -75,19 +85,25 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
 
       restoreAllThreats: () => set({ hiddenThreats: [] }),
 
-      markComplete: (result) => {
+      markComplete: (result, completion) => {
         const now = new Date().toISOString()
         set((state) => ({
-          completedAt: state.completedAt ?? now,
+          // Each completion is its own moment: a kept first timestamp would make every
+          // later run look like a duplicate of the first in the progress history.
+          completedAt: now,
           lastModifiedAt: now,
           previousRiskScore: result?.riskScore ?? state.previousRiskScore,
+          ...(completion?.result
+            ? { lastResult: completion.result, sourceInputKey: completion.inputKey }
+            : {}),
         }))
+        const finished = completion?.result ?? result
         try {
           useHistoryStore.getState().addEvent({
             type: 'assessment_completed',
             timestamp: Date.now(),
             title: 'Completed risk assessment',
-            detail: result ? `Risk score: ${result.riskScore}` : undefined,
+            detail: finished ? `Risk score: ${finished.riskScore}` : undefined,
             route: '/assess',
           })
         } catch {
@@ -101,6 +117,17 @@ export const useAssessmentResultStore = create<AssessmentResultState>()(
         set((state) => {
           const existing = Array.isArray(state.assessmentHistory) ? state.assessmentHistory : []
           if (existing.some((s) => s.completedAt === snapshot.completedAt)) return {}
+          // Completing again with nothing changed (or reopening the report) adds no
+          // information: skip a point identical to the latest one.
+          const latest = existing[existing.length - 1]
+          if (
+            latest &&
+            latest.riskScore === snapshot.riskScore &&
+            latest.preBoostScore === snapshot.preBoostScore &&
+            latest.industry === snapshot.industry &&
+            JSON.stringify(latest.categoryScores) === JSON.stringify(snapshot.categoryScores)
+          )
+            return {}
           return { assessmentHistory: [...existing, snapshot].slice(-5) }
         }),
 
