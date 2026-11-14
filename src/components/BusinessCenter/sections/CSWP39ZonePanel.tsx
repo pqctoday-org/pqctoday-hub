@@ -193,7 +193,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
               className="text-[10px] text-muted-foreground"
               title={missingNames.length > 0 ? `Missing: ${missingNames.join(', ')}` : undefined}
             >
-              {artifacts.length}/{sectionTypes.length} created
+              {existing.size}/{sectionTypes.length} created
               {missingNames.length > 0 && ` — missing ${missingPreview}${missingExtra}`}
             </span>
             {detail.learnRoute && !open && (
