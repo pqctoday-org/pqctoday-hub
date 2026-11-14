@@ -1,67 +1,487 @@
 ---
 generated: 2026-11-14
 collection: library
-documents_processed: 1
-enrichment_method: automated extraction, human-reviewed
+documents_processed: 8
+enrichment_method: automated extraction
 ---
 
-## OpenBao-Transit-Secrets-Engine
+## draft-ietf-tls-mlkem-11
 
-- **Reference ID**: OpenBao-Transit-Secrets-Engine
-- **Title**: OpenBao Transit Secrets Engine
+- **Reference ID**: draft-ietf-tls-mlkem-11
+- **Title**: ML-KEM Post-Quantum Key Agreement for TLS 1.3
 - **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
-- **Main Topic**: The OpenBao Transit secrets engine provides cryptography-as-a-service (encrypt/decrypt, sign/verify, HMAC, datakey generation, key rotation, key import) and supports ML-DSA signing keys alongside classical key types.
+- **Main Topic**: Defines ML-KEM-512, ML-KEM-768, and ML-KEM-1024 as TLS 1.3 NamedGroups and registers IANA Supported Groups values for standalone post-quantum key establishment.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IANA, NIST
+- **Leaders Contributions Mentioned**: Deirdre Connolly (author, Selkie Cryptography); Douglas Stebila (consulted on RFC 9954's design); Scott Fluhrer, Eric Rescorla, John Preuß Mattsson, Martin Thomson, Rebecca Guthrie (reviewers)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3; DTLS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; IANA; NIST
+- **Compliance Frameworks Referenced**: FIPS 203; NIST SP 800-227
+- **Classical Algorithms Referenced**: Diffie-Hellman; (EC)DHE
+- **Key Takeaways**: ML-KEM-512, ML-KEM-768 and ML-KEM-1024 are registered as TLS 1.3 NamedGroups (0x0200-0x0202) for standalone PQ key establishment; Servers must perform the FIPS 203 encapsulation key check and abort with illegal_parameter on failure; Clients must check ciphertext length and abort with illegal_parameter on mismatch; Implementations must not reuse encapsulation randomness or ciphertexts and should follow RNG guidance; Implementers must weigh standalone ML-KEM against hybrid constructions, and the registry marks the groups Recommended=N
+- **Security Levels & Parameters**: ML-KEM-512; ML-KEM-768; ML-KEM-1024; IND-CCA security; 32-byte shared secrets; 64-byte decapsulation key seeds
+- **Hybrid & Transition Approaches**: Hybrid key exchange referenced only via RFC 9954 and RFC 10024 as alternatives; this document defines standalone ML-KEM
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "This document defines standalone ML-KEM key establishment for TLS 1.3." (§5)
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "defines key establishment options for TLS 1.3 via the existing supported_groups ... and key_share ... extensions" (§1)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ML-KEM-512 encapsulation key 800 bytes, ciphertext 768 bytes; ML-KEM-768 encapsulation key 1184 bytes, ciphertext 1088 bytes; ML-KEM-1024 encapsulation key 1568 bytes, ciphertext 1568 bytes; Expanded decapsulation keys 1632/2400/3168 bytes; Shared secret 32 bytes; Decapsulation key seed 64 bytes
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: TLS 1.3 (RFC 9846) implementation; FIPS 203 ML-KEM implementation with encapsulation key check; Side-channel resistant implementations; Secure RNG per FIPS 203 and RFC 9846
+- **Relevant PQC Today Features**: Algorithms; tls-basics; hybrid-crypto
+- **Implementation Attack Surface**: Side-channel attacks (especially remotely applicable); RNG output disclosure via encapsulation randomness; Reuse of encapsulation randomness or ciphertexts
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Formal analysis (pen-and-paper computational proofs, ProVerif machine-checked symbolic analysis); Encapsulation key check per FIPS 203 Section 7.2
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Standalone ML-KEM versus hybrid choice depends on security, performance and operational constraints; Registry marks the groups Recommended=N (not evaluated by the IETF)
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: draft-ietf-tls-mlkem-11.html (70,543 bytes, 15,362 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:26
+- **Evidence SHA-256**: 326c734fde7d589ebcbfd48682661e12c2f48d0597b7623767695cf5f4443839
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 326c734fde7d589e
+- **Reader**: unified/5 full
+- **Window Chars**: 15362
+
+---
+
+## draft-ietf-tls-mldsa-06
+
+- **Reference ID**: draft-ietf-tls-mldsa-06
+- **Title**: Use of ML-DSA in TLS 1.3
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Specifies how the ML-DSA post-quantum signature scheme (FIPS 204) is negotiated and used for authentication in TLS 1.3 via new SignatureScheme values.
 - **PQC Algorithms Covered**: ML-DSA
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: OpenBao Transit secrets engine
-- **Protocols Covered**: PKCS#11; HTTP API
-- **Infrastructure Layers**: Key Management; HSM; KMS; Encryption-as-a-service
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: NIST SP 800-38D
-- **Classical Algorithms Referenced**: AES-GCM; AES-128; AES-256; ChaCha20-Poly1305; Ed25519; ECDSA P-256; ECDSA P-384; ECDSA P-521; RSA-2048; RSA-3072; RSA-4096; HMAC; SHA-1; SHA-224; SHA-256; SHA-384; SHA-512; RSAES-OAEP; RSA PSS; PKCS#1v1.5; AES-KWP; AES-SIV
-- **Key Takeaways**: Rotate AES-GCM keys before about 2^32 encryptions per key version per NIST SP 800-38D; Use rewrap after rotation to upgrade ciphertext without exposing plaintext; Prefer generating keys inside OpenBao over importing keys from an HSM; Restrict key management and encrypt/decrypt usage through ACLs; Convergent encryption version 3 resists offline plaintext-confirmation attacks
-- **Security Levels & Parameters**: mldsa-44; mldsa-65; mldsa-87; rsa-2048; rsa-3072; rsa-4096; aes128-gcm96; aes256-gcm96; 4096-bit RSA wrapping key; 256-bit AES ephemeral key
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, NIST
+- **Leaders Contributions Mentioned**: Tim Hollebeek, Sophie Schmieg and Bas Westerbaan are listed as authors; Alicja Kario, John Mattsson and others thanked for review and feedback (no specific contributions described)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3; X.509
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Three new TLS SignatureScheme values (mldsa44 0x0904, mldsa65 0x0905, mldsa87 0x0906) are mapped to ML-DSA-44, ML-DSA-65 and ML-DSA-87; CertificateVerify signatures MUST use ML-DSA.Sign and ML-DSA.Verify with an empty context string; HashML-DSA pre-hashed variants are not used; End-entity certificates MUST carry the matching ML-DSA AlgorithmIdentifier in SubjectPublicKeyInfo; IANA registry entries are marked Recommended = N (not evaluated by the IETF)
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
 - **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "mldsa-65 : ML-DSA-65 key; supports signing and signature verification"
+- **Pure PQC Signature Evidence**: "This document maps three new SignatureScheme values for the three ML-DSA parameter sets" (§3)
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: None detected
-- **Performance & Size Considerations**: Maximum HTTP request size 32MB; 96-bit nonce for AES-GCM; 4096-bit RSA wrapping key; example rotation estimate of 40 million operations per day
-- **Target Audience**: Developer; Security Architect; Operations
-- **Implementation Prerequisites**: OpenBao 2.7.x; transit secrets engine enabled; OpenBao token with proper ACL permissions; wrapping key read from transit/wrapping_key for key import
-- **Relevant PQC Today Features**: kms-pqc; hsm-pqc; Algorithms; code-signing
-- **Implementation Attack Surface**: Nonce reuse risk in convergent encryption; offline plaintext-confirmation attacks (convergent encryption version 2)
+- **PQC Heatmap Protocols Covered**: TLS-1.3; X.509
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "how ML-DSA can be negotiated for authentication in TLS 1.3" (§1); X.509: "end-entity certificate MUST use the corresponding AlgorithmIdentifier ... in its SubjectPublicKeyInfo" (§3.2)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: TLS 1.3 (RFC 9846); ML-DSA X.509 certificates per RFC 9881; ML-DSA.Sign and ML-DSA.Verify per FIPS 204
+- **Relevant PQC Today Features**: Algorithms; tls-basics; pki-workshop; pqc-101
+- **Implementation Attack Surface**: Side channels in cryptographic primitives; hedged vs deterministic ML-DSA signing variants
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Key rotation with min_decryption_version and rewrap; frequent rotation may exceed storage entry size limits for the archive on Raft backends; convergent encryption version 2 keys upgradable via rotate and rewrap
+- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Operators manage named keys and rotation frequency; applications limited to encrypt/decrypt via ACLs
+- **Organizational Readiness**: None detected
 - **Math Family**: Lattice
 - **PQC Round**: Not Applicable
-- **Source Document**: OpenBao-Transit-Secrets-Engine.html (48,604 bytes, 13,120 extracted chars)
-- **Extraction Timestamp**: 2026-11-14T10:46:54
-- **Evidence SHA-256**: b491217d818aba58bba57984e17b739870c20bf6bc8cbf4cadff8b1133ac2a84
+- **Source Document**: draft-ietf-tls-mldsa-06.html (56,877 bytes, 8,773 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:27
+- **Evidence SHA-256**: 95f5c148dd571c76a1f9b390e233f32899eb5caf746d8e8066dfb48adaf13f39
 - **Generation Model**: automated extraction
-- **Evidence SHA256**: b491217d818aba58
+- **Evidence SHA256**: 95f5c148dd571c76
 - **Reader**: unified/5 full
-- **Window Chars**: 13120
+- **Window Chars**: 8773
+
+---
+
+## draft-bokovoy-kitten-pkinit-pqc-02
+
+- **Reference ID**: draft-bokovoy-kitten-pkinit-pqc-02
+- **Title**: Post-quantum Key Encapsulation with ML-KEM in PKINIT (draft-bokovoy-kitten-pkinit-pqc-02)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Extends the Kerberos PKINIT pre-authentication mechanism with a new KEM path using ML-KEM (and composite ML-KEM) for post-quantum key establishment, including a KDC-signed KDCKEMInfo structure and HKDF-SHA-512 AS reply key derivation.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computer breaking Diffie-Hellman and RSA paths in PKINIT; post-quantum forward secrecy
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF (Common Authentication Technology Next Generation Working Group)
+- **Leaders Contributions Mentioned**: A. Bokovoy (author, Red Hat, Inc.); J. Rische (author, Red Hat, Inc.)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Kerberos; PKINIT; CMS (CMS SignedData); HKDF; X.509
+- **Infrastructure Layers**: PKI; Authentication infrastructure (Kerberos KDC)
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: FIPS 203
+- **Classical Algorithms Referenced**: RSA; ECDSA; Diffie-Hellman; ECDH; SHA-512; SHA-256; SHA-384; AES
+- **Key Takeaways**: A new kemInfo arm in PA-PK-AS-REP carries ML-KEM encapsulation results in a KDC-signed KDCKEMInfo; The AS reply key is derived with HKDF-SHA-512 over PkinitKEMSuppPubInfo, with only HKDF-SHA-512 approved for the KEM path; Clients must verify the KDC signature, nonce, echoed algorithm OID and ciphertext length before decapsulating, and erase the ephemeral decapsulation key; Downgrade prevention rules include no fallback to the RSA path on unrecognized OIDs and enforcing a quantum-resistant KDC signature when the client used a PQ certificate; Clients SHOULD use ML-DSA certificates for full quantum resistance, while ECDSA and RSA certificates are permitted during the transition
+- **Security Levels & Parameters**: ML-KEM-768 (cited as an example algorithm); aes128-cts-hmac-sha256-128 (L = 16 bytes); aes256-cts-hmac-sha384-192 (L = 32 bytes); HKDF-SHA-512
+- **Hybrid & Transition Approaches**: Composite ML-KEM OIDs supported in the KEM path framework; traditional ECDSA and RSA certificates permitted during transition; hybrid DH+KEM modes reserved for future specifications (serverNonce, clientDHNonce)
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "The shared secret is established entirely through one-sided encapsulation" (§3); pure ML-KEM exchange defined
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "the client SHOULD use an ML-DSA certificate ( [RFC9881] )" (§8.1); KDC ML-DSA signing RECOMMENDED (§8.2)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: AS reply key material length L: 16 bytes for aes128-cts-hmac-sha256-128; 32 bytes for aes256-cts-hmac-sha384-192
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: ML-KEM per FIPS 203; ML-DSA certificates and RFC 9882 CMS conventions for signing; HKDF-SHA-512 (id-alg-hkdf-with-sha512); CSPRNG for ephemeral key generation; IANA assignment for id-pkinit-KEMKeyData OID
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; pki-certificates-placeholder
+- **Implementation Attack Surface**: Decapsulation on unauthenticated ciphertext; weak CSPRNG for ephemeral dk; ephemeral decapsulation key retention
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: CSPRNG requirement for ephemeral KEM key pair generation
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Transition period permitting traditional certificates; KDC and client must both support the new KEM arm; downgrade prevention rules; no fallback to RSA path on unrecognized OID
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-bokovoy-kitten-pkinit-pqc-02.html (139,410 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:27
+- **Evidence SHA-256**: 91d68f85f98bb5aa86ac818f57c74d9a47725cf415795d962ca67402bf23683b
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 91d68f85f98bb5aa
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## draft-sheth-pqc-dnssec-strategy-02
+
+- **Reference ID**: draft-sheth-pqc-dnssec-strategy-02
+- **Title**: Post-Quantum Cryptography Strategy for DNSSEC
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: A strategy for post-quantum DNSSEC that pairs conservatively designed PQC signature algorithms (used in a signature-size-mitigating mode such as MTL) with low-impact drop-in PQC algorithms, plus recommended testing and deployment steps.
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; FALCON; XMSS; LMS; MAYO; SNOVA; SQIsign
+- **Quantum Threats Addressed**: Cryptanalytically capable quantum computers breaking RSASHA256 and ECDSA; "trust now/forge later" for DNSSEC signatures
+- **Migration Timeline Info**: Large system operators (Google, Cloudflare) encourage full migration to PQC in the next four years; DNSSEC upgrades occur over years; no specific milestone dates given
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST, IETF
+- **Leaders Contributions Mentioned**: Andrew Fregly (early contributions promoting PQ DNSSEC and uniting the research community around a post-quantum research agenda)
+- **PQC Products Mentioned**: BIND; NSD; CoreDNS
+- **Protocols Covered**: DNSSEC; DNS (UDP/TCP transport)
+- **Infrastructure Layers**: DNS recursive resolvers; DNS authoritative servers
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSASHA256; ECDSA
+- **Key Takeaways**: Deploy two types of PQC signature algorithms in DNSSEC: conservative fallback and low-impact drop-in; Large PQC signatures exceed the ~1232-byte UDP limit and risk TCP fallback, latency and resolver degradation; MTL mode amortizes signature size across multiple responses to reduce operational impact; Test multiple algorithms in BIND, NSD and CoreDNS and measure fallback rates and resilience, including KeyTrap-style attacks; Research DoS countermeasures for MTL mode
+- **Security Levels & Parameters**: ML-DSA signatures 2420-4627 bytes; SLH-DSA signatures 7856-49856 bytes; UDP packet limit ~1232 bytes
+- **Hybrid & Transition Approaches**: Dual-algorithm strategy (conservative plus low-impact algorithm); ML-DSA possibly combined with traditional algorithms; fallback mechanisms during PQC transition
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "DNSSEC should deploy two types of PQC signature algorithms" (§4); ML-DSA, Falcon, XMSS, LMS, MAYO, SNOVA listed
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: DNSSEC
+- **PQC Heatmap Protocols Evidence**: DNSSEC: "proposes a post-quantum cryptography (PQC) strategy for Domain Name System Security (DNSSEC)" (Abstract)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ML-DSA signature 2420-4627 bytes; SLH-DSA signature 7856-49856 bytes; UDP packet limit ~1232 bytes; excessive TCP fallback and latency; SQIsign verification overhead slows responses
+- **Target Audience**: Developer; Operations; Researcher; Security Architect
+- **Implementation Prerequisites**: DNS software supporting PQC algorithms (BIND, NSD, CoreDNS); TCP fallback capacity on resolvers and authorities; possible new DNSSEC algorithm code registrations
+- **Relevant PQC Today Features**: Algorithms; Migrate; crypto-agility; pqc-candidates; stateful-signatures
+- **Implementation Attack Surface**: KeyTrap-style algorithmic complexity denial-of-service attacks; denial-of-service risks for MTL mode
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Hackathon interoperability testing in BIND, NSD and CoreDNS; measuring latency, fallback rates and resilience under adversarial conditions
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: DNSSEC upgrades occur over years; uncertain adoption timelines for novel algorithms; large signatures cause truncated responses and TCP fallback; phased testing via hackathons recommended
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based; Multivariate; Isogeny
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-sheth-pqc-dnssec-strategy-02.html (71,758 bytes, 15,102 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:28
+- **Evidence SHA-256**: 561e2c48f32a59f4a8b7c1b3a594ecba858b6a2c173aa7b45c968ad722bae9f2
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 561e2c48f32a59f4
+- **Reader**: unified/5 full
+- **Window Chars**: 15102
+
+---
+
+## draft-becker-cnsa2-ssh-profile-07
+
+- **Reference ID**: draft-becker-cnsa2-ssh-profile-07
+- **Title**: CNSA 2.0 Suite Profile for SSH
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: A CNSA 2.0 profile of SSH that mandates ML-KEM-1024 (mlkem1024-sha384) key exchange, ML-DSA-87 signatures and AES-256-GCM for US National Security Systems.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; LMS; XMSS
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NSA, US Government National Security Systems
+- **Leaders Contributions Mentioned**: Alison Becker was primary editor of the document; reviewers named: Andrew Benhase, Santosh Chokhani, Scott Fluhrer, Jonathan Hammell, John Mattsson, Mike Ounsworth, Francois Rousseau; appendix text original authors: Andrew Benhase, Scott Fluhrer, Alexander Harrison, Panos Kampanakis
+- **PQC Products Mentioned**: Open Quantum Safe; OQS-SSH
+- **Protocols Covered**: SSH; X.509
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: IETF; NIST; NSA
+- **Compliance Frameworks Referenced**: CNSA 2.0; FIPS 203; FIPS 204; NIST SP 800-56A; NIST SP 800-38D; NIST SP 800-63
+- **Classical Algorithms Referenced**: AES-256; AES-GCM; SHA-384; SHA-512
+- **Key Takeaways**: CNSA-compliant SSH must list mlkem1024-sha384 as the first and only negotiated key exchange; ML-DSA-87 is required for server host keys and user public-key authentication; AES-256-GCM is the only permitted encryption and integrity algorithm; Trust on First Use host key acceptance is prohibited; The same cipher suite must be used when rekeying
+- **Security Levels & Parameters**: ML-KEM-1024; ML-DSA-87; AES-256; SHA-384; SHA-512; 16-octet authentication tag
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "ML-KEM-1024 MUST be used to establish a shared secret value between the client and the server." (§5.2)
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "The public key algorithm implemented MUST be ML-DSA-87." (§5.3)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: SSH; X.509
+- **PQC Heatmap Protocols Evidence**: SSH: "Commercial National Security Algorithm (CNSA) Suite 2.0 Profile for SSH"; X.509: "Where X.509 certificates are used, they must comply with [I-D.jenkins-cnsa2-pkix-profile]" (§5.3)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: AES-GCM invocation counter incremented mod 2^64; all 16 octets of the authentication tag used as the SSH data integrity value
+- **Target Audience**: Developer; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: SSH_MSG_KEX_KEM_INIT and SSH_MSG_KEX_KEM_REPLY message support (Appendix A); ssh-mldsa87 public key algorithm support; server-sig-algs extension per RFC 8308; certificates complying with the CNSA 2.0 PKIX profile or secure distribution of trust anchors
+- **Relevant PQC Today Features**: vpn-ssh-pqc; Compliance; Algorithms; pki-workshop
+- **Implementation Attack Surface**: Ephemeral key reuse prohibited; AES-GCM counter value repetition prohibited; Trust on First Use host key acceptance prohibited
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-becker-cnsa2-ssh-profile-07.html (92,354 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:28
+- **Evidence SHA-256**: 1043eb95c5ad1dea26f3ef4971005571e8710ecd9057b5578227e82a3fd90d85
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 1043eb95c5ad1dea
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## draft-ietf-cose-hpke-27
+
+- **Reference ID**: draft-ietf-cose-hpke-27
+- **Title**: Use of Hybrid Public-Key Encryption (HPKE) with COSE
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Defines how Hybrid Public-Key Encryption (HPKE) is used with CBOR Object Signing and Encryption (COSE), including integrated encryption and key encryption modes, ciphersuite registrations, key representation, and examples.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IANA, IESG
+- **Leaders Contributions Mentioned**: H. Tschofenig, M. Jones (Ed.), O. Steele, D. Ajitomi, L. Lundblade (authors); acknowledged contributors: Thomas Fossati, Chris Inacio, John Mattsson, Ivaylo Petrov, Mike Prorock, Michael Richardson, Göran Selander
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: COSE; HPKE; CBOR
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF; IANA; IESG
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: DHKEM(P-256, HKDF-SHA256); DHKEM(P-384, HKDF-SHA384); DHKEM(X25519, HKDF-SHA256); DHKEM(X448, HKDF-SHA512); HKDF-SHA256; HKDF-SHA384; HKDF-SHA512; AES-128-GCM; AES-256-GCM; P-256; X25519; X448
+- **Key Takeaways**: HPKE provides public-key encryption in COSE via Integrated Encryption mode (COSE_Encrypt0) and Key Encryption mode; Base mode HPKE lacks authentication, so COSE_Sign/COSE_Mac constructs or the PSK mode should be added; The ciphersuite registry is extensible so post-quantum ciphersuites can be registered once standardized; Detached ciphertext must receive its own integrity protection when used with COSE_Encrypt or COSE_Encrypt0; A cryptographically secure random source is required, including for CEK generation in Key Encryption mode
+- **Security Levels & Parameters**: P-256; P-384; X25519; X448; AES-128-GCM; AES-256-GCM
+- **Hybrid & Transition Approaches**: HPKE KEM+KDF+AEAD ciphersuite scheme (this is HPKE hybrid public-key encryption, not classical+PQ hybrid); extensible ciphersuite registry for future post-quantum ciphersuites
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Sender possesses the recipient's public key; cryptographically secure source of randomness; COSE (RFC 9052/9053) support; HPKE single-shot Seal/Open APIs
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; crypto-agility; api-security-jwt
+- **Implementation Attack Surface**: Weak random number generation; detached ciphertext lacking integrity protection
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors for HPKE-0-KE and PSK variants (Appendix C); worked encryption examples
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Cryptographically secure source of randomness required; RFC 8937 randomness improvements referenced
+- **Constrained Device & IoT Suitability**: Compact public key encoding (draft-irtf-cfrg-dnhpke) mentioned as possible for constrained environments
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Additional ciphersuites can be registered in the existing registry; public key distribution mechanism assumed but out of scope
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-cose-hpke-27.html (270,101 bytes, 20,608 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:29
+- **Evidence SHA-256**: 2b6eda3de9c0209b0fcdc5672560947afe8c00e23a4db7a75eafc9315d928a38
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 2b6eda3de9c0209b
+- **Reader**: unified/5 selection
+- **Window Chars**: 20608
+
+---
+
+## draft-ietf-ipsecme-ikev2-pqc-auth-12
+
+- **Reference ID**: draft-ietf-ipsecme-ikev2-pqc-auth-12
+- **Title**: Signature Authentication in IKEv2 using PQC (ML-DSA and SLH-DSA)
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: A generic mechanism for integrating post-quantum digital signature algorithms, specifically ML-DSA and SLH-DSA, into IKEv2 authentication using the RFC 7427 "Digital Signature" method.
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer) rendering traditional asymmetric algorithms obsolete and insecure
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IKEv2; IPsec
+- **Infrastructure Layers**: PKI; certificate authorities
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: FIPS 204; FIPS 205
+- **Classical Algorithms Referenced**: RSA; ECDSA; EdDSA; SHA-256; SHA-512; SHAKE256; AES-128; AES-192; AES-256
+- **Key Takeaways**: PQC signature algorithms plug into the existing IKEv2 "Digital Signature" authentication method without changing the protocol; Implementations using ML-DSA or SLH-DSA MUST include the Identity hash (5) in SIGNATURE_HASH_ALGORITHMS and use pure mode with an empty context string; Peers MUST support IKEv2 message fragmentation because PQC keys and signatures are large; Hedged signing is preferred but is a local choice that does not affect interoperability; SLH-DSA offers a non-lattice security foundation as an alternative to ML-DSA
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87; PQ Security Levels 2, 3, 5 (ML-DSA); PQ Security Levels 1, 3, 5 (SLH-DSA); SLH-DSA-128S-SHA2; SLH-DSA-128F-SHA2; SLH-DSA-192S-SHA2; SLH-DSA-192F-SHA2; SLH-DSA-256S-SHA2; SLH-DSA-256F-SHA2; SLH-DSA-128S-SHAKE; SLH-DSA-128F-SHAKE; SLH-DSA-192S-SHAKE; SLH-DSA-192F-SHAKE; SLH-DSA-256S-SHAKE; SLH-DSA-256F-SHAKE
+- **Hybrid & Transition Approaches**: Backward compatibility via negotiable PQC signature algorithms with no change to the IKEv2 protocol; cryptographic agility via SUPPORTED_AUTH_METHODS announcement
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "specifies the use of pure mode for signature-based authentication in IKEv2" (§3.2); ML-DSA and SLH-DSA AlgorithmIdentifiers in Appendix B
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: IKE/IPsec
+- **PQC Heatmap Protocols Evidence**: IKE/IPsec: "integrating post-quantum cryptographic (PQC) digital signature algorithms into the IKEv2 protocol"
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ML-DSA-44 public key 1,312 bytes; ML-DSA-44 signature 2,420 bytes; smallest SLH-DSA signature around 7,856 bytes; assumed minimum PMTU 1280 bytes for IPv6 and effective MTU 576 bytes for IPv4; ML-DSA outperforms SLH-DSA in signing/verification time and signature size
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: IKEv2 message fragmentation support (RFC 7383); support for the RFC 7427 Digital Signature authentication method; Identity hash (5) in SIGNATURE_HASH_ALGORITHMS; PQC-capable certificates and CAs; optionally RFC 9593 SUPPORTED_AUTH_METHODS
+- **Relevant PQC Today Features**: Algorithms; vpn-ssh-pqc; crypto-agility; pki-workshop
+- **Implementation Attack Surface**: Side-channel attacks; fault injection attacks (deterministic signing mode more susceptible; hedged mode offers partial resistance)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: SLH-DSA small (S) variants prioritize smaller signature sizes for resource-constrained IoT devices
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Maintains interoperability and backward compatibility without changing IKEv2; requires fragmentation support due to large PQC keys and signatures
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-ipsecme-ikev2-pqc-auth-12.html (111,203 bytes, 20,000 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:30
+- **Evidence SHA-256**: 5952cef821c6beb4ba1f75530c03d8145ca24b9e9a3ba4036e0c30b7cee49a20
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 5952cef821c6beb4
+- **Reader**: unified/5 head
+- **Window Chars**: 20000
+
+---
+
+## draft-ietf-openpgp-nist-bp-comp-05
+
+- **Reference ID**: draft-ietf-openpgp-nist-bp-comp-05
+- **Title**: PQ/T Composite Schemes for OpenPGP using NIST and Brainpool Elliptic Curves
+- **Authors**: See document
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: Defines PQ/T composite KEM and signature schemes for OpenPGP combining ML-KEM and ML-DSA with ECDH and ECDSA over NIST (P-384, P-521) and Brainpool (brainpoolP384r1, brainpoolP512r1) curves, extending RFC 9980.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: cryptographically relevant quantum computer
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Germany; Bodies: NIST, BSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: OpenPGP
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 186-5; SP 800-56A; SP 800-186; BSI TR-03111
+- **Classical Algorithms Referenced**: ECDH; ECDSA; AES-128; AES-192; AES-256; X25519; X448; EdDSA
+- **Key Takeaways**: ML-KEM and ML-DSA are only defined in composite combination with ECDH/ECDSA to retain a pre-quantum fallback; Both ECDSA and ML-DSA signatures MUST validate for a composite signature to be valid; Composite schemes are restricted to v6 (and newer) OpenPGP keys, certificates and signatures; Full EC public key validation is REQUIRED before ECDH-KEM encapsulation and decapsulation; Brainpool and NIST curve variants support regulatory needs such as those in Germany
+- **Security Levels & Parameters**: ML-KEM-768; ML-KEM-1024; ML-DSA-65; ML-DSA-87; NIST P-384; NIST P-521; brainpoolP384r1; brainpoolP512r1; digest size of at least 256 bits
+- **Hybrid & Transition Approaches**: PQ/T composite KEM (ML-KEM + ECDH) with a key combiner (multiKeyCombine); composite signatures (ML-DSA + ECDSA); parallel encryption to multiple keys supported by OpenPGP
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "ML-KEM + ECDH public key encryption involves both ML-KEM and an ECDH KEM in a non-separable manner" (§4.1) (paraphrase — not found verbatim in the document)
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "ML-DSA + ECDSA signature consists of independent ML-DSA and ECDSA signatures" (§4.2)
+- **PQC Heatmap Protocols Covered**: OpenPGP
+- **PQC Heatmap Protocols Evidence**: OpenPGP: "composite schemes ... for the OpenPGP protocol [RFC9580]" (Abstract)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ML-KEM-768 public key 1184 octets; ML-KEM-768 ciphertext 1088 octets; ML-KEM-1024 public key 1568 octets; ML-KEM-1024 ciphertext 1568 octets; ML-DSA-65 public key 1952 octets; ML-DSA-65 signature 3309 octets; ML-DSA-87 public key 2592 octets; ML-DSA-87 signature 4627 octets; ECDH P-384 public key 97 octets; ECDH P-521 public key 133 octets
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: OpenPGP v6 keys and signatures per RFC 9580; RFC 9980 multiKeyCombine key combiner; full EC public key validation per SP 800-56A; RFC 3394 AES key wrap
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; email-signing; pqc-candidates
+- **Implementation Attack Surface**: Invalid-curve attacks on ECDH points (mitigated by full public key validation)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors for sample ML-DSA+ECDSA with ML-KEM+ECDH keys (NIST and Brainpool variants)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Composite schemes restricted to v6 keys; PQ confidentiality is lost when also encrypting to keys without PQ or PQ/T support; experimental code points 100-107 assigned in an earlier draft
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hybrid
+- **PQC Round**: Not Applicable
+- **Source Document**: draft-ietf-openpgp-nist-bp-comp-05.html (446,530 bytes, 29,548 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T12:15:31
+- **Evidence SHA-256**: f7499abc67a3c0038946a5af766da225b305e114b0abb3be571b9992f5d08b2e
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: f7499abc67a3c003
+- **Reader**: unified/5 selection
+- **Window Chars**: 29548
 
 ---
 
@@ -55884,7 +56304,7 @@ enrichment_method: automated extraction, human-reviewed
 
 - **Reference ID**: Off-the-Record-Communication-or-Why-Not-To-Use-PGP
 - **Title**: Off-the-Record Communication, or, Why Not To Use PGP
-- **Authors**: See document
+- **Authors**: 
 - **Publication Date**: 2004
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
@@ -55930,9 +56350,9 @@ enrichment_method: automated extraction, human-reviewed
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Off-the-Record-Communication-or-Why-Not-To-Use-PGP.pdf (131,738 bytes, 13,881 extracted chars)
 - **Extraction Timestamp**: 2026-11-13T03:16:02
-- **Evidence SHA-256**: d2f75ac1746c64566eb5ccaa220917f471b4bfd3365236a21fd690ce56497d01
 - **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: d2f75ac1746c6456
 - **Window Chars**: 13881
@@ -55996,6 +56416,66 @@ enrichment_method: automated extraction, human-reviewed
 - **Evidence SHA256**: efa8727b8c3d0fb0
 - **Reader**: unified/5 full
 - **Window Chars**: 11705
+
+---
+
+## OpenBao-Transit-Secrets-Engine
+
+- **Reference ID**: OpenBao-Transit-Secrets-Engine
+- **Title**: OpenBao Transit Secrets Engine
+- **Authors**: 
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: The OpenBao Transit secrets engine provides cryptography-as-a-service (encrypt/decrypt, sign/verify, HMAC, datakey generation, key rotation, key import) and supports ML-DSA signing keys alongside classical key types.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenBao Transit secrets engine
+- **Protocols Covered**: PKCS#11; HTTP API
+- **Infrastructure Layers**: Key Management; HSM; KMS; Encryption-as-a-service
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: NIST SP 800-38D
+- **Classical Algorithms Referenced**: AES-GCM; AES-128; AES-256; ChaCha20-Poly1305; Ed25519; ECDSA P-256; ECDSA P-384; ECDSA P-521; RSA-2048; RSA-3072; RSA-4096; HMAC; SHA-1; SHA-224; SHA-256; SHA-384; SHA-512; RSAES-OAEP; RSA PSS; PKCS#1v1.5; AES-KWP; AES-SIV
+- **Key Takeaways**: Rotate AES-GCM keys before about 2^32 encryptions per key version per NIST SP 800-38D; Use rewrap after rotation to upgrade ciphertext without exposing plaintext; Prefer generating keys inside OpenBao over importing keys from an HSM; Restrict key management and encrypt/decrypt usage through ACLs; Convergent encryption version 3 resists offline plaintext-confirmation attacks
+- **Security Levels & Parameters**: mldsa-44; mldsa-65; mldsa-87; rsa-2048; rsa-3072; rsa-4096; aes128-gcm96; aes256-gcm96; 4096-bit RSA wrapping key; 256-bit AES ephemeral key
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "mldsa-65 : ML-DSA-65 key; supports signing and signature verification"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: Maximum HTTP request size 32MB; 96-bit nonce for AES-GCM; 4096-bit RSA wrapping key; example rotation estimate of 40 million operations per day
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: OpenBao 2.7.x; transit secrets engine enabled; OpenBao token with proper ACL permissions; wrapping key read from transit/wrapping_key for key import
+- **Relevant PQC Today Features**: kms-pqc; hsm-pqc; Algorithms; code-signing
+- **Implementation Attack Surface**: Nonce reuse risk in convergent encryption; offline plaintext-confirmation attacks (convergent encryption version 2)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Key rotation with min_decryption_version and rewrap; frequent rotation may exceed storage entry size limits for the archive on Raft backends; convergent encryption version 2 keys upgradable via rotate and rewrap
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Operators manage named keys and rotation frequency; applications limited to encrypt/decrypt via ACLs
+- **Math Family**: Lattice
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+- **Source Document**: OpenBao-Transit-Secrets-Engine.html (48,604 bytes, 13,120 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T10:46:54
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: b491217d818aba58
+- **Reader**: unified/5 full
+- **Window Chars**: 13120
 
 ---
 
