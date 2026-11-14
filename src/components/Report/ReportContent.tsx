@@ -90,6 +90,7 @@ import { ThreatLandscapeSection } from './sections/ThreatLandscapeSection'
 import { SimulationOutcomesSection } from './sections/SimulationOutcomesSection'
 import { printReport, exportAlgorithmMigrationsCsv } from './sections/reportContentActions'
 import { findReferenceEstate } from '@/data/assessmentScenarios'
+import { milestoneForPressure } from '@/utils/timelineMilestone'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -724,6 +725,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           <MigrationRoadmap
                             actions={result.recommendedActions}
                             countryName={country || undefined}
+                            selectedMilestone={milestoneForPressure(
+                              result.assessmentProfile?.timelinePressure,
+                              result.assessmentProfile?.timelineMilestone
+                            )}
                             defaultOpen={cfg('migrationRoadmap').state === 'open'}
                           />
                         </div>
