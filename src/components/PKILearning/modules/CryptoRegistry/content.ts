@@ -33,7 +33,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'The CycloneDX Cryptography Registry (introduced in CycloneDX v1.7) is a standalone, versioned catalog of 96 cryptographic algorithm families and 246 elliptic curves. It exists to solve one problem: the same mechanism has a different name in every tool that touches it — an HSM, a certificate, a protocol, a library, a CBOM — and without one shared vocabulary those names never line up.',
+      'The CycloneDX Cryptography Registry (introduced in CycloneDX v1.7) is a standalone, versioned catalog of 98 cryptographic algorithm families and 246 elliptic curves. It exists to solve one problem: the same mechanism has a different name in every tool that touches it — an HSM, a certificate, a protocol, a library, a CBOM — and without one shared vocabulary those names never line up.',
     scope:
       'Algorithm families are grouped by primitive (signature, KEM/PKE, key-agreement, block/stream cipher, AEAD, MAC, hash, XOF, KDF, key-wrap, DRBG). Elliptic curves are grouped into 15 standardization categories (NIST, SECG, Brainpool, ANSSI, BLS, GOST, X9.62/X9.63 and more), each entry carrying its OID, form (Weierstrass/Edwards/Montgomery) and cross-referenced aliases.',
     pqc: 'ML-KEM, ML-DSA, SLH-DSA, XMSS and LMS are registered as first-class families alongside their classical counterparts — the registry does not treat PQC as an afterthought bolted onto a legacy list, which is exactly what a PQC-readiness review needs: one place to check whether a discovered mechanism is quantum-safe.',
