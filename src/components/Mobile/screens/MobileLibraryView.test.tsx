@@ -7,6 +7,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { libraryData } from '@/data/libraryData'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
+import { RESEARCH_TOPICS } from '@/data/researchTopics'
 import { documentDatesText } from '@/components/Library/redesign/libraryPills'
 import { Button } from '@/components/ui/button'
 
@@ -362,10 +363,23 @@ describe('MobileLibraryView', () => {
       tagged.length = 0
     })
 
-    it('an untagged or unknown topic filters nothing and shows no chip', () => {
-      renderAt('?topic=not-a-topic')
+    it('a vocabulary topic no document carries filters nothing and shows no chip', () => {
+      const untagged = RESEARCH_TOPICS.find(
+        (t) => !libraryData.some((d) => d.researchTopics.includes(t.id))
+      )
+      if (!untagged) return // every topic tagged: nothing to check
+      renderAt(`?topic=${untagged.id}`)
       expect(shown()).toBe(libraryData.length)
       expect(screen.queryByTestId('library-link-filters')).not.toBeInTheDocument()
+    })
+
+    it('a subject that is not a topic id (a simulation link) becomes the search', () => {
+      renderAt('?topic=CycloneDX')
+      expect(screen.getByPlaceholderText(/Search — try/i)).toHaveValue('CycloneDX')
+      const search = new URLSearchParams(screen.getByTestId('loc').textContent!)
+      expect(search.get('q')).toBe('CycloneDX')
+      expect(search.has('topic')).toBe(false)
+      expect(shown()).toBeLessThan(libraryData.length)
     })
 
     it('a tagged topic filters the list, shows a chip, and the chip removes it', () => {

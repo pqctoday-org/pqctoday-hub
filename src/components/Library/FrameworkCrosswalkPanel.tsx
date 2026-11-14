@@ -15,8 +15,8 @@
  *   #4  App. H long-tail flag — surfaces the "forgotten" families (DKIM / WPA3 /
  *       Bluetooth) that are not yet tracked in the protocol matrix.
  *
- * Additive: this panel renders ONLY for the AQ framework entry (detected via
- * `manualCategory === 'applied-quantum'`). For every other library item the
+ * Additive: this panel renders ONLY for the AQ framework entry (detected by
+ * isAppliedQuantumFramework below). For every other library item the
  * detail popover behaves exactly as before. No new data is ingested — the
  * crosswalk reads `FRAMEWORK_PHASES` and the coverage reads `PROTOCOL_MATRIX`,
  * both already shipped.
@@ -27,7 +27,12 @@ import { ChevronDown, GitCompareArrows, ExternalLink, AlertTriangle, Grid3x3 } f
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import type { LibraryItem } from '../../data/libraryData'
-import { FRAMEWORK_PHASES, PHASE_ORDER, type FrameworkPhase } from '../../data/frameworkPhases'
+import {
+  FRAMEWORK_PHASES,
+  FRAMEWORK_VERSION,
+  PHASE_ORDER,
+  type FrameworkPhase,
+} from '../../data/frameworkPhases'
 import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 
 /** The four external frameworks the AQ App. G appendix crosswalks against. */
@@ -66,11 +71,22 @@ const APP_H_LONG_TAIL = [
 ] as const
 
 /**
- * Detect the Applied Quantum framework library entry. Both the active v2.1 and
- * the deprecated v1.1 carry `manual_category=applied-quantum` in the CSV.
+ * Detect the Applied Quantum framework library entry whose appendices this panel
+ * shows (FRAMEWORK_VERSION, v2.1). The rows carry `manual_category=Migration
+ * Guidance` and `trusted_source_id=applied-quantum`; the panel used to look for
+ * `manual_category=applied-quantum`, which no row has, so it never rendered.
+ * The version is matched too: the other Applied Quantum rows (the v3.0
+ * "Universal Version") are separate documents whose appendices this panel does
+ * not describe. `manualCategory === 'applied-quantum'` stays accepted for old snapshots.
  */
 export function isAppliedQuantumFramework(item: LibraryItem): boolean {
-  return item.manualCategory === 'applied-quantum'
+  if (item.manualCategory === 'applied-quantum') return true
+  if (item.trustedSourceId !== 'applied-quantum') return false
+  // `AQ-PQC-Migration-Framework-v2.1-2026` / "… Framework (v2.1)".
+  return (
+    item.referenceId.includes(`-${FRAMEWORK_VERSION}-`) ||
+    item.documentTitle.includes(`(${FRAMEWORK_VERSION})`)
+  )
 }
 
 /** Stable render order for the crosswalk: phase rail order. */

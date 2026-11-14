@@ -86,29 +86,33 @@ export const pageManuals: Record<PageId, PageManual> = {
   library: {
     title: 'PQC Library',
     summary:
-      'Search and browse 1,200+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
+      'Search and browse post-quantum cryptography standards, drafts, RFCs, guidance and research from NIST, IETF, ETSI and other organizations. Each record says what the document is, where it stands in its lifecycle, and links to the official source.',
     sections: [
       {
+        heading: 'Where to start',
+        body: 'Three purpose doors (Learn, Reference, Plan migration) narrow the catalogue by why you are here. With a role selected, Start here suggests three documents for it, and the New & updated strip lists documents added or revised recently.',
+      },
+      {
         heading: 'Search & Filters',
-        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter across 13 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research, Compliance & Certification, Blockchain Standards, Implementations). Filter by organization or industry. Persona-aware category boosting surfaces the most relevant categories for your role.',
+        body: 'Type in the search bar to search titles, summaries, reference IDs and tags. The left rail filters by quick view (All, New & updated, Certification starter set, Bookmarked), by the 13 categories and by lifecycle status; the toolbar adds organization, geography, sector, trust tier, algorithm family and research topic. With a role selected, the list starts narrowed to that role\'s focus areas; "Show all documents" turns that off.',
       },
       {
         heading: 'View Toggle',
-        body: 'Switch between Card view and Tree Table view using the toggle in the toolbar. Card view shows document summaries; Tree Table groups documents by category with sortable columns.',
+        body: 'Switch between Card view and Tree Table view in the toolbar. Card view shows document summaries; the Tree Table lists every document with sortable columns and nests, under each document, the documents that build on it.',
       },
       {
         heading: 'Document Details',
-        body: 'Click any document card to see full details including abstract, status, dependencies, related standards, and a direct link to the source. Documents with local cached copies show a preview icon.',
+        body: "Open any document to see its catalogue summary, status and dates, the documents it builds on, earlier revisions, the catalogue's classification tags, the Learn modules that use it, and a direct link to the source.",
       },
       {
-        heading: 'Activity Feed',
-        body: 'The activity feed shows recently added or updated documents. New and Updated badges appear on documents that changed since the previous data version.',
+        heading: 'Export',
+        body: 'Export the filtered list as CSV, or export citations for the filtered list or your bookmarks as BibTeX or CSL-JSON.',
       },
     ],
     tips: [
-      'Use the URL parameter ?ref=REFERENCE_ID to deep-link directly to a specific document.',
-      'Export the full library as CSV for offline analysis or reporting.',
-      'URL params: ?ref= opens a document; ?cat=, ?org=, ?sector=, ?q=, ?sort=, ?view=cards|table are all combinable for shareable filtered views.',
+      'Use ?ref=REFERENCE_ID to deep-link directly to a document; a retired ID opens the document that replaced it.',
+      'URL params: ?purpose=, ?cat=, ?org=, ?geo=, ?sector=, ?tier=, ?algo=, ?topic=, ?lifecycle=, ?cswp39=1, ?q=, ?sort= and ?view=cards|table combine into shareable filtered views.',
+      'On other pages, ?spec=REFERENCE_ID opens a document in place without leaving the page.',
     ],
   },
 

@@ -21,6 +21,8 @@ interface LibraryFacetRailProps {
   lifecycleBucket: string
   onLifecycle: (b: string) => void
   counts: { all: number; new: number; cert: number; bookmarked: number }
+  /** Documents per lifecycle label within the open purpose door. */
+  lifecycleCounts?: ReadonlyMap<string, number>
 }
 
 const QUICK_VIEWS: { id: LibraryQuickView; label: string; icon: typeof Bookmark }[] = [
@@ -66,6 +68,7 @@ export function LibraryFacetRail({
   lifecycleBucket,
   onLifecycle,
   counts,
+  lifecycleCounts,
 }: LibraryFacetRailProps) {
   return (
     <div className="flex w-full flex-col gap-3 lg:w-[228px] lg:shrink-0">
@@ -111,6 +114,7 @@ export function LibraryFacetRail({
         >
           <span className="h-2 w-2 shrink-0 rounded-full bg-muted-foreground" aria-hidden="true" />
           <span className="truncate">All categories</span>
+          <CountPill n={counts.all} active={activeCategory === 'All'} />
         </Button>
         {categoryInfo.map((cat) => {
           const active = activeCategory === cat.name
@@ -139,6 +143,14 @@ export function LibraryFacetRail({
                 aria-hidden="true"
               />
               <span className="truncate">{cat.name}</span>
+              {cat.hasUpdates && (
+                <span
+                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-success"
+                  title="Has new or updated documents"
+                  aria-label="has new or updated documents"
+                  role="img"
+                />
+              )}
               <CountPill n={cat.count} active={active} />
             </Button>
           )
@@ -164,6 +176,13 @@ export function LibraryFacetRail({
                 }`}
               >
                 {opt.label}
+                {opt.id === 'All' ? (
+                  <span className="ml-1 opacity-70">{counts.all}</span>
+                ) : (
+                  lifecycleCounts && (
+                    <span className="ml-1 opacity-70">{lifecycleCounts.get(opt.id) ?? 0}</span>
+                  )
+                )}
               </Button>
             )
           })}

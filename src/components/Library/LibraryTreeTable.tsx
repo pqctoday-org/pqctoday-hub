@@ -54,25 +54,32 @@ const SORT_DIRECTION: Partial<Record<SortOption, 'asc' | 'desc'>> = {
   newest: 'desc',
 }
 
+/**
+ * Row identity in the tree is its PATH, not its reference id: a document that
+ * builds on two others appears under both, and at the top level too. Keying rows
+ * (and expansion) by id alone gave sibling rows the same React key and made
+ * expanding one copy expand every copy.
+ */
+const treePathKey = (parentPath: string, referenceId: string): string =>
+  parentPath ? `${parentPath}>${referenceId}` : referenceId
+
+/** Path keys of every row that has in-scope children, i.e. what "Expand All" opens. */
 const getAllExpandedIds = (items: LibraryItem[]): Set<string> => {
   const ids = new Set<string>()
-  const visited = new Set<string>()
   const inScopeIds = new Set(items.map((item) => item.referenceId))
 
-  const traverse = (nodes: LibraryItem[]) => {
+  const traverse = (nodes: LibraryItem[], parentPath: string, ancestors: Set<string>) => {
     nodes.forEach((node) => {
-      if (visited.has(node.referenceId)) return
-      visited.add(node.referenceId)
-
+      if (ancestors.has(node.referenceId)) return // cycle
       const children = node.children?.filter((child) => inScopeIds.has(child.referenceId)) ?? []
-      if (children.length > 0) {
-        ids.add(node.referenceId)
-        traverse(children)
-      }
+      if (children.length === 0) return
+      const path = treePathKey(parentPath, node.referenceId)
+      ids.add(path)
+      traverse(children, path, new Set([...ancestors, node.referenceId]))
     })
   }
 
-  traverse(items)
+  traverse(items, '', new Set())
   return ids
 }
 
@@ -200,7 +207,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
     items: LibraryItem[],
     level = 0,
     visited = new Set<string>(),
-    isRoot = false
+    isRoot = false,
+    parentPath = ''
   ) => {
     const itemsToRender = isRoot ? sortedData : sortItems(items)
 
@@ -211,14 +219,15 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
       const newVisited = new Set(visited)
       newVisited.add(item.referenceId)
 
-      const isExpanded = expandedIds.has(item.referenceId)
+      const pathKey = treePathKey(parentPath, item.referenceId)
+      const isExpanded = expandedIds.has(pathKey)
       const children = item.children?.filter((child) => inScopeIds.has(child.referenceId)) ?? []
       const hasChildren = children.length > 0
       const sourceAction = resolveLibrarySourceAction(item)
 
       const rows = [
         <tr
-          key={`${item.referenceId}-${level}`} // Unique key for duplicates in tree
+          key={pathKey}
           data-deeplink-id={item.referenceId}
           className="border-b border-border hover:bg-muted/50 transition-colors group cursor-pointer"
           tabIndex={0}
@@ -240,7 +249,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation()
-                    toggleExpand(item.referenceId)
+                    toggleExpand(pathKey)
                   }}
                   className="shrink-0 p-1 hover:bg-muted rounded focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-expanded={isExpanded}
@@ -294,7 +303,17 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             </span>
           </td>
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-            {item.lastUpdateDate}
+            {/* The date "Newest first" sorts by: the catalogue update, else the
+                document's publication date (labelled), else a dash. */}
+            {item.lastUpdateDate ? (
+              item.lastUpdateDate
+            ) : item.initialPublicationDate ? (
+              <span title="No catalogue update recorded; this is the document's publication date">
+                Published {item.initialPublicationDate}
+              </span>
+            ) : (
+              <span aria-label="No date recorded">—</span>
+            )}
           </td>
           <td className="p-4 text-sm">
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -358,7 +377,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
       ]
 
       if (isExpanded && hasChildren) {
-        rows.push(...renderRows(children, level + 1, newVisited))
+        rows.push(...renderRows(children, level + 1, newVisited, false, pathKey))
       }
 
       return rows
@@ -368,7 +387,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
   const headers: { key: SortKey | 'actions'; label: string; width?: string }[] = [
     { key: 'referenceId', label: 'Reference ID', width: 'w-56 xl:w-64' },
     { key: 'documentTitle', label: 'Title', width: 'w-auto' },
-    { key: 'documentStatus', label: 'Status', width: 'w-36' },
+    // Sorts by the lifecycle label the column shows, not the raw publisher status.
+    { key: 'lifecycleLabel', label: 'Status', width: 'w-36' },
     { key: 'lastUpdateDate', label: 'Catalog update', width: 'w-36' },
     { key: 'actions', label: '', width: 'w-28' },
   ]

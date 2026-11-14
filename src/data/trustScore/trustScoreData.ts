@@ -198,6 +198,17 @@ function buildScoringContext(): ScoringContext {
     )
   }
 
+  // A Library row names its publisher's registry id in its own trusted_source_id
+  // column. The cross-reference file is regenerated separately and lags new rows
+  // (on 2026-11-14 the nine rows new in that day's snapshot had none), which
+  // scored them "No linked trusted source". Use the row's own id when the file
+  // has nothing for it and the registry knows the source.
+  for (const item of libraryData ?? []) {
+    if (!item.trustedSourceId || xrefsMap.has(item.referenceId)) continue
+    if (!trustedSourcesMap.has(item.trustedSourceId)) continue
+    xrefsMap.set(item.referenceId, [{ sourceId: item.trustedSourceId, matchMethod: 'direct' }])
+  }
+
   // Enrichment maps
   const threatsEnrichmentLookup = loadThreatsEnrichments()
 

@@ -492,6 +492,13 @@ export default defineConfig([
                 '@/components/Library/redesign/*',
                 '!@/components/Library/redesign/useLibraryPipeline',
                 '!@/components/Library/redesign/libraryPills',
+                // libraryDeepLink.ts / libraryRegions.ts / libraryDetailFacts.ts
+                // (2026-11-14) — pure helpers, no JSX: deep-link widening and
+                // ?topic= handling, region codes and labels, and the detail
+                // fields both shells list, shared so phone and desktop agree.
+                '!@/components/Library/redesign/libraryDeepLink',
+                '!@/components/Library/redesign/libraryRegions',
+                '!@/components/Library/redesign/libraryDetailFacts',
                 // LeaderCategorySidebar.tsx — imported only for its exported
                 // LEADER_CATEGORIES array (a plain literal, no JSX reused).
                 // The mobile Community screen's category filter reads the

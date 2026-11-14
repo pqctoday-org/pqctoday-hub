@@ -2,6 +2,8 @@
 import type { CsvColumnConfig } from './csvExport'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { LibraryItem } from '@/data/libraryData'
+import { LIFECYCLE_STYLES } from '@/utils/libraryLifecycle'
+import { ruleBasedConfidenceLabel } from '@/components/Library/ruleBasedConfidence'
 import {
   exportAlgorithmSize,
   exportStackRam,
@@ -37,20 +39,44 @@ export const MIGRATE_CSV_COLUMNS: CsvColumnConfig<SoftwareItem>[] = [
   { header: 'Repository URL', accessor: (i) => i.repositoryUrl },
 ]
 
+const LIBRARY_PURPOSE_LABELS: Record<string, string> = {
+  education: 'Learn',
+  reference: 'Reference',
+  planning: 'Plan migration',
+}
+
+/** Every field the Library detail view shows, with the labels it shows them under. */
 export const LIBRARY_CSV_COLUMNS: CsvColumnConfig<LibraryItem>[] = [
   { header: 'Reference ID', accessor: (i) => i.referenceId },
   { header: 'Title', accessor: (i) => i.documentTitle },
   { header: 'Organization', accessor: (i) => i.authorsOrOrganization },
+  {
+    header: 'Lifecycle',
+    accessor: (i) => LIFECYCLE_STYLES[i.lifecycleLabel]?.label ?? i.lifecycleLabel,
+  },
   { header: 'Status', accessor: (i) => i.documentStatus },
   { header: 'Type', accessor: (i) => i.documentType },
+  { header: 'Purpose', accessor: (i) => LIBRARY_PURPOSE_LABELS[i.purpose] ?? i.purpose },
   { header: 'Categories', accessor: (i) => i.categories?.join('; ') },
+  { header: 'Catalog Summary', accessor: (i) => i.shortDescription },
   { header: 'Publication Date', accessor: (i) => i.initialPublicationDate },
   { header: 'Last Updated', accessor: (i) => i.lastUpdateDate },
+  { header: 'Catalog Checked', accessor: (i) => i.lastVerified },
   { header: 'Algorithm Family', accessor: (i) => i.algorithmFamily },
   { header: 'Security Levels', accessor: (i) => i.securityLevels },
+  { header: 'Protocol or Tool Impact', accessor: (i) => i.protocolOrToolImpact },
+  { header: 'Toolchain Support', accessor: (i) => i.toolchainSupport },
+  { header: 'Builds On', accessor: (i) => i.dependencies },
+  { header: 'Industries', accessor: (i) => i.applicableIndustries?.join('; ') },
   { header: 'Migration Urgency', accessor: (i) => i.migrationUrgency },
   { header: 'Region', accessor: (i) => i.regionScope },
+  { header: 'Peer Reviewed', accessor: (i) => i.peerReviewed },
+  { header: 'Vetting Body', accessor: (i) => i.vettingBody?.join('; ') },
+  { header: 'Confidence', accessor: (i) => ruleBasedConfidenceLabel(i) },
+  { header: 'Referenced by Library Records', accessor: (i) => i.citationCount },
+  { header: 'Access', accessor: (i) => (i.accessType === 'paid' ? 'Paid' : '') },
   { header: 'URL', accessor: (i) => i.downloadUrl },
+  { header: 'Free Summary URL', accessor: (i) => i.freeSummaryUrl },
 ]
 
 const NOT_RECORDED = 'Not recorded in source catalogue'

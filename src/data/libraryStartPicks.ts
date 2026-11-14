@@ -10,7 +10,7 @@
  * resolve to a real LibraryItem. Swap a derived set for a hand-curated file later
  * if desired.
  */
-import { libraryData } from './libraryData'
+import { libraryData, parseDateMs } from './libraryData'
 import { PERSONA_LIBRARY_CATEGORIES } from './personaConfig'
 import { LIBRARY_CERT_ENGINEER_PICKS } from './libraryCertEngineerPicks'
 import { LIBRARY_CURIOUS_PICKS, type LibraryCuriousPick } from './libraryCuriousPicks'
@@ -18,7 +18,11 @@ import { LIBRARY_EXECUTIVE_PICKS } from './libraryExecutivePicks'
 import { LIBRARY_OPS_PICKS } from './libraryOpsPicks'
 import type { PersonaId } from './learningPersonas'
 
-export type LibraryStartPick = LibraryCuriousPick
+export type LibraryStartPick = LibraryCuriousPick & {
+  /** Set on picks chosen by citation count, whose blurb is the document's own
+   *  catalogue summary rather than a written reason to start there. */
+  derived?: true
+}
 
 const CURATED: Partial<Record<PersonaId, readonly LibraryStartPick[]>> = {
   curious: LIBRARY_CURIOUS_PICKS,
@@ -40,16 +44,18 @@ function derivePicks(persona: PersonaId): LibraryStartPick[] {
       const ac = a.citationCount ?? 0
       const bc = b.citationCount ?? 0
       if (bc !== ac) return bc - ac
-      return new Date(b.lastUpdateDate).getTime() - new Date(a.lastUpdateDate).getTime()
+      // Effective date (last update, else publication); a blank date sorts last.
+      const am = parseDateMs(a.lastUpdateDate) ?? parseDateMs(a.initialPublicationDate) ?? 0
+      const bm = parseDateMs(b.lastUpdateDate) ?? parseDateMs(b.initialPublicationDate) ?? 0
+      return bm - am
     })
     .slice(0, 3)
     .map((i) => ({
       referenceId: i.referenceId,
       label: `${i.referenceId} — ${i.documentTitle}`,
-      blurb:
-        i.shortDescription && i.shortDescription.length > 130
-          ? `${i.shortDescription.slice(0, 127)}…`
-          : (i.shortDescription ?? ''),
+      // The whole summary; the card clamps it to three lines on screen.
+      blurb: i.shortDescription ?? '',
+      derived: true as const,
     }))
 }
 
