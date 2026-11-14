@@ -345,7 +345,7 @@ export function computeZoneTiers(metrics: BusinessMetrics): Record<ZoneId, StepT
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Zone-own tier rules (Q4, owner decision 2026-11-14: each zone's own tools).
+// Zone-own tier rules: each zone's tier counts that zone's own tools.
 // ─────────────────────────────────────────────────────────────────────────────
 // Assets, Management Tools and Mitigation used to take their tier from step
 // rules that did not count the zone's own builders. Assets read the inventory
@@ -602,21 +602,32 @@ const ZONE_OWN_MISSING: Partial<
 
 /** The tier a zone's "missing for next tier" hint is measured from. For the three
  *  zones with their own rule that is the zone's tier. Migration and Risk
- *  Management keep the step tier the hint has always been keyed on. */
-export function zoneHintTier(zone: ZoneId, metrics: BusinessMetrics): MaturityTier {
+ *  Management keep the step tier the hint has always been keyed on.
+ *
+ *  Pass `stepTiers` (from computeStepTiers(metrics)) when hinting several zones in
+ *  one render, so the step tiers are computed once rather than per zone. */
+export function zoneHintTier(
+  zone: ZoneId,
+  metrics: BusinessMetrics,
+  stepTiers?: Record<CSWP39StepId, StepTierResult>
+): MaturityTier {
   const ownRule = ZONE_OWN_TIER[zone]
   if (ownRule) return ownRule(metrics).tier
   const step = primaryStepForZone(zone)
-  return computeStepTiers(metrics)[step].tier
+  return (stepTiers ?? computeStepTiers(metrics))[step].tier
 }
 
 /** "Missing for next tier" for a zone, measured from zoneHintTier. The three
  *  zones with their own rule get hints that name their own tools. Migration and
  *  Risk Management get the same hint as before: the hint for the step they take
  *  their tier from (see primaryStepForZone). */
-export function missingForNextZoneTier(zone: ZoneId, metrics: BusinessMetrics): string | null {
+export function missingForNextZoneTier(
+  zone: ZoneId,
+  metrics: BusinessMetrics,
+  stepTiers?: Record<CSWP39StepId, StepTierResult>
+): string | null {
   const ownMissing = ZONE_OWN_MISSING[zone as OwnRuleZone]
-  const tier = zoneHintTier(zone, metrics)
+  const tier = zoneHintTier(zone, metrics, stepTiers)
   if (ZONE_OWN_TIER[zone] && ownMissing) return ownMissing(metrics, tier)
   return missingForNextTier(primaryStepForZone(zone), metrics, tier)
 }

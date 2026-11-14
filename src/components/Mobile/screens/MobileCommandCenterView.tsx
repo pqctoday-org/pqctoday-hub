@@ -8,6 +8,7 @@ import { useBusinessMetrics } from '@/components/BusinessCenter/hooks/useBusines
 import { ActionItemsSection } from '@/components/BusinessCenter/sections/ActionItemsSection'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import {
+  computeStepTiers,
   computeZoneTiers,
   missingForNextZoneTier,
   zoneHintTier,
@@ -89,6 +90,8 @@ export function MobileCommandCenterView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   const zoneTiers = useMemo(() => computeZoneTiers(metrics), [metrics])
+  // Shared by every zone's hint below, so the step tiers are computed once per render.
+  const stepTiers = useMemo(() => computeStepTiers(metrics), [metrics])
 
   if (metrics.isFullyEmpty && !showZoneMap) {
     const intro = commandCenterIntroFor(selectedPersona)
@@ -189,8 +192,8 @@ export function MobileCommandCenterView() {
           const zone = CSWP39_ZONE_DETAILS[zoneId]
           const result = zoneTiers[zoneId]
           const isOpen = openZone === zoneId
-          const hintTier = zoneHintTier(zoneId, metrics)
-          const missing = missingForNextZoneTier(zoneId, metrics)
+          const hintTier = zoneHintTier(zoneId, metrics, stepTiers)
+          const missing = missingForNextZoneTier(zoneId, metrics, stepTiers)
           return (
             <div key={zoneId} className="glass-panel overflow-hidden">
               <Button

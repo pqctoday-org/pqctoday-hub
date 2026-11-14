@@ -7,11 +7,14 @@
  */
 import { describe, it, expect } from 'vitest'
 import {
+  ZONE_STEP_CONTRIBUTORS,
+  computeStepTiers,
   computeZoneTiers,
   missingForNextTier,
   missingForNextZoneTier,
   zoneHintTier,
 } from './cswp39Tier'
+import type { ZoneId } from '@/data/cswp39ZoneData'
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
@@ -226,8 +229,8 @@ describe('Mitigation — its own tier rule (deployment playbook, infra moderniza
 
   // Known remaining path, pinned on purpose. The deployment playbook is also a
   // Migration signal: Migration's rule (implementTier) counts it, and Migration
-  // keeps that rule. Whether the playbook should leave Migration's rule is an
-  // owner decision (see the Q4 report).
+  // keeps that rule. Removing it would change Migration's tier for every user
+  // with a playbook, so this test pins the current behaviour.
   it('a deployment playbook still counts toward Migration, because Migration keeps its rule', () => {
     const m = emptyMetrics()
     m.artifactsByPillar.vendor = [doc('migration-roadmap')]
@@ -287,5 +290,19 @@ describe('missing-for-next-tier hints name the zone own tools', () => {
     const m = emptyMetrics()
     expect(zoneHintTier('migration', m)).toBe(1)
     expect(missingForNextZoneTier('migration', m)).toBe(missingForNextTier('implement', m, 1))
+  })
+})
+
+describe('zone hints with precomputed step tiers', () => {
+  it('give the same hint as computing the step tiers inside the call, for every zone', () => {
+    const m = emptyMetrics()
+    m.artifactsByPillar.vendor = [doc('migration-roadmap')]
+    m.artifactsByPillar.risk = [doc('risk-treatment-plan')]
+    m.artifactsByPillar.architecture = [doc('infra-modernization-plan')]
+    const stepTiers = computeStepTiers(m)
+    for (const zone of Object.keys(ZONE_STEP_CONTRIBUTORS) as ZoneId[]) {
+      expect(zoneHintTier(zone, m, stepTiers), zone).toBe(zoneHintTier(zone, m))
+      expect(missingForNextZoneTier(zone, m, stepTiers), zone).toBe(missingForNextZoneTier(zone, m))
+    }
   })
 })
