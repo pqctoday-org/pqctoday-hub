@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { Grid3X3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -6,6 +7,9 @@ import { RiskHeatmapGenerator } from '@/components/PKILearning/modules/PQCRiskMa
 import { useRiskRegisterStore, DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { isExecutiveBankOverview } from '@/components/Simulation/autorun/autoRunFill'
+import { bankRiskEntries, BANK_CASE_NOTE } from '@/components/Simulation/autorun/executiveBankCase'
+import { useSimulationStore } from '@/store/useSimulationStore'
 
 /**
  * Zero-prop wrapper around {@link RiskHeatmapGenerator} for the Command Center
@@ -15,6 +19,11 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
  * one-click load sample entries to explore the treatment workflow standalone.
  */
 export function RiskHeatmapGeneratorStandalone() {
+  // Reactive, so the bank walkthrough's sample register (which the Risk
+  // Register step keeps in local state, not the store) carries over here.
+  const sector = useSimulationStore((s) => s.sector)
+  const sampleBank = isExecutiveBankOverview(sector)
+  const bankEntries = useMemo(() => bankRiskEntries(), [])
   const riskEntries = useRiskRegisterStore((s) => s.riskEntries)
   const setRiskEntries = useRiskRegisterStore((s) => s.setRiskEntries)
   const navigate = useNavigate()
@@ -34,6 +43,17 @@ export function RiskHeatmapGeneratorStandalone() {
       sources.push(
         `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
       )
+  }
+
+  if (sampleBank) {
+    return (
+      <div className="space-y-3">
+        <p className="rounded-lg border border-primary/30 p-3 text-xs text-muted-foreground">
+          {BANK_CASE_NOTE}
+        </p>
+        <RiskHeatmapGenerator riskEntries={bankEntries} />
+      </div>
+    )
   }
 
   if (riskEntries.length === 0) {

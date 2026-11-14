@@ -3,6 +3,7 @@ import { beforeEach, describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { RotationPolicyDesigner } from './RotationPolicyDesigner'
 import { ROTATION_POLICIES } from '../data/secretsConstants'
+import { OPENBAO_SIGNING_RECIPE } from '../data/openBaoSigningContract'
 vi.mock('../data/secretsConstants', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../data/secretsConstants')>()
   return { ...actual, ROTATION_POLICIES: structuredClone(actual.ROTATION_POLICIES) }
@@ -109,5 +110,28 @@ describe('illustrative rotation TTL comparisons', () => {
     expect(
       screen.getByText('Illustrative Rotation Policy Draft — Not Validated')
     ).toBeInTheDocument()
+  })
+})
+
+describe('OpenBao signing example in the rotation plan', () => {
+  it('updates the chosen TTL while retaining the exact runnable signing recipe', () => {
+    render(<RotationPolicyDesigner />)
+    fireEvent.click(screen.getByRole('button', { name: 'View Unvalidated YAML Draft' }))
+    const before = screen.getByLabelText('Sample rotation YAML').textContent!
+    expect(before).toContain('version: "2.7.2"')
+    expect(before).toContain('key_type: "mldsa-65"')
+    expect(before).not.toContain('vault_version: ">=1.18.0"')
+    expect(before).not.toContain('kek_algorithm: "ML-KEM-768"')
+    const recipeFrom = (text: string) =>
+      text
+        .split('  cli: |\n')[1]
+        .split('\n')
+        .map((line) => line.slice(4))
+        .join('\n')
+    expect(recipeFrom(before)).toBe(OPENBAO_SIGNING_RECIPE)
+    selectTtl('API Keys & Access Tokens', '1 day')
+    const after = screen.getByLabelText('Sample rotation YAML').textContent!
+    expect(after).not.toBe(before)
+    expect(recipeFrom(after)).toBe(OPENBAO_SIGNING_RECIPE)
   })
 })

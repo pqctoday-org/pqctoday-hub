@@ -121,6 +121,12 @@ function severityBand(severity: number): QRAHeatmapCell['band'] {
 function buildHeatmap(result: AssessmentResult): QRAHeatmapCell[] {
   const cs = result.categoryScores
   if (!cs) return []
+  // The engine emits coarse categoryScores on every track to feed the simulation
+  // and KPIs, so their presence does not mean the per-domain breakdown was earned.
+  // Only a comprehensive assessment shows them — the report locks the same scores
+  // behind the full assessment (RiskBreakdownLocked), so a quick report must not
+  // reveal them here either.
+  if (result.assessmentProfile?.mode !== 'comprehensive') return []
   // For three axes higher = worse; for organizationalReadiness higher = better,
   // so its severity is inverted.
   return [

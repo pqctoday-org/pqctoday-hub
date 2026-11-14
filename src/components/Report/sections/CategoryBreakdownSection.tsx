@@ -134,11 +134,16 @@ export const RiskBreakdownUnlocked = ({
   </div>
 )
 
-export const RiskBreakdownLocked = () => (
+export const RiskBreakdownLocked = ({ shared = false }: { shared?: boolean }) => (
   <div id="report-section-riskBreakdown">
     <ReportLockedOverlay
+      shared={shared}
       reason="Per-domain scores need the full assessment"
-      detail="A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
+      detail={
+        shared
+          ? "This shared report came from a quick assessment, which can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness."
+          : "A quick assessment can't separate Quantum Exposure, Migration Complexity, Regulatory Pressure and Organizational Readiness. Finish the full assessment to unlock the breakdown."
+      }
     >
       <CategoryBreakdownPreviewSkeleton />
     </ReportLockedOverlay>

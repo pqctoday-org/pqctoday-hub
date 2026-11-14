@@ -5,6 +5,7 @@ import {
   findCountryNextMilestone,
   upcomingMilestonesIn,
   findCountryMilestoneGroups,
+  selectedMilestoneIn,
 } from './countryMilestone'
 import type { GanttCountryData, TimelineEvent } from '../../types/timeline'
 
@@ -141,5 +142,47 @@ describe('findCountryMilestoneGroups on the shipped timeline', () => {
     expect(groups.length).toBeGreaterThan(1)
     const year = new Date().getFullYear()
     expect(groups.flatMap((g) => g.milestones).every((m) => m.year >= year)).toBe(true)
+  })
+})
+
+describe('selectedMilestoneIn', () => {
+  function withDeadline(title: string, endYear: number): GanttCountryData[] {
+    return [
+      {
+        country: { countryName: 'Testland', flagCode: 'xx', bodies: [] },
+        phases: [
+          {
+            startYear: endYear,
+            endYear,
+            phase: 'Deadline',
+            type: 'Milestone',
+            title,
+            description: '',
+            events: [ev(endYear, title, { mandateType: 'HARD' })],
+          },
+        ],
+      },
+    ]
+  }
+
+  it('returns the deadline the visitor chose', () => {
+    const m = selectedMilestoneIn(
+      withDeadline('Retire classical', 2030),
+      'Testland',
+      { id: 'Retire classical', year: 2030 } as never,
+      2026
+    )
+    expect(m).toMatchObject({ year: 2030, title: 'Retire classical', binding: true })
+  })
+
+  it('a chosen deadline that has already passed is not used to pace the roadmap', () => {
+    expect(
+      selectedMilestoneIn(
+        withDeadline('Old target', 2025),
+        'Testland',
+        { id: 'Old target', year: 2025 } as never,
+        2026
+      )
+    ).toBeNull()
   })
 })

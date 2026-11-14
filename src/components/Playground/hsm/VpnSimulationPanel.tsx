@@ -5299,7 +5299,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             RFC 9242 (IKE_INTERMEDIATE) →
           </Link>
           <Link
-            to="/library?ref=draft-ietf-ipsecme-ikev2-mlkem-05"
+            to="/library?ref=draft-ietf-ipsecme-ikev2-mlkem-09"
             className="text-primary hover:underline font-medium"
             target="_blank"
             rel="noopener noreferrer"
