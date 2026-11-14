@@ -584,9 +584,11 @@ export function MobileHomeBoard({
 function MobileHomeSkipped({ onOpenRoleSwitch }: { onOpenRoleSwitch: () => void }) {
   return (
     <div className="flex flex-col items-center gap-4 px-4 pb-4 pt-16 text-center">
-      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+      {/* The page's one h1 (2026-11-14): this screen had none, so "/" on a
+          phone after "Show me everything" had no top-level heading at all. */}
+      <h1 className="text-[22px] font-extrabold leading-tight text-foreground">
         Post-quantum cryptography, explained and provable
-      </p>
+      </h1>
       <p className="max-w-[280px] text-[13px] leading-relaxed text-muted-foreground">
         You're seeing everything, unfiltered. Pick a role any time to get a board tuned to what you
         need.

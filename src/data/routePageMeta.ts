@@ -77,6 +77,12 @@ export const pageIdForNestedRoute = (pathname: string): PageId | undefined =>
 //    static `description` copy instead of importing the tools registry (a
 //    sizeable data+icon module) into the always-loaded MainLayout shell.
 export const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string }>> = {
+  // Home had no entry until 2026-11-14, so the phone's Share button sent
+  // "PQC Today — PQC Today" with no text.
+  '/': {
+    title: 'PQC Today — Post-Quantum Cryptography Migration Hub',
+    text: 'A free, open educational hub for post-quantum cryptography: learn the standards, follow the deadlines, and try the algorithms in your browser.',
+  },
   '/algorithms': {
     title: 'PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More',
     text: 'Compare dozens of cryptographic algorithms side-by-side — security levels, key sizes, and performance.',
