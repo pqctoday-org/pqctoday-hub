@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { ArrowRight, ExternalLink, GitBranch, Search, X } from 'lucide-react'
+import { ArrowRight, ExternalLink, FlaskConical, GitBranch, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
@@ -10,6 +10,11 @@ import {
   type ProtocolMatrixRow,
 } from '@/data/pqcProtocolMatrix'
 import { specLink } from '@/components/Algorithms/libraryRef'
+import {
+  resolveToolLink,
+  toolLinkLabel,
+  toolLinkTitle,
+} from '@/components/Algorithms/matrixToolLink'
 import {
   AVAILABILITY_LABELS,
   SORT_LABELS,
@@ -457,6 +462,29 @@ export function MobileProtocolMatrixView() {
                       {lib.name}
                     </Link>
                   ))}
+                </div>
+              </div>
+            )}
+            {selected.playgrounds.length > 0 && (
+              <div>
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Try it
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {selected.playgrounds.map((tool) => {
+                    const href = resolveToolLink(tool)
+                    return (
+                      <Link
+                        key={tool.toolId}
+                        to={href}
+                        title={toolLinkTitle(tool, href)}
+                        className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[10.5px] font-medium text-primary-legible"
+                      >
+                        <FlaskConical size={10} aria-hidden="true" />
+                        {toolLinkLabel(tool, href)}
+                      </Link>
+                    )
+                  })}
                 </div>
               </div>
             )}

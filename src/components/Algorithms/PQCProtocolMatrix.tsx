@@ -49,7 +49,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ProtocolDetailModal } from './ProtocolDetailModal'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
-import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { resolveToolLink, toolLinkLabel, toolLinkTitle } from './matrixToolLink'
 import { SpecLink } from './SpecLink'
 import { SuccessorButton } from './SuccessorButton'
 import {
@@ -69,37 +69,6 @@ import {
   type SortKey,
 } from './protocolMatrixState'
 
-// Resolve the canonical destination for a matrix PlaygroundTool cell.
-// Priority: explicit per-cell `url` > registry `moduleLink` > playground fallback.
-// Without this, every cell would hit `/playground/<toolId>`, which for several
-// tools (e.g. pki-enrollment) is a minimal preview rather than the full workshop.
-const WORKSHOP_TOOL_LINKS: Record<string, string> = Object.fromEntries(
-  WORKSHOP_TOOLS.map((t) => [t.id, t.moduleLink])
-)
-function resolveToolLink(tool: PlaygroundTool): string {
-  return tool.url ?? WORKSHOP_TOOL_LINKS[tool.toolId] ?? `/playground/${tool.toolId}`
-}
-
-/** True when a tool cell resolves to a Learn module rather than the tool itself. */
-function opensLearnModule(href: string): boolean {
-  return href.startsWith('/learn/')
-}
-
-/**
- * Visible label for a tool cell. When the link resolves to the Learn module
- * that hosts the tool (registry `moduleLink`), say so, so the label matches
- * where the click lands — the protocol modal links the tool page directly.
- * Exported for unit tests.
- */
-export function toolLinkLabel(tool: PlaygroundTool, href: string): string {
-  return opensLearnModule(href) ? `${tool.toolName} (Learn module)` : tool.toolName
-}
-
-function toolLinkTitle(tool: PlaygroundTool, href: string): string {
-  return opensLearnModule(href)
-    ? `Opens the Learn module that hosts ${tool.toolName}`
-    : `Open ${tool.toolName}`
-}
 type ViewMode = 'heatmap' | 'detailed'
 
 interface DimensionBadgeProps {
