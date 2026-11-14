@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { MobileAssessView } from './MobileAssessView'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
@@ -14,6 +14,7 @@ import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { applicableFrameworks } from '@/utils/applicabilityEngine'
 import { complianceFrameworks } from '@/data/complianceData'
 import { LAYERS } from '@/data/infrastructureLayers'
+import { CRYPTO_LIBRARY_OPTIONS, INFRA_AUTOMATION_OPTIONS } from '@/data/infraToolchainOptions'
 
 // Real data throughout. The screenshot and its own README prose disagree
 // with each other on step count ("1 of 6" vs "1 of 8"), and both are wrong
@@ -89,6 +90,38 @@ describe('MobileAssessView', () => {
     expect(screen.getByRole('button', { name: /Next/ })).toBeDisabled()
     fireEvent.click(screen.getByText("I'm not sure — help me choose").closest('button')!)
     expect(screen.getByRole('button', { name: /Next/ })).not.toBeDisabled()
+  })
+
+  it('selecting a crypto category reveals its specific algorithms; chips toggle currentCrypto and deselecting the category clears them', async () => {
+    useAssessmentFormStore.setState({ industry: 'Technology', country: 'United States' })
+    renderView()
+    fireEvent.click(screen.getByRole('button', { name: /Next/ })) // industry -> country
+    fireEvent.click(screen.getByRole('button', { name: /Next/ })) // country -> crypto
+    // No category chosen yet: no algorithm chips are offered.
+    expect(screen.queryByText(/Key Exchange — specific algorithms/)).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByText('Key Exchange').closest('button')!)
+    expect(useAssessmentFormStore.getState().currentCryptoCategories).toEqual(['Key Exchange'])
+    const group = await screen.findByRole('group', { name: 'Key Exchange algorithms' })
+    const chips = within(group).getAllByRole('button')
+    expect(chips.length).toBeGreaterThan(1)
+
+    // Same chip list desktop builds: tapping a chip stores its algorithm key.
+    const rsa = chips[0]
+    fireEvent.click(rsa)
+    const selectedKeys = useAssessmentFormStore.getState().currentCrypto
+    expect(selectedKeys).toHaveLength(1)
+    expect(rsa).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(rsa)
+    expect(useAssessmentFormStore.getState().currentCrypto).toEqual([])
+
+    // Pick one, then drop the category: its specific algorithms go with it.
+    fireEvent.click(rsa)
+    expect(useAssessmentFormStore.getState().currentCrypto).toHaveLength(1)
+    fireEvent.click(screen.getByText('Key Exchange').closest('button')!)
+    expect(useAssessmentFormStore.getState().currentCryptoCategories).toEqual([])
+    expect(useAssessmentFormStore.getState().currentCrypto).toEqual([])
+    expect(screen.queryByRole('group', { name: 'Key Exchange algorithms' })).not.toBeInTheDocument()
   })
 
   it('shows the real 4 crypto categories, not the full algorithm list', () => {
@@ -296,6 +329,13 @@ describe('MobileAssessView', () => {
       expect(screen.getByText('Review your answers')).toBeInTheDocument()
       expect(screen.getByText('Finance & Banking')).toBeInTheDocument()
     })
+
+    it('Edit lands on the chosen question for a middle step and moves the stored step to it', () => {
+      goToReview()
+      fireEvent.click(screen.getByRole('button', { name: `Edit ${STEP_META.crypto.label}` }))
+      expect(screen.getByText(STEP_META.crypto.question)).toBeInTheDocument()
+      expect(useAssessmentFormStore.getState().currentStep).toBe(2)
+    })
   })
 
   // 2026-08-24 Assess-step audit: the compliance step rendered a flat,
@@ -420,7 +460,7 @@ describe('MobileAssessView', () => {
       expect(useAssessmentFormStore.getState().cryptoAgility).toBe('fully-abstracted')
     })
 
-    it('infra: shows only the real 9 layers — sub-categories/libraries/tools/vendor dropped', () => {
+    it('infra: shows the real 9 layers plus the crypto-library and automation chips, toggling the store', () => {
       goToComprehensiveStep('infra')
       expect(screen.getByText(STEP_META.infra.question)).toBeInTheDocument()
       for (const layer of LAYERS) {
@@ -428,7 +468,25 @@ describe('MobileAssessView', () => {
       }
       fireEvent.click(screen.getByText(LAYERS[0].label).closest('button')!)
       expect(useAssessmentFormStore.getState().infrastructure).toContain(LAYERS[0].id)
-      // The one real remaining desktop-only cut is named honestly, not silently dropped.
+
+      // Same option lists desktop's Step 12 offers.
+      for (const lib of CRYPTO_LIBRARY_OPTIONS) {
+        expect(screen.getByRole('button', { name: lib })).toBeInTheDocument()
+      }
+      for (const tool of INFRA_AUTOMATION_OPTIONS) {
+        expect(screen.getByRole('button', { name: tool })).toBeInTheDocument()
+      }
+      const openssl = screen.getByRole('button', { name: 'OpenSSL' })
+      fireEvent.click(openssl)
+      expect(useAssessmentFormStore.getState().cryptoLibraries).toEqual(['OpenSSL'])
+      expect(openssl).toHaveAttribute('aria-pressed', 'true')
+      fireEvent.click(openssl)
+      expect(useAssessmentFormStore.getState().cryptoLibraries).toEqual([])
+
+      const terraform = screen.getByRole('button', { name: 'Terraform' })
+      fireEvent.click(terraform)
+      expect(useAssessmentFormStore.getState().infraAutomation).toEqual(['Terraform'])
+      // The remaining desktop-only cut is still named, not silently dropped.
       expect(screen.getByText(/Step 12's finer-grained matrices/)).toBeInTheDocument()
     })
 
