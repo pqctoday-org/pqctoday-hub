@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter, useLocation } from 'react-router'
 import { BusinessCenterView } from './BusinessCenterView'
 import '@testing-library/jest-dom'
 
@@ -427,5 +427,61 @@ describe('BusinessCenterView', () => {
       // empty state.
       expect(screen.queryByTestId('bc-dashboard-ready')).not.toBeInTheDocument()
     })
+  })
+})
+
+// Shows the router's current search string so a test can check the URL.
+function LocationProbe() {
+  const location = useLocation()
+  return <div data-testid="location-search">{location.search}</div>
+}
+
+describe('BusinessCenterView ?zone= deep link', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // jsdom has no layout engine; the deep link scrolls the zone into view.
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockAssessmentStore.industry = 'Technology'
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = 'curious'
+  })
+
+  function renderAt(url: string) {
+    return render(
+      <MemoryRouter initialEntries={[url]}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+  }
+
+  it('opens the deep-linked zone, then lets the user switch to another zone', () => {
+    renderAt('/business?zone=mitigation')
+
+    // The linked zone opens on arrival.
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
+
+    // Selecting another zone moves the open zone; the deep link no longer pins it.
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Governance' }))
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Mitigation' })).toBeInTheDocument()
+  })
+
+  it('lets the user collapse the deep-linked zone', () => {
+    renderAt('/business?zone=governance')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse Governance' }))
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Collapse / })).not.toBeInTheDocument()
+  })
+
+  it('removes zone from the URL and keeps other query params', () => {
+    renderAt('/business?foo=bar&zone=assets')
+
+    expect(screen.getByTestId('location-search')).not.toHaveTextContent('zone=')
+    expect(screen.getByTestId('location-search')).toHaveTextContent('foo=bar')
+    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
   })
 })

@@ -393,6 +393,30 @@ export function BusinessCenterView() {
     }
   }, [zoneFromQuery])
 
+  // A ?zone= deep link opens that zone once, when it arrives. It is recorded in
+  // `appliedZoneQuery` so the user can then switch or collapse zones freely.
+  // Derived during render (not in an effect) so the zone is already open in the
+  // first committed frame, which the scroll effect above relies on.
+  const [appliedZoneQuery, setAppliedZoneQuery] = useState<ZoneId | null>(null)
+  if (zoneFromQuery !== appliedZoneQuery) {
+    setAppliedZoneQuery(zoneFromQuery)
+    if (zoneFromQuery) setOpenZone(zoneFromQuery)
+  }
+
+  // Remove the consumed param (other params kept) so later user navigation is
+  // not overridden by a stale ?zone=. Runs after the scroll effect above.
+  useEffect(() => {
+    if (!zoneFromQuery) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('zone')
+        return next
+      },
+      { replace: true }
+    )
+  }, [zoneFromQuery, setSearchParams])
+
   // Legacy hash redirects. Keeps old inbound URLs from CSWP39StepBadge / Report
   // nav (#step-govern), and from the previous §3-§6 iteration (#section-strategic),
   // working after this Fig 3 rebuild. Maps any legacy id to its zone via
@@ -541,8 +565,8 @@ export function BusinessCenterView() {
     onCreateArtifact: handleCreateArtifact,
   }
 
-  // ?zone=<id> deep-link wins over user selection.
-  const effectiveOpenZone: ZoneId | null = zoneFromQuery ?? openZone
+  // The open zone is `openZone`; a ?zone= deep link sets it once (see above).
+  const effectiveOpenZone: ZoneId | null = openZone
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
