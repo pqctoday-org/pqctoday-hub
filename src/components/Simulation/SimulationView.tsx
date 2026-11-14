@@ -23,7 +23,7 @@
  * intel rail from beginners.
  */
 import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
-import { Pencil } from 'lucide-react'
+import { FileText, Pencil } from 'lucide-react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -234,7 +234,11 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { computeAssessment } from '@/hooks/useAssessmentEngine'
-import { loadSampleOrganisation, SAMPLE_ORG_KEY } from './sampleOrganisation'
+import {
+  loadSampleOrganisation,
+  unloadSampleOrganisation,
+  SAMPLE_ORG_KEY,
+} from './sampleOrganisation'
 import { useLearnerEvidenceRecorder } from './hooks/useLearnerEvidenceRecorder'
 import { isAutoRunFillActive } from './autorun/autoRunFill'
 import { MeasureStatus, RecurrenceProgressBanner } from './stepStatus'
@@ -3550,6 +3554,36 @@ export function SimulationView() {
               >
                 <Pencil size={11} aria-hidden="true" />
               </Link>
+              {ownAssessment && (
+                <Link
+                  to="/report"
+                  onClick={() => markSimResume()}
+                  title="Open your assessment report"
+                  aria-label="Open your assessment report"
+                  data-testid="sim-header-report-link"
+                  className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-background/70 hover:bg-background/20 hover:text-background"
+                >
+                  <FileText size={11} aria-hidden="true" />
+                </Link>
+              )}
+              {sampleRun && (
+                // The sample is a stand-in assessment result. Other hub pages that
+                // read the assessment would see it too, so the reader can always
+                // put it away — the sim then returns to its start screen.
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    autoRunPlayer.stop()
+                    unloadSampleOrganisation()
+                  }}
+                  data-testid="sim-unload-sample"
+                  className="h-5 rounded-full px-2 font-mono text-sim-micro font-bold uppercase text-background/80 hover:bg-background/20 hover:text-background"
+                >
+                  Leave sample
+                </Button>
+              )}
             </div>
             <Dial
               label="Seat"
