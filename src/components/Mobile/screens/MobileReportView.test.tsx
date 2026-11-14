@@ -74,6 +74,28 @@ describe('MobileReportView', () => {
     expect(screen.getByText('Start Assessment').closest('a')).toHaveAttribute('href', '/assess')
   })
 
+  it('keeps showing the report after "Edit answers" sets the status back to in-progress', () => {
+    completeQuick()
+    useAssessmentFormStore.setState({ assessmentStatus: 'in-progress' })
+    renderView()
+    expect(screen.queryByText('No Report Yet')).not.toBeInTheDocument()
+    const result = computeAssessment({
+      industry: QUICK_INPUT.industry,
+      currentCrypto: [],
+      dataSensitivity: QUICK_INPUT.dataSensitivity,
+      complianceRequirements: [],
+      migrationStatus: QUICK_INPUT.migrationStatus,
+      country: QUICK_INPUT.country,
+    })
+    expect(screen.getByText(String(result.riskScore))).toBeInTheDocument()
+  })
+
+  it('shows no report while a first run is still missing answers', () => {
+    useAssessmentFormStore.setState({ industry: 'Technology', assessmentStatus: 'in-progress' })
+    renderView()
+    expect(screen.getByText('No Report Yet')).toBeInTheDocument()
+  })
+
   it('shows the curious-specific empty-state copy for the curious persona', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderView()

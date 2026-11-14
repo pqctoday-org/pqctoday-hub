@@ -75,7 +75,12 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
   // `getInput()` builds a fresh object on every read, so key the memo on a stable
   // serialization of it — edits to any answer, or a persona change that feeds the
   // input, recompute the report instead of keeping the first completion's result.
-  const input = store.assessmentStatus === 'complete' ? store.getInput() : null
+  // Same rule as desktop ReportView: after "Edit answers" the status is
+  // in-progress but the answers are still complete, so keep showing the report.
+  const input =
+    store.assessmentStatus === 'complete' || store.assessmentStatus === 'in-progress'
+      ? store.getInput()
+      : null
   const inputKey = input ? JSON.stringify(input) : null
   const ownResult = useMemo(() => {
     if (!inputKey) return null

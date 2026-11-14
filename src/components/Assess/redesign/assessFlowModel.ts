@@ -384,6 +384,10 @@ export interface AssessOptionalAnswerState {
   useCasesUnknown?: boolean
   infrastructure?: string[]
   infrastructureUnknown?: boolean
+  vendorDependency?: string
+  vendorUnknown?: boolean
+  cryptoLibraries?: string[]
+  infraAutomation?: string[]
 }
 
 export type AssessAnswerState = AssessValidatorState & AssessOptionalAnswerState
@@ -401,7 +405,16 @@ export function hasAnswer(key: AssessStepKey, s: AssessAnswerState): boolean {
     case 'use-cases':
       return (s.cryptoUseCases?.length ?? 0) > 0 || !!s.useCasesUnknown
     case 'infra':
-      return (s.infrastructure?.length ?? 0) > 0 || !!s.infrastructureUnknown
+      // The step asks about layers, vendor model, crypto libraries and automation;
+      // any one of them counts, matching the review summary.
+      return (
+        (s.infrastructure?.length ?? 0) > 0 ||
+        !!s.infrastructureUnknown ||
+        !!s.vendorDependency ||
+        !!s.vendorUnknown ||
+        (s.cryptoLibraries?.length ?? 0) > 0 ||
+        (s.infraAutomation?.length ?? 0) > 0
+      )
     default:
       return STEP_VALIDATORS[key](s)
   }

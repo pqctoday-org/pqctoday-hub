@@ -216,6 +216,16 @@ describe('assess flow model — optional-step answers', () => {
     expect(hasAnswer('infra', { ...emptyState(), infrastructure: ['hsm'] })).toBe(true)
   })
 
+  it('any of the infrastructure step parts answers it, as the review summary does', () => {
+    expect(hasAnswer('infra', { ...emptyState(), cryptoLibraries: ['OpenSSL'] })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), infraAutomation: ['None'] })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), vendorDependency: 'mixed' })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), vendorUnknown: true })).toBe(true)
+    expect(hasAnswer('infra', { ...emptyState(), cryptoLibraries: [], vendorDependency: '' })).toBe(
+      false
+    )
+  })
+
   it('hasAnswer on a required step is the validator', () => {
     expect(hasAnswer('industry', emptyState())).toBe(false)
     expect(hasAnswer('industry', { ...emptyState(), industry: 'Healthcare' })).toBe(true)
