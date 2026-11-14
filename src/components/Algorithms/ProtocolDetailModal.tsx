@@ -35,6 +35,8 @@ import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { Button } from '@/components/ui/button'
+import { SuccessorButton } from './SuccessorButton'
+import { replacedRows, successorOf } from './protocolMatrixState'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
@@ -46,6 +48,9 @@ interface ProtocolDetailModalProps {
   isOpen: boolean
   onClose: () => void
   protocol: ProtocolMatrixRow | null
+  /** Opens another protocol in this dialog (the successor of a deprecated row, or a
+   *  row it replaces). Omit to leave those names as plain text. */
+  onSelectProtocol?: (row: ProtocolMatrixRow) => void
 }
 
 function dimensionLabel(value: DimensionStatusValue): string {
@@ -419,7 +424,12 @@ function SourceRow({ source }: { source: RowSource }) {
   )
 }
 
-export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetailModalProps) {
+export function ProtocolDetailModal({
+  isOpen,
+  onClose,
+  protocol,
+  onSelectProtocol,
+}: ProtocolDetailModalProps) {
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
 
@@ -430,6 +440,9 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
         : undefined,
     [protocol]
   )
+
+  const successor = protocol ? successorOf(protocol) : undefined
+  const replaces = useMemo(() => (protocol ? replacedRows(protocol) : []), [protocol])
 
   // Row-level sources, deduped against every URL already shown in the modal —
   // only citations that aren't already linked per-cell are surfaced.
@@ -496,6 +509,41 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                     >
                       <GitBranch size={11} />
                       inherited by: {protocol.inheritedBy.join(', ')}
+                    </span>
+                  )}
+                  {successor && onSelectProtocol && (
+                    <SuccessorButton
+                      from={protocol}
+                      successor={successor}
+                      onOpen={onSelectProtocol}
+                    />
+                  )}
+                  {successor && !onSelectProtocol && (
+                    <span className="text-[11px] text-status-warning">
+                      no PQC path → {successor.name}
+                    </span>
+                  )}
+                  {replaces.length > 0 && (
+                    <span className="inline-flex flex-wrap items-center gap-1 text-[11px] text-muted-foreground">
+                      replaces
+                      {replaces.map((r) =>
+                        onSelectProtocol ? (
+                          <Button
+                            key={r.id}
+                            type="button"
+                            variant="link"
+                            size="sm"
+                            onClick={() => onSelectProtocol(r)}
+                            className="h-auto p-0 text-[11px]"
+                          >
+                            {r.name}
+                          </Button>
+                        ) : (
+                          <span key={r.id} className="font-medium text-foreground">
+                            {r.name}
+                          </span>
+                        )
+                      )}
                     </span>
                   )}
                 </div>

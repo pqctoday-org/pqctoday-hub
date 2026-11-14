@@ -64,6 +64,7 @@ const result: AssessmentResult = {
     regulatoryPressure: 70,
     organizationalReadiness: 30,
   },
+  assessmentProfile: { mode: 'comprehensive' } as AssessmentResult['assessmentProfile'],
 }
 
 const renderQRA = (overrides?: Partial<AssessmentResult>) =>
@@ -153,6 +154,14 @@ describe('QRASection', () => {
     renderQRA()
     expect(screen.getByText('Source states PQC required')).toBeInTheDocument()
     expect(screen.getByText('No PQC mandate yet')).toBeInTheDocument()
+  })
+
+  it('keeps the heatmap locked on a quick assessment even though coarse scores exist', () => {
+    renderQRA({ assessmentProfile: { mode: 'quick' } as AssessmentResult['assessmentProfile'] })
+    expect(screen.queryByText('Quantum Exposure')).not.toBeInTheDocument()
+    expect(
+      screen.getByText(/Estate heatmap needs the comprehensive assessment/i)
+    ).toBeInTheDocument()
   })
 
   it('degrades gracefully when category scores are absent (quick mode)', () => {

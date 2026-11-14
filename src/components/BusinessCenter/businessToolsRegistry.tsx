@@ -188,7 +188,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A plan that survives the machine arriving early. If your roadmap only works at the median estimate, it is a forecast, not a plan.',
     workedExample:
-      'Set the CRQC arrival year to 2030 and tick your compliance deadlines: the tool lists which of RSA-2048, ECDSA P-256 and the others are broken by then, and the HNDL exposure window for data you keep past that year.',
+      'Set the CRQC arrival year to 2030 and untick any compliance deadline that does not apply to your systems: the tool lists RSA-2048, ECDSA P-256 and the others broken by a CRQC, counts the ticked deadlines that fall before that year, and shows the HNDL exposure window for data you keep past it.',
     name: 'CRQC Scenario Planner',
     description: 'Plan for cryptographically relevant quantum computer threat scenarios',
     category: 'Risk & Strategy',
@@ -202,16 +202,13 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'risk-register',
-    // 2026-09-19: the builder's fields are asset, current algorithm, threat
-    // vector, likelihood, impact and mitigation — it has no owner or review-date
-    // field, so these lines describe what it renders.
     goodAnswer:
-      'Record the scenario and a proposed mitigation alongside its illustrative likelihood × impact score. This worksheet does not track owners or review dates; evaluate those capabilities in production risk-management tools.',
+      "Each entry names an owner role and a next review date. An entry without them is a note, not a risk: no one is answerable for treating it. Use roles, not people's names; recording a role is not a sign-off.",
     workedExample:
       "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely and Impact 5 — Catastrophic: the card shows Score: 20 (Critical) and the Risk Summary counts it as Critical.",
     name: 'Risk Register Builder',
     description:
-      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact and proposed mitigation',
+      'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact, proposed mitigation, owner role and review date',
     category: 'Risk & Strategy',
     icon: ListChecks,
     keywords: ['risk', 'register', 'inventory', 'mitigation', 'likelihood', 'impact'],
@@ -226,7 +223,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Each high risk maps to a treatment someone has actually agreed to fund. Accepting a risk is a valid answer — leaving it blank is not.',
     workedExample:
-      'Place a risk at Likelihood 4 / Impact 5 on the heatmap, choose Mitigate and write the rationale: it appears in the Treatment Summary and in the Migration Priority Order, where you can move it up or down and say why.',
+      'Load sample entries, click the Likelihood 4 / Impact 5 cell, choose Mitigate and write the rationale: it appears in the Treatment Summary and in the Migration Priority Order, where you can move it up or down and say why.',
     name: 'Risk Heatmap & Treatment Plan',
     description: 'Visualise residual risk and draft treatment strategies per risk category',
     category: 'Risk & Strategy',
@@ -245,7 +242,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Every "yes" points at evidence that exists today. A checklist of intentions passes no audit.',
     workedExample:
-      "Pick your industry and primary jurisdiction: each starred framework gets its own checklist with a deadline, a compliance owner and evidence items such as 'Crypto inventory mapped to this framework'.",
+      "Under 'Add frameworks to this checklist', pick an industry and a primary jurisdiction (or Load sample frameworks) and add the frameworks in scope: each one gets its own checklist with a deadline, a compliance owner and controls such as 'Crypto inventory mapped to this framework'. Frameworks starred on /compliance are added automatically.",
     name: 'Compliance Checklist',
     description:
       'Per-framework PQC compliance checklist seeded from your starred frameworks and assessment',
@@ -281,7 +278,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Dates you did not choose, next to dates you did. The gap between the two is the plan.',
     workedExample:
-      "Select jurisdictions and add a fictional milestone such as 'Complete crypto inventory' with a year. Compare the dates; obligation satisfaction stays not assessed because these milestones do not record requirement-specific scope or supporting checks.",
+      "Select jurisdictions, add a fictional milestone such as 'Complete crypto inventory' with a year, and tick the obligations it works toward in the Add Milestone form. The Obligation Review then compares only those linked deadlines (e.g. 'Planned by reference year'); obligation satisfaction stays not assessed.",
     name: 'Compliance Timeline Builder',
     description: 'Plot framework milestones, deadlines, and dependencies on a single timeline',
     category: 'Compliance & Audit',
@@ -334,7 +331,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     workedExample:
-      'Choose the Executive lens and enter a fictional Systems Inventoried value. Catalogue calculations use selected example products; other values are learner inputs. The combined sample score requires 70% scored-value coverage, not verified evidence. Saved values without usable provenance stay unassessed until explicitly used or recalculated; missing inputs must be supplied.',
+      'On a new worksheet, click Load sample baseline: the KPIs you normally type in get fictional values labelled Hub sample baseline, so the Overall Score appears (48/100 under the Executive lens). Switch to the Architect lens and the same values re-weight to 37/100. Move a slider to replace a sample value with your own; Clear sample baseline removes only the sample values. Catalogue calculations use only products you selected in Migrate, and the combined score still needs 70% scored-value coverage, which is not verified evidence.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',
@@ -457,7 +454,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     workedExample:
-      'Choose the Executive lens and a fictional reporting baseline. Inspect catalogue-derived sample measures and enter hypothetical progress values. Missing or unconfirmed saved values stay unassessed; the combined score requires 70% scored-value coverage. Sample notes and learner-selected review labels do not verify evidence or establish readiness.',
+      'Choose the Executive lens and click Load sample baseline: fictional values labelled Hub sample baseline fill the KPIs you normally enter, and the Overall Score appears. Switch to the Ops lens to see the same values re-weighted, then replace sample values with hypothetical progress of your own. Missing or unconfirmed saved values stay unassessed; the combined score requires 70% scored-value coverage. Sample notes and review labels do not verify evidence or establish readiness.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',
@@ -648,7 +645,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'You know which of your own tools would have to change before a single production key does.',
     workedExample:
-      'Rate your coverage — None, Manual, Partial or Automated — for each of the seven categories from Asset Management (CMDB / SBOM pipeline) to Zero-Trust Enforcement: the gap list, ordered by importance, says which tool has to change before a production key does.',
+      "Rate each of the seven categories — None, Manual, Partial or Automated — and set Systems covered: an Automated Crypto Scanner that reaches only 30% of systems keeps its Hub Tool-Category Rating but lowers Coverage-Adjusted Readiness and stays on the gap list, ordered by importance, as 'Automated, but only 30% of systems covered'.",
     name: 'Management Tools Audit',
     description:
       'Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5',
@@ -676,7 +673,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A CBOM you can regenerate repeatably. Its accuracy depends on source coverage, input freshness and reconciliation with the scoped inventory; generation alone does not establish completeness.',
     workedExample:
-      'Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get a FIPS, ESV, PQC and posture reading, and one click downloads a CycloneDX 1.7 CBOM.',
+      'Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get an end-of-life, FIPS, ESV, PQC and posture reading (OpenSSL 1.1.1w shows EoL (2023-09-11)), and one click downloads a CycloneDX 1.7 CBOM.',
     name: 'Crypto BOM (CBOM) Builder',
     description:
       'Build a CBOM slice from an SBOM, library posture, or HSM inventory; feeds the Assets pipeline',
@@ -831,7 +828,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'The assets whose refresh lands AFTER your deadline are named. Those need a decision now, not later.',
     workedExample:
-      "Keep the 3-year horizon, give 'HSM replacement' a next refresh of 2027 and 'Data center hardware' 2031: the first badge reads On budget, the second After horizon, and the banner counts how many of the seven programs need separate PQC spend.",
+      "Keep the 3-year horizon, give 'HSM replacement' a next refresh of 2027 and 'Data center hardware' 2031: the first badge reads Within planning window, the second After horizon, and the banner counts how many of the seven programs refresh after the planning horizon.",
     name: 'Refresh-Cycle Alignment',
     description:
       'Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals) so PQC work rides existing budgets',

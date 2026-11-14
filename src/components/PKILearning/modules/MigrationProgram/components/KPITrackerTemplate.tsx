@@ -23,6 +23,13 @@ import { KPI_CATALOG, KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import { rowsToCsv, spreadsheetSafeText } from '@/services/export/csvExport'
 import { useHasUserInteracted } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import type { ScorecardObservation } from '@/components/PKILearning/common/executive/DataDrivenScorecard'
+import { KpiSampleBaselineControl } from '@/components/PKILearning/common/executive/KpiSampleBaselineControl'
+import {
+  hasKpiSampleBaseline,
+  sampleBaselineScoreNote,
+  withKpiSampleBaseline,
+  withoutKpiSampleBaseline,
+} from '@/components/PKILearning/common/executive/kpiSampleBaseline'
 import {
   OVERALL_SCORE_MIN_COVERAGE,
   scoredWeightShare,
@@ -122,8 +129,10 @@ export function buildKpiTrackerMarkdown({
       : d.notYetScored === true && !touchedIds.has(d.id)
   let totalWeight = 0
   let weightedSum = 0
+  const countedIds: string[] = []
   for (const d of dimensions) {
     if (!isReadinessDimension(d) || isPending(d)) continue
+    countedIds.push(d.id)
     const score = scores[d.id] ?? d.autoScore ?? 0
     weightedSum += score * ew(d)
     totalWeight += ew(d)
@@ -136,6 +145,7 @@ export function buildKpiTrackerMarkdown({
     coverage >= OVERALL_SCORE_MIN_COVERAGE
       ? `**Overall Score: ${overall}/100**\n\n`
       : `**Overall Score: not available — scored-value coverage ${Math.round(coverage * 100)}%**\n\n`
+  md += sampleBaselineScoreNote(countedIds, (id) => valueOrigins?.[id])
   md += `Educational planning worksheet; entered values and catalogue status are not verified migration progress.\n\n`
   md += '## KPI Dimensions\n\n'
   md += '| KPI | Score | Weight | Target | Framework Mappings | Description | Value origin |\n'
@@ -264,7 +274,11 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   )
   const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
   const handleValueOriginsChange = useCallback((next: Record<string, KpiValueOrigin>) => {
-    setValueOrigins((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next))
+    // Merge: sample values for KPIs outside the current lens stay recorded.
+    setValueOrigins((prev) => {
+      const merged = { ...prev, ...next }
+      return JSON.stringify(prev) === JSON.stringify(merged) ? prev : merged
+    })
   }, [])
   const lastSyncedRef = useRef<string>('')
   const handleScoreSnapshot = useCallback((scores: Record<string, number>) => {
@@ -303,6 +317,38 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   const handleWeightSnapshot = useCallback((weights: Record<string, number>) => {
     setUserWeights(weights)
   }, [])
+
+  // What the scorecard mounts with. Loading or clearing the sample baseline
+  // replaces it and remounts the scorecard (the scorecard owns its live state).
+  const [scorecardSeed, setScorecardSeed] = useState(() => ({
+    key: 0,
+    scores: savedInputs?.userScores,
+    origins: savedInputs?.valueOrigins,
+    weights: savedInputs?.userWeights,
+  }))
+  const applySeed = useCallback(
+    (next: { scores: Record<string, number>; origins: Record<string, KpiValueOrigin> }) => {
+      lastSyncedRef.current = JSON.stringify(next.scores)
+      setUserScores(next.scores)
+      setValueOrigins(next.origins)
+      setScorecardSeed((prev) => ({
+        key: prev.key + 1,
+        scores: next.scores,
+        origins: next.origins,
+        weights: userWeights,
+      }))
+    },
+    [userWeights]
+  )
+  const sampleLoaded = hasKpiSampleBaseline(valueOrigins)
+  const handleLoadSample = useCallback(
+    () => applySeed(withKpiSampleBaseline(SURFACE, userScores, valueOrigins)),
+    [applySeed, userScores, valueOrigins]
+  )
+  const handleClearSample = useCallback(
+    () => applySeed(withoutKpiSampleBaseline(userScores, valueOrigins)),
+    [applySeed, userScores, valueOrigins]
+  )
 
   const exportMarkdown = useMemo(
     () =>
@@ -578,7 +624,14 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         />
       </div>
 
+      <KpiSampleBaselineControl
+        loaded={sampleLoaded}
+        onLoad={handleLoadSample}
+        onClear={handleClearSample}
+      />
+
       <DataDrivenScorecard
+        key={scorecardSeed.key}
         title="PQC Migration KPI Tracker"
         description={`Educational planning worksheet — ${activePersona} lens; values are not independently verified.`}
         minimumCoverageForOverall={OVERALL_SCORE_MIN_COVERAGE}
@@ -596,10 +649,10 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         // nothing read them back into the scorecard itself — it initialized
         // every slider from d.autoScore regardless of a restored save, so a
         // saved score looked reset on reload even though the write succeeded.
-        initialScores={savedInputs?.userScores}
-        initialValueOrigins={savedInputs?.valueOrigins}
+        initialScores={scorecardSeed.scores}
+        initialValueOrigins={scorecardSeed.origins}
         onValueOriginsChange={handleValueOriginsChange}
-        initialWeights={savedInputs?.userWeights}
+        initialWeights={scorecardSeed.weights}
       />
 
       {/* The overall score is a weighted average over only the KPIs that are

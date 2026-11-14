@@ -11,6 +11,7 @@ import { ReportUpgradeNudge } from '@/components/Report/redesign/ReportUpgradeNu
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { riskConfig as RISK_TIER } from '@/data/riskConfig'
+import { findReferenceEstate } from '@/data/assessmentScenarios'
 import type { SharedReportView } from '@/hooks/useResolvedSharedReport'
 import { BoardPackExport } from '@/components/common/BoardPackExport'
 
@@ -71,12 +72,21 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
   const store = useAssessmentStore()
   const livePersona = usePersonaStore((s) => s.selectedPersona)
 
+  // `getInput()` builds a fresh object on every read, so key the memo on a stable
+  // serialization of it — edits to any answer, or a persona change that feeds the
+  // input, recompute the report instead of keeping the first completion's result.
+  // Same rule as desktop ReportView: after "Edit answers" the status is
+  // in-progress but the answers are still complete, so keep showing the report.
+  const input =
+    store.assessmentStatus === 'complete' || store.assessmentStatus === 'in-progress'
+      ? store.getInput()
+      : null
+  const inputKey = input ? JSON.stringify(input) : null
   const ownResult = useMemo(() => {
-    if (store.assessmentStatus !== 'complete') return null
-    const input = store.getInput()
-    return input ? computeAssessment(input) : null
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- input is re-read fresh each recompute; only the completion transition needs to retrigger this
-  }, [store.assessmentStatus])
+    if (!inputKey) return null
+    const fresh = useAssessmentStore.getState().getInput()
+    return fresh ? computeAssessment(fresh) : null
+  }, [inputKey])
 
   // A shared/example link renders its own ephemeral result, never the
   // viewer's own live one — same precedence as desktop's ReportView.
@@ -128,6 +138,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
     !result.hndlRiskWindow &&
     (dataSensitivity.includes('critical') || dataSensitivity.includes('high'))
   const tier = RISK_TIER[result.riskLevel]
+  const referenceEstate = findReferenceEstate(result.assessmentProfile?.scenarioEstateId ?? null)
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -150,6 +161,17 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
             <ClipboardCheck size={14} aria-hidden="true" />
             Start Assessment
           </Link>
+        </div>
+      )}
+
+      {referenceEstate && (
+        <div className="mb-3 rounded-xl border border-status-warning/40 bg-status-warning/10 p-3">
+          <p className="text-[12px] font-semibold text-foreground">
+            Reference estate: {referenceEstate.label}
+          </p>
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            {referenceEstate.caveat}
+          </p>
         </div>
       )}
 

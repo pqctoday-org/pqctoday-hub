@@ -10,6 +10,17 @@ export interface RiskEntry {
   likelihood: number
   impact: number
   mitigation: string
+  /** Sample functional role answerable for treating the risk (e.g. "PKI lead").
+   *  A role, never a real person's name; recording it is not a sign-off. */
+  ownerRole?: string
+  /** Next scheduled review of the entry, ISO date (YYYY-MM-DD). */
+  nextReview?: string
+}
+
+/** An entry with no owner role or no review date is a note, not a risk:
+ *  no one is answerable for treating it and nothing brings it back. */
+export function isUnownedRiskEntry(entry: Pick<RiskEntry, 'ownerRole' | 'nextReview'>): boolean {
+  return !entry.ownerRole?.trim() || !entry.nextReview?.trim()
 }
 
 export const DEFAULT_RISK_ENTRIES: RiskEntry[] = [
@@ -21,6 +32,8 @@ export const DEFAULT_RISK_ENTRIES: RiskEntry[] = [
     likelihood: 4,
     impact: 5,
     mitigation: 'Migrate to ML-DSA certificates; deploy hybrid TLS with X25519MLKEM768',
+    ownerRole: 'PKI lead (sample role)',
+    nextReview: '2027-03-31',
   },
   {
     id: 'default-2',
@@ -30,6 +43,8 @@ export const DEFAULT_RISK_ENTRIES: RiskEntry[] = [
     likelihood: 2,
     impact: 4,
     mitigation: 'Upgrade to AES-256; re-encrypt sensitive records',
+    ownerRole: 'Data platform owner (sample role)',
+    nextReview: '2027-06-30',
   },
   {
     id: 'default-3',
@@ -39,7 +54,11 @@ export const DEFAULT_RISK_ENTRIES: RiskEntry[] = [
     likelihood: 3,
     impact: 5,
     mitigation: 'Adopt ML-DSA or SLH-DSA for software signing; implement dual-signature validation',
+    ownerRole: 'Release engineering lead (sample role)',
+    nextReview: '2027-03-31',
   },
+  // Deliberately left without an owner role or review date, so the sample
+  // register shows what an unowned entry looks like ("a note, not a risk").
   {
     id: 'default-4',
     assetName: 'VPN Gateway (Site-to-Site)',

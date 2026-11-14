@@ -71,6 +71,97 @@ describe('useAssessFlow', () => {
   })
 })
 
+// Every required full-track answer, entered the way the wizard stores them.
+const answerEverythingRequired = () => {
+  const st = useAssessmentStore.getState()
+  st.setIndustry('Finance & Banking')
+  st.setCountry('United States')
+  st.setCryptoUnknown(true)
+  st.setSensitivityUnknown(true)
+  st.setMigrationUnknown(true)
+  st.setRetentionUnknown(true)
+  st.setCredentialLifetimeUnknown(true)
+  st.setScaleUnknown(true)
+  st.setAgilityUnknown(true)
+  st.setTimelineUnknown(true)
+}
+
+describe('useAssessFlow edit-from-report reachability', () => {
+  it('a fully answered set opened at step 1 leaves every step reachable', () => {
+    act(() => {
+      answerEverythingRequired()
+      // What /report's Edit Answers does.
+      useAssessmentStore.getState().setAssessmentMode('comprehensive')
+      useAssessmentStore.getState().editFromStep(0)
+    })
+    const { result } = renderHook(
+      () => useAssessFlow({ mode: 'comprehensive', onLastStep: vi.fn() }),
+      { wrapper }
+    )
+    expect(result.current.stepIdx).toBe(0)
+    expect(result.current.maxIdx).toBe(12)
+
+    // jumpTo is what the rail click (and the mobile review's Edit) calls.
+    act(() => result.current.jumpTo(12))
+    expect(result.current.activeKey).toBe('timeline')
+  })
+
+  it('counts an optional step that holds a selection as answered after jumping back', () => {
+    act(() => {
+      answerEverythingRequired()
+      useAssessmentStore.getState().setAssessmentMode('comprehensive')
+      useAssessmentStore.getState().toggleInfrastructure('hsm')
+      useAssessmentStore.getState().editFromStep(0)
+    })
+    const { result } = renderHook(
+      () => useAssessFlow({ mode: 'comprehensive', onLastStep: vi.fn() }),
+      { wrapper }
+    )
+    // 10 required + infra selected + the two optional steps walked past.
+    expect(result.current.requiredAnsweredCount).toBe(10)
+    expect(result.current.answeredCount).toBe(13)
+  })
+
+  it('does not unlock steps on a blank start', () => {
+    const { result } = renderHook(
+      () => useAssessFlow({ mode: 'comprehensive', onLastStep: vi.fn() }),
+      { wrapper }
+    )
+    expect(result.current.maxIdx).toBe(0)
+    act(() => result.current.jumpTo(5))
+    expect(result.current.stepIdx).toBe(0)
+    expect(result.current.answeredCount).toBe(0)
+  })
+
+  it('unlocks the steps a fast-track answer set already holds when the track changes to full', () => {
+    act(() => {
+      const st = useAssessmentStore.getState()
+      st.setIndustry('Finance & Banking')
+      st.setCountry('United States')
+      st.setCryptoUnknown(true)
+      st.setSensitivityUnknown(true)
+      st.setMigrationUnknown(true)
+      st.setAssessmentMode('quick')
+    })
+    const { result, rerender } = renderHook(
+      ({ mode }: { mode: 'quick' | 'comprehensive' }) =>
+        useAssessFlow({ mode, onLastStep: vi.fn() }),
+      { wrapper, initialProps: { mode: 'quick' as 'quick' | 'comprehensive' } }
+    )
+    act(() => useAssessmentStore.getState().setStep(5))
+    expect(result.current.activeKey).toBe('migration')
+
+    act(() => useAssessmentStore.getState().setAssessmentMode('comprehensive'))
+    rerender({ mode: 'comprehensive' })
+    // migration sits at render position 8 on the full track and is answered, so the
+    // use-cases / retention / credential steps before it are reachable to fill in.
+    expect(result.current.activeKey).toBe('migration')
+    expect(result.current.maxIdx).toBe(8)
+    act(() => result.current.jumpTo(6))
+    expect(result.current.activeKey).toBe('retention')
+  })
+})
+
 describe('useAssessFlow ?step deep link', () => {
   // Counts renders and fails fast: a read/write feedback loop between the URL
   // and the store would otherwise re-render until the worker runs out of memory.

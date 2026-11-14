@@ -135,20 +135,20 @@
       }
     },
     "openssl-pkcs11": {
-      "hsmCommit": "07b1264903eaeae124a4df08acb77ec71bca3792",
+      "hsmCommit": "a013c43c6c99a85b5861c5611b27cf62cd83d257",
       "release": {
-        "tag": "engines-5",
-        "asset": "openssl-pkcs11-07b12649.tar.gz",
-        "tarballSha256": "e66c556c4b0b4a21bf712b8d6c45812ac914b25accf52ec78f72d3d44895378f"
+        "tag": "engines-7",
+        "asset": "openssl-pkcs11-a013c43c.tar.gz",
+        "tarballSha256": "4793e998bd820197c7a838983330e5c3065f3c30a4fcb1afbf2a17f44914cf95"
       },
       "files": {
         "public/wasm/openssl.js": {
-          "sha256": "e2464cf4b12acd0915490476ac102b55617b4124c4d7050a0b8d22f2aaaed3c2",
-          "bytes": 267489
+          "sha256": "a040907d611ff8e33cfebb119ac76dfb7c152ef884ad2e1a84ff55b26fdcdebe",
+          "bytes": 268592
         },
         "public/wasm/openssl.wasm": {
-          "sha256": "fa2002f25d50396a800671cdea301f841e0621a5aeaf30e7061e864123020ede",
-          "bytes": 7934812
+          "sha256": "aeec0a8e998a6bd323f3f36af43e797b1e8ba0c08b65154604f4a677d348f4b3",
+          "bytes": 8388649
         }
       }
     },

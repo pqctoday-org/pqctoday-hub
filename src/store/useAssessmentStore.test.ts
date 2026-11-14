@@ -274,13 +274,20 @@ describe('useAssessmentStore', () => {
     expect(completedAt).not.toBeNull()
   })
 
-  it('markComplete preserves original completedAt on repeated calls', () => {
-    const store = useAssessmentStore.getState()
-    store.markComplete()
-    const first = useAssessmentStore.getState().completedAt
-    store.markComplete()
-    const second = useAssessmentStore.getState().completedAt
-    expect(first).toBe(second)
+  it('markComplete stamps each completion with its own time', () => {
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-05-01T10:00:00.000Z'))
+      useAssessmentStore.getState().markComplete()
+      const first = useAssessmentStore.getState().completedAt
+      vi.setSystemTime(new Date('2026-05-02T10:00:00.000Z'))
+      useAssessmentStore.getState().markComplete()
+      const second = useAssessmentStore.getState().completedAt
+      expect(first).toBe('2026-05-01T10:00:00.000Z')
+      expect(second).toBe('2026-05-02T10:00:00.000Z')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   // ── reset ──
