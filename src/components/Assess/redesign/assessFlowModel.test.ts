@@ -14,6 +14,7 @@ import {
   renderOrderFor,
   hasAnswer,
   isStepAnswered,
+  missingRequiredSteps,
   firstIncompleteStepStoreIndex,
   resumePosition,
   type AssessAnswerState,
@@ -299,5 +300,25 @@ describe('assess flow model — resume position', () => {
 
   it('is null for a step outside the track', () => {
     expect(resumePosition('quick', 9)).toBeNull()
+  })
+})
+
+describe('assess flow model — crypto answers saved before the family picker', () => {
+  it('specific algorithms with no family ticked still answer the crypto step', () => {
+    const s = { ...emptyState(), currentCrypto: ['RSA-2048'] }
+    expect(STEP_VALIDATORS.crypto(s)).toBe(true)
+    expect(
+      missingRequiredSteps('quick', {
+        ...s,
+        industry: 'x',
+        country: 'y',
+        dataSensitivity: ['high'],
+        migrationStatus: 'planning',
+      })
+    ).toEqual([])
+  })
+
+  it('no family, no algorithm and not "not sure" is still unanswered', () => {
+    expect(STEP_VALIDATORS.crypto({ ...emptyState(), currentCrypto: [] })).toBe(false)
   })
 })

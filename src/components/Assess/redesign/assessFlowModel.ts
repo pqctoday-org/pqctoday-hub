@@ -276,6 +276,9 @@ export interface AssessValidatorState {
   industry: string
   country: string
   currentCryptoCategories: string[]
+  /** Specific algorithms; answers saved before the family picker (or a CBOM) can hold
+   *  these with no family ticked. */
+  currentCrypto?: string[]
   cryptoUnknown: boolean
   dataSensitivity: string[]
   sensitivityUnknown: boolean
@@ -301,7 +304,8 @@ export interface AssessValidatorState {
 export const STEP_VALIDATORS: Record<AssessStepKey, (s: AssessValidatorState) => boolean> = {
   industry: (s) => !!s.industry,
   country: (s) => !!s.country,
-  crypto: (s) => s.currentCryptoCategories.length > 0 || s.cryptoUnknown,
+  crypto: (s) =>
+    s.currentCryptoCategories.length > 0 || (s.currentCrypto?.length ?? 0) > 0 || s.cryptoUnknown,
   sensitivity: (s) => s.dataSensitivity.length > 0 || s.sensitivityUnknown,
   compliance: () => true,
   migration: (s) => !!s.migrationStatus || s.migrationUnknown,
