@@ -38,7 +38,10 @@ export function pickFlowEntry(
     role: persona,
     proficiency: profile.proficiency ?? undefined,
     industry: profile.industry ?? undefined,
-    region: personaRegionToWorkshop(profile.region) ?? undefined,
+    // A region the workshop vocabulary has no chapter for (mena, global) is
+    // 'OTHER', the same value the tour is started with — not a wildcard, or
+    // a MENA executive would be offered the US/Canada/Australia finance tour.
+    region: profile.region ? (personaRegionToWorkshop(profile.region) ?? 'OTHER') : undefined,
   }).filter((f) => !f.isGenericFallback && Array.isArray(f.match.roles))
   return roleFlows[0] ?? generic
 }

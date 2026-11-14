@@ -39,6 +39,10 @@ describe('pickFlowEntry — Home offers the role its own guided tour', () => {
     expect(pickFlowEntry(manifest, profile({ persona: 'executive', region: 'eu' }))?.id).toBe(
       'generic-overview'
     )
+    for (const region of ['mena', 'global'] as const)
+      expect(pickFlowEntry(manifest, profile({ persona: 'executive', region }))?.id).toBe(
+        'generic-overview'
+      )
   })
 
   it.each(['grc', 'cert-engineer'] as const)(

@@ -65,9 +65,9 @@ describe('recorded checking-date coverage', () => {
       expandTokens('{regulatory_checking_dates_chip}', { REGULATORY_SOURCE_COVERAGE_CHIP })
     ).toBe(
       `Checking dates on ${timeline.datedRows}/${timeline.totalRows} timeline and ` +
-        `${compliance.datedRows}/${compliance.totalRows} compliance rows`
+        `${compliance.datedRows}/${compliance.totalRows} compliance rows, not a review`
     )
-    expect(REGULATORY_SOURCE_COVERAGE_CHIP.length).toBeLessThan(80)
+    expect(REGULATORY_SOURCE_COVERAGE_CHIP.length).toBeLessThan(90)
     expect(expandTokens('{regulatory_verified_phrase}', {})).not.toContain(
       'verified against source'
     )

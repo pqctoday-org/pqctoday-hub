@@ -71,7 +71,7 @@ export const REGULATORY_SOURCE_COVERAGE_CHIP =
   `Checking dates on ${REGULATORY_SOURCE_DATE_COVERAGE.timeline.datedRows}/` +
   `${REGULATORY_SOURCE_DATE_COVERAGE.timeline.totalRows} timeline and ` +
   `${REGULATORY_SOURCE_DATE_COVERAGE.compliance.datedRows}/` +
-  `${REGULATORY_SOURCE_DATE_COVERAGE.compliance.totalRows} compliance rows`
+  `${REGULATORY_SOURCE_DATE_COVERAGE.compliance.totalRows} compliance rows, not a review`
 
 /** Compatibility newest-date value; never use alone as a whole-corpus review claim. */
 export const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {

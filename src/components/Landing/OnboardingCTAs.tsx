@@ -87,6 +87,9 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
     // before the await resolves; pattern is intentional, not a cascade.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
+    // Drop the previous profile's tour so the button cannot start it while the
+    // new one loads.
+    setFlowInfo(null)
     loadFlowInfo({ persona, proficiency, industry, region }).then((info) => {
       if (!cancelled) {
         setFlowInfo(info)
