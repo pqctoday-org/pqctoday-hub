@@ -444,10 +444,16 @@ export const SimpleGanttChart = ({
   const tableRef = useRef<HTMLDivElement>(null)
 
   const handlePhaseKeyDown = useCallback(
-    (e: React.KeyboardEvent, phaseData: TimelinePhase, rowIdx: number, phaseIdx: number) => {
+    (
+      e: React.KeyboardEvent,
+      phaseData: TimelinePhase,
+      rowIdx: number,
+      phaseIdx: number,
+      focus: TimelineEvent | null = null
+    ) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault()
-        handlePhaseClick(phaseData, e as unknown as React.MouseEvent)
+        handlePhaseClick(phaseData, e as unknown as React.MouseEvent, focus)
         return
       }
 
@@ -530,7 +536,7 @@ export const SimpleGanttChart = ({
         const active = year === currentYear
         const label = isFlag
           ? `${phaseData.phase}: ${starting.map((m) => m.title).join('; ')} (${year})`
-          : `${phaseData.phase}: ${spanning[0].title} (continues ${year})`
+          : `${phaseData.phase}: ${spanning[0].title} (continues ${year}${spanning[0].openEnded ? `; ${OPEN_ENDED_NOTE}` : ''})`
         const isFirstFlag = isFlag && year === phaseData.startYear
         const tabIndex = isFlag && tabbable ? 0 : -1
         if (isFlag) tabbable = false
@@ -545,7 +551,7 @@ export const SimpleGanttChart = ({
               variant="ghost"
               className="w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent z-20"
               onClick={(e) => handlePhaseClick(phaseData, e, focus)}
-              onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx)}
+              onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx, focus)}
               data-phase-row={rowIdx}
               data-phase-col={phaseIdx}
               data-year={year}
@@ -650,7 +656,7 @@ export const SimpleGanttChart = ({
             variant="ghost"
             className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst ? 'z-20' : 'z-0'}`}
             onClick={(e) => handlePhaseClick(phaseData, e, focus)}
-            onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx)}
+            onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx, focus)}
             data-phase-row={rowIdx}
             data-phase-col={phaseIdx}
             data-year={year}

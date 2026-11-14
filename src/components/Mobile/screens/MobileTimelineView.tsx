@@ -10,6 +10,7 @@ import {
   findTimelineEvent,
   phaseRowKey,
   resolveCountryParam,
+  retiredTimelineEventSuccessor,
   type ResolvedTimelineEvent,
 } from '@/data/timelineData'
 import { applyTimelineScope } from '@/data/timelineScope'
@@ -223,10 +224,35 @@ export function MobileTimelineView() {
     return searchedData
   }, [ganttData, searchedData, displayCountry, targetEvent, eventSwitchCountry, searchText])
 
-  const selection = useMemo(() => findEventInGantt(listData, eventParam), [listData, eventParam])
+  // A retired ?event id resolves to its successor (findTimelineEvent); open
+  // that record and rewrite the URL to its own id, as desktop does.
+  const canonicalKey = targetEvent ? eventLinkKey(targetEvent) : eventParam
+  const retiredLink =
+    !!targetEvent &&
+    !!eventParam &&
+    retiredTimelineEventSuccessor(eventParam) === targetEvent.eventId
+  const selection = useMemo(
+    () => findEventInGantt(listData, canonicalKey),
+    [listData, canonicalKey]
+  )
+  const [retiredNotice, setRetiredNotice] = useState<string | null>(null)
+  if (retiredLink && targetEvent && retiredNotice !== targetEvent.title)
+    setRetiredNotice(targetEvent.title)
+  useEffect(() => {
+    if (!retiredLink || !canonicalKey) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('event', canonicalKey)
+        return next
+      },
+      { replace: true }
+    )
+  }, [retiredLink, canonicalKey, setSearchParams])
   // The ?event value this screen wrote itself; any other value is an arrival.
   const [lastWritten, setLastWritten] = useState<string | null>(null)
-  const scrollTarget = selection && eventParam !== lastWritten ? phaseRowKey(selection.phase) : null
+  const scrollTarget =
+    selection && canonicalKey !== lastWritten ? phaseRowKey(selection.phase) : null
   useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
 
   const handleSelectEvent = (next: ResolvedTimelineEvent | null) => {
@@ -322,6 +348,13 @@ export function MobileTimelineView() {
           kind="not-found"
           message={`The timeline event "${notFound}" linked here was not found — it may have been retired or renamed.`}
           onDismiss={() => setNotFound(null)}
+        />
+      )}
+      {retiredNotice && (
+        <DeepLinkNotice
+          kind="widened"
+          message={`The record this link named was retired; "${retiredNotice}" replaced it, so it is shown instead.`}
+          onDismiss={() => setRetiredNotice(null)}
         />
       )}
       {showWidenNotice && targetEvent && (

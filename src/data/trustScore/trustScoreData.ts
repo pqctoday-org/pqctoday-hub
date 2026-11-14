@@ -331,7 +331,6 @@ function computeAllScores(): Map<string, TrustScore> {
         score('timeline', title, {
           peerReviewed: event.peerReviewed,
           vettingBody: event.vettingBody,
-          localFile: event.localFile,
           lastUpdateDate: event.sourceDate,
           // Not lastVerified: that column is a bulk stamp, not a per-row check.
           enrichmentKey: getTimelineEnrichmentKeyFor(

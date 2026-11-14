@@ -61,6 +61,8 @@ export const GanttDetailPopover = ({
     phase: TimelinePhase
     focus: TimelineEvent | null | undefined
   } | null>(null)
+  // Closing forgets a pick made in the popover (render-time reset).
+  if (!isOpen && localPick) setLocalPick(null)
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
 

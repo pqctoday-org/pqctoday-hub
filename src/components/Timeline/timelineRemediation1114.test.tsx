@@ -77,6 +77,22 @@ describe('GanttDetailPopover with a grouped row', () => {
     expect(screen.getByText('Testland')).toBeInTheDocument()
   })
 
+  it('forgets a pick made in the popover once it closes', () => {
+    const { rerender } = wrap(<GanttDetailPopover isOpen onClose={() => {}} phase={row} />)
+    fireEvent.click(screen.getByRole('button', { name: /FIPS 204 Published/ }))
+    rerender(
+      <MemoryRouter>
+        <GanttDetailPopover isOpen={false} onClose={() => {}} phase={row} />
+      </MemoryRouter>
+    )
+    rerender(
+      <MemoryRouter>
+        <GanttDetailPopover isOpen onClose={() => {}} phase={row} />
+      </MemoryRouter>
+    )
+    expect(screen.getByRole('heading', { name: 'SP 800-208 Published' })).toBeInTheDocument()
+  })
+
   it('hands the pick to a parent that controls the focus', () => {
     const onFocusEvent = vi.fn()
     wrap(<GanttDetailPopover isOpen onClose={() => {}} phase={row} onFocusEvent={onFocusEvent} />)
@@ -119,6 +135,17 @@ describe('SimpleGanttChart grouped milestone row', () => {
   it('opens the record of the year clicked', () => {
     wrap(<SimpleGanttChart {...props} />)
     fireEvent.click(screen.getByRole('button', { name: /Standardization: Agency Rule \(2022\)/ }))
+    expect(screen.getByRole('heading', { name: 'Agency Rule' })).toBeInTheDocument()
+  })
+
+  it("opens the record of the year on Enter, not the row's first", () => {
+    wrap(<SimpleGanttChart {...props} />)
+    fireEvent.keyDown(
+      screen.getByRole('button', { name: /Standardization: Agency Rule \(2022\)/ }),
+      {
+        key: 'Enter',
+      }
+    )
     expect(screen.getByRole('heading', { name: 'Agency Rule' })).toBeInTheDocument()
   })
 

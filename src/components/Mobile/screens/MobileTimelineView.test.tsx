@@ -192,6 +192,15 @@ describe('MobileTimelineView', () => {
       ).toBeInTheDocument()
     })
 
+    it('a link to a retired record opens the record that replaced it', async () => {
+      renderView('/timeline?event=south-korea-msit-full-pqc-roadmap-complete')
+      expect(
+        await screen.findByText(/was retired; "K-PQC Master Plan to 2035" replaced it/)
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/was not found/)).toBeNull()
+      expect(screen.getByRole('dialog')).toHaveTextContent('K-PQC Master Plan to 2035')
+    })
+
     it('an unknown ?region= is ignored and the stored region applies', () => {
       usePersonaStore.getState().setRegion('americas')
       renderView('/timeline?region=atlantis')

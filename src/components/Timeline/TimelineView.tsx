@@ -525,14 +525,15 @@ export const TimelineView = () => {
   }, [countryFilter, storeSelectedRegion])
 
   // One row per source event of what is in view, each with its own issuer.
-  const handleExportCsv = useCallback(
-    (dataToExport: GanttCountryData[] = isMobileShell ? mobileGanttData : viewData) => {
-      const events = eventsInView(dataToExport)
-      if (events.length === 0) return
-      downloadCsv(generateCsv(events, TIMELINE_CSV_COLUMNS), csvFilename('pqc-timeline'))
-    },
-    [isMobileShell, mobileGanttData, viewData]
-  )
+  // The view lives in a ref so the top-bar action stays one stable callback
+  // (re-registering it on every keystroke churned the global top bar).
+  const exportViewRef = useRef<GanttCountryData[]>([])
+  exportViewRef.current = isMobileShell ? mobileGanttData : viewData
+  const handleExportCsv = useCallback((dataToExport?: GanttCountryData[]) => {
+    const events = eventsInView(dataToExport ?? exportViewRef.current)
+    if (events.length === 0) return
+    downloadCsv(generateCsv(events, TIMELINE_CSV_COLUMNS), csvFilename('pqc-timeline'))
+  }, [])
 
   /**
    * Calendar export — B+ remediation 4.3 (2026-08-10). "Ops can act on the

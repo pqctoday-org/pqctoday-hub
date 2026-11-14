@@ -44,7 +44,7 @@ function trackFor(country: GanttCountryData | undefined) {
   const next = phases.find((p) => p.startYear >= year) ?? null
   // Started earlier but still running (a phase to 2030, a deadline range to
   // 2026): not "passed" — before 2026-11-14 these read as already passed.
-  const ongoing = phases.filter((p) => p.startYear < year && p.endYear >= year)
+  const ongoing = phases.filter((p) => p.startYear < year && (p.endYear >= year || p.openEnded))
   return { phases, next, ongoing, year }
 }
 
@@ -74,8 +74,10 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
           <>
             No new phase is recorded to start after {track.year - 1}, but{' '}
             {track.ongoing.length === 1
-              ? `one recorded phase runs to ${track.ongoing[0].endYear}`
-              : `${track.ongoing.length} recorded phases run to ${Math.max(...track.ongoing.map((p) => p.endYear))}`}
+              ? track.ongoing[0].openEnded
+                ? 'one recorded phase has no stated end'
+                : `one recorded phase runs to ${track.ongoing[0].endYear}`
+              : `${track.ongoing.length} recorded phases are still running`}
             .
           </>
         ) : (
@@ -114,7 +116,9 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
                 </span>
               )}
               {running && (
-                <span className="text-xs text-muted-foreground">in progress to {p.endYear}</span>
+                <span className="text-xs text-muted-foreground">
+                  {p.openEnded ? 'in progress, no stated end' : `in progress to ${p.endYear}`}
+                </span>
               )}
               {past && <span className="text-xs text-muted-foreground/70">already passed</span>}
             </li>
