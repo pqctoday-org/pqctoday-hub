@@ -102,6 +102,7 @@ export function ConstructionChip({
   id,
   count,
   countTitle,
+  countNoun,
   active,
   onSelect,
 }: {
@@ -109,6 +110,8 @@ export function ConstructionChip({
   count?: number
   /** Tooltip explaining what the count counts. */
   countTitle?: string
+  /** What the count counts, shown as text beside it ("standard" gives "3 standards"). */
+  countNoun?: string
   active?: boolean
   onSelect?: (id: string) => void
 }) {
@@ -130,6 +133,7 @@ export function ConstructionChip({
           title={countTitle}
         >
           {count}
+          {countNoun ? ` ${countNoun}${count === 1 ? '' : 's'}` : ''}
         </span>
       )}
     </>
@@ -693,6 +697,7 @@ export function ConstructionsOverview({
                       id={id}
                       count={count}
                       countTitle="Standards of this industry that cite the construction"
+                      countNoun="standard"
                       onSelect={onPick}
                     />
                   ))}

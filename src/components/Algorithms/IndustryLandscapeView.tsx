@@ -1538,51 +1538,52 @@ export function IndustryLandscapeView() {
                   ))}
                 </div>
               )}
-              {(usage.get(constructionDef.id)?.direct.length ?? 0) === 0 && (
-                <div
-                  className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-xs"
-                  data-testid="construction-standard-links"
-                >
-                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                    Use cases linked from the citing standards
-                  </p>
-                  <p className="mt-1 text-muted-foreground">
-                    No use case names {constructionDef.id} itself. The use cases below are linked to
-                    the standards that cite it, so they show where those standards apply. They are
-                    not use cases that run or plan this construction.
-                  </p>
-                  {linkedUseCasesFromStandards(usage.get(constructionDef.id), useCases).length ===
-                  0 ? (
-                    <p className="mt-2 text-muted-foreground">
-                      The citing standards do not link a use case yet.
+              {(usage.get(constructionDef.id)?.direct.length ?? 0) === 0 &&
+                (usage.get(constructionDef.id)?.standards.length ?? 0) > 0 && (
+                  <div
+                    className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-xs"
+                    data-testid="construction-standard-links"
+                  >
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Use cases linked from the citing standards
                     </p>
-                  ) : (
-                    <ul className="mt-2 space-y-1.5">
-                      {linkedUseCasesFromStandards(usage.get(constructionDef.id), useCases).map(
-                        ({ useCase: uc, standards: via }) => (
-                          <li key={uc.useCaseId} className="flex flex-wrap items-center gap-1">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              onClick={() => update({ usecase: uc.useCaseId })}
-                              className="h-auto p-0 text-xs text-primary hover:underline"
-                            >
-                              {uc.useCaseLabel}
-                            </Button>
-                            <span className="text-muted-foreground">({uc.industry}) via</span>
-                            {via.map((st) => (
-                              <AddressableStandardChip
-                                key={`${st.industry}-${st.standardId}`}
-                                std={st}
-                              />
-                            ))}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  )}
-                </div>
-              )}
+                    <p className="mt-1 text-muted-foreground">
+                      No use case names {constructionDef.id} itself. The use cases below are linked
+                      to the standards that cite it, so they show where those standards apply. They
+                      are not use cases that run or plan this construction.
+                    </p>
+                    {linkedUseCasesFromStandards(usage.get(constructionDef.id), useCases).length ===
+                    0 ? (
+                      <p className="mt-2 text-muted-foreground">
+                        The citing standards do not link a use case yet.
+                      </p>
+                    ) : (
+                      <ul className="mt-2 space-y-1.5">
+                        {linkedUseCasesFromStandards(usage.get(constructionDef.id), useCases).map(
+                          ({ useCase: uc, standards: via }) => (
+                            <li key={uc.useCaseId} className="flex flex-wrap items-center gap-1">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => update({ usecase: uc.useCaseId })}
+                                className="h-auto p-0 text-xs text-primary hover:underline"
+                              >
+                                {uc.useCaseLabel}
+                              </Button>
+                              <span className="text-muted-foreground">({uc.industry}) via</span>
+                              {via.map((st) => (
+                                <AddressableStandardChip
+                                  key={`${st.industry}-${st.standardId}`}
+                                  std={st}
+                                />
+                              ))}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                )}
               <div className="space-y-6">
                 {industries
                   .filter((ind) =>
@@ -1799,6 +1800,7 @@ export function IndustryLandscapeView() {
                           id={id}
                           count={count}
                           countTitle="Standards of this industry that cite the construction"
+                          countNoun="standard"
                           onSelect={pickConstruction}
                         />
                       ))}

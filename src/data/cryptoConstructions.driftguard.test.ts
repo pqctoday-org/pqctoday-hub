@@ -322,19 +322,19 @@ describe('construction layer driftguards', () => {
    * row is right to leave it out.
    */
   const STANDARD_PROOF_NOT_CITED: Record<string, string> = {
-    '3GPP-PQC-SA3-Overview:PQ-SUCI-Profile':
-      'The SA3 overview names ML-KEM and the 5G SUCI calculation in separate places and does not describe a post-quantum SUCI profile, so it does not cite the construction.',
+    'draft-ietf-mls-pq-ciphersuites:MLS-PQ-Combiner':
+      'draft-ietf-mls-pq-ciphersuites-07 supports the ML-KEM cipher-suite half of the combiner instantiation. The combiner itself is specified in draft-ietf-mls-combiner, which has its own standards row.',
   }
 
-  // A standards row whose Library document is one of a construction's defining
-  // proofs lists that construction, so the standards counts in the construction
+  // A standards row whose Library document is one of a construction's proofs
+  // (its own, an instantiation's or a succession's) lists that construction, so the standards counts in the construction
   // views cannot silently miss the document that defines it.
   it('K15: a standards row on a construction’s proof document lists the construction', () => {
     const missing: string[] = []
     const used = new Set<string>()
     for (const st of standards)
       for (const c of CRYPTO_CONSTRUCTIONS) {
-        if (!c.proofRefs.includes(st.libraryRef)) continue
+        if (!allProofRefs(c).includes(st.libraryRef)) continue
         if (st.constructionsReferenced.includes(c.id)) continue
         const key = `${st.standardId}:${c.id}`
         if (STANDARD_PROOF_NOT_CITED[key]) used.add(key)

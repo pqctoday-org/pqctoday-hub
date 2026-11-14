@@ -99,6 +99,20 @@ describe('a construction only standards cite', () => {
     }
   })
 
+  it('is not shown for a construction with no direct use case and no citing standard', () => {
+    const bare = CRYPTO_CONSTRUCTIONS.filter((c) => {
+      const u = usage.get(c.id)!
+      return u.direct.length === 0 && u.standards.length === 0
+    })
+    expect(bare.length).toBeGreaterThan(0)
+    for (const c of bare) {
+      const { unmount } = renderAt(`&construction=${c.id}`)
+      expect(screen.getByTestId(`construction-card-${c.id}`)).toBeInTheDocument()
+      expect(screen.queryByTestId('construction-standard-links')).not.toBeInTheDocument()
+      unmount()
+    }
+  })
+
   it('is not shown for a construction that use cases name', () => {
     renderAt('&construction=HPKE')
     expect(screen.queryByTestId('construction-standard-links')).not.toBeInTheDocument()
@@ -117,8 +131,14 @@ describe('industries whose standards cite constructions', () => {
       checked += 1
       const { unmount } = renderAt(`&industry=${encodeURIComponent(ind)}`)
       const row = screen.getByTestId('industry-standard-constructions')
-      for (const { id } of expected)
-        expect(within(row).getByTestId(`construction-chip-${id}`), `${ind} / ${id}`).toBeVisible()
+      for (const { id, count } of expected) {
+        const chip = within(row).getByTestId(`construction-chip-${id}`)
+        expect(chip, `${ind} / ${id}`).toBeVisible()
+        // What the number counts is written out, not only in a hover title.
+        expect(chip.textContent, `${ind} / ${id}`).toContain(
+          `${count} standard${count === 1 ? '' : 's'}`
+        )
+      }
       unmount()
     }
     expect(checked).toBeGreaterThan(0)
@@ -150,5 +170,6 @@ describe('industries whose standards cite constructions', () => {
     for (const ind of expected)
       expect(within(block).getByTestId(`standards-only-${ind}`)).toBeInTheDocument()
     expect(block.textContent).toMatch(/in sector standards/)
+    expect(block.textContent).toMatch(/\d+ standards?/)
   })
 })
