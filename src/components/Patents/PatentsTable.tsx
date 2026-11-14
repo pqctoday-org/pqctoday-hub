@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import {
   ChevronUp,
   ChevronDown,
@@ -33,6 +34,9 @@ import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
 
 export type SortKey = 'issueDate' | 'impactScore' | 'title' | 'priorityDate'
 export type SortDir = 'asc' | 'desc'
+
+/** Typical rendered height of one table row (two text lines plus padding). */
+const ROW_ESTIMATE_PX = 57
 
 const AGILITY_BADGE: Record<CryptoAgilityMode, string> = {
   classical_only: 'border-status-error/40 text-status-error bg-status-error/10',
@@ -460,6 +464,44 @@ export function PatentsTable({
   // table render and the redesign orchestrator's count + drawer nav).
   const sorted = usePatentResults(patents, searchParams, sortKey, sortDir)
 
+  // Only the rows in view are rendered. Measured 2026-11-14 on the production
+  // build with the full 732-row catalogue: re-sorting took 205-235 ms (740-800 ms
+  // at 4x CPU throttling) against 115-170 ms for a 7-row result, so the cost
+  // was the rows themselves. Rows are about 57 px tall; measureElement corrects
+  // the estimate for any row that differs.
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const rowVirtualizer = useVirtualizer({
+    count: sorted.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ROW_ESTIMATE_PX,
+    overscan: 12,
+  })
+  const virtualRows = rowVirtualizer.getVirtualItems()
+  const paddingTop = virtualRows.length > 0 ? (virtualRows[0]?.start ?? 0) : 0
+  const paddingBottom =
+    virtualRows.length > 0
+      ? rowVirtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
+      : 0
+
+  // A selection made from outside the table (a ?patent= link, the drawer's
+  // next/previous, a search result) may sit outside the rendered window: bring
+  // it into range so the row exists for the page's scroll-and-highlight step.
+  // A click on a visible row is already in range, so the table does not jump.
+  const selectedIndex = useMemo(
+    () => (selectedId ? sorted.findIndex((p) => p.patentNumber === selectedId) : -1),
+    [selectedId, sorted]
+  )
+  useEffect(() => {
+    if (selectedIndex < 0) return
+    const items = rowVirtualizer.getVirtualItems()
+    const first = items[0]?.index ?? -1
+    const last = items[items.length - 1]?.index ?? -1
+    if (selectedIndex < first || selectedIndex > last) {
+      rowVirtualizer.scrollToIndex(selectedIndex, { align: 'center' })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the virtualiser instance is stable
+  }, [selectedIndex])
+
   const handleSort = useCallback(
     (key: SortKey) => {
       logPatentSort(key)
@@ -556,7 +598,7 @@ export function PatentsTable({
         )}
 
         {/* Table */}
-        <div className="flex-1 overflow-auto">
+        <div ref={scrollRef} className="flex-1 overflow-auto">
           {sorted.length === 0 ? (
             <EmptyState
               title="No patents match"
@@ -664,11 +706,21 @@ export function PatentsTable({
                 </tr>
               </thead>
               <tbody>
-                {sorted.map((p, i) => {
+                {paddingTop > 0 && (
+                  <tr aria-hidden="true">
+                    <td style={{ height: `${paddingTop}px` }} colSpan={visibleColumns.length} />
+                  </tr>
+                )}
+                {virtualRows.map((virtualRow) => {
+                  const i = virtualRow.index
+                  const p = sorted[i]
+                  if (!p) return null
                   const isSelected = p.patentNumber === selectedId
                   return (
                     <tr
                       key={p.patentNumber}
+                      data-index={i}
+                      ref={rowVirtualizer.measureElement}
                       data-deeplink-id={p.patentNumber}
                       onClick={() => {
                         if (!isSelected) logPatentView(p.patentNumber)
@@ -820,6 +872,11 @@ export function PatentsTable({
                     </tr>
                   )
                 })}
+                {paddingBottom > 0 && (
+                  <tr aria-hidden="true">
+                    <td style={{ height: `${paddingBottom}px` }} colSpan={visibleColumns.length} />
+                  </tr>
+                )}
               </tbody>
             </table>
           )}

@@ -474,8 +474,8 @@ export function MobilePatentsView() {
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The full 25-dimension table/grid, the all-crypto scope toggle, and citation graphs are on a
-        laptop. Patent data sourced from USPTO. For research — not legal or IP advice.
+        The full 25-dimension table/grid and citation graphs are on a laptop. Patent data sourced
+        from USPTO. For research — not legal or IP advice.
       </p>
 
       <MobileSheet

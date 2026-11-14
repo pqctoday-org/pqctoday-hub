@@ -93,8 +93,10 @@ describe('MobilePatentsView', () => {
   it('states what was cut rather than silently dropping it', () => {
     renderView()
     expect(
-      screen.getByText(/The full 25-dimension table\/grid, the all-crypto scope toggle/i)
+      screen.getByText(/The full 25-dimension table\/grid and citation graphs are on a laptop/i)
     ).toBeInTheDocument()
+    // The scope toggle is on the phone now, so the note must not list it as cut.
+    expect(screen.queryByText(/all-crypto scope toggle/i)).not.toBeInTheDocument()
   })
 
   it('tapping a patent card opens the real detail sheet with its summary, and Close dismisses it', () => {
