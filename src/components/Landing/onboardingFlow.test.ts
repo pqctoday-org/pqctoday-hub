@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import type { WorkshopFlowManifest } from '@/services/workshopFlowLoader'
 import { pickFlowEntry, type FlowProfile } from './onboardingFlow'
+import manifestJson from '../../../public/workshop/index.json'
 
 // The real manifest, so the test fails if a role loses its tour or the ids move.
-const manifest = JSON.parse(
-  readFileSync(resolve(__dirname, '../../../public/workshop/index.json'), 'utf8')
-) as WorkshopFlowManifest
+const manifest = manifestJson as WorkshopFlowManifest
 
 const profile = (p: Partial<FlowProfile>): FlowProfile => ({
   persona: null,

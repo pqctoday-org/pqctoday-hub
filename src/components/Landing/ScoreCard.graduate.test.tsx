@@ -38,12 +38,9 @@ describe('ScoreCard — a graduating curious learner can pick every other role',
       </MemoryRouter>
     )
     expect(screen.getByText('Ready to specialize?')).toBeInTheDocument()
-
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: new RegExp(PERSONAS[persona].label.replace(/[/&]/g, '.')),
-      })
-    )
+    // eslint-disable-next-line security/detect-object-injection -- typed PersonaId from PERSONA_IDS
+    const label = PERSONAS[persona].label
+    fireEvent.click(screen.getByText(label).closest('button')!)
     expect(usePersonaStore.getState().selectedPersona).toBe(persona)
   })
 })
