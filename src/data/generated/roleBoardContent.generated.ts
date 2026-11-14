@@ -178,7 +178,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Questions you answer', value: '6' },
             { label: 'Report sections generated', value: '16' },
-            { label: 'Governance artifacts attached', value: 'four' },
+            { label: 'Governance artifacts attached', value: 'five' },
           ],
           punchline: 'A planning index whose working you can inspect.',
           footnote:
@@ -248,7 +248,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Governance artifacts', value: 'four' },
+            { label: 'Governance artifacts', value: 'five' },
             { label: 'Report sections', value: '16' },
             { label: 'Teaching modules on your path', value: '25' },
           ],
