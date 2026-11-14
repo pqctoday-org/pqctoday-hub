@@ -87,4 +87,31 @@ describe('Clear all removes seeded frameworks from every output', () => {
     expect(savedMarkdown()).not.toContain('CNSA 2.0')
     expect(ctx.add.mock.lastCall![0].inputs).not.toHaveProperty('fw-CNSA-2')
   })
+
+  it("keeps the learner's notes and overwritten values when the seed is cleared", () => {
+    ctx.value = {
+      myFrameworks: ['CNSA-2'],
+      industry: 'Government & Defense',
+      country: 'United States',
+      assessmentResult: null,
+    }
+    renderTool()
+    expect(screen.getByRole('textbox', { name: 'Industry' })).toHaveValue('Government & Defense')
+    fireEvent.change(screen.getByLabelText('Scope & context'), {
+      target: { value: 'Fictional payments programme' },
+    })
+    fireEvent.change(screen.getByRole('textbox', { name: 'Primary jurisdiction' }), {
+      target: { value: 'Canada' },
+    })
+    expect(screen.getByText(/Clear also removes the answers/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Clear all' }))
+    // Seeded value is cleared; the learner's own notes and overwritten value stay.
+    expect(screen.getByRole('textbox', { name: 'Industry' })).toHaveValue('')
+    expect(screen.getByRole('textbox', { name: 'Primary jurisdiction' })).toHaveValue('Canada')
+    expect(screen.getByLabelText('Scope & context')).toHaveValue('Fictional payments programme')
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(ctx.add.mock.lastCall![0].inputs.context['context-notes']).toBe(
+      'Fictional payments programme'
+    )
+  })
 })

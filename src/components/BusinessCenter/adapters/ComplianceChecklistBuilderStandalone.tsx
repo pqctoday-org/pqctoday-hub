@@ -426,6 +426,9 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
     addPageFrameworks(SAMPLE_CHECKLIST_CONTEXT.frameworkIds.filter((id) => known.has(id)))
   }
 
+  // Clearing the seed removes what came from elsewhere: the starred frameworks'
+  // sections, and industry/country while they still equal the seeded values.
+  // The learner's own notes and any value they overwrote are kept.
   const clearSeed = () => {
     setSeedCleared(true)
     const pageIds = new Set(pageFrameworkIds)
@@ -433,10 +436,11 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
       const kept = Object.entries(prev).filter(
         ([key]) => key.startsWith('fw-') && pageIds.has(key.slice(3))
       )
-      return {
-        ...Object.fromEntries(kept),
-        context: { industry: '', country: '', 'context-notes': '' },
-      }
+      const ctx = prev.context ?? {}
+      const context = { ...ctx }
+      if (industry && ctx.industry === industry) context.industry = ''
+      if (country && ctx.country === country) context.country = ''
+      return { ...Object.fromEntries(kept), context }
     })
   }
 
@@ -491,7 +495,14 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
   return (
     <div className="space-y-4">
       {sources.length > 0 && (
-        <PreFilledBanner summary={`Seeded from ${sources.join(' + ')}.`} onClear={clearSeed} />
+        <PreFilledBanner
+          summary={`Seeded from ${sources.join(' + ')}.${
+            trackedFrameworks.length > 0
+              ? " Clear also removes the answers in the starred frameworks' sections."
+              : ''
+          }`}
+          onClear={clearSeed}
+        />
       )}
 
       <section className="glass-panel p-4 space-y-3" aria-labelledby="cc-add-frameworks">
