@@ -40,7 +40,7 @@ describe('ScoreCard — a graduating curious learner can pick every other role',
     expect(screen.getByText('Ready to specialize?')).toBeInTheDocument()
     // eslint-disable-next-line security/detect-object-injection -- typed PersonaId from PERSONA_IDS
     const label = PERSONAS[persona].label
-    fireEvent.click(screen.getByText(label).closest('button')!)
+    fireEvent.click(screen.getByRole('button', { name: (name) => name.startsWith(label) }))
     expect(usePersonaStore.getState().selectedPersona).toBe(persona)
   })
 })
