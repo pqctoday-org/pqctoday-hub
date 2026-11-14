@@ -10,11 +10,14 @@ import { useLocation } from 'react-router'
 import { PAGE_NEXT_STEP_ROUTES } from '@/data/nextSteps'
 import { NextStepCard } from '@/components/shared/NextStepCard'
 import { MobileNextStepCard } from '@/components/Mobile/MobileNextStepCard'
+import { useHomeRolePickerShowing } from './useHomeRolePickerShowing'
 
 export function RouteNextStep({ mobile }: { mobile: boolean }) {
   const { pathname } = useLocation()
   const route = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
+  const rolePickerShowing = useHomeRolePickerShowing(route)
   if (!PAGE_NEXT_STEP_ROUTES.has(route)) return null
+  if (rolePickerShowing) return null
   return mobile ? (
     <div className="px-4 pb-4">
       <MobileNextStepCard route={route} />

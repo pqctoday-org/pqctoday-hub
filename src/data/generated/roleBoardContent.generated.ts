@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_11122026_r1.csv
+ * Source: src/data/role_board_content_11142026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -32,7 +32,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every regulatory date links to its source',
           '1511 documents, trust-tiered',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
         ],
         sideCard: {
           title: 'Your exposure window',
@@ -100,7 +100,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
           'The CRQC estimate carries its dissent',
         ],
         sideCard: {
@@ -168,7 +168,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
           '1511 documents, trust-tiered',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -240,7 +240,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -450,7 +450,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/assess?mode=comprehensive',
         proofChips: [
           '1511 documents, trust-tiered',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
         ],
         sideCard: {
           title: 'Where your register stands',
@@ -596,7 +596,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Review what applies first',
         ctaSecondaryHref: '/compliance?tab=obligations',
         proofChips: [
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -739,7 +739,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/assess?mode=comprehensive',
         proofChips: [
           '1511 documents, trust-tiered',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
         ],
         sideCard: {
           title: "What's already documented",
@@ -814,7 +814,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
           'Organised around the NIST CSWP.39 zones',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
         ],
         sideCard: {
           title: 'What closure requires',
@@ -1130,7 +1130,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             { label: 'Enterprise workflows sized', value: 'ten' },
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
             {
-              label: 'ML-DSA-65 in classical HSM firmware',
+              label: 'ML-DSA-65 signing in fictional profile A',
               value: '150 ops/s · ~133× slower than ECDSA',
             },
           ],
@@ -1274,7 +1274,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Work the compliance checklist',
         ctaSecondaryHref: '/business/tools/compliance-checklist',
         proofChips: [
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
           'Draft and final are labelled, never merged',
           'Every requirement links to its source',
         ],
@@ -1514,8 +1514,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'TLS 1.3', value: 'hybrid groups shipping' },
-            { label: 'Enrollment', value: 'pure PQC = RFC · composite = drafts, moving' },
-            { label: 'Messaging', value: 'MLS in WG last call; Signal shipped outside the IETF' },
+            {
+              label: 'Enrollment',
+              value:
+                'pure PQC = RFC · composite signatures = RFC 10073 · composite KEM = with the RFC Editor',
+            },
+            {
+              label: 'Messaging',
+              value: 'MLS PQ ciphersuites sent to the IESG; Signal shipped outside the IETF',
+            },
           ],
           punchline: 'You migrate at the speed of your slowest protocol.',
           footnote:
@@ -1829,7 +1836,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
             {
-              label: 'ML-DSA-65 in classical HSM firmware',
+              label: 'ML-DSA-65 signing in fictional profile A',
               value: '150 ops/s · ~133× slower than ECDSA',
             },
             { label: 'Per OCSP / CRL response', value: '+3.3 KB · ~5 KB with key' },
@@ -1900,7 +1907,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Your own answers, not a sample estate',
           'Organised around the NIST CSWP.39 zones',
-          'Recorded checking dates — Compliance: 108/191 dated rows (2026-07-16–2026-10-27); 83 missing, 0 invalid. Timeline: 195/195 dated rows (2026-07-16–2026-11-07); 0 missing, 0 invalid. Metadata coverage, not independent review.',
+          'Checking dates on 195/195 timeline and 108/191 compliance rows, not a review',
         ],
         sideCard: {
           title: 'What the score is built on',
@@ -2369,7 +2376,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             {
               label: 'Where each stands',
               value:
-                'FIPS 206 (FN-DSA) — announced, not yet drafted; LAMPS composites — past Last Call, with the IESG',
+                'FIPS 206 (FN-DSA) — in development, not yet published; LAMPS composite ML-DSA certificates — RFC 10073; composite ML-KEM — in the RFC Editor queue',
             },
           ],
           punchline: '“Standardised” is four different states wearing one word.',

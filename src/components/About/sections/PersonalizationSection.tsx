@@ -106,11 +106,11 @@ export function PersonalizationSection() {
           }
         />
         <Row
-          label="Behind More"
+          label="Left out of the menus (search finds them)"
           value={
             adaptation.behindSearchLabels.length > 0
               ? adaptation.behindSearchLabels.join(' · ')
-              : 'Nothing is moved out of the rail for this role.'
+              : 'Nothing is left out of the menus for this role.'
           }
         />
         <Row
