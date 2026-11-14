@@ -17,8 +17,7 @@
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
  */
-import { DEVELOPER_ROWS } from './forYouSelection'
-import { applicableFrameworks } from './forYouSelection'
+import { DEVELOPER_ROWS, applicableFrameworks } from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import {

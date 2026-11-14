@@ -196,6 +196,17 @@ function frameworkRow(
   }
 }
 
+/** The frameworks the trust paths reach, as the views list them under "Derived via cross-walk". */
+function derivedRows(derived: DerivedResult[]): ForYouViewRow[] {
+  return derived.map((d) => ({
+    section: 'reached through a trust path',
+    id: d.standardId,
+    label: d.standardLabel,
+    tier: d.derivedTier,
+    reason: 'Reached through a trust path from your applicable frameworks',
+  }))
+}
+
 /**
  * The rows the For You view for this persona lists. Each branch reads the same selection
  * the view reads; the default panel and the Executive, GRC and Researcher views list the
@@ -235,13 +246,13 @@ export function forYouViewRows(
         frameworkRow('expects PQC', fw)
       )
     case 'grc':
-      return sortedByConfidence(results, 'ascending').map((r) =>
+    case 'researcher': {
+      const direction = persona === 'grc' ? 'ascending' : 'descending'
+      const rows = sortedByConfidence(results, direction).map((r) =>
         frameworkRow('', r.item, r.tier, r.reason)
       )
-    case 'researcher':
-      return sortedByConfidence(results, 'descending').map((r) =>
-        frameworkRow('', r.item, r.tier, r.reason)
-      )
+      return [...rows, ...derivedRows(derived)]
+    }
     case 'curious':
       return ruleMakerBodies().map((b) => ({
         section: '',
@@ -253,16 +264,7 @@ export function forYouViewRows(
       const direct = applicableInTierOrder(results).map((r) =>
         frameworkRow('', r.item, r.tier, r.reason)
       )
-      const reached: ForYouViewRow[] = forYouShowsDerived(persona)
-        ? derived.map((d) => ({
-            section: 'reached through a trust path',
-            id: d.standardId,
-            label: d.standardLabel,
-            tier: d.derivedTier,
-            reason: 'Reached through a trust path from your applicable frameworks',
-          }))
-        : []
-      return [...direct, ...reached]
+      return [...direct, ...(forYouShowsDerived(persona) ? derivedRows(derived) : [])]
     }
   }
 }

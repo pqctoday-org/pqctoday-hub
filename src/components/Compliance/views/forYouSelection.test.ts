@@ -54,15 +54,21 @@ describe('For You rows by persona', () => {
   })
 
   it('grc: sorted by data confidence, least first, frameworks without a score last', () => {
-    const rows = forYouViewRows('grc', results, [])
-    expect(ids(rows)).toEqual(sortedByConfidence(results, 'ascending').map((r) => r.item.id))
+    const rows = forYouViewRows('grc', results, derived)
+    expect(ids(rows.slice(0, -1))).toEqual(
+      sortedByConfidence(results, 'ascending').map((r) => r.item.id)
+    )
+    expect(rows[rows.length - 1].id).toBe('DERIVED-X')
     const scores = rows.map((r) => r.confidenceScore ?? Number.MAX_SAFE_INTEGER)
     expect(scores).toEqual([...scores].sort((a, b) => a - b))
   })
 
   it('researcher: sorted by data confidence, most first, frameworks without a score last', () => {
-    const rows = forYouViewRows('researcher', results, [])
-    expect(ids(rows)).toEqual(sortedByConfidence(results, 'descending').map((r) => r.item.id))
+    const rows = forYouViewRows('researcher', results, derived)
+    expect(ids(rows.slice(0, -1))).toEqual(
+      sortedByConfidence(results, 'descending').map((r) => r.item.id)
+    )
+    expect(rows[rows.length - 1].id).toBe('DERIVED-X')
     const scores = rows.map((r) => r.confidenceScore ?? -1)
     expect(scores).toEqual([...scores].sort((a, b) => b - a))
   })

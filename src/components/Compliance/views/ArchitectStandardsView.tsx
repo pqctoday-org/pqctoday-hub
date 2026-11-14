@@ -12,7 +12,7 @@
  * and ApplicabilityPanel so the persona switch only changes rendering, not the
  * underlying recommendation set.
  */
-import { ARCHITECT_PER_REGION } from './forYouSelection'
+import { ARCHITECT_PER_REGION, frameworksByRegion, REGION_ORDER } from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Layers, GlobeLock, ArrowRight } from 'lucide-react'
@@ -22,7 +22,6 @@ import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { LibraryDocItem } from '../../applicability/parts/items'
 import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
-import { frameworksByRegion, REGION_ORDER } from './forYouSelection'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
 import { maturityRequirements } from '../../../data/maturityGovernanceData'

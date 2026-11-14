@@ -16,8 +16,13 @@
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
  */
-import { OPS_PHASE_LANE, OPS_TABLE_ROWS } from './forYouSelection'
-import { applicableFrameworks, frameworksByPhase, PHASE_ORDER } from './forYouSelection'
+import {
+  OPS_PHASE_LANE,
+  OPS_TABLE_ROWS,
+  applicableFrameworks,
+  frameworksByPhase,
+  PHASE_ORDER,
+} from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import {
