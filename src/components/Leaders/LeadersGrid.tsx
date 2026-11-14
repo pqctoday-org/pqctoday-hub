@@ -230,7 +230,7 @@ export const LeadersGrid = () => {
       (searchParams.get('sort') as LeaderSortOption | null) ??
       (selectedPersona === 'executive' ? 'relevance' : 'name')
   )
-  // Default view leads with the hand-curated profiles (252 in leaders_11132026_r5);
+  // Default view leads with the hand-curated profiles (252 in leaders_11142026);
   // the 109 single-sentence library-authorship stubs are opt-in, so they don't
   // dilute browsing.
   const [showAllContributors, setShowAllContributors] = useState<boolean>(
