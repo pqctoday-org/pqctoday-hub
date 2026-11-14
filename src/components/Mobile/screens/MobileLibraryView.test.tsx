@@ -341,6 +341,45 @@ describe('MobileLibraryView', () => {
     })
   })
 
+  // The rest of desktop's shareable filters: applied, shown as chips, removable;
+  // a ?ref the filters hide widens them with a notice and Undo.
+  describe('desktop filters from a shared link', () => {
+    function LocationProbe() {
+      return <output data-testid="loc">{useLocation().search}</output>
+    }
+    const renderAt = (query: string) =>
+      render(
+        <MemoryRouter initialEntries={[`/library${query}`]}>
+          <MobileLibraryView />
+          <LocationProbe />
+        </MemoryRouter>
+      )
+    const search = () => new URLSearchParams(screen.getByTestId('loc').textContent!)
+    const shown = () => Number(screen.getByTestId('library-count').textContent!.split(' ')[0])
+
+    it('applies category, organization and region as chips, and a chip removes its filter', () => {
+      renderAt('?cat=KEM&org=NIST&geo=US')
+      const chips = screen.getByTestId('library-link-filters')
+      expect(chips).toHaveTextContent('Category:KEM')
+      expect(chips).toHaveTextContent('Organization:NIST')
+      expect(chips).toHaveTextContent('Region:United States')
+      expect(shown()).toBeLessThan(libraryData.length)
+      fireEvent.click(screen.getByRole('button', { name: 'Remove Category filter' }))
+      expect(search().has('cat')).toBe(false)
+      expect(search().get('org')).toBe('NIST')
+    })
+
+    it('widens the filters that hide a linked document, says so, and Undo puts them back', () => {
+      const item = libraryData.find((i) => !i.categories.includes('KEM'))!
+      renderAt(`?cat=KEM&ref=${encodeURIComponent(item.referenceId)}`)
+      expect(search().has('cat')).toBe(false)
+      expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(item.referenceId)
+      fireEvent.click(screen.getByRole('button', { name: /undo/i }))
+      expect(search().get('cat')).toBe('KEM')
+      expect(search().get('ref')).toBe(item.referenceId)
+    })
+  })
+
   // ?topic= from a shared desktop link: filters the list and shows a removable
   // chip, but only for a topic the Library actually has documents for.
   describe('?topic= (same param as desktop)', () => {
@@ -362,10 +401,26 @@ describe('MobileLibraryView', () => {
       tagged.length = 0
     })
 
-    it('an untagged or unknown topic filters nothing and shows no chip', () => {
+    it('a value that is neither a topic id nor anything in the catalogue finds nothing, and says so in the search box', () => {
       renderAt('?topic=not-a-topic')
-      expect(shown()).toBe(libraryData.length)
-      expect(screen.queryByTestId('library-link-filters')).not.toBeInTheDocument()
+      expect(screen.getByPlaceholderText(/Search — try/i)).toHaveValue('not-a-topic')
+      expect(shown()).toBe(0)
+    })
+
+    it('a vocabulary topic id stays a topic filter', () => {
+      renderAt('?topic=cryptanalysis')
+      const search = new URLSearchParams(screen.getByTestId('loc').textContent!)
+      expect(search.get('topic')).toBe('cryptanalysis')
+      expect(search.has('q')).toBe(false)
+    })
+
+    it('a subject that is not a topic id (a simulation link) becomes the search', () => {
+      renderAt('?topic=CycloneDX')
+      expect(screen.getByPlaceholderText(/Search — try/i)).toHaveValue('CycloneDX')
+      const search = new URLSearchParams(screen.getByTestId('loc').textContent!)
+      expect(search.get('q')).toBe('CycloneDX')
+      expect(search.has('topic')).toBe(false)
+      expect(shown()).toBeLessThan(libraryData.length)
     })
 
     it('a tagged topic filters the list, shows a chip, and the chip removes it', () => {

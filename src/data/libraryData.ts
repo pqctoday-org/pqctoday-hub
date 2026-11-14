@@ -95,6 +95,8 @@ export interface LibraryItem {
    * must say so, or a reader will think they have the full document.
    */
   freeSummaryUrl?: string
+  /** The publisher's id in the Trusted Sources registry (`trusted_source_id`), when recorded. */
+  trustedSourceId?: string
   trustedSourceIdStatus?: string
   dataQualityNotes?: string
   confidenceScore?: number
@@ -337,6 +339,7 @@ export interface RawLibraryRow {
   vetting_body: string
   github_contribution_url?: string
   download_url_quality?: string
+  trusted_source_id?: string
   trusted_source_id_status?: string
   data_quality_notes?: string
   confidence_score?: string
@@ -499,6 +502,7 @@ export function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     downloadUrlQuality: row.download_url_quality || undefined,
     accessType: row.access_type?.trim().toLowerCase() === 'paid' ? 'paid' : undefined,
     freeSummaryUrl: row.free_summary_url?.trim() || undefined,
+    trustedSourceId: row.trusted_source_id?.trim() || undefined,
     trustedSourceIdStatus: row.trusted_source_id_status || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
@@ -552,15 +556,50 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
   return attachSuccessionLinks(attachPriorRevisions(items, priors))
 }
 
+const normalizedSuccessorCache = new WeakMap<ReadonlyMap<string, string>, Map<string, string>>()
+
+/**
+ * The live id a `dependencies` entry stands for: the id itself when it is a live
+ * row, else the live document that superseded it (following `superseded_by`
+ * hops, case- and separator-insensitively). A row that still names an older
+ * draft revision ("Builds on draft-…-07" after -11 replaced it) then links to the
+ * revision the catalogue holds instead of to nothing. Exported for unit testing.
+ */
+export function resolveLiveDependency(
+  depId: string,
+  liveIds: { has(id: string): boolean },
+  successorOf: ReadonlyMap<string, string>
+): string | undefined {
+  if (liveIds.has(depId)) return depId
+  let normSuccessor = normalizedSuccessorCache.get(successorOf)
+  if (!normSuccessor) {
+    normSuccessor = new Map<string, string>()
+    for (const [from, to] of successorOf) normSuccessor.set(separatorInsensitiveKey(from), to)
+    normalizedSuccessorCache.set(successorOf, normSuccessor)
+  }
+  let current = depId
+  const seen = new Set<string>()
+  while (!seen.has(separatorInsensitiveKey(current))) {
+    seen.add(separatorInsensitiveKey(current))
+    const next = successorOf.get(current) ?? normSuccessor.get(separatorInsensitiveKey(current))
+    if (!next) return undefined
+    if (liveIds.has(next)) return next
+    current = next
+  }
+  return undefined
+}
+
 function buildTree(items: LibraryItem[]): LibraryItem[] {
   const itemMap = new Map<string, LibraryItem>()
   items.forEach((item) => itemMap.set(item.referenceId, item))
+  const liveIds = new Set(itemMap.keys())
 
   items.forEach((item) => {
     const deps = item.dependencies
       .split(';')
       .map((d) => d.trim())
       .filter((d) => d)
+      .map((d) => resolveLiveDependency(d, liveIds, supersededByRef) ?? d)
 
     deps.forEach((depId) => {
       if (depId === item.referenceId) return // skip self-reference
@@ -680,15 +719,21 @@ const statusMap =
  * against synthetic fixtures without re-loading the CSV.
  */
 export function computeCitationCounts(
-  items: Pick<LibraryItem, 'referenceId' | 'dependencies'>[]
+  items: Pick<LibraryItem, 'referenceId' | 'dependencies'>[],
+  /** Maps a named dependency to the live id it counts for (a superseded id → its successor). */
+  resolve: (depId: string) => string | undefined = (d) => d
 ): Map<string, number> {
   const counts = new Map<string, number>()
   for (const item of items) {
     if (!item.dependencies) continue
-    const deps = item.dependencies
-      .split(';')
-      .map((d) => d.trim())
-      .filter((d) => d && d !== item.referenceId)
+    const deps = new Set(
+      item.dependencies
+        .split(';')
+        .map((d) => d.trim())
+        .filter(Boolean)
+        .map((d) => resolve(d) ?? d)
+        .filter((d) => d !== item.referenceId)
+    )
     for (const dep of deps) {
       counts.set(dep, (counts.get(dep) ?? 0) + 1)
     }
@@ -696,7 +741,10 @@ export function computeCitationCounts(
   return counts
 }
 
-const citationCounts = computeCitationCounts(currentItems)
+const currentIds = new Set(currentItems.map((item) => item.referenceId))
+const citationCounts = computeCitationCounts(currentItems, (d) =>
+  resolveLiveDependency(d, currentIds, supersededByRef)
+)
 
 // ── New / Updated badge derivation (recency window) ──────────────────────────
 // A document is 'New' when its publication date is within the last
@@ -771,7 +819,10 @@ export const REFERENCE_ID_ALIASES: Record<string, string> = {
 }
 
 /** `FIPS-203`, `fips_203` and `FIPS 203` all key to `fips203`. */
-const separatorInsensitiveKey = (ref: string): string => ref.toLowerCase().replace(/[\s\-_.]+/g, '')
+// A hoisted declaration: buildTree uses it while libraryData is built at load.
+function separatorInsensitiveKey(ref: string): string {
+  return ref.toLowerCase().replace(/[\s\-_.]+/g, '')
+}
 
 let _refsBySeparatorInsensitiveKey: Map<string, LibraryItem[]> | null = null
 function refsBySeparatorInsensitiveKey(): Map<string, LibraryItem[]> {
@@ -796,24 +847,51 @@ export function findLibraryItemByRef(ref: string): LibraryItem | undefined {
   const exact = libraryData.find((item) => item.referenceId === resolved)
   if (exact) return exact
   const loose = refsBySeparatorInsensitiveKey().get(separatorInsensitiveKey(resolved))
-  return loose?.length === 1 ? loose[0] : undefined
+  if (loose?.length === 1) return loose[0]
+  return findRfcByNumber(resolved, libraryData)
+}
+
+/** `RFC 9846`, `rfc9846`, `RFC-9846` → `9846`; anything else → null. */
+const bareRfcNumber = (ref: string): string | null =>
+  /^\s*rfc[\s\-_]*0*(\d{1,5})\s*$/i.exec(ref)?.[1] ?? null
+
+/**
+ * A bare RFC number (`RFC 9846`) for a row whose id carries the title after the
+ * number (`RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1`). Answers
+ * only when exactly one live row has that RFC number, so an ambiguous number
+ * opens nothing rather than the wrong document. Exported for unit testing.
+ */
+export function findRfcByNumber(
+  ref: string,
+  items: readonly LibraryItem[]
+): LibraryItem | undefined {
+  const num = bareRfcNumber(ref)
+  if (!num) return undefined
+  const hits = items.filter(
+    (item) => /^rfc[\s\-_]*0*(\d{1,5})(?:$|[\s\-_])/i.exec(item.referenceId)?.[1] === num
+  )
+  return hits.length === 1 ? hits[0] : undefined
 }
 
 /**
  * Resolve a retired `?ref=` (a deprecated/obsolete row) to the live document
  * that superseded it, following `superseded_by` hops until one is active.
+ * Case and separators in the retired id are ignored (`FIPS-186-4` finds
+ * `FIPS 186-4`), as in findLibraryItemByRef.
  * Returns undefined when the ref has no successor chain that ends in the corpus.
  */
+let _liveItemsById: Map<string, LibraryItem> | null = null
+/** libraryData by id, built once (libraryData does not change after load). */
+function liveItemsById(): Map<string, LibraryItem> {
+  if (!_liveItemsById) _liveItemsById = new Map(libraryData.map((item) => [item.referenceId, item]))
+  return _liveItemsById
+}
+
 export function findLibrarySuccessor(ref: string): LibraryItem | undefined {
-  let current = REFERENCE_ID_ALIASES[ref] ?? ref
-  const seen = new Set<string>()
-  while (!seen.has(current)) {
-    seen.add(current)
-    const next = supersededByRef.get(current)
-    if (!next) return undefined
-    const hit = libraryData.find((item) => item.referenceId === next)
-    if (hit) return hit
-    current = next
-  }
-  return undefined
+  const start = REFERENCE_ID_ALIASES[ref] ?? ref
+  const live = liveItemsById()
+  // A live id is not retired, so it has no successor (callers try it first).
+  if (live.has(start)) return undefined
+  const hop = resolveLiveDependency(start, live, supersededByRef)
+  return hop === undefined ? undefined : live.get(hop)
 }

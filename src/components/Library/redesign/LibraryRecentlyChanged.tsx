@@ -50,8 +50,14 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
                 >
                   {item.status}
                 </span>
+                {/* "New" is set from the publication date, "Updated" from the
+                    update date (computeRecencyStatus), so show the date that made it so. */}
                 <span className="font-mono text-[10px] text-muted-foreground">
-                  {formatLibDate(item.lastUpdateDate)}
+                  {formatLibDate(
+                    isNew
+                      ? item.initialPublicationDate || item.lastUpdateDate
+                      : item.lastUpdateDate || item.initialPublicationDate
+                  )}
                 </span>
               </span>
               <span className="w-full truncate font-mono text-[11px] font-semibold text-primary">

@@ -2,6 +2,11 @@
 import type { CsvColumnConfig } from './csvExport'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { LibraryItem } from '@/data/libraryData'
+import { LIFECYCLE_STYLES } from '@/utils/libraryLifecycle'
+import { ruleBasedConfidenceLabel } from '@/components/Library/ruleBasedConfidence'
+import { relatedLearnModules } from '@/components/Library/redesign/libraryDetailFacts'
+import { researchTopicLabel } from '@/data/researchTopics'
+import { LIBRARY_DOORS } from '@/data/libraryPurposeDoors'
 import {
   exportAlgorithmSize,
   exportStackRam,
@@ -37,20 +42,61 @@ export const MIGRATE_CSV_COLUMNS: CsvColumnConfig<SoftwareItem>[] = [
   { header: 'Repository URL', accessor: (i) => i.repositoryUrl },
 ]
 
+const LIBRARY_PURPOSE_LABELS = new Map(LIBRARY_DOORS.map((door) => [door.id, door.label]))
+
+/** The fields the Library detail view shows, with the labels it shows them under
+ *  (Region exports the catalogue's own tokens). */
 export const LIBRARY_CSV_COLUMNS: CsvColumnConfig<LibraryItem>[] = [
   { header: 'Reference ID', accessor: (i) => i.referenceId },
   { header: 'Title', accessor: (i) => i.documentTitle },
   { header: 'Organization', accessor: (i) => i.authorsOrOrganization },
+  {
+    header: 'Lifecycle',
+    accessor: (i) => LIFECYCLE_STYLES[i.lifecycleLabel]?.label ?? i.lifecycleLabel,
+  },
   { header: 'Status', accessor: (i) => i.documentStatus },
   { header: 'Type', accessor: (i) => i.documentType },
+  { header: 'Purpose', accessor: (i) => LIBRARY_PURPOSE_LABELS.get(i.purpose) ?? i.purpose },
   { header: 'Categories', accessor: (i) => i.categories?.join('; ') },
+  { header: 'Catalog Summary', accessor: (i) => i.shortDescription },
   { header: 'Publication Date', accessor: (i) => i.initialPublicationDate },
   { header: 'Last Updated', accessor: (i) => i.lastUpdateDate },
+  { header: 'Catalog Checked', accessor: (i) => i.lastVerified },
   { header: 'Algorithm Family', accessor: (i) => i.algorithmFamily },
   { header: 'Security Levels', accessor: (i) => i.securityLevels },
+  { header: 'Protocol or Tool Impact', accessor: (i) => i.protocolOrToolImpact },
+  { header: 'Toolchain Support', accessor: (i) => i.toolchainSupport },
+  {
+    header: 'Research Topics',
+    accessor: (i) => i.researchTopics?.map((id) => researchTopicLabel(id) ?? id).join('; '),
+  },
+  { header: 'Mathematical Family', accessor: (i) => i.mathFamily?.join('; ') },
+  { header: 'NIST PQC Round', accessor: (i) => i.pqcRound },
+  { header: 'Builds On', accessor: (i) => i.dependencies },
+  { header: 'Superseded By', accessor: (i) => i.supersededByRefs?.join('; ') },
+  { header: 'Replaces', accessor: (i) => i.replacesRefs?.join('; ') },
+  {
+    header: 'Previous Revisions',
+    accessor: (i) => i.priorRevisions?.map((r) => r.referenceId).join('; '),
+  },
+  {
+    header: 'Learn Modules',
+    accessor: (i) =>
+      relatedLearnModules(i)
+        .map((m) => m.title)
+        .join('; '),
+  },
+  { header: 'Industries', accessor: (i) => i.applicableIndustries?.join('; ') },
   { header: 'Migration Urgency', accessor: (i) => i.migrationUrgency },
   { header: 'Region', accessor: (i) => i.regionScope },
+  { header: 'Peer Reviewed', accessor: (i) => i.peerReviewed },
+  { header: 'Vetting Body', accessor: (i) => i.vettingBody?.join('; ') },
+  // Filled only for a confidence set by document-type rule, as in the drawer.
+  { header: 'Rule-based Confidence', accessor: (i) => ruleBasedConfidenceLabel(i) },
+  { header: 'Referenced by Library Records', accessor: (i) => i.citationCount },
+  { header: 'Access', accessor: (i) => (i.accessType === 'paid' ? 'Paid' : '') },
   { header: 'URL', accessor: (i) => i.downloadUrl },
+  { header: 'Free Summary URL', accessor: (i) => i.freeSummaryUrl },
 ]
 
 const NOT_RECORDED = 'Not recorded in source catalogue'
