@@ -157,6 +157,16 @@ describe('threatsUrlParams', () => {
     expect(isThreatsDeepLink('/threats', '?class=hnfl')).toBe(true)
     expect(isThreatsDeepLink('/threats', '?protocol=tls-https')).toBe(true)
     expect(isThreatsDeepLink('/threats', '')).toBe(false)
+    // NAV-4 (4.208): every filter a shared link can carry counts, so the phone
+    // first-run picker never stands in front of one.
+    for (const q of [
+      '?type=implementation+vulnerability',
+      '?criticality=Critical',
+      '?tier=1',
+      '?view=horizon',
+      '?threattab=response',
+    ])
+      expect(isThreatsDeepLink('/threats', q), q).toBe(true)
     expect(isThreatsDeepLink('/threats', '?mode=cards')).toBe(false)
     expect(isThreatsDeepLink('/timeline', '?id=FIN-001')).toBe(false)
   })

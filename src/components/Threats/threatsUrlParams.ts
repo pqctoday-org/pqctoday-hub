@@ -220,6 +220,7 @@ const DEEP_LINK_PARAMS = [
   'tier',
   'view',
   'threattab',
+  'cross',
 ] as const
 
 /** Is this a link into specific Threats content (a threat, a filtered set)?

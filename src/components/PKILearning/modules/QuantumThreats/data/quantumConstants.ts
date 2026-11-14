@@ -396,7 +396,9 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     notes:
       '26-expert survey (March 2026): a cryptographically relevant quantum computer is "quite possible" (28-49%) within the next 10 years and "likely" (51-70%) within 15, and the experts believe the timeline has accelerated from previous reports. The years 2030\u20132041 are a planning range set by this site, not a survey result.',
     url: 'https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/',
-    lastReviewed: '2026-07-30',
+    // Re-checked against the report page on 2026-10-03 (open claim
+    // crqc-gri-2025-timeline, same URL and quote).
+    lastReviewed: '2026-10-03',
     survey: {
       within10: '28\u201349%',
       within15: '51\u201370%',

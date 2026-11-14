@@ -17,22 +17,18 @@ import {
   Clock,
   List,
   ChevronDown,
+  ChevronUp,
   HelpCircle,
 } from 'lucide-react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
   draftThreatIndustries,
-  evidenceStrength,
   knownThreatIndustries,
   retiredThreats,
   threatsData,
   threatsMetadata,
 } from '../../data/threatsData'
-import {
-  criticalityLevelsPresent,
-  criticalityRank,
-  UNRATED_CRITICALITY,
-} from '../../data/threatRowRules'
+import { criticalityLevelsPresent, UNRATED_CRITICALITY } from '../../data/threatRowRules'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -92,6 +88,7 @@ import { InlineScopeStep } from '@/components/common/InlineScopeStep'
 import { RetiredThreatNotice } from './RetiredThreatNotice'
 import { DeepLinkNotice } from '../common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
+import { compareThreats } from './threatSort'
 import {
   threatExclusions,
   sectorAwaitingSourceMessage,
@@ -137,6 +134,10 @@ type ThreatsTab = 'list' | 'horizon'
 
 /** The protocol chips worth offering: only those that match a published threat. */
 const lensProtocols = lensProtocolsFor(threatsData)
+
+/** The Threats industry for records that apply to every sector. */
+const CROSS_INDUSTRY = 'Cross-Industry'
+const CROSS_INDUSTRY_COUNT = threatsData.filter((t) => t.industry === CROSS_INDUSTRY).length
 
 /** The notice for an `?industry=` value naming sectors the page knows but
  *  has no published threat for (every record drafted, awaiting a source);
@@ -244,6 +245,12 @@ export const ThreatsDashboard: React.FC<{
     parseThreatRecordType(searchParams.get('type'))
   )
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
+  // UX-4: a sector filter used to hide every Cross-Industry record (NIST IR
+  // 8547, OpenSSH, DNSSEC, …) with no way back short of clearing the sector.
+  // `?cross=1` adds them to a sector-scoped view.
+  const [includeCrossIndustry, setIncludeCrossIndustry] = useState(
+    () => searchParams.get('cross') === '1'
+  )
   const [sortField, setSortField] = useState<SortField>(
     () => (searchParams.get('sort') as SortField | null) ?? 'industry'
   )
@@ -295,6 +302,29 @@ export const ThreatsDashboard: React.FC<{
     awaitingSourceNotice(searchParams.get('industry'))
   )
 
+  // The reader's sector set in the top bar AFTER the page loaded used to be
+  // ignored until a reload (the store was read once, on mount). Follow it
+  // unless the URL names an industry, which wins as it does on arrival.
+  const prevStoreIndustriesRef = useRef(storeIndustries)
+  useEffect(() => {
+    if (prevStoreIndustriesRef.current === storeIndustries) return
+    prevStoreIndustriesRef.current = storeIndustries
+    if (searchParams.get('industry')) return
+    const mapped = storeIndustries
+      .flatMap((ind) => INDUSTRY_TO_THREATS_MAP[ind] ?? []) // eslint-disable-line security/detect-object-injection
+      .filter((ind, i, all) => all.indexOf(ind) === i)
+    const published = mapped.filter((ind) => threatsData.some((d) => d.industry === ind))
+    setSelectedIndustries((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(published) ? published : prev
+    )
+    const awaiting = mapped.filter((ind) => !published.includes(ind))
+    setSectorNotice(
+      published.length === 0 && awaiting.length > 0 ? sectorAwaitingSourceMessage(awaiting) : null
+    )
+    // Keyed on the store only; the URL is read at change time.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeIndustries])
+
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
   useEffect(() => {
@@ -308,6 +338,7 @@ export const ThreatsDashboard: React.FC<{
     const nextDir = (searchParams.get('dir') as SortDirection | null) ?? 'asc'
     const nextMode = threatsViewModeParam(searchParams)
     const nextLens = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
+    const nextCross = searchParams.get('cross') === '1'
 
     if (indParam) {
       const matches = resolveIndustryParam(indParam, threatsData)
@@ -342,6 +373,7 @@ export const ThreatsDashboard: React.FC<{
     setSortDirection((prev) => (prev !== nextDir ? nextDir : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
     setProtocolLens((prev) => (prev !== nextLens ? nextLens : prev))
+    setIncludeCrossIndustry((prev) => (prev !== nextCross ? nextCross : prev))
   }, [searchParams])
 
   /** Write all current filter state back to URL. Call with overrides for the value that just
@@ -359,6 +391,7 @@ export const ThreatsDashboard: React.FC<{
         id?: string | null
         mode?: ThreatsViewMode
         protocol?: string | null
+        cross?: boolean
       },
       { push = false }: { push?: boolean } = {}
     ) => {
@@ -376,6 +409,7 @@ export const ThreatsDashboard: React.FC<{
           const id = overrides.id !== undefined ? overrides.id : (selectedThreat?.threatId ?? null)
           const mode = overrides.mode ?? viewMode
           const protocol = overrides.protocol !== undefined ? overrides.protocol : protocolLens
+          const cross = overrides.cross ?? includeCrossIndustry
 
           if (inds.length > 0) next.set('industry', inds.join(','))
           else next.delete('industry')
@@ -402,6 +436,9 @@ export const ThreatsDashboard: React.FC<{
           else next.delete('protocol')
           if (mode !== 'table') next.set('mode', mode)
           else next.delete('mode')
+          // Only meaningful under a sector filter; dropped with it.
+          if (cross && inds.length > 0) next.set('cross', '1')
+          else next.delete('cross')
           return next
         },
         // Filter changes replace; opening a threat pushes, so Back closes it.
@@ -419,6 +456,7 @@ export const ThreatsDashboard: React.FC<{
       selectedThreat,
       viewMode,
       protocolLens,
+      includeCrossIndustry,
       setSearchParams,
     ]
   )
@@ -539,7 +577,11 @@ export const ThreatsDashboard: React.FC<{
 
     // Filter by Industry (multi-select: empty = all)
     if (selectedIndustries.length > 0) {
-      data = data.filter((item) => selectedIndustries.includes(item.industry))
+      data = data.filter(
+        (item) =>
+          selectedIndustries.includes(item.industry) ||
+          (includeCrossIndustry && item.industry === CROSS_INDUSTRY)
+      )
     } else if (personaDefaultActive) {
       // Persona-default narrowing — applies only when no explicit industry is
       // picked (above branch) and the user hasn't opted out via ?prefs=off.
@@ -577,38 +619,7 @@ export const ThreatsDashboard: React.FC<{
     }
 
     // Sort
-    data.sort((a, b) => {
-      // Unrated sorts below Low — "we don't know" never outranks "we checked".
-      const getCriticalityVal = criticalityRank
-
-      if (sortField === 'industry') {
-        if (a.industry !== b.industry) {
-          return sortDirection === 'asc'
-            ? a.industry.localeCompare(b.industry)
-            : b.industry.localeCompare(a.industry)
-        }
-        // Secondary Sort: Criticality (Highest First -> Descending)
-        return getCriticalityVal(b.criticality) - getCriticalityVal(a.criticality)
-      }
-
-      let valA: string | number = ''
-      let valB: string | number = ''
-
-      if (sortField === 'threatId') {
-        valA = a.threatId
-        valB = b.threatId
-      } else if (sortField === 'criticality') {
-        valA = getCriticalityVal(a.criticality)
-        valB = getCriticalityVal(b.criticality)
-      } else if (sortField === 'evidence') {
-        valA = evidenceStrength(a)
-        valB = evidenceStrength(b)
-      }
-
-      if (valA < valB) return sortDirection === 'asc' ? -1 : 1
-      if (valA > valB) return sortDirection === 'asc' ? 1 : -1
-      return 0
-    })
+    data.sort((a, b) => compareThreats(a, b, sortField, sortDirection))
 
     // My Threats filter
     if (showOnlyThreats) {
@@ -636,6 +647,7 @@ export const ThreatsDashboard: React.FC<{
     personaDefaultActive,
     personaDefaultThreatIndustries,
     protocolLens,
+    includeCrossIndustry,
   ])
 
   /**
@@ -1415,6 +1427,78 @@ export const ThreatsDashboard: React.FC<{
                     useTrustTierFilter reads the URL below — so shared links and
                     the E2E tier specs are unaffected; what went is the second
                     on-screen place to set it. */}
+
+                {selectedIndustries.length > 0 &&
+                  !selectedIndustries.includes(CROSS_INDUSTRY) &&
+                  CROSS_INDUSTRY_COUNT > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const next = !includeCrossIndustry
+                        setIncludeCrossIndustry(next)
+                        syncFiltersToUrl({ cross: next })
+                        logEvent('Threats', 'Include Cross-Industry', next ? 'on' : 'off')
+                      }}
+                      aria-pressed={includeCrossIndustry}
+                      className={clsx(
+                        'h-auto rounded-full border px-2.5 py-0.5 text-[11px] font-semibold',
+                        includeCrossIndustry
+                          ? 'border-primary/50 bg-primary/10 text-primary'
+                          : 'border-border text-muted-foreground hover:text-foreground'
+                      )}
+                    >
+                      {includeCrossIndustry ? 'Including' : '+ Include'} {CROSS_INDUSTRY_COUNT}{' '}
+                      Cross-Industry threats
+                    </Button>
+                  )}
+
+                {/* UX-5: sorting lived only in the table header, so Cards view and
+                    the phone-width card list had none. */}
+                <div
+                  className={clsx(
+                    'flex items-center gap-1',
+                    viewMode === 'table' ? 'md:hidden' : undefined
+                  )}
+                >
+                  <div className="min-w-[150px]">
+                    <FilterDropdown
+                      items={[
+                        { id: 'industry', label: 'Sort: Industry' },
+                        { id: 'threatId', label: 'Sort: ID' },
+                        { id: 'criticality', label: 'Sort: Site priority' },
+                        ...(selectedPersona === 'researcher'
+                          ? [{ id: 'evidence', label: 'Sort: Evidence' }]
+                          : []),
+                      ]}
+                      selectedId={sortField}
+                      onSelect={(id) => {
+                        const field = id as SortField
+                        if (field === sortField) return
+                        setSortField(field)
+                        setSortDirection('asc')
+                        syncFiltersToUrl({ sort: field, dir: 'asc' })
+                      }}
+                      defaultLabel="Sort"
+                      opaque
+                      className="mb-0 w-full"
+                      noContainer
+                    />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleSort(sortField)}
+                    aria-label={
+                      sortDirection === 'asc'
+                        ? 'Sorted ascending — reverse'
+                        : 'Sorted descending — reverse'
+                    }
+                    className="h-auto rounded-full border border-border px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground"
+                  >
+                    {sortDirection === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                  </Button>
+                </div>
 
                 {myThreats.length > 0 && (
                   <Button

@@ -11,6 +11,7 @@ import { MemoryRouter, useNavigate } from 'react-router'
 import '@testing-library/jest-dom'
 import { knownThreatIndustries, threatsData } from '@/data/threatsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { ThreatsDashboard } from './ThreatsDashboard'
 
 vi.mock('./ThreatDetailDialog', () => ({ ThreatDetailDialog: () => null }))
@@ -37,7 +38,7 @@ describe('ThreatsDashboard ?industry= sync (NAV-1)', () => {
   afterEach(() => {
     act(() => {
       usePersonaStore.getState().setPersona(null)
-      usePersonaStore.getState().setIndustries?.([])
+      usePersonaStore.getState().setIndustries([])
     })
   })
 
@@ -87,5 +88,53 @@ describe('ThreatsDashboard sectors awaiting a source (NAV-2)', () => {
       </MemoryRouter>
     )
     expect(screen.queryByTestId('deeplink-notice-not-found')).toBeNull()
+  })
+})
+
+describe('ThreatsDashboard Cross-Industry toggle (UX-4)', () => {
+  const sector = threatsData.find((t) => t.industry !== 'Cross-Industry')!.industry
+  const inSector = threatsData.filter((t) => t.industry === sector).length
+  const cross = threatsData.filter((t) => t.industry === 'Cross-Industry').length
+
+  it.runIf(cross > 0)(
+    'adds the Cross-Industry records to a sector view, and ?cross=1 keeps it',
+    () => {
+      render(
+        <MemoryRouter initialEntries={[`/threats?industry=${encodeURIComponent(sector)}`]}>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(shownCount()).toBe(inSector)
+      act(() => {
+        screen.getByRole('button', { name: new RegExp(`Include ${cross} Cross-Industry`) }).click()
+      })
+      expect(shownCount()).toBe(inSector + cross)
+    }
+  )
+
+  it.runIf(cross > 0)('?cross=1 on arrival includes them', () => {
+    render(
+      <MemoryRouter initialEntries={[`/threats?industry=${encodeURIComponent(sector)}&cross=1`]}>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
+    expect(shownCount()).toBe(inSector + cross)
+  })
+})
+
+describe('ThreatsDashboard follows the top-bar sector (UX-2)', () => {
+  it('narrows to a sector picked in the store after load', () => {
+    const [sector, mapped] = Object.entries(INDUSTRY_TO_THREATS_MAP).find(([, inds]) =>
+      inds.some((ind) => threatsData.some((t) => t.industry === ind))
+    )!
+    const expected = threatsData.filter((t) => mapped.includes(t.industry)).length
+    render(
+      <MemoryRouter initialEntries={['/threats']}>
+        <ThreatsDashboard />
+      </MemoryRouter>
+    )
+    expect(shownCount()).toBe(threatsData.length)
+    act(() => usePersonaStore.getState().setIndustries([sector]))
+    expect(shownCount()).toBe(expected)
   })
 })

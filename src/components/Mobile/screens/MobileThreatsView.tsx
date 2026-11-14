@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button'
 import {
   draftThreatIndustries,
+  knownThreatIndustries,
   retiredThreats,
   threatsData,
   type ThreatItem,
@@ -68,10 +69,17 @@ import {
 } from '@/components/Threats/threatsUrlParams'
 import { lensProtocolsFor, threatTouchesProtocol } from '@/data/threatProtocolLens'
 import {
+  sectorAwaitingSourceMessage,
   threatExclusions,
   threatNotFoundMessage,
   threatWidenedMessage,
 } from '@/components/Threats/threatDeepLink'
+import {
+  compareThreats,
+  threatSortDirParam,
+  threatSortFieldParam,
+} from '@/components/Threats/threatSort'
+import { matchesTrustTierFilter, trustTiersFromParams } from '@/data/trustTierFilter'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
@@ -80,6 +88,14 @@ import { formatSocCite, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getThreatRecordType, parseThreatRecordType } from '@/data/threatRecordTypes'
 import { ThreatRecordTypeBadge } from '@/components/common/ThreatRecordTypeBadge'
 
+/** The phone list's sort choices — the same fields as the desktop table. */
+const SORT_OPTIONS: { id: 'industry' | 'threatId' | 'criticality' | 'evidence'; label: string }[] =
+  [
+    { id: 'industry', label: 'Industry' },
+    { id: 'threatId', label: 'ID' },
+    { id: 'criticality', label: 'Site priority' },
+    { id: 'evidence', label: 'Evidence' },
+  ]
 const CURRENT_YEAR = new Date().getFullYear()
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
 // from (dataLifetime/credentialValidity/migrationTime) — only the CRQC year
@@ -181,6 +197,9 @@ export function MobileThreatsView() {
   const storeIndustries = usePersonaStore((s) => s.selectedIndustries)
   const myThreats = useBookmarkStore((s) => s.myThreats)
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
+  // The same saved "My threats only" preference the desktop page uses.
+  const showOnlyMine = useBookmarkStore((s) => s.showOnlyThreats)
+  const setShowOnlyMine = useBookmarkStore((s) => s.setShowOnlyThreats)
 
   const forecast = useMemo(() => getCrqcForecast(), [])
   const [crqcYear, setCrqcYear] = useState(forecast.planningYear)
@@ -217,6 +236,10 @@ export function MobileThreatsView() {
     [searchParams]
   )
   const urlQuery = searchParams.get('q')?.trim() ?? ''
+  // Same ?sort= / ?dir= as desktop, so a shared ordering opens the same way.
+  const sortField = threatSortFieldParam(searchParams.get('sort'))
+  const sortDir = threatSortDirParam(searchParams.get('dir'))
+  const tierFilter = useMemo(() => trustTiersFromParams(searchParams), [searchParams])
   // Desktop's developer protocol lens (deep-link PR 2): unknown values are ignored.
   const urlProtocol = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
   const linkedId = threatIdParam(searchParams)
@@ -381,8 +404,42 @@ export function MobileThreatsView() {
     if (classFilter) data = data.filter((t) => threatMatchesClass(t, classFilter))
     if (recordTypeFilter) data = data.filter((t) => getThreatRecordType(t) === recordTypeFilter)
     if (urlProtocol) data = data.filter((t) => threatTouchesProtocol(t, urlProtocol))
-    return data
-  }, [scopedData, urlQuery, criticality, classFilter, recordTypeFilter, urlProtocol])
+    if (tierFilter.length > 0)
+      data = data.filter((t) => matchesTrustTierFilter(tierFilter, 'threats', t.threatId))
+    if (showOnlyMine && myThreats.length > 0)
+      data = data.filter((t) => myThreats.includes(t.threatId))
+    return [...data].sort((a, b) => compareThreats(a, b, sortField, sortDir))
+  }, [
+    scopedData,
+    urlQuery,
+    criticality,
+    classFilter,
+    recordTypeFilter,
+    urlProtocol,
+    tierFilter,
+    showOnlyMine,
+    myThreats,
+    sortField,
+    sortDir,
+  ])
+
+  // A link or sector pick naming only sectors with no published threat yet
+  // (all drafted, awaiting a source) says so instead of silently showing all.
+  const awaitingSectors = useMemo(() => {
+    const fromUrl = resolveIndustryParam(
+      searchParams.get('industry'),
+      [...knownThreatIndustries].map((industry) => ({ industry }))
+    )
+    const fromStore =
+      searchParams.get('industry') || personaIndustries
+        ? []
+        : storeIndustries.flatMap((k) => INDUSTRY_TO_THREATS_MAP[k] ?? []) // eslint-disable-line security/detect-object-injection
+    return [...fromUrl, ...fromStore].filter(
+      (ind, i, all) => all.indexOf(ind) === i && !threatsData.some((t) => t.industry === ind)
+    )
+  }, [searchParams, personaIndustries, storeIndustries])
+  const [awaitingDismissed, setAwaitingDismissed] = useState<string | null>(null)
+  const awaitingKey = awaitingSectors.join('|')
   const [visibleCount, setVisibleCount] = useState(12)
   useEffect(
     () => setVisibleCount(12),
@@ -419,6 +476,14 @@ export function MobileThreatsView() {
           </div>
         )}
       </div>
+
+      {awaitingSectors.length > 0 && awaitingDismissed !== awaitingKey && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={sectorAwaitingSourceMessage(awaitingSectors)}
+          onDismiss={() => setAwaitingDismissed(awaitingKey)}
+        />
+      )}
 
       {deepLinkNotice && (
         <DeepLinkNotice
@@ -655,6 +720,56 @@ export function MobileThreatsView() {
             {c.label}
           </Button>
         ))}
+      </div>
+
+      <div className="mb-4 flex flex-wrap items-center gap-1.5">
+        <span className="text-[11px] text-muted-foreground">Sort</span>
+        {SORT_OPTIONS.filter((o) => o.id !== 'evidence' || selectedPersona === 'researcher').map(
+          (o) => (
+            <Button
+              type="button"
+              variant="ghost"
+              key={o.id}
+              onClick={() => setParam({ sort: o.id === 'industry' ? null : o.id, dir: null })}
+              aria-pressed={sortField === o.id}
+              className={cn(
+                'h-11 rounded-full border px-3 text-[11px] font-semibold',
+                sortField === o.id
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border bg-card text-foreground'
+              )}
+            >
+              {o.label}
+            </Button>
+          )
+        )}
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setParam({ dir: sortDir === 'asc' ? 'desc' : null })}
+          aria-label={
+            sortDir === 'asc' ? 'Sorted ascending — reverse' : 'Sorted descending — reverse'
+          }
+          className="h-11 rounded-full border border-border px-3 text-[11px] font-semibold"
+        >
+          {sortDir === 'asc' ? '↑' : '↓'}
+        </Button>
+        {myThreats.length > 0 && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setShowOnlyMine(!showOnlyMine)}
+            aria-pressed={showOnlyMine}
+            className={cn(
+              'h-11 rounded-full border px-3 text-[11px] font-semibold',
+              showOnlyMine
+                ? 'border-primary bg-primary text-primary-foreground'
+                : 'border-border bg-card text-foreground'
+            )}
+          >
+            My threats only ({myThreats.length})
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-col gap-2.5">

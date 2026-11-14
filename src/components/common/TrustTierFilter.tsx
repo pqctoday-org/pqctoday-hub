@@ -3,9 +3,11 @@ import { ShieldCheck } from 'lucide-react'
 import { useSearchParams } from 'react-router'
 import { FilterDropdown } from './FilterDropdown'
 import type { FilterDropdownItem } from './FilterDropdown'
-import { getTrustScore, type TrustTier, type ScoredResourceType } from '@/data/trustScore'
+import type { TrustTier } from '@/data/trustScore'
+import { isTrustTier, matchesTrustTierFilter, trustTiersFromParams } from '@/data/trustTierFilter'
 
-const TIER_ORDER: TrustTier[] = ['Authoritative', 'High', 'Moderate', 'Low']
+// Re-exported: existing desktop callers import it from here.
+export { matchesTrustTierFilter }
 
 const TIER_OPTIONS: FilterDropdownItem[] = [
   { id: 'Authoritative', label: 'Authoritative' },
@@ -64,30 +66,9 @@ export function TrustTierFilter({
   )
 }
 
-function isTrustTier(value: string): value is TrustTier {
-  return TIER_ORDER.includes(value as TrustTier)
-}
-
 /** Read trust-tier filter state — empty array when unset. Accepts an optional
  *  URLSearchParams override (for the sim embed). */
 export function useTrustTierFilter(paramsOverride?: URLSearchParams): TrustTier[] {
   const [urlParams] = useSearchParams()
-  return (paramsOverride ?? urlParams).getAll('tier').filter(isTrustTier)
-}
-
-/**
- * Returns true if the (resourceType, resourceId) pair has a tier matching one
- * of the selected tiers, OR if no tier filter is active. Records with no
- * trust score are excluded from results when any tier is selected — preserving
- * the user's intent ("show me only Authoritative content").
- */
-export function matchesTrustTierFilter(
-  selectedTiers: TrustTier[],
-  resourceType: ScoredResourceType,
-  resourceId: string
-): boolean {
-  if (selectedTiers.length === 0) return true
-  const score = getTrustScore(resourceType, resourceId)
-  if (!score) return false
-  return selectedTiers.includes(score.tier)
+  return trustTiersFromParams(paramsOverride ?? urlParams)
 }

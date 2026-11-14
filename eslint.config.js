@@ -470,6 +470,10 @@ export default defineConfig([
                 // filters hide a ?id threat + the notice text, shared by
                 // ThreatsDashboard and MobileThreatsView so they cannot drift.
                 '!@/components/Threats/threatDeepLink',
+                // threatSort.ts (4.208) — pure comparator, no JSX: the one
+                // ordering the desktop table/cards and the phone list use, so
+                // a shared ?sort= link orders the same way on both.
+                '!@/components/Threats/threatSort',
                 // useLibraryPipeline.ts / libraryPills.ts (Library/redesign)
                 // — the real filter/sort pipeline and pill-formatting
                 // helpers every desktop Library surface already reads (no
