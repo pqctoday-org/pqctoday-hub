@@ -2,15 +2,20 @@
 import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronUp, ChevronDown, ShieldAlert, BookmarkCheck, Bookmark } from 'lucide-react'
-import { claimsCheckedText, getThreatLineage, sourceIdentityText } from '@/data/threatClaimStatus'
+import {
+  CHECKED_CLAIM_COLUMNS,
+  claimsCheckedText,
+  getThreatLineage,
+  sourceIdentityText,
+} from '@/data/threatClaimStatus'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
-import { getIndustryIcon, capChips } from './threatsHelper'
-import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
+import { getIndustryIcon, cryptoFieldDisplay } from './threatsHelper'
+import { ThreatClassBadge, ShorTierBadge, ProtocolBasisBadge } from './ThreatClassBadges'
 import { EmptyState } from '../ui/empty-state'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
@@ -39,6 +44,9 @@ interface ThreatsTableProps {
   sortDirection: SortDirection
   onSort: (field: SortField) => void
   onItemClick: (item: ThreatItem) => void
+  /** Active developer protocol lens: each row says whether it matched by
+   *  naming the protocol (stated) or by an algorithm (inferred). */
+  protocolLens?: string | null
 }
 
 export const ThreatsTable = ({
@@ -48,6 +56,7 @@ export const ThreatsTable = ({
   sortDirection,
   onSort,
   onItemClick,
+  protocolLens = null,
 }: ThreatsTableProps) => {
   const myThreats = useBookmarkStore((s) => s.myThreats)
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
@@ -271,6 +280,11 @@ export const ThreatsTable = ({
                           <td className="hidden md:table-cell px-3 py-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors overflow-hidden">
                             <div className="line-clamp-2 md:line-clamp-3">{item.description}</div>
                             <ThreatRecordTypeBadge threat={item} className="mt-1" />
+                            <ProtocolBasisBadge
+                              threat={item}
+                              protocol={protocolLens}
+                              className="mt-1"
+                            />
                             <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider truncate">
                               Source: {item.mainSource}
                             </div>
@@ -305,6 +319,10 @@ export const ThreatsTable = ({
                               {(() => {
                                 const lineage = getThreatLineage(item.threatId)
                                 const checked = lineage.supported + lineage.unconfirmed
+                                // Out of the row's three claims, not out of the
+                                // ones that happen to have a verdict — a missing
+                                // verdict used to make "2 of 2" read as complete.
+                                const total = CHECKED_CLAIM_COLUMNS.length
                                 return (
                                   <span
                                     className="text-muted-foreground"
@@ -321,7 +339,7 @@ export const ThreatsTable = ({
                                     </span>
                                     {checked > 0 && (
                                       <span className="block">
-                                        {lineage.supported} of {checked} claims
+                                        {lineage.supported} of {total} claims
                                       </span>
                                     )}
                                   </span>
@@ -339,8 +357,20 @@ export const ThreatsTable = ({
                                 className="whitespace-normal text-left"
                               />
                               {(() => {
-                                const { visible, hiddenCount } = capChips(item.cryptoAtRisk)
-                                if (visible.length === 0) return <NotYetSpecified />
+                                const shown = cryptoFieldDisplay(item.cryptoAtRisk)
+                                if (shown.kind === 'empty') return <NotYetSpecified />
+                                // Prose quoted from the source stays one piece of
+                                // text; only a token list becomes chips.
+                                if (shown.kind === 'prose')
+                                  return (
+                                    <span
+                                      className="line-clamp-3 font-sans text-muted-foreground break-words"
+                                      title={shown.text}
+                                    >
+                                      {shown.text}
+                                    </span>
+                                  )
+                                const { visible, hiddenCount } = shown
                                 return (
                                   <>
                                     {visible.map((c, i) => (
@@ -367,8 +397,20 @@ export const ThreatsTable = ({
                           <td className="px-3 py-4 text-xs font-mono">
                             <div className="flex flex-wrap gap-1">
                               {(() => {
-                                const { visible, hiddenCount } = capChips(item.pqcReplacement)
-                                if (visible.length === 0) return <NotYetSpecified />
+                                const shown = cryptoFieldDisplay(item.pqcReplacement)
+                                if (shown.kind === 'empty') return <NotYetSpecified />
+                                // Prose quoted from the source stays one piece of
+                                // text; only a token list becomes chips.
+                                if (shown.kind === 'prose')
+                                  return (
+                                    <span
+                                      className="line-clamp-3 font-sans text-muted-foreground break-words"
+                                      title={shown.text}
+                                    >
+                                      {shown.text}
+                                    </span>
+                                  )
+                                const { visible, hiddenCount } = shown
                                 return (
                                   <>
                                     {visible.map((c, i) => (

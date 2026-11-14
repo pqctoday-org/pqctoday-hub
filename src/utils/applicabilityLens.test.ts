@@ -196,7 +196,7 @@ describe('each section links to the page that holds its full list', () => {
 
   it('routes threats to the Threats page, carrying the Threats-page labels for the sector', () => {
     expect(seeAllLink('threats', profile)).toEqual({
-      href: `/threats?industry=${encodeURIComponent('Finance & Banking,Insurance,Payment Card Industry,Cryptocurrency / Blockchain')}`,
+      href: `/threats?industry=${encodeURIComponent('Finance & Banking,Insurance,Payment Card Industry,Cryptocurrency / Blockchain,Legal / Notary / eSignature')}`,
       label: 'See all threats',
     })
   })
