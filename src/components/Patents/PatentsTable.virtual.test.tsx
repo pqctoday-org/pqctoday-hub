@@ -8,6 +8,7 @@
  */
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
 import { screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { renderWithRouter } from '@/test/utils'
 import type { PatentItem } from '@/types/PatentTypes'
 
@@ -21,7 +22,8 @@ const ROW_PX = 57
 function patent(n: number): PatentItem {
   return {
     patentNumber: `US${String(12000000 + n)}`,
-    title: `Patent title ${n}`,
+    // Zero-padded so the title sort is numeric order.
+    title: `Patent title ${String(n).padStart(3, '0')}`,
     inventors: 'Inventor',
     assignee: 'Holder',
     priorityDate: '2020-01-01',
@@ -103,14 +105,14 @@ afterAll(() => {
   }
 })
 
-function renderTable(selectedId: string | null = null) {
-  return renderWithRouter(
+function table(selectedId: string | null, sortDir: 'asc' | 'desc' = 'desc') {
+  return (
     <PatentsTable
       patents={ALL}
       selectedId={selectedId}
       onSelect={() => {}}
-      sortKey="issueDate"
-      sortDir="desc"
+      sortKey="title"
+      sortDir={sortDir}
       onSort={() => {}}
       visibleColumns={['num', 'title', 'issueDate']}
       columnPreset="custom"
@@ -119,6 +121,10 @@ function renderTable(selectedId: string | null = null) {
       chrome={false}
     />
   )
+}
+
+function renderTable(selectedId: string | null = null) {
+  return renderWithRouter(table(selectedId))
 }
 
 // The spacer and patent rows carry no accessible name to query by.
@@ -137,7 +143,8 @@ describe('PatentsTable virtualisation', () => {
     expect(rows.length).toBeGreaterThan(0)
     // 600 px of 57 px rows is about 11, plus the overscan on each side.
     expect(rows.length).toBeLessThan(40)
-    expect(screen.getByText('Patent title 1')).toBeInTheDocument()
+    // Sorted by title, newest-first: 732 leads.
+    expect(screen.getByText('Patent title 732')).toBeInTheDocument()
   })
 
   it('keeps the full scroll height with spacer rows', () => {
@@ -149,7 +156,8 @@ describe('PatentsTable virtualisation', () => {
   })
 
   it('brings a selected patent outside the window into range (deep link)', async () => {
-    const target = ALL[500]!.patentNumber
+    // Title 232 sits at index 500 when sorted by title, descending.
+    const target = ALL[231]!.patentNumber
     const scrollTo = vi.fn()
     const origScrollTo = HTMLElement.prototype.scrollTo
     HTMLElement.prototype.scrollTo = scrollTo as unknown as typeof HTMLElement.prototype.scrollTo
@@ -165,5 +173,29 @@ describe('PatentsTable virtualisation', () => {
     } finally {
       HTMLElement.prototype.scrollTo = origScrollTo
     }
+  })
+
+  it('does not jump back to the open patent when the reader re-sorts', async () => {
+    const target = ALL[231]!.patentNumber
+    const scrollTo = vi.fn()
+    const origScrollTo = HTMLElement.prototype.scrollTo
+    HTMLElement.prototype.scrollTo = scrollTo as unknown as typeof HTMLElement.prototype.scrollTo
+    try {
+      const view = renderWithRouter(table(target, 'desc'))
+      await vi.waitFor(() => expect(scrollTo).toHaveBeenCalled())
+      await new Promise((r) => setTimeout(r, 200))
+      const callsAfterArrival = scrollTo.mock.calls.length
+      // Reversing the sort moves the selection from index 500 to 231, still out of view.
+      view.rerender(<MemoryRouter>{table(target, 'asc')}</MemoryRouter>)
+      await new Promise((r) => setTimeout(r, 200))
+      expect(scrollTo.mock.calls.length).toBe(callsAfterArrival)
+    } finally {
+      HTMLElement.prototype.scrollTo = origScrollTo
+    }
+  })
+
+  it('tells assistive technology the full row count', () => {
+    renderTable()
+    expect(screen.getByRole('table')).toHaveAttribute('aria-rowcount', String(ALL.length + 1))
   })
 })

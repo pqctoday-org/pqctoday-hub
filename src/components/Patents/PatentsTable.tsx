@@ -485,14 +485,22 @@ export function PatentsTable({
 
   // A selection made from outside the table (a ?patent= link, the drawer's
   // next/previous, a search result) may sit outside the rendered window: bring
-  // it into range so the row exists for the page's scroll-and-highlight step.
-  // A click on a visible row is already in range, so the table does not jump.
+  // it into range once, so the row exists for the page's scroll-and-highlight
+  // step. A click on a visible row is already in range, and a later re-sort or
+  // filter change leaves the reader's scroll position alone.
   const selectedIndex = useMemo(
     () => (selectedId ? sorted.findIndex((p) => p.patentNumber === selectedId) : -1),
     [selectedId, sorted]
   )
+  const broughtIntoRange = useRef<string | null>(null)
   useEffect(() => {
-    if (selectedIndex < 0) return
+    if (!selectedId) {
+      broughtIntoRange.current = null
+      return
+    }
+    // Wait until the selection is in the list (a link may widen the scope first).
+    if (selectedIndex < 0 || broughtIntoRange.current === selectedId) return
+    broughtIntoRange.current = selectedId
     const items = rowVirtualizer.getVirtualItems()
     const first = items[0]?.index ?? -1
     const last = items[items.length - 1]?.index ?? -1
@@ -500,7 +508,7 @@ export function PatentsTable({
       rowVirtualizer.scrollToIndex(selectedIndex, { align: 'center' })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the virtualiser instance is stable
-  }, [selectedIndex])
+  }, [selectedId, selectedIndex])
 
   const handleSort = useCallback(
     (key: SortKey) => {
@@ -605,10 +613,12 @@ export function PatentsTable({
               description="Try adjusting your filters or search."
             />
           ) : (
-            <table className="w-full text-sm border-collapse">
+            // Only the rows in view are in the DOM; the row count and indices
+            // tell assistive technology how large the table really is.
+            <table className="w-full text-sm border-collapse" aria-rowcount={sorted.length + 1}>
               <thead className="sticky top-0 z-10 bg-card border-b border-border">
-                <tr>
-                  {show('num') && <ThCol label="#" className="w-10" {...thProps} />}
+                <tr aria-rowindex={1}>
+                  {show('num') && <ThCol label="#" className="w-12 min-w-12" {...thProps} />}
                   {show('title') && <ThCol label="Title" sortable="title" {...thProps} />}
                   {show('assignee') && !collapseForDetail && (
                     <ThCol label="Assignee" className="hidden sm:table-cell" {...thProps} />
@@ -616,14 +626,14 @@ export function PatentsTable({
                   {show('pqcAlgorithms') && (
                     <ThCol
                       label="PQC Algorithms"
-                      className="hidden sm:table-cell max-w-[160px]"
+                      className="hidden sm:table-cell min-w-[175px] max-w-[175px]"
                       {...thProps}
                     />
                   )}
                   {show('classicalAlgorithms') && (
                     <ThCol
                       label="Classical Algorithms"
-                      className="hidden sm:table-cell max-w-[160px]"
+                      className="hidden sm:table-cell min-w-[175px] max-w-[175px]"
                       {...thProps}
                     />
                   )}
@@ -720,6 +730,7 @@ export function PatentsTable({
                     <tr
                       key={p.patentNumber}
                       data-index={i}
+                      aria-rowindex={i + 2}
                       ref={rowVirtualizer.measureElement}
                       data-deeplink-id={p.patentNumber}
                       onClick={() => {
