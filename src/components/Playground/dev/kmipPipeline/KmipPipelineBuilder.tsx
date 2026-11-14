@@ -18,7 +18,7 @@
  * D1 (editor ↔ builder sync) and D2 (save/export) reuse the exact same
  * model and pipelineRun.ts persistence helpers the PKCS#11 tab uses.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import {
   Play,
@@ -550,18 +550,29 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     templateName,
   ])
 
+  // Ctrl/Cmd+Enter must always run the CURRENT runAll. Re-registering the
+  // listener in a passive effect left a window after each render where the
+  // previous closure was still attached: a keypress right after importing an
+  // older pipeline ran it with the "choose Text or Hex" guard of the stale
+  // render, before the reader had confirmed the input. The ref is updated in a
+  // layout effect, so it is current as soon as the render commits.
+  const shortcutRef = useRef({ runAll, paletteSource, corpus })
+  useLayoutEffect(() => {
+    shortcutRef.current = { runAll, paletteSource, corpus }
+  })
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault()
         if (runningRef.current) return
-        if (paletteSource === 'corpus') void corpus.runAll()
-        else void runAll()
+        const cur = shortcutRef.current
+        if (cur.paletteSource === 'corpus') void cur.corpus.runAll()
+        else void cur.runAll()
       }
     }
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
-  }, [runAll, paletteSource, corpus])
+  }, [])
 
   const downloadFile = (content: string, filename: string, type: string) => {
     const blob = new Blob([content], { type })
