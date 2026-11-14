@@ -1276,57 +1276,70 @@
   "successorDependencies": null
  },
  "Australia:ASD — ISM December 2024 Update": {
-  "mainTopic": "The December 2024 update of the Australian Information Security Manual's Guidelines for Cryptography, covering cryptographic fundamentals, ASD-Approved Cryptographic Algorithms, and the approval of ML-DSA and ML-KEM alongside a 2030 cutoff for DH, ECDH and ECDSA.",
+  "mainTopic": "The Australian Signals Directorate's Information Security Manual (ISM) Guidelines for Cryptography (December 2024), which set requirements for approved cryptographic algorithms and protocols, including post-quantum algorithms (ML-DSA, ML-KEM) and the transition to post-quantum cryptography by 2030.",
   "pqcAlgorithms": [
-   "ML-DSA",
-   "ML-KEM"
+   "ML-KEM",
+   "ML-DSA"
   ],
   "quantumThreats": [
-   "Projected technological advances in quantum computing (used as the reason DH, ECDH, ECDSA and ML-DSA-65 will not be approved beyond 2030)"
+   "Cryptographically relevant quantum computer (CRQC)",
+   "Shor's algorithm defeating DH",
+   "ECDH",
+   "ECDSA and RSA",
+   "projected technological advances in quantum computing"
   ],
   "migrationTimeline": [
-   "2030: DH, ECDH, ECDSA and ML-DSA-65 will not be approved for use beyond 2030"
+   "2030: DH, ECDH, ECDSA, RSA, ML-DSA-65, ML-KEM-768, SHA-224, SHA-256, AES-128, AES-192 and HMAC-SHA256 will not be approved for use beyond 2030",
+   "by no later than 2030: new cryptographic equipment and software must support ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 (ISM-1917)"
   ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
-    "ASD",
-    "Department of Home Affairs",
-    "NIST",
-    "Canadian Centre for Cyber Security"
+    "Australian Signals Directorate (ASD)",
+    "National Institute of Standards and Technology (NIST)",
+    "Canadian Centre for Cyber Security",
+    "United States National Security Agency",
+    "United Kingdom National Cyber Security Centre",
+    "Department of Home Affairs"
    ]
   },
   "leadersContributions": [],
   "pqcProducts": [],
-  "protocols": [],
+  "protocols": [
+   "TLS 1.3",
+   "SSH",
+   "S/MIME",
+   "OpenPGP",
+   "IPsec",
+   "IKE version 2",
+   "Wi-Fi Protected Access 2",
+   "Wi-Fi Protected Access 3"
+  ],
   "infrastructureLayers": [
-   "Key Management",
-   "HACE (High Assurance Cryptographic Equipment)",
-   "Full disk encryption",
-   "Cryptographic equipment and software"
+   "Cryptographic key management",
+   "High Assurance Cryptographic Equipment (HACE)",
+   "full disk encryption",
+   "certificates"
   ],
   "standardizationBodies": [
-   "ASD",
    "NIST",
-   "ISO",
-   "IEC",
-   "Canadian Centre for Cyber Security"
+   "ISO/IEC",
+   "ASD"
   ],
   "complianceFrameworks": [
-   "ISM",
-   "FIPS 140-3",
    "ISO/IEC 19790:2012",
    "ISO/IEC 24759:2017",
+   "FIPS 140-3",
    "NIST SP 180-140",
-   "NIST SP 800-57 Part 1 Rev. 5",
-   "NIST SP 800-56A Rev. 3",
-   "NIST SP 800-186",
    "FIPS 203",
    "FIPS 204",
+   "NIST SP 800-56A Rev. 3",
+   "NIST SP 800-56C Rev. 2",
+   "NIST SP 800-57 Part 1 Rev. 5",
+   "NIST SP 800-186",
    "Common Criteria",
-   "Cryptographic Module Validation Program",
    "Commercial National Security Algorithm Suite",
-   "Australian Communications Security Instructions",
+   "Cryptographic Module Validation Program",
    "Protective Security Policy Framework"
   ],
   "classicalAlgorithms": [
@@ -1335,56 +1348,81 @@
    "ECDSA",
    "RSA",
    "SHA-2",
+   "SHA-224",
+   "SHA-256",
+   "SHA-384",
+   "SHA-512",
    "SHA-3",
-   "AES"
+   "AES",
+   "AES-128",
+   "AES-192",
+   "AES-256",
+   "AES-GCM",
+   "HMAC-SHA256",
+   "HMAC-SHA384",
+   "HMAC-SHA512"
   ],
   "keyTakeaways": [
-   "DH, ECDH and ECDSA will not be approved for use beyond 2030 due to projected quantum computing advances",
-   "ML-DSA-65 and ML-DSA-87 are approved, but ML-DSA-65 will not be approved beyond 2030",
-   "ML-KEM and ML-DSA are now ASD-Approved Cryptographic Algorithms",
-   "SHA-3 including XOFs is approved exclusively for use within ML-DSA and ML-KEM",
-   "Use ECDH in preference to DH and prefer the NIST P-384 curve"
+   "New cryptographic equipment and software must support ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 by no later than 2030 (ISM-1917)",
+   "DH, ECDH, ECDSA and RSA will not be approved beyond 2030 due to quantum computing",
+   "ML-DSA-87 and ML-KEM-1024 are preferred over the -65 and -768 parameter sets, which are also not approved beyond 2030",
+   "Post-quantum traditional hybrid schemes are not recommended but not prohibited, and must use at least one AACA",
+   "The hedged variant of ML-DSA should be used whenever possible"
   ],
   "securityLevels": [
-   "ML-DSA-44",
    "ML-DSA-65",
    "ML-DSA-87",
-   "DH modulus at least 2048 bits (preferably 3072 bits)",
-   "DH modulus at least 3072 bits for SECRET and TOP SECRET",
-   "ECDH/ECDSA base point order and key size at least 224 bits",
-   "NIST P-256",
-   "P-384",
-   "P-521 curves",
-   "Effective security strength targets: 112 bits (non-classified, OFFICIAL: Sensitive, PROTECTED)",
-   "128 bits (SECRET)",
-   "192 bits (TOP SECRET)"
+   "ML-KEM-768",
+   "ML-KEM-1024",
+   "112-bit minimum effective security for non-classified",
+   "OFFICIAL: Sensitive and PROTECTED",
+   "128-bit for SECRET",
+   "192-bit for TOP SECRET",
+   "DH modulus 2048-bit minimum (3072-bit preferred)",
+   "RSA modulus 2048-bit minimum (3072-bit for S and TS)",
+   "NIST P-384 preferred curve",
+   "AES-256 preferred",
+   "SHA-384 or SHA-512 preferred"
   ],
-  "hybridApproaches": [],
-  "performanceConsiderations": [],
+  "hybridApproaches": [
+   "Post-quantum traditional hybrid schemes (e.g. ML-KEM with RSA) are not recommended but not prohibited",
+   "and at least one algorithm must be an AACA (ISM-1996)",
+   "transition to pure post-quantum schemes anticipated",
+   "support for ASD-approved post-quantum algorithms by 2030"
+  ],
+  "performanceConsiderations": [
+   "Hybrid schemes carry greater computational and bandwidth overheads",
+   "pre-hashed ML-DSA variants reduce computational overhead where SHAKE hardware support is lacking",
+   "pre-hash must be at least SHA-384 for ML-DSA-65 and SHA-512 for ML-DSA-87"
+  ],
   "targetAudience": [
    "CISO",
    "Security Architect",
    "Compliance Officer",
+   "Developer",
    "Policy Maker"
   ],
   "implementationPrereqs": [
-   "Disable all unapproved cryptographic algorithms (preferred) or advise users not to use them via usage policies",
-   "Adherence to pre-requisite FIPS publications for ML-DSA and ML-KEM",
-   "Curves selected from NIST SP 800-186"
+   "Disable unapproved cryptographic algorithms and protocols",
+   "adherence to pre-requisite FIPS publications for ML-DSA and ML-KEM",
+   "support for ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256 in new equipment and software by 2030",
+   "HACE with ASD Approval for Use for SECRET and TOP SECRET data"
   ],
   "relevantFeatures": [
    "Compliance",
    "Algorithms",
-   "Timeline",
-   "Migrate"
+   "Migrate",
+   "hybrid-crypto",
+   "tls-basics"
   ],
   "implementationAttackSurface": [
-   "Implementation errors in post-quantum algorithms (stated as a reason for approving only specific standards)",
-   "Unapproved algorithms used without a user's knowledge"
+   "Side-channel attacks on the deterministic ML-DSA variant (hedged variant provides protection)",
+   "implementation errors in complex post-quantum algorithms",
+   "ECB mode pattern leakage"
   ],
   "cryptoDiscovery": [],
   "testingValidation": [
-   "Common Criteria evaluation",
+   "Common Criteria evaluation against a Protection Profile",
    "Cryptographic Module Validation Program",
    "ISO/IEC 24759 and NIST SP 180-140 test requirements"
   ],
@@ -1392,31 +1430,32 @@
   "qrngEntropy": [],
   "constrainedDeviceIoT": [],
   "supplyChainRisk": [
-   "Cyber supply chain risk management (referenced to the Guidelines for Procurement and Outsourcing)"
+   "References the cyber supply chain risk management section of the Guidelines for Procurement and Outsourcing and the evaluated product procurement section of the Guidelines for Evaluated Products"
   ],
   "deploymentComplexity": [
-   "Only AACAs or high assurance algorithms may be used",
-   "Unapproved algorithms should be disabled",
-   "Classification-specific controls (NC, OS, P, S, TS)"
+   "Hybrid schemes add complexity, making maintenance, analysis and secure implementation harder",
+   "organisations should consider the eventual cost of transitioning to pure post-quantum schemes",
+   "disabling unapproved algorithms preferred over policy advice"
   ],
   "financialBusinessImpact": [],
   "organizationalReadiness": [
    "Documented cryptographic key management processes and procedures",
-   "Incident reporting to the Chief Information Security Officer"
+   "ASD Planning for Post-Quantum Cryptography publication referenced for transition planning",
+   "reporting of cryptographic incidents to the CISO"
   ],
-  "phaseClassification": "The document is the Australian Information Security Manual (ISM) cryptography guidance, issued by ASD, which sets controls and approved algorithms, including the newly approved ML-DSA and ML-KEM.",
-  "mandateLevel": "Recommended",
+  "phaseClassification": "The document is ASD's official guidance (the Information Security Manual) setting approved algorithms and a requirement (ISM-1917) to support post-quantum algorithms by 2030.",
+  "mandateLevel": "Mandatory",
   "sectorApplicability": [
    "Government"
   ],
   "migrationUrgency": "Critical Deadline",
-  "phaseTransition": "Moves from classical-only approved algorithms toward post-quantum adoption, approving ML-DSA and ML-KEM while setting a 2030 cutoff for DH, ECDH and ECDSA.",
-  "historicalSignificance": "The December 2024 update added ML-DSA and ML-KEM as ASD-approved algorithms and set a 2030 end date for the approval of traditional asymmetric algorithms.",
+  "phaseTransition": "Moves from traditional-cryptography-only approvals to formally approving ML-DSA and ML-KEM while setting a 2030 sunset for traditional asymmetric algorithms.",
+  "historicalSignificance": "Introduces ASD's first approval of the post-quantum algorithms ML-DSA and ML-KEM into the ISM, with a 2030 deadline for support of post-quantum and stronger symmetric/hash algorithms.",
   "implementationDates": [
-   "2030: DH, ECDH and ECDSA will not be approved for use beyond 2030",
-   "2030: ML-DSA-65 will not be approved for use beyond 2030"
+   "2030: DH, ECDH, ECDSA, RSA, ML-DSA-65, ML-KEM-768, SHA-224, SHA-256, AES-128 and AES-192 not approved beyond 2030",
+   "2030: new cryptographic equipment and software must support ML-DSA-87, ML-KEM-1024, SHA-384, SHA-512 and AES-256"
   ],
-  "successorDependencies": "Depends on FIPS 203 and FIPS 204 and their pre-requisite FIPS publications; Leads to the 2030 withdrawal of approval for DH, ECDH, ECDSA and ML-DSA-65"
+  "successorDependencies": "Depends on FIPS 203 and FIPS 204 finalization; enables procurement of cryptographic equipment supporting ASD-approved post-quantum algorithms; requires phase-out of DH, ECDH, ECDSA and RSA by 2030"
  },
  "International:BIS — Paper 158 Quantum Roadmap": {
   "mainTopic": "BIS Paper No 158 provides a roadmap for the financial system to transition to quantum-safe cryptographic infrastructures, stressing early awareness, governance and cryptographic inventory.",
@@ -35087,5 +35126,822 @@
   "historicalSignificance": "This is the final publication of NIST IR 8547, providing the definitive technical roadmap for the US federal government's transition to post-quantum cryptography in response to Executive Order 14412.",
   "implementationDates": [],
   "successorDependencies": "Requires implementation of Executive Order 14412 and OMB Memorandum M-26-15; Enables migration of federal agency sensitive systems to post-quantum cryptography."
+ },
+ "United States:NIST — Quantum-Vulnerable Public-Key Algorithms Deprecated": {
+  "mainTopic": "NIST's roadmap and expected approach for transitioning from quantum-vulnerable cryptographic algorithms to post-quantum digital signature algorithms and key-establishment schemes.",
+  "pqcAlgorithms": [
+   "Module-Lattice-Based Key-Encapsulation Mechanism",
+   "Module-Lattice-Based Digital Signature Algorithm",
+   "Stateless Hash-Based Signature Algorithm"
+  ],
+  "quantumThreats": [
+   "Harvest now",
+   "decrypt later"
+  ],
+  "migrationTimeline": [
+   "2030 deprecation and 2035 disallowment targets for quantum-vulnerable algorithms"
+  ],
+  "regionsAndBodies": null,
+  "leadersContributions": [
+   "Dustin Moody",
+   "Ray Perlner",
+   "Andrew Regenscheid",
+   "Angela Robinson",
+   "David Cooper"
+  ],
+  "pqcProducts": [
+   "OpenSSL",
+   "BoringSSL",
+   "Libsodium",
+   "Java Cryptography Architecture (JCA)"
+  ],
+  "protocols": [
+   "Transport Layer Security (TLS)",
+   "Secure Shell (SSH)",
+   "Internet Protocol Security (IPsec)",
+   "Cryptographic Message Syntax (CMS)"
+  ],
+  "infrastructureLayers": [
+   "PKI",
+   "Cryptographic Hardware",
+   "Software Cryptographic Libraries"
+  ],
+  "standardizationBodies": [
+   "NIST"
+  ],
+  "complianceFrameworks": [
+   "FIPS 203",
+   "FIPS 204",
+   "FIPS 205"
+  ],
+  "classicalAlgorithms": [
+   "Elliptic Curve Digital Signature Algorithm",
+   "Advanced Encryption Standard (AES)",
+   "Secure Hash Standard (SHS)",
+   "eXtendable-Output Functions (XOFs)"
+  ],
+  "keyTakeaways": [
+   "Transition to PQC is urgent due to the \"harvest now, decrypt later\" threat",
+   "NIST has released three initial PQC standards (FIPS 203, 204, 205) to begin the transition",
+   "Full integration into information systems may take 10 to 20 years",
+   "Federal agencies should follow NIST publications for planning and transition purposes"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [
+   "Hybrid Key-Establishment Techniques",
+   "Hybrid Digital Signature Techniques",
+   "careful deprecation",
+   "controlled legacy use",
+   "and eventual removal of quantum-vulnerable algorithms"
+  ],
+  "performanceConsiderations": [
+   "Larger sizes of the PQC algorithms",
+   "different computational requirements"
+  ],
+  "targetAudience": [
+   "Policy Maker",
+   "Compliance Officer",
+   "Security Architect"
+  ],
+  "implementationPrereqs": [
+   "Cryptographic inventory",
+   "PKI upgrade",
+   "software library revision",
+   "hardware module upgrade",
+   "crypto-agility"
+  ],
+  "relevantFeatures": [
+   "Timeline",
+   "Threats",
+   "Migrate",
+   "Algorithms",
+   "hybrid-crypto"
+  ],
+  "implementationAttackSurface": [
+   "Side-channel attacks"
+  ],
+  "cryptoDiscovery": [
+   "Cryptographic inventory",
+   "algorithm enumeration"
+  ],
+  "testingValidation": [
+   "FIPS 140 validation via the Cryptographic Module Validation Program (CMVP)",
+   "NIST is revising CMVP processes to accelerate validation of PQC modules (§3)",
+   "hybrid key establishment and dual signatures accommodated in FIPS 140 validation when combined with a NIST-approved scheme (§3.2)"
+  ],
+  "qkdProtocols": [],
+  "qrngEntropy": [
+   "None detected (DRBGs [SP80090A] are only listed among symmetric primitives",
+   "ML-DSA-44 category drops to 1 if an approved RBG with less than 192 bits of security is used)"
+  ],
+  "constrainedDeviceIoT": [
+   "Ascon-based lightweight cryptography [SP800232] (Ascon AES-AEAD128, Ascon-Hash256) listed as symmetric standards for constrained devices",
+   "hardware modules \"often have larger key sizes and different computational requirements\" for PQC (§2.2.3)",
+   "devices unable to update signature-verification code should require quantum-resistant signatures from the start (§3.1.1)"
+  ],
+  "supplyChainRisk": [
+   "Public-private engagement",
+   "vendor PQC roadmap maturity implied by industry dialogue"
+  ],
+  "deploymentComplexity": [
+   "10 to 20 years for full integration",
+   "phased deprecation and removal"
+  ],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [
+   "Governance prerequisites",
+   "dedicated crypto team implied by stakeholder roles",
+   "change management scope",
+   "estimated planning horizon (over a decade)"
+  ],
+  "phaseClassification": "The report sets firm dates for the end of quantum-vulnerable public-key cryptography: \"NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035.\" It also ties these dates to earlier federal deadlines (Dec 31, 2030 for key establishment; Dec 31, 2031 for digital signatures) under EO 14412 and OMB M-26-15.",
+  "mandateLevel": "Mandatory",
+  "sectorApplicability": [
+   "Government",
+   "Critical Infrastructure",
+   "Technology"
+  ],
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from Standardization (FIPS 203/204/205 published) to Deadline/Migration. NIST's deprecation and disallowance schedule for RSA, ECDSA, EdDSA, and finite-field and elliptic-curve DH/MQV turns the published PQC standards into dated migration obligations. It enables application-specific guidance (e.g., SP 800-52, SP 800-131A revisions) and CMVP validation of PQC modules.",
+  "historicalSignificance": "This final version of NIST IR 8547 fixes the 2030 deprecation and 2035 disallowance dates for quantum-vulnerable public-key algorithms. It aligns them with the federal accelerated deadlines in EO 14412 and OMB M-26-15 and extends deprecation to the ≥112-bit parameter sets of ECDSA, RSA, DH and MQV and the ≥128-bit EdDSA.",
+  "implementationDates": [
+   "2030: quantum-vulnerable public-key algorithms deprecated (ECDSA, RSA, DH/MQV at ≥112-bit",
+   "EdDSA at ≥128-bit)",
+   "December 31, 2030: federal high value assets, high impact systems and other prioritized systems must adopt PQC key establishment, and agencies should mitigate as much quantum risk as feasible",
+   "January 2, 2030: agencies must support TLS 1.3",
+   "December 31, 2031: those systems must adopt PQC digital signatures",
+   "2035: quantum-vulnerable public-key algorithms disallowed and the federal PQC migration goal (NSM-10) completed",
+   "2030: 112-bit symmetric standards and SHA-1 in FIPS-validated modules disallowed",
+   "October 2026: publication of NIST IR 8547 (approved 2026-10-21)"
+  ],
+  "successorDependencies": "Requires FIPS 203, 204 and 205 (published) and the forthcoming FALCON-derived FIPS and HQC-KEM FIPS. Depends on EO 14412 and OMB M-26-15. Enables revisions of SP 800-131A (more detailed schedules), SP 800-56C (hybrid composite key establishment), SP 800-52 (PQC and hybrid key exchange in TLS), and PIV/FIPS 201 infrastructure updates. Also enables accelerated CMVP validation of PQC modules and NCCoE migration guidance."
+ },
+ "United States:NIST — FIPS 140-2 certificates move to the Historical List": {
+  "mainTopic": "NIST CMVP transition timeline and submission rules for FIPS 140-2 to FIPS 140-3 cryptographic module validations.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [],
+  "migrationTimeline": [
+   "September 22, 2020: CMVP accepts FIPS 140-3 submissions",
+   "September 22, 2021: CMVP no longer accepts FIPS 140-2 submissions for new validation certificates",
+   "April 1, 2022: CMVP only accepts FIPS 140-2 reports that do not change the validation sunset date",
+   "September 21, 2026: FIPS 140-2 active modules can be used until this date for new systems"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "National Institute of Standards and Technology",
+    "Canadian Centre for Cyber Security",
+    "Communications Security Establishment",
+    "Department of Commerce"
+   ]
+  },
+  "leadersContributions": [
+   "David Hawes - NIST CMVP Program Manager",
+   "Kailai Chen - CCCS CMVP Program Manager"
+  ],
+  "pqcProducts": [],
+  "protocols": [],
+  "infrastructureLayers": [
+   "Cryptographic modules",
+   "Cryptographic and Security Testing Laboratories"
+  ],
+  "standardizationBodies": [
+   "National Institute of Standards and Technology",
+   "Canadian Centre for Cyber Security"
+  ],
+  "complianceFrameworks": [
+   "FIPS 140-2",
+   "FIPS 140-3",
+   "SP 800-140B",
+   "SP 800-140C",
+   "SP 800-140D"
+  ],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "FIPS 140-2 submissions for new validation certificates ceased on September 22, 2021",
+   "FIPS 140-2 modules remain valid for new systems until September 21, 2026",
+   "Agencies must use validated cryptographic modules if cryptography is required",
+   "FIPS 140-3 validations are currently being accepted",
+   "Interim validations offer a two-year active list period for modules submitted before Jan 1, 2024"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [
+   "Transition from FIPS 140-2 to FIPS 140-3",
+   "Interim validations"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Compliance Officer",
+   "Security Architect",
+   "Policy Maker"
+  ],
+  "implementationPrereqs": [
+   "FIPS 140-3 validated modules",
+   "SP 800-140Br1 formatted submissions"
+  ],
+  "relevantFeatures": [
+   "Timeline",
+   "Compliance",
+   "Migrate"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [
+   "Cryptographic Module Validation",
+   "Cryptographic and Security Testing Laboratories verification"
+  ],
+  "qkdProtocols": [],
+  "qrngEntropy": [
+   "Entropy Source Validation",
+   "Random Bit Generation Testing"
+  ],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [
+   "Limited selection of FIPS 140-3 modules for several years",
+   "purchasers advised to consider all modules on the Validated Modules Search Page, whether FIPS 140-2 or FIPS 140-3, to get the best selection"
+  ],
+  "deploymentComplexity": [
+   "Phased transition with specific submission cut-offs and usage deadlines",
+   "Backward compatibility for existing systems"
+  ],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [
+   "Federal Agencies decide when they move to FIPS 140-3 only modules",
+   "transition requires organizational, documentation and procedural changes to CMVP management",
+   "CMVP Management Manual for FIPS 140-3 and FIPS 140-3 Implementation Guidance released September 21, 2020"
+  ],
+  "phaseClassification": "The document sets out the formal transition schedule from FIPS 140-2 to FIPS 140-3 for cryptographic module validation, including a dated sunset after which all FIPS 140-2 certificates move to the Historical List. This is a governance/policy event for the CMVP validation program, not a technical or deployment event.",
+  "mandateLevel": "Informational",
+  "sectorApplicability": [
+   "Government"
+  ],
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from the FIPS 140-2 validation regime to the FIPS 140-3 regime (ISO/IEC 19790:2012-based) — FIPS 140-3 submissions open September 22, 2020, FIPS 140-2 submissions close in 2021–2022, and all FIPS 140-2 certificates move to the Historical List on September 22, 2026. It enables a FIPS 140-3-only validated module ecosystem.",
+  "historicalSignificance": "Marks the retirement of FIPS 140-2 as an active validation standard and its replacement by FIPS 140-3, aligning U.S. module validation with international ISO/IEC standards. The September 2026 move to the Historical List closes out the long transition period.",
+  "implementationDates": [
+   "March 22, 2019: FIPS 140-3 approved",
+   "September 22, 2019: FIPS 140-3 effective date",
+   "March 20, 2020: publication of SP 800-140x documents",
+   "May 20, 2020: updated CMVP Program Management Manual for FIPS 140-2",
+   "July 1, 2020: tester competency exam updated to include FIPS 140-3",
+   "September 21, 2020: FIPS 140-3 Implementation Guidance and CMVP Management Manual for FIPS 140-3 released",
+   "September 22, 2020: CMVP accepts FIPS 140-3 submissions",
+   "September 22, 2021: CMVP stops accepting FIPS 140-2 submissions for new certificates (with limited exceptions)",
+   "April 1, 2022: CMVP no longer accepts FIPS 140-2 submissions for new validation certificates",
+   "September 21/22, 2026: all FIPS 140-2 certificates placed on the Historical List"
+  ],
+  "successorDependencies": "Requires the FIPS 140-3 standard, SP 800-140x publications, and ISO/IEC 19790:2012 and 24759:2017; enables a FIPS 140-3-only validated modules market and continued purchase and use of Historical List modules for existing systems; contingent on CMVP resources and the validation queue."
+ },
+ "France:ANSSI — Stop Buying Products Without PQC (Recommendation)": {
+  "mainTopic": "ANSSI FAQ providing guidance on post-quantum cryptography migration, hybridization strategies, and regulatory timelines for French organizations.",
+  "pqcAlgorithms": [
+   "SLH-DSA",
+   "XMSS",
+   "LMS"
+  ],
+  "quantumThreats": [
+   "Quantum threat",
+   "Harvest Now Decrypt Later (implied by \"protection durable des informations (jusqu'à après 2030)\")"
+  ],
+  "migrationTimeline": [
+   "Start inventory now",
+   "PQC obligations for product qualification from 2027",
+   "Unreasonable to buy non-PQC products after 2030"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "ANSSI",
+    "European Commission"
+   ]
+  },
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [
+   "IPsec"
+  ],
+  "infrastructureLayers": [
+   "PKI",
+   "IGC (Certificate Authorities)"
+  ],
+  "standardizationBodies": [
+   "NIST"
+  ],
+  "complianceFrameworks": [
+   "ANSSI Security Visas",
+   "SAIV (Vital Information Systems)",
+   "Diffusion Restreinte (Restricted Distribution)"
+  ],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "Organizations must start cryptographic inventory immediately to identify critical use cases",
+   "Hybridization is essential for short and medium term security, except for hash-based signatures",
+   "Do not purchase products without PQC support after 2030",
+   "PQC obligations for product qualification will begin in 2027"
+  ],
+  "securityLevels": [
+   "IND-CCA2"
+  ],
+  "hybridApproaches": [
+   "Hybridization of asymmetric algorithms",
+   "CatKDF and CasKDF modes for KEMs",
+   "Concatenation of signatures",
+   "Crypto-agility"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "CISO",
+   "Security Architect",
+   "Compliance Officer"
+  ],
+  "implementationPrereqs": [
+   "Cryptographic inventory",
+   "Identification of critical data",
+   "Contacting vendors for roadmaps"
+  ],
+  "relevantFeatures": [
+   "Timeline",
+   "Threats",
+   "Compliance",
+   "Migrate",
+   "Assess",
+   "Algorithms",
+   "hybrid-crypto",
+   "crypto-agility",
+   "pki-workshop",
+   "migration-program",
+   "pqc-risk-management"
+  ],
+  "implementationAttackSurface": [
+   "Side-channel attacks",
+   "Fault injection attacks"
+  ],
+  "cryptoDiscovery": [
+   "Inventory of products and business uses integrating cryptography",
+   "Identification of cryptographic algorithms used"
+  ],
+  "testingValidation": [
+   "evaluation by accredited laboratories (évaluations conduites par des laboratoires agréés), ANSSI Security Visas (Visas de sécurité ANSSI)"
+  ],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [
+   "Embedded systems",
+   "Vulnerability to side-channel and fault injection attacks"
+  ],
+  "supplyChainRisk": [
+   "Vendor roadmaps",
+   "ANSSI qualification of products",
+   "Trustworthy PQC product offer"
+  ],
+  "deploymentComplexity": [
+   "Phased transition based on system renewal cycles",
+   "Hybridization for non-regression"
+  ],
+  "financialBusinessImpact": [
+   "Cost control through anticipation in renewal cycles"
+  ],
+  "organizationalReadiness": [
+   "Risk analysis inclusion",
+   "Crypto-agility implementation",
+   "Inventory completion"
+  ],
+  "phaseClassification": "The document is an ANSSI FAQ giving organizations practical guidance on starting the post-quantum transition (inventory, procurement, hybridization, crypto-agility). It states that \"il ne sera pas raisonnable d'acheter des produits qui n'intègrent pas de la PQC après 2030\" (it will not be reasonable to buy products that do not integrate PQC after 2030).",
+  "mandateLevel": "Recommended",
+  "sectorApplicability": [
+   "All Sectors"
+  ],
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from awareness and position papers (2022-2023) toward concrete procurement and qualification expectations, with ANSSI aiming for PQC obligations for product qualification from 2027 and a procurement cut-off after 2030. It enables organizations to begin cryptographic inventories, plan equipment renewal cycles, and prepare for regulated-perimeter updates.",
+  "historicalSignificance": "Sets an explicit procurement cut-off for non-PQC products (after 2030) from a national cybersecurity agency. It also records the first ANSSI Security Visa certifications of lattice-based PQC products in France (October 2025).",
+  "implementationDates": [
+   "2027: ANSSI aims to introduce PQC obligations for product entry into qualification",
+   "2030: not reasonable to buy products without PQC, and data confidentiality/authenticity must be assured beyond 2030",
+   "end of 2025: planned update of ANSSI guides on cryptographic mechanisms and algorithm selection",
+   "2026: planned revision of the IPsec DR (Diffusion Restreinte) reference framework",
+   "October 2025: first two ANSSI certifications of lattice-based PQC products (Thales and Samsung)",
+   "June 2025: European Commission coordinated PQC implementation roadmap",
+   "May 2025: ECCG Agreed Cryptographic Mechanisms update",
+   "end of 2024: ANSSI survey results published"
+  ],
+  "successorDependencies": "Enables PQC obligations for product qualification from 2027, updates to the Référentiel général de sécurité (Annex B) and PG-083 to include PQC, and revision of the IPsec DR framework in 2026. Depends on the availability of trusted PQC products, CESTI evaluation capacity, standardization work on certificate formats and hybridization, and a forthcoming ANSSI technical opinion on crypto-agility."
+ },
+ "Denmark:SAMSIK — Quantum-Safe Transition Guidance Revised": {
+  "mainTopic": "Guidance from the Danish agency SAMSIK on the quantum threat to cryptography and recommendations for organizations to prepare for and begin the transition to quantum-safe (post-quantum) cryptography.",
+  "pqcAlgorithms": [
+   "ML-KEM",
+   "ML-DSA",
+   "SLH-DSA"
+  ],
+  "quantumThreats": [
+   "Cryptography-breaking quantum computer (CRQC)",
+   "Shor's algorithm",
+   "\"Harvest now",
+   "decrypt later\" attack (Indhent nu, dekrypter senere)",
+   "forgery of digital signatures",
+   "loss of trust in digital signatures"
+  ],
+  "migrationTimeline": [
+   "~2030: a cryptography-breaking quantum computer may become available (AIVD/RDI); 2030: high-risk use cases migrated to PQC (EU roadmap); 2035: medium-risk use cases migrated (EU roadmap); 2035: low-risk use cases migrated as much as possible (EU roadmap); 2029: several large tech vendors plan to be fully migrated to PQC"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "SAMSIK",
+    "AIVD",
+    "RDI",
+    "NIST",
+    "National Cyber Security Centre (UK)",
+    "Bundesamt für Sicherheit in der Informationstechnik",
+    "NIS Cooperation Group",
+    "CWI",
+    "TNO"
+   ]
+  },
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [
+   "TLS",
+   "VPN"
+  ],
+  "infrastructureLayers": [
+   "Web browsers",
+   "Mail clients",
+   "Operating systems",
+   "VPN",
+   "Encrypted data transmission and remote access"
+  ],
+  "standardizationBodies": [
+   "NIST",
+   "NIS Cooperation Group"
+  ],
+  "complianceFrameworks": [
+   "EU Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography (June 2025)",
+   "The PQC Migration Handbook"
+  ],
+  "classicalAlgorithms": [
+   "RSA",
+   "ECC",
+   "Diffie–Hellman (DH)",
+   "ECDH",
+   "AES-128",
+   "AES-256",
+   "SHA-256"
+  ],
+  "keyTakeaways": [
+   "Authorities and businesses should start preparing for the quantum-safe transition as soon as possible",
+   "Form a working group, map critical systems and their cryptography, risk-assess each system, and plan the migration",
+   "Use Mosca's inequality (x < z-y) to assess data-confidentiality risk from harvest-now-decrypt-later attacks",
+   "Implement crypto-agility so algorithms can be updated without affecting the rest of the system",
+   "Isolate, phase out, or upgrade systems whose vendors will not provide PQC updates"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [
+   "Hybrid key exchange standardized in TLS and already widely deployed",
+   "Hybrid solutions combining a classical algorithm (e.g. RSA) with a PQC algorithm",
+   "Crypto-agility",
+   "Isolation of legacy systems (e.g. added VPN layer, disconnecting systems)",
+   "Phase-out of non-upgradable systems"
+  ],
+  "performanceConsiderations": [
+   "Hybrid solutions require more resources",
+   "PQC algorithms differ in key sizes from existing algorithms",
+   "Implementation may affect protocols, CPU needs, and memory usage"
+  ],
+  "targetAudience": [
+   "CISO",
+   "Security Architect",
+   "Developer",
+   "Policy Maker",
+   "Operations"
+  ],
+  "implementationPrereqs": [
+   "Working group to coordinate the effort",
+   "Inventory of critical systems and the cryptography they use",
+   "Risk assessment per cryptography-dependent system",
+   "Migration plan/timeline",
+   "Crypto-agility",
+   "Vendor roadmap checks"
+  ],
+  "relevantFeatures": [
+   "Migrate",
+   "Assess",
+   "hybrid-crypto",
+   "crypto-agility",
+   "quantum-threats"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [
+   "Mapping the organization's critical systems and the cryptography used in them",
+   "Overview of systems processing sensitive or valuable data"
+  ],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [
+   "Check whether vendors will deliver PQC in ongoing software updates",
+   "Small or narrow-use vendors may not upgrade to PQC",
+   "Assess vendor PQC upgrade plans when procuring new systems"
+  ],
+  "deploymentComplexity": [
+   "Migration can take a long time and may take \"decades\" in the worst cases",
+   "NIST PQC algorithms are not one-to-one replacements for existing algorithms",
+   "no replacement for Diffie-Hellman",
+   "Impact on protocols, CPU, and memory",
+   "Options for legacy systems: update, isolate, or phase out",
+   "Risk-based approach"
+  ],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [
+   "Set up a working group to coordinate the effort",
+   "Map critical systems",
+   "Risk-assess each system",
+   "Plan the migration with a timeline"
+  ],
+  "phaseClassification": "The document is national guidance recommending that authorities and businesses prepare for and start the quantum-safe transition as soon as possible, with concrete steps (working group, inventory, risk assessment, migration plan).",
+  "mandateLevel": "Recommended",
+  "sectorApplicability": [
+   "Government",
+   "All Sectors"
+  ],
+  "migrationUrgency": "Near-Term",
+  "phaseTransition": "Moves from awareness of the quantum threat toward active migration planning, signaling that organizations should begin preparing and executing the transition now.",
+  "historicalSignificance": "Revised Danish national guidance aligning with the EU coordinated PQC roadmap and Dutch AIVD/RDI advice, reflecting the shift toward practical migration planning by authorities and businesses.",
+  "implementationDates": [
+   "2030: possible availability of a cryptography-breaking quantum computer",
+   "2030: high-risk use cases migrated to PQC",
+   "2035: medium-risk use cases migrated",
+   "2035: low-risk use cases migrated as much as possible",
+   "2029: several large tech vendors plan full PQC migration"
+  ],
+  "successorDependencies": "Depends on the EU coordinated PQC roadmap (June 2025) and NIST PQC standards (2024); additional NIST algorithms are in the standardization process; PQC standards may be updated or new ones developed"
+ },
+ "Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook V1 Released": {
+  "mainTopic": "Singapore's CSA/GovTech/IMDA Quantum-Safe Migration Handbook (Version 1) guiding organisations, especially CII owners and government agencies, through quantum-safe migration across five domains: Risk Assessment, Governance, Technology, Training and Capability, and External Engagements.",
+  "pqcAlgorithms": [
+   "ML-KEM",
+   "ML-DSA",
+   "SLH-DSA",
+   "FN-DSA",
+   "HQC",
+   "XMSS",
+   "LMS"
+  ],
+  "quantumThreats": [
+   "Q-day",
+   "Harvest-Now-Decrypt-Later (HN-DL)",
+   "Cryptographically Relevant Quantum Computer (CRQC)",
+   "Shor's algorithm (breaks RSA, ECDSA, ECDH, DSA, DH)",
+   "Grover's algorithm (weakens AES, TDES, SHA hash functions)"
+  ],
+  "migrationTimeline": [
+   "Milestones for CII owners: By 31 Mar 2027 submit quantum-safe migration plan to CSA",
+   "From 1 Jan 2028 new CII systems with a digital component should support quantum-safe algorithms/technologies and/or be quantum-safe ready",
+   "By 31 Dec 2031 complete quantum-safe migration across CII systems. Q-day expert estimates of 5–10 years, with some at 10–20 years."
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "CSA",
+    "GovTech",
+    "IMDA",
+    "NIST",
+    "ISO",
+    "ETSI",
+    "IETF",
+    "EU NIS Cooperation Group",
+    "BSI",
+    "FS-ISAC",
+    "TNO/CWI/AIVD",
+    "PKI Consortium",
+    "Cloud Security Alliance",
+    "WEF"
+   ]
+  },
+  "leadersContributions": [],
+  "pqcProducts": [
+   "Open Quantum Safe (OQS) project",
+   "PQ Code Package",
+   "PQC Capability Matrix (PQCCM)"
+  ],
+  "protocols": [
+   "TLS",
+   "TLS 1.3",
+   "SSH",
+   "IPsec",
+   "S/MIME",
+   "PGP",
+   "X.509",
+   "CMS",
+   "VPN"
+  ],
+  "infrastructureLayers": [
+   "PKI",
+   "HSM",
+   "Key Management Systems",
+   "Certificate management systems",
+   "Load balancers",
+   "Web servers",
+   "API gateways",
+   "Cloud infrastructure",
+   "Smart cards",
+   "CI/CD pipelines",
+   "TRNG/CSPRNG",
+   "Middleware and cipher-translation proxies"
+  ],
+  "standardizationBodies": [
+   "NIST",
+   "ISO",
+   "ETSI",
+   "IETF",
+   "ISO/IEC",
+   "NIST NCCoE"
+  ],
+  "complianceFrameworks": [
+   "CNSA 2.0",
+   "EU Quantum-Safe Cryptography Roadmap",
+   "ISO/TS 22317",
+   "ISO 22301",
+   "NIST SP 800-34",
+   "FAIR",
+   "STRIDE-LM",
+   "MITRE ATT&CK",
+   "NIST CAVP",
+   "NIST SP 1800-38B",
+   "NIST SP 1800-38C",
+   "OMB Memorandum M-23-02"
+  ],
+  "classicalAlgorithms": [
+   "RSA",
+   "ECC",
+   "ECDSA",
+   "ECDH",
+   "DH",
+   "DSA",
+   "AES",
+   "AES-128",
+   "AES-256",
+   "TDES",
+   "SHA-1",
+   "SHA-2",
+   "SHA-3",
+   "SHA-224",
+   "SHA-256",
+   "X25519"
+  ],
+  "keyTakeaways": [
+   "Start now with no-regret moves: identify critical systems and run cryptographic asset discovery on them first",
+   "assign clear accountable ownership for migration (RACI) and brief senior leadership",
+   "replace RSA/DH/ECC with ML-KEM, ML-DSA and SLH-DSA (LMS/XMSS for firmware signing only), use AES-256 and hash outputs of at least 256 bits",
+   "build cryptographic agility and consider hybrid approaches during transition",
+   "ask key vendors for PQC roadmaps and CBOMs since their timelines constrain yours"
+  ],
+  "securityLevels": [
+   "AES-256",
+   "AES-128 (about 64-bit effective security under Grover's)",
+   "hash output of at least 256 bits",
+   "256-bit pre-shared keys",
+   "ML-KEM-768 (X25519 + MLKEM768 hybrid)"
+  ],
+  "hybridApproaches": [
+   "PQC-Classical hybrid",
+   "PQC-PQC hybrid",
+   "hybrid key exchange",
+   "hybrid signatures",
+   "hybrid certificates (multiple public keys, dual signatures)",
+   "cryptographic agility",
+   "middleware and cipher-translation proxies",
+   "phased deployment with rollback",
+   "pre-shared keys with AES-256",
+   "QKD as complementary"
+  ],
+  "performanceConsiderations": [
+   "PQC keys and signatures are larger than classical equivalents, affecting bandwidth, storage and latency",
+   "most pronounced in IoT/constrained devices, high-throughput paths, TLS handshake and certificate chains",
+   "ML-KEM and ML-DSA perform comparably to ECC on modern enterprise hardware but have larger payloads",
+   "hybrid adds some performance overhead"
+  ],
+  "targetAudience": [
+   "CISO",
+   "Security Architect",
+   "Compliance Officer",
+   "Policy Maker",
+   "Operations",
+   "Developer"
+  ],
+  "implementationPrereqs": [
+   "PQC-capable PKI supporting ML-KEM and ML-DSA with updated X.509 profiles",
+   "TLS 1.3",
+   "cryptographic asset inventory",
+   "updated cryptographic libraries",
+   "CMS support for ML-KEM and ML-DSA",
+   "vendor PQC roadmaps and CBOM",
+   "ACDI tools"
+  ],
+  "relevantFeatures": [
+   "Migrate",
+   "Assess",
+   "Algorithms",
+   "crypto-agility",
+   "hybrid-crypto"
+  ],
+  "implementationAttackSurface": [
+   "side-channel attacks in QKD physical setups",
+   "man-in-the-middle attacks on QKD without authenticated classical channel",
+   "compromised trusted relay nodes"
+  ],
+  "cryptoDiscovery": [
+   "Automated Cryptographic Discovery and Inventory (ACDI) tools",
+   "code scanning",
+   "network analysis",
+   "host scanning",
+   "HSM/KMS/certificate management logs",
+   "load balancer and web server configs",
+   "CBOM",
+   "live cryptographic inventory"
+  ],
+  "testingValidation": [
+   "Cryptographic operations testing",
+   "system stability testing",
+   "performance testing",
+   "interoperability testing",
+   "penetration testing",
+   "proof-of-concept and pilot projects",
+   "NIST CAVP",
+   "NIST SP 1800-38C",
+   "plug-fests"
+  ],
+  "qkdProtocols": [
+   "QKD point-to-point, trusted node-based and satellite-based architectures",
+   "trusted relay nodes",
+   "QKD-as-a-service",
+   "quantum key management systems",
+   "ISO/IEC 23837",
+   "ETSI Industry Specification Group QKD"
+  ],
+  "qrngEntropy": [
+   "TRNG/NDRNG from physical phenomena including quantum vacuum fluctuations",
+   "CSPRNG/DRNG hash-based expansion",
+   "stronger entropy sources via TRNGs for key generation"
+  ],
+  "constrainedDeviceIoT": [
+   "IoT devices and resource-constrained environments most affected by larger key and signature sizes",
+   "embedded and IoT devices listed among hardware/firmware cryptographic components",
+   "LMS/XMSS for firmware signing"
+  ],
+  "supplyChainRisk": [
+   "Vendor controls migration timeline",
+   "a vendor that cannot migrate is a supply chain vulnerability",
+   "request PQC roadmaps and CBOM",
+   "confirm cryptographic agility",
+   "update procurement policies and contract clauses",
+   "assess third-party quantum-safe maturity"
+  ],
+  "deploymentComplexity": [
+   "Multi-year effort",
+   "phased deployment with backward compatibility and rollback",
+   "align with technology refresh cycles",
+   "test in controlled environments",
+   "interoperability across OSI layers",
+   "legacy infrastructure modernisation",
+   "standards maturity for CMS/X.509"
+  ],
+  "financialBusinessImpact": [
+   "About $500-600 billion of cryptocurrency quantum-exposed (Citi Institute, Jan 2026)",
+   "$2.0–$3.3 trillion US GDP at risk from attack on Federal Reserve interbank payment service (Hudson Institute, Apr 2023)",
+   "global average data breach cost $4.4 million USD in 2025 (IBM)",
+   "consequences include breach, operational disruption, regulatory non-compliance, reputational damage"
+  ],
+  "organizationalReadiness": [
+   "Accountable owner for migration decisions",
+   "RACI model across senior management, CISO, CIO and business units",
+   "integrated vs dedicated migration team",
+   "leadership briefing",
+   "Quantum Readiness Index self-assessment",
+   "capability building per stakeholder group",
+   "quantum risk added to enterprise risk register"
+  ],
+  "phaseClassification": "The handbook provides non-mandatory, practical guidance for organisations on quantum-safe migration, and is explicitly informational and not prescriptive, fitting the Guidance phase.",
+  "mandateLevel": "Recommended",
+  "sectorApplicability": [
+   "Critical Infrastructure",
+   "Government",
+   "Energy",
+   "Finance",
+   "Healthcare",
+   "Transportation"
+  ],
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from public-consultation draft (v0.1, Oct 2025) to Version 1 guidance, enabling CII owners to prepare migration plans ahead of the 31 Mar 2027 submission milestone.",
+  "historicalSignificance": "Establishes Singapore's national practical guidance for quantum-safe migration, aligned with CII milestones through 2031, following public consultation and paired with CSA's Quantum Readiness Index.",
+  "implementationDates": [
+   "31 Mar 2027: CII owners submit quantum-safe migration plan to CSA",
+   "1 Jan 2028: new CII systems should support quantum-safe algorithms and/or be quantum-safe ready",
+   "31 Dec 2031: complete migration across CII systems, vulnerable cryptography no longer used",
+   "23 Oct 2025: draft v0.1 released",
+   "16 Jul 2026: Version 1 released"
+  ],
+  "successorDependencies": "Detailed guidance from CSA, GovTech and IMDA to support CII owners in meeting the milestones; handbook updates as the field evolves; depends on maturing standards such as FN-DSA, HQC, and CMS/X.509 PQC support"
  }
 }
