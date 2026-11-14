@@ -60,6 +60,7 @@ import {
 } from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { threatStandardLinks } from '@/data/threatRelatedStandards'
 import {
   matchesThreatQuery,
   resolveIndustryParam,
@@ -914,6 +915,26 @@ export function MobileThreatsView() {
                 Learn: SOC implementation for PQC
               </Link>
             </div>
+            {threatStandardLinks(selected).length > 0 && (
+              <div className="border-t border-border pt-3">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Related standards
+                </p>
+                <ul className="mt-1 flex flex-wrap gap-1.5">
+                  {threatStandardLinks(selected).map((std) => (
+                    <li key={std.id}>
+                      <Link
+                        to={std.deepLink}
+                        title={std.title}
+                        className="inline-flex min-h-11 items-center gap-1 rounded-full border border-border bg-muted/40 px-3 text-[11.5px] font-medium text-foreground"
+                      >
+                        {std.id}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {selected.relatedModules.length > 0 && (
               <div className="border-t border-border pt-3">
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
