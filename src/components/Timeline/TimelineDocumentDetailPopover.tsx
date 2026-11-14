@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { ExternalLink, Calendar, X, Flag, BookOpen } from 'lucide-react'
+import { ExternalLink, Calendar, X, Flag } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
@@ -16,12 +15,9 @@ import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
-import {
-  getTimelineEnrichment,
-  hasSubstantiveEnrichment,
-  timelineToLibraryRef,
-} from '../../data/timelineEnrichmentData'
-import type { Phase } from '../../types/timeline'
+import { getTimelineEnrichment, hasSubstantiveEnrichment } from '../../data/timelineEnrichmentData'
+import type { Phase, TimelineEvent } from '../../types/timeline'
+import { MandatePill, TimelineRecordFacts } from './TimelineRecordFacts'
 import { phaseColors, timelineEventPageUrl } from '../../data/timelineData'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
@@ -55,6 +51,11 @@ export interface TimelineDocumentRow {
   confidenceScore?: number
   dataQualityNotes?: string
   complianceRefs?: string[]
+  mandateType?: 'HARD' | 'SOFT' | 'DRAFT'
+  bindingForce?: TimelineEvent['bindingForce']
+  /** The CSV's editorial Status (Validated / Completed / Active …). */
+  reviewStatus?: string
+  libraryRefs?: string[]
 }
 
 interface TimelineDocumentDetailPopoverProps {
@@ -102,9 +103,6 @@ export const TimelineDocumentDetailPopover = ({
       : getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
-  // Check if this timeline doc's SourceUrl matches a library record
-  const libraryRefId = row.sourceUrl ? timelineToLibraryRef[row.sourceUrl] : undefined
-
   const content = (
     <>
       {/* Backdrop */}
@@ -142,6 +140,7 @@ export const TimelineDocumentDetailPopover = ({
                     {row.type}
                   </span>
                   <span className="text-xs text-muted-foreground">{row.org}</span>
+                  <MandatePill value={row.mandateType} />
                 </div>
                 <h3
                   id="timeline-doc-popover-title"
@@ -294,8 +293,8 @@ export const TimelineDocumentDetailPopover = ({
                 )}
               </div>
 
-              {/* Source link + Library cross-link */}
-              {(row.sourceUrl || libraryRefId) && (
+              {/* Source link */}
+              {row.sourceUrl && (
                 <div className="pt-2 border-t border-border flex flex-wrap items-center gap-3">
                   {row.sourceUrl && (
                     <a
@@ -308,15 +307,15 @@ export const TimelineDocumentDetailPopover = ({
                       View Source
                     </a>
                   )}
-                  {libraryRefId && (
-                    <Link
-                      to={`/library?ref=${encodeURIComponent(libraryRefId)}`}
-                      className="inline-flex items-center gap-1.5 text-accent hover:underline transition-colors text-sm font-medium"
-                    >
-                      <BookOpen size={13} aria-hidden="true" />
-                      Also in Library
-                    </Link>
-                  )}
+                </div>
+              )}
+
+              {/* Binding force, status, review history, Library and
+                  compliance cross-links (curated library_refs, then a Library
+                  document with the same URL). */}
+              {row.type !== 'Phase summary' && (
+                <div className="pt-2 border-t border-border">
+                  <TimelineRecordFacts event={row} />
                 </div>
               )}
 

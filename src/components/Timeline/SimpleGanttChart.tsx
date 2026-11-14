@@ -16,7 +16,7 @@ import {
   BookmarkCheck,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import type { GanttCountryData, TimelinePhase, Phase } from '../../types/timeline'
+import type { GanttCountryData, TimelinePhase, TimelineEvent, Phase } from '../../types/timeline'
 import {
   phaseColors,
   getCountryLastVerified,
@@ -40,7 +40,15 @@ import { buildEndorsementUrl, buildFlagUrl } from '../../utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { StatusBadge } from '../common/StatusBadge'
-import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import {
+  filterGanttView,
+  eventsInView,
+  phaseOrgs,
+  timelineRowDomId,
+} from '../../data/timelineViewFilter'
+import { TIMELINE_REGION_LABELS } from './timelineRegions'
+import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 
 import { FilterChip } from '../common/FilterChip'
 import { Button } from '@/components/ui/button'
@@ -72,6 +80,8 @@ interface SimpleGanttChartProps {
   scopeLabel?: string
   /** Year treated as "now" for current-year + elapsed-milestone state. Defaults to the real current year. */
   asOfYear?: number
+  /** Lower-cased semantic-search hit ids for `searchText` (TimelineView), or null. */
+  semanticHits?: readonly string[] | null
 }
 
 // The year axis auto-scales to whatever's actually in view (see `yearRange` below)
@@ -111,6 +121,7 @@ export const SimpleGanttChart = ({
   embedded = false,
   scopeLabel,
   asOfYear,
+  semanticHits = null,
 }: SimpleGanttChartProps) => {
   const currentYear = asOfYear ?? new Date().getFullYear()
   const [localSearchText, setLocalSearchText] = useState(searchText)
@@ -213,13 +224,28 @@ export const SimpleGanttChart = ({
     }
   }
 
-  const handlePhaseClick = (phase: TimelinePhase, e: React.MouseEvent) => {
+  // A row groups several events; the cell clicked names the event it shows
+  // (the one in that year), falling back to the row's first.
+  const handlePhaseClick = (
+    phase: TimelinePhase,
+    e: React.MouseEvent,
+    focus: TimelineEvent | null = null
+  ) => {
     e.stopPropagation()
-    const first = phase.events[0] ?? null
-    setSelection({ phase, event: first })
-    writeEventParam(first ? eventLinkKey(first) : phase.title, { push: true })
-    logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${phase.title}`)
+    const shown = focus ?? phase.events[0] ?? null
+    setSelection({ phase, event: shown })
+    writeEventParam(shown ? eventLinkKey(shown) : phase.title, { push: true })
+    logEvent('Timeline', 'View Phase Details', `${phase.phase}: ${shown?.title ?? phase.title}`)
   }
+
+  // The popover's own event switcher (rows with several events).
+  const handleFocusEvent = useCallback(
+    (event: TimelineEvent) => {
+      setSelection((prev) => (prev ? { phase: prev.phase, event } : prev))
+      writeEventParam(eventLinkKey(event), { push: false })
+    },
+    [writeEventParam]
+  )
 
   const handleClosePopover = () => {
     setSelection(null)
@@ -289,21 +315,17 @@ export const SimpleGanttChart = ({
   }
 
   const processedData = useMemo(() => {
-    const filtered = data.filter((d) => {
-      const matchesSearch =
-        d.country.countryName.toLowerCase().includes(filterText.toLowerCase()) ||
-        d.country.bodies.some((b) => b.name.toLowerCase().includes(filterText.toLowerCase()))
-      let matchesRegion: boolean
-      if (selectedCountry !== 'All') {
-        matchesRegion = d.country.countryName === selectedCountry
-      } else if (regionFilter !== 'All') {
-        const regionCountries =
-          REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP] ?? []
-        matchesRegion = regionCountries.includes(d.country.countryName)
-      } else {
-        matchesRegion = true
-      }
-      return matchesSearch && matchesRegion
+    // Region/country/search/phase/type/"My countries" — the same filter the
+    // page's exports and the executive card use (timelineViewFilter.ts).
+    const filtered = filterGanttView(data, {
+      region: regionFilter,
+      country: selectedCountry,
+      query: filterText,
+      semanticHits,
+      phase: selectedPhaseType,
+      etype: selectedEventType,
+      onlyMyCountries: showOnlyMyCountries,
+      myCountries,
     })
 
     const sorted = filtered.sort((a, b) => {
@@ -318,33 +340,25 @@ export const SimpleGanttChart = ({
       return sortDirection === 'asc' ? compare : -compare
     })
 
-    // Apply phase type and event type filters, then remove countries with no matching phases
-    return sorted
-      .map((c) => ({
-        ...c,
-        phases: c.phases
-          .filter((p) => {
-            const matchesPhaseType = selectedPhaseType === 'All' || p.phase === selectedPhaseType
-            const matchesEventType = selectedEventType === 'All' || p.type === selectedEventType
-            return matchesPhaseType && matchesEventType
-          })
-          .sort((a, b) => {
-            const aStart = a.startYear < 2025 ? 2024 : a.startYear
-            const bStart = b.startYear < 2025 ? 2024 : b.startYear
-            if (aStart !== bStart) return aStart - bStart
-            if (a.type !== b.type) return a.type === 'Milestone' ? -1 : 1
-            const aIdx = PHASE_ORDER.indexOf(a.phase)
-            const bIdx = PHASE_ORDER.indexOf(b.phase)
-            const aVal = aIdx === -1 ? 999 : aIdx
-            const bVal = bIdx === -1 ? 999 : bIdx
-            return aVal - bVal
-          }),
-      }))
-      .filter((c) => c.phases.length > 0)
-      .filter((c) => !showOnlyMyCountries || myCountries.includes(c.country.countryName))
+    // Rows within a country in date order (start, then end year); same-year
+    // rows put milestones first, then the fixed phase order.
+    return sorted.map((c) => ({
+      ...c,
+      phases: [...c.phases].sort((a, b) => {
+        if (a.startYear !== b.startYear) return a.startYear - b.startYear
+        if (a.type !== b.type) return a.type === 'Milestone' ? -1 : 1
+        if (a.endYear !== b.endYear) return a.endYear - b.endYear
+        const aIdx = PHASE_ORDER.indexOf(a.phase)
+        const bIdx = PHASE_ORDER.indexOf(b.phase)
+        const aVal = aIdx === -1 ? 999 : aIdx
+        const bVal = bIdx === -1 ? 999 : bIdx
+        return aVal - bVal
+      }),
+    }))
   }, [
     data,
     filterText,
+    semanticHits,
     sortField,
     sortDirection,
     regionFilter,
@@ -387,13 +401,6 @@ export const SimpleGanttChart = ({
     [yearRange]
   )
 
-  useEffect(() => {
-    if (!filterText || processedData.length === 0) return
-    const slug = processedData[0].country.countryName.toLowerCase().replace(/\s+/g, '-')
-    const el = document.getElementById(`timeline-row-${slug}`)
-    if (el?.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }, [filterText, processedData])
-
   const hasActiveFilters =
     regionFilter !== 'All' ||
     selectedCountry !== 'All' ||
@@ -425,47 +432,13 @@ export const SimpleGanttChart = ({
     onCountrySelect,
   ])
 
+  // One row per source event (not per grouped row), with each event's own
+  // issuer — the same columns as the page's top-bar export.
   const handleExportCSV = useCallback(() => {
-    if (processedData.length === 0) return
-
-    const rows = processedData.flatMap((countryData) =>
-      countryData.phases.map((phase) => ({
-        Country: countryData.country.countryName,
-        Organization: countryData.country.bodies.map((b) => b.name).join(', '),
-        Phase: phase.phase,
-        Type: phase.type,
-        Title: phase.title,
-        'Start Year': phase.startYear,
-        'End Year': phase.endYear,
-        Description: phase.description,
-        Status: phase.status || '',
-      }))
-    )
-
-    const header = Object.keys(rows[0]).join(',')
-    const csvRows = rows.map((row) =>
-      Object.values(row)
-        .map((val) => {
-          const str = String(val)
-          return str.includes(',') || str.includes('"') || str.includes('\n')
-            ? `"${str.replace(/"/g, '""')}"`
-            : str
-        })
-        .join(',')
-    )
-    const csv = [header, ...csvRows].join('\n')
-
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.setAttribute('href', url)
-    link.setAttribute('download', `pqc_timeline_${new Date().toISOString().split('T')[0]}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-
-    logEvent('Timeline', 'Export CSV', `${rows.length} rows`)
+    const events = eventsInView(processedData)
+    if (events.length === 0) return
+    downloadCsv(generateCsv(events, TIMELINE_CSV_COLUMNS), csvFilename('pqc-timeline'))
+    logEvent('Timeline', 'Export CSV', `${events.length} rows`)
   }, [processedData])
 
   const tableRef = useRef<HTMLDivElement>(null)
@@ -515,108 +488,190 @@ export const SimpleGanttChart = ({
 
   const renderPhaseCells = (phaseData: TimelinePhase, rowIdx: number, phaseIdx: number) => {
     const cells: React.ReactNode[] = []
-    const startYear = Math.max(yearRange.start, phaseData.startYear)
-    // Open-ended (D22): the source states no end, so the bar runs to the chart's
-    // edge and fades instead of stopping at an invented year.
-    const openEnded = Boolean(phaseData.openEnded) && phaseData.type !== 'Milestone'
-    const endYear = openEnded ? yearRange.end : Math.min(yearRange.end, phaseData.endYear)
-    const fadeFor = (year: number) =>
-      openEnded && endYear > startYear ? 1 - (0.75 * (year - startYear)) / (endYear - startYear) : 1
     const colors = phaseColors[phaseData.phase as Phase] || {
       start: 'hsl(var(--muted-foreground))',
       end: 'hsl(var(--muted))',
       glow: 'hsl(var(--ring))',
     }
     const isMilestone = phaseData.type === 'Milestone'
-    const milestoneElapsed = isMilestone && phaseData.startYear < currentYear
-    const milestoneActive = isMilestone && phaseData.startYear === currentYear
+    const emptyCell = (year: number) => (
+      <td
+        key={year}
+        className={`p-0 h-10 border-r border-border ${year === currentYear ? 'border-l-2 border-primary/50' : ''}`}
+      ></td>
+    )
 
-    for (let year = yearRange.start; year <= yearRange.end; year++) {
-      const isInPhase = year >= startYear && year <= endYear
-      const isFirst = year === startYear
-      const isLast = year === endYear
-      if (isInPhase) {
+    if (isMilestone) {
+      // A milestone row groups several dated records. Each year that holds one
+      // gets its own flag (with a count when it holds more), and a record that
+      // states a span (2026–2031, or "from 2030") draws a thin line to its end —
+      // before 2026-11-14 only the row's first year had a flag and every later
+      // record (FIPS 203/204/205, HQC, NIST IR 8547…) sat in blank cells.
+      // A row with no source events (sim embed, synthetic rows) is its own record.
+      type Mark = Pick<TimelineEvent, 'startYear' | 'endYear' | 'openEnded' | 'title'> & {
+        event: TimelineEvent | null
+      }
+      const marks: Mark[] =
+        phaseData.events.length > 0
+          ? phaseData.events.map((e) => ({ ...e, event: e }))
+          : [{ ...phaseData, event: null }]
+      const spanEnd = (m: Mark) => (m.openEnded ? yearRange.end : m.endYear)
+      let tabbable = true
+      for (let year = yearRange.start; year <= yearRange.end; year++) {
+        const starting = marks.filter((m) => m.startYear === year)
+        const spanning = marks.filter((m) => m.startYear < year && year <= spanEnd(m))
+        if (starting.length === 0 && spanning.length === 0) {
+          cells.push(emptyCell(year))
+          continue
+        }
+        const focus = (starting[0] ?? spanning[0]).event
+        const isFlag = starting.length > 0
+        const elapsed = year < currentYear
+        const active = year === currentYear
+        const label = isFlag
+          ? `${phaseData.phase}: ${starting.map((m) => m.title).join('; ')} (${year})`
+          : `${phaseData.phase}: ${spanning[0].title} (continues ${year})`
+        const isFirstFlag = isFlag && year === phaseData.startYear
+        const tabIndex = isFlag && tabbable ? 0 : -1
+        if (isFlag) tabbable = false
         cells.push(
           <td
             key={year}
             className={`p-0 h-10 overflow-visible relative ${year === currentYear ? 'border-l-2 border-primary/50' : ''}`}
-            title={openEnded && isFirst ? `${phaseData.title}: ${OPEN_ENDED_NOTE}` : undefined}
-            data-open-ended={openEnded ? 'true' : undefined}
-            style={{
-              borderRight: isLast && !openEnded ? '1px solid var(--color-border)' : 'none',
-              backgroundColor: isMilestone ? 'transparent' : colors.start,
-              boxShadow: isMilestone ? 'none' : `0 0 8px ${colors.glow}`,
-              opacity: isMilestone ? 1 : 0.9 * fadeFor(year),
-              zIndex: isFirst || isMilestone ? 20 : 0,
-              contain: 'layout style', // Optimize WebKit rendering
-            }}
+            data-open-ended={!isFlag && spanning.some((m) => m.openEnded) ? 'true' : undefined}
+            style={{ zIndex: isFlag ? 20 : 0, contain: 'layout style' }}
           >
             <Button
               variant="ghost"
-              className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst || isMilestone ? 'z-20' : 'z-0'}`}
-              onClick={(e) => handlePhaseClick(phaseData, e)}
+              className="w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent z-20"
+              onClick={(e) => handlePhaseClick(phaseData, e, focus)}
               onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx)}
               data-phase-row={rowIdx}
               data-phase-col={phaseIdx}
-              aria-label={`${phaseData.phase}: ${phaseData.title}${openEnded ? ` (${OPEN_ENDED_NOTE})` : ''}`}
-              tabIndex={isFirst ? 0 : -1}
+              data-year={year}
+              aria-label={label}
+              tabIndex={tabIndex}
             >
-              {isMilestone && isFirst ? (
+              {isFlag ? (
                 <div
                   className="relative flex items-center justify-center"
                   title={
-                    milestoneElapsed
-                      ? `Recorded for ${phaseData.startYear}`
-                      : milestoneActive
+                    elapsed
+                      ? `Recorded for ${year}`
+                      : active
                         ? 'Recorded for this year'
-                        : `Upcoming (${phaseData.startYear})`
+                        : `Upcoming (${year})`
                   }
                 >
                   <Flag
                     data-testid="milestone-flag"
-                    className={`w-4 h-4 ${milestoneElapsed ? 'opacity-60' : ''}`}
+                    className={`w-4 h-4 ${elapsed ? 'opacity-60' : ''}`}
                     style={{ color: colors.start, fill: colors.start }}
                   />
-                  <span
-                    className="absolute left-full ml-1 text-[10px] font-semibold whitespace-nowrap select-none pointer-events-none z-20 drop-shadow-md"
-                    style={{ color: colors.start }}
-                  >
-                    {phaseData.phase}
-                    {(milestoneElapsed || milestoneActive) && (
-                      <span className="ml-1 font-normal text-[9px] uppercase tracking-wide text-primary">
-                        {milestoneActive ? 'this year' : 'recorded'}
-                      </span>
-                    )}
-                  </span>
-                  {phaseData.status && (
+                  {starting.length > 1 && (
+                    <span
+                      data-testid="milestone-count"
+                      className="absolute -top-2 -right-2.5 rounded-full bg-background px-1 text-[9px] font-bold leading-tight border border-border text-foreground"
+                    >
+                      {starting.length}
+                    </span>
+                  )}
+                  {isFirstFlag && (
+                    <span
+                      className="absolute left-full ml-1 text-[10px] font-semibold whitespace-nowrap select-none pointer-events-none z-20 drop-shadow-md"
+                      style={{ color: colors.start }}
+                    >
+                      {phaseData.phase}
+                      {(elapsed || active) && (
+                        <span className="ml-1 font-normal text-[9px] uppercase tracking-wide text-primary">
+                          {active ? 'this year' : 'recorded'}
+                        </span>
+                      )}
+                    </span>
+                  )}
+                  {isFirstFlag && phaseData.status && (
                     <div className="absolute -top-3 -right-3 z-20 scale-75 origin-bottom-left">
                       <StatusBadge status={phaseData.status} size="sm" />
                     </div>
                   )}
                 </div>
-              ) : isFirst && !isMilestone ? (
-                <div className="relative flex items-center">
-                  <span className="absolute left-2 text-[10px] font-bold text-foreground bg-background/70 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-20 pointer-events-none">
-                    {phaseData.phase}
-                  </span>
-                  {phaseData.status && (
-                    <div className="absolute -top-2 -right-3 z-20 scale-75 origin-top-left">
-                      <StatusBadge status={phaseData.status} size="sm" />
-                    </div>
-                  )}
-                </div>
-              ) : null}
+              ) : (
+                <span
+                  data-testid="milestone-span"
+                  aria-hidden="true"
+                  className="block h-0.5 w-full"
+                  style={{ backgroundColor: colors.start, opacity: 0.5 }}
+                />
+              )}
             </Button>
           </td>
         )
-      } else {
-        cells.push(
-          <td
-            key={year}
-            className={`p-0 h-10 border-r border-border ${year === currentYear ? 'border-l-2 border-primary/50' : ''}`}
-          ></td>
-        )
       }
+      return cells
+    }
+
+    const startYear = Math.max(yearRange.start, phaseData.startYear)
+    // Open-ended (D22): the source states no end, so the bar runs to the chart's
+    // edge and fades instead of stopping at an invented year.
+    const openEnded = Boolean(phaseData.openEnded)
+    const endYear = openEnded ? yearRange.end : Math.min(yearRange.end, phaseData.endYear)
+    const fadeFor = (year: number) =>
+      openEnded && endYear > startYear ? 1 - (0.75 * (year - startYear)) / (endYear - startYear) : 1
+
+    for (let year = yearRange.start; year <= yearRange.end; year++) {
+      const isInPhase = year >= startYear && year <= endYear
+      const isFirst = year === startYear
+      const isLast = year === endYear
+      if (!isInPhase) {
+        cells.push(emptyCell(year))
+        continue
+      }
+      // The record this year belongs to (rows can group several phases).
+      const focus =
+        phaseData.events.find(
+          (e) => e.startYear <= year && year <= (e.openEnded ? yearRange.end : e.endYear)
+        ) ?? null
+      cells.push(
+        <td
+          key={year}
+          className={`p-0 h-10 overflow-visible relative ${year === currentYear ? 'border-l-2 border-primary/50' : ''}`}
+          title={openEnded && isFirst ? `${phaseData.title}: ${OPEN_ENDED_NOTE}` : undefined}
+          data-open-ended={openEnded ? 'true' : undefined}
+          style={{
+            borderRight: isLast && !openEnded ? '1px solid var(--color-border)' : 'none',
+            backgroundColor: colors.start,
+            boxShadow: `0 0 8px ${colors.glow}`,
+            opacity: 0.9 * fadeFor(year),
+            zIndex: isFirst ? 20 : 0,
+            contain: 'layout style', // Optimize WebKit rendering
+          }}
+        >
+          <Button
+            variant="ghost"
+            className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst ? 'z-20' : 'z-0'}`}
+            onClick={(e) => handlePhaseClick(phaseData, e, focus)}
+            onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx)}
+            data-phase-row={rowIdx}
+            data-phase-col={phaseIdx}
+            data-year={year}
+            aria-label={`${phaseData.phase}: ${(focus ?? phaseData).title}${openEnded ? ` (${OPEN_ENDED_NOTE})` : ''}`}
+            tabIndex={isFirst ? 0 : -1}
+          >
+            {isFirst ? (
+              <div className="relative flex items-center">
+                <span className="absolute left-2 text-[10px] font-bold text-foreground bg-background/70 px-1 rounded whitespace-nowrap drop-shadow-md select-none z-20 pointer-events-none">
+                  {phaseData.phase}
+                </span>
+                {phaseData.status && (
+                  <div className="absolute -top-2 -right-3 z-20 scale-75 origin-top-left">
+                    <StatusBadge status={phaseData.status} size="sm" />
+                  </div>
+                )}
+              </div>
+            ) : null}
+          </Button>
+        </td>
+      )
     }
     return cells
   }
@@ -741,7 +796,7 @@ export const SimpleGanttChart = ({
               />
               <input
                 type="text"
-                placeholder="Filter by country..."
+                placeholder="Search countries, agencies or records..."
                 value={filterText}
                 onChange={handleFilterTextChange}
                 onBlur={handleFilterBlur}
@@ -781,7 +836,11 @@ export const SimpleGanttChart = ({
           {hasActiveFilters && (
             <div className="flex flex-wrap items-center gap-2 px-1">
               {regionFilter !== 'All' && (
-                <FilterChip label={regionFilter} onClear={() => onRegionSelect('All')} />
+                <FilterChip
+                  // eslint-disable-next-line security/detect-object-injection -- label lookup
+                  label={TIMELINE_REGION_LABELS[regionFilter] ?? regionFilter}
+                  onClear={() => onRegionSelect('All')}
+                />
               )}
               {selectedCountry !== 'All' && (
                 <FilterChip label={selectedCountry} onClear={() => onCountrySelect('All')} />
@@ -904,11 +963,9 @@ export const SimpleGanttChart = ({
                   <span
                     className={`font-mono text-sm ${year === currentYear ? 'text-foreground font-bold' : 'text-muted-foreground'}`}
                   >
-                    {year === yearRange.start
-                      ? `<${yearRange.start}`
-                      : year === yearRange.end
-                        ? `${yearRange.end}+`
-                        : year}
+                    {/* The first column is the earliest recorded year itself, not
+                        "before" it; the last is padding past the latest record. */}
+                    {year === yearRange.end ? `${yearRange.end}+` : year}
                     {year === currentYear && (
                       <span className="ml-1 text-[8px] uppercase tracking-wide text-primary align-top">
                         now
@@ -934,11 +991,7 @@ export const SimpleGanttChart = ({
                       return (
                         <tr
                           key={`${country.countryName}-${phaseData.phase}-${idx}`}
-                          id={
-                            idx === 0
-                              ? `timeline-row-${country.countryName.toLowerCase().replace(/\s+/g, '-')}`
-                              : undefined
-                          }
+                          id={idx === 0 ? timelineRowDomId(country.countryName) : undefined}
                           data-deeplink-id={phaseRowKey(phaseData)}
                           className="hover:bg-muted/50 transition-colors"
                           style={
@@ -1039,18 +1092,24 @@ export const SimpleGanttChart = ({
                               </div>
                             </td>
                           )}
-                          {idx === 0 && (
-                            <td
-                              rowSpan={totalRows}
-                              className="sticky left-[180px] z-20 bg-background p-3 align-top border-r border-border"
+                          {/* Each row names its own issuer(s): a country lane holds
+                              records from several bodies (NIST, CISA, NIAP…), and
+                              one rowSpan cell showed only the first for all of them. */}
+                          <td
+                            className="sticky left-[180px] z-20 bg-background px-3 py-2 align-middle border-r border-border"
+                            data-testid="gantt-row-org"
+                          >
+                            <span
+                              className="block text-xs text-muted-foreground truncate"
+                              title={phaseOrgs(phaseData)
+                                .map((o) => (o.fullName ? `${o.name} — ${o.fullName}` : o.name))
+                                .join('\n')}
                             >
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground">
-                                  {country.bodies[0].name}
-                                </span>
-                              </div>
-                            </td>
-                          )}
+                              {phaseOrgs(phaseData)
+                                .map((o) => o.name)
+                                .join(', ') || country.bodies[0]?.name}
+                            </span>
+                          </td>
                           {renderPhaseCells(phaseData, currentRowIdx, idx)}
                         </tr>
                       )
@@ -1079,6 +1138,7 @@ export const SimpleGanttChart = ({
         onClose={handleClosePopover}
         phase={selectedPhase}
         focusEvent={selection?.event}
+        onFocusEvent={handleFocusEvent}
       />
     </div>
   )

@@ -21,17 +21,16 @@ import {
   findEventInGantt,
   resolveCountryParam,
   readGanttViewParams,
+  retiredTimelineEventSuccessor,
   GANTT_VIEW_PARAM_KEYS,
 } from '../../data/timelineData'
+import { filterGanttView, eventsInView, timelineRowDomId } from '@/data/timelineViewFilter'
+import { laneInTimelineRegion, timelineRegionCountries } from '@/data/timelineRegionCountries'
 import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
 import type { GanttCountryData } from '../../types/timeline'
 import { FilterChip } from '../common/FilterChip'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import {
-  REGION_COUNTRIES_MAP,
-  REGION_COUNTRY_MAP,
-  PERSONA_TIMELINE_REGION,
-} from '../../data/personaConfig'
+import { REGION_COUNTRY_MAP, PERSONA_TIMELINE_REGION } from '../../data/personaConfig'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { TimelineExecutiveDeadline } from './TimelineExecutiveDeadline'
 import { LeftNavTOC } from '@/components/common/LeftNavTOC'
@@ -52,7 +51,7 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
-import { phasesToIcs, downloadIcs } from '../../utils/timelineIcs'
+import { eventsToIcs, downloadIcs } from '../../utils/timelineIcs'
 import { WhenDoesThisReachMe } from './WhenDoesThisReachMe'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileTimelineView } from '@/components/Mobile/screens/MobileTimelineView'
@@ -323,19 +322,14 @@ export const TimelineView = () => {
     }
     const hiddenByCountry =
       (effCountry !== 'All' && effCountry !== event.countryName) ||
-      (effCountry === 'All' &&
-        effRegion !== 'All' &&
-        !(REGION_COUNTRIES_MAP[effRegion as keyof typeof REGION_COUNTRIES_MAP] ?? []).includes(
-          event.countryName
-        ))
+      (effCountry === 'All' && !laneInTimelineRegion(event.countryName, effRegion))
     const q = searchParams.get('q') ?? ''
-    const qLc = q.toLowerCase()
+    // The same search the chart applies (lane names, then each record's text).
+    const eventLane = transformToGanttData(
+      (timelineData ?? []).filter((c) => c.countryName === event.countryName)
+    )
     const hiddenBySearch =
-      !!q &&
-      !event.countryName.toLowerCase().includes(qLc) &&
-      !(timelineData ?? [])
-        .find((c) => c.countryName === event.countryName)
-        ?.bodies.some((b) => b.name.toLowerCase().includes(qLc))
+      !!q && !eventsInView(filterGanttView(eventLane, { query: q })).includes(event)
     const hiddenByMyCountries =
       showOnlyTimelineCountries && !myTimelineCountries.includes(event.countryName)
     // The Gantt's phase-type / event-type filters (?phase, ?deadlines, ?etype),
@@ -356,6 +350,8 @@ export const TimelineView = () => {
     if (hiddenBySearch) reasons.push('cleared the search')
     if (hiddenByMyCountries) reasons.push('turned off "My countries only" for this visit')
     if (hiddenByPhaseType) reasons.push('cleared the phase/type filter')
+    const retiredFrom =
+      event.eventId !== eventParam && retiredTimelineEventSuccessor(eventParam) === event.eventId
 
     const canonical = eventLinkKey(event)
     if (reasons.length === 0 && canonical === eventParam) return
@@ -390,10 +386,15 @@ export const TimelineView = () => {
     )
     if (hiddenByMyCountries) setMyCountriesSessionOff(true)
 
-    if (reasons.length > 0) {
+    if (retiredFrom && reasons.length === 0) {
       setEventNotice({
         kind: 'widened',
-        message: `"${event.title}" was hidden by your filters, so we ${reasons.join(', ')} to show it.`,
+        message: `The record this link named was retired; "${event.title}" replaced it, so it is shown instead.`,
+      })
+    } else if (reasons.length > 0) {
+      setEventNotice({
+        kind: 'widened',
+        message: `${retiredFrom ? `The record this link named was retired and "${event.title}" replaced it. ` : ''}"${event.title}" was hidden by your filters, so we ${reasons.join(', ')} to show it.`,
         undo: () => {
           handledEventParamRef.current = null
           const restored = new URLSearchParams(before)
@@ -463,31 +464,47 @@ export const TimelineView = () => {
     [semantic.mode, semantic.hits]
   )
 
-  // Mobile: filter ganttData to the selected region/country (mirrors desktop Gantt behaviour)
-  const mobileGanttData = useMemo(() => {
-    let result = ganttData
-    if (searchText) {
-      const q = searchText.toLowerCase()
-      result = result.filter((d) => {
-        const nameLc = d.country.countryName.toLowerCase()
-        const lexicalMatch =
-          nameLc.includes(q) || d.country.bodies.some((b) => b.name.toLowerCase().includes(q))
-        if (lexicalMatch) return true
-        if (semanticTitlesLc && semanticTitlesLc.some((t) => t.includes(nameLc))) return true
-        return false
-      })
-    }
-    if (regionFilter !== 'All' && regionFilter !== 'global') {
-      const allowed = new Set(
-        REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP]
-      )
-      result = result.filter((d) => allowed.has(d.country.countryName))
-    }
-    if (countryFilter !== 'All') {
-      result = result.filter((d) => d.country.countryName === countryFilter)
-    }
-    return result
-  }, [ganttData, regionFilter, countryFilter, searchText, semanticTitlesLc])
+  // Narrow-screen list (<768px), the newcomer track and its exports: region
+  // (including an explicit Global), country and search — the same filter the
+  // chart applies (timelineViewFilter.ts). The list has no phase/type controls.
+  const mobileGanttData = useMemo(
+    () =>
+      filterGanttView(ganttData, {
+        region: regionFilter,
+        country: countryFilter,
+        query: searchText,
+        semanticHits: semanticTitlesLc,
+      }),
+    [ganttData, regionFilter, countryFilter, searchText, semanticTitlesLc]
+  )
+
+  // Everything the desktop chart applies, phase/type and "My countries" too —
+  // what the top-bar CSV and the calendar export write.
+  const ganttViewParams = readGanttViewParams(searchParams)
+  const viewData = useMemo(
+    () =>
+      filterGanttView(ganttData, {
+        region: regionFilter,
+        country: countryFilter,
+        query: searchText,
+        semanticHits: semanticTitlesLc,
+        phase: ganttViewParams.phase,
+        etype: ganttViewParams.etype,
+        onlyMyCountries: showOnlyTimelineCountries,
+        myCountries: myTimelineCountries,
+      }),
+    [
+      ganttData,
+      regionFilter,
+      countryFilter,
+      searchText,
+      semanticTitlesLc,
+      ganttViewParams.phase,
+      ganttViewParams.etype,
+      showOnlyTimelineCountries,
+      myTimelineCountries,
+    ]
+  )
 
   const [countryCopied, setCountryCopied] = useState(false)
 
@@ -507,44 +524,26 @@ export const TimelineView = () => {
     return REGION_COUNTRY_MAP[region] ?? null
   }, [countryFilter, storeSelectedRegion])
 
+  // One row per source event of what is in view, each with its own issuer.
   const handleExportCsv = useCallback(
-    (dataToExport: GanttCountryData[] = ganttData) => {
-      if (dataToExport.length === 0) return
-      const flatEvents = dataToExport.flatMap((gcd) => gcd.phases.flatMap((phase) => phase.events))
-      const csv = generateCsv(flatEvents, TIMELINE_CSV_COLUMNS)
-      downloadCsv(csv, csvFilename('pqc-timeline'))
+    (dataToExport: GanttCountryData[] = isMobileShell ? mobileGanttData : viewData) => {
+      const events = eventsInView(dataToExport)
+      if (events.length === 0) return
+      downloadCsv(generateCsv(events, TIMELINE_CSV_COLUMNS), csvFilename('pqc-timeline'))
     },
-    [ganttData]
+    [isMobileShell, mobileGanttData, viewData]
   )
 
   /**
    * Calendar export — B+ remediation 4.3 (2026-08-10). "Ops can act on the
-   * dates instead of transcribing them." Exports whatever the reader has
-   * already filtered to, so the calendar matches the chart in front of them
-   * rather than the whole world.
+   * dates instead of transcribing them." Exports exactly what the chart shows
+   * (every filter, one entry per source record with its own issuer).
    */
+  const viewEvents = useMemo(() => eventsInView(viewData), [viewData])
   const handleExportIcs = useCallback(() => {
-    // `mobileGanttData` is the region/country/search-filtered set (its name is
-    // historical — it is not mobile-only). Exporting it rather than `ganttData`
-    // means the calendar matches what the reader has narrowed to.
-    if (mobileGanttData.length === 0) return
-    const chunks = mobileGanttData.map((gcd: GanttCountryData) =>
-      phasesToIcs(gcd.phases, {
-        countryName: gcd.country.countryName,
-        bodyName: gcd.country.bodies[0]?.name ?? 'Regulator',
-      })
-    )
-    // One calendar, many events: concatenating VCALENDARs is not valid, so
-    // splice the VEVENT blocks of every country into the first file's envelope.
-    const first = chunks[0]
-    const events = chunks
-      .slice(1)
-      .map((c: string) => c.split('\r\n').slice(6, -2).join('\r\n'))
-      .filter(Boolean)
-      .join('\r\n')
-    const merged = events ? first.replace('END:VCALENDAR', `${events}\r\nEND:VCALENDAR`) : first
-    downloadIcs('pqc-timeline.ics', merged)
-  }, [mobileGanttData])
+    if (viewEvents.length === 0) return
+    downloadIcs('pqc-timeline.ics', eventsToIcs(viewEvents))
+  }, [viewEvents])
 
   // Register this page's actions with the global top bar (HEADER-TOPBAR-
   // STANDARDIZATION-PLAN-2026-08-01.md §3/§4) — info/export/endorse/flag
@@ -614,10 +613,8 @@ export const TimelineView = () => {
 
     // If a region is selected, only show countries in that region
     let countries: string[]
-    if (regionFilter !== 'All' && regionFilter !== 'global') {
-      const regionCountries = new Set(
-        REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP] ?? []
-      )
+    if (regionFilter !== 'All') {
+      const regionCountries = new Set(timelineRegionCountries(regionFilter))
       countries = allCountries.filter((c) => regionCountries.has(c))
     } else {
       countries = allCountries
@@ -732,8 +729,9 @@ export const TimelineView = () => {
           regionLabel={REGION_LABELS[regionFilter] ?? regionFilter}
           selectedCountry={countryFilter}
           searchText={searchText}
-          phaseFilter={readGanttViewParams(searchParams).phase}
-          eventTypeFilter={readGanttViewParams(searchParams).etype}
+          phaseFilter={ganttViewParams.phase}
+          eventTypeFilter={ganttViewParams.etype}
+          semanticHits={semanticTitlesLc}
           myCountries={myTimelineCountries}
           showOnlyMyCountries={showOnlyTimelineCountries}
         />
@@ -763,9 +761,7 @@ export const TimelineView = () => {
               activeItemId={countryFilter !== 'All' ? countryFilter : null}
               onSelect={(id) => {
                 handleCountrySelect(id)
-                const target = document.getElementById(
-                  `timeline-row-${id.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`
-                )
+                const target = document.getElementById(timelineRowDomId(id))
                 target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
               }}
               groups={(() => {
@@ -796,7 +792,7 @@ export const TimelineView = () => {
               <WhenDoesThisReachMe data={mobileGanttData} countryName={readerCountry} />
             )}
 
-            {selectedPersona === 'ops' && mobileGanttData.length > 0 && (
+            {selectedPersona === 'ops' && viewEvents.length > 0 && (
               <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/20 px-3 py-2">
                 <CalendarPlus size={14} className="shrink-0 text-primary" aria-hidden="true" />
                 <p className="flex-1 text-xs leading-snug text-muted-foreground">
@@ -805,7 +801,7 @@ export const TimelineView = () => {
                   explained in each entry.
                 </p>
                 <Button variant="outline" size="sm" onClick={handleExportIcs} className="text-xs">
-                  Export {mobileGanttData.length} matching as .ics
+                  Export {viewEvents.length} matching records as .ics
                 </Button>
               </div>
             )}
@@ -832,6 +828,7 @@ export const TimelineView = () => {
                 showOnlyMyCountries={showOnlyTimelineCountries}
                 onSetShowOnlyMyCountries={setShowOnlyMyCountries}
                 onClearAll={clearAllFilters}
+                semanticHits={semanticTitlesLc}
               />
             )}
           </div>

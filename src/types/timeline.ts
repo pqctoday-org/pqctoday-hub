@@ -84,6 +84,11 @@ export interface TimelineEvent {
   // reporting, allowed only when flagged (user decision T5). Absent = unclassified.
   sourceClass?: 'primary' | 'secondary'
 
+  // CSV `library_refs` (strict keys into the Library's reference_id) and
+  // `related_standards` (free-text standard labels), ";"-delimited.
+  libraryRefs?: string[]
+  relatedStandards?: string[]
+
   // Derived fields — populated at load time, not from CSV (FR-T-05)
   complianceRefs?: string[]
   xwalkEdgeIds?: string[]

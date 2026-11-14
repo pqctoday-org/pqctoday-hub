@@ -11,7 +11,7 @@ import {
   TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME,
   type DeadlineMandate,
 } from '../../data/timelineFacts.generated'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
@@ -19,11 +19,8 @@ import { FlagButton } from '../ui/FlagButton'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import {
-  timelineEnrichments,
-  hasSubstantiveEnrichment,
-  getTimelineEnrichmentKey,
-} from '../../data/timelineEnrichmentData'
+import { getTimelineEnrichment, hasSubstantiveEnrichment } from '../../data/timelineEnrichmentData'
+import { TimelineRecordFacts } from './TimelineRecordFacts'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
 import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
@@ -42,6 +39,11 @@ interface GanttDetailPopoverProps {
    * instead of the row's first. Defaults to the row's first event.
    */
   focusEvent?: TimelineEvent | null
+  /**
+   * Called when the reader picks another event of the row in the popover's
+   * event list. Without it the popover switches on its own (local state).
+   */
+  onFocusEvent?: (event: TimelineEvent) => void
 }
 
 export const GanttDetailPopover = ({
@@ -49,8 +51,16 @@ export const GanttDetailPopover = ({
   onClose,
   phase,
   focusEvent,
+  onFocusEvent,
 }: GanttDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  // Event picked in the popover itself when no parent controls it, reset when
+  // the row or the parent's focus changes.
+  const [localPick, setLocalPick] = useState<{
+    key: string
+    phase: TimelinePhase
+    focus: TimelineEvent | null | undefined
+  } | null>(null)
   const isEmbedded = useIsEmbedded()
   const positionStyle = useModalPosition(isEmbedded)
 
@@ -83,7 +93,19 @@ export const GanttDetailPopover = ({
     glow: 'hsl(var(--ring))',
   }
 
-  const focusKey = focusEvent ? eventLinkKey(focusEvent) : null
+  const localKey =
+    !onFocusEvent && localPick && localPick.phase === phase && localPick.focus === focusEvent
+      ? localPick.key
+      : null
+  const focusKey = localKey ?? (focusEvent ? eventLinkKey(focusEvent) : null)
+  // Several records in one row: list them in date order so each is reachable.
+  const rowEvents = [...phase.events].sort(
+    (a, b) => a.startYear - b.startYear || a.endYear - b.endYear
+  )
+  const pickEvent = (event: TimelineEvent) => {
+    if (onFocusEvent) onFocusEvent(event)
+    else setLocalPick({ key: eventLinkKey(event), phase, focus: focusEvent })
+  }
   const primaryEvent =
     (focusKey && phase.events.find((e) => eventLinkKey(e) === focusKey)) || phase.events[0]
   // Every source event keeps its own fields, including the group's first event.
@@ -117,10 +139,15 @@ export const GanttDetailPopover = ({
     deadlineMandate = TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME[primaryEvent.countryName]
   }
 
-  const enrichmentKey = primaryEvent
-    ? getTimelineEnrichmentKey(primaryEvent.countryName, primaryEvent.orgName, shown.title)
+  // By event_id first (renamed events keep their analysis), then the label.
+  const enrichment = primaryEvent
+    ? getTimelineEnrichment(
+        primaryEvent.eventId,
+        primaryEvent.countryName,
+        primaryEvent.orgName,
+        shown.title
+      )
     : null
-  const enrichment = enrichmentKey ? timelineEnrichments[enrichmentKey] : null
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
 
   const content = (
@@ -220,6 +247,39 @@ export const GanttDetailPopover = ({
 
             {/* Content */}
             <div className="p-4 space-y-3 overflow-y-auto max-h-[70dvh]">
+              {rowEvents.length > 1 && (
+                <nav aria-label="Records in this row" data-testid="gantt-row-events">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                    {rowEvents.length} records in this row
+                  </p>
+                  <ol className="flex flex-col gap-0.5 max-h-36 overflow-y-auto">
+                    {rowEvents.map((ev) => {
+                      const current = primaryEvent === ev
+                      return (
+                        <li key={eventLinkKey(ev)}>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            aria-current={current ? 'true' : undefined}
+                            onClick={() => pickEvent(ev)}
+                            className={clsx(
+                              'h-auto w-full justify-start gap-2 px-2 py-1 text-left text-xs font-normal whitespace-normal',
+                              current
+                                ? 'bg-primary/10 text-foreground font-semibold'
+                                : 'text-muted-foreground hover:text-foreground'
+                            )}
+                          >
+                            <span className="font-mono shrink-0 w-[4.5rem]">
+                              {periodLabel(ev.startYear, ev.endYear, ev.openEnded)}
+                            </span>
+                            <span className="min-w-0">{ev.title}</span>
+                          </Button>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                </nav>
+              )}
               <div>
                 <p className="text-xs text-muted-foreground leading-relaxed break-words">
                   {shown.description}
@@ -239,6 +299,27 @@ export const GanttDetailPopover = ({
               {/* Detail grid: 2×2 on small screens, 4-col inline on sm+ */}
               <div className="pt-3 border-t border-border">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-xs">
+                  {primaryEvent && (
+                    <>
+                      <div className="col-span-2">
+                        <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                          Issued by
+                        </span>
+                        <span className="text-foreground" data-testid="gantt-popover-org">
+                          {primaryEvent.orgFullName &&
+                          primaryEvent.orgFullName !== primaryEvent.orgName
+                            ? `${primaryEvent.orgFullName} (${primaryEvent.orgName})`
+                            : primaryEvent.orgName}
+                        </span>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                          Country
+                        </span>
+                        <span className="text-foreground">{primaryEvent.countryName}</span>
+                      </div>
+                    </>
+                  )}
                   <div>
                     <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
                       Start
@@ -287,6 +368,12 @@ export const GanttDetailPopover = ({
                   )}
                 </div>
               </div>
+
+              {primaryEvent && (
+                <div className="pt-3 border-t border-border">
+                  <TimelineRecordFacts event={primaryEvent} />
+                </div>
+              )}
 
               {/* Electronic evidence — trust/freshness badge with a link to
                   the real external source. (Used to also surface a link to

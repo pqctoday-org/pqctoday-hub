@@ -42,7 +42,10 @@ function trackFor(country: GanttCountryData | undefined) {
     .sort((a, b) => a.startYear - b.startYear)
   if (phases.length === 0) return null
   const next = phases.find((p) => p.startYear >= year) ?? null
-  return { phases, next, year }
+  // Started earlier but still running (a phase to 2030, a deadline range to
+  // 2026): not "passed" — before 2026-11-14 these read as already passed.
+  const ongoing = phases.filter((p) => p.startYear < year && p.endYear >= year)
+  return { phases, next, ongoing, year }
 }
 
 export function WhenDoesThisReachMe({ data, countryName }: Props) {
@@ -67,6 +70,14 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
             <span className="font-semibold text-foreground">{track.next.startYear}</span> —{' '}
             {track.next.title}. Earlier recorded start years have passed.
           </>
+        ) : track.ongoing.length > 0 ? (
+          <>
+            No new phase is recorded to start after {track.year - 1}, but{' '}
+            {track.ongoing.length === 1
+              ? `one recorded phase runs to ${track.ongoing[0].endYear}`
+              : `${track.ongoing.length} recorded phases run to ${Math.max(...track.ongoing.map((p) => p.endYear))}`}
+            .
+          </>
         ) : (
           <>
             Every phase recorded for {countryName} has a start date in the past. That does not mean
@@ -85,7 +96,8 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
           by a smaller Gantt. */}
       <ol className="mt-3 space-y-1.5">
         {track.phases.map((p) => {
-          const past = p.startYear < track.year
+          const running = track.ongoing.includes(p)
+          const past = p.startYear < track.year && !running
           const isNext = track.next != null && p === track.next
           return (
             <li
@@ -100,6 +112,9 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
                 <span className="rounded bg-primary/15 px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-primary">
                   next
                 </span>
+              )}
+              {running && (
+                <span className="text-xs text-muted-foreground">in progress to {p.endYear}</span>
               )}
               {past && <span className="text-xs text-muted-foreground/70">already passed</span>}
             </li>

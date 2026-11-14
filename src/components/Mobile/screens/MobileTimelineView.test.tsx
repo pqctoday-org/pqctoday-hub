@@ -8,7 +8,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { timelineData, transformToGanttData } from '@/data/timelineData'
 import { applyTimelineScope } from '@/data/timelineScope'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
+import { timelineRegionCountries } from '@/data/timelineRegionCountries'
 
 // Real data throughout — timelineData is parsed synchronously from a bundled
 // CSV at module load (no fixture needed, matching TimelineView.test.tsx's
@@ -52,12 +52,13 @@ describe('MobileTimelineView', () => {
     usePersonaStore.getState().setRegion('global')
   })
 
-  it("scopes the country list to the reader's region, matching REGION_COUNTRIES_MAP exactly", () => {
+  it("scopes the country list to the reader's region, matching the timeline region map exactly", () => {
     usePersonaStore.getState().setRegion('americas')
     renderView()
-    const expected = REAL_GANTT_DATA.filter((d) =>
-      ['United States', 'Canada'].includes(d.country.countryName)
-    )
+    const americas = new Set(timelineRegionCountries('americas'))
+    const expected = REAL_GANTT_DATA.filter((d) => americas.has(d.country.countryName))
+    // The NSA CNSA 2.0 lane is part of the Americas view (it used to be in no region).
+    expect(expected.map((d) => d.country.countryName)).toContain('United States (CNSA)')
     expect(
       screen.getByText(`${expected.length} countries tracked`, { exact: false })
     ).toBeInTheDocument()
@@ -160,9 +161,27 @@ describe('MobileTimelineView', () => {
     it('?region= overrides the stored region (same precedence as desktop)', () => {
       usePersonaStore.getState().setRegion('americas')
       renderView('/timeline?region=eu')
-      const eu = new Set(REGION_COUNTRIES_MAP.eu)
+      const eu = new Set(timelineRegionCountries('eu'))
       const expected = REAL_GANTT_DATA.filter((d) => eu.has(d.country.countryName))
       expect(screen.getByText('EU PQC timeline')).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          `${expected.length} countr${expected.length === 1 ? 'y' : 'ies'} tracked`,
+          {
+            exact: false,
+          }
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('an explicit ?region=global shows the international bodies only', () => {
+      usePersonaStore.getState().setRegion('global')
+      renderView('/timeline?region=global')
+      const global = new Set(timelineRegionCountries('global'))
+      const expected = REAL_GANTT_DATA.filter((d) => global.has(d.country.countryName))
+      expect(expected.length).toBeGreaterThan(0)
+      expect(expected.length).toBeLessThan(REAL_GANTT_DATA.length)
+      expect(screen.getByText('International bodies PQC timeline')).toBeInTheDocument()
       expect(
         screen.getByText(
           `${expected.length} countr${expected.length === 1 ? 'y' : 'ies'} tracked`,
