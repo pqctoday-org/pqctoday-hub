@@ -26826,6 +26826,21 @@
       "unified": "converted",
       "admittedAt": "2026-11-13T12:55:56.194821+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "OpenBao-Transit-Secrets-Engine",
+      "title": "OpenBao Transit Secrets Engine",
+      "url": "https://openbao.org/docs/secrets/transit/",
+      "status": "downloaded",
+      "filename": "OpenBao-Transit-Secrets-Engine.html",
+      "sizeBytes": 48604,
+      "contentType": "text/html",
+      "sha256": "b491217d818aba58bba57984e17b739870c20bf6bc8cbf4cadff8b1133ac2a84",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-14T16:13:14.281938+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
