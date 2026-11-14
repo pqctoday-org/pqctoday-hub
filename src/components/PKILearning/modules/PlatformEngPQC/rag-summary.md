@@ -56,7 +56,7 @@
 **Metrics & Alerts**: A worked TLS observation lab parses two captured OpenSSL 3.6.3 connections with identical cipher/authentication and different negotiated groups. A schema-1 fictional metric feeds five copyable Prometheus rules tested with promtool 3.15.0 against seven positive/negative/collection cases. The sample policy allows both X25519MLKEM768 and X25519; missing groups are not inferred from cipher suites. The browser parses supplied output, while copied promtool commands execute the alert tests. This sits alongside 4 monitoring-source capability requirements (cert-manager, Vault audit log, Istio/Envoy, x509-certificate-exporter) with non-executable examples; certificate algorithms must come from a documented source, since an exporter's expiry metrics do not carry the key algorithm, and missing algorithm data is Unknown
 **SIEM Integration**: 4 capability checklists, not runnable queries (Splunk, Elastic, Datadog, Microsoft Sentinel)
 **Capacity Planner**: ML-DSA-65 sig 3,309B vs ECDSA 64B (52×); TLS cert chain 2.4KB → 17.4KB (7.25×); TLS handshake 4KB → 18KB (4.5×); etcd growth: 3MB → 14MB per 1000 certs
-**ACME Lifecycle**: 7 steps; Let's Encrypt is targeting late 2026 for a staging environment that issues MTCs and 2027 for a production-ready environment (its post gives no ML-DSA issuance dates); cert-manager's Certificate privateKey.algorithm accepts RSA, ECDSA or Ed25519 (no ML-DSA value); internal CAs (Vault PKI, EJBCA) required for ML-DSA certs until ACME supports PQC
+**ACME Lifecycle**: 7 steps; Let's Encrypt is targeting late 2026 for a staging environment that issues MTCs and 2027 for a production-ready environment (its post gives no ML-DSA issuance dates); released cert-manager v1.21.3 does not accept the sample MLDSA setting; the separate pinned-alpha SelfSigned example enables MLDSAPrivateKeys on controller and webhook and demonstrates issuance and renewal. SelfSigned success does not establish ACME issuer support
 
 ### Step 6: Platform Migration Planner
 
@@ -80,17 +80,17 @@
 
 ### IaC Quantum-Vulnerable Defaults
 
-- cert-manager: RSA-2048 default; Certificate.spec.privateKey.algorithm accepts RSA, ECDSA or Ed25519 only, so ML-DSA certificates come from an issuer that supports them (Vault PKI, EJBCA)
-- Vault PKI role: key_type=rsa → key_type=ml-dsa with parameter_set=ml-dsa-44
+- cert-manager: the tested ML-DSA example uses the pinned unreleased source and both MLDSAPrivateKeys gates, with algorithm MLDSA, size 65, PKCS8 and Always rotation; released v1.21.3 is not compatible with that manifest
+- OpenBao 2.7.2 PKI role: key_type="mldsa", key_bits=44 for the worked certificate request, with an existing sample PKI mount/CA. Inspect the actual subject key and issuer chain separately
 - nginx-ingress: ECDHE → ssl-ecdh-curve: X25519MLKEM768:X25519:P-256
 - Terraform ACM: RSA_2048 → ML-DSA-44 when supported (AWS roadmap 2026)
 - kubeconfig certs: ECDSA P-256 → ML-DSA-44 client certificate from an ML-DSA-capable issuer
 
 ### ACME + PQC Timeline
 
-- cert-manager: Certificate privateKey.algorithm accepts RSA, ECDSA or Ed25519; ML-DSA certificates come from issuers such as Vault PKI or EJBCA
+- The cert-manager sample is pinned to unreleased source fcecd8377a59b44d1daf4b9ac1401eaa2a6f76b0 and its feature gates. Its SelfSigned result does not imply support in a released chart or an ACME issuer
 - Let's Encrypt is targeting late 2026 for a staging environment that issues Merkle Tree Certificates (MTCs) and 2027 for a production-ready environment; its post says it is tracking the standards for ML-DSA signatures in X.509 and gives no ML-DSA issuance dates
-- Until ACME supports PQC: use Vault PKI or EJBCA as internal CAs for ML-DSA certificates
+- Evaluate the chosen issuer and consumers for documented ML-DSA support. The worked OpenBao PKI role and cert-manager SelfSigned examples establish their declared sample behavior, not universal ACME or deployment compatibility
 
 ## Cross-References
 

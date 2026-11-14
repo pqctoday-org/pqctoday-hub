@@ -16,7 +16,7 @@ workshop_steps: 7
 - Envelope encryption with ML-KEM vs RSA-OAEP
 - Complete envelope sizes in the module's HKE1 project sample format (not a standard): 284 bytes for RSA-2048, 1,191 bytes for ML-KEM-768 and 1,218 bytes for X25519+ML-KEM-768, counted from one layout (18-byte header, key ID, salt, info, ephemeral key, KEM ciphertext, 40-byte AES-KW wrapped DEK); the older 1,088 + 40 = 1,128 and 32 + 1,088 = 1,120 figures count data fields only, not a complete envelope
 - Hybrid key wrapping (X25519+ML-KEM-768, ECDH P-256+ML-KEM-768, ECDH P-384+ML-KEM-1024, X-Wing); these KMS key-wrap combiners differ from the TLS hybrid groups of RFC 10024
-- KMS provider PQC landscape (AWS KMS, Google Cloud KMS, Azure Key Vault, HashiCorp Vault, Thales CipherTrust, Fortanix DSM)
+- KMS provider PQC landscape (AWS KMS, Google Cloud KMS, Azure Key Vault, OpenBao, Thales CipherTrust, Fortanix DSM)
 - PQC key rotation strategies and compliance deadlines (CNSA 2.0, NIST IR 8547)
 - Enterprise architecture patterns for multi-cloud PQC key management
 - KMIP v3.0 (Committee Specification Draft 02; KMIP 2.1 is the OASIS Standard) protocol operations and PQC key type enumerations; Re-key vs Re-key Key Pair and the key lifecycle
@@ -31,7 +31,7 @@ workshop_steps: 7
 2. Envelope Encryption Demo — ML-KEM encaps → KDF → AES-KW wrap visualization
 3. Hybrid Key Wrapping — X25519+ML-KEM-768 combiner with provider API mapping
 4. KMS Rotation Planner — Enterprise rotation planning with provider-specific strategies
-5. KMIP Protocol Explorer — KMIP v3.0 (draft) vs provider API comparison, PQC key type mapping, cross-provider sync visualizer, migration readiness checklist
+5. KMIP Protocol Explorer — KMIP v3.0 (draft) vs provider API comparison, PQC key type mapping, cross-provider sync visualizer and migration-readiness checklist. The OpenBao example uses its native HTTP/bao operations rather than claiming a KMIP endpoint. Its tested sample creates an ML-DSA-65 signing key, signs/verifies, rotates key versions and checks lifecycle failures; a signing key is not presented as an ML-KEM encapsulation key.
 6. AWS Policy Lab — Write a sample IAM policy fragment and check every kms:CreateKey Allow path within the lab's declared subset (kms:KeySpec limited to ML-DSA, kms:KeyUsage SIGN_VERIFY); unsupported features stay incomplete, and an optional ML-KEM key-establishment snippet is detected separately. This is not an effective-permissions result.
 7. Cloud KMS Key Exchange — simulate classical and HPKE key-exchange flows for AWS KMS, Google Cloud KMS and Azure Key Vault in the browser (no cloud calls)
 
