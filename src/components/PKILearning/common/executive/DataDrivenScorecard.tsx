@@ -237,6 +237,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         !userOverriddenRef.current.has(d.id) &&
         valueOrigin(d) !== 'unrecorded' &&
         valueOrigin(d) !== 'calculated-snapshot' &&
+        valueOrigin(d) !== 'sample-baseline' &&
         next[d.id] !== d.autoScore
       ) {
         next[d.id] = d.autoScore

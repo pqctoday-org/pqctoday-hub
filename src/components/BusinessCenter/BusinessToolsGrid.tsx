@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useEffect, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
+import { businessToolRank } from '@/data/businessToolRank'
+import type { BusinessToolsLinkState } from './lib/businessToolsBackLink'
 import { Search, Wrench, Filter } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
@@ -178,20 +180,24 @@ export const BusinessToolsGrid = () => {
   // strongest predictor of a business tool being found (WS17: r = 0.81) and
   // it was the same fixed order for every visitor; now nobody is "position 19
   // of 19" for the role the tool was written for. No persona: registry order.
+  // The rule itself lives in data/businessToolRank so the phone catalogue ranks
+  // the same way.
   const rankFor = useCallback(
-    (t: (typeof filteredTools)[number]): number => {
-      if (!selectedPersona) return 1
-      const step = startHere.steps.findIndex((s) => s.id === t.id)
-      if (step !== -1) return -100 + step
-      const audience = t.audience ?? 'business'
-      const mine =
-        (selectedPersona === 'executive' || selectedPersona === 'grc') && audience === 'business'
-          ? true
-          : audience === selectedPersona
-      return mine ? 0 : 1
-    },
+    (t: (typeof filteredTools)[number]): number => businessToolRank(t, selectedPersona, startHere),
     [selectedPersona, startHere]
   )
+  // A tool opened from here remembers the catalogue's filters, so its back
+  // button returns to the same filtered view (BusinessToolRoute reads it).
+  const filterSearch = searchParams.toString()
+  const toolLinkState: BusinessToolsLinkState = {
+    fromToolsSearch: filterSearch ? `?${filterSearch}` : '',
+  }
+  const isUnfilteredView =
+    !searchQuery.trim() &&
+    !activeCategory &&
+    zoneFilter === 'all' &&
+    phaseFilter === 'all' &&
+    audienceFilter === 'all'
   const groupedTools: Record<string, typeof filteredTools> = {}
   for (const section of groupSections) {
     const tools = filteredTools
@@ -355,8 +361,9 @@ export const BusinessToolsGrid = () => {
       </div>
 
       {/* Start-here sequence — only on the unfiltered view, so it reads as a
-          suggested path without fighting an active search/category. */}
-      {!searchQuery.trim() && !activeCategory && (
+          suggested path without fighting an active search, category, zone,
+          phase or audience filter. */}
+      {isUnfilteredView && (
         <div className="glass-panel p-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
             {startHere.heading}
@@ -366,6 +373,7 @@ export const BusinessToolsGrid = () => {
               <div key={s.id} className="flex items-center gap-2">
                 <Link
                   to={`/business/tools/${s.id}`}
+                  state={toolLinkState}
                   className="flex items-center gap-2 rounded-full border border-border px-3 py-1 text-sm text-foreground hover:border-primary/40 hover:text-primary transition-colors max-md:min-h-[44px]"
                 >
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
@@ -408,6 +416,7 @@ export const BusinessToolsGrid = () => {
                   <Link
                     key={tool.id}
                     to={`/business/tools/${tool.id}`}
+                    state={toolLinkState}
                     className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
                   >
                     <div className="flex items-start gap-3 w-full">

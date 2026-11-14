@@ -33,6 +33,12 @@ import {
   reportingOnlyScoreCell,
   withoutNeverEnteredReportingScores,
 } from '@/components/PKILearning/common/executive/reportingOnlyMeasure'
+import { KpiSampleBaselineControl } from '@/components/PKILearning/common/executive/KpiSampleBaselineControl'
+import {
+  hasKpiSampleBaseline,
+  withKpiSampleBaseline,
+  withoutKpiSampleBaseline,
+} from '@/components/PKILearning/common/executive/kpiSampleBaseline'
 import type { PolicyOutput } from '../types'
 
 const SURFACE = 'governance' as const
@@ -181,6 +187,18 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
   const originsRef = useRef(restoredKpiValueOrigins(restoredScores, savedInputs?.valueOrigins))
   const [originalSavedInputs] = useState(() => savedInputs?.originalSavedInputs ?? savedInputs)
 
+  // What the scorecard mounts with. Loading or clearing the sample baseline
+  // replaces it and remounts the scorecard (the scorecard owns its live state).
+  const [scorecardSeed, setScorecardSeed] = useState(() => ({
+    key: 0,
+    scores: savedInputs?.scores,
+    origins: savedInputs?.valueOrigins,
+    weights: savedInputs?.weights,
+  }))
+  const [sampleLoaded, setSampleLoaded] = useState(() =>
+    hasKpiSampleBaseline(savedInputs?.valueOrigins)
+  )
+
   const [observations, setObservations] = useState<Record<string, ScorecardObservation>>(
     () => savedInputs?.observations ?? {}
   )
@@ -306,6 +324,30 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
     setDirtySinceSave(false)
   }, [persistScorecard, dimensions, activePersona, originalSavedInputs])
 
+  const applySeed = useCallback(
+    (next: { scores: Record<string, number>; origins: Record<string, KpiValueOrigin> }) => {
+      scoresRef.current = next.scores
+      originsRef.current = next.origins
+      setScorecardSeed((prev) => ({
+        key: prev.key + 1,
+        scores: next.scores,
+        origins: next.origins,
+        weights: weightsRef.current,
+      }))
+      setSampleLoaded(hasKpiSampleBaseline(next.origins))
+      scheduleSave()
+    },
+    [scheduleSave]
+  )
+  const handleLoadSample = useCallback(
+    () => applySeed(withKpiSampleBaseline(SURFACE, scoresRef.current, originsRef.current)),
+    [applySeed]
+  )
+  const handleClearSample = useCallback(
+    () => applySeed(withoutKpiSampleBaseline(scoresRef.current, originsRef.current)),
+    [applySeed]
+  )
+
   const handleScoreChange = useCallback(
     (scores: Record<string, number>) => {
       scoresRef.current = scores
@@ -418,6 +460,12 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         </p>
       )}
 
+      <KpiSampleBaselineControl
+        loaded={sampleLoaded}
+        onLoad={handleLoadSample}
+        onClear={handleClearSample}
+      />
+
       <CollapsibleSection
         title="How this score is computed"
         icon={<Info size={14} className="text-primary" aria-hidden="true" />}
@@ -440,6 +488,7 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
       )}
 
       <DataDrivenScorecard
+        key={scorecardSeed.key}
         title="PQC Governance KPIs"
         description={`Weighted scorecard — ${activePersona} lens.`}
         dimensions={dimensions}
@@ -447,12 +496,15 @@ export const KPIDashboardBuilder: React.FC<KPIDashboardBuilderProps> = ({ policy
         onScoreChange={handleScoreChange}
         onTouchedChange={handleTouchedChange}
         onWeightChange={handleWeightChange}
-        initialScores={savedInputs?.scores}
-        initialValueOrigins={savedInputs?.valueOrigins}
+        initialScores={scorecardSeed.scores}
+        initialValueOrigins={scorecardSeed.origins}
         onValueOriginsChange={(origins) => {
-          originsRef.current = origins
+          // Keep sample values for KPIs outside the current lens, so the saved
+          // worksheet still has them after a lens switch.
+          originsRef.current = { ...originsRef.current, ...origins }
+          setSampleLoaded(hasKpiSampleBaseline(originsRef.current))
         }}
-        initialWeights={savedInputs?.weights}
+        initialWeights={scorecardSeed.weights}
         allowWeightEditing={true}
         showExport={true}
         exportFilename={`pqc-governance-kpi-${activePersona}`}

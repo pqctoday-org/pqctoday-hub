@@ -331,7 +331,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     workedExample:
-      'Choose the Executive lens and enter a fictional Systems Inventoried value. Catalogue calculations use selected example products; other values are learner inputs. The combined sample score requires 70% scored-value coverage, not verified evidence. Saved values without usable provenance stay unassessed until explicitly used or recalculated; missing inputs must be supplied.',
+      'On a new worksheet, click Load sample baseline: the KPIs you normally type in get fictional values labelled Hub sample baseline, so the Overall Score appears (48/100 under the Executive lens). Switch to the Architect lens and the same values re-weight to 37/100. Move a slider to replace a sample value with your own; Clear sample baseline removes only the sample values. Catalogue calculations use only products you selected in Migrate, and the combined score still needs 70% scored-value coverage, which is not verified evidence.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',
@@ -454,7 +454,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     workedExample:
-      'Choose the Executive lens and a fictional reporting baseline. Inspect catalogue-derived sample measures and enter hypothetical progress values. Missing or unconfirmed saved values stay unassessed; the combined score requires 70% scored-value coverage. Sample notes and learner-selected review labels do not verify evidence or establish readiness.',
+      'Choose the Executive lens and click Load sample baseline: fictional values labelled Hub sample baseline fill the KPIs you normally enter, and the Overall Score appears. Switch to the Ops lens to see the same values re-weighted, then replace sample values with hypothetical progress of your own. Missing or unconfirmed saved values stay unassessed; the combined score requires 70% scored-value coverage. Sample notes and review labels do not verify evidence or establish readiness.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',

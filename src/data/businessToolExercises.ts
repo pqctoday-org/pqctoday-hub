@@ -186,6 +186,17 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
       answer: 0,
       why: 'The dashboard does not turn missing data or a selected framework into progress. A KPI without organization-specific evidence remains unavailable or not yet scored, never zero or complete.',
     },
+    {
+      prompt:
+        'Click Load sample baseline, then switch the lens from Executive to Architect. Why does the Overall Score change although no value changed?',
+      options: [
+        'Each lens weights the same KPIs differently',
+        'The sample values are re-randomised',
+        'Architect excludes manual KPIs',
+      ],
+      answer: 0,
+      why: 'The values stay the same; the Weight column changes with the lens, so the weighted average moves (48 to 37 with the sample baseline).',
+    },
   ],
   'vendor-scorecard': [
     {
