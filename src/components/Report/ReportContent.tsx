@@ -117,6 +117,12 @@ interface AssessReportProps {
   expandToken?: number
   collapseToken?: number
   /**
+   * The summary/full-report switch, when the parent owns it (so the table of
+   * contents can follow it). Without these the component keeps its own.
+   */
+  showFullReport?: boolean
+  onShowFullReportChange?: (value: boolean) => void
+  /**
    * Present when rendering someone else's shared report or the curious-mode
    * example (ACCURACY-0708-2) — an ephemeral, read-only view. `persona` is
    * the sender's persona at share time, used only to reproduce their
@@ -134,6 +140,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   result,
   expandToken = 0,
   collapseToken = 0,
+  showFullReport: showFullReportProp,
+  onShowFullReportChange,
   sharedView,
 }) => {
   const shared = !!sharedView
@@ -249,7 +257,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({
     return hiddenThreats.filter((id) => industryThreatIds.has(id)).length
   }, [industry, hiddenThreats, threatsData])
 
-  const [showFullReport, setShowFullReport] = useState(false)
+  const [ownShowFullReport, setOwnShowFullReport] = useState(false)
+  const showFullReport = showFullReportProp ?? ownShowFullReport
+  const setShowFullReport = onShowFullReportChange ?? setOwnShowFullReport
   const [methodologyOpen, setMethodologyOpen] = useState(false)
   const [showBoardBrief, setShowBoardBrief] = useState(false)
   const [roiSummary, setRoiSummary] = useState<ROISummary | null>(null)
