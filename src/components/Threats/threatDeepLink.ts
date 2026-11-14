@@ -93,3 +93,15 @@ export function threatNotFoundMessage(
     ? `Threat ${threatId} isn't published yet — it is awaiting a source document that states the quantum risk.`
     : `Threat "${threatId}" was not found. The link may be mistyped, or the entry was renamed.`
 }
+
+/**
+ * Notice for a sector with no published threat yet — every one of its records
+ * is drafted, awaiting a source document that states the quantum risk. A link
+ * or pick naming it used to show the whole catalogue with no word of why.
+ */
+export function sectorAwaitingSourceMessage(sectors: readonly string[]): string {
+  const names = sectors.join(', ')
+  return sectors.length === 1
+    ? `No published threats for ${names} yet — its records are awaiting a source document that states the quantum risk. Showing all industries; the Cross-Industry threats apply to every sector.`
+    : `No published threats for ${names} yet — their records are awaiting a source document that states the quantum risk. Showing all industries; the Cross-Industry threats apply to every sector.`
+}

@@ -208,7 +208,19 @@ export function threatDetailTabParam(params: URLSearchParams): ThreatDetailTab {
 }
 
 /** Parameters that make a /threats URL a link to specific content. */
-const DEEP_LINK_PARAMS = ['id', 'threat', 'industry', 'q', 'class', 'protocol'] as const
+const DEEP_LINK_PARAMS = [
+  'id',
+  'threat',
+  'industry',
+  'q',
+  'class',
+  'protocol',
+  'type',
+  'criticality',
+  'tier',
+  'view',
+  'threattab',
+] as const
 
 /** Is this a link into specific Threats content (a threat, a filtered set)?
  *  The mobile first-run role picker must not stand in front of one. */

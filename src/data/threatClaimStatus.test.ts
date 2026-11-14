@@ -110,6 +110,7 @@ describe('threat lineage — the Evidence panel (ruling R2)', () => {
       supported: 1,
       supportedBySecondReader: 0,
       unconfirmed: 2,
+      notChecked: 0,
     })
     expect(sourceIdentityText(l)).toBe('Source document: confirmed to be the cited document')
     expect(claimsCheckedText(l)).toBe(
@@ -132,6 +133,16 @@ describe('threat lineage — the Evidence panel (ruling R2)', () => {
     expect(l.supportedBySecondReader).toBe(1)
     expect(claimsCheckedText(l)).toBe(
       'Maintenance-pipeline claims check: 2 supported (1 by an AI second reader) · 1 could not be confirmed'
+    )
+  })
+
+  it('counts a claim with no verdict as not yet checked — "1 of 3", never "1 of 1" (ACC-3)', () => {
+    const l = lineageFor('P-1', {
+      rows: { 'P-1': { claims: { threat_description: { verdict: 'supported' } } } },
+    })
+    expect(l.notChecked).toBe(2)
+    expect(claimsCheckedText(l)).toBe(
+      'Maintenance-pipeline claims check: 1 supported · 0 could not be confirmed · 2 not yet checked'
     )
   })
 

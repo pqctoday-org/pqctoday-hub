@@ -303,13 +303,25 @@ const TIER_RANK: Record<ShorTier, number> = {
 /**
  * Family-level patterns for the loose free-text the CSV uses. Classical
  * tokens match only where they are not the tail of a hyphenated name, so the
- * "dsa" in ML-DSA / SLH-DSA / FN-DSA is never read as classical DSA. First
- * match wins, in urgency order.
+ * "dsa" in ML-DSA / SLH-DSA / FN-DSA is never read as classical DSA. Every
+ * matching pattern is considered; the most urgent tier wins.
  */
 const FAMILY_TIERS: [RegExp, ShorTier][] = [
-  [/(?<![\w-])(ecdsa|ecdh|ecc|p-?256|secp256|x25519|ed25519|curve25519)\b/, 'imminent'],
+  [
+    /(?<![\w-])(ecdsa|ecdh|ecc|eddsa|p-?256|secp256(?:k1|r1)?|x25519|ed25519|curve25519|schnorr|elgamal|elliptic[\s-]curves?)\b/,
+    'imminent',
+  ],
   [/(?<![\w-])(p-?521|rsa-?4096)\b/, 'near'],
   [/(?<![\w-])(rsa|dsa|dh|diffie|p-?384)\b/, 'imminent'],
+  // Generic wording for the classical public-key estate ("public-key
+  // cryptography", "asymmetric algorithms", and NIST IR 8547's
+  // "quantum-vulnerable", which it uses for public-key algorithms). That estate includes RSA-2048 and P-256, so its most urgent
+  // member is a lower-resource Shor target. Post-quantum / quantum-resistant
+  // public-key wording is excluded — it names the fix, not the risk.
+  [
+    /(?<!(?:post-quantum|quantum-resistant|quantum-safe|pqc)[\s-])(?<![\w-])(public[\s-]key|asymmetric|quantum[\s-]vulnerable)\b/,
+    'imminent',
+  ],
   [/(?<![\w-])(aes|sha-?\d|sha3|hmac|symmetric)\b/, 'grover'],
   [/\b(ml-kem|ml-dsa|slh-dsa|fn-dsa|kyber|dilithium|sphincs|falcon|hqc)\b/, 'safe'],
 ]
@@ -324,10 +336,11 @@ const FAMILY_TIERS: [RegExp, ShorTier][] = [
  * systems") is `unknown` — Unscored — never `safe`: the generic word "PQC" is
  * not an algorithm.
  *
- * Canonical-table hits are taken first (max tier). If they found nothing, or
- * only PQC parameter sets, the family-level patterns for the loose free-text
- * the CSV uses ("RSA", "ECC", "AES") get a say, so a row naming both a
- * classical family and a PQC set grades by the classical one.
+ * Canonical-table hits and the family-level patterns for the loose free-text
+ * the CSV uses ("RSA", "ECC", "AES", "public-key cryptography") are all
+ * evaluated and the most urgent tier wins, so a row naming both a classical
+ * family and a PQC set — or an asymmetric family next to AES-128 — grades by
+ * the most urgent one.
  */
 export function getShorTier(threat: ThreatItem): ShorTier {
   // Route common RSA-4096 spellings through the same canonical estimate.
@@ -342,12 +355,14 @@ export function getShorTier(threat: ThreatItem): ShorTier {
       if (tier && TIER_RANK[tier] > TIER_RANK[best]) best = tier
     }
   }
-  if (best !== 'unknown' && best !== 'safe') return best
-
-  // Family-level fallbacks for the loose free-text the CSV often uses.
-  const family = FAMILY_TIERS.find(([re]) => re.test(text))?.[1]
-  // eslint-disable-next-line security/detect-object-injection
-  if (family && TIER_RANK[family] > TIER_RANK[best]) return family
+  // Family-level patterns for the loose free-text the CSV often uses. Every
+  // pattern gets a say and the most urgent tier wins: a row naming "RSA, ECC"
+  // next to "AES-128" is a Shor target first, not "Grover-weakened" because
+  // the canonical table happened to hold only the AES-128 spelling.
+  for (const [re, tier] of FAMILY_TIERS) {
+    // eslint-disable-next-line security/detect-object-injection
+    if (re.test(text) && TIER_RANK[tier] > TIER_RANK[best]) best = tier
+  }
   return best
 }
 

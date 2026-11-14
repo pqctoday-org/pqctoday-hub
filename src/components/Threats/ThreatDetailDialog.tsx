@@ -483,14 +483,14 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                     const mod = MODULE_CATALOG[slug]
                     if (!mod) return null
                     return (
-                      <a
+                      <Link
                         key={slug}
-                        href={`/learn/${slug}`}
+                        to={`/learn/${slug}`}
                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
                       >
                         <BookOpen size={11} />
                         {mod.title}
-                      </a>
+                      </Link>
                     )
                   })}
                 </div>

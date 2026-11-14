@@ -23,6 +23,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import {
   draftThreatIndustries,
   evidenceStrength,
+  knownThreatIndustries,
   retiredThreats,
   threatsData,
   threatsMetadata,
@@ -93,6 +94,7 @@ import { DeepLinkNotice } from '../common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import {
   threatExclusions,
+  sectorAwaitingSourceMessage,
   threatNotFoundMessage,
   threatWidenedMessage,
   type ThreatExclusion,
@@ -135,6 +137,19 @@ type ThreatsTab = 'list' | 'horizon'
 
 /** The protocol chips worth offering: only those that match a published threat. */
 const lensProtocols = lensProtocolsFor(threatsData)
+
+/** The notice for an `?industry=` value naming sectors the page knows but
+ *  has no published threat for (every record drafted, awaiting a source);
+ *  null when every named sector has published threats, or none is known. */
+function awaitingSourceNotice(param: string | null): string | null {
+  if (!param) return null
+  const known = resolveIndustryParam(
+    param,
+    [...knownThreatIndustries].map((industry) => ({ industry }))
+  )
+  const awaiting = known.filter((ind) => !threatsData.some((t) => t.industry === ind))
+  return awaiting.length > 0 ? sectorAwaitingSourceMessage(awaiting) : null
+}
 
 export const ThreatsDashboard: React.FC<{
   simEmbed?: boolean
@@ -268,6 +283,18 @@ export const ThreatsDashboard: React.FC<{
   // behind this single "Full detail" collapse instead of loading open.
   const [detailOpen, setDetailOpen] = useState(false)
 
+  // The ?industry= value the URL carried on the previous sync. A persona or
+  // home-page sector seeds the filter on mount without writing the URL, so
+  // "no ?industry=" alone must not clear it — only the URL DROPPING a value it
+  // had (Back, or a same-route link to plain /threats) does.
+  const prevIndustryParamRef = useRef<string | null>(searchParams.get('industry'))
+  // A link or sector pick that names only sectors with no published threat
+  // yet (all drafted, awaiting a source) says so instead of silently showing
+  // every industry.
+  const [sectorNotice, setSectorNotice] = useState<string | null>(() =>
+    awaitingSourceNotice(searchParams.get('industry'))
+  )
+
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
   useEffect(() => {
@@ -289,7 +316,16 @@ export const ThreatsDashboard: React.FC<{
           JSON.stringify(prev) !== JSON.stringify(matches) ? matches : prev
         )
       }
+      // Only when ?industry= itself changed, so a dismissed notice stays
+      // dismissed while the reader changes other filters.
+      if (indParam !== prevIndustryParamRef.current) setSectorNotice(awaitingSourceNotice(indParam))
+    } else if (prevIndustryParamRef.current) {
+      setSectorNotice(null)
+      // The URL had an industry and no longer does: the page shows every
+      // industry again instead of keeping a filter the address bar dropped.
+      setSelectedIndustries((prev) => (prev.length > 0 ? [] : prev))
     }
+    prevIndustryParamRef.current = indParam
     if (idParam) {
       const found = threatsData.find((t) => t.threatId === idParam)
       if (found) setSelectedThreat(found)
@@ -472,25 +508,6 @@ export const ThreatsDashboard: React.FC<{
   // a filter on the threats corpus. Researcher + curious have empty default
   // sets → no narrowing.
 
-  /**
-   * How the active lens's matches were arrived at. Shown as a count rather than
-   * a per-row badge because the mix is what a reader needs in order to judge
-   * the list: "9 of these say TLS themselves, 14 are inferred from RSA" is a
-   * different list from "23 threats to your TLS", and only one of those is true.
-   */
-  const lensBasisSplit = useMemo(() => {
-    if (!protocolLens) return null
-    let stated = 0
-    let inferred = 0
-    for (const t of threatsData) {
-      const hit = protocolsForThreat(t).find((m) => m.protocol === protocolLens)
-      if (!hit) continue
-      if (hit.basis === 'stated') stated += 1
-      else inferred += 1
-    }
-    return { stated, inferred }
-  }, [protocolLens])
-
   const personaDefaults = usePersonaDefaults()
   // A deep-linked threat outside the persona-default scope adds its own
   // industry to that scope (rather than dropping the scope), so the row behind
@@ -621,6 +638,24 @@ export const ThreatsDashboard: React.FC<{
     protocolLens,
   ])
 
+  /**
+   * How the active lens's matches were arrived at — counted over the rows on
+   * screen (every other filter applied), so it adds up to the "Showing N"
+   * count. Each row also carries its own stated/inferred mark.
+   */
+  const lensBasisSplit = useMemo(() => {
+    if (!protocolLens) return null
+    let stated = 0
+    let inferred = 0
+    for (const t of filteredAndSortedData) {
+      const hit = protocolsForThreat(t).find((m) => m.protocol === protocolLens)
+      if (!hit) continue
+      if (hit.basis === 'stated') stated += 1
+      else inferred += 1
+    }
+    return { stated, inferred }
+  }, [protocolLens, filteredAndSortedData])
+
   // When a persona is set but no explicit industry filter is active, compute the persona's
   // relevant industries to drive card dimming — irrelevant threats remain visible but faded.
   const personaRelevantIndustries = useMemo<Set<string> | undefined>(() => {
@@ -676,6 +711,16 @@ export const ThreatsDashboard: React.FC<{
       )
       setSelectedIndustries(mapped)
       syncFiltersToUrl({ industry: mapped })
+      setSectorNotice(
+        mapped.length > 0
+          ? null
+          : sectorAwaitingSourceMessage(
+              // eslint-disable-next-line security/detect-object-injection
+              (INDUSTRY_TO_THREATS_MAP[sector] ?? []).length > 0
+                ? INDUSTRY_TO_THREATS_MAP[sector] // eslint-disable-line security/detect-object-injection
+                : [sector]
+            )
+      )
       logEvent('Threats', 'Filter Industry', mapped.join(','))
     },
     [syncFiltersToUrl]
@@ -963,6 +1008,14 @@ export const ThreatsDashboard: React.FC<{
             Choose your role
           </Button>
         </section>
+      )}
+
+      {sectorNotice && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={sectorNotice}
+          onDismiss={() => setSectorNotice(null)}
+        />
       )}
 
       {deepLinkNotice && (
@@ -1482,6 +1535,7 @@ export const ThreatsDashboard: React.FC<{
                   <ThreatsCardGrid
                     items={filteredAndSortedData}
                     onItemClick={openThreat}
+                    protocolLens={protocolLens}
                     relevantIndustries={personaRelevantIndustries}
                     personaLabel={
                       selectedPersona ? PERSONA_SHORT_LABELS[selectedPersona] : undefined // eslint-disable-line security/detect-object-injection
@@ -1502,12 +1556,14 @@ export const ThreatsDashboard: React.FC<{
                       showEvidence={selectedPersona === 'researcher'}
                       onSort={handleSort}
                       onItemClick={openThreat}
+                      protocolLens={protocolLens}
                     />
                   </div>
                   <div className="mb-8 md:hidden">
                     <ThreatsCardGrid
                       items={filteredAndSortedData}
                       onItemClick={openThreat}
+                      protocolLens={protocolLens}
                       relevantIndustries={personaRelevantIndustries}
                       personaLabel={
                         selectedPersona ? PERSONA_SHORT_LABELS[selectedPersona] : undefined // eslint-disable-line security/detect-object-injection

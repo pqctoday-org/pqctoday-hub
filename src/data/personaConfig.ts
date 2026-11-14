@@ -767,12 +767,21 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
   curious: [],
 }
 
+/**
+ * Site sector → Threats-page industry labels. The ONE map: the assessment
+ * report's threat appendix uses it too (it used to keep its own copy, which
+ * disagreed on four sectors, so a sector's threats on /report and /threats
+ * differed). Sectors may share a Threats industry (Legal / Notary sits under
+ * both Finance and Government; Payment Card Industry under Finance and
+ * Retail).
+ */
 export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   'Finance & Banking': [
     'Finance & Banking',
     'Insurance',
     'Payment Card Industry',
     'Cryptocurrency / Blockchain',
+    'Legal / Notary / eSignature',
   ],
   'Government & Defense': ['Government & Defense', 'Legal / Notary / eSignature'],
   Healthcare: ['Healthcare / Pharmaceutical'],
@@ -791,10 +800,11 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
     // THREAT_INDUSTRY_ALIASES (threatRowRules.ts) still resolves.
     'Critical Infrastructure / OT',
     'Water / Wastewater',
+    'Rail / Transit',
   ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation / Space'],
-  'Retail & E-Commerce': ['Retail & E-Commerce'],
+  'Retail & E-Commerce': ['Retail & E-Commerce', 'Payment Card Industry'],
   // Assessment-only industries (AVAILABLE_INDUSTRIES in assessmentData.ts):
   // without a key here, the report's Threats link passed the raw name, which
   // matches no Threats label, so the page opened unfiltered.

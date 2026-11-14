@@ -180,10 +180,43 @@ describe('getShorTier (Threats #4)', () => {
     // CLOUD-004 / CROSS-007 / GOV-005 shape: no algorithm in cryptoAtRisk, the
     // PQC replacement named in the description.
     const t = threat({
-      cryptoAtRisk: 'All public-key cryptography in NC3 systems',
+      cryptoAtRisk: 'Cryptographic systems in NC3 command and control',
       description: 'Migrate to ML-KEM-1024 and ML-DSA-87 per CNSA 2.0; PQC mandated.',
     })
     expect(getShorTier(t)).toBe('unknown')
+  })
+
+  it('grades an asymmetric family named next to AES-128 as a Shor target, not Grover-weakened', () => {
+    // TELCO-001 / PAYM-001 / CROS-007 shape: the canonical table only holds the
+    // AES-128 spelling, and its hit used to return before the family check.
+    for (const cryptoAtRisk of [
+      'RSA and elliptic-curve public-key algorithms; AES-128 for bulk encryption',
+      'RSA, ECC, Triple-DES, AES-128/192 across HSMs',
+      'RSA, ECC, ECDSA key management; AES-128/256, SHA-256/384/512',
+    ]) {
+      expect(getShorTier(threat({ cryptoAtRisk })), cryptoAtRisk).toBe('imminent')
+    }
+  })
+
+  it('grades generic classical public-key wording as a lower-resource Shor target', () => {
+    for (const cryptoAtRisk of [
+      'All public-key cryptography in NC3 systems',
+      'Widely used asymmetric algorithms',
+      'Quantum-vulnerable key-establishment schemes',
+      'Elliptic curve signatures on transactions',
+      'Schnorr signatures on Taproot outputs',
+    ]) {
+      expect(getShorTier(threat({ cryptoAtRisk })), cryptoAtRisk).toBe('imminent')
+    }
+  })
+
+  it('does not read post-quantum public-key wording as a Shor target', () => {
+    expect(
+      getShorTier(threat({ cryptoAtRisk: 'post-quantum public-key algorithms ML-KEM-768' }))
+    ).toBe('safe')
+    expect(getShorTier(threat({ cryptoAtRisk: 'quantum-resistant public key schemes' }))).toBe(
+      'unknown'
+    )
   })
 
   it('never grades the generic word "PQC" as safe', () => {
@@ -208,6 +241,14 @@ const CLASSICAL_TOKEN =
 const PQC_TOKEN = /\b(ml-kem|ml-dsa|slh-dsa|fn-dsa|kyber|dilithium|sphincs|falcon|hqc)\b/i
 
 describe('getShorTier over the real threats CSV', () => {
+  it('no active row that names RSA, ECC, ECDSA or DH in its at-risk crypto is graded Grover-weakened', () => {
+    const misgraded = threatsData
+      .filter((t) => /(?<![\w-])(rsa|ecc|ecdsa|ecdh|diffie|dh)\b/i.test(t.cryptoAtRisk))
+      .filter((t) => getShorTier(t) === 'grover')
+      .map((t) => t.threatId)
+    expect(misgraded).toEqual([])
+  })
+
   it('no active High/Critical row is PQC-safe unless its at-risk crypto names only PQC algorithms', () => {
     const safeHighRows = threatsData.filter(
       (t) => (t.criticality === 'High' || t.criticality === 'Critical') && getShorTier(t) === 'safe'
