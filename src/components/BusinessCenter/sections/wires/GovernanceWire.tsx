@@ -18,7 +18,7 @@ import { HiddenFrameworksToggle } from '../../widgets/HiddenFrameworksToggle'
 import type { ThreatData } from '@/data/threatsData'
 import { useThreatsData } from '@/hooks/useThreatsData'
 import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
-import { threatsIndustryHref } from '@/components/Threats/threatsUrlParams'
+import { resolveIndustryParam, threatsIndustryHref } from '@/components/Threats/threatsUrlParams'
 import { isCrossIndustry } from '@/data/industryMatch'
 
 export interface GovernanceWireProps {
@@ -167,10 +167,12 @@ function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
       )
     )
   }, [labels, threatsData])
-  const crossIndustry = useMemo(
-    () => rankThreats(threatsData.filter((t) => isCrossIndustry(t.industry))),
-    [threatsData]
-  )
+  // The rows the "Open Threats" link opens: /threats?industry=Cross-Industry
+  // selects exactly these labels, so the list is built from the same resolution.
+  const crossIndustry = useMemo(() => {
+    const crossLabels = new Set(resolveIndustryParam('Cross-Industry', threatsData))
+    return rankThreats(threatsData.filter((t) => crossLabels.has(t.industry)))
+  }, [threatsData])
 
   if (!industry || (own.length === 0 && crossIndustry.length === 0)) return null
 

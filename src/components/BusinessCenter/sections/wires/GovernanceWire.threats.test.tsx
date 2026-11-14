@@ -85,7 +85,13 @@ describe('GovernanceWire industry threats', () => {
     expect(screen.queryByText(/Threats ·/)).not.toBeInTheDocument()
     expect(screen.getAllByText('Applies to every sector')).toHaveLength(1)
     expect(screen.getByText('Cross threat')).toBeInTheDocument()
-    expect(screen.getByText('HSM cross threat')).toBeInTheDocument()
+  })
+
+  it('lists only the rows the cross-industry link filters to (exact label, no sub-labels)', () => {
+    renderFor('Retail & E-Commerce')
+    // /threats?industry=Cross-Industry selects the bare label only, so a
+    // 'Cross-Industry / HSM' row listed here would not be among the rows the link opens.
+    expect(screen.queryByText('HSM cross threat')).not.toBeInTheDocument()
   })
 
   it('Finance shows its own threats, then the cross-industry heading', () => {
@@ -100,7 +106,7 @@ describe('GovernanceWire industry threats', () => {
   it('never shows a cross-industry row twice', () => {
     renderFor('Finance & Banking')
     expect(screen.getAllByText('Cross threat')).toHaveLength(1)
-    expect(screen.getAllByText('HSM cross threat')).toHaveLength(1)
+    expect(screen.queryByText('HSM cross threat')).not.toBeInTheDocument()
   })
 
   it('shows no threats block without an industry', () => {
