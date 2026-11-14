@@ -236,7 +236,6 @@ export interface ProtocolDoc {
   title: string
   url: string
   date: string
-  localFile?: string
 }
 
 export interface OssLibrary {
@@ -489,14 +488,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 4253 — SSH Transport Layer Protocol',
         url: 'https://datatracker.ietf.org/doc/html/rfc4253',
         date: '2006-01',
-        localFile: '/library/IETF_RFC_4253.html',
       },
       {
         id: 'RFC-9941',
         title: 'RFC 9941 — Streamlined NTRU Prime sntrup761 Key Exchange for SSH',
         url: 'https://datatracker.ietf.org/doc/html/rfc9941',
         date: '2026-04',
-        localFile: '/library/RFC_9941.html',
       },
       {
         id: 'RFC-10042',
@@ -513,7 +510,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-sshm-mlkem-hybrid-kex-10 — ML-KEM Hybrid KEX for SSH (published Aug 2026 as RFC 10042)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/',
         date: '2026-02-26',
-        localFile: '/library/draft-ietf-sshm-mlkem-hybrid-kex-10.html',
       },
       {
         id: 'draft-harrison-sshm-mlkem',
@@ -545,7 +541,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'draft-becker-cnsa2-ssh-profile-05 — CNSA 2.0 Profile for SSH (In IESG Review)',
         url: 'https://datatracker.ietf.org/doc/draft-becker-cnsa2-ssh-profile/',
         date: '2026-05-08',
-        localFile: '/library/draft-becker-cnsa2-ssh-profile-05.html',
       },
     ],
     dimensions: {
@@ -708,14 +703,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 5246 — TLS 1.2',
         url: 'https://datatracker.ietf.org/doc/html/rfc5246',
         date: '2008-08',
-        localFile: '/library/RFC_5246.html',
       },
       {
         id: 'RFC-9325',
         title: 'RFC 9325 / BCP 195 — Recommendations for Secure Use of TLS and DTLS',
         url: 'https://datatracker.ietf.org/doc/html/rfc9325',
         date: '2022-11',
-        localFile: '/library/RFC_9325.html',
       },
     ],
     latestDraft: [],
@@ -771,7 +764,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9846 — TLS 1.3 (obsoletes RFC 8446)',
         url: 'https://datatracker.ietf.org/doc/html/rfc9846',
         date: '2026-07',
-        localFile: '/library/RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1.html',
       },
       {
         id: 'RFC 10024',
@@ -793,21 +785,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'draft-ietf-tls-mldsa-06 — ML-DSA in TLS 1.3 (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
         date: '2026-09-11',
-        localFile: '/library/draft-ietf-tls-mldsa-04.html',
       },
       {
         // PUBLISHED 2026-08-22 correction. Was labelled "(RFC Ed Queue)" at -16, dated
         // 2025-09-07. It left that queue in July 2026: the datatracker reads
         // "Hybrid Key Exchange in TLS 1.3 RFC 9954 ... Document Type RFC - Informational
-        // (July 2026) ... Was draft-ietf-tls-hybrid-design (tls WG)". The local capture
-        // The RFC itself is now cached (library row RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3,
-        // added 2026-08-22), so localFile points at it rather than at the superseded draft.
+        // (July 2026) ... Was draft-ietf-tls-hybrid-design (tls WG)".
         id: 'RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3',
         title:
           'RFC 9954 — Hybrid Key Exchange in TLS 1.3 (Informational; was draft-ietf-tls-hybrid-design)',
         url: 'https://www.rfc-editor.org/rfc/rfc9954.html',
         date: '2026-07',
-        localFile: '/library/RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3.html',
       },
       {
         id: 'draft-yusef-tls-pqt-dual-certs',
@@ -1057,28 +1045,24 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 5280 — X.509 PKI Certificate and CRL Profile',
         url: 'https://datatracker.ietf.org/doc/html/rfc5280',
         date: '2008-05',
-        localFile: '/library/RFC_5280.html',
       },
       {
         id: 'RFC-9881',
         title: 'RFC 9881 — X.509 Algorithm Identifiers for ML-DSA',
         url: 'https://datatracker.ietf.org/doc/html/rfc9881',
         date: '2025-10',
-        localFile: '/library/RFC_9881.html',
       },
       {
         id: 'RFC-9935',
         title: 'RFC 9935 — X.509 Algorithm Identifiers for ML-KEM',
         url: 'https://datatracker.ietf.org/doc/html/rfc9935',
         date: '2026-03',
-        localFile: '/library/RFC-9935.html',
       },
       {
         id: 'RFC-9909',
         title: 'RFC 9909 — X.509 Algorithm Identifiers for SLH-DSA',
         url: 'https://datatracker.ietf.org/doc/html/rfc9909',
         date: '2025-12',
-        localFile: '/library/RFC_9909.html',
       },
       {
         // Added 2026-08-17: a published X.509 hybrid mechanism the row omitted.
@@ -1088,7 +1072,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9763 — Related Certificates for Multiple Authentications',
         url: 'https://datatracker.ietf.org/doc/html/rfc9763',
         date: '2025-06',
-        localFile: '/library/RFC-9763.html',
       },
       {
         // Added 2026-09-30 (hybrid-cert refresh): hash-based signatures in X.509.
@@ -1096,7 +1079,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9802 — HSS and XMSS Hash-Based Signatures in X.509',
         url: 'https://datatracker.ietf.org/doc/html/rfc9802',
         date: '2025-06',
-        localFile: '/library/RFC_9802.html',
       },
       {
         // Added 2026-09-30 (hybrid-cert refresh): unsigned certificates
@@ -1106,7 +1088,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9925 — Unsigned X.509 Certificates',
         url: 'https://datatracker.ietf.org/doc/html/rfc9925',
         date: '2026-02',
-        localFile: '/library/RFC-9925.html',
       },
     ],
     latestDraft: [
@@ -1116,7 +1097,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-pq-composite-sigs-19 — Composite ML-DSA in X.509 (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
         date: '2026-04-21',
-        localFile: '/library/draft-ietf-lamps-pq-composite-sigs-19.html',
       },
       {
         id: 'draft-ietf-lamps-pq-composite-kem-23',
@@ -1124,7 +1104,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-pq-composite-kem-23 — Composite ML-KEM in X.509 (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
         date: '2026-10-14',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-23.html',
       },
       {
         // Active LAMPS WG draft. Its id-ad-certDiscovery access method and
@@ -1134,7 +1113,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-certdiscovery-03 — Certificate Discovery via subjectInfoAccess (WG draft, OIDs TBD)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-certdiscovery/',
         date: '2026-05-21',
-        localFile: '/library/draft-ietf-lamps-certdiscovery-03.html',
       },
       {
         // Watchlist: FN-DSA (planned FIPS 206, not yet final) in X.509. OIDs TBD.
@@ -1143,7 +1121,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-fn-dsa-certificates-00 — FN-DSA in X.509 (WG draft; FIPS 206 not final, OIDs TBD)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-fn-dsa-certificates/',
         date: '2026-05-20',
-        localFile: '/library/draft-ietf-lamps-fn-dsa-certificates-00.html',
       },
       {
         // Watchlist: single-use signing certificates. X.509 work, not a hybrid mechanism.
@@ -1152,7 +1129,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-one-signature-certs-02 — One Signature Certificates (WG draft; not a hybrid format)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-one-signature-certs/',
         date: '2026-07-01',
-        localFile: '/library/draft-ietf-lamps-one-signature-certs-02.html',
       },
     ],
     dimensions: {
@@ -1342,42 +1318,36 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 8551 — S/MIME v4.0',
         url: 'https://datatracker.ietf.org/doc/html/rfc8551',
         date: '2019-04',
-        localFile: '/library/RFC_8551.html',
       },
       {
         id: 'RFC-5652',
         title: 'RFC 5652 — Cryptographic Message Syntax (CMS)',
         url: 'https://datatracker.ietf.org/doc/html/rfc5652',
         date: '2009-09',
-        localFile: '/library/RFC_5652.html',
       },
       {
         id: 'RFC-9936',
         title: 'RFC 9936 — Use of ML-KEM in CMS',
         url: 'https://datatracker.ietf.org/doc/html/rfc9936',
         date: '2026-03',
-        localFile: '/library/RFC-9936.html',
       },
       {
         id: 'RFC-9882',
         title: 'RFC 9882 — Use of ML-DSA in CMS',
         url: 'https://datatracker.ietf.org/doc/html/rfc9882',
         date: '2025-10',
-        localFile: '/library/RFC_9882.html',
       },
       {
         id: 'RFC-9814',
         title: 'RFC 9814 — Use of SLH-DSA in CMS',
         url: 'https://datatracker.ietf.org/doc/html/rfc9814',
         date: '2025-07',
-        localFile: '/library/RFC_9814.html',
       },
       {
         id: 'RFC-9629',
         title: 'RFC 9629 — KEMRecipientInfo for CMS',
         url: 'https://datatracker.ietf.org/doc/html/rfc9629',
         date: '2024-08',
-        localFile: '/library/RFC_9629.html',
       },
     ],
     latestDraft: [
@@ -1523,14 +1493,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9052 — COSE: Structures and Process',
         url: 'https://datatracker.ietf.org/doc/html/rfc9052',
         date: '2022-08',
-        localFile: '/library/RFC_9052.html',
       },
       {
         id: 'RFC-9053',
         title: 'RFC 9053 — COSE: Initial Algorithms',
         url: 'https://datatracker.ietf.org/doc/html/rfc9053',
         date: '2022-08',
-        localFile: '/library/RFC_9053.html',
       },
       {
         id: 'RFC-9964',
@@ -1545,7 +1513,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'draft-ietf-cose-falcon-04 — FN-DSA for JOSE and COSE (expired 2026-09-16)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-falcon/',
         date: '2026-03-25',
-        localFile: '/library/draft-ietf-cose-falcon-04.html',
       },
       {
         id: 'draft-ietf-cose-hpke-27',
@@ -1755,21 +1722,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 7515 — JSON Web Signature (JWS)',
         url: 'https://datatracker.ietf.org/doc/html/rfc7515',
         date: '2015-05',
-        localFile: '/library/RFC_7515.html',
       },
       {
         id: 'RFC-7516',
         title: 'RFC 7516 — JSON Web Encryption (JWE)',
         url: 'https://datatracker.ietf.org/doc/html/rfc7516',
         date: '2015-05',
-        localFile: '/library/RFC_7516.html',
       },
       {
         id: 'RFC-7519',
         title: 'RFC 7519 — JSON Web Token (JWT)',
         url: 'https://datatracker.ietf.org/doc/html/rfc7519',
         date: '2015-05',
-        localFile: '/library/RFC_7519.html',
       },
       {
         id: 'RFC-9964',
@@ -1974,14 +1938,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 7030 — Enrollment over Secure Transport (EST)',
         url: 'https://datatracker.ietf.org/doc/html/rfc7030',
         date: '2013-10',
-        localFile: '/library/IETF-RFC-7030-EST.html',
       },
       {
         id: 'RFC-9810',
         title: 'RFC 9810 — CMP Updates for KEM',
         url: 'https://datatracker.ietf.org/doc/html/rfc9810',
         date: '2025-07',
-        localFile: '/library/RFC_9810.html',
       },
     ],
     latestDraft: [
@@ -1991,14 +1953,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-pq-composite-kem-19 — Composite ML-KEM (enrollment payload, IESG Evaluation)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
         date: '2026-08-14',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-19.html',
       },
       {
         id: 'draft-ietf-lamps-pq-composite-sigs-19',
         title: 'draft-ietf-lamps-pq-composite-sigs-19 — Composite ML-DSA (enrollment payload)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
         date: '2026-04-21',
-        localFile: '/library/draft-ietf-lamps-pq-composite-sigs-19.html',
       },
     ],
     dimensions: {
@@ -2289,7 +2249,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: '3GPP TS 33.501 — Security Architecture and Procedures for 5G',
         url: 'https://www.3gpp.org/dynareport/33501.htm',
         date: '2025-12',
-        localFile: '/library/3GPP_TS_33.501.html',
       },
     ],
     latestDraft: [
@@ -2304,7 +2263,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: '3GPP TR 33.938 — 3GPP Cryptographic Inventory',
         url: 'https://www.3gpp.org/dynareport/33938.htm',
         date: '2026-01',
-        localFile: '/library/3GPP-PQC-Study-2025.html',
       },
     ],
     dimensions: {
@@ -2395,7 +2353,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9580 — OpenPGP (crypto refresh)',
         url: 'https://datatracker.ietf.org/doc/html/rfc9580',
         date: '2024-07',
-        localFile: '/library/RFC_9580.html',
       },
       {
         id: 'RFC-9980',
@@ -2523,35 +2480,30 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 7296 — IKEv2',
         url: 'https://datatracker.ietf.org/doc/html/rfc7296',
         date: '2014-10',
-        localFile: '/library/IETF_RFC_7296.html',
       },
       {
         id: 'RFC-8784',
         title: 'RFC 8784 — Mixing Preshared Keys in IKEv2 for PQ Security',
         url: 'https://datatracker.ietf.org/doc/html/rfc8784',
         date: '2020-06',
-        localFile: '/library/RFC_8784.html',
       },
       {
         id: 'RFC-9370',
         title: 'RFC 9370 — Multiple Key Exchanges in IKEv2',
         url: 'https://datatracker.ietf.org/doc/html/rfc9370',
         date: '2023-05',
-        localFile: '/library/RFC_9370.html',
       },
       {
         id: 'RFC-9867',
         title: 'RFC 9867 — PSK Mixing in IKE_INTERMEDIATE / CREATE_CHILD_SA',
         url: 'https://datatracker.ietf.org/doc/html/rfc9867',
         date: '2025',
-        localFile: '/library/RFC_9867.html',
       },
       {
         id: 'RFC-9242',
         title: 'RFC 9242 — IKE_INTERMEDIATE Exchange',
         url: 'https://datatracker.ietf.org/doc/html/rfc9242',
         date: '2022-05',
-        localFile: '/library/IETF_RFC_9242.html',
       },
     ],
     latestDraft: [
@@ -2568,7 +2520,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-ipsecme-ikev2-pqc-auth-12 — PQ Authentication in IKEv2 (Submitted to IESG for Publication)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc-auth/',
         date: '2026-08-20',
-        localFile: '/library/draft-ietf-ipsecme-ikev2-pqc-auth-12.html',
       },
       {
         id: 'draft-hu-ipsecme-pqt-hybrid-auth',
@@ -2731,7 +2682,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'Rosenpass: Formally Verified Post-Quantum Protocol for WireGuard',
         url: 'https://rosenpass.eu/whitepaper.pdf',
         date: '2024-06',
-        localFile: '/library/Rosenpass-Protocol.pdf',
       },
     ],
     latestDraft: [],
@@ -2806,7 +2756,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 9420 — The Messaging Layer Security (MLS) Protocol',
         url: 'https://datatracker.ietf.org/doc/html/rfc9420',
         date: '2023-07',
-        localFile: '/library/RFC_9420.html',
       },
     ],
     latestDraft: [
@@ -2816,7 +2765,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-mls-pq-ciphersuites-07 — PQ Cipher Suites for MLS (Publication Requested to the IESG)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
         date: '2026-11-01',
-        localFile: '/library/draft-ietf-mls-pq-ciphersuites-07.html',
       },
       {
         id: 'draft-ietf-mls-combiner-02',
@@ -2827,14 +2775,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-mls-combiner-02 — Traditional + PQ MLS combiner (EXPIRED & archived; WGLC revival pending)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-combiner/',
         date: '2025-10-22',
-        localFile: '/library/draft-ietf-mls-combiner-02.html',
       },
       {
         id: 'draft-ietf-mls-extensions-11',
         title: 'draft-ietf-mls-extensions-11 — MLS Extensions framework (working-group draft)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-extensions/',
         date: '2026-11-02',
-        localFile: '/library/draft-ietf-mls-extensions-11.html',
       },
     ],
     dimensions: {
@@ -2948,11 +2894,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'TCG TPM 2.0 Library v1.85 Part 3: Commands (Published 2026-03-12)',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
         date: '2026-03-12',
-        // Not independently cached — TCG's site returns 403 for this URL (persisted
-        // in scripts/download-library.js's skip-list). The in-app Library link
-        // already redirects this citation to the Errata entry below (see
-        // SPEC_ALIASES in libraryRef.ts); point the raw asset the same way.
-        localFile: '/library/TCG-TPM-2.0-Library-v1.85-Errata.html',
       },
       {
         id: 'TCG-PC-Client-Platform-TPM-Profile-v1.07',
@@ -2960,21 +2901,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'TCG PC Client Specific Platform TPM Profile v1.07 (Published) — mandates ML-KEM + ML-DSA support',
         url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
         date: '2026-03-23',
-        localFile: '/library/TCG-PC-Client-Platform-TPM-Profile-v1.07.html',
       },
       {
         id: 'TCG-EK-Credential-Profile-v2.7',
         title: 'TCG EK Credential Profile for TPM 2.0, Level 0, v2.7 (Published)',
         url: 'https://trustedcomputinggroup.org/resource/tcg-ek-credential-profile-for-tpm-family-2-0/',
         date: '2026-03-19',
-        localFile: '/library/TCG-EK-Credential-Profile-v2.7.html',
       },
       {
         id: 'TCG-TPM-2.0-Library-v1.85-Errata',
         title: 'TCG TPM 2.0 Library v1.85 — Errata',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
         date: '2026-03-12',
-        localFile: '/library/TCG-TPM-2.0-Library-v1.85-Errata.html',
       },
     ],
     latestDraft: [],
@@ -3111,14 +3049,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'RFC 4034 — Resource Records for the DNS Security Extensions',
         url: 'https://datatracker.ietf.org/doc/html/rfc4034',
         date: '2005-03',
-        localFile: '/library/RFC_4034.html',
       },
       {
         id: 'RFC-9364',
         title: 'RFC 9364 / BCP 237 — DNS Security Extensions (DNSSEC)',
         url: 'https://datatracker.ietf.org/doc/html/rfc9364',
         date: '2023-02',
-        localFile: '/library/RFC_9364.html',
       },
     ],
     latestDraft: [
@@ -3128,7 +3064,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-fregly-dnsop-slh-dsa-mtl-dnssec-06 — SLH-DSA Merkle Tree Ladder mode (expired 2026-10-01)',
         url: 'https://datatracker.ietf.org/doc/draft-fregly-dnsop-slh-dsa-mtl-dnssec/',
         date: '2026-03-30',
-        localFile: '/library/draft-fregly-dnsop-slh-dsa-mtl-dnssec-06.html',
       },
       {
         id: 'draft-sheth-pqc-dnssec-strategy-02',
