@@ -27,6 +27,8 @@ import {
   hsmToCbomInput,
   libraryToCbomInput,
   matchLibrary,
+  eolLabel,
+  isPastEol,
   type CbomRow,
 } from './cbomAdapters'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
@@ -220,6 +222,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
         pqcSupport: lib?.pqcSupport ?? '—',
         posture: lib?.posture ?? 'yellow',
         notes: lib?.notes ?? 'No posture record — add to inventory and research.',
+        eolDate: lib ? lib.eolDate : undefined,
       })
     }
     return { valid: true, issue: null, rows }
@@ -372,12 +375,14 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
       )
       lines.push('')
       if (cbomSlice.length > 0) {
-        lines.push('| Component | Version | Reported FIPS status | ESV | PQC | Posture | Notes |')
-        lines.push('|---|---|---|---|---|---|---|')
+        lines.push(
+          '| Component | Version | EoL | Reported FIPS status | ESV | PQC | Posture | Notes |'
+        )
+        lines.push('|---|---|---|---|---|---|---|---|')
         for (const row of cbomSlice) {
           const safeNotes = row.notes.replace(/\|/g, '\\|')
           lines.push(
-            `| ${row.name} | ${row.version || '—'} | ${exportedStatus(row.fipsStatus)} | ${exportedStatus(row.esvStatus)} | ${row.pqcSupport} | ${row.posture} | ${safeNotes} |`
+            `| ${row.name} | ${row.version || '—'} | ${eolLabel(row)} | ${exportedStatus(row.fipsStatus)} | ${exportedStatus(row.esvStatus)} | ${row.pqcSupport} | ${row.posture} | ${safeNotes} |`
           )
         }
       } else {
@@ -655,6 +660,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
                     <tr className="bg-muted/60 text-left">
                       <th className="p-2 font-bold">Library</th>
                       <th className="p-2 font-bold">Version</th>
+                      <th className="p-2 font-bold">EoL</th>
                       <th className="p-2 font-bold">FIPS status</th>
                       <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                       <th className="p-2 font-bold">PQC support</th>
@@ -666,6 +672,15 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
                       <tr key={i} className="border-t border-border">
                         <td className="p-2 font-mono">{row.name}</td>
                         <td className="p-2">{row.version}</td>
+                        <td className="p-2">
+                          {isPastEol(row) ? (
+                            <span className="inline-block rounded px-1.5 py-0.5 text-[10px] border bg-status-error/15 text-status-error border-status-error/30">
+                              {eolLabel(row)}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">{eolLabel(row)}</span>
+                          )}
+                        </td>
                         <td className="p-2">
                           <span
                             className={`inline-block rounded px-1.5 py-0.5 text-[10px] border ${FIPS_COLOR[row.fipsStatus]}`}

@@ -30,6 +30,21 @@ export interface CbomRow {
   pqcSupport: string
   posture: RiskColor
   notes: string
+  /** Catalogue end-of-life date; null = active; undefined = no catalogue record. */
+  eolDate?: string | null
+}
+
+/** True when the catalogue end-of-life date has passed. */
+export function isPastEol(row: Pick<CbomRow, 'matched' | 'eolDate'>, now = new Date()): boolean {
+  if (!row.matched || !row.eolDate) return false
+  return row.eolDate <= now.toISOString().slice(0, 10)
+}
+
+/** Display text for a CBOM row's end-of-life column. */
+export function eolLabel(row: Pick<CbomRow, 'matched' | 'eolDate'>, now = new Date()): string {
+  if (!row.matched || row.eolDate === undefined) return 'Unknown'
+  if (row.eolDate === null) return 'Active'
+  return isPastEol(row, now) ? `EoL (${row.eolDate})` : `Supported until ${row.eolDate}`
 }
 
 /** SBOM package names that differ from the catalog's display name. */

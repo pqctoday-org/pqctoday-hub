@@ -1,30 +1,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { CERT_MANAGER_MLDSA_POLICY } from './certManagerAlphaSample'
+import { PROVENANCE_POLICY } from './provenanceSample'
 import type { PolicyRule } from './platformEngConstants'
+import { OPENBAO_KEY_CREATION_POLICY } from './openBaoPolicyExamples'
 
 export const POLICY_RULES: PolicyRule[] = [
   {
     id: 'opa-cert-algo',
     engine: 'opa',
-    name: 'Block Non-PQC Certificate Algorithms',
+    name: 'Check the Pinned ML-DSA Certificate Profile',
     description:
-      'Rejects cert-manager Certificate resources that request RSA or ECDSA private keys. Enforces ML-DSA or SLH-DSA keys cluster-wide via OPA Gatekeeper ConstraintTemplate. Target-state rule: cert-manager accepts only RSA, ECDSA or Ed25519 private keys today.',
-    targetResource: 'certificates.cert-manager.io',
+      'Native OPA/Rego v1 policy for cert-manager source fcecd8377a59b44d1daf4b9ac1401eaa2a6f76b0, an unreleased snapshot. Require algorithm MLDSA, parameter set 44/65/87 or its omitted default, and no explicit signatureAlgorithm. Enable MLDSAPrivateKeys on both controller and webhook. Released v1.21.3 cannot issue this request. A policy match is not certificate issuance; test the actual issuer, Secret and renewal using the accompanying sample.',
+    targetResource: 'AdmissionReview-shaped Certificate input',
     blockedAlgorithms: ['RSA', 'ECDSA', 'Ed25519'],
-    requiredAlgorithms: ['MLDSA44', 'MLDSA65', 'MLDSA87', 'SLH-DSA-128'],
+    requiredAlgorithms: ['MLDSA; size 44, 65 or 87'],
     severity: 'error',
-    rule: `# OPA Gatekeeper ConstraintTemplate
-package certmanager.pqc
-
-violation[{"msg": msg}] {
-  input.review.object.kind == "Certificate"
-  algo := input.review.object.spec.privateKey.algorithm
-  not startswith(lower(algo), "ml")
-  not startswith(lower(algo), "slh")
-  msg := sprintf(
-    "Certificate %v uses quantum-vulnerable algorithm %v. Use MLDSA44, MLDSA65, or SLH-DSA.",
-    [input.review.object.metadata.name, algo]
-  )
-}`,
+    rule: CERT_MANAGER_MLDSA_POLICY,
   },
   {
     id: 'kyverno-image-sig',
@@ -126,68 +117,27 @@ violation[{"msg": msg}] {
   },
   {
     id: 'kyverno-vault-key-type',
-    engine: 'kyverno',
-    name: 'Block Quantum-Vulnerable Vault Transit Keys',
+    engine: 'openbao',
+    name: 'Restrict OpenBao Sample Key Creation',
     description:
-      'Prevents creation of Vault Transit keys with RSA or ECDSA type via the Vault Secrets Operator. Enforces ml-dsa-44 or aes-256-gcm96 as the only allowed types.',
-    targetResource: 'VaultStaticSecret (VSO)',
+      'Apply this native OpenBao 2.7.2 ACL with bao policy write to a scoped test token. It permits creating only transit/keys/sample-policy-key with type mldsa-65; missing type, a different type, extra parameters and other paths are denied. A VaultStaticSecret retrieves a secret and does not configure a Transit key. Other attached token policies may add grants, so review the complete policy set.',
+    targetResource: 'OpenBao Transit key-creation API',
     blockedAlgorithms: ['ecdsa-p256', 'rsa-2048', 'rsa-4096', 'ed25519'],
-    requiredAlgorithms: ['ml-dsa-44', 'ml-dsa-65', 'aes-256-gcm96'],
+    requiredAlgorithms: ['mldsa-65'],
     severity: 'error',
-    rule: `# Kyverno policy for Vault Secrets Operator
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
-metadata:
-  name: require-pqc-vault-transit
-spec:
-  validationFailureAction: Enforce
-  rules:
-  - name: check-transit-key-type
-    match:
-      any:
-      - resources:
-          kinds: [VaultStaticSecret]
-    validate:
-      message: >
-        Vault Transit keys must use ml-dsa-44, ml-dsa-65, or aes-256-gcm96.
-        RSA and ECDSA transit keys are quantum-vulnerable.
-      deny:
-        conditions:
-          any:
-          - key: "{{request.object.spec.mount}}"
-            operator: Equals
-            value: "transit"
-          - key: "{{request.object.spec.path}}"
-            operator: Contains
-            value: "ecdsa"`,
+    rule: OPENBAO_KEY_CREATION_POLICY,
   },
   {
     id: 'opa-slsa-level',
     engine: 'opa',
-    name: 'Enforce SLSA Level 3 + PQC Attestation',
+    name: 'Verify Signed Build Evidence and Artifact Binding',
     description:
-      'Requires all production workloads to have a SLSA Level 3 build provenance attestation signed with ML-DSA-44 or higher (a projected requirement of this module — SLSA itself, through v1.2, names no signature algorithm). Prevents deployments without quantum-safe build integrity proof.',
-    targetResource: 'Deployment',
-    blockedAlgorithms: ['ECDSA-P256', 'RSA-PSS'],
-    requiredAlgorithms: ['ML-DSA-44', 'ML-DSA-65'],
-    slsaLevel: 3,
+      'A working offline sample uses cosign to verify a fictional pinned ECDSA P-256 signer before OPA checks the in-toto statement, SLSA provenance predicate, artifact digest and declared builder. Use the downloadable verifier and fixtures below. Deployment annotations are not trusted. This check does not establish SLSA Build L3 or PQC signatures.',
+    targetResource: 'Cryptographically verified statement and artifact bytes',
+    blockedAlgorithms: [],
+    requiredAlgorithms: ['ECDSA-P256 (classical sample)'],
     severity: 'error',
-    rule: `# OPA Gatekeeper ConstraintTemplate
-package slsa.pqc
-
-violation[{"msg": msg}] {
-  input.review.object.kind == "Deployment"
-  ns := input.review.object.metadata.namespace
-  ns == "production"
-
-  # Check for SLSA Level 3 PQC attestation annotation
-  not input.review.object.metadata.annotations["slsa.dev/pqc-provenance-verified"]
-
-  msg := sprintf(
-    "Deployment %v in production requires SLSA Level 3 provenance signed with ML-DSA.",
-    [input.review.object.metadata.name]
-  )
-}`,
+    rule: PROVENANCE_POLICY,
   },
 ]
 

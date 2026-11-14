@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { AlertTriangle, CheckCircle, Download } from 'lucide-react'
 import { ROTATION_POLICIES } from '../data/secretsConstants'
+import { OPENBAO_SIGNING_CONTRACT, OPENBAO_SIGNING_RECIPE } from '../data/openBaoSigningContract'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 
@@ -79,11 +80,14 @@ const generateYaml = (rows: PolicyRow[]): string => {
     lines.push('')
   })
 
-  lines.push('pqc_requirements:')
-  lines.push('  vault_version: ">=1.18.0"')
-  lines.push('  kek_algorithm: "ML-KEM-768"')
-  lines.push('  signing_algorithm: "ML-DSA-65"')
-  lines.push('  tls_hybrid: "X25519+ML-KEM-768"')
+  lines.push('# Teaching plan: TTL assumptions and a separately runnable signing example.')
+  lines.push('# This YAML is not native OpenBao server configuration.')
+  lines.push('openbao_signing_example:')
+  lines.push(`  version: "${OPENBAO_SIGNING_CONTRACT.version}"`)
+  lines.push(`  key_type: "${OPENBAO_SIGNING_CONTRACT.keyType}"`)
+  lines.push(`  api_documentation: "${OPENBAO_SIGNING_CONTRACT.apiUrl}"`)
+  lines.push('  cli: |')
+  lines.push(...OPENBAO_SIGNING_RECIPE.split('\n').map((line) => `    ${line}`))
 
   return lines.join('\n')
 }
@@ -290,7 +294,10 @@ export const RotationPolicyDesigner: React.FC = () => {
           <div className="text-sm font-bold text-foreground mb-2">
             Illustrative Rotation Policy Draft — Not Validated
           </div>
-          <div className="bg-muted font-mono text-xs rounded-lg p-4 overflow-x-auto border border-border whitespace-pre text-foreground/90 max-h-96 overflow-y-auto">
+          <div
+            aria-label="Sample rotation YAML"
+            className="bg-muted font-mono text-xs rounded-lg p-4 overflow-x-auto border border-border whitespace-pre text-foreground/90 max-h-96 overflow-y-auto"
+          >
             {yamlContent}
           </div>
         </div>

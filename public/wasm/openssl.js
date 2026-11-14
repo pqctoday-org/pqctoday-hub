@@ -5693,6 +5693,19 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   }
   
 
+  function ___syscall_rmdir(path) {
+  try {
+  
+      path = SYSCALLS.getStr(path);
+      FS.rmdir(path);
+      return 0;
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+  
+
   
   
   
@@ -7310,6 +7323,8 @@ var _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = make
 var _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = makeInvalidEarlyAccess('_pqctoday_composite_cms_verify');
 var _generate_mock_ca_root = Module['_generate_mock_ca_root'] = makeInvalidEarlyAccess('_generate_mock_ca_root');
 var _execute_cmp_simulation = Module['_execute_cmp_simulation'] = makeInvalidEarlyAccess('_execute_cmp_simulation');
+var _execute_cmp_key_update = Module['_execute_cmp_key_update'] = makeInvalidEarlyAccess('_execute_cmp_key_update');
+var _execute_cmp_key_update_v2 = Module['_execute_cmp_key_update_v2'] = makeInvalidEarlyAccess('_execute_cmp_key_update_v2');
 var _pqctoday_hsm_state_free = Module['_pqctoday_hsm_state_free'] = makeInvalidEarlyAccess('_pqctoday_hsm_state_free');
 var _pqctoday_hsm_state_load = Module['_pqctoday_hsm_state_load'] = makeInvalidEarlyAccess('_pqctoday_hsm_state_load');
 var _pqctoday_hsm_state_take = Module['_pqctoday_hsm_state_take'] = makeInvalidEarlyAccess('_pqctoday_hsm_state_take');
@@ -7378,6 +7393,8 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['pqctoday_composite_cms_verify'] != 'undefined', 'missing Wasm export: pqctoday_composite_cms_verify');
   assert(typeof wasmExports['generate_mock_ca_root'] != 'undefined', 'missing Wasm export: generate_mock_ca_root');
   assert(typeof wasmExports['execute_cmp_simulation'] != 'undefined', 'missing Wasm export: execute_cmp_simulation');
+  assert(typeof wasmExports['execute_cmp_key_update'] != 'undefined', 'missing Wasm export: execute_cmp_key_update');
+  assert(typeof wasmExports['execute_cmp_key_update_v2'] != 'undefined', 'missing Wasm export: execute_cmp_key_update_v2');
   assert(typeof wasmExports['pqctoday_hsm_state_free'] != 'undefined', 'missing Wasm export: pqctoday_hsm_state_free');
   assert(typeof wasmExports['pqctoday_hsm_state_load'] != 'undefined', 'missing Wasm export: pqctoday_hsm_state_load');
   assert(typeof wasmExports['pqctoday_hsm_state_take'] != 'undefined', 'missing Wasm export: pqctoday_hsm_state_take');
@@ -7442,6 +7459,8 @@ function assignWasmExports(wasmExports) {
   _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = createExportWrapper('pqctoday_composite_cms_verify', wasmExports['pqctoday_composite_cms_verify'], 4);
   _generate_mock_ca_root = Module['_generate_mock_ca_root'] = createExportWrapper('generate_mock_ca_root', wasmExports['generate_mock_ca_root'], 5);
   _execute_cmp_simulation = Module['_execute_cmp_simulation'] = createExportWrapper('execute_cmp_simulation', wasmExports['execute_cmp_simulation'], 7);
+  _execute_cmp_key_update = Module['_execute_cmp_key_update'] = createExportWrapper('execute_cmp_key_update', wasmExports['execute_cmp_key_update'], 9);
+  _execute_cmp_key_update_v2 = Module['_execute_cmp_key_update_v2'] = createExportWrapper('execute_cmp_key_update_v2', wasmExports['execute_cmp_key_update_v2'], 11);
   _pqctoday_hsm_state_free = Module['_pqctoday_hsm_state_free'] = createExportWrapper('pqctoday_hsm_state_free', wasmExports['pqctoday_hsm_state_free'], 2);
   _pqctoday_hsm_state_load = Module['_pqctoday_hsm_state_load'] = createExportWrapper('pqctoday_hsm_state_load', wasmExports['pqctoday_hsm_state_load'], 2);
   _pqctoday_hsm_state_take = Module['_pqctoday_hsm_state_take'] = createExportWrapper('pqctoday_hsm_state_take', wasmExports['pqctoday_hsm_state_take'], 1);
@@ -7548,6 +7567,8 @@ var wasmImports = {
   __syscall_recvmsg: ___syscall_recvmsg,
   /** @export */
   __syscall_renameat: ___syscall_renameat,
+  /** @export */
+  __syscall_rmdir: ___syscall_rmdir,
   /** @export */
   __syscall_sendmsg: ___syscall_sendmsg,
   /** @export */

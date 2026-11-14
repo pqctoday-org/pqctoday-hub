@@ -15,7 +15,7 @@ export type PQCReadiness =
 
 export type SigningSchemeId = 'cosign' | 'notation' | 'gpg' | 'sigstore-bundle' | 'dct'
 
-export type PolicyEngine = 'opa' | 'kyverno' | 'conftest' | 'cel'
+export type PolicyEngine = 'opa' | 'kyverno' | 'conftest' | 'cel' | 'openbao'
 
 export type MonitoringSource = 'cert-manager' | 'prometheus' | 'vault' | 'istio' | 'siem'
 

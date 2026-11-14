@@ -38,14 +38,14 @@ const PARTS: WorkshopPart[] = [
     id: 'policy-as-code-enforcer',
     title: 'Step 4: Policy-as-Code Enforcer',
     description:
-      'OPA and Kyverno rules that block quantum-vulnerable algorithm OIDs at Kubernetes admission time. Maps to SLSA supply chain levels.',
+      'Evaluate a pinned ML-DSA certificate profile and verified build evidence alongside native API and admission policies. Distinguish declaration checks, issuance and cryptographic verification.',
     icon: Shield,
   },
   {
     id: 'crypto-posture-monitor',
     title: 'Step 5: Crypto Posture Monitor',
     description:
-      'Four-panel monitor: monitoring capability requirements, SIEM checklists, capacity planning calculators, and ACME certificate lifecycle with cert-manager.',
+      'Four-panel monitor: tested TLS observation and Prometheus alert sample, monitoring capability requirements, SIEM checklists, capacity planning calculators, and ACME certificate lifecycle with cert-manager.',
     icon: Activity,
   },
   {

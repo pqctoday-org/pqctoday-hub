@@ -236,7 +236,7 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       },
     ],
     cycloneDxPrimitive: 'kem',
-    proofRefs: ['PQ-SUCI-MLKEM-Profile-C-2025', '3GPP-Post-Quantum-Cryptography-SA3-Overview'],
+    proofRefs: ['PQ-SUCI-MLKEM-Profile-C-2025'],
     explain: {
       plain:
         'A proposed way to conceal a 5G subscriber’s identity with a post-quantum KEM instead of ECIES. Today’s 3GPP specification only defines elliptic-curve profiles; post-quantum profiles are being studied, not standardised.',

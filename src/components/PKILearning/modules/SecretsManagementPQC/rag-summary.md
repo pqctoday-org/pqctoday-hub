@@ -2,13 +2,14 @@
 
 ## Overview
 
-Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server). Addresses secret classification by HNDL risk, automated rotation with PQC keys, cloud provider roadmaps, and Kubernetes/CI-CD pipeline integration.
+Covers PQC migration for secrets management platforms (OpenBao, HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server). Addresses secret classification by HNDL risk, automated rotation with PQC keys, cloud provider roadmaps, and Kubernetes/CI-CD pipeline integration.
 
 ## Key Topics
 
 - Secret types vs encryption keys: what PQC protects
 - Harvest-now-decrypt-later (HNDL) risk for long-lived credentials
 - HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65) as a proposed design: Vault documents no ML-KEM transit key type
+- The worked signing and rotation examples use tested OpenBao 2.7.2 Transit commands: mldsa-65 signing keys, versioned signatures, verification, tamper rejection and key rotation. Rotation of a signing-key version is separate from the illustrative credential TTL table. Other Vault-style encryption/KEM scenarios remain separately identified illustrations; they are not evidence that Vault implements an ML-KEM Transit key type.
 - Dynamic secrets and TTL-based rotation with PQC
 - AWS Secrets Manager / Azure Key Vault / GCP Secret Manager PQC timelines
 - Kubernetes secrets encryption-at-rest (via KMS plugin)
@@ -23,7 +24,8 @@ Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secr
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — ML-KEM)
 - FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard)
 - FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism)
-- HashiCorp Vault Transit Secrets Engine documentation
+- OpenBao 2.7.2 Transit documentation for the executable signing/rotation examples
+- HashiCorp Vault Transit Secrets Engine documentation for the separately labelled Vault concepts
 - HashiCorp Vault Database Secrets Engine documentation
 - CIS Kubernetes Benchmark v1.9 (etcd encryption-at-rest, section 1.2.33)
 - RFC 9700 (OAuth 2.0 Security Best Current Practice)

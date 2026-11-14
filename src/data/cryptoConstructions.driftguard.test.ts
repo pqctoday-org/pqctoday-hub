@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 // Driftguards for the construction layer (cryptoConstructions.ts, added
-// 2026-11-13). Check ids K1–K10 follow the construction-layer plan. They pin:
+// 2026-11-13). Check ids K1–K15 follow the construction-layer plan. They pin:
 //   - the registry is internally consistent (algorithms, outlook, successions);
 //   - every value in the three construction columns resolves;
 //   - rows agree with the constructions they claim (outlook and algorithms);
 //   - every construction is used by an active row;
-//   - every proof resolves to an active Library row a reader can open freely.
+//   - every proof resolves to an active Library row a reader can open freely;
+//   - a standards row on a construction's proof document lists it (K15).
 // Per-row proof (a cited document names the construction) is checked by the
 // private proof matcher, which reads the cached documents.
 
@@ -312,6 +313,36 @@ describe('construction layer driftguards', () => {
       .filter((uc) => uc.pqcClaimBasis === 'none' && uc.pqcConstructions.length > 0)
       .map((uc) => `${uc.useCaseId}: ${uc.pqcConstructions.join(';')}`)
     expect(bad).toEqual([])
+  })
+
+  /**
+   * Standards rows whose Library document is a proof of a construction in the
+   * registry but that do not cite it, each with the reason (K15). The document
+   * was read against the construction's own description; the entry says why the
+   * row is right to leave it out.
+   */
+  const STANDARD_PROOF_NOT_CITED: Record<string, string> = {
+    'draft-ietf-mls-pq-ciphersuites:MLS-PQ-Combiner':
+      'draft-ietf-mls-pq-ciphersuites-07 supports the ML-KEM cipher-suite half of the combiner instantiation. The combiner itself is specified in draft-ietf-mls-combiner, which has its own standards row.',
+  }
+
+  // A standards row whose Library document is one of a construction's proofs
+  // (its own, an instantiation's or a succession's) lists that construction, so the standards counts in the construction
+  // views cannot silently miss the document that defines it.
+  it('K15: a standards row on a construction’s proof document lists the construction', () => {
+    const missing: string[] = []
+    const used = new Set<string>()
+    for (const st of standards)
+      for (const c of CRYPTO_CONSTRUCTIONS) {
+        if (!allProofRefs(c).includes(st.libraryRef)) continue
+        if (st.constructionsReferenced.includes(c.id)) continue
+        const key = `${st.standardId}:${c.id}`
+        if (STANDARD_PROOF_NOT_CITED[key]) used.add(key)
+        else missing.push(key)
+      }
+    expect(missing).toEqual([])
+    // An exemption that no longer applies must be removed with the fix.
+    expect([...used].sort()).toEqual(Object.keys(STANDARD_PROOF_NOT_CITED).sort())
   })
 
   it('K10: every construction has a complete plain-language explanation', () => {
