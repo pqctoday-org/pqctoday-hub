@@ -88,6 +88,19 @@ describe('filters', () => {
     expect(filtered.length).toBe(counted.length)
   })
 
+  it('counts every standard and threat-model bar exactly as its click filters', () => {
+    for (const [field, param] of [
+      ['standardsReferenced', 'standard'],
+      ['threatModel', 'threatModel'],
+    ] as const) {
+      const counts = new Map<string, number>()
+      for (const p of patentsData)
+        for (const v of new Set(p[field])) counts.set(v, (counts.get(v) ?? 0) + 1)
+      for (const [v, n] of counts)
+        expect(filterPatents(patentsData, new URLSearchParams({ [param]: v })).length, v).toBe(n)
+    }
+  })
+
   it('filters by publication kind, quantum-safe basis, threat model, standard and migration strategy', () => {
     const apps = filterPatents(
       patentsData,

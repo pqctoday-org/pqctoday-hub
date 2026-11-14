@@ -354,7 +354,12 @@ export function PatentDetail({
                   {dateParts.map(({ label, term, value }, i) => (
                     <span key={term} className="inline-flex items-center gap-1 whitespace-nowrap">
                       {i > 0 && <span className="text-muted-foreground/50">/</span>}
-                      <InlineTooltip term={term}>{label}</InlineTooltip> {value}
+                      {term === 'Publication' ? (
+                        <span title={PUBLICATION_KIND_HINT}>{label}</span>
+                      ) : (
+                        <InlineTooltip term={term}>{label}</InlineTooltip>
+                      )}{' '}
+                      {value}
                     </span>
                   ))}
                 </span>
@@ -512,7 +517,9 @@ export function PatentDetail({
             <dd className="text-right tabular-nums text-foreground">{patent.impactFacts} / 50</dd>
             <dt>From the PQC migration score</dt>
             <dd className="text-right tabular-nums text-foreground">
-              {patent.impactMigration} / 50
+              {patent.pqcMigrationScore == null
+                ? 'not yet scored (facts counted twice)'
+                : `${patent.impactMigration} / 50`}
             </dd>
           </dl>
           <p className="text-xs text-muted-foreground">

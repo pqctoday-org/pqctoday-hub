@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { ExternalLink, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -209,8 +209,12 @@ export function MobilePatentsView() {
   )
   // A link to a record outside the PQC scope widens it, as on desktop, so
   // the record is still in the list when its sheet closes.
+  // Once per linked record, so choosing "PQC & hybrid" afterwards sticks.
+  const widenedRef = useRef<string | null>(null)
   useEffect(() => {
     if (!selected || !pqcOnly || isPqcPatent(selected)) return
+    if (widenedRef.current === selected.patentNumber) return
+    widenedRef.current = selected.patentNumber
     const next = new URLSearchParams(params)
     next.set(SCOPE_PARAM, 'all')
     setParams(next, { replace: true })

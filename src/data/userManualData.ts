@@ -234,7 +234,7 @@ export const pageManuals: Record<PageId, PageManual> = {
     sections: [
       {
         heading: 'Scope: PQC & hybrid or All crypto',
-        body: 'The page opens on records that use post-quantum or hybrid cryptography. All crypto adds the remaining records, including ones that are quantum-safe without a PQC algorithm (AES-256 or SHA-2/3 strength, lattice homomorphic encryption, quantum key distribution) and classical-only ones. Records outside the patents scope were retired from the catalogue, not deleted. A shared link to a record outside your current scope widens it, with Undo.',
+        body: 'The page opens on records that use post-quantum or hybrid cryptography. All crypto adds the remaining records, including ones that are quantum-safe without a PQC algorithm (AES-256 or SHA-2/3 strength, lattice homomorphic encryption, quantum key distribution) and classical-only ones. Records outside the patents scope were retired from the catalogue, not deleted. A shared link to a record outside your current scope widens it (with Undo on a computer).',
       },
       {
         heading: 'Granted patents and published applications',

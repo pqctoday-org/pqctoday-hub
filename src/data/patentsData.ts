@@ -285,12 +285,20 @@ function canonicalizeAssignees(items: PatentItem[]): PatentItem[] {
   )
 }
 
-type TagField = 'pqcAlgorithms' | 'classicalAlgorithms' | 'protocols' | 'hardwareComponents'
+type TagField =
+  | 'pqcAlgorithms'
+  | 'classicalAlgorithms'
+  | 'protocols'
+  | 'hardwareComponents'
+  | 'standardsReferenced'
+  | 'threatModel'
 const TAG_FIELDS: TagField[] = [
   'pqcAlgorithms',
   'classicalAlgorithms',
   'protocols',
   'hardwareComponents',
+  'standardsReferenced',
+  'threatModel',
 ]
 
 /** Collapse spelling variants of each tag onto the spelling most rows use. */
