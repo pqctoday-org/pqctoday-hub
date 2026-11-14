@@ -1583,10 +1583,11 @@ export function ComplianceLandscape({
 
   // Report the rows shown, keyed by their ids so an unchanged list does not re-report.
   const visibleKey = gridFrameworks.map((f) => f.id).join('|')
+  // The objects follow the data: a refresh that keeps the ids still reports the new rows.
   useEffect(() => {
-    onVisibleFrameworksChange?.(gridFrameworks)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by visibleKey, not the array identity
-  }, [visibleKey, onVisibleFrameworksChange])
+    onVisibleFrameworksChange?.(roleReductionActive ? emphasisSet : displayedFrameworks)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by visibleKey and the displayed set
+  }, [visibleKey, displayedFrameworks, onVisibleFrameworksChange])
 
   const openFullLandscape = () => {
     setFullLandscapeOpen(true)

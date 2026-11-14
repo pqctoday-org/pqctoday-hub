@@ -5,15 +5,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { useNavigate, useSearchParams } from 'react-router'
 import { downloadCsv } from '@/utils/csvExport'
-import {
-  buildTabCsv,
-  exportTabFor,
-  forYouRows,
-  forYouShowsDerived,
-  tabExportFileName,
-} from './tabExport'
+import { buildTabCsv, exportTabFor, forYouRowsFor, tabExportFileName } from './tabExport'
+import { applyRoleOrder } from './obligations/roleLens'
 import { useApplicabilityWithPaths } from '@/hooks/useApplicabilityWithPaths'
-import { buildObligations } from './obligations/obligationsModel'
+import { buildObligations, groupObligations } from './obligations/obligationsModel'
 import { buildProgress } from './progress/progressModel'
 import type { ComplianceRecord } from './types'
 import { ComplianceTable } from './ComplianceTable'
@@ -596,14 +591,18 @@ export const ComplianceView = ({
   // The rows each tab lists, for its Export CSV (the same data the tabs themselves build).
   const forYouPaths = useApplicabilityWithPaths()
   const forYouApplicable = useMemo(
-    () =>
-      forYouRows(
-        forYouPaths.frameworks,
-        forYouShowsDerived(personaForLens) ? forYouPaths.derivedFrameworks : []
-      ),
+    () => forYouRowsFor(personaForLens, forYouPaths.frameworks, forYouPaths.derivedFrameworks),
     [forYouPaths.frameworks, forYouPaths.derivedFrameworks, personaForLens]
   )
   const obligationRows = useMemo(() => buildObligations(forYouProfile), [forYouProfile])
+  // Rules & Standards lists its rows by tier, then in role order within each tier; the export keeps that order.
+  const obligationRowsInTabOrder = useMemo(
+    () =>
+      groupObligations(obligationRows).flatMap((group) =>
+        applyRoleOrder(group.rows, personaForLens)
+      ),
+    [obligationRows, personaForLens]
+  )
   const progressEntries = useMemo(
     () => buildProgress(obligationRows, new Date().getFullYear()),
     [obligationRows]
@@ -754,7 +753,7 @@ export const ComplianceView = ({
       const csv = buildTabCsv(exportTab, {
         forYou: forYouApplicable,
         landscape: landscapeVisible,
-        obligations: obligationRows,
+        obligations: obligationRowsInTabOrder,
         progress: progressEntries,
         records: recordsVisible,
         meta,
@@ -772,7 +771,7 @@ export const ComplianceView = ({
     exportTab,
     forYouApplicable,
     landscapeVisible,
-    obligationRows,
+    obligationRowsInTabOrder,
     progressEntries,
     recordsVisible,
     meta,

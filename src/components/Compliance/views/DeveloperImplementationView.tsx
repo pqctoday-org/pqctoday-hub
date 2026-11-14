@@ -17,6 +17,7 @@
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
  */
+import { applicableFrameworks } from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import {
@@ -34,7 +35,7 @@ import { logEvent, personaLabel } from '@/utils/analytics'
 import { useComplianceRefresh } from '../services'
 import { ModuleCertificationStatus } from './parts/ModuleCertificationStatus'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
+import type { UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { Button } from '@/components/ui/button'
@@ -302,16 +303,9 @@ export function DeveloperImplementationView({
   onSelectFramework,
 }: DeveloperImplementationViewProps) {
   const { profile, isEmpty, frameworks } = useApplicabilityWithPaths(profileOverride)
-  const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
   const applicable: ComplianceFramework[] = useMemo(
-    () =>
-      [
-        ...grouped.mandatory,
-        ...grouped.recognized,
-        ...grouped['cross-border'],
-        ...grouped.advisory,
-      ].map((r) => r.item),
-    [grouped]
+    () => applicableFrameworks(frameworks),
+    [frameworks]
   )
 
   // Collect library refs that appear across applicable frameworks → resolve

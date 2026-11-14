@@ -16,6 +16,7 @@
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
  */
+import { applicableFrameworks, frameworksByPhase, PHASE_ORDER } from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import {
@@ -30,7 +31,7 @@ import {
   FileCheck,
 } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
+import type { UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { Button } from '@/components/ui/button'
@@ -93,8 +94,6 @@ const PHASE_META: Record<DeadlinePhase, PhaseMeta> = {
     className: 'border-border bg-card/30 text-muted-foreground',
   },
 }
-
-const PHASE_ORDER: DeadlinePhase[] = ['active', 'imminent', 'near', 'mid', 'long', 'ongoing']
 
 const TOOLCHAIN_LINKS = [
   {
@@ -164,29 +163,13 @@ export const OPS_EVIDENCE_ARTIFACTS: { artifact: string; tool: string; whyAsked:
 
 export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotationViewProps) {
   const { profile, isEmpty, frameworks } = useApplicabilityWithPaths(profileOverride)
-  const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
   const applicable: ComplianceFramework[] = useMemo(
-    () =>
-      [
-        ...grouped.mandatory,
-        ...grouped.recognized,
-        ...grouped['cross-border'],
-        ...grouped.advisory,
-      ].map((r) => r.item),
-    [grouped]
+    () => applicableFrameworks(frameworks),
+    [frameworks]
   )
 
-  // Bucket frameworks by deadlinePhase
-  const byPhase = useMemo(() => {
-    const m = new Map<DeadlinePhase, ComplianceFramework[]>()
-    for (const fw of applicable) {
-      const phase = fw.deadlinePhase ?? 'ongoing'
-      const bucket = m.get(phase) ?? []
-      bucket.push(fw)
-      m.set(phase, bucket)
-    }
-    return m
-  }, [applicable])
+  // Bucket frameworks by deadlinePhase (see forYouSelection.ts)
+  const byPhase = useMemo(() => frameworksByPhase(applicable), [applicable])
 
   if (isEmpty) {
     return (

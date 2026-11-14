@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Each tab's page-level Export CSV writes the rows that tab lists, under a file name
-// that carries the tab name and the date (pqc-compliance-<tab>-<date>.csv).
+// that carries the tab name and the date (pqc-compliance-<tab label>-<date>.csv).
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
@@ -9,10 +9,10 @@ import { complianceFrameworks, type ComplianceFramework } from '@/data/complianc
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { downloadCsv } from '@/utils/csvExport'
+import { forYouShowsDerived } from './views/forYouSelection'
 import {
   exportTabFor,
-  forYouRows,
-  forYouShowsDerived,
+  forYouRowsFor,
   tabExportFileName,
   buildTabCsv,
   type TabExportInput,
@@ -58,11 +58,11 @@ const emptyInput: TabExportInput = {
 
 describe('tab export: which tab exports, and the file name', () => {
   it.each([
-    ['foryou', 'pqc-compliance-foryou-2026-11-14.csv'],
+    ['foryou', 'pqc-compliance-for-you-2026-11-14.csv'],
     ['landscape', 'pqc-compliance-landscape-2026-11-14.csv'],
-    ['obligations', 'pqc-compliance-obligations-2026-11-14.csv'],
+    ['obligations', 'pqc-compliance-rules-and-standards-2026-11-14.csv'],
     ['progress', 'pqc-compliance-progress-2026-11-14.csv'],
-    ['records', 'pqc-compliance-records-2026-11-14.csv'],
+    ['records', 'pqc-compliance-product-records-2026-11-14.csv'],
   ] as const)('%s exports as %s', (tab, name) => {
     expect(exportTabFor(tab)).toBe(tab)
     expect(tabExportFileName(tab, NOW)).toBe(name)
@@ -94,7 +94,7 @@ describe('tab export: each tab writes the rows it lists', () => {
   it('For You writes the applicable frameworks with their tier and binding status', () => {
     const csv = buildTabCsv('foryou', {
       ...emptyInput,
-      forYou: forYouRows([{ item: FW, tier: 'mandatory', reason: 'In your scope' }], []),
+      forYou: forYouRowsFor('', [{ item: FW, tier: 'mandatory', reason: 'In your scope' }], []),
     })
     const [header, row] = csv.split('\n')
     expect(header).toContain('Applicability tier')
@@ -111,7 +111,11 @@ describe('tab export: each tab writes the rows it lists', () => {
       bestPath: {} as never,
       derivedTier: 'derived' as const,
     }
-    const rows = forYouRows([{ item: FW, tier: 'mandatory', reason: 'In your scope' }], [derived])
+    const rows = forYouRowsFor(
+      '',
+      [{ item: FW, tier: 'mandatory', reason: 'In your scope' }],
+      [derived]
+    )
     expect(rows.map((r) => r.id)).toEqual([FW.id, 'DERIVED-STD'])
     expect(rows[1].tier).toBe('derived')
     const csv = buildTabCsv('foryou', { ...emptyInput, forYou: rows })
@@ -163,6 +167,14 @@ describe('tab export: each tab writes the rows it lists', () => {
 })
 
 // The page's own Export CSV: the handler the top bar runs for the tab on screen.
+const SLUG: Record<string, string> = {
+  foryou: 'for-you',
+  landscape: 'landscape',
+  obligations: 'rules-and-standards',
+  progress: 'progress',
+  records: 'product-records',
+}
+
 describe('ComplianceView page Export CSV, per tab', () => {
   beforeEach(() => {
     vi.mocked(downloadCsv).mockClear()
@@ -188,7 +200,9 @@ describe('ComplianceView page Export CSV, per tab', () => {
       onExport?.()
       expect(downloadCsv).toHaveBeenCalledTimes(1)
       const [, filename] = vi.mocked(downloadCsv).mock.calls[0]
-      expect(filename).toMatch(new RegExp(`^pqc-compliance-${tab}-\\d{4}-\\d{2}-\\d{2}\\.csv$`))
+      expect(filename).toMatch(
+        new RegExp(`^pqc-compliance-${SLUG[tab]}-\\d{4}-\\d{2}-\\d{2}\\.csv$`)
+      )
     },
     20000
   )

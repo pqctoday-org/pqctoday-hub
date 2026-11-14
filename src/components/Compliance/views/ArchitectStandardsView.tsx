@@ -21,14 +21,11 @@ import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { LibraryDocItem } from '../../applicability/parts/items'
 import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
+import { frameworksByRegion, REGION_ORDER } from './forYouSelection'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
 import { maturityRequirements } from '../../../data/maturityGovernanceData'
-import {
-  regionForCountry,
-  type ComplianceFramework,
-  type RegionBloc,
-} from '../../../data/complianceData'
+import { type ComplianceFramework } from '../../../data/complianceData'
 import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
@@ -72,35 +69,9 @@ export function ArchitectStandardsView({
     [applicableResults]
   )
 
-  // Group applicable frameworks by region bloc
-  const byRegion = useMemo(() => {
-    const m = new Map<RegionBloc | 'Other', ComplianceFramework[]>()
-    for (const fw of applicable) {
-      const regions = new Set<RegionBloc | 'Other'>()
-      for (const c of fw.countries) regions.add(regionForCountry(c) as RegionBloc)
-      // Each framework can sit in multiple region buckets (e.g. EU + Global)
-      for (const r of regions) {
-        const arr = m.get(r) ?? []
-        arr.push(fw)
-        m.set(r, arr)
-      }
-    }
-    return m
-  }, [applicable])
+  // Group applicable frameworks by region bloc (see forYouSelection.ts)
+  const byRegion = useMemo(() => frameworksByRegion(applicable), [applicable])
 
-  // Region display order — same as REGION_BLOC_ORDER in complianceData
-  const REGION_ORDER: (RegionBloc | 'Other')[] = [
-    'Global',
-    'North America',
-    'European Union',
-    'United Kingdom',
-    'Europe (non-EU)',
-    'Latin America',
-    'Asia-Pacific',
-    'Middle East',
-    'Africa',
-    'Other',
-  ]
   const orderedRegions = REGION_ORDER.filter((r) => byRegion.has(r))
 
   // Maturity requirements filtered to the user-relevant compliance refs
