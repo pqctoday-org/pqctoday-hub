@@ -107,19 +107,22 @@ describe('resolveLibraryRef — draft revisions', () => {
       .sort((a, b) => a - b)
 
   it('the Library holds several revisions of these drafts (the pins below are not vacuous)', () => {
+    // 4.207: the Library keeps ML-DSA-for-TLS -04 and -06 active; older IKEv2 ML-KEM
+    // revisions are superseded by -09, which is the only one still held.
     expect(libraryRevisions('draft-ietf-tls-mldsa').length).toBeGreaterThan(1)
-    expect(libraryRevisions('draft-ietf-ipsecme-ikev2-mlkem').length).toBeGreaterThan(1)
+    expect(libraryRevisions('draft-ietf-ipsecme-ikev2-mlkem').length).toBeGreaterThanOrEqual(1)
   })
 
   it.each([
     // exact revision when the Library has it
-    ['draft-ietf-tls-mldsa-03', 'draft-ietf-tls-mldsa-03'],
     ['draft-ietf-tls-mldsa-04', 'draft-ietf-tls-mldsa-04'],
-    ['draft-ietf-ipsecme-ikev2-mlkem-05', 'draft-ietf-ipsecme-ikev2-mlkem-05'],
+    ['draft-ietf-tls-mldsa-06', 'draft-ietf-tls-mldsa-06'],
     ['draft-ietf-ipsecme-ikev2-mlkem-09', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
+    // a superseded revision opens the newest one the Library holds
+    ['draft-ietf-tls-mldsa-03', 'draft-ietf-tls-mldsa-06'],
+    ['draft-ietf-ipsecme-ikev2-mlkem-05', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
     // newest revision the Library has when it lacks the cited one, or none is cited
-    ['draft-ietf-tls-mldsa-06', 'draft-ietf-tls-mldsa-04'],
-    ['draft-ietf-tls-mldsa', 'draft-ietf-tls-mldsa-04'],
+    ['draft-ietf-tls-mldsa', 'draft-ietf-tls-mldsa-06'],
     ['draft-ietf-ipsecme-ikev2-mlkem-12', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
     ['draft-ietf-ipsecme-ikev2-mlkem', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
   ])('%s opens %s', (cited, target) => {
