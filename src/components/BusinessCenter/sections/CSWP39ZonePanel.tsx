@@ -71,6 +71,18 @@ function getZoneSubElement(type: ExecutiveDocumentType): string | undefined {
 
 const UNGROUPED_LABEL = '__ungrouped__'
 
+/** Featured types first, in their featured order; the rest keep their own order. */
+function orderTypesByFeatured(
+  types: ExecutiveDocumentType[],
+  featured: ExecutiveDocumentType[] | undefined
+): ExecutiveDocumentType[] {
+  if (!featured || featured.length === 0) return types
+  const present = new Set(types)
+  const featuredFirst = featured.filter((t) => present.has(t))
+  const featuredSet = new Set(featuredFirst)
+  return [...featuredFirst, ...types.filter((t) => !featuredSet.has(t))]
+}
+
 interface SubGroup {
   label: string
   artifacts: ExecutiveDocument[]
@@ -139,8 +151,16 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
 
   const artifacts = orderByFeatured(getArtifactsForZone(metrics, zone), featuredArtifacts)
   const existing = new Set(artifacts.map((a) => a.type))
-  const missing = sectionTypes.filter((t) => !existing.has(t))
-  const subGroups = buildSubGroups(zone, artifacts, missing)
+  const missing = orderTypesByFeatured(
+    sectionTypes.filter((t) => !existing.has(t)),
+    featuredArtifacts
+  )
+  // Created artifacts always come before the placeholders, featured first in
+  // each. Basic and intermediate density show one flat list; advanced keeps the
+  // sub-element groups, each ordered the same way.
+  const subGroups: SubGroup[] = showSubElementGroups(density)
+    ? buildSubGroups(zone, artifacts, missing)
+    : [{ label: UNGROUPED_LABEL, artifacts, missingTypes: missing }]
   const hasContent = artifacts.length > 0 || missing.length > 0
   // Completeness framing (design_handoff_2026_pages/IMPLEMENTATION-PLAN-
   // COMMAND-CENTER-2026-08-01.md §3.2): the "N/M created" count alone doesn't
