@@ -12,6 +12,7 @@ import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { LeaderDetailSection } from './LeaderDetailSection'
+import { compareLeaderCountries, compareLeaderNames } from './leadersSort'
 import {
   DEFAULT_LEADERS_TABLE_SORT,
   type LeadersTableSort,
@@ -48,12 +49,15 @@ export const LeadersTable = ({
 
   const sortedData = useMemo(() => {
     const items = [...data]
-    const dir = sortDir === 'asc' ? 1 : -1
+    const dir: 1 | -1 = sortDir === 'asc' ? 1 : -1
     items.sort((a, b) => {
       let cmp = 0
       switch (sortKey) {
         case 'name':
-          cmp = a.name.localeCompare(b.name)
+          cmp = compareLeaderNames(a.name, b.name)
+          break
+        case 'category':
+          cmp = a.category.localeCompare(b.category) || compareLeaderNames(a.name, b.name)
           break
         case 'title':
           cmp = a.title.localeCompare(b.title)
@@ -62,8 +66,10 @@ export const LeadersTable = ({
           cmp = (a.organizations[0] ?? '').localeCompare(b.organizations[0] ?? '')
           break
         case 'country':
-          cmp = a.country.localeCompare(b.country)
-          break
+          // Blank countries stay last in both directions.
+          return (
+            compareLeaderCountries(a.country, b.country, dir) || compareLeaderNames(a.name, b.name)
+          )
         case 'type':
           cmp = a.type.localeCompare(b.type)
           break
@@ -109,6 +115,12 @@ export const LeadersTable = ({
                   Organization {sortIcon('organization')}
                 </span>
               </th>
+              <th
+                className={clsx(thClass, 'hidden lg:table-cell')}
+                onClick={() => handleSort('category')}
+              >
+                <span className="flex items-center gap-1.5">Category {sortIcon('category')}</span>
+              </th>
               <th className={thClass} onClick={() => handleSort('country')}>
                 <span className="flex items-center gap-1.5">Country {sortIcon('country')}</span>
               </th>
@@ -137,8 +149,8 @@ export const LeadersTable = ({
                 <AnimatePresence>
                   {expandedLeaderId === leader.id && (
                     <tr className="bg-muted/10">
-                      <td colSpan={7} className="p-3">
-                        <LeaderDetailSection leader={leader} onClose={onCloseDetails} />
+                      <td colSpan={8} className="p-3">
+                        <LeaderDetailSection leader={leader} onClose={onCloseDetails} showProfile />
                       </td>
                     </tr>
                   )}
@@ -201,15 +213,28 @@ const LeaderRow = ({
 
       {/* Organization */}
       <td className="px-3 py-3 hidden md:table-cell">
-        <span className="text-foreground truncate block max-w-[180px]">
-          {leader.organizations[0] ?? ''}
+        <span
+          className="text-foreground block max-w-[200px]"
+          title={leader.organizations.length > 1 ? leader.organizations.join('; ') : undefined}
+        >
+          <span className="truncate block">{leader.organizations[0] ?? ''}</span>
+          {leader.organizations.length > 1 && (
+            <span className="text-[10px] text-muted-foreground">
+              +{leader.organizations.length - 1} more
+            </span>
+          )}
         </span>
+      </td>
+
+      {/* Category */}
+      <td className="px-3 py-3 hidden lg:table-cell">
+        <span className="text-muted-foreground text-xs">{leader.category}</span>
       </td>
 
       {/* Country */}
       <td className="px-3 py-3">
         <div className="flex items-center gap-2">
-          <CountryFlag code={flagCode} width={18} height={12} />
+          {leader.country && <CountryFlag code={flagCode} width={18} height={12} />}
           <span className="text-muted-foreground text-xs">{leader.country}</span>
         </div>
       </td>

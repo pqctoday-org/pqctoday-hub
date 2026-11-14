@@ -199,30 +199,34 @@ export const pageManuals: Record<PageId, PageManual> = {
   },
 
   leaders: {
-    title: 'PQC Leaders',
+    title: 'Community',
     summary:
-      'Discover the organizations and experts driving post-quantum cryptography adoption worldwide, organized by region, sector, and leadership category.',
+      'An evidence-linked directory of people and organizations named in post-quantum research, standards, policy, patent and open-source sources. Inclusion is not an endorsement, a ranking or a certification.',
     sections: [
       {
-        heading: 'Region & Sector Filters',
-        body: 'Filter by region (Americas, EU, Asia-Pacific) with country drill-down, or by sector (Public, Private, Academic). Use the category sidebar to browse by leadership type.',
+        heading: 'Curated profiles and document contributors',
+        body: 'The directory opens on the hand-curated profiles. "Show all contributors" adds the document-contributor profiles, created from the author lists of documents in the Library (the link form is ?all=1). The page shows the current count of each.',
       },
       {
-        heading: 'View Toggle',
-        body: 'Switch between Card view (visual profile cards) and Table view (sortable columns). Both views support the same filtering and search capabilities.',
+        heading: 'Filters and views',
+        body: 'Filter by category, region and country, or sector (Public, Private, Academic), or search by name, role, organization or bio. Three views show the same results: Sector Stack (people grouped by sector; choose a sector to narrow the list), Cards, and Table (sortable columns, including Category). Name order ignores titles such as "Dr." and "Prof.", and people with no recorded country sort last.',
       },
       {
-        heading: 'Leader Details',
-        body: 'Click a leader card to see their full profile: organization, contributions to PQC, key publications, and links to related library resources. 330+ leaders are currently profiled.',
+        heading: 'What a profile links to',
+        body: 'Open a card or a table row to read the full role, organizations and bio, and the cited evidence: "Cited in the Library" opens each document in the Library, "External sources" opens the cited pages, "View patents" opens the person\'s patent records, and catalog products open in Migrate. "Events from <country>" appears when the Timeline has events for that country.',
       },
       {
-        heading: 'Search',
-        body: 'Search by name, organization, or keyword to quickly find specific leaders or organizations. Results update in real-time as you type.',
+        heading: 'Links you can share',
+        body: '?leader=<id> opens one profile (old links to merged or renamed profiles forward to the current one). Filters are kept in the address too: ?cat=, ?region=, ?country=, ?sector=, ?q=, ?mode=stack|cards|table, ?layer= (a Sector Stack sector) and ?sort=.',
+      },
+      {
+        heading: 'Reading a profile critically',
+        body: 'A profile is a starting point, not a verdict. The recorded source details (institutions in source metadata, review flags, "profile sources checked" dates) say what was recorded, not that anyone endorsed the person or their work. Check the claim in the linked primary source, and check its date and version.',
       },
     ],
     tips: [
-      'Leader profiles link to related documents in the Library via their Key Resource URLs.',
-      'Use the consent/removal form to submit corrections or request profile removal.',
+      'Profiles are compiled from cited public sources and from people who ask to be listed; anyone listed can ask for a correction or removal from the page.',
+      "Export CSV includes each profile's Library refs, external sources, patents and catalog products, so you can check them in bulk.",
     ],
   },
 

@@ -412,6 +412,11 @@ export default defineConfig([
                 // Every mobile screen that honours a resource deep link shows
                 // the same "widened / not found" notice desktop does.
                 '!@/components/common/DeepLinkNotice',
+                // LeaderKeyResources.tsx (common, 2026-11-14) — same category: the
+                // cited Library refs and external sources of one Community
+                // profile, shown identically in the desktop detail views and the
+                // phone sheet (refs are not paired with URLs by position).
+                '!@/components/common/LeaderKeyResources',
                 // UnresolvedEstimatesNotice.tsx (common, 2026-10-03) — same category:
                 // a small shared note with no desktop-view dependencies. The phone
                 // Threats screen shows the same "estimates are still open" wording
@@ -508,6 +513,10 @@ export default defineConfig([
                 // ?leader= name matching shared by LeadersGrid and
                 // MobileCommunityView.
                 '!@/components/Leaders/leaderDeepLink',
+                // leadersConstants.ts (2026-11-14) — pure helper, no JSX: catalogue
+                // product names/licences, the Timeline-country check and the
+                // removal-request link, shared by LeadersGrid and the phone screens.
+                '!@/components/Leaders/leadersConstants',
                 // PersonaBoardView.tsx (PersonaJourney) — imported only for
                 // its exported PROVENANCE_LABEL map (Phase 4's Home board
                 // reads the same three provenance strings the desktop board

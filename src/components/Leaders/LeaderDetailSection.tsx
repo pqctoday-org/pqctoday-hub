@@ -2,8 +2,8 @@
 import { useEffect, useRef } from 'react'
 import {
   MapPin,
-  BookOpen,
-  ExternalLink,
+  Briefcase,
+  Building2,
   Clock,
   ShieldCheck,
   X,
@@ -15,7 +15,13 @@ import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import type { Leader } from '../../data/leadersData'
 import { CountryFlag } from '../common/CountryFlag'
-import { FLAG_CODE_MAP, productLabelFromId } from './leadersConstants'
+import {
+  FLAG_CODE_MAP,
+  catalogProductsHeading,
+  leaderTimelineCountry,
+  productLabelFromId,
+} from './leadersConstants'
+import { LeaderKeyResources } from '@/components/common/LeaderKeyResources'
 import { Button } from '@/components/ui/button'
 import { leaderPatentsHref } from './leaderDeepLink'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
@@ -23,11 +29,19 @@ import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareBu
 interface LeaderDetailSectionProps {
   leader: Leader
   onClose: () => void
+  /** Also show the role, every organization and the full bio — for the Table
+   *  view, whose row shows none of them (a card already shows them above). */
+  showProfile?: boolean
 }
 
-export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProps) => {
+export const LeaderDetailSection = ({
+  leader,
+  onClose,
+  showProfile = false,
+}: LeaderDetailSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const flagCode = FLAG_CODE_MAP[leader.country] ?? 'un'
+  const timelineCountry = leaderTimelineCountry(leader.country)
 
   useEffect(() => {
     const el = containerRef.current
@@ -88,16 +102,41 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
           </div>
         </div>
 
+        {showProfile && (
+          <div className="space-y-1.5" data-testid="leader-detail-profile">
+            {leader.title && (
+              <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+                <Briefcase size={14} className="shrink-0 mt-0.5" aria-hidden="true" />
+                <span>{leader.title}</span>
+              </p>
+            )}
+            {leader.organizations.map((org, i) => (
+              <p
+                key={`${i}-${org}`}
+                className="flex items-start gap-1.5 text-sm font-semibold text-primary"
+              >
+                <Building2 size={14} className="shrink-0 mt-0.5" aria-hidden="true" />
+                <span>{org}</span>
+              </p>
+            ))}
+            {leader.bio && (
+              <p className="text-sm text-muted-foreground leading-relaxed">{leader.bio}</p>
+            )}
+          </div>
+        )}
+
         {leader.country && (
           <div className="flex flex-wrap gap-2">
-            <Link
-              to={`/timeline?country=${encodeURIComponent(leader.country)}`}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
-              title={`View timeline events from ${leader.country}`}
-            >
-              <Clock size={12} aria-hidden="true" />
-              Events from {leader.country}
-            </Link>
+            {timelineCountry && (
+              <Link
+                to={`/timeline?country=${encodeURIComponent(timelineCountry)}`}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+                title={`View timeline events from ${timelineCountry}`}
+              >
+                <Clock size={12} aria-hidden="true" />
+                Events from {timelineCountry}
+              </Link>
+            )}
             <Link
               to="/compliance"
               className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
@@ -125,9 +164,7 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
         {leader.migrateCatalogRefs && leader.migrateCatalogRefs.length > 0 && (
           <div className="rounded-lg bg-muted/20 border border-border p-2.5">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-1.5">
-              {leader.migrateCatalogRefs.length === 1
-                ? 'Open Source Project'
-                : `Open Source Projects (${leader.migrateCatalogRefs.length})`}
+              {catalogProductsHeading(leader.migrateCatalogRefs)}
             </p>
             <div className="flex flex-col gap-0.5">
               {leader.migrateCatalogRefs.map((productId) => (
@@ -145,45 +182,13 @@ export const LeaderDetailSection = ({ leader, onClose }: LeaderDetailSectionProp
           </div>
         )}
 
-        {leader.keyResourceUrl && leader.keyResourceUrl.length > 0 && (
-          <div className="rounded-lg bg-muted/20 border border-border p-2.5">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-1.5">
-              {leader.keyResourceUrl.length === 1
-                ? 'Key Resource'
-                : `Key Resources (${leader.keyResourceUrl.length})`}
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {leader.keyResourceUrl.slice(0, 6).map((ref, i) =>
-                ref.startsWith('http') ? (
-                  <a
-                    key={i}
-                    href={ref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5"
-                    title={ref}
-                  >
-                    <ExternalLink size={11} className="shrink-0" aria-hidden="true" />
-                    <span className="truncate">{ref}</span>
-                  </a>
-                ) : (
-                  <Link
-                    key={i}
-                    to={`/library?ref=${encodeURIComponent(ref)}`}
-                    className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5"
-                    title={`Open in Library: ${ref}`}
-                  >
-                    <BookOpen size={11} className="shrink-0" aria-hidden="true" />
-                    <span className="truncate">{ref}</span>
-                  </Link>
-                )
-              )}
-              {leader.keyResourceUrl.length > 6 && (
-                <span className="text-[10px] text-muted-foreground italic mt-0.5">
-                  …and {leader.keyResourceUrl.length - 6} more
-                </span>
-              )}
-            </div>
+        <LeaderKeyResources leader={leader} size="xs" limit={6} />
+
+        {leader.vettingBody && leader.vettingBody.length > 0 && (
+          <div className="text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">Institutions in source metadata:</span>{' '}
+            {leader.vettingBody.join(', ')}. These recorded names do not establish institutional
+            review or endorsement of this profile.
           </div>
         )}
 
