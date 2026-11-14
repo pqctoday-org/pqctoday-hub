@@ -226,6 +226,7 @@ const EXPECTED_KEYS: Record<string, readonly string[]> = {
     'from',
     'sq',
   ],
+  '/navigate': ['node', 'type', 'sub'],
 }
 
 function keysFor(path: string): readonly string[] {
@@ -280,6 +281,8 @@ describe('deep-link grammar per-route key sets', () => {
       '/timeline?event=US-NIST-2024-01',
       '/leaders?leader=Dustin%20Moody',
       '/algorithms?algo=ml-kem-768',
+      '/navigate?node=std-fips-203',
+      '/navigate?type=standard&sub=FIPS',
     ]
     for (const url of ok) expect(validateDeepLink(url), url).toBeNull()
   })
@@ -303,6 +306,7 @@ const PAGE_SOURCES: Record<string, readonly string[]> = {
   '/compliance': ['src/components/Compliance'],
   '/migrate': ['src/components/Migrate'],
   '/patents': ['src/components/Patents'],
+  '/navigate': ['src/components/Navigate'],
 }
 
 const PENDING_PAGE_KEYS: Record<string, readonly string[]> = {}

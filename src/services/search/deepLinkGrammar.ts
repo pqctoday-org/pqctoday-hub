@@ -278,6 +278,13 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     ],
     description: 'Patents',
   },
+  {
+    // Knowledge graph: `node` = a graph record id (e.g. std-fips-203, mech-ml-kem-768) opens
+    // that record; `type` (+ optional `sub`) spotlights a category or sub-category.
+    path: exact('/navigate'),
+    queryKeys: ['node', 'type', 'sub'],
+    description: 'Navigate',
+  },
 
   // Learn
   {
