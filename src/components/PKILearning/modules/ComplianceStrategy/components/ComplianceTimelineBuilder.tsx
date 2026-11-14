@@ -329,6 +329,10 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
   const [newLabel, setNewLabel] = useState('')
   const [newYear, setNewYear] = useState(2026)
   const [newCategory, setNewCategory] = useState(MILESTONE_CATEGORIES[0])
+  // Obligations the learner links while creating the milestone. Linking stays
+  // explicit (unrelated activities get no credit), but it no longer has to be
+  // discovered afterwards on the milestone card.
+  const [newObligationKeys, setNewObligationKeys] = useState<string[]>([])
 
   // Popover state
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
@@ -504,10 +508,12 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
       year: newYear,
       category: newCategory,
       completed: false,
+      ...(newObligationKeys.length > 0 ? { obligationKeys: [...newObligationKeys] } : {}),
     }
     setMilestones((prev) => [...prev, ms].sort((a, b) => a.year - b.year))
     setNewLabel('')
-  }, [newLabel, newYear, newCategory])
+    setNewObligationKeys([])
+  }, [newLabel, newYear, newCategory, newObligationKeys])
 
   const removeMilestone = useCallback((id: string) => {
     setMilestones((prev) => prev.filter((m) => m.id !== id))
@@ -762,6 +768,41 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             <span className="ml-1">Add</span>
           </Button>
         </div>
+        {externalDeadlines.length > 0 ? (
+          <fieldset className="mt-3 min-w-0 space-y-1.5">
+            <legend className="text-xs font-medium text-foreground mb-1">
+              Link this milestone to obligations ({newObligationKeys.length} selected)
+            </legend>
+            <p className="text-xs text-muted-foreground">
+              Tick the deadlines this activity works toward. Only linked obligations are compared in
+              the Obligation Review; you can change links later on the milestone card.
+            </p>
+            <div className="max-h-48 overflow-y-auto space-y-1 pr-1">
+              {externalDeadlines.map((d) => (
+                <label key={d.key} className="flex items-start gap-2 text-xs break-words">
+                  <input
+                    type="checkbox"
+                    checked={newObligationKeys.includes(d.key)}
+                    onChange={(e) =>
+                      setNewObligationKeys((prev) =>
+                        e.target.checked
+                          ? [...new Set([...prev, d.key])]
+                          : prev.filter((key) => key !== d.key)
+                      )
+                    }
+                  />
+                  <span className="min-w-0">
+                    {d.label} — reference year {d.year}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ) : (
+          <p className="mt-3 text-xs text-muted-foreground">
+            Select a jurisdiction to list obligations you can link this milestone to.
+          </p>
+        )}
       </div>
 
       {/* Milestone List */}

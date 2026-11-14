@@ -4,12 +4,12 @@ import path from 'node:path'
 import { describe, it, expect } from 'vitest'
 
 describe('PlatformEngPQC monitoring wording', () => {
-  it('describes the monitor step as capability requirements and checklists, not exporter metrics and queries', () => {
+  it('describes the tested TLS sample separately from exporter requirements and SIEM checklists', () => {
     const source = fs
       .readFileSync(path.resolve(__dirname, 'index.tsx'), 'utf8')
       .replace(/\s+/g, ' ')
     expect(source).toContain(
-      'Four-panel monitor: monitoring capability requirements, SIEM checklists'
+      'Four-panel monitor: tested TLS observation and Prometheus alert sample, monitoring capability requirements, SIEM checklists'
     )
     expect(source).not.toContain('Prometheus metrics, SIEM queries')
   })

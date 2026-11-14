@@ -350,17 +350,17 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/risk-register': {
     executive:
-      'Read the example assets, algorithms, threats, likelihood and impact to discuss proposed mitigations. Evaluate ownership and scheduled-review tracking in your production risk-management tools; this sample worksheet does not capture those fields.',
-    grc: 'Use Add Risk Entry to record a sample asset, algorithm, threat, likelihood, impact and proposed mitigation. Copy Markdown or .pdf retains the worksheet and its limits; look for owner, review-date and treatment-status tracking in production tools.',
+      'Read the example assets, algorithms, threats, likelihood, impact, owner roles and review dates to discuss proposed mitigations. An entry without an owner role and review date is a note, not a risk. Evaluate named-owner and review-reminder tracking in your production tools.',
+    grc: 'Use Add Risk Entry to record a sample asset, algorithm, threat, likelihood, impact, proposed mitigation, owner role and next review date. Copy Markdown or .pdf retains the worksheet and its limits; look for named owners, review reminders and treatment-status tracking in production tools.',
   },
   '/business/tools/risk-treatment-plan': {
     executive:
       'Load sample entries or build the register first, then read the Migration Priority Order: it is the sequence of what gets fixed first and why, and each move up or down has to carry a stated reason.',
-    grc: 'Place each risk on the heatmap, choose Mitigate, Accept, Transfer or Avoid with a rationale: the Treatment Summary is the treatment plan a risk framework expects, one decision per entry.',
+    grc: 'Click the heatmap cell for each risk, choose Mitigate, Accept, Transfer or Avoid with a rationale: the Treatment Summary is the treatment plan a risk framework expects, one decision per entry.',
   },
   '/business/tools/compliance-checklist': {
     executive:
-      'Enter the industry and primary jurisdiction and star your frameworks on the Compliance page: each starred framework gets a checklist with a deadline and an owner, which is the compliance programme in one view.',
+      'Pick the industry and primary jurisdiction and add the frameworks in scope (or star them on the Compliance page): each framework gets a checklist with a deadline and an owner, which is the compliance programme in one view.',
     grc: "Each per-framework checklist carries evidence items such as 'Crypto inventory mapped to this framework' with a compliance owner; complete Scope & context first so exclusions are recorded before the controls are.",
   },
   '/business/tools/audit-checklist': {
@@ -370,8 +370,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   },
   '/business/tools/compliance-timeline': {
     executive:
-      'Select the jurisdictions you operate in and add milestones with a year: the Gap Analysis says, per framework, whether the plan meets the deadline or by how many years it misses.',
-    grc: "Choose the jurisdictions, then add milestones such as 'Complete crypto inventory' against each framework's deadline: the gap per framework is the finding to put in front of the compliance committee.",
+      'Select the jurisdictions you operate in, add milestones with a year and link each to the obligations it works toward: the Obligation Review compares each linked plan with its reference year. A planned date is not delivered work.',
+    grc: "Choose the jurisdictions, then add milestones such as 'Complete crypto inventory' and tick the obligations each one serves: the Obligation Review shows, per linked obligation, whether the plan lands by the reference year, which is the finding to put in front of the compliance committee.",
   },
   '/business/tools/raci-builder': {
     executive:
@@ -457,7 +457,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   '/business/tools/crypto-vulnerability-watch': {
     executive:
       'The digest lists the top CVEs by severity for the products you selected on Migrate, joined through CPE from the NVD snapshot: a short list you will actually read, not everything.',
-    grc: 'Open Migrate to select the products in your estate, then read the CVE digest per product with How this data is sourced open: it is the vulnerability-management evidence for the crypto components you depend on.',
+    grc: 'Open Migrate to select the products in your estate (or Load sample watchlist to preview), then read the CVE digest per product with How this data is sourced open: it is the vulnerability-management evidence for the crypto components you depend on.',
   },
   '/business/tools/program-charter': {
     executive:

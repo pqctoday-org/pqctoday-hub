@@ -1,41 +1,28 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
-import {
-  Loader2,
-  RefreshCw,
-  CheckCircle2,
-  AlertTriangle,
-  Info,
-  FileText,
-  BookOpen,
-  ExternalLink,
-} from 'lucide-react'
+import { Loader2, RefreshCw, CheckCircle2, Info, BookOpen, ExternalLink } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import {
   WorkshopOperationLog,
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
-import { ensureMockCA } from '../mock-ca/mockCA'
 import { CA_ROOT_CERT_PATH, CA_ROOT_KEY_PATH, ML_KEM_ALG } from '../constants'
 
+type Event = { side: string; event: string; detail: string }
 interface KurResult {
-  newKemPubPem: string
-  newKemCertText: string
-  encapSharedHex: string
-  decapSharedHex: string
-  match: boolean
+  publicKey: string
+  certificate: string
+  events: Event[]
 }
 
-/**
- * Sample CMP IR enrollment followed by a separate ML-KEM encapsulation /
- * decapsulation round trip. No KUR, encrypted-certificate recovery or complete
- * certificate-confirmation exchange is executed by this component.
- */
+/** Actual encrypted-certificate KUR, using the opt-in modified sample CMP server. */
 export const CmpKemKeyUpdate: React.FC = () => {
   const [busy, setBusy] = useState(false)
-  const [phase, setPhase] = useState<string>('idle')
+  const [scenario, setScenario] = useState('authorized')
+  const [phase, setPhase] = useState('idle')
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<KurResult | null>(null)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
@@ -44,151 +31,267 @@ export const CmpKemKeyUpdate: React.FC = () => {
     setBusy(true)
     setError(null)
     setResult(null)
-    setPhase('Generating ML-KEM-768 keypair')
-    const startedAt = performance.now()
     setLogEntries([
       {
         status: 'pending',
-        message: 'Running sample enrollment and KEM round trip (keygen → IR → encap → decap)…',
+        message: 'Preparing fictional prior enrollment and a fresh renewal key…',
       },
     ])
+    const start = performance.now()
     try {
-      const ca = await ensureMockCA()
+      // A fresh scenario CA avoids changing or silently replacing the cached CA
+      // used by the other enrollment exercises.
+      const ca = await openSSLService.generateCaRoot({
+        algorithm: 'ML-DSA-65',
+        subjectDn: '/CN=Fictional CMP Renewal CA',
+        keyOutPath: CA_ROOT_KEY_PATH,
+        certOutPath: CA_ROOT_CERT_PATH,
+        days: 1,
+      })
+      if (!ca.ok || !ca.certPem || !ca.keyPem)
+        throw new Error(ca.error || 'Scenario CA generation failed')
       const caFiles = [
         { name: CA_ROOT_CERT_PATH.replace(/^\//, ''), data: ca.certPem },
         { name: CA_ROOT_KEY_PATH.replace(/^\//, ''), data: ca.keyPem },
       ]
-
-      const newKeyPath = '/ee-mlkem.key.pem'
-      const newPubPath = '/ee-mlkem.pub.pem'
-      const newCertPath = '/ee-mlkem.cert.pem'
-      const ctPath = '/kem.ct.bin'
-      const ssAPath = '/secret_ca.bin'
-      const ssBPath = '/secret_ee.bin'
-
-      // 1. Generate ML-KEM-768 keypair
-      const genResult = await openSSLService.execute(
-        `openssl genpkey -algorithm ${ML_KEM_ALG} -out ${newKeyPath}`
-      )
-      if (genResult.error) throw new Error(genResult.error + '\n' + genResult.stderr)
-      const newKeyFile = genResult.files.find((f) => '/' + f.name === newKeyPath)
-      if (!newKeyFile) throw new Error('ML-KEM keygen produced no key')
-
-      // 2. Extract pubkey (we'll need it for encap and to inspect)
-      setPhase('Extracting ML-KEM public key')
-      const pubResult = await openSSLService.execute(
-        `openssl pkey -in ${newKeyPath} -pubout -out ${newPubPath}`,
-        [{ name: newKeyPath.replace(/^\//, ''), data: newKeyFile.data }]
-      )
-      if (pubResult.error) throw new Error(pubResult.error + '\n' + pubResult.stderr)
-      const pubFile = pubResult.files.find((f) => '/' + f.name === newPubPath)
-      if (!pubFile) throw new Error('Public key export failed')
-      const pubPem = new TextDecoder().decode(pubFile.data)
-
-      // 3. Enroll the ML-KEM key via CMP IR (server signs with CA's ML-DSA key).
-      //    Re-uses the SAME execute_cmp_simulation shim as Step 2 / Step 5 — the
-      //    server callback is algorithm-agnostic and happily issues a cert with
-      //    an ML-KEM pubkey, signed by the CA's ML-DSA-65 key.
-      setPhase('Enrolling ML-KEM cert via CMP IR (CA signs with ML-DSA-65)')
-      const enrollResult = await openSSLService.simulateCmp({
-        eeKeyPath: newKeyPath,
-        subjectDn: '/CN=Workshop EE (ML-KEM rotation leg)/O=PQC Today/C=US',
-        reference: 'workshop-ee-mlkem-001',
-        secret: 'workshop-shared-secret',
+      const generate = async (path: string, algorithm = ML_KEM_ALG) => {
+        const generated = await openSSLService.execute(
+          `openssl genpkey -algorithm ${algorithm} -out ${path}`
+        )
+        if (generated.error) throw new Error(generated.error)
+        const file = generated.files.find((f) => '/' + f.name === path)
+        if (!file) throw new Error(`${algorithm} key generation produced no key`)
+        return file
+      }
+      setPhase('Preparing the authorized prior enrollment')
+      const oldKey = await generate('/cmp-old.key.pem')
+      const prior = await openSSLService.simulateCmp({
+        eeKeyPath: '/cmp-old.key.pem',
+        subjectDn: '/CN=Fictional renewal learner/O=PQC Today',
+        reference: 'fictional-renewal',
+        secret: 'fictional-sample-secret',
         caCertPath: CA_ROOT_CERT_PATH,
         caKeyPath: CA_ROOT_KEY_PATH,
-        outCertPath: newCertPath,
-        files: [...caFiles, { name: newKeyPath.replace(/^\//, ''), data: newKeyFile.data }],
+        outCertPath: '/cmp-prior.cert.pem',
+        files: [...caFiles, oldKey],
       })
-      if (!enrollResult.ok || !enrollResult.certPem) {
-        throw new Error(`ML-KEM CMP enrollment failed: ${enrollResult.error || 'unknown'}`)
-      }
-      const newCertName = newCertPath.replace(/^\//, '')
-      const certDecode = await openSSLService.execute(
-        `openssl x509 -in ${newCertPath} -text -noout`,
-        [{ name: newCertName, data: enrollResult.certPem }]
-      )
-
-      // 4. CA side: encapsulate a fresh shared secret under the EE's ML-KEM pubkey.
-      //    This primitive round trip does not encrypt the issued certificate.
-      setPhase('CA encapsulates shared secret under ML-KEM pubkey')
-      const encapResult = await openSSLService.execute(
-        `openssl pkeyutl -encap -inkey ${newPubPath} -pubin -out ${ctPath} -secret ${ssAPath}`,
-        [{ name: newPubPath.replace(/^\//, ''), data: pubFile.data }]
-      )
-      if (encapResult.error) throw new Error(`encap: ${encapResult.error}\n${encapResult.stderr}`)
-      const ctFile = encapResult.files.find((f) => '/' + f.name === ctPath)
-      const ssAFile = encapResult.files.find((f) => '/' + f.name === ssAPath)
-      if (!ctFile || !ssAFile) throw new Error('encap produced no ciphertext or shared secret')
-
-      // 5. EE side: decapsulate the sample KEM ciphertext.
-      setPhase('EE decapsulates the sample shared secret with ML-KEM private key')
-      const decapResult = await openSSLService.execute(
-        `openssl pkeyutl -decap -inkey ${newKeyPath} -in ${ctPath} -out ${ssBPath}`,
+      if (!prior.ok || !prior.certPem) throw new Error(prior.error || 'Prior enrollment failed')
+      setPhase('Preparing the separately authorized ML-DSA-65 signing identity')
+      const signingKey = await generate('/cmp-signer.key.pem', 'ML-DSA-65')
+      const signingIdentity = await openSSLService.simulateCmp({
+        eeKeyPath: '/cmp-signer.key.pem',
+        subjectDn: '/CN=Fictional CMP Renewal Signer',
+        reference: 'fictional-signer-bootstrap',
+        secret: 'fictional-signer-bootstrap-secret',
+        caCertPath: CA_ROOT_CERT_PATH,
+        caKeyPath: CA_ROOT_KEY_PATH,
+        outCertPath: '/cmp-signer.cert.pem',
+        files: [...caFiles, signingKey],
+      })
+      if (!signingIdentity.ok || !signingIdentity.certPem)
+        throw new Error(signingIdentity.error || 'Signing identity enrollment failed')
+      const signingProfile = await openSSLService.execute(
+        `openssl x509 -in /cmp-signer-bootstrap.pem -CA ${CA_ROOT_CERT_PATH} -CAkey ${CA_ROOT_KEY_PATH} -set_serial 42 -days 1 -extfile /cmp-signer.cnf -out /cmp-signer.cert.pem`,
         [
-          { name: newKeyPath.replace(/^\//, ''), data: newKeyFile.data },
-          { name: ctPath.replace(/^\//, ''), data: ctFile.data },
+          ...caFiles,
+          { name: 'cmp-signer-bootstrap.pem', data: signingIdentity.certPem },
+          {
+            name: 'cmp-signer.cnf',
+            data: new TextEncoder().encode(
+              'basicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature\n'
+            ),
+          },
         ]
       )
-      if (decapResult.error) throw new Error(`decap: ${decapResult.error}\n${decapResult.stderr}`)
-      const ssBFile = decapResult.files.find((f) => '/' + f.name === ssBPath)
-      if (!ssBFile) throw new Error('decap produced no shared secret')
-
-      // 6. Compare
-      const hex = (b: Uint8Array) =>
-        Array.from(b)
-          .map((x) => x.toString(16).padStart(2, '0'))
-          .join('')
-      const ssAHex = hex(ssAFile.data)
-      const ssBHex = hex(ssBFile.data)
-      const match = ssAHex === ssBHex && ssAHex.length > 0
-
+      if (signingProfile.error) throw new Error(signingProfile.error)
+      const signerCert = signingProfile.files.find((f) => f.name === 'cmp-signer.cert.pem')
+      if (!signerCert) throw new Error('Signing profile produced no certificate')
+      let requestPrior = prior.certPem
+      if (scenario === 'unauthorized') {
+        const other = await openSSLService.simulateCmp({
+          eeKeyPath: '/cmp-old.key.pem',
+          subjectDn: '/CN=Fictional other enrollment/O=PQC Today',
+          reference: 'fictional-renewal',
+          secret: 'fictional-sample-secret',
+          caCertPath: CA_ROOT_CERT_PATH,
+          caKeyPath: CA_ROOT_KEY_PATH,
+          outCertPath: '/cmp-other.cert.pem',
+          files: [...caFiles, oldKey],
+        })
+        if (!other.ok || !other.certPem)
+          throw new Error(other.error || 'Other sample enrollment failed')
+        requestPrior = other.certPem
+      }
+      setPhase('Generating a fresh ML-KEM-768 renewal key')
+      const freshKey = await generate('/cmp-new.key.pem')
+      setPhase('Running KUR → encrypted KUP → certConf → PKIConfirm')
+      const renewed = await openSSLService.executeCmpSignedKeyUpdate({
+        eeKeyPath: '/cmp-new.key.pem',
+        oldCertPath: '/cmp-request-prior.pem',
+        authorizedPriorPath: '/cmp-authorized-prior.pem',
+        subjectDn: '/CN=Fictional renewal learner/O=PQC Today',
+        signerCertPath: '/cmp-signer.cert.pem',
+        signerKeyPath: '/cmp-signer.key.pem',
+        authorizedSignerPath: '/cmp-authorized-signer.pem',
+        profile: 'MLKEM768-MLDSA65-explicit-confirm-v1',
+        caCertPath: CA_ROOT_CERT_PATH,
+        caKeyPath: CA_ROOT_KEY_PATH,
+        outCertPath: '/cmp-renewed.cert.pem',
+        files: [
+          ...caFiles,
+          freshKey,
+          signingKey,
+          signerCert,
+          { name: 'cmp-authorized-signer.pem', data: signerCert.data },
+          { name: 'cmp-request-prior.pem', data: requestPrior },
+          { name: 'cmp-authorized-prior.pem', data: prior.certPem },
+        ],
+      })
+      if (
+        !renewed.ok ||
+        renewed.operation !== 'KUR' ||
+        !renewed.proofVerified ||
+        !renewed.confirmationAccepted ||
+        !renewed.certPem
+      ) {
+        const rejection = renewed.transcript?.find((event) =>
+          ['rejected', 'confirmation_rejected'].includes(event.event)
+        )
+        throw new Error(
+          rejection?.detail || renewed.error || 'Key update did not complete explicit confirmation'
+        )
+      }
+      const decoded = await openSSLService.execute(
+        'openssl x509 -in /cmp-renewed.cert.pem -text -noout',
+        [{ name: 'cmp-renewed.cert.pem', data: renewed.certPem }]
+      )
+      if (decoded.error) throw new Error(decoded.error)
+      const exported = await openSSLService.execute(
+        'openssl pkey -in /cmp-new.key.pem -pubout -out /cmp-new.pub.pem',
+        [freshKey]
+      )
+      if (exported.error) throw new Error(exported.error)
+      const pub = exported.files.find((f) => f.name === 'cmp-new.pub.pem')
+      if (!pub) throw new Error('New public key export failed')
       setResult({
-        newKemPubPem: pubPem,
-        newKemCertText: certDecode.stdout,
-        encapSharedHex: ssAHex,
-        decapSharedHex: ssBHex,
-        match,
+        publicKey: new TextDecoder().decode(pub.data),
+        certificate: decoded.stdout,
+        events: renewed.transcript,
       })
       setPhase('done')
       setLogEntries([
         {
           status: 'success',
-          message: `Sample KEM round trip — shared secrets ${match ? 'match' : 'DIFFER'}`,
-          durationMs: Math.round(performance.now() - startedAt),
+          message:
+            'Key update completed: encrypted certificate recovered, explicit confirmation accepted and PKIConfirm received.',
+          durationMs: Math.round(performance.now() - start),
         },
       ])
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e)
-      setError(msg)
+      const message = e instanceof Error ? e.message : String(e)
+      setError(message)
+      setPhase('failed')
       setLogEntries([
         {
           status: 'error',
-          message: `Sample enrollment / KEM round trip failed — ${msg}`,
-          durationMs: Math.round(performance.now() - startedAt),
+          message: `Key update incomplete: ${message}`,
+          durationMs: Math.round(performance.now() - start),
         },
       ])
     } finally {
       setBusy(false)
     }
   }
-
   return (
     <div className="space-y-4">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 flex items-start gap-3 text-sm">
         <Info size={16} className="mt-0.5 shrink-0 text-primary" />
         <div>
-          <div className="font-medium text-foreground">CMP enrollment and ML-KEM round trip</div>
+          <div className="font-medium">ML-KEM certificate key update</div>
           <p className="mt-1 text-muted-foreground">
-            This sample enrolls an ML-KEM certificate using the existing CMP IR simulation, then
-            separately encapsulates and decapsulates a sample shared secret. It does not send a KUR
-            request, encrypt and recover the issued certificate, or demonstrate the complete
-            certificate-confirmation exchange. Matching secrets establish agreement for this sample
-            KEM operation, not completed CMP proof of possession.
+            The sample server encrypts a newly issued certificate to the fresh ML-KEM-768 key. The
+            client must recover and validate it, then confirm its hash before the server completes
+            the transaction. A separate fictional ML-DSA-65 signing identity authorizes renewal; its
+            signature does not prove possession of the new ML-KEM private key.
+          </p>
+          <p className="mt-2 text-muted-foreground">
+            Scenario setup provisions the signing identity and its trusted pin before the requester
+            sends the key-update request. This local exercise runs both roles; in production,
+            configure renewal authorization at the CA.
+          </p>
+          <p className="mt-2 text-muted-foreground">
+            The starting enrollment is pre-authorized for this fictional identity. Its issuer and
+            serial are checked separately from the new-key proof. This uses an opt-in modification
+            of the bundled OpenSSL CMP server, rather than support in unmodified OpenSSL 3.6.3.
           </p>
         </div>
       </div>
-
+      <FilterDropdown
+        label="Sample prior-certificate authorization"
+        selectedId={scenario}
+        disabled={busy}
+        hideDefaultOption
+        items={[
+          { id: 'authorized', label: 'Authorized prior enrollment' },
+          { id: 'unauthorized', label: 'Different prior enrollment — expect rejection' },
+        ]}
+        onSelect={(id) => {
+          setScenario(id)
+          setResult(null)
+          setError(null)
+          setLogEntries([])
+          setPhase('idle')
+        }}
+      />
+      <Button onClick={handleRun} disabled={busy}>
+        {busy ? (
+          <Loader2 size={14} className="mr-2 animate-spin" />
+        ) : (
+          <RefreshCw size={14} className="mr-2" />
+        )}
+        Run key update
+      </Button>
+      {busy && (
+        <p role="status" className="text-sm text-muted-foreground">
+          {phase}
+        </p>
+      )}
+      {error && <ErrorAlert message={error} onRetry={handleRun} />}
+      <WorkshopOperationLog entries={logEntries} />
+      {result && (
+        <div className="space-y-3">
+          <p className="flex items-center gap-2 text-sm text-status-success">
+            <CheckCircle2 size={16} />
+            New-key possession and explicit confirmation verified for this sample.
+          </p>
+          <details className="rounded-md border border-border p-3">
+            <summary>Actual transaction events</summary>
+            <ol className="mt-2 space-y-2 text-xs">
+              {result.events.map((e, i) => (
+                <li key={i}>
+                  <strong>
+                    {e.side}: {e.event}
+                  </strong>{' '}
+                  — {e.detail}
+                </li>
+              ))}
+            </ol>
+          </details>
+          <details className="rounded-md border border-border p-3">
+            <summary>Recovered certificate</summary>
+            <pre className="mt-2 overflow-auto text-xs">{result.certificate}</pre>
+          </details>
+          <details className="rounded-md border border-border p-3">
+            <summary>Fresh public key</summary>
+            <pre className="mt-2 overflow-auto text-xs">{result.publicKey}</pre>
+          </details>
+        </div>
+      )}
+      <p className="text-sm text-muted-foreground">
+        For your production tools, test authorization of the prior enrollment, encrypted-certificate
+        recovery, certificate validation, transaction binding and explicit confirmation—including
+        rejection cases. This fictional exchange does not validate a deployed CA or its policies.
+      </p>
       <details className="rounded-md border border-border bg-muted/30 p-3 text-sm">
         <summary className="cursor-pointer font-medium text-foreground flex items-center gap-2">
           <BookOpen size={14} /> Related standards and further reading
@@ -297,82 +400,6 @@ export const CmpKemKeyUpdate: React.FC = () => {
           </div>
         </div>
       </details>
-
-      <Button
-        variant="gradient"
-        onClick={handleRun}
-        disabled={busy}
-        className="h-auto whitespace-normal flex items-center gap-2"
-      >
-        {busy ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}
-        {busy ? `Working: ${phase}` : 'Run sample enrollment and KEM round trip'}
-      </Button>
-
-      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
-
-      {error && <ErrorAlert message={error} onRetry={handleRun} />}
-
-      {result && (
-        <div className="space-y-3">
-          <div
-            className={`flex items-center gap-2 text-sm ${result.match ? 'text-status-success' : 'text-status-error'}`}
-          >
-            {result.match ? (
-              <>
-                <CheckCircle2 size={16} />
-                <span>
-                  <strong>Sample shared secrets match.</strong> The encapsulated and decapsulated
-                  secrets agree byte-for-byte for this sample KEM operation.
-                </span>
-              </>
-            ) : (
-              <>
-                <AlertTriangle size={16} />
-                <span>
-                  Sample shared secrets differ — this KEM round trip did not establish agreement.
-                </span>
-              </>
-            )}
-          </div>
-
-          <details open className="rounded border border-border bg-muted/30 p-3">
-            <summary className="cursor-pointer text-sm font-medium text-foreground flex items-center gap-2">
-              <FileText size={14} /> ML-KEM-768 EE certificate (issued by mock CA via CMP)
-            </summary>
-            <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all font-mono text-[10px] text-muted-foreground">
-              {result.newKemCertText}
-            </pre>
-          </details>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="rounded border border-border bg-muted/30 p-3">
-              <div className="text-xs font-medium text-foreground mb-1">
-                CA-side shared secret (encap)
-              </div>
-              <pre className="font-mono text-[10px] break-all text-muted-foreground">
-                {result.encapSharedHex}
-              </pre>
-            </div>
-            <div className="rounded border border-border bg-muted/30 p-3">
-              <div className="text-xs font-medium text-foreground mb-1">
-                EE-side shared secret (decap)
-              </div>
-              <pre className="font-mono text-[10px] break-all text-muted-foreground">
-                {result.decapSharedHex}
-              </pre>
-            </div>
-          </div>
-
-          <details className="rounded border border-border bg-muted/30 p-3">
-            <summary className="cursor-pointer text-sm font-medium text-foreground">
-              ML-KEM-768 public key (PEM)
-            </summary>
-            <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-all font-mono text-[10px] text-muted-foreground">
-              {result.newKemPubPem}
-            </pre>
-          </details>
-        </div>
-      )}
     </div>
   )
 }

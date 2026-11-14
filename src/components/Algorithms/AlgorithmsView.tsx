@@ -204,8 +204,10 @@ export function AlgorithmsView({
   // chrome for both, same as support/validation above; Detailed
   // Comparison's Compare-side-by-side mode (AlgorithmComparisonPanel) has no
   // mobile layout, so mobile is Browse-only there — desktop keeps both.
-  // `tab=landscape` remains out of scope: confirmed unreachable from any
-  // mobile entry-strip intent, so no real phone user hits it.
+  // `tab=landscape` is reachable from the phone landing screen: INTENTS has
+  // "Explore industry use cases" (params tab=landscape), MobileAlgorithmsView
+  // renders every INTENTS entry, and `isMobileLandscape` below gives it its
+  // own phone screen instead of the desktop chrome.
   const tabParam = searchParams.get('tab')
   // ?protocol without ?tab means Protocol Support (useAlgorithmExplorer pins
   // tab=support into the URL right after first paint).

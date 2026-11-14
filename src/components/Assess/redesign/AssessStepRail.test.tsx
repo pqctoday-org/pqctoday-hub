@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, act } from '@testing-library/react'
 import { AssessStepRail } from './AssessStepRail'
+import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { RENDER_ORDER_FULL, RENDER_ORDER_QUICK } from './assessFlowModel'
 import type { AssessFlow } from './useAssessFlow'
 
@@ -19,6 +20,7 @@ const flow = {
   stepIdx: 0,
   activeKey: RENDER_ORDER_QUICK[0],
   maxIdx: 0,
+  visitedIdx: 0,
   answeredCount: 0,
   attempted: false,
   isValid: () => false,
@@ -47,5 +49,45 @@ describe('AssessStepRail fast-track note', () => {
   it('shows no fast-track note on the full track', () => {
     render(<AssessStepRail flow={flow} mode="comprehensive" onSwitchToFull={vi.fn()} />)
     expect(screen.queryByText(/to unlock/i)).not.toBeInTheDocument()
+  })
+})
+
+describe('AssessStepRail after Edit Answers', () => {
+  beforeEach(() => useAssessmentStore.getState().reset())
+
+  const fullFlow = (maxIdx: number) =>
+    ({
+      ...flow,
+      renderOrder: RENDER_ORDER_FULL,
+      total: RENDER_ORDER_FULL.length,
+      activeKey: RENDER_ORDER_FULL[0],
+      maxIdx,
+      visitedIdx: 0,
+      isValid: () => false,
+    }) as unknown as AssessFlow
+
+  it('leaves every step clickable when the flow reports them all reachable', () => {
+    render(<AssessStepRail flow={fullFlow(12)} mode="comprehensive" onSwitchToFull={vi.fn()} />)
+    const steps = screen
+      .getAllByRole('button', { name: /^\d+\s*\S/ })
+      .filter((b) => b.closest('li'))
+    expect(steps).toHaveLength(13)
+    steps.forEach((b) => expect(b).toBeEnabled())
+  })
+
+  it('locks the steps beyond the furthest reached on a fresh start', () => {
+    render(<AssessStepRail flow={fullFlow(0)} mode="comprehensive" onSwitchToFull={vi.fn()} />)
+    const steps = screen.getAllByRole('button').filter((b) => b.closest('li'))
+    expect(steps[0]).toBeEnabled()
+    expect(steps[1]).toBeDisabled()
+  })
+
+  it('marks an optional step answered when it holds a selection, even at step 1', () => {
+    act(() => {
+      useAssessmentStore.getState().toggleCompliance('nist')
+    })
+    render(<AssessStepRail flow={fullFlow(0)} mode="comprehensive" onSwitchToFull={vi.fn()} />)
+    // No required step is valid here, so the one answered step is the optional one.
+    expect(screen.getByText('1 of 13 answered')).toBeInTheDocument()
   })
 })

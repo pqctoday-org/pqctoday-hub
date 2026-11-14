@@ -6,8 +6,15 @@
 import React, { useState } from 'react'
 import { Check, Zap, ChevronDown } from 'lucide-react'
 import { Button } from '../../ui/button'
+import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { DOMAIN_META, TONES } from './tones'
-import { STEP_META, TRACK_INFO, type AssessStepKey, type AssessTrack } from './assessFlowModel'
+import {
+  STEP_META,
+  TRACK_INFO,
+  isStepAnswered,
+  type AssessStepKey,
+  type AssessTrack,
+} from './assessFlowModel'
 import { FULL_LOCKED_SECTIONS } from './reportContract'
 import type { AssessFlow } from './useAssessFlow'
 
@@ -27,18 +34,21 @@ interface AssessStepRailProps {
 }
 
 export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSwitchToFull }) => {
-  const { renderOrder, stepIdx, maxIdx, isValid, activeKey } = flow
+  const { renderOrder, stepIdx, maxIdx, activeKey } = flow
+  const store = useAssessmentStore()
   const furthest = Math.max(maxIdx, stepIdx)
+  // Where the reader has actually walked to; answered-but-unvisited steps are
+  // reachable (furthest) without making a blank optional step before them look done.
+  const walked = Math.max(flow.visitedIdx ?? maxIdx, stepIdx)
   // The step map is collapsed by default on mobile (< lg) and shown as a tappable
   // progress header; on lg+ it is always expanded as the sticky rail.
   const [expanded, setExpanded] = useState(false)
   const currentDomain = DOMAIN_META[STEP_META[activeKey].domain]
 
   // A required step is "answered" once its validator passes (value or "not sure").
-  // A freely-optional step (compliance/use-cases/infra) shows a tick once the
-  // user has moved past it.
-  const isAnswered = (key: AssessStepKey, i: number) =>
-    STEP_META[key].freelyOptional ? i < furthest : isValid(key)
+  // A freely-optional step (compliance/use-cases/infra) shows a tick once it
+  // holds a selection or the user has moved past it.
+  const isAnswered = (key: AssessStepKey, i: number) => isStepAnswered(key, store, i < walked)
 
   const answeredCount = renderOrder.filter((k, i) => isAnswered(k, i)).length
   const total = renderOrder.length

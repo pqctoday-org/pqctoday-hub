@@ -13,7 +13,7 @@ export const content: ModuleContent = {
   // module's factual claims via record_module_review.py. Leave it unset
   // (see ModuleContentTypes.ts) rather than claim a review that hasn't
   // happened; ModuleReferencesTab renders nothing when it's absent.
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-14',
 
   standards: [
     getStandard('RFC 4034'),
@@ -22,7 +22,7 @@ export const content: ModuleContent = {
     // own title by add_row.py, not the draft slug (verified against the CSV,
     // not guessed).
     getStandard('Module-Lattice-Digital-Signature-Algorithm-for-DNSSEC'),
-    getStandard('draft-sheth-pqc-dnssec-strategy-01'),
+    getStandard('draft-sheth-pqc-dnssec-strategy-02'),
     getStandard('draft-fregly-dnsop-slh-dsa-mtl-dnssec-06'),
     getStandard('Module-Lattice-Based-Signatures-with-Merkle-Tree-Ladders-ML'),
   ],

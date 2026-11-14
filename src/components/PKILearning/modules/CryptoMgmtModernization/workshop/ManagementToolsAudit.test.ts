@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { computeMaturityScore, TOOLS, type CoverageLevel } from './ManagementToolsAudit'
+import {
+  computeCoverageAdjustedScore,
+  computeMaturityScore,
+  gapReason,
+  TOOLS,
+  type CoverageLevel,
+} from './ManagementToolsAudit'
 
 const at = (level: CoverageLevel) =>
   Object.fromEntries(TOOLS.map((t) => [t.id, level])) as Record<string, CoverageLevel>
@@ -46,5 +52,28 @@ describe('computeMaturityScore (W1-5)', () => {
 
   it('treats an unknown tool id as uncovered rather than throwing', () => {
     expect(computeMaturityScore({})).toBe(0)
+  })
+})
+
+describe('computeCoverageAdjustedScore and gapReason (systems coverage counts)', () => {
+  const pctAll = (pct: number) => Object.fromEntries(TOOLS.map((t) => [t.id, pct]))
+
+  it('all Automated at 0% systems covered reads 0%, at 100% reads 100%', () => {
+    expect(computeCoverageAdjustedScore(at(3), pctAll(0))).toBe(0)
+    expect(computeCoverageAdjustedScore(at(3), pctAll(100))).toBe(100)
+    expect(computeCoverageAdjustedScore(at(3), pctAll(60))).toBe(60)
+  })
+
+  it('lowering one category coverage lowers readiness but not the category rating', () => {
+    const levels = at(3)
+    const pct = { ...pctAll(100), 'crypto-scanner': 30 }
+    expect(computeMaturityScore(levels)).toBe(100)
+    expect(computeCoverageAdjustedScore(levels, pct)).toBeLessThan(100)
+  })
+
+  it('flags a Partial/Automated category under 50% systems as a coverage gap', () => {
+    expect(gapReason(3, 40)).toBe('low-systems-coverage')
+    expect(gapReason(2, 50)).toBeNull()
+    expect(gapReason(1, 100)).toBe('rating-below-partial')
   })
 })
