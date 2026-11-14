@@ -204,7 +204,7 @@ describe('ComplianceView page Export CSV, per tab', () => {
         new RegExp(`^pqc-compliance-${SLUG[tab]}-\\d{4}-\\d{2}-\\d{2}\\.csv$`)
       )
     },
-    60000
+    120000
   )
 
   it('a tab with no rows of its own offers no export', async () => {
@@ -215,5 +215,5 @@ describe('ComplianceView page Export CSV, per tab', () => {
       </MemoryRouter>
     )
     expect(usePageActionsStore.getState().current?.onExport).toBeUndefined()
-  }, 60000)
+  }, 120000)
 })

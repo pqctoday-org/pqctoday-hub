@@ -49,6 +49,11 @@ describe('For You rows by persona', () => {
     }
   )
 
+  it('an unlisted persona id is routed to the default panel, so it lists derived frameworks too', () => {
+    const rows = forYouViewRows('stale-persona-id', results, derived)
+    expect(rows[rows.length - 1].id).toBe('DERIVED-X')
+  })
+
   it.each(['default', 'executive', 'grc', 'researcher'])(
     '%s: derived frameworks are listed (its view shows them) and carry their reason',
     (persona) => {

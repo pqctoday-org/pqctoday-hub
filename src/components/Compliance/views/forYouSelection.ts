@@ -166,7 +166,15 @@ export function sortedByConfidence(
 
 /** Derived (trust-path) frameworks appear on the default panel and on these persona views only. */
 export function forYouShowsDerived(persona: string | null | undefined): boolean {
-  return !persona || persona === 'executive' || persona === 'grc' || persona === 'researcher'
+  // The five personas whose views list other rows show no derived section. Any other value
+  // (no persona, or a stale id) is routed to the default panel, which does show them.
+  return !(
+    persona === 'architect' ||
+    persona === 'developer' ||
+    persona === 'ops' ||
+    persona === 'cert-engineer' ||
+    persona === 'curious'
+  )
 }
 
 /** One row of a For You view, as the view lists it. `section` names the view's own grouping. */
