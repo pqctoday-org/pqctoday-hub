@@ -135,7 +135,7 @@
       }
     },
     "openssl-pkcs11": {
-      "hsmCommit": "c8b0c365c878a7a214065c4e45fdc8d7c183e658",
+      "hsmCommit": "a013c43c6c99a85b5861c5611b27cf62cd83d257",
       "release": null,
       "files": {
         "public/wasm/openssl.js": {
@@ -143,8 +143,8 @@
           "bytes": 268592
         },
         "public/wasm/openssl.wasm": {
-          "sha256": "eecbaedf79bc3ab056c20af63631239fdd151e13d4a23efd1f7cc1bdacfebf0a",
-          "bytes": 8388635
+          "sha256": "aeec0a8e998a6bd323f3f36af43e797b1e8ba0c08b65154604f4a677d348f4b3",
+          "bytes": 8388649
         }
       }
     },
