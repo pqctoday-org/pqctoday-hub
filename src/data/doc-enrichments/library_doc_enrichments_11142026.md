@@ -56304,7 +56304,7 @@ enrichment_method: automated extraction
 
 - **Reference ID**: Off-the-Record-Communication-or-Why-Not-To-Use-PGP
 - **Title**: Off-the-Record Communication, or, Why Not To Use PGP
-- **Authors**: 
+- **Authors**: See document
 - **Publication Date**: 2004
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
@@ -56350,9 +56350,9 @@ enrichment_method: automated extraction
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: Off-the-Record-Communication-or-Why-Not-To-Use-PGP.pdf (131,738 bytes, 13,881 extracted chars)
 - **Extraction Timestamp**: 2026-11-13T03:16:02
+- **Evidence SHA-256**: d2f75ac1746c64566eb5ccaa220917f471b4bfd3365236a21fd690ce56497d01
 - **Generation Model**: automated extraction, human-reviewed
 - **Evidence SHA256**: d2f75ac1746c6456
 - **Window Chars**: 13881
@@ -56423,7 +56423,7 @@ enrichment_method: automated extraction
 
 - **Reference ID**: OpenBao-Transit-Secrets-Engine
 - **Title**: OpenBao Transit Secrets Engine
-- **Authors**: 
+- **Authors**: See document
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
@@ -56469,9 +56469,9 @@ enrichment_method: automated extraction
 - **Organizational Readiness**: Operators manage named keys and rotation frequency; applications limited to encrypt/decrypt via ACLs
 - **Math Family**: Lattice
 - **PQC Round**: Not Applicable
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: OpenBao-Transit-Secrets-Engine.html (48,604 bytes, 13,120 extracted chars)
 - **Extraction Timestamp**: 2026-11-14T10:46:54
+- **Evidence SHA-256**: b491217d818aba58bba57984e17b739870c20bf6bc8cbf4cadff8b1133ac2a84
 - **Generation Model**: automated extraction
 - **Evidence SHA256**: b491217d818aba58
 - **Reader**: unified/5 full
