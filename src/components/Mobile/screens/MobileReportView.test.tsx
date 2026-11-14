@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileReportView } from './MobileReportView'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
@@ -90,6 +90,32 @@ describe('MobileReportView', () => {
       country: QUICK_INPUT.country,
     })
     expect(screen.getByText(String(result.riskScore))).toBeInTheDocument()
+  })
+
+  it('recomputes the report when an answer is edited after completion', () => {
+    const scoreFor = (dataSensitivity: string[]) =>
+      computeAssessment({
+        industry: QUICK_INPUT.industry,
+        currentCrypto: [],
+        dataSensitivity,
+        complianceRequirements: [],
+        migrationStatus: QUICK_INPUT.migrationStatus,
+        country: QUICK_INPUT.country,
+      }).riskScore
+    const highScore = scoreFor(['high'])
+    const lowScore = scoreFor(['low'])
+    // The edit must actually move the score, or this test proves nothing.
+    expect(lowScore).not.toBe(highScore)
+
+    completeQuick({ dataSensitivity: ['high'] })
+    renderView()
+    expect(screen.getByText(String(highScore))).toBeInTheDocument()
+
+    act(() => {
+      useAssessmentFormStore.setState({ dataSensitivity: ['low'] })
+    })
+    expect(screen.getByText(String(lowScore))).toBeInTheDocument()
+    expect(screen.queryByText(String(highScore))).not.toBeInTheDocument()
   })
 
   it('shows the real "fast report" upgrade nudge verbatim for a quick assessment', () => {

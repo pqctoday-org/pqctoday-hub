@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -12,6 +12,7 @@ import {
   TRACK_INFO,
   type AssessStepKey,
   type AssessTrack,
+  storeIndexOf,
 } from '@/components/Assess/redesign/assessFlowModel'
 import { useAssessFlow } from '@/components/Assess/redesign/useAssessFlow'
 import { summarizeAnswer } from '@/components/Assess/redesign/reviewModel'
@@ -20,7 +21,10 @@ import {
   DATA_SENSITIVITY_SCORES,
   AVAILABLE_USE_CASES,
   COUNTRY_PLANNING_MANDATE,
+  ALGORITHM_DB,
 } from '@/hooks/assessmentData'
+import { CRYPTO_CATEGORY_IDS, useAlgorithmChipsByCategory } from '@/data/cryptoAlgorithmChips'
+import { CRYPTO_LIBRARY_OPTIONS, INFRA_AUTOMATION_OPTIONS } from '@/data/infraToolchainOptions'
 import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 import {
@@ -52,7 +56,7 @@ const COMPLIANCE_TIER_ORDER: ApplicabilityTier[] = [
   'advisory',
 ]
 
-const CRYPTO_CATEGORIES = ['Key Exchange', 'Signatures', 'Symmetric Encryption', 'Hash & MAC']
+const CRYPTO_CATEGORIES: string[] = [...CRYPTO_CATEGORY_IDS]
 
 // Same key→label map Step4Sensitivity.tsx's own SENSITIVITY_BADGE_STYLES
 // carries — replicated (a 4-entry literal, not worth an ESLint exception on
@@ -250,11 +254,13 @@ function deriveTimelinePressure(
  * timeline) had no mobile UI at all yet — not a deliberate desktop-only
  * design choice, confirmed by reading every real Step*.tsx component before
  * cutting anything, per explicit instruction. All 13 now render here, each
- * reduced to its real FIRST-level choice only — the one genuine gated
- * second-level tier found in the audit (Step11Infrastructure.tsx's per-layer
- * sub-category chips, plus its three sibling flat pickers: a 12-item
- * crypto-library multi-select, a 10-item automation-tool multi-select, and a
- * vendor-dependency radiogroup) is the one real cut, stated in the footer
+ * reduced to its real FIRST-level choice plus, where one exists, its flat
+ * second list — crypto's specific-algorithm chips under each chosen category,
+ * and infra's crypto-library and automation-tool pickers, are the same
+ * option lists and store actions the desktop steps use (shared data modules
+ * in `src/data`). The one real cut is Step11Infrastructure.tsx's
+ * per-layer sub-category chips and vendor-dependency radiogroup, stated in
+ * the footer
  * below. Every other step's desktop "second list" turned out on inspection
  * to be a second REPRESENTATION of one flat first-level choice (sensitivity,
  * use-cases, retention all show an industry-specific label set alongside a
@@ -344,6 +350,8 @@ export function MobileAssessView() {
     return entry ? entry.phases.filter((p) => p.phase === 'Deadline') : []
   }, [store.country])
   const timelineMandate = store.country ? COUNTRY_PLANNING_MANDATE[store.country] : undefined
+
+  const algosByCategory = useAlgorithmChipsByCategory()
 
   const [showWhy, setShowWhy] = useState(false)
   const [done, setDone] = useState(store.assessmentStatus === 'complete')
@@ -485,7 +493,9 @@ export function MobileAssessView() {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    flow.jumpTo(flow.renderIndexOf(k))
+                    // Straight to the store step: the review screen can jump to any
+                    // answer, whatever the flow's furthest-visited marker says.
+                    store.setStep(storeIndexOf(track ?? 'quick', k))
                     setEditingFromReview(true)
                     setShowReview(false)
                   }}
@@ -598,8 +608,75 @@ export function MobileAssessView() {
             <MultiSelectChips
               options={CRYPTO_CATEGORIES}
               selected={store.currentCryptoCategories}
-              onToggle={store.toggleCryptoCategory}
+              onToggle={(cat) => {
+                // Dropping a category also drops the specific algorithms chosen
+                // under it, same as the desktop step.
+                if (store.currentCryptoCategories.includes(cat)) {
+                  for (const algo of algosByCategory[cat] ?? []) {
+                    if (store.currentCrypto.includes(algo.storedKey))
+                      store.toggleCrypto(algo.storedKey)
+                  }
+                }
+                store.toggleCryptoCategory(cat)
+              }}
             />
+            {CRYPTO_CATEGORIES.filter((cat) => store.currentCryptoCategories.includes(cat)).map(
+              (cat) => {
+                const algos = algosByCategory[cat] ?? []
+                if (algos.length === 0) return null
+                return (
+                  <div
+                    key={cat}
+                    className="flex flex-col gap-1.5 rounded-xl border border-border p-2.5"
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                      {cat} — specific algorithms
+                      <span className="ml-1 font-normal normal-case">
+                        (none selected = all included)
+                      </span>
+                    </p>
+                    <div
+                      className="flex flex-wrap gap-1.5"
+                      role="group"
+                      aria-label={`${cat} algorithms`}
+                    >
+                      {algos.map((algo) => {
+                        const isActive = store.currentCrypto.includes(algo.storedKey)
+                        const isVulnerable =
+                          ALGORITHM_DB[algo.storedKey]?.quantumVulnerable ?? false
+                        return (
+                          <Button
+                            key={algo.storedKey}
+                            type="button"
+                            variant="ghost"
+                            onClick={() => store.toggleCrypto(algo.storedKey)}
+                            aria-pressed={isActive}
+                            className={cn(
+                              'h-auto min-h-9 gap-1 whitespace-normal rounded-full border px-3 py-1.5 text-left text-[11px] font-semibold',
+                              isActive
+                                ? 'border-primary bg-primary text-primary-foreground'
+                                : 'border-border bg-card text-foreground'
+                            )}
+                          >
+                            {algo.displayLabel}
+                            {isVulnerable && (
+                              <>
+                                <AlertTriangle
+                                  size={10}
+                                  className="shrink-0 text-warning"
+                                  aria-hidden="true"
+                                />
+                                <span className="sr-only">(quantum-vulnerable)</span>
+                              </>
+                            )}
+                          </Button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              }
+            )}
             <UnknownToggle checked={store.cryptoUnknown} onChange={store.setCryptoUnknown} />
           </>
         )}
@@ -861,6 +938,22 @@ export function MobileAssessView() {
               checked={store.infrastructureUnknown}
               onChange={store.setInfrastructureUnknown}
             />
+            <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+              Crypto libraries
+            </p>
+            <MultiSelectChips
+              options={CRYPTO_LIBRARY_OPTIONS}
+              selected={store.cryptoLibraries}
+              onToggle={store.toggleCryptoLibrary}
+            />
+            <p className="mt-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+              Crypto / cert automation
+            </p>
+            <MultiSelectChips
+              options={INFRA_AUTOMATION_OPTIONS}
+              selected={store.infraAutomation}
+              onToggle={store.toggleInfraAutomation}
+            />
           </>
         )}
 
@@ -1020,8 +1113,8 @@ export function MobileAssessView() {
 
       {key === 'infra' && (
         <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-          Per-layer sub-categories, the crypto-library picker, the automation-tool picker and
-          vendor-dependency detail — Step 12&apos;s finer-grained matrices — stay on a laptop.
+          Per-layer sub-categories and vendor-dependency detail — Step 12&apos;s finer-grained
+          matrices — stay on a laptop.
         </p>
       )}
     </div>

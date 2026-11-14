@@ -13,34 +13,7 @@ import { PersonaHint } from './PersonaHint'
 import { LAYERS } from '../../../data/infrastructureLayers'
 import { softwareData } from '../../../data/migrateData'
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
-
-const CRYPTO_LIBRARY_OPTIONS = [
-  'OpenSSL',
-  'BoringSSL',
-  'wolfSSL',
-  'Mbed TLS',
-  'liboqs',
-  'GnuTLS',
-  'NSS (Mozilla)',
-  '.NET cryptography',
-  'JCA / BouncyCastle',
-  'Go crypto',
-  'Rust crypto (RustCrypto)',
-  'PKCS#11 (HSM)',
-]
-
-const INFRA_AUTOMATION_OPTIONS = [
-  'Terraform',
-  'Ansible',
-  'cert-manager',
-  'HashiCorp Vault',
-  'AWS KMS / CloudHSM',
-  'Azure Key Vault / Managed HSM',
-  'GCP Cloud KMS',
-  'Smallstep / step-ca',
-  'Manual / scripted',
-  'None',
-]
+import { CRYPTO_LIBRARY_OPTIONS, INFRA_AUTOMATION_OPTIONS } from '@/data/infraToolchainOptions'
 
 const VENDOR_OPTIONS = [
   {

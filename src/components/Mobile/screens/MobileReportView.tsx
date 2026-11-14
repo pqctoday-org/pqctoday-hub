@@ -71,12 +71,16 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
   const store = useAssessmentStore()
   const livePersona = usePersonaStore((s) => s.selectedPersona)
 
+  // `getInput()` builds a fresh object on every read, so key the memo on a stable
+  // serialization of it — edits to any answer, or a persona change that feeds the
+  // input, recompute the report instead of keeping the first completion's result.
+  const input = store.assessmentStatus === 'complete' ? store.getInput() : null
+  const inputKey = input ? JSON.stringify(input) : null
   const ownResult = useMemo(() => {
-    if (store.assessmentStatus !== 'complete') return null
-    const input = store.getInput()
-    return input ? computeAssessment(input) : null
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- input is re-read fresh each recompute; only the completion transition needs to retrigger this
-  }, [store.assessmentStatus])
+    if (!inputKey) return null
+    const fresh = useAssessmentStore.getState().getInput()
+    return fresh ? computeAssessment(fresh) : null
+  }, [inputKey])
 
   // A shared/example link renders its own ephemeral result, never the
   // viewer's own live one — same precedence as desktop's ReportView.
