@@ -401,12 +401,14 @@ export const REGION_COUNTRIES_MAP: Record<PickerRegion, string[]> = (() => {
  * EU now has its own entry (hybrid=required, endState=pure) distinct from DE.
  */
 export const JURISDICTION_RULES: Record<string, JurisdictionRule> = Object.fromEntries(
-  ACTIVE_ALL.filter((j) => j.hybrid && j.endState && j.note).map((j) => [
+  // A hybrid stance is enough for a rule: an authority that states no end state
+  // still has a position the sim can check choices against.
+  ACTIVE_ALL.filter((j) => j.hybrid && j.note).map((j) => [
     j.code,
     {
       authority: j.authority,
       hybrid: j.hybrid as HybridStance,
-      endState: j.endState as EndState,
+      endState: j.endState,
       note: j.note,
       force: j.force,
     } satisfies JurisdictionRule,

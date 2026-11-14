@@ -2074,7 +2074,8 @@ export function SimulationView() {
       id: country,
       label: jur?.authority ?? JURISDICTION_AUTHORITY_NOTE[country]?.authority ?? country,
       hybrid: jur?.hybrid ?? 'interim',
-      endState: jur?.endState ?? 'pure',
+      // Empty when the authority states no end state — never assume one.
+      endState: jur?.endState ?? '',
       force: JURISDICTION_BY_CODE[country]?.force,
     },
     sector: { id: sector, label: sectorOpt.label, x: sectorOpt.shelfLifeYears },
