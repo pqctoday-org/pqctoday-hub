@@ -97,6 +97,49 @@ describe('PQCProtocolMatrix — deprecated rows are reachable', () => {
   })
 })
 
+describe('PQCProtocolMatrix — the deprecated toggle says what the table is doing', () => {
+  it('while a search reveals deprecated rows (even by a non-name query) the button says so and is not offered', () => {
+    const { container } = renderAt('/algorithms?tab=support')
+    expect(screen.getByRole('button', { name: 'Show deprecated (5)' })).toBeEnabled()
+    // "RFC 9395" is in IKEv1's description, not in any protocol name.
+    fireEvent.change(searchBox(), { target: { value: 'RFC 9395' } })
+    expect(rowFor(container, 'ikev1')).not.toBeNull()
+    const button = screen.getByRole('button', { name: /Deprecated shown by search/ })
+    expect(button).toBeDisabled()
+    expect(button).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByRole('button', { name: /^(Show|Hide) deprecated/ })).toBeNull()
+  })
+
+  it('goes back to "Show deprecated" when the search is cleared', () => {
+    renderAt('/algorithms?tab=support')
+    fireEvent.change(searchBox(), { target: { value: 'RFC 9395' } })
+    fireEvent.change(searchBox(), { target: { value: '' } })
+    const button = screen.getByRole('button', { name: 'Show deprecated (5)' })
+    expect(button).toBeEnabled()
+    expect(button).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('keeps "Hide deprecated" working when the reader turned the toggle on before searching', () => {
+    const { container } = renderAt('/algorithms?tab=support')
+    fireEvent.click(screen.getByRole('button', { name: 'Show deprecated (5)' }))
+    fireEvent.change(searchBox(), { target: { value: 'RFC 9395' } })
+    const button = screen.getByRole('button', { name: 'Hide deprecated (5)' })
+    expect(button).toBeEnabled()
+    fireEvent.click(button)
+    // Search still lists the matching deprecated row; the toggle is now off again.
+    expect(rowFor(container, 'ikev1')).not.toBeNull()
+    expect(screen.getByRole('button', { name: /Deprecated shown by search/ })).toBeDisabled()
+  })
+
+  it('the row counter counts the deprecated rows a search can reach', () => {
+    renderAt('/algorithms?tab=support')
+    fireEvent.change(searchBox(), { target: { value: 'RFC 9395' } })
+    expect(screen.getByText('rows').textContent).toBeTruthy()
+    // total shown after the slash is all 35 rows while searching
+    expect(screen.getByText('rows').parentElement).toHaveTextContent(/\/\s*35\s*rows/)
+  })
+})
+
 describe('PQCProtocolMatrix — specification chips never dead-end', () => {
   it('opens the cited page in a new tab when the Library does not hold it', () => {
     renderAt('/algorithms?tab=support&matrixView=detailed&matrixQ=KMIP')

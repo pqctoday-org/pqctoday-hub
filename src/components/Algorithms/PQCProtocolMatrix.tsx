@@ -846,6 +846,11 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
     return Boolean(arrived && PROTOCOL_MATRIX.find((r) => r.id === arrived)?.historical)
   })
   const isHeatmap = viewMode === 'heatmap'
+  // A typed search lists deprecated rows that match it (filteredRows), whatever the
+  // toggle says, so the toggle must say what the table is doing.
+  const searching = searchText.trim() !== ''
+  const revealedBySearch = searching && !showHistorical
+  const historicalShown = showHistorical || searching
 
   // Mirrors view/filter/sort changes to the URL in place (replace, not push —
   // these are filters, not "opening an item"; matches the house rule used
@@ -1381,25 +1386,28 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
           variant="outline"
           size="sm"
           onClick={() => setShowHistorical((v) => !v)}
-          className={`h-9 gap-1 ${showHistorical ? 'border-primary/40 text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-          aria-pressed={showHistorical}
+          disabled={revealedBySearch}
+          className={`h-9 gap-1 ${historicalShown ? 'border-primary/40 text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+          aria-pressed={historicalShown}
           title={
-            showHistorical
-              ? 'Hide deprecated protocols (TLS 1.0/1.1, SSL 3.0, DTLS 1.0, IKEv1)'
-              : `Show the ${HISTORICAL_COUNT} deprecated protocols kept as migration sources — each links to the PQC-capable protocol that replaces it`
+            revealedBySearch
+              ? 'Deprecated protocols that match your search are shown. Clear the search to go back to the toggle.'
+              : showHistorical
+                ? 'Hide deprecated protocols (TLS 1.0/1.1, SSL 3.0, DTLS 1.0, IKEv1)'
+                : `Show the ${HISTORICAL_COUNT} deprecated protocols kept as migration sources — each links to the PQC-capable protocol that replaces it`
           }
         >
           <History size={12} />
-          {showHistorical ? 'Hide' : 'Show'} deprecated ({HISTORICAL_COUNT})
+          {revealedBySearch
+            ? `Deprecated shown by search (${HISTORICAL_COUNT})`
+            : `${showHistorical ? 'Hide' : 'Show'} deprecated (${HISTORICAL_COUNT})`}
         </Button>
 
         <span className="ml-auto whitespace-nowrap text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">{filteredRows.length}</span>
           <span className="mx-1">/</span>
           <span className="font-semibold text-foreground">
-            {showHistorical || searchText.trim()
-              ? PROTOCOL_MATRIX.length
-              : PROTOCOL_MATRIX.length - HISTORICAL_COUNT}
+            {historicalShown ? PROTOCOL_MATRIX.length : PROTOCOL_MATRIX.length - HISTORICAL_COUNT}
           </span>{' '}
           rows
         </span>
