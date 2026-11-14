@@ -312,9 +312,9 @@
        axe-measured 2026-08-29; #fefefe was the prior, less-worst background
        and still passes at this lightness), success vs #d0ecda,
        warning vs #fcebcd, info vs #fefefe, destructive vs #e0f2f6. */
-    /* 2026-11-13: one step darker with the darker --accent, so its /10-/15
-       tints still clear 4.5:1 (worst 4.81:1, was 4.39:1). */
-    --accent-legible: 153 60% 27%;
+    /* 2026-11-13: darker with the darker --accent, so its /10-/20 tints
+       clear 4.5:1 (worst 4.72:1 on /20; the /15 tint was 4.39:1). */
+    --accent-legible: 153 60% 26%;
     --success-legible: 142.1 76.2% 26%;
     --warning-legible: 38 92% 30%;
     /* a11y (WS9, 2026-08-02): 53% lightness gave 4.39:1 on the light page
@@ -427,12 +427,15 @@
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 343 93% 71%;
     --destructive-foreground: 222.2 47.4% 11.2%;
-    /* Dark mode: each `-legible` variant equals its base token. These colours
-       are already light-on-dark and clear AA at text sizes, so darkening them
+    /* Dark mode: each `-legible` variant equals its base token, except
+       destructive, which is a little lighter (below). These colours are
+       already light-on-dark and clear AA at text sizes, so darkening them
        here would make them WORSE. The variants exist so a single class works
        in both themes. */
     --accent-legible: 153 66% 51%;
-    --destructive-legible: 343 93% 71%;
+    /* 2026-11-13: 71% (the base) read 4.38:1 on bg-destructive/30 here;
+       76% gives 5.17:1 there and 8.48:1 on the page. */
+    --destructive-legible: 343 93% 76%;
     /* Wave A (2026-09-18): was never restated here, so dark mode inherited the
        darkened light-mode purple — invisible on a dark surface. Equals base. */
     --tertiary-legible: 270 91% 65%;
@@ -861,7 +864,7 @@
   border: 1px solid hsl(var(--border));
 }
 .react-flow__controls button:hover {
-  background: hsl(var(--accent));
+  background: hsl(var(--muted));
 }
 .react-flow__minimap {
   background: hsl(var(--card));

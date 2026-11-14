@@ -65,7 +65,7 @@ const LogsTabSoftware: React.FC = () => {
               <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">
                 <tr>
                   <th
-                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    className="p-4 font-bold cursor-pointer hover:bg-muted transition-colors relative group"
                     style={{ width: columnWidths.timestamp }}
                     onClick={() => handleSort('timestamp')}
                   >
@@ -88,7 +88,7 @@ const LogsTabSoftware: React.FC = () => {
                     />
                   </th>
                   <th
-                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    className="p-4 font-bold cursor-pointer hover:bg-muted transition-colors relative group"
                     style={{ width: columnWidths.keyLabel }}
                     onClick={() => handleSort('keyLabel')}
                   >
@@ -111,7 +111,7 @@ const LogsTabSoftware: React.FC = () => {
                     />
                   </th>
                   <th
-                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    className="p-4 font-bold cursor-pointer hover:bg-muted transition-colors relative group"
                     style={{ width: columnWidths.operation }}
                     onClick={() => handleSort('operation')}
                   >
@@ -134,7 +134,7 @@ const LogsTabSoftware: React.FC = () => {
                     />
                   </th>
                   <th
-                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    className="p-4 font-bold cursor-pointer hover:bg-muted transition-colors relative group"
                     style={{ width: columnWidths.result }}
                     onClick={() => handleSort('result')}
                   >
@@ -157,7 +157,7 @@ const LogsTabSoftware: React.FC = () => {
                     />
                   </th>
                   <th
-                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors text-right relative group"
+                    className="p-4 font-bold cursor-pointer hover:bg-muted transition-colors text-right relative group"
                     style={{ width: columnWidths.executionTime }}
                     onClick={() => handleSort('executionTime')}
                   >
@@ -190,7 +190,7 @@ const LogsTabSoftware: React.FC = () => {
                   </tr>
                 ) : (
                   sortedLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-accent transition-colors">
+                    <tr key={log.id} className="hover:bg-muted transition-colors">
                       <td className="p-4 font-mono text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
                         {log.timestamp}
                       </td>

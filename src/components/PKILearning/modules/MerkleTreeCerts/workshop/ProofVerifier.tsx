@@ -658,7 +658,7 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
                                           : annotation.type === 'provided'
                                             ? 'bg-warning text-warning-foreground'
                                             : annotation.type === 'root'
-                                              ? 'bg-accent text-black'
+                                              ? 'bg-accent text-accent-foreground'
                                               : 'bg-success text-black'
                                     }`}
                                     title={annotation.label}

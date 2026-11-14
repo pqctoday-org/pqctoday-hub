@@ -311,7 +311,7 @@ export const TimelineDocumentDetailPopover = ({
                   {libraryRefId && (
                     <Link
                       to={`/library?ref=${encodeURIComponent(libraryRefId)}`}
-                      className="inline-flex items-center gap-1.5 text-accent hover:text-accent/80 transition-colors text-sm font-medium"
+                      className="inline-flex items-center gap-1.5 text-accent hover:underline transition-colors text-sm font-medium"
                     >
                       <BookOpen size={13} aria-hidden="true" />
                       Also in Library

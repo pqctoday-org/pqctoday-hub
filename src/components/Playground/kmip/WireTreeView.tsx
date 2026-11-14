@@ -40,7 +40,7 @@ function Node({ node, depth, annotated }: { node: TtlvNode; depth: number; annot
   return (
     <div className="font-mono text-xs leading-relaxed">
       <div
-        className={`flex items-start gap-1.5 ${isStruct ? 'cursor-pointer hover:bg-accent/40 rounded' : ''}`}
+        className={`flex items-start gap-1.5 ${isStruct ? 'cursor-pointer hover:bg-muted rounded' : ''}`}
         style={{ paddingLeft: `${depth * 14}px` }}
         role={isStruct ? 'button' : undefined}
         tabIndex={isStruct ? 0 : undefined}

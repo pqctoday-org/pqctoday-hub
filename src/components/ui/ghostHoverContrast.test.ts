@@ -221,18 +221,75 @@ describe('coloured fills keep their label at AA in both themes', () => {
     }
   }
 
-  // The -legible text tokens sit on their own fill's light tints in the light
-  // theme; a darker fill darkens those tints too.
+  // The -legible text tokens (what text-accent / text-destructive resolve to)
+  // sit on their own fill's tints; a darker fill darkens those tints too.
   const TINTS: Record<string, number[]> = {
-    accent: [0.1, 0.15],
+    accent: [0.1, 0.15, 0.2],
     destructive: [0.1, 0.15, 0.2, 0.3],
   }
-  for (const [x, alphas] of Object.entries(TINTS)) {
-    it(`light ${x}-legible on its ${alphas.map((a) => `/${a * 100}`).join(', ')} tints`, () => {
-      const fill = rgb(LIGHT[x])
-      const text = rgb(LIGHT[`${x}-legible`])
-      for (const base of [rgb(LIGHT.background), [1, 1, 1] as [number, number, number]])
-        for (const a of alphas) expect(ratio(text, over(fill, base, a))).toBeGreaterThanOrEqual(4.5)
-    })
+  for (const [theme, t] of Object.entries(THEMES)) {
+    const bases: [number, number, number][] =
+      theme === 'light' ? [rgb(t.background), [1, 1, 1]] : [rgb(t.background), rgb(t.card)]
+    for (const [x, alphas] of Object.entries(TINTS)) {
+      it(`${theme} ${x}-legible on its ${alphas.map((a) => `/${a * 100}`).join(', ')} tints`, () => {
+        const fill = rgb(t[x])
+        const text = rgb(t[`${x}-legible`])
+        for (const base of bases)
+          for (const a of alphas)
+            expect(ratio(text, over(fill, base, a))).toBeGreaterThanOrEqual(4.5)
+      })
+    }
   }
+})
+
+// ---- Where the accent and destructive colours may appear ------------------
+
+function classStrings(): { file: string; seg: string }[] {
+  const out: { file: string; seg: string }[] = []
+  const walk = (dir: string) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name)
+      if (e.isDirectory()) walk(p)
+      else if (/\.tsx?$/.test(e.name) && !e.name.includes('.test.')) {
+        const src = fs.readFileSync(p, 'utf8')
+        for (const m of src.matchAll(/"[^"\n]*"|'[^'\n]*'|`[^`]*`/g))
+          out.push({ file: path.relative(SRC, p), seg: m[0] })
+      }
+    }
+  }
+  walk(SRC)
+  return out
+}
+
+describe('accent and destructive colours are used as fills, not neutral hovers', () => {
+  const strings = classStrings()
+
+  // In dark mode these labels are dark navy, readable only on the bright
+  // solid fill; on a tint or a dark card they disappear.
+  it('text-accent-foreground / text-destructive-foreground only with the solid fill', () => {
+    const bad = strings
+      .filter(({ seg }) =>
+        ['accent', 'destructive'].some(
+          (x) =>
+            new RegExp(`(?<![\\w:/-])text-${x}-foreground\\b`).test(seg) &&
+            !new RegExp(`(?<![\\w:/-])bg-${x}(?![\\w/-])`).test(seg)
+        )
+      )
+      .map(({ file, seg }) => `${file}: ${seg.slice(0, 80)}`)
+    expect(bad).toEqual([])
+  })
+
+  // The green accent was once a neutral hover (shadcn's default). As a solid
+  // or heavy hover under ordinary text it reads 1.8:1 in dark mode and 3.4:1
+  // in light; neutral hovers use bg-muted.
+  it('no solid or heavy accent hover under ordinary text', () => {
+    const bad = strings
+      .filter(
+        ({ seg }) =>
+          /hover:bg-accent(?:\/(?:[3-9]\d))?(?![\w/-])/.test(seg) &&
+          !/(?<![\w:/-])bg-accent(?![\w/-])/.test(seg)
+      )
+      .map(({ file, seg }) => `${file}: ${seg.slice(0, 80)}`)
+    expect(bad).toEqual([])
+  })
 })

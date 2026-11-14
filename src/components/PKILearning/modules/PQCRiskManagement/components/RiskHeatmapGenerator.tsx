@@ -482,7 +482,7 @@ function RiskHeatmapGrid({
                           className="w-full h-full min-h-[64px] rounded-none p-1.5 flex flex-col gap-1 items-stretch justify-start text-left font-normal text-inherit focus-visible:ring-inset"
                         >
                           {/* Score badge */}
-                          <span className="text-[10px] font-bold opacity-60 self-end">{score}</span>
+                          <span className="text-[10px] font-bold opacity-80 self-end">{score}</span>
                           {/* Entry markers */}
                           {cellEntries.map((entry) => {
                             const idx = entryIndexMap.get(entry.id)
