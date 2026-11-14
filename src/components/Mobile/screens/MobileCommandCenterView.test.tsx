@@ -97,3 +97,39 @@ describe('MobileCommandCenterView', () => {
     expect(screen.getByText(/^For (Risk-Informed|Repeatable|Adaptive):/)).toBeInTheDocument()
   })
 })
+
+describe('MobileCommandCenterView empty profile with zone links', () => {
+  const WELCOME = 'Welcome to your PQC Command Center'
+
+  beforeEach(() => {
+    resetStore()
+    window.history.replaceState(null, '', '/')
+  })
+
+  it('shows the zone list, with the linked zone open, for ?zone= on an empty profile', () => {
+    render(
+      <MemoryRouter initialEntries={['/business?zone=mitigation']}>
+        <MobileCommandCenterView />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Mitigation/ })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    )
+    expect(screen.getByText(CSWP39_ZONE_DETAILS.mitigation.what)).toBeInTheDocument()
+  })
+
+  it('shows the welcome screen with no link, and "Explore the six zones" shows the zone list', () => {
+    renderView()
+    expect(screen.getByText(WELCOME)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Explore the six zones' }))
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    for (const zone of Object.values(CSWP39_ZONE_DETAILS)) {
+      expect(screen.getByText(zone.title)).toBeInTheDocument()
+    }
+  })
+})
+

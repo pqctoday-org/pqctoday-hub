@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router'
-import { ChevronDown, LayoutDashboard, PlayCircle } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router'
+import { ChevronDown, Layers, LayoutDashboard, PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useBusinessMetrics } from '@/components/BusinessCenter/hooks/useBusinessMetrics'
@@ -15,7 +15,12 @@ import {
   primaryStepForZone,
   type MaturityTier,
 } from '@/components/BusinessCenter/lib/cswp39Tier'
-import { CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp39ZoneData'
+import {
+  CSWP39_ZONE_DETAILS,
+  zoneFromHash,
+  zoneFromQueryParam,
+  type ZoneId,
+} from '@/data/cswp39ZoneData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { commandCenterIntroFor } from '@/data/commandCenterIntro'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
@@ -74,13 +79,20 @@ const ZONE_ORDER: ZoneId[] = [
  */
 export function MobileCommandCenterView() {
   const metrics = useBusinessMetrics()
-  const [openZone, setOpenZone] = useState<ZoneId | null>(null)
+  const [searchParams] = useSearchParams()
+  // A zone link (?zone=, or a #zone-/#step- hash) is read once, on arrival. It opens
+  // that zone and shows the zone list even on an empty profile.
+  const [linkedZone] = useState<ZoneId | null>(
+    () => zoneFromQueryParam(searchParams.get('zone')) ?? zoneFromHash(window.location.hash)
+  )
+  const [openZone, setOpenZone] = useState<ZoneId | null>(linkedZone)
+  const [showZoneMap, setShowZoneMap] = useState(linkedZone !== null)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   const zoneTiers = useMemo(() => computeZoneTiers(metrics), [metrics])
   const stepTiers = useMemo(() => computeStepTiers(metrics), [metrics])
 
-  if (metrics.isFullyEmpty) {
+  if (metrics.isFullyEmpty && !showZoneMap) {
     const intro = commandCenterIntroFor(selectedPersona)
     // Top 3 of the persona's own recommended sequence — see BusinessCenterView's
     // WelcomeState for the desktop equivalent of this same shared config.
@@ -127,6 +139,15 @@ export function MobileCommandCenterView() {
               </span>
             </Link>
           ))}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowZoneMap(true)}
+            className="h-11 gap-1.5 text-[11.5px] font-bold"
+          >
+            <Layers size={13} aria-hidden="true" />
+            Explore the six zones
+          </Button>
         </div>
         {topTools.length > 0 && (
           <>
