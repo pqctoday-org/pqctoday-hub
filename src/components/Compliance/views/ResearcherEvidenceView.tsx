@@ -12,10 +12,12 @@
  * and ApplicabilityPanel so the persona switch only changes rendering, not the
  * underlying recommendation set.
  */
+import { sortedByConfidence } from './forYouSelection'
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useMemo } from 'react'
 import { Link2, Info, Calendar, BookOpen } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
+import type { UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { LibraryDocItem, TimelineItem } from '../../applicability/parts/items'
@@ -45,21 +47,8 @@ export function ResearcherEvidenceView({
   const { profile, isEmpty, frameworks, library, timeline, derivedFrameworks } =
     useApplicabilityWithPaths(profileOverride)
 
-  const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
   // Flatten to a single array sorted by confidenceScore desc (per researcher spec)
-  const sorted = useMemo(() => {
-    const all = [
-      ...grouped.mandatory,
-      ...grouped.recognized,
-      ...grouped['cross-border'],
-      ...grouped.advisory,
-    ]
-    return all.slice().sort((a, b) => {
-      const cA = a.item.confidenceScore ?? -1
-      const cB = b.item.confidenceScore ?? -1
-      return cB - cA
-    })
-  }, [grouped])
+  const sorted = useMemo(() => sortedByConfidence(frameworks, 'descending'), [frameworks])
 
   if (isEmpty) {
     return (
@@ -88,7 +77,7 @@ export function ResearcherEvidenceView({
             Compliance-CSV changes from the latest two revisions
           </span>
         </header>
-        <ContentUpdatesFeed domain="compliance" limit={10} title="" />
+        <ContentUpdatesFeed domain="compliance" limit={10} title="" defaultCollapsed={false} />
       </section>
 
       {/* ── Frameworks sorted by confidence, inline trust path ── */}
@@ -145,9 +134,17 @@ export function ResearcherEvidenceView({
                         source: {r.item.trustedSourceId}
                       </span>
                     )}
-                    {r.item.deadline && (
-                      <span className="text-[10px] text-status-error">{r.item.deadline}</span>
-                    )}
+                    {(() => {
+                      const line = frameworkDateLine(r.item)
+                      if (line.kind === 'none') return null
+                      return (
+                        <span
+                          className={`text-[10px] ${line.kind === 'deadline' ? 'text-status-error' : 'text-muted-foreground'}`}
+                        >
+                          {line.text}
+                        </span>
+                      )
+                    })()}
                   </div>
                 </div>
                 {/* Inline trust-path sidebar per the researcher spec */}

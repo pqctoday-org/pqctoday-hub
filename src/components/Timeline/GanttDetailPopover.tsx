@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { ExternalLink, Calendar, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
@@ -11,7 +13,7 @@ import {
   TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME,
   type DeadlineMandate,
 } from '../../data/timelineFacts.generated'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
@@ -74,6 +76,11 @@ export const GanttDetailPopover = ({
   // Esc closes only the top overlay (shared stack); page stays put behind.
   useOverlayEscape(isOpen && !!phase, onClose, { rootRef: popoverRef })
   useBodyScrollLock(isOpen && !!phase)
+
+  // Revision history is found by the event's id, the key revisions.jsonl uses for the timeline.
+  const { revisions } = useRevisions()
+  // The event whose revision history is open. Keyed by event id: it cannot carry over to another event.
+  const [revisionsFor, setRevisionsFor] = useState<string | null>(null)
 
   if (!isOpen || !phase) return null
 
@@ -225,6 +232,49 @@ export const GanttDetailPopover = ({
                   {shown.description}
                 </p>
               </div>
+
+              {(primaryEvent?.bindingForce || primaryEvent?.reviewStatus) && (
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                  {primaryEvent?.bindingForce && (
+                    <>
+                      <span className="text-muted-foreground">Binding force</span>
+                      <span className="text-foreground">{primaryEvent.bindingForce}</span>
+                    </>
+                  )}
+                  {primaryEvent?.reviewStatus && (
+                    <>
+                      <span className="text-muted-foreground">Review status</span>
+                      <span className="text-foreground">{primaryEvent.reviewStatus}</span>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {primaryEvent?.eventId && (
+                <div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setRevisionsFor(primaryEvent?.eventId ?? null)}
+                    className="h-auto px-0 text-xs text-primary hover:underline"
+                  >
+                    Revision history
+                  </Button>
+                  {isOpen && revisionsFor === primaryEvent?.eventId && (
+                    <div className="relative" style={{ zIndex: 10000 }}>
+                      <RevisionDrilldownPanel
+                        domain="timeline"
+                        entityId={primaryEvent.eventId}
+                        entityLabel={primaryEvent.title}
+                        revisions={byRecord(revisions, 'timeline', primaryEvent.eventId)}
+                        onClose={() => setRevisionsFor(null)}
+                        sharePath={`/timeline?event=${encodeURIComponent(primaryEvent.eventId)}`}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Document Analysis — same collapsible enrichment panel
                   TimelineDocumentDetailPopover already renders; this popover

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { ExternalLink, Calendar, X, Flag, BookOpen } from 'lucide-react'
 import { createPortal } from 'react-dom'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
@@ -55,6 +57,12 @@ export interface TimelineDocumentRow {
   confidenceScore?: number
   dataQualityNotes?: string
   complianceRefs?: string[]
+  /** Binding force of the event (binding, recommendation, ...), as the timeline data states it. */
+  bindingForce?: string
+  /** HARD, SOFT or DRAFT, as the timeline data states it. */
+  mandateType?: string
+  /** The event's review status, as the timeline data states it. */
+  reviewStatus?: string
 }
 
 interface TimelineDocumentDetailPopoverProps {
@@ -85,6 +93,11 @@ export const TimelineDocumentDetailPopover = ({
   // Esc closes only the top overlay (shared stack); page stays put behind.
   useOverlayEscape(isOpen && !!row, onClose, { rootRef: popoverRef })
   useBodyScrollLock(isOpen && !!row)
+
+  // Revision history is found by the event's id, the key revisions.jsonl uses for the timeline.
+  const { revisions } = useRevisions()
+  // The event whose revision history is open. Keyed by event id: it cannot carry over to another event.
+  const [revisionsFor, setRevisionsFor] = useState<string | null>(null)
 
   if (!isOpen || !row) return null
 
@@ -336,6 +349,51 @@ export const TimelineDocumentDetailPopover = ({
                     publishedDate={row.sourceDate}
                     compact={false}
                   />
+                  {(row.bindingForce || row.mandateType || row.reviewStatus) && (
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                      {row.bindingForce && (
+                        <>
+                          <span className="text-muted-foreground">Binding force</span>
+                          <span className="text-foreground">{row.bindingForce}</span>
+                        </>
+                      )}
+                      {row.mandateType && (
+                        <>
+                          <span className="text-muted-foreground">Mandate</span>
+                          <span className="text-foreground">{row.mandateType}</span>
+                        </>
+                      )}
+                      {row.reviewStatus && (
+                        <>
+                          <span className="text-muted-foreground">Review status</span>
+                          <span className="text-foreground">{row.reviewStatus}</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {row.eventId && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setRevisionsFor(row.eventId ?? null)}
+                      className="h-auto px-0 text-xs text-primary hover:underline"
+                    >
+                      Revision history
+                    </Button>
+                  )}
+                  {isOpen && row.eventId && revisionsFor === row.eventId && (
+                    <div className="relative" style={{ zIndex: 10000 }}>
+                      <RevisionDrilldownPanel
+                        domain="timeline"
+                        entityId={row.eventId}
+                        entityLabel={row.title}
+                        revisions={byRecord(revisions, 'timeline', row.eventId)}
+                        onClose={() => setRevisionsFor(null)}
+                        sharePath={`/timeline?event=${encodeURIComponent(row.eventId)}`}
+                      />
+                    </div>
+                  )}
                   {row.peerReviewed && (
                     <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                       <span className="text-muted-foreground">Peer reviewed</span>

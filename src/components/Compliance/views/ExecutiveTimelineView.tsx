@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { tierGroups } from './forYouSelection'
 import { useMemo } from 'react'
 import { ShieldAlert, BookOpen, Calendar, Link2, FileDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import {
-  groupByTier,
-  linkTimelineToFrameworks,
-  type UserProfile,
-} from '../../../utils/applicabilityEngine'
+import { linkTimelineToFrameworks, type UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { ThreatItem, LibraryDocItem, TimelineItem } from '../../applicability/parts/items'
@@ -58,7 +55,7 @@ export function ExecutiveTimelineView({
   const { profile, isEmpty, frameworks, library, threats, timeline, derivedFrameworks } =
     useApplicabilityWithPaths(profileOverride)
 
-  const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
+  const grouped = useMemo(() => tierGroups(frameworks), [frameworks])
   const linkedTimeline = useMemo(
     () => linkTimelineToFrameworks(timeline, frameworks),
     [timeline, frameworks]
