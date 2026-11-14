@@ -141,20 +141,11 @@ describe('protocol matrix: document placement and cell completeness', () => {
 
 describe('protocol matrix: playground testability', () => {
   // "N/A" means the dimension does not apply to the protocol; a tool that cannot
-  // exercise an applicable dimension reads "No". These secondary tools still say
-  // N/A for dimensions their protocol does define. What they can actually test
-  // needs a tool-by-tool review, so each is listed here and nothing new may join.
-  const REVIEW_PENDING = new Set([
-    'tls-1-3/openssl-studio',
-    'x509/openssl-studio',
-    'tpm/firmware-signing',
-  ])
-
+  // exercise an applicable dimension reads "No".
   it('a tool says N/A only for a dimension its protocol also marks N/A', () => {
     const wrong: string[] = []
     for (const row of PROTOCOL_MATRIX) {
       for (const tool of row.playgrounds) {
-        if (REVIEW_PENDING.has(`${row.id}/${tool.toolId}`)) continue
         for (const dim of DIMENSIONS) {
           if (tool.testability[dim] === 'na' && row.dimensions[dim].value !== 'na') {
             wrong.push(`${row.id}/${tool.toolId}.${dim}`)
@@ -165,21 +156,34 @@ describe('protocol matrix: playground testability', () => {
     expect(wrong).toEqual([])
   })
 
-  it('the review list names only tools that still say N/A for an applicable dimension', () => {
-    for (const key of REVIEW_PENDING) {
-      const [rowId, toolId] = key.split('/')
-      const row = byId.get(rowId)!
-      const tool = row.playgrounds.find((t) => t.toolId === toolId)
-      expect(tool, key).toBeDefined()
-      const stillNa = DIMENSIONS.some(
-        (dim) => tool!.testability[dim] === 'na' && row.dimensions[dim].value !== 'na'
-      )
-      expect(stillNa, `${key} no longer needs review`).toBe(true)
-    }
-  })
+  const tool = (rowId: string, toolId: string) =>
+    byId.get(rowId)!.playgrounds.find((t) => t.toolId === toolId)!.testability
 
   it('the PQC TPM Workshop reports no composite-signature support', () => {
-    const tool = byId.get('tpm')!.playgrounds.find((t) => t.toolId === 'tpm-playground')!
-    expect(tool.testability.hybridSig).toBe('none')
+    expect(tool('tpm', 'tpm-playground').hybridSig).toBe('none')
+  })
+
+  it('OpenSSL Studio runs no TLS handshake, so it tests no TLS 1.3 dimension', () => {
+    expect(tool('tls-1-3', 'openssl-studio')).toEqual({
+      pureKem: 'none',
+      hybridKem: 'none',
+      pureSig: 'none',
+      hybridSig: 'none',
+    })
+  })
+
+  it('OpenSSL Studio self-signs ML-DSA / SLH-DSA certificates and nothing else on the X.509 row', () => {
+    expect(tool('x509', 'openssl-studio')).toEqual({
+      pureKem: 'none',
+      hybridKem: 'none',
+      pureSig: 'full',
+      hybridSig: 'none',
+    })
+  })
+
+  it('the calculator and the firmware signer test no TPM or certificate dimension', () => {
+    const none = { pureKem: 'none', hybridKem: 'none', pureSig: 'none', hybridSig: 'none' }
+    expect(tool('x509', 'cert-capacity')).toEqual(none)
+    expect(tool('tpm', 'firmware-signing')).toEqual(none)
   })
 })

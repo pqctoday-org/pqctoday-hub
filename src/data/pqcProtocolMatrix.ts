@@ -937,7 +937,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'openssl-studio',
         toolName: 'OpenSSL Studio',
-        testability: { pureKem: 'na', hybridKem: 'na', pureSig: 'na', hybridSig: 'na' },
+        testability: { pureKem: 'none', hybridKem: 'none', pureSig: 'none', hybridSig: 'none' },
+        pureKemNote:
+          'OpenSSL Studio runs no TLS client or server (its command categories are key, certificate, signing, KEM, KDF and encryption tools); the handshake runs in the TLS 1.3 Simulator.',
       },
     ],
     liveDeployments: [
@@ -1253,7 +1255,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'openssl-studio',
         toolName: 'OpenSSL Studio',
-        testability: { pureKem: 'na', hybridKem: 'na', pureSig: 'na', hybridSig: 'na' },
+        testability: { pureKem: 'none', hybridKem: 'none', pureSig: 'full', hybridSig: 'none' },
+        pureKemNote:
+          'The certificate command only self-signs (req -x509), and an ML-KEM key cannot sign, so no ML-KEM certificate can be issued here.',
+        pureSigNote:
+          'Generates an ML-DSA or SLH-DSA key and self-signs a certificate from it (req -x509); no CA chain is built.',
+        hybridKemNote: 'Stock OpenSSL 3.6.3 registers no composite algorithms.',
+        hybridSigNote: 'Stock OpenSSL 3.6.3 registers no composite algorithms.',
       },
       {
         toolId: 'cert-capacity',
@@ -3056,7 +3064,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'firmware-signing',
         toolName: 'Firmware Signing (ML-DSA-87 UEFI)',
-        testability: { pureKem: 'na', hybridKem: 'na', pureSig: 'na', hybridSig: 'na' },
+        testability: { pureKem: 'none', hybridKem: 'none', pureSig: 'none', hybridSig: 'none' },
+        pureSigNote:
+          'Signs firmware with ML-DSA or SLH-DSA through the in-browser PKCS#11 module; it issues no TPM 2.0 library commands.',
       },
     ],
     liveDeployments: [
