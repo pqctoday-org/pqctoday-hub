@@ -16,11 +16,12 @@
  * because that is what most needs a direct source check before treating a
  * row as settled.
  */
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useMemo } from 'react'
 import { Link2, ShieldAlert, Calendar, BookOpen } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import { groupByTier, TIER_META, type UserProfile } from '../../../utils/applicabilityEngine'
-import { BINDING_GROUP_META, bindingGroupOf } from '../../../utils/bindingSplit'
+import { bindingChipFor, bindingChipMeta } from '../../../utils/bindingSplit'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { LibraryDocItem, TimelineItem } from '../../applicability/parts/items'
@@ -107,7 +108,7 @@ export function GrcApplicabilityView({
             Compliance-CSV changes from the latest two revisions
           </span>
         </header>
-        <ContentUpdatesFeed domain="compliance" limit={10} title="" />
+        <ContentUpdatesFeed domain="compliance" limit={10} title="" defaultCollapsed={false} />
       </section>
 
       {/* ── Frameworks, weakest evidence first ── */}
@@ -144,7 +145,11 @@ export function GrcApplicabilityView({
                       {TIER_META[r.tier].label}
                     </span>
                     <span className="text-[10px] rounded border border-border px-1.5 py-0.5">
-                      {BINDING_GROUP_META[bindingGroupOf(r.item.bindingStatus)].chip}
+                      {
+                        bindingChipMeta(
+                          bindingChipFor(r.item.bindingStatus, r.tier === 'mandatory')
+                        ).chip
+                      }
                     </span>
                     {r.item.confidenceScore !== undefined && (
                       <span
@@ -165,9 +170,17 @@ export function GrcApplicabilityView({
                         source: {r.item.trustedSourceId}
                       </span>
                     )}
-                    {r.item.deadline && (
-                      <span className="text-[10px] text-status-error">{r.item.deadline}</span>
-                    )}
+                    {(() => {
+                      const line = frameworkDateLine(r.item)
+                      if (line.kind === 'none') return null
+                      return (
+                        <span
+                          className={`text-[10px] ${line.kind === 'deadline' ? 'text-status-error' : 'text-muted-foreground'}`}
+                        >
+                          {line.text}
+                        </span>
+                      )
+                    })()}
                   </div>
                   <p className="mt-1 text-[11px] text-muted-foreground">{r.reason}</p>
                   {r.item.bindingBasis && (

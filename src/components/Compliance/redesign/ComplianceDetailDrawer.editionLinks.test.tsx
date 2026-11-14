@@ -192,7 +192,7 @@ describe('a pair with both a replacement link and another link', () => {
 })
 
 describe('ComplianceDetailDrawer with edition links', () => {
-  it('shows the edition link first in "Related & overlapping" and opens it by its stored name', () => {
+  it('shows the edition link first in "Related & overlapping" and names nothing to open when the record is not held', () => {
     const onSelectRelated = vi.fn()
     render(
       <ComplianceDetailDrawer
@@ -210,8 +210,11 @@ describe('ComplianceDetailDrawer with edition links', () => {
     expect(rows).toHaveLength(4)
     expect(rows[0]).toHaveTextContent('Edition Test Newer')
     expect(rows[0]).toHaveTextContent('Replaced by a newer edition')
+    // "Edition Test Newer" is not a record the register holds, so the row names nothing to
+    // open: it is shown inert, and clicking it does nothing rather than opening a guess.
+    expect(rows[0]).toBeDisabled()
     fireEvent.click(rows[0])
-    expect(onSelectRelated).toHaveBeenCalledWith('Edition Test Newer')
+    expect(onSelectRelated).not.toHaveBeenCalled()
   })
 
   it('shows the full wording of an edition link; it is not clipped like the ranked rows', () => {

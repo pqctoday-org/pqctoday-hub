@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
@@ -35,7 +36,7 @@ import type { LibraryItem } from '@/data/libraryData'
 import type { TimelineEvent } from '@/types/timeline'
 import { libraryData } from '@/data/libraryData'
 import { conceptIdForFramework } from '@/data/complianceData'
-import { timelineData } from '@/data/timelineData'
+import { resolveTimelineRef } from '@/utils/timelineResolver'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
@@ -85,17 +86,10 @@ export const FrameworkDetailPopover = ({
     framework.libraryRefs.includes(item.referenceId)
   )
 
-  const flatTimeline: TimelineEvent[] = []
-  for (const country of timelineData) {
-    for (const body of country.bodies) {
-      for (const ev of body.events) flatTimeline.push(ev)
-    }
-  }
-  const linkedTimeline = flatTimeline.filter(
-    (ev) =>
-      framework.timelineRefs.includes(ev.title) ||
-      framework.timelineRefs.includes(ev.sourceUrl ?? '')
-  )
+  // timeline_refs name a country:body lane; the resolver maps each to its events.
+  const linkedTimeline: TimelineEvent[] = [
+    ...new Set(framework.timelineRefs.flatMap((ref) => resolveTimelineRef(ref).events)),
+  ]
 
   const linkedRequirements = framework.libraryRefs.flatMap((ref) => maturityByRefId.get(ref) ?? [])
 
@@ -141,8 +135,10 @@ export const FrameworkDetailPopover = ({
                       PQC · {framework.pqcRequirement}
                     </span>
                   )}
-                  {framework.deadline && (
-                    <span className="text-[10px] text-status-error">{framework.deadline}</span>
+                  {frameworkDateLine(framework).kind !== 'none' && (
+                    <span className="text-[10px] text-status-error">
+                      {frameworkDateLine(framework).text}
+                    </span>
                   )}
                 </div>
                 <h3

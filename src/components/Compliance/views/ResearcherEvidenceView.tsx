@@ -12,6 +12,7 @@
  * and ApplicabilityPanel so the persona switch only changes rendering, not the
  * underlying recommendation set.
  */
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useMemo } from 'react'
 import { Link2, Info, Calendar, BookOpen } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
@@ -88,7 +89,7 @@ export function ResearcherEvidenceView({
             Compliance-CSV changes from the latest two revisions
           </span>
         </header>
-        <ContentUpdatesFeed domain="compliance" limit={10} title="" />
+        <ContentUpdatesFeed domain="compliance" limit={10} title="" defaultCollapsed={false} />
       </section>
 
       {/* ── Frameworks sorted by confidence, inline trust path ── */}
@@ -145,9 +146,17 @@ export function ResearcherEvidenceView({
                         source: {r.item.trustedSourceId}
                       </span>
                     )}
-                    {r.item.deadline && (
-                      <span className="text-[10px] text-status-error">{r.item.deadline}</span>
-                    )}
+                    {(() => {
+                      const line = frameworkDateLine(r.item)
+                      if (line.kind === 'none') return null
+                      return (
+                        <span
+                          className={`text-[10px] ${line.kind === 'deadline' ? 'text-status-error' : 'text-muted-foreground'}`}
+                        >
+                          {line.text}
+                        </span>
+                      )
+                    })()}
                   </div>
                 </div>
                 {/* Inline trust-path sidebar per the researcher spec */}

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { Link } from 'react-router'
 import { ShieldCheck, AlertTriangle, BookOpen, Calendar } from 'lucide-react'
 import type { ComplianceFramework } from '../../../data/complianceData'
@@ -47,8 +48,8 @@ export function FrameworkItem({
           {fw.requiresPQC && !compact && (
             <span className="text-[10px] uppercase tracking-wide text-primary">PQC</span>
           )}
-          {fw.deadline && fw.deadline !== 'Ongoing' && !compact && (
-            <span className="text-[10px] text-muted-foreground">{fw.deadline}</span>
+          {frameworkDateLine(fw).kind !== 'none' && !compact && (
+            <span className="text-[10px] text-muted-foreground">{frameworkDateLine(fw).text}</span>
           )}
         </div>
         {!compact && <p className="text-xs text-muted-foreground line-clamp-1">{fw.description}</p>}

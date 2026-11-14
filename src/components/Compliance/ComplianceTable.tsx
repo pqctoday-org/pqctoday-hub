@@ -31,6 +31,8 @@ import { recordFilterExclusions } from './recordFilters'
 import type { TrustTier } from '@/data/trustScore'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { buildComplianceCsv } from './recordsExport'
+import { csvFilename } from '@/utils/csvExport'
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import {
   applyRecordScope,
   formatIsoDate,
@@ -796,7 +798,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.setAttribute('href', url)
-    link.setAttribute('download', `compliance_data_${new Date().toISOString().split('T')[0]}.csv`)
+    link.setAttribute('download', csvFilename('pqc-compliance-records'))
     link.style.visibility = 'hidden'
     document.body.appendChild(link)
     link.click()
@@ -984,7 +986,11 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               ? complianceFrameworks.find((f) => f.id === frameworkId)
               : undefined
             const deadline = framework?.deadline
-            const showDeadline = deadline && !/^ongoing$/i.test(deadline)
+            const dateLine = framework ? frameworkDateLine(framework) : undefined
+            const showDeadline =
+              dateLine !== undefined &&
+              dateLine.kind !== 'none' &&
+              !/^ongoing$/i.test(deadline ?? '')
             return (
               <Button
                 variant="ghost"
@@ -992,7 +998,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 onClick={() => onCertTypeChange && onCertTypeChange(tab.id)}
                 title={
                   framework
-                    ? `${framework.label} mandate deadline: ${deadline}`
+                    ? dateLine?.kind === 'published'
+                      ? `${framework.label}: ${dateLine.text}`
+                      : `${framework.label} mandate deadline: ${deadline}`
                     : tab.id in TAB_RECORD_TYPE
                       ? recordTypeDescription(TAB_RECORD_TYPE[tab.id])
                       : undefined
@@ -1006,7 +1014,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 <span>{tab.label}</span>
                 {showDeadline && (
                   <span className="text-[10px] font-normal text-muted-foreground leading-tight mt-0.5">
-                    Deadline: {deadline}
+                    {dateLine?.kind === 'published' ? dateLine.text : `Deadline: ${deadline}`}
                   </span>
                 )}
               </Button>

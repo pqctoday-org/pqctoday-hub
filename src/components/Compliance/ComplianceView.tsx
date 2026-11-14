@@ -3,7 +3,7 @@ import { lazy, Suspense, useState, useCallback, useMemo, useEffect, useRef } fro
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorAlert } from '@/components/ui/error-alert'
-import { useSearchParams } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { ComplianceTable } from './ComplianceTable'
 import { type FrameworkSortOption } from './ComplianceLandscape'
 import { useComplianceRefresh } from './services'
@@ -13,7 +13,6 @@ import {
   CalendarClock,
   PackageSearch,
   GlobeLock,
-  Info,
   Workflow,
   ArrowLeft,
   Sparkles,
@@ -48,7 +47,6 @@ import {
   TimelineDocumentDetailPopover,
   type TimelineDocumentRow,
 } from '@/components/Timeline/TimelineDocumentDetailPopover'
-import { FrameworkDetailPopover } from '@/components/Compliance/FrameworkDetailPopover'
 import type { LibraryItem } from '@/data/libraryData'
 import type { ThreatData } from '@/data/threatsData'
 import type { TimelineEvent } from '@/types/timeline'
@@ -58,8 +56,6 @@ import { logComplianceFilter, logComplianceSearch } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { downloadCsv, csvFilename } from '@/utils/csvExport'
-import { buildComplianceCsv } from './recordsExport'
 import { applyRecordScope } from './recordSemantics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
@@ -67,6 +63,7 @@ import {
   allComplianceFrameworks,
   complianceFrameworks,
   complianceMetadata,
+  getFrameworkById,
 } from '@/data/complianceData'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import {
@@ -170,14 +167,10 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  * output and only the rendering differs.
  */
 function ForYouSection({
-  framework,
   onOpenFramework,
-  onCloseFramework,
 }: {
-  /** The `?framework=` framework — the popover IS the URL param (see below). */
-  framework: ComplianceFramework | null
+  /** Opens the full side panel for a framework (the same panel every other tab uses). */
   onOpenFramework: (fw: ComplianceFramework) => void
-  onCloseFramework: () => void
 }) {
   const persona = usePersonaStore((s) => s.selectedPersona)
   const selectedIndustries = usePersonaStore((s) => s.selectedIndustries)
@@ -212,10 +205,10 @@ function ForYouSection({
   const [selectedLibrary, setSelectedLibrary] = useState<LibraryItem | null>(null)
   const [selectedThreat, setSelectedThreat] = useState<ThreatData | null>(null)
   const [selectedTimeline, setSelectedTimeline] = useState<TimelineDocumentRow | null>(null)
-  // The framework pop-up is `?framework=` (CHANGED 2026-09-29, deep-link PR 2):
+  // The framework side panel is `?framework=` (CHANGED 2026-09-29, deep-link PR 2):
   // opening pushes it, closing replaces it away, so a For You framework view
   // is shareable and Back closes it. The library / timeline / threat pop-ups
-  // stay local; the framework pop-up links each cross-reference to its own
+  // stay local; the framework panel links each cross-reference to its own
   // page's param instead (Library `?ref=`, Timeline `?event=`).
   const callbacks = {
     onSelectLibrary: setSelectedLibrary,
@@ -259,19 +252,6 @@ function ForYouSection({
         isOpen={!!selectedTimeline}
         onClose={() => setSelectedTimeline(null)}
         row={selectedTimeline}
-      />
-      <FrameworkDetailPopover
-        isOpen={!!framework}
-        onClose={onCloseFramework}
-        framework={framework}
-        onSelectLibrary={(doc) => {
-          onCloseFramework()
-          setSelectedLibrary(doc)
-        }}
-        onSelectTimeline={(ev) => {
-          onCloseFramework()
-          setSelectedTimeline(timelineEventToRow(ev))
-        }}
       />
     </>
   )
@@ -330,7 +310,7 @@ export const ComplianceView = ({
     return () => clearTimeout(timer)
   }, [myFrameworks.length, addHistoryEvent])
 
-  const [exportError, setExportError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   // ── URL-synced filter state ──────────────────────────────────────────
 
@@ -404,22 +384,6 @@ export const ComplianceView = ({
   // default, or everything incl. historical / archived / revoked. The trend
   // chart and every export follow the same scope as the table.
   const scopedRecords = useMemo(() => applyRecordScope(data, recScope), [data, recScope])
-
-  const handleExportCsv = useCallback(() => {
-    try {
-      const csv = buildComplianceCsv(data, {
-        meta,
-        scope: recScope,
-        newestRecordDate: lastUpdated,
-      })
-      downloadCsv(csv, csvFilename('pqc-compliance'))
-      setExportError(null)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error generating CSV export.'
-      console.error('Compliance CSV export failed:', err)
-      setExportError(message)
-    }
-  }, [data, meta, recScope, lastUpdated])
 
   // Active pillar — derived from the landscape tab, kept in local state so the
   // pipeline can drive it independently.
@@ -748,12 +712,11 @@ export const ComplianceView = ({
   const activeStableTab = stableTabFor(activeTab)
 
   // Register this page's actions with the global top bar (page-action-strip
-  // rollout, 2026-08-01) — info/export/endorse/flag render there now, not as
-  // a row on the page itself. Mirrors TimelineView.tsx's pattern. Gated on
-  // `!simEmbed`, same as the PageHeader render below (this page's own
-  // separate in-page <ForYouSection onExportCsv={handleExportCsv} /> export
-  // button, further down, is untouched — handleExportCsv is still a real,
-  // shared function, just no longer ALSO wired to PageHeader's onExport).
+  // rollout, 2026-08-01) — info/endorse/flag render there now, not as a row on
+  // the page itself. Mirrors TimelineView.tsx's pattern. Gated on `!simEmbed`.
+  // No export here: the top bar used to export every certificate record on every
+  // tab, which was not what the tab showed. Each tab exports its own content (the
+  // Product Records table exports its filtered rows, under the tab's name).
   useEffect(() => {
     if (simEmbed) return
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()
@@ -762,7 +725,6 @@ export const ComplianceView = ({
       dataSource: complianceMetadata
         ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
         : undefined,
-      onExport: handleExportCsv,
       endorseUrl: buildEndorsementUrl({
         category: 'compliance-endorsement',
         title: 'Endorse: Standardization, Certification & Compliance',
@@ -787,7 +749,7 @@ export const ComplianceView = ({
       flagResourceType: 'Compliance',
     })
     return () => clearPageActions()
-  }, [simEmbed, handleExportCsv])
+  }, [simEmbed])
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
@@ -850,29 +812,6 @@ export const ComplianceView = ({
           bar cannot supply. `?tier=` deep links still resolve, because
           useTrustTierFilter reads the URL; what is gone is the second on-screen
           place to change it. The other four pages that use it are untouched. */}
-
-      {exportError && (
-        <div
-          role="alert"
-          className="flex items-start gap-3 rounded-lg border border-status-error/40 bg-status-error/5 p-3 text-sm"
-        >
-          <Info size={16} className="mt-0.5 shrink-0 text-status-error" />
-          <div className="flex-1">
-            <p className="font-medium text-status-error">CSV export failed</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{exportError}</p>
-          </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setExportError(null)}
-            className="h-auto px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
-            aria-label="Dismiss export error"
-          >
-            Dismiss
-          </Button>
-        </div>
-      )}
 
       {/* Jump-back banner after a CSWP.39 cross-walk navigation. */}
       {cswp39JumpActive && activeTab !== 'cswp39' && (
@@ -1115,13 +1054,7 @@ export const ComplianceView = ({
               title="For You"
               description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region — tuned by your role (top bar) and your assessment profile."
             />
-            <ForYouSection
-              framework={drawerFramework}
-              onOpenFramework={(fw) => {
-                if (fw.id !== frameworkParam) openFrameworkParam(fw.id)
-              }}
-              onCloseFramework={clearFrameworkParam}
-            />
+            <ForYouSection onOpenFramework={openDrawer} />
           </div>
         )}
 
@@ -1142,24 +1075,21 @@ export const ComplianceView = ({
         )}
       </div>
 
-      {/* Drill-down traceability drawer (Landscape rows). */}
-      {/* For You shows `?framework=` in its own pop-up (above), not the drawer. */}
+      {/* Drill-down traceability drawer: the framework's side panel, on every tab (For You included). */}
       <ComplianceDetailDrawer
-        framework={activeStableTab === 'foryou' ? null : drawerFramework}
+        framework={drawerFramework}
         pillar={drawerPillar}
         onClose={clearFrameworkParam}
         onOpenCswp39={handleNavigateToCswp39}
         onTrack={(fw) => toggleMyFramework(fw.id)}
         isTracked={drawerFramework ? myFrameworks.includes(drawerFramework.id) : false}
-        onSelectRelated={(name) => {
-          const lower = name.toLowerCase()
-          const match = complianceFrameworks.find(
-            (f) =>
-              f.label.toLowerCase() === lower ||
-              f.label.toLowerCase().includes(lower) ||
-              lower.includes(f.label.toLowerCase())
-          )
-          if (match) openDrawer(match)
+        onSelectRelated={(target) => {
+          if (target.kind === 'framework') {
+            const match = getFrameworkById(target.id)
+            if (match) openDrawer(match)
+          } else {
+            navigate(`/library?ref=${encodeURIComponent(target.ref)}`)
+          }
         }}
       />
     </div>

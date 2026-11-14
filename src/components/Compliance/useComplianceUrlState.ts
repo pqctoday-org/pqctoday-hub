@@ -543,20 +543,23 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
             next.delete(key)
           }
 
+          // The reader's place (organisation, industry, region, country) applies to
+          // every tab, so it stays in the URL on every tab, and a link or Back restores it.
+          const placeOrg = overrides.org ?? lsOrg
+          const placeInd = overrides.ind ?? lsIndustry
+          const placeRegion = overrides.region ?? lsRegion
+          const placeCountry = overrides.country ?? lsCountry
+          if (placeOrg !== 'All') next.set('org', placeOrg)
+          if (placeInd !== 'All') next.set('ind', placeInd)
+          if (placeRegion !== 'All') next.set('region', placeRegion)
+          if (placeCountry !== 'All') next.set('country', placeCountry)
+
           if (isLandscapeTab(tab) || tab === 'foryou') {
-            const org = overrides.org ?? lsOrg
-            const ind = overrides.ind ?? lsIndustry
-            const region = overrides.region ?? lsRegion
-            const country = overrides.country ?? lsCountry
             const phase = overrides.phase ?? lsDeadline
             const q = overrides.lq ?? lsSearch
             const sort = overrides.lsort ?? lsSort
             const view = overrides.view ?? lsView
 
-            if (org !== 'All') next.set('org', org)
-            if (ind !== 'All') next.set('ind', ind)
-            if (region !== 'All') next.set('region', region)
-            if (country !== 'All') next.set('country', country)
             if (phase !== 'All') next.set('phase', phase)
             if (q) next.set('lq', q)
             if (sort !== 'deadline') next.set('lsort', sort)

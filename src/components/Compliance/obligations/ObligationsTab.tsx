@@ -15,6 +15,7 @@
  *    sector-matched global standards against 12 mandatory; expanded by default
  *    it would recreate the catalogue-browser problem this tab replaces.
  */
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, ExternalLink, Info, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -472,7 +473,9 @@ function ObligationListRow({
 
       {/* Timeline & key milestones — verbatim text, then structured dates. */}
       <div className="min-w-0 text-[11.5px]">
-        <p className="text-foreground">{fw.deadline}</p>
+        {frameworkDateLine(fw).kind !== 'none' && (
+          <p className="text-foreground">{frameworkDateLine(fw).text}</p>
+        )}
         {shown.map((m) => (
           <p key={`${m.year}-${m.label}`} className="mt-0.5 text-muted-foreground">
             <span className="font-mono text-[10.5px] text-foreground">{m.year}</span> {m.label}

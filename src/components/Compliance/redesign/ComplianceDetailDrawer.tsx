@@ -29,7 +29,12 @@ import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { getTrustedSource } from '@/data/trustedSourcesData'
 import { getAuthoritativeSource } from '@/data/authoritativeSourcesData'
-import { buildDrawerDetail, NO_STRUCTURED_DATE_LABEL, type PillarId } from './pillarModel'
+import {
+  buildDrawerDetail,
+  NO_STRUCTURED_DATE_LABEL,
+  type CrosswalkTarget,
+  type PillarId,
+} from './pillarModel'
 import { pillClasses, TONES } from './tones'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
@@ -80,7 +85,7 @@ interface ComplianceDetailDrawerProps {
   onTrack?: (framework: ComplianceFramework) => void
   isTracked?: boolean
   /** Related & overlapping row click — navigate to another framework drawer by display name. */
-  onSelectRelated?: (name: string) => void
+  onSelectRelated?: (target: CrosswalkTarget) => void
 }
 
 /**
@@ -441,41 +446,52 @@ export function ComplianceDetailDrawer({
                   Related &amp; overlapping
                 </h3>
                 <div className="space-y-1.5">
-                  {d.crosswalk.map((c, i) => (
-                    <Button
-                      key={i}
-                      type="button"
-                      variant="ghost"
-                      onClick={() => onSelectRelated?.(c.name)}
-                      className={`h-auto w-full justify-start gap-2.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-left transition-colors${onSelectRelated ? ' cursor-pointer hover:border-primary/40 hover:bg-muted/50' : ' cursor-default'}`}
-                    >
-                      <span
-                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${TONES[c.tone].solidBg}`}
-                      />
-                      <span
-                        className="flex min-w-0 flex-1 flex-col items-start gap-0.5"
-                        title={c.label !== c.name ? c.name : undefined}
+                  {d.crosswalk.map((c, i) => {
+                    // A row opens only the exact record it names; one that names no record we
+                    // hold is shown inert, with the reason, rather than as a button that does nothing.
+                    const clickable = !!c.target && !!onSelectRelated
+                    return (
+                      <Button
+                        key={i}
+                        type="button"
+                        variant="ghost"
+                        disabled={!clickable}
+                        title={
+                          c.target ? undefined : 'No record in this library to open for this entry'
+                        }
+                        onClick={() => c.target && onSelectRelated?.(c.target)}
+                        className={`h-auto w-full justify-start gap-2.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-left transition-colors${clickable ? ' cursor-pointer hover:border-primary/40 hover:bg-muted/50' : ' cursor-default opacity-70'}`}
                       >
-                        <span className="max-w-full whitespace-normal break-words text-xs font-semibold text-foreground">
-                          {c.label}
-                        </span>
                         <span
-                          className={
-                            c.pinned
-                              ? 'max-w-full whitespace-normal break-words text-[11px] font-medium text-foreground'
-                              : 'max-w-full truncate text-[10.5px] text-muted-foreground'
-                          }
-                          data-testid={c.pinned ? 'drawer-edition-link' : undefined}
+                          className={`h-1.5 w-1.5 shrink-0 rounded-full ${TONES[c.tone].solidBg}`}
+                        />
+                        <span
+                          className="flex min-w-0 flex-1 flex-col items-start gap-0.5"
+                          title={c.label !== c.name ? c.name : undefined}
                         >
-                          {c.note}
+                          <span className="max-w-full whitespace-normal break-words text-xs font-semibold text-foreground">
+                            {c.label}
+                          </span>
+                          <span
+                            className={
+                              c.pinned
+                                ? 'max-w-full whitespace-normal break-words text-[11px] font-medium text-foreground'
+                                : 'max-w-full truncate text-[10.5px] text-muted-foreground'
+                            }
+                            data-testid={c.pinned ? 'drawer-edition-link' : undefined}
+                          >
+                            {c.note}
+                          </span>
                         </span>
-                      </span>
-                      <ChevronRight
-                        size={13}
-                        className={`shrink-0 transition-colors${onSelectRelated ? ' text-primary/60' : ' text-muted-foreground'}`}
-                      />
-                    </Button>
-                  ))}
+                        {clickable && (
+                          <ChevronRight
+                            size={13}
+                            className="shrink-0 text-primary/60 transition-colors"
+                          />
+                        )}
+                      </Button>
+                    )
+                  })}
                 </div>
               </section>
             )}
