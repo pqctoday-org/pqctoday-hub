@@ -4,6 +4,14 @@ import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
 import { parseResearchTopics } from './researchTopics'
 import { resolveLifecycleLabel, type LifecycleLabel } from '../utils/libraryLifecycle'
+import {
+  citableReferenceIds,
+  citationIndexFromRows,
+  resolveCitation,
+  type CitationIndex,
+  type CitationRow,
+  type CitationVerdict,
+} from './libraryCitation'
 
 /**
  * A prior (deprecated) revision of a document, attached to its surviving active
@@ -623,6 +631,10 @@ let currentItems: LibraryItem[] = []
 /** Deprecated/obsolete reference_id → its CSV `superseded_by`, so a stale deep
  *  link can be forwarded to the document that replaced it (findLibrarySuccessor). */
 let supersededByRef = new Map<string, string>()
+/** Every row's id, status and successor from the newest CSV: the input to the citation rule
+ *  (libraryCitation.ts). Active and retired rows both; checks ask via the accessors. */
+let citationIndex: CitationIndex = new Map()
+let citableIds: ReadonlySet<string> = new Set()
 let previousItems: LibraryItem[] = []
 let parsedMetadata: { filename: string; lastUpdate: Date } | null = null
 
@@ -645,6 +657,10 @@ let libraryCorpusHealth: LibraryCorpusHealth = {
 
 if (import.meta.env.VITE_MOCK_DATA === 'true') {
   currentItems = parseLibraryCSV(MOCK_LIBRARY_CSV_CONTENT)
+  citationIndex = citationIndexFromRows(
+    currentItems.map((item) => ({ referenceId: item.referenceId, status: 'active' }))
+  )
+  citableIds = citableReferenceIds(citationIndex)
   parsedMetadata = { filename: 'MOCK_LIBRARY_DATA', lastUpdate: new Date() }
   libraryCorpusHealth = {
     active: currentItems.length,
@@ -692,6 +708,20 @@ if (import.meta.env.VITE_MOCK_DATA === 'true') {
   // Keep currentItems FLAT + enriched; buildTree runs last (in the export below).
   currentItems = attachSuccessionLinks(attachPriorRevisions(result.data, priorResult.data))
   supersededByRef = new Map(priorResult.data.map((p) => [p.referenceId, p.supersededBy]))
+  const citationResult = loadLatestCSV<RawLibraryRow, CitationRow>(
+    modules,
+    /library_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    (row) =>
+      row.reference_id?.trim()
+        ? {
+            referenceId: row.reference_id,
+            status: row.status ?? 'active',
+            supersededBy: row.superseded_by ?? '',
+          }
+        : null
+  )
+  citationIndex = citationIndexFromRows(citationResult.data)
+  citableIds = citableReferenceIds(citationIndex)
   previousItems = result.previousData ? result.previousData : []
   parsedMetadata = result.metadata
   libraryCorpusHealth = {
@@ -885,6 +915,25 @@ let _liveItemsById: Map<string, LibraryItem> | null = null
 function liveItemsById(): Map<string, LibraryItem> {
   if (!_liveItemsById) _liveItemsById = new Map(libraryData.map((item) => [item.referenceId, item]))
   return _liveItemsById
+}
+
+/** The verdict for citing `ref` against the newest library CSV (accepted when a retired id's
+ *  superseded_by chain ends at an active row; see libraryCitation.ts). */
+export function resolveLibraryCitation(ref: string): CitationVerdict {
+  return resolveCitation(ref, citationIndex)
+}
+
+/** Every reference_id a citation may name: the active rows, plus the retired rows whose chain
+ *  ends at an active row. Checks that asked "is this an active library row" use this set. */
+export function citableLibraryReferenceIds(): ReadonlySet<string> {
+  return citableIds
+}
+
+/** The active item a citation of `ref` lands on (the row itself, or a retired row's chain end),
+ *  or undefined when the citation is refused. */
+export function resolveCitedLibraryItem(ref: string): LibraryItem | undefined {
+  const verdict = resolveLibraryCitation(ref)
+  return verdict.ok ? liveItemsById().get(verdict.activeId) : undefined
 }
 
 export function findLibrarySuccessor(ref: string): LibraryItem | undefined {

@@ -27,7 +27,7 @@ import {
 import { CRYPTO_MECHANISMS, getMechanismFamily, isKnownMechanism } from './cryptoMechanisms'
 import { ALGORITHM_EXPLANATIONS } from './algorithmExplanations'
 import { loadIndustryLandscape } from './industryLandscapeData'
-import { libraryData } from './libraryData'
+import { resolveCitedLibraryItem } from './libraryData'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 import algorithmsGlossary from './glossary/algorithms.json'
 import conceptsGlossary from './glossary/concepts.json'
@@ -40,8 +40,6 @@ const { useCases, standards } = loadIndustryLandscape()
 
 /** Symmetric families: valid on the PQC side because they stay and are only re-sized. */
 const SYMMETRIC_FAMILIES = new Set(['AES', 'SHA', 'SNOW3G', 'ZUC', 'ChaCha20', 'Ascon', '3DES'])
-
-const libraryById = new Map(libraryData.map((r) => [r.referenceId, r]))
 
 const glossaryTerms = new Set(
   [
@@ -276,15 +274,16 @@ describe('construction layer driftguards', () => {
     expect(unused).toEqual([])
   })
 
-  it('K8: every proof resolves to an active Library row that is not a paid document', () => {
-    // libraryData holds ACTIVE rows only and marks paid ones. The stricter
-    // rule (access_type classified, and never registration-required or
+  it('K8: every proof resolves to a citable Library row that is not a paid document', () => {
+    // A proof names an active row, or a retired row whose superseded_by chain ends at an
+    // active row; the row it is checked against is the one the reader lands on.
+    // The stricter rule (access_type classified, and never registration-required or
     // blocked) needs the raw CSV and is checked by the private validator.
     const bad: string[] = []
     for (const c of CRYPTO_CONSTRUCTIONS)
       for (const ref of new Set(allProofRefs(c))) {
-        const row = libraryById.get(ref)
-        if (!row) bad.push(`${c.id}: ${ref} is not an active Library row`)
+        const row = resolveCitedLibraryItem(ref)
+        if (!row) bad.push(`${c.id}: ${ref} is not a citable Library row`)
         else if (row.accessType === 'paid') bad.push(`${c.id}: ${ref} is paid`)
       }
     expect(bad).toEqual([])
