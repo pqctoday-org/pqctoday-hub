@@ -159,7 +159,7 @@ interface RawTimelineRow {
 // (single source of truth, no CSV churn). Rubric weights:
 //   Source-URL quality   30  (authoritative 30 / needs-review 15 / else 0)
 //   Peer review + vetting 25 (peer yes 20 / partial 10 / no 0, + 5 if vetted)
-//   Source recency        20 (≤12 mo 20 / ≤36 mo 10 / older|missing 0; YYYY-MM counts from the 1st)
+//   Source recency        20 (≤12 mo 20 / ≤36 mo 10 / older|missing 0; YYYY-MM from the 1st, YYYY from 1 Jan)
 //   Cached local evidence 15 (local_file present 15 / else 0)
 //   Date specificity      10 (point event 10 / dated range 5 / else 0)
 //
@@ -189,10 +189,16 @@ export function computeTimelineConfidence(
 
   // Source recency (20) — relative to the CSV's own snapshot date
   const sd = (row.SourceDate || '').trim()
-  // A source that names only a month ("2025-03") is accepted precision: for age it counts from
-  // the first of that month. The cell itself is never rewritten with a day.
+  // A source that names only a month ("2025-03") or only a year ("2025") is accepted
+  // precision: for age it counts from the first of that month, or from 1 January — the
+  // oldest reading, so the record never looks fresher than it is (owner decision
+  // 2026-11-14). The cell itself is never rewritten with a day.
   const parsed =
-    /^\d{4}-\d{2}-\d{2}$/.test(sd) || /^\d{4}-(0[1-9]|1[0-2])$/.test(sd) ? new Date(sd) : null
+    /^\d{4}-\d{2}-\d{2}$/.test(sd) || /^\d{4}-(0[1-9]|1[0-2])$/.test(sd)
+      ? new Date(sd)
+      : /^\d{4}$/.test(sd)
+        ? new Date(`${sd}-01-01`)
+        : null
   if (parsed && !Number.isNaN(parsed.getTime())) {
     const months = (referenceDate.getTime() - parsed.getTime()) / (1000 * 60 * 60 * 24 * 30.44)
     if (months >= 0 && months <= 12) score += 20
