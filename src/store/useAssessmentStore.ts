@@ -10,6 +10,7 @@ import {
   type AssessmentResultState,
   type AssessmentSnapshot,
 } from './useAssessmentResultStore'
+import { computeAssessment } from '../hooks/assessment/orchestrator'
 
 export type { AssessmentMode, AssessmentStatus, AssessmentSnapshot }
 
@@ -17,6 +18,31 @@ export interface AssessmentState
   extends Omit<AssessmentFormState, 'setAssessmentStatus'>, AssessmentResultState {
   markComplete: () => void
   reset: () => void
+}
+
+/**
+ * Finishing the wizard: mark the form complete and compute THIS run's result right away,
+ * so the confirmation screen (and anything else reading `lastResult`) shows the run that
+ * just finished rather than nothing (first run) or the previous run (a repeat). The
+ * report recomputes from the same answers when it opens.
+ */
+function completeAssessment() {
+  const form = useAssessmentFormStore.getState()
+  const result = useAssessmentResultStore.getState()
+  form.setAssessmentStatus('complete')
+  const input = form.getInput()
+  let fresh: ReturnType<typeof computeAssessment> | null = null
+  if (input) {
+    try {
+      fresh = computeAssessment(input)
+    } catch (err) {
+      console.error('Assessment could not be computed at completion:', err)
+    }
+  }
+  result.markComplete(
+    result.lastResult,
+    fresh ? { result: fresh, inputKey: JSON.stringify(input) } : undefined
+  )
 }
 
 /**
@@ -34,10 +60,7 @@ export const useAssessmentStore = Object.assign(
       ...result,
 
       // Override complex actions to orchestrate across stores
-      markComplete: () => {
-        form.setAssessmentStatus('complete')
-        result.markComplete(result.lastResult)
-      },
+      markComplete: completeAssessment,
       reset: () => {
         form.reset()
         result.reset()
@@ -63,10 +86,7 @@ export const useAssessmentStore = Object.assign(
       return {
         ...form,
         ...result,
-        markComplete: () => {
-          form.setAssessmentStatus('complete')
-          result.markComplete(result.lastResult)
-        },
+        markComplete: completeAssessment,
         reset: () => {
           form.reset()
           result.reset()
