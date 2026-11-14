@@ -181,6 +181,7 @@ export const COMPLIANCE_CSV_COLUMNS: CsvColumnConfig<ComplianceRecord>[] = [
 ]
 
 export const LEADERS_CSV_COLUMNS: CsvColumnConfig<Leader>[] = [
+  { header: 'Leader ID', accessor: (i) => i.leaderId },
   { header: 'Name', accessor: (i) => i.name },
   { header: 'Title', accessor: (i) => i.title },
   { header: 'Country', accessor: (i) => i.country },
@@ -190,4 +191,14 @@ export const LEADERS_CSV_COLUMNS: CsvColumnConfig<Leader>[] = [
   { header: 'Bio', accessor: (i) => i.bio },
   { header: 'Website', accessor: (i) => i.websiteUrl },
   { header: 'LinkedIn', accessor: (i) => i.linkedinUrl },
+  {
+    header: 'Profile Tier',
+    accessor: (i) => (i.sourceKind === 'auto-imported' ? 'Document contributor' : 'Curated'),
+  },
+  { header: 'Profile Sources Checked', accessor: (i) => i.verifiedDate },
+  { header: 'Cited Library Refs', accessor: (i) => i.keyResourceRefs?.join('; ') },
+  { header: 'External Sources', accessor: (i) => i.keyResourceUrl?.join('; ') },
+  { header: 'Patent Refs', accessor: (i) => i.patentRefs?.join('; ') },
+  { header: 'Migrate Catalog Refs', accessor: (i) => i.migrateCatalogRefs?.join('; ') },
+  { header: 'Institutions in Source Metadata', accessor: (i) => i.vettingBody?.join('; ') },
 ]

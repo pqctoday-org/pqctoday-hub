@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useCallback, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router'
-import { ShieldCheck, Building2, ExternalLink, X } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router'
+import { ShieldCheck, Building2, ExternalLink, X, Award, FolderGit2, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { leadersData, deprecatedLeaderSuccessors, type Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
@@ -13,8 +13,17 @@ import {
   filterLeadersByParams,
   leaderForwardedMessage,
   LEADERS_REGION_LABELS,
+  leaderPatentsHref,
   resolveLeaderParam,
 } from '@/components/Leaders/leaderDeepLink'
+import {
+  LEADER_PROVENANCE_SENTENCE,
+  LEADER_REMOVAL_REQUEST_URL,
+  catalogProductsHeading,
+  leaderTimelineCountry,
+  productLabelFromId,
+} from '@/components/Leaders/leadersConstants'
+import { LeaderKeyResources } from '@/components/common/LeaderKeyResources'
 
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
@@ -52,9 +61,9 @@ const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string
  * Real corrections against the README's own §21 text and the mockup,
  * verified against live code before writing any UI:
  * - The mockup's subtitle sentence doesn't exist as on-screen copy — the
- *   real sentence (PageHeader description + LeaderConsentModal.tsx verbatim)
- *   is used instead: "People contributing to the advances of post-quantum
- *   cryptography. Community members are listed only with written consent."
+ *   page's own description is used, plus how profiles are compiled
+ *   (LEADER_PROVENANCE_SENTENCE; owner decision 2026-11-14 replaced the old
+ *   "listed only with written consent", which 109 auto-imported rows contradict).
  * - "Sort defaults to relevance to what you were reading" describes a
  *   mechanism that doesn't exist anywhere in the codebase (no reading-
  *   history/current-document tracking). The real, closest mechanism —
@@ -159,8 +168,17 @@ export function MobileCommunityView() {
 
       <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
         Evidence-linked profiles from post-quantum research, standards, policy, and implementation
-        sources. Inclusion is not an endorsement or ranking. Community members are listed{' '}
-        <span className="font-semibold text-foreground">only with written consent</span>.
+        sources. Inclusion is not an endorsement or ranking. {LEADER_PROVENANCE_SENTENCE} Anyone
+        listed can{' '}
+        <a
+          href={LEADER_REMOVAL_REQUEST_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-primary underline underline-offset-2"
+        >
+          ask for a correction or removal
+        </a>
+        .
       </p>
 
       {notFound && (
@@ -317,7 +335,7 @@ export function MobileCommunityView() {
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
         Sort options, the {leadersData.length - curated.length} document-contributor stubs, and the
-        consent/removal request flow are on a laptop.
+        form to join the list are on a laptop.
       </p>
 
       <MobileSheet
@@ -389,43 +407,44 @@ export function MobileCommunityView() {
                 )}
               </div>
             )}
-            {selected.keyResourceRefs && selected.keyResourceRefs.length > 0 && (
+            {selected.patentRefs && selected.patentRefs.length > 0 && (
+              <Link
+                to={leaderPatentsHref(selected.patentRefs)}
+                className="flex items-center gap-1.5 border-t border-border pt-3 text-[11.5px] font-semibold text-primary"
+              >
+                <Award size={12} aria-hidden="true" />
+                View {selected.patentRefs.length} patent
+                {selected.patentRefs.length === 1 ? '' : 's'}
+              </Link>
+            )}
+            {selected.migrateCatalogRefs && selected.migrateCatalogRefs.length > 0 && (
               <div className="border-t border-border pt-3">
-                <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                  Cite:
-                </span>
-                {/* keyResourceRefs[i] pairs positionally with keyResourceUrl[i]
-                    (leadersData.ts's own documented convention) — guard the
-                    index rather than assume the two arrays are the same
-                    length, then link only where a real URL exists at that
-                    position. Was dropped from this sheet entirely (2026-08-24
-                    audit R4.2): the card shows these chips, but tapping
-                    through to the detail sheet lost them — "the point of the
-                    page" (a claim with a name behind it) had no reachable
-                    reference. */}
-                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                  {selected.keyResourceRefs.map((ref, i) => {
-                    const url = selected.keyResourceUrl?.[i]
-                    const chipClass =
-                      'rounded border border-primary/25 bg-primary/5 px-1.5 py-px font-mono text-[10px] text-primary'
-                    return url ? (
-                      <a
-                        key={ref}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(chipClass, 'underline decoration-dotted underline-offset-2')}
-                      >
-                        {ref}
-                      </a>
-                    ) : (
-                      <span key={ref} className={chipClass}>
-                        {ref}
-                      </span>
-                    )
-                  })}
+                <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                  {catalogProductsHeading(selected.migrateCatalogRefs)}
+                </p>
+                <div className="mt-1.5 flex flex-col gap-1">
+                  {selected.migrateCatalogRefs.map((productId) => (
+                    <Link
+                      key={productId}
+                      to={`/migrate?product=${encodeURIComponent(productId)}&tab=replace`}
+                      className="flex items-center gap-1.5 text-[11.5px] font-semibold text-primary"
+                    >
+                      <FolderGit2 size={12} className="shrink-0" aria-hidden="true" />
+                      {productLabelFromId(productId)}
+                    </Link>
+                  ))}
                 </div>
               </div>
+            )}
+            <LeaderKeyResources leader={selected} size="xs" />
+            {leaderTimelineCountry(selected.country) && (
+              <Link
+                to={`/timeline?country=${encodeURIComponent(leaderTimelineCountry(selected.country) ?? '')}`}
+                className="flex items-center gap-1.5 text-[11.5px] font-semibold text-primary"
+              >
+                <Clock size={12} aria-hidden="true" />
+                Events from {leaderTimelineCountry(selected.country)}
+              </Link>
             )}
             {selected.vettingBody && selected.vettingBody.length > 0 && (
               <div className="border-t border-border pt-3">

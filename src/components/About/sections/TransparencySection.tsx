@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  LEADER_COMMUNITY_PROVENANCE,
+  LEADER_REMOVAL_REQUEST_URL,
+} from '@/components/Leaders/leadersConstants'
 import { motion } from 'framer-motion'
 import { MessageSquare, ExternalLink, Construction } from 'lucide-react'
 
@@ -62,8 +66,16 @@ export function TransparencySection() {
           <li className="flex items-start gap-2.5">
             <span className="text-primary mt-1 shrink-0">&#9679;</span>
             <span>
-              Industry leaders featured on this platform are included only with their{' '}
-              <strong className="text-foreground">written consent</strong>
+              {LEADER_COMMUNITY_PROVENANCE} Anyone listed can{' '}
+              <a
+                href={LEADER_REMOVAL_REQUEST_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline underline-offset-2"
+              >
+                ask for a correction or removal
+              </a>
+              .
             </span>
           </li>
         </ul>
