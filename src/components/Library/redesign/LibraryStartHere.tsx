@@ -68,7 +68,7 @@ export function LibraryStartHere({ persona, onOpen }: LibraryStartHereProps) {
               {pick.blurb && (
                 <span className="line-clamp-3 text-[11px] leading-relaxed text-muted-foreground">
                   <span className="font-semibold text-foreground">
-                    {pick.derived ? 'Most cited in your focus areas: ' : 'Why start here: '}
+                    {pick.derived ? 'Most referenced in this catalogue: ' : 'Why start here: '}
                   </span>
                   {pick.blurb}
                 </span>

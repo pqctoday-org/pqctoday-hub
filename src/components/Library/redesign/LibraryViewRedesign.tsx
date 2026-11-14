@@ -413,13 +413,17 @@ export function LibraryViewRedesign({
     const item = resolved.item
     const supersededNote = supersededNoteRef.current
     supersededNoteRef.current = null
+    // A ?topic= subject being moved to ?q= in this same render (effect above):
+    // judge and write against the moved params so the two URL writes agree.
+    const moved = topicParamAsSearch(params)
+    const baseParams = moved ?? params
     const widening = libraryWideningFor(item, {
       activePurpose,
       activeCategory,
       selectedPersona,
       prefsOff,
       activeOrg,
-      filterText,
+      filterText: moved ? (moved.get('q') ?? '') : filterText,
       geoFilter,
       sectorFilter,
       tierFilter,
@@ -430,12 +434,12 @@ export function LibraryViewRedesign({
       certRelevantOnly,
       certRelevantIdSet,
       lifecycleBucket,
-      topicFilter,
+      topicFilter: moved ? 'All' : topicFilter,
       semanticIdSet,
       newOnly,
     })
     if (widening) {
-      const next = new URLSearchParams(params)
+      const next = new URLSearchParams(baseParams)
       for (const key of widening.drop) next.delete(key)
       if (widening.prefsOff) next.set('prefs', 'off')
       setParams(next, { replace: true })
@@ -443,7 +447,7 @@ export function LibraryViewRedesign({
       setDeepLinkNotice({
         kind: 'widened',
         message: supersededNote ? `${supersededNote} ${widened}` : widened,
-        undoParams: params.toString(),
+        undoParams: baseParams.toString(),
       })
     } else if (supersededNote) {
       setDeepLinkNotice({ kind: 'moved', message: `${supersededNote} Showing it instead.` })

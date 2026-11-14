@@ -20,7 +20,7 @@ import {
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PERSONA_LIBRARY_CATEGORIES } from '@/data/personaConfig'
 import { matchesGeoFilter } from '@/components/common/GeoFilter'
-import { canonicalRegionCodes } from './libraryRegions'
+import { canonicalRegionCode, canonicalRegionCodes } from './libraryRegions'
 import { matchesSectorFilter } from '@/components/common/SectorFilter'
 import { matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
 import { matchesAlgorithmFamilyFilter } from '@/components/common/AlgorithmFamilyFilter'
@@ -407,7 +407,9 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
       .map((s) => s.trim())
       .filter(Boolean)
     const regionValues = [...new Set([...rawRegions, ...canonicalRegionCodes(item.regionScope)])]
-    if (!matchesGeoFilter(geoFilter, regionValues)) return false
+    // Old shared links can carry a name (`geo=United States`); match it as its code.
+    if (!matchesGeoFilter([...new Set(geoFilter.map(canonicalRegionCode))], regionValues))
+      return false
   }
   if (sectorFilter.length > 0) {
     if (!matchesSectorFilter(sectorFilter, item.applicableIndustries ?? [])) return false

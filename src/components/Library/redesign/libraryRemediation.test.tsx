@@ -25,7 +25,15 @@ import { LibraryTreeTable } from '@/components/Library/LibraryTreeTable'
 import { SpecDrawerHost } from '@/components/Library/SpecDrawerHost'
 import { topicParamAsSearch } from './libraryDeepLink'
 import { canonicalRegionCodes, regionLabel } from './libraryRegions'
-import { libraryCanonicalOrgs, ORG_OTHER } from './useLibraryPipeline'
+import {
+  libraryCanonicalOrgs,
+  matchesLibraryFilters,
+  ORG_OTHER,
+  type LibraryFilterState,
+} from './useLibraryPipeline'
+import { getTrustScore } from '@/data/trustScore'
+import { xrefsByResource } from '@/data/trustedSourceXrefData'
+import { trustedSources } from '@/data/trustedSourcesData'
 import { libraryClassificationFacts, relatedLearnModules } from './libraryDetailFacts'
 import { LibraryRecentlyChanged } from './LibraryRecentlyChanged'
 import { LibraryFacetRail } from './LibraryFacetRail'
@@ -35,6 +43,24 @@ import { documentTypeDescription } from '@/components/Library/libraryDocumentTyp
 vi.mock('@/embed/platform', () => ({ isNativeApp: () => false }))
 vi.mock('react-hot-toast', () => ({ default: { success: vi.fn() } }))
 vi.mock('@/hooks/useIsMobileShell', () => ({ useIsMobileShell: () => false }))
+
+/** Filter state that filters nothing. */
+const NEUTRAL: LibraryFilterState = {
+  activeOrg: 'All',
+  filterText: '',
+  geoFilter: [],
+  sectorFilter: [],
+  tierFilter: [],
+  algoFamilyFilter: [],
+  showOnlyLibraryBookmarks: false,
+  libraryBookmarks: [],
+  cswp39Only: false,
+  certRelevantOnly: false,
+  certRelevantIdSet: new Set(),
+  lifecycleBucket: 'All',
+  topicFilter: 'All',
+  semanticIdSet: null,
+}
 
 const base = (overrides: Partial<LibraryItem>): LibraryItem => ({
   ...libraryData[0],
@@ -131,6 +157,8 @@ describe('?topic= with a subject, not a topic id', () => {
   })
 
   it('leaves a vocabulary topic id, an empty value and an existing search alone', () => {
+    expect(topicParamAsSearch(new URLSearchParams('topic=cryptanalysis'))).toBeNull()
+    expect(topicParamAsSearch(new URLSearchParams('topic=Cryptanalysis'))).toBeNull()
     expect(topicParamAsSearch(new URLSearchParams(''))).toBeNull()
     expect(topicParamAsSearch(new URLSearchParams('topic=SBOM&q=mine'))).toBeNull()
   })
@@ -147,6 +175,16 @@ describe('region tokens canonicalise', () => {
   it('labels Spain and keeps unknown tokens as they are', () => {
     expect(regionLabel('ES')).toBe('Spain')
     expect(regionLabel('XX-UNKNOWN')).toBe('XX-UNKNOWN')
+  })
+
+  it('the Geography filter matches a name and its code both ways', () => {
+    const named = base({ regionScope: 'United States' })
+    const coded = base({ regionScope: 'US' })
+    for (const geo of [['US'], ['United States']]) {
+      expect(matchesLibraryFilters(named, { ...NEUTRAL, geoFilter: geo })).toBe(true)
+      expect(matchesLibraryFilters(coded, { ...NEUTRAL, geoFilter: geo })).toBe(true)
+    }
+    expect(matchesLibraryFilters(coded, { ...NEUTRAL, geoFilter: ['CN'] })).toBe(false)
   })
 
   it('no two region codes in the catalogue show the same label', () => {
@@ -184,8 +222,29 @@ describe('organisation filter', () => {
     expect(org({})).toEqual([ORG_OTHER])
   })
 
-  it('every catalogue row lands in at least one option', () => {
-    for (const item of libraryData) expect(libraryCanonicalOrgs(item).length).toBeGreaterThan(0)
+  it('no RFC or Internet-Draft in the catalogue falls into Other', () => {
+    const ietfDocs = libraryData.filter((i) =>
+      /^(RFC|Internet-Draft)$/i.test(i.documentType.trim())
+    )
+    expect(ietfDocs.length).toBeGreaterThan(0)
+    const inOther = ietfDocs.filter((i) => libraryCanonicalOrgs(i).includes(ORG_OTHER))
+    expect(inOther.map((i) => i.referenceId)).toEqual([])
+  })
+
+  it('a row with a blank author and no publisher mapping is in Other', () => {
+    const blank = libraryData.filter(
+      (i) =>
+        !i.authorsOrOrganization.trim() &&
+        !/^(RFC|Internet-Draft)$/i.test(i.documentType.trim()) &&
+        !i.trustedSourceId
+    )
+    for (const item of blank) expect(libraryCanonicalOrgs(item)).toEqual([ORG_OTHER])
+  })
+
+  it('the Organization filter matches through the same mapping', () => {
+    const row = base({ authorsOrOrganization: 'IETF Datatracker', documentType: 'RFC' })
+    expect(matchesLibraryFilters(row, { ...NEUTRAL, activeOrg: 'IETF' })).toBe(true)
+    expect(matchesLibraryFilters(row, { ...NEUTRAL, activeOrg: ORG_OTHER })).toBe(false)
   })
 })
 
@@ -279,7 +338,9 @@ describe('facet rail counts', () => {
     )
     expect(screen.getByRole('button', { name: /All categories/ })).toHaveTextContent('9')
     expect(screen.getByRole('button', { name: /^Draft/ })).toHaveTextContent('4')
-    expect(screen.getByRole('img', { name: 'has new or updated documents' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /^KEM, has new or updated documents/ })
+    ).toBeInTheDocument()
   })
 })
 
@@ -297,7 +358,14 @@ describe('CSV export', () => {
       'Industries',
       'Peer Reviewed',
       'Vetting Body',
-      'Confidence',
+      'Rule-based Confidence',
+      'Research Topics',
+      'Mathematical Family',
+      'NIST PQC Round',
+      'Superseded By',
+      'Replaces',
+      'Previous Revisions',
+      'Learn Modules',
       'Referenced by Library Records',
       'Access',
       'Free Summary URL',
@@ -424,5 +492,25 @@ describe('detail drawer: document type, assistant and pillar note', () => {
       documentTypeDescription(item.documentType)!
     )
     expect(screen.getByRole('button', { name: 'Ask Assistant' })).toBeInTheDocument()
+  })
+})
+
+describe('trust score: a row whose source cross-reference has not caught up', () => {
+  // Runs on a catalogue snapshot that has such rows (the 4.207 snapshot has nine).
+  it("scores source credibility from the row's own registered publisher", () => {
+    const registry = new Set(trustedSources.map((t) => t.sourceId))
+    const gap = libraryData.filter(
+      (i) =>
+        i.trustedSourceId &&
+        registry.has(i.trustedSourceId) &&
+        !xrefsByResource.has(i.referenceId) &&
+        !['inferred', 'needs_review', 'unregistered'].includes(i.trustedSourceIdStatus ?? '')
+    )
+    for (const item of gap) {
+      const dim = getTrustScore('library', item.referenceId)?.dimensions.find(
+        (d) => d.dimension === 'sourceCredibility'
+      )
+      expect(dim?.rationale).not.toBe('No linked trusted source')
+    }
   })
 })

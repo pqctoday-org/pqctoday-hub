@@ -19,7 +19,7 @@ import { LIBRARY_OPS_PICKS } from './libraryOpsPicks'
 import type { PersonaId } from './learningPersonas'
 
 export type LibraryStartPick = LibraryCuriousPick & {
-  /** Set on picks chosen by citation count, whose blurb is the document's own
+  /** Set on picks chosen by how many catalogue records build on them, whose blurb is the document's own
    *  catalogue summary rather than a written reason to start there. */
   derived?: true
 }

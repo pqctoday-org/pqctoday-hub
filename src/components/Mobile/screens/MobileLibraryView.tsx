@@ -196,9 +196,12 @@ export function MobileLibraryView() {
 
   // Retired ref → swap to its successor and say so; unknown ref → say so,
   // rather than opening nothing. Scroll the list to the linked card.
-  const [notice, setNotice] = useState<{ kind: 'not-found' | 'moved'; message: string } | null>(
-    null
-  )
+  const [notice, setNotice] = useState<{
+    kind: 'not-found' | 'moved' | 'widened'
+    message: string
+    /** The filters before a widening, so the reader can put them back. */
+    undoParams?: string
+  } | null>(null)
   const [scrollTarget, setScrollTarget] = useState<string | null>(null)
   const certRelevantIdSet = useMemo(() => new Set(LIBRARY_OPS_PICKS.map((p) => p.referenceId)), [])
   useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
@@ -222,14 +225,17 @@ export function MobileLibraryView() {
       return
     }
     // A linked document the current filters hide: widen just those filters (as
-    // desktop does) so the card behind the sheet is in the list.
+    // desktop does) so the card behind the sheet is in the list, and say so.
+    // A ?topic= subject moving to ?q= in this render is judged as moved.
+    const moved = topicParamAsSearch(params)
+    const baseParams = moved ?? params
     const widening = libraryWideningFor(selected, {
       activePurpose: purpose,
       activeCategory,
       selectedPersona,
       prefsOff,
       activeOrg,
-      filterText: searchText,
+      filterText: moved ? (moved.get('q') ?? '') : searchText,
       geoFilter,
       sectorFilter,
       tierFilter,
@@ -240,15 +246,20 @@ export function MobileLibraryView() {
       certRelevantOnly: quickView === 'cert',
       certRelevantIdSet,
       lifecycleBucket: lifecycle,
-      topicFilter: topic,
+      topicFilter: moved ? 'All' : topic,
       semanticIdSet: null,
       newOnly: quickView === 'new',
     })
     if (widening) {
-      const next = new URLSearchParams(params)
+      const next = new URLSearchParams(baseParams)
       for (const key of widening.drop) next.delete(key)
       if (widening.prefsOff) next.set('prefs', 'off')
       setParams(next, { replace: true })
+      setNotice({
+        kind: 'widened',
+        message: `Filters widened to show ${selected.referenceId}.`,
+        undoParams: baseParams.toString(),
+      })
     }
     setScrollTarget(selected.referenceId)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per ref
@@ -420,6 +431,17 @@ export function MobileLibraryView() {
         <DeepLinkNotice
           kind={notice.kind}
           message={notice.message}
+          onUndo={
+            notice.undoParams
+              ? () => {
+                  // Restore the reader's filters but keep the open document.
+                  const restored = new URLSearchParams(notice.undoParams)
+                  if (detailRef) restored.set('ref', detailRef)
+                  setParams(restored, { replace: true })
+                  setNotice(null)
+                }
+              : undefined
+          }
           onDismiss={() => {
             // An unknown ref is still in the URL; drop it along with the notice.
             if (detailRef && !selected) setDetailRef(null)

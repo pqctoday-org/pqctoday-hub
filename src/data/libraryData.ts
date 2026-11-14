@@ -556,6 +556,8 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
   return attachSuccessionLinks(attachPriorRevisions(items, priors))
 }
 
+const normalizedSuccessorCache = new WeakMap<ReadonlyMap<string, string>, Map<string, string>>()
+
 /**
  * The live id a `dependencies` entry stands for: the id itself when it is a live
  * row, else the live document that superseded it (following `superseded_by`
@@ -563,11 +565,9 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
  * draft revision ("Builds on draft-…-07" after -11 replaced it) then links to the
  * revision the catalogue holds instead of to nothing. Exported for unit testing.
  */
-const normalizedSuccessorCache = new WeakMap<ReadonlyMap<string, string>, Map<string, string>>()
-
 export function resolveLiveDependency(
   depId: string,
-  liveIds: ReadonlySet<string>,
+  liveIds: { has(id: string): boolean },
   successorOf: ReadonlyMap<string, string>
 ): string | undefined {
   if (liveIds.has(depId)) return depId
@@ -880,11 +880,18 @@ export function findRfcByNumber(
  * `FIPS 186-4`), as in findLibraryItemByRef.
  * Returns undefined when the ref has no successor chain that ends in the corpus.
  */
+let _liveItemsById: Map<string, LibraryItem> | null = null
+/** libraryData by id, built once (libraryData does not change after load). */
+function liveItemsById(): Map<string, LibraryItem> {
+  if (!_liveItemsById) _liveItemsById = new Map(libraryData.map((item) => [item.referenceId, item]))
+  return _liveItemsById
+}
+
 export function findLibrarySuccessor(ref: string): LibraryItem | undefined {
   const start = REFERENCE_ID_ALIASES[ref] ?? ref
-  const liveIds = new Set(libraryData.map((item) => item.referenceId))
+  const live = liveItemsById()
   // A live id is not retired, so it has no successor (callers try it first).
-  if (liveIds.has(start)) return undefined
-  const hop = resolveLiveDependency(start, liveIds, supersededByRef)
-  return hop === undefined ? undefined : libraryData.find((item) => item.referenceId === hop)
+  if (live.has(start)) return undefined
+  const hop = resolveLiveDependency(start, live, supersededByRef)
+  return hop === undefined ? undefined : live.get(hop)
 }

@@ -203,8 +203,11 @@ function buildScoringContext(): ScoringContext {
   // (on 2026-11-14 the nine rows new in that day's snapshot had none), which
   // scored them "No linked trusted source". Use the row's own id when the file
   // has nothing for it and the registry knows the source.
+  // A publisher id the catalogue itself marks as a guess is not used.
+  const unconfirmedSourceStatus = new Set(['inferred', 'needs_review', 'unregistered'])
   for (const item of libraryData ?? []) {
     if (!item.trustedSourceId || xrefsMap.has(item.referenceId)) continue
+    if (unconfirmedSourceStatus.has((item.trustedSourceIdStatus ?? '').trim())) continue
     if (!trustedSourcesMap.has(item.trustedSourceId)) continue
     xrefsMap.set(item.referenceId, [{ sourceId: item.trustedSourceId, matchMethod: 'direct' }])
   }

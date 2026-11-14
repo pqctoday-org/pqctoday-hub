@@ -98,7 +98,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'View Toggle',
-        body: 'Switch between Card view and Tree Table view in the toolbar. Card view shows document summaries; the Tree Table lists every document with sortable columns and nests, under each document, the documents that build on it.',
+        body: 'Switch between Card view and Tree Table view in the toolbar. Card view shows document summaries; the Tree Table lists the documents that match your filters, with sortable columns and nests, under each document, the documents that build on it.',
       },
       {
         heading: 'Document Details',

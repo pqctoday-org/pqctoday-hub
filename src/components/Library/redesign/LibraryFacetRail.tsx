@@ -144,12 +144,10 @@ export function LibraryFacetRail({
               />
               <span className="truncate">{cat.name}</span>
               {cat.hasUpdates && (
-                <span
-                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-success"
-                  title="Has new or updated documents"
-                  aria-label="has new or updated documents"
-                  role="img"
-                />
+                <span title="Has new or updated documents" className="shrink-0">
+                  <span className="block h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
+                  <span className="sr-only">, has new or updated documents</span>
+                </span>
               )}
               <CountPill n={cat.count} active={active} />
             </Button>

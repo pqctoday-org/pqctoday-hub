@@ -45,6 +45,20 @@ vi.mock('@/hooks/useIsMobileShell', () => ({
 // loaded machine); the default 30 s limit failed pr-test (1) on #797 ("forwards a retired ref"),
 // and 8b's loaded local run. Same allowance as libraryTableDrawerParams.test.tsx (#782).
 describe('LibraryViewRedesign deep links', { timeout: 60_000 }, () => {
+  describe('?topic= with a subject, not a topic id', () => {
+    it('moves the subject into the search box', () => {
+      renderWithProbe('/library?topic=CycloneDX')
+      expect(currentParams().get('q')).toBe('CycloneDX')
+      expect(currentParams().has('topic')).toBe(false)
+    })
+
+    it('keeps a vocabulary topic id as the topic filter', () => {
+      renderWithProbe('/library?topic=cryptanalysis')
+      expect(currentParams().get('topic')).toBe('cryptanalysis')
+      expect(currentParams().has('q')).toBe(false)
+    })
+  })
+
   describe('deep-link arrival (?ref)', () => {
     it('closing the drawer replaces history (Back must not reopen it)', () => {
       renderWithProbe('/library?ref=FIPS%20203')

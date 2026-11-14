@@ -176,6 +176,12 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
     if (!sortConfig.direction || !key) return items
 
     const sorted = [...items].sort((a, b) => {
+      // The date column shows the update date, else the publication date: sort by that.
+      if (key === 'lastUpdateDate') {
+        const ad = a.lastUpdateDate || a.initialPublicationDate || ''
+        const bd = b.lastUpdateDate || b.initialPublicationDate || ''
+        return ad.localeCompare(bd)
+      }
       // eslint-disable-next-line security/detect-object-injection
       const aValue = a[key]
       // eslint-disable-next-line security/detect-object-injection
@@ -312,7 +318,10 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                 Published {item.initialPublicationDate}
               </span>
             ) : (
-              <span aria-label="No date recorded">—</span>
+              <>
+                <span aria-hidden="true">—</span>
+                <span className="sr-only">No date recorded</span>
+              </>
             )}
           </td>
           <td className="p-4 text-sm">
