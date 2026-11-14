@@ -10,6 +10,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { UnifiedStorageService } from './UnifiedStorageService'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
+import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 
 const SAMPLE = softwareData[0]
 
@@ -103,5 +104,69 @@ describe('AppSnapshot ↔ migrate selection store', () => {
     expect(s.choice).toEqual({})
     expect(s.nameToProductId).toEqual({})
     expect(s.tab).toBe('replace')
+  })
+})
+
+describe('AppSnapshot ↔ assessment toolchain and estate fields', () => {
+  const form = () => useAssessmentFormStore.getState()
+  const resetToolchain = () =>
+    useAssessmentFormStore.setState({
+      cryptoLibraries: [],
+      infraAutomation: [],
+      scenarioEstateId: null,
+    })
+  beforeEach(resetToolchain)
+
+  it('captures and restores cryptoLibraries, infraAutomation and scenarioEstateId', () => {
+    useAssessmentFormStore.setState({
+      cryptoLibraries: ['OpenSSL', 'BoringSSL'],
+      infraAutomation: ['Terraform'],
+      scenarioEstateId: 'estate-1',
+    })
+    const snap = UnifiedStorageService.exportSnapshot()
+    expect(snap.stores.assessment.cryptoLibraries).toEqual(['OpenSSL', 'BoringSSL'])
+    expect(snap.stores.assessment.infraAutomation).toEqual(['Terraform'])
+    expect(snap.stores.assessment.scenarioEstateId).toBe('estate-1')
+
+    resetToolchain()
+    UnifiedStorageService.restoreSnapshot(snap)
+    expect(form().cryptoLibraries).toEqual(['OpenSSL', 'BoringSSL'])
+    expect(form().infraAutomation).toEqual(['Terraform'])
+    expect(form().scenarioEstateId).toBe('estate-1')
+  })
+
+  it('an older snapshot without the fields restores and resets them to empty / null', () => {
+    const snap = UnifiedStorageService.exportSnapshot()
+    const legacy = { ...snap.stores.assessment } as Record<string, unknown>
+    delete legacy.cryptoLibraries
+    delete legacy.infraAutomation
+    delete legacy.scenarioEstateId
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(snap.stores as any).assessment = legacy
+
+    useAssessmentFormStore.setState({
+      cryptoLibraries: ['stale'],
+      infraAutomation: ['stale'],
+      scenarioEstateId: 'stale',
+    })
+    expect(() => UnifiedStorageService.restoreSnapshot(snap)).not.toThrow()
+    expect(form().cryptoLibraries).toEqual([])
+    expect(form().infraAutomation).toEqual([])
+    expect(form().scenarioEstateId).toBeNull()
+  })
+
+  it('drops malformed values defensively', () => {
+    const snap = UnifiedStorageService.exportSnapshot()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(snap.stores as any).assessment = {
+      ...snap.stores.assessment,
+      cryptoLibraries: ['OpenSSL', 7, null],
+      infraAutomation: 'not-an-array',
+      scenarioEstateId: 42,
+    }
+    expect(() => UnifiedStorageService.restoreSnapshot(snap)).not.toThrow()
+    expect(form().cryptoLibraries).toEqual(['OpenSSL'])
+    expect(form().infraAutomation).toEqual([])
+    expect(form().scenarioEstateId).toBeNull()
   })
 })

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, act } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { MobileAssessView } from './MobileAssessView'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
@@ -9,6 +9,7 @@ import {
   STEP_META,
   TRACK_INFO,
   RENDER_ORDER_FULL,
+  RENDER_ORDER_QUICK,
 } from '@/components/Assess/redesign/assessFlowModel'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { applicableFrameworks } from '@/utils/applicabilityEngine'
@@ -313,6 +314,36 @@ describe('MobileAssessView', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Back' }))
       expect(screen.queryByText('Review your answers')).not.toBeInTheDocument()
       expect(useAssessmentFormStore.getState().assessmentStatus).not.toBe('complete')
+    })
+
+    it('with every required step answered, counts match and Generate is enabled', () => {
+      goToReview()
+      const required = RENDER_ORDER_QUICK.filter((k) => !STEP_META[k].freelyOptional).length
+      expect(
+        screen.getByText(new RegExp(`${required} of ${required} answered`))
+      ).toBeInTheDocument()
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Generate my report/ })).toBeEnabled()
+    })
+
+    it('holds Generate while a required step is blank and "Answer <step>" jumps to it', () => {
+      goToReview()
+      act(() => {
+        useAssessmentFormStore.setState({ migrationStatus: '', migrationUnknown: false })
+      })
+      const required = RENDER_ORDER_QUICK.filter((k) => !STEP_META[k].freelyOptional).length
+      expect(
+        screen.getByText(new RegExp(`${required - 1} of ${required} answered`))
+      ).toBeInTheDocument()
+      expect(screen.getByRole('status')).toHaveTextContent('1 question still needs an answer')
+      const generate = screen.getByRole('button', { name: /Generate my report/ })
+      expect(generate).toBeDisabled()
+      fireEvent.click(generate)
+      expect(useAssessmentFormStore.getState().assessmentStatus).not.toBe('complete')
+
+      fireEvent.click(screen.getByRole('button', { name: `Answer ${STEP_META.migration.label}` }))
+      expect(screen.queryByText('Review your answers')).not.toBeInTheDocument()
+      expect(screen.getByText(STEP_META.migration.question)).toBeInTheDocument()
     })
 
     it('Edit opens the selected question and Save and return goes straight back to review', () => {

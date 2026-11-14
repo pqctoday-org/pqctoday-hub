@@ -8,6 +8,8 @@ import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { isSimResumePending } from '@/components/Simulation/simChrome'
 import {
+  missingRequiredSteps,
+  requiredStepProgress,
   STEP_META,
   TRACK_INFO,
   type AssessStepKey,
@@ -458,7 +460,19 @@ export function MobileAssessView() {
   }
 
   if (showReview) {
-    const answered = flow.renderOrder.filter((k) => flow.isValid(k)).length
+    const reviewTrack: AssessTrack = track ?? 'quick'
+    const { answered, total: requiredTotal } = requiredStepProgress(reviewTrack, store)
+    // Required questions still blank: a report built without them would score on
+    // missing inputs, so Generate waits (same rule as the desktop review).
+    const missing = missingRequiredSteps(reviewTrack, store)
+    const firstMissing = missing[0]
+    // Straight to the store step: the review screen can jump to any answer,
+    // whatever the flow's furthest-visited marker says.
+    const editFromReview = (k: AssessStepKey) => {
+      store.setStep(storeIndexOf(reviewTrack, k))
+      setEditingFromReview(true)
+      setShowReview(false)
+    }
     return (
       <div className="px-4 pb-4 pt-4">
         <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
@@ -466,8 +480,20 @@ export function MobileAssessView() {
         </h1>
         <p className="mb-4 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           Edit anything before we generate your {track === 'quick' ? 'fast-track' : 'full'} report.{' '}
-          {answered} of {flow.total} answered.
+          {answered} of {requiredTotal} answered.
         </p>
+        {firstMissing && (
+          <p
+            role="status"
+            className="mb-4 rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-[11.5px] text-foreground"
+          >
+            {missing.length === 1
+              ? '1 question still needs an answer'
+              : `${missing.length} questions still need an answer`}{' '}
+            before the report can be generated. Starting with{' '}
+            <strong>{STEP_META[firstMissing].label}</strong>.
+          </p>
+        )}
 
         <div className="flex flex-col gap-2">
           {flow.renderOrder.map((k) => {
@@ -492,13 +518,7 @@ export function MobileAssessView() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    // Straight to the store step: the review screen can jump to any
-                    // answer, whatever the flow's furthest-visited marker says.
-                    store.setStep(storeIndexOf(track ?? 'quick', k))
-                    setEditingFromReview(true)
-                    setShowReview(false)
-                  }}
+                  onClick={() => editFromReview(k)}
                   className="h-8 shrink-0 px-2.5 text-[11px]"
                   aria-label={`Edit ${STEP_META[k].label}`}
                 >
@@ -519,11 +539,25 @@ export function MobileAssessView() {
           >
             <ArrowLeft size={14} aria-hidden="true" /> Back
           </Button>
+          {firstMissing && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => editFromReview(firstMissing)}
+              className="h-10 flex-1 gap-1 text-[12px] font-semibold text-primary"
+            >
+              Answer {STEP_META[firstMissing].label}
+              <ArrowRight size={14} aria-hidden="true" />
+            </Button>
+          )}
           <Button
             type="button"
             variant="gradient"
             size="sm"
+            disabled={!!firstMissing}
             onClick={() => {
+              if (firstMissing) return
               store.markComplete()
               // Came from the sim's locked-gate "Start the assessment" link
               // (WS-0, sim-mobile-full-play plan) — return to the now-unlocked

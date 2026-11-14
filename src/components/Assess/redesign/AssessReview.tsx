@@ -8,9 +8,10 @@ import { Button } from '../../ui/button'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { DOMAIN_META, TONES } from './tones'
 import {
+  missingRequiredSteps,
   renderOrderFor,
+  requiredStepProgress,
   STEP_META,
-  STEP_VALIDATORS,
   type AssessStepKey,
   type AssessTrack,
 } from './assessFlowModel'
@@ -27,15 +28,10 @@ export const AssessReview: React.FC<AssessReviewProps> = ({ mode, onEdit, onBack
   const store = useAssessmentStore()
   const reviewState = store as unknown as AssessReviewState
   const renderOrder = renderOrderFor(mode)
-  const answered = renderOrder.filter(
-    (k) => STEP_VALIDATORS[k](store) && !STEP_META[k].freelyOptional
-  ).length
-  const requiredTotal = renderOrder.filter((k) => !STEP_META[k].freelyOptional).length
+  const { answered, total: requiredTotal } = requiredStepProgress(mode, store)
   // Required questions still blank (neither a value nor "not sure"). A report
   // built without them would score on missing inputs, so Generate waits.
-  const missing = renderOrder.filter(
-    (k) => !STEP_META[k].freelyOptional && !STEP_VALIDATORS[k](store)
-  )
+  const missing = missingRequiredSteps(mode, store)
   const firstMissing = missing[0]
 
   // Group the render order into its three contiguous domains.

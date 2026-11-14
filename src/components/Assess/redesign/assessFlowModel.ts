@@ -315,6 +315,25 @@ export const STEP_VALIDATORS: Record<AssessStepKey, (s: AssessValidatorState) =>
 }
 
 /**
+ * Required (not freely-optional) steps of `mode` that are still blank — neither
+ * a value nor "not sure". A report built without them would score on missing
+ * inputs, so both the desktop and mobile review screens hold Generate until
+ * this is empty. In render order.
+ */
+export function missingRequiredSteps(mode: AssessTrack, s: AssessValidatorState): AssessStepKey[] {
+  return renderOrderFor(mode).filter((k) => !STEP_META[k].freelyOptional && !STEP_VALIDATORS[k](s))
+}
+
+/** How many required steps of `mode` are answered, and how many there are in all. */
+export function requiredStepProgress(
+  mode: AssessTrack,
+  s: AssessValidatorState
+): { answered: number; total: number } {
+  const total = renderOrderFor(mode).filter((k) => !STEP_META[k].freelyOptional).length
+  return { answered: total - missingRequiredSteps(mode, s).length, total }
+}
+
+/**
  * Steps that support persona/proficiency auto-suggestion of "I'm not sure",
  * categorized by technical depth. Shared by the legacy wizard and the redesign
  * so the auto-prefill behaviour stays identical.
