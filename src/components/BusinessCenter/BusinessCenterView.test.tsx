@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
-import { MemoryRouter, useLocation } from 'react-router'
+import { BrowserRouter, MemoryRouter, useLocation } from 'react-router'
 import { BusinessCenterView } from './BusinessCenterView'
 import '@testing-library/jest-dom'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_ORDER } from '@/data/cswp39ZoneData'
@@ -522,6 +522,33 @@ describe('BusinessCenterView ?zone= deep link', () => {
     expect(screen.getByTestId('location-search')).not.toHaveTextContent('zone=')
     expect(screen.getByTestId('location-search')).toHaveTextContent('foo=bar')
     expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
+  })
+})
+
+describe('BusinessCenterView ?zone= keeps the zone anchor in the address bar', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockAssessmentStore.industry = 'Technology'
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = 'curious'
+  })
+  afterEach(() => {
+    window.history.replaceState(null, '', '/')
+  })
+
+  // BrowserRouter, not MemoryRouter: the zone scroll effect writes #zone-<id>
+  // with window.history, and the router's own navigation is what can drop it.
+  it('still shows #zone-<id> in the URL after the consumed ?zone= param is removed', () => {
+    window.history.replaceState(null, '', '/business?zone=mitigation')
+    render(
+      <BrowserRouter>
+        <BusinessCenterView />
+      </BrowserRouter>
+    )
+    expect(window.location.search).not.toContain('zone=')
+    expect(window.location.hash).toBe('#zone-mitigation')
   })
 })
 

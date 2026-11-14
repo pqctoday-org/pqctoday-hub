@@ -377,6 +377,7 @@ export function BusinessCenterView() {
     setOpenZone(defaultOpenZoneFor(selectedPersona))
   }
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   // ?phase=<id> overlay — when active, the page swaps its zone body for a
   // compact phase header + the BUSINESS_TOOLS narrowed to that phase. When
@@ -449,15 +450,14 @@ export function BusinessCenterView() {
   // not overridden by a stale ?zone=. Runs after the scroll effect above.
   useEffect(() => {
     if (!zoneFromQuery) return
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        next.delete('zone')
-        return next
-      },
-      { replace: true }
-    )
-  }, [zoneFromQuery, setSearchParams])
+    const next = new URLSearchParams(searchParams)
+    next.delete('zone')
+    const search = next.toString()
+    // The scroll effect above wrote #zone-<id> with window.history, which the
+    // router does not track. setSearchParams navigates with search only and would
+    // drop that hash, so carry the current hash through.
+    navigate({ search: search ? `?${search}` : '', hash: window.location.hash }, { replace: true })
+  }, [zoneFromQuery, searchParams, navigate])
 
   // Legacy hash redirects. Keeps old inbound URLs from CSWP39StepBadge / Report
   // nav (#step-govern), and from the previous §3-§6 iteration (#section-strategic),
