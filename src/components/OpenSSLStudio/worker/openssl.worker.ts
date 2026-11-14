@@ -2017,7 +2017,8 @@ var executeCmpKeyUpdate = async (
     const outcome = JSON.parse(resultJson)
     if (
       outcome.ok &&
-      (outcome.operation !== 'KUR' ||
+      (outcome.certPath !== outCertPath ||
+        outcome.operation !== 'KUR' ||
         outcome.proofVerified !== true ||
         outcome.confirmationAccepted !== true)
     ) {
@@ -2106,7 +2107,8 @@ var executeCmpSignedKeyUpdate = async (
     const outcome = JSON.parse(resultJson)
     if (
       outcome.ok &&
-      (outcome.operation !== 'KUR' ||
+      (outcome.certPath !== outCertPath ||
+        outcome.operation !== 'KUR' ||
         outcome.proofVerified !== true ||
         outcome.confirmationAccepted !== true)
     ) {

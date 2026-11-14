@@ -481,7 +481,8 @@ class OpenSSLService {
             : undefined
           if (
             parsed.ok &&
-            (parsed.operation !== 'KUR' ||
+            (parsed.certPath !== args.outCertPath ||
+              parsed.operation !== 'KUR' ||
               parsed.proofVerified !== true ||
               parsed.confirmationAccepted !== true ||
               !certFile?.data.length)
@@ -597,7 +598,8 @@ class OpenSSLService {
             : undefined
           if (
             parsed.ok &&
-            (parsed.operation !== 'KUR' ||
+            (parsed.certPath !== args.outCertPath ||
+              parsed.operation !== 'KUR' ||
               parsed.proofVerified !== true ||
               parsed.confirmationAccepted !== true ||
               !certFile?.data.length)

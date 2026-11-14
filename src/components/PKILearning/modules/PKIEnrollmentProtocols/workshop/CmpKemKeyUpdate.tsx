@@ -215,6 +215,11 @@ export const CmpKemKeyUpdate: React.FC = () => {
             signature does not prove possession of the new ML-KEM private key.
           </p>
           <p className="mt-2 text-muted-foreground">
+            Scenario setup provisions the signing identity and its trusted pin before the requester
+            sends the key-update request. This local exercise runs both roles; in production,
+            configure renewal authorization at the CA.
+          </p>
+          <p className="mt-2 text-muted-foreground">
             The starting enrollment is pre-authorized for this fictional identity. Its issuer and
             serial are checked separately from the new-key proof. This uses an opt-in modification
             of the bundled OpenSSL CMP server, rather than support in unmodified OpenSSL 3.6.3.

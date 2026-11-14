@@ -425,8 +425,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'openssl-pkcs11': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: '07b1264903eaeae124a4df08acb77ec71bca3792',
-    sha256: 'fa2002f25d50396a800671cdea301f841e0621a5aeaf30e7061e864123020ede',
+    commit: 'c8b0c365c878a7a214065c4e45fdc8d7c183e658',
+    sha256: 'eecbaedf79bc3ab056c20af63631239fdd151e13d4a23efd1f7cc1bdacfebf0a',
   },
   'pqctoday-tpm': {
     repo: 'pqctoday-org/pqctoday-tpm',

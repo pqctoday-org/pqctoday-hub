@@ -15,6 +15,20 @@ function downloaded(name: string) {
 }
 
 describe('Signed provenance worked sample', () => {
+  it('downloads the exact six files exercised by the native verifier', () => {
+    render(<ProvenanceSampleLab />)
+    const pinned = {
+      'artifact.txt': 'edcb6b97a3482bc233b810427c2d0408394bdfc6fb5677aefd4248c321c4dc7b',
+      'statement.json': '9621f09753f6369fa25f572460f492d2c136935198aaaab9f99bfd6c0056a6ba',
+      'sample.pub': '1f677545f078de476414aad2cdad75ce69bf85f4ecb498903867dfc9c9d475f5',
+      'sample.bundle.json': '8b7ed38103b41844d4f8bf0207f144abf2b9d746320573781131630e6fc535e0',
+      'sample-policy.rego': 'fc9cc2159bd6a6ff79e4cde3521912d4ece78de623b88c44b89c9d50b30260a3',
+      'verify-sample.py': '7e87724ce0f933cbfaedc09a934bc52824015150f0e982f39653cdb299130948',
+    }
+    for (const [name, digest] of Object.entries(pinned)) {
+      expect(createHash('sha256').update(downloaded(name)).digest('hex')).toBe(digest)
+    }
+  })
   it('has a valid pinned P-256 signature and rejects a changed statement with an independent verifier', () => {
     const files = PROVENANCE_SAMPLE_FILES
     const bundle = JSON.parse(files['sample.bundle.json'])

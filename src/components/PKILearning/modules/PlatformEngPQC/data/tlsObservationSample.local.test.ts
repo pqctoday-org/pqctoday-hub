@@ -1,13 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
+import { createHash } from 'node:crypto'
 import {
   TLS_CAPTURE_SAMPLES,
   parseTlsObservation,
   groupDecision,
   tlsObservationMetric,
+  TLS_SAMPLE_ALERT_RULES,
+  TLS_PROMTOOL_TESTS,
 } from './tlsObservationSample'
 
 describe('TLS observation sample parsing', () => {
+  it('retains the rules and canonical test file exercised by promtool', () => {
+    expect(createHash('sha256').update(TLS_SAMPLE_ALERT_RULES).digest('hex')).toBe(
+      '9a811c1ebc3c479a7e379c04861acc7a8e25c4b4a7489dd11f55e502229ca80e'
+    )
+    expect(
+      createHash('sha256')
+        .update(JSON.stringify(TLS_PROMTOOL_TESTS, null, 2) + '\n')
+        .digest('hex')
+    ).toBe('a72bd3355de839fdd280ac2fc18f87f2cc849530d9039dcc8e06e869f7f08fc9')
+  })
   it('separates different captured groups despite identical cipher suite and authentication', () => {
     const hybrid = parseTlsObservation(TLS_CAPTURE_SAMPLES.hybrid.output, 0)
     const classical = parseTlsObservation(TLS_CAPTURE_SAMPLES.classical.output, 0)
