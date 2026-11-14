@@ -51,6 +51,9 @@ import {
   keyAtStoreIndex,
   storeIndexOf,
   renderOrderFor,
+  firstIncompleteStepStoreIndex,
+  resumePosition,
+  RENDER_ORDER_QUICK,
   type AssessStepKey,
 } from './assessFlowModel'
 
@@ -118,6 +121,10 @@ export const AssessViewRedesign: React.FC<{
   const { myFrameworks, snapshotFrameworks } = useComplianceSelectionStore()
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
   const [showResumeBanner, setShowResumeBanner] = useState(false)
+  // Set when the reader deliberately leaves the wizard for the track chooser
+  // (Back on step 1, Retake). Without it the persona auto-skip below would put
+  // them straight back into their recommended track.
+  const [chooserForced, setChooserForced] = useState(false)
   // Local view state: which screen of the flow is showing. A completed
   // assessment does NOT auto-jump anywhere — the user lands on the wizard (their
   // saved answers) and chooses: edit + regenerate, or use the "View Report" banner.
@@ -199,18 +206,47 @@ export const AssessViewRedesign: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
-  // ?mode=quick|comprehensive — force track.
+  // A finished fast-track assessment moving to the full track: the full order asks
+  // use cases, retention and credential lifetime BEFORE migration, so keeping the
+  // old step index would drop the reader past all three. Land on the first
+  // question the full track still needs instead (fast-track steps count as seen).
+  const upgradeToFullStep = (): number | null =>
+    firstIncompleteStepStoreIndex(
+      'comprehensive',
+      useAssessmentStore.getState(),
+      RENDER_ORDER_QUICK
+    )
+
+  // ?mode=quick|comprehensive — force track, once. The param is consumed so it
+  // cannot override a later track pick or switch the next time the URL changes
+  // (the wizard rewrites ?step= on every move).
   useEffect(() => {
     const m = searchParams.get('mode')
-    if (m === 'quick' || m === 'comprehensive') {
-      if (assessmentMode !== m) setAssessmentMode(m)
+    if (m !== 'quick' && m !== 'comprehensive') return
+    const current = useAssessmentStore.getState().assessmentMode
+    setChooserForced(false)
+    if (current !== m) {
+      setAssessmentMode(m)
+      if (current === 'quick' && m === 'comprehensive') {
+        const landing = upgradeToFullStep()
+        if (landing !== null) setStep(landing)
+      }
     }
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('mode')
+        return next
+      },
+      { replace: true }
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   // Persona-aware auto-skip of the chooser — render-time derivation (no effect),
   // identical to AssessView. Respects ?mode / ?prefs=off / prior mode.
   const personaAutoSkipApplies =
+    !chooserForced &&
     !assessmentMode &&
     !!recommendedMode &&
     searchParams.get('prefs') !== 'off' &&
@@ -225,7 +261,23 @@ export const AssessViewRedesign: React.FC<{
   useSeedAssessFromPersona()
 
   const handleStart = (mode: AssessmentMode) => {
+    setChooserForced(false)
     setAssessmentMode(mode)
+  }
+
+  // Leave the wizard for the chooser. Forces the chooser past the persona
+  // auto-skip and drops any ?mode= so neither sends the reader back in.
+  const exitToChooser = () => {
+    setChooserForced(true)
+    setAssessmentMode(null)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('mode')
+        return next
+      },
+      { replace: true }
+    )
   }
 
   /**
@@ -238,6 +290,7 @@ export const AssessViewRedesign: React.FC<{
    * is what someone evaluating the tool actually wants to look at.
    */
   const handleStartScenario = (estateId: string) => {
+    setChooserForced(false)
     useAssessmentStore.getState().loadReferenceEstate(estateId)
     setScreen('review')
   }
@@ -250,7 +303,11 @@ export const AssessViewRedesign: React.FC<{
       ? keyAtStoreIndex(effectiveAssessmentMode, currentStep)
       : undefined
     setAssessmentMode(mode)
-    if (curKey && renderOrderFor(mode).includes(curKey)) {
+    const upgradeLanding =
+      effectiveAssessmentMode === 'quick' && mode === 'comprehensive' ? upgradeToFullStep() : null
+    if (upgradeLanding !== null) {
+      setStep(upgradeLanding)
+    } else if (curKey && renderOrderFor(mode).includes(curKey)) {
       setStep(storeIndexOf(mode, curKey))
     } else {
       setStep(0)
@@ -306,17 +363,15 @@ export const AssessViewRedesign: React.FC<{
   // Retake from done → clear answers, back to the chooser.
   const retake = () => {
     reset()
-    setAssessmentMode(null)
+    exitToChooser()
     setScreen('wizard')
   }
 
   // Fast-track upsell → switch to full track at the first full-only question.
   const continueToFull = () => {
-    const firstFullOnly = renderOrderFor('comprehensive').find(
-      (k) => !renderOrderFor('quick').includes(k)
-    )
     setAssessmentMode('comprehensive')
-    if (firstFullOnly) setStep(storeIndexOf('comprehensive', firstFullOnly))
+    const landing = upgradeToFullStep()
+    if (landing !== null) setStep(landing)
     setScreen('wizard')
   }
 
@@ -336,8 +391,11 @@ export const AssessViewRedesign: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // eslint-disable-next-line security/detect-object-injection
-  const resumeStepLabel = STEP_LABELS[currentStep] ?? ''
+  // Position + label as the wizard's own rail shows them (render order), not the
+  // legacy-order number that `currentStep` indexes.
+  const resume = effectiveAssessmentMode
+    ? resumePosition(effectiveAssessmentMode, currentStep)
+    : null
 
   // Register this page's actions with the global top bar (page-action-strip
   // rollout, 2026-08-01) — info/endorse/flag render there now, not as a row
@@ -505,7 +563,9 @@ export const AssessViewRedesign: React.FC<{
                 <div>
                   <p className="text-sm font-semibold text-foreground">Resume saved assessment?</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    You left off at step {currentStep + 1} ({resumeStepLabel}) on{' '}
+                    You left off at step{' '}
+                    {resume ? `${resume.position} of ${resume.total}` : currentStep + 1}
+                    {resume ? ` (${resume.label})` : ''} on{' '}
                     {new Date(lastWizardUpdate).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',
@@ -607,7 +667,7 @@ export const AssessViewRedesign: React.FC<{
         <AssessWizardScreen
           mode={effectiveAssessmentMode}
           onComplete={goToReview}
-          onExitToChooser={() => setAssessmentMode(null)}
+          onExitToChooser={exitToChooser}
           onSwitchTrack={handleSwitchTrack}
           onSaveEdit={
             editingFromReview

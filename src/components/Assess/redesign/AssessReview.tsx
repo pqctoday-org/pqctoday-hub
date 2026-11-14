@@ -3,14 +3,15 @@
 // Review screen — every answer grouped by domain, editable, with recommended
 // defaults flagged, before the report is generated.
 import React from 'react'
-import { ChevronLeft, FileBarChart } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileBarChart } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { DOMAIN_META, TONES } from './tones'
 import {
+  missingRequiredSteps,
   renderOrderFor,
+  requiredStepProgress,
   STEP_META,
-  STEP_VALIDATORS,
   type AssessStepKey,
   type AssessTrack,
 } from './assessFlowModel'
@@ -27,10 +28,11 @@ export const AssessReview: React.FC<AssessReviewProps> = ({ mode, onEdit, onBack
   const store = useAssessmentStore()
   const reviewState = store as unknown as AssessReviewState
   const renderOrder = renderOrderFor(mode)
-  const answered = renderOrder.filter(
-    (k) => STEP_VALIDATORS[k](store) && !STEP_META[k].freelyOptional
-  ).length
-  const requiredTotal = renderOrder.filter((k) => !STEP_META[k].freelyOptional).length
+  const { answered, total: requiredTotal } = requiredStepProgress(mode, store)
+  // Required questions still blank (neither a value nor "not sure"). A report
+  // built without them would score on missing inputs, so Generate waits.
+  const missing = missingRequiredSteps(mode, store)
+  const firstMissing = missing[0]
 
   // Group the render order into its three contiguous domains.
   const groups: { domain: (typeof STEP_META)[AssessStepKey]['domain']; keys: AssessStepKey[] }[] =
@@ -50,6 +52,18 @@ export const AssessReview: React.FC<AssessReviewProps> = ({ mode, onEdit, onBack
           Edit anything before we generate your {mode === 'quick' ? 'fast-track' : 'full'} report.{' '}
           {answered} of {requiredTotal} answered.
         </p>
+        {firstMissing && (
+          <p
+            role="status"
+            className="mb-5 rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-[12.5px] text-foreground"
+          >
+            {missing.length === 1
+              ? '1 question still needs an answer'
+              : `${missing.length} questions still need an answer`}{' '}
+            before the report can be generated. Starting with{' '}
+            <strong>{STEP_META[firstMissing].label}</strong>.
+          </p>
+        )}
 
         {groups.map((group) => {
           const meta = DOMAIN_META[group.domain]
@@ -101,11 +115,22 @@ export const AssessReview: React.FC<AssessReviewProps> = ({ mode, onEdit, onBack
             <ChevronLeft size={15} />
             Back
           </Button>
+          {firstMissing && (
+            <Button
+              variant="outline"
+              onClick={() => onEdit(firstMissing)}
+              className="ml-auto gap-1.5 font-semibold text-primary"
+            >
+              Answer {STEP_META[firstMissing].label}
+              <ChevronRight size={15} />
+            </Button>
+          )}
           <Button
             variant="gradient"
             onClick={onGenerate}
+            disabled={!!firstMissing}
             data-workshop-target="assess-generate"
-            className="ml-auto gap-2 font-bold"
+            className={`${firstMissing ? '' : 'ml-auto '}gap-2 font-bold`}
           >
             <FileBarChart size={16} />
             Generate my report
