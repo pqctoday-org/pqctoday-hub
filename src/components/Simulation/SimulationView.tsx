@@ -235,6 +235,9 @@ import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { computeAssessment } from '@/hooks/useAssessmentEngine'
 import { loadSampleOrganisation, SAMPLE_ORG_KEY } from './sampleOrganisation'
+import { useLearnerEvidenceRecorder } from './hooks/useLearnerEvidenceRecorder'
+import { isAutoRunFillActive } from './autorun/autoRunFill'
+import { MeasureStatus, RecurrenceProgressBanner } from './stepStatus'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { ModuleCompletionCard } from '@/components/PKILearning/ModuleCompletionCard'
 import { SimRunComplete } from './SimRunComplete'
@@ -559,6 +562,9 @@ export function SimulationView() {
     artifactType: ExecutiveDocumentType
     title: string
     previewData?: string
+    /** Opened from a recurrence step: how many distinct reporting periods the
+     *  criterion needs this artifact saved in (1 + recurrenceQuarters). */
+    recurrenceNeeded?: number
   } | null>(null)
   const [assessEmbed, setAssessEmbed] = useState<{ title: string; refId?: string } | null>(null)
   const [workshopEmbed, setWorkshopEmbed] = useState<{
@@ -701,6 +707,16 @@ export function SimulationView() {
         title: s.label,
         previewData: proposal?.data,
       })
+    } else if (s.kind === 'recurrence' && s.recurrenceOf) {
+      // A recurring criterion operates the SAME tool again in a later quarter,
+      // so it opens that tool here, exactly like the activity step that first
+      // produced it — never a hard navigation out of the run.
+      clearAllEmbeds()
+      setActivityEmbed({
+        artifactType: s.recurrenceOf,
+        title: s.label,
+        recurrenceNeeded: 1 + (s.recurrenceQuarters ?? 1),
+      })
     } else if (s.kind === 'workshop' && s.workshopId && WORKSHOP_TOOL_COMPONENTS[s.workshopId]) {
       clearAllEmbeds()
       const qIdx = s.to.indexOf('?')
@@ -828,6 +844,9 @@ export function SimulationView() {
   // opens each tool inline for a peek, then returns to the board so its sections
   // tick off in view; the clock advances Q1 2026 → Q1 2035.
   const autoRunPlayer = useSimAutoRunPlayer({ openStep: openStepPane, closeEmbed })
+  // Interactive play files its own evidence (artifacts per quarter, visits,
+  // decisions) — the auto-run files its own, so it is excluded while driving.
+  useLearnerEvidenceRecorder(() => autoRunPlayer.running || isAutoRunFillActive())
   const overviewBookmark = useSimulationStore((s) => s.overviewBookmark)
   const overviewResume = useMemo(() => {
     const bookmark = readOverviewBookmark(overviewBookmark)
@@ -1529,7 +1548,7 @@ export function SimulationView() {
       createdAt: Date.now(),
       runQuarter: `Q${q} ${year}`,
     })
-    logSimEvidenceRecorded(phase, kind, origin)
+    logSimEvidenceRecorded(phase, kind, 'learner')
   }
   const autoKey = (phase: string, to: string) => `${phase}::${to}`
   // WS-04: how many migratable edges this run's architecture actually has — caps
@@ -2360,7 +2379,60 @@ export function SimulationView() {
   // the Overview's Resources list (any step of the current level), so the two
   // can never drift. `act` is the step's framework activity (the Brief/result
   // sheets draw their check from it); without one the sheet can't open.
+  // A `measure` step is a condition read from the run, not a resource: show
+  // its live value against the criterion's threshold, plus the action that
+  // moves it when the sim has one to open (the phase's architecture panel).
+  const renderMeasure = (step: TreeStep, opts: { canOpen: boolean; compact?: boolean }) => {
+    const value = step.metricId ? stepCompletionCtx.metricValue(step.metricId) : null
+    const tree = SIM_TREES[sel as PhaseId]
+    const archStep =
+      step.metricId === 'migration-coverage-pct' || step.metricId === 'migration-decisions'
+        ? (tree ? flattenTree(tree) : []).filter((x) => x.kind === 'architecture').at(-1)
+        : undefined
+    return (
+      <MeasureStatus
+        step={step}
+        value={value}
+        compact={opts.compact}
+        onAct={opts.canOpen && archStep ? () => openStep(archStep) : undefined}
+        actLabel="Open the architecture"
+      />
+    )
+  }
   const renderPhoneCompletion = (step: TreeStep, act: TreeActivity | undefined) => {
+    if (step.kind === 'measure') {
+      return <div className="mt-2">{renderMeasure(step, { canOpen: false, compact: true })}</div>
+    }
+    if (step.kind === 'recurrence' && step.recurrenceOf) {
+      const type = step.recurrenceOf
+      const quarters = distinctRunQuarters(evidence, type)
+      const needed = 1 + (step.recurrenceQuarters ?? 1)
+      const savedNow = quarters.includes(`Q${q} ${year}`)
+      const toolLabel = TOOL_LABELS_BY_ARTIFACT_TYPE[type]?.name
+      return (
+        <div className="mt-2 space-y-1.5">
+          <RecurrenceProgressBanner
+            quarters={quarters}
+            needed={needed}
+            currentQuarter={`Q${q} ${year}`}
+          />
+          {quarters.length < needed && !savedNow && act && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() =>
+                // The same brief + check the activity step uses, filed again for
+                // this quarter.
+                setSheetFor({ step: { ...step, kind: 'activity', artifactType: type }, act })
+              }
+              className="h-auto w-full rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-[11px] font-bold text-warning hover:bg-warning/20"
+            >
+              Review the brief again{toolLabel ? ` — ${toolLabel}` : ''}
+            </Button>
+          )}
+        </div>
+      )
+    }
     if (step.kind === 'learn' && step.moduleId) {
       const moduleId = step.moduleId
       if (moduleDone(moduleId)) {
@@ -2691,6 +2763,7 @@ export function SimulationView() {
             // auto-credits from the same artifactDone() signal desktop uses
             // and is labeled a "laptop step" rather than faked done.
             renderCompletion={(step) => renderPhoneCompletion(step, nextMove?.act)}
+            renderMeasure={(step) => renderMeasure(step, { canOpen: false })}
             assessRec={nextMoveRec}
             onTrapPicked={incrementTrapsThisRun}
             allowRetry={balance.decisions.freeRetryOnWrongPick}
@@ -2943,6 +3016,8 @@ export function SimulationView() {
                         st.kind !== 'activity' &&
                         st.kind !== 'workshop' &&
                         st.kind !== 'architecture' &&
+                        st.kind !== 'measure' &&
+                        st.kind !== 'recurrence' &&
                         canResolveDeepLink(st.to)
                       return (
                         <div
@@ -4089,9 +4164,18 @@ export function SimulationView() {
                       <MarkdownView content={activityEmbed.previewData} />
                     </div>
                   ) : ActivityComp ? (
-                    <Suspense fallback={<EmbedLoading />}>
-                      <ActivityComp />
-                    </Suspense>
+                    <>
+                      {activityEmbed?.recurrenceNeeded ? (
+                        <RecurrenceProgressBanner
+                          quarters={distinctRunQuarters(evidence, activityEmbed.artifactType)}
+                          needed={activityEmbed.recurrenceNeeded}
+                          currentQuarter={`Q${q} ${year}`}
+                        />
+                      ) : null}
+                      <Suspense fallback={<EmbedLoading />}>
+                        <ActivityComp />
+                      </Suspense>
+                    </>
                   ) : WorkshopComp ? (
                     // Workshop/playground tools need the SAME provider stack the standalone
                     // /playground page wraps them in (HSM + Settings + KeyStore + Operations)
@@ -4530,6 +4614,7 @@ export function SimulationView() {
                         onVisitRef={markRefVisited}
                         canEmbed={canEmbedStep}
                         onOpenStep={openStep}
+                        renderMeasure={(step) => renderMeasure(step, { canOpen: true })}
                         assessRec={nextMoveRec}
                         onTrapPicked={incrementTrapsThisRun}
                         allowRetry={balance.decisions.freeRetryOnWrongPick}
@@ -4834,6 +4919,16 @@ export function SimulationView() {
                                                     ? 'checking sandbox…'
                                                     : 'bonus · start sandbox'}
                                                 </span>
+                                              </div>
+                                            )
+                                          // a measured condition: show the live value, not a link to /simulation
+                                          if (step.kind === 'measure')
+                                            return (
+                                              <div key={`${step.to}-${i}`}>
+                                                {renderMeasure(step, {
+                                                  canOpen: true,
+                                                  compact: true,
+                                                })}
                                               </div>
                                             )
                                           // open IN the sim (embed) when possible
