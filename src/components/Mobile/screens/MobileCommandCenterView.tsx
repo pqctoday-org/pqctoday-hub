@@ -9,10 +9,9 @@ import { ActionItemsSection } from '@/components/BusinessCenter/sections/ActionI
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import {
   computeZoneTiers,
-  computeStepTiers,
-  missingForNextTier,
+  missingForNextZoneTier,
+  zoneHintTier,
   TIER_LABELS,
-  primaryStepForZone,
   type MaturityTier,
 } from '@/components/BusinessCenter/lib/cswp39Tier'
 import {
@@ -32,7 +31,7 @@ const TIER_STYLES: Record<MaturityTier, string> = {
   4: 'bg-status-success/15 text-status-success border-status-success/30',
 }
 
-// "Missing for next tier" text is missingForNextTier() (cswp39Tier.ts) — moved
+// "Missing for next tier" text is missingForNextZoneTier() (cswp39Tier.ts) — moved
 // there 2026-08-24 (audit R1.4) so it reads the same T thresholds and boolean
 // gates the tier functions above it use, instead of a parallel copy.
 
@@ -65,7 +64,7 @@ const ZONE_ORDER: ZoneId[] = [
  * exist on desktop at all (TierBadge.tsx only ever shows reasons FOR the
  * achieved tier) — built here as genuinely new UI from the same real
  * threshold constants/boolean gates cswp39Tier.ts's own tier functions use,
- * not invented text (see missingForNextTier above).
+ * not invented text (see missingForNextZoneTier above).
  *
  * Reuses real desktop logic/components verbatim: useBusinessMetrics() (the
  * same real hook driving every Command Center panel), ActionItemsSection
@@ -90,7 +89,6 @@ export function MobileCommandCenterView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   const zoneTiers = useMemo(() => computeZoneTiers(metrics), [metrics])
-  const stepTiers = useMemo(() => computeStepTiers(metrics), [metrics])
 
   if (metrics.isFullyEmpty && !showZoneMap) {
     const intro = commandCenterIntroFor(selectedPersona)
@@ -191,8 +189,8 @@ export function MobileCommandCenterView() {
           const zone = CSWP39_ZONE_DETAILS[zoneId]
           const result = zoneTiers[zoneId]
           const isOpen = openZone === zoneId
-          const step = primaryStepForZone(zoneId)
-          const missing = missingForNextTier(step, metrics, stepTiers[step].tier)
+          const hintTier = zoneHintTier(zoneId, metrics)
+          const missing = missingForNextZoneTier(zoneId, metrics)
           return (
             <div key={zoneId} className="glass-panel overflow-hidden">
               <Button
@@ -232,8 +230,7 @@ export function MobileCommandCenterView() {
                   )}
                   {missing && (
                     <p className="rounded-lg border border-primary/20 bg-primary/5 p-2 text-[10.5px] leading-relaxed text-foreground/80">
-                      For {TIER_LABELS[Math.min(4, stepTiers[step].tier + 1) as MaturityTier]}:{' '}
-                      {missing}
+                      For {TIER_LABELS[Math.min(4, hintTier + 1) as MaturityTier]}: {missing}
                     </p>
                   )}
                   <p className="font-mono text-sim-chip text-muted-foreground">{zone.cswpRef}</p>

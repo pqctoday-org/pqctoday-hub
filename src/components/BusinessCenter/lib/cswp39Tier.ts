@@ -288,7 +288,12 @@ export function computeStepTiers(metrics: BusinessMetrics): Record<CSWP39StepId,
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Which legacy step tiers feed into each Fig 3 zone's tier. The zone tier is
- *  the max() across contributing step tiers; reasons are concatenated. */
+ *  the max() across contributing step tiers; reasons are concatenated.
+ *
+ *  Assets, Management Tools and Mitigation no longer take their tier from these
+ *  rows: they have their own rules (ZONE_OWN_TIER below). The rows still name the
+ *  step each zone's resources belong to (primaryStepForZone). Migration and
+ *  Risk Management still take their tier from these rows. */
 export const ZONE_STEP_CONTRIBUTORS: Record<ZoneId, CSWP39StepId[]> = {
   // Governance — policy, standards, supply chain, threats, business reqs
   governance: ['govern'],
@@ -320,6 +325,12 @@ export function computeZoneTiers(metrics: BusinessMetrics): Record<ZoneId, StepT
   for (const [zoneId, contributors] of Object.entries(ZONE_STEP_CONTRIBUTORS) as Array<
     [ZoneId, CSWP39StepId[]]
   >) {
+    // eslint-disable-next-line security/detect-object-injection
+    const ownRule = ZONE_OWN_TIER[zoneId]
+    if (ownRule) {
+      out[zoneId] = ownRule(metrics)
+      continue
+    }
     let tier: MaturityTier = 1
     const reasons: string[] = []
     for (const stepId of contributors) {
@@ -331,6 +342,283 @@ export function computeZoneTiers(metrics: BusinessMetrics): Record<ZoneId, StepT
     out[zoneId] = { tier, reasons }
   }
   return out
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Zone-own tier rules (Q4, owner decision 2026-11-14: each zone's own tools).
+// ─────────────────────────────────────────────────────────────────────────────
+// Assets, Management Tools and Mitigation used to take their tier from step
+// rules that did not count the zone's own builders. Assets read the inventory
+// step, which never looked at the CBOM. Management Tools read the identify-gaps
+// step, which never looked at its two tools. Mitigation read the implement step,
+// which Migration reads too. Each of these zones now has a rule over its own
+// tools, plus the evidence signals of the old rule that still describe that zone.
+// Migration keeps implementTier, and Risk Management keeps its two contributors.
+//
+// Thresholds, shared by the three zones:
+//   - Tier 2: at least one of the zone's own tools is on file. That is the first
+//     sign the zone has been worked on.
+//   - Tier 3: more of the zone's tools, plus evidence (where the zone has more
+//     than one tool).
+//   - Tier 4: all of the tier-3 conditions, plus the zone's adaptive evidence.
+// Every tier repeats the conditions of the tier below, so the tiers are monotonic.
+// Assets has one builder, so its Tier 3 and 4 rest on the inventory evidence the
+// old rule used (layers assessed, products, FIPS validation, supply-chain matrix).
+// A second Assets builder would add a tool count to those tiers.
+
+/** The builder types each zone owns (registry: cswp39Zone of each tool). */
+const ZONE_OWN_TOOL_TYPES = {
+  assets: ['crypto-cbom'],
+  'management-tools': ['management-tools-audit', 'crypto-vulnerability-watch'],
+  mitigation: ['deployment-playbook', 'infra-modernization-plan', 'data-at-rest-strategy'],
+} as const satisfies Partial<Record<ZoneId, readonly ExecutiveDocumentType[]>>
+
+type OwnRuleZone = keyof typeof ZONE_OWN_TOOL_TYPES
+
+/** How many of the zone's own builder types are on file (each type counts once). */
+function ownToolsOnFile(metrics: BusinessMetrics, zone: OwnRuleZone): number {
+  const types: readonly ExecutiveDocumentType[] = ZONE_OWN_TOOL_TYPES[zone]
+  return types.filter((t) => hasArtifact(metrics, t)).length
+}
+
+/** The zone's own types not yet on file, as short phrases for a hint. */
+function ownToolsMissing(metrics: BusinessMetrics, zone: OwnRuleZone): string[] {
+  const types: readonly ExecutiveDocumentType[] = ZONE_OWN_TOOL_TYPES[zone]
+  return types.filter((t) => !hasArtifact(metrics, t)).map((t) => OWN_TOOL_PHRASE[t] ?? t)
+}
+
+/** Assets: CBOM is the zone's own tool. Its Tier 3-4 signals are the inventory
+ *  evidence the old inventory rule used. */
+export function assetsTier(metrics: BusinessMetrics): StepTierResult {
+  const reasons: string[] = []
+  const cbom = hasArtifact(metrics, 'crypto-cbom')
+  const layers = metrics.infraLayerCoverage.filter((l) => l.assessed).length
+  const products = metrics.bookmarkedProducts.length
+  const supplyMatrix = hasArtifact(metrics, 'supply-chain-matrix')
+  const fips = metrics.fipsBreakdown
+  const cbomDocumented = artifactContainsSection(metrics, 'supply-chain-matrix', 'CBOM')
+
+  if (cbom) reasons.push('CBOM on file')
+  if (products > 0) reasons.push(`${products} product(s) bookmarked`)
+  if (layers > 0) reasons.push(`${layers}/9 infra layers assessed`)
+  if (fips.validated > 0) reasons.push(`${fips.validated} FIPS-validated product(s)`)
+  if (supplyMatrix) reasons.push('Supply-chain matrix on file')
+  if (cbomDocumented) reasons.push('CBOM 6 asset classes documented (supply-chain-matrix §5.2)')
+
+  let tier: MaturityTier = 1
+  if (cbom) tier = 2
+  if (
+    cbom &&
+    layers >= T.inventoryAssessedLayersForRepeatable &&
+    products >= T.inventoryProductsForRepeatable
+  )
+    tier = 3
+  if (
+    cbom &&
+    layers >= T.inventoryAssessedLayersForRepeatable &&
+    products >= T.inventoryProductsForRepeatable &&
+    layers >= T.inventoryAssessedLayersForAdaptive &&
+    fips.validated > 0 &&
+    fips.validated >= fips.none &&
+    supplyMatrix &&
+    cbomDocumented
+  )
+    tier = 4
+
+  return { tier, reasons }
+}
+
+/** Management Tools: the audit and the vulnerability watch are the zone's own
+ *  tools. Its Tier 3-4 signals are the assessment result and history, and the
+ *  observability tooling notes (the tool-specific part of the old identify-gaps
+ *  rule). The risk register and the tracked frameworks are left out: they are
+ *  Risk Management evidence, not tooling. */
+export function managementToolsTier(metrics: BusinessMetrics): StepTierResult {
+  const reasons: string[] = []
+  const own = ownToolsOnFile(metrics, 'management-tools')
+  const result = metrics.assessmentResult !== null
+  const history = metrics.assessmentHistory.length
+  const observability = artifactContainsSection(
+    metrics,
+    'vendor-scorecard',
+    'Observability Tooling Notes'
+  )
+
+  if (hasArtifact(metrics, 'management-tools-audit')) reasons.push('Management-tools audit on file')
+  if (hasArtifact(metrics, 'crypto-vulnerability-watch'))
+    reasons.push('Crypto vulnerability watch on file')
+  if (result) reasons.push('Assessment result available')
+  if (history >= 2) reasons.push(`${history} assessments completed`)
+  if (observability) reasons.push('Observability tooling notes documented (vendor-scorecard §5.3)')
+
+  let tier: MaturityTier = 1
+  if (own >= 1) tier = 2
+  if (own >= 2 && result) tier = 3
+  if (own >= 2 && result && history >= T.identifyAssessmentHistoryForAdaptive && observability)
+    tier = 4
+
+  return { tier, reasons }
+}
+
+/** Mitigation: the deployment playbook, the infra modernization plan and the
+ *  data-at-rest strategy are the zone's own tools. Its evidence signals are the
+ *  gateway and decommission sections, the evidence section and FIPS validation
+ *  (the tooling-evidence part of the old implement rule). The roadmap, workflow
+ *  and phase signals stay with Migration. */
+export function mitigationTier(metrics: BusinessMetrics): StepTierResult {
+  const reasons: string[] = []
+  const own = ownToolsOnFile(metrics, 'mitigation')
+  const gateway = artifactContainsSection(metrics, 'migration-roadmap', 'Mitigation Gateway')
+  const decommission = artifactContainsSection(metrics, 'deployment-playbook', 'Decommission')
+  const evidence = artifactContainsSection(metrics, 'audit-checklist', 'Evidence')
+  const fipsValidated = metrics.fipsBreakdown.validated
+
+  if (hasArtifact(metrics, 'deployment-playbook')) reasons.push('Deployment playbook on file')
+  if (hasArtifact(metrics, 'infra-modernization-plan'))
+    reasons.push('Infrastructure modernization plan on file')
+  if (hasArtifact(metrics, 'data-at-rest-strategy')) reasons.push('Data-at-rest strategy on file')
+  if (gateway) reasons.push('Mitigation gateway documented (roadmap §4.6)')
+  if (decommission) reasons.push('Decommission plan documented (deployment-playbook §4.6)')
+  if (evidence) reasons.push('Evidence (CMVP / ACVP / ESV / CVE-scan) documented (audit-checklist)')
+  if (fipsValidated > 0) reasons.push(`${fipsValidated} FIPS-validated product(s)`)
+
+  let tier: MaturityTier = 1
+  if (own >= 1) tier = 2
+  if (own >= 2 && (gateway || decommission)) tier = 3
+  if (own === 3 && gateway && decommission && evidence && fipsValidated >= 1) tier = 4
+
+  return { tier, reasons }
+}
+
+/** The zone-own tier rule for each zone that has one. Other zones keep the
+ *  step-contributor rule above. */
+const ZONE_OWN_TIER: Partial<Record<ZoneId, (metrics: BusinessMetrics) => StepTierResult>> = {
+  assets: assetsTier,
+  'management-tools': managementToolsTier,
+  mitigation: mitigationTier,
+}
+
+// Short names for the zone's own tools, used in hints (no article, lower case).
+const OWN_TOOL_PHRASE: Partial<Record<ExecutiveDocumentType, string>> = {
+  'crypto-cbom': 'CBOM',
+  'management-tools-audit': 'management-tools audit',
+  'crypto-vulnerability-watch': 'crypto vulnerability watch',
+  'deployment-playbook': 'deployment playbook',
+  'infra-modernization-plan': 'infrastructure modernization plan',
+  'data-at-rest-strategy': 'data-at-rest strategy',
+}
+
+function ownHintMissing(metrics: BusinessMetrics, zone: OwnRuleZone, need: number): string | null {
+  if (need <= 0) return null
+  const names = ownToolsMissing(metrics, zone)
+  return names.length
+    ? `${need === 1 ? 'one more' : `${need} more`} of ${names.join(' or ')}`
+    : null
+}
+
+/** "Missing for next tier" for the three zones with their own rule. Each hint
+ *  names the zone's own tools (and the evidence the rule asks for). */
+const ZONE_OWN_MISSING: Partial<
+  Record<OwnRuleZone, (metrics: BusinessMetrics, tier: MaturityTier) => string | null>
+> = {
+  assets: (m, tier) => {
+    if (tier >= 4) return null
+    if (tier === 1) return 'Build a CBOM (crypto bill of materials) in the CBOM builder.'
+    if (tier === 2) {
+      const layers = m.infraLayerCoverage.filter((l) => l.assessed).length
+      const products = m.bookmarkedProducts.length
+      const need: string[] = []
+      if (layers < T.inventoryAssessedLayersForRepeatable)
+        need.push(`assess ${T.inventoryAssessedLayersForRepeatable - layers} more infra layer(s)`)
+      if (products < T.inventoryProductsForRepeatable)
+        need.push(`bookmark ${T.inventoryProductsForRepeatable - products} more product(s)`)
+      return need.length ? `Still need: ${need.join(', ')}.` : null
+    }
+    const layers = m.infraLayerCoverage.filter((l) => l.assessed).length
+    const fips = m.fipsBreakdown
+    return (
+      [
+        layers < T.inventoryAssessedLayersForAdaptive &&
+          `assess ${T.inventoryAssessedLayersForAdaptive - layers} more infra layer(s)`,
+        !hasArtifact(m, 'supply-chain-matrix') && 'add a supply-chain matrix',
+        !artifactContainsSection(m, 'supply-chain-matrix', 'CBOM') && 'document CBOM asset classes',
+        !(fips.validated >= fips.none && fips.validated > 0) &&
+          'get at least 1 FIPS-validated product on file',
+      ]
+        .filter(Boolean)
+        .join(', ') || null
+    )
+  },
+  'management-tools': (m, tier) => {
+    if (tier >= 4) return null
+    if (tier === 1) return 'Build a management-tools audit or a crypto vulnerability watch.'
+    const own = ownToolsOnFile(m, 'management-tools')
+    if (tier === 2) {
+      const need = [
+        ownHintMissing(m, 'management-tools', 2 - own),
+        m.assessmentResult === null && 'complete a risk assessment',
+      ].filter(Boolean)
+      return need.length ? `Still need: ${need.join(', ')}.` : null
+    }
+    return (
+      [
+        m.assessmentHistory.length < T.identifyAssessmentHistoryForAdaptive &&
+          'complete a second assessment',
+        !artifactContainsSection(m, 'vendor-scorecard', 'Observability Tooling Notes') &&
+          'document observability tooling notes',
+      ]
+        .filter(Boolean)
+        .join(', ') || null
+    )
+  },
+  mitigation: (m, tier) => {
+    if (tier >= 4) return null
+    if (tier === 1)
+      return 'Build a deployment playbook, an infrastructure modernization plan or a data-at-rest strategy.'
+    const own = ownToolsOnFile(m, 'mitigation')
+    const gateway = artifactContainsSection(m, 'migration-roadmap', 'Mitigation Gateway')
+    const decommission = artifactContainsSection(m, 'deployment-playbook', 'Decommission')
+    if (tier === 2) {
+      const need = [
+        ownHintMissing(m, 'mitigation', 2 - own),
+        !(gateway || decommission) && 'document a mitigation gateway or a decommission plan',
+      ].filter(Boolean)
+      return need.length ? `Still need: ${need.join(', ')}.` : null
+    }
+    const evidence = artifactContainsSection(m, 'audit-checklist', 'Evidence')
+    return (
+      [
+        own < 3 && `add ${ownToolsMissing(m, 'mitigation').join(' and ')}`,
+        !gateway && 'document your mitigation gateway',
+        !decommission && 'document a decommission plan',
+        !evidence && 'document evidence (CMVP/ACVP/ESV/CVE-scan)',
+        m.fipsBreakdown.validated < 1 && 'get at least 1 product FIPS-validated',
+      ]
+        .filter(Boolean)
+        .join(', ') || null
+    )
+  },
+}
+
+/** The tier a zone's "missing for next tier" hint is measured from. For the three
+ *  zones with their own rule that is the zone's tier. Migration and Risk
+ *  Management keep the step tier the hint has always been keyed on. */
+export function zoneHintTier(zone: ZoneId, metrics: BusinessMetrics): MaturityTier {
+  const ownRule = ZONE_OWN_TIER[zone]
+  if (ownRule) return ownRule(metrics).tier
+  const step = primaryStepForZone(zone)
+  return computeStepTiers(metrics)[step].tier
+}
+
+/** "Missing for next tier" for a zone, measured from zoneHintTier. The three
+ *  zones with their own rule get hints that name their own tools. Migration and
+ *  Risk Management get the same hint as before: the hint for the step they take
+ *  their tier from (see primaryStepForZone). */
+export function missingForNextZoneTier(zone: ZoneId, metrics: BusinessMetrics): string | null {
+  const ownMissing = ZONE_OWN_MISSING[zone as OwnRuleZone]
+  const tier = zoneHintTier(zone, metrics)
+  if (ZONE_OWN_TIER[zone] && ownMissing) return ownMissing(metrics, tier)
+  return missingForNextTier(primaryStepForZone(zone), metrics, tier)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
