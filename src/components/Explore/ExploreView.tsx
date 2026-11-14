@@ -9,7 +9,16 @@ import { PERSONAS } from '@/data/learningPersonas'
 import { TILES, type ExploreTile } from '@/data/exploreTiles'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
-export function ExploreView() {
+export function ExploreView({
+  simEmbed = false,
+  onLeave,
+}: {
+  /** Rendered inside the simulation. Every tile is another hub page, so each
+   *  one says it leaves the simulation instead of pretending to open in place. */
+  simEmbed?: boolean
+  /** Called before a tile navigates away (the sim marks where to resume). */
+  onLeave?: () => void
+} = {}) {
   const navigate = useNavigate()
   const { selectedPersona, experienceLevel, viewAccess, setViewAccess } = usePersonaStore()
   const isCurious = selectedPersona === 'curious' || experienceLevel === 'curious'
@@ -52,7 +61,7 @@ export function ExploreView() {
   return (
     <div className="max-w-5xl mx-auto py-4 md:py-8 px-2">
       {/* Header */}
-      <div className="text-center mb-8 md:mb-12">
+      <div className={`text-center mb-8 md:mb-12 ${simEmbed ? 'hidden' : ''}`}>
         <h1 className="text-xl md:text-4xl font-bold text-gradient flex items-center justify-center gap-2 md:gap-3 mb-3">
           <Compass className="w-5 h-5 md:w-9 md:h-9 text-primary shrink-0" aria-hidden="true" />
           Explore PQC Today
@@ -63,7 +72,13 @@ export function ExploreView() {
         </p>
       </div>
 
-      <PersonaPageNote route="/explore" className="mb-8 text-left" />
+      {!simEmbed && <PersonaPageNote route="/explore" className="mb-8 text-left" />}
+      {simEmbed && (
+        <p className="mb-4 text-sm text-muted-foreground" data-testid="explore-sim-note">
+          Each area below is its own hub page. Opening one leaves the simulation; your run is saved
+          and the simulation offers to resume when you come back.
+        </p>
+      )}
 
       {/* Tile grid — max-w-5xl prevents stretching on ultrawide */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
@@ -77,6 +92,7 @@ export function ExploreView() {
               variant="ghost"
               onClick={() => {
                 logExploreTileClick(destination)
+                onLeave?.()
                 navigate(destination)
               }}
               className={`glass-panel h-auto p-5 flex-col items-start text-left whitespace-normal hover:bg-transparent hover:border-primary/40 group relative ${isRecommended ? 'border-primary/30' : ''}`}
@@ -99,6 +115,11 @@ export function ExploreView() {
               <span className="mt-2 text-[11px] font-mono text-muted-foreground/80">
                 ~{tileMinutes(tile)} min {tileMinutesLabel(tile)}
               </span>
+              {simEmbed && (
+                <span className="mt-1 text-[11px] font-mono text-primary">
+                  opens the full page · leaves the simulation ↗
+                </span>
+              )}
             </Button>
           )
         })}

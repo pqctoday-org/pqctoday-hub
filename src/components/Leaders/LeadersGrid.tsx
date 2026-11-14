@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { useSearchParams } from 'react-router'
+import type { useSearchParams } from 'react-router'
+import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
 import {
   Search,
   Briefcase,
@@ -185,10 +186,16 @@ const EXEC_CATEGORY_PRIORITY: Record<string, number> = {
   'Algorithm Inventor': 4,
 }
 
-export const LeadersGrid = () => {
-  // Mobile UX layer (Phase 7).
-  const isMobileShell = useIsMobileShell()
-  const [searchParams, setSearchParams] = useSearchParams()
+export const LeadersGrid = ({
+  simEmbed = false,
+}: {
+  /** Rendered inside the simulation: no page header, filters kept local. */
+  simEmbed?: boolean
+} = {}) => {
+  // Mobile UX layer (Phase 7). The simulation keeps its own phone layout, so the
+  // mobile-shell screen never applies when embedded.
+  const isMobileShell = useIsMobileShell() && !simEmbed
+  const [searchParams, setSearchParams] = useEmbedSearchParams()
   const filters = useLeaderFilters(searchParams, setSearchParams)
   const selectedRegion = filters.values.region
   const selectedCountry = filters.values.country
@@ -666,13 +673,15 @@ export const LeadersGrid = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        icon={Users}
-        title="Community"
-        description="An evidence-linked directory of people and organizations appearing in post-quantum research, standards, policy, and implementation sources. Inclusion is not an endorsement or a ranking."
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={Users}
+          title="Community"
+          description="An evidence-linked directory of people and organizations appearing in post-quantum research, standards, policy, and implementation sources. Inclusion is not an endorsement or a ranking."
+        />
+      )}
 
-      <PersonaPageNote route="/leaders" />
+      {!simEmbed && <PersonaPageNote route="/leaders" />}
 
       {/* Executive overview — institutional influence + why each group matters.
           Exec only; other roles see the directory unchanged. */}

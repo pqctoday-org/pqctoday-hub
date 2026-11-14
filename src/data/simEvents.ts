@@ -35,7 +35,7 @@ export interface SimEvent {
  *  migration program. The event TEXT is still resolved live from
  *  `libraryData` at module load, so a title correction upstream propagates
  *  here without a code change — only the SELECTION is pinned. */
-const FEATURED_LIBRARY_REFS = ['NIST SP 800-208', 'NIST SP 800-227', 'NIST IR 8545']
+const FEATURED_LIBRARY_REFS = ['NIST SP 800-208', 'NIST SP 800-227', 'NIST IR 8545', 'NIST IR 8547']
 
 function deriveLibraryEvents(): string[] {
   const byId = new Map(libraryData.map((item) => [item.referenceId, item]))
