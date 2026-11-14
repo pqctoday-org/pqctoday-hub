@@ -80,8 +80,8 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     // `polarity` the coverage-matrix case polarity (both imply that tab).
     // `transition` opens one Transition row (slug of function-classical-pqc);
     // `standard` one Industry Landscape standard (standard_id).
-    // `industry`/`mechanism`/`usecase` drive the
-    // Landscape tab. The `matrix*` keys are Protocol Support's own state.
+    // `industry`/`mechanism`/`usecase`/`construction` drive the
+    // Landscape tab (`construction` opens one construction card by id). The `matrix*` keys are Protocol Support's own state.
     queryKeys: [
       'tab',
       'algo',
@@ -115,6 +115,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'cmp',
       'industry',
       'mechanism',
+      'construction',
       'usecase',
     ],
     description: 'Algorithms',

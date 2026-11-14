@@ -26,6 +26,7 @@ export const RESOURCE_PARAMS: Readonly<Record<string, readonly string[]>> = {
     'algo',
     'industry',
     'usecase',
+    'construction',
     'attack',
     'engine',
     'case',

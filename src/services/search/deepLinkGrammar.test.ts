@@ -116,6 +116,7 @@ const EXPECTED_KEYS: Record<string, readonly string[]> = {
     'cmp',
     'industry',
     'mechanism',
+    'construction',
     'usecase',
   ],
   '/library': [
