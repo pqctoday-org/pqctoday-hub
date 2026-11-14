@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// View-level check: the rows the Architect For You view renders, in order, are the rows the
-// For You export lists for that persona.
+// View-level check: every framework the Architect For You view renders, by region and in
+// order, is a row the For You export lists for that persona, and nothing else is rendered.
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
-import type { ApplicabilityResult } from '@/utils/applicabilityEngine'
+import { TIER_META, type ApplicabilityResult } from '@/utils/applicabilityEngine'
 import { ArchitectStandardsView } from './ArchitectStandardsView'
 import { forYouViewRows } from './forYouSelection'
 
@@ -43,33 +43,35 @@ beforeAll(() => {
   }))
 })
 
+// The title the view gives each framework's button: its label, plus its tier when the tier is known.
+function titleFor(label: string, tier: string | undefined): string {
+  const meta = tier ? TIER_META[tier as keyof typeof TIER_META] : undefined
+  return meta ? `${label} — ${meta.label}: ${meta.description}` : label
+}
+
 describe('Architect For You: the view and the export list the same rows', () => {
-  it('renders each region and its frameworks in the order the export lists them', () => {
+  it('renders exactly the export rows, region by region and in order', () => {
     const { container } = render(
       <MemoryRouter>
         <ArchitectStandardsView />
       </MemoryRouter>
     )
-    const exported = forYouViewRows('architect', hook.results, []).map((r) => ({
-      region: r.section,
-      label: r.label,
-    }))
+    const exported = forYouViewRows('architect', hook.results, [])
     expect(exported.length).toBeGreaterThan(0)
 
-    const rendered: { region: string; label: string }[] = []
+    const expected = exported.map((r) => `${r.section}|${titleFor(r.label, r.tier)}`)
+
+    // Every framework button the view renders, with its region, in document order.
+    const rendered: string[] = []
     for (const heading of Array.from(container.querySelectorAll('h4'))) {
       const region = heading.textContent ?? ''
       const panel = heading.closest('.glass-panel')
-      const items = Array.from(panel?.querySelectorAll('li') ?? [])
-      for (const li of items) {
-        // Each framework's button carries its label in its title: match exactly, not by prefix.
-        const title = li.querySelector('[title]')?.getAttribute('title') ?? ''
-        const row = exported.find(
-          (e) => e.region === region && (title === e.label || title.startsWith(`${e.label} — `))
-        )
-        if (row) rendered.push({ region, label: row.label })
+      for (const li of Array.from(panel?.querySelectorAll('li') ?? [])) {
+        const button = li.querySelector('[title]')
+        if (!button) continue
+        rendered.push(`${region}|${button.getAttribute('title') ?? ''}`)
       }
     }
-    expect(rendered).toEqual(exported)
+    expect(rendered).toEqual(expected)
   })
 })
