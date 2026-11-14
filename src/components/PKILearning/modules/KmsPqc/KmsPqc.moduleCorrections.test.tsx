@@ -78,19 +78,18 @@ describe('provider data', () => {
     expect(azure.hybridSupport).toBe(false)
   })
 
-  it('Vault: real transit API fields, a symmetric key for encryption, ML-DSA marked Enterprise', () => {
-    const vault = provider('hashicorp-vault')
-    expect(vault.apiPattern).toContain('type="ml-dsa"')
-    expect(vault.apiPattern).toContain('parameter_set="65"')
-    expect(vault.apiPattern).toContain('type="hybrid"')
-    expect(vault.apiPattern).toContain('hybrid_key_type_pqc="ml-dsa"')
-    expect(vault.apiPattern).not.toMatch(/ml-dsa-65|hybrid_algorithm/)
-    expect(vault.apiPattern).toMatch(/aes256-gcm96/)
-    expect(vault.envelopeEncryptionModel).toMatch(/cannot encrypt/)
-    expect(vault.notes).toMatch(/X25519MLKEM768 \(post quantum key agreement\)/)
-    expect(vault.notes).toContain(
-      "HashiCorp Vault's transit engine creates ML-DSA keys with type ml-dsa and a parameter_set of 44, 65 or 87."
-    )
+  it('OpenBao: native signing key type and separate AES encryption key', () => {
+    const bao = provider('hashicorp-vault')
+    expect(bao.name).toBe('OpenBao')
+    expect(bao.product).toBe('OpenBao 2.7.2')
+    expect(bao.apiPattern).toContain('type=mldsa-65')
+    expect(bao.apiPattern).toContain('type=aes256-gcm96')
+    expect(bao.apiPattern).not.toMatch(/parameter_set|type="hybrid"/)
+    expect(bao.envelopeEncryptionModel).toContain('cannot encrypt')
+    expect(bao.kmipSupport).toBe(false)
+    expect(bao.hybridSupport).toBe(false)
+    expect(bao.fipsLevel).not.toContain('BoringCrypto')
+    expect(bao.notes).toContain('https://openbao.org/docs/api/secret/transit/')
   })
 
   it('Thales: no ML-KEM key uploaded to AWS, no unsourced GA claim, RSA wrap named as classical', () => {
@@ -196,7 +195,7 @@ describe('constants', () => {
     expect(server.description).toMatch(/Committee Specification Draft/)
   })
 
-  it('KMIP examples carry the real Vault fields and no unsourced Thales REST shapes', () => {
+  it('Provider examples use native OpenBao operations and no unsourced Thales REST shapes', () => {
     const all = flat(KMIP_OPERATIONS)
     expect(all).not.toMatch(/type=\\"ml-dsa-65\\"|vault\/keys2|"algorithm": "ML-KEM-768"/)
     for (const op of KMIP_OPERATIONS) {
@@ -204,7 +203,9 @@ describe('constants', () => {
       expect(op.providerApis['hashicorp-vault'].code).not.toMatch(/pqc-root-kek/)
     }
     const vaultWrap = KMIP_OPERATIONS.find((o) => o.id === 'wrap')!.providerApis['hashicorp-vault']
-    expect(vaultWrap.code).toMatch(/aes-kek/)
+    expect(vaultWrap.code).toContain('keys/sample-provider-kek')
+    expect(vaultWrap.code).toContain('type=aes256-gcm96')
+    expect(vaultWrap.code).toContain('test "$recovered" = "$plaintext"')
   })
 
   it('the AWS rotate example no longer pairs automatic rotation with an ML-DSA key', () => {

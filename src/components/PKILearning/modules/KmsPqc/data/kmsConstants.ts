@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { hke1TotalBytes } from '../utils/hke1Envelope'
+import { OPENBAO_PROVIDER_COMMANDS } from './openBaoProviderCommands'
 
 export interface KeyHierarchyLevel {
   id: string
@@ -563,14 +564,7 @@ aws kms create-key \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault Enterprise — Create ML-DSA transit key (signing only)
-vault write transit/keys/pqc-root-sig \\
-  type="ml-dsa" \\
-  parameter_set="65"
-
-# Vault transit offers no KEM key type: key encapsulation is not available here.
-# Response:
-# Success! Data written to: transit/keys/pqc-root-sig`,
+        code: OPENBAO_PROVIDER_COMMANDS.create,
         language: 'bash',
       },
       'thales-ciphertrust': {
@@ -638,16 +632,7 @@ aws kms describe-key \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — Read transit key
-vault read transit/keys/pqc-root-sig
-
-# Response:
-# Key          Value
-# ---          -----
-# type         ml-dsa
-# keys         map[1:1709312400]
-# latest_version  1
-# min_available_version  0`,
+        code: OPENBAO_PROVIDER_COMMANDS.get,
         language: 'bash',
       },
       'thales-ciphertrust': {
@@ -663,7 +648,7 @@ vault read transit/keys/pqc-root-sig
     id: 'activate',
     name: 'Activate',
     description:
-      'Transition a key from Pre-Active to Active state. KMS-generated AWS KMS keys and Vault transit keys have no separate activation step in their APIs; a KMIP server moves a Pre-Active object to Active with Activate.',
+      'Transition a key from Pre-Active to Active state. KMS-generated AWS KMS keys and OpenBao Transit keys have no separate activation step in their APIs; a KMIP server moves a Pre-Active object to Active with Activate.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -701,11 +686,7 @@ aws kms enable-key \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — transit keys are usable on creation
-# (no separate activation step). To restrict old versions instead:
-vault write transit/keys/pqc-root-sig/config \\
-  min_decryption_version=1 \\
-  deletion_allowed=false`,
+        code: OPENBAO_PROVIDER_COMMANDS.activate,
         language: 'bash',
       },
       'thales-ciphertrust': {
@@ -784,16 +765,7 @@ aws kms encrypt \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — Encrypt (wrap) data with a symmetric transit key
-# (ML-DSA keys sign only; they cannot encrypt)
-vault write transit/encrypt/aes-kek \\
-  plaintext=$(base64 < dek.bin)
-
-# Response:
-# Key           Value
-# ---           -----
-# ciphertext    vault:v1:ABCDEFxyz...
-# key_version   1`,
+        code: OPENBAO_PROVIDER_COMMANDS.wrap,
         language: 'bash',
       },
       'thales-ciphertrust': {
@@ -854,13 +826,7 @@ aws kms update-alias \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — Rotate transit key
-vault write -f transit/keys/pqc-root-sig/rotate
-
-# Response:
-# Success! Data written to: transit/keys/pqc-root-sig/rotate
-# New version: 2
-# Old versions still available for decrypt`,
+        code: OPENBAO_PROVIDER_COMMANDS.rekey,
         language: 'bash',
       },
       'thales-ciphertrust': {
@@ -876,7 +842,7 @@ vault write -f transit/keys/pqc-root-sig/rotate
     id: 'destroy',
     name: 'Destroy',
     description:
-      'Destroy key material. The KMIP Destroy operation itself defines no waiting period and applies only to Pre-Active or Deactivated objects, so an Active key is first moved to Deactivated with Revoke. AWS KMS enforces a 7-30 day waiting period; other providers define their own soft-delete or scheduled-destruction windows, and Vault transit deletes once deletion_allowed is set. Check each provider before planning a destruction.',
+      'Destroy key material. The KMIP Destroy operation itself defines no waiting period and applies only to Pre-Active or Deactivated objects, so an Active key is first moved to Deactivated with Revoke. AWS KMS enforces a 7-30 day waiting period; other providers define their own soft-delete or scheduled-destruction windows, and OpenBao Transit deletes once deletion_allowed is set. Check each provider before planning a destruction.',
     kmipXml: `<RequestMessage>
   <RequestHeader>
     <ProtocolVersion>
@@ -919,14 +885,7 @@ aws kms schedule-key-deletion \\
         language: 'bash',
       },
       'hashicorp-vault': {
-        code: `# HashiCorp Vault — Enable deletion then destroy
-vault write transit/keys/pqc-root-sig/config \\
-  deletion_allowed=true
-
-vault delete transit/keys/pqc-root-sig
-
-# Response:
-# Success! Data deleted at: transit/keys/pqc-root-sig`,
+        code: OPENBAO_PROVIDER_COMMANDS.destroy,
         language: 'bash',
       },
       'thales-ciphertrust': {
@@ -1008,7 +967,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'GA',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental (Enterprise)',
+      'hashicorp-vault': 'N/A — native Transit API, not KMIP',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Listed in DSM documentation',
     },
@@ -1026,7 +985,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'GA',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental (Enterprise)',
+      'hashicorp-vault': 'N/A — native Transit API, not KMIP',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Listed in DSM documentation',
     },
@@ -1044,7 +1003,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'GA',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental (Enterprise)',
+      'hashicorp-vault': 'N/A — native Transit API, not KMIP',
       'thales-ciphertrust': 'Via Luna HSM',
       'fortanix-dsm': 'Listed in DSM documentation',
     },
@@ -1062,7 +1021,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'N/A',
       'gcp-kms': 'GA (software)',
-      'hashicorp-vault': 'Experimental (Enterprise)',
+      'hashicorp-vault': 'N/A — native Transit API, not KMIP',
       'thales-ciphertrust': 'N/A',
       'fortanix-dsm': 'Not listed',
     },
@@ -1080,7 +1039,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'N/A',
       'gcp-kms': 'N/A',
-      'hashicorp-vault': 'Experimental (Enterprise)',
+      'hashicorp-vault': 'N/A — native Transit API, not KMIP',
       'thales-ciphertrust': 'N/A',
       'fortanix-dsm': 'Not listed',
     },
@@ -1098,7 +1057,7 @@ export const KMIP_PQC_KEY_TYPES: KmipPqcKeyType[] = [
     providerSupport: {
       'aws-kms': 'N/A',
       'gcp-kms': 'N/A',
-      'hashicorp-vault': 'Experimental (Enterprise)',
+      'hashicorp-vault': 'N/A — native Transit API, not KMIP',
       'thales-ciphertrust': 'N/A',
       'fortanix-dsm': 'Not listed',
     },
@@ -1198,7 +1157,7 @@ export const KMIP_READINESS_CHECKLIST: KmipReadinessItem[] = [
     category: 'Connectivity',
     title: 'Provider KMIP Endpoint Compatibility',
     description:
-      'Test KMIP connectivity to each backend: on-prem HSMs (Luna, nShield) typically expose KMIP natively; cloud KMS may require a KMIP proxy like CipherTrust or Vault.',
+      'Test KMIP connectivity to each backend: on-prem HSMs (Luna, nShield) typically expose KMIP natively; cloud KMS may require an explicitly configured KMIP proxy such as CipherTrust.',
     critical: true,
   },
   {

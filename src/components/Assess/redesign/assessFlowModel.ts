@@ -276,6 +276,9 @@ export interface AssessValidatorState {
   industry: string
   country: string
   currentCryptoCategories: string[]
+  /** Specific algorithms; answers saved before the family picker (or a CBOM) can hold
+   *  these with no family ticked. */
+  currentCrypto?: string[]
   cryptoUnknown: boolean
   dataSensitivity: string[]
   sensitivityUnknown: boolean
@@ -301,7 +304,8 @@ export interface AssessValidatorState {
 export const STEP_VALIDATORS: Record<AssessStepKey, (s: AssessValidatorState) => boolean> = {
   industry: (s) => !!s.industry,
   country: (s) => !!s.country,
-  crypto: (s) => s.currentCryptoCategories.length > 0 || s.cryptoUnknown,
+  crypto: (s) =>
+    s.currentCryptoCategories.length > 0 || (s.currentCrypto?.length ?? 0) > 0 || s.cryptoUnknown,
   sensitivity: (s) => s.dataSensitivity.length > 0 || s.sensitivityUnknown,
   compliance: () => true,
   migration: (s) => !!s.migrationStatus || s.migrationUnknown,
@@ -312,6 +316,25 @@ export const STEP_VALIDATORS: Record<AssessStepKey, (s: AssessValidatorState) =>
   agility: (s) => !!s.cryptoAgility || s.agilityUnknown,
   infra: () => true,
   timeline: (s) => !!s.timelinePressure || s.timelineUnknown,
+}
+
+/**
+ * Required (not freely-optional) steps of `mode` that are still blank — neither
+ * a value nor "not sure". A report built without them would score on missing
+ * inputs, so both the desktop and mobile review screens hold Generate until
+ * this is empty. In render order.
+ */
+export function missingRequiredSteps(mode: AssessTrack, s: AssessValidatorState): AssessStepKey[] {
+  return renderOrderFor(mode).filter((k) => !STEP_META[k].freelyOptional && !STEP_VALIDATORS[k](s))
+}
+
+/** How many required steps of `mode` are answered, and how many there are in all. */
+export function requiredStepProgress(
+  mode: AssessTrack,
+  s: AssessValidatorState
+): { answered: number; total: number } {
+  const total = renderOrderFor(mode).filter((k) => !STEP_META[k].freelyOptional).length
+  return { answered: total - missingRequiredSteps(mode, s).length, total }
 }
 
 /**
@@ -372,6 +395,94 @@ export function storeIndexOf(mode: AssessTrack, key: AssessStepKey): number {
 export function keyAtStoreIndex(mode: AssessTrack, idx: number): AssessStepKey | undefined {
   // eslint-disable-next-line security/detect-object-injection
   return storeOrderFor(mode)[idx]
+}
+
+/** Store fields that say whether a freely-optional step got an answer. Optional
+ *  because the validator state above deliberately omits them (those validators
+ *  always pass). */
+export interface AssessOptionalAnswerState {
+  complianceRequirements?: string[]
+  complianceUnknown?: boolean
+  cryptoUseCases?: string[]
+  useCasesUnknown?: boolean
+  infrastructure?: string[]
+  infrastructureUnknown?: boolean
+  vendorDependency?: string
+  vendorUnknown?: boolean
+  cryptoLibraries?: string[]
+  infraAutomation?: string[]
+}
+
+export type AssessAnswerState = AssessValidatorState & AssessOptionalAnswerState
+
+/**
+ * True when the step holds a real answer: a required step passes its validator
+ * (value or "not sure"); a freely-optional step has a selection or the
+ * "not sure" flag. Unlike STEP_VALIDATORS this is false for an untouched
+ * optional step, so it can tell "answered" from "merely allowed to be blank".
+ */
+export function hasAnswer(key: AssessStepKey, s: AssessAnswerState): boolean {
+  switch (key) {
+    case 'compliance':
+      return (s.complianceRequirements?.length ?? 0) > 0 || !!s.complianceUnknown
+    case 'use-cases':
+      return (s.cryptoUseCases?.length ?? 0) > 0 || !!s.useCasesUnknown
+    case 'infra':
+      // The step asks about layers, vendor model, crypto libraries and automation;
+      // any one of them counts, matching the review summary.
+      return (
+        (s.infrastructure?.length ?? 0) > 0 ||
+        !!s.infrastructureUnknown ||
+        !!s.vendorDependency ||
+        !!s.vendorUnknown ||
+        (s.cryptoLibraries?.length ?? 0) > 0 ||
+        (s.infraAutomation?.length ?? 0) > 0
+      )
+    default:
+      return STEP_VALIDATORS[key](s)
+  }
+}
+
+/** "Answered" as the rail and progress counts show it: a real answer, or — for a
+ *  freely-optional step — one the user has already moved past (`passed`). */
+export function isStepAnswered(key: AssessStepKey, s: AssessAnswerState, passed: boolean): boolean {
+  return STEP_META[key].freelyOptional ? hasAnswer(key, s) || passed : STEP_VALIDATORS[key](s)
+}
+
+/**
+ * The `store.currentStep` value of the first step in `mode`'s render order that
+ * still needs the reader — a required step that fails its validator, or an
+ * optional step with no answer that is not in `seenKeys` (steps the reader
+ * already went through on another track). Null when nothing is outstanding.
+ *
+ * Used when a finished fast-track assessment is upgraded to the full track: the
+ * full order puts use-cases, retention and credential lifetime BEFORE migration,
+ * so resuming at the old store index would drop the reader past all three.
+ */
+export function firstIncompleteStepStoreIndex(
+  mode: AssessTrack,
+  s: AssessAnswerState,
+  seenKeys: readonly AssessStepKey[] = []
+): number | null {
+  const key = renderOrderFor(mode).find((k) =>
+    STEP_META[k].freelyOptional ? !hasAnswer(k, s) && !seenKeys.includes(k) : !STEP_VALIDATORS[k](s)
+  )
+  return key ? storeIndexOf(mode, key) : null
+}
+
+/** Where a saved `currentStep` sits on the wizard's own rail, for the resume
+ *  banner: 1-based position, track length and the rail label — not the
+ *  legacy-order number, which differs on the full track. */
+export function resumePosition(
+  mode: AssessTrack,
+  storeStep: number
+): { position: number; total: number; label: string } | null {
+  const key = keyAtStoreIndex(mode, storeStep)
+  if (!key) return null
+  const order = renderOrderFor(mode)
+  const idx = order.indexOf(key)
+  if (idx < 0) return null
+  return { position: idx + 1, total: order.length, label: STEP_META[key].label }
 }
 
 /** Per-track question count + time estimate, for chooser + control-deck copy. */

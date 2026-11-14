@@ -158,6 +158,48 @@ export function computeMaturityScore(
   return maxWeighted > 0 ? Math.round((weighted / maxWeighted) * 100) : 0
 }
 
+/** Below this share of systems covered, a category is listed as a gap even at Partial or Automated. */
+export const LOW_COVERAGE_PCT = 50
+
+/**
+ * Coverage-adjusted readiness: each category's rating (level / 3) is scaled by the
+ * share of systems it reaches (sysPct / 100), then importance-weighted like the
+ * category rating. An Automated scanner that reaches 30% of systems contributes
+ * 30% of its weight, not 100%.
+ */
+export function computeCoverageAdjustedScore(
+  levels: Record<string, CoverageLevel>,
+  sysPct: Record<string, number>,
+  tools: ToolDef[] = TOOLS
+): number {
+  const weighted = tools.reduce((acc, t) => {
+    const pct = Math.min(100, Math.max(0, sysPct[t.id] ?? 0))
+    return acc + ((levels[t.id] ?? 0) / 3) * (pct / 100) * t.importance
+  }, 0)
+  const maxWeighted = tools.reduce((acc, t) => acc + t.importance, 0)
+  return maxWeighted > 0 ? Math.round((weighted / maxWeighted) * 100) : 0
+}
+
+/** Why a category is a gap: rating below Partial, or rated Partial+ but reaching under half the systems. */
+export function gapReason(
+  level: CoverageLevel,
+  pct: number
+): 'rating-below-partial' | 'low-systems-coverage' | null {
+  if (level < 2) return 'rating-below-partial'
+  if ((pct ?? 0) < LOW_COVERAGE_PCT) return 'low-systems-coverage'
+  return null
+}
+
+function describeGap(
+  t: ToolDef,
+  levels: Record<string, CoverageLevel>,
+  sysPct: Record<string, number>
+): string {
+  return gapReason(levels[t.id], sysPct[t.id]) === 'low-systems-coverage'
+    ? `${LEVEL_LABELS[levels[t.id]]}, but only ${sysPct[t.id] ?? 0}% of systems covered`
+    : `currently ${LEVEL_LABELS[levels[t.id]]}`
+}
+
 export const ManagementToolsAudit: React.FC = () => {
   const { myProducts } = useExecutiveModuleData()
   // A catalogue selection identifies a product to investigate, not an installed
@@ -191,10 +233,21 @@ export const ManagementToolsAudit: React.FC = () => {
   // directly below. (Audit 2026-08-10, W1-5.)
   const completeness = useMemo(() => computeMaturityScore(levels), [levels])
 
-  const gaps = useMemo(
-    () => TOOLS.filter((t) => levels[t.id] < 2).sort((a, b) => b.importance - a.importance),
-    [levels]
+  const coverageAdjusted = useMemo(
+    () => computeCoverageAdjustedScore(levels, sysPct),
+    [levels, sysPct]
   )
+
+  // A category is a gap when its rating is below Partial, or when it is rated
+  // Partial/Automated but reaches under half of the systems.
+  const gaps = useMemo(
+    () =>
+      TOOLS.filter((t) => gapReason(levels[t.id], sysPct[t.id]) !== null).sort(
+        (a, b) => b.importance - a.importance
+      ),
+    [levels, sysPct]
+  )
+  const gapLabel = (t: ToolDef) => describeGap(t, levels, sysPct)
 
   /** Markdown serialization of the current audit state for Command Center export. */
   const exportMarkdown = useMemo(() => {
@@ -202,12 +255,13 @@ export const ManagementToolsAudit: React.FC = () => {
     lines.push('# Management Tools Audit')
     lines.push('')
     lines.push(`**Hub tool-category rating:** ${completeness}%`)
+    lines.push(`**Coverage-adjusted readiness:** ${coverageAdjusted}%`)
     lines.push('')
     lines.push(
       'Reference reading: NIST CSWP.39 §5. The weights and display bands are Hub teaching heuristics, not NIST completeness thresholds.'
     )
     lines.push(
-      'Selected category ratings are learner-entered sample assumptions, not tested capabilities. Systems-coverage percentages are recorded separately and do not contribute to this rating; even 100% does not establish inventory coverage or implemented controls.'
+      'Selected category ratings are learner-entered sample assumptions, not tested capabilities. The category rating ignores systems coverage; the coverage-adjusted readiness scales each rating by the sample share of systems covered. Even 100% on either does not establish inventory coverage or implemented controls.'
     )
     lines.push('')
     lines.push('## Coverage by tool category')
@@ -221,24 +275,26 @@ export const ManagementToolsAudit: React.FC = () => {
     }
     lines.push('')
     if (gaps.length > 0) {
-      lines.push(`## Topics below Partial — Hub importance order (${gaps.length})`)
+      lines.push(
+        `## Gaps: rating below Partial or under ${LOW_COVERAGE_PCT}% of systems covered — Hub importance order (${gaps.length})`
+      )
       lines.push('')
       for (const t of gaps) {
         const lvl = levels[t.id]
-        lines.push(`### ${t.name} — currently ${LEVEL_LABELS[lvl]}`)
+        lines.push(`### ${t.name} — ${describeGap(t, levels, sysPct)}`)
         lines.push('')
         lines.push(`> ${t.recommendations[lvl]}`)
         lines.push('')
       }
     } else {
-      lines.push('## No selected ratings below Partial')
+      lines.push('## No gaps in the sample ratings')
       lines.push('')
       lines.push(
-        'All selected category ratings are Partial or Automated; this does not establish implemented capability or systems coverage.'
+        `All selected category ratings are Partial or Automated and reach at least ${LOW_COVERAGE_PCT}% of systems; this does not establish implemented capability or systems coverage.`
       )
     }
     return lines.join('\n')
-  }, [levels, sysPct, completeness, gaps])
+  }, [levels, sysPct, completeness, coverageAdjusted, gaps])
 
   return (
     <div className="space-y-6">
@@ -347,6 +403,12 @@ export const ManagementToolsAudit: React.FC = () => {
           <div className="font-bold text-foreground">Hub Tool-Category Rating</div>
           <div className="text-xl font-bold text-primary">{completeness}%</div>
         </div>
+        <div className="flex justify-between items-center">
+          <div className="font-bold text-foreground">Coverage-Adjusted Readiness</div>
+          <div className="text-xl font-bold text-primary" data-testid="coverage-adjusted">
+            {coverageAdjusted}%
+          </div>
+        </div>
 
         {/* Completeness bar */}
         <div className="w-full bg-muted/50 rounded-full h-2.5">
@@ -367,8 +429,11 @@ export const ManagementToolsAudit: React.FC = () => {
           management, asset management, configuration management) each count three times as much as
           data classification. Systems-coverage percentages are yours to enter; nothing seeds them,
           because a count of detected products says nothing about how much of your estate they
-          reach. These percentages do not contribute to the headline rating: all categories set to
-          Automated still score 100% with 0% systems coverage. Neither number verifies a capability.
+          reach. The category rating ignores them: all categories set to Automated still score 100%
+          with 0% systems coverage. The coverage-adjusted readiness multiplies each rating by its
+          share of systems covered, so the same audit reads 0% there, and any category under{' '}
+          {LOW_COVERAGE_PCT}% of systems stays on the gap list. Neither number verifies a
+          capability.
         </p>
 
         {/* Selected category rating heatmap */}
@@ -398,7 +463,8 @@ export const ManagementToolsAudit: React.FC = () => {
         {gaps.length > 0 ? (
           <div>
             <div className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">
-              Topics below Partial ({gaps.length})
+              Gaps: rating below Partial or under {LOW_COVERAGE_PCT}% of systems covered (
+              {gaps.length})
             </div>
             <div className="space-y-2">
               {gaps.map((t) => (
@@ -406,10 +472,7 @@ export const ManagementToolsAudit: React.FC = () => {
                   <AlertCircle size={13} className="text-status-warning mt-0.5 shrink-0" />
                   <div className="text-xs">
                     <span className="font-bold text-foreground">{t.name}</span>
-                    <span className="text-muted-foreground">
-                      {' '}
-                      — currently {LEVEL_LABELS[levels[t.id]]}
-                    </span>
+                    <span className="text-muted-foreground"> — {gapLabel(t)}</span>
                   </div>
                 </div>
               ))}
@@ -418,8 +481,8 @@ export const ManagementToolsAudit: React.FC = () => {
         ) : completeness >= 75 ? (
           <div className="flex items-center gap-2 text-status-success text-sm font-medium">
             <CheckCircle2 size={16} />
-            Selected ratings reach the Hub display band — implemented capabilities and inventory
-            coverage are not assessed.
+            Selected ratings and systems coverage reach the Hub display band — implemented
+            capabilities and inventory coverage are not assessed.
           </div>
         ) : (
           <div className="flex items-center gap-2 text-status-warning text-sm font-medium">
@@ -450,7 +513,7 @@ export const ManagementToolsAudit: React.FC = () => {
             type: 'management-tools-audit',
             title: `Management Tools Audit — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
-            inputs: { levels, sysPct, completeness },
+            inputs: { levels, sysPct, completeness, coverageAdjusted },
             createdAt: Date.now(),
           })
         }}

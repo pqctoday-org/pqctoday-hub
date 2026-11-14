@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'compliance-strategy',
-  contentVersion: 13,
+  contentVersion: 14,
   lm_id: 'LM-035',
   title: 'Compliance & Regulatory Strategy',
   description:

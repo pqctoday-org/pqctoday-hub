@@ -36,7 +36,7 @@ run on this exact commit is not paid twice):
 - `format:check` — prettier over the whole tree (lint-staged only sees staged files).
 - `lint` — eslint incl. `eslint-plugin-security`.
 - `check:version-bumps` — a changed tool or Learn module carries its version bump.
-- `audit:matrix-refs` — protocol-matrix doc-ID references are backed by structured refs, `stage` and `value` agree, and ref ids are well formed.
+- `audit:matrix-refs` — protocol-matrix doc-ID references (also those in a row's description, recommended reason and vendor-availability text) are backed by structured refs, `stage` and `value` agree, ref ids are well formed, a published RFC is not listed under drafts (nor a draft under releases), and every library `productId` is an active catalog row whose licence does not contradict its open-source / commercial list.
 - `audit:role-board-drift` — `roleBoardContent.generated.ts` matches `role_board_content_*.csv`.
 - `gen:timeline-facts:check` — `timelineFacts.generated.ts` matches the CSV.
 - ~~automatic~~ `sync:wasm:check` is **manual only since 2026-09-27** (owner decision — it failed every hub push whenever pqctoday-hsm moved; run it by hand during a wasm rebuild) — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here). Since 2026-09-26 a Rust bundle's inputs come from its Cargo build graph (`cargoManifest` in `public/wasm/wasm-provenance.json`, derived by `scripts/ci/wasm-build-inputs.ts`) rather than a hand-written `sourceDirs` list. That hand-written list had missed a linked crate: cacp-kmip never saw a Rust engine change. It had also flagged changes that cannot alter the binary (reports, committed wasm output, the bench crate). `scripts/ci/wasm-build-inputs.local.test.ts` replays both kinds of error against real hsm commits. On CI's blobless clone the derivation reads each Rust source once, lazily: measured at ~96 s for cacp-kmip.
@@ -50,7 +50,10 @@ run on this exact commit is not paid twice):
 - `test` — the full vitest suite (also in GitHub, sharded; the local run is the fast path on an M-series machine).
 - `test:local` — the `*.local.test.{ts,tsx}` tier, UNSCOPED (80 files, 1,017 tests). Added 2026-09-26: 69 of those files were run by no gate at all (the only enforced invocation of `vitest.local.config.ts` was `test:local:cacp`'s two kmip paths). See the sabotage table below — many of the sabotage proofs live in this tier, so before this they were proofs nothing checked. **Cost: ~19 min measured** (1,159 s, M-series, 2026-09-26), dominated by a few real-WASM/vector suites rather than by breadth — much slower than `test`, and the main thing to weigh if pre-push starts feeling too heavy. Moving it to a receipt-only or nightly venue is a real option; running it nowhere is what created the hole. **Update, same day:** it later grew to 28.6 min, 26.3 of which was one file, the SLH-DSA NIST-vector suite; that file moved to the nightly venue below (`*.nightly.test.ts`), and everything else stays here.
 
-then the receipt is written. Data checks (data integrity, archival, evidence,
+then the hook writes the receipt (`gate:prepush` ends with `gate:receipt`). Since 4.207,
+`gate:local` run by hand writes no receipt: inside `gate:release` it is only the first
+half, and a receipt written there let a push skip the hook while the rest of the
+release check was still running or had failed. Data checks (data integrity, archival, evidence,
 editorial and validation-evidence checks) are not part of this gate: they run
 outside this repository on each PR head before merge. (`gate:cacp` was removed from the hook and from GitHub on 2026-09-27 by owner decision; run `npm run gate:cacp` by hand when changing the KMIP/CACP playground or rebuilding its wasm.)
 
@@ -193,12 +196,19 @@ the workflow stops invoking it.
 
 ## Before a release — `npm run gate:release`
 
-`gate:local` + `verify:engines:release` (downloads each engine release a bundle
+`gate:leak` (since 4.207: GitHub's leak-guard checks, run first and blocking —
+the whole tracked tree against `scripts/ci/leak-baseline-source.json`, and the
+added lines and commit messages of `origin/main...HEAD`; the range step is
+report-only on GitHub, enforced here so a finding is fixed before the push rather
+than read after it) + `gate:local` + `verify:engines:release` (downloads each engine release a bundle
 is pinned to, checks the tarball SHA-256 against the pin and every file against
 the lock; needs the network, so it is here and in the weekly
 `engines-release-weekly.yml`, not in pre-push) + `gate:e2e` (`build` + the full Playwright suite against the
 production build — the round-9 lesson: 15 browser regressions shipped through
 13 green releases while only the smoke tier ran per PR) +
+`gate:leak:dist` (since 4.207: the built `dist/` against
+`scripts/ci/leak-baseline-dist.json`, the same scan GitHub's CI build job and the
+deploy run, so a finding in the built site shows up before the push) +
 `test:e2e:local-tier` (`E2E_SERVER=dev playwright test --project=local` — the 18
 `*.local.spec.ts` specs, which both CI projects exclude and which no gate ran
 before 2026-09-26) (`gate:cacp` and `sync:wasm:check` are manual-only since 2026-09-27, H2), then the receipt `.gate-ok-<sha>` so the

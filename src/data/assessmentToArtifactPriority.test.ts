@@ -42,6 +42,46 @@ describe('getArtifactSuggestion', () => {
     ).toMatch(/current cryptography/i)
   })
 
+  it('suggests CBOM when only crypto families were ticked (no specific algorithms)', () => {
+    expect(
+      getArtifactSuggestion(
+        'crypto-cbom',
+        snap({ currentCrypto: [], currentCryptoCategories: ['Signatures'] })
+      )?.reason
+    ).toMatch(/current cryptography/i)
+  })
+
+  it('does not suggest CBOM for a family-only selection when algorithms are unknown', () => {
+    expect(
+      getArtifactSuggestion(
+        'crypto-cbom',
+        snap({
+          currentCrypto: [],
+          currentCryptoCategories: ['Signatures'],
+          currentCryptoUnknown: true,
+        })
+      )?.reason
+    ).toMatch(/unknown/i)
+  })
+
+  it('suggests the vulnerability watch for a family-only Key Exchange / Signatures selection', () => {
+    expect(
+      getArtifactSuggestion(
+        'crypto-vulnerability-watch',
+        snap({ currentCrypto: [], currentCryptoCategories: ['Key Exchange'] })
+      )?.reason
+    ).toMatch(/quantum-vulnerable/i)
+  })
+
+  it('does not suggest the vulnerability watch for a symmetric-only family selection', () => {
+    expect(
+      getArtifactSuggestion(
+        'crypto-vulnerability-watch',
+        snap({ currentCrypto: [], currentCryptoCategories: ['Symmetric Encryption'] })
+      )
+    ).toBeNull()
+  })
+
   it('suggests CBOM when crypto is unknown', () => {
     expect(
       getArtifactSuggestion('crypto-cbom', snap({ currentCryptoUnknown: true }))?.reason
