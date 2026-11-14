@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { ShieldCheck } from 'lucide-react'
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import { FilterDropdown } from './FilterDropdown'
 import type { FilterDropdownItem } from './FilterDropdown'
@@ -72,7 +73,13 @@ function isTrustTier(value: string): value is TrustTier {
  *  URLSearchParams override (for the sim embed). */
 export function useTrustTierFilter(paramsOverride?: URLSearchParams): TrustTier[] {
   const [urlParams] = useSearchParams()
-  return (paramsOverride ?? urlParams).getAll('tier').filter(isTrustTier)
+  const selected = (paramsOverride ?? urlParams).getAll('tier')
+  // Keep the same array while the selected tiers do not change. A new array on every
+  // render would be a new dependency for every memo and effect that reads it: the
+  // records table reports its rows back up, which re-renders the page with a new array,
+  // and that repeats without end.
+  const key = selected.join('\n')
+  return useMemo(() => (key ? key.split('\n').filter(isTrustTier) : []), [key])
 }
 
 /**

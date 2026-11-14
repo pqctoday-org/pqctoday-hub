@@ -4,6 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { useNavigate, useSearchParams } from 'react-router'
+import { downloadCsv } from '@/utils/csvExport'
+import { buildTabCsv, exportTabFor, tabExportFileName } from './tabExport'
+import { useApplicabilityWithPaths } from '@/hooks/useApplicabilityWithPaths'
+import { buildObligations } from './obligations/obligationsModel'
+import { buildProgress } from './progress/progressModel'
+import type { ComplianceRecord } from './types'
 import { ComplianceTable } from './ComplianceTable'
 import { type FrameworkSortOption } from './ComplianceLandscape'
 import { useComplianceRefresh } from './services'
@@ -13,6 +19,7 @@ import {
   CalendarClock,
   PackageSearch,
   GlobeLock,
+  Info,
   Workflow,
   ArrowLeft,
   Sparkles,
@@ -311,6 +318,10 @@ export const ComplianceView = ({
   }, [myFrameworks.length, addHistoryEvent])
 
   const navigate = useNavigate()
+  const [exportError, setExportError] = useState<string | null>(null)
+  // What the visible tab lists, reported by the table and the landscape; see tabExport.ts.
+  const [landscapeVisible, setLandscapeVisible] = useState<ComplianceFramework[]>([])
+  const [recordsVisible, setRecordsVisible] = useState<ComplianceRecord[]>([])
 
   // ── URL-synced filter state ──────────────────────────────────────────
 
@@ -575,6 +586,13 @@ export const ComplianceView = ({
     [lsCountry, lsIndustry]
   )
   const { profile: forYouProfile } = useApplicability(forYouProfileOverride)
+  // The rows each tab lists, for its Export CSV (the same data the tabs themselves build).
+  const forYouApplicable = useApplicabilityWithPaths().frameworks
+  const obligationRows = useMemo(() => buildObligations(forYouProfile), [forYouProfile])
+  const progressEntries = useMemo(
+    () => buildProgress(obligationRows, new Date().getFullYear()),
+    [obligationRows]
+  )
 
   // ── Tab handlers ─────────────────────────────────────────────────────
 
@@ -703,6 +721,7 @@ export const ComplianceView = ({
     onDeadlineFilterChange: handleLsDeadlineChange,
     onSearchTextChange: handleLsSearchChange,
     onSortByChange: handleLsSortChange,
+    onVisibleFrameworksChange: setLandscapeVisible,
     onViewModeChange: handleLsViewChange,
     onNavigateToCswp39: handleNavigateToCswp39,
     highlightFrameworkId,
@@ -710,6 +729,39 @@ export const ComplianceView = ({
   }
 
   const activeStableTab = stableTabFor(activeTab)
+
+  const exportTab = exportTabFor(activeStableTab)
+  const handleTabExport = useCallback(() => {
+    if (!exportTab) return
+    try {
+      const csv = buildTabCsv(exportTab, {
+        forYou: forYouApplicable,
+        landscape: landscapeVisible,
+        obligations: obligationRows,
+        progress: progressEntries,
+        records: recordsVisible,
+        meta,
+        scope: recScope,
+        newestRecordDate: lastUpdated,
+      })
+      downloadCsv(csv, tabExportFileName(exportTab))
+      setExportError(null)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error generating CSV export.'
+      console.error('Compliance CSV export failed:', err)
+      setExportError(message)
+    }
+  }, [
+    exportTab,
+    forYouApplicable,
+    landscapeVisible,
+    obligationRows,
+    progressEntries,
+    recordsVisible,
+    meta,
+    recScope,
+    lastUpdated,
+  ])
 
   // Register this page's actions with the global top bar (page-action-strip
   // rollout, 2026-08-01) — info/endorse/flag render there now, not as a row on
@@ -725,6 +777,7 @@ export const ComplianceView = ({
       dataSource: complianceMetadata
         ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
         : undefined,
+      onExport: exportTab ? handleTabExport : undefined,
       endorseUrl: buildEndorsementUrl({
         category: 'compliance-endorsement',
         title: 'Endorse: Standardization, Certification & Compliance',
@@ -749,7 +802,7 @@ export const ComplianceView = ({
       flagResourceType: 'Compliance',
     })
     return () => clearPageActions()
-  }, [simEmbed])
+  }, [simEmbed, exportTab, handleTabExport])
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
@@ -812,6 +865,29 @@ export const ComplianceView = ({
           bar cannot supply. `?tier=` deep links still resolve, because
           useTrustTierFilter reads the URL; what is gone is the second on-screen
           place to change it. The other four pages that use it are untouched. */}
+
+      {exportError && (
+        <div
+          role="alert"
+          className="flex items-start gap-3 rounded-lg border border-status-error/40 bg-status-error/5 p-3 text-sm"
+        >
+          <Info size={16} className="mt-0.5 shrink-0 text-status-error" />
+          <div className="flex-1">
+            <p className="font-medium text-status-error">CSV export failed</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{exportError}</p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setExportError(null)}
+            className="h-auto px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+            aria-label="Dismiss export error"
+          >
+            Dismiss
+          </Button>
+        </div>
+      )}
 
       {/* Jump-back banner after a CSWP.39 cross-walk navigation. */}
       {cswp39JumpActive && activeTab !== 'cswp39' && (
@@ -1001,6 +1077,7 @@ export const ComplianceView = ({
             />
             <ComplianceTable
               data={data}
+              onVisibleRecordsChange={setRecordsVisible}
               onRefresh={refresh}
               isRefreshing={loading}
               lastUpdated={lastUpdated}

@@ -9,7 +9,7 @@ import {
   RefreshCw,
   Calendar,
   Database,
-  Download,
+
   Filter,
   Check,
   LockKeyhole,
@@ -30,8 +30,6 @@ import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollTo
 import { recordFilterExclusions } from './recordFilters'
 import type { TrustTier } from '@/data/trustScore'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { buildComplianceCsv } from './recordsExport'
-import { csvFilename } from '@/utils/csvExport'
 import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import {
   applyRecordScope,
@@ -68,6 +66,8 @@ interface ComplianceTableProps {
   onRefresh?: () => void
   isRefreshing?: boolean
   lastUpdated?: Date | null
+  /** Reports the rows the table shows now (after its filters and scope), for the page's Export CSV. */
+  onVisibleRecordsChange?: (records: ComplianceRecord[]) => void
   /** @deprecated Use filterText prop for controlled mode */
   initialFilter?: string
   /** @deprecated Use selectedRecordId prop for controlled mode */
@@ -427,6 +427,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onRefresh,
   isRefreshing,
   lastUpdated,
+  onVisibleRecordsChange,
   initialFilter,
   initialSelectedId,
   filterText: filterTextProp,
@@ -717,6 +718,12 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     return processed
   }, [scopedData, activeFilters, sortColumn, sortDirection, certType, tierFiltersProp])
 
+  // Report the rows the table shows, so the page's Export CSV exports exactly these.
+  useEffect(() => {
+    onVisibleRecordsChange?.(filteredAndSortedData)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reports on each change of the filtered rows only
+  }, [filteredAndSortedData, onVisibleRecordsChange])
+
   const rowVirtualizer = useVirtualizer({
     count: filteredAndSortedData.length,
     getScrollElement: () => tableContainerRef.current,
@@ -786,24 +793,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     else setLocalOpenId(undefined)
   }, [onCloseRecord])
 
-  const handleExport = () => {
-    if (filteredAndSortedData.length === 0) return
-
-    const csv = buildComplianceCsv(filteredAndSortedData, {
-      meta,
-      scope: recordScope,
-      newestRecordDate: lastUpdated,
-    })
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.setAttribute('href', url)
-    link.setAttribute('download', csvFilename('pqc-compliance-records'))
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
 
   const retrieval = useMemo(() => snapshotRetrievalEntries(meta), [meta])
   const newestRecordDate = lastUpdated ? formatIsoDate(lastUpdated.toISOString()) : null
@@ -914,16 +903,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           />
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExport}
-            disabled={filteredAndSortedData.length === 0}
-            className="gap-2"
-          >
-            <Download size={14} />
-            Export CSV
-          </Button>
           {onRefresh && (
             <Button
               variant="outline"

@@ -212,7 +212,7 @@ describe('ComplianceDetailDrawer with edition links', () => {
     expect(rows[0]).toHaveTextContent('Replaced by a newer edition')
     // "Edition Test Newer" is not a record the register holds, so the row names nothing to
     // open: it is shown inert, and clicking it does nothing rather than opening a guess.
-    expect(rows[0]).toBeDisabled()
+    expect(rows[0]).toHaveAttribute('aria-disabled', 'true')
     fireEvent.click(rows[0])
     expect(onSelectRelated).not.toHaveBeenCalled()
   })

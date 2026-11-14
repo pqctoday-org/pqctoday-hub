@@ -1209,6 +1209,8 @@ interface ComplianceLandscapeProps {
   highlightFrameworkId?: string | null
   /** Called when user clicks a framework card, or a row in table view */
   onSelectFramework?: (fw: ComplianceFramework) => void
+  /** Reports the rows this landscape shows now, after its own filters and role set. */
+  onVisibleFrameworksChange?: (frameworks: ComplianceFramework[]) => void
 }
 
 const NO_REGION_SCOPE: readonly RegionBloc[] = []
@@ -1218,6 +1220,7 @@ export function ComplianceLandscape({
   showDeadlineTimeline = true,
   maturityByRefId,
   onNavigateToCswp39,
+  onVisibleFrameworksChange,
   orgFilter: orgFilterProp,
   industryFilter: industryFilterProp,
   regionFilter: regionFilterProp,
@@ -1577,6 +1580,13 @@ export function ComplianceLandscape({
     emphasisSet.length < displayedFrameworks.length
   const gridFrameworks = roleReductionActive ? emphasisSet : displayedFrameworks
   const hiddenByRole = displayedFrameworks.length - gridFrameworks.length
+
+  // Report the rows shown, keyed by their ids so an unchanged list does not re-report.
+  const visibleKey = gridFrameworks.map((f) => f.id).join('|')
+  useEffect(() => {
+    onVisibleFrameworksChange?.(gridFrameworks)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by visibleKey, not the array identity
+  }, [visibleKey, onVisibleFrameworksChange])
 
   const openFullLandscape = () => {
     setFullLandscapeOpen(true)

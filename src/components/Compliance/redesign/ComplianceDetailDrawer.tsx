@@ -455,11 +455,14 @@ export function ComplianceDetailDrawer({
                         key={i}
                         type="button"
                         variant="ghost"
-                        disabled={!clickable}
+                        // aria-disabled, not disabled: an inert row stays focusable, so its reason is reachable.
+                        aria-disabled={!clickable}
                         title={
                           c.target ? undefined : 'No record in this library to open for this entry'
                         }
-                        onClick={() => c.target && onSelectRelated?.(c.target)}
+                        onClick={() => {
+                          if (clickable && c.target) onSelectRelated?.(c.target)
+                        }}
                         className={`h-auto w-full justify-start gap-2.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-left transition-colors${clickable ? ' cursor-pointer hover:border-primary/40 hover:bg-muted/50' : ' cursor-default opacity-70'}`}
                       >
                         <span
