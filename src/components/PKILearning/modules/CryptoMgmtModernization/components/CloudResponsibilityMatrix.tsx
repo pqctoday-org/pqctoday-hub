@@ -384,6 +384,8 @@ export const CLOUD_PROVIDER_PRODUCTS: Record<string, { kmsHsm: string[]; tls: st
     tls: ['Google Cloud Platform (GCP)', 'Google Cloud CDN'],
   },
   Azure: {
+    // 'Azure Dedicated HSM (Thales Luna 7)' is deliberately not listed: PQC in
+    // Luna 7 firmware is not part of Azure Dedicated HSM's supported firmware.
     kmsHsm: ['Azure Key Vault', 'Azure Managed HSM'],
     tls: [],
   },
