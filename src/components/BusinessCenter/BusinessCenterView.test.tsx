@@ -384,6 +384,34 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Finish your risk assessment')).toBeInTheDocument()
   })
 
+  it('a GRC reader sees the GRC learning path in the bar, not the Executive path', () => {
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockPersonaStore.selectedPersona = 'grc'
+
+    renderView()
+
+    expect(screen.getByText('GRC Learning Path')).toBeInTheDocument()
+    expect(screen.queryByText(/Executive Learning Path/)).not.toBeInTheDocument()
+  })
+
+  it('an operations reader gets the operations learning button on the welcome state', () => {
+    mockPersonaStore.selectedPersona = 'ops'
+
+    renderView()
+
+    expect(screen.getByRole('button', { name: 'Start operations learning' })).toBeInTheDocument()
+    expect(screen.queryByText('Start Executive Learning')).not.toBeInTheDocument()
+  })
+
+  it('a certification engineer gets the certification learning button on the welcome state', () => {
+    mockPersonaStore.selectedPersona = 'cert-engineer'
+
+    renderView()
+
+    expect(screen.getByRole('button', { name: 'Start certification learning' })).toBeInTheDocument()
+    expect(screen.getByText('Which scheme applies?')).toBeInTheDocument()
+  })
+
   it('shows compact learning bar when assessment is in-progress', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
 

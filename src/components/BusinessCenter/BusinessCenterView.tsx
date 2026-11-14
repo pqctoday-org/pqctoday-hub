@@ -82,6 +82,10 @@ function learnCtaFor(persona: PersonaId | null): { label: string; to: string } {
       return { label: 'Start the architecture path', to: '/learn/arch-quantum-impact' }
     case 'researcher':
       return { label: 'Read the revision log', to: '/revisions' }
+    case 'ops':
+      return { label: 'Start operations learning', to: '/learn/migration-program' }
+    case 'cert-engineer':
+      return { label: 'Start certification learning', to: '/learn/crypto-product-certification' }
     case null:
     case 'executive':
       return { label: 'Start Executive Learning', to: '/learn/exec-quantum-impact' }
@@ -859,7 +863,11 @@ export function BusinessCenterView() {
                actionable zone panels above faster; header stays visible, one
                click away, not removed. */}
               <CompactLearningBar
-                modules={metrics.execModuleProgress}
+                modules={
+                  selectedPersona === 'grc' ? metrics.grcModuleProgress : metrics.execModuleProgress
+                }
+                pathTitle={selectedPersona === 'grc' ? 'GRC Learning Path' : undefined}
+                fallbackTo={selectedPersona === 'grc' ? '/learn/pqc-grc' : undefined}
                 defaultCollapsed={collapseLowerSections(density)}
               />
 
