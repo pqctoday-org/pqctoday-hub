@@ -46,8 +46,11 @@ Secrets, key-management and platform lessons now carry examples that were run ag
 - **OpenBao permission examples use its own policy language** [view:/learn/platform-eng-pqc] [persona:ops] [persona:grc] [persona:architect]: the policy-as-code workshop adds a native OpenBao access policy that lets a scoped test token create one named key, and only as an ML-DSA-65 key; other paths stay denied unless another policy grants them. Its certificate role uses parameters OpenBao accepts (key type ML-DSA, parameter set 44).
 - **Key-provider lifecycle commands match what OpenBao supports** [view:/learn/kms-pqc] [persona:ops] [persona:developer]: the KMS provider comparison and the KMIP explorer list OpenBao 2.7.2 with its own command-line operations (create, read, sign and verify, encrypt a data key, rotate, delete) instead of implying a KMIP endpoint. An ML-DSA key is used only to sign; a separate AES key encrypts the data key, and the page no longer presents a signing key as an ML-KEM encapsulation key.
 
+- **More use cases show the construction they use** [view:/algorithms] [persona:architect] [persona:researcher] [persona:developer]: the Industry Landscape construction view tags 16 more use cases with their constructions: 11 use hybrid ML-KEM key exchange, 4 wrap keys under an ML-KEM key (three of them listing the classical key wrap they replace) and one uses JOSE key agreement. 19 of the 24 industries now appear in the table of which industries use which constructions.
+
 ### Fixed
 
+- **A construction cited only by standards no longer opens to a blank page** [view:/algorithms] [persona:architect] [persona:researcher] [persona:grc]: it lists the use cases those standards link, marked as where the standards apply rather than as deployments, and industry pages show the constructions their own standards cite, with the number of citing standards written out.
 - **Protocol Support Matrix links go somewhere useful** [view:/algorithms] [persona:architect] [persona:developer] [persona:researcher]: a specification link now opens its Library entry when the Library has one, and the cited external page when it does not, instead of an empty search. Deprecated protocols such as IKEv1 and SSL 3.0 can be opened by link and found by search, and "no PQC path" jumps to the protocol that replaces it.
 
 ### Data
