@@ -16,9 +16,20 @@ interface ReportLockedOverlayProps {
   detail: string
   /** Blurred preview content shown behind the overlay. */
   children: React.ReactNode
+  /**
+   * A shared or example report is someone else's read-only snapshot: the
+   * recipient can't unlock it by finishing their own assessment, so the
+   * Unlock link is not offered.
+   */
+  shared?: boolean
 }
 
-export function ReportLockedOverlay({ reason, detail, children }: ReportLockedOverlayProps) {
+export function ReportLockedOverlay({
+  reason,
+  detail,
+  children,
+  shared = false,
+}: ReportLockedOverlayProps) {
   return (
     <div className="relative overflow-hidden rounded-2xl">
       <div aria-hidden="true" className="pointer-events-none select-none blur-[3px] saturate-50">
@@ -34,13 +45,15 @@ export function ReportLockedOverlay({ reason, detail, children }: ReportLockedOv
         </span>
         <h3 className="text-[14px] font-bold text-foreground">{reason}</h3>
         <p className="max-w-sm text-[12.5px] text-muted-foreground">{detail}</p>
-        <Link
-          to="/assess?mode=comprehensive"
-          className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-warning px-4 py-2 text-[13px] font-bold text-warning-foreground hover:opacity-90"
-        >
-          Unlock — ~5 min
-          <ArrowRight size={14} aria-hidden="true" />
-        </Link>
+        {!shared && (
+          <Link
+            to="/assess?mode=comprehensive"
+            className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-warning px-4 py-2 text-[13px] font-bold text-warning-foreground hover:opacity-90 print:hidden"
+          >
+            Unlock — ~5 min
+            <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        )}
       </div>
     </div>
   )

@@ -8,7 +8,12 @@ import React from 'react'
 import { Zap, ClipboardCheck, Check, Lock, Sparkles, FlaskConical } from 'lucide-react'
 import { Button } from '../../ui/button'
 import type { AssessmentMode } from '../../../store/useAssessmentStore'
-import { FAST_REPORT_SECTIONS, FULL_LOCKED_SECTIONS, FAST_LOCKED_COUNT } from './reportContract'
+import {
+  FAST_REPORT_SECTIONS,
+  FULL_LOCKED_SECTIONS,
+  FULL_ONLY_SECTIONS,
+  FAST_LOCKED_COUNT,
+} from './reportContract'
 import { TRACK_INFO } from './assessFlowModel'
 import { REFERENCE_ESTATES } from '@/data/assessmentScenarios'
 
@@ -99,7 +104,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
           Unlocks everything, including
         </div>
         <div className="mb-4 flex flex-col gap-1.5">
-          {FULL_LOCKED_SECTIONS.map((s) => (
+          {[...FULL_LOCKED_SECTIONS, ...FULL_ONLY_SECTIONS].map((s) => (
             <div key={s} className="flex items-center gap-2 text-xs text-foreground/90">
               <Sparkles className="shrink-0 text-primary" size={13} />
               {s}
