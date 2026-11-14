@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { RiskRegisterBuilderStandalone } from './RiskRegisterBuilderStandalone'
+import {
+  RiskRegisterBuilderStandalone,
+  inferThreatVectorFromText,
+} from './RiskRegisterBuilderStandalone'
+import { useModuleStore } from '@/store/useModuleStore'
 import {
   AUTOMATIC_RISK_RATING_SCOPE,
   buildRiskRegisterMarkdown,
@@ -27,8 +31,13 @@ let transitions = [
 ]
 let context = {
   myFrameworks: [] as unknown[],
-  myProducts: [] as { softwareName: string }[],
-  myThreats: [] as { industry: string; criticality: string; description: string }[],
+  myProducts: [] as { softwareName: string; categoryName?: string }[],
+  myThreats: [] as {
+    industry: string
+    criticality: string
+    description: string
+    cryptoAtRisk?: string
+  }[],
 }
 vi.mock('@/components/Simulation/autorun/autoRunFill', () => ({
   isExecutiveBankOverview: () => sampleBank,
@@ -64,6 +73,9 @@ beforeEach(() => {
   ]
   context = { myFrameworks: [], myProducts: [], myThreats: [] }
   useRiskRegisterStore.setState({ riskEntries: [], lastSavedKey: null })
+  useModuleStore.setState({
+    artifacts: { ...useModuleStore.getState().artifacts, executiveDocuments: [] },
+  })
 })
 describe('automatic risk rating interpretation', () => {
   it('does not increase signing likelihood for HNDL or impact for framework bookmarks', async () => {
@@ -172,5 +184,79 @@ describe('automatic risk rating interpretation', () => {
     expect(screen.queryByText('Stored worksheet context.')).not.toBeInTheDocument()
     expect(screen.getByDisplayValue(bankRiskEntries()[0].assetName)).toBeInTheDocument()
     expect(useRiskRegisterStore.getState().riskEntries).toEqual([])
+  })
+  it('labels product and threat rows by what they protect instead of HNDL for every row', async () => {
+    transitions = []
+    context = {
+      myFrameworks: [],
+      myProducts: [
+        { softwareName: 'Fictional Signer', categoryName: 'Code Signing' },
+        { softwareName: 'Fictional VPN', categoryName: 'VPN and IPsec' },
+      ],
+      myThreats: [
+        {
+          industry: 'Sample',
+          criticality: 'high',
+          description: 'Forged firmware updates',
+          cryptoAtRisk: 'ECDSA P-256 code signing, secure boot',
+        },
+        {
+          industry: 'Sample',
+          criticality: 'high',
+          description: 'Recorded sessions decrypted later',
+          cryptoAtRisk: 'RSA key transport, ECDH in TLS',
+        },
+      ],
+    }
+    render(<RiskRegisterBuilderStandalone />)
+    await waitFor(() => expect(useRiskRegisterStore.getState().riskEntries).toHaveLength(4))
+    const rows = useRiskRegisterStore.getState().riskEntries
+    expect(rows.map((r) => r.threatVector)).toEqual(['forgery', 'hndl', 'forgery', 'hndl'])
+    // starting likelihoods are unchanged by the label: products 4, high threats 4
+    expect(rows.map((r) => r.likelihood)).toEqual([4, 4, 4, 4])
+  })
+  it.each([
+    ['AES-128 bulk encryption keys', 'hndl'],
+    ['AES-128, SHA-256 symmetric parameters', 'grover'],
+    ['RSA-2048', 'hndl'],
+    ['RSA/ECDSA code signing', 'forgery'],
+    ['All asymmetric cryptography, PKI infrastructure', 'hndl'],
+    ['Avionics PKI, flight management system authentication', 'forgery'],
+    ['ML-DSA firmware signing service', 'forgery'],
+    ['HMAC-SHA-256 message integrity, AES-256 symmetric keys', 'grover'],
+    ['ECDSA certificates and ECDH key exchange in TLS', 'hndl'],
+    ['Lms learning platform for ca staff', 'hndl'],
+    ['Sample Lms course catalogue', 'hndl'],
+  ])('infers %s as %s', (text, vector) => {
+    expect(inferThreatVectorFromText(text)).toBe(vector)
+  })
+  it('restores the last saved register when the store is empty, ahead of context seeding', async () => {
+    const saved = { ...DEFAULT_RISK_ENTRIES[0], id: 'saved-1', assetName: 'Saved sample asset' }
+    useModuleStore.setState({
+      artifacts: {
+        ...useModuleStore.getState().artifacts,
+        executiveDocuments: [
+          {
+            id: 'risk-register-1',
+            moduleId: 'pqc-risk-management',
+            type: 'risk-register',
+            title: 'Quantum Risk Register',
+            data: 'md',
+            createdAt: 1,
+            inputs: { entries: [saved], __artifactScope: 'risk-register-builder' },
+          },
+        ],
+      },
+    })
+    render(<RiskRegisterBuilderStandalone />)
+    await waitFor(() =>
+      expect(useRiskRegisterStore.getState().riskEntries.map((e) => e.id)).toEqual(['saved-1'])
+    )
+  })
+  it('gives the bank walkthrough entries sample owner roles so they are not shown as notes', () => {
+    sampleBank = true
+    render(<RiskRegisterBuilderStandalone />)
+    expect(screen.getByDisplayValue('Digital channels lead (sample role)')).toBeInTheDocument()
+    expect(screen.queryByText(/Note, not a risk yet/)).not.toBeInTheDocument()
   })
 })

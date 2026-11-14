@@ -83,7 +83,7 @@ describe('management category context and recorded coverage', () => {
       fireEvent.click(category(name).getByRole('button', { name: 'Automated' }))
     expect(screen.getByTestId('export')).toHaveTextContent('Hub tool-category rating:** 100%')
     expect(screen.getByTestId('export')).toHaveTextContent(
-      'even 100% does not establish inventory coverage or implemented controls'
+      'Even 100% on either does not establish inventory coverage or implemented controls'
     )
     for (const name of names) expect(category(name).getByRole('slider')).toHaveValue('0')
     expect(screen.getByText(/all categories set to/)).toHaveTextContent(
@@ -125,6 +125,26 @@ describe('management category context and recorded coverage', () => {
     expect(category('Crypto Scanners').getByText('None', { selector: 'span' })).toBeInTheDocument()
     expect(screen.getByTestId('export')).toHaveTextContent(
       '| Log Management / SIEM | Partial (2/3) | 40% |'
+    )
+  })
+})
+
+describe('systems coverage feeds readiness and the gap list', () => {
+  it('Automated scanner at 30% systems shows in gaps and lowers coverage-adjusted readiness', () => {
+    render(<ManagementToolsAudit />)
+    for (const name of names) {
+      fireEvent.click(category(name).getByRole('button', { name: 'Automated' }))
+      fireEvent.change(category(name).getByRole('slider'), { target: { value: '100' } })
+    }
+    expect(screen.getByTestId('coverage-adjusted')).toHaveTextContent('100%')
+    fireEvent.change(category('Crypto Scanners').getByRole('slider'), { target: { value: '30' } })
+    expect(screen.getByTestId('coverage-adjusted')).not.toHaveTextContent('100%')
+    expect(
+      screen.getAllByText(/Automated, but only 30% of systems covered/).length
+    ).toBeGreaterThan(0)
+    expect(screen.getByTestId('export')).toHaveTextContent('Hub tool-category rating:** 100%')
+    expect(screen.getByTestId('export')).toHaveTextContent(
+      'Crypto Scanners — Automated, but only 30% of systems covered'
     )
   })
 })

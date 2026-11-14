@@ -65,6 +65,12 @@ beforeEach(() => {
   sample.add.mockClear()
   sample.saved = structuredClone(legacy)
 })
+/** The milestone card's association checkbox. The Add Milestone form now has its
+ *  own link-at-creation checkboxes for the same obligations, so scope to the card. */
+const cardCheckbox = () =>
+  within(screen.getByRole('group', { name: /^Explicit reference associations for / })).getByRole(
+    'checkbox'
+  )
 describe('linked sample plan inputs and real serialized outputs', () => {
   it('links explicitly, requires actual completion timing, and saves/reopens exact keys and dates', () => {
     const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
@@ -110,7 +116,7 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     view.unmount()
     sample.saved = doc.inputs
     render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
-    expect(screen.getByRole('checkbox')).toBeChecked()
+    expect(cardCheckbox()).toBeChecked()
     expect(
       screen.getByLabelText('Recorded completion year for Unrelated sample, certificate')
     ).toHaveValue(2025)
@@ -148,7 +154,7 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
     expect(screen.getByText(/Preserved reference key.*removed,key/)).toBeInTheDocument()
     expect(screen.getByText('Unknown')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('checkbox'))
+    fireEvent.click(cardCheckbox())
     fireEvent.click(screen.getByRole('button', { name: 'Save sample timeline' }))
     expect(sample.add.mock.calls[0][0].inputs.milestones[0]).toEqual({
       ...old,
@@ -249,8 +255,8 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     sample.saved = { ...legacy, milestones: [raw] } as unknown as ComplianceTimelineSavedInputs
     const view = render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
     expect(screen.getByText('Unknown')).toBeInTheDocument()
-    expect(screen.getByRole('checkbox')).not.toBeChecked()
-    expect(screen.getByRole('checkbox')).toBeDisabled()
+    expect(cardCheckbox()).not.toBeChecked()
+    expect(cardCheckbox()).toBeDisabled()
     expect(
       screen.getByText(/Associations not assessed; preserved malformed raw value/)
     ).toHaveTextContent('prefix-fw-sample-2030-suffix')
@@ -265,7 +271,7 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     view.unmount()
     render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
     expect(screen.getByText('Unknown')).toBeInTheDocument()
-    expect(screen.getByRole('checkbox')).not.toBeChecked()
+    expect(cardCheckbox()).not.toBeChecked()
   })
   it('restores nonboolean completion as unknown, not Done, and preserves its raw value on save/reopen', () => {
     const raw = {
@@ -304,7 +310,7 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     expect(
       screen.queryByText(/Completion not assessed; preserved raw value/)
     ).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('checkbox'))
+    fireEvent.click(cardCheckbox())
     expect(screen.getByText('Planned by reference year')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Done' })).not.toBeInTheDocument()
     expect(screen.getByTestId('markdown')).toHaveTextContent('Not marked complete')
@@ -392,5 +398,39 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     expect(
       screen.getAllByRole('button', { name: 'Remove Unrelated sample, certificate' })
     ).toHaveLength(1)
+  })
+})
+
+describe('linking obligations while adding a milestone', () => {
+  it('links the ticked obligation at creation so the review compares it immediately', () => {
+    sample.saved = { selectedJurisdictions: ['us'] }
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    const form = screen.getByRole('group', { name: /^Link this milestone to obligations/ })
+    expect(form).toHaveAccessibleName('Link this milestone to obligations (0 selected)')
+    fireEvent.change(screen.getByLabelText('Milestone'), {
+      target: { value: 'Complete crypto inventory' },
+    })
+    fireEvent.click(within(form).getByRole('checkbox', { name: /Fictional, obligation/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^Add$/ }))
+    // The new card carries the link, and the review reads it as planned work.
+    expect(cardCheckbox()).toBeChecked()
+    expect(screen.getByText('Planned by reference year')).toBeInTheDocument()
+    // The form resets its selections for the next milestone.
+    expect(
+      within(screen.getByRole('group', { name: /^Link this milestone to obligations/ })).getByRole(
+        'checkbox'
+      )
+    ).not.toBeChecked()
+  })
+
+  it('leaves an unlinked new milestone without credit', () => {
+    sample.saved = { selectedJurisdictions: ['us'] }
+    render(<ComplianceTimelineBuilder selectedJurisdictions={['us']} />)
+    fireEvent.change(screen.getByLabelText('Milestone'), {
+      target: { value: 'Unrelated sample activity' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /^Add$/ }))
+    expect(cardCheckbox()).not.toBeChecked()
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
   })
 })

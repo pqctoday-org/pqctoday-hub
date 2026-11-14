@@ -202,6 +202,12 @@ export interface CrqcScenarioInput {
   industry?: string
   country?: string
   migrationDeadlineYear?: number | null
+  /** Deadlines the learner unticked as not applying to their systems,
+   *  keyed by the deadline's `framework` label: ComplianceDeadline has no
+   *  stable id, so renaming a label re-ticks that deadline for saved
+   *  scenarios (unknown labels are dropped on restore). Omitted or empty =
+   *  every deadline is ticked. */
+  excludedDeadlines?: string[]
 }
 
 export function buildCrqcScenarioMarkdown({
@@ -211,6 +217,7 @@ export function buildCrqcScenarioMarkdown({
   industry,
   country,
   migrationDeadlineYear,
+  excludedDeadlines = [],
 }: CrqcScenarioInput): string {
   const yearsRemaining = crqcYear - currentYear
   const affectedAlgorithms = ALGORITHMS.filter((algo) => algo.breakYear !== null)
@@ -241,10 +248,16 @@ export function buildCrqcScenarioMarkdown({
     'Each date applies only to systems in its scope. The CRQC year is a scenario assumption, not a forecast.\n\n'
   md += '| Framework | Year | Scope | Source | Status |\n'
   md += '|-----------|------|-------|--------|--------|\n'
+  const excluded = new Set(excludedDeadlines)
   for (const d of COMPLIANCE_DEADLINES) {
+    if (excluded.has(d.framework)) continue
     md += `| ${d.framework} | ${d.year} | ${d.scope} | ${d.source} | ${deadlineStatus(d, crqcYear, currentYear)} |\n`
   }
   md += '\n'
+  const unticked = COMPLIANCE_DEADLINES.filter((d) => excluded.has(d.framework))
+  if (unticked.length > 0) {
+    md += `**Unticked as not applying to these systems:** ${unticked.map((d) => `${d.framework} (${d.year})`).join('; ')}\n\n`
+  }
 
   md += '## HNDL Exposure Window\n\n'
   md += '| Retention | Valid Until | At Risk? |\n'
@@ -288,8 +301,24 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
   const defaultCrqcYear = Math.round(medianCrqcYear('consensus'))
   // Restore the user's last-saved slider position (if any) ahead of the
   // computed default — the read-back half of persisting `inputs` on export.
-  const savedInputs = useSavedArtifactInputs<{ crqcYear?: number }>('crqc-scenario')
+  const savedInputs = useSavedArtifactInputs<{ crqcYear?: number; excludedDeadlines?: string[] }>(
+    'crqc-scenario'
+  )
   const [crqcYear, setCrqcYear] = useState(savedInputs?.crqcYear ?? defaultCrqcYear)
+  // Which compliance deadlines the learner ticked as applying to their
+  // systems. Stored as the unticked set so every deadline starts ticked.
+  const [excludedDeadlines, setExcludedDeadlines] = useState<string[]>(() =>
+    Array.isArray(savedInputs?.excludedDeadlines)
+      ? savedInputs.excludedDeadlines.filter((f) =>
+          COMPLIANCE_DEADLINES.some((d) => d.framework === f)
+        )
+      : []
+  )
+  const toggleDeadline = useCallback((framework: string) => {
+    setExcludedDeadlines((prev) =>
+      prev.includes(framework) ? prev.filter((f) => f !== framework) : [...prev, framework]
+    )
+  }, [])
   const [seedCleared, setSeedCleared] = useState(false)
 
   useEffect(() => {
@@ -328,8 +357,11 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
   }, [])
 
   const missedDeadlines = useMemo(() => {
-    return COMPLIANCE_DEADLINES.filter((d) => d.year <= crqcYear)
-  }, [crqcYear])
+    return COMPLIANCE_DEADLINES.filter(
+      (d) => d.year <= crqcYear && !excludedDeadlines.includes(d.framework)
+    )
+  }, [crqcYear, excludedDeadlines])
+  const tickedCount = COMPLIANCE_DEADLINES.length - excludedDeadlines.length
 
   const yearsRemaining = crqcYear - currentYear
   const urgencyLevel =
@@ -359,8 +391,17 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         industry,
         country,
         migrationDeadlineYear,
+        excludedDeadlines,
       }),
-    [crqcYear, currentYear, urgencyLevel, industry, country, migrationDeadlineYear]
+    [
+      crqcYear,
+      currentYear,
+      urgencyLevel,
+      industry,
+      country,
+      migrationDeadlineYear,
+      excludedDeadlines,
+    ]
   )
 
   const handleExport = useCallback(() => {
@@ -370,10 +411,10 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
       type: 'crqc-scenario',
       title: `CRQC Scenario Analysis (${crqcYear})`,
       data: exportMarkdown,
-      inputs: { crqcYear },
+      inputs: { crqcYear, excludedDeadlines },
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, crqcYear, exportMarkdown])
+  }, [addExecutiveDocument, crqcYear, excludedDeadlines, exportMarkdown])
 
   const urgencyBgColor =
     urgencyLevel === 'critical'
@@ -539,7 +580,8 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           </div>
           <div className="text-2xl font-bold text-foreground">{missedDeadlines.length}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            dated milestones before the assumed CRQC year, each with its own scope
+            ticked milestones ({tickedCount} of {COMPLIANCE_DEADLINES.length}) before the assumed
+            CRQC year, each with its own scope
           </p>
         </div>
         <div className="glass-panel p-4">
@@ -601,7 +643,8 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
             Each date applies only to systems in its own scope, and each is shown with its source
             version. National Security System requirements, federal civilian directives, NIST
             standards status, proposals and guidance are different things; the CRQC year is your
-            scenario assumption, not a forecast.
+            scenario assumption, not a forecast. Untick a date that does not apply to your systems;
+            the Pre-CRQC Deadlines count and the export use only ticked dates.
           </p>
           <div
             className="space-y-2 max-h-[300px] overflow-y-auto"
@@ -613,10 +656,12 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
             {COMPLIANCE_DEADLINES.map((deadline) => {
               const isMissed = deadline.year <= crqcYear
               const isPast = deadline.year <= currentYear
+              const ticked = !excludedDeadlines.includes(deadline.framework)
+              const checkboxId = `crqc-deadline-${deadline.framework.replace(/[^a-z0-9]+/gi, '-')}`
               return (
                 <div
                   key={deadline.framework}
-                  className={`p-3 rounded-lg border ${
+                  className={`p-3 rounded-lg border ${ticked ? '' : 'opacity-60 '}${
                     deadline.advisory
                       ? 'bg-muted/30 border-dashed border-border/60'
                       : isPast
@@ -627,9 +672,20 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-foreground">
-                      {deadline.framework}
-                    </span>
+                    <label
+                      htmlFor={checkboxId}
+                      className="flex items-start gap-2 text-sm font-medium text-foreground cursor-pointer"
+                    >
+                      <input
+                        id={checkboxId}
+                        type="checkbox"
+                        className="mt-1 shrink-0"
+                        checked={ticked}
+                        onChange={() => toggleDeadline(deadline.framework)}
+                        aria-label={`Applies to my systems: ${deadline.framework}`}
+                      />
+                      <span>{deadline.framework}</span>
+                    </label>
                     <span
                       className={`text-xs px-2 py-0.5 rounded shrink-0 ${
                         deadline.advisory
