@@ -74,8 +74,11 @@ describe('timeline record: binding force, status and revision history', () => {
     expect(last.domain).toBe('timeline')
     expect(last.entityId).toBe('EVT-EU-2026-001')
     // Only this event's timeline revision, not another event's or a compliance row's.
-    expect(last.revisions).toHaveLength(1)
-    expect(last.revisions[0]).toMatchObject({ domain: 'timeline', pr_number: 1 })
+    expect((last.revisions as unknown[]).length).toBe(1)
+    expect((last.revisions as Array<Record<string, unknown>>)[0]).toMatchObject({
+      domain: 'timeline',
+      pr_number: 1,
+    })
   })
 
   it('offers no revision history for a row without an event id', () => {
