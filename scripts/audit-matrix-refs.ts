@@ -283,6 +283,21 @@ export function auditProductRefs(
     ['ossLibraries', row.ossLibraries],
     ['commercialLibraries', row.commercialLibraries],
   ] as const
+  // One product in both lists is only coherent for a genuinely dual-licensed
+  // product; anything else contradicts one of the two lists.
+  const inOss = new Set(row.ossLibraries.map((l) => l.productId))
+  for (const lib of row.commercialLibraries) {
+    if (!inOss.has(lib.productId)) continue
+    const product = catalog.get(lib.productId)
+    if (product && licenceClass(product.licenseType) === 'mixed') continue
+    findings.push({
+      rowId: row.id,
+      field: `libraries[${lib.productId}]`,
+      ref: lib.productId,
+      detail: `"${lib.productId}" is listed under both ossLibraries and commercialLibraries but the catalog licence is "${product?.licenseType ?? 'unknown'}" — keep it in one list`,
+      severity: 'error',
+    })
+  }
   for (const [bucket, libs] of lists) {
     for (const lib of libs) {
       const field = `${bucket}[${lib.productId}]`

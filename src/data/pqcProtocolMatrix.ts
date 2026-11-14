@@ -3040,7 +3040,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         name: 'pqctoday-tpm',
         versionNote: 'Our fork — Published TPM 2.0 v1.85 PQ commands',
       },
-      { productId: 'wolftpm-pqc', name: 'wolfTPM PQC' },
     ],
     commercialLibraries: [
       {

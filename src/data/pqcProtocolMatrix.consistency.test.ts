@@ -187,3 +187,15 @@ describe('protocol matrix: playground testability', () => {
     expect(tool('tpm', 'firmware-signing')).toEqual(none)
   })
 })
+
+describe('protocol matrix: library lists', () => {
+  it('lists each product under one of open source or commercial on a row', () => {
+    const both = PROTOCOL_MATRIX.flatMap((row) => {
+      const oss = new Set(row.ossLibraries.map((l) => l.productId))
+      return row.commercialLibraries
+        .filter((l) => oss.has(l.productId))
+        .map((l) => `${row.id}: ${l.productId}`)
+    })
+    expect(both).toEqual([])
+  })
+})

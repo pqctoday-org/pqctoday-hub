@@ -99,6 +99,121 @@ describe('resolveLibraryRef', () => {
   })
 })
 
+describe('resolveLibraryRef — draft revisions', () => {
+  const libraryRevisions = (base: string): number[] =>
+    [...LIBRARY_IDS]
+      .filter((id) => id.startsWith(`${base}-`) && /-\d{2}$/.test(id))
+      .map((id) => Number(id.slice(-2)))
+      .sort((a, b) => a - b)
+
+  it('the Library holds several revisions of these drafts (the pins below are not vacuous)', () => {
+    expect(libraryRevisions('draft-ietf-tls-mldsa').length).toBeGreaterThan(1)
+    expect(libraryRevisions('draft-ietf-ipsecme-ikev2-mlkem').length).toBeGreaterThan(1)
+  })
+
+  it.each([
+    // exact revision when the Library has it
+    ['draft-ietf-tls-mldsa-03', 'draft-ietf-tls-mldsa-03'],
+    ['draft-ietf-tls-mldsa-04', 'draft-ietf-tls-mldsa-04'],
+    ['draft-ietf-ipsecme-ikev2-mlkem-05', 'draft-ietf-ipsecme-ikev2-mlkem-05'],
+    ['draft-ietf-ipsecme-ikev2-mlkem-09', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
+    // newest revision the Library has when it lacks the cited one, or none is cited
+    ['draft-ietf-tls-mldsa-06', 'draft-ietf-tls-mldsa-04'],
+    ['draft-ietf-tls-mldsa', 'draft-ietf-tls-mldsa-04'],
+    ['draft-ietf-ipsecme-ikev2-mlkem-12', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
+    ['draft-ietf-ipsecme-ikev2-mlkem', 'draft-ietf-ipsecme-ikev2-mlkem-09'],
+  ])('%s opens %s', (cited, target) => {
+    expect(resolveLibraryRef(cited)).toBe(target)
+  })
+
+  it('never opens an older revision than the newest one it holds when the cited one is missing', () => {
+    for (const base of ['draft-ietf-tls-mldsa', 'draft-ietf-ipsecme-ikev2-mlkem']) {
+      const newest = libraryRevisions(base).at(-1)!
+      expect(resolveLibraryRef(`${base}-99`)).toBe(`${base}-${String(newest).padStart(2, '0')}`)
+    }
+  })
+})
+
+describe('resolveLibraryRef — address-only matches', () => {
+  it.each([
+    [
+      'draft-ietf-lamps-cms-fn-dsa-00',
+      'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-fn-dsa/',
+      'draft-turner-lamps-cms-fn-dsa-00',
+    ],
+    [
+      'draft-ietf-cose-sphincs-plus-10',
+      'https://datatracker.ietf.org/doc/draft-ietf-cose-sphincs-plus/',
+      'SLH-DSA-for-JOSE-and-COSE',
+    ],
+    [
+      'draft-ietf-emu-pqc-eap-tls-02',
+      'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eap-tls/',
+      'Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods-WG-draft',
+    ],
+    [
+      'draft-ietf-emu-pqc-eapaka-02',
+      'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eapaka/',
+      'Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA',
+    ],
+    [
+      'draft-ietf-emu-hybrid-pqc-eapaka-01',
+      'https://datatracker.ietf.org/doc/draft-ietf-emu-hybrid-pqc-eapaka/',
+      'Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum',
+    ],
+    [
+      'draft-ietf-sshm-composite-sigs',
+      'https://datatracker.ietf.org/doc/draft-ietf-sshm-composite-sigs/',
+      'Post-Quantum-Composite-Signatures-in-SSH',
+    ],
+    [
+      'draft-westerbaan-dnssec-mldsa-04',
+      'https://datatracker.ietf.org/doc/draft-westerbaan-dnssec-mldsa/',
+      'Module-Lattice-Digital-Signature-Algorithm-for-DNSSEC',
+    ],
+    [
+      'draft-yoshikawa-sidrops-pqc-rpki-02',
+      'https://datatracker.ietf.org/doc/draft-yoshikawa-sidrops-pqc-rpki/',
+      'Post-Quantum-Signature-Algorithm-Profile-and-Migration-Consi',
+    ],
+  ])('%s opens %s by its address', (id, url, target) => {
+    expect(resolveLibraryRef(id, url)).toBe(target)
+    expect(resolveLibraryRef(id)).toBeNull()
+  })
+
+  it('Signal PQXDH opens the PQXDH specification entry', () => {
+    expect(resolveLibraryRef('Signal PQXDH', 'https://signal.org/docs/specifications/pqxdh/')).toBe(
+      'Signal-PQXDH-Spec'
+    )
+  })
+
+  it('3GPP TR 33.703 does not open the 3GPP "PQC in 3GPP" overview page: that page is not the study', () => {
+    const url = 'https://www.3gpp.org/technologies/pqc-sa3'
+    expect(resolveLibraryRef('3GPP TR 33.703', url)).toBeNull()
+    expect(specLink('3GPP TR 33.703', url)).toEqual({
+      kind: 'external',
+      href: url,
+      title: 'Open external specification (3GPP TR 33.703)',
+    })
+  })
+
+  it('an address that more than one Library entry has matches none of them', () => {
+    const owners = new Map<string, Set<string>>()
+    const walkItem = (item: LibraryItem): void => {
+      const key = normalizeUrlKey(item.downloadUrl)
+      if (key) owners.set(key, (owners.get(key) ?? new Set()).add(item.referenceId))
+      item.children?.forEach(walkItem)
+    }
+    libraryData.forEach(walkItem)
+    const shared = [...owners.entries()].filter(([, ids]) => ids.size > 1)
+    expect(shared.length).toBeGreaterThan(0)
+    for (const [key] of shared) {
+      const url = `https://${key}`
+      expect(resolveLibraryRef('no-such-document-id', url), key).toBeNull()
+    }
+  })
+})
+
 describe('specLink', () => {
   it('opens the Library entry in the app when the Library holds the document', () => {
     const link = specLink(

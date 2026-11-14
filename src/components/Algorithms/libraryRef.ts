@@ -68,30 +68,72 @@ export function normalizeUrlKey(url: string | undefined): string | null {
   return path ? `${m[1]}${path}` : null
 }
 
-// Build (once) a normalized-key → exact-referenceId index over the whole
-// Library tree (roots + children), and a second index by download address.
-const REF_BY_KEY = new Map<string, string>()
-const REF_BY_URL = new Map<string, string>()
+// Citations whose address matches a Library entry that is NOT the cited document.
+// The matrix links the Library's overview page for this study; the page is not
+// 3GPP TR 33.703 itself, so the citation opens the external page instead.
+const NOT_THE_SAME_DOCUMENT = new Set(['3GPP TR 33.703'])
+
+// Build (once) a normalized-key → referenceIds index over the whole Library
+// tree (roots + children), and a second index by download address. A key can
+// name several entries (the revisions of one draft; one page cited by several
+// entries), so both keep every distinct referenceId.
+const REFS_BY_KEY = new Map<string, string[]>()
+const REFS_BY_URL = new Map<string, Set<string>>()
 function indexItem(item: LibraryItem): void {
   const key = normalizeRefKey(item.referenceId)
-  if (key && !REF_BY_KEY.has(key)) REF_BY_KEY.set(key, item.referenceId)
+  if (key) {
+    const list = REFS_BY_KEY.get(key) ?? []
+    if (!list.includes(item.referenceId)) list.push(item.referenceId)
+    REFS_BY_KEY.set(key, list)
+  }
   const urlKey = normalizeUrlKey(item.downloadUrl)
-  if (urlKey && !REF_BY_URL.has(urlKey)) REF_BY_URL.set(urlKey, item.referenceId)
+  if (urlKey) {
+    const owners = REFS_BY_URL.get(urlKey) ?? new Set<string>()
+    owners.add(item.referenceId)
+    REFS_BY_URL.set(urlKey, owners)
+  }
   item.children?.forEach(indexItem)
 }
 libraryData.forEach(indexItem)
 
+/** The two-digit revision at the end of a draft id ("draft-ietf-tls-mldsa-06" → 6). */
+function draftRevision(id: string): number | null {
+  const m = /^draft-.*-(\d{2})$/i.exec(id)
+  return m ? Number(m[1]) : null
+}
+
+/** Among the Library entries that share one id key, the one a citation means: the
+ *  exact revision when the Library has it, otherwise the newest revision it has. */
+function pickRevision(docId: string, candidates: string[]): string {
+  if (candidates.length === 1 || !/^draft-/i.test(docId)) return candidates[0]
+  const wanted = draftRevision(docId)
+  const revised = candidates
+    .map((id) => ({ id, rev: draftRevision(id) }))
+    .filter((c): c is { id: string; rev: number } => c.rev !== null)
+  if (wanted !== null) {
+    const exact = revised.find((c) => c.rev === wanted)
+    if (exact) return exact.id
+  }
+  if (revised.length > 0) return revised.reduce((a, c) => (c.rev > a.rev ? c : a)).id
+  return candidates[0]
+}
+
 /** The exact Library referenceId for a matrix doc id, or null if not present.
  *  Pass the cited `url` to let a Library entry with the same download address
  *  match when the ids differ (a draft the Library still files under its
- *  pre-adoption name, for example). */
+ *  pre-adoption name, for example). An address counts only when exactly one
+ *  Library entry has it: a page shared by several entries does not say which
+ *  one was cited. */
 export function resolveLibraryRef(docId: string, url?: string): string | null {
   // eslint-disable-next-line security/detect-object-injection -- own-property check guards the lookup
   const aliased = Object.hasOwn(SPEC_ALIASES, docId) ? SPEC_ALIASES[docId] : undefined
-  const byId = aliased ?? REF_BY_KEY.get(normalizeRefKey(docId))
-  if (byId) return byId
+  if (aliased) return aliased
+  const byId = REFS_BY_KEY.get(normalizeRefKey(docId))
+  if (byId && byId.length > 0) return pickRevision(docId, byId)
+  if (NOT_THE_SAME_DOCUMENT.has(docId)) return null
   const urlKey = normalizeUrlKey(url)
-  return (urlKey && REF_BY_URL.get(urlKey)) || null
+  const owners = urlKey ? REFS_BY_URL.get(urlKey) : undefined
+  return owners && owners.size === 1 ? [...owners][0] : null
 }
 
 /** In-app Library deep-link for a doc id. Always stays in the app: links to the

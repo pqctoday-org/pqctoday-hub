@@ -140,8 +140,39 @@ describe('auditProductRefs', () => {
       auditProductRefs(
         row({
           ossLibraries: [lib('open-lib'), lib('dual-lib'), lib('blank-lib')],
-          commercialLibraries: [lib('paid-lib'), lib('dual-lib'), lib('blank-lib')],
+          commercialLibraries: [lib('paid-lib'), lib('dual-lib')],
         }),
+        catalog
+      )
+    ).toEqual([])
+  })
+})
+
+describe('auditProductRefs — one product in both lists', () => {
+  const lib = (productId: string) => ({ productId, name: productId })
+
+  it('flags a single-licence product listed under both open source and commercial', () => {
+    const f = auditProductRefs(
+      row({ ossLibraries: [lib('open-lib')], commercialLibraries: [lib('open-lib')] }),
+      catalog
+    )
+    const both = f.filter((x) => x.field === 'libraries[open-lib]')
+    expect(both).toHaveLength(1)
+    expect(both[0].detail).toMatch(/keep it in one list/)
+  })
+
+  it('flags a product with no catalog licence in both lists: nothing shows it is dual', () => {
+    const f = auditProductRefs(
+      row({ ossLibraries: [lib('blank-lib')], commercialLibraries: [lib('blank-lib')] }),
+      catalog
+    )
+    expect(f.map((x) => x.field)).toEqual(['libraries[blank-lib]'])
+  })
+
+  it('accepts a genuinely dual-licensed product in both lists', () => {
+    expect(
+      auditProductRefs(
+        row({ ossLibraries: [lib('dual-lib')], commercialLibraries: [lib('dual-lib')] }),
         catalog
       )
     ).toEqual([])

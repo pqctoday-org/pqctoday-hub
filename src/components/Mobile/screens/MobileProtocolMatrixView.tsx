@@ -452,9 +452,12 @@ export function MobileProtocolMatrixView() {
                   Implementations
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {[...selected.ossLibraries, ...selected.commercialLibraries].map((lib) => (
+                  {[
+                    ...selected.ossLibraries.map((lib) => ({ bucket: 'oss', lib })),
+                    ...selected.commercialLibraries.map((lib) => ({ bucket: 'commercial', lib })),
+                  ].map(({ bucket, lib }) => (
                     <Link
-                      key={lib.productId}
+                      key={`${bucket}-${lib.productId}`}
                       to={`/migrate?product=${encodeURIComponent(lib.productId)}`}
                       title={lib.versionNote ? `${lib.name} — ${lib.versionNote}` : lib.name}
                       className="inline-flex items-center rounded-md border border-border bg-muted/20 px-1.5 py-0.5 text-[10.5px] text-foreground"
