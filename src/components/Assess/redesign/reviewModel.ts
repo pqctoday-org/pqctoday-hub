@@ -12,6 +12,7 @@ export interface AssessReviewState {
   industry: string
   country: string
   currentCryptoCategories: string[]
+  currentCrypto?: string[]
   cryptoUnknown: boolean
   dataSensitivity: string[]
   sensitivityUnknown: boolean
@@ -137,7 +138,12 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
     case 'crypto':
       return s.cryptoUnknown
         ? def(recommended)
-        : val(listText(s.currentCryptoCategories.map(prettify)) || 'Not answered')
+        : val(
+            listText(s.currentCryptoCategories.map(prettify)) ||
+              // answers saved before the family picker hold only specific algorithms
+              listText(s.currentCrypto ?? []) ||
+              'Not answered'
+          )
     case 'sensitivity':
       return s.sensitivityUnknown
         ? def(recommended)
