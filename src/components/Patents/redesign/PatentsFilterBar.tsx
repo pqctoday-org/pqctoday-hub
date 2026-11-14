@@ -7,7 +7,7 @@
  * Reads/writes the same URL params the pipeline (usePatentResults) reads.
  */
 import { useMemo } from 'react'
-import { useSearchParams } from 'react-router'
+import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
 import { Search, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -85,7 +85,7 @@ export function PatentsFilterBar({
   onPresetChange,
   onColumnsChange,
 }: PatentsFilterBarProps) {
-  const [params, setParams] = useSearchParams()
+  const [params, setParams] = useEmbedSearchParams()
 
   const set = (key: string, value: string) => {
     const next = new URLSearchParams(params)

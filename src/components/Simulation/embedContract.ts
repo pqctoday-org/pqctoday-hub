@@ -124,6 +124,13 @@ export const REFERENCE_EMBED_IDS = new Set([
   // activity step embeds — fixed 07042026 so it embeds here too instead of
   // hard-navigating to /business/tools/migration-verification.
   'migration-verification',
+  // NAV-2 (2026-11-14): the rest of the Resources tab opens in place too.
+  'algorithms-catalog',
+  'algorithms-validation',
+  'industry-landscape',
+  'leaders',
+  'patents',
+  'explore',
 ])
 
 /** True for a reference step that has a full-page embed widget. */

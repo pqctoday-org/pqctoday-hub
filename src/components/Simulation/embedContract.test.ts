@@ -45,8 +45,18 @@ describe('embed contract (WS-09)', () => {
     // transition + detailed: both Algorithms comparison tabs embed (C5-full)
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(true)
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-detailed' }))).toBe(true)
-    // the remaining algorithm ref (catalog root) is still navigate-away
-    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-catalog' }))).toBe(false)
+    // NAV-2 (owner 2026-11-14): the catalogue and the rest of the Resources tab
+    // now open in place; an unknown reference id still does not embed.
+    for (const refId of [
+      'algorithms-catalog',
+      'algorithms-validation',
+      'industry-landscape',
+      'leaders',
+      'patents',
+      'explore',
+    ])
+      expect(canEmbedStep(step({ kind: 'reference', refId })), refId).toBe(true)
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'not-a-real-ref' }))).toBe(false)
     expect(canEmbedStep(step({ kind: 'activity' }))).toBe(false) // no artifactType
     // workshop: embeddable iff the tool id resolves to a registered component
     expect(

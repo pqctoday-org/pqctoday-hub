@@ -603,6 +603,9 @@ export function SimulationView() {
     // WP5.5 — a library step's `?topic=` (parsed from its `to`) — replaces the
     // old title-regex, which silently un-scoped a step on any label rewording.
     topic?: string
+    /** The step link's whole query string, for widgets that open on a tab or
+     *  filter (Algorithms tab, landscape sector). */
+    params?: string
   } | null>(null)
   // C3: a live sandbox lab embedded under the sim header (SandboxScenarioEmbed).
   const [scenarioEmbed, setScenarioEmbed] = useState<{
@@ -757,6 +760,7 @@ export function SimulationView() {
         title: s.label,
         cert: rp?.get('cert') ?? undefined,
         topic: rp?.get('topic') ?? undefined,
+        params: rp?.toString() || undefined,
       })
     } else if (isScenarioStep(s) && s.scenarioId) {
       // C3: live sandbox lab embedded under the header — only when a sandbox is
@@ -4304,7 +4308,16 @@ export function SimulationView() {
                         // not the default Threat Catalog list (mirrors ComplianceEmbed).
                         <ThreatsEmbed initialTab="horizon" />
                       ) : (
-                        <ReferenceComp />
+                        (() => {
+                          const ParamsComp = referenceEmbed
+                            ? SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.ParamsComponent
+                            : undefined
+                          return ParamsComp ? (
+                            <ParamsComp params={referenceEmbed?.params} />
+                          ) : (
+                            <ReferenceComp />
+                          )
+                        })()
                       )}
                     </Suspense>
                   ) : scenarioEmbed ? (

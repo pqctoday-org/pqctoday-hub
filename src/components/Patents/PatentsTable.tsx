@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
-import { useSearchParams } from 'react-router'
+import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
 import {
   ChevronUp,
   ChevronDown,
@@ -394,7 +394,7 @@ export function PatentsTable({
   onColumnsChange,
   chrome = true,
 }: Props) {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useEmbedSearchParams()
   // Read once per render rather than per row: this is the same set the
   // PatentsRoleLens summary counts against, so the badge and the headline
   // figure can never disagree.
