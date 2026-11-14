@@ -26,6 +26,7 @@ import { softwareData } from '@/data/migrateData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { MODULE_STEP_COUNTS, MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PILLAR_FOR_TYPE, type PillarKey } from '../lib/cswp39StepMapping'
+import { extractYear } from '@/utils/deadlineUrgency'
 import type { LucideIcon } from 'lucide-react'
 import {
   ClipboardCheck,
@@ -402,10 +403,15 @@ function parseFipsStatus(item: {
   }
 }
 
-function parseDeadlineYear(deadline: string): number | null {
-  if (!deadline || deadline === 'Ongoing' || deadline === 'N/A') return null
-  const match = deadline.match(/(\d{4})/)
-  return match ? parseInt(match[1], 10) : null
+const DAY_MS = 1000 * 60 * 60 * 24
+
+/**
+ * Days from `now` to the end of `deadlineYear`. A deadline that gives only a
+ * year is read as "by 31 December" of that year, so the current year keeps
+ * counting down instead of going negative on 1 January's midnight.
+ */
+export function daysUntilDeadlineYearEnd(deadlineYear: number, now: Date): number {
+  return Math.floor((new Date(deadlineYear + 1, 0, 1).getTime() - now.getTime()) / DAY_MS)
 }
 
 // Industries where breach cost dominates board conversation — bump breach-cost
@@ -725,12 +731,11 @@ export function useBusinessMetrics(): BusinessMetrics {
           mandatoryIds.has(f.id)
       )
       .map((f) => {
-        const deadlineYear = parseDeadlineYear(f.deadline)
-        const daysUntilDeadline = deadlineYear
-          ? Math.floor(
-              (new Date(deadlineYear, 0, 1).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-            )
-          : null
+        // Same year rule as the Compliance page's deadline badge and filter
+        // (extractYear): "Ongoing (...)" has no year, and phased ranges and
+        // notes resolve to the next stated year.
+        const deadlineYear = extractYear(f.deadline)
+        const daysUntilDeadline = deadlineYear ? daysUntilDeadlineYearEnd(deadlineYear, now) : null
 
         let urgency: TrackedFramework['urgency'] = 'unknown'
         if (deadlineYear) {
