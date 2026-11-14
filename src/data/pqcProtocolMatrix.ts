@@ -505,13 +505,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-sshm-mlkem-hybrid-kex-10',
-        title:
-          'draft-ietf-sshm-mlkem-hybrid-kex-10 — ML-KEM Hybrid KEX for SSH (published Aug 2026 as RFC 10042)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/',
-        date: '2026-02-26',
-      },
-      {
         id: 'draft-harrison-sshm-mlkem',
         title: 'draft-harrison-sshm-mlkem — Pure ML-KEM KEX for SSH',
         url: 'https://datatracker.ietf.org/doc/draft-harrison-sshm-mlkem/',
@@ -563,7 +556,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote:
-          'RFC 9941 (sntrup761 hybrid) published 2026-04; the ML-KEM hybrid key exchange (draft-ietf-sshm-mlkem-hybrid-kex) was published as RFC 10042 (Informational) in August 2026.',
+          'RFC 9941 (sntrup761 hybrid) published 2026-04; the ML-KEM hybrid key exchange was published as RFC 10042 (Informational) in August 2026.',
         refs: [
           {
             kind: 'rfc',
@@ -772,6 +765,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
         date: '2026-08',
       },
+      {
+        // Published July 2026 (Informational). It was listed under drafts as
+        // draft-ietf-tls-hybrid-design until the datatracker showed it as RFC 9954.
+        id: 'RFC-9954',
+        title:
+          'RFC 9954 — Hybrid Key Exchange in TLS 1.3 (Informational; was draft-ietf-tls-hybrid-design)',
+        url: 'https://www.rfc-editor.org/rfc/rfc9954.html',
+        date: '2026-07',
+      },
     ],
     latestDraft: [
       {
@@ -785,17 +787,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         title: 'draft-ietf-tls-mldsa-06 — ML-DSA in TLS 1.3 (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
         date: '2026-09-11',
-      },
-      {
-        // PUBLISHED 2026-08-22 correction. Was labelled "(RFC Ed Queue)" at -16, dated
-        // 2025-09-07. It left that queue in July 2026: the datatracker reads
-        // "Hybrid Key Exchange in TLS 1.3 RFC 9954 ... Document Type RFC - Informational
-        // (July 2026) ... Was draft-ietf-tls-hybrid-design (tls WG)".
-        id: 'RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3',
-        title:
-          'RFC 9954 — Hybrid Key Exchange in TLS 1.3 (Informational; was draft-ietf-tls-hybrid-design)',
-        url: 'https://www.rfc-editor.org/rfc/rfc9954.html',
-        date: '2026-07',
       },
       {
         id: 'draft-yusef-tls-pqt-dual-certs',
@@ -932,7 +923,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         name: 'Cloudflare Edge Network',
         versionNote: 'X25519MLKEM768 in production',
       },
-      { productId: 'akamai-pqc-edge', name: 'Akamai PQC Edge' },
+      { productId: 'akamai-edge', name: 'Akamai Edge' },
       { productId: 'venafi-tls-protect', name: 'Venafi TLS Protect' },
     ],
     playgrounds: [
@@ -1300,7 +1291,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'https://developers.cloudflare.com/changelog/post/2026-06-17-pqc-mldsa-aop-cots/',
       },
     ],
-    inheritedBy: ['UEFI'],
+    inheritedBy: ['UEFI Secure Boot'],
     sources: [
       {
         label: 'IETF LAMPS working group documents',
@@ -1604,7 +1595,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-jose-pq-composite-sigs',
             title: 'PQ/T Composite Sigs for JOSE/COSE (cross-WG)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-            publishedOn: '2025-01',
+            publishedOn: '2026-10-20',
           },
           {
             kind: 'rfc',
@@ -1869,7 +1860,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-jose-pq-composite-sigs',
             title: 'PQ/T Composite Sigs for JOSE/COSE',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-            publishedOn: '2026-09-11',
+            publishedOn: '2026-10-20',
           },
           {
             kind: 'rfc',
@@ -1895,12 +1886,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote: 'PQ primitives (ML-DSA, ML-KEM) via its JCA provider; not a JOSE library',
       },
       { productId: 'jose4j', name: 'jose4j', versionNote: 'Classical only; PQ via BC provider' },
+      {
+        productId: 'keycloak',
+        name: 'Keycloak',
+        versionNote: 'Planned: PQC readiness tracked in feature issue 43690',
+      },
       { productId: 'go-jose-v4', name: 'go-jose v4', versionNote: 'Classical only' },
       { productId: 'pyjwt', name: 'PyJWT', versionNote: 'Classical only' },
     ],
     commercialLibraries: [
       { productId: 'okta-workforce-identity', name: 'Okta Workforce Identity' },
-      { productId: 'keycloak', name: 'Keycloak' },
     ],
     playgrounds: [
       {
@@ -1948,11 +1943,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-19',
+        id: 'draft-ietf-lamps-pq-composite-kem-23',
         title:
-          'draft-ietf-lamps-pq-composite-kem-19 — Composite ML-KEM (enrollment payload, IESG Evaluation)',
+          'draft-ietf-lamps-pq-composite-kem-23 — Composite ML-KEM (enrollment payload, RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-08-14',
+        date: '2026-10-14',
       },
       {
         id: 'draft-ietf-lamps-pq-composite-sigs-19',
@@ -1996,7 +1991,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-lamps-pq-composite-kem',
             title: 'Composite ML-KEM (enrollment payload)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-            publishedOn: '2026-03-27',
+            publishedOn: '2026-10-14',
           },
         ],
       },
@@ -2171,12 +2166,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             title:
               'Composite ML-KEM in X.509 (optional composite mode; dependency: X.509-layer composite KEM used by the PKINIT draft)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-            publishedOn: '2026-03-27',
+            publishedOn: '2026-10-14',
           },
         ],
       },
       pureSig: {
         value: 'experimental',
+        stage: 'identified',
         note: 'PKINIT already has signature/digest algorithm agility (RFC 8636, 2019), so a KDC/client could in principle present ML-DSA certificates (RFC 9881 X.509 OIDs, RFC 9882 CMS) without a new PKINIT-specific spec — but no implementation has been confirmed to do this. Microsoft AD CS (Windows Server 2025) can issue ML-DSA certificates generally (GA, May 2026) but this is NOT confirmed to be wired into Kerberos/PKINIT specifically.',
         refs: [
           {
@@ -2382,6 +2378,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'experimental',
         stageNote: 'No pure ML-KEM track; OpenPGP-PQC ships composite only',
         note: 'OpenPGP-PQC ships composite KEM only; pure ML-KEM mode is chartered but not yet specified.',
+        refs: [
+          {
+            kind: 'rfc',
+            id: 'RFC 9980',
+            title:
+              'Post-Quantum Cryptography in OpenPGP (dependency: defines composite ML-KEM only; no pure ML-KEM mode is specified)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9980.html',
+            publishedOn: '2026-06',
+          },
+        ],
       },
       hybridKem: {
         value: 'rfc',
@@ -2441,14 +2447,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'gnupg', name: 'GnuPG', versionNote: 'PQC branch tracking RFC 9980' },
       { productId: 'sequoia-pgp-pqc', name: 'Sequoia-PGP PQC' },
       { productId: 'openpgp-js', name: 'OpenPGP.js', versionNote: 'PQC PR series' },
-    ],
-    commercialLibraries: [
       {
-        productId: 'proton-mail-pqc-openpgp',
-        name: 'Proton Mail PQC OpenPGP',
-        versionNote: 'Open Source / Commercial',
+        productId: 'proton-mail',
+        name: 'Proton Mail',
+        versionNote: 'Hybrid ML-KEM (OpenPGP v6), gradual rollout',
       },
     ],
+    commercialLibraries: [],
     playgrounds: [],
     liveDeployments: [
       {
@@ -2692,12 +2697,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'experimental',
+        stage: 'experimental',
         stageNote:
           'Vendor/community technique (Rosenpass whitepaper, formally verified with ProVerif) — not an IETF or WireGuard-project standard',
         note: "Rosenpass runs a separate handshake using Classic McEliece-460896 (static keys) and round-3 Kyber-512 (ephemeral keys), not FIPS 203 ML-KEM, and injects the combined shared secret into WireGuard's existing pre-shared-key (PSK) slot — an out-of-band combiner, not a change to the WireGuard wire protocol. Several VPN vendors ship equivalent WireGuard + ML-KEM hybrid combiners.",
         deploymentPosture: 'production',
         deploymentNote:
           'Mullvad ships this by default on all desktop platforms since Jan 2025; NordVPN, Surfshark, Windscribe, and IVPN ship comparable WireGuard + ML-KEM hybrid combiners.',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'Rosenpass protocol',
+            title:
+              'Rosenpass: Formally Verified Post-Quantum Protocol for WireGuard (whitepaper; not an IETF or WireGuard-project standard)',
+            url: 'https://rosenpass.eu/whitepaper.pdf',
+            publishedOn: '2024-06',
+          },
+        ],
       },
       pureSig: {
         value: 'na',
@@ -2720,9 +2736,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         name: 'Rosenpass',
         versionNote: 'Rust daemon — ML-KEM + Classic McEliece PSK injection',
       },
+      {
+        productId: 'mullvad-vpn-app',
+        name: 'Mullvad VPN App',
+        versionNote: 'Quantum-resistant tunnels by default on desktop (ML-KEM, HQC)',
+      },
     ],
     commercialLibraries: [
-      { productId: 'mullvad-vpn-app', name: 'Mullvad VPN App' },
       { productId: 'nordvpn', name: 'NordVPN' },
       { productId: 'surfshark', name: 'Surfshark' },
       { productId: 'windscribe', name: 'Windscribe' },
@@ -2945,6 +2965,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'experimental',
         stageNote: 'Labeled-KEM construct, not a TCG-standardized hybrid',
         note: 'TPM 2.0 Labeled KEM abstraction can mix algorithms; not standardized as "hybrid".',
+        refs: [
+          {
+            kind: 'spec',
+            id: 'TCG TPM 2.0 v1.85',
+            title:
+              'TCG TPM 2.0 Library v1.85 — Labeled KEM abstraction (dependency: not standardized as a hybrid)',
+            url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
+            publishedOn: '2026-03-12',
+          },
+        ],
       },
       pureSig: {
         value: 'rfc',
@@ -3156,11 +3186,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     commercialLibraries: [
       { productId: 'adguard-dns', name: 'AdGuard DNS', versionNote: 'Commercial / Free' },
-      {
-        productId: 'cloudflare-1-1-1-1',
-        name: 'Cloudflare 1.1.1.1',
-        versionNote: 'Validates ML-DSA-44 (alg 18) by default since 2026-09-10',
-      },
     ],
     playgrounds: [],
     liveDeployments: [
@@ -3219,6 +3244,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'experimental',
+        stage: 'identified',
         note: 'RPKI certs/ROAs are ordinary X.509 (RFC 5280) + CMS (RFC 6488) objects, so they could technically reuse the generic ML-DSA/SLH-DSA X.509 OIDs (RFC 9881/9909) — but no RPKI-specific draft proposes a pure-PQ profile; the one real draft targets composite only (see Hybrid). The real blocker is repository-scale bulk validation, not the certificate format: every relying party fetches and re-validates the ENTIRE global repository, and a SIDN Labs thesis measured this growing from ~838 MB (RSA-2048) to 3+ GB at ML-DSA-44 and 6.7–14 GB (judged impractical) at SLH-DSA.',
         refs: [
           {
@@ -3317,18 +3343,22 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'na',
+        stage: 'none',
         note: 'Inherits TLS 1.2 — no PQC.',
       },
       hybridKem: {
         value: 'na',
+        stage: 'none',
         note: 'Inherits TLS 1.2 — no PQC.',
       },
       pureSig: {
         value: 'na',
+        stage: 'none',
         note: 'Inherits TLS 1.2 — no PQC.',
       },
       hybridSig: {
         value: 'na',
+        stage: 'none',
         note: 'Inherits TLS 1.2 — no PQC.',
       },
     },
@@ -3359,7 +3389,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note (inherited from the TLS 1.3 row).",
+          'Inherited from the TLS 1.3 row. Verified live 2026-11-14: draft-ietf-tls-mlkem-11 (2026-09-17) is in the RFC Editor queue.',
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3367,7 +3397,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-tls-mlkem',
             title: 'Standalone ML-KEM groups for TLS (inherited from TLS 1.3)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-            publishedOn: '2026-02-12',
+            publishedOn: '2026-09-17',
           },
         ],
       },
@@ -3391,6 +3421,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'draft',
         stage: 'rfc-editor-queue',
+        stageNote:
+          'Inherited from the TLS 1.3 row. Verified live 2026-11-14: draft-ietf-tls-mldsa-06 (2026-09-11) is in the RFC Editor queue.',
         note: 'Inherits TLS 1.3 — ML-DSA SignatureScheme values.',
         refs: [
           {
@@ -3398,7 +3430,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-tls-mldsa',
             title: 'ML-DSA in TLS 1.3 (inherited)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
-            publishedOn: '2026-05-06',
+            publishedOn: '2026-09-11',
           },
         ],
       },
@@ -3439,6 +3471,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ossLibraries: [],
     commercialLibraries: [],
     playgrounds: [],
+    noDeploymentReason:
+      'No reviewed production deployment of post-quantum DTLS 1.3 is recorded here. The named groups are specified for TLS 1.3, and the TLS 1.3 deployments on that row are not counted as DTLS deployments.',
     inheritsFromProtocolId: 'tls-1-3',
     supersedes: ['dtls-1-2', 'dtls-1-0'],
   },
@@ -3459,13 +3493,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [],
     dimensions: {
-      pureKem: { value: 'na', note: 'Inherits TLS 1.2 — no PQC.' },
-      hybridKem: { value: 'na', note: 'Inherits TLS 1.2 — no PQC.' },
+      pureKem: { value: 'na', stage: 'none', note: 'Inherits TLS 1.2 — no PQC.' },
+      hybridKem: { value: 'na', stage: 'none', note: 'Inherits TLS 1.2 — no PQC.' },
       pureSig: {
         value: 'na',
+        stage: 'none',
         note: 'FIDO U2F uses classical ECDSA on device; no PQ migration spec.',
       },
-      hybridSig: { value: 'na', note: 'No FIDO Alliance hybrid-signature track.' },
+      hybridSig: { value: 'na', stage: 'none', note: 'No FIDO Alliance hybrid-signature track.' },
     },
     ossLibraries: [],
     commercialLibraries: [],
@@ -3487,7 +3522,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note (inherited from the TLS 1.3 row).",
+          'Inherited from the TLS 1.3 row. Verified live 2026-11-14: draft-ietf-tls-mlkem-11 (2026-09-17) is in the RFC Editor queue.',
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3495,7 +3530,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-tls-mlkem',
             title: 'Standalone ML-KEM groups for TLS (inherited)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-            publishedOn: '2026-02-12',
+            publishedOn: '2026-09-17',
           },
         ],
       },
@@ -3545,7 +3580,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-jose-pq-composite-sigs',
             title: 'PQ/T Composite Sigs for JOSE/COSE (inherited)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-            publishedOn: '2025-01',
+            publishedOn: '2026-10-20',
           },
           {
             kind: 'rfc',
@@ -3561,6 +3596,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ossLibraries: [],
     commercialLibraries: [],
     playgrounds: [],
+    noDeploymentReason:
+      'No reviewed production deployment of a post-quantum FIDO2 / WebAuthn authenticator is recorded here. Passkey traffic benefits from the TLS 1.3 hybrid key exchange on that row, but that is channel security and not a FIDO deployment; no FIDO Alliance profile for post-quantum authentication exists.',
     inheritsFromProtocolId: 'tls-1-3',
     supersedes: ['fido'],
   },
@@ -3583,7 +3620,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note (inherited from the TLS 1.3 row).",
+          'Inherited from the TLS 1.3 row. Verified live 2026-11-14: draft-ietf-tls-mlkem-11 (2026-09-17) is in the RFC Editor queue.',
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — pure ML-KEM via TLS 1.3 KEX.',
         refs: [
           {
@@ -3591,7 +3628,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-tls-mlkem',
             title: 'Standalone ML-KEM groups for TLS (inherited via EAP-TLS bootstrap)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/',
-            publishedOn: '2026-02-12',
+            publishedOn: '2026-09-17',
           },
         ],
       },
@@ -3614,6 +3651,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'draft',
         stage: 'rfc-editor-queue',
+        stageNote:
+          'Inherited from the TLS 1.3 row. Verified live 2026-11-14: draft-ietf-tls-mldsa-06 (2026-09-11) is in the RFC Editor queue.',
         note: 'Inherits TLS 1.3 — ML-DSA via certificate-based EAP-TLS auth.',
         refs: [
           {
@@ -3621,7 +3660,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-tls-mldsa',
             title: 'ML-DSA in TLS 1.3 (inherited)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/',
-            publishedOn: '2026-05-06',
+            publishedOn: '2026-09-11',
           },
         ],
       },
@@ -4078,6 +4117,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
+        stage: 'wg-document',
         stageNote:
           'OASIS Committee Specification Draft CSD02 (2026-05-07) — ML-KEM algorithm enumerations + native Encapsulate/Decapsulate operations',
         note: 'ML-KEM-512/768/1024 managed-object algorithm enumerations and the Encapsulate/Decapsulate operations are both defined natively in CSD02 (§6.1.15/§6.1.22, §11.12) — pqctoday-kmip implements the published set directly, no extension needed.',
@@ -4094,6 +4134,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
+        stage: 'wg-document',
         stageNote:
           'OASIS Committee Specification Draft CSD02 (2026-05-07) — first-class hybrid KEM algorithm values',
         note: 'X25519MLKEM768 (0x5C) and SecP256r1MLKEM768 (0x5D) are first-class CryptographicAlgorithm values in CSD02 §11.12 — one managed object per hybrid pair, ordinary Encapsulate/Decapsulate, combiner runs inside the engine. Profiles CSD02 §3.3.3 separately mandates a third group, SecP384r1MLKEM1024, as a required TLS key-exchange group for the KMIP transport itself — the Specification still assigns it no managed-object codepoint, so the two documents are currently out of step on that one algorithm.',
@@ -4110,6 +4151,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
+        stage: 'wg-document',
         stageNote:
           'OASIS CSD02 (2026-05-07) — ML-DSA algorithm enumeration used by KMIP’s existing Sign / SignatureVerify operations',
         note: 'ML-DSA-44/65/87 managed objects use the pre-existing KMIP Sign / SignatureVerify operations once the ML-DSA algorithm enum value is present — CSD02 adds the enum (plus 15 pre-hash Hash-ML-DSA-*/Hash-SLH-DSA-* variants, §11.12 Table 552), not new operations.',
@@ -4137,7 +4179,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'Our Rust KMIP 3.0 server (MIT) on softhsmrustv3 — full ML-KEM + ML-DSA + crypto-agility policy',
       },
     ],
-    commercialLibraries: [],
+    commercialLibraries: [
+      {
+        productId: 'cryptsoft',
+        name: 'Cryptsoft KMIP & PKCS#11 SDK',
+        versionNote: 'KMIP 1.0–3.0 SDK with ML-KEM, ML-DSA and SLH-DSA',
+      },
+    ],
     playgrounds: [
       {
         toolId: 'cacp-kmip',
@@ -4171,6 +4219,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'experimental',
+        stage: 'experimental',
         stageNote:
           'Signal Foundation specification (Rev 3, 2023; updated 2024-01) — not an IETF/OASIS standard, but live in production',
         note: 'X25519/X448 ECDH combined with ML-KEM / CRYSTALS-Kyber; mutual auth via classical XEdDSA-signed prekeys.',
@@ -4258,10 +4307,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'none',
+        stage: 'none',
         note: 'No composite/hybrid signing track in Sigstore yet.',
       },
     },
-    ossLibraries: [],
+    ossLibraries: [
+      {
+        productId: 'sigstore-cosign',
+        name: 'sigstore/cosign',
+        versionNote: 'ML-DSA experimental in sign-blob / verify-blob (bring-your-own key)',
+      },
+    ],
     commercialLibraries: [],
     playgrounds: [],
     liveDeployments: [],
@@ -4286,6 +4342,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
+        stage: 'wg-document',
         stageNote:
           'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
         note: 'The amendment scope covers PQC AKM suites and PQC key-establishment algorithms across SAE/OWE/FILS/PASN; the public status page does not identify a specific pure KEM construction.',
@@ -4301,6 +4358,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
+        stage: 'wg-document',
         stageNote:
           'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
         note: 'The amendment scope covers AKM suites and key-establishment algorithms; the public status page does not identify a specific hybrid KEM construction.',
@@ -4316,6 +4374,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
+        stage: 'wg-document',
         stageNote:
           'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
         note: 'The amendment scope covers PQC digital signature algorithms and a PQC password-authenticated key exchange (PAKE); the public status page does not identify a specific pure signature scheme.',
@@ -4331,6 +4390,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
+        stage: 'wg-document',
         stageNote:
           'PAR approved 2025-09-10 for Task Group BT. Draft 1.0 went to an initial 30-day Working Group Letter Ballot (LB 297); the September 2026 update reports 650 comments received, 232 resolved, and instructions to start Draft 1.1.',
         note: 'The amendment scope covers digital signature algorithms; the public status page does not identify a specific hybrid or composite signature construction.',
@@ -4377,6 +4437,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'rfc',
+        stage: 'rfc-published',
         stageNote: 'FC-SP-3 completed Feb 2026 — CNSA 2.0 algorithm definitions added',
         note: 'FC-SP-3 adds CNSA 2.0 algorithm support (ML-KEM) for FC-SP key exchange. Broadcom Emulex SecureHBA already negotiates ML-KEM-1024 automatically as part of the standard Fibre Channel login process.',
         deploymentPosture: 'production',
@@ -4398,6 +4459,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'rfc',
+        stage: 'rfc-published',
         stageNote: 'FC-SP-3 completed Feb 2026 — CNSA 2.0 algorithm definitions added',
         note: 'FC-SP-3 adds CNSA 2.0 algorithm support (ML-DSA) for FC-SP key/entity authentication. Broadcom Emulex SecureHBA already negotiates ML-DSA-87 automatically as part of the standard Fibre Channel login process.',
         deploymentPosture: 'production',
