@@ -7,6 +7,7 @@ import {
   isSymmetricRel,
   relHeading,
   type ForceClusterEdge,
+  type ForceClusterEdgeBasis,
   type ForceClusterNode,
   type ForceClusterNodeType,
 } from '@/data/forceClusterGraph'
@@ -57,6 +58,19 @@ const CONNECTIONS_PER_GROUP_CAP = 6
 const PRODUCTS_CITING_SOURCE_KEY = 'outgoing:products-citing-source'
 const PRODUCTS_CITING_SOURCE_HEADING = 'Products whose catalogue entry cites this source'
 const LINK_IS_NOT_VALIDATION = 'A link records a reference in the dataset, not a validation.'
+
+// Links found by matching names, not read from a field that cites the record, are marked so a
+// reader can tell them from a citation and knows what to check before relying on one.
+const BASIS_BADGE: Record<ForceClusterEdgeBasis, { label: string; note: string }> = {
+  'name-match': {
+    label: 'name match',
+    note: 'Name match: found because one record’s text uses the other’s name, not because it cites it. Open both records to confirm they are about the same thing.',
+  },
+  'family-match': {
+    label: 'family match',
+    note: 'Family match: the source names an algorithm family, so the link goes to every parameter set of it. Check the source for which parameter sets it actually uses.',
+  },
+}
 
 export function NavigateDetailPanel({
   node,
@@ -244,6 +258,9 @@ export function NavigateDetailPanel({
               ? items
               : items.slice(0, CONNECTIONS_PER_GROUP_CAP)
           const hiddenCount = items.length - visibleItems.length
+          const bases = Array.from(
+            new Set(items.map((c) => c.edge.basis).filter((b): b is ForceClusterEdgeBasis => !!b))
+          )
           return (
             <div key={key}>
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -255,6 +272,12 @@ export function NavigateDetailPanel({
               {key === PRODUCTS_CITING_SOURCE_KEY && (
                 <p className="mt-0.5 text-xs text-muted-foreground">{LINK_IS_NOT_VALIDATION}</p>
               )}
+              {bases.map((basis) => (
+                <p key={basis} className="mt-0.5 text-xs text-muted-foreground">
+                  {/* eslint-disable-next-line security/detect-object-injection -- basis is the typed ForceClusterEdgeBasis union, not user input */}
+                  {BASIS_BADGE[basis].note}
+                </p>
+              ))}
               <ul className="mt-1 space-y-1">
                 {visibleItems.map((c) => (
                   <li key={`${c.edge.from}-${c.edge.to}-${c.edge.rel}`}>
@@ -265,6 +288,11 @@ export function NavigateDetailPanel({
                     >
                       <TypeDot type={c.node.type} />
                       <span className="truncate">{c.node.label}</span>
+                      {c.edge.basis && (
+                        <span className="ml-auto shrink-0 rounded border border-border px-1 text-[10px] text-muted-foreground">
+                          {BASIS_BADGE[c.edge.basis].label}
+                        </span>
+                      )}
                     </Button>
                   </li>
                 ))}

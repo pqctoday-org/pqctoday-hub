@@ -15,6 +15,7 @@ export type PageId =
   | 'report'
   | 'business-center'
   | 'learn'
+  | 'navigate'
   | 'faq'
 
 export interface ManualSection {
@@ -463,6 +464,50 @@ export const pageManuals: Record<PageId, PageManual> = {
       'Start with the Foundations track if you are new to PQC, or pick a role first so My Path can order the modules for you.',
       'Workshop exercises that use WebAssembly cryptography run locally in your browser.',
       'The Practice quiz draws on questions across many topics, filtered by your role and the difficulty you choose.',
+    ],
+  },
+
+  navigate: {
+    title: 'Navigate: the knowledge graph',
+    summary:
+      'A 3D map of how the hub’s records connect. Each node is a record from one of the hub’s data sets and each line is a relationship recorded in that data. The graph teaches how standards, algorithms, protocols, compliance frameworks, products and vendors refer to each other; it does not validate any of them.',
+    sections: [
+      {
+        heading: 'Twelve kinds of record',
+        body: 'Nodes are coloured by category: Trusted source, Crypto mechanism, Industry, Use case, Compliance, Standard, Glossary, Product, Protocol, Patent, Community and Vendor. A bigger, darker node has more recorded connections in this graph. That is a count of links in the data, not a measure of importance, trust or maturity.',
+      },
+      {
+        heading: 'Zooming and labels',
+        body: 'Labels change with distance. From far away you see the category names, closer in the sub-category names, and close up the names of single records. The Labels slider sets how many labels can show at once; labels never overlap.',
+      },
+      {
+        heading: 'Filters and the node count',
+        body: 'Filters turns categories and sub-categories on and off. The Nodes slider sets how many records are drawn; each category contributes its most-connected records first, so a record that is not drawn is not missing from the data. The line under the sliders shows how many records and links are drawn out of the whole graph.',
+      },
+      {
+        heading: 'Finding a record',
+        body: 'Search (or the search box at the top of Filters) finds any record by name across the whole graph, including records the node count or the filters leave out. Picking one draws it, opens its details and flies the camera to it. List view (keyboard) lists the drawn records for keyboard and screen-reader use and does the same.',
+      },
+      {
+        heading: 'Spotlight',
+        body: 'Click a category or sub-category label to spotlight it: the camera frames it and every other record is hidden. The chip at the top names the spotlight; Show all or Escape returns to the whole graph. Clicking empty space also ends it, but releasing a drag does not.',
+      },
+      {
+        heading: 'Record details',
+        body: 'Clicking a record opens its details: what it is, links to its page in the hub (and to Learn modules or tools that cover it), and its connections grouped by relationship. A connection marked "name match" was found because one record’s text uses the other’s name; "family match" means a source named an algorithm family and the link goes to every parameter set of it. Unmarked connections come from a field that cites that exact record.',
+      },
+      {
+        heading: 'Guided tour and motion',
+        body: 'Spin turns the graph slowly. Tour visits each category and then its most-connected records, with a caption naming each one and, on a wider screen, its details panel open (on a phone the panel would cover the tour controls, so only the caption shows). Pause, Previous and Next control the tour; dragging the view also pauses it, and Resume carries on from the current stop.',
+      },
+      {
+        heading: 'Sharing a view',
+        body: 'The address bar follows what you have open: ?node= for a record, ?type= and ?sub= for a spotlight. The Share button in the top bar copies that link, and opening it shows the same record or spotlight.',
+      },
+    ],
+    tips: [
+      'A link records a reference in the dataset, not a validation. Before relying on one, open the cited document or the official register (for example CMVP for FIPS 140-3 certificates).',
+      'If the canvas feels busy, spotlight one category or lower the Nodes slider, then follow connections from the details panel.',
     ],
   },
 

@@ -47,6 +47,7 @@ export const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
   // own (now-removed) PageHeader call passed pageId="business-center" too.
   '/business/tools': 'business-center',
   '/learn': 'learn',
+  '/navigate': 'navigate',
 }
 
 /**
@@ -107,6 +108,10 @@ export const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string 
   '/leaders': {
     title: 'PQC Community — People Contributing to the Advances of Post-Quantum Cryptography',
     text: 'Meet the people contributing to the advances of post-quantum cryptography.',
+  },
+  '/navigate': {
+    title: 'PQC Knowledge Graph — How Standards, Algorithms and Products Connect',
+    text: 'Explore a 3D map of how post-quantum standards, algorithms, protocols, compliance frameworks and products refer to each other.',
   },
   '/library': {
     title: 'PQC Library — NIST, IETF, ETSI & More',

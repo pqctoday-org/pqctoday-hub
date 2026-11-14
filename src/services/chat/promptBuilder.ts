@@ -21,6 +21,7 @@ import {
 } from '@/components/Threats/threatsUrlParams'
 import { INTERACTIVE_TAB_IDS } from '@/components/Playground/contexts/interactiveTabs'
 import { OPENSSL_CATEGORIES } from '@/components/OpenSSLStudio/categories'
+import { NODE_TYPES } from '@/components/Navigate/graphVisuals'
 
 /**
  * Approximate character budget for RAG context blocks in the system prompt.
@@ -474,6 +475,7 @@ GUIDELINES:
    - /learn/quiz?category=<id> (comma-separated quiz categories, e.g. ?category=pqc-fundamentals,nist-standards)
    - /patents (Patent landscape & CSWP.39 maturity-evidence), /patents?tab=<insights|explore|search>, /patents?patent=US<number> (e.g. US12676741)
    - /patents?search=<text>, /patents?assignee=<name>, /patents?agility=<level>, /patents?domain=<name>, /patents?impact=<level>, /patents?quantumTech=<family>, /patents?quantumRelevance=<level>, /patents?region=<name>, /patents?protocol=<name>, /patents?classicalAlgorithm=<name>, /patents?hardwareComponent=<name>, /patents?nistStatus=<status>
+   - /navigate (3D knowledge graph of how records connect), /navigate?node=<graph record id, e.g. std-fips-203, mech-ml-kem-768> (open one record and its connections), /navigate?type=<${NODE_TYPES.join('|')}>&sub=<sub-category> (spotlight a category; sub optional)
    - /report (Assessment report — generated from /assess), /faq (frequently asked questions), /terms (terms of service & export controls), /explore (guided exploration), /changelog, /about
    - / (Landing) — supports /?picker=open to open the role switcher (region/industry picker retired 2026-08-01 in favor of the top-bar pill); embed mode supports /?persona=<id>&ind=<industry>
    **Self-check before emitting any link**: verify the path appears in this grammar AND every \`?param=\` you include is listed for that route. If unsure, link to the bare path.
