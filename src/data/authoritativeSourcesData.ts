@@ -40,7 +40,7 @@ export type ViewType =
   // ADDED 2026-08-07. /patents was the one data page with no provenance
   // surface at all — not because a column was missing, but because NEITHER
   // registry contained a single patent authority. USPTO (the issuing
-  // authority for all 1,185 active rows) and Google Patents (the index the
+  // authority for the catalogue's US records) and Google Patents (the index the
   // harvester actually queries) are now registered, so this ViewType finally
   // has sources to point at.
   | 'Patents'

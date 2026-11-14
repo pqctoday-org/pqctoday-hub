@@ -28,6 +28,8 @@ interface PatentDetailDrawerProps {
   onNavigate: (patentNumber: string) => void
   /** Prior-art citation → another patent (pushes, so Back returns here). */
   onOpenCitation?: (patentNumber: string) => void
+  /** A profile tag clicked → filter Explore by it (Explore URL param, value). */
+  onFilterTag?: (param: string, value: string) => void
 }
 
 export function PatentDetailDrawer(props: PatentDetailDrawerProps) {
@@ -42,6 +44,7 @@ function DrawerPanel({
   onClose,
   onNavigate,
   onOpenCitation,
+  onFilterTag,
 }: PatentDetailDrawerProps & { patent: PatentItem }) {
   const [entered, setEntered] = useState(false)
   useEffect(() => {
@@ -141,6 +144,7 @@ function DrawerPanel({
               inCorpusIds={inCorpusIds}
               onNavigate={onNavigate}
               onOpenCitation={onOpenCitation}
+              onFilterTag={onFilterTag}
             />
           </div>
         </div>

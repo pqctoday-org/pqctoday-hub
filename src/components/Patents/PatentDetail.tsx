@@ -20,7 +20,7 @@ import { FlagButton } from '@/components/ui/FlagButton'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
-import { filingJurisdictionLabel } from '@/data/patentFilters'
+import { filingJurisdictionLabel, PUBLICATION_KIND_HINT } from '@/data/patentFilters'
 import { inventorLeadersFor } from './patentInventorLeaders'
 import { findAlgorithmByRef, loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { standardRefHref } from '@/utils/standardRef'
@@ -35,7 +35,11 @@ interface Props {
   onOpenCitation?: (patentNumber: string) => void
   isExpanded?: boolean
   onToggleExpand?: () => void
+  /** Makes profile tags clickable: filter Explore by (URL param, value). */
+  onFilterTag?: (param: string, value: string) => void
 }
+
+const IETF_IPR_URL = 'https://datatracker.ietf.org/ipr/'
 
 // ─── Color tokens ────────────────────────────────────────────────────────────
 type TagVariant =
@@ -94,16 +98,59 @@ const IMPACT_COLOR: Record<string, string> = {
 
 // ─── Shared primitives ───────────────────────────────────────────────────────
 
-function ColorTagList({ items, variant = 'default' }: { items: string[]; variant?: TagVariant }) {
+function ColorTagList({
+  items,
+  variant = 'default',
+  onSelect,
+  hrefFor,
+  selectLabel = 'Show patents tagged',
+}: {
+  items: string[]
+  variant?: TagVariant
+  /** Tag click → filter (rendered as a button). */
+  onSelect?: (item: string) => void
+  /** Tag → page link (rendered as a link when it returns one). */
+  hrefFor?: (item: string) => string | null
+  selectLabel?: string
+}) {
   if (!items.length) return <span className="text-muted-foreground text-xs">—</span>
+  // eslint-disable-next-line security/detect-object-injection -- closed union key
   const cls = TAG_CLASSES[variant]
+  const base = `inline-block rounded border px-1.5 py-0.5 text-xs ${cls}`
   return (
     <div className="flex flex-wrap gap-1">
-      {items.map((item) => (
-        <span key={item} className={`inline-block rounded border px-1.5 py-0.5 text-xs ${cls}`}>
-          {item}
-        </span>
-      ))}
+      {items.map((item) => {
+        const href = hrefFor?.(item) ?? null
+        if (href)
+          return (
+            <Link
+              key={item}
+              to={href}
+              className={`${base} hover:underline`}
+              title={`Open ${item} in Library`}
+            >
+              {item}
+            </Link>
+          )
+        if (onSelect)
+          return (
+            <Button
+              key={item}
+              type="button"
+              variant="ghost"
+              onClick={() => onSelect(item)}
+              title={`${selectLabel} ${item}`}
+              className={`${base} h-auto font-normal hover:underline`}
+            >
+              {item}
+            </Button>
+          )
+        return (
+          <span key={item} className={base}>
+            {item}
+          </span>
+        )
+      })}
     </div>
   )
 }
@@ -208,12 +255,18 @@ export function PatentDetail({
   onOpenCitation = onNavigate,
   isExpanded,
   onToggleExpand,
+  onFilterTag,
 }: Props) {
+  const filterBy = (param: string) =>
+    onFilterTag ? (value: string) => onFilterTag(param, value) : undefined
   const googlePatentsUrl = `https://patents.google.com/patent/${patent.patentNumber}/en`
   const dateParts = [
     patent.priorityDate && { label: 'Priority', term: 'Priority Date', value: patent.priorityDate },
     patent.filingDate && { label: 'Filed', term: 'Filing Date', value: patent.filingDate },
-    patent.issueDate && { label: 'Issued', term: 'Issue Date', value: patent.issueDate },
+    patent.issueDate &&
+      (patent.publicationKind === 'published_application'
+        ? { label: 'Published', term: 'Publication', value: patent.issueDate }
+        : { label: 'Granted', term: 'Issue Date', value: patent.issueDate }),
   ].filter((d): d is { label: string; term: string; value: string } => Boolean(d))
 
   // The patent corpus keeps filing-era algorithm names (Kyber, Dilithium,
@@ -286,6 +339,14 @@ export function PatentDetail({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground mb-1">
             <span className="font-mono whitespace-nowrap">{patent.patentNumber}</span>
+            <span
+              className="rounded border border-border px-1 text-[10px] uppercase tracking-wide"
+              title={PUBLICATION_KIND_HINT}
+            >
+              {patent.publicationKind === 'published_application'
+                ? 'Published application'
+                : 'Granted patent'}
+            </span>
             {dateParts.length > 0 && (
               <>
                 <span>·</span>
@@ -446,11 +507,33 @@ export function PatentDetail({
             </span>
           </div>
           <ImpactBar score={patent.impactScore} />
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
+            <dt>From the record&rsquo;s facts</dt>
+            <dd className="text-right tabular-nums text-foreground">{patent.impactFacts} / 50</dd>
+            <dt>From the PQC migration score</dt>
+            <dd className="text-right tabular-nums text-foreground">
+              {patent.impactMigration} / 50
+            </dd>
+          </dl>
           <p className="text-xs text-muted-foreground">
-            This uncalibrated Hub score combines recorded migration urgency, listed standardized
-            algorithms and claim/domain breadth. Missing source records can affect it. A high score
-            does not establish migration priority, deployed security, patent validity or IP value.
+            Half of this Hub score comes from what the record names (FIPS 203/204/205 standards,
+            protocols, hardware, application domains and data types protected), half from its
+            1&ndash;10 PQC migration score. High is 65 or more, Medium 35&ndash;64. It is a reading
+            aid for this catalogue: it does not establish patent validity, enforceability, licensing
+            terms or IP value.
           </p>
+          {patent.pqcMigrationScore != null && (
+            <div className="rounded border border-border p-2 text-xs">
+              <div className="font-semibold text-foreground">
+                PQC migration score: {patent.pqcMigrationScore} / 10
+              </div>
+              {patent.pqcMigrationReason && (
+                <p className="mt-0.5 text-muted-foreground leading-relaxed">
+                  {patent.pqcMigrationReason}
+                </p>
+              )}
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
             <span>
               Crypto agility:{' '}
@@ -523,10 +606,14 @@ export function PatentDetail({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <GridCard title="PQC Algorithms">
-              <ColorTagList items={patent.pqcAlgorithms} variant="pqc" />
+              <ColorTagList items={patent.pqcAlgorithms} variant="pqc" onSelect={filterBy('pqc')} />
             </GridCard>
             <GridCard title="Classical Algorithms">
-              <ColorTagList items={patent.classicalAlgorithms} variant="classical" />
+              <ColorTagList
+                items={patent.classicalAlgorithms}
+                variant="classical"
+                onSelect={filterBy('classicalAlgorithm')}
+              />
             </GridCard>
             <GridCard title="Quantum Technology">
               <ColorTagList
@@ -535,13 +622,21 @@ export function PatentDetail({
               />
             </GridCard>
             <GridCard title="Protocols">
-              <ColorTagList items={patent.protocols} variant="protocol" />
+              <ColorTagList
+                items={patent.protocols}
+                variant="protocol"
+                onSelect={filterBy('protocol')}
+              />
             </GridCard>
             <GridCard title="Primitive Types">
               <ColorTagList items={patent.primitiveTypes} variant="info" />
             </GridCard>
             <GridCard title="Hardware">
-              <ColorTagList items={patent.hardwareComponents} variant="warning" />
+              <ColorTagList
+                items={patent.hardwareComponents}
+                variant="warning"
+                onSelect={filterBy('hardwareComponent')}
+              />
             </GridCard>
             <GridCard title="Key Management">
               <ColorTagList items={patent.keyManagementOps} />
@@ -556,16 +651,33 @@ export function PatentDetail({
               />
             </GridCard>
             <GridCard title="Threat Model">
-              <ColorTagList items={patent.threatModel} variant="threat" />
+              <ColorTagList
+                items={patent.threatModel}
+                variant="threat"
+                onSelect={filterBy('threatModel')}
+              />
             </GridCard>
             <GridCard title="Application Domain" full>
-              <ColorTagList items={patent.applicationDomain} variant="protocol" />
+              <ColorTagList
+                items={patent.applicationDomain}
+                variant="protocol"
+                onSelect={filterBy('domain')}
+              />
+            </GridCard>
+            <GridCard title="Performance Claims">
+              <ColorTagList items={patent.performanceClaims} variant="info" />
             </GridCard>
             <GridCard title="Data Protected">
               <ColorTagList items={patent.dataTypesProtected} />
             </GridCard>
             <GridCard title="Standards Referenced">
-              <ColorTagList items={patent.standardsReferenced} variant="warning" />
+              {/* Each standard the Library holds opens there; the rest filter. */}
+              <ColorTagList
+                items={patent.standardsReferenced}
+                variant="warning"
+                hrefFor={standardRefHref}
+                onSelect={filterBy('standard')}
+              />
             </GridCard>
             <GridCard title="Compliance Targets">
               <ColorTagList items={patent.complianceTargets} variant="protocol" />
@@ -674,6 +786,44 @@ export function PatentDetail({
             </div>
           </div>
         )}
+
+        {/* General questions only (owner decision 2026-11-14): the catalogue
+            records no licence, pledge or assertion history, so nothing here
+            says what applies to any one patent. */}
+        <details className="border-t border-border pt-4 text-xs text-muted-foreground">
+          <summary className="cursor-pointer font-semibold uppercase tracking-wide">
+            Questions to take to your counsel
+          </summary>
+          <ul className="mt-2 list-disc space-y-1 pl-4 leading-relaxed">
+            <li>
+              Is this a granted patent, or a published application whose claims are still under
+              examination? This record is{' '}
+              {patent.publicationKind === 'published_application'
+                ? 'a published application'
+                : 'a granted patent'}
+              .
+            </li>
+            <li>
+              Do the claims cover the standardised algorithm itself, or one implementation, protocol
+              or hardware design that a product may or may not use?
+            </li>
+            <li>
+              Has the holder filed an intellectual property rights declaration with the IETF for a
+              specification you use? Declarations can be searched on the{' '}
+              <a
+                href={IETF_IPR_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => logExternalLink('Patents', IETF_IPR_URL)}
+                className="text-primary hover:underline"
+              >
+                IETF IPR disclosures page
+              </a>
+              .
+            </li>
+            <li>Does your supplier contract include an intellectual property indemnity?</li>
+          </ul>
+        </details>
 
         {/* Disclaimer */}
         <p className="border-t border-border pt-4 text-xs text-muted-foreground leading-relaxed">

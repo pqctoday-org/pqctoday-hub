@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
-import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
+import { tagKey } from './patentFilters'
 import type {
   PatentItem,
   CryptoAgilityMode,
@@ -10,6 +10,7 @@ import type {
   NistStatus,
   ImpactLevel,
   NistStatusValue,
+  PublicationKind,
 } from '../types/PatentTypes'
 
 interface RawPatentRow {
@@ -62,41 +63,104 @@ interface RawPatentRow {
 
 const FIPS_STATUSES: NistStatusValue[] = ['fips_203', 'fips_204', 'fips_205']
 
-function computeImpactScore(item: Omit<PatentItem, 'impactScore' | 'impactLevel'>): number {
-  // Migration urgency (0–40)
-  let urgency = 14
-  const hasQuantumAttack = item.threatModel.includes('quantum-attack')
-  if (item.cryptoAgilityMode === 'classical_only') {
-    urgency = hasQuantumAttack ? 40 : 28
-  } else if (item.cryptoAgilityMode === 'hybrid') {
-    urgency = hasQuantumAttack ? 22 : 16
-  } else if (item.cryptoAgilityMode === 'pqc_only') {
-    urgency = 10
-  } else if (item.cryptoAgilityMode === 'negotiated') {
-    urgency = 18
-  }
+/**
+ * Hub impact score, 0–100 (owner decision 2026-11-14): half from what the
+ * record itself says, half from its curated 1–10 PQC migration score.
+ *
+ * Facts (0–50):
+ *  - FIPS standards named (0–20): one of FIPS 203/204/205 = 12, two = 16,
+ *    three = 20; no FIPS but another NIST track (Round 4, selected, stateful
+ *    hash standard) = 6.
+ *  - Protocols (0–8): any protocol named.
+ *  - Hardware (0–7): any hardware component named.
+ *  - Application domains (0–10): 2 per domain, up to 5.
+ *  - Data types protected (0–5): health or biometric 3, financial 2, PII 1,
+ *    any other type 1.
+ * Migration (0–50): migration score × 5. A record not yet scored takes its
+ * facts half twice, so a missing score neither lifts nor sinks it.
+ *
+ * The old formula gave post-quantum-only patents 10 of 40 "urgency" points
+ * (urgency measures how badly a CLASSICAL system must migrate), so none of
+ * them could reach High. That component is gone.
+ */
+export function computeImpactParts(
+  item: Omit<PatentItem, 'impactScore' | 'impactLevel' | 'impactFacts' | 'impactMigration'>
+): { facts: number; migration: number } {
+  const fipsCount = new Set(
+    item.nistRoundStatus
+      .map((s) => s.status)
+      .filter((s) => FIPS_STATUSES.includes(s as NistStatusValue))
+  ).size
+  const otherNistTrack = item.nistRoundStatus.some((s) =>
+    ['round4_candidate', 'selected_for_standardization', 'stateful_hash_standard'].includes(
+      s.status
+    )
+  )
+  const standards =
+    fipsCount >= 3 ? 20 : fipsCount === 2 ? 16 : fipsCount === 1 ? 12 : otherNistTrack ? 6 : 0
+  const protocols = item.protocols.length > 0 ? 8 : 0
+  const hardware = item.hardwareComponents.length > 0 ? 7 : 0
+  const domains = Math.min(item.applicationDomain.length, 5) * 2
 
-  // PQC coverage (0–30): count distinct FIPS-standardized algorithms
-  const fipsCount = item.nistRoundStatus.filter((s) =>
-    FIPS_STATUSES.includes(s.status as NistStatusValue)
-  ).length
-  const coverage = Math.min(fipsCount * 10, 30)
-
-  // Claim breadth (0–20)
-  const breadth = Math.min(item.independentClaimSubjects.length * item.applicationDomain.length, 20)
-
-  // Data sensitivity (0–10)
-  let sensitivity = 0
   const types = item.dataTypesProtected
-  if (types.includes('PHI') || types.includes('biometric')) sensitivity += 5
-  if (types.includes('financial')) sensitivity += 3
-  if (types.includes('PII')) sensitivity += 2
-  sensitivity = Math.min(sensitivity, 10)
+  let data = 0
+  if (types.includes('PHI') || types.includes('biometric')) data += 3
+  if (types.includes('financial')) data += 2
+  if (types.includes('PII')) data += 1
+  if (types.some((t) => !['PHI', 'biometric', 'financial', 'PII'].includes(t))) data += 1
+  data = Math.min(data, 5)
 
-  return urgency + coverage + breadth + sensitivity
+  const facts = standards + protocols + hardware + domains + data
+  const score = item.pqcMigrationScore
+  const migration = score == null ? facts : Math.round(Math.max(0, Math.min(score, 10)) * 5)
+  return { facts, migration }
 }
 
-function toImpactLevel(score: number): ImpactLevel {
+/**
+ * Titles harvested from Google Patents search results keep the snippet's
+ * match markup ("Cryptographic system for <b>post-quantum</b> …"). React
+ * escapes it, so readers saw the tags. Strip the markup; the words stay.
+ */
+export function cleanPatentTitle(raw: string | undefined): string {
+  return (raw ?? '')
+    .replace(/<\/?b>/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+/**
+ * A US number of 11 digits starting with the year ("20260189535") is a
+ * pre-grant publication of an application: its claims are still being
+ * examined. Shorter numbers ("12470376") are granted patents.
+ */
+export function publicationKindOf(rawNumber: string): PublicationKind {
+  const digits = rawNumber.trim().replace(/^US/i, '')
+  return /^(19|20)\d{9}$/.test(digits) ? 'published_application' : 'granted_patent'
+}
+
+/**
+ * Individual holders arrive in the USPTO "Surname; Given names" form
+ * ("Nix; John A."), sometimes several joined by commas, while other rows
+ * carry the same person as "John A. Nix". Turn each "Surname; Given" part
+ * into "Given Surname" (an all-capitals surname gets ordinary capitals) so
+ * the canonicaliser below can merge them. Company names have no ";" and are
+ * left alone.
+ */
+export function normalizePersonalAssignee(name: string): string {
+  if (!name.includes(';')) return name
+  return name
+    .split(',')
+    .map((part) => {
+      const [surname, ...given] = part.split(';')
+      if (given.length === 0) return part.trim()
+      const sur = surname.trim()
+      const nice = sur === sur.toUpperCase() ? sur.charAt(0) + sur.slice(1).toLowerCase() : sur
+      return `${given.join(' ').trim()} ${nice}`.trim()
+    })
+    .join(', ')
+}
+
+export function toImpactLevel(score: number): ImpactLevel {
   if (score >= 65) return 'High'
   if (score >= 35) return 'Medium'
   return 'Low'
@@ -115,18 +179,22 @@ export function transformRow(row: RawPatentRow): PatentItem | null {
   if (!row.patent_number?.trim()) return null
   // Lifecycle filter (2026-09-17): a deprecated row is carried in the CSV
   // for self-containment but is not a patent this page shows. Done here,
-  // on the raw row, because PatentItem.status is the New/Updated badge.
+  // on the raw row (lifecycle status is not carried onto PatentItem).
   const lifecycle = row.status?.trim().toLowerCase()
   if (lifecycle && lifecycle !== 'active') return null
 
-  const partial: Omit<PatentItem, 'impactScore' | 'impactLevel'> = {
+  const partial: Omit<
+    PatentItem,
+    'impactScore' | 'impactLevel' | 'impactFacts' | 'impactMigration'
+  > = {
     patentNumber: `US${row.patent_number.trim()}`,
+    publicationKind: publicationKindOf(row.patent_number),
     filingJurisdiction: row.filing_jurisdiction?.trim() || undefined,
     filingJurisdictionApplication: row.filing_jurisdiction_application?.trim() || undefined,
     filingJurisdictionSourceUrl: row.filing_jurisdiction_source_url?.trim() || undefined,
-    title: row.title?.trim() ?? '',
+    title: cleanPatentTitle(row.title),
     inventors: row.inventors?.trim() ?? '',
-    assignee: row.assignee?.trim() ?? '',
+    assignee: normalizePersonalAssignee(row.assignee?.trim() ?? ''),
     priorityDate: row.priority_date?.trim() ?? '',
     issueDate: row.issue_date?.trim() ?? '',
     filingDate: row.filing_date?.trim() ?? '',
@@ -171,8 +239,15 @@ export function transformRow(row: RawPatentRow): PatentItem | null {
     pqcMigrationReason: row.pqc_migration_reason?.trim() ?? '',
   }
 
-  const impactScore = computeImpactScore(partial)
-  return { ...partial, impactScore, impactLevel: toImpactLevel(impactScore) }
+  const { facts, migration } = computeImpactParts(partial)
+  const impactScore = facts + migration
+  return {
+    ...partial,
+    impactFacts: facts,
+    impactMigration: migration,
+    impactScore,
+    impactLevel: toImpactLevel(impactScore),
+  }
 }
 
 // Source records mix casing and punctuation conventions across pulls (e.g.
@@ -210,6 +285,48 @@ function canonicalizeAssignees(items: PatentItem[]): PatentItem[] {
   )
 }
 
+type TagField = 'pqcAlgorithms' | 'classicalAlgorithms' | 'protocols' | 'hardwareComponents'
+const TAG_FIELDS: TagField[] = [
+  'pqcAlgorithms',
+  'classicalAlgorithms',
+  'protocols',
+  'hardwareComponents',
+]
+
+/** Collapse spelling variants of each tag onto the spelling most rows use. */
+export function canonicalizeTags(items: PatentItem[]): PatentItem[] {
+  const canonical = new Map<TagField, Map<string, string>>()
+  for (const field of TAG_FIELDS) {
+    const counts = new Map<string, Map<string, number>>()
+    for (const item of items) {
+      for (const tag of item[field]) {
+        const key = tagKey(tag)
+        const variants = counts.get(key) ?? new Map<string, number>()
+        variants.set(tag, (variants.get(tag) ?? 0) + 1)
+        counts.set(key, variants)
+      }
+    }
+    const best = new Map<string, string>()
+    for (const [key, variants] of counts) {
+      // Most rows first; ties go to the spelling that sorts first, so the
+      // choice never depends on row order.
+      const [winner] = [...variants.entries()].sort(
+        (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+      )[0]
+      best.set(key, winner)
+    }
+    canonical.set(field, best)
+  }
+  return items.map((item) => {
+    const next = { ...item }
+    for (const field of TAG_FIELDS) {
+      const map = canonical.get(field)!
+      next[field] = Array.from(new Set(item[field].map((t) => map.get(tagKey(t)) ?? t)))
+    }
+    return next
+  })
+}
+
 const modules = import.meta.glob('./patents_*.csv', {
   query: '?raw',
   import: 'default',
@@ -220,18 +337,31 @@ const result = loadLatestCSV<RawPatentRow, PatentItem>(
   modules,
   /patents_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   transformRow,
-  true // withPrevious for New/Updated status badges
+  false
 )
 
-const canonicalizedData = canonicalizeAssignees(result.data)
+const canonicalizedData = canonicalizeTags(canonicalizeAssignees(result.data))
 
-// Compute status map if previous data exists
-const statusMap = result.previousData
-  ? compareDatasets(canonicalizedData, result.previousData, 'patentNumber')
-  : new Map<string, ItemStatus>()
+export const patentsData: PatentItem[] = canonicalizedData
 
-export const patentsData: PatentItem[] = canonicalizedData.map((item) => ({
-  ...item,
-  status: statusMap.get(item.patentNumber) as 'New' | 'Updated' | undefined,
-}))
+/**
+ * Records granted or published in the `days` before the newest grant or
+ * publication date in the catalogue, newest first. Sorted by those dates —
+ * NOT by when the Hub added a record (the page has no previous file to
+ * compare with, so a "new since last update" list could never be filled).
+ */
+export function latestGrantsAndPublications(items: PatentItem[], days = 90): PatentItem[] {
+  const dated = items.filter((p) => /^\d{4}-\d{2}-\d{2}$/.test(p.issueDate))
+  if (dated.length === 0) return []
+  const newest = dated.reduce((m, p) => (p.issueDate > m ? p.issueDate : m), dated[0].issueDate)
+  const cutoff = new Date(`${newest}T00:00:00Z`)
+  cutoff.setUTCDate(cutoff.getUTCDate() - days)
+  const from = cutoff.toISOString().slice(0, 10)
+  return dated
+    .filter((p) => p.issueDate > from)
+    .sort(
+      (a, b) =>
+        b.issueDate.localeCompare(a.issueDate) || a.patentNumber.localeCompare(b.patentNumber)
+    )
+}
 export const patentsMetadata = result.metadata
