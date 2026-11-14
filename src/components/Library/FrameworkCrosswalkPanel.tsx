@@ -118,6 +118,13 @@ export function FrameworkCrosswalkPanel({ item }: FrameworkCrosswalkPanelProps) 
 
   return (
     <div className="space-y-4">
+      {/* Owner decision 2026-11-14: the panel (and the Migration Sim) stay on
+          v2.1 until v3.0 has been read, and say so. */}
+      <p className="text-[11.5px] text-muted-foreground" data-testid="crosswalk-edition-note">
+        These appendices are from edition {FRAMEWORK_VERSION} (June 2026). A later edition,
+        Universal v3.0 (September 2026), is in the Library; this crosswalk has not yet been checked
+        against it.
+      </p>
       {/* #2 Framework crosswalk (App. G) */}
       <div className="glass-panel p-3">
         <Button

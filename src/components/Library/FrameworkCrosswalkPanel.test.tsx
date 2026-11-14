@@ -92,3 +92,12 @@ describe('FrameworkCrosswalkPanel', () => {
     expect(screen.getByRole('button', { name: /Open Protocol Support matrix/ })).toBeInTheDocument()
   })
 })
+
+describe('FrameworkCrosswalkPanel edition note', () => {
+  it('says which edition the appendices come from', () => {
+    renderPanel(makeItem())
+    expect(screen.getByTestId('crosswalk-edition-note')).toHaveTextContent(
+      /edition v2\.1 .*Universal v3\.0/
+    )
+  })
+})
