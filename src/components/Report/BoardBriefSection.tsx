@@ -109,7 +109,11 @@ export const BoardBriefSection: React.FC<BoardBriefProps> = ({
     day: 'numeric',
   })
 
-  const categoryScores = result.categoryScores
+  // The per-domain scores are a full-assessment result: the engine emits coarse
+  // ones on every track, but the report keeps them locked on a quick assessment,
+  // so the executive brief must not print them either.
+  const categoryScores =
+    result.assessmentProfile?.mode === 'comprehensive' ? result.categoryScores : undefined
 
   return (
     <div className="exec-brief-content">

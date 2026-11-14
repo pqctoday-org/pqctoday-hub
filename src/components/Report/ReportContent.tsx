@@ -589,11 +589,12 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           defaultOpen={cfg('riskBreakdown').state === 'open'}
                         />
                       ) : (
-                        <RiskBreakdownLocked />
+                        <RiskBreakdownLocked shared={shared} />
                       ))}
 
                     {/* Framework Risk Lens (Applied Quantum P3) — derived alongside the categories */}
                     {phaseVisible('riskBreakdown') &&
+                      isComprehensive &&
                       result.frameworkRisk &&
                       cfg('riskBreakdown').state !== 'hidden' && (
                         <FrameworkRiskLensSection frameworkRisk={result.frameworkRisk} />
@@ -783,6 +784,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         )
                       ) : (
                         <ReportLockedOverlay
+                          shared={shared}
                           reason="Compare your priority index over time"
                           detail="Trends compare saved comprehensive self-assessments. Finish the full assessment to track how answer changes affect the educational index and crypto-agility model."
                         >
