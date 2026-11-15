@@ -373,7 +373,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'firmware-signing',
     pt_id: 'PT-007',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'Firmware Signing',
     // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
     // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
@@ -414,12 +414,12 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'ML-DSA-87 signature over firmware image digest (hex, 4627 bytes); verify must return true against same ML-DSA-87 public key.',
+      'A post-quantum signature (ML-DSA-44, ML-DSA-65, ML-DSA-87 or SLH-DSA-SHA2-128s; default ML-DSA-65 at 3,309 bytes, ML-DSA-44 2,420, ML-DSA-87 4,627, SLH-DSA-SHA2-128s 7,856) and a classical RSA or ECDSA signature over the firmware image (hex); each must verify under its own public key.',
   },
   {
     id: 'slh-dsa',
     pt_id: 'PT-001',
-    version: '1.0.3',
+    version: '1.0.4',
     name: 'SLH-DSA Sign & Verify',
     description: 'All 12 FIPS 205 parameter sets with pre-hash support',
     category: 'HSM / PKCS#11',
@@ -438,7 +438,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'ML-DSA/SLH-DSA signature (hex); verify step must return true under same key pair. Signature size varies by param set (7856–49856 bytes for SLH-DSA).',
+      'FIPS 205 SLH-DSA signature (hex); verify step must return true under the same key pair. Signature size depends on the parameter set (7,856–49,856 bytes).',
   },
   {
     id: 'lms-hss',

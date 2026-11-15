@@ -7,6 +7,7 @@ import { SMIMECertViewer } from './workshop/SMIMECertViewer'
 import { CMSSigningDemo } from './workshop/CMSSigningDemo'
 import { CMSEncryptionDemo } from './workshop/CMSEncryptionDemo'
 import { LiveHSMProvider } from './workshop/LiveHSMProvider'
+import { clampStep } from '@/utils/clampStep'
 
 const SECTIONS = [
   {
@@ -32,13 +33,20 @@ const SECTIONS = [
   },
 ]
 
-export const EmailSigningPlayground: React.FC = () => {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    'smime-certs': false,
-    'cms-signing': false,
-    'cms-encryption': false,
-    'live-hsm': true,
-  })
+export const EmailSigningPlayground: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
+  // A ?step=N link opens just that section; without one the usual sections open.
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
+    initialStep === undefined
+      ? {
+          'smime-certs': false,
+          'cms-signing': false,
+          'cms-encryption': false,
+          'live-hsm': true,
+        }
+      : Object.fromEntries(
+          SECTIONS.map((s, i) => [s.id, i === clampStep(initialStep, SECTIONS.length)])
+        )
+  )
 
   const toggle = (id: string) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
 

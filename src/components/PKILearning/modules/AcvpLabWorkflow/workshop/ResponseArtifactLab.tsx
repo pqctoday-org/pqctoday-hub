@@ -229,10 +229,7 @@ export const ResponseArtifactLab: React.FC = () => {
           </h3>
           <p className="text-foreground/80">
             This is the Hub’s ACVP-format prototype itself — the same panel as in the{' '}
-            <Link
-              to="/playground/hsm?tab=developer&dtab=acvp"
-              className="text-primary hover:underline"
-            >
+            <Link to="/playground/hsm?tab=build&dtab=acvp" className="text-primary hover:underline">
               Playground’s validation workbench
             </Link>
             . Import the file you saved, choose an engine, run it, then download both response.json

@@ -801,10 +801,7 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           </p>
           <p>
             <strong>Try it.</strong> Run the ML-KEM tests in the{' '}
-            <Link
-              to="/playground/hsm?tab=developer&dtab=acvp"
-              className="text-primary hover:underline"
-            >
+            <Link to="/playground/hsm?tab=build&dtab=acvp" className="text-primary hover:underline">
               ACVP suite
             </Link>{' '}
             and compare two results. The row &ldquo;PKCS#11 boundary · product-authored probe ·

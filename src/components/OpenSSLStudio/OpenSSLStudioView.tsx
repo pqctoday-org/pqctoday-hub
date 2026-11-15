@@ -435,7 +435,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                     <span>Generated a cert? Test it in the TLS Simulator.</span>
                   </div>
                   <Link
-                    to="/playground?tool=tls-simulator"
+                    to="/playground/tls-simulator"
                     className="text-xs text-primary underline hover:text-primary/80 shrink-0 flex items-center gap-0.5"
                   >
                     TLS Simulator <ArrowRight size={10} />

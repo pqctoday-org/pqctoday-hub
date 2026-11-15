@@ -144,17 +144,25 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'HSM Playground',
-        body: 'The /playground/hsm route emulates a PKCS#11 v3.2 HSM via SoftHSMv3 WASM with 10 tabs: Keystore, Symmetric, Key Wrap, Hashing, Sign/Verify, Key Agreement, Key Derivation, Mechanisms, Validation (mixed-evidence workbench: selected NIST ACVP-Server reference samples, standard KATs, oracle and functional tests), and Logs. Supports C++, Rust, and Dual engine modes with parity cross-check.',
+        body: 'The /playground/hsm route emulates a PKCS#11 v3.2 HSM via SoftHSMv3 WASM in four modes. Learn runs guided lessons in three tracks: PKCS#11 Foundations, v3.2 & the PQC transformation, and PKCS#11 v3.3 (working draft). Operate has seven panels: KEM, Symmetric Encrypt, Key Wrap / Unwrap, Hashing, Sign & Verify, Key Agreement and KDF. Build holds the test suites (standard KATs, selected NIST ACVP-Server reference samples, conformance, and v3.3). Inspect shows the mechanism list, the call log and the keys on the token. Supports C++, Rust, and Dual engine modes with parity cross-check.',
+      },
+      {
+        heading: 'KMIP Control Plane',
+        body: 'The /playground/cacp route is a KMIP 3.0 key-management control plane running in the browser, with Learn, Policy, Operate, Inspect, Dev and Migration Estate tabs. Switch a crypto-agility policy and watch new keys and operations move to post-quantum algorithms.',
       },
       {
         heading: 'Individual Tools',
-        body: 'Each workshop tool has its own route at /playground/:toolId with lazy-loaded components, breadcrumb navigation, and community endorse/flag buttons.',
+        body: 'Each workshop tool has its own route at /playground/:toolId with lazy-loaded components, breadcrumb navigation, and community endorse/flag buttons. Step-based tools open at a given step with ?step=N (counting from 0), and the TPM 2.0 Playground keeps its open tab in ?tab=.',
+      },
+      {
+        heading: 'Command Palette',
+        body: 'On a laptop, press ⌘K (Ctrl-K) or / on the /playground page to search every tool, task and full playground by name, algorithm or keyword. Algorithm nicknames such as Kyber, Dilithium and SPHINCS find the standard ML-KEM, ML-DSA and SLH-DSA tools.',
       },
     ],
     tips: [
       'All generated keys are for educational purposes only — not for production use.',
       'The Logs tab records every operation with timestamps for review.',
-      'Use the SoftHSM tab to understand how real HSMs handle PQC operations via PKCS#11.',
+      'Use the HSM Playground to understand how real HSMs handle PQC operations via PKCS#11.',
     ],
   },
 

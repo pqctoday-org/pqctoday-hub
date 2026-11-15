@@ -28,17 +28,12 @@ export const PlaygroundToolRoute = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
-  // 5G SUCI deep-link params
-  const profileParam = searchParams.get('profile')
-  const pqcModeParam = searchParams.get('pqcMode')
-  const suciProfile =
-    profileParam === 'A' || profileParam === 'B' || profileParam === 'C'
-      ? (profileParam as 'A' | 'B' | 'C')
-      : undefined
-  const suciPqcMode =
-    pqcModeParam === 'hybrid' || pqcModeParam === 'pure'
-      ? (pqcModeParam as 'hybrid' | 'pure')
-      : undefined
+  // ?step=N opens a step-based workshop tool at that step (0-indexed) — the same
+  // contract the simulation's deep-link resolver accepts. Each tool clamps the
+  // value into its own range; anything that is not a non-negative integer is
+  // ignored. (suci-flow reads its own ?profile= / ?pqcMode= in SuciFlowRoute.)
+  const stepParam = searchParams.get('step')
+  const initialStep = stepParam !== null && /^\d+$/.test(stepParam) ? Number(stepParam) : undefined
 
   const tool = toolId ? WORKSHOP_TOOLS.find((t) => t.id === toolId) : null
   const [revisionDrilldownOpen, setRevisionDrilldownOpen] = useState(false)
@@ -233,13 +228,12 @@ export const PlaygroundToolRoute = () => {
         ) : (
           Comp &&
           (isOnBack ? (
-            toolId === 'suci-flow' ? (
-              <Comp onBack={handleBack} initialProfile={suciProfile} initialPqcMode={suciPqcMode} />
-            ) : (
-              <Comp onBack={handleBack} />
-            )
+            <Comp onBack={handleBack} />
           ) : (
-            <Comp key={`${toolId}:${searchParams.get('launchAlgo')}`} />
+            <Comp
+              key={`${toolId}:${searchParams.get('launchAlgo')}:${initialStep ?? ''}`}
+              initialStep={initialStep}
+            />
           ))
         )}
       </Suspense>
