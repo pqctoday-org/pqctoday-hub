@@ -46,21 +46,40 @@ for (const surface of KEY_SURFACES) {
     test.skip(isMobile, 'Desktop keyboard focus and WCAG 2.1 AA gate')
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto(surface)
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 20_000 })
+    // Wait for the app itself, not the loading shell's own heading: until the
+    // app renders there is nothing to Tab to.
+    await expect(page.getByText(/Initializing application/i)).toHaveCount(0, { timeout: 30_000 })
+    await expect(page.locator('#main-content h1, #main-content h2').first()).toBeVisible({
+      timeout: 20_000,
+    })
 
     // Tab moves focus onto a visible control that shows a focus indicator.
     await page.keyboard.press('Tab')
     await page.keyboard.press('Tab')
-    const focused = page.locator(':focus')
-    await expect(focused, `${surface}: Tab reaches a control`).toHaveCount(1)
-    await expect(focused).toBeVisible()
-    const indicator = await focused.evaluate((el) => {
+    const focus = await page.evaluate(() => {
+      const el = document.activeElement
+      if (!el || el === document.body || el === document.documentElement) return null
+      const r = el.getBoundingClientRect()
       const s = getComputedStyle(el)
-      const outline = s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0
-      const ring = s.boxShadow !== 'none' && s.boxShadow !== ''
-      return outline || ring
+      return {
+        tag: el.tagName,
+        visible: r.width > 0 && r.height > 0 && s.visibility !== 'hidden',
+        // An outline, or a box-shadow layer that is visible: not transparent
+        // and with a non-zero spread or blur (a focus ring).
+        indicator:
+          (s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0) ||
+          s.boxShadow.split(/,(?![^(]*\))/).some((layer) => {
+            if (/rgba\([^)]*,\s*0\)/.test(layer) || layer.trim() === 'none') return false
+            const lengths = (layer.match(/-?[\d.]+px/g) ?? []).map(parseFloat)
+            return lengths.slice(2).some((v) => v > 0)
+          }),
+      }
     })
-    expect(indicator, `${surface}: the focused control shows a focus outline or ring`).toBe(true)
+    expect(focus, `${surface}: Tab moves focus onto a control`).not.toBeNull()
+    expect(focus!.visible, `${surface}: the focused ${focus!.tag} is visible`).toBe(true)
+    expect(focus!.indicator, `${surface}: the focused ${focus!.tag} shows a focus indicator`).toBe(
+      true
+    )
 
     await injectAxe(page)
     await checkA11y(page, 'main', {

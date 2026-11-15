@@ -44,6 +44,11 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
+// The quiz page is not a module page: it hides the module sidebar, which holds
+// the checklist (PKILearningView: showSidebar is false for 'quiz'), and has no
+// module tabs.
+const MODULES_WITHOUT_SIDEBAR = new Set(['quiz'])
+
 // The checklist registry matching the module manifests is a unit test
 // (moduleCapabilityChecklists.test.ts); here each registered module is opened.
 test('the module checklist registry lists each module once', () => {
@@ -67,13 +72,20 @@ for (const moduleId of ALL_MODULE_IDS) {
 
     // The checklist belongs to this module and opens to show its entries.
     const checklist = page.getByTestId('production-capability-checklist')
-    await expect(checklist).toHaveAttribute('data-module-id', moduleId)
-    await expect(checklist).not.toHaveAttribute('open', '')
-    await checklist.locator('summary').click()
-    await expect(checklist).toHaveAttribute('open', '')
-    const items = checklist.locator('ul > li')
-    await expect(items).toHaveCount(spec!.productionCapabilities.length)
-    await expect(items).toHaveText(spec!.productionCapabilities)
+    if (MODULES_WITHOUT_SIDEBAR.has(moduleId)) {
+      await expect(checklist).toHaveCount(0)
+    } else {
+      await expect(checklist).toHaveAttribute('data-module-id', moduleId)
+      await expect(checklist).not.toHaveAttribute('open', '')
+      await checklist.locator('summary').click()
+      await expect(checklist).toHaveAttribute('open', '')
+      const items = checklist.locator('ul > li')
+      await expect(items).toHaveCount(spec!.productionCapabilities.length)
+      await expect(items).toHaveText(spec!.productionCapabilities)
+    }
+
+    expect(runtimeErrors, `Runtime errors opening /learn/${moduleId}`).toEqual([])
+    if (MODULES_WITHOUT_SIDEBAR.has(moduleId)) return
 
     const tablist = page.getByRole('tablist', { name: 'Module sections' })
     await expect(tablist).toBeVisible()
@@ -90,7 +102,9 @@ for (const moduleId of ALL_MODULE_IDS) {
       if (/Workshop/i.test(String(name))) {
         // In the shared workshop stepper, each step button opens its step: it
         // becomes the current step (aria-current="step").
-        const stepButtons = page.getByLabel('Workshop steps').getByRole('button')
+        const stepButtons = page
+          .getByLabel('Workshop steps')
+          .getByRole('button', { name: /^Step \d+/ })
         const stepCount = Math.min(await stepButtons.count(), 5)
         for (let i = 0; i < stepCount; i++) {
           const step = stepButtons.nth(i)

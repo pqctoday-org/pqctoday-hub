@@ -25,12 +25,12 @@ function collectRuntimeErrors(page: Page): string[] {
   return errors
 }
 
+// Tools changed in this remediation round. Each must be a registered browser
+// route (checked below), so a renamed or removed tool fails here, not silently.
 const PRIORITY_REMEDIATION_TOOLS = [
   '/playground/vpn-sim',
   '/playground/pqc-ssh-sim',
-  '/playground/web-gateway',
-  '/playground/secrets-mgr',
-  '/playground/jwt-pqc',
+  '/playground/api-security-jwt',
   '/playground/lms-hss',
   '/playground/pki-workshop',
 ] as const
@@ -63,6 +63,11 @@ test('every browser playground route has its own capability checklist entry', ()
     (id) => !ALL_PLAYGROUND_TOOL_IDS.includes(id)
   )
   expect(missing, 'browser routes with no checklist entry').toEqual([])
+})
+
+test('every priority tool is a registered browser route', () => {
+  const paths = new Set(BROWSER_TOOL_ROUTES.map((r) => r.path))
+  expect(PRIORITY_REMEDIATION_TOOLS.filter((p) => !paths.has(p))).toEqual([])
 })
 
 for (const route of BROWSER_TOOL_ROUTES) {
