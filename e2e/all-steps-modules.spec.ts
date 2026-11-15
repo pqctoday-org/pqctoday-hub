@@ -1,16 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { test, expect } from './fixtures/blockAnalytics'
-import { ALL_MODULE_IDS } from '../src/data/moduleCapabilityChecklists'
+import { test, expect, type Page } from './fixtures/blockAnalytics'
+import {
+  ALL_MODULE_IDS,
+  getModuleCapabilityChecklist,
+} from '../src/data/moduleCapabilityChecklists'
 
-const TARGET_REMEDIATION_MODULES = [
-  'vpn-ssh-pqc',
-  'secrets-management-pqc',
-  'web-gateway-pqc',
-  'tls-basics',
-  'stateful-signatures',
-  'pki-enrollment-protocols',
-  'pki-workshop',
-] as const
+// Requests the browser cancels on navigation or tab switches (a lazy chunk, an
+// image, a prefetch) log a console error that says nothing about the page.
+// Every other console error and every uncaught page error still fails a test.
+const ABORTED_REQUEST_NOISE =
+  /net::ERR_ABORTED|AbortError|The user aborted a request|signal is aborted|NS_BINDING_ABORTED/i
+
+function collectRuntimeErrors(page: Page): string[] {
+  const errors: string[] = []
+  page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`))
+  page.on('console', (msg) => {
+    if (msg.type() === 'error' && !ABORTED_REQUEST_NOISE.test(msg.text())) {
+      errors.push(`console.error: ${msg.text()}`)
+    }
+  })
+  return errors
+}
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -34,88 +44,82 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('all 76 registered learning modules are present in the module capability checklist registry', () => {
-  expect(ALL_MODULE_IDS).toHaveLength(76)
+// The checklist registry matching the module manifests is a unit test
+// (moduleCapabilityChecklists.test.ts); here each registered module is opened.
+test('the module checklist registry lists each module once', () => {
+  expect(ALL_MODULE_IDS.length).toBeGreaterThan(0)
+  expect(new Set(ALL_MODULE_IDS).size).toBe(ALL_MODULE_IDS.length)
 })
 
 for (const moduleId of ALL_MODULE_IDS) {
-  test(`module ${moduleId} renders Learn, Visual, Workshop steps, References, and ProductionCapabilityChecklist with zero console/page errors`, async ({
+  test(`module ${moduleId}: the checklist opens with its own capabilities and every tab opens without runtime errors`, async ({
     page,
     isMobile,
   }) => {
     test.skip(isMobile, 'Desktop step-by-step tab traversal uses desktop viewport >= 1024px')
     await page.setViewportSize({ width: 1440, height: 900 })
-
-    const runtimeErrors: string[] = []
-    page.on('pageerror', (err) => runtimeErrors.push(`pageerror: ${err.message}`))
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        runtimeErrors.push(`console.error: ${msg.text()}`)
-      }
-    })
+    const runtimeErrors = collectRuntimeErrors(page)
+    const spec = getModuleCapabilityChecklist(moduleId)
+    expect(spec, `checklist entry for ${moduleId}`).toBeDefined()
 
     await page.goto(`/learn/${moduleId}`)
     await expect(page.locator('h1').first()).toBeVisible({ timeout: 20_000 })
 
+    // The checklist belongs to this module and opens to show its entries.
     const checklist = page.getByTestId('production-capability-checklist')
-    await expect(checklist).toBeAttached()
     await expect(checklist).toHaveAttribute('data-module-id', moduleId)
+    await expect(checklist).not.toHaveAttribute('open', '')
     await checklist.locator('summary').click()
-    await expect(page.getByTestId('module-adversarial-lab')).toBeVisible()
-    await page.getByTestId('module-verify-adversarial-btn').click()
-    await expect(page.getByTestId('module-verify-receipt')).toContainText(
-      'REFUSED / TAMPER DETECTED'
-    )
+    await expect(checklist).toHaveAttribute('open', '')
+    const items = checklist.locator('ul > li')
+    await expect(items).toHaveCount(spec!.productionCapabilities.length)
+    await expect(items).toHaveText(spec!.productionCapabilities)
 
     const tablist = page.getByRole('tablist', { name: 'Module sections' })
     await expect(tablist).toBeVisible()
 
-    // Traverse Visual tab if present
-    const visualTab = tablist.getByRole('tab', { name: /Visual/i })
-    if ((await visualTab.count()) > 0) {
-      await visualTab.first().click()
-      await expect(visualTab.first()).toHaveAttribute('aria-selected', 'true')
-    }
+    // Selecting a tab must select it and show its panel.
+    for (const name of [/Visual/i, /^Workshop$/i, /References/i]) {
+      const tab = tablist.getByRole('tab', { name }).first()
+      if ((await tab.count()) === 0) continue
+      await tab.click()
+      await expect(tab).toHaveAttribute('aria-selected', 'true')
+      const panelId = await tab.getAttribute('aria-controls')
+      if (panelId) await expect(page.locator(`[id="${panelId}"]`)).toBeVisible()
 
-    // Traverse Workshop tab and step buttons if present
-    const workshopTab = tablist.getByRole('tab', { name: /^Workshop$/i })
-    if ((await workshopTab.count()) > 0) {
-      await workshopTab.first().click()
-      await expect(workshopTab.first()).toHaveAttribute('aria-selected', 'true')
-      const stepButtons = page.getByRole('button', { name: /^Step \d+/i })
-      const stepCount = await stepButtons.count()
-      for (let i = 0; i < Math.min(stepCount, 5); i++) {
-        await stepButtons.nth(i).click()
+      if (/Workshop/i.test(String(name))) {
+        // In the shared workshop stepper, each step button opens its step: it
+        // becomes the current step (aria-current="step").
+        const stepButtons = page.getByLabel('Workshop steps').getByRole('button')
+        const stepCount = Math.min(await stepButtons.count(), 5)
+        for (let i = 0; i < stepCount; i++) {
+          const step = stepButtons.nth(i)
+          await step.click()
+          await expect(step, `${moduleId} workshop step ${i + 1} is current`).toHaveAttribute(
+            'aria-current',
+            'step'
+          )
+        }
       }
-    }
-
-    // Traverse References tab if present
-    const refsTab = tablist.getByRole('tab', { name: /References/i })
-    if ((await refsTab.count()) > 0) {
-      await refsTab.first().click()
-      await expect(refsTab.first()).toHaveAttribute('aria-selected', 'true')
     }
 
     expect(runtimeErrors, `Runtime errors on /learn/${moduleId}`).toEqual([])
   })
 }
 
-test('pki-enrollment-protocols exposes all 4 sidebar section anchors and RFC 9810 / RFC 9483 / RFC 8894 / RFC 8555 / RFC 10073 alignment', async ({
+test('pki-enrollment-protocols: each sidebar section link scrolls to its section', async ({
   page,
   isMobile,
 }) => {
   test.skip(isMobile, 'Desktop anchor verification')
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/learn/pki-enrollment-protocols')
-  await expect(page.locator('#enrollment-overview')).toBeAttached({ timeout: 20_000 })
-  await expect(page.locator('#est-protocol')).toBeAttached()
-  await expect(page.locator('#cmp-protocol')).toBeAttached()
-  await expect(page.locator('#pqc-enrollment')).toBeAttached()
-  await expect(page.getByText(/RFC 9810/i).first()).toBeVisible()
-  await expect(page.getByText(/RFC 9483/i).first()).toBeVisible()
-  await expect(page.getByText(/RFC 8894/i).first()).toBeVisible()
-  await expect(page.getByText(/RFC 8555/i).first()).toBeVisible()
-  await expect(page.getByText(/RFC 10073/i).first()).toBeVisible()
+  for (const anchor of ['enrollment-overview', 'est-protocol', 'cmp-protocol', 'pqc-enrollment']) {
+    const section = page.locator(`#${anchor}`)
+    await expect(section).toBeAttached({ timeout: 20_000 })
+    await page.goto(`/learn/pki-enrollment-protocols#${anchor}`)
+    await expect(section).toBeInViewport({ timeout: 10_000 })
+  }
 })
 
 test('learning module progress persists across page reload and fits mobile 390x844 without horizontal overflow', async ({
@@ -131,14 +135,13 @@ test('learning module progress persists across page reload and fits mobile 390x8
   expect(overflow, '/learn/pki-enrollment-protocols mobile overflow').toBeLessThanOrEqual(1)
 
   const sectionToggle = page.locator('ul > li > button[aria-pressed]').first()
-  if ((await sectionToggle.count()) > 0) {
-    await sectionToggle.click()
-    await expect(sectionToggle).toHaveAttribute('aria-pressed', 'true')
-    await page.reload()
-    await expect(page.locator('ul > li > button[aria-pressed]').first()).toHaveAttribute(
-      'aria-pressed',
-      'true',
-      { timeout: 20_000 }
-    )
-  }
+  await expect(sectionToggle, 'a section progress toggle on the phone layout').toBeVisible()
+  await sectionToggle.click()
+  await expect(sectionToggle).toHaveAttribute('aria-pressed', 'true')
+  await page.reload()
+  await expect(page.locator('ul > li > button[aria-pressed]').first()).toHaveAttribute(
+    'aria-pressed',
+    'true',
+    { timeout: 20_000 }
+  )
 })

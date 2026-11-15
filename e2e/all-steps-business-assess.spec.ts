@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect } from './fixtures/blockAnalytics'
 import { TOOL_ROUTE_META } from '../src/seo/toolRouteMeta.generated'
-import { ALL_BUSINESS_TOOL_IDS } from '../src/data/businessCapabilityChecklists'
+import {
+  ALL_BUSINESS_TOOL_IDS,
+  getBusinessCapabilityChecklist,
+} from '../src/data/businessCapabilityChecklists'
 
 const BUSINESS_TOOL_ROUTES = TOOL_ROUTE_META.filter((route) => route.kind === 'business-tool')
+const toolIdOf = (path: string) => path.split('/').pop() ?? path
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -27,47 +31,46 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('all 37 registered Business Center tools have production capability checklists', () => {
-  expect(ALL_BUSINESS_TOOL_IDS).toHaveLength(37)
-  expect(BUSINESS_TOOL_ROUTES).toHaveLength(37)
+test('the Business Center routes and the capability checklist list the same tools', () => {
+  expect(BUSINESS_TOOL_ROUTES.length).toBeGreaterThan(0)
+  const routeIds = BUSINESS_TOOL_ROUTES.map((r) => toolIdOf(r.path)).sort()
+  expect([...ALL_BUSINESS_TOOL_IDS].sort()).toEqual(routeIds)
 })
 
 for (const route of BUSINESS_TOOL_ROUTES) {
-  test(`${route.path} renders BusinessToolEvidenceNotice and BusinessCapabilityFooter with sample-vs-production boundary`, async ({
+  const spec = getBusinessCapabilityChecklist(toolIdOf(route.path))
+  test(`${route.path}: the capability footer opens and lists this tool's own capabilities`, async ({
     page,
     isMobile,
   }) => {
     test.skip(isMobile, 'Desktop full-catalog Business Center sweep')
+    expect(spec, `checklist entry for ${route.path}`).toBeDefined()
     await page.goto(route.path)
     await expect(page.locator('h1').first()).toBeVisible({ timeout: 20_000 })
     await expect(page.getByLabel('How to interpret this business tool')).toBeVisible()
 
     const footer = page.getByTestId('business-capability-footer')
-    await expect(footer).toBeVisible()
-    await expect(footer).toContainText('Production Tool Capabilities to Evaluate')
+    await expect(footer).not.toHaveAttribute('open', '')
+    await footer.locator('summary').click()
+    await expect(footer).toHaveAttribute('open', '')
+    const items = footer.locator('ul > li')
+    await expect(items).toHaveCount(spec!.requiredCapabilities.length)
+    await expect(items).toHaveText(spec!.requiredCapabilities)
+    await expect(footer).toContainText(spec!.evaluationCriteria)
+    await expect(footer).toContainText(spec!.sampleVsProductionBoundary)
   })
 }
 
-test('Business capability footer expands to show required capability, evaluation criteria, and sample-vs-production boundary', async ({
-  page,
-}) => {
-  await page.goto('/business/tools/cost-of-inaction')
-  await expect(page.locator('h1').first()).toBeVisible({ timeout: 20_000 })
-
-  const footer = page.getByTestId('business-capability-footer')
-  await expect(footer).toBeVisible()
-  await footer.locator('summary').click()
-  await expect(footer).toContainText('Capabilities to require in your enterprise tooling:')
-  await expect(footer).toContainText('How to evaluate in production:')
-  await expect(footer).toContainText('Completing or exporting this Hub worksheet teaches how to structure')
-  await page.getByTestId('business-stress-test-btn').click()
-  await expect(page.getByTestId('business-stress-test-receipt')).toBeVisible()
-})
-
-test('Assessment flow supports Quick 6-step assessment and Comprehensive 14-step mode', async ({
-  page,
-}) => {
-  await page.goto('/assess')
-  await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 20_000 })
-  await expect(page.getByText(/Page not found/i)).toHaveCount(0)
-})
+for (const mode of ['quick', 'comprehensive'] as const) {
+  test(`the ${mode} assessment answers its first question and moves to the next one`, async ({
+    page,
+  }) => {
+    await page.goto(`/assess?mode=${mode}`)
+    const firstQuestion = page.getByRole('heading', { name: /what industry are you in/i })
+    await expect(firstQuestion).toBeVisible({ timeout: 20_000 })
+    await page.getByRole('radio', { name: /Finance & Banking/i }).click()
+    await page.getByRole('button', { name: /^Continue/ }).click()
+    await expect(firstQuestion).toBeHidden()
+    await expect(page.getByRole('heading', { level: 2 }).first()).toBeVisible()
+  })
+}

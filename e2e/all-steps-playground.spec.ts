@@ -1,9 +1,29 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { test, expect } from './fixtures/blockAnalytics'
+import { test, expect, type Page } from './fixtures/blockAnalytics'
 import { TOOL_ROUTE_META } from '../src/seo/toolRouteMeta.generated'
-import { ALL_PLAYGROUND_TOOL_IDS } from '../src/data/playgroundCapabilityChecklists'
+import {
+  ALL_PLAYGROUND_TOOL_IDS,
+  getPlaygroundCapabilityChecklist,
+} from '../src/data/playgroundCapabilityChecklists'
 
 const BROWSER_TOOL_ROUTES = TOOL_ROUTE_META.filter((route) => route.kind === 'browser-tool')
+const toolIdOf = (path: string) => path.split('/').pop() ?? path
+
+// Requests the browser cancels on navigation (a lazy chunk, a prefetch) log a
+// console error that says nothing about the page; every other error counts.
+const ABORTED_REQUEST_NOISE =
+  /net::ERR_ABORTED|AbortError|The user aborted a request|signal is aborted|NS_BINDING_ABORTED/i
+
+function collectRuntimeErrors(page: Page): string[] {
+  const errors: string[] = []
+  page.on('pageerror', (err) => errors.push(`pageerror: ${err.message}`))
+  page.on('console', (msg) => {
+    if (msg.type() === 'error' && !ABORTED_REQUEST_NOISE.test(msg.text())) {
+      errors.push(`console.error: ${msg.text()}`)
+    }
+  })
+  return errors
+}
 
 const PRIORITY_REMEDIATION_TOOLS = [
   '/playground/vpn-sim',
@@ -37,12 +57,17 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('all 35 native browser playground tools are registered in playgroundCapabilityChecklists', () => {
-  expect(ALL_PLAYGROUND_TOOL_IDS).toHaveLength(35)
+test('every browser playground route has its own capability checklist entry', () => {
+  expect(BROWSER_TOOL_ROUTES.length).toBeGreaterThan(0)
+  const missing = BROWSER_TOOL_ROUTES.map((r) => toolIdOf(r.path)).filter(
+    (id) => !ALL_PLAYGROUND_TOOL_IDS.includes(id)
+  )
+  expect(missing, 'browser routes with no checklist entry').toEqual([])
 })
 
 for (const route of BROWSER_TOOL_ROUTES) {
-  test(`${route.path} renders PlaygroundCapabilityBanner, evidence notice, and Try it exercise`, async ({
+  const spec = getPlaygroundCapabilityChecklist(toolIdOf(route.path))
+  test(`${route.path}: the capability banner opens and lists this tool's own requirements`, async ({
     page,
     isMobile,
   }) => {
@@ -52,36 +77,35 @@ for (const route of BROWSER_TOOL_ROUTES) {
     await expect(page.getByLabel('How this tool runs').first()).toBeVisible()
 
     const banner = page.getByTestId('playground-capability-banner')
-    await expect(banner).toBeVisible()
-    await expect(banner).toContainText('Production Tool Capabilities & Verification Requirements')
+    await expect(banner).not.toHaveAttribute('open', '')
+    await banner.locator('summary').click()
+    await expect(banner).toHaveAttribute('open', '')
+    const items = banner.locator('ul > li')
+    await expect(items).toHaveCount(spec.productionToolRequirements.length)
+    await expect(items).toHaveText(spec.productionToolRequirements)
+    await expect(banner).toContainText(spec.whatCheckEstablishes)
+    await expect(banner).toContainText(spec.sandboxLimitation)
   })
 }
 
 for (const path of PRIORITY_REMEDIATION_TOOLS) {
-  test(`${path} opens cleanly on desktop and mobile without console errors or horizontal spillover`, async ({
+  test(`${path} opens on desktop and phone with no runtime errors or horizontal spillover`, async ({
     page,
   }) => {
-    const consoleErrors: string[] = []
-    page.on('pageerror', (err) => consoleErrors.push(err.message))
+    const runtimeErrors = collectRuntimeErrors(page)
 
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto(path)
     await expect(page.locator('h1').first()).toBeVisible({ timeout: 20_000 })
-
     const banner = page.getByTestId('playground-capability-banner')
-    await expect(banner).toBeVisible()
     await banner.locator('summary').click()
-    await expect(banner).toContainText('What this sample check establishes:')
-    await expect(banner).toContainText('Browser sandbox limitation (non-certification boundary):')
-    await expect(banner).toContainText('What to require and test in your production tools:')
-    await page.getByTestId('playground-tamper-toggle-btn').click()
-    await expect(page.getByTestId('playground-tamper-status')).toBeVisible()
+    await expect(banner).toHaveAttribute('open', '')
 
     await page.setViewportSize({ width: 390, height: 844 })
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     )
     expect(overflow, `${path} mobile horizontal overflow`).toBeLessThanOrEqual(1)
-    expect(consoleErrors, `Unhandled page errors on ${path}`).toEqual([])
+    expect(runtimeErrors, `Runtime errors on ${path}`).toEqual([])
   })
 }

@@ -48,11 +48,19 @@ for (const surface of KEY_SURFACES) {
     await page.goto(surface)
     await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 20_000 })
 
-    // Press Tab to move focus into interactive controls and verify activeElement is focusable
+    // Tab moves focus onto a visible control that shows a focus indicator.
     await page.keyboard.press('Tab')
     await page.keyboard.press('Tab')
-    const activeTag = await page.evaluate(() => document.activeElement?.tagName ?? 'BODY')
-    expect(activeTag).not.toBe('BODY')
+    const focused = page.locator(':focus')
+    await expect(focused, `${surface}: Tab reaches a control`).toHaveCount(1)
+    await expect(focused).toBeVisible()
+    const indicator = await focused.evaluate((el) => {
+      const s = getComputedStyle(el)
+      const outline = s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0
+      const ring = s.boxShadow !== 'none' && s.boxShadow !== ''
+      return outline || ring
+    })
+    expect(indicator, `${surface}: the focused control shows a focus outline or ring`).toBe(true)
 
     await injectAxe(page)
     await checkA11y(page, 'main', {
