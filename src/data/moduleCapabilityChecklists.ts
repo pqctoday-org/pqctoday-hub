@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Standardized Production-Tool Capability Checklists for all 76 Learning Modules.
+ * Standardized Production-Tool Capability Checklists for every Learning Module.
  *
- * Implements the 31 October 2026 and 7 November 2026 owner educational scope rules:
+ * Each checklist:
  * - Teaches each role what capabilities to require in their own production tools:
  *   what the capability does, why it is needed, how to evaluate/test it, what
  *   evidence demonstrates it, and its limitations.
@@ -60,7 +60,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'hybrid-crypto': {
     roleFocus: 'Security Architects & Protocol Engineers',
     productionCapabilities: [
-      'Standards-compliant PQ/T hybrid key exchange (e.g., X25519MLKEM768 or SecP256r1MLKEM768 per IETF RFC 9794 / ETSI TS 103 744) with FIPS-approved KDF combiners.',
+      'Standards-compliant PQ/T hybrid key exchange (e.g., X25519MLKEM768 or SecP256r1MLKEM768 per RFC 10024, formerly draft-ietf-tls-ecdhe-mlkem; ETSI TS 103 744) with FIPS-approved KDF combiners.',
       'Dual/composite or parallel certificate chain validation where policy requires both classical and PQC cryptographic assurances.',
       'Downgrade-detection alerts when peers fall back from hybrid PQ/T groups to classical-only key exchange.',
     ],
@@ -132,14 +132,14 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'email-signing': {
     roleFocus: 'Messaging Architects & Enterprise PKI Engineers',
     productionCapabilities: [
-      'S/MIME 4.0 and CMS (RFC 5652 / RFC 9629 / RFC 9936) support for `KEMRecipientInfo` with `ML-KEM-768/1024` and `SignedData` with `ML-DSA` (RFC 9881) or `SLH-DSA` (RFC 9909).',
+      'S/MIME 4.0 and CMS (RFC 5652 / RFC 9629 / RFC 9936) support for `KEMRecipientInfo` with `ML-KEM-768/1024` and `SignedData` with `ML-DSA` (RFC 9882) or `SLH-DSA` (RFC 9814).',
       'Automated recipient-capability discovery (S/MIME capabilities attribute or directory lookup) to select PQC vs classical encryption.',
       'Key-archival and escrow support for decapsulation private keys in enterprise KMS/HSM.',
     ],
     evaluationMethod:
       'Generate and verify CMS `SignedData` and `AuthEnvelopedData` (`KEMRecipientInfo`) using `openssl cms` and test cross-client decryption in staging.',
     evidenceRequired:
-      'ASN.1 dump (`openssl asn1parse`) showing `KEMRecipientInfo` OID `2.16.840.1.101.3.4.4.2` (`ML-KEM-768`) and verified signature receipt.',
+      'ASN.1 dump (`openssl asn1parse`) showing `KEMRecipientInfo` (`id-ori-kem`, `1.2.840.113549.1.9.16.13.3`) with the `ML-KEM-768` key algorithm OID `2.16.840.1.101.3.4.4.2`, and verified signature receipt.',
   },
   'pki-workshop': {
     roleFocus: 'PKI Architects & Certificate Lifecycle Engineers',
@@ -180,7 +180,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'pqc-hw-acceleration': {
     roleFocus: 'Hardware Architects, SoC Designers & Embedded Engineers',
     productionCapabilities: [
-      'Hardware-accelerated Number Theoretic Transform (NTT) and Keccak/SHAKEponge engines for `ML-KEM` and `ML-DSA` polynomial arithmetic.',
+      'Hardware-accelerated Number Theoretic Transform (NTT) and Keccak/SHAKE sponge engines for `ML-KEM` and `ML-DSA` polynomial arithmetic.',
       'Constant-time execution and masking/shuffling countermeasures against Differential Power Analysis (DPA) and electromagnetic fault injection.',
       'Bounded SRAM and DMA footprint profiling for constrained Cortex-M / RISC-V / FPGA targets.',
     ],
@@ -228,8 +228,8 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'pci-certification': {
     roleFocus: 'Payment Security Architects & PCI QSAs',
     productionCapabilities: [
-      'PCI DSS v4.0.1 Req. 12.3.3 automated cryptographic cipher-suite and protocol inventory with documented PQC transition plans.',
-      'PCI DSS Req. 4.2.1 strong cryptography for cardholder data in transit using TLS 1.3 with hybrid PQC key exchange.',
+      'PCI DSS v4.0.1 Req. 12.3.3 cryptographic cipher-suite and protocol inventory, reviewed annually; a PQC transition plan is good practice that PCI DSS itself does not name.',
+      'PCI DSS Req. 4.2.1 strong cryptography for cardholder data in transit; TLS 1.3 with hybrid PQC key exchange is one way to plan ahead, not a PCI DSS requirement.',
       'PCI PTS HSM / TR-31 (ASC X9.143) key-block support capable of wrapping post-quantum keys and maintaining key-usage separation.',
     ],
     evaluationMethod:
@@ -277,8 +277,8 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Telecom Security Architects & Mobile Core Engineers',
     productionCapabilities: [
       '3GPP TS 33.501 SUCI (Subscription Concealed Identifier) ECIES Profile protection upgradable to post-quantum / hybrid KEM (`ML-KEM-768`) between USIM/UE and UDM/SIDF.',
-      'IPsec IKEv2 (RFC 9370) and TLS 1.3 (`X25519MLKEM768`) across 5G Service-Based Architecture (SBA) N2/N3/N32 (SEPP) interfaces.',
-      'Milage/TUAK symmetric authentication key-length enforcement (256-bit K/OPc) for Grover resistance.',
+      'IPsec IKEv2 (RFC 9370) and TLS 1.3 (`X25519MLKEM768`) across the 5G core: Service-Based Architecture (SBA) interfaces, N32 between SEPPs, and the N2/N3 interfaces to the RAN.',
+      'Subscriber authentication key-length planning for Grover margin: MILENAGE uses a 128-bit K and OPc, while TUAK also supports a 256-bit K.',
     ],
     evaluationMethod:
       'Run staging UE-to-UDM SUCI concealment/deconcealment test vectors and inspect N32/N2 IPsec/TLS control-plane handshakes.',
@@ -312,7 +312,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'merkle-tree-certs': {
     roleFocus: 'Web PKI Architects, CDN Engineers & CA Operators',
     productionCapabilities: [
-      'IETF TLS Merkle Tree Certificates (`draft-ietf-tls-merkle-tree-certs`) inclusion-proof verification replacing per-CA multi-kilobyte PQC signatures on the TLS wire.',
+      'IETF Merkle Tree Certificates (`draft-ietf-plants-merkle-tree-certs`, an Internet-Draft) inclusion-proof verification replacing per-CA multi-kilobyte PQC signatures on the TLS wire.',
       'Transparency Service tree-head cosigning with `ML-DSA` / `SLH-DSA` and automated epoch window refresh on edge TLS terminators.',
       'Fallback to standard X.509 PQC or hybrid certificate chains when clients do not advertise MTC support.',
     ],
@@ -360,7 +360,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'migration-program': {
     roleFocus: 'PQC Program Directors, Transformation Leads & PMO',
     productionCapabilities: [
-      'Seven-phase migration tracking aligned with NIST CSWP 39 / NCCoE SP 1800-38 (Discovery, Inventory, Prioritization, Execution, Testing, Deployment, Monitoring).',
+      'Phase-based migration tracking (the Hub’s own seven-phase framing, informed by NIST CSWP 39 and NCCoE SP 1800-38: Discovery, Inventory, Prioritization, Execution, Testing, Deployment, Monitoring).',
       'Dependency-graph modeling linking root/issuing CAs, HSM firmware, crypto libraries, and consuming applications.',
       'Rollback and canary deployment automation for production PQC rollouts.',
     ],
@@ -398,7 +398,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     productionCapabilities: [
       'Automated NIST ACVP JSON test-session processing (`keygen`, `encapDecap`, `sigGen`, `sigVer`) for `ML-KEM`, `ML-DSA`, and `SLH-DSA`.',
       'Deterministic seed injection (`d`, `z` for ML-KEM; `xi`, `rnd` for ML-DSA) required by ACVP test harnesses while preserving CSPRNG generation in production builds.',
-      'Strict rejection of malformed encapsulation keys (modulus check per FIPS 203 §7.2) and out-of-range signature coefficients (FIPS 204 §6.2).',
+      'Strict rejection of malformed encapsulation keys (modulus check per FIPS 203 §7.2) and out-of-range signature values (FIPS 204 §6.3, ML-DSA.Verify_internal).',
     ],
     evaluationMethod:
       'Run the official NIST `acvp-server` test vector sets against the target cryptographic binary and verify zero mismatches between `rsp` and `expected`.',
@@ -493,11 +493,11 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Privacy Engineers, Applied Cryptographers & Data Scientists',
     productionCapabilities: [
       'Ring-LWE / RLWE parameter selection (BGV, BFV, CKKS, TFHE) compliant with HomomorphicEncryption.org / ISO/IEC 28033 post-quantum security estimates (at least 128-bit security).',
-      'Strict noise-budget monitoring and circuit-depth bounds preventing decryption failures or key-recovery attacks fromInd-CPA^D oracle leakage.',
+      'Strict noise-budget monitoring and circuit-depth bounds preventing decryption failures or key-recovery attacks from IND-CPA-D oracle leakage.',
       'Authenticated PQC transport (`ML-KEM` + `ML-DSA`) wrapping FHE evaluation keys and ciphertexts between client and compute nodes.',
     ],
     evaluationMethod:
-      'Validate lattice dimension (N) and modulus (q) against the Lattice Estimator for at least 128-bit quantum security and test Ind-CPA^D decryption error boundaries.',
+      'Validate lattice dimension (N) and modulus (q) against the Lattice Estimator for at least 128-bit quantum security and test IND-CPA-D decryption error boundaries.',
     evidenceRequired:
       'FHE parameter security-level estimation report, noise-budget test log, and ciphertext serialization benchmark.',
   },
@@ -516,7 +516,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'emv-payment-pqc': {
     roleFocus: 'Payment Systems Architects, Card Issuers & Terminal Engineers',
     productionCapabilities: [
-      'Transition planning for EMVCo接觸/contactless Offline Data Authentication (ODA: DDA/CDA) within ISO/IEC 7816-4 & 14443 APDU payload and `< 300–500 ms` tap budgets.',
+      'Transition planning for EMVCo contact/contactless Offline Data Authentication (ODA: DDA/CDA) within ISO/IEC 7816-4 & 14443 APDU payload and `< 300–500 ms` tap budgets.',
       'Acquirer-to-issuer ISO 8583 / ISO 20022 host links secured with TLS 1.3 hybrid PQC (`X25519MLKEM768`) and TR-31 key blocks.',
       'Payment HSM support for post-quantum issuer root/CA hierarchies and elliptic-curve/PQC dual-mode terminal kernel updates.',
     ],
@@ -528,7 +528,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'crypto-dev-apis': {
     roleFocus: 'Software Engineers, Library Maintainers & AppSec Leads',
     productionCapabilities: [
-      'High-level KEM API usage (`EVP_PKEY_encapsulate` / `EVP_PKEY_decapsulate` in OpenSSL 3.5+, `KEM` API in Java 21+, `crypto.Kem` in Go/Rust) replacing raw RSA `encrypt`/`decrypt` or manual DH.',
+      'High-level KEM API usage (`EVP_PKEY_encapsulate` / `EVP_PKEY_decapsulate` in OpenSSL 3.5+, `KEM` API in Java 21+, `crypto/mlkem` in Go 1.24+) replacing raw RSA `encrypt`/`decrypt` or manual DH.',
       'Streaming / one-shot `EVP_DigestSign` / `EVP_DigestVerify` with `NULL` digest for pure `ML-DSA` and `SLH-DSA` (which hash internally via SHAKE256/SHA2).',
       'Safe memory zeroization (`OPENSSL_cleanse` / `Zeroize`) of decapsulation keys and shared secrets.',
     ],
@@ -565,11 +565,11 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Healthcare CISOs, Biomedical Device Engineers & HIPAA Compliance Leads',
     productionCapabilities: [
       'Long-term Electronic Health Record (EHR) and genomic archive protection against HNDL via hybrid PQC TLS 1.3 (`X25519MLKEM768`) on HL7 FHIR / DICOMweb APIs and `AES-256` at rest.',
-      'FDA premarket cybersecurity compliance (FD&C Act §524B) including cryptographic BOM (CBOM) and post-quantum firmware update signing (`ML-DSA` / `LMS`) for connected medical devices.',
+      'FDA premarket cybersecurity compliance (FD&C Act §524B, which requires an SBOM; a cryptographic BOM (CBOM) is a useful addition) and post-quantum firmware update signing (`ML-DSA` / `LMS`) for connected medical devices.',
       'Zero-downtime cryptographic proxy / gateway shielding for legacy clinical imaging modalities.',
     ],
     evaluationMethod:
-      'Verify HL7 FHIR / DICOM TLS 1.3 hybrid key exchange in staging and audit medical-device CBOM artifacts against FDA §524B submission criteria.',
+      'Verify HL7 FHIR / DICOM TLS 1.3 hybrid key exchange in staging and review medical-device SBOM and CBOM artifacts prepared for the FDA §524B submission.',
     evidenceRequired:
       'FHIR/DICOM gateway TLS scan, device CycloneDX CBOM, and signed firmware update verification log.',
   },
@@ -792,7 +792,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'mls-group-messaging': {
     roleFocus: 'Messaging Security Architects & Collaboration Platform Engineers',
     productionCapabilities: [
-      'IETF RFC 9420 Messaging Layer Security (MLS) TreeKEM ratchet configured with hybrid post-quantum kem ciphersuites (e.g., `MLS_256_X25519MLKEM768_AES256GCM_SHA512_MLDSA65`).',
+      'IETF RFC 9420 Messaging Layer Security (MLS) TreeKEM ratchet configured with hybrid post-quantum KEM cipher suites from the Internet-Draft draft-ietf-mls-pq-ciphersuites (e.g., `MLS_128_MLKEM768X25519_AES256GCM_SHA384_Ed25519`).',
       'Forward Secrecy (FS) and Post-Compromise Security (PCS) epoch updates refreshing leaf and intermediate ratchet nodes with fresh `ML-KEM` encapsulation keys.',
       'Authenticated KeyPackage distribution signed with `ML-DSA` and verified against enterprise identity directories.',
     ],
@@ -804,7 +804,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'pqc-candidates': {
     roleFocus: 'Cryptographic Researchers, Security Architects & Standards Analysts',
     productionCapabilities: [
-      'Support for NIST Round 4 / alternate PQC algorithms (`HQC-128/192/256` code-based KEM selected March 2025, `FN-DSA-512/1024` / Falcon FIPS 206 in development, `FrodoKEM-976/1344` ISO/BSI/ANSSI conservative LWE) where cryptographic diversity or compact signatures are required.',
+      'Support for NIST Round 4 / alternate PQC algorithms (`HQC-128/192/256` code-based KEM selected March 2025, `FN-DSA-512/1024` / Falcon, planned as FIPS 206, `FrodoKEM-976/1344` ISO/BSI/ANSSI conservative LWE) where cryptographic diversity or compact signatures are required.',
       'Strict algorithm lifecycle gating preventing experimental or unselected Round 4 candidates (`BIKE`, `SIKE`) from entering production configurations.',
       'Modular crypto-provider architecture capable of adding NIST FIPS 206 (`FN-DSA`) and future `HQC` FIPS standards upon final publication.',
     ],
