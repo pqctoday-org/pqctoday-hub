@@ -2615,6 +2615,28 @@
       "replacedAt": "2026-11-15T01:04:33.671390+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "re-sourced to the FuSeCar project report D3.1 — replaced by AUTO-003.pdf"
+    },
+    {
+      "threatId": "HSM-003",
+      "refId": "HSM-003",
+      "title": "Adapting Constrained Devices for Post-Quantum Cryptography (draft-ietf-pquip-pqc-hsm-constrained-11)",
+      "url": "https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqc-hsm-constrained-11",
+      "status": "downloaded",
+      "file": "threats/HSM-003.html",
+      "filename": "HSM-003.html",
+      "sizeBytes": 182751,
+      "contentType": "text/html",
+      "sha256": "d40fce9eaef47ab6f7e8adfe74300a61a4ae7232e7d886fc9ec5397ac03fd5e7",
+      "downloadedAt": "2026-11-15T18:19:39.514598+00:00",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-15T18:40:01.296916+00:00",
+      "admittedBy": "evidence admission",
+      "superseded_file": "_superseded-11152026/threats/HSM-003.html",
+      "identity": "MATCH",
+      "replacedAt": "2026-11-15T18:40:00.846189+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "re-fetched: the same IETF -11 page, checked again for the new row"
     }
   ],
   "archivedEntries": [],

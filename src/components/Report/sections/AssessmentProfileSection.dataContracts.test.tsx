@@ -30,10 +30,19 @@ describe('AssessmentProfileSummary', () => {
     ).toBeInTheDocument()
   })
 
+  it('shows both explicit selections and category-implied count when mixed', () => {
+    const result = computeAssessment({
+      ...base,
+      currentCrypto: ['X25519'],
+      currentCryptoCategories: ['Key Exchange', 'Signatures'],
+    })
+    render(<AssessmentProfileSummary profile={result.assessmentProfile!} defaultOpen />)
+    expect(screen.getByText('1 selected (+ 8 from categories)')).toBeInTheDocument()
+  })
+
   it('shows the crypto libraries and automation of a full assessment', () => {
     const result = computeAssessment({
       ...base,
-      cryptoAgility: 'hardcoded',
       cryptoLibraries: ['OpenSSL', 'BoringSSL'],
       infraAutomation: ['cert-manager'],
     })

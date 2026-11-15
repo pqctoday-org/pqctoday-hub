@@ -10,6 +10,9 @@ A certificate covers something narrow: a defined product, at a specific version 
 
 Read what a certificate covers before you read its grade. A deadline to move to post-quantum cryptography makes the work urgent, but it does not make certification faster or skip any step.
 
+- **ACVP KAT Vector Conformance vs. Module Boundary Validation**: NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (`IUT`). CMVP FIPS 140-3 validates a cryptographic module against its security requirements (module specification and boundary, interfaces, self-tests, key and SSP zeroization, physical security, with entropy sources validated separately under SP 800-90B); non-invasive (side-channel) requirements are currently N/A by default. Common Criteria/EUCC evaluates the product against its own Security Target, and only what the ST claims.
+- **Certificate Evidence-Chain Cross-Check vs. Sample Non-Equivalence**: When reading a production certificate, a useful check is: the certificate or module number and its status (active, historical or revoked); the exact module or product name and version; the tested operational environment or configuration (CMVP: Security Policy; CC: evaluated configuration in the certification report); the CAVP algorithm certificate numbers listed for the algorithms you rely on; and, for CC/EUCC, the Security Target and assurance level it claims. This is Hub practice guidance, not a certification-scheme requirement. A sample Hub exercise export or a vendor marketing datasheet is never certification evidence.
+
 ### What's Happening
 
 As of 22 October 2026, the FIPS 140-3 standard itself is unchanged, the EU's scheme already lists post-quantum algorithms in its approved cryptography guidance, and PCI's newest HSM standard adds post-quantum definitions without naming a required algorithm or deadline.

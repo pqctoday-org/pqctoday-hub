@@ -75,11 +75,13 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
       if (csrFile) {
         setCsrPem(new TextDecoder().decode(csrFile.data))
       } else {
-        // CSR build failed (likely ML-DSA + req -new) — flag in the UI but
-        // proceed to the issuance step using the CMP shim, which doesn't
-        // require a CSR (it parses the EE key directly).
+        // CSR build failed — for ML-KEM keys, PKCS#10 CSRs require a self-signature
+        // (signature POP) over CertificationRequestInfo, which KEM keys cannot produce.
+        const isKemKey = eeKeyAlgorithm?.toUpperCase().includes('KEM')
         setCsrPem(
-          `(CSR build via 'openssl req -new' is not available for this key algorithm in OpenSSL 3.6 CLI;\nthe issuance step below uses the same EE key directly via the CMP shim.)\n\n` +
+          (isKemKey
+            ? `(PKCS#10 CSR signature POP is not possible for ${eeKeyAlgorithm}: KEM keys only support encapsulation/decapsulation and cannot sign CertificationRequestInfo. In production PKI, enroll ML-KEM keys via CMPv3 CRMF POPOPrivKey (encrCert or challengeResp) rather than a PKCS#10 CSR.\nFor this educational step, the issuance stage below demonstrates the PKCS#7 response envelope using the EE public key directly.)\n\n`
+            : `(CSR build via 'openssl req -new' is not available for this key algorithm in OpenSSL 3.6 CLI;\nthe issuance step below uses the same EE key directly via the CMP shim.)\n\n`) +
             (csrResult.stderr || '')
         )
       }

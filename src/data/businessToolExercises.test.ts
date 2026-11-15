@@ -41,4 +41,10 @@ describe('BUSINESS_TOOL_EXERCISES (round 9, wave 2, business sittings)', () => {
     expect(ex.why).toMatch(/hand-built entries drift/)
     expect(ex.why).toMatch(/dated snapshot/)
   })
+  it('includes interactive sample-baseline, systems-coverage, and sample-watchlist exercises', () => {
+    expect(BUSINESS_TOOL_EXERCISES['kpi-dashboard']).toHaveLength(2)
+    expect(BUSINESS_TOOL_EXERCISES['kpi-tracker']).toHaveLength(2)
+    expect(BUSINESS_TOOL_EXERCISES['management-tools-audit']).toHaveLength(2)
+    expect(BUSINESS_TOOL_EXERCISES['crypto-vulnerability-watch']).toHaveLength(2)
+  })
 })

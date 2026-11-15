@@ -945,7 +945,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
             if (mode === 'sbom' && !latestSbomValidity.current) return
             addExecutiveDocument({
               id: `crypto-cbom-${Date.now()}`,
-              moduleId: 'crypto-management-modernization',
+              moduleId: 'crypto-mgmt-modernization',
               type: 'crypto-cbom',
               title: `CBOM — ${new Date().toLocaleDateString()}`,
               data: exportMarkdown,

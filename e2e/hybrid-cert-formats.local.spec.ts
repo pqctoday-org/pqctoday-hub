@@ -152,9 +152,9 @@ test.describe('hybrid certificate formats — browser smoke', () => {
         )
       }
       if (section === 'Advanced examples') {
-        // Discovery reports its selected profile/signature checks, not full PKIX validation.
+        // Discovery reports its selected profile/signature/certHash checks, not full PKIX validation.
         await expect(
-          region.getByText('Selected discovery checks — 10/10 passed', { exact: true })
+          region.getByText('Selected discovery checks — 11/11 passed', { exact: true })
         ).toBeVisible({ timeout: 60_000 })
       }
       await expect(region.getByText(/^Verified — \d+\/\d+ checks passed$/)).toHaveCount(

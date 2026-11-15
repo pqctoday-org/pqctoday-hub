@@ -33,17 +33,22 @@ function currentParams() {
 
 beforeEach(() => usePersonaStore.getState().setPersona(null))
 
+// Render over a 46-row slice of the real catalogue (src/test/fixtures/libraryCorpus.ts): the full
+// ~1,500-row corpus made these tests take 30-120 s and use over 3 GB of heap.
+vi.mock('@/data/csvUtils', async (importOriginal) =>
+  (await import('@/test/fixtures/libraryCorpus')).withLibraryCorpusSlice(await importOriginal())
+)
+
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
   useIsMobileShell: mockUseIsMobileShell,
 }))
 
-// Split from LibraryViewRedesign.test.tsx (2026-10-03): each test renders the whole Library view over
-// the real corpus and the heap grows ~120 MB per test, so the full file reached ~4 GB and a CI worker
-// hit the V8 heap limit. Running the deep-link tests in their own file gives each its own worker heap.
-// Every test here renders the whole Library view over the real corpus (2-10 s alone, 20-40 s on a
-// loaded machine); the default 30 s limit failed pr-test (1) on #797 ("forwards a retired ref"),
-// and 8b's loaded local run. Same allowance as libraryTableDrawerParams.test.tsx (#782).
+// Split from LibraryViewRedesign.test.tsx (2026-10-03): each test rendered the whole Library view over
+// the real corpus and the heap grew ~120 MB per test, so the full file reached ~4 GB and a CI worker
+// hit the V8 heap limit. These tests now render over a slice of the real corpus (mocked above), which
+// keeps the heap flat; the longer allowance is headroom for a loaded runner (the default 30 s limit
+// failed pr-test (1) on #797 over the full corpus). Same allowance as libraryTableDrawerParams.test.tsx (#782).
 describe('LibraryViewRedesign deep links', { timeout: 60_000 }, () => {
   describe('?topic= with a subject, not a topic id', () => {
     it('moves the subject into the search box', () => {

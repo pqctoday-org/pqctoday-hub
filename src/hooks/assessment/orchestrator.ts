@@ -115,6 +115,8 @@ export function computeAssessment(rawInput: AssessmentInput): AssessmentResult {
     input.cryptoAgility ||
     input.infrastructure?.length ||
     input.infrastructureUnknown ||
+    input.cryptoLibraries?.length ||
+    input.infraAutomation?.length ||
     input.systemCount ||
     input.teamSize ||
     input.vendorDependency ||
@@ -506,6 +508,8 @@ export async function computeAssessmentAsync(
     input.cryptoAgility ||
     input.infrastructure?.length ||
     input.infrastructureUnknown ||
+    input.cryptoLibraries?.length ||
+    input.infraAutomation?.length ||
     input.systemCount ||
     input.teamSize ||
     input.vendorDependency ||
