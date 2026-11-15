@@ -8,7 +8,9 @@
  * adding or updating a country rule only requires a CSV edit, not a code change.
  */
 export type MigChoice = 'classical' | 'hybrid' | 'pure'
-export type HybridStance = 'required' | 'interim' | 'discouraged'
+/** `recommended`: guidance prefers hybrid where feasible but does not rule out
+ *  post-quantum-only (the EU coordinated roadmap). */
+export type HybridStance = 'required' | 'recommended' | 'interim' | 'discouraged'
 export type EndState = 'hybrid' | 'pure'
 
 export interface JurisdictionRule {
@@ -35,7 +37,7 @@ export function jurisdictionFor(country: string): JurisdictionRule | undefined {
 
 /** The migration choice this jurisdiction steers you toward. */
 export function recommendedChoice(rule: JurisdictionRule): string {
-  if (rule.hybrid === 'required') return 'hybrid'
+  if (rule.hybrid === 'required' || rule.hybrid === 'recommended') return 'hybrid'
   if (rule.hybrid === 'discouraged') return 'pure'
   return 'hybrid now → pure later' // interim
 }
@@ -86,6 +88,13 @@ export function checkChoice(country: string, choice: MigChoice): ComplianceVerdi
           : rule.force === 'guidance'
             ? `${rule.authority} expects hybrid in its published guidance — a pure-only choice departs from it.`
             : `${rule.authority}'s recorded stance is hybrid — a pure-only choice departs from it.`,
+      evaluated: true,
+    }
+  if (rule.hybrid === 'recommended' && choice === 'pure')
+    return {
+      ok: true,
+      level: 'warn',
+      reason: `${rule.authority} recommends hybrid where feasible — a pure-only choice is allowed but departs from that recommendation.`,
       evaluated: true,
     }
   if (rule.endState === 'pure' && choice === 'hybrid')
