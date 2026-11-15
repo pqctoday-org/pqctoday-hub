@@ -43,7 +43,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     evaluationMethod:
       'Query provider algorithm registries (e.g., OpenSSL 3.5+ `openssl list -kem-algorithms -signature-algorithms`) and run NIST ACVP test vectors in staging.',
     evidenceRequired:
-      'Provider algorithm inventory output, CAVP certificate numbers for cryptographic modules, and staging handshake/signature logs.',
+      'Provider algorithm inventory output, CAVP algorithm-validation certificate numbers and CMVP module certificate numbers, and staging handshake/signature logs.',
   },
   'quantum-threats': {
     roleFocus: 'Risk Officers, Security Architects & Researchers',
@@ -97,7 +97,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Network Engineers, SREs & Application Developers',
     productionCapabilities: [
       'TLS 1.3 hybrid post-quantum group negotiation (`X25519MLKEM768`, `SecP256r1MLKEM768`, `SecP384r1MLKEM1024`) on ingress gateways and service meshes.',
-      'Support for RFC 8879 TLS Certificate Compression (Brotli/Zstd) to mitigate TCP initial-congestion-window fragmentation from PQC certificate chains.',
+      'Support for RFC 8879 TLS Certificate Compression (zlib/Brotli/Zstd); measure its actual effect on PQC chains, since PQC keys and signatures compress poorly.',
       'Strict TLS 1.3 enforcement disabling legacy TLS 1.0/1.1 and static RSA key transport.',
     ],
     evaluationMethod:
@@ -108,7 +108,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'vpn-ssh-pqc': {
     roleFocus: 'Network Security & Infrastructure Operations',
     productionCapabilities: [
-      'IKEv2 Multiple Key Exchanges (RFC 9370 `ADDKE1..ADDKE7`) with `ML-KEM-768` / `ML-KEM-1024` and TCP/UDP IKE fragmentation (RFC 7383).',
+      'IKEv2 Multiple Key Exchanges (RFC 9370 `ADDKE1..ADDKE7`) with `ML-KEM-768` / `ML-KEM-1024` (draft-ietf-ipsecme-ikev2-mlkem) and IKEv2 message fragmentation (RFC 7383; TCP encapsulation is RFC 8229).',
       'OpenSSH 9.9+ hybrid key exchange (`mlkem768x25519-sha256` or `sntrup761x25519-sha512`) enforced via `KexAlgorithms` in `sshd_config`.',
       'PQC X.509 or raw public key authentication for site-to-site and remote-access VPN tunnels.',
     ],
@@ -137,7 +137,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
       'Key-archival and escrow support for decapsulation private keys in enterprise KMS/HSM.',
     ],
     evaluationMethod:
-      'Generate and verify CMS `SignedData` and `AuthEnvelopedData` (`KEMRecipientInfo`) using `openssl cms` and test cross-client decryption in staging.',
+      'Generate and verify CMS `SignedData` and `AuthEnvelopedData` (`KEMRecipientInfo`) using `openssl cms` (confirm KEMRecipientInfo support in your OpenSSL release) or another CMS toolkit, and test cross-client decryption in staging.',
     evidenceRequired:
       'ASN.1 dump (`openssl asn1parse`) showing `KEMRecipientInfo` (`id-ori-kem`, `1.2.840.113549.1.9.16.13.3`) with the `ML-KEM-768` key algorithm OID `2.16.840.1.101.3.4.4.2`, and verified signature receipt.',
   },
@@ -157,7 +157,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Cloud Security Architects & Platform Operations',
     productionCapabilities: [
       'Envelope encryption combining FIPS 203 `ML-KEM` key encapsulation (or hybrid KEM) with `AES-256-GCM` data encryption keys (DEKs).',
-      'OASIS KMIP 3.0+ protocol support for PQC key objects, parameter-set attributes, and automated key rotation.',
+      'KMIP support for PQC key objects, parameter-set attributes and automated key rotation (KMIP 3.0 is a Committee Specification Draft, CSD02, not yet an OASIS Standard), or documented vendor equivalents.',
       'Immutable CloudTrail / KMS audit logging recording key-usage mechanisms (`Encapsulate`, `Decapsulate`, `Sign`, `Verify`).',
     ],
     evaluationMethod:
@@ -169,11 +169,11 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'HSM Administrators & Cryptographic Custodians',
     productionCapabilities: [
       'OASIS PKCS#11 v3.2 interface supporting `C_EncapsulateKey`, `C_DecapsulateKey`, `CKM_ML_KEM`, `CKM_ML_DSA`, `CKM_SLH_DSA`, and `CKA_PARAMETER_SET`.',
-      'FIPS 140-3 Level 3 physical and side-channel-hardened firmware executing PQC primitives inside the cryptographic boundary.',
+      'FIPS 140-3 Level 3 physical security, with documented non-invasive (side-channel) attack mitigations, for firmware executing PQC primitives inside the cryptographic boundary.',
       'Partition-level mechanism policy enforcement blocking deprecated classical algorithms (`CKM_RSA_PKCS`, `<2048-bit RSA`).',
     ],
     evaluationMethod:
-      'Query HSM partition capabilities (`pkcs11-tool --list-mechanisms`) and execute `C_EncapsulateKey` / `C_Sign` kat vectors on a staging HSM slot.',
+      'Query HSM partition capabilities (`pkcs11-tool --list-mechanisms`) and execute `C_EncapsulateKey` / `C_Sign` KAT vectors on a staging HSM slot.',
     evidenceRequired:
       'HSM firmware version and CMVP certificate reference, `pkcs11-tool` mechanism list, and signed HSM audit log.',
   },
@@ -194,7 +194,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     productionCapabilities: [
       'Traceable mapping between product versions, NIST CAVP algorithm validation certificates, and CMVP (FIPS 140-3) / Common Criteria / EUCC module certificates.',
       'Explicit boundary documentation distinguishing which PQC algorithms execute inside the validated module vs unvalidated host software.',
-      'Automated monitoring of CMVP/CC certificate status (Active vs Historical vs Revoked).',
+      'Automated monitoring of CMVP certificate status (Active, Historical, Revoked) and CC/EUCC certificate status (certified vs archived/withdrawn).',
     ],
     evaluationMethod:
       'Verify vendor-claimed CAVP/CMVP certificate numbers directly against the NIST CSRC validation database and Common Criteria Security Target PDF.',
@@ -230,7 +230,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     productionCapabilities: [
       'PCI DSS v4.0.1 Req. 12.3.3 cryptographic cipher-suite and protocol inventory, reviewed annually; a PQC transition plan is good practice that PCI DSS itself does not name.',
       'PCI DSS Req. 4.2.1 strong cryptography for cardholder data in transit; TLS 1.3 with hybrid PQC key exchange is one way to plan ahead, not a PCI DSS requirement.',
-      'PCI PTS HSM / TR-31 (ASC X9.143) key-block support capable of wrapping post-quantum keys and maintaining key-usage separation.',
+      'PCI PTS HSM / TR-31 / ASC X9.143 key-block support, with a documented path for post-quantum key types and key-usage separation.',
     ],
     evaluationMethod:
       'Inspect the annual PCI DSS Req. 12.3.3 cryptographic inventory artifact and verify payment gateway TLS 1.3 cipher configurations in staging.',
@@ -276,8 +276,8 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   '5g-security': {
     roleFocus: 'Telecom Security Architects & Mobile Core Engineers',
     productionCapabilities: [
-      '3GPP TS 33.501 SUCI (Subscription Concealed Identifier) ECIES Profile protection upgradable to post-quantum / hybrid KEM (`ML-KEM-768`) between USIM/UE and UDM/SIDF.',
-      'IPsec IKEv2 (RFC 9370) and TLS 1.3 (`X25519MLKEM768`) across the 5G core: Service-Based Architecture (SBA) interfaces, N32 between SEPPs, and the N2/N3 interfaces to the RAN.',
+      '3GPP TS 33.501 SUCI concealment (ECIES Profiles A and B) with a documented crypto-agility path to a post-quantum or hybrid KEM once 3GPP specifies a profile, between USIM/UE and UDM/SIDF.',
+      'IPsec IKEv2 (RFC 9370) on N2/N3 (TS 33.501) and TLS 1.3 (`X25519MLKEM768`) on SBA interfaces including N32-c between SEPPs.',
       'Subscriber authentication key-length planning for Grover margin: MILENAGE uses a 128-bit K and OPc, while TUAK also supports a 256-bit K.',
     ],
     evaluationMethod:
@@ -313,11 +313,11 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Web PKI Architects, CDN Engineers & CA Operators',
     productionCapabilities: [
       'IETF Merkle Tree Certificates (`draft-ietf-plants-merkle-tree-certs`, an Internet-Draft) inclusion-proof verification replacing per-CA multi-kilobyte PQC signatures on the TLS wire.',
-      'Transparency Service tree-head cosigning with `ML-DSA` / `SLH-DSA` and automated epoch window refresh on edge TLS terminators.',
+      'Cosigner and CA signatures over issuance-log checkpoints (tree heads) with `ML-DSA` / `SLH-DSA`, and landmark-relative certificate refresh on edge TLS terminators.',
       'Fallback to standard X.509 PQC or hybrid certificate chains when clients do not advertise MTC support.',
     ],
     evaluationMethod:
-      'Benchmark TLS 1.3 handshake byte size and verification latency comparing a 3-cert `ML-DSA-65` chain (~15 KB) against an MTC inclusion proof (~1.5 KB) in staging.',
+      'Benchmark TLS 1.3 handshake byte size and verification latency comparing a 3-cert `ML-DSA-65` chain (~15 KB) against a measured MTC certificate (landmark-relative or cosigned) in staging.',
     evidenceRequired:
       'TLS handshake byte-budget comparison report, inclusion-proof verification test log, and edge fallback test results.',
   },
@@ -325,7 +325,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Optical Network Architects & Defense Communications Engineers',
     productionCapabilities: [
       'ETSI GS QKD 014 REST key-delivery API integration with IPsec IKEv2 (RFC 8784 PPK) or MACsec / optical layer-1 encryptors.',
-      'Defense-in-depth hybridization combining QKD-derived keys with NIST FIPS 203 `ML-KEM` and classical ECDH (aligned with ANSSI/BSI/NCSC guidance).',
+      'Defense-in-depth hybridization combining QKD-derived keys with NIST FIPS 203 `ML-KEM` and classical ECDH (consistent with the BSI/ANSSI/NLNCSA/SNCSA position: PQC primary, QKD complementary where justified; NCSC and NSA do not recommend QKD).',
       'Authenticated classical control channel secured with post-quantum signatures (`ML-DSA`) to prevent man-in-the-middle attacks.',
     ],
     evaluationMethod:
@@ -348,7 +348,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'compliance-strategy': {
     roleFocus: 'GRC Officers, Legal Counsel & Security Leadership',
     productionCapabilities: [
-      'Multi-jurisdiction regulatory mapping engine tracking NSA CNSA 2.0 (2025–2033), NIST IR 8547 (2030/2035), EU DORA / NIS2, UK NCSC (2028/2031/2035), and PCI DSS v4.0.1.',
+      'Multi-jurisdiction regulatory mapping engine tracking NSA CNSA 2.0 (advisory 2025–2033; FAQ v2.2: new acquisitions from 1 Jan 2027, phase-out by 31 Dec 2030, mandated by 31 Dec 2031), NIST IR 8547 (2030/2035), EU DORA / NIS2, UK NCSC (2028/2031/2035), and PCI DSS v4.0.1.',
       'Exception and compensating-control workflow for legacy systems unable to meet initial PQC transition milestones.',
       'Audit-ready evidence repository linking each regulatory obligation to dated technical verification artifacts.',
     ],
@@ -396,12 +396,12 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'acvp-lab-workflow': {
     roleFocus: 'Cryptographic Library Developers & CSTL Validation Engineers',
     productionCapabilities: [
-      'Automated NIST ACVP JSON test-session processing (`keygen`, `encapDecap`, `sigGen`, `sigVer`) for `ML-KEM`, `ML-DSA`, and `SLH-DSA`.',
+      'Automated NIST ACVP JSON test-session processing (`keyGen`, `encapDecap`, `sigGen`, `sigVer`) for `ML-KEM`, `ML-DSA`, and `SLH-DSA`.',
       'Deterministic seed injection (`d`, `z` for ML-KEM; `xi`, `rnd` for ML-DSA) required by ACVP test harnesses while preserving CSPRNG generation in production builds.',
       'Strict rejection of malformed encapsulation keys (modulus check per FIPS 203 §7.2) and out-of-range signature values (FIPS 204 §6.3, ML-DSA.Verify_internal).',
     ],
     evaluationMethod:
-      'Run the official NIST `acvp-server` test vector sets against the target cryptographic binary and verify zero mismatches between `rsp` and `expected`.',
+      'Run the official NIST `acvp-server` test vector sets against the target cryptographic binary and verify zero mismatches between your responses and the server’s `expectedResults.json`.',
     evidenceRequired:
       'ACVP request/response JSON transcripts, CAVP algorithm validation certificate, and malformed-input rejection test log.',
   },
@@ -432,7 +432,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'code-signing': {
     roleFocus: 'DevSecOps Leads, Release Engineers & Firmware Architects',
     productionCapabilities: [
-      'Artifact, container, and package signing (`Cosign`, `Notation`, `JAR`, `Authenticode`, `RPM/DEB`) supporting `ML-DSA-65/87`, `SLH-DSA`, or `LMS/XMSS`.',
+      'Artifact, container and package signing (e.g., Cosign with experimental ML-DSA, Java jarsigner in JDK 26, Notation, RPM/DEB) with PQC signature support; Authenticode/SignTool has no PQC support yet.',
       'RFC 3161 Time-Stamp Authority (TSA) tokens signed with post-quantum algorithms to preserve signature validity beyond algorithm deprecation.',
       'HSM-backed signing key custody with quorum approval and air-gapped root key ceremonies.',
     ],
@@ -446,7 +446,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     productionCapabilities: [
       'The Update Framework (TUF) / Uptane multi-role metadata signing (`root`, `targets`, `snapshot`, `timestamp`) with threshold PQC/hybrid signatures.',
       'SLSA Build Level 3+ provenance attestations (in-toto / DSSE envelopes) signed with `ML-DSA` or `SLH-DSA`.',
-      ' Bootstrapped root-of-trust rotation enabling in-field verifiers to transition from classical to PQC root keys safely.',
+      'Bootstrapped root-of-trust rotation enabling in-field verifiers to transition from classical to PQC root keys safely.',
     ],
     evaluationMethod:
       'Simulate a TUF root key rotation from Ed25519 to `ML-DSA-65` + Ed25519 threshold signing in staging and verify client update acceptance and rollback protection.',
@@ -457,7 +457,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'API Platform Architects, IAM Engineers & Backend Developers',
     productionCapabilities: [
       'JOSE / COSE support for post-quantum JWS signature algorithms (`ML-DSA-44`, `ML-DSA-65`, `ML-DSA-87`) and JWK representation.',
-      'HTTP header and cookie size budget management for ~3.3 KB (`ML-DSA-65`) JWT bearer tokens, or sender-constrained token reference patterns (DPoP / mTLS / opaque Phantom tokens).',
+      'HTTP header and cookie size budget management for at least ~4.4 KB (`ML-DSA-65`: 3,309 B signature = ~4,412 base64url characters, plus header and payload) JWT bearer tokens, or sender-constrained token reference patterns (DPoP / mTLS / opaque Phantom tokens).',
       'JWKS endpoint rotation publishing post-quantum public keys with explicit `alg` and `kid` pinning (preventing algorithm confusion).',
     ],
     evaluationMethod:
