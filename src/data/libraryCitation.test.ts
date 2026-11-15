@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 // The citation rule: a retired library id is accepted only when its successor chain ends at an active row.
 import { describe, expect, it } from 'vitest'
 import {
