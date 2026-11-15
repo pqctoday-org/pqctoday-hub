@@ -1,6 +1,6 @@
 {
- "csv": "quantum_threats_hsm_industries_11142026_r7.csv",
- "generatedAt": "2026-11-15T00:00:31+00:00",
+ "csv": "quantum_threats_hsm_industries_11142026_r12.csv",
+ "generatedAt": "2026-11-15T01:09:43+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file and exact claim text cited today. Verdict words only; no document text.",
  "rows": {
   "AUS-FIN-002": {
@@ -101,6 +101,26 @@
     }
    },
    "evidenceSha256": "c0eb015a5294afe1"
+  },
+  "AUTO-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "7ff5a740b8bc0d10"
   },
   "CI-001": {
    "claims": {
