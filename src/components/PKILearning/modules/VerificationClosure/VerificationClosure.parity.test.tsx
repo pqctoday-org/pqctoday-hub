@@ -40,19 +40,20 @@ describe('Verification & Closure module render', () => {
     }
   })
 
-  it('establishes ACVP KAT vector mathematical conformance vs FIPS 140-3 / CC module boundary validation and 5 certificate cross-check fields', () => {
+  it('establishes ACVP KAT vector mathematical conformance vs FIPS 140-3 / CC module boundary validation and the five suggested certificate checks', () => {
     expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('IUT')
     expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('SP 800-90B')
-    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckFields).toEqual([
-      'Operational Environment (OE)',
-      'CAVP Algorithm Cert #',
-      'CMVP Module Cert #',
-      'Tested Version/Commit',
-      'Security Target SHA-256',
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckChecklist).toEqual([
+      'Certificate or module number and status (active, historical or revoked)',
+      'Exact module or product name and version',
+      'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+      'CAVP algorithm certificate numbers for the algorithms you rely on',
+      'CC/EUCC: Security Target and claimed assurance level',
     ])
-    for (const field of CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckFields) {
-      expect(curiousSummary).toContain(field)
-      expect(ragSummary).toContain(field)
+    for (const summary of [curiousSummary, ragSummary]) {
+      expect(summary).toContain('Hub practice guidance, not a certification-scheme requirement')
+      expect(summary).toContain('Security Target')
+      expect(summary).not.toContain('side-channel protections')
     }
     expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.nonEquivalenceRule).toContain(
       'never certification evidence'

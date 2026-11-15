@@ -65,7 +65,7 @@ describe('crypto-product-certification ACVP vs module boundary & certificate cro
     expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.acvpIutConformance).toContain('IUT')
     expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.moduleBoundaryValidation).toContain('SP 800-90B')
     expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.moduleBoundaryValidation).toContain(
-      'key zeroization'
+      'SSP zeroization'
     )
     expect(curiousSummary).toContain('IUT')
     expect(curiousSummary).toContain('SP 800-90B')
@@ -73,17 +73,20 @@ describe('crypto-product-certification ACVP vs module boundary & certificate cro
     expect(ragSummary).toContain('SP 800-90B')
   })
 
-  it('requires cross-checking the 5 production certificate fields and rejects sample Hub exports as certification evidence', () => {
-    expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.productionCertificateCrossCheckFields).toEqual([
-      'Operational Environment (OE)',
-      'CAVP Algorithm Cert #',
-      'CMVP Module Cert #',
-      'Tested Version/Commit',
-      'Security Target SHA-256',
-    ])
-    for (const field of CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.productionCertificateCrossCheckFields) {
-      expect(curiousSummary).toContain(field)
-      expect(ragSummary).toContain(field)
+  it('includes the five suggested certificate checks and rejects sample Hub exports as certification evidence', () => {
+    expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.productionCertificateCrossCheckChecklist).toEqual(
+      [
+        'Certificate or module number and status (active, historical or revoked)',
+        'Exact module or product name and version',
+        'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+        'CAVP algorithm certificate numbers for the algorithms you rely on',
+        'CC/EUCC: Security Target and claimed assurance level',
+      ]
+    )
+    for (const summary of [curiousSummary, ragSummary]) {
+      expect(summary).toContain('Hub practice guidance, not a certification-scheme requirement')
+      expect(summary).toContain('Security Target')
+      expect(summary).not.toContain('side-channel protections')
     }
     expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.sampleNonEquivalenceRule).toContain(
       'never certification evidence'

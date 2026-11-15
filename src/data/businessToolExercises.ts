@@ -272,7 +272,7 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
         'It stays identical because sample values ignore persona weights',
       ],
       answer: 0,
-      why: 'Loading the sample baseline fills the manual KPIs with fictional values labelled Hub sample baseline value (crossing the 70% scored-value coverage threshold), and switching the lens re-weights those same values.',
+      why: 'Loading the sample baseline fills the manual KPIs with fictional values labelled Hub sample baseline value (crossing the 70% scored-weight coverage threshold), and switching the lens re-weights those same values.',
     },
   ],
   'deployment-playbook': [

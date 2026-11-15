@@ -69,57 +69,57 @@ export const INFOGRAPHIC_SAMPLE_ASSUMPTIONS: Record<
   'pki-enrollment-protocols': {
     title: 'Sample Enrollment & Composite Framing',
     assumptions:
-      'Visual diagram illustrates parallel EST (RFC 7030) and Composite ML-DSA (RFC 10073, OID 1.3.6.1.5.5.7.4.18) enrollment flows; ML-KEM-768 keys use CMPv3 KemOtherInfo proof-of-possession (RFC 9810 §5.2.8) rather than signature-based POP.',
+      'Visual diagram illustrates parallel EST (RFC 7030) and Composite ML-DSA (RFC 10073; OIDs 1.3.6.1.5.5.7.6.37–54, one per classical/ML-DSA pairing) enrollment flows; ML-KEM-768 keys prove possession with CMPv3 POPOPrivKey (encrCert or challengeResp, RFC 9810 §5.2.8.3), not a signature-based POP.',
   },
   'tls-basics': {
     title: 'Sample Handshake Latency & Network Assumptions',
     assumptions:
-      'Displayed handshake timings assume a synthetic lab link (25 ms base RTT, TCP initcwnd = 10 MSS / 14,600 B). Real-world X25519MLKEM768 latency depends on WAN RTT, path MTU, and middlebox inspection.',
+      'Displayed handshake figures are byte sizes only, not timings. TCP initcwnd is 10 MSS (RFC 6928, 14,600 B at MSS 1,460 B). Real-world X25519MLKEM768 latency depends on WAN RTT, path MTU, and middlebox inspection.',
   },
   'iot-pqc': {
     title: 'Bounded Constrained-Device Sample Scope',
     assumptions:
-      'HSM and Sub-GHz radio bottleneck figures represent a bounded Cortex-M4 / IEEE 802.15.4 (127-byte frame) sample scenario, not an industry-wide hardware limitation across higher-tier embedded SoCs.',
+      'Radio and device bottleneck figures represent a bounded Cortex-M4 (pqm4 benchmarks) and IEEE 802.15.4 (127-byte frame) sample scenario, not an industry-wide limitation across higher-tier embedded SoCs.',
   },
   'ot-pqc': {
     title: 'Operational Technology Sample Boundary',
     assumptions:
-      'Legacy PLC/RTU serial-bus and gateway constraints illustrate a representative IEC 62443 Purdue Level 1–2 cell; passive TAP discovery is required where active TLS probing can trip safety interlocks.',
+      'Legacy PLC/RTU serial-bus and gateway constraints illustrate a representative Purdue Level 1–2 cell (mapped to IEC 62443 zones and conduits); passive network discovery is the safer choice where active TLS probing could disturb safety interlocks.',
   },
   'hsm-pqc': {
     title: 'Dual-Partition HA & Rollback Assumptions',
     assumptions:
-      'High-availability and rollback paths require explicit PKCS#11 v3.2 firmware compatibility and synchronized monotonic state counters (SP 800-208); active PQC keys cannot be downgraded to classical-only firmware partitions.',
+      'High-availability and rollback planning must keep stateful hash-based signature state (LMS/XMSS, SP 800-208) from ever being reused or restored; a firmware rollback below a PQC-capable release can strand PQC keys, so confirm vendor rollback behaviour before upgrading.',
   },
   'migration-program': {
     title: 'Enterprise vs. Sector Phased Timeline Scope',
     assumptions:
-      'The 3–5 year phased roadmap reflects a typical enterprise IT migration aligned with NIST IR 8547 (2030 deprecation / 2035 disallowance), whereas hardware-bound payment or avionics fleets require 7–10 year refresh cycles.',
+      'The 3–5 year phased roadmap reflects a typical enterprise IT migration aligned with NIST IR 8547 (quantum-vulnerable algorithms deprecated after 2030, disallowed after 2035). Hardware-bound payment or avionics fleets follow longer refresh cycles; the durations are illustrative estimates.',
   },
   'emv-payment-pqc': {
     title: 'Payment Terminal Lifecycle & PCI DSS Scope',
     assumptions:
-      'EMVCo kernel and POI terminal refresh spans 7–10 years alongside PCI DSS v4.0.1 Req. 4.2.1 / 12.3.3 inventory controls, distinct from 3–5 year cloud/enterprise software migration timelines.',
+      'EMVCo kernel and POI terminal refresh follows multi-year replacement cycles (illustrative, not sourced), alongside PCI DSS v4.0.1 key/certificate inventory and cryptographic protocol review requirements, distinct from shorter cloud/enterprise software migration timelines.',
   },
   'network-security-pqc': {
     title: 'Certificate Byte Sizes & Middlebox Framing',
     assumptions:
-      'A full X.509v3 certificate with ML-DSA-65 is ~4.6–5.2 KB DER (1,952 B public key + 3,309 B signature + ASN.1 TBSCertificate metadata). Middlebox double-handshake timings depend on TLS proxy hardware offload.',
+      'A full X.509v3 certificate with ML-DSA-65 is at least 5,261 B (1,952 B public key + 3,309 B signature) plus ASN.1 TBSCertificate metadata, so roughly 5.5–5.8 KB DER. Middlebox double-handshake timings depend on TLS proxy hardware offload.',
   },
   'pqc-testing-validation': {
     title: 'Sample Test Scores vs. Production Assurance',
     assumptions:
-      'Lab harness pass rates and RFC 2119 interoperability checks verify protocol formatting in a test environment; production cryptographic assurance requires NIST CAVP (ACVP) and CMVP (FIPS 140-3) / Common Criteria validation.',
+      'Lab harness pass rates and RFC 2119 interoperability checks verify protocol formatting in a test environment; production cryptographic assurance is shown by CAVP algorithm validation plus a CMVP (FIPS 140-3) or Common Criteria/EUCC certificate, where your regime requires one.',
   },
   'crypto-dev-apis': {
     title: 'API Throughput & Hardware Benchmark Scope',
     assumptions:
-      'Displayed provider call paths (OpenSSL 3.5 EVP_KEM, JCA KEM, Go crypto/mlkem, PKCS#11 v3.2) reflect software reference baselines unless paired with cited hardware-accelerated benchmarks.',
+      'Displayed provider call paths (OpenSSL 3.5 EVP_PKEY_encapsulate, JCA KEM, Go crypto/mlkem, PKCS#11 v3.2) reflect software reference baselines unless paired with cited hardware-accelerated benchmarks.',
   },
   'pqc-hw-acceleration': {
     title: 'Measured Reference Benchmarks vs. Unmeasured Targets',
     assumptions:
-      'Throughput bars reflect published Arm Cortex/Neoverse and Artix-7 FPGA reference measurements only; GPU/NPU and RISC-V vector profiles require target-specific silicon benchmarking before sizing production capacity.',
+      'Throughput bars reflect this project’s own measurements on Apple M4 Pro and Arm Cortex-A53/A55/A78C cores and the Zynq UltraScale+ FPGA fabric of an AMD Kria KV260; GPU/NPU paths are batching or desk assessments and need target-specific benchmarking before sizing production capacity.',
   },
 }
 

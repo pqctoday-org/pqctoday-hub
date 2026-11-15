@@ -81,24 +81,25 @@ describe('verification-closure ACVP vs module boundary & certificate cross-check
   it('establishes ACVP KAT vector mathematical conformance vs FIPS 140-3 / CC module boundary validation', () => {
     expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('IUT')
     expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('SP 800-90B')
-    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('key zeroization')
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('SSP zeroization')
     expect(curiousSummary).toContain('IUT')
     expect(curiousSummary).toContain('SP 800-90B')
     expect(ragSummary).toContain('IUT')
     expect(ragSummary).toContain('SP 800-90B')
   })
 
-  it('requires cross-checking the 5 production certificate fields and rejects sample Hub exports as certification evidence', () => {
-    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckFields).toEqual([
-      'Operational Environment (OE)',
-      'CAVP Algorithm Cert #',
-      'CMVP Module Cert #',
-      'Tested Version/Commit',
-      'Security Target SHA-256',
+  it('includes the five suggested certificate checks and rejects sample Hub exports as certification evidence', () => {
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckChecklist).toEqual([
+      'Certificate or module number and status (active, historical or revoked)',
+      'Exact module or product name and version',
+      'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+      'CAVP algorithm certificate numbers for the algorithms you rely on',
+      'CC/EUCC: Security Target and claimed assurance level',
     ])
-    for (const field of CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckFields) {
-      expect(curiousSummary).toContain(field)
-      expect(ragSummary).toContain(field)
+    for (const summary of [curiousSummary, ragSummary]) {
+      expect(summary).toContain('Hub practice guidance, not a certification-scheme requirement')
+      expect(summary).toContain('Security Target')
+      expect(summary).not.toContain('side-channel protections')
     }
     expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.nonEquivalenceRule).toContain(
       'never certification evidence'

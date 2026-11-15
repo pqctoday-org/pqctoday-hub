@@ -14,4 +14,4 @@ EST is HTTP-friendly and simple, CMP is richer and is where the IETF post-quantu
 
 ## What's Happening
 
-EJBCA 9.1+ already issues ML-DSA + ML-KEM certificates through CMPv3 (RFC 9810 / RFC 9483) today. Bouncy Castle, OpenSSL 3.5+, and the IETF LAMPS working group have standardized Composite ML-DSA (RFC 10073) for X.509 PKI alongside ongoing composite KEM standardization (`draft-ietf-lamps-pq-composite-kem`).
+EJBCA 9.1+ issues ML-DSA and ML-KEM certificates through CMP (encrCert POP for ML-KEM). Bouncy Castle and OpenSSL 3.5+ are filling in the remaining gaps, and the IETF LAMPS working group has published Composite ML-DSA (RFC 10073) alongside the ongoing composite KEM draft (`draft-ietf-lamps-pq-composite-kem`).

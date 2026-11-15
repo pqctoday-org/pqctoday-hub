@@ -15,7 +15,7 @@ import {
   EVIDENCE_SCENARIOS,
   HUB_REACHABLE_MAX_RUNG,
   NOT_TEST_EVIDENCE,
-  PRODUCTION_CERTIFICATE_CROSSCHECK_FIELDS,
+  PRODUCTION_CERTIFICATE_CROSSCHECK_CHECKLIST,
   SAMPLE_EXPORT_NON_EQUIVALENCE_RULE,
 } from './evidenceLevels'
 import { CONCEPT_CHECKS } from './conceptChecks'
@@ -126,24 +126,25 @@ describe('acvp-lab-workflow ACVP vs module boundary & certificate cross-check ga
   it('establishes ACVP KAT vector mathematical conformance vs FIPS 140-3 / CC module boundary validation', () => {
     expect(ACVP_VS_MODULE_BOUNDARY_SCOPE.acvpKatScope).toContain('IUT')
     expect(ACVP_VS_MODULE_BOUNDARY_SCOPE.moduleBoundaryScope).toContain('SP 800-90B')
-    expect(ACVP_VS_MODULE_BOUNDARY_SCOPE.moduleBoundaryScope).toContain('key zeroization')
+    expect(ACVP_VS_MODULE_BOUNDARY_SCOPE.moduleBoundaryScope).toContain('SSP zeroization')
     expect(curiousSummary).toContain('IUT')
     expect(curiousSummary).toContain('SP 800-90B')
     expect(ragSummary).toContain('IUT')
     expect(ragSummary).toContain('SP 800-90B')
   })
 
-  it('requires all five production certificate cross-check fields and rejects sample Hub exports as certification evidence', () => {
-    expect(PRODUCTION_CERTIFICATE_CROSSCHECK_FIELDS).toEqual([
-      'Operational Environment (OE)',
-      'CAVP Algorithm Cert #',
-      'CMVP Module Cert #',
-      'Tested Version/Commit',
-      'Security Target SHA-256',
+  it('includes the five suggested certificate checks and rejects sample Hub exports as certification evidence', () => {
+    expect(PRODUCTION_CERTIFICATE_CROSSCHECK_CHECKLIST).toEqual([
+      'Certificate or module number and status (active, historical or revoked)',
+      'Exact module or product name and version',
+      'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+      'CAVP algorithm certificate numbers for the algorithms you rely on',
+      'CC/EUCC: Security Target and claimed assurance level',
     ])
-    for (const field of PRODUCTION_CERTIFICATE_CROSSCHECK_FIELDS) {
-      expect(curiousSummary).toContain(field)
-      expect(ragSummary).toContain(field)
+    for (const summary of [curiousSummary, ragSummary]) {
+      expect(summary).toContain('Hub practice guidance, not a certification-scheme requirement')
+      expect(summary).toContain('Security Target')
+      expect(summary).not.toContain('side-channel protections')
     }
     expect(SAMPLE_EXPORT_NON_EQUIVALENCE_RULE).toContain('never certification evidence')
   })

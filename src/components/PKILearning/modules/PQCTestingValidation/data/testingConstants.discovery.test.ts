@@ -60,7 +60,7 @@ describe('pqc-testing-validation ACVP vs module boundary & certificate cross-che
       'SP 800-90B'
     )
     expect(PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.moduleBoundaryValidation).toContain(
-      'key zeroization'
+      'SSP zeroization'
     )
     expect(curiousSummary).toContain('IUT')
     expect(curiousSummary).toContain('SP 800-90B')
@@ -68,17 +68,20 @@ describe('pqc-testing-validation ACVP vs module boundary & certificate cross-che
     expect(ragSummary).toContain('SP 800-90B')
   })
 
-  it('requires cross-checking the 5 production certificate fields and rejects sample Hub exports as certification evidence', () => {
-    expect(PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.requiredCertificateCrossCheckFields).toEqual([
-      'Operational Environment (OE)',
-      'CAVP Algorithm Cert #',
-      'CMVP Module Cert #',
-      'Tested Version/Commit',
-      'Security Target SHA-256',
+  it('includes the five suggested certificate checks and rejects sample Hub exports as certification evidence', () => {
+    expect(
+      PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.productionCertificateCrossCheckChecklist
+    ).toEqual([
+      'Certificate or module number and status (active, historical or revoked)',
+      'Exact module or product name and version',
+      'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+      'CAVP algorithm certificate numbers for the algorithms you rely on',
+      'CC/EUCC: Security Target and claimed assurance level',
     ])
-    for (const field of PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.requiredCertificateCrossCheckFields) {
-      expect(curiousSummary).toContain(field)
-      expect(ragSummary).toContain(field)
+    for (const summary of [curiousSummary, ragSummary]) {
+      expect(summary).toContain('Hub practice guidance, not a certification-scheme requirement')
+      expect(summary).toContain('Security Target')
+      expect(summary).not.toContain('side-channel protections')
     }
     expect(PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.sampleNonEquivalenceNotice).toContain(
       'never certification evidence'
