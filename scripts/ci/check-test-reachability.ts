@@ -103,15 +103,15 @@ type Gate =
  * `source` field accurate and re-read it when the workflows change.
  */
 export const GATES: Gate[] = [
-  // ci.yml job `test`, matrix shard 1..2: `npx vitest run --shard=N/2`.
+  // ci.yml job `test`, matrix shard 1..3: `npx vitest run --shard=N/3`.
   // Default config, NO positional filter -> every file vitest's own
   // include/exclude resolves. `--shard` only partitions that set, so the union
   // over shards is exactly the unfiltered set. This is the positive control.
   {
     kind: 'vitest',
-    id: 'ci:test (vitest shards 1-2)',
+    id: 'ci:test (vitest shards 1-3)',
     tier: 'github-ci',
-    source: '.github/workflows/ci.yml job "test": npx vitest run --shard=${{ matrix.shard }}/2',
+    source: '.github/workflows/ci.yml job "test": npx vitest run --shard=${{ matrix.shard }}/3',
     config: null,
     filters: [],
   },

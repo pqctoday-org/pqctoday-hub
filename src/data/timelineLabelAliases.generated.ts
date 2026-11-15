@@ -261,6 +261,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Global:3GPP SA3 — 3GPP TR 33.938 Cryptographic Inventory (5G System)',
     'Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study',
   ],
+  'global-3gpp-sa3-release-20-pqc-cryptographic-profiles-target': [
+    'Global:3GPP SA3 — Release 20 PQC Cryptographic Profiles Target (TS 33.210 and TS 33.310, SA#114)',
+  ],
   'global-3gpp-sa3-tr-33-703-v20-0-0-published-study-on-transit': [
     'Global:3GPP SA3 — TR 33.703 V20.0.0 Published (Study on Transitioning to PQC in 3GPP)',
   ],

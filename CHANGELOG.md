@@ -29,6 +29,26 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.209.0] - 2026-11-15
+
+Library documents now list the lessons that use them, citations of retired documents point to the documents that replaced them, the Timeline adds the 3GPP Release 20 post-quantum profiles target, and patent details fill in. Search no longer returns governance requirements the site has retired.
+
+### Changed
+
+- **Two Legal threat records say who vetted their source** [view:/threats] [persona:grc] [persona:researcher]: LEG-001 and LEG-003 now name ETSI as the body that vetted their source, and LEG-001 no longer marks its source as peer reviewed.
+- **Document-analysis lists keep an item whole when it contains commas** [view:/timeline] [view:/library] [view:/threats] [view:/migrate] [persona:researcher] [persona:grc]: a list item that itself contains commas now shows as one chip instead of being split; for example, one ISM December 2024 sentence used to show as two chips.
+
+### Fixed
+
+- **Citations of retired documents point to the version that replaced them** [view:/algorithms] [view:/compliance] [view:/leaders] [persona:researcher] [persona:architect] [persona:grc]: 13 Industry Landscape use-case links, 8 industry standards, 2 Community profiles and 20 maturity-model requirements that cited a retired Library document now cite its successor. Each re-pointed requirement keeps its wording and its quote, which appears in the newer document. The construction pages now cite RFC 10082 for composite signatures in CMS, and the newer AuthKEM draft. Ten requirements whose quote is not in the newer document still cite the original and reach the successor through its "replaced by" link.
+
+### Data
+
+- **The Timeline adds the 3GPP Release 20 post-quantum profiles target** [view:/timeline] [persona:architect] [persona:ops] [persona:researcher]: 3GPP SA3's target to add post-quantum cryptographic profiles to TS 33.210 and TS 33.310 in Release 20 (SA#114, December 2026) joins the Timeline, which now holds 198 events.
+- **Library documents show the Learn modules that use them** [view:/library] [view:/learn] [persona:researcher] [persona:architect] [persona:grc] [persona:ops]: 43 Library documents that lessons already cite now list those lessons under "Learn modules that use this document", so you can go from a standard to the lesson that explains it. Most are in Key Management (18); the rest are in Hybrid Cryptography, PCI certification, FIPS 140-3, payment, code signing, group messaging and more than 20 other modules.
+- **Patent details fill in, and patents that name a post-quantum algorithm are labelled that way** [view:/patents] [persona:researcher] [persona:architect]: 22 patent details that reviewers corrected earlier (NIST round status, quantum relevance, crypto-agility mode and one quantum note) now show on the Patents page, and 55 details the page showed blank are filled where the patent's own document lists them. 16 patents now show "post-quantum algorithm" as their quantum-safe basis because each lists one: 4 had no label, and 12 were shown as lattice or homomorphic encryption (7), QKD (4) or symmetric key strength (1). Seven patents join the post-quantum view and two leave it, because a reviewed correction changed their crypto-agility mode from hybrid; 719 patents are now in scope, up from 714.
+- **Search returns only current governance requirements** [view:/compliance] [persona:grc] [persona:researcher]: the assistant's search index is rebuilt, and it no longer returns 727 maturity-model requirements that the Compliance page had already retired, or the earlier versions of the 20 requirements re-pointed in this release. The OSCAL and SBOM exports are refreshed.
+
 ## [4.208.0] - 2026-11-14
 
 The migration simulation now works in your own run, not only the sample organisation, and keeps Leaders, Patents, Explore and the Algorithms pages inside the run. The Patents, Timeline, Navigate, Threats, Community, Compliance and Library pages get working links, matching counts and exports that write what you see, and the data behind them is corrected: 146 patent titles, 45 EUCC certification records, 12 new and 25 retired Library records, and re-sourced threat records.

@@ -412,10 +412,10 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
     label: 'AuthKEM (KEM-based TLS authentication)',
     outlook: 'pqc-native',
     pqc: [
-      { algorithms: ['ML-KEM'], status: 'draft', proofRefs: ['draft-celi-wiggers-tls-authkem-07'] },
+      { algorithms: ['ML-KEM'], status: 'draft', proofRefs: ['draft-celi-wiggers-tls-authkem-08'] },
     ],
     cycloneDxPrimitive: 'kem',
-    proofRefs: ['draft-celi-wiggers-tls-authkem-07'],
+    proofRefs: ['draft-celi-wiggers-tls-authkem-08'],
     explain: {
       plain:
         'In normal TLS the server proves its identity with a signature. AuthKEM proposes proving it with a KEM instead: the client encapsulates a secret to the server’s certified KEM key, and only the real server can recover it.',
@@ -465,30 +465,21 @@ export const CRYPTO_CONSTRUCTIONS: CryptoConstruction[] = [
       {
         algorithms: ['ML-DSA', 'RSA-sig'],
         status: 'published',
-        proofRefs: [
-          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
-          'draft-ietf-lamps-cms-composite-sigs',
-        ],
+        proofRefs: ['RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra', 'RFC 10082'],
       },
       {
         algorithms: ['ML-DSA', 'ECDSA'],
         status: 'published',
-        proofRefs: [
-          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
-          'draft-ietf-lamps-cms-composite-sigs',
-        ],
+        proofRefs: ['RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra', 'RFC 10082'],
       },
       {
         algorithms: ['ML-DSA', 'EdDSA'],
         status: 'published',
-        proofRefs: [
-          'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
-          'draft-ietf-lamps-cms-composite-sigs',
-        ],
+        proofRefs: ['RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra', 'RFC 10082'],
       },
     ],
     cycloneDxPrimitive: 'signature',
-    proofRefs: ['draft-ietf-lamps-cms-composite-sigs'],
+    proofRefs: ['RFC 10082'],
     explain: {
       plain:
         'A composite signature puts an ML-DSA signature and a classical signature (RSA, ECDSA or EdDSA) together under one key and one algorithm identifier, so the two always travel as a pair.',

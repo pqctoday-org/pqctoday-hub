@@ -29,6 +29,10 @@ describe('balanced names reach all four existing enrichment consumers', () => {
       'ISM December 2024 Update'
     )
     expect(entry?.securityLevels).toContain('RSA modulus 2048-bit minimum (3072-bit for S and TS)')
+    expect(entry?.hybridApproaches).toContain(
+      'Post-quantum traditional hybrid schemes (e.g. ML-KEM with RSA) are not recommended but not prohibited, and at least one algorithm must be an AACA (ISM-1996)'
+    )
+    expect(entry?.quantumThreats).toContain("Shor's algorithm defeating DH, ECDH, ECDSA and RSA")
     expect(
       getTimelineEnrichment(
         'australia-asd-ism-december-2024-update',

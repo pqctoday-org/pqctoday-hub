@@ -101,8 +101,9 @@ The only checks `main`'s branch protection requires: `pr-check`, `pr-test (1)`,
 (security rules), `verify-attestations`, and a clean `build`
 (which includes `tsc -b`), then a short browser tier against that build
 (`playground-pr-desktop`, `playground-pr-mobile`, and `a11y-modules-pr`: the Playground and Business
-Tool contract, and the Learn-module tab, phone and accessibility spec), ~8–10 min. `pr-test`: the unit suite in 2 shards,
-~8 min, in parallel. It exists so a PR can satisfy protection
+Tool contract, and the Learn-module tab, phone and accessibility spec), ~8–10 min. `pr-test`: the unit suite in 3 shards
+(`pr-test (1)` to `pr-test (3)`), in parallel; all three must pass before a
+merge, including `pr-test (3)` while protection does not yet require it. It exists so a PR can satisfy protection
 without an override, and so the proof that a PR builds does not rest on a
 developer machine. Data checks run outside this repository on the same head
 before merge. No `paths-ignore`: a required check that some PRs skip
@@ -119,7 +120,7 @@ to 2026-09-29.
    **release** (anything that deploys app changes), `npm run gate:release-local`
    (`test:local`, ~19 min) also passed on the exact head, run once, just before
    asking for the merge yes.
-2. `pr-check`, `pr-test (1)` and `pr-test (2)` are green and the branch is up
+2. `pr-check`, `pr-test (1)`, `pr-test (2)` and `pr-test (3)` are green and the branch is up
    to date with `main` (`gh pr update-branch <n>` or merge `origin/main`; the
    checks re-run on the new head).
 3. The owner's yes for this PR and head (given directly, or relayed verbatim
