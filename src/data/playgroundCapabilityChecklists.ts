@@ -31,8 +31,8 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'Runs against an in-browser protocol state model; it does not connect to an enterprise KMIP server, HSM partition, or production key database.',
     productionToolRequirements: [
       'OASIS KMIP 3.0+ TTLV/JSON protocol support for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) Managed Cryptographic Objects.',
-      'Automated key-state transition enforcement (Pre-Active -> Active -> Deactivated -> Destroyed) with immutable audit logs.',
-      'Mutual TLS 1.3 with hybrid PQC key exchange (`X25519MLKEM768`) between KMIP clients and enterprise key managers.',
+      'Automated key-state transition enforcement per the KMIP state model (Pre-Active, Active, Deactivated, Compromised, Destroyed, Destroyed Compromised) with tamper-evident audit logs.',
+      'Mutual TLS 1.3 with a hybrid PQC key-exchange group (for example `X25519MLKEM768`) between KMIP clients and key managers, where both ends support it (KMIP 3.0 itself does not mandate TLS 1.3 or hybrid groups).',
     ],
   },
   'hsm-capacity': {
@@ -41,9 +41,9 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Performs deterministic arithmetic sizing from parameter-set byte sizes; it does not benchmark real HSM hardware latency, bus contention, or firmware memory fragmentation.',
     productionToolRequirements: [
-      'PKCS#11 v3.2 HSM firmware with documented NVRAM object overhead for ML-KEM-768/1024, ML-DSA-65/87, and stateful LMS/XMSS trees.',
+      'HSM firmware with vendor-documented NVRAM object overhead for ML-KEM-768/1024, ML-DSA-65/87, and stateful LMS/XMSS trees (PKCS#11 v3.2 defines the mechanisms but not storage overhead).',
       'Load-tested signing/decapsulation ops/sec under multi-tenant partition concurrency on your actual HSM appliance model.',
-      'High-availability HSM cluster replication and backup capacity sized for 3x–15x larger post-quantum key blobs.',
+      'High-availability HSM cluster replication and backup capacity sized for substantially larger post-quantum key and signature objects (for example an ML-DSA-65 signature is 3,309 B against 256 B for RSA-2048).',
     ],
   },
   'hybrid-encrypt': {
@@ -52,8 +52,8 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Browser WASM/WebCrypto execution lacks constant-time hardware guarantees, side-channel protection, and FIPS 140-3 validated module boundaries.',
     productionToolRequirements: [
-      'NIST SP 800-227 / ETSI TS 103 744 / IETF RFC 9794 compliant PQ/T hybrid KEM combiner using HKDF-SHA256/384 or KMAC256.',
-      'FIPS 203 §7.2 encapsulation-key modulus validation and implicit rejection on tampered ML-KEM ciphertexts.',
+      'PQ/T hybrid KEM combiner built from an SP 800-56C-approved key-derivation method (SP 800-227 §4.6.2; ETSI TS 103 744), using HKDF-SHA256/384 or KMAC256; IETF RFC 9794 supplies the terminology.',
+      'FIPS 203 §7.2 encapsulation-key (modulus) check, and implicit rejection in decapsulation (§6.3/§7.3), on tampered ML-KEM ciphertexts.',
       'Authenticated encryption (AES-256-GCM or ChaCha20-Poly1305) with strict nonce-uniqueness enforcement.',
     ],
   },
@@ -98,7 +98,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     productionToolRequirements: [
       'Hardware Root of Trust (Boot ROM / MCU secure enclave) supporting SP 800-208 `LMS/HSS`, `XMSS`, or FIPS 204 `ML-DSA-87` signature verification.',
       'Monotonic anti-rollback security version number (SVN) counters stored in hardware fuses or RPMB/TPM.',
-      'Air-gapped HSM signing appliance enforcing monotonic OTS state tracking for stateful hash-based keys.',
+      'HSM signing appliance (FIPS 140 Level 3+, SP 800-208 §8) that stores the incremented leaf index in non-volatile memory before exporting any signature.',
     ],
   },
   'slh-dsa': {
@@ -107,8 +107,8 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Browser WASM timing depends on host CPU/JIT and does not establish hardware throughput or side-channel fault immunity.',
     productionToolRequirements: [
-      'CAVP-validated FIPS 205 `SLH-DSA` implementation supporting required SHA2/SHAKE `128s/f`, `192s/f`, and `256s/f` parameter sets and RFC 9909 OIDs.',
-      'Explicit context-string (`ctx`, 0–255 bytes) support per FIPS 205 §9.2 for domain separation.',
+      'CAVP-validated FIPS 205 `SLH-DSA` implementation supporting the SLH-DSA SHA2/SHAKE parameter sets your policy needs (`128s/f`, `192s/f`, `256s/f`) and RFC 9909 OIDs.',
+      'Context-string (`ctx`, 0–255 bytes, default empty) support per FIPS 205 §10.2.1 for domain separation.',
       'Transport and storage buffers sized for 7,856 B (`128s`) up to 49,856 B (`256f`) signatures.',
     ],
   },
@@ -116,10 +116,10 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     whatCheckEstablishes:
       'Demonstrates NIST SP 800-208 / RFC 8554 Leighton-Micali (LMS / HSS) Merkle-tree key generation, one-time leaf index advancement, and signature verification.',
     sandboxLimitation:
-      'Browser state resets on reload; in production, reusing a single LMS leaf index due to VM rollback or NVRAM failure catastrophically compromises private-key security.',
+      "Browser state resets on reload; in production, reusing a single LMS leaf index due to VM rollback or NVRAM failure allows signature forgery and breaks the key's security.",
     productionToolRequirements: [
-      'Hardware-enforced monotonic counter inside a FIPS 140-3 Level 3+ HSM that updates NVRAM state BEFORE releasing any LMS/HSS signature.',
-      'Strict prohibition of private-key backup/restore outside dedicated HSM state-synchronized failover hardware.',
+      'A FIPS 140 Level 3+ hardware module that stores the incremented LMS/HSS leaf index in non-volatile memory before releasing any signature (SP 800-208 §8); a monotonic counter is a useful aid, not a requirement.',
+      'No export, backup or cloning of LMS/HSS/XMSS private keying material (SP 800-208 §8); use multi-tree HSS/XMSS^MT with sub-trees on separate modules for redundancy.',
       'Automated exhaustion alerting when remaining LMS leaf capacity drops below operational thresholds.',
     ],
   },
@@ -130,7 +130,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'Executes in browser memory; it does not test third-party X.509 path-validation engines or legacy middlebox ASN.1 parsers.',
     productionToolRequirements: [
       'IETF RFC 10073 (Composite ML-DSA) OID support and strict AND-verification semantics (both component signatures must pass).',
-      'Domain-separation prefix binding per RFC 10073 to prevent signature stripping or cross-protocol replay.',
+      'Prefix/Label domain separation as defined in RFC 10073 §2.2 and §9.4, and no reuse of component keys outside the composite (RFC 10073 §9.4 MUST).',
       'Negative test verification confirming that corrupting either the classical or the ML-DSA component causes overall verification failure.',
     ],
   },
@@ -140,7 +140,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Runs in browser WASM/WebCrypto; it does not enforce hardware key-isolation attributes on derived keys.',
     productionToolRequirements: [
-      'NIST SP 800-227 / ETSI TS 103 744 compliant hybrid KDF combiner binding transcript hashes and public keys into the derivation context.',
+      'SP 800-227 / ETSI TS 103 744 compliant hybrid KDF combiner, preferably one that binds ciphertexts, encapsulation keys and a domain separator into the derivation (SP 800-227 §4.6.2).',
       'HSM PKCS#11 v3.2 key derivation (`CKM_HKDF_DERIVE` / SP 800-108) keeping derived traffic/wrapping keys inside the HSM boundary when required.',
       'Immediate zeroization of intermediate shared secrets (`Z_ecdh`, `Z_mlkem`) after key derivation.',
     ],
@@ -151,19 +151,19 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Uses synthetic attestation quotes in the browser; it does not execute inside physical Intel TDX, AMD SEV-SNP, or Arm CCA silicon.',
     productionToolRequirements: [
-      'Hardware-rooted TEE attestation verification checking platform certificates, TCB SVN levels, and measurement registers (`MRTD`/`RTMR`).',
+      'Hardware-rooted TEE attestation verification checking platform certificates, TCB SVN levels, and measurement registers (for example Intel TDX `MRTD`/`RTMR`).',
       'Cryptographic channel binding (exporter or public-key hash in quote reportData) linking the `X25519MLKEM768` TLS session to the attested enclave.',
       'Post-quantum roadmap for silicon vendor VCEK/ASK attestation root signatures.',
     ],
   },
   'tls-simulator': {
     whatCheckEstablishes:
-      'Runs a real OpenSSL 3.6 WASM in-memory TLS 1.3 handshake (`OSSL_SSL_CTX`) negotiating hybrid (`X25519MLKEM768`) or pure PQC groups and PQC certificates.',
+      'Runs a real OpenSSL 3.6 WASM in-memory TLS 1.3 handshake (`SSL_CTX`) negotiating hybrid (`X25519MLKEM768`) or pure PQC groups and PQC certificates.',
     sandboxLimitation:
       'Uses in-memory BIO buffers without kernel TCP/IP segmentation, middlebox DPI inspection, or real WAN packet loss.',
     productionToolRequirements: [
       'TLS 1.3 hybrid key exchange (`X25519MLKEM768`, codepoint `0x11EC`) enabled on production TLS libraries, CDNs, and ingress controllers.',
-      'RFC 8879 TLS Certificate Compression (Brotli/Zstd) and TCP Initial Congestion Window (`initcwnd >= 10`) tuning for multi-kilobyte PQC cert chains.',
+      'RFC 8879 TLS Certificate Compression (Brotli/Zstd) and TCP Initial Congestion Window (`initcwnd >= 10`) tuning for multi-kilobyte PQC cert chains, enabled where supported, and measured against your own chains.',
       'Active monitoring for middlebox clientHello drops on multi-packet TCP ClientHellos (`> 1,500 B`).',
     ],
   },
@@ -173,9 +173,9 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Browser protocol simulation does not test physical router UDP fragmentation, NAT-T traversal, or hardware IPsec ESP offload.',
     productionToolRequirements: [
-      'RFC 9370 `IKE_INTERMEDIATE` (`ADDKE1..ADDKE7`) support with `ML-KEM-768` / `ML-KEM-1024` in enterprise VPN concentrators (strongSwan, Libreswan, Cisco, Palo Alto, Fortinet).',
+      'IKEv2 additional key exchanges per RFC 9370 (`ADDKE1..ADDKE7`) over `IKE_INTERMEDIATE` (RFC 9242), with ML-KEM-768/1024 (draft-ietf-ipsecme-ikev2-mlkem), in your VPN concentrators; confirm per product (strongSwan 6.x, Cisco IOS XE 26 and Fortinet FortiOS 7.6+ document ML-KEM IKEv2).',
       'RFC 7383 IKEv2 Message Fragmentation and RFC 9329 TCP encapsulation fallback when UDP fragments are dropped on transit paths.',
-      '256-bit ESP data-plane encryption (`ENCR_AES_GCM_16` with 256-bit keys) paired with `PRF_HMAC_SHA2_384/512`.',
+      'AES-256-GCM (`ENCR_AES_GCM_16`, 256-bit keys) for ESP and `PRF_HMAC_SHA2_384/512` for the IKE SA, where policy requires 256-bit strength.',
     ],
   },
   'pqc-ssh-sim': {
@@ -195,18 +195,18 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Runs in browser memory; it does not test physical 5G USIM JavaCard applet constraints or radio-access RRC NAS signaling frames.',
     productionToolRequirements: [
-      '3GPP Rel-19/Rel-20 compliant SIDF (Subscription Identifier De-concealing Function) and USIM support for post-quantum/hybrid SUCI profiles.',
+      'SIDF and USIM support for operator-defined post-quantum SUCI protection schemes (TS 33.501 Annex C.1 allows up to 3,000 octets of scheme output; no standardized PQ profile exists in Rel-19).',
       'HSM-backed Home Network Private Key custody with automated key-identifier (`Home Network Public Key ID`) rotation.',
       'NAS registration payload budget verification for ~1.1 KB (`ML-KEM-768`) SUCI ciphertexts.',
     ],
   },
   'mls-group-messaging': {
     whatCheckEstablishes:
-      'Demonstrates RFC 9420 Messaging Layer Security (MLS) TreeKEM group key establishment, epoch ratcheting, and post-quantum hybrid ciphersuite operations.',
+      'Demonstrates RFC 9420 Messaging Layer Security (MLS) TreeKEM group key establishment and epoch ratcheting, plus draft post-quantum ciphersuites (draft-ietf-mls-pq-ciphersuites).',
     sandboxLimitation:
       'Runs in a single browser session; it does not test distributed Delivery Service message ordering or multi-device offline queue synchronization.',
     productionToolRequirements: [
-      'RFC 9420 MLS implementation supporting hybrid PQC KEM (`X25519MLKEM768`) and `ML-DSA` LeafNode/KeyPackage signatures.',
+      'MLS (RFC 9420) implementation that also supports the draft PQ ciphersuites (draft-ietf-mls-pq-ciphersuites) with a hybrid ML-KEM KEM and `ML-DSA` signatures.',
       'Strict epoch-authenticity and TreeKEM parent-hash verification to detect malicious Delivery Service tree tampering.',
       'Automated PCS (Post-Compromise Security) self-update cadence policies for long-lived messaging groups.',
     ],
@@ -217,8 +217,8 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Uses an in-browser software TPM simulator; it does not measure discrete SPI/I2C TPM 2.0 chip latency or physical bus interposer protection.',
     productionToolRequirements: [
-      'TCG TPM 2.0 Library Rev 1.83+ firmware/hardware support for post-quantum algorithms (`ML-DSA`, `ML-KEM`, `LMS/XMSS`) as silicon ships.',
-      'Hybrid TPM + host software/HSM key-wrapping patterns where existing soldered TPM 2.0 chips only support RSA-2048 / ECC P-256.',
+      'TCG TPM 2.0 Library Version 185 or later firmware/hardware supporting post-quantum algorithms (`ML-DSA`, `HashML-DSA`, `ML-KEM`) as silicon ships.',
+      'Hybrid TPM + host software/HSM key-wrapping patterns where existing soldered TPM 2.0 chips support only classical algorithms (typically RSA-2048 / ECC P-256 at minimum).',
       'PCR-bound sealing policies verified against signed UEFI Secure Boot and OS kernel measurements.',
     ],
   },
@@ -228,7 +228,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Browser `crypto.getRandomValues` / simulated noise sources do not expose physical ring-oscillator or avalanche-diode hardware telemetry.',
     productionToolRequirements: [
-      'NIST SP 800-90B ESV-validated physical entropy sources feeding SP 800-90A `CTR_DRBG` / `Hash_DRBG` with at least 256-bit security strength.',
+      'NIST SP 800-90B ESV-validated physical entropy sources feeding SP 800-90A `CTR_DRBG` / `Hash_DRBG` with a security strength at least that of the target parameter set (FIPS 203 §3.3: 128, 192 or 256 bits; use 256 for ML-KEM-1024 and CNSA 2.0 profiles).',
       'Continuous hardware health testing (Repetition Count Test and Adaptive Proportion Test) with instant fail-closed behavior.',
       'Verified OS / hypervisor entropy forwarding (`virtio-rng` / CPU `RDSEED`) into containerized workloads.',
     ],
@@ -239,30 +239,30 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Simulates quantum noise distributions mathematically in the browser; no physical optical QRNG hardware is attached.',
     productionToolRequirements: [
-      'SP 800-90C / BSI AIS 31 compliant XOR/KDF entropy mixing so external QRNG hardware supplements—never replaces—validated local OS/HSM TRNGs.',
+      'Entropy combination per SP 800-90C (RBG3(XOR)/RBG3(RS)) and CMVP IG D.O, where each source (including a QRNG) is itself SP 800-90B validated; a local OS/HSM source is a design choice, not a requirement.',
       'Authenticated, integrity-protected transport if entropy is streamed from an external appliance over a network or PCIe bus.',
-      'Continuous SP 800-90B non-IID min-entropy monitoring prior to conditioning.',
+      'Continuous SP 800-90B health tests (Repetition Count Test, Adaptive Proportion Test) on each raw source prior to conditioning.',
     ],
   },
   'entropy-test': {
     whatCheckEstablishes:
-      'Executes statistical and NIST SP 800-90B style min-entropy estimators (Most Common Value, Collision, Markov, Compression, RCT, APT) on sample byte streams.',
+      'Executes statistical and NIST SP 800-90B style min-entropy estimators (Most Common Value, Collision, Markov, Compression) and the RCT/APT health tests on sample byte streams.',
     sandboxLimitation:
-      'Browser-scale sample windows are for educational inspection; formal NIST ESV certification requires at least 1,000,000 consecutive raw noise samples analyzed by an accredited lab.',
+      'Browser-scale sample windows are for educational inspection; formal NIST entropy source validation (ESV) needs at least 1,000,000 raw noise samples (SP 800-90B §3.1.1), plus restart tests, assessed by an NVLAP-accredited laboratory.',
     productionToolRequirements: [
       'Formal NIST Entropy Source Validation (ESV) per SP 800-90B using the official NIST C++ `ea_iid` / `ea_non_iid` assessment suite.',
       'Stochastic model justification documenting the physical noise mechanism and quantization process.',
-      'Configured RCT and APT cutoff thresholds matching the target false-positive rate (2^-20 to 2^-40).',
+      'Configured RCT and APT cutoff thresholds matching the target false-positive probability (SP 800-90B recommends 2^-20 to 2^-40).',
     ],
   },
   'drbg-demo': {
     whatCheckEstablishes:
       'Demonstrates NIST SP 800-90A Deterministic Random Bit Generator (`HMAC_DRBG` / `CTR_DRBG`) state transitions: `Instantiate`, `Reseed`, `Generate`, and prediction resistance.',
     sandboxLimitation:
-      'Educational state visualizer in the browser; production DRBGs must execute inside a memory-protected cryptographic boundary.',
+      'Educational state visualizer in the browser; production DRBGs should execute inside a validated cryptographic module boundary (FIPS 140-3).',
     productionToolRequirements: [
       'CAVP-validated NIST SP 800-90A Rev. 1 DRBG instantiated at 256-bit security strength (`AES-256 CTR_DRBG` or `SHA-512 Hash/HMAC_DRBG`).',
-      'Enforced reseed intervals (at most 2^48 requests) and prediction-resistance reseeding before high-value PQC Root CA key generation.',
+      'Reseed intervals at or below the SP 800-90A limit of 2^48 requests, and, as good practice, a prediction-resistance reseed before high-value PQC Root CA key generation.',
       'Zeroization of internal DRBG working state (`V`, `Key` / `C`) upon uninstantiation or error.',
     ],
   },
@@ -272,7 +272,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'In-browser demonstration using synthetic streams; it does not isolate hardware failure domains across shared power rails or clocks.',
     productionToolRequirements: [
-      'NIST SP 800-90C / FIPS 140-3 IG D.K compliant vetted conditioning components (`HMAC`, `KMAC`, `AES-CBC-MAC`) when combining entropy sources.',
+      'SP 800-90B vetted conditioning components (`HMAC`, `CMAC`, `AES-CBC-MAC`, approved hash, `Hash_df`, `Block_Cipher_df`) and FIPS 140-3 IG D.O / SP 800-90C when combining entropy sources.',
       'Physical independence between combined noise sources (separate silicon ring oscillators, discrete TPM TRNG, and external HSM/QRNG).',
       'Independent health testing on each raw noise source PRIOR to the combiner stage.',
     ],
@@ -283,8 +283,8 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'In-browser CA uses ephemeral keys in WASM memory; it does not provide HSM root key protection, CRL distribution points, or audited CA ceremony controls.',
     productionToolRequirements: [
-      'CA software (EJBCA, Dogtag, Microsoft ADCS/Cloud PKI, AWS Private CA, DigiCert) supporting RFC 9881 (`ML-DSA`) and RFC 9909 (`SLH-DSA`) X.509 OIDs.',
-      'FIPS 140-3 Level 3 HSM protection for Root and Issuing CA private keys with M-of-N quorum activation.',
+      'CA software that supports RFC 9881 (`ML-DSA`) and, where needed, RFC 9909 (`SLH-DSA`) X.509 OIDs; check each product (for example EJBCA and DigiCert Trust Lifecycle Manager list both, Microsoft AD CS and AWS Private CA list ML-DSA).',
+      'Root and Issuing CA private keys in a FIPS 140-3 validated HSM (Level 3 or higher where your CA policy requires it), with multi-person activation.',
       'Automated CRL/OCSP and short-lived certificate issuance pipelines validated for multi-kilobyte PQC certificate chains.',
     ],
   },
@@ -301,18 +301,18 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
   },
   'hybrid-certs': {
     whatCheckEstablishes:
-      'Inspects dual/hybrid X.509 certificate structures including IETF Composite ML-DSA (RFC 10073), Chameleon/Related Certificates (RFC 9763), and parallel chains.',
+      'Inspects dual/hybrid X.509 certificate structures including IETF Composite ML-DSA (RFC 10073), Related Certificates (RFC 9763), and parallel chains.',
     sandboxLimitation:
       'Browser ASN.1 inspection and mock issuance do not validate whether your specific production TLS clients, browsers, or Java/Go/C# trust stores accept the extension.',
     productionToolRequirements: [
       'End-to-end relying-party compatibility testing confirming whether target clients support RFC 10073 Composite ML-DSA, RFC 9763 Related Certificates, or parallel dual-cert deployment.',
-      'CA policy enforcement ensuring both component keys in a composite certificate undergo proof-of-possession verification during enrollment.',
-      'Clear revocation semantics so revoking either component key invalidates the composite credential.',
+      'CA policy enforcement that the composite key pair is fresh (no reuse of component keys, RFC 10073 §9.4) and that proof of possession covers the composite signature.',
+      'Revocation of the composite certificate invalidates the whole composite credential.',
     ],
   },
   'merkle-proof': {
     whatCheckEstablishes:
-      'Constructs a SHA-256 Merkle tree over a batch of certificates and generates/verifies compact logarithmic O(log2 N) inclusion proofs alongside a single PQC tree-head signature.',
+      'Constructs a SHA-256 Merkle tree over a batch of certificates and generates/verifies compact logarithmic (O(log N)) inclusion proofs alongside a single PQC tree-head signature.',
     sandboxLimitation:
       'In-browser tree builder over sample entries; it does not operate a distributed Transparency Service or TLS edge proof-stitching pipeline.',
     productionToolRequirements: [
@@ -327,8 +327,8 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Runs in browser memory; it does not test smartphone Secure Element hardware signing speed or physical NFC reader antenna power limits.',
     productionToolRequirements: [
-      'COSE (`RFC 9052`) and JOSE post-quantum signature algorithm registration support in issuer backends and mobile wallet SDKs.',
-      'BLE / NFC APDU fragmentation and session-establishment latency tested at `< 500 ms` on physical reader terminals.',
+      'COSE (RFC 9052) and JOSE (draft PQ algorithm registrations) support for post-quantum signatures in issuer backends and mobile wallet SDKs.',
+      'BLE / NFC APDU fragmentation and session-establishment latency measured on physical reader terminals against your own transaction-time target.',
       'Hardware-backed holder binding (DeviceKey in Secure Enclave / StrongBox) with PQC transition path.',
     ],
   },
@@ -350,7 +350,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'Browser-based derivation uses synthetic mnemonics; never enter real seed phrases into any browser tool.',
     productionToolRequirements: [
       'Hardened HMAC-SHA512 / KMAC256 seed derivation generating deterministic 32/64-byte child seeds (`d`, `z` for ML-KEM; `xi` for ML-DSA) inside an air-gapped hardware wallet or HSM.',
-      'Recognition that non-hardened public-key parent-to-child derivation (BIP-32 xpub) does not directly translate to standard NIST FIPS 204/205 parameter sets.',
+      'Recognition that non-hardened public-key parent-to-child derivation (BIP-32 xpub) does not directly translate to NIST FIPS 203/204/205 key generation.',
       'FIPS 140-3 Level 3+ HSM seed backup and M-of-N Shamir/threshold recovery for institutional custody.',
     ],
   },
@@ -361,7 +361,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'Browser simulation of transaction layout and signature sizes; it does not submit transactions to a live validator cluster.',
     productionToolRequirements: [
       'Smart-contract / program-derived account (PDA) abstraction allowing authority rotation from Ed25519 keys to post-quantum verification keys.',
-      'Transaction chunking or pre-staged verification state to accommodate more than 2.4 KB PQC signatures across 1,232-byte packet limits.',
+      'Transaction chunking or pre-staged verification state to accommodate ML-DSA signatures of 2.4 KB and larger (ML-DSA-44 is 2,420 B) across 1,232-byte packet limits.',
       'Institutional custody HSM support for both Ed25519 and FIPS 204/205 post-quantum signing.',
     ],
   },
@@ -383,7 +383,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'In-browser token signing and verification; it does not test production reverse-proxy HTTP header limits (e.g., NGINX `large_client_header_buffers`) or distributed JWKS caching.',
     productionToolRequirements: [
       'API gateway and ingress proxy buffer sizing validated for ~4.6 KB (`ML-DSA-65`) Base64URL-encoded `Authorization: Bearer` headers.',
-      'Strict JWS algorithm allowlisting (`ML-DSA-65`, rejecting `none` and symmetric `HS256` key-confusion attacks) in token verifiers.',
+      'Strict JWS algorithm allowlisting (`ML-DSA-65`, per the JOSE ML-DSA draft) in token verifiers.',
       'JWKS discovery endpoints serving post-quantum public keys with automated `kid` rollover.',
     ],
   },
@@ -394,17 +394,17 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'Both client and mock CA run in the same browser WASM process with fictional credentials; it does not test production CA policy engines, RA approval queues, or network mTLS.',
     productionToolRequirements: [
       'Production CA support for CMPv3 (RFC 9810 / RFC 9483) `POPOPrivKey` `encrCert` proof-of-possession and strict `certConf` hash verification when issuing `ML-KEM` certificates.',
-      'EST (RFC 7030) and ACME (RFC 8555) support for `ML-DSA` (RFC 9881) PKCS#10 CSRs with mutual TLS or cryptographic account authentication.',
+      'EST (RFC 7030) and ACME (RFC 8555) support for `ML-DSA` (RFC 9881 identifiers) PKCS#10 CSRs, with mutual TLS for EST and account-key JWS authentication for ACME.',
       'Negative enrollment testing confirming the CA rejects mismatched `certConf` hashes, invalid CSR signatures, and unauthorized renewal signers.',
     ],
   },
   'email-signing': {
     whatCheckEstablishes:
-      'Executes real OpenSSL 3.6 WASM CMS (`RFC 5652` / `RFC 9629` / `RFC 9936`) `SignedData` (`ML-DSA`, `SLH-DSA`) and `AuthEnvelopedData` (`ML-KEM-768` `KEMRecipientInfo`) operations.',
+      'Executes real OpenSSL 3.6 WASM CMS (RFC 5652; RFC 9882 and RFC 9814 for SignedData; RFC 9629 / RFC 9936 for `KEMRecipientInfo`) `SignedData` (`ML-DSA`, `SLH-DSA`) and `AuthEnvelopedData` (`ML-KEM-768`) operations.',
     sandboxLimitation:
       'Operates on sample payloads in browser WASM; it does not test enterprise email gateway (SEG) MIME parsing, Outlook/Thunderbird client plugins, or corporate LDAP key directories.',
     productionToolRequirements: [
-      'S/MIME 4.0 and CMS implementation supporting RFC 9629 `KEMRecipientInfo` (`1.2.840.113549.1.9.16.1.54` / `ori`) with `ML-KEM-768/1024` (RFC 9936) and `ML-DSA` (RFC 9881).',
+      'S/MIME 4.0 and CMS implementation supporting RFC 9629 `KEMRecipientInfo` (`id-ori-kem`, 1.2.840.113549.1.9.16.13.3) with `ML-KEM-768/1024` (RFC 9936) and `ML-DSA` (RFC 9882; RFC 9881 for certificates).',
       'Secure Email Gateway (SEG) content-inspection compatibility with post-quantum S/MIME envelopes.',
       'Enterprise KMS/HSM key escrow and recovery for employee `ML-KEM` decapsulation keys so encrypted mail remains recoverable after device loss.',
     ],
@@ -438,7 +438,7 @@ export function getPlaygroundCapabilityChecklist(toolId: string): PlaygroundCapa
       'Runs in an isolated educational container with synthetic keys and test traffic; it does not validate your production network topology, hardware HSMs, or live service SLAs.',
     productionToolRequirements: [
       'FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA) support verified in your production cryptographic libraries and network gateways.',
-      'Automated positive Known-Answer Tests (KATs) and negative tamper/downgrade rejection tests in your staging CI/CD pipeline.',
+      'Automated known-answer tests (KATs) and negative tests (corrupted inputs, downgrade attempts) in your staging CI/CD pipeline.',
       'Centralized CBOM and telemetry verification confirming post-quantum algorithm negotiation across production endpoints.',
     ],
   }

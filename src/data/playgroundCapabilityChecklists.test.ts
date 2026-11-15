@@ -69,4 +69,38 @@ describe('Playground production-tool capability checklists', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(spec.productionToolRequirements.length)
     expect(screen.queryByRole('button')).toBeNull()
   })
+
+  it('keeps the 4.210 fact corrections and drops the claims they replaced', () => {
+    const all = [
+      ...Object.values(PLAYGROUND_CAPABILITY_CHECKLISTS),
+      getPlaygroundCapabilityChecklist('sbx-unlisted-scenario'),
+    ]
+      .flatMap((s) => [
+        s.whatCheckEstablishes,
+        s.sandboxLimitation,
+        ...s.productionToolRequirements,
+      ])
+      .join('\n')
+    // corrected references
+    expect(all).toContain('FIPS 205 §10.2.1')
+    expect(all).toContain('1.2.840.113549.1.9.16.13.3')
+    expect(all).toContain('TPM 2.0 Library Version 185')
+    expect(all).toContain('(`SSL_CTX`)')
+    expect(all).toContain('Related Certificates (RFC 9763)')
+    // replaced wording must not come back
+    for (const gone of [
+      'FIPS 205 §9.2',
+      '1.2.840.113549.1.9.16.1.54',
+      'Rev 1.83',
+      'OSSL_SSL_CTX',
+      'Chameleon',
+      'catastrophically',
+      'IG D.K',
+      '3x–15x',
+      '< 500 ms',
+    ]) {
+      expect(all, gone).not.toContain(gone)
+    }
+    expect(all).not.toMatch(/\$|\\(?:ge|le|log|frac)\b/)
+  })
 })
