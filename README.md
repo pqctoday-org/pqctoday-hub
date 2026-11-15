@@ -114,7 +114,7 @@ Release **4.209.0** · source-data snapshot through **2026-11-15**. These figure
 
 - **Learn:** 75 instructional modules and 1,159 quiz questions.
 - **Core references:** 130 algorithm records, 198 timeline events and 1,498 active Library records.
-- **Educational catalogues:** 901 active products, 189 active compliance references, 74 active threat records and 361 active community profiles.
+- **Educational catalogues:** 901 active products, 189 active compliance references, 75 active threat records and 361 active community profiles.
 - **Main glossary:** 648 terms.
 - **Assistant corpus:** 19,130 chunks across 46 source collections; 99.97% carry a Hub deep link.
 
