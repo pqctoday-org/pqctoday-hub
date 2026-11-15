@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'quantum-threats',
-  contentVersion: 21,
+  contentVersion: 22,
   lm_id: 'LM-002',
   title: 'Quantum Threats',
   description:

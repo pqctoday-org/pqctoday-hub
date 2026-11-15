@@ -10,9 +10,19 @@ const PRIORITY_STYLES: Record<number, string> = {
   3: 'border-l-border',
 }
 
+/**
+ * Border colour for a (possibly fractional) priority. Profile nudges leave
+ * fractions such as 0.7 or 1.6, so the value is rounded and clamped into the
+ * 1..3 tiers that have a style. Sorting still uses the raw value.
+ */
+function priorityBorderClass(priority: number): string {
+  const tier = Number.isFinite(priority) ? Math.min(3, Math.max(1, Math.round(priority))) : 3
+  return PRIORITY_STYLES[tier] ?? 'border-l-border'
+}
+
 function ActionRow({ item }: { item: ActionItem }) {
   const navigate = useNavigate()
-  const borderClass = PRIORITY_STYLES[item.priority] ?? 'border-l-border'
+  const borderClass = priorityBorderClass(item.priority)
   const drivers = item.drivers ?? []
 
   return (

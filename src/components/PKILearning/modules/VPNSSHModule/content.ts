@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'vpn-ssh-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-11',
+  lastEdited: '2026-11-15',
 
   // Expanded from a single line 2026-08-23. The one-line form is why the five
   // declarations below first landed in algorithms[] — an applier that looked for the
@@ -38,7 +38,7 @@ export const content: ModuleContent = {
     // revision -12 and ikev2-mlkem at -09. The library ID below still carries the
     // older pqc-auth revision until the library row is refreshed; it links to the
     // Datatracker page, which always shows the latest revision.
-    getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-08'),
+    getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-12'),
     getStandard('draft-ietf-ipsecme-ikev2-mlkem-09'),
     // RFC 9329 (obsoletes RFC 8229): the reliable-transport route the limits section names
     getStandard('RFC-9329'),

@@ -209,7 +209,7 @@ const VALID_ARCHETYPES = new Set<SimArchetype>([
   'EU',
 ])
 
-const VALID_HYBRID = new Set<HybridStance>(['required', 'interim', 'discouraged'])
+const VALID_HYBRID = new Set<HybridStance>(['required', 'recommended', 'interim', 'discouraged'])
 const VALID_END_STATE = new Set<EndState>(['hybrid', 'pure'])
 
 const modules = import.meta.glob('./jurisdictions_*.csv', {
@@ -401,12 +401,14 @@ export const REGION_COUNTRIES_MAP: Record<PickerRegion, string[]> = (() => {
  * EU now has its own entry (hybrid=required, endState=pure) distinct from DE.
  */
 export const JURISDICTION_RULES: Record<string, JurisdictionRule> = Object.fromEntries(
-  ACTIVE_ALL.filter((j) => j.hybrid && j.endState && j.note).map((j) => [
+  // A hybrid stance is enough for a rule: an authority that states no end state
+  // still has a position the sim can check choices against.
+  ACTIVE_ALL.filter((j) => j.hybrid && j.note).map((j) => [
     j.code,
     {
       authority: j.authority,
       hybrid: j.hybrid as HybridStance,
-      endState: j.endState as EndState,
+      endState: j.endState,
       note: j.note,
       force: j.force,
     } satisfies JurisdictionRule,
@@ -421,10 +423,12 @@ export const JURISDICTION_RULES: Record<string, JurisdictionRule> = Object.fromE
  */
 export const JURISDICTION_AUTHORITY_NOTE: Record<string, { authority: string; note: string }> =
   Object.fromEntries(
-    ACTIVE_ALL.filter((j) => j.authority && j.note && !j.hybrid && !j.endState).map((j) => [
-      j.code,
-      { authority: j.authority, note: j.note },
-    ])
+    ACTIVE_ALL.filter(
+      // Keyed by sim archetype, so only rows that ARE an archetype belong here:
+      // the sim's country is always an archetype code, and a reference-only row's
+      // note is catalogue bookkeeping, not a jurisdiction summary.
+      (j) => j.code === j.simArchetype && j.authority && j.note && !j.hybrid && !j.endState
+    ).map((j) => [j.code, { authority: j.authority, note: j.note }])
   )
 
 /**

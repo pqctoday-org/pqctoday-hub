@@ -28,9 +28,7 @@ describe('balanced names reach all four existing enrichment consumers', () => {
       'ASD',
       'ISM December 2024 Update'
     )
-    expect(entry?.securityLevels).toContain(
-      'Effective security strength targets: 112 bits (non-classified, OFFICIAL: Sensitive, PROTECTED)'
-    )
+    expect(entry?.securityLevels).toContain('RSA modulus 2048-bit minimum (3072-bit for S and TS)')
     expect(
       getTimelineEnrichment(
         'australia-asd-ism-december-2024-update',

@@ -28,7 +28,7 @@ export const COLUMN_LABELS: Record<ColumnId, string> = {
   assignee: 'Assignee',
   agility: 'Crypto Agility',
   impact: 'Impact',
-  issueDate: 'Issue Date',
+  issueDate: 'Granted / Published',
   priorityDate: 'Priority Date',
   pqcAlgorithms: 'PQC Algorithms',
   classicalAlgorithms: 'Classical Algorithms',
@@ -88,7 +88,13 @@ export const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Filing Bibliographic Source', accessor: (p) => p.filingJurisdictionSourceUrl ?? '' },
   { header: 'Inventors', accessor: (p) => p.inventors },
   { header: 'Priority Date', accessor: (p) => p.priorityDate },
-  { header: 'Issue Date', accessor: (p) => p.issueDate },
+  {
+    header: 'Publication Type',
+    accessor: (p) =>
+      p.publicationKind === 'published_application' ? 'Published application' : 'Granted patent',
+  },
+  { header: 'Filing Date', accessor: (p) => p.filingDate },
+  { header: 'Grant or Publication Date', accessor: (p) => p.issueDate },
   { header: 'Crypto Agility', accessor: (p) => p.cryptoAgilityMode },
   { header: 'Quantum Relevance', accessor: (p) => p.quantumRelevance },
   { header: 'Impact Level', accessor: (p) => p.impactLevel },
@@ -99,6 +105,12 @@ export const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Application Domain', accessor: (p) => p.applicationDomain.join('; ') },
   { header: 'Threat Model', accessor: (p) => p.threatModel.join('; ') },
   { header: 'Summary', accessor: (p) => p.summary },
+  {
+    header: 'PQC Migration Score (1-10)',
+    accessor: (p) => (p.pqcMigrationScore == null ? '' : String(p.pqcMigrationScore)),
+  },
+  { header: 'PQC Migration Reason', accessor: (p) => p.pqcMigrationReason },
+  { header: 'Performance Claims', accessor: (p) => p.performanceClaims.join('; ') },
 ]
 
 // "PQC only" keeps patents that actually involve post-quantum crypto:
@@ -110,3 +122,48 @@ export function isPqcPatent(p: PatentItem): boolean {
     p.cryptoAgilityMode === 'hybrid'
   )
 }
+
+/** Columns in the order PatentsTable renders them. */
+export const COLUMN_ORDER: ColumnId[] = [
+  'num',
+  'title',
+  'assignee',
+  'pqcAlgorithms',
+  'classicalAlgorithms',
+  'quantumRelevance',
+  'threatModel',
+  'applicationDomain',
+  'agility',
+  'impact',
+  'issueDate',
+  'priorityDate',
+  'quantumTechnology',
+  'impactScore',
+  'inventors',
+]
+
+/**
+ * Fixed widths (px) for every column except Title, which takes the rest.
+ * PatentsTable uses fixed layout: only the rows in view are rendered, and auto
+ * layout would size columns from whichever rows happen to be on screen. With
+ * the default columns at 1440 px the old auto widths left Title about 70 px.
+ */
+export const COLUMN_WIDTH_PX: Record<Exclude<ColumnId, 'title'>, number> = {
+  num: 48,
+  assignee: 150,
+  pqcAlgorithms: 130,
+  classicalAlgorithms: 130,
+  quantumRelevance: 105,
+  threatModel: 120,
+  applicationDomain: 120,
+  agility: 110,
+  impact: 90,
+  issueDate: 115,
+  priorityDate: 105,
+  quantumTechnology: 130,
+  impactScore: 75,
+  inventors: 160,
+}
+
+/** Title never gets narrower than this; below it the table scrolls sideways. */
+export const TITLE_MIN_PX = 240

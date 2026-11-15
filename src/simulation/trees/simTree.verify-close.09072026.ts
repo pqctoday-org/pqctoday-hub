@@ -99,6 +99,14 @@ const TREE: PhaseTree = {
               to: '/business/tools/data-at-rest-strategy',
               artifactType: 'data-at-rest-strategy',
             },
+            {
+              kind: 'measure',
+              label:
+                'Confirm the estate is actually migrated — closure needs 80% of connections decided, not just a dossier',
+              to: '/simulation',
+              metricId: 'migration-coverage-pct',
+              minValue: 80,
+            },
           ],
         },
       ],

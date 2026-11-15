@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Inline three-state pill for an artifact's approval status (draft → in-review
- * → approved). Drives `useModuleStore.updateExecutiveDocument` to advance
- * state and (optionally) record a reviewer name.
+ * Inline three-state pill for an artifact's practice state (draft → in-review
+ * → approved). These states teach how a document moves through review; they do
+ * not record a real review. Drives `useModuleStore.updateExecutiveDocument` to
+ * advance state and (optionally) record an example reviewer role.
  *
  * Two render modes:
  *   - `chip` (read-only): renders just the colored badge for a card
@@ -11,8 +12,12 @@
 import { useState, useCallback } from 'react'
 import { Check, Clock, Edit3, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import type { ExecutiveDocumentApprovalStatus } from '@/services/storage/types'
+import { EXAMPLE_REVIEWER_ROLES, exampleReviewerRole } from '@/data/exampleReviewerRoles'
+
+const PRACTICE_STATE_TIP =
+  'Practice states for learning how a document moves through review. They do not record a real review.'
 
 const STATUS_LABEL: Record<ExecutiveDocumentApprovalStatus, string> = {
   draft: 'Draft',
@@ -59,13 +64,18 @@ export function ApprovalStatusControl({
   onAdvance,
   onReset,
 }: ApprovalStatusControlProps) {
-  const [reviewerInput, setReviewerInput] = useState(reviewer ?? '')
+  // Only a role on the list is preselected; a name saved earlier is not offered back.
+  const [roleChoice, setRoleChoice] = useState(() => {
+    const role = exampleReviewerRole(reviewer)
+    return role && EXAMPLE_REVIEWER_ROLES.includes(role) ? role : ''
+  })
   const [editing, setEditing] = useState(false)
   const Icon = STATUS_ICON[status]
   const next = NEXT_STATUS[status]
+  const shownRole = exampleReviewerRole(reviewer)
 
   const titleParts: string[] = [STATUS_LABEL[status]]
-  if (reviewer) titleParts.push(`reviewer: ${reviewer}`)
+  if (shownRole) titleParts.push(`example reviewer role: ${shownRole}`)
   if (approvedAt) {
     titleParts.push(`approved ${new Date(approvedAt).toLocaleDateString('en-US')}`)
   }
@@ -73,12 +83,13 @@ export function ApprovalStatusControl({
 
   const advance = useCallback(() => {
     if (!onAdvance || !next) return
-    onAdvance(next, reviewerInput.trim() || undefined)
+    onAdvance(next, roleChoice || undefined)
     setEditing(false)
-  }, [onAdvance, next, reviewerInput])
+  }, [onAdvance, next, roleChoice])
 
   return (
-    <div className="inline-flex items-center gap-1.5 flex-wrap">
+    <div className="inline-flex items-center gap-1.5 flex-wrap" title={PRACTICE_STATE_TIP}>
+      <span className="text-[10px] text-muted-foreground">Practice state</span>
       <span
         className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border ${STATUS_STYLE[status]}`}
         title={title}
@@ -86,9 +97,9 @@ export function ApprovalStatusControl({
         <Icon size={11} />
         {STATUS_LABEL[status]}
       </span>
-      {reviewer && (
+      {shownRole && (
         <span className="text-[10px] text-muted-foreground" title={title}>
-          · {reviewer}
+          · {shownRole}
         </span>
       )}
       {onAdvance && next && !editing && (
@@ -109,11 +120,15 @@ export function ApprovalStatusControl({
       )}
       {editing && (
         <span className="inline-flex items-center gap-1">
-          <Input
-            value={reviewerInput}
-            onChange={(e) => setReviewerInput(e.target.value)}
-            placeholder="Reviewer name (optional)"
-            className="h-6 text-[10px] w-44"
+          <FilterDropdown
+            items={EXAMPLE_REVIEWER_ROLES as string[]}
+            selectedId={roleChoice || 'All'}
+            onSelect={(id) => setRoleChoice(id === 'All' ? '' : id)}
+            defaultLabel="Example reviewer role (optional)"
+            ariaLabel="Example reviewer role"
+            size="sm"
+            noContainer
+            className="w-44"
           />
           <Button variant="outline" size="sm" className="h-6 px-2 text-[10px]" onClick={advance}>
             Confirm

@@ -42,6 +42,13 @@
         "reason": "Sixty-seven rows kept only an internal review log in this note column; the log is removed from the public data. Their values and sources are unchanged.",
         "until": "2026-11-13"
       }
+    },
+    "compliance": {
+      "timeline_refs": {
+        "expectedEmptied": 16,
+        "reason": "Reviewed 2026-11-14: these rows pointed only at timeline events that do not exist, so the broken links were removed rather than kept as dead links; seven other rows were re-pointed to the right event.",
+        "until": "2026-11-16"
+      }
     }
   }
 }

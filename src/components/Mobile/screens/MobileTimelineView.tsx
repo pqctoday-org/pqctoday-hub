@@ -10,6 +10,7 @@ import {
   findTimelineEvent,
   phaseRowKey,
   resolveCountryParam,
+  retiredTimelineEventSuccessor,
   type ResolvedTimelineEvent,
 } from '@/data/timelineData'
 import { applyTimelineScope } from '@/data/timelineScope'
@@ -18,6 +19,8 @@ import {
   REGION_COUNTRY_MAP,
   PERSONA_TIMELINE_REGION,
 } from '@/data/personaConfig'
+import { timelineRegionCountries } from '@/data/timelineRegionCountries'
+import { searchLane } from '@/data/timelineViewFilter'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { Region } from '@/store/usePersonaStore'
@@ -88,9 +91,10 @@ function nextTwoPhases(country: GanttCountryData | undefined) {
  * (`PERSONA_TIMELINE_REGION`), else every country — same precedence chain
  * TimelineView.tsx uses for its own regionFilter: `?region=` (a known
  * region) first, `?prefs=off` → every country, then stored region, then
- * persona default. 'global' is treated as "no region filter," matching
- * TimelineView's own check. `?q=` narrows the list with desktop's lexical
- * match (country or body name), shown with a Clear search control.
+ * persona default. A stored or persona 'global' means "no region filter", as
+ * on desktop; an explicit `?region=global` shows the international bodies.
+ * `?q=` narrows the list with desktop's search (lane names, then each
+ * record's own text), shown with a Clear search control.
  *
  * Deep links (same params as desktop): `?country=` shows just that country;
  * `?event=<event_id|title>` is resolved against the unscoped data, widened
@@ -108,13 +112,13 @@ function parseRegionParam(raw: string | null): Region | 'All' | null {
   return KNOWN_REGIONS.has(raw) ? (raw as Region) : null
 }
 
-/** Desktop TimelineView's lexical ?q= match: country name or any body name. */
-function matchesTimelineSearch(d: GanttCountryData, q: string): boolean {
-  const qLc = q.toLowerCase()
-  return (
-    d.country.countryName.toLowerCase().includes(qLc) ||
-    d.country.bodies.some((b) => b.name.toLowerCase().includes(qLc))
-  )
+/** Desktop's ?q= search: lane names, then each record's own text. */
+function searchData(data: GanttCountryData[], q: string): GanttCountryData[] {
+  if (!q) return data
+  return data.flatMap((d) => {
+    const hit = searchLane(d, q)
+    return hit ? [hit] : []
+  })
 }
 
 export function MobileTimelineView() {
@@ -183,17 +187,16 @@ export function MobileTimelineView() {
     return transformToGanttData(applyTimelineScope(timelineData, { categories: [...cats] }))
   }, [defaultScoped, widenCategory, targetEvent])
 
+  // A STORED 'global' (every visitor's default) means no region filter, as on
+  // desktop; only an explicit ?region=global narrows to the international bodies.
+  const regionScope = region === 'global' && urlRegion !== 'global' ? 'All' : region
   const regionData = useMemo(() => {
-    if (region === 'All' || region === 'global') return ganttData
-    const allowed = new Set(REGION_COUNTRIES_MAP[region])
+    if (regionScope === 'All') return ganttData
+    const allowed = new Set(timelineRegionCountries(regionScope))
     return ganttData.filter((d) => allowed.has(d.country.countryName))
-  }, [ganttData, region])
+  }, [ganttData, regionScope])
 
-  const searchedData = useMemo(
-    () =>
-      searchText ? regionData.filter((d) => matchesTimelineSearch(d, searchText)) : regionData,
-    [regionData, searchText]
-  )
+  const searchedData = useMemo(() => searchData(regionData, searchText), [regionData, searchText])
 
   // A linked event hidden by the region, ?country= or ?q= scope: show its
   // country instead (and drop the search for this view), as desktop does.
@@ -205,10 +208,10 @@ export function MobileTimelineView() {
   const eventHiddenBySearch =
     !!targetEvent &&
     !!searchText &&
-    !ganttData.some(
-      (d) =>
-        d.country.countryName === targetEvent.countryName && matchesTimelineSearch(d, searchText)
-    )
+    !searchData(
+      ganttData.filter((d) => d.country.countryName === targetEvent.countryName),
+      searchText
+    ).some((d) => d.phases.some((p) => p.events.includes(targetEvent)))
   const eventSwitchCountry = eventCountryHidden || eventHiddenBySearch
   const displayCountry = targetEvent && eventSwitchCountry ? targetEvent.countryName : linkedCountry
   const listData = useMemo(() => {
@@ -216,15 +219,40 @@ export function MobileTimelineView() {
       return ganttData.filter((d) => d.country.countryName === targetEvent.countryName)
     if (displayCountry) {
       const one = ganttData.filter((d) => d.country.countryName === displayCountry)
-      return searchText ? one.filter((d) => matchesTimelineSearch(d, searchText)) : one
+      return searchData(one, searchText)
     }
     return searchedData
   }, [ganttData, searchedData, displayCountry, targetEvent, eventSwitchCountry, searchText])
 
-  const selection = useMemo(() => findEventInGantt(listData, eventParam), [listData, eventParam])
+  // A retired ?event id resolves to its successor (findTimelineEvent); open
+  // that record and rewrite the URL to its own id, as desktop does.
+  const canonicalKey = targetEvent ? eventLinkKey(targetEvent) : eventParam
+  const retiredLink =
+    !!targetEvent &&
+    !!eventParam &&
+    retiredTimelineEventSuccessor(eventParam) === targetEvent.eventId
+  const selection = useMemo(
+    () => findEventInGantt(listData, canonicalKey),
+    [listData, canonicalKey]
+  )
+  const [retiredNotice, setRetiredNotice] = useState<string | null>(null)
+  if (retiredLink && targetEvent && retiredNotice !== targetEvent.title)
+    setRetiredNotice(targetEvent.title)
+  useEffect(() => {
+    if (!retiredLink || !canonicalKey) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('event', canonicalKey)
+        return next
+      },
+      { replace: true }
+    )
+  }, [retiredLink, canonicalKey, setSearchParams])
   // The ?event value this screen wrote itself; any other value is an arrival.
   const [lastWritten, setLastWritten] = useState<string | null>(null)
-  const scrollTarget = selection && eventParam !== lastWritten ? phaseRowKey(selection.phase) : null
+  const scrollTarget =
+    selection && canonicalKey !== lastWritten ? phaseRowKey(selection.phase) : null
   useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
 
   const handleSelectEvent = (next: ResolvedTimelineEvent | null) => {
@@ -275,9 +303,11 @@ export function MobileTimelineView() {
           <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
             {displayCountry
               ? `${displayCountry} PQC timeline`
-              : region === 'All' || region === 'global'
+              : regionScope === 'All'
                 ? 'Global PQC timeline'
-                : `${REGION_LABELS[region]} PQC timeline`}
+                : regionScope === 'global'
+                  ? 'International bodies PQC timeline'
+                  : `${REGION_LABELS[regionScope]} PQC timeline`}
           </h1>
           <p className="text-[11.5px] text-muted-foreground">
             {listData.length} countr{listData.length === 1 ? 'y' : 'ies'} tracked
@@ -318,6 +348,13 @@ export function MobileTimelineView() {
           kind="not-found"
           message={`The timeline event "${notFound}" linked here was not found — it may have been retired or renamed.`}
           onDismiss={() => setNotFound(null)}
+        />
+      )}
+      {retiredNotice && (
+        <DeepLinkNotice
+          kind="widened"
+          message={`The record this link named was retired; "${retiredNotice}" replaced it, so it is shown instead.`}
+          onDismiss={() => setRetiredNotice(null)}
         />
       )}
       {showWidenNotice && targetEvent && (

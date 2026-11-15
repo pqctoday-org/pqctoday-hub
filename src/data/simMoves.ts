@@ -233,10 +233,15 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
                   ? `Compliance FAIL. ${ctx.country.label} (${ctx.country.id}) requires HYBRID — a pure-only deployment is non-compliant and must be reworked. This is the classic cross-jurisdiction trap.`
                   : `Misaligned. ${ctx.country.label} (${ctx.country.id}) expects HYBRID through the transition — that is published guidance, binding only where a system falls under the instrument named for the jurisdiction. A pure-only deployment departs from it and has to be justified or reworked. This is the classic cross-jurisdiction trap.`,
             }
-          : {
-              kind: 'warn',
-              outcome: `Risky. ${ctx.country.id} allows a pure end-state, but going pure with no hybrid fallback invites interop breakage with peers still on classical. Pilot hybrid first, then sunset to pure.`,
-            },
+          : ctx.country.hybrid === 'recommended'
+            ? {
+                kind: 'warn',
+                outcome: `Departs from guidance. ${ctx.country.label} (${ctx.country.id}) recommends HYBRID wherever feasible. Pure-only is allowed, but it gives up the classical safety net while PQC implementations mature, and you should record why hybrid was not feasible here.`,
+              }
+            : {
+                kind: 'warn',
+                outcome: `Risky. ${ctx.country.id} allows a pure end-state, but going pure with no hybrid fallback invites interop breakage with peers still on classical. Pilot hybrid first, then sunset to pure.`,
+              },
     },
     {
       label: 'Skip rollback testing to hit the deadline',
@@ -254,10 +259,15 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
               kind: 'sound',
               outcome: `Sound. Hybrid matches the ${ctx.country.id} end-state position — reversible and standards-aligned.`,
             }
-          : {
-              kind: 'warn',
-              outcome: `OK as interim. ${ctx.country.id}'s end-state is pure PQC, so hybrid needs a documented sunset plan or it becomes permanent tech debt.`,
-            },
+          : ctx.country.endState === 'pure'
+            ? {
+                kind: 'warn',
+                outcome: `OK as interim. ${ctx.country.id}'s end-state is pure PQC, so hybrid needs a documented sunset plan or it becomes permanent tech debt.`,
+              }
+            : {
+                kind: 'sound',
+                outcome: `Sound for the transition. ${ctx.country.label} states no end state yet, so keep hybrid reversible and re-check when one is published.`,
+              },
     },
     {
       label: 'Deploy to a FIPS-required system before a validated module exists',

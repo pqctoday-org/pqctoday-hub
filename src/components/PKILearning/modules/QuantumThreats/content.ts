@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'quantum-threats',
   version: '1.0.2',
   lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-11',
+  lastEdited: '2026-11-15',
 
   standards: [
     // Resource-estimate papers first — every qubit figure in this module comes
@@ -42,6 +42,8 @@ export const content: ModuleContent = {
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr'), // m-quantum-threats: wave 4c
     getStandard('GRI-Quantum-Threat-Timeline-2025'), // m-quantum-threats: wave 4c
+    // IBM gross code "12 logical in 288 physical" (quantumConstants): Bravyi et al., Nature 2024
+    getStandard('ref-bravyi-quantum-memory'),
   ],
 
   algorithms: [

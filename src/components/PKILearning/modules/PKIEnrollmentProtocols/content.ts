@@ -26,7 +26,7 @@ export const content: ModuleContent = {
     getStandard('RFC 9629'),
     getStandard('RFC 9811'),
     getStandard('RFC 9881'),
-    getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
+    getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
     // DECLARED 2026-08-23: this module names "RFC 4211" to a reader and cited
     // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1

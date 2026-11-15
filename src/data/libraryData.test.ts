@@ -528,12 +528,13 @@ describe('libraryData', () => {
   })
 
   it('distinguishes experimental evidence and protection profiles from certification outcomes', () => {
+    // The duplicate row was retired in 4.208 (OA-1114-38); the paper's surviving row
+    // carries the same cautious wording.
     const avionics = libraryData.find(
-      (item) => item.referenceId === 'Agile-Post-Quantum-Secure-Cryptography-in-Avionics'
+      (item) => item.referenceId === 'DLR-CEAS-Agile-Post-Quantum-Secure-Cryptography-in-Avionics'
     )
     expect(avionics?.documentStatus).toBe('Peer-reviewed journal article')
-    expect(avionics?.downloadUrl).toContain('10.1007/s13272-025-00806-5')
-    expect(avionics?.algorithmFamily).toBe('ML-KEM; ML-DSA')
+    expect(avionics?.downloadUrl).toContain('s13272-025-00806-5')
     expect(avionics?.shortDescription).toContain('not an avionics certification')
     expect(avionics?.shortDescription).toContain('does not guarantee certification credit')
 

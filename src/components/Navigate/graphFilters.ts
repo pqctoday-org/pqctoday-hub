@@ -136,3 +136,45 @@ export function subCategoriesOf(
     .map(([sub, count]) => ({ sub, count }))
     .sort((a, b) => b.count - a.count || a.sub.localeCompare(b.sub))
 }
+
+/**
+ * Records whose name, sub-category or id contains every word of `query`, best matches first:
+ * an exact name, then a name that starts with the query, then a name containing it, then a
+ * match on the sub-category or id only. Searches the whole graph, not just the nodes drawn —
+ * finding a record the count cap hides is the point.
+ */
+export function searchNodes(
+  graph: ForceClusterGraph,
+  query: string,
+  limit = 8
+): ForceClusterNode[] {
+  const q = query.trim().toLowerCase()
+  if (q.length < 2) return []
+  const words = q.split(/\s+/)
+  const scored: { node: ForceClusterNode; score: number }[] = []
+  for (const node of graph.nodes) {
+    const label = node.label.toLowerCase()
+    const rest = `${node.sub} ${node.id}`.toLowerCase()
+    if (!words.every((w) => label.includes(w) || rest.includes(w))) continue
+    const score =
+      label === q
+        ? 0
+        : label.startsWith(q)
+          ? 1
+          : label.includes(q)
+            ? 2
+            : words.every((w) => label.includes(w))
+              ? 3
+              : 4
+    scored.push({ node, score })
+  }
+  return scored
+    .sort(
+      (a, b) =>
+        a.score - b.score ||
+        b.node.degree - a.node.degree ||
+        a.node.label.localeCompare(b.node.label)
+    )
+    .slice(0, limit)
+    .map((s) => s.node)
+}

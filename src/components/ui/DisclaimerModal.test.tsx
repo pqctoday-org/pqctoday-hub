@@ -91,7 +91,11 @@ describe('DisclaimerModal', () => {
     renderBanner()
     expect(screen.getByText(/not received endorsement/)).toBeInTheDocument()
     expect(screen.getByText(/may contain inaccuracies/)).toBeInTheDocument()
-    expect(screen.getByText(/written consent/)).toBeInTheDocument()
+    expect(screen.queryByText(/written consent/)).not.toBeInTheDocument()
+    expect(screen.getByText(/Profiles in the Community directory are compiled/)).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'ask for a correction or removal' }).getAttribute('href')
+    ).toContain('category=i-consent-to-be-added-as-a-pqc-leader')
     expect(screen.getByRole('link', { name: /GitHub Discussions/ })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'I Understand' }))
     expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(true)

@@ -165,7 +165,7 @@ export function getArtifactsForStep(
 /** Orphan artifact types whose zone cannot be derived from the tool registry
  *  (because the type has no corresponding tool yet). Keep this small and
  *  explicit — every entry should have a follow-up to wire a real builder. */
-const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
+const ORPHAN_TYPE_ZONE = {
   // sim-roadmap (WS-15) has no builder tool, so it isn't in ARTIFACT_TYPE_TO_TOOL_ID;
   // bucket it in the migration zone like a hand-built migration roadmap.
   'sim-roadmap': 'migration',
@@ -204,6 +204,18 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   'claim-matrix': 'mitigation',
   'reproduction-record': 'mitigation',
   'research-question': 'mitigation',
+} as const satisfies Partial<Record<ExecutiveDocumentType, ZoneId>>
+
+/** The artifact types with no Command Center builder. Each one is made somewhere
+ *  else (see `ARTIFACT_PRODUCERS` in artifactProducers.ts), so the Command Center
+ *  shows a card that links there rather than an in-page builder. */
+export type OrphanArtifactType = keyof typeof ORPHAN_TYPE_ZONE
+
+export const ORPHAN_ARTIFACT_TYPES = Object.keys(ORPHAN_TYPE_ZONE) as OrphanArtifactType[]
+
+/** True when the type has no Command Center builder and is made elsewhere. */
+export function isOrphanArtifactType(type: ExecutiveDocumentType): type is OrphanArtifactType {
+  return (ORPHAN_ARTIFACT_TYPES as ExecutiveDocumentType[]).includes(type)
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from

@@ -72,7 +72,6 @@ describe('patent role lens: filing-era algorithm names', () => {
     const { container } = render(
       <MemoryRouter>
         <PatentsRoleLens
-          persona={null}
           patents={[
             patent({ patentNumber: 'US1', pqcAlgorithms: ['Kyber'], assignee: 'Acme' }),
             patent({
@@ -85,7 +84,7 @@ describe('patent role lens: filing-era algorithm names', () => {
         />
       </MemoryRouter>
     )
-    expect(relevantAlgorithmFamilies(null)).toEqual(['ML-KEM', 'ML-DSA', 'SLH-DSA'])
+    expect(relevantAlgorithmFamilies()).toEqual(['ML-KEM', 'ML-DSA', 'SLH-DSA'])
     expect(screen.getByText(/filing-era names Kyber, Dilithium, SPHINCS\+/)).toBeInTheDocument()
     // Two of the three records name a counted algorithm; the generic "lattice-based" one is not counted.
     expect(container.textContent).toMatch(/2 of the\s*patents below name ML-KEM, ML-DSA, SLH-DSA/)

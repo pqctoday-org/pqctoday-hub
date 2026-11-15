@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router'
 import { ArrowRight, Boxes, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { productFipsBadge, type FipsBadge } from '@/components/Migrate/Workbench/productStatus'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
 import { INFRA_LAYERS } from '../../hooks/useBusinessMetrics'
 
@@ -23,28 +24,30 @@ interface ProductRowProps {
   product: SoftwareItem
 }
 
+const FIPS_TONE_CLASS: Record<FipsBadge['tone'], string> = {
+  success: 'bg-status-success/10 text-status-success',
+  warning: 'bg-status-warning/10 text-status-warning',
+  info: 'bg-primary/10 text-primary',
+}
+
 /** Compact product chip-row used in the layer groups. */
 function ProductRow({ product }: ProductRowProps) {
-  const fipsTone =
-    product.fipsValidated?.toLowerCase().startsWith('yes') &&
-    !product.fipsValidated.toLowerCase().includes('mode')
-      ? 'bg-status-success/10 text-status-success'
-      : product.fipsValidated?.toLowerCase().includes('partial') ||
-          product.fipsValidated?.toLowerCase().includes('mode')
-        ? 'bg-status-warning/10 text-status-warning'
-        : 'bg-muted text-muted-foreground'
+  // Same label and tone rules as the Migrate page. The badge only appears when
+  // a FIPS 140-3 record backs it (certified, in process, or CAVP-only); a
+  // "No" or FIPS 140-2 / "Trusted" value gets no badge.
+  const fips = productFipsBadge(product)
   return (
     <div className="flex items-center gap-2 p-2 rounded border border-border bg-card/50">
       <Package size={14} className="text-muted-foreground shrink-0" />
       <span className="text-sm text-foreground truncate flex-1 min-w-0">
         {product.softwareName}
       </span>
-      {product.fipsValidated && (
+      {fips && (
         <span
-          className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${fipsTone}`}
+          className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${FIPS_TONE_CLASS[fips.tone]}`}
           title={`FIPS: ${product.fipsValidated}`}
         >
-          FIPS
+          {fips.label}
         </span>
       )}
       {product.pqcSupport && product.pqcSupport.toLowerCase() !== 'no' && (

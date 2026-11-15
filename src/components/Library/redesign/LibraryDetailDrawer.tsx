@@ -17,7 +17,15 @@ import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
 import { X, ExternalLink, Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
-import { findLibraryItemByRef, type LibraryItem } from '@/data/libraryData'
+import { findLibraryItemByRef, findLibrarySuccessor, type LibraryItem } from '@/data/libraryData'
+import {
+  libraryAssistantQuestion,
+  libraryClassificationFacts,
+  relatedLearnModules,
+} from './libraryDetailFacts'
+import { documentTypeDescription } from '@/components/Library/libraryDocumentTypes'
+import { PillarDisclaimer } from '@/components/BusinessCenter/widgets/PillarDisclaimer'
+import { AskAssistantButton } from '@/components/ui/AskAssistantButton'
 import { ruleBasedConfidenceLabel } from '../ruleBasedConfidence'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
@@ -78,27 +86,37 @@ function hasDialogAbove(root: HTMLElement | null): boolean {
   return Boolean(top) && top !== root
 }
 
-/** A reference id as a link when it resolves to a live library document. */
+/** A reference id as a link when it resolves to a live library document. With
+ *  `followSuccessor`, an id the catalogue has retired links to the document that
+ *  superseded it (a "Builds on" entry naming an older draft revision). */
 function RefLink({
   refId,
   onOpenRef,
   className,
+  followSuccessor = false,
 }: {
   refId: string
   onOpenRef?: (referenceId: string) => void
   className: string
+  followSuccessor?: boolean
 }) {
-  const target = onOpenRef ? findLibraryItemByRef(refId) : undefined
+  const direct = onOpenRef ? findLibraryItemByRef(refId) : undefined
+  const target = direct ?? (onOpenRef && followSuccessor ? findLibrarySuccessor(refId) : undefined)
   if (!target || !onOpenRef) return <span className={className}>{refId}</span>
+  const viaSuccessor = !direct
   return (
     <Button
       type="button"
       variant="ghost"
       onClick={() => onOpenRef(target.referenceId)}
-      title={`Open ${target.referenceId} — ${target.documentTitle}`}
+      title={
+        viaSuccessor
+          ? `${refId} has been superseded. Open ${target.referenceId} — ${target.documentTitle}`
+          : `Open ${target.referenceId} — ${target.documentTitle}`
+      }
       className={`h-auto font-normal text-primary hover:bg-primary/10 hover:text-primary hover:underline ${className}`}
     >
-      {refId}
+      {viaSuccessor ? `${refId} → ${target.referenceId}` : refId}
     </Button>
   )
 }
@@ -195,6 +213,9 @@ function DrawerPanel({
   const documentStatusText = publisherStatusText(item.documentStatus, item.lifecycleLabel)
   const documentDates = documentDatesText(item.initialPublicationDate, item.lastUpdateDate)
   const relatedLeaders = relatedLeadersFor(item)
+  const classificationFacts = libraryClassificationFacts(item)
+  const learnModules = relatedLearnModules(item)
+  const typeDescription = documentTypeDescription(item.documentType)
 
   return (
     // Focus stays inside the drawer. Nested pop-ups keep working: the revision
@@ -316,6 +337,7 @@ function DrawerPanel({
               )}
             </div>
             <div className="flex shrink-0 items-center gap-1">
+              <AskAssistantButton question={libraryAssistantQuestion(item)} />
               <ItemShareButton
                 title={itemShareTitle(item.documentTitle)}
                 path={`/library?ref=${encodeURIComponent(item.referenceId)}`}
@@ -369,11 +391,28 @@ function DrawerPanel({
                 label="Referenced by Library records"
                 value={item.citationCount != null ? String(item.citationCount) : undefined}
               />
+              {classificationFacts.map((f) => (
+                <KeyFact key={f.label} label={f.label} value={f.value} />
+              ))}
             </dl>
-            {(item.algorithmFamily || item.securityLevels || item.protocolOrToolImpact) && (
+            {(item.algorithmFamily ||
+              item.securityLevels ||
+              item.protocolOrToolImpact ||
+              item.toolchainSupport) && (
               <p className="text-[11px] leading-relaxed text-muted-foreground">
                 Catalog classifications and impact tags are pqctoday analysis. They may not be
                 statements made by the publisher.
+              </p>
+            )}
+            {typeDescription && (
+              <p
+                data-testid="drawer-type-description"
+                className="text-[11.5px] leading-relaxed text-muted-foreground"
+              >
+                <span className="font-semibold text-foreground/80">
+                  Document type, {item.documentType.trim()}:
+                </span>{' '}
+                {typeDescription}
               </p>
             )}
 
@@ -404,10 +443,28 @@ function DrawerPanel({
                         key={d}
                         refId={d}
                         onOpenRef={onOpenRef}
+                        followSuccessor
                         className="rounded-md border border-border px-2 py-0.5 font-mono text-[11px] text-muted-foreground"
                       />
                     ))}
                 </div>
+              </Section>
+            )}
+
+            {learnModules.length > 0 && (
+              <Section title={`Learn modules that use this document (${learnModules.length})`}>
+                <ul className="flex flex-wrap gap-1.5" data-testid="drawer-learn-modules">
+                  {learnModules.map((m) => (
+                    <li key={m.id}>
+                      <Link
+                        to={`/learn/${m.id}`}
+                        className="inline-block rounded-md border border-border px-2 py-0.5 text-[11.5px] text-primary hover:bg-primary/10 hover:underline"
+                      >
+                        {m.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </Section>
             )}
 
@@ -518,6 +575,7 @@ function DrawerPanel({
                     )
                   })}
                 </div>
+                <PillarDisclaimer className="mt-3" />
                 {/* Evidence-reference deep link, restored (same plan §3.2) —
                   jumps to this document's own governance evidence inside the
                   CSWP.39 Agility explorer. */}

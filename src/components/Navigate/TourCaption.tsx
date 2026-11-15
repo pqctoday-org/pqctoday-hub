@@ -9,8 +9,10 @@ interface TourCaptionProps {
 }
 
 /**
- * Slim lower-third readout shown once the tour's camera arrives at a node
- * stop. The tour also opens the full NavigateDetailPanel for the same node
+ * Slim readout shown at the top of the canvas once the tour's camera arrives at a node stop.
+ * Not bottom-left: the Filters panel, which holds the tour's own Pause/Previous/Next controls,
+ * sits there and a caption over it blocked them. Click-through, since it holds no controls, and
+ * kept clear of the Reset view button in the top-right corner. The tour also opens the full NavigateDetailPanel for the same node
  * (confirmed 2026-08-29, revising the initial "caption only" choice) — this
  * stays as a quick at-a-glance strip even with the fuller panel open.
  */
@@ -18,10 +20,10 @@ export function TourCaption({ node, panelOpen }: TourCaptionProps) {
   const token = GRAPH_TOKEN[node.type]
   return (
     <div
-      className={`pointer-events-none absolute bottom-4 left-4 z-10 flex justify-center ${panelOpen ? 'right-[372px]' : 'right-4'}`}
+      className={`pointer-events-none absolute left-4 top-3 z-10 flex justify-center ${panelOpen ? 'right-16 sm:right-[420px]' : 'right-16'}`}
     >
       <div
-        className="glass-panel pointer-events-auto w-[min(92vw,480px)] space-y-1 p-3 text-center"
+        className="glass-panel w-full max-w-[480px] min-w-0 space-y-1 p-3 text-center"
         role="status"
         aria-live="polite"
       >

@@ -33,3 +33,20 @@ export function loadSampleOrganisation(): void {
     sourceInputKey: SAMPLE_ORG_KEY,
   })
 }
+
+/**
+ * Put the sample away. The sample is stored as an assessment result so the sim
+ * can run on it, which means every other page that reads the assessment sees it
+ * too. Only a result the SAMPLE wrote is cleared — a learner's own assessment
+ * is never touched. Returns whether anything was cleared.
+ */
+export function unloadSampleOrganisation(): boolean {
+  const current = useAssessmentResultStore.getState()
+  if (current.sourceInputKey !== SAMPLE_ORG_KEY) return false
+  useAssessmentResultStore.setState({
+    lastResult: null,
+    completedAt: null,
+    sourceInputKey: null,
+  })
+  return true
+}

@@ -18,7 +18,7 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
-import { FLAG_CODE_MAP } from './leadersConstants'
+import { FLAG_CODE_MAP, leaderAssistantQuestion } from './leadersConstants'
 import { Button } from '@/components/ui/button'
 import { LeaderDetailSection } from './LeaderDetailSection'
 
@@ -63,9 +63,11 @@ export const LeaderCard = ({
               <User size={24} />
             </div>
           )}
-          <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border shadow-sm">
-            <CountryFlag code={FLAG_CODE_MAP[leader.country] ?? 'un'} width={16} height={11} />
-          </div>
+          {leader.country && (
+            <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border shadow-sm">
+              <CountryFlag code={FLAG_CODE_MAP[leader.country] ?? 'un'} width={16} height={11} />
+            </div>
+          )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <span
@@ -108,21 +110,50 @@ export const LeaderCard = ({
       </div>
 
       <h2 className="text-xl font-bold mb-1">{leader.name}</h2>
-      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 overflow-hidden">
-        <Briefcase size={14} aria-hidden="true" className="shrink-0" />
-        <span className="truncate">{leader.title}</span>
-      </div>
+      {/* Collapsed cards keep one line per role / organization and three lines
+          of bio; an expanded card shows them in full. */}
+      {leader.title && (
+        <div
+          className={clsx(
+            'flex gap-2 text-sm text-muted-foreground mb-4',
+            isExpanded ? 'items-start' : 'items-center overflow-hidden'
+          )}
+        >
+          <Briefcase
+            size={14}
+            aria-hidden="true"
+            className={clsx('shrink-0', isExpanded && 'mt-0.5')}
+          />
+          <span className={clsx(!isExpanded && 'truncate')}>{leader.title}</span>
+        </div>
+      )}
 
       <div className="flex flex-col gap-1 text-sm font-bold text-primary mb-4">
         {leader.organizations.map((org, i) => (
-          <div key={i} className="flex items-center gap-2 overflow-hidden">
-            <Building2 size={14} aria-hidden="true" className="shrink-0" />
-            <span className="truncate">{org}</span>
+          <div
+            key={i}
+            className={clsx(
+              'flex gap-2',
+              isExpanded ? 'items-start' : 'items-center overflow-hidden'
+            )}
+          >
+            <Building2
+              size={14}
+              aria-hidden="true"
+              className={clsx('shrink-0', isExpanded && 'mt-0.5')}
+            />
+            <span className={clsx(!isExpanded && 'truncate')}>{org}</span>
           </div>
         ))}
       </div>
 
-      <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-4 mb-4 line-clamp-3">
+      <p
+        className={clsx(
+          'text-sm text-muted-foreground leading-relaxed border-t border-border pt-4 mb-4',
+          !isExpanded && 'line-clamp-3'
+        )}
+        data-testid="leader-card-bio"
+      >
         {leader.bio}
       </p>
 
@@ -182,7 +213,7 @@ export const LeaderCard = ({
         <AskAssistantButton
           variant="text"
           label={`Ask about ${leader.name}`}
-          question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
+          question={leaderAssistantQuestion(leader)}
         />
       </div>
 

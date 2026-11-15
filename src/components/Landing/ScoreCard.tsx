@@ -118,8 +118,12 @@ function BeltLadder({ currentBelt }: { currentBelt: BeltRank }) {
 
 // ── Graduate CTA — shown when Curious users hit Orange/Green belt ────────────
 
+// Every role except curious itself. GRC was missing after the 2026-09-07
+// Executive/GRC split, and the executive pitch still described GRC's work;
+// both pitches now follow the role's own subtitle in learningPersonas.ts.
 const GRADUATE_PERSONAS: { id: PersonaId; pitch: string }[] = [
-  { id: 'executive', pitch: 'Risk governance & compliance' },
+  { id: 'executive', pitch: 'Funding, decisions & oversight' },
+  { id: 'grc', pitch: 'Obligations, risk & evidence' },
   { id: 'developer', pitch: 'Hands-on protocol integration' },
   { id: 'architect', pitch: 'Infrastructure & key management' },
   { id: 'ops', pitch: 'Deploy & operate PQC at scale' },

@@ -25,6 +25,9 @@ export interface ThreatData {
   sourceUrl: string
   accuracyPct?: number
   relatedModules: string[]
+  /** Library reference ids from `related_standards` (';'-joined). Shown as
+   *  Library links only where the Library holds the id (threatStandardLinks). */
+  relatedStandards?: string[]
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   sourceUrlQuality?: string
@@ -117,6 +120,7 @@ interface RawThreatRow {
   deprecated_at?: string
   deprecated_reason?: string
   secondary_source_ref?: string
+  related_standards?: string
   secondary_claims?: string
   threat_class?: string
   source_mirror_of?: string
@@ -146,6 +150,10 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     sourceUrl: row.source_url || '',
     accuracyPct: pct || undefined,
     relatedModules: splitPipe(row.related_modules),
+    relatedStandards: (row.related_standards ?? '')
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean),
     peerReviewed: (row.peer_reviewed?.toLowerCase() as ThreatData['peerReviewed']) || undefined,
     vettingBody: row.vetting_body
       ? row.vetting_body

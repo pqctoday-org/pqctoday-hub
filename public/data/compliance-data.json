@@ -255514,8 +255514,8 @@
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000067-i-00_en",
     "type": "EUCC",
     "status": "Active",
-    "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "pqcCoverage": "ML-KEM, ML-DSA, LMS",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5A and ST33K1M5M B04",
     "productCategory": "Smartcards and similar devices",
     "vendor": "STMICROELECTRONICS",
@@ -255552,7 +255552,12 @@
     "euccResponsibleNcca": "Agence nationale de la sécurité des systèmes d’information",
     "euccAssuranceLevel": "High",
     "euccValidityEndDate": "2031-07-16",
-    "euccObservedAt": "2026-11-12T08:56:19+00:00"
+    "euccObservedAt": "2026-11-12T08:56:19+00:00",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/469baab6-1e4b-4f65-86fa-f0359690cc0b_en?filename=EUCC-3090-2026-67-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T22:59:43Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T22:59:43Z"
   },
   {
     "id": "enisa-eucc-eucc-eucc-3090-2026-000066-i-00",
@@ -255561,8 +255566,8 @@
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000066-i-00_en",
     "type": "EUCC",
     "status": "Active",
-    "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "pqcCoverage": "ML-KEM, ML-DSA, LMS",
+    "classicalAlgorithms": "RSA (public modulus 829–4096 bits, private modulus 896–4096 bits), EdDSA (448, 25519), X25519, X448, ECDSA, ECDH",
     "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5C and ST33K1M5T C03",
     "productCategory": "Smartcards and similar devices",
     "vendor": "STMICROELECTRONICS",
@@ -255599,7 +255604,12 @@
     "euccResponsibleNcca": "Agence nationale de la sécurité des systèmes d’information",
     "euccAssuranceLevel": "High",
     "euccValidityEndDate": "2031-07-16",
-    "euccObservedAt": "2026-11-12T08:56:19+00:00"
+    "euccObservedAt": "2026-11-12T08:56:19+00:00",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/fe36ddbe-a3e3-4c11-94f6-1d82f70316ad_en?filename=EUCC-3090-2026-66-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T22:59:53Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T22:59:53Z"
   },
   {
     "id": "enisa-eucc-eucc-eucc-3090-2026-000068-i-00",
@@ -262835,7 +262845,7 @@
   },
   {
     "id": "enisa-eucc-3089-2026-000002-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -262874,11 +262884,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/1f7e82df-1ca1-492d-9825-176af79ae91f_en?filename=Nokia_ST_v0.96.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:12+00:00"
+    "euccObservedAt": "2026-11-12T08:56:12+00:00",
+    "classicalAlgorithms": "RSA (2048 bits or greater; key sizes 2048, 3072, 4096 bits for TLS), ECDSA (P-256, P-384, P-521), ECDH / EC Diffie-Hellman (secp256r1, secp384r1, secp521r1), Diffie-Hellman (diffie-hellman-group14-sha256, group16-sha512, group18-sha512, group-exchange-sha256)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/1f7e82df-1ca1-492d-9825-176af79ae91f_en?filename=Nokia_ST_v0.96.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3087-2026-000016-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -262917,11 +262933,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/02258446-14fa-46b0-a71a-afbdeea65812_en?filename=EUCC-3087-2026-0016%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:13+00:00"
+    "euccObservedAt": "2026-11-12T08:56:13+00:00",
+    "classicalAlgorithms": "RSA (512-4224 bits), DH (RSA_DH key agreement, modulus 512-4224 bits), ECDSA (160-521 bits, Brainpool and NIST curves), ECDH (160-521 bits), EC key generation (160-521 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/02258446-14fa-46b0-a71a-afbdeea65812_en?filename=EUCC-3087-2026-0016%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3100-2026-000001-r-01",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -262960,11 +262982,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/a4f5c374-466c-4ed8-a554-ce42f260437e_en?filename=EUCC-3100-2026-000001-R-01%20Security%20Target%20Lite.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:14+00:00"
+    "euccObservedAt": "2026-11-12T08:56:14+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/a4f5c374-466c-4ed8-a554-ce42f260437e_en?filename=EUCC-3100-2026-000001-R-01%20Security%20Target%20Lite.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3087-2026-000015-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263003,11 +263031,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/1adf65b4-8329-426c-a919-054c639461f1_en?filename=EUCC-3087-2026-0015_Security_Target_6_5.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:16+00:00"
+    "euccObservedAt": "2026-11-12T08:56:16+00:00",
+    "classicalAlgorithms": "RSA (2048 bit), ECDSA (brainpoolP256r1, 256 bit; brainpoolP384r1, 384 bit for firmware/TSP CA list signature verification), ECDHE (P-256, P-384, brainpoolP256r1, brainpoolP384r1)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/1adf65b4-8329-426c-a919-054c639461f1_en?filename=EUCC-3087-2026-0015_Security_Target_6_5.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3087-2026-000013-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263046,11 +263080,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/23f9bac1-7cd5-44dd-87b0-9d4470121c45_en?filename=EUCC-3087-2026-0013%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:17+00:00"
+    "euccObservedAt": "2026-11-12T08:56:17+00:00",
+    "classicalAlgorithms": "RSA (1024-4224 bits), ECDSA (160-521 bits; Brainpool and NIST prime curves), ECDH (160-521 bits), Diffie-Hellman (RSA_DH key agreement, modulus 1024-4224 bits), PACE integrated mapping ECDH (160-521 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/23f9bac1-7cd5-44dd-87b0-9d4470121c45_en?filename=EUCC-3087-2026-0013%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00-7",
-    "pqcCoverage": "",
+    "pqcCoverage": "LMS",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263089,11 +263129,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/87895f1a-8219-419c-94df-f9bb1cbed19a_en?filename=EUCC-3090-2026-57-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:25+00:00"
+    "euccObservedAt": "2026-11-12T08:56:25+00:00",
+    "classicalAlgorithms": "RSA (829-4096 bits), ECDSA, ECDH, Ed25519, Ed448, X25519, X448, Diffie-Hellman (up to 4096 bits), elliptic curves on GF(p) in Weierstrass form (up to 640 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/87895f1a-8219-419c-94df-f9bb1cbed19a_en?filename=EUCC-3090-2026-57-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00-2",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263132,11 +263178,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/6e2e1d0a-7996-4214-8a47-84e06c7a2a3f_en?filename=EUCC-3090-2026-43-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:38+00:00"
+    "euccObservedAt": "2026-11-12T08:56:38+00:00",
+    "classicalAlgorithms": "RSA (1024, 1536, 2048, 3072, 4096 bits), ECDSA (elliptic curves 192-521 bits), ECDH (192-521 bits), EC-DH (192-521 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/6e2e1d0a-7996-4214-8a47-84e06c7a2a3f_en?filename=EUCC-3090-2026-43-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00-3",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263175,11 +263227,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/2debd5c5-5162-4cfd-b325-1f41ea65a05d_en?filename=EUCC-3090-2026-44-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:39+00:00"
+    "euccObservedAt": "2026-11-12T08:56:39+00:00",
+    "classicalAlgorithms": "RSA (1024, 1536, 2048 bits; ISO/IEC 9796-2 signature, Active Authentication), ECDSA (prime field curves, 192 to 512 bits, Active Authentication), ECDH (192 to 521 bits, Chip Authentication), Diffie-Hellman key agreement (Chip Authentication v1)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/2debd5c5-5162-4cfd-b325-1f41ea65a05d_en?filename=EUCC-3090-2026-44-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000023-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263218,11 +263276,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/dfc91fca-61de-4916-8a7f-65c37590eb16_en?filename=EUCC-3090-2026-23-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:52+00:00"
+    "euccObservedAt": "2026-11-12T08:56:52+00:00",
+    "classicalAlgorithms": "RSA (1024-4096 bits), ECC on Weierstrass curves (up to 640 bits) including ECDH and ECDSA, EdDSA ed25519 (Edwards curve 25519, 256 bits), Diffie-Hellman (up to 3968 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/dfc91fca-61de-4916-8a7f-65c37590eb16_en?filename=EUCC-3090-2026-23-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000022-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263261,11 +263325,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/020b8c1d-bb6f-47d0-bb80-5e0d06a6331f_en?filename=EUCC-3090-2026-22-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:52+00:00"
+    "euccObservedAt": "2026-11-12T08:56:52+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/020b8c1d-bb6f-47d0-bb80-5e0d06a6331f_en?filename=EUCC-3090-2026-22-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00-4",
-    "pqcCoverage": "",
+    "pqcCoverage": "ML-KEM, LMS",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263304,11 +263374,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/5747e7b4-0d93-4862-b3cb-5dc33ef4c868_en?filename=EUCC-3090-2026-19-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:53+00:00"
+    "euccObservedAt": "2026-11-12T08:56:53+00:00",
+    "classicalAlgorithms": "RSA (829-4096 bits), ECDSA (Weierstrass curves), ECDH, Ed25519, Ed448, X25519, X448, Diffie-Hellman (up to 4096 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/5747e7b4-0d93-4862-b3cb-5dc33ef4c868_en?filename=EUCC-3090-2026-19-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00-5",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263347,11 +263423,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/185853a1-2040-41f3-b880-60f4ec8a321a_en?filename=EUCC-3090-2026-26-pp_0.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:54+00:00"
+    "euccObservedAt": "2026-11-12T08:56:54+00:00",
+    "classicalAlgorithms": "RSA (2048 bits, 3072 bits; RSAES-PKCS1-v1_5, RSAES-OAEP, RSASSA_PKCS1v1_5, RSASSA_PSS), ECDSA (TPM_ECC_NIST_P256, TPM_ECC_NIST_P384), ECDH (TPM_ECC_NIST_P256, TPM_ECC_NIST_P384), ECDAA (TPM_ECC_BN_P256, optional package)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/185853a1-2040-41f3-b880-60f4ec8a321a_en?filename=EUCC-3090-2026-26-pp_0.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00-6",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263390,11 +263472,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/26d47028-db2a-4cc6-9829-ae6f3ea95ccc_en?filename=EUCC-3090-2026-32-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:55+00:00"
+    "euccObservedAt": "2026-11-12T08:56:55+00:00",
+    "classicalAlgorithms": "RSA (2048, 3072, 4096 bits), ECDSA (NIST P-256, P-384), ECDH (NIST P-256, P-384), ECDHE (NIST P-384)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/26d47028-db2a-4cc6-9829-ae6f3ea95ccc_en?filename=EUCC-3090-2026-32-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263433,11 +263521,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/ac36f702-e200-44a6-9983-c1f0c78a450e_en?filename=EUCC-3090-2026-33-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:55+00:00"
+    "euccObservedAt": "2026-11-12T08:56:55+00:00",
+    "classicalAlgorithms": "RSA (2048, 3072, 4096 bits), ECDSA (NIST P-256, P-384), ECDH (NIST P-256, P-384), ECDHE (NIST P-384)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/ac36f702-e200-44a6-9983-c1f0c78a450e_en?filename=EUCC-3090-2026-33-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000001-i-00-0",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263476,11 +263570,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/2ac44317-ebb8-45ca-947e-78ef5ffb9c21_en?filename=EUCC-3090-2026-34-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:56+00:00"
+    "euccObservedAt": "2026-11-12T08:56:56+00:00",
+    "classicalAlgorithms": "RSA (2048, 3072, 4096 bits), ECDSA (NIST P-256, P-384), ECDH (NIST P-256, P-384), ECDHE (NIST P-384, SPDM key exchange)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/2ac44317-ebb8-45ca-947e-78ef5ffb9c21_en?filename=EUCC-3090-2026-34-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000016-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "LMS",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263519,11 +263619,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/19f16850-cc2c-4a67-ae58-c583c44cd96d_en?filename=EUCC-3090-2026-16-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:57+00:00"
+    "euccObservedAt": "2026-11-12T08:56:57+00:00",
+    "classicalAlgorithms": "RSA (829-4096 bits), ECDSA (Weierstrass curves up to 640 bits), ECDH, Ed25519, Ed448, X25519, X448, Diffie-Hellman (up to 4096 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/19f16850-cc2c-4a67-ae58-c583c44cd96d_en?filename=EUCC-3090-2026-16-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000018-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "ML-KEM, LMS",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263562,11 +263668,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/0a076b13-2301-480d-a0de-b994464f9aea_en?filename=EUCC-3090-2026-18-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:58+00:00"
+    "euccObservedAt": "2026-11-12T08:56:58+00:00",
+    "classicalAlgorithms": "RSA (829-4096 bits), Diffie-Hellman (up to 4096 bits), ECDSA, ECDH (Weierstrass curves, up to 640 bits), Ed25519, Ed448, X25519, X448",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/0a076b13-2301-480d-a0de-b994464f9aea_en?filename=EUCC-3090-2026-18-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000017-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "LMS",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263605,11 +263717,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/54f12e13-95a3-4a12-b001-98d268c26487_en?filename=EUCC-3090-2026-17-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:59+00:00"
+    "euccObservedAt": "2026-11-12T08:56:59+00:00",
+    "classicalAlgorithms": "RSA (829-4096 bits), ECDSA (Weierstrass curves up to 640 bits), ECDH, Ed25519, Ed448, X25519, X448, Diffie-Hellman (up to 4096 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/54f12e13-95a3-4a12-b001-98d268c26487_en?filename=EUCC-3090-2026-17-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000011-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263648,11 +263766,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/92ccd6d4-4667-43c7-ae86-938498e92cb9_en?filename=EUCC-3090-2026-11-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:01+00:00"
+    "euccObservedAt": "2026-11-12T08:57:01+00:00",
+    "classicalAlgorithms": "RSA (829-4096 bits), Diffie-Hellman (up to 4096 bits), ECDSA (Weierstrass curves up to 640 bits), ECDH (Weierstrass curves up to 640 bits), Ed25519 (EdDSA, curve edwards25519, 256 bits), X25519 (curve25519, 256 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/92ccd6d4-4667-43c7-ae86-938498e92cb9_en?filename=EUCC-3090-2026-11-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000010-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263691,11 +263815,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/2e1d1746-b4b6-4992-9924-41e43c14fcc9_en?filename=EUCC-3090-2026_10-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:02+00:00"
+    "euccObservedAt": "2026-11-12T08:57:02+00:00",
+    "classicalAlgorithms": "RSA (829-4096 bits), ECDSA, ECDH (Weierstrass curves, up to 640 bits), Ed25519 (EdDSA, 256 bits), X25519 (curve25519, 256 bits), Diffie-Hellman (up to 4096 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/2e1d1746-b4b6-4992-9924-41e43c14fcc9_en?filename=EUCC-3090-2026_10-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000020-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263734,11 +263864,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/94474af5-eaca-4138-a7fd-4dc4c38add49_en?filename=EUCC-3090-2026-20-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:04+00:00"
+    "euccObservedAt": "2026-11-12T08:57:04+00:00",
+    "classicalAlgorithms": "RSA (1280-2048 bits, 2-bit granularity), ECDSA (192-512 bits; NIST P-192/P-224/P-256/P-384, Brainpool, SEC curves), ECDH (192-512 bits), ECSDSA (P-256), BDH (P-256)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/94474af5-eaca-4138-a7fd-4dc4c38add49_en?filename=EUCC-3090-2026-20-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-0008-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263777,11 +263913,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/bb4e9bc7-7205-43f9-91bd-6463ca4af557_en?filename=EUCC-3090-2026-08-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:04+00:00"
+    "euccObservedAt": "2026-11-12T08:57:04+00:00",
+    "classicalAlgorithms": "RSA (1280-4096 bits), ECDSA (192-512 bits; NIST, Brainpool, SEC curves), ECDH (192-512 bits), X25519 (255 bits), EdDSA25519 (255 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/bb4e9bc7-7205-43f9-91bd-6463ca4af557_en?filename=EUCC-3090-2026-08-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000021-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263820,11 +263962,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/6c2ff5d8-b652-47f8-8835-725b26a40a2c_en?filename=EUCC-3090-2026-21-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:05+00:00"
+    "euccObservedAt": "2026-11-12T08:57:05+00:00",
+    "classicalAlgorithms": "RSA (1280-2048 bits, 2-bit granularity), ECDSA (192-512 bits; NIST P-192/P-224/P-256/P-384, Brainpool, SEC curves), ECDH (192-512 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/6c2ff5d8-b652-47f8-8835-725b26a40a2c_en?filename=EUCC-3090-2026-21-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000002-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263863,11 +264011,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/26687566-b310-49aa-8d50-929580d1b692_en?filename=EUCC-3090-2026-02-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:10+00:00"
+    "euccObservedAt": "2026-11-12T08:57:10+00:00",
+    "classicalAlgorithms": "RSA (1024, 1536, 2048 bits), ECDSA (prime field curves, 192 to 521 bits), ECDH (192 to 512 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/26687566-b310-49aa-8d50-929580d1b692_en?filename=EUCC-3090-2026-02-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-12-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263906,11 +264060,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/f352280c-a792-4000-9895-966dae7f265d_en?filename=EUCC-3090-2026-12-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:11+00:00"
+    "euccObservedAt": "2026-11-12T08:57:11+00:00",
+    "classicalAlgorithms": "RSA (2048, 3072, 4096 bits), ECDSA (NIST P-256, P-384), ECDH (NIST P-256, P-384)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/f352280c-a792-4000-9895-966dae7f265d_en?filename=EUCC-3090-2026-12-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-13-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263949,11 +264109,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/9e9656b2-b04b-4333-bddf-78fbb626245a_en?filename=EUCC-3090-2026-13-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:12+00:00"
+    "euccObservedAt": "2026-11-12T08:57:12+00:00",
+    "classicalAlgorithms": "RSA (2048, 3072, 4096 bits), ECDSA (NIST P-256, P-384), ECDH (NIST P-256, P-384)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/9e9656b2-b04b-4333-bddf-78fbb626245a_en?filename=EUCC-3090-2026-13-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-000007-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -263992,11 +264158,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/0943690b-3bb4-4864-ba8f-c99ebd448769_en?filename=EUCC-3090-2026-07-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:16+00:00"
+    "euccObservedAt": "2026-11-12T08:57:16+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/0943690b-3bb4-4864-ba8f-c99ebd448769_en?filename=EUCC-3090-2026-07-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3090-2026-06-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -264035,7 +264207,13 @@
         "url": "https://certification.enisa.europa.eu/document/download/0a5d8b73-cba7-4484-ae38-896b91e172da_en?filename=EUCC-3090-2026-06-cible.pdf"
       }
     ],
-    "euccObservedAt": "2026-10-26T06:07:19+00:00"
+    "euccObservedAt": "2026-10-26T06:07:19+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/0a5d8b73-cba7-4484-ae38-896b91e172da_en?filename=EUCC-3090-2026-06-cible.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "A4270",
@@ -279221,7 +279399,7 @@
   },
   {
     "id": "enisa-eucc-3087-2026-000017-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -279260,11 +279438,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/05ce3a85-4e5b-4d37-bd31-d53b36cae7b6_en?filename=EUCC-3087-2026_0017_Security_Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:11+00:00"
+    "euccObservedAt": "2026-11-12T08:56:11+00:00",
+    "classicalAlgorithms": "ECDHE-ECDSA (TLS; SECP256R1/NIST P-256, SECP384R1/NIST P-384, BrainpoolP256r1, BrainpoolP384r1, BrainpoolP512r1), ECKA-EG (CMS key generation)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/05ce3a85-4e5b-4d37-bd31-d53b36cae7b6_en?filename=EUCC-3087-2026_0017_Security_Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3206-2026-000001-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -279303,11 +279487,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/2c2eaf31-90cb-457f-a102-a42912e7dda6_en?filename=EUCC-3206-2026-0001-I-00%20SecurityTarget.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:12+00:00"
+    "euccObservedAt": "2026-11-12T08:56:12+00:00",
+    "classicalAlgorithms": "RSA (4096 bits), ECDSA (Curve P-256, 256 bits), ECDH (ephemeral, Curve P-256), ECKA-EG, PACE (Curve P-256), Terminal Authentication 2, Chip Authentication 2",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/2c2eaf31-90cb-457f-a102-a42912e7dda6_en?filename=EUCC-3206-2026-0001-I-00%20SecurityTarget.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3206-2026-000002-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -279346,7 +279536,13 @@
         "url": "https://certification.enisa.europa.eu/document/download/1cc472b9-fa64-48a6-bdb5-ce5bd538c043_en?filename=EUCC-3206-2026-0002-I-00%20SecurityTarget.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:11+00:00"
+    "euccObservedAt": "2026-11-12T08:56:11+00:00",
+    "classicalAlgorithms": "ECDH/PACE key agreement with Generic Mapping (Curve P-256)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/1cc472b9-fa64-48a6-bdb5-ce5bd538c043_en?filename=EUCC-3206-2026-0002-I-00%20SecurityTarget.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "cc-nxp-se310-series---secure-element--version-se310-se-a0-1-000-j2-221d01d3",
@@ -281100,7 +281296,7 @@
   },
   {
     "id": "enisa-eucc-3087-2026-pp-000008-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -281139,11 +281335,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/a41410c4-76a2-4cfa-b176-45ce7f637d62_en?filename=EUCC-3087-2026-PP-000008-PP-I-00%20Protection%20Profile.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:07+00:00"
+    "euccObservedAt": "2026-11-12T08:57:07+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/a41410c4-76a2-4cfa-b176-45ce7f637d62_en?filename=EUCC-3087-2026-PP-000008-PP-I-00%20Protection%20Profile.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3087-2026-pp-000009-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -281182,7 +281384,13 @@
         "url": "https://certification.enisa.europa.eu/document/download/4be09dfb-426a-4f65-81c5-e05f1740fb53_en?filename=EUCC-3087-2026-PP-000009-PP-I-00%20Protection%20Profile.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:57:08+00:00"
+    "euccObservedAt": "2026-11-12T08:57:08+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/4be09dfb-426a-4f65-81c5-e05f1740fb53_en?filename=EUCC-3087-2026-PP-000009-PP-I-00%20Protection%20Profile.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "E1",
@@ -308848,7 +309056,7 @@
   },
   {
     "id": "enisa-eucc-3095-2026-000003-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "ML-KEM",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -308887,11 +309095,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/fb89c80d-3a2f-41cd-874d-b3f8fb050e86_en?filename=EUCC-3095-2026-03%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:04+00:00"
+    "euccObservedAt": "2026-11-12T08:56:04+00:00",
+    "classicalAlgorithms": "RSA (3072 bits), ECDSA (P-256, P-384), ECDH/ECDHE (secp256r1, secp384r1)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/fb89c80d-3a2f-41cd-874d-b3f8fb050e86_en?filename=EUCC-3095-2026-03%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3095-2026-000002-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -308930,11 +309144,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/e405c91a-5fef-499a-9686-429a534ea076_en?filename=EUCC-3095-2026-02%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:05+00:00"
+    "euccObservedAt": "2026-11-12T08:56:05+00:00",
+    "classicalAlgorithms": "RSA (3072 bits; RSASSA-PKCS1-v1.5 signature), ECDH (256, 384, 521 bits), ECDSA (256, 384, 521 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/e405c91a-5fef-499a-9686-429a534ea076_en?filename=EUCC-3095-2026-02%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3089-2026-000003-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -308973,11 +309193,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/9860a653-e595-4fff-bf7c-ee2d8d9eb3f5_en?filename=EUCC-3089-2026-003%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:06+00:00"
+    "euccObservedAt": "2026-11-12T08:56:06+00:00",
+    "classicalAlgorithms": "RSA (3072-4096 bits), Diffie-Hellman (3072, 4096 bits), ECDH (NIST P-256, P-384, P-521, X25519, X448), ED25519 (256 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/9860a653-e595-4fff-bf7c-ee2d8d9eb3f5_en?filename=EUCC-3089-2026-003%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3089-2026-000004-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -309016,11 +309242,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/ab9c6a55-bf65-4095-99bb-4e947a28156c_en?filename=EUCC-3089-2026-004%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:06+00:00"
+    "euccObservedAt": "2026-11-12T08:56:06+00:00",
+    "classicalAlgorithms": "RSA (3072-4096 bits), Diffie-Hellman (FFC, 3072 and 4096 bits), ECDH (NIST P-256, P-384, P-521, X25519, X448), ED25519 (256 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/ab9c6a55-bf65-4095-99bb-4e947a28156c_en?filename=EUCC-3089-2026-004%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3096-2026-000003-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -309059,11 +309291,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/a17e30ad-b332-49c3-a565-4deffd04be50_en?filename=Huawei%20OceanStor%20Hybrid%20Flash%20Storage%20System%206.1.8%20Security%20Target%20v0.15.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:07+00:00"
+    "euccObservedAt": "2026-11-12T08:56:07+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/a17e30ad-b332-49c3-a565-4deffd04be50_en?filename=Huawei%20OceanStor%20Hybrid%20Flash%20Storage%20System%206.1.8%20Security%20Target%20v0.15.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3100-2026-000002-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -309102,11 +309340,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/9c39fe14-9906-408f-aa81-bafe7237a2c4_en?filename=EUCC-3100-2026-0002%20Security%20Target%20Lite.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:08+00:00"
+    "euccObservedAt": "2026-11-12T08:56:08+00:00",
+    "classicalAlgorithms": "RSA (512-4096 bits), ECDSA (ECC over GF(p), 128-640 bits), ECDH, EdDSA, Diffie-Hellman on Montgomery Curves (MontDH/XDH)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/9c39fe14-9906-408f-aa81-bafe7237a2c4_en?filename=EUCC-3100-2026-0002%20Security%20Target%20Lite.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3087-2026-000019-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -309145,11 +309389,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/c6e248f4-8339-43ea-8212-ad2e0b33bc07_en?filename=EUCC-3087-2026-0019%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:08+00:00"
+    "euccObservedAt": "2026-11-12T08:56:08+00:00",
+    "classicalAlgorithms": "RSA (1024-4096 bits), ECDSA (160-521 bits, Brainpool and NIST curves), ECDH (160-521 bits), EC key generation",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/c6e248f4-8339-43ea-8212-ad2e0b33bc07_en?filename=EUCC-3087-2026-0019%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3096-2026-000002-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -309188,11 +309438,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/4bf4b64b-8675-440b-ba90-985ff885de7d_en?filename=Huawei%20OceanStor%20Pacific%20Storage%20System%20V800R001C10SPC100%20%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:09+00:00"
+    "euccObservedAt": "2026-11-12T08:56:09+00:00",
+    "classicalAlgorithms": "",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/4bf4b64b-8675-440b-ba90-985ff885de7d_en?filename=Huawei%20OceanStor%20Pacific%20Storage%20System%20V800R001C10SPC100%20%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3087-2026-000018-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -309231,11 +309487,17 @@
         "url": "https://certification.enisa.europa.eu/document/download/5c7267fb-6c78-4f4d-909d-c6a9c8b19b8e_en?filename=EUCC-3087-2026-0018%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:10+00:00"
+    "euccObservedAt": "2026-11-12T08:56:10+00:00",
+    "classicalAlgorithms": "RSA (1024-4224 bits), ECDSA (160-521 bits, Brainpool and NIST curves), ECDH (160-521 bits)",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/5c7267fb-6c78-4f4d-909d-c6a9c8b19b8e_en?filename=EUCC-3087-2026-0018%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   },
   {
     "id": "enisa-eucc-3135-2026-000002-i-00",
-    "pqcCoverage": "",
+    "pqcCoverage": "No PQC Mechanisms Detected",
     "source": "ENISA",
     "type": "EUCC",
     "scheme": "EUCC",
@@ -309274,6 +309536,12 @@
         "url": "https://certification.enisa.europa.eu/document/download/0e36bc02-419a-49c5-aa7d-692214a49aa7_en?filename=EUCC-3135-2026-000002-I-00%20Security%20Target.pdf"
       }
     ],
-    "euccObservedAt": "2026-11-12T08:56:14+00:00"
+    "euccObservedAt": "2026-11-12T08:56:14+00:00",
+    "classicalAlgorithms": "RSA (2048, 4096 bits), ECDHE",
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/0e36bc02-419a-49c5-aa7d-692214a49aa7_en?filename=EUCC-3135-2026-000002-I-00%20Security%20Target.pdf"
+    ],
+    "pqcCoverageVerifiedAt": "2026-11-14T23:00:25Z",
+    "securityTargetUrlsVerifiedAt": "2026-11-14T23:00:25Z"
   }
 ]

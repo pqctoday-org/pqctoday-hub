@@ -46,11 +46,14 @@ describe('RFC 10024 and the hybrid TLS draft it replaced', () => {
   })
 
   it('keeps the draft as a historical record that names RFC 10024, and drops it from the lessons', () => {
-    const draft = byId('draft-ietf-tls-ecdhe-mlkem-05')
+    // Retired in 4.208 (OA-1114-38): the draft now lives on as RFC 10024's prior revision.
+    expect(byId('draft-ietf-tls-ecdhe-mlkem-05')).toBeUndefined()
+    const draft = byId('RFC-10024')?.priorRevisions?.find(
+      (r) => r.referenceId === 'draft-ietf-tls-ecdhe-mlkem-05'
+    )
     expect(draft?.lifecycleLabel).toBe('Historical')
-    expect(draft?.supersededByRefs).toEqual(['RFC-10024'])
+    expect(draft?.supersededBy).toBe('RFC-10024')
     expect(draft?.documentStatus).toBe('Internet-Draft (published as RFC 10024)')
-    expect(byId('RFC-10024')?.replacesRefs).toContain('draft-ietf-tls-ecdhe-mlkem-05')
     for (const moduleId of ['hybrid-crypto', 'tls-basics', 'network-security-pqc']) {
       expect(
         getLibraryItemsForModule(moduleId).map((i) => i.referenceId),

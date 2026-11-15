@@ -48,7 +48,8 @@ const PROTOCOL_PATTERNS: { protocol: string; match: RegExp }[] = [
   { protocol: 'PKI / X.509', match: /\b(PKI|X\.509|certificate authority)\b/i },
   { protocol: 'VPN / IPsec', match: /\b(VPN|IPsec|IKEv2)\b/i },
   { protocol: 'SCADA / OT', match: /\b(SCADA|Modbus|DNP3|OPC ?UA)\b/i },
-  { protocol: 'SSH', match: /\bSSH\b/i },
+  // OpenSSH has no word boundary before "SSH"; name it explicitly (CROSS-011).
+  { protocol: 'SSH', match: /\b(?:Open)?SSH\b/i },
   { protocol: 'S/MIME & email', match: /\b(S\/MIME|PGP|OpenPGP)\b/i },
   { protocol: 'DNSSEC / BGP / RPKI', match: /\b(DNSSEC|BGP|RPKI)\b/i },
   { protocol: 'Payments (SWIFT, EMV, FIX)', match: /\b(SWIFT|EMV|FIX protocol|FIX)\b/i },
@@ -68,7 +69,10 @@ const PROTOCOL_PATTERNS: { protocol: string; match: RegExp }[] = [
  */
 const ALGORITHM_PROTOCOLS: { match: RegExp; protocols: string[] }[] = [
   { match: /\bRSA\b/i, protocols: ['TLS / HTTPS', 'PKI / X.509', 'S/MIME & email', 'SSH'] },
-  { match: /\bECDSA\b/i, protocols: ['TLS / HTTPS', 'PKI / X.509', 'SSH', 'Vehicle & avionics'] },
+  // Not 'Vehicle & avionics': ECDSA is used there, but inferring it from every
+  // ECDSA row put Bitcoin, Ethereum, DNSSEC and RPKI under "Vehicle & avionics".
+  // That lens counts only records that name a vehicle or avionics protocol.
+  { match: /\bECDSA\b/i, protocols: ['TLS / HTTPS', 'PKI / X.509', 'SSH'] },
   { match: /\bECDH\b/i, protocols: ['TLS / HTTPS', 'VPN / IPsec', 'SSH'] },
   { match: /\bEdDSA|Ed25519\b/i, protocols: ['SSH', 'PKI / X.509'] },
   { match: /\bECC\b/i, protocols: ['TLS / HTTPS', 'PKI / X.509'] },
@@ -102,6 +106,11 @@ export function protocolsForThreat(threat: ThreatItem): ProtocolMatch[] {
     ...[...stated].map((protocol) => ({ protocol, basis: 'stated' as const })),
     ...[...inferred].map((protocol) => ({ protocol, basis: 'inferred' as const })),
   ]
+}
+
+/** How a threat touches the given protocol, or null when it does not. */
+export function protocolBasisFor(threat: ThreatItem, protocol: string): ProtocolBasis | null {
+  return protocolsForThreat(threat).find((m) => m.protocol === protocol)?.basis ?? null
 }
 
 /** True when a threat touches the given protocol by either route. */

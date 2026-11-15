@@ -70,6 +70,13 @@ vi.mock('../../data/timelineEnrichmentData', () => ({
     !!(e && (e.mainTopic || e.mandateLevel)),
   getTimelineEnrichmentKey: (countryName: string, org: string, title: string) =>
     `${countryName}:${org} — ${title}`,
+  getTimelineEnrichment: (
+    _id: string | undefined,
+    countryName: string,
+    org: string,
+    title: string
+  ) => ({ [ENRICHMENT_KEY]: mockEnrichment })[`${countryName}:${org} — ${title}`],
+  timelineLibraryLinks: () => [],
 }))
 
 describe('GanttDetailPopover — enrichment analysis click depth (Phase 8.5)', () => {

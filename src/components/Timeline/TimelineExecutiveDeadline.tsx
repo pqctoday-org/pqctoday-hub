@@ -2,7 +2,7 @@
 import { Link, useLocation } from 'react-router'
 import { CalendarClock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
+import { filterGanttView, deadlineYear } from '@/data/timelineViewFilter'
 import { TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME } from '@/data/timelineFacts.generated'
 import type { GanttCountryData, TimelineEvent } from '@/types/timeline'
 import { readGanttViewParams, writeGanttViewParams } from '@/data/timelineData'
@@ -40,10 +40,13 @@ function nearestDeadlineMilestone(
     for (const phase of row.phases) {
       for (const ev of phase.events) {
         if (ev.phase !== 'Deadline') continue
-        if (ev.startYear < CURRENT_YEAR) continue
+        // A deadline stated as a range falls due at its end ("2026–2031: the
+        // sole use of classical key agreement ends in 2031").
+        const due = deadlineYear(ev)
+        if (due < CURRENT_YEAR) continue
         if (!predicate(ev, row.country.countryName)) continue
-        if (!best || ev.startYear < best.year) {
-          best = { year: ev.startYear, title: ev.title, country: row.country.countryName }
+        if (!best || due < best.year) {
+          best = { year: due, title: ev.title, country: row.country.countryName }
         }
       }
     }
@@ -74,6 +77,7 @@ interface Props {
   eventTypeFilter?: string
   myCountries?: string[]
   showOnlyMyCountries?: boolean
+  semanticHits?: readonly string[] | null
 }
 
 /**
@@ -91,37 +95,20 @@ export function TimelineExecutiveDeadline({
   eventTypeFilter = 'All',
   myCountries = [],
   showOnlyMyCountries = false,
+  semanticHits = null,
 }: Props) {
-  // Match SimpleGanttChart's existing selection rules. Category and trust-tier
-  // filtering has already happened upstream; the card must also respect the
-  // chart's country/issuer search, phase, event type and saved-country scope.
-  const query = searchText.toLowerCase()
-  const visibleData = ganttData
-    .filter((row) => {
-      const country = row.country.countryName
-      const matchesSearch =
-        country.toLowerCase().includes(query) ||
-        row.country.bodies.some((body) => body.name.toLowerCase().includes(query))
-      const matchesCountry =
-        selectedCountry !== 'All'
-          ? country === selectedCountry
-          : regionFilter === 'All' ||
-            (
-              REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP] ?? []
-            ).includes(country)
-      return (
-        matchesSearch && matchesCountry && (!showOnlyMyCountries || myCountries.includes(country))
-      )
-    })
-    .map((row) => ({
-      ...row,
-      phases: row.phases.filter(
-        (phase) =>
-          (phaseFilter === 'All' || phase.phase === phaseFilter) &&
-          (eventTypeFilter === 'All' || phase.type === eventTypeFilter)
-      ),
-    }))
-    .filter((row) => row.phases.length > 0)
+  // The chart's own view filter (timelineViewFilter.ts). Category and trust-tier
+  // filtering has already happened upstream.
+  const visibleData = filterGanttView(ganttData, {
+    region: regionFilter,
+    country: selectedCountry,
+    query: searchText,
+    semanticHits,
+    phase: phaseFilter,
+    etype: eventTypeFilter,
+    onlyMyCountries: showOnlyMyCountries,
+    myCountries,
+  })
   const next = nearestBindingMilestone(visibleData)
   // Only computed as a fallback when nothing confirmed-binding is in view, so we
   // never silently imply "nothing is coming" when something is, just unconfirmed.

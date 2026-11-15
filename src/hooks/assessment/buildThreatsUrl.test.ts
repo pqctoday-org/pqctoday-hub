@@ -16,7 +16,7 @@ describe('buildThreatsUrl', () => {
     expect(industryParam(buildThreatsUrl('Healthcare'))).toBe('Healthcare / Pharmaceutical')
     expect(industryParam(buildThreatsUrl('Aerospace'))).toBe('Aerospace / Aviation / Space')
     expect(industryParam(buildThreatsUrl('Energy & Utilities'))).toBe(
-      'Critical Infrastructure / OT,Water / Wastewater'
+      'Critical Infrastructure / OT,Water / Wastewater,Rail / Transit'
     )
   })
 

@@ -11,7 +11,11 @@ import { getTrustTier } from './weights'
 import { trustedSources } from '../trustedSourcesData'
 import { xrefsByResource, type TrustedSourceXref } from '../trustedSourceXrefData'
 import { libraryEnrichments, type LibraryEnrichment } from '../libraryEnrichmentData'
-import { timelineEnrichments, getTimelineEnrichmentKey } from '../timelineEnrichmentData'
+import {
+  timelineEnrichments,
+  getTimelineEnrichmentKey,
+  getTimelineEnrichmentKeyFor,
+} from '../timelineEnrichmentData'
 import { complianceFrameworks } from '../complianceData'
 import { threatsData } from '../threatsData'
 import { formerLeaderNames, leadersData } from '../leadersData'
@@ -198,6 +202,20 @@ function buildScoringContext(): ScoringContext {
     )
   }
 
+  // A Library row names its publisher's registry id in its own trusted_source_id
+  // column. The cross-reference file is regenerated separately and lags new rows
+  // (on 2026-11-14 the nine rows new in that day's snapshot had none), which
+  // scored them "No linked trusted source". Use the row's own id when the file
+  // has nothing for it and the registry knows the source.
+  // A publisher id the catalogue itself marks as a guess is not used.
+  const unconfirmedSourceStatus = new Set(['inferred', 'needs_review', 'unregistered'])
+  for (const item of libraryData ?? []) {
+    if (!item.trustedSourceId || xrefsMap.has(item.referenceId)) continue
+    if (unconfirmedSourceStatus.has((item.trustedSourceIdStatus ?? '').trim())) continue
+    if (!trustedSourcesMap.has(item.trustedSourceId)) continue
+    xrefsMap.set(item.referenceId, [{ sourceId: item.trustedSourceId, matchMethod: 'direct' }])
+  }
+
   // Enrichment maps
   const threatsEnrichmentLookup = loadThreatsEnrichments()
 
@@ -316,11 +334,26 @@ function computeAllScores(): Map<string, TrustScore> {
         const compositeId = `${country.countryName}:${body.name}:${event.phase}:${title}`
         const enrichmentKey = getTimelineEnrichmentKey(country.countryName, body.name, title)
 
-        // Score using title (matches xref resource_id)
+        // Score using title (matches xref resource_id). Enrichment is keyed by
+        // label ("Country:Org — Title", or an earlier label of the same
+        // event_id) and compliance cites the issuer as "Country:Org" (the CSV
+        // country — the CNSA lane is "United States"); before 2026-11-14 both
+        // were looked up by bare title and every timeline event scored 0 on
+        // enrichment completeness and on compliance cross-references.
+        const csvCountry =
+          country.countryName === 'United States (CNSA)' ? 'United States' : country.countryName
         score('timeline', title, {
           peerReviewed: event.peerReviewed,
           vettingBody: event.vettingBody,
           lastUpdateDate: event.sourceDate,
+          // Not lastVerified: that column is a bulk stamp, not a per-row check.
+          enrichmentKey: getTimelineEnrichmentKeyFor(
+            event.eventId,
+            country.countryName,
+            body.name,
+            title
+          ),
+          crossRefAliases: [`${csvCountry}:${body.name}`],
         })
 
         // Map alternate keys so UI lookups work with either format
