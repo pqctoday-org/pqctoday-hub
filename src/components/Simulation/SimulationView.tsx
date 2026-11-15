@@ -792,9 +792,11 @@ export function SimulationView() {
   // read the still-present value as "reopen this".
   const closingOpenRef = useRef<string | null>(null)
   const location = useLocation()
-  const openStep = (s: TreeStep) => {
+  // `phase` is the tree the step lives in, when that is not the current phase
+  // (closure opens Phase 5's architecture), so a reload can find it again.
+  const openStep = (s: TreeStep, phase: string = sel) => {
     if (!openStepPane(s)) return
-    const value = encodeOpen(sel, s)
+    const value = encodeOpen(phase, s)
     urlOpenRef.current = value
     const next = new URLSearchParams(searchParams)
     if (next.get(OPEN_PARAM) === value) return
@@ -1607,7 +1609,7 @@ export function SimulationView() {
     edgeDecisionCount: () => architectureChoices.selectedKeys.length,
     edgeDecisionCapacity: () => edgeDecisionCapacity,
     // W2.4: recurrence is measured in the RUN's reporting periods.
-    recurrenceCount: (type) => distinctRunQuarters(evidence, type).length,
+    recurrenceCount: (type) => distinctRunQuarters(evidence, type, runFp).length,
     // W2.5: a criterion stating a measurable condition is evidenced by the
     // condition, not by a document about it. Read through a ref because the
     // inputs (budget, assets) are derived further down this component — a
@@ -2415,17 +2417,18 @@ export function SimulationView() {
       const t = SIM_TREES[p]
       return (t ? flattenTree(t) : []).filter((x) => x.kind === 'architecture').at(-1)
     }
-    const archStep =
+    const measuresEstate =
       step.metricId === 'migration-coverage-pct' || step.metricId === 'migration-decisions'
-        ? (lastArchStep(sel as PhaseId) ?? lastArchStep('p5'))
-        : undefined
+    const ownArch = measuresEstate ? lastArchStep(sel as PhaseId) : undefined
+    const archStep = ownArch ?? (measuresEstate ? lastArchStep('p5') : undefined)
+    const archPhase = ownArch ? sel : 'p5'
     return (
       <MeasureStatus
         step={step}
         value={value}
         compact={opts.compact}
         hideLabel={opts.hideLabel}
-        onAct={opts.canOpen && archStep ? () => openStep(archStep) : undefined}
+        onAct={opts.canOpen && archStep ? () => openStep(archStep, archPhase) : undefined}
         actLabel="Open the architecture"
       />
     )
@@ -2441,7 +2444,7 @@ export function SimulationView() {
     }
     if (step.kind === 'recurrence' && step.recurrenceOf) {
       const type = step.recurrenceOf
-      const quarters = distinctRunQuarters(evidence, type)
+      const quarters = distinctRunQuarters(evidence, type, runFp)
       const needed = 1 + (step.recurrenceQuarters ?? 1)
       const savedNow = quarters.includes(`Q${q} ${year}`)
       const toolLabel = TOOL_LABELS_BY_ARTIFACT_TYPE[type]?.name
@@ -3619,7 +3622,7 @@ export function SimulationView() {
                     unloadSampleOrganisation()
                   }}
                   data-testid="sim-unload-sample"
-                  className="h-5 rounded-full px-2 font-mono text-sim-micro font-bold uppercase text-background/80 hover:bg-background/20 hover:text-background"
+                  className="h-6 rounded-full px-2 font-mono text-sim-micro font-bold uppercase text-background/80 hover:bg-background/20 hover:text-background"
                 >
                   Leave sample
                 </Button>
@@ -4236,7 +4239,11 @@ export function SimulationView() {
                       ) : null}
                       {activityEmbed?.recurrenceNeeded ? (
                         <RecurrenceProgressBanner
-                          quarters={distinctRunQuarters(evidence, activityEmbed.artifactType)}
+                          quarters={distinctRunQuarters(
+                            evidence,
+                            activityEmbed.artifactType,
+                            runFp
+                          )}
                           needed={activityEmbed.recurrenceNeeded}
                           currentQuarter={`Q${q} ${year}`}
                         />
@@ -4310,7 +4317,10 @@ export function SimulationView() {
                             ? SIM_REFERENCE_EMBEDS[referenceEmbed.refId]?.ParamsComponent
                             : undefined
                           return ParamsComp ? (
-                            <ParamsComp params={referenceEmbed?.params} />
+                            <ParamsComp
+                              key={`${referenceEmbed?.refId}|${referenceEmbed?.params ?? ''}`}
+                              params={referenceEmbed?.params}
+                            />
                           ) : (
                             <ReferenceComp />
                           )

@@ -54,6 +54,27 @@ const ctx = (): StepCompletionContext => ({
   metricValue: () => null,
 })
 
+describe('distinctRunQuarters', () => {
+  const rec = (q: string, fingerprint: string) =>
+    ({
+      id: `${q}-${fingerprint}`,
+      runId: 'run-1',
+      phase: 'p1',
+      resourceId: 'board-deck',
+      kind: 'artifact',
+      origin: 'learner',
+      status: 'practiced',
+      fingerprint,
+      createdAt: 0,
+      runQuarter: q,
+    }) as const
+  it('counts only the quarters saved for this run’s organisation profile', () => {
+    const ev = [rec('Q1 2026', 'sample'), rec('Q2 2026', 'mine')]
+    expect(distinctRunQuarters(ev, 'board-deck')).toHaveLength(2)
+    expect(distinctRunQuarters(ev, 'board-deck', 'mine')).toEqual(['Q2 2026'])
+  })
+})
+
 describe('useLearnerEvidenceRecorder', () => {
   beforeEach(() => {
     useModuleStore.getState().resetProgress()

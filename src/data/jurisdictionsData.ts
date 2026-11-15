@@ -209,7 +209,7 @@ const VALID_ARCHETYPES = new Set<SimArchetype>([
   'EU',
 ])
 
-const VALID_HYBRID = new Set<HybridStance>(['required', 'interim', 'discouraged'])
+const VALID_HYBRID = new Set<HybridStance>(['required', 'recommended', 'interim', 'discouraged'])
 const VALID_END_STATE = new Set<EndState>(['hybrid', 'pure'])
 
 const modules = import.meta.glob('./jurisdictions_*.csv', {
