@@ -3,7 +3,8 @@
  * Deep-link PR 2 (Library): table rows open the drawer through `?ref`, the
  * table honours/writes `?sort`, the drawer links "Builds on" ids, carries the
  * App. G/H crosswalk, lets nested pop-ups own Esc and outside clicks, and the
- * Advanced disclosure opens when its filters are active. Real data throughout.
+ * Advanced disclosure opens when its filters are active. Real rows throughout
+ * (a 46-row slice of the catalogue, see src/test/fixtures/libraryCorpus.ts).
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
@@ -16,6 +17,12 @@ import { findLibraryItemByRef, libraryData } from '@/data/libraryData'
 import { leadersData } from '@/data/leadersData'
 import { isAppliedQuantumFramework } from '@/components/Library/FrameworkCrosswalkPanel'
 import { relatedLeadersFor } from '@/components/Library/relatedLeaders'
+
+// Render over a 46-row slice of the real catalogue (src/test/fixtures/libraryCorpus.ts): the full
+// ~1,500-row corpus made these tests take 30-120 s and use over 3 GB of heap.
+vi.mock('@/data/csvUtils', async (importOriginal) =>
+  (await import('@/test/fixtures/libraryCorpus')).withLibraryCorpusSlice(await importOriginal())
+)
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({ useIsMobileShell: mockUseIsMobileShell }))
@@ -50,10 +57,11 @@ function tableRowIds(container: HTMLElement): string[] {
 
 beforeEach(() => usePersonaStore.getState().setPersona(null))
 
-// Renders the table/drawer over the real library dataset (~10 s alone); on a
-// GitHub runner under the full parallel suite it passes the default 30 s limit
-// (seen on #773 and #769 pr-test, 30 Sep). Same allowance as the drawer-links
-// suite below (b9d7bd6bf).
+// Renders the table/drawer over a slice of the real library dataset. The full
+// corpus took ~10 s per test and passed the default 30 s limit on a GitHub runner
+// under the full parallel suite (seen on #773 and #769 pr-test, 30 Sep); the
+// slice is far faster, and the allowance is kept as headroom. Same allowance as
+// the drawer-links suite below (b9d7bd6bf).
 describe('Library table view → drawer via ?ref', { timeout: 60_000 }, () => {
   it('a row click pushes ?ref and opens the detail drawer (no local popover)', () => {
     const { container } = renderPage('/library?view=table')
@@ -89,8 +97,8 @@ describe('Library table view → drawer via ?ref', { timeout: 60_000 }, () => {
   })
 })
 
-// Renders the drawer over the real library dataset (~10 s alone); under the
-// full parallel suite it can pass the default 30 s limit.
+// Renders the drawer over a slice of the real library dataset; the allowance is
+// kept as headroom for a loaded runner.
 describe('Library detail drawer links and panels', { timeout: 60_000 }, () => {
   it('"Builds on" ids that resolve render as links that push ?ref', () => {
     const parent = libraryData.find((i) =>
@@ -140,7 +148,7 @@ describe('Library detail drawer links and panels', { timeout: 60_000 }, () => {
   })
 })
 
-// See the note on the first describe: real-data drawer render.
+// See the note on the first describe: drawer render over the library slice.
 describe('Library drawer with a nested pop-up on top', { timeout: 60_000 }, () => {
   function renderDrawer(onClose: () => void) {
     return render(

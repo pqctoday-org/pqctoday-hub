@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter, useLocation, useNavigationType, useNavigate } from 'react-router'
 import { MobileLibraryView } from './MobileLibraryView'
@@ -10,9 +10,16 @@ import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { documentDatesText } from '@/components/Library/redesign/libraryPills'
 import { Button } from '@/components/ui/button'
 
-// Real data throughout — libraryData is parsed synchronously from a bundled
-// CSV at module load. Assertions are structural (derived at test time), not
-// hardcoded counts, since the underlying CSV changes over time.
+// Render over a 46-row slice of the real catalogue (src/test/fixtures/libraryCorpus.ts): the full
+// ~1,500-row corpus made these tests take 30-120 s and use over 3 GB of heap.
+vi.mock('@/data/csvUtils', async (importOriginal) =>
+  (await import('@/test/fixtures/libraryCorpus')).withLibraryCorpusSlice(await importOriginal())
+)
+
+// Real rows throughout — libraryData is parsed synchronously from the library
+// CSV at module load (here, the 46-row slice mocked below). Assertions are
+// structural (derived at test time), not hardcoded counts, since the
+// underlying CSV changes over time.
 //
 // MemoryRouter wrapper added 2026-08-26: the detail sheet now renders the
 // shared DocumentAnalysis panel (mobile-ux remediation), whose "Explore on
