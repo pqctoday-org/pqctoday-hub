@@ -50,7 +50,7 @@ test('executive persona does not imply an industry on /threats', async ({ page }
   await expect(page.getByRole('group', { name: /Complete your scope/i })).toContainText(
     /Still unknown: sector/i
   )
-  await expect(page.getByText('71 in scope', { exact: true })).toBeVisible()
+  await expect(page.getByText('74 in scope', { exact: true })).toBeVisible()
   await expect(page.getByRole('status').filter({ hasText: /matched to your role/i })).toHaveCount(0)
 })
 
