@@ -9,7 +9,6 @@ import {
   RefreshCw,
   Calendar,
   Database,
-
   Filter,
   Check,
   LockKeyhole,
@@ -792,7 +791,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     if (onCloseRecord) onCloseRecord()
     else setLocalOpenId(undefined)
   }, [onCloseRecord])
-
 
   const retrieval = useMemo(() => snapshotRetrievalEntries(meta), [meta])
   const newestRecordDate = lastUpdated ? formatIsoDate(lastUpdated.toISOString()) : null

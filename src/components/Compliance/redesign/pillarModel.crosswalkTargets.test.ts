@@ -41,7 +41,10 @@ describe('drawer related records resolve to the exact record they name', () => {
     for (const { fwId, item } of items) {
       if (item.name === fwId) continue
       if (!getFrameworkById(item.name)) continue
-      expect(item.target, `${fwId} names ${item.name}`).toEqual({ kind: 'framework', id: item.name })
+      expect(item.target, `${fwId} names ${item.name}`).toEqual({
+        kind: 'framework',
+        id: item.name,
+      })
     }
   })
 
