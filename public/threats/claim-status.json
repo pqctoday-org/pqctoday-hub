@@ -1,33 +1,8 @@
 {
- "csv": "quantum_threats_hsm_industries_11142026_r2.csv",
- "generatedAt": "2026-11-14T23:01:49+00:00",
+ "csv": "quantum_threats_hsm_industries_11142026_r7.csv",
+ "generatedAt": "2026-11-15T00:00:31+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file and exact claim text cited today. Verdict words only; no document text.",
  "rows": {
-  "AERO-002": {
-   "claims": {
-    "crypto_at_risk": {
-     "decidedAt": "2026-10-01",
-     "verdict": "supported"
-    },
-    "main_source": {
-     "decidedAt": "2026-10-01",
-     "verdict": "MATCH"
-    },
-    "pqc_replacement": {
-     "decidedAt": "2026-10-01",
-     "verdict": "supported"
-    },
-    "related_standards": {
-     "decidedAt": "2026-10-01",
-     "verdict": "FOUND"
-    },
-    "vetting_body": {
-     "decidedAt": "2026-10-01",
-     "verdict": "FOUND"
-    }
-   },
-   "evidenceSha256": "5abe0a74a66d146b"
-  },
   "AUS-FIN-002": {
    "claims": {
     "crypto_at_risk": {
@@ -91,6 +66,41 @@
     }
    },
    "evidenceSha256": "4099d86d1b3ce2e0"
+  },
+  "AUTO-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "related_standards": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "c0eb015a5294afe1"
   },
   "CI-001": {
    "claims": {
@@ -642,6 +652,11 @@
   },
   "CROSS-006": {
    "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
     "main_source": {
      "basis": "codex-review",
      "decidedAt": "2026-09-25",
@@ -1987,6 +2002,61 @@
     }
    },
    "evidenceSha256": "b98b60db14db876e"
+  },
+  "LEG-001": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "7d8428f6433221fa"
+  },
+  "LEG-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "related_standards": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "FOUND"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    }
+   },
+   "evidenceSha256": "7d8428f6433221fa"
   },
   "MEDIA-002": {
    "claims": {
