@@ -468,9 +468,9 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'iot-pqc': {
     roleFocus: 'Embedded Systems Engineers, IoT Architects & Firmware Leads',
     productionCapabilities: [
-      'Constrained-stack `ML-KEM-512/768` and `ML-DSA-44` or stateful `LMS` verification fitting within MCU Flash/SRAM budgets (`pqm4` / `wolfCrypt` / `mbedTLS`).',
+      'Constrained-stack `ML-KEM-512/768` and `ML-DSA-44` or stateful `LMS` verification fitting within MCU Flash/SRAM budgets (`pqm4` / `wolfCrypt`; Mbed TLS ML-KEM/ML-DSA are roadmap items).',
       'DTLS 1.3 (RFC 9147) and EDHOC / CoAP / OSCORE fragmentation handling over 802.15.4 / LoRaWAN / NB-IoT links.',
-      'Hardware TRNG entropy Conditioning and secure element (TPM / SE) offload for PQC operations.',
+      'Hardware TRNG entropy conditioning and secure element (TPM / SE) offload for PQC operations.',
     ],
     evaluationMethod:
       'Measure RAM stack peak, Flash footprint, energy consumption (mJ/handshake), and DTLS 1.3 fragment reassembly under 10% packet loss on target MCU hardware.',
@@ -492,19 +492,19 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'homomorphic-encryption': {
     roleFocus: 'Privacy Engineers, Applied Cryptographers & Data Scientists',
     productionCapabilities: [
-      'Ring-LWE / RLWE parameter selection (BGV, BFV, CKKS, TFHE) compliant with HomomorphicEncryption.org / ISO/IEC 28033 post-quantum security estimates (at least 128-bit security).',
-      'Strict noise-budget monitoring and circuit-depth bounds preventing decryption failures or key-recovery attacks from IND-CPA-D oracle leakage.',
+      'Ring-LWE / RLWE parameter selection (BGV, BFV, CKKS, TFHE) compliant with the HomomorphicEncryption.org security standard parameter tables (ISO/IEC 28033 is still a Draft International Standard) and ≥128-bit security estimates.',
+      'Strict noise-budget monitoring and circuit-depth bounds preventing decryption failures or key-recovery attacks from IND-CPA^D oracle leakage.',
       'Authenticated PQC transport (`ML-KEM` + `ML-DSA`) wrapping FHE evaluation keys and ciphertexts between client and compute nodes.',
     ],
     evaluationMethod:
-      'Validate lattice dimension (N) and modulus (q) against the Lattice Estimator for at least 128-bit quantum security and test IND-CPA-D decryption error boundaries.',
+      'Validate lattice dimension (N) and modulus (q) against the Lattice Estimator for at least 128-bit quantum security and test IND-CPA^D decryption error boundaries.',
     evidenceRequired:
       'FHE parameter security-level estimation report, noise-budget test log, and ciphertext serialization benchmark.',
   },
   'web-gateway-pqc': {
     roleFocus: 'Edge Network Engineers, CDN Administrators & WAF Architects',
     productionCapabilities: [
-      'Ingress TLS 1.3 termination with `X25519MLKEM768` enabled by default on NGINX, Envoy, HAProxy, Cloudflare, AWS ALB/CloudFront, or Akamai.',
+      'Ingress TLS 1.3 termination with `X25519MLKEM768` enabled (default or by configuration, depending on product and crypto library, e.g., NGINX with OpenSSL 3.5+, Envoy 1.40+, HAProxy vendor builds) on NGINX, Envoy, HAProxy, Cloudflare, AWS ALB/CloudFront or Akamai.',
       'Re-encryption (upstream origin TLS) supporting hybrid PQC key exchange so internal load-balancer-to-service legs are also HNDL-protected.',
       'Observability metrics tracking % of connections negotiating PQC vs classical groups by client User-Agent/JA4 fingerprint.',
     ],
@@ -516,7 +516,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'emv-payment-pqc': {
     roleFocus: 'Payment Systems Architects, Card Issuers & Terminal Engineers',
     productionCapabilities: [
-      'Transition planning for EMVCo contact/contactless Offline Data Authentication (ODA: DDA/CDA) within ISO/IEC 7816-4 & 14443 APDU payload and `< 300–500 ms` tap budgets.',
+      "Transition planning for EMVCo contact/contactless Offline Data Authentication (ODA: DDA/CDA) within ISO/IEC 7816-4 and 14443 APDU payload limits and the scheme's contactless transaction-time target.",
       'Acquirer-to-issuer ISO 8583 / ISO 20022 host links secured with TLS 1.3 hybrid PQC (`X25519MLKEM768`) and TR-31 key blocks.',
       'Payment HSM support for post-quantum issuer root/CA hierarchies and elliptic-curve/PQC dual-mode terminal kernel updates.',
     ],
@@ -529,7 +529,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Software Engineers, Library Maintainers & AppSec Leads',
     productionCapabilities: [
       'High-level KEM API usage (`EVP_PKEY_encapsulate` / `EVP_PKEY_decapsulate` in OpenSSL 3.5+, `KEM` API in Java 21+, `crypto/mlkem` in Go 1.24+) replacing raw RSA `encrypt`/`decrypt` or manual DH.',
-      'Streaming / one-shot `EVP_DigestSign` / `EVP_DigestVerify` with `NULL` digest for pure `ML-DSA` and `SLH-DSA` (which hash internally via SHAKE256/SHA2).',
+      '`EVP_DigestSign` / `EVP_DigestVerify` (one-shot; confirm streaming support per OpenSSL release) with `NULL` digest for pure `ML-DSA` and `SLH-DSA` (which hash internally via SHAKE or SHA-2 per parameter set).',
       'Safe memory zeroization (`OPENSSL_cleanse` / `Zeroize`) of decapsulation keys and shared secrets.',
     ],
     evaluationMethod:
@@ -540,7 +540,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'platform-eng-pqc': {
     roleFocus: 'Platform Engineers, Kubernetes Administrators & SREs',
     productionCapabilities: [
-      'Service mesh mTLS (Istio / Envoy / Linkerd / Cilium) configured with hybrid post-quantum key exchange (`X25519MLKEM768`) and automated workload identity rotation (SPIFFE/SPIRE).',
+      'Service mesh mTLS (Istio, Envoy, Linkerd; Cilium PQC is a community demo) configured with hybrid post-quantum key exchange (`X25519MLKEM768`) and automated workload identity rotation (SPIFFE/SPIRE).',
       'cert-manager integration with CMPv3 (RFC 9810), ACME (RFC 8555), or Private CA issuers supporting `ML-DSA` and `ML-KEM` certificates.',
       'Base container images packaging FIPS-validated or PQC-enabled OpenSSL 3.5+ / BoringSSL / Go 1.24+ runtimes across all Kubernetes namespaces.',
     ],
@@ -553,7 +553,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'OT/ICS Security Architects, SCADA Engineers & Grid Operators',
     productionCapabilities: [
       'IEC 62351, OPC UA, and DNP3-SA secure channel configurations supporting hybrid/PQC key transport or post-quantum TLS 1.3 gateways/bump-in-the-wire proxies for legacy PLCs/RTUs.',
-      'Deterministic real-time latency bounds ensuring PQC signature verification does not violate protection-relay or control-loop timing windows (e.g., IEC 61850 GOOSE `< 4 ms`).',
+      'Deterministic real-time latency bounds ensuring PQC signature verification does not violate protection-relay or control-loop timing windows (e.g., IEC 61850 Type 1A GOOSE trip messages, transfer-time class TT6, `< 3 ms`).',
       'Long-lifecycle firmware signing (`LMS/HSS` or `ML-DSA-87`) for field devices with 15–25 year operational lifespans.',
     ],
     evaluationMethod:
@@ -565,7 +565,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Healthcare CISOs, Biomedical Device Engineers & HIPAA Compliance Leads',
     productionCapabilities: [
       'Long-term Electronic Health Record (EHR) and genomic archive protection against HNDL via hybrid PQC TLS 1.3 (`X25519MLKEM768`) on HL7 FHIR / DICOMweb APIs and `AES-256` at rest.',
-      'FDA premarket cybersecurity compliance (FD&C Act §524B, which requires an SBOM; a cryptographic BOM (CBOM) is a useful addition) and post-quantum firmware update signing (`ML-DSA` / `LMS`) for connected medical devices.',
+      'FDA premarket cybersecurity (FD&C Act §524B, which requires an SBOM); a CBOM is a voluntary addition and post-quantum firmware update signing (`ML-DSA` / `LMS`) for connected medical devices.',
       'Zero-downtime cryptographic proxy / gateway shielding for legacy clinical imaging modalities.',
     ],
     evaluationMethod:
@@ -660,7 +660,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'standards-bodies': {
     roleFocus: 'Standards Leads, Compliance Architects & Policy Strategists',
     productionCapabilities: [
-      'Authoritative tracking of normative standards (NIST FIPS 203/204/205/206, ISO/IEC JTC 1/SC 27, IETF TLS/LAMPS/IPSECME/PQUIP, ETSI TC CYBER QSC) vs certification schemes (CMVP, Common Criteria/EUCC) and regulatory mandates.',
+      'Authoritative tracking of normative standards (NIST FIPS 203/204/205 published; FIPS 206 FN-DSA planned, FIPS 207 HQC pre-draft; ISO/IEC JTC 1/SC 27, IETF TLS/LAMPS/IPSECME/PQUIP, ETSI TC CYBER QSC) vs certification schemes (CMVP, Common Criteria/EUCC) and regulatory mandates.',
       'Strict verification of IETF RFC / draft status, avoiding deployment of retired pre-standard draft codepoints or superseded specifications.',
       'Mapping of regional cryptographic policies (CNSA 2.0, BSI TR-02102, ANSSI, NCSC, ASD ISM, CRYPTREC, KISA) for global deployments.',
     ],
@@ -672,7 +672,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'ai-security-pqc': {
     roleFocus: 'AI/ML Security Architects & MLOps Engineers',
     productionCapabilities: [
-      'Cryptographic signing of AI model weights, datasets, and training provenance (C2PA / SLSA / Sigstore / OMS) using `ML-DSA-65/87` or `SLH-DSA` to prevent model poisoning and supply-chain tampering.',
+      'Cryptographic signing of AI model weights, datasets, and training provenance (C2PA, SLSA/in-toto, Sigstore, OpenSSF Model Signing) using `ML-DSA-65/87` or `SLH-DSA` where the tooling supports it (Cosign ML-DSA is experimental; C2PA 2.4 specifies no PQC algorithms) to prevent model poisoning and supply-chain tampering.',
       'Protection of proprietary training corpora and inference prompts/RAG vectors in transit via hybrid TLS 1.3 (`X25519MLKEM768`) and at rest via `AES-256-GCM` with `ML-KEM` envelope encryption.',
       'Confidential GPU/TEE enclave attestation for high-sensitivity model weights.',
     ],
@@ -684,7 +684,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'secrets-management-pqc': {
     roleFocus: 'DevSecOps, Platform Security & Vault Administrators',
     productionCapabilities: [
-      'Secrets manager (HashiCorp Vault / OpenBao / Cloud Secrets Manager) seal/unseal and transit engine integration with PKCS#11 v3.2 PQC HSMs (`ML-KEM`, `ML-DSA`).',
+      'Secrets manager (HashiCorp Vault Enterprise / OpenBao / cloud secrets manager) transit-engine PQC signing (ML-DSA; SLH-DSA experimental) and PKCS#11 HSM seal/unseal, verifying PQC mechanism support per product.',
       'Dynamic secret leasing and automated rotation of post-quantum TLS certificates, SSH keys, and database credentials.',
       'Quantum-safe replication and cluster mTLS (`X25519MLKEM768`) between vault nodes.',
     ],
@@ -697,7 +697,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Network Security Architects, Firewall Admins & Zero-Trust Engineers',
     productionCapabilities: [
       'Next-Generation Firewall (NGFW) and IDS/IPS deep-packet inspection compatibility with TLS 1.3 hybrid key shares (`X25519MLKEM768`) and RFC 8879 compressed PQC certificates.',
-      'MACsec (IEEE 802.1AE / MKA) 256-bit GCM cipher suites (`GCM-AES-XPN-256`) paired with post-quantum EAP-TLS / IKEv2 key agreement.',
+      'MACsec (IEEE 802.1AE / MKA) 256-bit GCM cipher suites (`GCM-AES-XPN-256`) paired with post-quantum EAP-TLS (MKA key hierarchy).',
       'Zero-Trust Network Access (ZTNA) and SASE tunnel termination supporting post-quantum mutual authentication.',
     ],
     evaluationMethod:
@@ -708,14 +708,14 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'database-encryption-pqc': {
     roleFocus: 'Database Administrators (DBAs), Data Architects & Storage Engineers',
     productionCapabilities: [
-      'Transparent Data Encryption (TDE) using `AES-256-GCM` / `AES-256-XTS` with Master Encryption Keys (MEKs) wrapped via `ML-KEM-768/1024` in external KMS/HSM (KMIP 3.0 / PKCS#11 v3.2).',
+      'Transparent Data Encryption (TDE) using `AES-256-GCM` / `AES-256-XTS` with Master Encryption Keys (MEKs) wrapped via `ML-KEM-768/1024` in external KMS/HSM (KMIP 3.0 draft / PKCS#11 v3.2).',
       'Client-Side Field-Level Encryption (CSFLE) and searchable encryption key hierarchies using post-quantum key encapsulation.',
-      'Database wire-protocol TLS 1.3 (`X25519MLKEM768`) for PostgreSQL, MySQL, Oracle, SQL Server, and MongoDB client connections.',
+      'Database wire-protocol TLS 1.3 hybrid key exchange (`X25519MLKEM768`) where the database or driver and its OpenSSL 3.5+ build support it (MySQL Community: yes; verify PostgreSQL, Oracle, SQL Server and MongoDB per release).',
     ],
     evaluationMethod:
       'Perform an online TDE master-key rotation backed by an `ML-KEM` KMS key in staging and verify client-to-DB TLS 1.3 hybrid cipher negotiation.',
     evidenceRequired:
-      'TDE key-rotation audit log, KMIP/KMS key-wrapping receipt, and `pg_stat_ssl` / database TLS connection status query.',
+      'TDE key-rotation audit log, KMIP/KMS key-wrapping receipt, and `pg_stat_ssl` (TLS version/cipher) plus a packet capture or server log showing the negotiated key-exchange group.',
   },
   'iam-pqc': {
     roleFocus: 'Identity & Access Management (IAM) Architects & Workforce Security Leads',
@@ -758,7 +758,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     productionCapabilities: [
       'NIST FIPS 205 `SLH-DSA` support across SHA2 and SHAKE parameter sets (`128s`, `128f`, `192s`, `192f`, `256s`, `256f`) with RFC 9909 X.509 OIDs.',
       'Profile selection matching workload constraints: `-s` (small signature: 7,856–29,792 B, slower signing) vs `-f` (fast signing: 17,088–49,856 B signature) for root CAs and code signing.',
-      'Pure vs pre-hash (`HashSLH-DSA`) mode selection and context-string binding per FIPS 205 §9–§10.',
+      'Pure vs pre-hash (`HashSLH-DSA`) mode selection and context-string binding per FIPS 205 §10.2–§10.3.',
     ],
     evaluationMethod:
       'Generate `SLH-DSA-SHA2-128s` and `SLH-DSA-SHA2-128f` signatures in OpenSSL 3.5+ / HSM, compare signing latency and wire size, and verify deterministic KAT vectors.',
@@ -828,7 +828,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'media-drm-pqc': {
     roleFocus: 'Media Security Architects, Broadcast Engineers & Content Protection Leads',
     productionCapabilities: [
-      'C2PA 2.x content provenance and manifest signing (`COSE_Sign1`) using `ML-DSA` or `SLH-DSA` with RFC 3161 post-quantum timestamps.',
+      'C2PA 2.x content provenance and manifest signing (`COSE_Sign1`, RFC 3161 timestamps) with a crypto-agility path to post-quantum signatures once C2PA specifies them.',
       'DRM license-acquisition and key-exchange pipelines (Widevine, FairPlay, PlayReady, CI Plus, AACS) protected with hybrid PQC TLS 1.3 (`X25519MLKEM768`) and RFC 10024 hybrid key agreement.',
       'Clone-resistant device certificate provisioning and revocation-list delivery for long-lived smart TVs and set-top boxes.',
     ],
@@ -840,9 +840,9 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   cbom: {
     roleFocus: 'AppSec Engineers, Supply Chain Leads & Enterprise Architects',
     productionCapabilities: [
-      'Automated CycloneDX v1.6+ Cryptographic Bill of Materials (CBOM) generation (`cryptoProperties`: `algorithm`, `certificate`, `relatedCryptoMaterial`, `protocol`) integrated into CI/CD and network discovery.',
+      'Automated CycloneDX v1.6+ Cryptographic Bill of Materials (CBOM) generation (`cryptoProperties.assetType`: `algorithm`, `certificate`, `related-crypto-material`, `protocol`) integrated into CI/CD and network discovery.',
       'Correlation of static source/binary CBOM findings with runtime TLS/SSH/PKI telemetry to eliminate blind spots.',
-      'NIST Quantum Readiness /oid and parameter-set tagging (`ML-KEM-768`, `ML-DSA-65`, `RSA-2048`) driving automated remediation tickets.',
+      'OID and parameter-set tagging (`ML-KEM-768`, `ML-DSA-65`, `RSA-2048`) driving automated remediation tickets.',
     ],
     evaluationMethod:
       'Generate a CycloneDX 1.6 CBOM JSON from a target repository/container and validate it against the official CycloneDX JSON schema and live runtime cipher usage.',
@@ -877,11 +877,11 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Defense System Architects, Federal CISOs & NSS Authorizing Officials',
     productionCapabilities: [
       'Strict NSA CNSA 2.0 compliance for National Security Systems (NSS): `ML-KEM-1024` for key establishment, `ML-DSA-87` for general signatures, `LMS/XMSS` (SP 800-208) for firmware/software signing, `AES-256`, and `SHA-384`/`SHA-512`.',
-      'NIST IR 8547 and OMB M-23-02 automated cryptographic inventory reporting and high-value asset (HVA) prioritization.',
+      'OMB M-23-02 annual cryptographic inventory submission and high-value-asset prioritization, aligned to NIST IR 8547 milestones, supported by automated discovery.',
       'Cross-domain and coalition interoperability profiles bridging CNSA 2.0 pure-PQC level-5 mandates with NATO/allied hybrid PQC standards.',
     ],
     evaluationMethod:
-      'Verify NSS staging configurations reject Category 1/3 parameter sets where CNSA 2.0 mandates Category 5 (`ML-KEM-1024` / `ML-DSA-87`) and validate FIPS 140-3 Level 3+ module certificates.',
+      "Verify NSS staging configurations reject Category 1/3 parameter sets where CNSA 2.0 mandates Category 5 (`ML-KEM-1024` / `ML-DSA-87`) and validate CMVP (FIPS 140-3) module certificates at the level required by the system's authorizing official.",
     evidenceRequired:
       'CNSA 2.0 configuration compliance scan, OMB M-23-02 inventory submission receipt, and ATO cryptographic test package.',
   },
@@ -919,7 +919,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     evaluationMethod:
       'Replay synthetic hybrid TLS 1.3 and downgrade-attack pcaps through staging Zeek/Suricata sensors and verify SIEM alert generation and field extraction.',
     evidenceRequired:
-      'Zeek `ssl.log` JSON showing extracted PQC `curve`/`named_group`, SIEM detection rule YAML, and alert firing test receipt.',
+      'Zeek `ssl.log` JSON showing the extracted `curve` value (or a custom script extracting the PQC group), SIEM detection rule YAML, and alert firing test receipt.',
   },
   'skills-team-structure': {
     roleFocus: 'Security Leaders, Engineering Directors & Workforce Planners',
