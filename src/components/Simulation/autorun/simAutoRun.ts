@@ -113,8 +113,14 @@ export function liveCompletionContext(): StepCompletionContext {
     isScenarioComplete: (id) => useSimulationStore.getState().visitedScenarios.includes(id),
     edgeDecisionCount: () => currentArchitectureChoices().selectedKeys.length,
     edgeDecisionCapacity: () => architectureEdgeCapacity(),
-    recurrenceCount: (type) =>
-      distinctRunQuarters(useSimulationStore.getState().evidence, type).length,
+    recurrenceCount: (type) => {
+      const sim = useSimulationStore.getState()
+      return distinctRunQuarters(
+        sim.evidence,
+        type,
+        runFingerprint(sim.size, sim.country, sim.sector)
+      ).length
+    },
     metricValue: (metricId) => {
       const st = useSimulationStore.getState()
       // Budget is a pure function of P0 work completed (target cancels out of

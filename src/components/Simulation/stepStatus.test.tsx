@@ -34,6 +34,11 @@ describe('MeasureStatus', () => {
     expect(screen.getByText(/✓ Measured now: 45%/)).toBeInTheDocument()
   })
 
+  it('never shows a value just under its target as reaching it', () => {
+    render(<MeasureStatus step={measure} value={59.6} />)
+    expect(screen.getByText(/Measured now: 59% · needs 60%/)).toBeInTheDocument()
+  })
+
   it('says when the run cannot measure the condition yet', () => {
     render(<MeasureStatus step={measure} value={null} />)
     expect(screen.getByText(/not measurable yet/)).toBeInTheDocument()
