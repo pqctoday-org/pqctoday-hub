@@ -27460,6 +27460,21 @@
       "unified": "converted",
       "admittedAt": "2026-11-15T02:33:47.897828+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "draft-ietf-pquip-pqc-hsm-constrained-11",
+      "title": "Adapting Constrained Devices for Post-Quantum Cryptography",
+      "url": "https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqc-hsm-constrained-11",
+      "status": "downloaded",
+      "filename": "draft-ietf-pquip-pqc-hsm-constrained-11.html",
+      "sizeBytes": 182751,
+      "contentType": "text/html",
+      "sha256": "26fcd32fc57e9fbf40616bb1405ddd42073759c7075ccda7e87de9c66d9ae60b",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-15T19:37:22.303375+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [
