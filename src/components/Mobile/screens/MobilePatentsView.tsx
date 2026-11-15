@@ -127,8 +127,8 @@ function fipsMappedAlgorithms(p: PatentItem): string[] {
  * corpus, so this screen can never carry a stale figure forward.
  *
  * Same PQC-only default scope desktop uses (`readPqcOnly()` + `isPqcPatent`
- * — real, shared, persisted localStorage state, not a second toggle). No
- * scope toggle UI on mobile — distilled to the default scope, stated below.
+ * — real, shared, persisted localStorage state, not a second toggle). The
+ * two scope buttons above the list write that same state.
  *
  * Card fields are all real: cryptoAgilityMode, quantumRelevance (only shown
  * when not 'none'), the FIPS-mapped algorithm(s) from nistRoundStatus
@@ -474,8 +474,8 @@ export function MobilePatentsView() {
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The full 25-dimension table/grid, the all-crypto scope toggle, and citation graphs are on a
-        laptop. Patent data sourced from USPTO. For research — not legal or IP advice.
+        The full 25-dimension table/grid and citation graphs are on a laptop. Patent data sourced
+        from USPTO. For research — not legal or IP advice.
       </p>
 
       <MobileSheet

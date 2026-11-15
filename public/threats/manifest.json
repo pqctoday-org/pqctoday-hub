@@ -87,7 +87,12 @@
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T12:57:57.298132+00:00"
+      "stampedAt": "2026-09-17T12:57:57.298132+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-11142026/threats/AUTO-003.html",
+      "supersededAt": "2026-11-15T01:04:33.671390+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "re-sourced to the FuSeCar project report D3.1 — replaced by AUTO-003.pdf — replaced by AUTO-003.pdf"
     },
     {
       "threatId": "AUTO-004",
@@ -2591,6 +2596,25 @@
       "replacedAt": "2026-11-14T23:32:37.849950+00:00",
       "replacedBy": "evidence replacement",
       "replaceReason": "re-sourced to ETSI TR 103 949"
+    },
+    {
+      "threatId": "AUTO-003",
+      "refId": "AUTO-003",
+      "filename": "AUTO-003.pdf",
+      "sizeBytes": 949597,
+      "contentType": "application/pdf",
+      "url": "https://secloud.ing.unimore.it/shared/project_resources/fusecar/D3_1.pdf",
+      "sha256": "7ff5a740b8bc0d107f38623376dd155d61a46c40235a7dc06f744909002d42ab",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-15T01:04:35.106008+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "threats/AUTO-003.pdf",
+      "status": "downloaded",
+      "replacedAt": "2026-11-15T01:04:33.671390+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "re-sourced to the FuSeCar project report D3.1 — replaced by AUTO-003.pdf"
     }
   ],
   "archivedEntries": [],

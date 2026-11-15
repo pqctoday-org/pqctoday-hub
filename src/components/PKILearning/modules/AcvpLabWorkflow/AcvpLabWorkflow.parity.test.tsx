@@ -96,7 +96,7 @@ describe('AcvpLabWorkflowModule render parity', () => {
     )
     expect(screen.getByRole('link', { name: 'ACVP suite' })).toHaveAttribute(
       'href',
-      '/playground/hsm?tab=developer&dtab=acvp'
+      '/playground/hsm?tab=build&dtab=acvp'
     )
   })
 })
