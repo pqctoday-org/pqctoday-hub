@@ -29,6 +29,13 @@ export interface ResourceFields {
   lastVerifiedDate?: string
   lastUpdateDate?: string
   releaseDate?: string
+  /**
+   * Key of this resource's entry in the enrichment lookup, when it is not the
+   * resource id (timeline: enrichment is keyed "Country:Org — Title", scores by title).
+   */
+  enrichmentKey?: string
+  /** Further ids cross-references may name this resource by (timeline: "Country:Org"). */
+  crossRefAliases?: string[]
 }
 
 type DimensionScorer = (
@@ -59,9 +66,10 @@ const SCORERS: Record<TrustDimension, DimensionScorer> = {
       lastUpdateDate: fields.lastUpdateDate,
       releaseDate: fields.releaseDate,
     }),
-  crossRefDensity: (resourceId, rt, _f, ctx) => scoreCrossRefDensity(resourceId, ctx, rt),
-  enrichmentCompleteness: (resourceId, rt, _f, ctx) =>
-    scoreEnrichmentCompleteness(resourceId, rt, ctx),
+  crossRefDensity: (resourceId, rt, fields, ctx) =>
+    scoreCrossRefDensity(resourceId, ctx, rt, fields.crossRefAliases),
+  enrichmentCompleteness: (resourceId, rt, fields, ctx) =>
+    scoreEnrichmentCompleteness(fields.enrichmentKey ?? resourceId, rt, ctx),
 }
 
 export function computeTrustScore(

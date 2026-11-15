@@ -254,3 +254,32 @@ export function legacyToZoneId(legacyId: string): ZoneId {
   }
   return 'governance'
 }
+
+// Legacy hash ids that legacyToZoneId still maps to a zone (see above). Any other
+// id names no zone, so a link to it must not open one.
+const LEGACY_ZONE_HASH_IDS = [
+  'govern',
+  'inventory',
+  'identify-gaps',
+  'prioritise',
+  'implement',
+  'protocols',
+  'implementations',
+  'strategic',
+  'future-works',
+]
+
+/** A ?zone= value naming a real CSWP.39 zone, or null. */
+export function zoneFromQueryParam(value: string | null): ZoneId | null {
+  if (!value) return null
+  return CSWP39_ZONE_ORDER.includes(value as ZoneId) ? (value as ZoneId) : null
+}
+
+/** A #zone-<id> or #step-<id> hash naming a real zone (current or legacy id), or null. */
+export function zoneFromHash(hash: string): ZoneId | null {
+  const match = hash.match(/^#(?:step|section|zone)-([a-z-]+)$/)
+  if (!match) return null
+  const id = match[1]
+  const named = CSWP39_ZONE_ORDER.includes(id as ZoneId) || LEGACY_ZONE_HASH_IDS.includes(id)
+  return named ? legacyToZoneId(id) : null
+}

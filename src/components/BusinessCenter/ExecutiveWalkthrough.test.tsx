@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
 import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
 
-function renderWalkthrough() {
+function renderWalkthrough(onJumpToZoneMap: () => void = vi.fn()) {
   return render(
     <MemoryRouter>
-      <ExecutiveWalkthrough />
+      <ExecutiveWalkthrough onJumpToZoneMap={onJumpToZoneMap} />
     </MemoryRouter>
   )
 }
@@ -38,5 +38,15 @@ describe('ExecutiveWalkthrough', () => {
     renderWalkthrough()
     fireEvent.click(screen.getAllByRole('link')[0])
     expect(useCommandCenterOnboardingStore.getState().hasSeenExecWalkthrough).toBe(true)
+  })
+
+  it('jumps to the zone map from the walkthrough text, and leaves the walkthrough in place', () => {
+    const onJump = vi.fn()
+    renderWalkthrough(onJump)
+    fireEvent.click(
+      screen.getByRole('button', { name: 'jump straight to the full zone map below' })
+    )
+    expect(onJump).toHaveBeenCalledTimes(1)
+    expect(useCommandCenterOnboardingStore.getState().hasSeenExecWalkthrough).toBe(false)
   })
 })

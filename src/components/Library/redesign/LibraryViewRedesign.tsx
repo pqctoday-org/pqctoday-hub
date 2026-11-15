@@ -48,7 +48,7 @@ import type { SortOption } from '@/components/Library/SortControl'
 import type { ViewMode } from '@/components/Library/ViewToggle'
 import { libraryDefaultSortForPersona } from '@/data/libraryPersonaConfig'
 import { parseLifecycleParam } from '@/utils/libraryLifecycle'
-import { useLibraryPipeline, ORG_CANONICAL_MAP, ORG_OTHER } from './useLibraryPipeline'
+import { useLibraryPipeline, libraryCanonicalOrgs, ORG_OTHER } from './useLibraryPipeline'
 import { LibraryControlDeck } from './LibraryControlDeck'
 import { LibraryFacetRail, type LibraryQuickView } from './LibraryFacetRail'
 import { LibraryPurposeDoors, type LibraryPurposeSelection } from './LibraryPurposeDoors'
@@ -61,7 +61,8 @@ import {
   itemsByReferenceIds,
   type CitationScope,
 } from './LibraryCitationExport'
-import { resolveLibraryDeepLink, libraryWideningFor } from './libraryDeepLink'
+import { canonicalRegionCodes, regionLabel } from './libraryRegions'
+import { resolveLibraryDeepLink, libraryWideningFor, topicParamAsSearch } from './libraryDeepLink'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { logLibrarySearch } from '@/utils/analytics'
 import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
@@ -105,57 +106,9 @@ const QUICK_VIEW_LABELS = new Map<string, string>([
   ['bookmarked', 'Bookmarked'],
 ])
 
-// ISO-ish region_scope codes → friendly labels for the Geography facet + chips.
-// EU / Global / Five-Eyes are surfaced by GeoFilter's built-in overlay options,
-// so they're intentionally skipped in the per-country list (GEO_SKIP below).
-const REGION_LABELS = new Map<string, string>([
-  ['US', 'United States'],
-  ['GB', 'United Kingdom'],
-  ['FR', 'France'],
-  ['DE', 'Germany'],
-  ['AU', 'Australia'],
-  ['CA', 'Canada'],
-  ['JP', 'Japan'],
-  ['KR', 'South Korea'],
-  ['CN', 'China'],
-  ['RU', 'Russia'],
-  ['SG', 'Singapore'],
-  ['IN', 'India'],
-  ['HK', 'Hong Kong'],
-  ['NL', 'Netherlands'],
-  ['AE', 'United Arab Emirates'],
-  ['SA', 'Saudi Arabia'],
-  ['IL', 'Israel'],
-  ['SE', 'Sweden'],
-  ['NO', 'Norway'],
-  ['CZ', 'Czechia'],
-  ['MY', 'Malaysia'],
-  ['ZA', 'South Africa'],
-  ['KE', 'Kenya'],
-  ['NZ', 'New Zealand'],
-  ['G7', 'G7'],
-  ['NATO', 'NATO'],
-])
-
-const GEO_OVERLAY_LABELS = new Map<string, string>([
-  ['PQC-REGION-GLOBAL', 'Global'],
-  ['PQC-REGION-FIVEEYES', 'Five Eyes'],
-  ['PQC-REGION-EU', 'European Union'],
-])
-
-// region_scope tokens already covered by GeoFilter overlays, or too noisy to surface.
-const GEO_SKIP = new Set([
-  'PQC-REGION-GLOBAL',
-  'PQC-REGION-FIVEEYES',
-  'PQC-REGION-EU',
-  'EU',
-  'Global',
-  'UK',
-])
-
-function geoChipLabel(code: string): string {
-  return GEO_OVERLAY_LABELS.get(code) ?? REGION_LABELS.get(code) ?? code
-}
+// region_scope tokens already covered by GeoFilter overlays (after
+// canonicalisation, see libraryRegions.ts), so not listed as countries.
+const GEO_SKIP = new Set(['PQC-REGION-GLOBAL', 'PQC-REGION-FIVEEYES', 'PQC-REGION-EU'])
 
 export function LibraryViewRedesign({
   simEmbed = false,
@@ -267,6 +220,12 @@ export function LibraryViewRedesign({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // `?topic=CycloneDX` (a subject, not a topic id) arrives as a search.
+  useEffect(() => {
+    const moved = topicParamAsSearch(params)
+    if (moved) setParams(moved, { replace: true })
+  }, [params, setParams])
+
   // One search event per pause in typing, not one per keystroke.
   useEffect(() => {
     if (filterText.trim().length < 3) return
@@ -343,22 +302,11 @@ export function LibraryViewRedesign({
   // ── Org dropdown options (canonical) ───────────────────────────────────────
   const orgs = useMemo(() => {
     const set = new Set<string>()
-    let hasUnmapped = false
-    for (const item of libraryData) {
-      if (!item.authorsOrOrganization) continue
-      let mapped = false
-      for (const raw of item.authorsOrOrganization.split(';')) {
-        const canon = ORG_CANONICAL_MAP[raw.trim()]
-        if (canon) {
-          set.add(canon)
-          mapped = true
-        }
-      }
-      if (!mapped) hasUnmapped = true
-    }
+    for (const item of libraryData) for (const org of libraryCanonicalOrgs(item)) set.add(org)
+    const hasOther = set.delete(ORG_OTHER)
     const sorted = Array.from(set).sort()
-    // Append "Other" last so docs by unmapped publishers stay reachable.
-    if (hasUnmapped) sorted.push(ORG_OTHER)
+    // "Other" last, so documents by unmapped publishers stay reachable.
+    if (hasOther) sorted.push(ORG_OTHER)
     return sorted
   }, [])
 
@@ -368,12 +316,11 @@ export function LibraryViewRedesign({
     const out: GeoOption[] = []
     for (const item of libraryData) {
       if (!item.regionScope) continue
-      for (const raw of item.regionScope.split(';')) {
-        const code = raw.trim()
-        if (!code || GEO_SKIP.has(code) || code.includes(':')) continue
+      for (const code of canonicalRegionCodes(item.regionScope)) {
+        if (GEO_SKIP.has(code) || code.includes(':')) continue
         if (seen.has(code)) continue
         seen.add(code)
-        out.push({ code, label: REGION_LABELS.get(code) ?? code })
+        out.push({ code, label: regionLabel(code) })
       }
     }
     return out.sort((a, b) => a.label.localeCompare(b.label))
@@ -466,13 +413,17 @@ export function LibraryViewRedesign({
     const item = resolved.item
     const supersededNote = supersededNoteRef.current
     supersededNoteRef.current = null
+    // A ?topic= subject being moved to ?q= in this same render (effect above):
+    // judge and write against the moved params so the two URL writes agree.
+    const moved = topicParamAsSearch(params)
+    const baseParams = moved ?? params
     const widening = libraryWideningFor(item, {
       activePurpose,
       activeCategory,
       selectedPersona,
       prefsOff,
       activeOrg,
-      filterText,
+      filterText: moved ? (moved.get('q') ?? '') : filterText,
       geoFilter,
       sectorFilter,
       tierFilter,
@@ -483,12 +434,12 @@ export function LibraryViewRedesign({
       certRelevantOnly,
       certRelevantIdSet,
       lifecycleBucket,
-      topicFilter,
+      topicFilter: moved ? 'All' : topicFilter,
       semanticIdSet,
       newOnly,
     })
     if (widening) {
-      const next = new URLSearchParams(params)
+      const next = new URLSearchParams(baseParams)
       for (const key of widening.drop) next.delete(key)
       if (widening.prefsOff) next.set('prefs', 'off')
       setParams(next, { replace: true })
@@ -496,7 +447,7 @@ export function LibraryViewRedesign({
       setDeepLinkNotice({
         kind: 'widened',
         message: supersededNote ? `${supersededNote} ${widened}` : widened,
-        undoParams: params.toString(),
+        undoParams: baseParams.toString(),
       })
     } else if (supersededNote) {
       setDeepLinkNotice({ kind: 'moved', message: `${supersededNote} Showing it instead.` })
@@ -585,7 +536,7 @@ export function LibraryViewRedesign({
   for (const code of geoFilter)
     activeFilterChips.push({
       id: `geo:${code}`,
-      label: geoChipLabel(code),
+      label: regionLabel(code),
       onClear: () => clearMulti('geo', code),
     })
   for (const code of sectorFilter)
@@ -745,11 +696,12 @@ export function LibraryViewRedesign({
             lifecycleBucket={lifecycleBucket}
             onLifecycle={(b) => setParam('lifecycle', b)}
             counts={{
-              all: libraryData.length,
-              new: pipeline.activityItems.length,
+              all: pipeline.purposeCounts.all,
+              new: pipeline.purposeCounts.new,
               cert: certificationStarterCount,
-              bookmarked: libraryBookmarks.length,
+              bookmarked: pipeline.purposeCounts.bookmarked,
             }}
+            lifecycleCounts={pipeline.purposeCounts.lifecycle}
           />
         </div>
 
@@ -811,7 +763,8 @@ export function LibraryViewRedesign({
             <div className="flex items-center gap-2 rounded-lg border border-secondary/30 bg-secondary/10 px-3 py-2 text-[12.5px]">
               <span className="text-foreground">
                 Showing <strong>{displayedItems.length}</strong> of {libraryData.length} — narrowed
-                to your role's focus areas ({pipeline.newHiddenByPersonaCount} new hidden).
+                to your role's focus areas ({pipeline.newHiddenByPersonaCount} new or updated
+                hidden).
               </span>
               <Button
                 type="button"

@@ -15,6 +15,7 @@ export type PageId =
   | 'report'
   | 'business-center'
   | 'learn'
+  | 'navigate'
   | 'faq'
 
 export interface ManualSection {
@@ -33,26 +34,37 @@ export const pageManuals: Record<PageId, PageManual> = {
   timeline: {
     title: 'Global Migration Timeline',
     summary:
-      'Compare post-quantum cryptography migration roadmaps across nations and track phases from discovery to full migration.',
+      'Compare published post-quantum migration records — standards, guidance, policy and deadlines — across countries and international bodies, each linked to its source.',
     sections: [
       {
         heading: 'Region & Country Filters',
-        body: 'Use the region dropdown to filter by Americas, EU, APAC, or Global. Select a specific country to see its migration phases highlighted on the Gantt chart. Filters sync with the URL so you can share filtered views.',
+        body: 'Use the region dropdown, or a Coverage-by-region tile, to show Americas, EU (the Europe group, including the UK, Norway and Switzerland), MENA, APAC or Global (international bodies such as the G7, IETF, ITU-T and ETSI). Pick a country to narrow further and to open its Documents panel. Filters are kept in the URL (?region=, ?country=, ?q=) so a filtered view can be shared.',
       },
       {
         heading: 'Gantt Chart',
-        body: 'Each row represents a country. Colored bars show migration phases (Research, Planning, Early Adoption, Transition, Full Migration). Hover over a bar to see phase dates and details. Click a row to expand milestones.',
+        body: "Each country has one row per phase type: Discovery, Testing, POC, Migration, Standardization, Guidance, Policy, Regulation, Research or Deadline. Bars are phases with a start and end year; flags are dated milestones, with a number when one year holds several, and a thin line when a milestone states a span. The Organization column names the body behind each row. Click a bar or flag to open that year's record; when a row groups several records, the popover lists them all so each can be opened.",
+      },
+      {
+        heading: 'Search & Quick Filters',
+        body: 'Search matches countries, issuing bodies and each record\'s title, description and identifiers (for example "FIPS 203" or "TR-02102"). The phase and type dropdowns narrow the chart (?phase=, ?etype=), and Deadlines (?deadlines=1) shows deadline records only. A deadline that states a range counts at its end year.',
+      },
+      {
+        heading: 'Records, Binding Force & Evidence',
+        body: 'A record shows who issued it, its period, how binding the source is (binding, mandatory in scope, official target, recommendation, draft or informational), its HARD/SOFT mandate label where one has been reviewed, its evidence score, its review history, and links to the Library documents and compliance frameworks that cite it. In the Documents panel, switch between Cards and Table (?docview=table). A link to one record is /timeline?event=<record id>; a link to a retired record opens the record that replaced it when the dataset names one.',
       },
       {
         heading: 'Export & Sharing',
-        body: 'Use the Export button in the header to download the full timeline dataset as CSV. The Share button copies a deep link to your current filtered view.',
+        body: 'Export (in the header or the chart toolbar) downloads one CSV row per record in the current view, with its issuer, dates, source, mandate label and binding force. The operations view also offers a calendar (.ics) export of the same records. Years are year-level: a calendar entry marks the year, not a day.',
       },
       {
-        heading: 'Sources & Endorsements',
-        body: 'Click Sources to see the authoritative government documents behind each data point. Use the Endorse/Flag buttons to provide community feedback on data accuracy.',
+        heading: 'Endorsements & Flags',
+        body: 'Use Endorse or Flag on a country row or a record to send feedback about its accuracy.',
       },
     ],
-    tips: ['Bookmark a filtered URL to quickly return to a specific region view.'],
+    tips: [
+      'Bookmark a filtered URL to quickly return to a specific region view.',
+      'A country-level record does not establish that a milestone applies to your organization; open its source to check scope.',
+    ],
   },
 
   algorithms: {
@@ -87,29 +99,33 @@ export const pageManuals: Record<PageId, PageManual> = {
   library: {
     title: 'PQC Library',
     summary:
-      'Search and browse 1,200+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
+      'Search and browse post-quantum cryptography standards, drafts, RFCs, guidance and research from NIST, IETF, ETSI and other organizations. Each record says what the document is, where it stands in its lifecycle, and links to the official source.',
     sections: [
       {
+        heading: 'Where to start',
+        body: 'Three purpose doors (Learn, Reference, Plan migration) narrow the catalogue by why you are here. With a role selected, Start here suggests three documents for it, and the New & updated strip lists documents added or revised recently.',
+      },
+      {
         heading: 'Search & Filters',
-        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter across 13 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research, Compliance & Certification, Blockchain Standards, Implementations). Filter by organization or industry. Persona-aware category boosting surfaces the most relevant categories for your role.',
+        body: 'Type in the search bar to search titles, summaries, reference IDs and tags. The left rail filters by quick view (All, New & updated, Certification starter set, Bookmarked), by the 13 categories and by lifecycle status; the toolbar adds organization, geography, sector, trust tier, algorithm family and research topic. With a role selected, the list starts narrowed to that role\'s focus areas; "Show all documents" turns that off.',
       },
       {
         heading: 'View Toggle',
-        body: 'Switch between Card view and Tree Table view using the toggle in the toolbar. Card view shows document summaries; Tree Table groups documents by category with sortable columns.',
+        body: 'Switch between Card view and Tree Table view in the toolbar. Card view shows document summaries; the Tree Table lists the documents that match your filters, with sortable columns and nests, under each document, the documents that build on it.',
       },
       {
         heading: 'Document Details',
-        body: 'Click any document card to see full details including abstract, status, dependencies, related standards, and a direct link to the source. Documents with local cached copies show a preview icon.',
+        body: "Open any document to see its catalogue summary, status and dates, the documents it builds on, earlier revisions, the catalogue's classification tags, the Learn modules that use it, and a direct link to the source.",
       },
       {
-        heading: 'Activity Feed',
-        body: 'The activity feed shows recently added or updated documents. New and Updated badges appear on documents that changed since the previous data version.',
+        heading: 'Export',
+        body: 'Export the filtered list as CSV, or export citations for the filtered list or your bookmarks as BibTeX or CSL-JSON.',
       },
     ],
     tips: [
-      'Use the URL parameter ?ref=REFERENCE_ID to deep-link directly to a specific document.',
-      'Export the full library as CSV for offline analysis or reporting.',
-      'URL params: ?ref= opens a document; ?cat=, ?org=, ?sector=, ?q=, ?sort=, ?view=cards|table are all combinable for shareable filtered views.',
+      'Use ?ref=REFERENCE_ID to deep-link directly to a document; a retired ID opens the document that replaced it.',
+      'URL params: ?purpose=, ?cat=, ?org=, ?geo=, ?sector=, ?tier=, ?algo=, ?topic=, ?lifecycle=, ?cswp39=1, ?q=, ?sort= and ?view=cards|table combine into shareable filtered views.',
+      'On other pages, ?spec=REFERENCE_ID opens a document in place without leaving the page.',
     ],
   },
 
@@ -200,30 +216,34 @@ export const pageManuals: Record<PageId, PageManual> = {
   },
 
   leaders: {
-    title: 'PQC Leaders',
+    title: 'Community',
     summary:
-      'Discover the organizations and experts driving post-quantum cryptography adoption worldwide, organized by region, sector, and leadership category.',
+      'An evidence-linked directory of people and organizations named in post-quantum research, standards, policy, patent and open-source sources. Inclusion is not an endorsement, a ranking or a certification.',
     sections: [
       {
-        heading: 'Region & Sector Filters',
-        body: 'Filter by region (Americas, EU, Asia-Pacific) with country drill-down, or by sector (Public, Private, Academic). Use the category sidebar to browse by leadership type.',
+        heading: 'Curated profiles and document contributors',
+        body: 'The directory opens on the hand-curated profiles. "Show all contributors" adds the document-contributor profiles, created from the author lists of documents in the Library (the link form is ?all=1). The page shows the current count of each.',
       },
       {
-        heading: 'View Toggle',
-        body: 'Switch between Card view (visual profile cards) and Table view (sortable columns). Both views support the same filtering and search capabilities.',
+        heading: 'Filters and views',
+        body: 'Filter by category, region and country, or sector (Public, Private, Academic), or search by name, role, organization or bio. Three views show the same results: Sector Stack (people grouped by sector; choose a sector to narrow the list), Cards, and Table (sortable columns, including Category). Name order ignores titles such as "Dr." and "Prof.", and people with no recorded country sort last.',
       },
       {
-        heading: 'Leader Details',
-        body: 'Click a leader card to see their full profile: organization, contributions to PQC, key publications, and links to related library resources. 330+ leaders are currently profiled.',
+        heading: 'What a profile links to',
+        body: 'Open a card or a table row to read the full role, organizations and bio, and the cited evidence: "Cited in the Library" opens each document in the Library, "External sources" opens the cited pages, "View patents" opens the person\'s patent records, and catalog products open in Migrate. "Events from <country>" appears when the Timeline has events for that country.',
       },
       {
-        heading: 'Search',
-        body: 'Search by name, organization, or keyword to quickly find specific leaders or organizations. Results update in real-time as you type.',
+        heading: 'Links you can share',
+        body: '?leader=<id> opens one profile (old links to merged or renamed profiles forward to the current one). Filters are kept in the address too: ?cat=, ?region=, ?country=, ?sector=, ?q=, ?mode=stack|cards|table, ?layer= (a Sector Stack sector) and ?sort=.',
+      },
+      {
+        heading: 'Reading a profile critically',
+        body: 'A profile is a starting point, not a verdict. The recorded source details (institutions in source metadata, review flags, "profile sources checked" dates) say what was recorded, not that anyone endorsed the person or their work. Check the claim in the linked primary source, and check its date and version.',
       },
     ],
     tips: [
-      'Leader profiles link to related documents in the Library via their Key Resource URLs.',
-      'Use the consent/removal form to submit corrections or request profile removal.',
+      'Profiles are compiled from cited public sources and from people who ask to be listed; anyone listed can ask for a correction or removal from the page.',
+      "Export CSV includes each profile's Library refs, external sources, patents and catalog products, so you can check them in bulk.",
     ],
   },
 
@@ -459,6 +479,50 @@ export const pageManuals: Record<PageId, PageManual> = {
       'Start with the Foundations track if you are new to PQC, or pick a role first so My Path can order the modules for you.',
       'Workshop exercises that use WebAssembly cryptography run locally in your browser.',
       'The Practice quiz draws on questions across many topics, filtered by your role and the difficulty you choose.',
+    ],
+  },
+
+  navigate: {
+    title: 'Navigate: the knowledge graph',
+    summary:
+      'A 3D map of how the hub’s records connect. Each node is a record from one of the hub’s data sets and each line is a relationship recorded in that data. The graph teaches how standards, algorithms, protocols, compliance frameworks, products and vendors refer to each other; it does not validate any of them.',
+    sections: [
+      {
+        heading: 'Twelve kinds of record',
+        body: 'Nodes are coloured by category: Trusted source, Crypto mechanism, Industry, Use case, Compliance, Standard, Glossary, Product, Protocol, Patent, Community and Vendor. A bigger, darker node has more recorded connections in this graph. That is a count of links in the data, not a measure of importance, trust or maturity.',
+      },
+      {
+        heading: 'Zooming and labels',
+        body: 'Labels change with distance. From far away you see the category names, closer in the sub-category names, and close up the names of single records. The Labels slider sets how many labels can show at once; labels never overlap.',
+      },
+      {
+        heading: 'Filters and the node count',
+        body: 'Filters turns categories and sub-categories on and off. The Nodes slider sets how many records are drawn; each category contributes its most-connected records first, so a record that is not drawn is not missing from the data. The line under the sliders shows how many records and links are drawn out of the whole graph.',
+      },
+      {
+        heading: 'Finding a record',
+        body: 'Search (or the search box at the top of Filters) finds any record by name across the whole graph, including records the node count or the filters leave out. Picking one draws it, opens its details and flies the camera to it. List view (keyboard) lists the drawn records for keyboard and screen-reader use and does the same.',
+      },
+      {
+        heading: 'Spotlight',
+        body: 'Click a category or sub-category label to spotlight it: the camera frames it and every other record is hidden. The chip at the top names the spotlight; Show all or Escape returns to the whole graph. Clicking empty space also ends it, but releasing a drag does not.',
+      },
+      {
+        heading: 'Record details',
+        body: 'Clicking a record opens its details: what it is, links to its page in the hub (and to Learn modules or tools that cover it), and its connections grouped by relationship. A connection marked "name match" was found because one record’s text uses the other’s name; "family match" means a source named an algorithm family and the link goes to every parameter set of it. Unmarked connections come from a field that cites that exact record.',
+      },
+      {
+        heading: 'Guided tour and motion',
+        body: 'Spin turns the graph slowly. Tour visits each category and then its most-connected records, with a caption naming each one and, on a wider screen, its details panel open (on a phone the panel would cover the tour controls, so only the caption shows). Pause, Previous and Next control the tour; dragging the view also pauses it, and Resume carries on from the current stop.',
+      },
+      {
+        heading: 'Sharing a view',
+        body: 'The address bar follows what you have open: ?node= for a record, ?type= and ?sub= for a spotlight. The Share button in the top bar copies that link, and opening it shows the same record or spotlight.',
+      },
+    ],
+    tips: [
+      'A link records a reference in the dataset, not a validation. Before relying on one, open the cited document or the official register (for example CMVP for FIPS 140-3 certificates).',
+      'If the canvas feels busy, spotlight one category or lower the Nodes slider, then follow connections from the details panel.',
     ],
   },
 

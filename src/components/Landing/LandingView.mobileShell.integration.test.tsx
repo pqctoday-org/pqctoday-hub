@@ -130,4 +130,19 @@ describe('LandingView — mobile UX layer (Phase 4)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Change' }))
     expect(await screen.findByText('Change role')).toBeInTheDocument()
   })
+
+  it.each([
+    ['a role is picked', () => usePersonaStore.getState().setPersona('developer')],
+    [
+      '"Show me everything" was chosen',
+      () => usePersonaStore.setState({ hasSkippedPersonalization: true }),
+    ],
+  ])('phone Home keeps score card and Backup & Restore when %s', async (_label, setup) => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    setup()
+    renderApp('/')
+    expect(await screen.findByText('Backup & Restore progress')).toBeInTheDocument()
+    expect(screen.getByTestId('mobile-home-utilities')).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
 })

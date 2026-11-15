@@ -170,8 +170,23 @@ describe('computeTimelineConfidence', () => {
     ).toBe(30)
   })
 
-  it('still gives no recency credit to a bare year or an impossible month', () => {
-    for (const sd of ['2026', '2026-13', '2026-00', '2026-1', 'March 2026']) {
+  it('scores a year-only source date from 1 January of that year (owner decision 2026-11-14)', () => {
+    const row = { ...base, source_url_quality: '', peer_reviewed: '', SourceDate: '2026' }
+    expect(computeTimelineConfidence(row, new Date('2026-07-01'))).toBe(20 + 10)
+    // counted from 1 January, never from a later day: 2024 is 34 months before 2026-11-08
+    expect(computeTimelineConfidence({ ...row, SourceDate: '2024' }, new Date('2026-11-08'))).toBe(
+      10 + 10
+    )
+    expect(computeTimelineConfidence({ ...row, SourceDate: '2023' }, new Date('2026-11-08'))).toBe(
+      0 + 10
+    )
+    expect(computeTimelineConfidence(row, new Date('2026-07-01'))).toBe(
+      computeTimelineConfidence({ ...row, SourceDate: '2026-01' }, new Date('2026-07-01'))
+    )
+  })
+
+  it('still gives no recency credit to an impossible month or free text', () => {
+    for (const sd of ['2026-13', '2026-00', '2026-1', 'March 2026']) {
       const row = { ...base, source_url_quality: '', peer_reviewed: '', SourceDate: sd }
       expect(computeTimelineConfidence(row, new Date('2026-07-01'))).toBe(10)
     }

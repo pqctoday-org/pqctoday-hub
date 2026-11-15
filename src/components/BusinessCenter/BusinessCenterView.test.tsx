@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { BrowserRouter, MemoryRouter, useLocation } from 'react-router'
 import { BusinessCenterView } from './BusinessCenterView'
 import '@testing-library/jest-dom'
+import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_ORDER } from '@/data/cswp39ZoneData'
+import { useCommandCenterOnboardingStore } from '@/store/useCommandCenterOnboardingStore'
+import { BUSINESS_TOOLS } from './businessToolsRegistry'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -259,6 +262,14 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Start Executive Learning')).toBeInTheDocument()
   })
 
+  it('the welcome state links to the full planning tools list', () => {
+    renderView()
+    const link = screen.getByRole('link', {
+      name: `Browse all ${BUSINESS_TOOLS.length} planning tools →`,
+    })
+    expect(link).toHaveAttribute('href', '/business/tools')
+  })
+
   it('shows a developer the engineering questions and tools, not board questions', () => {
     mockPersonaStore.selectedPersona = 'developer'
     renderView()
@@ -373,6 +384,34 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Finish your risk assessment')).toBeInTheDocument()
   })
 
+  it('a GRC reader sees the GRC learning path in the bar, not the Executive path', () => {
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockPersonaStore.selectedPersona = 'grc'
+
+    renderView()
+
+    expect(screen.getByText('GRC Learning Path')).toBeInTheDocument()
+    expect(screen.queryByText(/Executive Learning Path/)).not.toBeInTheDocument()
+  })
+
+  it('an operations reader gets the operations learning button on the welcome state', () => {
+    mockPersonaStore.selectedPersona = 'ops'
+
+    renderView()
+
+    expect(screen.getByRole('button', { name: 'Start operations learning' })).toBeInTheDocument()
+    expect(screen.queryByText('Start Executive Learning')).not.toBeInTheDocument()
+  })
+
+  it('a certification engineer gets the certification learning button on the welcome state', () => {
+    mockPersonaStore.selectedPersona = 'cert-engineer'
+
+    renderView()
+
+    expect(screen.getByRole('button', { name: 'Start certification learning' })).toBeInTheDocument()
+    expect(screen.getByText('Which scheme applies?')).toBeInTheDocument()
+  })
+
   it('shows compact learning bar when assessment is in-progress', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
 
@@ -427,5 +466,304 @@ describe('BusinessCenterView', () => {
       // empty state.
       expect(screen.queryByTestId('bc-dashboard-ready')).not.toBeInTheDocument()
     })
+  })
+})
+
+// Shows the router's current search string so a test can check the URL.
+function LocationProbe() {
+  const location = useLocation()
+  return <div data-testid="location-search">{location.search}</div>
+}
+
+describe('BusinessCenterView ?zone= deep link', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // jsdom has no layout engine; the deep link scrolls the zone into view.
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockAssessmentStore.industry = 'Technology'
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = 'curious'
+  })
+
+  function renderAt(url: string) {
+    return render(
+      <MemoryRouter initialEntries={[url]}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+  }
+
+  it('opens the deep-linked zone, then lets the user switch to another zone', () => {
+    renderAt('/business?zone=mitigation')
+
+    // The linked zone opens on arrival.
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
+
+    // Selecting another zone moves the open zone; the deep link no longer pins it.
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Governance' }))
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Mitigation' })).toBeInTheDocument()
+  })
+
+  it('lets the user collapse the deep-linked zone', () => {
+    renderAt('/business?zone=governance')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse Governance' }))
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Collapse / })).not.toBeInTheDocument()
+  })
+
+  it('removes zone from the URL and keeps other query params', () => {
+    renderAt('/business?foo=bar&zone=assets')
+
+    expect(screen.getByTestId('location-search')).not.toHaveTextContent('zone=')
+    expect(screen.getByTestId('location-search')).toHaveTextContent('foo=bar')
+    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
+  })
+})
+
+describe('BusinessCenterView ?zone= keeps the zone anchor in the address bar', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockAssessmentStore.industry = 'Technology'
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = 'curious'
+  })
+  afterEach(() => {
+    window.history.replaceState(null, '', '/')
+  })
+
+  // BrowserRouter, not MemoryRouter: the zone scroll effect writes #zone-<id>
+  // with window.history, and the router's own navigation is what can drop it.
+  it('still shows #zone-<id> in the URL after the consumed ?zone= param is removed', () => {
+    window.history.replaceState(null, '', '/business?zone=mitigation')
+    render(
+      <BrowserRouter>
+        <BusinessCenterView />
+      </BrowserRouter>
+    )
+    expect(window.location.search).not.toContain('zone=')
+    expect(window.location.hash).toBe('#zone-mitigation')
+  })
+})
+
+// An empty profile (nothing saved, not started) that arrives on a zone link, or
+// that opens the zone map on purpose, sees the zone map rather than only the
+// welcome screen.
+describe('BusinessCenterView empty profile with zone links', () => {
+  const WELCOME = 'Welcome to your PQC Command Center'
+
+  function renderEmptyAt(url: string) {
+    return render(
+      <MemoryRouter initialEntries={[url]}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'not-started'
+    mockAssessmentStore.industry = ''
+    mockAssessmentStore.country = ''
+    mockAssessmentStore.completedAt = null
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = 'curious'
+    useCommandCenterOnboardingStore.setState({ hasSeenExecWalkthrough: true })
+    window.history.replaceState(null, '', '/')
+  })
+
+  afterEach(() => {
+    window.history.replaceState(null, '', '/')
+  })
+
+  it('shows the zone map with the linked zone open for ?zone= on an empty profile', () => {
+    renderEmptyAt('/business?zone=mitigation')
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
+  })
+
+  it('keeps the zone map after ?zone= is stripped from the URL', () => {
+    renderEmptyAt('/business?zone=mitigation')
+
+    // The param is removed by the page; the map and the open zone stay.
+    expect(screen.getByTestId('location-search')).not.toHaveTextContent('zone=')
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+  })
+
+  it('shows the zone map with the linked zone open for a #zone- hash on an empty profile', () => {
+    window.history.replaceState(null, '', '/business#zone-mitigation')
+    renderEmptyAt('/business#zone-mitigation')
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Mitigation' })).toBeInTheDocument()
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalled()
+  })
+
+  it('maps a legacy #step- hash to its zone on an empty profile', () => {
+    window.history.replaceState(null, '', '/business#step-implement')
+    renderEmptyAt('/business#step-implement')
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Collapse Migration' })).toBeInTheDocument()
+  })
+
+  it('keeps the welcome screen for a zone link that names no real zone', () => {
+    window.history.replaceState(null, '', '/business#zone-nonsense')
+    renderEmptyAt('/business?zone=bogus')
+
+    expect(screen.getByText(WELCOME)).toBeInTheDocument()
+  })
+
+  it('shows the welcome screen with no link, and "Explore the six zones" shows the six zones', () => {
+    renderEmptyAt('/business')
+
+    expect(screen.getByText(WELCOME)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Explore the six zones' }))
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    for (const zone of CSWP39_ZONE_ORDER) {
+      // eslint-disable-next-line security/detect-object-injection -- zone is a ZoneId, a closed union
+      const title = CSWP39_ZONE_DETAILS[zone].title
+      expect(
+        screen.getByRole('button', {
+          name: (name) => name === `Expand ${title}` || name === `Collapse ${title}`,
+        })
+      ).toBeInTheDocument()
+    }
+  })
+
+  it('still switches zones after the map has been opened from the welcome screen', () => {
+    renderEmptyAt('/business')
+    fireEvent.click(screen.getByRole('button', { name: 'Explore the six zones' }))
+
+    // An executive's lens opens Governance by default; a click moves the open zone.
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Assets' }))
+    expect(screen.getByRole('button', { name: 'Collapse Assets' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Governance' })).toBeInTheDocument()
+  })
+
+  it('still switches zones after a ?zone= link opened the map', () => {
+    renderEmptyAt('/business?zone=mitigation')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Expand Governance' }))
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand Mitigation' })).toBeInTheDocument()
+  })
+
+  it('the walkthrough jump link reveals the zone map on an empty profile', () => {
+    useCommandCenterOnboardingStore.setState({ hasSeenExecWalkthrough: false })
+    renderEmptyAt('/business')
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'jump straight to the full zone map below' })
+    )
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    // The executive's lens zone (Governance) is the one that opens.
+    expect(screen.getByRole('button', { name: 'Collapse Governance' })).toBeInTheDocument()
+  })
+})
+
+// Which zone opens on arrival follows the role's own lens (lib/lensZone.ts),
+// at any density. Curious, or no role, opens Assets. A switch of role moves the
+// open zone, and the footer names the zone that opens.
+describe('BusinessCenterView open zone by role', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    Element.prototype.scrollIntoView = vi.fn()
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+    mockAssessmentStore.industry = 'Technology'
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = null
+  })
+
+  function renderAt(url = '/business') {
+    return render(
+      <MemoryRouter initialEntries={[url]}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+  }
+
+  const openTitles = () =>
+    CSWP39_ZONE_ORDER.filter((z) =>
+      screen.queryByRole('button', { name: `Collapse ${CSWP39_ZONE_DETAILS[z].title}` })
+    ).map((z) => CSWP39_ZONE_DETAILS[z].title)
+
+  it('an executive opens Governance at basic density', () => {
+    mockPersonaStore.experienceLevel = 'curious'
+    renderAt()
+    expect(openTitles()).toEqual(['Governance'])
+  })
+
+  it('an executive still opens Governance at advanced density', () => {
+    mockPersonaStore.experienceLevel = 'expert'
+    renderAt()
+    expect(openTitles()).toEqual(['Governance'])
+  })
+
+  it('a developer opens Migration, the zone of their lens', () => {
+    mockPersonaStore.selectedPersona = 'developer'
+    mockPersonaStore.experienceLevel = null
+    renderAt()
+    expect(openTitles()).toEqual(['Migration'])
+  })
+
+  it('curious opens Assets', () => {
+    mockPersonaStore.selectedPersona = 'curious'
+    mockPersonaStore.experienceLevel = 'curious'
+    renderAt()
+    expect(openTitles()).toEqual(['Assets'])
+  })
+
+  it('no role picked opens Assets', () => {
+    mockPersonaStore.selectedPersona = null
+    mockPersonaStore.experienceLevel = null
+    renderAt()
+    expect(openTitles()).toEqual(['Assets'])
+  })
+
+  it('switching role moves the open zone to the new role default', () => {
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = null
+    const { rerender } = renderAt()
+    expect(openTitles()).toEqual(['Governance'])
+
+    mockPersonaStore.selectedPersona = 'ops'
+    rerender(
+      <MemoryRouter initialEntries={['/business']}>
+        <BusinessCenterView />
+        <LocationProbe />
+      </MemoryRouter>
+    )
+    expect(openTitles()).toEqual(['Migration'])
+  })
+
+  it('the footer names the zone that opens for the role', () => {
+    mockPersonaStore.selectedPersona = 'executive'
+    renderAt()
+    expect(screen.getByText(/Your executive lens/).closest('div')).toHaveTextContent(
+      `opens the ${CSWP39_ZONE_DETAILS.governance.title} zone`
+    )
+    expect(openTitles()).toEqual([CSWP39_ZONE_DETAILS.governance.title])
+  })
+
+  it('a zone deep link still opens its zone on arrival, over the role default', () => {
+    mockPersonaStore.selectedPersona = 'executive'
+    renderAt('/business?zone=mitigation')
+    expect(openTitles()).toEqual(['Mitigation'])
   })
 })

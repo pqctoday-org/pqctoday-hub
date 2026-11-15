@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { CmsSourceGuide, LibraryReviewProcess } from '@/components/common/LibrarySourceLabels'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { Search, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -18,6 +18,16 @@ import {
 } from '@/data/libraryPurposeDoors'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { useLibraryPipeline } from '@/components/Library/redesign/useLibraryPipeline'
+import {
+  libraryWideningFor,
+  topicParamAsSearch,
+} from '@/components/Library/redesign/libraryDeepLink'
+import { regionLabel } from '@/components/Library/redesign/libraryRegions'
+import {
+  libraryClassificationFacts,
+  relatedLearnModules,
+} from '@/components/Library/redesign/libraryDetailFacts'
+import { industryLabel } from '@/data/sectorVocabularyData'
 import {
   lifecycleLabel,
   formatLibDate,
@@ -39,6 +49,7 @@ import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollTo
 import { MobileSheet } from '../primitives/Sheet'
 import { resolveLibrarySourceAction } from '@/components/Library/librarySourceAction'
 import { ruleBasedConfidenceLabel } from '@/components/Library/ruleBasedConfidence'
+import { documentTypeDescription } from '@/components/Library/libraryDocumentTypes'
 import {
   MISSING_REVIEWED_SUMMARY,
   SCOPE_VERIFICATION_NOTE,
@@ -81,13 +92,12 @@ const QUICK_VIEWS: { id: QuickView; label: string }[] = [
  * "Certification starter set" is stated as what it really is — a 7-item curated
  * allowlist (`LIBRARY_OPS_PICKS`), not a computed corpus-wide flag.
  *
- * Distilled: no geo/sector/trust-tier/algorithm-family filters, no sort
- * picker ('published', matching every persona's real current default, unless
- * a shared link carries desktop's `?sort`), no semantic-search supplement
- * (lexical only) — stated below.
- * Sort/category/org/tier/geo/sector/algoFamily inputs are fixed to their
- * "off" values rather than exposed as controls; the pipeline itself is the
- * real one every desktop Library surface uses, not a re-derivation.
+ * Distilled: no geo/sector/trust-tier/algorithm-family/category/org controls,
+ * no sort picker ('published', matching every persona's real current default,
+ * unless a shared link carries desktop's `?sort`), no semantic-search supplement
+ * (lexical only). Those filters still apply when a shared desktop link carries
+ * them (shown as removable chips); the pipeline itself is the real one every
+ * desktop Library surface uses, not a re-derivation.
  */
 type LibrarySort = Parameters<typeof useLibraryPipeline>[0]['sortBy']
 // Desktop's sort options (SortControl.tsx) — a `?sort` from a shared desktop
@@ -145,6 +155,24 @@ export function MobileLibraryView() {
   // and shows as a removable chip. An id with no tagged documents filters nothing.
   const libraryTopics = useMemo(() => researchTopicCounts(libraryData), [])
   const topic = resolveResearchTopicParam(params.get(RESEARCH_TOPIC_PARAM), libraryTopics)
+  // The rest of desktop's shareable filters (?cat, ?org, ?geo, ?sector, ?tier,
+  // ?algo, ?cswp39) work the same way: the phone has no control for them, so a
+  // shared link filters the list and each shows as a removable chip.
+  const activeCategory = params.get('cat') ?? 'All'
+  const activeOrg = params.get('org') ?? 'All'
+  // Read as desktop's filter hooks read them (those hooks live in desktop
+  // dropdown components). A value desktop would not offer still shows as a chip,
+  // so the reader can see and remove it.
+  const geoFilter = params.getAll('geo')
+  const sectorFilter = params.getAll('sector')
+  const tierFilter = params.getAll('tier') as Parameters<typeof useLibraryPipeline>[0]['tierFilter']
+  const algoFamilyFilter = params.getAll('algo')
+  const cswp39Only = params.get('cswp39') === '1'
+  // `?topic=CycloneDX` (a subject, not a topic id) arrives as a search.
+  useEffect(() => {
+    const moved = topicParamAsSearch(params)
+    if (moved) setParams(moved, { replace: true })
+  }, [params, setParams])
   // Same resolution as desktop's resolveLibraryDeepLink (live ref, else the
   // document that superseded it), read straight from libraryData.
   const selected: LibraryItem | null = useMemo(
@@ -168,10 +196,14 @@ export function MobileLibraryView() {
 
   // Retired ref → swap to its successor and say so; unknown ref → say so,
   // rather than opening nothing. Scroll the list to the linked card.
-  const [notice, setNotice] = useState<{ kind: 'not-found' | 'moved'; message: string } | null>(
-    null
-  )
+  const [notice, setNotice] = useState<{
+    kind: 'not-found' | 'moved' | 'widened'
+    message: string
+    /** The filters before a widening, so the reader can put them back. */
+    undoParams?: string
+  } | null>(null)
   const [scrollTarget, setScrollTarget] = useState<string | null>(null)
+  const certRelevantIdSet = useMemo(() => new Set(LIBRARY_OPS_PICKS.map((p) => p.referenceId)), [])
   useScrollToDeepLinkTarget(scrollTarget, scrollTarget ? deepLinkSelector(scrollTarget) : null)
   useEffect(() => {
     if (!detailRef) return
@@ -192,24 +224,59 @@ export function MobileLibraryView() {
       setParams(next, { replace: true })
       return
     }
+    // A linked document the current filters hide: widen just those filters (as
+    // desktop does) so the card behind the sheet is in the list, and say so.
+    // A ?topic= subject moving to ?q= in this render is judged as moved.
+    const moved = topicParamAsSearch(params)
+    const baseParams = moved ?? params
+    const widening = libraryWideningFor(selected, {
+      activePurpose: purpose,
+      activeCategory,
+      selectedPersona,
+      prefsOff,
+      activeOrg,
+      filterText: moved ? (moved.get('q') ?? '') : searchText,
+      geoFilter,
+      sectorFilter,
+      tierFilter,
+      algoFamilyFilter,
+      showOnlyLibraryBookmarks: quickView === 'bookmarked',
+      libraryBookmarks,
+      cswp39Only,
+      certRelevantOnly: quickView === 'cert',
+      certRelevantIdSet,
+      lifecycleBucket: lifecycle,
+      topicFilter: moved ? 'All' : topic,
+      semanticIdSet: null,
+      newOnly: quickView === 'new',
+    })
+    if (widening) {
+      const next = new URLSearchParams(baseParams)
+      for (const key of widening.drop) next.delete(key)
+      if (widening.prefsOff) next.set('prefs', 'off')
+      setParams(next, { replace: true })
+      setNotice({
+        kind: 'widened',
+        message: `Filters widened to show ${selected.referenceId}.`,
+        undoParams: baseParams.toString(),
+      })
+    }
     setScrollTarget(selected.referenceId)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per ref
   }, [detailRef])
 
-  const certRelevantIdSet = useMemo(() => new Set(LIBRARY_OPS_PICKS.map((p) => p.referenceId)), [])
-
   const pipeline = useLibraryPipeline({
     activePurpose: purpose,
-    activeCategory: 'All',
-    activeOrg: 'All',
+    activeCategory,
+    activeOrg,
     filterText: searchText,
-    geoFilter: [],
-    sectorFilter: [],
-    tierFilter: [],
-    algoFamilyFilter: [],
+    geoFilter,
+    sectorFilter,
+    tierFilter,
+    algoFamilyFilter,
     showOnlyLibraryBookmarks: quickView === 'bookmarked',
     libraryBookmarks,
-    cswp39Only: false,
+    cswp39Only,
     certRelevantOnly: quickView === 'cert',
     certRelevantIdSet,
     lifecycleBucket: lifecycle,
@@ -233,6 +300,79 @@ export function MobileLibraryView() {
     next.delete(RESEARCH_TOPIC_PARAM)
     setParams(next, { replace: true })
   }, [params, setParams])
+
+  /** Remove one URL filter value (every value of `key` when `value` is omitted). */
+  const clearParam = useCallback(
+    (key: string, value?: string) => {
+      const next = new URLSearchParams(params)
+      const remaining = value === undefined ? [] : next.getAll(key).filter((v) => v !== value)
+      next.delete(key)
+      for (const v of remaining) next.append(key, v)
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
+
+  // Link-only filters shown as removable chips, in desktop's chip order.
+  const linkChips: { id: string; kind: string; label: string; onClear: () => void }[] = []
+  if (activeCategory !== 'All')
+    linkChips.push({
+      id: 'cat',
+      kind: 'Category',
+      label: activeCategory,
+      onClear: () => clearParam('cat'),
+    })
+  if (activeOrg !== 'All')
+    linkChips.push({
+      id: 'org',
+      kind: 'Organization',
+      label: activeOrg,
+      onClear: () => clearParam('org'),
+    })
+  if (lifecycle !== 'All')
+    linkChips.push({ id: 'lifecycle', kind: 'Status', label: lifecycle, onClear: clearLifecycle })
+  if (topic !== 'All')
+    linkChips.push({
+      id: 'topic',
+      kind: 'Topic',
+      label: researchTopicLabel(topic) ?? topic,
+      onClear: clearTopic,
+    })
+  if (cswp39Only)
+    linkChips.push({
+      id: 'cswp39',
+      kind: 'Mapped to',
+      label: 'NIST CSWP 39',
+      onClear: () => clearParam('cswp39'),
+    })
+  for (const code of geoFilter)
+    linkChips.push({
+      id: `geo:${code}`,
+      kind: 'Region',
+      label: regionLabel(code),
+      onClear: () => clearParam('geo', code),
+    })
+  for (const code of sectorFilter)
+    linkChips.push({
+      id: `sector:${code}`,
+      kind: 'Sector',
+      label: industryLabel(code),
+      onClear: () => clearParam('sector', code),
+    })
+  for (const tier of tierFilter)
+    linkChips.push({
+      id: `tier:${tier}`,
+      kind: 'Trust',
+      label: tier,
+      onClear: () => clearParam('tier', tier),
+    })
+  for (const fam of algoFamilyFilter)
+    linkChips.push({
+      id: `algo:${fam}`,
+      kind: 'Algorithm',
+      label: fam,
+      onClear: () => clearParam('algo', fam),
+    })
 
   // The Certification starter set is a fixed list that role narrowing leaves alone
   // (see useLibraryPipeline), so while it is open the page does not claim the list
@@ -291,6 +431,17 @@ export function MobileLibraryView() {
         <DeepLinkNotice
           kind={notice.kind}
           message={notice.message}
+          onUndo={
+            notice.undoParams
+              ? () => {
+                  // Restore the reader's filters but keep the open document.
+                  const restored = new URLSearchParams(notice.undoParams)
+                  if (detailRef) restored.set('ref', detailRef)
+                  setParams(restored, { replace: true })
+                  setNotice(null)
+                }
+              : undefined
+          }
           onDismiss={() => {
             // An unknown ref is still in the URL; drop it along with the notice.
             if (detailRef && !selected) setDetailRef(null)
@@ -366,43 +517,29 @@ export function MobileLibraryView() {
         ))}
       </div>
 
-      {(lifecycle !== 'All' || topic !== 'All') && (
+      {linkChips.length > 0 && (
         <div
           className="mb-3 flex flex-wrap items-center gap-1.5"
           data-testid="library-link-filters"
         >
-          {lifecycle !== 'All' && (
-            <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]">
-              <span className="text-muted-foreground">Status:</span>
-              <span className="truncate font-medium text-foreground">{lifecycle}</span>
+          {linkChips.map((chip) => (
+            <span
+              key={chip.id}
+              className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]"
+            >
+              <span className="text-muted-foreground">{chip.kind}:</span>
+              <span className="truncate font-medium text-foreground">{chip.label}</span>
               <Button
                 type="button"
                 variant="ghost"
-                aria-label="Remove Status filter"
-                onClick={clearLifecycle}
+                aria-label={`Remove ${chip.kind} filter`}
+                onClick={chip.onClear}
                 className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
               >
                 <X size={12} aria-hidden="true" />
               </Button>
             </span>
-          )}
-          {topic !== 'All' && (
-            <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-muted/60 py-0.5 pl-2.5 text-[11.5px]">
-              <span className="text-muted-foreground">Topic:</span>
-              <span className="truncate font-medium text-foreground">
-                {researchTopicLabel(topic) ?? topic}
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                aria-label="Remove Topic filter"
-                onClick={clearTopic}
-                className="h-8 w-8 shrink-0 p-0 text-muted-foreground hover:bg-transparent"
-              >
-                <X size={12} aria-hidden="true" />
-              </Button>
-            </span>
-          )}
+          ))}
         </div>
       )}
 
@@ -543,6 +680,7 @@ export function MobileLibraryView() {
                   'Referenced by Library records',
                   selected.citationCount ? String(selected.citationCount) : undefined,
                 ],
+                ...libraryClassificationFacts(selected).map((f) => [f.label, f.value]),
               ]
                 // Screen real estate is scarce here — a row that only says "N/A" or
                 // "0" costs a line without telling the reader anything, so it's
@@ -560,10 +698,22 @@ export function MobileLibraryView() {
             </dl>
             {(selected.algorithmFamily ||
               selected.securityLevels ||
-              selected.protocolOrToolImpact) && (
+              selected.protocolOrToolImpact ||
+              selected.toolchainSupport) && (
               <p className="text-[10.5px] leading-relaxed text-muted-foreground">
                 Catalog classifications and impact tags are pqctoday analysis, not necessarily
                 publisher statements.
+              </p>
+            )}
+            {documentTypeDescription(selected.documentType) && (
+              <p
+                data-testid="sheet-type-description"
+                className="text-[10.5px] leading-relaxed text-muted-foreground"
+              >
+                <span className="font-semibold text-foreground/80">
+                  Document type, {selected.documentType.trim()}:
+                </span>{' '}
+                {documentTypeDescription(selected.documentType)}
               </p>
             )}
             {selected.categories?.length > 0 && (
@@ -576,6 +726,25 @@ export function MobileLibraryView() {
                     {c}
                   </span>
                 ))}
+              </div>
+            )}
+            {relatedLearnModules(selected).length > 0 && (
+              <div className="border-t border-border pt-3" data-testid="sheet-learn-modules">
+                <p className="mb-1.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Learn modules that use this document
+                </p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {relatedLearnModules(selected).map((m) => (
+                    <li key={m.id}>
+                      <Link
+                        to={`/learn/${m.id}`}
+                        className="inline-flex min-h-[32px] items-center rounded-md border border-border px-2 text-[11.5px] text-primary"
+                      >
+                        {m.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
             {libraryEnrichments[selected.referenceId] && (

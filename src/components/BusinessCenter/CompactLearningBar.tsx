@@ -14,18 +14,28 @@ interface CompactLearningBarProps {
    *  header (icon, title, module count) stays visible in the <summary> either
    *  way — only the progress bar / CTA / bookmarks collapse. */
   defaultCollapsed?: boolean
+  /** Name of the path the modules belong to. Defaults to the Executive path. */
+  pathTitle?: string
+  /** Where the CTA goes once every module is complete. Defaults to the Executive path. */
+  fallbackTo?: string
 }
 
-export function CompactLearningBar({ modules, defaultCollapsed = false }: CompactLearningBarProps) {
+export function CompactLearningBar({
+  modules,
+  defaultCollapsed = false,
+  pathTitle,
+  fallbackTo = '/learn/exec-quantum-impact',
+}: CompactLearningBarProps) {
   const navigate = useNavigate()
   const myLearnModules = useBookmarkStore((s) => s.myLearnModules)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   // The modules below are the Executive path. A reader in another role sees it named as optional
   // context, so it is not taken for their own path; with no role picked it stays the default.
   const title =
-    selectedPersona !== null && selectedPersona !== 'executive'
+    pathTitle ??
+    (selectedPersona !== null && selectedPersona !== 'executive'
       ? 'Executive Learning Path (optional context for your role)'
-      : 'Executive Learning Path'
+      : 'Executive Learning Path')
   const completedCount = modules.filter((m) => m.status === 'completed').length
   const totalCount = modules.length
   const allNotStarted = modules.every((m) => m.status === 'not-started')
@@ -82,9 +92,7 @@ export function CompactLearningBar({ modules, defaultCollapsed = false }: Compac
       variant={allNotStarted ? 'gradient' : 'outline'}
       size="sm"
       className="shrink-0"
-      onClick={() =>
-        navigate(nextModule ? `/learn/${nextModule.id}` : '/learn/exec-quantum-impact')
-      }
+      onClick={() => navigate(nextModule ? `/learn/${nextModule.id}` : fallbackTo)}
     >
       {allNotStarted ? 'Start Learning' : completedCount === totalCount ? 'Review' : 'Continue'}
       <ExternalLink size={12} className="ml-1" />

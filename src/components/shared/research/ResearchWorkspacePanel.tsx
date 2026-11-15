@@ -8,6 +8,7 @@
  */
 import { useEffect, useRef, type FC, type ReactNode } from 'react'
 import { FlaskConical } from 'lucide-react'
+import { useLocation } from 'react-router'
 import { CollectionsList } from './CollectionsList'
 import { BookmarksToCollection } from './BookmarksToCollection'
 import { ChangedSinceSaved } from './ChangedSinceSaved'
@@ -33,9 +34,11 @@ const Block: FC<{ title: string; intro: string; children: ReactNode; testId: str
 
 export const ResearchWorkspacePanel: FC = () => {
   const ref = useRef<HTMLElement>(null)
+  const { hash } = useLocation()
+  // Scroll on load and whenever a same-page link sets this panel's hash.
   useEffect(() => {
-    if (window.location.hash === `#${PANEL_ID}`) ref.current?.scrollIntoView({ block: 'start' })
-  }, [])
+    if (hash === `#${PANEL_ID}`) ref.current?.scrollIntoView({ block: 'start' })
+  }, [hash])
 
   return (
     <section

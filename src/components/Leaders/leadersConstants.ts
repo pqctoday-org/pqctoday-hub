@@ -33,7 +33,8 @@ export type LeaderCategory = (typeof LEADER_CATEGORIES)[number]
 export function leaderMatchesCategory(leader: Leader, category: string): boolean {
   if (leader.category === category) return true
   if (category === 'Patent Inventor') return (leader.patentRefs?.length ?? 0) > 0
-  if (category === 'Open Source Maintainer') return (leader.migrateCatalogRefs?.length ?? 0) > 0
+  if (category === 'Open Source Maintainer')
+    return (leader.migrateCatalogRefs ?? []).some((id) => isOpenSourceCatalogProduct(id))
   return false
 }
 
@@ -65,6 +66,7 @@ export const FLAG_CODE_MAP: Record<string, string> = {
   Netherlands: 'nl',
   Sweden: 'se',
   Spain: 'es',
+  Austria: 'at',
   Italy: 'it',
   India: 'in',
   China: 'cn',
@@ -76,6 +78,10 @@ export const FLAG_CODE_MAP: Record<string, string> = {
   'USA/Switzerland': 'us',
   'USA/Germany': 'us',
   'USA/Canada': 'us',
+  'United States/Canada': 'us',
+  'Belgium/United States': 'be',
+  'Japan/United States': 'jp',
+  'Netherlands/United States': 'nl',
   'USA/China': 'us',
   'USA/Israel': 'us',
   'USA/Netherlands': 'us',
@@ -112,6 +118,10 @@ export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
     'Japan/USA',
     'Netherlands/USA',
     'USA/Canada',
+    'United States/Canada',
+    'Belgium/United States',
+    'Japan/United States',
+    'Netherlands/United States',
     'USA/China',
     'USA/Germany',
     'USA/Israel',
@@ -157,16 +167,107 @@ export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
   ],
 }
 
-/** migrate-catalog product_ids are kebab-case slugs ("bouncy-castle-java") —
- * the CSV has no per-leader display name for them, so this derives a
- * readable label (simple title-case; won't recover exact brand casing like
- * "OpenSSL", but that's a display nicety, not a correctness concern — the
- * link's href always carries the real product_id). */
+/**
+ * Display name and licence of every migrate-catalog product a leader row cites
+ * (`MigrateCatalogRefs`), copied from the catalogue's `software_name` and
+ * `license_type`. The 2.6 MB catalogue is not loaded on /leaders, so the names
+ * live here; leadersConstants.test.ts fails when a cited product is missing or
+ * its name or licence no longer matches the catalogue.
+ */
+export const LEADER_CATALOG_PRODUCTS: Record<string, { name: string; openSource: boolean }> = {
+  'bouncy-castle-c-net': { name: 'Bouncy Castle C# .NET', openSource: true },
+  'bouncy-castle-java': { name: 'Bouncy Castle Java', openSource: true },
+  botan: { name: 'Botan', openSource: true },
+  'cosmian-covercrypt': { name: 'Cosmian covercrypt', openSource: false },
+  'go-stdlib-crypto-mlkem': { name: 'Go stdlib crypto/mlkem', openSource: true },
+  'google-tink': { name: 'Google Tink', openSource: true },
+  leancrypto: { name: 'leancrypto', openSource: true },
+  'liboqs-rust-oqs-crate': { name: 'liboqs-rust (oqs crate)', openSource: true },
+  'mlkem-native': { name: 'mlkem-native', openSource: true },
+  openssl: { name: 'OpenSSL', openSource: true },
+  pqcrypto: { name: 'pqcrypto', openSource: true },
+  'Qinsight-Atlas-Cryptographic-Discovery-P': {
+    name: 'Qinsight Atlas — Cryptographic Discovery & Posture Management Platform',
+    openSource: false,
+  },
+  'rustcrypto-ml-dsa': { name: 'RustCrypto ml-dsa', openSource: true },
+  'rustcrypto-ml-kem': { name: 'RustCrypto ml-kem', openSource: true },
+}
+
+function catalogProduct(productId: string) {
+  return Object.prototype.hasOwnProperty.call(LEADER_CATALOG_PRODUCTS, productId)
+    ? // eslint-disable-next-line security/detect-object-injection -- own key checked above
+      LEADER_CATALOG_PRODUCTS[productId]
+    : undefined
+}
+
+/** The catalogue's name for a product; a title-cased slug when it is not listed. */
 export function productLabelFromId(productId: string): string {
-  return productId
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ')
+  return (
+    catalogProduct(productId)?.name ??
+    productId
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ')
+  )
+}
+
+/** True only when the catalogue records the product's licence as open source. */
+export function isOpenSourceCatalogProduct(productId: string): boolean {
+  return catalogProduct(productId)?.openSource === true
+}
+
+/** Section heading for a leader's catalogue products: "Open Source Project(s)"
+ *  only when every product is open source, otherwise "Catalog Product(s)". */
+export function catalogProductsHeading(productIds: readonly string[]): string {
+  const allOpen = productIds.every((id) => isOpenSourceCatalogProduct(id))
+  const noun = allOpen ? 'Open Source Project' : 'Catalog Product'
+  return productIds.length === 1 ? noun : `${noun}s (${productIds.length})`
+}
+
+/**
+ * Countries that have rows on /timeline (timeline CSV `Country`), limited to
+ * the ones leader rows use. leadersConstants.test.ts checks this list against
+ * timelineData both ways for every leader country, so it cannot drift.
+ */
+const TIMELINE_COUNTRIES = new Set([
+  'Australia',
+  'Brazil',
+  'Canada',
+  'China',
+  'Czech Republic',
+  'European Union',
+  'Finland',
+  'France',
+  'Germany',
+  'Hong Kong',
+  'India',
+  'Israel',
+  'Italy',
+  'Japan',
+  'Netherlands',
+  'Norway',
+  'Singapore',
+  'South Korea',
+  'Spain',
+  'Sweden',
+  'Switzerland',
+  'Taiwan',
+  'United Kingdom',
+  'United States',
+])
+
+/**
+ * The /timeline country for a leader's "Events from …" link, or null when the
+ * Timeline has no events for it (blank, or a country such as Ireland with no
+ * Timeline rows). A dual-country value uses its first part that has events.
+ */
+export function leaderTimelineCountry(country: string): string | null {
+  for (const part of country.split('/')) {
+    const p = part.trim()
+    if (TIMELINE_COUNTRIES.has(p)) return p
+  }
+  return null
 }
 
 /**
@@ -275,3 +376,45 @@ export const PERSONA_LEADER_GUIDANCE: Record<string, LeaderGuidance[]> = {
     },
   ],
 }
+
+/** The card's "Ask about" question, without "They are  at ." when a row has
+ *  no role or organization (7 rows have no role, 1 neither). */
+export function leaderAssistantQuestion(leader: Leader): string {
+  const orgs = leader.organizations.filter((o) => o.trim())
+  const role = leader.title.trim()
+  const who =
+    role && orgs.length > 0
+      ? ` They are ${role} at ${orgs.join(' and ')}.`
+      : role
+        ? ` They are ${role}.`
+        : orgs.length > 0
+          ? ` They work with ${orgs.join(' and ')}.`
+          : ''
+  const background = leader.bio ? ` Background: ${leader.bio}` : ''
+  return `What is ${leader.name}'s role in post-quantum cryptography?${who}${background}`
+}
+
+const REMOVAL_TEMPLATE = `**Name:** [Your full name or the name listed on the page]
+**Organization:** [If applicable]
+**Reason:** [Optional — no questions asked]`
+
+/** Pre-filled GitHub Discussions post asking for a profile's correction or
+ *  removal — the request route the Community page and the phone screen link to. */
+export const LEADER_REMOVAL_REQUEST_URL = (() => {
+  const base = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/new'
+  const params = new URLSearchParams({
+    category: 'i-consent-to-be-added-as-a-pqc-leader',
+    title: 'Request removal from the PQC Community',
+    body: REMOVAL_TEMPLATE,
+  })
+  return `${base}?${params.toString()}`
+})()
+
+/** How profiles get into the directory (owner decision 2026-11-14, Leaders A-1). */
+export const LEADER_PROVENANCE_SENTENCE =
+  'Profiles are compiled from cited public sources (standards, research, patents, open-source projects) and from people who ask to be listed.'
+
+/** The same fact for pages outside /leaders (disclaimer, About), which have to
+ *  say which directory they mean (owner decision 2026-11-14). */
+export const LEADER_COMMUNITY_PROVENANCE =
+  'Profiles in the Community directory are compiled from cited public sources (standards, research, patents, open-source projects) and from people who ask to be listed.'

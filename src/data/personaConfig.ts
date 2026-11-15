@@ -674,6 +674,15 @@ export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
   global: ['Global', 'International', 'G7', 'NATO', 'BIS', 'GSMA'],
 }
 
+/**
+ * Paths the rail and the phone's group menus show for every role even though
+ * no PERSONA_NAV_PATHS list names them: railNav's computeGroupDisplayPaths
+ * adds Business Tools to the Practice group unconditionally. They are not
+ * "left out of your menus", so personaTradeSentence must not count them
+ * (it did until 2026-11-14 — every role's sentence was one page too high).
+ */
+export const RAIL_GROUP_DISPLAY_ADDITIONS = ['/business/tools']
+
 /** Nav paths that are always shown regardless of persona. */
 export const ALWAYS_VISIBLE_PATHS = [
   '/',
@@ -767,12 +776,21 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
   curious: [],
 }
 
+/**
+ * Site sector → Threats-page industry labels. The ONE map: the assessment
+ * report's threat appendix uses it too (it used to keep its own copy, which
+ * disagreed on four sectors, so a sector's threats on /report and /threats
+ * differed). Sectors may share a Threats industry (Legal / Notary sits under
+ * both Finance and Government; Payment Card Industry under Finance and
+ * Retail).
+ */
 export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   'Finance & Banking': [
     'Finance & Banking',
     'Insurance',
     'Payment Card Industry',
     'Cryptocurrency / Blockchain',
+    'Legal / Notary / eSignature',
   ],
   'Government & Defense': ['Government & Defense', 'Legal / Notary / eSignature'],
   Healthcare: ['Healthcare / Pharmaceutical'],
@@ -791,10 +809,11 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
     // THREAT_INDUSTRY_ALIASES (threatRowRules.ts) still resolves.
     'Critical Infrastructure / OT',
     'Water / Wastewater',
+    'Rail / Transit',
   ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation / Space'],
-  'Retail & E-Commerce': ['Retail & E-Commerce'],
+  'Retail & E-Commerce': ['Retail & E-Commerce', 'Payment Card Industry'],
   // Assessment-only industries (AVAILABLE_INDUSTRIES in assessmentData.ts):
   // without a key here, the report's Threats link passed the raw name, which
   // matches no Threats label, so the page opened unfiltered.
@@ -1022,8 +1041,9 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
     tagline:
       'Quantum-readiness scorecard organised around the NIST CSWP.39 strategic plan. Surface the artifacts your board needs first: ROI model, board deck, policy, KPIs.',
     featuredArtifacts: {
-      governance: ['board-deck', 'roi-model', 'policy-draft', 'audit-checklist'],
+      governance: ['board-deck', 'roi-model', 'policy-draft', 'audit-checklist', 'program-charter'],
       'risk-management': ['kpi-dashboard', 'risk-register'],
+      migration: ['migration-roadmap'],
     },
   },
   // GRC (2026-09-07 split, plan §5): open with Governance — audit checklist,
@@ -1068,11 +1088,10 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
   ops: {
     defaultActiveZone: 'migration',
     headline: 'Migration & Mitigation — Run View',
-    tagline:
-      'Track migration phases, deployment playbooks, and KPI burndown. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
+    tagline: 'Track migration phases, deployment playbooks, and KPI burndown.',
     featuredArtifacts: {
-      migration: ['migration-roadmap'],
-      mitigation: ['deployment-playbook'],
+      migration: ['migration-roadmap', 'refresh-cycle-alignment'],
+      mitigation: ['deployment-playbook', 'infra-modernization-plan', 'data-at-rest-strategy'],
       'risk-management': ['kpi-tracker', 'kpi-dashboard'],
       governance: ['supply-chain-matrix', 'audit-checklist'],
     },
@@ -1084,9 +1103,10 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
     tagline:
       'Algorithm transitions, library + HSM upgrade paths, and the deployment playbook for the systems you own.',
     featuredArtifacts: {
-      migration: ['migration-roadmap'],
+      migration: ['migration-roadmap', 'crypto-api-refactor', 'hybrid-transition'],
       mitigation: ['deployment-playbook'],
       governance: ['crypto-architecture', 'policy-draft'],
+      assets: ['crypto-cbom'],
     },
   },
   // Researcher: open with Risk Management — surface risk + policy reference.
@@ -1098,6 +1118,25 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
     featuredArtifacts: {
       'risk-management': ['risk-register', 'risk-treatment-plan'],
       governance: ['policy-draft', 'audit-checklist', 'crqc-scenario'],
+    },
+  },
+  // Certification engineer: opens Governance on the evidence side — the
+  // compliance checklist, vendor certificates and claims, the audit checklist
+  // and the migration check. The role has no seat in the migration program on
+  // the rail (see PERSONA_NAV_PATHS), so this lens does not reach into Migration.
+  'cert-engineer': {
+    defaultActiveZone: 'governance',
+    headline: 'Certification & conformance — evidence view',
+    tagline:
+      'Check certificates, vendor evidence and deployed results against the plan. Surface the compliance checklist, vendor scorecard, audit checklist and migration verification first.',
+    featuredArtifacts: {
+      governance: [
+        'compliance-checklist',
+        'vendor-scorecard',
+        'audit-checklist',
+        'migration-verification',
+      ],
+      mitigation: ['certification-plan'],
     },
   },
 }
@@ -2424,7 +2463,9 @@ export function describePersonaAdaptation(personaId: PersonaId): PersonaAdaptati
     (p) => !ALWAYS_VISIBLE_PATHS.includes(p) && !RAIL_HIDDEN_PATHS.includes(p)
   )
   const focus = navPaths ?? gateable
-  const behindSearch = gateable.filter((p) => !focus.includes(p) && !(p in absenceMap))
+  const behindSearch = gateable.filter(
+    (p) => !focus.includes(p) && !(p in absenceMap) && !RAIL_GROUP_DISPLAY_ADDITIONS.includes(p)
+  )
 
   // eslint-disable-next-line security/detect-object-injection
   const reportOverrides = PERSONA_REPORT_CONFIG[personaId]
@@ -2481,7 +2522,12 @@ export function personaTradeSentence(personaId: PersonaId): string {
   const movedCount = a.behindSearchLabels.length
   const movedPart =
     movedCount > 0
-      ? `${toWordIfSmall(movedCount)} other ${movedCount === 1 ? 'page moves' : 'pages move'} behind More and search`
+      ? // Neither the desktop rail (no MORE rows for a role since the owner's
+        // 2026-08-01 "remove more and revisions from the left bar") nor the
+        // phone's group menus list these pages; search does. The sentence said
+        // "behind More and search" until 2026-11-14 (owner chose to keep the
+        // rail and fix the sentence).
+        `${toWordIfSmall(movedCount)} other ${movedCount === 1 ? 'page is' : 'pages are'} left out of your menus, and search still finds ${movedCount === 1 ? 'it' : 'them'}`
       : 'nothing is moved out of reach'
   const absencePart =
     a.absences.length > 0

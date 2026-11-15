@@ -64,9 +64,7 @@ function renderAt(url: string) {
   )
 }
 
-const popoverTitle = () => document.getElementById('framework-popover-title')
-
-describe('For You framework pop-up', () => {
+describe('For You opens the full side panel', () => {
   beforeEach(() => {
     window.localStorage.clear()
     usePersonaStore.setState({
@@ -76,27 +74,22 @@ describe('For You framework pop-up', () => {
     })
   })
 
-  it('opening pushes ?framework= and shows the pop-up (not the Landscape drawer)', () => {
+  const sidePanel = () => screen.queryByRole('dialog', { name: (n) => n.includes(FW.label) })
+
+  it('opening pushes ?framework= and shows the same side panel as the other tabs, not the old pop-up', () => {
     renderAt('/compliance?tab=foryou')
     fireEvent.click(screen.getByRole('button', { name: 'stub-open-framework' }))
     expect(urlParams().get('framework')).toBe(FW.id)
-    expect(popoverTitle()).toHaveTextContent(FW.label)
-    expect(screen.getAllByRole('dialog')).toHaveLength(1)
+    expect(sidePanel()).not.toBeNull()
+    expect(document.getElementById('framework-popover-title')).toBeNull()
   }, 15000)
 
-  it('a shared link reopens it, and closing clears the param', () => {
+  it('a shared link reopens the side panel, and closing clears the param', () => {
     renderAt(`/compliance?tab=foryou&framework=${encodeURIComponent(FW.id)}`)
-    expect(popoverTitle()).toHaveTextContent(FW.label)
-    fireEvent.click(screen.getByRole('button', { name: 'Close details' }))
+    expect(sidePanel()).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Close detail' }))
     expect(urlParams().get('framework')).toBeNull()
-    expect(popoverTitle()).toBeNull()
-  }, 15000)
-
-  it('links each library cross-reference to /library?ref=', () => {
-    renderAt(`/compliance?tab=foryou&framework=${encodeURIComponent(FW.id)}`)
-    const doc = libraryData.find((d) => FW.libraryRefs.includes(d.referenceId))!
-    const link = screen.getByRole('link', { name: `Open ${doc.documentTitle} in Library` })
-    expect(link).toHaveAttribute('href', `/library?ref=${encodeURIComponent(doc.referenceId)}`)
+    expect(sidePanel()).toBeNull()
   }, 15000)
 })
 

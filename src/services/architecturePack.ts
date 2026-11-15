@@ -14,7 +14,7 @@ export const ARCHITECTURE_PACK_PANEL_PATH = '/business#architecture-pack'
 
 export const ARCHITECTURE_PACK_DISCLAIMER =
   'This is your own working document, built in your browser from what you saved on PQC Today. ' +
-  'It is not a PQC Today assessment, and nobody else has reviewed it unless a reviewer is named above.'
+  'It is not a PQC Today assessment. This is a learning example; status and reviewer role are practice values, not a record of review.'
 
 export const ARCHITECTURE_PACK_RECIPE: RolePackRecipe = {
   title: ARCHITECTURE_PACK_TITLE,

@@ -159,7 +159,7 @@ interface RawTimelineRow {
 // (single source of truth, no CSV churn). Rubric weights:
 //   Source-URL quality   30  (authoritative 30 / needs-review 15 / else 0)
 //   Peer review + vetting 25 (peer yes 20 / partial 10 / no 0, + 5 if vetted)
-//   Source recency        20 (≤12 mo 20 / ≤36 mo 10 / older|missing 0; YYYY-MM counts from the 1st)
+//   Source recency        20 (≤12 mo 20 / ≤36 mo 10 / older|missing 0; YYYY-MM from the 1st, YYYY from 1 Jan)
 //   Cached local evidence 15 (local_file present 15 / else 0)
 //   Date specificity      10 (point event 10 / dated range 5 / else 0)
 //
@@ -189,10 +189,16 @@ export function computeTimelineConfidence(
 
   // Source recency (20) — relative to the CSV's own snapshot date
   const sd = (row.SourceDate || '').trim()
-  // A source that names only a month ("2025-03") is accepted precision: for age it counts from
-  // the first of that month. The cell itself is never rewritten with a day.
+  // A source that names only a month ("2025-03") or only a year ("2025") is accepted
+  // precision: for age it counts from the first of that month, or from 1 January — the
+  // oldest reading, so the record never looks fresher than it is (owner decision
+  // 2026-11-14). The cell itself is never rewritten with a day.
   const parsed =
-    /^\d{4}-\d{2}-\d{2}$/.test(sd) || /^\d{4}-(0[1-9]|1[0-2])$/.test(sd) ? new Date(sd) : null
+    /^\d{4}-\d{2}-\d{2}$/.test(sd) || /^\d{4}-(0[1-9]|1[0-2])$/.test(sd)
+      ? new Date(sd)
+      : /^\d{4}$/.test(sd)
+        ? new Date(`${sd}-01-01`)
+        : null
   if (parsed && !Number.isNaN(parsed.getTime())) {
     const months = (referenceDate.getTime() - parsed.getTime()) / (1000 * 60 * 60 * 24 * 30.44)
     if (months >= 0 && months <= 12) score += 20
@@ -247,6 +253,57 @@ export function isUnreviewedStatus(status: string | undefined): boolean {
 export interface ParseTimelineOptions {
   /** Keep rows whose Status is unreviewed. Off for everything public. */
   includeUnreviewed?: boolean
+}
+
+/** A ";"-delimited CSV cell as a trimmed list; undefined when empty. */
+function splitList(raw: string | undefined): string[] | undefined {
+  const items = (raw ?? '')
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return items.length > 0 ? items : undefined
+}
+
+/**
+ * Retired event_id → the active event_id that replaced it, read from the CSV's
+ * own retirement records (no hand-kept list). A retired row counts as replaced
+ * only when its `deprecated_reason` names exactly one active event_id
+ * ("superseded:timeline:<id>", "Duplicate … <id>"), or, failing that, when its
+ * title matches exactly one active row's title. Anything else stays retired, so
+ * its old `?event=` link reports "not found" rather than opening a guess.
+ */
+export function buildRetiredEventSuccessors(csvContent: string): Map<string, string> {
+  const { data } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
+    header: true,
+    skipEmptyLines: true,
+  })
+  const active = filterActive(data).filter((r) => !isUnreviewedStatus(r.Status))
+  const activeIds = new Set(active.map((r) => (r.event_id ?? '').trim()).filter(Boolean))
+  const byTitle = new Map<string, string[]>()
+  for (const r of active) {
+    const id = (r.event_id ?? '').trim()
+    if (!id) continue
+    const t = (r.Title ?? '').trim().toLowerCase()
+    byTitle.set(t, [...(byTitle.get(t) ?? []), id])
+  }
+  const successors = new Map<string, string>()
+  for (const r of data) {
+    const id = (r.event_id ?? '').trim()
+    if (!id || activeIds.has(id)) continue
+    const named = new Set(
+      ((r.deprecated_reason ?? '').match(/[a-z0-9][a-z0-9-]{9,}/g) ?? []).filter(
+        (t) => t !== id && activeIds.has(t)
+      )
+    )
+    if (named.size === 1) {
+      successors.set(id, [...named][0])
+      continue
+    }
+    if (named.size > 1) continue
+    const sameTitle = byTitle.get((r.Title ?? '').trim().toLowerCase()) ?? []
+    if (sameTitle.length === 1) successors.set(id, sameTitle[0])
+  }
+  return successors
 }
 
 export function parseTimelineCSV(
@@ -350,6 +407,8 @@ export function parseTimelineCSV(
       eventId: row.event_id || undefined,
       lastVerified: row.last_verified || undefined,
       bindingForce: (row.binding_force?.trim() as TimelineEvent['bindingForce']) || undefined,
+      libraryRefs: splitList(row.library_refs),
+      relatedStandards: splitList(row.related_standards),
       sourceClass: (row.source_class?.trim() as TimelineEvent['sourceClass']) || undefined,
       complianceRefs: [],
       xwalkEdgeIds: [],
@@ -447,6 +506,7 @@ function changeKey(countryName: string, bodyName: string, e: TimelineEvent): str
 // Parse the CSV content to get the timeline data
 let parsedData: CountryData[] = []
 let metadata: { filename: string; lastUpdate: Date } | null = null
+let retiredSuccessors = new Map<string, string>()
 
 try {
   const { current, previous } = getLatestTimelineFiles()
@@ -506,6 +566,7 @@ try {
     }))
 
     metadata = { filename: current.filename, lastUpdate: current.date }
+    retiredSuccessors = buildRetiredEventSuccessors(current.content)
   } else {
     parsedData = []
   }
@@ -692,10 +753,25 @@ function matchers(param: string): Matcher[] {
   ]
 }
 
-/** Find an event in (unscoped) country data by event_id, then by title. */
+/**
+ * The active event_id that replaced a retired one, from the CSV's own
+ * retirement records (see buildRetiredEventSuccessors); undefined otherwise.
+ */
+export function retiredTimelineEventSuccessor(
+  param: string | null | undefined,
+  successors: ReadonlyMap<string, string> = retiredSuccessors
+): string | undefined {
+  return param ? successors.get(param.trim()) : undefined
+}
+
+/**
+ * Find an event in (unscoped) country data by event_id, then by title, then —
+ * for a retired event_id — the event that replaced it.
+ */
 export function findTimelineEvent(
   countries: CountryData[],
-  param: string | null | undefined
+  param: string | null | undefined,
+  successors: ReadonlyMap<string, string> = retiredSuccessors
 ): TimelineEvent | null {
   if (!param) return null
   const all = countries.flatMap((c) => c.bodies.flatMap((b) => b.events))
@@ -703,6 +779,8 @@ export function findTimelineEvent(
     const hit = all.find(match)
     if (hit) return hit
   }
+  const successor = retiredTimelineEventSuccessor(param, successors)
+  if (successor) return all.find((e) => e.eventId === successor) ?? null
   return null
 }
 
@@ -744,6 +822,13 @@ export function timelineEventPageUrl(countryName: string, eventKey?: string | nu
   return eventKey ? `${base}&event=${encodeURIComponent(eventKey)}` : base
 }
 
+/** `?country=` aliases for lanes the loader builds (see the CNSA split above). */
+const LANE_ALIASES: Readonly<Record<string, string>> = {
+  CNSA: 'United States (CNSA)',
+  'US-CNSA': 'United States (CNSA)',
+  NSA: 'United States (CNSA)',
+}
+
 export interface ResolvedCountry {
   resolved: string
   wasUnknown: boolean
@@ -756,10 +841,15 @@ export function resolveCountryParam(
 ): ResolvedCountry {
   if (!param) return { resolved: 'All', wasUnknown: false }
   if (knownCountries.includes(param)) return { resolved: param, wasUnknown: false }
-  // COUNTRY_ALIASES is `as const`; index access with arbitrary string needs a widened view.
-  const aliasMap = COUNTRY_ALIASES as Readonly<Record<string, string>>
-  // eslint-disable-next-line security/detect-object-injection
-  const aliased = aliasMap[param]
+  // Aliases match case-insensitively (?country=usa, uk, eu). The CNSA lane is a
+  // loader-made lane, not a CSV Country, so its aliases live here rather than in
+  // COUNTRY_ALIASES (whose values must each name a CSV Country).
+  const paramLc = param.trim().toLowerCase()
+  const aliasEntry = [
+    ...Object.entries(COUNTRY_ALIASES as Readonly<Record<string, string>>),
+    ...Object.entries(LANE_ALIASES),
+  ].find(([key]) => key.toLowerCase() === paramLc)
+  const aliased = aliasEntry?.[1]
   if (aliased && knownCountries.includes(aliased)) {
     return { resolved: aliased, wasUnknown: false }
   }

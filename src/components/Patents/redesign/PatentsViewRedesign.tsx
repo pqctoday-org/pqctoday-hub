@@ -10,7 +10,7 @@
  * default), tab/patent/filter URL params, CSV export, persona.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
 import { ScrollText } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -147,10 +147,16 @@ function readSavedSort(): { key: SortKey; dir: SortDir } {
   return { key: 'issueDate', dir: 'desc' }
 }
 
-export function PatentsViewRedesign() {
-  // Mobile UX layer (Phase 7).
-  const isMobileShell = useIsMobileShell()
-  const [params, setParams] = useSearchParams()
+export function PatentsViewRedesign({
+  simEmbed = false,
+}: {
+  /** Rendered inside the simulation: no page header; filters come from the
+   *  embed's local params (see EmbedSearchParamsProvider). */
+  simEmbed?: boolean
+} = {}) {
+  // Mobile UX layer (Phase 7). The simulation keeps its own phone layout.
+  const isMobileShell = useIsMobileShell() && !simEmbed
+  const [params, setParams] = useEmbedSearchParams()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const activeTab = resolvePatentTab(params, FILTER_PARAMS)
   const selectedPatent = params.get('patent')
@@ -562,13 +568,15 @@ export function PatentsViewRedesign() {
 
   return (
     <div className="animate-fade-in space-y-4 pb-24">
-      <PageHeader
-        icon={ScrollText}
-        title="PQC Patents"
-        description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={ScrollText}
+          title="PQC Patents"
+          description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
+        />
+      )}
 
-      <PersonaPageNote route="/patents" />
+      {!simEmbed && <PersonaPageNote route="/patents" />}
 
       {deepLinkNotice && (
         <DeepLinkNotice

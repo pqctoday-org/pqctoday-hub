@@ -8,6 +8,7 @@ import {
   BookOpen,
   Download,
   Filter,
+  Layers,
   X,
   PlayCircle,
 } from 'lucide-react'
@@ -32,7 +33,8 @@ import {
   CSWP39_ZONE_ORDER,
   CSWP39_ZONE_DETAILS,
   CSWP39_ZONE_STYLES,
-  legacyToZoneId,
+  zoneFromHash,
+  zoneFromQueryParam,
   type ZoneId,
 } from '@/data/cswp39ZoneData'
 import { usePhaseFilter } from '@/hooks/usePhaseFilter'
@@ -54,8 +56,8 @@ import {
   showTopToolbar,
   actionItemCap,
   collapseLowerSections,
-  BASIC_DENSITY_DEFAULT_ZONE,
 } from './lib/density'
+import { defaultOpenZoneFor } from './lib/lensZone'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import { ExecutiveWalkthrough } from './ExecutiveWalkthrough'
@@ -80,6 +82,10 @@ function learnCtaFor(persona: PersonaId | null): { label: string; to: string } {
       return { label: 'Start the architecture path', to: '/learn/arch-quantum-impact' }
     case 'researcher':
       return { label: 'Read the revision log', to: '/revisions' }
+    case 'ops':
+      return { label: 'Start operations learning', to: '/learn/migration-program' }
+    case 'cert-engineer':
+      return { label: 'Start certification learning', to: '/learn/crypto-product-certification' }
     case null:
     case 'executive':
       return { label: 'Start Executive Learning', to: '/learn/exec-quantum-impact' }
@@ -94,7 +100,11 @@ function topToolCountFor(persona: PersonaId | null): number {
   return 3
 }
 
-function WelcomeState() {
+// Id of the zone map (the strategic plan). "Explore the six zones" and the
+// walkthrough's jump link scroll here once the map is shown.
+const ZONE_MAP_ANCHOR = 'command-center-zone-map'
+
+function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
   const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const intro = commandCenterIntroFor(selectedPersona)
@@ -179,6 +189,10 @@ function WelcomeState() {
       )}
 
       <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button variant="outline" onClick={onExploreZones}>
+          <Layers size={16} className="mr-2" />
+          Explore the six zones
+        </Button>
         <Button variant="outline" onClick={() => navigate('/compliance?tab=compliance')}>
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance
@@ -187,6 +201,12 @@ function WelcomeState() {
           <BookOpen size={16} className="mr-2" />
           {learnCta.label}
         </Button>
+      </div>
+
+      <div className="text-center">
+        <Link to="/business/tools" className="text-sm font-medium text-primary hover:underline">
+          Browse all {BUSINESS_TOOLS.length} planning tools →
+        </Link>
       </div>
     </div>
   )
@@ -348,14 +368,16 @@ export function BusinessCenterView() {
   )
 
   // openZone — single source of truth for which zone panel is expanded.
-  // Initialised to the persona-derived default; user nav/toggle overrides it.
-  // At basic density we always anchor on the Assets zone — the audit-recommended
-  // "start here" entry point for first-time learners. Other densities honour
-  // the persona-derived default.
-  const [openZone, setOpenZone] = useState<ZoneId | null>(() =>
-    density === 'basic' ? BASIC_DENSITY_DEFAULT_ZONE : zoneEmphasis.defaultActiveZone
-  )
+  // Initialised to the role's default zone (lib/lensZone.ts); user nav/toggle
+  // overrides it. Switching role moves it to the new role's default.
+  const [openZone, setOpenZone] = useState<ZoneId | null>(() => defaultOpenZoneFor(selectedPersona))
+  const [zoneRolePersona, setZoneRolePersona] = useState<PersonaId | null>(selectedPersona)
+  if (selectedPersona !== zoneRolePersona) {
+    setZoneRolePersona(selectedPersona)
+    setOpenZone(defaultOpenZoneFor(selectedPersona))
+  }
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   // ?phase=<id> overlay — when active, the page swaps its zone body for a
   // compact phase header + the BUSINESS_TOOLS narrowed to that phase. When
@@ -378,11 +400,13 @@ export function BusinessCenterView() {
   // ?zone=<id> deep-link (used by the Workshop Video Mode and external links).
   // Only valid CSWP-39 zone ids are honoured; anything else is ignored.
   // Resolved synchronously during render so we avoid set-state-in-effect.
-  const zoneFromQuery = useMemo<ZoneId | null>(() => {
-    const requested = searchParams.get('zone')
-    if (!requested) return null
-    return CSWP39_ZONE_ORDER.includes(requested as ZoneId) ? (requested as ZoneId) : null
-  }, [searchParams])
+  const zoneFromQuery = useMemo<ZoneId | null>(
+    () => zoneFromQueryParam(searchParams.get('zone')),
+    [searchParams]
+  )
+  // The zone the selected role opens (see lens-zone). Same zone the open-zone
+  // state starts on, so the footer and the open panel name the same zone.
+  const lensZone = defaultOpenZoneFor(selectedPersona)
 
   useEffect(() => {
     if (!zoneFromQuery) return
@@ -393,27 +417,75 @@ export function BusinessCenterView() {
     }
   }, [zoneFromQuery])
 
+  // A ?zone= deep link opens that zone once, when it arrives. It is recorded in
+  // `appliedZoneQuery` so the user can then switch or collapse zones freely.
+  // Derived during render (not in an effect) so the zone is already open in the
+  // first committed frame, which the scroll effect above relies on.
+  const [appliedZoneQuery, setAppliedZoneQuery] = useState<ZoneId | null>(null)
+
+  // Whether the full zone map shows on an empty profile. A zone link (?zone=, or a
+  // #zone-/#step- hash naming a real zone) or "Explore the six zones" turns it on.
+  // It is state captured at arrival, so removing ?zone= from the URL below does not
+  // send the page back to the welcome screen.
+  const [showZoneMap, setShowZoneMap] = useState<boolean>(
+    () => zoneFromQuery !== null || zoneFromHash(window.location.hash) !== null
+  )
+  // Scroll request, handled after the map is in the DOM. A new object each time,
+  // so a repeat request for the same target still scrolls.
+  const [scrollRequest, setScrollRequest] = useState<{ id: string } | null>(null)
+  const requestZoneMap = useCallback(() => {
+    setShowZoneMap(true)
+    setScrollRequest({ id: ZONE_MAP_ANCHOR })
+  }, [])
+
+  if (zoneFromQuery !== appliedZoneQuery) {
+    setAppliedZoneQuery(zoneFromQuery)
+    if (zoneFromQuery) {
+      setOpenZone(zoneFromQuery)
+      setShowZoneMap(true)
+    }
+  }
+
+  // Remove the consumed param (other params kept) so later user navigation is
+  // not overridden by a stale ?zone=. Runs after the scroll effect above.
+  useEffect(() => {
+    if (!zoneFromQuery) return
+    const next = new URLSearchParams(searchParams)
+    next.delete('zone')
+    const search = next.toString()
+    // The scroll effect above wrote #zone-<id> with window.history, which the
+    // router does not track. setSearchParams navigates with search only and would
+    // drop that hash, so carry the current hash through.
+    navigate({ search: search ? `?${search}` : '', hash: window.location.hash }, { replace: true })
+  }, [zoneFromQuery, searchParams, navigate])
+
   // Legacy hash redirects. Keeps old inbound URLs from CSWP39StepBadge / Report
   // nav (#step-govern), and from the previous §3-§6 iteration (#section-strategic),
   // working after this Fig 3 rebuild. Maps any legacy id to its zone via
   // `legacyToZoneId`.
   useEffect(() => {
     const remapHash = () => {
-      const hash = window.location.hash
-      const match = hash.match(/^#(?:step|section|zone)-([a-z-]+)$/)
-      if (!match) return
-      const zoneId = legacyToZoneId(match[1])
-      const target = document.getElementById(`zone-${zoneId}`)
-      if (target) {
-        window.history.replaceState(null, '', `#zone-${zoneId}`)
-        setOpenZone(zoneId)
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
+      const zoneId = zoneFromHash(window.location.hash)
+      if (!zoneId) return
+      window.history.replaceState(null, '', `#zone-${zoneId}`)
+      setOpenZone(zoneId)
+      setShowZoneMap(true)
+      setScrollRequest({ id: `zone-${zoneId}` })
     }
     remapHash()
     window.addEventListener('hashchange', remapHash)
     return () => window.removeEventListener('hashchange', remapHash)
   }, [])
+
+  // Scrolls to the requested target once it is rendered. Declared after the
+  // effects that set a request, so a request made on mount is handled in the
+  // same commit.
+  useEffect(() => {
+    if (!scrollRequest) return
+    document
+      .getElementById(scrollRequest.id)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [scrollRequest])
 
   const handleZoneSelect = useCallback((zone: ZoneId) => {
     logEvent('Business Center', 'Zone Select', personaLabel(zone))
@@ -541,8 +613,8 @@ export function BusinessCenterView() {
     onCreateArtifact: handleCreateArtifact,
   }
 
-  // ?zone=<id> deep-link wins over user selection.
-  const effectiveOpenZone: ZoneId | null = zoneFromQuery ?? openZone
+  // The open zone is `openZone`; a ?zone= deep link sets it once (see above).
+  const effectiveOpenZone: ZoneId | null = openZone
 
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
@@ -602,7 +674,9 @@ export function BusinessCenterView() {
       {/* "Board pack in 3 steps" — shown once on an executive's first visit
           (design_handoff_2026_pages/IMPLEMENTATION-PLAN-COMMAND-CENTER-2026-
           08-01.md §3.1); the zone map below is unaffected either way. */}
-      {selectedPersona === 'executive' && !hasSeenExecWalkthrough && <ExecutiveWalkthrough />}
+      {selectedPersona === 'executive' && !hasSeenExecWalkthrough && (
+        <ExecutiveWalkthrough onJumpToZoneMap={requestZoneMap} />
+      )}
 
       {/* ?phase=<id> overlay — when a phase is active, replace the zone body
            with a compact phase header + the tools narrowed to that phase. When
@@ -643,8 +717,8 @@ export function BusinessCenterView() {
           {/* Page-level empty state — bypassed when a workshop is active so the
            cue tour can target zone panels + artifact placeholders even when
            the user hasn't yet completed an assessment. */}
-          {metrics.isFullyEmpty && !workshopActive ? (
-            <WelcomeState />
+          {metrics.isFullyEmpty && !workshopActive && !showZoneMap ? (
+            <WelcomeState onExploreZones={requestZoneMap} />
           ) : (
             <div className="space-y-6">
               {/* HERO: personalised next steps — first content slot. Cap by density
@@ -659,11 +733,13 @@ export function BusinessCenterView() {
               {showSectionsNav(density) && <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />}
 
               {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
-              <CommandCenterStrategicPlan
-                metrics={metrics}
-                activeZone={effectiveOpenZone}
-                onZoneSelect={handleZoneSelect}
-              />
+              <div id={ZONE_MAP_ANCHOR}>
+                <CommandCenterStrategicPlan
+                  metrics={metrics}
+                  activeZone={effectiveOpenZone}
+                  onZoneSelect={handleZoneSelect}
+                />
+              </div>
 
               {/* Per-zone artifact panels — left sidebar nav (desktop) + scrollable tab bar (mobile) */}
               <div>
@@ -787,22 +863,28 @@ export function BusinessCenterView() {
                actionable zone panels above faster; header stays visible, one
                click away, not removed. */}
               <CompactLearningBar
-                modules={metrics.execModuleProgress}
+                modules={
+                  selectedPersona === 'grc' ? metrics.grcModuleProgress : metrics.execModuleProgress
+                }
+                pathTitle={selectedPersona === 'grc' ? 'GRC Learning Path' : undefined}
+                fallbackTo={selectedPersona === 'grc' ? '/learn/pqc-grc' : undefined}
                 defaultCollapsed={collapseLowerSections(density)}
               />
 
-              {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zones
-               this persona emphasizes so the user knows other lenses exist.
-               Renders only when a persona is selected. Acts as a soft invite
-               to switch role via the chip in the page header. */}
+              {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zone
+               this persona's lens opens and the zones it features, so the user
+               knows other lenses exist. Renders only when a persona with a lens
+               is selected. Acts as a soft invite to switch role via the chip in
+               the page header. */}
               {selectedPersona && Object.keys(zoneEmphasis.featuredArtifacts).length > 0 && (
                 <div className="px-1 text-xs text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
                   <span className="font-medium text-foreground">Your {selectedPersona} lens</span>{' '}
-                  emphasizes the{' '}
-                  <span className="text-primary">{zoneEmphasis.defaultActiveZone}</span> zone and a
-                  curated artifact set ({Object.keys(zoneEmphasis.featuredArtifacts).length} of{' '}
-                  {CSWP39_ZONE_ORDER.length} zones featured). Switch persona via the chip in the
-                  page header to see other lenses — every zone and artifact stays reachable.
+                  opens the{' '}
+                  <span className="text-primary">{CSWP39_ZONE_DETAILS[lensZone].title}</span> zone
+                  and features a curated artifact set (
+                  {Object.keys(zoneEmphasis.featuredArtifacts).length} of {CSWP39_ZONE_ORDER.length}{' '}
+                  zones featured). Switch persona via the chip in the page header to see other
+                  lenses — every zone and artifact stays reachable.
                 </div>
               )}
 

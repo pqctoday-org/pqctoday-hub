@@ -12,6 +12,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { ComplianceLandscape } from './ComplianceLandscape'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import type { ComplianceFramework } from '@/data/complianceData'
 
 function framework(overrides: Partial<ComplianceFramework>): ComplianceFramework {
@@ -122,5 +123,54 @@ describe('ComplianceLandscape — table view row selection', () => {
     const row = screen.getByText('Framework Alpha').closest('tr')!
     expect(row).not.toHaveAttribute('aria-label')
     expect(row).not.toHaveAttribute('tabindex')
+  })
+})
+
+describe('ComplianceLandscape — sort and role reduction', () => {
+  it('shows the sort control in table view too, so the table order can be changed', () => {
+    render(
+      <MemoryRouter>
+        <ComplianceLandscape frameworks={FRAMEWORKS} viewMode="table" />
+      </MemoryRouter>
+    )
+    expect(screen.getByText('Starts soonest')).toBeInTheDocument()
+  })
+
+  it('does not reduce the list to the role set on top of a search the reader typed', () => {
+    usePersonaStore.setState({
+      selectedPersona: 'executive',
+      selectedIndustries: [],
+      selectedRegion: null,
+    })
+    try {
+      // CNSA-2 and DORA are in the executive emphasis set; the other two are not.
+      const frameworks = [
+        framework({ id: 'CNSA-2', label: 'CNSA 2.0' }),
+        framework({ id: 'DORA', label: 'DORA' }),
+        framework({ id: 'fw-x', label: 'Framework Xray' }),
+        framework({ id: 'fw-y', label: 'Framework Yankee' }),
+      ]
+      const { unmount } = render(
+        <MemoryRouter>
+          <ComplianceLandscape frameworks={frameworks} viewMode="cards" />
+        </MemoryRouter>
+      )
+      // Without a search the role set is shown, with the rest behind a control.
+      expect(screen.getByText(/Showing the 2 frameworks that matter most/)).toBeInTheDocument()
+      unmount()
+
+      render(
+        <MemoryRouter>
+          <ComplianceLandscape frameworks={frameworks} viewMode="cards" searchText="Xray" />
+        </MemoryRouter>
+      )
+      // A typed search is the reader's own narrowing: the role set must not hide its results.
+      expect(
+        screen.queryByText(/Showing the \d+ frameworks that matter most/)
+      ).not.toBeInTheDocument()
+      expect(screen.getByText('Framework Xray')).toBeInTheDocument()
+    } finally {
+      usePersonaStore.setState({ selectedPersona: null })
+    }
   })
 })

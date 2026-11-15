@@ -16,6 +16,13 @@
  * Reuses useApplicabilityWithPaths so the engine output is identical to other
  * For You views; only rendering differs.
  */
+import {
+  OPS_PHASE_LANE,
+  OPS_TABLE_ROWS,
+  applicableFrameworks,
+  frameworksByPhase,
+  PHASE_ORDER,
+} from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import {
@@ -30,7 +37,7 @@ import {
   FileCheck,
 } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
-import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
+import type { UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { Button } from '@/components/ui/button'
@@ -93,8 +100,6 @@ const PHASE_META: Record<DeadlinePhase, PhaseMeta> = {
     className: 'border-border bg-card/30 text-muted-foreground',
   },
 }
-
-const PHASE_ORDER: DeadlinePhase[] = ['active', 'imminent', 'near', 'mid', 'long', 'ongoing']
 
 const TOOLCHAIN_LINKS = [
   {
@@ -164,29 +169,13 @@ export const OPS_EVIDENCE_ARTIFACTS: { artifact: string; tool: string; whyAsked:
 
 export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotationViewProps) {
   const { profile, isEmpty, frameworks } = useApplicabilityWithPaths(profileOverride)
-  const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
   const applicable: ComplianceFramework[] = useMemo(
-    () =>
-      [
-        ...grouped.mandatory,
-        ...grouped.recognized,
-        ...grouped['cross-border'],
-        ...grouped.advisory,
-      ].map((r) => r.item),
-    [grouped]
+    () => applicableFrameworks(frameworks),
+    [frameworks]
   )
 
-  // Bucket frameworks by deadlinePhase
-  const byPhase = useMemo(() => {
-    const m = new Map<DeadlinePhase, ComplianceFramework[]>()
-    for (const fw of applicable) {
-      const phase = fw.deadlinePhase ?? 'ongoing'
-      const bucket = m.get(phase) ?? []
-      bucket.push(fw)
-      m.set(phase, bucket)
-    }
-    return m
-  }, [applicable])
+  // Bucket frameworks by deadlinePhase (see forYouSelection.ts)
+  const byPhase = useMemo(() => frameworksByPhase(applicable), [applicable])
 
   if (isEmpty) {
     return (
@@ -254,7 +243,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
                 </div>
                 <p className="text-[11px] opacity-80 leading-snug">{meta.blurb}</p>
                 <ul className="space-y-0.5 mt-1">
-                  {fws.slice(0, 4).map((fw) => (
+                  {fws.slice(0, OPS_PHASE_LANE).map((fw) => (
                     <li key={fw.id} className="min-w-0">
                       <Button
                         type="button"
@@ -328,7 +317,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
                 </tr>
               </thead>
               <tbody>
-                {applicable.slice(0, 10).map((fw) => (
+                {applicable.slice(0, OPS_TABLE_ROWS).map((fw) => (
                   <tr key={fw.id} className="border-b border-border/40 last:border-0">
                     <td className="px-2 py-1.5 min-w-0">
                       <Button

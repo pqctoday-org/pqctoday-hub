@@ -26,7 +26,7 @@ export const OPERATIONS_PACK_MODULE_ID = 'operations-pack'
 export const OPERATIONS_PACK_DISCLAIMER =
   'This is your own working document, built in your browser from what you saved on PQC Today. ' +
   'It is not a PQC Today assessment. Estimates and simulator results are not measurements of your ' +
-  'systems, and nobody else has reviewed it unless a reviewer is named above.'
+  'systems. This is a learning example; status and reviewer role are practice values, not a record of review.'
 
 export const OPERATIONS_PACK_RECIPE: RolePackRecipe = {
   title: OPERATIONS_PACK_TITLE,
