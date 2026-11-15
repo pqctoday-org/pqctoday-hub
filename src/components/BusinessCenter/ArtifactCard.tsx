@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router'
 import { FileText, Eye, Pencil, Trash2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { Input } from '@/components/ui/input'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { TOOL_LABELS_BY_ARTIFACT_TYPE, getCswp39RefForArtifactType } from './businessToolsRegistry'
+import { artifactProducerFor, producerHref, producerNote } from './lib/artifactProducers'
 import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
 import { ApprovalStatusControl } from './widgets/ApprovalStatusControl'
 
@@ -176,8 +180,10 @@ export function ArtifactCard({
 }
 
 /** Placeholder card shown when no artifacts exist for a document type.
- *  Clicking the card opens the shared ArtifactDrawer in `create` mode with the
- *  matching builder — no navigation away from the Command Center. */
+ *  A type with a builder opens the shared ArtifactDrawer in `create` mode, with
+ *  no navigation away from the Command Center. A type with no builder is made on
+ *  another page, so its card links there (or, for a pack panel the visitor's
+ *  persona does not show, carries the note and opens the drawer). */
 export function ArtifactPlaceholder({
   type,
   pillar,
@@ -190,25 +196,25 @@ export function ArtifactPlaceholder({
   /** When set, render a "Suggested by your assessment" badge with this reason as tooltip. */
   suggestion?: { reason: string }
 }) {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const typeLabel = TYPE_LABELS[type] ?? type
   const badgeColor = pillar
     ? (PILLAR_COLORS[pillar] ?? 'bg-muted text-muted-foreground')
     : 'bg-muted text-muted-foreground'
-  const description =
-    TOOL_LABELS_BY_ARTIFACT_TYPE[type]?.description ?? 'Click to open the builder.'
+  const producer = artifactProducerFor(type)
+  const href = producer ? producerHref(producer, selectedPersona) : null
+  const description = producer
+    ? `${producerNote(producer)}${href ? ' →' : ''}`
+    : (TOOL_LABELS_BY_ARTIFACT_TYPE[type]?.description ?? 'Click to open the builder.')
   const cswp39Ref = getCswp39RefForArtifactType(type)
 
-  return (
-    <Button
-      variant="ghost"
-      data-workshop-target={`business-artifact-${type}-create`}
-      onClick={() => onCreate(type)}
-      className={`group flex items-center gap-3 p-3 rounded-lg border border-dashed transition-colors w-full text-left ${
-        suggestion
-          ? 'border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10'
-          : 'border-border hover:border-primary/30 hover:bg-muted/30'
-      }`}
-    >
+  const className = `group flex items-center gap-3 p-3 rounded-lg border border-dashed transition-colors w-full text-left ${
+    suggestion
+      ? 'border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10'
+      : 'border-border hover:border-primary/30 hover:bg-muted/30'
+  }`
+  const content = (
+    <>
       <FileText size={16} className="text-muted-foreground/40 shrink-0 group-hover:hidden" />
       <Plus size={16} className="text-primary shrink-0 hidden group-hover:block" />
       <div className="flex-1 min-w-0">
@@ -233,9 +239,32 @@ export function ArtifactPlaceholder({
           )}
         </div>
         <span className="text-xs text-muted-foreground line-clamp-1">
-          {suggestion ? suggestion.reason : description}
+          {producer ? description : suggestion ? suggestion.reason : description}
         </span>
       </div>
+    </>
+  )
+
+  if (href) {
+    return (
+      <Link
+        to={href}
+        className={`${buttonVariants({ variant: 'ghost' })} h-auto ${className}`}
+        data-workshop-target={`business-artifact-${type}-create`}
+      >
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      data-workshop-target={`business-artifact-${type}-create`}
+      onClick={() => onCreate(type)}
+      className={className}
+    >
+      {content}
     </Button>
   )
 }

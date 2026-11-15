@@ -39,17 +39,19 @@ export function SpecDrawerHost() {
       return
     }
     let cancelled = false
-    // Unknown, retired or unloadable reference: fall back to the full library
-    // page rather than leaving the reader with an empty overlay. /library then
-    // forwards a retired ref to its successor or shows a "not found" notice
-    // (LibraryViewRedesign's deep-link arrival handling), so this never fails silently.
+    // Unknown or unloadable reference (a retired one with no live successor):
+    // fall back to the full library page rather than leaving the reader with an
+    // empty overlay. /library then shows a "not found" notice (LibraryViewRedesign's
+    // deep-link arrival handling), so this never fails silently.
     const fallback = () => {
       if (!cancelled) navigate(`/library?ref=${encodeURIComponent(specRef)}`, { replace: true })
     }
     Promise.all([import('./redesign/LibraryDetailDrawer'), import('@/data/libraryData')])
       .then(([drawerMod, dataMod]) => {
         if (cancelled) return
-        const item = dataMod.findLibraryItemByRef(specRef)
+        // A retired ref opens the document that superseded it, in place; that
+        // document's "Previous revisions" lists the retired id.
+        const item = dataMod.findLibraryItemByRef(specRef) ?? dataMod.findLibrarySuccessor(specRef)
         if (!item) return fallback()
         setLoaded({ ref: specRef, Drawer: drawerMod.LibraryDetailDrawer, item })
       })
@@ -74,6 +76,13 @@ export function SpecDrawerHost() {
         next.delete('spec')
         // replace, not push: Back should leave the page, not reopen the drawer.
         setParams(next, { replace: true })
+      }}
+      // "Builds on", successor and replaced-by links open the next document in
+      // this same overlay (push, so Back returns to the previous document).
+      onOpenRef={(nextRef) => {
+        const next = new URLSearchParams(params)
+        next.set('spec', nextRef)
+        setParams(next)
       }}
     />
   )

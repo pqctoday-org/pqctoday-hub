@@ -161,6 +161,13 @@ export interface PhaseStep {
   state: 'done' | 'active' | 'future' | 'recorded'
 }
 
+/**
+ * The one record a related-record row opens: a compliance framework (by its row id) or a
+ * library document (by its reference id). A row whose other end names no record we hold
+ * has no target and is shown as inert, not as a button that does nothing.
+ */
+export type CrosswalkTarget = { kind: 'framework'; id: string } | { kind: 'library'; ref: string }
+
 export interface CrosswalkItem {
   /** The record as the cross-walk data names it. Used to open the related record; not shown as text. */
   name: string
@@ -170,6 +177,8 @@ export interface CrosswalkItem {
   tone: Tone
   /** True for an edition link ("Replaced by a newer edition"): listed first and shown in full, not clipped. */
   pinned?: boolean
+  /** The exact record this row opens, or undefined when it names no record we hold. */
+  target?: CrosswalkTarget
 }
 
 export interface DrawerDetail {
@@ -436,6 +445,36 @@ function xwalkChainNodes(
   })
 }
 
+/**
+ * The record the other end of a cross-walk row names, resolved exactly: the
+ * registry row for that end wins (its own source row id), then the stored name
+ * read as a framework id or a library reference. A framework never targets
+ * itself. A framework is matched by its exact id, never by label or substring, so a row
+ * cannot open an umbrella record that merely contains the name. A library document is
+ * looked up by its reference id (with a separator-insensitive fallback).
+ */
+export function crosswalkTargetFor(
+  framework: ComplianceFramework,
+  edge: ConceptXwalkRecord
+): CrosswalkTarget | undefined {
+  const idsToMatch = frameworkMatchIds(framework)
+  const otherName = idsToMatch.has(edge.fromConcept) ? edge.toConcept : edge.fromConcept
+  const otherConceptId = idsToMatch.has(edge.fromConcept) ? edge.toConceptId : edge.fromConceptId
+  const row = otherConceptId ? conceptByCanonicalId.get(otherConceptId) : undefined
+  const frameworkCandidates = [row?.sourceTable === 'compliance' ? row.sourceRowId : '', otherName]
+  for (const id of frameworkCandidates) {
+    if (!id || id === framework.id || idsToMatch.has(id)) continue
+    if (getFrameworkById(id)) return { kind: 'framework', id }
+  }
+  const libraryCandidates = [row?.sourceTable === 'library' ? row.sourceRowId : '', otherName]
+  for (const ref of libraryCandidates) {
+    if (!ref) continue
+    const item = findLibraryItemByRef(ref)
+    if (item) return { kind: 'library', ref: item.referenceId }
+  }
+  return undefined
+}
+
 function xwalkCrosswalkItems(
   framework: ComplianceFramework,
   edges: ConceptXwalkRecord[],
@@ -445,18 +484,23 @@ function xwalkCrosswalkItems(
   return pinnedThenRanked(framework, edges, max).map((edge) => {
     const frameworkIsFromSide = idsToMatch.has(edge.fromConcept)
     const verb = relationshipVerb(edge, frameworkIsFromSide)
+    const target = crosswalkTargetFor(framework, edge)
     if (edge.relationshipType === 'supersedes') {
       return {
         ...xw(otherSide(edge, framework), otherSideLabel(edge, framework), verb, 'info'),
         pinned: true,
+        target,
       }
     }
-    return xw(
-      otherSide(edge, framework),
-      otherSideLabel(edge, framework),
-      `${verb.toLowerCase()} · ${rationaleLabel(edge.rationaleType)}`,
-      'info'
-    )
+    return {
+      ...xw(
+        otherSide(edge, framework),
+        otherSideLabel(edge, framework),
+        `${verb.toLowerCase()} · ${rationaleLabel(edge.rationaleType)}`,
+        'info'
+      ),
+      target,
+    }
   })
 }
 

@@ -47,6 +47,8 @@ interface PillarPipelineProps {
   highlightFrameworkId?: string | null
   /** Row click → opens the traceability drawer. */
   onSelectFramework?: (fw: ComplianceFramework) => void
+  /** Reports the landscape rows shown, for the page's Export CSV. */
+  onVisibleFrameworksChange?: (frameworks: ComplianceFramework[]) => void
 }
 
 export function PillarPipeline({

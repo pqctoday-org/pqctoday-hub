@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { Link, MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { useModuleStore } from '@/store/useModuleStore'
 import { OPERATIONS_PACK_SECTIONS } from '@/services/operationsPack'
@@ -80,5 +80,24 @@ describe('OperationsPackPanel', () => {
     expect(plan.title).toBe('Operations test plan')
     expect(plan.data.startsWith('# Operations test plan')).toBe(true)
     expect((plan.inputs as { lines: unknown[] }).lines).toHaveLength(checklistFor('ops').length)
+  })
+})
+
+describe('OperationsPackPanel same-page link', () => {
+  it('scrolls into view when an already-mounted panel gets its own hash', () => {
+    const scrollIntoView = vi.fn()
+    Element.prototype.scrollIntoView = scrollIntoView
+    render(
+      <MemoryRouter>
+        <Link to="/business#architecture-pack">arch</Link>
+        <Link to="/business#operations-pack">ops</Link>
+        <OperationsPackPanel />
+      </MemoryRouter>
+    )
+    expect(scrollIntoView).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByText('arch'))
+    expect(scrollIntoView).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByText('ops'))
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
   })
 })

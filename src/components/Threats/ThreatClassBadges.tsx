@@ -10,6 +10,7 @@ import {
   SHOR_TIER_DEFS,
   type ThreatClass,
 } from './threatClassification'
+import { protocolBasisFor } from '@/data/threatProtocolLens'
 
 /**
  * Compact badges that surface the derived threat dimensions (Threats #2
@@ -146,6 +147,37 @@ export const ShorTierBadge: React.FC<{ threat: ThreatItem; className?: string }>
       label={def.label}
       definition={def.blurb}
       badgeClassName={`${def.bg} ${def.color}`}
+      className={className}
+    />
+  )
+}
+
+/**
+ * Under an active protocol lens, how this record matched it: "stated" (its own
+ * text names the protocol) or "inferred" (it names only an algorithm that
+ * protocol commonly uses). The lens banner promises this mark on each record.
+ */
+export const ProtocolBasisBadge: React.FC<{
+  threat: ThreatItem
+  protocol: string | null | undefined
+  className?: string
+}> = ({ threat, protocol, className = '' }) => {
+  if (!protocol) return null
+  const basis = protocolBasisFor(threat, protocol)
+  if (!basis) return null
+  return (
+    <DefinitionBadge
+      label={basis === 'stated' ? `${protocol}: stated` : `${protocol}: inferred`}
+      definition={
+        basis === 'stated'
+          ? `This record names ${protocol} itself.`
+          : `This record names only an algorithm that ${protocol} commonly uses — a lead, not a finding.`
+      }
+      badgeClassName={
+        basis === 'stated'
+          ? 'bg-primary/10 border-primary/30 text-primary'
+          : 'bg-muted/40 border-dashed border-border text-muted-foreground'
+      }
       className={className}
     />
   )

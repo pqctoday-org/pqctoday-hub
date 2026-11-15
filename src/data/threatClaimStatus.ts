@@ -97,6 +97,10 @@ export interface ThreatLineage {
    *  confirmed, rather than the pipeline's own claim check. */
   supportedBySecondReader: number
   unconfirmed: number
+  /** Of the three claims a reader sees, how many the ledger holds no verdict
+   *  for. Counted so a row checked on two of three claims reads "2 of 3",
+   *  never "2 of 2". */
+  notChecked: number
 }
 
 export function lineageFor(threatId: string, status: ThreatClaimStatusFile | null): ThreatLineage {
@@ -120,6 +124,7 @@ export function lineageFor(threatId: string, status: ThreatClaimStatusFile | nul
     supported,
     supportedBySecondReader,
     unconfirmed,
+    notChecked: CHECKED_CLAIM_COLUMNS.length - supported - unconfirmed,
   }
 }
 
@@ -144,7 +149,8 @@ export function claimsCheckedText(lineage: ThreatLineage): string | null {
   const bySecond = lineage.supportedBySecondReader
     ? ` (${lineage.supportedBySecondReader} by an AI second reader)`
     : ''
-  return `Maintenance-pipeline claims check: ${lineage.supported} supported${bySecond} · ${lineage.unconfirmed} could not be confirmed`
+  const notChecked = lineage.notChecked > 0 ? ` · ${lineage.notChecked} not yet checked` : ''
+  return `Maintenance-pipeline claims check: ${lineage.supported} supported${bySecond} · ${lineage.unconfirmed} could not be confirmed${notChecked}`
 }
 
 /**

@@ -593,7 +593,12 @@ export function MobileComplianceView({
             key={s.id}
             type="button"
             variant="ghost"
-            onClick={() => setSection(s.id)}
+            onClick={() => {
+              setSection(s.id)
+              // The section IS `?tab=`: a pill writes it (replacing, so pills add no history entries),
+              // so a shared link opens the section the reader was looking at.
+              setSectionParams(s.id, {})
+            }}
             aria-pressed={section === s.id}
             className={cn(
               'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',

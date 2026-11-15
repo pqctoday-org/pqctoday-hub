@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
-import { useSearchParams } from 'react-router'
+import type { useSearchParams } from 'react-router'
+import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
 import {
   Search,
   Briefcase,
@@ -53,6 +54,8 @@ import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { findLeaderByParam, leaderForwardedMessage, planLeaderDeepLink } from './leaderDeepLink'
 import { readLeadersTableSort, writeLeadersTableSort } from './leadersTableSort'
+import { compareLeaderCountries, compareLeaderNames, leaderMatchesIndustries } from './leadersSort'
+import { canonicalLeaderCountry } from '@/data/leaderCountry'
 import type { LeadersTableSort } from './leadersTableSort'
 
 type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
@@ -183,15 +186,25 @@ const EXEC_CATEGORY_PRIORITY: Record<string, number> = {
   'Industry Vendor': 2,
   'Industry Adopter': 3,
   'Algorithm Inventor': 4,
+  'Patent Inventor': 5,
+  'Open Source Maintainer': 6,
+  'Skeptic/Critic': 7,
 }
 
-export const LeadersGrid = () => {
-  // Mobile UX layer (Phase 7).
-  const isMobileShell = useIsMobileShell()
-  const [searchParams, setSearchParams] = useSearchParams()
+export const LeadersGrid = ({
+  simEmbed = false,
+}: {
+  /** Rendered inside the simulation: no page header, filters kept local. */
+  simEmbed?: boolean
+} = {}) => {
+  // Mobile UX layer (Phase 7). The simulation keeps its own phone layout, so the
+  // mobile-shell screen never applies when embedded.
+  const isMobileShell = useIsMobileShell() && !simEmbed
+  const [searchParams, setSearchParams] = useEmbedSearchParams()
   const filters = useLeaderFilters(searchParams, setSearchParams)
   const selectedRegion = filters.values.region
-  const selectedCountry = filters.values.country
+  // Rows carry one spelling per country, so an old ?country=USA link selects United States.
+  const selectedCountry = canonicalLeaderCountry(filters.values.country)
   const selectedSector = filters.values.sector
   const activeCategory = filters.values.category
   const activeLayer = STACK_LAYERS.has(filters.values.layer) ? filters.values.layer : 'All'
@@ -224,8 +237,9 @@ export const LeadersGrid = () => {
       (searchParams.get('sort') as LeaderSortOption | null) ??
       (selectedPersona === 'executive' ? 'relevance' : 'name')
   )
-  // Default view leads with the 208 hand-curated profiles; the 124 single-sentence
-  // library-authorship stubs are reachable but opt-in, so they don't dilute browsing.
+  // Default view leads with the hand-curated profiles (252 in leaders_11142026);
+  // the 109 single-sentence library-authorship stubs are opt-in, so they don't
+  // dilute browsing.
   const [showAllContributors, setShowAllContributors] = useState<boolean>(
     () => searchParams.get('all') === '1'
   )
@@ -356,7 +370,8 @@ export const LeadersGrid = () => {
 
   // Country items scoped by selected region
   const countryItems = useMemo(() => {
-    const unique = new Set(leadersData.map((l) => l.country))
+    // A blank country is no choice to offer (17 rows have none).
+    const unique = new Set(leadersData.map((l) => l.country).filter((c) => c.trim()))
     let countries = Array.from(unique).sort()
 
     if (selectedRegion !== 'All') {
@@ -501,17 +516,13 @@ export const LeadersGrid = () => {
     semanticNameSet,
   ])
 
-  // Industry relevance — leaders whose bio/organizations match selected industries
+  // Industry relevance — profiles whose own text names one of the reader's
+  // industries (whole words, per-industry keywords; see leadersSort.ts).
   const industryRelevant = useMemo(() => {
     const relevant = new Set<string>()
     if (selectedIndustries.length === 0) return relevant
-    const keywords = selectedIndustries.map((ind) => ind.toLowerCase().split(/\s*[&/]\s*/)).flat()
     for (const leader of leadersData) {
-      const text =
-        `${leader.bio} ${leader.organizations.join(' ')} ${leader.category}`.toLowerCase()
-      if (keywords.some((kw) => text.includes(kw))) {
-        relevant.add(leader.id)
-      }
+      if (leaderMatchesIndustries(leader, selectedIndustries)) relevant.add(leader.id)
     }
     return relevant
   }, [selectedIndustries])
@@ -521,13 +532,18 @@ export const LeadersGrid = () => {
     const items = [...filteredLeaders]
     switch (sortBy) {
       case 'name':
-        items.sort((a, b) => a.name.localeCompare(b.name))
+        items.sort((a, b) => compareLeaderNames(a.name, b.name))
         break
       case 'country':
-        items.sort((a, b) => a.country.localeCompare(b.country))
+        items.sort(
+          (a, b) =>
+            compareLeaderCountries(a.country, b.country) || compareLeaderNames(a.name, b.name)
+        )
         break
       case 'category':
-        items.sort((a, b) => a.category.localeCompare(b.category))
+        items.sort(
+          (a, b) => a.category.localeCompare(b.category) || compareLeaderNames(a.name, b.name)
+        )
         break
       case 'relevance': {
         // Executive-only sort option: governance-relevant categories first, then
@@ -536,17 +552,18 @@ export const LeadersGrid = () => {
         const rank = (c: string) =>
           // eslint-disable-next-line security/detect-object-injection -- c is a leader category string
           EXEC_CATEGORY_PRIORITY[c] ?? 99
-        items.sort((a, b) => rank(a.category) - rank(b.category) || a.name.localeCompare(b.name))
+        // Within a category, profiles relevant to the reader's industries come
+        // first. Other sorts keep exactly the order the reader chose; the
+        // "Relevant to you" badge still marks those profiles.
+        const industryRank = (l: Leader) => (industryRelevant.has(l.id) ? 0 : 1)
+        items.sort(
+          (a, b) =>
+            rank(a.category) - rank(b.category) ||
+            industryRank(a) - industryRank(b) ||
+            compareLeaderNames(a.name, b.name)
+        )
         break
       }
-    }
-    // Stable secondary sort: industry-relevant leaders float to top
-    if (industryRelevant.size > 0) {
-      items.sort((a, b) => {
-        const aR = industryRelevant.has(a.id) ? 0 : 1
-        const bR = industryRelevant.has(b.id) ? 0 : 1
-        return aR - bR
-      })
     }
     return items
   }, [filteredLeaders, sortBy, industryRelevant])
@@ -562,10 +579,18 @@ export const LeadersGrid = () => {
     [setSearchParams]
   )
 
+  // In the Sector Stack view a chosen layer (sector) narrows what is shown, so
+  // the result count and the CSV export follow it too.
+  const stackLayerActive = viewMode === 'stack' && activeLayer !== 'All'
+  const visibleLeaders = useMemo(
+    () => (stackLayerActive ? sortedLeaders.filter((l) => l.type === activeLayer) : sortedLeaders),
+    [stackLayerActive, sortedLeaders, activeLayer]
+  )
+
   const handleExportCsv = useCallback(() => {
-    const csv = generateCsv(sortedLeaders, LEADERS_CSV_COLUMNS)
+    const csv = generateCsv(visibleLeaders, LEADERS_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-leaders'))
-  }, [sortedLeaders])
+  }, [visibleLeaders])
 
   const handleToggleShowAllContributors = useCallback(() => {
     const next = !showAllContributors
@@ -581,6 +606,19 @@ export const LeadersGrid = () => {
     )
     logEvent('Leaders', 'Toggle Show All Contributors', next ? 'all' : 'curated')
   }, [showAllContributors, setSearchParams])
+
+  const handleSearchChange = (q: string) => {
+    setSearchQuery(q)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (q) next.set('q', q)
+        else next.delete('q')
+        return next
+      },
+      { replace: true }
+    )
+  }
 
   const handleCategorySelect = (category: string) => {
     filters.set({ category })
@@ -664,19 +702,46 @@ export const LeadersGrid = () => {
     return <MobileCommunityView />
   }
 
+  const renderCardGrid = (items: Leader[]) => (
+    <div
+      ref={gridRef}
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+    >
+      {items.map((leader) => (
+        <div key={leader.id} data-deeplink-id={leader.id} className="rounded-xl transition-shadow">
+          <LeaderCard
+            leader={leader}
+            onClick={() => toggleDetail(leader)}
+            isIndustryMatch={industryRelevant.has(leader.id)}
+            isExpanded={expandedLeaderId === leader.id}
+            onCloseExpanded={closeDetail}
+          />
+        </div>
+      ))}
+    </div>
+  )
+
   return (
     <div className="space-y-6">
-      <PageHeader
-        icon={Users}
-        title="Community"
-        description="An evidence-linked directory of people and organizations appearing in post-quantum research, standards, policy, and implementation sources. Inclusion is not an endorsement or a ranking."
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={Users}
+          title="Community"
+          description="An evidence-linked directory of people and organizations appearing in post-quantum research, standards, policy, and implementation sources. Inclusion is not an endorsement or a ranking."
+        />
+      )}
 
-      <PersonaPageNote route="/leaders" />
+      {!simEmbed && <PersonaPageNote route="/leaders" />}
 
       {/* Executive overview — institutional influence + why each group matters.
           Exec only; other roles see the directory unchanged. */}
-      {selectedPersona === 'executive' && <LeadersExecutivePanel leaders={leadersData} />}
+      {selectedPersona === 'executive' && (
+        <LeadersExecutivePanel
+          leaders={leadersData}
+          onSelectCategory={handleCategorySelect}
+          onSelectOrganization={handleSearchChange}
+        />
+      )}
 
       {/* B+ remediation 4.1 (2026-08-10): "who to follow and why", per role.
           The grid was byte-identical for every role that could see it and
@@ -837,16 +902,7 @@ export const LeadersGrid = () => {
               value={searchQuery}
               onChange={(e) => {
                 const q = e.target.value
-                setSearchQuery(q)
-                setSearchParams(
-                  (prev) => {
-                    const next = new URLSearchParams(prev)
-                    if (q) next.set('q', q)
-                    else next.delete('q')
-                    return next
-                  },
-                  { replace: true }
-                )
+                handleSearchChange(q)
                 if (q.length > 2) logLeadersSearch(q)
               }}
               className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
@@ -897,8 +953,9 @@ export const LeadersGrid = () => {
       {/* Results count + active filter badge */}
       <div className="flex items-center gap-2 flex-wrap">
         <p className="text-xs text-muted-foreground">
-          {filteredLeaders.length} {filteredLeaders.length === 1 ? 'person' : 'people'}
+          {visibleLeaders.length} {visibleLeaders.length === 1 ? 'person' : 'people'}
           {activeCategory !== 'All' && ` in ${activeCategory}`}
+          {stackLayerActive && ` · ${activeLayer} sector`}
         </p>
         {activeFilterCount > 0 && (
           <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[11px] font-semibold">
@@ -970,53 +1027,16 @@ export const LeadersGrid = () => {
             items={filteredLeaders}
             expandedContent={
               <div className="p-4 md:p-6 bg-background rounded-lg border border-border mt-4">
-                <div
-                  ref={gridRef}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-                >
-                  {sortedLeaders
-                    .filter((l) => l.type === activeLayer || activeLayer === 'All')
-                    .map((leader) => (
-                      <div
-                        key={leader.id}
-                        data-deeplink-id={leader.id}
-                        className="rounded-xl transition-shadow"
-                      >
-                        <LeaderCard
-                          leader={leader}
-                          onClick={() => toggleDetail(leader)}
-                          isIndustryMatch={industryRelevant.has(leader.id)}
-                          isExpanded={expandedLeaderId === leader.id}
-                          onCloseExpanded={closeDetail}
-                        />
-                      </div>
-                    ))}
-                </div>
+                {renderCardGrid(visibleLeaders)}
               </div>
             }
           />
+          {/* No layer chosen: every matching person is listed under the stack
+              (the stack itself only shows cards inside a chosen layer). */}
+          {activeLayer === 'All' && renderCardGrid(visibleLeaders)}
         </div>
       ) : filteredLeaders.length > 0 && viewMode === 'cards' ? (
-        <div
-          ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-        >
-          {sortedLeaders.map((leader) => (
-            <div
-              key={leader.id}
-              data-deeplink-id={leader.id}
-              className="rounded-xl transition-shadow"
-            >
-              <LeaderCard
-                leader={leader}
-                onClick={() => toggleDetail(leader)}
-                isIndustryMatch={industryRelevant.has(leader.id)}
-                isExpanded={expandedLeaderId === leader.id}
-                onCloseExpanded={closeDetail}
-              />
-            </div>
-          ))}
-        </div>
+        renderCardGrid(sortedLeaders)
       ) : filteredLeaders.length > 0 ? (
         <>
           <div className="hidden md:block">

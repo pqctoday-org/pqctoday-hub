@@ -82,8 +82,11 @@ export function actionItemCap(d: Density): number {
   return d === 'basic' ? 3 : d === 'intermediate' ? 4 : 5
 }
 
-/** When density is basic, only this zone is expanded by default; the rest are
- *  one-line collapsed teasers. Other densities use persona emphasis. */
+/** The zone a visitor with no role lens opens (Curious, or no role picked). Only
+ *  this zone is expanded; the rest are one-line collapsed teasers. A role with
+ *  its own lens opens that lens's zone instead, whatever the density (see
+ *  lib/lensZone.ts). The name is historical: it was once the basic-density
+ *  default. */
 export const BASIC_DENSITY_DEFAULT_ZONE = 'assets' as const
 
 /** True if the lower dashboard sections (learning bar, glossary) should default

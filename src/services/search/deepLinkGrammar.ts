@@ -161,6 +161,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
       'protocol',
       'threattab',
       'type',
+      'cross',
     ],
     description: 'Threats',
   },
@@ -278,6 +279,13 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     ],
     description: 'Patents',
   },
+  {
+    // Knowledge graph: `node` = a graph record id (e.g. std-fips-203, mech-ml-kem-768) opens
+    // that record; `type` (+ optional `sub`) spotlights a category or sub-category.
+    path: exact('/navigate'),
+    queryKeys: ['node', 'type', 'sub'],
+    description: 'Navigate',
+  },
 
   // Learn
   {
@@ -296,11 +304,29 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
     description: 'Learning module',
   },
 
-  // Playground
-  { path: exact('/playground'), queryKeys: ['algo', 'tab'], description: 'Playground' },
+  // Playground — the keys each page actually reads. The catalog filters by
+  // ?cat= / ?verb= / ?group=, and ?tool=<id> forwards to that tool's own page.
   {
+    path: exact('/playground'),
+    queryKeys: ['algo', 'tab', 'cat', 'verb', 'group', 'tool'],
+    description: 'Playground',
+  },
+  {
+    path: exact('/playground/hsm'),
+    queryKeys: ['tab', 'rail', 'itab', 'dtab', 'ltrack', 'lesson', 'engine', 'algo', 'launchAlgo'],
+    description: 'HSM Playground',
+  },
+  {
+    path: exact('/playground/cacp'),
+    queryKeys: ['tab', 'plane', 'view', 'op'],
+    description: 'KMIP Control Plane',
+  },
+  {
+    // Every tool page, plus /playground/interactive. ?step=N opens a step-based
+    // tool at that step; profile/pqcMode pick the 5G SUCI scenario; launchAlgo
+    // preselects an algorithm; tab picks a tool's own tab (TPM).
     path: new RegExp(`^/playground/${SLUG}$`),
-    queryKeys: ['algo', 'tab'],
+    queryKeys: ['algo', 'tab', 'step', 'launchAlgo', 'profile', 'pqcMode'],
     description: 'Playground tool',
   },
 

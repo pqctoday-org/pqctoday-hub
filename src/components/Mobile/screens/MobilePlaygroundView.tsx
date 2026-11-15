@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { Bookmark, BookmarkCheck, GraduationCap, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
@@ -95,7 +95,13 @@ const DIFFICULTY_BADGE: Record<ToolDifficulty, string> = {
  */
 export function MobilePlaygroundView() {
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState<WorkshopCategory | null>(null)
+  // A shared /playground?cat=<category> link opens on that category here too,
+  // matching the desktop catalog (which keeps ?cat= in the URL).
+  const [searchParams] = useSearchParams()
+  const [category, setCategory] = useState<WorkshopCategory | null>(() => {
+    const cat = searchParams.get('cat')
+    return cat && (CATEGORIES as readonly string[]).includes(cat) ? (cat as WorkshopCategory) : null
+  })
   const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
   const [runsHereOnly, setRunsHereOnly] = useState(true)
   const [selected, setSelected] = useState<WorkshopTool | null>(null)

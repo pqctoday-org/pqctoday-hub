@@ -10,8 +10,9 @@
  *   - infrastructure layer coverage from the assessment
  *   - FIPS-validated count from the migrate catalog
  *
- * The zone has no dedicated artifacts of its own (CBOM and vulnerability-watch
- * moved to the Assets zone). This wire is the only content for the zone.
+ * The zone's own artifacts (the management-tools audit and the crypto
+ * vulnerability watch) are listed by the zone panel below this wire. The CBOM
+ * belongs to the Assets zone, not this one. This wire is the zone's data summary.
  */
 import React from 'react'
 import { useNavigate } from 'react-router'

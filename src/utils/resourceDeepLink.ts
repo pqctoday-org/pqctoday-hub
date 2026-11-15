@@ -36,6 +36,8 @@ export const RESOURCE_PARAMS: Readonly<Record<string, readonly string[]>> = {
   '/timeline': ['event', 'country'],
   '/migrate': ['product', 'productIds', 'share', 'vendor', 'open', 'domain'],
   '/leaders': ['leader'],
+  // A record in the knowledge graph (?type=/&sub= spotlight a whole category, not one resource).
+  '/navigate': ['node'],
   '/compliance': [
     'framework',
     'cert',

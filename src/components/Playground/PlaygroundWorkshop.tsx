@@ -862,6 +862,20 @@ export const PlaygroundWorkshop = () => {
   const isMobileShell = useIsMobileShell()
   const [searchParams, setSearchParams] = useSearchParams()
 
+  // Older links open a tool as /playground?tool=<id>. The catalog never read
+  // that parameter, so those links landed on the overview with nothing
+  // selected. Send a known tool id to its own page, keeping any other
+  // parameters (for example ?step=), and replace the history entry so Back
+  // still works.
+  const toolParam = searchParams.get('tool')
+  useEffect(() => {
+    if (!toolParam || !WORKSHOP_TOOLS.some((t) => t.id === toolParam)) return
+    const rest = new URLSearchParams(searchParams)
+    rest.delete('tool')
+    const query = rest.toString()
+    navigate(`/playground/${toolParam}${query ? `?${query}` : ''}`, { replace: true })
+  }, [toolParam, searchParams, navigate])
+
   // Role — backed by the shared persona store (mirrors Learn). Read-only here:
   // the global top-bar role switcher is the single write control (Phase 0.2).
   const role = usePersonaStore((s) => s.selectedPersona)
@@ -1852,6 +1866,10 @@ export const PlaygroundWorkshop = () => {
             onPickVerb={(verb) => {
               setPaletteOpen(false)
               setActiveVerb(verb)
+            }}
+            onPickPlayground={(to) => {
+              setPaletteOpen(false)
+              navigate(to)
             }}
           />
         )}

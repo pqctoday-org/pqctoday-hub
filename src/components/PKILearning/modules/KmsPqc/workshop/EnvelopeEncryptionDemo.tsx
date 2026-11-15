@@ -66,6 +66,7 @@ import {
   WorkshopOperationLog,
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
+import { clampStep } from '@/utils/clampStep'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -495,7 +496,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
     []
   )
 
-  const [currentStep, setCurrentStep] = useState(initialStep)
+  const [currentStep, setCurrentStep] = useState(() =>
+    clampStep(initialStep, ENVELOPE_ENCRYPTION_STEPS.length)
+  )
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
   const [executedSteps, setExecutedSteps] = useState<Set<number>>(new Set())
 

@@ -34,6 +34,7 @@ import { ModuleShell } from '@/components/PKILearning/common/ModuleShell'
 import { Button } from '@/components/ui/button'
 import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import manifest from './manifest'
+import { clampStep } from '@/utils/clampStep'
 
 const ARTIFACT_GROUPS = [
   {
@@ -225,7 +226,7 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
   // tracking; this component owns its own stepper state and renders the workshop
   // through the `workshop` slot so the Playground embed (playgroundMode) can
   // reuse the exact same panel standalone.
-  const [currentStep, setCurrentStep] = useState(initialStep)
+  const [currentStep, setCurrentStep] = useState(() => clampStep(initialStep, parts.length))
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { CompactLearningBar } from './CompactLearningBar'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_IDS } from '@/data/personaIds'
@@ -36,6 +36,42 @@ function renderBar(defaultCollapsed = false) {
     </MemoryRouter>
   )
 }
+
+function LocationProbe() {
+  const location = useLocation()
+  return <div data-testid="location">{location.pathname}</div>
+}
+
+describe('CompactLearningBar for another path (GRC)', () => {
+  it('shows the path title it is given, not the Executive path', () => {
+    usePersonaStore.getState().setPersona('grc')
+    render(
+      <MemoryRouter>
+        <CompactLearningBar modules={modules} pathTitle="GRC Learning Path" />
+      </MemoryRouter>
+    )
+    expect(screen.getByText('GRC Learning Path')).toBeInTheDocument()
+    expect(screen.queryByText(/Executive Learning Path/)).not.toBeInTheDocument()
+  })
+
+  it('sends a finished reader to the path it is given, not the Executive path', () => {
+    const done = modules.map((m) => ({ ...m, status: 'completed' as const, completedSteps: 3 }))
+    render(
+      <MemoryRouter initialEntries={['/business']}>
+        <CompactLearningBar
+          modules={done}
+          pathTitle="GRC Learning Path"
+          fallbackTo="/learn/pqc-grc"
+        />
+        <Routes>
+          <Route path="*" element={<LocationProbe />} />
+        </Routes>
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('button', { name: /Review/ }))
+    expect(screen.getByTestId('location')).toHaveTextContent('/learn/pqc-grc')
+  })
+})
 
 describe('CompactLearningBar names whose path it shows', () => {
   it('with no role picked, shows the Executive path unqualified', () => {

@@ -154,19 +154,20 @@ export function buildRoadmapMarkdown(
 
   md += `**Critical path:** ${criticalPathLength(currentMilestones)} milestones deep (longest dependency chain).\n\n`
 
-  // CSWP.39 §4.6 — Mitigation Gateway specs (with mandatory sunset date).
+  // CSWP.39 §4.6 — Mitigation Gateway specs. The sunset date is a Hub suggestion, not a NIST rule.
   md += '## Mitigation Gateway (CSWP.39 §4.6)\n\n'
   if (mitigations.length === 0) {
     md +=
-      '_No mitigation gateways specified. CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them — every mitigation requires a sunset date._\n\n'
+      '_No mitigation gateways specified. CSWP.39 §4.6 frames a crypto gateway as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside them. The sunset date is our suggestion: we suggest a planned end date for each gateway. CSWP.39 §4.6 does not prescribe one._\n\n'
   } else {
-    md += '| Asset | Gateway product | Reason | Sunset |\n|---|---|---|---|\n'
+    md +=
+      '| Asset | Gateway product | Reason | Sunset (Hub suggestion, not a NIST rule) |\n|---|---|---|---|\n'
     for (const m of mitigations) {
       const gateway =
         softwareData.find((p) => p.productId === m.gatewayProductId)?.softwareName ||
         m.gatewayProductId ||
         '—'
-      md += `| ${m.asset || '—'} | ${gateway} | ${m.reason || '—'} | ${m.sunset || '⚠ MISSING'} |\n`
+      md += `| ${m.asset || '—'} | ${gateway} | ${m.reason || '—'} | ${m.sunset || 'not set'} |\n`
     }
     md += '\n'
   }
@@ -743,7 +744,8 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
               For assets where direct migration is blocked, document the gateway / bump-in-the-wire
-              that mitigates the risk — every entry must carry a mandatory sunset date.
+              that mitigates the risk. We suggest a planned end (sunset) date for each gateway;
+              CSWP.39 §4.6 does not prescribe one.
             </p>
           </div>
           <Button type="button" variant="outline" size="sm" onClick={addMitigation}>
@@ -809,12 +811,12 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
                 <div className="flex gap-1">
                   <input
                     type="text"
-                    required
                     className="text-sm rounded-md border border-input bg-background p-2 flex-1"
-                    placeholder="Sunset (YYYY-MM-DD)"
+                    placeholder="Suggested sunset (YYYY-MM-DD, our suggestion)"
                     value={row.sunset}
                     onChange={(e) => updateMitigation(idx, { sunset: e.target.value })}
-                    aria-label="Sunset date"
+                    aria-label="Suggested sunset date"
+                    title="A Hub suggestion for a planned end date. CSWP.39 §4.6 does not set one."
                   />
                   <Button
                     type="button"
