@@ -12,6 +12,7 @@
 import { useState, useCallback } from 'react'
 import { Check, Clock, Edit3, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import type { ExecutiveDocumentApprovalStatus } from '@/services/storage/types'
 import { EXAMPLE_REVIEWER_ROLES, exampleReviewerRole } from '@/data/exampleReviewerRoles'
 
@@ -119,19 +120,16 @@ export function ApprovalStatusControl({
       )}
       {editing && (
         <span className="inline-flex items-center gap-1">
-          <select
-            value={roleChoice}
-            onChange={(e) => setRoleChoice(e.target.value)}
-            aria-label="Example reviewer role"
-            className="h-6 rounded-md border border-input bg-background px-1 text-[10px] w-44"
-          >
-            <option value="">Example reviewer role (optional)</option>
-            {EXAMPLE_REVIEWER_ROLES.map((role) => (
-              <option key={role} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
+          <FilterDropdown
+            items={EXAMPLE_REVIEWER_ROLES as string[]}
+            selectedId={roleChoice || 'All'}
+            onSelect={(id) => setRoleChoice(id === 'All' ? '' : id)}
+            defaultLabel="Example reviewer role (optional)"
+            ariaLabel="Example reviewer role"
+            size="sm"
+            noContainer
+            className="w-44"
+          />
           <Button variant="outline" size="sm" className="h-6 px-2 text-[10px]" onClick={advance}>
             Confirm
           </Button>
