@@ -14,7 +14,8 @@
  * directly instead.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, ChevronDown, Filter, Home } from 'lucide-react'
+import { BookOpen, ChevronDown, Filter, Home, Search, X } from 'lucide-react'
+import { useSearchParams } from 'react-router'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
@@ -25,6 +26,7 @@ import {
   type ForceClusterNodeType,
 } from '@/data/forceClusterGraph'
 import { NavigateDetailPanel } from './NavigateDetailPanel'
+import { NavigateSearch } from './NavigateSearch'
 import { GRAPH_TOKEN, NODE_TYPES, TYPE_LABEL } from './graphVisuals'
 import {
   buildVisibleSubgraph,
@@ -141,8 +143,13 @@ const LABEL_MARGIN_PX = 3
 const SUB_LABEL_PRIORITY_BASE = 1_000_000
 
 // How long the filter panel stays expanded after the last filter-changing
-// interaction before it collapses back to a pill, freeing up screen space.
-const PANEL_IDLE_COLLAPSE_MS = 3000
+// interaction before it collapses back to a pill, freeing up screen space. The
+// clock does not run while the pointer is over the panel or focus is inside it.
+const PANEL_IDLE_COLLAPSE_MS = 5000
+
+// A press that moves further than this before release is an orbit drag, not a click:
+// releasing a drag over empty space must not deselect the record or drop the spotlight.
+const CLICK_MAX_TRAVEL_PX = 5
 
 // Ported directly from the design handoff's real reference implementation
 // (design_handoff_force_cluster/reference/ForceCluster3D.dc.html,
@@ -849,6 +856,7 @@ function buildScene(
 
 export function ForceClusterView() {
   const selectedPersona = usePersonaStore((state) => state.selectedPersona)
+  const [searchParams, setSearchParams] = useSearchParams()
   const containerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -918,24 +926,55 @@ export function ForceClusterView() {
     // so "About this graph" inside the panel closes the panel too.
     setSelectedNodeId(REOPEN_GUIDE.selectedNodeId)
     setGuideDismissed(REOPEN_GUIDE.guideDismissed)
+    // The panel unmounts under the pointer and focus, so no leave/blur event resets these.
     setPanelOpen(REOPEN_GUIDE.panelOpen)
+    setPanelHovered(false)
+    setPanelFocused(false)
+    setSearchRequested(false)
   }
   // Starts collapsed to a small pill so the graph gets the full screen by
   // default; expanding is a deliberate click, and PANEL_IDLE_COLLAPSE_MS
   // below re-collapses it once the user stops touching the filter controls.
   const [panelOpen, setPanelOpen] = useState(false)
+  // Pointer over the panel, or keyboard focus inside it: the reader is using it.
+  const [panelHovered, setPanelHovered] = useState(false)
+  const [panelFocused, setPanelFocused] = useState(false)
+  // "Search" opened the panel: the search box takes focus.
+  const [searchRequested, setSearchRequested] = useState(false)
+  const [motionPrefs, setMotionPrefsState] = useState<MotionPrefs>(() => loadMotionPrefs())
+  const motionMode = motionPrefs.mode
+  const motionSpeed = motionPrefs.speed
   useEffect(() => {
     // listOpen guards against collapsing out from under a keyboard user
-    // actively reading the visible-node list — every other dependency here
-    // is a real filter-changing interaction, so touching any of them resets
-    // the idle clock the same way the mouse/keyboard activity that produced
-    // them did.
-    if (!panelOpen || listOpen) return
-    const timer = setTimeout(() => setPanelOpen(false), PANEL_IDLE_COLLAPSE_MS)
+    // actively reading the visible-node list; hover and focus guard a reader
+    // who is looking at or typing in the panel. Every other dependency here
+    // is a real panel interaction, so touching any of them resets the idle
+    // clock the same way the mouse/keyboard activity that produced them did.
+    if (!panelOpen || listOpen || panelHovered || panelFocused) return
+    const timer = setTimeout(() => {
+      setPanelOpen(false)
+      setSearchRequested(false) // a later "Filters" click must not jump into the search box
+    }, PANEL_IDLE_COLLAPSE_MS)
     return () => clearTimeout(timer)
     // expandedType is here too: opening a sub-category row is the start of
     // an interaction, not the end of one.
-  }, [panelOpen, listOpen, filters, labelBudget, expandedType])
+  }, [
+    panelOpen,
+    listOpen,
+    panelHovered,
+    panelFocused,
+    filters,
+    labelBudget,
+    expandedType,
+    motionMode,
+    motionSpeed,
+  ])
+  const closePanel = () => {
+    setPanelOpen(false)
+    setPanelHovered(false)
+    setPanelFocused(false)
+    setSearchRequested(false)
+  }
   const applyFiltersRef = useRef<
     ((filters: GraphFilters, options?: { keepPositions?: boolean }) => LayoutSnapshot) | null
   >(null)
@@ -965,9 +1004,6 @@ export function ForceClusterView() {
   // And for the Home button: flies the camera back to the overview.
   const resetViewRef = useRef<(() => void) | null>(null)
 
-  const [motionPrefs, setMotionPrefsState] = useState<MotionPrefs>(() => loadMotionPrefs())
-  const motionMode = motionPrefs.mode
-  const motionSpeed = motionPrefs.speed
   const motionModeRef = useRef<MotionMode>(motionMode)
   const motionSpeedRef = useRef<number>(motionSpeed)
   useEffect(() => {
@@ -1001,6 +1037,8 @@ export function ForceClusterView() {
       resumeCategoryType: ForceClusterNodeType | null
     ) => void
     resume: () => void
+    pause: () => void
+    step: (delta: -1 | 1) => void
   } | null>(null)
   const [tourProgress, setTourProgress] = useState<TourProgress | null>(null)
   const [tourPaused, setTourPaused] = useState(false)
@@ -1150,10 +1188,14 @@ export function ForceClusterView() {
 
   // Picking a record means the reader has found their way around — the guide
   // should not come back when its drawer closes.
+  // A record or spotlight opened by a shared link closes the guide for this visit only: the
+  // visitor has not chosen anything yet, so the dismissal is not remembered.
+  const openedFromLinkRef = useRef(false)
   useEffect(() => {
     if (selectedNodeId) {
       setGuideDismissed(true)
-      saveGuideDismissed()
+      if (openedFromLinkRef.current) openedFromLinkRef.current = false
+      else saveGuideDismissed()
     }
   }, [selectedNodeId])
 
@@ -1161,12 +1203,14 @@ export function ForceClusterView() {
   // drawer first, then the guide. Left alone while a dialog is open, which
   // owns the key.
   useEffect(() => {
-    if (!selectedNodeId && !guideVisible) return
+    if (!selectedNodeId && !guideVisible && !clusterSelection) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || event.defaultPrevented) return
       if (document.querySelector('[role="dialog"], [role="alertdialog"]')) return
       if (selectedNodeId) {
         setSelectedNodeId(null)
+      } else if (clusterSelection) {
+        resetView()
       } else {
         setGuideDismissed(true)
         saveGuideDismissed()
@@ -1174,7 +1218,18 @@ export function ForceClusterView() {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [selectedNodeId, guideVisible])
+  }, [selectedNodeId, guideVisible, clusterSelection])
+
+  // A spotlight is a choice the reader made, like picking a record: the guide stays closed.
+  // A tour stop's caption also goes: it would sit on the spotlight chip at the top.
+  useEffect(() => {
+    if (clusterSelection) {
+      setGuideDismissed(true)
+      setTourCaptionNode(null)
+      if (openedFromLinkRef.current) openedFromLinkRef.current = false
+      else saveGuideDismissed()
+    }
+  }, [clusterSelection])
 
   // A node selected FROM WITHIN an active spotlight (clicking its sphere or
   // label always hits an already-visible, matching node — the spotlight has
@@ -1211,6 +1266,15 @@ export function ForceClusterView() {
     () => (graph ? filterNodes(graph, filters).length : 0),
     [graph, filters]
   )
+  // Links between the records drawn, against the whole graph — shown under the sliders.
+  const visibleEdgeCount = useMemo(() => {
+    if (!graph) return 0
+    const ids = new Set(visibleNodeList.map((n) => n.id))
+    return graph.edges.reduce(
+      (count, e) => (ids.has(e.from) && ids.has(e.to) ? count + 1 : count),
+      0
+    )
+  }, [graph, visibleNodeList])
   const nodeSliderMax = Math.max(
     MIN_MAX_NODES,
     Math.ceil(filteredCount / MAX_NODES_STEP) * MAX_NODES_STEP
@@ -1240,12 +1304,54 @@ export function ForceClusterView() {
     return result
   }, [graph, selectedNodeId, nodesById])
 
+  // Shareable view: ?node=<record id> opens that record and flies to it (drawing it if the
+  // filters hide it); ?type=<category>[&sub=<sub-category>] opens that spotlight. Read once,
+  // when the scene is ready; after that the URL follows the view (replace, so Back still
+  // leaves the page) and the top bar's Share button copies the current view. A running tour
+  // moves the selection every few seconds, so it does not write the URL.
+  const urlHydratedRef = useRef(false)
+  useEffect(() => {
+    if (loading || error || !graph || urlHydratedRef.current) return
+    urlHydratedRef.current = true
+    const nodeParam = searchParams.get('node')
+    const typeParam = searchParams.get('type')
+    const subParam = searchParams.get('sub')
+    if (nodeParam && nodesById.has(nodeParam)) {
+      openedFromLinkRef.current = true
+      focusNode(nodeParam)
+    } else if (typeParam && (NODE_TYPES as readonly string[]).includes(typeParam)) {
+      openedFromLinkRef.current = Boolean(breadcrumbSelectRef.current)
+      const type = typeParam as ForceClusterNodeType
+      const sub =
+        subParam && subsByType.get(type)?.some((s) => s.sub === subParam) ? subParam : null
+      breadcrumbSelectRef.current?.(type, sub)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once, when the scene is first ready
+  }, [loading, error, graph])
+  useEffect(() => {
+    if (!urlHydratedRef.current || motionMode === 'tour') return
+    const next = new URLSearchParams(searchParams)
+    next.delete('node')
+    next.delete('type')
+    next.delete('sub')
+    if (selectedNodeId) {
+      next.set('node', selectedNodeId)
+    } else if (clusterSelection) {
+      next.set('type', clusterSelection.type)
+      if (clusterSelection.sub !== null) next.set('sub', clusterSelection.sub)
+    }
+    if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- written from the view; reading searchParams must not re-trigger it
+  }, [selectedNodeId, clusterSelection, motionMode])
+
   useEffect(() => {
     let cancelled = false
     let renderer: THREE.WebGLRenderer | null = null
     let controls: OrbitControls | null = null
     let resizeObserver: ResizeObserver | null = null
     let canvasClickHandler: ((event: MouseEvent) => void) | null = null
+    let pointerDownHandler: ((event: PointerEvent) => void) | null = null
+    let pointerDownAt: { x: number; y: number } | null = null
     let canvasEl: HTMLCanvasElement | null = null
     let controlsStartHandler: (() => void) | null = null
     const container = containerRef.current
@@ -1713,7 +1819,13 @@ export function ForceClusterView() {
             .map((n) => layout.positionById.get(n.id))
             .filter((p): p is THREE.Vector3 => !!p)
             .map((p) => rotatingGroup.localToWorld(p.clone()))
-          const worldCenter = rotatingGroup.localToWorld(localCenter.clone())
+          // Framed on where the category's nodes actually sit after layout, the same centre
+          // flyToSpotlight uses: links to other categories pull a cluster off its anchor
+          // (layout.typeCenters), so framing the anchor left the cluster off-centre.
+          const worldCenter =
+            worldPoints.length > 0
+              ? boundingSphere(worldPoints).center
+              : rotatingGroup.localToWorld(localCenter.clone())
           const { radius } = boundingSphere(worldPoints.length > 0 ? worldPoints : [worldCenter])
           const distance = frameDistance(
             radius,
@@ -1843,7 +1955,7 @@ export function ForceClusterView() {
               // while state.paused is false (gated by its one caller in the
               // render loop), so it can never fight a real user's manual
               // selection made during a genuine pause.
-              setSelectedNodeId(stop.node.id)
+              if (tourOpensDetailPanel()) setSelectedNodeId(stop.node.id)
             }
           }
         } else {
@@ -1855,12 +1967,69 @@ export function ForceClusterView() {
         }
       }
 
+      /**
+       * Below the sm breakpoint the detail panel fills the screen and would cover the Filters
+       * panel that holds the tour's controls, so on a phone the tour shows only its caption.
+       */
+      function tourOpensDetailPanel(): boolean {
+        return (
+          typeof window.matchMedia !== 'function' || window.matchMedia('(min-width: 640px)').matches
+        )
+      }
+
+      /** Prev/Next: moves to a stop and holds there (paused), flying the camera itself since a paused tour does not advance its own flight. */
+      function jumpToStop(state: TourRuntime, index: number) {
+        const count = state.stops.length
+        if (count === 0) return
+        const nextIndex = ((index % count) + count) % count
+        // eslint-disable-next-line security/detect-object-injection -- nextIndex is a numeric position wrapped into [0, count), not user input
+        const stop = state.stops[nextIndex]
+        const targets = stop ? stopTarget(stop) : null
+        if (!stop || !targets || !controls) return
+        state.index = nextIndex
+        state.phase = 'dwelling'
+        state.elapsedMs = 0
+        state.paused = true
+        setTourPaused(true)
+        spotlightFlightRef.current = {
+          fromPos: camera.position.clone(),
+          fromTarget: controls.target.clone(),
+          toPos: targets.pos,
+          toTarget: targets.target,
+          elapsedMs: 0,
+          durationMs: SPOTLIGHT_FLIGHT_MS,
+        }
+        applyTourLabelFocus(stop)
+        currentTourStopTypeRef.current = stop.type
+        setTourProgress({
+          stopIndex: nextIndex,
+          stopCount: count,
+          categoryLabel: TYPE_LABEL[stop.type],
+        })
+        if (stop.kind === 'node') {
+          setTourCaptionNode(stop.node)
+          if (tourOpensDetailPanel()) {
+            selectedNodeIdRef.current = stop.node.id
+            setSelectedNodeId(stop.node.id)
+          }
+        } else {
+          setTourCaptionNode(null)
+          selectedNodeIdRef.current = null
+          setSelectedNodeId(null)
+        }
+      }
+
       tourControlRef.current = {
         rebuild: rebuildTour,
         resume: () => {
           if (tourStateRef.current) tourStateRef.current.paused = false
           setTourPaused(false)
           setSelectedNodeId(null)
+        },
+        pause: pauseTourIfRunning,
+        step: (delta) => {
+          const state = tourStateRef.current
+          if (state) jumpToStop(state, state.index + delta)
         },
       }
 
@@ -1922,7 +2091,18 @@ export function ForceClusterView() {
 
       const raycaster = new THREE.Raycaster()
       const pointer = new THREE.Vector2()
+      pointerDownHandler = (event: PointerEvent) => {
+        pointerDownAt = { x: event.clientX, y: event.clientY }
+      }
+      canvas.addEventListener('pointerdown', pointerDownHandler)
       canvasClickHandler = (event: MouseEvent) => {
+        const start = pointerDownAt
+        pointerDownAt = null
+        if (
+          start &&
+          Math.hypot(event.clientX - start.x, event.clientY - start.y) > CLICK_MAX_TRAVEL_PX
+        )
+          return
         const rect = canvas.getBoundingClientRect()
         pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
         pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
@@ -1982,6 +2162,8 @@ export function ForceClusterView() {
       cancelled = true
       resizeObserver?.disconnect()
       if (canvasEl && canvasClickHandler) canvasEl.removeEventListener('click', canvasClickHandler)
+      if (canvasEl && pointerDownHandler)
+        canvasEl.removeEventListener('pointerdown', pointerDownHandler)
       if (controls && controlsStartHandler)
         controls.removeEventListener('start', controlsStartHandler)
       controls?.dispose()
@@ -2058,17 +2240,33 @@ export function ForceClusterView() {
         />
       )}
       {!loading && !error && !panelOpen && (
-        <div className="absolute bottom-4 left-4 flex gap-2">
+        <div className="absolute bottom-4 left-4 z-10 flex gap-2">
           <Button
             variant="secondary"
             size="sm"
             className="glass-panel h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
             aria-expanded={false}
             aria-controls="navigate-filter-panel"
-            onClick={() => setPanelOpen(true)}
+            onClick={() => {
+              setSearchRequested(false)
+              setPanelOpen(true)
+            }}
           >
             <Filter className="h-3.5 w-3.5" aria-hidden="true" />
             Filters
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="glass-panel h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
+            aria-controls="navigate-filter-panel"
+            onClick={() => {
+              setSearchRequested(true)
+              setPanelOpen(true)
+            }}
+          >
+            <Search className="h-3.5 w-3.5" aria-hidden="true" />
+            Search
           </Button>
           {guideDismissed && motionMode !== 'tour' && (
             <Button
@@ -2086,7 +2284,13 @@ export function ForceClusterView() {
       {!loading && !error && panelOpen && (
         <div
           id="navigate-filter-panel"
-          className="glass-panel absolute bottom-4 left-3 right-3 max-h-[55vh] max-w-[440px] space-y-3 overflow-y-auto p-3 sm:left-4 sm:right-auto"
+          className="glass-panel absolute bottom-4 left-3 right-3 z-10 max-h-[55vh] max-w-[440px] space-y-3 overflow-y-auto p-3 sm:left-4 sm:right-auto"
+          onPointerEnter={() => setPanelHovered(true)}
+          onPointerLeave={() => setPanelHovered(false)}
+          onFocus={() => setPanelFocused(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPanelFocused(false)
+          }}
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground">Filter</span>
@@ -2112,8 +2316,21 @@ export function ForceClusterView() {
               >
                 {listOpen ? 'Hide list view' : 'List view (keyboard)'}
               </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={closePanel}
+                aria-label="Close filters"
+                title="Close"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
+              </Button>
             </div>
           </div>
+          {graph && (
+            <NavigateSearch graph={graph} onPick={focusNode} focusOnMount={searchRequested} />
+          )}
           <div className="flex flex-wrap gap-1.5">
             {NODE_TYPES.map((type) => {
               const on = enabledTypes.has(type)
@@ -2249,6 +2466,13 @@ export function ForceClusterView() {
               aria-label="Maximum number of labels shown at once; labels never overlap"
             />
           </label>
+          {graph && (
+            <p className="text-xs text-muted-foreground">
+              Showing {visibleNodeList.length.toLocaleString()} of{' '}
+              {graph.nodes.length.toLocaleString()} records · {visibleEdgeCount.toLocaleString()} of{' '}
+              {graph.edges.length.toLocaleString()} links
+            </p>
+          )}
           <MotionControls
             mode={motionMode}
             onModeChange={setMotionMode}
@@ -2257,6 +2481,8 @@ export function ForceClusterView() {
             tourProgress={tourProgress}
             tourPaused={tourPaused}
             onResumeTour={() => tourControlRef.current?.resume()}
+            onPauseTour={() => tourControlRef.current?.pause()}
+            onStepTour={(delta) => tourControlRef.current?.step(delta)}
             skippedCategoryLabels={skippedCategoryLabels}
           />
           {listOpen && (
@@ -2271,7 +2497,7 @@ export function ForceClusterView() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => setSelectedNodeId(node.id)}
+                    onClick={() => focusNode(node.id)}
                     aria-current={node.id === selectedNodeId ? 'true' : undefined}
                     className="h-auto w-full justify-start truncate rounded px-1.5 py-1 text-left text-xs font-normal"
                   >
@@ -2282,6 +2508,25 @@ export function ForceClusterView() {
               ))}
             </ul>
           )}
+        </div>
+      )}
+      {!loading && !error && clusterSelection && (
+        <div
+          className="glass-panel absolute left-1/2 top-3 z-10 flex max-w-[calc(100%-6rem)] -translate-x-1/2 items-center gap-2 rounded-full px-3 py-1 text-xs"
+          role="status"
+        >
+          <span className="truncate text-foreground">
+            Spotlight: {TYPE_LABEL[clusterSelection.type]}
+            {clusterSelection.sub ? ` · ${clusterSelection.sub}` : ''}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto shrink-0 px-1.5 py-0.5 text-xs"
+            onClick={resetView}
+          >
+            Show all (Esc)
+          </Button>
         </div>
       )}
       {!loading && !error && motionMode === 'tour' && tourCaptionNode && (

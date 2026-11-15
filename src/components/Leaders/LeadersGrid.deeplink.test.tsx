@@ -30,7 +30,7 @@ vi.mock('../../data/leadersData', () => ({
       id: 'alice-1',
       leaderId: 'alice-1',
       name: 'Alice Quant',
-      country: 'USA',
+      country: 'United States',
       title: 'Chief Scientist',
       organizations: ['Quantum Corp'],
       type: 'Private',
@@ -42,7 +42,7 @@ vi.mock('../../data/leadersData', () => ({
       id: 'bob-2',
       leaderId: 'bob-2',
       name: 'Bob Cyber',
-      country: 'UK',
+      country: 'United Kingdom',
       title: 'Director',
       organizations: ['NCSC'],
       type: 'Public',
@@ -214,10 +214,13 @@ describe('LeadersGrid PR 2 params (leader_id, layer, table sort)', () => {
     await waitFor(() => expect(param('layer')).toBe('Public'))
   })
 
-  it('an unknown ?layer renders no layer as open (graceful)', () => {
+  it('an unknown ?layer renders no layer as open (graceful) and lists everyone under the stack', () => {
     renderAt('?mode=stack&layer=Bogus')
-    expect(document.querySelector('[data-deeplink-id]')).toBeNull()
+    expect(screen.queryByText('Collapse Stack')).toBeNull()
+    expect(screen.queryByText('Filtered')).toBeNull()
     expect(screen.getAllByText(/Click to filter/).length).toBeGreaterThan(0)
+    // No layer chosen: the cards are listed below the stack, not hidden.
+    expect(document.querySelectorAll('[data-deeplink-id]').length).toBeGreaterThan(0)
   })
 
   it('leaving stack view drops ?layer', async () => {

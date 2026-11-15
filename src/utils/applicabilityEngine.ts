@@ -23,6 +23,7 @@ import type { ThreatData } from '../data/threatsData'
 import { threatsData } from '../data/threatsData'
 import type { TimelineEvent, CountryData } from '../types/timeline'
 import { timelineData } from '../data/timelineData'
+import { canonicalTimelineLane, parseTimelineRef } from './timelineResolver'
 
 /** Flattens the hierarchical timeline structure into a flat list of events. */
 function flattenTimeline(countries: CountryData[]): TimelineEvent[] {
@@ -823,8 +824,8 @@ export const TIER_META: Record<ApplicabilityTier, { label: string; description: 
 
 /**
  * Splits a list of timeline-event applicability results into:
- *   - `byFrameworkId`: events that match ≥1 framework's (country, enforcementBody)
- *     pair — surfaced as inline milestones on each matching framework card.
+ *   - `byFrameworkId`: events in a lane one of the framework's timeline_refs names
+ *     (or, for a framework with no usable ref, its (country, enforcementBody) pair) — surfaced as inline milestones on each matching framework card.
  *   - `industryEvents`: events with no framework match — surfaced as a small
  *     standalone "Industry events" sidebar in ExecutiveTimelineView.
  *
@@ -842,15 +843,35 @@ export function linkTimelineToFrameworks(
   const byFrameworkId = new Map<string, ApplicabilityResult<TimelineEvent>[]>()
   const industryEvents: ApplicabilityResult<TimelineEvent>[] = []
 
+  // The lanes each framework names in its timeline_refs ("country:org"), after the
+  // renamed-lane alias. An event belongs to a framework when its own lane is one of them.
+  const lanesByFramework = new Map<string, Set<string>>()
+  for (const fwRes of frameworks) {
+    const lanes = new Set<string>()
+    for (const ref of fwRes.item.timelineRefs ?? []) {
+      const parsed = parseTimelineRef(ref)
+      if (!parsed) continue
+      const lane = canonicalTimelineLane(parsed.country, parsed.org)
+      lanes.add(laneKey(lane.country, lane.org))
+    }
+    lanesByFramework.set(fwRes.item.id, lanes)
+  }
+
   for (const evRes of events) {
     const ev = evRes.item
+    const evLane = laneKey(ev.countryName ?? '', ev.orgName ?? '')
     let matched = false
     for (const fwRes of frameworks) {
       const fw = fwRes.item
+      const lanes = lanesByFramework.get(fw.id)
+      const refHit = lanes?.has(evLane) ?? false
+      // Fallback only for a framework with no usable timeline_refs entry: the older
+      // country + enforcement-body pairing.
       const countryHit = ev.countryName && fw.countries.includes(ev.countryName)
       const bodyHit =
         ev.orgName && fw.enforcementBody && ev.orgName.trim() === fw.enforcementBody.trim()
-      if (countryHit && bodyHit) {
+      const fallbackHit = (lanes?.size ?? 0) === 0 && !!countryHit && !!bodyHit
+      if (refHit || fallbackHit) {
         if (!byFrameworkId.has(fw.id)) byFrameworkId.set(fw.id, [])
         byFrameworkId.get(fw.id)!.push(evRes)
         matched = true
@@ -860,6 +881,10 @@ export function linkTimelineToFrameworks(
   }
 
   return { byFrameworkId, industryEvents }
+}
+
+function laneKey(country: string, org: string): string {
+  return `${country.trim().toLowerCase()}::${org.trim().toLowerCase()}`
 }
 
 export function groupByTier<T>(

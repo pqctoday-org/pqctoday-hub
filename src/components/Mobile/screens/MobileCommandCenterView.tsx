@@ -1,21 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router'
-import { ChevronDown, LayoutDashboard, PlayCircle } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router'
+import { ChevronDown, Layers, LayoutDashboard, PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useBusinessMetrics } from '@/components/BusinessCenter/hooks/useBusinessMetrics'
 import { ActionItemsSection } from '@/components/BusinessCenter/sections/ActionItemsSection'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import {
-  computeZoneTiers,
   computeStepTiers,
-  missingForNextTier,
+  computeZoneTiers,
+  missingForNextZoneTier,
+  zoneHintTier,
   TIER_LABELS,
-  primaryStepForZone,
   type MaturityTier,
 } from '@/components/BusinessCenter/lib/cswp39Tier'
-import { CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp39ZoneData'
+import {
+  CSWP39_ZONE_DETAILS,
+  zoneFromHash,
+  zoneFromQueryParam,
+  type ZoneId,
+} from '@/data/cswp39ZoneData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { commandCenterIntroFor } from '@/data/commandCenterIntro'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
@@ -27,7 +32,7 @@ const TIER_STYLES: Record<MaturityTier, string> = {
   4: 'bg-status-success/15 text-status-success border-status-success/30',
 }
 
-// "Missing for next tier" text is missingForNextTier() (cswp39Tier.ts) — moved
+// "Missing for next tier" text is missingForNextZoneTier() (cswp39Tier.ts) — moved
 // there 2026-08-24 (audit R1.4) so it reads the same T thresholds and boolean
 // gates the tier functions above it use, instead of a parallel copy.
 
@@ -60,7 +65,7 @@ const ZONE_ORDER: ZoneId[] = [
  * exist on desktop at all (TierBadge.tsx only ever shows reasons FOR the
  * achieved tier) — built here as genuinely new UI from the same real
  * threshold constants/boolean gates cswp39Tier.ts's own tier functions use,
- * not invented text (see missingForNextTier above).
+ * not invented text (see missingForNextZoneTier above).
  *
  * Reuses real desktop logic/components verbatim: useBusinessMetrics() (the
  * same real hook driving every Command Center panel), ActionItemsSection
@@ -74,13 +79,21 @@ const ZONE_ORDER: ZoneId[] = [
  */
 export function MobileCommandCenterView() {
   const metrics = useBusinessMetrics()
-  const [openZone, setOpenZone] = useState<ZoneId | null>(null)
+  const [searchParams] = useSearchParams()
+  // A zone link (?zone=, or a #zone-/#step- hash) is read once, on arrival. It opens
+  // that zone and shows the zone list even on an empty profile.
+  const [linkedZone] = useState<ZoneId | null>(
+    () => zoneFromQueryParam(searchParams.get('zone')) ?? zoneFromHash(window.location.hash)
+  )
+  const [openZone, setOpenZone] = useState<ZoneId | null>(linkedZone)
+  const [showZoneMap, setShowZoneMap] = useState(linkedZone !== null)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   const zoneTiers = useMemo(() => computeZoneTiers(metrics), [metrics])
+  // Shared by every zone's hint below, so the step tiers are computed once per render.
   const stepTiers = useMemo(() => computeStepTiers(metrics), [metrics])
 
-  if (metrics.isFullyEmpty) {
+  if (metrics.isFullyEmpty && !showZoneMap) {
     const intro = commandCenterIntroFor(selectedPersona)
     // Top 3 of the persona's own recommended sequence — see BusinessCenterView's
     // WelcomeState for the desktop equivalent of this same shared config.
@@ -127,6 +140,15 @@ export function MobileCommandCenterView() {
               </span>
             </Link>
           ))}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowZoneMap(true)}
+            className="h-11 gap-1.5 text-[11.5px] font-bold"
+          >
+            <Layers size={13} aria-hidden="true" />
+            Explore the six zones
+          </Button>
         </div>
         {topTools.length > 0 && (
           <>
@@ -170,8 +192,8 @@ export function MobileCommandCenterView() {
           const zone = CSWP39_ZONE_DETAILS[zoneId]
           const result = zoneTiers[zoneId]
           const isOpen = openZone === zoneId
-          const step = primaryStepForZone(zoneId)
-          const missing = missingForNextTier(step, metrics, stepTiers[step].tier)
+          const hintTier = zoneHintTier(zoneId, metrics, stepTiers)
+          const missing = missingForNextZoneTier(zoneId, metrics, stepTiers)
           return (
             <div key={zoneId} className="glass-panel overflow-hidden">
               <Button
@@ -211,8 +233,7 @@ export function MobileCommandCenterView() {
                   )}
                   {missing && (
                     <p className="rounded-lg border border-primary/20 bg-primary/5 p-2 text-[10.5px] leading-relaxed text-foreground/80">
-                      For {TIER_LABELS[Math.min(4, stepTiers[step].tier + 1) as MaturityTier]}:{' '}
-                      {missing}
+                      For {TIER_LABELS[Math.min(4, hintTier + 1) as MaturityTier]}: {missing}
                     </p>
                   )}
                   <p className="font-mono text-sim-chip text-muted-foreground">{zone.cswpRef}</p>
@@ -223,10 +244,11 @@ export function MobileCommandCenterView() {
         })}
       </div>
 
-      <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        Read your maturity here. The {BUSINESS_TOOLS.length} planning tools, the CBOM builder, and
-        the artifact drawer that produce these artifacts are on a laptop.
-      </p>
+      <div className="mt-4 border-t border-border pt-3">
+        <Link to="/business/tools" className="text-[11.5px] font-bold text-primary">
+          Browse all {BUSINESS_TOOLS.length} planning tools →
+        </Link>
+      </div>
     </div>
   )
 }

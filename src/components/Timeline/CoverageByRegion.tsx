@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { Globe } from 'lucide-react'
 import type { GanttCountryData } from '../../types/timeline'
 import type { Region } from '../../store/usePersonaStore'
-import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import { timelineRegionCountries } from '../../data/timelineRegionCountries'
 import { Button } from '../ui/button'
 
 const REGION_DISPLAY: { id: Region; label: string }[] = [
@@ -31,8 +31,7 @@ interface RegionStats {
 const MIGRATION_PLUS_PHASES = new Set(['Migration', 'Standardization'])
 
 function computeRegionStats(data: GanttCountryData[], region: Region): RegionStats {
-  // eslint-disable-next-line security/detect-object-injection
-  const allowed = new Set(REGION_COUNTRIES_MAP[region])
+  const allowed = new Set(timelineRegionCountries(region))
   const rows = data.filter((d) => allowed.has(d.country.countryName))
   const countries = rows.length
   let events = 0

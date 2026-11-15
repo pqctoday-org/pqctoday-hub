@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { BookOpen, List, Route, X } from 'lucide-react'
+import { ArrowUpRight, BookOpen, List, Route, X } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '@/data/learningPersonas'
+import { pageRelationsFor } from '@/data/pageRelations'
+import { nextStepFor } from '@/data/nextSteps'
 
 const ROLE_START: Partial<Record<PersonaId, string>> = {
   executive:
     'Start with Standards, Compliance, and Vendors to see which hub records connect policy to implementation.',
+  grc: 'Start on a Compliance framework to see the standards it cites, the industries it applies to and the trusted sources behind it, then follow those standards to the products that reference them. A link records a reference in the dataset, not a compliance finding.',
   developer:
     'Start with Algorithms, Mechanisms, Protocols, and Products to trace implementation dependencies.',
   architect:
@@ -17,6 +21,42 @@ const ROLE_START: Partial<Record<PersonaId, string>> = {
   ops: 'Start with Products and Protocols to find operational records, then follow their standards and compliance links.',
   curious:
     'Try the guided tour first. It introduces the most-connected records in each visible category.',
+}
+
+/**
+ * The page's authored next step and related pages. The full-bleed canvas leaves no room for
+ * the footer every other page shows them in, so the guide carries them.
+ */
+function RelatedPages({ persona }: { persona: PersonaId | null }) {
+  const next = nextStepFor('/navigate', persona)
+  const related = pageRelationsFor('/navigate').filter((r) => r.to !== next?.to)
+  if (!next && related.length === 0) return null
+  return (
+    <nav aria-label="Related pages" className="space-y-1 border-t border-border pt-2 text-xs">
+      {next && (
+        <Link
+          to={next.to}
+          className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+          title={next.why}
+        >
+          {next.label} <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+        </Link>
+      )}
+      {related.length > 0 && (
+        <p className="text-muted-foreground">
+          Related:{' '}
+          {related.map((r, i) => (
+            <span key={r.to}>
+              {i > 0 && ' · '}
+              <Link to={r.to} className="text-primary hover:underline" title={r.reason}>
+                {r.title}
+              </Link>
+            </span>
+          ))}
+        </p>
+      )}
+    </nav>
+  )
 }
 
 interface NavigateGuideProps {
@@ -58,7 +98,12 @@ export function NavigateGuide({ persona, onTour, onList, onDismiss }: NavigateGu
         are not missing evidence.
       </p>
       {persona && ROLE_START[persona] && (
-        <p className="text-xs leading-relaxed text-foreground">{ROLE_START[persona]}</p>
+        <p
+          className="text-xs leading-relaxed text-foreground"
+          data-testid="navigate-guide-role-start"
+        >
+          {ROLE_START[persona]}
+        </p>
       )}
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" size="sm" className="h-8 gap-1.5 text-xs" onClick={onTour}>
@@ -70,6 +115,7 @@ export function NavigateGuide({ persona, onTour, onList, onDismiss }: NavigateGu
           Open accessible list
         </Button>
       </div>
+      <RelatedPages persona={persona} />
     </section>
   )
 }

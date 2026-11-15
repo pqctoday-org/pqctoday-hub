@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Leader, LeaderSuccessor } from '@/data/leadersData'
+import { canonicalLeaderCountry } from '@/data/leaderCountry'
 import {
   LEADERS_REGION_COUNTRIES,
   LEADERS_REGION_LABELS,
@@ -130,7 +131,7 @@ export function findLeaderByParam(
 
 /** The notice shown when a link to a merged duplicate was forwarded. */
 export function leaderForwardedMessage(forwardedFrom: string, leader: Leader): string {
-  return `${forwardedFrom} is now listed under ${leader.name} (duplicate profiles were merged).`
+  return `${forwardedFrom} is now listed under ${leader.name} (the earlier profile was merged into this one).`
 }
 
 /** Lexical half of the page's search filter (the semantic supplement is async). */
@@ -187,12 +188,14 @@ export function planLeaderDeepLink(
     next.delete('cat')
     widened.push(`category "${cat}"`)
   }
-  const country = params.get('country')
+  const rawCountry = params.get('country')
+  // Rows carry one spelling per country; an old ?country=USA link means United States.
+  const country = rawCountry ? canonicalLeaderCountry(rawCountry) : rawCountry
   const region = params.get('region')
   if (country && country !== 'All') {
     if (leader.country !== country) {
       next.delete('country')
-      widened.push(`country "${country}"`)
+      widened.push(`country "${rawCountry}"`)
       // With country cleared, the region filter takes effect again.
       if (region && region !== 'All' && !regionIncludes(region, leader.country)) {
         next.delete('region')
@@ -242,7 +245,8 @@ export function filterLeadersByParams(
   params: URLSearchParams
 ): Leader[] {
   const cat = activeFilter(params, 'cat')
-  const country = activeFilter(params, 'country')
+  const rawCountry = activeFilter(params, 'country')
+  const country = rawCountry ? canonicalLeaderCountry(rawCountry) : null
   const region = activeFilter(params, 'region')
   const sector = activeFilter(params, 'sector')
   const q = params.get('q')?.trim() || null

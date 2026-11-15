@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { tierGroups } from '../Compliance/views/forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { ShieldAlert, Calendar, BookOpen, Scale, Link2, ArrowRight } from 'lucide-react'
@@ -6,7 +7,6 @@ import { useApplicabilityWithPaths } from '../../hooks/useApplicabilityWithPaths
 import {
   TIER_META,
   TIER_ORDER,
-  groupByTier,
   type ApplicabilityResult,
   type ApplicabilityTier,
   type UserProfile,
@@ -199,7 +199,7 @@ function Section<T>({
   compact,
   bindingGroups,
 }: SectionProps<T>) {
-  const grouped = useMemo(() => groupByTier(results), [results])
+  const grouped = useMemo(() => tierGroups(results), [results])
   const reviewedGroups = bindingGroups?.(results).filter((g) => g.items.length > 0)
   const total = results.length
   const totalDropped = dropped ? TIER_ORDER.reduce((sum, t) => sum + (dropped[t] ?? 0), 0) : 0

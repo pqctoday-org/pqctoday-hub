@@ -10,6 +10,7 @@
  */
 import { findLibraryItemByRef, findLibrarySuccessor, type LibraryItem } from '@/data/libraryData'
 import { PERSONA_LIBRARY_CATEGORIES } from '@/data/personaConfig'
+import { RESEARCH_TOPIC_PARAM, isResearchTopicId } from '@/data/researchTopics'
 import {
   matchesLibraryFilters,
   type LibraryFilterState,
@@ -115,4 +116,24 @@ export function libraryWideningFor(
     !item.categories?.some((c) => preferred.includes(c))
 
   return drop.length > 0 || prefsOff ? { drop, prefsOff } : null
+}
+
+/**
+ * A `?topic=` value that is not a research-topic id (`SBOM`, `CycloneDX`,
+ * `800-88` — what simulation steps and older shared links carry) is a subject,
+ * not a filter id. Inside the simulation the same value already seeds the search
+ * (LibraryEmbed); on the page itself it used to be dropped, opening the whole
+ * catalogue. Returns the params with that value moved to `?q=` (the search box),
+ * or null when there is nothing to move: no topic, a known topic id, or a search
+ * already present (the reader's own search wins and the topic is left alone).
+ */
+export function topicParamAsSearch(params: URLSearchParams): URLSearchParams | null {
+  const raw = params.get(RESEARCH_TOPIC_PARAM)?.trim()
+  if (!raw) return null
+  if (isResearchTopicId(raw.toLowerCase())) return null
+  if ((params.get('q') ?? '').trim()) return null
+  const next = new URLSearchParams(params)
+  next.delete(RESEARCH_TOPIC_PARAM)
+  next.set('q', raw)
+  return next
 }

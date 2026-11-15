@@ -57,6 +57,12 @@ export function JurisdictionPanel({ country, size }: { country: string; size: Si
         </span>
       </div>
       <p className="text-sm text-muted-foreground">{rule.note}</p>
+      {!rule.endState && (
+        <p className="mt-2 text-xs text-muted-foreground" data-testid="jurisdiction-no-end-state">
+          {rule.authority} states no end state yet: whether hybrid stays or is later retired is not
+          decided in its guidance.
+        </p>
+      )}
 
       <div className="mt-3 flex flex-wrap gap-1.5">
         {choices.map((c) => {

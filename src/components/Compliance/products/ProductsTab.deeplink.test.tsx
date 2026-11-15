@@ -4,6 +4,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { MemoryRouter } from 'react-router'
 import { ProductsTab } from './ProductsTab'
 import { buildProductRows, productKey } from './productsModel'
 import { certsByProduct } from '@/data/certificationXrefData'
@@ -24,7 +25,11 @@ describe('ProductsTab ?prod=', () => {
   })
 
   it('expands the linked product and marks it as the deep-link target', () => {
-    render(<ProductsTab openProductId={KEY} />)
+    render(
+      <MemoryRouter>
+        <ProductsTab openProductId={KEY} />
+      </MemoryRouter>
+    )
     expect(rowButton(TARGET.softwareName)).toHaveAttribute('aria-expanded', 'true')
     expect(rowButton(TARGET.softwareName).closest('li')).toHaveAttribute('data-deeplink-id', KEY)
     expect(screen.queryByTestId(/deeplink-notice/)).not.toBeInTheDocument()
@@ -34,26 +39,44 @@ describe('ProductsTab ?prod=', () => {
     const onOpen = vi.fn()
     const onClose = vi.fn()
     const { rerender } = render(
-      <ProductsTab openProductId={null} onOpenProduct={onOpen} onCloseProduct={onClose} />
+      <MemoryRouter>
+        <ProductsTab openProductId={null} onOpenProduct={onOpen} onCloseProduct={onClose} />
+      </MemoryRouter>
     )
     fireEvent.click(rowButton(TARGET.softwareName))
     expect(onOpen).toHaveBeenCalledWith(KEY)
-    rerender(<ProductsTab openProductId={KEY} onOpenProduct={onOpen} onCloseProduct={onClose} />)
+    rerender(
+      <MemoryRouter>
+        <ProductsTab openProductId={KEY} onOpenProduct={onOpen} onCloseProduct={onClose} />
+      </MemoryRouter>
+    )
     fireEvent.click(rowButton(TARGET.softwareName))
     expect(onClose).toHaveBeenCalled()
   })
 
   it('collapses the row when the param goes away (Back)', () => {
-    const { rerender } = render(<ProductsTab openProductId={KEY} />)
+    const { rerender } = render(
+      <MemoryRouter>
+        <ProductsTab openProductId={KEY} />
+      </MemoryRouter>
+    )
     expect(rowButton(TARGET.softwareName)).toHaveAttribute('aria-expanded', 'true')
-    rerender(<ProductsTab openProductId={null} />)
+    rerender(
+      <MemoryRouter>
+        <ProductsTab openProductId={null} />
+      </MemoryRouter>
+    )
     expect(rowButton(TARGET.softwareName)).toHaveAttribute('aria-expanded', 'false')
   })
 
   it('widens the inventory view for a product the reader does not own, with Undo', () => {
     const other = ROWS.find((r) => r !== TARGET)!
     useMigrateSelectionStore.setState({ myProducts: [other.productId] })
-    render(<ProductsTab openProductId={KEY} />)
+    render(
+      <MemoryRouter>
+        <ProductsTab openProductId={KEY} />
+      </MemoryRouter>
+    )
     expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(TARGET.softwareName)
     expect(rowButton(TARGET.softwareName)).toHaveAttribute('aria-expanded', 'true')
     fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
@@ -63,7 +86,11 @@ describe('ProductsTab ?prod=', () => {
 
   it('says not-found for an unknown product, and dismissing clears the param', () => {
     const onClose = vi.fn()
-    render(<ProductsTab openProductId="no-such-product" onCloseProduct={onClose} />)
+    render(
+      <MemoryRouter>
+        <ProductsTab openProductId="no-such-product" onCloseProduct={onClose} />
+      </MemoryRouter>
+    )
     expect(screen.getByTestId('deeplink-notice-not-found')).toHaveTextContent('no-such-product')
     fireEvent.click(screen.getByRole('button', { name: 'Dismiss notice' }))
     expect(onClose).toHaveBeenCalled()

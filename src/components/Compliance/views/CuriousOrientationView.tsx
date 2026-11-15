@@ -13,11 +13,12 @@
  * "does this affect me?" card and one link to the full Landscape, per the
  * original design intent.
  */
+import { ruleMakerBodies } from './forYouSelection'
 import { Link } from 'react-router'
 import { useEffect, useMemo, type FC } from 'react'
 import { Compass, ArrowRight } from 'lucide-react'
 import type { UserProfile } from '../../../utils/applicabilityEngine'
-import { complianceFrameworks, type ComplianceFramework } from '../../../data/complianceData'
+import type { ComplianceFramework } from '../../../data/complianceData'
 import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
@@ -54,29 +55,7 @@ export const CuriousOrientationView: FC<CuriousOrientationViewProps> = () => {
    * date is unrecorded sorts last and says so rather than being dropped —
    * "no date yet" is information for this reader too.
    */
-  const ruleMakers = useMemo(() => {
-    const byBody = new Map<string, { body: string; earliest: number | null; count: number }>()
-    for (const fw of complianceFrameworks) {
-      if (!fw.requiresPQC) continue
-      const body = fw.enforcementBody?.trim()
-      if (!body) continue
-      const year =
-        fw.deadlineYear ??
-        (fw.deadlineDates?.length ? Math.min(...fw.deadlineDates.map((d) => d.year)) : null)
-      const existing = byBody.get(body)
-      if (existing) {
-        existing.count += 1
-        if (year !== null && (existing.earliest === null || year < existing.earliest)) {
-          existing.earliest = year
-        }
-      } else {
-        byBody.set(body, { body, earliest: year, count: 1 })
-      }
-    }
-    return [...byBody.values()]
-      .sort((a, b) => (a.earliest ?? 9999) - (b.earliest ?? 9999))
-      .slice(0, 6)
-  }, [])
+  const ruleMakers = useMemo(() => ruleMakerBodies(), [])
 
   return (
     <section

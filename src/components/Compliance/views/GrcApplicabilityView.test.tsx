@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { GrcApplicabilityView } from './GrcApplicabilityView'
+
+const feedProps = vi.hoisted(() => [] as Array<{ defaultCollapsed?: boolean }>)
+vi.mock('@/components/ui/ContentUpdatesFeed', () => ({
+  ContentUpdatesFeed: (props: { defaultCollapsed?: boolean }) => {
+    feedProps.push(props)
+    return null
+  },
+}))
 
 vi.mock('../../../hooks/useApplicabilityWithPaths', () => ({
   useApplicabilityWithPaths: () => ({
@@ -26,9 +34,32 @@ vi.mock('../../../hooks/useApplicabilityWithPaths', () => ({
           timelineRefs: [],
           bodyType: 'compliance_framework' as const,
           confidenceScore: 90,
+          bindingStatus: 'binding' as const,
         },
         tier: 'mandatory',
         reason: 'NIST mandate',
+      },
+      {
+        item: {
+          id: 'HIPAA',
+          label: 'HIPAA Security Rule',
+          description: 'US health data rule',
+          industries: ['Healthcare'],
+          countries: ['United States'],
+          requiresPQC: false,
+          pqcRequirement: 'guidance' as const,
+          deadline: '',
+          deadlinePhase: 'ongoing' as const,
+          notes: '',
+          enforcementBody: 'HHS',
+          libraryRefs: [],
+          timelineRefs: [],
+          bodyType: 'compliance_framework' as const,
+          confidenceScore: 60,
+          bindingStatus: 'binding' as const,
+        },
+        tier: 'cross-border',
+        reason: 'US rule, reader outside its scope',
       },
       {
         item: {
@@ -104,6 +135,23 @@ describe('GrcApplicabilityView', () => {
     expect(body.indexOf('ETSI QSC TR 103')).toBeLessThan(body.indexOf('FIPS 203 ML-KEM'))
     expect(fips).toBeInTheDocument()
     expect(etsi).toBeInTheDocument()
+  })
+
+  it('shows "Binding" only for a framework in the mandatory tier (owner decision D2′)', () => {
+    renderView()
+    const hipaaRow = screen.getByText('HIPAA Security Rule').closest('li') as HTMLElement
+    expect(hipaaRow).toHaveTextContent('Binding for others')
+    expect(within(hipaaRow).queryByText('Binding', { exact: true })).not.toBeInTheDocument()
+
+    const fipsRow = screen.getByText('FIPS 203 ML-KEM').closest('li') as HTMLElement
+    // Two exact "Binding" labels: the mandatory tier's own label and the binding chip.
+    expect(within(fipsRow).getAllByText('Binding', { exact: true })).toHaveLength(2)
+  })
+
+  it('opens the revisions feed by default (its section has its own heading, so it must not start collapsed)', () => {
+    renderView()
+    expect(feedProps.length).toBeGreaterThan(0)
+    expect(feedProps.every((p) => p.defaultCollapsed === false)).toBe(true)
   })
 
   it('never applies Executive-style browsing caps — every framework in the applicable set renders', () => {

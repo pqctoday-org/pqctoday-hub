@@ -25,15 +25,21 @@ function tierKey(tier: string | undefined): string | null {
  */
 function countRefs(
   resourceId: string,
-  ctx: ScoringContext
+  ctx: ScoringContext,
+  aliases: readonly string[] = []
 ): { verified: number; heuristic: number; tiers: Set<string> } {
   const verifiedRefs = new Set<string>()
   const heuristicRefs = new Set<string>()
   const tiers = new Set<string>()
+  // The resource id plus any alias it is cited by (timeline events are cited
+  // by compliance as "Country:Org"); aliases compare case-insensitively.
+  const aliasLc = new Set(aliases.map((a) => a.trim().toLowerCase()))
+  const names = (ref: string) => ref === resourceId || aliasLc.has(ref.trim().toLowerCase())
 
   // TrustedSourceXref entries — split by matchMethod, accumulate cited tier
-  const xrefs = ctx.xrefsByResource.get(resourceId)
-  if (xrefs) {
+  for (const id of [resourceId, ...aliases]) {
+    const xrefs = ctx.xrefsByResource.get(id)
+    if (!xrefs) continue
     for (const x of xrefs) {
       const key = `xref:${x.sourceId}`
       if (HEURISTIC_METHODS.has(x.matchMethod)) heuristicRefs.add(key)
@@ -46,16 +52,16 @@ function countRefs(
 
   // Compliance, library deps, threat module refs are all direct edges → verified
   for (const [fwId, libraryRefs] of ctx.complianceLibraryRefs) {
-    if (libraryRefs.includes(resourceId)) verifiedRefs.add(`compliance:${fwId}`)
+    if (libraryRefs.some(names)) verifiedRefs.add(`compliance:${fwId}`)
   }
   for (const [fwId, timelineRefs] of ctx.complianceTimelineRefs) {
-    if (timelineRefs.includes(resourceId)) verifiedRefs.add(`compliance-tl:${fwId}`)
+    if (timelineRefs.some(names)) verifiedRefs.add(`compliance-tl:${fwId}`)
   }
   for (const [libId, deps] of ctx.libraryDependencies) {
-    if (deps.includes(resourceId)) verifiedRefs.add(`lib-dep:${libId}`)
+    if (deps.some(names)) verifiedRefs.add(`lib-dep:${libId}`)
   }
   for (const [threatId, modules] of ctx.threatModuleRefs) {
-    if (modules.includes(resourceId)) verifiedRefs.add(`threat:${threatId}`)
+    if (modules.some(names)) verifiedRefs.add(`threat:${threatId}`)
   }
 
   return { verified: verifiedRefs.size, heuristic: heuristicRefs.size, tiers }
@@ -113,9 +119,10 @@ const RESOURCE_TYPE_TO_SIGNAL_KEY: Record<ScoredResourceType, string> = {
 export function scoreCrossRefDensity(
   resourceId: string,
   ctx: ScoringContext,
-  resourceType?: ScoredResourceType
+  resourceType?: ScoredResourceType,
+  aliases: readonly string[] = []
 ): DimensionResult {
-  const { verified, heuristic, tiers } = countRefs(resourceId, ctx)
+  const { verified, heuristic, tiers } = countRefs(resourceId, ctx, aliases)
   // Heuristic refs count as half-weight: a category-inferred match is weaker
   // evidence than a direct/mapped one.
   const effective = verified + heuristic * 0.5

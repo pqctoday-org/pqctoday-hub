@@ -174,7 +174,10 @@ describe('MobilePatentsView', () => {
     const p = patentsData.find((x) => !isPqcPatent(x))!
     renderView(`/patents?patent=${p.patentNumber.replace(/^US/, '')}`)
     expect(screen.getByTestId('patent-detail-sheet')).toBeInTheDocument()
-    expect(screen.getByText(p.title)).toBeInTheDocument()
+    // The scope widens, so the record is in the list as well as the sheet.
+    expect(screen.getAllByText(p.title).length).toBeGreaterThanOrEqual(2)
+    expect(new URLSearchParams(lastSearch).get('scope')).toBe('all')
+    expect(screen.getByTestId('deeplink-notice-widened')).toBeInTheDocument()
   })
 
   it('shows a not-found notice for an unknown ?patent', () => {

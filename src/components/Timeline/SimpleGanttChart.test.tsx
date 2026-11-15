@@ -182,8 +182,10 @@ describe('SimpleGanttChart', () => {
     expect(screen.getByText('Organization')).toBeInTheDocument()
     // Year axis auto-scales to the data in view (mockData spans 2024–2027) with a
     // minimum 6-column span and a "+" overflow bucket on the right edge — see
-    // yearRange in SimpleGanttChart.tsx. First column is the "<start" bucket.
-    expect(screen.getByText('<2024')).toBeInTheDocument()
+    // yearRange in SimpleGanttChart.tsx. The first column is the earliest year
+    // itself (it used to read "<2024", i.e. "before 2024", which was wrong).
+    expect(screen.getByText('2024')).toBeInTheDocument()
+    expect(screen.queryByText('<2024')).toBeNull()
     expect(screen.getByText('2030+')).toBeInTheDocument()
   })
 
@@ -193,7 +195,8 @@ describe('SimpleGanttChart', () => {
 
     // Use getAllByText because names appear in dropdown too, so scope to table
     expect(within(table).getByText('United States')).toBeInTheDocument()
-    expect(within(table).getByText('NIST')).toBeInTheDocument()
+    // Every row names its issuer (one cell per row, not one per country).
+    expect(within(table).getAllByText('NIST')).toHaveLength(2)
     expect(within(table).getByText('Canada')).toBeInTheDocument()
     expect(within(table).getByText('CSE')).toBeInTheDocument()
   })
@@ -330,7 +333,7 @@ describe('SimpleGanttChart', () => {
   it('filters data by search text', () => {
     renderG(<SimpleGanttChart {...defaultProps} />)
 
-    const searchInput = screen.getByPlaceholderText(/Filter by country.../i)
+    const searchInput = screen.getByPlaceholderText(/Search countries, agencies or records/i)
     fireEvent.change(searchInput, { target: { value: 'Canada' } })
 
     const table = screen.getByRole('table')
@@ -451,7 +454,7 @@ describe('SimpleGanttChart', () => {
       fireEvent.click(within(dropdowns[2]).getByText('Research'))
 
       // Also filter by region (search for US)
-      const searchInput = screen.getByPlaceholderText(/Filter by country.../i)
+      const searchInput = screen.getByPlaceholderText(/Search countries, agencies or records/i)
       fireEvent.change(searchInput, { target: { value: 'United States' } })
 
       const table = screen.getByRole('table')
@@ -592,7 +595,7 @@ describe('SimpleGanttChart', () => {
     it('renders no results when filter matches nothing', () => {
       renderG(<SimpleGanttChart {...defaultProps} />)
 
-      const searchInput = screen.getByPlaceholderText(/Filter by country.../i)
+      const searchInput = screen.getByPlaceholderText(/Search countries, agencies or records/i)
       fireEvent.change(searchInput, { target: { value: 'NonexistentCountry' } })
 
       const table = screen.getByRole('table')

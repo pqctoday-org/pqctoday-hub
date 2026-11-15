@@ -45,8 +45,18 @@ describe('embed contract (WS-09)', () => {
     // transition + detailed: both Algorithms comparison tabs embed (C5-full)
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-transition' }))).toBe(true)
     expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-detailed' }))).toBe(true)
-    // the remaining algorithm ref (catalog root) is still navigate-away
-    expect(canEmbedStep(step({ kind: 'reference', refId: 'algorithms-catalog' }))).toBe(false)
+    // NAV-2 (owner 2026-11-14): the catalogue and the rest of the Resources tab
+    // now open in place; an unknown reference id still does not embed.
+    for (const refId of [
+      'algorithms-catalog',
+      'algorithms-validation',
+      'industry-landscape',
+      'leaders',
+      'patents',
+      'explore',
+    ])
+      expect(canEmbedStep(step({ kind: 'reference', refId })), refId).toBe(true)
+    expect(canEmbedStep(step({ kind: 'reference', refId: 'not-a-real-ref' }))).toBe(false)
     expect(canEmbedStep(step({ kind: 'activity' }))).toBe(false) // no artifactType
     // workshop: embeddable iff the tool id resolves to a registered component
     expect(
@@ -110,6 +120,13 @@ describe('embed contract (WS-09)', () => {
             toolId ? BUSINESS_TOOL_COMPONENTS[toolId] : undefined,
             `${phase}: activity ${s.artifactType}`
           ).toBeTruthy()
+        } else if (s.kind === 'recurrence' && s.recurrenceOf) {
+          // A recurring criterion re-opens the same Business tool in a later quarter.
+          const toolId = ARTIFACT_TYPE_TO_TOOL_ID[s.recurrenceOf]
+          expect(
+            toolId ? BUSINESS_TOOL_COMPONENTS[toolId] : undefined,
+            `${phase}: recurrence ${s.recurrenceOf}`
+          ).toBeTruthy()
         } else if (s.kind === 'workshop' && s.workshopId) {
           expect(
             WORKSHOP_TOOL_COMPONENTS[s.workshopId],
@@ -146,6 +163,21 @@ describe('embed contract (WS-09)', () => {
         }
       }
     }
+  })
+
+  // A recurrence step used to fall through canEmbedStep and hard-navigate to
+  // /business/tools/…, out of the run — while the activity step for the SAME
+  // tool opened inline. Every recurrence step must open inside the sim.
+  it('every recurrence tree step opens inside the sim', () => {
+    let seen = 0
+    for (const phase of Object.keys(SIM_TREES) as PhaseId[]) {
+      for (const s of flattenTree(SIM_TREES[phase]!)) {
+        if (s.kind !== 'recurrence') continue
+        seen++
+        expect(canEmbedStep(s), `${phase}: ${s.label}`).toBe(true)
+      }
+    }
+    expect(seen).toBeGreaterThan(0)
   })
 
   // W0 — the test above only checks steps that are ALREADY embeddable. This one

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
+import { canonicalLeaderCountry } from './leaderCountry'
 
 export interface Leader {
   /** Same value as `leaderId` — the React key / expand / scroll identity. */
@@ -24,7 +25,7 @@ export interface Leader {
   keyResourceRefs?: string[]
   /** Patent numbers (patents.patent_number) this leader is the first-named inventor on — a separate proof anchor from keyResourceRefs, added 2026-07-30 for the patents↔leaders cross-check. */
   patentRefs?: string[]
-  /** Google Patents URLs matching patentRefs positionally, same pairing convention as keyResourceRefs/keyResourceUrl. */
+  /** Google Patents URLs matching patentRefs positionally. (keyResourceRefs and keyResourceUrl are NOT paired that way — see LeaderKeyResources.) */
   patentUrl?: string[]
   /** migrate-catalog product_ids this leader is a credited open-source maintainer/author of — a third proof anchor, added 2026-07-30 for the migrate-catalog↔leaders cross-check. */
   migrateCatalogRefs?: string[]
@@ -72,9 +73,9 @@ interface RawLeaderRow {
   leader_id?: string
 }
 
-// Distinguishes the 124 single-sentence, library-authorship-derived stub rows
-// from the 208 hand-curated profiles (see `data_quality_notes` convention set
-// 2026-05-10 by the library-authors auto-import script).
+// Distinguishes the single-sentence, library-authorship-derived stub rows (109
+// in leaders_11142026) from the hand-curated profiles (252) — see the
+// `data_quality_notes` convention set 2026-05-10 by the library-authors import.
 const isAutoImportedRow = (note: string): boolean => note.includes('auto-imported from library')
 
 const modules = import.meta.glob('./leaders_*.csv', {
@@ -99,7 +100,7 @@ const {
     return {
       leaderId: row.leader_id?.trim() ?? '',
       name: row.Name,
-      country: row.Country,
+      country: canonicalLeaderCountry(row.Country ?? ''),
       title: row.Role,
       organizations: splitSemicolon(row.Organization),
       type: row.Type as Leader['type'],
@@ -166,6 +167,14 @@ const DUPLICATE_OF = /^duplicate of (\S+)$/i
 /** Older merges name the kept row instead: "Duplicate of 'Krzysztof (Kris)
  *  Kwiatkowski' row -- same person …". Resolved to that row's leader_id. */
 const DUPLICATE_OF_NAMED_ROW = /^duplicate of '([^']+)'/i
+/** Citation-form and misspelt rows name the row that replaced them:
+ *  "… Superseded by the row named 'David Joseph' — …", "Superseded by 'Jan
+ *  Klaußner' — …", or "… see the active \"Martin Habovštiak\" row …". Their
+ *  ids must keep working ("the key must survive"), so links forward too. */
+// The closing quote is the one followed by a space, punctuation or the end, so
+// a name with an apostrophe ("X O'Connor") is read whole.
+const SUPERSEDED_BY_NAMED_ROW = /superseded by (?:the row named )?'(.+?)'(?=[\s.,;:—–-]|$)/i
+const SEE_ACTIVE_ROW = /see the active "([^"]+)" row/i
 
 /**
  * Deprecated `leader_id` → the profile it was merged into. Duplicate rows are
@@ -179,10 +188,15 @@ export const deprecatedLeaderSuccessors: ReadonlyMap<string, LeaderSuccessor> = 
     if (!row.status || row.status === 'active') return null
     const id = row.leader_id?.trim()
     const reason = row.deprecated_reason?.trim() ?? ''
-    const namedRow = DUPLICATE_OF_NAMED_ROW.exec(reason)?.[1]
+    const namedRow =
+      DUPLICATE_OF_NAMED_ROW.exec(reason)?.[1] ??
+      SUPERSEDED_BY_NAMED_ROW.exec(reason)?.[1] ??
+      SEE_ACTIVE_ROW.exec(reason)?.[1]
     const successorId =
       DUPLICATE_OF.exec(reason)?.[1] ??
       (namedRow ? leadersData.find((l) => l.name === namedRow)?.leaderId : undefined)
+    // A named row that is itself retired (d-b-c-costa → a deprecated row) has
+    // no active profile to forward to and is left out.
     if (!id || !successorId || successorId === id) return null
     return [id, { successorId: successorId.toLowerCase(), name: row.Name }]
   }).data

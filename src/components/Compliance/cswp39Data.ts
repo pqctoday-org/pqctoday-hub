@@ -139,7 +139,7 @@ export const CSWP39_STEPS: CSWP39Step[] = [
     requirements: [
       'Crypto-agility assessment per asset (source available? modular API? update cadence?)',
       'Migration path with algorithm target (ML-KEM-768, ML-DSA-65, SLH-DSA) and timeline',
-      'Mitigation gateway spec when migration blocked — with mandatory sunset date',
+      'Mitigation gateway spec when migration blocked — with a suggested end (sunset) date; a Hub suggestion, not a CSWP.39 requirement',
       '§4.6 callout — a crypto gateway is framed as an architectural fix for legacy systems that cannot be modified directly, not a substitute for migrating the algorithm inside; decommission plan required',
       'Evidence artefacts per change type — CMVP cert number, ACVP run, CVE-scan clean',
     ],

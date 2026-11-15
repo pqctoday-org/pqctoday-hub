@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, BookmarkCheck, Bookmark } from 'lucide-react'
 import clsx from 'clsx'
-import { ThreatClassBadge, ShorTierBadge } from './ThreatClassBadges'
+import { ThreatClassBadge, ShorTierBadge, ProtocolBasisBadge } from './ThreatClassBadges'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { ThreatActionsMenu } from './ThreatActionsMenu'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { NOT_YET_SPECIFIED } from '@/data/threatRowRules'
+import { cryptoFieldDisplay } from './threatsHelper'
 import { ThreatRecordTypeBadge } from '@/components/common/ThreatRecordTypeBadge'
 
 interface ThreatCardProps {
@@ -21,6 +22,9 @@ interface ThreatCardProps {
   /** Explanation shown as a tooltip when `dimmed` is true, so the opacity
    *  change isn't a silent, unexplained visual state. */
   dimmedReason?: string
+  /** Active developer protocol lens: the card says whether it matched by
+   *  naming the protocol (stated) or by an algorithm (inferred). */
+  protocolLens?: string | null
 }
 
 /** Criticality → severity-bar / badge tone (icon+text, never colour alone). */
@@ -56,16 +60,27 @@ const Chips = ({
   tone: 'risk' | 'pqc'
   max?: number
 }) => {
-  const list = values
-    .split(',')
-    .map((v) => v.trim())
-    .filter(Boolean)
+  const display = cryptoFieldDisplay(values, max)
   // A blank field (a not-yet-filled row) says so, instead of an empty gap
   // beside the arrow.
-  if (list.length === 0)
+  if (display.kind === 'empty')
     return <span className="font-sans italic text-muted-foreground">{NOT_YET_SPECIFIED}</span>
-  const shown = list.slice(0, max)
-  const extra = list.length - shown.length
+  // Prose (a sentence quoted from the source) stays one piece of text —
+  // splitting it on commas made code-styled fragments of its clauses.
+  if (display.kind === 'prose')
+    return (
+      <span
+        title={display.text}
+        className={clsx(
+          'line-clamp-2 max-w-full break-words font-sans',
+          tone === 'risk' ? 'text-status-error/90' : 'text-status-success/90'
+        )}
+      >
+        {display.text}
+      </span>
+    )
+  const shown = display.visible
+  const extra = display.hiddenCount
   return (
     <>
       {shown.map((c, i) => (
@@ -94,6 +109,7 @@ export const ThreatCard = ({
   onClick,
   dimmed = false,
   dimmedReason,
+  protocolLens = null,
 }: ThreatCardProps) => {
   const isBookmarked = useBookmarkStore((s) => s.myThreats.includes(item.threatId))
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
@@ -130,6 +146,7 @@ export const ThreatCard = ({
           </span>
           <span className="font-mono text-[11px] text-muted-foreground">{item.threatId}</span>
           <ThreatRecordTypeBadge threat={item} />
+          <ProtocolBasisBadge threat={item} protocol={protocolLens} />
           {item.status && <StatusBadge status={item.status} size="sm" />}
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
             <ThreatClassBadge threat={item} className="whitespace-normal" />
