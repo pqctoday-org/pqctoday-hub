@@ -2,7 +2,7 @@
   "generated": "2026-11-14",
   "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_11142026_r6.csv",
+  "csv": "timeline_11142026_r8.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -3565,9 +3565,26 @@
       "unified": "converted",
       "admittedAt": "2026-11-15T02:28:51.238167+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "global-3gpp-sa3-release-20-pqc-cryptographic-profiles-target",
+      "label": "Release 20 PQC Cryptographic Profiles Target (TS 33.210 and TS 33.310, SA#114)",
+      "url": "https://www.3gpp.org/ftp/tsg_sa/TSG_SA/TSGS_112_Singapore_2026-06/Docs/SP-260663.zip",
+      "status": "downloaded",
+      "file": "timeline/Release-20-PQC-Cryptographic-Profiles-Target-TS-33-210-and-T.docx",
+      "filename": "Release-20-PQC-Cryptographic-Profiles-Target-TS-33-210-and-T.docx",
+      "sizeBytes": 60470,
+      "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "sha256": "28a5c9976820e4242d2fc968fd23283feeaaf71c23a4bacbb3cf4685913e289f",
+      "verifiedAt": "2026-11-14",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-15T03:41:00.607111+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-11-15T02:50:22.349720+00:00"
+  "rebuiltAt": "2026-11-15T03:43:36.607232+00:00"
 }
