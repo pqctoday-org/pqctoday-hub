@@ -104,7 +104,7 @@ describe('second-source columns', () => {
     ])
     expect(byId.get('CROSS-009')?.secondarySources?.map((s) => s.ref)).toEqual([
       'RFC 6605',
-      'draft-fregly-research-agenda-for-pqc-dnssec-00',
+      'draft-fregly-research-agenda-for-pqc-dnssec-02',
     ])
   })
 })
