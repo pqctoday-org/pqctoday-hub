@@ -124,7 +124,12 @@
       "unified": "current",
       "admittedAt": "2026-09-11",
       "admittedBy": "admit.py --stamp-existing",
-      "stampedAt": "2026-09-17T12:57:57.298132+00:00"
+      "stampedAt": "2026-09-17T12:57:57.298132+00:00",
+      "ok": false,
+      "superseded_file": "_superseded-11142026/threats/AUTO-003.html",
+      "supersededAt": "2026-11-15T01:04:33.671390+00:00",
+      "supersededBy": "evidence replacement",
+      "superseded_reason": "re-sourced to the FuSeCar project report D3.1 — replaced by AUTO-003.pdf — replaced by AUTO-003.pdf"
     },
     {
       "refId": "auto-invehicle",
