@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import { rowsToCsv } from '@/services/export/csvExport'
 import { useModuleStore } from '@/store/useModuleStore'
 import {
   FRAMEWORK_AUTHOR,
@@ -348,6 +349,41 @@ export const MigrationVerification: React.FC = () => {
     }))
 
   const exportMarkdown = useMemo(() => buildMarkdown(state), [state])
+  const exportCsv = useMemo(() => {
+    const header = [
+      'Section',
+      'System / Material',
+      'Kind / Status',
+      'Observed Negotiation / Retired Date',
+      'Negative Test / Owner',
+      'Cert Chain / Method',
+      'Downgrade Documented / Destruction Confirmed',
+      'Dossier Link / Verifier Trust Withdrawn',
+    ]
+    const recordRows = state.records.map((r) => [
+      'Verification Record',
+      r.system || '(unnamed)',
+      isVerified(r)
+        ? 'Evidence recorded — review required'
+        : `Incomplete evidence (${verifiedCount(r)}/5)`,
+      r.evidence.observedNegotiation,
+      r.evidence.negativeTest,
+      r.evidence.certChainUnderPqc,
+      r.evidence.downgradeDocumented,
+      r.evidence.dossierLink,
+    ])
+    const decommRows = state.decommissions.map((d) => [
+      'Decommissioning Log',
+      d.material || '—',
+      d.kind,
+      d.retiredDate || '—',
+      d.owner || '—',
+      d.method || '—',
+      d.confirmed ? 'confirmed' : 'pending',
+      d.kind !== 'signing-key' ? 'n/a' : isTnflLiability(d) ? 'TNFL liability' : 'trust withdrawn',
+    ])
+    return rowsToCsv([header, ...recordRows, ...decommRows])
+  }, [state])
   const verifiedTotal = state.records.filter(isVerified).length
 
   return (
@@ -603,8 +639,9 @@ export const MigrationVerification: React.FC = () => {
       <ExportableArtifact
         title="Migration Verification — Export"
         exportData={exportMarkdown}
+        csvData={exportCsv}
         filename="migration-verification"
-        formats={['markdown', 'pdf', 'docx']}
+        formats={['markdown', 'csv', 'pdf', 'docx']}
         wideTable
         onExport={() => {
           addExecutiveDocument({

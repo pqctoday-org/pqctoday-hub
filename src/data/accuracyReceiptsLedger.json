@@ -1,0 +1,5056 @@
+{
+  "schemaVersion": "4.213.0",
+  "generatedAt": "2026-11-15T16:15:00Z",
+  "totalAuthoritativeSources": 28,
+  "hubItemCoverage": {
+    "pages": 34,
+    "learningModules": 76,
+    "playgroundTools": 34,
+    "businessTools": 37,
+    "totalGradedItems": 181
+  },
+  "csvCorporaSnapshots": {
+    "library": {
+      "rowCount": 1822
+    },
+    "algorithms": {
+      "rowCount": 130
+    },
+    "timeline": {
+      "rowCount": 324
+    },
+    "threats": {
+      "rowCount": 226
+    },
+    "compliance": {
+      "rowCount": 225
+    },
+    "migrate": {
+      "rowCount": 1052
+    },
+    "leaders": {
+      "rowCount": 402
+    },
+    "patents": {
+      "rowCount": 1887
+    }
+  },
+  "canonicalAlgorithms": {
+    "ML-KEM-512": {
+      "family": "KEM",
+      "securityLevel": 1,
+      "publicKeyBytes": 800,
+      "privateKeyBytes": 1632,
+      "signatureOrCiphertextBytes": 768,
+      "sharedSecretBytes": 32,
+      "fipsStandard": "FIPS 203"
+    },
+    "ML-KEM-768": {
+      "family": "KEM",
+      "securityLevel": 3,
+      "publicKeyBytes": 1184,
+      "privateKeyBytes": 2400,
+      "signatureOrCiphertextBytes": 1088,
+      "sharedSecretBytes": 32,
+      "fipsStandard": "FIPS 203"
+    },
+    "ML-KEM-1024": {
+      "family": "KEM",
+      "securityLevel": 5,
+      "publicKeyBytes": 1568,
+      "privateKeyBytes": 3168,
+      "signatureOrCiphertextBytes": 1568,
+      "sharedSecretBytes": 32,
+      "fipsStandard": "FIPS 203"
+    },
+    "ML-DSA-44": {
+      "family": "Signature",
+      "securityLevel": 2,
+      "publicKeyBytes": 1312,
+      "privateKeyBytes": 2560,
+      "signatureOrCiphertextBytes": 2420,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 204"
+    },
+    "ML-DSA-65": {
+      "family": "Signature",
+      "securityLevel": 3,
+      "publicKeyBytes": 1952,
+      "privateKeyBytes": 4032,
+      "signatureOrCiphertextBytes": 3309,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 204"
+    },
+    "ML-DSA-87": {
+      "family": "Signature",
+      "securityLevel": 5,
+      "publicKeyBytes": 2592,
+      "privateKeyBytes": 4896,
+      "signatureOrCiphertextBytes": 4627,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 204"
+    },
+    "SLH-DSA-SHA2-128s": {
+      "family": "Signature",
+      "securityLevel": 1,
+      "publicKeyBytes": 32,
+      "privateKeyBytes": 64,
+      "signatureOrCiphertextBytes": 7856,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 205"
+    },
+    "SLH-DSA-SHA2-128f": {
+      "family": "Signature",
+      "securityLevel": 1,
+      "publicKeyBytes": 32,
+      "privateKeyBytes": 64,
+      "signatureOrCiphertextBytes": 17088,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 205"
+    },
+    "SLH-DSA-SHA2-192s": {
+      "family": "Signature",
+      "securityLevel": 3,
+      "publicKeyBytes": 48,
+      "privateKeyBytes": 96,
+      "signatureOrCiphertextBytes": 16224,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 205"
+    },
+    "SLH-DSA-SHA2-192f": {
+      "family": "Signature",
+      "securityLevel": 3,
+      "publicKeyBytes": 48,
+      "privateKeyBytes": 96,
+      "signatureOrCiphertextBytes": 35664,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 205"
+    },
+    "SLH-DSA-SHA2-256s": {
+      "family": "Signature",
+      "securityLevel": 5,
+      "publicKeyBytes": 64,
+      "privateKeyBytes": 128,
+      "signatureOrCiphertextBytes": 29792,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 205"
+    },
+    "SLH-DSA-SHA2-256f": {
+      "family": "Signature",
+      "securityLevel": 5,
+      "publicKeyBytes": 64,
+      "privateKeyBytes": 128,
+      "signatureOrCiphertextBytes": 49856,
+      "sharedSecretBytes": null,
+      "fipsStandard": "FIPS 205"
+    }
+  },
+  "canonicalOids": {
+    "ML-KEM-512": "2.16.840.1.101.3.4.4.1",
+    "ML-KEM-768": "2.16.840.1.101.3.4.4.2",
+    "ML-KEM-1024": "2.16.840.1.101.3.4.4.3",
+    "ML-DSA-44": "2.16.840.1.101.3.4.3.17",
+    "ML-DSA-65": "2.16.840.1.101.3.4.3.18",
+    "ML-DSA-87": "2.16.840.1.101.3.4.3.19"
+  },
+  "authoritativeSources": [
+    {
+      "sourceIndex": 1,
+      "referenceId": "FIPS 203",
+      "authority": "NIST",
+      "clausePin": "FIPS 203 §6–§7, Table 2 (ML-KEM-512/768/1024 Parameter Sets & Key/Ciphertext Sizes)",
+      "domain": "Key Encapsulation Mechanism (ML-KEM)",
+      "canonicalParameters": {
+        "ML-KEM-512": {
+          "publicKeyBytes": 800,
+          "privateKeyBytes": 1632,
+          "ciphertextBytes": 768,
+          "sharedSecretBytes": 32,
+          "securityLevel": 1
+        },
+        "ML-KEM-768": {
+          "publicKeyBytes": 1184,
+          "privateKeyBytes": 2400,
+          "ciphertextBytes": 1088,
+          "sharedSecretBytes": 32,
+          "securityLevel": 3
+        },
+        "ML-KEM-1024": {
+          "publicKeyBytes": 1568,
+          "privateKeyBytes": 3168,
+          "ciphertextBytes": 1568,
+          "sharedSecretBytes": 32,
+          "securityLevel": 5
+        }
+      },
+      "documentTitle": "Module-Lattice-Based Key-Encapsulation Mechanism Standard (ML-KEM)",
+      "documentStatus": "Final Standard",
+      "documentType": "Reference",
+      "organization": "NIST",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 2,
+      "referenceId": "FIPS 204",
+      "authority": "NIST",
+      "clausePin": "FIPS 204 §4, Table 1 & Table 2 (ML-DSA-44/65/87 Parameter Sets & Key/Signature Sizes)",
+      "domain": "Digital Signature Algorithm (ML-DSA)",
+      "canonicalParameters": {
+        "ML-DSA-44": {
+          "publicKeyBytes": 1312,
+          "privateKeyBytes": 2560,
+          "signatureBytes": 2420,
+          "securityLevel": 2
+        },
+        "ML-DSA-65": {
+          "publicKeyBytes": 1952,
+          "privateKeyBytes": 4032,
+          "signatureBytes": 3309,
+          "securityLevel": 3
+        },
+        "ML-DSA-87": {
+          "publicKeyBytes": 2592,
+          "privateKeyBytes": 4896,
+          "signatureBytes": 4627,
+          "securityLevel": 5
+        }
+      },
+      "documentTitle": "Module-Lattice-Based Digital Signature Standard (ML-DSA)",
+      "documentStatus": "Final Standard",
+      "documentType": "Reference",
+      "organization": "NIST",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 3,
+      "referenceId": "FIPS 205",
+      "authority": "NIST",
+      "clausePin": "FIPS 205 §11, Table 2 (SLH-DSA SHA2/SHAKE 128s/128f/192s/192f/256s/256f Parameter Sets)",
+      "domain": "Stateless Hash-Based Digital Signature Algorithm (SLH-DSA)",
+      "canonicalParameters": {
+        "SLH-DSA-SHA2-128s": {
+          "publicKeyBytes": 32,
+          "privateKeyBytes": 64,
+          "signatureBytes": 7856,
+          "securityLevel": 1
+        },
+        "SLH-DSA-SHA2-128f": {
+          "publicKeyBytes": 32,
+          "privateKeyBytes": 64,
+          "signatureBytes": 17088,
+          "securityLevel": 1
+        },
+        "SLH-DSA-SHA2-192s": {
+          "publicKeyBytes": 48,
+          "privateKeyBytes": 96,
+          "signatureBytes": 16224,
+          "securityLevel": 3
+        },
+        "SLH-DSA-SHA2-192f": {
+          "publicKeyBytes": 48,
+          "privateKeyBytes": 96,
+          "signatureBytes": 35664,
+          "securityLevel": 3
+        },
+        "SLH-DSA-SHA2-256s": {
+          "publicKeyBytes": 64,
+          "privateKeyBytes": 128,
+          "signatureBytes": 29792,
+          "securityLevel": 5
+        },
+        "SLH-DSA-SHA2-256f": {
+          "publicKeyBytes": 64,
+          "privateKeyBytes": 128,
+          "signatureBytes": 49856,
+          "securityLevel": 5
+        }
+      },
+      "documentTitle": "Stateless Hash-Based Digital Signature Standard (SLH-DSA)",
+      "documentStatus": "Final Standard",
+      "documentType": "Reference",
+      "organization": "NIST",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 4,
+      "referenceId": "NIST SP 800-208",
+      "authority": "NIST",
+      "clausePin": "SP 800-208 §4–§5 (LMS / HSS & XMSS / XMSS^MT Stateful Hash-Based Signatures)",
+      "domain": "Stateful Hash-Based Signatures (HSS/LMS, XMSS)",
+      "documentTitle": "Recommendation for Stateful Hash-Based Signature Schemes",
+      "documentStatus": "Final",
+      "documentType": "Reference",
+      "organization": "NIST",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 5,
+      "referenceId": "NIST SP 800-227",
+      "authority": "NIST",
+      "clausePin": "SP 800-227 (Recommendations for Key-Encapsulation Mechanisms & Hybrid KEM Combiners)",
+      "domain": "KEM Implementation & Hybrid Combiner Guidance",
+      "documentTitle": "Recommendations for Key-Encapsulation Mechanisms",
+      "documentStatus": "Final",
+      "documentType": "Compliance Framework",
+      "organization": "NIST",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 6,
+      "referenceId": "NIST IR 8547",
+      "authority": "NIST",
+      "clausePin": "NIST IR 8547 (Transition to Post-Quantum Cryptography Standards: 2030 Deprecation / 2035 Disallowance)",
+      "domain": "Federal & Enterprise PQC Deprecation Schedule (2030/2035)",
+      "documentTitle": "Transition to Post-Quantum Cryptography Standards",
+      "documentStatus": "Final",
+      "documentType": "Compliance Framework",
+      "organization": "NIST",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 7,
+      "referenceId": "NIST-SP-800-131A-Rev3",
+      "authority": "NIST",
+      "clausePin": "SP 800-131A Rev. 3 (Transitioning the Use of Cryptographic Algorithms and Key Lengths)",
+      "domain": "Cryptographic Algorithm Transition & Legacy Deprecation",
+      "documentTitle": "Transitioning the Use of Cryptographic Algorithms and Key Lengths (Rev 3)",
+      "documentStatus": "Initial Public Draft",
+      "documentType": "Compliance Framework",
+      "organization": "NIST",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 8,
+      "referenceId": "NSA CNSA 2.0",
+      "authority": "NSA",
+      "clausePin": "CNSA 2.0 Advisory (ML-KEM-1024, ML-DSA-87, LMS/XMSS, AES-256, SHA-384/512; 2025–2033 NSS Timelines)",
+      "domain": "National Security Systems (NSS) Post-Quantum Suite",
+      "documentTitle": "Announcing the Commercial National Security Algorithm Suite 2.0",
+      "documentStatus": "Policy/Advisory",
+      "documentType": "Compliance Framework",
+      "organization": "NSA",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 9,
+      "referenceId": "BSI TR-02102-1",
+      "authority": "BSI (Germany)",
+      "clausePin": "BSI TR-02102-1 §3.6 (Cryptographic Mechanisms: Hybrid PQC + Classical Recommendations)",
+      "domain": "European Cryptographic Guideline & Hybrid Mandate",
+      "documentTitle": "Cryptographic Mechanisms: Recommendations and Key Lengths",
+      "documentStatus": "Technical Guideline",
+      "documentType": "Compliance Framework",
+      "organization": "BSI Germany",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 10,
+      "referenceId": "ANSSI PQC Position Paper",
+      "authority": "ANSSI (France)",
+      "clausePin": "ANSSI PQC Transition Views (Defense-in-Depth Hybridization & Phased PQC Deployment)",
+      "domain": "French National PQC Transition & Hybridization Policy",
+      "documentTitle": "Avis scientifique et technique de l'ANSSI sur la migration vers la cryptographie post-quantique",
+      "documentStatus": "Position Paper",
+      "documentType": "Compliance Framework",
+      "organization": "ANSSI; French National Cybersecurity Agency",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 11,
+      "referenceId": "UK-NCSC-Migration-Timelines-2025",
+      "authority": "UK NCSC",
+      "clausePin": "NCSC PQC Migration Timelines (2028 Discovery/Plan, 2031 Priority Migration, 2035 Full Completion)",
+      "domain": "UK National Three-Phase PQC Migration Roadmap",
+      "documentTitle": "NCSC PQC Migration Timelines Guidance",
+      "documentStatus": "Published",
+      "documentType": "Government Guidance",
+      "organization": "NCSC UK; UK National Cyber Security Centre",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 12,
+      "referenceId": "AU-ASD-ISM-Crypto-2024",
+      "authority": "ASD / ACSC (Australia)",
+      "clausePin": "ASD Information Security Manual (ISM) Cryptographic Guidelines (2030 Classical Asymmetric Phase-Out)",
+      "domain": "Australian ISM Post-Quantum Cryptographic Controls",
+      "documentTitle": "ASD Information Security Manual — Guidelines for Cryptography (December 2024)",
+      "documentStatus": "Published",
+      "documentType": "Compliance Framework",
+      "organization": "ASD; Australian Signals Directorate; ACSC",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 13,
+      "referenceId": "RFC 9370",
+      "authority": "IETF",
+      "clausePin": "RFC 9370 §2–§5 (Multiple Key Exchanges in IKEv2: AdditionalKeyExchange ADDKE1..ADDKE7)",
+      "domain": "IPsec IKEv2 Hybrid Post-Quantum Key Exchange",
+      "documentTitle": "Multiple Key Exchanges in IKEv2",
+      "documentStatus": "Standards Track",
+      "documentType": "RFC",
+      "organization": "IETF IPSECME",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 14,
+      "referenceId": "RFC 9629",
+      "authority": "IETF",
+      "clausePin": "RFC 9629 §3–§6 (Using Key Encapsulation Mechanism (KEM) Algorithms in the Cryptographic Message Syntax (CMS) — KEMRecipientInfo)",
+      "domain": "CMS KEMRecipientInfo EnvelopedData Architecture",
+      "documentTitle": "Using Key Encapsulation Mechanism (KEM) Algorithms in CMS",
+      "documentStatus": "Proposed Standard",
+      "documentType": "RFC",
+      "organization": "IETF LAMPS",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 15,
+      "referenceId": "RFC 9794",
+      "authority": "IETF",
+      "clausePin": "RFC 9794 §2–§4 (Terminology for Post-Quantum Traditional Hybrid Schemes)",
+      "domain": "Standardized PQ/T Hybrid Cryptography Terminology",
+      "documentTitle": "Terminology for Post-Quantum Traditional Hybrid Schemes",
+      "documentStatus": "Informational",
+      "documentType": "Government Guidance",
+      "organization": "IETF PQUIP",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 16,
+      "referenceId": "RFC 9810",
+      "authority": "IETF",
+      "clausePin": "RFC 9810 §5.1.3 & §5.2.8 (Certificate Management Protocol (CMP) v3 — Obsoletes RFC 4210 & RFC 9480; encrCert & KemOtherInfo POP)",
+      "domain": "PKI Enrollment & KEM Proof-of-Possession (CMPv3)",
+      "documentTitle": "Certificate Management Protocol (CMP)",
+      "documentStatus": "Standards Track",
+      "documentType": "RFC",
+      "organization": "IETF LAMPS",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 17,
+      "referenceId": "RFC 9881",
+      "authority": "IETF",
+      "clausePin": "RFC 9881 §2–§4 (Internet X.509 Public Key Infrastructure — Algorithm Identifiers for ML-DSA: 2.16.840.1.101.3.4.3.17/18/19)",
+      "domain": "X.509 OIDs & ASN.1 Encoding for ML-DSA-44/65/87",
+      "canonicalOids": {
+        "id-ml-dsa-44": "2.16.840.1.101.3.4.3.17",
+        "id-ml-dsa-65": "2.16.840.1.101.3.4.3.18",
+        "id-ml-dsa-87": "2.16.840.1.101.3.4.3.19"
+      },
+      "documentTitle": "Algorithm Identifiers for ML-DSA in X.509 PKI",
+      "documentStatus": "Proposed Standard",
+      "documentType": "Compliance Framework",
+      "organization": "IETF LAMPS",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 18,
+      "referenceId": "RFC-9935",
+      "authority": "IETF",
+      "clausePin": "RFC 9935 §2–§4 (Internet X.509 Public Key Infrastructure — Algorithm Identifiers for ML-KEM: 2.16.840.1.101.3.4.4.1/2/3)",
+      "domain": "X.509 SubjectPublicKeyInfo OIDs for ML-KEM-512/768/1024",
+      "canonicalOids": {
+        "id-alg-ml-kem-512": "2.16.840.1.101.3.4.4.1",
+        "id-alg-ml-kem-768": "2.16.840.1.101.3.4.4.2",
+        "id-alg-ml-kem-1024": "2.16.840.1.101.3.4.4.3"
+      },
+      "documentTitle": "Internet X.509 PKI — Algorithm Identifiers for ML-KEM",
+      "documentStatus": "Proposed Standard",
+      "documentType": "Compliance Framework",
+      "organization": "IETF LAMPS WG; Sean Turner; Panos Kampanakis (AWS); Jake Massimo (AWS); Bas Westerbaan (Cloudflare)",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 19,
+      "referenceId": "RFC-9909",
+      "authority": "IETF",
+      "clausePin": "RFC 9909 §2–§4 (Internet X.509 Public Key Infrastructure — Algorithm Identifiers for SLH-DSA: 2.16.840.1.101.3.4.3.20..31)",
+      "domain": "X.509 OIDs & ASN.1 Encoding for SLH-DSA",
+      "documentTitle": "Profile for Use of SLH-DSA in the Internet X.509 PKI",
+      "documentStatus": "Proposed Standard",
+      "documentType": "Compliance Framework",
+      "organization": "IETF LAMPS; Kaveh Bashiri (BSI); Scott Fluhrer (Cisco Systems); Stefan-Lukas Gazdag (genua GmbH); Daniel Van Geest (CryptoNext Security); Stavros Kousidis (BSI)",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 20,
+      "referenceId": "RFC-9936",
+      "authority": "IETF",
+      "clausePin": "RFC 9936 §2–§5 (Use of ML-KEM in the Cryptographic Message Syntax (CMS) & S/MIME)",
+      "domain": "S/MIME & CMS EnvelopedData with ML-KEM",
+      "documentTitle": "Use of ML-KEM in the Cryptographic Message Syntax (CMS)",
+      "documentStatus": "Released (Proposed Standard)",
+      "documentType": "RFC",
+      "organization": "IETF",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 21,
+      "referenceId": "RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra",
+      "authority": "IETF",
+      "clausePin": "RFC 10073 (Composite ML-DSA for Use in X.509 Public Key Infrastructure and CMS)",
+      "domain": "Composite Dual-Algorithm X.509 Certificates & Signatures",
+      "documentTitle": "RFC 10073: Composite ML-DSA for Use in X.509 Public Key Infrastructure",
+      "documentStatus": "Standards Track",
+      "documentType": "RFC",
+      "organization": "M. Ounsworth (Entrust); J. Gray (Entrust); M. Pala (OpenCA Labs); J. Klaußner (Bundesdruckerei GmbH); S. Fluhrer (Cisco Systems)",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 22,
+      "referenceId": "IETF-RFC-7030-EST",
+      "authority": "IETF",
+      "clausePin": "RFC 7030 §4.2 (Enrollment over Secure Transport (EST) — /.well-known/est/simpleenroll PKCS#10 & PKCS#7)",
+      "domain": "Automated PKI Enrollment over HTTPS (EST)",
+      "documentTitle": "Enrollment over Secure Transport (EST)",
+      "documentStatus": "Published",
+      "documentType": "RFC",
+      "organization": "IETF",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 23,
+      "referenceId": "ETSI TS 103 744",
+      "authority": "ETSI",
+      "clausePin": "ETSI TS 103 744 (Quantum-Safe Hybrid Key Exchanges — CatKDF & CascadeKDF Combiners)",
+      "domain": "Telecom & Enterprise Hybrid Key Exchange Combiners",
+      "documentTitle": "Quantum-Safe Hybrid Key Exchanges",
+      "documentStatus": "Published Technical Specification",
+      "documentType": "Standard",
+      "organization": "ETSI QSC",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 24,
+      "referenceId": "3GPP TS 33.501 Rel-19",
+      "authority": "3GPP",
+      "clausePin": "3GPP TS 33.501 Rel-19 & 3GPP-PQC-Study-2025 (5G Security Architecture SUCI Concealment & Post-Quantum Study)",
+      "domain": "5G Core & USIM Subscriber Privacy (SUCI) PQC Evolution",
+      "documentTitle": "Security architecture and procedures for 5G System (TS 33.501)",
+      "documentStatus": "Technical Specification",
+      "documentType": "Standard",
+      "organization": "3GPP",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 25,
+      "referenceId": "ISO/IEC 14888-4:2024",
+      "authority": "ISO/IEC JTC 1/SC 27",
+      "clausePin": "ISO/IEC 14888-4:2024 (IT Security Techniques — Digital Signatures with Appendix — Part 4: Stateful Hash-Based Mechanisms)",
+      "domain": "International Standard for Stateful Hash-Based Signatures",
+      "documentTitle": "Hash-based Digital Signatures",
+      "documentStatus": "International Standard",
+      "documentType": "Reference",
+      "organization": "ISO/IEC JTC 1/SC 27",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 26,
+      "referenceId": "PKCS11-V32-OASIS",
+      "authority": "OASIS",
+      "clausePin": "OASIS PKCS#11 v3.2 §5.21 & §6.68–6.70 (C_EncapsulateKey, C_DecapsulateKey, CKM_ML_KEM, CKM_ML_DSA, CKM_SLH_DSA)",
+      "domain": "HSM Cryptographic Token Interface for PQC",
+      "documentTitle": "PKCS #11 Specification Version 3.2 (Committee Specification 01)",
+      "documentStatus": "Committee Specification Draft",
+      "documentType": "Standard",
+      "organization": "OASIS PKCS11 Technical Committee",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 27,
+      "referenceId": "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures",
+      "authority": "PCI SSC",
+      "clausePin": "PCI DSS v4.0.1 Req. 4.2.1 & 12.3.3 (Strong Cryptography in Transit & Annual Cryptographic Cipher Suite Inventory)",
+      "domain": "Payment Card Industry Cryptographic Inventory & Governance",
+      "documentTitle": "PCI DSS v4.0.1 — Requirements and Testing Procedures",
+      "documentStatus": "Current",
+      "documentType": "Standard",
+      "organization": "PCI Security Standards Council",
+      "verifiedInLibraryCsv": true
+    },
+    {
+      "sourceIndex": 28,
+      "referenceId": "DORA-REG-2022-2554",
+      "authority": "European Union",
+      "clausePin": "Regulation (EU) 2022/2554 (DORA Art. 9) & RTS (EU) 2024/1774 Art. 6 (Cryptographic Key Management & Crypto-Agility Policy)",
+      "domain": "EU Financial Sector Digital Operational Resilience & Crypto-Agility Mandate",
+      "documentTitle": "Digital Operational Resilience Act (DORA) — Regulation EU 2022/2554",
+      "documentStatus": "In Force",
+      "documentType": "Regulation",
+      "organization": "European Parliament; Council of the EU",
+      "verifiedInLibraryCsv": true
+    }
+  ],
+  "moduleClauseReceipts": [
+    {
+      "moduleId": "acvp-lab-workflow",
+      "directory": "AcvpLabWorkflow",
+      "sha256": "219b47e5d58bb7b6c4a990695efe5794f26dfcf8e81ee365134aca53d054861d",
+      "lineCount": 775,
+      "referencedStandards": [
+        "NIST-ACVP",
+        "FIPS-140-3-STANDARD",
+        "CMVP-MGMT-MANUAL",
+        "NIST-SP-800-140C",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "PKCS11-V32-OS-OASIS",
+        "PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O",
+        "NIST-Cryptographic-Algorithm-Validation-Program-CAVP",
+        "Accessing-the-ACVTS-Demo-and-Prod-Environments",
+        "usnistgov-ACVP-Automated-Cryptographic-Validation-Protocol-S",
+        "usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets",
+        "ACVP-ML-DSA-JSON-Specification",
+        "ACVP-ML-KEM-JSON-Specification",
+        "ACVP-SLH-DSA-JSON-Specification",
+        "ACVP-Secure-Hash-Algorithm-SHA-JSON-Specification",
+        "FIPS 186-5",
+        "FIPS 140-3",
+        "PKCS#11"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "f056d10b6d2914f674dda92846b8f708623e355842886ff3215e80d287ead13c",
+          "lineCount": 67
+        },
+        "curious-summary.md": {
+          "sha256": "40e450798df64e58183a7819e97aca99a8b80d0df8f61e4d6c5d9211ac8850cb",
+          "lineCount": 19
+        },
+        "rag-summary.md": {
+          "sha256": "71d381ccc1b79cdd80abe93b5dda68bd5e8e2e11471d03664afc88add59e14fe",
+          "lineCount": 35
+        },
+        "data/conceptChecks.ts": {
+          "sha256": "529f9d5037be5f28d3f0fb0ef71dc4b74bc21678ee5da5a223eaa791c45efe74",
+          "lineCount": 166
+        },
+        "data/evidenceLevels.ts": {
+          "sha256": "d07910650fd4df339efbd876eda27fb97552f8f83ac62bc3aa5c9c0c5ff20ee9",
+          "lineCount": 168
+        },
+        "data/publicFixtures.ts": {
+          "sha256": "a25e415a578858eadd08b70dabdf91cbfd005e8280a3cb0aa8e7e3923cc798b9",
+          "lineCount": 72
+        },
+        "data/reviewStatus.ts": {
+          "sha256": "d83e2e1a5cd65d7a7fadccac48c54edbc3a5a059d073a3451a7a882266dcd0ca",
+          "lineCount": 31
+        },
+        "data/sources.ts": {
+          "sha256": "c14d86a62536df98c78295c8ddf5e72e0fa867e6be7382705dc9681aa4b852bc",
+          "lineCount": 217
+        }
+      }
+    },
+    {
+      "moduleId": "aerospace-pqc",
+      "directory": "AerospacePQC",
+      "sha256": "4dd5878fbe82ebcc5b99f3ab9b58b4a5001d37fdd14ca76ef36b73451610d224",
+      "lineCount": 1379,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "664P7-1-Aircraft-Data-Network-Part-7-Avionics-Full-Duplex-Sw",
+        "740-17-Encryption-commodities-software-and-technology-ENC",
+        "ARINC-429-Cyber-vulnerabilities-and-Voltage-Data-in-a-Hardwa",
+        "GR740-Radiation-Summary",
+        "EASA-Easy-Access-Rules-AMC-20",
+        "SAE-ARINC-835-2-Loadable-Software-Parts-Digital-Signatures",
+        "DLR-CEAS-Agile-Post-Quantum-Secure-Cryptography-in-Avionics",
+        "IACR-2024-046-Aviation-Quantum-Secure",
+        "GSMA-PQ-07-Post-Quantum-Cryptography-for-Non-Terrestrial-Net",
+        "NSA CNSA 2.0 FAQ"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "8fabc7a5608014bf96483815b2fae4033f4d55d469e6d3b57b2b3afc5082bd89",
+          "lineCount": 77
+        },
+        "curious-summary.md": {
+          "sha256": "06f7e23180ea2e1248aff3717b6b8894df4cfcaefef50a4879290421f3bd946c",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "eb1af319ce31b2c0f21dc92cb252ba2f911fdbdf5a229f6d3ec738fb4ea8c48f",
+          "lineCount": 77
+        },
+        "data/aerospaceConstants.ts": {
+          "sha256": "3908fe044bb3d3d1298fef959fc064a845fb7e179100d567df18c3fac4adb53e",
+          "lineCount": 226
+        },
+        "data/aerospaceProtocolData.ts": {
+          "sha256": "ef68ecd0ccd2cc22f5be78b48042815b94bd9ec7e73515badf16c6c91d25289e",
+          "lineCount": 166
+        },
+        "data/certificationData.ts": {
+          "sha256": "3ff2adfbba1287b644ec814eb36b601a7dc10fc3707561737a7fb848aefe11fc",
+          "lineCount": 227
+        },
+        "data/exportControlData.ts": {
+          "sha256": "386ac5105bce270953b4a8e05249619cf1cb6e4077e82b330f436db443f65a27",
+          "lineCount": 247
+        },
+        "data/fleetData.ts": {
+          "sha256": "2c7f455ff8b87640f96cd481f99a5ed9b32606d2cf2e4a78347435b422fe3f30",
+          "lineCount": 145
+        },
+        "data/orbitData.ts": {
+          "sha256": "33a74d5f9d11e37acd0c4c8f4e16ceac7930a25931699b3a6b62b22fc4ad9e97",
+          "lineCount": 198
+        }
+      }
+    },
+    {
+      "moduleId": "ai-security-pqc",
+      "directory": "AISecurityPQC",
+      "sha256": "74f343a71d7811f6bc48f85efc4bbe17f32a6ca833511fa249354b5a0a03782f",
+      "lineCount": 2126,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "FIPS-140-3-STANDARD",
+        "FIPS-180-4",
+        "NIST-SP-800-38D",
+        "NIST-AI-100-1-Artificial-Intelligence-Risk-Management-Framew",
+        "Content-Credentials-C2PA-Technical-Specification-Version-2-4",
+        "The-Applied-Quantum-PQC-Migration-Framework-Universal-Versio",
+        "RFC 9846",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "edca9af70c46b11838e5f9da4b1d86c6c1db59fc5ed8769573667cbd0b851648",
+          "lineCount": 73
+        },
+        "curious-summary.md": {
+          "sha256": "a027b59f486680ff22805707753387c33cd44acebb0e5cbf84cc0d9e1e071529",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "ba29bf2a090a6e6255b84f1d734ed9dba8552ec3e2fc042ea9bd8627bcdf3031",
+          "lineCount": 41
+        },
+        "data/agentAuthData.ts": {
+          "sha256": "ac14ede7a30dd6fcd64641bfc4e1c3de118234bbe88bb93c6e92d96b0b4207fa",
+          "lineCount": 484
+        },
+        "data/aiModelData.ts": {
+          "sha256": "d474f28acc1e32c21279eda2e3c0784345fe4f315aaf89efdc754cc5a2336128",
+          "lineCount": 203
+        },
+        "data/aiPipelineData.ts": {
+          "sha256": "248f12dcd15744800fbbd2919eb19a0f5fed875b9c0193b17555ad1cbef287c9",
+          "lineCount": 316
+        },
+        "data/aiSecurityConstants.ts": {
+          "sha256": "81389941fb36c36fcc48da5ce6e3d5b28f42b55d007faa16632deaae50a1075c",
+          "lineCount": 309
+        },
+        "data/dataAuthenticityData.ts": {
+          "sha256": "f41dad3df40ea618154c741faee7f801396b150483503c33f380de7428850bd7",
+          "lineCount": 345
+        },
+        "data/observationEvaluation.ts": {
+          "sha256": "90897a2f51a740ed1f069cbc4889a366e5e67c8c7172088d3231b83df4fc0fc7",
+          "lineCount": 68
+        },
+        "data/scaleEncryptionData.ts": {
+          "sha256": "231713b9064a66ce5c8748cf88f694eb6e67e6a6a674b7825f23aa51575b2b7e",
+          "lineCount": 248
+        },
+        "data/scenarioCalculations.ts": {
+          "sha256": "47ffd21411ba0de36e9450cc164ef610962ddfafc88af9fc73793b95c3ebaf57",
+          "lineCount": 23
+        }
+      }
+    },
+    {
+      "moduleId": "api-security-jwt",
+      "directory": "APISecurityJWT",
+      "sha256": "f64982404cda3b597261e4f4422ab99536b436d7cc52429e64b5f5373254c138",
+      "lineCount": 550,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 6749",
+        "RFC 7515",
+        "RFC 7516",
+        "RFC 7518",
+        "RFC 7519",
+        "RFC 9449",
+        "RFC 8725",
+        "RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security",
+        "RFC 7517",
+        "SLH-DSA-for-JOSE-and-COSE",
+        "draft-ietf-jose-hpke-encrypt",
+        "draft-ietf-jose-hpke-pq-pqt-02",
+        "RFC-9068",
+        "RFC-9864",
+        "draft-ietf-jose-pq-composite-sigs",
+        "FIPS-198-1",
+        "IETF RFC 7662",
+        "RFC-9964",
+        "JOSE",
+        "RFC 9421"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "21d361d9ac3acef17d63ae0085ca6e5dce5de28141b81d4ce471518872f42312",
+          "lineCount": 84
+        },
+        "constants.ts": {
+          "sha256": "557a1be60062863e44d6ce7518616082995034986ffafa4c2876847abbdbd613",
+          "lineCount": 411
+        },
+        "curious-summary.md": {
+          "sha256": "ee1042d30972c825be3d2919a2e547b0324a28364d72ec2c86c489a32fb496f2",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "9e63aecea36515fc3e9614ec732343ad9c5bd3eaba56d2a0d72dc890e73a503c",
+          "lineCount": 39
+        }
+      }
+    },
+    {
+      "moduleId": "arch-quantum-impact",
+      "directory": "ArchQuantumImpact",
+      "sha256": "b0d5d2094afd1703b16c1dae65efa194756de507c695b9bc87c30770f495839d",
+      "lineCount": 1957,
+      "referencedStandards": [
+        "FIPS 203",
+        "NIST SP 800-227",
+        "FIPS 204",
+        "RFC 9147",
+        "FIPS 205",
+        "NIST IR 8547",
+        "NIST SP 800-208",
+        "NSA CNSA 2.0"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "2523fa2595d394c1a61c3ae7997d8d5900309edad612a010c8929bf92a446b96",
+          "lineCount": 111
+        },
+        "data.ts": {
+          "sha256": "cf59ce787227cde64404891387a4dc7b2e3605662ae3daa7a7f57936ba331699",
+          "lineCount": 349
+        },
+        "curious-summary.md": {
+          "sha256": "5bd9d1ade70489d581657b75402e86d4498e52f75401db1fd15024c3ab472c15",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "680866bf269f1744a7646c31e645afa84326c8990133230687e0a3c8e360e958",
+          "lineCount": 67
+        },
+        "data/sourceLabel.ts": {
+          "sha256": "2897fbe4f1ed1e0d3db36467ca72d37842c1305d7f91d2fc7563fee7d865aadb",
+          "lineCount": 21
+        },
+        "data/trustHardware.ts": {
+          "sha256": "e01455d38d3b6c41744b8d43295710bde7e8db23877b5b1da3cfb48b84280e78",
+          "lineCount": 1250
+        },
+        "data/trustHardwareVenn.ts": {
+          "sha256": "220e58033d313d383fbed60e883c48cb433fca61578d60230cddf346a09c618b",
+          "lineCount": 143
+        }
+      }
+    },
+    {
+      "moduleId": "automotive-pqc",
+      "directory": "AutomotivePQC",
+      "sha256": "d8cfb2ea6daeb1b2e3ace4fddba004b8c3d57bede4c16dd13afcfcffe58251f8",
+      "lineCount": 2182,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-88",
+        "NSA CNSA 2.0",
+        "NSM-10",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-38D",
+        "NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope",
+        "ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M",
+        "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag",
+        "UNECE-R156",
+        "ISO-26262-Road-vehicles-Functional-safety",
+        "A-Standard-for-the-Transmission-of-IP-Datagrams-over-Etherne",
+        "Cards-and-security-devices-for-personal-identification-Conta",
+        "Cards-and-security-devices-for-personal-identification-Conta-2",
+        "IEEE-Standard-for-Ethernet",
+        "IEEE-Standard-for-Wireless-Access-in-Vehicular-Environments",
+        "ISO-10681-1-2010-Road-vehicles-Communication-on-FlexRay-Part",
+        "ISO-11898-1-2024-Road-vehicles-Controller-area-network-CAN-P",
+        "ISO-21448-2022-Road-vehicles-Safety-of-the-intended-function",
+        "ISO-SAE-21434-2021-Road-vehicles-Cybersecurity-engineering",
+        "Road-vehicles-Vehicle-to-grid-communication-interface-Part-1",
+        "Road-vehicles-Vehicle-to-grid-communication-interface-Part-2",
+        "Use-of-FN-DSA-in-TLS-1-3",
+        "IEEE-Std-802-3bp-2016-1000BASE-T1-PHY",
+        "ETSI-TR-103-949",
+        "C-ITS-Certificate-Policy-Release-3.0",
+        "BSI-CC-PP-0114-V2X-HSM",
+        "NSA CNSA 2.0 FAQ",
+        "NIST SP 800-208",
+        "AUTOSAR-CP-SWS-CryptoDriver-R23-11",
+        "RFC-10024",
+        "PKI-Consortium-Post-Quantum-Cryptography-Conference-2025-Kua",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "44585120009a1d1c30d5f8e952f3a76ad6428c75113377c615332ffe2890b5ae",
+          "lineCount": 115
+        },
+        "curious-summary.md": {
+          "sha256": "0435f791e5e7426bb81b951308e097f7d7dee36f6e6677c07ca9b286781570ae",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "9c5890078009c732446481ae6a9b1a2144664ca78268131679533489ee2eb11b",
+          "lineCount": 73
+        },
+        "data/automotiveConstants.ts": {
+          "sha256": "ff1ab49f0c428f72a87cee90d6835421718580d7801a909a5706f036cc559820",
+          "lineCount": 161
+        },
+        "data/carKeyProtocolData.ts": {
+          "sha256": "0bec355c8b9bef405ea3cff4306052519cbd23f5a0ebc737abac1020e911cb1c",
+          "lineCount": 439
+        },
+        "data/lifecycleComplianceData.ts": {
+          "sha256": "60e79eff2c0d44a296d762a04abdb025705a2caaaa2f5565028c2eb5b78c59be",
+          "lineCount": 451
+        },
+        "data/otaOrchestrationData.ts": {
+          "sha256": "6125a6ce310d1188a23bfffa58038deb44a273256ee2e1ad18ed45d3c3e4b1c5",
+          "lineCount": 203
+        },
+        "data/safetyCryptoData.ts": {
+          "sha256": "3fe0f14762817979ce7fa26b3878fa91d455a8ea8cfbd35f4d1f2dece7853af2",
+          "lineCount": 204
+        },
+        "data/sensorFusionData.ts": {
+          "sha256": "385914833b03183d872e17392d81628d25296df216d6a9b8d53e14f5a1c3fdfd",
+          "lineCount": 174
+        },
+        "data/vehicleArchitectureData.ts": {
+          "sha256": "a1737012bca2baf1106ea064b5b3034dcb806855895f74e4c4c43c9d7f507051",
+          "lineCount": 344
+        }
+      }
+    },
+    {
+      "moduleId": "cbom",
+      "directory": "Cbom",
+      "sha256": "7afcfe77937d1d5f36f16d815d0f85333a5f836594c87b9f895b681530fdff9c",
+      "lineCount": 131,
+      "referencedStandards": [
+        "OWASP-CycloneDX-CBOM-Guide",
+        "CycloneDX-Cryptography-Registry",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "PKI-Consortium-Launches-the-CBOM-Profiles-Working-Group",
+        "NIST IR 8547",
+        "RFC 9881",
+        "FIPS-140-3-STANDARD",
+        "SPDX-Spec-ISO-5962",
+        "RFC-7512-The-PKCS-11-URI-Scheme",
+        "RFC-7638",
+        "CycloneDX / ECMA-424",
+        "SPDX / ISO 5962",
+        "NIST SP 1800-38"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "102bafd5ba57d9300491fb1725d2c1b5788c01d4ffb3dbbc0a87f324994565be",
+          "lineCount": 96
+        },
+        "curious-summary.md": {
+          "sha256": "16edf1a58261feefbf2d3f9ca9af257521c7f8db134ffecc9b5ac49bc66aa41d",
+          "lineCount": 14
+        },
+        "rag-summary.md": {
+          "sha256": "ab9be6e49b5d5745f37f4fc028f0d9996187ab81ac194a9ae0281cde4b777c0c",
+          "lineCount": 21
+        }
+      }
+    },
+    {
+      "moduleId": "cc-eucc-certification",
+      "directory": "CcEuccCertification",
+      "sha256": "563424a84d60e3bacf19bf39b8620ea8781206d7147b024dbce9d3d5a3ca0eb1",
+      "lineCount": 1906,
+      "referencedStandards": [
+        "CCMC-2023-04-001-CC2022-Transition-Policy",
+        "CCDB-014-Assurance-Continuity-v3-1",
+        "CCMC-011-CCRA-EUCC-Coexistence",
+        "COMMON-CRITERIA",
+        "CC-2022-PART2",
+        "CC-2022-PART3",
+        "CC-2022-PART4",
+        "CC-2022-PART5",
+        "CC-2022-CEM",
+        "CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme",
+        "CIR-EU-2024-3144-EUCC-Amendment",
+        "CIR-EU-2025-2462-EUCC-Amendment",
+        "EUCC v2.0 ACM",
+        "ENISA-Hybridization-Standardisation-Status",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "eIDAS-2-Regulation",
+        "CIR-EU-2025-1567-Remote-QSCD-Management",
+        "CIR-EU-2025-1570-QSCD-Certification-Notification",
+        "CID-EU-2016-650-QSCD-Security-Assessment",
+        "ANSSI-CC-PP-2016-05-EN-419221-5",
+        "ANSSI-CC-PP-2016-05-M01",
+        "ANSSI-CC-PP-2018-02-EN-419241-2",
+        "BSI-CC-PP-0084-V2-2026",
+        "ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation",
+        "ENISA-EUCC-Assurance-Continuity-Change-Scenarios",
+        "ENISA-EUCC-Product-Series-Methodology",
+        "CMVP-MGMT-MANUAL",
+        "ENISA-State-of-Cybersecurity-2024",
+        "NIAP-CCEVS-POLICY-33",
+        "NIAP-CCEVS-MANUAL",
+        "NSA CNSA 2.0 FAQ",
+        "NSA CSfC PQC Guidance Addendum",
+        "CNSSP-11-IA-Product-Acquisition-Policy",
+        "CNSSP 15",
+        "BSI-CC-PP-0114-V2X-HSM",
+        "CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile",
+        "NIAP-Protection-Profile-for-Application-Software-Version-2-0",
+        "NIAP-cPP-Dedicated-Security-Component-Version-2-1",
+        "NIAP-cPP-Network-Devices-Version-4-0",
+        "NIAP-PP-General-Purpose-Computing-Platforms-Version-2-0",
+        "NIAP-PP-Virtualization-Version-2-0",
+        "NIAP-cPP-Full-Drive-Encryption-Authorization-Acquisition-Version-3-0",
+        "NIAP-cPP-Full-Drive-Encryption-Encryption-Engine-Version-3-0",
+        "NIAP-cPP-Hardcopy-Devices-Version-2-0",
+        "NIAP-PP-Module-VPN-Client-Version-3-0",
+        "NIAP-PP-Module-File-Encryption-Version-2-0",
+        "NIAP-PP-Module-File-Encryption-Enterprise-Management-Version-2-0",
+        "NIAP-cPP-DSC-Supporting-Document-Version-2-1",
+        "NIAP-TD1010-Network-Devices-v4-0-Endorsement",
+        "NIAP-TD1011-DSC-v2-1-Endorsement",
+        "NIAP-Announcements-Policy-33-Technical-Decisions-Notice",
+        "EUCC-Guidelines-on-Cryptography"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "95a5b81a0af3f54b8f5f12b2d7be07bd0562df4c0678ad4381a73eb81cd42ffb",
+          "lineCount": 108
+        },
+        "curious-summary.md": {
+          "sha256": "4eef449ac1fc72b43c27eaaa21807500b46c4936403e2ac9d4666c731af5d960",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "b51060c2e93fc1ad9d32151b79b71937ed2fe930cb01bdb2593f7ed549a59d90",
+          "lineCount": 42
+        },
+        "data/allExercises.ts": {
+          "sha256": "377a50702de668271ce1f4db17c97f077eff79ff127545e2c35cdf3d29654e1f",
+          "lineCount": 6
+        },
+        "data/ccEuData.ts": {
+          "sha256": "02cbdda81ab2f232ad8eb74ef24a4f7ebabda955787198d752754d0d0f8d47fe",
+          "lineCount": 1138
+        },
+        "data/regionalSchemesData.ts": {
+          "sha256": "5d0f11426735ce05c7d9ecfc518f62faecaaca786dc1600a55b88636cfb99fad",
+          "lineCount": 594
+        }
+      }
+    },
+    {
+      "moduleId": "code-signing",
+      "directory": "CodeSigning",
+      "sha256": "d38451989242b7724df24015679ba2ab19d72d667bd472e68b651d4670b55d44",
+      "lineCount": 529,
+      "referencedStandards": [
+        "NSA CNSA 2.0",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-208",
+        "RFC 8554",
+        "RFC 8391",
+        "RFC 9580",
+        "RFC 5280",
+        "FIPS-180-4",
+        "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp",
+        "NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D",
+        "SolarWinds-Corporation-Form-8-K-December-14-2020",
+        "CISA-AA20-352A",
+        "Mandiant-3CX-Software-Supply-Chain-Compromise",
+        "Analysis-of-the-Codecov-Supply-Chain-Compromise"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "faa8586c0602da3e091a800b23efd8ac5679b6ff592c86f5ddc4cd6e716b15ad",
+          "lineCount": 99
+        },
+        "constants.ts": {
+          "sha256": "5b36f4b6ca354f0b17a02f2d7a8c5865623b60ff368ce6af5114c687df19e9e2",
+          "lineCount": 378
+        },
+        "curious-summary.md": {
+          "sha256": "6928b9bf50b82fdec85f1d760e5b00625641cd20b7ed59811f60691fa9cf580d",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "f40c76c938f105a5cc23cc09588f1ba9c6a493e555824649f44bbce82ed59455",
+          "lineCount": 34
+        }
+      }
+    },
+    {
+      "moduleId": "compliance-strategy",
+      "directory": "ComplianceStrategy",
+      "sha256": "641ffd65b5b428f0fdb37f93e6a7db627e7e1192870d985e85491de7c0be0c5f",
+      "lineCount": 656,
+      "referencedStandards": [
+        "FIPS 203",
+        "NIST SP 800-227",
+        "NSA CNSA 2.0",
+        "NIST IR 8547",
+        "EO-2026-06-22-Securing-the-Nation",
+        "OMB-M-26-15",
+        "ETSI TR 103 619",
+        "ETSI TS 103 744",
+        "FIPS 199",
+        "FIPS 204",
+        "FIPS 205",
+        "FIPS-140-3",
+        "FIPS-140-3-STANDARD",
+        "NIST CSWP 39",
+        "NIST SP 800-30",
+        "NSA CNSA 2.0 FAQ",
+        "NSM-10",
+        "NIST-SP-800-131A-Rev3",
+        "OMB-M-23-02",
+        "NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag",
+        "NIST-SP-800-57-Pt1-R5",
+        "EO-14028",
+        "EO-14306",
+        "NIST-SP-800-128-Guide-for-Security-Focused-Configuration-Man",
+        "NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform",
+        "NIST-SP-800-90B",
+        "Canada CSE PQC Guidance",
+        "Europol-QSFF-Call-to-Action-2025",
+        "HHS-HIPAA-Security-Rule-NPRM-2025",
+        "NIST SP 800-161r1",
+        "EO 14306",
+        "NIST SP 800-90B",
+        "OMB M-23-02"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "884b0dbd9c1ebf4a6c6e58eb5e93a69d44dc1afa1accb381f5bf91c34ed1c0d7",
+          "lineCount": 146
+        },
+        "curious-summary.md": {
+          "sha256": "9f7c7f9f816fd2839683f3c53bc4e94a488199726ca5cb4462e40fe9038508fb",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "83dd6b81fedebb3841040887b51a1f3f10608f474e210c633653993d695f48ad",
+          "lineCount": 44
+        },
+        "data/complianceFrameworks.ts": {
+          "sha256": "e6cbe40db44e9adc678561abdd45821191c48d5f5c63053166db323862f58fe1",
+          "lineCount": 411
+        },
+        "data/jurisdictions.ts": {
+          "sha256": "705ffdd794d9317170a777d55a6778167074a1e178b0200921147632ac7c5749",
+          "lineCount": 39
+        }
+      }
+    },
+    {
+      "moduleId": "confidential-computing",
+      "directory": "ConfidentialComputing",
+      "sha256": "6144d413e6d7d920705c72f15d24309029ccd94fb69fd5acb9e37c4e8a2ac876",
+      "lineCount": 1196,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "ETSI TS 103 744",
+        "NIST SP 800-227",
+        "RFC 5869",
+        "FIPS-140-3-STANDARD",
+        "FIPS-180-4",
+        "IETF RFC 5649",
+        "RFC 9052",
+        "NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope",
+        "NIST IR 8320E",
+        "TCG-TPM-V185-Part1",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "d26024526bcaad6938df2bccdc6fd7561d3654e10b2c70a905e78dcc0256e016",
+          "lineCount": 92
+        },
+        "curious-summary.md": {
+          "sha256": "cb396328e9755fd168a4e8786e332214fb15ca87224ea905fece94651e53f53a",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "3cf4968311980a9c9fe9fbe11246f8d80f4f630546753ed7fc719f86316e9001",
+          "lineCount": 39
+        },
+        "data/attestationData.ts": {
+          "sha256": "b71bf89f55dd5fe85829b732238c96b7417031fad0ce86f9622059d2b1571e5d",
+          "lineCount": 569
+        },
+        "data/ccConstants.ts": {
+          "sha256": "c0d4cd67529bb48272032d1d040db1fe2c719c173b124519c163370887d2ede9",
+          "lineCount": 193
+        },
+        "data/teeArchitectureData.ts": {
+          "sha256": "9dcc6af274882d0cc3ff8bde903940f199cb6af8fc05a9cb01192ecd87b088cb",
+          "lineCount": 287
+        }
+      }
+    },
+    {
+      "moduleId": "crypto-agility",
+      "directory": "CryptoAgility",
+      "sha256": "d880ce0c230c6fc2ee6d3d1f400c951bf7fdd3c24aea8afb2375f1a5c2b7d456",
+      "lineCount": 909,
+      "referencedStandards": [
+        "NIST SP 800-208",
+        "NIST SP 800-227",
+        "RFC 9629",
+        "FIPS 186-5",
+        "FIPS 202",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "RFC 9370",
+        "FIPS-140-3-STANDARD",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "Advancing-Our-Amazing-Bet-on-Asymmetric-Cryptography",
+        "Classic-McEliece-Implementation",
+        "X25519Kyber768Draft00-hybrid-post-quantum-KEM-for-HPKE",
+        "NIST CSWP 39",
+        "RFC 9846"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "84498158502d4a7e28932d6b35971ac0f6eb191de83289bc287c8cae93ffe518",
+          "lineCount": 87
+        },
+        "curious-summary.md": {
+          "sha256": "2c889ed53ce32631d80a5fddbc15f700be11878afa3c506a344dfdaa18907ab5",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "500d44b35e18c6fb0910dd9cd30f147ca53c51250b0f05a1184afaca93a8bf38",
+          "lineCount": 39
+        },
+        "data/architecturePatterns.ts": {
+          "sha256": "a25bd741acae0a311c6a16613e2711c7c1d5900f50dede1f47b5af172752d45d",
+          "lineCount": 150
+        },
+        "data/cbomTemplates.ts": {
+          "sha256": "635fadceb6f51073acc0653a980ed8ea219ff3e38386d37d88e06d85e40fc526",
+          "lineCount": 615
+        }
+      }
+    },
+    {
+      "moduleId": "crypto-dev-apis",
+      "directory": "CryptoDevAPIs",
+      "sha256": "9c466772d5da3288deb6136062209fc3444306414ec2804420ee6bb7f1a14826",
+      "lineCount": 4445,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "FIPS 186-5",
+        "FIPS 202",
+        "NIST SP 800-56A",
+        "PQClean",
+        "FIPS-140-3-STANDARD",
+        "FIPS-180-4",
+        "NIST SP 800-208",
+        "ISO-IEC-7816-4-2020-Identification-cards-Integrated-circuit",
+        "RFC-8032",
+        "RFC-9763",
+        "Announcing-NET-10",
+        "Download-Bouncy-Castle-Java",
+        "BouncyCastle-Releases-Java-1-81-and-CSharp-2-6-1",
+        "RFC 9846",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "44582a5ab48dd80d51cb55bf3f7730f5d62dcaae19917218ea2505b77eeb5bfe",
+          "lineCount": 104
+        },
+        "curious-summary.md": {
+          "sha256": "b768f0bb22b678c55b487288753872371d1ba5d70b0d17c479ed6cff711dce22",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "5f2ba185193d5d3a894fc8b3670377f8ebddd93c31838f016c13cf27c7c74ec1",
+          "lineCount": 77
+        },
+        "data/agilityPatternsData.ts": {
+          "sha256": "eb4a88c4e78e4e2dfe9baced4cdcd19d3849c8dbb99383704c5b00eac8a18dee",
+          "lineCount": 316
+        },
+        "data/apiData.ts": {
+          "sha256": "7c5201e93638276f643ce53d2f81f49251f14bc06ceb99460ff1690b2c4eb72b",
+          "lineCount": 417
+        },
+        "data/buildBuyData.ts": {
+          "sha256": "665482d9a96b3f269526f8355b18bd9c8ca0909067559ffbd20e4e8a2bc0f360",
+          "lineCount": 471
+        },
+        "data/codeExamplesData.ts": {
+          "sha256": "148219e25a9f06e3dcfd72507e7a39c50d86644ecc1354297cc0c1697ef8f2ad",
+          "lineCount": 402
+        },
+        "data/languageData.ts": {
+          "sha256": "7b4aaee3b008e98a022a3330702ddef2f241b77dc3f33b5c921f5324badc881e",
+          "lineCount": 561
+        },
+        "data/migrationData.ts": {
+          "sha256": "e3808b23f2c0c19980965d7841bc10c6971032daba48a32423ab49a5223faf0e",
+          "lineCount": 592
+        },
+        "data/pqcLibraryData.ts": {
+          "sha256": "064063314f7d66899fbbedca47c9ded10ba63be343c140e6bac87f51c3c48297",
+          "lineCount": 619
+        },
+        "data/pqcSupportData.ts": {
+          "sha256": "2d14a29253e2805b0d488b8ada579fea24fb9d8d38224cb8cb59b4134be8fb4f",
+          "lineCount": 868
+        }
+      }
+    },
+    {
+      "moduleId": "crypto-mgmt-modernization",
+      "directory": "CryptoMgmtModernization",
+      "sha256": "5b1a1fd119e633763ea5f6a7b4f13b8520b223f9836725c87d9960b8d5251558",
+      "lineCount": 1422,
+      "referencedStandards": [
+        "NSA CNSA 2.0 FAQ",
+        "CABF-TLS-BR-v2-2-9",
+        "NSA CNSA 2.0",
+        "FIPS 204",
+        "CAB-Forum-SC-081v3",
+        "FIPS 205",
+        "NIST CSWP 39",
+        "FIPS 203",
+        "NIST-CMVP-Validated-Modules",
+        "NIST-CMVP-MIP-List",
+        "BSI TR-02102-1",
+        "CNSSP 15",
+        "FIPS 202",
+        "NIST IR 8547",
+        "RFC 8996",
+        "RFC 9370",
+        "RFC 9629",
+        "FIPS-140-3-STANDARD",
+        "FIPS-180-4",
+        "NIST-SP-800-131A-Rev3",
+        "NIST SP 800-208",
+        "OMB-M-23-02",
+        "NIST-SP-800-57-Pt1-R5",
+        "IETF-RFC-7030-EST",
+        "RFC-7465",
+        "IETF RFC 8555",
+        "NIST-SP-800-140B",
+        "NIST-SP-800-90A-R1",
+        "NIST-SP-800-90B",
+        "NIST-SP-800-90C",
+        "NIST-FIPS140-3-IG-PQC",
+        "oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo",
+        "ANSSI-PG-083-v3-2026",
+        "NIST-Selects-HQC-as-Fifth-Algorithm-for-Post-Quantum-Encrypt",
+        "Trends-in-PKI-Security-A-Global-Study-of-Trends-Challenges-B",
+        "NIST IR 8545",
+        "OpenSSL-1-1-1-End-Of-Life-Approaching",
+        "The-Total-Economic-Impact-Of-DigiCert-ONE",
+        "NIST SP 800-90B",
+        "RFC 8555",
+        "OMB M-23-02",
+        "NIST SP 800-131A"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "043ff7a53be09b61c4fe48b54c6927e685d979c4b52efefdfd5e1a6fd956d9db",
+          "lineCount": 205
+        },
+        "curious-summary.md": {
+          "sha256": "4ae1d7e2101828d7a3e341eaecba0613439643e53000b2c8b2a6e7ff1b07587f",
+          "lineCount": 58
+        },
+        "rag-summary.md": {
+          "sha256": "9ae4908a42a03d9e1d11b6e6e40281b7d06063bff7dfd5e4a10581a575ac34d5",
+          "lineCount": 85
+        },
+        "data/clmScenarios.ts": {
+          "sha256": "c5af8a565d6fff0338c0fe2b064d053e70b7fe7efabfb07739c3f79d9bffd055",
+          "lineCount": 92
+        },
+        "data/cpmMaturityModel.ts": {
+          "sha256": "552afc92b1e5aa7bec36c3a47c3ffda664f77fd17faad368ceb4148e8eca3d9d",
+          "lineCount": 121
+        },
+        "data/cryptoLibraries.ts": {
+          "sha256": "f4e2eaff84eec41e686c6e4b029d7645de8ea45c96e0da09f47792a512efa322",
+          "lineCount": 202
+        },
+        "data/fileArtifacts.ts": {
+          "sha256": "c6f7269f34690e828ab480c3a7a145973d3fa48d588ab3f6be64ef78331da485",
+          "lineCount": 77
+        },
+        "data/hsmVendors.ts": {
+          "sha256": "e6c94ae13d26d5d4afe776b6599429794f71271aaee1e6d41efa516a753f7be0",
+          "lineCount": 207
+        },
+        "data/postureKPIs.ts": {
+          "sha256": "1e7f763c873592d84ab53d41c1a30c8623c88cc38687bc04b29cf5ba41fffa31",
+          "lineCount": 242
+        },
+        "data/sampleInventory.ts": {
+          "sha256": "07ad75a146dfd749a68f86c68450491603a03135ded4c66063101ee9b7adb486",
+          "lineCount": 17
+        },
+        "data/sampleSBOMs.ts": {
+          "sha256": "3943ad59b0e3bf31a9229e58669244b1a148ae44acc3c84a95a8d57fa4f8380c",
+          "lineCount": 94
+        },
+        "data/workshopTypes.ts": {
+          "sha256": "1775c8598d14603dd5f6319c3b2dea438f12cda0b4d2b991368928f09b5c7fb5",
+          "lineCount": 22
+        }
+      }
+    },
+    {
+      "moduleId": "crypto-product-certification",
+      "directory": "CryptoProductCertification",
+      "sha256": "f6066d6e432edbec57ced808f4d12126597ef64328e5c91969b290dbcf9bdf00",
+      "lineCount": 4641,
+      "referencedStandards": [
+        "FIPS-140-3-STANDARD",
+        "CMVP-MGMT-MANUAL",
+        "NIST-FIPS140-3-IG-PQC",
+        "NIST-CMVP-MIP-List",
+        "NIST-CMVP-Validated-Modules",
+        "NIST-CMVP-140-2-to-140-3-Transition-Timeline",
+        "EO-2026-06-22-Securing-the-Nation",
+        "NIST-SP-800-140B",
+        "NIST-ACVP",
+        "NIST-CMVP-ESV",
+        "NIST-SP-1800-40B-IPD",
+        "NIST-SP-1800-40A-PD",
+        "NIST-CSWP-37A",
+        "NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va",
+        "NIST IR 8547",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "CCMC-2023-04-001-CC2022-Transition-Policy",
+        "CCDB-014-Assurance-Continuity-v3-1",
+        "COMMON-CRITERIA",
+        "CC-2022-PART2",
+        "CC-2022-PART3",
+        "CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme",
+        "CIR-EU-2024-3144-EUCC-Amendment",
+        "CIR-EU-2025-2462-EUCC-Amendment",
+        "EUCC v2.0 ACM",
+        "ENISA-Hybridization-Standardisation-Status",
+        "ENISA-EUCC-Assurance-Continuity-Change-Scenarios",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "eIDAS-2-Regulation",
+        "ANSSI-CC-PP-2016-05-EN-419221-5",
+        "BSI-CC-PP-0084-V2-2026",
+        "PCI-SSC-Blog-Publishes-PTS-HSM-v5-0",
+        "PCI-PTS-Listing-Field-Definitions",
+        "PCI-SSC-Blog-KMO-v1-0-Published",
+        "PCI-SSC-P2PE-Program-Page",
+        "PCI-SSC-Blog-Authentication-Cryptography-Guidance",
+        "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures",
+        "ETSI-EN-319-411",
+        "NIST-CMVP-FIPS-140-3-Standards-page",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "ef6241529057d0bcd26438e79f9425d8dc087924dbeed4ae9bc4c8bacaf4616f",
+          "lineCount": 98
+        },
+        "curious-summary.md": {
+          "sha256": "520f249bcb5043846accdbfdee7d80a24641c75608081210fedeb8e5f67b8da2",
+          "lineCount": 19
+        },
+        "rag-summary.md": {
+          "sha256": "4df532db58cb55ce6e48937d74c9558c8b88b0c77a993a5ffde9c076595bcc90",
+          "lineCount": 41
+        },
+        "data/allExercises.ts": {
+          "sha256": "9fd65b9c08254171b4b06a5453d1e669e83b225b367614ef19c97b1a427d929d",
+          "lineCount": 10
+        },
+        "data/anchorScenario.ts": {
+          "sha256": "daaf54a9f4580e300d283771fe07ae425c405efc7a2562c6fd10ab35774df978",
+          "lineCount": 202
+        },
+        "data/capstoneWorkedReference.ts": {
+          "sha256": "866d2669b88cd0c547871bf688fc69c6ae672a5d63e43bbbf80a8481d127fb6e",
+          "lineCount": 1245
+        },
+        "data/coreData.ts": {
+          "sha256": "f756eeebddfe00be0ad86cfda56aea7e4a4cecdec648e20b42ff6370b3e3e98e",
+          "lineCount": 927
+        },
+        "data/sharedData.ts": {
+          "sha256": "7320041ec120cf18b12f1e7293dfe9b4f115815d7f7c4a9f25f473e47daf9d2d",
+          "lineCount": 2067
+        },
+        "data/types.ts": {
+          "sha256": "55dedc2b139163f775186846988c5915acbbd0cf703bda4fdc789434cd56d755",
+          "lineCount": 32
+        }
+      }
+    },
+    {
+      "moduleId": "crypto-registry",
+      "directory": "CryptoRegistry",
+      "sha256": "01662de019fc40c9389904fb44832eaa975f366da13ae568e12348d1b404a835",
+      "lineCount": 70,
+      "referencedStandards": [
+        "CycloneDX-Cryptography-Registry",
+        "OWASP-CycloneDX-CBOM-Guide",
+        "ANSI X9.62",
+        "RFC 9881",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "CycloneDX Cryptography Registry"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "992944508189aa48195983565715f4ee30b4a7d46975a47a75e44228e3d76f5f",
+          "lineCount": 44
+        },
+        "curious-summary.md": {
+          "sha256": "6cb79cdd790e0900a210398fc2b8289d2118a9c249addda083e54f09a867c6d9",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "53c2568bf45679db8a8fd5c2c308640f814400a5e39eef1724ef8d1ecbafce0f",
+          "lineCount": 10
+        }
+      }
+    },
+    {
+      "moduleId": "data-asset-sensitivity",
+      "directory": "DataAssetSensitivity",
+      "sha256": "3e95e05f5bc6437b36fdf29b4ac4d8f48c66eae41c33e6f698c9d124a878ecb5",
+      "lineCount": 1493,
+      "referencedStandards": [
+        "FIPS 199",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-218",
+        "NIST SP 800-37",
+        "NIST SP 800-53",
+        "NIST SP 800-66",
+        "FIPS-140-3",
+        "FIPS-140-3-STANDARD",
+        "NIST IR 8547",
+        "NSM-10",
+        "FIPS-180-4",
+        "NIST-SP-800-57-Pt1-R5",
+        "FIPS-200-Minimum-Security-Requirements-for-Federal-Informati",
+        "ISO-IEC-27001-2022",
+        "ISO-IEC-27005-2022-Guidance-on-managing-information-security",
+        "NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform",
+        "NIST SP 800-82 Rev. 3",
+        "45-CFR-164-312-Technical-safeguards",
+        "NIST SP 800-57",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "474efd340b28313dcddfed775bbd0da0397d81934ec6bb1650fb2951c6958b95",
+          "lineCount": 119
+        },
+        "curious-summary.md": {
+          "sha256": "0ab90ee584a9c53acff889d614ab1448946f7484c05338e40b6c20998c1a61f6",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "b3cc26047c6c22e066f6633e94deabf3b3a2c1e83e4482751eaadb0f6d2c465a",
+          "lineCount": 54
+        },
+        "data/industryComplianceData.ts": {
+          "sha256": "a581f2f8af7aa8a49502895ff79c386def697a190fcacf79716e9cdf4b7915f1",
+          "lineCount": 249
+        },
+        "data/sensitivityConstants.ts": {
+          "sha256": "a0d7e9abb91084065458cffe917dca71d6e2ba3ebb04c38ffda04ae40c1a8cf7",
+          "lineCount": 1055
+        }
+      }
+    },
+    {
+      "moduleId": "database-encryption-pqc",
+      "directory": "DatabaseEncryptionPQC",
+      "sha256": "6049e18193634d76c9e987d48f660ea1540d00b6bbc5f82b04614146fbb47bd4",
+      "lineCount": 840,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-111",
+        "NSM-10",
+        "RFC 3394",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-38D",
+        "NSM-8",
+        "Key-Management-Interoperability-Protocol-Specification-Versi",
+        "The-Applied-Quantum-PQC-Migration-Framework-Universal-Versio",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "d85b68a5a98614e939ba44887319ed0663cc20403cab6c99cd0e522ac222bc16",
+          "lineCount": 78
+        },
+        "curious-summary.md": {
+          "sha256": "9204395c005b48e23ad2e0f84f462bcf155505ae29143333288dee18e750cce6",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "b381473ca3904b995ba7b2b81df495c27adf4426c093a2a852b264a371f564e4",
+          "lineCount": 132
+        },
+        "data/databaseConstants.ts": {
+          "sha256": "f0dd1ef8d877cfa92ad3aa9ca8ed1892b8c69a02f307356f513e306384b80d70",
+          "lineCount": 614
+        }
+      }
+    },
+    {
+      "moduleId": "dev-quantum-impact",
+      "directory": "DevQuantumImpact",
+      "sha256": "86ebf1b269d12cbb498010b788ac9570175e1ca9d3e54a8a245bfc83e3ab9c18",
+      "lineCount": 567,
+      "referencedStandards": [
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "FIPS 203",
+        "FIPS 204",
+        "NIST SP 800-227",
+        "FIPS 205",
+        "RFC 9980",
+        "RFC 9580",
+        "RFC 9846"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "9ffaebae9164bfce12a97245ab97ead8edae8385c5f26712541986e00d369173",
+          "lineCount": 128
+        },
+        "data.ts": {
+          "sha256": "e0b2175b17432b3aeffe720b1b1f59e0f05f95324ca51a5b09e6744aa9d3bed0",
+          "lineCount": 363
+        },
+        "curious-summary.md": {
+          "sha256": "3209f671f411f4926236ee375b3427c3cdaccb03b138923c05b243b0cc17c04b",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "2dd5c6fb87a98adcffb231713447fc4aeb65144322a32c3937c433478801980a",
+          "lineCount": 60
+        }
+      }
+    },
+    {
+      "moduleId": "digital-assets",
+      "directory": "DigitalAssets",
+      "sha256": "558200733fbe0dc9d9ad45be66c31e3ec348f57a15bcc9c865163c2de05206d8",
+      "lineCount": 870,
+      "referencedStandards": [
+        "RFC-8032",
+        "SLIP-0010",
+        "BIP-32",
+        "BIP-39",
+        "BIP-44",
+        "FIPS 203",
+        "FIPS 204",
+        "Falcon-Spec-v12",
+        "BIP-141",
+        "BIP-340",
+        "BIP-341",
+        "EIP-155",
+        "EIP-2",
+        "EIP-55",
+        "FIPS 205",
+        "IETF RFC 6979",
+        "RFC-10024",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-132",
+        "Solana-Docs-Transactions",
+        "Bech32m-format-for-v1-witness-addresses",
+        "Fee-Structure",
+        "Frame-Transaction",
+        "Secondary-Signature-Algorithms",
+        "RFC 10024",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "44749467cf7d5f34cf82cdc5b0ab69384772f6fa7efae9da0cb50be11944f423",
+          "lineCount": 80
+        },
+        "constants.ts": {
+          "sha256": "8e16fbc0ea1539a721bc8117a1ef1a7bfea762c8921f9e07eed9c35892196b2e",
+          "lineCount": 58
+        },
+        "curious-summary.md": {
+          "sha256": "0daca7422fe2157ddb4369225fb4cad80d1ef9ac584cdd6553cc835e8a6fc407",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "e09b461bb509ceb91feff837c6d9889956ef7a7c6d67be95871f5bfc81d834af",
+          "lineCount": 27
+        },
+        "data/custodyConstants.ts": {
+          "sha256": "b25c6aa8953b9ebc05f3717c1f937b63bb5807a38c2eca5868e5a60309dbac84",
+          "lineCount": 689
+        }
+      }
+    },
+    {
+      "moduleId": "digital-id",
+      "directory": "DigitalID",
+      "sha256": "3f14e5c0b0f60c49fba6f1567ed42cdbf54dccbb6d96ff8504c0539f78616ec8",
+      "lineCount": 305,
+      "referencedStandards": [
+        "eIDAS-2-Regulation",
+        "EUDI-Wallet-ARF",
+        "ISO-18013-5-mDL",
+        "RFC-9901-SD-JWT-VC",
+        "OpenID4VCI-Spec",
+        "OpenID4VP-Spec",
+        "CSC-API-v2-Spec",
+        "ETSI-EN-319-411",
+        "EU PQC Recommendation",
+        "FIPS 204",
+        "FIPS 205",
+        "BSI TR-02102-1",
+        "FIPS 203",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "Electronic-Signatures-and-Infrastructures-ESI-JAdES-digital",
+        "X.509"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "3a4a124ec4534a941d3f0eb5f21603532ad51b83812f5575da13c882665c8384",
+          "lineCount": 97
+        },
+        "constants.ts": {
+          "sha256": "35f3c5ea86f3d33bfd2e2a103258d141ac17e48f06575f431b572c5129d001be",
+          "lineCount": 152
+        },
+        "curious-summary.md": {
+          "sha256": "0fc19c325698b962d9fb60287599776c3ad859ec5942d76d9b29bebe982148c5",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "6cb2add53f4c03b18c6df2e1d8d59f6ebd0fbd8e5ac3ef9fcda424872cafea41",
+          "lineCount": 40
+        }
+      }
+    },
+    {
+      "moduleId": "dnssec-pqc",
+      "directory": "DNSSECPQC",
+      "sha256": "698ff32ccdc3a7e70f21b52c1b0965b801dfe89d5dde0e7d01088a5729316c07",
+      "lineCount": 117,
+      "referencedStandards": [
+        "RFC 4034",
+        "RFC 9364",
+        "Module-Lattice-Digital-Signature-Algorithm-for-DNSSEC",
+        "draft-sheth-pqc-dnssec-strategy-02",
+        "draft-fregly-dnsop-slh-dsa-mtl-dnssec-06",
+        "Module-Lattice-Based-Signatures-with-Merkle-Tree-Ladders-ML",
+        "draft-westerbaan-dnssec-mldsa"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "1a4aca647e4a745da88e40c6d35794066d6e8ebe6a5dcb71d6bb04448478e986",
+          "lineCount": 64
+        },
+        "curious-summary.md": {
+          "sha256": "b096cf704461d123c6e158800d871be254b898222ed6e9e96690cca261f89cfd",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "fb3a0679c220b81ea29787cbe6d0fc5fbaf6943d58c0766a2cd40434a73be00c",
+          "lineCount": 37
+        }
+      }
+    },
+    {
+      "moduleId": "email-signing",
+      "directory": "EmailSigning",
+      "sha256": "db2948f243dc8f8c0ae567d81d48ce704518f8cdcdd08b9d05d4d910421d6b16",
+      "lineCount": 735,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 5083",
+        "RFC 5652",
+        "RFC 8551",
+        "RFC 9629",
+        "RFC 9690",
+        "RFC 9708",
+        "RFC 9882",
+        "RFC 9580",
+        "RFC 9980",
+        "RFC-9935",
+        "RFC-9936",
+        "RFC 5754",
+        "RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra",
+        "NIST SP 800-208",
+        "JOSE",
+        "X.509"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "e9c4c4bed54f803a9f963d9c4a610d4caee9b3a02b78637808d8a54a0dadbba9",
+          "lineCount": 62
+        },
+        "curious-summary.md": {
+          "sha256": "5d48858b9f579ab3f584c8d30ffa953416f46a0a6707c124c4b925a1323db2a9",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "5ff03df6869e81118234c83e2b48f27da76d58d29f5f2b0883883f6c38161d07",
+          "lineCount": 45
+        },
+        "data/emailSigningConstants.ts": {
+          "sha256": "d733f67cacc3b755a7506585cc8d648a7685d1db562dc26b1d41168826b2acaf",
+          "lineCount": 610
+        }
+      }
+    },
+    {
+      "moduleId": "emv-payment-pqc",
+      "directory": "EMVPaymentPQC",
+      "sha256": "f212e156afc3743617e32d61932a8f8148fba876569154c79728b2c787f18dd1",
+      "lineCount": 3614,
+      "referencedStandards": [
+        "FIPS 186-5",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "Falcon-Spec-v12",
+        "EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us",
+        "Swift-Customer-Security-Controls-Framework-CSCF-v2026",
+        "BIS-OTHP107",
+        "UK-CMORG-PQC-Guidance-2025",
+        "Europol-QSFF-Call-to-Action-2025",
+        "FS-ISAC-PQC-Timeline-2026",
+        "DORA-REG-2022-2554",
+        "G7-Financial-PQC-Roadmap-2026",
+        "SG-MAS-Quantum-Advisory-2024",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "ASC-X9-IR-F01-2022",
+        "BIS-Paper-158",
+        "CA-CFDIR-Quantum-Readiness-2023",
+        "Europol-FS-ISAC-PQC-Financial-2026",
+        "PSD2-Directive-EU-2015-2366",
+        "EBA-RTS-SCA-2018-389",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-38D",
+        "NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope",
+        "2025-in-Numbers",
+        "ISO-8583-2023-Financial-transaction-card-originated-messages",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "The-Straits-Times-DBS-PayLah-users-can-scan-UnionPay-QR-code",
+        "RFC-10024",
+        "EMVCo-Quantum-Position-Statement",
+        "Post-Quantum-Protocols-for-Banking-Applications",
+        "Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape",
+        "PKCS11-V32-OS-OASIS",
+        "PCI-SSC-Blog-Publishes-PTS-HSM-v5-0",
+        "PCI-PTS-Listing-Field-Definitions",
+        "PCI-SSC-P2PE-Program-Page",
+        "NIST IR 8547",
+        "FRB-FEDS-2025093-Blockchain-PQC",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "0c0650a9808c0ddff44bce7cf36dfb969e8de019255fb9671ba6a583e750573c",
+          "lineCount": 153
+        },
+        "curious-summary.md": {
+          "sha256": "b8668184160069f2448891b28fdc040a235d8eb09f44d13a0319bcb2860f318f",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "b315a86261ca04e41cfc3bc74905dea93e65ad9087fa8a5095af2e3a5c5beb40",
+          "lineCount": 43
+        },
+        "data/bankingData.ts": {
+          "sha256": "39d10ab0c6f0efb43ebce2b6a67cab0a13c95e27bd6e891cb105bf2aad2609a0",
+          "lineCount": 207
+        },
+        "data/cardCryptoData.ts": {
+          "sha256": "637787df44570223ae9efaafe37f09a9fa3e73f96f2a8a69c05d5ed726b86daa",
+          "lineCount": 390
+        },
+        "data/cardReplacementScenario.ts": {
+          "sha256": "7734ccd993ff533da9b3cd66aef9305146b90da957c15603981d82ba08dfff36",
+          "lineCount": 24
+        },
+        "data/emvCardPopulation.ts": {
+          "sha256": "922ecd64e97f1556c4b754e73d8ee6ef02dd304f58ad4677a55e77bf1ce629cc",
+          "lineCount": 10
+        },
+        "data/emvConstants.ts": {
+          "sha256": "4f8a0b04c980cff1c9bfc2b28e745e13f8b101a0a2ee0735f8a444366e0291d4",
+          "lineCount": 446
+        },
+        "data/migrationRiskData.ts": {
+          "sha256": "8bc25d46d12277c860f96302f3b51a2f9ccf5632be19f885ff527729581c712d",
+          "lineCount": 242
+        },
+        "data/networkRadarRubric.ts": {
+          "sha256": "9a440fe807f57fbb77d84d68ceffca0ff55013ae64949572cd713176c7260d12",
+          "lineCount": 177
+        },
+        "data/networkVolumeComparison.ts": {
+          "sha256": "06edf33bfb0a09b803d376e2a4baca5f7618e9859a7ca928411861da10a6e2db",
+          "lineCount": 169
+        },
+        "data/paymentNetworkData.ts": {
+          "sha256": "da11e6d946a700dd13e486059b3b07f400bd3db1da69d00e6518ae3140fc53c8",
+          "lineCount": 493
+        },
+        "data/posCryptoData.ts": {
+          "sha256": "d16177bdb89b319f456ed6409663f171f01fc7bb1f2eba3992cfa6b4956422a8",
+          "lineCount": 201
+        },
+        "data/tokenizationAssessment.ts": {
+          "sha256": "f193f71a75f95ce7c2392a2c284e7edfcdfde659e5e6bcb66d88df059c1adc6f",
+          "lineCount": 31
+        },
+        "data/tokenizationData.ts": {
+          "sha256": "f60c8acee14e77f52c407bbdeb941d69f60408aae74dbf25ce1f89573f76d9e6",
+          "lineCount": 547
+        },
+        "data/transactionFlowData.ts": {
+          "sha256": "f4ecdfc83364a89560fd9f9183faba5800a52d1e7110543358db507b4247ddb7",
+          "lineCount": 465
+        }
+      }
+    },
+    {
+      "moduleId": "entropy-randomness",
+      "directory": "Entropy",
+      "sha256": "e3c94f39c7bfc52e22479a610b394be65f6d211fdd2ce87ba18273e2964ad31e",
+      "lineCount": 147,
+      "referencedStandards": [
+        "NIST-SP-800-131A-Rev3",
+        "FIPS 203",
+        "FIPS 205",
+        "FIPS 204",
+        "NIST-SP-800-90A-R1",
+        "BSI-AIS-20-31",
+        "FIPS-180-4",
+        "NIST-SP-800-22-R1A",
+        "NIST-SP-800-90B",
+        "NIST-SP-800-90C",
+        "RFC 5869",
+        "FIPS-140-3-STANDARD",
+        "FIPS-198-1",
+        "NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope",
+        "NIST-SP-800-57-Pt1-R5",
+        "IETF RFC 6979",
+        "SSLkeys",
+        "ChaCha20-and-Poly1305-for-IETF-Protocols",
+        "Quantinuum-s-Quantum-Origin-Becomes-First-Software-Quantum-R",
+        "qStream-High-speed-Full-Entropy-RNG",
+        "The-Art-of-Computer-Programming-Volume-2-Seminumerical-Algor",
+        "NIST-CMVP-ESV",
+        "NIST-CMVP-ESV-Program",
+        "NIST-FIPS140-3-IG-PQC",
+        "NIST-SP-800-90B-Entropy-Assessment-tool-usnistgov-GitHub",
+        "NIST SP 800-90B",
+        "NIST SP 800-131A",
+        "NIST SP 800-57",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "5a55226a2a81a4cb3de0ee7f9a842e1d4759f95623ec4929e269b0b47794914f",
+          "lineCount": 94
+        },
+        "curious-summary.md": {
+          "sha256": "4a7fb944a429170274609685aa45cd67e8002eb6842f265b54164f4fae73f301",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "eff37c9c5fd904fa87db80349e230350ee452aef97bdcb7296498fa6229bd0d1",
+          "lineCount": 35
+        }
+      }
+    },
+    {
+      "moduleId": "exec-quantum-impact",
+      "directory": "ExecQuantumImpact",
+      "sha256": "2002c7ea82c80062bd09b45eaa19cc60aebef44ade46d210bf2627ef25bb8532",
+      "lineCount": 501,
+      "referencedStandards": [
+        "NSA CNSA 2.0",
+        "NIST IR 8547",
+        "NSM-10",
+        "EO-14306",
+        "EO-2026-06-22-Securing-the-Nation",
+        "OMB-M-26-15",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "DORA-REG-2022-2554",
+        "FIPS 203",
+        "EO 14306"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "1251be7edbed4bb4991aa800b1304933b8c5f6793f0e814618563efdb02b4248",
+          "lineCount": 68
+        },
+        "data.ts": {
+          "sha256": "4e58ad6f7e3418f5912bd646934bc3fb7565587147dab47781f4c3c2db0656e1",
+          "lineCount": 366
+        },
+        "curious-summary.md": {
+          "sha256": "868e0efc0ac36e18e7539ba54831791496bf73e1f16be300119d85fa903c06fd",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "cfcce463458a6a4fdb02ca877d49d43f4a9b1ba4d4ccb0ef97e83995d217fc3c",
+          "lineCount": 51
+        }
+      }
+    },
+    {
+      "moduleId": "fips-140-3-certification",
+      "directory": "Fips1403Certification",
+      "sha256": "379a4a5b6e87b0cc71ad7e882201a3dcef0ca0ac61bcf02654ec64b19a28e8dd",
+      "lineCount": 1785,
+      "referencedStandards": [
+        "FIPS-140-3-STANDARD",
+        "CMVP-MGMT-MANUAL",
+        "NIST-FIPS140-3-IG-PQC",
+        "NIST-CMVP-MIP-List",
+        "NIST-CMVP-Validated-Modules",
+        "NIST-CMVP-140-2-to-140-3-Transition-Timeline",
+        "EO-2026-06-22-Securing-the-Nation",
+        "NIST-SP-800-140",
+        "NIST-SP-800-140A",
+        "NIST-SP-800-140B",
+        "NIST-SP-800-140C",
+        "NIST-SP-800-140D",
+        "NIST-SP-800-140E",
+        "NIST-SP-800-140F",
+        "NIST-ACVP",
+        "NIST-CMVP-ESV",
+        "NIST-SP-1800-40B-IPD",
+        "NIST-SP-1800-40A-PD",
+        "NIST-CSWP-37A",
+        "NIST-CSWP-37B-Automation-of-the-NIST-Cryptographic-Module-Va",
+        "NIST-Cryptographic-Algorithm-Validation-Program-CAVP",
+        "NIST-CMVP-ESV-Program",
+        "NIST-CMVP-ESV-Announcements",
+        "NIST-CMVP-MIS-SP800-140B",
+        "NIST-ACMVP-Protocol-Workstream",
+        "NCCoE-Automation-of-the-CMVP",
+        "PCI-PTS-Listing-Field-Definitions",
+        "NIST-CMVP-FIPS-140-3-Standards-page",
+        "ISO-IEC-19790-2025",
+        "CC-2022-PART3",
+        "NIST-PQC-Seminar-FaultInjection-Lattice",
+        "PROACT-2025-SCA-Lattice-PQC",
+        "ENISA-EUCC-HSM-PP-FPT-PHP-Interpretation",
+        "ENISA-EUCC-Assurance-Continuity-Change-Scenarios",
+        "NIST-CMVP-Programmatic-Transitions",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "4f8fe0fa548b9d91146b8195348314d33fc8ada27b259fb64266dfd90bc16388",
+          "lineCount": 91
+        },
+        "curious-summary.md": {
+          "sha256": "c52bab81838653da3a575f8d3f0786bac2e0f9316ebfa903b134d58235aea037",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "b4c7d2466fabb09ec01c250c2e211262be188b457b46f7290589a5beedb376dc",
+          "lineCount": 39
+        },
+        "data/allExercises.ts": {
+          "sha256": "46195f4aa98e576070762223f78bd805b00c763ca0181ac21009bb177b316556",
+          "lineCount": 6
+        },
+        "data/fipsData.ts": {
+          "sha256": "8ee1649f63d1483fdd0889aad28e22c2bb0d7eace6dd080c7869baab93911f4a",
+          "lineCount": 1633
+        }
+      }
+    },
+    {
+      "moduleId": "5g-security",
+      "directory": "FiveG",
+      "sha256": "1fcf26f4f37d43ce5fcb302076d80fc53665e8b79d1de4b55d365592a42d6e08",
+      "lineCount": 941,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "3GPP TS 33.501 Rel-19",
+        "3GPP-PQC-Study-2025",
+        "GSMA PQ.03 PQC Guidelines",
+        "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar",
+        "ETSI TS 103 744",
+        "3GPP-Post-Quantum-Cryptography-SA3-Overview",
+        "GSMA-SGP24-v2-4-4",
+        "NIST-CSWP-36A",
+        "ANSI X9.63",
+        "NIST SP 800-227",
+        "NIST SP 800-56A",
+        "RFC 7748",
+        "SEC 1",
+        "NIST-SP-800-56C-R2",
+        "PQ-SUCI-MLKEM-Profile-C-2025",
+        "Characteristics-of-the-Universal-Subscriber-Identity-Module",
+        "Numbering-addressing-and-identification",
+        "Specification-of-the-MILENAGE-algorithm-set-An-example-algor",
+        "X.509"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "7d222a900e2590b2e070b57a2dfa255ed998f0a61198c13b2bf94d337f53d4f2",
+          "lineCount": 67
+        },
+        "constants.ts": {
+          "sha256": "2f1f5645f43aa8ff43d464eb8ae41f987eed18031bde9506044651b0a3b79116",
+          "lineCount": 824
+        },
+        "curious-summary.md": {
+          "sha256": "e9b9086dfea85b9bb633e24865972b5d93217c8a0fed5dc241f375ae94fe5e78",
+          "lineCount": 20
+        },
+        "rag-summary.md": {
+          "sha256": "53d68ac0fbc8a4cf7ca23662d4e99320ee9a471ed2066ee79f273d1ffb604822",
+          "lineCount": 30
+        }
+      }
+    },
+    {
+      "moduleId": "government-defense-pqc",
+      "directory": "GovernmentDefensePQC",
+      "sha256": "f21e785e37548fcc02bd27f43fbd2d95be01e327b78a9d31e6acac6bb992e149",
+      "lineCount": 384,
+      "referencedStandards": [
+        "NSA CNSA 2.0",
+        "NSA CNSA 2.0 FAQ",
+        "CNSSP 15",
+        "NSA CSfC PQC Guidance Addendum",
+        "RFC 8603",
+        "NIST SP 800-208",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "QCCPA-2022",
+        "OMB-M-23-02",
+        "OMB-M-26-15",
+        "EO-14306",
+        "EO-2026-06-22-Securing-the-Nation",
+        "CNSSP-11-IA-Product-Acquisition-Policy",
+        "NIAP-CCEVS-POLICY-33",
+        "CISA-PQC-CATEGORY-LIST-2026",
+        "CMMC-2.0-MODEL",
+        "NIST-SP-800-171-Rev-3-Protecting-Controlled-Unclassified-Inf",
+        "Common-Policy-X-509-Certificate-and-CRL-Profile",
+        "Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile",
+        "X-509-Certificate-Policy-for-the-U-S-Federal-PKI-Common-Poli",
+        "NIAP",
+        "NSM-10",
+        "X.509",
+        "EO 14306",
+        "OMB M-23-02"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "f684949541714df349bfa976d995f705d3aa2a9b6cdf019f0cf856d50e2562dd",
+          "lineCount": 71
+        },
+        "curious-summary.md": {
+          "sha256": "6fe0a777bd7a6bbb4547410a13bc11d0a157de05cd40d24ac5ea4768d0c4ac0d",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "6ca670f2e928cd0c8734e881c1b9a4591f7b5156c4663e5799ff552e7b068b9b",
+          "lineCount": 49
+        },
+        "data/cnsaData.ts": {
+          "sha256": "df6189568dc73c954c345ff9c97529b069e8454368d1c5777a7cc981c32cebee",
+          "lineCount": 135
+        },
+        "data/mandateData.ts": {
+          "sha256": "f2a0fa2ad1e0e7c4b4e3ff38f2902157a1df3ef003f8eeaef488b33303ebd0e2",
+          "lineCount": 111
+        }
+      }
+    },
+    {
+      "moduleId": "healthcare-pqc",
+      "directory": "HealthcarePQC",
+      "sha256": "9f6341fbd1cbe5872196dbbf6fbad5a4d2b8ce30a13bb9d2d7f970faac246ba1",
+      "lineCount": 1418,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-111",
+        "NIST SP 800-66",
+        "NIST IR 8547",
+        "NIST-SP-800-38D",
+        "ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part",
+        "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",
+        "IEC-62443-4-2-2019-Security-for-industrial-automation-and-co",
+        "ICS-Medical-Advisory-ICSMA-17-241-01-Abbott-Laboratories-Acc",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "RFC-10024",
+        "ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D",
+        "ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity",
+        "ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "ea35cd0b590e4a502eb1cbcc3c6cf59b997463cea93d34f0e713c5423d4f16d7",
+          "lineCount": 78
+        },
+        "curious-summary.md": {
+          "sha256": "c0a2b0bd53ec71156b4ee50ca6e30289446d84c3c764456c36186b85045df273",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "9f3d97d2668ce1961b608c4c380e94808ba077a34022d4dcca1e2d874fdda1f1",
+          "lineCount": 71
+        },
+        "data/healthcareConstants.ts": {
+          "sha256": "e9df2adb910fa6c95fb6b2e9d5f982d988990a7e69386e44f450f7475256130a",
+          "lineCount": 923
+        },
+        "data/pharmaIpModel.ts": {
+          "sha256": "55127de00096732257c2ee06b3f8312725af40e600d07c9834c93300465753af",
+          "lineCount": 328
+        }
+      }
+    },
+    {
+      "moduleId": "homomorphic-encryption",
+      "directory": "HomomorphicEncryption",
+      "sha256": "4d5bc4534a8c7c1297c815e381606603d9170799b0cde9756b5a2a5df3a63785",
+      "lineCount": 6114,
+      "referencedStandards": [
+        "ISO-IEC-28033",
+        "tfhe-rs-v1.8.1",
+        "openfhe-v1.6.0",
+        "lattigo-v6.2.0",
+        "fhe-rs-v0.1.1",
+        "IACR-ePrint-2025-075",
+        "EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us",
+        "FIPS 203",
+        "FIPS 204"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "f5aba7c629d2bbaa5226e4b4b0ef01cd882c3c699503b210bb30bb754dec3a57",
+          "lineCount": 45
+        },
+        "curious-summary.md": {
+          "sha256": "967d54554361721d3c733de3f11d111d034b2c4874eec6eacaddf59486ffadfc",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "e20f906af2487080f4541fde95fb96c7e1e18623bcf76245c24891d3fba8ba17",
+          "lineCount": 43
+        },
+        "data/fheCkksEvidence.ts": {
+          "sha256": "d3581958ed5948fa8c379354efe8b743401328ad96e806a121d44758f50ad19c",
+          "lineCount": 61
+        },
+        "data/fheComputeService.ts": {
+          "sha256": "219803aeb306befe6c0405fe440aa247788c31e7ed42751a065a9e9191b65567",
+          "lineCount": 355
+        },
+        "data/fheContextData.ts": {
+          "sha256": "93b288c89e5554d95bb334b5b8a61dee66bb7dab4d3712eeb50b350e7e03898b",
+          "lineCount": 1294
+        },
+        "data/fheData.ts": {
+          "sha256": "51b68b03ad897583bca762073d236cef38e56a5f1cb2fbe8b0dfbd89bbc6abf7",
+          "lineCount": 248
+        },
+        "data/fheFloodSizing.ts": {
+          "sha256": "b4d01b64608c86c518f5df0e664cbf01c27b2443a245dfe34b94c2caef7a0734",
+          "lineCount": 86
+        },
+        "data/fheHsmCosts.ts": {
+          "sha256": "f465cc32a3eb0a3ef0eac5b6467289e4c4c8a13d90ef7cec8a9597e05d1d2f74",
+          "lineCount": 854
+        },
+        "data/fheHsmFlows.ts": {
+          "sha256": "461fbea437f69ea122ede68dcb5228d7f7bc356f3f0141c28d7f9d755676463e",
+          "lineCount": 1553
+        },
+        "data/fheHsmStepIO.ts": {
+          "sha256": "cc4a4b17c34a4fa42b911d00ba7e5127612f3112e267cbbfe453b41c327b7749",
+          "lineCount": 482
+        },
+        "data/fheKeyLifecycleFlows.ts": {
+          "sha256": "fbd0d13b6cb3c59541c154a7706a1d1f593e6f6304041d1bdf349677e971e1db",
+          "lineCount": 774
+        },
+        "data/fheKeyMap.ts": {
+          "sha256": "e79ea57662abb1d6daa964e6be1c5f00d8117cce6bf336df98f4312072e8cb53",
+          "lineCount": 303
+        }
+      }
+    },
+    {
+      "moduleId": "hsm-pqc",
+      "directory": "HsmPqc",
+      "sha256": "7dc7b9a73058c81ba3a1f3f40f3ce27b46e7f725b640baef1a1490a1a0a11d76",
+      "lineCount": 1677,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST-SP-800-108-R1",
+        "NIST SP 800-208",
+        "RFC 3394",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-38D",
+        "NIST-SP-800-90A-R1",
+        "NIST-FIPS140-3-IG-PQC",
+        "CMVP-MGMT-MANUAL",
+        "NIST-Cryptographic-Algorithm-Validation-Program-CAVP",
+        "PKCS11-V32-OS-OASIS",
+        "NIST-SP-800-140F",
+        "What-is-Azure-Dedicated-HSM",
+        "PKCS#11"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "753406c3c57ab86ba82a176908cbba42718acefc0a1cfda7a69f4f716c0972db",
+          "lineCount": 91
+        },
+        "curious-summary.md": {
+          "sha256": "0b8d9a5efb20408f015bb8236ee6172be1a145c1968a361eb7ae62294d8d14b2",
+          "lineCount": 20
+        },
+        "rag-summary.md": {
+          "sha256": "fac3a08a85c7894c411776e32196a4a4d41c1dba26d9fadc3e5f017663c7bc31",
+          "lineCount": 71
+        },
+        "data/hsmConstants.ts": {
+          "sha256": "b1c41e6ecedd46474d690b188eb50ed595660e857cad6c759c69a7603a6aa936",
+          "lineCount": 1009
+        },
+        "data/hsmVendorData.ts": {
+          "sha256": "454af9b743935c413f62eadacb11b2e933835eb6c40a00b4a902d87b7a2cf11c",
+          "lineCount": 486
+        }
+      }
+    },
+    {
+      "moduleId": "hybrid-crypto",
+      "directory": "HybridCrypto",
+      "sha256": "944d7f0658f07f222745f7002d0bf9a9d58ab72290678429649294032bda3930",
+      "lineCount": 1764,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 9794",
+        "RFC 9881",
+        "RFC-9909",
+        "RFC-9935",
+        "RFC 9802",
+        "NIST SP 800-227",
+        "NIST-FIPS140-3-IG-PQC",
+        "RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra",
+        "draft-ietf-lamps-pq-composite-kem-23",
+        "RFC-9763",
+        "RFC 9629",
+        "RFC-9936",
+        "draft-bonnell-lamps-chameleon-certs-07",
+        "draft-ietf-lamps-fn-dsa-certificates-00",
+        "RFC-9925",
+        "draft-ietf-lamps-certdiscovery-03",
+        "FIPS 186-5",
+        "FIPS 205",
+        "Falcon-Spec-v12",
+        "NIST SP 800-56A",
+        "RFC 5869",
+        "RFC 8017",
+        "RFC 9180",
+        "draft-ietf-hpke-hpke-06",
+        "draft-ietf-hpke-pq",
+        "draft-ietf-cose-hpke-27",
+        "draft-ietf-jose-hpke-encrypt",
+        "RFC-9955-Hybrid-Signature-Spectrums",
+        "Google-Security-Blog-A-new-path-for-Kyber-on-the-web",
+        "Cloudflare-PQ-Internet-2025",
+        "AWS-Security-Blog-ML-KEM-Post-Quantum-TLS-in-KMS-ACM-Secrets",
+        "draft-sheffer-tls-pqc-continuity",
+        "FIPS-180-4",
+        "IETF RFC 5480",
+        "RFC-8032",
+        "RFC-8410",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "NIST-SP-800-56C-R2",
+        "NIST-SP-800-90A-R1",
+        "SEC2-v2",
+        "CRYSTALS-Dilithium-Spec-v31",
+        "eprint-2025-2059",
+        "RFC-6928",
+        "ANSSI-PQC-FAQ-2025",
+        "BSI TR-02102-1",
+        "BSI-Hinweise-zu-aktuellen-Entwicklungen-um-Classic-McEliece",
+        "NL-PQC-Migration-Handbook-2024",
+        "https-nukib-gov-cz-download-publications-en-Annex-20to-20the",
+        "NSA CNSA 2.0 FAQ",
+        "UK-NCSC-PQC-Whitepaper-2024",
+        "CA-CCCS-ITSP-40-111",
+        "EUCC v2.0 ACM",
+        "ECCG-ACM-v3-Draft-2026",
+        "ENISA-Hybridization-Standardisation-Status",
+        "ETSI TS 103 744",
+        "ETSI-TR-103-966",
+        "RFC-10024",
+        "draft-ietf-tls-mlkem-11",
+        "GSMA PQ.03 PQC Guidelines",
+        "Cloudflare-PostQuantum-Roadmap-2026",
+        "Bernstein-MLDSA-Bugs-2026",
+        "Analysis-of-Hybrid-Key-Establishment-and-Standalone-ML-KEM-i",
+        "draft-connolly-cfrg-xwing-kem-11",
+        "draft-irtf-cfrg-concrete-hybrid-kems-04",
+        "Hybrid-PQ-T-Key-Encapsulation-Mechanisms",
+        "OpenJDK-JEP-496-ML-KEM",
+        "OpenJDK-JEP-497-ML-DSA",
+        "OpenJDK-JEP-527-PQ-Hybrid-TLS13",
+        "OpenJDK-JEP-452-KEM-API",
+        "OpenJDK-JEP-510-KDF-API",
+        "Oracle-JDK-25-0-5-Release-Notes",
+        "Oracle-JDK-27-Release-Notes",
+        "JDK-27-Standard-Algorithm-Names",
+        "BouncyCastle-Java-Release-Notes",
+        "BouncyCastle-Java-1-86-Release",
+        "BouncyCastle-Java-Specifications",
+        "Microsoft-PQC-APIs-GA-2025",
+        "Microsoft-Windows-PQ-Composite-Features-2026",
+        "Microsoft-Windows-TLS13-PQC-FAQ-2026",
+        "Microsoft-Schannel-Kestrel-PQC-GA-2026",
+        "Microsoft-DotNet-PQC-2025",
+        "Microsoft-DotNet-11-Libraries",
+        "Microsoft-DotNet-11-CompositeMLDsa-Windows-Native",
+        "Microsoft-TLS-Supported-Groups-Win11",
+        "Microsoft-CNG-Algorithm-Identifiers",
+        "Microsoft-ADCS-ML-DSA-Overview",
+        "Microsoft-PQC-Windows-Insiders-Linux-2025",
+        "Microsoft-SymCrypt-Changelog",
+        "Microsoft-KB5099536",
+        "OpenSSL-4-1-0-Release",
+        "OpenSSL-3-6-Release-Notes",
+        "OpenSSL-SSL-CTX-set1-curves-3-5",
+        "Go-1-24-Release-Notes",
+        "Go-1-26-Release-Notes",
+        "Go-1-27-Release-Notes",
+        "Go-crypto-hpke",
+        "AWS-PQ-Readiness-Confidentiality",
+        "BoringSSL-xwing-h",
+        "AWS-LC-v5-12-0-Release",
+        "rustls-0-23-46-Release",
+        "rustls-0-23-27-Release",
+        "NSS-3-132-Release-Notes",
+        "NSS-3-118-Release-Notes",
+        "NSS-3-105-Release-Notes",
+        "Firefox-132-Release-Notes",
+        "wolfSSL-5-9-4-Release",
+        "liboqs-0-16-0-Release",
+        "oqs-provider-0-12-0-Release",
+        "OASIS-PKCS11-TC-v33-Working-Header",
+        "OASIS-PKCS11-TC-v33-Composite-KEM-Draft",
+        "OASIS-PKCS11-TC-v33-Composite-Sig-Draft",
+        "draft-ietf-cose-hpke"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "d13bdf8ac2592ed134cc77b8d741d819ad44439d4d0627fe23c8b7f8b59af5e7",
+          "lineCount": 210
+        },
+        "constants.ts": {
+          "sha256": "35ec11dccab274495bb771d5217ec819e130af26494ff7970ef27c6a7283dfb1",
+          "lineCount": 803
+        },
+        "curious-summary.md": {
+          "sha256": "4162abbaa6008b1de4562d7d416be6f3df4fdeb1f1d9391a6ec38d32e564b2c7",
+          "lineCount": 26
+        },
+        "rag-summary.md": {
+          "sha256": "7c61a85d53459d1e6d5981d8b629ed40e7cd4ae48c715e9868d63adb5bb038eb",
+          "lineCount": 110
+        },
+        "data/externalVectors.ts": {
+          "sha256": "b79a2dcb3b4dccbaec261685983d5e7807b282aca77551f01d3cd71f443a4634",
+          "lineCount": 248
+        },
+        "data/hpkeTestVectors.ts": {
+          "sha256": "b2af8070cdb38d6bbbe52b66e56439ec7981c9e95c47ceb7493d72a818722436",
+          "lineCount": 214
+        },
+        "data/ietfTestVectors.ts": {
+          "sha256": "d5e89f645ea4cca595db16d3d6b50cb003e90ebb386e09f424bca2f5e1c6273b",
+          "lineCount": 153
+        }
+      }
+    },
+    {
+      "moduleId": "iam-pqc",
+      "directory": "IAMPQC",
+      "sha256": "6dad10b33a3d13d7d99f0015fde4f13eb0145d59a1cdf0e8b47f413120fb6e84",
+      "lineCount": 739,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "FIPS-198-1",
+        "NIST-SP-800-132",
+        "OASIS-SAML-2-0-Core",
+        "Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum",
+        "NIST IR 8547",
+        "Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA",
+        "RFC 9052",
+        "FIPS-140-3-STANDARD",
+        "IETF RFC 4556",
+        "RFC-9964",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "2511009d57e82b6f85d98737c4c733be26cc202aa74631fdd0a558d5ea2c1ff6",
+          "lineCount": 91
+        },
+        "curious-summary.md": {
+          "sha256": "b19debb48cbce9ec0dce22ef7038899e1bb7e055c6a5e47f793e43aa62bbcf92",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "3a96bbb69504dc2ac16be1baccd2b0f04d3429dc8b777e642d9ae8bd6320d8fa",
+          "lineCount": 37
+        },
+        "data/iamConstants.ts": {
+          "sha256": "f8e2326f8dc94f7b107b0c1b415d4d520d75296d413fdccbbeef1fc559b93a4c",
+          "lineCount": 392
+        },
+        "data/iamProviderData.ts": {
+          "sha256": "4c8dcff466253564e754801cf09ba10b1fe382b6c589926765ffe77e211b3d8d",
+          "lineCount": 201
+        }
+      }
+    },
+    {
+      "moduleId": "iot-pqc",
+      "directory": "IoTPQC",
+      "sha256": "5fece85305cf7acdecdfa573e7755696aff7afc4cc51ede01fcaa3da2c52e284",
+      "lineCount": 1303,
+      "referencedStandards": [
+        "RFC 7228",
+        "draft-ietf-iotops-7228bis",
+        "FIPS 203",
+        "FIPS 204",
+        "Falcon-Spec-v12",
+        "NIST SP 800-208",
+        "RFC 8554",
+        "RFC 8391",
+        "NIST-SP-800-232",
+        "NSA CNSA 2.0",
+        "RFC 9019",
+        "RFC-9124",
+        "draft-ietf-suit-manifest",
+        "RFC 8778",
+        "RFC-9964",
+        "NIST IR 8547",
+        "RFC-7252",
+        "RFC 9147",
+        "RFC-7925",
+        "draft-ietf-uta-tls13-iot-profile",
+        "RFC 9528",
+        "RFC-8613",
+        "draft-ietf-lake-pqsuites",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "Matter-1-6-Core-Specification",
+        "LoRaWAN-Specification-v1-1",
+        "RFC 5280",
+        "RFC 8879",
+        "RFC 7250",
+        "draft-ietf-cose-cbor-encoded-cert",
+        "draft-ietf-plants-merkle-tree-certs",
+        "NIST-SP-1800-36B",
+        "FIDO-FDO-v1.1-PS",
+        "RFC-9148",
+        "TCG-TPM-V185-Part1",
+        "TCG-PC-Client-Platform-TPM-Profile-v1.07",
+        "PSA-Certified-Security-Model-v1-1",
+        "PSA-Certified-Level-2-PP-SESIP-v2-0",
+        "EN-17927-2023",
+        "EU-CRA-REG-2024-2847",
+        "ETSI-EN-303645",
+        "CDR-EU-2022-30-RED-Cybersecurity",
+        "CID-EU-2025-138-EN-18031",
+        "EN-18031-1-2024",
+        "EN-18031-3-2024",
+        "US-FCC-24-26-Cyber-Trust-Mark",
+        "UK-PSTI-Regs-2023-1007",
+        "NIST-IR-8259r1",
+        "NIST SP 800-82 Rev. 3",
+        "NIST-IR-8259A",
+        "RFC 9846"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "a7064a463084bf11fbd7c9cd2f952029005364a3049f026d02f40b92ff77bc34",
+          "lineCount": 123
+        },
+        "constants.ts": {
+          "sha256": "1e14eefee8e9fd51ac81dbeed9783c6d4c191eaf037061d0e09194dcb1f6adea",
+          "lineCount": 791
+        },
+        "curious-summary.md": {
+          "sha256": "c1db01afd6337dcfbd72dea6246441145bca11defec591b127f73990f3ebf308",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "8ca17db30ca7db681ddf3facd95e7ffac2a89d2092b5caa560b791b8e54af5bc",
+          "lineCount": 33
+        },
+        "data/fleetData.ts": {
+          "sha256": "8fcee4e53f4b902cab8912b937f12065f5deaf1dc8196efd9e47e0850a399e46",
+          "lineCount": 306
+        },
+        "data/fleetTypes.ts": {
+          "sha256": "484d3c6c5208a6a8f5e86e950ed2efd39d2b99168570648a5c0b72990f7d7cae",
+          "lineCount": 34
+        }
+      }
+    },
+    {
+      "moduleId": "kms-pqc",
+      "directory": "KmsPqc",
+      "sha256": "0121790108cc5084a5ddfdaf4ed5e7a39ce629b274aacd3b6e7509f0d956daba",
+      "lineCount": 2577,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-227",
+        "PKCS11-V32-OS-OASIS",
+        "NIST-SP-800-56C-R2",
+        "NIST-SP-800-38D",
+        "RFC 3394",
+        "IETF RFC 5649",
+        "RFC 5869",
+        "CSA-PQC-Guide-2025",
+        "KMIP-V2-1-OASIS",
+        "NIST IR 8547",
+        "NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy",
+        "RFC 8017",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-57-Pt1-R5",
+        "NIST-SP-800-108-R1",
+        "NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope",
+        "NSA CNSA 2.0 FAQ",
+        "Chosen-Ciphertext-Attacks-Against-Protocols-Based-on-the-RSA",
+        "Key-encapsulation-mechanisms",
+        "AWS-KMS-Post-Quantum-Keys",
+        "AWS-KMS-ML-KEM-Launch-2026-10",
+        "AWS-KMS-Import-Wrapping-Keys",
+        "AWS-KMS-API-Decapsulate",
+        "AWS-KMS-API-Encapsulate",
+        "AWS-KMS-API-GenerateDataKeyPair",
+        "AWS-KMS-Hybrid-PQ-TLS",
+        "AWS-PQ-Readiness-Confidentiality",
+        "Google-Cloud-KMS-Quantum-Safe-Key-Import",
+        "Google-Cloud-KMS-Key-Import",
+        "Google-Cloud-KMS-Release-Notes",
+        "Azure-Key-Vault-BYOK-Specification",
+        "Azure-Managed-HSM-BYOK",
+        "HashiCorp-Vault-Transit-API",
+        "OpenBao-Transit-Secrets-Engine",
+        "RFC 9180",
+        "RFC-10024",
+        "NIST-SP-800-57-Pt1-R6",
+        "NIST-FIPS140-3-IG-PQC",
+        "AQ-PQC-Migration-Framework-v2.1-2026"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "bb61be2f766dac94defc052bb356b7b0bebed589e9d89e62103c3e417f2fe936",
+          "lineCount": 162
+        },
+        "curious-summary.md": {
+          "sha256": "6cce3dac593592ee9d77a6853eccb2a437123fe173afd1082cf0903a569807f0",
+          "lineCount": 20
+        },
+        "rag-summary.md": {
+          "sha256": "a5da6cb129001ef7d578884a9503dca1f24fe858a0ef6418909265734829e532",
+          "lineCount": 50
+        },
+        "data/cloudKmsExchangeData.ts": {
+          "sha256": "c622e0bce7e8a0ec6e9523df7692fd6baf2ffe9a69009e28327f54e91cb47536",
+          "lineCount": 707
+        },
+        "data/kmsConstants.ts": {
+          "sha256": "9e000f6c2642abba273974d9b260f30032cb29e710a8c3b8c6fb30371e71362f",
+          "lineCount": 1204
+        },
+        "data/kmsProviderData.ts": {
+          "sha256": "0d80cff94ab1616dae525c360f8bd3598deb57d1e082b9d20892fd8ab2c23319",
+          "lineCount": 372
+        },
+        "data/openBaoProviderCommands.ts": {
+          "sha256": "42fad8f8f7547826ed0997e36fa21967e9bf59cd58b5dc617b0fa6c3f4e22b54",
+          "lineCount": 62
+        }
+      }
+    },
+    {
+      "moduleId": "media-drm-pqc",
+      "directory": "MediaDrmPQC",
+      "sha256": "e9baf6ec5fece825915ab1601239724c2f4d1d3e6fbcd4ccb37bfd60f7782393",
+      "lineCount": 740,
+      "referencedStandards": [
+        "MovieLabs-ECP-v1-4",
+        "AACS-Introduction-and-Common-Cryptographic-Elements-Book-Rev",
+        "CI-Plus-Spec-v1.3.2",
+        "A-First-Look-at-Digital-Rights-Management-Systems-for-Secure",
+        "Content-Credentials-C2PA-Technical-Specification-Version-2-4",
+        "RFC-10024",
+        "Cloudflare-PQ-Internet-2025",
+        "RFC-9964",
+        "SLH-DSA-for-JOSE-and-COSE",
+        "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp",
+        "NIST IR 8547",
+        "NIST-SP-800-57-Pt1-R5",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-57",
+        "RFC 10024",
+        "RFC 3161"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "1fef1571f905497763eaae6d84aff33260cbd0139c57e09d592eab3da4ad7740",
+          "lineCount": 59
+        },
+        "curious-summary.md": {
+          "sha256": "3d43ab4adf875f0c24ec740219285e62f6680be5c4089b3b636d76489cff1704",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "d771f705b023d2714610a90441dd0134b38e7b209e5a7d2b57428e6b787534be",
+          "lineCount": 32
+        },
+        "data/ecpData.ts": {
+          "sha256": "d4bf633e0354c66f66bf3c2b93ea9b67b675fe0d1b7eb43898fe5c7bd60bb62b",
+          "lineCount": 127
+        },
+        "data/editionData.ts": {
+          "sha256": "1c22fefadf5b7c81d85a2f8d52e7ab87a905a00742ac42704e04fcd24c996e53",
+          "lineCount": 79
+        },
+        "data/ladderData.ts": {
+          "sha256": "9d5d28cfb1a266dc1c5f467c28e30d0103131260b6653988160967c1e7dfcc61",
+          "lineCount": 181
+        },
+        "data/leverData.ts": {
+          "sha256": "faa3dacc47d41d012d1954aaf05bd911ff99828e968e92ce2aee1ae7a325d3c9",
+          "lineCount": 71
+        },
+        "data/provenanceData.ts": {
+          "sha256": "c6ef2cd78099d1474293acd766d27dd22b98aabb6777acc9b8812fb738eddb64",
+          "lineCount": 107
+        },
+        "data/streamingData.ts": {
+          "sha256": "b494f6c49978b36a98682ba9fb0d03a807782cbd956906e3d8167eeee11bb53e",
+          "lineCount": 66
+        }
+      }
+    },
+    {
+      "moduleId": "merkle-tree-certs",
+      "directory": "MerkleTreeCerts",
+      "sha256": "7f87364ba176ba1b79c4a5a295b0cdf6c6130c70731c85a1267a60539f699779",
+      "lineCount": 540,
+      "referencedStandards": [
+        "draft-ietf-plants-merkle-tree-certs",
+        "FIPS 204",
+        "RFC-9162",
+        "FIPS-180-4",
+        "FIPS 205",
+        "NIST SP 800-208",
+        "draft-sheffer-tls-pqc-continuity"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "0651b6a6818fcadefa6a728ee41ffd220e752402dd7c07189ae09fdb1bb59c5f",
+          "lineCount": 93
+        },
+        "curious-summary.md": {
+          "sha256": "a50c76ec325c88644bb401e220587c6a44a76faf614ff4daa3345d9804832087",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "635e621df47b48825000ca3974fd65183636fa508b1831fdc44ef80677f8cca1",
+          "lineCount": 34
+        },
+        "data/mtcConstants.ts": {
+          "sha256": "8791597ccd9eda67b26030d8c08b765169307fb358efc5cbf43c5a1bfdcf7ca7",
+          "lineCount": 395
+        }
+      }
+    },
+    {
+      "moduleId": "migration-program",
+      "directory": "MigrationProgram",
+      "sha256": "a99e1de60011246ea874abe0febd950a4ea5320c0321fd2124d7320b8d41dade",
+      "lineCount": 466,
+      "referencedStandards": [
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "EO-14306",
+        "G7-Financial-PQC-Roadmap-2026",
+        "ANSSI-PQC-FAQ-2025",
+        "EO-2026-06-22-Securing-the-Nation",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST CSWP 39",
+        "OMB-M-23-02",
+        "FIPS-140-3-STANDARD",
+        "EO 14306",
+        "OMB M-23-02"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "ac4e742bda6ca3160c4ba3ad8cd50d341c1493ad1433273a4292b191b2bce864",
+          "lineCount": 74
+        },
+        "curious-summary.md": {
+          "sha256": "7857f8a8273d397eeae739f6d370350414f3de6628878ddd2a1e18bb4a703273",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "f1f73d9d492d24a2be8853775dae879c463802fa48014e00ee1fb8176917311e",
+          "lineCount": 33
+        },
+        "data/migrationProgramData.ts": {
+          "sha256": "8f8512100311ba587d598d059e63fec714fa323d631fd104fb02c52a57cb8eaf",
+          "lineCount": 343
+        }
+      }
+    },
+    {
+      "moduleId": "mls-group-messaging",
+      "directory": "MLSGroupMessaging",
+      "sha256": "c22173ef9d1db20ab4f4d229657a055a86b5242eca88b8003a4beded927ed23c",
+      "lineCount": 323,
+      "referencedStandards": [
+        "RFC 9420",
+        "RFC 9180",
+        "draft-ietf-mls-pq-ciphersuites-07",
+        "draft-ietf-mls-combiner-02",
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 5869",
+        "draft-ietf-mls-extensions-11",
+        "JOSE"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "2ed64318eb4792f24c860f9dc182b02dc464a90bb04544ad69a6d171b65451b9",
+          "lineCount": 110
+        },
+        "curious-summary.md": {
+          "sha256": "fcacaa289783cc60ce91a2dfe6bf8f72703c4a128c33efa7d737e7c6b9f4cc0e",
+          "lineCount": 24
+        },
+        "rag-summary.md": {
+          "sha256": "d18137797cfbc696ba988844f33c75c576f47c739b2de38c4c86a387527eb4d9",
+          "lineCount": 46
+        },
+        "data/mlsData.ts": {
+          "sha256": "ac484772efc5d29bb9579253397d4632438baf6d7eb055c2b2f5ae5336bcccf4",
+          "lineCount": 143
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-101",
+      "directory": "Module1-Introduction",
+      "sha256": "919c67d95faa4971de0823510a2e97d16268da993743d80580836f902aa1fc6a",
+      "lineCount": 303,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST IR 8547",
+        "EO-2026-06-22-Securing-the-Nation",
+        "FIPS 186-5",
+        "Falcon-Spec-v12",
+        "NSA CNSA 2.0",
+        "NIST IR 8545",
+        "NIST SP 800-227",
+        "SEC2-v2",
+        "A-Public-Key-Cryptosystem-Based-On-Algebraic-Coding-Theory"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "97fe809a46a33b0435344ad78b19a0293ebce8607cc551242d0fe6bfa9bb5bad",
+          "lineCount": 169
+        },
+        "curious-summary.md": {
+          "sha256": "00957102d776166175b5dbef233f3e9d2956222ae6a163ee627957050176168c",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "ceec0c6c85e609d86d28ef658874d39ae50c3d918c68d2d4510ef57b6eb7b601",
+          "lineCount": 36
+        },
+        "data/scenarioQuestions.ts": {
+          "sha256": "e4f65e5fc4378d665bba1065b072fde7e3ace9f4fbd9910a0c8b0bfebc378069",
+          "lineCount": 82
+        }
+      }
+    },
+    {
+      "moduleId": "network-security-pqc",
+      "directory": "NetworkSecurityPQC",
+      "sha256": "a371e8bcc34ed399197366193a6935c9e46daaf0026eecfa829c62d66d813bf6",
+      "lineCount": 1057,
+      "referencedStandards": [
+        "NIST IR 8547",
+        "FIPS 203",
+        "NIST SP 800-207",
+        "NIST SP 800-227",
+        "FIPS 204",
+        "NSM-10",
+        "RFC 9370",
+        "FIPS-198-1",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "NIST-SP-800-207A-A-Zero-Trust-Architecture-Model-for-Access",
+        "NIST-SP-800-38A-Recommendation-for-Block-Cipher-Modes-of-Ope",
+        "RFC 9846"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "6ea3fd07c7f0727770c332740a4efb9e5afaf538dd6ff81a23e146406da77820",
+          "lineCount": 89
+        },
+        "curious-summary.md": {
+          "sha256": "059314394c509a86925f3cbcbc3ca39e8449f4b51f9dd547a5e20a930d4c48ce",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "bdd3f1804cfdd5b1d5aa16fc8bfff57c6a822932be104f0d44fc3e34888a1a37",
+          "lineCount": 39
+        },
+        "data/networkConstants.ts": {
+          "sha256": "1c8680d5c21e84839eb8cc098c16606dfdc1aeac99a828b84f04b5733a576500",
+          "lineCount": 595
+        },
+        "data/networkProviderData.ts": {
+          "sha256": "3c64c2fdcbaef085bd3efbc3d25387699ae8568aff1e36f9c6402993c9996fe9",
+          "lineCount": 318
+        }
+      }
+    },
+    {
+      "moduleId": "ops-quantum-impact",
+      "directory": "OpsQuantumImpact",
+      "sha256": "caeb4733ece009dd2cc43f0eeac26154ac9e96d573f44a19a7b5c197a3e3cb56",
+      "lineCount": 633,
+      "referencedStandards": [
+        "RFC 4253",
+        "NIST IR 8547",
+        "FIPS 203",
+        "NIST SP 800-227",
+        "FIPS 204",
+        "NSA CNSA 2.0",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-57-Pt1-R5",
+        "IETF-RFC-7030-EST",
+        "IETF RFC 7296",
+        "IETF RFC 8555",
+        "CAB-Forum-SC-081v3",
+        "GSMA-PQ-04-Post-Quantum-Cryptography-in-the-IoT-Ecosystem",
+        "RFC 8555",
+        "NIST SP 800-57",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "0b5d2217d0adaa545faebf64ea1564c24296bb27129a3989b1e33f7798d9f767",
+          "lineCount": 85
+        },
+        "data.ts": {
+          "sha256": "aeacd5e5eccd686668d6f8242c2aefa3a7c2dc5c335592f4c5c0032a3d148f78",
+          "lineCount": 350
+        },
+        "curious-summary.md": {
+          "sha256": "66aefb6d93469728e427d67b842e03a8ce7788d06927c6a8b14ec792d0c10d55",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "53018dd759f1068cff2a03c629bc5a52eaef9580297c2c00fa40dbcec541f556",
+          "lineCount": 71
+        },
+        "data/operationsWorkedChecks.ts": {
+          "sha256": "f64b90aa2386b57b0a81d0ed68a107deef22159b4dad641a1a50637e50cc5a3e",
+          "lineCount": 111
+        }
+      }
+    },
+    {
+      "moduleId": "os-pqc",
+      "directory": "OSPQC",
+      "sha256": "08527eaba5bdb6ca89019ff137a78071e737a2ba20df3fe7a2fbcb112a71581c",
+      "lineCount": 677,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 4253",
+        "NIST SP 800-227",
+        "FIPS-140-3-STANDARD",
+        "FIPS-180-4",
+        "IETF RFC 5656",
+        "IETF RFC 8709",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "November-11-2025-KB5068861-OS-Build-26100-7171",
+        "Ubuntu-24-04-LTS-release-notes",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "afe3987d785812565a003abb50778506748f4e8665f071558921b2e1a51dc694",
+          "lineCount": 82
+        },
+        "curious-summary.md": {
+          "sha256": "7e77ee37d572b0e04e4628c87e1ffac120920adecf53c3fa9ea736ce7532df2f",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "b3d9757ccfafa2ae2ac78f975e6692ac48a0cf234964405a405655b61193a75b",
+          "lineCount": 20
+        },
+        "data/osConstants.ts": {
+          "sha256": "4a693f5e976383aa96d32afa70aa43bc0d6904dac4d0cfc9da37c7dd30641866",
+          "lineCount": 297
+        },
+        "data/osProviderData.ts": {
+          "sha256": "b441862b02658804e7ee1dd91187663541ce33c985fbfa652e73d9aae0e5a46f",
+          "lineCount": 226
+        },
+        "data/tlsProbeCommands.ts": {
+          "sha256": "d382da9f16440244d22774c8f1236700eb808ca6ec5f141f48ef4b04fac454e7",
+          "lineCount": 34
+        }
+      }
+    },
+    {
+      "moduleId": "ot-pqc",
+      "directory": "OTPQC",
+      "sha256": "69468f68ecf3a22e88a7668b269da0384b37ab0e0c001435a4ee5359853caede",
+      "lineCount": 2746,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "NIST SP 800-208",
+        "RFC 8554",
+        "RFC 8391",
+        "NSA CNSA 2.0",
+        "FIPS-198-1",
+        "RFC 3394",
+        "IEC 62443",
+        "IEC-62443-4-2-2019-Security-for-industrial-automation-and-co",
+        "NIST SP 800-82 Rev. 3",
+        "US-CISA-PQC-OT-2024",
+        "Barriers-to-Secure-OT-Communication-Why-Johnny-Can-t-Authent",
+        "CISA-OT-Primary-Mitigations-2025",
+        "CISA-AA21-131A-DarkSide",
+        "CISA-IR-ALERT-H-16-056-01",
+        "NIS2-DIRECTIVE-2022-2555",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "NERC-CIP-005-7",
+        "NERC-CIP-010-4",
+        "NERC-CIP-012-2",
+        "TSA-SD-PIPELINE-2021-02G",
+        "IEC-62351-6-2020-Power-systems-management-and-associated-inf",
+        "RFC-8052",
+        "PNNL-29313-RADIANCE",
+        "SAND2022-1118",
+        "IEC-62056-5-3-2023-Electricity-metering-data-exchange-The-DL",
+        "IEEE-Standard-for-Smart-Energy-Profile-Application-Protocol",
+        "OPC-10000-2",
+        "OPC-10000-7",
+        "ODVA-PUB00319-CIP-Security",
+        "PI-PROFINET-Security-Whitepaper-V105-2019",
+        "ASHRAE-135-2016-Addendum-bj",
+        "ASHRAE-BACnet-SC-Whitepaper-2019",
+        "Torres-ICREPQ-2024-341",
+        "Chen-Sensors-2020-20-7345",
+        "Alghamdi-Schukat-Cybersecurity-2021-4-12",
+        "Derbyshire-IChemE-Hazards26-2016",
+        "HSE-ECI-Functional-Safety",
+        "UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS",
+        "ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch",
+        "49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems",
+        "EPA-America-s-Water-Infrastructure-Act-AWIA-Section-2013",
+        "EPA-Cybersecurity-for-the-Water-Sector",
+        "FERC-Security-Program-for-Hydropower-Projects-Division-of-Da"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "c514023851b8b169be303c75075c21809bc7768f99cf15504730a4752b2719d1",
+          "lineCount": 139
+        },
+        "curious-summary.md": {
+          "sha256": "921d5378a2112c440a31c128be6e0b95a7b1afb41984c64f04ee8abdad9b3d57",
+          "lineCount": 22
+        },
+        "rag-summary.md": {
+          "sha256": "78c50056154a55b346b2692acd336bd4b331916c46f23e232f80c64deb4d44bc",
+          "lineCount": 37
+        },
+        "data/consequenceData.ts": {
+          "sha256": "f0c482948f5e5eaa13904075f20e042a47d2f6c7c63e0c5162c6bb733c9bff21",
+          "lineCount": 454
+        },
+        "data/learnFigures.ts": {
+          "sha256": "8159b7a6a6f389229f8d3b95383c2a1a53c894b993e48ad51db5d487192d7b7d",
+          "lineCount": 80
+        },
+        "data/otProtocolData.ts": {
+          "sha256": "dad5395229c0bb6bde2cd1f18c809d15f311064cfdac77fd8a9a10bacd82bc74",
+          "lineCount": 617
+        },
+        "data/regulationsData.ts": {
+          "sha256": "34a7242ffe2a7996fa7705a5a85611c53a516f9264cb0f166aa77aca17c383a9",
+          "lineCount": 165
+        },
+        "data/roadmapData.ts": {
+          "sha256": "2fc6c3c467af02eba08e8c457f5a271d59137d54f1cca0104067c894d76b52f7",
+          "lineCount": 297
+        },
+        "data/signingLabData.ts": {
+          "sha256": "5bbd870dd86f4028cad299c2c42fa6d5177199ef1178b3cc2520d1a8295c9edc",
+          "lineCount": 221
+        },
+        "data/substationData.ts": {
+          "sha256": "6c91fbd18ca1abddb1ebc3f7e3c33ab9632d39bcd811a3fdbfe0ba2bde083aa5",
+          "lineCount": 320
+        },
+        "data/zoneConduitData.ts": {
+          "sha256": "4bf74d82236dac218138da5ef665e0e544d6dc388789c0a94aeebc55877f0939",
+          "lineCount": 394
+        }
+      }
+    },
+    {
+      "moduleId": "pci-certification",
+      "directory": "PciCertification",
+      "sha256": "594f7e5cbc8f6fcfe9d209004cc1cbd10910b2fd93756036bf691c76b9130b1c",
+      "lineCount": 1095,
+      "referencedStandards": [
+        "PCI-SSC-Blog-Publishes-PTS-HSM-v5-0",
+        "PCI-PTS-Listing-Field-Definitions",
+        "PCI-SSC-P2PE-Program-Page",
+        "PCI-SSC-Blog-KMO-v1-0-Published",
+        "PCI-SSC-Blog-Authentication-Cryptography-Guidance",
+        "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures",
+        "NIST-CMVP-140-2-to-140-3-Transition-Timeline",
+        "Just-Released-Version-3-1-of-the-PCI-PIN-Security-Standard",
+        "PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management",
+        "PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry",
+        "PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "27bb790824e7bfcfbc7b51c61484d46e26fc9938104cd803b8d369a4e5679385",
+          "lineCount": 63
+        },
+        "curious-summary.md": {
+          "sha256": "a80e7c0061ea18a101619b62beec1d9516f2199e9c59d89c630642bf204c610f",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "0c9312e3bebc1578f3760bb7aa33c13d668bc51ec5fc3e4a336c5be3604881eb",
+          "lineCount": 29
+        },
+        "data/allExercises.ts": {
+          "sha256": "e72d5754bc6974577173cb69ffad2600b9e551456367c1bf350a88e8f2ee0f63",
+          "lineCount": 6
+        },
+        "data/pciData.ts": {
+          "sha256": "3ba64d43ced060b2b6b3329079f21da1ef572d147550a01ad18cc785515960b8",
+          "lineCount": 844
+        },
+        "data/pciListingFixture.ts": {
+          "sha256": "bc7623681c336c74e59c2c7a37da0f078f09279304bd3da6a952de56723c6ebf",
+          "lineCount": 137
+        }
+      }
+    },
+    {
+      "moduleId": "pki-enrollment-protocols",
+      "directory": "PKIEnrollmentProtocols",
+      "sha256": "721dc59321d21d9c6be63965e909badeeec5a29e633f26616f6cb4dbc5d9b761",
+      "lineCount": 222,
+      "referencedStandards": [
+        "IETF-RFC-7030-EST",
+        "RFC 9810",
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 9629",
+        "RFC 9811",
+        "RFC 9881",
+        "RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra",
+        "RFC-4211-Internet-X-509-PKI-Certificate-Request-Message-Form",
+        "RFC-9908",
+        "RFC-9909",
+        "RFC-9935",
+        "RFC-9936"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "52e48cace2964d50af7696211cf0598ff44153d5e0820377449f422c72deb489",
+          "lineCount": 78
+        },
+        "constants.ts": {
+          "sha256": "e8c754ebf032820c86bd5818b14f3dbfb1a5508cd983800e51a4731bdd0c0620",
+          "lineCount": 65
+        },
+        "curious-summary.md": {
+          "sha256": "d446a67b2b164b7d335510bd42399c640709a230a4daf0e66683f222125e8877",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "e1592942d4b75ff179c2f81d0fea9a20c6352320f8ff70121e3cb055486773a4",
+          "lineCount": 61
+        }
+      }
+    },
+    {
+      "moduleId": "pki-workshop",
+      "directory": "PKIWorkshop",
+      "sha256": "b64e135964524db0bf6bcae458fcf209b152a3e84290e08d026719b65c2ace3f",
+      "lineCount": 150,
+      "referencedStandards": [
+        "FIPS 204",
+        "FIPS 205",
+        "RFC 5280",
+        "RFC-6960",
+        "IETF RFC 8555",
+        "RFC 9881",
+        "RFC-9763",
+        "NIST IR 8547",
+        "RFC 8017",
+        "NIST-SP-800-131A-Rev3",
+        "RFC-2986-PKCS-10-Certification-Request-Syntax-Specification",
+        "IETF RFC 5480",
+        "RFC-6066-Transport-Layer-Security-TLS-Extensions-Extension-D",
+        "RFC-9909",
+        "Codes-for-the-representation-of-names-of-countries-and-their",
+        "Electronic-Signatures-and-Infrastructures-ESI-Certificate-Pr",
+        "Lightweight-Directory-Access-Protocol-v3-UTF-8-String-Repres",
+        "Network-Domain-Security-NDS-Authentication-Framework-AF",
+        "X.509"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "d5587b4c424e246cb35d8ef3baaf16744b62667d6d034465a4ad84417807aab2",
+          "lineCount": 105
+        },
+        "curious-summary.md": {
+          "sha256": "59ffc6092d891f5b12a6ca7c8c445fcfc09e56d20656c95bb824f11343507d73",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "51742b51d666dc99855e1a3b21396db1d2b00c8d20d84c51b8974d4886fb8716",
+          "lineCount": 29
+        }
+      }
+    },
+    {
+      "moduleId": "platform-eng-pqc",
+      "directory": "PlatformEngPQC",
+      "sha256": "cb278d529df893384dbf51161d958918d7667bda3095ad309a36ac26d05ea164",
+      "lineCount": 1976,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "RFC 8879",
+        "RFC 9580",
+        "NIST SP 800-227",
+        "FIPS 186-5",
+        "NSA CNSA 2.0",
+        "FIPS-180-4",
+        "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp",
+        "Sigstore-Post-Quantum-Cryptography-2025",
+        "RFC 3161"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "087c65d174500905839dd8c995ba4affe325935465f25d20a0ccb6cddff3ceec",
+          "lineCount": 81
+        },
+        "curious-summary.md": {
+          "sha256": "8796d9d707da7b9c2d3ceec05a44dd4169bb4ac7f35524de5283d0aba47596f1",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "d8c0098db32bd9c29078d38b893fc75afc6e626dcd946f38c772e22f18f59317",
+          "lineCount": 104
+        },
+        "data/certManagerAlphaSample.ts": {
+          "sha256": "6815ba08d101e4c82f825e1fe7627de57fd30bc279906763cf97829dbcdf2858",
+          "lineCount": 87
+        },
+        "data/iacCryptoData.ts": {
+          "sha256": "2141f024e6c16801cc51ff5dab72e9714daf0316646f8104701b06d46831a22d",
+          "lineCount": 148
+        },
+        "data/monitoringToolsData.ts": {
+          "sha256": "e294bf22378cda2847a080b4768a438f1e516c228064942bfd81876e673d8ac6",
+          "lineCount": 418
+        },
+        "data/openBaoPolicyExamples.ts": {
+          "sha256": "b0048149a917ad4ce32692b790aaf237f107beb23e1d3f30efa1a0fbdf5380d0",
+          "lineCount": 29
+        },
+        "data/pipelineStagesData.ts": {
+          "sha256": "7106f007337a8cf790085cb585853d4421965441341cbfba411b6004c36f0420",
+          "lineCount": 393
+        },
+        "data/platformEngConstants.ts": {
+          "sha256": "31bf533e87a6285f6ecd2ce359d7d69aafaa50bf57c6d30c6cd3cb6d8bbb727a",
+          "lineCount": 179
+        },
+        "data/policyRulesData.ts": {
+          "sha256": "717c94b126816e3fba058503231f4824cc38612d107a7ddd1cb6e457f727e4ae",
+          "lineCount": 172
+        },
+        "data/provenanceSample.ts": {
+          "sha256": "3b6477cd15fb00f0dbf74e0c23b2a48840171311fa8b59883c6ecd09c8a57e9d",
+          "lineCount": 21
+        },
+        "data/signingToolsData.ts": {
+          "sha256": "6305788103691811bf18571918cfa3ff007a682911b2b91d2b6f89df825f99c6",
+          "lineCount": 134
+        },
+        "data/tlsObservationSample.ts": {
+          "sha256": "7022ee92e57636df3b85ef09b28fd94e7e9499311a9cdc247de7b18629647648",
+          "lineCount": 194
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-business-case",
+      "directory": "PQCBusinessCase",
+      "sha256": "4499601851b1d049b8cae79969f55103e828c455f8f251f4e6ea881e013f585f",
+      "lineCount": 215,
+      "referencedStandards": [
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "EO-2026-06-22-Securing-the-Nation",
+        "Cyentia IRIS 2025",
+        "FIPS-140-3",
+        "FIPS-140-3-STANDARD",
+        "NIST CSWP 39",
+        "NetDiligence Cyber Claims Study 2025",
+        "GRI-Quantum-Threat-Timeline-2025",
+        "PSD2-Directive-EU-2015-2366",
+        "HIPAA-Administrative-Simplification-Enforcement-Interim-Fina",
+        "Regulation-EU-2016-679-General-Data-Protection-Regulation",
+        "Summary-of-the-HIPAA-Privacy-Rule",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "ef6f318131b052828daef2a557a0f67ac63d0ac00cfadfeed96128d9c1b6b47d",
+          "lineCount": 70
+        },
+        "curious-summary.md": {
+          "sha256": "b825d4220c3eedb3cdfe44558c45461f7e4a731ef2c5e06588e5cb4d13511a38",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "53d26fe4237d168159e5716ca64801df29eff0e9d63b7ae6d163e67e90e38bbb",
+          "lineCount": 33
+        },
+        "data/businessCaseScenarios.ts": {
+          "sha256": "ef0027411b33765f2c0e5883f5db46c7c46eca93ab163162c3bbf039126e0ca8",
+          "lineCount": 96
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-candidates",
+      "directory": "PQCCandidates",
+      "sha256": "3c0eb445d32f4ebea2c30be844eac29fd60ef8a832f159f49eb8f56f1aee2923",
+      "lineCount": 1142,
+      "referencedStandards": [
+        "NIST IR 8610",
+        "FIPS 203",
+        "NIST IR 8545",
+        "FIPS 204",
+        "KpqC-Competition-Results",
+        "FIPS 205",
+        "NIST IR 8413",
+        "NIST IR 8547",
+        "Falcon-Spec-v12",
+        "NIST-IR-8528",
+        "ISO/IEC 14888-4:2024",
+        "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur",
+        "ISO/IEC 18033-2:2006"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "fa58bf5441d67d10d76a0b5e52864faf59f924f42f02c16b904dcb09db1cc73e",
+          "lineCount": 94
+        },
+        "curious-summary.md": {
+          "sha256": "b4236329acd827a34a32cedf212d8d5be9b77d623a0bbc6ac33ac89d3b573bc6",
+          "lineCount": 17
+        },
+        "rag-summary.md": {
+          "sha256": "06bf3c2c17769ee2b56e13db815cadec0abdd21213cb0b3cd6c0459ae8907ec5",
+          "lineCount": 34
+        },
+        "data/candidates.ts": {
+          "sha256": "b8e342f3d5bb2d0948eee57206702da36d2173fc6a22a00c1ecca77c223cad28",
+          "lineCount": 198
+        },
+        "data/families.ts": {
+          "sha256": "edcb188d9da575e4d47bdd6e1607eb36228af5af3f791b0b94505081b0be3849",
+          "lineCount": 142
+        },
+        "data/kemHistory.ts": {
+          "sha256": "9cf4c014879d3b165fd43e150565f7be14c1016bc74ebf978ebfe729750e88ad",
+          "lineCount": 86
+        },
+        "data/lifecycleOutcomes.ts": {
+          "sha256": "d6d189f1ecec619f9abd3490c53c6941222df9101ab3086d3590eeb6089580fc",
+          "lineCount": 107
+        },
+        "data/nationalCandidates.ts": {
+          "sha256": "1ad3bc5b96c914a694bb1334b815b0b6e07d9ed7a8f95c0787b3cc77df750622",
+          "lineCount": 157
+        },
+        "data/rounds.ts": {
+          "sha256": "f3e26e53228903b2a24f4317587915b3af0037e7aff67072d6ca7f45f72c15ef",
+          "lineCount": 165
+        },
+        "data/worldwideBodies.ts": {
+          "sha256": "60d0cdd3db7f8a4abf4f2e8f5d4083d7c4a017fd2b4470c1c8eb3290ba551b11",
+          "lineCount": 142
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-governance",
+      "directory": "PQCGovernance",
+      "sha256": "d7dc7bf60ccc9c297c1e3b43108405c19057ed41babeb0915ff0b1d1a32b9cbc",
+      "lineCount": 312,
+      "referencedStandards": [
+        "OMB-M-23-02",
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "NIST SP 800-53",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "Falcon-Spec-v12",
+        "FIPS 186-5",
+        "NIST CSWP 39",
+        "NIST SP 800-208",
+        "NIST SP 800-88",
+        "FIPS-140-3-STANDARD",
+        "BSI TR-02102-1",
+        "NIST IR 8545",
+        "FrodoKEM-key-encapsulation-from-learning-with-errors",
+        "OMB M-23-02"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "d3a30044b67860ec7e586c441e4daeac02d1ffa96f8d8d076ac4ea1ac38a8ba0",
+          "lineCount": 94
+        },
+        "curious-summary.md": {
+          "sha256": "aff2b485d19ace4708ba08d135c573d87f998622e95245f716b33714369f6cb9",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "56258d287eb5185c3d872c13de5f17ace23f0c39655f69ba2086bebe87b41231",
+          "lineCount": 33
+        },
+        "data/governanceTemplates.ts": {
+          "sha256": "a7d8547a142c5c4f9aab75e32542088377254c883781e94f8536db21eb6cdb8b",
+          "lineCount": 169
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-grc",
+      "directory": "PqcGrc",
+      "sha256": "c0a2251a56de7277291084a55a4d53cb2f7b8ee3b57230e1b77dcc435454d89c",
+      "lineCount": 574,
+      "referencedStandards": [
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "OWASP-CycloneDX-CBOM-Guide",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-208",
+        "ISO-31000-2018-Risk-management-Guidelines",
+        "CycloneDX CBOM"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "789f723a9d9d70c049019a4139d63a4e68df2af5ff130f2e5325b1640506e4d8",
+          "lineCount": 75
+        },
+        "curious-summary.md": {
+          "sha256": "f341d737b4fddb665fd3e1ff244621f31dee6905cfdbb7579e2e4bfa95cde6a8",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "790de230e53b99371f8df8aa3d9f47981d8044bc3ab704b95ddc4ef570dbd960",
+          "lineCount": 35
+        },
+        "data/grcData.ts": {
+          "sha256": "2b4679db3e9e0a91d8d9b0ea5ac25941904061ac7b3b80df9479240e25cda665",
+          "lineCount": 448
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-hw-acceleration",
+      "directory": "PQCHardwareAcceleration",
+      "sha256": "01885ba8f2e5cec68ba1f27a1e3bd3c4e7e10f0633c7f15cf058fc46f10e0842",
+      "lineCount": 2454,
+      "referencedStandards": [
+        "FIPS 202",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "IACR-2018-952",
+        "IACR-2019-1086"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "1e917239c715acf3c83338a155b2fa51fd021a6d59b3a309a6e7bc60e0c88b38",
+          "lineCount": 63
+        },
+        "curious-summary.md": {
+          "sha256": "25dee7f00062a7ace1cf7a1c6b5a0ffb71799fb4f9f9e5595a134f49f10d5133",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "dac6868ad7853b9baf84dd2b9a817a8a49ae3065c38dc78d6df879f9ed801d98",
+          "lineCount": 49
+        },
+        "data/agility.ts": {
+          "sha256": "7251f0f774221c2866c3eed3124bbf4e461ed3f727297955590b6987e808aba3",
+          "lineCount": 175
+        },
+        "data/armWork.ts": {
+          "sha256": "a1b50465f74f86ae238d7a22d089c8c72a7414c9a23b1834463745cd9da2fc7f",
+          "lineCount": 222
+        },
+        "data/circuits.ts": {
+          "sha256": "75feadf0f5db0aefe723feded93d74571d2177e79c08cafef91c5a284388102d",
+          "lineCount": 153
+        },
+        "data/cited.ts": {
+          "sha256": "eb1f08305e3c1c72c409ec7be1cb8bf33fee2bec474a9feb701cad48eeef8aaf",
+          "lineCount": 725
+        },
+        "data/measurements.ts": {
+          "sha256": "1e5986cdc3fa60d2dcce6a15a2467cdc9c945b31151e8867022d58c376fcd079",
+          "lineCount": 484
+        },
+        "data/modelFitExamples.ts": {
+          "sha256": "b7540db951a2ad04efe712cd1a685d19f449572b8956223467c66287288dc0ba",
+          "lineCount": 57
+        },
+        "data/models.ts": {
+          "sha256": "f454e365d36bcb320aadf4a823f408d09a0c91ed30b0ce8024a1bbfed945fd24",
+          "lineCount": 200
+        },
+        "data/scenario39.ts": {
+          "sha256": "97e448622e63c9dd2e30e28f71729e80fb2bcd2ce9e87ec4c5dc0d540bfcfd2a",
+          "lineCount": 308
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-risk-management",
+      "directory": "PQCRiskManagement",
+      "sha256": "9ddfcc84c901f52570c407d8f691907a54a95c7683e600b40c0bae3f5df0078c",
+      "lineCount": 508,
+      "referencedStandards": [
+        "NIST SP 800-30",
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "NIST CSWP 39",
+        "RFC 9370",
+        "draft-ietf-ipsecme-ikev2-mlkem-09",
+        "NIST-SP-800-131A-Rev3",
+        "2025-Cost-of-a-Data-Breach-Report-Navigating-the-AI-rush-wit",
+        "NIST SP 800-131A"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "6a6812be6870ada29ae9e5046a8d42c0539872e80c5976739926048f61c69acb",
+          "lineCount": 96
+        },
+        "curious-summary.md": {
+          "sha256": "be4a6bb75b33b40cae96f65e5600db1ec5da3426264b598c7306342e8770d2ca",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "8dd15ffb778ca210d5c85d6dc371b6ad4ea331b45cebbf65b1eccdcb98f64e2f",
+          "lineCount": 31
+        },
+        "data/cnsaLabels.ts": {
+          "sha256": "ff9e9137ecf01b27b1cefeafb79395fbee75d73f630f85841c754e635be97905",
+          "lineCount": 22
+        },
+        "data/nssWorkedCases.ts": {
+          "sha256": "16a06f9fbcdc2ea04008f119a8b189c66280afcc530a4f32aad7058dea6c7ce9",
+          "lineCount": 140
+        },
+        "data/riskScenarios.ts": {
+          "sha256": "54eea7850eb3745e1ddf1ab6c98eeb0f6dddd17ac6e65877ed87a464c8fddbbf",
+          "lineCount": 203
+        }
+      }
+    },
+    {
+      "moduleId": "pqc-testing-validation",
+      "directory": "PQCTestingValidation",
+      "sha256": "cf34e6506408db9c601b79144487d083ed1585e67ebf7b6ed76ef93626bf800b",
+      "lineCount": 2040,
+      "referencedStandards": [
+        "FIPS 186-5",
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 9794",
+        "FIPS 202",
+        "FIPS-140-3-STANDARD",
+        "FIPS-180-4",
+        "NIST-SP-800-38D",
+        "FIPS-198-1",
+        "FIPS-197",
+        "VIAVI-PQC-Migration-WP-2026",
+        "EU-NIS-CG-Roadmap-v1.1",
+        "RFC-6928",
+        "NIST-ACVP",
+        "NIST-SP-800-140F",
+        "NIST-FIPS140-3-IG-PQC",
+        "RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3",
+        "RFC-10024",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "fbc2a5f5056ed6b3215424793ffdcd0aa6b9027293fb31fd19d838c06b7e5e64",
+          "lineCount": 93
+        },
+        "curious-summary.md": {
+          "sha256": "cb48eae655bfc5a9fd2f7434ca2de5e74bc8973fd8aa76831e151988d280c084",
+          "lineCount": 19
+        },
+        "rag-summary.md": {
+          "sha256": "73634e73abad018f56edf5cc5cf2a6675d8dc85ce8314bfb403d751d80991ad3",
+          "lineCount": 239
+        },
+        "data/learnPathTags.ts": {
+          "sha256": "306f324926f1effbfb9bdf7b84477ecd827f992bfe25fba34a8fd4e3561b735f",
+          "lineCount": 25
+        },
+        "data/testingConstants.ts": {
+          "sha256": "9714385f7914441430655e35ab723493465af8545da9d634ac7e4a54df9bd55d",
+          "lineCount": 1278
+        },
+        "data/testingToolData.ts": {
+          "sha256": "350aaa062fc8241c55bec78f42c4f68887fa89cbe18afa9aaf2e7d44b14ab607",
+          "lineCount": 386
+        }
+      }
+    },
+    {
+      "moduleId": "qkd",
+      "directory": "QKD",
+      "sha256": "0b9d1f11d3d3917d35e85e8bd5397eb6aedea7aac2141d7ca66b75b2fdc76c6b",
+      "lineCount": 485,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST-SP-800-108-R1",
+        "RFC 4253",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "ETSI-GS-QKD-014",
+        "NIST IR 8547",
+        "PKCS11-V32-OS-OASIS",
+        "RFC 5869",
+        "RFC-9258",
+        "FIPS-198-1",
+        "IETF RFC 7296",
+        "NIST-SP-800-56C-R2",
+        "Quantum-cryptography-Public-key-distribution-and-coin-tossin",
+        "Entanglement-based-secure-quantum-cryptography-over-1-120-ki",
+        "The-early-days-of-experimental-quantum-cryptography",
+        "Satellite-Relayed-Intercontinental-Quantum-Network",
+        "RFC 9846"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "84a15db0a3c6a6a1fb134543b0a97327fec6ffcefbb8a9876048a635c3474994",
+          "lineCount": 76
+        },
+        "curious-summary.md": {
+          "sha256": "154d0e1e0fd84d4e606aacc4be5bdd9a040180c166e2ce081aef46b90660da06",
+          "lineCount": 14
+        },
+        "rag-summary.md": {
+          "sha256": "da34913dfa5200d52586a754d6a59de5cb4be2bdc66548c9b4429fdcf0d7869f",
+          "lineCount": 33
+        },
+        "data/qkdDeployments.ts": {
+          "sha256": "4154436c45ad588a1b3541fce66a43230a83f91cada40b15ed8425debc714d2c",
+          "lineCount": 362
+        }
+      }
+    },
+    {
+      "moduleId": "quantum-threats",
+      "directory": "QuantumThreats",
+      "sha256": "d691e7422263eb1baf05a5b3889c25597be94d761f49e9a0bb4dea3a53bbb5b4",
+      "lineCount": 1289,
+      "referencedStandards": [
+        "ref-gidney-factor-rsa",
+        "ref-gidney-factor-rsa-8h",
+        "Google-QuantumAI-EC-Crypto-Quantum-2026",
+        "FIPS 203",
+        "Reducing-the-Number-of-Qubits-in-Quantum-Factoring",
+        "Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms",
+        "NIST IR 8547",
+        "FIPS 186-5",
+        "FIPS 204",
+        "NSA CNSA 2.0",
+        "NSM-10",
+        "A-fast-quantum-mechanical-algorithm-for-database-search",
+        "Factoring-using-2n-2-qubits-with-Toffoli-based-modular-multi",
+        "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr",
+        "GRI-Quantum-Threat-Timeline-2025",
+        "ref-bravyi-quantum-memory"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "2bc5735ec14a78120a860787e715927ce8434534398ae98b72338a41b3bf7484",
+          "lineCount": 97
+        },
+        "curious-summary.md": {
+          "sha256": "002bf924fb315d4287c891c7200cc74e2e7ba7cae92de80af8deefc487e642ba",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "9a979832167354c7ac9c5f621a46cf9cc062f0bba7d9e974baed51cfd1196b81",
+          "lineCount": 36
+        },
+        "data/algorithmVulnerabilities.ts": {
+          "sha256": "42e05cccbdeec33d7625567bb80b7473f8bc79589259bf7736f6540991f374e2",
+          "lineCount": 153
+        },
+        "data/quantumConstants.ts": {
+          "sha256": "8333958753ea61cc20706e50e03c77bf157b22ec630e369151432706fbe2c6b1",
+          "lineCount": 985
+        }
+      }
+    },
+    {
+      "moduleId": "quiz",
+      "directory": "Quiz",
+      "sha256": "5e5651b03ed9881ccba2777b43f132741fe21f67a8fad1ae89cab41ed7fde425",
+      "lineCount": 21,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": false,
+      "hasRagSummary": false,
+      "files": {
+        "manifest.ts": {
+          "sha256": "641c23d27a7f26c40b05ced8af3a9722e229c63945e3038e97811fadb186514c",
+          "lineCount": 21
+        }
+      }
+    },
+    {
+      "moduleId": "research-quantum-impact",
+      "directory": "ResearchQuantumImpact",
+      "sha256": "93c5741830ddcd81f2a5528484d1dd5d03b4e6cbdb6c89b32a236e350ac1e0bc",
+      "lineCount": 504,
+      "referencedStandards": [
+        "NIST SP 800-208",
+        "NIST-SP-800-90A-R1",
+        "FIPS 203",
+        "NIST IR 8547",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST IR 8105",
+        "NIST IR 8309",
+        "NIST IR 8413",
+        "FIPS-140-3-STANDARD",
+        "NIST SP 800-227",
+        "NIST-SP-800-90B",
+        "NIST-SP-800-90C",
+        "NIST SP 800-90B",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "a5343820f4472d6e6bd96cfece22f64f0c5e9fc865e94fb7e3ca1960c6a94f8f",
+          "lineCount": 81
+        },
+        "data.ts": {
+          "sha256": "ad60dcaeda7dede2393009c1a84ee2e74d3786a9fdf1d34715c84cabee178344",
+          "lineCount": 351
+        },
+        "curious-summary.md": {
+          "sha256": "430f3dfd68db2d3d6850adb36842fdc0741166644399cf684ac4e4d480008897",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "3224929f9268d8d86f2a19339a1f3454977324685622646b183cb1018f835086",
+          "lineCount": 56
+        }
+      }
+    },
+    {
+      "moduleId": "sbom",
+      "directory": "Sbom",
+      "sha256": "33ed1ac62ec0dbdbee01d90a4367b0ada5250a60d8b8661c5e953fff7628ad2c",
+      "lineCount": 164,
+      "referencedStandards": [
+        "SPDX-Spec-ISO-5962",
+        "CycloneDX-Spec-Overview",
+        "2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM",
+        "OASIS-CSAF-2.0-VEX",
+        "EO-14028",
+        "EU-CRA-REG-2024-2847",
+        "SPDX / ISO 5962",
+        "CycloneDX / ECMA-424",
+        "NTIA Minimum Elements",
+        "CISA 2026 Minimum Elements v2.1",
+        "OASIS CSAF 2.0 (VEX)"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "f0ce02dcb51ee575083a68dc3dbb09ef8579d3ccd30c56fca6df9211c3769573",
+          "lineCount": 69
+        },
+        "curious-summary.md": {
+          "sha256": "6abc7ca21f81fd86ab4b173feda1e7ebd4d38a5ba9e7b1e4a7d188fccebe866d",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "71b37489afd90100629a25e2245f09f29b60555143ce3118c5b0440a68fe39f4",
+          "lineCount": 21
+        },
+        "data/sampleComponents.ts": {
+          "sha256": "ed8edebc38dc68266012a6e97c6b1fa68ee6fba895154b7838ce74afa9ccd011",
+          "lineCount": 56
+        }
+      }
+    },
+    {
+      "moduleId": "secrets-management-pqc",
+      "directory": "SecretsManagementPQC",
+      "sha256": "27a9d56112bdb574abbd7d4dfe0dc447d3e26f9346fc86468299cdfd4d69948b",
+      "lineCount": 964,
+      "referencedStandards": [
+        "NIST-SP-800-57-Pt1-R5",
+        "FIPS 203",
+        "FIPS 204",
+        "NIST SP 800-227",
+        "BIP-32",
+        "BIP-39",
+        "RFC 9180",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-38D",
+        "FIPS-198-1",
+        "RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security",
+        "NIST-SP-800-132",
+        "AWS-KMS-adds-support-for-post-quantum-ML-DSA-digital-signatu",
+        "NIST SP 800-57",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "fe1cd768195da6c03a4dab2369aa54062adc4af17131882826550ae1f69749c5",
+          "lineCount": 94
+        },
+        "curious-summary.md": {
+          "sha256": "be752d949624153bd1953690358e2c2ce3a727e967ec731d384e0660fd7eeb20",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "486dc841872f5ece3ad34f1e5ec54f1d15e822fe17acfcb91df1657514b5a047",
+          "lineCount": 51
+        },
+        "data/openBaoSigningContract.ts": {
+          "sha256": "a132fed961fff4efd72dc017b2c13dd74904aa00c03bdbaf05160f2cdfd93a0b",
+          "lineCount": 45
+        },
+        "data/secretsConstants.ts": {
+          "sha256": "1a7f0dcc2f1ba1827664c3dcad124a27e765c9ae1974564834bc370e8bd379d6",
+          "lineCount": 670
+        },
+        "data/secretsProviderData.ts": {
+          "sha256": "345b371055012f36d1f96c6e42b1d1714fc035ca16ef0d68ae45b78ce5b9fac0",
+          "lineCount": 88
+        }
+      }
+    },
+    {
+      "moduleId": "secure-boot-pqc",
+      "directory": "SecureBootPQC",
+      "sha256": "8a4fd46a20e7210cedd039263299679d628349fa5ca348563301b9726e46f007",
+      "lineCount": 908,
+      "referencedStandards": [
+        "FIPS 204",
+        "RFC 9882",
+        "RFC 9814",
+        "FIPS 205",
+        "FIPS 186-5",
+        "FIPS-180-4",
+        "NSA CNSA 2.0",
+        "RFC 5652",
+        "RFC 9019",
+        "UEFI-SPEC-2.10-SecureBoot",
+        "PKCS11-V32-OS-OASIS",
+        "ANSI X9.62",
+        "NIST SP 800-208",
+        "NIST-FIPS140-3-IG-PQC",
+        "NIST-ACVP",
+        "RFC 8017",
+        "RFC 9881",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag",
+        "ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M",
+        "RFC-9909",
+        "CRYSTALS-Dilithium-Spec-v31",
+        "RFC 8554",
+        "NIST-SP-800-193",
+        "NIST-SP-800-140",
+        "NIST-SP-800-140B",
+        "NIST-SP-800-140C",
+        "NIST SP 800-161r1",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "1e0e292f9871f5c2ae5d9acd09e86f2e519d071416f3245d3eaaa8bee2539342",
+          "lineCount": 120
+        },
+        "curious-summary.md": {
+          "sha256": "f6be74df15cf47242946c21bd9d3714bddde2691a4ce38c8d531469457b33f72",
+          "lineCount": 20
+        },
+        "rag-summary.md": {
+          "sha256": "efd3c8f4f8a45496314d186fb71941d67e67fa62468268674db44c7e5ac61fe3",
+          "lineCount": 64
+        },
+        "data/labTestsSummaryRows.ts": {
+          "sha256": "3d99df419cc1f82ec8bf6a2c9c64f99c2df65b941129157e58c379a7de38c5bd",
+          "lineCount": 34
+        },
+        "data/secureBootConstants.ts": {
+          "sha256": "42f3f3400f6816f8db0587454e899a5eed98841aa7b7d0f9ecfadb971ae4ba7e",
+          "lineCount": 469
+        },
+        "data/secureBootProviderData.ts": {
+          "sha256": "ef5590a5e19afc5c81ad0320dadcb3fd391723805866c23b5e26697b33239082",
+          "lineCount": 201
+        }
+      }
+    },
+    {
+      "moduleId": "skills-team-structure",
+      "directory": "SkillsTeamStructurePqc",
+      "sha256": "25c5fa16500064e3c85a5193d505f0d276dd323aae9a913031fe81b046d8efc5",
+      "lineCount": 459,
+      "referencedStandards": [
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "OWASP-CycloneDX-CBOM-Guide",
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "Falcon-Spec-v12",
+        "NIST SP 800-181r1",
+        "PQCC-Migration-Roadmap-2025",
+        "CycloneDX CBOM"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "173d4af02a666c1fb5b2ded8adde5b9dbf262f711775ad8c36e5907d10023e40",
+          "lineCount": 94
+        },
+        "curious-summary.md": {
+          "sha256": "8a2fb6b61d2e5e6edd6d39e2c17aaf1c9518a100a037f7c9a487a503924aa320",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "a00fe4cc14482cd8671fb1990a5fe0e52778799487e2b8e07c61ff752dd44205",
+          "lineCount": 34
+        },
+        "data/teamModel.ts": {
+          "sha256": "fc88d08ee321a855fe3875fb137b6e76e035bd1555e83d10290aff48fbdeb9fe",
+          "lineCount": 315
+        }
+      }
+    },
+    {
+      "moduleId": "slh-dsa",
+      "directory": "SLHDSAModule",
+      "sha256": "bb583d77bb4400825c9e4efc5c7457d571705d06bcd87b7a57825899e451c213",
+      "lineCount": 437,
+      "referencedStandards": [
+        "FIPS 205",
+        "BSI TR-02102-1",
+        "FIPS 204",
+        "NIST SP 800-208",
+        "RFC 8391",
+        "RFC 8554",
+        "ACVP-SLH-DSA-JSON-Specification",
+        "NIST-FIPS140-3-IG-PQC",
+        "NSA CNSA 2.0 FAQ"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "623bd6c620660dfb28c35631a12ad1d7012a8f6c6f7307292256d6767f214063",
+          "lineCount": 43
+        },
+        "curious-summary.md": {
+          "sha256": "3a8c09586716872bdf02f31b1588f274a50b07ab8c0f72708c9ae7dae7e81834",
+          "lineCount": 22
+        },
+        "rag-summary.md": {
+          "sha256": "579e6bb0c4ac7eaea9b2198dfddf15da56f2b05a2caf3d326e7ad8713b9b991a",
+          "lineCount": 50
+        },
+        "data/slhdsaData.ts": {
+          "sha256": "0db16e6c221d1f5ae501d9e6b8f2d61ea676829ebafba27104c2290dc77a9231",
+          "lineCount": 322
+        }
+      }
+    },
+    {
+      "moduleId": "soc-implementation-pqc",
+      "directory": "SocImplementationPqc",
+      "sha256": "406291a9eb1180b8d319dfebb42cbf9d434698ee0a40f096b7e98e892f1beb6e",
+      "lineCount": 534,
+      "referencedStandards": [
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "NIST IR 8547",
+        "FIPS 203",
+        "NIST SP 800-227",
+        "FIPS 204",
+        "FIPS 205",
+        "RFC 9846"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "1a690c3a5a80b894d1f1a9ed285272b56a6fde779a8fad919713ef7c3ebb9be6",
+          "lineCount": 81
+        },
+        "data.ts": {
+          "sha256": "c91da9f7cf94444c2a3c7873d07387f285a5b3e1bc8e49da99009e4ba3fc5a91",
+          "lineCount": 362
+        },
+        "curious-summary.md": {
+          "sha256": "2ce85cef871b8f15641db4d10942828418908ac6e346b858c609118dfecaa021",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "bfb0ff2effa3c5c8ad1339bf1e13a697afa9522b567b2944e09ab70bc42a6866",
+          "lineCount": 75
+        }
+      }
+    },
+    {
+      "moduleId": "software-supply-chain-pqc",
+      "directory": "SoftwareSupplyChainPQC",
+      "sha256": "a48912377c2d79370272836db7330f7b4b6b25eabc8a8da12b247bfc930e90f4",
+      "lineCount": 1067,
+      "referencedStandards": [
+        "NIST SP 800-218",
+        "NIST-SP-800-204D",
+        "Sigstore-Algorithm-Registry",
+        "CABF-Code-Signing-BR-v3-11",
+        "draft-ietf-suit-manifest",
+        "UEFI-SPEC-2.10-SecureBoot",
+        "RFC 8778",
+        "RFC-9964",
+        "SLH-DSA-for-JOSE-and-COSE",
+        "RFC 9708",
+        "RFC 9814",
+        "RFC 9882",
+        "RFC 9881",
+        "RFC-9909",
+        "RFC 9802",
+        "RFC 9980",
+        "RFC 9580",
+        "ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra",
+        "Uptane-Standard-2-1-0",
+        "TUF-Specification-v1-0-37",
+        "NIST-SP-800-193",
+        "RFC-9124",
+        "SLSA-v1-2-Build-Track-Basics",
+        "SLSA-v1-2-Build-Provenance",
+        "SLSA-v1-2-Build-Verifying-Artifacts",
+        "in-toto-Attestation-Statement-v1",
+        "2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM",
+        "RFC 9019",
+        "draft-ietf-lamps-pq-composite-sigs-19",
+        "RFC-9955-Hybrid-Signature-Spectrums",
+        "NSA CNSA 2.0 FAQ",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST SP 800-208",
+        "RFC 8554",
+        "RFC 8391",
+        "FIPS-140-3-STANDARD",
+        "NSA CNSA 2.0"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "fcfdff8dccf81f8211e10d15fdbd1beee9ae90c87a2f02a08cead26d10d4c8a6",
+          "lineCount": 80
+        },
+        "curious-summary.md": {
+          "sha256": "f649b4244dead0d93b2917d823fc07981010b021b73b8533cbfb252307fb6e3c",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "10bffc972b5608b36860860bdb01b6da3019cfeb47c065dbc6ae41036b074ae8",
+          "lineCount": 85
+        },
+        "data/chainData.ts": {
+          "sha256": "bb0f7e947ce6958286e8d278a0484fac0792d9be20a6cb178a484db96e4e0510",
+          "lineCount": 112
+        },
+        "data/provenanceData.ts": {
+          "sha256": "6e6426b4e6545a780225364c6940434122fc9aad522266244708980076069d30",
+          "lineCount": 102
+        },
+        "data/sourceClaims.ts": {
+          "sha256": "a03a7ade0bc034d2fcdd18a4715ceac8ee6218b74816a7048f55be4b808f0521",
+          "lineCount": 335
+        },
+        "data/statusMapData.ts": {
+          "sha256": "55511f18f829cd5ee69e103eb3588614fdab4bf816928236cd0d5ab2e40762e5",
+          "lineCount": 153
+        },
+        "data/transitionData.ts": {
+          "sha256": "ddb5058c335df45ede01fcde581b346952fa4e95b37a9e2c0e7cb51a6ce3cfeb",
+          "lineCount": 99
+        },
+        "data/updateFrameworkData.ts": {
+          "sha256": "1282a5c0e43232b75162157a959e0fb5c2c0e00cd8817682e6f067de1b2fe41a",
+          "lineCount": 83
+        }
+      }
+    },
+    {
+      "moduleId": "standards-bodies",
+      "directory": "StandardsBodies",
+      "sha256": "f1be6ab512343f5dff1befd3e96fc572954919dfa74dc16b392a00dc5eedf3d9",
+      "lineCount": 1186,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "Falcon-Spec-v12",
+        "NIST SP 800-227",
+        "RFC 9629",
+        "RFC 9814",
+        "RFC 9882",
+        "ANSSI PQC Follow-up Paper",
+        "ANSSI PQC Position Paper",
+        "BSI TR-02102-1",
+        "BSI TR-02102-2",
+        "BSI TR-02102-3",
+        "BSI TR-02102-4",
+        "ENISA PQC Guidelines",
+        "ETSI TR 103 619",
+        "ETSI TS 103 744",
+        "EUCC v2.0 ACM",
+        "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur",
+        "ISO/IEC 14888-4:2024",
+        "ISO/IEC 18033-2:2006",
+        "KpqC-Competition-Results",
+        "NIAP",
+        "NIST IR 8547",
+        "NIST-FIPS140-3-IG-PQC",
+        "NSA CNSA 2.0",
+        "NSA CNSA 2.0 FAQ",
+        "NSA CSfC PQC Guidance Addendum",
+        "ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com",
+        "ISO-IEC-20085-1-2019-Test-tool-requirements-and-test-tool-ca",
+        "3GPP-PQC-Study-2025"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "413c42eab4ba0710226506eeaa3fa18bd9c6f1870c97251038d11f0237643abe",
+          "lineCount": 92
+        },
+        "data.ts": {
+          "sha256": "8d8f0aeb43c4fddfd4ed102801e470c523be0fb6ace9bb7d91cab9d689e4b038",
+          "lineCount": 761
+        },
+        "curious-summary.md": {
+          "sha256": "276252986c854bcb53bccdd4f8f3f85326b9c554b2310cb917a9deea8ef7a8f9",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "ae3609331e3a83a444196172b9930853dd53ba6cf7f74ddc7e47256ad3c148f2",
+          "lineCount": 128
+        },
+        "data/workshopScenarios.ts": {
+          "sha256": "77529630d35e7b88029474f1aee67fe58e8144afbfb1b8a708e4e2acde04488e",
+          "lineCount": 189
+        }
+      }
+    },
+    {
+      "moduleId": "stateful-signatures",
+      "directory": "StatefulSignatures",
+      "sha256": "42995ccbb8ca0947a0b47b490634c5773d585065b8f4d333baeee41203498622",
+      "lineCount": 1115,
+      "referencedStandards": [
+        "FIPS 205",
+        "RFC 8554",
+        "RFC 8391",
+        "NIST SP 800-208",
+        "FIPS 204",
+        "NSA CNSA 2.0",
+        "RFC 9858",
+        "RFC-10033-Hash-Based-Signatures-State-and-Backup-Management",
+        "FIPS-140-3-STANDARD",
+        "FIPS-180-4",
+        "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp",
+        "NIST-FIPS140-3-IG-PQC",
+        "NSA CNSA 2.0 FAQ"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "053f7cafcf87aec3c8bd0b6a752c839435ad0bdf2b46ee58f2cabb9e3ed9f59a",
+          "lineCount": 87
+        },
+        "curious-summary.md": {
+          "sha256": "509fa3abb032a9ac55f36d0eac61a6a1687f6ef886fb212e349a6ab151703859",
+          "lineCount": 22
+        },
+        "rag-summary.md": {
+          "sha256": "5d1f6bc6a020cee996b3e39c632a0abfa4797a62787bdce61394d4cc13a28604",
+          "lineCount": 45
+        },
+        "data/signatureSizes.ts": {
+          "sha256": "f4779bf8a4ff92cce1d1937bd4e9b035ab8ccfda0d08bc92d14865d145bd37e8",
+          "lineCount": 96
+        },
+        "data/statefulSigsConstants.ts": {
+          "sha256": "72bd8783f2de88a703883f4fd5320bd7f7649e0d41022a8aa31b1c40c003bd1a",
+          "lineCount": 865
+        }
+      }
+    },
+    {
+      "moduleId": "talking-about-pqc",
+      "directory": "TalkingAboutPQC",
+      "sha256": "6ae4073d6e9547b2439d2419217acbcac33bf92aea619682a2bd5641a47baa1a",
+      "lineCount": 272,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST IR 8547",
+        "NSA CNSA 2.0",
+        "EO-2026-06-22-Securing-the-Nation",
+        "OMB-M-26-15",
+        "FIPS-140-3-STANDARD",
+        "NIST-CMVP-MIP-List",
+        "NIST-CMVP-Validated-Modules",
+        "ETSI-GR-QSC-001"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "7e1a8ddf8db6ed8bf34102bb4ffcea1a8457643c9f7bba74476394ea679ef83e",
+          "lineCount": 75
+        },
+        "data.ts": {
+          "sha256": "711376fbdaba5fe62d56ba7e79f72870d22badc16e17bec9837e6f94e50c6bf0",
+          "lineCount": 171
+        },
+        "curious-summary.md": {
+          "sha256": "b5035a6af1c771c9ec5ef3c77d332eea73ff7ae9fefe23c9687b680db4afc191",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "acc962a742ce92ef95929b06ff1bc3a8d05f8b43105f77d06bde1ef6097db5b4",
+          "lineCount": 10
+        }
+      }
+    },
+    {
+      "moduleId": "tls-basics",
+      "directory": "TLSBasics",
+      "sha256": "3e34aa9f8462f2378cacc2375aa1bbf0f6a00aa871ceeac64a2edc435e376e2b",
+      "lineCount": 144,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "RFC-10024",
+        "RFC-9849",
+        "NIST SP 800-227",
+        "draft-sheffer-tls-pqc-continuity",
+        "draft-ietf-plants-merkle-tree-certs",
+        "FIPS 205",
+        "RFC 8879",
+        "RFC-9162",
+        "A-Standard-for-the-Transmission-of-IP-Datagrams-over-Etherne",
+        "RFC 9846",
+        "X.509"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "f04d8bbcbdeab5ce6d4ef24188095180907f97d4028653c077ea7eefc40cc56d",
+          "lineCount": 75
+        },
+        "curious-summary.md": {
+          "sha256": "b9077934e7805a97f70b81197331e0169b4d4b58a69d371ad6847c16937f2033",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "e87c72fc43b4b83754cf9309ef59dd79b4735579121316bde9f0c61b076a747e",
+          "lineCount": 51
+        }
+      }
+    },
+    {
+      "moduleId": "trust-services-pqc",
+      "directory": "TrustServicesPQC",
+      "sha256": "f77d88f87ec61a68ea26e2906184b0e767c6a232867baa548d4c0104487b33ec",
+      "lineCount": 330,
+      "referencedStandards": [
+        "ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra",
+        "ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp",
+        "ETSI-EN-319-411",
+        "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp",
+        "eIDAS-2-Regulation",
+        "EIDAS-REG-910-2014",
+        "CSC-API-v2-Spec",
+        "FIPS 204",
+        "FIPS 205",
+        "NSA CNSA 2.0",
+        "RFC-5816-ESSCertIDv2-Update-for-RFC-3161",
+        "CIR-EU-2025-1929-Qualified-Electronic-Time-Stamps",
+        "Electronic-Signatures-and-Infrastructures-ESI-Algorithms-and",
+        "RFC 3161"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "152ea25cba38ab5f67ab9267ddbf4c06b79214c656ed7c768fc5ae76960fc5df",
+          "lineCount": 69
+        },
+        "curious-summary.md": {
+          "sha256": "810b34de38d8875f93a73b75a5a462933973b85b808430e53c04f7ecbc7532b1",
+          "lineCount": 18
+        },
+        "rag-summary.md": {
+          "sha256": "a238670bf5bb49227354331712260db9c780215f7bbd3cb4246f84656d698d1c",
+          "lineCount": 41
+        },
+        "data/trustServicesData.ts": {
+          "sha256": "065fa300c2e34af0b422e71d413ae4bda47b250da2d557d4410dea3f13b7029b",
+          "lineCount": 202
+        }
+      }
+    },
+    {
+      "moduleId": "vendor-risk",
+      "directory": "VendorRisk",
+      "sha256": "673c55a5deaf57660b99868ff596161f32c7ab871f6cd2498fd451832fe8bbe7",
+      "lineCount": 125,
+      "referencedStandards": [
+        "NIST IR 8547",
+        "NIST-CMVP-140-2-to-140-3-Transition-Timeline",
+        "FIPS 203",
+        "OWASP-CycloneDX-CBOM-Guide",
+        "FIPS 204",
+        "FIPS 205",
+        "NIST CSWP 39",
+        "NSA CNSA 2.0",
+        "FIPS-140-3-STANDARD",
+        "NIST SP 800-208",
+        "NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag",
+        "OpenSSH-Post-Quantum-Cryptography",
+        "NIST SP 800-161r1",
+        "CycloneDX CBOM"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "107e7913398312be2f05d867cc661d9e5be76340e196e2b7e9e89d9d5dcc8fc6",
+          "lineCount": 79
+        },
+        "curious-summary.md": {
+          "sha256": "5b851ea81370703b143a71f96837385f1e93773632e574ac1a636fca3bf7d519",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "f1f6e3b3eca5c61cc661194701ddc55f36d5d2995f883fc9892d9c2ce52a656f",
+          "lineCount": 30
+        }
+      }
+    },
+    {
+      "moduleId": "verification-closure",
+      "directory": "VerificationClosure",
+      "sha256": "5e2be6d0b99af6083f29667672043c768e6cabf925e642982035ee346a130f26",
+      "lineCount": 115,
+      "referencedStandards": [
+        "NIST IR 8547",
+        "ETSI TR 103 619",
+        "ETSI-TR-104-016",
+        "NIST CSWP 48",
+        "NIST SP 800-37",
+        "CISA-PQC-CATEGORY-LIST-2026",
+        "NIST SP 800-53",
+        "NIST-SP-800-131A-Rev3",
+        "ISO-IEC-27001-2022",
+        "UK-NCSC-Migration-Timelines-2025",
+        "NIST SP 800-131A",
+        "ISO/IEC 27001"
+      ],
+      "hasDataFile": false,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "79656dbd9debb082c87bb76ce540ad1158e696c98696add577b649a2e788c302",
+          "lineCount": 80
+        },
+        "curious-summary.md": {
+          "sha256": "3ddf61bee65364d5e0aece471ea767d6857770db72eadd76078fe7dcd8921471",
+          "lineCount": 17
+        },
+        "rag-summary.md": {
+          "sha256": "1ec3c687850fba9be98a7963dbba7a06aa1bb3e0f7a6fbde810c25fec6a29e75",
+          "lineCount": 18
+        }
+      }
+    },
+    {
+      "moduleId": "vpn-ssh-pqc",
+      "directory": "VPNSSHModule",
+      "sha256": "a1a5a64d40c70d76311bf0fbf9085c259d6e5d67641a10797539b6839e82487b",
+      "lineCount": 1472,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "RFC 9370",
+        "RFC-3526-More-Modular-Exponential-MODP-Diffie-Hellman-groups",
+        "IETF RFC 7296",
+        "RFC-7383",
+        "IETF RFC 8731",
+        "RFC-9242",
+        "draft-ietf-ipsecme-ikev2-pqc-auth-12",
+        "draft-ietf-ipsecme-ikev2-mlkem-09",
+        "RFC-9329",
+        "OpenSSH-9-9",
+        "Multiple-Authentication-Exchanges-in-the-Internet-Key-Exchan",
+        "RFC 9442"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": true,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "5ba027ea46f491042c4569d0f4dff795a37fecfc232393ea48844909daa7532d",
+          "lineCount": 71
+        },
+        "curious-summary.md": {
+          "sha256": "b2f0bdc829dc0fd11a1c9a23f5f4ea5ec6c3f20355bf9bd49478c77d88a94036",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "bde9ac9bcc60f5bba19c676b73e8fad6a666543fed4ff8370803a1716d33f80e",
+          "lineCount": 39
+        },
+        "data/ikev2Constants.ts": {
+          "sha256": "95ea3f28e3de27185dbaca8e46d224f9f9f57668f4907f089c666c83d85ee0ea",
+          "lineCount": 371
+        },
+        "data/measuredHandshakeFacts.ts": {
+          "sha256": "b1701ffeaa93d24a127dc56948da9732426a9fe937c979cd9c26b163c2d348fd",
+          "lineCount": 69
+        },
+        "data/measuredSshHandshake.ts": {
+          "sha256": "86780117323c203787d849dd337077fc890267b7970ee65433bf977ae6d11962",
+          "lineCount": 217
+        },
+        "data/measuredTlsHandshake.ts": {
+          "sha256": "87d324b15df40b4f5e26e1d94ac9cd6c952bdbd3ded6287aa823864f891fb26f",
+          "lineCount": 250
+        },
+        "data/protocolSizeComparisons.ts": {
+          "sha256": "27ce2b6907230ccb4e66fb4d8826a3aa130d0fb146e080da8c9d6c9810ef7598",
+          "lineCount": 286
+        },
+        "data/sshConstants.ts": {
+          "sha256": "bff96e2e646038b2ece7b3afb4415293f63c89cafc50893b9736eaf406083689",
+          "lineCount": 153
+        }
+      }
+    },
+    {
+      "moduleId": "web-gateway-pqc",
+      "directory": "WebGatewayPQC",
+      "sha256": "f4a9eb9c239cdf817843ca14d7a54496d64b11d836636e8c9772109d2e9dd6b4",
+      "lineCount": 1068,
+      "referencedStandards": [
+        "FIPS 203",
+        "FIPS 204",
+        "IETF RFC 8555",
+        "NIST SP 800-227",
+        "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
+        "RFC 8879",
+        "RFC-9162",
+        "FIPS-140-3-STANDARD",
+        "NIST-SP-800-38D",
+        "Amazon-CloudFront-launches-TLS-security-policy-with-post-qua",
+        "F5-BIG-IP-v21-1-is-now-generally-available-bringing-PQC-and",
+        "RFC 8555",
+        "RFC 9846",
+        "FIPS 140-3"
+      ],
+      "hasDataFile": true,
+      "hasConstantsFile": false,
+      "hasCuriousSummary": true,
+      "hasRagSummary": true,
+      "files": {
+        "content.ts": {
+          "sha256": "20ee3a7a7d693feb1eed6bab338b55e3f95d4178b4ad9b452d96950561cf612a",
+          "lineCount": 66
+        },
+        "curious-summary.md": {
+          "sha256": "e9865006f265c7464d6127cb96e623bc032df91e7985a260d307d1ae4244957e",
+          "lineCount": 16
+        },
+        "rag-summary.md": {
+          "sha256": "15ee46f4c8e61478c65003ec1ad57d4a5c97564f6d1a7737e8a906470850d1d9",
+          "lineCount": 34
+        },
+        "data/gatewayData.ts": {
+          "sha256": "7292e66136fbd5acaedc5c7951e8bb46d780d4afdee3ea1186d8f59e22572cdc",
+          "lineCount": 808
+        },
+        "data/measuredHandshakeComparison.ts": {
+          "sha256": "1f4ac24c91bdb120b4003f79f4c5b8f26793c76ba7f81c9e56b60145655a1981",
+          "lineCount": 144
+        }
+      }
+    }
+  ],
+  "infographicVisualReceipts": [
+    {
+      "moduleId": "pki-enrollment-protocols",
+      "fileName": "pqcstd_pki-enrollment-protocols.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 751833,
+      "sha256": "ce6d438db0a1e99e70f00afd484de2025bf0f0a0ca930d1f1dd0be0cd0c7993b",
+      "standardsRefs": [
+        "RFC 9810",
+        "RFC 7030",
+        "RFC 10073"
+      ],
+      "framingScope": "CMPv3 (RFC 9810), EST (RFC 7030), and ACME (RFC 8555) PKI enrollment & ML-KEM KemOtherInfo proof-of-possession"
+    },
+    {
+      "moduleId": "tls-basics",
+      "fileName": "pqcstd_tls-basics.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 723596,
+      "sha256": "eef9797085e723e7694b62a96c43ecc43abaa583ae4ee660612708e42afbfda0",
+      "standardsRefs": [
+        "RFC 8446",
+        "FIPS 203"
+      ],
+      "framingScope": "TLS 1.3 (RFC 8446) 1-RTT key schedule & hybrid X25519MLKEM768 key exchange framing"
+    },
+    {
+      "moduleId": "iot-pqc",
+      "fileName": "pqcstd_iot-pqc.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 2216720,
+      "sha256": "696a82f5b590bc3681c4176b50934eeebffa1dcb7d440a764468c89e5fa45e1d",
+      "standardsRefs": [
+        "FIPS 203",
+        "NIST SP 800-208"
+      ],
+      "framingScope": "Constrained IoT post-quantum TLS/DTLS fragmentation & stateful/stateless firmware verification"
+    },
+    {
+      "moduleId": "ot-pqc",
+      "fileName": "pqcstd_ot-pqc.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 2131093,
+      "sha256": "6bc6e1921fa96ee3530ad693b4716b800cad22879fb188826fd42386973d3c79",
+      "standardsRefs": [
+        "IEC 62443",
+        "NIST IR 8547"
+      ],
+      "framingScope": "Operational Technology (OT/ICS) passive-only discovery safety constraints & PQC conduit migration"
+    },
+    {
+      "moduleId": "hsm-pqc",
+      "fileName": "pqcstd_hsm-pqc.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 688939,
+      "sha256": "6cfe6f89fccb411cd2e4553c61a56d7172c2b4f5ec3f345aca43b49b30a76305",
+      "standardsRefs": [
+        "PKCS#11 v3.2",
+        "FIPS 140-3"
+      ],
+      "framingScope": "OASIS PKCS#11 v3.2 C_EncapsulateKey / C_DecapsulateKey & FIPS 140-3 HSM cryptographic boundary"
+    },
+    {
+      "moduleId": "migration-program",
+      "fileName": "pqcstd_migration-program.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 625344,
+      "sha256": "8f6c8a10edc0ad934fa204d15a2db7cc66f2137b206f20bf51bb834e44b55209",
+      "standardsRefs": [
+        "NIST IR 8547",
+        "NSA CNSA 2.0"
+      ],
+      "framingScope": "NIST IR 8547 (2030 deprecation / 2035 disallowance) & CNSA 2.0 phased enterprise migration roadmap"
+    },
+    {
+      "moduleId": "emv-payment-pqc",
+      "fileName": "pqcstd_emv-payment-pqc.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 708727,
+      "sha256": "76c3af6fc3f64b423307fa83ab0244f0bb2964f274b3c4e98b9633dfab806037",
+      "standardsRefs": [
+        "PCI DSS v4.0.1",
+        "FIPS 203"
+      ],
+      "framingScope": "EMVCo payment kernel & PCI DSS v4.0.1 Req. 4.2.1 / 12.3.3 post-quantum transition architecture"
+    },
+    {
+      "moduleId": "network-security-pqc",
+      "fileName": "pqcstd_network-security-pqc.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 794677,
+      "sha256": "e36a2f0a083b343a47b6d480ac1992b3653efd2fb27da386123aef61ecc83a64",
+      "standardsRefs": [
+        "RFC 8446",
+        "FIPS 204"
+      ],
+      "framingScope": "NGFW/SGW middlebox TLS double-handshake inspection & TCP MSS fragmentation overhead"
+    },
+    {
+      "moduleId": "pqc-testing-validation",
+      "fileName": "pqcstd_pqc-testing-validation.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 737639,
+      "sha256": "0c92b6da15a7058c756bf597fee6ad4f384cce25669869691c738adec5b2c00d",
+      "standardsRefs": [
+        "FIPS 140-3",
+        "ISO/IEC 17825"
+      ],
+      "framingScope": "Layered PQC validation: passive TAP discovery, active probing, TVLA side-channel & ACVP KAT boundaries"
+    },
+    {
+      "moduleId": "crypto-dev-apis",
+      "fileName": "pqcstd_crypto-dev-apis.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 682772,
+      "sha256": "f274205dfffc20c5c82bc0741c308649c6a5d3c7438acca1712588415c7b0c46",
+      "standardsRefs": [
+        "FIPS 203",
+        "PKCS#11 v3.2"
+      ],
+      "framingScope": "JCA/JCE KEM, OpenSSL 3.5 EVP_KEM, Go crypto/mlkem, and PKCS#11 v3.2 developer API surfaces"
+    },
+    {
+      "moduleId": "pqc-hw-acceleration",
+      "fileName": "pqcstd_pqc-hw-acceleration.png",
+      "width": 1254,
+      "height": 1254,
+      "byteSize": 774210,
+      "sha256": "4d8c8aaeef3630d4191b9aa4bd13a3eb63415c405931b9338780d67613f235cd",
+      "standardsRefs": [
+        "FIPS 203",
+        "FIPS 204"
+      ],
+      "framingScope": "NTT/INTT polynomial hardware offload, Keccak/SHAKE accelerators & PCIe/SoC latency bounds"
+    }
+  ]
+}

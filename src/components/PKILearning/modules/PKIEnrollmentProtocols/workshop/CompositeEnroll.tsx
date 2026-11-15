@@ -281,12 +281,12 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
         </p>
         <div className="flex flex-wrap gap-2">
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/19/"
+            href="https://www.rfc-editor.org/rfc/rfc10073"
             target="_blank"
             rel="noopener noreferrer"
           >
             <Button variant="outline" size="sm" className="gap-1">
-              draft-composite-sigs-19 <ExternalLink size={12} />
+              RFC 10073 (Composite ML-DSA) <ExternalLink size={12} />
             </Button>
           </a>
           <a

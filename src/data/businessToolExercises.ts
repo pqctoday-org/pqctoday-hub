@@ -263,6 +263,17 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
       answer: 0,
       why: 'Only vendor and FIPS measures use the catalogue, and only for products you select. Progress, compliance closure and pace are values you enter, and missing values stay unscored. A start year is planning context, not a measurement.',
     },
+    {
+      prompt:
+        'Click Load sample baseline on a fresh tracker, then switch the lens from Executive to Ops. What happens to the Overall Score?',
+      options: [
+        'It recalculates immediately because the Ops lens assigns different weights to the same sample baseline values',
+        'It resets to Not yet available',
+        'It stays identical because sample values ignore persona weights',
+      ],
+      answer: 0,
+      why: 'Loading the sample baseline fills the manual KPIs with fictional values labelled Hub sample baseline value (crossing the 70% scored-value coverage threshold), and switching the lens re-weights those same values.',
+    },
   ],
   'deployment-playbook': [
     {
@@ -344,6 +355,17 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
       answer: 0,
       why: 'CSWP.39 §5 step 3 audits the management-tools layer; a category with no coverage is a gap that has to change before a production key does.',
     },
+    {
+      prompt:
+        'Set Crypto Scanners to Automated, but leave Systems covered at 30%. How do the two headline scores and the gap list respond?',
+      options: [
+        'Hub Tool-Category Rating credits Automated, but Coverage-Adjusted Readiness scales it by 30% and keeps the category on the gap list as under 50% covered',
+        'Both scores read 100% and the category leaves the gap list',
+        'Systems covered only changes the exported CSV',
+      ],
+      answer: 0,
+      why: 'A tool capability that reaches only 30% of systems leaves 70% of the estate unexamined: Coverage-Adjusted Readiness multiplies the category rating by its systems-coverage share, and any category below 50% coverage remains flagged in the gap list.',
+    },
   ],
   'crypto-cbom-builder': [
     {
@@ -367,6 +389,17 @@ export const BUSINESS_TOOL_EXERCISES: Record<string, StepExercise[]> = {
       ],
       answer: 0,
       why: 'The digest is the top CVEs per selected product by severity, joined through CPE from the NVD snapshot: a short list you will actually read.',
+    },
+    {
+      prompt:
+        'On a fresh page, click Load sample watchlist. Why does oqs-provider increment "CPE coverage gaps" and show "No vulnerability data yet"?',
+      options: [
+        'It has no NIST NVD CPE match in the xref, which means coverage is unmapped — not that the product has zero vulnerabilities',
+        'It has been verified to have zero CVEs in NVD',
+        'It is excluded because it is a post-quantum library',
+      ],
+      answer: 0,
+      why: 'NVD CVE lookups join by CPE 2.3 identifier; a library without a matched CPE cannot be queried in the snapshot and is counted under CPE coverage gaps so unmapped dependencies are never mistaken for clean ones.',
     },
   ],
   'program-charter': [

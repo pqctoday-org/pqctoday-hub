@@ -11,3 +11,6 @@ A migration isn't finished when you add post-quantum cryptography — it's finis
 ## The Key Takeaway
 
 Close deliberately. Verify the highest-value systems completely and sample the rest; remove and then confirm-removed the old cryptography; and hand every ongoing responsibility (the crypto inventory, vendor monitoring, security detections, reporting) to a named permanent owner, accepting any leftover risk on the record. Then the program can formally end instead of fading away.
+
+- **ACVP KAT Conformance vs. Module Boundary Validation**: NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (`IUT`), whereas CMVP FIPS 140-3 and Common Criteria (`CC/EUCC`) validate the cryptographic module boundary, physical/logical isolation, RNG health tests (SP 800-90B), key zeroization, and side-channel protections.
+- **Evidence-Chain Verification vs. Sample Non-Equivalence**: An auditor or engineering lead closing a migration dossier must cross-check `Operational Environment (OE)`, `CAVP Algorithm Cert #`, `CMVP Module Cert #`, `Tested Version/Commit`, and `Security Target SHA-256` on a production CAVP/CMVP/CC certificate; a sample Hub exercise export or vendor marketing datasheet is never certification evidence.

@@ -30,6 +30,20 @@ export const CRITERIA = [
   { id: 'residual', label: 'Residual risk accepted by SteerCo (owner + re-eval date)' },
 ]
 
+export const CLOSURE_EVIDENCE_CHAIN_GUIDANCE = {
+  acvpVsModuleBoundary:
+    'NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (IUT), whereas CMVP FIPS 140-3 and Common Criteria (CC/EUCC) validate the cryptographic module boundary, physical/logical isolation, RNG health tests (SP 800-90B), key zeroization, and side-channel protections.',
+  productionCertificateCrossCheckFields: [
+    'Operational Environment (OE)',
+    'CAVP Algorithm Cert #',
+    'CMVP Module Cert #',
+    'Tested Version/Commit',
+    'Security Target SHA-256',
+  ] as const,
+  nonEquivalenceRule:
+    'A sample Hub exercise export or vendor marketing datasheet is never certification evidence.',
+} as const
+
 export interface ClosureInputs {
   owner: Record<string, string>
   date: Record<string, string>

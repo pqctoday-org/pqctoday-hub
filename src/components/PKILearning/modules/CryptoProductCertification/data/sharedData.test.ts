@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC,
   MANDATE_LABEL,
   MANDATE_SCOPE_NOTE,
   PQC_SCHEME_TABLE,
   capstoneMarkdown,
   emptyCapstone,
 } from './sharedData'
+import curiousSummary from '../curious-summary.md?raw'
+import ragSummary from '../rag-summary.md?raw'
 
 describe('eIDAS / QSCD row of the scheme table', () => {
   const row = PQC_SCHEME_TABLE.find((r) => r.scheme === 'eIDAS / QSCD')
@@ -54,5 +57,36 @@ describe('capstone export', () => {
     expect(md).toContain('Market deadlines (from the Hub timeline, read at export time):')
     expect(md).toContain(`Scope: ${MANDATE_SCOPE_NOTE}`)
     expect(md).toContain(MANDATE_LABEL.HARD)
+  })
+})
+
+describe('crypto-product-certification ACVP vs module boundary & certificate cross-check gate', () => {
+  it('separates NIST CAVP ACVP IUT mathematical conformance from FIPS 140-3 / CC module boundary validation', () => {
+    expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.acvpIutConformance).toContain('IUT')
+    expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.moduleBoundaryValidation).toContain('SP 800-90B')
+    expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.moduleBoundaryValidation).toContain(
+      'key zeroization'
+    )
+    expect(curiousSummary).toContain('IUT')
+    expect(curiousSummary).toContain('SP 800-90B')
+    expect(ragSummary).toContain('IUT')
+    expect(ragSummary).toContain('SP 800-90B')
+  })
+
+  it('requires cross-checking the 5 production certificate fields and rejects sample Hub exports as certification evidence', () => {
+    expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.productionCertificateCrossCheckFields).toEqual([
+      'Operational Environment (OE)',
+      'CAVP Algorithm Cert #',
+      'CMVP Module Cert #',
+      'Tested Version/Commit',
+      'Security Target SHA-256',
+    ])
+    for (const field of CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.productionCertificateCrossCheckFields) {
+      expect(curiousSummary).toContain(field)
+      expect(ragSummary).toContain(field)
+    }
+    expect(CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC.sampleNonEquivalenceRule).toContain(
+      'never certification evidence'
+    )
   })
 })

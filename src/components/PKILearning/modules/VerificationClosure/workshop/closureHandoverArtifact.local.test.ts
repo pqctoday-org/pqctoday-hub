@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  CLOSURE_EVIDENCE_CHAIN_GUIDANCE,
   restoreClosureInputs,
   closureEntryStatus,
   buildClosureArtifact,
   type ClosureInputs,
 } from './closureHandoverArtifact'
+import curiousSummary from '../curious-summary.md?raw'
+import ragSummary from '../rag-summary.md?raw'
 const complete: ClosureInputs = {
   owner: {
     cbom: 'Crypto Gov Owner',
@@ -71,5 +74,34 @@ describe('Closure record content and missing inputs', () => {
     expect(buildClosureArtifact(value)).toContain('A\\|B<br>&lt;script&gt;sample&lt;/script&gt;')
     expect(JSON.stringify(value)).toBe(raw)
     expect(closureEntryStatus(value).complete).toBe(false)
+  })
+})
+
+describe('verification-closure ACVP vs module boundary & certificate cross-check gate', () => {
+  it('establishes ACVP KAT vector mathematical conformance vs FIPS 140-3 / CC module boundary validation', () => {
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('IUT')
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('SP 800-90B')
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('key zeroization')
+    expect(curiousSummary).toContain('IUT')
+    expect(curiousSummary).toContain('SP 800-90B')
+    expect(ragSummary).toContain('IUT')
+    expect(ragSummary).toContain('SP 800-90B')
+  })
+
+  it('requires cross-checking the 5 production certificate fields and rejects sample Hub exports as certification evidence', () => {
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckFields).toEqual([
+      'Operational Environment (OE)',
+      'CAVP Algorithm Cert #',
+      'CMVP Module Cert #',
+      'Tested Version/Commit',
+      'Security Target SHA-256',
+    ])
+    for (const field of CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckFields) {
+      expect(curiousSummary).toContain(field)
+      expect(ragSummary).toContain(field)
+    }
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.nonEquivalenceRule).toContain(
+      'never certification evidence'
+    )
   })
 })

@@ -17,7 +17,7 @@ The PKI Enrollment Protocols module covers EST (Enrollment over Secure Transport
 - **RFC 9909** — Algorithm Identifiers for SLH-DSA in X.509 PKI; companion to RFC 9881 for stateless hash-based signatures
 - **RFC 9936** — Use of ML-KEM in CMS; downstream consumer of ML-KEM certs in S/MIME
 - **RFC 9629** — KEM algorithms in CMS (KEMRecipientInfo); upstream of RFC 9936
-- **Composite signatures (draft-ietf-lamps-pq-composite-sigs)** and **composite KEMs (draft-ietf-lamps-pq-composite-kem)** — IETF drafts defining one certificate carrying both classical and PQC public keys under composite OIDs; OpenSSL 3.6 does not yet ship these; this module shows separate parallel certificates instead
+- **Composite ML-DSA (RFC 10073)** and **composite KEMs (draft-ietf-lamps-pq-composite-kem)** — IETF standards/drafts defining one certificate carrying both classical and PQC public keys under composite OIDs; OpenSSL 3.6 does not yet ship these; this module shows separate parallel certificates instead
 - **PBM-MAC protection (RFC 9810 §5.1.3.1)** — Password-Based Message Authentication Code; shared-secret protection mode where the requester and CA share a one-time secret; HMAC over the PKIMessage header + body
 - **Signature-based protection (RFC 9810 §5.1.3.3)** — the sender possesses a signature key pair and signs the PKI message; PKIProtection contains the signature value and protectionAlg is a digital signature AlgorithmIdentifier
 - **Implicit confirm vs explicit certConf** — CMP normally requires a second round trip where the EE confirms it received the cert; if both sides agree, this can be skipped via the `implicitConfirm` extension in the IR header
@@ -35,23 +35,26 @@ The workshop has 6 steps:
 2. **CMP Initial Request (ir)** — drives the real in-process CMP exchange via the `execute_cmp_simulation` shim: server callback parses the CRMF, builds a fresh X509 with the requested public key, signs with the CA's ML-DSA-65 key, returns a real PKIMessage IP; client validates protection and writes the issued cert to the FS; transcript shows every internal event from both sides
 3. **EST simpleenroll** — exercises the EST-specific request/response shapes: PKCS#10 CSR via `openssl req`, mock CA signs via `openssl x509 -req`, response wrapped in PKCS#7 degenerate SignedData via `openssl crl2pkcs7`; transport is simulated (no real HTTP) because OpenSSL ships no EST client
 4. **ML-KEM certificate key update** — provisions a fictional prior enrollment, a separately authorized ML-DSA-65 signing identity and a fresh ML-KEM-768 target key. The signed KUR names the prior certificate; the server checks that enrollment and subject, encrypts the new certificate to the new key, and accepts completion only after the client recovers it, validates it and confirms its hash. The alternative prior-enrollment case is rejected and failed operations return no certificate. This is actual CMP key update using the opt-in modified sample server, not a separate shared-secret comparison.
-5. **Parallel certificate issuance** — issues a separate ECDSA-P256 subject certificate under the same ML-DSA-65 CA and compares it with the ML-DSA subject certificate. These are separate certificates, not a composite certificate; the ML-DSA issuer signature still requires a verifier that supports it. The sample helps learners distinguish subject-key choice, issuer signature and consumer compatibility. It links to draft-ietf-lamps-pq-composite-sigs-19 for when true composite OIDs land.
+5. **Parallel certificate issuance** — issues a separate ECDSA-P256 subject certificate under the same ML-DSA-65 CA and compares it with the ML-DSA subject certificate. These are separate certificates, not a composite certificate; the ML-DSA issuer signature still requires a verifier that supports it. The sample helps learners distinguish subject-key choice, issuer signature and consumer compatibility. It links to RFC 10073 (Composite ML-DSA) and draft-ietf-lamps-pq-composite-kem for composite X.509 specifications.
 6. **Inspect Issued Certificate** — decodes the issued cert with `openssl x509 -text -noout` and verifies the chain with `openssl verify -CAfile root.crt`; works for whichever cert (ML-DSA from Step 2 or ECDSA from Step 5) was issued last
 
 ## Related Standards
 
 - RFC 7030 (EST)
 - RFC 9810 (CMP — the current Certificate Management Protocol specification, July 2025)
+- RFC 9483 (Lightweight CMP Profile)
 - RFC 4210 (CMP, 2005 — obsoleted by RFC 9810)
 - RFC 9480 (CMP Updates — obsoleted by RFC 9810 together with RFC 9811)
 - RFC 4211 (CRMF)
 - RFC 9811 (CMP over HTTP — obsoletes RFC 6712 and, with RFC 9810, RFC 9480)
+- RFC 8894 (SCEP)
+- RFC 8555 (ACME)
 - RFC 9881 (ML-DSA in X.509)
 - RFC 9935 (ML-KEM in X.509)
 - RFC 9909 (SLH-DSA in X.509)
 - RFC 9629 (KEM in CMS)
 - RFC 9936 (ML-KEM in CMS)
+- RFC 10073 (Composite ML-DSA in X.509 PKI)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
-- draft-ietf-lamps-pq-composite-sigs-19
 - draft-ietf-lamps-pq-composite-kem

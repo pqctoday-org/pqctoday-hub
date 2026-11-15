@@ -1256,3 +1256,22 @@ export const STRATEGY_MATRIX: Record<
     ],
   },
 }
+
+// ─── ACVP KAT Conformance vs Module Boundary & Certificate Verification ────────
+
+export const PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY = {
+  acvpIutConformance:
+    'NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (IUT).',
+  moduleBoundaryValidation:
+    'CMVP FIPS 140-3 and Common Criteria (CC/EUCC) validate the cryptographic module boundary, physical/logical isolation, RNG health tests (SP 800-90B), key zeroization, and side-channel protections.',
+  requiredCertificateCrossCheckFields: [
+    'Operational Environment (OE)',
+    'CAVP Algorithm Cert #',
+    'CMVP Module Cert #',
+    'Tested Version/Commit',
+    'Security Target SHA-256',
+  ] as const,
+  sampleNonEquivalenceNotice:
+    'A sample Hub exercise or vendor marketing datasheet is never certification evidence.',
+} as const
+

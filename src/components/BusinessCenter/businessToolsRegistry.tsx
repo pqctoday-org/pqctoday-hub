@@ -205,7 +205,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       "Each entry names an owner role and a next review date. An entry without them is a note, not a risk: no one is answerable for treating it. Use roles, not people's names; recording a role is not a sign-off.",
     workedExample:
-      "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely and Impact 5 — Catastrophic: the card shows Score: 20 (Critical) and the Risk Summary counts it as Critical.",
+      "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely, Impact 5 — Catastrophic, Owner role 'PKI lead' and a Next review date: the card shows Score: 20 (Critical), the 'Note, not a risk yet' badge clears, and the Risk Summary counts it as Critical.",
     name: 'Risk Register Builder',
     description:
       'Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact, proposed mitigation, owner role and review date',
@@ -691,7 +691,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'A short list you will actually read. A watch that surfaces everything gets ignored like everything else.',
     workedExample:
-      'Bookmark OpenSSL on Migrate and switch off the MEDIUM and LOW chips: the tiles count products tracked, filtered CVEs, Critical + High and CPE coverage gaps, and expanding OpenSSL lists its top 20 CVEs by ID, score, date and summary.',
+      'Bookmark OpenSSL on Migrate (or click Load sample watchlist) and switch off the MEDIUM and LOW chips: the tiles count products tracked, filtered CVEs, Critical + High and CPE coverage gaps, and expanding OpenSSL lists its top 20 CVEs by ID, score, date and summary.',
     name: 'Crypto Vulnerability Watch',
     description:
       'NIST NVD CVE digest for the products on your /migrate selection, joined via CPE — the top CVEs per product by severity from the current snapshot',

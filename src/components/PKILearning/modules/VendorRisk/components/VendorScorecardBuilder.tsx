@@ -560,7 +560,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
         />
       )}
       {/* Intro */}
-      <div className="bg-muted/50 rounded-lg p-4 border border-border">
+      <div className="bg-muted/50 rounded-lg p-4 border border-border flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-foreground/80">
           Score your vendors across six PQC readiness dimensions.{' '}
           {hasProducts ? (
@@ -576,6 +576,30 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
             </>
           )}
         </p>
+        {hasProducts && (
+          <Button
+            variant="outline"
+            size="sm"
+            type="button"
+            onClick={() => {
+              const allSliders = DIMENSIONS.every((d) => useSlider[d.id])
+              const next: Record<string, boolean> = {}
+              for (const d of DIMENSIONS) next[d.id] = !allSliders
+              setUseSlider(next)
+            }}
+            className="text-xs h-7 px-2.5 shrink-0"
+          >
+            {DIMENSIONS.every((d) => useSlider[d.id]) ? (
+              <>
+                <Users size={12} className="mr-1.5" /> Catalog Products
+              </>
+            ) : (
+              <>
+                <SlidersHorizontal size={12} className="mr-1.5" /> Manual Sliders
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       {/* Overall score */}

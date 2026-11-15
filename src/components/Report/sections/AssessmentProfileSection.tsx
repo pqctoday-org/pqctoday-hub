@@ -38,7 +38,9 @@ export const AssessmentProfileSummary = ({
             profile.algorithmUnknown
               ? 'Unknown (conservative defaults)'
               : profile.algorithmsSelected.length > 0
-                ? `${profile.algorithmsSelected.length} selected`
+                ? profile.algorithmsImplied?.length
+                  ? `${profile.algorithmsSelected.length} selected (+ ${profile.algorithmsImplied.length} from categories)`
+                  : `${profile.algorithmsSelected.length} selected`
                 : profile.algorithmCategories?.length
                   ? `${profile.algorithmCategories.join(', ')} (all algorithms assumed)`
                   : 'None'

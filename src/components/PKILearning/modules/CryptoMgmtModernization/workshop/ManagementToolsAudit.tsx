@@ -509,7 +509,7 @@ export const ManagementToolsAudit: React.FC = () => {
         onExport={() => {
           addExecutiveDocument({
             id: `management-tools-audit-${Date.now()}`,
-            moduleId: 'crypto-management-modernization',
+            moduleId: 'crypto-mgmt-modernization',
             type: 'management-tools-audit',
             title: `Management Tools Audit — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,

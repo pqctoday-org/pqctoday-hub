@@ -2042,3 +2042,25 @@ export const stepExercises: Record<string, StepExercise> = {
     why: 'An acknowledgement is an automated result about the payload. Sufficiency needs evaluator judgement, attestation is the lab’s act, and only the authority decides — machine-readable exchange removes round trips, not those roles.',
   },
 }
+
+/**
+ * Explicit boundary between CAVP ACVP KAT vector mathematical conformance of an IUT
+ * vs. CMVP FIPS 140-3 / Common Criteria (CC/EUCC) module boundary validation, and
+ * mandatory production certificate cross-check fields.
+ */
+export const CERTIFICATION_EVIDENCE_CROSSCHECK_SPEC = {
+  acvpIutConformance:
+    'NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (IUT).',
+  moduleBoundaryValidation:
+    'CMVP FIPS 140-3 and Common Criteria (CC/EUCC) validate the cryptographic module boundary, physical/logical isolation, RNG health tests (SP 800-90B), key zeroization, and side-channel protections.',
+  productionCertificateCrossCheckFields: [
+    'Operational Environment (OE)',
+    'CAVP Algorithm Cert #',
+    'CMVP Module Cert #',
+    'Tested Version/Commit',
+    'Security Target SHA-256',
+  ] as const,
+  sampleNonEquivalenceRule:
+    'A sample Hub exercise export or vendor marketing datasheet is never certification evidence.',
+} as const
+

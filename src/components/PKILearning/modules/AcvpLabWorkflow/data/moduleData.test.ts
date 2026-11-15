@@ -10,15 +10,20 @@ import { hasStandard } from '@/data/standardsRegistry'
 import { EVIDENCE_CLASS_IDS, isEvidenceClassId } from '@/data/validation/evidenceClasses'
 import { SOURCES, LIBRARY_ADDITIONS_NEEDED, type ModuleSource } from './sources'
 import {
+  ACVP_VS_MODULE_BOUNDARY_SCOPE,
   CLAIM_LADDER,
   EVIDENCE_SCENARIOS,
   HUB_REACHABLE_MAX_RUNG,
   NOT_TEST_EVIDENCE,
+  PRODUCTION_CERTIFICATE_CROSSCHECK_FIELDS,
+  SAMPLE_EXPORT_NON_EQUIVALENCE_RULE,
 } from './evidenceLevels'
 import { CONCEPT_CHECKS } from './conceptChecks'
 import { REVIEW_STATUS } from './reviewStatus'
 import { content } from '../content'
 import manifest from '../manifest'
+import curiousSummary from '../curious-summary.md?raw'
+import ragSummary from '../rag-summary.md?raw'
 
 const all = Object.values(SOURCES) as ModuleSource[]
 
@@ -114,5 +119,32 @@ describe('acvp-lab-workflow review status', () => {
     expect(REVIEW_STATUS.label).not.toMatch(/draft/i)
     expect(manifest.workInProgress).toBeUndefined()
     expect(manifest.description).not.toMatch(/draft/i)
+  })
+})
+
+describe('acvp-lab-workflow ACVP vs module boundary & certificate cross-check gate', () => {
+  it('establishes ACVP KAT vector mathematical conformance vs FIPS 140-3 / CC module boundary validation', () => {
+    expect(ACVP_VS_MODULE_BOUNDARY_SCOPE.acvpKatScope).toContain('IUT')
+    expect(ACVP_VS_MODULE_BOUNDARY_SCOPE.moduleBoundaryScope).toContain('SP 800-90B')
+    expect(ACVP_VS_MODULE_BOUNDARY_SCOPE.moduleBoundaryScope).toContain('key zeroization')
+    expect(curiousSummary).toContain('IUT')
+    expect(curiousSummary).toContain('SP 800-90B')
+    expect(ragSummary).toContain('IUT')
+    expect(ragSummary).toContain('SP 800-90B')
+  })
+
+  it('requires all five production certificate cross-check fields and rejects sample Hub exports as certification evidence', () => {
+    expect(PRODUCTION_CERTIFICATE_CROSSCHECK_FIELDS).toEqual([
+      'Operational Environment (OE)',
+      'CAVP Algorithm Cert #',
+      'CMVP Module Cert #',
+      'Tested Version/Commit',
+      'Security Target SHA-256',
+    ])
+    for (const field of PRODUCTION_CERTIFICATE_CROSSCHECK_FIELDS) {
+      expect(curiousSummary).toContain(field)
+      expect(ragSummary).toContain(field)
+    }
+    expect(SAMPLE_EXPORT_NON_EQUIVALENCE_RULE).toContain('never certification evidence')
   })
 })

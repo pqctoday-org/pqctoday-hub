@@ -229,6 +229,7 @@ Focus: Enterprise-wide enforcement, continuous compliance scanning, policy autom
 
 ## Cross-References
 
+- **acvp-lab-workflow & certification boundary** — NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (`IUT`), whereas CMVP FIPS 140-3 and Common Criteria (`CC/EUCC`) validate the cryptographic module boundary, physical/logical isolation, RNG health tests (SP 800-90B), key zeroization, and side-channel protections. Auditors and engineering leads must cross-check `Operational Environment (OE)`, `CAVP Algorithm Cert #`, `CMVP Module Cert #`, `Tested Version/Commit`, and `Security Target SHA-256` on a production certificate; a sample Hub exercise or vendor marketing datasheet is never certification evidence.
 - **cc-eucc-certification** — Covers how a Common Criteria or EUCC evaluation looks at side-channel attacks on post-quantum code under AVA_VAN.5; the side-channel section here links to it
 - **hybrid-crypto** — Covers hybrid cert formats and composite certificates (distinct from testing methodology)
 - **network-security-pqc** — Covers NGFW cipher policy configuration (distinct from traffic scanning)
