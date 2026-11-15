@@ -565,7 +565,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Healthcare CISOs, Biomedical Device Engineers & HIPAA Compliance Leads',
     productionCapabilities: [
       'Long-term Electronic Health Record (EHR) and genomic archive protection against HNDL via hybrid PQC TLS 1.3 (`X25519MLKEM768`) on HL7 FHIR / DICOMweb APIs and `AES-256` at rest.',
-      'FDA premarket cybersecurity (FD&C Act §524B, which requires an SBOM); a CBOM is a voluntary addition and post-quantum firmware update signing (`ML-DSA` / `LMS`) for connected medical devices.',
+      'FDA premarket cybersecurity (FD&C Act §524B requires an SBOM; a CBOM is a voluntary addition) and post-quantum firmware update signing (`ML-DSA` / `LMS`) for connected medical devices.',
       'Zero-downtime cryptographic proxy / gateway shielding for legacy clinical imaging modalities.',
     ],
     evaluationMethod:
