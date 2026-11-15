@@ -261,6 +261,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Global:3GPP SA3 — 3GPP TR 33.938 Cryptographic Inventory (5G System)',
     'Global:3GPP SA3 — 3GPP TR 33.938 PQC Transition Study',
   ],
+  'global-3gpp-sa3-tr-33-703-v20-0-0-published-study-on-transit': [
+    'Global:3GPP SA3 — TR 33.703 V20.0.0 Published (Study on Transitioning to PQC in 3GPP)',
+  ],
   'global-ca-browser-forum-ballot-smc013-ml-dsa-for-s-mime-adopted': [
     'Global:CA/Browser Forum — Ballot SMC013 ML-DSA for S/MIME Adopted',
   ],
@@ -466,6 +469,9 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
   ],
   'malaysia-nacsa-malaysia-national-pqc-migration': [
     'Malaysia:NACSA — Malaysia National PQC Migration',
+  ],
+  'malaysia-nacsa-nacsa-chief-executive-directive-no-9-takes-ef': [
+    'Malaysia:NACSA — NACSA Chief Executive Directive No. 9 Takes Effect',
   ],
   'malaysia-nacsa-national-pqc-migration-plan-published': [
     'Malaysia:NACSA — MyKriptografi Action Plan 2026–2030',

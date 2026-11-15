@@ -1,7 +1,7 @@
 ---
 generated: 2026-11-14
 collection: timeline
-documents_processed: 6
+documents_processed: 2
 enrichment_method: automated extraction
 ---
 
@@ -10582,72 +10582,6 @@ enrichment_method: automated extraction
 
 ---
 
-## Israel:Bank of Israel — Banking System Preparedness for Quantum Computing Cyber Risks
-
-- **Reference ID**: Israel:Bank of Israel — Banking System Preparedness for Quantum Computing Cyber Risks
-- **Title**: Banking System Preparedness for Quantum Computing Cyber Risks
-- **Authors**: Bank of Israel — Banking Supervision Department
-- **Publication Date**: 2025-01-07
-- **Last Updated**: Not specified
-- **Document Status**: Validated
-- **Main Topic**: Bank of Israel directive requiring banking corporations to assess quantum computing risks, map encrypted assets, and submit preparedness plans within one year.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Harvest Now, Decrypt Later; encryption breaking in the quantum computing era
-- **Migration Timeline Info**: Risks expected to materialize within the next decade; preparedness plan submission required within one year from January 7, 2025
-- **Applicable Regions / Bodies**: Regions: Israel; Bodies: Bank of Israel, NIST, World Economic Forum, Monetary Authority of Singapore
-- **Leaders Contributions Mentioned**: Daniel Hahiashvili (Supervisor of Banks, author of directive); Tal Harel Matityahu (Deputy Supervisor of Banks); Aya Gal-Ed (Head of Supervisory Cyber Unit); Liora Navon (Head of Technology in Banking Unit)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Supply chain; computing infrastructure; laboratory and testing environment
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: Proper Conduct of Banking Business Directive 364
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Banking corporations must map all encrypted information assets at rest and in motion; organizations must integrate quantum risk into supply chain management; a preparedness plan must be submitted to the Bank of Israel within one year; board-level awareness and periodic review of quantum risks are mandatory
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Transition from vulnerable algorithms to new resilient algorithms; alternative solutions for systems that cannot be converted
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Compliance Officer; Security Architect
-- **Implementation Prerequisites**: Mapping of encrypted information assets; assessment of computing infrastructure compatibility; development of initial preparedness plan
-- **Relevant PQC Today Features**: Threats; Compliance; Assess; Migration-program; pqc-risk-management; data-asset-sensitivity; vendor-risk
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: Mapping encrypted information assets at rest; mapping processes using asymmetric encryption in motion; mapping asymmetrically encrypted information outside the organization
-- **Testing & Validation Methods**: Establishing a laboratory and testing environment for solutions
-- **QKD Protocols & Quantum Networking**: Quantum key distribution (QKD) technology for establishing secure communication channels
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Assess impact of quantum computing developments on supply chain risks; require third parties to adopt resilient solutions; avoid reliance on suppliers not preparing for the quantum era
-- **Deployment & Migration Complexity**: Minimizing impact on information systems during transition; defining alternative solutions for non-convertible systems
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Board of directors and senior management awareness; continuous monitoring of developments; integration into cyber risk management process
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Phase Classification Rationale**: This document represents a Regulatory Mandate phase event as it issues a directive from the Bank of Israel requiring specific actions (mapping, planning) from banking corporations.
-- **Regulatory Mandate Level**: Mandatory
-- **Sector / Industry Applicability**: Banking; Finance
-- **Migration Urgency & Priority**: Near-Term
-- **Phase Transition Narrative**: Moves from general awareness to mandatory regulatory compliance for the Israeli banking sector, requiring concrete asset mapping and planning.
-- **Historical Significance**: Represents a specific central bank directive in Israel mandating PQC preparedness planning and asset inventory for financial institutions.
-- **Implementation Timeline Dates**: January 7, 2025: Directive issued; Within one year from January 7, 2025: Preparedness plan submission deadline
-- **Successor Events & Dependencies**: Requires completion of encrypted asset mapping; contingent on availability of commercially viable PQC solutions
-- **Source Document Title**: Israel:Bank of Israel — Banking System Preparedness for Quantum Computing Cyber Risks
-- **Source Document Publication Date**: January 7, 2025
-- **Country Migration Dates**: Israel: 2025 — Bank of Israel directive issued requiring preparedness plans within one year
-- **Timeline Cross-Reference**: Israel 2025: CONSISTENT (Banking System Preparedness for Quantum Computing )
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-
----
-
 ## Israel:INCD — Government Threat Assessment
 
 - **Reference ID**: Israel:INCD — Government Threat Assessment
@@ -20541,6 +20475,150 @@ enrichment_method: automated extraction
 - **Country Migration Dates**: Uruguay: 2024 — National Cybersecurity Strategy 2024-2030 commits to identifying PQC needs for critical infrastructure
 - **Timeline Cross-Reference**: Uruguay 2024: CONSISTENT (National Cybersecurity Strategy 2024-2030 Commits )
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Malaysia:NACSA — NACSA Chief Executive Directive No. 9 Takes Effect
+
+- **Reference ID**: Malaysia:NACSA — NACSA Chief Executive Directive No. 9 Takes Effect
+- **Title**: NACSA Chief Executive Directive No. 9 Takes Effect
+- **Authors**: National Cyber Security Agency of Malaysia
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: NACSA Chief Executive Directive No. 9 requires Malaysian National Critical Information Infrastructure (NCII) entities to prepare and submit data on post-quantum cryptography migration (cryptographic inventory, SBOM/CBOM, risk assessment and migration plans) within three months of notice, with PTPKM coordinating collection.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Risk of quantum computing threats to cryptography (stated as "risiko ancaman pengkomputeran kuantum"); no specific attack named
+- **Migration Timeline Info**: Directive effective 22 September 2025; NCII entities must submit data within three (3) months of the written notice; five national migration phases (Assess, Select, Validate, Deploy, Monitor) with example plan: Jul–Dec 2025, Jan–Jun 2026, Jul–Dec 2026, Jan–Jun 2027, July 2027+ (each phase maximum 6 months)
+- **Applicable Regions / Bodies**: Regions: Malaysia; Bodies: NACSA, PTPKM, Majlis Keselamatan Negara, Jabatan Perdana Menteri, NCII sector leads and NCII entities
+- **Leaders Contributions Mentioned**: Ir. Dr. Megat Zuhairy bin Megat Tajuddin, Chief Executive of NACSA, issued the directive
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: S/MIME (appears only in the form's example entry)
+- **Infrastructure Layers**: Critical information infrastructure systems, applications and services; hardware, firmware, operating systems; software libraries; virtualisation stack (example entry)
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Akta Keselamatan Siber 2024 [Akta 854] (Cyber Security Act 2024); Peraturan-Peraturan Keselamatan Siber 2024 (P.U. (A) 219/2024, 220/2024, 221/2024, 222/2024)
+- **Classical Algorithms Referenced**: AES; RSA; RSA-2048; SHA-1
+- **Key Takeaways**: NCII entities must compile PQC migration data covering their systems, applications, services and infrastructure; Submission is due within three months of the NACSA written notice using the Lampiran A form; Required deliverables include a cryptographic inventory (Table 0), SBOM, CBOM, risk register and risk/dependency assessment; Entities must also provide a five-phase migration timeline and resource/cost requirements; PTPKM coordinates data collection under NACSA supervision while sector leads coordinate and monitor their sectors
+- **Security Levels & Parameters**: RSA-2048 (2048-bit) appears only as a form example
+- **Hybrid & Transition Approaches**: Crypto-agility support is a column in the CBOM table; no hybrid schemes discussed
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; Compliance Officer; CISO; Security Architect
+- **Implementation Prerequisites**: Cryptographic inventory of NCII assets; SBOM and CBOM; Buku Kerja Bengkel Migrasi PQC (PQC Migration Workshop Workbook) as reference for completing the form; Risk register and risk/dependency assessment
+- **Relevant PQC Today Features**: Compliance; Migrate; Assess; migration-program; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Initial inventory of cryptography-related assets (Jadual 0); SBOM (Jadual 1); CBOM (Jadual 2) listing functions, algorithms, libraries, key lengths and crypto-agility support
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: SBOM includes third-party components, external APIs, vendor dependency and whether the agency has in-house expertise or budget
+- **Deployment & Migration Complexity**: Five national phases (Assess, Select, Validate, Deploy, Monitor), each maximum 6 months; migration prioritised by cryptographic inventory readiness; legacy system incompatibility noted in risk register example
+- **Financial & Business Impact**: Entities must estimate costs (RM) for training and awareness, new technology procurement, testing and evaluation, consulting/audit, operations/maintenance and other items; no figures given
+- **Organizational Readiness**: NCII sector leads coordinate and monitor; PTPKM acts as coordinator; entities must plan human, technical and financial resources; risk ownership assigned per asset
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The directive compels NCII entities to submit cryptographic inventories and PQC migration plans, a mandatory readiness and planning step that precedes actual deployment of PQC.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Critical Infrastructure
+- **Migration Urgency & Priority**: Near-Term
+- **Phase Transition Narrative**: Moves from awareness and policy to mandatory national data collection and planning (inventory, risk assessment, phased migration roadmap), enabling prioritised PQC migration.
+- **Historical Significance**: It is a legally backed Malaysian directive under the Cyber Security Act 2024 that obliges critical infrastructure entities to report PQC migration readiness data to the national cybersecurity agency.
+- **Implementation Timeline Dates**: 22 September 2025: directive takes effect; within 3 months of the written notice: data submission due; Jul–Dec 2025, Jan–Jun 2026, Jul–Dec 2026, Jan–Jun 2027, July 2027+: example migration phases
+- **Successor Events & Dependencies**: Depends on the Cyber Security Act 2024 (Akta 854) and the NACSA written notice specifying form and manner; enables PTPKM analysis and strategic reporting to NACSA and prioritised PQC migration by NCII entities
+- **Source Document Title**: ARAHAN KETUA EKSEKUTIF NO. 9 — PENYEDIAAN DATA DAN MAKLUMAT PELAKSANAAN MIGRASI KRIPTOGRAFI PASCA KUANTUM OLEH ENTITI INFRASTRUKTUR MAKLUMAT KRITIKAL NEGARA
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: Malaysia: 2025 — Directive No. 9 takes effect 22 September 2025; Malaysia: 2025 — example Phase 1 (Assess) planning period Jul–Dec 2025; Malaysia: 2026 — example Phases 2 and 3 (Select, Validate) Jan–Dec 2026; Malaysia: 2027 — example Phase 4 (Deploy) Jan–Jun 2027 and Phase 5 (Monitor) from July 2027
+- **Timeline Cross-Reference**: Malaysia 2025: CONSISTENT (Malaysia National PQC Migration | also: PKI Consortium PQC Conference 2025 Concl); Malaysia 2025: CONSISTENT (Malaysia National PQC Migration); Malaysia 2026: CONSISTENT (MyKriptografi Action Plan 2026–2030 | also: Malaysia Launches National Post-Quantum ); Malaysia: DATE CHANGE — CSV=2026 (Malaysia Launches National Post-Quantum Cryptography Migrati), doc=2027 (2027 — example Phase 4 (Deploy) Jan–Jun 2027 and Phase 5 (Mo) → REVIEW
+- **Source Document**: NACSA-Chief-Executive-Directive-No-9-Takes-Effect.pdf (295,397 bytes, 10,396 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T20:34:24
+- **Evidence SHA-256**: 46133b742fa43b19e24ca700b629b20222b92199153850ed7ea2de62ccd7e79b
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 46133b742fa43b19
+- **Reader**: unified/5 full
+- **Window Chars**: 10396
+
+---
+
+## Global:3GPP SA3 — TR 33.703 V20.0.0 Published (Study on Transitioning to PQC in 3GPP)
+
+- **Reference ID**: Global:3GPP SA3 — TR 33.703 V20.0.0 Published (Study on Transitioning to PQC in 3GPP)
+- **Title**: TR 33.703 V20.0.0 Published (Study on Transitioning to PQC in 3GPP)
+- **Authors**: 3rd Generation Partnership Project (3GPP)
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Unverified — needs review
+- **Main Topic**: 3GPP specification record for TR 33.703, a technical report studying the transition to Post Quantum Cryptography (PQC) in 3GPP, listed as a Release 20 study under change control.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: 3GPP, SA 3
+- **Leaders Contributions Mentioned**: Zander (Zhongding) Lei (HuaWei Technologies Co., Ltd) and Virendra Kumar (Qualcomm Technologies Int) are listed as rapporteurs; Mirko Cano Soveri created the specification record; Maurice Pope made it Under Change Control
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: 3GPP; SA 3 (primary responsible group)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: TR 33.703 is a Release 20 technical report on transitioning to PQC in 3GPP; SA 3 is the responsible group, with Huawei and Qualcomm rapporteurs; The specification was placed under change control on 2026-06-17; Version 20.0.0 was uploaded 2026-06-25 and 20.1.0 on 2026-09-28; It is linked to work item FS_CryptoPQC (UID 1080045)
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Researcher; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: 5g-security; Migrate; Timeline
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The title and work item (Study on Transitioning to Post Quantum Cryptography in 3GPP) show a study of PQC transition planning, but the extracted text gives no phase language.
+- **Regulatory Mandate Level**: None detected
+- **Sector / Industry Applicability**: Telecommunications
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: The specification record was created for Release 20 on 2025-06-20 and made Under Change Control on 2026-06-17, moving from drafting (versions 0.0.0 to 1.0.0) to a controlled version (20.0.0, then 20.1.0). This enables subsequent 3GPP work on PQC transition.
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: 2025-06-20: specification created for Rel-20; 2026-06-17: made Under Change Control; 2026-06-25: version 20.0.0 uploaded; 2026-09-28: version 20.1.0 uploaded
+- **Successor Events & Dependencies**: Linked to work item FS_CryptoPQC (UID 1080045); responsible group SA 3; no parent or child specifications listed
+- **Source Document Title**: Study on transitioning to Post Quantum Cryptography (PQC) in 3GPP
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Source Document**: TR-33-703-V20-0-0-Published-Study-on-Transitioning-to-PQC-in.html (206,100 bytes, 2,006 extracted chars)
+- **Extraction Timestamp**: 2026-11-14T20:34:24
+- **Evidence SHA-256**: 845f8bdcc51cf68b0b9623115c70bb016bb9b70fa2956e2b8d2518bd97051f81
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 845f8bdcc51cf68b
+- **Reader**: unified/5 full
+- **Window Chars**: 2006
 
 ---
 

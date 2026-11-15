@@ -35943,5 +35943,206 @@
    "16 Jul 2026: Version 1 released"
   ],
   "successorDependencies": "Detailed guidance from CSA, GovTech and IMDA to support CII owners in meeting the milestones; handbook updates as the field evolves; depends on maturing standards such as FN-DSA, HQC, and CMS/X.509 PQC support"
+ },
+ "Malaysia:NACSA — NACSA Chief Executive Directive No. 9 Takes Effect": {
+  "mainTopic": "NACSA Chief Executive Directive No. 9 requires Malaysian National Critical Information Infrastructure (NCII) entities to prepare and submit data on post-quantum cryptography migration (cryptographic inventory, SBOM/CBOM, risk assessment and migration plans) within three months of notice, with PTPKM coordinating collection.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [
+   "Risk of quantum computing threats to cryptography (stated as \"risiko ancaman pengkomputeran kuantum\")",
+   "no specific attack named"
+  ],
+  "migrationTimeline": [
+   "Directive effective 22 September 2025",
+   "NCII entities must submit data within three (3) months of the written notice",
+   "five national migration phases (Assess, Select, Validate, Deploy, Monitor) with example plan: Jul–Dec 2025, Jan–Jun 2026, Jul–Dec 2026, Jan–Jun 2027, July 2027+ (each phase maximum 6 months)"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "NACSA",
+    "PTPKM",
+    "Majlis Keselamatan Negara",
+    "Jabatan Perdana Menteri",
+    "NCII sector leads and NCII entities"
+   ]
+  },
+  "leadersContributions": [
+   "Ir. Dr. Megat Zuhairy bin Megat Tajuddin",
+   "Chief Executive of NACSA",
+   "issued the directive"
+  ],
+  "pqcProducts": [],
+  "protocols": [
+   "S/MIME (appears only in the form's example entry)"
+  ],
+  "infrastructureLayers": [
+   "Critical information infrastructure systems",
+   "applications and services",
+   "hardware",
+   "firmware",
+   "operating systems",
+   "software libraries",
+   "virtualisation stack (example entry)"
+  ],
+  "standardizationBodies": [],
+  "complianceFrameworks": [
+   "Akta Keselamatan Siber 2024 [Akta 854] (Cyber Security Act 2024)",
+   "Peraturan-Peraturan Keselamatan Siber 2024 (P.U. (A) 219/2024, 220/2024, 221/2024, 222/2024)"
+  ],
+  "classicalAlgorithms": [
+   "AES",
+   "RSA",
+   "RSA-2048",
+   "SHA-1"
+  ],
+  "keyTakeaways": [
+   "NCII entities must compile PQC migration data covering their systems, applications, services and infrastructure",
+   "Submission is due within three months of the NACSA written notice using the Lampiran A form",
+   "Required deliverables include a cryptographic inventory (Table 0), SBOM, CBOM, risk register and risk/dependency assessment",
+   "Entities must also provide a five-phase migration timeline and resource/cost requirements",
+   "PTPKM coordinates data collection under NACSA supervision while sector leads coordinate and monitor their sectors"
+  ],
+  "securityLevels": [
+   "RSA-2048 (2048-bit) appears only as a form example"
+  ],
+  "hybridApproaches": [
+   "Crypto-agility support is a column in the CBOM table",
+   "no hybrid schemes discussed"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Policy Maker",
+   "Compliance Officer",
+   "CISO",
+   "Security Architect"
+  ],
+  "implementationPrereqs": [
+   "Cryptographic inventory of NCII assets",
+   "SBOM and CBOM",
+   "Buku Kerja Bengkel Migrasi PQC (PQC Migration Workshop Workbook) as reference for completing the form",
+   "Risk register and risk/dependency assessment"
+  ],
+  "relevantFeatures": [
+   "Compliance",
+   "Migrate",
+   "Assess",
+   "migration-program",
+   "vendor-risk"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [
+   "Initial inventory of cryptography-related assets (Jadual 0)",
+   "SBOM (Jadual 1)",
+   "CBOM (Jadual 2) listing functions, algorithms, libraries, key lengths and crypto-agility support"
+  ],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [
+   "SBOM includes third-party components, external APIs, vendor dependency and whether the agency has in-house expertise or budget"
+  ],
+  "deploymentComplexity": [
+   "Five national phases (Assess, Select, Validate, Deploy, Monitor), each maximum 6 months",
+   "migration prioritised by cryptographic inventory readiness",
+   "legacy system incompatibility noted in risk register example"
+  ],
+  "financialBusinessImpact": [
+   "Entities must estimate costs (RM) for training and awareness, new technology procurement, testing and evaluation, consulting/audit, operations/maintenance and other items",
+   "no figures given"
+  ],
+  "organizationalReadiness": [
+   "NCII sector leads coordinate and monitor",
+   "PTPKM acts as coordinator",
+   "entities must plan human, technical and financial resources",
+   "risk ownership assigned per asset"
+  ],
+  "phaseClassification": "The directive compels NCII entities to submit cryptographic inventories and PQC migration plans, a mandatory readiness and planning step that precedes actual deployment of PQC.",
+  "mandateLevel": "Mandatory",
+  "sectorApplicability": [
+   "Critical Infrastructure"
+  ],
+  "migrationUrgency": "Near-Term",
+  "phaseTransition": "Moves from awareness and policy to mandatory national data collection and planning (inventory, risk assessment, phased migration roadmap), enabling prioritised PQC migration.",
+  "historicalSignificance": "It is a legally backed Malaysian directive under the Cyber Security Act 2024 that obliges critical infrastructure entities to report PQC migration readiness data to the national cybersecurity agency.",
+  "implementationDates": [
+   "22 September 2025: directive takes effect",
+   "within 3 months of the written notice: data submission due",
+   "Jul–Dec 2025, Jan–Jun 2026, Jul–Dec 2026, Jan–Jun 2027, July 2027+: example migration phases"
+  ],
+  "successorDependencies": "Depends on the Cyber Security Act 2024 (Akta 854) and the NACSA written notice specifying form and manner; enables PTPKM analysis and strategic reporting to NACSA and prioritised PQC migration by NCII entities"
+ },
+ "Global:3GPP SA3 — TR 33.703 V20.0.0 Published (Study on Transitioning to PQC in 3GPP)": {
+  "mainTopic": "3GPP specification record for TR 33.703, a technical report studying the transition to Post Quantum Cryptography (PQC) in 3GPP, listed as a Release 20 study under change control.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [],
+  "migrationTimeline": null,
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "3GPP",
+    "SA 3"
+   ]
+  },
+  "leadersContributions": [
+   "Zander (Zhongding) Lei (HuaWei Technologies Co., Ltd) and Virendra Kumar (Qualcomm Technologies Int) are listed as rapporteurs",
+   "Mirko Cano Soveri created the specification record",
+   "Maurice Pope made it Under Change Control"
+  ],
+  "pqcProducts": [],
+  "protocols": [],
+  "infrastructureLayers": [],
+  "standardizationBodies": [
+   "3GPP",
+   "SA 3 (primary responsible group)"
+  ],
+  "complianceFrameworks": [],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "TR 33.703 is a Release 20 technical report on transitioning to PQC in 3GPP",
+   "SA 3 is the responsible group, with Huawei and Qualcomm rapporteurs",
+   "The specification was placed under change control on 2026-06-17",
+   "Version 20.0.0 was uploaded 2026-06-25 and 20.1.0 on 2026-09-28",
+   "It is linked to work item FS_CryptoPQC (UID 1080045)"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Security Architect",
+   "Researcher",
+   "Policy Maker"
+  ],
+  "implementationPrereqs": [],
+  "relevantFeatures": [
+   "5g-security",
+   "Migrate",
+   "Timeline"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [],
+  "deploymentComplexity": [],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [],
+  "phaseClassification": "The title and work item (Study on Transitioning to Post Quantum Cryptography in 3GPP) show a study of PQC transition planning, but the extracted text gives no phase language.",
+  "mandateLevel": null,
+  "sectorApplicability": [
+   "Telecommunications"
+  ],
+  "migrationUrgency": "Exploratory",
+  "phaseTransition": "The specification record was created for Release 20 on 2025-06-20 and made Under Change Control on 2026-06-17, moving from drafting (versions 0.0.0 to 1.0.0) to a controlled version (20.0.0, then 20.1.0). This enables subsequent 3GPP work on PQC transition.",
+  "historicalSignificance": null,
+  "implementationDates": [
+   "2025-06-20: specification created for Rel-20",
+   "2026-06-17: made Under Change Control",
+   "2026-06-25: version 20.0.0 uploaded",
+   "2026-09-28: version 20.1.0 uploaded"
+  ],
+  "successorDependencies": "Linked to work item FS_CryptoPQC (UID 1080045); responsible group SA 3; no parent or child specifications listed"
  }
 }
