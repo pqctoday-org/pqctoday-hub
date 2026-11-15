@@ -2626,8 +2626,17 @@
       "filename": "HSM-003.html",
       "sizeBytes": 182751,
       "contentType": "text/html",
-      "sha256": "c2e33813bc69e851c689536b386f14848b47e1d3da9088fcf8de18f90a188ac3",
-      "downloadedAt": "2026-11-15T18:19:39.514598+00:00"
+      "sha256": "d40fce9eaef47ab6f7e8adfe74300a61a4ae7232e7d886fc9ec5397ac03fd5e7",
+      "downloadedAt": "2026-11-15T18:19:39.514598+00:00",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-15T18:40:01.296916+00:00",
+      "admittedBy": "evidence admission",
+      "superseded_file": "_superseded-11152026/threats/HSM-003.html",
+      "identity": "MATCH",
+      "replacedAt": "2026-11-15T18:40:00.846189+00:00",
+      "replacedBy": "evidence replacement",
+      "replaceReason": "admission stamp for the new row: same IETF -11 page, refetched through the evidence door"
     }
   ],
   "archivedEntries": [],
