@@ -40,6 +40,7 @@ export const TIMELINE_LABEL_ALIASES: Record<string, readonly string[]> = {
     'Bahrain:NCSC — National Quantum-Safe Deployment',
   ],
   'bank-of-israel-banking-system-preparedness-for-quantum-compu': [
+    'Israel:BOI — Banking System Preparedness for Quantum Computing Cyber Risks',
     'Israel:Bank of Israel — Banking System Preparedness for Quantum Computing Cyber Risks',
   ],
   'bis-bis-paper-158-quantum-roadmap': ['BIS:BIS — Paper 158 Quantum Roadmap'],
