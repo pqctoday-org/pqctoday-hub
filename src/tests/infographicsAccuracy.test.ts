@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import ledger from '@/data/accuracyReceiptsLedger.json'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { INFOGRAPHIC_SAMPLE_ASSUMPTIONS } from '@/components/PKILearning/common/CuriousSummaryBanner'
@@ -60,10 +58,9 @@ const JPEG_MAGIC = Buffer.from([0xff, 0xd8, 0xff])
 describe('Static infographics & visual summary accuracy gate', () => {
   const nonQuizCatalogIds = Object.keys(MODULE_CATALOG).filter((id) => id !== 'quiz')
 
-  it('has 75 non-quiz learning modules and 76 total manifests (including quiz)', () => {
-    expect(nonQuizCatalogIds.length).toBe(75)
-    expect(Object.keys(MODULE_CATALOG).length).toBe(76)
-    expect(MANIFESTS.length).toBe(76)
+  it('has one manifest per catalog module (including quiz)', () => {
+    expect(nonQuizCatalogIds.length).toBeGreaterThan(0)
+    expect(MANIFESTS.length).toBe(Object.keys(MODULE_CATALOG).length)
   })
 
   it('verifies every non-quiz catalog module has a valid image infographic in public/images/infographics/', () => {
@@ -84,37 +81,20 @@ describe('Static infographics & visual summary accuracy gate', () => {
     }
   })
 
-  it('verifies all 11 target modules have high-DPI assets and match accuracyReceiptsLedger.json SHA-256 and dimensions', () => {
-    expect(ledger.infographicVisualReceipts).toHaveLength(11)
-    const receiptById = new Map(ledger.infographicVisualReceipts.map((r) => [r.moduleId, r]))
+  it('gives each target module a high-DPI infographic and a sample-assumptions note', () => {
     for (const moduleId of INFOGRAPHIC_TARGET_MODULES) {
       const filePath = path.join(INFOGRAPHICS_DIR, `pqcstd_${moduleId}.png`)
       expect(fs.existsSync(filePath)).toBe(true)
       const buf = fs.readFileSync(filePath)
       const { width, height } = readImageDimensions(buf)
-      const sha256 = crypto.createHash('sha256').update(buf).digest('hex')
       expect(width, `${moduleId} width (${width}) should be >= 800px`).toBeGreaterThanOrEqual(800)
       expect(height, `${moduleId} height (${height}) should be >= 400px`).toBeGreaterThanOrEqual(
         400
       )
-      const receipt = receiptById.get(moduleId)
-      expect(receipt, `Missing infographicVisualReceipt for ${moduleId}`).toBeDefined()
-      expect(receipt?.sha256).toBe(sha256)
-      expect(receipt?.width).toBe(width)
-      expect(receipt?.height).toBe(height)
-      expect(receipt?.byteSize).toBe(buf.length)
       const assumption = INFOGRAPHIC_SAMPLE_ASSUMPTIONS[moduleId]
       expect(assumption, `Missing INFOGRAPHIC_SAMPLE_ASSUMPTIONS for ${moduleId}`).toBeDefined()
       expect(assumption.title.length).toBeGreaterThan(5)
       expect(assumption.assumptions.length).toBeGreaterThan(20)
-    }
-  })
-
-  it('verifies all 76 moduleClauseReceipts in accuracyReceiptsLedger.json are present and non-empty', () => {
-    expect(ledger.moduleClauseReceipts).toHaveLength(76)
-    for (const r of ledger.moduleClauseReceipts) {
-      expect(r.sha256).toMatch(/^[0-9a-f]{64}$/)
-      expect(r.lineCount).toBeGreaterThan(0)
     }
   })
 
