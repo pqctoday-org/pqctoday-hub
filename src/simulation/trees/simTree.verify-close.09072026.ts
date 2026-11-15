@@ -100,9 +100,6 @@ const TREE: PhaseTree = {
               artifactType: 'data-at-rest-strategy',
             },
             {
-              // Owner decision 2026-11-14 (COMP-2, "B"): the dossier alone was
-              // the source's own "Declared done" failure. Closure also needs the
-              // estate actually migrated — the same 80% bar Phase 5 L4 uses.
               kind: 'measure',
               label:
                 'Confirm the estate is actually migrated — closure needs 80% of connections decided, not just a dossier',

@@ -183,11 +183,21 @@ export function selectEvidence(
  */
 export function distinctRunQuarters(
   records: readonly SimEvidenceRecord[],
-  resourceId: string
+  resourceId: string,
+  /** Only count this world's records: a quarter saved for another
+   *  organisation profile (e.g. the sample) is not this run's operation. */
+  fingerprint?: string
 ): string[] {
   return [
     ...new Set(
-      records.filter((r) => r.resourceId === resourceId && r.runQuarter).map((r) => r.runQuarter!)
+      records
+        .filter(
+          (r) =>
+            r.resourceId === resourceId &&
+            r.runQuarter &&
+            (fingerprint === undefined || r.fingerprint === fingerprint)
+        )
+        .map((r) => r.runQuarter!)
     ),
   ]
 }

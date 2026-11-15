@@ -60,7 +60,8 @@ const METRIC_HINT: Record<string, string> = {
 }
 
 export function formatMetric(value: number, unit: string | undefined): string {
-  const rounded = Math.round(value)
+  // Round down, so a value just under its target (79.6% of 80%) never reads as met.
+  const rounded = Math.floor(value)
   return unit === 'percent' ? `${rounded}%` : String(rounded)
 }
 
@@ -129,8 +130,9 @@ export function OtherWorldNote({ compact = false }: { compact?: boolean }) {
         compact ? 'mt-2 text-[11px]' : 'mb-3 text-xs'
       }`}
     >
-      You already saved one, but for a different organisation profile (for example the sample
-      organisation), so it does not count for this run. Save it again here for this organisation.
+      A document of this type is already saved, but for a different organisation profile (for
+      example the sample organisation, including documents the guided run saved), so it does not
+      count for this run. Save it again here for this organisation.
     </p>
   )
 }
