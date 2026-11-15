@@ -225,8 +225,9 @@ jobs:
         run: npm run audit:deps
 
   test:
-    # The unit suite (vitest, ~740 files, 15 min unsharded), split in two so
-    # the wall time halves and `checks` no longer sits at its cap. Same
+    # The unit suite (vitest, ~740 files), split in three so each shard
+    # stays well under its cap: with two shards, shard 2 took 22-23 minutes
+    # on 4.208.0. Split in two in 2026-09 so `checks` no longer sat at its cap. Same
     # config as `npm run test` (vitest run); `--shard` is a vitest built-in.
     # Needs no build output: every fixture the suite reads (public/wasm/*.wasm,
     # the *.generated.ts files) is tracked. public/pyodide/* is NOT — it is
@@ -239,7 +240,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        shard: [1, 2, 3]
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -263,8 +264,8 @@ jobs:
       - name: Generate SBOM versions (the test asserts these match package.json)
         run: npm run gen:sbom-versions
 
-      - name: Unit tests (shard ${{ matrix.shard }}/2)
-        run: npx vitest run --shard=${{ matrix.shard }}/2
+      - name: Unit tests (shard ${{ matrix.shard }}/3)
+        run: npx vitest run --shard=${{ matrix.shard }}/3
         # Headroom above Node's ~4 GB default heap (owner decision 2026-10-03). The
         # Library view tests render the whole corpus per test; one worker hit the
         # heap limit (SIGABRT) twice on #826. Vitest workers inherit NODE_OPTIONS.
