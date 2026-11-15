@@ -64,6 +64,7 @@ function getRandomUUID(): string {
 
 import { hsm_importGenericSecret, hsm_kbkdf } from '../../../../../wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { clampStep } from '@/utils/clampStep'
 
 interface DemoState {
   keyId: string
@@ -77,7 +78,7 @@ interface DemoState {
 }
 
 export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
-  const [currentStep, setCurrentStep] = useState<number>(initialStep) // 0 = not started
+  const [currentStep, setCurrentStep] = useState<number>(() => clampStep(initialStep, STEPS.length)) // 0 = not started
   const [state, setState] = useState<Partial<DemoState>>({})
   const [processing, setProcessing] = useState(false)
   const hsm = useHSM()

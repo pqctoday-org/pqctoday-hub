@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Link } from 'react-router'
 import {
   Shield,
@@ -81,6 +81,7 @@ import {
 } from './channelBinding'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import { sha256 } from '@noble/hashes/sha2.js'
+import { clampStep } from '@/utils/clampStep'
 
 const TEE_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -319,6 +320,14 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
     if (!integration) return []
     return buildProvisioningSteps(integration, pqcMode)
   }, [integration, pqcMode])
+
+  // A ?step=N link (or a simulation embed) can ask for a step past the end of
+  // this integration's provisioning list; pull it back to the last real step.
+  useEffect(() => {
+    if (provisioningSteps.length > 0 && currentStep > provisioningSteps.length - 1) {
+      setCurrentStep(clampStep(currentStep, provisioningSteps.length))
+    }
+  }, [provisioningSteps.length, currentStep])
 
   const handleReset = () => {
     setCurrentStep(0)
@@ -1149,8 +1158,8 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
             {/* Current step detail */}
             {provisioningSteps.length > 0 &&
               (() => {
-                // eslint-disable-next-line security/detect-object-injection
-                const activeStep = provisioningSteps[currentStep]
+                const activeStep =
+                  provisioningSteps[clampStep(currentStep, provisioningSteps.length)]
                 return (
                   <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
                     <div className="text-sm font-bold text-foreground">{activeStep.title}</div>

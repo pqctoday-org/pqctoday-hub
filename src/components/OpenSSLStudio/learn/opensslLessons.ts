@@ -871,7 +871,7 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
       'A certificate sitting in a file is not the same as a certificate doing its job in a real protocol exchange. This capstone points from the keys, signatures and certificates this curriculum built to the one place in this Studio where certificates are used in a protocol exchange the way a browser or server would use them — with its own sample certificates unless you import yours.',
     tryRef: ['genpkey', 'x509'],
     crossPlaygroundLink: {
-      to: '/playground?tool=tls-simulator',
+      to: '/playground/tls-simulator',
       label: 'Continue in the TLS Simulator',
     },
   },

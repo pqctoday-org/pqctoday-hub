@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { Step } from '../components/StepWizard'
 import type { LogEntry } from '@/components/PKILearning/common/WorkshopOperationLog'
+import { clampStep } from '@/utils/clampStep'
 
 interface UseStepWizardProps {
   steps: Step[]
@@ -10,7 +11,7 @@ interface UseStepWizardProps {
 }
 
 export const useStepWizard = ({ steps, onBack, initialStep = 0 }: UseStepWizardProps) => {
-  const [currentStep, setCurrentStep] = useState(initialStep)
+  const [currentStep, setCurrentStep] = useState(() => clampStep(initialStep, steps.length))
   const [isExecuting, setIsExecuting] = useState(false)
   const [output, setOutput] = useState<string | Record<string, string> | null>(null)
   const [error, setError] = useState<string | null>(null)

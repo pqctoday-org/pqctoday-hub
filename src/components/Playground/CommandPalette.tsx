@@ -13,7 +13,18 @@ import { Search, Zap, Container, CornerDownLeft, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import type { WorkshopTool } from './workshopRegistry'
-import { VERBS, type VerbId, verbsFor, runFor } from './cryptoLabTaxonomy'
+import { VERBS, type VerbId, verbsFor, runFor, expandSearchQuery } from './cryptoLabTaxonomy'
+import { FEATURE_PLAYGROUNDS, type FeaturePlayground } from './cryptoLabMeta'
+
+// The full playgrounds that run in the browser and are not single tools: the
+// Interactive Playground, the PKCS#11 HSM and the KMIP Control Plane. The
+// Docker sandbox needs a local runtime, and the capacity calculator is already
+// listed as a tool.
+const PALETTE_PLAYGROUNDS: readonly FeaturePlayground[] = FEATURE_PLAYGROUNDS.filter(
+  (p) =>
+    !p.requiresLocalSandbox &&
+    ['/playground/interactive', '/playground/hsm', '/playground/cacp'].includes(p.to)
+)
 
 // Mount this only while open (`{paletteOpen && <CommandPalette … />}`) so each
 // open starts fresh — no state-resetting effect needed.
@@ -22,6 +33,8 @@ interface CommandPaletteProps {
   onClose: () => void
   onPickTool: (_tool: WorkshopTool) => void
   onPickVerb: (_verb: VerbId) => void
+  /** Opens a full playground page (Interactive, HSM, KMIP). */
+  onPickPlayground: (_to: string) => void
 }
 
 const MAX_TOOLS = 9
@@ -46,6 +59,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onClose,
   onPickTool,
   onPickVerb,
+  onPickPlayground,
 }) => {
   const [q, setQ] = useState('')
   const [index, setIndex] = useState(0)
@@ -61,14 +75,26 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     [ql]
   )
 
+  // Algorithm nicknames ("kyber", "dilithium", "sphincs") expand to their
+  // standard names, the same expansion the catalog search box uses.
+  const terms = useMemo(() => expandSearchQuery(ql), [ql])
+
+  const playgroundMatches = useMemo(() => {
+    if (!ql) return PALETTE_PLAYGROUNDS
+    const hit = (hay: string) => terms.some((term) => hay.toLowerCase().includes(term))
+    return PALETTE_PLAYGROUNDS.filter((p) => hit(p.title) || hit(p.description) || hit(p.tag))
+  }, [ql, terms])
+
   const toolMatches = useMemo(() => {
+    const hit = (hay: string) => terms.some((term) => hay.toLowerCase().includes(term))
     const matched = ql
       ? tools.filter(
           (t) =>
-            t.name.toLowerCase().includes(ql) ||
-            t.description.toLowerCase().includes(ql) ||
-            t.category.toLowerCase().includes(ql) ||
-            t.algorithms.some((a) => a.toLowerCase().includes(ql)) ||
+            hit(t.name) ||
+            hit(t.description) ||
+            hit(t.category) ||
+            t.algorithms.some((a) => hit(a)) ||
+            t.keywords.some((k) => hit(k)) ||
             verbsFor(t.id).some((v) => v.includes(ql)) ||
             (!t.sandbox && 'in-browser'.includes(ql)) ||
             (t.sandbox && 'sandbox'.includes(ql))
@@ -82,18 +108,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           a.name.localeCompare(b.name)
       )
       .slice(0, MAX_TOOLS)
-  }, [ql, tools])
+  }, [ql, terms, tools])
 
-  const total = verbMatches.length + toolMatches.length
+  const playgroundOffset = verbMatches.length
+  const toolOffset = verbMatches.length + playgroundMatches.length
+  const total = toolOffset + toolMatches.length
   // Clamp the highlight into range during render (no set-state-in-effect).
   const activeIndex = total === 0 ? 0 : Math.min(index, total - 1)
 
   const activate = (i: number) => {
-    if (i < verbMatches.length) {
+    if (i < playgroundOffset) {
       const v = verbMatches.at(i)
       if (v) onPickVerb(v.id)
+    } else if (i < toolOffset) {
+      const p = playgroundMatches.at(i - playgroundOffset)
+      if (p) onPickPlayground(p.to)
     } else {
-      const t = toolMatches.at(i - verbMatches.length)
+      const t = toolMatches.at(i - toolOffset)
       if (t) onPickTool(t)
     }
   }
@@ -188,13 +219,50 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               </>
             )}
 
+            {playgroundMatches.length > 0 && (
+              <>
+                <p className="px-2 pb-1 pt-3 text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                  Full playgrounds
+                </p>
+                {playgroundMatches.map((p, j) => {
+                  const i = playgroundOffset + j
+                  const active = i === activeIndex
+                  const Icon = p.icon
+                  return (
+                    <Button
+                      key={p.to}
+                      variant="ghost"
+                      role="option"
+                      aria-selected={active}
+                      onMouseMove={() => setIndex(i)}
+                      onClick={() => onPickPlayground(p.to)}
+                      className={cn(ROW, active ? 'bg-primary/12' : 'hover:bg-muted/40')}
+                    >
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1 text-left">
+                        <span className="block truncate text-[13px] font-medium text-foreground">
+                          {p.title}
+                        </span>
+                        <span className="block truncate text-[11px] text-muted-foreground">
+                          {p.tag}
+                        </span>
+                      </span>
+                      <RunPill sandbox={false} />
+                    </Button>
+                  )
+                })}
+              </>
+            )}
+
             {toolMatches.length > 0 && (
               <>
                 <p className="px-2 pb-1 pt-3 text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground/80">
                   Tools &amp; demos
                 </p>
                 {toolMatches.map((t, j) => {
-                  const i = verbMatches.length + j
+                  const i = toolOffset + j
                   const active = i === activeIndex
                   const Icon = t.icon
                   return (

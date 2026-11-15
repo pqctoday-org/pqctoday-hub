@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
 import {
   ChevronUp,
@@ -16,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PatentDetail } from './PatentDetail'
 import { ColumnPicker } from './ColumnPicker'
+import { COLUMN_ORDER, COLUMN_WIDTH_PX, TITLE_MIN_PX } from './patentColumns'
 import type { ColumnId, PresetKey } from './patentColumns'
 import type { PatentItem, ImpactLevel, CryptoAgilityMode } from '@/types/PatentTypes'
 import { filingJurisdictionLabel, NIST_STATUS_LABELS } from './PatentsInsights'
@@ -33,6 +35,9 @@ import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
 
 export type SortKey = 'issueDate' | 'impactScore' | 'title' | 'priorityDate'
 export type SortDir = 'asc' | 'desc'
+
+/** Typical rendered height of one table row (two text lines plus padding). */
+const ROW_ESTIMATE_PX = 57
 
 const AGILITY_BADGE: Record<CryptoAgilityMode, string> = {
   classical_only: 'border-status-error/40 text-status-error bg-status-error/10',
@@ -190,7 +195,7 @@ interface ThColProps {
 function ThCol({ label, sortable, className = '', sortKey, sortDir, onSort }: ThColProps) {
   return (
     <th
-      className={`px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground whitespace-nowrap ${sortable ? 'cursor-pointer select-none hover:text-foreground' : ''} ${className}`}
+      className={`px-3 py-2.5 text-left align-bottom text-xs font-semibold text-muted-foreground break-words ${sortable ? 'cursor-pointer select-none hover:text-foreground' : ''} ${className}`}
       onClick={sortable ? () => onSort(sortable) : undefined}
     >
       <span className="inline-flex items-center gap-1">
@@ -460,6 +465,52 @@ export function PatentsTable({
   // table render and the redesign orchestrator's count + drawer nav).
   const sorted = usePatentResults(patents, searchParams, sortKey, sortDir)
 
+  // Only the rows in view are rendered. Measured 2026-11-14 on the production
+  // build with the full 732-row catalogue: re-sorting took 205-235 ms (740-800 ms
+  // at 4x CPU throttling) against 115-170 ms for a 7-row result, so the cost
+  // was the rows themselves. Rows are about 57 px tall; measureElement corrects
+  // the estimate for any row that differs.
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const rowVirtualizer = useVirtualizer({
+    count: sorted.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => ROW_ESTIMATE_PX,
+    overscan: 12,
+  })
+  const virtualRows = rowVirtualizer.getVirtualItems()
+  const paddingTop = virtualRows.length > 0 ? (virtualRows[0]?.start ?? 0) : 0
+  const paddingBottom =
+    virtualRows.length > 0
+      ? rowVirtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
+      : 0
+
+  // A selection made from outside the table (a ?patent= link, the drawer's
+  // next/previous, a search result) may sit outside the rendered window: bring
+  // it into range once, so the row exists for the page's scroll-and-highlight
+  // step. A click on a visible row is already in range, and a later re-sort or
+  // filter change leaves the reader's scroll position alone.
+  const selectedIndex = useMemo(
+    () => (selectedId ? sorted.findIndex((p) => p.patentNumber === selectedId) : -1),
+    [selectedId, sorted]
+  )
+  const broughtIntoRange = useRef<string | null>(null)
+  useEffect(() => {
+    if (!selectedId) {
+      broughtIntoRange.current = null
+      return
+    }
+    // Wait until the selection is in the list (a link may widen the scope first).
+    if (selectedIndex < 0 || broughtIntoRange.current === selectedId) return
+    broughtIntoRange.current = selectedId
+    const items = rowVirtualizer.getVirtualItems()
+    const first = items[0]?.index ?? -1
+    const last = items[items.length - 1]?.index ?? -1
+    if (selectedIndex < first || selectedIndex > last) {
+      rowVirtualizer.scrollToIndex(selectedIndex, { align: 'center' })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the virtualiser instance is stable
+  }, [selectedId, selectedIndex])
+
   const handleSort = useCallback(
     (key: SortKey) => {
       logPatentSort(key)
@@ -484,6 +535,13 @@ export function PatentsTable({
 
   const hasFilters = activeFilters.length > 0 || search !== ''
   const show = (id: ColumnId) => visibleColumns.includes(id)
+  const renderedColumns = COLUMN_ORDER.filter(
+    (id) => show(id) && !(id === 'assignee' && collapseForDetail)
+  )
+  const tableMinWidth = renderedColumns.reduce(
+    (sum, id) => sum + (id === 'title' ? TITLE_MIN_PX : COLUMN_WIDTH_PX[id]),
+    0
+  )
 
   const thProps = { sortKey, sortDir, onSort: handleSort }
 
@@ -556,32 +614,43 @@ export function PatentsTable({
         )}
 
         {/* Table */}
-        <div className="flex-1 overflow-auto">
+        <div ref={scrollRef} className="flex-1 overflow-auto">
           {sorted.length === 0 ? (
             <EmptyState
               title="No patents match"
               description="Try adjusting your filters or search."
             />
           ) : (
-            <table className="w-full text-sm border-collapse">
+            // Only the rows in view are in the DOM; the row count and indices
+            // tell assistive technology how large the table really is.
+            <table
+              className="w-full table-fixed text-sm border-collapse"
+              style={{ minWidth: `${tableMinWidth}px` }}
+              aria-rowcount={sorted.length + 1}
+            >
+              <colgroup>
+                {renderedColumns.map((id) => (
+                  <col
+                    key={id}
+                    data-column={id}
+                    style={id === 'title' ? undefined : { width: `${COLUMN_WIDTH_PX[id]}px` }}
+                  />
+                ))}
+              </colgroup>
               <thead className="sticky top-0 z-10 bg-card border-b border-border">
-                <tr>
-                  {show('num') && <ThCol label="#" className="w-10" {...thProps} />}
+                <tr aria-rowindex={1}>
+                  {show('num') && <ThCol label="#" {...thProps} />}
                   {show('title') && <ThCol label="Title" sortable="title" {...thProps} />}
                   {show('assignee') && !collapseForDetail && (
                     <ThCol label="Assignee" className="hidden sm:table-cell" {...thProps} />
                   )}
                   {show('pqcAlgorithms') && (
-                    <ThCol
-                      label="PQC Algorithms"
-                      className="hidden sm:table-cell max-w-[160px]"
-                      {...thProps}
-                    />
+                    <ThCol label="PQC Algorithms" className="hidden sm:table-cell" {...thProps} />
                   )}
                   {show('classicalAlgorithms') && (
                     <ThCol
                       label="Classical Algorithms"
-                      className="hidden sm:table-cell max-w-[160px]"
+                      className="hidden sm:table-cell"
                       {...thProps}
                     />
                   )}
@@ -664,11 +733,22 @@ export function PatentsTable({
                 </tr>
               </thead>
               <tbody>
-                {sorted.map((p, i) => {
+                {paddingTop > 0 && (
+                  <tr aria-hidden="true">
+                    <td style={{ height: `${paddingTop}px` }} colSpan={renderedColumns.length} />
+                  </tr>
+                )}
+                {virtualRows.map((virtualRow) => {
+                  const i = virtualRow.index
+                  const p = sorted[i]
+                  if (!p) return null
                   const isSelected = p.patentNumber === selectedId
                   return (
                     <tr
                       key={p.patentNumber}
+                      data-index={i}
+                      aria-rowindex={i + 2}
+                      ref={rowVirtualizer.measureElement}
                       data-deeplink-id={p.patentNumber}
                       onClick={() => {
                         if (!isSelected) logPatentView(p.patentNumber)
@@ -820,6 +900,11 @@ export function PatentsTable({
                     </tr>
                   )
                 })}
+                {paddingBottom > 0 && (
+                  <tr aria-hidden="true">
+                    <td style={{ height: `${paddingBottom}px` }} colSpan={renderedColumns.length} />
+                  </tr>
+                )}
               </tbody>
             </table>
           )}
