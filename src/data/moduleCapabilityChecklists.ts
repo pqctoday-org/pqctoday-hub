@@ -60,7 +60,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'hybrid-crypto': {
     roleFocus: 'Security Architects & Protocol Engineers',
     productionCapabilities: [
-      'Standards-compliant PQ/T hybrid key exchange (e.g., X25519MLKEM768 or SecP256r1MLKEM768 per RFC 10024, formerly draft-ietf-tls-ecdhe-mlkem; ETSI TS 103 744) with FIPS-approved KDF combiners.',
+      'Standards-compliant PQ/T hybrid key exchange (e.g., X25519MLKEM768 or SecP256r1MLKEM768 per RFC 10024; terminology per RFC 9794; generic hybrid framework per ETSI TS 103 744) with FIPS-approved KDF combiners.',
       'Dual/composite or parallel certificate chain validation where policy requires both classical and PQC cryptographic assurances.',
       'Downgrade-detection alerts when peers fall back from hybrid PQ/T groups to classical-only key exchange.',
     ],
@@ -384,7 +384,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'pqc-testing-validation': {
     roleFocus: 'QA Architects, Performance Engineers & Security Testers',
     productionCapabilities: [
-      'Automated NIST ACVP Known-Answer Test (KAT) and negative tamper-rejection harnesses in CI/CD pipelines.',
+      'Automated known-answer tests against published vectors (such as NIST ACVP) and negative tamper-rejection tests in CI/CD.',
       'Network protocol fuzzing and MTU fragmentation simulation for large PQC handshakes (`ML-KEM-1024`, `ML-DSA-87`, `SLH-DSA`).',
       'Cross-vendor interoperability test matrices (e.g., OpenSSL 3.6 ↔ BoringSSL ↔ wolfSSL ↔ Bouncy Castle).',
     ],
