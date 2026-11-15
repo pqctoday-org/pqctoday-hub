@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { Building2, Compass } from 'lucide-react'
 import type { Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from './LeaderCategorySidebar'
+import { Button } from '@/components/ui/button'
 
 // Why each contributor category can help a reader navigate the directory.
 const CATEGORY_WHY: Record<string, string> = {
@@ -30,7 +31,17 @@ const CATEGORY_WHY: Record<string, string> = {
  * matters to a governance reader. Rendered only for the executive persona (caller
  * gates it), so every other role sees the directory exactly as before.
  */
-export function LeadersExecutivePanel({ leaders }: { leaders: Leader[] }) {
+export function LeadersExecutivePanel({
+  leaders,
+  onSelectOrganization,
+  onSelectCategory,
+}: {
+  leaders: Leader[]
+  /** Search the directory for this organization (rows become buttons when set). */
+  onSelectOrganization?: (org: string) => void
+  /** Filter the directory to this category (rows become buttons when set). */
+  onSelectCategory?: (category: string) => void
+}) {
   const topOrgs = useMemo(() => {
     const counts = new Map<string, number>()
     for (const l of leaders) {
@@ -67,7 +78,18 @@ export function LeadersExecutivePanel({ leaders }: { leaders: Leader[] }) {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-[11px] font-semibold text-muted-foreground">
                 {i + 1}
               </span>
-              <span className="min-w-0 flex-1 truncate text-foreground">{org}</span>
+              {onSelectOrganization ? (
+                <Button
+                  variant="ghost"
+                  onClick={() => onSelectOrganization(org)}
+                  className="h-auto min-w-0 flex-1 justify-start truncate p-0 text-sm font-normal text-foreground hover:text-primary hover:underline"
+                  title={`Show people at ${org}`}
+                >
+                  {org}
+                </Button>
+              ) : (
+                <span className="min-w-0 flex-1 truncate text-foreground">{org}</span>
+              )}
               <span className="shrink-0 text-xs text-muted-foreground">{count}</span>
             </li>
           ))}
@@ -87,7 +109,18 @@ export function LeadersExecutivePanel({ leaders }: { leaders: Leader[] }) {
         <ul className="space-y-2">
           {LEADER_CATEGORIES.map((cat) => (
             <li key={cat} className="text-sm">
-              <span className="font-medium text-foreground">{cat}</span>
+              {onSelectCategory ? (
+                <Button
+                  variant="ghost"
+                  onClick={() => onSelectCategory(cat)}
+                  className="h-auto p-0 align-baseline text-sm font-medium text-foreground hover:text-primary hover:underline"
+                  title={`Show ${cat} profiles`}
+                >
+                  {cat}
+                </Button>
+              ) : (
+                <span className="font-medium text-foreground">{cat}</span>
+              )}
               <span className="text-muted-foreground"> ({categoryCounts.get(cat) ?? 0})</span>
               <span className="text-muted-foreground">
                 {' '}

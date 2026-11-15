@@ -11,7 +11,8 @@ import {
 import { ChevronRight, ChevronLeft, Flag, Rows3, GalleryHorizontal } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { GanttDetailPopover } from './GanttDetailPopover'
-import type { TimelinePhase } from '../../types/timeline'
+import type { TimelinePhase, TimelineEvent } from '../../types/timeline'
+import { phaseOrgs } from '../../data/timelineViewFilter'
 import { motion } from 'framer-motion'
 import { StatusBadge } from '../common/StatusBadge'
 import { Button } from '@/components/ui/button'
@@ -66,6 +67,18 @@ function proximityLabel(startYear: number, currentYear: number): string {
   if (delta === 0) return 'this year'
   if (delta === 1) return 'in 1 year'
   return `in ${delta} years`
+}
+
+/** A country card names every issuing body, not only the first. */
+function bodySummary(bodies: Array<{ name: string }>): string {
+  const names = bodies.map((b) => b.name)
+  return names.length <= 3
+    ? names.join(', ')
+    : `${names.slice(0, 3).join(', ')} +${names.length - 3}`
+}
+
+function bodyNames(bodies: Array<{ name: string }>): string {
+  return bodies.map((b) => b.name).join(', ')
 }
 
 export const MobileTimelineList = ({
@@ -133,6 +146,14 @@ export const MobileTimelineList = ({
 
   const handleCardClick = (phase: TimelinePhase) => {
     const next = { phase, event: phase.events[0] ?? null }
+    if (onSelectEvent) onSelectEvent(next)
+    else setLocalSelection(next)
+  }
+
+  // Another record of the open row, picked in the popover's record list.
+  const handleFocusEvent = (event: TimelineEvent) => {
+    if (!selection) return
+    const next = { phase: selection.phase, event }
     if (onSelectEvent) onSelectEvent(next)
     else setLocalSelection(next)
   }
@@ -221,7 +242,9 @@ export const MobileTimelineList = ({
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground leading-tight">{country.countryName}</h3>
-                  <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
+                  <p className="text-xs text-muted-foreground" title={bodyNames(country.bodies)}>
+                    {bodySummary(country.bodies)}
+                  </p>
                   {lastVerified && (
                     <p className="text-[9px] text-muted-foreground font-mono">
                       Sources checked {lastVerified}
@@ -257,7 +280,10 @@ export const MobileTimelineList = ({
                           {phase.phase}
                         </span>
                         <span className="text-[10px] text-muted-foreground truncate hidden xs:inline">
-                          {phase.title}
+                          {phaseOrgs(phase)
+                            .map((o) => o.name)
+                            .join(', ')}{' '}
+                          · {phase.title}
                         </span>
                       </div>
                       <span className="flex flex-shrink-0 flex-col items-end gap-0.5">
@@ -310,7 +336,9 @@ export const MobileTimelineList = ({
                     <h3 className="font-bold text-foreground leading-tight">
                       {country.countryName}
                     </h3>
-                    <p className="text-xs text-muted-foreground">{country.bodies[0]?.name}</p>
+                    <p className="text-xs text-muted-foreground" title={bodyNames(country.bodies)}>
+                      {bodySummary(country.bodies)}
+                    </p>
                     {lastVerified && (
                       <p className="text-[9px] text-muted-foreground font-mono">
                         Sources checked {lastVerified}
@@ -398,6 +426,13 @@ export const MobileTimelineList = ({
                             </span>
                             <StatusBadge status={currentPhase.status} size="sm" />
                           </div>
+                          <span className="block text-[10px] text-muted-foreground">
+                            {phaseOrgs(currentPhase)
+                              .map((o) => o.name)
+                              .join(', ')}
+                            {currentPhase.events.length > 1 &&
+                              ` · ${currentPhase.events.length} records`}
+                          </span>
                           <span className="text-[10px] sm:text-xs text-muted-foreground font-mono">
                             {currentPhase.openEnded
                               ? `${currentPhase.startYear} onward`
@@ -460,6 +495,7 @@ export const MobileTimelineList = ({
         onClose={handleClosePopover}
         phase={selectedPhase}
         focusEvent={selection?.event}
+        onFocusEvent={handleFocusEvent}
       />
     </div>
   )

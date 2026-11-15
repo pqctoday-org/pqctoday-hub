@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { revisionAuthorshipLabel, revisionReviewLabel } from './revisionProvenance'
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import { GitMerge, Bot, ChevronRight, History } from 'lucide-react'
 import { useRevisions, byDomain, type RevisionEntry } from '@/hooks/useRevisions'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
@@ -80,12 +81,12 @@ export function ContentUpdatesFeed({
           <UpdateRow key={`${r.pr_number}-${i}`} r={r} />
         ))}
       </div>
-      <a
-        href="/revisions"
+      <Link
+        to="/revisions"
         className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
       >
         View all revisions <ChevronRight className="w-3 h-3" />
-      </a>
+      </Link>
     </CollapsibleSection>
   )
 }

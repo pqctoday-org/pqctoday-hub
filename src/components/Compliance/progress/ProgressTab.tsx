@@ -6,6 +6,7 @@
  * comes from the structured `deadlineDates` column; nothing here parses prose,
  * and nothing is labelled overdue (see progressModel for why).
  */
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useMemo } from 'react'
 import { CalendarClock, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -145,9 +146,11 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
                         </span>
                       )
                     })()}
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">
-                    {entry.framework.deadline}
-                  </p>
+                  {frameworkDateLine(entry.framework).kind !== 'none' && (
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">
+                      {frameworkDateLine(entry.framework).text}
+                    </p>
+                  )}
                 </div>
               </li>
             ))}

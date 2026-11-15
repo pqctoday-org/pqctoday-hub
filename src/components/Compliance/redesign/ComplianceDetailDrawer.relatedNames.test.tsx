@@ -76,10 +76,10 @@ describe('ComplianceDetailDrawer related & overlapping list', () => {
     expect(row).toHaveTextContent(readable as string)
     expect(within(row).queryByText('NIST-SP800-208')).not.toBeInTheDocument()
 
-    // The id stays reachable as a tooltip, and it is what the list opens.
+    // The id stays reachable as a tooltip, and the list opens the exact framework it names.
     expect(within(row).getByTitle('NIST-SP800-208')).toBeInTheDocument()
     fireEvent.click(row)
-    expect(onSelectRelated).toHaveBeenCalledWith('NIST-SP800-208')
+    expect(onSelectRelated).toHaveBeenCalledWith({ kind: 'framework', id: 'NIST-SP800-208' })
 
     // The traceability chain names the same record the same way.
     expect(screen.queryByText('NIST-SP800-208')).not.toBeInTheDocument()

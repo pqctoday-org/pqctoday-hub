@@ -235,10 +235,12 @@ export function PatentSearchPanel({
     // then merge-sort by descending score. A high-cosine semantic-only
     // result (~0.9) will outrank a weak fuzzy lexical match (normalized
     // ~0.2) and bubble up where it belongs.
-    if (semantic.mode !== 'semantic' || semantic.hits.length === 0) return lexical
-    const seen = new Set(lexical.map((r) => r.patent.patentNumber))
+    // Lexical-only results use the same 0–1 scale, so the card's relevance
+    // bar means the same thing with or without the semantic supplement.
     const lexicalMax = Math.max(1e-6, ...lexical.map((r) => r.score))
     const normLexical = lexical.map((r) => ({ ...r, score: r.score / lexicalMax }))
+    if (semantic.mode !== 'semantic' || semantic.hits.length === 0) return normLexical
+    const seen = new Set(lexical.map((r) => r.patent.patentNumber))
     const semanticOnly: PatentSearchResult[] = []
     for (const hit of semantic.hits) {
       if (seen.has(hit.id)) continue
@@ -437,7 +439,8 @@ function PatentResultCard({
     .slice(0, 4)
 
   const topAlgos = patent.pqcAlgorithms.slice(0, 4)
-  const scoreBar = Math.min(100, Math.round((score / 20) * 100))
+  // `score` is relative (0–1, best hit = 1) — see the results memo.
+  const scoreBar = Math.max(4, Math.min(100, Math.round(score * 100)))
 
   return (
     <div
@@ -493,7 +496,7 @@ function PatentResultCard({
           </span>
           <div
             className="h-1 w-12 rounded-full bg-muted overflow-hidden"
-            title={`Relevance score: ${score.toFixed(1)}`}
+            title={`Relevance: ${Math.round(score * 100)}% of the best match`}
           >
             <div
               className="h-full bg-primary rounded-full transition-all"

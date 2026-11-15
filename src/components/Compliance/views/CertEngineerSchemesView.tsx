@@ -16,6 +16,7 @@
  * Stage language follows the 2026-09-26 rule: a CAVP algorithm validation is
  * the prerequisite for a FIPS 140-3 certificate, never the certificate.
  */
+import { certSchemesByExpectation, PQC_EXPECTATION } from './forYouSelection'
 import { useMemo, type FC } from 'react'
 import { Link } from 'react-router'
 import { ArrowRight, BadgeCheck, FlaskConical, Landmark } from 'lucide-react'
@@ -38,13 +39,6 @@ interface CertEngineerSchemesViewProps {
   onSelectThreat?: (item: ThreatData) => void
   onSelectTimeline?: (item: TimelineEvent) => void
   onSelectFramework?: (item: ComplianceFramework) => void
-}
-
-const PQC_EXPECTATION: Record<string, string> = {
-  yes: 'Requires PQC',
-  expected: 'PQC expected',
-  partial: 'Partly PQC',
-  guidance: 'PQC guidance',
 }
 
 const TEST_LINKS = [
@@ -110,17 +104,10 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
   onSelectFramework,
 }) => {
   const { profile, isEmpty, frameworks } = useApplicabilityWithPaths(profileOverride)
-  const { expecting, others } = useMemo(() => {
-    const schemes = frameworks
-      .map((result) => result.item)
-      .filter((fw) => fw.bodyType === 'certification_body')
-    const expectsPqc = (fw: ComplianceFramework) =>
-      Boolean(fw.pqcRequirement && fw.pqcRequirement in PQC_EXPECTATION)
-    return {
-      expecting: schemes.filter(expectsPqc),
-      others: schemes.filter((fw) => !expectsPqc(fw)),
-    }
-  }, [frameworks])
+  const { expecting, others } = useMemo(
+    () => certSchemesByExpectation(frameworks.map((result) => result.item)),
+    [frameworks]
+  )
 
   if (isEmpty) {
     return (

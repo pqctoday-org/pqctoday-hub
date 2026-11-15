@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { cswp39Note } from '@/data/complianceData'
+import { certRecordSourceFor, certRecordsHref } from './certRecordLinks'
+import { frameworkDateLine } from '@/utils/frameworkDateLine'
 import { useState, useMemo, useEffect, useRef } from 'react'
 
 /** Remembers that a reader opened the full landscape — B+ remediation 4.6. */
@@ -84,6 +87,22 @@ const FIPS_ROW_TO_PQC_ALGORITHM: Record<string, string> = {
   'FIPS-203': 'ML-KEM',
   'FIPS-204': 'ML-DSA',
   'FIPS-205': 'SLH-DSA',
+}
+
+/**
+ * What the landscape shows for a framework's date. A publication date on non-binding guidance
+ * is shown as "Published <year>" with no urgency colour; only a deadline is coloured by how
+ * close it is (owner decision D7).
+ */
+function deadlineReadout(fw: ComplianceFramework): {
+  kind: 'deadline' | 'published' | 'none'
+  text: string | null
+  urgency: DeadlineUrgency
+} {
+  const line = frameworkDateLine(fw)
+  if (line.kind === 'published') return { kind: 'published', text: line.text, urgency: 'ongoing' }
+  if (line.kind === 'none') return { kind: 'none', text: null, urgency: 'ongoing' }
+  return { kind: 'deadline', text: fw.deadline, urgency: deadlineUrgency(fw.deadline) }
 }
 
 function urgencyBgColor(urgency: DeadlineUrgency) {
@@ -340,18 +359,19 @@ export function DeadlineTimeline({
                     style={{ gridTemplateColumns: `repeat(${STACK_COLUMNS}, 10px)` }}
                   >
                     {fws.map((fw) => {
-                      const urgency = deadlineUrgency(fw.deadline)
+                      const readout = deadlineReadout(fw)
+                      const urgency = readout.urgency
                       return (
                         <div key={fw.id} className="group relative">
                           <div
                             className={`w-2.5 h-2.5 rounded-full ${urgencyBgColor(urgency)} cursor-default`}
-                            title={`${fw.label}: ${fw.deadline}`}
+                            title={`${fw.label}: ${readout.text ?? 'no date'}`}
                           />
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 whitespace-nowrap">
                             <div className="bg-popover border border-border text-xs text-foreground px-2 py-1 rounded shadow-lg">
                               <span className="font-semibold">{fw.label}</span>
                               <span className={`ml-1 ${urgencyTextColor(urgency)}`}>
-                                {fw.deadline}
+                                {readout.text}
                               </span>
                             </div>
                           </div>
@@ -474,7 +494,8 @@ function FrameworkCard({
   const [expanded, setExpanded] = useState(false)
   const [graphOpen, setGraphOpen] = useState(false)
   const [maturityOpen, setMaturityOpen] = useState(false)
-  const urgency = deadlineUrgency(fw.deadline)
+  const readout = deadlineReadout(fw)
+  const urgency = readout.urgency
   const hasRefs = fw.libraryRefs.length > 0 || fw.timelineRefs.length > 0
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
@@ -643,12 +664,16 @@ function FrameworkCard({
         />
       )}
 
-      <div className={`flex items-center gap-1.5 text-xs ${urgencyTextColor(urgency)}`}>
-        <Clock size={12} />
-        <span className="font-medium">
-          {urgency === 'overdue' ? `${fw.deadline} — date passed` : fw.deadline}
-        </span>
-      </div>
+      {readout.text && (
+        <div className={`flex items-center gap-1.5 text-xs ${urgencyTextColor(urgency)}`}>
+          <Clock size={12} />
+          <span className="font-medium">
+            {urgency === 'overdue' && readout.kind === 'deadline'
+              ? `${readout.text} — date passed`
+              : readout.text}
+          </span>
+        </div>
+      )}
 
       <p className="text-xs text-muted-foreground line-clamp-2">{fw.description}</p>
 
@@ -681,6 +706,10 @@ function FrameworkCard({
             </span>
           ))}
         </div>
+      )}
+
+      {cswp39Note(fw.cswp39Tags) !== null && (
+        <div className="text-[10px] text-muted-foreground">{cswp39Note(fw.cswp39Tags)}</div>
       )}
 
       {fw.cswp39Tags && fw.cswp39Tags.length > 0 && (
@@ -769,12 +798,12 @@ function FrameworkCard({
                 </Link>
               )
             })()}
-          {fw.enforcementBody && fw.bodyType === 'certification_body' && (
+          {fw.bodyType === 'certification_body' && certRecordsHref(fw.id) && (
             <Link
-              to={`/compliance?tab=records&q=${encodeURIComponent(fw.enforcementBody)}`}
+              to={certRecordsHref(fw.id) as string}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 hover:text-foreground transition-colors"
-              title={`Cert records for ${fw.enforcementBody}`}
+              title={`Cert records from ${certRecordSourceFor(fw.id)}`}
             >
               <Award size={8} />
               Certs
@@ -1185,6 +1214,8 @@ interface ComplianceLandscapeProps {
   highlightFrameworkId?: string | null
   /** Called when user clicks a framework card, or a row in table view */
   onSelectFramework?: (fw: ComplianceFramework) => void
+  /** Reports the rows this landscape shows now, after its own filters and role set. */
+  onVisibleFrameworksChange?: (frameworks: ComplianceFramework[]) => void
 }
 
 const NO_REGION_SCOPE: readonly RegionBloc[] = []
@@ -1194,6 +1225,7 @@ export function ComplianceLandscape({
   showDeadlineTimeline = true,
   maturityByRefId,
   onNavigateToCswp39,
+  onVisibleFrameworksChange,
   orgFilter: orgFilterProp,
   industryFilter: industryFilterProp,
   regionFilter: regionFilterProp,
@@ -1533,10 +1565,34 @@ export function ComplianceLandscape({
     : []
   // Never reduce to nothing, and never reduce a set the reader has already
   // narrowed themselves — either would read as broken rather than as focused.
+  // Any other narrowing (an org, region, country, deadline, search, "mine", or a
+  // PQC/deadline-only switch) counts as the reader having narrowed it, so the role set
+  // is not applied on top of it. The industry filter is left out: it defaults to the
+  // persona's own industry, so it is not something the reader picked here.
+  const readerNarrowed =
+    orgFilter !== 'All' ||
+    regionFilter !== 'All' ||
+    countryFilter !== 'All' ||
+    deadlineFilter !== 'All' ||
+    searchFilterText.trim() !== '' ||
+    showOnlyMine ||
+    pqcRequiredOnly ||
+    hasDeadlineOnly
   const roleReductionActive =
-    !fullLandscapeOpen && emphasisSet.length > 0 && emphasisSet.length < displayedFrameworks.length
+    !fullLandscapeOpen &&
+    !readerNarrowed &&
+    emphasisSet.length > 0 &&
+    emphasisSet.length < displayedFrameworks.length
   const gridFrameworks = roleReductionActive ? emphasisSet : displayedFrameworks
   const hiddenByRole = displayedFrameworks.length - gridFrameworks.length
+
+  // Report the rows shown, keyed by their ids so an unchanged list does not re-report.
+  const visibleKey = gridFrameworks.map((f) => f.id).join('|')
+  // The objects follow the data: a refresh that keeps the ids still reports the new rows.
+  useEffect(() => {
+    onVisibleFrameworksChange?.(roleReductionActive ? emphasisSet : displayedFrameworks)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by visibleKey and the displayed set
+  }, [visibleKey, displayedFrameworks, onVisibleFrameworksChange])
 
   const openFullLandscape = () => {
     setFullLandscapeOpen(true)
@@ -1727,16 +1783,15 @@ export function ComplianceLandscape({
 
           {/* Right-side controls */}
           <div className="flex items-center gap-2 ml-auto">
-            {viewMode === 'cards' && (
-              <FilterDropdown
-                items={sortItems}
-                selectedId={sortBy}
-                onSelect={(id) => setSortBy(id as FrameworkSortOption)}
-                defaultLabel="Sort"
-                noContainer
-                opaque
-              />
-            )}
+            {/* The sort applies to both views: the table lists rows in the same order the cards use. */}
+            <FilterDropdown
+              items={sortItems}
+              selectedId={sortBy}
+              onSelect={(id) => setSortBy(id as FrameworkSortOption)}
+              defaultLabel="Sort"
+              noContainer
+              opaque
+            />
             <ViewToggle mode={viewMode} onChange={setViewMode} />
             {myFrameworks.length > 0 && (
               <Button

@@ -13,6 +13,8 @@ interface ThreatsCardGridProps {
   /** Display label for the active persona (e.g. "Executive") — used to explain
    *  why non-matching cards are dimmed, instead of a silent opacity change. */
   personaLabel?: string
+  /** Active developer protocol lens, passed to each card's stated/inferred mark. */
+  protocolLens?: string | null
 }
 
 function industrySlug(industry: string) {
@@ -24,6 +26,7 @@ export const ThreatsCardGrid = ({
   onItemClick,
   relevantIndustries,
   personaLabel,
+  protocolLens = null,
 }: ThreatsCardGridProps) => {
   if (items.length === 0) {
     return (
@@ -65,6 +68,7 @@ export const ThreatsCardGrid = ({
                   item={item}
                   index={i}
                   onClick={onItemClick}
+                  protocolLens={protocolLens}
                   dimmed={relevantIndustries != null && !relevantIndustries.has(item.industry)}
                   dimmedReason={
                     personaLabel

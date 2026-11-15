@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { ShieldCheck } from 'lucide-react'
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import { FilterDropdown } from './FilterDropdown'
 import type { FilterDropdownItem } from './FilterDropdown'
-import { getTrustScore, type TrustTier, type ScoredResourceType } from '@/data/trustScore'
+import type { TrustTier } from '@/data/trustScore'
+import { isTrustTier, matchesTrustTierFilter, trustTiersFromParams } from '@/data/trustTierFilter'
 
-const TIER_ORDER: TrustTier[] = ['Authoritative', 'High', 'Moderate', 'Low']
+// Re-exported: existing desktop callers import it from here.
+export { matchesTrustTierFilter }
 
 const TIER_OPTIONS: FilterDropdownItem[] = [
   { id: 'Authoritative', label: 'Authoritative' },
@@ -64,30 +67,15 @@ export function TrustTierFilter({
   )
 }
 
-function isTrustTier(value: string): value is TrustTier {
-  return TIER_ORDER.includes(value as TrustTier)
-}
-
 /** Read trust-tier filter state — empty array when unset. Accepts an optional
  *  URLSearchParams override (for the sim embed). */
 export function useTrustTierFilter(paramsOverride?: URLSearchParams): TrustTier[] {
   const [urlParams] = useSearchParams()
-  return (paramsOverride ?? urlParams).getAll('tier').filter(isTrustTier)
-}
-
-/**
- * Returns true if the (resourceType, resourceId) pair has a tier matching one
- * of the selected tiers, OR if no tier filter is active. Records with no
- * trust score are excluded from results when any tier is selected — preserving
- * the user's intent ("show me only Authoritative content").
- */
-export function matchesTrustTierFilter(
-  selectedTiers: TrustTier[],
-  resourceType: ScoredResourceType,
-  resourceId: string
-): boolean {
-  if (selectedTiers.length === 0) return true
-  const score = getTrustScore(resourceType, resourceId)
-  if (!score) return false
-  return selectedTiers.includes(score.tier)
+  const selected = trustTiersFromParams(paramsOverride ?? urlParams)
+  // Keep the same array while the selected tiers do not change. A new array on every
+  // render would be a new dependency for every memo and effect that reads it: the
+  // records table reports its rows back up, which re-renders the page with a new array,
+  // and that repeats without end. Only known tiers are keyed, and tier names have no comma.
+  const key = selected.join(',')
+  return useMemo(() => (key ? (key.split(',') as TrustTier[]) : []), [key])
 }

@@ -23,6 +23,17 @@ export function sortPatents(
   sortDir: SortDir
 ): PatentItem[] {
   return [...patents].sort((a, b) => {
+    // A record with no date goes last in either direction: "oldest first"
+    // must open on the oldest real date, not on a page of blanks.
+    if (sortKey === 'issueDate' || sortKey === 'priorityDate') {
+      const av = a[sortKey]
+      const bv = b[sortKey]
+      if (!av || !bv) {
+        if (av) return -1
+        if (bv) return 1
+        return a.patentNumber.localeCompare(b.patentNumber)
+      }
+    }
     let cmp = 0
     if (sortKey === 'issueDate') cmp = a.issueDate.localeCompare(b.issueDate)
     else if (sortKey === 'priorityDate') cmp = a.priorityDate.localeCompare(b.priorityDate)
