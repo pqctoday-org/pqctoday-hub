@@ -164,8 +164,8 @@ export const IMPACT_HIGH_MIN = 72
 
 export function toImpactLevel(score: number): ImpactLevel {
   // 72 (owner decision 2026-11-14: roughly the top 15–20% High). On
-  // patents_11122026.csv that is 138 of 732 records (18.9%); no multiple of
-  // 5 falls in the band (70 → 23.1%, 75 → 14.1%).
+  // patents_11152026.csv that is 141 of 732 records (19.3%); no multiple of
+  // 5 falls in the band (70 → 23.8%, 75 → 14.6%).
   if (score >= IMPACT_HIGH_MIN) return 'High'
   if (score >= 35) return 'Medium'
   return 'Low'

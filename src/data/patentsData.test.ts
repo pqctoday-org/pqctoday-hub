@@ -70,11 +70,14 @@ describe('patentsData — lifecycle (patents_09172026.csv prunes the out-of-scop
 
 describe('patentsData — quantum-safe basis (2026-09-22)', () => {
   it('says WHY a patent outside the PQC scope is still quantum-safe', () => {
-    // pqcAlgorithms only ever holds NIST PQC names — AES appears in none of
-    // the 1,862 rows — so a patent whose quantum resistance comes from
-    // AES-256 (~128-bit security against Grover, which NIST treats as
-    // post-quantum adequate), from a lattice FHE scheme, or from QKD read as
-    // purely classical and silently left the page. Each now says which.
+    // A patent whose quantum resistance comes from AES-256 (~128-bit
+    // security against Grover, which NIST treats as post-quantum adequate),
+    // from a lattice FHE scheme, or from QKD, and whose pqcAlgorithms is
+    // empty, used to read as purely classical and silently leave the page.
+    // Each now says which. pqcAlgorithms holds what the patent's own document
+    // names, which since 2026-11-15 includes FHE schemes (CKKS, BFV, FHE) and
+    // one symmetric cipher (eAES); such a patent is in scope and labelled
+    // pqc_algorithm, so it is not among the ones checked here.
     const outside = patentsData.filter((p) => !isPqcPatent(p))
     expect(outside.length).toBeGreaterThan(0)
     const explained = outside.filter((p) => p.quantumSafeBasis !== '')
