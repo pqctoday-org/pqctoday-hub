@@ -26,13 +26,18 @@ describe('ApprovalStatusControl practice states', () => {
     expect(screen.getByText('· CISO')).toBeInTheDocument()
   })
 
+  /** Opens the example-role dropdown and returns its option labels, in order. */
+  function openRoleMenu() {
+    fireEvent.click(screen.getByRole('button', { name: 'Example reviewer role' }))
+    return screen.getAllByRole('option').map((o) => o.textContent)
+  }
+
   it('offers a choice of example roles, not a free-text name box', () => {
     render(<ApprovalStatusControl status="draft" onAdvance={vi.fn()} />)
     fireEvent.click(screen.getByRole('button', { name: /In review/ }))
     expect(screen.queryByPlaceholderText(/Reviewer name/)).not.toBeInTheDocument()
-    const select = screen.getByRole('combobox', { name: 'Example reviewer role' })
-    const options = Array.from(select.querySelectorAll('option')).map((o) => o.textContent)
-    expect(options).toEqual([
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(openRoleMenu()).toEqual([
       'Example reviewer role (optional)',
       'CISO',
       'Security architect',
@@ -46,11 +51,31 @@ describe('ApprovalStatusControl practice states', () => {
     const onAdvance = vi.fn()
     render(<ApprovalStatusControl status="draft" onAdvance={onAdvance} />)
     fireEvent.click(screen.getByRole('button', { name: /In review/ }))
-    fireEvent.change(screen.getByRole('combobox', { name: 'Example reviewer role' }), {
-      target: { value: 'Compliance lead' },
-    })
+    openRoleMenu()
+    fireEvent.click(screen.getByRole('option', { name: 'Compliance lead' }))
     fireEvent.click(screen.getByRole('button', { name: 'Confirm' }))
     expect(onAdvance).toHaveBeenCalledWith('in-review', 'Compliance lead')
+  })
+
+  it('clearing the role back to the optional row advances with no role', () => {
+    const onAdvance = vi.fn()
+    render(<ApprovalStatusControl status="in-review" reviewer="CISO" onAdvance={onAdvance} />)
+    fireEvent.click(screen.getByRole('button', { name: /Approved/ }))
+    openRoleMenu()
+    fireEvent.click(screen.getByRole('option', { name: 'Example reviewer role (optional)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(onAdvance).toHaveBeenCalledWith('approved', undefined)
+  })
+
+  it('preselects a stored role that is on the list', () => {
+    const onAdvance = vi.fn()
+    render(<ApprovalStatusControl status="in-review" reviewer="ciso" onAdvance={onAdvance} />)
+    fireEvent.click(screen.getByRole('button', { name: /Approved/ }))
+    openRoleMenu()
+    expect(screen.getByRole('option', { name: 'CISO' })).toHaveAttribute('aria-selected', 'true')
+    fireEvent.click(screen.getByRole('option', { name: 'CISO' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(onAdvance).toHaveBeenCalledWith('approved', 'CISO')
   })
 
   it('does not preselect a saved person name in the role choice', () => {
@@ -59,10 +84,14 @@ describe('ApprovalStatusControl practice states', () => {
       <ApprovalStatusControl status="in-review" reviewer="R. Reviewer" onAdvance={onAdvance} />
     )
     fireEvent.click(screen.getByRole('button', { name: /Approved/ }))
-    const select = screen.getByRole('combobox', {
-      name: 'Example reviewer role',
-    }) as HTMLSelectElement
-    expect(select.value).toBe('')
+    expect(screen.getByRole('button', { name: 'Example reviewer role' })).toHaveTextContent(
+      'Example reviewer role (optional)'
+    )
+    openRoleMenu()
+    expect(
+      screen.getByRole('option', { name: 'Example reviewer role (optional)' })
+    ).toHaveAttribute('aria-selected', 'true')
+    expect(document.body.innerHTML).not.toContain('R. Reviewer')
     fireEvent.click(screen.getByRole('button', { name: 'Confirm' }))
     expect(onAdvance).toHaveBeenCalledWith('approved', undefined)
   })
