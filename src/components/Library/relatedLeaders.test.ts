@@ -16,6 +16,23 @@ describe('relatedLeadersFor', () => {
     expect(names.some((n) => n.includes('Gaborit'))).toBe(true)
   })
 
+  it('matches every person named in one comma-joined contributor item', () => {
+    // Contributor lists are semicolon-separated, so one item can name several
+    // authors ("Meltem Sönmez Turan, Elaine Barker, John Kelsey, …") or a person
+    // and their title ("Paul van Brouwershaven, Chair of the PKI Consortium …").
+    const sp90b = libraryData.find((d) => d.referenceId === 'NIST-SP-800-90B')
+    expect(sp90b).toBeTruthy()
+    const ids = relatedLeadersFor(sp90b!).map((l) => l.id)
+    expect(ids).toEqual(
+      expect.arrayContaining(['meltem-sonmez-turan', 'elaine-barker', 'john-kelsey'])
+    )
+    const pkic = libraryData.find((d) => d.referenceId === 'PKI-Consortium-PQC-2025')
+    expect(pkic).toBeTruthy()
+    expect(relatedLeadersFor(pkic!).map((l) => l.id)).toEqual(
+      expect.arrayContaining(['paul-van-brouwershaven', 'chris-bailey'])
+    )
+  })
+
   it('never returns a deprecated (merged) profile', () => {
     for (const item of libraryData.slice(0, 400)) {
       if (!libraryEnrichments[item.referenceId]) continue

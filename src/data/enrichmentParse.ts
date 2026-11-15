@@ -47,17 +47,36 @@ export interface LibraryEnrichment {
 
 export type EnrichmentLookup = Record<string, LibraryEnrichment>
 
+/** True when `val` has a semicolon outside any bracket group. */
+function hasTopLevelSemicolon(val: string): boolean {
+  let depth = 0
+  for (const char of val) {
+    if (char === '(' || char === '[' || char === '{') depth++
+    else if (char === ')' || char === ']' || char === '}') depth = Math.max(0, depth - 1)
+    else if (char === ';' && depth === 0) return true
+  }
+  return false
+}
+
 /**
- * Split top-level commas/semicolons, retaining balanced parameter groups.
- * Malformed brackets use the existing delimiter grammar for the whole value,
+ * Split a list value into items, retaining balanced parameter groups.
+ *
+ * The extraction writes list fields SEMICOLON-separated, and an item may be a
+ * phrase with its own commas ("Harvest Now, Decrypt Later"; "not recommended
+ * but not prohibited, and at least one algorithm must be an AACA"). So a value
+ * with a top-level semicolon is split on semicolons only. A value without one
+ * is an older comma-separated list ("ML-KEM, ML-DSA") and is split on commas.
+ * Malformed brackets use the same delimiter choice without bracket tracking,
  * so an unmatched opening cannot swallow all following list items. Quotes are
  * ordinary text here; this is not a quoted-CSV grammar.
  */
 function splitList(val: string | undefined): string[] {
   if (!val || val === 'None detected') return []
+  const semicolonList = hasTopLevelSemicolon(val)
+  const isDelimiter = (char: string) => char === ';' || (char === ',' && !semicolonList)
   const legacy = () =>
     val
-      .split(/[,;]/)
+      .split(val.includes(';') ? ';' : ',')
       .map((s) => s.trim())
       .filter(Boolean)
   const expectedClosing: string[] = []
@@ -70,7 +89,7 @@ function splitList(val: string | undefined): string[] {
     else if (char === '{') expectedClosing.push('}')
     else if (char === ')' || char === ']' || char === '}') {
       if (expectedClosing.pop() !== char) return legacy()
-    } else if ((char === ',' || char === ';') && expectedClosing.length === 0) {
+    } else if (isDelimiter(char) && expectedClosing.length === 0) {
       const item = val.slice(start, i).trim()
       if (item) items.push(item)
       start = i + 1

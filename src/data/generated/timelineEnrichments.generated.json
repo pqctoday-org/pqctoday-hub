@@ -119,16 +119,11 @@
    ]
   },
   "leadersContributions": [
-   "Jai S. Arun: Product Management Leader",
-   "Strategy & Go-To-Market",
-   "IBM Quantum Safe and Crypto-Agility Products",
+   "Jai S. Arun: Product Management Leader, Strategy & Go-To-Market, IBM Quantum Safe and Crypto-Agility Products",
    "Sukanta Bhattacharjee: Solution Architect for IBM Quantum Safe Explorer",
-   "Kyle Brown: IBM Fellow",
-   "CTO IBM CIO Office",
-   "James McGugan: Chief Architect",
-   "Quantum Safe Tools",
-   "Biswajit Roy: Solution Architect",
-   "App modernization - CIO DevEx"
+   "Kyle Brown: IBM Fellow, CTO IBM CIO Office",
+   "James McGugan: Chief Architect, Quantum Safe Tools",
+   "Biswajit Roy: Solution Architect, App modernization - CIO DevEx"
   ],
   "pqcProducts": [
    "IBM Quantum Safe Explorer",
@@ -346,8 +341,7 @@
    "FrodoKEM"
   ],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later (HNDL)",
+   "Harvest Now, Decrypt Later (HNDL)",
    "scalable quantum computing breaking public-key cryptography"
   ],
   "migrationTimeline": [
@@ -1283,9 +1277,7 @@
   ],
   "quantumThreats": [
    "Cryptographically relevant quantum computer (CRQC)",
-   "Shor's algorithm defeating DH",
-   "ECDH",
-   "ECDSA and RSA",
+   "Shor's algorithm defeating DH, ECDH, ECDSA and RSA",
    "projected technological advances in quantum computing"
   ],
   "migrationTimeline": [
@@ -1374,8 +1366,7 @@
    "ML-DSA-87",
    "ML-KEM-768",
    "ML-KEM-1024",
-   "112-bit minimum effective security for non-classified",
-   "OFFICIAL: Sensitive and PROTECTED",
+   "112-bit minimum effective security for non-classified, OFFICIAL: Sensitive and PROTECTED",
    "128-bit for SECRET",
    "192-bit for TOP SECRET",
    "DH modulus 2048-bit minimum (3072-bit preferred)",
@@ -1385,8 +1376,7 @@
    "SHA-384 or SHA-512 preferred"
   ],
   "hybridApproaches": [
-   "Post-quantum traditional hybrid schemes (e.g. ML-KEM with RSA) are not recommended but not prohibited",
-   "and at least one algorithm must be an AACA (ISM-1996)",
+   "Post-quantum traditional hybrid schemes (e.g. ML-KEM with RSA) are not recommended but not prohibited, and at least one algorithm must be an AACA (ISM-1996)",
    "transition to pure post-quantum schemes anticipated",
    "support for ASD-approved post-quantum algorithms by 2030"
   ],
@@ -1462,8 +1452,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "CRQC (cryptographically relevant quantum computer)",
-   "Harvest Now",
-   "Decrypt Later (HNDL)",
+   "Harvest Now, Decrypt Later (HNDL)",
    "Shor's algorithm breaking RSA and ECC",
    "Grover's algorithm weakening symmetric key search",
    "Quantum forgery of long-lived digital signatures"
@@ -1488,13 +1477,7 @@
    ]
   },
   "leadersContributions": [
-   "Raphael Auer",
-   "Donna Dodson",
-   "Angela Dupont",
-   "Maryam Haghighi",
-   "Nicolas Margaine",
-   "Danica Marsden",
-   "Sarah McCarthy and Andras Valko (authors)",
+   "Raphael Auer, Donna Dodson, Angela Dupont, Maryam Haghighi, Nicolas Margaine, Danica Marsden, Sarah McCarthy and Andras Valko (authors)",
    "Donna Dodson is described as a former employee of NIST",
    "Peter Shor's algorithm (Shor (1994)) and Lov Grover's search algorithm (Grover (1996)) are cited"
   ],
@@ -1853,8 +1836,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "cryptographically relevant quantum computer (CRQC)",
-   "harvest now",
-   "decrypt later (HNDL)"
+   "harvest now, decrypt later (HNDL)"
   ],
   "migrationTimeline": [
    "Phase 1 Preparation by April 1, 2026",
@@ -3305,8 +3287,7 @@
   "mainTopic": "Contenu Menu république française Rechercher Menu ANSSI Agence nationale de la sécurité des systèmes d'information Fermer Rechercher Rechercher Fermer Nous connaître L'Agence Écosystème Publications Sécurisation 10 règles d’or en matière de sécurité",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "store now",
-   "decrypt later",
+   "store now, decrypt later",
    "collapse of public key cryptography security"
   ],
   "migrationTimeline": [
@@ -3739,8 +3720,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "CRQC",
-   "store-now",
-   "decrypt-later",
+   "store-now, decrypt-later",
    "Shor’s algorithm"
   ],
   "migrationTimeline": [
@@ -6662,8 +6642,7 @@
    "National Institute of Standards and Technology (NIST)"
   ],
   "complianceFrameworks": [
-   "Quantum Computing Cybersecurity Preparedness Act",
-   "Public Law No: 117-260",
+   "Quantum Computing Cybersecurity Preparedness Act, Public Law No: 117-260",
    "National Security Memorandum 10 (NSM-10)",
    "OMB Memorandum M-23-02",
    "Executive Order 14028",
@@ -7271,8 +7250,7 @@
    "bodies": []
   },
   "leadersContributions": [
-   "President Joseph R. Biden",
-   "Jr. (Signed the Executive Order)",
+   "President Joseph R. Biden, Jr. (Signed the Executive Order)",
    "Director of OMB",
    "Secretary of Commerce",
    "Director of NIST",
@@ -8588,11 +8566,8 @@
    ]
   },
   "leadersContributions": [
-   "Eva Rudin",
-   "Vice President",
-   "Mobile Connectivity Solutions at Thales",
-   "Hwa Yeal Yu",
-   "vice president and head of the System LSI Security & Power Product Development Team at Samsung Electronics"
+   "Eva Rudin, Vice President, Mobile Connectivity Solutions at Thales",
+   "Hwa Yeal Yu, vice president and head of the System LSI Security & Power Product Development Team at Samsung Electronics"
   ],
   "pqcProducts": [
    "S3SSE2A",
@@ -9324,13 +9299,9 @@
   },
   "leadersContributions": [
    "Hester Bruikman (Clear Signing standard launch)",
-   "Will Corcoran",
-   "Kev Wedderburn",
-   "Fredrik (Protocol Cluster Updates)",
+   "Will Corcoran, Kev Wedderburn, Fredrik (Protocol Cluster Updates)",
    "Tim Beiko (Soldøgn Interop Recap)",
-   "Josh Rudolf",
-   "Julian Ma",
-   "Josh Stark (L1/L2 perspective)"
+   "Josh Rudolf, Julian Ma, Josh Stark (L1/L2 perspective)"
   ],
   "pqcProducts": [
    "Solana",
@@ -9437,12 +9408,9 @@
    ]
   },
   "leadersContributions": [
-   "Mr. Ling Keok Tong",
-   "Executive Director of the National Quantum Office",
-   "Dr. Rajeeb Hazra",
-   "President & CEO of Quantinuum",
-   "Mrs. Josephine Teo",
-   "Minister for Digital Development and Information"
+   "Mr. Ling Keok Tong, Executive Director of the National Quantum Office",
+   "Dr. Rajeeb Hazra, President & CEO of Quantinuum",
+   "Mrs. Josephine Teo, Minister for Digital Development and Information"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -9947,12 +9915,8 @@
    ]
   },
   "leadersContributions": [
-   "Arthur Yuen",
-   "Deputy Chief Executive",
-   "HKMA",
-   "Ms Carmen Chu",
-   "Executive Director (Banking Supervision)",
-   "HKMA"
+   "Arthur Yuen, Deputy Chief Executive, HKMA",
+   "Ms Carmen Chu, Executive Director (Banking Supervision), HKMA"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -10150,12 +10114,8 @@
    ]
   },
   "leadersContributions": [
-   "Mr Denis Beau",
-   "First Deputy Governor",
-   "BdF",
-   "Ms Jacqueline Loh",
-   "Deputy Managing Director (Corporate Development)",
-   "MAS"
+   "Mr Denis Beau, First Deputy Governor, BdF",
+   "Ms Jacqueline Loh, Deputy Managing Director (Corporate Development), MAS"
   ],
   "pqcProducts": [
    "PQC email plugin"
@@ -10233,8 +10193,7 @@
   "mainTopic": "Department of Science and Technology (National Quantum Mission) report 'Quantum-Safe Ecosystem in India: Roadmap to Quantum Resiliency' (May 2026): time-bound recommendations in three milestones, with earlier dates for Critical Information Infrastructure sectors than for other enterprises.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later",
+   "Harvest Now, Decrypt Later",
    "Shor's algorithm",
    "Grover's algorithm"
   ],
@@ -10365,8 +10324,7 @@
   "quantumThreats": [
    "Shor's Algorithm",
    "Grover's Algorithm",
-   "Harvest Now",
-   "Decrypt Later (HNDL)"
+   "Harvest Now, Decrypt Later (HNDL)"
   ],
   "migrationTimeline": [
    "FY2026: migration roadmap to be drawn up",
@@ -10866,10 +10824,8 @@
    ]
   },
   "leadersContributions": [
-   "Dr. Mohamed Al-Kuwaiti",
-   "Head of Cyber Security for the UAE Government",
-   "Dr. Najwa Aaraj",
-   "CEO of QuantumGate"
+   "Dr. Mohamed Al-Kuwaiti, Head of Cyber Security for the UAE Government",
+   "Dr. Najwa Aaraj, CEO of QuantumGate"
   ],
   "pqcProducts": [
    "QuantumGate",
@@ -11464,11 +11420,7 @@
   "quantumThreats": [
    "Quantum computers breaking currently deployed public-key cryptography",
    "significantly weakening symmetric key cryptography",
-   "risks to personal information",
-   "financial systems",
-   "utility grids",
-   "infrastructure",
-   "and national security."
+   "risks to personal information, financial systems, utility grids, infrastructure, and national security."
   ],
   "migrationTimeline": [
    "NIST on-track to publish first set of PQC standards in 2024",
@@ -11608,8 +11560,7 @@
   ],
   "quantumThreats": [
    "Shor's algorithm",
-   "Harvest now",
-   "decrypt later"
+   "Harvest now, decrypt later"
   ],
   "migrationTimeline": [
    "2026: Google internal deadline for PQC migration",
@@ -11675,10 +11626,8 @@
   ],
   "securityLevels": [
    "256-bit elliptic curve cryptography",
-   "1",
-   "200 logical qubits (estimated to break 256-bit ECC)",
-   "3",
-   "000 bytes (leanXMSS signature size)",
+   "1,200 logical qubits (estimated to break 256-bit ECC)",
+   "3,000 bytes (leanXMSS signature size)",
    "96 bytes (BLS signature size)",
    "250x compression ratio (leanVM)"
   ],
@@ -11760,8 +11709,7 @@
   ],
   "quantumThreats": [
    "Cryptographically Relevant Quantum Computer (CRQC)",
-   "store now",
-   "decrypt later attacks"
+   "store now, decrypt later attacks"
   ],
   "migrationTimeline": [
    "Google is on track to complete a PQC migration safely within NIST’s current guidelines",
@@ -12824,14 +12772,9 @@
   "migrationTimeline": null,
   "regionsAndBodies": null,
   "leadersContributions": [
-   "Jay Gambetta",
-   "Director of IBM Research and IBM Fellow",
-   "Sabrina Maniscalco",
-   "CEO and co-founder",
-   "Algorithmiq",
-   "Hayk Tepanyan",
-   "CTO and co-founder",
-   "BlueQubit"
+   "Jay Gambetta, Director of IBM Research and IBM Fellow",
+   "Sabrina Maniscalco, CEO and co-founder, Algorithmiq",
+   "Hayk Tepanyan, CTO and co-founder, BlueQubit"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -12908,8 +12851,7 @@
    "FrodoKEM"
   ],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later (HNDL)",
+   "Harvest Now, Decrypt Later (HNDL)",
    "scalable quantum computing breaking public-key cryptography"
   ],
   "migrationTimeline": [
@@ -12932,11 +12874,8 @@
    ]
   },
   "leadersContributions": [
-   "Charlie Bell: Executive Vice President for Microsoft Security",
-   "outlined Microsoft’s vision to build a quantum-safe future",
-   "Amy Hogan Burney: Vice President",
-   "Customer Security and Trust",
-   "contributed to Microsoft On the Issues blog"
+   "Charlie Bell: Executive Vice President for Microsoft Security, outlined Microsoft’s vision to build a quantum-safe future",
+   "Amy Hogan Burney: Vice President, Customer Security and Trust, contributed to Microsoft On the Issues blog"
   ],
   "pqcProducts": [
    "SymCrypt",
@@ -13048,8 +12987,7 @@
    "FrodoKEM"
   ],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later (HNDL)",
+   "Harvest Now, Decrypt Later (HNDL)",
    "scalable quantum computing breaking public-key cryptography"
   ],
   "migrationTimeline": [
@@ -13072,11 +13010,8 @@
    ]
   },
   "leadersContributions": [
-   "Charlie Bell: Executive Vice President for Microsoft Security",
-   "outlined Microsoft’s vision to build a quantum-safe future",
-   "Amy Hogan Burney: Vice President",
-   "Customer Security and Trust",
-   "contributed to Microsoft On the Issues blog"
+   "Charlie Bell: Executive Vice President for Microsoft Security, outlined Microsoft’s vision to build a quantum-safe future",
+   "Amy Hogan Burney: Vice President, Customer Security and Trust, contributed to Microsoft On the Issues blog"
   ],
   "pqcProducts": [
    "SymCrypt",
@@ -13300,8 +13235,7 @@
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
-    "NIST",
-    "NSA",
+    "NIST, NSA",
     "Regions: None detected"
    ]
   },
@@ -13414,8 +13348,7 @@
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
-    "NIST",
-    "NSA",
+    "NIST, NSA",
     "Regions: None detected"
    ]
   },
@@ -13864,8 +13797,7 @@
   "mainTopic": "Cyber Centre roadmap for Government of Canada departments and agencies to migrate non-classified IT systems to post-quantum cryptography, covering preparation, identification and transition phases, milestones, and governance.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest now",
-   "decrypt later (HNDL)",
+   "Harvest now, decrypt later (HNDL)",
    "future quantum computer breaking vulnerable public-key cryptography"
   ],
   "migrationTimeline": [
@@ -14010,8 +13942,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "Future quantum computer threat to public-key cryptography",
-   "Harvest now",
-   "decrypt later (HNDL)"
+   "Harvest now, decrypt later (HNDL)"
   ],
   "migrationTimeline": [
    "April 2026: Develop an initial departmental PQC migration plan",
@@ -14476,8 +14407,7 @@
   "mainTopic": "Cyber Centre roadmap (ITSM.40.001) for Government of Canada departments and agencies to migrate non-classified IT systems to post-quantum cryptography, covering preparation, identification and transition phases, milestones and governance.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest now",
-   "decrypt later (HNDL)",
+   "Harvest now, decrypt later (HNDL)",
    "future quantum computer breaking vulnerable public-key cryptography"
   ],
   "migrationTimeline": [
@@ -15053,8 +14983,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "Cryptographically relevant quantum computer",
-   "Store now",
-   "decrypt later",
+   "Store now, decrypt later",
    "Shor's algorithm",
    "Threat to confidentiality and authenticity",
    "Long transition periods for PKIs and long-lifetime devices"
@@ -15110,9 +15039,7 @@
   ],
   "securityLevels": [
    "RSA-2048 (as the quantum threat benchmark)",
-   "risk categories low",
-   "medium",
-   "high"
+   "risk categories low, medium, high"
   ],
   "hybridApproaches": [
    "Standardised hybrid combination of PQC and quantum-vulnerable algorithm",
@@ -18989,8 +18916,7 @@
   "mainTopic": "India DST Task Force report outlining a phased roadmap for migrating to Post-Quantum Cryptography under the National Quantum Mission with milestones through 2033.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later (HNDL)",
+   "Harvest Now, Decrypt Later (HNDL)",
    "Shor's algorithm",
    "Grover's algorithm",
    "Q-Day"
@@ -19012,19 +18938,9 @@
    ]
   },
   "leadersContributions": [
-   "Dr. Rajkumar Upadhyay",
-   "CEO",
-   "C-DOT",
-   "chaired the Task Force",
-   "Mr. Kamal Kumar Agarwal",
-   "DDG",
-   "QT",
-   "TEC",
-   "chaired Sub-Group 1 for standards and testing",
-   "Mr. Vinayak Godse",
-   "CEO",
-   "DSCI",
-   "chaired Sub-Group 2 for quantum resiliency and migration"
+   "Dr. Rajkumar Upadhyay, CEO, C-DOT, chaired the Task Force",
+   "Mr. Kamal Kumar Agarwal, DDG, QT, TEC, chaired Sub-Group 1 for standards and testing",
+   "Mr. Vinayak Godse, CEO, DSCI, chaired Sub-Group 2 for quantum resiliency and migration"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -19188,10 +19104,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "Quantum computers rendering today's encryption obsolete",
-   "compromise of financial systems",
-   "national defense",
-   "healthcare",
-   "and transportation within minutes",
+   "compromise of financial systems, national defense, healthcare, and transportation within minutes",
    "exposure of vast stores of data and critical infrastructure"
   ],
   "migrationTimeline": [
@@ -19958,8 +19871,7 @@
    "ML-DSA"
   ],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later",
+   "Harvest Now, Decrypt Later",
    "quantum attack on exposed public keys"
   ],
   "migrationTimeline": [
@@ -20305,13 +20217,9 @@
   },
   "leadersContributions": [
    "Hester Bruikman (Clear Signing launch)",
-   "Will Corcoran",
-   "Kev Wedderburn",
-   "Fredrik (Protocol Cluster Updates)",
+   "Will Corcoran, Kev Wedderburn, Fredrik (Protocol Cluster Updates)",
    "Tim Beiko (Soldøgn Interop Recap)",
-   "Josh Rudolf",
-   "Julian Ma",
-   "Josh Stark (L1/L2 perspective)"
+   "Josh Rudolf, Julian Ma, Josh Stark (L1/L2 perspective)"
   ],
   "pqcProducts": [],
   "protocols": [
@@ -20588,23 +20496,17 @@
   "mainTopic": "Ciena's WaveLogic 6 Extreme 1.6T quantum-safe optical encryption solution supporting PQC and QKD for high-speed data protection.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest now",
-   "decrypt later",
+   "Harvest now, decrypt later",
    "quantum computers disrupting traditional encryption"
   ],
   "migrationTimeline": null,
   "regionsAndBodies": null,
   "leadersContributions": [
-   "Paulina Gomez: Director",
-   "Portfolio Marketing",
-   "explains WaveLogic 6 Extreme",
+   "Paulina Gomez: Director, Portfolio Marketing, explains WaveLogic 6 Extreme",
    "Matt Bolig: explains CPO adoption",
-   "Rebecca Smith",
-   "Brodie Gage",
-   "Dino DiPerna: reflect on OFC 2026 and AI networking",
+   "Rebecca Smith, Brodie Gage, Dino DiPerna: reflect on OFC 2026 and AI networking",
    "Farzam Toudeh-Fallah: leads Quantum Communications R&D",
-   "Ashley Chackman: Lead",
-   "Security",
+   "Ashley Chackman: Lead, Security",
    "Ashley Wyand: shares compliance approach"
   ],
   "pqcProducts": [
@@ -20715,8 +20617,7 @@
   "mainTopic": "Adva Network Security announces its FSP 3000 S-Flex™ 400G solution is the first to receive BSI approval for VS-NfD and EU/NATO-restricted data using Layer 1 PQC encryption.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest-now",
-   "decrypt-later attacks",
+   "Harvest-now, decrypt-later attacks",
    "quantum-enabled threats"
   ],
   "migrationTimeline": null,
@@ -20730,10 +20631,8 @@
    ]
   },
   "leadersContributions": [
-   "Josef Sißmeir",
-   "GM of Adva Network Security",
-   "Michael Roth",
-   "GM of Adva Network Security"
+   "Josef Sißmeir, GM of Adva Network Security",
+   "Michael Roth, GM of Adva Network Security"
   ],
   "pqcProducts": [
    "FSP 3000 S-Flex™",
@@ -21311,8 +21210,7 @@
   ],
   "quantumThreats": [
    "Harvest Now Decrypt Later",
-   "threat from future large-scale",
-   "fault-tolerant quantum computers"
+   "threat from future large-scale, fault-tolerant quantum computers"
   ],
   "migrationTimeline": [
    "By 2028: define migration goals, complete discovery and build an initial plan",
@@ -22341,15 +22239,10 @@
    "ML-DSA-44",
    "ML-DSA-65",
    "ML-DSA-87",
-   "DH modulus 2048 bits minimum",
-   "preferably 3072 bits",
+   "DH modulus 2048 bits minimum, preferably 3072 bits",
    "ECDH/ECDSA base point order and key size at least 224 bits (112-bit security)",
-   "NIST P-256",
-   "P-384",
-   "P-521 curves",
-   "effective security strength targets 112 bits (non-classified, OFFICIAL: Sensitive, PROTECTED)",
-   "128 bits (SECRET)",
-   "192 bits (TOP SECRET)"
+   "NIST P-256, P-384, P-521 curves",
+   "effective security strength targets 112 bits (non-classified, OFFICIAL: Sensitive, PROTECTED), 128 bits (SECRET), 192 bits (TOP SECRET)"
   ],
   "hybridApproaches": [],
   "performanceConsiderations": [
@@ -22450,8 +22343,7 @@
    "PSPF Policy 13 (Technology Lifecycle Management)",
    "PSPF Policy 14 (Cyber Security Strategies)",
    "Information Security Manual (ISM)",
-   "Public Governance",
-   "Performance and Accountability Act 2013",
+   "Public Governance, Performance and Accountability Act 2013",
    "Strategies to Mitigate Cyber Security Incidents"
   ],
   "classicalAlgorithms": [],
@@ -22623,10 +22515,8 @@
    ]
   },
   "leadersContributions": [
-   "H.E President William Samoei Ruto (PhD)",
-   "President of the Republic of Kenya and the African Union Champion on Institutional Reform",
-   "H.E Paul Kagame",
-   "President of the Republic of Rwanda who led the implementation of the reform process since 2016"
+   "H.E President William Samoei Ruto (PhD), President of the Republic of Kenya and the African Union Champion on Institutional Reform",
+   "H.E Paul Kagame, President of the Republic of Rwanda who led the implementation of the reform process since 2016"
   ],
   "pqcProducts": [],
   "protocols": [],
@@ -22804,8 +22694,7 @@
   "mainTopic": "G7 Cyber Expert Group roadmap for migrating critical financial systems to post-quantum cryptography.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest now",
-   "decrypt later",
+   "Harvest now, decrypt later",
    "undermining existing cryptography"
   ],
   "migrationTimeline": [
@@ -23427,8 +23316,7 @@
   "mainTopic": "G7 Cyber Expert Group statement advising financial sector stakeholders on planning for quantum computing risks and opportunities, including PQC transition strategies.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest now",
-   "decrypt later",
+   "Harvest now, decrypt later",
    "undermining existing cryptography"
   ],
   "migrationTimeline": [
@@ -23730,10 +23618,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "Quantum computers rendering today's encryption obsolete",
-   "compromise of financial systems",
-   "national defense",
-   "healthcare",
-   "and transportation within minutes",
+   "compromise of financial systems, national defense, healthcare, and transportation within minutes",
    "exposure of vast stores of data and critical infrastructure"
   ],
   "migrationTimeline": [
@@ -24423,9 +24308,7 @@
    "ML-DSA-44",
    "ML-DSA-65",
    "ML-DSA-87",
-   "NIST PQC security categories 2",
-   "3",
-   "and 5"
+   "NIST PQC security categories 2, 3, and 5"
   ],
   "hybridApproaches": [],
   "performanceConsiderations": [
@@ -24939,8 +24822,7 @@
    "Shor's Algorithm",
    "Grover's Algorithm",
    "Simon's Algorithm",
-   "Store now",
-   "decrypt later"
+   "Store now, decrypt later"
   ],
   "migrationTimeline": null,
   "regionsAndBodies": {
@@ -25030,10 +24912,8 @@
    ]
   },
   "leadersContributions": [
-   "Mohamed Al Kuwaiti",
-   "head of cyber security for the UAE government",
-   "Najwa Aaraj",
-   "chief executive officer of QuantumGate"
+   "Mohamed Al Kuwaiti, head of cyber security for the UAE government",
+   "Najwa Aaraj, chief executive officer of QuantumGate"
   ],
   "pqcProducts": [
    "Crypto Discovery Tool (CDT)"
@@ -25138,10 +25018,7 @@
    "Critical Infrastructure",
    "National Critical Functions (NCFs)",
    "Federal Civilian Executive Branch (FCEB)",
-   "State",
-   "Local",
-   "Tribal",
-   "and Territorial (SLTT) entities"
+   "State, Local, Tribal, and Territorial (SLTT) entities"
   ],
   "standardizationBodies": [
    "NIST"
@@ -25234,8 +25111,7 @@
   ],
   "quantumThreats": [
    "Cryptographically relevant quantum computers (CRQC)",
-   "harvest now",
-   "decrypt later approach"
+   "harvest now, decrypt later approach"
   ],
   "migrationTimeline": [
    "NIST anticipates 10 to 20 years from algorithm standardization to full integration",
@@ -25272,13 +25148,8 @@
   ],
   "securityLevels": [],
   "hybridApproaches": [
-   "Cryptographic agility defined as the ability to change encryption keys",
-   "key lengths",
-   "encryption algorithms",
-   "and libraries",
-   "deprecation",
-   "controlled legacy use",
-   "and eventual removal of quantum vulnerable algorithms"
+   "Cryptographic agility defined as the ability to change encryption keys, key lengths, encryption algorithms, and libraries",
+   "deprecation, controlled legacy use, and eventual removal of quantum vulnerable algorithms"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
@@ -27212,9 +27083,7 @@
    "Public Key Infrastructure (PKI)",
    "Cloud migrations",
    "FedRAMP-authorized cloud service providers",
-   "Federal Identity",
-   "Credential",
-   "and Access Management (FICAM)"
+   "Federal Identity, Credential, and Access Management (FICAM)"
   ],
   "standardizationBodies": [
    "National Institute of Standards and Technology (NIST)"
@@ -27361,9 +27230,7 @@
    "Public Key Infrastructure (PKI)",
    "Cloud migrations",
    "FedRAMP-authorized cloud service providers",
-   "Federal Identity",
-   "Credential",
-   "and Access Management (FICAM)"
+   "Federal Identity, Credential, and Access Management (FICAM)"
   ],
   "standardizationBodies": [
    "National Institute of Standards and Technology (NIST)"
@@ -28414,8 +28281,7 @@
   "mainTopic": "Joint statement by 18 EU member states urging the transition to post-quantum cryptography to mitigate the \"store now, decrypt later\" threat.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "\"store now",
-   "decrypt later\" scenario",
+   "\"store now, decrypt later\" scenario",
    "cryptographically relevant quantum computers"
   ],
   "migrationTimeline": [
@@ -28683,10 +28549,8 @@
    "Aigis-sig"
   ],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later",
-   "Store Now",
-   "Decrypt Later",
+   "Harvest Now, Decrypt Later",
+   "Store Now, Decrypt Later",
    "Shor's Algorithm",
    "Cryptographically Relevant Quantum Computer (CRQC)"
   ],
@@ -29160,8 +29024,7 @@
   "mainTopic": "Bank of Israel directive requiring banking corporations to assess quantum computing risks, map encrypted assets, and submit preparedness plans within one year.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest Now",
-   "Decrypt Later",
+   "Harvest Now, Decrypt Later",
    "encryption breaking in the quantum computing era"
   ],
   "migrationTimeline": [
@@ -30064,10 +29927,8 @@
   ],
   "quantumThreats": [
    "CRQC",
-   "Harvest Now",
-   "Decrypt Later",
-   "Trust Now",
-   "Forge Later"
+   "Harvest Now, Decrypt Later",
+   "Trust Now, Forge Later"
   ],
   "migrationTimeline": [
    "IBM plans to build a quantum computer with 100,000 qubits by 2033"
@@ -30194,8 +30055,7 @@
   "mainTopic": "Overview of quantum computing technology, its potential impacts on encryption and data privacy, and guidance for organizations on preparing for the transition to post-quantum cryptography.",
   "pqcAlgorithms": [],
   "quantumThreats": [
-   "Harvest now",
-   "decrypt later",
+   "Harvest now, decrypt later",
    "threats to encryption"
   ],
   "migrationTimeline": [
@@ -31027,8 +30887,7 @@
   "pqcAlgorithms": [],
   "quantumThreats": [
    "cryptographically relevant quantum computer (CRQC)",
-   "harvest now",
-   "decrypt later (HNDL)"
+   "harvest now, decrypt later (HNDL)"
   ],
   "migrationTimeline": [
    "Phase 1 Preparation by April 1, 2026",
@@ -31170,8 +31029,7 @@
   "quantumThreats": [
    "Shor's Algorithm",
    "Grover's Algorithm",
-   "Harvest Now",
-   "Decrypt Later (HNDL)"
+   "Harvest Now, Decrypt Later (HNDL)"
   ],
   "migrationTimeline": [
    "Target migration completion by 2035",
@@ -31310,29 +31168,8 @@
    ]
   },
   "leadersContributions": [
-   "Gorjan Alagic",
-   "Maxime Bros",
-   "Pierre Ciadoux",
-   "David Cooper",
-   "Quynh Dang",
-   "Thinh Dang",
-   "John Kelsey",
-   "Jacob Lichtinger",
-   "Yi-Kai Liu",
-   "Carl Miller",
-   "Dustin Moody",
-   "Rene Peralta",
-   "Ray Perlner",
-   "Angela Robinson",
-   "Hamilton Silberg",
-   "Daniel Smith-Tone",
-   "Noah Waller (Authors)",
-   "Zuzana Bajcsy",
-   "Larry Bassham",
-   "Lily Chen",
-   "Morris Dworkin",
-   "Sara Kerman",
-   "Andrew Regenscheid (Reviewers/Support)"
+   "Gorjan Alagic, Maxime Bros, Pierre Ciadoux, David Cooper, Quynh Dang, Thinh Dang, John Kelsey, Jacob Lichtinger, Yi-Kai Liu, Carl Miller, Dustin Moody, Rene Peralta, Ray Perlner, Angela Robinson, Hamilton Silberg, Daniel Smith-Tone, Noah Waller (Authors)",
+   "Zuzana Bajcsy, Larry Bassham, Lily Chen, Morris Dworkin, Sara Kerman, Andrew Regenscheid (Reviewers/Support)"
   ],
   "pqcProducts": [],
   "protocols": [
@@ -32440,8 +32277,7 @@
   "securityLevels": [],
   "hybridApproaches": [
    "Quantum-safe signature schemes are recommended only in combination with a classic signature scheme",
-   "hash-based signatures may in principle also be used alone",
-   "provided the implementation security of stateful and stateless hash-based mechanisms is carefully considered",
+   "hash-based signatures may in principle also be used alone, provided the implementation security of stateful and stateless hash-based mechanisms is carefully considered",
    "quantum-safe key agreement is recommended in hybrid form with a classical mechanism"
   ],
   "performanceConsiderations": [],
@@ -34858,8 +34694,7 @@
   ],
   "quantumThreats": [
    "CRQC",
-   "Harvest Now",
-   "Decrypt Later"
+   "Harvest Now, Decrypt Later"
   ],
   "migrationTimeline": [
    "31 Dec 2027: CII Resiliency Organisation Preparatory stage; 31 Dec 2028: CII Migration of High Priority Systems; 31 Dec 2029: CII Full PQC Adoption; 31 Dec 2033: Regular Enterprises Full PQC Adoption"
@@ -35190,9 +35025,7 @@
   "hybridApproaches": [
    "Hybrid Key-Establishment Techniques",
    "Hybrid Digital Signature Techniques",
-   "careful deprecation",
-   "controlled legacy use",
-   "and eventual removal of quantum-vulnerable algorithms"
+   "careful deprecation, controlled legacy use, and eventual removal of quantum-vulnerable algorithms"
   ],
   "performanceConsiderations": [
    "Larger sizes of the PQC algorithms",
@@ -35536,8 +35369,7 @@
   "quantumThreats": [
    "Cryptography-breaking quantum computer (CRQC)",
    "Shor's algorithm",
-   "\"Harvest now",
-   "decrypt later\" attack (Indhent nu, dekrypter senere)",
+   "\"Harvest now, decrypt later\" attack (Indhent nu, dekrypter senere)",
    "forgery of digital signatures",
    "loss of trust in digital signatures"
   ],
@@ -35976,11 +35808,8 @@
    "S/MIME (appears only in the form's example entry)"
   ],
   "infrastructureLayers": [
-   "Critical information infrastructure systems",
-   "applications and services",
-   "hardware",
-   "firmware",
-   "operating systems",
+   "Critical information infrastructure systems, applications and services",
+   "hardware, firmware, operating systems",
    "software libraries",
    "virtualisation stack (example entry)"
   ],
