@@ -44,7 +44,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     requiredCapabilities: [
       'Traceable linkage from executive readiness summaries down to dated CBOM discovery scans, Mosca HNDL exposure windows, and regulatory deadlines.',
       'Clear separation between business services (e.g., archiving and retrieval service) and the long-lived assets they protect.',
-      'Milestone-gated funding release tracking tied to NIST CSWP 39 / NCCoE SP 1800-38 migration phases.',
+      'Milestone-gated funding release tracking tied to the NIST CSWP 39 strategic-plan activities and the NCCoE SP 1800-38 (preliminary draft) migration steps.',
     ],
     evaluationCriteria:
       'Verify every quantitative claim in the board briefing is backed by an auditable inventory export or signed vendor attestation in your GRC repository.',
@@ -54,7 +54,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     requiredCapabilities: [
       'Differentiation between Harvest-Now-Decrypt-Later (HNDL) confidentiality breach impact on archived traffic and active quantum signature forgery on authentication/code-signing.',
       'Monte Carlo or scenario-based loss-exceedance modeling incorporating regulatory fines (DORA, GDPR, HIPAA), notification costs, and contract penalties.',
-      'Asset-level data-retention horizon mapping (X + Y > Z) tied to enterprise data-classification catalogs.',
+      'Asset-level data-retention horizon mapping (the confidentiality lifetime X in Mosca’s X + Y > Z) tied to enterprise data-classification catalogs.',
     ],
     evaluationCriteria:
       'Validate loss-magnitude inputs with legal, privacy, and cyber-insurance actuaries using your organization’s actual record counts and retention schedules.',
@@ -63,18 +63,18 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Enterprise Risk & Financial Exposure Modeling Platforms',
     requiredCapabilities: [
       'Multi-year delay-penalty modeling capturing talent scarcity premiums, expedited audit remediation fees, and legacy vendor extended-support surcharges.',
-      'Mapping of regulatory disallowance dates (2030 NIST deprecation / 2035 disallowance, CNSA 2.0, DORA) to revenue-bearing services.',
+      'Mapping of transition dates (NIST IR 8547: deprecated after 2030, disallowed after 2035; CNSA 2.0 for national security systems; EO 14412 / OMB M-26-15 for US federal agencies) to revenue-bearing services.',
       'Comparison of planned multi-year OpEx/CapEx smoothing vs compressed late-stage capital spikes.',
     ],
     evaluationCriteria:
-      'Cross-check projected delay surcharges against procurement contract renewal dates and mandatory certification windows (FIPS 140-3, PCI DSS v4.0.1).',
+      'Cross-check projected delay surcharges against procurement contract-renewal dates and certification or assessment lead times (e.g., FIPS 140-3 module validation, PCI DSS v4.0.1 assessment cycles).',
   },
   'cost-model-explorer': {
     productionToolCategory: 'Engineering Estimation & Cloud Capacity Planning Tools',
     requiredCapabilities: [
-      'Parametric sizing of engineering labor hours across discovery, PKI hierarchy rebuilds, application refactoring, andinterop testing.',
+      'Parametric sizing of engineering labor hours across discovery, PKI hierarchy rebuilds, application refactoring, and interop testing.',
       'Infrastructure overhead estimation for larger PQC TLS certificates, KMS key wrapping, and HSM throughput scaling.',
-      'Exportable work-breakdown structures (WBS) compatible with enterprise portfolio management tools (Jira, ServiceNowSPM).',
+      'Exportable work-breakdown structures (WBS) compatible with enterprise portfolio management tools (Jira, ServiceNow SPM).',
     ],
     evaluationCriteria:
       'Calibrate per-application refactoring effort against a timed pilot migration of one representative microservice and one legacy monolith.',
@@ -83,8 +83,8 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Strategic Threat Intelligence & Horizon-Scanning Platforms',
     requiredCapabilities: [
       'Scenario planning across optimistic, baseline, and accelerated Cryptographically Relevant Quantum Computer (CRQC) arrival timelines.',
-      'Automated Mosca inequality (X + Y > Z) recalculation across all registered business services when threat-horizon assumptions shift.',
-      'Mapping of external regulatory milestones (NSA CNSA 2.0, NIST IR 8547, UK NCSC, EU DORA, ANSSI/BSI) onto internal migration waves.',
+      'Automated Mosca-inequality recalculation (confidentiality lifetime + migration time > time to CRQC) across all registered business services when threat-horizon assumptions shift.',
+      'Mapping of external regulatory milestones (NSA CNSA 2.0, NIST IR 8547, US federal EO 14412 / OMB M-26-15, UK NCSC (2028/2031/2035), EU coordinated PQC roadmap, ANSSI/BSI) onto internal migration waves.',
     ],
     evaluationCriteria:
       'Test how a 3-year acceleration in the CRQC horizon assumption re-orders your top 10 priority migration systems in your enterprise risk register.',
@@ -112,7 +112,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
   'compliance-checklist': {
     productionToolCategory: 'Regulatory Compliance Management & Control Mapping Suites',
     requiredCapabilities: [
-      'Multi-framework control cross-walking across CNSA 2.0, NIST IR 8547 / SP 800-131A, EU DORA / NIS2, PCI DSS v4.0.1, and ISO/IEC 27001.',
+      'Multi-framework control cross-walking across CNSA 2.0, NIST IR 8547 / SP 800-131A (Rev. 2; Rev. 3 draft), EU DORA / NIS2 (no explicit PQC mandate; read through ICT-risk and state-of-the-art-cryptography duties), PCI DSS v4.0.1, ISO/IEC 27001, and the EU coordinated PQC roadmap.',
       'Per-obligation evidence attachment slots distinguishing policy documents from technical configuration exports.',
       'Jurisdiction-aware filtering based on the geographic footprint and regulated sectors of each business unit.',
     ],
@@ -152,7 +152,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
   'policy-generator': {
     productionToolCategory: 'Enterprise Policy Management & Policy-as-Code Engines',
     requiredCapabilities: [
-      'Normative cryptographic standards specification naming approved parameter sets (`ML-KEM-768/1024`, `ML-DSA-65/87`, `SLH-DSA`, `LMS/XMSS`) and classical deprecation dates.',
+      'Normative cryptographic standards specification naming the parameter sets your organization approves (e.g., `ML-KEM-768/1024`, `ML-DSA-65/87`, `SLH-DSA`, `LMS/XMSS`; CNSA 2.0 national security systems: `ML-KEM-1024`, `ML-DSA-87`, `LMS/XMSS` only) and classical deprecation dates.',
       'Time-bound cryptographic exception and waiver workflows requiring compensating controls and CISO sign-off.',
       'Translation of written policy clauses into automated CI/CD and Kubernetes admission-control rules (OPA / Rego / Kyverno).',
     ],
@@ -184,10 +184,10 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     requiredCapabilities: [
       'Standardized PQC procurement clauses mandating CycloneDX 1.6+ CBOM delivery, NIST FIPS 203/204/205 support, and cryptographic agility SLAs.',
       'Right-to-audit and vulnerability-remediation timelines for cryptographic flaws or deprecated classical algorithms.',
-      'Indemnification and termination-for-cause provisions if a vendor fails to meet regulatory PQC compliance deadlines (e.g., CNSA 2.0, DORA, PCI DSS).',
+      'Indemnification and termination-for-cause provisions if a vendor fails to meet applicable PQC deadlines (e.g., CNSA 2.0 / NIAP Policy #33 for national security systems, the EU coordinated roadmap, OMB M-26-15) or your own program dates.',
     ],
     evaluationCriteria:
-      'Review standard MSA/RFP templates with legal counsel to ensure mandatory CBOM and PQC migration SLA clauses are included in all new technology renewals.',
+      'Review standard MSA/RFP templates with legal counsel to ensure the CBOM and PQC migration SLA clauses your procurement policy requires are included in all new technology renewals.',
   },
   'supply-chain-matrix': {
     productionToolCategory: 'Software Supply Chain Security & Third-Party Dependency Analyzers',
@@ -202,7 +202,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
   'roadmap-builder': {
     productionToolCategory: 'Enterprise Architecture & Portfolio Roadmap Platforms',
     requiredCapabilities: [
-      'Multi-year wave sequencing aligned with NIST CSWP 39 phases, dependency order (HSM/KMS -> Root/Issuing PKI -> Network/Edge -> Applications), and regulatory deadlines.',
+      'Multi-year wave sequencing aligned with the NIST CSWP 39 strategic-plan activities, a dependency order your architects set (e.g., HSM/KMS -> Root/Issuing PKI -> Network/Edge -> Applications), and regulatory deadlines.',
       'Critical-path analysis identifying prerequisite infrastructure upgrades before application cutover.',
       'Milestone tracking with explicit exit criteria per phase.',
     ],
@@ -223,7 +223,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Operational Security Telemetry & Program OKR Trackers',
     requiredCapabilities: [
       'Granular operational metrics tracking % of endpoints scanned, % of TLS sessions negotiating `X25519MLKEM768`, % of CAs PQC-capable, and % of tier-1 vendors with verified CBOMs.',
-      'Target threshold alerting when migration velocity falls behind the required trajectory for 2030/2035 compliance.',
+      'Target threshold alerting when migration velocity falls behind your planned trajectory toward the 2030/2035 milestones (NIST IR 8547, EU roadmap, or your sector regulator).',
       'Per-business-unit drilldown exposing lagging infrastructure domains.',
     ],
     evaluationCriteria:
@@ -233,7 +233,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Release Orchestration, GitOps & Change-Management Platforms',
     requiredCapabilities: [
       'Canary and blue/green rollout templates for enabling hybrid PQC TLS/IKEv2 and dual/PQC certificates with progressive traffic shifting (1% -> 10% -> 50% -> 100%).',
-      'Automated pre-flight checks (MTU path discovery, middlebox compatibility, HSM capacity) and instant one-command rollback triggers.',
+      'Automated pre-flight checks (MTU path discovery, middlebox compatibility, HSM capacity) and one-command rollback triggers.',
       'Post-deployment verification gates confirming PQC negotiation and error-rate stability before promotion.',
     ],
     evaluationCriteria:
@@ -242,7 +242,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
   'hybrid-transition-planner': {
     productionToolCategory: 'Cryptographic Architecture & Protocol Lifecycle Planners',
     requiredCapabilities: [
-      'Dual-mode and PQ/T hybrid transition modeling (Classical -> PQ/T Hybrid -> Pure PQC where mandated by CNSA 2.0, or long-term Hybrid per BSI/ANSSI).',
+      'Dual-mode and PQ/T hybrid transition modeling (Classical -> PQ/T Hybrid -> Pure PQC where CNSA 2.0 applies, or Hybrid as recommended by BSI/ANSSI for the short-to-medium term).',
       'Interoperability matrix tracking client vs server capability across internal and external trust boundaries.',
       'Deprecation scheduling for removing classical fallback groups once relying-party readiness reaches 100%.',
     ],
@@ -252,7 +252,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
   'mti-negotiator': {
     productionToolCategory: 'Protocol Configuration & Cipher-Suite Policy Management Tools',
     requiredCapabilities: [
-      'Mandatory-to-Implement (MTI) algorithm preference ordering across TLS 1.3 (`Groups`, `SignatureAlgorithms`), IKEv2, SSH, and CMS/S/MIME.',
+      'Mandatory-to-Implement (MTI) coverage and local algorithm preference ordering across TLS 1.3 (`supported_groups`, `signature_algorithms`), IKEv2, SSH, and CMS/S/MIME.',
       'Detection of incompatible cipher/group intersections between enterprise clients, middleboxes, and partner gateways.',
       'Automated generation of hardened cipher-policy configurations for NGINX, Envoy, HAProxy, OpenSSL, and Java/Go runtimes.',
     ],
@@ -273,7 +273,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Cloud Security Posture Management (CSPM) & Multi-Cloud Governance',
     requiredCapabilities: [
       'Shared-responsibility mapping across IaaS, PaaS, and SaaS layers distinguishing cloud-provider-managed PQC controls (edge TLS, physical HSM firmware) from customer-configured controls (CMK algorithm selection, BYOK wrapping, mTLS).',
-      'Catalog cross-referencing of specific cloud services (AWS KMS/CloudHSM, Azure Key Vault/Application Gateway v2, GCP Cloud KMS, IBM Cloud HPCS, OCI KMS/Vault) against verified PQC support.',
+      'Catalog cross-referencing of specific cloud services (AWS KMS/CloudHSM, Azure Key Vault, GCP Cloud KMS, IBM Cloud HPCS, OCI KMS/Vault) against verified PQC support.',
       'Automated CSPM drift detection alerting when cloud resources use classical-only KMS keys or TLS policies.',
     ],
     evaluationCriteria:
@@ -293,7 +293,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Cryptographic Discovery, CLM & Security Tooling Stack',
     requiredCapabilities: [
       'Estate-wide coverage measurement tracking the exact percentage of production hosts, containers, certificates, and repositories actually inspected by discovery/CLM/CBOM tools.',
-      'Identification of low-coverage blind spots (<50% estate coverage) such as ephemeral containers, OT/IoT subnets, or appliances without agent support.',
+      'Identification of low-coverage blind spots (e.g., below your chosen coverage threshold) such as ephemeral containers, OT/IoT subnets, or appliances without agent support.',
       'Evaluation of management-tool PQC readiness (support for RFC 9881 `ML-DSA` and RFC 9935 `ML-KEM` OIDs without parsing errors).',
     ],
     evaluationCriteria:
@@ -303,16 +303,16 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'CycloneDX CBOM Generators & Software Composition Analysis (SCA)',
     requiredCapabilities: [
       'Generation and ingestion of standards-compliant CycloneDX v1.6+ CBOM documents covering algorithms, keys, certificates, protocols, and underlying crypto libraries.',
-      'Automatic detection of End-of-Life (EoL) cryptographic libraries (e.g., `OpenSSL 1.1.1w` EoL `2023-09-11`) alongside classical algorithm exposures.',
+      'Automatic detection of End-of-Life (EoL) cryptographic libraries (e.g., the `OpenSSL 1.1.1` series, public support ended 2023-09-11) alongside classical algorithm exposures.',
       'Deduplicated cross-service rollups linking cryptographic components to owning engineering teams.',
     ],
     evaluationCriteria:
-      'Generate a CBOM from a production build artifact, verify it flags any EoL crypto libraries and classical algorithms, and validate the JSON against CycloneDX 1.6 schema.',
+      'Generate a CBOM from a production build artifact, verify it flags any EoL crypto libraries and classical algorithms, and validate the JSON against the CycloneDX 1.6 (or later) schema.',
   },
   'crypto-vulnerability-watch': {
     productionToolCategory: 'Vulnerability Management, NVD/CVE Feeds & Threat Intelligence',
     requiredCapabilities: [
-      'Continuous CPE and Package URL (`purl`) matching correlating deployed cryptographic libraries (`OpenSSL`, `strongSwan`, `Bouncy Castle`, `wolfSSL`, `BIND 9`) against live NVD CVEs and side-channel advisories.',
+      'Continuous CPE and Package URL (`purl`) matching correlating deployed cryptographic libraries and crypto-bearing components against live NVD CVEs and side-channel advisories.',
       'Visibility into CPE coverage gaps where niche PQC libraries or hardware appliances lack standardized NVD CPE identifiers.',
       'Prioritized patching workflows combining CVSS severity with cryptographic exposure context.',
     ],
@@ -342,7 +342,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
   'skills-team-plan': {
     productionToolCategory: 'Learning Management (LMS) & Engineering Competency Platforms',
     requiredCapabilities: [
-      'Role-specific training and hands-on lab tracks mapped to NICE Workforce Framework roles (Architects, Developers, PKI/HSM Ops, Network Engineers, GRC).',
+      'Role-specific training and hands-on lab tracks mapped to NICE Framework (SP 800-181 Rev. 1, v2.2.0) work roles, using familiar job titles (Architects, Developers, PKI/HSM Operations, Network Engineers, GRC).',
       'Practical competency verification requiring engineers to complete staging PQC configuration and troubleshooting labs.',
       'Capacity planning balancing internal upskilling against specialized external cryptography consulting.',
     ],
@@ -373,18 +373,18 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Incident Response & Rapid Cryptographic Rollover Orchestration',
     requiredCapabilities: [
       'Emergency "break-glass" cryptographic agility playbooks for rapid algorithm/key rollover in response to an unexpected cryptanalytic breakthrough or zero-day implementation flaw.',
-      'Automated short-lived certificate re-issuance and CDN/gateway cipher-group hot-swapping within hours rather than months.',
+      'Automated short-lived certificate re-issuance and CDN/gateway cipher-group hot-swapping in a time frame your drill measures.',
       'Pre-staged backup PQC/hybrid trust anchors and tested fallback communication channels.',
     ],
     evaluationCriteria:
-      'Measure actual time-to-rotate (MTTR) during an unannounced staging drill simulating emergency revocation and algorithm swap on a tier-1 service.',
+      'Measure actual time-to-rotate during an unannounced staging drill simulating emergency revocation and algorithm swap on a tier-1 service.',
   },
   'data-at-rest-strategy': {
     productionToolCategory: 'Storage Encryption, Backup Archive & KMS Lifecycle Platforms',
     requiredCapabilities: [
-      'Verification of `AES-256` (GCM/XTS) and `SHA-384/512` across databases, object stores, tape/cloud archives, and backup snapshots for Grover resistance.',
+      'Verification of `AES-256` (GCM/XTS) and `SHA-384/512` (CNSA 2.0 baseline; NIST does not require moving off AES-128) across databases, object stores, tape/cloud archives, and backup snapshots.',
       'Migration of key-encryption-key (KEK) and envelope-encryption transport from RSA-OAEP/ECDH to FIPS 203 `ML-KEM-768/1024`.',
-      'Long-lived record integrity protection using post-quantum archive timestamps (`RFC 3161` / `ERS` with `ML-DSA` or `SLH-DSA`).',
+      'Long-lived record integrity protection using post-quantum archive timestamps (`RFC 3161` timestamps / `RFC 4998` Evidence Record Syntax, signed with `ML-DSA` (RFC 9882) or `SLH-DSA` (RFC 9814)).',
     ],
     evaluationCriteria:
       'Audit KMS key-wrapping algorithms and backup archive encryption configurations to verify `AES-256` data encryption and PQC-ready KEK wrapping.',
