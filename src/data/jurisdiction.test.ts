@@ -68,13 +68,16 @@ describe('jurisdiction', () => {
     )
   })
 
-  // Owner decision 2026-11-14: the EU roadmap recommends hybrid (guidance) and
-  // states no end state, so hybrid is never warned about as a stop-gap.
-  it('EU recommends hybrid with no stated end state — pure-only fails; hybrid is fine', () => {
+  // Owner decisions 2026-11-14: the EU roadmap recommends hybrid "whenever
+  // feasible and suitable" (guidance) and states no end state. Hybrid is never
+  // flagged as a stop-gap, and post-quantum-only is a caution, not a failure.
+  it('EU recommends hybrid with no stated end state — pure-only is a caution; hybrid is fine', () => {
+    expect(JURISDICTION_RULES.EU.hybrid).toBe('recommended')
     expect(JURISDICTION_RULES.EU.endState).toBeUndefined()
     expect(JURISDICTION_RULES.EU.force).toBe('guidance')
-    expect(checkChoice('EU', 'pure').level).toBe('fail')
+    expect(checkChoice('EU', 'pure')).toMatchObject({ ok: true, level: 'warn' })
     expect(checkChoice('EU', 'hybrid').level).toBe('ok')
+    expect(checkChoice('EU', 'classical').level).toBe('fail')
   })
 
   it('CA/JP/KR/SG accept pure and warn on hybrid (pure end state, not mandated hybrid)', () => {
