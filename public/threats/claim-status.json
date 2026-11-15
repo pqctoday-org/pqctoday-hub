@@ -1,5 +1,5 @@
 {
- "csv": "quantum_threats_hsm_industries_11142026_r12.csv",
+ "csv": "quantum_threats_hsm_industries_11152026_r2.csv",
  "generatedAt": "2026-11-15T01:09:43+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file and exact claim text cited today. Verdict words only; no document text.",
  "rows": {
@@ -229,10 +229,6 @@
      "basis": "codex-review",
      "decidedAt": "2026-11-14",
      "verdict": "supported"
-    },
-    "related_standards": {
-     "decidedAt": "2026-10-30",
-     "verdict": "FOUND"
     },
     "threat_description": {
      "decidedAt": "2026-10-30",
@@ -782,14 +778,8 @@
      "basis": "second-source",
      "decidedAt": "2026-09-24",
      "primaryVerdict": "undeterminable",
-     "secondSource": "draft-fregly-research-agenda-for-pqc-dnssec-00",
+     "secondSource": "draft-fregly-research-agenda-for-pqc-dnssec-02",
      "verdict": "supported"
-    },
-    "related_standards": {
-     "basis": "codex-review",
-     "codexLog": "cx-20260925T014907Z-ed849b46",
-     "decidedAt": "2026-09-25",
-     "verdict": "FOUND"
     },
     "threat_description": {
      "decidedAt": "2026-09-24",
