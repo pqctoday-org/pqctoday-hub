@@ -136,9 +136,10 @@ describe('citable id set', () => {
 describe('citation rule on the newest library CSV', () => {
   it('a retired id whose chain ends at an active row resolves to that row', async () => {
     const { resolveLibraryCitation } = await import('./libraryData')
+    // -04 -> -05 -> RFC 10024 (both drafts retired in 4.208): a two-hop chain.
     const v = resolveLibraryCitation('draft-ietf-tls-ecdhe-mlkem-04')
     expect(v.ok).toBe(true)
-    expect(v.ok && v.activeId).toBe('draft-ietf-tls-ecdhe-mlkem-05')
+    expect(v.ok && v.activeId).toBe('RFC-10024')
   })
 
   it('a retired id with a blank successor is refused', async () => {
