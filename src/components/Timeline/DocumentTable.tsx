@@ -6,11 +6,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink, Flag, Info, Sparkles } f
 import clsx from 'clsx'
 import type { GanttCountryData, Phase } from '../../types/timeline'
 import { phaseColors, timelineEventPageUrl, readDocViewParam } from '../../data/timelineData'
-import {
-  timelineEnrichments,
-  hasSubstantiveEnrichment,
-  getTimelineEnrichmentKey,
-} from '../../data/timelineEnrichmentData'
+import { getTimelineEnrichment, hasSubstantiveEnrichment } from '../../data/timelineEnrichmentData'
 import { StatusBadge } from '../common/StatusBadge'
 import { ViewToggle } from '../Library/ViewToggle'
 import type { ViewMode } from '../Library/ViewToggle'
@@ -25,6 +21,7 @@ import {
 } from './TimelineDocumentDetailPopover'
 import { Button } from '@/components/ui/button'
 import { periodLabel } from '@/utils/timelinePeriod'
+import { BindingForcePill, MandatePill } from './TimelineRecordFacts'
 
 interface DocumentTableProps {
   data: GanttCountryData[]
@@ -128,6 +125,10 @@ export const DocumentTable = ({
         confidenceScore: event.confidenceScore,
         dataQualityNotes: event.dataQualityNotes,
         complianceRefs: event.complianceRefs,
+        mandateType: event.mandateType,
+        bindingForce: event.bindingForce,
+        reviewStatus: event.reviewStatus,
+        libraryRefs: event.libraryRefs,
       }))
     })
   )
@@ -246,13 +247,12 @@ export const DocumentTable = ({
                     end: 'hsl(var(--muted))',
                     glow: 'hsl(var(--ring))',
                   }
-                  const enrichmentKey = getTimelineEnrichmentKey(
-                    row.countryName,
-                    row.org,
-                    row.title
-                  )
+                  // By event_id first, so renamed events and the CNSA lane
+                  // keep their analysis.
                   const enrichment =
-                    row.type === 'Phase summary' ? undefined : timelineEnrichments[enrichmentKey]
+                    row.type === 'Phase summary'
+                      ? undefined
+                      : getTimelineEnrichment(row.eventId, row.countryName, row.org, row.title)
                   const rowIsEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
                   return (
                     <tr
@@ -306,6 +306,12 @@ export const DocumentTable = ({
                       {/* Organization */}
                       <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                         <span className="font-mono text-primary/80">{row.org}</span>
+                        {(row.mandateType || row.bindingForce) && (
+                          <span className="mt-1 flex flex-wrap gap-1">
+                            {row.mandateType && <MandatePill value={row.mandateType} />}
+                            <BindingForcePill value={row.bindingForce} />
+                          </span>
+                        )}
                       </td>
 
                       {/* Period */}

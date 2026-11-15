@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button'
 import {
   draftThreatIndustries,
+  knownThreatIndustries,
   retiredThreats,
   threatsData,
   type ThreatItem,
@@ -59,6 +60,7 @@ import {
 } from '@/data/threatClaimStatus'
 import { MobileSheet } from '../primitives/Sheet'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { threatStandardLinks } from '@/data/threatRelatedStandards'
 import {
   matchesThreatQuery,
   resolveIndustryParam,
@@ -68,10 +70,17 @@ import {
 } from '@/components/Threats/threatsUrlParams'
 import { lensProtocolsFor, threatTouchesProtocol } from '@/data/threatProtocolLens'
 import {
+  sectorAwaitingSourceMessage,
   threatExclusions,
   threatNotFoundMessage,
   threatWidenedMessage,
 } from '@/components/Threats/threatDeepLink'
+import {
+  compareThreats,
+  threatSortDirParam,
+  threatSortFieldParam,
+} from '@/components/Threats/threatSort'
+import { matchesTrustTierFilter, trustTiersFromParams } from '@/data/trustTierFilter'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
@@ -80,6 +89,14 @@ import { formatSocCite, SOC_LEARN_MODULE_HREF } from '@/data/socQuantumPlaybook'
 import { getThreatRecordType, parseThreatRecordType } from '@/data/threatRecordTypes'
 import { ThreatRecordTypeBadge } from '@/components/common/ThreatRecordTypeBadge'
 
+/** The phone list's sort choices — the same fields as the desktop table. */
+const SORT_OPTIONS: { id: 'industry' | 'threatId' | 'criticality' | 'evidence'; label: string }[] =
+  [
+    { id: 'industry', label: 'Industry' },
+    { id: 'threatId', label: 'ID' },
+    { id: 'criticality', label: 'Site priority' },
+    { id: 'evidence', label: 'Evidence' },
+  ]
 const CURRENT_YEAR = new Date().getFullYear()
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
 // from (dataLifetime/credentialValidity/migrationTime) — only the CRQC year
@@ -150,7 +167,8 @@ const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
  * functions/data every desktop Threats-page component reads, not
  * re-derived. Distilled, not a port of ThreatsDashboard.tsx's ~4,300-line
  * component tree: no protocol-lens picker (a shared `?protocol=` link is
- * still applied, shown in the "From your link" strip), no trust-tier filter, no
+ * still applied, shown in the "From your link" strip; so are ?tier= and
+ * ?cross=), no trust-tier picker, no
  * CRQC capability strip / trajectory chart, no CSV/related-modules detail,
  * and only ONE working calculator control (the CRQC year) rather than
  * desktop's four sliders — stated below, not silently dropped.
@@ -181,6 +199,17 @@ export function MobileThreatsView() {
   const storeIndustries = usePersonaStore((s) => s.selectedIndustries)
   const myThreats = useBookmarkStore((s) => s.myThreats)
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
+  // The same saved "My threats only" preference the desktop page uses.
+  const savedShowOnlyMine = useBookmarkStore((s) => s.showOnlyThreats)
+  const saveShowOnlyMine = useBookmarkStore((s) => s.setShowOnlyThreats)
+  // As on desktop: a deep link to a threat the saved "My threats only" hides
+  // turns it off for this visit only; an explicit toggle is saved.
+  const [mineSessionOff, setMineSessionOff] = useState(false)
+  const showOnlyMine = savedShowOnlyMine && !mineSessionOff
+  const setShowOnlyMine = (val: boolean) => {
+    setMineSessionOff(false)
+    saveShowOnlyMine(val)
+  }
 
   const forecast = useMemo(() => getCrqcForecast(), [])
   const [crqcYear, setCrqcYear] = useState(forecast.planningYear)
@@ -217,6 +246,12 @@ export function MobileThreatsView() {
     [searchParams]
   )
   const urlQuery = searchParams.get('q')?.trim() ?? ''
+  // Same ?sort= / ?dir= as desktop, so a shared ordering opens the same way.
+  const sortField = threatSortFieldParam(searchParams.get('sort'))
+  const sortDir = threatSortDirParam(searchParams.get('dir'))
+  const tierFilter = useMemo(() => trustTiersFromParams(searchParams), [searchParams])
+  // ?cross=1: a sector-scoped link that also includes the Cross-Industry records.
+  const urlCross = searchParams.get('cross') === '1'
   // Desktop's developer protocol lens (deep-link PR 2): unknown values are ignored.
   const urlProtocol = resolveProtocolParam(searchParams.get('protocol'), lensProtocols)
   const linkedId = threatIdParam(searchParams)
@@ -280,7 +315,11 @@ export function MobileThreatsView() {
     kind: 'widened' | 'not-found'
     message: string
   } | null>(null)
-  const undoRef = useRef<{ params: string; personaScopeExtra: string | null } | null>(null)
+  const undoRef = useRef<{
+    params: string
+    personaScopeExtra: string | null
+    mineSessionOff: boolean
+  } | null>(null)
   const resolvedIdRef = useRef<string | null>(null)
   const arrivalIdRef = useRef<string | null>(null)
   useEffect(() => {
@@ -302,19 +341,23 @@ export function MobileThreatsView() {
     }
     arrivalIdRef.current = selected.threatId
     const exclusions = threatExclusions(selected, {
-      industries: urlIndustries,
+      industries:
+        urlCross && urlIndustries.length > 0 ? [...urlIndustries, 'Cross-Industry'] : urlIndustries,
       personaScope: urlIndustries.length === 0 ? (personaIndustries ?? []) : [],
       criticality,
       threatClass: classFilter,
       recordType: recordTypeFilter,
       query: urlQuery,
       lensExcludes: !!urlProtocol && !threatTouchesProtocol(selected, urlProtocol),
+      onlyMine: showOnlyMine && myThreats.length > 0 ? myThreats : null,
+      tierExcludes:
+        tierFilter.length > 0 && !matchesTrustTierFilter(tierFilter, 'threats', selected.threatId),
     })
     if (exclusions.length === 0) {
       setDeepLinkNotice(null)
       return
     }
-    undoRef.current = { params: searchParams.toString(), personaScopeExtra }
+    undoRef.current = { params: searchParams.toString(), personaScopeExtra, mineSessionOff }
     const updates: Record<string, string | null> = {}
     for (const ex of exclusions) {
       if (ex === 'industry') updates.industry = [...urlIndustries, selected.industry].join(',')
@@ -324,6 +367,8 @@ export function MobileThreatsView() {
       else if (ex === 'record-type') updates.type = null
       else if (ex === 'q') updates.q = null
       else if (ex === 'lens') updates.protocol = null
+      else if (ex === 'tier') updates.tier = null
+      else if (ex === 'mine') setMineSessionOff(true)
     }
     if (Object.keys(updates).length > 0) setParam(updates)
     setDeepLinkNotice({
@@ -341,6 +386,7 @@ export function MobileThreatsView() {
     if (!snap) return
     arrivalIdRef.current = null
     setPersonaScopeExtra(snap.personaScopeExtra)
+    setMineSessionOff(snap.mineSessionOff)
     const restored = new URLSearchParams(snap.params)
     restored.delete('id')
     restored.delete('threat')
@@ -367,11 +413,14 @@ export function MobileThreatsView() {
   const scopedData = useMemo(
     () =>
       urlIndustries.length > 0
-        ? threatsData.filter((t) => urlIndustries.includes(t.industry))
+        ? threatsData.filter(
+            (t) =>
+              urlIndustries.includes(t.industry) || (urlCross && t.industry === 'Cross-Industry')
+          )
         : personaIndustries
           ? threatsData.filter((t) => personaIndustries.includes(t.industry))
           : threatsData,
-    [urlIndustries, personaIndustries]
+    [urlIndustries, personaIndustries, urlCross]
   )
 
   const filteredData = useMemo(() => {
@@ -381,8 +430,44 @@ export function MobileThreatsView() {
     if (classFilter) data = data.filter((t) => threatMatchesClass(t, classFilter))
     if (recordTypeFilter) data = data.filter((t) => getThreatRecordType(t) === recordTypeFilter)
     if (urlProtocol) data = data.filter((t) => threatTouchesProtocol(t, urlProtocol))
-    return data
-  }, [scopedData, urlQuery, criticality, classFilter, recordTypeFilter, urlProtocol])
+    if (tierFilter.length > 0)
+      data = data.filter((t) => matchesTrustTierFilter(tierFilter, 'threats', t.threatId))
+    if (showOnlyMine && myThreats.length > 0)
+      data = data.filter((t) => myThreats.includes(t.threatId))
+    return [...data].sort((a, b) => compareThreats(a, b, sortField, sortDir))
+  }, [
+    scopedData,
+    urlQuery,
+    criticality,
+    classFilter,
+    recordTypeFilter,
+    urlProtocol,
+    tierFilter,
+    showOnlyMine,
+    myThreats,
+    sortField,
+    sortDir,
+  ])
+
+  // A link or sector pick naming only sectors with no published threat yet
+  // (all drafted, awaiting a source) says so instead of silently showing all.
+  const awaitingSectors = useMemo(() => {
+    const fromUrl = resolveIndustryParam(
+      searchParams.get('industry'),
+      [...knownThreatIndustries].map((industry) => ({ industry }))
+    )
+    const fromStore =
+      searchParams.get('industry') || personaIndustries
+        ? []
+        : storeIndustries.flatMap((k) => INDUSTRY_TO_THREATS_MAP[k] ?? []) // eslint-disable-line security/detect-object-injection
+    const named = [...fromUrl, ...fromStore].filter((ind, i, all) => all.indexOf(ind) === i)
+    const awaiting = named.filter((ind) => !threatsData.some((t) => t.industry === ind))
+    // Only when none of the named sectors has a published threat (a mixed list
+    // filters to the published ones as asked).
+    return awaiting.length === named.length ? awaiting : []
+  }, [searchParams, personaIndustries, storeIndustries])
+  const [awaitingDismissed, setAwaitingDismissed] = useState<string | null>(null)
+  const awaitingKey = awaitingSectors.join('|')
   const [visibleCount, setVisibleCount] = useState(12)
   useEffect(
     () => setVisibleCount(12),
@@ -420,6 +505,14 @@ export function MobileThreatsView() {
         )}
       </div>
 
+      {awaitingSectors.length > 0 && awaitingDismissed !== awaitingKey && (
+        <DeepLinkNotice
+          kind="not-found"
+          message={sectorAwaitingSourceMessage(awaitingSectors)}
+          onDismiss={() => setAwaitingDismissed(awaitingKey)}
+        />
+      )}
+
       {deepLinkNotice && (
         <DeepLinkNotice
           kind={deepLinkNotice.kind}
@@ -453,20 +546,24 @@ export function MobileThreatsView() {
       {/* A shared link's industry / search scope — there is no picker or
           search box for these on this screen, so say what is applied and
           offer the way out. */}
-      {(urlIndustries.length > 0 || urlQuery || urlProtocol) && (
+      {(urlIndustries.length > 0 || urlQuery || urlProtocol || tierFilter.length > 0) && (
         <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-[11.5px] text-foreground">
           <span className="font-semibold">From your link:</span>
           <span className="flex-1">
             {[
               ...urlIndustries,
               ...(urlQuery ? [`“${urlQuery}”`] : []),
+              ...(urlIndustries.length > 0 && urlCross ? ['+ Cross-Industry'] : []),
               ...(urlProtocol ? [`Protocol: ${urlProtocol}`] : []),
+              ...(tierFilter.length > 0 ? [`Trust tier: ${tierFilter.join(', ')}`] : []),
             ].join(' · ')}
           </span>
           <Button
             type="button"
             variant="ghost"
-            onClick={() => setParam({ industry: null, q: null, protocol: null })}
+            onClick={() =>
+              setParam({ industry: null, q: null, protocol: null, tier: null, cross: null })
+            }
             className="h-11 rounded-full border border-border px-3 text-[11px] font-semibold"
           >
             Show all
@@ -657,6 +754,56 @@ export function MobileThreatsView() {
         ))}
       </div>
 
+      <div className="mb-4 flex flex-wrap items-center gap-1.5">
+        <span className="text-[11px] text-muted-foreground">Sort</span>
+        {SORT_OPTIONS.filter((o) => o.id !== 'evidence' || selectedPersona === 'researcher').map(
+          (o) => (
+            <Button
+              type="button"
+              variant="ghost"
+              key={o.id}
+              onClick={() => setParam({ sort: o.id === 'industry' ? null : o.id, dir: null })}
+              aria-pressed={sortField === o.id}
+              className={cn(
+                'h-11 rounded-full border px-3 text-[11px] font-semibold',
+                sortField === o.id
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border bg-card text-foreground'
+              )}
+            >
+              {o.label}
+            </Button>
+          )
+        )}
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setParam({ dir: sortDir === 'asc' ? 'desc' : null })}
+          aria-label={
+            sortDir === 'asc' ? 'Sorted ascending — reverse' : 'Sorted descending — reverse'
+          }
+          className="h-11 rounded-full border border-border px-3 text-[11px] font-semibold"
+        >
+          {sortDir === 'asc' ? '↑' : '↓'}
+        </Button>
+        {myThreats.length > 0 && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setShowOnlyMine(!showOnlyMine)}
+            aria-pressed={showOnlyMine}
+            className={cn(
+              'h-11 rounded-full border px-3 text-[11px] font-semibold',
+              showOnlyMine
+                ? 'border-primary bg-primary text-primary-foreground'
+                : 'border-border bg-card text-foreground'
+            )}
+          >
+            My threats only ({myThreats.length})
+          </Button>
+        )}
+      </div>
+
       <div className="flex flex-col gap-2.5">
         {filteredData.length === 0 && (
           <p className="text-[12.5px] text-muted-foreground">No threats match these filters.</p>
@@ -768,6 +915,26 @@ export function MobileThreatsView() {
                 Learn: SOC implementation for PQC
               </Link>
             </div>
+            {threatStandardLinks(selected).length > 0 && (
+              <div className="border-t border-border pt-3">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  Related standards
+                </p>
+                <ul className="mt-1 flex flex-wrap gap-1.5">
+                  {threatStandardLinks(selected).map((std) => (
+                    <li key={std.id}>
+                      <Link
+                        to={std.deepLink}
+                        title={std.title}
+                        className="inline-flex min-h-11 items-center gap-1 rounded-full border border-border bg-muted/40 px-3 text-[11.5px] font-medium text-foreground"
+                      >
+                        {std.id}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {selected.relatedModules.length > 0 && (
               <div className="border-t border-border pt-3">
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">

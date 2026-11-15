@@ -48,6 +48,25 @@ describe('MobileCommandCenterView', () => {
     expect(screen.getByText('Who owns it?')).toBeInTheDocument()
   })
 
+  it('the tiered dashboard links to the full planning tools list instead of a laptop note', () => {
+    completeMinimalAssessment()
+    renderView()
+    const link = screen.getByRole('link', {
+      name: `Browse all ${BUSINESS_TOOLS.length} planning tools →`,
+    })
+    expect(link).toHaveAttribute('href', '/business/tools')
+    expect(screen.queryByText(/on a laptop/)).not.toBeInTheDocument()
+  })
+
+  it('the phone view offers no role packs or artifact drawer; it stays read-only', () => {
+    completeMinimalAssessment()
+    renderView()
+    expect(
+      screen.queryByText(/Architecture pack|Operations pack|Role pack/i)
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Create')).not.toBeInTheDocument()
+  })
+
   it('shows the tiered dashboard once the reader has started (assessment complete)', () => {
     completeMinimalAssessment()
     renderView()
@@ -83,7 +102,7 @@ describe('MobileCommandCenterView', () => {
     renderView()
     expect(BUSINESS_TOOLS.length).toBeGreaterThan(0)
     expect(
-      screen.getByText(new RegExp(`The ${BUSINESS_TOOLS.length} planning tools`))
+      screen.getByText(`Browse all ${BUSINESS_TOOLS.length} planning tools →`)
     ).toBeInTheDocument()
     expect(screen.queryByText(/The 34 planning tools/)).not.toBeInTheDocument()
   })
@@ -95,5 +114,40 @@ describe('MobileCommandCenterView', () => {
     // Nothing has been bookmarked/documented for Assets, so it isn't at
     // Tier 4 yet — a real, non-empty next-tier hint should surface.
     expect(screen.getByText(/^For (Risk-Informed|Repeatable|Adaptive):/)).toBeInTheDocument()
+  })
+})
+
+describe('MobileCommandCenterView empty profile with zone links', () => {
+  const WELCOME = 'Welcome to your PQC Command Center'
+
+  beforeEach(() => {
+    resetStore()
+    window.history.replaceState(null, '', '/')
+  })
+
+  it('shows the zone list, with the linked zone open, for ?zone= on an empty profile', () => {
+    render(
+      <MemoryRouter initialEntries={['/business?zone=mitigation']}>
+        <MobileCommandCenterView />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Mitigation/ })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    )
+    expect(screen.getByText(CSWP39_ZONE_DETAILS.mitigation.what)).toBeInTheDocument()
+  })
+
+  it('shows the welcome screen with no link, and "Explore the six zones" shows the zone list', () => {
+    renderView()
+    expect(screen.getByText(WELCOME)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Explore the six zones' }))
+
+    expect(screen.queryByText(WELCOME)).not.toBeInTheDocument()
+    for (const zone of Object.values(CSWP39_ZONE_DETAILS)) {
+      expect(screen.getByText(zone.title)).toBeInTheDocument()
+    }
   })
 })

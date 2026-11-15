@@ -3,25 +3,12 @@ import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
 import { X, ShieldX, ExternalLink, MessageSquare } from 'lucide-react'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { LEADER_REMOVAL_REQUEST_URL } from './leadersConstants'
 
 interface LeaderRemovalModalProps {
   isOpen: boolean
   onClose: () => void
 }
-
-const REMOVAL_TEMPLATE = `**Name:** [Your full name or the name listed on the page]
-**Organization:** [If applicable]
-**Reason:** [Optional — no questions asked]`
-
-const DISCUSSION_NEW_URL = (() => {
-  const base = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/new'
-  const params = new URLSearchParams({
-    category: 'i-consent-to-be-added-as-a-pqc-leader',
-    title: 'Request removal from the PQC Community',
-    body: REMOVAL_TEMPLATE,
-  })
-  return `${base}?${params.toString()}`
-})()
 
 export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps) {
   // Esc via the shared overlay stack: closes only the topmost overlay.
@@ -83,7 +70,7 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
 
               <div className="space-y-2">
                 <a
-                  href={DISCUSSION_NEW_URL}
+                  href={LEADER_REMOVAL_REQUEST_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"

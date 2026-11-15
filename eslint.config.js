@@ -412,6 +412,11 @@ export default defineConfig([
                 // Every mobile screen that honours a resource deep link shows
                 // the same "widened / not found" notice desktop does.
                 '!@/components/common/DeepLinkNotice',
+                // LeaderKeyResources.tsx (common, 2026-11-14) — same category: the
+                // cited Library refs and external sources of one Community
+                // profile, shown identically in the desktop detail views and the
+                // phone sheet (refs are not paired with URLs by position).
+                '!@/components/common/LeaderKeyResources',
                 // UnresolvedEstimatesNotice.tsx (common, 2026-10-03) — same category:
                 // a small shared note with no desktop-view dependencies. The phone
                 // Threats screen shows the same "estimates are still open" wording
@@ -474,6 +479,10 @@ export default defineConfig([
                 // filters hide a ?id threat + the notice text, shared by
                 // ThreatsDashboard and MobileThreatsView so they cannot drift.
                 '!@/components/Threats/threatDeepLink',
+                // threatSort.ts (4.208) — pure comparator, no JSX: the one
+                // ordering the desktop table/cards and the phone list use, so
+                // a shared ?sort= link orders the same way on both.
+                '!@/components/Threats/threatSort',
                 // useLibraryPipeline.ts / libraryPills.ts (Library/redesign)
                 // — the real filter/sort pipeline and pill-formatting
                 // helpers every desktop Library surface already reads (no
@@ -492,10 +501,20 @@ export default defineConfig([
                 // rule-set confidence score, no JSX. Both shells must show the
                 // same "set by document-type rule" wording.
                 '!@/components/Library/ruleBasedConfidence',
+                // libraryDocumentTypes.ts (2026-11-14) — the document-type
+                // explanations, plain strings, no JSX; both shells show them.
+                '!@/components/Library/libraryDocumentTypes',
                 '!@/components/Library/redesign',
                 '@/components/Library/redesign/*',
                 '!@/components/Library/redesign/useLibraryPipeline',
                 '!@/components/Library/redesign/libraryPills',
+                // libraryDeepLink.ts / libraryRegions.ts / libraryDetailFacts.ts
+                // (2026-11-14) — pure helpers, no JSX: deep-link widening and
+                // ?topic= handling, region codes and labels, and the detail
+                // fields both shells list, shared so phone and desktop agree.
+                '!@/components/Library/redesign/libraryDeepLink',
+                '!@/components/Library/redesign/libraryRegions',
+                '!@/components/Library/redesign/libraryDetailFacts',
                 // LeaderCategorySidebar.tsx — imported only for its exported
                 // LEADER_CATEGORIES array (a plain literal, no JSX reused).
                 // The mobile Community screen's category filter reads the
@@ -508,6 +527,10 @@ export default defineConfig([
                 // ?leader= name matching shared by LeadersGrid and
                 // MobileCommunityView.
                 '!@/components/Leaders/leaderDeepLink',
+                // leadersConstants.ts (2026-11-14) — pure helper, no JSX: catalogue
+                // product names/licences, the Timeline-country check and the
+                // removal-request link, shared by LeadersGrid and the phone screens.
+                '!@/components/Leaders/leadersConstants',
                 // PersonaBoardView.tsx (PersonaJourney) — imported only for
                 // its exported PROVENANCE_LABEL map (Phase 4's Home board
                 // reads the same three provenance strings the desktop board

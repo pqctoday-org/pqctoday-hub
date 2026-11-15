@@ -157,6 +157,11 @@ const RESOLVERS: Record<string, Resolver> = {
       'Recorded checking-date coverage is unavailable; no whole-corpus review or freshness is established.'
     )
   },
+  // Short form of the same coverage for proof chips (2026-11-14).
+  regulatory_checking_dates_chip: (mod, args) => {
+    requireArgs('regulatory_checking_dates_chip', args, 0)
+    return mod.REGULATORY_SOURCE_COVERAGE_CHIP ?? 'Checking-date coverage unavailable'
+  },
   hsm_use_cases_count: (mod, args) => {
     requireArgs('hsm_use_cases_count', args, 0)
     return mod.toWordIfSmall(mod.HSM_CAPACITY_USE_CASE_COUNT)

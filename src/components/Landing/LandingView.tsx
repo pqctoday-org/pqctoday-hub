@@ -363,14 +363,28 @@ export const LandingView = () => {
   // row in MainLayout.tsx.
   if (isMobileShell) {
     if (!selectedPersona && !hasSkippedPersonalization) return null
+    // The phone Home carries the same utility sections as the desktop one
+    // (2026-11-14). Before, this early return dropped all of them: no resume
+    // link, no "updated since your last visit", no score card, no
+    // transparency note, and no Backup & Restore — the only place in the app
+    // to export or import saved progress, so a phone learner could do neither.
     return (
       <>
+        <div className="space-y-3 px-4 pt-3 empty:hidden">
+          <ResumeBanner dismissKey="landing-mobile-home" />
+          <UpdatedSinceLastVisit />
+        </div>
         <MobileHomeBoard
           persona={selectedPersona}
           variantId={activeVariantId}
           onSelectVariant={handleSelectVariant}
           onOpenRoleSwitch={() => setHomeRoleSwitchOpen(true)}
         />
+        <div className="space-y-6 px-4 pb-6" data-testid="mobile-home-utilities">
+          <ScoreCard />
+          <TransparencyBanner />
+          <BackupRestoreSection />
+        </div>
         <MobileRoleSelection
           variant="switch"
           open={homeRoleSwitchOpen}

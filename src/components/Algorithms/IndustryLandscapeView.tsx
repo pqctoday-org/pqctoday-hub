@@ -21,7 +21,8 @@
 // the measurement that killed it.
 
 import { useEffect, useMemo, useRef } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { Link } from 'react-router'
+import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
 import {
   ArrowLeft,
   BookMarked,
@@ -1067,7 +1068,8 @@ function CyberOpportunityBadge({ industry }: { industry: string }) {
 // ── Main view ────────────────────────────────────────────────────────────────
 
 export function IndustryLandscapeView() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  // Inside the simulation this reads the embed's local params, never the page URL.
+  const [searchParams, setSearchParams] = useEmbedSearchParams()
   const { useCases, standards, marketSizes } = loadIndustryLandscape()
   const meta = getLandscapeMetadata()
 

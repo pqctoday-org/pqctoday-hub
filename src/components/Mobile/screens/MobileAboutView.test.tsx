@@ -88,6 +88,16 @@ describe('MobileAboutView', () => {
     expect(screen.getByText(/Security audit/i)).toBeInTheDocument()
   })
 
+  it('says how Community profiles are compiled, not "only with written consent"', () => {
+    renderView()
+    fireEvent.click(screen.getByText('Trust & verification').closest('button')!)
+    expect(screen.queryByText(/only with written consent/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/Profiles in the Community directory are compiled/)).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'ask for a correction or removal' }).getAttribute('href')
+    ).toContain('category=i-consent-to-be-added-as-a-pqc-leader')
+  })
+
   it('shows real, live-computed platform-data counts, not stale figures', () => {
     renderView()
     fireEvent.click(screen.getByText('Data & privacy').closest('button')!)

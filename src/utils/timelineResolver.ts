@@ -47,6 +47,22 @@ function key(country: string, org: string): OrgKey {
   return `${country.trim().toLowerCase()}::${org.trim().toLowerCase()}`
 }
 
+/**
+ * Lanes the timeline data renames. The timeline CSV files the NSA rows under
+ * "United States", but the timeline builds them as their own lane,
+ * "United States (CNSA)" (timelineData.ts). Compliance rows written before the
+ * rename still say "United States:NSA", so the ref is mapped to the lane the
+ * events really carry. Keys are `key(country, org)`.
+ */
+const LANE_ALIASES: ReadonlyMap<OrgKey, { country: string; org: string }> = new Map([
+  [key('United States', 'NSA'), { country: 'United States (CNSA)', org: 'NSA' }],
+])
+
+/** The timeline lane a `country:org` pair names, after the renamed-lane alias. */
+export function canonicalTimelineLane(country: string, org: string): ParsedTimelineRef {
+  return LANE_ALIASES.get(key(country, org)) ?? { country: country.trim(), org: org.trim() }
+}
+
 for (const country of timelineData) {
   knownCountries.add(country.countryName.trim().toLowerCase())
   for (const body of country.bodies) {
@@ -68,7 +84,7 @@ export function resolveTimelineRef(ref: string): ResolvedTimelineRef {
   if (!parsed) {
     return { ref, country: '', org: '', events: [] }
   }
-  const { country, org } = parsed
+  const { country, org } = canonicalTimelineLane(parsed.country, parsed.org)
   const events = orgIndex.get(key(country, org)) ?? []
   if (events.length === 0) {
     return { ref, country, org, events: [] }

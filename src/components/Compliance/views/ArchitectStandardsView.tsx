@@ -12,6 +12,7 @@
  * and ApplicabilityPanel so the persona switch only changes rendering, not the
  * underlying recommendation set.
  */
+import { ARCHITECT_PER_REGION, frameworksByRegion, REGION_ORDER } from './forYouSelection'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Layers, GlobeLock, ArrowRight } from 'lucide-react'
@@ -24,11 +25,7 @@ import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
 import { maturityRequirements } from '../../../data/maturityGovernanceData'
-import {
-  regionForCountry,
-  type ComplianceFramework,
-  type RegionBloc,
-} from '../../../data/complianceData'
+import { type ComplianceFramework } from '../../../data/complianceData'
 import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
@@ -72,35 +69,9 @@ export function ArchitectStandardsView({
     [applicableResults]
   )
 
-  // Group applicable frameworks by region bloc
-  const byRegion = useMemo(() => {
-    const m = new Map<RegionBloc | 'Other', ComplianceFramework[]>()
-    for (const fw of applicable) {
-      const regions = new Set<RegionBloc | 'Other'>()
-      for (const c of fw.countries) regions.add(regionForCountry(c) as RegionBloc)
-      // Each framework can sit in multiple region buckets (e.g. EU + Global)
-      for (const r of regions) {
-        const arr = m.get(r) ?? []
-        arr.push(fw)
-        m.set(r, arr)
-      }
-    }
-    return m
-  }, [applicable])
+  // Group applicable frameworks by region bloc (see forYouSelection.ts)
+  const byRegion = useMemo(() => frameworksByRegion(applicable), [applicable])
 
-  // Region display order — same as REGION_BLOC_ORDER in complianceData
-  const REGION_ORDER: (RegionBloc | 'Other')[] = [
-    'Global',
-    'North America',
-    'European Union',
-    'United Kingdom',
-    'Europe (non-EU)',
-    'Latin America',
-    'Asia-Pacific',
-    'Middle East',
-    'Africa',
-    'Other',
-  ]
   const orderedRegions = REGION_ORDER.filter((r) => byRegion.has(r))
 
   // Maturity requirements filtered to the user-relevant compliance refs
@@ -201,7 +172,7 @@ export function ArchitectStandardsView({
                     </span>
                   </div>
                   <ul className="space-y-1 min-w-0">
-                    {fws.slice(0, 8).map((fw) => {
+                    {fws.slice(0, ARCHITECT_PER_REGION).map((fw) => {
                       const tier = tierById.get(fw.id)
                       const tierMeta = tier ? TIER_META[tier] : undefined
                       return (

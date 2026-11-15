@@ -395,7 +395,7 @@ export const EXTENSION_COVERAGE: ExtensionCoverage[] = [
     evidence:
       'Assemble traceable verification results and unresolved exceptions; require review and closure conditions that are distinct from possessing a dossier.',
     status: 'proxy',
-    note: 'The source’s own Common Failure is "Declared done" — closing on milestone completion rather than verification evidence. Artifact presence currently clears the band, which is that failure mode.',
+    note: 'The source’s own Common Failure is "Declared done" — closing on milestone completion rather than verification evidence. VC.2 now also requires 80% of migratable connections decided (owner decision 2026-11-14), so a dossier alone no longer closes the program. Still a proxy: connection coverage is not the verification evidence and review the section asks for.',
   },
   {
     phase: 'foundations',

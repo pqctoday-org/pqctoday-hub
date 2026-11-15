@@ -33,6 +33,7 @@ import {
   PERSONA_MARKED_NAV_PATHS,
   PERSONA_ABSENT_PATHS,
   RAIL_HIDDEN_PATHS,
+  RAIL_GROUP_DISPLAY_ADDITIONS,
   NAV_PATH_LABELS,
   type PersonaAbsence,
 } from '@/data/personaConfig'
@@ -394,7 +395,10 @@ export function computeGroupDisplayPaths(
     ]
   }
   if (group.id === 'practice') {
-    const candidates = [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
+    const candidates = [
+      ...group.paths.filter((p) => p !== '/explore'),
+      ...RAIL_GROUP_DISPLAY_ADDITIONS,
+    ]
     return [
       ...PRACTICE_DISPLAY_ORDER.filter((p) => candidates.includes(p)),
       ...candidates.filter((p) => !PRACTICE_DISPLAY_ORDER.includes(p)),

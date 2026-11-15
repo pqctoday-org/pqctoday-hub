@@ -157,12 +157,20 @@ describe('Patents Insights drills', () => {
     expect(onFilter).toHaveBeenCalledWith({ quantumRelevance: 'core_invention' })
   })
 
-  it('leaderboards with no Explore filter are not clickable', () => {
-    render(<PatentsInsightsRedesign patents={patentsData} onFilter={vi.fn()} />)
+  it('every "More breakdowns" leaderboard drills into Explore', () => {
+    const onFilter = vi.fn()
+    render(<PatentsInsightsRedesign patents={patentsData} onFilter={onFilter} />)
     fireEvent.click(screen.getByRole('button', { name: /More breakdowns/ }))
-    for (const title of ['Threat models', 'Standards referenced', 'Migration strategy']) {
+    for (const [title, key] of [
+      ['Threat models', 'threatModel'],
+      ['Standards referenced', 'standard'],
+      ['Migration strategy', 'migrationStrategy'],
+    ] as const) {
       const card = screen.getByRole('heading', { name: title }).parentElement!
-      expect(within(card).queryAllByRole('button')).toHaveLength(0)
+      const bars = within(card).queryAllByRole('button')
+      expect(bars.length).toBeGreaterThan(0)
+      fireEvent.click(bars[0])
+      expect(Object.keys(onFilter.mock.lastCall![0])).toEqual([key])
     }
     const protocols = screen.getByRole('heading', { name: 'Protocol coverage' }).parentElement!
     expect(within(protocols).queryAllByRole('button').length).toBeGreaterThan(0)

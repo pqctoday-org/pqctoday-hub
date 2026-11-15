@@ -64,8 +64,19 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
     'You unlocked the full comparison. Three common starting points from the published NIST standards (ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128s) are pre-highlighted; the other rows are there to compare against.',
 }
 
-export function AlgorithmsView() {
-  const isMobile = useIsMobileShell()
+export function AlgorithmsView({
+  simEmbed = false,
+  simEmbedParams,
+}: {
+  /** Rendered inside the simulation: no page header, and filters/tab state kept
+   *  local so /simulation's own URL is never read or written. */
+  simEmbed?: boolean
+  /** Embedded only: the starting params, e.g. `tab=validation`. */
+  simEmbedParams?: string
+} = {}) {
+  // The simulation renders this at any viewport but keeps its own phone layout,
+  // so the mobile-shell screens never apply when embedded (same as Library).
+  const isMobile = useIsMobileShell() && !simEmbed
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
@@ -137,7 +148,11 @@ export function AlgorithmsView() {
     transitionNotFound,
     closeTransition,
     roleDefaultFilters,
-  } = useAlgorithmExplorer(personaDefaults, { preserveMobileAlgorithmSheet: isMobile })
+  } = useAlgorithmExplorer(personaDefaults, {
+    preserveMobileAlgorithmSheet: isMobile,
+    urlSync: !simEmbed,
+    initialParams: simEmbed ? (simEmbedParams ?? '') : '',
+  })
 
   const catalogueFreshness = getCatalogueFreshness(metadata?.date)
   const catalogueQuality = useMemo(
@@ -593,13 +608,15 @@ export function AlgorithmsView() {
 
   return (
     <div>
-      <PageHeader
-        icon={Shield}
-        title="Post-Quantum Algorithms & Protocols"
-        description="Compare post-quantum algorithms and track their support across IETF protocols"
-      />
+      {!simEmbed && (
+        <PageHeader
+          icon={Shield}
+          title="Post-Quantum Algorithms & Protocols"
+          description="Compare post-quantum algorithms and track their support across IETF protocols"
+        />
+      )}
 
-      <PersonaPageNote route="/algorithms" className="mb-4" />
+      {!simEmbed && <PersonaPageNote route="/algorithms" className="mb-4" />}
 
       <aside className="mb-4 rounded-lg border border-status-info/30 bg-status-info/5 px-4 py-3 text-sm leading-relaxed text-foreground/85">
         <strong className="text-foreground">Educational boundary.</strong> This explorer compares
@@ -931,7 +948,7 @@ export function AlgorithmsView() {
                 transition={{ duration: 0.3 }}
                 data-workshop-target="section-algorithm-protocol-support"
               >
-                <PQCProtocolMatrix />
+                <PQCProtocolMatrix embedded={simEmbed} />
               </motion.div>
             </TabsContent>
 

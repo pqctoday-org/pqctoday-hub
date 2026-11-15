@@ -9,6 +9,7 @@ import {
   buildVisibleSubgraph,
   filterNodes,
   rankVisibleNodes,
+  searchNodes,
   subCategoriesOf,
   subKey,
   type GraphFilters,
@@ -196,5 +197,34 @@ describe('subCategoriesOf', () => {
       { sub: 'RFC', count: 2 },
       { sub: 'Regulation', count: 1 },
     ])
+  })
+})
+
+describe('searchNodes', () => {
+  const node = (id: string, label: string, degree = 1): ForceClusterNode => ({
+    id,
+    label,
+    type: 'standard',
+    sub: 'FIPS',
+    description: '',
+    degree,
+  })
+  const graph: ForceClusterGraph = {
+    nodes: [
+      node('std-a', 'FIPS 203 companion note', 9),
+      node('std-b', 'FIPS 203'),
+      node('std-c', 'Guide to FIPS 203', 50),
+      node('mech-x', 'ML-KEM-768'),
+    ],
+    edges: [],
+  }
+
+  it('ranks an exact name first, then names that start with the query, then any name match', () => {
+    expect(searchNodes(graph, 'fips 203').map((n) => n.id)).toEqual(['std-b', 'std-a', 'std-c'])
+  })
+
+  it('needs two characters and matches ids and sub-categories too', () => {
+    expect(searchNodes(graph, 'f')).toEqual([])
+    expect(searchNodes(graph, 'mech-x').map((n) => n.id)).toEqual(['mech-x'])
   })
 })

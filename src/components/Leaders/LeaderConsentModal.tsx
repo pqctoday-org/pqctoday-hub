@@ -17,6 +17,7 @@ import {
   Check,
 } from 'lucide-react'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
+import { LEADER_PROVENANCE_SENTENCE, LEADER_REMOVAL_REQUEST_URL } from './leadersConstants'
 
 interface LeaderConsentModalProps {
   isOpen: boolean
@@ -127,9 +128,17 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
             {/* Scrollable content */}
             <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                We feature people contributing to the advances of post-quantum cryptography.
-                Community members are listed{' '}
-                <span className="font-medium text-foreground">only with written consent</span>.
+                We feature people contributing to the advances of post-quantum cryptography.{' '}
+                {LEADER_PROVENANCE_SENTENCE} Anyone listed can{' '}
+                <a
+                  href={LEADER_REMOVAL_REQUEST_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-primary underline underline-offset-2"
+                >
+                  ask for a correction or removal
+                </a>
+                .
               </p>
 
               <div>

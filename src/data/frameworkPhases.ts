@@ -341,7 +341,12 @@ export const FRAMEWORK_PHASES: Record<PhaseId, FrameworkPhase> = {
       { route: '/business', ref: 'mti-negotiator', status: 'live' },
       { route: '/business', ref: 'crypto-api-refactor-audit', status: 'live' },
       { route: '/migrate', ref: 'migrate', status: 'live' },
-      { route: '/migrate', ref: 'wave-data-at-rest-ai', status: 'gap' },
+      {
+        route: '/migrate',
+        ref: 'wave-data-at-rest-ai',
+        status: 'gap',
+        note: 'No data-at-rest / AI-workload migration wave view on /migrate. The data-at-rest-strategy Business tool listed next in this phase covers the planning; a /migrate wave view is not built.',
+      },
       { route: '/business', ref: 'data-at-rest-strategy', status: 'live' },
     ],
     communicate: {

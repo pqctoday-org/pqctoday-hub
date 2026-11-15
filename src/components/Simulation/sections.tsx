@@ -206,6 +206,7 @@ export function DecisionSection({
   canEmbed,
   onOpenStep,
   renderCompletion,
+  renderMeasure,
   assessRec,
   onWrongPick,
   onTrapPicked,
@@ -237,6 +238,10 @@ export function DecisionSection({
    *  no embed pane to show a completion control) passes one so a correct pick
    *  can actually finish the step instead of only linking away from it. */
   renderCompletion?: (step: TreeStep) => ReactNode
+  /** A `measure` step has nothing to open: it is a condition read from the run.
+   *  When given, this renders the live value against the target in place of the
+   *  open/deep-link control (whose only target would be /simulation itself). */
+  renderMeasure?: (step: TreeStep) => ReactNode
   assessRec?: AssessRec
   /** I1 / WP4.4: called with the wrong move's label when the player picks a trap —
    *  every phase now wires this (uniform stakes), not just p1/p5. */
@@ -350,7 +355,9 @@ export function DecisionSection({
   // (it used to render only after a correct pick: a hard dead end on phones).
   const stepAction = (
     <>
-      {canEmbed(step) ? (
+      {step.kind === 'measure' && renderMeasure ? (
+        renderMeasure(step)
+      ) : canEmbed(step) ? (
         <Button
           type="button"
           variant="ghost"
@@ -398,7 +405,7 @@ export function DecisionSection({
           <span className="shrink-0 font-mono text-sim-micro text-warning">resource moved</span>
         </div>
       )}
-      {renderCompletion?.(step)}
+      {step.kind === 'measure' && renderMeasure ? null : renderCompletion?.(step)}
     </>
   )
 

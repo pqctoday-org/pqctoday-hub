@@ -6,38 +6,12 @@ import type { ThreatData } from '../../data/threatsData'
 import { useThreatsData } from '../../hooks/useThreatsData'
 import { Button } from '../ui/button'
 import clsx from 'clsx'
+import { INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 
-/** Maps assess-module industry names to threats CSV industry column values. */
-export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
-  'Finance & Banking': [
-    'Finance & Banking',
-    'Cryptocurrency / Blockchain',
-    'Payment Card Industry',
-    'Insurance',
-    'Legal / Notary / eSignature',
-  ],
-  'Government & Defense': ['Government & Defense'],
-  Healthcare: ['Healthcare / Pharmaceutical'],
-  Telecommunications: ['Telecommunications'],
-  Technology: [
-    'Cloud Computing / Data Centers',
-    'IT Industry / Software',
-    'Internet of Things (IoT)',
-    'Media / Entertainment / DRM',
-    'Supply Chain / Logistics',
-  ],
-  'Energy & Utilities': [
-    // The Threats page's label since ruling R3 (2026-09-24); the old labels
-    // resolve to it through THREAT_INDUSTRY_ALIASES (threatRowRules.ts).
-    'Critical Infrastructure / OT',
-    'Water / Wastewater',
-    'Rail / Transit',
-  ],
-  Automotive: ['Automotive / Connected Vehicles'],
-  Aerospace: ['Aerospace / Aviation / Space'],
-  'Retail & E-Commerce': ['Retail & E-Commerce', 'Payment Card Industry'],
-  Other: [],
-}
+/** Maps assess-module industry names to threats CSV industry column values —
+ *  the same map the Threats page uses, so a sector shows the same threats on
+ *  both pages. */
+export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = INDUSTRY_TO_THREATS_MAP
 
 const criticalityConfig: Record<ThreatData['criticality'], { label: string; className: string }> = {
   Critical: { label: 'Critical', className: 'bg-destructive/10 text-destructive' },

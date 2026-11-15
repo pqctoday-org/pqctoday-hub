@@ -21,6 +21,7 @@ import {
   NIST_STATUS_LABELS,
 } from '@/components/Patents/PatentsInsights'
 import type { PatentItem, InsightsFilter } from '@/types/PatentTypes'
+import { pqcCountingLabel, pqcCountingName } from '@/data/patentFilters'
 
 interface Props {
   patents: PatentItem[]
@@ -45,12 +46,13 @@ const RELEVANCE_LABEL_TO_ID: Record<string, string> = {
   None: 'none',
 }
 
+// Keyed by filingJurisdictionLabel's output — the labels this chart groups by.
 const REGION_COLORS: Record<string, string> = {
-  Americas: 'hsl(var(--primary))',
-  Europe: 'hsl(var(--secondary))',
-  APAC: 'hsl(var(--warning))',
-  'Middle East & Africa': 'hsl(var(--info))',
-  Unknown: 'hsl(var(--muted-foreground))',
+  'United States (US)': 'hsl(var(--primary))',
+  'European Patent Office (EP)': 'hsl(var(--secondary))',
+  'PCT international publication (WO)': 'hsl(var(--warning))',
+  'Canada (CA)': 'hsl(var(--info))',
+  Unassigned: 'hsl(var(--muted-foreground))',
 }
 
 const PALETTE = [
@@ -229,7 +231,13 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
   )
 
   const assignees = useMemo(() => countBy(patents, (p) => p.assignee || 'Unknown'), [patents])
-  const pqcAlgos = useMemo(() => countByList(patents, (p) => p.pqcAlgorithms), [patents])
+  // Counted under the FIPS name, so a filing that says Kyber and one that
+  // says ML-KEM land on one bar, and the bar's click (?pqc=ML-KEM, which
+  // matches both names) opens exactly the patents it counts.
+  const pqcAlgos = useMemo(
+    () => countByList(patents, (p) => Array.from(new Set(p.pqcAlgorithms.map(pqcCountingName)))),
+    [patents]
+  )
   const classicalAlgos = useMemo(
     () => countByList(patents, (p) => p.classicalAlgorithms),
     [patents]
@@ -241,10 +249,7 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
   const standards = useMemo(() => countByList(patents, (p) => p.standardsReferenced), [patents])
   const hardware = useMemo(() => countByList(patents, (p) => p.hardwareComponents), [patents])
   const strategies = useMemo(
-    () =>
-      countBy(patents, (p) =>
-        p.migrationStrategy ? p.migrationStrategy.replace(/_/g, ' ') : 'unknown'
-      ),
+    () => countBy(patents, (p) => p.migrationStrategy || 'unknown'),
     [patents]
   )
   const nistStatus = useMemo(
@@ -305,6 +310,7 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
           rows={pqcAlgos}
           colorClass="bg-success"
           onClick={(l) => onFilter({ pqc: l })}
+          labelTransform={pqcCountingLabel}
         />
         <Leaderboard
           title="Classical algorithms replaced"
@@ -342,17 +348,28 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
               rows={protocols}
               onClick={(l) => onFilter({ protocol: l })}
             />
-            {/* Threat models, standards and migration strategy have no Explore
-                filter param, so these three are read-only. */}
-            <Leaderboard title="Threat models" rows={threats} />
-            <Leaderboard title="Standards referenced" rows={standards} />
+            <Leaderboard
+              title="Threat models"
+              rows={threats}
+              onClick={(l) => onFilter({ threatModel: l })}
+            />
+            <Leaderboard
+              title="Standards referenced"
+              rows={standards}
+              onClick={(l) => onFilter({ standard: l })}
+            />
             <Leaderboard
               title="Hardware components"
               rows={hardware}
               onClick={(l) => onFilter({ hardwareComponent: l })}
               labelTransform={(l) => l.replace(/_/g, ' ')}
             />
-            <Leaderboard title="Migration strategy" rows={strategies} />
+            <Leaderboard
+              title="Migration strategy"
+              rows={strategies}
+              onClick={(l) => onFilter({ migrationStrategy: l })}
+              labelTransform={(l) => l.replace(/_/g, ' ')}
+            />
             <Leaderboard
               title="NIST round status"
               rows={nistStatus}
