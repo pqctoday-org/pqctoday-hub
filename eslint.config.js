@@ -13,6 +13,7 @@ export default defineConfig([
   {
     ignores: [
       'dist',
+      '.vite-cache',
       'public/dist',
       'src/wasm',
       'public/wasm',

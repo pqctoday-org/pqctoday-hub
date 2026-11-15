@@ -252,6 +252,10 @@ function coiGuardHtml(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Each worktree keeps its own dependency cache. Worktrees that link one
+  // node_modules folder otherwise share node_modules/.vite, and a dev server
+  // started in one re-optimizes the cache under another one's running tests.
+  cacheDir: '.vite-cache',
   plugins: [
     bundledPackagesPlugin(process.cwd()),
     // Production and dev ship the newest covering enrichment snapshot plus later corrections.
