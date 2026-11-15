@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import Papa from 'papaparse'
+import { DATA_FILENAMES } from '@/data/generated/dataFilenames.generated'
 import { leadersData, deprecatedLeaderSuccessors, type Leader } from '@/data/leadersData'
 import { canonicalLeaderCountry } from '@/data/leaderCountry'
 import { timelineData, resolveCountryParam } from '@/data/timelineData'
@@ -121,7 +122,9 @@ describe('superseded leader ids forward to the active profile', () => {
 })
 
 describe('catalogue products', () => {
-  const catalogFile = join(process.cwd(), 'src/data/pqc_product_catalog_11132026_r3.csv')
+  // The newest catalogue file, as the app loads it (a dated file is archived when
+  // a newer one lands).
+  const catalogFile = join(process.cwd(), 'src/data', DATA_FILENAMES.migrate ?? '')
   const catalog = new Map(
     Papa.parse<Record<string, string>>(readFileSync(catalogFile, 'utf8'), {
       header: true,
