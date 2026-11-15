@@ -122,3 +122,48 @@ export function isPqcPatent(p: PatentItem): boolean {
     p.cryptoAgilityMode === 'hybrid'
   )
 }
+
+/** Columns in the order PatentsTable renders them. */
+export const COLUMN_ORDER: ColumnId[] = [
+  'num',
+  'title',
+  'assignee',
+  'pqcAlgorithms',
+  'classicalAlgorithms',
+  'quantumRelevance',
+  'threatModel',
+  'applicationDomain',
+  'agility',
+  'impact',
+  'issueDate',
+  'priorityDate',
+  'quantumTechnology',
+  'impactScore',
+  'inventors',
+]
+
+/**
+ * Fixed widths (px) for every column except Title, which takes the rest.
+ * PatentsTable uses fixed layout: only the rows in view are rendered, and auto
+ * layout would size columns from whichever rows happen to be on screen. With
+ * the default columns at 1440 px the old auto widths left Title about 70 px.
+ */
+export const COLUMN_WIDTH_PX: Record<Exclude<ColumnId, 'title'>, number> = {
+  num: 48,
+  assignee: 150,
+  pqcAlgorithms: 130,
+  classicalAlgorithms: 130,
+  quantumRelevance: 105,
+  threatModel: 120,
+  applicationDomain: 120,
+  agility: 110,
+  impact: 90,
+  issueDate: 115,
+  priorityDate: 105,
+  quantumTechnology: 130,
+  impactScore: 75,
+  inventors: 160,
+}
+
+/** Title never gets narrower than this; below it the table scrolls sideways. */
+export const TITLE_MIN_PX = 240

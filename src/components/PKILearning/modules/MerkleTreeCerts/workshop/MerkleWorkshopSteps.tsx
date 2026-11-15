@@ -19,6 +19,7 @@ import { SizeComparison } from './SizeComparison'
 import { CTLogSimulator } from './CTLogSimulator'
 import { WorkshopStepHeader } from '../../../common/WorkshopStepHeader'
 import type { MerkleNode, CertLeaf } from '../utils/merkleTree'
+import { clampStep } from '@/utils/clampStep'
 
 const MODULE_ID = 'merkle-tree-certs'
 
@@ -61,7 +62,7 @@ const PARTS = [
  * Contains only the simulation steps — no Learn/Visual/Exercises/References tabs.
  */
 export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
-  const [currentPart, setCurrentPart] = useState(initialStep)
+  const [currentPart, setCurrentPart] = useState(() => clampStep(initialStep, PARTS.length))
   const [configKey, setConfigKey] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
   // Shared tree built in Step 1 — passed to Step 2 so the user proves their own certificates.

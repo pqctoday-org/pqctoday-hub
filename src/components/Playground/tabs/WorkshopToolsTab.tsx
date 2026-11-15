@@ -1,55 +1,56 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useMemo, useEffect, Suspense, useCallback } from 'react'
-import { ArrowLeft, Search } from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router'
+import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
-import { useAchievementStore } from '@/store/useAchievementStore'
-import { WorkshopNavigationContext } from '../contexts/WorkshopNavigationContext'
-import {
-  CATEGORIES,
-  WORKSHOP_TOOLS,
-  TOOL_COMPONENTS,
-  ONBACK_COMPONENTS,
-  type WorkshopTool,
-} from '../workshopRegistry'
+import { DROPPED_TOOL_IDS } from '@/components/Mobile/screens/MobilePlaygroundView'
+import { expandSearchQuery } from '../cryptoLabTaxonomy'
+import { CATEGORIES, WORKSHOP_TOOLS, type WorkshopTool } from '../workshopRegistry'
 
 // ---------------------------------------------------------------------------
 // Tool list — derived live from the real desktop registry (workshopRegistry.tsx),
 // not a hand-copied duplicate. Sandbox/Docker-gated scenarios are excluded since
-// they require a local sandbox server, not a fit for a mobile touch picker.
+// they require a local sandbox server, not a fit for a mobile touch picker, and
+// so are the tools the phone catalog drops (DROPPED_TOOL_IDS), so both phone
+// pickers offer the same set.
 // (2026-08-02: replaces a stale hand-copied 21-tool array that had drifted from
 // the real 64-tool registry — dead ids, missing tools added since. See
 // design_handoff_2026_pages/IMPLEMENTATION-PLAN-PLAYGROUND-2026-08-01.md §3.2.)
 // ---------------------------------------------------------------------------
 
-const MOBILE_TOOLS: WorkshopTool[] = WORKSHOP_TOOLS.filter((t) => !t.sandbox)
+const MOBILE_TOOLS: WorkshopTool[] = WORKSHOP_TOOLS.filter(
+  (t) => !t.sandbox && !DROPPED_TOOL_IDS.has(t.id)
+)
 
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
+/**
+ * Picker for the phone Interactive Playground's "Crypto Lab" swipe tab.
+ *
+ * Choosing a tool opens its own page (/playground/<id>). It used to mount the
+ * tool inline here, inside the horizontal swipe carousel, where a sideways drag
+ * on a slider or a scrolling table inside the tool could swipe the visitor to
+ * the neighbouring tab instead.
+ */
 export const WorkshopToolsTab: React.FC = () => {
-  const [selectedToolId, setSelectedToolId] = useState<string | null>(null)
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
-
-  useEffect(() => {
-    if (selectedToolId) useAchievementStore.getState().recordPlaygroundToolUsage(selectedToolId)
-  }, [selectedToolId])
-
-  const handleBack = useCallback(() => setSelectedToolId(null), [])
 
   const filteredTools = useMemo(() => {
     if (!searchQuery.trim()) return MOBILE_TOOLS
-    const q = searchQuery.toLowerCase()
+    const queries = expandSearchQuery(searchQuery)
+    const hit = (hay: string) => queries.some((term) => hay.includes(term))
     return MOBILE_TOOLS.filter(
       (t) =>
-        t.name.toLowerCase().includes(q) ||
-        t.description.toLowerCase().includes(q) ||
-        t.algorithms.some((a) => a.toLowerCase().includes(q)) ||
-        t.keywords.some((k) => k.includes(q)) ||
-        t.category.toLowerCase().includes(q)
+        hit(t.name.toLowerCase()) ||
+        hit(t.description.toLowerCase()) ||
+        t.algorithms.some((a) => hit(a.toLowerCase())) ||
+        t.keywords.some((k) => hit(k.toLowerCase())) ||
+        hit(t.category.toLowerCase())
     )
   }, [searchQuery])
 
@@ -61,41 +62,6 @@ export const WorkshopToolsTab: React.FC = () => {
     }
     return groups
   }, [filteredTools])
-
-  const selectedTool = selectedToolId ? MOBILE_TOOLS.find((t) => t.id === selectedToolId) : null
-
-  // Render the selected tool
-  if (selectedTool) {
-    const isOnBack = selectedTool.id in ONBACK_COMPONENTS
-    const Comp = isOnBack ? ONBACK_COMPONENTS[selectedTool.id] : TOOL_COMPONENTS[selectedTool.id]
-
-    return (
-      <WorkshopNavigationContext.Provider value={{ selectTool: setSelectedToolId }}>
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={handleBack}>
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              All Tools
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              {selectedTool.category} / {selectedTool.name}
-            </span>
-          </div>
-          <Suspense
-            fallback={
-              <div className="space-y-4 p-4">
-                <Skeleton className="h-8 w-64" />
-                <Skeleton className="h-48 w-full" />
-                <Skeleton className="h-32 w-full" />
-              </div>
-            }
-          >
-            {Comp && (isOnBack ? <Comp onBack={handleBack} /> : <Comp />)}
-          </Suspense>
-        </div>
-      </WorkshopNavigationContext.Provider>
-    )
-  }
 
   // Render tool selector grid
   return (
@@ -137,7 +103,7 @@ export const WorkshopToolsTab: React.FC = () => {
                   <Button
                     key={tool.id}
                     variant="ghost"
-                    onClick={() => setSelectedToolId(tool.id)}
+                    onClick={() => navigate(`/playground/${tool.id}`)}
                     className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start"
                   >
                     <div className="flex items-start gap-3 w-full">

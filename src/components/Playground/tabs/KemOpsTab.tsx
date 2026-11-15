@@ -683,33 +683,6 @@ const KemOpsTabSoftware: React.FC = () => {
                 Step {isHybridMode ? '4B' : '4'}: Final Derived Secret
               </div>
 
-              {/* Raw Shared Secret(s) - before normalization (hybrid only) */}
-              {isHybridMode && (pqcSharedSecret || classicalSharedSecret) ? (
-                <>
-                  <div className="text-xs text-muted-foreground italic mt-2 mb-1">
-                    Raw Secrets (before normalization):
-                  </div>
-                  <DataInput
-                    label="PQC Shared Secret (Raw)"
-                    value={pqcSharedSecret}
-                    onChange={() => {}}
-                    inputType="binary"
-                    placeholder="PQC Secret..."
-                    height="h-12"
-                    readOnly
-                  />
-                  <DataInput
-                    label="Classical Shared Secret (Raw)"
-                    value={classicalSharedSecret}
-                    onChange={() => {}}
-                    inputType="binary"
-                    placeholder="Classical Secret..."
-                    height="h-12"
-                    readOnly
-                  />
-                </>
-              ) : null}
-
               {/* Normalization Indicator */}
               {isHybridMode && hybridMethod === 'concat-hkdf' && sharedSecret && (
                 <div className="border border-dashed border-primary/20 rounded p-3 bg-primary/5 text-center space-y-2">
@@ -930,33 +903,6 @@ const KemOpsTabSoftware: React.FC = () => {
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Step {isHybridMode ? '4B' : '4'}: Final Derived Secret
               </div>
-
-              {/* Raw Recovered Secret(s) - before normalization (hybrid only) */}
-              {isHybridMode && (pqcRecoveredSecret || classicalRecoveredSecret) ? (
-                <>
-                  <div className="text-xs text-muted-foreground italic mt-2 mb-1">
-                    Recovered Raw Secrets (before normalization):
-                  </div>
-                  <DataInput
-                    label="PQC Shared Secret (Recovered)"
-                    value={pqcRecoveredSecret}
-                    onChange={() => {}}
-                    inputType="binary"
-                    placeholder="PQC Secret..."
-                    height="h-12"
-                    readOnly
-                  />
-                  <DataInput
-                    label="Classical Shared Secret (Recovered)"
-                    value={classicalRecoveredSecret}
-                    onChange={() => {}}
-                    inputType="binary"
-                    placeholder="Classical Secret..."
-                    height="h-12"
-                    readOnly
-                  />
-                </>
-              ) : null}
 
               {/* Normalization Indicator */}
               {isHybridMode && hybridMethod === 'concat-hkdf' && decapsulatedSecret && (

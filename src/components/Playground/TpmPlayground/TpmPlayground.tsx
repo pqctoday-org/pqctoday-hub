@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useLocation, useSearchParams } from 'react-router'
 import { ShieldCheck, Terminal, Cpu } from 'lucide-react'
 import {
   initTpm,
@@ -33,6 +34,12 @@ export interface TpmObjectEntry {
   algorithm: string
 }
 
+const TPM_ROUTE = '/playground/tpm-playground'
+const TPM_TABS = ['learn', 'builder', 'v27-eks', 'v27-certs', 'attestation'] as const
+type TpmTab = (typeof TPM_TABS)[number]
+const isTpmTab = (v: string | null): v is TpmTab =>
+  v !== null && (TPM_TABS as readonly string[]).includes(v)
+
 export default function TpmPlayground() {
   const [isWasmReady, setIsWasmReady] = useState(false)
   const [initError, setInitError] = useState<string | null>(null)
@@ -42,7 +49,34 @@ export default function TpmPlayground() {
   // Learn is the default tab (2026-07-23 curriculum decision, mirroring the
   // PKCS#11 redesign); controlled so lesson "try it in the workbench" chips
   // can navigate.
-  const [activeTab, setActiveTab] = useState('learn')
+  //
+  // On its own page the open tab lives in ?tab= so it can be shared. The same
+  // component is also embedded in a simulation step, where the address belongs
+  // to the simulation, so only the tool's own route reads or writes it.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const { pathname } = useLocation()
+  const ownsUrl = pathname === TPM_ROUTE
+  const urlTab = searchParams.get('tab')
+  const [activeTab, setActiveTabState] = useState<TpmTab>(() =>
+    ownsUrl && isTpmTab(urlTab) ? urlTab : 'learn'
+  )
+  const setActiveTab = useCallback(
+    (tab: string) => {
+      if (!isTpmTab(tab)) return
+      setActiveTabState(tab)
+      if (!ownsUrl) return
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (tab === 'learn') next.delete('tab')
+          else next.set('tab', tab)
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [ownsUrl, setSearchParams]
+  )
 
   useEffect(() => {
     initTpm()

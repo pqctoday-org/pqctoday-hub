@@ -11,6 +11,7 @@ import { JWEEncryption } from './workshop/JWEEncryption'
 import { TokenSizeAnalyzer } from './workshop/TokenSizeAnalyzer'
 import { JOSEProtocolMatrixAudit } from './workshop/JOSEProtocolMatrixAudit'
 import { JWTAttackLab } from './workshop/JWTAttackLab'
+import { clampStep } from '@/utils/clampStep'
 
 const SECTIONS = [
   {
@@ -55,16 +56,23 @@ const SECTIONS = [
   },
 ]
 
-export const APISecurityJWTPlayground: React.FC = () => {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    'jwt-inspector': false,
-    'pqc-signing': !readAlgorithmLaunch('api-security-jwt'),
-    'hybrid-jwt': !readAlgorithmLaunch('api-security-jwt'),
-    'jwe-encryption': true,
-    'token-size': false,
-    'matrix-audit': false,
-    'attack-lab': false,
-  })
+export const APISecurityJWTPlayground: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
+  // A ?step=N link opens just that section; without one the usual sections open.
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
+    initialStep === undefined
+      ? {
+          'jwt-inspector': false,
+          'pqc-signing': !readAlgorithmLaunch('api-security-jwt'),
+          'hybrid-jwt': !readAlgorithmLaunch('api-security-jwt'),
+          'jwe-encryption': true,
+          'token-size': false,
+          'matrix-audit': false,
+          'attack-lab': false,
+        }
+      : Object.fromEntries(
+          SECTIONS.map((s, i) => [s.id, i === clampStep(initialStep, SECTIONS.length)])
+        )
+  )
 
   const toggle = (id: string) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
 
