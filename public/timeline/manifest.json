@@ -2,7 +2,7 @@
   "generated": "2026-11-14",
   "generatedBy": "manifest rebuild",
   "source": "timeline",
-  "csv": "timeline_11142026_r5.csv",
+  "csv": "timeline_11142026_r6.csv",
   "note": "Keyed by refId (the row's own id) because trustScoreData and libraryDocumentWeight both look entries up by that field. Status is derived from the file on disk, not copied from a past fetch run: a 'skipped: already-exists' entry describes the FETCH, not the document.",
   "entries": [
     {
@@ -3569,5 +3569,5 @@
   ],
   "archivedEntries": [],
   "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
-  "rebuiltAt": "2026-11-15T02:41:21.483781+00:00"
+  "rebuiltAt": "2026-11-15T02:50:22.349720+00:00"
 }
