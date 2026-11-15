@@ -2,7 +2,7 @@
 // View-level check: every framework the Architect For You view renders, by region and in
 // order, is a row the For You export lists for that persona, and nothing else is rendered.
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 import { TIER_META, type ApplicabilityResult } from '@/utils/applicabilityEngine'
@@ -51,7 +51,7 @@ function titleFor(label: string, tier: string | undefined): string {
 
 describe('Architect For You: the view and the export list the same rows', () => {
   it('renders exactly the export rows, region by region and in order', () => {
-    const { container } = render(
+    render(
       <MemoryRouter>
         <ArchitectStandardsView />
       </MemoryRouter>
@@ -63,7 +63,7 @@ describe('Architect For You: the view and the export list the same rows', () => 
 
     // Every framework button the view renders, with its region, in document order.
     const rendered: string[] = []
-    for (const heading of Array.from(container.querySelectorAll('h4'))) {
+    for (const heading of screen.getAllByRole('heading', { level: 4 })) {
       const region = heading.textContent ?? ''
       const panel = heading.closest('.glass-panel')
       for (const li of Array.from(panel?.querySelectorAll('li') ?? [])) {
