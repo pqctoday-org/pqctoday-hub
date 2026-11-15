@@ -2636,7 +2636,7 @@
       "identity": "MATCH",
       "replacedAt": "2026-11-15T18:40:00.846189+00:00",
       "replacedBy": "evidence replacement",
-      "replaceReason": "admission stamp for the new row: same IETF -11 page, refetched through the evidence door"
+      "replaceReason": "re-fetched: the same IETF -11 page, checked again for the new row"
     }
   ],
   "archivedEntries": [],
