@@ -24,7 +24,7 @@ export const content: ModuleContent = {
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
     getStandard('NIST-FIPS140-3-IG-PQC'), // CMVP IG D.S: when a hybrid KEM is an approved service (Hybrid KEM Construction callout)
-    getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
+    getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'), // Composite ML-DSA
     getStandard('draft-ietf-lamps-pq-composite-kem-23'), // Composite ML-KEM (draft -23, RFC Editor queue since 2026-10-12; supersedes -22)
     getStandard('RFC-9763'), // Related Certificates
     getStandard('RFC 9629'), // CMS KEMRecipientInfo — how a KEM certificate key is used
