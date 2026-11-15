@@ -412,14 +412,18 @@ export function verifyChameleonCert(primary: Certificate): VerificationCheck[] {
 }
 
 // ---------------------------------------------------------------------------
-// Certificate Discovery (draft-ietf-lamps-certdiscovery-03) — advanced example
+// Certificate Discovery (draft-ietf-lamps-certdiscovery-06) — advanced example
 // ---------------------------------------------------------------------------
 
 export interface DiscoveryAdvertisement {
+  /** CertDiscoveryMethod chosen: byUri, byInclusion, byLocalPolicy, or byOther */
+  method: 'byUri' | 'byInclusion' | 'byLocalPolicy' | 'byOther' | 'unknown'
+  /** the byUri location ('' for any other method) */
   uri: string
-  intentOid: string | null
   signatureOid: string | null
   publicKeyOid: string | null
+  /** certHash [2] RelatedCertificate, when present */
+  certHash: { hashAlgorithmOid: string; hashValue: Uint8Array } | null
 }
 
 /** Strip a TLV's tag + length, returning its content bytes. */
@@ -442,7 +446,7 @@ function oidFromTlv(tlv: Uint8Array): string {
   return parts.join('.')
 }
 
-/** Read the certDiscovery advertisement from a primary's subjectInfoAccess. */
+/** Read the certDiscovery advertisement from a primary's subjectInfoAccess (-06 layout). */
 export function readDiscoveryAdvertisement(
   cert: Certificate,
   ids: { accessMethod: string; otherName: string }
@@ -457,23 +461,32 @@ export function readDiscoveryAdvertisement(
     another[0] = 0x30
     const [typeId, explicitValue] = derSequenceChildren(another)
     if (oidFromTlv(typeId) !== ids.otherName) continue
-    const descriptor = tlvContent(explicitValue)
-    const fields = derSequenceChildren(descriptor)
+    const [first, ...rest] = derSequenceChildren(tlvContent(explicitValue))
     const adv: DiscoveryAdvertisement = {
+      method: 'unknown',
       uri: '',
-      intentOid: null,
       signatureOid: null,
       publicKeyOid: null,
+      certHash: null,
     }
-    for (const f of fields) {
-      if (f[0] === 0x80) adv.uri = new TextDecoder().decode(tlvContent(f))
-      else if (f[0] === 0x06) adv.intentOid = oidFromTlv(f)
-      else if (f[0] === 0xa0 || f[0] === 0xa1) {
-        const seq = f.slice()
-        seq[0] = 0x30
-        const oid = oidFromTlv(derSequenceChildren(seq)[0])
-        if (f[0] === 0xa0) adv.signatureOid = oid
-        else adv.publicKeyOid = oid
+    // method CertDiscoveryMethod — a CHOICE, always the first component.
+    if (first?.[0] === 0x16) {
+      adv.method = 'byUri'
+      adv.uri = new TextDecoder().decode(tlvContent(first))
+    } else if (first?.[0] === 0x30) adv.method = 'byInclusion'
+    else if (first?.[0] === 0x05) adv.method = 'byLocalPolicy'
+    else if (first?.[0] === 0xa0) adv.method = 'byOther'
+    // The optional fields are EXPLICIT [0] [1] [2]: each wraps one inner TLV.
+    for (const f of rest) {
+      const inner = tlvContent(f)
+      if (f[0] === 0xa0) adv.signatureOid = oidFromTlv(derSequenceChildren(inner)[0])
+      else if (f[0] === 0xa1) adv.publicKeyOid = oidFromTlv(derSequenceChildren(inner)[0])
+      else if (f[0] === 0xa2) {
+        const [hashAlg, hashValue] = derSequenceChildren(inner)
+        adv.certHash = {
+          hashAlgorithmOid: oidFromTlv(derSequenceChildren(hashAlg)[0]),
+          hashValue: tlvContent(hashValue).slice(),
+        }
       }
     }
     return adv
@@ -496,7 +509,10 @@ export function verifyCertDiscovery(
   const ext = findExtension(primary, '1.3.6.1.5.5.7.1.11')
   checks.push({ name: 'subjectInfoAccess is non-critical', ok: !!ext && ext.critical !== true })
   const adv = readDiscoveryAdvertisement(primary, ids)
-  checks.push({ name: 'Primary advertises a related certificate (certDiscovery)', ok: !!adv?.uri })
+  checks.push({
+    name: 'Primary advertises a related certificate (certDiscovery, byUri)',
+    ok: adv?.method === 'byUri' && !!adv.uri,
+  })
   if (!adv?.uri) return checks
   const der = resolve(adv.uri)
   checks.push({ name: `Secondary resolves from ${adv.uri}`, ok: !!der })
@@ -510,6 +526,19 @@ export function verifyCertDiscovery(
     name: 'Secondary public-key algorithm matches the advertisement',
     ok: secondary.tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm === adv.publicKeyOid,
   })
+  // §3.1.1: after retrieval, a populated certHash MUST match the retrieved certificate.
+  if (adv.certHash) {
+    const sha256Oid = '2.16.840.1.101.3.4.2.1'
+    const got = sha256(der)
+    const want = adv.certHash.hashValue
+    checks.push({
+      name: 'Secondary certificate hash matches the advertised certHash (SHA-256)',
+      ok:
+        adv.certHash.hashAlgorithmOid === sha256Oid &&
+        got.length === want.length &&
+        got.every((b, i) => b === want.at(i)),
+    })
+  }
   for (const c of verifyIssuedBy(secondary, secondaryIssuer)) {
     checks.push({ ...c, name: `Secondary: ${c.name}` })
   }

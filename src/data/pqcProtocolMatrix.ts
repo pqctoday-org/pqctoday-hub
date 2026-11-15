@@ -1101,12 +1101,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         // Active LAMPS WG draft. Its id-ad-certDiscovery access method and
-        // relatedCertificateDescriptor otherName OIDs are still TBD.
-        id: 'draft-ietf-lamps-certdiscovery-03',
+        // relatedCertificateDescriptor otherName OIDs are still TBD. -06
+        // (2 November 2026) removed the descriptor's intent field.
+        id: 'draft-ietf-lamps-certdiscovery-06',
         title:
-          'draft-ietf-lamps-certdiscovery-03 — Certificate Discovery via subjectInfoAccess (WG draft, OIDs TBD)',
+          'draft-ietf-lamps-certdiscovery-06 — Certificate Discovery via subjectInfoAccess (WG draft, OIDs TBD)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-certdiscovery/',
-        date: '2026-05-21',
+        date: '2026-11-02',
       },
       {
         // Watchlist: FN-DSA (planned FIPS 206, not yet final) in X.509. OIDs TBD.
