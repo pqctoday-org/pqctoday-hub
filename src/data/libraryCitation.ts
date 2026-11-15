@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The one rule for whether a citation of a library reference_id may stand: a citation of a RETIRED id (status deprecated or obsolete) is
  * accepted ONLY when its superseded_by chain ends at an ACTIVE row. A blank successor, a
