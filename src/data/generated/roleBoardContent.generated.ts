@@ -32,7 +32,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every regulatory date links to its source',
           '1511 documents, trust-tiered',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
         ],
         sideCard: {
           title: 'Your exposure window',
@@ -100,7 +100,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
           'The CRQC estimate carries its dissent',
         ],
         sideCard: {
@@ -168,7 +168,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
           '1511 documents, trust-tiered',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -240,7 +240,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -450,7 +450,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/assess?mode=comprehensive',
         proofChips: [
           '1511 documents, trust-tiered',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
         ],
         sideCard: {
           title: 'Where your register stands',
@@ -596,7 +596,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Review what applies first',
         ctaSecondaryHref: '/compliance?tab=obligations',
         proofChips: [
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -739,7 +739,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/assess?mode=comprehensive',
         proofChips: [
           '1511 documents, trust-tiered',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
         ],
         sideCard: {
           title: "What's already documented",
@@ -814,7 +814,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
           'Organised around the NIST CSWP.39 zones',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
         ],
         sideCard: {
           title: 'What closure requires',
@@ -1274,7 +1274,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Work the compliance checklist',
         ctaSecondaryHref: '/business/tools/compliance-checklist',
         proofChips: [
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
           'Draft and final are labelled, never merged',
           'Every requirement links to its source',
         ],
@@ -1907,7 +1907,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Your own answers, not a sample estate',
           'Organised around the NIST CSWP.39 zones',
-          'Checking dates on 197/197 timeline and 177/191 compliance rows, not a review',
+          'Checking dates on 197/197 timeline and 175/189 compliance rows, not a review',
         ],
         sideCard: {
           title: 'What the score is built on',
