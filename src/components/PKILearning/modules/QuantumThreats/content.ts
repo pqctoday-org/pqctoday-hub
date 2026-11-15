@@ -42,6 +42,8 @@ export const content: ModuleContent = {
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr'), // m-quantum-threats: wave 4c
     getStandard('GRI-Quantum-Threat-Timeline-2025'), // m-quantum-threats: wave 4c
+    // IBM gross code "12 logical in 288 physical" (quantumConstants): Bravyi et al., Nature 2024
+    getStandard('ref-bravyi-quantum-memory'),
   ],
 
   algorithms: [
