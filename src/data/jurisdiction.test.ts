@@ -68,9 +68,13 @@ describe('jurisdiction', () => {
     )
   })
 
-  it('EU requires hybrid — a pure-only pilot fails; hybrid warns (sunset to pure)', () => {
+  // Owner decision 2026-11-14: the EU roadmap recommends hybrid (guidance) and
+  // states no end state, so hybrid is never warned about as a stop-gap.
+  it('EU recommends hybrid with no stated end state — pure-only fails; hybrid is fine', () => {
+    expect(JURISDICTION_RULES.EU.endState).toBeUndefined()
+    expect(JURISDICTION_RULES.EU.force).toBe('guidance')
     expect(checkChoice('EU', 'pure').level).toBe('fail')
-    expect(checkChoice('EU', 'hybrid').level).toBe('warn')
+    expect(checkChoice('EU', 'hybrid').level).toBe('ok')
   })
 
   it('CA/JP/KR/SG accept pure and warn on hybrid (pure end state, not mandated hybrid)', () => {
