@@ -35973,5 +35973,146 @@
    "2026-09-28: version 20.1.0 uploaded"
   ],
   "successorDependencies": "Linked to work item FS_CryptoPQC (UID 1080045); responsible group SA 3; no parent or child specifications listed"
+ },
+ "Global:3GPP SA3 — Release 20 PQC Cryptographic Profiles Target (TS 33.210 and TS 33.310, SA#114)": {
+  "mainTopic": "A 3GPP SA3 work item description (PQCMigration-SEC, Rel-20) for migrating 3GPP security profiles to post-quantum cryptography: PQC key encapsulation in (D)TLS 1.3 and IKEv2, PQC in vendor certificate profiles, and phasing out TLS 1.2.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [
+   "CRQC (Cryptographically Relevant Quantum Computers)",
+   "\"store now, decrypt later\"",
+   "long transition periods for PKIs and long-lifetime devices"
+  ],
+  "migrationTimeline": [
+   "2030 migration for high priority systems; 2035 for all systems; SA Stage 2 frozen December 2026; RAN and CT Stage 3 frozen mid-2027; Rel-21 completed beginning of 2029 at the earliest; TS 33.210 and TS 33.310 target SA#114 (Dec 2026)"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "3GPP SA3",
+    "TSG SA",
+    "European Commission",
+    "UK NCSC",
+    "NSA",
+    "ANSSI",
+    "ASD",
+    "Canadian Centre for Cyber Security",
+    "Swedish NCSC",
+    "NSM",
+    "AIVD",
+    "NIST"
+   ]
+  },
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [
+   "(D)TLS 1.3",
+   "TLS 1.2",
+   "IKEv2",
+   "MOBIKE",
+   "JWE",
+   "COSE",
+   "JOSE",
+   "EAP-TLS",
+   "EAP-TTLS",
+   "OAuth",
+   "OCSP",
+   "ECIES (SUCI)",
+   "MIKEY-SAKKE"
+  ],
+  "infrastructureLayers": [
+   "PKI",
+   "Certificate profiles",
+   "Vendor root CA",
+   "Vendor CA",
+   "Base-station certificates",
+   "SEPP and NF certificates"
+  ],
+  "standardizationBodies": [
+   "3GPP",
+   "IETF",
+   "NIST"
+  ],
+  "complianceFrameworks": [
+   "NIST IR 8547",
+   "CNSA 2.0",
+   "EU Coordinated Implementation Roadmap for PQC transition"
+  ],
+  "classicalAlgorithms": [
+   "ECIES",
+   "IBS (MIKEY-SAKKE)"
+  ],
+  "keyTakeaways": [
+   "Introduce PQC KEMs in (D)TLS 1.3 and IKEv2 first to address store-now-decrypt-later",
+   "Update vendor certificate profiles in TS 33.310 for long-lived devices such as base stations",
+   "Phase out TLS 1.2 by enforcing TLS 1.3 while letting operators allow TLS 1.2 for specific use cases",
+   "Authentication and other certificate profile usages are deferred until IETF specifications progress",
+   "Both standalone and hybrid mechanisms are in scope"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [
+   "Both standalone and hybrid mechanisms in scope",
+   "phased migration prioritising KEMs and vendor certificates",
+   "operator-configurable TLS 1.2 fallback via supported_versions extension"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Security Architect",
+   "Policy Maker",
+   "Operations",
+   "Compliance Officer"
+  ],
+  "implementationPrereqs": [
+   "Updated TS 33.210 and TS 33.310 cryptographic profiles",
+   "stable vendor implementations ahead of deployment milestones",
+   "TLS 1.3 enforcement with configurable TLS 1.2 fallback",
+   "supported_versions extension configuration"
+  ],
+  "relevantFeatures": [
+   "5g-security",
+   "tls-basics",
+   "pki-workshop",
+   "hybrid-crypto",
+   "Timeline"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [
+   "TR 33.938 3GPP Cryptographic Inventory (completed June 2025) listing protocols using asymmetric cryptography potentially affected by quantum computing"
+  ],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [
+   "Vendors need sufficient lead time to implement, test and certify solutions",
+   "vendor credentials (vendor root CA, vendor CA, base-station certificates) are in scope"
+  ],
+  "deploymentComplexity": [
+   "Phased migration prioritising KEMs and vendor certificates",
+   "operator-controlled phased TLS 1.2 phase-out",
+   "different SDO, vendor and operator timelines",
+   "Rel-21 completion in early 2029 versus 2030 migration targets"
+  ],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [
+   "Operators decide which network elements may still negotiate TLS 1.2",
+   "high-priority system assessment by network operator"
+  ],
+  "phaseClassification": "This is a 3GPP work item description defining the normative standardization work (Stage 2) to introduce PQC algorithms into the TS 33.210 and TS 33.310 cryptographic profiles, with approval at TSG SA#112.",
+  "mandateLevel": null,
+  "sectorApplicability": [
+   "Telecommunications"
+  ],
+  "migrationUrgency": "Near-Term",
+  "phaseTransition": "Moves from the Study phase (TR 33.703, FS_CryptoPQC) and the cryptographic inventory (TR 33.938) to normative Standardization work in Rel-20, enabling later vendor implementation and operator deployment.",
+  "historicalSignificance": "Marks the start of normative PQC migration work in 3GPP security specifications, following the 2025 cryptographic inventory and transition study.",
+  "implementationDates": [
+   "2030: migration of high priority systems",
+   "2035: migration of all systems",
+   "December 2026: SA#114 target completion for TS 33.210 and TS 33.310 and SA Stage 2 freeze",
+   "mid-2027: RAN and CT Stage 3 freeze",
+   "beginning of 2029: earliest Rel-21 completion",
+   "June 2025: TR 33.938 completed and PQC study initiated"
+  ],
+  "successorDependencies": "Depends on TR 33.703 study outcomes, TR 33.938 inventory and IETF specifications for authentication; Enables later WID updates for (D)TLS and IKEv2 authentication, other certificate profiles (SEPP, NF, OAuth, CCA signing) and PQC for other 3GPP profiles"
  }
 }
