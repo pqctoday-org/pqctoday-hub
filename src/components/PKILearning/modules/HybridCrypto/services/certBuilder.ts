@@ -1441,12 +1441,19 @@ export async function buildRelatedCertificates(opts: {
 }
 
 // ---------------------------------------------------------------------------
-// Advanced: Certificate Discovery (draft-ietf-lamps-certdiscovery-03)
+// Advanced: Certificate Discovery (draft-ietf-lamps-certdiscovery-06)
 //
 // A primary certificate advertises where a secondary certificate (here one
 // with a PQC key) can be fetched, in a subjectInfoAccess entry whose
 // accessMethod is id-ad-certDiscovery and whose accessLocation is an
 // otherName carrying a RelatedCertificateDescriptor.
+//
+// -06 changed the descriptor from -03: the `intent` field (and its id-rcd
+// OIDs) is gone, byUri is an untagged IA5String, the two algorithm fields are
+// EXPLICIT [0]/[1] (the module is DEFINITIONS EXPLICIT TAGS), and an optional
+// certHash [2] (RFC 9763 RelatedCertificate) lets the relying party confirm it
+// fetched the right certificate. The draft gives no way to say why two
+// certificates are related; its stated implied purpose is fallback redundancy.
 //
 // The draft's OIDs are still TBD. These placeholders sit under the IANA
 // documentation enterprise number 32473 (RFC 5612) — clearly not real,
@@ -1454,12 +1461,10 @@ export async function buildRelatedCertificates(opts: {
 // ---------------------------------------------------------------------------
 
 export const CERT_DISCOVERY_PLACEHOLDER_OIDS = {
-  /** stands in for id-ad-certDiscovery (id-ad TBD) */
+  /** stands in for id-ad-certDiscovery (id-ad TBD2) */
   accessMethod: '1.3.6.1.4.1.32473.1.1',
-  /** stands in for id-on-relatedCertificateDescriptor (id-on TBD) */
+  /** stands in for id-on-relatedCertificateDescriptor (id-on TBD3) */
   otherName: '1.3.6.1.4.1.32473.1.2',
-  /** stands in for id-rcd-agility (id-rcd 1, id-rcd TBD4) */
-  intentAgility: '1.3.6.1.4.1.32473.1.3.1',
 } as const
 
 const SUBJECT_INFO_ACCESS_OID = '1.3.6.1.5.5.7.1.11'
@@ -1484,31 +1489,50 @@ function implicitConstructed(n: number, tlv: Uint8Array): Uint8Array {
 }
 
 /**
- * Build the subjectInfoAccess extension advertising a secondary certificate:
+ * Build the subjectInfoAccess extension advertising a secondary certificate
+ * (draft-ietf-lamps-certdiscovery-06 §3, Appendix A — EXPLICIT TAGS):
  *
  *   AccessDescription { accessMethod id-ad-certDiscovery,
  *     accessLocation otherName { type-id id-on-relatedCertificateDescriptor,
  *       value [0] EXPLICIT RelatedCertificateDescriptor {
- *         method byUri [0] IMPLICIT IA5String,
- *         intent id-rcd-agility,
- *         signatureAlgorithm [0] IMPLICIT AlgorithmIdentifier,
- *         publicKeyAlgorithm [1] IMPLICIT AlgorithmIdentifier } } }
+ *         method byUri IA5String,
+ *         signatureAlgorithm [0] AlgorithmIdentifier,
+ *         publicKeyAlgorithm [1] AlgorithmIdentifier,
+ *         certHash [2] RelatedCertificate { hashAlgorithm, hashValue } } } }
+ *
+ * For byUri the two algorithm fields SHOULD be present and certHash MAY be
+ * (§3.1.1). `certHash` is the digest of the whole secondary certificate,
+ * computed with `certHashAlgOid` (default SHA-256, parameters absent).
  */
 export function buildCertDiscoveryExtension(opts: {
   uri: string
   signatureOid: string
   publicKeyOid: string
+  certHash?: Uint8Array
+  certHashAlgOid?: string
 }): Extension {
   const ids = CERT_DISCOVERY_PLACEHOLDER_OIDS
   const uriBytes = new TextEncoder().encode(opts.uri)
-  const byUri = new Uint8Array([0x80, ...encodeDERLength(uriBytes.length), ...uriBytes])
+  // CertDiscoveryMethod ::= CHOICE { byUri IA5String, … } — untagged in -06.
+  const byUri = new Uint8Array([0x16, ...encodeDERLength(uriBytes.length), ...uriBytes])
   const algId = (oid: string) => new Uint8Array(AsnConvert.serialize(buildAlgId(oid)))
-  const descriptor = buildDERSequence([
+  const fields = [
     byUri,
-    derOid(ids.intentAgility),
-    implicitConstructed(0, algId(opts.signatureOid)),
-    implicitConstructed(1, algId(opts.publicKeyOid)),
-  ])
+    buildDERContextExplicit(0, algId(opts.signatureOid)),
+    buildDERContextExplicit(1, algId(opts.publicKeyOid)),
+  ]
+  if (opts.certHash) {
+    fields.push(
+      buildDERContextExplicit(
+        2,
+        buildDERSequence([
+          algId(opts.certHashAlgOid ?? SHA256_OID_STR),
+          buildDEROctetString(opts.certHash),
+        ])
+      )
+    )
+  }
+  const descriptor = buildDERSequence(fields)
   // GeneralName otherName is [0] IMPLICIT AnotherName (constructed).
   const otherName = implicitConstructed(
     0,

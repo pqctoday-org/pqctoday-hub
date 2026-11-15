@@ -1409,11 +1409,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  <strong>draft-ietf-lamps-certdiscovery-03</strong> lets a certificate tell
+                  <strong>draft-ietf-lamps-certdiscovery-06</strong> lets a certificate tell
                   PQC-capable relying parties where to fetch a related certificate, through a{' '}
-                  <code className="text-[10px]">subjectInfoAccess</code> entry. A fetched
-                  certificate must still pass full path validation. The OIDs are not assigned yet,
-                  so the workshop&apos;s encoding is illustrative.
+                  <code className="text-[10px]">subjectInfoAccess</code> entry that can also name
+                  the related certificate&apos;s algorithms and carry its hash. It does not say why
+                  the two are related (earlier drafts had an &ldquo;intent&rdquo; field; -06 removed
+                  it). A fetched certificate must still pass full path validation. The OIDs are not
+                  assigned yet, so the workshop&apos;s encoding is illustrative.
                 </p>
               </div>
               <div className="bg-muted/50 rounded-lg p-4 border border-border">

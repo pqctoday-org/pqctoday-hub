@@ -1531,10 +1531,12 @@ export class HybridCryptoService {
   }
 
   /**
-   * ADVANCED — Certificate Discovery (draft-ietf-lamps-certdiscovery-03).
+   * ADVANCED — Certificate Discovery (draft-ietf-lamps-certdiscovery-06).
    * A classical ECDSA primary advertises, in subjectInfoAccess, where an
-   * ML-DSA-65 secondary can be fetched. The draft's OIDs are TBD, so the
-   * encoding uses documentation-arc placeholders and is illustrative only.
+   * ML-DSA-65 secondary can be fetched (byUri), with the secondary's signature
+   * and public-key algorithms and a SHA-256 certHash of the secondary. -06 has
+   * no intent field. The draft's OIDs are TBD, so the encoding uses
+   * documentation-arc placeholders and is illustrative only.
    * The URI resolves locally — no network request is made.
    */
   async generateCertDiscovery(
@@ -1561,6 +1563,11 @@ export class HybridCryptoService {
         keyUsage: ['digitalSignature'],
       })
       const uri = 'https://pqctoday.invalid/workshop/discovery/secondary.der'
+      // certHash [2]: SHA-256 over the whole secondary (its ML-DSA-65 signature
+      // names no hash of its own, so the SHOULD in §3.3 does not apply).
+      const secondaryHash = new Uint8Array(
+        await crypto.subtle.digest('SHA-256', secondary as BufferSource)
+      )
       await st.enter('Primary (ECDSA) key generation')
       const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
       await st.enter('Primary certificate issuance')
@@ -1578,6 +1585,7 @@ export class HybridCryptoService {
             uri,
             signatureOid: ML_DSA_65_OID_STR,
             publicKeyOid: ML_DSA_65_OID_STR,
+            certHash: secondaryHash,
           }),
         ],
       })

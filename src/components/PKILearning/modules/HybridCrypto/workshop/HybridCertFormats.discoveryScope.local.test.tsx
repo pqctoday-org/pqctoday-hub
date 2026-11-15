@@ -6,6 +6,7 @@ import { generateKeyPairSync, sign } from 'node:crypto'
 import { AsnConvert, OctetString } from '@peculiar/asn1-schema'
 import { Certificate, Extension, SubjectPublicKeyInfo, Time } from '@peculiar/asn1-x509'
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
+import { sha256 } from '@noble/hashes/sha2.js'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { hybridCryptoService, type FormatOutput } from '../services/HybridCryptoService'
 import {
@@ -36,7 +37,13 @@ const hsm = vi.hoisted(() => ({
 vi.mock('@/hooks/useHSM', () => ({ useHSM: () => hsm }))
 
 async function fixture(
-  mode: 'valid' | 'expired-critical' | 'bad-signature' | 'wrong-advertisement' | 'unresolved'
+  mode:
+    | 'valid'
+    | 'expired-critical'
+    | 'bad-signature'
+    | 'wrong-advertisement'
+    | 'wrong-hash'
+    | 'unresolved'
 ): Promise<FormatOutput> {
   // Real existing builders and verifier; Node signs primary ECDSA, Noble verifies it.
   // Secondary/CA use actual ML-DSA. The HSM UI transport alone is controlled below.
@@ -78,6 +85,8 @@ async function fixture(
         uri: 'https://pqctoday.invalid/sample.der',
         signatureOid: mode === 'wrong-advertisement' ? ECDSA_SHA256_OID_STR : ML_DSA_65_OID_STR,
         publicKeyOid: ML_DSA_65_OID_STR,
+        // -06 certHash: SHA-256 of the whole secondary; 'wrong-hash' advertises another one.
+        certHash: sha256(mode === 'wrong-hash' ? ca.certDer : secondary.der),
       }),
     ],
   })
@@ -137,6 +146,9 @@ describe('Discovery reports exactly its actual selected checks', () => {
       const output = await fixture(mode)
       expect(output.checks.length).toBeGreaterThan(6)
       expect(output.checks.every((check) => check.ok)).toBe(true)
+      expect(output.checks.map((check) => check.name)).toContain(
+        'Secondary certificate hash matches the advertised certHash (SHA-256)'
+      )
       vi.spyOn(hybridCryptoService, 'generateCertDiscovery').mockResolvedValue(output)
       render(<HybridCertFormats />)
       const card = screen.getByRole('region', { name: /^Certificate Discovery/ })
@@ -152,7 +164,7 @@ describe('Discovery reports exactly its actual selected checks', () => {
     }
   )
 
-  it.each(['bad-signature', 'wrong-advertisement', 'unresolved'] as const)(
+  it.each(['bad-signature', 'wrong-advertisement', 'wrong-hash', 'unresolved'] as const)(
     'keeps actual %s checks failed',
     async (mode) => {
       const output = await fixture(mode)
