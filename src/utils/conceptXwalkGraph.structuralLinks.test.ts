@@ -10,7 +10,7 @@ import type { ConceptXwalkRecord } from '@/data/conceptXwalkData'
 
 const UMBRELLA = 'guidance:common-criteria'
 const ANSSI = 'guidance:anssi-common-criteria-certific'
-const BSI = 'guidance:bsi-common-criteria-certificat'
+const BSI = 'guidance:bsi-cc-certification'
 const IEEE_1363 = 'standard:ieee-1363'
 const IEEE_1363A = 'standard:ieee-1363a'
 const FIPS_203 = 'standard:fips-203'
