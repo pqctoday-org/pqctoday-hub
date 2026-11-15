@@ -11,23 +11,6 @@
  *   teaches decision criteria and does not verify or certify a deployed system.
  */
 
-export interface AdversarialChallengeSpec {
-  scenarioTitle: string
-  positiveCase: {
-    label: string
-    inputSummary: string
-    expectedResult: string
-    telemetryCode: string
-  }
-  adversarialCase: {
-    label: string
-    faultInjected: string
-    expectedRefusal: string
-    telemetryCode: string
-    productionLesson: string
-  }
-}
-
 export interface ModuleCapabilitySpec {
   moduleId: string
   roleFocus: string
@@ -35,7 +18,6 @@ export interface ModuleCapabilitySpec {
   evaluationMethod: string
   evidenceRequired: string
   educationalBoundary: string
-  adversarialChallenge: AdversarialChallengeSpec
 }
 
 export type ModuleCapabilityChecklist = ModuleCapabilitySpec
@@ -275,7 +257,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
       'Strict prohibition of private-key export or VM snapshot cloning for stateful hash-based signing keys.',
     ],
     evaluationMethod:
-      'Test OTS leaf-index increment persistence across power cycles and verify hard failure when tree capacity ($2^h$) is exhausted in a lab HSM.',
+      'Test OTS leaf-index increment persistence across power cycles and verify hard failure when tree capacity (2^h signatures) is exhausted in a lab HSM.',
     evidenceRequired:
       'HSM state-counter audit log, SP 800-208 parameter set configuration (`H`, `W`), and backup/clone prevention verification record.',
   },
@@ -390,7 +372,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'pqc-risk-management': {
     roleFocus: 'Enterprise Risk Managers, CISOs & Audit Committees',
     productionCapabilities: [
-      'Quantitative and qualitative risk scoring integrating Mosca timeline parameters ($X + Y > Z$), threat-vector differentiation (HNDL vs forgery), and asset criticality.',
+      'Quantitative and qualitative risk scoring integrating Mosca timeline parameters (X + Y > Z), threat-vector differentiation (HNDL vs forgery), and asset criticality.',
       'Automated risk-register synchronization with live cryptographic discovery findings (unapproved RSA/ECDSA endpoints, expiring certificates).',
       'Risk-treatment tracking (Mitigate via Hybrid/PQC, Transfer, Accept with time-bound waiver, Avoid).',
     ],
@@ -404,7 +386,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     productionCapabilities: [
       'Automated NIST ACVP Known-Answer Test (KAT) and negative tamper-rejection harnesses in CI/CD pipelines.',
       'Network protocol fuzzing and MTU fragmentation simulation for large PQC handshakes (`ML-KEM-1024`, `ML-DSA-87`, `SLH-DSA`).',
-      'Cross-vendor interoperability test matrices (e.g., OpenSSL 3.6 $\leftrightarrow$ BoringSSL $\leftrightarrow$ wolfSSL $\leftrightarrow$ Bouncy Castle).',
+      'Cross-vendor interoperability test matrices (e.g., OpenSSL 3.6 ↔ BoringSSL ↔ wolfSSL ↔ Bouncy Castle).',
     ],
     evaluationMethod:
       'Execute positive KAT vectors, corrupt 1 bit of ciphertext/signature to confirm deterministic rejection, and run 1,500-byte MTU constrained handshake tests.',
@@ -510,12 +492,12 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'homomorphic-encryption': {
     roleFocus: 'Privacy Engineers, Applied Cryptographers & Data Scientists',
     productionCapabilities: [
-      'Ring-LWE / RLWE parameter selection (BGV, BFV, CKKS, TFHE) compliant with HomomorphicEncryption.org / ISO/IEC 28033 post-quantum security estimates ($\ge 128$-bit security).',
+      'Ring-LWE / RLWE parameter selection (BGV, BFV, CKKS, TFHE) compliant with HomomorphicEncryption.org / ISO/IEC 28033 post-quantum security estimates (at least 128-bit security).',
       'Strict noise-budget monitoring and circuit-depth bounds preventing decryption failures or key-recovery attacks fromInd-CPA^D oracle leakage.',
       'Authenticated PQC transport (`ML-KEM` + `ML-DSA`) wrapping FHE evaluation keys and ciphertexts between client and compute nodes.',
     ],
     evaluationMethod:
-      'Validate lattice dimension ($N$) and modulus ($q$) against the Lattice Estimator for $\ge 128$-bit quantum security and test Ind-CPA^D decryption error boundaries.',
+      'Validate lattice dimension (N) and modulus (q) against the Lattice Estimator for at least 128-bit quantum security and test Ind-CPA^D decryption error boundaries.',
     evidenceRequired:
       'FHE parameter security-level estimation report, noise-budget test log, and ciphertext serialization benchmark.',
   },
@@ -965,416 +947,6 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   },
 }
 
-const ADVERSARIAL_CHALLENGE_OVERRIDES: Record<string, AdversarialChallengeSpec> = {
-  'pqc-101': {
-    scenarioTitle: 'Break & Verify: Ciphertext Tampering & Policy Downgrade Check',
-    positiveCase: {
-      label: 'FIPS 203 ML-KEM-768 + FIPS 204 ML-DSA-65 Baseline',
-      inputSummary:
-        'Encapsulate 32-byte shared secret with valid 1,184 B ML-KEM-768 public key (`c` = 1,088 B) and verify 3,309 B ML-DSA-65 signature over transcript.',
-      expectedResult:
-        'PASS — Decapsulator derives identical 32-byte shared secret K and ML-DSA-65 verification returns true.',
-      telemetryCode: 'PQC_BASELINE_OK_FIPS203_204',
-    },
-    adversarialCase: {
-      label: '1-Bit Ciphertext Flip & RSA-2048 Policy Downgrade',
-      faultInjected:
-        'Flip LSB of byte 0 in ML-KEM-768 ciphertext (`c[0] ^= 0x01`) and offer legacy RSA-2048 key transport in client policy.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — FIPS 203 §7.3 implicit rejection substitutes pseudorandom fallback secret K_bar != K (preventing timing oracle), and policy gate blocks RSA-2048.',
-      telemetryCode: 'ERR_FIPS203_IMPLICIT_REJECT_AND_POLICY_BLOCK',
-      productionLesson:
-        'Production crypto providers must enforce FIPS 203 constant-time implicit rejection on corrupted ciphertexts (never exposing a decryption failure error oracle) and block classical RSA/ECDSA fallbacks via policy.',
-    },
-  },
-  'tls-basics': {
-    scenarioTitle: 'Break & Verify: TLS 1.3 Hybrid KeyShare Downgrade & MTU Blackhole Check',
-    positiveCase: {
-      label: 'TLS 1.3 X25519MLKEM768 + RFC 8879 Brotli Cert Compression',
-      inputSummary:
-        'ClientHello offers `supported_groups: [X25519MLKEM768 (0x11EC)]` with 1,216 B key_share and negotiates RFC 8879 compressed ML-DSA-65 cert chain.',
-      expectedResult:
-        'PASS — Server selects `0x11EC` in 1-RTT without HelloRetryRequest; compressed certificate fits inside initial TCP congestion window.',
-      telemetryCode: 'TLS13_GROUP_0x11EC_ESTABLISHED',
-    },
-    adversarialCase: {
-      label: 'Classical Group Downgrade & Corrupted ML-KEM KeyShare',
-      faultInjected:
-        'MITM strips `0x11EC` to force classical `x25519 (0x001D)` OR injects out-of-range polynomial coefficient (>= q = 3329) in ML-KEM encapsulation key.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Strict PQC endpoint aborts with `insufficient_security (71)` on downgrade or `illegal_parameter (47)` on FIPS 203 §7.2 modulus check failure.',
-      telemetryCode: 'TLS_ALERT_ILLEGAL_PARAMETER_47_MODULUS_FAIL',
-      productionLesson:
-        'Ingress gateways and service meshes must validate FIPS 203 §7.2 encapsulation key coefficients (< 3329) before encapsulation and fire SIEM alerts when peers downgrade from `0x11EC` to classical groups.',
-    },
-  },
-  'hybrid-crypto': {
-    scenarioTitle: 'Break & Verify: PQ/T Hybrid KDF Combiner Split-Component Corruption',
-    positiveCase: {
-      label: 'X25519 + ML-KEM-768 Dual Shared Secret Combiner (SP 800-227)',
-      inputSummary:
-        'Both 32 B X25519 shared secret `ss_ecdh` and 32 B ML-KEM-768 shared secret `ss_pq` are valid and bound with context transcript into HKDF-SHA256.',
-      expectedResult:
-        'PASS — Combined 256-bit traffic key matches across initiator and responder; security holds if either component remains unbroken.',
-      telemetryCode: 'HYBRID_KDF_COMBINER_VERIFIED',
-    },
-    adversarialCase: {
-      label: 'All-Zero X25519 Point or Tampered ML-KEM Component Share',
-      faultInjected:
-        'Inject low-order X25519 public key (yielding all-zero `ss_ecdh`) OR corrupt the ML-KEM-768 ciphertext share while keeping classical ECDH valid.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — RFC 7748 all-zero shared secret check aborts immediately, or ML-KEM implicit rejection diverges the combined HKDF output so AEAD tag verification fails.',
-      telemetryCode: 'ERR_HYBRID_COMPONENT_INTEGRITY_FAILURE',
-      productionLesson:
-        'A compliant PQ/T hybrid combiner must never allow a valid classical share to mask a failed PQC share (or vice versa); both shares must contribute non-malleably to the KDF transcript.',
-    },
-  },
-  'pki-workshop': {
-    scenarioTitle: 'Break & Verify: 3-Tier ML-DSA X.509 Chain Path Validation & Signature Tamper',
-    positiveCase: {
-      label: 'ML-DSA-87 Root -> ML-DSA-65 Intermediate -> ML-DSA-44 Leaf Chain',
-      inputSummary:
-        'X.509 v3 chain using RFC 9881 OIDs (`2.16.840.1.101.3.4.3.17/18/19`), valid `basicConstraints: CA:TRUE`, and fresh OCSP `good` status.',
-      expectedResult:
-        'PASS — `X509_verify_cert` succeeds (`ok=1`) across all three post-quantum signature tiers.',
-      telemetryCode: 'X509_PQ_CHAIN_VERIFY_OK',
-    },
-    adversarialCase: {
-      label: 'Leaf TBSCertificate SAN Mutation & Unauthorized Intermediate CA',
-      faultInjected:
-        'Modify 1 byte of the Leaf SubjectAltName after signing OR sign leaf certificate with a non-CA `ML-DSA-65` key (`CA:FALSE`).',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — FIPS 204 `ML-DSA.Verify` fails with `X509_V_ERR_CERT_SIGNATURE_FAILURE` (7) or path validator rejects with `X509_V_ERR_INVALID_CA` (24).',
-      telemetryCode: 'X509_V_ERR_CERT_SIGNATURE_FAILURE_07',
-      productionLesson:
-        'Production relying parties must validate RFC 9881 `ML-DSA` signatures across the entire chain, enforce X.509v3 `keyUsage` / `basicConstraints`, and check OCSP/CRL revocation before trusting leaf credentials.',
-    },
-  },
-  'pki-enrollment-protocols': {
-    scenarioTitle: 'Break & Verify: CMPv3 ML-KEM encrCert Proof-of-Possession & certConf Check',
-    positiveCase: {
-      label: 'CMPv3 (RFC 9810 / RFC 9483) ML-KEM-768 encrCert POP Flow',
-      inputSummary:
-        'Client sends CRMF `ir` with `POPOPrivKey: subsequentMessage (encrCert)`; CA returns encrypted cert under `ML-KEM-768`; client decapsulates and returns matching `certConf` SHA-256 certHash.',
-      expectedResult:
-        'PASS — CA verifies `certConf` hash matches issued certificate, proves private key possession, and commits certificate to active repository (`pkiconf`).',
-      telemetryCode: 'CMPV3_ENCRCERT_POP_CONFIRMED',
-    },
-    adversarialCase: {
-      label: 'Spoofed Public Key Without Decapsulation Key (Mismatched certConf Hash)',
-      faultInjected:
-        'Attacker submits a victim’s `ML-KEM-768` public key in CRMF `ir`, cannot decapsulate the CA `EncryptedValue`, and sends a guessed/zeroed `certConf` hash.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — CA rejects enrollment with `PKIStatus: rejection (2)` and `PKIFailureInfo: badCertId / badPOP (9)` and revokes/discards the unconfirmed certificate.',
-      telemetryCode: 'CMP_ERR_BAD_POP_CERTCONF_MISMATCH',
-      productionLesson:
-        'Because `ML-KEM` cannot sign a CSR, production CAs must enforce indirect Proof-of-Possession (`encrCert` challenge decryption + `certConf` verification) and never activate an `ML-KEM` certificate until `certConf` succeeds.',
-    },
-  },
-  'stateful-signatures': {
-    scenarioTitle: 'Break & Verify: SP 800-208 LMS/XMSS One-Time Leaf Index Reuse & Exhaustion Guard',
-    positiveCase: {
-      label: 'HSM Monotonic LMS (SHA-256/M32/H10, W8) State Advancement',
-      inputSummary:
-        'HSM increments NVRAM leaf index `q: 41 -> 42` atomically before computing and releasing the LMS signature over the firmware digest.',
-      expectedResult:
-        'PASS — Signature verifies against Merkle root `T[1]`; NVRAM monotonic counter permanently committed at `q = 43`.',
-      telemetryCode: 'SP800_208_LMS_MONOTONIC_SIGN_OK',
-    },
-    adversarialCase: {
-      label: 'VM Snapshot Rollback Attempting Leaf Index Reuse (q = 42 Twice)',
-      faultInjected:
-        'Restore a cloned VM snapshot or block NVRAM write so the signer attempts to sign a second distinct message using leaf index `q = 42` (or after `q == 2^H` tree exhaustion).',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Hardware HSM monotonic fuse/NVRAM guard detects state rollback/exhaustion, aborts with `CKR_KEY_EXHAUSTED` / `HSM_STATE_SYNC_FAULT`, and zeroizes signing session.',
-      telemetryCode: 'ERR_SP800_208_OTS_INDEX_REUSE_BLOCKED',
-      productionLesson:
-        'Signing two messages with the same LMS or XMSS leaf index allows trivial WOTS+ private-key forgery; stateful hash-based keys must execute exclusively inside non-cloneable HSMs with pre-commit NVRAM counters.',
-    },
-  },
-  'slh-dsa': {
-    scenarioTitle: 'Break & Verify: FIPS 205 SLH-DSA Context-String Domain Separation & FORS Tamper',
-    positiveCase: {
-      label: 'FIPS 205 SLH-DSA-SHA2-128s Pure Mode with Context Binding',
-      inputSummary:
-        'Sign firmware manifest using `SLH-DSA-SHA2-128s` (7,856 B signature) with explicit domain context `ctx = "pqctoday-fw-v1"` (FIPS 205 §9.2).',
-      expectedResult:
-        'PASS — FORS forest roots and hypertree `HT` authentication paths reconstruct the exact 32-byte public root seed `PK.root`.',
-      telemetryCode: 'FIPS205_SLHDSA_128S_VERIFY_OK',
-    },
-    adversarialCase: {
-      label: 'Cross-Protocol Context Stripping or WOTS+ Authentication Path Bit Flip',
-      faultInjected:
-        'Replay the valid signature under a different protocol context (`ctx = ""`) OR flip 1 bit in the 7,856-byte hypertree authentication path.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Computed hypertree root `PK.root_prime != PK.root`; `slh_verify` deterministically returns `false` (and rejects `|ctx| > 255` per FIPS 205 §10.3).',
-      telemetryCode: 'ERR_FIPS205_ROOT_MISMATCH_REJECT',
-      productionLesson:
-        'Production verifiers must enforce exact FIPS 205 context-string (`ctx`) matching and pure vs `HashSLH-DSA` domain separation so signatures cannot be replayed across application domains.',
-    },
-  },
-  'hsm-pqc': {
-    scenarioTitle: 'Break & Verify: PKCS#11 v3.2 Mechanism Policy & Extractability Boundary Check',
-    positiveCase: {
-      label: 'PKCS#11 v3.2 C_EncapsulateKey / C_Sign Inside FIPS 140-3 L3 Partition',
-      inputSummary:
-        'Invoke `C_Sign` with `CKM_ML_DSA` (`CKA_PARAMETER_SET = CKP_ML_DSA_65`, `CKA_SENSITIVE = TRUE`, `CKA_EXTRACTABLE = FALSE`) inside authenticated HSM partition.',
-      expectedResult:
-        'PASS — HSM executes lattice signing inside the physical boundary and returns the 3,309 B signature without exposing private seed `xi`.',
-      telemetryCode: 'PKCS11_V32_CKM_ML_DSA_OK',
-    },
-    adversarialCase: {
-      label: 'Unwrapped Private Key Export Attempt or Deprecated CKM_RSA_PKCS Call',
-      faultInjected:
-        'Call `C_GetAttributeValue(CKA_VALUE)` to extract private key bytes OR invoke deprecated `CKM_RSA_PKCS` on a PQC-enforced partition.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — HSM firmware blocks call with `CKR_ATTRIBUTE_SENSITIVE (0x00000011)` or `CKR_MECHANISM_INVALID (0x00000070)` and records tamper audit event.',
-      telemetryCode: 'PKCS11_ERR_CKR_ATTRIBUTE_SENSITIVE_0x11',
-      productionLesson:
-        'HSM partition policies must enforce `CKA_SENSITIVE=TRUE` / `CKA_EXTRACTABLE=FALSE` on all PQC private keys and disable legacy PKCS#1 v1.5 mechanisms at the firmware policy layer.',
-    },
-  },
-  'kms-pqc': {
-    scenarioTitle: 'Break & Verify: Cloud KMS Envelope DEK Wrapping & Confused-Deputy AAD Check',
-    positiveCase: {
-      label: 'ML-KEM-768 KEK Envelope + AES-256-GCM DEK with Tenant AAD Binding',
-      inputSummary:
-        'Decapsulate wrapped DEK via KMS `Decapsulate` API and decrypt AES-256-GCM payload with authenticated EncryptionContext `{"tenantId":"bank-prod-01","service":"ledger"}`.',
-      expectedResult:
-        'PASS — KMS audit log records authorized `Decapsulate` event and AES-256-GCM authentication tag verifies cleanly.',
-      telemetryCode: 'KMS_ENVELOPE_DECAPS_AAD_OK',
-    },
-    adversarialCase: {
-      label: 'Cross-Tenant EncryptionContext (AAD) Substitution Attack',
-      faultInjected:
-        'Replay a valid wrapped DEK ciphertext under a different tenant context `{"tenantId":"attacker-sandbox"}` OR flip 1 bit in the AES-GCM auth tag.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — KMS IAM condition / AEAD tag check aborts with `InvalidCiphertextException` and releases zero plaintext bytes.',
-      telemetryCode: 'KMS_ERR_INVALID_CIPHERTEXT_AAD_MISMATCH',
-      productionLesson:
-        'Production KMS envelope encryption must bind structured Additional Authenticated Data (AAD / EncryptionContext) into both the KEM KDF and AES-256-GCM tag to prevent cross-tenant ciphertext substitution.',
-    },
-  },
-  'code-signing': {
-    scenarioTitle: 'Break & Verify: ML-DSA-65 Artifact Signature & PQC RFC 3161 Timestamp Check',
-    positiveCase: {
-      label: 'ML-DSA-65 Signed Container Image + PQC RFC 3161 TSA Token',
-      inputSummary:
-        'Verify release binary digest against HSM-backed `ML-DSA-65` signature and validate countersigned RFC 3161 TimeStampToken issued before cert expiration.',
-      expectedResult:
-        'PASS — Admission controller verifies artifact hash, `ML-DSA-65` signature, Rekor/transparency log entry, and PQC TSA timestamp.',
-      telemetryCode: 'CODESIGN_MLDSA65_TSA_VERIFIED',
-    },
-    adversarialCase: {
-      label: 'Post-Sign Binary Byte Injection or Unsigned Timestamp Backdating',
-      faultInjected:
-        'Modify 1 byte in the compiled ELF/container layer after signing OR present a signature signed with a revoked key lacking a valid RFC 3161 TSA token.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Admission webhook blocks deployment with `SIGNATURE_DIGEST_MISMATCH` / `TSA_TOKEN_MISSING_OR_REVOKED`.',
-      telemetryCode: 'ADMISSION_DENIED_ARTIFACT_TAMPERED',
-      productionLesson:
-        'Kubernetes and OS admission controllers must require both a valid post-quantum signature (`ML-DSA` / `LMS`) and a PQC-signed RFC 3161 timestamp so signatures remain verifiable across key lifecycles.',
-    },
-  },
-  'vpn-ssh-pqc': {
-    scenarioTitle: 'Break & Verify: IKEv2 RFC 9370 ADDKE & OpenSSH Hybrid KEX Downgrade Check',
-    positiveCase: {
-      label: 'IKEv2 RFC 9370 (ECP-384 + ADDKE1 ML-KEM-1024) & OpenSSH mlkem768x25519-sha256',
-      inputSummary:
-        'VPN tunnel completes `IKE_SA_INIT` + `IKE_INTERMEDIATE` (`ML-KEM-1024` over RFC 7383 fragments) and SSH session negotiates `mlkem768x25519-sha256`.',
-      expectedResult:
-        'PASS — IKEv2 SKEYSEED derives from both classical DH and ML-KEM-1024 secrets; SSH session resists HNDL capture.',
-      telemetryCode: 'IKEV2_RFC9370_ADDKE_AND_SSH_PQ_OK',
-    },
-    adversarialCase: {
-      label: 'IKE_INTERMEDIATE Transcript Tamper or Legacy DH-Group14 SSH Proposal',
-      faultInjected:
-        'Modify `IKE_INTERMEDIATE` ML-KEM payload before `IKE_AUTH` OR connect to `sshd` offering only `diffie-hellman-group14-sha256`.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — IKEv2 `IKE_AUTH` MAC verification fails (`AUTHENTICATION_FAILED` notify) and `sshd` terminates connection (`no matching key exchange method found`).',
-      telemetryCode: 'ERR_IKEV2_AUTH_MAC_FAIL_OR_KEX_REJECT',
-      productionLesson:
-        'RFC 9370 binds every `IKE_INTERMEDIATE` post-quantum exchange into the `IKE_AUTH` signature transcript to block downgrade attacks, and `sshd_config` must explicitly remove classical-only KexAlgorithms.',
-    },
-  },
-  'merkle-tree-certs': {
-    scenarioTitle: 'Break & Verify: Merkle Tree Certificate (MTC) Inclusion Proof & Cosigner Check',
-    positiveCase: {
-      label: 'Logarithmic SHA-256 Inclusion Proof + ML-DSA-65 Cosigned Tree Head',
-      inputSummary:
-        'TLS server presents compact 1.4 KB Merkle inclusion proof (`index = 1842`, 14 sibling hashes) matching the client’s cached `ML-DSA-65` cosigned `TreeHead`.',
-      expectedResult:
-        'PASS — Client hashes `0x00 || leaf` up the authentication path (`0x01 || L || R`) and matches the trusted epoch Merkle root in < 0.2 ms.',
-      telemetryCode: 'MTC_INCLUSION_PROOF_VERIFIED',
-    },
-    adversarialCase: {
-      label: 'Forged Sibling Hash or Leaf/Internal Node Domain-Prefix Confusion',
-      faultInjected:
-        'Alter 1 byte in sibling hash `path[3]` OR omit RFC 9162 `0x00`/`0x01` domain-separation prefix to attempt a second-preimage interior node splice.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Reconstructed root hash diverges from cosigned `TreeHead.root`; TLS client aborts handshake with `bad_certificate (42)`.',
-      telemetryCode: 'TLS_ALERT_BAD_CERTIFICATE_42_MTC_ROOT_MISMATCH',
-      productionLesson:
-        'Merkle Tree Certificate verifiers must enforce strict `0x00` leaf / `0x01` internal node domain separation, check bit-index left/right ordering, and require valid witness cosignatures on the epoch tree head.',
-    },
-  },
-  'email-signing': {
-    scenarioTitle: 'Break & Verify: S/MIME 4.0 CMS KEMRecipientInfo & ML-DSA SignedData Tamper',
-    positiveCase: {
-      label: 'CMS AuthEnvelopedData (RFC 9629 ML-KEM-768) + SignedData (RFC 9881 ML-DSA-65)',
-      inputSummary:
-        'Sender signs MIME body with `ML-DSA-65` and wraps AES-256-GCM content-encryption key via `OtherRecipientInfo: KEMRecipientInfo (ML-KEM-768)` + `HKDF-SHA256`.',
-      expectedResult:
-        'PASS — Recipient decapsulates KEK, unwraps CEK, verifies AES-GCM tag, and confirms `ML-DSA-65` `messageDigest` attribute.',
-      telemetryCode: 'CMS_SMIME4_KEMRI_MLDSA_VERIFIED',
-    },
-    adversarialCase: {
-      label: 'MIME Body Tampering or Unauthenticated Content-Encryption Downgrade',
-      faultInjected:
-        'Modify 1 character in the signed MIME body OR tamper with the `KEMRecipientInfo` `ukm` / wrapped CEK bytes.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — `CMS_verify` fails on `messageDigest` / `ML-DSA-65` verification and `AES-256-KWP` unwrap rejects corrupted key material.',
-      telemetryCode: 'CMS_ERR_SIGNATURE_OR_UNWRAP_FAILURE',
-      productionLesson:
-        'Enterprise email gateways and clients must sign-then-encrypt using `AuthEnvelopedData` (AEAD) with RFC 9629 `KEMRecipientInfo` and reject modified MIME bodies or unauthenticated CBC envelopes.',
-    },
-  },
-  'api-security-jwt': {
-    scenarioTitle: 'Break & Verify: Post-Quantum JWS (ML-DSA-65) Algorithm Confusion & Payload Tamper',
-    positiveCase: {
-      label: 'JWS Signed with ML-DSA-65 + Explicit JWKS kid & alg Pinning',
-      inputSummary:
-        'API Gateway validates `Authorization: Bearer <JWS>` (~4.5 KB Base64URL) against JWKS key `kid="pqc-idp-2026-01"` with `alg="ML-DSA-65"`.',
-      expectedResult:
-        'PASS — Gateway verifies 3,309 B `ML-DSA-65` signature over `ASCII(BASE64URL(Header) || "." || BASE64URL(Payload))` and forwards claims.',
-      telemetryCode: 'JWS_MLDSA65_VERIFY_OK',
-    },
-    adversarialCase: {
-      label: 'alg:none / HS256 Key-Confusion Attack or Role Claim Escalation',
-      faultInjected:
-        'Change JWS header to `{"alg":"none"}` (or `HS256` signed with the public `ML-DSA` key bytes) OR edit payload `"role":"user"` to `"role":"admin"`.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Verifier algorithm allowlist rejects `alg != ML-DSA-65` immediately (`HTTP 401 invalid_token`) and signature check catches payload mutation.',
-      telemetryCode: 'JWT_ERR_ALG_FORBIDDEN_OR_SIG_INVALID',
-      productionLesson:
-        'API gateways must enforce a strict asymmetric algorithm allowlist (`ML-DSA-44/65/87`), bind verification to the key type in JWKS, and size HTTP header buffers (`>= 8–16 KB`) for PQC bearer tokens.',
-    },
-  },
-  'acvp-lab-workflow': {
-    scenarioTitle: 'Break & Verify: NIST ACVP Deterministic KAT Vector & FIPS 203/204 Input Validation',
-    positiveCase: {
-      label: 'NIST ACVP ML-KEM-768 encapDecap & ML-DSA-65 sigVer AFT/VAL Vectors',
-      inputSummary:
-        'Supply deterministic ACVP seeds `(d, z)` and test vectors `tcId: 1..25` to the IUT cryptographic module harness.',
-      expectedResult:
-        'PASS — 100% bit-exact match between IUT output (`ek`, `dk`, `c`, `k`, `sigPassed`) and NIST ACVP expected vector responses.',
-      telemetryCode: 'ACVP_KAT_100PCT_MATCH',
-    },
-    adversarialCase: {
-      label: 'ACVP Malformed Encapsulation Key (Coefficient >= 3329) & Corrupted Hint Vector',
-      faultInjected:
-        'Feed an ACVP negative test vector containing an unreduced polynomial coefficient `3329` in `ek` (FIPS 203 §7.2) or malformed hint bit unpacking in `ML-DSA` signature (FIPS 204 §7.2).',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — IUT explicitly rejects the malformed encapsulation key before encapsulation and sets `testPassed: false` on invalid signature encodings.',
-      telemetryCode: 'ACVP_NEGATIVE_VECTOR_PROPERLY_REJECTED',
-      productionLesson:
-        'CAVP certification requires passing not only positive KATs but also negative validation vectors: FIPS 203 §7.2 modulus checks (`ByteDecode_12(ek)`) and FIPS 204 hint/norm bounds (`||z||_inf < gamma1 - beta`).',
-    },
-  },
-  'pqc-testing-validation': {
-    scenarioTitle: 'Break & Verify: CI/CD Negative Tamper Harness & 1,500 B MTU Fragmentation Gate',
-    positiveCase: {
-      label: 'Cross-Vendor Interop (OpenSSL 3.6 <-> BoringSSL) + Positive/Negative CI Suite',
-      inputSummary:
-        'Execute automated CI pipeline running positive KATs, 1-bit flip negative tests, and 1,500 B MTU constrained TLS 1.3 `X25519MLKEM768` + `ML-DSA-65` handshakes.',
-      expectedResult:
-        'PASS — Positive handshakes succeed across vendors, 1-bit tampered ciphertexts are rejected, and TCP/UDP fragmentation reassembles cleanly.',
-      telemetryCode: 'CI_PQC_INTEROP_AND_NEGATIVE_SUITE_PASS',
-    },
-    adversarialCase: {
-      label: 'Middlebox DF-Bit Packet Drop on 14 KB PQC Certificate Chain',
-      faultInjected:
-        'Simulate a legacy firewall dropping IP fragments > 1,492 B or a buggy wrapper library returning `0 (OK)` when `EVP_PKEY_verify` returns `-1 (error)`.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — CI gate fails build on negative-test false-accept or handshake timeout, blocking release until error check (`rc === 1`) and RFC 8879 compression are fixed.',
-      telemetryCode: 'CI_GATE_BLOCKED_NEGATIVE_TEST_OR_MTU_FAIL',
-      productionLesson:
-        'Production test suites must explicitly assert `EVP_PKEY_verify(...) == 1` (since `< 0` indicates an internal error, not `true` in C) and test PQC handshakes over realistic 1,500-byte MTU network paths.',
-    },
-  },
-  'exec-quantum-impact': {
-    scenarioTitle: 'Break & Verify: Executive Readiness Audit — Unverified Slide Claim vs Evidence Receipt',
-    positiveCase: {
-      label: 'Evidence-Backed Service Readiness Report (Portal, Archive Service & Signing)',
-      inputSummary:
-        'Executive review of Customer Portal TLS, Records Archiving & Retrieval Service (protecting 25-year records), and Software Update Signing backed by dated CBOMs and staging test receipts.',
-      expectedResult:
-        'PASS — Board confirms business services are distinguished from protected assets and every readiness metric links to an auditable technical artifact.',
-      telemetryCode: 'EXEC_GOVERNANCE_EVIDENCE_VERIFIED',
-    },
-    adversarialCase: {
-      label: 'Greenwashed "100% Quantum-Ready" Vendor Claim & Unscoped Archive Service',
-      faultInjected:
-        'Submission claims "100% Quantum Ready" based on a vendor marketing brochure (no CAVP/CMVP number) while leaving the 25-year Records Archiving Service on RSA-2048 KEKs.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Audit committee rejects readiness sign-off (`GOVERNANCE_REJECT_UNVERIFIED_CLAIM`), flags Mosca HNDL exposure ($25\\text{ yr} + 4\\text{ yr} > 10\\text{ yr}$), and holds milestone funding.',
-      telemetryCode: 'GOVERNANCE_REJECT_UNVERIFIED_CLAIM_HNDL_GAP',
-      productionLesson:
-        'Executives must reject unsubstantiated "quantum-ready" percentages, require dated CBOM/CAVP evidence for crown-jewel services, and ensure the archiving service protecting long-lived records is prioritized for HNDL mitigation.',
-    },
-  },
-  'pqc-business-case': {
-    scenarioTitle: 'Break & Verify: CFO/CISO Investment Model — Stranded Hardware & Omitted Refresh Alignment',
-    positiveCase: {
-      label: 'Refresh-Aligned Multi-Year TCO & Cost-of-Inaction Model',
-      inputSummary:
-        'Capital model aligns HSM/load-balancer PQC upgrades with scheduled 4-year hardware depreciation cycles and includes PKI, bandwidth, and refactoring labor.',
-      expectedResult:
-        'PASS — Investment committee approves phased budget avoiding mid-cycle hardware write-offs and pre-2030 emergency retrofit surcharges.',
-      telemetryCode: 'FINOPS_TCO_MODEL_VALIDATED',
-    },
-    adversarialCase: {
-      label: 'Unaligned Classical HSM Purchase & Omitted Downstream App Labor',
-      faultInjected:
-        'Procurement proposes buying non-PQC-upgradable classical HSM appliances on a 5-year lease in 2026 while budgeting $0 for application testing and certificate size overhead.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Architecture & Finance gate blocks PO (`CAPEX_HOLD_STRANDED_ASSET_RISK`) due to guaranteed pre-2030 hardware write-off and incomplete TCO scope.',
-      telemetryCode: 'CAPEX_HOLD_STRANDED_ASSET_RISK',
-      productionLesson:
-        'A sound PQC business case must gate all near-term hardware/EA renewals on FIPS 203/204/205 upgradability so organizations never pay twice for stranded cryptographic infrastructure.',
-    },
-  },
-}
-
-function buildDefaultAdversarialChallenge(
-  moduleId: string,
-  seed: RawModuleCapabilitySeed
-): AdversarialChallengeSpec {
-  // eslint-disable-next-line security/detect-object-injection
-  const override = ADVERSARIAL_CHALLENGE_OVERRIDES[moduleId]
-  if (override) return override
-
-  const upperId = moduleId.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase()
-  return {
-    scenarioTitle: `Break & Verify: ${moduleId} Policy & Tamper Refusal Check`,
-    positiveCase: {
-      label: `Validated Production Baseline (${seed.roleFocus.split(',')[0]})`,
-      inputSummary: `Execute ${seed.evaluationMethod}`,
-      expectedResult: `PASS — Verification succeeds and produces required evidence: ${seed.evidenceRequired}`,
-      telemetryCode: `VERIFY_OK_${upperId}`,
-    },
-    adversarialCase: {
-      label: 'Injected Cryptographic Tamper / Unapproved Classical Fallback',
-      faultInjected:
-        'Corrupt 1 bit of the post-quantum cryptographic payload/signature OR attempt a silent fallback to an unapproved classical primitive without validated module evidence.',
-      expectedRefusal:
-        'REFUSED / TAMPER DETECTED — Deterministic verification rejects the mutated artifact or policy gate blocks the unapproved classical configuration.',
-      telemetryCode: `ERR_REFUSED_${upperId}_TAMPER_OR_POLICY`,
-      productionLesson: `Your production tooling (${seed.roleFocus}) must deterministically reject tampered PQC artifacts and block unverified classical fallbacks, producing auditable failure logs (${seed.evidenceRequired}).`,
-    },
-  }
-}
-
 export const MODULE_CAPABILITY_CHECKLISTS: Record<string, ModuleCapabilitySpec> =
   Object.fromEntries(
     Object.entries(MODULE_CAPABILITY_SEEDS).map(([moduleId, seed]) => [
@@ -1383,7 +955,6 @@ export const MODULE_CAPABILITY_CHECKLISTS: Record<string, ModuleCapabilitySpec> 
         moduleId,
         ...seed,
         educationalBoundary: DEFAULT_EDUCATIONAL_BOUNDARY,
-        adversarialChallenge: buildDefaultAdversarialChallenge(moduleId, seed),
       },
     ])
   )

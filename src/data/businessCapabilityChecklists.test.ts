@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { describe, expect, it } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { BusinessCapabilityFooter } from '@/components/BusinessCenter/common/BusinessCapabilityFooter'
 import {
@@ -9,9 +9,9 @@ import {
   getBusinessCapabilityChecklist,
 } from './businessCapabilityChecklists'
 
-describe('Business Center Production-Tool Capability Checklists (37 Business Tools)', () => {
-  it('covers all 37 Business Tools in BUSINESS_TOOLS with auditStressTest specs', () => {
-    expect(BUSINESS_TOOLS).toHaveLength(37)
+describe('Business Center production-tool capability checklists', () => {
+  it('gives every Business Tool in BUSINESS_TOOLS a complete checklist', () => {
+    expect(BUSINESS_TOOLS.length).toBeGreaterThan(0)
 
     for (const tool of BUSINESS_TOOLS) {
       const spec = getBusinessCapabilityChecklist(tool.id)
@@ -26,39 +26,36 @@ describe('Business Center Production-Tool Capability Checklists (37 Business Too
       expect(spec!.sampleVsProductionBoundary).toContain(
         'does not collect production evidence or assess a deployed environment'
       )
-
-      const stress = spec!.auditStressTest
-      expect(stress, `Missing auditStressTest in ${tool.id}`).toBeDefined()
-      expect(stress.flawedArtifactSummary.length).toBeGreaterThan(30)
-      expect(stress.detectedGapCode).toMatch(/^AUDIT_GAP_/)
-      expect(stress.governanceRejectionReason.length).toBeGreaterThan(30)
-      expect(stress.remediationAction.length).toBeGreaterThan(30)
     }
   })
 
-  it('has exactly 37 entries in BUSINESS_CAPABILITY_CHECKLISTS with zero orphan keys', () => {
+  it('has one checklist per registry tool and no orphan keys', () => {
     const registryIds = new Set(BUSINESS_TOOLS.map((t) => t.id))
     const checklistIds = Object.keys(BUSINESS_CAPABILITY_CHECKLISTS)
-    expect(checklistIds).toHaveLength(37)
+    expect(checklistIds).toHaveLength(registryIds.size)
     for (const id of checklistIds) {
       expect(registryIds.has(id), `Orphan business tool checklist key: ${id}`).toBe(true)
     }
   })
 
-  it('renders interactive Audit Stress-Test button and refusal receipt in BusinessCapabilityFooter', () => {
+  it('renders collapsed by default and lists the capabilities when opened', () => {
+    const { unmount } = render(
+      React.createElement(BusinessCapabilityFooter, { toolId: 'vendor-scorecard' })
+    )
+    const collapsed = screen.getByTestId('business-capability-footer') as HTMLDetailsElement
+    expect(collapsed.open).toBe(false)
+    unmount()
+
     render(
       React.createElement(BusinessCapabilityFooter, {
         toolId: 'vendor-scorecard',
         defaultOpen: true,
       })
     )
-
-    expect(screen.getByTestId('business-capability-footer')).toBeDefined()
-    const stressBtn = screen.getByTestId('business-stress-test-btn')
-    fireEvent.click(stressBtn)
-
-    const receipt = screen.getByTestId('business-stress-test-receipt')
-    expect(receipt.textContent).toContain('AUDIT_GAP_UNVERIFIED_VENDOR_MARKETING_CLAIM')
-    expect(receipt.textContent).toContain('CAVP')
+    const footer = screen.getByTestId('business-capability-footer') as HTMLDetailsElement
+    expect(footer.open).toBe(true)
+    const spec = getBusinessCapabilityChecklist('vendor-scorecard')!
+    expect(screen.getAllByRole('listitem')).toHaveLength(spec.requiredCapabilities.length)
+    expect(screen.queryByRole('button')).toBeNull()
   })
 })

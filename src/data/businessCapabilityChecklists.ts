@@ -9,20 +9,12 @@
  * - sampleVsProductionBoundary: Explicit educational boundary distinguishing Hub sample worksheets from production evidence
  */
 
-export interface BusinessAuditStressTestSpec {
-  flawedArtifactSummary: string
-  detectedGapCode: string
-  governanceRejectionReason: string
-  remediationAction: string
-}
-
 export interface BusinessCapabilitySpec {
   toolId: string
   productionToolCategory: string
   requiredCapabilities: [string, string, string]
   evaluationCriteria: string
   sampleVsProductionBoundary: string
-  auditStressTest: BusinessAuditStressTestSpec
 }
 
 export type BusinessCapabilityChecklist = BusinessCapabilitySpec
@@ -62,7 +54,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     requiredCapabilities: [
       'Differentiation between Harvest-Now-Decrypt-Later (HNDL) confidentiality breach impact on archived traffic and active quantum signature forgery on authentication/code-signing.',
       'Monte Carlo or scenario-based loss-exceedance modeling incorporating regulatory fines (DORA, GDPR, HIPAA), notification costs, and contract penalties.',
-      'Asset-level data-retention horizon mapping ($X + Y > Z$) tied to enterprise data-classification catalogs.',
+      'Asset-level data-retention horizon mapping (X + Y > Z) tied to enterprise data-classification catalogs.',
     ],
     evaluationCriteria:
       'Validate loss-magnitude inputs with legal, privacy, and cyber-insurance actuaries using your organization’s actual record counts and retention schedules.',
@@ -91,7 +83,7 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
     productionToolCategory: 'Strategic Threat Intelligence & Horizon-Scanning Platforms',
     requiredCapabilities: [
       'Scenario planning across optimistic, baseline, and accelerated Cryptographically Relevant Quantum Computer (CRQC) arrival timelines.',
-      'Automated Mosca inequality ($X + Y > Z$) recalculation across all registered business services when threat-horizon assumptions shift.',
+      'Automated Mosca inequality (X + Y > Z) recalculation across all registered business services when threat-horizon assumptions shift.',
       'Mapping of external regulatory milestones (NSA CNSA 2.0, NIST IR 8547, UK NCSC, EU DORA, ANSSI/BSI) onto internal migration waves.',
     ],
     evaluationCriteria:
@@ -409,342 +401,6 @@ const BUSINESS_CAPABILITY_SEEDS: Record<string, RawBusinessCapabilitySeed> = {
   },
 }
 
-const BUSINESS_AUDIT_STRESS_TESTS: Record<string, BusinessAuditStressTestSpec> = {
-  'roi-calculator': {
-    flawedArtifactSummary:
-      'Sample TCO worksheet budgets $0 for HSM partition upgrades and CDN TLS bandwidth overhead while purchasing classical-only HSMs two years before scheduled refresh.',
-    detectedGapCode: 'AUDIT_GAP_UNALIGNED_CAPEX_AND_OMITTED_OVERHEAD',
-    governanceRejectionReason:
-      'Investment Committee rejects ROI submission because buying non-PQC-upgradable hardware out-of-cycle creates a guaranteed stranded-asset write-off ahead of 2030 deprecation.',
-    remediationAction:
-      'Align PQC hardware upgrades with CMDB depreciation schedules and incorporate validated HSM NVRAM/throughput and TLS certificate wire-size deltas.',
-  },
-  'board-pitch': {
-    flawedArtifactSummary:
-      'Board deck claims "85% Quantum Readiness" without linking to a dated CBOM scan and conflates long-lived customer records (assets) with the archiving service.',
-    detectedGapCode: 'AUDIT_GAP_UNVERIFIED_READINESS_METRIC',
-    governanceRejectionReason:
-      'Audit Committee blocks board sign-off because readiness percentages lack traceable discovery timestamps and fail to distinguish business services from protected assets.',
-    remediationAction:
-      'Attach dated CBOM/CLM discovery exports to every readiness metric and explicitly map the Records Archiving & Retrieval Service protecting long-lived records.',
-  },
-  'breach-simulator': {
-    flawedArtifactSummary:
-      'Risk scenario models active signature forgery and HNDL confidentiality breaches using identical timelines and omits 25-year regulated archive retention ($X + Y > Z$).',
-    detectedGapCode: 'AUDIT_GAP_CONFLATED_HNDL_AND_FORGERY_VECTORS',
-    governanceRejectionReason:
-      'Model Risk Governance rejects the loss-exceedance simulation for failing to separate immediate HNDL ciphertext capture risk from future active CRQC signature forgery.',
-    remediationAction:
-      'Split HNDL key-establishment exposure ($X + Y > Z$) from authentication/signing forgery risk and bind $X$ to actual enterprise data-retention catalog values.',
-  },
-  'cost-of-inaction': {
-    flawedArtifactSummary:
-      'Delay-cost model assumes linear 2029–2030 migration labor availability and omits PCI DSS v4.0.1 / CNSA 2.0 / DORA non-compliance penalties on revenue services.',
-    detectedGapCode: 'AUDIT_GAP_UNDERSTATED_LATE_MIGRATION_SURCHARGE',
-    governanceRejectionReason:
-      'CFO/CISO review rejects the baseline projection because compressed post-2028 remediation ignores vendor extended-support surcharges and regulatory disallowance gates.',
-    remediationAction:
-      'Incorporate contract renewal cutoffs, mandatory certification lead times (12–18 months for CMVP), and late-stage specialist rate premiums.',
-  },
-  'cost-model-explorer': {
-    flawedArtifactSummary:
-      'Engineering WBS applies uniform 16-hour refactoring estimates across 200 applications without distinguishing C/C++ static-linked monoliths from agile sidecar proxies.',
-    detectedGapCode: 'AUDIT_GAP_UNCAUGHT_LEGACY_REFACTOR_COMPLEXITY',
-    governanceRejectionReason:
-      'Architecture Review Board rejects capacity plan due to uncalibrated labor assumptions that omit SAST call-site density and cross-vendor interop testing.',
-    remediationAction:
-      'Stratify applications by crypto-abstraction maturity (Provider API vs hardcoded RSA/ECDSA calls) and calibrate WBS hours against a timed pilot migration.',
-  },
-  'crqc-scenario': {
-    flawedArtifactSummary:
-      'Horizon scan evaluates only a single 2035 CRQC point estimate and leaves 15-year confidentiality-lifetime services scheduled for 2031 migration ($15 + 5 > 9$).',
-    detectedGapCode: 'AUDIT_GAP_MOSCA_HORIZON_VIOLATION',
-    governanceRejectionReason:
-      'Risk Committee rejects scenario plan because under both baseline and accelerated CRQC horizons, $X + Y > Z$ is already violated for long-lived archives.',
-    remediationAction:
-      'Run multi-horizon sensitivity analysis (optimistic, baseline, accelerated) and immediately reprioritize any service where $X + Y > Z$ into Wave 1 hybrid KEM rollout.',
-  },
-  'risk-register': {
-    flawedArtifactSummary:
-      'Risk register entries list generic "Quantum Risk to Enterprise" with no assigned role owner, no CMDB/CBOM asset ID, and no scheduled review cadence.',
-    detectedGapCode: 'AUDIT_GAP_ORPHAN_RISK_ENTRY_NO_ASSET_ID',
-    governanceRejectionReason:
-      'Internal Audit flags a governance deficiency: unowned, asset-unlinked risk entries cannot be tracked to technical remediation or verified at closure.',
-    remediationAction:
-      'Bind every risk register row to a specific CMDB business service / CBOM asset ID, assign one Accountable owner, and set a quarterly review date.',
-  },
-  'risk-treatment-plan': {
-    flawedArtifactSummary:
-      'Treatment plan marks three Tier-1 payment gateways as "Mitigated (Residual Risk: Low)" based solely on a project manager email with zero packet-capture or CBOM evidence.',
-    detectedGapCode: 'AUDIT_GAP_UNVERIFIED_RESIDUAL_RISK_REDUCTION',
-    governanceRejectionReason:
-      'GRC QA rejects status change to "Mitigated" because self-attestation without an independent TLS handshake receipt or negative tamper log violates closure policy.',
-    remediationAction:
-      'Keep treatment status as "In Progress — Evidence Required" until a verified `X25519MLKEM768` handshake capture and negative test log are attached.',
-  },
-  'compliance-checklist': {
-    flawedArtifactSummary:
-      'Compliance matrix marks CNSA 2.0 and NIST IR 8547 obligations as "Compliant" while linking only to a high-level corporate security policy PDF.',
-    detectedGapCode: 'AUDIT_GAP_POLICY_ONLY_NO_OPERATING_EVIDENCE',
-    governanceRejectionReason:
-      'External Assessor rejects control mapping because a written policy statement establishes design intent only, not operating effectiveness on deployed endpoints.',
-    remediationAction:
-      'Attach both the normative policy clause and dated technical configuration exports (CBOM, CA profile, TLS scan) for each jurisdiction.',
-  },
-  'audit-checklist': {
-    flawedArtifactSummary:
-      'Internal audit workpaper relies on 100% management self-assessment questionnaires without independent sampling of HSM partitions, CA chains, or live TLS endpoints.',
-    detectedGapCode: 'AUDIT_GAP_SELF_ATTESTATION_WITHOUT_SAMPLING',
-    governanceRejectionReason:
-      'Chief Audit Executive rejects workpaper package for failing IIA / ISACA standards requiring independent technical re-performance and negative-control testing.',
-    remediationAction:
-      'Sample at least 10% of in-scope production endpoints and independently re-verify live PQC negotiation, CAVP/CMVP certificates, and tamper rejection.',
-  },
-  'compliance-timeline': {
-    flawedArtifactSummary:
-      'Program schedule places Root/Issuing PKI PQC upgrade in Q4 2030, nine months AFTER the linked Q1 2030 application leaf-certificate migration milestone.',
-    detectedGapCode: 'AUDIT_GAP_INVERTED_CRITICAL_PATH_DEPENDENCY',
-    governanceRejectionReason:
-      'PMO Governance gate rejects timeline due to negative schedule slack and an impossible dependency inversion (leaf certs cannot chain to an unissued PQC CA).',
-    remediationAction:
-      'Sequence HSM/KMS and Root/Issuing CA readiness ahead of downstream leaf-certificate and application cutover waves with >= 6 months slack before regulatory cutoffs.',
-  },
-  'raci-builder': {
-    flawedArtifactSummary:
-      'RACI matrix assigns three different executives as "Accountable (A)" for PKI Root Ceremonies and leaves Cloud KMS Key Rotation with zero Accountable owner.',
-    detectedGapCode: 'AUDIT_GAP_DUAL_OR_MISSING_ACCOUNTABLE_OWNER',
-    governanceRejectionReason:
-      'Program Steering Committee rejects RACI matrix because multiple Accountable owners diffuse decision authority while zero Accountable owner creates an unowned blind spot.',
-    remediationAction:
-      'Enforce exactly one Accountable (A) role per cryptographic workstream and verify every infrastructure domain has at least one Responsible (R) engineering team.',
-  },
-  'policy-generator': {
-    flawedArtifactSummary:
-      'Draft Enterprise Cryptographic Policy mandates "Quantum-Safe Encryption Everywhere Immediately" without naming specific FIPS 203/204/205 parameter sets or exception gates.',
-    detectedGapCode: 'AUDIT_GAP_NON_NORMATIVE_POLICY_LANGUAGE',
-    governanceRejectionReason:
-      'Security Architecture & Legal reject policy draft because vague prose cannot be compiled into OPA/Kyverno CI gates or enforced in vendor procurement contracts.',
-    remediationAction:
-      'Specify exact approved OIDs/parameter sets (`ML-KEM-768/1024`, `ML-DSA-65/87`, `SLH-DSA`, `LMS/XMSS`), deprecation dates, and time-bound CISO waiver criteria.',
-  },
-  'kpi-dashboard': {
-    flawedArtifactSummary:
-      'Executive dashboard displays an overall "92% Green PQC Readiness Score" even though 45% of enterprise subnets and ephemeral containers have never been scanned.',
-    detectedGapCode: 'AUDIT_GAP_ROLLUP_SCORE_ON_INCOMPLETE_COVERAGE',
-    governanceRejectionReason:
-      'Data Governance & CISO reject KPI rollup because computing a high readiness percentage over a small scanned subset masks uninventoried shadow cryptography.',
-    remediationAction:
-      'Enforce a hard completeness threshold (e.g., >= 85% estate discovery coverage) before displaying rolled-up readiness scores, and report unscanned estate percentage prominently.',
-  },
-  'vendor-scorecard': {
-    flawedArtifactSummary:
-      'Vendor scorecard awards "Tier-1 Approved (100/100)" to a cloud HSM supplier based on a marketing press release claiming "FIPS 203 Ready" with no CAVP/CMVP number.',
-    detectedGapCode: 'AUDIT_GAP_UNVERIFIED_VENDOR_MARKETING_CLAIM',
-    governanceRejectionReason:
-      'Third-Party Risk Management (TPRM) blocks procurement approval because "FIPS Ready / Designed to Meet" is not a NIST CAVP or CMVP validation certificate.',
-    remediationAction:
-      'Require verified NIST CSRC CAVP algorithm certificate numbers, CMVP module status (Active vs In Review), and a signed CycloneDX 1.6 CBOM before scoring a vendor green.',
-  },
-  'contract-clause': {
-    flawedArtifactSummary:
-      'MSA renewal template commits the organization to a 5-year SaaS lock-in with no CBOM delivery obligation, no PQC migration SLA, and no right to audit cryptography.',
-    detectedGapCode: 'AUDIT_GAP_MISSING_CBOM_AND_PQC_SLA_CLAUSES',
-    governanceRejectionReason:
-      'Legal & Procurement Gate holds contract signature because the agreement lacks enforceable remedies if the vendor fails to deprecate RSA/ECDSA by regulatory deadlines.',
-    remediationAction:
-      'Insert mandatory CycloneDX 1.6 CBOM delivery upon release, NIST FIPS 203/204/205 support SLAs, and termination/remediation rights tied to CNSA 2.0 / DORA / PCI dates.',
-  },
-  'supply-chain-matrix': {
-    flawedArtifactSummary:
-      'Supply-chain inventory lists only top-level commercial vendor names while omitting transitive embedded OpenSSL 1.1.1w (EoL) and non-PQC BoringSSL dependencies.',
-    detectedGapCode: 'AUDIT_GAP_UNSCOPED_TRANSITIVE_CRYPTO_DEPENDENCY',
-    governanceRejectionReason:
-      'Supply Chain Security rejects vendor matrix for failing to inspect Nth-tier cryptographic libraries where actual algorithm constraints and CVEs reside.',
-    remediationAction:
-      'Ingest transitive SBOM/CBOM dependency trees (`purl` / CPE) for all Tier-1 suppliers and flag embedded End-of-Life cryptographic libraries.',
-  },
-  'roadmap-builder': {
-    flawedArtifactSummary:
-      'Multi-year roadmap schedules 100% production cutover in a single "Big Bang" quarter without staging pilots, canary rollouts, or HSM/PKI prerequisite phases.',
-    detectedGapCode: 'AUDIT_GAP_MISSING_CANARY_AND_INFRA_PREREQUISITES',
-    governanceRejectionReason:
-      'Enterprise Architecture rejects roadmap for violating NIST CSWP 39 / SP 1800-38 phased sequencing and omitting rollback validation gates.',
-    remediationAction:
-      'Structure roadmap into sequenced waves (Discovery -> PKI/HSM Foundation -> Internal Pilot -> Hybrid Canary -> Production Rollout) with explicit exit criteria.',
-  },
-  'stakeholder-comms': {
-    flawedArtifactSummary:
-      'External partner notification announces an immediate mandatory cutover to pure PQC TLS (`ML-KEM-1024` only) in 48 hours with no hybrid transition window or rollback path.',
-    detectedGapCode: 'AUDIT_GAP_BREAKING_CHANGE_WITHOUT_FALLBACK_WINDOW',
-    governanceRejectionReason:
-      'Change Advisory Board (CAB) blocks communication and change ticket because abrupt removal of hybrid/classical groups without relying-party readiness testing causes B2B outage.',
-    remediationAction:
-      'Publish a staged deprecation schedule (Hybrid PQ/T preferred -> Canary test endpoint -> Scheduled classical deprecation) with clear client compatibility requirements.',
-  },
-  'kpi-tracker': {
-    flawedArtifactSummary:
-      'Operational OKR tracker relies on manually typed monthly spreadsheet numbers that have not been refreshed or reconciled against live gateway telemetry in 90 days.',
-    detectedGapCode: 'AUDIT_GAP_STALE_MANUAL_KPI_TELEMETRY',
-    governanceRejectionReason:
-      'SRE & Security Operations reject KPI report because stale manual metrics fail to detect silent configuration drift or TLS fallback regressions.',
-    remediationAction:
-      'Wire KPI trackers directly to automated Prometheus `$ssl_curve` counters, CLM certificate inventories, and CI/CD CBOM scan timestamps.',
-  },
-  'deployment-playbook': {
-    flawedArtifactSummary:
-      'Production rollout runbook enables `X25519MLKEM768` and 15 KB `ML-DSA` cert chains across 100% of edge traffic simultaneously with no MTU pre-flight check or rollback command.',
-    detectedGapCode: 'AUDIT_GAP_NO_CANARY_OR_ROLLBACK_VERIFICATION',
-    governanceRejectionReason:
-      'SRE Change Management blocks deployment playbook because enabling large PQC handshakes without progressive traffic shifting (1% -> 10% -> 50% -> 100%) risks middlebox blackholes.',
-    remediationAction:
-      'Add automated pre-flight MTU/middlebox probes, progressive canary error-budget gates, and a tested 1-command configuration rollback procedure.',
-  },
-  'hybrid-transition-planner': {
-    flawedArtifactSummary:
-      'Transition plan disables classical fallback on public-facing retail portals in 2026 while simultaneously permitting unmonitored classical downgrade on internal HVA links.',
-    detectedGapCode: 'AUDIT_GAP_INCONSISTENT_HYBRID_POLICY_POSTURE',
-    governanceRejectionReason:
-      'Cryptographic Architecture Board rejects transition matrix for breaking legacy retail browser compatibility while leaving high-value internal links vulnerable to silent downgrade.',
-    remediationAction:
-      'Configure PQ/T hybrid (`X25519MLKEM768`) with monitored fallback on public B2C ingress and enforce strict hybrid/PQC-only with downgrade alerting on internal HVA service mesh.',
-  },
-  'mti-negotiator': {
-    flawedArtifactSummary:
-      'Generated cipher policy places `X25519MLKEM768` at the bottom of `Groups` below `secp256r1`/`x25519` and retains TLS 1.2 static RSA cipher suites.',
-    detectedGapCode: 'AUDIT_GAP_SUBOPTIMAL_GROUP_PREFERENCE_ORDER',
-    governanceRejectionReason:
-      'Protocol Security Audit rejects configuration because placing PQC hybrid groups after classical groups guarantees peers will always negotiate classical ECDH.',
-    remediationAction:
-      'Order `X25519MLKEM768:SecP256r1MLKEM768` first in TLS 1.3 `Groups`, enable `server_preference`, and disable TLS < 1.3 static RSA ciphers.',
-  },
-  'crypto-api-refactor-audit': {
-    flawedArtifactSummary:
-      'Code modernization audit uses simple `grep "RSA"` text search, missing 40+ `EVP_PKEY_CTX_new_id(EVP_PKEY_EC, ...)` call sites and fixed 256-byte signature buffers.',
-    detectedGapCode: 'AUDIT_GAP_MISSED_FIXED_BUFFER_AND_EVP_CALLSITES',
-    governanceRejectionReason:
-      'AppSec Review rejects refactoring audit because fixed 256-byte stack buffers will buffer-overflow or truncate 3,309-byte `ML-DSA-65` signatures at runtime.',
-    remediationAction:
-      'Use AST-based SAST rules (Semgrep / CodeQL) to locate all asymmetric primitive calls and fixed-size key/signature buffers, and validate with dynamic memory sanitizers.',
-  },
-  'cloud-responsibility-matrix': {
-    flawedArtifactSummary:
-      'Cloud governance worksheet assumes AWS/Azure/GCP automatically migrate customer-managed KMS keys (CMKs) and application mTLS certificates to PQC without customer configuration.',
-    detectedGapCode: 'AUDIT_GAP_MISATTRIBUTED_CUSTOMER_CLOUD_CONTROL',
-    governanceRejectionReason:
-      'Cloud Security Posture (CSPM) audit rejects responsibility matrix because while cloud providers manage physical HSM firmware, customers own CMK algorithm selection and workload mTLS.',
-    remediationAction:
-      'Explicitly separate provider-managed infrastructure controls from customer-configured Terraform/IaC flags for KMS key specs, ALB/FrontDoor TLS policies, and service mesh mTLS.',
-  },
-  'crypto-architecture-diagram': {
-    flawedArtifactSummary:
-      'Architecture diagram shows "PQC TLS 1.3" at the CDN edge but omits the unencrypted / RSA-2048 internal load-balancer-to-microservice and database backup hops.',
-    detectedGapCode: 'AUDIT_GAP_UNMAPPED_INTERNAL_TRANSIT_HOP',
-    governanceRejectionReason:
-      'Threat Modeling Review rejects architecture diagram because edge-only PQC termination leaves internal VPC and cross-region replication links exposed to HNDL.',
-    remediationAction:
-      'Annotate every hop from client edge through ingress, service mesh, database wire protocol, and archive storage with its verified protocol, KEM/signature algorithm, and key store.',
-  },
-  'management-tools-audit': {
-    flawedArtifactSummary:
-      'Tooling audit declares "100% CLM & CBOM Visibility" while the discovery agent is deployed on only 38% of production hosts and crashes when parsing RFC 9881 `ML-DSA` OIDs.',
-    detectedGapCode: 'AUDIT_GAP_LOW_ESTATE_DISCOVERY_COVERAGE',
-    governanceRejectionReason:
-      'Enterprise Architecture rejects tooling sign-off because < 50% estate coverage leaves majority blind spots and legacy ASN.1 parsers fail on PQC certificate OIDs.',
-    remediationAction:
-      'Reconcile scanned host/repo counts against total CMDB active inventory and verify CLM/scanner parsing of RFC 9881 (`ML-DSA`) and RFC 9935 (`ML-KEM`) certificates in staging.',
-  },
-  'crypto-cbom-builder': {
-    flawedArtifactSummary:
-      'Submitted CBOM JSON omits `cryptoProperties.oid`, fails to flag embedded `OpenSSL 1.1.1w` (EoL `2023-09-11`), and lists algorithms without linking to owning services.',
-    detectedGapCode: 'AUDIT_GAP_INCOMPLETE_CYCLONEDX_CBOM_SCHEMA',
-    governanceRejectionReason:
-      'SecOps Automation gate rejects CBOM artifact because missing OIDs, unflagged EoL libraries, and absent service owners prevent automated risk prioritization.',
-    remediationAction:
-      'Validate generated CBOMs against CycloneDX v1.6 schema, require complete `algorithmProperties` + `oid` fields, and correlate library versions against EoL matrices.',
-  },
-  'crypto-vulnerability-watch': {
-    flawedArtifactSummary:
-      'Vulnerability watch relies exclusively on NVD CVE CPE matching, creating a 100% blind spot for specialized PQC libraries and hardware appliances that lack NVD CPE entries.',
-    detectedGapCode: 'AUDIT_GAP_UNMONITORED_NON_CPE_PQC_COMPONENTS',
-    governanceRejectionReason:
-      'Vulnerability Management Audit flags a coverage gap: relying solely on NVD CPEs misses side-channel advisories in `liboqs`, `pqm4`, and vendor HSM firmware bulletins.',
-    remediationAction:
-      'Combine NVD CPE + GitHub Security Advisory (`purl` / OSV) feeds with direct vendor security bulletin tracking for all non-CPE hardware and PQC cryptographic components.',
-  },
-  'program-charter': {
-    flawedArtifactSummary:
-      'Draft PQC Program Charter is authored by a single security architect with no executive sponsor sign-off, no allocated budget authority, and no mandate to block non-compliant releases.',
-    detectedGapCode: 'AUDIT_GAP_UNSIGNED_CHARTER_NO_GATE_AUTHORITY',
-    governanceRejectionReason:
-      'PMO Portfolio Review rejects charter because a working group without CISO/CIO/CFO sponsorship and release-gate authority cannot enforce cross-BU migration deadlines.',
-    remediationAction:
-      'Secure formal executive sponsor signatures, define the in-scope business services and budget envelope, and grant the PQC PMO binding policy-exception authority.',
-  },
-  'initial-scoping': {
-    flawedArtifactSummary:
-      'Initial scoping worksheet inventories only public web servers while omitting internal PKI CAs, code-signing pipelines, VPN concentrators, and 20-year customer record archives.',
-    detectedGapCode: 'AUDIT_GAP_OMITTED_PKI_CODESIGN_AND_ARCHIVE_SCOPE',
-    governanceRejectionReason:
-      'Discovery Review rejects scoping baseline because excluding long-lived archives (HNDL target) and software signing (root-of-trust target) misses the highest-impact exposures.',
-    remediationAction:
-      'Expand scoping across all five priority domains: External TLS/VPN, Long-Lived Data Archives, PKI/HSM Hierarchy, Code/Firmware Signing, and Tier-1 Vendor Dependencies.',
-  },
-  'skills-team-plan': {
-    flawedArtifactSummary:
-      'Workforce plan counts a 20-minute awareness video as "Full Engineering PQC Competency" with zero hands-on OpenSSL/PKI/HSM lab verification.',
-    detectedGapCode: 'AUDIT_GAP_SLIDE_TRAINING_WITHOUT_LAB_COMPETENCY',
-    governanceRejectionReason:
-      'Engineering Leadership rejects training sign-off because passive video completion does not prepare SREs or developers to debug PQC MTU fragmentation or PKCS#11 v3.2 errors.',
-    remediationAction:
-      'Map NICE Workforce roles to hands-on staging lab exercises (e.g., configuring `X25519MLKEM768`, issuing `ML-DSA` certs, and running negative tamper tests).',
-  },
-  'infra-modernization-planner': {
-    flawedArtifactSummary:
-      'Infrastructure plan assumes legacy network HSMs and 10-year-old OT/SCADA PLCs can run `ML-KEM-1024` and `ML-DSA-87` via a simple software patch without checking SRAM/flash or EoL limits.',
-    detectedGapCode: 'AUDIT_GAP_UNVERIFIED_HARDWARE_FIRMWARE_COMPATIBILITY',
-    governanceRejectionReason:
-      'Infrastructure Architecture rejects modernization plan because legacy hardware appliances lacking sufficient NVRAM/FPGA resources require physical replacement or bump-in-the-wire proxies.',
-    remediationAction:
-      'Cross-reference every HSM, NGFW, load balancer, and embedded MCU model against vendor PQC hardware capability matrices and size replacement CapEx.',
-  },
-  'refresh-cycle-alignment': {
-    flawedArtifactSummary:
-      'Procurement schedule renews a 3-year Enterprise Agreement for legacy load balancers and classical CAs in Q3 without attaching PQC capability requirements to the RFP.',
-    detectedGapCode: 'AUDIT_GAP_MISSED_RENEWAL_PROCUREMENT_GATE',
-    governanceRejectionReason:
-      'IT Asset Management (ITAM) blocks PO renewal because locking in a 3-year contract without FIPS 203/204 support forces an unbudgeted mid-term contract buyout.',
-    remediationAction:
-      'Attach mandatory PQC capability and CBOM gates to every hardware refresh and software EA renewal occurring within the next 36 months.',
-  },
-  'accelerated-execution-profile': {
-    flawedArtifactSummary:
-      'Emergency crypto-rollover playbook relies on manual ticket creation across 14 teams with an estimated 6-month certificate replacement timeline and no pre-staged backup CA.',
-    detectedGapCode: 'AUDIT_GAP_MANUAL_ROLLOVER_EXCEEDS_INCIDENT_MTTR',
-    governanceRejectionReason:
-      'Incident Response Review rejects break-glass playbook because a 6-month manual rotation cannot contain an active cryptanalytic or implementation vulnerability.',
-    remediationAction:
-      'Implement automated ACME/CMPv3 short-lived certificate rotation, pre-stage a secondary PQC/hybrid root of trust, and validate a < 24-hour emergency swap in a game-day drill.',
-  },
-  'data-at-rest-strategy': {
-    flawedArtifactSummary:
-      'Storage strategy upgrades database bulk encryption from AES-128 to AES-256 but leaves the KMS Key-Encryption-Keys (KEKs) and backup tape transport wrapped with RSA-2048.',
-    detectedGapCode: 'AUDIT_GAP_CLASSICAL_KEK_WRAPPING_ON_AES256_DATA',
-    governanceRejectionReason:
-      'Cryptography Review rejects data-at-rest architecture because an attacker who harvests the RSA-2048 wrapped KEK header can recover the AES-256 DEK with a CRQC via Shor’s algorithm.',
-    remediationAction:
-      'Pair AES-256-GCM/XTS data encryption with FIPS 203 `ML-KEM-768/1024` (or hybrid KEM) KEK envelope wrapping and post-quantum RFC 3161 archive timestamps.',
-  },
-  'migration-verification': {
-    flawedArtifactSummary:
-      'Closure dossier marks a Tier-1 service as "Verified Complete" with only a screenshot of a green UI badge—missing the wire pcap, negative tamper test log, and `openssl verify` output.',
-    detectedGapCode: 'AUDIT_GAP_MISSING_5POINT_VERIFICATION_DOSSIER',
-    governanceRejectionReason:
-      'Release Assurance & Internal Audit reject closure sign-off because UI screenshots or self-reported notes do not satisfy the mandatory 5-point technical verification standard.',
-    remediationAction:
-      'Attach all 5 verifiable artifacts before closure: (1) wire negotiation pcap, (2) negative tamper/downgrade refusal log, (3) PQC cert chain verification, (4) fallback policy, and (5) archived dossier hash.',
-  },
-}
-
 export const BUSINESS_CAPABILITY_CHECKLISTS: Record<string, BusinessCapabilitySpec> =
   Object.fromEntries(
     Object.entries(BUSINESS_CAPABILITY_SEEDS).map(([toolId, seed]) => [
@@ -753,8 +409,6 @@ export const BUSINESS_CAPABILITY_CHECKLISTS: Record<string, BusinessCapabilitySp
         toolId,
         ...seed,
         sampleVsProductionBoundary: DEFAULT_BUSINESS_BOUNDARY,
-        // eslint-disable-next-line security/detect-object-injection
-        auditStressTest: BUSINESS_AUDIT_STRESS_TESTS[toolId],
       },
     ])
   )

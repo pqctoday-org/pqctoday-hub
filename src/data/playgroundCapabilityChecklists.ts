@@ -8,19 +8,11 @@
  * - productionToolRequirements: Concrete capabilities to require and test in production tools
  */
 
-export interface PlaygroundTamperVerificationSpec {
-  artifactLabel: string
-  validVectorHex: string
-  tamperedVectorHex: string
-  expectedFailureBehavior: string
-}
-
 export interface PlaygroundCapabilitySpec {
   toolId: string
   whatCheckEstablishes: string
   sandboxLimitation: string
   productionToolRequirements: [string, string, string]
-  tamperVerification: PlaygroundTamperVerificationSpec
 }
 
 export type PlaygroundCapabilityChecklist = PlaygroundCapabilitySpec
@@ -236,7 +228,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     sandboxLimitation:
       'Browser `crypto.getRandomValues` / simulated noise sources do not expose physical ring-oscillator or avalanche-diode hardware telemetry.',
     productionToolRequirements: [
-      'NIST SP 800-90B ESV-validated physical entropy sources feeding SP 800-90A `CTR_DRBG` / `Hash_DRBG` with $\ge 256$-bit security strength.',
+      'NIST SP 800-90B ESV-validated physical entropy sources feeding SP 800-90A `CTR_DRBG` / `Hash_DRBG` with at least 256-bit security strength.',
       'Continuous hardware health testing (Repetition Count Test and Adaptive Proportion Test) with instant fail-closed behavior.',
       'Verified OS / hypervisor entropy forwarding (`virtio-rng` / CPU `RDSEED`) into containerized workloads.',
     ],
@@ -256,11 +248,11 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
     whatCheckEstablishes:
       'Executes statistical and NIST SP 800-90B style min-entropy estimators (Most Common Value, Collision, Markov, Compression, RCT, APT) on sample byte streams.',
     sandboxLimitation:
-      'Browser-scale sample windows are for educational inspection; formal NIST ESV certification requires $\ge 1,000,000$ consecutive raw noise samples analyzed by an accredited lab.',
+      'Browser-scale sample windows are for educational inspection; formal NIST ESV certification requires at least 1,000,000 consecutive raw noise samples analyzed by an accredited lab.',
     productionToolRequirements: [
       'Formal NIST Entropy Source Validation (ESV) per SP 800-90B using the official NIST C++ `ea_iid` / `ea_non_iid` assessment suite.',
       'Stochastic model justification documenting the physical noise mechanism and quantization process.',
-      'Configured RCT and APT cutoff thresholds matching the target false-positive rate ($2^{-20}$ to $2^{-40}$).',
+      'Configured RCT and APT cutoff thresholds matching the target false-positive rate (2^-20 to 2^-40).',
     ],
   },
   'drbg-demo': {
@@ -270,7 +262,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'Educational state visualizer in the browser; production DRBGs must execute inside a memory-protected cryptographic boundary.',
     productionToolRequirements: [
       'CAVP-validated NIST SP 800-90A Rev. 1 DRBG instantiated at 256-bit security strength (`AES-256 CTR_DRBG` or `SHA-512 Hash/HMAC_DRBG`).',
-      'Enforced reseed intervals ($\le 2^{48}$ requests) and prediction-resistance reseeding before high-value PQC Root CA key generation.',
+      'Enforced reseed intervals (at most 2^48 requests) and prediction-resistance reseeding before high-value PQC Root CA key generation.',
       'Zeroization of internal DRBG working state (`V`, `Key` / `C`) upon uninstantiation or error.',
     ],
   },
@@ -320,7 +312,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
   },
   'merkle-proof': {
     whatCheckEstablishes:
-      'Constructs a SHA-256 Merkle tree over a batch of certificates and generates/verifies compact logarithmic $O(\\log_2 N)$ inclusion proofs alongside a single PQC tree-head signature.',
+      'Constructs a SHA-256 Merkle tree over a batch of certificates and generates/verifies compact logarithmic O(log2 N) inclusion proofs alongside a single PQC tree-head signature.',
     sandboxLimitation:
       'In-browser tree builder over sample entries; it does not operate a distributed Transparency Service or TLS edge proof-stitching pipeline.',
     productionToolRequirements: [
@@ -369,7 +361,7 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
       'Browser simulation of transaction layout and signature sizes; it does not submit transactions to a live validator cluster.',
     productionToolRequirements: [
       'Smart-contract / program-derived account (PDA) abstraction allowing authority rotation from Ed25519 keys to post-quantum verification keys.',
-      'Transaction chunking or pre-staged verification state to accommodate $> 2.4$ KB PQC signatures across 1,232-byte packet limits.',
+      'Transaction chunking or pre-staged verification state to accommodate more than 2.4 KB PQC signatures across 1,232-byte packet limits.',
       'Institutional custody HSM support for both Ed25519 and FIPS 204/205 post-quantum signing.',
     ],
   },
@@ -419,262 +411,6 @@ const PLAYGROUND_SEEDS: Record<string, RawPlaygroundSeed> = {
   },
 }
 
-const PLAYGROUND_TAMPER_SPECS: Record<string, PlaygroundTamperVerificationSpec> = {
-  'cacp-kmip': {
-    artifactLabel: 'KMIP 3.0 TTLV Key-State Transition Tag (ML-KEM-768 Object)',
-    validVectorHex: '420079010000004842005c020000000400000002',
-    tamperedVectorHex: '420079010000004842005c020000000400000003',
-    expectedFailureBehavior:
-      'KMIP State Transition Refusal (OASIS KMIP 3.0 §4.18): Server rejects backwards transition from Deactivated (0x03) to Active (0x02) with ResultReason = Illegal Operation.',
-  },
-  'hsm-capacity': {
-    artifactLabel: 'PKCS#11 v3.2 Partition Object Allocation Quota Header',
-    validVectorHex: '000018300000096000040000',
-    tamperedVectorHex: '000018310000096000040000',
-    expectedFailureBehavior:
-      'Explicit HSM NVRAM Quota Rejection (PKCS#11 v3.2): C_CreateObject / C_GenerateKeyPair returns CKR_DEVICE_MEMORY (0x00000031) when PQC key blob exceeds partition free NVRAM.',
-  },
-  'hybrid-encrypt': {
-    artifactLabel: 'X25519 (32 B) + ML-KEM-768 Ciphertext (1,088 B) Combiner Input',
-    validVectorHex: '8a4e2c19f07b6d33e1a5590c44b82e719c03d4e8a1b2c3d4',
-    tamperedVectorHex: '8b4e2c19f07b6d33e1a5590c44b82e719c03d4e8a1b2c3d4',
-    expectedFailureBehavior:
-      'Implicit Rejection + AEAD Tag Failure (FIPS 203 §7.3 & SP 800-227): 1-bit flip c[0] ^= 0x01 causes ML-KEM.Decaps to output pseudorandom K_bar != K, diverging HKDF output and failing AES-256-GCM tag check.',
-  },
-  'envelope-encrypt': {
-    artifactLabel: 'ML-KEM-768 Wrapped DEK Ciphertext & AES-256-GCM Auth Tag (16 B)',
-    validVectorHex: 'd471a83e9f02bc541167e892a34f501c7b8d9e0f1a2b3c4d',
-    tamperedVectorHex: 'd571a83e9f02bc541167e892a34f501c7b8d9e0f1a2b3c4d',
-    expectedFailureBehavior:
-      'Envelope Unwrap Refusal (FIPS 203 §7.3 / NIST SP 800-38D): Implicit KEM rejection derives mismatched KEK so AES-256-GCM DEK unwrap fails authentication and zeroes output buffer.',
-  },
-  'cloud-kms-key-exchange': {
-    artifactLabel: 'BYOK Import Token Attestation & Hybrid ML-KEM Wrapping Blob',
-    validVectorHex: '308204a006092b608648016503040402a082048f1f2e3d4c',
-    tamperedVectorHex: '318204a006092b608648016503040402a082048f1f2e3d4c',
-    expectedFailureBehavior:
-      'Cloud KMS ImportKeyMaterial Rejection: Target HSM rejects corrupted ASN.1 / wrapping ciphertext with InvalidCiphertextException and refuses to install customer key material.',
-  },
-  'token-migration': {
-    artifactLabel: 'PKCS#11 v3.2 CKA_PARAMETER_SET Attribute (CKP_ML_DSA_65)',
-    validVectorHex: '0000061d00000004000000020000010801',
-    tamperedVectorHex: '0000061d00000004000000020000010800',
-    expectedFailureBehavior:
-      'PKCS#11 Template Attribute Rejection: Attempting to set CKA_SENSITIVE=FALSE (0x00) or mismatched CKA_PARAMETER_SET causes HSM to abort with CKR_TEMPLATE_INCONSISTENT (0x000000D1).',
-  },
-  'firmware-signing': {
-    artifactLabel: 'Signed Bootloader Image Digest + ML-DSA-87 Signature (4,627 B)',
-    validVectorHex: 'f39a12c844e071b5902d6e3f81a4b7c255d8e9012a3b4c5d',
-    tamperedVectorHex: 'f29a12c844e071b5902d6e3f81a4b7c255d8e9012a3b4c5d',
-    expectedFailureBehavior:
-      'Boot ROM Hard Halt (FIPS 204 §5.3): 1-bit flip in firmware payload or ML-DSA-87 signature causes c_tilde_prime != c_tilde; immutable Boot ROM halts execution before jumping to stage-1 bootloader.',
-  },
-  'slh-dsa': {
-    artifactLabel: 'FIPS 205 SLH-DSA-SHA2-128s Signature (7,856 B FORS + Hypertree)',
-    validVectorHex: '7c1e904a2b88d31f65a0c4e791b238d40f1e2d3c4b5a6978',
-    tamperedVectorHex: '7d1e904a2b88d31f65a0c4e791b238d40f1e2d3c4b5a6978',
-    expectedFailureBehavior:
-      'Explicit Verification Rejection (FIPS 205 §10.3): 1-bit flip in FORS authentication path cascades through SHA-256 hypertree nodes so reconstructed root != PK.root; slh_verify() returns false.',
-  },
-  'lms-hss': {
-    artifactLabel: 'NIST SP 800-208 LMS Leaf Index Counter q (Monotonic State)',
-    validVectorHex: '0000002a0000000591a4c8e27b3f106d44e8a9c12b3d4e5f',
-    tamperedVectorHex: '0000002b0000000591a4c8e27b3f106d44e8a9c12b3d4e5f',
-    expectedFailureBehavior:
-      'Merkle Root Mismatch & State Reuse Refusal (SP 800-208 §5): Mutating leaf index q (0x2a -> 0x2b) alters left/right Merkle path hashing so Tc != T[1]; HSM also blocks signing if NVRAM counter q is re-used.',
-  },
-  'hybrid-sigs': {
-    artifactLabel: 'RFC 10073 Composite ML-DSA-65 + ECDSA-P256 Signature Value',
-    validVectorHex: '30820d3404820ced9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d',
-    tamperedVectorHex: '30820d3404820ced9b8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d',
-    expectedFailureBehavior:
-      'Composite AND-Verification Refusal (RFC 10073): Corrupting 1 bit of the ML-DSA-65 component causes composite verify() to return false immediately even when the ECDSA-P256 component is intact.',
-  },
-  'kdf-derivation': {
-    artifactLabel: 'SP 800-227 Hybrid KDF Input Block (Z_ecdh || Z_mlkem || Context)',
-    validVectorHex: '5e81c309a47d2f66b019e83c45a7d1f288c9e0a1b2c3d4e5',
-    tamperedVectorHex: '5f81c309a47d2f66b019e83c45a7d1f288c9e0a1b2c3d4e5',
-    expectedFailureBehavior:
-      'Avalanche Key Divergence (SP 800-56C / SP 800-227): 1-bit mutation in shared secret or protocol context flips ~50% of derived HKDF output bits, causing immediate handshake MAC / AEAD failure.',
-  },
-  'tee-channel': {
-    artifactLabel: 'TEE Remote Attestation Quote MRTD + X25519MLKEM768 Binding Hash',
-    validVectorHex: 'a19f4408c2e731b6d5089a2c47e1f3b866d0c9a2e4f61829',
-    tamperedVectorHex: 'a09f4408c2e731b6d5089a2c47e1f3b866d0c9a2e4f61829',
-    expectedFailureBehavior:
-      'RA-TLS Channel-Binding & Measurement Rejection: Verifier detects mismatch between TLS session exporter hash / enclave MRTD and signed attestation quote reportData, terminating the connection.',
-  },
-  'tls-simulator': {
-    artifactLabel: 'TLS 1.3 ServerHello KeyShare (0x11EC X25519MLKEM768, 1,120 B)',
-    validVectorHex: '11ec04606b29a8f14c03e9d277b51a4c8e90f2d1a3b5c7d9',
-    tamperedVectorHex: '11ec04606a29a8f14c03e9d277b51a4c8e90f2d1a3b5c7d9',
-    expectedFailureBehavior:
-      'TLS 1.3 Finished VerifyData Alert (RFC 8446 §4.4.4 & FIPS 203 §7.3): 1-bit flip in ML-KEM key_share causes implicit rejection to derive a different Handshake Traffic Secret, failing decrypt_error (51).',
-  },
-  'vpn-sim': {
-    artifactLabel: 'IKEv2 RFC 9370 IKE_INTERMEDIATE ADDKE1 (ML-KEM-768) Payload',
-    validVectorHex: '2b00044c000000004f81c2e9a37b1d6055e8a4c291b3d5e7',
-    tamperedVectorHex: '2b00044c000000004e81c2e9a37b1d6055e8a4c291b3d5e7',
-    expectedFailureBehavior:
-      'IKEv2 IntAuth MAC Rejection (RFC 9370 §3.3): Tampering with the IKE_INTERMEDIATE ML-KEM payload alters both SK_d and the IntAuth transcript hash, causing IKE_AUTH to abort with AUTHENTICATION_FAILED.',
-  },
-  'pqc-ssh-sim': {
-    artifactLabel: 'SSHv2 SSH_MSG_KEX_ECDH_REPLY (mlkem768x25519-sha256)',
-    validVectorHex: '1f000004609c31a7e408b2d56f11c9e34a8b7d201e3f5a7b',
-    tamperedVectorHex: '1f000004609d31a7e408b2d56f11c9e34a8b7d201e3f5a7b',
-    expectedFailureBehavior:
-      'SSH Exchange Hash H Signature Refusal: 1-bit mutation in the hybrid KEX reply changes the SHA-256 exchange hash H so host-key signature verification fails and client disconnects.',
-  },
-  'suci-flow': {
-    artifactLabel: '3GPP TS 33.501 SUCI Hybrid ML-KEM-768 Concealed MSIN + MAC Tag',
-    validVectorHex: '0100f110000204407a92e1c48b30d5f612a4c8e09b1d3f5a',
-    tamperedVectorHex: '0100f110000204407b92e1c48b30d5f612a4c8e09b1d3f5a',
-    expectedFailureBehavior:
-      '5G UDM/SIDF Deconcealment Failure (TS 33.501): Implicit KEM rejection produces wrong K_enc / K_mac; 64-bit SUCI MAC check fails at SIDF and 5G registration is rejected without leaking SUPI.',
-  },
-  'mls-group-messaging': {
-    artifactLabel: 'RFC 9420 MLS Commit UpdatePath (X25519MLKEM768) + ParentHash',
-    validVectorHex: '000204603e89a1c75b20d4f891e3a6c20f4b8d1e2a3c4d5e',
-    tamperedVectorHex: '000204603f89a1c75b20d4f891e3a6c20f4b8d1e2a3c4d5e',
-    expectedFailureBehavior:
-      'MLS Epoch ConfirmationTag & ParentHash Refusal (RFC 9420 §12.4): Corrupting 1 bit of the TreeKEM ciphertext or parent_hash causes receiving members to reject the Commit and halt epoch advancement.',
-  },
-  'tpm-playground': {
-    artifactLabel: 'TPM2_Quote Attestation Structure (TPMS_ATTEST) + PCR Digest',
-    validVectorHex: 'ff54434780180022000b6e41a8c290f3d1e577b24a8c0e1f',
-    tamperedVectorHex: 'ff54434780180022000b6f41a8c290f3d1e577b24a8c0e1f',
-    expectedFailureBehavior:
-      'TPM2 PolicyPCR & Quote Verification Refusal: 1-bit difference in PCR composite digest invalidates the TPM quote signature and blocks TPM2_Unseal with TPM_RC_POLICY_FAIL (0x0000019D).',
-  },
-  'rng-demo': {
-    artifactLabel: 'SP 800-90B Raw Physical Noise Sample Window (RCT Health Check)',
-    validVectorHex: '94e17b2c08f3a65d41c9e072b83a5f1d62c4e8901a3b5d7f',
-    tamperedVectorHex: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-    expectedFailureBehavior:
-      'SP 800-90B §4.4.1 Repetition Count Test (RCT) Alarm: Stuck-at fault repeating identical sample values exceeds cutoff C = 1 + ceil(-log2(alpha)/H), latching the entropy source into hard error state.',
-  },
-  'qrng-demo': {
-    artifactLabel: 'SP 800-90C Hybrid QRNG + OS TRNG Conditioning Input Frame',
-    validVectorHex: '3b7e91c4a052d8f619e3b7c044a8d2f17c9e0b2d4f6a8c1e',
-    tamperedVectorHex: '000000000000000019e3b7c044a8d2f17c9e0b2d4f6a8c1e',
-    expectedFailureBehavior:
-      'Pre-Combiner Health-Test Isolation (SP 800-90C): Zeroed QRNG appliance stream triggers independent source APT/RCT failure alarm while HMAC/KMAC combiner preserves security via local OS TRNG.',
-  },
-  'entropy-test': {
-    artifactLabel: 'SP 800-90B Non-IID Min-Entropy Assessment Stream (APT Window)',
-    validVectorHex: 'c841f9207e3b6a15d094c2e83f71a5b92d4e6f801b3c5d7e',
-    tamperedVectorHex: 'c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8',
-    expectedFailureBehavior:
-      'Adaptive Proportion Test (APT) & Min-Entropy Collapse Refusal (SP 800-90B §4.4.2): Symbol 0xC8 frequency exceeds 512-sample window cutoff; min-entropy H_min drops below threshold and seeding is blocked.',
-  },
-  'drbg-demo': {
-    artifactLabel: 'SP 800-90A AES-256 CTR_DRBG Working State (Key, V, reseed_counter)',
-    validVectorHex: '00000000000000017f42a9c1e803b5d26a91c4e70b2d4f68',
-    tamperedVectorHex: '00010000000000017f42a9c1e803b5d26a91c4e70b2d4f68',
-    expectedFailureBehavior:
-      'SP 800-90A Reseed Interval Enforcement (§10.2.1): When reseed_counter exceeds 2^48 (0x0001000000000000), CTR_DRBG_Generate refuses to output bits and returns ERROR_FLAG requiring mandatory Reseed.',
-  },
-  'source-combining': {
-    artifactLabel: 'Multi-Source Entropy Combiner Authentication Tag (HMAC-SHA512)',
-    validVectorHex: 'e2904b7c18a3f56d90c1e4a73b82d5f06a1c3e5f7b9d0e2a',
-    tamperedVectorHex: 'e3904b7c18a3f56d90c1e4a73b82d5f06a1c3e5f7b9d0e2a',
-    expectedFailureBehavior:
-      'Vetted Conditioning Integrity Failure (FIPS 140-3 IG D.K): 1-bit tamper on external entropy transport frame invalidates the authenticated conditioning MAC and rejects the frame before DRBG reseeding.',
-  },
-  'pki-workshop': {
-    artifactLabel: 'X.509v3 TBSCertificate + ML-DSA-65 SignatureValue (3,309 B)',
-    validVectorHex: '30820ce5060960864801650304031203820cd2008a4f2c19',
-    tamperedVectorHex: '30820ce5060960864801650304031203820cd2008b4f2c19',
-    expectedFailureBehavior:
-      'X.509 Signature Verification Failure (RFC 9881 / FIPS 204 §5.3): 1-bit flip in ML-DSA-65 BIT STRING causes X509_verify() to return 0 with X509_V_ERR_CERT_SIGNATURE_FAILURE.',
-  },
-  'cert-capacity': {
-    artifactLabel: 'TLS 1.3 Certificate Record Length Header (3x ML-DSA-65 Chain)',
-    validVectorHex: '16030338a00b00389c000038990011203082111c30820430',
-    tamperedVectorHex: '16030378a00b00789c000078990011203082111c30820430',
-    expectedFailureBehavior:
-      'TLS Record Overflow / Max-Cert-Chain Alert (RFC 8446 §4.4.2): Exceeding configured max_certificate_list size or corrupting the 24-bit length header triggers decode_error (50) / record_overflow (22).',
-  },
-  'hybrid-certs': {
-    artifactLabel: 'RFC 10073 Composite ML-DSA-65-ECDSA-P256 SubjectPublicKeyInfo',
-    validVectorHex: '308207f2300b06092b06010505070626038207df00308207',
-    tamperedVectorHex: '308207f2300b06092b06010505070626038207df00318207',
-    expectedFailureBehavior:
-      'Composite Certificate ASN.1 & Dual-Verify Rejection (RFC 10073): Malformed SEQUENCE tag or 1-bit corruption in either component signature causes path validation to fail closed.',
-  },
-  'merkle-proof': {
-    artifactLabel: 'RFC 9162 Domain-Separated Merkle Inclusion Proof Node (0x01 || L || R)',
-    validVectorHex: '015f8c2a91e407b3d618a0c4e92b7f3184d6e0a2c4f6183a',
-    tamperedVectorHex: '005f8c2a91e407b3d618a0c4e92b7f3184d6e0a2c4f6183a',
-    expectedFailureBehavior:
-      'Second-Preimage Domain-Prefix Rejection (RFC 9162 §2.1): Replacing internal node prefix 0x01 with leaf prefix 0x00 (or flipping 1 sibling bit) produces a root mismatch against the signed TreeHead.',
-  },
-  'digital-id': {
-    artifactLabel: 'ISO/IEC 18013-5 mDL COSE_Sign1 Mobile Security Object (ML-DSA-65)',
-    validVectorHex: 'd28443a101390105a058409b2e4c71a803f5d612e9a4c08b',
-    tamperedVectorHex: 'd28443a101390105a058409a2e4c71a803f5d612e9a4c08b',
-    expectedFailureBehavior:
-      'mDL Reader COSE_Sign1 & ValueDigest Refusal (ISO/IEC 18013-5 §9): 1-bit flip in MSO digest or ML-DSA signature causes reader verification to reject the credential presentation.',
-  },
-  'bitcoin-flow': {
-    artifactLabel: 'Taproot / Post-Quantum Witness Script Commitment (32-Byte Hash)',
-    validVectorHex: '51209e41a8c27b03f6d518e2a9c470b1d3f58a2c4e60193b',
-    tamperedVectorHex: '51209f41a8c27b03f6d518e2a9c470b1d3f58a2c4e60193b',
-    expectedFailureBehavior:
-      'Consensus Witness Commitment Rejection: 1-bit flip in the witness public-key / script root commitment invalidates script-path / signature verification and causes node mempool rejection.',
-  },
-  'hd-wallet': {
-    artifactLabel: 'Hardened PQC Master Seed Derivation Path (m/44\'/9999\'/0\' + HMAC-SHA512)',
-    validVectorHex: '8000002c8000270f800000004a91c8e27b30f5d612a4c8e9',
-    tamperedVectorHex: '0000002c8000270f800000004a91c8e27b30f5d612a4c8e9',
-    expectedFailureBehavior:
-      'Non-Hardened Lattice Derivation Refusal: Clearing hardened bit 0x80000000 is rejected by PQC HD wallet policy because FIPS 203/204 seeds (d, z, xi) cannot safely perform unhardened public-key child derivation.',
-  },
-  'solana-flow': {
-    artifactLabel: 'Solana PDA Lattice Vault Authority Signature (ML-DSA-44, 2,420 B)',
-    validVectorHex: '01009b4e21c87a30f6d512e8a4c90b1d3f5a7c9e0b2d4f68',
-    tamperedVectorHex: '01009a4e21c87a30f6d512e8a4c90b1d3f5a7c9e0b2d4f68',
-    expectedFailureBehavior:
-      'On-Chain Program Signature Verification Revert: 1-bit flip in the pre-staged ML-DSA-44 signature causes the vault verification instruction to fail with SignatureVerificationFailed (custom program error).',
-  },
-  'openssl-studio': {
-    artifactLabel: 'OpenSSL 3.6 EVP_PKEY ML-KEM-768 Ciphertext / ML-DSA-65 Signature Blob',
-    validVectorHex: '4b82e91c07a3f5d618e2a4c970b1d3f58a2c4e60193b5d7f',
-    tamperedVectorHex: '4a82e91c07a3f5d618e2a4c970b1d3f58a2c4e60193b5d7f',
-    expectedFailureBehavior:
-      'OpenSSL 3.6 Provider Refusal: `openssl pkeyutl -verify` outputs "Signature Verification Failure" (exit code 1) on 1-bit signature tamper, and `-decap` performs FIPS 203 implicit rejection.',
-  },
-  'api-security-jwt': {
-    artifactLabel: 'JWS Compact Serialization Signature Segment (ML-DSA-65, 3,309 B)',
-    validVectorHex: '4d4c2d4453412d36352e7369672e8a4f2c19e07b6d33a1c5',
-    tamperedVectorHex: '4d4c2d4453412d36352e7369672e8b4f2c19e07b6d33a1c5',
-    expectedFailureBehavior:
-      'JWS Signature & Algorithm-Confusion Rejection (RFC 7515 / FIPS 204): 1-bit flip in signature segment or `alg:none` header causes verifier to return HTTP 401 Unauthorized (ERR_JWS_SIGNATURE_INVALID).',
-  },
-  'pki-enrollment': {
-    artifactLabel: 'CMPv3 (RFC 9810) CertConfirmContent certHash (SHA-256 over ML-KEM Cert)',
-    validVectorHex: '302904207e91a4c82b03f6d518e2a9c470b1d3f58a2c4e60',
-    tamperedVectorHex: '302904207f91a4c82b03f6d518e2a9c470b1d3f58a2c4e60',
-    expectedFailureBehavior:
-      'CMPv3 POP Confirmation Rejection (RFC 9810 §5.3.18): 1-bit mismatch in certConf certHash proves client failed to decapsulate encrCert; CA rejects with PKIFailureInfo = badCertId / badPOP.',
-  },
-  'email-signing': {
-    artifactLabel: 'CMS (RFC 9629 / RFC 9936) KEMRecipientInfo ML-KEM-768 Encapsulated Key',
-    validVectorHex: '30820472020100301806092b608648016503040402048204',
-    tamperedVectorHex: '30820472020100301806092b608648016503040402048304',
-    expectedFailureBehavior:
-      'CMS AuthEnvelopedData Unwrap & Signature Refusal (RFC 9629): Tampering with the KEM ciphertext or signed MIME body causes `openssl cms -decrypt / -verify` to fail authentication and discard output.',
-  },
-}
-
-const DEFAULT_SANDBOX_TAMPER_SPEC: PlaygroundTamperVerificationSpec = {
-  artifactLabel: 'Containerized PQC Handshake & Signature Transcript Vector',
-  validVectorHex: '11ec04608a4f2c19e07b6d33a1c5590c44b82e719c03d4e8',
-  tamperedVectorHex: '11ec04608b4f2c19e07b6d33a1c5590c44b82e719c03d4e8',
-  expectedFailureBehavior:
-    'Deterministic Tamper Refusal (FIPS 203 §7.3 / FIPS 204 §5.3): 1-bit mutation (`^ 0x01`) causes implicit KEM secret divergence or explicit signature verification failure.',
-}
-
 export const PLAYGROUND_CAPABILITY_CHECKLISTS: Record<string, PlaygroundCapabilitySpec> =
   Object.fromEntries(
     Object.entries(PLAYGROUND_SEEDS).map(([toolId, seed]) => [
@@ -682,8 +418,6 @@ export const PLAYGROUND_CAPABILITY_CHECKLISTS: Record<string, PlaygroundCapabili
       {
         toolId,
         ...seed,
-        // eslint-disable-next-line security/detect-object-injection
-        tamperVerification: PLAYGROUND_TAMPER_SPECS[toolId] ?? DEFAULT_SANDBOX_TAMPER_SPEC,
       },
     ])
   )
@@ -707,6 +441,5 @@ export function getPlaygroundCapabilityChecklist(toolId: string): PlaygroundCapa
       'Automated positive Known-Answer Tests (KATs) and negative tamper/downgrade rejection tests in your staging CI/CD pipeline.',
       'Centralized CBOM and telemetry verification confirming post-quantum algorithm negotiation across production endpoints.',
     ],
-    tamperVerification: DEFAULT_SANDBOX_TAMPER_SPEC,
   }
 }

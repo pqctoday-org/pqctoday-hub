@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
-import { ShieldCheck, ChevronDown, CheckCircle2, AlertTriangle, FlaskConical } from 'lucide-react'
+import React from 'react'
+import { ShieldCheck, ChevronDown } from 'lucide-react'
 import { getModuleCapabilityChecklist } from '@/data/moduleCapabilityChecklists'
 
 export interface ProductionCapabilityChecklistProps {
@@ -13,11 +13,7 @@ export const ProductionCapabilityChecklist: React.FC<ProductionCapabilityCheckli
   defaultOpen = false,
 }) => {
   const spec = getModuleCapabilityChecklist(moduleId)
-  const [verificationMode, setVerificationMode] = useState<'positive' | 'adversarial' | null>(null)
-
   if (!spec) return null
-
-  const { adversarialChallenge } = spec
 
   return (
     <details
@@ -66,104 +62,6 @@ export const ProductionCapabilityChecklist: React.FC<ProductionCapabilityCheckli
             </p>
             <p className="mt-1 text-xs leading-relaxed">{spec.evidenceRequired}</p>
           </div>
-        </div>
-
-        <div
-          data-testid="module-adversarial-lab"
-          className="rounded-lg border border-primary/30 bg-muted/30 p-3 space-y-2.5"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <FlaskConical className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-              <span className="text-xs sm:text-sm font-semibold text-foreground">
-                Break &amp; Verify — Failure/Refusal Lab: {adversarialChallenge.scenarioTitle}
-              </span>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                data-testid="module-verify-positive-btn"
-                onClick={() => setVerificationMode('positive')}
-                className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-                  verificationMode === 'positive'
-                    ? 'border-emerald-500/60 bg-emerald-500/15 text-foreground'
-                    : 'border-border bg-background hover:bg-muted text-foreground'
-                }`}
-              >
-                Run Valid Sample Baseline
-              </button>
-              <button
-                type="button"
-                data-testid="module-verify-adversarial-btn"
-                onClick={() => setVerificationMode('adversarial')}
-                className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-                  verificationMode === 'adversarial'
-                    ? 'border-amber-500/60 bg-amber-500/15 text-foreground'
-                    : 'border-border bg-background hover:bg-muted text-foreground'
-                }`}
-              >
-                Inject Fault / Policy Violation
-              </button>
-            </div>
-          </div>
-
-          {verificationMode === 'positive' && (
-            <div
-              data-testid="module-verify-receipt"
-              className="rounded-md border border-emerald-500/40 bg-emerald-500/10 p-2.5 text-xs space-y-1.5"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
-                  STATUS: PASS — {adversarialChallenge.positiveCase.label}
-                </span>
-                <code className="rounded bg-background/80 px-1.5 py-0.5 font-mono text-[11px] text-foreground">
-                  {adversarialChallenge.positiveCase.telemetryCode}
-                </code>
-              </div>
-              <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">Sample Input:</span>{' '}
-                {adversarialChallenge.positiveCase.inputSummary}
-              </p>
-              <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">Deterministic Outcome:</span>{' '}
-                {adversarialChallenge.positiveCase.expectedResult}
-              </p>
-              <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">Production Decision Lesson:</span>{' '}
-                {adversarialChallenge.adversarialCase.productionLesson}
-              </p>
-            </div>
-          )}
-
-          {verificationMode === 'adversarial' && (
-            <div
-              data-testid="module-verify-receipt"
-              className="rounded-md border border-amber-500/40 bg-amber-500/10 p-2.5 text-xs space-y-1.5"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
-                  <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
-                  STATUS: REFUSED / TAMPER DETECTED — {adversarialChallenge.adversarialCase.label}
-                </span>
-                <code className="rounded bg-background/80 px-1.5 py-0.5 font-mono text-[11px] text-foreground">
-                  {adversarialChallenge.adversarialCase.telemetryCode}
-                </code>
-              </div>
-              <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">Fault / Violation Injected:</span>{' '}
-                {adversarialChallenge.adversarialCase.faultInjected}
-              </p>
-              <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">Expected Tool Refusal:</span>{' '}
-                {adversarialChallenge.adversarialCase.expectedRefusal}
-              </p>
-              <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">Production Decision Lesson:</span>{' '}
-                {adversarialChallenge.adversarialCase.productionLesson}
-              </p>
-            </div>
-          )}
         </div>
 
         <p className="text-xs italic text-muted-foreground">{spec.educationalBoundary}</p>
