@@ -116,7 +116,7 @@ Release **4.210.0** · source-data snapshot through **2026-11-15**. These figure
 - **Core references:** 130 algorithm records, 198 timeline events and 1,498 active Library records.
 - **Educational catalogues:** 901 active products, 189 active compliance references, 75 active threat records and 361 active community profiles.
 - **Main glossary:** 648 terms.
-- **Assistant corpus:** 19,130 chunks across 46 source collections; 99.97% carry a Hub deep link.
+- **Assistant corpus:** 19,140 chunks across 46 source collections; 99.97% carry a Hub deep link.
 
 Edit the source registries, not this table, then run `npm run gen:readme-facts`.
 <!-- END GENERATED README FACTS -->
