@@ -15,9 +15,20 @@ import { libraryEnrichments } from '@/data/libraryEnrichmentData'
  * Community page's own matcher — accent- and honorific-tolerant, and it
  * forwards names of merged duplicate profiles to the kept one.
  */
-function leaderForContributor(raw: string): Leader | undefined {
+function leaderForContributor(raw: string): Leader[] {
   const cleaned = raw.replace(/\s*\(.*?\)/g, '').trim()
-  return cleaned ? findLeaderByParam(leadersData, cleaned, deprecatedLeaderSuccessors) : undefined
+  if (!cleaned) return []
+  const whole = findLeaderByParam(leadersData, cleaned, deprecatedLeaderSuccessors)
+  if (whole) return [whole]
+  // One list item can name several people, or a person and their title
+  // ("Tushin Mallick, Ashish Kundu, Ramana Kompella"; "Ray Harishankar, IBM
+  // Fellow"), so try each comma part as a name too.
+  return cleaned
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => findLeaderByParam(leadersData, part, deprecatedLeaderSuccessors))
+    .filter((leader): leader is Leader => Boolean(leader))
 }
 
 export function relatedLeadersFor(item: LibraryItem): Leader[] {
@@ -36,10 +47,11 @@ export function relatedLeadersFor(item: LibraryItem): Leader[] {
   const enrichment = libraryEnrichments[item.referenceId]
   if (enrichment) {
     for (const contrib of enrichment.leadersContributions) {
-      const leader = leaderForContributor(contrib)
-      if (leader && !seen.has(leader.id)) {
-        related.push(leader)
-        seen.add(leader.id)
+      for (const leader of leaderForContributor(contrib)) {
+        if (!seen.has(leader.id)) {
+          related.push(leader)
+          seen.add(leader.id)
+        }
       }
     }
   }
