@@ -57,10 +57,14 @@ describe('patentsData — lifecycle (patents_09172026.csv prunes the out-of-scop
     // NIST treats as post-quantum adequate), it is simply not a NIST PQC
     // algorithm. They load, they carry a quantumSafeBasis saying why, and
     // the "All crypto" scope shows them.
+    // 2026-11-15 (4.209): seven of those 18 now list an algorithm their own
+    // document names (CKKS, BFV, FHE, LWE/RLWE, eAES) and so are in scope,
+    // and two reviewed corrections set a patent's agility mode away from
+    // hybrid (20260088970, 12537684), which takes it out: 18 - 7 + 2 = 13.
     expect(patentsData.length).toBe(732)
     const inScope = patentsData.filter(isPqcPatent)
-    expect(inScope.length).toBe(714)
-    expect(patentsData.length - inScope.length).toBe(18)
+    expect(inScope.length).toBe(719)
+    expect(patentsData.length - inScope.length).toBe(13)
   })
 })
 
@@ -74,7 +78,15 @@ describe('patentsData — quantum-safe basis (2026-09-22)', () => {
     const outside = patentsData.filter((p) => !isPqcPatent(p))
     expect(outside.length).toBeGreaterThan(0)
     const explained = outside.filter((p) => p.quantumSafeBasis !== '')
-    expect(explained.length).toBe(outside.length - 1) // Code-sign white listing claims none
+    // Code-sign white listing claims none; the two patents a reviewed agility
+    // correction moved out of scope (2026-11-15) name no basis either.
+    expect(
+      outside
+        .filter((p) => p.quantumSafeBasis === '')
+        .map((p) => p.patentNumber)
+        .sort()
+    ).toEqual(['US11431510', 'US12537684', 'US20260088970'])
+    expect(explained.length).toBe(outside.length - 3)
     for (const p of explained) {
       expect(['symmetric_strength', 'lattice_fhe', 'qkd']).toContain(p.quantumSafeBasis)
     }
