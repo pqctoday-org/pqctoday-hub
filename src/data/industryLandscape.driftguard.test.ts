@@ -26,7 +26,7 @@ import { ALGORITHM_FAMILIES, REGISTRY_LAST_UPDATED } from './cyclonedxCryptoRegi
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
 import { PROTOCOL_MATRIX, DRAFT_STAGE_LEVEL } from './pqcProtocolMatrix'
 import { draftThreatIndustries, threatsData } from './threatsData'
-import { libraryData } from './libraryData'
+import { citableLibraryReferenceIds, libraryData, resolveCitedLibraryItem } from './libraryData'
 import { softwareData } from './migrateData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
@@ -285,12 +285,14 @@ describe('industry-landscape driftguards', () => {
     // state, and the value is hand-set only (fuzzy title matching resolved
     // "IEC 62351-3/-5/-9" to IEC 62443 and "PCI DSS v4.0.1" to the PCI-DSS
     // quick-reference guide, i.e. a DIFFERENT standard).
-    const active = new Set(libraryData.map((d) => d.referenceId))
+    // A citation may name an active row, or a retired row whose superseded_by chain ends at
+    // an active row (libraryCitation.ts). A broken chain still fails here.
+    const citable = citableLibraryReferenceIds()
     for (const uc of useCases) {
       if (!uc.sourceLibraryRef) continue
       expect(
-        active,
-        `${uc.useCaseId}: source_library_ref "${uc.sourceLibraryRef}" is not an active library row`
+        citable,
+        `${uc.useCaseId}: source_library_ref "${uc.sourceLibraryRef}" is not a citable library row`
       ).toContain(uc.sourceLibraryRef)
     }
   })
@@ -489,7 +491,10 @@ describe('industry-landscape driftguards', () => {
     const titleByRef = new Map(libraryData.map((d) => [d.referenceId, d.documentTitle]))
     const escape = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     for (const std of standards) {
-      const title = titleByRef.get(std.libraryRef) ?? ''
+      const title =
+        titleByRef.get(std.libraryRef) ??
+        resolveCitedLibraryItem(std.libraryRef)?.documentTitle ??
+        ''
       for (const [needle, family] of Object.entries(TITLE_ALIASES)) {
         const re = new RegExp(`(?<![A-Za-z0-9])${escape(needle)}(?![A-Za-z0-9])`)
         if (!re.test(title)) continue
@@ -502,7 +507,8 @@ describe('industry-landscape driftguards', () => {
   })
 
   it('every standards row has a resolvable library_ref (hard FK)', () => {
-    const refs = new Set(libraryData.map((d) => d.referenceId))
+    // OA-1114-38: a retired id stands when its superseded_by chain reaches an active row.
+    const refs = citableLibraryReferenceIds()
     for (const s of standards) {
       expect(s.libraryRef, `${s.standardId}: empty library_ref`).not.toBe('')
       expect(refs, `${s.standardId}: library_ref "${s.libraryRef}" not in Library`).toContain(
@@ -650,12 +656,13 @@ describe('industry-landscape driftguards', () => {
     // to prove a row's mechanism claims, so a ref pointing at a missing or
     // deprecated document proves nothing. Empty is legitimate and reported
     // separately (see the coverage test below), never failed here.
-    const active = new Set(libraryData.map((d) => d.referenceId))
+    // Same rule as source_library_ref above.
+    const citable = citableLibraryReferenceIds()
     for (const uc of useCases) {
       for (const ref of uc.mechanismRefs) {
         expect(
-          active,
-          `${uc.useCaseId}: mechanism_ref "${ref}" is not an active library row`
+          citable,
+          `${uc.useCaseId}: mechanism_ref "${ref}" is not a citable library row`
         ).toContain(ref)
       }
     }
@@ -755,7 +762,7 @@ describe('industry-landscape driftguards', () => {
     // Same grounding discipline as mechanism_refs. A regulatory-requirement
     // claim with no citation is unfalsifiable by a reader, which is precisely
     // the defect class the 2026-08-13 audit found 12 instances of.
-    const known = new Set(libraryData.map((r) => r.referenceId))
+    const known = citableLibraryReferenceIds()
     for (const uc of useCases) {
       const asserts = [
         uc.fipsCertification,
@@ -823,7 +830,7 @@ describe('industry-landscape driftguards', () => {
       ).toBeGreaterThan(0)
       for (const ref of uc.certificationFutureRefs) {
         expect(
-          libraryData.map((r) => r.referenceId),
+          [...citableLibraryReferenceIds()],
           `${uc.useCaseId}: certification_future_ref "${ref}" is not a library row`
         ).toContain(ref)
       }
@@ -906,7 +913,9 @@ describe('industry-landscape driftguards', () => {
         EVIDENCE_TYPES as readonly string[],
         `standard "${s.standardId}" has unknown evidence_type "${s.evidenceType}"`
       ).toContain(s.evidenceType)
-      const docType = docTypeOf.get(s.libraryRef) ?? ''
+      // A retired library_ref is judged by the active row its chain lands on (OA-1114-38).
+      const docType =
+        docTypeOf.get(s.libraryRef) ?? resolveCitedLibraryItem(s.libraryRef)?.documentType ?? ''
       if (s.evidenceType === 'standard') {
         // Reverse direction. NOTE the library's `Reference` type is NOT listed
         // in NOT_A_SPEC: it holds FIPS 203/204/205, SP 800-208 and the TCG TPM

@@ -51,10 +51,12 @@ import fs from 'fs'
 import path from 'path'
 import Papa from 'papaparse'
 import { DATA_FILENAMES } from './generated/dataFilenames.generated'
+import { citationIndexFromRows, resolveCitation } from './libraryCitation'
 
 interface Row {
   reference_id?: string
   status?: string
+  superseded_by?: string
 }
 
 const MODULES_DIR = path.resolve(__dirname, '../components/PKILearning/modules')
@@ -328,18 +330,25 @@ describe('learn module citation declarations', () => {
     ).toEqual(PENDING_ORDERING_REVIEW)
   })
 
-  it('no module declares a library row that has been deprecated', () => {
+  it('no module declares a retired library row whose successor chain does not reach an active row', () => {
     // Free to check once the CSV is open, and it found two on the first run:
     // Entropy and ResearchQuantumImpact both declare `NIST SP 800-90A`, which was
     // deprecated in favour of the active `NIST-SP-800-90A-R1`. A module pointing
     // the accuracy check at a retired row is worse than pointing it nowhere —
     // the check runs, reads a superseded document, and reports success.
+    //
+    // A retired row whose superseded_by chain ends at an active row is accepted — the Hub renders its successor. A broken chain,
+    // a cycle, a chain ending at a retired or draft row, or a blank successor still fails.
     const csv = fs.readFileSync(libraryCsvPath(), 'utf8')
     const { data } = Papa.parse<Row>(csv, { header: true, skipEmptyLines: true })
-    const deprecated = new Set(
+    const index = citationIndexFromRows(
       data
-        .filter((r) => r.reference_id && (r.status ?? '').trim().toLowerCase() === 'deprecated')
-        .map((r) => r.reference_id as string)
+        .filter((r) => r.reference_id)
+        .map((r) => ({
+          referenceId: r.reference_id as string,
+          status: r.status ?? 'active',
+          supersededBy: r.superseded_by ?? '',
+        }))
     )
     const offenders: string[] = []
     for (const dir of fs.readdirSync(MODULES_DIR)) {
@@ -347,13 +356,18 @@ describe('learn module citation declarations', () => {
       if (!fs.existsSync(contentPath)) continue
       const src = fs.readFileSync(contentPath, 'utf8')
       for (const id of declaredIds(src)) {
-        if (deprecated.has(id)) offenders.push(`${dir}: ${id}`)
+        const row = index.get(id)
+        const retired = row
+          ? ['deprecated', 'obsolete'].includes((row.status || '').toLowerCase())
+          : false
+        const verdict = resolveCitation(id, index)
+        if (retired && !verdict.ok) offenders.push(`${dir}: ${id} (${verdict.reason})`)
       }
     }
     expect(
       offenders,
-      `these modules declare deprecated library rows; repoint each at the active\n` +
-        `successor:\n${offenders.map((o) => `  ${o}`).join('\n')}`
+      `these modules declare retired library rows that do not resolve to an active successor:\n` +
+        offenders.map((o) => `  ${o}`).join('\n')
     ).toEqual([])
   })
 
