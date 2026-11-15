@@ -45,6 +45,7 @@ import { describe, it, expect } from 'vitest'
 import { readdirSync, readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import Papa from 'papaparse'
+import { citationIndexFromRows, resolveCitation } from './libraryCitation'
 
 const MODULES = join(process.cwd(), 'src/components/PKILearning/modules')
 /** Status text meaning "do not cite this as current". Substring, case-insensitive. */
@@ -54,6 +55,7 @@ interface Row {
   reference_id: string
   document_status: string
   status: string
+  superseded_by?: string
 }
 
 /** Newest library_MMDDYYYY[_rN].csv by DATE then REVISION — never lexical order.
@@ -208,6 +210,17 @@ describe('modules that declare a superseded standard must say so', () => {
     expect(rows.length).toBeGreaterThan(100) // guard the guard: an empty CSV passes vacuously
 
     const staleIds = new Map<string, string>()
+    // A RETIRED row is acceptable when its superseded_by chain ends at an active row (the Hub
+    // renders that successor); only a retired row whose chain does not reach an
+    // active row is stale here. The SUPERSEDED TEXT branch below (an ACTIVE row whose
+    // document_status says obsoleted/expired/withdrawn/superseded) is unchanged.
+    const citation = citationIndexFromRows(
+      rows.map((r) => ({
+        referenceId: r.reference_id ?? '',
+        status: r.status ?? 'active',
+        supersededBy: r.superseded_by ?? '',
+      }))
+    )
     for (const r of rows) {
       const id = (r.reference_id ?? '').trim()
       const st = (r.document_status ?? '').trim()
@@ -219,8 +232,10 @@ describe('modules that declare a superseded standard must say so', () => {
       // Draft", so it slipped through while secure-boot-pqc linked a reader straight to
       // a superseded draft of PKCS#11 v3.2.
       const rowStatus = (r.status ?? 'active').trim().toLowerCase()
-      if (rowStatus === 'deprecated') staleIds.set(id, `row status: deprecated (${st})`)
-      else if (STALE.some((re) => re.test(st))) staleIds.set(id, st)
+      if (rowStatus === 'deprecated') {
+        const verdict = resolveCitation(id, citation)
+        if (!verdict.ok) staleIds.set(id, `row status: deprecated (${st}); ${verdict.reason}`)
+      } else if (STALE.some((re) => re.test(st))) staleIds.set(id, st)
     }
     expect(staleIds.size).toBeGreaterThan(0) // and guard that the corpus HAS stale rows
 
