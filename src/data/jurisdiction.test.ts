@@ -9,7 +9,7 @@ describe('jurisdiction', () => {
   })
 
   it('does not call published guidance a requirement', () => {
-    for (const c of ['DE', 'FR', 'EU']) {
+    for (const c of ['DE', 'FR']) {
       const rule = JURISDICTION_RULES[c]
       expect(rule.hybrid, `${c} hybrid stance`).toBe('required')
       expect(rule.force, `${c} instrument force`).toBe('guidance')
@@ -17,6 +17,10 @@ describe('jurisdiction', () => {
       expect(verdict.reason, `${c} reason`).toContain('expects hybrid in its published guidance')
       expect(verdict.reason, `${c} reason`).not.toMatch(/requires hybrid|non-compliant/)
     }
+    // The EU roadmap only recommends hybrid (owner decision 2026-11-14).
+    const eu = checkChoice('EU', 'pure')
+    expect(eu.reason).toContain('recommends hybrid where feasible')
+    expect(eu.reason).not.toMatch(/requires hybrid|non-compliant/)
   })
 
   it('claims neither a requirement nor published guidance where the instrument force is not recorded', () => {
