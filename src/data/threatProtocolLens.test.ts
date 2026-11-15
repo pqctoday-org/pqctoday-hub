@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest'
 import {
   LENS_PROTOCOLS,
   lensProtocolsFor,
+  protocolBasisFor,
   protocolsForThreat,
   threatTouchesProtocol,
 } from './threatProtocolLens'
@@ -86,5 +87,25 @@ describe('threat protocol lens', () => {
     }
     expect(stated).toBeGreaterThan(0)
     expect(inferred).toBeGreaterThan(0)
+  })
+
+  it('reads OpenSSH as a stated SSH record (CROSS-011)', () => {
+    expect(protocolBasisFor(threat({ description: 'OpenSSH 9.9 hybrid default' }), 'SSH')).toBe(
+      'stated'
+    )
+    const cross011 = threatsData.find((t) => t.threatId === 'CROSS-011')
+    if (cross011) expect(protocolBasisFor(cross011, 'SSH')).toBe('stated')
+  })
+
+  it('never infers Vehicle & avionics from ECDSA alone (Bitcoin, DNSSEC, RPKI)', () => {
+    expect(
+      protocolBasisFor(threat({ cryptoAtRisk: 'ECDSA on secp256k1' }), 'Vehicle & avionics')
+    ).toBeNull()
+    expect(
+      protocolBasisFor(
+        threat({ cryptoAtRisk: 'IEEE 1609.2 V2X certificates' }),
+        'Vehicle & avionics'
+      )
+    ).toBe('stated')
   })
 })

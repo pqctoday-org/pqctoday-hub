@@ -19,6 +19,7 @@ describe('isResourceDeepLink', () => {
     ['/timeline', '?country=France'],
     ['/migrate', '?productIds=softhsm2'],
     ['/leaders', '?leader=Stavros%20Kousidis'],
+    ['/navigate', '?node=std-fips-203'],
     ['/compliance', '?framework=CNSA-2'],
     ['/compliance', '?cert=5528'],
     ['/compliance', '?tab=cswp39&evref=CMMC-2.0-MODEL'],
@@ -127,6 +128,7 @@ describe('every grammar key is classified (resource vs view/filter)', () => {
       'gdir',
     ],
     '/migrate': ['tab', 'rq', 'facet'],
+    '/navigate': ['type', 'sub'],
     '/leaders': [
       'cat',
       'region',

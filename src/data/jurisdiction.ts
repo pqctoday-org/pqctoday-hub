@@ -14,7 +14,10 @@ export type EndState = 'hybrid' | 'pure'
 export interface JurisdictionRule {
   authority: string
   hybrid: HybridStance
-  endState: EndState
+  /** The authority's stated end state. Absent when its guidance states none
+   *  (e.g. the EU roadmap recommends hybrid but names no end state) — never
+   *  fill it in with a guess. */
+  endState?: EndState
   /** Plain-language summary for the panel. */
   note: string
   /** Whether the governing instrument is a requirement or guidance (empty = not recorded).

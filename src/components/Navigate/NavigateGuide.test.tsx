@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render as rtlRender, screen, within } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { MemoryRouter } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
+import { PERSONA_IDS } from '@/data/personaIds'
 import { NavigateGuide } from './NavigateGuide'
+
+// The guide carries the page's related-page links, so it renders inside a router.
+const render = (ui: ReactElement) => rtlRender(<MemoryRouter>{ui}</MemoryRouter>)
 
 describe('NavigateGuide', () => {
   it('explains the graph encoding without turning connectivity into importance', () => {
@@ -64,5 +70,27 @@ describe('NavigateGuide', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Close guide' }))
 
     expect(onDismiss).toHaveBeenCalledOnce()
+  })
+
+  it.each(PERSONA_IDS)('gives the %s role its own start point', (persona) => {
+    render(
+      <NavigateGuide persona={persona} onTour={() => {}} onList={() => {}} onDismiss={() => {}} />
+    )
+    expect(screen.getByTestId('navigate-guide-role-start'), persona).toBeVisible()
+  })
+
+  it('gives the GRC role a start point that does not read a link as a compliance finding', () => {
+    render(<NavigateGuide persona="grc" onTour={() => {}} onList={() => {}} onDismiss={() => {}} />)
+    expect(screen.getByText(/Start on a Compliance framework/)).toBeVisible()
+    expect(screen.getByText(/not a compliance finding/)).toBeVisible()
+  })
+
+  it("links the page's authored next step and related pages, which the full-bleed canvas has no footer for", () => {
+    render(
+      <NavigateGuide persona={null} onTour={() => {}} onList={() => {}} onDismiss={() => {}} />
+    )
+    const nav = within(screen.getByRole('navigation', { name: 'Related pages' }))
+    const hrefs = nav.getAllByRole('link').map((a) => a.getAttribute('href'))
+    expect(hrefs).toEqual(expect.arrayContaining(['/explore', '/learn']))
   })
 })

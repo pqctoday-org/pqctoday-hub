@@ -58,10 +58,17 @@ describe('MobileCommunityView', () => {
     expect(screen.getByText(`${CURATED.length} hand-curated profiles`)).toBeInTheDocument()
   })
 
-  it('states directory limits and preserves the written-consent rule', () => {
+  it('states directory limits and how profiles are compiled, with a working removal route', () => {
     renderView()
     expect(screen.getByText(/Inclusion is not an endorsement or ranking/i)).toBeInTheDocument()
-    expect(screen.getByText(/only with written consent/i)).toBeInTheDocument()
+    // Owner decision 2026-11-14 (Leaders A-1): 109 profiles are auto-imported, so
+    // "listed only with written consent" was not true.
+    expect(screen.queryByText(/only with written consent/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/Profiles are compiled from cited public sources/i)).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: 'ask for a correction or removal' })
+    expect(link.getAttribute('href')).toMatch(
+      /^https:\/\/github\.com\/pqctoday-org\/pqctoday-hub\/discussions\/new\?category=i-consent-to-be-added-as-a-pqc-leader/
+    )
   })
 
   it('renders every real LEADER_CATEGORIES value as a filter chip', () => {
@@ -101,21 +108,47 @@ describe('MobileCommunityView', () => {
   // 2026-08-24 audit R4.2: the card showed Cite: chips, but tapping through
   // to the detail sheet dropped them entirely — a claim with "a name and a
   // reference behind it" (the screen's own stated point) had no reachable
-  // reference once you opened the profile. keyResourceRefs[i] pairs
-  // positionally with keyResourceUrl[i] (leadersData.ts's documented
-  // convention); this only asserts on a leader where both arrays are
-  // actually present at that index, since the pairing isn't type-guaranteed.
-  it('the detail sheet keeps the citation chips and links each to its real keyResourceUrl', () => {
+  // reference once you opened the profile. 4.208: refs and URLs are NOT
+  // paired by position (31 rows have different lengths, and most equal-length
+  // rows do not pair either), so refs open in the Library and URLs are listed
+  // as external sources.
+  it('the detail sheet links every Library ref to /library and lists external sources separately (never paired by position)', () => {
     renderView()
-    const withLinkedRef = CURATED.find((l) => l.keyResourceRefs?.[0] && l.keyResourceUrl?.[0])
+    const leader = CURATED.find(
+      (l) =>
+        (l.keyResourceRefs?.length ?? 0) > 0 &&
+        (l.keyResourceUrl?.length ?? 0) > 0 &&
+        l.keyResourceRefs!.length !== l.keyResourceUrl!.length
+    )
     expect(
-      withLinkedRef,
-      'fixture assumption: no curated leader has a linked citation'
+      leader,
+      'fixture assumption: a curated leader with refs and URLs of different lengths'
     ).toBeDefined()
-    fireEvent.click(screen.getByRole('button', { name: new RegExp(withLinkedRef!.name) }))
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(leader!.name) }))
     const sheet = screen.getByTestId('leader-detail-sheet')
-    const link = within(sheet).getByRole('link', { name: withLinkedRef!.keyResourceRefs![0] })
-    expect(link).toHaveAttribute('href', withLinkedRef!.keyResourceUrl![0])
+    for (const ref of leader!.keyResourceRefs!) {
+      expect(within(sheet).getByRole('link', { name: ref })).toHaveAttribute(
+        'href',
+        `/library?ref=${encodeURIComponent(ref)}`
+      )
+    }
+    const hrefs = within(sheet)
+      .getAllByRole('link')
+      .map((a) => a.getAttribute('href'))
+    for (const url of leader!.keyResourceUrl!) expect(hrefs).toContain(url)
+  })
+
+  it('the detail sheet shows patents and catalogue products', () => {
+    renderView()
+    const withPatents = CURATED.find((l) => (l.patentRefs?.length ?? 0) > 0)
+    if (withPatents) {
+      fireEvent.click(screen.getByRole('button', { name: new RegExp(withPatents.name) }))
+      const sheet = screen.getByTestId('leader-detail-sheet')
+      expect(within(sheet).getByRole('link', { name: /View \d+ patents?/ })).toHaveAttribute(
+        'href',
+        expect.stringMatching(/^\/patents\?patentIds=/)
+      )
+    }
   })
 
   it('shows recorded review metadata alongside the profile-check date, not as a mutually exclusive state', () => {

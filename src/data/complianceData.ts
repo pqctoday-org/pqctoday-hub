@@ -297,6 +297,25 @@ function classifyDeadline(deadline: string, year: number | undefined): DeadlineP
 }
 
 /**
+ * The CSWP.39 tags of a row (owner decision D6). A blank cell is not classified yet, so the
+ * tags are undefined. The explicit value "none" means classified, with no CSWP.39 stage
+ * applying: an empty list, so it never shows as a tag.
+ */
+export function parseCswp39Tags(raw: string | undefined | null): string[] | undefined {
+  // Split first: "none", "none;" and "none;cswp39:x" all name the same thing as a whole cell.
+  const pieces = splitSemicolon(raw ?? '').filter((piece) => piece.length > 0)
+  if (pieces.length === 0) return undefined
+  return pieces.filter((piece) => piece.toLowerCase() !== 'none')
+}
+
+/** The line a view shows where the tags would be: null when there are tags to show as chips. */
+export function cswp39Note(tags: string[] | undefined): string | null {
+  if (tags === undefined) return 'Not classified yet'
+  if (tags.length === 0) return 'No CSWP.39 stage applies'
+  return null
+}
+
+/**
  * Turns one row of the compliance CSV into a framework, or null for a row without an id or a
  * label. Exported so the column readers can be tested on small fixture rows.
  */
@@ -396,7 +415,7 @@ export function mapComplianceRow(row: RawComplianceRow): ComplianceFramework | n
       const n = Number(raw)
       return Number.isFinite(n) ? n : undefined
     })(),
-    cswp39Tags: row.cswp39_tags ? splitSemicolon(row.cswp39_tags) : undefined,
+    cswp39Tags: parseCswp39Tags(row.cswp39_tags),
     naicsCodes: row.naics_codes ? splitSemicolon(row.naics_codes) : undefined,
     status: ((): ComplianceFramework['status'] => {
       const s = (row.status || '').trim().toLowerCase()

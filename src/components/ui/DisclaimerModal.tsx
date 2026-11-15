@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  LEADER_COMMUNITY_PROVENANCE,
+  LEADER_REMOVAL_REQUEST_URL,
+} from '@/components/Leaders/leadersConstants'
 import { useCallback, useState } from 'react'
 import { Construction, ExternalLink, Mail, MessageSquare } from 'lucide-react'
 import { Button } from './button'
@@ -65,8 +69,17 @@ function DisclaimerText({ className }: { className: string }) {
       <span className="font-medium text-foreground">community-driven educational platform</span>.
       Content is sourced from publicly available resources and{' '}
       <span className="font-medium text-foreground">may contain inaccuracies</span>. This site has
-      not received endorsement from organizations referenced in its content. Leaders are included
-      only with <span className="font-medium text-foreground">written consent</span>.
+      not received endorsement from organizations referenced in its content.{' '}
+      {LEADER_COMMUNITY_PROVENANCE} Anyone listed can{' '}
+      <a
+        href={LEADER_REMOVAL_REQUEST_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-medium text-primary underline underline-offset-2"
+      >
+        ask for a correction or removal
+      </a>
+      .
     </p>
   )
 }

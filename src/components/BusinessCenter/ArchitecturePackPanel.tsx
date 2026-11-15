@@ -7,7 +7,7 @@
 // checklist.
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useLocation, useSearchParams } from 'react-router'
 import { ChevronDown, ChevronRight, FileDown, FileText, Loader2, PackageCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -59,6 +59,7 @@ const isTopic = (v: string | null): v is DecisionTopic =>
 export function ArchitecturePackPanel() {
   const documents = useModuleStore((s) => s.artifacts.executiveDocuments ?? EMPTY)
   const [params] = useSearchParams()
+  const { hash } = useLocation()
   // `?adr=<topic>` (from a Learn module) opens a new decision from that template.
   const adrTopic = params.get('adr')
   const [open, setOpen] = useState<Editor | null>(isTopic(adrTopic) ? 'decisions' : null)
@@ -68,10 +69,13 @@ export function ArchitecturePackPanel() {
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    if (isTopic(adrTopic) || window.location.hash === '#architecture-pack') {
-      ref.current?.scrollIntoView({ block: 'start' })
-    }
+    if (isTopic(adrTopic)) ref.current?.scrollIntoView({ block: 'start' })
   }, [adrTopic])
+
+  // Scroll on load and whenever a same-page link sets this panel's hash.
+  useEffect(() => {
+    if (hash === '#architecture-pack') ref.current?.scrollIntoView({ block: 'start' })
+  }, [hash])
 
   const preview = useMemo(() => buildArchitecturePack({ documents }), [documents])
   const total = ARCHITECTURE_PACK_SECTIONS.length

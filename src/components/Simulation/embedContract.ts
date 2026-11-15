@@ -124,6 +124,13 @@ export const REFERENCE_EMBED_IDS = new Set([
   // activity step embeds — fixed 07042026 so it embeds here too instead of
   // hard-navigating to /business/tools/migration-verification.
   'migration-verification',
+  // NAV-2 (2026-11-14): the rest of the Resources tab opens in place too.
+  'algorithms-catalog',
+  'algorithms-validation',
+  'industry-landscape',
+  'leaders',
+  'patents',
+  'explore',
 ])
 
 /** True for a reference step that has a full-page embed widget. */
@@ -140,6 +147,13 @@ export function canEmbedStep(s: TreeStep): boolean {
     return !!toolId && !!BUSINESS_TOOL_COMPONENTS[toolId]
   }
 
+  // recurrence: the criterion operates an existing activity AGAIN in a later
+  // quarter, so it embeds the same Business tool the activity step does.
+  if (s.kind === 'recurrence' && s.recurrenceOf) {
+    const toolId = ARTIFACT_TYPE_TO_TOOL_ID[s.recurrenceOf]
+    // eslint-disable-next-line security/detect-object-injection
+    return !!toolId && !!BUSINESS_TOOL_COMPONENTS[toolId]
+  }
   if (s.kind === 'workshop' && s.workshopId) return !!WORKSHOP_TOOL_COMPONENTS[s.workshopId]
   if (s.kind === 'catalog') return true
   // architecture: ArchitecturePanel is always mounted (no external tool/module

@@ -34,6 +34,9 @@ import { expandAlgorithmAliases } from './algorithmNameAliases'
 import { vendors } from './vendorData'
 import { algorithmHref } from '@/utils/algorithmLinks'
 import { migrateProductHref } from '@/utils/migrateLinks'
+import { CRYPTO_MECHANISMS, getMechanismFamily } from './cryptoMechanisms'
+import { roadmapByVendorId } from './vendorRoadmapData'
+import { enrichmentByVendorId } from './vendorRoadmapEnrichmentData'
 
 export type ForceClusterNodeType =
   | 'certbody'
@@ -89,10 +92,20 @@ function playgroundToolLink(toolId: string): { label: string; href: string } {
   return { label: `Open tool: ${title}`, href: `/playground/${toolId}` }
 }
 
+/**
+ * How a link was found, when it was NOT read from a field that names the other record outright.
+ * - `name-match`: a glossary term, or a protocol's description, uses the other record's name.
+ * - `family-match`: a source names an algorithm family ("ML-KEM", "Kyber"), and the link is drawn
+ *   to every parameter set of that family, because the source does not say which one.
+ * Absent = the link comes from a field that cites that exact record.
+ */
+export type ForceClusterEdgeBasis = 'name-match' | 'family-match'
+
 export interface ForceClusterEdge {
   from: string
   to: string
   rel: string
+  basis?: ForceClusterEdgeBasis
 }
 
 /**
@@ -120,6 +133,7 @@ const REL_HEADING: Record<string, { outgoing: string; incoming: string }> = {
   part_of_series: { outgoing: 'Part of series with', incoming: 'Includes' },
   // `published_by` is not drawn here (a publisher has no node, and would be a hub), so it has no heading.
   supersedes: { outgoing: 'Replaces', incoming: 'Replaced by' },
+  uses: { outgoing: 'Uses', incoming: 'Used in' },
 }
 
 /** The detail-panel heading for a group of connections; an unknown relation is shown as plain words. */
@@ -182,6 +196,10 @@ function enrichProductDescription(productId: string, softwareName: string, base:
   return parts.join(' — ')
 }
 
+function vendorHasRoadmap(vendorId: string): boolean {
+  return roadmapByVendorId.has(vendorId) || enrichmentByVendorId.has(vendorId)
+}
+
 /** Builds the full, uncapped node set — one entry per category, id-keyed so edge builders can look nodes up. */
 function buildNodes(
   algorithms: AlgorithmDetail[],
@@ -229,7 +247,15 @@ function buildNodes(
       sub: sector.crossSector ? 'Cross-sector' : 'NAICS sector',
       description: `${sector.crossSector ? 'Cross-sector grouping' : 'NAICS sector'}: ${sector.displayName}`,
       degree: 0,
-      href: '/algorithms?tab=landscape',
+      // The frameworks that apply to this sector (the same join as the applies_to edges below),
+      // and the Library documents tagged with it.
+      href: `/compliance?ind=${encodeURIComponent(sector.displayName || sector.sectorKey)}`,
+      extraLinks: [
+        {
+          label: 'Library documents for this sector',
+          href: `/library?sector=${encodeURIComponent(sector.sectorKey)}`,
+        },
+      ],
     })
   }
 
@@ -277,7 +303,9 @@ function buildNodes(
       sub: doc.documentType,
       description: doc.shortDescription || doc.documentTitle,
       degree: 0,
-      href: `/library?spec=${encodeURIComponent(doc.referenceId)}`,
+      // ?ref= opens the document in the Library itself (?spec= is the reading drawer that
+      // opens over whatever page is behind it).
+      href: `/library?ref=${encodeURIComponent(doc.referenceId)}`,
       extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
@@ -324,9 +352,12 @@ function buildNodes(
       sub: xref.implementationType,
       description: enrichProductDescription(xref.productId, xref.softwareName, base),
       degree: 0,
-      href: xref.softwareName
-        ? migrateProductHref(matchingSoftware?.productId ?? xref.softwareName)
-        : undefined,
+      // Only a product that is in the Migrate catalog gets a /migrate link; a reference
+      // implementation that is not there opens its own repository instead of a "no product
+      // matching" notice.
+      href: matchingSoftware
+        ? migrateProductHref(matchingSoftware.productId)
+        : xref.implementationUrl || undefined,
       extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
@@ -412,9 +443,15 @@ function buildNodes(
           .filter(Boolean)
           .join(' — ') || v.vendorName,
       degree: 0,
-      // No dedicated vendor route in the hub yet — same fallback pattern as
-      // certbody nodes (line ~150), which link out to the source's own site.
-      href: v.website || undefined,
+      // /migrate?vendor= opens the vendor's card on the Roadmaps tab, which exists only for a
+      // vendor with a published roadmap or roadmap notes; any other vendor links to its own site.
+      href: vendorHasRoadmap(v.vendorId)
+        ? `/migrate?vendor=${encodeURIComponent(v.vendorId)}`
+        : v.website || undefined,
+      extraLinks:
+        vendorHasRoadmap(v.vendorId) && v.website
+          ? [{ label: 'Vendor website', href: v.website }]
+          : undefined,
     })
   }
 
@@ -447,6 +484,88 @@ function productNodeIdFor(productId: string, nodes: Map<string, ForceClusterNode
 function mechanismNodeIdFor(name: string, nodes: Map<string, ForceClusterNode>): string | null {
   const id = `mech-${slug(name)}`
   return nodes.has(id) ? id : null
+}
+
+/**
+ * Mechanism nodes for a name that may be one parameter set ("ML-KEM-768") or a family
+ * ("ML-KEM", "RSA-kex", "LMS"). A family resolves through the mechanism vocabulary's own
+ * parameter-set list, else to the nodes whose name starts with the family name and a hyphen.
+ */
+function mechanismNodeIdsForToken(
+  token: string,
+  nodes: Map<string, ForceClusterNode>,
+  mechanismNodes: ForceClusterNode[]
+): { ids: string[]; basis?: ForceClusterEdgeBasis } {
+  const exact = mechanismNodeIdFor(token, nodes)
+  if (exact) return { ids: [exact] }
+  const family = getMechanismFamily(token)
+  const fromRegistry = (family?.registryMembers ?? [])
+    .map((member) => mechanismNodeIdFor(member, nodes))
+    .filter((id): id is string => !!id)
+  if (fromRegistry.length > 0) return { ids: fromRegistry, basis: 'family-match' }
+  const prefix = `${norm(token)}-`
+  const byPrefix = mechanismNodes.filter((n) => norm(n.label).startsWith(prefix)).map((n) => n.id)
+  return { ids: byPrefix, basis: byPrefix.length > 0 ? 'family-match' : undefined }
+}
+
+function complianceNodeIdFor(
+  ref: string | undefined | null,
+  nodes: Map<string, ForceClusterNode>
+): string | null {
+  if (!ref) return null
+  const id = `comp-${slug(ref)}`
+  return nodes.has(id) ? id : null
+}
+
+/**
+ * The standards an algorithm row's fips_standard text names as its specification, e.g.
+ * "FIPS 204", "NIST SP 800-208", "RFC 8032", "FIPS 206 (in development)". A clause that says
+ * the algorithm is NOT in a standard ("not in NIST FIPS", "not a FIPS 186-5 key-agreement
+ * approval") or was withdrawn names nothing.
+ */
+export function standardIdsInFipsText(text: string | undefined | null): string[] {
+  const ids: string[] = []
+  for (const clause of (text ?? '').split(';')) {
+    if (/\b(not|withdrawn|no)\b/i.test(clause)) continue
+    const re =
+      // eslint-disable-next-line security/detect-unsafe-regex -- bounded alternation over a short field from this repo's own algorithm CSV, not user input
+      /\b(FIPS\s?\d{3}(?:-\d)?|(?:NIST\s)?SP\s?800-\d+[A-Z]?(?:\sRev\.\s?\d+)?|RFC\s?\d{4,5})\b/gi
+    for (const match of clause.matchAll(re)) ids.push(match[1].replace(/\s+/g, ' ').trim())
+  }
+  return ids
+}
+
+/**
+ * A standard named in prose ("SP 800-56B", "SP 800-56A Rev. 3", "FIPS 186", "NIST SP 800-230")
+ * to its Library node. Library ids spell NIST SPs as "NIST-SP-800-56B", and a FIPS named without
+ * its revision ("FIPS 186") is the one Library document of that number ("FIPS 186-5"); a name
+ * that matches more than one document resolves to none.
+ */
+function libraryNodeIdForStandardName(
+  name: string,
+  nodes: Map<string, ForceClusterNode>
+): string | null {
+  const bare = name.replace(/\s+Rev\.\s?\d+$/i, '').trim()
+  const nistSp = bare.replace(/^(NIST\s)?SP\s?/i, 'NIST SP ')
+  for (const candidate of [name, bare, nistSp]) {
+    const id = libraryNodeIdFor(candidate, nodes)
+    if (id) return id
+  }
+  for (const candidate of [bare, nistSp]) {
+    const prefix = `std-${slug(candidate)}-`
+    const matches = Array.from(nodes.keys()).filter((id) => id.startsWith(prefix))
+    if (matches.length === 1) return matches[0]
+  }
+  return null
+}
+
+/** Protocol and mechanism text mentions a name only when it stands as a whole token. */
+function mentionsName(haystack: string, name: string): boolean {
+  const n = norm(name)
+  if (n.length < 3) return false
+  const escaped = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  // eslint-disable-next-line security/detect-non-literal-regexp -- `escaped` is an algorithm name from this repo's own data, with every regex metacharacter escaped
+  return new RegExp(`(^|[^a-z0-9-])${escaped}([^a-z0-9-]|$)`).test(haystack)
 }
 
 function certbodyNodeIdFor(
@@ -486,13 +605,40 @@ function buildEdges(
   libraryData: LibraryItem[]
 ): ForceClusterEdge[] {
   const edges: ForceClusterEdge[] = []
-  const seen = new Set<string>()
-  const add = (from: string | null, to: string | null, rel: string) => {
+  // One edge per pair of records, whichever way round it was found: A->B and B->A would draw
+  // two lines and count each record's connections twice. When a pair is found again with a
+  // more specific relation than `related`, or from a field that names the record outright
+  // where the first find was a name or family match, the edge is upgraded in place.
+  const byPair = new Map<string, ForceClusterEdge>()
+  const add = (
+    from: string | null,
+    to: string | null,
+    rel: string,
+    basis?: ForceClusterEdgeBasis
+  ) => {
     if (!from || !to || from === to) return
-    const key = `${from}|${to}`
-    if (seen.has(key)) return
-    seen.add(key)
-    edges.push({ from, to, rel })
+    const key = from < to ? `${from}|${to}` : `${to}|${from}`
+    const existing = byPair.get(key)
+    if (!existing) {
+      const edge: ForceClusterEdge = basis ? { from, to, rel, basis } : { from, to, rel }
+      byPair.set(key, edge)
+      edges.push(edge)
+      return
+    }
+    if (existing.rel === 'related' && rel !== 'related') {
+      existing.from = from
+      existing.to = to
+      existing.rel = rel
+      if (basis) existing.basis = basis
+      else delete existing.basis
+    } else if (existing.basis && !basis && existing.rel === rel) {
+      delete existing.basis
+    }
+  }
+  const mechanismNodes = Array.from(nodes.values()).filter((n) => n.type === 'mechanism')
+  const addMechanisms = (from: string, token: string, rel: string) => {
+    const { ids, basis } = mechanismNodeIdsForToken(token, nodes, mechanismNodes)
+    for (const id of ids) add(from, id, rel, basis)
   }
 
   // compliance -> standards / certbody
@@ -526,6 +672,14 @@ function buildEdges(
       'specifies'
     )
   }
+  // ...and via each algorithm row's own fips_standard field (LMS/XMSS -> SP 800-208,
+  // FN-DSA -> FIPS 206, Ed25519 -> RFC 8032, …), which the xref above does not cover.
+  for (const algo of algorithms) {
+    const mechId = mechanismNodeIdFor(algo.name, nodes)
+    for (const stdRef of standardIdsInFipsText(algo.fipsStandard)) {
+      add(mechId, libraryNodeIdForStandardName(stdRef, nodes), 'specifies')
+    }
+  }
 
   // crypto mechanisms -> products, via algo_product_xref
   for (const xref of algoProductXrefs) {
@@ -542,8 +696,18 @@ function buildEdges(
     add(ucId, libraryNodeIdFor(uc.sourceLibraryRef, nodes), 'cites')
     add(ucId, certbodyNodeIdFor(uc.trustedSourceId, nodes), 'references')
     for (const sectorId of industryNodeIdsFor(uc.industry, nodes)) add(sectorId, ucId, 'related')
-    for (const mechName of [...uc.pqcMechanisms, ...uc.mechanismRefs]) {
-      add(ucId, mechanismNodeIdFor(mechName, nodes), 'related')
+    // pqc_mechanisms / classical_mechanisms name families ("ML-KEM", "RSA-kex"); the use case
+    // uses that family, not one stated parameter set.
+    for (const family of [...uc.pqcMechanisms, ...uc.classicalMechanisms]) {
+      addMechanisms(ucId, family, 'uses')
+    }
+    // mechanism_refs, related_standards and hsm_certification_refs hold Library (or
+    // compliance) ids — the documents the row cites — not algorithm names.
+    for (const ref of [...uc.mechanismRefs, ...uc.relatedStandards, ...uc.hsmCertificationRefs]) {
+      add(ucId, libraryNodeIdFor(ref, nodes) ?? complianceNodeIdFor(ref, nodes), 'cites')
+    }
+    for (const productId of uc.migrateProductRefs) {
+      add(ucId, productNodeIdFor(productId, nodes), 'references')
     }
   }
 
@@ -586,8 +750,17 @@ function buildEdges(
   }
 
   // protocols -> standards / products / protocols / crypto mechanisms (weak)
-  const protocolDocIds = (row: ProtocolMatrixRow) =>
-    [...row.latestRelease, ...row.latestDraft].map((d) => d.id)
+  // The release and draft documents, plus the RFCs/drafts cited in each of the four PQC
+  // readiness cells (pure/hybrid KEM, pure/hybrid signature).
+  const protocolDocIds = (row: ProtocolMatrixRow) => [
+    ...[...row.latestRelease, ...row.latestDraft].map((d) => d.id),
+    ...Object.values(row.dimensions).flatMap((cell) => (cell.refs ?? []).map((r) => r.id)),
+  ]
+  const protoNodeId = (id: string) => {
+    const nodeId = `proto-${slug(id)}`
+    return nodes.has(nodeId) ? nodeId : null
+  }
+  const pqcFamilies = CRYPTO_MECHANISMS.filter((m) => !m.classical).map((m) => m.family)
   for (const row of PROTOCOL_MATRIX) {
     const protoId = `proto-${slug(row.id)}`
     for (const docId of protocolDocIds(row))
@@ -595,17 +768,25 @@ function buildEdges(
     for (const lib of [...row.ossLibraries, ...row.commercialLibraries]) {
       add(protoId, productNodeIdFor(lib.productId, nodes), 'implementedby')
     }
-    if (row.inheritsFromProtocolId)
-      add(protoId, `proto-${slug(row.inheritsFromProtocolId)}`, 'related')
+    if (row.inheritsFromProtocolId) add(protoId, protoNodeId(row.inheritsFromProtocolId), 'related')
+    // "supersedes" reads from the newer protocol to the one it replaces.
     if (row.supersededByProtocolId)
-      add(protoId, `proto-${slug(row.supersededByProtocolId)}`, 'related')
+      add(protoNodeId(row.supersededByProtocolId), protoId, 'supersedes')
     for (const supersededId of row.supersedes ?? [])
-      add(protoId, `proto-${slug(supersededId)}`, 'related')
+      add(protoId, protoNodeId(supersededId), 'supersedes')
 
+    // Weakest link in this graph: the protocol's own text names the algorithm. A parameter
+    // set must appear as a whole token ("ML-KEM-768", not inside "X25519MLKEM768"); a family
+    // name ("ML-KEM") links every parameter set of that family.
     const haystack = norm(`${row.description} ${row.recommendedReason ?? ''}`)
     for (const algo of algorithms) {
-      if (haystack.includes(norm(algo.name)))
-        add(protoId, mechanismNodeIdFor(algo.name, nodes), 'related')
+      if (mentionsName(haystack, algo.name))
+        add(protoId, mechanismNodeIdFor(algo.name, nodes), 'related', 'name-match')
+    }
+    for (const family of pqcFamilies) {
+      if (!mentionsName(haystack, family)) continue
+      const { ids } = mechanismNodeIdsForToken(family, nodes, mechanismNodes)
+      for (const id of ids) add(protoId, id, 'related', 'family-match')
     }
   }
 
@@ -669,7 +850,7 @@ function buildEdges(
   for (const term of glossaryTerms) {
     const glId = `gl-${slug(term.term)}`
     const key = norm(term.term)
-    for (const targetId of labelIndex.get(key) ?? []) add(glId, targetId, 'related')
+    for (const targetId of labelIndex.get(key) ?? []) add(glId, targetId, 'related', 'name-match')
   }
 
   // patents -> mechanism, via the SAME legacy⇄FIPS alias table
@@ -678,7 +859,6 @@ function buildEdges(
   // nodes are exact FIPS parameter sets, so this matches by family-name
   // PREFIX (a "Kyber" patent relates to every ML-KEM-* node, since patents
   // don't specify a parameter set), never an invented exact mapping.
-  const mechanismNodes = Array.from(nodes.values()).filter((n) => n.type === 'mechanism')
   const mechanismNodeIdsForPatentAlgo = (name: string): string[] => {
     const candidates = [name, ...expandAlgorithmAliases([name])].map((c) => c.toUpperCase())
     return mechanismNodes
@@ -695,7 +875,8 @@ function buildEdges(
   for (const patent of patentsData) {
     const patId = `pat-${slug(patent.patentNumber)}`
     for (const algoName of [...patent.pqcAlgorithms, ...patent.classicalAlgorithms]) {
-      for (const mechId of mechanismNodeIdsForPatentAlgo(algoName)) add(patId, mechId, 'related')
+      for (const mechId of mechanismNodeIdsForPatentAlgo(algoName))
+        add(patId, mechId, 'related', 'family-match')
     }
     for (const ref of patent.standardsReferenced) add(patId, libraryNodeIdFor(ref, nodes), 'cites')
     for (const target of patent.complianceTargets) {

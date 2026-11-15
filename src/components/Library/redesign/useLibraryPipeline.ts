@@ -20,6 +20,7 @@ import {
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PERSONA_LIBRARY_CATEGORIES } from '@/data/personaConfig'
 import { matchesGeoFilter } from '@/components/common/GeoFilter'
+import { canonicalRegionCode, canonicalRegionCodes } from './libraryRegions'
 import { matchesSectorFilter } from '@/components/common/SectorFilter'
 import { matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
 import { matchesAlgorithmFamilyFilter } from '@/components/common/AlgorithmFamilyFilter'
@@ -99,11 +100,106 @@ export const ORG_CANONICAL_MAP: Record<string, string> = {
   'Ethereum Foundation': 'Ethereum Foundation',
   DigiCert: 'DigiCert',
   Thales: 'Thales',
+  // ── Publisher spellings found unmapped in the 2026-11-14 catalogue ──
+  'IETF Datatracker': 'IETF',
+  'Individual submission (IETF-hosted)': 'IETF',
+  'IETF TLS Working Group': 'IETF',
+  'NIST CAVP': 'NIST',
+  'CSRC | NIST': 'NIST',
+  'NIST (usnistgov)': 'NIST',
+  NCCoE: 'NIST',
+  Microsoft: 'Microsoft',
+  MicrosoftLearn: 'Microsoft',
+  'Microsoft Research': 'Microsoft',
+  'Amazon Web Services': 'Amazon Web Services',
+  'Amazon Web Services, Inc.': 'Amazon Web Services',
+  Google: 'Google',
+  'Google Cloud': 'Google',
+  'Google Cloud Documentation': 'Google',
+  'US DoD': 'US DoD',
+  'DoD CIO': 'US DoD',
+  NIAP: 'NIAP',
+  'PCI Security Standards Council': 'PCI SSC',
+  NERC: 'NERC',
+  'SAE ITC (ARINC)': 'SAE ITC (ARINC)',
 }
 
 /** Sentinel org value for documents authored only by organizations not in the
  *  canonical map — keeps them reachable via the org filter instead of vanishing. */
 export const ORG_OTHER = 'Other'
+
+/**
+ * Trusted Sources registry ids that name the PUBLISHER of the documents they are
+ * set on (checked against the 2026-11-14 catalogue: e.g. every `ietf-rfc-series`
+ * row is an IETF RFC). Hosting sites (arXiv, IACR ePrint, GitHub) are not here —
+ * they host other people's work. Used only when the author field names no mapped
+ * organisation, so a row's own named publisher always wins.
+ */
+const ORG_BY_TRUSTED_SOURCE: Record<string, string> = {
+  ietf: 'IETF',
+  'ietf-rfc-series': 'IETF',
+  'ietf-internet-drafts': 'IETF',
+  'nist-csrc': 'NIST',
+  nist: 'NIST',
+  'nist-nccoe-migration-to-post-q': 'NIST',
+  etsi: 'ETSI',
+  'etsi-cyber': 'ETSI',
+  enisa: 'ENISA',
+  bsi: 'BSI',
+  anssi: 'ANSSI',
+  cisa: 'CISA',
+  acsc: 'ASD Australia',
+  '3gpp': '3GPP',
+  gsma: 'GSMA',
+  tcg: 'Trusted Computing Group',
+  iso: 'ISO',
+  'iso-iec-sc27': 'ISO',
+  'ieee-sa': 'IEEE',
+  ascx9: 'ANSI X9',
+  'oqs-project': 'Open Quantum Safe',
+  cloudflare: 'Cloudflare Research',
+  microsoft: 'Microsoft',
+  'amazon-aws': 'Amazon Web Services',
+  google: 'Google',
+  'dod-cio': 'US DoD',
+  niap: 'NIAP',
+  'pci-ssc': 'PCI SSC',
+  nerc: 'NERC',
+  'aeec-sae': 'SAE ITC (ARINC)',
+  'ethereum-foundation': 'Ethereum Foundation',
+  'common-criteria-portal': 'CCRA',
+}
+
+/** IETF working-group spellings the map does not list one by one ("IETF emu WG"). */
+const IETF_WG = /^IETF\s+\S+(\s+\S+)?\s+(WG|Working Group)$/i
+
+/**
+ * The canonical organisations a Library row belongs to, for the Organization
+ * filter and its options: the author field's mapped names; failing that, the
+ * publisher its `trusted_source_id` names; failing that, IETF for an RFC or
+ * Internet-Draft. A row matching none of these is "Other" — including a row
+ * with a blank author field, which used to be in no option at all.
+ */
+export function libraryCanonicalOrgs(
+  item: Pick<LibraryItem, 'authorsOrOrganization' | 'trustedSourceId' | 'documentType'>
+): string[] {
+  const orgs = new Set<string>()
+  for (const raw of (item.authorsOrOrganization ?? '').split(';')) {
+    const token = raw.trim()
+    if (!token) continue
+    // eslint-disable-next-line security/detect-object-injection -- token is looked up, never written
+    const canon = ORG_CANONICAL_MAP[token] ?? (IETF_WG.test(token) ? 'IETF' : undefined)
+    if (canon) orgs.add(canon)
+  }
+  if (orgs.size === 0 && item.trustedSourceId) {
+    const bySource = ORG_BY_TRUSTED_SOURCE[item.trustedSourceId]
+    if (bySource) orgs.add(bySource)
+  }
+  if (orgs.size === 0 && /^(RFC|Internet-Draft)$/i.test((item.documentType ?? '').trim())) {
+    orgs.add('IETF')
+  }
+  return orgs.size > 0 ? [...orgs] : [ORG_OTHER]
+}
 
 /** Effective "how recent is this" timestamp for newest-first ordering.
  *
@@ -254,7 +350,10 @@ export interface LibraryPipelineResult {
   purposeInfo: { id: LibraryPurpose; count: number }[]
   filteredItems: LibraryItem[]
   sortedItems: LibraryItem[]
+  /** New-or-updated documents the role narrowing hides. */
   newHiddenByPersonaCount: number
+  /** Counts within the open purpose door (the whole catalogue for 'all'). */
+  purposeCounts: { all: number; new: number; bookmarked: number; lifecycle: Map<string, number> }
   totalCount: number
   personaPreferredCategories: string[]
   personaPreferredActive: boolean
@@ -299,28 +398,18 @@ export function matchesLibraryFilters(item: LibraryItem, f: LibraryFilterState):
     topicFilter,
     semanticIdSet,
   } = f
-  if (activeOrg !== 'All') {
-    const itemCanonicalOrgs = item.authorsOrOrganization
-      ? item.authorsOrOrganization
-          .split(';')
-          .map((s) => ORG_CANONICAL_MAP[s.trim()])
-          .filter(Boolean)
-      : []
-    if (activeOrg === ORG_OTHER) {
-      // "Other": authored, but by no canonically-mapped organization.
-      if (!item.authorsOrOrganization || itemCanonicalOrgs.length > 0) return false
-    } else if (!itemCanonicalOrgs.includes(activeOrg)) {
-      return false
-    }
-  }
+  if (activeOrg !== 'All' && !libraryCanonicalOrgs(item).includes(activeOrg)) return false
   if (geoFilter.length > 0) {
-    const regionValues = item.regionScope
-      ? item.regionScope
-          .split(';')
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : []
-    if (!matchesGeoFilter(geoFilter, regionValues)) return false
+    // Raw tokens plus their canonical codes: a `United States` row matches the
+    // `US` option, a `China` row the `CN` option (libraryRegions.ts).
+    const rawRegions = (item.regionScope ?? '')
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    const regionValues = [...new Set([...rawRegions, ...canonicalRegionCodes(item.regionScope)])]
+    // Old shared links can carry a name (`geo=United States`); match it as its code.
+    if (!matchesGeoFilter([...new Set(geoFilter.map(canonicalRegionCode))], regionValues))
+      return false
   }
   if (sectorFilter.length > 0) {
     if (!matchesSectorFilter(sectorFilter, item.applicableIndustries ?? [])) return false
@@ -419,6 +508,27 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     })
   }, [activePurpose])
 
+  // Quick-view and lifecycle counts share the categories' denominator: the
+  // documents behind the open purpose door. They used to count the whole
+  // catalogue while the categories counted the door, so "New & updated (20)"
+  // could open a list of 2.
+  const purposeCounts = useMemo(() => {
+    const pool =
+      activePurpose === 'all'
+        ? libraryData
+        : libraryData.filter((item) => item.purpose === activePurpose)
+    const bookmarkSet = new Set(libraryBookmarks)
+    const lifecycle = new Map<string, number>()
+    for (const item of pool)
+      lifecycle.set(item.lifecycleLabel, (lifecycle.get(item.lifecycleLabel) ?? 0) + 1)
+    return {
+      all: pool.length,
+      new: pool.filter((item) => item.status === 'New' || item.status === 'Updated').length,
+      bookmarked: pool.filter((item) => bookmarkSet.has(item.referenceId)).length,
+      lifecycle,
+    }
+  }, [activePurpose, libraryBookmarks])
+
   // Door counts are global (independent of the active purpose) so the bar is stable.
   const purposeInfo = useMemo(
     () =>
@@ -484,7 +594,9 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
       if (activeCategory !== 'All' && !item.categories.includes(activeCategory)) return false
       return matchesAllButNarrow(item)
     })
-    return noNarrow.filter((i) => i.status === 'New' && !visibleIds.has(i.referenceId)).length
+    return noNarrow.filter(
+      (i) => (i.status === 'New' || i.status === 'Updated') && !visibleIds.has(i.referenceId)
+    ).length
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personaPreferredActive, filteredItems, activeCategory, activePurpose])
 
@@ -525,7 +637,9 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
           const aCount = a.citationCount ?? 0
           const bCount = b.citationCount ?? 0
           if (bCount !== aCount) return bCount - aCount
-          return new Date(b.lastUpdateDate).getTime() - new Date(a.lastUpdateDate).getTime()
+          // Tie-break on the effective date: a blank lastUpdateDate parsed as NaN
+          // and broke the comparator for half the catalogue.
+          return newestFirstMs(b) - newestFirstMs(a)
         })
         break
     }
@@ -557,6 +671,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     filteredItems,
     sortedItems,
     newHiddenByPersonaCount,
+    purposeCounts,
     totalCount: libraryData.length,
     personaPreferredCategories,
     personaPreferredActive,

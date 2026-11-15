@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router'
 import { Play, BookOpen, LayoutGrid } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '@/data/learningPersonas'
-import type { Region } from '@/store/usePersonaStore'
 import { homeFunnelFor } from '@/data/nextSteps'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
+import { usePersonaStore, type Region } from '@/store/usePersonaStore'
 import type { WorkshopRegion } from '@/types/Workshop'
+import { loadFlow, loadManifest } from '@/services/workshopFlowLoader'
+import { pickFlowEntry, type FlowProfile } from './onboardingFlow'
 
 interface OnboardingCTAsProps {
   persona: PersonaId | null
@@ -37,36 +39,26 @@ interface FlowInfo {
   firstStepId: string
   title: string
   minutes: number
+  /** True when the tour is the catch-all overview, not one written for this role. */
+  isGeneric: boolean
 }
 
-async function loadFlowInfo(isCurious: boolean): Promise<FlowInfo | null> {
+async function loadFlowInfo(profile: FlowProfile): Promise<FlowInfo | null> {
   try {
-    const manifest = await fetch('/workshop/index.json').then((r) => r.json())
-    const flows: {
-      id: string
-      file: string
-      title: string
-      totalEstMinutes: number
-      isGenericFallback?: boolean
-      match: { roles: string[] | '*'; proficiencies: string[] | '*' }
-    }[] = manifest.flows ?? []
-
-    const entry = isCurious
-      ? flows.find(
-          (f) =>
-            Array.isArray(f.match.roles) &&
-            f.match.roles.includes('curious') &&
-            Array.isArray(f.match.proficiencies) &&
-            f.match.proficiencies.includes('curious')
-        )
-      : flows.find((f) => f.isGenericFallback === true)
-
+    const manifest = await loadManifest()
+    const entry = pickFlowEntry(manifest, profile)
     if (!entry) return null
 
-    const flow = await fetch(`/workshop/${entry.file}`).then((r) => r.json())
+    const flow = await loadFlow(entry.file)
     const firstStepId: string = flow.intro?.steps?.[0]?.id ?? 'intro-01-welcome'
 
-    return { id: entry.id, firstStepId, title: entry.title, minutes: entry.totalEstMinutes }
+    return {
+      id: entry.id,
+      firstStepId,
+      title: entry.title,
+      minutes: entry.totalEstMinutes,
+      isGeneric: entry.isGenericFallback === true,
+    }
   } catch {
     return null
   }
@@ -77,7 +69,8 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
   const { startVideo } = useWorkshopStore()
   const { open: openPanel } = useRightPanelStore()
 
-  const isCurious = persona === 'curious'
+  const proficiency = usePersonaStore((st) => st.experienceLevel)
+  const industry = usePersonaStore((st) => st.selectedIndustry)
   // A persona whose Home leads somewhere other than the learning modules
   // (the researcher: the Library's recent changes) gets that as its third CTA.
   const startCta = homeFunnelFor(persona)?.startCta ?? {
@@ -94,7 +87,10 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
     // before the await resolves; pattern is intentional, not a cascade.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
-    loadFlowInfo(isCurious).then((info) => {
+    // Drop the previous profile's tour so the button cannot start it while the
+    // new one loads.
+    setFlowInfo(null)
+    loadFlowInfo({ persona, proficiency, industry, region }).then((info) => {
       if (!cancelled) {
         setFlowInfo(info)
         setLoading(false)
@@ -103,7 +99,7 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
     return () => {
       cancelled = true
     }
-  }, [isCurious])
+  }, [persona, proficiency, industry, region])
 
   const handleVideoTour = () => {
     if (!flowInfo) return
@@ -111,7 +107,9 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
     // RightPanel auto-opens via its useEffect when workshop mode becomes 'video'
   }
 
-  const videoLabel = isCurious ? 'PQC for the Curious — Visual Tour' : 'Watch Quick Overview'
+  // A role's own tour is named by its title; the catch-all overview keeps the
+  // generic label.
+  const videoLabel = flowInfo && !flowInfo.isGeneric ? flowInfo.title : 'Watch Quick Overview'
   const videoSub = flowInfo
     ? `${flowInfo.minutes} min guided tour`
     : loading

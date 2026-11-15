@@ -2,11 +2,12 @@
 /**
  * Table-view column sort ↔ URL. The page-level `?sort=` (card view: name |
  * country | category | relevance) is reused when the table sort means the
- * same thing — Name A→Z or Country A→Z — so a link keeps its order across
+ * same thing — Name, Category or Country A→Z — so a link keeps its order across
  * views. Every other column / direction goes to `?tsort=<column>` (+
  * `tdir=desc`), which wins over `?sort` while the table is showing.
  */
-export type LeadersTableSortKey = 'name' | 'title' | 'organization' | 'country' | 'type'
+export type LeadersTableSortKey =
+  'name' | 'title' | 'organization' | 'category' | 'country' | 'type'
 export type LeadersTableSortDir = 'asc' | 'desc'
 export interface LeadersTableSort {
   key: LeadersTableSortKey
@@ -17,11 +18,16 @@ const TABLE_SORT_KEYS: readonly LeadersTableSortKey[] = [
   'name',
   'title',
   'organization',
+  'category',
   'country',
   'type',
 ]
 /** Table columns whose ascending order is exactly a page `?sort` value. */
-const PAGE_SORT_EQUIVALENT: ReadonlySet<LeadersTableSortKey> = new Set(['name', 'country'])
+const PAGE_SORT_EQUIVALENT: ReadonlySet<LeadersTableSortKey> = new Set([
+  'name',
+  'category',
+  'country',
+])
 
 const isTableSortKey = (v: string | null): v is LeadersTableSortKey =>
   v !== null && (TABLE_SORT_KEYS as readonly string[]).includes(v)

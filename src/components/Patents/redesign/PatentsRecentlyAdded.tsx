@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * PatentsRecentlyAdded — a horizontal strip highlighting patents new since the
- * last corpus update (status === 'New', derived by comparing the current dated
- * CSV against the previous one — see patentsData.ts). Mirrors
- * LibraryRecentlyChanged's placement/shape. Click a card → opens the detail drawer.
+ * PatentsRecentlyAdded — "Latest grants and publications": records granted or
+ * published in the 90 days before the catalogue's newest such date, newest
+ * first (latestGrantsAndPublications in patentsData.ts). Sorted by grant or
+ * publication date, not by when the Hub added them (owner decision
+ * 2026-11-14). Click a card → opens the detail drawer.
  */
 import { Button } from '@/components/ui/button'
 import type { PatentItem } from '@/types/PatentTypes'
@@ -11,7 +12,7 @@ import type { PatentItem } from '@/types/PatentTypes'
 interface PatentsRecentlyAddedProps {
   items: PatentItem[]
   onOpen: (patentNumber: string) => void
-  /** Cap the strip; Explore (filtered to New via the KPI drill) shows the full set. */
+  /** Cap the strip. */
   limit?: number
 }
 
@@ -30,9 +31,11 @@ export function PatentsRecentlyAdded({ items, onOpen, limit = 16 }: PatentsRecen
     <div className="glass-panel rounded-2xl p-3">
       <div className="mb-2 flex items-center justify-between px-1">
         <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-          New since last update
+          Latest grants and publications
         </span>
-        <span className="text-[11px] text-muted-foreground">{items.length} patents</span>
+        <span className="text-[11px] text-muted-foreground">
+          {items.length} in the last 90 days of the catalogue · by date, not when added
+        </span>
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1 snap-x snap-mandatory">
         {shown.map((item) => (
@@ -44,9 +47,8 @@ export function PatentsRecentlyAdded({ items, onOpen, limit = 16 }: PatentsRecen
             className="flex h-auto w-[215px] shrink-0 snap-start flex-col items-start justify-start gap-1 rounded-xl border border-border bg-card/40 p-2.5 text-left font-normal hover:border-primary/40 hover:bg-card"
           >
             <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
-              <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em] text-success">
-                New
+              <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                {item.publicationKind === 'published_application' ? 'Application' : 'Granted'}
               </span>
               <span className="font-mono text-[10px] text-muted-foreground">
                 {formatPatentDate(item.issueDate)}

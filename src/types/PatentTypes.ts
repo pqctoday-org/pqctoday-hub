@@ -44,7 +44,12 @@ export interface InsightsFilter {
   impact?: string
   quantumTech?: string
   quantumRelevance?: string
-  quantum_safe_basis?: string
+  quantumSafeBasis?: string
+  /** 'granted_patent' | 'published_application'. */
+  publication?: string
+  threatModel?: string
+  standard?: string
+  migrationStrategy?: string
   region?: string
   protocol?: string
   classicalAlgorithm?: string
@@ -69,8 +74,12 @@ export interface NistStatus {
   status: NistStatusValue
 }
 
+/** Granted patent, or a published application whose claims are still under examination. */
+export type PublicationKind = 'granted_patent' | 'published_application'
+
 export interface PatentItem {
   patentNumber: string
+  publicationKind: PublicationKind
   title: string
   inventors: string
   assignee: string
@@ -120,12 +129,13 @@ export interface PatentItem {
   // enrichment pipeline hasn't scored this patent yet — distinct from a genuine 0.
   pqcMigrationScore: number | null
   pqcMigrationReason: string
-  // Computed
+  // Computed (computeImpactParts): impactScore = impactFacts + impactMigration.
+  /** 0–50 from the record's own facts (standards, protocols, hardware, domains, data). */
+  impactFacts: number
+  /** 0–50 from the curated 1–10 migration score. */
+  impactMigration: number
   impactScore: number
   impactLevel: ImpactLevel
   priorityYear: number
   filingYear: number
-  // Corpus-diff badge: 'New' when absent from the previous dated CSV, 'Updated'
-  // when present but any field changed. Undefined = unchanged since last update.
-  status?: 'New' | 'Updated'
 }

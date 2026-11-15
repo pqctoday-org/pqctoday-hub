@@ -10,6 +10,7 @@
  * /migrate already maintains. This page does not mint a second one.
  */
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router'
 import { ChevronDown, ChevronRight, ExternalLink, PackageSearch } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
@@ -188,9 +189,9 @@ export function ProductsTab({
           <p className="mt-1.5 text-[11px] text-muted-foreground">
             You haven&apos;t marked anything as yours yet, so this shows the whole catalogue. Pick
             your products on{' '}
-            <a href="/migrate" className="text-primary hover:underline">
+            <Link to="/migrate" className="text-primary hover:underline">
               Migrate
-            </a>{' '}
+            </Link>{' '}
             and this narrows to them.
           </p>
         )}

@@ -5,8 +5,6 @@ import {
   Building2,
   MapPin,
   User,
-  BookOpen,
-  ExternalLink,
   Clock,
   ShieldCheck,
   Award,
@@ -27,7 +25,13 @@ import { FlagButton } from '../ui/FlagButton'
 import { ItemShareButton, itemShareTitle } from '@/components/common/ItemShareButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
-import { FLAG_CODE_MAP, productLabelFromId } from './leadersConstants'
+import {
+  FLAG_CODE_MAP,
+  catalogProductsHeading,
+  leaderTimelineCountry,
+  productLabelFromId,
+} from './leadersConstants'
+import { LeaderKeyResources } from '@/components/common/LeaderKeyResources'
 import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
@@ -68,6 +72,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
   if (!isOpen || !leader) return null
 
   const flagCode = FLAG_CODE_MAP[leader.country] ?? 'un'
+  const timelineCountry = leaderTimelineCountry(leader.country)
 
   const content = (
     <FocusLock returnFocus>
@@ -181,11 +186,13 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
 
         {/* Body */}
         <div className="p-4 space-y-4 overflow-y-auto">
-          {/* Title */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Briefcase size={14} className="shrink-0" aria-hidden="true" />
-            <span>{leader.title}</span>
-          </div>
+          {/* Title (7 rows have none — no empty icon row) */}
+          {leader.title && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Briefcase size={14} className="shrink-0" aria-hidden="true" />
+              <span>{leader.title}</span>
+            </div>
+          )}
 
           {/* Organizations */}
           <div className="space-y-1">
@@ -198,11 +205,13 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
           </div>
 
           {/* Country */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin size={14} className="shrink-0" aria-hidden="true" />
-            <CountryFlag code={flagCode} width={20} height={14} />
-            <span>{leader.country}</span>
-          </div>
+          {leader.country && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin size={14} className="shrink-0" aria-hidden="true" />
+              <CountryFlag code={flagCode} width={20} height={14} />
+              <span>{leader.country}</span>
+            </div>
+          )}
 
           {/* Bio */}
           <div className="glass-panel p-4">
@@ -223,15 +232,17 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
                 <Users size={12} aria-hidden="true" /> Open in Community
               </Link>
             )}
-            <Link
-              to={`/timeline?country=${encodeURIComponent(leader.country)}`}
-              onClick={onClose}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
-              title={`View timeline events from ${leader.country}`}
-            >
-              <Clock size={12} aria-hidden="true" />
-              Events from {leader.country}
-            </Link>
+            {timelineCountry && (
+              <Link
+                to={`/timeline?country=${encodeURIComponent(timelineCountry)}`}
+                onClick={onClose}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+                title={`View timeline events from ${timelineCountry}`}
+              >
+                <Clock size={12} aria-hidden="true" />
+                Events from {timelineCountry}
+              </Link>
+            )}
             <Link
               to="/compliance"
               onClick={onClose}
@@ -258,9 +269,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
           {leader.migrateCatalogRefs && leader.migrateCatalogRefs.length > 0 && (
             <div className="p-3 rounded-lg bg-muted/20 border border-border">
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2">
-                {leader.migrateCatalogRefs.length === 1
-                  ? 'Open Source Project'
-                  : `Open Source Projects (${leader.migrateCatalogRefs.length})`}
+                {catalogProductsHeading(leader.migrateCatalogRefs)}
               </p>
               <div className="flex flex-col gap-1">
                 {leader.migrateCatalogRefs.map((productId) => (
@@ -279,41 +288,17 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             </div>
           )}
 
-          {/* Key Resources — links to validated library references */}
-          {leader.keyResourceUrl && leader.keyResourceUrl.length > 0 && (
-            <div className="p-3 rounded-lg bg-muted/20 border border-border">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2">
-                {leader.keyResourceUrl.length === 1 ? 'Key Resource' : 'Key Resources'}
-              </p>
-              <div className="flex flex-col gap-1">
-                {leader.keyResourceUrl.map((ref, i) =>
-                  ref.startsWith('http') ? (
-                    <a
-                      key={i}
-                      href={ref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
-                      title={ref}
-                    >
-                      <ExternalLink size={12} className="shrink-0" aria-hidden="true" />
-                      <span className="truncate">{ref}</span>
-                    </a>
-                  ) : (
-                    <Link
-                      key={i}
-                      to={`/library?ref=${encodeURIComponent(ref)}`}
-                      onClick={onClose}
-                      className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
-                      title={`Open in Library: ${ref}`}
-                    >
-                      <BookOpen size={12} className="shrink-0" aria-hidden="true" />
-                      <span className="truncate">{ref}</span>
-                    </Link>
-                  )
-                )}
-              </div>
-            </div>
+          {/* Key Resources — Library references and external sources, as two lists */}
+          <LeaderKeyResources leader={leader} onNavigate={onClose} />
+
+          {leader.vettingBody && leader.vettingBody.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                Institutions in source metadata:
+              </span>{' '}
+              {leader.vettingBody.join(', ')}. These recorded names do not establish institutional
+              review or endorsement of this profile.
+            </p>
           )}
 
           {/* Social Links */}

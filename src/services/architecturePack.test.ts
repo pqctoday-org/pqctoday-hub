@@ -73,8 +73,45 @@ describe('architecture pack', () => {
     expect(md.indexOf('CBOM BODY')).toBeLessThan(md.indexOf('NEW PLAN'))
     expect(md).toContain('- Author: A. Architect')
     expect(md).toContain('- Scope: Payments platform')
-    expect(md).toContain('| 5 | Hybrid Transition Plan | approved | R. Reviewer | 2026-10-05 |')
+    expect(md).toContain(
+      '| 5 | Hybrid Transition Plan | approved | example reviewer role | 2026-10-05 |'
+    )
     expect(md).toContain('Sections: 2 of 11 present')
+  })
+
+  it('prints an example reviewer role from the list, and never a saved person name', () => {
+    const pack = buildArchitecturePack({
+      now,
+      documents: [
+        doc({ id: 'role', approvalStatus: 'in-review', reviewer: 'Compliance lead' }),
+        doc({
+          id: 'named',
+          type: 'architecture-scope',
+          title: 'Scope',
+          data: 'SCOPE',
+          approvalStatus: 'approved',
+          reviewer: 'R. Reviewer',
+        }),
+      ],
+    })
+    const md = pack.markdown
+    expect(md).toContain(
+      '| 5 | Hybrid Transition Plan | in-review | Compliance lead | 2026-10-01 |'
+    )
+    expect(md).toContain(
+      '| 1 | Architecture Scope | approved | example reviewer role | 2026-10-01 |'
+    )
+    expect(md).toContain('Example reviewer role')
+    expect(md).toContain('· example reviewer role: Compliance lead')
+    expect(md).not.toContain('R. Reviewer')
+  })
+
+  it('the disclaimer says the states are practice values, not a record of review', () => {
+    const pack = buildArchitecturePack({ now, documents: [] })
+    expect(pack.markdown).toContain(
+      'This is a learning example; status and reviewer role are practice values, not a record of review.'
+    )
+    expect(pack.markdown).not.toContain('nobody else has reviewed it')
   })
 
   it('pushes artefact headings under the section heading', () => {

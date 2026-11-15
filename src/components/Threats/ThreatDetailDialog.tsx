@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   CircleDashed,
   ListChecks,
+  Library,
 } from 'lucide-react'
 import { Link } from 'react-router'
 import type { ThreatItem } from '../../data/threatsData'
@@ -26,6 +27,7 @@ import {
 } from '@/data/threatEducationalAssessment'
 import { StatusBadge } from '../common/StatusBadge'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
+import { threatStandardLinks } from '@/data/threatRelatedStandards'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -472,6 +474,26 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
               </Tabs>
             </div>
 
+            {threatStandardLinks(threat).length > 0 && (
+              <div className="pt-4 border-t border-border mt-4">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <Library size={14} /> Related standards
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {threatStandardLinks(threat).map((std) => (
+                    <Link
+                      key={std.id}
+                      to={std.deepLink}
+                      title={std.title}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-muted/40 text-foreground border border-border hover:bg-muted/70 transition-colors"
+                    >
+                      <Library size={11} />
+                      {std.id}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
             {threat.relatedModules && threat.relatedModules.length > 0 && (
               <div className="pt-4 border-t border-border mt-4">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -483,14 +505,14 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                     const mod = MODULE_CATALOG[slug]
                     if (!mod) return null
                     return (
-                      <a
+                      <Link
                         key={slug}
-                        href={`/learn/${slug}`}
+                        to={`/learn/${slug}`}
                         className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
                       >
                         <BookOpen size={11} />
                         {mod.title}
-                      </a>
+                      </Link>
                     )
                   })}
                 </div>

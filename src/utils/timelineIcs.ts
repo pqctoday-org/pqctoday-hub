@@ -17,7 +17,7 @@
  *  - Every event carries its source URL where we have one, so the calendar
  *    entry can be checked against the document rather than trusted.
  */
-import type { TimelinePhase } from '@/types/timeline'
+import type { TimelineEvent, TimelinePhase } from '@/types/timeline'
 
 /** Escape per RFC 5545 §3.3.11 — backslash, semicolon, comma, newline. */
 function escapeText(value: string): string {
@@ -49,6 +49,8 @@ function yearDate(year: number, month = 1, day = 1): string {
 export interface IcsOptions {
   countryName: string
   bodyName: string
+  /** Stable id for the entry UID (the record's event_id), so re-imports update it. */
+  uidKey?: string
   /** Stamp for DTSTAMP/UID. Injected so the output is deterministic in tests. */
   now?: Date
 }
@@ -82,7 +84,11 @@ export function phasesToIcs(phases: TimelinePhase[], options: IcsOptions): strin
       Number.isFinite(phase.endYear) && phase.endYear >= phase.startYear
         ? phase.endYear
         : phase.startYear
-    const uid = `pqctoday-${options.countryName}-${options.bodyName}-${phase.startYear}-${seq}`
+    const uid = (
+      options.uidKey
+        ? `pqctoday-timeline-${options.uidKey}`
+        : `pqctoday-${options.countryName}-${options.bodyName}-${phase.startYear}-${seq}`
+    )
       .toLowerCase()
       .replace(/[^a-z0-9-]+/g, '-')
 
@@ -121,6 +127,50 @@ export function phasesToIcs(phases: TimelinePhase[], options: IcsOptions): strin
   }
 
   lines.push('END:VCALENDAR')
+  return `${lines.join('\r\n')}\r\n`
+}
+
+/**
+ * One calendar for a list of source records — one entry per record, named after
+ * the record's own country and issuing body (not the first body of its lane).
+ * This is what /timeline's calendar export writes.
+ */
+export function eventsToIcs(events: TimelineEvent[], now?: Date): string {
+  const vevents = events.map((e) => {
+    const issuer =
+      e.orgFullName && e.orgFullName !== e.orgName ? `${e.orgFullName} (${e.orgName})` : e.orgName
+    const ics = phasesToIcs(
+      [
+        {
+          startYear: e.startYear,
+          endYear: e.endYear,
+          ...(e.openEnded ? { openEnded: true } : {}),
+          phase: e.phase,
+          type: e.type,
+          title: e.title,
+          description: [e.description, issuer ? `Issued by: ${issuer}` : '']
+            .filter(Boolean)
+            .join('\n\n'),
+          events: [e],
+        },
+      ],
+      { countryName: e.countryName, bodyName: e.orgName || 'Regulator', uidKey: e.eventId, now }
+    )
+    const start = ics.indexOf('BEGIN:VEVENT')
+    const end = ics.lastIndexOf('END:VEVENT')
+    return start < 0 || end < 0 ? '' : ics.slice(start, end + 'END:VEVENT'.length)
+  })
+  // One VCALENDAR envelope; concatenating several calendars is not valid.
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//PQC Today//Timeline Export//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:PQC timeline export',
+    ...vevents.filter(Boolean),
+    'END:VCALENDAR',
+  ]
   return `${lines.join('\r\n')}\r\n`
 }
 

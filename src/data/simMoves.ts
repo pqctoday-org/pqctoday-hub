@@ -254,10 +254,15 @@ export const SIM_MOVES: Partial<Record<PhaseId, SimMove[]>> = {
               kind: 'sound',
               outcome: `Sound. Hybrid matches the ${ctx.country.id} end-state position — reversible and standards-aligned.`,
             }
-          : {
-              kind: 'warn',
-              outcome: `OK as interim. ${ctx.country.id}'s end-state is pure PQC, so hybrid needs a documented sunset plan or it becomes permanent tech debt.`,
-            },
+          : ctx.country.endState === 'pure'
+            ? {
+                kind: 'warn',
+                outcome: `OK as interim. ${ctx.country.id}'s end-state is pure PQC, so hybrid needs a documented sunset plan or it becomes permanent tech debt.`,
+              }
+            : {
+                kind: 'sound',
+                outcome: `Sound for the transition. ${ctx.country.label} states no end state yet, so keep hybrid reversible and re-check when one is published.`,
+              },
     },
     {
       label: 'Deploy to a FIPS-required system before a validated module exists',

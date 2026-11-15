@@ -41,6 +41,9 @@ const basePatent: PatentItem = {
   nistRoundStatus: [],
   pqcMigrationScore: 5,
   pqcMigrationReason: '',
+  publicationKind: 'granted_patent',
+  impactFacts: 25,
+  impactMigration: 25,
   impactScore: 50,
   impactLevel: 'Medium',
   priorityYear: 2020,
@@ -61,8 +64,8 @@ it.each(['classical_only', 'pqc_only'] as const)(
     )
     expect(screen.getByText('Hub catalogue analysis score')).toBeVisible()
     expect(screen.getByText('82')).toBeVisible()
-    expect(screen.getByText(/This uncalibrated Hub score/)).toHaveTextContent(
-      'does not establish migration priority, deployed security, patent validity or IP value'
+    expect(screen.getByText(/Half of this Hub score/)).toHaveTextContent(
+      'it does not establish patent validity, enforceability, licensing terms or IP value'
     )
     expect(screen.queryByText('Migration Impact')).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Close/ }))

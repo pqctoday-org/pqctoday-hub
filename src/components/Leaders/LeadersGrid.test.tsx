@@ -32,7 +32,7 @@ vi.mock('../../data/leadersData', () => ({
     {
       id: 'alice-1',
       name: 'Alice Quant',
-      country: 'USA',
+      country: 'United States',
       title: 'Chief Scientist',
       organizations: ['Quantum Corp'],
       type: 'Private',
@@ -46,7 +46,7 @@ vi.mock('../../data/leadersData', () => ({
     {
       id: 'bob-2',
       name: 'Bob Cyber',
-      country: 'UK',
+      country: 'United Kingdom',
       title: 'Director',
       organizations: ['NCSC'],
       type: 'Public',
@@ -196,7 +196,7 @@ describe('LeadersGrid', () => {
 
     // Filter to USA
     const dropdown = screen.getByTestId('filter-Country') // label="Country"
-    fireEvent.click(within(dropdown).getByText('USA'))
+    fireEvent.click(within(dropdown).getByText('United States'))
 
     // Should behave like filter
     const articles = screen.getAllByRole('article')
@@ -239,7 +239,7 @@ describe('LeadersGrid', () => {
 
     // Filter to USA
     const dropdown = screen.getByTestId('filter-Country') // label="Country"
-    fireEvent.click(within(dropdown).getByText('USA'))
+    fireEvent.click(within(dropdown).getByText('United States'))
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
     // Search for something that matches Alice
@@ -279,7 +279,7 @@ describe('LeadersGrid', () => {
 
     // Filter to UK (Bob matches)
     const countryDropdown = screen.getByTestId('filter-Country')
-    fireEvent.click(within(countryDropdown).getByText('UK'))
+    fireEvent.click(within(countryDropdown).getByText('United Kingdom'))
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
     // Search for "Securing" (matches Bob's bio)

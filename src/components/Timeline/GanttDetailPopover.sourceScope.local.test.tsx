@@ -45,7 +45,12 @@ describe('Gantt details preserve source-event scope', () => {
   it('shows the first source event own period, description, link and status instead of aggregate fields', () => {
     render(<GanttDetailPopover isOpen phase={phase} onClose={vi.fn()} />)
     expect(screen.getByRole('heading', { name: first.title })).toBeInTheDocument()
-    expect(screen.getAllByText('2016', { exact: true })).toHaveLength(2)
+    // Start and End cells (the row's record list repeats each record's period).
+    expect(
+      screen
+        .getAllByText('2016', { exact: true })
+        .filter((el) => !el.closest('[data-testid="gantt-row-events"]'))
+    ).toHaveLength(2)
     expect(screen.getByText(first.description)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'View' })).toHaveAttribute('href', first.sourceUrl)
     expect(screen.queryByText('Not stated by source')).not.toBeInTheDocument()
@@ -55,7 +60,12 @@ describe('Gantt details preserve source-event scope', () => {
   it('keeps a focused later event own fields and status', () => {
     render(<GanttDetailPopover isOpen phase={phase} focusEvent={later} onClose={vi.fn()} />)
     expect(screen.getByRole('heading', { name: later.title })).toBeInTheDocument()
-    expect(screen.getAllByText('2024', { exact: true })).toHaveLength(2)
+    // Start and End cells (the row's record list repeats each record's period).
+    expect(
+      screen
+        .getAllByText('2024', { exact: true })
+        .filter((el) => !el.closest('[data-testid="gantt-row-events"]'))
+    ).toHaveLength(2)
     expect(screen.getByText(later.description)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'View' })).toHaveAttribute('href', later.sourceUrl)
     expect(screen.getByText('Updated', { exact: true })).toBeInTheDocument()

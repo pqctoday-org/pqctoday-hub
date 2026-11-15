@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { ExternalLink, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { patentsData } from '@/data/patentsData'
-import { findPatentByNumber, readPqcOnly, readScopeParam } from '@/data/patentsScope'
+import {
+  PQC_ONLY_LS_KEY,
+  SCOPE_PARAM,
+  findPatentByNumber,
+  readPqcOnly,
+  readScopeParam,
+} from '@/data/patentsScope'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { isPqcPatent } from '@/components/Patents/patentColumns'
 import { usePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
@@ -12,7 +18,14 @@ import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/Pa
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
-import { filingJurisdictionLabel, filterPatents, NIST_STATUS_LABELS } from '@/data/patentFilters'
+import {
+  filingJurisdictionLabel,
+  filterPatents,
+  NIST_STATUS_LABELS,
+  PUBLICATION_KIND_LABELS,
+  QUANTUM_SAFE_BASIS_LABELS,
+  publicationDateVerb,
+} from '@/data/patentFilters'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 import { logExternalLink } from '@/utils/analytics'
 
@@ -70,6 +83,21 @@ const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string
   { key: 'pqc', label: 'PQC algorithm' },
   { key: 'fips', label: 'FIPS-mapped', format: () => 'only' },
   { key: 'filingYear', label: 'Filing year' },
+  {
+    key: 'publication',
+    label: 'Publication',
+    // eslint-disable-next-line security/detect-object-injection -- label lookup; unknown ids fall back to the raw value
+    format: (v) => PUBLICATION_KIND_LABELS[v] ?? v,
+  },
+  {
+    key: 'quantumSafeBasis',
+    label: 'Quantum-safe basis',
+    // eslint-disable-next-line security/detect-object-injection -- label lookup; unknown ids fall back to the raw value
+    format: (v) => QUANTUM_SAFE_BASIS_LABELS[v] ?? v,
+  },
+  { key: 'threatModel', label: 'Threat model' },
+  { key: 'standard', label: 'Standard' },
+  { key: 'migrationStrategy', label: 'Migration strategy', format: (v) => v.replace(/_/g, ' ') },
 ]
 
 /** Every URL filter filterPatents reads except `search` (the phone's search
@@ -166,6 +194,37 @@ export function MobilePatentsView() {
   const scopeParam = readScopeParam(params)
   const pqcOnly = scopeParam ?? readPqcOnly()
   const scoped = useMemo(() => (pqcOnly ? patentsData.filter(isPqcPatent) : patentsData), [pqcOnly])
+  const setScope = useCallback(
+    (onlyPqc: boolean) => {
+      try {
+        localStorage.setItem(PQC_ONLY_LS_KEY, String(onlyPqc))
+      } catch {
+        /* ignore */
+      }
+      const next = new URLSearchParams(params)
+      next.set(SCOPE_PARAM, onlyPqc ? 'pqc' : 'all')
+      setParams(next, { replace: true })
+    },
+    [params, setParams]
+  )
+  // A link to a record outside the PQC scope widens it, as on desktop, so
+  // the record is still in the list when its sheet closes.
+  // Once per linked record, so choosing "PQC & hybrid" afterwards sticks.
+  const widenedRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!selected || !pqcOnly || isPqcPatent(selected)) return
+    if (widenedRef.current === selected.patentNumber) return
+    widenedRef.current = selected.patentNumber
+    const next = new URLSearchParams(params)
+    next.set(SCOPE_PARAM, 'all')
+    setParams(next, { replace: true })
+  }, [selected, pqcOnly, params, setParams])
+  // The notice names the open out-of-scope record until dismissed.
+  const [dismissedWiden, setDismissedWiden] = useState<string | null>(null)
+  const widenedFor =
+    selected && !isPqcPatent(selected) && !pqcOnly && dismissedWiden !== selected.patentNumber
+      ? selected.patentNumber
+      : null
   const kpis = usePatentKpis(scoped)
 
   const agilityCounts = useMemo(() => {
@@ -224,6 +283,34 @@ export function MobilePatentsView() {
         Three figures worth carrying. Tap High migration impact to narrow the list below.
       </p>
       <MobilePersonaPageNote route="/patents" className="mb-3" />
+
+      <div className="mb-3 flex gap-2" role="group" aria-label="Patent scope">
+        <Button
+          type="button"
+          size="sm"
+          variant={pqcOnly ? 'secondary' : 'ghost'}
+          aria-pressed={pqcOnly}
+          onClick={() => setScope(true)}
+        >
+          PQC &amp; hybrid ({patentsData.filter(isPqcPatent).length})
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={!pqcOnly ? 'secondary' : 'ghost'}
+          aria-pressed={!pqcOnly}
+          onClick={() => setScope(false)}
+        >
+          All crypto ({patentsData.length})
+        </Button>
+      </div>
+      {widenedFor && (
+        <DeepLinkNotice
+          kind="widened"
+          message={`Showing all patents to include ${widenedFor}.`}
+          onDismiss={() => setDismissedWiden(widenedFor)}
+        />
+      )}
 
       {notFound && (
         <DeepLinkNotice
@@ -378,7 +465,8 @@ export function MobilePatentsView() {
               </div>
               <p className="text-[10.5px] text-muted-foreground">
                 {fipsAlgos.length > 0 && `Maps to ${fipsAlgos.join(', ')} · `}
-                {p.assignee} · issued {p.issueDate}
+                {p.assignee}
+                {p.issueDate && ` · ${publicationDateVerb(p)} ${p.issueDate}`}
               </p>
             </Button>
           )
@@ -407,7 +495,13 @@ export function MobilePatentsView() {
                 {selected.title}
               </h2>
               <p className="mt-1 text-[11px] text-muted-foreground">
-                {selected.assignee} · issued {selected.issueDate}
+                {selected.assignee}
+                {selected.issueDate && ` · ${publicationDateVerb(selected)} ${selected.issueDate}`}
+              </p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {selected.publicationKind === 'published_application'
+                  ? 'Published application — its claims are still under examination.'
+                  : 'Granted patent.'}
               </p>
             </div>
             <p className="text-[11.5px] text-muted-foreground">

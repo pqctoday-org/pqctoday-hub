@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import {
+  LEADER_COMMUNITY_PROVENANCE,
+  LEADER_REMOVAL_REQUEST_URL,
+} from '@/components/Leaders/leadersConstants'
 import { useMemo, useState, type ReactNode } from 'react'
 import {
   Info,
@@ -191,7 +195,16 @@ export function MobileAboutView() {
                         This site has not received endorsement from the organisations, standards
                         bodies or agencies it references. Information is sourced publicly and
                         verified through automated and manual review, but may still contain
-                        inaccuracies. Leaders are featured only with written consent.
+                        inaccuracies. {LEADER_COMMUNITY_PROVENANCE} Anyone listed can{' '}
+                        <a
+                          href={LEADER_REMOVAL_REQUEST_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary underline underline-offset-2"
+                        >
+                          ask for a correction or removal
+                        </a>
+                        .
                       </Row>
                       <Row title="Trust Engine">
                         Source links and any recorded trust or review metadata provide context for
