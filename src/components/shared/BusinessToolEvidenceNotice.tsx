@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { Info } from 'lucide-react'
 import { businessToolEvidence } from '@/data/businessToolEvidence'
+import { BusinessCapabilityFooter } from '@/components/BusinessCenter/common/BusinessCapabilityFooter'
 
 export function BusinessToolEvidenceNotice({
   toolId,
@@ -45,6 +46,9 @@ export function BusinessToolEvidenceNotice({
             decision.
           </p>
         </div>
+      </div>
+      <div className="mt-2">
+        <BusinessCapabilityFooter toolId={toolId} />
       </div>
     </aside>
   )

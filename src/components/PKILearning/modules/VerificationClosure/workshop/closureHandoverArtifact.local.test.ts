@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import {
+  CLOSURE_EVIDENCE_CHAIN_GUIDANCE,
   restoreClosureInputs,
   closureEntryStatus,
   buildClosureArtifact,
   type ClosureInputs,
 } from './closureHandoverArtifact'
+import curiousSummary from '../curious-summary.md?raw'
+import ragSummary from '../rag-summary.md?raw'
 const complete: ClosureInputs = {
   owner: {
     cbom: 'Crypto Gov Owner',
@@ -71,5 +74,35 @@ describe('Closure record content and missing inputs', () => {
     expect(buildClosureArtifact(value)).toContain('A\\|B<br>&lt;script&gt;sample&lt;/script&gt;')
     expect(JSON.stringify(value)).toBe(raw)
     expect(closureEntryStatus(value).complete).toBe(false)
+  })
+})
+
+describe('verification-closure ACVP vs module boundary & certificate cross-check gate', () => {
+  it('establishes ACVP KAT vector mathematical conformance vs FIPS 140-3 / CC module boundary validation', () => {
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('IUT')
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('SP 800-90B')
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.acvpVsModuleBoundary).toContain('SSP zeroization')
+    expect(curiousSummary).toContain('IUT')
+    expect(curiousSummary).toContain('SP 800-90B')
+    expect(ragSummary).toContain('IUT')
+    expect(ragSummary).toContain('SP 800-90B')
+  })
+
+  it('includes the five suggested certificate checks and rejects sample Hub exports as certification evidence', () => {
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.productionCertificateCrossCheckChecklist).toEqual([
+      'Certificate or module number and status (active, historical or revoked)',
+      'Exact module or product name and version',
+      'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+      'CAVP algorithm certificate numbers for the algorithms you rely on',
+      'CC/EUCC: Security Target and claimed assurance level',
+    ])
+    for (const summary of [curiousSummary, ragSummary]) {
+      expect(summary).toContain('Hub practice guidance, not a certification-scheme requirement')
+      expect(summary).toContain('Security Target')
+      expect(summary).not.toContain('side-channel protections')
+    }
+    expect(CLOSURE_EVIDENCE_CHAIN_GUIDANCE.nonEquivalenceRule).toContain(
+      'never certification evidence'
+    )
   })
 })

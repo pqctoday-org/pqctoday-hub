@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { PASSIVE_OBSERVATIONS, SCAN_RESULTS } from './testingConstants'
+import {
+  PASSIVE_OBSERVATIONS,
+  PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY,
+  SCAN_RESULTS,
+} from './testingConstants'
+import curiousSummary from '../curious-summary.md?raw'
+import ragSummary from '../rag-summary.md?raw'
 
 describe('passive discovery observations: not observed is not the same as not supported', () => {
   const all = Object.values(PASSIVE_OBSERVATIONS).flat()
@@ -44,5 +50,41 @@ describe('active scan results: TLS 1.2 is not deprecated and BEAST is a TLS 1.0 
   it('keeps the end-of-life label for TLS 1.1', () => {
     expect(t7.tlsVersion).toBe('TLS 1.1')
     expect(t7.vulnerabilities.join(' ')).toMatch(/TLS 1\.1/)
+  })
+})
+
+describe('pqc-testing-validation ACVP vs module boundary & certificate cross-check gate', () => {
+  it('separates NIST CAVP ACVP IUT mathematical conformance from FIPS 140-3 / CC module boundary validation', () => {
+    expect(PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.acvpIutConformance).toContain('IUT')
+    expect(PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.moduleBoundaryValidation).toContain(
+      'SP 800-90B'
+    )
+    expect(PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.moduleBoundaryValidation).toContain(
+      'SSP zeroization'
+    )
+    expect(curiousSummary).toContain('IUT')
+    expect(curiousSummary).toContain('SP 800-90B')
+    expect(ragSummary).toContain('IUT')
+    expect(ragSummary).toContain('SP 800-90B')
+  })
+
+  it('includes the five suggested certificate checks and rejects sample Hub exports as certification evidence', () => {
+    expect(
+      PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.productionCertificateCrossCheckChecklist
+    ).toEqual([
+      'Certificate or module number and status (active, historical or revoked)',
+      'Exact module or product name and version',
+      'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+      'CAVP algorithm certificate numbers for the algorithms you rely on',
+      'CC/EUCC: Security Target and claimed assurance level',
+    ])
+    for (const summary of [curiousSummary, ragSummary]) {
+      expect(summary).toContain('Hub practice guidance, not a certification-scheme requirement')
+      expect(summary).toContain('Security Target')
+      expect(summary).not.toContain('side-channel protections')
+    }
+    expect(PQC_TESTING_VALIDATION_EVIDENCE_BOUNDARY.sampleNonEquivalenceNotice).toContain(
+      'never certification evidence'
+    )
   })
 })

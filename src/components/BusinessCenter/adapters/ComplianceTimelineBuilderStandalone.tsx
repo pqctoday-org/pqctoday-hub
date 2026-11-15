@@ -214,7 +214,7 @@ export function ComplianceTimelineBuilderStandalone() {
           <span className="text-xs text-muted-foreground">
             ({selectedJurisdictions.length} selected)
           </span>
-          {selectedJurisdictions.length > 0 && (
+          {selectedJurisdictions.length > 0 ? (
             <Button
               variant="ghost"
               size="sm"
@@ -222,6 +222,15 @@ export function ComplianceTimelineBuilderStandalone() {
               onClick={() => setSelectedJurisdictions([])}
             >
               Clear
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-auto h-7 px-2.5 text-xs"
+              onClick={() => setSelectedJurisdictions(['us', 'eu'])}
+            >
+              Load sample US + EU timeline
             </Button>
           )}
         </div>

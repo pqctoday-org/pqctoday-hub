@@ -137,3 +137,30 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
     trap: 'Mistaking “every test answered” for “every test passed”.',
   },
 ]
+
+/**
+ * Distinction between NIST CAVP ACVP JSON vector mathematical conformance of an
+ * IUT vs. CMVP FIPS 140-3 / CC cryptographic module boundary validation.
+ */
+export const ACVP_VS_MODULE_BOUNDARY_SCOPE = {
+  acvpKatScope:
+    'NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (IUT) for the exact registered capability, parameters, and operational environment.',
+  moduleBoundaryScope:
+    'CMVP FIPS 140-3 validates a cryptographic module against its security requirements (module specification and boundary, interfaces, self-tests, key and SSP zeroization, physical security, with entropy sources validated separately under SP 800-90B); non-invasive (side-channel) requirements are currently N/A by default. Common Criteria/EUCC evaluates the product against its own Security Target, and only what the ST claims.',
+} as const
+
+/**
+ * Suggested checks (Hub practice guidance, not a standard) when reading a
+ * production CAVP/CMVP/CC certificate, paired with explicit non-equivalence
+ * of sample Hub exports and vendor marketing datasheets.
+ */
+export const PRODUCTION_CERTIFICATE_CROSSCHECK_CHECKLIST = [
+  'Certificate or module number and status (active, historical or revoked)',
+  'Exact module or product name and version',
+  'Tested operational environment or evaluated configuration (CMVP Security Policy; CC certification report)',
+  'CAVP algorithm certificate numbers for the algorithms you rely on',
+  'CC/EUCC: Security Target and claimed assurance level',
+] as const
+
+export const SAMPLE_EXPORT_NON_EQUIVALENCE_RULE =
+  'A sample Hub exercise export or a vendor marketing datasheet is never certification evidence; auditors and engineering leads should verify the certificate directly against the NIST CAVP/CMVP or CC/EUCC registry.' as const
