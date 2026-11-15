@@ -1,5 +1,5 @@
 {
- "csv": "quantum_threats_hsm_industries_11152026_r2.csv",
+ "csv": "quantum_threats_hsm_industries_11152026_r5.csv",
  "generatedAt": "2026-11-15T01:09:43+00:00",
  "note": "Claim-ledger verdicts on each row's cited document, only where the verdict was reached on the file and exact claim text cited today. Verdict words only; no document text.",
  "rows": {
@@ -1872,6 +1872,36 @@
     }
    },
    "evidenceSha256": "777f2e43986e2936"
+  },
+  "HSM-003": {
+   "claims": {
+    "crypto_at_risk": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "main_source": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "MATCH"
+    },
+    "pqc_replacement": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "threat_description": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "supported"
+    },
+    "vetting_body": {
+     "basis": "codex-review",
+     "decidedAt": "2026-11-15",
+     "verdict": "FOUND"
+    }
+   },
+   "evidenceSha256": "d40fce9eaef47ab6"
   },
   "INSU-001": {
    "claims": {
