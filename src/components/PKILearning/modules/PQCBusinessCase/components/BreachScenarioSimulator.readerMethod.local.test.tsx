@@ -22,7 +22,7 @@ beforeEach(() => {
   useModuleStore.setState((s) => ({ artifacts: { ...s.artifacts, executiveDocuments: [] } }))
 })
 
-async function downloadMarkdown() {
+async function downloadMarkdown(format = '.md') {
   let blob: Blob | undefined
   vi.spyOn(URL, 'createObjectURL').mockImplementation((value) => {
     blob = value as Blob
@@ -30,7 +30,7 @@ async function downloadMarkdown() {
   })
   vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
-  fireEvent.click(screen.getByRole('button', { name: '.md' }))
+  fireEvent.click(screen.getByRole('button', { name: format }))
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => resolve(String(reader.result))
@@ -68,4 +68,23 @@ describe('Breach scenario UI and actual Markdown retain method limits', () => {
     expect(saved.inputs).toMatchObject({ yearsOfData: 20 })
     expect(saved.data).toContain('Assumptions and calculation method')
   })
+})
+
+it('loads the fictional scenario and exports its actual inputs and results as CSV', async () => {
+  render(
+    <MemoryRouter>
+      <BreachScenarioSimulator />
+    </MemoryRouter>
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Load fictional finance scenario' }))
+  expect(screen.getByLabelText('Years of Stored Data (HNDL)')).toHaveValue('5')
+  const csv = await downloadMarkdown('.csv')
+  expect(csv).toContain('Scenario,Industry,Finance & Banking,')
+  expect(csv).toContain('Input,annualBreachProbPct,10,model input')
+  expect(csv).toContain('Input,migrationDurationYears,3,model input')
+  expect(csv).toContain('Input,annualBreachProbabilityOrigin,learner-assumption,model input')
+  expect(csv).toContain('Result,Expected annual quantum loss,')
+  const md = await downloadMarkdown()
+  expect(md).toContain('Finance & Banking')
+  expect(md).toContain('migration-duration assumption: 3 years')
 })

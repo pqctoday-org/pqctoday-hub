@@ -26,13 +26,30 @@
  * secure-boot stage rows, sbom element map, automotive vehicle and zone
  * cards). Three single-page workshops (digital-assets, mls-group-messaging,
  * tls-basics) have no step nav on the phone and stay off until walked by
- * hand. Evidence: priv `round9-records/wave3-phone-probe-4.107.0.json`.
+ * hand at that time. Evidence: priv `round9-records/wave3-phone-probe-4.107.0.json`.
  *
  * 2026-10-12: homomorphic-encryption joined (owner decision). Probed at 390 px with the phone
  * shell on: the Workshop tab mounts; all eight flow scenarios and all six concept views open and
  * work; no horizontal overflow, no console errors, no serious axe violation on the new views.
  */
+// 2026-11-16: twelve additional modules expose their real workshop in the phone
+// shell. e2e/mobile-workshop-parity.local.spec.ts covers navigation and page
+// overflow on the default learning path; custom workshop controls and other
+// learning paths need their own task-level acceptance, not inferred parity.
 export const MOBILE_WORKSHOP_READY: ReadonlySet<string> = new Set([
+  'digital-assets',
+  'acvp-lab-workflow',
+  'cc-eucc-certification',
+  'crypto-product-certification',
+  'fips-140-3-certification',
+  'media-drm-pqc',
+  'tls-basics',
+  'mls-group-messaging',
+  'pqc-hw-acceleration',
+  'pci-certification',
+  'software-supply-chain-pqc',
+  'talking-about-pqc',
+
   '5g-security',
   'aerospace-pqc',
   'ai-security-pqc',

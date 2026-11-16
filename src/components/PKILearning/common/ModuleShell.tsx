@@ -416,7 +416,10 @@ export const ModuleShell = ({
       if (isMobileShell) {
         // Wave D (2026-09-18): modules on MOBILE_WORKSHOP_READY mount their
         // real workshop inside the phone shell, so the click switches to it.
-        if (MOBILE_WORKSHOP_READY.has(manifest.id)) {
+        if (
+          MOBILE_WORKSHOP_READY.has(manifest.id) &&
+          (workshop || (workshopParts && renderWorkshopStep))
+        ) {
           navigateToTab('workshop')
         } else if (practiceTool) {
           navigate(`/playground/${practiceTool}`)

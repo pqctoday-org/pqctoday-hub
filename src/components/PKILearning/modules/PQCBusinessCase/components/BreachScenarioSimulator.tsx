@@ -4,6 +4,8 @@ import {
   BREACH_SCENARIO_EARLY_ACTION,
   breachScenarioMethodMarkdown,
 } from '@/utils/breachScenarioReaderMethod'
+import { rowsToCsv } from '@/services/export/csvExport'
+import { Button } from '@/components/ui/button'
 import React, { useState, useMemo, useEffect } from 'react'
 import { AlertTriangle, Info, TrendingUp, Shield } from 'lucide-react'
 import {
@@ -68,6 +70,8 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
   const [selectedIndustry, setSelectedIndustry] = useState(
     savedInputs?.selectedIndustry ?? data.industry ?? 'Other'
   )
+  const [sampleRevision, setSampleRevision] = useState(0)
+  const [sampleInputs, setSampleInputs] = useState<Partial<BreachScenarioInputs> | undefined>()
   const [modelInputs, setModelInputs] = useState<BreachScenarioInputs | null>(null)
   const [breachCosts, setBreachCosts] = useState<{
     classicalCost: number
@@ -237,10 +241,40 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
         </div>
       </div>
 
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setSelectedIndustry('Finance & Banking')
+            setSampleInputs({
+              breachScale: 1,
+              yearsOfData: 5,
+              orgSizeTier: 'average',
+              annualBreachProbPct: 10,
+              annualBreachProbabilityOrigin: 'learner-assumption',
+              hndlFactorPct: 50,
+              dataSensitivityClass: 'general-pii',
+              planningHorizonYears: 10,
+              discountRateAnnual: 0.03,
+              migrationDurationYears: 3,
+              region: 'global',
+            })
+            setSampleRevision((n) => n + 1)
+          }}
+        >
+          Load fictional finance scenario
+        </Button>
+        <p className="text-sm text-muted-foreground">
+          Sample assumptions: 10% annual breach probability, 50% HNDL exposure and a three-year
+          migration. Change the duration and explain how it changes the latest start year before
+          using the result to prioritize work.
+        </p>
+      </div>
       {/* Breach Cost Model */}
       <BreachCostModel
+        key={sampleRevision}
         industry={selectedIndustry}
-        initialValues={savedInputs}
+        initialValues={sampleInputs ?? savedInputs}
         onCostCalculated={setBreachCosts}
         onInputsChanged={setModelInputs}
       />
@@ -315,7 +349,31 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           title="Breach Scenario — Export"
           exportData={exportMarkdown}
           filename="pqc-breach-scenario"
-          formats={['markdown', 'pdf', 'docx']}
+          formats={['markdown', 'csv', 'pdf', 'docx']}
+          csvData={rowsToCsv([
+            ['Section', 'Metric', 'Value', 'Unit'],
+            ['Scenario', 'Industry', selectedIndustry, ''],
+            ...Object.entries(modelInputs ?? {}).map(([name, value]) => [
+              'Input',
+              name,
+              String(value),
+              'model input',
+            ]),
+            ['Result', 'Classical breach per event', breachCosts.classicalCost, 'USD'],
+            ['Result', 'Quantum breach per event if CRQC exists', breachCosts.quantumCost, 'USD'],
+            ['Result', 'Additional quantum exposure if CRQC exists', breachCosts.delta, 'USD'],
+            ['Result', 'CRQC probability within horizon', breachCosts.pCrqc, 'fraction'],
+            ['Result', 'Expected annual quantum loss', breachCosts.quantumALE, 'USD/year'],
+            [
+              'Result',
+              'Latest migration start',
+              Math.round(breachCosts.latestSafeStartYear),
+              'year',
+            ],
+            ...findings.map((finding) => ['Interpretation', 'Finding', finding, '']),
+            ['Method', 'Assumptions and limitations', breachScenarioMethodMarkdown(), ''],
+            ['Method', 'Baseline limitation', IBM_BASELINE_UNVERIFIED_NOTE, ''],
+          ])}
           onExport={() =>
             addExecutiveDocument({
               id: `breach-scenario-${Date.now()}`,
@@ -330,8 +388,8 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           }
         >
           <p className="text-sm text-muted-foreground">
-            Export the breach scenario as markdown, PDF, or DOCX — also saved to your Command Center
-            Risk Artifacts.
+            Export the breach scenario as CSV, Markdown, PDF, or DOCX — also saved to your Command
+            Center Risk Artifacts.
           </p>
         </ExportableArtifact>
       )}

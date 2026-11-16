@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
+import { AuditSampleScopeExercise } from './AuditSampleScopeExercise'
 import React, { useMemo, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -767,6 +768,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
         template. References are related reading, not proof that every field is a source-mandated
         control.
       </p>
+      <AuditSampleScopeExercise />
       <ArtifactBuilder
         title="PQC Audit Planning Topics"
         description="Use this Hub-authored educational template to select sample planning topics. A selection records inclusion, not completed controls or audit readiness. References are related reading, not proof that every field is a source-mandated control. Identify what to evaluate with your own tools."
