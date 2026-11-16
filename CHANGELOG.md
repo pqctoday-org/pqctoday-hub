@@ -29,6 +29,26 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.211.1] - 2026-11-15
+
+The Q&A Assistant and search upgrade described under 4.211.0 goes live in this release, searching for a Business Center tool by name finds that tool's own page first, 112 patent details are corrected, six Migrate products are updated from their own sources, and the Library gains security levels for one document and plainer notes on seven ISO standards.
+
+### Changed
+
+- **The 4.211.0 Assistant and search upgrade is live** [view:/about] [persona:developer] [persona:architect] [persona:researcher]: the Assistant answers questions about production tool capability checklists, Business Center decision exercises and Learn infographic sample assumptions, links to workshop steps across 65 Learn modules and all 58 Playground tools, cites only the passages it used, and runs on the smaller, more accurate semantic search index described under 4.211.0. 4.211.0 itself was never released, so this is the first release that carries it.
+
+### Fixed
+
+- **Business Center tool pages come first in search** [view:/business] [persona:executive] [persona:grc] [persona:architect]: searching any of the 37 Business Center tools by its name, such as "deployment playbook", now returns that tool's own page first, ahead of the production capability checklist that shares the name. The same ordering applies in the ⌘K search and the Q&A Assistant.
+
+### Data
+
+- **112 patent details corrected after review** [view:/patents] [persona:researcher] [persona:grc] [persona:executive]: across 95 patents, the NIST standardization status listed for each algorithm (81 statuses), the quantum notes (13), the one-sentence summaries (9) and the main inventive claims (9) now carry the reviewed values.
+- **Six Migrate products updated from their own sources** [view:/migrate] [persona:architect] [persona:ops] [persona:developer]: the Tenable Nessus Professional and Threema descriptions, the Applivery post-quantum description, the Microsoft Playwright version and release date, the Python SSL module version, and the Trail of Bits ML-DSA FIPS validation status (now shown as not stated in its source rather than "No") now rest on a source page the entry cites.
+- **Security levels for the composite ML-DSA signatures for SSH draft** [view:/library] [persona:researcher] [persona:architect]: the Library entry now lists security levels L2, L3 and L5.
+- **Plainer notes on seven ISO standards** [view:/library] [persona:researcher]: the data-quality notes on ISO/IEC 11889, 19790, 19794-2, 20085-1, 24759, 27005 and 28033 now begin "Note:" like the rest of the Library, with the rest of each note unchanged.
+- **Search covers this release** [view:/] [persona:curious] [persona:researcher]: the assistant's search index is rebuilt, and the OSCAL and SBOM exports name 4.211.1.
+
 ## [4.211.0] - 2026-11-15
 
 The Q&A Assistant now answers questions about production tool capability checklists, Business Center decision exercises, and Learn infographic sample assumptions, links directly to workshop steps across 65 Learn modules and all 58 Playground tools, and uses a 75%-smaller semantic search index alongside stricter citation and fact verification.

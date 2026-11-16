@@ -239,13 +239,24 @@ export class UnifiedSearchService {
       'governance-maturity': 5,
       'concept-xwalk': 6,
     }
+    // A Business Center tool's own page is the primary authority for its toolId,
+    // so it resolves ahead of the capability checklist that shares that alias.
+    const rankFor = (id: string, key: string): number => {
+      const chunk = this._corpusById.get(id)
+      const m = chunk?.metadata as Record<string, unknown> | undefined
+      if (
+        chunk?.source === 'business-center' &&
+        m?.feature === 'tool' &&
+        typeof m.toolId === 'string' &&
+        m.toolId.trim().toLowerCase() === key
+      ) {
+        return 0
+      }
+      return ENTITY_SOURCE_RANK[chunk?.source ?? ''] ?? 4
+    }
     for (const [key, ids] of this._entityIndex) {
       if (ids.length <= 1) continue
-      ids.sort((a, b) => {
-        const sa = this._corpusById.get(a)?.source ?? ''
-        const sb = this._corpusById.get(b)?.source ?? ''
-        return (ENTITY_SOURCE_RANK[sa] ?? 4) - (ENTITY_SOURCE_RANK[sb] ?? 4)
-      })
+      ids.sort((a, b) => rankFor(a, key) - rankFor(b, key))
       this._entityIndex.set(key, ids)
     }
   }

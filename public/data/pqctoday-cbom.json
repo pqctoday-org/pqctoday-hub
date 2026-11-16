@@ -21142,14 +21142,9 @@
       "bom-ref": "bf9d452bc0aa5e0d",
       "name": "Applivery UEM PQC",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "First UEM to deploy PQC across managed Apple devices using Post-quantum Hybrid Public Key Encryption (HPKE) X25519MLKEM768 (ML-KEM-768 + X25519) with AES-256, via Apple quantum-secure TLS 1.3 APIs on iOS/macOS/iPadOS 26 and TLS 1.3 over OpenSSL 3.5.0 on servers.",
+      "description": "Applivery states it is the first UEM to deploy post-quantum cryptography across managed Apple devices (a vendor claim, not independently verified). Its announcement of September 16, 2025 says the implementation secures key exchange in MDM communication and describes it as Post-quantum Hybrid Public Key Encryption (HPKE) leveraging X25519MLKEM768, with Apple's quantum-secure TLS 1.3 APIs on iOS 26, macOS 26 and iPadOS 26, TLS 1.3 via OpenSSL 3.5.0 on the server side, and Cloudflare configured between clients and servers to use X25519MLKEM768. X25519MLKEM768 is a TLS 1.3 hybrid key-agreement group (RFC 10024) and HPKE is a separate public-key encryption scheme (RFC 9180); the announcement does not say how the two are combined, so the exact mechanism is the vendor's wording only. The announcement says AES-256 is the minimum symmetric key size and that Android and Windows support is on the roadmap.",
       "externalReferences": [
         {
           "type": "website",
@@ -29979,7 +29974,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "No"
+          "value": "Validation status not stated in the referenced source. Algorithm availability, reference code or a project test claim is not a CMVP module-validation record."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -30787,9 +30782,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "42ad7452fc135d70",
+      "bom-ref": "ec302e2c20e6866f",
       "name": "Playwright",
-      "version": "1.60",
+      "version": "1.65",
       "manufacturer": {
         "name": "Microsoft"
       },
@@ -34569,9 +34564,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7a390ad5c900c8e4",
+      "bom-ref": "f0f85ff9b96f73e5",
       "name": "Python ssl module (CPython stdlib)",
-      "version": "3.14.7",
+      "version": "3.15.2",
       "manufacturer": {
         "name": "Python Software Foundation (CPython)"
       },

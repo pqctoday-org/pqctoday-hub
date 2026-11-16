@@ -22,7 +22,9 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
 import {
+  bytesPerElement,
   cosineSearch,
+  dequantizeInt8,
   resetEmbeddingRuntime,
   injectTestRuntime,
   selectPassages,
@@ -64,7 +66,8 @@ async function loadRealRuntime() {
   const meta: EmbeddingMeta = JSON.parse(fs.readFileSync(META_PATH, 'utf8'))
   const buf = fs.readFileSync(BIN_PATH)
   // Node Buffer → ArrayBuffer slice that matches the typed-array view.
-  const vectors = new Float32Array(buf.buffer, buf.byteOffset, buf.byteLength / 4)
+  const bytes = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer
+  const vectors = meta.dtype === 'int8' ? dequantizeInt8(bytes) : new Float32Array(bytes)
 
   const { pipeline, env } = await import('@huggingface/transformers')
   env.allowRemoteModels = true
@@ -98,13 +101,13 @@ describe.skipIf(!hasArtifact)('embeddingRetrieval — integration with real mode
     it('meta has the expected schema', () => {
       expect(meta.version).toBe(1)
       expect(meta.dimensions).toBe(768)
-      expect(meta.dtype).toBe('float32')
+      expect(meta.dtype).toBe('int8')
       expect(meta.chunkCount).toBeGreaterThan(1000) // real corpus has thousands
       expect(Object.keys(meta.byteOffsets)).toHaveLength(meta.chunkCount)
     })
 
-    it('every byteOffset is within bounds and aligned to 4 × dims', () => {
-      const stride = meta.dimensions * 4
+    it('every byteOffset is within bounds and aligned to the vector stride', () => {
+      const stride = meta.dimensions * bytesPerElement(meta.dtype)
       const maxOffset = (meta.chunkCount - 1) * stride
       for (const [id, offset] of Object.entries(meta.byteOffsets)) {
         expect(offset % stride, `${id} offset ${offset} not aligned to stride ${stride}`).toBe(0)
@@ -113,7 +116,7 @@ describe.skipIf(!hasArtifact)('embeddingRetrieval — integration with real mode
     })
 
     it('the embedding file is the expected size', () => {
-      const expected = meta.chunkCount * meta.dimensions * 4
+      const expected = meta.chunkCount * meta.dimensions * bytesPerElement(meta.dtype)
       const actual = fs.statSync(BIN_PATH).size
       expect(actual).toBe(expected)
     })
