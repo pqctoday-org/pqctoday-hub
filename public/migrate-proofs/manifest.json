@@ -32618,6 +32618,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "trailofbits-ml-dsa",
+      "refId": "trailofbits-ml-dsa",
+      "file": "trailofbits-ml-dsa-45c35f21-5fa06564.html",
+      "sizeBytes": 227384,
+      "content_type": "text/html",
+      "url": "https://github.com/trailofbits/ml-dsa",
+      "sha256": "5fa06564cb44f55da334c235b5889a8c88d4bfcbc4fc4cd5f2c66ca0cc956d5f",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-16T04:54:54.837284+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
