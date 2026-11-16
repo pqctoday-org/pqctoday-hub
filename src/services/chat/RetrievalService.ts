@@ -89,7 +89,8 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     vendors: 1.5,
     'vendor-roadmap': 1.5,
     'regulatory-timeline': 1.5,
-    'capability-checklist': 2.0,
+    'module-topic-summaries': 1.5,
+    'module-summaries': 1.3,
   },
   country_query: {
     timeline: 3,
@@ -751,6 +752,28 @@ class RetrievalService {
       }
     }
 
+    const capabilityQuery =
+      /\b(capabilit(?:y|ies)|capability checklist|sandbox limitation|what check establishes|production tool requirements)\b/i.test(
+        query
+      )
+    const exerciseQuery = /\b(decision exercise|try it exercise|mosca verdict)\b/i.test(query)
+    const assumptionsQuery =
+      /\b(sample assumptions|infographic assumptions|handshake latency.*assumptions|rollback assumptions)\b/i.test(
+        query
+      )
+    if (capabilityQuery || exerciseQuery || assumptionsQuery) {
+      const cleanTokens = queryLower
+        .replace(/[?!.,;:()[\]"']/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean)
+      for (let n = Math.min(cleanTokens.length, 4); n >= 1; n--) {
+        for (let i = 0; i <= cleanTokens.length - n; i++) {
+          const gram = cleanTokens.slice(i, i + n).join(' ')
+          if (!nGrams.includes(gram)) nGrams.push(gram)
+        }
+      }
+    }
+
     // For pronoun or short follow-up queries ("What is its public key size?"),
     // also include n-grams from the immediately preceding user turn (conversationContext[0])
     // so Phase 1 entity lookup and Phase 2 expansions retain the subject entity.
@@ -919,6 +942,15 @@ class RetrievalService {
       if (!chunk) return { ...r, boostedScore: r.score }
 
       let multiplier = boosts[chunk.source] ?? 1
+      if (capabilityQuery && chunk.source === 'capability-checklist') {
+        multiplier *= 4
+      }
+      if (exerciseQuery && chunk.category === 'business-exercise') {
+        multiplier *= 4
+      }
+      if (assumptionsQuery && chunk.category === 'infographic-assumptions') {
+        multiplier *= 4
+      }
       // When the user explicitly asks for cryptographic libraries, favor
       // product rows categorized as libraries over products that merely
       // mention OpenSSL, a PQC algorithm, or a certification in passing.
@@ -1171,17 +1203,11 @@ class RetrievalService {
     const target = limit ?? getLimitForIntent(intent)
     if (target <= 0) return []
 
-    // Direct lookups already have strong lexical/entity signals when lexical
-    // search returns 5+ matches. Only skip semantic retrieval when lexical
-    // results already meet the minimum strong-match threshold (5 or target).
-    if (
-      (intent === 'definition' ||
-        intent === 'catalog_lookup' ||
-        intent === 'standard_query' ||
-        intent === 'country_query' ||
-        intent === 'whats_new') &&
-      lexicalResults.length >= Math.min(5, target)
-    ) {
+    // Only skip semantic retrieval on changelog ("what's new") queries, which
+    // are purely chronological. On all other intents, preserve the top 2
+    // lexical/entity matches and interleave high-confidence semantic hits so
+    // paraphrase and conceptual queries benefit from vector retrieval.
+    if (intent === 'whats_new' && lexicalResults.length >= Math.min(5, target)) {
       return lexicalResults.slice(0, target)
     }
 
@@ -1192,8 +1218,8 @@ class RetrievalService {
     const isCurious = pageContext?.experienceLevel === 'curious'
 
     try {
-      const SEMANTIC_SCORE_FLOOR = 0.72
-      const semanticQuota = Math.max(1, Math.floor(target / 5))
+      const SEMANTIC_SCORE_FLOOR = 0.62
+      const semanticQuota = Math.max(2, Math.floor(target / 4))
       const preferredSources = new Set(Object.keys(INTENT_BOOSTS[intent]))
       const anchors = semanticAnchors(query)
       const generallyUsefulSources = new Set([
@@ -1204,6 +1230,15 @@ class RetrievalService {
         'regulatory-timeline',
         'counter-claims',
         'capability-checklist',
+        'module-content',
+        'modules',
+        'module-summaries',
+        'module-topic-summaries',
+        'business-center',
+        'threats',
+        'timeline',
+        'compliance',
+        'migrate',
       ])
       const hits = await cosineSearch(query, { k: Math.max(15, target * 3) })
       const semantic: RAGChunk[] = []

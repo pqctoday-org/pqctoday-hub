@@ -60,6 +60,7 @@ const ENTITY_CATEGORY_LABELS: Record<string, string> = {
   'user-manual': 'App Guides',
   'playground-guide': 'App Guides',
   'openssl-guide': 'App Guides',
+  'capability-checklist': 'Production Tool Checklists',
 }
 
 /** Sources that don't produce meaningful entity names for the inventory */
@@ -312,6 +313,10 @@ export function countPlaygroundTools(): { total: number; native: number; sandbox
   return { total: WORKSHOP_TOOLS.length, native: WORKSHOP_TOOLS.length - sandbox, sandbox }
 }
 
+export function buildPlaygroundToolIdList(): string {
+  return WORKSHOP_TOOLS.map((tool) => tool.id).join(', ')
+}
+
 /**
  * The criticality values /threats?criticality= accepts, most severe first. Typed
  * here (the Threats page lists only the levels its data has, and loading that
@@ -421,6 +426,7 @@ export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageCo
   const moduleList = buildModuleLinkList()
   const businessToolIds = buildBusinessToolIdList()
   const playgroundTools = countPlaygroundTools()
+  const playgroundToolIds = buildPlaygroundToolIdList()
   const values = buildLinkValueLists()
   const mainPages = buildMainPageList()
 
@@ -463,7 +469,7 @@ GUIDELINES:
    - /leaders?leader=<leader id or name>, /leaders?sector=<Public|Private|Academic>&country=<name>, /leaders?cat=<category — singular: ${values.leaderCategory.join(', ')}>, /leaders?region=<americas|eu|apac>, /leaders?q=<text>, /leaders?mode=<cards|table|stack>, /leaders?layer=<Public|Private|Academic> (stack view layer)
    - /compliance?framework=<id> (open one framework, e.g. CNSA-2, FIPS-140-3), /compliance?cert=<recordId> (open one certification record), /compliance?evref=<library ref> (CSWP.39 evidence reference; tab=cswp39 optional), /compliance?tab=<obligations|requirements|progress|products|standards|certification|compliance|records|foryou|cswp39>, /compliance?q=<text>, /compliance?pqc=<algorithm name, e.g. ML-KEM>, /compliance?mcat=<category>, /compliance?org=<org>, /compliance?ind=<industry>, /compliance?vendor=<name>, /compliance?cat=<cat>, /compliance?src=<source>, /compliance?rtab=<all|fips|acvp|cc|cspn|esv>
    - /threats?id=<threatId>&industry=<industry>, /threats?criticality=<${values.threatCriticality.join('|')}>, /threats?class=<${values.threatClass.join('|')}>, /threats?q=<text>, /threats?sort=<industry|threatId|criticality|evidence>&dir=<asc|desc>, /threats?mode=<${values.threatMode.join('|')}> (list layout; default table), /threats?protocol=<protocol slug, e.g. tls-https, ssh, vpn-ipsec> (developer protocol lens), /threats?id=<threatId>&threattab=<${values.threatTab.join('|')}> (open that threat on its Detection or Response tab; default detection), /threats?view=horizon (CRQC Threat Horizon)
-   - /playground/<toolId> (one page per tool — ${playgroundTools.total} tools: ${playgroundTools.native} native + ${playgroundTools.sandbox} Docker-sandbox; each has its own "playground-guide" context chunk with a Deep Link: field — ALWAYS use that exact toolId rather than guessing one), /playground?algo=<name>&tab=<tab>
+   - /playground/<toolId> (one page per tool — ${playgroundTools.total} tools: ${playgroundTools.native} native + ${playgroundTools.sandbox} Docker-sandbox; actual toolIds: ${playgroundToolIds}), /playground?algo=<name>&tab=<tab>
    - /playground/interactive?tab=<${values.playgroundTab.join('|')}>&algo=<algo> (multi-tab lab; opens on keystore when tab is omitted), /playground/hsm (softhsmv3 HSM emulator workshop), /playground/cacp (KMIP 3.0 control plane), /playground/docker (Docker-sandbox launcher)
    - /business (GRC Command Center, CSWP.39-aligned), /business/tools (planning tools grid)
    - /business/tools/<toolId> — actual toolIds: ${businessToolIds}

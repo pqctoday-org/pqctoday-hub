@@ -320,9 +320,24 @@ export class UnifiedSearchService {
     pushAlias(m.country)
     pushAlias(m.org)
 
-    if (chunk.source === 'business-center' && typeof m.toolId === 'string') {
+    if (
+      (chunk.source === 'business-center' ||
+        chunk.source === 'playground-guide' ||
+        chunk.source === 'capability-checklist') &&
+      typeof m.toolId === 'string'
+    ) {
       pushAlias(m.toolId)
       pushAlias(m.toolId.replace(/-/g, ' '))
+    }
+    if (chunk.source === 'capability-checklist' && typeof m.moduleId === 'string') {
+      pushAlias(m.moduleId)
+    }
+    if (
+      chunk.source === 'module-content' &&
+      m.feature === 'infographic-assumptions' &&
+      typeof m.moduleId === 'string'
+    ) {
+      pushAlias(m.moduleId)
     }
     if (chunk.source === 'patents') {
       pushAlias(m.patentNumber)
@@ -345,12 +360,6 @@ export class UnifiedSearchService {
     }
     if (chunk.source === 'trusted-sources') {
       pushAlias(m.sourceId)
-    }
-    if (chunk.source === 'capability-checklist') {
-      pushAlias(m.moduleId)
-      pushAlias(m.toolId)
-      if (typeof m.moduleId === 'string') pushAlias(m.moduleId.replace(/-/g, ' '))
-      if (typeof m.toolId === 'string') pushAlias(m.toolId.replace(/-/g, ' '))
     }
   }
 
