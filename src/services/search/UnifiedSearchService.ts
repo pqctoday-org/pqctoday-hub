@@ -224,6 +224,30 @@ export class UnifiedSearchService {
     for (const chunk of this._corpus) {
       this.indexEntity(chunk)
     }
+
+    const ENTITY_SOURCE_RANK: Record<string, number> = {
+      algorithms: 1,
+      library: 1,
+      glossary: 1,
+      compliance: 1,
+      timeline: 1,
+      threats: 1,
+      modules: 1,
+      migrate: 1,
+      'capability-checklist': 2,
+      'document-enrichment': 3,
+      'governance-maturity': 5,
+      'concept-xwalk': 6,
+    }
+    for (const [key, ids] of this._entityIndex) {
+      if (ids.length <= 1) continue
+      ids.sort((a, b) => {
+        const sa = this._corpusById.get(a)?.source ?? ''
+        const sb = this._corpusById.get(b)?.source ?? ''
+        return (ENTITY_SOURCE_RANK[sa] ?? 4) - (ENTITY_SOURCE_RANK[sb] ?? 4)
+      })
+      this._entityIndex.set(key, ids)
+    }
   }
 
   /** Synchronous build — for `initializeWithCorpus` (tests, the Assistant's seeded corpus). */
@@ -321,6 +345,12 @@ export class UnifiedSearchService {
     }
     if (chunk.source === 'trusted-sources') {
       pushAlias(m.sourceId)
+    }
+    if (chunk.source === 'capability-checklist') {
+      pushAlias(m.moduleId)
+      pushAlias(m.toolId)
+      if (typeof m.moduleId === 'string') pushAlias(m.moduleId.replace(/-/g, ' '))
+      if (typeof m.toolId === 'string') pushAlias(m.toolId.replace(/-/g, ' '))
     }
   }
 

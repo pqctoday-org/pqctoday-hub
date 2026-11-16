@@ -382,7 +382,8 @@ export function useChatSend() {
         ensureCurrent()
         const recentQueries = historyBeforeQuery
           .filter((m) => m.role === 'user')
-          .slice(-5)
+          .slice(-3)
+          .reverse()
           .map((m) => m.content)
         const chunks = await retrievalService.searchWithEmbeddingFallback(trimmed, undefined, {
           page: pageContext.page,
@@ -532,15 +533,23 @@ export function useChatSend() {
 
         // Build deduplicated source references after generation, reusing the
         // trust-data import that ran in parallel with the model.
+        // Filter displayed sources to only the chunks actually cited in the
+        // verified answer (or the top-5 extractive fallback chunks).
         const tierForChunk = await tierResolverPromise
         ensureCurrent()
+        const citedSet = new Set(verified.citedChunkIds)
+        const displayChunks =
+          citedSet.size > 0
+            ? chunks.filter((c) => citedSet.has(c.id))
+            : chunks.slice(0, 5)
+        sourceIds = displayChunks.map((c) => c.id)
         const seenTitles = new Map<string, number>()
-        for (const c of chunks) {
+        for (const c of displayChunks) {
           const existingIdx = seenTitles.get(c.title)
           if (existingIdx !== undefined) {
             const existing = sourceRefs[existingIdx]
             const existingPriority =
-              chunks.find((ch) => ch.deepLink === existing.deepLink && ch.title === c.title)
+              displayChunks.find((ch) => ch.deepLink === existing.deepLink && ch.title === c.title)
                 ?.priority ?? 1
             const newPriority = c.priority ?? 1
             if (

@@ -12,6 +12,7 @@ import {
   injectTestRuntime,
   resetEmbeddingRuntime,
   isEmbeddingRuntimeReady,
+  dequantizeInt8,
   type EmbeddingMeta,
 } from '../embeddingRetrieval'
 
@@ -174,6 +175,43 @@ describe('embeddingRetrieval', () => {
       expect(hits[1].chunkId).toBe('e')
       expect(hits[0].score).toBeCloseTo(1, 5)
       expect(hits[1].score).toBeCloseTo(0.5, 5)
+    })
+
+    it('supports int8 byteOffsets (1 byte/dim), BGE cls pooling, and queryPrefix', async () => {
+      const seenCalls: Array<{ text: string; opts: { pooling: string; normalize: boolean } }> = []
+      const int8Bytes = new Int8Array([127, 0, 0, 0, 0, 127, 0, 0])
+      const dequantized = dequantizeInt8(int8Bytes.buffer)
+      injectTestRuntime({
+        vectors: dequantized,
+        meta: {
+          version: 1,
+          model: 'Xenova/bge-small-en-v1.5',
+          modelHash: 'sha256:fixture',
+          corpusHash: 'sha256:fixture',
+          dimensions: 4,
+          dtype: 'int8',
+          pooling: 'cls',
+          queryPrefix: 'Represent this sentence for searching relevant passages: ',
+          generatedAt: '2026-11-15T00:00:00Z',
+          generatedBy: 'fixture',
+          chunkCount: 2,
+          byteOffsets: { 'chunk-0': 0, 'chunk-1': 4 },
+        },
+        encoder: async (text, opts) => {
+          seenCalls.push({ text, opts })
+          return { data: vec([0, 1, 0, 0]) }
+        },
+      })
+
+      const hits = await cosineSearch('what is ml-kem?')
+      expect(seenCalls).toEqual([
+        {
+          text: 'Represent this sentence for searching relevant passages: what is ml-kem?',
+          opts: { pooling: 'cls', normalize: true },
+        },
+      ])
+      expect(hits[0].chunkId).toBe('chunk-1')
+      expect(hits[0].score).toBeCloseTo(1, 2)
     })
   })
 })

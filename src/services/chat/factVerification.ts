@@ -53,9 +53,21 @@ for (const entry of Object.values(ALGORITHM_REGISTRY)) {
  *  Keys are upper-cased (registry uses lowercase 's'/'f' parameter-set
  *  suffixes; checkSecurityLevels() below matches and looks up upper-case). */
 const SECURITY_LEVELS: Record<string, number> = {}
+const PUBLIC_KEY_BYTES: Record<string, number> = {}
+const SIG_OR_CT_BYTES: Record<string, number> = {}
 for (const entry of Object.values(ALGORITHM_REGISTRY)) {
+  const upper = entry.name.toUpperCase()
   if (typeof entry.securityLevel === 'number') {
-    SECURITY_LEVELS[entry.name.toUpperCase()] = entry.securityLevel
+    SECURITY_LEVELS[upper] = entry.securityLevel
+  }
+  if (typeof entry.publicKeyBytes === 'number' && entry.publicKeyBytes > 0) {
+    PUBLIC_KEY_BYTES[upper] = entry.publicKeyBytes
+  }
+  if (
+    typeof entry.signatureOrCiphertextBytes === 'number' &&
+    entry.signatureOrCiphertextBytes > 0
+  ) {
+    SIG_OR_CT_BYTES[upper] = entry.signatureOrCiphertextBytes
   }
 }
 
@@ -120,6 +132,12 @@ export function verifyFacts(
   if (chunks) {
     checkCertificationClaims(responseText, chunks, violations)
   }
+
+  // 6. Parameter set byte sizes (public key / ciphertext / signature)
+  checkParameterByteSizes(responseText, violations)
+
+  // 7. NIST IR 8547 classical deprecation (2030) and disallowance (2035) years
+  checkNistIr8547Dates(responseText, violations)
 
   return violations
 }
@@ -265,6 +283,65 @@ function checkNonPqcStandards(text: string, violations: FactViolation[]): void {
           found: `Response claims ${standard} supports ${algo}`,
         })
       }
+    }
+  }
+}
+
+/** Check public key, ciphertext, and signature byte-size claims for PQC parameter sets */
+function checkParameterByteSizes(text: string, violations: FactViolation[]): void {
+  const pkPattern =
+    /\b(ML-KEM-(?:512|768|1024)|ML-DSA-(?:44|65|87)|FN-DSA-(?:512|1024)|SLH-DSA-(?:SHA2|SHAKE)-(?:128|192|256)[SF])\b[^.\n]{0,45}?\bpublic\s+key(?:\s+size|\s+length|\s+is|\s+of)?[^.\d\n]{0,20}?(\d[\d,]*)\s*(?:bytes?|B)\b/gi
+  let match: RegExpExecArray | null
+  while ((match = pkPattern.exec(text)) !== null) {
+    const variant = match[1].toUpperCase()
+    const claimed = parseInt(match[2].replace(/,/g, ''), 10)
+    const expected = PUBLIC_KEY_BYTES[variant]
+    if (expected !== undefined && claimed !== expected) {
+      violations.push({
+        claim: match[0],
+        expected: `${variant} public key is ${expected} bytes`,
+        found: `Response claims ${claimed} bytes`,
+      })
+    }
+  }
+
+  const ctOrSigPattern =
+    /\b(ML-KEM-(?:512|768|1024)|ML-DSA-(?:44|65|87)|FN-DSA-(?:512|1024)|SLH-DSA-(?:SHA2|SHAKE)-(?:128|192|256)[SF])\b[^.\n]{0,45}?\b(ciphertext|signature)(?:\s+size|\s+length|\s+is|\s+of)?[^.\d\n]{0,20}?(\d[\d,]*)\s*(?:bytes?|B)\b/gi
+  while ((match = ctOrSigPattern.exec(text)) !== null) {
+    const variant = match[1].toUpperCase()
+    const kind = match[2].toLowerCase()
+    const claimed = parseInt(match[3].replace(/,/g, ''), 10)
+    const expected = SIG_OR_CT_BYTES[variant]
+    if (expected !== undefined && claimed !== expected) {
+      violations.push({
+        claim: match[0],
+        expected: `${variant} ${kind} is ${expected} bytes`,
+        found: `Response claims ${claimed} bytes`,
+      })
+    }
+  }
+}
+
+/** Check NIST IR 8547 classical deprecation (2030) and disallowance (2035) years */
+function checkNistIr8547Dates(text: string, violations: FactViolation[]): void {
+  const irPattern =
+    /\bNIST\s+IR\s+8547\b[^.\n]{0,80}?\b(deprecat\w*|disallow\w*)\b[^.\d\n]{0,30}?\b(20\d{2})\b/gi
+  let match: RegExpExecArray | null
+  while ((match = irPattern.exec(text)) !== null) {
+    const action = match[1].toLowerCase()
+    const year = parseInt(match[2], 10)
+    if (action.startsWith('deprecat') && year !== 2030) {
+      violations.push({
+        claim: match[0],
+        expected: 'NIST IR 8547 deprecates quantum-vulnerable algorithms after 2030',
+        found: `Response claims deprecation in ${year}`,
+      })
+    } else if (action.startsWith('disallow') && year !== 2035) {
+      violations.push({
+        claim: match[0],
+        expected: 'NIST IR 8547 disallows quantum-vulnerable algorithms after 2035',
+        found: `Response claims disallowance in ${year}`,
+      })
     }
   }
 }

@@ -45,7 +45,7 @@ export const CURRENT_CORPUS_GOLDEN_QUESTIONS: CurrentCorpusGoldenQuestion[] = [
     semanticMustInclude: ['user-manual-learn'],
     expectedSources: ['user-manual', 'modules'],
     minTop5Hits: 1,
-    answerTerms: ['62', 'Foundations', 'Applied Crypto'],
+    answerTerms: ['75', 'Foundations', 'Applied Crypto'],
   },
   {
     id: 'ml-kem-supporting-libraries',

@@ -137,4 +137,35 @@ FIPS 204 was published in January 2025.`
     const result = verifyFacts(text)
     expect(result.length).toBeGreaterThanOrEqual(2)
   })
+
+  // ── Parameter byte sizes & NIST IR 8547 dates ────────────────────────
+
+  it('passes for correct ML-KEM-768 public key (1,184 B) and ML-DSA-65 signature (3,309 B)', () => {
+    const result = verifyFacts(
+      'ML-KEM-768 has a public key size of 1,184 bytes and ML-DSA-65 produces a signature of 3,309 bytes.'
+    )
+    expect(result).toEqual([])
+  })
+
+  it('detects wrong byte size for ML-KEM-768 public key or ML-DSA-65 signature', () => {
+    const result = verifyFacts(
+      'ML-KEM-768 has a public key size of 800 bytes and ML-DSA-65 has a signature size of 2,420 bytes.'
+    )
+    expect(result).toHaveLength(2)
+    expect(result[0].expected).toContain('ML-KEM-768 public key is 1184 bytes')
+    expect(result[1].expected).toContain('ML-DSA-65 signature is 3309 bytes')
+  })
+
+  it('detects wrong NIST IR 8547 deprecation or disallowance year', () => {
+    const bad = verifyFacts(
+      'Under NIST IR 8547, RSA-2048 is deprecated in 2028 and disallowed in 2032.'
+    )
+    expect(bad.length).toBeGreaterThanOrEqual(1)
+    expect(bad[0].expected).toContain('2030')
+
+    const good = verifyFacts(
+      'Under NIST IR 8547, RSA-2048 is deprecated after 2030 and disallowed after 2035.'
+    )
+    expect(good).toEqual([])
+  })
 })

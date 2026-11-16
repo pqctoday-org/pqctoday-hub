@@ -149,4 +149,21 @@ describe('enforceGrounding', () => {
         '- [ML-KEM](/algorithms?highlight=ml-kem)'
     )
   })
+
+  it('rejects a response containing even a single ungrounded RFC or standard entity', () => {
+    const answer = 'ML-KEM is standardized in FIPS 203 and RFC 99999.'
+    const result = enforceGrounding(
+      answer,
+      [
+        {
+          claimExcerpt: answer,
+          evidenceExcerpt: 'ML-KEM is a key encapsulation mechanism standardized in FIPS 203.',
+          chunkId: 'algo-ml-kem',
+        },
+      ],
+      chunks
+    )
+    expect(result.approved).toBe(false)
+    expect(result.reasons).toContain('ungrounded-entity')
+  })
 })

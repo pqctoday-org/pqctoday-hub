@@ -258,4 +258,18 @@ describe('RetrievalService.searchWithEmbeddingFallback', () => {
     const results = await service.searchWithEmbeddingFallback(QUERY, 2)
     expect(results.map((c) => c.id)).toEqual(['lexical-match'])
   })
+
+  it('triggers semantic fallback on a definition query when lexical search returns fewer than 5 hits', async () => {
+    vi.spyOn(service, 'search').mockReturnValue([LEXICAL_CHUNK])
+    embeddingRetrievalEnabled = true
+    const queryVec = vec([1, 0, 0, 0])
+    injectTestRuntime({
+      vectors: pack([vec([0, 1, 0, 0]), queryVec]),
+      meta: makeMeta(['lexical-match', 'semantic-only'], 4),
+      encoder: async () => ({ data: queryVec }),
+    })
+
+    const results = await service.searchWithEmbeddingFallback('What is RSA migration?', 5)
+    expect(results.map((c) => c.id)).toEqual(['lexical-match', 'semantic-only'])
+  })
 })

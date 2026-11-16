@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { RAGChunk } from '@/types/ChatTypes'
-import { appendGroundedDeepLinks, appendRetrievedDeepLinks } from './deepLinkInjection'
+import { appendGroundedDeepLinks } from './deepLinkInjection'
 import {
   buildRetrievedEvidenceResponse,
   enforceGrounding,
@@ -9,12 +9,13 @@ import {
 } from './groundingPolicy'
 import type { ClaimCitation } from './parseCitations'
 
-export type GroundedResponseMode = 'verified' | 'salvaged' | 'format-tolerant' | 'extractive'
+export type GroundedResponseMode = 'verified' | 'salvaged' | 'extractive'
 
 export interface FinalizedGroundedResponse {
   content: string
   decision: GroundingDecision
   mode: GroundedResponseMode
+  citedChunkIds: string[]
 }
 
 /** Convert one model draft into the safest useful response available. */
@@ -29,6 +30,7 @@ export function finalizeGroundedResponse(
       content: appendGroundedDeepLinks(answer, citations, chunks),
       decision,
       mode: 'verified',
+      citedChunkIds: [...new Set(citations.map((c) => c.chunkId).filter(Boolean))],
     }
   }
 
@@ -38,17 +40,7 @@ export function finalizeGroundedResponse(
       content: appendGroundedDeepLinks(salvaged.content, salvaged.citations, chunks),
       decision,
       mode: 'salvaged',
-    }
-  }
-
-  const formattingOnlyFailure = decision.reasons.every((reason) =>
-    ['missing-citations', 'claim-not-in-answer', 'uncited-statement'].includes(reason)
-  )
-  if (formattingOnlyFailure && answer.trim()) {
-    return {
-      content: appendRetrievedDeepLinks(answer, chunks),
-      decision,
-      mode: 'format-tolerant',
+      citedChunkIds: [...new Set(salvaged.citations.map((c) => c.chunkId).filter(Boolean))],
     }
   }
 
@@ -56,5 +48,6 @@ export function finalizeGroundedResponse(
     content: buildRetrievedEvidenceResponse(chunks),
     decision,
     mode: 'extractive',
+    citedChunkIds: [],
   }
 }

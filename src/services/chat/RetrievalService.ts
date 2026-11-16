@@ -48,6 +48,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'document-enrichment': 1.2,
     'concept-registry': 1.5,
     nice: 1.2,
+    'capability-checklist': 1.5,
   },
   comparison: {
     algorithms: 2,
@@ -72,6 +73,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'algo-product-xref': 1.5,
     'vendor-roadmap': 2,
     'user-manual': 2,
+    'capability-checklist': 1.8,
   },
   recommendation: {
     algorithms: 1.2,
@@ -87,6 +89,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     vendors: 1.5,
     'vendor-roadmap': 1.5,
     'regulatory-timeline': 1.5,
+    'capability-checklist': 2.0,
   },
   country_query: {
     timeline: 3,
@@ -132,6 +135,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'guided-tour': 1.1,
     'implementation-attacks': 1.3,
     nice: 1.1,
+    'capability-checklist': 1.4,
   },
 }
 
@@ -149,6 +153,7 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'algo-product-xref': 1.3,
     'implementation-attacks': 1.4,
     'protocol-matrix': 1.2,
+    'capability-checklist': 1.4,
   },
   executive: {
     assessment: 1.5,
@@ -163,6 +168,7 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     vendors: 1.3,
     'vendor-roadmap': 1.3,
     'regulatory-timeline': 1.5,
+    'capability-checklist': 1.5,
   },
   architect: {
     'module-content': 1.3,
@@ -175,6 +181,7 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'protocol-matrix': 1.3,
     'standard-algo-xref': 1.2,
     'regulatory-timeline': 1.2,
+    'capability-checklist': 1.5,
   },
   researcher: {
     library: 1.5,
@@ -198,6 +205,7 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'module-content': 1.3,
     'standard-algo-xref': 1.3,
     'algo-product-xref': 1.2,
+    'capability-checklist': 1.5,
   },
   ops: {
     migrate: 1.5,
@@ -208,6 +216,7 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'governance-maturity': 1.2,
     'vendor-roadmap': 1.5,
     'regulatory-timeline': 1.3,
+    'capability-checklist': 1.5,
   },
   curious: {
     glossary: 1.3,
@@ -742,6 +751,29 @@ class RetrievalService {
       }
     }
 
+    // For pronoun or short follow-up queries ("What is its public key size?"),
+    // also include n-grams from the immediately preceding user turn (conversationContext[0])
+    // so Phase 1 entity lookup and Phase 2 expansions retain the subject entity.
+    const isFollowUpPronounQuery =
+      Boolean(pageContext?.conversationContext?.length) &&
+      (/\b(it|its|they|them|their|this|that|these|those)\b/i.test(query) ||
+        queryTokens.length <= 4)
+    const priorTurnLower = isFollowUpPronounQuery
+      ? (pageContext?.conversationContext?.[0] ?? '')
+          .toLowerCase()
+          .replace(/[?!.,;:()[\]"]/g, ' ')
+          .trim()
+      : ''
+    const priorTokens = priorTurnLower ? priorTurnLower.split(/\s+/).filter(Boolean) : []
+    if (priorTokens.length > 0) {
+      for (let n = Math.min(priorTokens.length, 4); n >= 1; n--) {
+        for (let i = 0; i <= priorTokens.length - n; i++) {
+          const gram = priorTokens.slice(i, i + n).join(' ')
+          if (!nGrams.includes(gram)) nGrams.push(gram)
+        }
+      }
+    }
+
     // Cap per-source contribution in Phase 1 so a single source (e.g. multiple
     // governance-maturity rows that share a refId with a library entry) cannot
     // monopolise the four entity slots at the expense of complementary sources.
@@ -1139,16 +1171,16 @@ class RetrievalService {
     const target = limit ?? getLimitForIntent(intent)
     if (target <= 0) return []
 
-    // Direct lookups already have strong lexical/entity signals. They should
-    // not wait for the ~53 MB embedding index and query-vector inference.
-    // Keep semantic retrieval for ambiguous, comparative, and recommendation
-    // queries where it materially improves recall.
+    // Direct lookups already have strong lexical/entity signals when lexical
+    // search returns 5+ matches. Only skip semantic retrieval when lexical
+    // results already meet the minimum strong-match threshold (5 or target).
     if (
-      intent === 'definition' ||
-      intent === 'catalog_lookup' ||
-      intent === 'standard_query' ||
-      intent === 'country_query' ||
-      intent === 'whats_new'
+      (intent === 'definition' ||
+        intent === 'catalog_lookup' ||
+        intent === 'standard_query' ||
+        intent === 'country_query' ||
+        intent === 'whats_new') &&
+      lexicalResults.length >= Math.min(5, target)
     ) {
       return lexicalResults.slice(0, target)
     }
@@ -1171,6 +1203,7 @@ class RetrievalService {
         'document-enrichment',
         'regulatory-timeline',
         'counter-claims',
+        'capability-checklist',
       ])
       const hits = await cosineSearch(query, { k: Math.max(15, target * 3) })
       const semantic: RAGChunk[] = []

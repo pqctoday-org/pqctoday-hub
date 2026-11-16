@@ -27,11 +27,26 @@ export interface EmbeddingMeta {
   modelHash: string
   corpusHash: string
   dimensions: number
-  dtype: 'float32'
+  dtype: 'float32' | 'int8'
+  pooling?: 'cls' | 'mean'
+  queryPrefix?: string
   generatedAt: string
   generatedBy: string
   chunkCount: number
   byteOffsets: Record<string, number>
+}
+
+export function bytesPerElement(dtype: 'float32' | 'int8' = 'float32'): number {
+  return dtype === 'int8' ? 1 : 4
+}
+
+export function dequantizeInt8(buf: ArrayBuffer): Float32Array {
+  const q = new Int8Array(buf)
+  const out = new Float32Array(q.length)
+  for (let i = 0; i < q.length; i++) {
+    out[i] = q[i] / 127
+  }
+  return out
 }
 
 export interface CosineHit {
@@ -85,11 +100,12 @@ export async function initEmbeddingRuntime(): Promise<void> {
     ])
 
     // Sanity-check the file length matches the meta.
-    const expectedBytes = meta.chunkCount * meta.dimensions * 4
+    const elemBytes = bytesPerElement(meta.dtype)
+    const expectedBytes = meta.chunkCount * meta.dimensions * elemBytes
     if (vectorsBuf.byteLength !== expectedBytes) {
       throw new Error(
         `embeddings.bin size mismatch: expected ${expectedBytes} bytes ` +
-          `(${meta.chunkCount} × ${meta.dimensions} × 4), got ${vectorsBuf.byteLength}`
+          `(${meta.chunkCount} × ${meta.dimensions} × ${elemBytes}), got ${vectorsBuf.byteLength}`
       )
     }
 
@@ -102,7 +118,7 @@ export async function initEmbeddingRuntime(): Promise<void> {
 
     cachedRuntime = {
       encoder,
-      vectors: new Float32Array(vectorsBuf),
+      vectors: meta.dtype === 'int8' ? dequantizeInt8(vectorsBuf) : new Float32Array(vectorsBuf),
       meta,
     }
   })()
@@ -135,9 +151,12 @@ export async function cosineSearch(
   if (!cachedRuntime) return []
   const { encoder, vectors, meta } = cachedRuntime
 
-  const tensor = await encoder(queryText, { pooling: 'mean', normalize: true })
+  const pooling = meta.pooling ?? 'mean'
+  const encodedQuery = meta.queryPrefix ? `${meta.queryPrefix}${queryText}` : queryText
+  const tensor = await encoder(encodedQuery, { pooling, normalize: true })
   const query = new Float32Array(tensor.data)
   const dims = meta.dimensions
+  const elemBytes = bytesPerElement(meta.dtype)
   const k = opts.k ?? 10
 
   const ids = opts.candidateIds ?? Object.keys(meta.byteOffsets)
@@ -145,7 +164,7 @@ export async function cosineSearch(
   for (const id of ids) {
     const offset = meta.byteOffsets[id]
     if (offset === undefined) continue
-    const start = offset / 4
+    const start = offset / elemBytes
     const chunkVec = vectors.subarray(start, start + dims)
     hits.push({ chunkId: id, score: cosineSimilarity(query, chunkVec) })
   }
@@ -171,7 +190,8 @@ export async function cosineSearchByChunkId(
   const offset = meta.byteOffsets[chunkId]
   if (offset === undefined) return []
   const dims = meta.dimensions
-  const query = vectors.subarray(offset / 4, offset / 4 + dims)
+  const elemBytes = bytesPerElement(meta.dtype)
+  const query = vectors.subarray(offset / elemBytes, offset / elemBytes + dims)
   const k = opts.k ?? 10
 
   const ids = opts.candidateIds ?? Object.keys(meta.byteOffsets)
@@ -180,7 +200,7 @@ export async function cosineSearchByChunkId(
     if (id === chunkId) continue
     const cOff = meta.byteOffsets[id]
     if (cOff === undefined) continue
-    const start = cOff / 4
+    const start = cOff / elemBytes
     const chunkVec = vectors.subarray(start, start + dims)
     hits.push({ chunkId: id, score: cosineSimilarity(query, chunkVec) })
   }
@@ -239,7 +259,8 @@ export function getChunkVector(chunkId: string): Float32Array | null {
   if (!cachedRuntime) throw new Error('embedding runtime not initialized')
   const offset = cachedRuntime.meta.byteOffsets[chunkId]
   if (offset === undefined) return null
-  const start = offset / 4
+  const elemBytes = bytesPerElement(cachedRuntime.meta.dtype)
+  const start = offset / elemBytes
   return cachedRuntime.vectors.subarray(start, start + cachedRuntime.meta.dimensions)
 }
 

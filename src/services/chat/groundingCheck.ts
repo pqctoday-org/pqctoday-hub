@@ -108,6 +108,15 @@ const FALSE_POSITIVE_PHRASES = new Set([
   'migration program',
   'compliance framework',
   'infrastructure layer',
+  'pqc today',
+  'command center',
+  'openssl studio',
+  'migration workbench',
+  'readiness report',
+  'explore in pqc today',
+  'pqc assistant',
+  'learning center',
+  'crypto playground',
 ])
 
 /**
@@ -230,9 +239,9 @@ export function checkGrounding(
     ungroundedEntities.push(entity)
   }
 
-  // Warn at 2+ ungrounded entities — catches fabricated names/products/standards
+  // Warn at 1+ ungrounded entities — catches even a single fabricated name/product/standard
   return {
     ungroundedEntities,
-    hasWarning: ungroundedEntities.length >= 2,
+    hasWarning: ungroundedEntities.length >= 1,
   }
 }

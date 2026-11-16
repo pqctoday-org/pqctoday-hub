@@ -16,16 +16,15 @@ const chunks: RAGChunk[] = [
 ]
 
 describe('finalizeGroundedResponse', () => {
-  it('keeps a useful corpus-prompted answer when only hidden citations are missing', () => {
+  it('falls back to extractive retrieved sources when citations are missing (strict verified-only mode)', () => {
     const answer = 'PQC 101 introduces post-quantum cryptography fundamentals.'
     const result = finalizeGroundedResponse(answer, [], chunks)
-    expect(result.mode).toBe('format-tolerant')
-    expect(result.content).toContain(answer)
+    expect(result.mode).toBe('extractive')
+    expect(result.citedChunkIds).toEqual([])
     expect(result.content).toContain('[PQC 101](/learn/pqc-101)')
-    expect(result.content).not.toContain("couldn't produce")
   })
 
-  it('retains valid cited claims when an uncited introduction fails strict coverage', () => {
+  it('retains valid cited claims and records citedChunkIds when an uncited introduction fails strict coverage', () => {
     const claim = 'PQC 101 introduces post-quantum cryptography fundamentals.'
     const result = finalizeGroundedResponse(
       `Available learning content includes:\n\n${claim}`,
@@ -33,6 +32,7 @@ describe('finalizeGroundedResponse', () => {
       chunks
     )
     expect(result.mode).toBe('salvaged')
+    expect(result.citedChunkIds).toEqual(['module-pqc-101'])
     expect(result.content).toContain(claim)
     expect(result.content).not.toContain('Available learning content includes')
   })
@@ -45,6 +45,7 @@ describe('finalizeGroundedResponse', () => {
       chunks
     )
     expect(result.mode).toBe('extractive')
+    expect(result.citedChunkIds).toEqual([])
     expect(result.content).not.toContain(badClaim)
     expect(result.content).toContain('[PQC 101](/learn/pqc-101)')
   })

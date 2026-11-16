@@ -660,7 +660,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'standards-bodies': {
     roleFocus: 'Standards Leads, Compliance Architects & Policy Strategists',
     productionCapabilities: [
-      'Authoritative tracking of normative standards (NIST FIPS 203/204/205 published; FIPS 206 FN-DSA planned, FIPS 207 HQC pre-draft; ISO/IEC JTC 1/SC 27, IETF TLS/LAMPS/IPSECME/PQUIP, ETSI TC CYBER QSC) vs certification schemes (CMVP, Common Criteria/EUCC) and regulatory mandates.',
+      'Authoritative tracking of normative standards (NIST FIPS 203/204/205 published; FIPS 206 FN-DSA planned with no public draft, FIPS 207 HQC planned with no public draft; ISO/IEC JTC 1/SC 27, IETF TLS/LAMPS/IPSECME/PQUIP, ETSI TC CYBER QSC) vs certification schemes (CMVP, Common Criteria/EUCC) and regulatory mandates.',
       'Strict verification of IETF RFC / draft status, avoiding deployment of retired pre-standard draft codepoints or superseded specifications.',
       'Mapping of regional cryptographic policies (CNSA 2.0, BSI TR-02102, ANSSI, NCSC, ASD ISM, CRYPTREC, KISA) for global deployments.',
     ],

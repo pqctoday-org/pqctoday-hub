@@ -549,6 +549,17 @@ describe('RetrievalService', () => {
       expect(fresh.isReady).toBe(false)
     })
   })
+
+  describe('pronoun follow-up and capability-checklist entity resolution', () => {
+    it('resolves a pronoun follow-up query using conversationContext[0] in Phase 1', () => {
+      const results = service.search('What is its key size?', 5, {
+        page: 'Algorithms',
+        relevantSources: ['algorithms'],
+        conversationContext: ['Tell me about ML-KEM-768', 'Earlier unrelated turn'],
+      })
+      expect(results.some((c) => c.title.includes('ML-KEM'))).toBe(true)
+    })
+  })
 })
 
 describe('RetrievalService.initialize', () => {

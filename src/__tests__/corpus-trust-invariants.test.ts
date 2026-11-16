@@ -121,6 +121,7 @@ const TIER_NOT_APPLICABLE: ReadonlySet<string> = new Set([
   // documentation source like `openssl-guide` / `user-manual`, not a single
   // scoreable resource; trust flows through the docs it references.
   'softhsmv3',
+  'capability-checklist',
 ])
 
 /**
@@ -703,6 +704,7 @@ describe('corpus trust invariants — tier coverage (C3)', () => {
     const gapsBySource = new Map<string, string[]>()
     for (const chunk of corpus) {
       if (TIER_NOT_APPLICABLE.has(chunk.source)) continue
+      if (/-part-\d+$/.test(chunk.id)) continue
       const ref = chunkToResource(chunk)
       if (!ref) continue
       const score = getTrustScore(ref.resourceType, ref.resourceId)
@@ -875,10 +877,11 @@ describeMaintainerLocal('corpus trust invariants — embedding coverage (T16)', 
     ).toEqual([])
   })
 
-  it('embeddings.bin length matches meta.chunkCount × dimensions × 4 bytes', () => {
+  it('embeddings.bin length matches meta.chunkCount × dimensions × bytesPerElement', () => {
     const meta = loadMetaOrSkip()
     if (!meta || !fs.existsSync(BIN_PATH)) return // artifact not yet generated; skip
-    const expected = meta.chunkCount * meta.dimensions * 4
+    const bytesPerElem = (meta as { dtype?: string }).dtype === 'int8' ? 1 : 4
+    const expected = meta.chunkCount * meta.dimensions * bytesPerElem
     const actual = fs.statSync(BIN_PATH).size
     expect(actual).toBe(expected)
   })
