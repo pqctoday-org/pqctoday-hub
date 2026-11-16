@@ -331,6 +331,7 @@ export class UnifiedSearchService {
     }
     if (chunk.source === 'capability-checklist' && typeof m.moduleId === 'string') {
       pushAlias(m.moduleId)
+      pushAlias(m.moduleId.replace(/-/g, ' '))
     }
     if (
       chunk.source === 'module-content' &&
@@ -338,6 +339,7 @@ export class UnifiedSearchService {
       typeof m.moduleId === 'string'
     ) {
       pushAlias(m.moduleId)
+      pushAlias(m.moduleId.replace(/-/g, ' '))
     }
     if (chunk.source === 'patents') {
       pushAlias(m.patentNumber)

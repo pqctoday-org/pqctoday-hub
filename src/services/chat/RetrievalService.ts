@@ -1159,6 +1159,38 @@ class RetrievalService {
       }
     }
 
+    // Capability checklist guarantee: when a query explicitly asks for
+    // production tool capabilities or capability checklists, ensure the top
+    // boosted capability-checklist chunk surfaces in top 5 even when generic
+    // entities ("PQC", "HSM") fill Phase 1 entity slots with software rows.
+    if (capabilityQuery) {
+      const top5 = selected.slice(0, 5)
+      const hasCapTop5 = top5.some((c) => c.source === 'capability-checklist')
+      if (!hasCapTop5) {
+        const capCandidate = boostedResults.find((r) => {
+          const chunk = this.corpusById.get(r.id)
+          return chunk?.source === 'capability-checklist'
+        })
+        if (capCandidate) {
+          const chunk = this.corpusById.get(capCandidate.id)
+          if (chunk) {
+            const existingIdx = selected.findIndex((c) => c.id === chunk.id)
+            if (existingIdx >= 5) {
+              selected.splice(existingIdx, 1)
+              selected.splice(4, 0, chunk)
+            } else if (existingIdx === -1) {
+              if (selected.length >= 5) {
+                const removed = selected.splice(4, 1)[0]
+                selectedIds.delete(removed.id)
+              }
+              selected.splice(4, 0, chunk)
+              selectedIds.add(chunk.id)
+            }
+          }
+        }
+      }
+    }
+
     return selected
   }
 
