@@ -539,9 +539,7 @@ export function useChatSend() {
         ensureCurrent()
         const citedSet = new Set(verified.citedChunkIds)
         const displayChunks =
-          citedSet.size > 0
-            ? chunks.filter((c) => citedSet.has(c.id))
-            : chunks.slice(0, 5)
+          citedSet.size > 0 ? chunks.filter((c) => citedSet.has(c.id)) : chunks.slice(0, 5)
         sourceIds = displayChunks.map((c) => c.id)
         const seenTitles = new Map<string, number>()
         for (const c of displayChunks) {

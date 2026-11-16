@@ -254,8 +254,7 @@ export const CURRENT_CORPUS_GOLDEN_QUESTIONS: CurrentCorpusGoldenQuestion[] = [
   },
   {
     id: 'infographic-assumptions-tls-basics',
-    query:
-      'What are the sample handshake latency and TCP initcwnd assumptions for tls-basics?',
+    query: 'What are the sample handshake latency and TCP initcwnd assumptions for tls-basics?',
     expectedIntent: 'definition',
     mustInclude: ['infographic-assumptions-tls-basics'],
     semanticMustInclude: ['infographic-assumptions-tls-basics'],

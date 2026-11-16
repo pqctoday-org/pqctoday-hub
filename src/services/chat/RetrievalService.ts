@@ -779,8 +779,7 @@ class RetrievalService {
     // so Phase 1 entity lookup and Phase 2 expansions retain the subject entity.
     const isFollowUpPronounQuery =
       Boolean(pageContext?.conversationContext?.length) &&
-      (/\b(it|its|they|them|their|this|that|these|those)\b/i.test(query) ||
-        queryTokens.length <= 4)
+      (/\b(it|its|they|them|their|this|that|these|those)\b/i.test(query) || queryTokens.length <= 4)
     const priorTurnLower = isFollowUpPronounQuery
       ? (pageContext?.conversationContext?.[0] ?? '')
           .toLowerCase()

@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.211.0] - 2026-11-15
+
+The Q&A Assistant now answers questions about production tool capability checklists, Business Center decision exercises, and Learn infographic sample assumptions, links directly to workshop steps across 65 Learn modules and all 58 Playground tools, and uses a 75%-smaller semantic search index alongside stricter citation and fact verification.
+
+### Added
+
+- **Q&A Assistant searches production tool checklists, business exercises, and sample assumptions** [view:/learn] [view:/playground] [view:/business] [persona:architect] [persona:developer] [persona:ops] [persona:grc] [persona:executive]: the Assistant's search index now includes all 171 production tool capability checklists (75 Learn modules plus the quiz, 58 Playground tools, and 37 Business Center tools), all 37 Business Center interactive decision exercises, and the 11 Learn infographic assumption notes.
+- **Step-level workshop deep links across 65 Learn modules and all 58 Playground tools** [view:/learn] [view:/playground] [persona:developer] [persona:architect] [persona:ops]: Assistant answers now link directly to specific workshop steps (`/learn/<module>?tab=workshop&step=<n>`) across 65 Learn modules and recognize all 58 Playground tool routes (including the 23 Docker-sandbox labs).
+
+### Changed
+
+- **Smaller, more accurate semantic search index** [view:/about] [persona:researcher] [persona:developer]: the local sentence-embedding index now uses BGE CLS-token pooling, retrieval query prefixes, section-balanced passage sampling, and 8-bit quantization, shrinking `embeddings.bin` by 75% (from 58.8 MB to 14.2 MB) while improving paraphrase recall.
+- **Verified-only source cards and stricter fact checks in Assistant replies** [view:/about] [persona:grc] [persona:cert-engineer] [persona:ops]: the Assistant now shows source cards only for passages actually cited in the answer, verifies FIPS 203, FIPS 204, and FIPS 205 key, ciphertext, and signature byte sizes and NIST IR 8547 2030/2035 transition dates against the catalog, and carries named algorithms or standards across short follow-up questions.
+
 ## [4.210.0] - 2026-11-15
 
 Every Learn module, Playground tool and Business Center tool gains a collapsed checklist of the capabilities to require in your own tools, and the PKI Enrollment, ACVP, certification, testing and closure lessons are corrected. Certificate Discovery follows draft -06, the Threats page adds constrained HSMs, Library entries show their documents' own status, and 876 notes across the catalogues read plainly.
