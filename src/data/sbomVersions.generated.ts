@@ -272,9 +272,9 @@ export const SBOM_BUNDLED_TRANSITIVE: {
   readonly count: number
   readonly licenses: readonly (readonly [string, number])[]
 } = {
-  count: 178,
+  count: 179,
   licenses: [
-    ['MIT', 146],
+    ['MIT', 147],
     ['ISC', 20],
     ['BSD-3-Clause', 6],
     ['0BSD', 2],

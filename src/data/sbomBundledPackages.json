@@ -9,6 +9,7 @@
     "node_modules/@mlc-ai/web-llm",
     "node_modules/@monaco-editor/loader",
     "node_modules/@monaco-editor/react",
+    "node_modules/@noble/ciphers",
     "node_modules/@noble/curves",
     "node_modules/@noble/hashes",
     "node_modules/@noble/post-quantum",
