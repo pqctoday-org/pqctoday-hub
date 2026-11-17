@@ -362,10 +362,10 @@ export const SafetyCryptoAnalyzer: React.FC = () => {
 
       {/* Function Selector */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <Car size={16} className="text-primary" />
           Select Automotive Function
-        </h4>
+        </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {AUTOMOTIVE_FUNCTIONS.map((fn) => (
             <FunctionCard

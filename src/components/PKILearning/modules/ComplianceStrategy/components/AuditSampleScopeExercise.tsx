@@ -14,9 +14,9 @@ export function AuditSampleScopeExercise() {
   const gaps = compareAuditSampleScope(record)
   return (
     <section className="glass-panel p-4 space-y-3" aria-labelledby="audit-scope-exercise-title">
-      <h3 id="audit-scope-exercise-title" className="font-bold">
+      <h2 id="audit-scope-exercise-title" className="font-bold">
         Practice: does the record cover the sample system?
-      </h3>
+      </h2>
       <p className="text-sm">
         You are reviewing the fictional customer portal’s cryptographic module:{' '}
         {AUDIT_SAMPLE_REQUIREMENT.module} {AUDIT_SAMPLE_REQUIREMENT.version},{' '}

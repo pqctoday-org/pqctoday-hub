@@ -505,7 +505,10 @@ export const CryptoArchitectureDiagram: React.FC = () => {
                 <th className="px-3 py-2 text-left font-semibold text-foreground">
                   Depends on (ids, comma-separated)
                 </th>
-                <th className="px-3 py-2 text-left font-semibold text-foreground w-10" />
+                <th
+                  className="px-3 py-2 text-left font-semibold text-foreground w-10"
+                  aria-label="Actions"
+                />
               </tr>
             </thead>
             <tbody className="divide-y divide-border">

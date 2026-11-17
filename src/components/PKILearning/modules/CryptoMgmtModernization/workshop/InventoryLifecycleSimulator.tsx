@@ -148,9 +148,9 @@ export const InventoryLifecycleSimulator: React.FC<InventoryLifecycleSimulatorPr
         className="rounded-lg border border-border p-4 space-y-3"
         aria-label="Fictional remediation durations"
       >
-        <h4 className="font-bold text-sm">
+        <h3 className="font-bold text-sm">
           Calculate from fictional completed-remediation records
-        </h4>
+        </h3>
         <p className="text-xs text-muted-foreground">
           Each input is elapsed hours from the declared start to completion of one fictional case,
           using the same definition for all three records. These are sample inputs, not measured

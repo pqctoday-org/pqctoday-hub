@@ -397,7 +397,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
                         {flow.indexOf(m) + 1}
                       </div>
                       <div className="flex-1 space-y-2 min-w-0">
-                        <h5 className="font-semibold text-foreground text-sm">{m.label}</h5>
+                        <h3 className="font-semibold text-foreground text-sm">{m.label}</h3>
                         <div className="flex flex-wrap items-center gap-2 text-xs">
                           <span className="flex items-center gap-1 px-2 py-0.5 rounded border border-border bg-muted/50 text-foreground">
                             <FromIcon size={12} />
@@ -488,7 +488,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
 
       {/* ── Radio events and local steps, outside the totals ── */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-2">Not counted in the totals</h4>
+        <h3 className="text-sm font-bold text-foreground mb-2">Not counted in the totals</h3>
         <div className="space-y-2">
           {CAR_KEY_LOCAL_EVENTS.map((event) => (
             <div key={event.id} className="text-xs">
@@ -530,7 +530,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
 
       {/* ── Service-time assumptions ── */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-1">Your timing assumptions</h4>
+        <h3 className="text-sm font-bold text-foreground mb-1">Your timing assumptions</h3>
         <p className="text-xs text-muted-foreground mb-3">
           No elapsed time is assumed. Enter how long you think each local radio fragment and each
           carmaker network message takes to serve; the page then adds them up as one serial
@@ -575,7 +575,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
 
       {/* ── Scenario Comparison Table ── */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">Radio Scenario Comparison</h4>
+        <h3 className="text-sm font-bold text-foreground mb-3">Radio Scenario Comparison</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>

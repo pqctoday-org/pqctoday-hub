@@ -24,6 +24,7 @@ interface Props {
   source: string
   /** Optional heading for the group; defaults to "Do this now". */
   heading?: string
+  headingLevel?: 2 | 3
   /** Extra wrapper classes for layout. */
   className?: string
 }
@@ -38,8 +39,10 @@ export const TopThreeActions: React.FC<Props> = ({
   actions,
   source,
   heading = 'Do this now',
+  headingLevel = 3,
   className,
 }) => {
+  const Heading = headingLevel === 2 ? 'h2' : 'h3'
   const capped = actions.slice(0, 3)
   if (capped.length === 0) return null
 
@@ -49,9 +52,9 @@ export const TopThreeActions: React.FC<Props> = ({
       className={`mb-6 ${className ?? ''}`.trim()}
       data-testid="top-three-actions"
     >
-      <h3 className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+      <Heading className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
         {heading}
-      </h3>
+      </Heading>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {capped.map((action, idx) => {
           const handleClick = () => {

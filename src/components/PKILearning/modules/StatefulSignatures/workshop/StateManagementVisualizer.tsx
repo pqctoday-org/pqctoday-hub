@@ -567,7 +567,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                       isProdOnly
                         ? lmsHeight === h
                           ? 'bg-muted/30 text-muted-foreground border border-border/50'
-                          : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
+                          : 'bg-muted/20 text-muted-foreground border border-border/30'
                         : lmsHeight === h
                           ? 'bg-primary/20 text-primary border border-primary/50'
                           : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
@@ -575,7 +575,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                   >
                     H{h}
                     {isProdOnly && (
-                      <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
+                      <span className="ml-1 text-[9px] text-muted-foreground">prod</span>
                     )}
                   </Button>
                   {isProdOnly && (
@@ -649,7 +649,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                             isProdOnly
                               ? level2Height === h
                                 ? 'bg-muted/30 text-muted-foreground border border-border/50'
-                                : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
+                                : 'bg-muted/20 text-muted-foreground border border-border/30'
                               : level2Height === h
                                 ? 'bg-primary/20 text-primary border border-primary/50'
                                 : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
@@ -657,7 +657,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                         >
                           H{h}
                           {isProdOnly && (
-                            <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
+                            <span className="ml-1 text-[9px] text-muted-foreground">prod</span>
                           )}
                         </Button>
                         {isProdOnly && (
@@ -687,7 +687,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                             isProdOnly
                               ? level3Height === h
                                 ? 'bg-muted/30 text-muted-foreground border border-border/50'
-                                : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
+                                : 'bg-muted/20 text-muted-foreground border border-border/30'
                               : level3Height === h
                                 ? 'bg-primary/20 text-primary border border-primary/50'
                                 : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
@@ -695,7 +695,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                         >
                           H{h}
                           {isProdOnly && (
-                            <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
+                            <span className="ml-1 text-[9px] text-muted-foreground">prod</span>
                           )}
                         </Button>
                         {isProdOnly && (

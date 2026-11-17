@@ -24,6 +24,26 @@ describe('applyFocusableScrollRegions', () => {
     expect(el.getAttribute('aria-label')).toBe('Scrollable table')
   })
 
+  it('keeps generated landmark names distinct without replacing an authored name', () => {
+    const root = document.createElement('main')
+    const authored = box('overflow-x-auto', '<table></table>', 900, 300)
+    authored.setAttribute('role', 'region')
+    authored.setAttribute('aria-label', 'Scrollable table')
+    const first = box('overflow-x-auto', '<table></table>', 900, 300)
+    const second = box('overflow-x-auto', '<table></table>', 900, 300)
+    root.append(authored, first, second)
+    applyFocusableScrollRegions(root)
+    expect(authored.getAttribute('aria-label')).toBe('Scrollable table')
+    expect(first.getAttribute('aria-label')).toBe('Scrollable table 2')
+    expect(second.getAttribute('aria-label')).toBe('Scrollable table 3')
+    applyFocusableScrollRegions(root)
+    expect(second.getAttribute('aria-label')).toBe('Scrollable table 3')
+    Object.defineProperty(first, 'clientWidth', { value: 900 })
+    applyFocusableScrollRegions(root)
+    expect(first.hasAttribute('aria-label')).toBe(false)
+    expect(second.getAttribute('aria-label')).toBe('Scrollable table 3')
+  })
+
   it('leaves a box that fits, or that holds a focusable element, untouched', () => {
     const root = document.createElement('main')
     const fits = box('overflow-x-auto', '<table></table>', 300, 300)

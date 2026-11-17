@@ -446,6 +446,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         <TopThreeActions
                           source="report"
                           heading="Do this first"
+                          headingLevel={2}
                           actions={result.recommendedActions.slice(0, 3).map((a) => ({
                             id: `action-${a.priority}`,
                             label: a.action,

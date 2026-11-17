@@ -140,8 +140,8 @@ const TAB_PATTERN_MODULES = ['pqc-101', 'qkd', 'secrets-management-pqc']
 // Lessons with a phone workshop: src/data/mobileWorkshops.ts MOBILE_WORKSHOP_READY. Listed here on
 // purpose rather than imported, so a change to that list has to be made in this spec as well.
 const PHONE_WORKSHOP_MODULES = ['pqc-101', 'qkd', 'secrets-management-pqc']
-// Lessons with no phone workshop: the phone shows no tab strip at all.
-const NO_PHONE_WORKSHOP_MODULES = ['tls-basics', 'talking-about-pqc']
+// Additional phone workshops enabled in v4.212.
+const ADDED_PHONE_WORKSHOP_MODULES = ['tls-basics', 'talking-about-pqc']
 
 /** The phone lesson has rendered: its section checklist is on screen. A count-of-zero
  *  assertion made before this passes on a page that has no lesson in it yet. */
@@ -152,18 +152,27 @@ async function settledMobileLesson(page: Page) {
   })
 }
 
-for (const id of NO_PHONE_WORKSHOP_MODULES) {
-  test(`module: /learn/${id} — mobile (390x844) has no tab strip, only a section checklist`, async ({
+for (const id of ADDED_PHONE_WORKSHOP_MODULES) {
+  test(`module: /learn/${id} — mobile (390x844) has working Learn / Workshop navigation and a section checklist`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(`/learn/${id}`)
     await settledMobileLesson(page)
 
-    await expect(page.getByRole('tablist')).toHaveCount(0)
+    const strip = page.getByRole('tablist', { name: 'Module view' })
+    await expect(strip).toBeVisible()
+    await expect(strip.getByRole('tab')).toHaveCount(2)
+    await expect(page.getByRole('tablist', { name: 'Module sections' })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'More tabs' })).toHaveCount(0)
     const sectionButtons = page.locator('ul > li > button[aria-pressed]')
     expect(await sectionButtons.count()).toBeGreaterThanOrEqual(1)
+    await strip.getByRole('tab', { name: 'Workshop', exact: true }).click()
+    const workshop = page.locator('#mobile-workshop')
+    await expect(workshop).toBeVisible()
+    expect((await workshop.innerText()).trim().length).toBeGreaterThan(100)
+    await strip.getByRole('tab', { name: 'Learn', exact: true }).click()
+    await settledMobileLesson(page)
   })
 }
 

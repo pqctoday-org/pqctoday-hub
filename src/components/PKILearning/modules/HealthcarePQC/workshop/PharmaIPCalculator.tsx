@@ -193,10 +193,10 @@ export const PharmaIPCalculator: React.FC = () => {
 
       {/* ── Pipeline Builder ──────────────────────────────────────────── */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <FlaskConical size={16} className="text-primary" />
           Fictional Compound Records
-        </h4>
+        </h3>
 
         <div className="space-y-3">
           {pipeline.map((compound) => {
@@ -493,10 +493,10 @@ export const PharmaIPCalculator: React.FC = () => {
 
       {/* ── Value dashboard: total value and vulnerable-path value, separately ── */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <DollarSign size={16} className="text-primary" />
           Value and Key-Protection Path
-        </h4>
+        </h3>
 
         <div className="space-y-2" role="status" aria-live="polite">
           {results.map(({ compound, result }) => {
@@ -592,10 +592,10 @@ export const PharmaIPCalculator: React.FC = () => {
 
       {/* ── R&D time from the visible steps ───────────────────────────── */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <TrendingUp size={16} className="text-status-warning" />
           R&amp;D Time From the Steps You Entered
-        </h4>
+        </h3>
         <p className="text-xs text-muted-foreground mb-3">
           Time saved is the sum of the steps you marked as omittable, and nothing else. It is
           arithmetic on fictional steps. It does not claim a stolen record replaces independent
@@ -623,10 +623,10 @@ export const PharmaIPCalculator: React.FC = () => {
 
       {/* ── Summary Panel ─────────────────────────────────────────────── */}
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <Shield size={16} className="text-primary" />
           Portfolio Summary
-        </h4>
+        </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-muted/30 rounded-lg p-3 border border-border text-center">

@@ -237,7 +237,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                     isProductionOnly
                       ? selectedParamId === param.id
                         ? 'bg-muted/30 text-muted-foreground border border-border/50'
-                        : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
+                        : 'bg-muted/20 text-muted-foreground border border-border/30'
                       : selectedParamId === param.id
                         ? 'bg-primary/20 text-primary border border-primary/50'
                         : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
@@ -245,7 +245,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                 >
                   {param.name}
                   {isProductionOnly && (
-                    <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
+                    <span className="ml-1 text-[9px] text-muted-foreground">prod</span>
                   )}
                   {/* Which document defines this set. RFC 8554 is the original
                       LMS/HSS; RFC 9858 added the 192-bit and SHAKE256 families
@@ -483,7 +483,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                     <span className="font-bold text-foreground">{row.value}</span>
                   </div>
                   {row.helper && (
-                    <div className="text-[10px] text-primary/80 bg-primary/5 p-1 rounded">
+                    <div className="text-[10px] text-foreground bg-primary/5 p-1 rounded">
                       {row.helper}
                     </div>
                   )}

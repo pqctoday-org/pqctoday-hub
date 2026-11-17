@@ -540,7 +540,7 @@ export const ProviderSetup: React.FC = () => {
                   <h4 className="text-sm font-semibold text-foreground">
                     Gemini 3.8 Flash (Cloud)
                   </h4>
-                  <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/20 text-primary">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/20 text-foreground">
                     Recommended
                   </span>
                 </div>

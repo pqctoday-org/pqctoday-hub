@@ -185,7 +185,7 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
       {/* Size Comparison */}
       {kexSizes && (
         <div className="space-y-3">
-          <h4 className="text-sm font-bold text-foreground">Key Exchange Sizes</h4>
+          <h3 className="text-sm font-bold text-foreground">Key Exchange Sizes</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
               <div className="text-lg font-bold text-foreground">

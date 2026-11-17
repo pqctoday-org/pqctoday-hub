@@ -10,7 +10,7 @@ export function InteractiveExecutionNotice({
   wasmLoaded: boolean
 }) {
   return (
-    <aside
+    <div
       role="status"
       aria-label="Selected execution mode"
       className="mb-4 rounded-lg border border-border bg-muted/20 p-3 text-xs"
@@ -26,6 +26,6 @@ export function InteractiveExecutionNotice({
           : 'A selected mode or loaded library is not a successful operation result.'}{' '}
         Read each operation’s result to see what executed and whether it succeeded.
       </p>
-    </aside>
+    </div>
   )
 }

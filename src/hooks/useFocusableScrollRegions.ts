@@ -48,10 +48,19 @@ export function applyFocusableScrollRegions(root: HTMLElement): void {
       el.setAttribute('tabindex', '0')
       el.setAttribute('role', 'region')
       if (!el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) {
-        el.setAttribute(
-          'aria-label',
-          el.querySelector('table') ? 'Scrollable table' : 'Scrollable content'
+        const baseName = el.querySelector('table') ? 'Scrollable table' : 'Scrollable content'
+        const namedRegions = [
+          ...root.querySelectorAll('[role="region"][aria-label]'),
+          ...el.ownerDocument.querySelectorAll('[role="region"][aria-label]'),
+        ]
+        const usedNames = new Set(
+          namedRegions
+            .filter((region) => region !== el)
+            .map((region) => region.getAttribute('aria-label'))
         )
+        let name = baseName
+        for (let suffix = 2; usedNames.has(name); suffix++) name = `${baseName} ${suffix}`
+        el.setAttribute('aria-label', name)
         el.setAttribute(`${MARK}-label`, '1')
       }
     } else if (!needs && managed) {

@@ -554,7 +554,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                       isProductionOnly
                         ? xmssHeight === h
                           ? 'bg-muted/30 text-muted-foreground border border-border/50 cursor-not-allowed'
-                          : 'bg-muted/20 text-muted-foreground/40 border border-border/30 cursor-not-allowed'
+                          : 'bg-muted/20 text-muted-foreground border border-border/30 cursor-not-allowed'
                         : xmssHeight === h
                           ? 'bg-secondary/20 text-foreground border border-secondary/50'
                           : 'bg-muted/50 text-muted-foreground border border-border hover:border-secondary/30'
@@ -562,7 +562,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                   >
                     H{h}
                     {isProductionOnly && (
-                      <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
+                      <span className="ml-1 text-[9px] text-muted-foreground">prod</span>
                     )}
                   </Button>
                   {isProductionOnly && (

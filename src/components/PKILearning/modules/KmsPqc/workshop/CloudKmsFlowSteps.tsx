@@ -50,7 +50,7 @@ export function CloudKmsFlowSteps({ flow, observations }: FlowStepsProps) {
               </span>
               <span className="rounded bg-muted px-1.5 py-0.5">{ACTOR_LABEL[step.actor]}</span>
             </div>
-            <h5 className="mt-1.5 text-sm font-semibold">{step.title}</h5>
+            <h4 className="mt-1.5 text-sm font-semibold">{step.title}</h4>
             <p className="mt-0.5 break-all font-mono text-xs text-primary">{step.apiName}</p>
             {step.params.length > 0 && (
               <ul className="mt-1.5 space-y-0.5 text-xs text-muted-foreground">
