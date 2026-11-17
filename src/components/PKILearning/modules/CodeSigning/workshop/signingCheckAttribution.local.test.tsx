@@ -40,7 +40,10 @@ const outcome = (spec: KatTestSpec, status: KATResult['status']): KATResult => (
 })
 const successful = () =>
   controlled.run.mockImplementation(async (_m, _s, spec: KatTestSpec) => outcome(spec, 'pass'))
-const run = () => fireEvent.click(screen.getByRole('button', { name: /^Run / }))
+const run = () =>
+  fireEvent.click(
+    screen.getByRole('button', { name: /^Run (?:known-answer checks|reference samples)$/ })
+  )
 
 beforeEach(() => {
   controlled.run.mockReset()

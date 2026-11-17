@@ -42,8 +42,11 @@ describe('secrets exercise and summary wording on HNDL exposure', () => {
     )
   })
 
-  it('labels the Vault transit ML-KEM path as a proposed design', () => {
-    expect(ragSummary).toContain('as a proposed design: Vault documents no ML-KEM transit key type')
+  it('distinguishes the executed application envelope from proposed native Vault support', () => {
+    expect(ragSummary).toContain(
+      'a separately executed application-side ML-KEM-768 / HKDF-SHA256 / AES-256-GCM envelope'
+    )
+    expect(ragSummary).toContain('Vault does not perform the sample ML-KEM operation.')
     expect(content.narratives.keyConcepts).toContain(
       'as a proposed design: Vault documents no ML-KEM transit key type'
     )
