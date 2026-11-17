@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:7eea32c5-88a6-4bdf-a13d-e2c1f6bdeb95",
+  "serialNumber": "urn:uuid:a2658a90-2551-4729-836d-ea5291d15146",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-15T00:00:00.000Z",
+    "timestamp": "2026-11-16T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -618,7 +618,7 @@
           "primitive": "other"
         }
       },
-      "description": "Multi-language library (C++, Go, Java). ML-DSA and SLH-DSA digital signatures are natively supported (general availability, not experimental) in C++ and Go; Java has now landed general ML-DSA support too. ML-KEM (Kyber) hybrid-encryption/KEM support is still under development, not yet in a stable release — the Hybrid Encryption API still offers only classical primitives.",
+      "description": "Tink supports ML-DSA and SLH-DSA signatures, subject to the supported-key-types matrix: Java requires Conscrypt for these signatures, while C++ support uses BoringSSL rather than its OpenSSL backend. C++ v2.5.0 added X-Wing, ML-KEM-768 and ML-KEM-1024 to HPKE. Check the language-specific release and backend before choosing a template; support in C++ does not establish the same feature in every language.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -1284,7 +1284,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Post-quantum secure with a 128-bit security level. Supports hybridization using INDCPA-KYBER (INDCPA version of NIST standard Kyber). Data encrypted with AES-GCM 256-bit. Uses Curve25519 for classic coordinates and INDCPA-Kyber for hybridized coordinates.",
+      "description": "Covercrypt 16.0.1 provides attribute-based encryption with hybrid classical/post-quantum coordinates. The published Rust package enables Curve25519 and ML-KEM-512 by default; P-256 and ML-KEM-768 are optional features. Select the package features and policy appropriate to the deployment rather than treating earlier IND-CPA Kyber descriptions as the current ML-KEM configuration.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -17981,7 +17981,7 @@
           "primitive": "other"
         }
       },
-      "description": "The Quantum Protect application package for the u.trust GP HSM Se-Series provides PQC algorithms that Utimaco states passed NIST CAVP testing: ML-KEM, ML-DSA, LMS, SLH-DSA, and SHA/SHAKE (NIST CAVP validation numbers 40010 and 40011). Utimaco also includes XMSS and XMSS-MT. A Software Development Kit included with all HSM deployments lets customers integrate and deploy new algorithms.",
+      "description": "The Quantum Protect application package for u.trust GP HSM Se-Series lists ML-KEM, ML-DSA, LMS/HSS, XMSS and XMSS-MT; the vendor currently marks SLH-DSA as in progress. Integration uses PKCS#11 vendor-defined mechanisms and a software simulator is available. NIST algorithm records A7400 and A7401 identify different implementation/version and operating-environment scopes on containerized u.trust Anchor; those records must not be transferred to this GP HSM package merely because the vendor is the same.",
       "externalReferences": [
         {
           "type": "website",
@@ -20831,14 +20831,9 @@
       "bom-ref": "7d26cbad0c2abd65",
       "name": "Threema PQC",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Quantum-secure messaging with IBM Research partnership for ML-KEM integration.",
+      "description": "Threema announced its IBM Research collaboration on 24 February 2026 to introduce post-quantum encryption gradually. The announcement describes research and planned integration rather than a released quantum-secure messaging feature, and names no specific algorithm.",
       "externalReferences": [
         {
           "type": "website",
@@ -21358,14 +21353,9 @@
       "bom-ref": "c020763fd63a67a8",
       "name": "Netskope One PQC",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "Netskope's blog (June 17, 2025) states the company is focusing on NIST's PQC algorithms, specifically ML-KEM 768, across its infrastructure, and that quantum-resilient Netskope One is in development with sandbox testing by customers intended shortly. The post identifies five places in the Netskope One architecture where encryption is used and says all were evaluated for a post-quantum attack; it does not state general availability.",
+      "description": "Netskope's 24 August 2026 announcement documents X25519MLKEM768 support in Netskope One Next Gen SWG for both client-to-Netskope and Netskope-to-destination TLS connections. The feature uses a tenant-level flag and transaction events expose PQC use. Availability is stated for commercial environments; FedRAMP, PBMM, Data Plane on-Premises and Virtual Private Edge are described as future work. This is a scoped gateway capability, not proof that every Netskope service or connection uses PQC.",
       "externalReferences": [
         {
           "type": "website",
@@ -26836,7 +26826,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (FIPS 140-2 Level 4 — CMVP #4558)"
+          "value": "Historical module validation: FIPS 140-2 Level 4, CMVP #4558, IBM 4770-001 Enterprise PKCS#11 HSM Cryptographic Coprocessor Security Module (EP11 firmware 8.0.37z/8.0.53z, operated in FIPS mode). This record does not establish validation of CCA 8.4 or its ML-KEM/ML-DSA operations."
         },
         {
           "name": "pqctoday:algorithm_source",
@@ -33663,7 +33653,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Implements the stateful hash-based signature scheme LMS (NIST SP 800-208), including patented state management for high-availability/backup, exposed through the HSM as part of the Quantum Protect package. LMS is NIST CAVP/ACVP validated (CAVP product #20182).",
+      "description": "NIST A7401 records LMS with SHA2-256 for Stateful hash based Module - HBS 1.4.2.0 on containerized u.trust Anchor. The record does not document XMSS or establish the former high-availability/backup and GP HSM package claims.",
       "externalReferences": [
         {
           "type": "website",
@@ -37752,9 +37742,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "a4ef7a9489538ce0",
+      "bom-ref": "2ddf53c64596a520",
       "name": "age-plugin-pqctoday",
-      "version": "in-tree (2026-08-09)",
+      "version": "0.1.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -37763,8 +37753,17 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "pqctoday's age recipient plugin implementing the X-Wing hybrid KEM (X25519 + ML-KEM-768) so age — and therefore SOPS — can wrap secrets to a post-quantum recipient. The post-quantum key material is generated in and held by softhsmv3 over PKCS#11 rather than in a file. This is the component that gives the sandbox's SOPS GitOps scenario its PQC; SOPS itself has none (see the getsops-sops row).",
-      "externalReferences": [],
+      "description": "An age recipient plugin implementing X-Wing draft-06 (X25519 + ML-KEM-768). The default backend performs the construction in software. With the pkcs11 feature, long-term private keys are generated as sensitive, non-extractable token objects; the plugin reads the two component shared secrets and combines them with SHA3-256 on the host. Therefore token-held private keys do not imply that every intermediate secret remains inside the token. The resulting secret protects the age file key using HKDF-SHA256 and ChaCha20-Poly1305. SOPS can use this recipient through its age integration; SOPS itself does not implement X-Wing.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/age-plugin-pqctoday"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pqctoday-org/age-plugin-pqctoday/tree/a297d1a1135fb5db75375904ae3ed03b8573b435"
+        }
+      ],
       "properties": [
         {
           "name": "pqctoday:product_id",
