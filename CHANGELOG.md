@@ -38,17 +38,17 @@ first time (don't ship dev-speak and reformat later):
 
 ### Changed
 
-- **Use twelve more workshops on a phone** [view:/learn] [persona:all]: phone workshop access now includes certification, TLS, digital-assets, hardware, supply-chain and other previously excluded modules.
+- **Use twelve more workshops on a phone** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: phone workshop access now includes certification, TLS, digital-assets, hardware, supply-chain and other previously excluded modules.
 - **Export decision-model inputs and results as CSV** [view:/business] [persona:executive] [persona:architect] [persona:grc]: additional builders preserve their current assumptions, calculated results and notes alongside their existing document exports. The breach simulator also includes a clearly fictional finance scenario.
-- **Read clearer visual worked examples** [view:/learn] [persona:all]: ten revised infographics distinguish raw and encoded sizes, fictional planning assumptions, capability requirements and measured results. Accessible descriptions and captions follow the revised examples.
+- **Read clearer visual worked examples** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: ten revised infographics distinguish raw and encoded sizes, fictional planning assumptions, capability requirements and measured results. Accessible descriptions and captions follow the revised examples.
 
 ### Fixed
 
 - **Enrollment failures clear old certificate output** [view:/learn/pki-enrollment-protocols] [persona:developer] [persona:cert-engineer] [persona:ops]: initial CMP enrollment fails closed when serial-number generation fails and prevents stale output from appearing to be a new result.
 - **NSS scope determines the MTI planner’s CNSA profile** [view:/business] [persona:architect] [persona:grc]: general federal use and National Security Systems are separate choices. A chosen planning year does not change the NSS parameter sets, and incompatible peer requirements remain visible in the exported decision.
 - **Compare matching HSS objects in automotive planning** [view:/learn/automotive-pqc] [persona:architect] [persona:developer]: the OTA estimate includes the HSS public-key header consistently with the signature format, with corrected package totals.
-- **Read tables and navigate more clearly** [view:/learn] [view:/navigate] [persona:all]: affected tables have header labels, selected scrollable comparisons support keyboard focus, and several lessons retain readable text contrast for future or unavailable items.
-- **Follow current sources and scoped claims** [view:/library] [view:/learn/software-supply-chain-pqc] [view:/sponsor] [view:/terms] [persona:all]: Library backlinks include additional citing modules, the supply-chain lesson cites the published composite-signature RFC, sponsorship explains applicability, and export-control notices distinguish conditional treatment from blanket authorization.
+- **Read tables and navigate more clearly** [view:/learn] [view:/navigate] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: affected tables have header labels, selected scrollable comparisons support keyboard focus, and several lessons retain readable text contrast for future or unavailable items.
+- **Follow current sources and scoped claims** [view:/library] [view:/learn/software-supply-chain-pqc] [view:/sponsor] [view:/terms] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Library backlinks include additional citing modules, the supply-chain lesson cites the published composite-signature RFC, sponsorship explains applicability, and export-control notices distinguish conditional treatment from blanket authorization.
 
 ## [4.211.1] - 2026-11-15
 

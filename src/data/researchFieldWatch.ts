@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { LIBRARY_CSV_SNAPSHOTS } from './generated/librarySnapshots.generated'
 import { loadLatestCSV } from './csvUtils'
 import { parseDateMs } from './libraryData'
 import {
@@ -282,18 +283,13 @@ let cachedCorpus: FieldWatchCorpus | null = null
  * Loads every library row — active AND deprecated, deliberately NOT filtered
  * the way `libraryData.ts` filters — as `FieldWatchRow`s, plus the corpus
  * release date and the derived reporting window, via the same `loadLatestCSV`
- * + `import.meta.glob('./library_*.csv', ...)` pattern `libraryData.ts` itself
- * uses. Memoized at module scope (the CSV is static per deploy); pass
+ * and bounded generated snapshots shared with `libraryData.ts`. Memoized at module scope (the CSV is static per deploy); pass
  * `forceReload: true` to bypass the cache (tests only).
  */
 export function loadFieldWatchCorpus(forceReload = false): FieldWatchCorpus {
   if (cachedCorpus && !forceReload) return cachedCorpus
 
-  const modules = import.meta.glob('./library_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
+  const modules = LIBRARY_CSV_SNAPSHOTS
 
   const { data, metadata } = loadLatestCSV<RawFieldWatchRow, FieldWatchRow>(
     modules,

@@ -1,7 +1,7 @@
 # Terms of Service
 
 **Effective Date:** October 4, 2026
-**Last Updated:** October 16, 2026
+**Last Updated:** November 16, 2026
 
 ## 1. Acceptance of Terms
 
@@ -27,19 +27,19 @@ In short: this is a demo, not a certified crypto library — never use keys it g
 
 ## 4. Export Compliance and Sanctions
 
-In short: because this Platform bundles real cryptographic source code, U.S. export control and sanctions law applies to it — details below.
+Encryption export controls depend on the item, its distribution and the parties and destinations involved. An open-source licence and export authorization are separate questions.
 
-### 4.1 Classification
+### 4.1 Classification and public availability
 
-The Platform embeds open-source cryptographic software classified under **Export Control Classification Number (ECCN) 5D002** pursuant to the U.S. Export Administration Regulations (EAR). This includes but is not limited to: OpenSSL, liboqs, ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), AES, RSA, ECDSA, ECDH, Ed25519, secp256k1, FrodoKEM, HQC, Classic McEliece, and Falcon.
+The Platform includes real cryptographic software. Encryption software may fall under ECCN 5D002, but an algorithm name alone does not determine the classification or whether an item is subject to the U.S. Export Administration Regulations (EAR). Source code, corresponding object code and modified distributions can require different treatment. Consult the [BIS guidance on encryption items not subject to the EAR](https://www.bis.gov/learn-support/encryption-controls/encryption-items-not-subject-to-ear).
 
-### 4.2 License Exception
+### 4.2 Conditions and exceptions
 
-Distribution is authorized under **License Exception TSU (§740.13 EAR)** for publicly available encryption source code and **License Exception ENC (§740.17 EAR)** for mass-market encryption software.
+[EAR section 742.15(b)](https://www.bis.gov/regulations/ear/742) describes the treatment of publicly available encryption source code, including applicable notification conditions. License Exception ENC has its own conditions for eligible encryption items. This notice does not assert that every Platform component or redistribution automatically qualifies for an exception or exemption.
 
 ### 4.3 Your responsibility for export and sanctions law
 
-Users are responsible for complying with the export control and sanctions laws that apply to them. U.S. law, for example, restricts exports to countries and territories under comprehensive U.S. sanctions (such as Cuba, Iran, North Korea, Syria, and the Crimea, Donetsk and Luhansk regions of Ukraine) and to parties on the BIS Entity List, the Treasury Department's Specially Designated Nationals (SDN) List, or other restricted party lists. This section is a notice about the law, not a condition of the software licence.
+Users are responsible for the laws applicable to their activities. Check current item, destination, end-use and restricted-party rules with [BIS](https://www.bis.gov/) and the [OFAC sanctions programs](https://ofac.treasury.gov/sanctions-programs-and-country-information). Comprehensive US sanctions on Syria ended effective July 1, 2025; targeted restrictions can still apply. See [OFAC’s current Syria-related program information](https://ofac.treasury.gov/sanctions-programs-and-country-information/paarss). This section is a notice about the law, not a condition of the software licence.
 
 ## 5. Acceptable Use
 

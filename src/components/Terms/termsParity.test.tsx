@@ -105,3 +105,30 @@ describe('TERMS.md and the /terms page say the same about privacy', () => {
     }
   })
 })
+
+describe('export-control notice parity', () => {
+  it('publishes the same scoped notice and official sources in both forms', () => {
+    render(
+      <MemoryRouter>
+        <TermsView />
+      </MemoryRouter>
+    )
+    const heading = screen.getByRole('heading', { name: '4. Export Compliance and Sanctions' })
+    // eslint-disable-next-line testing-library/no-node-access -- scope the published section by its heading
+    const section = heading.closest('section')
+    const scoped = within(section as HTMLElement)
+    const match = /^## 4\. [^\n]*\n([\s\S]*?)(?=^## 5\.)/m.exec(termsMd)
+    expect(match).not.toBeNull()
+    const mdBody = match?.[1].replace(/^### .+$/gm, '') ?? ''
+    expect(normalize(mdBody)).toBe(
+      normalize(
+        scoped
+          .getAllByRole('paragraph')
+          .map((p) => p.textContent)
+          .join(' ')
+      )
+    )
+    const mdLinks = [...mdBody.matchAll(/\]\((https?:\/\/[^)]+)\)/g)].map((m) => m[1])
+    expect(scoped.getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual(mdLinks)
+  })
+})
