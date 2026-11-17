@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'email-signing',
-  contentVersion: 17,
+  contentVersion: 18,
   lm_id: 'LM-010',
   title: 'Email & Document Signing',
   description:

@@ -69,6 +69,7 @@ import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell'
 import { MOBILE_WORKSHOP_READY } from '@/data/mobileWorkshops'
+import { INFOGRAPHIC_IMAGE_REVISIONS } from '@/data/infographicImageRevisions'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
  *  modules (frameworkPhase is an array) show their first/primary phase. */
@@ -698,7 +699,21 @@ export const ModuleShell = ({
           manifest={manifest}
           title={title}
           description={headerDescription}
-          learnContent={learnContent}
+          learnContent={
+            INFOGRAPHIC_IMAGE_REVISIONS[manifest.id] ? (
+              <div className="space-y-5">
+                <details className="glass-panel p-3 space-y-3" open={activeTab === 'visual'}>
+                  <summary className="font-semibold cursor-pointer">
+                    Visual reference and worked assumptions
+                  </summary>
+                  <ModuleVisualTab moduleId={manifest.id} />
+                </details>
+                {learnContent}
+              </div>
+            ) : (
+              learnContent
+            )
+          }
           practiceTool={practiceTool}
           workshopContent={mobileWorkshop}
           activeTab={activeTab}
