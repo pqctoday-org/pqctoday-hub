@@ -180,11 +180,30 @@ nightly-E2E merge rule above. Reproduce: `npm run build`, then
 `npm run test:nightly` — the `*.nightly.test.{ts,tsx}` tier, unscoped, via
 `vitest.nightly.config.ts`. Both `vite.config.ts` and `vitest.local.config.ts`
 exclude that tier, so it runs here and nowhere else. It is for suites that must
-run but are too slow for pre-push. Today it has one file:
-`useAcvpSuite.slhdsaAcvp.nightly.test.ts`, which took 26.3 of `test:local`'s
-28.6 min on an M-series Mac, because it runs the whole slh_stateful category on
-both engines three times (baseline plus two sabotage proofs). Moved here by
-maintainer decision, 2026-09-26.
+run but are too slow for pre-push. The SLH-DSA checks run in three independent
+files: the baseline (`useAcvpSuite.slhdsaAcvp.nightly.test.ts`), length mutation
+(`useAcvpSuite.slhdsaAcvp.lengthMutation.nightly.test.ts`) and expectation
+mutation (`useAcvpSuite.slhdsaAcvp.expectationMutation.nightly.test.ts`). Each
+loads its own C++ and Rust engines in an isolated process; the mutation mocks
+cannot affect another pass. All 14 tests and their original assertions remain.
+The worker count uses available CPU capacity, up to three, locally and in CI. Each pass logs
+its process ID and elapsed time. Measured locally on 16 November 2026 with
+Node 26.3.0 and Vitest 5.0.5: the sequential run took 2,597.55 seconds (43.3 min);
+the three-worker run took 779.91 seconds (13.0 min), about 70% less elapsed time.
+All 14 tests passed, with 3,078 rows executed per pass. This is a local
+measurement; runner performance remains unmeasured.
+The suite originally moved here by maintainer decision, 2026-09-26.
+
+| Independent pass     | Tests | Purpose                                                                                 |
+| -------------------- | ----- | --------------------------------------------------------------------------------------- |
+| Baseline             | 12    | Real reference vectors and cross-engine agreement                                       |
+| Length mutation      | 1     | A falsely labelled signature-length negative must fail                                  |
+| Expectation mutation | 1     | Corrupted expected dispositions and signature bytes must fail exactly the affected rows |
+
+During a repair, select the affected file for feedback. For release acceptance,
+run the unscoped command once and retain its JSON report; a filtered pass does
+not establish that all three passes succeeded. Progress messages identify each
+pass and process and report elapsed time on completion.
 
 Not a required check, so a regression here can sit on `main` for up to a day.
 The `notify` job opens or updates ONE issue, **"Nightly validation vectors are

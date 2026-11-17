@@ -2,9 +2,9 @@ name: Validation (nightly vector suites)
 
 # The `*.nightly.test.*` Vitest suites: NIST-vector suites too slow for the
 # pre-push gate that must still run somewhere (maintainer decision 2026-09-26).
-# Today that is useAcvpSuite.slhdsaAcvp.nightly.test.ts — 26.3 of the 28.6 min
-# `test:local` took on an M-series Mac, because it runs the whole slh_stateful
-# category on both engines three times (baseline plus two sabotage proofs).
+# SLH-DSA baseline and two mutation proofs run in three isolated test files.
+# Each pass exercises the whole slh_stateful category on both engines; separate
+# processes allow concurrency without sharing engines or vector mocks.
 #
 # Like e2e-nightly.yml this is NOT a required/branch-protected check, so a
 # regression here can sit on `main` for up to 24h. The `notify` job keeps that
