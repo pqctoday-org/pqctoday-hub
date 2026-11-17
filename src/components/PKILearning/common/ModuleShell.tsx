@@ -299,27 +299,16 @@ function WorkshopStepper({
   )
 }
 
+const CryptoTamperExercise = lazy(() =>
+  import('@/components/shared/CryptoTamperExercise').then((m) => ({
+    default: m.CryptoTamperExercise,
+  }))
+)
 const PolicyScopeExercise = lazy(() =>
   import('@/components/shared/PolicyScopeExercise').then((m) => ({
     default: m.PolicyScopeExercise,
   }))
 )
-const POLICY_PRACTICE_MODULES = new Set([
-  'pqc-business-case',
-  'pqc-risk-management',
-  'pqc-governance',
-  'pqc-grc',
-  'compliance-strategy',
-  'migration-program',
-  'vendor-risk',
-  'data-asset-sensitivity',
-  'exec-quantum-impact',
-  'ops-quantum-impact',
-  'government-defense-pqc',
-  'healthcare-pqc',
-  'emv-payment-pqc',
-  'pqc-testing-validation',
-])
 
 export const ModuleShell = ({
   manifest,
@@ -673,17 +662,17 @@ export const ModuleShell = ({
         }
       />
     ) : null
-  const workshopBody =
-    primaryWorkshopBody && POLICY_PRACTICE_MODULES.has(manifest.id) ? (
-      <div className="space-y-6">
-        {primaryWorkshopBody}
-        <Suspense fallback={null}>
-          <PolicyScopeExercise />
-        </Suspense>
-      </div>
-    ) : (
-      primaryWorkshopBody
-    )
+  const workshopBody = primaryWorkshopBody ? (
+    <div className="space-y-6">
+      {primaryWorkshopBody}
+      <Suspense fallback={null}>
+        <CryptoTamperExercise moduleId={manifest.id} />
+        <PolicyScopeExercise moduleId={manifest.id} />
+      </Suspense>
+    </div>
+  ) : (
+    primaryWorkshopBody
+  )
 
   if (isMobileShell) {
     const learnContent =

@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.213.0] - 2026-11-17
+
+Every Learn module's failure-and-recovery exercise is now tailored to that module's own subject, algorithm, and decision scenario, all 304 numeric key, signature, and ciphertext size claims across the lessons are verified against independent RFC and NIST specifications, and all 34 Playground tools, 37 Business Center tools, and 33 pages are verified end-to-end across their role decisions, adverse cases, and exports.
+
+### Added
+
+- **Tailored failure, recovery, and changed-assumption exercises across all 75 Learn modules** [view:/learn] [persona:developer] [persona:architect] [persona:ops] [persona:grc] [persona:executive] [persona:cert-engineer] [persona:researcher] [persona:curious]: each Learn module workshop now runs a domain-specific decision scenario tied to that lesson's topic and artifact — with a prediction prompt, a valid baseline run, a 1-byte mutation or policy-scope failure check, a restoration step, an interactive changed-assumption transfer check, and a direct link to the production tool capabilities to evaluate.
+- **Expanded Common Criteria Security Target scope examples** [view:/learn/cc-eucc-certification] [persona:cert-engineer] [persona:grc] [persona:architect] [persona:ops]: the Security Target scope exercise now covers twelve cached Security Targets across smart cards, hardware security modules, network encryptors, and operating system/TPM targets, contrasting supported cryptographic claims against out-of-scope assumptions.
+
+### Changed
+
+- **Complete RFC and NIST size verification across all 304 lesson claims** [view:/learn] [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer]: all 304 numeric key, signature, ciphertext, and protocol object size claims across the Learn modules are now verified against independent specification tables covering FIPS 203/204/205, classical ECDSA/RSA/Ed25519/X25519, stateful LMS/HSS/XMSS, Round-4 and alternate PQC candidates, and hybrid TLS/SSH/IKEv2/CMS/X.509 encodings.
+- **Verified mathematical and cryptographic reference checks across all 34 Playground tools and 37 Business Center tools** [view:/playground] [view:/business] [persona:developer] [persona:architect] [persona:ops] [persona:executive] [persona:grc]: every Playground tool and Business Center tool is now verified against an independent reference formula or vector check across a valid baseline, a tampered or contradictory boundary input, a recovery path, and CSV/Markdown export correspondence.
+
 ## [4.212.0] - 2026-11-16
 
 ### Added

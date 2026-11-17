@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { LearnModuleContext } from '@/components/PKILearning/common/useLearnPath'
+import { getModuleDecisionScenario } from '@/data/moduleDecisionScenarios'
 import { evaluateSamplePolicy } from '@/utils/policyContradictionEvaluator'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { rowsToCsv } from '@/services/export/csvExport'
 
-export function PolicyScopeExercise() {
+export function PolicyScopeExercise({ moduleId }: { moduleId?: string } = {}) {
+  const contextModuleId = useContext(LearnModuleContext)
+  const resolvedModuleId = moduleId ?? contextModuleId
+  const scenario = resolvedModuleId ? getModuleDecisionScenario(resolvedModuleId) : undefined
+
   const [algorithm, setAlgorithm] = useState('ML-DSA-65')
   const [useCase, setUseCase] = useState<'signature' | 'key-establishment'>('key-establishment')
   const [year, setYear] = useState('2031')
@@ -20,9 +26,11 @@ export function PolicyScopeExercise() {
     setError('')
   }
   const policy = {
-    id: 'FICTIONAL-PORTAL',
+    id: scenario ? `FICTIONAL-${scenario.moduleId.toUpperCase()}` : 'FICTIONAL-PORTAL',
     revision: '1',
-    source: 'Hub-authored fictional organizational policy',
+    source: scenario
+      ? `Hub-authored fictional policy (${scenario.domainTitle})`
+      : 'Hub-authored fictional organizational policy',
     applies,
     deadlineYear: 2030,
   }
@@ -31,6 +39,16 @@ export function PolicyScopeExercise() {
       <summary className="font-semibold cursor-pointer">
         Practice: policy scope, algorithm use and retention risk
       </summary>
+      {scenario && (
+        <div className="rounded border border-border/60 bg-muted/20 p-2.5 text-xs space-y-1">
+          <p className="font-semibold text-foreground">{scenario.domainTitle}</p>
+          <p className="text-muted-foreground">{scenario.roleDecisionPrompt}</p>
+          <p>
+            <strong>Transfer question:</strong> {scenario.transferQuestion.prompt} —{' '}
+            {scenario.transferQuestion.changedAssumptionOutcome}
+          </p>
+        </div>
+      )}
       <p className="text-sm">
         Fictional customer-portal policy revision 1 requires migration by 2030 where it applies.
         This is a sample organizational choice. The portal currently uses quantum-vulnerable key
@@ -152,6 +170,7 @@ export function PolicyScopeExercise() {
         )}
       </div>
       <p className="text-sm text-muted-foreground">
+        {scenario ? `${scenario.productionToolCheck} ` : ''}
         Evaluate production tools for versioned source clauses and applicability, algorithm/use-case
         checks, transparent assumptions, boundary tests and reproducible outputs. A real deadline
         must be sourced and scoped to the authority, system and use case before enforcement. Passing
