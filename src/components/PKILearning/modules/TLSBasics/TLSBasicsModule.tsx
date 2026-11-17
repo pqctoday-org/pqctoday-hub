@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Play, Loader2 } from 'lucide-react'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useModuleStore } from '@/store/useModuleStore'
+import { ModuleVisualTab } from '@/components/PKILearning/common/ModuleVisualTab'
 import { ModuleShell } from '@/components/PKILearning/common/ModuleShell'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
@@ -300,7 +301,17 @@ export const TLSBasicsModule: React.FC = () => {
       title="TLS 1.3 Basics"
       description="Learn about TLS 1.3, configure handshake parameters, and explore PQC migration trade-offs."
       learn={(api) => <TLSIntroduction onNavigateToSimulate={() => api.goToWorkshop()} />}
-      visual={<TLSDowngradeScenario />}
+      visual={
+        <div className="space-y-6">
+          <TLSDowngradeScenario />
+          <details className="glass-panel p-4 space-y-4">
+            <summary className="font-semibold cursor-pointer">
+              Visual reference: TLS handshake sizes and path budget
+            </summary>
+            <ModuleVisualTab moduleId={MODULE_ID} />
+          </details>
+        </div>
+      }
       exercises={(api) => (
         <>
           <TLSExercises onNavigateToSimulate={() => api.goToWorkshop()} />

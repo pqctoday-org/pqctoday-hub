@@ -26,9 +26,9 @@ describe('workshopRunsOnPhone', () => {
     expect(workshopRunsOnPhone('tls-basics')).toBe(true)
   })
 
-  it('is false for the certification modules and for an unknown id', () => {
-    expect(workshopRunsOnPhone('cc-eucc-certification')).toBe(false)
-    expect(workshopRunsOnPhone('fips-140-3-certification')).toBe(false)
+  it('supports the newly enabled certification workshops and rejects an unknown id', () => {
+    expect(workshopRunsOnPhone('cc-eucc-certification')).toBe(true)
+    expect(workshopRunsOnPhone('fips-140-3-certification')).toBe(true)
     expect(workshopRunsOnPhone('not-a-real-module')).toBe(false)
   })
 })
@@ -83,7 +83,7 @@ describe('relabelWorkshopEntries', () => {
   it('relabels a workshop link into a module that cannot run it, and keeps one into a module that can', () => {
     const root = document.createElement('div')
     root.innerHTML =
-      '<a href="/learn/fips-140-3-certification?tab=workshop&step=1">the lab step</a>' +
+      '<a href="/learn/not-a-real-module?tab=workshop&step=1">the lab step</a>' +
       '<a href="/learn/hsm-pqc?tab=workshop&step=0">the HSM step</a>'
     relabelWorkshopEntries(root, 'cc-eucc-certification')
     const [certLink, hsmLink] = Array.from(root.querySelectorAll('a'))

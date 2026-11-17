@@ -240,12 +240,31 @@ export function ProductDetail({
         </div>
       )}
 
-      {(certs.length > 0 || classicalOnly || componentOnly || hasStageNote) && (
+      {product.license && (
+        <div>
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            License and distribution
+          </p>
+          <p className="leading-relaxed text-foreground/80">{product.license}</p>
+        </div>
+      )}
+
+      {(certs.length > 0 ||
+        classicalOnly ||
+        componentOnly ||
+        hasStageNote ||
+        product.fipsValidated) && (
         <div>
           <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
             Certifications
           </p>
           {certs.length > 0 && <CertBadges certs={certs} />}
+          {product.fipsValidated && (
+            <div className="mt-2">
+              <p className="font-medium text-foreground">Recorded module-validation scope</p>
+              <p className="mt-0.5 leading-relaxed text-foreground/80">{product.fipsValidated}</p>
+            </div>
+          )}
           {coverageRows.length > 0 && (
             <ul
               aria-label="What each certificate covers"
@@ -302,7 +321,7 @@ export function ProductDetail({
           {componentOnly && (
             <p
               data-testid="component-only-note"
-              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info/10 px-2 py-1 text-xs text-status-info"
             >
               <Info size={12} aria-hidden />
               Uses a validated module inside — the product itself holds no certificate
@@ -311,7 +330,7 @@ export function ProductDetail({
           {cavpOnly && (
             <p
               data-testid="cavp-only-note"
-              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info/10 px-2 py-1 text-xs text-status-info"
             >
               <Info size={12} aria-hidden />
               Algorithms validated (CAVP) — the prerequisite for FIPS 140-3, not a certificate
@@ -320,7 +339,7 @@ export function ProductDetail({
           {fipsInProgress && (
             <p
               data-testid="fips-in-progress-note"
-              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info px-2 py-1 text-xs text-status-info"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-status-info/10 px-2 py-1 text-xs text-status-info"
             >
               <Info size={12} aria-hidden />
               FIPS 140-3 in progress — listed by NIST as a module in process

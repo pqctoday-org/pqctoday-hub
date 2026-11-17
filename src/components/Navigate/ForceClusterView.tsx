@@ -2246,7 +2246,6 @@ export function ForceClusterView() {
             size="sm"
             className="glass-panel h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
             aria-expanded={false}
-            aria-controls="navigate-filter-panel"
             onClick={() => {
               setSearchRequested(false)
               setPanelOpen(true)
@@ -2259,7 +2258,6 @@ export function ForceClusterView() {
             variant="secondary"
             size="sm"
             className="glass-panel h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
-            aria-controls="navigate-filter-panel"
             onClick={() => {
               setSearchRequested(true)
               setPanelOpen(true)

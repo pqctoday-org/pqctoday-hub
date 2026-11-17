@@ -24,15 +24,15 @@ export const HashingTab: React.FC = () => {
 
   return (
     <div className="w-full animate-fade-in">
-      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
+      <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
         <Hash size={18} className="text-accent" /> Cryptographic Hashing
-      </h4>
+      </h3>
 
       {/* Hash Method Selection */}
       <div className="mb-6 p-6 bg-muted/20 rounded-xl border border-border">
-        <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
+        <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <Hash size={14} /> Select Hash Algorithm
-        </h5>
+        </h4>
         <FilterDropdown
           items={HASH_METHODS.map((method) => ({
             id: method.id,
@@ -133,9 +133,9 @@ export const HashingTab: React.FC = () => {
 
       {/* Info Section */}
       <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-xl">
-        <h5 className="text-sm font-bold text-primary mb-2 flex items-center gap-2">
+        <h4 className="text-sm font-bold text-primary mb-2 flex items-center gap-2">
           <Info size={14} /> About Cryptographic Hashing
-        </h5>
+        </h4>
         <p className="text-xs text-muted-foreground leading-relaxed">
           Cryptographic hash functions are one-way functions that produce a fixed-size output
           (digest) from arbitrary input data. They are deterministic (same input always produces the

@@ -86,9 +86,9 @@ export const SectorMigrationRoadmap: React.FC<SectorMigrationRoadmapProps> = ({
       </p>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
           <Building2 size={16} className="text-primary" /> Organisation
-        </h4>
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <span className="block text-xs text-muted-foreground mb-1">Sector</span>
@@ -170,9 +170,9 @@ export const SectorMigrationRoadmap: React.FC<SectorMigrationRoadmapProps> = ({
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
           <Map size={16} className="text-primary" /> Roadmap ({ROADMAP_START_YEAR} start)
-        </h4>
+        </h3>
         <div className="space-y-2">
           {summary.phases.map((p) => {
             const open = pinned === p.id
@@ -237,9 +237,9 @@ export const SectorMigrationRoadmap: React.FC<SectorMigrationRoadmapProps> = ({
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <Calendar size={16} className="text-primary" /> Summary
-        </h4>
+        </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <p className="text-[10px] text-muted-foreground">Total duration</p>
@@ -263,10 +263,10 @@ export const SectorMigrationRoadmap: React.FC<SectorMigrationRoadmapProps> = ({
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <Scale size={16} className="text-primary" /> Regulatory milestones for this sector and
           jurisdiction
-        </h4>
+        </h3>
         {milestones.length === 0 ? (
           <p className="text-xs text-muted-foreground">
             No jurisdiction-specific milestones in this model — use IEC 62443 as the baseline.
@@ -287,7 +287,7 @@ export const SectorMigrationRoadmap: React.FC<SectorMigrationRoadmapProps> = ({
 
       {(topZone || worst) && (
         <div className="glass-panel p-4 text-sm space-y-2">
-          <h4 className="text-sm font-bold text-foreground">From earlier steps</h4>
+          <h3 className="text-sm font-bold text-foreground">From earlier steps</h3>
           {topZone && (
             <p className="flex items-start gap-2 text-foreground/80">
               <AlertTriangle size={14} className="text-status-warning shrink-0 mt-0.5" />

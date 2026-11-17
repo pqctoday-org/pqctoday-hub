@@ -394,7 +394,7 @@ export const NetworkComparator: React.FC = () => {
                     </Button>
                   )}
                   <div>
-                    <h4 className="font-semibold text-foreground">{net.name}</h4>
+                    <h3 className="font-semibold text-foreground">{net.name}</h3>
                     <span className="text-xs text-muted-foreground">
                       {net.abbreviation} &middot; {net.headquartersRegion}
                     </span>
@@ -421,7 +421,7 @@ export const NetworkComparator: React.FC = () => {
 
               {/* Dated, sourced figures */}
               <div className="text-xs text-muted-foreground space-y-1">
-                <h5 className="font-medium text-secondary">Figures and their scope</h5>
+                <h4 className="font-medium text-secondary">Figures and their scope</h4>
                 <p>
                   <span className="font-medium text-foreground">Cards:</span>{' '}
                   {net.figures.cards.scope}
@@ -468,12 +468,12 @@ export const NetworkComparator: React.FC = () => {
 
               {/* Initiatives */}
               <div className="space-y-1">
-                <h5 className="text-xs font-medium text-secondary">Official Stance</h5>
+                <h4 className="text-xs font-medium text-secondary">Official Stance</h4>
                 <p className="text-xs text-muted-foreground">{net.pqcStance}</p>
               </div>
 
               <div>
-                <h5 className="text-xs font-medium text-secondary mb-1">Public Evidence</h5>
+                <h4 className="text-xs font-medium text-secondary mb-1">Public Evidence</h4>
                 <ul className="text-xs text-muted-foreground space-y-0.5 list-disc list-inside">
                   {net.pqcInitiatives.map((init, i) => (
                     <li key={i}>{init}</li>
@@ -482,7 +482,7 @@ export const NetworkComparator: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <h5 className="text-xs font-medium text-secondary">Public / Tentative Plan</h5>
+                <h4 className="text-xs font-medium text-secondary">Public / Tentative Plan</h4>
                 <p className="text-xs text-muted-foreground">{net.pqcTimeline}</p>
                 <p className="text-[11px] text-muted-foreground italic">{net.evidenceBasis}</p>
               </div>
@@ -636,9 +636,9 @@ export const NetworkComparator: React.FC = () => {
 
           {/* Radar chart overlay */}
           <div className="glass-panel p-4">
-            <h4 className="text-sm font-semibold text-foreground mb-3 text-center">
+            <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
               Illustrative Score Overlay
-            </h4>
+            </h3>
             <p className="text-xs text-muted-foreground mb-3 text-center">{RADAR_SCORES_NOTICE}</p>
             <p className="text-xs text-muted-foreground mb-3 text-center">
               Axes that are not scored are left out of the chart.{' '}

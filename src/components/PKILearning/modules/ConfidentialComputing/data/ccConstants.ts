@@ -158,14 +158,14 @@ export const PQC_READINESS_COLORS: Record<PQCReadiness, string> = {
   production: 'bg-status-success/20 text-status-success border-status-success/50',
   preview: 'bg-primary/20 text-primary border-primary/50',
   planned: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-  'community-only': 'bg-secondary/20 text-secondary border-secondary/50',
+  'community-only': 'bg-secondary/20 text-foreground border-secondary/50',
   none: 'bg-muted text-muted-foreground border-border',
 }
 
 export const MATURITY_COLORS: Record<MaturityLevel, string> = {
   mature: 'bg-status-success/20 text-status-success border-status-success/50',
   emerging: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-  experimental: 'bg-secondary/20 text-secondary border-secondary/50',
+  experimental: 'bg-secondary/20 text-foreground border-secondary/50',
 }
 
 export const ACTOR_LABELS: Record<AttestationActor, string> = {
@@ -178,7 +178,7 @@ export const ACTOR_LABELS: Record<AttestationActor, string> = {
 export const ACTOR_COLORS: Record<AttestationActor, string> = {
   enclave: 'bg-primary/20 text-primary border-primary/50',
   platform: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-  'attestation-service': 'bg-secondary/20 text-secondary border-secondary/50',
+  'attestation-service': 'bg-secondary/20 text-foreground border-secondary/50',
   'relying-party': 'bg-status-success/20 text-status-success border-status-success/50',
 }
 

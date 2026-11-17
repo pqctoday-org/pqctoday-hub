@@ -211,7 +211,7 @@ export const ProtocolComparisonTable: React.FC = () => {
 
       {/* Visual Bar Chart */}
       <div className="space-y-3">
-        <h4 className="text-sm font-bold text-foreground">Handshake Size Comparison</h4>
+        <h3 className="text-sm font-bold text-foreground">Handshake Size Comparison</h3>
         <div className="space-y-2">
           {filteredData.map((entry, idx) => {
             const maxBytes = Math.max(...filteredData.map((e) => e.handshakeBytes))
@@ -245,7 +245,7 @@ export const ProtocolComparisonTable: React.FC = () => {
 
       {filteredData.some((entry) => entry.protocol === 'TLS 1.3') && (
         <section aria-label="Measured TLS handshake examples" className="glass-panel p-4 space-y-3">
-          <h4 className="text-sm font-bold text-foreground">What the TLS totals include</h4>
+          <h3 className="text-sm font-bold text-foreground">What the TLS totals include</h3>
           <p className="text-xs text-muted-foreground">
             Measured 9 November 2026 with OpenSSL 3.6.3: TLS_AES_128_GCM_SHA256, server
             authentication, and fictional example.test certificates. Each total counts all seven

@@ -104,7 +104,7 @@ export const BootVerifyLatencySimulator: React.FC = () => {
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Model estimate
             </div>
-            <h4 className="font-bold text-lg">Signature load + verify</h4>
+            <h3 className="font-bold text-lg">Signature load + verify</h3>
             <div className="text-4xl font-mono text-primary font-bold">
               {totalBootDelayMs.toFixed(2)} ms
             </div>

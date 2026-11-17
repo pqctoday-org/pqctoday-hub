@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 /** The exit codes of the step that writes dist/404.html, run for real on a tiny fake build. */
 
 const ROOT = path.resolve(__dirname, '../..')
-const TSX = path.join(ROOT, 'node_modules/.bin/tsx')
+const TSX_LOADER = path.join(ROOT, 'node_modules/tsx/dist/loader.mjs')
 const CLI = path.join(ROOT, 'scripts/ci/make-404.ts')
 
 const INDEX =
@@ -28,11 +28,17 @@ function run(index: string | null) {
     mkdirSync(path.join(cwd, 'dist'))
     writeFileSync(path.join(cwd, 'dist/index.html'), index)
   }
-  const r = spawnSync(TSX, [CLI], { cwd, encoding: 'utf8' })
+  // Use the loader directly: the tsx CLI creates an IPC broker, which can
+  // deadlock inside a synchronous child launched by a forked test worker.
+  const r = spawnSync(process.execPath, ['--import', TSX_LOADER, CLI], {
+    cwd,
+    encoding: 'utf8',
+    timeout: 30_000,
+  })
   const out404 = path.join(cwd, 'dist/404.html')
   return {
     code: r.status,
-    out: `${r.stdout}${r.stderr}`,
+    out: `${r.stdout ?? ''}${r.stderr ?? ''}${r.error?.message ?? ''}`,
     page: existsSync(out404) ? readFileSync(out404, 'utf8') : null,
     index: index !== null ? readFileSync(path.join(cwd, 'dist/index.html'), 'utf8') : null,
   }

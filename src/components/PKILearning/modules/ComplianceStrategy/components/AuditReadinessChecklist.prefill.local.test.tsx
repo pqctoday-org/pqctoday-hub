@@ -78,7 +78,11 @@ describe('Audit clear prefill preserves learner draft ownership', () => {
     expect(
       screen.getAllByRole('checkbox').every((element) => element.hasAttribute('disabled'))
     ).toBe(true)
-    expect(screen.getByRole('status')).toHaveTextContent('4 untouched topic suggestions cleared')
+    expect(
+      screen.getByText(/^\d+ untouched topic suggestions? cleared\./, {
+        selector: '[role="status"]',
+      })
+    ).toHaveTextContent('4 untouched topic suggestions cleared')
     fireEvent.click(screen.getByRole('button', { name: 'Edit' }))
     expect(box('All systems cataloged')).toBeChecked()
     expect(box('PQC policy published')).toBeChecked()
@@ -193,7 +197,11 @@ describe('Audit clear prefill preserves learner draft ownership', () => {
     fireEvent.click(box('All systems cataloged'))
     fireEvent.click(clear())
     expect(box('All systems cataloged')).toBeChecked()
-    expect(screen.getByRole('status')).toHaveTextContent('0 untouched topic suggestions cleared')
+    expect(
+      screen.getByText(/^\d+ untouched topic suggestions? cleared\./, {
+        selector: '[role="status"]',
+      })
+    ).toHaveTextContent('0 untouched topic suggestions cleared')
     saveNow()
     expect(latest().inputs?.prefillOwnership).toMatchObject({
       untouchedInserted: [],
@@ -255,6 +263,10 @@ describe('Audit clear prefill preserves learner draft ownership', () => {
     ).not.toBeInTheDocument()
     fireEvent.click(clear())
     expect(box('PQC policy published')).toBeChecked()
-    expect(screen.getByRole('status')).toHaveTextContent('0 untouched topic suggestions cleared')
+    expect(
+      screen.getByText(/^\d+ untouched topic suggestions? cleared\./, {
+        selector: '[role="status"]',
+      })
+    ).toHaveTextContent('0 untouched topic suggestions cleared')
   })
 })

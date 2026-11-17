@@ -23,9 +23,9 @@ export const EvidenceWarnings: React.FC<{ flags?: string[] }> = ({ flags }) => {
   if (!flags || flags.length === 0) return null
   return (
     <div className="mt-3 rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2">
-      <h4 className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-status-warning">
+      <h3 className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-status-warning">
         <AlertTriangle size={12} /> Evidence Notices ({flags.length})
-      </h4>
+      </h3>
       <ul className="space-y-0.5 text-xs text-muted-foreground">
         {flags.map((flag) => (
           <li key={flag} className="flex items-start gap-1.5">
@@ -282,9 +282,9 @@ const CertTypeBadge: React.FC<{
   const allClassical = classicalCount === count
   const hasPqc =
     !newest.classicalOnly && newest.pqcAlgorithms && !newest.pqcAlgorithms.startsWith('No ')
-  const badgeClass = `inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border font-semibold hover:opacity-80 transition-opacity ${config.className}`
+  const badgeClass = `inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border font-semibold hover:underline ${config.className}`
   const classicalChip = allClassical ? (
-    <span data-testid="cert-badge-classical-only" className="font-normal opacity-80">
+    <span data-testid="cert-badge-classical-only" className="font-normal">
       classical only
     </span>
   ) : null
@@ -334,7 +334,7 @@ const CertTypeBadge: React.FC<{
         className={`h-auto ${badgeClass}`}
       >
         {config.label}
-        <span className="font-normal opacity-70">({count})</span>
+        <span className="font-normal">({count})</span>
         {classicalChip}
         <ExternalLink size={8} className="opacity-50" />
       </Button>

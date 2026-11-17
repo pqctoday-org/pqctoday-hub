@@ -66,7 +66,7 @@ export const MobilePlaygroundView = () => {
         <div className="inline-flex items-center justify-center p-3 rounded-xl bg-secondary/10 border border-secondary/20">
           <FlaskConical size={28} className="text-secondary" />
         </div>
-        <h3 className="text-xl font-bold text-foreground">Interactive Playground</h3>
+        <h2 className="text-xl font-bold text-foreground">Interactive Playground</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
           This is an information view of the workbench’s capabilities, not an operation result. The
           active workbench shows its selected execution mode; mock outputs are demonstrations. Open
@@ -82,9 +82,9 @@ export const MobilePlaygroundView = () => {
 
       {/* Feature Grid */}
       <div className="space-y-3">
-        <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-1">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-1">
           Desktop workbench capabilities
-        </h4>
+        </h2>
         <div className="grid grid-cols-1 gap-3">
           {FEATURES.map((feature) => {
             const Icon = feature.icon
@@ -97,7 +97,7 @@ export const MobilePlaygroundView = () => {
                   <Icon size={18} className="text-primary" />
                 </div>
                 <div className="min-w-0">
-                  <h5 className="text-sm font-semibold text-foreground">{feature.title}</h5>
+                  <h3 className="text-sm font-semibold text-foreground">{feature.title}</h3>
                   <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                     {feature.description}
                   </p>
@@ -110,7 +110,7 @@ export const MobilePlaygroundView = () => {
 
       {/* Tech Stack Note */}
       <div className="glass-panel p-4 space-y-2">
-        <h4 className="text-sm font-semibold text-foreground">Implementation references</h4>
+        <h2 className="text-sm font-semibold text-foreground">Implementation references</h2>
         <div className="flex flex-wrap gap-2">
           {['OpenSSL 3.6.3 WASM', 'liboqs', 'PKCS#11 v3.2', 'Web Crypto API'].map((tech) => (
             <span

@@ -6,6 +6,7 @@ import {
   isOutsidePosture,
   recommendMTI,
   renderMTIMarkdown,
+  renderMTICsv,
   type MTIInputs,
 } from './MTINegotiator'
 
@@ -39,17 +40,16 @@ describe('MTINegotiator — component', () => {
 })
 
 describe('recommendMTI — decision tree', () => {
-  it('US federal + 2030 deadline -> ML-DSA-87 + ML-KEM-1024 (CNSA 2.0, Cat 5)', () => {
+  it('Applicable US NSS profile -> ML-DSA-87 + ML-KEM-1024 (CNSA 2.0, Cat 5)', () => {
     const rec = recommendMTI({
       ...baseInputs,
-      audience: 'us-federal',
+      audience: 'us-nss',
       complianceDeadline: '2030',
     })
     expect(rec.sigMTI).toMatch(/ML-DSA-87/)
     expect(rec.kemMTI).toMatch(/ML-KEM-1024/)
-    // Cat-3 sets remain available as the non-NSS / NIST-track federal alternate
-    expect(rec.sigAlternates.join(' ')).toMatch(/ML-DSA-65/)
-    expect(rec.kemAlternates.join(' ')).toMatch(/ML-KEM-768/)
+    expect(rec.sigAlternates).toEqual([])
+    expect(rec.kemAlternates).toEqual([])
   })
 
   it('Embedded/IoT + low-RAM -> stateless SLH-DSA-SHAKE-128s signature', () => {
@@ -95,8 +95,8 @@ describe('recommendMTI — decision tree', () => {
     expect(rec.kemAlternates.join(' ')).toMatch(/HQC-128/)
   })
 
-  it('US federal -> SHA-384 hash MTI (CNSA 2.0) with SHA-512 alternate', () => {
-    const rec = recommendMTI({ ...baseInputs, audience: 'us-federal' })
+  it('US NSS -> SHA-384 hash MTI (CNSA 2.0) with SHA-512 alternate', () => {
+    const rec = recommendMTI({ ...baseInputs, audience: 'us-nss' })
     // CNSA 2.0 mandates SHA-384 for NSS — not SHA-256.
     expect(rec.hashMTI).toMatch(/SHA-384/)
     expect(rec.hashAlternates.join(' ')).toMatch(/SHA-512/)
@@ -198,7 +198,7 @@ describe('recommendMTI — standards posture applies to every recommendation', (
   })
 
   it('keeps FIPS signature standards unmarked for a federal profile', () => {
-    const rec = recommendMTI({ ...fipsOnly, audience: 'us-federal', complianceDeadline: '2030' })
+    const rec = recommendMTI({ ...fipsOnly, audience: 'us-nss', complianceDeadline: '2030' })
     expect(rec.sigMTI).toMatch(/ML-DSA-87/)
     for (const alt of [rec.sigMTI, ...rec.sigAlternates]) {
       expect(alt).not.toMatch(/outside the chosen standards posture/)
@@ -267,7 +267,7 @@ describe('renderMTIMarkdown — export', () => {
   const data = {
     protocolAudience: {
       protocol: 'TLS 1.3',
-      audience: 'us-federal',
+      audience: 'us-nss',
       interopProfile: ['non-pqc-peers'],
       complianceDeadline: '2030',
     },
@@ -320,3 +320,43 @@ describe('renderMTIMarkdown — export', () => {
   })
 })
 /* eslint-enable testing-library/render-result-naming-convention */
+
+describe('applicable profile and export consistency', () => {
+  it('does not infer NSS from general federal use, and keeps NSS sets beyond 2030', () => {
+    const federal = recommendMTI({
+      ...baseInputs,
+      audience: 'us-federal',
+      complianceDeadline: '2030',
+    })
+    expect(federal.sigMTI).toContain('ML-DSA-65')
+    expect(federal.kemMTI).toContain('ML-KEM-768')
+    for (const complianceDeadline of ['2030', '2035', 'none']) {
+      const nss = recommendMTI({ ...baseInputs, audience: 'us-nss', complianceDeadline })
+      expect(nss.sigMTI).toContain('ML-DSA-87')
+      expect(nss.kemMTI).toContain('ML-KEM-1024')
+    }
+  })
+  it('preserves NSS requirements under a conflicting peer choice and exports the same decision', () => {
+    const data = {
+      protocolAudience: {
+        audience: 'us-nss',
+        complianceDeadline: '2035',
+        interopProfile: ['non-pqc-peers'],
+      },
+    }
+    // These render functions serialize documents; they do not render React.
+    // eslint-disable-next-line testing-library/render-result-naming-convention
+    const csv = renderMTICsv(data)
+    // eslint-disable-next-line testing-library/render-result-naming-convention
+    const md = renderMTIMarkdown(data)
+    for (const text of [csv, md]) {
+      expect(text).toContain('ML-DSA-87')
+      expect(text).toContain('ML-KEM-1024')
+      expect(text).toContain('Requirement conflict:')
+      expect(text).toContain('CSI_CNSA_2.0_FAQ_.PDF')
+    }
+    data.protocolAudience.interopProfile = []
+    expect(renderMTICsv(data)).not.toContain('Requirement conflict:')
+    expect(renderMTIMarkdown(data)).not.toContain('Requirement conflict:')
+  })
+})

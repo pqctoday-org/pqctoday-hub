@@ -72,9 +72,9 @@ export const DeploymentRoadmapTracker: React.FC = () => {
       </div>
 
       <div className="bg-warning/5 rounded-lg p-4 border border-warning/20 space-y-2">
-        <h4 className="font-bold text-warning text-sm mb-1">
+        <h3 className="font-bold text-warning text-sm mb-1">
           A separate, broader scenario: the root zone&apos;s own algorithm rollovers
-        </h4>
+        </h3>
         <p className="text-xs text-muted-foreground">
           The DNS root zone&apos;s own algorithm change is a different, larger-scope migration than
           Cloudflare&apos;s roadmap above, and it has two distinct steps that should not be

@@ -126,9 +126,9 @@ export const SIGNATURE_OVERHEADS: SignatureOverhead[] = [
     signaturesPerPackage: 32,
   },
   {
-    algorithm: 'LMS (H10/W4)',
-    signatureBytes: 2512, // RFC 8554 H10/W4 with the HSS header (was 2156, unsourced)
-    publicKeyBytes: 56,
+    algorithm: 'HSS (L=1, LMS H10/W4)',
+    signatureBytes: 2512, // RFC 8554: HSS L=1 adds a 4-byte header to the 2508-byte LMS signature.
+    publicKeyBytes: 60, // 4-byte HSS level count + 56-byte LMS public key.
     signaturesPerPackage: 32,
   },
   {

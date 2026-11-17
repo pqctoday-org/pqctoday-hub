@@ -18,7 +18,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'cc-eucc-certification',
-  contentVersion: 24,
+  contentVersion: 25,
   lm_id: 'LM-068',
   title: 'Common Criteria, EUCC & eIDAS Certification',
   description:

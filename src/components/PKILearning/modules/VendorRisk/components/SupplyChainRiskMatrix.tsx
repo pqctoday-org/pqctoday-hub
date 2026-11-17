@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -1731,7 +1732,21 @@ export const SupplyChainRiskMatrix: React.FC<{
         title="Supply Chain Risk Matrix - Export"
         exportData={exportMarkdown}
         filename="supply-chain-risk-matrix"
-        formats={['markdown', 'pdf']}
+        formats={['markdown', 'pdf', 'csv']}
+        csvData={decisionModelToCsv({
+          inputs: { industry, country, pipelineSources, refreshCadence, cmdbMapping },
+          result: {
+            totalProducts,
+            overallPqcPct,
+            pqcReadyCount,
+            overallFipsPct,
+            fipsValidatedCount,
+            domainStats,
+            matrixEntries,
+            noRiskDomains,
+          },
+          decisionBrief: exportMarkdown,
+        })}
         onExport={handleExport}
         wideTable
       >

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'kms-pqc',
-  contentVersion: 21,
+  contentVersion: 22,
   lm_id: 'LM-016',
   title: 'KMS & PQC Key Management',
   description:

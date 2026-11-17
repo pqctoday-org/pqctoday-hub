@@ -272,9 +272,9 @@ export const SBOM_BUNDLED_TRANSITIVE: {
   readonly count: number
   readonly licenses: readonly (readonly [string, number])[]
 } = {
-  count: 178,
+  count: 179,
   licenses: [
-    ['MIT', 146],
+    ['MIT', 147],
     ['ISC', 20],
     ['BSD-3-Clause', 6],
     ['0BSD', 2],
@@ -425,8 +425,8 @@ export const SBOM_BUILDS: Readonly<
   },
   'openssl-pkcs11': {
     repo: 'pqctoday-org/pqctoday-hsm',
-    commit: 'a013c43c6c99a85b5861c5611b27cf62cd83d257',
-    sha256: 'aeec0a8e998a6bd323f3f36af43e797b1e8ba0c08b65154604f4a677d348f4b3',
+    commit: 'fd2a7bad0878fd2fdef77cfe6ed6c76a03e1a697',
+    sha256: '14018bc6a684babf4c1db381de73e226cc73f6f6b51a2d29fa52ea051203ee29',
   },
   'pqctoday-tpm': {
     repo: 'pqctoday-org/pqctoday-tpm',

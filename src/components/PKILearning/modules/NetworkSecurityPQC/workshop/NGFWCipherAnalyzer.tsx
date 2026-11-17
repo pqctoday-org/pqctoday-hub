@@ -185,7 +185,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                       ? mode === 'classical'
                         ? 'bg-destructive/20 text-status-error border-destructive/50'
                         : mode === 'hybrid'
-                          ? 'bg-warning/20 text-status-warning border-warning/50'
+                          ? 'bg-warning/20 text-foreground border-warning/50'
                           : 'bg-success/20 text-status-success border-success/50'
                       : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
                   }`}

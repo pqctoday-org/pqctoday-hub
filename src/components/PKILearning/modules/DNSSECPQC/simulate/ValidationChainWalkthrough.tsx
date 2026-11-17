@@ -59,7 +59,7 @@ export const ValidationChainWalkthrough: React.FC = () => {
           onClick={() => setView('full')}
           className={`px-3 py-1.5 rounded text-xs font-bold transition-colors border ${
             view === 'full'
-              ? 'bg-success/20 border-success/50 text-success'
+              ? 'bg-success/20 border-success/50 text-foreground'
               : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'
           }`}
         >
@@ -81,7 +81,7 @@ export const ValidationChainWalkthrough: React.FC = () => {
               >
                 <div className="flex items-center gap-3">
                   {isPq ? (
-                    <CheckCircle2 size={20} className="text-success shrink-0" />
+                    <CheckCircle2 size={20} className="text-foreground shrink-0" />
                   ) : (
                     <Circle size={20} className="text-muted-foreground shrink-0" />
                   )}
@@ -93,7 +93,7 @@ export const ValidationChainWalkthrough: React.FC = () => {
                 <span
                   className={`text-[10px] px-2 py-0.5 rounded border font-bold shrink-0 ${
                     isPq
-                      ? 'bg-success/20 text-success border-success/50'
+                      ? 'bg-success/20 text-foreground border-success/50'
                       : 'bg-muted text-muted-foreground border-border'
                   }`}
                 >

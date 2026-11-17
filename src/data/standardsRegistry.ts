@@ -10,6 +10,7 @@
  *
  * Data sourced from: src/data/library_*.csv (reference_id, document_title, document_status)
  */
+import { LIBRARY_CSV_SNAPSHOTS } from './generated/librarySnapshots.generated'
 import { loadLatestCSV } from './csvUtils'
 
 export interface StandardRef {
@@ -35,12 +36,8 @@ interface RawLibraryRow {
   authors_or_organization: string
 }
 
-// Load all library records at module-init time (synchronous eager glob)
-const modules = import.meta.glob('./library_*.csv', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-})
+// Load the current snapshot; reuse the bounded imports shared by Library consumers.
+const modules = LIBRARY_CSV_SNAPSHOTS
 
 const { data: libraryRecords } = loadLatestCSV<RawLibraryRow, StandardRef>(
   modules,

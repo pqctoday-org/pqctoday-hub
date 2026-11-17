@@ -175,7 +175,6 @@ export const SigstoreFlow: React.FC = () => {
             const StepIcon = ICON_MAP[step.icon] ?? CheckCircle
             const isActive = idx === activeStep
             const isCompleted = idx < activeStep
-            const isFuture = idx > activeStep
 
             return (
               <div key={step.step} className="flex items-stretch gap-3">
@@ -205,7 +204,7 @@ export const SigstoreFlow: React.FC = () => {
                 </div>
 
                 {/* Step content */}
-                <div className={`flex-1 min-w-0 pb-4 ${isFuture ? 'opacity-40' : ''}`}>
+                <div className="flex-1 min-w-0 pb-4">
                   <Button
                     variant="ghost"
                     onClick={() => setActiveStep(idx)}

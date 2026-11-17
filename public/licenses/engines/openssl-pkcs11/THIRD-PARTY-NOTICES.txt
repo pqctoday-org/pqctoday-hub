@@ -1,8 +1,8 @@
 Third-party notices for the openssl-pkcs11 engine bundle
 ============================================================
 
-Built from https://github.com/pqctoday-org/pqctoday-hsm at commit a013c43c6c99a85b5861c5611b27cf62cd83d257
-(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/a013c43c6c99a85b5861c5611b27cf62cd83d257).
+Built from https://github.com/pqctoday-org/pqctoday-hsm at commit fd2a7bad0878fd2fdef77cfe6ed6c76a03e1a697
+(source: https://github.com/pqctoday-org/pqctoday-hsm/tree/fd2a7bad0878fd2fdef77cfe6ed6c76a03e1a697).
 Code written by PQC Today, LLC is under the licence in that repository.
 This file lists the third-party code compiled into the bundle, its
 licence and where its full licence text is (LICENSES/ next to this file).
@@ -15,7 +15,7 @@ Code written by PQC Today, LLC (Rust PKCS#11 engine, KMIP server and policy engi
   Licence:   AGPL-3.0-only
   Copyright: Copyright (c) 2024-2026 PQC Today, LLC
   Source:    this repository (see COPYRIGHT.md)
-  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/a013c43c6c99a85b5861c5611b27cf62cd83d257. It stays available there, and on request from PQC Today, LLC (pqctoday@proton.me), for at least three years after this bundle is published.
+  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/fd2a7bad0878fd2fdef77cfe6ed6c76a03e1a697. It stays available there, and on request from PQC Today, LLC (pqctoday@proton.me), for at least three years after this bundle is published.
   Text:      LICENSES/pqctoday-rust/AGPL-3.0-only.txt
 
 OpenSSL Studio shims (TLS, CMP and CMS simulators, static PKCS#11 binding)
@@ -23,7 +23,7 @@ OpenSSL Studio shims (TLS, CMP and CMS simulators, static PKCS#11 binding)
   Licence:   AGPL-3.0-only
   Copyright: Copyright (c) 2026 PQC Today, LLC
   Source:    wasm/openssl-studio/ in this repository (see its README.md)
-  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/a013c43c6c99a85b5861c5611b27cf62cd83d257 (shims, OpenSSL patch and build script) plus the OpenSSL 3.6.3 tarball and the pkcs11-provider source named in this file. It stays available there, and on request from PQC Today, LLC, for at least three years after this bundle is published.
+  Source:    Complete corresponding source: https://github.com/pqctoday-org/pqctoday-hsm/tree/fd2a7bad0878fd2fdef77cfe6ed6c76a03e1a697 (shims, OpenSSL patch and build script) plus the OpenSSL 3.6.3 tarball and the pkcs11-provider source named in this file. It stays available there, and on request from PQC Today, LLC, for at least three years after this bundle is published.
   Text:      LICENSES/pqctoday-rust/AGPL-3.0-only.txt
 
 OpenSSL, library and openssl command-line tool

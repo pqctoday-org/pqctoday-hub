@@ -86,7 +86,7 @@ export function rawRows(option: OptionKind, newAlgorithm: string): RawSize[] {
   return option === 'replace' ? [next] : [rawSize(CURRENT_ALGORITHM), next]
 }
 
-/** Sum of the raw rows. For the composite option the draft's own encoding is not counted. */
+/** Sum of the raw rows. For the composite option the composite profile's encoding is not counted. */
 export function rawSum(rows: RawSize[]): { publicKeyBytes: number; signatureBytes: number } {
   return rows.reduce(
     (acc, r) => ({

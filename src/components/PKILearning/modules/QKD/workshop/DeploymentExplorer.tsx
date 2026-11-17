@@ -134,7 +134,13 @@ export const DeploymentExplorer: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div
+        className="relative overflow-x-auto"
+        role="region"
+        aria-label="QKD deployments table"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- This named horizontal table region needs keyboard scrolling.
+        tabIndex={0}
+      >
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
@@ -167,7 +173,9 @@ export const DeploymentExplorer: React.FC = () => {
               <th className="text-left p-2 text-muted-foreground font-medium hidden lg:table-cell">
                 Distance
               </th>
-              <th className="w-8" />
+              <th className="w-8" scope="col">
+                <span className="sr-only">Details</span>
+              </th>
             </tr>
           </thead>
           <tbody>

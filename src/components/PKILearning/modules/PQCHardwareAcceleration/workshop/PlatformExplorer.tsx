@@ -412,7 +412,9 @@ export const PlatformExplorer: React.FC = () => {
           <table className="w-full text-xs">
             <thead>
               <tr className="text-left text-muted-foreground">
-                <th className="py-1" />
+                <th className="py-1" scope="col">
+                  <span className="sr-only">Platform</span>
+                </th>
                 <th className="py-1 text-right">SHA2-128s</th>
                 <th className="py-1 text-right">SHAKE-128s</th>
               </tr>

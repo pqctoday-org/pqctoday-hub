@@ -296,7 +296,14 @@ const CapacityTab: React.FC = () => {
             Cryptographic Object Size Comparison
           </h4>
         </div>
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+          role="region"
+          aria-label="Cryptographic object size comparison"
+          // Keyboard scrolling requires a focusable region (WCAG 2.1.1).
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
+        >
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/30">

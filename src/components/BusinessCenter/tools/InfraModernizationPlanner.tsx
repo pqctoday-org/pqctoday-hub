@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 /**
  * Infrastructure Modernization Planner — Phase 6 (Infrastructure Modernization &
  * Performance) Command Center deliverable.
@@ -494,7 +495,12 @@ export const InfraModernizationPlanner: React.FC = () => {
         title="Infrastructure Modernization Plan — Export"
         exportData={exportMarkdown}
         filename="infra-modernization-plan"
-        formats={['markdown', 'pdf', 'docx']}
+        formats={['markdown', 'pdf', 'docx', 'csv']}
+        csvData={decisionModelToCsv({
+          inputs: state,
+          result: capacityNotes,
+          decisionBrief: exportMarkdown,
+        })}
         onExport={() => {
           addExecutiveDocument({
             id: `infra-modernization-plan-${Date.now()}`,

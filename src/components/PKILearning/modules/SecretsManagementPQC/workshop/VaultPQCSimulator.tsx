@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { SecretEnvelopeExercise } from '@/components/shared/SecretEnvelopeExercise'
 import React, { useState } from 'react'
 import { ArrowRight, Info } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -81,7 +82,7 @@ export const VaultPQCSimulator: React.FC = () => {
       string,
       { classicalKey: number; pqcKey: number; classicalCt: number; pqcCt: number }
     > = {
-      'symmetric-encrypt': { classicalKey: 32, pqcKey: 32, classicalCt: 32, pqcCt: 32 },
+      'symmetric-encrypt': { classicalKey: 32, pqcKey: 32, classicalCt: 48, pqcCt: 48 },
       'key-wrapping': { classicalKey: 256, pqcKey: 1184, classicalCt: 256, pqcCt: 1088 },
       'sign-verify': { classicalKey: 64, pqcKey: 1952, classicalCt: 64, pqcCt: 3309 },
       mac: { classicalKey: 32, pqcKey: 32, classicalCt: 32, pqcCt: 32 },
@@ -246,7 +247,9 @@ export const VaultPQCSimulator: React.FC = () => {
       {/* API Example */}
       <div>
         <div className="text-sm font-bold text-foreground mb-2">
-          {scenario.id === 'sign-verify' ? 'OpenBao API Example' : 'Vault API Example'}
+          {scenario.id === 'sign-verify'
+            ? 'OpenBao API Example'
+            : 'Documented Vault operations and separate browser sample'}
         </div>
         <div className="bg-muted font-mono text-xs rounded-lg p-4 overflow-x-auto border border-border whitespace-pre text-foreground/90">
           {scenario.apiExample}
@@ -307,8 +310,8 @@ export const VaultPQCSimulator: React.FC = () => {
                 NO CHANGE
               </span>
               <div className="text-xs text-muted-foreground">
-                Algorithm is already quantum-safe. Only ensure the key wrapping mechanism uses
-                ML-KEM (not RSA/ECDH) to protect the symmetric key at rest in Vault.
+                The symmetric primitive is unchanged. Inspect actual seal, backup and transport
+                protection separately; a symmetric key-encryption key does not require ML-KEM.
               </div>
             </div>
           )}
@@ -340,6 +343,7 @@ export const VaultPQCSimulator: React.FC = () => {
         </div>
       </div>
 
+      <SecretEnvelopeExercise />
       <KatValidationPanel
         specs={SECRETS_KAT_SPECS}
         label="Secrets Management PQC Known Answer Tests"

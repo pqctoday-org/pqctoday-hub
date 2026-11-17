@@ -236,7 +236,7 @@ export interface PrivacyTechProfile {
 export const PIPELINE_STAGE_COLORS: Record<PipelineStage, string> = {
   ingestion: 'bg-primary/20 text-primary border-primary/50',
   preprocessing: 'bg-status-info/20 text-status-info border-status-info/50',
-  storage: 'bg-secondary/20 text-secondary border-secondary/50',
+  storage: 'bg-secondary/20 text-foreground border-secondary/50',
   training: 'bg-status-warning/20 text-status-warning border-status-warning/50',
   inference: 'bg-status-success/20 text-status-success border-status-success/50',
   output: 'bg-accent/20 text-accent border-accent/50',
@@ -267,7 +267,7 @@ export const COMMERCE_ACTOR_COLORS: Record<CommerceActor, string> = {
   user: 'bg-primary/20 text-primary border-primary/50',
   'buyer-agent': 'bg-status-info/20 text-status-info border-status-info/50',
   'seller-agent': 'bg-status-warning/20 text-status-warning border-status-warning/50',
-  arbiter: 'bg-secondary/20 text-secondary border-secondary/50',
+  arbiter: 'bg-secondary/20 text-foreground border-secondary/50',
   'payment-service': 'bg-status-success/20 text-status-success border-status-success/50',
   registry: 'bg-accent/20 text-accent border-accent/50',
 }
@@ -291,7 +291,7 @@ export const DATASET_RISK_COLORS: Record<string, string> = {
 export const PRIVACY_MATURITY_COLORS: Record<string, string> = {
   production: 'bg-status-success/20 text-status-success border-status-success/50',
   emerging: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-  research: 'bg-secondary/20 text-secondary border-secondary/50',
+  research: 'bg-secondary/20 text-foreground border-secondary/50',
 }
 
 export const EFFORT_COLORS: Record<string, string> = {

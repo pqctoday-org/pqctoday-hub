@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-governance',
-  contentVersion: 19,
+  contentVersion: 20,
   lm_id: 'LM-037',
   title: 'PQC Governance & Policy',
   description:

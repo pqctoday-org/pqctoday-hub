@@ -80,7 +80,7 @@ export function hierarchyMaterial(
 const MODE_LABELS: Record<AlgorithmMode, { label: string; color: string }> = {
   classical: { label: 'Classical', color: 'text-destructive' },
   hybrid: { label: 'Hybrid', color: 'text-warning' },
-  pqc: { label: 'PQC-Only', color: 'text-success' },
+  pqc: { label: 'PQC-Only', color: 'text-foreground' },
 }
 
 const MODE_BORDER: Record<AlgorithmMode, string> = {
@@ -161,7 +161,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                               ? 'bg-destructive/10 text-status-error border-destructive/20'
                               : config.mode === 'hybrid'
                                 ? 'bg-warning/10 text-warning border-warning/20'
-                                : 'bg-success/10 text-success border-success/20'
+                                : 'bg-success/10 text-foreground border-success/20'
                           }`}
                         >
                           {modeInfo.label}
@@ -212,7 +212,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                                 ? 'bg-destructive/20 text-destructive border border-destructive/50'
                                 : mode === 'hybrid'
                                   ? 'bg-warning/20 text-warning border border-warning/50'
-                                  : 'bg-success/20 text-success border border-success/50'
+                                  : 'bg-success/20 text-foreground border border-success/50'
                               : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
                           }`}
                         >
@@ -312,7 +312,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                 <span
                   className={`text-xs font-bold shrink-0 ${
                     multiplier <= 1.0
-                      ? 'text-success'
+                      ? 'text-foreground'
                       : multiplier < 5
                         ? 'text-warning'
                         : 'text-destructive'
@@ -387,7 +387,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                     {k.privateKeyBytes.toLocaleString()} B
                   </td>
                   <td
-                    className={`py-2 px-2 ${k.quantumSafe ? 'text-success' : 'text-destructive'}`}
+                    className={`py-2 px-2 ${k.quantumSafe ? 'text-foreground' : 'text-destructive'}`}
                   >
                     {k.nistLevel}
                   </td>

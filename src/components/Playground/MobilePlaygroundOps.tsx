@@ -58,7 +58,7 @@ function CapabilityWarning({
       <div className="flex items-start gap-3">
         <AlertTriangle size={20} className="text-status-warning shrink-0 mt-0.5" />
         <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-foreground">Limited Device Support</h3>
+          <h2 className="text-sm font-semibold text-foreground">Limited Device Support</h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
             The Playground requires SharedArrayBuffer and sufficient memory for WebAssembly crypto
             operations. Your device may not support these features or may experience slow
@@ -149,6 +149,7 @@ function MobileOpsContent() {
 
   return (
     <div className="flex min-w-0 flex-col h-full">
+      <h2 className="sr-only">Interactive cryptographic operations</h2>
       <InteractiveExecutionNotice executionMode={executionMode} wasmLoaded={wasmLoaded} />
       {/* Tab indicator dots */}
       <div className="flex flex-wrap items-center justify-center gap-2 px-3 py-3 border-b border-border shrink-0">

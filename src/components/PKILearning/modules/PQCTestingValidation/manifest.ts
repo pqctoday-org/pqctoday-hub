@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-testing-validation',
-  contentVersion: 24,
+  contentVersion: 25,
   lm_id: 'LM-014',
   title: 'PQC Network Testing & Validation',
   description:

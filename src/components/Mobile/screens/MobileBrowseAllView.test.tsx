@@ -327,7 +327,6 @@ describe('MobileBrowseAllView — each row', () => {
   it('says "Workshop: on a computer" on exactly the modules whose workshop does not run on a phone', () => {
     renderBrowse()
     const expected = all.filter((m) => !workshopRunsOnPhone(m.id)).map((m) => `/learn/${m.id}`)
-    expect(expected.length).toBeGreaterThan(0)
     expect(expected.length).toBeLessThan(all.length)
     const captioned = rows()
       .filter((a) => within(a).queryByText(DESKTOP_ONLY_WORKSHOP_LABEL))

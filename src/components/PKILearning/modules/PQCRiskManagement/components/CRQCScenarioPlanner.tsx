@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Link } from 'react-router'
 import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } from 'lucide-react'
@@ -782,7 +783,12 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         title="CRQC Scenario — Export"
         exportData={exportMarkdown}
         filename="crqc-scenario-analysis"
-        formats={['markdown', 'pdf']}
+        formats={['markdown', 'pdf', 'csv']}
+        csvData={decisionModelToCsv({
+          inputs: { crqcYear, currentYear, industry, country, migrationDeadlineYear },
+          result: { urgencyLevel, missedDeadlines },
+          decisionBrief: exportMarkdown,
+        })}
         wideTable
         onExport={handleExport}
       >

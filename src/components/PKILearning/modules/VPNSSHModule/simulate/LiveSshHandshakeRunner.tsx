@@ -145,7 +145,7 @@ function RunnerInner({ algorithm }: Props) {
       <div className="rounded-lg border border-border/40 bg-muted/30 p-4 space-y-2">
         <div className="flex items-center gap-2">
           <ShieldAlert className="w-4 h-4 text-muted-foreground" />
-          <h4 className="text-sm font-semibold text-foreground">Live execution unavailable</h4>
+          <h3 className="text-sm font-semibold text-foreground">Live execution unavailable</h3>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
           The byte sizes shown above come from{' '}
@@ -182,7 +182,7 @@ function RunnerInner({ algorithm }: Props) {
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-primary" />
           <div>
-            <h4 className="text-sm font-semibold text-foreground">Modeled SSH operation sample</h4>
+            <h3 className="text-sm font-semibold text-foreground">Modeled SSH operation sample</h3>
             <p className="text-[11px] text-muted-foreground mt-0.5">
               Same softhsmv3-driven engine the{' '}
               <Link

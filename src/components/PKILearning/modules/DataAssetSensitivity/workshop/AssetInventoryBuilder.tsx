@@ -318,7 +318,13 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
             No assets added yet. Use the form above to add your first asset.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <div
+            className="relative overflow-x-auto"
+            role="region"
+            aria-label="Asset inventory table"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- This named horizontal table region needs keyboard scrolling.
+            tabIndex={0}
+          >
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border text-xs text-muted-foreground">
@@ -330,7 +336,9 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                   <th className="text-left py-2 pr-4 font-medium">Industry</th>
                   <th className="text-left py-2 pr-4 font-medium">Encryption</th>
                   <th className="text-left py-2 pr-4 font-medium">Laws and standards</th>
-                  <th className="py-2 font-medium" />
+                  <th className="py-2 font-medium" scope="col">
+                    <span className="sr-only">Actions</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>

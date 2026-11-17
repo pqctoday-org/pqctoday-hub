@@ -15,7 +15,7 @@
  * Header text is a slot (`title`/`description`) defaulting to the manifest —
  * because a module's in-page header often differs from its catalog description.
  */
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, lazy, Suspense, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -69,6 +69,7 @@ import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell'
 import { MOBILE_WORKSHOP_READY } from '@/data/mobileWorkshops'
+import { INFOGRAPHIC_IMAGE_REVISIONS } from '@/data/infographicImageRevisions'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
  *  modules (frameworkPhase is an array) show their first/primary phase. */
@@ -298,6 +299,28 @@ function WorkshopStepper({
   )
 }
 
+const PolicyScopeExercise = lazy(() =>
+  import('@/components/shared/PolicyScopeExercise').then((m) => ({
+    default: m.PolicyScopeExercise,
+  }))
+)
+const POLICY_PRACTICE_MODULES = new Set([
+  'pqc-business-case',
+  'pqc-risk-management',
+  'pqc-governance',
+  'pqc-grc',
+  'compliance-strategy',
+  'migration-program',
+  'vendor-risk',
+  'data-asset-sensitivity',
+  'exec-quantum-impact',
+  'ops-quantum-impact',
+  'government-defense-pqc',
+  'healthcare-pqc',
+  'emv-payment-pqc',
+  'pqc-testing-validation',
+])
+
 export const ModuleShell = ({
   manifest,
   title,
@@ -416,7 +439,10 @@ export const ModuleShell = ({
       if (isMobileShell) {
         // Wave D (2026-09-18): modules on MOBILE_WORKSHOP_READY mount their
         // real workshop inside the phone shell, so the click switches to it.
-        if (MOBILE_WORKSHOP_READY.has(manifest.id)) {
+        if (
+          MOBILE_WORKSHOP_READY.has(manifest.id) &&
+          (workshop || (workshopParts && renderWorkshopStep))
+        ) {
           navigateToTab('workshop')
         } else if (practiceTool) {
           navigate(`/playground/${practiceTool}`)
@@ -628,7 +654,7 @@ export const ModuleShell = ({
 
   // The Workshop tab body, shared by the desktop tab strip and (Wave D,
   // 2026-09-18) the phone shell for modules on MOBILE_WORKSHOP_READY.
-  const workshopBody =
+  const primaryWorkshopBody =
     present.has('workshop') && workshop ? (
       resolve(workshop)
     ) : present.has('workshop') && !workshop && parts.length > 0 && renderWorkshopStep ? (
@@ -647,6 +673,17 @@ export const ModuleShell = ({
         }
       />
     ) : null
+  const workshopBody =
+    primaryWorkshopBody && POLICY_PRACTICE_MODULES.has(manifest.id) ? (
+      <div className="space-y-6">
+        {primaryWorkshopBody}
+        <Suspense fallback={null}>
+          <PolicyScopeExercise />
+        </Suspense>
+      </div>
+    ) : (
+      primaryWorkshopBody
+    )
 
   if (isMobileShell) {
     const learnContent =
@@ -662,7 +699,21 @@ export const ModuleShell = ({
           manifest={manifest}
           title={title}
           description={headerDescription}
-          learnContent={learnContent}
+          learnContent={
+            INFOGRAPHIC_IMAGE_REVISIONS[manifest.id] ? (
+              <div className="space-y-5">
+                <details className="glass-panel p-3 space-y-3" open={activeTab === 'visual'}>
+                  <summary className="font-semibold cursor-pointer">
+                    Visual reference and worked assumptions
+                  </summary>
+                  <ModuleVisualTab moduleId={manifest.id} />
+                </details>
+                {learnContent}
+              </div>
+            ) : (
+              learnContent
+            )
+          }
           practiceTool={practiceTool}
           workshopContent={mobileWorkshop}
           activeTab={activeTab}

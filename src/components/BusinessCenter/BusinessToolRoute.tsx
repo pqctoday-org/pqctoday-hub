@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { NextStepCard } from '@/components/shared/NextStepCard'
 import { ToolExercise } from '@/components/shared/ToolExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
@@ -22,6 +22,12 @@ import { RecommendedResourcesPanel } from './widgets/RecommendedResourcesPanel'
 import { primaryStepForZone } from './lib/cswp39Tier'
 import { BusinessToolEvidenceNotice } from '@/components/shared/BusinessToolEvidenceNotice'
 import { businessToolsBackHref } from './lib/businessToolsBackLink'
+
+const PolicyScopeExercise = lazy(() =>
+  import('@/components/shared/PolicyScopeExercise').then((m) => ({
+    default: m.PolicyScopeExercise,
+  }))
+)
 
 export const BusinessToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -124,6 +130,9 @@ export const BusinessToolRoute = () => {
         </div>
       </div>
 
+      <Suspense fallback={null}>
+        <PolicyScopeExercise />
+      </Suspense>
       {/* B+ remediation 4.6 (2026-08-10): what this is for, and what a good
           answer looks like — before the tool, not after it. "The tools produce
           real artifacts but explain very little about why an artifact is shaped

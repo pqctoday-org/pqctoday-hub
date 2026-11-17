@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { LIBRARY_CSV_SNAPSHOTS } from './generated/librarySnapshots.generated'
 import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
@@ -669,11 +670,7 @@ if (import.meta.env.VITE_MOCK_DATA === 'true') {
     reasonCounts: [],
   }
 } else {
-  const modules = import.meta.glob('./library_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
+  const modules = LIBRARY_CSV_SNAPSHOTS
 
   const result = loadLatestCSV<RawLibraryRow, LibraryItem>(
     modules,

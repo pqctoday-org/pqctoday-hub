@@ -1,13 +1,13 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:a1a9fab4-aff2-5184-8c85-31fd7ab21896",
+  "serialNumber": "urn:uuid:4650baf4-d751-5d42-a509-82c49675cf6f",
   "version": 1,
   "metadata": {
     "component": {
       "type": "application",
       "name": "pqctoday-hub",
-      "version": "4.211.1"
+      "version": "4.212.0"
     },
     "properties": [
       {
@@ -523,6 +523,35 @@
         {
           "name": "pqctoday:listed-on-about-page",
           "value": "true"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "@noble/ciphers",
+      "version": "2.4.0",
+      "purl": "pkg:npm/%40noble/ciphers@2.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0278c59f426ff7695a024bccae0865159ab8a9008837fe03c4557f7a8a2ab42d984e307b90178b312d93f4a257e039fe6555cb3b02b495282a0edc7d82fc6d8b"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:evidence",
+          "value": "bundled into the production build (emitted chunks); version and license from package-lock.json"
+        },
+        {
+          "name": "pqctoday:listed-on-about-page",
+          "value": "false"
         }
       ]
     },

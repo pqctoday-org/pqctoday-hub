@@ -60,7 +60,7 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       description:
         'Update your IDS/IPS signature library for PQC traffic detection. Enable and disable rule categories covering hybrid KEM handshake detection, certificate size anomalies, PQC algorithm inventory, and downgrade attack detection. Adjust the base false positive rate slider to see how high-risk rules amplify alert noise.',
       badge: 'IDS/IPS',
-      badgeColor: 'bg-warning/20 text-status-warning border-warning/50',
+      badgeColor: 'bg-warning/20 text-foreground border-warning/50',
       observe:
         'In this illustrative model, enabling one high false positive risk rule, such as downgrade attack detection, at 5% base FP rate increases the adjusted rate to 7% (5% × 1.4). With no high-risk rules enabled, the same base rate remains 5%. Compare the selected rules’ modelled coverage and adjusted rate; these outputs are not measured IDS performance or a calibrated detection guarantee. Evaluate the trade-off with your own tools and environment.',
       config: { step: 2 },

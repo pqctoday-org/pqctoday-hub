@@ -192,7 +192,7 @@ export const TransactionSimulator: React.FC = () => {
 
       {/* Flow description */}
       <div className="glass-panel p-4">
-        <h4 className="font-semibold text-foreground mb-1">{flow.name}</h4>
+        <h3 className="font-semibold text-foreground mb-1">{flow.name}</h3>
         <p className="text-sm text-muted-foreground">{flow.description}</p>
       </div>
 
@@ -314,7 +314,7 @@ export const TransactionSimulator: React.FC = () => {
                   <div className="flex-1 space-y-2 min-w-0">
                     {/* Label row */}
                     <div className="flex items-center flex-wrap gap-2">
-                      <h5 className="font-semibold text-foreground text-sm">{step.label}</h5>
+                      <h4 className="font-semibold text-foreground text-sm">{step.label}</h4>
                       {step.quantumVulnerable ? (
                         <span className="flex items-center gap-1 text-xs text-status-error">
                           <ShieldAlert size={13} /> Vulnerable
@@ -372,10 +372,10 @@ export const TransactionSimulator: React.FC = () => {
 
       {/* Latency bar */}
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <AlertTriangle size={14} className="text-status-warning" />
           Latency Contribution
-        </h4>
+        </h3>
         <div className="space-y-2">
           {flow.steps.map((step) => {
             const pct = maxLatency > 0 ? (step.latencyMs / maxLatency) * 100 : 0

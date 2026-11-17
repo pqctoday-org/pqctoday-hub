@@ -163,9 +163,9 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
       </div>
 
       <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
           <Zap size={16} className="text-status-warning" /> {scenario.name} — attack paths
-        </h4>
+        </h3>
         <p className="text-xs text-muted-foreground">{scenario.description}</p>
         {scenario.attackPaths.map((ap) => (
           <div key={ap.name} className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -195,9 +195,9 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <Shield size={16} className="text-primary" /> Inputs
-        </h4>
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Select
             label="Worst credible consequence"
@@ -248,9 +248,9 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3">
+        <h3 className="text-sm font-bold text-foreground mb-3">
           Illustrative safety scenario score
-        </h4>
+        </h3>
         <p className="text-xs text-muted-foreground mb-3">
           These authored factors combine selected cryptographic weaknesses with existing
           unauthenticated paths. They are not a separate measure of extra risk caused by a quantum
@@ -338,9 +338,9 @@ export const SafetyConsequenceScorer: React.FC<SafetyConsequenceScorerProps> = (
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <CheckCircle2 size={16} className="text-status-success" /> Recommended actions
-        </h4>
+        </h3>
         <ul className="space-y-2">
           {result.actions.map((a) => (
             <li key={a} className="text-sm text-foreground/80">

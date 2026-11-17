@@ -104,7 +104,7 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
                   ? 'bg-primary/10 border-primary/40 shadow-[0_0_8px_hsl(var(--primary)/0.15)]'
                   : isActive
                     ? 'bg-muted/50 border-border'
-                    : 'bg-muted/30 border-border/50 opacity-50'
+                    : 'bg-muted/30 border-border/50'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -185,7 +185,7 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
       {/* Size Comparison */}
       {kexSizes && (
         <div className="space-y-3">
-          <h4 className="text-sm font-bold text-foreground">Key Exchange Sizes</h4>
+          <h3 className="text-sm font-bold text-foreground">Key Exchange Sizes</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
               <div className="text-lg font-bold text-foreground">

@@ -29,9 +29,9 @@ const LogsTabSoftware: React.FC = () => {
   return (
     <div className="h-full flex flex-col animate-fade-in">
       <div className="flex justify-between items-center mb-4">
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
+        <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           <FileText size={18} className="text-muted-foreground" /> Operation Log
-        </h4>
+        </h3>
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"

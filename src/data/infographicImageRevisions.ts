@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+export const INFOGRAPHIC_IMAGE_REVISIONS: Record<string, string> = {
+  'tls-basics': 'c4b74c9eb90de54b',
+  'pki-enrollment-protocols': '616cfaef6719f81f',
+  'iot-pqc': '1e6d7b511c8a9809',
+  'ot-pqc': '00631597cf4b53a6',
+  'hsm-pqc': '0be1c1a6e9c16547',
+  'migration-program': 'af7b812c29e1a0d4',
+  'emv-payment-pqc': 'ef82e616b7b32efe',
+  'network-security-pqc': '97f146afb1a54a6c',
+  'pqc-testing-validation': 'cba293e57a14cdea',
+  'crypto-dev-apis': '2b2a9b0db236fc78',
+  'pqc-hw-acceleration': '4d8c8aaeef3630d4',
+}

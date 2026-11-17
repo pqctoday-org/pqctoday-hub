@@ -13,7 +13,7 @@ export const DayGroup: React.FC<DayGroupProps> = ({ day, events }) => {
     <div className="mb-3">
       <div className="flex items-center gap-1.5 w-full px-2 py-1 text-xs font-medium text-muted-foreground">
         <span>{day}</span>
-        <span className="text-muted-foreground/50">
+        <span className="text-muted-foreground">
           ({events.length} {events.length === 1 ? 'milestone' : 'milestones'})
         </span>
       </div>

@@ -1275,6 +1275,26 @@ function MobileProductDetailSheet({
             )}
           </div>
 
+          {product.license && (
+            <div>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                License and distribution
+              </p>
+              <p className="text-[13px] leading-relaxed text-foreground/90">{product.license}</p>
+            </div>
+          )}
+
+          {product.fipsValidated && (
+            <div>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                Recorded module-validation scope
+              </p>
+              <p className="text-[13px] leading-relaxed text-foreground/90">
+                {product.fipsValidated}
+              </p>
+            </div>
+          )}
+
           {relatedResource && (
             <section aria-labelledby="mobile-related-resources">
               <h3

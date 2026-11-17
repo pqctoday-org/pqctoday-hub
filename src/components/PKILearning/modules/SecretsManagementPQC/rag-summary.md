@@ -8,8 +8,8 @@ Covers PQC migration for secrets management platforms (OpenBao, HashiCorp Vault,
 
 - Secret types vs encryption keys: what PQC protects
 - Harvest-now-decrypt-later (HNDL) risk for long-lived credentials
-- HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65) as a proposed design: Vault documents no ML-KEM transit key type
-- The worked signing and rotation examples use tested OpenBao 2.7.2 Transit commands: mldsa-65 signing keys, versioned signatures, verification, tamper rejection and key rotation. Rotation of a signing-key version is separate from the illustrative credential TTL table. Other Vault-style encryption/KEM scenarios remain separately identified illustrations; they are not evidence that Vault implements an ML-KEM Transit key type.
+- Compare documented Vault AES-256-GCM and RSA-OAEP transit operations with a separately executed application-side ML-KEM-768 / HKDF-SHA256 / AES-256-GCM envelope; Vault KV stores the envelope as opaque fields. Vault does not perform the sample ML-KEM operation.
+- The worked signing and rotation examples use tested OpenBao 2.7.2 Transit commands: mldsa-65 signing keys, versioned signatures, verification, tamper rejection and key rotation. Rotation of a signing-key version is separate from the illustrative credential TTL table. The encryption/KEM exercise executes real sample cryptography, checking original decryption, altered KEM ciphertext and authentication-tag rejection, then recovery. It does not export the ephemeral recipient private key.
 - Dynamic secrets and TTL-based rotation with PQC
 - AWS Secrets Manager / Azure Key Vault / GCP Secret Manager PQC timelines
 - Kubernetes secrets encryption-at-rest (via KMS plugin)

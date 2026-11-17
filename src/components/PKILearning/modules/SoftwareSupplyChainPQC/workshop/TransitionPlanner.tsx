@@ -134,7 +134,7 @@ export const TransitionPlanner = () => {
         </div>
         <p className="text-xs text-muted-foreground">
           Raw algorithm sizes from the algorithm registry. No certificates, envelopes, timestamps or
-          log proofs are counted, the composite draft&rsquo;s own encoding is not counted, and the
+          log proofs are counted, the composite profile&rsquo;s encoding is not counted, and the
           step computes no total for an update.
         </p>
       </section>

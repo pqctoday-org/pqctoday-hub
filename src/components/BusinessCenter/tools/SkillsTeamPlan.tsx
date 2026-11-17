@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -286,7 +287,12 @@ export const SkillsTeamPlan: React.FC = () => {
           title="Skills & Team Plan — Export"
           exportData={markdown}
           filename="skills-team-plan"
-          formats={['markdown', 'pdf', 'docx']}
+          formats={['markdown', 'pdf', 'docx', 'csv']}
+          csvData={decisionModelToCsv({
+            inputs: state,
+            result: assessment,
+            decisionBrief: markdown,
+          })}
           wideTable
           onExport={handleExport}
         >

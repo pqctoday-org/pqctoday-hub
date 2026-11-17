@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
+import { downloadCsv } from '@/utils/csvExport'
+import { withEducationNoticeCsv } from '@/data/educationNotice'
 import React, { useCallback, useMemo } from 'react'
 import { Plus, Trash2, Copy, Check, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -269,6 +272,19 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
         <Button variant="outline" size="sm" onClick={handleCopy}>
           {copied ? <Check size={14} /> : <Copy size={14} />}
           <span className="ml-1.5">{copied ? 'Copied' : 'Copy Markdown'}</span>
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() =>
+            downloadCsv(
+              withEducationNoticeCsv(
+                decisionModelToCsv({ entries: riskEntries, decisionBrief: exportMarkdown })
+              ),
+              'risk-register.csv'
+            )
+          }
+        >
+          Download CSV
         </Button>
         <Button variant="outline" size="sm" onClick={handleDownloadPdf}>
           <FileType2 size={14} />

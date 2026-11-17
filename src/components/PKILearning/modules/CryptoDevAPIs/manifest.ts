@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-dev-apis',
-  contentVersion: 15,
+  contentVersion: 16,
   lm_id: 'LM-021',
   title: 'Cryptographic APIs & Developer Languages',
   description:

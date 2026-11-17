@@ -206,13 +206,13 @@ export const WorkshopPanel: React.FC = () => {
 
   return (
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4">
-      <header className="space-y-1">
+      <div className="space-y-1">
         <div className="flex items-center gap-2">
           <GraduationCap size={18} className="text-primary" />
           <h2 className="text-base font-semibold text-foreground">{headerTitle}</h2>
         </div>
         <p className="text-xs text-muted-foreground">{headerSubtitle}</p>
-      </header>
+      </div>
 
       {manifestError && !manifest && (
         <section className="rounded-lg border border-status-warning/40 bg-card p-3 space-y-2">

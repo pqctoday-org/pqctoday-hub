@@ -2,10 +2,10 @@
 import { describe, expect, it } from 'vitest'
 import manifest from './manifest'
 
-describe('secrets management description: Vault transit is a proposed design', () => {
-  it('says Vault documents no ML-KEM transit key type', () => {
+describe('secrets management description: distinguish service and application capabilities', () => {
+  it('describes the separate executable application envelope', () => {
     expect(manifest.description).toContain(
-      'simulate a proposed Vault transit design with ML-KEM (Vault documents no ML-KEM transit key type)'
+      'compare Vault transit operations with an executable application-side ML-KEM envelope'
     )
     expect(manifest.description).not.toContain('simulate Vault transit with ML-KEM')
   })

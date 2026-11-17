@@ -29,6 +29,28 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.212.0] - 2026-11-16
+
+### Added
+
+- **Practice failure and recovery with real sample cryptography** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: supported signature and key-establishment demonstrations now let you compare a valid operation, a changed byte and a restored input. A separate secret-envelope exercise combines ML-KEM, key derivation and authenticated encryption.
+- **Check scope before accepting a policy or assurance claim** [view:/business] [view:/learn] [persona:grc] [persona:cert-engineer] [persona:executive]: fictional audit and policy exercises distinguish version and platform mismatches, applicable policies and scenario risk. The Common Criteria workshop adds source-reading examples for exact operations, configurations and assurance boundaries.
+
+### Changed
+
+- **Compare product capabilities within their actual scope** [view:/migrate] [persona:architect] [persona:developer] [persona:grc] [persona:cert-engineer] [persona:ops]: corrected catalog entries distinguish software and token-backed age recipients, language-specific Tink support, gateway TLS from DLP, and hardware configurations from their validation records. The Ubuntu baseline and planned messaging features are stated separately from released PQC capabilities.
+- **Use twelve more workshops on a phone** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: phone workshop access now includes certification, TLS, digital-assets, hardware, supply-chain and other previously excluded modules.
+- **Export decision-model inputs and results as CSV** [view:/business] [persona:executive] [persona:architect] [persona:grc]: additional builders preserve their current assumptions, calculated results and notes alongside their existing document exports. The breach simulator also includes a clearly fictional finance scenario.
+- **Read clearer visual worked examples** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: ten revised infographics distinguish raw and encoded sizes, fictional planning assumptions, capability requirements and measured results. Accessible descriptions and captions follow the revised examples.
+
+### Fixed
+
+- **Enrollment failures clear old certificate output** [view:/learn/pki-enrollment-protocols] [persona:developer] [persona:cert-engineer] [persona:ops]: initial CMP enrollment fails closed when serial-number generation fails and prevents stale output from appearing to be a new result.
+- **NSS scope determines the MTI planner’s CNSA profile** [view:/business] [persona:architect] [persona:grc]: general federal use and National Security Systems are separate choices. A chosen planning year does not change the NSS parameter sets, and incompatible peer requirements remain visible in the exported decision.
+- **Compare matching HSS objects in automotive planning** [view:/learn/automotive-pqc] [persona:architect] [persona:developer]: the OTA estimate includes the HSS public-key header consistently with the signature format, with corrected package totals.
+- **Read tables and navigate more clearly** [view:/learn] [view:/navigate] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: affected tables have header labels, selected scrollable comparisons support keyboard focus, and several lessons retain readable text contrast for future or unavailable items.
+- **Follow current sources and scoped claims** [view:/library] [view:/learn/software-supply-chain-pqc] [view:/sponsor] [view:/terms] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Library backlinks include additional citing modules, the supply-chain lesson cites the published composite-signature RFC, sponsorship explains applicability, and export-control notices distinguish conditional treatment from blanket authorization.
+
 ## [4.211.1] - 2026-11-15
 
 The Q&A Assistant and search upgrade described under 4.211.0 goes live in this release, searching for a Business Center tool by name finds that tool's own page first, 112 patent details are corrected, six Migrate products are updated from their own sources, and the Library gains security levels for one document and plainer notes on seven ISO standards.

@@ -4,7 +4,7 @@ import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // Bump this date whenever a substantive edit is made to this file.
 const EFFECTIVE_DATE = 'October 4, 2026'
-const LAST_UPDATED = 'October 16, 2026'
+const LAST_UPDATED = 'November 16, 2026'
 
 const TOC_SECTIONS = [
   { number: 1, slug: 'acceptance', title: 'Acceptance of Terms' },
@@ -160,27 +160,46 @@ export function TermsView() {
         <Section number={4} slug="export-compliance" title="Export Compliance and Sanctions">
           <div className="space-y-4">
             <p className="text-xs bg-accent/10 border border-accent/30 rounded px-3 py-2">
-              In short: because this Platform bundles real cryptographic source code, U.S. export
-              control and sanctions law applies to it &mdash; details below.
+              Encryption export controls depend on the item, its distribution and the parties and
+              destinations involved. An open-source licence and export authorization are separate
+              questions.
             </p>
             <div>
-              <h3 className="font-medium text-foreground mb-1">4.1 Classification</h3>
+              <h3 className="font-medium text-foreground mb-1">
+                4.1 Classification and public availability
+              </h3>
               <p>
-                The Platform embeds open-source cryptographic software classified under{' '}
-                <strong>Export Control Classification Number (ECCN) 5D002</strong> pursuant to the
-                U.S. Export Administration Regulations (EAR). This includes but is not limited to:
-                OpenSSL, liboqs, ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), AES, RSA,
-                ECDSA, ECDH, Ed25519, secp256k1, FrodoKEM, HQC, Classic McEliece, and Falcon.
+                The Platform includes real cryptographic software. Encryption software may fall
+                under ECCN 5D002, but an algorithm name alone does not determine the classification
+                or whether an item is subject to the U.S. Export Administration Regulations (EAR).
+                Source code, corresponding object code and modified distributions can require
+                different treatment. Consult the{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://www.bis.gov/learn-support/encryption-controls/encryption-items-not-subject-to-ear"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  BIS guidance on encryption items not subject to the EAR
+                </a>
+                .
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-foreground mb-1">4.2 License Exception</h3>
+              <h3 className="font-medium text-foreground mb-1">4.2 Conditions and exceptions</h3>
               <p>
-                Distribution is authorized under{' '}
-                <strong>License Exception TSU (15 CFR &sect;740.13, EAR)</strong> for publicly
-                available encryption source code and{' '}
-                <strong>License Exception ENC (15 CFR &sect;740.17, EAR)</strong> for mass-market
-                encryption software.
+                <a
+                  className="text-primary underline"
+                  href="https://www.bis.gov/regulations/ear/742"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  EAR section 742.15(b)
+                </a>{' '}
+                describes the treatment of publicly available encryption source code, including
+                applicable notification conditions. License Exception ENC has its own conditions for
+                eligible encryption items. This notice does not assert that every Platform component
+                or redistribution automatically qualifies for an exception or exemption.
               </p>
             </div>
             <div>
@@ -188,13 +207,36 @@ export function TermsView() {
                 4.3 Your responsibility for export and sanctions law
               </h3>
               <p>
-                Users are responsible for complying with the export control and sanctions laws that
-                apply to them. U.S. law, for example, restricts exports to countries and territories
-                under comprehensive U.S. sanctions (such as Cuba, Iran, North Korea, Syria, and the
-                Crimea, Donetsk and Luhansk regions of Ukraine) and to parties on the BIS Entity
-                List, the Treasury Department&apos;s Specially Designated Nationals (SDN) List, or
-                other restricted party lists. This section is a notice about the law, not a
-                condition of the software licence.
+                Users are responsible for the laws applicable to their activities. Check current
+                item, destination, end-use and restricted-party rules with{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://www.bis.gov/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  BIS
+                </a>{' '}
+                and the{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://ofac.treasury.gov/sanctions-programs-and-country-information"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  OFAC sanctions programs
+                </a>
+                . Comprehensive US sanctions on Syria ended effective July 1, 2025; targeted
+                restrictions can still apply. See{' '}
+                <a
+                  className="text-primary underline"
+                  href="https://ofac.treasury.gov/sanctions-programs-and-country-information/paarss"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  OFAC’s current Syria-related program information
+                </a>
+                . This section is a notice about the law, not a condition of the software licence.
               </p>
             </div>
           </div>

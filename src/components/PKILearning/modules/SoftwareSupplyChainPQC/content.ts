@@ -41,7 +41,7 @@ export const content: ModuleContent = {
     getStandard('in-toto-Attestation-Statement-v1'),
     getStandard('2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM'),
     getStandard('RFC 9019'),
-    getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
+    getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
     getStandard('RFC-9955-Hybrid-Signature-Spectrums'),
     getStandard('NSA CNSA 2.0 FAQ'),
     getStandard('FIPS 204'),
