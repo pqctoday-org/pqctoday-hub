@@ -24,11 +24,9 @@ for (const width of [1280, 390]) {
       test(`${id}: versioned image, assumptions, zoom and keyboard return`, async ({ page }) => {
         await page.goto(`/learn/${id}?tab=visual`)
         if (width < 600) {
-          const reference = page
-            .locator('details')
-            .filter({
-              has: page.getByText('Visual reference and worked assumptions', { exact: true }),
-            })
+          const reference = page.locator('details').filter({
+            has: page.getByText('Visual reference and worked assumptions', { exact: true }),
+          })
           await expect(reference).toBeAttached()
           if ((await reference.getAttribute('open')) === null)
             await reference.locator('summary').click()

@@ -78,13 +78,11 @@ for (const width of [1280, 390]) {
       page,
     }) => {
       await page.goto('/business/tools/policy-generator')
-      const sample = page
-        .locator('details')
-        .filter({
-          has: page.getByText('Practice: policy scope, algorithm use and retention risk', {
-            exact: true,
-          }),
-        })
+      const sample = page.locator('details').filter({
+        has: page.getByText('Practice: policy scope, algorithm use and retention risk', {
+          exact: true,
+        }),
+      })
       await sample.locator('summary').click()
       await sample.getByLabel('Migration completion year').fill('')
       await sample.getByRole('button', { name: 'Evaluate the fictional scenario' }).click()
