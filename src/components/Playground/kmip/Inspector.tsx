@@ -211,7 +211,11 @@ export function KeystoreTable({
             <th className="py-1 pr-2">Type</th>
             <th className="py-1 pr-2">State</th>
             {expert && <th className="py-1 pr-2">UID</th>}
-            {engine && <th className="py-1" aria-label="Actions" />}
+            {engine && (
+              <th className="py-1">
+                <span className="sr-only">Actions</span>
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>

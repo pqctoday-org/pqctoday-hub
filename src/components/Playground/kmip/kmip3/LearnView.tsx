@@ -204,7 +204,7 @@ function CompareTable({ lesson }: { lesson: Lesson }) {
         <table className="w-full text-[12px]">
           <thead>
             <tr className="text-left text-muted-foreground">
-              <th className="pb-1.5 pr-3 font-semibold" aria-label="Comparison attribute" />
+              <th className="pb-1.5 pr-3 font-semibold">Attribute</th>
               {lesson.compareHeaders.map((h) => (
                 <th key={h} className="pb-1.5 pr-3 font-semibold">
                   {h}
@@ -232,7 +232,7 @@ function CompareTable({ lesson }: { lesson: Lesson }) {
       <table className="w-full text-[12px]">
         <thead>
           <tr className="text-left text-muted-foreground">
-            <th className="pb-1.5 pr-3 font-semibold" aria-label="Comparison attribute" />
+            <th className="pb-1.5 pr-3 font-semibold">Attribute</th>
             <th className="pb-1.5 pr-3 font-semibold">{lesson.classical.algoLabel}</th>
             <th className="pb-1.5 pr-3 font-semibold">{lesson.modernize.algoLabel}</th>
           </tr>
