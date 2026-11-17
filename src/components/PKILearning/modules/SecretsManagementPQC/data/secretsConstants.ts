@@ -221,45 +221,38 @@ export const VAULT_TRANSIT_SCENARIOS: VaultTransitScenario[] = [
     id: 'symmetric-encrypt',
     name: 'Symmetric Encryption',
     classicalMechanism: 'AES-256-GCM',
-    pqcMechanism: 'AES-256-GCM (key wrapped with ML-KEM)',
-    keySize: '256-bit AES key (unchanged)',
-    ciphertextExpansion: '0 bytes additional (symmetric already quantum-safe)',
+    pqcMechanism: 'AES-256-GCM',
+    keySize: '32-byte symmetric key (unchanged)',
+    ciphertextExpansion:
+      'Sample 32-byte plaintext + 16-byte authentication tag = 48 bytes; nonce and Vault encoding are additional',
     description:
-      "AES-256-GCM is already quantum-safe against Grover's algorithm (effective 128-bit security). The change is in how the AES key is wrapped — RSA-OAEP wrapping is replaced with ML-KEM-768 encapsulation + HKDF derivation. Ciphertext size is unchanged.",
-    apiExample: `# Classical Vault transit (AES-256-GCM, RSA-wrapped key)
-vault write transit/encrypt/my-key \\
-  plaintext=$(base64 <<< "sensitive data")
-
-# PQC Vault transit (AES-256-GCM, ML-KEM-wrapped key)
-# Key type: aes256-gcm96 (unchanged)
-# KEK wrapping: ml-kem-768 (ILLUSTRATIVE ONLY: Vault transit has no ML-KEM key type;
-# its post-quantum types are Enterprise ml-dsa, slh-dsa and hybrid sign/verify keys)
-vault write transit/encrypt/my-pqc-key \\
-  plaintext=$(base64 <<< "sensitive data") \\
-  key_version=2`,
+      'Vault transit can encrypt using AES-256-GCM directly. This does not imply an RSA wrapping layer or a native ML-KEM transit key. For the separate application-side PQC envelope below, ML-KEM establishes a secret, HKDF derives a symmetric encryption key, and AEAD authenticates the data and metadata.',
+    apiExample: `# On an isolated test Vault with transit enabled:
+vault write transit/keys/sample-aes type=aes256-gcm96
+vault write transit/encrypt/sample-aes plaintext=$(printf '0123456789abcdef0123456789abcdef' | base64 | tr -d '\n')
+# Vault returns its versioned ciphertext format, not a raw 48-byte object.
+# Run the separate browser envelope exercise for ML-KEM + HKDF + AEAD.`,
   },
   {
     id: 'key-wrapping',
     name: 'Key Wrapping / KEM',
     classicalMechanism: 'RSA-OAEP-2048',
     pqcMechanism: 'ML-KEM-768',
-    keySize: '1,184 bytes (public key) vs 256 bytes (RSA-2048)',
-    ciphertextExpansion: '1,088 bytes (ML-KEM ciphertext) vs 256 bytes (RSA ciphertext)',
+    keySize: 'Raw RSA modulus 256 B versus ML-KEM-768 encapsulation key 1,184 B; encodings differ',
+    ciphertextExpansion:
+      'RSA-2048 ciphertext 256 B versus ML-KEM-768 ciphertext 1,088 B; KEM does not directly encrypt a chosen DEK',
     description:
-      'Replacing RSA-OAEP with ML-KEM-768 for key encapsulation increases the public key size 4.6x and ciphertext size 4.25x. This impacts HSM storage, network payload sizes for key distribution APIs, and certificate sizes when embedding public keys.',
-    apiExample: `# Classical: RSA-OAEP key wrapping
-vault write transit/encrypt/rsa-key \\
-  type=rsa-2048 \\
-  plaintext=$(base64 <<< "32-byte-dek")
-# Result: 256-byte ciphertext
+      'RSA-OAEP can transport chosen key bytes. ML-KEM instead establishes a shared secret; an application must derive and use a symmetric wrapping or encryption key under a defined envelope profile. The browser sample below executes that KEM/KDF/AEAD composition and rejects altered inputs. Vault KV stores the resulting envelope as opaque data; it does not implement the ML-KEM operation.',
+    apiExample: `# Classical RSA key creation and encryption on a test Vault:
+vault write transit/keys/sample-rsa type=rsa-2048
+vault write transit/encrypt/sample-rsa plaintext=$(printf '0123456789abcdef0123456789abcdef' | base64 | tr -d '\n')
 
-# PQC: ML-KEM-768 key encapsulation (ILLUSTRATIVE ONLY: Vault transit has no ML-KEM
-# key type; its post-quantum types are Enterprise ml-dsa, slh-dsa and hybrid sign/verify keys)
-vault write transit/keys/ml-kem-key \\
-  type=ml-kem-768
-vault write transit/encrypt/ml-kem-key \\
-  plaintext=$(base64 <<< "32-byte-dek")
-# Result: 1,088-byte ciphertext (4.25x larger)`,
+# Run the Hub envelope exercise and download fictional-envelope.json.
+# On a test Vault with a KV v2 mount named sample-secrets:
+vault kv put -mount=sample-secrets fictional-envelope @fictional-envelope.json
+vault kv get -format=json -mount=sample-secrets fictional-envelope
+# KV persists fields only. It neither encapsulates nor decapsulates ML-KEM.
+# The sample does not export its ephemeral recipient private key.`,
   },
   {
     id: 'sign-verify',
@@ -288,9 +281,8 @@ vault write transit/hmac/hmac-key \\
   algorithm=sha2-256
 # Returns: 32-byte HMAC (256-bit, quantum-safe)
 
-# PQC consideration: ensure the HMAC key is
-# wrapped with ML-KEM-768 (not RSA) in Vault's
-# key store to prevent offline key extraction`,
+# Evaluate the actual seal/key-protection and transport configuration.
+# A symmetric key hierarchy does not itself require an ML-KEM wrapping step.`,
   },
 ]
 

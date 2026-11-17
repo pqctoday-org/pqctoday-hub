@@ -21,7 +21,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'vault-pqc-simulator',
     title: 'Step 2: Vault Transit Simulator',
-    description: 'Simulate HashiCorp Vault transit engine operations with PQC algorithms.',
+    description: 'Compare Vault transit examples with an executable application-side KEM envelope.',
     icon: Database,
   },
   {

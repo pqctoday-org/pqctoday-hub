@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -1076,7 +1077,16 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
         renderPreview={(data) =>
           renderPolicyPreview(activePolicyType, data) + renderRuleDraft(activeRuleDraft)
         }
-        exportFormats={['markdown', 'docx', 'pdf']}
+        exportFormats={['markdown', 'csv', 'docx', 'pdf']}
+        renderCsv={(data) =>
+          decisionModelToCsv({
+            policyType: activePolicyType,
+            inputs: data,
+            rules: activeRuleDraft,
+            decisionBrief:
+              renderPolicyPreview(activePolicyType, data) + renderRuleDraft(activeRuleDraft),
+          })
+        }
         wideTable
       />
 

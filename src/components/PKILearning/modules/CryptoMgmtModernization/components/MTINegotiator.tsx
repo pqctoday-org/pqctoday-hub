@@ -1,3 +1,4 @@
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Mandatory-to-Implement (MTI) Negotiator (M6 / CSWP.39 §3.1.1)
@@ -21,10 +22,13 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 // Recommendation engine (pure function — testable in isolation)
 // ─────────────────────────────────────────────────────────────────────────────
 
+const CNSA_FAQ_SOURCE =
+  'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF'
+
 export interface MTIInputs {
   /** e.g. 'TLS 1.3', 'IKEv2', 'SSH', 'S/MIME', 'JOSE/COSE', 'custom-binary' */
   protocol: string
-  /** 'us-federal' | 'eu-regulated' | 'global-commercial' | 'embedded-iot' | 'post-crqc-greenfield' */
+  /** 'us-nss' | 'us-federal' | 'eu-regulated' | 'global-commercial' | 'embedded-iot' | 'post-crqc-greenfield' */
   audience: string
   /** Bitmask-style flags: must-interop-with-non-pqc, must-interop-hybrid-only, must-interop-pure-pqc, vendor-controlled-only */
   interopProfile: string[]
@@ -53,28 +57,18 @@ export interface MTIRecommendation {
   watchOuts: string[]
 }
 
-function isImmediateDeadline(deadline: string): boolean {
-  if (deadline === 'none') return false
-  const y = parseInt(deadline, 10)
-  return Number.isFinite(y) && y <= 2030
-}
-
 function isEmbeddedAudience(audience: string, hardware: string[]): boolean {
   return audience === 'embedded-iot' || hardware.includes('low-ram')
 }
 
 function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; rationale: string } {
-  const { audience, signatureSizePreference, interopProfile, complianceDeadline } = inputs
+  const { audience, signatureSizePreference, interopProfile } = inputs
 
-  // US federal + ≤ 2030 deadline -> ML-DSA-87 (CNSA 2.0, Cat 5)
-  if (audience === 'us-federal' && isImmediateDeadline(complianceDeadline)) {
-    const alts = ['ML-DSA-65 (FIPS 204, Cat 3)', 'SLH-DSA-SHA2-128s (defence-in-depth)']
-    if (interopProfile.includes('non-pqc-peers')) {
-      alts.unshift('RSA-PSS-3072 + ML-DSA-87 (LAMPS composite, transition period)')
-    }
+  // Applicable NSS profile, independent of the learner's planning year.
+  if (audience === 'us-nss') {
     return {
       mti: 'ML-DSA-87 (FIPS 204, NIST Cat 5)',
-      alternates: alts,
+      alternates: [],
       rationale: 'CNSA 2.0 mandates ML-DSA-87 for US National Security Systems.',
     }
   }
@@ -123,8 +117,16 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
 }
 
 function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; rationale: string } {
-  const { audience, complianceDeadline, interopProfile, standardsPosture, hardwareConstraints } =
-    inputs
+  const { audience, interopProfile, standardsPosture, hardwareConstraints } = inputs
+
+  if (audience === 'us-nss') {
+    return {
+      mti: 'ML-KEM-1024 (FIPS 203, NIST Cat 5)',
+      alternates: [],
+      rationale:
+        'The applicable CNSA 2.0 NSS profile specifies ML-KEM-1024. A non-NSS profile must be evaluated separately; changing a planning year does not change this parameter set.',
+    }
+  }
 
   // Must interop with non-PQC peers -> hybrid KEM MTI
   if (interopProfile.includes('non-pqc-peers')) {
@@ -133,16 +135,6 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
       alternates: ['ML-KEM-768 (FIPS 203, pure PQC)'],
       rationale:
         'For deployments that must interoperate with non-PQC peers this module recommends the hybrid X25519MLKEM768 (RFC 10024): it combines X25519 with ML-KEM-768 so that the shared secret stays secure if either component is unbroken. That protection applies only to connections where both peers support the named group and the handshake selects it; a classical-only peer cannot negotiate it. For such a peer the connection uses a separately negotiated classical group (for example X25519) if the client offers one and local policy allows it, and then has no post-quantum protection; if policy forbids classical fallback, the handshake fails (RFC 9954 describes a hybrid-aware party falling back to a non-hybrid exchange only if it is willing to downgrade). Pure ML-KEM-768 is an option for deployments that require exclusively post-quantum key exchange and whose peers all support it.',
-    }
-  }
-
-  // US federal + ≤ 2030 deadline -> ML-KEM-1024 (CNSA 2.0, Cat 5)
-  if (audience === 'us-federal' && isImmediateDeadline(complianceDeadline)) {
-    return {
-      mti: 'ML-KEM-1024 (FIPS 203, NIST Cat 5)',
-      alternates: ['ML-KEM-768 (FIPS 203, Cat 3 — non-NSS / NIST-track federal alternate)'],
-      rationale:
-        'CNSA 2.0 mandates ML-KEM-1024 for US National Security Systems; ML-KEM-768 (Cat 3) is the alternate for non-NSS / NIST-track federal use.',
     }
   }
 
@@ -185,7 +177,7 @@ function recommendHash(inputs: MTIInputs): {
 } {
   const { audience } = inputs
 
-  if (audience === 'us-federal') {
+  if (audience === 'us-nss') {
     return {
       mti: 'SHA-384 (FIPS 180-4)',
       alternates: ['SHA-512 (FIPS 180-4)'],
@@ -274,6 +266,17 @@ function computeWatchOuts(
   } else {
     const protocolNote = PROTOCOL_MTI_NOTES[inputs.protocol]
     if (protocolNote) out.push(protocolNote)
+  }
+
+  if (inputs.audience === 'us-nss') {
+    out.push(
+      `Applicable profile: CNSA 2.0 for the explicitly selected National Security System. Source: ${CNSA_FAQ_SOURCE}. Scope transition milestones to the system and use case; the completion-year input is a planning assumption.`
+    )
+  }
+  if (inputs.audience === 'us-nss' && inputs.interopProfile.includes('non-pqc-peers')) {
+    out.push(
+      'Requirement conflict: a classical-only peer cannot meet the selected CNSA 2.0 PQC key-establishment profile. Keep the NSS requirement visible; use compatible peers or revise the separately authorized system/profile scope. Do not substitute a smaller KEM because of the planning year or a fallback preference.'
+    )
   }
 
   // Interop: a hybrid or pure-PQC group only works when both peers support it.
@@ -428,7 +431,8 @@ const SECTIONS: ArtifactSection[] = [
         label: 'Audience',
         type: 'select',
         options: [
-          { value: 'us-federal', label: 'US federal (CNSA 2.0-aligned)' },
+          { value: 'us-federal', label: 'US federal, non-NSS (scope separately)' },
+          { value: 'us-nss', label: 'US National Security System (CNSA 2.0 applies)' },
           { value: 'eu-regulated', label: 'EU regulated (ANSSI / BSI / ENISA)' },
           { value: 'global-commercial', label: 'Global commercial' },
           { value: 'embedded-iot', label: 'Embedded / IoT (constrained)' },
@@ -557,7 +561,9 @@ const SECTIONS: ArtifactSection[] = [
 function audienceLabel(v: string): string {
   switch (v) {
     case 'us-federal':
-      return 'US federal (CNSA 2.0-aligned)'
+      return 'US federal, non-NSS (scope separately)'
+    case 'us-nss':
+      return 'US National Security System (CNSA 2.0 applies)'
     case 'eu-regulated':
       return 'EU regulated (ANSSI / BSI / ENISA)'
     case 'global-commercial':
@@ -627,10 +633,9 @@ function sanitiseAscii(md: string): string {
     .replace(/§/g, 'Section ')
 }
 
-export function renderMTIMarkdown(data: Record<string, Record<string, string | string[]>>): string {
+function mtiInputs(data: Record<string, Record<string, string | string[]>>) {
   const pa = data.protocolAudience ?? {}
   const sc = data.standardsConstraints ?? {}
-  const plan = data.plan ?? {}
 
   const inputs: MTIInputs = {
     protocol: (pa.protocol as string) || 'TLS 1.3',
@@ -644,6 +649,13 @@ export function renderMTIMarkdown(data: Record<string, Record<string, string | s
     signatureSizePreference: (sc.signatureSizePreference as string) || 'no-preference',
     localPolicyOverride: (sc.localPolicyOverride as string) || '',
   }
+
+  return inputs
+}
+
+export function renderMTIMarkdown(data: Record<string, Record<string, string | string[]>>): string {
+  const plan = data.plan ?? {}
+  const inputs = mtiInputs(data)
 
   const rec = recommendMTI(inputs)
 
@@ -666,6 +678,8 @@ export function renderMTIMarkdown(data: Record<string, Record<string, string | s
   md += `- Audience: ${audienceLabel(inputs.audience)}\n`
   md += `- Interop profile: ${interopList}\n`
   md += `- Compliance deadline: ${inputs.complianceDeadline}\n\n`
+
+  if (inputs.audience === 'us-nss') md += `- Applicable NSS profile source: ${CNSA_FAQ_SOURCE}\n\n`
 
   md += `## 2. Standards & Constraints\n\n`
   md += `- Standards posture: ${postureLabel(inputs.standardsPosture)}\n`
@@ -704,15 +718,28 @@ export function renderMTIMarkdown(data: Record<string, Record<string, string | s
   return sanitiseAscii(md)
 }
 
+export function renderMTICsv(data: Record<string, Record<string, string | string[]>>) {
+  const inputs = mtiInputs(data)
+  return decisionModelToCsv({
+    inputs,
+    result: recommendMTI(inputs),
+    notes: data.plan ?? {},
+    sources: [
+      'NIST CSWP 39: https://doi.org/10.6028/NIST.CSWP.39-upd1',
+      ...(inputs.audience === 'us-nss' ? [CNSA_FAQ_SOURCE] : []),
+    ],
+  })
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Auto-run demo fill — US PQC Executive Order scenario: CNSA-aligned federal audience, FIPS-validated
-// posture, 2030 key-establishment deadline. Overrides the generic defaults only during a run
+// Auto-run fictional NSS planning scenario: explicitly applicable CNSA profile, FIPS-validated
+// posture and learner-selected 2030 completion target. Overrides the generic defaults only during a run
 // (isAutoRunFillActive, via ArtifactBuilder); normal manual use is unchanged.
 const MTI_DEMO_FILL: Record<string, Record<string, string | string[]>> = {
-  protocolAudience: { audience: 'us-federal', complianceDeadline: '2030' },
+  protocolAudience: { audience: 'us-nss', complianceDeadline: '2030' },
   standardsConstraints: { standardsPosture: 'fips-validated-only' },
 }
 
@@ -801,7 +828,8 @@ export const MTINegotiator: React.FC = () => {
         onExport={handleExport}
         exportFilename="mti-recommendation"
         renderPreview={renderMTIMarkdown}
-        exportFormats={['markdown', 'pdf']}
+        renderCsv={renderMTICsv}
+        exportFormats={['markdown', 'csv', 'pdf']}
       />
     </div>
   )

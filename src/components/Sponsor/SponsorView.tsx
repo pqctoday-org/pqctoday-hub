@@ -180,8 +180,8 @@ function Hero() {
         Help fund the independent reference platform for post-quantum cryptography migration.
       </p>
       <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-8">
-        Used by security architects, compliance officers, vendors, and consultants preparing for the
-        2030–2035 PQC mandate window.
+        Designed for security architects, compliance officers, vendors and consultants comparing PQC
+        capabilities and planning against milestones that apply to their systems.
       </p>
       <PersonaPageNote route="/sponsor" className="mx-auto mb-8 max-w-2xl text-left" />
       <div className="flex flex-wrap justify-center gap-3">
@@ -210,15 +210,16 @@ function MarketContext() {
         Why this matters now
       </h2>
       <p className="text-sm md:text-base text-secondary leading-relaxed mb-3">
-        NSM-10, CNSA 2.0, BSI TR-02102, ANSSI RGS, and ETSI/ENISA mandates put post-quantum
-        cryptography on the roadmap of every regulated enterprise between now and 2035. Adversaries
-        are harvesting encrypted traffic <em>today</em> to decrypt once cryptanalytically-relevant
-        quantum computers arrive.
+        Government policies, technical recommendations and sector requirements create different PQC
+        planning obligations. CNSA 2.0 applies to US National Security Systems; other organizations
+        must identify their own authority, use case and milestone. Long-lived data also calls for a
+        harvest-now-decrypt-later risk assessment alongside those requirements.
       </p>
       <p className="text-sm md:text-base text-secondary leading-relaxed">
-        Buyers — CISOs, security architects, compliance officers, PKI engineers — are evaluating
-        vendors, libraries, HSMs, CAs, and migration tooling right now. PQC Today is where they come
-        to compare options on neutral ground.
+        Sponsorship funds educational resources that help CISOs, architects, compliance officers and
+        PKI engineers compare vendors, libraries, HSMs and migration capabilities. It does not
+        purchase a favorable listing or prove a product capability. Readers can inspect sources in
+        the Migrate catalogue and use the editorial-independence policy to understand this boundary.
       </p>
     </section>
   )

@@ -33,7 +33,7 @@ describe('CC certificate claim decoder', () => {
 
     wrap(<CcClaimDecoder config={{ recordId: record.id }} />)
     fireEvent.click(screen.getByRole('button', { name: meaning }))
-    expect(screen.getByRole('status')).toHaveTextContent(`Right — ${code}`)
+    expect(screen.getByRole('status', { name: '' })).toHaveTextContent(`Right — ${code}`)
     expect(
       screen.getByText((text) => text.includes(`mandatory errata ${CC_MANDATORY_ERRATA_VERSION}`))
     ).toBeInTheDocument()
@@ -50,9 +50,9 @@ describe('eIDAS regulation-to-certificate trace', () => {
 
     wrap(<EidasTrace config={{ scenario: scenario.id, layer: layer.id }} />)
     fireEvent.click(screen.getByRole('button', { name: wrong.label }))
-    expect(screen.getByRole('status')).toHaveTextContent('Try another option')
+    expect(screen.getByRole('status', { name: '' })).toHaveTextContent('Try another option')
     fireEvent.click(screen.getByRole('button', { name: right.label }))
-    expect(screen.getByRole('status')).toHaveTextContent('Right')
+    expect(screen.getByRole('status', { name: '' })).toHaveTextContent('Right')
     expect(
       screen.getAllByText((text) => text.includes(layer.link.slice(0, 30))).length
     ).toBeGreaterThan(0)

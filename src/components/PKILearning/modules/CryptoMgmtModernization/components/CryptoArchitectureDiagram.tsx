@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
+import { downloadCsv } from '@/utils/csvExport'
+import { withEducationNoticeCsv } from '@/data/educationNotice'
 /**
  * Crypto Architecture Diagram builder — CSWP.39 §5.4.
  *
@@ -607,6 +610,19 @@ export const CryptoArchitectureDiagram: React.FC = () => {
               Copy markdown
             </>
           )}
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() =>
+            downloadCsv(
+              withEducationNoticeCsv(
+                decisionModelToCsv({ components, diagram: mermaidSource, decisionBrief: markdown })
+              ),
+              'crypto-architecture.csv'
+            )
+          }
+        >
+          Download CSV
         </Button>
         <Button variant="outline" onClick={handleDownloadPdf}>
           <FileType2 size={14} className="mr-1.5" />

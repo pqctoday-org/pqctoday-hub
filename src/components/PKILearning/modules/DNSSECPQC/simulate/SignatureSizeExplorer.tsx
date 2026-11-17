@@ -93,7 +93,7 @@ export const SignatureSizeExplorer: React.FC<SignatureSizeExplorerProps> = ({
                 <span className="font-bold text-foreground flex items-center gap-2">
                   {row.label}
                   {row.pq && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/20 text-secondary border border-secondary/40 font-bold">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/20 text-foreground border border-secondary/40 font-bold">
                       PQ
                     </span>
                   )}

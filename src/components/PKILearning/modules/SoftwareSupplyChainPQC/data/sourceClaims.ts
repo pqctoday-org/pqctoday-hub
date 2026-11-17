@@ -305,10 +305,10 @@ export const SOURCE_CLAIMS = {
   },
   'SC-5.2a': {
     id: 'SC-5.2a',
-    text: 'Composite ML-DSA for use in X.509 Public Key Infrastructure is an Internet-Draft (draft-ietf-lamps-pq-composite-sigs-19, 21 April 2026) that defines combinations of ML-DSA with RSASSA-PKCS1-v1.5, RSASSA-PSS, ECDSA, Ed25519 and Ed448; use within CMS is left to a separate specification.',
-    sourceId: 'draft-ietf-lamps-pq-composite-sigs-19',
-    edition: 'draft-ietf-lamps-pq-composite-sigs-19, 21 April 2026',
-    locator: 'Abstract; datatracker status',
+    text: 'RFC 10073 (November 2026, Standards Track) defines composite ML-DSA signatures combining ML-DSA with RSASSA-PKCS1-v1.5, RSASSA-PSS, ECDSA, Ed25519 or Ed448 for X.509/PKIX. A supported composite profile requires its specified encoding and algorithm identifiers; adding raw component sizes is not an encoded certificate or signature measurement.',
+    sourceId: 'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+    edition: 'RFC 10073, November 2026, Standards Track',
+    locator: 'Abstract; sections 4–6',
   },
   'SC-5.2b': {
     id: 'SC-5.2b',

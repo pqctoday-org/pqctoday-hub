@@ -330,7 +330,9 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                   <th className="text-left py-2 pr-4 font-medium">Industry</th>
                   <th className="text-left py-2 pr-4 font-medium">Encryption</th>
                   <th className="text-left py-2 pr-4 font-medium">Laws and standards</th>
-                  <th className="py-2 font-medium" />
+                  <th className="py-2 font-medium" scope="col">
+                    <span className="sr-only">Actions</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>

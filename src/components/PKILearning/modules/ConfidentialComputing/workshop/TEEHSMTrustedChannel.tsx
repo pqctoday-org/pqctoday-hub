@@ -1631,11 +1631,11 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
       {/* ── Cross-reference callout ───────────────────────────────── */}
       <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
         <strong>Note:</strong> HSM PQC firmware details and vendor comparison are covered in the{' '}
-        <Link to="/learn/hsm-pqc" className="text-primary hover:underline">
+        <Link to="/learn/hsm-pqc" className="text-primary underline">
           HSM &amp; PQC Operations module
         </Link>
         . Use the{' '}
-        <Link to="/learn/hsm-pqc?tab=workshop&step=0" className="text-primary hover:underline">
+        <Link to="/learn/hsm-pqc?tab=workshop&step=0" className="text-primary underline">
           PKCS#11 Simulator
         </Link>{' '}
         to explore the HSM side of this integration.

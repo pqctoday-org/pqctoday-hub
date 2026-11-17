@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Rocket } from 'lucide-react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
@@ -352,7 +353,11 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
         <ExportableArtifact
           title="Inspect or copy the fictional packet"
           filename="fictional-retirement-packet"
-          formats={['markdown']}
+          formats={['markdown', 'csv']}
+          csvData={decisionModelToCsv({
+            samplePacket: packet,
+            decisionBrief: retirementPacketMarkdown(packet),
+          })}
           exportData={retirementPacketMarkdown(packet)}
         >
           <div className="grid gap-3 md:grid-cols-2">

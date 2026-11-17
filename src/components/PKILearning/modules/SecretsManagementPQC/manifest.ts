@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'secrets-management-pqc',
-  contentVersion: 18,
+  contentVersion: 19,
   lm_id: 'LM-022',
   title: 'Secrets Management & PQC',
   description:
-    'Master PQC migration for secrets managers: classify secrets by HNDL risk, simulate a proposed Vault transit design with ML-KEM (Vault documents no ML-KEM transit key type), design rotation policies, and integrate PQC-safe secrets into Kubernetes and CI/CD pipelines.',
+    'Evaluate PQC migration for secrets managers: classify exposure, compare Vault transit operations with an executable application-side ML-KEM envelope, design rotation policies, and assess Kubernetes and CI/CD integration capabilities.',
   whyThisMatters:
-    "A secret stored in Vault today with a 5-year rotation policy needs a PQC migration plan now, not when the rotation comes due — harvest-now-decrypt-later risk doesn't wait for your rotation schedule.",
+    'Rotation, retention and cryptographic protection solve different problems. Assess which captured data could remain valuable, whether its key establishment is quantum-vulnerable, and how long changing the protecting systems will take.',
   duration: '60 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',

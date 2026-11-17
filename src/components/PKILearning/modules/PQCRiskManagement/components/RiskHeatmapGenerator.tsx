@@ -438,7 +438,12 @@ function RiskHeatmapGrid({
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="p-1.5 text-left text-xs font-medium text-muted-foreground w-[100px]" />
+              <th
+                className="p-1.5 text-left text-xs font-medium text-muted-foreground w-[100px]"
+                scope="col"
+              >
+                <span className="sr-only">Likelihood / impact</span>
+              </th>
               {IMPACT_LABELS.map((label, colIdx) => (
                 <th
                   key={label}

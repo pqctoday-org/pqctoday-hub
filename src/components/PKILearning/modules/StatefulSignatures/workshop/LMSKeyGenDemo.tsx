@@ -251,7 +251,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                       LMS/HSS; RFC 9858 added the 192-bit and SHAKE256 families
                       in 2025. SP 800-208 approves both but assigns numeric
                       identifiers to neither — those come from IANA. */}
-                  <span className="ml-1.5 text-[9px] font-normal opacity-50">
+                  <span className="ml-1.5 text-[9px] font-normal text-muted-foreground">
                     {param.provenance}
                   </span>
                 </Button>

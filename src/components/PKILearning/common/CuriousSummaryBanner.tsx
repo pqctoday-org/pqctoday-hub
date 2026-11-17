@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useRef, useState } from 'react'
+import { INFOGRAPHIC_IMAGE_REVISIONS } from '@/data/infographicImageRevisions'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import FocusLock from 'react-focus-lock'
 import { createPortal } from 'react-dom'
@@ -32,6 +33,22 @@ const curiousVariantSummaries = import.meta.glob('../modules/*/curious-summary-c
  * Only entries where dir name !== moduleId need to be listed.
  */
 const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
+  'crypto-dev-apis':
+    'A fictional algorithm-plus-HSM requirement that neither of two partial-capability candidates meets; evaluate the combined operation and its evidence.',
+  'pqc-testing-validation':
+    'A fictional hundred-case suite contrasts ten false accepts with correct rejection of all ten invalid cases, then separates algorithm, module and deployment checks.',
+  'network-security-pqc':
+    'Raw ML-DSA sizes versus encoded certificates, fictional chain and TCP-window budgets, TLS termination versus passive inspection, and separate IKEv2 key-exchange and fragmentation mechanisms.',
+  'emv-payment-pqc':
+    'Fictional terminal replacement calculations: ten thousand terminals take five years at two thousand per year or ten years at one thousand per year, alongside conditional software overlap.',
+  'hsm-pqc':
+    'Conceptual stateful-signature index allocation across two signers, durable state and rollback constraints, and distinct algorithm and module-validation scopes.',
+  'ot-pqc':
+    'Fictional control-loop timing budgets showing a feasible nine-millisecond case and an over-budget twelve-millisecond case, with safety-path and recovery checks.',
+  'iot-pqc':
+    'Fictional constrained-device frame counts for ML-KEM and ML-DSA objects at 80-byte and 64-byte usable payloads; object sizes do not measure target-device performance.',
+  'pki-enrollment-protocols':
+    'Enrollment proof-of-possession choices for signing and KEM keys, trust in an RA, and the difference between parallel certificates and composite signatures.',
   'pqc-101':
     "A visual flowchart showing classical computers struggling to open a lock, while a quantum computer flashes a light representing Shor's Algorithm, which could break it once such a machine is large enough. Below it, math grids represent lattice cryptography securing the lock.",
   'quantum-threats':
@@ -41,7 +58,7 @@ const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
   'crypto-agility':
     'A visualization of a modular IT architecture where security algorithms can be swapped out quickly without disrupting the entire system.',
   'tls-basics':
-    'A client-server handshake diagram demonstrating how TLS 1.3 integrates Key Encapsulation Mechanisms to establish a secure connection.',
+    'TLS 1.3 key establishment, raw versus hybrid key shares, and a fictional initial TCP-window calculation. The worked assumptions and limits are provided below.',
   'pqc-risk-management':
     'A heatmap grid showing likelihood versus impact scores for cryptographic assets, with high-risk systems highlighted for urgent PQC migration.',
   'data-asset-sensitivity':
@@ -51,9 +68,9 @@ const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
   'standards-bodies':
     'A three-column diagram separating Standards Bodies, Certification Bodies, and Compliance Frameworks, with arrows showing how algorithms flow from specification through validation to mandated use.',
   'migration-program':
-    'A seven-phase roadmap from Discovery through Validation, with stakeholder coordination lines connecting executive sponsors, technical teams, and vendor dependencies.',
+    'Fictional sequential migration phases totaling 42 months, extending to 54 months if rollout slips twelve months, with dependency and service-scope checks.',
   'pqc-hw-acceleration':
-    'Seven acceleration models drawn as everyday scenes — one cook with one knife, a wide blade chopping a row at once, an apple corer, a school bus, a custom assembly line in a warehouse, a factory cast in concrete, and a calculator that rounds — beside bar charts of measured signing speed on three Arm chips and an FPGA.',
+    'CPU instructions and accelerator models, a measured KV260 FPGA comparison, seven-platform CPU signing throughput including Apple M4 Pro and M5 Max, AMD64 dispatch tests, and hybrid HSM operations. Different benchmark scopes are kept separate.',
   'dnssec-pqc':
     'A bar comparison showing a classical ECDSA signature as a small block next to a much larger ML-DSA-44 signature block, both measured against a dashed line marking the DNS UDP size limit; alongside it, a resolver icon labeled Cloudflare 1.1.1.1 checking a green checkmark against a signed test-zone icon labeled dnstest.dev, with a roadmap timeline below leading toward a 2029 target.',
   'media-drm-pqc':
@@ -69,57 +86,57 @@ export const INFOGRAPHIC_SAMPLE_ASSUMPTIONS: Record<
   'pki-enrollment-protocols': {
     title: 'Sample Enrollment & Composite Framing',
     assumptions:
-      'Visual diagram illustrates parallel EST (RFC 7030) and Composite ML-DSA (RFC 10073; OIDs 1.3.6.1.5.5.7.6.37–54, one per classical/ML-DSA pairing) enrollment flows; ML-KEM-768 keys prove possession with CMPv3 POPOPrivKey (encrCert or challengeResp, RFC 9810 §5.2.8.3), not a signature-based POP.',
+      'A signing key can sign proof-of-possession data. An ML-KEM key requires a supported non-signature proof: distinguish encrypted-certificate, challenge-response and separately trusted RA assertions. Parallel certificates differ from a composite signature profile combining two signature algorithms.',
   },
   'tls-basics': {
-    title: 'Sample Handshake Latency & Network Assumptions',
+    title: 'Raw and Hybrid Key Shares & Network Assumptions',
     assumptions:
-      'Displayed handshake figures are byte sizes only, not timings. TCP initcwnd is 10 MSS (RFC 6928, 14,600 B at MSS 1,460 B). Real-world X25519MLKEM768 latency depends on WAN RTT, path MTU, and middlebox inspection.',
+      'Raw ML-KEM-768 key 1,184 B and ciphertext 1,088 B; adding the 32 B X25519 contribution gives hybrid shares of 1,216 B and 1,120 B. A sample 10 \u00d7 1,460 B initial window is 14,600 B. Byte counts do not establish latency or negotiated-profile support.',
   },
   'iot-pqc': {
     title: 'Bounded Constrained-Device Sample Scope',
     assumptions:
-      'Radio and device bottleneck figures represent a bounded Cortex-M4 (pqm4 benchmarks) and IEEE 802.15.4 (127-byte frame) sample scenario, not an industry-wide limitation across higher-tier embedded SoCs.',
+      'Fictional Cortex-M4 planning scenario with 80 B usable application payload per frame: ML-KEM-512 public key 800 B needs 10 frames; ciphertext 768 B needs 10; ML-DSA-44 public key 1,312 B needs 17; signature 2,420 B needs 31. At 64 B payload the signature needs 38. These object-only counts exclude protocol, certificate and retransmission costs; measure target resource use separately.',
   },
   'ot-pqc': {
     title: 'Operational Technology Sample Boundary',
     assumptions:
-      'Legacy PLC/RTU serial-bus and gateway constraints illustrate a representative Purdue Level 1–2 cell (mapped to IEC 62443 zones and conduits); passive network discovery is the safer choice where active TLS probing could disturb safety interlocks.',
+      'Fictional control-loop budget 10 ms, baseline 7 ms and added processing 2 ms yields 9 ms with 1 ms margin; adding 5 ms yields 12 ms and exceeds the budget. These are arithmetic assumptions, not measured hardware results. Assess the actual safety path, zones, failure isolation and update recovery.',
   },
   'hsm-pqc': {
     title: 'Dual-Partition HA & Rollback Assumptions',
     assumptions:
-      'High-availability and rollback planning must keep stateful hash-based signature state (LMS/XMSS, SP 800-208) from ever being reused or restored; a firmware rollback below a PQC-capable release can strand PQC keys, so confirm vendor rollback behaviour before upgrading.',
+      'Conceptual one-time-index example: signer A exclusively uses 0\u20137 and B 8\u201315. This illustrates allocation only, not an LMS/XMSS parameter set or enforced implementation. Durable atomic state and recovery must prevent reuse; firmware partitions do not by themselves partition signing state. Verify actual vendor-supported state and rollback behavior.',
   },
   'migration-program': {
     title: 'Enterprise vs. Sector Phased Timeline Scope',
     assumptions:
-      'The 3–5 year phased roadmap reflects a typical enterprise IT migration aligned with NIST IR 8547 (quantum-vulnerable algorithms deprecated after 2030, disallowed after 2035). Hardware-bound payment or avionics fleets follow longer refresh cycles; the durations are illustrative estimates.',
+      'Fictional sequential schedule: inventory 6 + pilot 6 + rollout 24 + verification 6 = 42 months (3.5 years). A 12-month rollout extension gives 54 months (4.5 years). Overlap requires dependency analysis. The 3\u20135 year range is illustrative; scope external milestones separately.',
   },
   'emv-payment-pqc': {
     title: 'Payment Terminal Lifecycle & PCI DSS Scope',
     assumptions:
-      'EMVCo kernel and POI terminal refresh follows multi-year replacement cycles (illustrative, not sourced), alongside PCI DSS v4.0.1 key/certificate inventory and cryptographic protocol review requirements, distinct from shorter cloud/enterprise software migration timelines.',
+      'Fictional fleet: 10,000 terminals replaced at 2,000/year needs 5 years; at 1,000/year it needs 10 years. An 18-month software/pilot effort can overlap only where dependencies allow. Illustrative hardware and software ranges are planning assumptions; exact scheme, kernel, profile, certificates and key-service dependencies must be checked.',
   },
   'network-security-pqc': {
     title: 'Certificate Byte Sizes & Middlebox Framing',
     assumptions:
-      'A full X.509v3 certificate with ML-DSA-65 is at least 5,261 B (1,952 B public key + 3,309 B signature) plus ASN.1 TBSCertificate metadata, so roughly 5.5–5.8 KB DER. Middlebox double-handshake timings depend on TLS proxy hardware offload.',
+      'Raw ML-DSA-65 public key 1,952 B plus signature 3,309 B equals 5,261 B. A certificate using both adds DER metadata; other subject/issuer combinations differ. Fictional encoded chain 18,000 B exceeds a 14,600 B initial window by 3,400 B; 12,000 B fits. This does not predict exact RTT. RFC 9370 additional key exchanges and RFC 7383 fragmentation are distinct.',
   },
   'pqc-testing-validation': {
     title: 'Sample Test Scores vs. Production Assurance',
     assumptions:
-      'Lab harness pass rates and RFC 2119 interoperability checks verify protocol formatting in a test environment; production cryptographic assurance is shown by CAVP algorithm validation plus a CMVP (FIPS 140-3) or Common Criteria/EUCC certificate, where your regime requires one.',
+      'Fictional suite: 90 valid and 10 invalid cases. Accepting all 100 completes 100 requests but gives only 90 correct outcomes and 10 false accepts. Correctly accepting 90 and rejecting 10 gives 100 correct outcomes for this bounded suite. Algorithm checks, module validation scope and deployment testing establish different things.',
   },
   'crypto-dev-apis': {
-    title: 'API Throughput & Hardware Benchmark Scope',
+    title: 'Joint Algorithm & Key-Protection Requirements',
     assumptions:
-      'Displayed provider call paths (OpenSSL 3.5 EVP_PKEY_encapsulate, JCA KEM, Go crypto/mlkem, PKCS#11 v3.2) reflect software reference baselines unless paired with cited hardware-accelerated benchmarks.',
+      'Fictional requirement: ML-KEM-768 with a nonexportable HSM private key. Candidate A offers the algorithm in software; B offers HSM key protection without that algorithm. Combining checkmarks does not satisfy the joint requirement. Test an implementation that meets both or justify an explicit requirement change.',
   },
   'pqc-hw-acceleration': {
     title: 'Measured Reference Benchmarks vs. Unmeasured Targets',
     assumptions:
-      'Throughput bars reflect this project’s own measurements on Apple M4 Pro and Arm Cortex-A53/A55/A78C cores and the Zynq UltraScale+ FPGA fabric of an AMD Kria KV260; GPU/NPU paths are batching or desk assessments and need target-specific benchmarking before sizing production capacity.',
+      'The seven-platform comparison is measured CPU ML-DSA-65 throughput, including Apple M4 Pro/M5 Max and AMD64. The separate KV260 SLH-DSA FPGA on/off comparison is not included in its CPU row. Hybrid results measure combined HSM mechanisms directly. GPU/NPU paths need separate target-specific evidence; these different scopes cannot be combined into one speed claim.',
   },
 }
 
@@ -238,11 +255,12 @@ export const CuriousSummaryBanner = ({
   const idealImgSrc = `/images/infographics/pqcstd_${moduleId}.png`
   // Changed visuals need a new URL because image-cache is CacheFirst.
   const imageRevision =
-    moduleId === 'ai-security-pqc'
+    INFOGRAPHIC_IMAGE_REVISIONS[moduleId] ??
+    (moduleId === 'ai-security-pqc'
       ? '65181ab040311ff4'
       : moduleId === 'merkle-tree-certs'
         ? 'c443553ff4dc196b'
-        : 'pqcstd_v4'
+        : 'pqcstd_v4')
 
   const [imgSrc, setImgSrc] = useState(idealImgSrc)
   const [imgFailed, setImgFailed] = useState(false)

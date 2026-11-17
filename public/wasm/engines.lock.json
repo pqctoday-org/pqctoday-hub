@@ -135,7 +135,7 @@
       }
     },
     "openssl-pkcs11": {
-      "hsmCommit": "a013c43c6c99a85b5861c5611b27cf62cd83d257",
+      "hsmCommit": "fd2a7bad0878fd2fdef77cfe6ed6c76a03e1a697",
       "release": {
         "tag": "engines-7",
         "asset": "openssl-pkcs11-a013c43c.tar.gz",
@@ -147,8 +147,8 @@
           "bytes": 268592
         },
         "public/wasm/openssl.wasm": {
-          "sha256": "aeec0a8e998a6bd323f3f36af43e797b1e8ba0c08b65154604f4a677d348f4b3",
-          "bytes": 8388649
+          "sha256": "14018bc6a684babf4c1db381de73e226cc73f6f6b51a2d29fa52ea051203ee29",
+          "bytes": 8389239
         }
       }
     },

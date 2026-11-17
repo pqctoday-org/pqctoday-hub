@@ -593,7 +593,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
             return (
               <div
                 key={d.id}
-                className="glass-panel p-4 opacity-60"
+                className="glass-panel p-4 border-dashed"
                 data-testid={`kpi-dim-${d.id}`}
                 data-disabled="true"
               >

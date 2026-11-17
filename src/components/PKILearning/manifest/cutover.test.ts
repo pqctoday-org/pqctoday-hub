@@ -24,14 +24,22 @@ const historicalCryptoMgmtDescription =
 const reviewedCryptoMgmtDescription =
   'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative, with a business case tested against explicit costs, benefits and uncertainty.'
 
+const historicalSecretsDescription =
+  'Master PQC migration for secrets managers: classify secrets by HNDL risk, simulate a proposed Vault transit design with ML-KEM (Vault documents no ML-KEM transit key type), design rotation policies, and integrate PQC-safe secrets into Kubernetes and CI/CD pipelines.'
+const reviewedSecretsDescription =
+  'Evaluate PQC migration for secrets managers: classify exposure, compare Vault transit operations with an executable application-side ML-KEM envelope, design rotation policies, and assess Kubernetes and CI/CD integration capabilities.'
+
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
   it('MODULE_CATALOG', () => {
     // Retain the historical snapshot; only the reviewed conditional business-case
-    // description changes. All other catalogue fields remain guarded exactly.
+    // description changes, along with the separately reviewed secrets sample. Other fields remain guarded exactly.
     const original = golden.MODULE_CATALOG['crypto-mgmt-modernization']
     expect(original.description).toBe(historicalCryptoMgmtDescription)
+    const secrets = golden.MODULE_CATALOG['secrets-management-pqc']
+    expect(secrets.description).toBe(historicalSecretsDescription)
     expect(buildCatalog(MANIFESTS)).toEqual({
       ...golden.MODULE_CATALOG,
+      'secrets-management-pqc': { ...secrets, description: reviewedSecretsDescription },
       'crypto-mgmt-modernization': { ...original, description: reviewedCryptoMgmtDescription },
     })
   })
@@ -62,6 +70,10 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
     const expected = golden.MODULE_TRACKS.map((track) => ({
       ...track,
       modules: track.modules.map((module) => {
+        if (module.id === 'secrets-management-pqc') {
+          expect(module.description).toBe(historicalSecretsDescription)
+          return { ...module, description: reviewedSecretsDescription }
+        }
         if (module.id !== 'crypto-mgmt-modernization') return module
         expect(module.description).toBe(historicalCryptoMgmtDescription)
         return { ...module, description: reviewedCryptoMgmtDescription }

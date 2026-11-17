@@ -8,7 +8,10 @@
  * katEvidence.ts), and the run button names that class only when every spec
  * shares it — a mixed set gets the neutral "Run known-answer checks".
  */
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
+const CryptoTamperExercise = lazy(() =>
+  import('./CryptoTamperExercise').then((m) => ({ default: m.CryptoTamperExercise }))
+)
 import { ShieldCheck, Loader2, CheckCircle, XCircle, MinusCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useHSM } from '@/hooks/useHSM'
@@ -45,6 +48,19 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
   authorityNote,
   onComplete,
 }) => {
+  const sampleKind = specs.find((spec) =>
+    ['mldsa-functional', 'mldsa-sigver', 'mlkem-encap-roundtrip', 'mlkem-decap'].includes(
+      spec.kind.type
+    )
+  )?.kind
+  const tamperSample =
+    sampleKind &&
+    (sampleKind.type === 'mldsa-functional' ||
+      sampleKind.type === 'mldsa-sigver' ||
+      sampleKind.type === 'mlkem-encap-roundtrip' ||
+      sampleKind.type === 'mlkem-decap')
+      ? sampleKind
+      : null
   const hsm = useHSM()
   const [results, setResults] = useState<KATResult[]>([])
   const [running, setRunning] = useState(false)
@@ -182,6 +198,14 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
             : ''}
       </p>
 
+      {tamperSample && (
+        <Suspense fallback={<p>Loading failure exercise…</p>}>
+          <CryptoTamperExercise
+            operation={tamperSample.type.startsWith('mldsa') ? 'signature' : 'encapsulation'}
+            variant={tamperSample.variant}
+          />
+        </Suspense>
+      )}
       {/* Operation log + progress bar (A7) */}
       {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-48" />}
 

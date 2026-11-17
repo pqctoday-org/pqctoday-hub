@@ -15,7 +15,7 @@
  * Header text is a slot (`title`/`description`) defaulting to the manifest —
  * because a module's in-page header often differs from its catalog description.
  */
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, lazy, Suspense, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -297,6 +297,28 @@ function WorkshopStepper({
     </div>
   )
 }
+
+const PolicyScopeExercise = lazy(() =>
+  import('@/components/shared/PolicyScopeExercise').then((m) => ({
+    default: m.PolicyScopeExercise,
+  }))
+)
+const POLICY_PRACTICE_MODULES = new Set([
+  'pqc-business-case',
+  'pqc-risk-management',
+  'pqc-governance',
+  'pqc-grc',
+  'compliance-strategy',
+  'migration-program',
+  'vendor-risk',
+  'data-asset-sensitivity',
+  'exec-quantum-impact',
+  'ops-quantum-impact',
+  'government-defense-pqc',
+  'healthcare-pqc',
+  'emv-payment-pqc',
+  'pqc-testing-validation',
+])
 
 export const ModuleShell = ({
   manifest,
@@ -631,7 +653,7 @@ export const ModuleShell = ({
 
   // The Workshop tab body, shared by the desktop tab strip and (Wave D,
   // 2026-09-18) the phone shell for modules on MOBILE_WORKSHOP_READY.
-  const workshopBody =
+  const primaryWorkshopBody =
     present.has('workshop') && workshop ? (
       resolve(workshop)
     ) : present.has('workshop') && !workshop && parts.length > 0 && renderWorkshopStep ? (
@@ -650,6 +672,17 @@ export const ModuleShell = ({
         }
       />
     ) : null
+  const workshopBody =
+    primaryWorkshopBody && POLICY_PRACTICE_MODULES.has(manifest.id) ? (
+      <div className="space-y-6">
+        {primaryWorkshopBody}
+        <Suspense fallback={null}>
+          <PolicyScopeExercise />
+        </Suspense>
+      </div>
+    ) : (
+      primaryWorkshopBody
+    )
 
   if (isMobileShell) {
     const learnContent =

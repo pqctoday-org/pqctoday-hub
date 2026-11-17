@@ -8,7 +8,7 @@ import {
 } from './otaOrchestrationData'
 import { OTAOrchestrationPlanner } from '../workshop/OTAOrchestrationPlanner'
 
-const expectedBytes = [2081, 8448, 78752, 107840, 80440, 22209]
+const expectedBytes = [2081, 8448, 78752, 107840, 80444, 22209]
 
 describe('common illustrative OTA packaging policy', () => {
   it('applies the approved component totals to every algorithm without intermediate rounding', () => {

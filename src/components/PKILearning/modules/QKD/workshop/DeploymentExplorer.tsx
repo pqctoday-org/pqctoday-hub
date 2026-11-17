@@ -167,7 +167,9 @@ export const DeploymentExplorer: React.FC = () => {
               <th className="text-left p-2 text-muted-foreground font-medium hidden lg:table-cell">
                 Distance
               </th>
-              <th className="w-8" />
+              <th className="w-8" scope="col">
+                <span className="sr-only">Details</span>
+              </th>
             </tr>
           </thead>
           <tbody>

@@ -27,6 +27,7 @@ import {
   type CertRecordFixture,
   type ClaimVerdict,
 } from '../data/ccEuData'
+import { SecurityTargetScopeExercise } from './SecurityTargetScopeExercise'
 import { CheckedOn } from '../components/sections/CcEuSections'
 
 const VERDICTS: ClaimVerdict[] = ['supported', 'not-supported', 'not-shown']
@@ -373,6 +374,7 @@ export const CcClaimDecoder: FC<CertWorkshopStepProps> = ({ config }) => {
           Each certificate answers its own question about its own TOE.
         </p>
       </div>
+      <SecurityTargetScopeExercise />
     </div>
   )
 }

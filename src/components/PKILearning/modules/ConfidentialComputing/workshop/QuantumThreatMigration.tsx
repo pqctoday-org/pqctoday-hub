@@ -204,7 +204,9 @@ export const QuantumThreatMigration: React.FC = () => {
                 <th className="text-left p-2 text-muted-foreground font-medium text-xs hidden lg:table-cell">
                   PQC Solution
                 </th>
-                <th className="p-2 w-8" />
+                <th className="p-2 w-8" scope="col">
+                  <span className="sr-only">Details</span>
+                </th>
               </tr>
             </thead>
             <tbody>

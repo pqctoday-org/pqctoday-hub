@@ -104,7 +104,7 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
                   ? 'bg-primary/10 border-primary/40 shadow-[0_0_8px_hsl(var(--primary)/0.15)]'
                   : isActive
                     ? 'bg-muted/50 border-border'
-                    : 'bg-muted/30 border-border/50 opacity-50'
+                    : 'bg-muted/30 border-border/50'
               }`}
             >
               <div className="flex items-center gap-3">

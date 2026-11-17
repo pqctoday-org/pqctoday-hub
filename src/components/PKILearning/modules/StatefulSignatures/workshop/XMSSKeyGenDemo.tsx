@@ -470,7 +470,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 }
                 className={`flex flex-col items-start gap-0.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                   structure === s
-                    ? 'bg-secondary/20 text-secondary border border-secondary/50'
+                    ? 'bg-secondary/20 text-foreground border border-secondary/50'
                     : 'bg-muted/50 text-muted-foreground border border-border hover:border-secondary/30'
                 }`}
               >
@@ -520,7 +520,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 title={`XMSS parameter sets using ${h}: ${XMSS_PARAM_SET_APPROVAL[h].note}`}
                 className={`h-auto flex flex-col items-start gap-0.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                   xmssHash === h
-                    ? 'bg-secondary/20 text-secondary border border-secondary/50'
+                    ? 'bg-secondary/20 text-foreground border border-secondary/50'
                     : 'bg-muted/50 text-muted-foreground border border-border hover:border-secondary/30'
                 }`}
               >
@@ -556,7 +556,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                           ? 'bg-muted/30 text-muted-foreground border border-border/50 cursor-not-allowed'
                           : 'bg-muted/20 text-muted-foreground/40 border border-border/30 cursor-not-allowed'
                         : xmssHeight === h
-                          ? 'bg-secondary/20 text-secondary border border-secondary/50'
+                          ? 'bg-secondary/20 text-foreground border border-secondary/50'
                           : 'bg-muted/50 text-muted-foreground border border-border hover:border-secondary/30'
                     }`}
                   >
@@ -676,7 +676,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               <div className="space-y-2 overflow-x-auto">
                 {/* Root */}
                 <div className="flex justify-center">
-                  <div className="px-3 py-1.5 rounded bg-secondary/20 text-secondary text-[10px] font-bold border border-secondary/30">
+                  <div className="px-3 py-1.5 rounded bg-secondary/20 text-foreground text-[10px] font-bold border border-secondary/30">
                     Root (PK)
                   </div>
                 </div>
@@ -1055,7 +1055,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                             {
                               label: 'idx',
                               bytes: 4,
-                              color: 'bg-secondary/20 text-secondary border-secondary/30',
+                              color: 'bg-secondary/20 text-foreground border-secondary/30',
                               hexBg: 'bg-secondary/20',
                             },
                             {

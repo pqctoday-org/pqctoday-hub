@@ -1,17 +1,20 @@
 {
-  "_comment": "SHA-256 of every archive linked into openssl.wasm, recorded at link time. Compare against a fresh build of the same commit: if these differ, the bundle was linked from stale intermediates even though its recorded hsm commit looks current.",
-  "linked_at": "2026-10-03T22:09:09Z",
+  "_comment": "SHA-256 of every archive linked into openssl.wasm, recorded at link time by scripts/build-openssl-studio-wasm.sh.",
+  "linked_at": "2026-11-16T23:48:45Z",
+  "hsm_commit": "fd2a7bad",
+  "emcc": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.4 (fe5be6afdff43ad58860d821fcc8572a23f92d19)",
+  "openssl_tarball_sha256": "243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1",
   "inputs": {
     "pkcs11_provider_ar": {
       "path": "build-wasm/lib/libpkcs11-provider.a",
-      "sha256": "78f9601495cd97dba533f7e4729d8e8d9f3bdf4aa4c517af87ff4af5d133449b",
-      "built_at": "2026-10-03T22:08:27Z"
+      "sha256": "8d2b42fdf6df7d58f1b925e00236db187fbfd1e32cefbcd5562f1a1d8b6f4872",
+      "built_at": "2026-11-14T15:02:48Z"
     },
     "softhsm_ar": {
       "path": "rust/target/wasm32-unknown-emscripten/release/libsofthsmrustv3.a",
-      "sha256": "0a2b7f48282acdfc12f6921831ed7fe2ffa06f7c5bd0cc328865088efa5b8711",
-      "built_at": "2026-10-03T22:08:23Z"
+      "sha256": "76026d999460300028883f845f6044caed083e9a549f2b4d3c8610de67cec24b",
+      "built_at": "2026-11-14T15:04:09Z"
     }
   },
-  "output_sha256": "77494bd4920b67b49aec429128102347b2438a30abb8769bcb15407206a399da"
+  "output_sha256": "14018bc6a684babf4c1db381de73e226cc73f6f6b51a2d29fa52ea051203ee29"
 }

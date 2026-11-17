@@ -82,3 +82,7 @@ CPM (2026-04) · Keyfactor/EJBCA CPM.
 Crypto Agility (LM-007) · PQC Governance (LM-037) · KMS & PQC (LM-024) · Business Case (LM-036).
 
 Vendor algorithm availability and validation evidence are shown from shared, product-specific capability records with source links, checked dates and the recorded review state. Availability, approved mode and inclusion on a named CMVP certificate are separate facts; missing records remain unknown. Version-specific documentation examples and integration scenarios do not establish support for another firmware, parameter set or environment.
+
+## Scoped MTI planning example
+
+The MTI planner separates general US federal non-NSS use from an explicitly applicable National Security System CNSA 2.0 profile. In the NSS example, ML-DSA-87 and ML-KEM-1024 do not change when the learner changes the planning year. A classical-only peer creates a requirement conflict; a smaller or differently negotiated algorithm is not silently substituted. CSV and Markdown retain the selected inputs, recommended parameters, conflict and source. These are educational planning recommendations, not evidence that a production implementation or module meets the profile.
