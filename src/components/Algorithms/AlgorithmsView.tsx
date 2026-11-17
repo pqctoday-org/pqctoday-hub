@@ -618,7 +618,10 @@ export function AlgorithmsView({
 
       {!simEmbed && <PersonaPageNote route="/algorithms" className="mb-4" />}
 
-      <aside className="mb-4 rounded-lg border border-status-info/30 bg-status-info/5 px-4 py-3 text-sm leading-relaxed text-foreground/85">
+      <aside
+        aria-label="Educational boundary"
+        className="mb-4 rounded-lg border border-status-info/30 bg-status-info/5 px-4 py-3 text-sm leading-relaxed text-foreground/85"
+      >
         <strong className="text-foreground">Educational boundary.</strong> This explorer compares
         algorithm standards, catalogue records, protocol maturity, and tests included in PQC Today.
         It does not certify an algorithm, validate a product, establish compliance, or predict
@@ -626,7 +629,10 @@ export function AlgorithmsView({
         making a deployment decision.
       </aside>
 
-      <aside className="mb-4 rounded-lg border border-border bg-muted/20 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+      <aside
+        aria-label="Catalogue evidence health"
+        className="mb-4 rounded-lg border border-border bg-muted/20 px-4 py-3 text-xs leading-relaxed text-muted-foreground"
+      >
         <p>
           <strong className="text-foreground">Catalogue evidence health:</strong>{' '}
           {catalogueFreshness.label}. This is the imported file date, not proof that every row was

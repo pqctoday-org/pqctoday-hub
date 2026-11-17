@@ -479,9 +479,9 @@ const KemOpsTabSoftware: React.FC = () => {
       {/* Section 1: Key Encapsulation */}
       <div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border pb-4 mb-6 gap-4">
-          <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
             <Activity size={18} className="text-accent" /> Key Encapsulation Mechanism (KEM)
-          </h4>
+          </h3>
 
           {/* Key Derivation Method Selector - Always visible */}
           <div className="flex items-center gap-2">
@@ -990,9 +990,9 @@ const KemOpsTabSoftware: React.FC = () => {
       {/* Section 2: Data Encryption/Decryption */}
       <div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border pb-4 mb-6 gap-2">
-          <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
             <Lock size={18} className="text-accent" /> Data Encryption (AES-GCM)
-          </h4>
+          </h3>
           <p className="text-xs text-muted-foreground italic">
             Use the shared secret from above as the encryption/decryption key
           </p>
@@ -1182,9 +1182,9 @@ const X25519ECDHPanel: React.FC = () => {
   return (
     <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border pb-4 mb-6 gap-2">
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
+        <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
           <Activity size={18} className="text-muted-foreground" /> Classical Baseline: X25519 ECDH
-        </h4>
+        </h3>
         <p className="text-xs text-muted-foreground italic">
           Elliptic-curve Diffie-Hellman — broken by quantum computers (Shor's algorithm)
         </p>

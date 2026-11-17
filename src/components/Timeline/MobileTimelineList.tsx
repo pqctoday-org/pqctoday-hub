@@ -185,6 +185,7 @@ export const MobileTimelineList = ({
 
   return (
     <div className="flex flex-col gap-4 pb-8" data-testid="mobile-timeline-list">
+      <h2 className="sr-only">Country timelines</h2>
       {/* Swipe vs compact whole-country-overview toggle */}
       <div
         className="flex items-center gap-1 self-end rounded-lg border border-border bg-muted/20 p-0.5"

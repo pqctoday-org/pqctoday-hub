@@ -1374,9 +1374,9 @@ const SignVerifyTabSoftware: React.FC = () => {
   return (
     <div className="w-full animate-fade-in space-y-8">
       <div>
-        <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
+        <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
           <FileSignature size={18} className="text-accent" /> Digital Signatures
-        </h4>
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
           {/* Sign */}
           <div className="p-6 bg-card rounded-xl border border-border hover:border-success/30 transition-colors group flex flex-col">

@@ -400,6 +400,7 @@ export const InteractivePlayground = () => {
         aria-labelledby={`tab-${activeTab}`}
         className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative"
       >
+        <h2 className="sr-only">Cryptographic workbench</h2>
         {activeTab === 'data' && <DataTab />}
         {activeTab === 'kem_ops' && <KemOpsTab />}
         {activeTab === 'symmetric' && <SymmetricTab />}

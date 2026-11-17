@@ -551,15 +551,6 @@
       "firstSeen": "2026-09-26"
     },
     {
-      "product_id": "utimaco-utrust-hsm",
-      "list": "MIP",
-      "module": "u.trust Anchor CSe",
-      "vendor": "Utimaco IS GmbH",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-11-10",
-      "firstSeen": "2026-09-26"
-    },
-    {
       "product_id": "windows-server-2025",
       "list": "IUT",
       "module": "BitLocker Dump Filter (Windows 11 version 24H2, Windows Server 2025, Azure Local version 24H2)",

@@ -15,15 +15,15 @@ export const SymmetricTab: React.FC = () => {
 
   return (
     <div className="w-full animate-fade-in">
-      <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
+      <h3 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
         <Lock size={18} className="text-accent" /> Symmetric Encryption (AES-GCM)
-      </h4>
+      </h3>
 
       {/* Key Selection */}
       <div className="mb-6 p-6 bg-muted/20 rounded-xl border border-border">
-        <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
+        <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <KeyIcon size={14} /> Select Symmetric Key
-        </h5>
+        </h4>
         <FilterDropdown
           selectedId={selectedSymKeyId || 'All'}
           onSelect={(id) => setSelectedSymKeyId(id === 'All' ? '' : id)}
