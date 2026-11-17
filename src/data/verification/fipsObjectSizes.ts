@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /** Independently transcribed raw object lengths, not derived from the Hub registry.
- * FIPS 203 (2024), Table 3; FIPS 204 (2024), Table 2.
+ * FIPS 203 (2024), Table 3; FIPS 204 (2024), Table 2;
+ * FIPS 205, Table 2 and the 4n-byte private-key format in section 3.
  * Encoded certificates, protocol messages and signing-key seeds are different claims.
  */
 export const FIPS_OBJECT_SIZES = {
@@ -46,8 +47,93 @@ export const FIPS_OBJECT_SIZES = {
     securityLevel: 5,
     fipsStandard: 'FIPS 204',
   },
+  'SLH-DSA-SHA2-128s': {
+    publicKeyBytes: 32,
+    privateKeyBytes: 64,
+    signatureOrCiphertextBytes: 7856,
+    securityLevel: 1,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHA2-128f': {
+    publicKeyBytes: 32,
+    privateKeyBytes: 64,
+    signatureOrCiphertextBytes: 17088,
+    securityLevel: 1,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHA2-192s': {
+    publicKeyBytes: 48,
+    privateKeyBytes: 96,
+    signatureOrCiphertextBytes: 16224,
+    securityLevel: 3,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHA2-192f': {
+    publicKeyBytes: 48,
+    privateKeyBytes: 96,
+    signatureOrCiphertextBytes: 35664,
+    securityLevel: 3,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHA2-256s': {
+    publicKeyBytes: 64,
+    privateKeyBytes: 128,
+    signatureOrCiphertextBytes: 29792,
+    securityLevel: 5,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHA2-256f': {
+    publicKeyBytes: 64,
+    privateKeyBytes: 128,
+    signatureOrCiphertextBytes: 49856,
+    securityLevel: 5,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHAKE-128s': {
+    publicKeyBytes: 32,
+    privateKeyBytes: 64,
+    signatureOrCiphertextBytes: 7856,
+    securityLevel: 1,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHAKE-128f': {
+    publicKeyBytes: 32,
+    privateKeyBytes: 64,
+    signatureOrCiphertextBytes: 17088,
+    securityLevel: 1,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHAKE-192s': {
+    publicKeyBytes: 48,
+    privateKeyBytes: 96,
+    signatureOrCiphertextBytes: 16224,
+    securityLevel: 3,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHAKE-192f': {
+    publicKeyBytes: 48,
+    privateKeyBytes: 96,
+    signatureOrCiphertextBytes: 35664,
+    securityLevel: 3,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHAKE-256s': {
+    publicKeyBytes: 64,
+    privateKeyBytes: 128,
+    signatureOrCiphertextBytes: 29792,
+    securityLevel: 5,
+    fipsStandard: 'FIPS 205',
+  },
+  'SLH-DSA-SHAKE-256f': {
+    publicKeyBytes: 64,
+    privateKeyBytes: 128,
+    signatureOrCiphertextBytes: 49856,
+    securityLevel: 5,
+    fipsStandard: 'FIPS 205',
+  },
 } as const
 export const FIPS_OBJECT_SIZE_SOURCES = [
   'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf',
   'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf',
+  'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
 ]
