@@ -1457,11 +1457,7 @@ export const BUSINESS_MODEL_ORACLES: Record<BusinessAssessmentId, BusinessModelO
       if (serverMode === 'pqc-required' && clientMode === 'classical-only') {
         return { connected: false, negotiated: 'HANDSHAKE_FAILURE_NO_SHARED_GROUP' }
       }
-      if (
-        clientMode === ' classical-only' ||
-        serverMode === 'classical-only' ||
-        clientMode === 'classical-only'
-      ) {
+      if (serverMode === 'classical-only' || clientMode === 'classical-only') {
         return { connected: true, negotiated: 'CLASSICAL_X25519_FALLBACK' }
       }
       return { connected: true, negotiated: 'HYBRID_X25519MLKEM768' }

@@ -634,7 +634,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
     )
     expect(pqcMandates.length).toBeGreaterThan(0)
     expect(complianceFrameworks.filter((f) => f.id === 'non-existent-fw')).toEqual([])
-    expect(complianceFrameworks.some((f) => bindingDataPresent(f))).toBe(true)
+    expect(bindingDataPresent()).toBe(true)
     expect(conceptIdForFramework(complianceFrameworks[0])).toBeTruthy()
 
     recordReceipt({
@@ -890,13 +890,13 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
     // 17. simulation
     const phaseKeys = Object.keys(SIM_TREES)
     expect(phaseKeys.length).toBeGreaterThanOrEqual(5)
-    const firstTree = Object.values(SIM_TREES)[0]
+    const firstTree = Object.values(SIM_TREES)[0]!
     const allSteps = flattenTree(firstTree)
     expect(allSteps.length).toBeGreaterThan(0)
     expect(allSteps.some((s) => isGatingStep(s))).toBe(true)
     expect(achievedTreeLevel(firstTree, () => false)).toBe(0)
-    const allStepIds = new Set(allSteps.map((s) => s.id))
-    expect(achievedTreeLevel(firstTree, (s) => allStepIds.has(s.id))).toBeGreaterThan(0)
+    const allStepTos = new Set(allSteps.map((s) => s.to))
+    expect(achievedTreeLevel(firstTree, (s) => allStepTos.has(s.to))).toBeGreaterThan(0)
 
     const simJurisdiction = simJurisdictionFromAssess({
       assessmentProfile: { country: 'Germany' },

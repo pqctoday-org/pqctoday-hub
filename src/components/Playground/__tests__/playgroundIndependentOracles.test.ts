@@ -97,7 +97,7 @@ export type PlaygroundAssessmentId = (typeof ALL_34_PLAYGROUND_TOOL_IDS)[number]
 
 const enc = new TextEncoder()
 
-function deterministicSeed(length: number, tag: number): Uint8Array {
+function deterministicSeed(length: number, tag: number): Uint8Array<ArrayBuffer> {
   const out = new Uint8Array(length)
   for (let i = 0; i < length; i++) {
     out[i] = (tag * 37 + i * 13 + 7) & 0xff
@@ -113,7 +113,7 @@ function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   return true
 }
 
-function flipByte(buf: Uint8Array, index = 0): Uint8Array {
+function flipByte(buf: Uint8Array, index = 0): Uint8Array<ArrayBuffer> {
   const copy = new Uint8Array(buf)
   copy[index % copy.length] ^= 0x01
   return copy
