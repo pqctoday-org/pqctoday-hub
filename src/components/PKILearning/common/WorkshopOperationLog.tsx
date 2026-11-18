@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useRef } from 'react'
-import { Loader2, CheckCircle2, XCircle } from 'lucide-react'
+import { Loader2, CheckCircle2, XCircle, MinusCircle } from 'lucide-react'
 import clsx from 'clsx'
 
 export interface LogEntry {
-  status: 'pending' | 'success' | 'error'
+  status: 'pending' | 'success' | 'error' | 'skipped'
   message: string
   durationMs?: number
 }
@@ -59,8 +59,12 @@ export const WorkshopOperationLog: React.FC<WorkshopOperationLogProps> = ({
         </div>
       )}
       {entries.map((entry, idx) => (
-        <div key={idx} className="flex items-start gap-1.5 min-w-0">
-          <span className="shrink-0 mt-px">
+        <div
+          key={idx}
+          className="flex items-start gap-1.5 min-w-0"
+          data-operation-status={entry.status}
+        >
+          <span className="shrink-0 mt-px" aria-hidden="true">
             {entry.status === 'pending' && (
               <Loader2 size={12} className="animate-spin text-primary" />
             )}
@@ -68,13 +72,16 @@ export const WorkshopOperationLog: React.FC<WorkshopOperationLogProps> = ({
               <CheckCircle2 size={12} className="text-status-success" />
             )}
             {entry.status === 'error' && <XCircle size={12} className="text-status-error" />}
+            {entry.status === 'skipped' && (
+              <MinusCircle size={12} className="text-muted-foreground" />
+            )}
           </span>
           <span
             className={clsx(
               'break-all',
               entry.status === 'error' && 'text-status-error',
               entry.status === 'success' && 'text-foreground',
-              entry.status === 'pending' && 'text-muted-foreground'
+              (entry.status === 'pending' || entry.status === 'skipped') && 'text-muted-foreground'
             )}
           >
             {entry.message}

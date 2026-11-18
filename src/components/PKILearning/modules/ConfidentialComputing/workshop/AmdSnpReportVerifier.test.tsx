@@ -92,7 +92,7 @@ describe('AMD SEV-SNP report verifier panel', () => {
     expect(screen.getByTestId('amd-binding-label')).toHaveTextContent(
       "simulated: a recorded report cannot carry this page's key"
     )
-    expect(screen.getByTestId('amd-gate-pending')).toBeInTheDocument()
+    expect(screen.getByTestId('amd-gate')).toHaveTextContent('Release blocked')
     click(/Run simulated binding step/)
     const out = await screen.findByTestId('amd-binding-result')
     const row = (key: string, id: string) =>
@@ -104,14 +104,20 @@ describe('AMD SEV-SNP report verifier panel', () => {
     expect(row('swapped-ciphertext', 'key-binding')).toMatch(/PASS/)
   })
 
-  it('opens the key-transport gate only when the real checks and the binding checks all passed', async () => {
+  it('keeps release blocked when the signed report did not bind the local key', async () => {
     render(<AmdSnpReportVerifier />)
     click(/Run simulated binding step/)
     click(/Appraise recorded report/)
-    await waitFor(() => expect(screen.getByTestId('amd-gate')).toHaveTextContent('OPEN'))
+    await waitFor(() =>
+      expect(screen.getByTestId('amd-gate')).toHaveTextContent(
+        'The signed report data does not match the local key binding.'
+      )
+    )
+    expect(screen.getByTestId('amd-gate')).toHaveTextContent('Release blocked')
     click(/Appraise recorded report/)
-    await waitFor(() => expect(screen.getByTestId('amd-gate')).toHaveTextContent('CLOSED'))
-    expect(screen.getByTestId('amd-gate')).toHaveTextContent('failed: challenge')
+    await waitFor(() =>
+      expect(screen.getByTestId('amd-gate')).toHaveTextContent('Failed checks: challenge')
+    )
   })
 })
 

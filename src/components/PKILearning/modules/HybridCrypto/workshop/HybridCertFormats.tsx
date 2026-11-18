@@ -46,6 +46,9 @@ import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Button } from '@/components/ui/button'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 
+import { CertificateTlsExercise } from './CertificateTlsExercise'
+import { CERTIFICATE_SECURITY_PROPERTIES } from '../services/certificateSecurityProperties'
+
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
 interface FormatResult {
@@ -81,7 +84,7 @@ export const HybridCertFormats: React.FC = () => {
   const [expandedViews, setExpandedViews] = useState<Record<string, 'pem' | 'parsed' | null>>({})
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
   /**
-   * Which draft §6 composite profile the 'composite' format mints. Defaults to
+   * Which RFC 10073 §6 composite profile the 'composite' format mints. Defaults to
    * the first entry, id-MLDSA65-ECDSA-P256-SHA512 — §10.4's general-use pick.
    */
   // Both ways are shown. 'by-hand' = PKCS#11 v3.2 (before 3.3): the
@@ -273,7 +276,11 @@ export const HybridCertFormats: React.FC = () => {
                   name: `${v.classical?.algorithm ?? 'Classical'} component verifies`,
                   ok: v.classical?.verified === true,
                 },
-                { name: 'Both components verify (composite AND rule)', ok: v.valid }
+                {
+                  name: 'RFC 10073 self-signature profile and both components',
+                  ok: v.valid,
+                  detail: v.errors.join(' '),
+                }
               )
             }
             output = {
@@ -448,7 +455,7 @@ export const HybridCertFormats: React.FC = () => {
   ]
 
   const renderFormatCard = (baseFmt: HybridCertFormat) => {
-    // The composite card follows the selected draft §6 profile — its label,
+    // The composite card follows the selected RFC 10073 §6 profile — its label,
     // OID and structure are never hard-coded to one profile.
     const fmt: HybridCertFormat =
       baseFmt.id === 'composite'
@@ -561,6 +568,19 @@ export const HybridCertFormats: React.FC = () => {
                     ))}
                   </optgroup>
                 </select>
+                <p className="text-xs text-muted-foreground">
+                  Generate {COMPOSITE_PROFILE_CHOICES.length} of the 18 profiles in{' '}
+                  <a
+                    href="https://www.rfc-editor.org/rfc/rfc10073.html#section-6"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline"
+                  >
+                    RFC 10073 §6
+                  </a>
+                  . The certificates can be downloaded for separate testing in a compatible
+                  verifier.
+                </p>
                 <p className="text-[10px] leading-relaxed text-muted-foreground">
                   {compositeChoice.useWhen}
                 </p>
@@ -659,7 +679,7 @@ export const HybridCertFormats: React.FC = () => {
                   {fmt.id === 'pure-pqc-slh' &&
                     'Requires SLH-DSA-128s key pairs in the HSM for the workshop CA and the end entity (C_GenerateKeyPair + C_MessageSign).'}
                   {fmt.id === 'composite' &&
-                    'Requires both ML-DSA-65 and ECDSA P-256 key pairs; both signatures over shared TBS bytes.'}
+                    `Requires the selected ${compositeChoice.shortLabel} key pair profile. Both components sign the message representative derived from the certificate.`}
                   {fmt.id === 'alt-sig' &&
                     'Requires ECDSA P-256 primary key and ML-DSA-65 key for extensions 2.5.29.72–74.'}
                   {fmt.id === 'related-certs' &&
@@ -914,11 +934,14 @@ export const HybridCertFormats: React.FC = () => {
         <div>
           <h2 className="text-lg font-bold text-foreground mb-2">Hybrid Certificate Formats</h2>
           <p className="text-sm text-muted-foreground">
-            Generate and compare X.509 hybrid certificate approaches. Each format combines classical
-            and PQC algorithms differently, with distinct trade-offs for backward compatibility,
-            standardization, and security properties.
+            Generate and compare classical, post-quantum and hybrid certificate approaches.
+            Certificate authentication, key encapsulation and TLS key exchange are separate
+            properties. Start with the classical TLS baseline below, then inspect the certificate
+            formats.
           </p>
         </div>
+
+        <CertificateTlsExercise />
 
         <WhyThisMatters
           title="Why Hybrid Certificates? Migration Without Breaking Relying Parties"
@@ -1108,35 +1131,24 @@ export const HybridCertFormats: React.FC = () => {
                       )
                     })}
                   </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="p-2 text-muted-foreground">Quantum Safe</td>
-                    {comparisonFormats.map((fmt) => (
-                      <td key={fmt.id} className="p-2 text-center">
-                        {fmt.quantumSafe === 'system' ? (
-                          <span
-                            className="text-warning font-bold text-xs"
-                            title="Only the two-cert system is quantum-safe; classical cert alone is not"
-                          >
-                            System
-                          </span>
-                        ) : (
-                          <span className="text-success font-bold text-xs">Yes</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="p-2 text-muted-foreground">Legacy Compat</td>
-                    {comparisonFormats.map((fmt) => (
-                      <td key={fmt.id} className="p-2 text-center">
-                        {fmt.legacyCompat ? (
-                          <span className="text-success font-bold text-xs">Yes</span>
-                        ) : (
-                          <span className="text-destructive font-bold text-xs">No</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
+                  {(
+                    [
+                      ['authentication', 'Certificate authentication'],
+                      ['legacy', 'What a legacy validator accepts'],
+                      ['tls', 'TLS authentication use'],
+                    ] as const
+                  ).map(([property, label]) => (
+                    <tr key={property} className="border-b border-border/50">
+                      <th scope="row" className="p-2 text-muted-foreground font-normal">
+                        {label}
+                      </th>
+                      {comparisonFormats.map((fmt) => (
+                        <td key={fmt.id} className="p-2 text-xs">
+                          {CERTIFICATE_SECURITY_PROPERTIES[fmt.id][property]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
                   <tr>
                     <td className="p-2 text-muted-foreground">Status</td>
                     {comparisonFormats.map((fmt) => {

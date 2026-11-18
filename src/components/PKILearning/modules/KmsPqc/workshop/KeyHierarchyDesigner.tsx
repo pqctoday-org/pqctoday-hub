@@ -396,6 +396,11 @@ export const KeyHierarchyDesigner: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          RSA public values count the modulus bytes. RSA private-key entries are illustrative PKCS#1
+          DER lengths. The ECDSA public-key row counts an uncompressed point. Measure the
+          provider&apos;s exported or wrapped key when estimating actual transfer or storage.
+        </p>
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { estimateCompactTokenSize } from './tokenSizeModel'
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import {
   Play,
   AlertTriangle,
@@ -131,6 +131,7 @@ const JWT_PAYLOAD = `{
   "iss": "https://auth.corp.example",
   "aud": "https://api.corp.example"
 }`
+const CHANGED_JWT_PAYLOAD = JWT_PAYLOAD.replace('"user-1234"', '"user-4321"')
 
 const MOCK_SIGNATURES: Record<SigningAlgorithm, string> = {
   RS256: 'SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c...[RSA-2048 signature, 256 bytes total]',
@@ -246,7 +247,9 @@ export const TokenMigrationLab: React.FC = () => {
   const [liveSignatureBytes, setLiveSignatureBytes] = useState<number | null>(null)
   const [verifying, setVerifying] = useState(false)
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
-  const [isSimulationMode, setIsSimulationMode] = useState(false)
+  const [signError, setSignError] = useState<string | null>(null)
+  const [verifyError, setVerifyError] = useState<string | null>(null)
+  const [changedPayload, setChangedPayload] = useState(false)
   // Stores raw signature bytes from live signing for subsequent live verification
   const liveSigBytesRef = useRef<Uint8Array | null>(null)
 
@@ -257,6 +260,19 @@ export const TokenMigrationLab: React.FC = () => {
   const algoData = SIGNATURE_SIZE_DATA[selectedAlgorithm]
   const isQuantumSafe = selectedAlgorithm.startsWith('ML-DSA')
   const isLive = hsm.isReady && !!hsm.moduleRef.current
+  const waitingForHsm = hsm.phase === 'loading' || hsm.phase === 'error'
+
+  useEffect(() => {
+    keyCacheRef.current = {}
+    liveSigBytesRef.current = null
+    setSigned(false)
+    setLiveSignatureHex(null)
+    setLiveSignatureBytes(null)
+    setVerifyResult(null)
+    setSignError(null)
+    setVerifyError(null)
+    setChangedPayload(false)
+  }, [hsm.phase, hsm.engine])
 
   const handleAlgorithmSelect = (id: string) => {
     if (id === 'All') return
@@ -266,7 +282,9 @@ export const TokenMigrationLab: React.FC = () => {
     setLiveSignatureBytes(null)
     setVerifyResult(null)
     liveSigBytesRef.current = null
-    setIsSimulationMode(false)
+    setSignError(null)
+    setVerifyError(null)
+    setChangedPayload(false)
   }
 
   /** Generate or retrieve cached key pair for the selected algorithm */
@@ -337,6 +355,9 @@ export const TokenMigrationLab: React.FC = () => {
     setLiveSignatureHex(null)
     setLiveSignatureBytes(null)
     setVerifyResult(null)
+    setSignError(null)
+    setVerifyError(null)
+    setChangedPayload(false)
     liveSigBytesRef.current = null
 
     if (isLive) {
@@ -366,25 +387,19 @@ export const TokenMigrationLab: React.FC = () => {
         setLiveSignatureBytes(sig.length)
         setSigned(true)
       } catch (err) {
-        console.error('[TokenMigrationLab] live sign error:', err)
-        setIsSimulationMode(true)
-        // Fall back to mock on error
-        const delay = algoData.timingMs * 10 + Math.random() * 5
-        await new Promise((resolve) => setTimeout(resolve, delay))
-        setSigned(true)
+        setSignError(err instanceof Error ? err.message : String(err))
       }
     } else {
-      const delay = algoData.timingMs * 10 + Math.random() * 5
-      await new Promise((resolve) => setTimeout(resolve, delay))
       setSigned(true)
     }
     setSigning(false)
-  }, [selectedAlgorithm, algoData, isLive, hsm, getOrGenerateKey])
+  }, [selectedAlgorithm, isLive, hsm, getOrGenerateKey])
 
   const handleVerify = useCallback(async () => {
     if (!isLive || !liveSigBytesRef.current) return
     setVerifying(true)
     setVerifyResult(null)
+    setVerifyError(null)
 
     try {
       const keys = keyCacheRef.current[selectedAlgorithm]
@@ -393,7 +408,8 @@ export const TokenMigrationLab: React.FC = () => {
       const M = hsm.moduleRef.current as unknown as SoftHSMModule
       const hSession = hsm.hSessionRef.current
       const { pubHandle } = keys
-      const signingInput = `${base64url(JWT_HEADERS[selectedAlgorithm])}.${base64url(JWT_PAYLOAD)}`
+      const payload = changedPayload ? CHANGED_JWT_PAYLOAD : JWT_PAYLOAD
+      const signingInput = `${base64url(JWT_HEADERS[selectedAlgorithm])}.${base64url(payload)}`
       const sig = liveSigBytesRef.current
 
       let ok: boolean
@@ -407,12 +423,10 @@ export const TokenMigrationLab: React.FC = () => {
 
       setVerifyResult(ok)
     } catch (err) {
-      console.error('[TokenMigrationLab] live verify error:', err)
-      setIsSimulationMode(true)
-      setVerifyResult(false)
+      setVerifyError(err instanceof Error ? err.message : String(err))
     }
     setVerifying(false)
-  }, [selectedAlgorithm, isLive, hsm])
+  }, [selectedAlgorithm, changedPayload, isLive, hsm])
 
   const displayedSigBytes = liveSignatureBytes ?? algoData.bytes
   const displayedSigHex = liveSignatureHex ?? (signed ? MOCK_SIGNATURES[selectedAlgorithm] : null)
@@ -439,17 +453,7 @@ export const TokenMigrationLab: React.FC = () => {
       {/* Live HSM Toggle */}
       <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
 
-      {hsm.isReady && (
-        <WasmModeIndicator
-          isLive={!isSimulationMode}
-          simulationReason={
-            isSimulationMode
-              ? 'Live operation failed — check the browser console for details.'
-              : undefined
-          }
-          className="mb-3"
-        />
-      )}
+      {hsm.isReady && <WasmModeIndicator isLive className="mb-3" />}
 
       {/* Algorithm Selector */}
       <div className="glass-panel p-5">
@@ -532,19 +536,16 @@ export const TokenMigrationLab: React.FC = () => {
                   ? `${liveSignatureHex.slice(0, 80)}...${liveSignatureHex.slice(-20)}`
                   : displayedSigHex}
               </pre>
-              <div className="mt-2 flex items-center gap-2">
-                <CheckCircle2 size={12} className="text-status-success" aria-hidden="true" />
-                <span className="text-[10px] text-status-success font-medium">
-                  {liveSignatureHex
-                    ? `Signed via PKCS#11 v3.2 — ${displayedSigBytes.toLocaleString()} bytes`
-                    : `Signed in ~${algoData.timingMs}ms`}
-                </span>
-              </div>
+              <p className="mt-2 text-[10px] text-muted-foreground">
+                {liveSignatureHex
+                  ? `Signed via PKCS#11 v3.2 — ${displayedSigBytes.toLocaleString()} bytes`
+                  : 'Illustrative signature bytes'}
+              </p>
             </>
           ) : (
             <div className="bg-muted/30 rounded p-3 border border-border min-h-[80px] flex items-center justify-center">
               <span className="text-xs text-muted-foreground italic">
-                {signing ? 'Signing...' : 'Click "Sign Token" to generate signature'}
+                {signing ? 'Signing…' : 'Sign a token in Live HSM Mode or view an illustration.'}
               </span>
             </div>
           )}
@@ -552,10 +553,10 @@ export const TokenMigrationLab: React.FC = () => {
       </div>
 
       {/* Sign Button */}
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center gap-2">
         <Button
           onClick={handleSign}
-          disabled={signing}
+          disabled={signing || waitingForHsm}
           variant="gradient"
           className="flex items-center gap-2"
         >
@@ -567,10 +568,15 @@ export const TokenMigrationLab: React.FC = () => {
           ) : (
             <>
               <Play size={14} fill="currentColor" aria-hidden="true" />
-              {isLive ? 'Sign Token (Live WASM)' : 'Sign Token'}
+              {isLive ? 'Sign Token (Live WASM)' : 'Show Signature Illustration'}
             </>
           )}
         </Button>
+        {signError && (
+          <p role="alert" className="text-sm text-status-error">
+            Signing failed. {signError}
+          </p>
+        )}
       </div>
 
       {/* Size Impact Analysis */}
@@ -784,15 +790,14 @@ export const TokenMigrationLab: React.FC = () => {
               {
                 step: '2',
                 label: 'Reconstruct input',
-                detail:
-                  'base64url(header) + "." + base64url(payload) — identical to what was signed',
+                detail: 'base64url(header) + "." + base64url(the received payload)',
               },
               {
                 step: '3',
                 label: selectedAlgorithm.startsWith('ML-DSA')
                   ? 'C_MessageVerifyInit / C_VerifyMessage'
                   : 'C_VerifyInit / C_Verify',
-                detail: `PKCS#11 v3.2 verify with ${selectedAlgorithm} public key — returns the PKCS#11 status code CKR_OK (valid) or CKR_SIGNATURE_INVALID (rejected)`,
+                detail: `PKCS#11 v3.2 verification with the local ${selectedAlgorithm} public key used in this exercise`,
               },
             ] as const
           ).map(({ step, label, detail }) => (
@@ -808,6 +813,19 @@ export const TokenMigrationLab: React.FC = () => {
           ))}
         </div>
 
+        <label className="mb-3 flex items-start gap-2 text-xs">
+          <input
+            type="checkbox"
+            checked={changedPayload}
+            disabled={!isLive || !liveSignatureHex || verifying}
+            onChange={(event) => {
+              setChangedPayload(event.target.checked)
+              setVerifyResult(null)
+              setVerifyError(null)
+            }}
+          />
+          Change received subject from user-1234 to user-4321
+        </label>
         {/* Live verify button + result */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <Button
@@ -831,6 +849,7 @@ export const TokenMigrationLab: React.FC = () => {
 
           {verifyResult !== null && (
             <div
+              role="status"
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-bold ${
                 verifyResult
                   ? 'bg-status-success/10 border-status-success/30 text-status-success'
@@ -840,15 +859,20 @@ export const TokenMigrationLab: React.FC = () => {
               {verifyResult ? (
                 <>
                   <CheckCircle2 size={14} aria-hidden="true" />
-                  Signature valid — CKR_OK
+                  Signature verified
                 </>
               ) : (
                 <>
                   <AlertTriangle size={14} aria-hidden="true" />
-                  Signature invalid — CKR_SIGNATURE_INVALID
+                  Signature did not verify
                 </>
               )}
             </div>
+          )}
+          {verifyError && (
+            <p role="alert" className="text-sm text-status-error">
+              Verification failed. {verifyError}
+            </p>
           )}
 
           {!isLive && (

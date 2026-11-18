@@ -52,7 +52,8 @@ export function moduleIdFromToolLink(moduleLink: string): string | null {
 export const TOOLS_BY_MODULE_ID: ReadonlyMap<string, readonly string[]> = new Map([
   ['pki-workshop', ['hsm-capacity', 'pki-workshop', 'cert-capacity']],
   ['hybrid-crypto', ['hybrid-encrypt', 'hybrid-sigs', 'hybrid-certs']],
-  ['kms-pqc', ['envelope-encrypt', 'cloud-kms-key-exchange', 'kdf-derivation']],
+  ['kms-pqc', ['envelope-encrypt', 'cloud-kms-key-exchange']],
+  ['qkd', ['kdf-derivation']],
   ['iam-pqc', ['token-migration']],
   ['secure-boot-pqc', ['firmware-signing', 'tpm-playground']],
   ['slh-dsa', ['slh-dsa']],

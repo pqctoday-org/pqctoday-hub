@@ -13,7 +13,7 @@ import {
   RECORDED_CHALLENGE,
   TAMPER_OFFSET_GUEST_SVN,
   buildAttackerEvidence,
-  channelEstablished,
+  reviewRecordedChannel,
   flipBit,
   parseChain,
   parseSnpReport,
@@ -243,54 +243,43 @@ describe('5. channel binding (simulated report_data)', () => {
   })
 })
 
-describe('7. every check must run, pass and be attributed before a channel is established', () => {
-  const ok = checkChannelBinding(
-    (() => {
-      const kp = ml_kem768.keygen()
-      const rd = bindingDigest(kp.publicKey, RECORDED_CHALLENGE, 'c')
-      const ct = ml_kem768.encapsulate(kp.publicKey).cipherText
-      return {
-        reportData: rd,
-        recipientEk: kp.publicKey,
-        challenge: RECORDED_CHALLENGE,
-        context: 'c',
-        ciphertext: ct,
-        committedStatement: channelStatement(rd, ct),
-      }
-    })()
-  )
-
-  it('establishes only when all real checks and both binding checks pass', async () => {
-    const r = await verifySnpEvidence(loadAmdSnpSampleEvidence(), DEFAULT_POLICY, fresh(), NOW)
-    expect(channelEstablished(r, ok.checks)).toEqual({ established: true, missing: [], failed: [] })
-  })
-
-  it('a signature pass alone cannot establish the channel', async () => {
-    const r = await verifySnpEvidence(loadAmdSnpSampleEvidence(), DEFAULT_POLICY, fresh(), NOW)
-    const sigOnly = { checks: r.checks.filter((c) => c.id === 'signature') }
-    const res = channelEstablished(sigOnly, [])
-    expect(res.established).toBe(false)
-    expect(res.missing).toEqual(
-      expect.arrayContaining([
-        'chain',
-        'measurement',
-        'challenge',
-        'key-binding',
-        'ciphertext-binding',
-      ])
+describe('recorded appraisal and the separate channel-binding exercise', () => {
+  it('detects that passing local binding checks use different report data', async () => {
+    const kp = ml_kem768.keygen()
+    const reportData = bindingDigest(kp.publicKey, RECORDED_CHALLENGE, 'c')
+    const ciphertext = ml_kem768.encapsulate(kp.publicKey).cipherText
+    const { checks } = checkChannelBinding({
+      reportData,
+      recipientEk: kp.publicKey,
+      challenge: RECORDED_CHALLENGE,
+      context: 'c',
+      ciphertext,
+      committedStatement: channelStatement(reportData, ciphertext),
+    })
+    expect(checks.every((check) => check.passed)).toBe(true)
+    const appraisal = await verifySnpEvidence(
+      loadAmdSnpSampleEvidence(),
+      DEFAULT_POLICY,
+      fresh(),
+      NOW
     )
+    expect(appraisal.allPassed).toBe(true)
+    expect(reviewRecordedChannel(appraisal, { checks, reportData })).toEqual({
+      failed: [],
+      matchesRecordedKey: false,
+    })
   })
 
-  it('one failed check stops it and names the check', async () => {
-    const r = await verifySnpEvidence(
+  it('reports the failed measurement separately when no binding step was run', async () => {
+    const appraisal = await verifySnpEvidence(
       loadAmdSnpSampleEvidence(),
       policyWithWrongMeasurement(DEFAULT_POLICY),
       fresh(),
       NOW
     )
-    expect(channelEstablished(r, ok.checks)).toMatchObject({
-      established: false,
+    expect(reviewRecordedChannel(appraisal, null)).toEqual({
       failed: ['measurement'],
+      matchesRecordedKey: null,
     })
   })
 })

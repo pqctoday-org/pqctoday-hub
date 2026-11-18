@@ -128,7 +128,7 @@ export const FiveGModule: React.FC = () => {
               <Button
                 variant="ghost"
                 key={part.id}
-                onClick={() => handlePartChange(idx)}
+                onClick={() => setCurrentPart(idx)}
                 aria-label={part.title}
                 aria-current={idx === currentPart ? 'step' : undefined}
                 className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
@@ -164,7 +164,7 @@ export const FiveGModule: React.FC = () => {
           stepIndex={currentPart}
           totalSteps={PARTS.length}
           steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
-          onStepClick={handlePartChange}
+          onStepClick={setCurrentPart}
         />
         {currentPart === 0 && (
           <SuciFlow

@@ -669,7 +669,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/hybrid-certs',
     title: 'Hybrid Certificates — PQC Crypto Lab | PQC Today',
     description:
-      'Generate and compare eight X.509 hybrid and post-quantum certificate formats via SoftHSM PKCS#11 + real DER encoding',
+      'Compare X.509 certificate formats, RFC 10073 composite signatures, and real TLS handshakes with a classical baseline',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [

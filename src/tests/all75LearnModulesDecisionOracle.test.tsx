@@ -71,9 +71,14 @@ describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Deci
     ).toBeGreaterThanOrEqual(2)
     expect(screen.queryByText(/Your workbench artifacts stay separate/i)).toBeNull()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Check changed assumption' }))
+    const reveal = screen.getByText('Compare your prediction')
+    expect(reveal.closest('details')).not.toHaveAttribute('open')
+    fireEvent.click(reveal)
+    expect(reveal.closest('details')).toHaveAttribute('open')
     expect(screen.getAllByText(/Transfer question:/i)).toHaveLength(2)
-    expect(screen.getByText(/Changed-assumption horizon check/i)).toBeInTheDocument()
+    expect(reveal.parentElement).toHaveTextContent(
+      MODULE_DECISION_SCENARIOS['tls-basics'].transferQuestion.changedAssumptionOutcome
+    )
     unmount()
   })
 

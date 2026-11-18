@@ -21,7 +21,7 @@ export function SecurityTargetScopeExercise() {
         Read the exact Security Target scope
       </summary>
       <p className="text-sm">
-        Compare four claims from three real Security Targets reviewed on 16 November 2026. Read the
+        Compare {SECURITY_TARGET_SCOPE_EXAMPLES.length} claims about evaluated products. Read the
         linked pages, predict the verdict, then check your interpretation.
       </p>
       <div className="flex flex-wrap gap-2" role="group" aria-label="Security Target example">
@@ -42,13 +42,14 @@ export function SecurityTargetScopeExercise() {
         ))}
       </div>
       <p className="font-medium">{example.product}</p>
+      <p className="text-sm">{example.stVersion}</p>
       <a
         className="text-primary underline text-sm"
         href={example.source}
         target="_blank"
         rel="noopener noreferrer"
       >
-        Security Target — PDF pages {example.pages}
+        Source document — PDF pages {example.pages}
       </a>
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium mb-2">{example.claim}</legend>

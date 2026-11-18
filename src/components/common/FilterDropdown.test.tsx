@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
 import { FilterDropdown } from './FilterDropdown'
 
 describe('FilterDropdown', () => {
@@ -8,6 +8,34 @@ describe('FilterDropdown', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('moves from filtered text to options and restores focus when selecting', async () => {
+    render(
+      <FilterDropdown
+        items={['Apple', 'Banana', 'Cherry']}
+        selectedId="Apple"
+        onSelect={mockOnSelect}
+        label="Fruit"
+        searchable
+        hideDefaultOption
+      />
+    )
+    const trigger = screen.getByRole('button', { name: 'Fruit:' })
+    fireEvent.click(trigger)
+    const listbox = screen.getByRole('listbox', { name: 'Fruit:' })
+    const input = screen.getByRole('textbox', { name: 'Search Fruit' })
+    expect(trigger).toHaveAttribute('aria-controls', listbox.id)
+    expect(within(listbox).queryByRole('textbox')).not.toBeInTheDocument()
+    await waitFor(() => expect(input).toHaveFocus())
+    fireEvent.change(input, { target: { value: 'r' } })
+    fireEvent.keyDown(input, { key: 'ArrowUp' })
+    const choice = within(listbox).getByRole('option', { name: 'Cherry' })
+    expect(choice).toHaveFocus()
+    fireEvent.keyDown(choice, { key: 'Enter' })
+    expect(mockOnSelect).toHaveBeenCalledWith('Cherry')
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
   })
 
   it('renders with string items', () => {

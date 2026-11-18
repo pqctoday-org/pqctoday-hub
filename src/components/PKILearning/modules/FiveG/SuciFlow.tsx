@@ -1332,13 +1332,13 @@ SIDF ECDH executed via SoftHSM3 WASM.
 Detailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
-        // The two engines generate their own home-network keys, so the OpenSSL engine cannot open an
-        // envelope that was made for the HSM's key. Profile C therefore reports it instead of
-        // running a receiver that is guaranteed to refuse.
+        // Both Profile C receivers read the identical wire bytes. OpenSSL has
+        // its own key from the key-generation step, providing a wrong-key control.
+        const opensslReceipt = await fiveGService.sidfDecrypt(profile)
         const osslResult =
           hsmActive && profile === 'C'
-            ? 'OpenSSL cross-check not run: the envelope was made for the SoftHSM3 home-network key, and this engine holds a different one.'
-            : await fiveGService.sidfDecrypt(profile)
+            ? `Wrong-key control — OpenSSL uses its independently generated home-network key. The SoftHSM3 result uses the key addressed by this sample. Compare MAC verification before looking for a recovered SUPI.\n\n${opensslReceipt}`
+            : opensslReceipt
         if (hsmActive) {
           result = buildDualEngineResult(hsmResult, osslResult)
         } else {

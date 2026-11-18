@@ -124,7 +124,7 @@ function show() {
 }
 async function consent(withholdAge = false) {
   fireEvent.click(screen.getByRole('button', { name: 'Login with Wallet' }))
-  if (withholdAge) fireEvent.click(screen.getByRole('checkbox', { name: 'age_over_18' }))
+  if (withholdAge) fireEvent.click(screen.getByRole('checkbox', { name: 'age_over_18 (PID)' }))
   fireEvent.click(screen.getByRole('button', { name: 'Consent & Share' }))
   await act(async () => {
     await vi.runAllTimersAsync()
@@ -198,7 +198,7 @@ describe('selective-disclosure exercise claims match actual sample outcomes', ()
     await verify()
     expect(calls.verify).toHaveBeenCalledTimes(1)
     expect(screen.getByRole('alert')).toHaveTextContent(
-      'The sample request is missing: age_over_18.'
+      'The sample request is missing: age_over_18 (PID).'
     )
     expect(screen.getByText('Account Opening Refused')).toBeVisible()
     expect(screen.queryByText('Sample account opening accepted')).not.toBeInTheDocument()
@@ -211,6 +211,7 @@ describe('selective-disclosure exercise claims match actual sample outcomes', ()
     wallet.credentials[1].raw = JSON.stringify(pid)
     show()
     await consent()
+    await verify()
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Sample PID disclosure digest verification failed.'
     )

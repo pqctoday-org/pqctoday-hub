@@ -119,3 +119,40 @@ test('phone 375 px: a full-width numeric field, the unit under it and no sideway
   expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
   await checkOwnCount(page)
 })
+
+test('zero breach probability removes breach savings and the export identifies the override', async ({
+  page,
+}) => {
+  await page.goto(ROUTE)
+  const slider = page.getByLabel('Annual Breach Probability', { exact: true })
+  const risk = page.locator('details').filter({ has: slider })
+  const baseline = await slider.inputValue()
+  expect(Number(baseline)).toBeGreaterThan(0)
+  const baselineOutput = await risk
+    .getByText(/\/year/)
+    .last()
+    .innerText()
+  const comparison = page
+    .locator('details')
+    .filter({ has: page.getByText('Compare scenario outputs', { exact: true }) })
+    .last()
+  await comparison.getByText('Compare scenario outputs', { exact: true }).click()
+  await comparison.getByRole('button', { name: 'Keep this baseline' }).click()
+  await expect(comparison.getByRole('status')).toContainText('matches your baseline')
+  await slider.press('Home')
+  await expect(slider).toHaveValue('0')
+  await expect(risk).toContainText('0% = $0/year')
+  await expect(comparison.getByRole('status')).toContainText('The report changed')
+  await expect(comparison.locator('pre').last()).toContainText('Annual savings: $0')
+  const downloaded = page.waitForEvent('download')
+  await page.getByRole('button', { name: '.md', exact: true }).click()
+  const stream = await (await downloaded).createReadStream()
+  let markdown = ''
+  for await (const chunk of stream) markdown += chunk.toString()
+  expect(markdown).toContain('Annual breach probability: 0% (learner scenario assumption')
+  expect(markdown).toContain('**Annual savings: $0**')
+  await risk.getByRole('button', { name: /Average org/ }).click()
+  await expect(slider).toHaveValue(baseline)
+  await expect(risk.getByText(/\/year/).last()).toHaveText(baselineOutput)
+  await expect(comparison.getByRole('status')).toContainText('matches your baseline')
+})

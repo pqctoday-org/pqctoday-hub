@@ -35,6 +35,7 @@ import { Button } from '@/components/ui/button'
 
 interface CustodyArchitectureFlowProps {
   onBack: () => void
+  onComplete?: () => void
 }
 
 const LAYER_ICONS: Record<string, LucideIcon> = {
@@ -155,11 +156,14 @@ const SubComponentCard: React.FC<{ component: ArchitectureSubComponent }> = ({ c
   )
 }
 
-export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = ({ onBack }) => {
+export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = ({
+  onBack,
+  onComplete,
+}) => {
   const [expandedLayer, setExpandedLayer] = useState<string | null>(null)
   const [exploredLayers, setExploredLayers] = useState<Set<string>>(new Set())
   const [txFlowStep, setTxFlowStep] = useState(0)
-  const [hasViewedTxFlow, setHasViewedTxFlow] = useState(false)
+  const [visitedTxSteps, setVisitedTxSteps] = useState(() => new Set([0]))
   const layerRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   const toggleLayer = useCallback((layerId: string) => {
@@ -187,11 +191,12 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
 
   const handleTxStepChange = useCallback((step: number) => {
     setTxFlowStep(step)
-    setHasViewedTxFlow(true)
+    setVisitedTxSteps((previous) => new Set([...previous, step]))
   }, [])
 
   const explorationProgress = exploredLayers.size / ARCHITECTURE_LAYERS.length
   const currentTxStep = TRANSACTION_FLOW_STEPS[txFlowStep]
+  const reviewedAllTxSteps = visitedTxSteps.size === TRANSACTION_FLOW_STEPS.length
 
   return (
     <div className="space-y-6">
@@ -221,7 +226,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
               style={{ width: `${explorationProgress * 100}%` }}
             />
           </div>
-          {hasViewedTxFlow && (
+          {visitedTxSteps.size > 1 && (
             <span className="text-xs text-status-success flex items-center gap-1">
               <CheckCircle size={12} />
               Flow viewed
@@ -331,7 +336,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
 
         {/* Step progress indicator (same pattern as PQCMigrationFlow) */}
         <div className="glass-panel p-4">
-          <div className="flex items-center justify-between">
+          <div className="grid grid-cols-4 gap-1 sm:flex sm:items-center sm:justify-between">
             {TRANSACTION_FLOW_STEPS.map((step, idx) => {
               const StepIcon = TX_STEP_ICONS[idx] ?? Send
               return (
@@ -339,10 +344,12 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
                   <Button
                     variant="ghost"
                     onClick={() => handleTxStepChange(idx)}
-                    className={`flex flex-col items-center gap-1 group ${
+                    aria-label={`Transaction step ${step.step}`}
+                    aria-current={idx === txFlowStep ? 'step' : undefined}
+                    className={`h-auto min-w-0 flex flex-col items-center gap-1 px-1 py-1 group ${
                       idx === txFlowStep
                         ? 'text-primary'
-                        : idx < txFlowStep
+                        : visitedTxSteps.has(idx)
                           ? 'text-status-success'
                           : 'text-muted-foreground'
                     }`}
@@ -351,20 +358,20 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
                       className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${
                         idx === txFlowStep
                           ? 'border-primary bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
-                          : idx < txFlowStep
+                          : visitedTxSteps.has(idx)
                             ? 'border-[hsl(var(--status-success))] bg-[hsl(var(--status-success)/0.1)]'
                             : 'border-border bg-background'
                       }`}
                     >
                       <StepIcon size={18} />
                     </div>
-                    <span className="text-xs font-medium hidden sm:block text-center leading-tight max-w-[80px]">
+                    <span className="text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[80px]">
                       Step {step.step}
                     </span>
                   </Button>
                   {idx < TRANSACTION_FLOW_STEPS.length - 1 && (
                     <div
-                      className={`flex-1 h-0.5 mx-1 ${idx < txFlowStep ? 'bg-[hsl(var(--status-success))]' : 'bg-border'}`}
+                      className={`hidden sm:block flex-1 h-0.5 mx-1 ${visitedTxSteps.has(idx) && visitedTxSteps.has(idx + 1) ? 'bg-[hsl(var(--status-success))]' : 'bg-border'}`}
                     />
                   )}
                 </React.Fragment>
@@ -448,7 +455,8 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
           ) : (
             <Button
               variant="gradient"
-              onClick={onBack}
+              onClick={onComplete ?? onBack}
+              disabled={!reviewedAllTxSteps}
               className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
             >
               Complete
@@ -456,6 +464,11 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
             </Button>
           )}
         </div>
+        {txFlowStep === TRANSACTION_FLOW_STEPS.length - 1 && !reviewedAllTxSteps && (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Review all transaction steps to complete this exercise.
+          </p>
+        )}
       </div>
     </div>
   )

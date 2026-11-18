@@ -442,6 +442,8 @@ interface FirmwareManifest {
   components: { name: string; size: string; hash: string }[]
 }
 
+const SAMPLE_MANIFEST_SEQUENCE = 7
+
 const MOCK_MANIFEST: FirmwareManifest = {
   firmwareName: 'APTIO_V_GenericServerPlatform',
   version: '5.27.1234',
@@ -474,11 +476,15 @@ const truncateHex = (hex: string, maxChars = 80): string => {
   return `${hex.slice(0, maxChars / 2)}...${hex.slice(-maxChars / 2)}`
 }
 
-const buildManifestString = (fileBytes: Uint8Array | null): string => {
+const buildManifestString = (
+  fileBytes: Uint8Array | null,
+  sequence = SAMPLE_MANIFEST_SEQUENCE
+): string => {
   if (fileBytes) {
     return buildFirmwareUploadManifest(fileBytes)
   }
-  return MOCK_MANIFEST.components.map((c) => `${c.name}:${c.size}:${c.hash}`).join('|')
+  const components = MOCK_MANIFEST.components.map((c) => `${c.name}:${c.size}:${c.hash}`)
+  return [`manifest-sequence:${sequence}`, ...components].join('|')
 }
 
 const downloadBlob = (bytes: Uint8Array, filename: string) => {
@@ -589,6 +595,10 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
   // Verify results
   const [pqcVerified, setPqcVerified] = useState<boolean | null>(null)
   const [classicalVerified, setClassicalVerified] = useState<boolean | null>(null)
+  const [changedManifest, setChangedManifest] = useState(false)
+  const [minimumSequence, setMinimumSequence] = useState(String(SAMPLE_MANIFEST_SEQUENCE))
+  const minimumSequenceValue = Number(minimumSequence)
+  const validSequence = /^\d+$/.test(minimumSequence) && Number.isSafeInteger(minimumSequenceValue)
 
   const isLive = hsm.isReady && !!hsm.moduleRef.current
   const keysGenerated = pqcKeysReady && classicalKeysReady
@@ -632,6 +642,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
     async (file: File) => {
       setPqcVerified(null)
       setClassicalVerified(null)
+      setChangedManifest(false)
       setFileDigestHex('')
       setUploadedFile(file)
       const buf = await file.arrayBuffer()
@@ -773,6 +784,9 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
     }
     setSignError('')
     setIsProcessing(true)
+    setPqcVerified(null)
+    setClassicalVerified(null)
+    setChangedManifest(false)
 
     const startedAt = performance.now()
     setLogEntries((prev) => [
@@ -889,13 +903,21 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
   // ---------------------------------------------------------------------------
 
   const handleVerifyBoth = useCallback(async () => {
-    if (!hsm.isReady || !hsm.moduleRef.current) return
-    if (!classicalSigBytesRef.current || !pqcSigBytesRef.current) return
+    if (!hsm.isReady || !hsm.moduleRef.current) return null
+    if (!classicalSigBytesRef.current || !pqcSigBytesRef.current) return null
     setIsProcessing(true)
+    setSignError('')
+    setClassicalVerified(null)
+    setPqcVerified(null)
     try {
       const M = hsm.moduleRef.current as unknown as SoftHSMModule
       const hSession = hsm.hSessionRef.current
-      const content = buildManifestString(fileBytes)
+      const original = buildManifestString(fileBytes)
+      const content = !changedManifest
+        ? original
+        : fileBytes
+          ? `${original.slice(0, -1)}${original.endsWith('0') ? '1' : '0'}`
+          : buildManifestString(null, SAMPLE_MANIFEST_SEQUENCE + 1)
 
       // Classical verify
       const mechType = classicalMech()[classicalAlgo][hashAlgo]
@@ -919,8 +941,6 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           mechType
         )
       }
-      setClassicalVerified(cvResult)
-
       // PQC verify (pure mode)
       let pvResult: boolean
       if (pqcAlgo === 'SLH-DSA-SHA2-128S') {
@@ -940,13 +960,16 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           pqcSigBytesRef.current
         )
       }
+      setClassicalVerified(cvResult)
       setPqcVerified(pvResult)
+      return { classical: cvResult, pqc: pvResult }
     } catch (err) {
-      setIsSimulationMode(true)
-      console.error('[FirmwareSigningMigrator] verify error:', err)
+      setSignError(`Verification failed: ${err instanceof Error ? err.message : String(err)}`)
+      return null
+    } finally {
+      setIsProcessing(false)
     }
-    setIsProcessing(false)
-  }, [hsm, classicalAlgo, pqcAlgo, hashAlgo, fileBytes])
+  }, [hsm, classicalAlgo, pqcAlgo, hashAlgo, fileBytes, changedManifest])
 
   const handleReset = () => {
     setWizardStep(0)
@@ -964,6 +987,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
     setClassicalSigSize(0)
     setPqcVerified(null)
     setClassicalVerified(null)
+    setChangedManifest(false)
+    setMinimumSequence(String(SAMPLE_MANIFEST_SEQUENCE))
     setPqcCmsDer(null)
     setClassicalCmsDer(null)
     pqcSigBytesRef.current = null
@@ -1042,12 +1067,15 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               `PQC: ${pqcAlgo} C_SignMessage (pure, ${pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1'}) → ${pqcAlgo === 'SLH-DSA-SHA2-128S' ? SLHDSA_SIG_BYTES : MLDSA_SIG_BYTES[pqcAlgo]} B + CMS .p7s`
           )
           break
-        case 3:
-          await handleVerifyBoth()
+        case 3: {
+          const verification = await handleVerifyBoth()
           setWizardOutput(
-            'C_MessageVerifyInit / C_VerifyMessage / C_MessageVerifyFinal × 2 — see Verification Results above.'
+            verification
+              ? `Classical: ${verification.classical ? 'verified' : 'rejected'}\nPQC: ${verification.pqc ? 'verified' : 'rejected'}`
+              : null
           )
           break
+        }
       }
     } catch (err) {
       setIsSimulationMode(true)
@@ -1076,7 +1104,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
         ? keysGenerated
         : wizardStep === 2
           ? signaturesReady
-          : pqcVerified !== null && classicalVerified !== null
+          : pqcVerified === true && classicalVerified === true
 
   // ---------------------------------------------------------------------------
   // Wizard steps (defined inside component so customControls capture state)
@@ -1785,7 +1813,22 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           </div>
 
           {isLive && (
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  checked={changedManifest}
+                  disabled={isProcessing || !signaturesReady}
+                  onChange={(event) => {
+                    setChangedManifest(event.target.checked)
+                    setClassicalVerified(null)
+                    setPqcVerified(null)
+                    setWizardOutput(null)
+                    setSignError('')
+                  }}
+                />
+                Change the received firmware manifest
+              </label>
               <Button
                 onClick={handleVerifyBoth}
                 disabled={isProcessing || !signaturesReady}
@@ -1883,6 +1926,57 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               </p>
             </div>
           </div>
+
+          {isLive && (
+            <section aria-label="Sample rollback policy" className="glass-panel p-3 space-y-2">
+              <h4 className="text-sm font-semibold">Sample rollback policy</h4>
+              {fileBytes ? (
+                <p className="text-xs text-muted-foreground">
+                  The uploaded-file exercise signs a content fingerprint. This sample has no
+                  authenticated manifest sequence to compare with a device policy.
+                </p>
+              ) : (
+                <>
+                  <p className="text-xs text-muted-foreground">
+                    The signed sample has manifest sequence {SAMPLE_MANIFEST_SEQUENCE}. The
+                    changed-manifest toggle modifies that sequence. The minimum below represents the
+                    fictional device’s stored sequence. This example uses the sequence rule
+                    described in{' '}
+                    <a
+                      href="https://www.rfc-editor.org/rfc/rfc9124.html#section-4.3.1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary underline"
+                    >
+                      RFC 9124 §4.3.1
+                    </a>
+                    . A manifest sequence is independent of the firmware version.
+                  </p>
+                  <label className="flex flex-wrap items-center gap-2 text-xs">
+                    Minimum manifest sequence
+                    <input
+                      type="number"
+                      min={0}
+                      value={minimumSequence}
+                      onChange={(event) => setMinimumSequence(event.target.value)}
+                      className="min-h-[44px] w-24 rounded border border-border bg-background px-2"
+                    />
+                  </label>
+                  <p role="status" aria-label="Sample rollback decision" className="text-xs">
+                    {!validSequence
+                      ? 'Enter a non-negative whole sequence number.'
+                      : classicalVerified === null || pqcVerified === null
+                        ? 'Verify both signatures to evaluate the sample.'
+                        : !classicalVerified || !pqcVerified
+                          ? 'Sample rejected because signature verification failed.'
+                          : SAMPLE_MANIFEST_SEQUENCE < minimumSequenceValue
+                            ? 'Sample rejected by the rollback policy. Both signatures still verify.'
+                            : 'Sample meets the sequence policy and both signatures verify.'}
+                  </p>
+                </>
+              )}
+            </section>
+          )}
 
           {/* Full comparison table */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

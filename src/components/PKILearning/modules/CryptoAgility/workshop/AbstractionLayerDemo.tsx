@@ -10,6 +10,7 @@ import {
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+import { SigningRolloutExercise } from './SigningRolloutExercise'
 
 const AGILITY_KAT_SPECS: KatTestSpec[] = [
   {
@@ -218,6 +219,8 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
           </div>
         </div>
       </div>
+
+      <SigningRolloutExercise />
 
       {/* Anti-patterns */}
       <div>

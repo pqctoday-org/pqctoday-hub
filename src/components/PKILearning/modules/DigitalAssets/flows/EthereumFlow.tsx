@@ -18,9 +18,10 @@ import { useEthereumVerification } from './ethereum/useEthereumVerification'
 
 interface EthereumFlowProps {
   onBack: () => void
+  onComplete?: () => void
 }
 
-export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
+export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack, onComplete }) => {
   // Shared Hooks
   const keyGen = useKeyGeneration('ethereum')
   const recipientKeyGen = useKeyGeneration('ethereum')
@@ -142,7 +143,7 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
         isStepComplete={wizard.isStepComplete}
         onNext={wizard.handleNext}
         onBack={wizard.handleBack}
-        onComplete={onBack}
+        onComplete={onComplete ?? onBack}
       />
 
       {hsm.isReady && (

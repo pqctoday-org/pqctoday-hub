@@ -89,7 +89,8 @@ function isImmediateDeadline(complianceDeadline: string): boolean {
 function suggestKemPair(
   targetState: TargetState,
   currentAlgorithm: string,
-  cnsa2: boolean
+  cnsa2: boolean,
+  protocol: string
 ): string {
   // CNSA 2.0 mandates ML-KEM-1024 (Category 5) and discourages hybrid for NSS.
   if (cnsa2) return 'ML-KEM-1024 (FIPS 203 — CNSA 2.0 Category 5 mandate)'
@@ -98,15 +99,23 @@ function suggestKemPair(
   if (targetState === 'crypto-gateway') {
     return 'Gateway-terminated ML-KEM-768 (legacy peer keeps classical KEM)'
   }
-  // hybrid-traditional+PQC default
-  if (currentAlgorithm.includes('X25519') || currentAlgorithm === 'X25519') {
-    return 'X25519MLKEM768 (RFC 10024)'
-  }
-  if (currentAlgorithm.includes('ECDH-P256') || currentAlgorithm === 'ECDH-P256') {
-    return 'SecP256r1MLKEM768 (IETF hybrid KEM)'
+  if (protocol === 'TLS 1.2') return 'RFC 10024 groups require TLS 1.3. Plan a protocol upgrade.'
+  if (protocol !== 'TLS 1.3')
+    return 'Identify a published or explicitly supported hybrid key exchange for this protocol.'
+  if (currentAlgorithm === 'ECDH-P256') {
+    return 'SecP256r1MLKEM768 (RFC 10024)'
   }
   return 'X25519MLKEM768 (RFC 10024)'
 }
+
+const COMPOSITE_SIGNATURE_CANDIDATES = new Map([
+  ['RSA-2048', 'ML-DSA-44 + RSA-2048 PSS'],
+  ['RSA-3072', 'ML-DSA-65 + RSA-3072 PSS'],
+  ['RSA-4096', 'ML-DSA-65 + RSA-4096 PSS'],
+  ['ECDSA-P256', 'ML-DSA-65 + ECDSA P-256'],
+  ['ECDSA-P384', 'ML-DSA-87 + ECDSA P-384'],
+  ['Ed25519', 'ML-DSA-65 + Ed25519'],
+])
 
 function suggestSigPair(
   targetState: TargetState,
@@ -122,17 +131,10 @@ function suggestSigPair(
   if (targetState === 'crypto-gateway') {
     return 'Gateway-terminated ML-DSA-65 (legacy peer keeps classical sig)'
   }
-  // hybrid-traditional+PQC default
-  if (currentAlgorithm.startsWith('RSA')) {
-    return `${currentAlgorithm} + ML-DSA-65 (LAMPS hybrid composite signatures)`
-  }
-  if (currentAlgorithm.startsWith('ECDSA')) {
-    return `${currentAlgorithm} + ML-DSA-65 (LAMPS hybrid composite signatures)`
-  }
-  if (currentAlgorithm === 'Ed25519') {
-    return 'Ed25519 + ML-DSA-65 (LAMPS hybrid composite signatures)'
-  }
-  return 'Classical + ML-DSA-65 (LAMPS hybrid composite signatures)'
+  const profile = COMPOSITE_SIGNATURE_CANDIDATES.get(currentAlgorithm)
+  return profile
+    ? `${profile} (RFC 10073 X.509 profile). Confirm signature scheme support in the application.`
+    : 'Record the current signing key separately before selecting a compatible signature profile.'
 }
 
 function watchOutsForTarget(targetState: TargetState, bandwidthBudget: string): string[] {
@@ -237,7 +239,7 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
   const sunsetDate = `Q4 ${deadlineYear}`
 
   // A KEM-only or signature-only deployment doesn't need the other pair.
-  let kemPair = suggestKemPair(targetState, currentAlgorithm, cnsa2)
+  let kemPair = suggestKemPair(targetState, currentAlgorithm, cnsa2, inputs.protocol)
   let sigPair = suggestSigPair(targetState, currentAlgorithm, cnsa2)
   if (cryptoFunction === 'kem') sigPair = 'Not applicable — KEM-only function'
   if (cryptoFunction === 'signature') kemPair = 'Not applicable — signature-only function'
@@ -386,6 +388,28 @@ const SECTIONS: ArtifactSection[] = [
         defaultValue: ['classical-peers', 'downgrade-protection'],
       },
       {
+        id: 'peerCapability',
+        label: 'Sample TLS peer capability',
+        type: 'select',
+        helperText: 'This comparison applies to the suggested hybrid TLS 1.3 key exchange.',
+        defaultValue: 'unknown',
+        options: [
+          { value: 'unknown', label: 'Capability unknown' },
+          { value: 'hybrid', label: 'Supports selected hybrid group' },
+          { value: 'classical', label: 'Classical group only' },
+        ],
+      },
+      {
+        id: 'fallbackPolicy',
+        label: 'Classical fallback policy',
+        type: 'select',
+        defaultValue: 'block',
+        options: [
+          { value: 'block', label: 'Require the hybrid group' },
+          { value: 'allow', label: 'Allow separate classical connection' },
+        ],
+      },
+      {
         id: 'bandwidthBudget',
         label: 'Bandwidth budget',
         type: 'select',
@@ -455,9 +479,9 @@ const SECTIONS: ArtifactSection[] = [
         defaultValue: [
           '- Test handshake against a hybrid-aware peer in a controlled environment',
           '- Run an interop matrix across vendor stacks (OpenSSL, BoringSSL, Rustls)',
-          '- Monitor IETF + CSPs for hybrid-format draft maturity status',
+          '- Check the current IETF specification and provider support for the selected profile',
           '- Capture handshake-size metrics; compare to baseline before rollout',
-          '- Plan a rollback path that re-pins the classical-only cipher suite',
+          '- Test the permitted recovery configuration and negotiated key exchange group',
         ].join('\n'),
       },
     ],
@@ -646,6 +670,34 @@ export function renderHybridTransitionMarkdown(
   md += `### Algorithm pairing\n\n`
   md += `- KEM: ${rec.kemPair}\n`
   md += `- Signature: ${rec.sigPair}\n\n`
+  if (
+    inputs.protocol === 'TLS 1.3' &&
+    inputs.function !== 'signature' &&
+    rec.targetState === 'hybrid-traditional+PQC' &&
+    !interop.includes('cnsa-2')
+  ) {
+    const supportsHybrid = con.peerCapability === 'hybrid'
+    const classicalOnly = con.peerCapability === 'classical'
+    const allowClassical = con.fallbackPolicy === 'allow'
+    const group = inputs.currentAlgorithm === 'ECDH-P256' ? 'secp256r1' : 'X25519'
+    md += '### Sample peer decision\n\n'
+    md += `- Peer: ${supportsHybrid ? 'Supports selected hybrid group' : classicalOnly ? 'Classical group only' : 'Capability unknown'}\n`
+    md += `- Policy: ${allowClassical ? 'Allow separate classical connection' : 'Require the hybrid group'}\n\n`
+    if (supportsHybrid) {
+      md += 'Shared hybrid group is eligible for the modeled exchange.\n\n'
+    } else if (classicalOnly) {
+      md += allowClassical
+        ? `Separate ${group} exchange is allowed by the sample policy. It remains classical.\n\n`
+        : 'Connection blocked by the sample policy.\n\n'
+      if (!allowClassical && interop.includes('classical-peers')) {
+        md +=
+          'The interop requirement and the fallback policy conflict. Plan a peer upgrade or an explicitly scoped exception.\n\n'
+      }
+    } else {
+      md += 'Check the peer’s supported groups before deciding if it can connect.\n\n'
+    }
+    md += `The worksheet assumes both peers support ${group} as the separate classical group. Verify the negotiated group and signature scheme with real peers. [RFC 10024, Section 4](https://www.rfc-editor.org/rfc/rfc10024.html#section-4).\n\n`
+  }
   md += `### Watch-outs\n\n`
   for (const w of rec.watchOuts) md += `- ${w}\n`
   md += `\n`
@@ -655,7 +707,10 @@ export function renderHybridTransitionMarkdown(
   if (userSummary) md += `${userSummary}\n\n`
   const isHybridTarget =
     rec.targetState === 'hybrid-traditional+PQC' || rec.targetState === 'hybrid-PQC+PQC'
-  if (isHybridTarget) {
+  if (isHybridTarget && inputs.protocol === 'TLS 1.2' && inputs.function !== 'signature') {
+    md +=
+      'Schedule prerequisite: upgrade the protocol and verify support before planning a hybrid key exchange pilot.\n\n'
+  } else if (isHybridTarget) {
     // These are this function's internally generated Q4 labels, not parsed user dates.
     const hybridYear = Number(rec.hybridTargetDate.slice('Q4 '.length))
     const sunsetYear = Number(rec.sunsetDate.slice('Q4 '.length))

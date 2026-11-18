@@ -84,9 +84,7 @@ export const PlaygroundToolRoute = () => {
   // already derives this same pair for its pre-open preview card; this is
   // the same derivation for the tool's real page, which had no such link at
   // all — a visitor who arrived from a module had no way back to it.
-  const relatedModuleId = tool.moduleLink.startsWith('/learn/')
-    ? moduleIdFromToolLink(tool.moduleLink)
-    : null
+  const relatedModuleId = moduleIdFromToolLink(tool.moduleLink)
   // eslint-disable-next-line security/detect-object-injection -- relatedModuleId is derived from the tool's own registry-declared moduleLink, not user input
   const relatedModuleTitle = relatedModuleId ? MODULE_CATALOG[relatedModuleId]?.title : undefined
 
@@ -106,7 +104,7 @@ export const PlaygroundToolRoute = () => {
           All Tools
         </Button>
         {relatedModuleId && relatedModuleTitle && (
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/learn/${relatedModuleId}`)}>
+          <Button variant="ghost" size="sm" onClick={() => navigate(tool.moduleLink)}>
             <GraduationCap className="w-4 h-4 mr-1" />
             Back to {relatedModuleTitle}
           </Button>
@@ -201,7 +199,7 @@ export const PlaygroundToolRoute = () => {
               {' · '}
               <Link
                 className="text-primary underline-offset-2 hover:underline"
-                to={`/learn/${relatedModuleId}`}
+                to={tool.moduleLink}
               >
                 Learn with {relatedModuleTitle}
               </Link>

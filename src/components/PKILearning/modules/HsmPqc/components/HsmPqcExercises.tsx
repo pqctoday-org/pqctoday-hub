@@ -36,11 +36,11 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       id: 'pkcs11-keygen',
       title: '1. PKCS#11 Key Generation — Generate ML-KEM-768 keypair and compare buffer sizes',
       description:
-        'In the PKCS#11 Simulator workshop, step through the key generation operation. Observe the C_GenerateKeyPair call with CKM_ML_KEM_KEY_PAIR_GEN mechanism. Compare the 1,184-byte ML-KEM-768 public key against the 256-byte RSA-2048 public key in the classical comparison section.',
+        'In the PKCS#11 Simulator workshop, step through the key generation operation. Observe C_GenerateKeyPair with CKM_ML_KEM_KEY_PAIR_GEN. Compare the 1,184-byte ML-KEM-768 public key with the 256-byte RSA-2048 modulus.',
       badge: 'KEM',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'The ML-KEM-768 public key (1,184 bytes) is 4.6x larger than RSA-2048 (256 bytes). Applications using fixed-size buffers will need updating. The private key never leaves the HSM boundary — CKA_SENSITIVE=TRUE and CKA_EXTRACTABLE=FALSE are enforced.',
+        'The raw ML-KEM-768 public key is about 4.6 times the width of the RSA-2048 modulus. Measure the serialized key before sizing the application buffer. The HSM keeps this private key sensitive and non-extractable.',
       config: { step: 0 },
     },
     {

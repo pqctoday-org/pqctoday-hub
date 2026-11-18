@@ -394,11 +394,15 @@ function vendorScorecardSample() {
     useSlider: {},
     sliderScores: {},
   })
-  const totalProducts = rows.reduce((sum, r) => sum + r.productCount, 0)
+  const assessedRows = rows.filter((row) => row.overall !== null)
+  const totalProducts = assessedRows.reduce((sum, r) => sum + r.productCount, 0)
   const portfolioAverage =
     totalProducts > 0
-      ? Math.round(rows.reduce((sum, r) => sum + r.overall * r.productCount, 0) / totalProducts)
-      : 0
+      ? Math.round(
+          assessedRows.reduce((sum, r) => sum + (r.overall ?? 0) * r.productCount, 0) /
+            totalProducts
+        )
+      : null
   const dimensionRows: ScorecardDimensionRow[] = SCORECARD_DIMENSIONS.map((d) => {
     const checked = checkedProducts[d.id]?.size ?? 0
     return {
@@ -768,7 +772,7 @@ export const REAL_DOC_GENERATORS: Partial<
   'vendor-scorecard': () => {
     const { rows, portfolioAverage, dimensionRows, productCount } = vendorScorecardSample()
     return {
-      title: `Vendor PQC Readiness Scorecard (${portfolioAverage}/100)`,
+      title: `Vendor PQC Readiness Scorecard (${portfolioAverage === null ? 'not assessed' : `${portfolioAverage}/100`})`,
       data: buildScorecardMarkdown(portfolioAverage, productCount, dimensionRows, rows, {
         scannerNotes: 'Keyfactor AgileSec — code + traffic scanning across the vendor fleet',
         cveNotes: 'NVD subscription + CISA KEV alerts; library-EoL tracker via Snyk',

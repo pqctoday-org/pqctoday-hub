@@ -8,7 +8,7 @@
 // which are NOT the X.509 composite format. So a learner could download a
 // composite cert and had no way to confirm it was actually valid.
 //
-// This implements the verifier side of draft-ietf-lamps-pq-composite-sigs:
+// This implements the verifier side of RFC 10073 for the workshop profiles:
 //
 //   §4.1  composite public key := mldsaPK || tradPK   (ML-DSA FIRST)
 //   §4.3  composite signature  := mldsaSig || tradSig (ML-DSA FIRST)
@@ -87,7 +87,7 @@ const PROFILES: CompositeProfileDraft19[] = [
   COMPOSITE_PROFILE_MLDSA65_ECDSA_P384_SHA512, // .46  not §10.4 recommended
 ]
 
-/** Look up the draft profile for a composite signatureAlgorithm OID. */
+/** Look up the RFC 10073 profile for a composite signatureAlgorithm OID. */
 export function findCompositeProfile(oid: string): CompositeProfileDraft19 | undefined {
   return PROFILES.find((p) => p.compositeOid === oid)
 }
@@ -155,7 +155,7 @@ function readTlv(b: Uint8Array, off: number): { tag: number; value: Uint8Array; 
 
 /**
  * Parse `RSAPublicKey ::= SEQUENCE { modulus INTEGER, publicExponent INTEGER }`
- * (RFC 8017 §A.1.1) — the encoding draft §4.1 uses for an RSA `tradPK`.
+ * (RFC 8017 §A.1.1) — the encoding RFC 10073 §4.1 uses for an RSA `tradPK`.
  *
  * Hand-rolled rather than via `@peculiar/asn1-rsa`, whose decorator-registered
  * schema does not survive this project's bundler ("Cannot get schema for
@@ -196,7 +196,7 @@ const RSA_ENCRYPTION_ALGID_DER = new Uint8Array([
  * Wrap a raw `RSAPublicKey` DER in a SubjectPublicKeyInfo so Web Crypto can
  * import it — `crypto.subtle.importKey` accepts 'spki', never a bare PKCS#1 key.
  *
- * The composite carries the PKCS#1 form per draft §4.1, so this wrapper exists
+ * The composite carries the PKCS#1 form per RFC 10073 §4.1, so this wrapper exists
  * purely to bridge the two encodings; the key bytes pass through untouched.
  */
 function wrapRsaPublicKeyInSpki(rsaPublicKeyDer: Uint8Array): Uint8Array {
@@ -235,7 +235,7 @@ async function verifyClassical(
   try {
     switch (spec.kind) {
       /**
-       * The hash here is the spec's `tradHash` (draft §6 "Traditional Signature
+       * The hash here is the spec's `tradHash` (RFC 10073 §6 "Traditional Signature
        * Algorithm"), NOT the pre-hash PH in the profile's name. For
        * id-MLDSA65-ECDSA-P256-SHA512 the traditional algorithm is
        * ecdsa-with-SHA256 — the ECDSA hash tracks the curve. Using PH here
@@ -250,20 +250,20 @@ async function verifyClassical(
        * FIPS 186: a high-S ECDSA signature is perfectly valid, and roughly half
        * of all signatures are high-S. Leaving the default in place silently
        * rejected ~50% of otherwise valid composite certificates from other
-       * implementations. Caught 2026-08-18 by the draft's own
+       * implementations. Caught 2026-08-18 by the specification’s own
        * id-MLDSA87-ECDSA-P384-SHA512 vector, which happens to be high-S: our
        * Rust KMIP engine accepted it, this verifier did not, and the
        * disagreement between our own two implementations is what exposed it.
        */
       case 'ecdsa': {
         const algorithm = `ECDSA ${spec.curve} (${spec.tradHash})`
-        // draft §4.1: "public key MUST be encoded as an uncompressed X9.62
+        // RFC 10073 §4.1: "public key MUST be encoded as an uncompressed X9.62
         // [...] including the leading byte 0x04 indicating uncompressed", and
         // §3.3 step 2 makes a component key of the wrong type or length an
         // invalid signature rather than a parse error to shrug at.
         //
         // Note this is NOT the same situation as low-S: RFC 5480 would permit a
-        // compressed point, but the composite draft explicitly forbids one, so
+        // compressed point, but RFC 10073 requires the uncompressed form, so
         // rejecting 33/49-byte keys is enforcing the spec, not over-reading it.
         if (pub.length !== spec.pubKeyBytes) {
           const compressed = pub.length === (spec.pubKeyBytes - 1) / 2 + 1
@@ -272,7 +272,7 @@ async function verifyClassical(
             algorithm,
             verified: false,
             detail:
-              `Traditional public key is ${pub.length} B; draft §4.1 requires ${spec.pubKeyBytes} B ` +
+              `Traditional public key is ${pub.length} B; RFC 10073 §4.1 requires ${spec.pubKeyBytes} B ` +
               `for an uncompressed ${spec.curve} point (0x04 || X || Y)` +
               (compressed
                 ? '. This looks like a COMPRESSED point — permitted by RFC 5480 in general, but forbidden here.'
@@ -286,7 +286,7 @@ async function verifyClassical(
             verified: false,
             detail:
               `Traditional public key starts with 0x${pub[0].toString(16).padStart(2, '0')}; ` +
-              `draft §4.1 requires the leading byte 0x04 indicating an uncompressed point.`,
+              `RFC 10073 §4.1 requires the leading byte 0x04 indicating an uncompressed point.`,
           }
         }
         const curve = spec.curve === 'P-384' ? p384 : p256
@@ -299,7 +299,7 @@ async function verifyClassical(
        * Ed25519 is PureEdDSA (RFC 8032 §5.1.6): it takes the message itself,
        * not a digest, and hashes internally with SHA-512. So M' is passed
        * whole — pre-hashing it here would implement Ed25519ph, a different
-       * algorithm that the draft does not specify for these profiles.
+       * algorithm that the RFC does not specify for these profiles.
        *
        * Both the key and the signature are fixed-length raw byte strings
        * (RFC 8032: 32-octet public keys, 64-octet signatures), so unlike ECDSA
@@ -328,14 +328,14 @@ async function verifyClassical(
         // point encodings and small-order points). That direction is deliberate
         // here, for the same reason `lowS: false` is set for ECDSA above:
         // rejecting a signature another conformant implementation considers
-        // valid is the costlier failure, and the draft imposes no stricter
+        // valid is the costlier failure, and the RFC imposes no stricter
         // requirement than "Trad.Verify(tradPK, M', tradSig)".
         const ok = ed25519.verify(sig, mprime, pub)
         return { ...base, algorithm, verified: ok }
       }
 
       /**
-       * RSASSA-PSS per draft §6.1 Table 2: SHA-256 for both the message digest
+       * RSASSA-PSS per RFC 10073 §6.1 Table 2: SHA-256 for both the message digest
        * and MGF1, 32-byte salt, at 2048 and 3072 bits alike. Note that PH is
        * SHA-512 for the 3072-bit profile while PSS still uses SHA-256 — the
        * same PH-vs-traditional-hash trap as the ECDSA profiles.
@@ -361,7 +361,7 @@ async function verifyClassical(
           }
         }
 
-        // draft §6 "RSA size" is normative, and §3.3 step 2 requires rejecting
+        // RFC 10073 §6 "RSA size" is normative, and §3.3 step 2 requires rejecting
         // a component key that is "not of the correct type or length". A cert
         // claiming .41 with a 2048-bit modulus is invalid — and unlike the
         // signature itself, this stays checkable in any environment.
@@ -372,7 +372,7 @@ async function verifyClassical(
             algorithm,
             verified: false,
             detail:
-              `RSA modulus is ${bits} bits; draft §6 fixes this profile at ${spec.modulusBits} bits. ` +
+              `RSA modulus is ${bits} bits; RFC 10073 §6 fixes this profile at ${spec.modulusBits} bits. ` +
               `Per §3.3 step 2 a component key of the wrong length makes the composite signature invalid.`,
           }
         }
@@ -386,7 +386,7 @@ async function verifyClassical(
           exponent === BigInt(spec.recommendedExponent)
             ? undefined
             : `Public exponent is ${exponent}, not the RECOMMENDED ${spec.recommendedExponent} ` +
-              `(draft §6). Valid, but some implementations reject it.`
+              `(RFC 10073 §6). Valid, but some implementations reject it.`
 
         const key = await crypto.subtle.importKey(
           'spki',
@@ -459,7 +459,22 @@ export async function verifyCompositeCert(der: Uint8Array): Promise<CompositeVer
     }
   }
 
-  const spk = new Uint8Array(cert.tbsCertificate.subjectPublicKeyInfo.subjectPublicKey)
+  const { signature, subjectPublicKeyInfo } = cert.tbsCertificate
+  if (signature.algorithm !== oid) {
+    errors.push('The inner and outer certificate signature algorithm identifiers must match.')
+  }
+  if (subjectPublicKeyInfo.algorithm.algorithm !== oid) {
+    errors.push('The subject public key profile must match the self-signature profile.')
+  }
+  if (
+    [cert.signatureAlgorithm, signature, subjectPublicKeyInfo.algorithm].some(
+      (identifier) => identifier.parameters !== undefined
+    )
+  ) {
+    errors.push('RFC 10073 requires absent parameters in composite algorithm identifiers.')
+  }
+
+  const spk = new Uint8Array(subjectPublicKeyInfo.subjectPublicKey)
   const sig = new Uint8Array(cert.signatureValue)
 
   // §4.1 / §4.3 — split at the ML-DSA component's fixed length.
@@ -489,7 +504,7 @@ export async function verifyCompositeCert(der: Uint8Array): Promise<CompositeVer
   const mprime = await buildCompositeMessageRepresentative(profile, tbsDer, new Uint8Array(0))
 
   // ML-DSA half — the signature label MUST be supplied as the FIPS 204 ctx, or
-  // a conformant signature fails to verify (draft §9.2.3 non-separability).
+  // a conformant signature fails to verify (RFC 10073 §9.2.3 non-separability).
   const impl = mldsaImplFor(profile)
   let mldsaResult: ComponentVerification
   if (!impl) {

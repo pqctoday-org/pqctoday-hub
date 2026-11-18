@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { KeyEncodingSizingExercise } from '@/components/ui/KeyEncodingSizingExercise'
 import React, { useState } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
@@ -375,6 +376,7 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
           {/* Key Size Explosion Table */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-sm font-bold text-foreground mb-3">Key Size Comparison</div>
+            <KeyEncodingSizingExercise />
             <div
               className="overflow-x-auto"
               // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
@@ -443,13 +445,13 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
               PQC public keys are about 3&times; (ML-KEM-512) to 10&times; (ML-DSA-87) the size of
-              an RSA-2048 public key, and up to about 40&times; the size of an ECDSA P-256 public
-              key &mdash; impacting HSM storage, certificate sizes, and network bandwidth during key
-              distribution. The Security column uses two scales: classical rows show approximate bit
-              strength (NIST SP 800-57 Part 1 Rev. 5, Table 2), and PQC rows show NIST security
-              categories. SP 800-57 has no row for RSA-4096, which falls between its 128-bit and
-              192-bit entries. The RSA private-key sizes are typical DER lengths and vary by a few
-              bytes between keys.
+              the RSA-2048 modulus width, and up to about 40&times; the size of an uncompressed
+              ECDSA P-256 public point. Budget certificate and network sizes using the actual
+              encodings and container overhead. The Security column uses two scales: classical rows
+              show approximate bit strength (NIST SP 800-57 Part 1 Rev. 5, Table 2), and PQC rows
+              show NIST security categories. SP 800-57 has no row for RSA-4096, which falls between
+              its 128-bit and 192-bit entries. The RSA private-key sizes are typical DER lengths and
+              vary by a few bytes between keys.
             </p>
           </div>
         </CollapsibleSection>
@@ -731,10 +733,10 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Rotating 300 TLS certificates from RSA-2048 (256 B pub key) to hybrid ML-DSA-65 +
-              ECDSA (2,017 B) increases per-rotation bandwidth by approximately 528 KB (this
-              module's planning assumption, not a measurement) for public keys alone. Certificate
-              chains with larger signatures add more overhead.
+              At 300 TLS certificates, comparing the 256-byte RSA-2048 modulus with the 2,017 raw
+              bytes of an ML-DSA-65 public key and an uncompressed P-256 point gives a difference of
+              about 528 KB. Measure the complete encoded certificate chains, including signatures,
+              to budget rotation bandwidth.
             </p>
           </div>
 

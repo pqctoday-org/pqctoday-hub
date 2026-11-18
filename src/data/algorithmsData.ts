@@ -88,6 +88,7 @@ const TRANSITION_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'Round 2': 'round2-candidate', // MAYO
   'Round 3': 'round2-candidate', // MAYO — NIST Additional Signatures Round 3 since 14 May 2026; the UI labels this tier Round 3
   Withdrawn: 'eliminated', // HAWK — withdrawn by its submitters, 29 Jul 2026
+  'RFC 10073': 'final', // X.509 Composite ML-DSA signatures
   'RFC 10024': 'final', // TLS 1.3 hybrid groups (X25519MLKEM768 etc.), Aug 2026
   'Round 4': 'round4-not-selected', // BIKE, Classic-McEliece (NIST-track view)
   'Not selected by NIST (Round 4 concluded March 2025)': 'round4-not-selected', // BIKE, Classic-McEliece (NIST IR 8545)

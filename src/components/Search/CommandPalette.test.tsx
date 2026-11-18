@@ -5,7 +5,7 @@
  * The search stack is mocked; ranking is covered by the UnifiedSearchService tests.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, within, fireEvent, waitFor } from '@testing-library/react'
+import { act, render, screen, within, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { SearchResult } from '@/services/search/SearchIndex'
 import type { PaletteHiddenHit } from '@/services/search/UnifiedSearchService'
@@ -54,6 +54,53 @@ beforeEach(() => {
   mocks.searchWithHidden.mockReset()
   mocks.getSearchIndex.mockReset()
   mocks.getSearchIndex.mockResolvedValue({})
+})
+
+describe('CommandPalette — search recovery', () => {
+  it('blocks stale click and keyboard results while another query is pending', async () => {
+    let finish: (out: Out) => void = () => {}
+    mocks.searchWithHidden.mockResolvedValueOnce(PURDUE).mockReturnValueOnce(
+      new Promise<Out>((resolve) => {
+        finish = resolve
+      })
+    )
+    const onClose = vi.fn()
+    render(
+      <MemoryRouter>
+        <CommandPalette isOpen onClose={onClose} />
+      </MemoryRouter>
+    )
+    await type('prior')
+    await screen.findByText('Purdue Model')
+    const input = screen.getByRole('combobox', { name: 'Search' })
+    expect(document.getElementById(input.getAttribute('aria-activedescendant')!)).toBe(options()[0])
+    await type('next')
+    expect(options()).toHaveLength(0)
+    expect(input).not.toHaveAttribute('aria-activedescendant')
+    fireEvent.keyDown(input, { key: 'Enter' })
+    expect(onClose).not.toHaveBeenCalled()
+    await waitFor(() => expect(mocks.searchWithHidden).toHaveBeenCalledTimes(2))
+    fireEvent.click(screen.getByRole('button', { name: 'Clear search' }))
+    await act(async () => finish(PURDUE))
+    expect(input).toHaveValue('')
+    expect(input).toHaveFocus()
+    expect(options()).toHaveLength(0)
+    expect(screen.getByRole('group', { name: 'Search suggestions' })).toBeInTheDocument()
+  })
+
+  it('retries a failed query and returns focus for an empty search', async () => {
+    mocks.searchWithHidden
+      .mockRejectedValueOnce(new Error('Temporary failure'))
+      .mockResolvedValueOnce({ results: [], hidden: [] })
+    renderPalette()
+    await type('query')
+    fireEvent.click(await screen.findByRole('button', { name: 'Retry search' }))
+    await screen.findByText(/No results/)
+    fireEvent.click(screen.getByRole('button', { name: 'Clear and search again' }))
+    const input = screen.getByRole('combobox', { name: 'Search' })
+    expect(input).toHaveValue('')
+    expect(input).toHaveFocus()
+  })
 })
 
 describe('CommandPalette — per-group cap', () => {

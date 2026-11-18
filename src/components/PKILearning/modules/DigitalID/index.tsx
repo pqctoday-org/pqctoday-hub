@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { Trash2, Shield, FileText, PenTool, Building2, CheckSquare } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { useHSM } from '@/hooks/useHSM'
 import { WalletComponent } from './components/Wallet/WalletComponent'
 import { PIDIssuerComponent } from './components/PIDIssuer/PIDIssuerComponent'
@@ -77,7 +76,6 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
   // and time tracking; this component owns only the workshop's own step state.
   const [currentStep, setCurrentStep] = useState(0)
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
-  const prevStepRef = useRef<number | null>(null)
   // One PKCS#11 session for the whole workshop: the wallet is a single physical
   // device, so a key generated in one actor's step (e.g. PID Issuer) must still
   // be a valid handle when reused in a later step (e.g. Bank Relying Party).
@@ -86,24 +84,9 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
   // or different session fails with CKR_KEY_HANDLE_INVALID.
   const hsm = useHSM()
 
-  // Mark the previous workshop step complete whenever the user navigates
-  useEffect(() => {
-    if (prevStepRef.current !== null) {
-      const prevId = WORKSHOP_STEPS[prevStepRef.current]?.id
-      if (prevId) markStepComplete(MODULE_ID, prevId, prevStepRef.current)
-    }
-    prevStepRef.current = currentStep
-  }, [currentStep, markStepComplete])
-
   const handleReset = () => {
-    if (
-      confirm(
-        'Are you sure you want to reset the module? This will clear all generated keys and credentials.'
-      )
-    ) {
+    if (confirm('Reset this workshop and clear the sample wallet’s credentials and keys?')) {
       resetModuleProgress(MODULE_ID)
-      const { resetStore } = useOpenSSLStore.getState()
-      resetStore()
       // Close the shared PKCS#11 session too — otherwise the HSM Key Registry
       // (and any orphaned session-object key handles) survives the reset even
       // though wallet.keys is now empty. The next screen's LiveHSMToggle
@@ -283,7 +266,10 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
         ) : (
           <Button
             variant="gradient"
-            onClick={() => setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))}
+            onClick={() => {
+              markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id, currentStep)
+              setCurrentStep(currentStep + 1)
+            }}
             className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
           >
             Next Step &rarr;

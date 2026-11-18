@@ -57,7 +57,7 @@ import {
   type PipelineStore,
 } from './pipelineRun'
 import { PALETTE_ENTRIES, type PaletteEntry, type PrimitiveFamily } from './pipelineCatalogMeta'
-import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
+import { runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import {
   beginAttempt,
   completeAttempt,
@@ -137,9 +137,11 @@ const FAMILIES: PrimitiveFamily[] = ['Signature', 'KEM', 'Symmetric', 'Hash']
 const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
-export type PkcsDevWorkbenchProps = Record<string, never>
+export interface PkcsDevWorkbenchProps {
+  openPython?: boolean
+}
 
-export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
+export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = ({ openPython = false }) => {
   const hsmCtx = useHsmContext()
   const { moduleRef, rawModuleRef, isReady, autoInit, engineMode } = hsmCtx
 
@@ -197,12 +199,12 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const [detached, setDetached] = useState<string | null>(null)
 
   // Change 1: which pane of the Builder/Code switch is showing.
-  const [activeView, setActiveView] = useState<'builder' | 'code'>('builder')
+  const [activeView, setActiveView] = useState<'builder' | 'code'>(openPython ? 'code' : 'builder')
   // Change 2: the Code tab's editor opens read-only whenever it's showing
   // generated (synced) code — this is what has to be explicitly clicked
   // through before Monaco's onChange can ever fire at all, independent of
   // `detached` (which only becomes true once real edited text diverges).
-  const [editUnlocked, setEditUnlocked] = useState(false)
+  const [editUnlocked, setEditUnlocked] = useState(openPython)
   // Change 3: last "Try to apply to Builder" outcome, shown inline near its
   // button until the next edit or another apply attempt replaces it.
   const [applyMsg, setApplyMsg] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null)
@@ -436,9 +438,9 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
       setPipeline((prev) => prev.map((step) => ({ ...step, status: 'running', output: null })))
     const t0 = performance.now()
     try {
-      const py = await bootPyRuntime()
-      py.registerJsModule('p11_bridge', createP11Bridge(runModule))
-      const result = await runPython(started.inputs.code)
+      const result = await runPython(started.inputs.code, {
+        p11_bridge: createP11Bridge(runModule),
+      })
       const finished = completeAttempt(started.inputs, result, Math.round(performance.now() - t0))
       setAttempt(finished)
       if (
@@ -628,7 +630,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
     <Tabs
       value={activeView}
       onValueChange={(v) => setActiveView(v as 'builder' | 'code')}
-      className="flex flex-col min-h-[70vh] lg:h-[70vh] border rounded-lg overflow-hidden bg-background text-sm"
+      className={`flex flex-col min-h-[70vh] border rounded-lg overflow-hidden bg-background text-sm ${activeView === 'builder' ? 'lg:h-[70vh]' : ''}`}
     >
       <div className="p-4 border-b flex justify-between items-center gap-4 flex-wrap">
         <div className="min-w-0 flex-1">
@@ -759,17 +761,34 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
           {attempt.elapsedMs !== null && (
             <p>Original attempt ran in {(attempt.elapsedMs / 1000).toFixed(2)}s.</p>
           )}
+          {attempt.inputs.detached && attemptIsCurrent && (attempt.stdout || attempt.stderr) && (
+            <div className="space-y-1">
+              <p className="font-semibold">Python output</p>
+              <pre
+                className="max-h-40 overflow-auto whitespace-pre-wrap break-all"
+                aria-live="polite"
+              >
+                {[attempt.stdout, attempt.stderr].filter(Boolean).join('\n')}
+              </pre>
+            </div>
+          )}
           <details>
-            <summary>Original inputs, submitted code and output</summary>
+            <summary>
+              {attempt.inputs.detached && attemptIsCurrent
+                ? 'Original inputs and submitted code'
+                : 'Original inputs, submitted code and output'}
+            </summary>
             <p>
               Template origin: {attempt.inputs.templateName ?? 'not established'}; template
               explanations require unchanged generated steps.
             </p>
             <pre className="whitespace-pre-wrap break-all">{attempt.inputs.input}</pre>
             <pre className="whitespace-pre-wrap break-all">{attempt.inputs.code}</pre>
-            <pre className="whitespace-pre-wrap break-all">
-              {[attempt.stdout, attempt.stderr].filter(Boolean).join('\n')}
-            </pre>
+            {(!attempt.inputs.detached || !attemptIsCurrent) && (
+              <pre className="whitespace-pre-wrap break-all">
+                {[attempt.stdout, attempt.stderr].filter(Boolean).join('\n')}
+              </pre>
+            )}
           </details>
         </section>
       )}
@@ -1068,8 +1087,8 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
           </div>
         )}
 
-        <div className="flex-1 min-h-0 p-4">
-          <div className="h-full border rounded overflow-hidden">
+        <div className="relative min-h-80 flex-1">
+          <div className="absolute inset-4 border rounded overflow-hidden">
             {monacoReady ? (
               <Editor
                 height="100%"

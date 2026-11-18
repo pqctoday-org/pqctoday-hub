@@ -13,6 +13,7 @@
  * registry, no fixtures.
  */
 import { describe, it, expect, beforeAll } from 'vitest'
+import { PYTHON_WORKBENCH_PATH } from '@/data/pythonWorkbench'
 import { ROUTE_META, isNoindexRoute } from '@/seo/routeMeta'
 import {
   SOURCE_LABELS,
@@ -52,7 +53,13 @@ describe('page search entries — coverage', () => {
     )
     const missing = expected.filter((r) => !indexedRoutes.has(r))
     expect(missing, `routes missing from global search: ${missing.join(', ')}`).toEqual([])
-    expect(entries.length).toBe(expected.length)
+    expect(indexedRoutes).toEqual(new Set([...expected, PYTHON_WORKBENCH_PATH]))
+  })
+
+  it('indexes the Python editor entry rather than just the HSM landing page', () => {
+    expect(entries.find((entry) => entry.title === 'Python Workbench')?.deepLink).toBe(
+      PYTHON_WORKBENCH_PATH
+    )
   })
 
   it.each(PREVIOUSLY_UNFINDABLE)('%s is findable', (route) => {
@@ -68,7 +75,7 @@ describe('page search entries — coverage', () => {
   })
 
   it('never indexes a noindex route', () => {
-    const leaked = entries.filter((e) => isNoindexRoute(String(e.metadata.route)))
+    const leaked = entries.filter((e) => isNoindexRoute(String(e.metadata.route).split('?')[0]))
     expect(leaked.map((e) => e.deepLink)).toEqual([])
   })
 

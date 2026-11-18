@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { loadSoftHsmRustBindings } from './softhsmRustBindings'
+
 // Public metadata and existing encrypted replication packages only.
 export interface ProtectedKeyResult {
   readonly public_handle: number
@@ -23,7 +25,7 @@ interface BackupBindings {
 }
 
 export async function loadProtectedBackupBindings(): Promise<BackupBindings> {
-  const bindings = (await import('./softhsmrustv3.js')) as unknown as Partial<BackupBindings>
+  const bindings = (await loadSoftHsmRustBindings()) as unknown as Partial<BackupBindings>
   if (
     typeof bindings.pqctodaySelectEducationalReplicationProfile !== 'function' ||
     typeof bindings.ProtectedBackupLab !== 'function'

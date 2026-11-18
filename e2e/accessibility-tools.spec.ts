@@ -36,7 +36,7 @@
  *     the flakiness the exclusion avoids comes from full-page scans racing the
  *     engine load, not from asserting on one already-rendered `<div>`.
  */
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
 import { injectAxe, checkA11y } from 'axe-playwright'
 
 test.use({ reducedMotion: 'reduce' })
@@ -60,6 +60,12 @@ test.use({ reducedMotion: 'reduce' })
  */
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'pqc-disclaimer-storage',
+      JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+    )
+  })
 })
 
 const A11Y_OPTIONS = {
@@ -162,14 +168,26 @@ const GRIDS = [
 
 async function scan(page: import('@playwright/test').Page, path: string) {
   await page.goto(path)
-  // Same stabilisation the page-level spec uses: wait for primary content, then
-  // let the reduced-motion transition settle so axe never samples a mid-fade
-  // frame as a contrast failure.
-  await page.waitForSelector('h1, h2, [data-testid]', { timeout: 20_000 }).catch(() => undefined)
-  await page.waitForTimeout(400)
+  // Wait for this route's actual content so the scan includes the tool and its controls.
+  await expect(page.locator(`#root[data-prerender-route="${path}"]`)).toHaveAttribute(
+    'data-prerender-state',
+    'ready',
+    { timeout: 20_000 }
+  )
+  await expect(page.locator('head title')).toHaveCount(1)
   await injectAxe(page)
   await checkA11y(page, undefined, A11Y_OPTIONS)
 }
+
+test.describe('tool title before application startup', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('business tool: HTML supplies exactly one title', async ({ page }) => {
+    await page.goto('/business/tools/board-pitch')
+    await expect(page.locator('head title')).toHaveCount(1)
+    await expect(page).toHaveTitle(/PQC Today/)
+  })
+})
 
 for (const { path, name } of GRIDS) {
   test(`${name} (${path}) — no serious/critical a11y violations`, async ({ page }) => {

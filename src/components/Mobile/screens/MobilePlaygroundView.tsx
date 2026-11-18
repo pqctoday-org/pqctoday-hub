@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { PythonWorkbenchLink } from '@/components/ui/PythonWorkbenchLink'
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { Bookmark, BookmarkCheck, GraduationCap, Monitor } from 'lucide-react'
@@ -22,6 +23,7 @@ import {
   REQUIREMENT_LABELS,
 } from '@/hooks/useDeviceCapabilities'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { moduleIdFromToolLink } from '@/data/moduleToolLinks'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { playgroundJourneyFor } from '@/data/playgroundRoleJourneys'
@@ -166,6 +168,7 @@ export function MobilePlaygroundView() {
         {/* sr-only + "Playground" (2026-08-24 audit R2.2): matches the sticky
             header's real NAV_PATH_LABELS title for this route — "Crypto Lab"
             was a second, disagreeing name for the same page. */}
+        <PythonWorkbenchLink />
         <h1 className="sr-only">Playground</h1>
         <p className="text-[11.5px] text-muted-foreground">
           {MOBILE_TOOLS.length} tools · runs in-browser
@@ -419,9 +422,7 @@ function ToolDetailSheetBody({
   const toggleBookmark = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
   const bookmarked = myPlaygroundTools.includes(tool.id)
   const unmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
-  const relatedModuleId = tool.moduleLink.startsWith('/learn/')
-    ? tool.moduleLink.slice('/learn/'.length)
-    : null
+  const relatedModuleId = moduleIdFromToolLink(tool.moduleLink)
   // eslint-disable-next-line security/detect-object-injection -- relatedModuleId is derived from the tool's own registry-declared moduleLink, not user input
   const relatedModuleTitle = relatedModuleId ? MODULE_CATALOG[relatedModuleId]?.title : undefined
 

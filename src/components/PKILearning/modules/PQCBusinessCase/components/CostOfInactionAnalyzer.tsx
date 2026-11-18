@@ -505,7 +505,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           <input
             id="inaction-prob"
             type="range"
-            min={1}
+            min={0}
             max={25}
             // The IRIS tier anchors are fractional (8.7 / 9.3 / 12.8), so an
             // implicit step of 1 would snap the selected tier to a whole number
@@ -519,10 +519,17 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             className="w-full accent-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>1%</span>
+            <span>0%</span>
             <span>25%</span>
           </div>
         </div>
+        {annualBreachProbPct === 0 && (
+          <p className="text-sm text-muted-foreground">
+            At 0% assumed annual breach probability, expected breach loss is $0 in both scenarios.
+            The comparison still includes migration spending and any verified consequences you
+            entered.
+          </p>
+        )}
         <div className="space-y-2">
           <label
             htmlFor="inaction-migration-duration"
@@ -676,6 +683,8 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             variant="outline"
             size="sm"
             onClick={() => {
+              setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[probabilityAnchorTier])
+              setAnnualBreachProbabilityOrigin(anchorOrigin(probabilityAnchorTier))
               setMigrationCostOverrideUSD(null)
               setDiscountRatePct(DELAY_MODEL_DEFAULTS.discountRatePct)
               setVerifiedAnnualConsequenceUSD(0)
@@ -770,7 +779,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
                   ? 'The two choices are within $1,000 in the central scenario.'
                   : costOfInaction > 0
                     ? `Deferral adds ${fmt(costOfInaction)} in the central scenario.`
-                    : `Deferral reduces discounted NPV by ${fmt(Math.abs(costOfInaction))}, while leaving exposure higher for longer.`}
+                    : `Deferral reduces discounted NPV by ${fmt(Math.abs(costOfInaction))}. Review the expected breach loss and migration timing separately.`}
               </dd>
             </div>
             <div>
@@ -849,8 +858,8 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             <div className="text-xs text-status-warning mt-2 leading-relaxed">
               Negative: at a {inputs.discountRatePct}% discount rate
               {mandate.mandateType !== 'HARD' && ' and with no binding mandate'}, deferring the
-              migration spend is worth more in present-value terms than the added breach exposure it
-              buys. That is a financing result, not a safety verdict. Set the discount rate to 0% to
+              migration spend lowers the total expected discounted cost under these assumptions.
+              That is a financing result, not a safety verdict. Set the discount rate to 0% to
               inspect undiscounted modelled dollars; that is not the same as an inflation-adjusted
               real-dollar analysis.
             </div>
@@ -992,8 +1001,8 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               Waiting {delayYears} year{delayYears === 1 ? '' : 's'} lowers discounted NPV by
               approximately{' '}
               <strong className="text-foreground">{fmt(Math.abs(costOfInaction))}</strong> because
-              spending is deferred, while the organization remains exposed for longer. This is a
-              financing result, not a safety recommendation.
+              spending is deferred under these assumptions. Review the breach-loss and consequence
+              estimates separately before making a decision.
             </>
           )}{' '}
           The Mosca date shown above is a threshold under assumed data shelf life, migration time

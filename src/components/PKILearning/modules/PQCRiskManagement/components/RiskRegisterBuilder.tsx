@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { ScenarioComparison } from '@/components/PKILearning/common/executive/ScenarioComparison'
 import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import { downloadCsv } from '@/utils/csvExport'
 import { withEducationNoticeCsv } from '@/data/educationNotice'
@@ -73,13 +74,32 @@ const ALGORITHM_OPTIONS = [
   'Other',
 ]
 
-function getRiskLevel(score: number): { label: string; color: string; bgColor: string } {
-  if (score >= 20)
-    return { label: 'Critical', color: 'text-status-error', bgColor: 'bg-status-error/10' }
-  if (score >= 12)
-    return { label: 'High', color: 'text-status-warning', bgColor: 'bg-status-warning/10' }
-  if (score >= 6) return { label: 'Medium', color: 'text-primary', bgColor: 'bg-primary/10' }
-  return { label: 'Low', color: 'text-status-success', bgColor: 'bg-status-success/10' }
+const RISK_LEVELS = {
+  Critical: { color: 'text-status-error', bg: 'bg-status-error/10' },
+  High: { color: 'text-status-warning', bg: 'bg-status-warning/10' },
+  Medium: { color: 'text-primary', bg: 'bg-primary/10' },
+  Low: { color: 'text-status-success', bg: 'bg-status-success/10' },
+}
+
+function getRiskLevel(score: number): keyof typeof RISK_LEVELS {
+  if (score >= 20) return 'Critical'
+  if (score >= 12) return 'High'
+  if (score >= 6) return 'Medium'
+  return 'Low'
+}
+
+function summarizeRiskEntries(
+  entries: Pick<RiskEntry, 'likelihood' | 'impact' | 'ownerRole' | 'nextReview'>[]
+) {
+  const summary = { Critical: 0, High: 0, Medium: 0, Low: 0, notes: 0 }
+  for (const entry of entries) {
+    if (isUnownedRiskEntry(entry)) {
+      summary.notes++
+    } else {
+      summary[getRiskLevel(entry.likelihood * entry.impact)]++
+    }
+  }
+  return summary
 }
 
 /** Extracted (07192026, Batch 2) so the simulation's real-tool doc generator
@@ -110,29 +130,21 @@ export function buildRiskRegisterMarkdown(
 
   riskEntries.forEach((entry, idx) => {
     const score = entry.likelihood * entry.impact
-    const level = getRiskLevel(score)
+    const level = isUnownedRiskEntry(entry) ? 'Pending assignment' : getRiskLevel(score)
     const threat =
       THREAT_VECTORS.find((t) => t.value === entry.threatVector)?.label ?? entry.threatVector
-    md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${entry.currentAlgorithm} | ${threat} | ${entry.likelihood} | ${entry.impact} | ${score} | ${level.label} | ${entry.mitigation || 'None specified'} | ${entry.ownerRole?.trim() || 'Unassigned'} | ${entry.nextReview?.trim() || 'Not scheduled'} |\n`
+    md += `| ${idx + 1} | ${entry.assetName || 'Unnamed'} | ${entry.currentAlgorithm} | ${threat} | ${entry.likelihood} | ${entry.impact} | ${score} | ${level} | ${entry.mitigation || 'None specified'} | ${entry.ownerRole?.trim() || 'Unassigned'} | ${entry.nextReview?.trim() || 'Not scheduled'} |\n`
   })
 
   md += '\n\n## Risk Summary\n\n'
-  const critical = riskEntries.filter((e) => e.likelihood * e.impact >= 20).length
-  const high = riskEntries.filter(
-    (e) => e.likelihood * e.impact >= 12 && e.likelihood * e.impact < 20
-  ).length
-  const medium = riskEntries.filter(
-    (e) => e.likelihood * e.impact >= 6 && e.likelihood * e.impact < 12
-  ).length
-  const low = riskEntries.filter((e) => e.likelihood * e.impact < 6).length
-
-  md += `- **Critical:** ${critical}\n`
-  md += `- **High:** ${high}\n`
-  md += `- **Medium:** ${medium}\n`
-  md += `- **Low:** ${low}\n`
+  const summary = summarizeRiskEntries(riskEntries)
+  md += 'Counts include entries with an owner role and next review date.\n\n'
+  md += `- **Critical:** ${summary.Critical}\n`
+  md += `- **High:** ${summary.High}\n`
+  md += `- **Medium:** ${summary.Medium}\n`
+  md += `- **Low:** ${summary.Low}\n`
   md += `- **Total Entries:** ${riskEntries.length}\n`
-  const notes = riskEntries.filter(isUnownedRiskEntry).length
-  md += `- **Notes, not yet risks (no owner role or review date):** ${notes}\n`
+  md += `- **Notes, not yet risks (no owner role or review date):** ${summary.notes}\n`
 
   md += `\n## Production-tool capabilities to evaluate\n\n${PRODUCTION_CAPABILITIES}\n`
   md += '\n---\n\n'
@@ -194,6 +206,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
     [riskEntries, onRiskEntriesChange]
   )
 
+  const summary = useMemo(() => summarizeRiskEntries(riskEntries), [riskEntries])
   const exportMarkdown = useMemo(() => buildRiskRegisterMarkdown(riskEntries), [riskEntries])
 
   const editedSince = wasSaved && lastSavedKey !== null && exportMarkdown !== lastSavedKey
@@ -232,6 +245,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
 
   return (
     <div className="space-y-6">
+      <ScenarioComparison reportId="risk-register" report={exportMarkdown} />
       {typeof scenarioCrqcYear === 'number' && (
         <div className="glass-panel p-3 border-l-4 border-primary/50">
           <p className="text-sm text-muted-foreground">
@@ -278,7 +292,20 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
           onClick={() =>
             downloadCsv(
               withEducationNoticeCsv(
-                decisionModelToCsv({ entries: riskEntries, decisionBrief: exportMarkdown })
+                decisionModelToCsv({
+                  entries: riskEntries.map((entry) => {
+                    const score = entry.likelihood * entry.impact
+                    const pending = isUnownedRiskEntry(entry)
+                    return {
+                      ...entry,
+                      score,
+                      status: pending ? 'Draft note' : 'Tracked risk',
+                      riskLevel: pending ? 'Pending assignment' : getRiskLevel(score),
+                    }
+                  }),
+                  summary,
+                  decisionBrief: exportMarkdown,
+                })
               ),
               'risk-register.csv'
             )
@@ -305,18 +332,20 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
       <div className="space-y-4">
         {riskEntries.map((entry, idx) => {
           const score = entry.likelihood * entry.impact
-          const risk = getRiskLevel(score)
+          const riskLevel = getRiskLevel(score)
+          const pending = isUnownedRiskEntry(entry)
+          const risk = RISK_LEVELS[riskLevel]
           return (
             <div key={entry.id} className="glass-panel p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-muted-foreground">#{idx + 1}</span>
                   <span
-                    className={`text-xs px-2 py-0.5 rounded font-medium ${risk.color} ${risk.bgColor}`}
+                    className={`text-xs px-2 py-0.5 rounded font-medium ${pending ? 'text-muted-foreground bg-muted' : `${risk.color} ${risk.bg}`}`}
                   >
-                    Score: {score} ({risk.label})
+                    {pending ? `Provisional score: ${score}` : `Score: ${score} (${riskLevel})`}
                   </span>
-                  {isUnownedRiskEntry(entry) && (
+                  {pending && (
                     <span className="text-xs px-2 py-0.5 rounded font-medium text-status-warning bg-status-warning/10">
                       {UNOWNED_ENTRY_LABEL}
                     </span>
@@ -477,48 +506,22 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
         <div className="glass-panel p-6">
           <h2 className="text-base font-semibold text-foreground mb-3">Risk Summary</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              {
-                label: 'Critical',
-                count: riskEntries.filter((e) => e.likelihood * e.impact >= 20).length,
-                color: 'text-status-error',
-                bg: 'bg-status-error/10',
-              },
-              {
-                label: 'High',
-                count: riskEntries.filter(
-                  (e) => e.likelihood * e.impact >= 12 && e.likelihood * e.impact < 20
-                ).length,
-                color: 'text-status-warning',
-                bg: 'bg-status-warning/10',
-              },
-              {
-                label: 'Medium',
-                count: riskEntries.filter(
-                  (e) => e.likelihood * e.impact >= 6 && e.likelihood * e.impact < 12
-                ).length,
-                color: 'text-primary',
-                bg: 'bg-primary/10',
-              },
-              {
-                label: 'Low',
-                count: riskEntries.filter((e) => e.likelihood * e.impact < 6).length,
-                color: 'text-status-success',
-                bg: 'bg-status-success/10',
-              },
-            ].map((cat) => (
-              <div key={cat.label} className={`rounded-lg p-3 ${cat.bg} text-center`}>
-                <div className={`text-2xl font-bold ${cat.color}`}>{cat.count}</div>
-                <div className="text-xs text-muted-foreground">{cat.label}</div>
-              </div>
-            ))}
+            {(Object.keys(RISK_LEVELS) as (keyof typeof RISK_LEVELS)[]).map((label) => {
+              // eslint-disable-next-line security/detect-object-injection -- label comes from RISK_LEVELS
+              const { color, bg } = RISK_LEVELS[label]
+              return (
+                <div key={label} className={`rounded-lg p-3 ${bg} text-center`}>
+                  <div className={`text-2xl font-bold ${color}`}>{summary[label]}</div>
+                  <div className="text-xs text-muted-foreground">{label}</div>
+                </div>
+              )
+            })}
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
             <span className="font-medium text-foreground">
-              Notes, not yet risks: {riskEntries.filter(isUnownedRiskEntry).length}
-            </span>{' '}
-            — entries without an owner role or a review date. Scores count them, but no one is
-            answerable for treating them yet.
+              Notes, not yet risks: {summary.notes}
+            </span>
+            . A note enters the summary once it has an owner role and a next review date.
           </p>
         </div>
       )}

@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { useOpenSSLStore } from '../store'
 import { OPENSSL_READY_LOG } from '../readyLog'
 import type { WorkerMessage, WorkerResponse } from '../worker/types'
-import { parseOpensslArgs } from '../worker/commandParser'
+import { hasUnquotedPipe, parseOpensslArgs } from '../worker/commandParser'
 import { lookupCkr } from '../../../wasm/pkcs11Inspect'
 
 /** One object really resident on the PKCS#11 token, as reported by a live
@@ -224,9 +224,10 @@ export const useOpenSSL = () => {
             let fileSize: number | undefined
 
             // Attempt to extract output filename
-            const outMatch = cmd.match(/-out\s+([^\s]+)/)
-            if (outMatch) {
-              fileName = outMatch[1]
+            const args = parseOpensslArgs(cmd)
+            const outIndex = args.indexOf('-out')
+            if (outIndex >= 0) {
+              fileName = args[outIndex + 1]
               // Access latest files state directly to avoid stale closures or dependency loops
               const file = useOpenSSLStore.getState().files.find((f) => f.name === fileName)
               if (file) {
@@ -326,7 +327,7 @@ export const useOpenSSL = () => {
       // B. Refuse up front with a clear message instead of silently
       // mis-parsing (this is what let both the `echo | dgst` and
       // `list | grep` presets fail with no explanation).
-      if (/\|/.test(commandToExecute.replace(/"[^"]*"/g, ''))) {
+      if (hasUnquotedPipe(commandToExecute)) {
         addLog(
           'error',
           "This command uses a shell pipe ( | ), which the Studio's in-browser runner does not support (no real shell — just a single OpenSSL binary). Copy it and run it in a real terminal with OpenSSL 3.5+ installed instead."
@@ -392,7 +393,7 @@ export const useOpenSSL = () => {
    */
   const runCommand = useCallback(
     (cmd: string): Promise<{ stdout: string }> => {
-      if (/\|/.test(cmd.replace(/"[^"]*"/g, ''))) {
+      if (hasUnquotedPipe(cmd)) {
         return Promise.reject(new Error('Learn tab commands may not use shell pipes.'))
       }
       if (!workerRef.current) {

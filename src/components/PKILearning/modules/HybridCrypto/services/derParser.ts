@@ -142,17 +142,6 @@ const OID_LABELS: Record<string, string> = {
   // Ed25519 / X25519
   '1.3.101.110': 'X25519',
   '1.3.101.112': 'Ed25519',
-  // Composite signatures (draft-ietf-lamps-pq-composite-sigs)
-  '1.3.6.1.5.5.7.6.37': 'MLDSA44-RSA2048-PSS-SHA256',
-  '1.3.6.1.5.5.7.6.38': 'MLDSA44-RSA2048-PKCS15-SHA256',
-  '1.3.6.1.5.5.7.6.39': 'MLDSA44-Ed25519',
-  '1.3.6.1.5.5.7.6.40': 'MLDSA44-ECDSA-P256',
-  '1.3.6.1.5.5.7.6.41': 'MLDSA65-RSA3072-PSS-SHA512',
-  '1.3.6.1.5.5.7.6.42': 'MLDSA65-RSA3072-PKCS15-SHA512',
-  '1.3.6.1.5.5.7.6.45': 'MLDSA65-ECDSA-P256-SHA512 (Composite)',
-  '1.3.6.1.5.5.7.6.46': 'MLDSA65-ECDSA-P384-SHA512',
-  '1.3.6.1.5.5.7.6.48': 'MLDSA65-Ed25519',
-  '1.3.6.1.5.5.7.6.49': 'MLDSA87-ECDSA-P384-SHA512',
   // Composite KEM (draft-ietf-lamps-pq-composite-kem-23)
   '1.3.6.1.5.5.7.6.58': 'id-MLKEM768-X25519-SHA3-256 (Composite KEM)',
   // Unsigned certificates (RFC 9925)
@@ -176,8 +165,34 @@ const OID_LABELS: Record<string, string> = {
   '1.3.6.1.5.5.7.1.36': 'RelatedCertificate (RFC 9763)',
 }
 
+// RFC 10073 §6. Name every assigned X.509 signature profile independently of
+// which algorithms the workshop can generate or verify.
+const RFC10073_PROFILE_NAMES = new Map([
+  ['1.3.6.1.5.5.7.6.37', 'MLDSA44-RSA2048-PSS-SHA256'],
+  ['1.3.6.1.5.5.7.6.38', 'MLDSA44-RSA2048-PKCS15-SHA256'],
+  ['1.3.6.1.5.5.7.6.39', 'MLDSA44-Ed25519-SHA512'],
+  ['1.3.6.1.5.5.7.6.40', 'MLDSA44-ECDSA-P256-SHA256'],
+  ['1.3.6.1.5.5.7.6.41', 'MLDSA65-RSA3072-PSS-SHA512'],
+  ['1.3.6.1.5.5.7.6.42', 'MLDSA65-RSA3072-PKCS15-SHA512'],
+  ['1.3.6.1.5.5.7.6.43', 'MLDSA65-RSA4096-PSS-SHA512'],
+  ['1.3.6.1.5.5.7.6.44', 'MLDSA65-RSA4096-PKCS15-SHA512'],
+  ['1.3.6.1.5.5.7.6.45', 'MLDSA65-ECDSA-P256-SHA512'],
+  ['1.3.6.1.5.5.7.6.46', 'MLDSA65-ECDSA-P384-SHA512'],
+  ['1.3.6.1.5.5.7.6.47', 'MLDSA65-ECDSA-brainpoolP256r1-SHA512'],
+  ['1.3.6.1.5.5.7.6.48', 'MLDSA65-Ed25519-SHA512'],
+  ['1.3.6.1.5.5.7.6.49', 'MLDSA87-ECDSA-P384-SHA512'],
+  ['1.3.6.1.5.5.7.6.50', 'MLDSA87-ECDSA-brainpoolP384r1-SHA512'],
+  ['1.3.6.1.5.5.7.6.51', 'MLDSA87-Ed448-SHAKE256'],
+  ['1.3.6.1.5.5.7.6.52', 'MLDSA87-RSA3072-PSS-SHA512'],
+  ['1.3.6.1.5.5.7.6.53', 'MLDSA87-RSA4096-PSS-SHA512'],
+  ['1.3.6.1.5.5.7.6.54', 'MLDSA87-ECDSA-P521-SHA512'],
+])
+
+export const rfc10073ProfileName = (oid: string): string | undefined =>
+  RFC10073_PROFILE_NAMES.get(oid)
+
 export function oidToLabel(oid: string): string {
-  return OID_LABELS[oid] ?? oid
+  return rfc10073ProfileName(oid) ?? OID_LABELS[oid] ?? oid
 }
 
 // ---------------------------------------------------------------------------

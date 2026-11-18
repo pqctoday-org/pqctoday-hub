@@ -38,6 +38,7 @@ interface FilterDropdownProps {
    * cluster where a visible label does not fit.
    */
   ariaLabel?: string
+  triggerId?: string
   /** Disables the trigger, mirroring a native `<select disabled>`. */
   disabled?: boolean
   /**
@@ -64,6 +65,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   onMultiSelect,
   searchable,
   ariaLabel,
+  triggerId,
   disabled = false,
   hideDefaultOption = false,
 }) => {
@@ -131,6 +133,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   // Unique per instance: two dropdowns with the same label (e.g. two "Status"
   // filters on one tab) must not share an aria-labelledby target.
   const instanceId = useId().replace(/[^a-zA-Z0-9_-]/g, '')
+  const listboxId = `filter-dropdown-options-${instanceId}`
   const labelId = label
     ? `filter-dropdown-label-${label.replace(/\s+/g, '-').toLowerCase()}-${instanceId}`
     : undefined
@@ -215,7 +218,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     if (!menu) return
     const options = menu.querySelectorAll<HTMLElement>('[role="option"]')
     if (options.length === 0) return
-    const clamped = Math.max(0, Math.min(options.length - 1, index))
+    const clamped =
+      index === -1 ? options.length - 1 : Math.max(0, Math.min(options.length - 1, index))
     options[clamped]?.focus()
   }
 
@@ -295,10 +299,6 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     return createPortal(
       <div
         ref={menuPortalRef}
-        role="listbox"
-        aria-labelledby={labelId}
-        aria-label={labelId ? undefined : ariaLabel}
-        aria-multiselectable={isMulti}
         style={{
           position: 'fixed',
           top: menuPos.top,
@@ -318,13 +318,27 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                e.stopPropagation()
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                  e.preventDefault()
+                  focusOption(e.key === 'ArrowDown' ? 0 : -1)
+                }
+              }}
+              aria-label={`Search ${label ?? ariaLabel ?? defaultLabel}`}
               placeholder="Search…"
               className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
           </div>
         )}
-        <div className="max-h-60 overflow-y-auto">
+        <div
+          className="max-h-60 overflow-y-auto"
+          id={listboxId}
+          role="listbox"
+          aria-labelledby={labelId}
+          aria-label={labelId ? undefined : (ariaLabel ?? defaultLabel)}
+          aria-multiselectable={isMulti}
+        >
           {/* All / Clear Option — omitted for closed value sets */}
           {!hideDefaultOption && (
             <Button
@@ -337,6 +351,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 } else {
                   onSelect('All')
                   setIsOpen(false)
+                  buttonRef.current?.focus()
                 }
               }}
               onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
@@ -380,6 +395,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                     } else {
                       onSelect(item.id)
                       setIsOpen(false)
+                      buttonRef.current?.focus()
                     }
                   }}
                   onKeyDown={(e) => handleOptionKeyDown(e, item.id)}
@@ -412,6 +428,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <Button
       variant="ghost"
       ref={buttonRef}
+      id={triggerId}
       data-testid="filter-dropdown"
       disabled={disabled}
       onClick={() => {
@@ -426,6 +443,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       onKeyDown={handleKeyDown}
       aria-haspopup="listbox"
       aria-expanded={isOpen}
+      aria-controls={isOpen ? listboxId : undefined}
       aria-labelledby={labelId}
       aria-label={labelId ? undefined : ariaLabel}
       className={clsx(

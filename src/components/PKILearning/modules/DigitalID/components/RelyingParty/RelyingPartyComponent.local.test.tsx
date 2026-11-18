@@ -74,9 +74,10 @@ describe('relying-party sample result gates', () => {
     expect(screen.queryByText('Sample account opening accepted')).not.toBeInTheDocument()
     expect(screen.queryByText(/Your proof was cryptographically valid/)).not.toBeInTheDocument()
   })
-  it('rejects an altered PID digest before offering verification completion', async () => {
+  it('rejects an altered PID digest during verification', async () => {
     show(true)
     await consent()
+    fireEvent.click(await screen.findByRole('button', { name: 'Check Verification Result' }))
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'disclosure digest verification failed'
     )
@@ -85,13 +86,12 @@ describe('relying-party sample result gates', () => {
     ).not.toBeInTheDocument()
     expect(screen.queryByText('Sample account opening accepted')).not.toBeInTheDocument()
   })
-  it('labels only successful sample proof checks, with identity approval still simulated', async () => {
+  it('keeps a successful device proof separate from missing request claims', async () => {
     show()
     await consent()
     fireEvent.click(await screen.findByRole('button', { name: 'Check Verification Result' }))
-    expect(await screen.findByText('Sample account opening accepted')).toBeInTheDocument()
-    expect(screen.getByText(/Identity approval, issuer trust, status checks/)).toHaveTextContent(
-      'remain simulated'
-    )
+    expect(await screen.findByRole('alert')).toHaveTextContent('degree (diploma)')
+    expect(screen.getByText(/Sample device-binding signature and challenge passed/)).toBeVisible()
+    expect(screen.queryByText('Sample account opening accepted')).not.toBeInTheDocument()
   })
 })

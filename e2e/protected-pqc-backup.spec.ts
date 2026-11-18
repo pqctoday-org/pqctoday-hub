@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { readFile } from 'node:fs/promises'
 import { test, expect } from './fixtures/blockAnalytics'
 
 for (const viewport of [
@@ -57,7 +56,11 @@ for (const viewport of [
           page.waitForEvent('download'),
           panel.getByRole('button', { name: 'Export protected package', exact: true }).click(),
         ])
-        const file = JSON.parse(await readFile((await download.path())!, 'utf8'))
+        let rawPackage = ''
+        for await (const chunk of await download.createReadStream()) {
+          rawPackage += chunk.toString()
+        }
+        const file = JSON.parse(rawPackage)
         // Editable labels must never determine the restored type/representation.
         file.algorithm = 'AES'
         file.representation = representation === 'Seed' ? 'expanded' : 'seed'

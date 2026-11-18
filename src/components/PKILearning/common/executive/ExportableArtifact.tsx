@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import { Download, Copy, Printer, Check, Presentation, FileText, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CompleteStepAction } from '../CompleteStepAction'
+import { ScenarioComparison } from './ScenarioComparison'
 import { markdownToPptx } from '@/services/export/pptxExport'
 import { markdownToDocx } from '@/services/export/docxExport'
 import { markdownToPdf } from '@/services/export/pdfExport'
@@ -106,7 +107,17 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   wideTable = false,
   csvData,
 }) => {
-  const [copied, setCopied] = React.useState(false)
+  const [copyResult, setCopyResult] = React.useState<{ data: string; ok: boolean } | null>(null)
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const currentCopyResult = copyResult?.data === exportData ? copyResult : null
+  const copied = currentCopyResult?.ok === true
+
+  useEffect(
+    () => () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current)
+    },
+    []
+  )
   // Persistent done-state: `wasSaved` stays set across edits; once the content
   // changes after a save the badge reads "Saved · edited since" rather than
   // flickering back to "Save" on every recompute (sliders/calculators).
@@ -200,9 +211,10 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
 
   const handleCopy = useCallback(async () => {
     const ok = await copyToClipboard(withEducationNoticeMarkdown(exportData))
+    if (copyTimer.current) clearTimeout(copyTimer.current)
+    setCopyResult({ data: exportData, ok })
     if (!ok) return
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    copyTimer.current = setTimeout(() => setCopyResult(null), 2000)
     triggerSave()
   }, [exportData, triggerSave])
 
@@ -304,6 +316,18 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
           </Button>
         </div>
       </div>
+      <p
+        role="status"
+        aria-live="polite"
+        className={currentCopyResult?.ok === false ? 'text-sm text-status-error' : 'sr-only'}
+      >
+        {currentCopyResult?.ok === false
+          ? 'Clipboard access failed. You can download the report using a format button.'
+          : copied
+            ? 'Report copied to clipboard.'
+            : ''}
+      </p>
+      <ScenarioComparison reportId={JSON.stringify([filename, title])} report={exportData} />
       <div className="border-t border-border pt-4">{children}</div>
     </div>
   )

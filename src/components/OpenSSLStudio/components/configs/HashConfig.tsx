@@ -35,6 +35,7 @@ export const HashConfig: React.FC<HashConfigProps> = ({
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Hash Algorithm</span>
         <FilterDropdown
+          ariaLabel="Hash Algorithm"
           selectedId={hashAlgo}
           onSelect={(id) => setHashAlgo(id)}
           items={[
@@ -48,9 +49,9 @@ export const HashConfig: React.FC<HashConfigProps> = ({
           noContainer
         />
         <div className="text-[10px] text-muted-foreground pl-1">
-          {hashAlgo === 'sha256' && '32 bytes (256 bits) - Bitcoin, Ethereum, General Purpose'}
-          {hashAlgo === 'sha384' && '48 bytes (384 bits) - High Security Applications'}
-          {hashAlgo === 'sha512' && '64 bytes (512 bits) - Solana, HD Wallets'}
+          {hashAlgo === 'sha256' && '32-byte digest (256 bits)'}
+          {hashAlgo === 'sha384' && '48-byte digest (384 bits)'}
+          {hashAlgo === 'sha512' && '64-byte digest (512 bits)'}
           {hashAlgo === 'sha3-256' && '32 bytes (256 bits) - NIST SHA-3 Standard'}
           {hashAlgo === 'ripemd160' && '20 bytes (160 bits) - Bitcoin Hash160'}
         </div>
@@ -59,6 +60,7 @@ export const HashConfig: React.FC<HashConfigProps> = ({
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Input File</span>
         <FilterDropdown
+          ariaLabel="Input File"
           selectedId={hashInFile}
           onSelect={(id) => setHashInFile(id)}
           items={files.map((f) => ({ id: f.name, label: f.name }))}

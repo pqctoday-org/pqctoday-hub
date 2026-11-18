@@ -121,10 +121,15 @@ describe('transition guide labels', () => {
     ).toBe(false)
   })
 
-  it('names the current LAMPS composite draft revisions', () => {
+  it('distinguishes published composite signatures from the composite KEM draft', () => {
     const sigs = algorithmsData.filter((r) => r.pqc.endsWith('(IETF Composite Sig)'))
     expect(sigs.length).toBe(3)
-    for (const row of sigs) expect(row.standardizationDate).toContain('composite-sigs-19')
+    for (const row of sigs) {
+      expect(row.standardizationDate).toBe('RFC 10073')
+      expect(row.statusUrl).toBe('https://www.rfc-editor.org/rfc/rfc10073.html')
+      expect(row.statusTier).toBe('final')
+      expect(row.deprecationDate).toBe('')
+    }
     const kems = algorithmsData.filter((r) => r.pqc.endsWith('(IETF Composite KEM)'))
     expect(kems.length).toBe(2)
     for (const row of kems) expect(row.standardizationDate).toContain('composite-kem-23')

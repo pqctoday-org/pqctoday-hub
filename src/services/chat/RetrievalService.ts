@@ -774,13 +774,14 @@ class RetrievalService {
       }
     }
 
-    // For pronoun or short follow-up queries ("What is its public key size?"),
-    // also include n-grams from the immediately preceding user turn (conversationContext[0])
-    // so Phase 1 entity lookup and Phase 2 expansions retain the subject entity.
-    const isFollowUpPronounQuery =
-      Boolean(pageContext?.conversationContext?.length) &&
-      (/\b(it|its|they|them|their|this|that|these|those)\b/i.test(query) || queryTokens.length <= 4)
-    const priorTurnLower = isFollowUpPronounQuery
+    // Carry over the previous subject for a reference or a concise measurement
+    // follow-up. A new standalone query needs evidence of its own.
+    const refersBack =
+      /\b(it|its|they|them|their|this|that|these|those)\b/i.test(query) ||
+      /^(?:(?:and|what about|how about) )?(?:(?:public |private |secret )?key|signature|ciphertext) sizes?(?: in bytes)?[?!]?$/.test(
+        queryLower.trim()
+      )
+    const priorTurnLower = refersBack
       ? (pageContext?.conversationContext?.[0] ?? '')
           .toLowerCase()
           .replace(/[?!.,;:()[\]"]/g, ' ')
@@ -893,8 +894,7 @@ class RetrievalService {
     }
 
     // --- Phase 3: MiniSearch keyword search with intent-aware boosting ---
-    // Incorporate conversation context (prior user messages) for multi-turn queries
-    if (pageContext?.conversationContext?.length) {
+    if (priorTokens.length > 0) {
       const stopWords = new Set([
         'what',
         'about',
@@ -920,11 +920,7 @@ class RetrievalService {
         'would',
         'could',
       ])
-      const contextTerms = pageContext.conversationContext
-        .join(' ')
-        .toLowerCase()
-        .split(/\s+/)
-        .filter((t) => t.length > 3 && !stopWords.has(t))
+      const contextTerms = priorTokens.filter((term) => term.length > 3 && !stopWords.has(term))
       const uniqueTerms = [...new Set(contextTerms)].slice(0, 5)
       for (const term of uniqueTerms) expandedTerms.add(term)
     }

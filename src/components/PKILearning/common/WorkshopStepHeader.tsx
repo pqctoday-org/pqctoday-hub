@@ -3,6 +3,7 @@ import React from 'react'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { useModuleStore } from '@/store/useModuleStore'
 import { MODULE_CATALOG } from '../moduleData'
 import { WorkshopStepper, type WorkshopStep } from './WorkshopStepper'
 
@@ -10,6 +11,7 @@ interface WorkshopStepHeaderProps {
   moduleId: string
   stepId: string
   stepTitle: string
+  titleRef?: React.Ref<HTMLHeadingElement>
   stepDescription: string
   stepIndex: number
   totalSteps: number
@@ -31,6 +33,7 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
   moduleId,
   stepId,
   stepTitle,
+  titleRef,
   stepDescription,
   stepIndex,
   totalSteps,
@@ -78,15 +81,19 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
       label: `Step ${i + 1}`,
     }))
 
-  const resolvedCompleted =
-    completedSteps ??
-    // Treat all steps before current as implicitly completed
-    Array.from({ length: stepIndex }, (_, i) => String(i))
+  const savedCompletedSteps = useModuleStore((state) => state.modules[moduleId]?.completedSteps)
+  const resolvedCompleted = completedSteps ?? savedCompletedSteps
 
   return (
     <div className="mb-6 border-b border-border pb-4">
       <div className="flex items-start justify-between gap-2">
-        <h2 className="text-2xl font-bold text-foreground break-words min-w-0">{stepTitle}</h2>
+        <h2
+          ref={titleRef}
+          tabIndex={titleRef ? -1 : undefined}
+          className="text-2xl font-bold text-foreground break-words min-w-0 scroll-mt-28"
+        >
+          {stepTitle}
+        </h2>
         <div className="flex items-center gap-1 shrink-0">
           <EndorseButton
             endorseUrl={endorseUrl}

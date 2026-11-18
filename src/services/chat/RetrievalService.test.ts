@@ -551,13 +551,25 @@ describe('RetrievalService', () => {
   })
 
   describe('pronoun follow-up and capability-checklist entity resolution', () => {
-    it('resolves a pronoun follow-up query using conversationContext[0] in Phase 1', () => {
-      const results = service.search('What is its key size?', 5, {
+    it.each(['What is its key size?', 'And public key size?'])(
+      'resolves the follow-up %j using the prior subject in Phase 1',
+      (query) => {
+        const results = service.search(query, 5, {
+          page: 'Algorithms',
+          relevantSources: ['algorithms'],
+          conversationContext: ['Tell me about ML-KEM-768', 'Earlier unrelated turn'],
+        })
+        expect(results.some((chunk) => chunk.title.includes('ML-KEM'))).toBe(true)
+      }
+    )
+
+    it('requires evidence from a standalone query even after a supported turn', () => {
+      const results = service.search('zxqvjwkpfrx zjqblwmvrqp zkvfhtjg', 5, {
         page: 'Algorithms',
         relevantSources: ['algorithms'],
-        conversationContext: ['Tell me about ML-KEM-768', 'Earlier unrelated turn'],
+        conversationContext: ['Tell me about ML-KEM-768'],
       })
-      expect(results.some((c) => c.title.includes('ML-KEM'))).toBe(true)
+      expect(results).toEqual([])
     })
   })
 })

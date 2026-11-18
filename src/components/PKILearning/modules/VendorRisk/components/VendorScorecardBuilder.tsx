@@ -99,7 +99,8 @@ export function resolveProductNames(keys: string[]): SoftwareItem[] {
   return softwareData.filter((s) => keySet.has(s.productId))
 }
 
-function getScoreColor(value: number): string {
+function getScoreColor(value: number | null): string {
+  if (value === null) return 'text-muted-foreground'
   if (value >= 75) return 'text-status-success'
   if (value >= 50) return 'text-status-warning'
   return 'text-status-error'
@@ -135,7 +136,7 @@ export interface VendorScorecardRow {
   productCount: number
   /** null = not assessed: left out of this vendor's overall score, weight included. */
   dimScores: Record<string, number | null>
-  overall: number
+  overall: number | null
 }
 
 /**
@@ -152,7 +153,7 @@ export function scoreDimension(
 ): number | null {
   if (!dim.catalogueLevel) {
     const hits = checked ? group.filter((i) => checked.has(productKey(i))).length : 0
-    return group.length > 0 ? Math.round((hits / group.length) * 100) : 0
+    return group.length > 0 ? Math.round((hits / group.length) * 100) : null
   }
   let assessed = 0
   let credit = 0
@@ -195,7 +196,7 @@ export function computeVendorScorecards(
     let totalWeight = 0
     for (const d of DIMENSIONS) {
       const score = opts.useSlider[d.id]
-        ? (opts.sliderScores[d.id] ?? 0)
+        ? (opts.sliderScores[d.id] ?? null)
         : scoreDimension(d, group, checkedProducts[d.id])
       dimScores[d.id] = score
       if (score === null) continue // not assessed: no score, and its weight is not in the total
@@ -207,10 +208,12 @@ export function computeVendorScorecards(
       vendor,
       productCount: group.length,
       dimScores,
-      overall: totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0,
+      overall: totalWeight > 0 ? Math.round(weightedSum / totalWeight) : null,
     })
   }
-  return rows.sort((a, b) => b.overall - a.overall || a.vendor.localeCompare(b.vendor))
+  return rows.sort(
+    (a, b) => (b.overall ?? -1) - (a.overall ?? -1) || a.vendor.localeCompare(b.vendor)
+  )
 }
 
 export interface ScorecardOutput {
@@ -221,7 +224,7 @@ export interface ScorecardOutput {
 export interface ScorecardDimensionRow {
   id: string
   label: string
-  /** null = not assessed (no structured catalogue entry for any selected product). */
+  /** null = not assessed: this dimension does not contribute to the weighted result. */
   score: number | null
   weightPct: number
   method: string
@@ -242,21 +245,24 @@ export interface ScorecardNotes {
  * with its own live state; the sim calls it with a sample scorecard.
  */
 export function buildScorecardMarkdown(
-  portfolioAverage: number,
+  portfolioAverage: number | null,
   productCount: number | null,
   dimensionRows: ScorecardDimensionRow[],
   vendorRows: VendorScorecardRow[],
   notes: ScorecardNotes
 ): string {
   let md = '# Vendor PQC Readiness Scorecard\n\n'
-  md += `**Portfolio average (all products): ${portfolioAverage}/100**\n\n`
+  const overallLabel = (score: number | null) => (score === null ? 'Not assessed' : `${score}/100`)
+  const summaryLabel =
+    productCount === null ? 'Manual readiness score' : 'Portfolio average (all products)'
+  md += `**${summaryLabel}: ${overallLabel(portfolioAverage)}**\n\n`
   md += `Generated: ${new Date().toLocaleDateString()}\n`
   if (productCount != null) {
     md += `Products assessed: ${productCount}\n`
   }
   md += '\n'
   md +=
-    "Scores count the catalogue entries you select and the values you enter. The weights and the readiness thresholds are Hub teaching choices, and no dimension measures deployment progress. FIPS 140-3 Validation counts a cited module certificate whatever its algorithm scope; Hybrid Mode Support is scored only from the catalogue's structured hybrid fields, and Not assessed means the catalogue has no structured hybrid entry, so that dimension is left out of the weighted total.\n\n"
+    "Scores use the selected catalogue entries and entered manual values. Unassessed dimensions have no weight in the result. An explicit manual zero contributes its full weight. The Hub defines these teaching thresholds. FIPS 140-3 Validation counts cited module certificates regardless of algorithm scope. Hybrid Mode Support is scored only from the catalogue's structured hybrid fields. For that dimension, Not assessed means the catalogue has no structured hybrid entry.\n\n"
   md += '| Dimension | Score | Weight | Method |\n'
   md += '|-----------|-------|--------|--------|\n'
   for (const d of dimensionRows) {
@@ -272,7 +278,7 @@ export function buildScorecardMarkdown(
     md += `|${'---|'.repeat(3 + dimensionRows.length)}\n`
     for (const v of vendorRows) {
       const scores = dimensionRows.map((d) => v.dimScores[d.id] ?? 'Not assessed')
-      md += `| ${v.vendor} | ${v.productCount} | ${v.overall}/100 | ${scores.join(' | ')} |\n`
+      md += `| ${v.vendor} | ${v.productCount} | ${overallLabel(v.overall)} | ${scores.join(' | ')} |\n`
     }
   }
 
@@ -321,14 +327,9 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
     return initial
   })
 
-  // Slider scores (used when useSlider[dim] is true)
-  const [sliderScores, setSliderScores] = useState<Record<string, number>>(() => {
-    const initial: Record<string, number> = {}
-    for (const d of DIMENSIONS) {
-      initial[d.id] = savedInputs?.sliderScores?.[d.id] ?? 0
-    }
-    return initial
-  })
+  const [sliderScores, setSliderScores] = useState<Record<string, number>>(
+    () => savedInputs?.sliderScores ?? {}
+  )
 
   // User-adjustable weight overrides (0–1). Saved artifact uses the same values.
   const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>(
@@ -396,7 +397,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   const getScore = useCallback(
     (dimId: string): number | null => {
       if (useSlider[dimId] || !hasProducts) {
-        return sliderScores[dimId] ?? 0
+        return sliderScores[dimId] ?? null
       }
       const dim = DIMENSIONS.find((d) => d.id === dimId)
       return dim ? scoreDimension(dim, selectedItems, checkedProducts[dimId]) : 0
@@ -415,7 +416,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       weightedSum += score * w
       totalWeight += w
     }
-    return totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
+    return totalWeight > 0 ? Math.round(weightedSum / totalWeight) : null
   }, [getScore, effectiveWeight])
 
   // Per-vendor breakdown — each vendor scored on its own products, sorted best
@@ -433,7 +434,9 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   // Emit scorecard output to parent whenever vendor scores change
   useEffect(() => {
     if (!onOutput) return
-    const low = vendorScorecards.filter((r) => r.overall < 50).map((r) => r.vendor)
+    const low = vendorScorecards
+      .filter((r) => r.overall !== null && r.overall < 50)
+      .map((r) => r.vendor)
     onOutput({ rows: vendorScorecards, lowReadinessVendors: low })
   }, [onOutput, vendorScorecards])
 
@@ -468,7 +471,9 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       weightPct: Math.round(effectiveWeight(d.id) * 100),
       method:
         useSlider[d.id] || !hasProducts
-          ? 'Manual'
+          ? getScore(d.id) === null
+            ? 'Awaiting manual input'
+            : 'Manual'
           : d.catalogueLevel
             ? getScore(d.id) === null
               ? 'No structured catalogue entry for the selected products'
@@ -498,8 +503,6 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
   ])
 
   // Save to the Command Center on an explicit Save click (the export card below).
-  // Replaces the old silent auto-save; the 0-score hint above tells the user to
-  // score a dimension first.
   const handleSaveArtifact = useCallback(() => {
     const checkedProductsForSave: Record<string, string[]> = {}
     for (const [dimId, keys] of Object.entries(checkedProducts)) {
@@ -509,7 +512,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       id: `vendor-scorecard-${MODULE_ID}`,
       moduleId: MODULE_ID,
       type: 'vendor-scorecard',
-      title: `Vendor PQC Readiness Scorecard (${weightedTotal}/100)`,
+      title: `Vendor PQC Readiness Scorecard (${weightedTotal === null ? 'not assessed' : `${weightedTotal}/100`})`,
       data: exportMarkdown,
       createdAt: Date.now(),
       inputs: {
@@ -605,12 +608,17 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
       {/* Overall score */}
       <div className="glass-panel p-6 text-center">
         <p className="text-sm text-muted-foreground mb-2">
-          PQC Readiness — Portfolio average (across all products)
+          {hasProducts
+            ? 'PQC Readiness — Portfolio average (across all products)'
+            : 'PQC Readiness — Manual assessment'}
         </p>
-        <p className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal)}`}>
-          {weightedTotal}
+        <p
+          aria-live="polite"
+          className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal)}`}
+        >
+          {weightedTotal ?? 'Not assessed'}
         </p>
-        <p className="text-sm text-muted-foreground mt-1">/100</p>
+        {weightedTotal !== null && <p className="text-sm text-muted-foreground mt-1">/100</p>}
         {vendorScorecards.length > 1 && (
           <p className="text-xs text-muted-foreground mt-2">
             This blends {vendorScorecards.length} vendors — see the per-vendor breakdown below for
@@ -644,14 +652,9 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
         </p>
       </div>
 
-      {/* Save gate hint — until the overall score is above zero the scorecard
-          stays at 0/100 and the auto-save never fires, so spell out what to do. */}
-      {weightedTotal === 0 && (
+      {weightedTotal === null && !savedInputs && (
         <div className="glass-panel border border-status-warning/30 bg-status-warning/5 p-3 text-center text-sm text-status-warning">
-          Score at least one dimension to save this scorecard —{' '}
-          {hasProducts
-            ? 'tick a product capability in any dimension below, or switch a dimension to the slider and drag it above 0.'
-            : 'drag a dimension slider above 0.'}
+          Give at least one weighted dimension a score to save this scorecard. You can enter zero.
         </div>
       )}
 
@@ -685,7 +688,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                       {v.productCount}
                     </td>
                     <td className={`py-1.5 px-2 text-center font-bold ${getScoreColor(v.overall)}`}>
-                      {v.overall}
+                      {v.overall ?? 'Not assessed'}
                     </td>
                     {DIMENSIONS.map((d) => {
                       const dimScore = v.dimScores[d.id] ?? null
@@ -806,11 +809,12 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
 
                   {isSliderMode || !hasProducts ? (
                     /* Slider mode */
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="range"
                         min="0"
                         max="100"
+                        aria-label={d.label}
                         value={sliderScores[d.id] ?? 0}
                         onChange={(e) =>
                           setSliderScores((prev) => ({
@@ -818,11 +822,25 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                             [d.id]: parseInt(e.target.value),
                           }))
                         }
-                        className="flex-1 accent-primary"
+                        className="min-w-24 flex-1 accent-primary"
                       />
                       <span className="text-sm font-medium text-foreground tabular-nums w-8 text-right">
-                        {sliderScores[d.id] ?? 0}
+                        {sliderScores[d.id] ?? '—'}
                       </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setSliderScores((prev) => {
+                            if (prev[d.id] === undefined) return { ...prev, [d.id]: 0 }
+                            const next = { ...prev }
+                            delete next[d.id]
+                            return next
+                          })
+                        }
+                      >
+                        {notAssessed ? 'Record zero' : 'Clear score'}
+                      </Button>
                     </div>
                   ) : (
                     /* Product picking mode */
@@ -891,6 +909,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                       type="number"
                       min="0"
                       max="100"
+                      aria-label={`Weight for ${d.label} (%)`}
                       value={Math.round(effectiveWeight(d.id) * 100)}
                       onChange={(e) => handleWeightChange(d.id, parseInt(e.target.value) || 0)}
                       onClick={(e) => e.stopPropagation()}
@@ -1020,7 +1039,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
         exportData={exportMarkdown}
         filename="vendor-pqc-scorecard"
         formats={['markdown', 'pdf']}
-        onExport={handleSaveArtifact}
+        onExport={weightedTotal === null && !savedInputs ? undefined : handleSaveArtifact}
         wideTable
       >
         <p className="text-sm text-muted-foreground">

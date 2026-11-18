@@ -4,6 +4,7 @@ import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
 import { Play, CheckCircle2, XCircle, Loader2, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import {
@@ -18,6 +19,7 @@ import {
   hsm_generateAESKey,
   hsm_aesEncrypt,
   hsm_aesDecrypt,
+  Pkcs11Error,
 } from '@/wasm/softhsm'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -79,7 +81,7 @@ function StepCard({
     )
 
   return (
-    <div className="glass-panel p-5 space-y-3">
+    <section aria-label={title} className="glass-panel p-5 space-y-3">
       <div className="flex items-start gap-3">
         <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold shrink-0 mt-0.5">
           {index}
@@ -106,7 +108,10 @@ function StepCard({
       {children}
 
       {result.status !== 'idle' && (
-        <pre className="mt-2 bg-muted/40 rounded p-3 overflow-x-auto text-[11px] leading-relaxed font-mono whitespace-pre-wrap break-all">
+        <pre
+          aria-live="polite"
+          className="mt-2 bg-muted/40 rounded p-3 overflow-x-auto text-[11px] leading-relaxed font-mono whitespace-pre-wrap break-all"
+        >
           {result.status === 'running'
             ? 'Computing…'
             : result.status === 'error'
@@ -114,7 +119,7 @@ function StepCard({
               : result.lines.join('\n')}
         </pre>
       )}
-    </div>
+    </section>
   )
 }
 
@@ -270,16 +275,50 @@ function TreeKEMNodeStep({ hsm }: { hsm: UseHSMResult }) {
 
 // ── Step 3 — Application message encryption (AES-128-GCM) ────────────────────
 
+const applicationContext = 'group:demo|epoch:1|content:application'
+const receiverContexts = [
+  { label: 'Matching context', id: applicationContext },
+  { label: 'Different epoch', id: 'group:demo|epoch:2|content:application' },
+  { label: 'Different group', id: 'group:other|epoch:1|content:application' },
+  { label: 'Different content type', id: 'group:demo|epoch:1|content:proposal' },
+]
+
+async function checkApplicationContext(
+  decrypt: () => Uint8Array | Promise<Uint8Array>,
+  plaintext: string,
+  receiverContext: string,
+  isAuthenticationError: (error: unknown) => boolean
+): Promise<string[]> {
+  let decrypted: Uint8Array
+  try {
+    decrypted = await decrypt()
+  } catch (error) {
+    if (receiverContext === applicationContext || !isAuthenticationError(error)) throw error
+    return ['Receiver rejected the message. Authentication failed and no plaintext was released.']
+  }
+  if (receiverContext !== applicationContext) {
+    throw new Error('The receiver accepted a mismatched context.')
+  }
+  const recovered = new TextDecoder().decode(decrypted)
+  if (recovered !== plaintext) throw new Error('The recovered message differs from the input.')
+  return ['Receiver accepted the message.', `Recovered message: "${recovered}"`]
+}
+
 function AppMessageStep({ hsm }: { hsm: UseHSMResult }) {
   const [plaintext, setPlaintext] = useState('Hello, MLS group! 🔐')
+  const [receiverContext, setReceiverContext] = useState(applicationContext)
   const { result, run } = useStep()
 
   const handleRun = () =>
     run(async () => {
       const enc = new TextEncoder()
       const pt = enc.encode(plaintext)
-      const aad = enc.encode('group:demo|epoch:1|content:application')
-      const badAad = enc.encode('group:demo|epoch:2|content:application')
+      const aad = enc.encode(applicationContext)
+      const receiverAad = enc.encode(receiverContext)
+      const contexts = [
+        `Sender context: ${applicationContext}`,
+        `Receiver context: ${receiverContext}`,
+      ]
 
       if (hsm.isReady && hsm.moduleRef.current) {
         const M = hsm.moduleRef.current
@@ -297,44 +336,33 @@ function AppMessageStep({ hsm }: { hsm: UseHSMResult }) {
           true,
           'mls-epoch-key'
         )
-        const epochKeyBytes = hsm_extractKeyValue(M, session, keyHandle)
-
-        // Roundtrip: encrypt with aad, decrypt with same aad
-        const { ciphertext: ct, iv } = hsm_aesEncrypt(
-          M,
-          session,
-          keyHandle,
-          pt,
-          'gcm',
-          undefined,
-          aad
-        )
-        const recovered = new TextDecoder().decode(
-          hsm_aesDecrypt(M, session, keyHandle, ct, iv, 'gcm', aad)
-        )
-        if (recovered !== plaintext) throw new Error('decrypt mismatch')
-
-        // AAD integrity: same ciphertext + wrong aad → CKR_ENCRYPTED_DATA_INVALID
-        let aadOk = false
         try {
-          hsm_aesDecrypt(M, session, keyHandle, ct, iv, 'gcm', badAad)
-          aadOk = true
-        } catch {
-          aadOk = false
+          const epochKeyBytes = hsm_extractKeyValue(M, session, keyHandle)
+          const { ciphertext, iv } = hsm_aesEncrypt(
+            M,
+            session,
+            keyHandle,
+            pt,
+            'gcm',
+            undefined,
+            aad
+          )
+          const outcome = await checkApplicationContext(
+            () => hsm_aesDecrypt(M, session, keyHandle, ciphertext, iv, 'gcm', receiverAad),
+            plaintext,
+            receiverContext,
+            (error) => error instanceof Pkcs11Error && error.rv === 0x40
+          )
+          return [
+            ...contexts,
+            `[HSM] Demo key (${epochKeyBytes.length} B): ${toHex(epochKeyBytes)}`,
+            `[HSM] Nonce (${iv.length} B): ${toHex(iv)}`,
+            `[HSM] Ciphertext: ${shortHex(ciphertext)}`,
+            ...outcome,
+          ]
+        } finally {
+          hsm_destroyObject(M, session, keyHandle)
         }
-
-        hsm_destroyObject(M, session, keyHandle)
-
-        return [
-          `[HSM] epoch key (${epochKeyBytes.length} B): ${toHex(epochKeyBytes)}`,
-          `[HSM] nonce     (${iv.length} B): ${toHex(iv)}`,
-          `[HSM] plaintext : "${plaintext}"`,
-          `[HSM] ciphertext(${ct.length} B): ${shortHex(ct)}`,
-          `[HSM] decrypted : "${recovered}"`,
-          `C_EncryptInit(CKM_AES_GCM) + C_Encrypt ✓`,
-          `C_DecryptInit(CKM_AES_GCM) + C_Decrypt (correct AAD) ✓`,
-          `${!aadOk ? 'AAD integrity → CKR_ENCRYPTED_DATA_INVALID ✓' : '✗ AAD check did not throw — unexpected'}`,
-        ]
       }
 
       // Web Crypto (software) path
@@ -349,31 +377,26 @@ function AppMessageStep({ hsm }: { hsm: UseHSMResult }) {
         cryptoKey,
         pt
       )
-      const ct = new Uint8Array(ctBuf)
-      const ptBuf = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv, additionalData: aad },
-        cryptoKey,
-        ct
+      const outcome = await checkApplicationContext(
+        async () =>
+          new Uint8Array(
+            await crypto.subtle.decrypt(
+              { name: 'AES-GCM', iv, additionalData: receiverAad },
+              cryptoKey,
+              ctBuf
+            )
+          ),
+        plaintext,
+        receiverContext,
+        (error) => error instanceof DOMException && error.name === 'OperationError'
       )
-      const recovered = new TextDecoder().decode(ptBuf)
-      if (recovered !== plaintext) throw new Error('decrypt mismatch')
-
-      let aadOk = false
-      try {
-        await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: badAad }, cryptoKey, ct)
-        aadOk = true
-      } catch {
-        aadOk = false
-      }
 
       return [
-        `epoch key (${epochKey.length} B): ${toHex(epochKey)}`,
-        `nonce     (${iv.length} B): ${toHex(iv)}`,
-        `plaintext : "${plaintext}"`,
-        `ciphertext(${ct.length} B): ${shortHex(ct)}`,
-        `decrypted : "${recovered}"`,
-        `AAD integrity (wrong epoch) → throws ✓`,
-        `${!aadOk ? '✓ AES-GCM authentication passed' : '✗ AAD check did not throw — unexpected'}`,
+        ...contexts,
+        `Demo key (${epochKey.length} B): ${toHex(epochKey)}`,
+        `Nonce (${iv.length} B): ${toHex(iv)}`,
+        `Ciphertext: ${shortHex(new Uint8Array(ctBuf))}`,
+        ...outcome,
       ]
     })
 
@@ -381,7 +404,7 @@ function AppMessageStep({ hsm }: { hsm: UseHSMResult }) {
     <StepCard
       index={3}
       title="Application message encryption — AES-128-GCM"
-      subtitle="MLS derives a content key and nonce from an unused generation of either the handshake or application ratchet derived for the member (RFC 9420); messages are protected with an AEAD function, with the epoch number, group ID, and content type bound in Additional Data."
+      subtitle="Choose the receiver context and run AES-GCM. In MLS, the content key and nonce come from the sender’s ratchet. This exercise uses a fresh demo key and a readable encoding of the authenticated group, epoch and content type."
       result={result}
       onRun={handleRun}
     >
@@ -394,10 +417,19 @@ function AppMessageStep({ hsm }: { hsm: UseHSMResult }) {
           type="text"
           value={plaintext}
           onChange={(e) => setPlaintext(e.target.value)}
-          className="flex-1 bg-muted/30 border border-border rounded px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          className="min-w-0 flex-1 bg-muted/30 border border-border rounded px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
           maxLength={200}
         />
       </div>
+      <FilterDropdown
+        label="Receiver context"
+        defaultLabel="Matching context"
+        items={receiverContexts}
+        selectedId={receiverContext}
+        onSelect={setReceiverContext}
+        hideDefaultOption
+        noContainer
+      />
     </StepCard>
   )
 }

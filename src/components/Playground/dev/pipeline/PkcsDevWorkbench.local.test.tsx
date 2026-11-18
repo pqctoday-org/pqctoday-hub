@@ -47,8 +47,10 @@ vi.mock('../../keystore/discoverHsmObjects', () => ({
   discoverHsmObjectsOnSession: (...args: unknown[]) => state.discover(...args),
 }))
 vi.mock('@/services/python/pyRuntime', () => ({
-  bootPyRuntime: () => state.boot(),
-  runPython: (...args: unknown[]) => state.run(...args),
+  runPython: async (...args: unknown[]) => {
+    await state.boot()
+    return state.run(...args)
+  },
   getInterruptMode: () => 'best-effort',
 }))
 vi.mock('@/services/python/pyodide/p11Bridge', () => ({ createP11Bridge: () => ({}) }))
@@ -73,6 +75,16 @@ beforeEach(() => {
   state.session.mockReturnValue(44)
 })
 describe('PKCS developer sample run records', () => {
+  it('opens editable code from the Python entry point and submits the learner edit', async () => {
+    render(<PkcsDevWorkbench openPython />)
+    expect(screen.getByRole('tab', { name: 'Code' })).toHaveAttribute('aria-selected', 'true')
+    const editor = await screen.findByRole('textbox', { name: 'Python sample code' })
+    expect(editor).not.toHaveAttribute('readonly')
+    fireEvent.change(editor, { target: { value: "print('edited input')" } })
+    run()
+    await record().findByText(/Custom script finished/)
+    expect(state.run.mock.calls[0][0]).toBe("print('edited input')")
+  })
   it('requires step results and preserves existing session discovery', async () => {
     render(<PkcsDevWorkbench />)
     run()
@@ -171,7 +183,7 @@ describe('PKCS developer sample run records', () => {
     })
     run()
     await record().findByText(/Custom script finished without/)
-    expect(state.run).toHaveBeenCalledWith('')
+    expect(state.run).toHaveBeenCalledWith('', expect.any(Object))
     expect(record().queryByText('What this sample demonstrated:')).not.toBeInTheDocument()
   })
   it('does not infer template identity from a saved title', async () => {

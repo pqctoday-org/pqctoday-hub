@@ -24,7 +24,7 @@ const QKD_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'qkd-hkdf',
     useCase: 'Key derivation functional testing (HKDF)',
-    standard: 'SP 800-108 + RFC 5869',
+    standard: 'RFC 5869',
     referenceUrl: '/library?ref=RFC 5869',
     kind: { type: 'hkdf-derive' },
   },
@@ -62,7 +62,12 @@ function getRandomUUID(): string {
   })
 }
 
-import { hsm_importGenericSecret, hsm_kbkdf } from '../../../../../wasm/softhsm'
+import {
+  CKM_SHA256_HMAC,
+  hsm_destroyObject,
+  hsm_importGenericSecret,
+  hsm_kbkdf,
+} from '../../../../../wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { clampStep } from '@/utils/clampStep'
 
@@ -75,6 +80,7 @@ interface DemoState {
   importedHandle?: number // real PKCS#11 handle from C_CreateObject (step 2)
   importWasLive?: boolean // true only after the current session import succeeds
   outputOrigin?: 'live-kbkdf' | 'illustrative-random'
+  comparison?: { repeatedKey: string; changedSessionId: string; changedKey: string }
 }
 
 export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
@@ -114,6 +120,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
         sessionId: undefined,
         sessionKey: undefined,
         outputOrigin: undefined,
+        comparison: undefined,
       }))
       setCurrentStep((step) => (step > 1 ? 1 : step))
       setOperationError(null)
@@ -157,6 +164,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
         sessionId: undefined,
         sessionKey: undefined,
         outputOrigin: undefined,
+        comparison: undefined,
       }))
       try {
         const { next, step } = await operation(active)
@@ -247,9 +255,13 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
             'The sample HSM is unavailable or still initializing. Retry, or explicitly disable it for an illustration.'
           )
         if (!active()) throw new Error('Sample HSM mode changed; repeat import.')
-        const sessionId = getRandomHex(16)
+        const sessionContext = crypto.getRandomValues(new Uint8Array(16))
+        const toHex = (bytes: Uint8Array) =>
+          Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+        const sessionId = toHex(sessionContext)
         let sessionKey = ''
         let outputOrigin: DemoState['outputOrigin']
+        let comparison: DemoState['comparison']
         if (hsm.isReady) {
           if (
             !hsm.moduleRef.current ||
@@ -276,21 +288,50 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               'The sample key belongs to a different HSM module or session. Repeat import before derivation.'
             )
           }
-          const fixedInput = new TextEncoder().encode(`session-key-v1\x00${sessionId}`)
-          // The bundled engines accept this HMAC-SHA-256 selector; rejection is never substituted.
-          const derived = hsm_kbkdf(M, hSession, state.importedHandle, 0x00000251, fixedInput, 32)
-          if (derived.length !== 32)
-            throw new Error('The sample derivation did not return the requested 32 bytes.')
-          sessionKey = Array.from(derived)
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('')
+          const { importedHandle } = state
+          const label = new TextEncoder().encode('session-key-v1\x00')
+          const derive = (context: Uint8Array) => {
+            const fixedInput = new Uint8Array(label.length + context.length + 4)
+            fixedInput.set(label)
+            fixedInput.set(context, label.length)
+            new DataView(fixedInput.buffer).setUint32(label.length + context.length, 256, false)
+            const derivedHandle = { current: 0 }
+            try {
+              const derived = hsm_kbkdf(
+                M,
+                hSession,
+                importedHandle,
+                CKM_SHA256_HMAC,
+                fixedInput,
+                32,
+                derivedHandle
+              )
+              if (derived.length !== 32) {
+                throw new Error('The sample derivation did not return the requested 32 bytes.')
+              }
+              return toHex(derived)
+            } finally {
+              if (derivedHandle.current) hsm_destroyObject(M, hSession, derivedHandle.current)
+            }
+          }
+          sessionKey = derive(sessionContext)
+          const repeatedKey = derive(sessionContext)
+          const changedContext = sessionContext.slice()
+          changedContext[0] ^= 1
+          const changedKey = derive(changedContext)
+          if (repeatedKey !== sessionKey || changedKey === sessionKey) {
+            throw new Error(
+              'The sample KDF did not reproduce the key for identical context or separate the changed context.'
+            )
+          }
+          comparison = { repeatedKey, changedSessionId: toHex(changedContext), changedKey }
           outputOrigin = 'live-kbkdf'
         } else {
           sessionKey = getRandomHex(32)
           outputOrigin = 'illustrative-random'
         }
         await new Promise((resolve) => setTimeout(resolve, 400))
-        return { next: { sessionId, sessionKey, outputOrigin }, step: 3 }
+        return { next: { sessionId, sessionKey, outputOrigin, comparison }, step: 3 }
       }),
     [perform, state.qkdSecret, state.importedHandle, state.importWasLive, hsm]
   )
@@ -598,12 +639,12 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               <div>PRF: CKM_SHA256_HMAC (HMAC-SHA-256)</div>
               <div>KI: &lt;imported_qkd_key_handle&gt;</div>
               <div>Label: &quot;session-key-v1&quot;</div>
-              <div>Context: &lt;session_id (16 bytes)&gt;</div>
-              <div>L: 256 bits</div>
+              <div>Context: 16 session-ID bytes, displayed in hex</div>
+              <div>L: 256 bits, encoded as a 32-bit big-endian integer</div>
             </div>
             <div className="mt-3 bg-muted/40 rounded p-3 border border-border">
               <div className="text-xs font-bold text-muted-foreground mb-1">
-                SP 800-108 Counter-Mode formula (§5.1)
+                SP 800-108 Rev. 1 Counter-Mode formula (§4.1)
               </div>
               <code className="text-xs font-mono text-foreground">
                 K(i) = PRF(KI, [i]₂ ‖ Label ‖ 0x00 ‖ Context ‖ [L]₂)
@@ -612,7 +653,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
           </div>
           <div className="flex items-start gap-2">
             <a
-              href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-108r1.pdf"
+              href="https://csrc.nist.gov/pubs/sp/800/108/r1/upd1/final"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-primary flex items-center gap-1 hover:underline"
@@ -680,55 +721,43 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               ? 'Sample C_DeriveKey returned bytes; displayed in JavaScript.'
               : 'Illustrative random output — no KDF executed.'}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Alice side */}
-            <div className="border-2 border-dashed border-primary/40 rounded-lg p-4 relative">
-              <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-primary">
-                Sample Output — View A
-              </div>
-              <div className="space-y-2">
-                <div className="bg-background rounded p-2 border border-border">
-                  <div className="text-xs text-muted-foreground mb-1">Session ID (context)</div>
-                  <code className="text-xs font-mono text-foreground break-all">
-                    {state.sessionId}
-                  </code>
-                </div>
-                <div className="bg-status-success/10 rounded p-2 border border-status-success/30">
-                  <div className="text-xs text-muted-foreground mb-1">Local sample output</div>
-                  <code className="text-xs font-mono text-status-success break-all">
-                    {state.sessionKey}
-                  </code>
-                </div>
-              </div>
-            </div>
-            {/* Bob side */}
-            <div className="border-2 border-dashed border-status-success/40 rounded-lg p-4 relative">
-              <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-status-success">
-                Same Sample Output — View B
-              </div>
-              <div className="space-y-2">
-                <div className="bg-background rounded p-2 border border-border">
-                  <div className="text-xs text-muted-foreground mb-1">
-                    Session ID (same context)
-                  </div>
-                  <code className="text-xs font-mono text-foreground break-all">
-                    {state.sessionId}
-                  </code>
-                </div>
-                <div className="bg-status-success/10 rounded p-2 border border-status-success/30">
-                  <div className="text-xs text-muted-foreground mb-1">Local sample output</div>
-                  <code className="text-xs font-mono text-status-success break-all">
-                    {state.sessionKey}
-                  </code>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="bg-status-success/5 rounded p-3 border border-status-success/20 text-xs text-muted-foreground">
-            Both views repeat the same locally stored value; they are not two independent HSM
-            derivations. No quantum channel or remote peer is involved. Check actual peer agreement,
-            supported mechanisms and key handling with your own production tools.
-          </div>
+          <section aria-label="Original context" className="space-y-1 rounded border p-3 text-xs">
+            <h3 className="font-semibold">Original context</h3>
+            <p>
+              Session ID <code className="break-all">{state.sessionId}</code>
+            </p>
+            <p>
+              Output <code className="break-all">{state.sessionKey}</code>
+            </p>
+          </section>
+          {state.comparison && (
+            <>
+              <section
+                aria-label="Repeated context"
+                className="space-y-1 rounded border p-3 text-xs"
+              >
+                <h3 className="font-semibold">Repeated context</h3>
+                <p>Deriving again with the same inputs returned the same key.</p>
+                <code className="block break-all">{state.comparison.repeatedKey}</code>
+              </section>
+              <section
+                aria-label="Changed context"
+                className="space-y-1 rounded border p-3 text-xs"
+              >
+                <h3 className="font-semibold">Changed context</h3>
+                <p>
+                  Changing one context bit produced a different key with the same master secret and
+                  label.
+                </p>
+                <p>
+                  Session ID <code className="break-all">{state.comparison.changedSessionId}</code>
+                </p>
+                <p>
+                  Output <code className="break-all">{state.comparison.changedKey}</code>
+                </p>
+              </section>
+            </>
+          )}
           <Button
             variant="gradient"
             onClick={stepHandlers[3]}

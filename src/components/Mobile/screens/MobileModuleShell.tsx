@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useRef, type ReactNode } from 'react'
+import { useId, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { CheckCircle2, Circle, Network, ArrowRight, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { handleTabListKeyDown } from '@/components/ui/tabs'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
 import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/learnPathScope'
@@ -121,6 +122,8 @@ export function MobileModuleShell({
   pathPicker,
 }: MobileModuleShellProps) {
   const showWorkshop = Boolean(workshopContent) && activeTab === 'workshop'
+  const mobileViewId = useId()
+  const learnPanelId = `${mobileViewId}-learn-panel`
   // A phone can open this module's workshop when it mounts here (workshopContent) or has a
   // phone-capable twin tool. Otherwise every workshop entry point says "on a computer".
   const workshopOnPhone = Boolean(workshopContent) || Boolean(practiceTool)
@@ -215,6 +218,7 @@ export function MobileModuleShell({
         <div
           role="tablist"
           aria-label="Module view"
+          onKeyDown={(event) => handleTabListKeyDown(event)}
           className="grid grid-cols-2 gap-1 rounded-xl border border-border bg-card p-1"
         >
           {(['learn', 'workshop'] as const).map((tab) => {
@@ -225,8 +229,15 @@ export function MobileModuleShell({
                 type="button"
                 variant="ghost"
                 role="tab"
+                id={`${mobileViewId}-${tab}-tab`}
                 aria-selected={selected}
-                onClick={() => onTabChange?.(tab)}
+                aria-controls={
+                  selected ? (tab === 'learn' ? learnPanelId : 'mobile-workshop') : undefined
+                }
+                tabIndex={selected ? 0 : -1}
+                onClick={() => {
+                  if (!selected) onTabChange?.(tab)
+                }}
                 className={cn(
                   'h-auto min-h-[44px] rounded-lg text-[13px] font-semibold transition-colors',
                   selected
@@ -242,7 +253,12 @@ export function MobileModuleShell({
       ) : null}
 
       {showWorkshop ? (
-        <div id="mobile-workshop" role="tabpanel" className="min-w-0">
+        <div
+          id="mobile-workshop"
+          role="tabpanel"
+          aria-labelledby={`${mobileViewId}-workshop-tab`}
+          className="min-w-0"
+        >
           {workshopContent}
         </div>
       ) : null}
@@ -298,6 +314,9 @@ export function MobileModuleShell({
       {!showWorkshop && (
         <div
           ref={learnRef}
+          id={workshopContent ? learnPanelId : undefined}
+          role={workshopContent ? 'tabpanel' : undefined}
+          aria-labelledby={workshopContent ? `${mobileViewId}-learn-tab` : undefined}
           className="text-[13px] leading-relaxed text-foreground [&_h2]:mt-4 [&_h2]:text-[15px] [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:text-[13.5px] [&_h3]:font-bold"
         >
           {learnContent}

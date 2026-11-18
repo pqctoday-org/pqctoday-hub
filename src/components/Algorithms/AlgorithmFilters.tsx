@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Input } from '../ui/input'
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '../../data/learningPersonas'
@@ -116,7 +116,7 @@ function QuickViewSegmented({
 }: {
   quickView: 'none' | 'nist-picks' | 'final-nist-standards'
   onQuickView: (preset: QuickViewPreset) => void
-  /** A dropdown filter (e.g. a role default) still hides rows. */
+  /** A filter outside the quick-view preset still hides rows. */
   narrowed: boolean
 }) {
   // quickView is tracked directly (see useAlgorithmExplorer.ts) rather than
@@ -216,20 +216,17 @@ export function AlgorithmFilters({
   // Ternary / researcher / no-persona open the dropdown row inline.
   const isBinaryPersona = granularityForPersona(persona) === 'binary'
   const [advancedOpen, setAdvancedOpen] = useState(!isBinaryPersona)
-  const hasActiveFilters =
+  const searchInput = useRef<HTMLInputElement>(null)
+  const narrowed =
     cryptoFamily !== 'All' ||
     functionGroup !== 'All' ||
     securityLevel !== 'All' ||
     region !== 'All' ||
     status !== 'All' ||
     searchQuery !== '' ||
-    quickView !== 'none'
-  const dropdownNarrowed =
-    cryptoFamily !== 'All' ||
-    functionGroup !== 'All' ||
-    securityLevel !== 'All' ||
-    region !== 'All' ||
-    status !== 'All'
+    cnsaLens ||
+    researchGapOnly
+  const hasActiveFilters = narrowed || quickView !== 'none'
   const roleDefaults =
     roleDefaultFilters ??
     roleDefaultsInForce(persona, {
@@ -258,6 +255,7 @@ export function AlgorithmFilters({
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
           <Input
+            ref={searchInput}
             type="text"
             placeholder='Search — try "lattice KEM" or "ML-DSA"'
             value={searchQuery}
@@ -268,11 +266,7 @@ export function AlgorithmFilters({
         </div>
 
         {onQuickView && (
-          <QuickViewSegmented
-            quickView={quickView}
-            onQuickView={onQuickView}
-            narrowed={dropdownNarrowed}
-          />
+          <QuickViewSegmented quickView={quickView} onQuickView={onQuickView} narrowed={narrowed} />
         )}
 
         {/* CNSA 2.0 lens toggle — primary-tinted when active */}
@@ -302,6 +296,21 @@ export function AlgorithmFilters({
           >
             <Lightbulb size={13} aria-hidden="true" />
             Research needed
+          </Button>
+        )}
+
+        {onClearAll && hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              onClearAll()
+              searchInput.current?.focus()
+            }}
+            className="min-h-[44px] md:min-h-0 md:h-7 gap-1 px-2 text-xs text-muted-foreground"
+          >
+            <X size={12} aria-hidden="true" />
+            Clear all
           </Button>
         )}
 
@@ -416,18 +425,6 @@ export function AlgorithmFilters({
               defaultIcon={<CheckCircle size={16} className="text-primary" />}
               noContainer
             />
-
-            {onClearAll && hasActiveFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClearAll}
-                className="h-7 gap-1 px-2 text-xs text-muted-foreground"
-              >
-                <X size={12} />
-                Clear all
-              </Button>
-            )}
           </div>
         </div>
       )}

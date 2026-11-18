@@ -19,6 +19,7 @@ import { V33TestBench } from './v33/V33TestBench'
 export type TestSuite = 'standard' | 'acvp' | 'conformance' | 'v33'
 
 interface DeveloperTabProps {
+  openPython?: boolean
   activeSubTab: TestSuite
   onSubTabChange: (tab: TestSuite) => void
   /** Open a lesson of the Learn tab's v3.3 track (the bench links to it). */
@@ -43,7 +44,12 @@ interface DeveloperTabProps {
  * "Builder" would collide with the inner one once both tablists are mounted
  * together.
  */
-export const DeveloperTab = ({ activeSubTab, onSubTabChange, onOpenLesson }: DeveloperTabProps) => {
+export const DeveloperTab = ({
+  activeSubTab,
+  onSubTabChange,
+  onOpenLesson,
+  openPython,
+}: DeveloperTabProps) => {
   const role = usePersonaStore((s) => s.selectedPersona)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const workbenchHidden = hidesWorkbench(role, viewAccess)
@@ -71,7 +77,7 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange, onOpenLesson }: Dev
         {showWorkbenchTabs && <TabsTrigger value="v33">v3.3 draft</TabsTrigger>}
       </TabsList>
       <TabsContent value="standard">
-        <PkcsDevWorkbench />
+        <PkcsDevWorkbench openPython={openPython} />
       </TabsContent>
       {showWorkbenchTabs && (
         <TabsContent value="acvp">

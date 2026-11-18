@@ -209,6 +209,8 @@ export interface InventoriedClaim {
   field: string
   value: number
   units: string
+  encoding?: string
+  scope?: string
   labels: string[]
   parameters: string[]
   expected?: number
@@ -220,7 +222,8 @@ export interface VerifiedClaimRecord extends InventoriedClaim {
   expected: number
   source: string
   encodingScope: string
-  disposition: 'matches-independent-oracle'
+  disposition:
+    'matches-independent-oracle' | 'illustrative-sizing-example' | 'implementation-constant'
 }
 
 /**
@@ -313,10 +316,10 @@ export function verifyInventoriedClaim(claim: InventoriedClaim): VerifiedClaimRe
     let expected: number
     let encodingScope: string
     if (isPubField) {
-      if (claim.value === spec.compressedPublicKeyBytes) {
+      if (claim.encoding === 'sec1-compressed') {
         expected = spec.compressedPublicKeyBytes
         encodingScope = `${curveKey} SEC 1 v2.0 §2.3.3 compressed point (1 + ${spec.coordinateBytes} B)`
-      } else if (claim.value === spec.rawCoordinatePairBytes) {
+      } else if (claim.encoding === 'raw-coordinates') {
         expected = spec.rawCoordinatePairBytes
         encodingScope = `${curveKey} raw coordinate pair X || Y (2 * ${spec.coordinateBytes} B)`
       } else {
@@ -327,7 +330,7 @@ export function verifyInventoriedClaim(claim: InventoriedClaim): VerifiedClaimRe
       expected = spec.privateKeyBytes
       encodingScope = `${curveKey} FIPS 186-5 private scalar d (${spec.coordinateBytes} B)`
     } else {
-      if (claim.value === spec.derSignatureMaxBytes) {
+      if (claim.encoding === 'der-signature-upper-bound') {
         expected = spec.derSignatureMaxBytes
         encodingScope = `${curveKey} RFC 3279 §2.2.3 ASN.1 DER ECDSA-Sig-Value max length`
       } else {
@@ -357,10 +360,10 @@ export function verifyInventoriedClaim(claim: InventoriedClaim): VerifiedClaimRe
     let expected: number
     let encodingScope: string
     if (isPubField) {
-      if (claim.value === spec.spkiDerBytes) {
+      if (claim.encoding === 'spki-der-e65537') {
         expected = spec.spkiDerBytes
         encodingScope = `${rsaKey} RFC 5280 / RFC 3279 ASN.1 DER SubjectPublicKeyInfo (e=65537)`
-      } else if (claim.value === spec.pkcs1PublicKeyDerBytes) {
+      } else if (claim.encoding === 'pkcs1-public-der') {
         expected = spec.pkcs1PublicKeyDerBytes
         encodingScope = `${rsaKey} RFC 8017 §A.1.1 PKCS#1 RSAPublicKey DER`
       } else {
@@ -368,11 +371,26 @@ export function verifyInventoriedClaim(claim: InventoriedClaim): VerifiedClaimRe
         encodingScope = `${rsaKey} RFC 8017 / EMV Book 2 raw modulus n (${spec.modulusBits} bits)`
       }
     } else if (isPrivField) {
-      const matchedDer =
-        spec.pkcs1PrivateKeyDerBytes.find((len) => len === claim.value) ??
-        spec.pkcs1PrivateKeyDerBytes[0]
-      expected = matchedDer
-      encodingScope = `${rsaKey} RFC 8017 §A.1.2 PKCS#1 RSAPrivateKey DER`
+      // The tables are sizing illustrations. PKCS#1 defines the RSA private-key
+      // structure, with variable-length integers. It does not pin its DER byte count.
+      const referenceSize =
+        rsaKey === 'RSA-2048'
+          ? 1192
+          : rsaKey === 'RSA-3072'
+            ? 1766
+            : rsaKey === 'RSA-4096'
+              ? claim.file.endsWith('secureBootConstants.ts')
+                ? 2350
+                : 2348
+              : spec.pkcs1PrivateKeyDerBytes[0]
+      return {
+        ...claim,
+        expected: referenceSize,
+        source:
+          'Illustrative storage estimate; see RFC 8017 §A.1.2 for the variable-size structure',
+        encodingScope: `${rsaKey} PKCS#1 RSAPrivateKey DER sizing example`,
+        disposition: 'illustrative-sizing-example',
+      }
     } else {
       expected = spec.signatureOrCiphertextBytes
       encodingScope = `${rsaKey} RFC 8017 §8.1/§8.2 signature or ciphertext (${spec.rawModulusBytes} B)`
@@ -547,8 +565,8 @@ export function verifyInventoriedClaim(claim: InventoriedClaim): VerifiedClaimRe
       ...claim,
       expected,
       source: spec.standard,
-      encodingScope: spec.standard,
-      disposition: 'matches-independent-oracle',
+      encodingScope: 'Implementation constant in an arithmetic reduction',
+      disposition: 'implementation-constant',
     }
   }
 

@@ -3,14 +3,18 @@ import type { CryptoProvider } from './crypto-provider'
 import type { CryptoKey } from '../types'
 import { sampleHolderPublicJwk } from './sdjwt-utils'
 
-function decodeObject(encoded: string): Record<string, unknown> {
+function decodeJson(encoded: string): unknown {
   if (!/^[A-Za-z0-9_-]+$/.test(encoded)) throw new Error('Malformed sample JWT payload.')
   const base64 = encoded.replace(/-/g, '+').replace(/_/g, '/')
   const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
-  const value = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes))
+  return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes))
+}
+
+function decodeObject(encoded: string): Record<string, unknown> {
+  const value = decodeJson(encoded)
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw new Error('Malformed sample JWT payload.')
-  return value
+  return value as Record<string, unknown>
 }
 
 /** Match all public members without changing synchronous wallet-key selection. */
@@ -39,7 +43,7 @@ export async function verifySampleSdPresentation(
   key: CryptoKey,
   provider: CryptoProvider,
   onLog?: (line: string) => void
-): Promise<void> {
+): Promise<string[]> {
   const split = presentation.lastIndexOf('~')
   if (split < 0) throw new Error('Missing sample key-binding JWT.')
   const prefix = presentation.slice(0, split + 1)
@@ -74,6 +78,7 @@ export async function verifySampleSdPresentation(
   if (issuerPayload._sd_alg !== 'sha-256' || !Array.isArray(issuerPayload._sd))
     throw new Error('Unsupported sample disclosure profile.')
   const seen = new Set<string>()
+  const claims = new Set<string>()
   for (const disclosure of segments.slice(1)) {
     if (!disclosure || seen.has(disclosure))
       throw new Error('Missing or duplicate sample disclosure.')
@@ -81,7 +86,13 @@ export async function verifySampleSdPresentation(
     const digest = await provider.sha256Hash(disclosure, onLog)
     if (!issuerPayload._sd.includes(digest))
       throw new Error('Sample disclosure digest does not match the saved issuer payload.')
+    const claim = decodeJson(disclosure)
+    if (!Array.isArray(claim) || claim.length !== 3 || typeof claim[1] !== 'string')
+      throw new Error('Malformed sample claim disclosure.')
+    if (claims.has(claim[1])) throw new Error('Duplicate sample claim name.')
+    claims.add(claim[1])
   }
   if (payload.sd_hash !== (await provider.sha256Hash(prefix, onLog)))
     throw new Error('Sample SD-hash does not match the presented disclosures.')
+  return [...claims]
 }

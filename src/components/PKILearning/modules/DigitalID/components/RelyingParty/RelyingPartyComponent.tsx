@@ -34,6 +34,22 @@ interface RelyingPartyComponentProps {
 
 type RPStep = 'START' | 'DISCLOSURE' | 'PRESENTATION' | 'VERIFICATION' | 'COMPLETE' | 'REFUSED'
 
+type DisclosureSource = 'diploma' | 'pid'
+type DisclosureClaim = { key: string; source: DisclosureSource }
+const BANK_AUDIENCE = 'https://bank.example.com'
+const OTHER_AUDIENCE = 'https://other-bank.example.com'
+
+const REQUESTED_CLAIMS: DisclosureClaim[] = [
+  { key: 'family_name', source: 'pid' },
+  { key: 'given_name', source: 'pid' },
+  { key: 'degree', source: 'diploma' },
+  { key: 'age_over_18', source: 'pid' },
+]
+const claimId = ({ source, key }: DisclosureClaim) => `${source}:${key}`
+const claimLabel = ({ source, key }: DisclosureClaim) =>
+  `${key} (${source === 'pid' ? 'PID' : 'diploma'})`
+const DEFAULT_SELECTION = REQUESTED_CLAIMS.map(claimId)
+
 export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   wallet,
   hsm,
@@ -41,14 +57,15 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
 }) => {
   const [step, setStep] = useState<RPStep>('START')
   const [loading, setLoading] = useState(false)
+  const [verifyOtherAudience, setVerifyOtherAudience] = useState(false)
   const [verificationError, setVerificationError] = useState<string | null>(null)
   const [presentationData, setPresentationData] = useState<{
     signature: string
     payload: string
     key: CryptoKey
     nonce: string
-    audience: string
     issuerJwt?: string
+    pid?: ReturnType<typeof createMdocPresentation>
   } | null>(null)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
@@ -65,13 +82,6 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
     }
     return ossl
   }
-
-  /**
-   * What the bank asks for. Spans BOTH credentials in one request, which is
-   * the ARF's own model: `age_over_18` proves eligibility from the PID while
-   * `birth_date` stays withheld, and the diploma supplies the degree.
-   */
-  const REQUESTED_CLAIMS = ['family_name', 'given_name', 'degree', 'age_over_18']
 
   /** The SD-JWT credential this presentation will disclose from, if any. */
   const sdJwtCred = wallet.credentials.find(
@@ -94,8 +104,8 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
   })
 
   /** Every claim the holder could disclose, per credential, read from the credentials themselves. */
-  const availableClaims = (): { key: string; source: 'diploma' | 'pid' }[] => {
-    const out: { key: string; source: 'diploma' | 'pid' }[] = []
+  const availableClaims = (): DisclosureClaim[] => {
+    const out: DisclosureClaim[] = []
     if (sdJwtCred?.raw) {
       try {
         const parsed = JSON.parse(sdJwtCred.raw) as SdJwtVc
@@ -119,24 +129,22 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
 
   const claims = availableClaims()
 
-  /**
-   * The holder's choice. Defaults to exactly what the bank asked for, so the
-   * guided path still works for a learner who just clicks through, but every
-   * box is free to untick — under-sharing is allowed precisely so the refusal
-   * below is something you can cause and observe.
-   */
-  const [selectedClaims, setSelectedClaims] = useState<string[]>(REQUESTED_CLAIMS)
-  const toggleClaim = (k: string) =>
-    setSelectedClaims((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]))
+  const [selectedClaims, setSelectedClaims] = useState(DEFAULT_SELECTION)
+  const toggleClaim = (id: string) =>
+    setSelectedClaims((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
 
-  const offeredKeys = claims.map((c) => c.key)
-  /** Claims the bank asked for that the wallet actually holds. */
-  const satisfiable = REQUESTED_CLAIMS.filter((k) => offeredKeys.includes(k))
-  const missing = satisfiable.filter((k) => !selectedClaims.includes(k))
+  const selected = (claim: DisclosureClaim) => selectedClaims.includes(claimId(claim))
+  const unavailable = REQUESTED_CLAIMS.filter(
+    (required) => !claims.some((claim) => claimId(claim) === claimId(required))
+  )
+  const withheldRequired = REQUESTED_CLAIMS.filter(
+    (required) => !unavailable.includes(required) && !selected(required)
+  )
+  const requestedLabels = REQUESTED_CLAIMS.map(claimLabel).join(', ')
 
   const handleStart = () => {
     addLog('Connecting to Bank (Relying Party)...')
-    addLog(`Bank requests: [${REQUESTED_CLAIMS.join(', ')}] for Account Opening.`)
+    addLog(`Bank requests: [${requestedLabels}] for Account Opening.`)
     addLog(
       'age_over_18 is requested INSTEAD of birth_date — the bank needs eligibility, not your date of birth.'
     )
@@ -145,17 +153,14 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
 
   const handleDisclosure = () => {
     addLog('User Review: Selective Disclosure applied.')
-    const revealed = claims.filter((c) => selectedClaims.includes(c.key)).map((c) => c.key)
-    const withheld = claims.filter((c) => !selectedClaims.includes(c.key)).map((c) => c.key)
+    const revealed = claims.filter(selected).map(claimLabel)
+    const withheld = claims.filter((claim) => !selected(claim)).map(claimLabel)
     addLog(`Revealed attributes: [${revealed.join(', ') || 'none'}]`)
     addLog(`Hidden attributes: [${withheld.join(', ') || 'none'}]`)
-    if (withheld.includes('birth_date') && revealed.includes('age_over_18')) {
+    if (unavailable.length || withheldRequired.length) {
       addLog(
-        'Note: age_over_18 is proven while birth_date is withheld from the same signed credential.'
+        `Sample request is incomplete: ${[...unavailable, ...withheldRequired].map(claimLabel).join(', ')}.`
       )
-    }
-    if (missing.length) {
-      addLog(`WARNING: withholding [${missing.join(', ')}] — the bank requires these.`)
     }
     setStep('PRESENTATION')
     handlePresentation()
@@ -174,103 +179,52 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
         hsm.addStepLog('🔐 Generate Key Binding Proof (Presentation)')
       }
 
+      const provider = getCryptoProvider()
+      const nonce = crypto.randomUUID()
+      let signature: string
+      let payload: string
+      let issuerJwt: string | undefined
+
       if (sdJwtCred?.raw) {
         addLog('Generating SD-JWT Presentation with Key Binding...')
-
         const sdJwtVc = JSON.parse(sdJwtCred.raw) as SdJwtVc
-        const challenge = crypto.randomUUID()
-        const audience = 'https://bank.example.com'
-
-        const provider = getCryptoProvider()
-        // Only the diploma's own claims go to the SD-JWT presentation; the PID
-        // half is a separate mdoc disclosure below.
         const diplomaSelection = claims
-          .filter((c) => c.source === 'diploma' && selectedClaims.includes(c.key))
-          .map((c) => c.key)
-        const presentationString = await createPresentation(
+          .filter((claim) => claim.source === 'diploma' && selected(claim))
+          .map((claim) => claim.key)
+        payload = await createPresentation(
           sdJwtVc,
           diplomaSelection,
           availableKey,
-          audience,
-          challenge,
+          BANK_AUDIENCE,
+          nonce,
           provider,
           addOpenSSLLog
         )
-
-        setPresentationData({
-          signature: presentationString,
-          payload: presentationString,
-          key: availableKey,
-          nonce: challenge,
-          audience,
-          issuerJwt: sdJwtVc.issuerJwt,
-        })
-        addLog(`Presentation generated:\n${presentationString.substring(0, 40)}...`)
-
-        // PID half — a REAL ISO 18013-5 selective disclosure: only the chosen
-        // IssuerSignedItems travel, and the verifier re-hashes each against the
-        // issuer-signed MSO. This is what makes the age proof more than a label.
-        if (pidCred?.raw) {
-          const pidSelection = claims
-            .filter((c) => c.source === 'pid' && selectedClaims.includes(c.key))
-            .map((c) => c.key)
-          const mdoc = JSON.parse(pidCred.raw) as MsoMdoc
-          const mdocPres = createMdocPresentation(mdoc, pidSelection)
-          addLog(
-            `PID mdoc disclosure: sending [${mdocPres.disclosed.map((d) => d.elementIdentifier).join(', ') || 'none'}], withholding [${mdocPres.withheld.join(', ') || 'none'}]`
-          )
-          const checks = await verifyMdocPresentation(mdocPres, provider, addOpenSSLLog)
-          if (checks.some((check) => !check.digestMatched))
-            throw new Error('Sample PID disclosure digest verification failed.')
-          for (const c of checks) {
-            addLog(
-              `  digest check ${c.element}: ${c.digestMatched ? 'MATCHES the issuer-signed MSO' : 'FAILED'}`
-            )
-          }
-          if (mdocPres.withheld.includes('birth_date')) {
-            addLog(
-              '  birth_date was never transmitted — it is absent from the payload, not merely hidden.'
-            )
-          }
-        }
+        signature = payload
+        issuerJwt = sdJwtVc.issuerJwt
       } else {
-        // No SD-JWT credential — use device binding proof (works with PID mdoc)
         addLog('Generating Device Binding Proof (no SD-JWT credential found)...')
-
-        const nonce = crypto.randomUUID()
-        const payload = JSON.stringify({
+        payload = JSON.stringify({
           iss: 'did:wallet:123',
-          aud: 'https://bank.example.com',
+          aud: BANK_AUDIENCE,
           nonce,
           iat: Date.now(),
         })
-        addLog(`Signing Verification Payload: ${payload.substring(0, 60)}...`)
-
-        const provider = getCryptoProvider()
-        const signature = await provider.signData(availableKey, payload, addOpenSSLLog)
-        setPresentationData({
-          signature,
-          payload,
-          key: availableKey,
-          nonce,
-          audience: 'https://bank.example.com',
-        })
-        addLog(`Signature generated: ${signature.substring(0, 20)}...`)
-        if (pidCred?.raw) {
-          const mdoc = JSON.parse(pidCred.raw) as MsoMdoc
-          const selected = claims
-            .filter((c) => c.source === 'pid' && selectedClaims.includes(c.key))
-            .map((c) => c.key)
-          const checks = await verifyMdocPresentation(
-            createMdocPresentation(mdoc, selected),
-            provider,
-            addOpenSSLLog
-          )
-          if (checks.some((check) => !check.digestMatched))
-            throw new Error('Sample PID disclosure digest verification failed.')
-        }
+        signature = await provider.signData(availableKey, payload, addOpenSSLLog)
       }
 
+      const pidSelection = claims
+        .filter((claim) => claim.source === 'pid' && selected(claim))
+        .map((claim) => claim.key)
+      const pid = pidCred?.raw
+        ? createMdocPresentation(JSON.parse(pidCred.raw) as MsoMdoc, pidSelection)
+        : undefined
+      if (pid) {
+        addLog(
+          `PID mdoc disclosure: sending [${pid.disclosed.map((item) => item.elementIdentifier).join(', ') || 'none'}], withholding [${pid.withheld.join(', ') || 'none'}]`
+        )
+      }
+      setPresentationData({ signature, payload, key: availableKey, nonce, issuerJwt, pid })
       addLog('Presentation with Proof sent to Bank.')
 
       await new Promise((r) => setTimeout(r, 800)) // UI pacing
@@ -294,13 +248,15 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
     try {
       if (!presentationData) throw new Error('No complete sample presentation is available.')
       const provider = getCryptoProvider()
+      const expectedAudience = verifyOtherAudience ? OTHER_AUDIENCE : BANK_AUDIENCE
+      let diplomaClaims: string[] = []
       if (presentationData.issuerJwt) {
-        await verifySampleSdPresentation(
+        diplomaClaims = await verifySampleSdPresentation(
           presentationData.payload,
           {
             issuerJwt: presentationData.issuerJwt,
             nonce: presentationData.nonce,
-            audience: presentationData.audience,
+            audience: expectedAudience,
           },
           presentationData.key,
           provider,
@@ -311,7 +267,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
         )
       } else {
         const payload = JSON.parse(presentationData.payload)
-        if (payload.nonce !== presentationData.nonce || payload.aud !== presentationData.audience)
+        if (payload.nonce !== presentationData.nonce || payload.aud !== expectedAudience)
           throw new Error('Sample device-proof challenge mismatch.')
         if (
           !(await provider.verifySignature(
@@ -326,7 +282,21 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
           )
         addLog('Sample device-binding signature and challenge passed.')
       }
-      if (missing.length) throw new Error(`The sample request is missing: ${missing.join(', ')}.`)
+      const pidChecks = presentationData.pid
+        ? await verifyMdocPresentation(presentationData.pid, provider, addOpenSSLLog)
+        : []
+      if (pidChecks.some((check) => !check.digestMatched))
+        throw new Error('Sample PID disclosure digest verification failed.')
+      for (const check of pidChecks) addLog(`PID digest matches the saved MSO: ${check.element}.`)
+      const verifiedClaims = {
+        diploma: diplomaClaims,
+        pid: pidChecks.map((check) => check.element),
+      }
+      const missing = REQUESTED_CLAIMS.filter(
+        (claim) => !verifiedClaims[claim.source].includes(claim.key)
+      )
+      if (missing.length)
+        throw new Error(`The sample request is missing: ${missing.map(claimLabel).join(', ')}.`)
       addLog(
         'Issuer-chain trust, revocation/status and account-approval decisions are simulated assumptions, not checks performed by this exercise.'
       )
@@ -463,10 +433,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                       <Eye className="w-4 h-4" /> You choose what to share
                     </p>
                     <p className="text-xs text-muted-foreground mb-3">
-                      The bank asked for{' '}
-                      <span className="font-mono">{REQUESTED_CLAIMS.join(', ')}</span>. Untick
-                      anything you would rather keep — the presentation is built from this list, so
-                      what you withhold is never transmitted.
+                      The bank asked for <span className="font-mono">{requestedLabels}</span>.
+                      Untick anything you would rather keep — the presentation is built from this
+                      list, so what you withhold is never transmitted.
                     </p>
                     {claims.length === 0 ? (
                       <p className="text-xs text-muted-foreground">
@@ -475,15 +444,16 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                     ) : (
                       <ul className="space-y-1.5">
                         {claims.map((c) => {
-                          const asked = REQUESTED_CLAIMS.includes(c.key)
-                          const on = selectedClaims.includes(c.key)
+                          const asked = DEFAULT_SELECTION.includes(claimId(c))
+                          const on = selected(c)
                           return (
                             <li key={`${c.source}-${c.key}`} className="flex items-center gap-2">
                               <input
                                 type="checkbox"
                                 id={`claim-${c.source}-${c.key}`}
                                 checked={on}
-                                onChange={() => toggleClaim(c.key)}
+                                onChange={() => toggleClaim(claimId(c))}
+                                aria-label={claimLabel(c)}
                                 className="accent-tertiary w-3.5 h-3.5"
                               />
                               <label
@@ -510,11 +480,16 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                         })}
                       </ul>
                     )}
-                    {missing.length > 0 && (
+                    {unavailable.length > 0 && (
                       <p className="text-xs text-status-warning mt-3">
-                        Withholding <span className="font-mono">{missing.join(', ')}</span> — the
-                        bank requires these. Share anyway to see what a verifier does with an
-                        incomplete presentation.
+                        The wallet lacks {unavailable.map(claimLabel).join(', ')}. Share the
+                        available claims to see how the bank handles the incomplete request.
+                      </p>
+                    )}
+                    {withheldRequired.length > 0 && (
+                      <p className="text-xs text-status-warning mt-3">
+                        You chose to withhold {withheldRequired.map(claimLabel).join(', ')}. The
+                        bank requires these attributes.
                       </p>
                     )}
                   </div>
@@ -539,14 +514,28 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
               )}
 
               {step === 'VERIFICATION' && (
-                <Button
-                  variant="ghost"
-                  onClick={handleVerification}
-                  disabled={loading}
-                  className="w-full"
-                >
-                  Check Verification Result
-                </Button>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    The holder signed for {BANK_AUDIENCE}. Try the same presentation with another
+                    recipient to see how the audience check works.
+                  </p>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={verifyOtherAudience}
+                      onChange={(event) => setVerifyOtherAudience(event.target.checked)}
+                    />
+                    Verify for another recipient
+                  </label>
+                  <Button
+                    variant="ghost"
+                    onClick={handleVerification}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    Check Verification Result
+                  </Button>
+                </div>
               )}
 
               {step === 'REFUSED' && (
@@ -561,7 +550,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({
                     </p>
                     <Button
                       onClick={() => {
-                        setSelectedClaims(REQUESTED_CLAIMS)
+                        setSelectedClaims(DEFAULT_SELECTION)
+                        setVerifyOtherAudience(false)
+                        setVerificationError(null)
                         setStep('DISCLOSURE')
                       }}
                       variant="outline"

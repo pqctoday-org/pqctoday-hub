@@ -80,7 +80,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
-  const [loading, setLoading] = useState(false)
+  const [completedKey, setCompletedKey] = useState<string | null>(null)
+  const [attempt, setAttempt] = useState(0)
   // Hits the Authoritative-only tier filter removed for the current query (for the hint row).
   const [hidden, setHidden] = useState<PaletteHiddenHit[]>([])
   // Group labels whose "Show N more" has been activated for the current results.
@@ -109,6 +110,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const activeItemRef = useRef<HTMLButtonElement>(null)
 
   const curiousLocked = selectedPersona === 'curious' && viewAccess === 'gated'
+  const searchKey = JSON.stringify([query, authoritativeOnly, curiousLocked, showAdvanced, attempt])
+  const loading = Boolean(isOpen && query.trim() && completedKey !== searchKey)
 
   // Pre-warm the index when the palette OPENS, not on mount. Pre-warming on mount
   // meant every page load pulled the 21 MB search/trust-score graph even for the
@@ -135,13 +138,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       setResults([])
       setError(null)
       setActiveIdx(0)
-      setTimeout(() => inputRef.current?.focus(), 50)
+      setCompletedKey(null)
+      const focusTimer = setTimeout(() => inputRef.current?.focus(), 50)
+      return () => clearTimeout(focusTimer)
     }
   }, [isOpen])
 
   // Search on query change
   useEffect(() => {
-    if (!query.trim()) {
+    if (!isOpen || !query.trim()) {
+      setCompletedKey(null)
       setResults([])
       setHidden([])
       setExpanded(new Set())
@@ -151,7 +157,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     }
 
     let cancelled = false
-    setLoading(true)
     setError(null)
 
     // `ensureSources` (WS6a, extended WS22 Stage 3): the two tool registries and
@@ -177,7 +182,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         setExpanded(new Set())
         setIndexReady(true)
         setActiveIdx(0)
-        setLoading(false)
+        setCompletedKey(searchKey)
       })
       .catch((err) => {
         if (cancelled) return
@@ -185,13 +190,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         setResults([])
         setHidden([])
         setError(err instanceof Error ? err.message : 'Search index failed to load')
-        setLoading(false)
+        setCompletedKey(searchKey)
       })
 
     return () => {
       cancelled = true
     }
-  }, [query, curiousLocked, showAdvanced, authoritativeOnly])
+  }, [isOpen, query, curiousLocked, showAdvanced, authoritativeOnly, searchKey])
 
   const grouped = useMemo(() => groupResults(results), [results])
   // Per-group cap: only the top PALETTE_GROUP_CAP rows of each group render until its
@@ -232,13 +237,19 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   const runRecentQuery = useCallback((q: string) => {
     setQuery(q)
+    inputRef.current?.focus()
+  }, [])
+
+  const clearSearch = useCallback(() => {
+    setQuery('')
+    inputRef.current?.focus()
   }, [])
 
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       // Suggestions and other buttons keep their own native keyboard activation.
-      if ((e.target as HTMLElement).closest('button')) return
+      if ((e.target as HTMLElement).closest('button') || !hasSelectableResults) return
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         setActiveIdx((i) => Math.min(i + 1, nav.length - 1))
@@ -252,7 +263,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         else if (entry?.kind === 'more') expandGroup(entry.label)
       }
     },
-    [nav, activeIdx, navigateTo, expandGroup]
+    [nav, activeIdx, navigateTo, expandGroup, hasSelectableResults]
   )
 
   // Scroll active item into view
@@ -300,6 +311,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     role="combobox"
                     aria-expanded={hasSelectableResults}
                     aria-controls="command-palette-listbox"
+                    aria-activedescendant={
+                      hasSelectableResults ? `command-palette-option-${activeIdx}` : undefined
+                    }
                     aria-autocomplete="list"
                     aria-label="Search"
                     placeholder="Search algorithms, standards, timelines…"
@@ -327,7 +341,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setQuery('')}
+                      onClick={clearSearch}
                       className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground shrink-0"
                       aria-label="Clear search"
                     >
@@ -421,11 +435,21 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       <p className="text-sm text-status-error font-medium">Search unavailable</p>
                       <p className="text-xs text-muted-foreground max-w-sm">{error}</p>
                       <p className="text-xs text-muted-foreground mt-2">
-                        Try reloading the page. If the problem persists the search index may need to
-                        be regenerated.
+                        Retry this search or enter another query.
                       </p>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setAttempt((previous) => previous + 1)
+                          inputRef.current?.focus()
+                        }}
+                      >
+                        Retry search
+                      </Button>
                     </div>
-                  ) : results.length === 0 && loading ? (
+                  ) : loading ? (
                     /* Index still building (up to ~17 s on slow CPUs) or first query
                        in flight: say so instead of rendering a blank list. */
                     <div
@@ -439,10 +463,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     /* No results */
                     <div className="flex flex-col items-center gap-2 py-12 text-center">
                       <Search size={28} className="text-muted-foreground/30" aria-hidden="true" />
-                      <p className="text-sm text-muted-foreground">
+                      <p role="status" className="text-sm text-muted-foreground">
                         No results for{' '}
                         <span className="font-medium text-foreground">&ldquo;{query}&rdquo;</span>
                       </p>
+                      <Button type="button" size="sm" variant="outline" onClick={clearSearch}>
+                        Clear and search again
+                      </Button>
                     </div>
                   ) : (
                     /* Grouped results — top PALETTE_GROUP_CAP rows per group */
@@ -466,6 +493,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                                     : undefined
                                 }
                                 role="option"
+                                id={`command-palette-option-${idx}`}
                                 aria-selected={isActive}
                                 onClick={() => navigateTo(item)}
                                 onMouseEnter={() => setActiveIdx(idx)}
@@ -514,6 +542,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                                       : undefined
                                   }
                                   role="option"
+                                  id={`command-palette-option-${idx}`}
                                   aria-selected={isActive}
                                   aria-label={`Show ${moreCount} more ${label} results`}
                                   data-testid="cmdk-show-more"

@@ -68,6 +68,7 @@ export interface TestResult {
   value: number
   /** Within the check's cutoff. For group 'visualization' this is NOT a security verdict. */
   passed: boolean
+  insufficientData?: true
   threshold: number
   description: string
   detail: string
@@ -181,6 +182,7 @@ export function runsTest(data: Uint8Array): TestResult {
       threshold: 0,
       description: 'Need at least 2 bits',
       detail: 'Insufficient data',
+      insufficientData: true,
       group: 'visualization',
       sampleLimit: visualizationLimit(n),
     }
@@ -215,6 +217,7 @@ export function chiSquaredTest(data: Uint8Array): TestResult {
       threshold: 0,
       description: 'Need at least 16 bytes',
       detail: 'Insufficient data',
+      insufficientData: true,
       group: 'visualization',
       sampleLimit: visualizationLimit(n * 8),
     }
@@ -298,6 +301,7 @@ export function repetitionCountTest(
       threshold: 0,
       description: 'Need at least 2 bytes',
       detail: 'Insufficient data',
+      insufficientData: true,
       group: 'health',
       sampleLimit: healthLimit(n, H),
     }
@@ -424,6 +428,7 @@ export function adaptiveProportionTest(
       threshold: 0,
       description: 'Need at least 2 bytes',
       detail: 'Insufficient data',
+      insufficientData: true,
       group: 'health',
       sampleLimit: healthLimit(n, H),
     }

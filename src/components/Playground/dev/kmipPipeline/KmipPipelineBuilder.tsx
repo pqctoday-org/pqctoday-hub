@@ -49,7 +49,7 @@ import {
 } from './KmipCorpusPalette'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { getCodepointTable } from '../../../../wasm/kmip/ttlv/codepointTable'
-import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
+import { runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import {
   KMIP_PRIMITIVES,
   opsFor,
@@ -497,11 +497,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       )
     const t0 = performance.now()
     try {
-      const py = await bootPyRuntime()
       const table = await getCodepointTable()
-      const bridge = createKmipBridge(engine, table)
-      py.registerJsModule('kmip_bridge', bridge)
-      const result = await runPython(started.inputs.code)
+      const result = await runPython(started.inputs.code, {
+        kmip_bridge: createKmipBridge(engine, table),
+      })
       const completed = completeAttempt(started.inputs, result, Math.round(performance.now() - t0))
       setAttempt(completed)
       const parsed = completed.parsed

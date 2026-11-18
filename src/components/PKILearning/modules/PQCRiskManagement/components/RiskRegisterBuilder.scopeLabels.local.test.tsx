@@ -70,7 +70,7 @@ describe('risk worksheet scope and production capability teaching', () => {
       'completing a record does not demonstrate risk reduction'
     )
     expect(screen.getByDisplayValue(sample.assetName)).toBeInTheDocument()
-    expect(screen.getByText('Score: 16 (High)')).toBeInTheDocument()
+    expect(screen.getByText('Provisional score: 16')).toBeInTheDocument()
     expect(screen.queryByLabelText(/treatment status/i)).not.toBeInTheDocument()
     expect(screen.getByLabelText('Owner role')).toHaveValue('')
     expect(screen.getByLabelText('Next review date')).toHaveValue('')
@@ -82,10 +82,10 @@ describe('risk worksheet scope and production capability teaching', () => {
     expect(md.split('\n').filter((line) => line.startsWith('|'))).toEqual([
       '| # | Asset | Algorithm | Threat Vector | L | I | Score | Level | Mitigation | Owner role | Next review |',
       '|---|-------|-----------|---------------|---|---|-------|-------|------------|------------|-------------|',
-      '| 1 | Fictional signing service | RSA-2048 | Signature Forgery (Code Signing / Certs) | 4 | 4 | 16 | High | Evaluate sample signing transition | Unassigned | Not scheduled |',
+      '| 1 | Fictional signing service | RSA-2048 | Signature Forgery (Code Signing / Certs) | 4 | 4 | 16 | Pending assignment | Evaluate sample signing transition | Unassigned | Not scheduled |',
     ])
     expect(md).toContain(
-      '- **Critical:** 0\n- **High:** 1\n- **Medium:** 0\n- **Low:** 0\n- **Total Entries:** 1\n- **Notes, not yet risks (no owner role or review date):** 1'
+      '- **Critical:** 0\n- **High:** 0\n- **Medium:** 0\n- **Low:** 0\n- **Total Entries:** 1\n- **Notes, not yet risks (no owner role or review date):** 1'
     )
     expect(md).toContain('Sample risk worksheet.')
     expect(md).toContain('is a note, not a risk')
@@ -178,7 +178,10 @@ describe('risk worksheet scope and production capability teaching', () => {
     expect(screen.getByText('Notes, not yet risks: 0')).toBeInTheDocument()
     expect(screen.getByText('Score: 16 (High)')).toBeInTheDocument()
     const md = buildRiskRegisterMarkdown(useRiskRegisterStore.getState().riskEntries)
-    expect(md).toContain('| Evaluate sample signing transition | PKI lead | 2027-03-31 |')
+    expect(md).toContain(
+      '| 16 | High | Evaluate sample signing transition | PKI lead | 2027-03-31 |'
+    )
+    expect(md).toContain('- **High:** 1')
   })
 
   it('saves the entries as scoped inputs so a later visit can restore them', () => {

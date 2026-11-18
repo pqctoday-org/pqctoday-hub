@@ -4,7 +4,24 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { TokenMigrationLab } from './TokenMigrationLab'
 
 vi.mock('@/hooks/useHSM', () => ({
-  useHSM: () => ({ isReady: false, moduleRef: { current: null } }),
+  useHSM: () =>
+    failure.live
+      ? {
+          isReady: true,
+          phase: 'session_open',
+          moduleRef: { current: {} },
+          hSessionRef: { current: 1 },
+          log: [],
+          keys: [],
+        }
+      : { isReady: false, phase: 'idle', moduleRef: { current: null } },
+}))
+const failure = vi.hoisted(() => ({ live: false }))
+vi.mock('@/wasm/softhsm', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/wasm/softhsm')>()),
+  hsm_generateRSAKeyPair: () => {
+    throw new Error('Sample key generation failed')
+  },
 }))
 vi.mock('@/components/shared/LiveHSMToggle', () => ({ LiveHSMToggle: () => null }))
 vi.mock('@/components/shared/KatValidationPanel', () => ({ KatValidationPanel: () => null }))
@@ -25,6 +42,19 @@ describe('Unrun token sizing model', () => {
     expect(screen.getByText(/does not establish a valid, interoperable token/)).toBeInTheDocument()
     expect(screen.getByText(/Token length alone does not establish fit/)).toBeInTheDocument()
     expect(screen.queryByText(/must use ML-DSA-44 or switch/)).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Sign Token' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Show Signature Illustration' })).toBeEnabled()
+  })
+
+  it('shows the live signing error and keeps verification disabled', async () => {
+    failure.live = true
+    try {
+      render(<TokenMigrationLab />)
+      fireEvent.click(screen.getByRole('button', { name: 'Sign Token (Live WASM)' }))
+      expect(await screen.findByRole('alert')).toHaveTextContent('Sample key generation failed')
+      expect(screen.queryByText('Illustrative signature bytes')).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Verify Signature (Live WASM)' })).toBeDisabled()
+    } finally {
+      failure.live = false
+    }
   })
 })

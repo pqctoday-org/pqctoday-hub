@@ -25,8 +25,10 @@ vi.mock('@monaco-editor/react', () => ({
 }))
 vi.mock('../monacoSelfHost', () => ({ installMonacoSelfHost: () => Promise.resolve() }))
 vi.mock('@/services/python/pyRuntime', () => ({
-  bootPyRuntime: () => state.boot(),
-  runPython: (...args: unknown[]) => state.run(...args),
+  runPython: async (...args: unknown[]) => {
+    await state.boot()
+    return state.run(...args)
+  },
   getInterruptMode: () => 'best-effort',
 }))
 vi.mock('@/services/python/pyodide/kmipBridge', () => ({ createKmipBridge: () => ({}) }))
@@ -175,7 +177,7 @@ describe('KMIP builder recorded sample attempts', () => {
     state.run.mockResolvedValue({ ok: true, stdout: '', stderr: '', error: null, elapsedMs: 5 })
     run()
     await record().findByText(/Custom script finished without a reported runtime error/)
-    expect(state.run).toHaveBeenCalledWith('')
+    expect(state.run).toHaveBeenCalledWith('', expect.any(Object))
     expect(record().queryByText('What this sample demonstrated:')).not.toBeInTheDocument()
   })
   it('marks an old attempt out of date when the engine instance changes', async () => {
@@ -228,7 +230,7 @@ describe('KMIP builder recorded sample attempts', () => {
       fireEvent.click(screen.getByRole('button', { name: 'saved custom input' }))
       expect(await screen.findByRole('textbox', { name: 'Python sample code' })).toHaveValue(code)
       run()
-      await waitFor(() => expect(state.run).toHaveBeenCalledWith(code))
+      await waitFor(() => expect(state.run).toHaveBeenCalledWith(code, expect.any(Object)))
     }
   )
   it('imports the recorded mode rather than retaining the current hex selection', async () => {

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { text } from 'node:stream/consumers'
 import { test, expect } from '@playwright/test'
 
 /**
@@ -112,9 +113,7 @@ test('Export .py downloads a file carrying the provenance header', async ({ page
   await page.getByRole('button', { name: /Export \.py/ }).click()
   const download = await downloadPromise
   expect(download.suggestedFilename()).toMatch(/\.py$/)
-  const path = await download.path()
-  const fs = await import('node:fs')
-  const content = fs.readFileSync(path!, 'utf-8')
+  const content = await text(await download.createReadStream())
   expect(content).toContain('PKCS#11 v3.2 Developer tab')
   expect(content).toContain('import p11')
 })
@@ -560,3 +559,56 @@ for (const [name, steps] of [
     await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
   })
 }
+
+test('an expired Python await cannot overlap a new script, and the workbench recovers', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  let release!: () => void
+  const waitForResponse = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  await page.route('**/python-workbench-sample-await', async (route) => {
+    await waitForResponse
+    await route.fulfill({ body: 'fictional sample', contentType: 'text/plain' })
+  })
+
+  await page.goto('/playground/hsm?tab=build&editor=python')
+  const editor = page.locator('.monaco-editor').first()
+  await expect(editor).toBeVisible({ timeout: 25_000 })
+  const unlock = page.getByRole('button', { name: 'Edit as custom script' })
+  if (await unlock.isVisible()) await unlock.click()
+  const run = page.getByRole('button', { name: /^Run$/ })
+
+  async function replaceCode(source: string) {
+    await editor.locator('.view-lines').click()
+    await page.keyboard.press('ControlOrMeta+a')
+    await page.keyboard.insertText(source)
+  }
+
+  await replaceCode(
+    "from pyodide.http import pyfetch\nawait pyfetch('/python-workbench-sample-await')\n"
+  )
+  const received = page.waitForResponse('**/python-workbench-sample-await')
+  try {
+    const requested = page.waitForRequest('**/python-workbench-sample-await')
+    await run.click()
+    await requested
+    await expect(page.getByText('Script exceeded 15s', { exact: true }).first()).toBeVisible({
+      timeout: 25_000,
+    })
+
+    await replaceCode("print('fresh attempt')\n")
+    await run.click()
+    await expect(page.getByText(/A script is still running in this tab/).first()).toBeVisible()
+    await expect(page.getByText('fresh attempt', { exact: true })).toHaveCount(0)
+  } finally {
+    release()
+  }
+
+  expect((await received).ok()).toBe(true)
+  await expect(async () => {
+    await run.click()
+    await expect(page.getByText('fresh attempt', { exact: true })).toBeVisible({ timeout: 500 })
+  }).toPass({ timeout: 10_000 })
+})

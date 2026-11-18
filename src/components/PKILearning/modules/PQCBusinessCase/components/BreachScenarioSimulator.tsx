@@ -14,6 +14,9 @@ import {
 } from '@/components/PKILearning/common/executive'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { complianceFrameworks } from '@/data/complianceData'
+import { matchesIndustry } from '@/data/industryMatch'
+import { threatsData } from '@/data/threatsData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -67,9 +70,14 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
   // remount even though `industry` correctly persisted, live-verified.
   type SavedBreachScenarioInputs = { selectedIndustry: string } & Partial<BreachScenarioInputs>
   const savedInputs = useSavedArtifactInputs<SavedBreachScenarioInputs>('breach-scenario')
-  const [selectedIndustry, setSelectedIndustry] = useState(
-    savedInputs?.selectedIndustry ?? data.industry ?? 'Other'
-  )
+  const [selectedIndustry, setSelectedIndustry] = useState(() => {
+    const initial = savedInputs?.selectedIndustry || data.industry
+    return (
+      AVAILABLE_INDUSTRIES.find((industry) => industry === initial) ??
+      AVAILABLE_INDUSTRIES.find((industry) => matchesIndustry(industry, initial)) ??
+      'Other'
+    )
+  })
   const [sampleRevision, setSampleRevision] = useState(0)
   const [sampleInputs, setSampleInputs] = useState<Partial<BreachScenarioInputs> | undefined>()
   const [modelInputs, setModelInputs] = useState<BreachScenarioInputs | null>(null)
@@ -86,6 +94,22 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     hndlFactorPct: number
     annualBreachProbPct: number
   } | null>(null)
+
+  const changeIndustry = (industry: string) => {
+    if (industry === selectedIndustry) return
+    setBreachCosts(null)
+    setModelInputs(null)
+    setSelectedIndustry(industry)
+  }
+  const scenarioFrameworks = useMemo(
+    () =>
+      complianceFrameworks.filter(
+        (framework) =>
+          framework.industries.length === 0 ||
+          framework.industries.some((industry) => matchesIndustry(industry, selectedIndustry))
+      ),
+    [selectedIndustry]
+  )
 
   const findings = useMemo(() => {
     if (!breachCosts) return []
@@ -112,23 +136,33 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
       )
     }
 
-    if (data.criticalThreatCount > 0) {
-      items.push(
-        `${data.criticalThreatCount} critical/high-severity quantum threats currently target this industry.`
-      )
-    }
+    const sectorThreats = threatsData.filter(
+      (threat) =>
+        (threat.criticality === 'Critical' || threat.criticality === 'High') &&
+        matchesIndustry(threat.industry, selectedIndustry)
+    ).length
+    items.push(
+      `The Hub threat catalogue lists ${sectorThreats} high or critical ${sectorThreats === 1 ? 'entry that applies' : 'entries that apply'} to ${selectedIndustry}, based on the Hub’s sector groups and including cross-industry entries.`
+    )
 
-    if (data.migrationDeadlineYear) {
+    if (data.country && data.migrationDeadlineYear) {
       const yearsRemaining = data.migrationDeadlineYear - new Date().getFullYear()
-      if (yearsRemaining <= 3) {
+      if (yearsRemaining >= 0 && yearsRemaining <= 3) {
+        const milestone = data.migrationDeadlineBinding ? 'a binding milestone' : 'a milestone'
         items.push(
-          `Regulatory deadline in ${data.migrationDeadlineYear} (${yearsRemaining} years) adds urgency to breach prevention through PQC adoption.`
+          `Assessment context for ${data.country}: the timeline records ${milestone} in ${data.migrationDeadlineYear}. Check its scope against the selected scenario before using it to set a deadline.`
         )
       }
     }
 
     return items
-  }, [breachCosts, selectedIndustry, data.criticalThreatCount, data.migrationDeadlineYear])
+  }, [
+    breachCosts,
+    selectedIndustry,
+    data.country,
+    data.migrationDeadlineYear,
+    data.migrationDeadlineBinding,
+  ])
 
   const exportMarkdown = useMemo(() => {
     if (!breachCosts) return ''
@@ -221,8 +255,10 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           <FilterDropdown
             noContainer
             selectedId={selectedIndustry}
-            onSelect={(id) => setSelectedIndustry(id)}
+            onSelect={changeIndustry}
             items={AVAILABLE_INDUSTRIES.map((ind) => ({ id: ind, label: ind }))}
+            ariaLabel="Industry sector"
+            hideDefaultOption
           />
           {savedInputs ? (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -245,6 +281,8 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
         <Button
           variant="outline"
           onClick={() => {
+            setBreachCosts(null)
+            setModelInputs(null)
             setSelectedIndustry('Finance & Banking')
             setSampleInputs({
               breachScale: 1,
@@ -327,14 +365,13 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
               <p className="text-xs text-muted-foreground">{BREACH_SCENARIO_EARLY_ACTION}</p>
             </div>
           </div>
-          {data.frameworksByIndustry.length > 0 && (
+          {scenarioFrameworks.length > 0 && (
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <p className="text-xs text-muted-foreground">
-                <strong className="text-foreground">Compliance context:</strong>{' '}
-                {data.frameworksByIndustry.length} compliance framework
-                {data.frameworksByIndustry.length !== 1 ? 's' : ''} apply to your industry.
-                Non-compliance penalties amplify breach costs through regulatory fines, audit
-                requirements, and potential loss of operating licenses.
+                <strong className="text-foreground">Compliance context:</strong> The catalogue lists{' '}
+                {scenarioFrameworks.length} compliance references for {selectedIndustry} and general
+                use. Check each reference’s scope to determine which requirements apply to the
+                organization in your scenario.
               </p>
             </div>
           )}

@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { AlertTriangle, ClipboardCheck, FileBarChart } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { InventoryAnswerComparison } from '@/components/ui/InventoryAnswerComparison'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/assessment/orchestrator'
@@ -225,6 +226,10 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
             </p>
           </div>
         </div>
+      )}
+
+      {!sharedView && input && (
+        <InventoryAnswerComparison key={inputKey} input={input} result={result} />
       )}
 
       {result.recommendedActions.length > 0 && (

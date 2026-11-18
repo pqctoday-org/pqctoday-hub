@@ -9,7 +9,7 @@
 import type { AcvpSuite, CategoryId } from '@/components/Playground/hsm/acvp/useAcvpSuite'
 import type { Pkcs11ConformanceSuite } from '@/components/Playground/hsm/conformance/usePkcs11Conformance'
 import { evidenceForRowId, loadAcvpRowEvidence } from '@/data/validation/acvpRowEvidence'
-import { bootPyRuntime, runPython } from '@/services/python/pyRuntime'
+import { runPython } from '@/services/python/pyRuntime'
 
 /** A Python list arrives as a PyProxy; a JS array as itself. */
 const toStringArray = (v: unknown): string[] => {
@@ -74,9 +74,7 @@ export async function runSuiteScript(
   code: string,
   modules: Record<string, object>
 ): Promise<{ ok: boolean; text: string }> {
-  const py = await bootPyRuntime()
-  for (const [name, mod] of Object.entries(modules)) py.registerJsModule(name, mod)
-  const result = await runPython(code)
+  const result = await runPython(code, modules)
   const text = [result.stdout, result.stderr, result.error].filter(Boolean).join('\n').trim()
   return { ok: result.ok, text: text || (result.ok ? '(no output)' : 'run failed') }
 }

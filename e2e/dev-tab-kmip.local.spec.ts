@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { text } from 'node:stream/consumers'
 import { test, expect, type Page, type Locator } from '@playwright/test'
 
 /**
@@ -143,9 +144,7 @@ test('Export .py downloads a file carrying the provenance header and pqctoday_km
   await page.getByRole('button', { name: /Export \.py/ }).click()
   const download = await downloadPromise
   expect(download.suggestedFilename()).toMatch(/\.py$/)
-  const path = await download.path()
-  const fs = await import('node:fs')
-  const content = fs.readFileSync(path!, 'utf-8')
+  const content = await text(await download.createReadStream())
   expect(content).toContain('KMIP 3.0 + CACP Developer tab')
   expect(content).toContain('from pqctoday_kmip import KmipClient')
 })
@@ -270,9 +269,7 @@ test('hex mode signs a genuinely binary (non-UTF-8) payload live — G9/W3b', as
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: /Export \.py/ }).click()
   const download = await downloadPromise
-  const path = await download.path()
-  const fs = await import('node:fs')
-  const exported = fs.readFileSync(path!, 'utf-8')
+  const exported = await text(await download.createReadStream())
   expect(exported).toContain(`leaf('Data', 'ByteString', '${hexPayload}')`)
   expect(exported).not.toContain(`b'${hexPayload}'`)
   await page.getByRole('button', { name: /^Run$/ }).click()

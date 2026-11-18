@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { PythonWorkbenchLink } from '@/components/ui/PythonWorkbenchLink'
 //
 // Crypto Lab Workbench — the /playground page.
 //
@@ -83,6 +84,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobilePlaygroundView } from '@/components/Mobile/screens/MobilePlaygroundView'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { moduleIdFromToolLink } from '@/data/moduleToolLinks'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
@@ -481,9 +483,7 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
   // non-sandbox WorkshopTool already carries a populated moduleLink (verified
   // against workshopRegistry.tsx) — it was just never rendered anywhere. No
   // new data, only surfacing what's already there.
-  const relatedModuleId = tool.moduleLink.startsWith('/learn/')
-    ? tool.moduleLink.slice('/learn/'.length)
-    : null
+  const relatedModuleId = moduleIdFromToolLink(tool.moduleLink)
   // eslint-disable-next-line security/detect-object-injection -- relatedModuleId is derived from the tool's own registry-declared moduleLink, not user input
   const relatedModuleTitle = relatedModuleId ? MODULE_CATALOG[relatedModuleId]?.title : undefined
 
@@ -1565,6 +1565,7 @@ export const PlaygroundWorkshop = () => {
           A model or calculator is not evidence of network interoperability.
         </p>
 
+        <PythonWorkbenchLink />
         <PersonaPageNote route="/playground" className="mt-4" />
 
         <p className="mt-6 mb-3 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">

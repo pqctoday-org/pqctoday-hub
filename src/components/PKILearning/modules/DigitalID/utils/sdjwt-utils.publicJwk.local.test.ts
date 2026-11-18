@@ -115,7 +115,7 @@ describe('sample holder public JWK binding', () => {
             s.key,
             s.provider
           )
-        ).resolves.toBeUndefined()
+        ).resolves.toEqual([])
         const issuerParts = credential.issuerJwt.split('.')
         const altered = JSON.parse(Buffer.from(issuerParts[1]!, 'base64url').toString())
         if (s.ed) altered.cnf.jwk.kty = 'EC'

@@ -4,15 +4,18 @@ import { CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import { RemediationCheck } from './RemediationCheck'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 
 interface FeedbackPanelProps {
+  questionId?: string
   isCorrect: boolean
   explanation: string
   learnMorePath?: string
 }
 
 export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
+  questionId,
   isCorrect,
   explanation,
   learnMorePath,
@@ -47,11 +50,16 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
           {learnMorePath && (
             <Link
               to={learnMorePath}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 mt-2 transition-colors"
             >
               <ExternalLink size={12} />
-              Learn more
+              Learn more (opens in a new tab)
             </Link>
+          )}
+          {!isCorrect && questionId && (
+            <RemediationCheck key={questionId} questionId={questionId} />
           )}
         </div>
       </div>

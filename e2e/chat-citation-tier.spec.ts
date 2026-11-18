@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
+import { openAssistant } from './fixtures/runAssistantQuestion'
 
 /**
  * Chat citation tier chip — visual end-to-end (C7).
@@ -94,14 +95,14 @@ test('citation chip renders with the seeded trustTier on the assistant message',
 
   // Open the right-panel chat via the FAB. The button is always rendered when
   // isOpen=false (which is the default — isOpen isn't persisted).
-  await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+  const assistant = await openAssistant(page)
 
   // The panel is a React.lazy chunk MainLayout mounts only once the store
   // flips open, so the click above is what starts its fetch; under parallel
   // workers that cold path outran a 5 s budget (nightly flake 2026-09-21,
   // failed twice in one 4-worker run, passed alone in 4.9 s). Wait for the
   // dialog with the suite's 15 s lazy-chunk budget, then assert content.
-  await expect(page.getByRole('dialog', { name: /pqc assistant/i })).toBeVisible({
+  await expect(assistant).toBeVisible({
     timeout: 15_000,
   })
 

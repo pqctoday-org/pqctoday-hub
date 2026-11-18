@@ -50,7 +50,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Privacy by Design',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:
-      'Inspect which selected elements are sent and which are withheld. The sample checks disclosure digests against its saved credential data and verifies the holder proof and its challenge bindings. Withholding a requested available claim causes the sample bank to refuse the request; this is distinct from a failed signature. Issuer-chain trust and revocation/status remain simulated assumptions, and this is not a complete production verifier. A post-quantum migration must address the relevant holder and issuer signatures, credential/protocol profiles and trust configuration; changing one signature algorithm alone does not establish a complete fix.',
+      'Inspect which selected elements are sent and which are withheld. The sample checks disclosure digests against its saved credential data and verifies the holder proof and its challenge bindings. The sample bank requires PID claims and the diploma’s degree. Compare a missing claim with an audience mismatch, then try the complete presentation for the intended bank. Issuer-chain trust and revocation/status remain simulated assumptions, and this is not a complete production verifier. A post-quantum migration must address the relevant holder and issuer signatures, credential/protocol profiles and trust configuration; changing one signature algorithm alone does not establish a complete fix.',
     stepIndex: 3,
   },
   {

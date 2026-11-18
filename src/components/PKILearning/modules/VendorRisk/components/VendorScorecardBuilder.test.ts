@@ -51,4 +51,19 @@ describe('computeVendorScorecards (per-vendor, not blended)', () => {
     })
     expect(rows.every((r) => r.overall === 80)).toBe(true)
   })
+
+  it('excludes unentered manual dimensions and counts a manual zero', () => {
+    const items = [item('a1', 'Acme')]
+    const useSlider = { 'sbom-cbom': true }
+    const [unassessed] = computeVendorScorecards(items, {}, weightOf, {
+      useSlider,
+      sliderScores: {},
+    })
+    const [zero] = computeVendorScorecards(items, {}, weightOf, {
+      useSlider,
+      sliderScores: { 'sbom-cbom': 0 },
+    })
+    expect(unassessed.overall).toBeNull()
+    expect(zero.overall).toBe(0)
+  })
 })

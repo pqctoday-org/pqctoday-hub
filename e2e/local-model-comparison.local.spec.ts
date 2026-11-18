@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { test, expect, type Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import { test, expect } from './fixtures/blockAnalytics'
+import { openAssistant, runAssistantQuestion } from './fixtures/runAssistantQuestion'
 import { writeFile } from 'node:fs/promises'
 import {
   CURRENT_CORPUS_GOLDEN_QUESTIONS,
@@ -29,27 +31,6 @@ function isGroundingRefusal(normalizedAnswer: string): boolean {
   ].some((marker) => normalizedAnswer.includes(marker))
 }
 
-interface E2eMessage {
-  role: 'user' | 'assistant'
-  content: string
-  sources?: string[]
-}
-
-interface E2eChatState {
-  messages: E2eMessage[]
-  isLoading: boolean
-  isStreaming: boolean
-  error: string | null
-}
-
-type E2eWindow = Window & {
-  // eslint-disable-next-line no-unused-vars
-  __e2e_toggle_panel?: (_panel?: string) => void
-  // eslint-disable-next-line no-unused-vars
-  __e2e_chat_send?: (_query: string) => void
-  __e2e_chat_store?: { getState: () => E2eChatState }
-}
-
 function seededChatState(model: string) {
   return JSON.stringify({
     state: {
@@ -75,30 +56,8 @@ function seededChatState(model: string) {
 }
 
 async function runQuestion(page: Page, question: CurrentCorpusGoldenQuestion) {
-  const before = await page.evaluate(
-    () => (window as unknown as E2eWindow).__e2e_chat_store?.getState().messages.length ?? 0
-  )
   const startedAt = Date.now()
-  await page.evaluate((query: string) => {
-    ;(window as unknown as E2eWindow).__e2e_chat_send?.(query)
-  }, question.query)
-  await page.waitForFunction(
-    ({ previousCount }) => {
-      const state = (window as unknown as E2eWindow).__e2e_chat_store?.getState()
-      return Boolean(
-        state &&
-        !state.isLoading &&
-        !state.isStreaming &&
-        state.messages.length >= previousCount + 2
-      )
-    },
-    { previousCount: before },
-    { timeout: 10 * 60_000 }
-  )
-  const state = await page.evaluate(() =>
-    (window as unknown as E2eWindow).__e2e_chat_store!.getState()
-  )
-  const answer = [...state.messages].reverse().find((message) => message.role === 'assistant')
+  const { answer, error } = await runAssistantQuestion(page, question.query, 10 * 60_000)
   const text = answer?.content ?? ''
   const normalized = text.toLowerCase()
   const matchedTerms = question.answerTerms.filter((term) =>
@@ -115,7 +74,7 @@ async function runQuestion(page: Page, question: CurrentCorpusGoldenQuestion) {
     matchedTerms: refused ? [] : matchedTerms,
     verifiedAnswer: text.length > 0 && !refused,
     refused,
-    error: state.error,
+    error,
   }
 }
 
@@ -146,15 +105,7 @@ test.describe('Qwen 3 vs Qwen 3.5 grounded local-model comparison', () => {
       )
 
       await page.goto('/timeline')
-      const hasWebGPU = await page.evaluate(() => Boolean(navigator.gpu))
-      test.skip(!hasWebGPU, 'This browser session does not expose WebGPU on localhost.')
-      await page.waitForFunction(
-        () => typeof (window as unknown as E2eWindow).__e2e_toggle_panel === 'function'
-      )
-      await page.evaluate(() => (window as unknown as E2eWindow).__e2e_toggle_panel?.('chat'))
-      await page.waitForFunction(
-        () => typeof (window as unknown as E2eWindow).__e2e_chat_send === 'function'
-      )
+      await openAssistant(page)
 
       const results = []
       for (const question of QUESTIONS) results.push(await runQuestion(page, question))

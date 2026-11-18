@@ -740,6 +740,7 @@ export const HsmPlayground = () => {
           <div className="flex justify-end">{inspectChip}</div>
           <DeveloperTab
             activeSubTab={devSubTab}
+            openPython={searchParams.get('editor') === 'python'}
             onSubTabChange={setDevSubTab}
             onOpenLesson={(lessonId) =>
               goTo(resolveHsmLocation({ tab: 'learn', ltrack: 'v33', lesson: lessonId }))

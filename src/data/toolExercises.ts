@@ -25,14 +25,15 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'lms-hss': [
     {
-      prompt: 'After Simulate State Loss, why can the key not simply be restored from a backup?',
+      prompt:
+        'A signing device used leaf 12 after its backup was taken. Why is restoring that old signing state unsafe?',
       options: [
-        'A restored state would reuse one-time keys and void the security proof',
+        'The restored counter can assign leaf 12 a second time',
         'The backup format is not supported',
         'The token deletes the public key',
       ],
       answer: 0,
-      why: 'LMS/HSS signatures are one-time leaves; signing twice from the same state breaks the scheme, which is why the token returns CKR_KEY_EXHAUSTED rather than rewinding.',
+      why: 'Each LM-OTS key signs one message. If the next unused leaf cannot be established safely, retire the signing key. Existing signatures can still be verified with its public key.',
     },
   ],
   'hybrid-encrypt': [
@@ -44,7 +45,7 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
         'Only the ML-KEM secret is used; X25519 is a fallback',
       ],
       answer: 0,
-      why: 'Both secrets are inputs to HKDF, so the session key stays secure if either component survives; that is the point of a hybrid.',
+      why: 'In this exercise both shared secrets feed the combiner. A matching output demonstrates agreement for this sample. A deployed protocol also needs the specified input order, context binding, peer authentication and downgrade handling.',
     },
   ],
   'envelope-encrypt': [
@@ -165,14 +166,15 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'pqc-ssh-sim': [
     {
-      prompt: 'Which host-key variants run on the real OpenSSH binary in this simulator?',
+      prompt:
+        'You select ssh-mldsa-65. What else must you check before treating the displayed telemetry as an executed SSH handshake?',
       options: [
-        'The ones marked REAL, such as ssh-mldsa-65 and the SLH-DSA variants',
-        'All of them',
-        'Only the classical baseline',
+        'The selected key exchange and host-key combination ran on the embedded OpenSSH build',
+        'The host-key label alone proves the complete handshake ran',
+        'A modeled signature size proves the peer accepted the key',
       ],
       answer: 0,
-      why: 'Variants marked MODEL are computed from sizes; REAL ones execute the handshake on softhsmv3, which is why their telemetry is the one to compare.',
+      why: 'The embedded build supports specific combinations. Read the run result and its engine label. A modeled trace can illustrate sizes and steps, while an executed handshake can show what those two sample peers negotiated.',
     },
   ],
   'tls-simulator': [
@@ -256,9 +258,9 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   'qrng-demo': [
     {
       prompt:
-        'After Run the Checks on All Three Samples, how do the Simulated QRNG and the CSPRNG compare?',
+        'The simulated QRNG and CSPRNG samples both pass the displayed checks. What can you infer about their sources?',
       options: [
-        'The same, within sampling noise; only the Weak PRNG stands out',
+        'Those output checks do not identify a quantum noise source',
         'The Simulated QRNG scores far higher',
         'The CSPRNG fails monobit',
       ],
@@ -302,14 +304,15 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
   ],
   'hybrid-certs': [
     {
-      prompt: 'Which generated format can a relying party that knows only ECDSA still validate?',
+      prompt:
+        'For these sample formats, which one lets an ECDSA-only verifier check the primary classical signature while ignoring a noncritical alternative signature extension?',
       options: [
         'Alt-Sig / Catalyst (ECDSA + ML-DSA)',
         'Pure PQC (ML-DSA-65)',
         'Pure PQC KEM (ML-KEM-768)',
       ],
       answer: 0,
-      why: 'Alt-Sig keeps the classical signature in the standard field and adds the PQC one as an extension, so an old verifier ignores what it cannot parse; composite forms need a verifier that knows the composite OID.',
+      why: 'An ECDSA verifier can validate the classical path when the usual trust and policy checks pass. Checking the alternative signature requires a capable verifier. An unknown critical extension would require rejection.',
     },
   ],
   'merkle-proof': [
@@ -318,7 +321,7 @@ export const TOOL_EXERCISES: Record<string, StepExercise[]> = {
         'Build the tree from 8 leaves and generate an inclusion proof. How many hashes does the proof carry?',
       options: ['Three — one sibling per level', 'Eight — every leaf', 'One — the root'],
       answer: 0,
-      why: 'A proof is the sibling hash at each level up to the root, log2(n) for n leaves; that is what makes a Merkle Tree Certificate small.',
+      why: 'This balanced eight-leaf tree has three levels above a leaf, so its proof carries three sibling hashes. The verifier also needs the leaf position, tree size and an authenticated root. Uneven trees can have different proof lengths.',
     },
   ],
   'cert-capacity': [

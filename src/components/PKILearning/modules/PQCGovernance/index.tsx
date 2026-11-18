@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, type FC } from 'react'
+import { useCallback, useState, type FC } from 'react'
 import { Users, FileText, BarChart3, GitBranch } from 'lucide-react'
 import { Introduction } from './components/Introduction'
-import { RACIBuilder } from './components/RACIBuilder'
+import { RACIBuilder, type MatrixState } from './components/RACIBuilder'
 import { PolicyTemplateGenerator } from './components/PolicyTemplateGenerator'
 import { KPIDashboardBuilder } from './components/KPIDashboardBuilder'
 import { EscalationFramework } from './components/EscalationFramework'
@@ -41,7 +41,12 @@ const PARTS: WorkshopPart[] = [
 ]
 
 export const PQCGovernanceModule: FC = () => {
-  const [raciOutput, setRACIOutput] = useState<RACIOutput | null>(null)
+  const [raciDraft, setRaciDraft] = useState<{ output: RACIOutput; matrix: MatrixState } | null>(
+    null
+  )
+  const saveRaciDraft = useCallback((output: RACIOutput, matrix: MatrixState) => {
+    setRaciDraft({ output, matrix })
+  }, [])
   const [policyOutput, setPolicyOutput] = useState<PolicyOutput | null>(null)
 
   return (
@@ -52,18 +57,24 @@ export const PQCGovernanceModule: FC = () => {
       exercises={(api) => <PQCGovernanceExercises onNavigateToWorkshop={api.goToWorkshop} />}
       workshopParts={PARTS}
       onReset={() => {
-        setRACIOutput(null)
+        setRaciDraft(null)
         setPolicyOutput(null)
       }}
       renderWorkshopStep={(index, configKey) => {
         switch (index) {
           case 0:
-            return <RACIBuilder key={`raci-${configKey}`} onOutput={setRACIOutput} />
+            return (
+              <RACIBuilder
+                key={`raci-${configKey}`}
+                initialMatrix={raciDraft?.matrix}
+                onOutput={saveRaciDraft}
+              />
+            )
           case 1:
             return (
               <PolicyTemplateGenerator
                 key={`policy-${configKey}`}
-                raciOutput={raciOutput}
+                raciOutput={raciDraft?.output}
                 onOutput={setPolicyOutput}
               />
             )

@@ -8,6 +8,7 @@ import { businessToolRelations } from '@/data/toolRelations'
 import { useParams, useNavigate, useLocation, Link } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '../ui/button'
+import { ScenarioComparisonProvider } from '@/components/PKILearning/common/executive/ScenarioComparison'
 import { Skeleton } from '../ui/skeleton'
 import { BUSINESS_TOOLS } from './businessToolsRegistry'
 import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
@@ -186,7 +187,11 @@ export const BusinessToolRoute = () => {
           </div>
         }
       >
-        {Comp && <Comp />}
+        {Comp && (
+          <ScenarioComparisonProvider key={tool.id} toolId={tool.id}>
+            <Comp />
+          </ScenarioComparisonProvider>
+        )}
       </Suspense>
 
       {/* Hub resources. RecommendedResourcesPanel was rendered only inside

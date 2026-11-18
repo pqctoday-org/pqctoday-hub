@@ -175,17 +175,17 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
   },
   'dnssec-pqc': {
     moduleId: 'dnssec-pqc',
-    domainTitle: 'Post-Quantum DNSSEC RRSIG Verification & EDNS0 Truncation Recovery',
+    domainTitle: 'DNSSEC signing primitive and resolver validation',
     roleDecisionPrompt:
-      'Assess how recursive resolvers validate post-quantum DNSSEC `RRSIG` records (`ML-DSA-44`) and recover when UDP truncation or packet corruption occurs.',
-    artifactLabel: 'Fictional signed DNSSEC RRset with ML-DSA-44 RRSIG (2,420 B)',
+      'Predict the effect of changing a signature byte. Then validate a signed MX record in the workshop and decide when a resolver should retry over TCP.',
+    artifactLabel: 'Fictional release-manifest message for the DNSSEC signature warm-up',
     algorithmVariant: { operation: 'signature', variant: 44 },
     validCaseExplanation:
-      'The validating resolver verifies the intact 2,420-byte `ML-DSA-44` `RRSIG` against the zone `DNSKEY` and sets the `AD` (Authenticated Data) bit.',
+      'The primitive check verifies an ML-DSA-44 signature over the sample message.',
     adverseFailureExplanation:
-      'If 1 byte of the `RRSIG` is corrupted or truncated over UDP without TCP retry, `ML-DSA-44` verification fails and the resolver returns `SERVFAIL` (`DNSSEC BOGUS`).',
+      'Changing a signature byte makes verification fail against the original message and key.',
     recoveryActionExplanation:
-      'Restore the complete unmodified `RRSIG` over DNS-over-TCP fallback when EDNS0 (`1,232 B`) sets `TC=1`.',
+      'Restoring the signature recovers verification. Use the signed MX exercise in workshop step 2 to test DNS record validation and transport recovery.',
     transferQuestion: {
       prompt:
         'What changes if a zone operator mistakenly selects an encryption KEM (`ML-KEM-768`) instead of a signature algorithm (`ML-DSA-44`) in a DNSSEC signing policy?',

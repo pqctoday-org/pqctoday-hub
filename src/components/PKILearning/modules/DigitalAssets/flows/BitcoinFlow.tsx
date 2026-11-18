@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input'
 
 interface BitcoinFlowProps {
   onBack: () => void
+  onComplete?: () => void
 }
 
 /**
@@ -45,7 +46,7 @@ function extractCompressedSecp256k1(spki: Uint8Array): Uint8Array {
   return point // already compressed (0x02 / 0x03)
 }
 
-export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
+export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack, onComplete }) => {
   const hsm = useHSM()
 
   const hsmHandlesRef = React.useRef<{
@@ -646,7 +647,7 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
         isStepComplete={wizard.isStepComplete}
         onNext={gatedHandleNext}
         onBack={wizard.handleBack}
-        onComplete={onBack}
+        onComplete={onComplete ?? onBack}
       />
 
       {hsm.isReady && (

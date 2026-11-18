@@ -2,7 +2,7 @@
 import { useContext, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { LearnModuleContext } from '@/components/PKILearning/common/useLearnPath'
-import { evaluatePolicyScope, getModuleDecisionScenario } from '@/data/moduleDecisionScenarios'
+import { getModuleDecisionScenario } from '@/data/moduleDecisionScenarios'
 import { runTamperSample, type TamperReceipt } from '@/utils/cryptoTamperVerifier'
 
 export function CryptoTamperExercise({
@@ -29,10 +29,13 @@ export function CryptoTamperExercise({
   const [receipt, setReceipt] = useState<TamperReceipt | null>(null)
   const [running, setRunning] = useState(false)
   const [error, setError] = useState('')
-  const [transferChecked, setTransferChecked] = useState(false)
+  const [sampleText, setSampleText] = useState('Fictional training message')
+  const [byteIndex, setByteIndex] = useState('0')
 
-  const transferPolicyResult =
-    transferChecked && scenario ? evaluatePolicyScope(scenario.moduleId, 'transfer') : null
+  function clearResult() {
+    setReceipt(null)
+    setError('')
+  }
 
   return (
     <section className="border border-border rounded p-3 space-y-2">
@@ -45,12 +48,10 @@ export function CryptoTamperExercise({
           </p>
           <p className="text-muted-foreground">{scenario.roleDecisionPrompt}</p>
           <p>
-            This fictional domain sample generates fresh{' '}
+            The protocol example above gives context for this primitive check. Here you
             {resolvedOperation === 'signature'
-              ? `ML-DSA-${resolvedVariant}`
-              : `ML-KEM-${resolvedVariant}`}{' '}
-            keys for <strong>{scenario.artifactLabel}</strong>. Predict whether mutating byte zero
-            preserves verification or key confirmation, then run the live cryptographic check.
+              ? ` sign the sample text with ML-DSA-${resolvedVariant} and change one signature byte.`
+              : ` encrypt the sample text with AES-GCM and change one ML-KEM-${resolvedVariant} ciphertext byte before key confirmation.`}
           </p>
         </div>
       ) : (
@@ -59,10 +60,37 @@ export function CryptoTamperExercise({
           {resolvedOperation === 'signature'
             ? `ML-DSA-${resolvedVariant}`
             : `ML-KEM-${resolvedVariant}`}{' '}
-          keys. Predict whether changing byte zero should preserve verification or key confirmation,
-          then run the actual operation.
+          keys. Predict whether changing the selected byte should preserve verification or key
+          confirmation, then run the actual operation.
         </p>
       )}
+      <label className="block text-sm">
+        Sample text
+        <input
+          className="block w-full rounded border bg-background p-2"
+          value={sampleText}
+          disabled={running}
+          onChange={(event) => {
+            setSampleText(event.target.value)
+            clearResult()
+          }}
+        />
+      </label>
+      <label className="block text-sm">
+        Byte index to change (first byte is 0)
+        <input
+          className="ml-2 w-24 rounded border bg-background p-1"
+          type="number"
+          min="0"
+          step="1"
+          value={byteIndex}
+          disabled={running}
+          onChange={(event) => {
+            setByteIndex(event.target.value)
+            clearResult()
+          }}
+        />
+      </label>
       <div className="flex flex-wrap gap-2">
         <Button
           disabled={running}
@@ -71,7 +99,15 @@ export function CryptoTamperExercise({
             setReceipt(null)
             setError('')
             try {
-              setReceipt(await runTamperSample(resolvedOperation, resolvedVariant))
+              if (!/^\d+$/.test(byteIndex)) throw new Error('Choose an existing byte')
+              setReceipt(
+                await runTamperSample(
+                  resolvedOperation,
+                  resolvedVariant,
+                  Number(byteIndex),
+                  sampleText
+                )
+              )
             } catch (failure) {
               setError(failure instanceof Error ? failure.message : 'Operation could not run')
             } finally {
@@ -81,16 +117,6 @@ export function CryptoTamperExercise({
         >
           {running ? 'Computing…' : 'Run valid → mutate → restore sample'}
         </Button>
-        {scenario && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setTransferChecked((prev) => !prev)}
-          >
-            {transferChecked ? 'Hide changed-assumption check' : 'Check changed assumption'}
-          </Button>
-        )}
       </div>
       <div role="status" aria-live="polite">
         {error && <p>Execution error: {error}</p>}
@@ -116,13 +142,14 @@ export function CryptoTamperExercise({
             {scenario ? (
               <div className="mt-2 pt-2 border-t border-border/60 space-y-1 text-xs">
                 <p>
-                  <strong>Valid baseline:</strong> {scenario.validCaseExplanation}
+                  <strong>Protocol example, expected baseline:</strong>{' '}
+                  {scenario.validCaseExplanation}
                 </p>
                 <p>
-                  <strong>1-byte mutation failure:</strong> {scenario.adverseFailureExplanation}
+                  <strong>Expected domain consequence:</strong> {scenario.adverseFailureExplanation}
                 </p>
                 <p>
-                  <strong>Recovery action:</strong> {scenario.recoveryActionExplanation}
+                  <strong>Suggested domain recovery:</strong> {scenario.recoveryActionExplanation}
                 </p>
                 <p>
                   <strong>Production tool verification:</strong> {scenario.productionToolCheck}
@@ -139,19 +166,15 @@ export function CryptoTamperExercise({
           </div>
         )}
       </div>
-      {scenario && transferChecked && (
-        <div className="rounded border border-border/70 bg-muted/20 p-2.5 text-xs space-y-1">
-          <p className="font-semibold text-foreground">
-            Transfer question: {scenario.transferQuestion.prompt}
+      {scenario && (
+        <div className="rounded border border-border/70 p-2.5 text-sm">
+          <p>
+            <strong>Transfer question:</strong> {scenario.transferQuestion.prompt}
           </p>
-          <p>{scenario.transferQuestion.changedAssumptionOutcome}</p>
-          {transferPolicyResult && (
-            <p className="text-muted-foreground">
-              Changed-assumption horizon check ({transferPolicyResult.algorithm}):{' '}
-              {transferPolicyResult.exposureYears} years beyond horizon — findings:{' '}
-              {transferPolicyResult.findings.map((f) => f.kind).join(', ')}.
-            </p>
-          )}
+          <details>
+            <summary className="cursor-pointer">Compare your prediction</summary>
+            <p>{scenario.transferQuestion.changedAssumptionOutcome}</p>
+          </details>
         </div>
       )}
     </section>

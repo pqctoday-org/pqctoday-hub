@@ -104,8 +104,8 @@ describe('automatic risk rating interpretation', () => {
     )
     const md = buildRiskRegisterMarkdown(rows)
     expect(md).toContain(AUTOMATIC_RISK_RATING_SCOPE)
-    expect(md).not.toContain('| 5 | 5 | 25 | Critical |')
-    expect(md).toContain('| 4 | 4 | 16 | High |')
+    expect(md).not.toContain('| 5 | 5 | 25 | Pending assignment |')
+    expect(md).toContain('| 4 | 4 | 16 | Pending assignment |')
     expect(md).toContain(
       'a bookmark does not establish deployment, algorithm exposure or calibrated risk'
     )
@@ -173,7 +173,7 @@ describe('automatic risk rating interpretation', () => {
     )
     expect(screen.queryByText('Pre-filled from your assessment.')).not.toBeInTheDocument()
     expect(useRiskRegisterStore.getState().riskEntries).toEqual([old])
-    expect(buildRiskRegisterMarkdown([old])).toContain('| 2 | 2 | 4 | Low |')
+    expect(buildRiskRegisterMarkdown([old])).toContain('| 2 | 2 | 4 | Pending assignment |')
     fireEvent.click(screen.getByRole('button', { name: 'Restore sample entries' }))
     expect(useRiskRegisterStore.getState().riskEntries).toEqual(DEFAULT_RISK_ENTRIES)
   })

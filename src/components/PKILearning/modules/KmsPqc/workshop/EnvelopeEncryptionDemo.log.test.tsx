@@ -139,6 +139,7 @@ import {
   runPublishedKwpVectors,
   type PublishedKwpVector,
 } from './EnvelopeEncryptionDemo'
+import { hsm_extractKeyValue } from '@/wasm/softhsm'
 
 /**
  * The steps each logged PKCS#11 function may belong to in this workshop. C_CreateObject imports
@@ -236,6 +237,18 @@ describe('envelope workshop call log: each header sits above its own calls', () 
       .filter((s) => s.underStep !== expected[s.call])
       .map((s) => `${s.call} filed under step ${s.underStep}, belongs to step ${expected[s.call]}`)
     expect(misfiled).toEqual([])
+  })
+
+  it('keeps progression locked when the recovered DEK differs despite the same KCV', async () => {
+    vi.mocked(hsm_extractKeyValue)
+      .mockReturnValueOnce(new Uint8Array(32))
+      .mockReturnValueOnce(new Uint8Array(32).fill(1))
+    render(<EnvelopeEncryptionDemo />)
+    fireEvent.click(screen.getByRole('button', { name: 'RSA-2048' }))
+    fireEvent.click(screen.getByRole('button', { name: /Execute \(Live WASM\)/ }))
+    expect(await screen.findByText(/Keys differ/)).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Complete & Next' })).toBeDisabled()
+    expect(screen.queryByText('Stored Envelope Blobs')).not.toBeInTheDocument()
   })
 })
 

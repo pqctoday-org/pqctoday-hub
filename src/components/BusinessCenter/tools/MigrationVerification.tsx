@@ -49,7 +49,7 @@ const EVIDENCE_FIELDS: { key: EvidenceField; label: string; hint: string }[] = [
   {
     key: 'observedNegotiation',
     label: 'Observed negotiation',
-    hint: 'A captured handshake showing PQC was actually negotiated — evidence, not configuration.',
+    hint: 'Record the negotiated key exchange group from a captured handshake, such as X25519MLKEM768.',
   },
   {
     key: 'negativeTest',
@@ -58,8 +58,8 @@ const EVIDENCE_FIELDS: { key: EvidenceField; label: string; hint: string }[] = [
   },
   {
     key: 'certChainUnderPqc',
-    label: 'Cert-chain under PQC',
-    hint: 'The full certificate chain validates with PQC signatures.',
+    label: 'Certificate and authentication evidence',
+    hint: 'Record the certificate chain validation and the peer’s CertificateVerify signature separately from key exchange.',
   },
   {
     key: 'downgradeDocumented',
@@ -72,6 +72,13 @@ const EVIDENCE_FIELDS: { key: EvidenceField; label: string; hint: string }[] = [
     hint: 'Reference/link to the filed evidence.',
   },
 ]
+
+const CERTIFICATE_AUTH_OPTIONS = [
+  'Classical certificate',
+  'Post-quantum certificate',
+  'Composite certificate',
+] as const
+type CertificateAuth = (typeof CERTIFICATE_AUTH_OPTIONS)[number]
 
 const DECOMMISSION_KINDS = ['signing-key', 'certificate', 'kek', 'other'] as const
 type DecommissionKind = (typeof DECOMMISSION_KINDS)[number]
@@ -98,6 +105,8 @@ export interface VerificationRecord {
   id: string
   system: string
   evidence: Record<EvidenceField, string>
+  requiredCertificateAuth?: CertificateAuth
+  observedCertificateAuth?: CertificateAuth
 }
 
 export interface DecommissionRow {
@@ -169,6 +178,22 @@ export function verifiedCount(r: VerificationRecord): number {
 export const isVerified = (r: VerificationRecord): boolean =>
   verifiedCount(r) === EVIDENCE_FIELDS.length
 
+function authenticationIssue(record: VerificationRecord): string | undefined {
+  if (!record.requiredCertificateAuth) return undefined
+  if (!record.observedCertificateAuth) return 'Record observed certificate authentication'
+  if (record.requiredCertificateAuth !== record.observedCertificateAuth)
+    return 'Authentication differs from requirement'
+}
+
+function evidenceStatus(record: VerificationRecord): string {
+  return (
+    authenticationIssue(record) ??
+    (isVerified(record)
+      ? 'Evidence recorded — review required'
+      : `Incomplete evidence (${verifiedCount(record)}/5)`)
+  )
+}
+
 /**
  * A retired signing key whose public key verifiers still trust is a standing
  * Trust-Now-Forge-Later risk, whether or not its private key was destroyed.
@@ -188,15 +213,15 @@ export function buildMarkdown(state: VerifyState): string {
   // 1 — Verification records (5-point evidence standard).
   lines.push('## Verification records')
   lines.push('')
-  lines.push('| System | Negotiation | Neg-test | Cert-chain | Downgrade | Dossier | Status |')
-  lines.push('|---|:--:|:--:|:--:|:--:|:--:|---|')
+  lines.push(
+    '| System | Negotiation | Neg-test | Authentication evidence | Downgrade | Dossier | Required authentication | Observed authentication | Status |'
+  )
+  lines.push('|---|:--:|:--:|:--:|:--:|:--:|---|---|---|')
   for (const r of state.records) {
     const cell = (k: EvidenceField) => (r.evidence[k].trim() ? '✓' : '—')
-    const status = isVerified(r)
-      ? '**Evidence recorded — review required**'
-      : `Incomplete evidence (${verifiedCount(r)}/5)`
+    const status = evidenceStatus(r)
     lines.push(
-      `| ${r.system || '_(unnamed)_'} | ${cell('observedNegotiation')} | ${cell('negativeTest')} | ${cell('certChainUnderPqc')} | ${cell('downgradeDocumented')} | ${cell('dossierLink')} | ${status} |`
+      `| ${r.system || '_(unnamed)_'} | ${cell('observedNegotiation')} | ${cell('negativeTest')} | ${cell('certChainUnderPqc')} | ${cell('downgradeDocumented')} | ${cell('dossierLink')} | ${r.requiredCertificateAuth ?? '—'} | ${r.observedCertificateAuth ?? '—'} | ${isVerified(r) && !authenticationIssue(r) ? `**${status}**` : status} |`
     )
   }
   const verified = state.records.filter(isVerified).length
@@ -205,6 +230,20 @@ export function buildMarkdown(state: VerifyState): string {
     `> ${verified}/${state.records.length} records have all five evidence fields populated. These educational references require review; entering them does not evaluate evidence or verify a deployment.`
   )
   lines.push('')
+
+  const withEvidence = state.records.filter((record) => verifiedCount(record) > 0)
+  if (withEvidence.length > 0) {
+    lines.push('### Evidence references for review', '')
+    for (const record of withEvidence) {
+      lines.push('System', '', ...record.system.split(/\r?\n/).map((line) => `    ${line}`), '')
+      for (const field of EVIDENCE_FIELDS) {
+        const reference = record.evidence[field.key].trim()
+        if (reference) {
+          lines.push(field.label, '', ...reference.split(/\r?\n/).map((line) => `    ${line}`), '')
+        }
+      }
+    }
+  }
 
   // 2 — Decommissioning log.
   lines.push('## Decommissioning log (classical material)')
@@ -302,10 +341,10 @@ export const MigrationVerification: React.FC = () => {
         r.id === id ? { ...r, evidence: { ...r.evidence, [key]: value } } : r
       ),
     }))
-  const setSystem = (id: string, system: string) =>
+  const updateRecord = (id: string, patch: Partial<Omit<VerificationRecord, 'id' | 'evidence'>>) =>
     setState((prev) => ({
       ...prev,
-      records: prev.records.map((r) => (r.id === id ? { ...r, system } : r)),
+      records: prev.records.map((r) => (r.id === id ? { ...r, ...patch } : r)),
     }))
   const addRecord = () =>
     setState((prev) => ({
@@ -359,18 +398,20 @@ export const MigrationVerification: React.FC = () => {
       'Cert Chain / Method',
       'Downgrade Documented / Destruction Confirmed',
       'Dossier Link / Verifier Trust Withdrawn',
+      'Required Certificate Authentication',
+      'Observed Certificate Authentication',
     ]
     const recordRows = state.records.map((r) => [
       'Verification Record',
       r.system || '(unnamed)',
-      isVerified(r)
-        ? 'Evidence recorded — review required'
-        : `Incomplete evidence (${verifiedCount(r)}/5)`,
+      evidenceStatus(r),
       r.evidence.observedNegotiation,
       r.evidence.negativeTest,
       r.evidence.certChainUnderPqc,
       r.evidence.downgradeDocumented,
       r.evidence.dossierLink,
+      r.requiredCertificateAuth ?? '',
+      r.observedCertificateAuth ?? '',
     ])
     const decommRows = state.decommissions.map((d) => [
       'Decommissioning Log',
@@ -381,6 +422,8 @@ export const MigrationVerification: React.FC = () => {
       d.method || '—',
       d.confirmed ? 'confirmed' : 'pending',
       d.kind !== 'signing-key' ? 'n/a' : isTnflLiability(d) ? 'TNFL liability' : 'trust withdrawn',
+      '',
+      '',
     ])
     return rowsToCsv([header, ...recordRows, ...decommRows])
   }, [state])
@@ -411,28 +454,55 @@ export const MigrationVerification: React.FC = () => {
           Filling the five educational prompts records references. It does not test the system or
           evaluate the evidence. Different services require different technical checks.
         </p>
+        <p className="text-xs text-muted-foreground">
+          In TLS 1.3, record the negotiated group separately from the certificate chain and peer
+          authentication. A hybrid group can be used with a classical certificate. Compare the
+          observed authentication with the policy for the service.{' '}
+          <a
+            href="https://www.rfc-editor.org/rfc/rfc10024.html#section-4"
+            className="text-primary underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            TLS hybrid groups
+          </a>
+          {' · '}
+          <a
+            href="https://www.ietf.org/ietf-ftp/rfc/rfc9846.html#section-4.5"
+            className="text-primary underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            TLS authentication messages
+          </a>
+        </p>
         <div className="space-y-3">
           {state.records.map((r) => {
-            const n = verifiedCount(r)
-            const done = n === EVIDENCE_FIELDS.length
+            const done = isVerified(r) && !authenticationIssue(r)
             return (
-              <div key={r.id} className="glass-panel border border-border rounded-lg p-3 space-y-2">
+              <div
+                key={r.id}
+                role="group"
+                aria-label={r.system.trim() || 'Unnamed system'}
+                className="glass-panel border border-border rounded-lg p-3 space-y-2"
+              >
                 <div className="flex items-center gap-2">
                   <Input
                     value={r.system}
-                    onChange={(e) => setSystem(r.id, e.target.value)}
+                    onChange={(e) => updateRecord(r.id, { system: e.target.value })}
                     placeholder="System (e.g. Public web TLS)"
                     aria-label="System"
                     className="flex-1"
                   />
                   <span
+                    role="status"
                     className={`min-w-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
                       done
                         ? 'border-status-success/40 bg-status-success/10 text-status-success'
                         : 'border-status-warning/40 bg-status-warning/10 text-status-warning'
                     }`}
                   >
-                    {done ? 'Evidence recorded — review required' : `Incomplete evidence ${n}/5`}
+                    {evidenceStatus(r)}
                   </span>
                   <Button
                     type="button"
@@ -444,6 +514,36 @@ export const MigrationVerification: React.FC = () => {
                   >
                     ×
                   </Button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <FilterDropdown
+                    items={[...CERTIFICATE_AUTH_OPTIONS]}
+                    selectedId={r.requiredCertificateAuth ?? ''}
+                    onSelect={(id) =>
+                      updateRecord(r.id, {
+                        requiredCertificateAuth: CERTIFICATE_AUTH_OPTIONS.find(
+                          (option) => option === id
+                        ),
+                      })
+                    }
+                    ariaLabel="Required certificate authentication"
+                    defaultLabel="No requirement recorded"
+                    label="Required certificate authentication"
+                  />
+                  <FilterDropdown
+                    items={[...CERTIFICATE_AUTH_OPTIONS]}
+                    selectedId={r.observedCertificateAuth ?? ''}
+                    onSelect={(id) =>
+                      updateRecord(r.id, {
+                        observedCertificateAuth: CERTIFICATE_AUTH_OPTIONS.find(
+                          (option) => option === id
+                        ),
+                      })
+                    }
+                    ariaLabel="Observed certificate authentication"
+                    defaultLabel="No observation recorded"
+                    label="Observed certificate authentication"
+                  />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
                   {EVIDENCE_FIELDS.map((f) => (
@@ -458,10 +558,17 @@ export const MigrationVerification: React.FC = () => {
                       <Input
                         id={`${r.id}-${f.key}`}
                         value={r.evidence[f.key]}
+                        aria-describedby={`${r.id}-${f.key}-hint`}
                         onChange={(e) => setEvidence(r.id, f.key, e.target.value)}
                         placeholder="evidence ref…"
                         className="mt-1 text-xs"
                       />
+                      <p
+                        id={`${r.id}-${f.key}-hint`}
+                        className="mt-1 text-[11px] text-muted-foreground"
+                      >
+                        {f.hint}
+                      </p>
                     </div>
                   ))}
                 </div>

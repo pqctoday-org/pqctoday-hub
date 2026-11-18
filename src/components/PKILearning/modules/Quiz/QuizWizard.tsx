@@ -154,6 +154,7 @@ export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, o
 
           {isSubmitted && (
             <FeedbackPanel
+              questionId={currentQuestion.id}
               isCorrect={state.results[currentQuestion.id] ?? false}
               explanation={currentQuestion.explanation}
               learnMorePath={currentQuestion.learnMorePath}

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { X509Certificate } from 'node:crypto'
 import { AsnConvert } from '@peculiar/asn1-schema'
 import { Certificate, AttributeValue } from '@peculiar/asn1-x509'
+import profileFixtures from '@/data/pkcs11-v33/composite-sig/testvectors.json'
 import { IETF_CERT_VECTORS, decodeDer, derToPem } from '../data/ietfTestVectors'
 import {
   inspectCertificateDer,
@@ -13,6 +14,17 @@ import {
 const fixture = () => decodeDer(IETF_CERT_VECTORS.find((v) => v.certType === 'pure-pqc')!.derBase64)
 
 describe('Actual certificate structural fields and byte boundaries', () => {
+  it.each(profileFixtures.tests.filter((sample) => sample.tcId.startsWith('id-MLDSA')))(
+    'reads the full registered profile from the signed DER for $tcId',
+    ({ tcId, x5c }) => {
+      const result = inspectCertificateDer(decodeDer(x5c))
+      expect(result.text).toContain(
+        `Signature Algorithm: ${tcId.slice(3)} (${result.info.algorithmOID})`
+      )
+      expect(result.info.publicKeyOID).toBe(result.info.algorithmOID)
+    }
+  )
+
   it.each(IETF_CERT_VECTORS.map((v) => [v.id, v.derBase64]))(
     'reads actual reference bytes for %s',
     (_id, base64) => {

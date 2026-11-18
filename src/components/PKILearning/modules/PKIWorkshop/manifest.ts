@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-workshop',
-  contentVersion: 23,
+  contentVersion: 24,
   lm_id: 'LM-020',
   title: 'PKI',
   description:
@@ -29,6 +29,8 @@ const manifest: ModuleManifest = {
     { id: 'parse', label: 'Certificate Parsing' },
     { id: 'revoke', label: 'Certificate Revocation' },
     { id: 'mtc', label: 'Merkle Tree Certificates' },
+    { id: 'acme', label: 'ACME + PQC', optional: true },
+    { id: 'capacity', label: 'Cert Capacity', optional: true },
   ],
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {

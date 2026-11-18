@@ -108,19 +108,19 @@ export const SECURITY_TARGET_SCOPE_EXAMPLES: readonly SecurityTargetScopeExample
   {
     id: 'infineon-sle78-st',
     category: 'smart-card',
-    product: 'Infineon Integrity Guard 32 SLB9672 / SLE78 Dual-Interface Security Controller',
-    stVersion: 'ST Lite v1.4 (BSI-DSZ-CC-1190)',
-    source: 'https://www.commoncriteriaportal.org/cc/index.cfm',
-    pages: '12, 34 and 61',
+    product: 'MTCOS Pro 2.5 V2 EAC with PACE on the Infineon SLE78 (M7892)',
+    stVersion: 'Certification report BSI-DSZ-CC-1033-V2, section 5',
+    source: 'https://www.commoncriteriaportal.org/files/epfiles/1033V2a_pdf.pdf',
+    pages: '14',
     claim:
       'Because the hardware IC is certified to PP-0084 at EAL6+, any composite payment or PQC applet loaded after issuance inherits EAL6+ certification automatically.',
     verdict: 'not-supported',
     supportedClaim:
-      'The security IC platform and its flash loader / symmetric crypto libraries are evaluated to Security IC Protection Profile PP-0084 at EAL6+(ALC_FLR.1).',
+      'The security IC platform and its cryptographic library are identified as EAL6 augmented with ALC_FLR.1 against PP-0084.',
     contradictedClaim:
       'Assuming an uncertified composite applet or post-quantum software library loaded onto the IC inherits the platform EAL6+ certificate without a composite evaluation.',
     explanation:
-      'Platform certification under PP-0084 covers the hardware IC and dedicated IC firmware/libraries named in the TOE boundary. An applet loaded above the platform requires its own composite evaluation referencing the platform ETR-for-composition.',
+      'Page 14 identifies the IC, embedded MTCOS operating system and travel-document application in the evaluated product. A payment applet added later would need its own applicable evaluation evidence.',
     auditorTakeaway:
       'When auditing smart cards or secure elements, verify both the underlying IC platform certificate and the composite certificate for the specific OS/applet version.',
   },
@@ -241,20 +241,20 @@ export const SECURITY_TARGET_SCOPE_EXAMPLES: readonly SecurityTargetScopeExample
   {
     id: 'infineon-optiga-tpm20-st',
     category: 'os-tpm',
-    product: 'Infineon OPTIGA TPM SLB9672 FW 15.23 (TCG TPM 2.0 Library Rev 1.59)',
-    stVersion: 'ST Lite v1.2 (BSI-DSZ-CC-1177)',
-    source: 'https://www.commoncriteriaportal.org/cc/index.cfm',
-    pages: '7, 22 and 58',
+    product: 'Infineon OPTIGA TPM SLB9672_2.0 v15.25.19744.00',
+    stVersion: 'Security Target v1.8, 2 February 2026',
+    source: 'https://www.commoncriteriaportal.org/nfs/ccpfiles/files/epfiles/1277b_pdf.pdf',
+    pages: '39–40 (FDP_ACF.1.2/States)',
     claim:
-      'The TPM 2.0 ST evaluates field-upgradeable firmware loading protected by LMS/XMSS or RSA/ECDSA verification in the bootloader, while runtime TPM2_Sign commands remain scoped to the evaluated TCG Rev 1.59 algorithms.',
+      'The evaluated firmware-update mode requires the TPM to verify integrity and authenticity before it imports or activates firmware.',
     verdict: 'supported',
     supportedClaim:
-      'FDP_UIT / FCS_COP.1 in the ST cover authenticated field-firmware update verification and the runtime TCG TPM 2.0 Rev 1.59 cryptographic command set.',
+      'FDP_ACF.1.2/States, rule 2, makes both checks a condition of importing or activating firmware in update mode.',
     contradictedClaim:
-      'Assuming a quantum-safe bootloader firmware-update verification mechanism exposes general-purpose ML-DSA signing to the host OS via TPM2_Sign.',
+      'Allowing the TPM to activate an unauthenticated image in firmware-update mode would violate rule 2.',
     explanation:
-      'Hardware roots of trust frequently implement hash-based or post-quantum signature verification exclusively inside the immutable ROM/bootloader for field firmware updates before exposing PQC commands to host applications.',
+      'Rule 2 on pages 39–40 requires both checks in firmware-update mode. A claim about application signing through TPM2_Sign needs separate evidence identifying the command, algorithm and evaluated configuration.',
     auditorTakeaway:
-      'Distinguish TOE internal self-protection mechanisms (secure firmware update verification) from externally callable TSF cryptographic services exposed to the host OS.',
+      'Match the firmware identifier in section 1.1 to the device and trace each claimed operation to its own security requirement.',
   },
 ] as const

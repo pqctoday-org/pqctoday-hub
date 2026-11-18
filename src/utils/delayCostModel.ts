@@ -9,8 +9,8 @@
  *    shelf-life decay, and HNDL cap as the Breach Scenario Simulator — no
  *    second, competing quantum-cost model.
  *  - Each row evaluates computeBreachCosts as-of THAT row's calendar year with
- *    a 1-year horizon — the marginal probability CRQC arrives in that specific
- *    year, blended into that year's expected loss. computeBreachCosts' own
+ *    a 1-year horizon and weights that year's expected loss using the cumulative
+ *    probability a CRQC exists by that year. computeBreachCosts' own
  *    shelf-life decay depends only on yearsOfData (by the shared model's own
  *    design, to avoid double-counting elapsed-time uncertainty against the
  *    CRQC-arrival weighting), so it does not need a growing horizon to behave
@@ -24,8 +24,8 @@
  *    (no new data harvested once you're actively moving to PQC), not once it
  *    finishes. The residual tail's decay level is therefore fixed at whatever
  *    it was when migration began; what still varies year to year afterward is
- *    the marginal CRQC-arrival probability, not further corpus aging —
- *    matching the shared model's own simplification, not a separate one.
+ *    the cumulative probability of CRQC availability and the years since
+ *    the corpus stopped growing.
  *  - Optional learner-verified consequences (annual and one-time) accrue while
  *    migration remains INCOMPLETE after the learner-supplied effective year.
  *    The caller must never infer a dollar amount from a framework match alone.

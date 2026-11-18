@@ -14,7 +14,7 @@ vi.mock('@/utils/analytics', () => ({
 const fields = [
   'Observed negotiation',
   'Negative test',
-  'Cert-chain under PQC',
+  'Certificate and authentication evidence',
   'Downgrade documented',
   'Evidence in dossier',
 ]
@@ -100,16 +100,16 @@ describe('migration reference route and actual educational export', () => {
     await show()
     fill()
     expect(screen.getByText('Evidence recorded — review required')).toBeInTheDocument()
-    expect(screen.getByText('Incomplete evidence 3/5')).toBeInTheDocument()
+    expect(screen.getByText('Incomplete evidence (3/5)')).toBeInTheDocument()
     expect(screen.getByText(/Export the sample reference entries/)).toHaveTextContent(
       'does not establish that a migration or retirement was performed'
     )
     const markdown = await download()
     expect(markdown).toContain(
-      '| Fictional service A | ✓ | ✓ | ✓ | ✓ | ✓ | **Evidence recorded — review required** |'
+      '| Fictional service A | ✓ | ✓ | ✓ | ✓ | ✓ | — | — | **Evidence recorded — review required** |'
     )
     expect(markdown).toContain(
-      '| Fictional service B | ✓ | ✓ | ✓ | — | — | Incomplete evidence (3/5) |'
+      '| Fictional service B | ✓ | ✓ | ✓ | — | — | — | — | Incomplete evidence (3/5) |'
     )
     expect(markdown).toContain('1/2 records have all five evidence fields populated')
     expect(markdown).toContain('entering them does not evaluate evidence or verify a deployment')
@@ -127,11 +127,11 @@ describe('migration reference route and actual educational export', () => {
     fireEvent.change(screen.getAllByRole('textbox', { name: 'Evidence in dossier' })[0], {
       target: { value: '' },
     })
-    expect(screen.getByText('Incomplete evidence 4/5')).toBeInTheDocument()
+    expect(screen.getByText('Incomplete evidence (4/5)')).toBeInTheDocument()
     expect(screen.queryByText('Evidence recorded — review required')).not.toBeInTheDocument()
     const markdown = await download()
     expect(markdown).toContain(
-      '| Fictional service A | ✓ | ✓ | ✓ | ✓ | — | Incomplete evidence (4/5) |'
+      '| Fictional service A | ✓ | ✓ | ✓ | ✓ | — | — | — | Incomplete evidence (4/5) |'
     )
     expect(markdown).toContain('0/2 records have all five evidence fields populated')
     expect(markdown).toContain('entering them does not evaluate evidence or verify a deployment')

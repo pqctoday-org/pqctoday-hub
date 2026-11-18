@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { inventoryCoverageText, SYSTEMS_INVENTORIED } from './inventoryCoverage'
 import React, { useState, useCallback, useMemo, useEffect, useId } from 'react'
 import { ChevronDown, ChevronUp, Lock, Target } from 'lucide-react'
 import { ExportableArtifact } from './ExportableArtifact'
@@ -431,6 +432,8 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
         : `${scores[d.id] ?? 0}/100`
       md += `| ${d.label} | ${scoreCell} | ${Math.round(effectiveWeight(d) * 100)}%${target}${lineage}\n`
       md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
+      const coverageText = inventoryCoverageText(d.id, observation)
+      if (coverageText) md += `\nInventory coverage from sample counts: ${coverageText}\n`
     }
     return md
   }, [
@@ -475,6 +478,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       'Current-use status',
       'Included in overall calculation',
       'Scope',
+      'Inventory coverage from sample counts',
     ]
     const rows = dimensions.map((d) => {
       const observation = observations[d.id]
@@ -506,6 +510,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
               : 'Assessed sample value',
         !isReadinessDimension(d) || isPending(d) ? 'false' : 'true',
         spreadsheetSafeText(observation?.scope ?? ''),
+        inventoryCoverageText(d.id, observation) ?? '',
       ]
     })
     return rowsToCsv([header, ...rows])
@@ -777,7 +782,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                   Sample measure notes
                 </summary>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  {d.reportingOnly && (
+                  {(d.reportingOnly || d.id === SYSTEMS_INVENTORIED) && (
                     <label className="space-y-1 text-xs text-muted-foreground">
                       <span>Reporting scope</span>
                       <input
@@ -858,6 +863,12 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
                     </select>
                   </label>
                 </div>
+                {d.id === SYSTEMS_INVENTORIED && (
+                  <p role="status" className="mt-2 text-xs font-medium text-foreground">
+                    {inventoryCoverageText(d.id, observations[d.id]) ??
+                      'Enter counts for the same reporting scope to calculate inventory coverage.'}
+                  </p>
+                )}
                 <p className="mt-2 text-[11px] text-muted-foreground">
                   {d.reportingOnly
                     ? 'The raw reported percent may exceed 100 and is independent of the optional actual-spend and approved-budget notes; the Hub does not calculate or verify their consistency.'

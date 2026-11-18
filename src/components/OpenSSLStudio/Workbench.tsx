@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { quoteOpenSSLArgument } from './worker/commandParser'
 import { useState, useEffect, useMemo } from 'react'
 import { useOpenSSLStore } from './store'
 import { WorkbenchToolbar } from './components/WorkbenchToolbar'
@@ -390,7 +391,8 @@ export const Workbench = ({
 
       cmd += ` dgst -${hashAlgo}`
       if (hashBinary) cmd += ` -binary`
-      cmd += ` -out ${outFile} ${inFile}`
+      const inputPath = inFile.startsWith('-') ? `./${inFile}` : inFile
+      cmd += ` -out ${quoteOpenSSLArgument(outFile)} ${quoteOpenSSLArgument(inputPath)}`
     } else if (category === 'kem') {
       const key = kemKeyFile || (kemAction === 'encap' ? 'public.key' : 'private.key')
 

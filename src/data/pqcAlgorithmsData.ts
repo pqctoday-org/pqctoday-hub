@@ -425,6 +425,7 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // named by the row, and this one is standards-track and published.
   'RFC 9941|||RFC 9941': 'final', // sntrup761x25519-sha512
   // TLS 1.3 hybrid groups, published as RFC 10024 (Standards Track, Aug 2026).
+  'RFC 10073|||RFC 10073': 'final', // X.509 Composite ML-DSA signatures
   'RFC 10024|||RFC 10024': 'final', // X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024
   // SSH hybrid key exchange, published as RFC 10042 (Informational, Aug 2026);
   // a published RFC, treated like RFC 9941 above.
@@ -546,11 +547,21 @@ export function algorithmSizeBytes(
   return algorithmSizeState(algo, field) === 'stated' ? sizeValue(algo, field) : null
 }
 
+/** The variable-length entries marked with an asterisk in RFC 10073 Table 6. */
+function isCompositeMaximum(algo: AlgorithmDetail, field: AlgorithmSizeField): boolean {
+  if (algo.fipsStandard !== 'RFC 10073') return false
+  if (algo.id === 'id-mldsa44-rsa2048-pss-sha256') {
+    return field === 'publicKey' || field === 'privateKey'
+  }
+  return algo.id === 'id-mldsa44-ecdsa-p256-sha256' && field === 'signatureOrCiphertext'
+}
+
 /** "1,184 B", or the field's missing-data words. */
 export function formatAlgorithmSize(algo: AlgorithmDetail, field: AlgorithmSizeField): string {
   const state = algorithmSizeState(algo, field)
   if (state !== 'stated') return evidenceStateLabel(state)
-  return formatByteField(sizeValue(algo, field), 'stated')
+  const text = formatByteField(sizeValue(algo, field), 'stated')
+  return isCompositeMaximum(algo, field) ? `Up to ${text}` : text
 }
 
 /** Export cell: the number of bytes, or the field's missing-data words. */
@@ -560,7 +571,9 @@ export function exportAlgorithmSize(
 ): string | number {
   const state = algorithmSizeState(algo, field)
   if (state !== 'stated') return evidenceStateLabel(state)
-  return sizeValue(algo, field) ?? RESEARCH_NEEDED
+  const value = sizeValue(algo, field)
+  if (value === null) return RESEARCH_NEEDED
+  return isCompositeMaximum(algo, field) ? `Up to ${value}` : value
 }
 
 export function stackRamState(algo: AlgorithmDetail): EvidenceFieldState {

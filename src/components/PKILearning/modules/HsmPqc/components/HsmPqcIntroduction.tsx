@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { KeyEncodingSizingExercise } from '@/components/ui/KeyEncodingSizingExercise'
 import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
 import React, { useState } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
@@ -326,6 +327,14 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             />
 
             {/* Key Size Comparison */}
+            <KeyEncodingSizingExercise />
+            <p className="text-xs text-muted-foreground">
+              For HSM buffer estimates, distinguish key components from exported objects. The RSA
+              public-key value is the modulus width. The RSA private-key value is an example in
+              PKCS#1 DER and varies by key. The ECDSA row uses an uncompressed public point and a
+              raw signature. Measure the actual API output before sizing a buffer for a certificate
+              or exported key.
+            </p>
             <h3 className="text-sm font-bold text-foreground">Buffer Size Impact</h3>
             <ResponsiveTable
               caption="Key, signature and ciphertext sizes by algorithm"

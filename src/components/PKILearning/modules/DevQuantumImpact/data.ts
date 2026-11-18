@@ -13,7 +13,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
     'The code you write today may be vulnerable before its end of life. Understanding PQC is now a core engineering skill.',
 
   urgencyStatement:
-    'Every line of cryptographic code you ship today uses algorithms that quantum computers will break. Library migrations are already underway (OpenSSL 3.5, BoringSSL, Go 1.24), and larger PQC keys/signatures break assumptions baked into protocols, databases, and network stacks. Developers who understand PQC now will lead their teams through the most significant cryptographic transition in internet history.',
+    'Start with the operation your code performs. A sufficiently large fault-tolerant quantum computer could break RSA signatures and elliptic-curve key exchange. AES-256 encryption uses a different primitive. Trace each dependency, then test whether peers, storage fields and network limits can handle the replacement keys and signatures.',
 
   threatImpacts: [
     {
@@ -24,7 +24,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       severity: 'critical',
       timeframe: '2024-2027',
       exampleScenario:
-        'Your application uses OpenSSL for TLS. OpenSSL 3.5 adds ML-KEM and ML-DSA support but changes EVP API patterns. Your hardcoded cipher suite configuration breaks, and your CI pipeline starts failing TLS handshake tests.',
+        'Your TLS client pins its supported key-exchange groups to X25519. A server changes its policy to require X25519MLKEM768. The peers have no group in common. Update the supported-group configuration and check what the peers actually negotiate.',
     },
     {
       id: 'key-size-impact',

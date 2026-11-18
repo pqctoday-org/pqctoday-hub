@@ -19,6 +19,7 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { MECH_TABLE, type MechanismFamily } from './softhsm/mechanismTable'
 import { derOctetString } from './softhsm/helpers'
 import { hsm_getKeysRemaining } from './softhsm/stateful'
+import { loadSoftHsmRustBindings } from './softhsmRustBindings'
 export type { SoftHSMModule }
 
 // Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
@@ -118,17 +119,12 @@ export const getSoftHSMCppModule = async (): Promise<SoftHSMModule> => {
 
 /**
  * Returns the SoftHSMv3 (Rust) WASM module singleton.
- * Dynamically imports the `softhsmrustv3.js` wasm-bindgen shim and wraps its
- * InitOutput into the identical SoftHSMModule ABI interface.
+ * Wraps the shared wasm-bindgen bindings in the SoftHSMModule ABI interface.
  */
 export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
   if (!rustModulePromise) {
     rustModulePromise = (async () => {
-      // wasm-bindgen --target bundler: Vite handles WASM loading at build time.
-      // import('./softhsmrustv3.js') boots the module synchronously — no async init needed.
-      // _C_* functions, _malloc/_free, and __wbg_get_memory are named exports on _bg.js,
-      // re-exported through softhsmrustv3.js.
-      const rustShim = await import('./softhsmrustv3.js')
+      const rustShim = await loadSoftHsmRustBindings()
       const rawMemory = (
         rustShim as unknown as { __wbg_get_memory: () => WebAssembly.Memory }
       ).__wbg_get_memory()

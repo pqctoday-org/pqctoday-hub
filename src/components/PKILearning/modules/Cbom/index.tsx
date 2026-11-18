@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import { Layers, FileText, ShieldCheck, Fingerprint } from 'lucide-react'
 import { CbomIntroduction } from './components/CbomIntroduction'
 import { CbomExercises } from './components/CbomExercises'
+import { DependencyReconciliation } from './workshop/DependencyReconciliation'
 import { SourceCoverageMapper } from './workshop/SourceCoverageMapper'
 import { FormatChooser } from './workshop/FormatChooser'
 import { CbomVerify } from './workshop/CbomVerify'
@@ -49,7 +50,12 @@ export const CbomModule: FC = () => (
     renderWorkshopStep={(index, configKey) => {
       switch (index) {
         case 0:
-          return <SourceCoverageMapper key={`coverage-${configKey}`} />
+          return (
+            <div key={`coverage-${configKey}`} className="space-y-4">
+              <SourceCoverageMapper />
+              <DependencyReconciliation />
+            </div>
+          )
         case 1:
           return <FormatChooser key={`format-${configKey}`} />
         case 2:

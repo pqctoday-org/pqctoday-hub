@@ -54,6 +54,19 @@ describe('Binary Signing live sample uses the existing Rust engine', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Generate (Live WASM)' }))
     fireEvent.click(await screen.findByRole('button', { name: 'Sign and check sample' }))
     expect(await screen.findByText('Sample signature check passed')).toBeInTheDocument()
+    const received = screen.getByLabelText('Received data')
+    const verifyReceived = screen.getByRole('button', { name: 'Verify against original signature' })
+    fireEvent.change(received, { target: { value: 'Hello, Post-Quantum World?' } })
+    fireEvent.click(verifyReceived)
+    expect(screen.getByRole('status', { name: 'Received data result' })).toHaveTextContent(
+      'Received data failed signature verification'
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Restore signed data' }))
+    fireEvent.click(verifyReceived)
+    expect(screen.getByRole('status', { name: 'Received data result' })).toHaveTextContent(
+      'Received data matches the signed message'
+    )
+
     const engine = live.module as SoftHSMModule
     const publicKey = live.keys.find((key) => key.role === 'public')!.handle
     const privateKey = live.keys.find((key) => key.role === 'private')!.handle

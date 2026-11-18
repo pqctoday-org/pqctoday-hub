@@ -939,7 +939,7 @@ export const COMPOSITE_PROFILES_RECOMMENDED: readonly CompositeProfileDraft19[] 
   COMPOSITE_PROFILE_MLDSA65_ED25519_SHA512, // SUF-CMA concerns (see §9.2.2)
 ]
 
-/** One selectable composite profile, with the guidance the draft gives for it. */
+/** One selectable composite profile, with the guidance the RFC gives for it. */
 export interface CompositeProfileChoice {
   profile: CompositeProfileDraft19
   /** Short label for a picker, e.g. 'ML-DSA-65 + ECDSA P-256' */
@@ -955,7 +955,7 @@ export interface CompositeProfileChoice {
  * its recommendations.
  *
  * The `useWhen` strings paraphrase §10.4 rather than inventing advice. Note the
- * draft is explicit that it "does not list any particular composite algorithm
+ * RFC is explicit that it "does not list any particular composite algorithm
  * as mandatory-to-implement" — this is guidance for narrowing an awkward number
  * of options, not a conformance ranking.
  */
@@ -969,8 +969,7 @@ export const COMPOSITE_PROFILE_CHOICES: readonly CompositeProfileChoice[] = [
   {
     profile: COMPOSITE_PROFILE_MLDSA65_RSA3072_PSS_SHA512,
     shortLabel: 'ML-DSA-65 + RSA-3072 PSS',
-    useWhen:
-      'When RSA is required. Note the draft points here rather than at the RSA-2048 profile below.',
+    useWhen: 'When RSA is required. RFC 10073 §10.4 recommends this RSA-3072 profile.',
     recommended: true,
   },
   {
@@ -996,14 +995,14 @@ export const COMPOSITE_PROFILE_CHOICES: readonly CompositeProfileChoice[] = [
     profile: COMPOSITE_PROFILE_MLDSA65_ED25519_SHA512,
     shortLabel: 'ML-DSA-65 + Ed25519',
     useWhen:
-      'Where SUF-CMA is a concern. Read §9.2.2 first: the draft concludes Composite ML-DSA is NOT SUF-CMA secure against quantum adversaries. Ed25519 removes ECDSA’s trivial signature malleability, which is a real improvement but not the full property.',
+      'Where SUF-CMA is a concern. Read §9.2.2 first: RFC 10073 says Composite ML-DSA lacks strong unforgeability against quantum adversaries. Ed25519 removes ECDSA’s trivial signature malleability, which is a real improvement but not the full property.',
     recommended: true,
   },
   {
     profile: COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256,
     shortLabel: 'ML-DSA-44 + RSA-2048 PSS',
     useWhen:
-      'Not recommended by §10.4 — included because it is the composite certificate you are most likely to meet in the wild. For new RSA deployments the draft points at RSA-3072 above.',
+      'Not recommended by §10.4 — included to compare with the RSA-3072 profile that §10.4 recommends when RSA is required.',
     recommended: false,
   },
   {

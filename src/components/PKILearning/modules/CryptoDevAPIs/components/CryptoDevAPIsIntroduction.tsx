@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { PythonWorkbenchLink } from '@/components/ui/PythonWorkbenchLink'
 import React from 'react'
 import { Link } from 'react-router'
 import {
@@ -468,6 +469,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                   ))}
                 </div>
                 <div className="text-xs text-muted-foreground mb-1">PQC: {item.pqc}</div>
+                {item.lang === 'Python' && <PythonWorkbenchLink />}
                 <div className="text-xs text-muted-foreground italic">{item.note}</div>
               </div>
             ))}

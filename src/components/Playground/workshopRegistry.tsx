@@ -285,7 +285,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'envelope-encrypt',
     pt_id: 'PT-004',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Envelope Encryption',
     description: 'ML-KEM + AES key wrap in a KMS envelope encryption pattern',
     category: 'HSM / PKCS#11',
@@ -304,7 +304,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'AES-256-GCM wrapped DEK (base64) + ML-KEM ciphertext; unwrapped DEK must equal original DEK.',
+      'Copyable hex for the wrapped DEK. ML-KEM runs also produce a KEM ciphertext, and AES-GCM adds a nonce. Compare all 32 recovered DEK bytes with the original.',
   },
   {
     id: 'cloud-kms-key-exchange',
@@ -349,31 +349,31 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'token-migration',
     pt_id: 'PT-005',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'Multi-Algorithm Signing',
     description: 'Compare ML-DSA, ECDSA, and RSA signing in a token migration workflow',
     category: 'HSM / PKCS#11',
     algorithms: ['ML-DSA', 'ECDSA', 'RSA'],
     icon: Fingerprint,
-    moduleLink: '/learn/iam-pqc',
+    moduleLink: '/learn/iam-pqc?tab=workshop&step=1',
     keywords: ['token', 'migration', 'iam', 'ml-dsa', 'ecdsa', 'rsa', 'multi-algorithm', 'jwt'],
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     intro: {
       whatYouWillDo:
-        'Choose a JWT signing algorithm (RS256, ES256 or ML-DSA-44/65/87), Sign Token to see the header, unchanged payload and signature, then Verify Signature against the JWKS public key over PKCS#11.',
+        'Choose a JWT signing algorithm and sign with the browser HSM. Verify the original payload with the local public key, change the received subject, then restore it.',
       workedExample:
-        'Switch from the default RS256 to ML-DSA-65: the signature grows from 256 to 3,309 bytes (12.9x vs RS256) in the Size Impact Analysis, and Verify Signature returns Signature valid — CKR_OK.',
+        'With ML-DSA-65, the signature grows from the 256-byte RS256 baseline to 3,309 bytes. Verification accepts the original payload, rejects the changed subject and succeeds when the original value is restored.',
     },
     hasOutput: true,
     outputSpec:
-      'ML-DSA / ECDSA / RSA signature bytes (hex); each must verify under corresponding public key.',
+      'A signature preview and byte count, plus real PKCS#11 verification of the selected received payload in Live HSM Mode.',
   },
   {
     id: 'firmware-signing',
     pt_id: 'PT-007',
-    version: '1.0.4',
+    version: '1.0.5',
     name: 'Firmware Signing',
     // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
     // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
@@ -384,7 +384,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'HSM / PKCS#11',
     algorithms: ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'SLH-DSA-SHA2-128s', 'SHA-256'],
     icon: Cpu,
-    moduleLink: '/learn/secure-boot-pqc',
+    moduleLink: '/learn/secure-boot-pqc?tab=workshop&step=1',
     // NOTE: the SPHINCS+ alias is used here rather than the FIPS 205 short name,
     // which is also another tool's id. Discovery is unaffected either way — the
     // algorithms entry above already contains that name as a substring, and
@@ -408,13 +408,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'cert-engineer'],
     intro: {
       whatYouWillDo:
-        'Upload a firmware binary (or use the mock UEFI manifest), pick PQC, classical and hash algorithms, then Generate Both Keys, Sign Both and Verify Both Signatures across the four wizard steps.',
+        'Upload a firmware binary or use the sample UEFI manifest. Generate classical and PQC key pairs, sign the manifest and verify both signatures. Change the received manifest to test rejection.',
       workedExample:
         'With the defaults — ML-DSA-65 against RSA-2048 with SHA-256 — both signatures come back VERIFIED and the Migration Comparison table shows the signature growing from 256 B to 3,309 B (12.9×).',
     },
     hasOutput: true,
     outputSpec:
-      'A post-quantum signature (ML-DSA-44, ML-DSA-65, ML-DSA-87 or SLH-DSA-SHA2-128s; default ML-DSA-65 at 3,309 bytes, ML-DSA-44 2,420, ML-DSA-87 4,627, SLH-DSA-SHA2-128s 7,856) and a classical RSA or ECDSA signature over the firmware image (hex); each must verify under its own public key.',
+      'A PQC signature and a classical signature over the manifest. For an uploaded binary the manifest binds its byte length and SHA-256 digest. Both signatures must verify under their own public keys to finish.',
   },
   {
     id: 'slh-dsa',
@@ -509,14 +509,14 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'kdf-derivation',
     pt_id: 'PT-008',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'SP 800-108 KDF',
     description:
       'NIST SP 800-108 counter-mode key derivation — applicable to KEM secrets, PSK, QKD, and password-derived keys',
     category: 'HSM / PKCS#11',
     algorithms: ['SP 800-108', 'HMAC-SHA256', 'PBKDF2', 'HKDF'],
     icon: KeyRound,
-    moduleLink: '/learn/kms-pqc',
+    moduleLink: '/learn/qkd?tab=workshop&step=4',
     keywords: [
       'kdf',
       'key derivation',
@@ -534,13 +534,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher', 'cert-engineer'],
     intro: {
       whatYouWillDo:
-        'Retrieve a QKD key over ETSI QKD 014, import it into the HSM, and derive a session key from it with SP 800-108 counter-mode KDF over PKCS#11.',
+        'Generate a local key shaped like an ETSI QKD 014 response and import it into the browser HSM. Compare SP 800-108 counter-mode derivations with the same session context and a one-bit change.',
       workedExample:
-        'One QKD key in, one session key out, with the label and context that bind the derived key to its purpose — then the session key is used.',
+        'Run the local HSM sample. Repeating the same inputs reproduces the key. Changing the session context gives a different key from the same imported secret and label.',
     },
     hasOutput: true,
     outputSpec:
-      'SP 800-108 derived key material (32 or 64 bytes hex); deterministic given same PRF, context, and label.',
+      'Three 32-byte derivation outputs in hex for the live HSM sample. With the HSM disabled, the walkthrough displays one labelled illustrative random value.',
   },
   {
     id: 'tee-channel',
@@ -745,7 +745,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'mls-group-messaging',
     pt_id: 'PT-030',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'MLS Group Messaging',
     description:
       'RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto routes every crypto op through softhsmv3.',
@@ -1060,23 +1060,23 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-certs',
     pt_id: 'PT-016',
-    version: '1.0.1',
+    version: '1.1.1',
     name: 'Hybrid Certificates',
     description:
-      'Generate and compare eight X.509 hybrid and post-quantum certificate formats via SoftHSM PKCS#11 + real DER encoding',
+      'Compare X.509 certificate formats, RFC 10073 composite signatures, and real TLS handshakes with a classical baseline',
     category: 'Certificates & Proofs',
     algorithms: ['SLH-DSA', 'ML-DSA-65', 'ECDSA-P256'],
     icon: ShieldCheck,
-    moduleLink: '/learn/hybrid-crypto',
+    moduleLink: '/learn/hybrid-crypto?tab=workshop&step=5&sv=2',
     keywords: ['certificate', 'x509', 'composite', 'hybrid', 'pqc', 'openssl', 'der'],
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     intro: {
       whatYouWillDo:
-        "Enable the HSM, press Generate on any of the seven current certificate format cards or Generate All Current Formats, check each card's verification results, then read each PEM or parsed view and the Format Comparison table. Advanced and historical examples are generated separately.",
+        'Run the certificate-to-TLS exercise to compare classical and hybrid key exchange with RSA and ML-DSA authentication. Then enable the HSM and generate certificate formats to inspect their signatures, legacy acceptance and TLS applicability. Advanced and historical examples are generated separately.',
       workedExample:
-        'Generate Pure PQC (ML-DSA-65) and Related Certificates (RFC 9763) first: the comparison table shows their DER size, generation time and quantum-safe status side by side.',
+        'Run the RSA baseline, then keep the same RSA certificate while switching to X25519MLKEM768: key exchange changes, but CertificateVerify remains RSA. The ML-DSA run changes authentication too.',
     },
     hasOutput: true,
     outputSpec:
@@ -1122,7 +1122,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'digital-id',
     pt_id: 'PT-019',
-    version: '1.0.6',
+    version: '1.0.7',
     name: 'EUDI Wallet Architecture',
     description:
       'Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.',
@@ -1148,7 +1148,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Walk five sample steps: inspect the wallet, issue a sample PID, receive a sample diploma attestation, present selected attributes to the relying-party exercise, then explore a modelled QTSP-signing workflow.',
       workedExample:
-        'Create a sample PID, inspect its wallet representation, then present selected attributes to the relying-party exercise. The sample result does not validate a deployed identity or trust-service transaction.',
+        'Present a sample PID to see the bank refuse the missing degree. Issue the diploma, compare an audience mismatch with a complete presentation for the intended bank, and inspect which PID fields were shared.',
     },
     hasOutput: true,
     outputSpec:
@@ -1165,7 +1165,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['secp256k1', 'SHA-256', 'RIPEMD160'],
     icon: Bitcoin,
-    moduleLink: '/learn/digital-assets?flow=bitcoin',
+    moduleLink: '/learn/digital-assets?tab=workshop&flow=bitcoin',
     keywords: ['bitcoin', 'secp256k1', 'ecdsa', 'transaction', 'utxo', 'sha256', 'ripemd160'],
     difficulty: 'intermediate',
     requires: [],
@@ -1189,7 +1189,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['BIP39', 'BIP32', 'PBKDF2', 'HMAC-SHA512'],
     icon: Workflow,
-    moduleLink: '/learn/digital-assets?flow=hd-wallet',
+    moduleLink: '/learn/digital-assets?tab=workshop&flow=hd-wallet',
     keywords: ['hd wallet', 'bip39', 'bip32', 'mnemonic', 'derivation', 'pbkdf2', 'slip-0010'],
     difficulty: 'intermediate',
     requires: [],
@@ -1215,7 +1215,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['Ed25519'],
     icon: Zap,
-    moduleLink: '/learn/digital-assets?flow=solana',
+    moduleLink: '/learn/digital-assets?tab=workshop&flow=solana',
     keywords: ['solana', 'ed25519', 'eddsa', 'transaction', 'base58'],
     difficulty: 'intermediate',
     requires: [],

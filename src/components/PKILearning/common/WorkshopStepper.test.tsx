@@ -23,9 +23,19 @@ describe('WorkshopStepper', () => {
     expect(screen.getAllByRole('button')).toHaveLength(3)
   })
 
-  it('marks step before current as completed', () => {
+  it('marks a saved step before the current step as completed', () => {
     render(<WorkshopStepper steps={STEPS} currentStep={1} completedSteps={['step-1']} />)
     expect(screen.getByRole('button', { name: /key setup.*completed/i })).toBeInTheDocument()
+  })
+
+  it('leaves skipped steps incomplete and still identifies a revisited completed step as current', () => {
+    render(<WorkshopStepper steps={STEPS} currentStep={2} completedSteps={['step-3']} />)
+    expect(screen.getByRole('button', { name: /^Key Setup$/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Sign$/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Verify.*current.*completed/ })).toHaveAttribute(
+      'aria-current',
+      'step'
+    )
   })
 
   it('marks current step with aria-current="step"', () => {

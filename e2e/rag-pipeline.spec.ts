@@ -1,4 +1,6 @@
-import { test, expect } from '@playwright/test'
+// SPDX-License-Identifier: AGPL-3.0-only
+import { expect, test } from './fixtures/blockAnalytics'
+import { openAssistant } from './fixtures/runAssistantQuestion'
 
 test.describe('ASR Copilot RAG Agent Pipeline', () => {
   test.setTimeout(30000)
@@ -13,9 +15,10 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
   // i.e. the exact URL the route pattern targets. Blocking service workers for
   // this spec puts the request back on the page, where the mock applies.
   test.use({ serviceWorkers: 'block' })
-  test('validates offline RAG pipeline execution without typing interactions', async ({ page }) => {
-    // Intercept console to debug
-    page.on('console', (msg) => console.log('RAG-BROWSER:', msg.text()))
+  test('answers a supported question with a source and declines a question without evidence', async ({
+    page,
+  }) => {
+    let providerRequests = 0
 
     // Inject the Chat Store setup before the page loads.
     // We set the provider to 'gemini' and inject a fake API key.
@@ -48,6 +51,10 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
         })
       )
       // Suppress the WhatsNew toast (z-100 alertdialog can intercept clicks).
+      window.localStorage.setItem(
+        'pqc-disclaimer-storage',
+        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+      )
       window.localStorage.setItem(
         'pqc-version-storage',
         JSON.stringify({ state: { lastSeenVersion: '99.99.99' }, version: 0 })
@@ -90,6 +97,7 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
         })
       }
 
+      providerRequests++
       const mockAnswer =
         'ML-KEM is a key-encapsulation mechanism standardized by NIST.\n\n' +
         '```citations\n' +
@@ -106,82 +114,44 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
       })
     })
 
-    // Navigate to a page where the Chat Copilot mounts
     await page.goto('/timeline')
+    const assistant = await openAssistant(page)
+    const input = assistant.getByRole('textbox', { name: 'Message input' })
+    const send = assistant.getByRole('button', { name: 'Send message' })
+    await input.fill('What is ML-KEM?')
+    await send.click()
 
-    // Make sure the RightPanel is toggled open via ASR E2E boundary
-    type E2eWindow = Window & {
-      __e2e_toggle_panel?: (panel?: string) => void
-      __e2e_chat_send?: (query: string) => void
-      __e2e_chat_store?: { getState: () => { messages: { content: string }[] } }
-    }
-    await page.waitForFunction(
-      () => typeof (window as unknown as E2eWindow).__e2e_toggle_panel === 'function',
-      undefined,
-      { timeout: 10000 }
-    )
-    // The seeded `activeTab: 'chat'` does NOT open the panel — `isOpen` isn't
-    // persisted by `useRightPanelStore.partialize`. Calling toggle('chat') with
-    // tab matching activeTab while isOpen=false correctly OPENS the panel
-    // (the toggle's else-branch). Calling it after the panel is already open
-    // would CLOSE it — that was the prior bug here.
-    await page.evaluate(() => {
-      ;(window as unknown as E2eWindow).__e2e_toggle_panel?.('chat')
-    })
-
-    // Wait for the UI-decoupled window.__e2e_chat_send to become available
-    // Since we forced the Right Panel to be open via local storage, the component should mount immediately.
-    try {
-      await page.waitForFunction(
-        () => typeof (window as unknown as E2eWindow).__e2e_chat_send === 'function',
-        undefined,
-        { timeout: 10000 }
-      )
-      console.log('e2e_chat_send is available.')
-    } catch {
-      console.log('e2e_chat_send wait timed out')
-    }
-
-    // Action: Programmatic State Dispatch
-    await page.evaluate(() => {
-      const send = (window as unknown as E2eWindow).__e2e_chat_send
-      if (typeof send === 'function') {
-        send('What is ML-KEM?')
-        console.log('Dispatched query.')
-      } else {
-        console.log('__e2e_chat_send was not a function!')
-      }
-    })
-
-    // State & Result Verification:
-    // We verified the pipeline processed the data via state, now wait for Result.
-    const chatBubble = page.getByText(/ML-KEM is a key-encapsulation mechanism/, { exact: false })
-    try {
-      await expect(chatBubble).toBeVisible({ timeout: 15000 })
-      await expect(page.getByText('Explore in PQC Today:', { exact: false })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'ML-KEM', exact: true })).toHaveAttribute(
-        'href',
-        '/algorithms?highlight=ml-kem'
-      )
-    } catch {
-      console.log(
-        'DOM check failed, but ASR test validates store state as primary source of truth.'
-      )
-      const messages = await page.evaluate(() => {
-        const store = (window as unknown as E2eWindow).__e2e_chat_store
-        if (typeof store !== 'undefined') {
-          return store.getState().messages
-        }
-        return []
+    await expect(
+      assistant.getByText('ML-KEM is a key-encapsulation mechanism standardized by NIST.', {
+        exact: true,
       })
-      expect(messages.length).toBeGreaterThan(0)
-      expect(messages[messages.length - 1].content).toContain(
-        'ML-KEM is a key-encapsulation mechanism'
+    ).toBeVisible({ timeout: 15_000 })
+    await expect(assistant.getByText('Explore in PQC Today:', { exact: false })).toBeVisible()
+    await expect(assistant.getByRole('link', { name: 'ML-KEM', exact: true })).toHaveAttribute(
+      'href',
+      '/algorithms?highlight=ml-kem'
+    )
+    expect(providerRequests).toBe(1)
+
+    await input.fill('What is it?')
+    await send.click()
+    await expect(
+      assistant.getByText('ML-KEM is a key-encapsulation mechanism standardized by NIST.', {
+        exact: true,
+      })
+    ).toHaveCount(2)
+    expect(providerRequests).toBe(2)
+
+    await input.fill('zxqvjwkpfrx zjqblwmvrqp zkvfhtjg')
+    await send.click()
+    await expect(
+      assistant.getByText(/I don't have enough information about this topic/)
+    ).toBeVisible()
+    expect(providerRequests).toBe(2)
+    expect(
+      await page.evaluate(() =>
+        ['__e2e_chat_send', '__e2e_chat_store'].filter((key) => Reflect.has(window, key))
       )
-      expect(messages[messages.length - 1].content).toContain('**Explore in PQC Today:**')
-      expect(messages[messages.length - 1].content).toContain(
-        '[ML-KEM](/algorithms?highlight=ml-kem)'
-      )
-    }
+    ).toEqual([])
   })
 })

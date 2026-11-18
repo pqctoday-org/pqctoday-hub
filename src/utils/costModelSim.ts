@@ -185,6 +185,8 @@ export interface MonteCarloResult {
   mean: number
   /** Sorted total-cost samples, ascending. */
   samples: number[]
+  /** Same samples in draw order for progressive display. */
+  drawOrder: number[]
 }
 
 /**
@@ -202,12 +204,13 @@ export function monteCarloEstimate(
   const base = SIM_CONSTANTS.perSystemBase * inp.complexity
   const min = base * SIM_CONSTANTS.mcMinFactor
   const max = base * SIM_CONSTANTS.mcMaxFactor
-  const samples: number[] = []
+  const standingCost = programCostFor(inp.horizonYears)
+  const drawOrder: number[] = []
   for (let i = 0; i < draws; i++) {
     const perSystem = sampleTriangular(rng, min, base, max)
-    samples.push(perSystem * inp.systems + programCostFor(inp.horizonYears))
+    drawOrder.push(perSystem * inp.systems + standingCost)
   }
-  samples.sort((a, b) => a - b)
+  const samples = [...drawOrder].sort((a, b) => a - b)
   const mean = samples.reduce((sum, v) => sum + v, 0) / (samples.length || 1)
   return {
     p10: percentile(samples, 10),
@@ -215,6 +218,7 @@ export function monteCarloEstimate(
     p90: percentile(samples, 90),
     mean,
     samples,
+    drawOrder,
   }
 }
 

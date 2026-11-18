@@ -178,11 +178,8 @@ if '/hub_shims' not in sys.path:
 `)
 }
 
-/** Boot (or return the existing) shared Pyodide instance. Installs the p11 /
- *  pqctoday_kmip shim packages onto its filesystem, but does NOT register
- *  the JS bridges — callers register `js.p11_bridge` / `js.kmip_bridge`
- *  themselves once their engine is booted (see HsmContext / KmipEngine
- *  wiring), because bridge availability is per-tab, not global. */
+/** Boot the shared Pyodide instance and install the Python shim files. The
+ *  caller supplies the relevant JavaScript bridges when it runs a script. */
 export async function bootPyRuntime(): Promise<PyodideInterface> {
   if (bootPromise) return bootPromise
   setBootState('loading')
@@ -208,88 +205,105 @@ export async function bootPyRuntime(): Promise<PyodideInterface> {
 
 let runInFlight = false
 
-/** Run a Python script, capturing stdout/stderr. Rejects a concurrent call
- *  while one run is already in flight — a fixed guard, not itself a
- *  timeout (see the class-level note on the two actual timeout layers). */
-export async function runPython(code: string): Promise<PyRunResult> {
+/** Run one script at a time, including setup and any execution that outlives
+ *  its UI deadline. Bridge replacements and output capture share that lock. */
+export async function runPython(
+  code: string,
+  modules: Record<string, object> = {}
+): Promise<PyRunResult> {
   if (runInFlight) {
     return {
       ok: false,
       stdout: '',
       stderr: '',
-      error: 'A script is already running in this tab — wait for it to finish.',
+      error: 'A script is still running in this tab. Wait for it to finish before retrying.',
       elapsedMs: 0,
     }
   }
-  const py = await bootPyRuntime()
   runInFlight = true
   const t0 = performance.now()
   let out = ''
   let err = ''
-  py.setStdout({
-    batched: (s: string) => {
-      out += s + '\n'
-    },
-  })
-  py.setStderr({
-    batched: (s: string) => {
-      err += s + '\n'
-    },
-  })
-
-  // Arm the watchdog (layer 1). The soft race keeps a pathological
-  // worker-boot failure from wedging runs forever — that run simply falls
-  // back to layer 2, and the await itself yields the event loop, which is
-  // exactly what a still-loading watchdog needs to finish starting.
-  const buffer = await Promise.race([
-    startWatchdog(),
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
-  ])
-  let armed = false
-  if (buffer && armCtrl) {
-    buffer[0] = 0 // clear any stale interrupt a prior run's deadline raced in after that run finished
-    py.setInterruptBuffer(buffer)
-    armGeneration++
-    Atomics.store(armCtrl, 0, armGeneration)
-    Atomics.notify(armCtrl, 0)
-    armed = true
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  let cleanupOnCompletion = false
+  let release = () => {
+    runInFlight = false
   }
 
   try {
-    const timeoutGuard = new Promise<never>((_, reject) => {
-      setTimeout(
-        () => reject(new Error(`Script exceeded ${RUN_TIMEOUT_MS / 1000}s`)),
-        RUN_TIMEOUT_MS
-      )
+    const py = await bootPyRuntime()
+    let armed = false
+    const disarmWatchdog = () => {
+      if (!armed || !armCtrl) return
+      Atomics.store(armCtrl, 0, 0)
+      Atomics.notify(armCtrl, 0)
+      // Replace the shared byte so a signal already in flight cannot
+      // interrupt the callbacks that resume a timed-out asynchronous wait.
+      py.setInterruptBuffer(new Uint8Array(1))
+      armed = false
+    }
+    release = () => {
+      try {
+        disarmWatchdog()
+        py.setStdout({})
+        py.setStderr({})
+      } finally {
+        runInFlight = false
+      }
+    }
+    for (const [name, module] of Object.entries(modules)) {
+      py.registerJsModule(name, module)
+      // Python import caching otherwise keeps the bridge from a previous engine or suite run.
+      py.runPython(`__import__("sys").modules.pop(${JSON.stringify(name)}, None)\nNone`)
+    }
+
+    py.setStdout({
+      batched: (line: string) => {
+        out += line + '\n'
+      },
     })
-    // runPythonAsync (not runPython): supports top-level `await` in the
-    // generated script — needed for the KMIP tab's Load-policy step, which
-    // fetches a real policy YAML file via Pyodide's pyfetch (the browser's
-    // real fetch(), which resolves a relative URL like /kmip-policies/x.yaml
-    // against the page's own origin — plain urllib.request has no browser
-    // context and rejects a relative URL outright, confirmed live). A
-    // strict superset of runPython: every already-proven synchronous
-    // script (P1/P2/P3's PKCS#11 and KMIP-lifecycle samples) still runs
-    // unchanged under it. The race is layer 2 only (stalled awaits) — a
-    // tight synchronous loop is layer 1's job, see the module header.
-    await Promise.race([py.runPythonAsync(code), timeoutGuard])
+    py.setStderr({
+      batched: (line: string) => {
+        err += line + '\n'
+      },
+    })
+
+    // Do not wait forever for a watchdog that failed to start.
+    const buffer = await Promise.race([
+      startWatchdog(),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000)),
+    ])
+    if (buffer && armCtrl) {
+      buffer[0] = 0
+      py.setInterruptBuffer(buffer)
+      armGeneration++
+      Atomics.store(armCtrl, 0, armGeneration)
+      Atomics.notify(armCtrl, 0)
+      armed = true
+    }
+
+    const timeoutGuard = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => {
+        disarmWatchdog()
+        reject(new Error(`Script exceeded ${RUN_TIMEOUT_MS / 1000}s`))
+      }, RUN_TIMEOUT_MS)
+    })
+    // KMIP sample scripts need top-level await for pyfetch. Reporting a timeout
+    // does not cancel a pending await, so release only when Python settles.
+    const execution = py.runPythonAsync(code).finally(release)
+    cleanupOnCompletion = true
+    await Promise.race([execution, timeoutGuard])
     return { ok: true, stdout: out, stderr: err, error: null, elapsedMs: performance.now() - t0 }
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e)
+  } catch (error) {
     return {
       ok: false,
       stdout: out,
       stderr: err,
-      error: message,
+      error: error instanceof Error ? error.message : String(error),
       elapsedMs: performance.now() - t0,
     }
   } finally {
-    runInFlight = false
-    py.setStdout({})
-    py.setStderr({})
-    if (armed && armCtrl) {
-      Atomics.store(armCtrl, 0, 0) // disarm — the watchdog's wait wakes and goes back to sleep
-      Atomics.notify(armCtrl, 0)
-    }
+    clearTimeout(timeoutId)
+    if (!cleanupOnCompletion) release()
   }
 }

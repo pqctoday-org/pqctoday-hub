@@ -2,6 +2,7 @@
 /* eslint-disable security/detect-object-injection, security/detect-non-literal-fs-filename */
 import fs from 'node:fs'
 import path from 'node:path'
+import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
 import { FIPS_OBJECT_SIZES } from './verification/fipsObjectSizes'
@@ -161,7 +162,7 @@ describe('independently sourced classical & stateful specification tables (@nobl
   })
 })
 
-describe('304 / 304 module claim inventory verification & receipt generation', () => {
+describe('Module size inventory and encoding verification', () => {
   const repoRoot = path.resolve(__dirname, '../..')
   const sourceInventoryPath = path.resolve(
     repoRoot,
@@ -172,7 +173,30 @@ describe('304 / 304 module claim inventory verification & receipt generation', (
     '../backups/hub-4213/module-claim-inventory-304-verified.json'
   )
 
-  it('resolves all 304 claims against standard-pinned oracles with 0 outside-bounded-raw-size-oracle', () => {
+  it('keeps the expected size when offered a plausible size from a different encoding', () => {
+    const inventory = JSON.parse(fs.readFileSync(sourceInventoryPath, 'utf8')) as {
+      claims: InventoriedClaim[]
+    }
+    const alternateEncodingProbes = [
+      { file: 'otaOrchestrationData.ts', line: 107, alternate: 65 },
+      { file: 'mtcConstants.ts', line: 29, alternate: 256 },
+      { file: 'secureBootConstants.ts', line: 419, alternate: 64 },
+      { file: 'secureBootConstants.ts', line: 409, alternate: 2348 },
+      { file: 'gatewayData.ts', line: 390, alternate: 33 },
+    ]
+    for (const probe of alternateEncodingProbes) {
+      const claim = inventory.claims.find(
+        (entry) => entry.file.endsWith(probe.file) && entry.line === probe.line
+      )
+      expect(claim, probe.file).toBeDefined()
+      expect(verifyInventoriedClaim({ ...claim!, value: probe.alternate }).expected).toBe(
+        claim!.value
+      )
+      expect(probe.alternate).not.toBe(claim!.value)
+    }
+  })
+
+  it('checks source values against fixed encodings and separates illustrations from standard sizes', () => {
     const rawJson = JSON.parse(fs.readFileSync(sourceInventoryPath, 'utf-8')) as {
       scope: string
       counts: Record<string, number>
@@ -181,33 +205,60 @@ describe('304 / 304 module claim inventory verification & receipt generation', (
 
     expect(rawJson.claims).toHaveLength(304)
 
+    const sourceValues = new Map<string, Map<string, number[]>>()
     const verifiedClaims = rawJson.claims.map((claim) => {
-      const absFile = path.resolve(repoRoot, claim.file)
-      const fileLines = fs.readFileSync(absFile, 'utf-8').split('\n')
-      const sourceLine = fileLines[claim.line - 1] ?? ''
+      let values = sourceValues.get(claim.file)
+      if (!values) {
+        const source = ts.createSourceFile(
+          claim.file,
+          fs.readFileSync(path.resolve(repoRoot, claim.file), 'utf8'),
+          ts.ScriptTarget.Latest
+        )
+        const entries = new Map<string, number[]>()
+        function visit(node: ts.Node) {
+          if (ts.isPropertyAssignment(node) && ts.isNumericLiteral(node.initializer)) {
+            const line = source.getLineAndCharacterOfPosition(node.name.getStart(source)).line + 1
+            const key = `${line}:${node.name.getText(source)}`
+            entries.set(key, [...(entries.get(key) ?? []), Number(node.initializer.text)])
+          }
+          ts.forEachChild(node, visit)
+        }
+        visit(source)
+        values = entries
+        sourceValues.set(claim.file, values)
+      }
       expect(
-        sourceLine.includes(claim.field),
-        `Expected ${claim.file}:${claim.line} to contain field ${claim.field}`
-      ).toBe(true)
+        values.get(`${claim.line}:${claim.field}`),
+        `${claim.file}:${claim.line} ${claim.field}`
+      ).toEqual([claim.value])
 
       const resolved = verifyInventoriedClaim(claim)
       expect(
         resolved.value,
         `Claim ${claim.file}:${claim.line} (${claim.field}) value ${claim.value} !== oracle expected ${resolved.expected} (${resolved.source})`
       ).toBe(resolved.expected)
-      expect(resolved.disposition).toBe('matches-independent-oracle')
+      const probe = verifyInventoriedClaim({ ...claim, value: claim.value + 1 })
+      expect(
+        probe.expected,
+        `Size must be independent of the observed value in ${claim.file}:${claim.line}`
+      ).toBe(resolved.expected)
+      expect(probe.encodingScope).toBe(resolved.encodingScope)
       return resolved
     })
 
     const matchesOracleCount = verifiedClaims.filter(
       (c) => c.disposition === 'matches-independent-oracle'
     ).length
-    const outsideBoundedOracleCount = verifiedClaims.filter(
-      (c) => c.disposition !== 'matches-independent-oracle'
+    const sizingExampleCount = verifiedClaims.filter(
+      (c) => c.disposition === 'illustrative-sizing-example'
+    ).length
+    const implementationConstantCount = verifiedClaims.filter(
+      (c) => c.disposition === 'implementation-constant'
     ).length
 
-    expect(matchesOracleCount).toBe(304)
-    expect(outsideBoundedOracleCount).toBe(0)
+    expect(matchesOracleCount).toBe(296)
+    expect(sizingExampleCount).toBe(6)
+    expect(implementationConstantCount).toBe(2)
 
     if (fs.existsSync(path.resolve(repoRoot, '../backups'))) {
       fs.mkdirSync(path.dirname(verifiedOutputPath), { recursive: true })
@@ -216,10 +267,11 @@ describe('304 / 304 module claim inventory verification & receipt generation', (
         JSON.stringify(
           {
             scope:
-              'All 304 numeric literal key/signature/ciphertext length claims across PKILearning module data TypeScript files, verified 304/304 against independent FIPS 203/204/205, RFC 5480/8017/8032/7748, RFC 8554/9858/8391/SP 800-208, Falcon/Candidate specifications, and RFC 10024/10073 hybrid/protocol specifications.',
+              '304 inventoried source literals. The receipt distinguishes protocol and encoding checks, illustrative RSA private-key estimates and arithmetic constants.',
             counts: {
               'matches-independent-oracle': matchesOracleCount,
-              'outside-bounded-raw-size-oracle': outsideBoundedOracleCount,
+              'illustrative-sizing-example': sizingExampleCount,
+              'implementation-constant': implementationConstantCount,
             },
             claims: verifiedClaims,
           },

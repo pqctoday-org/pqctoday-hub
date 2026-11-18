@@ -23,16 +23,23 @@ export function presentExercise(toolId: string, questionIndex: number, exercise:
   return { ...exercise, options, answer: (exercise.answer + offset) % exercise.options.length }
 }
 
-export function ToolExercise({
-  toolId,
-  family = 'playground',
-  className,
-}: {
+interface ToolExerciseProps {
   toolId: string
   /** 'page' keys src/data/pageExercises.ts by route (round 9, 2026-09-19). */
   family?: 'playground' | 'business' | 'page'
   className?: string
-}) {
+}
+
+export function ToolExercise(props: ToolExerciseProps) {
+  return (
+    <ExerciseQuestions
+      key={JSON.stringify([props.family ?? 'playground', props.toolId])}
+      {...props}
+    />
+  )
+}
+
+function ExerciseQuestions({ toolId, family = 'playground', className }: ToolExerciseProps) {
   // toolId comes from the registry route (or the router's pathname for 'page'),
   // matched against our own keys.
   /* eslint-disable security/detect-object-injection */

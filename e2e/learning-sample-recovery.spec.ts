@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { readFileSync } from 'node:fs'
+import { text } from 'node:stream/consumers'
 import { test, expect } from './fixtures/blockAnalytics'
 
 test.beforeEach(async ({ page }) => {
@@ -56,9 +56,7 @@ for (const width of [1280, 390]) {
       await sample.getByRole('button', { name: 'Download sample envelope' }).click()
       const download = await downloadPromise
       expect(download.suggestedFilename()).toBe('fictional-envelope.json')
-      const path = await download.path()
-      expect(path).not.toBeNull()
-      const raw = readFileSync(path!, 'utf8')
+      const raw = await text(await download.createReadStream())
       const envelope = JSON.parse(raw)
       expect(envelope).toMatchObject({
         version: 1,
@@ -137,5 +135,50 @@ for (const width of [1280, 390]) {
       await sample.getByRole('button', { name: 'Check interpretation' }).click()
       await expect(sample.getByRole('status')).toContainText('verification operation')
     })
+  })
+}
+
+for (const width of [1280, 390]) {
+  test(`DNS transport retry, signature corruption and recovery at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 850 })
+    await page.goto('/learn/dnssec-pqc?tab=workshop&step=1')
+    const sample = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { name: 'Validate a signed MX answer' }) })
+      .last()
+    const udp = sample.getByRole('button', { name: 'Query over UDP' })
+    const tcp = sample.getByRole('button', { name: 'Retry over TCP' })
+    const status = sample.getByRole('status')
+    await udp.click()
+    await expect(status).toContainText('TC=1')
+    await tcp.click()
+    await expect(status).toContainText('AD=1')
+    await sample.getByRole('checkbox').check()
+    await udp.click()
+    await expect(status).toContainText('TC=1')
+    await tcp.click()
+    await expect(status).toContainText('SERVFAIL')
+    await sample.getByRole('radio', { name: '4096 bytes' }).check()
+    await sample.getByRole('checkbox').uncheck()
+    await udp.click()
+    await expect(status).toContainText('AD=1')
+  })
+  test(`TPM update authorization and host signing are distinguished at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 850 })
+    await page.goto('/learn/cc-eucc-certification?tab=workshop&step=0')
+    const sample = page
+      .locator('details')
+      .filter({ has: page.getByText('Read the exact Security Target scope', { exact: true }) })
+    await sample.locator('summary').click()
+    await sample.getByRole('button', { name: 'Example 12' }).click()
+    await expect(sample).toContainText('15.25.19744.00')
+    await sample.getByLabel('Not established by the reviewed evidence').check()
+    await sample.getByRole('button', { name: 'Check interpretation' }).click()
+    await expect(sample.getByRole('status')).toContainText('Review the scope.')
+    await sample.getByLabel('Supported', { exact: true }).check()
+    await sample.getByRole('button', { name: 'Check interpretation' }).click()
+    await expect(sample.getByRole('status')).toContainText('TPM2_Sign needs separate evidence')
   })
 }

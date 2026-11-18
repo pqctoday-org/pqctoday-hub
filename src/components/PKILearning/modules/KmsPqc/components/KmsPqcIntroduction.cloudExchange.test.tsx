@@ -142,7 +142,7 @@ describe('KmsPqcIntroduction: corrected module statements', () => {
     const text = lessonText()
     expect(text).not.toMatch(/4\s*[–-]\s*10\s*×\s*vs RSA baselines/)
     expect(text).toMatch(
-      /about 3× \(ML-KEM-512\) to 10× \(ML-DSA-87\) the size of an RSA-2048 public key/
+      /about 3× \(ML-KEM-512\) to 10× \(ML-DSA-87\) the size of the RSA-2048 modulus width/
     )
     expect(text).toMatch(/Total Keys and Certificates/)
     expect(text).not.toMatch(/Total Certificates/)

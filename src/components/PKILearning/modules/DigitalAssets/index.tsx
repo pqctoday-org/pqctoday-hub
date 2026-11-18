@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { Trash2, Bitcoin, Hexagon, Zap, GitBranch, ShieldAlert, Landmark } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
-import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { BlockchainCryptoIntroduction } from './components/BlockchainCryptoIntroduction'
 import { BlockchainExercises } from './components/BlockchainExercises'
 import { BitcoinFlow } from './flows/BitcoinFlow'
@@ -67,7 +66,7 @@ const CHAINS: ChainOption[] = [
 export const DigitalAssetsModule: React.FC = () => {
   const markStepComplete = useModuleStore((s) => s.markStepComplete)
   const resetModuleProgress = useModuleStore((s) => s.resetModuleProgress)
-  const { resetStore } = useOpenSSLStore()
+  const completedSteps = useModuleStore((s) => s.modules[MODULE_ID]?.completedSteps)
 
   // The workshop is a bespoke chain-selector (not a generic stepper), so it
   // rides the ModuleShell `workshop` slot. ModuleShell owns tabs, header, time
@@ -76,13 +75,18 @@ export const DigitalAssetsModule: React.FC = () => {
   const [activeChain, setActiveChain] = useState<string | null>(
     () => getModuleDeepLink().initialFlow
   )
-  const [hasExploredAnyChain, setHasExploredAnyChain] = useState(false)
   const [configKey, setConfigKey] = useState(0)
 
   const selectChain = (chain: string) => {
     setActiveChain(chain)
-    setHasExploredAnyChain(true)
     setConfigKey((prev) => prev + 1)
+  }
+
+  const backToSelection = () => setActiveChain(null)
+
+  const completeChain = () => {
+    if (activeChain) markStepComplete(MODULE_ID, activeChain)
+    backToSelection()
   }
 
   // From Learn/Exercises CTAs: optionally pre-select a chain, or route the
@@ -97,13 +101,8 @@ export const DigitalAssetsModule: React.FC = () => {
   }
 
   const handleReset = () => {
-    if (
-      confirm(
-        'Are you sure you want to reset the module? This will clear all generated keys and transactions.'
-      )
-    ) {
+    if (confirm('Reset this module’s learning progress and clear the active exercise?')) {
       resetModuleProgress(MODULE_ID)
-      resetStore()
       setActiveChain(null)
       setConfigKey((prev) => prev + 1)
     }
@@ -119,7 +118,7 @@ export const DigitalAssetsModule: React.FC = () => {
           className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-status-error rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
         >
           <Trash2 size={16} />
-          Reset
+          Reset module progress
         </Button>
       </div>
 
@@ -162,49 +161,62 @@ export const DigitalAssetsModule: React.FC = () => {
                 <p className="max-w-full break-words text-xs text-muted-foreground font-mono">
                   {chain.description}
                 </p>
+                {completedSteps?.includes(chain.id) && (
+                  <span className="text-xs text-status-success">Completed</span>
+                )}
               </Button>
             ))}
           </div>
-          {hasExploredAnyChain && (
-            <div className="flex justify-end">
-              <Button
-                variant="gradient"
-                onClick={() => markStepComplete(MODULE_ID, 'workshop')}
-                className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
-              >
-                Complete Module ✓
-              </Button>
-            </div>
-          )}
         </>
       ) : (
         <div>
           <Button
             variant="ghost"
-            onClick={() => setActiveChain(null)}
+            onClick={backToSelection}
             className="mb-4 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground"
           >
             &larr; Back to Chain Selection
           </Button>
           {activeChain === 'bitcoin' && (
-            <BitcoinFlow key={`bitcoin-${configKey}`} onBack={() => setActiveChain(null)} />
+            <BitcoinFlow
+              key={`bitcoin-${configKey}`}
+              onBack={backToSelection}
+              onComplete={completeChain}
+            />
           )}
           {activeChain === 'ethereum' && (
-            <EthereumFlow key={`ethereum-${configKey}`} onBack={() => setActiveChain(null)} />
+            <EthereumFlow
+              key={`ethereum-${configKey}`}
+              onBack={backToSelection}
+              onComplete={completeChain}
+            />
           )}
           {activeChain === 'solana' && (
-            <SolanaFlow key={`solana-${configKey}`} onBack={() => setActiveChain(null)} />
+            <SolanaFlow
+              key={`solana-${configKey}`}
+              onBack={backToSelection}
+              onComplete={completeChain}
+            />
           )}
           {activeChain === 'hd-wallet' && (
-            <HDWalletFlow key={`hdwallet-${configKey}`} onBack={() => setActiveChain(null)} />
+            <HDWalletFlow
+              key={`hdwallet-${configKey}`}
+              onBack={backToSelection}
+              onComplete={completeChain}
+            />
           )}
           {activeChain === 'pqc-migration' && (
-            <PQCMigrationFlow key={`pqc-${configKey}`} onBack={() => setActiveChain(null)} />
+            <PQCMigrationFlow
+              key={`pqc-${configKey}`}
+              onBack={backToSelection}
+              onComplete={completeChain}
+            />
           )}
           {activeChain === 'custody-architecture' && (
             <CustodyArchitectureFlow
               key={`custody-${configKey}`}
-              onBack={() => setActiveChain(null)}
+              onBack={backToSelection}
+              onComplete={completeChain}
             />
           )}
         </div>

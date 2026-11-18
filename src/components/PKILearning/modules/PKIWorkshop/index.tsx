@@ -17,7 +17,6 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
@@ -228,38 +227,35 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
   // reuse the exact same panel standalone.
   const [currentStep, setCurrentStep] = useState(() => clampStep(initialStep, parts.length))
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
-  const { resetStore } = useOpenSSLStore()
+  const [workshopRevision, setWorkshopRevision] = useState(0)
+  const completedSteps = useModuleStore((state) => state.modules[MODULE_ID]?.completedSteps)
+  const earlierStepsRecorded = parts.slice(0, -1).every((part) => completedSteps?.includes(part.id))
+  const allStepsRecorded = parts.every((part) => completedSteps?.includes(part.id))
 
   const handleSetWorkshopStep = useCallback((step: number) => {
     setCurrentStep(step)
   }, [])
 
-  // Part navigation — mark current part complete when moving forward
-  const handlePartChange = useCallback(
-    (newStep: number) => {
-      if (newStep > currentStep) {
-        markStepComplete(MODULE_ID, parts[currentStep].id, currentStep)
-      }
-      setCurrentStep(newStep)
-    },
-    [currentStep, markStepComplete, parts]
-  )
-
-  const handleReset = () => {
-    if (
-      confirm(
-        'Are you sure you want to reset the workshop? This will clear all generated keys and certificates.'
-      )
-    ) {
-      resetModuleProgress(MODULE_ID)
-      resetStore()
-      setCurrentStep(0)
+  const recordStep = (stepIndex: number) => {
+    const part = ALL_PARTS.at(stepIndex)
+    if (!part) return
+    if (!useModuleStore.getState().modules[MODULE_ID]) {
+      updateModuleProgress(MODULE_ID, {})
     }
+    markStepComplete(MODULE_ID, part.id, stepIndex)
   }
 
-  const handleComplete = () => {
-    markStepComplete(MODULE_ID, parts[currentStep].id, currentStep)
-    updateModuleProgress(MODULE_ID, { status: 'completed' })
+  const handlePartChange = (newStep: number) => {
+    if (newStep > currentStep) recordStep(currentStep)
+    setCurrentStep(newStep)
+  }
+
+  const handleReset = () => {
+    if (confirm('Reset PKI workshop progress and return to the first exercise?')) {
+      resetModuleProgress(MODULE_ID)
+      setCurrentStep(0)
+      setWorkshopRevision((revision) => revision + 1)
+    }
   }
 
   const workshopPanel = (
@@ -318,7 +314,10 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
       </ScrollFadeContainer>
 
       {/* Content Area */}
-      <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
+      <div
+        key={workshopRevision}
+        className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in"
+      >
         <WorkshopStepHeader
           moduleId={MODULE_ID}
           stepId={parts[currentStep].id}
@@ -327,29 +326,17 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
           stepIndex={currentStep}
           totalSteps={parts.length}
           steps={parts.map((p) => ({ id: p.id, label: p.title }))}
-          onStepClick={handlePartChange}
+          onStepClick={setCurrentStep}
         />
 
         <ArtifactSummaryStrip />
 
-        {currentStep === 0 && (
-          <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr', 0)} />
-        )}
-        {currentStep === 1 && (
-          <RootCAGenerator onComplete={() => markStepComplete(MODULE_ID, 'root-ca', 1)} />
-        )}
-        {currentStep === 2 && (
-          <CertSigner onComplete={() => markStepComplete(MODULE_ID, 'sign', 2)} />
-        )}
-        {currentStep === 3 && (
-          <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse', 3)} />
-        )}
-        {currentStep === 4 && (
-          <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke', 4)} />
-        )}
-        {currentStep === 5 && (
-          <MTCComparison onComplete={() => markStepComplete(MODULE_ID, 'mtc', 5)} />
-        )}
+        {currentStep === 0 && <CSRGenerator onComplete={() => recordStep(0)} />}
+        {currentStep === 1 && <RootCAGenerator onComplete={() => recordStep(1)} />}
+        {currentStep === 2 && <CertSigner onComplete={() => recordStep(2)} />}
+        {currentStep === 3 && <CertParser onComplete={() => recordStep(3)} />}
+        {currentStep === 4 && <CRLGenerator onComplete={() => recordStep(4)} />}
+        {currentStep === 5 && <MTCComparison onComplete={() => recordStep(5)} />}
         {currentStep === 6 && <AcmePqcWalkthrough />}
         {currentStep === 7 && <CertCapacityCalculator />}
       </div>
@@ -365,13 +352,21 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
           &larr; Previous Step
         </Button>
         {currentStep === parts.length - 1 ? (
-          <Button
-            variant="gradient"
-            onClick={handleComplete}
-            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
-          >
-            Complete Module ✓
-          </Button>
+          <div className="space-y-2 sm:text-right">
+            <Button
+              variant="gradient"
+              onClick={() => recordStep(currentStep)}
+              disabled={!earlierStepsRecorded || allStepsRecorded}
+              className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
+            >
+              {allStepsRecorded ? 'Workshop steps recorded' : 'Finish workshop'}
+            </Button>
+            {!earlierStepsRecorded && (
+              <p className="text-xs text-muted-foreground">
+                Review the earlier workshop steps to finish this section.
+              </p>
+            )}
+          </div>
         ) : (
           <Button
             variant="gradient"

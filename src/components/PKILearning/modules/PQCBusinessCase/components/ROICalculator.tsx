@@ -438,9 +438,14 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `- HNDL exposure: ${assumptions.hndlExposurePct}%\n`
     md += `- Post-CRQC attacker uplift: ${assumptions.crqcAttackerUpliftPct}%\n`
     md += `- Detection-timeline uplift: ${assumptions.detectionTimelineUpliftPct}%\n`
-    md += `- Annual breach probability: ${assumptions.breachProbability}% (organization size: ${
+    const tierLabel =
       ORG_SIZE_TIER_OPTIONS.find((o) => o.tier === assumptions.orgSizeTier)?.label ?? 'Average org'
-    } — Cyentia IRIS 2025)\n`
+    const tierProbability = ANNUAL_BREACH_PROBABILITY_PCT[assumptions.orgSizeTier]
+    const probabilitySource =
+      assumptions.breachProbability === tierProbability
+        ? `${tierLabel} default from Cyentia IRIS 2025`
+        : `learner scenario assumption; ${tierLabel} default is ${tierProbability}% from Cyentia IRIS 2025`
+    md += `- Annual breach probability: ${assumptions.breachProbability}% (${probabilitySource})\n`
     md += `- **Annual savings: ${formatCurrency(financials.breachCostSavings)}**\n\n`
     md += `### Regulatory Exposure — Illustrative Scenario\n`
     md += `- Framework count selected for scenario: ${assumptions.applicableFrameworks} of ${data.frameworksByIndustry.length}\n`
@@ -933,7 +938,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <input
               id="roi-breach-probability"
               type="range"
-              min={1}
+              min={0}
               max={50}
               // 0.1 steps and parseFloat: the IRIS tier anchors are fractional
               // (8.7 / 9.3 / 12.8) and parseInt silently truncated them to
@@ -944,7 +949,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               className="w-full accent-primary"
             />
             <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>1%</span>
+              <span>0%</span>
               <span className="text-sm font-mono text-primary">
                 {assumptions.breachProbability}%
               </span>

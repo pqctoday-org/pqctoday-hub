@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { useLocation } from 'react-router'
 import { getRouteMeta } from './routeMeta'
 import { NOT_FOUND_DESCRIPTION, NOT_FOUND_TITLE } from './notFoundContent'
 import { useNotFoundPath } from './notFoundState'
 
 /**
- * Renders per-route SEO metadata using React 19's native document metadata hoisting.
- * React 19 automatically hoists <title>, <meta>, and <link> tags to <head>.
+ * Keeps the title from the HTML shell available during startup, then updates
+ * it in place. React hoists the other route metadata into the head.
  */
 export function PageMeta() {
   const { pathname } = useLocation()
@@ -18,17 +18,20 @@ export function PageMeta() {
     ? { title: NOT_FOUND_TITLE, description: NOT_FOUND_DESCRIPTION, canonical: '', noindex: true }
     : getRouteMeta(pathname)
 
-  // The saved 404.html carries its own title, description and robots tags for visitors without
-  // JavaScript (see scripts/lib/notFoundPage.ts). Once the app runs, the tags below take over, and
-  // the static ones must go: a stale "noindex" or "Page not found" title would otherwise stay on a
-  // real page that was served from 404.html.
+  useLayoutEffect(() => {
+    document.title = meta.title
+  }, [meta.title])
+
+  // The saved 404 page can also serve app-only routes. Keep its title element,
+  // and remove the temporary description and robots tags once the app takes over.
   useEffect(() => {
-    for (const element of document.head.querySelectorAll('[data-static-404]')) element.remove()
+    for (const element of document.head.querySelectorAll('[data-static-404]:not(title)')) {
+      element.remove()
+    }
   }, [])
 
   return (
     <>
-      <title>{meta.title}</title>
       <meta name="description" content={meta.description} />
       {!isNotFound && <link rel="canonical" href={meta.canonical} />}
       {meta.noindex && <meta name="robots" content="noindex,follow" />}

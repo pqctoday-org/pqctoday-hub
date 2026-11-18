@@ -45,6 +45,7 @@ const DIGITAL_ASSETS_KAT_SPECS: KatTestSpec[] = [
 
 interface PQCMigrationFlowProps {
   onBack: () => void
+  onComplete?: () => void
 }
 
 const PARTS = [
@@ -776,7 +777,7 @@ const SolanaHardProblem: React.FC = () => (
   </div>
 )
 
-export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) => {
+export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack, onComplete }) => {
   const [currentPart, setCurrentPart] = useState(0)
 
   return (
@@ -845,7 +846,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
           {currentPart === 3 && <SolanaHardProblem />}
         </div>
       ) : (
-        <PQCLiveComparisonFlow onBack={() => setCurrentPart(3)} onComplete={onBack} />
+        <PQCLiveComparisonFlow onBack={() => setCurrentPart(3)} onComplete={onComplete ?? onBack} />
       )}
 
       {/* Navigation — hidden on Part 5 (StepWizard has its own nav) */}

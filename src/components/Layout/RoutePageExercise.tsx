@@ -16,7 +16,7 @@ export function RoutePageExercise({ mobile }: { mobile: boolean }) {
   if (!PAGE_EXERCISE_ROUTES.has(route)) return null
   return mobile ? (
     <div className="px-4 pb-4">
-      <MobilePageExercise route={route} />
+      <MobilePageExercise key={route} route={route} />
     </div>
   ) : (
     <ToolExercise toolId={route} family="page" className="mt-8" />

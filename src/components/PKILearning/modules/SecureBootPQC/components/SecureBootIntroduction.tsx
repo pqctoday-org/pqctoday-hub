@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { KeyEncodingSizingExercise } from '@/components/ui/KeyEncodingSizingExercise'
 import React, { useState } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
@@ -298,7 +299,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           <div className="bg-status-error/5 rounded-lg p-4 border border-status-error/20">
             <div className="text-xs font-bold text-status-error mb-2">RSA-2048 (Current)</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; Public key: 256 bytes</li>
+              <li>&bull; RSA modulus: 256 bytes</li>
               <li>&bull; Signature: 256 bytes</li>
               <li>&bull; Quantum-safe: No (Shor&apos;s algorithm)</li>
             </ul>
@@ -306,7 +307,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
             <div className="text-xs font-bold text-primary mb-2">ML-DSA-65 (Target)</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; Public key: 1,952 bytes (7.6&times; larger)</li>
+              <li>&bull; Raw public key: 1,952 bytes</li>
               <li>&bull; Signature: 3,309 bytes (12.9&times; larger)</li>
               <li>&bull; Quantum-safe: Yes (NIST Level 3)</li>
             </ul>
@@ -316,6 +317,13 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         {/* Size comparison table */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-3">Algorithm Size Reference</div>
+          <KeyEncodingSizingExercise />
+          <p className="text-xs text-muted-foreground mb-2">
+            RSA public values count the modulus bytes. The private-key entries are illustrative
+            PKCS#1 DER lengths. ECDSA public values are uncompressed points and the signature
+            entries are DER upper bounds. Use the complete encoded certificate or update package
+            when estimating flash storage.
+          </p>
           <div
             className="overflow-x-auto"
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).

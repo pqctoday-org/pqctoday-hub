@@ -53,6 +53,10 @@ describe('KatValidationPanel', () => {
   beforeEach(() => {
     mockRunKAT.mockReset()
     HSM_STUB.addStepLog.mockReset()
+    HSM_STUB.isReady = true
+    HSM_STUB.moduleRef.current = {}
+    HSM_STUB.hSessionRef.current = 1
+    HSM_STUB.initialize.mockReset().mockResolvedValue(undefined)
   })
 
   it("counts a 'skip' as not tested — never as passed or failed — and passes the engine's mechanism list", async () => {
@@ -101,5 +105,36 @@ describe('KatValidationPanel', () => {
     expect(status).toHaveAttribute('aria-live', 'polite')
     expect(status).toHaveTextContent('KATs: 0 of 0 checks passed, 2 not tested.')
     expect(document.activeElement).toBe(button)
+  })
+
+  it('keeps fails and skips out of the successful operation log rows', async () => {
+    mockRunKAT.mockResolvedValueOnce(result('a', 'fail')).mockResolvedValueOnce(result('b', 'skip'))
+    render(<KatValidationPanel specs={SPECS} label="KATs" authorityNote="note" />)
+    fireEvent.click(screen.getByRole('button', { name: /Run/ }))
+    const log = within(await screen.findByRole('log'))
+    expect(await log.findByText(/FAIL X/)).toHaveClass('text-status-error')
+    expect(await log.findByText(/NOT TESTED X/)).toHaveClass('text-muted-foreground')
+    expect(log.queryByText(/Passed X/)).not.toBeInTheDocument()
+  })
+
+  it('waits for a live session and retries an initialization failure', async () => {
+    HSM_STUB.isReady = false
+    HSM_STUB.moduleRef.current = null
+    HSM_STUB.hSessionRef.current = 0
+    mockRunKAT.mockResolvedValueOnce(result('a', 'pass')).mockResolvedValueOnce(result('b', 'pass'))
+    render(<KatValidationPanel specs={SPECS} label="KATs" authorityNote="note" />)
+    fireEvent.click(screen.getByRole('button', { name: /Run/ }))
+    const missingSession = 'The HSM did not open a session. Retry initialization.'
+    expect(await screen.findByText(missingSession, { exact: true })).toBeVisible()
+    expect(mockRunKAT).not.toHaveBeenCalled()
+    expect(screen.queryByText('softhsmv3 HSM module ready')).not.toBeInTheDocument()
+
+    HSM_STUB.initialize.mockImplementationOnce(async () => {
+      HSM_STUB.moduleRef.current = {}
+      HSM_STUB.hSessionRef.current = 1
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(await screen.findByText('2 passed')).toBeInTheDocument()
+    expect(screen.queryByText(missingSession, { exact: true })).not.toBeInTheDocument()
   })
 })

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { ScenarioComparison } from './executive/ScenarioComparison'
 import React, { useState, useCallback, useMemo } from 'react'
 import { Wrench, ChevronDown, ChevronRight, Copy, Check, FileType2 } from 'lucide-react'
 import { CompleteStepAction } from './CompleteStepAction'
@@ -174,6 +175,7 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
         </div>
       </div>
 
+      <ScenarioComparison reportId={title} report={buildMarkdown()} />
       {/* Progress bar */}
       <div
         className="w-full bg-muted rounded-full h-2"

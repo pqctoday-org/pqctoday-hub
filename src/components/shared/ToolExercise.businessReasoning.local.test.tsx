@@ -6,6 +6,18 @@ import { ToolExercise } from './ToolExercise'
 import { useModuleStore } from '@/store/useModuleStore'
 
 describe('Business exercise evidence and uncertainty reasoning', () => {
+  it('starts the next tool with unanswered questions when navigating in place', async () => {
+    const user = userEvent.setup()
+    const view = render(<ToolExercise toolId="migration-verification" family="business" />)
+    await user.click(screen.getByRole('button', { name: /^The tested path supports/ }))
+    expect(screen.getByRole('status')).toHaveTextContent('Right.')
+    view.rerender(<ToolExercise toolId="cost-model-explorer" family="business" />)
+    expect(screen.queryByRole('status')).toBeNull()
+    expect(screen.queryByRole('button', { pressed: true })).toBeNull()
+    await user.click(screen.getByRole('button', { name: /^Only limited disagreement/ }))
+    expect(screen.getByRole('status')).toHaveTextContent('Right.')
+  })
+
   it('accepts the policy-scoped hybrid outcome without treating filled references as proof', async () => {
     const user = userEvent.setup()
     const before = useModuleStore.getState()

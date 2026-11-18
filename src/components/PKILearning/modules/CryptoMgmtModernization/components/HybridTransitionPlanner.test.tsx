@@ -97,14 +97,14 @@ describe('recommendTransitionPathway — decision tree', () => {
     expect(rec.kemPair).toMatch(/X25519MLKEM768/)
   })
 
-  it('emits an RSA + ML-DSA-65 composite sig when current algorithm is RSA-2048', () => {
+  it('emits the RFC 10073 RSA-2048 and ML-DSA-44 profile', () => {
     const rec = recommendTransitionPathway({
       ...baseInputs,
       currentAlgorithm: 'RSA-2048',
       function: 'both',
     })
     expect(rec.sigPair).toMatch(/RSA-2048/)
-    expect(rec.sigPair).toMatch(/ML-DSA-65/)
+    expect(rec.sigPair).toMatch(/ML-DSA-44/)
   })
 
   it('produces a sunset date in the future', () => {

@@ -44,9 +44,12 @@ export function PolicyScopeExercise({ moduleId }: { moduleId?: string } = {}) {
           <p className="font-semibold text-foreground">{scenario.domainTitle}</p>
           <p className="text-muted-foreground">{scenario.roleDecisionPrompt}</p>
           <p>
-            <strong>Transfer question:</strong> {scenario.transferQuestion.prompt} —{' '}
-            {scenario.transferQuestion.changedAssumptionOutcome}
+            <strong>Transfer question:</strong> {scenario.transferQuestion.prompt}
           </p>
+          <details>
+            <summary className="cursor-pointer">Compare your reasoning</summary>
+            <p>{scenario.transferQuestion.changedAssumptionOutcome}</p>
+          </details>
         </div>
       )}
       <p className="text-sm">

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { inventoryCoverageText } from '@/components/PKILearning/common/executive/inventoryCoverage'
 import {
   currentKpiValueOrigin,
   kpiValueOriginLabel,
@@ -166,15 +167,15 @@ export function buildKpiTrackerMarkdown({
   }
   md += '\n## Sample Measurement Notes\n\n'
   md +=
-    '| KPI | Numerator | Denominator | Unit | Period | As of | Sample owner | Sample reference | Learner-recorded review label | Scope |\n'
+    '| KPI | Numerator | Denominator | Unit | Period | As of | Sample owner | Sample reference | Learner-recorded review label | Scope | Inventory coverage from sample counts |\n'
   md +=
-    '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|-------|\n'
+    '|-----|-----------|-------------|------|--------|-------|-------|----------|--------------|-------|-----------------|\n'
   const cell = (value: string | undefined) =>
     (value || 'not provided').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')
   for (const dimension of dimensions) {
     const observation = observations[dimension.id]
     if (!observation) continue
-    md += `| ${cell(dimension.label)} | ${cell(observation.numerator)} | ${cell(observation.denominator)} | ${cell(observation.unit)} | ${cell(observation.reportingPeriod)} | ${cell(observation.asOfDate)} | ${cell(observation.owner)} | ${cell(observation.evidenceReference)} | ${observation.verificationState} | ${cell(observation.scope)} |\n`
+    md += `| ${cell(dimension.label)} | ${cell(observation.numerator)} | ${cell(observation.denominator)} | ${cell(observation.unit)} | ${cell(observation.reportingPeriod)} | ${cell(observation.asOfDate)} | ${cell(observation.owner)} | ${cell(observation.evidenceReference)} | ${observation.verificationState} | ${cell(observation.scope)} | ${cell(inventoryCoverageText(dimension.id, observation))} |\n`
   }
   md += '\n## Data Sources\n\n'
   md += `- Vendor and FIPS measures use only products explicitly selected in Migrate; catalogue status does not verify deployment. Compliance closure, exposure coverage and pace require organization-entered values.\n`

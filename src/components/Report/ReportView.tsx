@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { InventoryAnswerComparison } from '@/components/ui/InventoryAnswerComparison'
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { flushSync } from 'react-dom'
@@ -564,6 +565,10 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
             </Link>
           </div>
         </motion.div>
+      )}
+
+      {!sharedView && !simEmbed && input && resultInputKey === inputKey && (
+        <InventoryAnswerComparison key={inputKey} input={input} result={result} />
       )}
 
       {/* `result` is guaranteed truthy here — the `!result` early-return above

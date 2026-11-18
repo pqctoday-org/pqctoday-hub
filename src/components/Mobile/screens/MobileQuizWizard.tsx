@@ -106,6 +106,7 @@ export function MobileQuizWizard({ questions, title, onComplete, onExit }: Mobil
         />
         {isSubmitted && (
           <FeedbackPanel
+            questionId={currentQuestion.id}
             isCorrect={state.results[currentQuestion.id] ?? false}
             explanation={currentQuestion.explanation}
             learnMorePath={currentQuestion.learnMorePath}

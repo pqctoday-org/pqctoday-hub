@@ -117,6 +117,10 @@ describe('buildMarkdown', () => {
     expect(md).toContain('## Verification records')
     expect(md).toContain('## Decommissioning log')
     expect(md).toContain('## Closure decision record')
+    expect(md).toContain('### Evidence references for review')
+    expect(md).toContain(
+      `Observed negotiation\n\n    ${state.records[0].evidence.observedNegotiation}`
+    )
     expect(md).toContain('## BAU handover register')
     expect(md).toContain('**Evidence recorded — review required**')
     expect(md).not.toContain('**Verified**')

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { ScenarioComparison } from '@/components/PKILearning/common/executive/ScenarioComparison'
 import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import { downloadCsv } from '@/utils/csvExport'
 import { withEducationNoticeCsv } from '@/data/educationNotice'
@@ -425,6 +426,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <ScenarioComparison reportId="architecture" report={markdown} />
       <div className="flex items-start gap-3">
         <Network size={24} className="text-primary mt-1 shrink-0" />
         <div>

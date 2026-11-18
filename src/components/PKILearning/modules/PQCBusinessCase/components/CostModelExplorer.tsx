@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { Info, Play, Sliders } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
@@ -13,8 +13,6 @@ import {
   SIM_CONSTANTS,
   type CostModelInputs,
   compareCostModels,
-  mulberry32,
-  sampleTriangular,
   percentile,
   programCostFor,
 } from '@/utils/costModelSim'
@@ -28,6 +26,7 @@ function formatCurrency(amount: number): string {
 }
 
 const DRAWS = 1000
+const DRAW_SEED = 42
 const BATCH = 25
 const FRAME_MS = 30
 
@@ -58,10 +57,19 @@ export const CostModelExplorer: React.FC = () => {
         })
   )
 
-  const update = <K extends keyof CostModelInputs>(key: K, value: CostModelInputs[K]) =>
+  const [revealed, setRevealed] = useState<number | null>(null)
+  const update = <K extends keyof CostModelInputs>(key: K, value: CostModelInputs[K]) => {
     setInputs((prev) => ({ ...prev, [key]: value }))
+    setRevealed(null)
+  }
 
-  const comparison = useMemo(() => compareCostModels(inputs, { seed: 42 }), [inputs])
+  const comparison = useMemo(
+    () => compareCostModels(inputs, { seed: DRAW_SEED, draws: DRAWS }),
+    [inputs]
+  )
+  const rawSamples = comparison.monteCarlo.drawOrder
+  const revealedCount = revealed ?? 0
+  const running = revealed !== null && revealed < rawSamples.length
 
   const analogicalExplanation = `${formatCurrency(SIM_CONSTANTS.histPerSystem)}/system illustrative anchor × ${inputs.complexity.toFixed(1)}× complexity × ${inputs.systems} systems + ${formatCurrency(programCostFor(inputs.horizonYears))} standing program cost over ${inputs.horizonYears}yr.`
 
@@ -75,6 +83,11 @@ export const CostModelExplorer: React.FC = () => {
     md += `| Judgemental (scenario expected) | ${formatCurrency(comparison.scenario.expected)} |\n`
     md += `| Analogical (illustrative anchor) | ${formatCurrency(comparison.analogical)} |\n\n`
     md += `**Analogical illustrative calculation:** ${analogicalExplanation}\n\n`
+    md += `**Model assumptions**\n\n`
+    md += `- Parametric: ${SIM_CONSTANTS.budgetSharePct}% of the annual IT budget for each year.\n`
+    md += `- Bottom-up: ${formatCurrency(SIM_CONSTANTS.perSystemBase)} per system at 1× complexity, plus standing program cost.\n`
+    md += `- Scenario: bottom-up × ${SIM_CONSTANTS.optimisticFactor}, 1, or ${SIM_CONSTANTS.conservativeFactor}.\n`
+    md += `- Monte Carlo: ${DRAWS} seeded draws (seed ${DRAW_SEED}) of a triangular per-system cost, at ${SIM_CONSTANTS.mcMinFactor}×, 1× and ${SIM_CONSTANTS.mcMaxFactor}× the complexity-adjusted base. Each draw adds the same standing program cost.\n\n`
     md += `**Spread across methods:** ${comparison.spreadRatio.toFixed(1)}×\n\n`
     md += `**Cost of inaction (reference, not a migration cost):** ${formatCurrency(comparison.aleReference)}\n\n`
     md += `*Illustrative — the point is how far the methods diverge on identical inputs; triangulate rather than trust any single one.*\n`
@@ -111,7 +124,7 @@ export const CostModelExplorer: React.FC = () => {
       {
         key: 'scenario',
         label: 'Judgemental (scenario)',
-        why: 'Optimistic / expected / conservative around the bottom-up number.',
+        why: `Bottom-up estimate × ${SIM_CONSTANTS.optimisticFactor}, 1 or ${SIM_CONSTANTS.conservativeFactor}, using optimistic, expected and conservative assumptions respectively.`,
         band: {
           lo: comparison.scenario.optimistic,
           mid: comparison.scenario.expected,
@@ -146,59 +159,24 @@ export const CostModelExplorer: React.FC = () => {
   const pct = (v: number) => `${Math.min(100, (v / axisMax) * 100)}%`
 
   // ── Animated Monte-Carlo detail ──────────────────────────────────────────
-  const rawSamples = useMemo(() => {
-    const rng = mulberry32(42)
-    const base = SIM_CONSTANTS.perSystemBase * inputs.complexity
-    const min = base * SIM_CONSTANTS.mcMinFactor
-    const max = base * SIM_CONSTANTS.mcMaxFactor
-    // programCostFor(horizon), NOT the flat fixedProgramCost. This loop
-    // duplicates monteCarloEstimate() so the animation can reveal draws in the
-    // order they were generated (the model returns them sorted). When the
-    // standing programme cost became horizon-scaled on 2026-08-11, the model
-    // moved and this copy did not — so the histogram and its percentiles
-    // silently disagreed with the Monte-Carlo bar in the comparison chart
-    // above, on the same screen: identical at the nominal 3-year horizon by
-    // construction, out by $4.67M at 10 years and $11.33M at 20.
-    // `horizonYears` was missing from the dependency list too, which is what
-    // an unused input looks like.
-    const programCost = programCostFor(inputs.horizonYears)
-    const arr: number[] = []
-    for (let i = 0; i < DRAWS; i++) {
-      arr.push(sampleTriangular(rng, min, base, max) * inputs.systems + programCost)
-    }
-    return arr
-  }, [inputs.complexity, inputs.systems, inputs.horizonYears])
-
-  const [revealed, setRevealed] = useState(0)
-  const [running, setRunning] = useState(false)
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  // The histogram/percentiles below derive from the current sample prefix, so
-  // when the scenario changes they update live — no reset needed.
   useEffect(() => {
     if (!running) return
-    timer.current = setInterval(() => {
-      setRevealed((r) => {
-        const next = Math.min(DRAWS, r + BATCH)
-        if (next >= DRAWS) setRunning(false)
-        return next
-      })
+    const timer = setInterval(() => {
+      setRevealed((count) => (count === null ? null : Math.min(rawSamples.length, count + BATCH)))
     }, FRAME_MS)
-    return () => {
-      if (timer.current) clearInterval(timer.current)
-    }
-  }, [running])
+    return () => clearInterval(timer)
+  }, [rawSamples.length, running])
 
   const revealedStats = useMemo(() => {
-    if (revealed === 0) return null
-    const sorted = rawSamples.slice(0, revealed).sort((a, b) => a - b)
+    if (revealedCount === 0) return null
+    const sorted = rawSamples.slice(0, revealedCount).sort((a, b) => a - b)
     return {
       p10: percentile(sorted, 10),
       p50: percentile(sorted, 50),
       p90: percentile(sorted, 90),
       sorted,
     }
-  }, [rawSamples, revealed])
+  }, [rawSamples, revealedCount])
 
   // Histogram buckets over the full sample range so the shape settles in place.
   const histogram = useMemo(() => {
@@ -207,18 +185,13 @@ export const CostModelExplorer: React.FC = () => {
     const BUCKETS = 24
     const width = (max - min) / BUCKETS || 1
     const counts = new Array(BUCKETS).fill(0)
-    for (let i = 0; i < revealed; i++) {
+    for (let i = 0; i < revealedCount; i++) {
       const idx = Math.min(BUCKETS - 1, Math.floor((rawSamples[i] - min) / width))
       counts[idx] += 1
     }
     const peak = Math.max(...counts, 1)
     return { counts, peak, min, max }
-  }, [rawSamples, revealed])
-
-  const runSimulation = () => {
-    setRevealed(0)
-    setRunning(true)
-  }
+  }, [rawSamples, revealedCount])
 
   return (
     <div className="space-y-6">
@@ -431,21 +404,22 @@ export const CostModelExplorer: React.FC = () => {
           <p className="text-xs text-muted-foreground">
             The probabilistic lens doesn&apos;t give a number — it gives a distribution. Run it and
             watch {DRAWS.toLocaleString()} draws build the shape. Each draw samples an uncertain
-            average cost-per-system; the band is where the middle 80% lands (P10–P90).
+            average cost per system. The middle 80% lies between P10 and P90. Editing the scenario
+            clears the animation.
           </p>
           <div className="flex items-center gap-3">
             <Button
               type="button"
               variant="default"
-              onClick={runSimulation}
+              onClick={() => setRevealed(0)}
               disabled={running}
               className="inline-flex items-center gap-2"
             >
               <Play size={14} />
-              {running ? 'Running…' : revealed > 0 ? 'Re-run' : 'Run Monte Carlo'}
+              {running ? 'Running…' : revealedCount > 0 ? 'Re-run' : 'Run Monte Carlo'}
             </Button>
             <span className="text-xs font-mono text-muted-foreground">
-              {revealed.toLocaleString()} / {DRAWS.toLocaleString()} draws
+              {revealedCount.toLocaleString()} / {DRAWS.toLocaleString()} draws
             </span>
           </div>
 
@@ -461,7 +435,10 @@ export const CostModelExplorer: React.FC = () => {
           </div>
 
           {revealedStats && (
-            <div className="grid grid-cols-3 gap-2 text-center">
+            <section
+              aria-label="Monte Carlo animation percentiles"
+              className="grid grid-cols-3 gap-2 text-center"
+            >
               <div className="bg-muted/50 rounded p-2">
                 <div className="text-[11px] text-muted-foreground">P10</div>
                 <div className="text-sm font-bold text-foreground">
@@ -480,7 +457,7 @@ export const CostModelExplorer: React.FC = () => {
                   {formatCurrency(revealedStats.p90)}
                 </div>
               </div>
-            </div>
+            </section>
           )}
         </div>
       </details>

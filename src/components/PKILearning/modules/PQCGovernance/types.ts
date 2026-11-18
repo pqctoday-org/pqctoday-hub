@@ -4,7 +4,6 @@
 
 export interface RACIOutput {
   accountableRole: string
-  responsibleRole: string
 }
 
 export interface PolicyOutput {

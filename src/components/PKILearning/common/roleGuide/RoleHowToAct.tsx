@@ -4,6 +4,8 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { Rocket, Zap, Target, CheckCircle2, Circle, Download, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useModuleStore } from '@/store/useModuleStore'
+import { downloadBlob } from '@/services/exportBundle'
 import type { RoleGuideData } from './types'
 
 const PHASE_META: Record<string, { label: string; color: string; bgClass: string }> = {
@@ -29,29 +31,30 @@ const PHASES = ['immediate', '30-day', '90-day', '6-month'] as const
 
 interface Props {
   data: RoleGuideData
-  onComplete?: () => void
+  moduleId: string
 }
 
-export const RoleHowToAct: React.FC<Props> = ({ data }) => {
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
-  const [quickWinsDone, setQuickWinsDone] = useState<Set<string>>(new Set())
-  const [copied, setCopied] = useState(false)
+export const RoleHowToAct: React.FC<Props> = ({ data, moduleId }) => {
+  const plan = useModuleStore((state) => state.modules[moduleId]?.roleActionPlan)
+  const [copyStatus, setCopyStatus] = useState<'copied' | 'unavailable' | null>(null)
 
-  const toggleCheck = (key: string) => {
-    setCheckedItems((prev) => {
-      const next = new Set(prev)
-      if (next.has(key)) next.delete(key)
-      else next.add(key)
-      return next
-    })
-  }
+  const checkedItems = useMemo(() => new Set(plan?.completedActions), [plan])
+  const quickWinsDone = useMemo(() => new Set(plan?.completedQuickWins), [plan])
 
-  const toggleQuickWin = (id: string) => {
-    setQuickWinsDone((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
+  const toggleItem = (list: 'completedActions' | 'completedQuickWins', id: string) => {
+    const store = useModuleStore.getState()
+    const current = store.modules[moduleId]?.roleActionPlan ?? {
+      completedActions: [],
+      completedQuickWins: [],
+    }
+    const selected = current[list]
+    store.updateModuleProgress(moduleId, {
+      roleActionPlan: {
+        ...current,
+        [list]: selected.includes(id)
+          ? selected.filter((value) => value !== id)
+          : [...selected, id],
+      },
     })
   }
 
@@ -64,14 +67,12 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
     return grouped
   }, [data.actionItems])
 
-  const totalChecklist = useMemo(() => {
-    let total = 0
-    for (const item of data.actionItems) total += item.checklist.length
-    return total
-  }, [data.actionItems])
-
-  const completionPct =
-    totalChecklist > 0 ? Math.round((checkedItems.size / totalChecklist) * 100) : 0
+  const actionKeys = PHASES.flatMap((phase) =>
+    actionsByPhase[phase].flatMap((item) => item.checklist.map((check) => `${item.id}-${check}`))
+  )
+  const totalChecklist = actionKeys.length
+  const completed = actionKeys.filter((key) => checkedItems.has(key)).length
+  const completionPct = totalChecklist > 0 ? Math.round((completed / totalChecklist) * 100) : 0
 
   const generateExport = useCallback(() => {
     const lines: string[] = [`# PQC Action Plan: ${data.roleLabel}`, '', `> ${data.tagline}`, '']
@@ -116,19 +117,17 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
   }, [data, checkedItems, quickWinsDone, actionsByPhase])
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(generateExport())
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      await navigator.clipboard.writeText(generateExport())
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('unavailable')
+    }
   }, [generateExport])
 
   const handleDownload = useCallback(() => {
     const blob = new Blob([generateExport()], { type: 'text/markdown' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `pqc-action-plan-${data.roleId}.md`
-    link.click()
-    URL.revokeObjectURL(url)
+    downloadBlob(blob, `pqc-action-plan-${data.roleId}.md`)
   }, [generateExport, data.roleId])
 
   return (
@@ -149,7 +148,7 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
           />
         </div>
         <p className="text-xs text-muted-foreground mt-2">
-          {checkedItems.size} of {totalChecklist} action items completed
+          {completed} of {totalChecklist} action items completed
         </p>
       </div>
 
@@ -171,7 +170,7 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
                   id={`qw-${qw.id}`}
                   type="checkbox"
                   checked={quickWinsDone.has(qw.id)}
-                  onChange={() => toggleQuickWin(qw.id)}
+                  onChange={() => toggleItem('completedQuickWins', qw.id)}
                   className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
                 />
                 <div>
@@ -224,9 +223,9 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
                             return (
                               <label
                                 key={key}
-                                className="flex items-start gap-2.5 cursor-pointer group"
+                                className="flex items-start gap-2.5 cursor-pointer group rounded focus-within:ring-2 focus-within:ring-ring"
                               >
-                                <span className="mt-0.5 shrink-0">
+                                <span className="mt-0.5 shrink-0" aria-hidden="true">
                                   {isDone ? (
                                     <CheckCircle2 size={16} className="text-status-success" />
                                   ) : (
@@ -239,7 +238,7 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
                                 <input
                                   type="checkbox"
                                   checked={isDone}
-                                  onChange={() => toggleCheck(key)}
+                                  onChange={() => toggleItem('completedActions', key)}
                                   className="sr-only"
                                 />
                                 <span
@@ -291,8 +290,8 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleCopy}>
-              {copied ? <Check size={14} /> : <Copy size={14} />}
-              <span className="ml-1.5">{copied ? 'Copied' : 'Copy'}</span>
+              {copyStatus === 'copied' ? <Check size={14} /> : <Copy size={14} />}
+              <span className="ml-1.5">Copy</span>
             </Button>
             <Button variant="outline" size="sm" onClick={handleDownload}>
               <Download size={14} />
@@ -300,6 +299,10 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
             </Button>
           </div>
         </div>
+        <p role="status" className="text-xs text-muted-foreground">
+          {copyStatus === 'copied' && 'Action plan copied.'}
+          {copyStatus === 'unavailable' && 'Copy unavailable. Download the Markdown file.'}
+        </p>
       </div>
     </div>
   )

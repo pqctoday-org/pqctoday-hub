@@ -57,7 +57,17 @@ function getRACIColor(value: RACIValue): string {
   }
 }
 
-type MatrixState = Record<string, Record<string, RACIValue>>
+export type MatrixState = Record<string, Record<string, RACIValue>>
+
+function accountableRoles(row?: Record<string, RACIValue>) {
+  return ROLES.filter((role) => row?.[role] === 'A')
+}
+
+function accountabilityText(roles: readonly string[]): string {
+  if (roles.length === 0) return 'Missing accountable role'
+  if (roles.length > 1) return `Conflicting accountable roles (${roles.join(', ')})`
+  return `One accountable role (${roles[0]})`
+}
 
 function buildInitialMatrix(): MatrixState {
   const matrix: MatrixState = {}
@@ -81,11 +91,11 @@ export function buildRaciMarkdown(matrix: MatrixState): string {
   for (const role of ROLES) {
     md += ` ${role} |`
   }
-  md += '\n'
+  md += ' Accountability check |\n'
 
   // Separator
   md += '|----------|'
-  md += '------|'.repeat(ROLES.length)
+  md += '------|'.repeat(ROLES.length + 1)
   md += '\n'
 
   // Data rows
@@ -95,7 +105,7 @@ export function buildRaciMarkdown(matrix: MatrixState): string {
       const val = matrix[activity]?.[role] || '-'
       md += ` ${val} |`
     }
-    md += '\n'
+    md += ` ${accountabilityText(accountableRoles(matrix[activity]))} |\n`
   }
 
   md += '\n**Legend:** R = Responsible, A = Accountable, C = Consulted, I = Informed\n'
@@ -151,46 +161,36 @@ interface SavedRaciInputs {
 }
 
 interface RACIBuilderProps {
-  onOutput?: (output: RACIOutput) => void
+  initialMatrix?: MatrixState | null
+  onOutput?: (output: RACIOutput, matrix: MatrixState) => void
 }
 
-export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
+export const RACIBuilder: React.FC<RACIBuilderProps> = ({ initialMatrix, onOutput }) => {
   const savedInputs = useSavedArtifactInputs<SavedRaciInputs>('raci-matrix')
   const restoredMatrix = useMemo(
     () => (isValidMatrixState(savedInputs?.matrix) ? savedInputs.matrix : null),
     [savedInputs]
   )
-  const [matrix, setMatrix] = useState<MatrixState>(() => restoredMatrix ?? buildSeededMatrix())
+  const [matrix, setMatrix] = useState<MatrixState>(
+    () => initialMatrix ?? restoredMatrix ?? buildSeededMatrix()
+  )
   const [seedCleared, setSeedCleared] = useState(false)
+  const [resumedDraft] = useState(() => Boolean(initialMatrix))
   const { addExecutiveDocument } = useModuleStore()
   const { industry } = useExecutiveModuleData()
 
   useEffect(() => {
     if (!onOutput) return
-    const primaryTaskKey = ACTIVITIES[0]
-    const row = matrix[primaryTaskKey]
-    if (!row) return
-    const accountable = (ROLES as readonly string[]).find((r) => row[r] === 'A') ?? ''
-    const responsible = (ROLES as readonly string[]).find((r) => row[r] === 'R') ?? ''
-    if (accountable || responsible) {
-      onOutput({ accountableRole: accountable, responsibleRole: responsible })
-    }
+    const accountable = accountableRoles(matrix[ACTIVITIES[0]])
+    onOutput({ accountableRole: accountable.length === 1 ? accountable[0] : '' }, matrix)
   }, [matrix, onOutput])
 
-  const activitiesMissingAccountable = useMemo(() => {
-    return ACTIVITIES.filter((activity) => {
-      const row = matrix[activity]
-      return !ROLES.some((role) => row?.[role] === 'A')
-    })
-  }, [matrix])
-
-  const activitiesMultipleAccountable = useMemo(() => {
-    return ACTIVITIES.filter((activity) => {
-      const row = matrix[activity]
-      const accountableCount = ROLES.filter((role) => row?.[role] === 'A').length
-      return accountableCount > 1
-    })
-  }, [matrix])
+  const activitiesMissingAccountable = ACTIVITIES.filter(
+    (activity) => accountableRoles(matrix[activity]).length === 0
+  )
+  const activitiesMultipleAccountable = ACTIVITIES.filter(
+    (activity) => accountableRoles(matrix[activity]).length > 1
+  )
 
   const handleCellChange = useCallback((activity: string, role: string, value: RACIValue) => {
     setMatrix((prev) => ({
@@ -206,9 +206,14 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
 
   // Structured CSV so `.csv` opens as real spreadsheet rows, not pipe text.
   const exportCsv = useMemo(() => {
-    const rows: (string | number)[][] = [['Activity', ...ROLES]]
+    const rows: (string | number)[][] = [['Activity', ...ROLES, 'Accountability check']]
     for (const activity of ACTIVITIES) {
-      rows.push([activity, ...ROLES.map((role) => matrix[activity]?.[role] || '')])
+      const row = matrix[activity]
+      rows.push([
+        activity,
+        ...ROLES.map((role) => row?.[role] || ''),
+        accountabilityText(accountableRoles(row)),
+      ])
     }
     return rowsToCsv(rows)
   }, [matrix])
@@ -230,9 +235,11 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
       {!seedCleared && (
         <PreFilledBanner
           summary={
-            restoredMatrix
-              ? 'Restored your last saved RACI matrix — edit and re-export to update it.'
-              : `Illustrative default Accountable / Responsible assignments for a PQC governance program${industry ? ` (${industry} context)` : ''}. Refine per your org chart.`
+            resumedDraft
+              ? 'Continue editing the matrix from your workshop draft.'
+              : restoredMatrix
+                ? 'Restored your last saved RACI matrix — edit and re-export to update it.'
+                : `Illustrative default Accountable / Responsible assignments for a PQC governance program${industry ? ` (${industry} context)` : ''}. Refine per your org chart.`
           }
           onClear={() => {
             setMatrix(buildInitialMatrix())
@@ -297,7 +304,10 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
 
       {/* Validation Warnings */}
       {activitiesMissingAccountable.length > 0 && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30 text-sm">
+        <div
+          role="status"
+          className="flex items-start gap-2 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30 text-sm"
+        >
           <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
           <div>
             <p className="font-medium text-foreground">Missing Accountable assignment</p>
@@ -309,7 +319,10 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ onOutput }) => {
         </div>
       )}
       {activitiesMultipleAccountable.length > 0 && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-status-error/10 border border-status-error/30 text-sm">
+        <div
+          role="status"
+          className="flex items-start gap-2 p-3 rounded-lg bg-status-error/10 border border-status-error/30 text-sm"
+        >
           <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
           <div>
             <p className="font-medium text-foreground">Multiple Accountable assignments</p>

@@ -522,7 +522,7 @@ export async function buildAttackerEvidence(evidence: SnpEvidence): Promise<SnpE
   return { ...evidence, report: forged, vcekDer: new Uint8Array(cert.rawData) }
 }
 
-// ── Completing a channel ───────────────────────────────────────────────────
+// ── Reviewing recorded and simulated checks ─────────────────────────────
 
 export interface ChannelBindingCheckLike {
   id: string
@@ -530,26 +530,18 @@ export interface ChannelBindingCheckLike {
   passed: boolean
 }
 
-/**
- * A channel may be treated as established only when every required check ran and passed, each
- * attributed to its own result. A primitive signature check passing on its own is not enough.
- */
-export function channelEstablished(
-  appraisal: Pick<VerificationResult, 'checks'>,
-  binding: readonly ChannelBindingCheckLike[]
-): { established: boolean; missing: string[]; failed: string[] } {
-  const required = [
-    'chain',
-    'validity',
-    'vcek-binding',
-    'signature',
-    'measurement',
-    'challenge',
-    'key-binding',
-    'ciphertext-binding',
-  ]
-  const all: ChannelBindingCheckLike[] = [...appraisal.checks, ...binding]
-  const missing = required.filter((id) => !all.some((c) => c.id === id && c.ran))
-  const failed = required.filter((id) => all.some((c) => c.id === id && c.ran && !c.passed))
-  return { established: missing.length === 0 && failed.length === 0, missing, failed }
+/** Compare the signed report data with the binding generated in the separate exercise. */
+export function reviewRecordedChannel(
+  appraisal: Pick<VerificationResult, 'checks' | 'report'>,
+  binding: { checks: readonly ChannelBindingCheckLike[]; reportData: Uint8Array } | null
+): { failed: string[]; matchesRecordedKey: boolean | null } {
+  return {
+    failed: [...appraisal.checks, ...(binding?.checks ?? [])]
+      .filter((check) => check.ran && !check.passed)
+      .map((check) => check.id),
+    matchesRecordedKey:
+      appraisal.report && binding
+        ? equalBytes(appraisal.report.reportData, binding.reportData)
+        : null,
+  }
 }

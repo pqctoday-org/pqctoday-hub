@@ -1289,13 +1289,17 @@ export const SupplyChainRiskMatrix: React.FC<{
               </thead>
               <tbody>
                 {scorecardOutput.rows.map((row) => {
-                  const isLow = row.overall < 50
+                  const score = row.overall
+                  const isLow = score !== null && score < 50
+                  const isHigh = score !== null && score >= 75
                   const scoreColor =
-                    row.overall >= 75
-                      ? 'text-status-success'
-                      : row.overall >= 50
-                        ? 'text-status-warning'
-                        : 'text-status-error'
+                    score === null
+                      ? 'text-muted-foreground'
+                      : isHigh
+                        ? 'text-status-success'
+                        : isLow
+                          ? 'text-status-error'
+                          : 'text-status-warning'
                   return (
                     <tr key={row.vendor} className="border-b border-border/50">
                       <td className="py-1.5 pr-3 text-foreground">{row.vendor}</td>
@@ -1303,19 +1307,21 @@ export const SupplyChainRiskMatrix: React.FC<{
                         {row.productCount}
                       </td>
                       <td className={`py-1.5 px-2 text-center font-bold ${scoreColor}`}>
-                        {row.overall}/100
+                        {score === null ? 'Not assessed' : `${score}/100`}
                       </td>
                       <td className="py-1.5 px-2 text-center">
                         <span
                           className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
-                            isLow
-                              ? 'bg-destructive/10 text-status-error border-destructive/20'
-                              : row.overall >= 75
-                                ? 'bg-status-success/10 text-status-success border-status-success/20'
-                                : 'bg-status-warning/10 text-status-warning border-status-warning/20'
+                            score === null
+                              ? 'bg-muted text-muted-foreground border-border'
+                              : isLow
+                                ? 'bg-destructive/10 text-status-error border-destructive/20'
+                                : isHigh
+                                  ? 'bg-status-success/10 text-status-success border-status-success/20'
+                                  : 'bg-status-warning/10 text-status-warning border-status-warning/20'
                           }`}
                         >
-                          {isLow ? 'Low' : row.overall >= 75 ? 'High' : 'Medium'}
+                          {score === null ? '—' : isLow ? 'Low' : isHigh ? 'High' : 'Medium'}
                         </span>
                       </td>
                     </tr>

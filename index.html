@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <title>PQC Today</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="google-site-verification" content="lSSC0h-CK8Ps91057B3Ig-aHiKn8kS58RrIzpRgpAl0" />
     <meta
@@ -11,11 +12,9 @@
     <meta name="author" content="PQC Today" />
 
     <!--
-      Per-route SEO tags — <title>, description, canonical, Open Graph and Twitter
-      Card — are emitted by src/seo/PageMeta.tsx and baked into every page by the
-      prerender step (scripts/prerender.ts). They are intentionally NOT duplicated
-      here: React 19 hoists PageMeta's tags into <head>, so a static copy would
-      produce conflicting duplicate canonical / og:title tags on every route.
+      PageMeta updates the title from this shell in place and hoists the
+      remaining per-route SEO tags. The prerender step saves those route
+      values in the published HTML.
     -->
 
     <!-- PWA & Theme -->

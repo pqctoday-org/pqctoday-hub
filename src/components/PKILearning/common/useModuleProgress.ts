@@ -84,7 +84,12 @@ export function useModuleProgress(moduleId: string, opts: UseModuleProgressOptio
         setCurrentPart(0)
         setConfigKey((p) => p + 1)
         startTimeRef.current = Date.now()
-        updateModuleProgress(moduleId, { status: 'in-progress', completedSteps: [], timeSpent: 0 })
+        updateModuleProgress(moduleId, {
+          status: 'in-progress',
+          completedSteps: [],
+          timeSpent: 0,
+          roleActionPlan: undefined,
+        })
         // runs ONLY on a confirmed reset — lets the shell clear its pre-fill
         // config and a module clear FC-held cross-tab state (its onReset slot).
         onConfirmed?.()

@@ -11,19 +11,23 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     await navigator.clipboard.writeText(text)
     return true
   } catch {
+    const previous = document.activeElement
+    const textarea = document.createElement('textarea')
     try {
-      const textarea = document.createElement('textarea')
       textarea.value = text
       textarea.style.position = 'fixed'
       textarea.style.opacity = '0'
       document.body.appendChild(textarea)
       textarea.focus()
       textarea.select()
-      const ok = document.execCommand('copy')
-      document.body.removeChild(textarea)
-      return ok
+      return document.execCommand('copy')
     } catch {
       return false
+    } finally {
+      textarea.remove()
+      if (previous instanceof HTMLElement && previous.isConnected) {
+        previous.focus({ preventScroll: true })
+      }
     }
   }
 }

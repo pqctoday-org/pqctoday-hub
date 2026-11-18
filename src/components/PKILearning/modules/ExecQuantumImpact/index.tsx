@@ -168,7 +168,9 @@ export const ExecQuantumImpactModule: FC = () => (
         case 1:
           return <RoleWhatToLearn key={`what-${configKey}`} data={EXEC_GUIDE_DATA} />
         case 2:
-          return <RoleHowToAct key={`how-${configKey}`} data={EXEC_GUIDE_DATA} />
+          return (
+            <RoleHowToAct moduleId={manifest.id} key={`how-${configKey}`} data={EXEC_GUIDE_DATA} />
+          )
         case 3:
           return <SelfAssessmentStep key={`assess-${configKey}`} />
         default:

@@ -70,6 +70,7 @@ interface SignatureResult {
   isLive: boolean
   algorithm: AlgorithmName
   message: string
+  signatureBytes?: Uint8Array
 }
 
 /** Generate realistic-looking hex string of a given byte length */
@@ -121,6 +122,8 @@ export const BinarySigning: React.FC = () => {
   const [keyPair, setKeyPair] = useState<KeyPair | null>(null)
   const [inputText, setInputText] = useState('Hello, Post-Quantum World!')
   const [signatureResult, setSignatureResult] = useState<SignatureResult | null>(null)
+  const [receivedData, setReceivedData] = useState('')
+  const [receivedVerified, setReceivedVerified] = useState<boolean | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSigning, setIsSigning] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
@@ -260,7 +263,10 @@ export const BinarySigning: React.FC = () => {
           isLive: true,
           algorithm: keyPair.algorithm,
           message: inputText,
+          signatureBytes: sig,
         })
+        setReceivedData(inputText)
+        setReceivedVerified(null)
       } catch (err) {
         setOperationError(err instanceof Error ? err.message : String(err))
       }
@@ -286,6 +292,24 @@ export const BinarySigning: React.FC = () => {
       setIsSigning(false)
     }
   }, [keyPair, inputText, algInfo, hsm])
+
+  const checkReceivedData = () => {
+    if (!signatureResult?.signatureBytes || !hsm.isReady || !hsm.moduleRef.current) return
+    setOperationError(null)
+    setReceivedVerified(null)
+    try {
+      const verified = hsm_verify(
+        hsm.moduleRef.current,
+        hsm.hSessionRef.current,
+        liveKeyRef.current.pubHandle,
+        receivedData,
+        signatureResult.signatureBytes
+      )
+      setReceivedVerified(verified)
+    } catch (error) {
+      setOperationError(error instanceof Error ? error.message : String(error))
+    }
+  }
 
   const handleReset = () => {
     if (busyRef.current) return
@@ -618,6 +642,55 @@ export const BinarySigning: React.FC = () => {
               </p>
             </div>
           </div>
+        </div>
+      )}
+
+      {signatureResult?.isLive && (
+        <div className="glass-panel p-4 space-y-3">
+          <h4 className="text-sm font-bold text-foreground">5. Verify the received data</h4>
+          <p className="text-xs text-muted-foreground">
+            Change one character in the received data and run verification again. Each check uses
+            the original signature and the same public key.
+          </p>
+          <label
+            htmlFor="received-signed-data"
+            className="block text-xs font-medium text-muted-foreground"
+          >
+            Received data
+          </label>
+          <textarea
+            id="received-signed-data"
+            value={receivedData}
+            onChange={(event) => {
+              setReceivedData(event.target.value)
+              setReceivedVerified(null)
+              setOperationError(null)
+            }}
+            className="w-full rounded-lg bg-muted/50 border border-border p-3 text-sm font-mono text-foreground focus:outline-none focus:border-primary/50"
+            rows={3}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={checkReceivedData}>
+              Verify against original signature
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setReceivedData(signatureResult.message)
+                setReceivedVerified(null)
+                setOperationError(null)
+              }}
+            >
+              Restore signed data
+            </Button>
+          </div>
+          <p role="status" aria-label="Received data result" className="text-sm">
+            {receivedVerified === null
+              ? 'Ready to check the received data.'
+              : receivedVerified
+                ? 'Received data matches the signed message.'
+                : 'Received data failed signature verification.'}
+          </p>
         </div>
       )}
 

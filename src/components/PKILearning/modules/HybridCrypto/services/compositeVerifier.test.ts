@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, beforeAll } from 'vitest'
+import { AsnConvert } from '@peculiar/asn1-schema'
+import { Certificate } from '@peculiar/asn1-x509'
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { p256 } from '@noble/curves/nist.js'
 import { sha256 } from '@noble/hashes/sha2.js'
@@ -87,6 +89,30 @@ describe('verifyCompositeCert — valid certificate', () => {
 })
 
 describe('verifyCompositeCert — negative controls', () => {
+  it('requires absent parameters in the workshop certificate identifiers', async () => {
+    const certificate = AsnConvert.parse(await mintComposite(), Certificate)
+    certificate.signatureAlgorithm.parameters = null
+    const result = await verifyCompositeCert(new Uint8Array(AsnConvert.serialize(certificate)))
+    expect(result.valid).toBe(false)
+    expect(result.errors).toContain(
+      'RFC 10073 requires absent parameters in composite algorithm identifiers.'
+    )
+  })
+
+  it('requires matching signature and subject key profiles for a self-signature', async () => {
+    const certificate = AsnConvert.parse(await mintComposite(), Certificate)
+    certificate.tbsCertificate.signature.algorithm = ML_DSA_65_OID_STR
+    certificate.tbsCertificate.subjectPublicKeyInfo.algorithm.algorithm = ML_DSA_65_OID_STR
+    const result = await verifyCompositeCert(new Uint8Array(AsnConvert.serialize(certificate)))
+    expect(result.valid).toBe(false)
+    expect(result.errors).toContain(
+      'The inner and outer certificate signature algorithm identifiers must match.'
+    )
+    expect(result.errors).toContain(
+      'The subject public key profile must match the self-signature profile.'
+    )
+  })
+
   it('REJECTS a tampered ML-DSA component', async () => {
     // Land inside the ML-DSA half: past the classical tail, well inside 3309 B.
     const der = await mintComposite()

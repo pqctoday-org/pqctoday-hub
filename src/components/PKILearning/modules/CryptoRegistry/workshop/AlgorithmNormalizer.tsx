@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
 import { Search, CheckCircle2, XCircle } from 'lucide-react'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { normalizeAlgorithmName } from '@/data/cyclonedxCryptoRegistry'
 
@@ -19,11 +20,19 @@ const PRESETS: { input: string; source: string }[] = [
   { input: 'RSA2048', source: 'Vendor scanner (under-specified)' },
 ]
 
+const SIGNING_PROFILES = {
+  compatibility: { label: 'Existing JWT issuer', signingIdentifier: 'ES256' },
+  pilot: { label: 'ML-DSA certificate pilot', signingIdentifier: 'id-ml-dsa-65' },
+} as const
+
 export function AlgorithmNormalizer() {
   const [query, setQuery] = useState('')
+  const [profile, setProfile] = useState<keyof typeof SIGNING_PROFILES>('compatibility')
 
   const match = useMemo(() => (query.trim() ? normalizeAlgorithmName(query) : null), [query])
   const searched = query.trim().length > 0
+  const { signingIdentifier } = SIGNING_PROFILES[profile]
+  const permitted = query.trim() === signingIdentifier
 
   return (
     <div className="space-y-4">
@@ -37,6 +46,7 @@ export function AlgorithmNormalizer() {
         </p>
         <input
           type="text"
+          aria-label="Reported cryptographic identifier"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="e.g. CKM_ECDSA_SHA256"
@@ -57,6 +67,30 @@ export function AlgorithmNormalizer() {
           ))}
         </div>
       </div>
+
+      <section className="glass-panel p-4 space-y-2" aria-label="Sample deployment policy">
+        <FilterDropdown
+          label="Deployment profile"
+          items={Object.entries(SIGNING_PROFILES).map(([id, entry]) => ({
+            id,
+            label: entry.label,
+          }))}
+          selectedId={profile}
+          onSelect={(id) => setProfile(id === 'pilot' ? 'pilot' : 'compatibility')}
+          hideDefaultOption
+        />
+        <p className="text-sm text-muted-foreground">
+          This fictional policy permits the exact reported signing identifier{' '}
+          <code>{signingIdentifier}</code>. A registry family can include multiple variants and does
+          not grant deployment approval.
+        </p>
+        <p role="status" className="text-sm font-medium">
+          {searched &&
+            (permitted
+              ? 'Identifier permitted for this sample profile. Verify the actual key and runtime separately.'
+              : 'Identifier outside this sample profile. Check the exact identifier and deployment scope.')}
+        </p>
+      </section>
 
       {searched && (
         <div className="glass-panel p-4">

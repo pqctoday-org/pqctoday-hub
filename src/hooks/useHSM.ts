@@ -11,7 +11,7 @@
  * Lifecycle:
  *   initialize() → getSoftHSMModule → createLoggingProxy →
  *     C_Initialize → C_GetSlotList → C_InitToken → C_OpenSession → C_Login
- *   finalize()   → C_CloseSession (never C_Finalize — singleton must stay alive)
+ *   finalize() or unmount → C_CloseSession for this hook's owned session
  *
  * All PKCS#11 calls use the logging proxy so every call appears in `log`.
  */
@@ -97,14 +97,33 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
   // Setting state after that is a no-op in a browser but crashes a test worker
   // whose environment is already torn down ("window is not defined").
   const mountedRef = useRef(true)
+  const hSessionRef = useRef<number>(0)
+  const slotRef = useRef<number>(0)
+  const initializing = useRef<symbol | null>(null)
+
+  const releaseSession = useCallback(() => {
+    initializing.current = null
+    const module = moduleRef.current
+    const session = hSessionRef.current
+    moduleRef.current = null
+    hSessionRef.current = 0
+    slotRef.current = 0
+    if (module && session) {
+      try {
+        module._C_CloseSession(session)
+      } catch {
+        // The engine may have already closed this session.
+      }
+    }
+  }, [])
+
   useEffect(() => {
     mountedRef.current = true
     return () => {
       mountedRef.current = false
+      releaseSession()
     }
-  }, [])
-  const hSessionRef = useRef<number>(0)
-  const slotRef = useRef<number>(0)
+  }, [releaseSession])
 
   // engineRef always holds the latest selection so initialize() never needs
   // to be re-created when the user changes engine between sessions.
@@ -187,7 +206,9 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
   )
 
   const initialize = useCallback(async () => {
-    if (phase === 'loading' || phase === 'session_open') return
+    if (initializing.current || hSessionRef.current) return
+    const attempt = Symbol('HSM initialization')
+    initializing.current = attempt
     setPhase('loading')
     setError(null)
     clearLog()
@@ -196,7 +217,10 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
       const rawModule = await (engineRef.current === 'rust'
         ? getSoftHSMRustModule()
         : getSoftHSMCppModule())
-      const proxy = createLoggingProxy(rawModule, (e) => addLog(e))
+      if (initializing.current !== attempt) return
+      const proxy = createLoggingProxy(rawModule, (entry) => {
+        if (mountedRef.current) addLog(entry)
+      })
       moduleRef.current = proxy as unknown as SoftHSMModule
 
       // C_Initialize — accept ALREADY_INITIALIZED (another module initialized it first)
@@ -233,31 +257,24 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
         USER_PIN
       )
       hSessionRef.current = hSession
-      if (!mountedRef.current) return
       setPhase('session_open')
     } catch (err) {
-      if (!mountedRef.current) return
+      if (initializing.current !== attempt) return
+      releaseSession()
       const msg = err instanceof Error ? err.message : String(err)
       console.error('[useHSM] initialize failed:', msg)
       setError(msg)
       setPhase('error')
+    } finally {
+      if (initializing.current === attempt) initializing.current = null
     }
-  }, [phase, clearLog, clearKeys, addLog])
+  }, [clearLog, clearKeys, addLog, releaseSession])
 
   const finalize = useCallback(() => {
-    if (moduleRef.current && hSessionRef.current) {
-      try {
-        moduleRef.current._C_CloseSession(hSessionRef.current)
-      } catch {
-        // Ignore close errors (session may already be closed)
-      }
-    }
-    moduleRef.current = null
-    hSessionRef.current = 0
-    slotRef.current = 0
+    releaseSession()
     setPhase('idle')
     setError(null)
-  }, [])
+  }, [releaseSession])
 
   return {
     phase,

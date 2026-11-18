@@ -21,7 +21,8 @@ export function mutateByte(bytes: Uint8Array, index: number): Uint8Array {
 export async function runTamperSample(
   operation: TamperReceipt['operation'],
   variant: number,
-  index = 0
+  index = 0,
+  sampleText?: string
 ): Promise<TamperReceipt> {
   if (operation === 'signature') {
     const suites = await import('@noble/post-quantum/ml-dsa.js')
@@ -35,7 +36,9 @@ export async function runTamperSample(
             : null
     if (!suite) throw new Error('Unsupported ML-DSA parameter set')
     const { publicKey, secretKey } = suite.keygen()
-    const message = new TextEncoder().encode('Fictional signed release manifest: revision 1')
+    const message = new TextEncoder().encode(
+      sampleText ?? 'Fictional signed release manifest: revision 1'
+    )
     const signature = suite.sign(message, secretKey)
     const altered = mutateByte(signature, index)
     const baselineValid = suite.verify(signature, message, publicKey)
@@ -72,7 +75,7 @@ export async function runTamperSample(
   const { gcm } = await import('@noble/ciphers/aes.js')
   // One message with a fresh random key per sample: no nonce/key reuse across runs.
   const nonce = crypto.getRandomValues(new Uint8Array(12))
-  const message = new TextEncoder().encode('Fictional sample key confirmation')
+  const message = new TextEncoder().encode(sampleText ?? 'Fictional sample key confirmation')
   const encrypted = gcm(sharedSecret, nonce).encrypt(message)
   if (!same(gcm(originalSecret, nonce).decrypt(encrypted), message))
     throw new Error('Valid confirmation control failed')

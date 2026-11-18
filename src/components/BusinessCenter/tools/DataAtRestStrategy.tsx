@@ -23,6 +23,7 @@ import { Database } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StandardRef } from '@/components/common/StandardRef'
 import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
@@ -44,12 +45,24 @@ export type Strategy = (typeof STRATEGY_OPTIONS)[number]
 const SENSITIVITY_OPTIONS = ['Low', 'Medium', 'High'] as const
 type Sensitivity = (typeof SENSITIVITY_OPTIONS)[number]
 
+const KEY_EXPOSURE_OPTIONS = {
+  unknown: 'History unknown',
+  'no-known-capture': 'No known capture',
+  confirmed: 'Old wrap captured',
+} as const
+type KeyExposure = keyof typeof KEY_EXPOSURE_OPTIONS
+const KEY_EXPOSURE_ITEMS = Object.entries(KEY_EXPOSURE_OPTIONS).map(([id, label]) => ({
+  id,
+  label,
+}))
+
 export interface StoreRow {
   id: string
   name: string
   strategy: Strategy
   sensitivity: Sensitivity
   note: string
+  keyExposure?: KeyExposure
 }
 
 export interface DataAtRestState {
@@ -102,6 +115,28 @@ function isValidStoreRows(rows: unknown): rows is StoreRow[] {
   )
 }
 
+function sampleDecision(row: StoreRow): string {
+  const exposure = row.keyExposure ?? 'unknown'
+  switch (row.strategy) {
+    case 'Re-wrap existing DEK under PQC KEK':
+      if (exposure === 'confirmed')
+        return 'Re-wrap leaves the same data key in use. If the captured wrap can be opened, that key can still decrypt every copy encrypted with it. Re-encrypt controlled copies with a fresh key.'
+      if (exposure === 'unknown')
+        return 'Establish the old key history first. Find the retained wraps, affected ciphertext and any copies that left the store before relying on re-wrap.'
+      return 'Re-wrap can improve future key protection if the same data key remains uncompromised and the old wraps are retired.'
+    case 'Re-encrypt with fresh AES-256 DEK (PQC-wrapped KEK)':
+      return 'Re-encrypt the controlled copies with a fresh data key. Captured copies still depend on the old key. Track their exposure and retire the old key separately.'
+    case 'Crypto-shred':
+      return 'Identify every recoverable copy of the data key and wrapping key before claiming cryptographic erasure. Include escrow and backup copies.'
+    case 'Delete':
+      return 'Identify the live, replicated and archived copies covered by the chosen sanitization procedure. Record what was removed and what remains in scope.'
+    case 'Accept & monitor':
+      return exposure === 'confirmed' || row.sensitivity === 'High'
+        ? 'The scenario leaves material exposure. Record who owns the decision and what evidence or date will trigger reconsideration.'
+        : 'Record the confidentiality deadline, monitoring owner and review trigger for this store.'
+  }
+}
+
 export function buildMarkdown(s: DataAtRestState): string {
   const lines: string[] = []
   lines.push('# Data-at-Rest Strategy')
@@ -138,12 +173,17 @@ export function buildMarkdown(s: DataAtRestState): string {
       'old DEK) needs its own retirement or destruction step.'
   )
   lines.push('')
-  lines.push('| Data store | Sensitivity | Strategy | Notes |')
-  lines.push('|---|---|---|---|')
+  lines.push(
+    '| Data store | Sensitivity | Old wrapped key exposure | Strategy | Sample decision | Notes |'
+  )
+  lines.push('|---|---|---|---|---|---|')
   for (const row of s.stores) {
     const name = row.name.trim() || '_(unnamed store)_'
     const note = row.note.trim() || '—'
-    lines.push(`| ${name} | ${row.sensitivity} | ${row.strategy} | ${note} |`)
+    const exposure = KEY_EXPOSURE_OPTIONS[row.keyExposure ?? 'unknown']
+    lines.push(
+      `| ${name} | ${row.sensitivity} | ${exposure} | ${row.strategy} | ${sampleDecision(row)} | ${note} |`
+    )
   }
   lines.push('')
   lines.push(
@@ -236,7 +276,12 @@ export const DataAtRestStrategy: React.FC = () => {
 
         <div className="space-y-4">
           {state.stores.map((row) => (
-            <div key={row.id} className="glass-panel border border-border rounded-lg p-3 space-y-3">
+            <div
+              key={row.id}
+              role="group"
+              aria-label={row.name || 'New data store'}
+              className="glass-panel border border-border rounded-lg p-3 space-y-3"
+            >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="block">
                   <label
@@ -306,6 +351,17 @@ export const DataAtRestStrategy: React.FC = () => {
                 </div>
               </div>
 
+              <FilterDropdown
+                items={KEY_EXPOSURE_ITEMS}
+                label="Old wrapped key exposure"
+                selectedId={row.keyExposure ?? 'unknown'}
+                onSelect={(keyExposure) =>
+                  setStore(row.id, { keyExposure: keyExposure as KeyExposure })
+                }
+                noContainer
+                hideDefaultOption
+              />
+
               <div className="block" role="group" aria-label="Data-at-rest strategy">
                 <span className="text-xs font-medium text-muted-foreground">Strategy</span>
                 <div className="mt-1 flex flex-wrap gap-2">
@@ -336,6 +392,13 @@ export const DataAtRestStrategy: React.FC = () => {
                   so destruction is verifiable.
                 </p>
               </div>
+
+              <p
+                role="status"
+                className="rounded-md border border-border p-3 text-sm text-foreground"
+              >
+                {sampleDecision(row)}
+              </p>
 
               <div className="flex justify-end">
                 <Button

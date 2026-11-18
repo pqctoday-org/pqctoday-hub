@@ -56,9 +56,9 @@ beforeEach(() => {
 describe('sample relying-party presentation checks', () => {
   it('checks the sample holder signature, key confirmation and actual disclosure hashes', async () => {
     const { presentation, context } = await sample()
-    await expect(
-      verifySampleSdPresentation(presentation, context, key, provider)
-    ).resolves.toBeUndefined()
+    await expect(verifySampleSdPresentation(presentation, context, key, provider)).resolves.toEqual(
+      ['degree']
+    )
     expect(provider.verifySignature).toHaveBeenCalled()
     expect(sampleHolderMatchesIssuer(key, context.issuerJwt)).toBe(true)
     expect(sampleHolderMatchesIssuer({ ...key, publicKey: 'other key' }, context.issuerJwt)).toBe(

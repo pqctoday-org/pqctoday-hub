@@ -24,9 +24,10 @@ import { Skull } from 'lucide-react'
 
 interface SolanaFlowProps {
   onBack: () => void
+  onComplete?: () => void
 }
 
-export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
+export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack, onComplete }) => {
   // Shared Hooks
   const keyGen = useKeyGeneration('solana')
   const recipientKeyGen = useKeyGeneration('solana')
@@ -890,7 +891,7 @@ Note: Address derived from the HSM Ed25519 public key.`
         isStepComplete={wizard.isStepComplete}
         onNext={gatedHandleNext}
         onBack={wizard.handleBack}
-        onComplete={onBack}
+        onComplete={onComplete ?? onBack}
       />
 
       {hsm.isReady && (

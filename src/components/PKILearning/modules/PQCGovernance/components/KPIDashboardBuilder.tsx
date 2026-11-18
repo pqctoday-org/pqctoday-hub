@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { inventoryCoverageText } from '@/components/PKILearning/common/executive/inventoryCoverage'
 import {
   currentKpiValueOrigin,
   kpiValueOriginLabel,
@@ -152,6 +153,8 @@ export function buildKpiDashboardMarkdown(
     }
     md += `| ${d.label} | ${value === undefined ? '_not yet scored_' : isPending(d) ? `${value}/100 — not assessed for current use` : `${value}/100`} | ${Math.round(ew(d) * 100)}% | ${d.target ?? '—'}${lineage}\n`
     md += `\nRaw measure: ${observation?.numerator || 'not provided'} / ${observation?.denominator || 'not provided'} ${observation?.unit || ''}; as of ${observation?.asOfDate || 'not provided'}.\n`
+    const coverageText = inventoryCoverageText(d.id, observation)
+    if (coverageText) md += `\nInventory coverage from sample counts: ${coverageText}\n`
   }
 
   // Honest methodology — the weighted-average score the dashboard computes.

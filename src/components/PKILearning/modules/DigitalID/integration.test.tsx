@@ -162,7 +162,7 @@ describe('EUDI Digital ID Integration', () => {
     })
   })
 
-  it('completes the PID Issuance and Relying Party flow', async () => {
+  it('issues the PID and refuses a bank request that also requires a diploma', async () => {
     renderWithRouter()
 
     // Switch to Workshop tab first
@@ -216,13 +216,7 @@ describe('EUDI Digital ID Integration', () => {
     )
     fireEvent.click(checkBtn)
 
-    // Step 4: Complete
-    await waitFor(
-      () => {
-        expect(screen.getByText(/Sample account opening accepted/i)).toBeDefined()
-        expect(screen.getByText(/Sample proof checks passed/i)).toBeDefined()
-      },
-      { timeout: 5000 }
-    )
+    expect(await screen.findByText(/Account Opening Refused/i)).toBeDefined()
+    expect(screen.getByRole('alert').textContent).toContain('degree (diploma)')
   }, 30000)
 })

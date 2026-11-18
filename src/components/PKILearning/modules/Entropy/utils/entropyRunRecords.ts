@@ -148,14 +148,20 @@ export interface EntropyTestingRunInput {
   startedAt: string
   finishedAt: string
   /** The sample checks shown on the page, when the learner ran them. */
-  sample?: { label: string; lengthBytes: number; visual: TestResult[]; health: TestResult[] }
+  sample?: {
+    label: string
+    lengthBytes: number
+    assumedMinEntropy: number
+    visual: TestResult[]
+    health: TestResult[]
+  }
 }
 
 const resultRow = (r: TestResult) => ({
   name: r.name,
-  value: r.value,
-  cutoff: r.threshold,
-  withinCutoff: r.passed,
+  value: r.insufficientData ? null : r.value,
+  cutoff: r.insufficientData ? null : r.threshold,
+  withinCutoff: r.insufficientData ? null : r.passed,
   limit: r.sampleLimit,
 })
 
@@ -182,6 +188,7 @@ export function entropyTestingRunManifest(
               sampleChecks: {
                 sample: i.sample.label,
                 lengthBytes: i.sample.lengthBytes,
+                assumedMinEntropyBitsPerByte: i.sample.assumedMinEntropy,
                 note: 'Shown as separate groups and never totalled; none of them is an entropy estimate.',
                 visualization: i.sample.visual.map(resultRow),
                 healthTests: i.sample.health.map(resultRow),

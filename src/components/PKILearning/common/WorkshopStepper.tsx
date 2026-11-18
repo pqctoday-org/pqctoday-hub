@@ -58,7 +58,7 @@ export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
       className={clsx('flex flex-wrap items-center gap-1.5', className)}
     >
       {steps.map((step, idx) => {
-        const isDone = completedSteps.includes(step.id) || idx < currentStep
+        const isDone = completedSteps.includes(step.id)
         const isCurrent = idx === currentStep
         // Every chip is a real control when the module passes onStepClick — past,
         // current and future alike. Release 4.95.0 (CC-3, 2026-09-19) removed the
@@ -78,7 +78,7 @@ export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
               variant="ghost"
               size="sm"
               aria-current={isCurrent ? 'step' : undefined}
-              aria-label={`${step.label}${isDone ? ' (completed)' : isCurrent ? ' (current)' : ''}`}
+              aria-label={`${step.label}${isCurrent ? ' (current)' : ''}${isDone ? ' (completed)' : ''}`}
               disabled={!clickable}
               onClick={() => clickable && onStepClick!(idx)}
               className={clsx(
@@ -118,7 +118,7 @@ export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
                 aria-hidden="true"
                 className={clsx(
                   'hidden sm:block h-px w-4 shrink-0',
-                  idx < currentStep ? 'bg-status-success/40' : 'bg-border'
+                  isDone ? 'bg-status-success/40' : 'bg-border'
                 )}
               />
             )}

@@ -531,15 +531,21 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
 
   const isRSA = kekAlgo.startsWith('rsa')
 
-  const runLiveDemo = async () => {
-    if (!hsm.moduleRef.current) return
-    setLiveRunning(true)
+  const clearRun = () => {
     setLiveLines([])
     setLiveError(null)
     setKcvResult(null)
     setEnvelopeBlob(null)
+    setCompletedSteps(new Set())
+    setExecutedSteps(new Set())
     hsm.clearLog()
     hsm.clearKeys()
+  }
+
+  const runLiveDemo = async () => {
+    if (!hsm.moduleRef.current) return
+    setLiveRunning(true)
+    clearRun()
 
     const addLine = (msg: string) =>
       setLiveLines((prev) => [...prev, { status: 'success' as const, message: msg }])
@@ -604,7 +610,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           label: `RSA-${bits} KEK (Private)`,
           generatedAt: ts(),
         })
-        addLine(`KEK: RSA-${bits} key pair — public key ${bits / 8} B (e=65537)`)
+        addLine(`KEK: RSA-${bits} key pair — ${bits / 8} B modulus (e=65537)`)
 
         // Read KCV and raw bytes of original DEK (before wrap)
         const kcvBefore = fmtKcv(hsm_getKeyCheckValue(M, hSession, dekHandle))
@@ -641,7 +647,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         const dekBytesRecov = hsm_extractKeyValue(M, hSession, recoveredDekHandle)
         const comparison = compareRecoveredDek(kcvBefore, kcvAfter, dekBytesOrig, dekBytesRecov)
         setKcvResult({ comparison, path: 'rsa' })
-
+        if (!comparison.fullMatch) throw new Error(describeDekComparison(comparison))
         addLine(describeDekComparison(comparison))
 
         addLine(`RSA-${bits} ciphertext: ${wrappedDek.length} B (1 wrapped blob, data field only)`)
@@ -925,7 +931,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         const dekBytesRecov = hsm_extractKeyValue(M, hSession, recoveredDekHandle)
         const comparison = compareRecoveredDek(kcvBefore, kcvAfter, dekBytesOrig, dekBytesRecov)
         setKcvResult({ comparison, path: 'ml-kem' })
-
+        if (!comparison.fullMatch) throw new Error(describeDekComparison(comparison))
         addLine(describeDekComparison(comparison))
 
         const dataFieldBytes = ciphertextBytes.length + wrappedDek.length + (gcmIv?.length ?? 0)
@@ -1007,9 +1013,9 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
   const step1ComparisonNote = (() => {
     if (isRSA) return null // RSA vs RSA — no meaningful cross-comparison
     const { pk } = ML_KEM_SIZES[kekAlgo] ?? { pk: 1184 }
-    const rsaRef = 256 // RSA-2048 public key baseline
+    const rsaRef = 256 // RSA-2048 modulus width
     const ratio = (pk / rsaRef).toFixed(1)
-    return `${kekAlgo.toUpperCase()} encapsulation keys are ${ratio}x larger than RSA-2048 public keys (${pk.toLocaleString()} B vs 256 B). In this module's reading, this impacts certificate sizes and key distribution bandwidth.`
+    return `The ${kekAlgo.toUpperCase()} encapsulation key is ${ratio} times the width of the RSA-2048 modulus (${pk.toLocaleString()} B vs 256 B). Measure the complete encoded keys or certificates when budgeting distribution bandwidth.`
   })()
 
   // Dynamic overrides for the step card side-by-side panel — reflect kekAlgo + wrapMech selection.
@@ -1105,10 +1111,12 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                     variant="outline"
                     size="sm"
                     onClick={() => {
+                      if (alg === kekAlgo) return
                       setKekAlgo(alg)
-                      setExecutedSteps(new Set())
+                      clearRun()
                     }}
                     disabled={liveRunning}
+                    aria-pressed={kekAlgo === alg}
                     className={`font-mono text-xs h-auto py-1 px-2.5 ${
                       kekAlgo === alg
                         ? 'bg-primary/20 text-primary border-primary/50 font-semibold'
@@ -1146,10 +1154,12 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                       variant="outline"
                       size="sm"
                       onClick={() => {
+                        if (key === wrapMech) return
                         setWrapMech(key)
-                        setExecutedSteps(new Set())
+                        clearRun()
                       }}
                       disabled={liveRunning}
+                      aria-pressed={wrapMech === key}
                       title={meta.standard}
                       className={`font-mono text-xs h-auto py-1 px-2.5 ${
                         wrapMech === key

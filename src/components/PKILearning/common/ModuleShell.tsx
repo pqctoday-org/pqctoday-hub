@@ -15,7 +15,7 @@
  * Header text is a slot (`title`/`description`) defaulting to the manifest —
  * because a module's in-page header often differs from its catalog description.
  */
-import { useEffect, useMemo, useState, lazy, Suspense, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, lazy, Suspense, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -193,6 +193,8 @@ interface WorkshopStepperProps {
   currentPart: number
   configKey: number
   onPartChange: (index: number) => void
+  onPartJump: (index: number) => void
+  completedSteps: string[]
   onReset: () => void
   onComplete: (stepId: string) => void
   renderStep: (index: number, configKey: number, goToStep: (step: number) => void) => ReactNode
@@ -206,6 +208,8 @@ function WorkshopStepper({
   currentPart,
   configKey,
   onPartChange,
+  onPartJump,
+  completedSteps,
   onReset,
   onComplete,
   renderStep,
@@ -219,6 +223,27 @@ function WorkshopStepper({
   const isFirst = pos === 0
   const isLast = pos === visibleIndices.length - 1
   const currentOptional = optionalStepIds.has(parts[currentPart].id)
+  const stepTitleRef = useRef<HTMLHeadingElement>(null)
+  const pendingStepFocus = useRef<number | null>(null)
+
+  const moveToStep = (index: number) => {
+    if (index === currentPart) return
+    pendingStepFocus.current = index
+    onPartChange(index)
+  }
+
+  useEffect(() => {
+    if (pendingStepFocus.current === null) return
+    pendingStepFocus.current = null
+    stepTitleRef.current?.focus()
+  }, [currentPart])
+
+  const remainingRequired = visibleIndices.filter(
+    (i) =>
+      i !== currentPart &&
+      !optionalStepIds.has(parts[i].id) &&
+      !completedSteps.includes(parts[i].id)
+  ).length
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex justify-end">
@@ -242,6 +267,7 @@ function WorkshopStepper({
           moduleId={moduleId}
           stepId={parts[currentPart].id}
           stepTitle={parts[currentPart].title}
+          titleRef={stepTitleRef}
           stepDescription={parts[currentPart].description}
           stepIndex={pos}
           totalSteps={visibleIndices.length}
@@ -253,9 +279,10 @@ function WorkshopStepper({
               ? `${parts[i].title} (optional reference)`
               : parts[i].title,
           }))}
-          onStepClick={(p) => onPartChange(visibleIndices[p])}
+          completedSteps={completedSteps}
+          onStepClick={(p) => onPartJump(visibleIndices[p])}
         />
-        {renderStep(currentPart, configKey, onPartChange)}
+        {renderStep(currentPart, configKey, moveToStep)}
         {/* Round 9, wave 2 — one question per step with feedback that names the
             concept (src/data/stepExercises.ts); nothing for steps without one. */}
         <StepExercise
@@ -268,7 +295,7 @@ function WorkshopStepper({
       <div className="flex flex-col sm:flex-row justify-between gap-3">
         <Button
           variant="ghost"
-          onClick={() => onPartChange(visibleIndices[Math.max(0, pos - 1)])}
+          onClick={() => moveToStep(visibleIndices[Math.max(0, pos - 1)])}
           disabled={isFirst}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
           data-workshop-target="learn-stepper-prev"
@@ -282,12 +309,12 @@ function WorkshopStepper({
             className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
             data-workshop-target="learn-stepper-complete"
           >
-            Complete Module
+            {remainingRequired > 0 ? 'Complete Step' : 'Complete Module'}
           </Button>
         ) : (
           <Button
             variant="gradient"
-            onClick={() => onPartChange(visibleIndices[pos + 1])}
+            onClick={() => moveToStep(visibleIndices[pos + 1])}
             className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
             data-workshop-target="learn-stepper-next"
           >
@@ -353,6 +380,7 @@ export const ModuleShell = ({
     handlePartChange,
     handleReset,
     completeStep,
+    completedSteps,
     workshopDot,
   } = useModuleProgress(manifest.id, {
     steps: parts.length ? parts : manifest.workshopSteps,
@@ -433,6 +461,7 @@ export const ModuleShell = ({
           (workshop || (workshopParts && renderWorkshopStep))
         ) {
           navigateToTab('workshop')
+          if (typeof step === 'number') setCurrentPart(step)
         } else if (practiceTool) {
           navigate(`/playground/${practiceTool}`)
         } else {
@@ -655,6 +684,8 @@ export const ModuleShell = ({
         currentPart={shownPart}
         configKey={configKey}
         onPartChange={handlePartChange}
+        onPartJump={setCurrentPart}
+        completedSteps={completedSteps}
         onReset={resetWorkshop}
         onComplete={(stepId) => completeStep(stepId)}
         renderStep={(index, key, goToStep) =>

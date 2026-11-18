@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { CheckCircle, XCircle, Info, RotateCcw, ShieldCheck, FlaskConical } from 'lucide-react'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
@@ -12,7 +12,7 @@ import {
   RECORDED_CHALLENGE,
   TAMPER_OFFSET_GUEST_SVN,
   buildAttackerEvidence,
-  channelEstablished,
+  reviewRecordedChannel,
   flipBit,
   policyWithWrongMeasurement,
   verifySnpEvidence,
@@ -77,11 +77,20 @@ export const AmdSnpReportVerifier: React.FC = () => {
   const [scenario, setScenario] = useState<string | null>(null)
   const [result, setResult] = useState<VerificationResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [binding, setBinding] = useState<BindingScenario[] | null>(null)
+  const [binding, setBinding] = useState<{
+    reportData: Uint8Array
+    scenarios: BindingScenario[]
+  } | null>(null)
+  const busy = useRef(false)
+  const [running, setRunning] = useState(false)
 
   const run = useCallback(
     async (name: string, task: (l: ChallengeLedger) => Promise<VerificationResult>, own = true) => {
+      if (busy.current) return
+      busy.current = true
+      setRunning(true)
       setError(null)
+      setResult(null)
       try {
         const l = own ? newLedger() : ledger
         const r = await task(l)
@@ -90,6 +99,9 @@ export const AmdSnpReportVerifier: React.FC = () => {
         setResult(r)
       } catch (e) {
         setError(`Could not run "${name}": ${(e as Error).message}`)
+      } finally {
+        busy.current = false
+        setRunning(false)
       }
     },
     [ledger, newLedger]
@@ -106,6 +118,7 @@ export const AmdSnpReportVerifier: React.FC = () => {
     setResult(null)
     setScenario(null)
     setError(null)
+    setBinding(null)
   }
   const flip = () =>
     run('One bit of the signed report flipped (guest_svn, byte 0x04)', (l) =>
@@ -138,35 +151,41 @@ export const AmdSnpReportVerifier: React.FC = () => {
         ciphertext: sent.cipherText,
         committedStatement: committed,
       }
-      setBinding([
-        {
-          key: 'right',
-          title: 'Right recipient key, the ciphertext that was committed',
-          checks: checkChannelBinding(base).checks,
-          expectedToFail: false,
-        },
-        {
-          key: 'wrong-key',
-          title: 'Wrong recipient key (a different ML-KEM-768 key)',
-          checks: checkChannelBinding({ ...base, recipientEk: stranger.publicKey }).checks,
-          expectedToFail: true,
-        },
-        {
-          key: 'swapped-ciphertext',
-          title: `Different ciphertext of the same length (${swapped.length} bytes)`,
-          checks: checkChannelBinding({ ...base, ciphertext: swapped }).checks,
-          expectedToFail: true,
-        },
-      ])
+      setBinding({
+        reportData,
+        scenarios: [
+          {
+            key: 'right',
+            title: 'Right recipient key, the ciphertext that was committed',
+            checks: checkChannelBinding(base).checks,
+            expectedToFail: false,
+          },
+          {
+            key: 'wrong-key',
+            title: 'Wrong recipient key (a different ML-KEM-768 key)',
+            checks: checkChannelBinding({ ...base, recipientEk: stranger.publicKey }).checks,
+            expectedToFail: true,
+          },
+          {
+            key: 'swapped-ciphertext',
+            title: `Different ciphertext of the same length (${swapped.length} bytes)`,
+            checks: checkChannelBinding({ ...base, ciphertext: swapped }).checks,
+            expectedToFail: true,
+          },
+        ],
+      })
     } catch (e) {
+      setBinding(null)
       setError(`Could not run the simulated binding step: ${(e as Error).message}`)
     }
   }
 
-  const gate = useMemo(() => {
-    if (!result || !binding) return null
-    return channelEstablished(result, binding[0].checks)
-  }, [result, binding])
+  const checks = result
+    ? reviewRecordedChannel(
+        result,
+        binding ? { checks: binding.scenarios[0].checks, reportData: binding.reportData } : null
+      )
+    : null
 
   const r = result?.report
   return (
@@ -222,19 +241,19 @@ export const AmdSnpReportVerifier: React.FC = () => {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="gradient" size="sm" onClick={appraiseAsIs}>
+        <Button variant="gradient" size="sm" onClick={appraiseAsIs} disabled={running}>
           Appraise recorded report
         </Button>
-        <Button variant="outline" size="sm" onClick={flip}>
+        <Button variant="outline" size="sm" onClick={flip} disabled={running}>
           Flip one bit
         </Button>
-        <Button variant="outline" size="sm" onClick={wrongMeasurement}>
+        <Button variant="outline" size="sm" onClick={wrongMeasurement} disabled={running}>
           Pin a different measurement
         </Button>
-        <Button variant="outline" size="sm" onClick={attacker}>
+        <Button variant="outline" size="sm" onClick={attacker} disabled={running}>
           Re-sign with an attacker key
         </Button>
-        <Button variant="outline" size="sm" onClick={reset}>
+        <Button variant="outline" size="sm" onClick={reset} disabled={running}>
           <RotateCcw size={14} className="mr-1" aria-hidden />
           Reset verifier
         </Button>
@@ -289,12 +308,12 @@ export const AmdSnpReportVerifier: React.FC = () => {
           challenge || context). The ML-KEM keys and ciphertexts are real (generated here); the
           report_data is computed by this page, not signed by AMD hardware.
         </p>
-        <Button variant="outline" size="sm" onClick={runBinding}>
+        <Button variant="outline" size="sm" onClick={runBinding} disabled={running}>
           Run simulated binding step
         </Button>
         {binding && (
           <div className="space-y-3" data-testid="amd-binding-result" aria-live="polite">
-            {binding.map((s) => (
+            {binding.scenarios.map((s) => (
               <div key={s.key}>
                 <div className="text-xs font-bold text-foreground mb-1">
                   {s.title}{' '}
@@ -307,24 +326,32 @@ export const AmdSnpReportVerifier: React.FC = () => {
             ))}
           </div>
         )}
-        {gate && (
-          <div
-            data-testid="amd-gate"
-            className={`text-xs font-bold ${gate.established ? 'text-status-success' : 'text-status-error'}`}
+        <div
+          role="status"
+          aria-label="Sample release decision"
+          data-testid="amd-gate"
+          className="text-xs text-muted-foreground space-y-1"
+        >
+          <p className="font-bold text-foreground">Release blocked</p>
+          <p>
+            The report uses a recorded challenge. A real release needs fresh evidence that binds the
+            recipient key to the appraised workload.
+          </p>
+          {checks?.matchesRecordedKey === false && (
+            <p>The signed report data does not match the local key binding.</p>
+          )}
+          {checks && checks.failed.length > 0 && <p>Failed checks: {checks.failed.join(', ')}.</p>}
+          {!result && <p>Appraise the report to inspect its evidence checks.</p>}
+          {result && !binding && <p>No simulated binding check has run for this appraisal.</p>}
+          <a
+            className="text-primary underline"
+            href="https://datatracker.ietf.org/doc/html/rfc9334#section-10.2"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            Key-transport gate for the last appraisal: {gate.established ? 'OPEN' : 'CLOSED'}
-            {gate.failed.length > 0 && ` (failed: ${gate.failed.join(', ')})`}
-            {gate.missing.length > 0 && ` (not run: ${gate.missing.join(', ')})`}. The gate needs
-            all six real checks and both simulated binding checks; a signature check on its own
-            never opens it.
-          </div>
-        )}
-        {!gate && (
-          <div className="text-[11px] text-muted-foreground" data-testid="amd-gate-pending">
-            The key-transport gate opens only after an appraisal and the binding step have both run
-            and every check passed.
-          </div>
-        )}
+            Freshness in remote attestation
+          </a>
+        </div>
       </div>
     </div>
   )

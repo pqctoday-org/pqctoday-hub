@@ -79,29 +79,11 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
     const beginOp = (message: string) => {
       const startedAt = performance.now()
       setLogEntries((prev) => [...prev, { status: 'pending', message }])
-      return {
-        done: (label?: string) => {
-          setLogEntries((prev) => {
-            const next = [...prev]
-            next[next.length - 1] = {
-              status: 'success',
-              message: label ?? message,
-              durationMs: Math.round(performance.now() - startedAt),
-            }
-            return next
-          })
-        },
-        fail: (label?: string) => {
-          setLogEntries((prev) => {
-            const next = [...prev]
-            next[next.length - 1] = {
-              status: 'error',
-              message: label ?? message,
-              durationMs: Math.round(performance.now() - startedAt),
-            }
-            return next
-          })
-        },
+      return (status: Exclude<LogEntry['status'], 'pending'>, label: string) => {
+        setLogEntries((prev) => [
+          ...prev.slice(0, -1),
+          { status, message: label, durationMs: Math.round(performance.now() - startedAt) },
+        ])
       }
     }
 
@@ -110,9 +92,12 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
         const op = beginOp('Initializing softhsmv3 HSM module…')
         try {
           await hsm.initialize()
-          op.done('softhsmv3 HSM module ready')
+          if (!hsm.moduleRef.current || !hsm.hSessionRef.current) {
+            throw new Error('The HSM did not open a session. Retry initialization.')
+          }
+          op('success', 'softhsmv3 HSM module ready')
         } catch (e) {
-          op.fail(`HSM init failed — ${e instanceof Error ? e.message : String(e)}`)
+          op('error', `HSM init failed — ${e instanceof Error ? e.message : String(e)}`)
           throw e
         }
       }
@@ -127,15 +112,16 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
           const r = await runKAT(M, hSession, spec, { advertised })
           out.push(r)
           setResults([...out])
-          op.done(
-            r.status === 'pass'
-              ? `Passed ${r.algorithm || spec.id} — ${r.details || 'all vectors validated'}`
-              : r.status === 'skip'
-                ? `NOT TESTED ${r.algorithm || spec.id} — ${r.details}`
-                : `${r.status.toUpperCase()} ${r.algorithm || spec.id} — ${r.details || 'no details'}`
-          )
+          const algorithm = r.algorithm || spec.id
+          if (r.status === 'pass') {
+            op('success', `Passed ${algorithm} — ${r.details || 'all vectors validated'}`)
+          } else if (r.status === 'skip') {
+            op('skipped', `NOT TESTED ${algorithm} — ${r.details}`)
+          } else {
+            op('error', `${r.status.toUpperCase()} ${algorithm} — ${r.details || 'no details'}`)
+          }
         } catch (e) {
-          op.fail(`${spec.useCase || spec.id} — ${e instanceof Error ? e.message : String(e)}`)
+          op('error', `${spec.useCase || spec.id} — ${e instanceof Error ? e.message : String(e)}`)
           throw e
         }
       }
@@ -157,7 +143,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
   const hasReferenceSample = evidenceClasses.includes('nist-acvp-reference-sample')
 
   return (
-    <div className="glass-panel p-5 space-y-4 border border-border">
+    <section aria-label={label} className="glass-panel p-5 space-y-4 border border-border">
       {/* Header row */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
@@ -335,6 +321,6 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
         )}
         {authorityNote} · Generated keys are for educational use only.
       </p>
-    </div>
+    </section>
   )
 }

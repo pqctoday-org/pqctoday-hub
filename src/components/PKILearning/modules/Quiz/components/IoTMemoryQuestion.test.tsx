@@ -61,9 +61,8 @@ describe('IoT operation-specific memory question', () => {
     expect(select).toHaveBeenCalledWith('false')
     expect(screen.getByText(question.explanation)).toHaveTextContent('41,952 bytes')
     expect(screen.getByText(question.explanation)).toHaveTextContent('2,976 bytes')
-    expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
-      'href',
-      '/learn/iot-pqc'
-    )
+    const lesson = screen.getByRole('link', { name: 'Learn more (opens in a new tab)' })
+    expect(lesson).toHaveAttribute('href', '/learn/iot-pqc')
+    expect(lesson).toHaveAttribute('target', '_blank')
   })
 })

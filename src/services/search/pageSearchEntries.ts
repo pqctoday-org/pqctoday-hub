@@ -16,11 +16,12 @@
  *   /terms 1, /report 2, /faq 2, /about 3). They are not badly ranked — several
  *   are simply absent, so no query can reach them.
  *
- * Source of truth — no new data:
+ * Source of truth:
  *   `ROUTE_META` (src/seo/routeMeta.ts) is already the canonical list of real,
  *   indexable routes: the prerender step and the sitemap generator both derive
  *   from it, so a page cannot exist here and not there. Title and one line of
- *   description come from that same entry. Nothing is authored in this file.
+ *   description come from that same entry. The Python Workbench is a
+ *   separately searchable view of the HSM playground with its own deep link.
  *
  * Scope:
  *   - `/learn/*` module routes are excluded — the corpus already carries 64
@@ -33,6 +34,7 @@
  * written to rag-corpus.json — a renamed or retired route cannot drift out of
  * search, and the 24 MB corpus does not grow.
  */
+import { PYTHON_WORKBENCH_PATH } from '@/data/pythonWorkbench'
 import type { RAGChunk } from '@/types/ChatTypes'
 
 /**
@@ -40,7 +42,7 @@ import type { RAGChunk } from '@/types/ChatTypes'
  * the ⌘K MiniSearch cache key so a stale serialized index built without them is
  * discarded rather than served.
  */
-export const PAGE_ENTRIES_VERSION = '1'
+export const PAGE_ENTRIES_VERSION = '2'
 
 export const PAGE_SOURCE = 'page'
 
@@ -67,7 +69,7 @@ export function pageEntryTitle(title: string): string {
  */
 export async function pageSearchEntries(): Promise<RAGChunk[]> {
   const { ROUTE_META, isNoindexRoute } = await import('@/seo/routeMeta')
-  return Object.entries(ROUTE_META)
+  const entries: RAGChunk[] = Object.entries(ROUTE_META)
     .filter(([route]) => !route.startsWith('/learn/') && !isNoindexRoute(route))
     .map(([route, meta]) => ({
       id: `${PAGE_SOURCE}:${route}`,
@@ -81,4 +83,15 @@ export async function pageSearchEntries(): Promise<RAGChunk[]> {
       deepLink: route,
       metadata: { route },
     }))
+
+  entries.push({
+    id: `${PAGE_SOURCE}:${PYTHON_WORKBENCH_PATH}`,
+    source: PAGE_SOURCE,
+    title: 'Python Workbench',
+    content: 'Edit and run Python crypto code in your browser. Try hashlib or PKCS#11 calls.',
+    category: 'Page',
+    deepLink: PYTHON_WORKBENCH_PATH,
+    metadata: { route: PYTHON_WORKBENCH_PATH },
+  })
+  return entries
 }

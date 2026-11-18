@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useId, useMemo, useRef } from 'react'
 import { Eye, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -95,6 +95,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   saveRevision,
   controlledForm,
 }) => {
+  const fieldNamespace = useId()
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
   // Persistent done-state keyed on the form snapshot (survives edits).
   const [wasSaved, setWasSaved] = useState(false)
@@ -356,7 +357,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                   // every artifact builder was an unlabelled form control — a
                   // critical axe violation, systemic across the Command Center
                   // because all 37 business tools render through this component.
-                  const controlId = `${section.id}-${field.id}`
+                  const controlId = `${fieldNamespace}-${section.id}-${field.id}`
                   return (
                     <div key={field.id}>
                       <label
@@ -394,6 +395,8 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                       {field.type === 'select' && (
                         <FilterDropdown
                           noContainer
+                          ariaLabel={field.label}
+                          triggerId={controlId}
                           selectedId={(formData[section.id]?.[field.id] as string) || 'All'}
                           onSelect={(id) =>
                             updateField(section.id, field.id, id === 'All' ? '' : id)

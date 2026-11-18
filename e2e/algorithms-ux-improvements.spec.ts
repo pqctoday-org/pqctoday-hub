@@ -168,3 +168,57 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
     await expect(page.getByText('What are you replacing?')).toBeVisible({ timeout: 5000 })
   })
 })
+
+for (const width of [1280, 390]) {
+  test(`recover from a filtered reference link and inspect the ML-KEM source at ${width}px`, async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'pqc-learning-persona',
+        JSON.stringify({
+          state: {
+            selectedPersona: 'architect',
+            hasSeenPersonaPicker: true,
+            hasAcknowledgedExecutiveGrcSplit: true,
+          },
+          version: 11,
+        })
+      )
+      localStorage.setItem(
+        'pqc-disclaimer-storage',
+        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+      )
+    })
+    await page.setViewportSize({ width, height: 844 })
+    await page.goto(
+      '/algorithms?mobileUx=1&tab=detailed&quickview=nist-picks&cnsa=1&gap=1&q=no-such-mechanism'
+    )
+    await expect(page.getByRole('heading', { name: 'No algorithms match' })).toBeVisible()
+    const search = page.getByRole('textbox', { name: 'Search algorithms' })
+    await expect(search).toHaveValue('no-such-mechanism')
+    const reset = page.getByRole('button', { name: 'Clear all', exact: true })
+    await reset.focus()
+    await page.keyboard.press('Enter')
+    await expect(search).toBeFocused()
+    await expect(search).toHaveValue('')
+    await expect(page).toHaveURL(/tab=detailed/)
+    const params = new URL(page.url()).searchParams
+    expect(params.get('quickview')).toBe('none')
+    for (const key of ['q', 'cnsa', 'gap', 'region', 'status', 'level', 'fn', 'family']) {
+      expect(params.has(key)).toBe(false)
+    }
+
+    await page.reload()
+    await expect(search).toHaveValue('')
+    await page.getByRole('button', { name: 'Final NIST standards' }).click()
+    await search.fill('ML-KEM-768')
+    await page.getByRole('button', { name: 'ML-KEM-768', exact: true }).click()
+    const detail = page.getByRole('dialog', { name: 'ML-KEM-768', exact: true })
+    await expect(detail).toContainText('FIPS 203')
+    await expect(detail.getByRole('link', { name: 'Status source' })).toHaveAttribute(
+      'href',
+      'https://csrc.nist.gov/pubs/fips/203/final'
+    )
+  })
+}

@@ -192,9 +192,10 @@ const KeyDerivationTree: React.FC<KeyDerivationTreeProps> = ({ leaves }) => {
 
 interface HDWalletFlowProps {
   onBack: () => void
+  onComplete?: () => void
 }
 
-export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
+export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack, onComplete }) => {
   const hsm = useHSM()
   const [mnemonic, setMnemonic] = useState<string>('')
   const [seed, setSeed] = useState<Uint8Array | null>(null)
@@ -751,7 +752,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         isStepComplete={wizard.isStepComplete}
         onNext={gatedHandleNext}
         onBack={wizard.handleBack}
-        onComplete={onBack}
+        onComplete={onComplete ?? onBack}
       />
 
       {wizard.currentStep === 0 && wizard.isStepComplete && mnemonic && (

@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { getRandomBytes } from '@/utils/webCrypto'
 import {
   runHealthTests,
@@ -83,6 +84,11 @@ const PRIMITIVE_SELF_CHECK_SPECS: KatTestSpec[] = [
 type SampleType = 'good' | 'bad-zeros' | 'bad-pattern' | 'bad-increment'
 type TestingMode = 'static' | 'bitflip' | 'streaming'
 
+const ENTROPY_ASSUMPTIONS = [8, 4, 2, 1].map((bits) => ({
+  id: String(bits),
+  label: `${bits} ${bits === 1 ? 'bit' : 'bits'} per sample`,
+}))
+
 interface EntropyTestingDemoProps {
   initialSampleType?: SampleType
 }
@@ -112,6 +118,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
   const [sampleLabel, setSampleLabel] = useState<string>(
     () => resolveInitialSample(initialSampleType)?.label ?? ''
   )
+  const [assumedMinEntropy, setAssumedMinEntropy] = useState(8)
   const [testResults, setTestResults] = useState<{
     visual: TestResult[]
     health: TestResult[]
@@ -128,6 +135,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
   const loadSample = useCallback((type: SampleType) => {
     setTestResults(null)
     setShowPasteInput(false)
+    setPasteHexError(null)
     switch (type) {
       case 'good': {
         const bytes = getRandomBytes(64)
@@ -167,9 +175,9 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
     // Groups are computed and shown separately and never totalled (P0.4).
     setTestResults({
       visual: runVisualizationChecks(sampleData),
-      health: runHealthTests(sampleData),
+      health: runHealthTests(sampleData, assumedMinEntropy),
     })
-  }, [sampleData])
+  }, [sampleData, assumedMinEntropy])
 
   const handleSelfChecksComplete = useCallback(
     (results: KATResult[], run: { startedAt: string; finishedAt: string }) =>
@@ -189,12 +197,13 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
           ? {
               label: sampleLabel,
               lengthBytes: sampleData.length,
+              assumedMinEntropy,
               visual: testResults.visual,
               health: testResults.health,
             }
           : undefined,
     })
-  }, [selfCheckRun, sampleData, sampleLabel, testResults])
+  }, [selfCheckRun, sampleData, sampleLabel, assumedMinEntropy, testResults])
 
   const handleDownloadRunRecord = useCallback(() => {
     const manifest = buildRunManifestRecord()
@@ -265,7 +274,10 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
               size="sm"
               onClick={() => {
                 setShowPasteInput(!showPasteInput)
-                if (showPasteInput) setPasteHex('')
+                if (showPasteInput) {
+                  setPasteHex('')
+                  setPasteHexError(null)
+                }
               }}
             >
               Paste Hex
@@ -283,6 +295,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
               <div className="flex gap-2">
                 <Input
                   type="text"
+                  aria-label="Sample bytes in hexadecimal"
                   value={pasteHex}
                   onChange={(e) => {
                     const val = e.target.value
@@ -306,7 +319,10 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                 </Button>
               </div>
               {pasteHexError && (
-                <p className="mt-1.5 text-xs flex items-center gap-1 text-status-error">
+                <p
+                  role="alert"
+                  className="mt-1.5 text-xs flex items-center gap-1 text-status-error"
+                >
                   <AlertTriangle size={12} />
                   {pasteHexError}
                 </p>
@@ -314,6 +330,27 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
             </div>
           )}
 
+          {sampleData && (
+            <div className="mt-4 max-w-xs space-y-1">
+              <p className="text-xs font-medium">Assumed min-entropy</p>
+              <FilterDropdown
+                noContainer
+                ariaLabel="Assumed min-entropy"
+                hideDefaultOption
+                selectedId={String(assumedMinEntropy)}
+                items={ENTROPY_ASSUMPTIONS}
+                onSelect={(value) => {
+                  const bits = Number(value)
+                  if (bits === assumedMinEntropy) return
+                  setAssumedMinEntropy(bits)
+                  setTestResults(null)
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Use an assumed value to compare cutoffs. The sample does not estimate it.
+              </p>
+            </div>
+          )}
           {sampleData && !testResults && (
             <Button variant="gradient" className="mt-3 w-full" onClick={handleRunTests}>
               Run the checks
@@ -366,7 +403,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
             />
             <ResultGroup
               title={`2. ${TEST_GROUP_LABELS.health}`}
-              note="SP 800-90B defines these on raw noise-source samples, before any conditioning (§4.3 item 6). Here each byte is treated as one raw sample with an assumed H = 8 bits/sample. Web Crypto output is DRBG output, so on it this is a demonstration only. A health test detects gross failures; it is not an entropy estimate."
+              note={`SP 800-90B defines these checks on raw noise-source samples before conditioning (§4.3 item 6). This example treats each byte as one sample with assumed H = ${assumedMinEntropy} bits per sample. The checks can flag gross failures. Web Crypto output is DRBG output and serves here as demonstration data.`}
               results={testResults.health}
               okLabel="No failure signalled"
               badLabel="Failure signalled"
@@ -600,15 +637,21 @@ const ResultGroup: React.FC<{
       {results.map((result) => (
         <div
           key={result.name}
+          role="group"
+          aria-label={result.name}
           className={`rounded-lg p-4 border-l-4 border border-border ${
-            result.passed
-              ? 'border-l-success bg-status-success/10'
-              : 'border-l-destructive bg-status-error/10'
+            result.insufficientData
+              ? 'bg-muted/30'
+              : result.passed
+                ? 'border-l-success bg-status-success/10'
+                : 'border-l-destructive bg-status-error/10'
           }`}
         >
           <div className="flex items-center justify-between mb-2 gap-2">
             <span className="text-sm font-bold text-foreground">{result.name}</span>
-            {result.passed ? (
+            {result.insufficientData ? (
+              <span className="text-xs font-medium text-muted-foreground">Insufficient data</span>
+            ) : result.passed ? (
               <span className="flex items-center gap-1 text-xs font-bold text-success">
                 <CheckCircle size={14} />
                 {okLabel}
@@ -620,18 +663,24 @@ const ResultGroup: React.FC<{
               </span>
             )}
           </div>
-          <div className="flex gap-4 mb-2 text-xs">
-            <div>
-              <span className="text-muted-foreground">Value: </span>
-              <span className="font-mono font-bold text-foreground">{result.value.toFixed(4)}</span>
+          {!result.insufficientData && (
+            <div className="flex gap-4 mb-2 text-xs">
+              <div>
+                <span className="text-muted-foreground">Value: </span>
+                <span className="font-mono font-bold text-foreground">
+                  {result.value.toFixed(4)}
+                </span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Cutoff: </span>
+                <span className="font-mono text-foreground">{result.threshold.toFixed(4)}</span>
+              </div>
             </div>
-            <div>
-              <span className="text-muted-foreground">Cutoff: </span>
-              <span className="font-mono text-foreground">{result.threshold.toFixed(4)}</span>
-            </div>
-          </div>
+          )}
           <p className="text-[11px] text-muted-foreground mb-1">{result.description}</p>
-          <p className="text-[10px] text-muted-foreground/80 font-mono mb-2">{result.detail}</p>
+          {!result.insufficientData && (
+            <p className="text-[10px] text-muted-foreground/80 font-mono mb-2">{result.detail}</p>
+          )}
           <p className="text-[10px] text-muted-foreground border-t border-border pt-1.5">
             <strong>Limit:</strong> {result.sampleLimit}
           </p>

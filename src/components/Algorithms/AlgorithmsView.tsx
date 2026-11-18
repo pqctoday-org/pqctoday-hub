@@ -113,6 +113,7 @@ export function AlgorithmsView({
     handleSearchChange,
     handleTabChange,
     handleQuickView,
+    handleClearAllFilters,
     handleToggleCnsaLens,
     handleToggleResearchGapOnly,
     detailMode,
@@ -248,15 +249,6 @@ export function AlgorithmsView({
 
   const [infoOpen, setInfoOpen] = useState(false)
   const [hintDismissed, setHintDismissed] = useState(false)
-
-  // Clear every active filter + search in one action (deck "Clear all").
-  // Reuses the 'everything' preset so quickView resets along with the
-  // dropdowns — a second reset path here previously let quickView survive
-  // "Clear all", pinning stale FIPS-validated/NIST-picks results.
-  const handleClearAllFilters = () => {
-    handleQuickView('everything')
-    handleSearchChange('')
-  }
 
   // A link to a specific resource or sub-view bypasses the Curious preview
   // card — otherwise it swallows the very thing the link points at.
@@ -510,6 +502,87 @@ export function AlgorithmsView({
     return () => clearPageActions()
   }, [handleExportCsv, metadata, transitionMetadata])
 
+  const algorithmFilters = (
+    <>
+      <AlgorithmFilters
+        roleDefaultFilters={roleDefaultFilters}
+        cryptoFamily={filterCryptoFamily}
+        onCryptoFamilyChange={handleCryptoFamilyChange}
+        functionGroup={filterFunction}
+        onFunctionGroupChange={handleFunctionChange}
+        securityLevel={filterSecurityLevel}
+        onSecurityLevelChange={handleSecurityLevelChange}
+        region={filterRegion}
+        onRegionChange={handleRegionChange}
+        status={filterStatus}
+        onStatusChange={handleStatusChange}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        filteredCount={filteredCount}
+        totalCount={totalAlgoCount}
+        availableLevels={availableLevels}
+        persona={selectedPersona}
+        quickView={quickView}
+        onQuickView={handleQuickView}
+        cnsaLens={cnsaLens}
+        onToggleCnsaLens={handleToggleCnsaLens}
+        researchGapOnly={researchGapOnly}
+        onToggleResearchGapOnly={handleToggleResearchGapOnly}
+        onClearAll={handleClearAllFilters}
+        personaHint={
+          selectedPersona && !hintDismissed ? ALGO_PERSONA_HINTS[selectedPersona] : undefined
+        }
+        onDismissHint={() => setHintDismissed(true)}
+        hintAction={
+          selectedPersona === 'executive' ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
+              onClick={() =>
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    // Published FIPS examples only: FN-DSA (FIPS 206)
+                    // is selected but its standard is still pending.
+                    next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s')
+                    next.set('tab', 'detailed')
+                    return next
+                  },
+                  { replace: true }
+                )
+              }
+            >
+              Compare common starting points →
+            </Button>
+          ) : undefined
+        }
+      />
+
+      {/* CNSA 2.0 suite detail — inline below the deck only when the lens is on */}
+      {cnsaLens && <Cnsa20Panel />}
+
+      {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
+      {(filterStatus === 'candidate' || filterStatus === 'Candidate') && (
+        <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
+          <Info size={16} className="text-info shrink-0 mt-0.5" />
+          <p className="text-xs text-foreground/85 leading-relaxed">
+            These are NIST Additional Signatures Round 3 candidates, not yet standardised. To
+            understand the standardisation lifecycle — the four math families, the cryptanalysis
+            events, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC) — see the{' '}
+            <Link
+              to="/learn/pqc-candidates"
+              className="text-info hover:underline font-semibold inline-flex items-center gap-1"
+            >
+              PQC Candidates &amp; Standardisation Lifecycle <ArrowRight size={11} />
+            </Link>{' '}
+            learn module.
+          </p>
+        </div>
+      )}
+    </>
+  )
+
   // Placed after every hook above (React rules; the desktop-only ones just
   // run and are discarded) but before the desktop JSX — a pure early return
   // with zero risk to the flag-off path (Rule 1). AlgorithmsView is never
@@ -567,7 +640,8 @@ export function AlgorithmsView({
         <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
           Key sizes, security levels, publication status, and scoped evidence for each algorithm.
         </p>
-        <div className="mt-3">
+        <div className="mt-3 space-y-3">
+          {algorithmFilters}
           {algoNotFoundEl}
           {highlightNoticeEl}
           <AlgorithmDetailedComparison
@@ -757,89 +831,7 @@ export function AlgorithmsView({
           {/* Control deck — filters + QuickView + CNSA lens + persona hint in one panel.
               Hidden on Protocol Support: that tab filters/sorts its own table
               (family/fn/level/region/status here have no effect on it). */}
-          {activeTab !== 'support' && activeTab !== 'landscape' && activeTab !== 'validation' && (
-            <>
-              <AlgorithmFilters
-                roleDefaultFilters={roleDefaultFilters}
-                cryptoFamily={filterCryptoFamily}
-                onCryptoFamilyChange={handleCryptoFamilyChange}
-                functionGroup={filterFunction}
-                onFunctionGroupChange={handleFunctionChange}
-                securityLevel={filterSecurityLevel}
-                onSecurityLevelChange={handleSecurityLevelChange}
-                region={filterRegion}
-                onRegionChange={handleRegionChange}
-                status={filterStatus}
-                onStatusChange={handleStatusChange}
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                filteredCount={filteredCount}
-                totalCount={totalAlgoCount}
-                availableLevels={availableLevels}
-                persona={selectedPersona}
-                quickView={quickView}
-                onQuickView={handleQuickView}
-                cnsaLens={cnsaLens}
-                onToggleCnsaLens={handleToggleCnsaLens}
-                researchGapOnly={researchGapOnly}
-                onToggleResearchGapOnly={handleToggleResearchGapOnly}
-                onClearAll={handleClearAllFilters}
-                personaHint={
-                  selectedPersona && !hintDismissed
-                    ? ALGO_PERSONA_HINTS[selectedPersona]
-                    : undefined
-                }
-                onDismissHint={() => setHintDismissed(true)}
-                hintAction={
-                  selectedPersona === 'executive' ? (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
-                      onClick={() =>
-                        setSearchParams(
-                          (prev) => {
-                            const next = new URLSearchParams(prev)
-                            // Published FIPS examples only: FN-DSA (FIPS 206)
-                            // is selected but its standard is still pending.
-                            next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s')
-                            next.set('tab', 'detailed')
-                            return next
-                          },
-                          { replace: true }
-                        )
-                      }
-                    >
-                      Compare common starting points →
-                    </Button>
-                  ) : undefined
-                }
-              />
-
-              {/* CNSA 2.0 suite detail — inline below the deck only when the lens is on */}
-              {cnsaLens && <Cnsa20Panel />}
-
-              {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
-              {(filterStatus === 'candidate' || filterStatus === 'Candidate') && (
-                <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
-                  <Info size={16} className="text-info shrink-0 mt-0.5" />
-                  <p className="text-xs text-foreground/85 leading-relaxed">
-                    These are NIST Additional Signatures Round 3 candidates, not yet standardised.
-                    To understand the standardisation lifecycle — the four math families, the
-                    cryptanalysis events, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC) —
-                    see the{' '}
-                    <Link
-                      to="/learn/pqc-candidates"
-                      className="text-info hover:underline font-semibold inline-flex items-center gap-1"
-                    >
-                      PQC Candidates &amp; Standardisation Lifecycle <ArrowRight size={11} />
-                    </Link>{' '}
-                    learn module.
-                  </p>
-                </div>
-              )}
-            </>
-          )}
+          {(activeTab === 'transition' || activeTab === 'detailed') && algorithmFilters}
 
           {algoNotFoundEl && <div className="mt-4">{algoNotFoundEl}</div>}
           {activeTab === 'transition' && transitionNotFoundEl && (

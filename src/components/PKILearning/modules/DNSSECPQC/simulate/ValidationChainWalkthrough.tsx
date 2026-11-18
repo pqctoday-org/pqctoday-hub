@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { SignedMxExercise } from './SignedMxExercise'
 import React, { useState } from 'react'
 import { CheckCircle2, Circle, ArrowDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -115,6 +116,7 @@ export const ValidationChainWalkthrough: React.FC = () => {
           ? 'Simplified illustration, not a verified map of every delegation: Cloudflare demonstrates ML-DSA-44 validation against a signed record at dnstest.dev. The root and .dev TLD above it still delegate classically, so an attacker with a quantum computer could still forge trust at either of those levels even though the leaf itself is PQ-signed.'
           : 'Full deployment means algorithm-18 DS records down the delegation chain and a post-quantum trust anchor at the root itself, so the chain of trust is post-quantum end to end — the state Cloudflare’s own roadmap and the DNS root’s separate rollover estimate are both working toward, though the order in which levels actually migrate isn’t fixed.'}
       </p>
+      <SignedMxExercise />
     </div>
   )
 }

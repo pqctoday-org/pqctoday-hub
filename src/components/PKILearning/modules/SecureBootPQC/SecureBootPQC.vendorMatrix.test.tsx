@@ -157,7 +157,7 @@ describe('ML-DSA-65 box: no invented timings', () => {
     for (const title of ['RSA-2048 (Current)', 'ML-DSA-65 (Target)']) {
       const box = screen.getByText(title).parentElement as HTMLElement // eslint-disable-line testing-library/no-node-access -- the list sits beside its title
       const text = flat(box.textContent ?? '')
-      expect(text).toContain('Public key:')
+      expect(text).toContain(title === 'RSA-2048 (Current)' ? 'RSA modulus:' : 'Raw public key:')
       expect(text).toContain('Signature:')
       expect(text).not.toMatch(/Signing speed|Verification:/)
       expect(text).not.toMatch(/\d\s?ms\b/)

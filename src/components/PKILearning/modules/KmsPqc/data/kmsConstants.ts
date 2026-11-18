@@ -96,7 +96,7 @@ export const ENVELOPE_ENCRYPTION_STEPS: EnvelopeEncryptionStep[] = [
     classicalDescription: 'Generate RSA-2048 key pair. Public key is used by clients to wrap DEKs.',
     pqcDescription:
       'Generate ML-KEM-768 key pair. Public encapsulation key is distributed to clients.',
-    classicalArtifact: 'RSA-2048 Public Key',
+    classicalArtifact: 'RSA-2048 modulus',
     pqcArtifact: 'ML-KEM-768 Encapsulation Key',
     classicalSize: '256 bytes',
     pqcSize: '1,184 bytes',

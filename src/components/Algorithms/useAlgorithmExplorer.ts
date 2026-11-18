@@ -776,6 +776,33 @@ export function useAlgorithmExplorer(
     [updateSearchParams, personaDefaults.tab, searchParams]
   )
 
+  const applyFilterState = useCallback((f: ExplorerFilterState) => {
+    setQuickView(f.quickView)
+    setFilterCryptoFamily(f.family)
+    setFilterFunction(f.fn)
+    setFilterSecurityLevel(f.level)
+    setFilterRegion(f.region)
+    setFilterStatus(f.status)
+    setCnsaLens(f.cnsa)
+    setResearchGapOnly(f.gap)
+    setSearchQuery(f.q)
+  }, [])
+
+  const handleClearAllFilters = useCallback(() => {
+    applyFilterState(WIDE_OPEN_FILTERS)
+    updateSearchParams({
+      quickview: 'none',
+      family: null,
+      fn: null,
+      level: null,
+      region: null,
+      status: null,
+      cnsa: null,
+      gap: null,
+      q: null,
+    })
+  }, [applyFilterState, updateSearchParams])
+
   // QuickView preset → multi-field filter writes (P1.2). NIST picks pins
   // status=Certified + family=Lattice (the standardized FIPS 203/204/205
   // family); FIPS-validated narrows to status=Certified across all families;
@@ -799,23 +826,10 @@ export function useAlgorithmExplorer(
           status: null,
         })
       } else {
-        setQuickView('none')
-        setFilterCryptoFamily('All')
-        setFilterFunction('All')
-        setFilterSecurityLevel('All')
-        setFilterRegion('All')
-        setFilterStatus('All')
-        updateSearchParams({
-          quickview: 'none',
-          family: null,
-          fn: null,
-          level: null,
-          region: null,
-          status: null,
-        })
+        handleClearAllFilters()
       }
     },
-    [updateSearchParams]
+    [handleClearAllFilters, updateSearchParams]
   )
 
   // --- Comparison handlers ---
@@ -965,18 +979,6 @@ export function useAlgorithmExplorer(
   } | null>(null)
   const handledHighlightKeyRef = useRef<string | null>(null)
   const highlightRaw = searchParams.get('highlight')
-
-  const applyFilterState = useCallback((f: ExplorerFilterState) => {
-    setQuickView(f.quickView)
-    setFilterCryptoFamily(f.family)
-    setFilterFunction(f.fn)
-    setFilterSecurityLevel(f.level)
-    setFilterRegion(f.region)
-    setFilterStatus(f.status)
-    setCnsaLens(f.cnsa)
-    setResearchGapOnly(f.gap)
-    setSearchQuery(f.q)
-  }, [])
 
   useEffect(() => {
     if (isLoading) return
@@ -1342,6 +1344,7 @@ export function useAlgorithmExplorer(
     handleSearchChange,
     handleTabChange,
     handleQuickView,
+    handleClearAllFilters,
     handleToggleCnsaLens,
     handleToggleResearchGapOnly,
     handleDetailModeChange,

@@ -917,7 +917,7 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
       simplified,
     })
     if (!raciOutput) return built
-    // Inject accountableRole → policy-owner, responsibleRole → approver
+    // Suggest the policy owner only when the upstream activity has one accountable role.
     return built.map((section) => {
       if (section.id !== 'general') return section
       return {
@@ -925,9 +925,6 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
         fields: section.fields.map((field) => {
           if (field.id === 'policy-owner' && raciOutput.accountableRole) {
             return { ...field, defaultValue: raciOutput.accountableRole }
-          }
-          if (field.id === 'approver' && raciOutput.responsibleRole) {
-            return { ...field, defaultValue: raciOutput.responsibleRole }
           }
           return field
         }),

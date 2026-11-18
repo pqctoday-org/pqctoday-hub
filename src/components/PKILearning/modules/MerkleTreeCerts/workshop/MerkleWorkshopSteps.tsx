@@ -137,7 +137,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
             return (
               <Button
                 key={part.id}
-                onClick={() => handlePartChange(idx)}
+                onClick={() => setCurrentPart(idx)}
                 variant="ghost"
                 title={part.title}
                 aria-label={`Go to step ${idx + 1}: ${part.title}`}
@@ -175,7 +175,10 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
           stepIndex={currentPart}
           totalSteps={PARTS.length}
           steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
-          onStepClick={handlePartChange}
+          completedSteps={PARTS.filter((_, index) => completedSteps.has(index)).map(
+            (step) => step.id
+          )}
+          onStepClick={setCurrentPart}
         />
         {(currentPart === 1 || currentPart === 2) && !sharedLevels && (
           <div className="mb-4 flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-sm text-muted-foreground">
