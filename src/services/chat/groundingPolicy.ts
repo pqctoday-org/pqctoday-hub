@@ -190,7 +190,12 @@ export function deriveCorpusCitations(
 
   const rawStatements = trimmed
     .split(/(?<=[.!?])\s+|\n+/)
-    .map((s) => s.trim().replace(/^[-+*]\s+/, '').trim())
+    .map((s) =>
+      s
+        .trim()
+        .replace(/^[-+*]\s+/, '')
+        .trim()
+    )
     .filter((s) => visibleText(s).length >= 12)
 
   for (const rawStmt of rawStatements) {
@@ -202,11 +207,7 @@ export function deriveCorpusCitations(
     if (checkGrounding(rawStmt, chunks).hasWarning) continue
 
     const stmtTokens = Array.from(
-      new Set(
-        normStmt
-          .split(/[^a-z0-9-]+/)
-          .filter((t) => t.length >= 4 && !STOPWORDS.has(t))
-      )
+      new Set(normStmt.split(/[^a-z0-9-]+/).filter((t) => t.length >= 4 && !STOPWORDS.has(t)))
     )
     if (stmtTokens.length === 0) continue
 

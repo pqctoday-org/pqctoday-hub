@@ -189,7 +189,12 @@ describe('streamResponse', () => {
     vi.stubGlobal('fetch', mockFetch)
 
     const chunks: string[] = []
-    for await (const chunk of streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-3.8-flash')) {
+    for await (const chunk of streamResponse(
+      'key',
+      MOCK_MESSAGES,
+      MOCK_CHUNKS,
+      'gemini-3.8-flash'
+    )) {
       chunks.push(chunk)
     }
 

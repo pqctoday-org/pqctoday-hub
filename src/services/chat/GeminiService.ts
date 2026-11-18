@@ -114,7 +114,10 @@ export async function* streamResponse(
 
   // Automatic fallback when the primary model requires a paid billing tier (402),
   // is unavailable on the key's project (404), or rejects thinkingConfig (400).
-  if (!response.ok && (response.status === 402 || response.status === 404 || response.status === 400)) {
+  if (
+    !response.ok &&
+    (response.status === 402 || response.status === 404 || response.status === 400)
+  ) {
     const fallbackCandidates = GEMINI_FALLBACK_MODELS.filter((m) => m !== model)
     for (const candidate of fallbackCandidates) {
       const candidateRes = await requestStream(candidate, true)

@@ -67,9 +67,7 @@ describe('Explore graph: links come from the fields that name them', () => {
       const id = `uc-${slug(uc.industry)}-${slug(uc.useCaseId)}`
       if (!byId.has(id)) continue
       const protoEdges = neighbours(id).filter(
-        (e) =>
-          e.rel === 'uses' &&
-          (e.to.startsWith('proto-') || e.from.startsWith('proto-'))
+        (e) => e.rel === 'uses' && (e.to.startsWith('proto-') || e.from.startsWith('proto-'))
       )
       expect(protoEdges.length, id).toBeGreaterThan(0)
       checked += 1
@@ -79,11 +77,13 @@ describe('Explore graph: links come from the fields that name them', () => {
 
   it('adds Industry Landscape and Construction deep links on mechanism, industry, and use-case nodes', () => {
     const mlKem768 = byId.get('mech-ml-kem-768')
-    expect(mlKem768?.extraLinks?.some((l) => l.href === '/algorithms?tab=landscape&mechanism=ML-KEM')).toBe(
-      true
-    )
     expect(
-      mlKem768?.extraLinks?.some((l) => l.href.startsWith('/algorithms?tab=landscape&construction='))
+      mlKem768?.extraLinks?.some((l) => l.href === '/algorithms?tab=landscape&mechanism=ML-KEM')
+    ).toBe(true)
+    expect(
+      mlKem768?.extraLinks?.some((l) =>
+        l.href.startsWith('/algorithms?tab=landscape&construction=')
+      )
     ).toBe(true)
 
     const financeSector = byId.get('ind-52')

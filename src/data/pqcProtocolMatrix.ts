@@ -53,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-14'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-11-18'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -1118,11 +1118,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         // Watchlist: single-use signing certificates. X.509 work, not a hybrid mechanism.
-        id: 'draft-ietf-lamps-one-signature-certs-02',
+        id: 'draft-ietf-lamps-one-signature-certs-04',
         title:
-          'draft-ietf-lamps-one-signature-certs-02 — One Signature Certificates (WG draft; not a hybrid format)',
+          'draft-ietf-lamps-one-signature-certs-04 — One Signature Certificates (WG draft; not a hybrid format)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-one-signature-certs/',
-        date: '2026-07-01',
+        date: '2026-10',
       },
     ],
     dimensions: {
@@ -1350,6 +1350,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         url: 'https://datatracker.ietf.org/doc/html/rfc9629',
         date: '2024-08',
       },
+      {
+        id: 'RFC-10082',
+        title: 'RFC 10082 — Composite ML-DSA for Use in the Cryptographic Message Syntax (CMS)',
+        url: 'https://www.rfc-editor.org/rfc/rfc10082.html',
+        date: '2026-11',
+      },
     ],
     latestDraft: [
       {
@@ -1358,12 +1364,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-cms-composite-kem-04 — Composite ML-KEM for CMS (RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-kem/',
         date: '2026-10-15',
-      },
-      {
-        id: 'draft-ietf-lamps-cms-composite-sigs-05',
-        title: 'draft-ietf-lamps-cms-composite-sigs-05 — Composite ML-DSA for CMS (RFC Ed Queue)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-sigs/',
-        date: '2026-04',
       },
       {
         id: 'draft-becker-cnsa2-smime-profile-05',
@@ -1427,18 +1427,26 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote:
-          'IETF Last Call completed (directorate reviews Apr 2026) — now in RFC Editor queue (draft-05)',
-        note: 'Composite ML-DSA SignerInfo construction mirrors the X.509 composite-sigs row.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 10082 published 2026-11 (formerly the lamps-cms-composite-sigs work item)',
+        note: 'Composite ML-DSA SignerInfo construction mirrors the X.509 composite-sigs row (RFC 10073).',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-cms-composite-sigs',
-            title: 'Composite ML-DSA for CMS',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-composite-sigs/',
-            publishedOn: '2026-02',
+            kind: 'rfc',
+            id: 'RFC 10082',
+            title:
+              'Composite ML-DSA for Use in the Cryptographic Message Syntax (CMS) (formerly the lamps-cms-composite-sigs work item)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10082.html',
+            publishedOn: '2026-11',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 10073',
+            title:
+              'Composite ML-DSA for Use in X.509 Public Key Infrastructure (companion X.509 certificate profile)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',
@@ -1469,13 +1477,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         pureKemNote:
           'ML-KEM-512/768/1024 encrypt+decrypt via CMS AuthEnvelopedData with KEMRecipientInfo; CA-issued cert flow for KEM-only keys. X25519 also exercised.',
         hybridSigNote:
-          'LAMPS composite ML-DSA+ECDSA OIDs (draft-19) implemented via pkcs11-provider composite.c — exercised through the algorithm dropdown when HSM mode is on.',
+          'RFC 10082 / RFC 10073 composite ML-DSA+ECDSA OIDs implemented via pkcs11-provider composite.c — exercised through the algorithm dropdown when HSM mode is on.',
         hybridKemNote:
           'Composite ML-KEM (draft-ietf-lamps-cms-composite-kem) deferred — awaiting composite-KEM OID support in pkcs11-provider.',
       },
     ],
     noDeploymentReason:
-      'S/MIME PQ standards are very fresh (ML-DSA Oct 2025, SLH-DSA Jul 2025, ML-KEM Mar 2026) — typical standards-to-ship gap is 12–24 months. The quantum-safe consumer-email market migrated to OpenPGP (Proton Mail) and proprietary protocols (Tuta / TutaCrypt) rather than S/MIME; mainstream providers (Gmail / Outlook / Apple Mail) rely on TLS-in-transit + at-rest encryption and do not drive S/MIME at all. The procurement-cycle slots that will force S/MIME PQ deployment — the CNSA 2.0 S/MIME profile (draft-becker-cnsa2-smime-profile-05, still draft) and X9 Financial PKI consumers — have not yet shipped a product. Building blocks (OpenSSL 3.5 `cms`, Bouncy Castle 1.79+ CMS API) exist and IETF Hackathon runs cross-vendor interop tests, but no end-user product deployment.',
+      'S/MIME PQ standards are very fresh (SLH-DSA Jul 2025, ML-DSA Oct 2025, ML-KEM Mar 2026, Composite ML-DSA RFC 10082 Nov 2026) — typical standards-to-ship gap is 12–24 months. The quantum-safe consumer-email market migrated to OpenPGP (Proton Mail) and proprietary protocols (Tuta / TutaCrypt) rather than S/MIME; mainstream providers (Gmail / Outlook / Apple Mail) rely on TLS-in-transit + at-rest encryption and do not drive S/MIME at all. The procurement-cycle slots that will force S/MIME PQ deployment — the CNSA 2.0 S/MIME profile (draft-becker-cnsa2-smime-profile-05, still draft) and X9 Financial PKI consumers — have not yet shipped a product. Building blocks (OpenSSL 3.5 `cms`, Bouncy Castle 1.79+ CMS API) exist and IETF Hackathon runs cross-vendor interop tests, but no end-user product deployment.',
     sources: [
       {
         label: 'IETF LAMPS working group documents',
@@ -1510,10 +1518,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-cose-falcon-04',
-        title: 'draft-ietf-cose-falcon-04 — FN-DSA for JOSE and COSE (expired 2026-09-16)',
+        id: 'draft-ietf-cose-falcon-05',
+        title: 'draft-ietf-cose-falcon-05 — FN-DSA for JOSE and COSE (WG draft)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-falcon/',
-        date: '2026-03-25',
+        date: '2026-10',
       },
       {
         id: 'draft-ietf-cose-hpke-27',
@@ -1863,7 +1871,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridSig: {
         value: 'draft',
         stage: 'wg-document',
-        stageNote: "WG document, 'I-D Exists' — draft-04 (2026-09-11), checked 2026-10-01",
+        stageNote: "WG document, 'I-D Exists' — draft-06 (2026-10-20)",
         refs: [
           {
             kind: 'draft',
@@ -2145,7 +2153,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-bokovoy-kitten-pkinit-pqc',
             title: 'Post-Quantum ML-KEM for PKINIT',
             url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
-            publishedOn: '2026-06-26',
+            publishedOn: '2026-10-16',
           },
           {
             kind: 'rfc',
@@ -2168,7 +2176,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-bokovoy-kitten-pkinit-pqc',
             title: 'Post-Quantum ML-KEM for PKINIT',
             url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
-            publishedOn: '2026-06-26',
+            publishedOn: '2026-10-16',
           },
           {
             kind: 'draft',
@@ -2204,17 +2212,31 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'experimental',
-        stage: 'individual-draft',
+        stage: 'identified',
         stageNote:
-          'Individual draft active (draft-bokovoy-kitten-pkinit-pqc, datatracker 2026-07-18)',
-        note: 'Same agility-based path as Pure Signature; draft-bokovoy-kitten-pkinit-pqc optionally mentions composite ML-DSA per the LAMPS composite-sigs draft, but this is unadopted and unimplemented.',
+          'No PKINIT composite-signature spec yet; draft-bokovoy-kitten-pkinit-pqc-02 (adopted by KITTEN WG 2026-11-03) scopes ML-KEM / composite KEM key establishment and notes composite ML-DSA (RFC 10073 / RFC 10082) via existing PKINIT agility (RFC 8636)',
+        note: 'Same agility-based path as Pure Signature; draft-bokovoy-kitten-pkinit-pqc optionally mentions composite ML-DSA per RFC 10073 / RFC 10082, but no PKINIT composite-signature implementation exists.',
         refs: [
           {
             kind: 'draft',
             id: 'draft-bokovoy-kitten-pkinit-pqc',
             title: 'Post-Quantum ML-KEM for PKINIT (mentions optional composite ML-DSA)',
             url: 'https://datatracker.ietf.org/doc/html/draft-bokovoy-kitten-pkinit-pqc-02',
-            publishedOn: '2026-06-26',
+            publishedOn: '2026-10-16',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 10073',
+            title: 'Composite ML-DSA for Use in X.509 Public Key Infrastructure',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
+          },
+          {
+            kind: 'rfc',
+            id: 'RFC 10082',
+            title: 'Composite ML-DSA for Use in the Cryptographic Message Syntax (CMS)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10082.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',
@@ -2532,7 +2554,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         id: 'draft-ietf-ipsecme-ikev2-pqc-auth-12',
         title:
-          'draft-ietf-ipsecme-ikev2-pqc-auth-12 — PQ Authentication in IKEv2 (Submitted to IESG for Publication)',
+          'draft-ietf-ipsecme-ikev2-pqc-auth-12 — PQ Authentication in IKEv2 (RFC Editor Queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc-auth/',
         date: '2026-08-20',
       },
@@ -2556,7 +2578,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-ipsecme-ikev2-mlkem',
             title: 'ML-KEM in IKEv2 (covers Pure + Hybrid KEM)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/',
-            publishedOn: '2026-03-14',
+            publishedOn: '2026-07-05',
           },
         ],
       },
@@ -2575,7 +2597,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-ipsecme-ikev2-mlkem',
             title: 'ML-KEM in IKEv2 (covers Pure + Hybrid KEM)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/',
-            publishedOn: '2026-03-14',
+            publishedOn: '2026-07-05',
           },
           {
             kind: 'rfc',
@@ -2597,7 +2619,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-ipsecme-ikev2-pqc-auth',
             title: 'PQ Authentication in IKEv2',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc-auth/',
-            publishedOn: '2026-04-14',
+            publishedOn: '2026-08-20',
           },
         ],
       },
@@ -3163,7 +3185,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-sheth-pqc-dnssec-strategy',
             title: 'PQC Strategy for DNSSEC (individual)',
             url: 'https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/',
-            publishedOn: '2026-04-17',
+            publishedOn: '2026-10-16',
           },
         ],
         lastReviewed: '2026-09-13',
@@ -3180,7 +3202,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-sheth-pqc-dnssec-strategy',
             title: 'PQC Strategy for DNSSEC (individual)',
             url: 'https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/',
-            publishedOn: '2026-04-17',
+            publishedOn: '2026-10-16',
           },
         ],
         lastReviewed: '2026-09-13',
@@ -3296,7 +3318,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'individual-draft',
         stageNote:
-          'Individual submission (draft-yoshikawa-sidrops-pqc-rpki-01, posted 2026-07-04) — not adopted by the SIDROPS working group, no IESG standing',
+          'Individual submission (draft-yoshikawa-sidrops-pqc-rpki-02, posted 2026-08) — not adopted by the SIDROPS working group, no IESG standing',
         note: 'Proposes Composite ML-DSA-65 + ECDSA-P256 for RPKI certificates. Explicitly flags open questions: HSM readiness, untested RRDP snapshot/delta size impact, no Krill/relying-party integration yet. BGPsec path signatures have NO PQC work of any kind, chartered or individual — and BGPsec itself remains almost entirely undeployed in production networks (unlike RPKI ROA validation, which covers ~50%+ of routes), which independent sources cite as the reason nobody is prioritizing BGPsec-specific PQC engineering.',
         refs: [
           {
@@ -3304,7 +3326,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-yoshikawa-sidrops-pqc-rpki',
             title: 'Post-Quantum Signature Profile for RPKI (individual)',
             url: 'https://datatracker.ietf.org/doc/draft-yoshikawa-sidrops-pqc-rpki/',
-            publishedOn: '2026-07-04',
+            publishedOn: '2026-08',
           },
           {
             kind: 'rfc',
@@ -3831,7 +3853,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             id: 'draft-ietf-emu-pqc-eap-tls',
             title: 'Post-Quantum Enhancements to TLS-Based EAP Methods (cert-size mitigation)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-emu-pqc-eap-tls/',
-            publishedOn: '2026-05-13',
+            publishedOn: '2026-10-15',
           },
         ],
       },

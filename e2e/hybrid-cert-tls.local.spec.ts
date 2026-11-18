@@ -84,7 +84,10 @@ test('the phone workshop connects the certificate prediction to measured TLS aut
     timeout: 90_000,
   })
   await expect(
-    exercise.getByRole('row', { name: /Classical baseline/ }).getByRole('cell').first()
+    exercise
+      .getByRole('row', { name: /Classical baseline/ })
+      .getByRole('cell')
+      .first()
   ).toContainText(/x25519\s*$/i)
   await expect(
     exercise.getByRole('row', { name: /Hybrid exchange \+ classical authentication/ })

@@ -23,7 +23,10 @@ export function fetchWithPacedBackoff(
     maxRetries?: number
     baseBackoffMs?: number
     timeoutMs?: number
-    fetchImpl?: (url: string, init?: unknown) => Promise<{
+    fetchImpl?: (
+      url: string,
+      init?: unknown
+    ) => Promise<{
       status: number
       ok: boolean
       headers: { get: (name: string) => string | null }

@@ -15,7 +15,16 @@
  * Header text is a slot (`title`/`description`) defaulting to the manifest —
  * because a module's in-page header often differs from its catalog description.
  */
-import { useEffect, useMemo, useRef, useState, lazy, Suspense, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  lazy,
+  Suspense,
+  type ReactNode,
+} from 'react'
 import { Link, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -226,11 +235,14 @@ function WorkshopStepper({
   const stepTitleRef = useRef<HTMLHeadingElement>(null)
   const pendingStepFocus = useRef<number | null>(null)
 
-  const moveToStep = (index: number) => {
-    if (index === currentPart) return
-    pendingStepFocus.current = index
-    onPartChange(index)
-  }
+  const moveToStep = useCallback(
+    (index: number) => {
+      if (index === currentPart) return
+      pendingStepFocus.current = index
+      onPartChange(index)
+    },
+    [currentPart, onPartChange]
+  )
 
   useEffect(() => {
     if (pendingStepFocus.current === null) return
@@ -282,6 +294,7 @@ function WorkshopStepper({
           completedSteps={completedSteps}
           onStepClick={(p) => onPartJump(visibleIndices[p])}
         />
+        {/* eslint-disable-next-line react-hooks/refs */}
         {renderStep(currentPart, configKey, moveToStep)}
         {/* Round 9, wave 2 — one question per step with feedback that names the
             concept (src/data/stepExercises.ts); nothing for steps without one. */}

@@ -26,11 +26,7 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import { shake256 } from '@noble/hashes/sha3.js'
 import { ml_kem512, ml_kem768, ml_kem1024 } from '@noble/post-quantum/ml-kem.js'
-import {
-  ml_kem768_x25519,
-  ml_kem768_p256,
-  ml_kem1024_p384,
-} from '@noble/post-quantum/hybrid.js'
+import { ml_kem768_x25519, ml_kem768_p256, ml_kem1024_p384 } from '@noble/post-quantum/hybrid.js'
 import * as SoftHSM from '@/wasm/softhsm'
 import hpkePqFile from '@/data/acvp/hpke-pq-04-test-vectors.json'
 import cfrgFile from '@/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json'
@@ -438,9 +434,7 @@ describe('HPKE composed from PKCS#11 v3.2 primitives', () => {
         HPKE_KEM.MLKEM1024_P384,
         HPKE_KEM.MLKEM768_X25519,
       ].includes(v.kem_id as never) &&
-      [HPKE_KDF.HKDF_SHA256, HPKE_KDF.HKDF_SHA384, HPKE_KDF.HKDF_SHA512].includes(
-        v.kdf_id as never
-      )
+      [HPKE_KDF.HKDF_SHA256, HPKE_KDF.HKDF_SHA384, HPKE_KDF.HKDF_SHA512].includes(v.kdf_id as never)
   )
 
   describe.each(
@@ -480,14 +474,7 @@ describe('HPKE composed from PKCS#11 v3.2 primitives', () => {
           true,
           true
         )
-        ssHandle = hybridDecap(
-          ctx,
-          v.kem_id,
-          fromHex(v.enc),
-          mlkemPriv,
-          ecPriv,
-          fromHex(v.pkRm)
-        )
+        ssHandle = hybridDecap(ctx, v.kem_id, fromHex(v.enc), mlkemPriv, ecPriv, fromHex(v.pkRm))
       } else {
         throw new Error('unexpected kem kind')
       }

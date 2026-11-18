@@ -218,6 +218,7 @@ export function MobileModuleShell({
         <div
           role="tablist"
           aria-label="Module view"
+          tabIndex={-1}
           onKeyDown={(event) => handleTabListKeyDown(event)}
           className="grid grid-cols-2 gap-1 rounded-xl border border-border bg-card p-1"
         >
