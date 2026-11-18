@@ -12,13 +12,28 @@
 //    compared against the RFC's own worked values.
 //    Source: https://www.rfc-editor.org/rfc/rfc9180.html#appendix-A.3
 //
-// 2. The PQ/T hybrid KEM path (MLKEM768-P256) has no such byte-exact vector
-//    available through this binding — see the long comment at the top of
-//    hpkeService.ts for why (no SHAKE256 PRG, no seeded ML-KEM.Encaps). It is
-//    instead round-trip tested: sender and recipient must derive the
-//    identical combined shared secret and recover the identical plaintext.
+// 2. The PQ and PQ/T hybrid KEM paths on PKCS#11 v3.2 (pqDecap, hybridDecap,
+//    hybridEncap, keyScheduleSecure, sealHandle, openHandle) are cross-checked
+//    across:
+//    (a) All 54 (3 KEMs × 3 KDFs × 3 AEADs × 2 modes) independent-keygen round trips;
+//    (b) All 6 HKDF-based PQ and PQ/T hybrid suites from draft-ietf-hpke-pq-05
+//        Appendix A (hpkewg/hpke-pq reference vectors), reproducing base_nonce,
+//        exporter_secret, and every published AEAD encryption byte-for-byte;
+//    (c) All 30 CFRG draft-irtf-cfrg-concrete-hybrid-kems test vectors; and
+//    (d) Bidirectional encapsulation/decapsulation + AEAD interop with
+//        @noble/post-quantum/hybrid.js (ml_kem768_x25519, ml_kem768_p256,
+//        ml_kem1024_p384).
 import { describe, it, expect, beforeAll } from 'vitest'
+import { shake256 } from '@noble/hashes/sha3.js'
+import { ml_kem512, ml_kem768, ml_kem1024 } from '@noble/post-quantum/ml-kem.js'
+import {
+  ml_kem768_x25519,
+  ml_kem768_p256,
+  ml_kem1024_p384,
+} from '@noble/post-quantum/hybrid.js'
 import * as SoftHSM from '@/wasm/softhsm'
+import hpkePqFile from '@/data/acvp/hpke-pq-04-test-vectors.json'
+import cfrgFile from '@/data/acvp/cfrg-concrete-hybrid-kems-test-vectors.json'
 import {
   HPKE_KEM,
   HPKE_KDF,
@@ -32,6 +47,7 @@ import {
   dhkemAuthDecap,
   hybridEncap,
   hybridDecap,
+  pqDecap,
   keySchedule,
   keyScheduleSecure,
   seal,
@@ -391,6 +407,290 @@ describe('HPKE composed from PKCS#11 v3.2 primitives', () => {
         expect(new TextDecoder().decode(recovered)).toBe(
           'Post-quantum hybrid HPKE over PKCS#11 v3.2'
         )
+      })
+    }
+  )
+
+  // ── Reference-Vector & Reference-Library Cross-Checks on PKCS#11 v3.2 ───────
+  // 1. Replays all 6 HKDF-based PQ and PQ/T hybrid suites from draft-ietf-hpke-pq-05
+  //    Appendix A (hpkewg/hpke-pq reference vectors) through the PKCS#11 v3.2
+  //    pqDecap / hybridDecap + keyScheduleSecure + openHandle path, verifying
+  //    byte-exact base_nonce, exporter_secret, and every published AEAD encryption.
+  // 2. Replays all 30 CFRG draft-irtf-cfrg-concrete-hybrid-kems vectors through
+  //    PKCS#11 v3.2 hybridDecap + keyScheduleSecure and verifies exact agreement
+  //    with keySchedule(v.shared_secret).
+  // 3. Verifies bidirectional interoperability between PKCS#11 v3.2
+  //    hybridEncap / hybridDecap and @noble/post-quantum/hybrid.js
+  //    (ml_kem768_x25519, ml_kem768_p256, ml_kem1024_p384).
+  const expandMlkemSeed = (variant: 512 | 768 | 1024, seed64: Uint8Array): Uint8Array => {
+    if (variant === 512) return ml_kem512.keygen(seed64).secretKey
+    if (variant === 768) return ml_kem768.keygen(seed64).secretKey
+    return ml_kem1024.keygen(seed64).secretKey
+  }
+
+  const pqHkdfVectors = hpkePqFile.vectors.filter(
+    (v) =>
+      [
+        HPKE_KEM.MLKEM512,
+        HPKE_KEM.MLKEM768,
+        HPKE_KEM.MLKEM1024,
+        HPKE_KEM.MLKEM768_P256,
+        HPKE_KEM.MLKEM1024_P384,
+        HPKE_KEM.MLKEM768_X25519,
+      ].includes(v.kem_id as never) &&
+      [HPKE_KDF.HKDF_SHA256, HPKE_KDF.HKDF_SHA384, HPKE_KDF.HKDF_SHA512].includes(
+        v.kdf_id as never
+      )
+  )
+
+  describe.each(
+    pqHkdfVectors.map((v) => ({
+      label: `kem 0x${v.kem_id.toString(16)} kdf 0x${v.kdf_id.toString(16)} aead 0x${v.aead_id.toString(16)}`,
+      v,
+    }))
+  )('draft-ietf-hpke-pq-05 reference vector on PKCS#11 v3.2 — $label', ({ v }) => {
+    it('reproduces base_nonce, exporter_secret, and decrypts every published encryption via PKCS#11 v3.2', () => {
+      const info = kemInfo(v.kem_id)
+      let ssHandle: number
+      if (info.kind === 'pq') {
+        const dkBytes = expandMlkemSeed(info.pqVariant, fromHex(v.skRm))
+        const mlkemPriv = SoftHSM.hsm_importMLKEMPrivateKey(
+          ctx.M,
+          ctx.hSession,
+          info.pqVariant,
+          dkBytes
+        )
+        ssHandle = pqDecap(ctx, v.kem_id, fromHex(v.enc), mlkemPriv)
+      } else if (info.kind === 'hybrid') {
+        const scalarLen = info.curve === 'P-384' ? 48 : 32
+        const expanded = shake256(fromHex(v.skRm), { dkLen: 64 + scalarLen })
+        const dkPqBytes = expandMlkemSeed(info.pqVariant, expanded.subarray(0, 64))
+        const dkTScalar = expanded.subarray(64)
+        const mlkemPriv = SoftHSM.hsm_importMLKEMPrivateKey(
+          ctx.M,
+          ctx.hSession,
+          info.pqVariant,
+          dkPqBytes
+        )
+        const ecPriv = SoftHSM.hsm_importECPrivateKey(
+          ctx.M,
+          ctx.hSession,
+          dkTScalar,
+          info.curve,
+          true,
+          true
+        )
+        ssHandle = hybridDecap(
+          ctx,
+          v.kem_id,
+          fromHex(v.enc),
+          mlkemPriv,
+          ecPriv,
+          fromHex(v.pkRm)
+        )
+      } else {
+        throw new Error('unexpected kem kind')
+      }
+
+      const recipientCtx = keyScheduleSecure(
+        ctx,
+        v.mode as HpkeModeId,
+        v.kem_id,
+        v.kdf_id,
+        v.aead_id,
+        ssHandle,
+        fromHex(v.info)
+      )
+      expect(hex(recipientCtx.baseNonce!)).toBe(v.base_nonce)
+      expect(hex(recipientCtx.exporterSecret)).toBe(v.exporter_secret)
+
+      v.encryptions.forEach((encItem, seq) => {
+        const pt = openHandle(
+          ctx,
+          recipientCtx.keyHandle!,
+          v.aead_id,
+          recipientCtx.baseNonce!,
+          seq,
+          fromHex(encItem.aad),
+          fromHex(encItem.ct)
+        )
+        expect(hex(pt)).toBe(encItem.pt)
+      })
+    })
+  })
+
+  const CFRG_KEM_MAP: Record<string, number> = {
+    mlkem768_x25519: HPKE_KEM.MLKEM768_X25519,
+    mlkem768_p256: HPKE_KEM.MLKEM768_P256,
+    mlkem1024_p384: HPKE_KEM.MLKEM1024_P384,
+  }
+
+  it.each(cfrgFile.vectors.map((v, idx) => [`${v.kem} #${idx}`, v] as const))(
+    'CFRG hybrid KEM vector %s on PKCS#11 v3.2: hybridDecap matches published shared_secret schedule',
+    (_label, v) => {
+      const kemId = CFRG_KEM_MAP[v.kem]
+      const info = kemInfo(kemId)
+      if (info.kind !== 'hybrid') throw new Error('expected hybrid')
+      const dkPqBytes = expandMlkemSeed(info.pqVariant, fromHex(v.decapsulation_key_pq))
+      const mlkemPriv = SoftHSM.hsm_importMLKEMPrivateKey(
+        ctx.M,
+        ctx.hSession,
+        info.pqVariant,
+        dkPqBytes
+      )
+      const ecPriv = SoftHSM.hsm_importECPrivateKey(
+        ctx.M,
+        ctx.hSession,
+        fromHex(v.decapsulation_key_t),
+        info.curve,
+        true,
+        true
+      )
+      const ssHandle = hybridDecap(
+        ctx,
+        kemId,
+        fromHex(v.ciphertext),
+        mlkemPriv,
+        ecPriv,
+        fromHex(v.encapsulation_key)
+      )
+      const infoBytes = new TextEncoder().encode('cfrg-v32-crosscheck')
+      const v32Ks = keyScheduleSecure(
+        ctx,
+        HPKE_MODE.BASE,
+        kemId,
+        HPKE_KDF.HKDF_SHA256,
+        HPKE_AEAD.AES_256_GCM,
+        ssHandle,
+        infoBytes
+      )
+      const expectedKs = keySchedule(
+        ctx,
+        HPKE_MODE.BASE,
+        kemId,
+        HPKE_KDF.HKDF_SHA256,
+        HPKE_AEAD.AES_256_GCM,
+        fromHex(v.shared_secret),
+        infoBytes
+      )
+      expect(hex(v32Ks.baseNonce!)).toBe(hex(expectedKs.baseNonce!))
+      expect(hex(v32Ks.exporterSecret)).toBe(hex(expectedKs.exporterSecret))
+    }
+  )
+
+  describe.each([
+    { name: 'MLKEM768-X25519', kemId: HPKE_KEM.MLKEM768_X25519, nobleKem: ml_kem768_x25519 },
+    { name: 'MLKEM768-P256', kemId: HPKE_KEM.MLKEM768_P256, nobleKem: ml_kem768_p256 },
+    { name: 'MLKEM1024-P384', kemId: HPKE_KEM.MLKEM1024_P384, nobleKem: ml_kem1024_p384 },
+  ] as const)(
+    'bidirectional PKCS#11 v3.2 ↔ @noble/post-quantum reference library interop — $name',
+    ({ kemId, nobleKem }) => {
+      it('PKCS#11 v3.2 hybridEncap + sealHandle decrypts cleanly with @noble/post-quantum decapsulate, and vice versa', () => {
+        const info = kemInfo(kemId)
+        if (info.kind !== 'hybrid') throw new Error('expected hybrid')
+
+        // Direction 1: PKCS#11 v3.2 Sender -> @noble/post-quantum Recipient
+        const nobleKp = nobleKem.keygen()
+        const v32Sender = hybridEncap(ctx, kemId, nobleKp.publicKey)
+        const nobleSharedSecret = nobleKem.decapsulate(v32Sender.enc, nobleKp.secretKey)
+
+        const appInfo = new TextEncoder().encode('bidirectional-v32-noble')
+        const aad = new TextEncoder().encode('aad-v32-noble')
+        const msg = new TextEncoder().encode('Cross-verified PKCS#11 v3.2 <-> reference KEM')
+
+        const senderKs = keyScheduleSecure(
+          ctx,
+          HPKE_MODE.BASE,
+          kemId,
+          HPKE_KDF.HKDF_SHA256,
+          HPKE_AEAD.AES_256_GCM,
+          v32Sender.sharedSecretHandle,
+          appInfo
+        )
+        const nobleRecipientKs = keySchedule(
+          ctx,
+          HPKE_MODE.BASE,
+          kemId,
+          HPKE_KDF.HKDF_SHA256,
+          HPKE_AEAD.AES_256_GCM,
+          nobleSharedSecret,
+          appInfo
+        )
+        expect(hex(nobleRecipientKs.baseNonce!)).toBe(hex(senderKs.baseNonce!))
+        expect(hex(nobleRecipientKs.exporterSecret)).toBe(hex(senderKs.exporterSecret))
+
+        const { ct } = sealHandle(
+          ctx,
+          senderKs.keyHandle!,
+          HPKE_AEAD.AES_256_GCM,
+          senderKs.baseNonce!,
+          0,
+          aad,
+          msg
+        )
+        const openedByNoble = open(
+          ctx,
+          nobleRecipientKs.keyBytes!,
+          HPKE_AEAD.AES_256_GCM,
+          nobleRecipientKs.baseNonce!,
+          0,
+          aad,
+          ct
+        )
+        expect(hex(openedByNoble)).toBe(hex(msg))
+
+        // Direction 2: @noble/post-quantum Sender -> PKCS#11 v3.2 Recipient
+        const mlkem = SoftHSM.hsm_generateMLKEMKeyPair(
+          ctx.M,
+          ctx.hSession,
+          info.pqVariant,
+          true,
+          'v32-recip-pq'
+        )
+        const ec = SoftHSM.hsm_generateECKeyPair(
+          ctx.M,
+          ctx.hSession,
+          info.curve,
+          false,
+          'v32-recip-ec'
+        )
+        const ekPQ = SoftHSM.hsm_extractKeyValue(ctx.M, ctx.hSession, mlkem.pubHandle)
+        const ekTRaw = SoftHSM.hsm_extractECPoint(ctx.M, ctx.hSession, ec.pubHandle)
+        const ekT =
+          info.curve === 'X25519' ? ekTRaw : stripEcPointDer(ekTRaw, ecPointRawLen(info.curve))
+        const ekH = new Uint8Array(ekPQ.length + ekT.length)
+        ekH.set(ekPQ, 0)
+        ekH.set(ekT, ekPQ.length)
+
+        const nobleEncap = nobleKem.encapsulate(ekH)
+        const v32RecipSsHandle = hybridDecap(
+          ctx,
+          kemId,
+          nobleEncap.cipherText,
+          mlkem.privHandle,
+          ec.privHandle,
+          ekH
+        )
+        const nobleSenderKs = keySchedule(
+          ctx,
+          HPKE_MODE.BASE,
+          kemId,
+          HPKE_KDF.HKDF_SHA256,
+          HPKE_AEAD.AES_256_GCM,
+          nobleEncap.sharedSecret,
+          appInfo
+        )
+        const v32RecipKs = keyScheduleSecure(
+          ctx,
+          HPKE_MODE.BASE,
+          kemId,
+          HPKE_KDF.HKDF_SHA256,
+          HPKE_AEAD.AES_256_GCM,
+          v32RecipSsHandle,
+          appInfo
+        )
+        expect(hex(v32RecipKs.baseNonce!)).toBe(hex(nobleSenderKs.baseNonce!))
+        expect(hex(v32RecipKs.exporterSecret)).toBe(hex(nobleSenderKs.exporterSecret))
       })
     }
   )

@@ -39,25 +39,20 @@
  * concatenation for the encapsulation key and ciphertext, and
  * ss_H = SHA3-256(concat(ss_PQ, ss_T, ct_T, ek_T, Label)).
  *
- * One real gap remains: the CG framework's seed-based DeriveKeyPair
- * (Section 5.1.1) uses SHAKE256 as a PRG to split one seed into the ML-KEM
- * and EC component seeds, and ML-KEM.Encaps() takes explicit randomness
- * (FIPS 203 Algorithm 20) for its derandomized form. This SoftHSM WASM
- * build exposes neither a general-purpose SHAKE256 XOF/KDF primitive nor a
- * seeded/derandomized C_EncapsulateKey(CKM_ML_KEM) — both hsm_generateMLKEMKeyPair
- * and hsm_encapsulate always draw fresh internal randomness with no override
- * hook. RFC 9180 §5.2's own "shared seed" deviation note explicitly
- * anticipates this ("some hardware modules do not expose such a function")
- * and sanctions generating each component keypair independently instead of
- * deriving both from one seed — which is what hybridEncap/hybridDecap do.
- * The published draft-irtf-cfrg-concrete-hybrid-kems Appendix A vectors are
- * therefore NOT byte-reproducible through this binding; correctness for the
- * hybrid path is instead proven by round-trip agreement (sender and
- * recipient derive the identical ss_H), the same method this module's
- * existing HybridEncryptionDemo.tsx workshop step already uses for its
- * X25519+ML-KEM-768 combiner. The classical DHKEM path has no such gap —
- * ephemeral and static EC private keys ARE importable — and IS byte-exact
- * against RFC 9180 Appendix A.3 for all four HPKE modes (hpkeService.test.ts).
+ * Note on PKCS#11 v3.2 keygen/encap randomness and vector verification:
+ * The CG framework's seed-based DeriveKeyPair (Section 5.1.1) uses SHAKE256
+ * as a PRG to split one seed into the ML-KEM and EC component seeds, and
+ * ML-KEM.Encaps() takes explicit randomness (FIPS 203 Algorithm 20) for its
+ * derandomized form. On the PKCS#11 v3.2 path, hsm_generateMLKEMKeyPair and
+ * hsm_encapsulate draw fresh internal randomness inside the token (per RFC 9180
+ * §5.2's "shared seed" hardware-module note). For recipient decapsulation
+ * (hybridDecap / pqDecap), however, the published draft-ietf-hpke-pq-05
+ * Appendix A and CFRG draft-irtf-cfrg-concrete-hybrid-kems vectors ARE
+ * byte-reproducible on the PKCS#11 v3.2 path by importing the expanded
+ * component private keys via hsm_importMLKEMPrivateKey + hsm_importECPrivateKey,
+ * and hybridEncap / hybridDecap are also bidirectionally cross-checked against
+ * @noble/post-quantum/hybrid.js in hpkeService.test.ts. The classical DHKEM
+ * path is byte-exact against RFC 9180 Appendix A.3 for all four HPKE modes.
  *
  * Non-extracting hybrid path: hybridEncap/hybridDecap, hybridCombinerSecure,
  * and keyScheduleSecure never call C_GetAttributeValue on ss_PQ, ss_T, the
