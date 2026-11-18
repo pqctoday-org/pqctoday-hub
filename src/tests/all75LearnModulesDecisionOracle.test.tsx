@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import { mkdirSync, writeFileSync } from 'node:fs'
-import { dirname } from 'node:path'
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
@@ -11,8 +11,10 @@ import { MODULE_CAPABILITY_CHECKLISTS } from '@/data/moduleCapabilityChecklists'
 import { MODULE_DECISION_SCENARIOS, evaluatePolicyScope } from '@/data/moduleDecisionScenarios'
 import { runTamperSample } from '@/utils/cryptoTamperVerifier'
 
-const RECEIPT_OUTPUT_PATH =
-  '/Users/pqctoday/Antigravity/backups/hub-4213/learn-decision-receipts-76.json'
+const RECEIPT_OUTPUT_PATH = resolve(
+  process.cwd(),
+  '../backups/hub-4213/learn-decision-receipts-76.json'
+)
 
 describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Decision Oracle', () => {
   const allModuleIds = MANIFESTS.map((m) => m.id).sort()
@@ -139,29 +141,31 @@ describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Deci
 
     expect(receipts).toHaveLength(76)
 
-    mkdirSync(dirname(RECEIPT_OUTPUT_PATH), { recursive: true })
-    writeFileSync(
-      RECEIPT_OUTPUT_PATH,
-      JSON.stringify(
-        {
-          version: '4.214.0',
-          generatedAt: new Date().toISOString(),
-          totalModulesVerified: receipts.length,
-          allBaselineValid: receipts.every(
-            (r) => (r.cryptoOracle as { baselineValid: boolean }).baselineValid === true
-          ),
-          allAlteredRejected: receipts.every(
-            (r) => (r.cryptoOracle as { alteredAccepted: boolean }).alteredAccepted === false
-          ),
-          allRestoredValid: receipts.every(
-            (r) => (r.cryptoOracle as { restoredValid: boolean }).restoredValid === true
-          ),
-          receipts,
-        },
-        null,
-        2
-      ),
-      'utf8'
-    )
+    if (existsSync(resolve(process.cwd(), '../backups'))) {
+      mkdirSync(dirname(RECEIPT_OUTPUT_PATH), { recursive: true })
+      writeFileSync(
+        RECEIPT_OUTPUT_PATH,
+        JSON.stringify(
+          {
+            version: '4.214.0',
+            generatedAt: new Date().toISOString(),
+            totalModulesVerified: receipts.length,
+            allBaselineValid: receipts.every(
+              (r) => (r.cryptoOracle as { baselineValid: boolean }).baselineValid === true
+            ),
+            allAlteredRejected: receipts.every(
+              (r) => (r.cryptoOracle as { alteredAccepted: boolean }).alteredAccepted === false
+            ),
+            allRestoredValid: receipts.every(
+              (r) => (r.cryptoOracle as { restoredValid: boolean }).restoredValid === true
+            ),
+            receipts,
+          },
+          null,
+          2
+        ),
+        'utf8'
+      )
+    }
   }, 60000)
 })

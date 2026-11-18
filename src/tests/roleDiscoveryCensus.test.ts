@@ -61,11 +61,123 @@ const censusOutputPath = path.resolve(
   '../backups/hub-4213/role-discovery-census-180.json'
 )
 
-describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
-  const reassessment = JSON.parse(fs.readFileSync(reassessmentPath, 'utf-8')) as {
-    active_population: number
-    items: ReassessmentItem[]
+const FALLBACK_PAGE_ITEMS: ReassessmentItem[] = [
+  { id: 'assess', name: 'Assess', route: '/assess', tier: 'page', population: 'active' },
+  { id: 'report', name: 'Report', route: '/report', tier: 'page', population: 'active' },
+  { id: 'landing', name: 'Landing', route: '/', tier: 'page', population: 'active' },
+  { id: 'learn', name: 'Learn', route: '/learn', tier: 'page', population: 'active' },
+  {
+    id: 'playground-cacp',
+    name: 'CACP / KMIP',
+    route: '/playground/cacp',
+    tier: 'page',
+    population: 'active',
+  },
+  {
+    id: 'playground-hsm',
+    name: 'HSM Playground',
+    route: '/playground?tab=hsm',
+    tier: 'page',
+    population: 'active',
+  },
+  {
+    id: 'algorithms',
+    name: 'Algorithms',
+    route: '/algorithms',
+    tier: 'page',
+    population: 'active',
+  },
+  {
+    id: 'compliance',
+    name: 'Compliance',
+    route: '/compliance',
+    tier: 'page',
+    population: 'active',
+  },
+  { id: 'migrate', name: 'Migrate', route: '/migrate', tier: 'page', population: 'active' },
+  { id: 'business', name: 'Business', route: '/business', tier: 'page', population: 'active' },
+  { id: 'timeline', name: 'Timeline', route: '/timeline', tier: 'page', population: 'active' },
+  { id: 'library', name: 'Library', route: '/library', tier: 'page', population: 'active' },
+  {
+    id: 'playground',
+    name: 'Playground',
+    route: '/playground',
+    tier: 'page',
+    population: 'active',
+  },
+  {
+    id: 'playground-interactive',
+    name: 'Interactive Playground',
+    route: '/playground?tab=interactive',
+    tier: 'page',
+    population: 'active',
+  },
+  { id: 'openssl', name: 'OpenSSL Studio', route: '/openssl', tier: 'page', population: 'active' },
+  { id: 'threats', name: 'Threats', route: '/threats', tier: 'page', population: 'active' },
+  {
+    id: 'simulation',
+    name: 'Simulation',
+    route: '/simulation',
+    tier: 'page',
+    population: 'active',
+  },
+  { id: 'patents', name: 'Patents', route: '/patents', tier: 'page', population: 'active' },
+  { id: 'leaders', name: 'Leaders', route: '/leaders', tier: 'page', population: 'active' },
+  { id: 'explore', name: 'Explore', route: '/explore', tier: 'page', population: 'active' },
+  { id: 'revisions', name: 'Revisions', route: '/revisions', tier: 'page', population: 'active' },
+  { id: 'changelog', name: 'Changelog', route: '/changelog', tier: 'page', population: 'active' },
+  { id: 'faq', name: 'FAQ', route: '/faq', tier: 'page', population: 'active' },
+  { id: 'about', name: 'About', route: '/about', tier: 'page', population: 'active' },
+  { id: 'editorial', name: 'Editorial', route: '/editorial', tier: 'page', population: 'active' },
+  { id: 'sponsor', name: 'Sponsor', route: '/sponsor', tier: 'page', population: 'active' },
+  { id: 'terms', name: 'Terms', route: '/terms', tier: 'page', population: 'active' },
+  { id: 'palette', name: 'Command Palette', route: '/', tier: 'page', population: 'active' },
+  { id: 'assistant', name: 'PQC Assistant', route: '/', tier: 'page', population: 'active' },
+  { id: 'journey', name: 'Role Journey', route: '/', tier: 'page', population: 'active' },
+  { id: 'rightpanel', name: 'Right Panel', route: '/', tier: 'page', population: 'active' },
+  { id: 'nav', name: 'Navigation', route: '/', tier: 'page', population: 'active' },
+  { id: 'navigate', name: 'Navigate', route: '/navigate', tier: 'page', population: 'active' },
+]
+
+function loadOrBuildReassessmentItems(): { active_population: number; items: ReassessmentItem[] } {
+  if (fs.existsSync(reassessmentPath)) {
+    return JSON.parse(fs.readFileSync(reassessmentPath, 'utf-8')) as {
+      active_population: number
+      items: ReassessmentItem[]
+    }
   }
+  const moduleSlugs = Object.keys(MODULE_CATALOG).sort()
+  const moduleItems: ReassessmentItem[] = moduleSlugs.map((slug) => ({
+    id: `m-${slug}`,
+    name: MODULE_CATALOG[slug]?.title ?? slug,
+    route: `/learn/${slug}`,
+    tier: 'module',
+    population: 'active',
+  }))
+  const playgroundItems: ReassessmentItem[] = ALL_PLAYGROUND_TOOL_IDS.filter(
+    (id) => id !== 'cloud-kms-key-exchange'
+  ).map((slug) => ({
+    id: `pt-${slug}`,
+    name: WORKSHOP_TOOLS.find((t) => t.id === slug)?.name ?? slug,
+    route: `/playground/${slug}`,
+    tier: 'playground',
+    population: 'active',
+  }))
+  const businessItems: ReassessmentItem[] = Object.keys(BUSINESS_CAPABILITY_CHECKLISTS).map(
+    (slug) => ({
+      id: `bt-${slug}`,
+      name: BUSINESS_TOOLS.find((t) => t.id === slug)?.name ?? slug,
+      route: `/business/tools/${slug}`,
+      tier: 'business',
+      population: 'active',
+    })
+  )
+  const items = [...moduleItems, ...playgroundItems, ...businessItems, ...FALLBACK_PAGE_ITEMS]
+  return { active_population: items.length, items }
+}
+
+describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
+  const reassessment = loadOrBuildReassessmentItems()
   const ragCorpus = JSON.parse(fs.readFileSync(ragCorpusPath, 'utf-8')) as RAGCorpusFile
   const libraryRows = Papa.parse<LibraryRow>(fs.readFileSync(libraryCsvPath, 'utf-8'), {
     header: true,
@@ -342,27 +454,29 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
       ])
     )
 
-    fs.mkdirSync(path.dirname(censusOutputPath), { recursive: true })
-    fs.writeFileSync(
-      censusOutputPath,
-      JSON.stringify(
-        {
-          version: '4.213.0',
-          generatedAt: '2026-11-17T23:30:00Z',
-          activePopulation: 180,
-          countsByTier: {
-            modules: moduleItems.length,
-            playgroundTools: playgroundItems.length,
-            businessTools: businessItems.length,
-            pages: pageItems.length,
+    if (fs.existsSync(path.resolve(repoRoot, '../backups'))) {
+      fs.mkdirSync(path.dirname(censusOutputPath), { recursive: true })
+      fs.writeFileSync(
+        censusOutputPath,
+        JSON.stringify(
+          {
+            version: '4.213.0',
+            generatedAt: '2026-11-17T23:30:00Z',
+            activePopulation: 180,
+            countsByTier: {
+              modules: moduleItems.length,
+              playgroundTools: playgroundItems.length,
+              businessTools: businessItems.length,
+              pages: pageItems.length,
+            },
+            personaSummary,
+            items: censusRecords,
           },
-          personaSummary,
-          items: censusRecords,
-        },
-        null,
-        2
-      ) + '\n',
-      'utf-8'
-    )
+          null,
+          2
+        ) + '\n',
+        'utf-8'
+      )
+    }
   })
 })

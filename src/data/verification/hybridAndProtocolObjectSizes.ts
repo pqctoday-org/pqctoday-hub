@@ -7,7 +7,7 @@
  * resolver for all 304 claims in `module-claim-inventory.json`.
  *
  * Standards referenced:
- * - RFC 10024 / draft-ietf-tls-ecdhe-mlkem: Hybrid Key Exchange in TLS 1.3
+ * - RFC 10024: Hybrid Key Exchange in TLS 1.3
  *   (X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024)
  * - draft-kampanakis-curdle-ssh-pq-ke: PQ/T Hybrid Key Exchange in SSH (mlkem768x25519-sha256)
  * - RFC 9976: Streamlined NTRU Prime sntrup761 + X25519 in SSH (sntrup761x25519-sha512)
@@ -49,7 +49,7 @@ export const HYBRID_KEM_OBJECT_SIZES: Record<string, HybridKemSpec> = {
       FIPS_OBJECT_SIZES['ML-KEM-768'].signatureOrCiphertextBytes +
       CLASSICAL_KEX_SIZES.X25519.publicKeyBytes, // 1088 + 32 = 1120
     sharedSecretBytes: 64,
-    standard: 'RFC 10024 / draft-ietf-tls-ecdhe-mlkem',
+    standard: 'RFC 10024',
   },
   SecP256r1MLKEM768: {
     id: 'SecP256r1MLKEM768',
@@ -62,7 +62,7 @@ export const HYBRID_KEM_OBJECT_SIZES: Record<string, HybridKemSpec> = {
       FIPS_OBJECT_SIZES['ML-KEM-768'].signatureOrCiphertextBytes +
       CLASSICAL_ECDSA_SIZES['ECDSA P-256'].uncompressedPublicKeyBytes, // 1088 + 65 = 1153
     sharedSecretBytes: 64,
-    standard: 'draft-ietf-tls-ecdhe-mlkem',
+    standard: 'RFC 10024',
   },
   SecP384r1MLKEM1024: {
     id: 'SecP384r1MLKEM1024',
@@ -75,7 +75,7 @@ export const HYBRID_KEM_OBJECT_SIZES: Record<string, HybridKemSpec> = {
       FIPS_OBJECT_SIZES['ML-KEM-1024'].signatureOrCiphertextBytes +
       CLASSICAL_ECDSA_SIZES['ECDSA P-384'].uncompressedPublicKeyBytes, // 1568 + 97 = 1665
     sharedSecretBytes: 64,
-    standard: 'draft-ietf-tls-ecdhe-mlkem',
+    standard: 'RFC 10024',
   },
   'mlkem768x25519-sha256': {
     id: 'mlkem768x25519-sha256',

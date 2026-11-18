@@ -1860,7 +1860,7 @@ describe('All 34 Unique Playground Tools — Independent Cryptographic/Mathemati
   const collectedReceipts: PlaygroundOracleResult[] = []
 
   afterAll(() => {
-    const outDir = '/Users/pqctoday/Antigravity/backups/hub-4213'
+    const outDir = `${process.cwd()}/../backups/hub-4213`
     if (fs.existsSync(outDir) && collectedReceipts.length === 34) {
       fs.writeFileSync(
         `${outDir}/playground-34-oracle-receipts.json`,

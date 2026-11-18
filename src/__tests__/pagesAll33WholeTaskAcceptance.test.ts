@@ -5,7 +5,7 @@
  * Executes deterministic whole-task data, calculation, filter, boundary/adverse-case,
  * provenance, and cross-link checks for every one of the 33 active page-tier items in
  * the quality reassessment inventory, and writes the structured verification receipt
- * to /Users/pqctoday/Antigravity/backups/hub-4213/pages-33-whole-task-receipts.json.
+ * to ../backups/hub-4213/pages-33-whole-task-receipts.json when available.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -202,8 +202,9 @@ afterAll(() => {
     (r): r is PageWholeTaskReceipt => Boolean(r)
   )
 
-  const outDir = '/Users/pqctoday/Antigravity/backups/hub-4213'
-  if (fs.existsSync('/Users/pqctoday/Antigravity/backups')) {
+  const backupsRoot = path.resolve(process.cwd(), '../backups')
+  const outDir = path.join(backupsRoot, 'hub-4213')
+  if (fs.existsSync(backupsRoot)) {
     fs.mkdirSync(outDir, { recursive: true })
     const receiptPayload = {
       version: '4.216.0',
@@ -222,8 +223,10 @@ afterAll(() => {
 
 describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () => {
   it('matches the exact 33 page IDs from the v4.212.0 quality reassessment inventory', () => {
-    const reassessmentPath =
-      '/Users/pqctoday/Antigravity/backups/hub-4212-1116/4212-quality-reassessment.json'
+    const reassessmentPath = path.resolve(
+      process.cwd(),
+      '../backups/hub-4212-1116/4212-quality-reassessment.json'
+    )
     if (fs.existsSync(reassessmentPath)) {
       const reassessment = JSON.parse(fs.readFileSync(reassessmentPath, 'utf8')) as {
         items: Array<{ id: string; tier: string }>

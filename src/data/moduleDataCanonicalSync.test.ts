@@ -165,7 +165,7 @@ describe('304 / 304 module claim inventory verification & receipt generation', (
   const repoRoot = path.resolve(__dirname, '../..')
   const sourceInventoryPath = path.resolve(
     repoRoot,
-    '../backups/hub-4212-1116/module-claim-inventory.json'
+    'src/data/verification/module-claim-inventory.json'
   )
   const verifiedOutputPath = path.resolve(
     repoRoot,
@@ -209,23 +209,25 @@ describe('304 / 304 module claim inventory verification & receipt generation', (
     expect(matchesOracleCount).toBe(304)
     expect(outsideBoundedOracleCount).toBe(0)
 
-    fs.mkdirSync(path.dirname(verifiedOutputPath), { recursive: true })
-    fs.writeFileSync(
-      verifiedOutputPath,
-      JSON.stringify(
-        {
-          scope:
-            'All 304 numeric literal key/signature/ciphertext length claims across PKILearning module data TypeScript files, verified 304/304 against independent FIPS 203/204/205, RFC 5480/8017/8032/7748, RFC 8554/9858/8391/SP 800-208, Falcon/Candidate specifications, and RFC 10024/10073 hybrid/protocol specifications.',
-          counts: {
-            'matches-independent-oracle': matchesOracleCount,
-            'outside-bounded-raw-size-oracle': outsideBoundedOracleCount,
+    if (fs.existsSync(path.resolve(repoRoot, '../backups'))) {
+      fs.mkdirSync(path.dirname(verifiedOutputPath), { recursive: true })
+      fs.writeFileSync(
+        verifiedOutputPath,
+        JSON.stringify(
+          {
+            scope:
+              'All 304 numeric literal key/signature/ciphertext length claims across PKILearning module data TypeScript files, verified 304/304 against independent FIPS 203/204/205, RFC 5480/8017/8032/7748, RFC 8554/9858/8391/SP 800-208, Falcon/Candidate specifications, and RFC 10024/10073 hybrid/protocol specifications.',
+            counts: {
+              'matches-independent-oracle': matchesOracleCount,
+              'outside-bounded-raw-size-oracle': outsideBoundedOracleCount,
+            },
+            claims: verifiedClaims,
           },
-          claims: verifiedClaims,
-        },
-        null,
-        2
-      ) + '\n',
-      'utf-8'
-    )
+          null,
+          2
+        ) + '\n',
+        'utf-8'
+      )
+    }
   })
 })

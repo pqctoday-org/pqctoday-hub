@@ -2404,7 +2404,7 @@ describe('All 37 Business Center Tools — Registry, Exercises, Independent Deci
   const collectedReceipts: Array<Record<string, unknown>> = []
 
   afterAll(() => {
-    const outDir = '/Users/pqctoday/Antigravity/backups/hub-4213'
+    const outDir = `${process.cwd()}/../backups/hub-4213`
     if (fs.existsSync(outDir) && collectedReceipts.length === 37) {
       fs.writeFileSync(
         `${outDir}/business-37-oracle-export-receipts.json`,
