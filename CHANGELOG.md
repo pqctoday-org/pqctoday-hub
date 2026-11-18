@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.214.0] - 2026-11-18
+
+Hands-on workshops, Business Center worksheets, Playground tools, the Navigate knowledge graph, the Migrate catalog, and the AI Assistant are updated with verified decision exercises, RFC 10073 and HPKE/FN-DSA reference coverage, full Industry Landscape graph links, and resilient cloud and local assistant grounding.
+
+### Added
+
+- **Full Algorithm Industry Landscape connections in the Navigate knowledge graph** [view:/navigate] [view:/algorithms] [persona:architect] [persona:developer] [persona:grc] [persona:executive] [persona:researcher] [persona:ops]: industry use cases in the 3D knowledge graph now connect directly to the protocols they run today and migrate to, link to the Industry Landscape and Cryptographic Construction views from mechanism, industry, and use-case cards, and resolve industry technical standards to their Library records and certification bodies.
+- **HPKE reference libraries, RFC 10073 hybrid certificate implementations, and integer-mode FN-DSA libraries in the Migrate catalog** [view:/migrate] [view:/playground] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: added the official IRTF CFRG Go HPKE reference library (`cisco/go-hpke`), `filippo.io/hpke`, Rust `hpke`, `@panva/hpke`, Google Conscrypt, the IETF LAMPS Composite Signatures reference implementation, and Thomas Pornin's integer-capable draft FIPS 206 (`FN-DSA`) libraries (`fn-dsa` crate with `no_fpu` and `c-fn-dsa`), and cross-checked the PKCS#11 v3.2 HPKE service against `draft-ietf-hpke-pq-05` Appendix A, all 30 CFRG concrete hybrid KEM vectors, and `@noble/post-quantum`.
+- **Interactive decision, recovery, and comparison exercises across Learn modules, Business Center worksheets, and Playground tools** [view:/learn] [view:/business] [view:/playground] [persona:executive] [persona:grc] [persona:architect] [persona:developer] [persona:ops] [persona:cert-engineer] [persona:researcher] [persona:curious]: expanded hands-on workshops and business planning tools with live scenario comparisons, DNSSEC signed MX verification, TPM and Common Criteria scope checks, 18-profile RFC 10073 composite certificate inspection, MLS context checks, and keyboard-accessible step navigation across desktop and phone views.
+
+### Fixed
+
+- **Resilient Gemini Flash model fallback and local WebLLM citation grounding in PQC Assistant** [view:/learn] [view:/algorithms] [persona:developer] [persona:architect] [persona:grc] [persona:executive] [persona:ops] [persona:researcher] [persona:cert-engineer] [persona:curious]: the cloud assistant now automatically falls back to free-tier-compatible Gemini Flash-Lite models when a Google AI Studio key returns HTTP 402 Payment Required on the default model, and the local WebLLM assistant now synthesizes verified corpus citations for fact-checked, entity-grounded statements instead of replacing valid answers with a raw list of retrieved titles.
+
 ## [4.213.0] - 2026-11-17
 
 Every Learn module's failure-and-recovery exercise is now tailored to that module's own subject, algorithm, and decision scenario, all 304 numeric key, signature, and ciphertext size claims across the lessons are verified against independent RFC and NIST specifications, and all 34 Playground tools, 37 Business Center tools, and 33 pages are verified end-to-end across their role decisions, adverse cases, and exports.
