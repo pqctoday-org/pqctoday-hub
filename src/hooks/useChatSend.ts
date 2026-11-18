@@ -16,7 +16,10 @@ import {
 } from '@/services/chat/WebLLMService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
 import { parseCitations } from '@/services/chat/parseCitations'
-import { buildRetrievedEvidenceResponse } from '@/services/chat/groundingPolicy'
+import {
+  buildRetrievedEvidenceResponse,
+  deriveCorpusCitations,
+} from '@/services/chat/groundingPolicy'
 import { finalizeGroundedResponse } from '@/services/chat/responseFinalization'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
 import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '@/utils/analytics'
@@ -510,7 +513,8 @@ export function useChatSend() {
         const parseAndVerify = (raw: string) => {
           const { cleanContent: contentAfterCitations, citations } = parseCitations(raw)
           const { cleanContent } = parseFollowUps(contentAfterCitations)
-          return finalizeGroundedResponse(cleanContent, citations, chunks)
+          const effectiveCitations = deriveCorpusCitations(cleanContent, citations, chunks)
+          return finalizeGroundedResponse(cleanContent, effectiveCitations, chunks)
         }
 
         // One generation only. The former automatic retry doubled latency and

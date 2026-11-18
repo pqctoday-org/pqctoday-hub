@@ -4,6 +4,7 @@ import type { RAGChunk } from '@/types/ChatTypes'
 import {
   buildGroundingFailureResponse,
   buildRetrievedEvidenceResponse,
+  deriveCorpusCitations,
   enforceGrounding,
   salvageGroundedClaims,
 } from './groundingPolicy'
@@ -165,5 +166,18 @@ describe('enforceGrounding', () => {
     )
     expect(result.approved).toBe(false)
     expect(result.reasons).toContain('ungrounded-entity')
+  })
+
+  it('derives corpus-verified citations for uncited WebLLM sentences that pass fact and entity checks', () => {
+    const answer = 'ML-KEM is a Key Encapsulation Mechanism standardized in FIPS 203.'
+    const derived = deriveCorpusCitations(answer, [], chunks)
+    expect(derived).toHaveLength(1)
+    expect(derived[0].chunkId).toBe('algo-ml-kem')
+    expect(enforceGrounding(answer, derived, chunks)).toEqual({ approved: true, reasons: [] })
+  })
+
+  it('never derives corpus citations for sentences containing an ungrounded entity or fact contradiction', () => {
+    const badAnswer = 'ML-KEM is standardized in FIPS 203 and RFC 99999.'
+    expect(deriveCorpusCitations(badAnswer, [], chunks)).toEqual([])
   })
 })

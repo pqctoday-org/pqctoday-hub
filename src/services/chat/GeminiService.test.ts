@@ -181,6 +181,30 @@ describe('streamResponse', () => {
     await expect(gen.next()).rejects.toThrow('Gemini API error: 500')
   })
 
+  it('automatically falls back to free-tier Flash-Lite model when primary model returns 402 Payment Required', async () => {
+    const mockFetch = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 402 })
+      .mockResolvedValueOnce(mockSSE(['Fallback ', 'succeeded.']))
+    vi.stubGlobal('fetch', mockFetch)
+
+    const chunks: string[] = []
+    for await (const chunk of streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-3.8-flash')) {
+      chunks.push(chunk)
+    }
+
+    expect(chunks).toEqual(['Fallback ', 'succeeded.'])
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+    expect(mockFetch.mock.calls[0][0]).toContain('gemini-3.8-flash:streamGenerateContent')
+    expect(mockFetch.mock.calls[1][0]).toContain('gemini-3.5-flash-lite:streamGenerateContent')
+  })
+
+  it('throws actionable 402 Payment Required message when all candidate models return 402', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 402 }))
+    const gen = streamResponse('key', MOCK_MESSAGES, MOCK_CHUNKS, 'gemini-3.8-flash')
+    await expect(gen.next()).rejects.toThrow('402 (Payment Required)')
+  })
+
   it('should send correct model in URL', async () => {
     const mockFetch = vi.fn().mockResolvedValue(mockSSE(['ok']))
     vi.stubGlobal('fetch', mockFetch)

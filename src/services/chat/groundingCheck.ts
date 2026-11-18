@@ -117,6 +117,33 @@ const FALSE_POSITIVE_PHRASES = new Set([
   'pqc assistant',
   'learning center',
   'crypto playground',
+  'key encapsulation mechanism',
+  'key encapsulation mechanisms',
+  'post quantum cryptography',
+  'digital signature algorithm',
+  'digital signature algorithms',
+  'digital signatures',
+  'public key cryptography',
+  'public key infrastructure',
+  'symmetric encryption',
+  'asymmetric encryption',
+  'hardware security module',
+  'hardware security modules',
+  'certificate authority',
+  'certificate authorities',
+  'transport layer security',
+  'national institute',
+  'cryptographic agility',
+  'crypto agility',
+  'quantum computer',
+  'quantum computers',
+  'security levels',
+  'parameter set',
+  'parameter sets',
+  'hybrid mode',
+  'hybrid cryptography',
+  'key agreement',
+  'software bill',
 ])
 
 /**
@@ -127,11 +154,18 @@ export function checkGrounding(
   responseText: string,
   chunks: RAGChunk[]
 ): { ungroundedEntities: string[]; hasWarning: boolean } {
-  // Build grounded terms set from chunk titles + metadata
+  // Build grounded terms set from chunk titles + metadata, plus lowercase corpus text
   const groundedTerms = new Set<string>()
+  const chunkTextParts: string[] = []
 
   for (const c of chunks) {
-    if (c.title) groundedTerms.add(c.title.toLowerCase())
+    if (c.title) {
+      groundedTerms.add(c.title.toLowerCase())
+      chunkTextParts.push(c.title.toLowerCase())
+    }
+    if (c.content) {
+      chunkTextParts.push(c.content.toLowerCase())
+    }
 
     // Add metadata values that represent entity names
     if (c.metadata) {
@@ -183,7 +217,8 @@ export function checkGrounding(
     }
   }
 
-  // Check each extracted entity against grounded terms
+  // Check each extracted entity against grounded terms and lowercase chunk text
+  const fullChunkTextLower = chunkTextParts.join('\n')
   const ungroundedEntities: string[] = []
 
   for (const entity of extractedEntities) {
@@ -198,8 +233,8 @@ export function checkGrounding(
     // Skip common phrases that look like entities but aren't
     if (FALSE_POSITIVE_PHRASES.has(lower)) continue
 
-    // Check exact match
-    if (groundedTerms.has(lower)) continue
+    // Check exact match or case-insensitive substring presence in retrieved chunk text
+    if (groundedTerms.has(lower) || fullChunkTextLower.includes(lower)) continue
 
     // Check partial match — "ML-KEM" should match "ML-KEM-768" in grounded set.
     // Use boundary-aware matching (hyphen or space) to prevent false positives

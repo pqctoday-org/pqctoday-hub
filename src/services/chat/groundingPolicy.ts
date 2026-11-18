@@ -129,6 +129,124 @@ export function salvageGroundedClaims(
   return { content, citations: valid }
 }
 
+const STOPWORDS = new Set([
+  'that',
+  'this',
+  'with',
+  'from',
+  'have',
+  'been',
+  'were',
+  'they',
+  'their',
+  'what',
+  'when',
+  'where',
+  'which',
+  'while',
+  'into',
+  'only',
+  'also',
+  'than',
+  'then',
+  'some',
+  'more',
+  'most',
+  'such',
+  'used',
+  'uses',
+  'using',
+  'does',
+  'each',
+  'both',
+  'over',
+  'under',
+  'between',
+  'through',
+  'about',
+  'based',
+])
+
+/**
+ * Deterministically synthesize corpus-backed citations for any substantive statement
+ * in `answer` that was omitted from or slightly paraphrased in the model's ```citations
+ * block (common on 8B local WebLLM models), provided the statement:
+ *   1. passes `verifyFacts(statement, chunks)` (zero factual contradictions),
+ *   2. passes `checkGrounding(statement, chunks)` (zero ungrounded entities), and
+ *   3. has direct content-token overlap with at least one retrieved chunk in `chunks`.
+ * Every synthesized citation uses a verbatim `evidenceExcerpt` from the matched chunk,
+ * so it still goes through `verifyCitations`, `enforceGrounding`, and `salvageGroundedClaims`.
+ */
+export function deriveCorpusCitations(
+  answer: string,
+  existingCitations: ClaimCitation[],
+  chunks: RAGChunk[]
+): ClaimCitation[] {
+  const trimmed = answer.trim()
+  if (!trimmed || chunks.length === 0 || SAFE_REFUSAL.test(trimmed)) return existingCitations
+
+  const result: ClaimCitation[] = [...existingCitations]
+  const existingNormClaims = new Set(existingCitations.map((c) => visibleText(c.claimExcerpt)))
+
+  const rawStatements = trimmed
+    .split(/(?<=[.!?])\s+|\n+/)
+    .map((s) => s.trim().replace(/^[-+*]\s+/, '').trim())
+    .filter((s) => visibleText(s).length >= 12)
+
+  for (const rawStmt of rawStatements) {
+    const normStmt = visibleText(rawStmt)
+    if (!normStmt || existingNormClaims.has(normStmt)) continue
+
+    // Never synthesize a citation for a statement with a fact violation or ungrounded entity
+    if (verifyFacts(rawStmt, chunks).length > 0) continue
+    if (checkGrounding(rawStmt, chunks).hasWarning) continue
+
+    const stmtTokens = Array.from(
+      new Set(
+        normStmt
+          .split(/[^a-z0-9-]+/)
+          .filter((t) => t.length >= 4 && !STOPWORDS.has(t))
+      )
+    )
+    if (stmtTokens.length === 0) continue
+
+    let bestChunk: RAGChunk | null = null
+    let bestOverlap = 0
+    for (const chunk of chunks) {
+      const hay = `${chunk.title} ${chunk.content}`.toLowerCase()
+      const titleLower = chunk.title?.toLowerCase().trim() ?? ''
+      let overlap = 0
+      if (titleLower.length >= 4 && normStmt.includes(titleLower)) {
+        overlap += 2
+      }
+      for (const tok of stmtTokens) {
+        if (hay.includes(tok)) overlap += 1
+      }
+      if (overlap > bestOverlap) {
+        bestOverlap = overlap
+        bestChunk = chunk
+      }
+    }
+
+    if (bestChunk && bestOverlap >= 2) {
+      const verbatimEvidence =
+        bestChunk.title?.trim() ||
+        bestChunk.content.split(/\r?\n/)[0]?.trim() ||
+        bestChunk.content.slice(0, 80).trim()
+      if (verbatimEvidence) {
+        result.push({
+          claimExcerpt: rawStmt,
+          evidenceExcerpt: verbatimEvidence,
+          chunkId: bestChunk.id,
+        })
+        existingNormClaims.add(normStmt)
+      }
+    }
+  }
+
+  return result
+}
+
 /**
  * Last-resort corpus-only response for a non-empty retrieval result. Titles
  * and deep links come directly from retrieved chunks, so this remains useful

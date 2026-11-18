@@ -540,9 +540,9 @@ export async function* streamResponse(
   const totalChars = safeContextWindow * 4
   const ragCharBudget = Math.round(totalChars * 0.45)
   const maxHistoryMsgs = Math.min(6, Math.max(2, Math.floor(safeContextWindow / 2048)))
-  // The native comparison completes grounded answers within 512 tokens. A
-  // larger ceiling adds browser latency without improving answer coverage.
-  const maxResponseTokens = Math.min(512, Math.round(safeContextWindow * 0.125))
+  // Allow enough tokens for both the 2-4 bullet sentences and the optional
+  // structured citations fence so Qwen 3 8B does not truncate mid-fence.
+  const maxResponseTokens = Math.min(768, Math.round(safeContextWindow * 0.1875))
   const maxInventory = Math.min(25, Math.max(8, Math.floor(safeContextWindow / 400)))
 
   // RetrievalService already ranks and trust-adjusts these chunks. Re-sorting
@@ -643,10 +643,11 @@ export async function* streamResponse(
     yield final.slice(yieldedLength)
   }
 
-  // Only annotate truncation when a visible answer exists. If a model ever
-  // returns thinking-only output again, yield nothing and let the shared
-  // finalizer produce a safe extractive response from retrieved corpus data.
-  if (hitTokenLimit && final.trim().length > 0) {
+  // Only annotate truncation when a visible answer exists and the truncation
+  // did not occur inside the hidden ```citations metadata block (appending
+  // uncited text after ```citations would fail whole-answer grounding).
+  const truncatedOutsideCitations = !/```[ \t]*(?:citations|json)\b/i.test(final)
+  if (hitTokenLimit && final.trim().length > 0 && truncatedOutsideCitations) {
     yield '\n\n*(Response truncated — try asking a more specific question.)*'
   }
 }

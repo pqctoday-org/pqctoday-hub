@@ -3,10 +3,10 @@ import type { ChatMessage } from '@/types/ChatTypes'
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { buildGeminiSystemPrompt, extractEntityInventory } from './promptBuilder'
-import { DEFAULT_GEMINI_MODEL } from './modelConfig'
+import { DEFAULT_GEMINI_MODEL, GEMINI_FALLBACK_MODELS } from './modelConfig'
 
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
-export { DEFAULT_GEMINI_MODEL } from './modelConfig'
+export { DEFAULT_GEMINI_MODEL, GEMINI_FALLBACK_MODELS } from './modelConfig'
 
 /**
  * Re-export buildSystemPrompt for backwards compatibility.
@@ -51,7 +51,10 @@ const SAFETY_SETTINGS = [
 const MAX_RETRIES = 2
 const RETRY_DELAY_MS = 1_000
 
-function buildGenerationConfig(model: string) {
+function buildGenerationConfig(model: string, includeThinking = true) {
+  if (!includeThinking) {
+    return { maxOutputTokens: 2048 }
+  }
   return {
     // The assistant is intentionally concise and includes an evidence map.
     // A large ceiling encouraged needlessly long generations.
@@ -94,25 +97,50 @@ export async function* streamResponse(
   const systemPrompt = buildGeminiSystemPrompt(contextChunks, pageContext)
   const formattedMessages = formatMessages(messages)
 
-  const response = await fetchWithRetry(
-    `${GEMINI_BASE}/${model}:streamGenerateContent?key=${apiKey}&alt=sse`,
-    {
+  const requestStream = (targetModel: string, includeThinking = true) =>
+    fetchWithRetry(`${GEMINI_BASE}/${targetModel}:streamGenerateContent?key=${apiKey}&alt=sse`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
         contents: formattedMessages,
-        generationConfig: buildGenerationConfig(model),
+        generationConfig: buildGenerationConfig(targetModel, includeThinking),
         safetySettings: SAFETY_SETTINGS,
       }),
       signal,
+    })
+
+  let response = await requestStream(model, true)
+
+  // Automatic fallback when the primary model requires a paid billing tier (402),
+  // is unavailable on the key's project (404), or rejects thinkingConfig (400).
+  if (!response.ok && (response.status === 402 || response.status === 404 || response.status === 400)) {
+    const fallbackCandidates = GEMINI_FALLBACK_MODELS.filter((m) => m !== model)
+    for (const candidate of fallbackCandidates) {
+      const candidateRes = await requestStream(candidate, true)
+      if (candidateRes.ok) {
+        response = candidateRes
+        break
+      }
+      if (candidateRes.status === 400) {
+        const retryWithoutThinking = await requestStream(candidate, false)
+        if (retryWithoutThinking.ok) {
+          response = retryWithoutThinking
+          break
+        }
+      }
     }
-  )
+  }
 
   if (!response.ok) {
     const status = response.status
     if (status === 401 || status === 403) {
       throw new Error('Invalid API key. Please check your key and try again.')
+    }
+    if (status === 402) {
+      throw new Error(
+        'Gemini API error: 402 (Payment Required). Your Google AI Studio API key requires billing enabled or free-tier quota for Gemini Flash. Enable billing in Google AI Studio or switch to Local (Private) mode.'
+      )
     }
     if (status === 429) {
       throw new Error('Rate limit reached. Please wait a moment before trying again.')
