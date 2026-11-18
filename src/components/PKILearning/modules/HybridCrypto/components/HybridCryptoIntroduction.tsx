@@ -1263,8 +1263,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-primary">Composite (Dual-Algorithm)</h3>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
-                    RFC Editor queue
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                    RFC 10073
                   </span>
                 </div>
                 <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
@@ -1277,11 +1277,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </div>
                 <p className="text-xs text-muted-foreground">
                   A single composite OID identifies the algorithm pair. Both signatures must verify.
-                  Defined in <strong>draft-ietf-lamps-pq-composite-sigs-19</strong>, approved and in
-                  the RFC Editor queue (no RFC number yet). Strongest binding &mdash; the signatures
-                  are tied to the composite algorithm: a split-off ML-DSA signature fails on its
-                  own, but the traditional signature still verifies (draft §9.2.3). Not
-                  backward-compatible with legacy validators.
+                  Defined in <strong>RFC 10073</strong> (November 2026). Strongest binding &mdash;
+                  the signatures are tied to the composite algorithm: a split-off ML-DSA signature
+                  fails on its own, but the traditional signature still verifies (RFC 10073 §9.2.3).
+                  Not backward-compatible with legacy validators.
                 </p>
               </div>
             </div>

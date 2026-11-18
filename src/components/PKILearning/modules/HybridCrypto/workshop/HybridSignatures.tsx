@@ -92,7 +92,7 @@ const CONSTRUCTIONS: Array<{
     nonSeparability: 'None / WNS',
     nsColor: 'text-status-warning',
     description:
-      'Bare concatenation, shown here with no label or prefix (RFC 9955 Table 2, case 1): either component can be stripped and verified alone. RFC 9955 (section 1.3.4) notes that concatenation with a label in the message gives weak non-separability; Composite ML-DSA (draft-ietf-lamps-pq-composite-sigs section 9.2.3) works that way.',
+      'Bare concatenation, shown here with no label or prefix (RFC 9955 Table 2, case 1): either component can be stripped and verified alone. RFC 9955 (section 1.3.4) notes that concatenation with a label in the message gives weak non-separability; Composite ML-DSA (RFC 10073 section 9.2.3) works that way.',
     reference: 'RFC 9955 §2',
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc9955',
   },
@@ -736,9 +736,9 @@ export const HybridSignatures: React.FC = () => {
             binding experiment.
           </p>
           <p className="text-xs">
-            Standards: IETF draft-ietf-lamps-pq-composite-sigs (a labelled concatenation, not the
-            bare form shown here); RFC 9955, Hybrid Signature Spectrums (the concatenation, nesting
-            and fused categories); ePrint 2025/2059 (Silithium).
+            Standards: IETF RFC 10073 (a labelled concatenation, not the bare form shown here); RFC
+            9955, Hybrid Signature Spectrums (the concatenation, nesting and fused categories);
+            ePrint 2025/2059 (Silithium).
           </p>
         </div>
       </details>

@@ -76,7 +76,7 @@ export const SHARED_SOURCES = {
   pciQuantumLeapUtimaco: getStandard(
     'PCI-SSC-blog-The-Quantum-Leap-Preparing-for-Post-Quantum-Cry-2'
   ),
-  compositeMlDsa: getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
+  compositeMlDsa: getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
 } satisfies Record<string, StandardRef>
 
 // ── hybrid or standalone (owner-approved 2026-10-22; every quote checked

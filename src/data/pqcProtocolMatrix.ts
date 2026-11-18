@@ -13,7 +13,7 @@
  *                wire order, e.g. X25519MLKEM768)
  *  - pureSig   = pure PQ signature/auth (e.g. ML-DSA-only, SLH-DSA-only)
  *  - hybridSig = PQ + classical composite signature (ML-DSA component encoded
- *                FIRST per composite-sigs §4.3, raw concatenation, no ASN.1 wrapper)
+ *                FIRST per RFC 10073 §4.3, raw concatenation, no ASN.1 wrapper)
  *
  * Dimension status values (coarse — kept for backwards compatibility and as
  * the heatmap fallback when `stage` is absent):
@@ -856,8 +856,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          'The TLS WG adopted draft-ietf-tls-composite-mldsa on 2026-10-23. The X.509-layer draft-ietf-lamps-pq-composite-sigs dependency has IESG state "RFC Ed Queue".',
-        note: 'Three approaches to composite/hybrid signatures for TLS 1.3 are documented: dual-certificate negotiation remains an individual Internet-Draft, the TLS WG has adopted composite ML-DSA for the handshake, and the LAMPS composite-signature work supplies the X.509-layer construction that TLS profiles.',
+          'The TLS WG adopted draft-ietf-tls-composite-mldsa on 2026-10-23. The X.509-layer composite-signature dependency is published as RFC 10073 (November 2026).',
+        note: 'Three approaches to composite/hybrid signatures for TLS 1.3 are documented: dual-certificate negotiation remains an individual Internet-Draft, the TLS WG has adopted composite ML-DSA for the handshake, and RFC 10073 supplies the X.509-layer construction that TLS profiles.',
         refs: [
           {
             kind: 'draft',
@@ -867,12 +867,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             publishedOn: '2026-04',
           },
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-pq-composite-sigs',
+            kind: 'rfc',
+            id: 'RFC 10073',
             title:
-              'Composite ML-DSA signatures (dependency: X.509-layer composite signatures that TLS profiles)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-            publishedOn: '2026-04-21',
+              'Composite ML-DSA for Use in X.509 Public Key Infrastructure (dependency: X.509-layer composite signatures that TLS profiles)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'draft',
@@ -1083,15 +1083,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         url: 'https://datatracker.ietf.org/doc/html/rfc9925',
         date: '2026-02',
       },
+      {
+        id: 'RFC-10073',
+        title: 'RFC 10073 — Composite ML-DSA for Use in X.509 Public Key Infrastructure',
+        url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+        date: '2026-11',
+      },
     ],
     latestDraft: [
-      {
-        id: 'draft-ietf-lamps-pq-composite-sigs-19',
-        title:
-          'draft-ietf-lamps-pq-composite-sigs-19 — Composite ML-DSA in X.509 (RFC Editor queue)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-        date: '2026-04-21',
-      },
       {
         id: 'draft-ietf-lamps-pq-composite-kem-23',
         title:
@@ -1182,17 +1181,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (EDIT) — draft-ietf-lamps-pq-composite-sigs-19',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 10073 published 2026-11',
         note: 'Composite mode pairs ML-DSA with ECDSA / RSA / Ed25519 / EdDSA classical signatures.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-pq-composite-sigs',
-            title: 'Composite ML-DSA in X.509',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-            publishedOn: '2026-04-21',
+            kind: 'rfc',
+            id: 'RFC 10073',
+            title:
+              'Composite ML-DSA for Use in X.509 Public Key Infrastructure (formerly the lamps-pq-composite-sigs work item)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',
@@ -1252,7 +1252,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         pureSigNote:
           'Issues ML-DSA-65 and SLH-DSA end-entity certificates from workshop CAs; signatures and chains are verified independently.',
         hybridSigNote:
-          'Composite signatures are checked against the draft test vectors; Alt-Sig verifies both signatures and Related Certificates verifies the one-way binding.',
+          'Composite signatures are checked against the RFC 10073 test vectors; Alt-Sig verifies both signatures and Related Certificates verifies the one-way binding.',
       },
       {
         toolId: 'openssl-studio',
@@ -1950,6 +1950,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         url: 'https://datatracker.ietf.org/doc/html/rfc9810',
         date: '2025-07',
       },
+      {
+        id: 'RFC-10073',
+        title:
+          'RFC 10073 — Composite ML-DSA for Use in X.509 Public Key Infrastructure (enrollment payload)',
+        url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+        date: '2026-11',
+      },
     ],
     latestDraft: [
       {
@@ -1958,12 +1965,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'draft-ietf-lamps-pq-composite-kem-23 — Composite ML-KEM (enrollment payload, RFC Editor queue)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
         date: '2026-10-14',
-      },
-      {
-        id: 'draft-ietf-lamps-pq-composite-sigs-19',
-        title: 'draft-ietf-lamps-pq-composite-sigs-19 — Composite ML-DSA (enrollment payload)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-        date: '2026-04-21',
       },
     ],
     dimensions: {
@@ -2028,18 +2029,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote:
-          'Inherited from X.509 row — draft-ietf-lamps-pq-composite-sigs-19 in RFC Editor queue',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'Inherited from X.509 row — RFC 10073 published 2026-11',
         note: 'Composite-sig CSR / issuance flows wrap the X.509 composite-sigs construction — see X.509 row.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-pq-composite-sigs',
+            kind: 'rfc',
+            id: 'RFC 10073',
             title: 'Composite ML-DSA (enrollment payload)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-            publishedOn: '2026-04-21',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',
@@ -2079,7 +2079,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         hybridKemNote:
           'Composite KEM (draft-ietf-lamps-pq-composite-kem) deferred — awaiting composite provider support; stock OpenSSL 3.6.3 registers no composite algorithms (verified 2026-08-17).',
         hybridSigNote:
-          'Composite sigs (draft-ietf-lamps-pq-composite-sigs) deferred — awaiting composite provider support; stock OpenSSL 3.6.3 registers no composite algorithms (verified 2026-08-17).',
+          'Composite sigs (RFC 10073) deferred — awaiting composite provider support; stock OpenSSL 3.6.3 registers no composite algorithms (verified 2026-08-17).',
       },
     ],
     liveDeployments: [
@@ -3449,7 +3449,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          'Capped at the TLS 1.3 row. The TLS 1.3 binding, draft-ietf-tls-composite-mldsa-00 (October 2026), is a WG document whose abstract covers TLS 1.3; no DTLS-specific composite binding is recorded here. The X.509-layer draft-ietf-lamps-pq-composite-sigs has IESG state "RFC Ed Queue", but reusing its OIDs is not DTLS support by itself.',
+          'Capped at the TLS 1.3 row. The TLS 1.3 binding, draft-ietf-tls-composite-mldsa-00 (October 2026), is a WG document whose abstract covers TLS 1.3; no DTLS-specific composite binding is recorded here. The X.509-layer RFC 10073 is published, but reusing its OIDs is not DTLS support by itself.',
         note: 'Inherits TLS 1.3 — composite ML-DSA is specified for TLS 1.3 only (WG document); reusing the X.509 composite OIDs in DTLS is not a specified DTLS profile.',
         refs: [
           {
@@ -3461,12 +3461,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             publishedOn: '2026-10-23',
           },
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-pq-composite-sigs',
+            kind: 'rfc',
+            id: 'RFC 10073',
             title:
               'Composite ML-DSA in X.509 (dependency: X.509-layer composite signatures; not a DTLS binding)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-            publishedOn: '2026-04-21',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',
@@ -3679,7 +3679,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'wg-document',
         stageNote:
-          'Capped at the TLS 1.3 row. The TLS 1.3 binding, draft-ietf-tls-composite-mldsa-00 (October 2026), is a WG document whose abstract covers TLS 1.3; no MACsec-specific composite binding is recorded here. The X.509-layer draft-ietf-lamps-pq-composite-sigs has IESG state "RFC Ed Queue", but reusing its OIDs is not MACsec support by itself.',
+          'Capped at the TLS 1.3 row. The TLS 1.3 binding, draft-ietf-tls-composite-mldsa-00 (October 2026), is a WG document whose abstract covers TLS 1.3; no MACsec-specific composite binding is recorded here. The X.509-layer RFC 10073 is published, but reusing its OIDs is not MACsec support by itself.',
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — composite ML-DSA is specified for TLS 1.3 only (WG document); MACsec/MKA has no composite-signature profile of its own.',
         refs: [
           {
@@ -3691,12 +3691,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             publishedOn: '2026-10-23',
           },
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-pq-composite-sigs',
+            kind: 'rfc',
+            id: 'RFC 10073',
             title:
               'Composite ML-DSA in X.509 (dependency: X.509-layer composite signatures; not a MACsec binding)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-            publishedOn: '2026-04-21',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',
@@ -3836,16 +3836,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 10073 published 2026-11 (inherited via X.509)',
         note: 'Same inheritance as Pure Signature — composite ML-DSA certificate chains flow through TLS 1.3 / X.509 (see those rows); EAP-AKA’ is N/A (no signature dimension).',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-pq-composite-sigs',
+            kind: 'rfc',
+            id: 'RFC 10073',
             title: 'Composite ML-DSA in X.509 (inherited via TLS 1.3 / X.509 row)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-            publishedOn: '2026-04-21',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',
@@ -3931,16 +3932,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 10073 published 2026-11 (inherited from X.509)',
         note: 'Inherits X.509 composite-sigs for dual-cert dual-algorithm boot — see X.509 row.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-lamps-pq-composite-sigs',
+            kind: 'rfc',
+            id: 'RFC 10073',
             title: 'Composite ML-DSA in X.509 (inherited)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-            publishedOn: '2026-04-21',
+            url: 'https://www.rfc-editor.org/rfc/rfc10073.html',
+            publishedOn: '2026-11',
           },
           {
             kind: 'rfc',

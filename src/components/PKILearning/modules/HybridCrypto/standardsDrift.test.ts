@@ -51,7 +51,7 @@ function matrixRevision(family: string): string {
 }
 
 describe('hybrid certificate standards drift', () => {
-  for (const family of ['pq-composite-kem', 'pq-composite-sigs']) {
+  for (const family of ['pq-composite-kem']) {
     it(`every revision-qualified ${family} citation matches the protocol matrix`, () => {
       const current = matrixRevision(family)
       const re = new RegExp(`draft-ietf-lamps-${family}-(\\d{2})\\b`, 'g')
@@ -64,6 +64,16 @@ describe('hybrid certificate standards drift', () => {
       expect(stale, `matrix says -${current}`).toEqual([])
     })
   }
+
+  it('Composite ML-DSA is recorded as RFC 10073 in the X.509 row and on the composite format card', () => {
+    expect(x509!.latestRelease.map((d) => d.id)).toContain('RFC-10073')
+    expect(
+      x509!.latestDraft.some((d) => d.id.startsWith('draft-ietf-lamps-pq-composite-sigs'))
+    ).toBe(false)
+    const compositeCard = HYBRID_CERT_FORMATS.find((f) => f.id === 'composite')
+    expect(compositeCard?.standard).toBe('RFC 10073')
+    expect(compositeCard?.status).toBe('Published')
+  })
 
   it('each format card cites a document the latest library CSV holds, at the matrix revision', () => {
     const libFiles = readdirSync(join(ROOT, 'src/data'))

@@ -47,8 +47,8 @@ const CERT_ALGORITHMS: CertAlgoConfig[] = [
     opensslAlg: 'COMPOSITE',
     type: 'hybrid',
     formatType: 'composite',
-    standard: 'draft-ietf-lamps-pq-composite-sigs',
-    standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
+    standard: 'RFC 10073',
+    standardUrl: 'https://www.rfc-editor.org/rfc/rfc10073.html',
     // 1.3.6.1.5.5.7.6.45 = id-MLDSA65-ECDSA-P256-SHA512 in the IANA PKIX arc.
     // Previously carried 2.16.840.1.114027.80.8.1.6 — a RETIRED Entrust
     // private-enterprise OID the draft moved off. Corrected 2026-08-17.
@@ -322,9 +322,8 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                       {isComposite && result.components ? (
                         <div className="space-y-3">
                           <p className="text-xs text-muted-foreground">
-                            Component certificates generated. In a true composite cert
-                            (draft-ietf-lamps-pq-composite-sigs), both would be packaged under a
-                            single OID ({config?.oid}).
+                            Component certificates generated. In a true composite cert (RFC 10073),
+                            both would be packaged under a single OID ({config?.oid}).
                           </p>
                           {result.components.map((comp) => (
                             <div
@@ -573,10 +572,8 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
         </div>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <p className="text-xs text-muted-foreground">
-            <strong className="text-primary">
-              Composite (draft-ietf-lamps-pq-composite-sigs):
-            </strong>{' '}
-            Would use a single composite OID (e.g.,{' '}
+            <strong className="text-primary">Composite (RFC 10073):</strong> Would use a single
+            composite OID (e.g.,{' '}
             <span className="font-mono">id-MLDSA65-ECDSA-P256-SHA512 = 1.3.6.1.5.5.7.6.45</span>)
             that encodes both algorithm identifiers. The public key and signature fields each
             contain a raw concatenation with the ML-DSA component FIRST, then the classical one — no

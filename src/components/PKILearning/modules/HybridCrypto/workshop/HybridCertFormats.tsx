@@ -526,13 +526,13 @@ export const HybridCertFormats: React.FC = () => {
                   htmlFor="composite-profile"
                   className="block text-xs font-medium text-muted-foreground"
                 >
-                  Composite profile (draft §6)
+                  Composite profile (RFC 10073 §6)
                 </label>
                 {/*
                   DOCUMENTED EXCEPTION to the <FilterDropdown> contract
                   (WS22 Stage 2). The two <optgroup>s — "Recommended by
                   §10.4" and "Also implemented" — are normative guidance
-                  from the composite-sigs draft, not decoration, and
+                  from RFC 10073, not decoration, and
                   FilterDropdown has no grouped-item concept: flattening
                   the list would drop the recommendation that tells a
                   learner which profile to pick. Revisit if

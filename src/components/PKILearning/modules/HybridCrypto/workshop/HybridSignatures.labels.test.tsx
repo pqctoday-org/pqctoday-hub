@@ -4,7 +4,7 @@
  *  - RFC 9955 (July 2026): section 1.3.3 is Weak Non-Separability, section 2 the non-separability
  *    spectrum, section 1.3.4 Strong Non-Separability, Table 2 the artifact locations per category
  *    (concatenated cases 1-4, nested 5-7, fused 8-11);
- *  - draft-ietf-lamps-pq-composite-sigs section 9.2.3: Composite ML-DSA provides weak
+ *  - RFC 10073 section 9.2.3: Composite ML-DSA provides weak
  *    non-separability for both components;
  *  - Silithium is ePrint 2025/2059, not part of RFC 9955.
  */
@@ -31,12 +31,10 @@ describe('Hybrid Signature Spectrums: labels follow RFC 9955', () => {
       'Bare concatenation, shown here with no label or prefix (RFC 9955 Table 2, case 1): either component can be stripped and verified alone.'
     )
     expect(text).toContain(
-      'concatenation with a label in the message gives weak non-separability; Composite ML-DSA (draft-ietf-lamps-pq-composite-sigs section 9.2.3) works that way'
+      'concatenation with a label in the message gives weak non-separability; Composite ML-DSA (RFC 10073 section 9.2.3) works that way'
     )
     expect(text).not.toContain('no separability resistance')
-    expect(text).toContain(
-      'draft-ietf-lamps-pq-composite-sigs (a labelled concatenation, not the bare form shown here)'
-    )
+    expect(text).toContain('RFC 10073 (a labelled concatenation, not the bare form shown here)')
   })
 
   it('points the cards at the RFC 9955 sections that define what they claim', () => {

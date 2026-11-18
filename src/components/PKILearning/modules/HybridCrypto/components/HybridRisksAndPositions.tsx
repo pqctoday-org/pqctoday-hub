@@ -276,10 +276,14 @@ const POSITION_GROUPS: PositionGroup[] = [
       {
         org: 'IETF',
         position:
-          'Standardizes both options: hybrid groups for TLS 1.3 (RFC 10024) and composite signatures (in the RFC Editor queue), and pure ML-KEM groups for TLS 1.3 (still a draft). It does not choose between them for deployers.',
+          'Standardizes both options: hybrid groups for TLS 1.3 (RFC 10024) and composite signatures in X.509 (RFC 10073), and pure ML-KEM groups for TLS 1.3 (still a draft). It does not choose between them for deployers.',
         pureAlone: 'Specified alongside hybrid.',
         sources: [
           { label: 'RFC 10024', refId: 'RFC-10024' },
+          {
+            label: 'RFC 10073',
+            refId: 'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+          },
           { label: 'draft-ietf-tls-mlkem', refId: 'draft-ietf-tls-mlkem-11' },
         ],
       },

@@ -28,7 +28,7 @@ The Hybrid Cryptography module teaches how to combine classical and post-quantum
 - **Seven certificate formats in the main comparison** (five signature formats + two KEM formats):
   - **Pure PQC (ML-DSA)** — standard single-algorithm X.509 using ML-DSA signatures; OIDs standardized in RFC 9881; the workshop is tested with OpenSSL 3.6.3
   - **Pure PQC (SLH-DSA)** — hash-based signature X.509 certificates; OIDs in RFC 9909; ANSSI does not recommend systematic hybridisation for hash-based signatures such as SLH-DSA, XMSS and LMS
-  - **Composite (dual-algorithm)** — single composite OID identifies the algorithm pair; both signatures must verify; defined in draft-ietf-lamps-pq-composite-sigs-19, approved and in the RFC Editor queue (no RFC number yet)
+  - **Composite (dual-algorithm)** — single composite OID identifies the algorithm pair; both signatures must verify; defined in RFC 10073 (November 2026)
   - **Alt-Sig / Catalyst** — classical primary cert with PQC key and signature in X.509 extensions (SubjectAltPublicKeyInfo 2.5.29.72, AltSignatureAlgorithm 2.5.29.73, AltSignatureValue 2.5.29.74); legacy verifiers ignore the extensions; defined in ITU-T X.509 (2019) §7.2.2 and §9.8; relying-party policy decides whether one or both signatures are required
   - **Related Certificates (RFC 9763)** — a NEW certificate (Cert B) carries a RelatedCertificate extension holding the hash of the complete final DER of an EXISTING certificate (Cert A); the binding is one-way and Cert A is never modified; the CA issues Cert B only after a relatedCertRequest proves possession of Cert A's key; a protocol may use either certificate or both — RFC 9763 does not require both
   - **Pure PQC KEM (ML-KEM, RFC 9935)** — an ML-KEM public key in X.509; if keyUsage is present, keyEncipherment must be the only bit; the certificate is CA-issued, never self-signed; the key is used e.g. in CMS KEMRecipientInfo (RFC 9629, ML-KEM in CMS: RFC 9936)
@@ -79,7 +79,7 @@ Note: No official test vector exists for Related Certificates (RFC 9763) — the
 - RFC 9802 (LMS/XMSS stateful hash-based signature OIDs in X.509)
 - RFC 9909 (SLH-DSA stateless hash-based signature OIDs in X.509)
 - RFC 9763 (Related Certificates for PKI)
-- draft-ietf-lamps-pq-composite-sigs-19 (Composite Signatures, RFC Editor queue)
+- RFC 10073 (Composite ML-DSA for Use in X.509 Public Key Infrastructure)
 - RFC 9935 (ML-KEM OIDs in X.509)
 - draft-ietf-lamps-pq-composite-kem-23 (Composite ML-KEM, RFC Editor queue)
 - RFC 9629 (CMS KEMRecipientInfo) and RFC 9936 (ML-KEM in CMS)

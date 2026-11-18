@@ -36,7 +36,7 @@ describe('protocol matrix: inherited maturity', () => {
     // The application binding is tracked next to the X.509 dependency.
     const ids = (dtls.refs ?? []).map((r) => r.id)
     expect(ids).toContain('draft-ietf-tls-composite-mldsa')
-    expect(ids).toContain('draft-ietf-lamps-pq-composite-sigs')
+    expect(ids).toContain('RFC 10073')
   })
 
   it('MACsec composite signatures follow the same cap through the EAP-TLS bootstrap', () => {

@@ -42,7 +42,7 @@ export const IETF_CERT_VECTORS: IETFCertVector[] = [
     providerUrl: 'https://github.com/IETF-Hackathon/pqc-certificates/tree/master/providers/bc',
     hackathonRef: 'IETF Hackathon pqc-certificates r5',
     algorithmOID: '1.3.6.1.5.5.7.6.45',
-    algorithmLabel: 'id-MLDSA65-ECDSA-P256-SHA512 (draft-ietf-lamps-pq-composite-sigs)',
+    algorithmLabel: 'id-MLDSA65-ECDSA-P256-SHA512 (RFC 10073)',
     sizeBytes: 5651,
     certType: 'composite',
     derBase64:

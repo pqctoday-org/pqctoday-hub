@@ -490,7 +490,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
               <strong>Key observation:</strong> ML-DSA-65 public keys (1,952 bytes) are ~30x larger
               than ECDSA P-256 keys (65 bytes), and signatures (3,309 bytes) are ~46x larger. This
               size increase is the main trade-off for quantum resistance. Composite signature
-              standards (draft-ietf-lamps-pq-composite-sigs) would combine both.
+              standards (RFC 10073) combine both.
             </>
           )}
         </p>
