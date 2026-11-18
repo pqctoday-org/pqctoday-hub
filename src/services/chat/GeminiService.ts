@@ -86,6 +86,21 @@ async function fetchWithRetry(
   return response
 }
 
+/** True when a Gemini error body says the API key itself is invalid. */
+export async function isInvalidKeyResponse(response: Response): Promise<boolean> {
+  try {
+    const body = (await response.clone().json()) as {
+      error?: { message?: string; details?: Array<{ reason?: string }> }
+    }
+    const err = body?.error
+    if (!err) return false
+    if (err.details?.some((d) => d?.reason === 'API_KEY_INVALID')) return true
+    return /api key not valid|api key expired/i.test(err.message ?? '')
+  } catch {
+    return false
+  }
+}
+
 export async function* streamResponse(
   apiKey: string,
   messages: ChatMessage[],
@@ -111,6 +126,14 @@ export async function* streamResponse(
     })
 
   let response = await requestStream(model, true)
+
+  // Google answers an invalid or revoked key with 400 (INVALID_ARGUMENT,
+  // reason API_KEY_INVALID), not 401/403. Detect it before the model fallback
+  // chain below, which treats 400 as a thinkingConfig rejection and would
+  // otherwise end in a generic "Gemini API error: 400".
+  if (response.status === 400 && (await isInvalidKeyResponse(response))) {
+    throw new Error('Invalid API key. Please check your key and try again.')
+  }
 
   // Automatic fallback when the primary model requires a paid billing tier (402),
   // is unavailable on the key's project (404), or rejects thinkingConfig (400).
