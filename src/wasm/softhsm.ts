@@ -5235,7 +5235,7 @@ export const hsm_importECPrivateKey = (
   M: SoftHSMModule,
   hSession: number,
   scalarBytes: Uint8Array,
-  curve: 'P-256' | 'P-384' | 'P-521' = 'P-256',
+  curve: 'P-256' | 'P-384' | 'P-521' | 'X25519' = 'P-256',
   derive = true,
   extractable = true
 ): number => {

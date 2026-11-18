@@ -254,7 +254,10 @@ export const hsm_rsaDecrypt = (
 
 // ── EC / ECDSA / ECDH helpers ─────────────────────────────────────────────────
 
-export const ecCurveOID = (curve: 'P-256' | 'P-384' | 'P-521' | 'secp256k1'): Uint8Array => {
+export const ecCurveOID = (
+  curve: 'P-256' | 'P-384' | 'P-521' | 'secp256k1' | 'X25519'
+): Uint8Array => {
+  if (curve === 'X25519') return EC_OID_X25519
   if (curve === 'secp256k1') return EC_OID_SECP256K1
   if (curve === 'P-384') return EC_OID_P384
   if (curve === 'P-521') return EC_OID_P521

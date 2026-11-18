@@ -58,6 +58,53 @@ describe('Explore graph: links come from the fields that name them', () => {
     expect(mlKem?.basis).toBe('family-match')
   })
 
+  it('links a use case to the protocols in its protocolsCurrent and protocolsTarget', () => {
+    const { useCases } = loadIndustryLandscape()
+    let checked = 0
+    for (const uc of useCases) {
+      const protos = [...uc.protocolsCurrent, ...uc.protocolsTarget]
+      if (protos.length === 0) continue
+      const id = `uc-${slug(uc.industry)}-${slug(uc.useCaseId)}`
+      if (!byId.has(id)) continue
+      const protoEdges = neighbours(id).filter(
+        (e) =>
+          e.rel === 'uses' &&
+          (e.to.startsWith('proto-') || e.from.startsWith('proto-'))
+      )
+      expect(protoEdges.length, id).toBeGreaterThan(0)
+      checked += 1
+    }
+    expect(checked).toBeGreaterThan(50)
+  })
+
+  it('adds Industry Landscape and Construction deep links on mechanism, industry, and use-case nodes', () => {
+    const mlKem768 = byId.get('mech-ml-kem-768')
+    expect(mlKem768?.extraLinks?.some((l) => l.href === '/algorithms?tab=landscape&mechanism=ML-KEM')).toBe(
+      true
+    )
+    expect(
+      mlKem768?.extraLinks?.some((l) => l.href.startsWith('/algorithms?tab=landscape&construction='))
+    ).toBe(true)
+
+    const financeSector = byId.get('ind-52')
+    expect(
+      financeSector?.extraLinks?.some((l) =>
+        l.href.startsWith('/algorithms?tab=landscape&industry=')
+      )
+    ).toBe(true)
+
+    const ucWithConstructions = loadIndustryLandscape().useCases.find(
+      (u) => u.classicalConstructions.length > 0 || u.pqcConstructions.length > 0
+    )
+    expect(ucWithConstructions).toBeDefined()
+    const ucNode = byId.get(
+      `uc-${slug(ucWithConstructions!.industry)}-${slug(ucWithConstructions!.useCaseId)}`
+    )
+    expect(
+      ucNode?.extraLinks?.some((l) => l.href.startsWith('/algorithms?tab=landscape&construction='))
+    ).toBe(true)
+  })
+
   it('links a use case to the Library documents in its mechanism_refs, which are document ids, not algorithm names', () => {
     const uc = loadIndustryLandscape().useCases.find((u) => u.mechanismRefs.includes('FIPS 204'))
     expect(uc).toBeDefined()

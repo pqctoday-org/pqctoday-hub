@@ -35,6 +35,8 @@ import { vendors } from './vendorData'
 import { algorithmHref } from '@/utils/algorithmLinks'
 import { migrateProductHref } from '@/utils/migrateLinks'
 import { CRYPTO_MECHANISMS, getMechanismFamily } from './cryptoMechanisms'
+import { constructionsUsingAlgorithm, getConstruction } from './cryptoConstructions'
+import { isCrossIndustry } from './industryMatch'
 import { roadmapByVendorId } from './vendorRoadmapData'
 import { enrichmentByVendorId } from './vendorRoadmapEnrichmentData'
 
@@ -90,6 +92,28 @@ function learnModuleLink(moduleId: string): { label: string; href: string } {
 function playgroundToolLink(toolId: string): { label: string; href: string } {
   const title = TOOL_NAME_BY_ID.get(toolId) ?? toolId
   return { label: `Open tool: ${title}`, href: `/playground/${toolId}` }
+}
+
+function constructionLink(constructionId: string): { label: string; href: string } {
+  const label = getConstruction(constructionId)?.label ?? constructionId
+  return {
+    label: `Open Construction: ${label}`,
+    href: `/algorithms?tab=landscape&construction=${encodeURIComponent(constructionId)}`,
+  }
+}
+
+function industryLandscapeLink(industry: string): { label: string; href: string } {
+  return {
+    label: `Open Industry Landscape: ${industry}`,
+    href: `/algorithms?tab=landscape&industry=${encodeURIComponent(industry)}`,
+  }
+}
+
+function mechanismLandscapeLink(family: string): { label: string; href: string } {
+  return {
+    label: `Open Industry Landscape: ${family}`,
+    href: `/algorithms?tab=landscape&mechanism=${encodeURIComponent(family)}`,
+  }
 }
 
 /**
@@ -225,6 +249,18 @@ function buildNodes(
   for (const algo of algorithms) {
     const id = `mech-${slug(algo.name)}`
     if (nodes.has(id)) continue
+    const matchingFamilies = CRYPTO_MECHANISMS.filter((m) =>
+      (m.registryMembers as readonly string[]).includes(algo.name)
+    )
+    const constructionIds = Array.from(
+      new Set(
+        matchingFamilies.flatMap((m) => constructionsUsingAlgorithm(m.family).map((c) => c.id))
+      )
+    )
+    const extraLinks = [
+      ...matchingFamilies.map((m) => mechanismLandscapeLink(m.family)),
+      ...constructionIds.map(constructionLink),
+    ]
     nodes.set(id, {
       id,
       label: algo.name,
@@ -235,11 +271,22 @@ function buildNodes(
       // ?algo= opens this one algorithm's detail, whatever the visitor's
       // default status / quick-view filters would otherwise hide.
       href: algorithmHref(algo.name),
+      extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
 
+  const landscapeIndustries = Array.from(new Set(landscape.useCases.map((u) => u.industry))).sort()
+
   for (const sector of SECTOR_VOCABULARY) {
     const id = `ind-${slug(sector.sectorKey)}`
+    const matchingLandscapeIndustries = landscapeIndustries.filter((ind) => {
+      if (!ind || isCrossIndustry(ind)) return false
+      const codes = resolveToNaicsSet(ind)
+      if (codes.length === 1 && codes[0] === ind) return false
+      return sector.crossSector
+        ? codes.some((c) => sector.expandsTo.includes(c))
+        : codes.includes(sector.sectorKey)
+    })
     nodes.set(id, {
       id,
       label: sector.displayName,
@@ -251,6 +298,7 @@ function buildNodes(
       // and the Library documents tagged with it.
       href: `/compliance?ind=${encodeURIComponent(sector.displayName || sector.sectorKey)}`,
       extraLinks: [
+        ...matchingLandscapeIndustries.map(industryLandscapeLink),
         {
           label: 'Library documents for this sector',
           href: `/library?sector=${encodeURIComponent(sector.sectorKey)}`,
@@ -261,9 +309,13 @@ function buildNodes(
 
   for (const uc of landscape.useCases) {
     const id = `uc-${slug(uc.industry)}-${slug(uc.useCaseId)}`
+    const ucConstructions = Array.from(
+      new Set([...uc.classicalConstructions, ...uc.pqcConstructions])
+    )
     const extraLinks = [
       ...(uc.learnModuleId ? [learnModuleLink(uc.learnModuleId)] : []),
       ...uc.playgroundTools.map(playgroundToolLink),
+      ...ucConstructions.map(constructionLink),
     ]
     nodes.set(id, {
       id,
@@ -690,7 +742,13 @@ function buildEdges(
     )
   }
 
-  // use cases -> standards / certbody / industries, use cases -> crypto mechanisms (weak)
+  const protoNodeId = (id: string) => {
+    const nodeId = `proto-${slug(id)}`
+    return nodes.has(nodeId) ? nodeId : null
+  }
+  const landscapeStdById = new Map(landscape.standards.map((s) => [s.standardId, s]))
+
+  // use cases -> standards / certbody / industries / protocols, use cases -> crypto mechanisms (weak)
   for (const uc of landscape.useCases) {
     const ucId = `uc-${slug(uc.industry)}-${slug(uc.useCaseId)}`
     add(ucId, libraryNodeIdFor(uc.sourceLibraryRef, nodes), 'cites')
@@ -701,20 +759,42 @@ function buildEdges(
     for (const family of [...uc.pqcMechanisms, ...uc.classicalMechanisms]) {
       addMechanisms(ucId, family, 'uses')
     }
-    // mechanism_refs, related_standards and hsm_certification_refs hold Library (or
-    // compliance) ids — the documents the row cites — not algorithm names.
-    for (const ref of [...uc.mechanismRefs, ...uc.relatedStandards, ...uc.hsmCertificationRefs]) {
+    // protocolsCurrent and protocolsTarget are exact PROTOCOL_MATRIX row ids.
+    for (const protoRawId of new Set([...uc.protocolsCurrent, ...uc.protocolsTarget])) {
+      add(ucId, protoNodeId(protoRawId), 'uses')
+    }
+    // mechanism_refs and hsm_certification_refs hold Library (or compliance) ids;
+    // related_standards holds standard_ids in industry_standards_*.csv (resolved via landscapeStdById).
+    for (const ref of [...uc.mechanismRefs, ...uc.hsmCertificationRefs]) {
       add(ucId, libraryNodeIdFor(ref, nodes) ?? complianceNodeIdFor(ref, nodes), 'cites')
+    }
+    for (const stdRef of uc.relatedStandards) {
+      const stdRow = landscapeStdById.get(stdRef)
+      if (stdRow) {
+        add(ucId, libraryNodeIdFor(stdRow.libraryRef, nodes), 'cites')
+        add(ucId, certbodyNodeIdFor(stdRow.trustedSourceId, nodes), 'references')
+      } else {
+        add(ucId, libraryNodeIdFor(stdRef, nodes) ?? complianceNodeIdFor(stdRef, nodes), 'cites')
+      }
     }
     for (const productId of uc.migrateProductRefs) {
       add(ucId, productNodeIdFor(productId, nodes), 'references')
     }
   }
 
-  // industry_standards rows bridge use cases <-> standards/certbody beyond sourceLibraryRef
+  // industry_standards rows bridge use cases <-> standards/certbody beyond sourceLibraryRef,
+  // plus industry <-> standard and standard -> mechanism family references.
   for (const std of landscape.standards) {
     const stdId = libraryNodeIdFor(std.libraryRef, nodes)
     const cbId = certbodyNodeIdFor(std.trustedSourceId, nodes)
+    for (const sectorId of industryNodeIdsFor(std.industry, nodes)) {
+      add(sectorId, stdId, 'related')
+    }
+    if (stdId) {
+      for (const family of std.mechanismsReferenced) {
+        addMechanisms(stdId, family, 'references')
+      }
+    }
     for (const ucRawId of std.useCaseIds) {
       const ucId = `uc-${slug(std.industry)}-${slug(ucRawId)}`
       if (!nodes.has(ucId)) continue
@@ -756,10 +836,6 @@ function buildEdges(
     ...[...row.latestRelease, ...row.latestDraft].map((d) => d.id),
     ...Object.values(row.dimensions).flatMap((cell) => (cell.refs ?? []).map((r) => r.id)),
   ]
-  const protoNodeId = (id: string) => {
-    const nodeId = `proto-${slug(id)}`
-    return nodes.has(nodeId) ? nodeId : null
-  }
   const pqcFamilies = CRYPTO_MECHANISMS.filter((m) => !m.classical).map((m) => m.family)
   for (const row of PROTOCOL_MATRIX) {
     const protoId = `proto-${slug(row.id)}`
