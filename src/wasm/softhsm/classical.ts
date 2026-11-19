@@ -59,6 +59,7 @@ import {
   buildPSSParams,
   buildTemplate,
   checkRV,
+  signatureAccepted,
   freeTemplate,
   readUlong,
   writeBytes,
@@ -347,7 +348,8 @@ export const hsm_ecdsaVerify = (
   pubHandle: number,
   message: string | Uint8Array,
   sigBytes: Uint8Array,
-  mechType: number = CKM_ECDSA_SHA256
+  mechType: number = CKM_ECDSA_SHA256,
+  strictErrors = false
 ): boolean => {
   const mech = buildMech(M, mechType)
   const msgBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message
@@ -356,7 +358,7 @@ export const hsm_ecdsaVerify = (
   try {
     checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(ECDSA)')
     const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
-    return rv === 0
+    return signatureAccepted(rv, strictErrors, 'C_Verify(ECDSA)')
   } finally {
     M._free(mech)
     M._free(msgPtr)
@@ -731,12 +733,8 @@ export const hsm_eddsaVerify = (
   try {
     checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(EdDSA)')
     const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
-    // CKR_SIGNATURE_INVALID / CKR_SIGNATURE_LEN_RANGE are signature outcomes.
-    // Preserve the historical boolean contract for callers that have not opted in.
-    if (strictErrors && rv !== 0 && rv !== 0x000000c0 && rv !== 0x000000c1) {
-      checkRV(rv, 'C_Verify(EdDSA)')
-    }
-    return rv === 0
+    // Keep the historical boolean contract for callers that have not opted in.
+    return signatureAccepted(rv, strictErrors, 'C_Verify(EdDSA)')
   } finally {
     params.allocPtrs.forEach((p) => M._free(p))
     M._free(mech)

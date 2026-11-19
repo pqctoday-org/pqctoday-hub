@@ -99,6 +99,18 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
         'ML-KEM and ML-DSA carry the most validations in the tracker, across both algorithm (CAVP) and module (CMVP) certificates. Several Level 3 HSM module certificates list ML-KEM and ML-DSA as approved (Thales Luna T7 #5450, Kryptus #5282, Crypto4A #5497, Sansec #5503), while others from the same vendors list none (Luna K7 #4684, nShield 5s #5329 and #4745; Luna M7 #5300 lists only LMS). Read the approved-algorithm list of the exact certificate rather than a vendor name — that is the point of the exercise. An algorithm certificate is a prerequisite for listing an approved algorithm on a module certificate, but it is not a module certificate.',
       config: { step: 3 },
     },
+    {
+      id: 'capacity-sizing',
+      title:
+        '7. HSM Fleet Capacity Sizing — Model PQC throughput impact across enterprise workloads',
+      description:
+        'Open the Capacity Calculator workshop (Step 5). Select representative enterprise workloads (such as TLS handshake offloading, PKI signing, and KMS key wrapping) and compare fleet sizing across classical and PQC algorithms on current vs. next-generation HSM hardware.',
+      badge: 'Capacity',
+      badgeColor: 'bg-accent/20 text-accent border-accent/50',
+      observe:
+        'PQC key sizes and signing/encapsulation throughput shift the bottleneck differently by workload: high-frequency signing (ML-DSA) and key-storage footprint grow sharply compared to ECDSA, while symmetric bulk operations remain unchanged. Treat the calculator outputs as planning estimates and validate throughput, latency, and key-slot limits on your target HSM firmware in a staging lab before committing hardware procurement.',
+      config: { step: 4 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {

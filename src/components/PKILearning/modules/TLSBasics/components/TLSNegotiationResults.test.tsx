@@ -50,7 +50,7 @@ function recordedCaTypes(clientCa: string | undefined, serverCa?: string, mutual
   useTLSStore.setState({
     clientConfig: withCa(clientConfig, clientCa),
     serverConfig: withCa(serverConfig, serverCa, mutual),
-    results: SUCCESS,
+    results: structuredClone(SUCCESS),
   })
   render(<TLSNegotiationResults />)
   const [run] = useTLSStore.getState().runHistory

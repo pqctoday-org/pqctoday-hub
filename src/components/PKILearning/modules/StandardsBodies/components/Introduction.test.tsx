@@ -4,6 +4,8 @@ import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { Introduction } from './Introduction'
 import { COVERAGE_GRID, ORGANIZATIONS } from '../data'
+import { content } from '../content'
+import { findLibraryItemByRef } from '@/data/libraryData'
 
 const flat = () => {
   const { container } = render(
@@ -52,6 +54,29 @@ describe('StandardsBodies data: UK assurance and the side-channel test standard'
     expect(cell.note).toMatch(/different scheme from Commercial Product Assurance \(CPA\)/)
     expect(cell.note).toMatch(/no longer run by the NCSC/)
     expect(cell.note).toMatch(/certificate-consuming participant of the CCRA/)
+  })
+
+  it('uses the NCSC source target dates and exposes the cited guidance', () => {
+    const ncsc = ORGANIZATIONS.find((o) => o.id === 'ncsc-uk')!
+    expect(ncsc.mission).toMatch(
+      /by 2028.*initial migration plan.*by 2031.*highest-priority.*by 2035/s
+    )
+    expect(ncsc.mission).toMatch(/target dates in guidance/)
+    expect(ncsc.mission).not.toMatch(/three-phase roadmap|Five Eyes partners/)
+    expect(ncsc.libraryRefs).toContain('UK-NCSC-Migration-Timelines-2025')
+    expect(findLibraryItemByRef(ncsc.libraryRefs[0])?.referenceId).toBe(
+      'UK-NCSC-Migration-Timelines-2025'
+    )
+    expect(findLibraryItemByRef(ncsc.libraryRefs[0])?.shortDescription).toMatch(
+      /indicative PQC migration target dates.*2028.*2031.*2035/i
+    )
+    expect(content.standards).toContainEqual(
+      expect.objectContaining({ id: 'UK-NCSC-Migration-Timelines-2025' })
+    )
+
+    const t = flat()
+    expect(t).toMatch(/NCSC — PQC migration targets for 2028, 2031 and 2035/)
+    expect(t).not.toMatch(/NCSC — three-phase roadmap/)
   })
 
   it('no longer lists ISO/IEC 20085 as a KEM work item', () => {

@@ -335,9 +335,11 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               ))}
             </div>
             <p className="text-[10px] text-muted-foreground mt-2">
-              PQC signatures are 38&ndash;123x larger than ECDSA. For code signing this is
-              acceptable &mdash; signatures are verified once per install, and bandwidth is not the
-              primary constraint.
+              Raw signature sizes vary by algorithm: ML-DSA-44 is 2,420 bytes and SLH-DSA-SHA2-128s
+              is 7,856 bytes, about 38&ndash;123 times a 64-byte raw ECDSA P-256 signature. These
+              ratios exclude certificates, artifact framing, and transparency proofs. Signatures may
+              be checked at download, install, boot, launch, or log verification; benchmark the
+              actual workflow instead of assuming verification happens once.
             </p>
           </div>
         </div>
@@ -416,9 +418,10 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             Every major package manager uses code signing to verify package authenticity. Migration
-            to PQC varies widely &mdash; RPM is leading with hybrid ML-DSA-87+Ed448 support in RHEL
-            10.1, while npm and PyPI sign through Sigstore, whose ML-DSA support is listed as
-            experimental.
+            to PQC varies widely &mdash; RPM supports hybrid ML-DSA-87+Ed448 signatures in RHEL
+            10.1. npm registry signatures use ECDSA P-256; npm&apos;s separate provenance
+            attestations and PyPI attestations use Sigstore. Sigstore&apos;s ML-DSA identifiers
+            remain experimental.
           </p>
 
           <div className="overflow-x-auto">
@@ -451,6 +454,22 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               </tbody>
             </table>
           </div>
+
+          <p className="text-xs text-muted-foreground">
+            Sigstore&apos;s October 2026 roadmap proposes a separate, opt-in PQC infrastructure
+            stack, with a production-ready public instance targeted for mid-2027. The classical
+            public service is planned to remain supported through a future turndown tentatively set
+            for 2029 or 2030. These are project targets, not current npm or PyPI support.{' '}
+            <a
+              href="https://blog.sigstore.dev/pqc-sigstore/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 text-primary"
+            >
+              Read Sigstore&apos;s roadmap
+            </a>
+            .
+          </p>
 
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-foreground mb-1">Hybrid Signing</div>

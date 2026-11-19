@@ -16,9 +16,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-101',
-  version: '1.0.2',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-02',
+  version: '1.0.3',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -147,7 +147,7 @@ export const timelineMilestones = [
   {
     year: '2026',
     event:
-      'EO 14412 sets U.S. federal civilian PQC deadlines — key establishment 2030, digital signatures 2031',
+      'EO 14412 sets U.S. federal civilian PQC deadlines (key establishment 2030, digital signatures 2031) and NIST finalizes IR 8547 (October 2026)',
     phase: 'Policy',
   },
   {

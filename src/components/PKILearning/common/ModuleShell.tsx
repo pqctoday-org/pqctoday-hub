@@ -25,7 +25,7 @@ import {
   Suspense,
   type ReactNode,
 } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
   Trash2,
@@ -65,12 +65,7 @@ import { UnderstandingCheckCard } from '@/components/shared/UnderstandingCheckCa
 import { StepExercise } from '@/components/shared/StepExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
-import {
-  resolveModuleTool,
-  resolveModuleTools,
-  mobilePracticeTool,
-  TOOL_TITLE_BY_ID,
-} from '@/data/moduleToolLinks'
+import { resolveModuleTools, mobilePracticeTool, TOOL_TITLE_BY_ID } from '@/data/moduleToolLinks'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { personaPracticesModulePhase } from '@/data/personaConfig'
@@ -118,6 +113,9 @@ export interface WorkshopPart {
  *  drive navigation owned by the shell's progress hook (the per-module
  *  onNavigateToWorkshop / onSetWorkshopConfig callbacks). */
 export interface ModuleSlotApi {
+  /** Step state for a workshop that supplies its own navigation and panel. */
+  currentWorkshopStep: number
+  selectWorkshopStep: (step: number) => void
   /** complete the current tab and jump to the Workshop tab, optionally landing
    *  on a specific step (the per-module onNavigateToWorkshop(step?) callback) */
   goToWorkshop: (step?: number) => void
@@ -299,7 +297,7 @@ function WorkshopStepper({
         {/* Round 9, wave 2 — one question per step with feedback that names the
             concept (src/data/stepExercises.ts); nothing for steps without one. */}
         <StepExercise
-          key={parts[currentPart].id}
+          key={`step-exercise-${parts[currentPart].id}-${configKey}`}
           moduleId={moduleId}
           stepId={parts[currentPart].id}
         />
@@ -368,6 +366,8 @@ export const ModuleShell = ({
 }: ModuleShellProps) => {
   const isMobileShell = useIsMobileShell()
   const navigate = useNavigate()
+  const location = useLocation()
+  const embedded = useEmbeddedLearn()
   // Wave B1/B2 (2026-08-29) — the mobile shell's own real destination for the
   // in-prose "Start Workshop" CTA (see slotApi.goToWorkshop below and
   // MobileModuleShell's "Practice on your phone" card).
@@ -376,7 +376,10 @@ export const ModuleShell = ({
   // WS-0 learn paths: the active path scopes which workshop steps show and
   // which count toward completion (manifest/learnPathScope.ts). Modules with
   // no `paths`-tagged or `optional` steps get every step, as before.
-  const activePathId = useActiveLearnPathId(manifest.id, manifest)
+  const linkedPath = embedded
+    ? undefined
+    : (new URLSearchParams(location.search).get('path') ?? undefined)
+  const activePathId = useActiveLearnPathId(manifest.id, manifest, linkedPath)
   const requiredStepIds = requiredWorkshopStepIds(manifest, activePathId)
   // A module with learning paths states each path's own duration; show the one the learner is on.
   const activePathDuration = manifest.learnPaths?.find((p) => p.id === activePathId)?.duration
@@ -458,6 +461,8 @@ export const ModuleShell = ({
       ? (manifest.workshopSteps ?? []).findIndex((st) => st.id === manifest.startHere?.step)
       : -1
   const slotApi: ModuleSlotApi = {
+    currentWorkshopStep: currentPart,
+    selectWorkshopStep: setCurrentPart,
     goToWorkshop: (step) => {
       // Wave B1 (2026-08-29): MobileModuleShell never mounts a Workshop tab,
       // so navigateToTab('workshop') below is a dead click there — confirmed
@@ -501,7 +506,6 @@ export const ModuleShell = ({
     typeof slot === 'function' ? slot(slotApi) : slot
 
   const headerDescription = description ?? manifest.description
-  const embedded = useEmbeddedLearn()
 
   // P2.1 — context rail sourced from the manifest: ties the module to the same
   // track + framework-phase model the catalog and the simulation use.
@@ -524,6 +528,11 @@ export const ModuleShell = ({
   // iframe embed has a Learn dashboard to go back to.
   const iframeEmbedded = useIsEmbedded()
   const showBackLink = !embedded && !iframeEmbedded
+  const browseSearch = location.state?.learnBrowseSearch
+  const browseHref =
+    typeof browseSearch === 'string' && browseSearch.startsWith('?mode=browse&')
+      ? `/learn${browseSearch}`
+      : undefined
 
   // "Practice in the Simulation" is persona-aware: relevance depends on the
   // active profile, not the lesson's track. An exec practices the governance/
@@ -546,15 +555,7 @@ export const ModuleShell = ({
     const idx = entry.modules.findIndex((m) => m.id === manifest.id)
     return idx >= 0 && idx < entry.modules.length - 1 ? entry.modules[idx + 1] : null
   })()
-  // WS12 gap 3 (2026-08-21) — the module's own `playgroundTool` first, then the
-  // reverse of any tool whose required `moduleLink` already points here. Three
-  // modules (confidential-computing, iam-pqc, secure-boot-pqc) had a real tool
-  // linking to them and rendered nothing back; no manifest edit closes it.
-  const relatedTool = resolveModuleTool(manifest)
-  // Wave B (2026-09-18, WS17 signal 13): the other tools that name this module
-  // as their home. Rendered as a second row under the primary link so a
-  // module with several twins (entropy-randomness has five) offers them all.
-  const moreTools = resolveModuleTools(manifest).filter((t) => t !== relatedTool)
+  const playgroundTools = resolveModuleTools(manifest)
   const footerLink =
     'flex items-center gap-2.5 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors hover:border-primary/40 hover:bg-muted'
 
@@ -566,11 +567,11 @@ export const ModuleShell = ({
         <div className="flex flex-wrap items-center gap-2 mb-2">
           {showBackLink ? (
             <Link
-              to="/learn"
+              to={browseHref ?? '/learn'}
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft size={16} aria-hidden="true" />
-              Back to Dashboard
+              {browseHref ? 'Back to workshop search' : 'Back to Dashboard'}
             </Link>
           ) : null}
           {track ? (
@@ -755,6 +756,7 @@ export const ModuleShell = ({
           durationLabel={durationLabel}
           showStartHere={startHereIndex >= 0}
           pathPicker={pathPicker}
+          workshopSearchHref={showBackLink ? browseHref : undefined}
         />
       </LearnModuleContext.Provider>
     )
@@ -765,6 +767,29 @@ export const ModuleShell = ({
       <div className="space-y-6">
         {header}
         {pathPicker}
+        {!embedded && !iframeEmbedded && playgroundTools.length > 0 && (
+          <nav
+            aria-label="Playground tools for this module"
+            className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2"
+          >
+            <span className="flex items-center gap-1.5 text-sm font-semibold">
+              <Wrench size={15} className="text-primary" aria-hidden="true" />
+              Practice in Playground
+            </span>
+            <ul className="flex flex-wrap items-center gap-2">
+              {playgroundTools.map((tool) => (
+                <li key={tool}>
+                  <Link
+                    to={`/playground/${tool}`}
+                    className="inline-flex items-center min-h-9 rounded-lg border border-border px-2.5 text-sm text-primary hover:underline"
+                  >
+                    {TOOL_TITLE_BY_ID.get(tool) ?? tool}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <ModuleTabBar tabs={barTabs} value={activeTab} onValueChange={handleTabChange} />
 
@@ -874,36 +899,7 @@ export const ModuleShell = ({
                   </span>
                 </Link>
               ) : null}
-              {relatedTool ? (
-                <Link to={`/playground/${relatedTool}`} className={footerLink}>
-                  <Wrench size={15} className="shrink-0 text-primary" />
-                  <span className="min-w-0">
-                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
-                      Related tool
-                    </span>
-                    <span className="block truncate font-medium text-foreground">
-                      Open in the Playground
-                    </span>
-                  </span>
-                </Link>
-              ) : null}
             </div>
-            {moreTools.length > 0 ? (
-              <p className="mt-3 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Also in the Playground: </span>
-                {moreTools.map((t, i) => (
-                  <span key={t}>
-                    {i > 0 ? ' · ' : ''}
-                    <Link
-                      to={`/playground/${t}`}
-                      className="text-primary underline underline-offset-2"
-                    >
-                      {TOOL_TITLE_BY_ID.get(t) ?? t}
-                    </Link>
-                  </span>
-                ))}
-              </p>
-            ) : null}
           </div>
         ) : null}
       </div>

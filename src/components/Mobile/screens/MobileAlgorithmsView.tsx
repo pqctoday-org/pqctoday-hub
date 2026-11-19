@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { AlgoCtaStrip } from '@/shared/algorithm-actions/AlgorithmActions'
+import { StandardSizeBudget } from '@/components/Algorithms/StandardSizeBudget'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { ChevronRight, Shield } from 'lucide-react'
@@ -283,10 +284,11 @@ export function MobileAlgorithmsView() {
   // link to any algorithm opens, not just the handful charted here — and
   // against the registry until then.
   const algoParam = searchParams.get('algo')
+  const selectedDetail =
+    algoParam && perfDetails ? findAlgorithmByRef([...perfDetails.values()], algoParam) : null
   const selected: SheetAlgo | null = (() => {
     if (!algoParam) return null
-    const detail = perfDetails ? findAlgorithmByRef([...perfDetails.values()], algoParam) : null
-    if (detail) return sheetFromDetail(detail)
+    if (selectedDetail) return sheetFromDetail(selectedDetail)
     const q = algoParam.trim().toLowerCase()
     return (
       Object.values(ALGORITHM_REGISTRY).find(
@@ -456,7 +458,7 @@ export function MobileAlgorithmsView() {
               </div>
               <div>
                 <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                  Public key
+                  {selected.fipsStandard === 'FIPS 203' ? 'Encapsulation key' : 'Public key'}
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">
                   {formatByteField(selected.publicKeyBytes, selected.evidence?.publicKey)}
@@ -464,7 +466,7 @@ export function MobileAlgorithmsView() {
               </div>
               <div>
                 <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                  Private key
+                  {selected.fipsStandard === 'FIPS 203' ? 'Decapsulation key' : 'Private key'}
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">
                   {formatByteField(selected.privateKeyBytes, selected.evidence?.privateKey)}
@@ -472,7 +474,11 @@ export function MobileAlgorithmsView() {
               </div>
               <div>
                 <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
-                  Signature / ciphertext
+                  {selected.fipsStandard === 'FIPS 203'
+                    ? 'Ciphertext'
+                    : selected.fipsStandard === 'FIPS 204' || selected.fipsStandard === 'FIPS 205'
+                      ? 'Signature'
+                      : 'Signature / ciphertext'}
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">
                   {formatByteField(
@@ -492,6 +498,9 @@ export function MobileAlgorithmsView() {
                 </div>
               )}
             </dl>
+            {selectedDetail && (
+              <StandardSizeBudget key={selectedDetail.id} algorithm={selectedDetail} />
+            )}
             {selected.useCaseNotes && (
               <section className="mt-3 border-t border-border pt-3" aria-label="Use-case notes">
                 <h3 className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">

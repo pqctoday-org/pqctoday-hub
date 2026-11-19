@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { expect, test } from './fixtures/blockAnalytics'
+import { getViolations, injectAxe } from 'axe-playwright'
+
+async function expectNoSeriousAxeViolations(page: import('@playwright/test').Page) {
+  await page.waitForTimeout(350)
+  await injectAxe(page)
+  const violations = await getViolations(page, 'main', {
+    runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+  })
+  expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')).toEqual([])
+}
 
 const cases = [
   {
@@ -18,10 +28,20 @@ const cases = [
     steps: 5,
     state: 'in-progress',
   },
+  {
+    route: '/learn/pki-workshop?tab=workshop',
+    width: 390,
+    final: 'Step 8: Cert Capacity',
+    id: 'capacity',
+    steps: 8,
+    state: 'completed',
+  },
 ]
 
 for (const sample of cases) {
-  test(`${sample.route} records only the completed workshop scope`, async ({ page }) => {
+  test(`${sample.width}px ${sample.route} reaches ${sample.final} and records ${sample.state}`, async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: sample.width, height: 900 })
     await page.addInitScript(() => {
       localStorage.setItem(
@@ -34,6 +54,7 @@ for (const sample of cases) {
       page.getByRole('button', { name: 'Keep going', exact: true }),
       (button) => button.click()
     )
+    await expectNoSeriousAxeViolations(page)
     const steps = page.getByRole('navigation', { name: 'PKI workshop steps' })
     const first = steps.getByRole('button', { name: 'Step 1: Generate CSR', exact: true })
     const last = steps.getByRole('button', { name: sample.final, exact: true })
@@ -62,5 +83,9 @@ for (const sample of cases) {
       status: sample.state,
       completedSteps: expect.arrayContaining(['csr', sample.id]),
     })
+    await expectNoSeriousAxeViolations(page)
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+      .toBeLessThanOrEqual(1)
   })
 }

@@ -1,45 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Freshness } from './contentFreshness'
-// Industry breach cost baselines — IBM Cost of a Data Breach Report 2025
-// (https://www.ibm.com/reports/data-breach), read directly from the primary
-// report's Figure 3 (average total cost of a breach by industry, USD). IBM's
-// per-sector table does not use this app's taxonomy 1:1, so each key below is
-// mapped to its nearest IBM sector — see the inline comment on each line.
-// Aerospace and Automotive have no IBM sector at all; they use the Industrial
-// figure as a labeled proxy (F11 follow-up: source a dedicated figure if one
-// becomes available).
-export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-07'
-
-/**
- * Freshness stamp for the IBM-derived baselines (aggregated in
- * contentFreshness). IBM refreshes the report annually around end-July.
- *
- * STALE AS OF 2026-08-10 — the 2026 edition is published. Fetched
- * https://www.ibm.com/reports/data-breach on 2026-08-10 (capture:
- * pqctoday-priv/local-evidence-cache/library/IBM-Cost-of-a-Data-Breach-2026-landing.html):
- * the page is titled "Cost of a Data Breach Report 2026" and states a global
- * average of **USD 4.99M, "a 12% increase over last year and a record high"**.
- * That +12% is consistent with the 4.44M below being the correct 2025 figure —
- * so the table is right for 2025 and one edition behind.
- *
- * Re-sourcing needs the per-sector figures, which are inside the report PDF,
- * not on the landing page. Retrieval was ATTEMPTED on 2026-08-10 via the
- * resilient fetcher (landing page, /thank-you, and the downloads/documents
- * asset path) and failed — the report is registration-walled and the
- * post-form page resolves to a soft 404. A third-party summary was
- * deliberately not substituted: a secondary source is not the report.
- *
- * Every figure below plus the citation string in derivedFinancialDocs must
- * move together. Deliberately NOT half-updated: a 2026 global average sitting
- * on top of 2025 sector figures would be worse than a consistent 2025 table.
- *
- * RE-CHECKED 2026-10-27: https://www.ibm.com/reports/data-breach still shows
- * only the 2026 global figure (USD 4.99M, "a 12% increase over last year") and
- * a "Download report" form; no per-sector table without registration. The
- * table stays on 2025 with IBM_BASELINE_UNVERIFIED_NOTE.
- */
+// IBM's public 2026 release lists the global, financial services and energy
+// averages. The remaining rows retain the historical 2025 sector assumptions.
 export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
-  asOf: '2026-10-27',
+  asOf: '2026-11-18',
   recheck: 'https://www.ibm.com/reports/data-breach',
 }
 
@@ -68,8 +32,8 @@ export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
  *    (the download form is HubSpot-gated; the asset itself is public — located
  *    via the Wayback CDX index and then fetched from the live origin). Figures
  *    9 and 10 carry the cost anchors. One of the two was wrong.
- *  - IBM Cost of a Data Breach — still landing-page-only; the per-sector
- *    figures are inside a registration-walled PDF with no public asset path.
+ *  - IBM Cost of a Data Breach — IBM’s public 2026 release supplies three
+ *    values. Other sector figures remain historical assumptions.
  *
  * Retrieval on 2026-08-11 used the resilient fetcher
  * (pqctoday-priv/scripts/fetch_resilient_bridge.py); both PDFs verified as
@@ -82,7 +46,7 @@ export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
  *     sha256 4014f4e7a52c55125e3287b2c61ca788f9ae133a8e49408d7e34ec35ba7166cb
  */
 export const FINANCIAL_BASELINE_EVIDENCE = {
-  ibmBreachCosts: 'landing-page-only',
+  ibmBreachCosts: 'partial-primary-coverage',
   cyentiaBreachProbability: 'primary-verified',
   netDiligenceOrgSize: 'primary-verified',
   // ADDED 2026-08-14: the per-sector claim costs, from the same NetDiligence
@@ -92,35 +56,78 @@ export const FINANCIAL_BASELINE_EVIDENCE = {
   netDiligenceIndustryClaimCosts: 'primary-verified',
 } as const
 
-/**
- * User-facing caveat for the IBM-derived figures — the one financial source
- * still standing on a landing page rather than the report.
- *
- * This exists because of what happened when the OTHER two landing-page-only
- * sources were finally opened: three of their five constants were wrong. That
- * is the base rate to assume here. An unopened citation is not weak evidence
- * of a correct number, it is no evidence either way, and it reads on screen
- * exactly like a checked one. Surfaced wherever the IBM baseline is presented
- * as a source, including in exports, since those are what reach a CFO.
- */
-export const IBM_BASELINE_UNVERIFIED_NOTE =
-  "These per-sector figures come from IBM's 2025 table and are one edition behind: IBM published its 2026 global report on 29 July 2026, but the current per-sector table is not publicly available without registration. The 2025 per-sector figures are cited but unverified because that report is " +
-  'registration-walled, so only its landing page has been read. When the two ' +
-  'other financial sources behind this suite were opened in full, three of ' +
-  'their five figures turned out to be wrong — treat these as an assumption, ' +
-  'not a sourced baseline.'
+export const IBM_BREACH_BENCHMARK_SCOPE =
+  'IBM publicly reports 2026 global, financial services and energy averages. Other sector values are historical 2025 assumptions retained from the previous model. The full 2026 sector table requires registration.'
+
+const IBM_2026_BREACH_RELEASE =
+  'https://newsroom.ibm.com/2026-07-29-ibm-study-one-in-four-malicious-breaches-are-ai-enabled,-costing-companies-6-million-on-average'
+const IBM_2025_BREACH_RELEASE =
+  'https://newsroom.ibm.com/2025-07-30-ibm-report-13-of-organizations-reported-breaches-of-ai-models-or-applications,-97-of-which-reported-lacking-proper-ai-access-controls'
+
+const BREACH_BASELINE_PROVENANCE = {
+  global2026: { label: 'IBM 2026 global average (USD)', source: IBM_2026_BREACH_RELEASE },
+  sector2026: { label: 'IBM 2026 global sector average (USD)', source: IBM_2026_BREACH_RELEASE },
+  healthcare2025: {
+    label: 'IBM 2025 global healthcare average (USD, historical)',
+    source: IBM_2025_BREACH_RELEASE,
+  },
+  industrial2025: {
+    label: 'IBM 2025 Industrial proxy (USD, historical assumption)',
+    source: undefined,
+  },
+  sector2025: {
+    label: 'IBM 2025 sector average (USD, historical assumption)',
+    source: undefined,
+  },
+} as const
+
+export type BreachBaselineSourceId = keyof typeof BREACH_BASELINE_PROVENANCE
+
+export function describeBreachBaselineSource(id: BreachBaselineSourceId | undefined) {
+  if (!id || !Object.hasOwn(BREACH_BASELINE_PROVENANCE, id)) return undefined
+  return BREACH_BASELINE_PROVENANCE[id]
+}
+
+export function getIndustryBreachBaselineSourceId(
+  industry: string | undefined
+): BreachBaselineSourceId {
+  if (!industry || industry === 'Other' || !Object.hasOwn(INDUSTRY_BREACH_BASELINES, industry))
+    return 'global2026'
+  if (industry === 'Finance & Banking' || industry === 'Energy & Utilities') return 'sector2026'
+  if (industry === 'Healthcare') return 'healthcare2025'
+  if (INDUSTRY_BASELINE_IS_PROXY[industry]) return 'industrial2025'
+  return 'sector2025'
+}
+
+export function describeIndustryBreachBaseline(industry: string | undefined) {
+  return BREACH_BASELINE_PROVENANCE[getIndustryBreachBaselineSourceId(industry)]
+}
+
+const breachUsdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+})
+
+export function formatBreachBaselineUSD(amount: number) {
+  return breachUsdFormatter.format(amount)
+}
+
+export const SAVED_BREACH_BASELINE_LABEL = 'Saved simulator estimate (source edition not recorded)'
+
 export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
-  'Finance & Banking': 5_560_000, // IBM Financial
+  'Finance & Banking': 6_300_000, // IBM Financial Services, 2026
   Healthcare: 7_420_000, // IBM Healthcare
   'Government & Defense': 2_860_000, // IBM Public sector
   Technology: 4_790_000, // IBM Technology
   Telecommunications: 3_750_000, // IBM Communications
-  'Energy & Utilities': 4_830_000, // IBM Energy
+  'Energy & Utilities': 5_200_000, // IBM Energy, 2026
   'Retail & E-Commerce': 3_540_000, // IBM Retail
   Aerospace: 5_000_000, // proxy — IBM Industrial (no dedicated IBM sector)
   Automotive: 5_000_000, // proxy — IBM Industrial (no dedicated IBM sector)
   Education: 3_800_000, // IBM Education
-  Other: 4_440_000, // IBM global average
+  Other: 4_990_000, // IBM global average, 2026
 }
 
 /** Sectors above with no dedicated IBM figure — surfaced in the UI as "proxy". */
@@ -131,14 +138,6 @@ export const INDUSTRY_BASELINE_IS_PROXY: Record<string, boolean> = {
 
 /**
  * The same industries, from a source we have actually opened (2026-08-14).
- *
- * WHY BOTH. The IBM table above is cited but unread — its per-sector figures
- * sit behind a registration wall (see IBM_BASELINE_UNVERIFIED_NOTE). The
- * NetDiligence Cyber Claims Study 2025 is already downloaded, hash-verified
- * and open access, and it carries its own cost-by-sector table that nobody had
- * looked at. Rather than swap one number for another, present them side by
- * side: a reader can then see which figure was checked and which was not,
- * which is the distinction that actually matters here.
  *
  * THESE TWO COLUMNS DO NOT MEASURE THE SAME THING, and the gap is not error.
  * IBM estimates the TOTAL cost of a breach to the organisation. NetDiligence

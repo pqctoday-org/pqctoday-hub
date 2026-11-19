@@ -254,9 +254,10 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           <p>
             OpenSSH has been a pioneer in deploying post-quantum key exchange. Since version 8.5
             (March 2021), it has shipped with <strong>sntrup761x25519-sha512</strong> &mdash; a
-            hybrid of Streamlined NTRU Prime and X25519. In OpenSSH 9.9 (September 2024),
-            <strong>mlkem768x25519-sha256</strong>, OpenSSH&rsquo;s hybrid of ML-KEM-768 (FIPS 203,
-            standardised by NIST) and X25519, was added.
+            hybrid of Streamlined NTRU Prime and X25519 (default from 9.0). In OpenSSH 9.9
+            (September 2024), <strong>mlkem768x25519-sha256</strong>, OpenSSH&rsquo;s hybrid of
+            ML-KEM-768 (FIPS 203, standardised by NIST) and X25519, was added, and in OpenSSH 10.0
+            (April 2025) it became the default key exchange.
           </p>
           <div className="space-y-2">
             {[
@@ -271,7 +272,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                 version: 'OpenSSH 9.0',
                 year: '2022',
                 kex: 'sntrup761x25519-sha512',
-                status: 'Default',
+                status: 'Default (9.0–9.9)',
                 statusColor: 'text-success',
               },
               {
@@ -280,6 +281,13 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
                 kex: 'mlkem768x25519-sha256',
                 status: 'Available',
                 statusColor: 'text-primary',
+              },
+              {
+                version: 'OpenSSH 10.0',
+                year: '2025',
+                kex: 'mlkem768x25519-sha256',
+                status: 'Default (10.0+)',
+                statusColor: 'text-success',
               },
             ].map((entry) => (
               <div

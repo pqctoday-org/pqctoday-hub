@@ -85,6 +85,7 @@ import { KeyConfigPanel } from './operate/KeyConfigPanel'
 import { GuidedLifecyclePanel } from './operate/GuidedLifecyclePanel'
 import type { OperateContext } from './operate/types'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { ToolExercise } from '@/components/shared/ToolExercise'
 import { OP_TEMPLATES } from '@/wasm/kmip/ttlv/opTemplates'
 
 // Counted from the operation templates and the algorithm list, so the tour's
@@ -266,7 +267,7 @@ function whatThisMeans(r: OpResult): string | null {
   if (r.status === 'Skip')
     return 'Not a policy denial — the algorithm itself has no implementation here. A real appliance (or a different demo scoped to it) would actually run this.'
   if (!r.ok && r.operation === 'Sign' && r.resultReason === WRONG_KEY_LIFECYCLE_STATE)
-    return "This is refused before the policy even runs — Sign requires an Active key by protocol, and Revoke just moved this one out of Active. No policy has to name this rule; it's built into the KMIP lifecycle itself."
+    return 'Wrong Key Lifecycle State. Signing requires an Active key. Activate a new Pre-Active key before signing, or create a replacement if the key has been revoked. The engine applies this lifecycle check before the policy.'
   const d = decisionOf(r)
   if (d.kind === 'Rekey')
     return `The policy didn't just allow this — it migrated the key to ${d.algorithm ?? 'a quantum-safe algorithm'}. The old key was retired automatically; your application code never changed.`
@@ -418,10 +419,6 @@ export function KmipPlaygroundView() {
   // the engine apply its own default (RSA-2048 / P-256). Reset whenever the
   // algorithm changes so a stale curve choice can't leak onto a PQC pick.
   const [keyLength, setKeyLength] = useState<number | undefined>(undefined)
-  const onSelectAlgo = (value: string) => {
-    setAlgo(value)
-    setKeyLength(ALGORITHMS.find((a) => a.value === value)?.sizes?.[0]?.length)
-  }
   const [message, setMessage] = useState('hello post-quantum world')
   /** CACP guide overlay — the canonical markdown guide is staged next to the
    * policies by scripts/build-kmip-wasm.sh, so it always matches the shipped
@@ -489,6 +486,22 @@ export function KmipPlaygroundView() {
    * ciphertext+tag concatenated, ready to hand straight back to Decrypt). */
   const [encIvHex, setEncIvHex] = useState<string | null>(null)
 
+  const clearWorkingKey = () => {
+    setPriv(null)
+    setPub(null)
+    setSigHex(null)
+    setCtHex(null)
+    setEncIvHex(null)
+  }
+
+  const onSelectAlgo = (value: string) => {
+    if (busy || value === algo) return
+    setAlgo(value)
+    setKeyLength(ALGORITHMS.find((a) => a.value === value)?.sizes?.[0]?.length)
+    clearWorkingKey()
+    setResult(null)
+  }
+
   const chosen = ALGORITHMS.find((a) => a.value === algo)
   const isKem = chosen?.kind === 'kem'
   const isSymmetric = chosen?.kind === 'symmetric'
@@ -551,11 +564,7 @@ export function KmipPlaygroundView() {
 
   const onCreate = async () => {
     if (isSpecOnly) {
-      setPriv(null)
-      setPub(null)
-      setSigHex(null)
-      setCtHex(null)
-      setEncIvHex(null)
+      clearWorkingKey()
       setResult(skipResult(algo))
       return
     }
@@ -588,8 +597,9 @@ export function KmipPlaygroundView() {
     }
   }
   const onActivate = async () => {
-    if (priv) await run({ op: 'Activate', uid: priv })
-    if (pub) await run({ op: 'Activate', uid: pub })
+    if (!priv) return
+    const activation = await run({ op: 'Activate', uid: priv })
+    if (activation?.ok && pub) await run({ op: 'Activate', uid: pub })
   }
   const onSign = async () => {
     if (!priv) return
@@ -633,8 +643,8 @@ export function KmipPlaygroundView() {
   // (denied) Sign attempt, not the Revoke, so that's what the learner sees.
   const onRevokeThenRetrySign = async () => {
     if (!priv) return
-    await run({ op: 'Revoke', uid: priv })
-    await run({ op: 'Sign', uid: priv, text: message })
+    const revocation = await run({ op: 'Revoke', uid: priv })
+    if (revocation?.ok) await run({ op: 'Sign', uid: priv, text: message })
   }
 
   // Reset the workbench scratch state — the audit/activity trail, the last result,
@@ -649,11 +659,7 @@ export function KmipPlaygroundView() {
     setAudit([])
     setResult(null)
     setLastSpec(null)
-    setPriv(null)
-    setPub(null)
-    setSigHex(null)
-    setCtHex(null)
-    setEncIvHex(null)
+    clearWorkingKey()
   }
 
   // Counts policy loads so a slow, older load that settles after a newer one
@@ -1330,6 +1336,22 @@ export function KmipPlaygroundView() {
               <GlossaryProvider data={KMIP_GLOSSARY_DATA}>
                 <div className="flex items-start gap-4 max-lg:overflow-x-hidden">
                   <div className="min-w-0 flex-1">
+                    <div className="mb-4 flex flex-wrap gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setOperateMode('single')
+                          setPlane('operate')
+                        }}
+                      >
+                        Try the signing-key lifecycle
+                      </Button>
+                      {!devHidden && (
+                        <Button variant="outline" onClick={() => setPlane('dev')}>
+                          Open the KMIP Python workbench
+                        </Button>
+                      )}
+                    </div>
                     {/* Guided-mode intro card (D8): the three-step agility story,
                         for every persona in Guided mode; Expert hides it. Was
                         executive-only on the old Agility plane (B+ remediation 4.5). */}
@@ -1433,6 +1455,7 @@ export function KmipPlaygroundView() {
                           <Button
                             variant="ghost"
                             size="sm"
+                            disabled={busy}
                             onClick={onReset}
                             className="ml-auto h-7 gap-1.5 px-2.5 text-[11px] text-muted-foreground hover:text-foreground"
                           >
@@ -1449,13 +1472,26 @@ export function KmipPlaygroundView() {
                               Each button sends a real KMIP 3.0 request.
                             </p>
 
+                            {!isKem && !isSymmetric && !isSpecOnly && (
+                              <p className="mb-3 text-xs text-muted-foreground">
+                                Create a sample signing pair and try Sign while it is Pre-Active.
+                                Activate the pair, then sign and verify the same message. Revoke the
+                                signing key and compare the next Sign result.
+                              </p>
+                            )}
                             <KeyConfigPanel operate={operate} />
                             <GuidedLifecyclePanel operate={operate} />
                           </section>
 
                           <div className="flex flex-col gap-4 min-w-0">
-                            <section className="rounded-xl border border-border bg-card p-4">
-                              <h3 className="font-semibold flex items-center gap-2 text-foreground">
+                            <section
+                              aria-labelledby="kmip-lifecycle-result"
+                              className="rounded-xl border border-border bg-card p-4"
+                            >
+                              <h3
+                                id="kmip-lifecycle-result"
+                                className="font-semibold flex items-center gap-2 text-foreground"
+                              >
                                 <ScrollText size={16} /> Result
                               </h3>
                               {!result ? (
@@ -1634,6 +1670,8 @@ export function KmipPlaygroundView() {
           onEnd={tour.endTour}
         />
       )}
+
+      {pathname === '/playground/cacp' && <ToolExercise toolId="cacp-kmip" />}
 
       {/* CACP guide overlay — policy language + workbench testing + KMIP 3.0
           hybrid status; content staged beside the policies so it matches the

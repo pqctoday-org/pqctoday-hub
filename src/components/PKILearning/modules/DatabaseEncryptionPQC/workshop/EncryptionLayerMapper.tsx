@@ -89,7 +89,7 @@ const LAYER_INFO: LayerInfo[] = [
     classicalAlgorithm:
       'AES-based encryption of data files (cipher and mode vary by product; for example AES-CBC in pg_tde). In the products this module models, the DEK is wrapped by a master key; where that wrap uses RSA-OAEP, it is the part that needs a post-quantum replacement.',
     pqcUpgradePath:
-      'AES-256 data encryption is already quantum-safe. Only the DEK wrapping (RSA-OAEP) needs upgrade to ML-KEM-1024 via external KMS/HSM. Online re-encryption supported (Oracle/SQL Server).',
+      'A sufficiently strong symmetric data cipher such as AES-256 is not broken by Shor’s algorithm. Review asymmetric key establishment and key wrapping across the database/KMS path. ML-KEM-1024 via an external KMS/HSM is a design proposal unless the named product documents support. Oracle online tablespace rekey and SQL Server DEK regeneration change/re-encrypt data keys; they are not simple protector re-wraps.',
     depth: 'Innermost (storage)',
   },
 ]

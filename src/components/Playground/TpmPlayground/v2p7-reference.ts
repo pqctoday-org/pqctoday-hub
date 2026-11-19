@@ -1,22 +1,25 @@
 /**
  * v2p7-reference.ts
  *
- * Spec reference tables for the V2.7 RC1 PQC EK Credential Profile,
- * pasted from the canonical pqctoday-tpm headers so the hub UI can
- * cross-check TPM-resident artifacts against the spec without round-tripping
- * to a server. Sources:
+ * Spec reference tables for the published TCG EK Credential Profile v2.7
+ * (16 March 2026), retained locally so the hub UI can cross-check the
+ * emulator's sample artifacts without round-tripping to a server. The values
+ * below were rechecked against the final published tables. Sources:
+ *   - TCG EK Credential Profile for TPM Family 2.0, Level 0, Version 2.7
+ *     (published 2026-03-16):
+ *     https://cdn.trustedcomputinggroup.org/production/TCG_EK_Credential_Profile_for_TPM_Family_2_0_Level_0_Version_2_7_Pub_cafa3d55b0.pdf
  *
  *   - PolicyB SHA-256/384/512:
  *       pqctoday-tpm/swtpm/src/swtpm_setup/tcg_pqc_ek_constants.h §A.1.3-5
- *       (V2.7 RC1 Table 8)
+ *       (published V2.7 Table 8)
  *   - NIST CSOR OIDs (id-alg-ml-kem-{512,768,1024}, id-ml-dsa-{44,65,87}):
  *       pqctoday-tpm/tests/compliance/vectors/v2p7-ek-cert-oids/
- *       v2p7_ek_cert_spki_oids.h  (V2.7 RC1 §6.2.x)
+ *       v2p7_ek_cert_spki_oids.h  (published V2.7 §6.2.x)
  *   - FIPS pubkey sizes: NIST FIPS 203 Table 3, NIST FIPS 204 Table 2.
  */
 
 export interface V2p7EkSpec {
-  /** Display name, exactly as in V2.7 RC1 Tables 13/14. */
+  /** Display name, as in published V2.7 Tables 13/14. */
   label: string
   /** Per-EK persistent handle (pqctoday-tpm allocation). */
   persistentHandle: number
@@ -41,7 +44,7 @@ export interface V2p7EkSpec {
   nistCsorOidDotted: string
 }
 
-// ── V2.7 RC1 Table 8 — PolicyBSHA{256,384,512} digests ─────────────────────
+// ── Published V2.7 Table 8 — PolicyBSHA{256,384,512} digests ───────────────
 // Sourced exactly from tcg_pqc_ek_constants.h lines 86-115.
 
 export const POLICYB_SHA256 = new Uint8Array([

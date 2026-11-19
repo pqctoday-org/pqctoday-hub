@@ -146,7 +146,7 @@ export const ACVP_VS_MODULE_BOUNDARY_SCOPE = {
   acvpKatScope:
     'NIST CAVP ACVP JSON test vectors verify mathematical algorithm conformance of an implementation under test (IUT) for the exact registered capability, parameters, and operational environment.',
   moduleBoundaryScope:
-    'CMVP FIPS 140-3 validates a cryptographic module against its security requirements (module specification and boundary, interfaces, self-tests, key and SSP zeroization, physical security, with entropy sources validated separately under SP 800-90B); non-invasive (side-channel) requirements are currently N/A by default. Common Criteria/EUCC evaluates the product against its own Security Target, and only what the ST claims.',
+    'CMVP FIPS 140-3 validates a cryptographic module against its security requirements (module specification and boundary, interfaces, self-tests, key and SSP zeroization, physical security, with entropy sources validated separately under SP 800-90B). Common Criteria/EUCC evaluates the product against its own Security Target, and only what the ST claims.',
 } as const
 
 /**

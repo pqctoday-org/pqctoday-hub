@@ -14,7 +14,8 @@ describe('database re-encryption commands and figures are stated as they work', 
       'ONLINE conversion builds new datafiles and needs free space'
     )
     expect(ragSummary).toContain(`Oracle: \`${cmd}\``)
-    expect(ragSummary).toContain(`Oracle (\`${cmd}\`)`)
+    expect(ragSummary).toContain(`Oracle: \`${cmd}\` changes/re-encrypts the tablespace`)
+    expect(ragSummary).toContain('builds replacement datafiles (needs free space)')
     expect(flat(introSource)).toContain('ALTER TABLESPACE ... ENCRYPTION ONLINE REKEY')
     expect(plannerSource).not.toContain("commandNote: 'ALTER TABLESPACE <name> REKEY'")
     expect(ragSummary).not.toContain('ALTER TABLESPACE REKEY')
@@ -35,6 +36,12 @@ describe('database re-encryption commands and figures are stated as they work', 
 
   it('names the MongoDB key-vault re-wrap call for client-side encrypted fields', () => {
     expect(flat(introSource)).toContain('KeyVault.rewrapManyDataKey')
+    expect(plannerSource).toContain('security.kmip.rotateMasterKey: true (MongoDB Enterprise)')
+    expect(flat(plannerSource)).toContain(
+      're-encrypts its internal keystore; database keys remain unchanged'
+    )
+    expect(flat(plannerSource)).toContain('re-wraps existing DEKs with a new CMK')
+    expect(ragSummary).not.toContain('db.adminCommand({ rotateMasterKey: 1 })')
   })
 
   it('labels CPU and downtime figures as samples and carries no readiness percentage', () => {

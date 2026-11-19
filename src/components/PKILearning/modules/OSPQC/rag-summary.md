@@ -12,7 +12,7 @@ Module covering OS-level PQC migration including system TLS policies, SSH host k
 
 ## Workshop Steps
 
-1. OS Crypto Inventory
+1. OS Crypto Inventory — compare recorded TLS 1.3 groups for a host OpenSSL client and a bundled Go client after changing each client’s settings independently.
 2. System TLS Configurator
 3. SSH Host Key Migrator
 4. Package Signing Migrator

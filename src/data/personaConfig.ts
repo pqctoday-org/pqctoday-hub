@@ -1281,27 +1281,27 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     },
     {
       afterPhase: 'grc-risk-obligations',
-      route: '/business',
+      route: '/business/tools/compliance-checklist',
       label: 'Scope a Compliance Checklist',
       purpose: 'Turn what applies to you into a checklist with owners and evidence links.',
     },
     {
       afterPhase: 'grc-governance-inventory',
-      route: '/business',
+      route: '/business/tools/risk-treatment-plan',
       label: 'Record a Risk Treatment',
       purpose: 'Log an exposure, its owner, and the treatment you chose.',
     },
     {
       afterPhase: 'grc-governance-inventory',
-      route: '/business',
+      route: '/business/tools/vendor-scorecard',
       label: 'Review Vendor Evidence',
       purpose: "Score a supplier's PQC claims against what they can actually prove.",
     },
     {
       afterPhase: 'grc-assurance-closure',
-      route: '/business',
+      route: '/business/tools/migration-verification',
       label: 'Complete a Verification Artifact',
-      purpose: 'Define exit criteria and check them before calling a migration closed.',
+      purpose: 'Save a sample closure review with exit criteria and handover notes.',
     },
   ],
   developer: [

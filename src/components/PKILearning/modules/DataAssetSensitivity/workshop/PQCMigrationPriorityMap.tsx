@@ -5,6 +5,8 @@ import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
   getPriorityBand,
+  formatConfidentialityPeriod,
+  computeAssetHndlRiskYear,
   SENSITIVITY_TIERS,
   RETENTION_CONFIGS,
   ASSET_TYPES,
@@ -91,6 +93,7 @@ function AssetPriorityRow({ scored, rank }: { scored: ScoredAsset; rank: number 
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
             <span>Retention: {retConfig?.label}</span>
+            <span>Confidentiality: {formatConfidentialityPeriod(scored)}</span>
             {earliestDeadline.year && (
               <span
                 className={
@@ -238,6 +241,7 @@ export const PQCMigrationPriorityMap: React.FC<PQCMigrationPriorityMapProps> = (
       `Illustrative quantum-threat year assumption: ${crqcYear}`,
       `Scoring weights (%): sensitivity ${weights.sensitivity}, retention ${weights.retention}, compliance ${weights.compliance}, confidentiality window ${weights.hndlWindow}`,
       'Scores are educational planning estimates, not predictions of a quantum computer or proof of protection.',
+      'Confidentiality period follows the [NIST security life of data](https://csrc.nist.gov/glossary/term/security_life_of_data) concept. The threshold assumes a captured copy under quantum-vulnerable protection.',
       '',
       '## Priority Summary',
       `- Critical (≥80): ${bandCounts.Critical} asset(s)`,
@@ -253,6 +257,10 @@ export const PQCMigrationPriorityMap: React.FC<PQCMigrationPriorityMapProps> = (
       const band = getPriorityBand(s.compositeScore)
       lines.push(`### ${i + 1}. ${s.name} — Score: ${s.compositeScore} (${band.label})`)
       lines.push(`- **Sensitivity:** ${s.sensitivityTier} | **Retention:** ${s.retentionPeriod}`)
+      lines.push(`- **Confidentiality period:** ${formatConfidentialityPeriod(s)}`)
+      lines.push(
+        `- **HNDL threshold year:** ${computeAssetHndlRiskYear(s, crqcYear) ?? 'Not applicable'}`
+      )
       lines.push(`- **Current encryption:** ${s.currentEncryption}`)
       if (s.pqcRecommendation.kem) lines.push(`- **PQC KEM:** ${s.pqcRecommendation.kem}`)
       if (s.pqcRecommendation.signature)

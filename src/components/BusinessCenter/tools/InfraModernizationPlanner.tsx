@@ -34,6 +34,8 @@ export interface InfraModernizationState {
   firmwareUpgradeScheduled: boolean
   hardwareReplacementPlanned: boolean
   cloudKmsConfigured: boolean
+  hsmReadyDate?: string
+  pkiCutoverDate?: string
   // Network & middleboxes
   protocols: Record<ProtocolId, boolean>
   // Capacity plan
@@ -53,10 +55,38 @@ export type ProtocolId = (typeof PROTOCOL_OPTIONS)[number]
 
 const yesNo = (on: boolean): string => (on ? 'Yes' : 'No')
 
-/** Highest number mentioned in a string ("5-15" → 15, "3x" → 3, "banana" → null). */
-export function parseUpperNumber(s: string): number | null {
-  const nums = (s.match(/\d+(\.\d+)?/g) ?? []).map(Number).filter(Number.isFinite)
-  return nums.length ? Math.max(...nums) : null
+/** Read a whole value or ascending range with its optional unit. */
+export function parseUpperNumber(s: string, unit?: 'percent' | 'factor'): number | null {
+  const match = s
+    .trim()
+    .match(/^([+]?[0-9]+(?:\.[0-9]+)?)(?:\s*[-–]\s*([0-9]+(?:\.[0-9]+)?))?\s*([%x×])?$/i)
+  if (!match) return null
+  const [, first, last, suffix] = match
+  if ((unit === 'percent' && suffix && suffix !== '%') || (unit === 'factor' && suffix === '%')) {
+    return null
+  }
+  const lower = Number(first)
+  const upper = Number(last ?? first)
+  return Number.isFinite(upper) && lower <= upper ? upper : null
+}
+
+function scheduleFit(state: InfraModernizationState): string {
+  const ready = state.hsmReadyDate ?? ''
+  const cutover = state.pkiCutoverDate ?? ''
+  if (!ready || !cutover) return 'Enter the HSM readiness and PKI cutover dates.'
+  for (const value of [ready, cutover]) {
+    const date = new Date(value)
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(value) ||
+      !Number.isFinite(date.getTime()) ||
+      date.toISOString().slice(0, 10) !== value
+    ) {
+      return 'Enter valid calendar dates for the HSM and PKI milestones.'
+    }
+  }
+  if (cutover < ready) return 'Schedule conflict. The PKI cutover precedes its HSM readiness date.'
+  if (cutover === ready) return 'Same-day milestones. Record the prerequisite check before cutover.'
+  return 'The planned HSM readiness date precedes the PKI cutover.'
 }
 
 /**
@@ -67,13 +97,19 @@ export function parseUpperNumber(s: string): number | null {
  */
 export function capacityFlags(cpuImpactPct: string, certStorageMultiplier: string): string[] {
   const out: string[] = []
-  const cpu = parseUpperNumber(cpuImpactPct)
+  const cpu = parseUpperNumber(cpuImpactPct, 'percent')
+  if (cpu === null && cpuImpactPct.trim()) {
+    out.push('CPU impact is unassessed. Enter one percentage or an ascending range.')
+  }
   if (cpu !== null && cpu >= 20) {
     out.push(
       `High CPU impact (up to ${cpu}%) - verify compute headroom or plan to scale out before PQC cutover.`
     )
   }
-  const mult = parseUpperNumber(certStorageMultiplier)
+  const mult = parseUpperNumber(certStorageMultiplier, 'factor')
+  if (mult === null && certStorageMultiplier.trim()) {
+    out.push('Certificate storage is unassessed. Enter one multiplier or an ascending range.')
+  }
   if (mult !== null && mult >= 2) {
     out.push(
       `Certificate stores grow ~${mult}x - provision additional cert-store capacity before cutover.`
@@ -112,6 +148,9 @@ export function buildMarkdown(s: InfraModernizationState): string {
   lines.push(`- **Firmware upgrade scheduled:** ${yesNo(s.firmwareUpgradeScheduled)}`)
   lines.push(`- **Hardware replacement planned (2–4 yr):** ${yesNo(s.hardwareReplacementPlanned)}`)
   lines.push(`- **Cloud KMS configured for PQC:** ${yesNo(s.cloudKmsConfigured)}`)
+  lines.push(`- **Planned HSM readiness:** ${s.hsmReadyDate || '_(TBD)_'}`)
+  lines.push(`- **Planned PKI cutover:** ${s.pkiCutoverDate || '_(TBD)_'}`)
+  lines.push(`- **Dependency check:** ${scheduleFit(s)}`)
   lines.push('')
 
   lines.push('## Network Compatibility Planning')
@@ -176,6 +215,8 @@ export const InfraModernizationPlanner: React.FC = () => {
       firmwareUpgradeScheduled: false,
       hardwareReplacementPlanned: false,
       cloudKmsConfigured: false,
+      hsmReadyDate: '',
+      pkiCutoverDate: '',
       protocols: {
         'TLS 1.3': true,
         'IKEv2/IPsec': false,
@@ -319,6 +360,40 @@ export const InfraModernizationPlanner: React.FC = () => {
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">HSM &amp; KMS Upgrade Schedule</h3>
+        <p className="text-xs text-muted-foreground">
+          In this planning check, the CA depends on the upgraded HSM. Enter the target dates and
+          compare the sequence. A date records a plan; verify access to the required mechanism in
+          staging.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label htmlFor="infra-hsm-ready-date" className="block text-xs font-medium">
+            Planned HSM readiness date
+            <Input
+              id="infra-hsm-ready-date"
+              type="date"
+              className="mt-1"
+              value={state.hsmReadyDate ?? ''}
+              onChange={(event) => set('hsmReadyDate', event.target.value)}
+            />
+          </label>
+          <label htmlFor="infra-pki-cutover-date" className="block text-xs font-medium">
+            Planned PKI cutover date
+            <Input
+              id="infra-pki-cutover-date"
+              type="date"
+              className="mt-1"
+              value={state.pkiCutoverDate ?? ''}
+              onChange={(event) => set('pkiCutoverDate', event.target.value)}
+            />
+          </label>
+        </div>
+        <p
+          role="status"
+          aria-label="Infrastructure schedule result"
+          className="text-sm font-semibold"
+        >
+          {scheduleFit(state)}
+        </p>
         <div className="block">
           <label
             htmlFor="infra-hsm-inventory"
@@ -331,14 +406,11 @@ export const InfraModernizationPlanner: React.FC = () => {
             className="mt-1"
             value={state.hsmInventory}
             onChange={(e) => set('hsmInventory', e.target.value)}
-            placeholder="e.g. 4× Luna 7 (fw 7.7, PQC-capable), 2× nCipher (fw 12.6, no PQC)"
+            placeholder="Fictional example: Northstar HSM-10, fw 3.2, signing evidence pending"
           />
           <p className="mt-1 text-[11px] text-muted-foreground">
-            Framework vendor notes (activity 6.2): Thales Luna 7.8.0+ introduced initial PQC support
-            (ML-KEM, ML-DSA); the Luna HSM Firmware v7.9 Release: NIST-Approved PQC Algorithms (June
-            2025) adds further capabilities. Utimaco Quantum Protect is a new hardware variant — not
-            a firmware upgrade for existing devices, so budget for hardware replacement if running
-            older Utimaco models.
+            Record the installed model, firmware, intended signing operation and the compatibility
+            evidence that must be complete before the CA uses the HSM.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -425,12 +497,9 @@ export const InfraModernizationPlanner: React.FC = () => {
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">Capacity Plan</h3>
         <p className="text-[11px] text-muted-foreground rounded-md border border-border bg-muted/30 p-2">
-          <span className="font-semibold text-foreground">Why these thresholds:</span> the
-          framework&apos;s capacity guidance (activity 6.5) expects roughly a 5–15% CPU increase for
-          signature-heavy workloads and a 2–5× certificate-storage increase at scale. The readiness
-          flags below trigger at ≥20% CPU impact — above that typical range, so headroom needs
-          explicit verification — and at ≥2× storage growth — the low end of the expected range, so
-          provisioning should already be underway.
+          The worksheet flags a stated CPU impact of at least 20% and a storage multiplier of at
+          least 2× for further review. Use a value or an ascending range per field. Measure capacity
+          limits for the target workload and equipment.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="block">
@@ -498,7 +567,7 @@ export const InfraModernizationPlanner: React.FC = () => {
         formats={['markdown', 'pdf', 'docx', 'csv']}
         csvData={decisionModelToCsv({
           inputs: state,
-          result: capacityNotes,
+          result: { capacityNotes, dependency: scheduleFit(state) },
           decisionBrief: exportMarkdown,
         })}
         onExport={() => {

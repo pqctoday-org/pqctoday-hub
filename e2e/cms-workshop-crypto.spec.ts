@@ -229,7 +229,7 @@ async function runSignDemo(
 
   const success = page
     .getByText(
-      /(?:Both halves \(ML-DSA \+ classical\) verified|Signature verifies against signer cert)/i
+      /(?:Both halves \(ML-DSA \+ classical\) verified|Signature verifies against signer cert|Signature verified OK)/i
     )
     .first()
   const failure = page.getByText(/Signature did NOT verify|composite.*(failed|rc=)/i).first()

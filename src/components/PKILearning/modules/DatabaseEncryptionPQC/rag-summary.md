@@ -14,7 +14,7 @@ This module covers quantum-safe migration for database encryption layers, TDE ke
 
 ## TDE Migration Steps
 
-Transparent Data Encryption (TDE) protects database files on disk using AES-256. The data encryption layer is already quantum-safe — only the DEK wrapping algorithm (RSA-OAEP) requires migration to ML-KEM-1024.
+Transparent Data Encryption (TDE) encrypts database files on disk. Cipher and mode vary by product and configuration; AES-256 is one common option and retains a 128-bit margin against generic quantum search. Review key establishment, DEK wrapping, KMS links and TLS separately. An ML-KEM wrapping workflow is a design proposal unless the named product documents support.
 
 **6-step migration procedure:**
 
@@ -24,13 +24,13 @@ Transparent Data Encryption (TDE) protects database files on disk using AES-256.
 
 3. **Master Key Rotation** — Generate ML-KEM-1024 key pair in HSM. Use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF; this is this module's design, since FIPS 203 says the shared secret can be used directly as a key in symmetric-key cryptography), and wrap the new 256-bit DEK with that key; store the KEM ciphertext (1,568 bytes) plus the wrapped DEK alongside the old RSA entry during transition.
 
-4. **Online Re-Encryption** — Oracle: `ALTER TABLESPACE <name> ENCRYPTION ONLINE REKEY` (ONLINE conversion builds new datafiles and needs free space). SQL Server: `ALTER DATABASE ENCRYPTION KEY REGENERATE WITH ALGORITHM = AES_256`. MongoDB: `db.adminCommand({ rotateMasterKey: 1 })`. In this module's sample plan these run online, with no application downtime assumed.
+4. **Data-key rewrite, only when the DEK changes** — Oracle: `ALTER TABLESPACE <name> ENCRYPTION ONLINE REKEY` changes/re-encrypts the tablespace and builds replacement datafiles (needs free space). SQL Server: `ALTER DATABASE ENCRYPTION KEY REGENERATE WITH ALGORITHM = AES_256` starts database encryption work and has operation restrictions. MongoDB Enterprise's `security.kmip.rotateMasterKey: true` rotates the KMIP master key and re-encrypts the internal keystore while leaving database keys unchanged. MongoDB Queryable Encryption/CSFLE uses the separate `KeyVault.rewrapManyDataKey()` API to re-wrap field DEKs. Do not assume zero downtime; test workload, availability and recovery for the product/version.
 
 5. **Integrity Verification** — DBCC CHECKDB (SQL Server) / Oracle RMAN validation. Test ML-KEM ciphertext decapsulation end-to-end.
 
 6. **Decommission Classical Keys** — Mark RSA keys as DEACTIVATED (not deleted — needed for old backups). Enforce ML-KEM-only policy for new key wrapping.
 
-**Key insight**: AES-256 symmetric data encryption is already quantum-safe. PQC migration scope for TDE is limited to DEK wrapping algorithm replacement.
+**Key insight**: Shor's algorithm does not break AES, while Grover's algorithm reduces effective key-search strength. Keep the data cipher and the asymmetric key-management path as separate migration questions; do not assume that replacing a DEK protector leaves data files, service availability or KMS integration unchanged.
 
 ---
 
@@ -89,9 +89,9 @@ The three patterns differ in key custody and revocation, not in a measured PQC r
 
 ### HIPAA § 164.312(a)(2)(iv)
 
-- Encryption of ePHI at rest; records retained 50+ years (highest HNDL risk)
-- Healthcare databases are highest-priority migration target
-- HHS has not yet issued PQC-specific guidance; NSM-10 applies to federal systems
+- Prioritize ePHI datasets whose confidentiality requirements extend for decades; retention depends on record type and jurisdiction.
+- HIPAA does not prescribe ML-KEM or a PQC migration date. The Security Rule requires risk analysis and treats encryption as an addressable implementation specification.
+- Apply federal NSS requirements only where the system is in scope; do not generalize them to healthcare databases as a sector.
 
 ### DORA Art. 9 (Digital Operational Resilience Act)
 
@@ -123,9 +123,9 @@ No vendor PQC dates for databases are cited in this module; any vendor date or r
 
 ## Key Technical Facts
 
-- **AES-256 is quantum-safe**: Grover's algorithm reduces effective bits from 256 to 128 — still above the 112-bit security minimum. No data file re-encryption needed.
-- **DEK wrapping is the PQC target**: RSA-OAEP and ECDH used to wrap DEKs must be replaced with a standardized KEM: ML-KEM-768 is the FIPS 203 default; ML-KEM-1024 where a policy such as CNSA 2.0 requires it.
-- **ML-KEM-1024 key sizes**: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.
-- **Online migration**: Oracle (`ALTER TABLESPACE <name> ENCRYPTION ONLINE REKEY`) and SQL Server (`ALTER DATABASE ENCRYPTION KEY REGENERATE`) support zero-downtime TDE re-keying.
+- **AES-256 and quantum search**: Grover's algorithm reduces generic key-search strength to roughly 128 bits; the database engine's actual cipher and mode depend on product and configuration. A data-key protector change does not itself establish that the data cipher or file was changed.
+- **ML-KEM parameter sets**: FIPS 203 recommends ML-KEM-768 as its default parameter set. CNSA 2.0 requires ML-KEM-1024 for applicable National Security Systems use. Check the policy and integration instead of treating one set as universal.
+- **ML-KEM-1024 sizes**: Encapsulation key: 1,568 bytes; ciphertext: 1,568 bytes. If a design stores one ciphertext with each wrapped DEK, overhead scales with the key count and serialization format; this module does not present it as a supported engine feature or measured estimate.
+- **Key rotation distinctions**: Oracle online tablespace rekeying creates replacement datafiles and needs free space; SQL Server DEK regeneration invokes database encryption work and has operation restrictions. MongoDB Enterprise `security.kmip.rotateMasterKey` re-encrypts its internal keystore and leaves database keys unchanged; MongoDB `KeyVault.rewrapManyDataKey` re-wraps client-side DEKs. Verify operation, workload, availability and recovery behavior for the named product/version.
 - **HNDL risk**: Database backups captured today with RSA-wrapped DEKs may be decryptable after a CRQC arrives. Priority: databases with long data retention (healthcare, financial records, classified).
 - **KMIP 2.1**: Key Management Interoperability Protocol version 2.1 (published Dec 2020, latest ratified OASIS standard); ML-KEM, ML-DSA and SLH-DSA Cryptographic Algorithm values are defined in KMIP 3.0 (Committee Specification Draft 02, May 2026), which is not ratified; KMIP 2.1 has none. Thales CipherTrust Manager’s release notes list ML-KEM on its web interface from v2.20.0; HashiCorp Vault's only PQC is experimental transit ML-DSA in Vault Enterprise 1.19.

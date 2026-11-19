@@ -40,7 +40,7 @@ describe('algorithm names do not establish framework compliance', () => {
   })
   it('uses the year only as an explicit illustrative assumption, not a compliance deadline', () => {
     render(<ComplianceGapAnalysis riskEntries={[row('RSA-2048')]} />)
-    fireEvent.change(screen.getByRole('slider', { name: 'CRQC arrival year' }), {
+    fireEvent.change(screen.getByRole('slider', { name: 'CRQC planning year (scenario)' }), {
       target: { value: '2028' },
     })
     expect(

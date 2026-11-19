@@ -163,7 +163,7 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     adverseFailureExplanation:
       'A 1-byte mutation in the fragmented IKEv2 ML-KEM-768 ciphertext produces a divergent `SKEYSEED` via implicit rejection, causing `IKE_AUTH` decryption and authentication to fail.',
     recoveryActionExplanation:
-      'Enable RFC 7383 IKEv2 fragmentation (or RFC 8229 TCP encapsulation) and restore intact payload reassembly so `IKE_INTERMEDIATE` completes cleanly.',
+      'For a message-size problem, confirm RFC 7383 IKEv2 fragmentation and intact reassembly. If the path blocks UDP, check that both peers are configured for RFC 9329 TCP encapsulation. Retest the authentic exchange and inspect the resulting associations.',
     transferQuestion: {
       prompt:
         'What changes if a remote-access VPN tunnel carries long-lived classified traffic over a 10-year retention window but IKEv2 migration is delayed past 2030?',
@@ -879,17 +879,17 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
   },
   'web-gateway-pqc': {
     moduleId: 'web-gateway-pqc',
-    domainTitle: 'Edge CDN / Reverse Proxy (NGINX / Envoy) Ingress & Origin TLS 1.3 PQC',
+    domainTitle: 'Edge CDN / Reverse Proxy Ingress & Origin TLS 1.3',
     roleDecisionPrompt:
-      'Verify that edge web gateways terminate `X25519MLKEM768` on client ingress AND re-encrypt upstream origin connections with `ML-KEM-768` key confirmation.',
+      'Compare the observed TLS groups on the client and origin sides of a re-encrypting gateway. Decide whether the origin can use the same hybrid policy.',
     artifactLabel: 'Fictional edge-to-origin TLS 1.3 ML-KEM-768 KeyShare & AEAD confirmation',
     algorithmVariant: { operation: 'kem', variant: 768 },
     validCaseExplanation:
-      'Both the ingress and upstream origin TLS 1.3 legs decapsulate intact `ML-KEM-768` key shares and pass `Finished` AEAD confirmation.',
+      'With compatible peers, both TLS sessions can negotiate `X25519MLKEM768`. TLS Finished verifies a MAC over the handshake transcript.',
     adverseFailureExplanation:
-      'A 1-byte corruption in the upstream `ML-KEM-768` key share derives a mismatched secret via implicit rejection, failing the origin TLS 1.3 `Finished` check (`502 Bad Gateway`).',
+      'When the gateway strictly offers the hybrid group and the origin supports only classical X25519, there is no shared group for that TLS leg.',
     recoveryActionExplanation:
-      'Restore intact upstream TLS 1.3 negotiation and monitor `$ssl_curve` access-log metrics across both ingress and origin legs.',
+      'Restore hybrid group support at the origin and verify both negotiated groups independently.',
     transferQuestion: {
       prompt:
         'What changes if an enterprise enables `X25519MLKEM768` on its public CDN edge, but leaves the CDN-to-origin leg over the public internet on classical ECDH until 2031?',
@@ -897,7 +897,7 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
         'The origin leg remains vulnerable to HNDL interception across the transit network and violates the 2030 end-to-end migration policy.',
     },
     productionToolCheck:
-      'Check `ssl_ecdh_curve X25519MLKEM768:X25519` on both ingress and proxy_ssl upstream directives and inspect `$ssl_curve` telemetry under load.',
+      'For deployed proxies, capture independent evidence for both negotiated groups. In NGINX HTTP, the server-side `$ssl_curve` describes the client-to-NGINX handshake. Check the upstream leg using its own TLS observations.',
   },
   'emv-payment-pqc': {
     moduleId: 'emv-payment-pqc',

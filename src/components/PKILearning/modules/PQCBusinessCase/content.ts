@@ -3,9 +3,10 @@
  * Structured content for the PQCBusinessCase module.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
-import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import {
-  CNSA_2022_PREFERRED_LABEL,
+  CNSA_ACQUISITION_LABEL,
+  CNSA_MANDATE_LABEL,
   CNSA_PHASE_OUT_LABEL,
 } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getStandard } from '@/data/standardsRegistry'
@@ -13,8 +14,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-business-case',
   version: '1.0.2',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-11',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('NIST IR 8547'),
@@ -49,11 +50,27 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: CNSA_2022_PREFERRED_LABEL,
-      year: CNSA_2_0.softwarePreferred,
+      label: CNSA_ACQUISITION_LABEL,
+      year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0',
     },
     { label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    {
+      label: CNSA_MANDATE_LABEL,
+      year: CNSA_2_0.networkingExclusive,
+      source: 'CNSA 2.0',
+    },
+    {
+      label: 'NIST: covered quantum-vulnerable public-key parameters deprecated after 2030',
+      year: NIST_DEPRECATION.deprecateClassical,
+      source: 'NIST IR 8547',
+    },
+    {
+      label:
+        'NIST: covered quantum-vulnerable public-key parameters disallowed after 2035 under NIST standards/guidelines',
+      year: NIST_DEPRECATION.disallowClassical,
+      source: 'NIST IR 8547',
+    },
   ],
 
   narratives: {
@@ -64,6 +81,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has 5 interactive steps: Cost Model Explorer — compares six costing models on one scenario before committing to a number. ROI Calculator — computes migration cost, annual benefit, payback period, and 3-year ROI percentage from live migration-catalog data. Breach Scenario Simulator — adjustable sliders for data records, regulatory fines, and HNDL years; compares classical vs. quantum breach costs with industry-specific baselines. Cost of Inaction — compares start-now and delayed-migration scenarios over the same 10-year horizon. Board Pitch Builder — assembles a board-ready executive brief populated from the earlier steps.',
     relatedStandards:
-      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). Ponemon Institute Cost of a Data Breach methodology. FAIR (Factor Analysis of Information Risk)',
+      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final October 2026). NSA CNSA 2.0 (FAQ v2.2, National Security Systems only). EO 14412 & OMB M-26-15 (U.S. federal civilian agencies). EU PQC Coordinated Implementation Roadmap v1.1 (advisory; DORA/NIS2 impose cyber risk-management duties rather than fixed PQC dates). NIST CSWP 39. Ponemon Institute / IBM Cost of a Data Breach methodology. FAIR (Factor Analysis of Information Risk)',
   },
 }

@@ -16,7 +16,10 @@ import { useLocation } from 'react-router'
  * hash targets asynchronously with extra state (Changelog, Threats) handle the
  * hash themselves.
  */
-export function useScrollToHash({ timeoutMs = 4000 }: { timeoutMs?: number } = {}) {
+export function useScrollToHash({
+  timeoutMs = 4000,
+  focusTarget = false,
+}: { timeoutMs?: number; focusTarget?: boolean } = {}) {
   const { hash } = useLocation()
 
   useEffect(() => {
@@ -31,6 +34,7 @@ export function useScrollToHash({ timeoutMs = 4000 }: { timeoutMs?: number } = {
       const el = document.getElementById(id)
       if (el && el.getClientRects().length > 0) {
         el.scrollIntoView({ block: 'start' })
+        if (focusTarget) el.focus({ preventScroll: true })
         return
       }
       if (Date.now() - started < timeoutMs) frame = requestAnimationFrame(tick)
@@ -41,7 +45,7 @@ export function useScrollToHash({ timeoutMs = 4000 }: { timeoutMs?: number } = {
       cancelled = true
       cancelAnimationFrame(frame)
     }
-  }, [hash, timeoutMs])
+  }, [focusTarget, hash, timeoutMs])
 }
 
 function decodeHash(hash: string): string {

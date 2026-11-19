@@ -211,6 +211,30 @@ const LibCard: React.FC<LibCardProps> = ({
         <div>
           <h4 className="font-semibold text-sm text-foreground mb-1">FIPS Details</h4>
           <p className="text-sm text-muted-foreground">{lib.fipsDetails}</p>
+          {(lib.fipsEvidenceUrl || lib.fipsRoadmapUrl) && (
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+              {lib.fipsEvidenceUrl && (
+                <a
+                  className="text-primary underline underline-offset-2"
+                  href={lib.fipsEvidenceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Validation evidence
+                </a>
+              )}
+              {lib.fipsRoadmapUrl && (
+                <a
+                  className="text-primary underline underline-offset-2"
+                  href={lib.fipsRoadmapUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Vendor roadmap
+                </a>
+              )}
+            </div>
+          )}
         </div>
         <div>
           <h4 className="font-semibold text-sm text-foreground mb-1">Performance</h4>

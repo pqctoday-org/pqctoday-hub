@@ -23,6 +23,7 @@ import {
   Pencil,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ChoosePqcOperation } from './ChoosePqcOperation'
 
 const MODULE_ID = 'pqc-101'
 
@@ -176,7 +177,8 @@ const Step2WhatsChanging: React.FC = () => {
       name: 'Code-Based',
       description:
         'Based on the hardness of decoding error-correcting codes. Among the oldest PQC proposals.',
-      algorithms: 'Classic McEliece, HQC',
+      algorithms:
+        'HQC (NIST Round 4 selection, IR 8545); Classic McEliece (Round 4 finalist, not selected by NIST)',
       strengths: 'Decades of cryptanalysis, very conservative',
       color: 'border-l-accent',
     },
@@ -191,8 +193,8 @@ const Step2WhatsChanging: React.FC = () => {
           <InlineTooltip term="Post-Quantum Cryptography">Post-Quantum Cryptography</InlineTooltip>{' '}
           (PQC)
         </strong>{' '}
-        algorithms — new math that even quantum computers can&apos;t crack. The first standards were
-        published in <strong>August 2024</strong>.
+        algorithms designed to resist known attacks by classical and quantum computers. The first
+        standards were published in <strong>August 2024</strong>.
       </p>
 
       <div className="glass-panel p-5">
@@ -238,6 +240,8 @@ const Step2WhatsChanging: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <ChoosePqcOperation />
 
       <h4 className="font-semibold text-foreground">Three Families of PQC</h4>
       <div className="space-y-3">
@@ -422,6 +426,8 @@ const PERSONA_LABELS: Record<string, string> = {
   architect: 'Security Architect',
   researcher: 'Researcher / Academic',
   ops: 'IT Ops / DevOps',
+  curious: 'Curious / General Reader',
+  'cert-engineer': 'Certification / Validation Engineer',
 }
 const LEVEL_LABELS: Record<string, string> = {
   new: 'New to PQC',
@@ -615,7 +621,8 @@ const Step5NextSteps: React.FC = () => {
 }
 
 export const PQC101Module: React.FC = () => {
-  const { markStepComplete, updateModuleProgress } = useModuleStore()
+  const { markLearnSectionRead, updateModuleProgress } = useModuleStore()
+  const progress = useModuleStore((state) => state.modules[MODULE_ID])
   const [currentStep, setCurrentStep] = useState(0)
   const startTimeRef = useRef(0)
 
@@ -638,40 +645,34 @@ export const PQC101Module: React.FC = () => {
     }
   }, [updateModuleProgress])
 
-  const handleStepComplete = (stepId: string, nextIndex: number) => {
-    markStepComplete(MODULE_ID, stepId)
-    updateModuleProgress(MODULE_ID, { status: 'in-progress' })
-    setCurrentStep(nextIndex)
-  }
-
-  const handleFinalComplete = () => {
-    markStepComplete(MODULE_ID, 'next-steps')
-    updateModuleProgress(MODULE_ID, { status: 'completed' })
-  }
-
   const steps = [
     {
       id: 'why-pqc',
+      section: 'quantum-threat',
       title: 'Why PQC?',
       component: <Step1WhyPQC />,
     },
     {
       id: 'whats-changing',
+      section: 'algorithms',
       title: "What's Changing",
       component: <Step2WhatsChanging />,
     },
     {
       id: 'the-timeline',
+      section: 'timeline',
       title: 'The Timeline',
       component: <Step3Timeline />,
     },
     {
       id: 'who-acts',
+      section: 'readiness',
       title: 'Who Needs to Act',
       component: <Step4WhoNeedsToAct />,
     },
     {
       id: 'next-steps',
+      section: 'next-steps',
       title: 'Your Next Steps',
       component: <Step5NextSteps />,
     },
@@ -691,33 +692,41 @@ export const PQC101Module: React.FC = () => {
         <div className="max-md:overflow-x-auto max-md:no-scrollbar">
           <div className="flex max-md:w-max max-md:min-w-full max-md:gap-x-6 md:justify-between relative">
             <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
-            {steps.map((step, idx) => (
-              <Button
-                variant="ghost"
-                key={step.id}
-                onClick={() => setCurrentStep(idx)}
-                className={`flex flex-col items-center gap-2 group max-md:shrink-0 min-h-[44px] md:min-h-0 ${
-                  idx === currentStep ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background text-sm
-                  ${
-                    idx === currentStep
-                      ? 'border-primary text-primary'
-                      : idx < currentStep
-                        ? 'border-status-success text-status-success'
-                        : 'border-border text-muted-foreground'
-                  }
-                `}
+            {steps.map((step, idx) => {
+              const read =
+                Boolean(progress?.learnSectionChecks?.[step.section]) ||
+                Boolean(progress?.completedSteps.includes(step.id))
+              return (
+                <Button
+                  variant="ghost"
+                  key={step.id}
+                  onClick={() => setCurrentStep(idx)}
+                  aria-current={idx === currentStep ? 'step' : undefined}
+                  aria-label={read ? `${step.title} (read)` : step.title}
+                  className={`flex flex-col items-center gap-2 group max-md:shrink-0 min-h-[44px] md:min-h-0 ${
+                    idx === currentStep ? 'text-primary' : 'text-muted-foreground'
+                  }`}
                 >
-                  {idx < currentStep ? '✓' : idx + 1}
-                </div>
-                <span className="text-[10px] md:text-xs font-medium max-w-[80px] text-center leading-tight">
-                  {step.title}
-                </span>
-              </Button>
-            ))}
+                  <div
+                    aria-hidden="true"
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background text-sm
+                      ${
+                        idx === currentStep
+                          ? 'border-primary text-primary'
+                          : read
+                            ? 'border-status-success text-status-success'
+                            : 'border-border text-muted-foreground'
+                      }
+                    `}
+                  >
+                    {read ? '✓' : idx + 1}
+                  </div>
+                  <span className="text-[10px] md:text-xs font-medium max-w-[80px] text-center leading-tight">
+                    {step.title}
+                  </span>
+                </Button>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -745,11 +754,13 @@ export const PQC101Module: React.FC = () => {
         {currentStep === steps.length - 1 ? (
           <Button
             variant="ghost"
-            onClick={handleFinalComplete}
+            onClick={() => markLearnSectionRead(MODULE_ID, 'next-steps')}
             data-workshop-target="learn-stepper-complete"
             className="px-6 py-2 min-h-[44px] md:min-h-0 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
           >
-            ✓ Complete Module
+            {progress?.learnSectionChecks?.['next-steps']
+              ? '✓ Section marked as read'
+              : 'Mark this section as read'}
           </Button>
         ) : (
           <Button
@@ -757,7 +768,8 @@ export const PQC101Module: React.FC = () => {
             onClick={() => {
               const step = steps[currentStep]
 
-              handleStepComplete(step.id, currentStep + 1)
+              markLearnSectionRead(MODULE_ID, step.section)
+              setCurrentStep(currentStep + 1)
             }}
             data-workshop-target="learn-stepper-next"
             className="px-6 py-2 min-h-[44px] md:min-h-0 font-bold rounded-lg transition-colors"

@@ -102,7 +102,7 @@ export const KPI_DIMENSIONS: KpiDimension[] = [
     weight: 15,
     description: 'Percentage of in-scope systems with a complete cryptographic inventory on file.',
     measurementUnit: '% of total in-scope systems',
-    targetThreshold: '100% by end of Phase 2',
+    targetThreshold: 'Example target: 100% by end of Phase 2',
   },
   {
     id: 'algorithms-migrated',
@@ -111,7 +111,7 @@ export const KPI_DIMENSIONS: KpiDimension[] = [
     description:
       'Percentage of classical public-key algorithm instances replaced with approved PQC alternatives.',
     measurementUnit: '% of inventoried algorithm instances',
-    targetThreshold: '100% Critical-tier by compliance deadline',
+    targetThreshold: 'Example target: 100% of Critical-tier instances by applicable deadline',
   },
   {
     id: 'vendors-assessed',
@@ -120,7 +120,7 @@ export const KPI_DIMENSIONS: KpiDimension[] = [
     description:
       'Percentage of third-party vendors who have provided a documented PQC readiness status.',
     measurementUnit: '% of material vendors',
-    targetThreshold: '90% assessed by start of migration phase',
+    targetThreshold: 'Example target: 90% assessed by start of migration phase',
   },
   {
     id: 'compliance-gaps-closed',
@@ -129,7 +129,7 @@ export const KPI_DIMENSIONS: KpiDimension[] = [
     description:
       'Percentage of identified regulatory compliance gaps (CNSA 2.0, NIST IR 8547, local mandates) that have been remediated.',
     measurementUnit: '% of open compliance gaps',
-    targetThreshold: '100% critical gaps closed before regulatory deadline',
+    targetThreshold: 'Example target: close all critical gaps before applicable deadline',
   },
   {
     id: 'budget-utilization',
@@ -138,7 +138,7 @@ export const KPI_DIMENSIONS: KpiDimension[] = [
     description:
       'Ratio of actual spend to approved budget, tracked quarterly to flag over/under-runs early.',
     measurementUnit: 'Actual spend / approved budget (%)',
-    targetThreshold: 'Within ±10% of quarterly plan',
+    targetThreshold: 'Example target: within ±10% of quarterly plan',
   },
   {
     id: 'risk-trend',
@@ -147,7 +147,7 @@ export const KPI_DIMENSIONS: KpiDimension[] = [
     description:
       'Direction of the aggregate quantum-threat risk score over the past 90 days (improving, stable, or worsening).',
     measurementUnit: 'Trend direction + delta score',
-    targetThreshold: 'Improving or stable at each quarterly review',
+    targetThreshold: 'Example target: improving or stable at each quarterly review',
   },
 ]
 
@@ -175,7 +175,7 @@ export const STAKEHOLDER_ROLES: StakeholderRole[] = [
     messagingFocus:
       'Risk and compliance posture — frame PQC migration as a business continuity and regulatory obligation, not a technology project.',
     reportingCadence: 'Quarterly executive summary (1 page + dashboard)',
-    escalationTrigger: 'Any compliance deadline at risk or budget variance >20%',
+    escalationTrigger: 'Example trigger: compliance deadline at risk or budget variance >20%',
   },
   {
     id: 'technical-leadership',

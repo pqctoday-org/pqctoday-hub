@@ -16,6 +16,7 @@ import {
   TRACK_ORDER,
   criticalPathLength,
   criticalPathSpanYears,
+  milestoneDateConflicts,
   newMilestoneId,
   type RoadmapMilestone,
   type RoadmapTrack,
@@ -56,6 +57,7 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
   const labelById = useMemo(() => new Map(milestones.map((m) => [m.id, m.label])), [milestones])
   const critPath = useMemo(() => criticalPathLength(milestones), [milestones])
   const critSpan = useMemo(() => criticalPathSpanYears(milestones), [milestones])
+  const dateConflicts = useMemo(() => milestoneDateConflicts(milestones), [milestones])
   const years = useMemo(() => {
     const out: number[] = []
     for (let y = min; y <= max; y++) out.push(y)
@@ -144,9 +146,25 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
                       key={m.id}
                       className="flex items-start gap-2 rounded-md bg-background/60 border border-border p-2"
                     >
-                      <span className="text-xs font-mono text-muted-foreground shrink-0 w-12">
-                        {m.year}
-                      </span>
+                      {/* eslint-disable-next-line no-restricted-syntax -- Native <select> preserved for compact per-row year picker and Playwright combobox/selectOption tests */}
+                      <select
+                        aria-label={`Planned year for ${m.label}`}
+                        value={m.year}
+                        onChange={(event) => {
+                          const year = Number(event.target.value)
+                          onChange(
+                            milestones.map((item) => (item.id === m.id ? { ...item, year } : item))
+                          )
+                        }}
+                        className="shrink-0 rounded border border-input bg-background p-1 text-xs font-mono"
+                      >
+                        {!years.includes(m.year) && <option value={m.year}>{m.year}</option>}
+                        {years.map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span
@@ -190,6 +208,21 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
           </div>
         )
       })}
+
+      {dateConflicts.length > 0 && (
+        <div
+          role="status"
+          className="space-y-2 rounded-md border border-status-warning/40 p-3 text-xs"
+        >
+          <h3 className="font-semibold">Milestone dates to review</h3>
+          <ul className="list-disc pl-5">
+            {dateConflicts.map((conflict) => (
+              <li key={conflict}>{conflict}</li>
+            ))}
+          </ul>
+          <p>Update either planned year after checking the prerequisite and the work it blocks.</p>
+        </div>
+      )}
 
       <p className="text-xs text-muted-foreground">
         Critical path: spans{' '}
@@ -255,6 +288,7 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
                   type="button"
                   variant="ghost"
                   size="sm"
+                  aria-pressed={on}
                   onClick={() =>
                     setDraftDeps((prev) => (on ? prev.filter((d) => d !== m.id) : [...prev, m.id]))
                   }

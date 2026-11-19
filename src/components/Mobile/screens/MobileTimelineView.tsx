@@ -121,7 +121,7 @@ function searchData(data: GanttCountryData[], q: string): GanttCountryData[] {
   })
 }
 
-export function MobileTimelineView() {
+export function MobileTimelineView({ comparison }: { comparison?: React.ReactNode } = {}) {
   const storeSelectedRegion = usePersonaStore((s) => s.selectedRegion)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
@@ -326,6 +326,8 @@ export function MobileTimelineView() {
           </Button>
         )}
       </div>
+
+      {comparison}
 
       {showSearch && (
         <div className="mb-3 flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2">

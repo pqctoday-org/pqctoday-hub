@@ -15,8 +15,8 @@ import { citedStandards } from '../trustHardwareCitations'
 export const content: ModuleContent = {
   moduleId: 'hsm-pqc',
   version: '1.0.3',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-10',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -81,10 +81,10 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'HSM architecture for PQC (FIPS 140-3 levels, on-prem vs cloud side-by-side). PKCS#11 v3.2 PQC mechanisms (CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM, CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_HASH_ML_DSA, plus CKK_ML_KEM and CKK_ML_DSA key types). On-prem HSM deep dive (Thales Luna, Entrust nShield, Utimaco Quantum Protect, Securosys Primus HSM CyberVault). Cloud HSM deep dive (AWS CloudHSM, Azure Cloud HSM, Azure Managed HSM, Azure Dedicated HSM, Google Cloud HSM) and Tessera as a specification with no product or certificate yet. Side-channel attack surfaces (NTT power analysis, EM emanation, fault injection, ML-DSA hedged signing). What the lab tests for an HSM (CAVP algorithm certificates, the CMVP module certificate and its Security Policy, FIPS 140-3 IG 10.3.A self-tests and pairwise tests, and which CMVP submission scenario a firmware update falls under).',
+      'HSM architecture for PQC (FIPS 140-3 levels, on-prem vs cloud side-by-side). PKCS#11 v3.2 PQC mechanisms (CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM, CKM_ML_DSA_KEY_PAIR_GEN, CKM_ML_DSA, CKM_HASH_ML_DSA, CKM_SLH_DSA_KEY_PAIR_GEN, CKM_SLH_DSA, plus CKK_ML_KEM, CKK_ML_DSA, and CKK_SLH_DSA key types). On-prem HSM deep dive (Thales Luna, Entrust nShield, Utimaco Quantum Protect, Securosys Primus HSM CyberVault). Cloud HSM deep dive (AWS CloudHSM, Azure Cloud HSM, Azure Managed HSM, Azure Dedicated HSM, Google Cloud HSM) and Tessera as a specification with no product or certificate yet. Side-channel attack surfaces (NTT power analysis, EM emanation, fault injection, ML-DSA hedged signing). What the lab tests for an HSM (CAVP algorithm certificates, the CMVP module certificate and its Security Policy, FIPS 140-3 IG 10.3.A self-tests and pairwise tests, and which CMVP submission scenario a firmware update falls under).',
     workshopSummary:
-      'PKCS#11 PQC Simulator — 8 operations with classical comparison and on-prem vs cloud notes. Vendor Comparison — Interactive matrix with PQC Maturity Score (0-100). HSM Migration Planner — 4-phase firmware migration wizard. FIPS Validation Tracker — CMVP/CAVP PQC validation status per vendor',
+      'Five interactive steps: (1) PKCS#11 PQC Simulator — 8 operations with classical comparison and on-prem vs cloud notes; (2) Vendor Comparison — Interactive matrix with PQC Maturity Score (0-100); (3) HSM Migration Planner — 4-phase firmware migration wizard; (4) FIPS Validation Tracker — CMVP/CAVP PQC validation status per vendor; (5) Capacity Calculator — Size an HSM fleet across enterprise use cases and compare classical vs next-gen HSM throughput and quantum-crypto impact.',
     relatedStandards:
-      'FIPS 140-3 (Cryptographic Module Validation). PKCS#11 v3.2 (ratified OASIS Standard, 3 June 2026 — adds ML-KEM, ML-DSA, SLH-DSA mechanisms; supersedes v3.1 from 2023). FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA). NIST SP 800-208 (Stateful Hash-Based Signatures). CNSA 2.0 (NSA)',
+      'FIPS 140-3 (Cryptographic Module Validation) and FIPS 140-2 Historical transition (September 2026). PKCS#11 v3.2 (ratified OASIS Standard, 3 June 2026 — adds ML-KEM, ML-DSA, SLH-DSA mechanisms; supersedes v3.1 from 2023). FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA). NIST SP 800-208 (Stateful Hash-Based Signatures). NIST IR 8547 (final October 2026). CNSA 2.0 (NSA FAQ v2.2 for NSS). EO 14412 & OMB M-26-15 (US federal civilian). EU PQC Roadmap v1.1.',
   },
 }

@@ -3086,8 +3086,8 @@
       "polarity": "positive",
       "parameters": {},
       "source": {
-        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
-        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+        "citation": "ETSI TS 133 501 V19.7.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf"
       },
       "exercises": [
         "CKM_ECDH1_DERIVE derive P-256"
@@ -3110,8 +3110,8 @@
       "polarity": "positive",
       "parameters": {},
       "source": {
-        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
-        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+        "citation": "ETSI TS 133 501 V19.7.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf"
       },
       "exercises": [
         "CKM_ECDH1_DERIVE derive P-256"
@@ -3134,8 +3134,8 @@
       "polarity": "positive",
       "parameters": {},
       "source": {
-        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
-        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+        "citation": "ETSI TS 133 501 V19.7.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf"
       },
       "exercises": [
         "CKM_AES_CTR encrypt AES-128"
@@ -3158,8 +3158,8 @@
       "polarity": "positive",
       "parameters": {},
       "source": {
-        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
-        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+        "citation": "ETSI TS 133 501 V19.7.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf"
       },
       "exercises": [
         "CKM_SHA256_HMAC_GENERAL sign"
@@ -3182,8 +3182,8 @@
       "polarity": "positive",
       "parameters": {},
       "source": {
-        "citation": "ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
-        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf"
+        "citation": "ETSI TS 133 501 V19.7.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI",
+        "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf"
       },
       "exercises": [
         "CKM_ECDH1_DERIVE derive P-256",

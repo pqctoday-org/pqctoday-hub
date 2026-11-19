@@ -77,7 +77,7 @@ export const content: ModuleContent = {
     // bytes) and the "736 bytes" figure quoted in MTCIntroduction.tsx for a ~5.4M-entry
     // LANDMARK subtree. A standalone certificate's proof is the smaller
     // MTC_STANDALONE_PROOF_BYTES (384 B, 12 hashes over ~3,000 entries) — both are
-    // projected side by side in draft-ietf-plants-merkle-tree-certs-07 §6.5, and this
+    // projected side by side in draft-ietf-plants-merkle-tree-certs-08 §6.5, and this
     // module previously charged the landmark figure to both. Was originally an
     // unverifiable "900 bytes" approximation.
     mtcOverhead: '736 bytes (landmark) / 384 bytes (standalone)',

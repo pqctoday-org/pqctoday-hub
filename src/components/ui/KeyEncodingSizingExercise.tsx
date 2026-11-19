@@ -82,7 +82,7 @@ export function KeyEncodingSizingExercise() {
                 ? 'Enter a positive whole number of bytes.'
                 : sizes.spkiBytes <= capacity
                   ? `The exported key fits with ${capacity - sizes.spkiBytes} bytes to spare.`
-                  : `The exported key needs ${sizes.spkiBytes - capacity} more bytes. Increase the buffer to fit the required encoding.`}
+                  : `The exported key needs ${sizes.spkiBytes - capacity} more ${sizes.spkiBytes - capacity === 1 ? 'byte' : 'bytes'}. Increase the buffer to fit the required encoding.`}
             </p>
           </>
         )}

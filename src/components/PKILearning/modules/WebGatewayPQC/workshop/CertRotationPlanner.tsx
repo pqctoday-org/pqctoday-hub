@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { CalendarDays, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { CalendarDays, AlertTriangle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 const EDGE_NODE_OPTIONS = [
@@ -35,10 +35,10 @@ const ALGORITHM_OPTIONS = [
   { id: 'ecdsa-p256', label: 'ECDSA P-256' },
   { id: 'ml-dsa-44', label: 'ML-DSA-44' },
   { id: 'ml-dsa-65', label: 'ML-DSA-65' },
-  { id: 'hybrid-ecdsa-ml-dsa-44', label: 'ECDSA + ML-DSA-44 (Hybrid)' },
+  { id: 'hybrid-ecdsa-ml-dsa-44', label: 'RFC 10073 ML-DSA-44 + ECDSA P-256' },
 ]
 
-const CT_LOG_ENTRY_SIZES: Record<string, number> = {
+const ILLUSTRATIVE_LEAF_BYTES: Record<string, number> = {
   'rsa-2048': 900,
   'ecdsa-p256': 400,
   'ml-dsa-44': 4100,
@@ -57,6 +57,8 @@ export const CertRotationPlanner: React.FC = () => {
   const [certsPerNode, setCertsPerNode] = useState('10')
   const [validity, setValidity] = useState('90')
   const [renewal, setRenewal] = useState('acme')
+  const [stagingRecord, setStagingRecord] = useState(false)
+  const [publicLogRequired, setPublicLogRequired] = useState(false)
   const [currentAlgo, setCurrentAlgo] = useState('ecdsa-p256')
   const [targetAlgo, setTargetAlgo] = useState('ml-dsa-65')
   const [rolloutPace, setRolloutPace] = useState('90')
@@ -71,22 +73,14 @@ export const CertRotationPlanner: React.FC = () => {
     const dailyRenewalRate = Math.ceil(totalCerts / validDays)
     const peakDailyRenewals = Math.ceil(dailyRenewalRate * 1.5)
 
-    // CT log impact
-    const currentCtSize = CT_LOG_ENTRY_SIZES[currentAlgo] || 400
-    const targetCtSize = CT_LOG_ENTRY_SIZES[targetAlgo] || 5700
-    const ctImpactMultiplier = targetCtSize / currentCtSize
+    const currentLeafSize = ILLUSTRATIVE_LEAF_BYTES[currentAlgo] || 400
+    const targetLeafSize = ILLUSTRATIVE_LEAF_BYTES[targetAlgo] || 5700
+    const leafSizeMultiplier = targetLeafSize / currentLeafSize
 
     // Discrete batches conserve the selected node count, including small estates.
     const pilotNodes = Math.min(nodes, Math.max(1, Math.ceil(nodes * 0.05)))
     const nextNodes = Math.min(nodes - pilotNodes, Math.ceil(nodes * 0.5))
     const finalNodes = nodes - pilotNodes - nextNodes
-
-    // ACME compatibility
-    const acmeSupported =
-      targetAlgo === 'ecdsa-p256' ||
-      targetAlgo === 'rsa-2048' ||
-      targetAlgo === 'hybrid-ecdsa-ml-dsa-44'
-    const pqcAcmeExperimental = targetAlgo === 'ml-dsa-44' || targetAlgo === 'ml-dsa-65'
 
     // Existing teaching durations define one sequential sample schedule.
     const phaseTemplates = [
@@ -137,12 +131,12 @@ export const CertRotationPlanner: React.FC = () => {
       totalCerts,
       dailyRenewalRate,
       peakDailyRenewals,
-      ctImpactMultiplier,
-      acmeSupported,
-      pqcAcmeExperimental,
+      leafSizeMultiplier,
       phases,
     }
   }, [edgeNodes, certsPerNode, validity, currentAlgo, targetAlgo, rolloutPace])
+
+  const enrollmentMatches = stagingRecord && targetAlgo === 'ml-dsa-65' && renewal === 'acme'
 
   return (
     <div className="space-y-6">
@@ -186,6 +180,8 @@ export const CertRotationPlanner: React.FC = () => {
             items={RENEWAL_METHODS}
             selectedId={renewal}
             onSelect={setRenewal}
+            ariaLabel="Renewal method"
+            hideDefaultOption
             noContainer
           />
         </div>
@@ -204,6 +200,8 @@ export const CertRotationPlanner: React.FC = () => {
             items={ALGORITHM_OPTIONS.filter((a) => a.id !== 'rsa-2048' && a.id !== 'ecdsa-p256')}
             selectedId={targetAlgo}
             onSelect={setTargetAlgo}
+            ariaLabel="Target certificate profile"
+            hideDefaultOption
             noContainer
           />
         </div>
@@ -238,9 +236,9 @@ export const CertRotationPlanner: React.FC = () => {
         </div>
         <div className="bg-muted/50 rounded-lg p-3 text-center">
           <div className="text-2xl font-bold text-foreground">
-            {plan.ctImpactMultiplier.toFixed(1)}&times;
+            {plan.leafSizeMultiplier.toFixed(1)}&times;
           </div>
-          <div className="text-xs text-muted-foreground">CT Log Impact</div>
+          <div className="text-xs text-muted-foreground">Assumed leaf size ratio</div>
         </div>
       </div>
 
@@ -305,32 +303,71 @@ export const CertRotationPlanner: React.FC = () => {
             </span>
           </div>
         )}
-        {plan.pqcAcmeExperimental && (
-          <div className="flex items-start gap-2 bg-status-warning/10 rounded-lg p-3 border border-status-warning/20">
-            <AlertTriangle size={14} className="text-status-warning shrink-0 mt-0.5" />
-            <span className="text-sm text-foreground">
-              Pure PQC ACME issuance ({targetAlgo}) is experimental. Verify your CA supports PQC
-              certificate issuance before migrating.
-            </span>
-          </div>
-        )}
-        {plan.acmeSupported && (
-          <div className="flex items-start gap-2 bg-status-success/10 rounded-lg p-3 border border-status-success/20">
-            <CheckCircle2 size={14} className="text-status-success shrink-0 mt-0.5" />
-            <span className="text-sm text-foreground">
-              {targetAlgo} is supported by major CAs for ACME-based issuance.
-            </span>
-          </div>
-        )}
-        {plan.ctImpactMultiplier > 5 && (
-          <div className="flex items-start gap-2 bg-status-info/10 rounded-lg p-3 border border-status-info/20">
-            <AlertTriangle size={14} className="text-status-info shrink-0 mt-0.5" />
-            <span className="text-sm text-foreground">
-              CT log entries will be {plan.ctImpactMultiplier.toFixed(1)}&times; larger with{' '}
-              {targetAlgo}. This increases CT log bandwidth and monitoring costs.
-            </span>
-          </div>
-        )}
+        <section className="glass-panel space-y-2 p-4" aria-labelledby="gateway-renewal-evidence">
+          <h3 id="gateway-renewal-evidence" className="text-sm font-bold">
+            Check the renewal evidence
+          </h3>
+          <p className="text-sm">
+            The fictional Northstar staging CA record covers an ACME renewal for an ML-DSA-65 leaf
+            and a successful verification by an internal staging client. The record covers an
+            internal trust anchor and includes no public log acceptance result.
+          </p>
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={stagingRecord}
+              onChange={(event) => setStagingRecord(event.target.checked)}
+            />
+            Use the Northstar staging ACME record
+          </label>
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={publicLogRequired}
+              onChange={(event) => setPublicLogRequired(event.target.checked)}
+            />
+            The deployment requires evidence from a public CT log
+          </label>
+          <p role="status" aria-label="Renewal evidence decision" className="text-sm font-semibold">
+            {enrollmentMatches
+              ? publicLogRequired
+                ? 'Staging renewal matches. Public CT log acceptance still needs evidence.'
+                : 'The record supports this internal staging renewal.'
+              : 'The selected record does not establish renewal for this profile and method.'}
+          </p>
+          {targetAlgo === 'hybrid-ecdsa-ml-dsa-44' && (
+            <p className="text-xs text-muted-foreground">
+              RFC 10073 specifies a 1,377-byte composite public-key payload and a variable composite
+              signature up to 2,492 bytes for this profile. These payload sizes exclude the
+              surrounding X.509 encoding and chain.
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            The ratio above uses illustrative leaf file sizes. For a real rollout, exercise the
+            exact CA profile, enrollment client and relying party. Check the intended log separately
+            when policy requires public logging.
+          </p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <a
+              className="text-primary underline"
+              href="https://www.rfc-editor.org/rfc/rfc8555.html#section-7.4"
+            >
+              ACME order finalization
+            </a>
+            <a
+              className="text-primary underline"
+              href="https://www.rfc-editor.org/rfc/rfc9162.html#section-4.2"
+            >
+              CT log acceptance criteria
+            </a>
+            <a
+              className="text-primary underline"
+              href="https://www.rfc-editor.org/rfc/rfc10073.html#appendix-A"
+            >
+              Composite encoding sizes
+            </a>
+          </p>
+        </section>
       </div>
     </div>
   )

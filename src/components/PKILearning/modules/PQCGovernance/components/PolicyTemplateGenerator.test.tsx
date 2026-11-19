@@ -68,20 +68,20 @@ describe('PolicyTemplateGenerator', () => {
     expect(keyMgmtTile).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('presents the hardcoded-crypto rotation default as a starting point to confirm per system', () => {
-    useAssessmentStore.setState({ cryptoAgility: 'hardcoded' })
+  it('does not infer a key rotation interval from broad assessment labels', () => {
+    useAssessmentStore.setState({ cryptoAgility: 'hardcoded', dataSensitivity: ['critical'] })
     try {
       render(<PolicyTemplateGenerator />)
       fireEvent.click(screen.getByRole('button', { name: /Key Management Policy/i }))
-      expect(screen.getByRole('button', { name: /2 years/ })).toBeInTheDocument()
-      const note = screen.getByText(/Starting point only/)
-      expect(note).toHaveTextContent('pre-selects its longest interval')
-      expect(note).toHaveTextContent('confirm per system')
-      expect(note).toHaveTextContent('SP 800-57 Pt 1 Rev 5 Sec 5.3.1')
-      expect(screen.queryByText(/longest safe interval/)).not.toBeInTheDocument()
-      expect(screen.queryByText(/can’t be rotated often/)).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /Maximum Key Rotation Period/i })
+      ).toHaveTextContent(/select/i)
+      expect(
+        screen.getByText(/Data sensitivity or algorithm agility alone does not determine/)
+      ).toBeInTheDocument()
+      expect(screen.getByText(/Revision 6 is still an initial public draft/)).toBeInTheDocument()
     } finally {
-      useAssessmentStore.setState({ cryptoAgility: '' })
+      useAssessmentStore.setState({ cryptoAgility: '', dataSensitivity: [] })
     }
   })
 })

@@ -28,12 +28,12 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
       {
         id: 'online-2',
         order: 2,
-        label: 'Card Authentication (CDA)',
+        label: 'Terminal prepares local card authentication',
         type: 'authenticate',
         fromActor: 'card',
         toActor: 'terminal',
         description:
-          'Terminal verifies the ICC certificate chain: payment-system (scheme) CA public key held in the terminal \u2192 Issuer certificate \u2192 ICC certificate. All signatures are RSA.',
+          'In this CDA example the terminal uses the payment-system CA public key to verify the issuer and card certificates. This prepares the card key for the dynamic signature check on the card response.',
         cryptoUsed: ['RSA-2048 signature verification (3 levels)'],
         quantumVulnerable: true,
         pqcReplacement: 'ML-DSA-44 or FN-DSA-512 certificate chain',
@@ -48,7 +48,7 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         fromActor: 'card',
         toActor: 'terminal',
         description:
-          'Card generates Authorization Request Cryptogram (ARQC) using 3DES/AES session key derived from card master key. Includes transaction amount, terminal data, and unpredictable number.',
+          'The card generates an ARQC using a derived symmetric key. If CDA is performed, the terminal checks a separate dynamic signature returned by the card. The issuer receives and verifies the ARQC.',
         cryptoUsed: ['3DES-CBC MAC (legacy)', 'AES-CMAC (newer cards)'],
         quantumVulnerable: false,
         dataSize: '~64 bytes',
@@ -93,7 +93,7 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
         fromActor: 'network',
         toActor: 'issuer',
         description:
-          'Issuer HSM verifies the ARQC using the card master key (symmetric), checks balance/fraud. Generates ARPC (Authorization Response Cryptogram) for the card. The card master key lives in the HSM under a symmetric Local Master Key, so nothing in this step is quantum-vulnerable — the RSA exposure in issuer key management is in key DISTRIBUTION between institutions, modelled separately as the hsm-key-wrapping and key-injection vectors.',
+          'The issuer’s HSM verifies the symmetric ARQC and can generate an ARPC for the card. Issuer systems separately apply balance, fraud and authorization rules. Key distribution has its own scope.',
         // 'HSM key wrapping (RSA-2048)' was listed here until 2026-07-31 while
         // the step was (correctly) flagged quantum-safe — the only step in this
         // file naming an asymmetric primitive on a safe step. Per-transaction

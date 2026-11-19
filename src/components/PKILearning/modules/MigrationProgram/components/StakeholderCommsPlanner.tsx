@@ -13,6 +13,33 @@ type CommsFormData = Record<string, Record<string, string | string[]>>
 
 const MODULE_ID = 'migration-program'
 
+const DECISION_AUDIENCES = [
+  {
+    value: 'board',
+    label: 'Board / C-Suite',
+    ask: (initiative: string) =>
+      `Approve the funding and name the accountable sponsor for ${initiative}.`,
+  },
+  {
+    value: 'technical',
+    label: 'Technical leadership',
+    ask: (initiative: string) =>
+      `Choose the pilot profile and approve the interoperability and rollback criteria for ${initiative}.`,
+  },
+  {
+    value: 'delivery',
+    label: 'Development teams',
+    ask: (initiative: string) =>
+      `Confirm the implementation owner and commit to the tests and delivery date for ${initiative}.`,
+  },
+  {
+    value: 'partner',
+    label: 'External partners',
+    ask: (initiative: string) =>
+      `Confirm supported profiles, the test endpoint and a joint interoperability test date for ${initiative}.`,
+  },
+] as const
+
 /**
  * How the seeded text names the country's next timeline milestone. A milestone
  * keeps its title and its binding status: a country listing alone does not make
@@ -155,6 +182,22 @@ export function buildCommsSections(opts: {
         'Craft targeted messages for each audience tier. Tailor language, detail level, and focus areas.',
       fields: [
         {
+          id: 'decision-audience',
+          label: 'Recipient for the decision request',
+          type: 'select',
+          options: DECISION_AUDIENCES.map(({ value, label }) => ({ value, label })),
+          defaultValue: 'board',
+        },
+        {
+          id: 'decision-initiative',
+          label: 'Initiative for the decision request',
+          type: 'text',
+          placeholder: 'e.g. the fictional gateway migration pilot',
+          helperText:
+            'Name the initiative to generate a decision request for the selected recipient.',
+          defaultValue: '',
+        },
+        {
           id: 'board-message',
           label: 'Board / C-Suite Message',
           type: 'textarea',
@@ -277,6 +320,14 @@ export function renderCommsPreview(
 
   // Message Framework
   md += '## 2. Message Framework\n\n'
+  const initiative = data['message-framework']?.['decision-initiative']
+  const recipient = DECISION_AUDIENCES.find(
+    ({ value }) => value === data['message-framework']?.['decision-audience']
+  )
+  if (recipient && typeof initiative === 'string' && initiative.trim()) {
+    md += `### Decision request for ${recipient.label}\n\n`
+    md += `${recipient.ask(initiative.trim())}\n\n`
+  }
   const boardMsg = data['message-framework']?.['board-message'] || '_Not specified_'
   const techMsg = data['message-framework']?.['technical-leadership-message'] || '_Not specified_'
   const devMsg = data['message-framework']?.['dev-teams-message'] || '_Not specified_'

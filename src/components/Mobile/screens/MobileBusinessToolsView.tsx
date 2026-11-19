@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router'
+import { useMemo, useRef, useState } from 'react'
+import { Link, useLocation, useSearchParams } from 'react-router'
+import { useCatalogResultFocus } from '@/hooks/useCatalogResultFocus'
 import { Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
@@ -16,6 +17,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { getBusinessRoleSequence } from '@/data/businessRoleConfig'
 import { businessToolEvidence } from '@/data/businessToolEvidence'
 import { rankBusinessTools } from '@/data/businessToolRank'
+import { filterBusinessTools } from '@/data/businessToolFilters'
 
 // crypto-architecture-diagram dropped entirely (per audit, 2026-08-24): its
 // core value is a live Mermaid topology diagram (`MermaidDiagram.tsx`,
@@ -33,6 +35,11 @@ const AUDIENCE_BADGE: Record<string, string> = {
   architect: 'For architects',
   developer: 'For developers',
 }
+const SHARED_FILTERS = [
+  { key: 'zone', label: 'Zone' },
+  { key: 'phase', label: 'Phase' },
+  { key: 'audience', label: 'Audience' },
+]
 
 /**
  * Mobile Business Tools (Phase 9 — Practice set, closing Phase 9).
@@ -64,8 +71,28 @@ const AUDIENCE_BADGE: Record<string, string> = {
  * catalogue/discovery layer, not a second copy of each tool's own UI.
  */
 export function MobileBusinessToolsView() {
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState<string | null>(null)
+  const [params, setParams] = useSearchParams()
+  const location = useLocation()
+  useCatalogResultFocus(location.state?.focusBusinessTool, 'business')
+  const searchInput = useRef<HTMLInputElement>(null)
+  const search = params.get('q') ?? ''
+  const category = params.get('cat')
+  const advancedFilters = SHARED_FILTERS.filter(({ key }) => {
+    const value = params.get(key)
+    return value && value !== 'all'
+  })
+  const setFilter = (key: 'q' | 'cat', value: string | null) => {
+    setParams(
+      (previous) => {
+        const next = new URLSearchParams(previous)
+        if (value) next.set(key, value)
+        else next.delete(key)
+        return next
+      },
+      { replace: true, preventScrollReset: true }
+    )
+  }
+  const toolLinkState = { fromToolsSearch: location.search }
   const [selected, setSelected] = useState<BusinessTool | null>(null)
   const selectedPersona = usePersonaStore((state) => state.selectedPersona)
   const startHere = getBusinessRoleSequence(selectedPersona)
@@ -77,22 +104,10 @@ export function MobileBusinessToolsView() {
   }, [])
 
   const filtered = useMemo(() => {
-    let tools = MOBILE_TOOLS
-    if (category) tools = tools.filter((t) => t.category === category)
-    const q = search.trim().toLowerCase()
-    if (q) {
-      tools = tools.filter(
-        (t) =>
-          t.name.toLowerCase().includes(q) ||
-          t.description.toLowerCase().includes(q) ||
-          t.keywords.some((k) => k.toLowerCase().includes(q)) ||
-          t.category.toLowerCase().includes(q)
-      )
-    }
     // Same persona ranking as the desktop grid: the role's start sequence
     // first, then tools written for the role, then registry order.
-    return rankBusinessTools(tools, selectedPersona, startHere)
-  }, [category, search, selectedPersona, startHere])
+    return rankBusinessTools(filterBusinessTools(MOBILE_TOOLS, params), selectedPersona, startHere)
+  }, [params, selectedPersona, startHere])
 
   return (
     <div className="px-4 pb-4 pt-4">
@@ -102,11 +117,13 @@ export function MobileBusinessToolsView() {
       </div>
 
       <input
+        ref={searchInput}
         type="search"
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => setFilter('q', e.target.value)}
         placeholder="Search tools or keywords..."
         aria-label="Search business tools"
+        data-business-search
         className="mb-3 h-10 w-full rounded-lg border border-border bg-card px-3 text-[13px] text-foreground placeholder:text-muted-foreground"
       />
 
@@ -114,7 +131,7 @@ export function MobileBusinessToolsView() {
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setCategory(null)}
+          onClick={() => setFilter('cat', null)}
           aria-pressed={category === null}
           className={cn(
             'h-8 rounded-full border px-3 text-[11px] font-semibold',
@@ -130,7 +147,7 @@ export function MobileBusinessToolsView() {
             type="button"
             variant="ghost"
             key={cat}
-            onClick={() => setCategory((c) => (c === cat ? null : cat))}
+            onClick={() => setFilter('cat', category === cat ? null : cat)}
             aria-pressed={category === cat}
             className={cn(
               'h-8 rounded-full border px-3 text-[11px] font-semibold',
@@ -144,7 +161,34 @@ export function MobileBusinessToolsView() {
         ))}
       </div>
 
-      {!search.trim() && !category && (
+      {advancedFilters.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
+          <span>
+            {advancedFilters.map(({ key, label }) => `${label}: ${params.get(key)}`).join(' · ')}
+          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="min-h-11"
+            onClick={() => {
+              setParams(
+                (previous) => {
+                  const next = new URLSearchParams(previous)
+                  advancedFilters.forEach(({ key }) => next.delete(key))
+                  return next
+                },
+                { replace: true, preventScrollReset: true }
+              )
+              searchInput.current?.focus()
+            }}
+          >
+            Clear shared filters
+          </Button>
+        </div>
+      )}
+
+      {!search.trim() && !category && advancedFilters.length === 0 && (
         <section className="mb-4 rounded-xl border border-border bg-card p-3.5">
           <h2 className="text-[12px] font-bold text-foreground">{startHere.heading}</h2>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
@@ -155,6 +199,7 @@ export function MobileBusinessToolsView() {
               <Link
                 key={step.id}
                 to={`/business/tools/${step.id}`}
+                state={toolLinkState}
                 className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-foreground"
               >
                 <span className="text-primary">{step.step}</span>
@@ -198,8 +243,8 @@ export function MobileBusinessToolsView() {
       ))}
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The role-specific "Start here" sequence is available above. Zone, Phase and Audience filters
-        and "Group by" remain laptop features. The Crypto Architecture Diagram tool also needs a
+        Links with Zone, Phase and Audience filters preserve those filters here. Use the desktop
+        view to choose those filters or group results. The Crypto Architecture Diagram tool needs a
         wider screen — its live topology diagram and dense entry table don&apos;t fit a phone.
       </p>
 
@@ -211,7 +256,7 @@ export function MobileBusinessToolsView() {
         shareUrl={selected ? `/business/tools/${encodeURIComponent(selected.id)}` : undefined}
         testId="business-tool-detail-sheet"
       >
-        {selected && <ToolDetailSheetBody tool={selected} />}
+        {selected && <ToolDetailSheetBody tool={selected} fromToolsSearch={location.search} />}
       </MobileSheet>
     </div>
   )
@@ -220,11 +265,12 @@ export function MobileBusinessToolsView() {
 function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () => void }) {
   const Icon = tool.icon
   return (
-    <article className="glass-panel flex flex-col gap-1.5 p-3.5">
+    <article className="glass-panel flex flex-col gap-1.5 p-3.5" data-business-result={tool.id}>
       <Button
         type="button"
         variant="ghost"
         onClick={onSelect}
+        data-business-open
         // Button's own base classes hard-code whitespace-nowrap; same defect
         // class found and fixed on Threats/Patents/Compliance/Library (2026-08-24).
         className="h-auto w-full flex-col items-start gap-1.5 whitespace-normal rounded-none p-0 text-left font-normal"
@@ -255,7 +301,13 @@ function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () =
   )
 }
 
-function ToolDetailSheetBody({ tool }: { tool: BusinessTool }) {
+function ToolDetailSheetBody({
+  tool,
+  fromToolsSearch,
+}: {
+  tool: BusinessTool
+  fromToolsSearch: string
+}) {
   return (
     <div className="flex flex-col gap-3">
       <div>
@@ -292,6 +344,7 @@ function ToolDetailSheetBody({ tool }: { tool: BusinessTool }) {
 
       <Link
         to={`/business/tools/${tool.id}`}
+        state={{ fromToolsSearch }}
         className={cn(
           buttonVariants({ variant: 'gradient' }),
           'h-auto rounded-lg py-2.5 font-bold'

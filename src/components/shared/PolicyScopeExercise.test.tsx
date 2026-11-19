@@ -16,10 +16,16 @@ it('rejects an empty year, recovers, and invalidates the old result when assumpt
   fireEvent.change(year, { target: { value: '2031' } })
   evaluate()
   expect(screen.queryByRole('alert')).toBeNull()
-  expect(screen.getByRole('status')).toHaveTextContent('exceeds this policy')
-  expect(screen.getByRole('status')).toHaveTextContent('does not supply')
+  expect(screen.getByRole('status', { name: 'Policy scenario result' })).toHaveTextContent(
+    'exceeds this policy'
+  )
+  expect(screen.getByRole('status', { name: 'Policy scenario result' })).toHaveTextContent(
+    'does not supply'
+  )
   fireEvent.change(year, { target: { value: '2030' } })
-  expect(screen.getByRole('status')).toBeEmptyDOMElement()
+  expect(screen.getByRole('status', { name: 'Policy scenario result' })).toBeEmptyDOMElement()
   evaluate()
-  expect(screen.getByRole('status')).not.toHaveTextContent('exceeds this policy')
+  expect(screen.getByRole('status', { name: 'Policy scenario result' })).not.toHaveTextContent(
+    'exceeds this policy'
+  )
 })

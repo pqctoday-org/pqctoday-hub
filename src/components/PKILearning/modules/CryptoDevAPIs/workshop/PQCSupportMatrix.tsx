@@ -204,6 +204,46 @@ export const PQCSupportMatrix: React.FC = () => {
                   <p className="text-sm text-muted-foreground">{selectedDetail.protocolNote}</p>
                 </div>
               )}
+              {selectedDetail.licenseNote && (
+                <div className="mt-3 rounded-md border border-border p-3">
+                  <div className="font-semibold text-xs text-muted-foreground mb-1">
+                    Oracle JDK 21.0.13 release details
+                  </div>
+                  <p className="text-sm text-muted-foreground">{selectedDetail.licenseNote}</p>
+                  {selectedDetail.licenseEvidenceUrl && (
+                    <a
+                      href={selectedDetail.licenseEvidenceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-block text-xs text-primary hover:underline"
+                    >
+                      Oracle JDK 21.0.13 release notes
+                    </a>
+                  )}
+                  {selectedDetail.licenseCheckedDate && (
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      Checked {selectedDetail.licenseCheckedDate}
+                    </span>
+                  )}
+                  {selectedDetail.privateKeyEncodingNote && (
+                    <div className="mt-2">
+                      <p className="text-sm text-muted-foreground">
+                        Private-key encoding: {selectedDetail.privateKeyEncodingNote}
+                      </p>
+                      {selectedDetail.privateKeyEncodingEvidenceUrl && (
+                        <a
+                          href={selectedDetail.privateKeyEncodingEvidenceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-block text-xs text-primary hover:underline"
+                        >
+                          Oracle private-key encoding details
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
               {selectedDetail.evidenceUrl && (
                 <p className="mt-3 text-xs text-muted-foreground">
                   Source:{' '}
@@ -276,6 +316,35 @@ export const PQCSupportMatrix: React.FC = () => {
                       <p>
                         <span className="font-semibold">Protocol:</span> {row.protocolNote}
                       </p>
+                      {row.licenseNote && (
+                        <p>
+                          {row.licenseNote}{' '}
+                          <a
+                            href={row.licenseEvidenceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            License source
+                          </a>
+                          {row.licenseCheckedDate && (
+                            <span className="ml-1">(checked {row.licenseCheckedDate})</span>
+                          )}
+                        </p>
+                      )}
+                      {row.privateKeyEncodingNote && (
+                        <p>
+                          Private-key encoding: {row.privateKeyEncodingNote}{' '}
+                          <a
+                            href={row.privateKeyEncodingEvidenceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            Encoding source
+                          </a>
+                        </p>
+                      )}
                       <a
                         href={row.evidenceUrl}
                         target="_blank"

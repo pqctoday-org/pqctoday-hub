@@ -118,7 +118,9 @@ describe('BitcoinFlow', () => {
         },
         handleNext: () => setCurrentStep((prev: number) => prev + 1),
         handleBack: () => setCurrentStep((prev: number) => prev - 1),
-        isStepComplete: () => true,
+        isStepComplete: true,
+        setIsStepComplete: vi.fn(),
+        setOutput: vi.fn(),
         error: null,
       }
     })

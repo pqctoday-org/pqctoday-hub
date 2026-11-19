@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { HsmCapabilityEvidence } from '@/components/PKILearning/common/HsmCapabilityEvidence'
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import React, { useState, useMemo, useCallback, useEffect, useId } from 'react'
 import { Link } from 'react-router'
 import {
   Shield,
@@ -52,6 +52,7 @@ import {
   hsm_unwrapKeyMech,
   hsm_sign,
   hsm_verify,
+  hsm_destroyObject,
   hsm_ecdsaSign,
   hsm_ecdsaVerify,
   hsm_extractKeyValue,
@@ -341,6 +342,14 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
   const [liveError, setLiveError] = useState<string | null>(null)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
   const [channelFault, setChannelFault] = useState<ChannelFault>('none')
+  const signerHintId = useId()
+  const [expectedSigner, setExpectedSigner] = useState<'provisioning' | 'staging'>('provisioning')
+
+  const clearLiveOutcome = () => {
+    setLiveResults([])
+    setLiveError(null)
+    setLogEntries([])
+  }
 
   const runLiveDemo = useCallback(async () => {
     if (!hsm.moduleRef.current) return
@@ -409,14 +418,14 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           note: 'Sample key generated in this session; step 4 signs a channel statement with it. It is not a vendor attestation key and says nothing about real hardware. The private key stays in the HSM.',
         })
 
-        // Step 2: TLS transport via ML-KEM-768
+        // Step 2: Provisioning key agreement via ML-KEM-768
         const kemKeys = hsm_generateMLKEMKeyPair(M, hSession, 768)
         const kemPubBytes = hsm_extractKeyValue(M, hSession, kemKeys.pubHandle)
         hsm.registerKey(M, hSession, {
           handle: kemKeys.pubHandle,
           family: 'ml-kem',
           role: 'public',
-          label: 'ML-KEM-768 TLS Transport Key (Public)',
+          label: 'ML-KEM-768 Recipient Key (Public)',
           purpose: 'tls',
           generatedAt: now(),
         })
@@ -424,7 +433,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           handle: kemKeys.privHandle,
           family: 'ml-kem',
           role: 'private',
-          label: 'ML-KEM-768 TLS Transport Key (Private)',
+          label: 'ML-KEM-768 Recipient Key (Private)',
           purpose: 'tls',
           generatedAt: now(),
         })
@@ -440,7 +449,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'TLS Transport Key (ML-KEM-768) + Encapsulation',
           pkcs11Call: `C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN) → pub=${kemPubBytes.length} B\nC_EncapsulateKey(CKM_ML_KEM) → ct=${ciphertextBytes.length} B`,
           detail: `pub = ${kemPubBytes.length} B (1184 B) · ciphertext = ${ciphertextBytes.length} B · shared secret handle = 0x${secretHandle.toString(16)}`,
-          note: 'ML-KEM replaces ECDH for the TLS 1.3 key exchange. The encapsulated shared secret is used to derive the session wrapping key.',
+          note: 'The sample uses ML-KEM to establish a shared secret for the wrapping key. This operation runs directly through PKCS #11.',
         })
 
         // Derive KEK from ML-KEM shared secret via HKDF-SHA256 (RFC 5869)
@@ -508,7 +517,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           title: 'KEK from ML-KEM Secret (HKDF) Wraps Provisioning Key',
           pkcs11Call: `C_CreateObject(CKK_GENERIC_SECRET) → derivable handle\nC_DeriveKey(CKM_HKDF, info="tee-hsm-kek-v1") → 32 B KEK\nC_GenerateKey(CKM_AES_KEY_GEN, 256) → prov key\nC_WrapKey(CKM_AES_KEY_WRAP) → ${wrappedKey.length} B`,
           detail: `shared secret = ${sharedSecretBytes.length} B → HKDF → KEK = 32 B · wrapped blob = ${wrappedKey.length} B`,
-          note: 'KEK is derived from the ML-KEM-768 shared secret via HKDF-SHA256 (RFC 5869, info="tee-hsm-kek-v1"). The enclave re-derives the same KEK after decapsulating — no KEK is ever transmitted.',
+          note: 'The receiver derives the KEK from the recovered ML-KEM shared secret. This browser sample reads shared-secret and HKDF output bytes into JavaScript for the derivation and import steps.',
         })
 
         // Step 4: Sign the channel statement. The statement commits to report_data (a SHA-512 over
@@ -545,10 +554,21 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           // Simulated earlier use of the same challenge, so the receiver sees a replay.
           challengeLedger.consume(challenge)
         }
-        const verifyOk = hsm_verify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
+        const stagingSigner =
+          expectedSigner === 'staging' ? hsm_generateMLDSAKeyPair(M, hSession, 65) : null
+        let verifyOk: boolean
+        try {
+          const expectedPublicKey = stagingSigner?.pubHandle ?? dsaKeys.pubHandle
+          verifyOk = hsm_verify(M, hSession, expectedPublicKey, teeReport, sigBytes)
+        } finally {
+          if (stagingSigner) {
+            hsm_destroyObject(M, hSession, stagingSigner.privHandle)
+            hsm_destroyObject(M, hSession, stagingSigner.pubHandle)
+          }
+        }
         if (!verifyOk) {
           throw new SampleProvisioningCheckError(
-            'Sample attestation signature verification failed; provisioning stopped.'
+            'The statement did not verify with the expected sample signer. No provisioning key was unwrapped.'
           )
         }
         if (challengeLedger.consume(challenge) !== 'fresh') {
@@ -576,7 +596,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           M,
           hSession,
           kemKeys.privHandle,
-          ciphertextBytes,
+          receivedCiphertext,
           768
         )
         const recoveredSecretBytes = hsm_extractKeyValue(M, hSession, recoveredSecretHandle)
@@ -634,7 +654,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           pkcs11Call: `C_MessageVerifyInit(CKM_ML_DSA) → C_VerifyMessage → ${verifyOk ? '✓ PASS' : '✗ FAIL'}\nC_DecapsulateKey(CKM_ML_KEM) → shared secret = ${recoveredSecretBytes.length} B\nC_DeriveKey(CKM_HKDF) → KEK (same derivation)\nC_UnwrapKey(CKM_AES_KEY_WRAP) → prov key handle`,
           // eslint-disable-next-line security/detect-object-injection
           detail: `sig verify = ${verifyOk ? 'PASS ✓' : 'FAIL ✗'} · channel binding (simulated) = ${binding.passed ? 'PASS ✓' : 'FAIL ✗'} · recovered secret match = ${recoveredSecretBytes.every((b, i) => b === sharedSecretBytes[i]) ? 'YES ✓' : 'NO ✗'} · prov key handle = 0x${recoveredProvHandle.toString(16)}`,
-          note: 'Protocol complete. The enclave verified the sample signed statement, checked the single-use challenge and the channel binding (simulated, see step 4), decapsulated the KEM ciphertext to recover the shared secret, re-derived the KEK via HKDF (same info string), and unwrapped the provisioning key — all without the KEK ever leaving either party.',
+          note: 'The sample receiver verified the statement with its expected signing key, checked freshness and channel binding, derived the KEK and unwrapped the provisioning key. Both roles run in the same browser and the sample uses extractable secrets during derivation.',
         })
       } else {
         // ── Classical flow ────────────────────────────────────────────────────
@@ -845,7 +865,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
     } finally {
       setLiveRunning(false)
     }
-  }, [hsm, pqcMode, channelFault, AES_UNWRAP_TEMPLATE])
+  }, [hsm, pqcMode, channelFault, expectedSigner, AES_UNWRAP_TEMPLATE])
 
   const bothSelected = selectedTeeVendor !== 'All' && selectedHsmVendor !== 'All'
 
@@ -1040,6 +1060,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   size="sm"
                   onClick={() => {
                     setPqcMode(false)
+                    clearLiveOutcome()
                     setCurrentStep(0)
                     setCompletedSteps(new Set())
                   }}
@@ -1052,6 +1073,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                   size="sm"
                   onClick={() => {
                     setPqcMode(true)
+                    clearLiveOutcome()
                     setCurrentStep(0)
                     setCompletedSteps(new Set())
                   }}
@@ -1408,7 +1430,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                       }`}
                     >
                       {eng.quantumImpact === 'grover-halved'
-                        ? 'Grover Halved'
+                        ? 'Idealized key search'
                         : eng.quantumImpact === 'none'
                           ? 'No AES key documented'
                           : 'Quantum Safe'}
@@ -1453,7 +1475,37 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           )}
 
           {pqcMode && (
-            <fieldset className="text-xs space-y-1" data-testid="channel-fault">
+            <div className="space-y-1 text-xs">
+              <label className="block space-y-1">
+                <span className="block font-semibold">Expected sample signer</span>
+                {/* eslint-disable-next-line no-restricted-syntax -- Native <select> preserved for form semantics and Playwright combobox/selectOption tests */}
+                <select
+                  value={expectedSigner}
+                  aria-describedby={signerHintId}
+                  disabled={liveRunning}
+                  className="min-h-[44px] max-w-full rounded-md border border-border bg-background px-2"
+                  onChange={(event) => {
+                    setExpectedSigner(event.target.value === 'staging' ? 'staging' : 'provisioning')
+                    clearLiveOutcome()
+                  }}
+                >
+                  <option value="provisioning">Fictional provisioning HSM</option>
+                  <option value="staging">Fictional staging HSM</option>
+                </select>
+              </label>
+              <p id={signerHintId} className="text-muted-foreground">
+                The receiver checks the signed statement with the public key selected here before it
+                can unwrap a key. Both sample identities are local software keys.
+              </p>
+            </div>
+          )}
+
+          {pqcMode && (
+            <fieldset
+              className="text-xs space-y-1"
+              data-testid="channel-fault"
+              disabled={liveRunning}
+            >
               <legend className="font-semibold text-foreground">
                 Channel check (simulated fault injection)
               </legend>
@@ -1470,7 +1522,10 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                     type="radio"
                     name="channel-fault"
                     checked={channelFault === id}
-                    onChange={() => setChannelFault(id)}
+                    onChange={() => {
+                      setChannelFault(id)
+                      clearLiveOutcome()
+                    }}
                   />
                   {label}
                 </label>
@@ -1478,7 +1533,11 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
             </fieldset>
           )}
 
-          {liveError && <ErrorAlert message={liveError} onRetry={() => void runLiveDemo()} />}
+          {liveError && (
+            <div role="alert">
+              <ErrorAlert message={liveError} onRetry={() => void runLiveDemo()} />
+            </div>
+          )}
 
           {liveResults.length > 0 && (
             <div className="space-y-2">

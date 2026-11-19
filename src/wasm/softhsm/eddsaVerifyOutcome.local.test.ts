@@ -9,7 +9,8 @@ import {
   hsm_openUserSession,
   type SoftHSMModule,
 } from '@/wasm/softhsm'
-import { hsm_eddsaVerify, hsm_importEdDSAPublicKey } from './classical'
+import { hsm_ecdsaVerify, hsm_eddsaVerify, hsm_importEdDSAPublicKey } from './classical'
+import { hsm_verifyBytes } from './pqc'
 import vectors from '@/data/acvp/eddsa_test.json'
 const bytes = (hex: string) => Uint8Array.from(hex.match(/../g) ?? [], (b) => parseInt(b, 16))
 let engine: SoftHSMModule,
@@ -48,6 +49,57 @@ describe('Ed25519 signature outcomes for negative sample checks', () => {
         if ([0, 0xc0, 0xc1].includes(rv)) expect(run(true)).toBe(rv === 0)
         else expect(() => run(true)).toThrow(/C_Verify/)
       } finally {
+        verify.mockRestore()
+        init.mockRestore()
+      }
+    }
+  )
+})
+
+describe('ECDSA verification outcomes for the signed-output workshop', () => {
+  it.each([0, 0xc0, 0xc1, 5, 0x82])(
+    'distinguishes C_Verify return code %i in the strict path',
+    (rv) => {
+      const init = vi.spyOn(engine, '_C_VerifyInit').mockReturnValue(0)
+      const verify = vi.spyOn(engine, '_C_Verify').mockReturnValue(rv)
+      try {
+        const run = (strict: boolean) =>
+          hsm_ecdsaVerify(
+            engine,
+            session,
+            1,
+            new Uint8Array(32),
+            new Uint8Array(64),
+            undefined,
+            strict
+          )
+        expect(run(false)).toBe(rv === 0)
+        if ([0, 0xc0, 0xc1].includes(rv)) expect(run(true)).toBe(rv === 0)
+        else expect(() => run(true)).toThrow(/C_Verify/)
+      } finally {
+        verify.mockRestore()
+        init.mockRestore()
+      }
+    }
+  )
+})
+
+describe('ML-DSA verification outcomes for hybrid component checks', () => {
+  it.each([0, 0xc0, 0xc1, 5, 0x82])(
+    'distinguishes C_VerifyMessage return code %i in the strict path',
+    (rv) => {
+      const init = vi.spyOn(engine, '_C_MessageVerifyInit').mockReturnValue(0)
+      const verify = vi.spyOn(engine, '_C_VerifyMessage').mockReturnValue(rv)
+      const finish = vi.spyOn(engine, '_C_MessageVerifyFinal').mockReturnValue(0)
+      try {
+        const run = (strict: boolean) =>
+          hsm_verifyBytes(engine, session, 1, new Uint8Array(32), new Uint8Array(3309), strict)
+        expect(run(false)).toBe(rv === 0)
+        if ([0, 0xc0, 0xc1].includes(rv)) expect(run(true)).toBe(rv === 0)
+        else expect(() => run(true)).toThrow(/C_VerifyMessage/)
+        expect(finish).toHaveBeenCalledTimes(2)
+      } finally {
+        finish.mockRestore()
         verify.mockRestore()
         init.mockRestore()
       }

@@ -11,7 +11,7 @@ The TLS Basics module provides a comprehensive introduction to Transport Layer S
 - **Key exchange approaches**:
   - **Classical (ECDH)** — X25519, P-256, P-384; fast with small keys (~32 bytes); quantum-vulnerable
   - **PQC (ML-KEM)** — ML-KEM-512/768/1024; quantum-resistant; larger keys (~1,184 bytes for ML-KEM-768)
-  - **Hybrid** — X25519MLKEM768 combines both; already deployed in Chrome and Firefox; secure even if one algorithm is broken
+  - **Hybrid** — X25519MLKEM768 (RFC 10024, TLS NamedGroup codepoint `0x11EC`) combines X25519 and ML-KEM-768; already deployed in Chrome and Firefox; secure even if one algorithm is broken
 - **HelloRetryRequest (HRR)** — per RFC 9846 §4.2.4, the server sends an HRR when client and server share a supported group but the ClientHello carried no key_share for the group the server selects; the client retries with that key share (2-RTT). If no group is supported by both sides, no HRR is possible and the server aborts with a handshake_failure alert. A hybrid such as X25519MLKEM768 is its own NamedGroup codepoint (RFC 10024): a classical-only client matches only if the server also supports plain X25519 as a separate group, and that classical fallback needs a policy that prevents silent downgrade
 - **HKDF key schedule**: derives all session keys through Extract and Expand operations — Early Secret (from PSK), Handshake Secret (from ECDHE/KEM shared secret, producing client and server handshake traffic secrets), and Master Secret (producing application traffic secrets)
 - **Forward secrecy** — TLS 1.3 mandates ephemeral key exchange for every connection; session keys cannot be recovered even if long-term keys are compromised

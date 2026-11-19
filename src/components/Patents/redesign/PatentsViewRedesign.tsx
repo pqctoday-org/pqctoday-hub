@@ -147,6 +147,11 @@ function readSavedSort(): { key: SortKey; dir: SortDir } {
   return { key: 'issueDate', dir: 'desc' }
 }
 
+function exportPatentRows(patents: PatentItem[]) {
+  logPatentExport(patents.length)
+  downloadCsv(generateCsv(patents, PATENTS_CSV_COLUMNS), csvFilename('pqc-patents'))
+}
+
 export function PatentsViewRedesign({
   simEmbed = false,
 }: {
@@ -508,8 +513,7 @@ export function PatentsViewRedesign({
         ? exploreResults
         : displayPatents
   const handleExport = useCallback(() => {
-    logPatentExport(exportPatents.length)
-    downloadCsv(generateCsv(exportPatents, PATENTS_CSV_COLUMNS), csvFilename('pqc-patents'))
+    exportPatentRows(exportPatents)
   }, [exportPatents])
 
   // Resolved against the full corpus (either ID form), not the scoped list —
@@ -658,6 +662,7 @@ export function PatentsViewRedesign({
               patents={displayPatents}
               onSelectPatent={handleSearchSelect}
               onResults={setSearchResults}
+              onExport={exportPatentRows}
               urlQuery={searchQuery}
               onQueryChange={handleSearchQueryChange}
             />

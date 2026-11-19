@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'sbom',
-  contentVersion: 15,
+  contentVersion: 16,
   lm_id: 'LM-063',
   title: 'Software Bill of Materials (SBOM)',
   description:
-    'Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.',
+    'Inventory software components within a stated scope, with versions, supplier or producer details, and dependency relationships — one input for vulnerability triage and broader crypto-asset discovery.',
   duration: '30 min',
   whyThisMatters:
-    "You can't patch, license-clear, or migrate what you don't know you depend on; the SBOM is the software inventory every downstream discipline — CBOM, vulnerability management, license compliance — builds on.",
+    'An SBOM can help teams investigate dependencies for vulnerability, licensing, and migration work. Its coverage depends on how it is generated and maintained, and downstream disciplines combine it with other evidence.',
   difficulty: 'intermediate',
   frameworkPhase: 'p1',
   track: 'Strategy',

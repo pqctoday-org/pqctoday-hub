@@ -90,7 +90,8 @@ export const useSymmetricOperations = ({
 
           const inputBytes = hexToBytes(symOutput)
 
-          if (inputBytes.length < 12) throw new Error('Invalid ciphertext (too short for IV)')
+          if (inputBytes.length < 28)
+            throw new Error('AES-GCM needs a 12-byte nonce and a 16-byte authentication tag.')
           const iv = inputBytes.slice(0, 12)
           const ciphertext = inputBytes.slice(12)
 
@@ -230,7 +231,12 @@ export const useSymmetricOperations = ({
         }
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Operation failed'
+      const errorMessage =
+        type === 'symDecrypt' && err instanceof DOMException && err.name === 'OperationError'
+          ? 'AES-GCM rejected this ciphertext. Restore the original bytes and check the selected key.'
+          : err instanceof Error
+            ? err.message
+            : 'Operation failed'
       setError(errorMessage)
     } finally {
       setLoading(false)

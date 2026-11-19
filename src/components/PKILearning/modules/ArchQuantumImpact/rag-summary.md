@@ -12,7 +12,7 @@ Architect Quantum Impact connects six descriptive architecture scenarios to skil
 - **Algorithm Selection Decision Tree** — constrained devices (IoT, smart cards, embedded): FN-DSA-512 (Falcon-512) preferred — compact signature (666 bytes), but requires Gaussian sampling (careful implementation); ML-DSA-44 for signing when implementation simplicity matters more than size; ML-KEM-512 for key exchange on constrained devices; general servers/cloud: ML-DSA-65 for signing, ML-KEM-768 for KEM; high-assurance/long-lived: ML-DSA-87, ML-KEM-1024, SLH-DSA-SHAKE-256s
 - **TLS Handshake Size and Performance Budgets** — measured seven-message handshake totals: X25519 with RSA-2048 is 2,233 bytes; X25519MLKEM768 with RSA-2048 is 4,499 bytes (2,266 more, all in key exchange); ML-KEM-768 with ML-DSA-65 is 16,944 bytes (14,711 more); these are handshake-layer bytes from sample profiles, not estimates for every chain, and no handshake latency was measured, so the lesson gives no P50 or P99 figure; architects must measure budgets and fallback behaviour on their own endpoints and audit SLA contracts, and CDN and load balancer session ticket sizes also grow
 - **Strangler Fig Migration Pattern** — legacy monolithic crypto services can be gradually migrated without downtime by deploying a PQC API Gateway to intercept traffic and routing specific endpoints to new PQC-enabled microservices over time.
-- **Crypto-Agility Debt** — hardcoded algorithm identifiers (OID strings, JCA algorithm names, cipher suite constants) embedded in configuration files, database schema, or wire protocols create migration blockers; crypto-agile systems abstract algorithm selection behind a policy interface; CBOM (Cryptographic Bill of Materials) — machine-readable inventory of all cryptographic dependencies (analogous to SBOM); CycloneDX CBOM schema is the current draft standard
+- **Crypto-Agility Debt** — hardcoded algorithm identifiers (OID strings, JCA algorithm names, cipher suite constants) embedded in configuration files, database schema, or wire protocols create migration blockers; crypto-agile systems abstract algorithm selection behind a policy interface; CBOM (Cryptographic Bill of Materials) — machine-readable inventory of all cryptographic dependencies (analogous to SBOM); CycloneDX 1.6+ CBOM schema (ECMA-424) is the current standard
 - **HSM PQC Maturity Tiers** — Tier 1 (PQC firmware shipping): Thales Luna Network HSM 7 (firmware 7.9.0 or newer for ML-KEM and ML-DSA, 7.8.9 or newer for LMS/HSS; Thales's pages do not list SLH-DSA), Entrust nShield 5 (firmware v13.8+, ML-KEM v13.8.3+: ML-KEM, ML-DSA, SLH-DSA; its FIPS 140-3 certificate #5329 lists no PQC), Utimaco u.trust GP HSM Se-Series with Quantum Protect (ML-KEM, ML-DSA, LMS, XMSS; SLH-DSA on roadmap; no FIPS certificate is established for this product name here, and FIPS 140-2 certificate #3925, now Historical, is listed under CryptoServer Se-Series Gen2), Crypto4A QxHSM (FIPS 140-3 certificate #5497 lists ML-KEM, ML-DSA, SLH-DSA and LMS); Tier 2 (limited): AWS CloudHSM (ML-DSA only, through vendor-defined PKCS#11 mechanisms, in FIPS mode on hsm2m.medium from 1 Sep 2026, not yet on its CMVP certificate; no ML-KEM), Azure Dedicated HSM (Thales Luna 7 backend, PQC by customer-requested firmware upgrade; retiring, no new customers); Tier 3 (not in the HSM yet): Google Cloud HSM (PQC keys at the Cloud KMS software protection level only), IBM 4769 (PQC key types not yet GA); architects must map their HSM tier against their migration timeline before committing to hardware-backed PQC key storage
 - **DTLS 1.3 with ML-KEM** — IoT and UDP-based protocols (CoAP, QUIC, DTLS) face additional constraints: DTLS record size limits, handshake fragmentation, retransmit buffers for large PQC Certificate messages; DTLS 1.3 + ML-KEM-512 is the current recommended path for constrained IoT; QUIC with X25519MLKEM768 is available in Cloudflare, Chrome, and BoringSSL
 - **Crypto-Agility CBOM** — architects should mandate CBOM generation in build pipelines; CycloneDX cbom component type identifies algorithm, key length, and usage context; CBOM enables automated policy enforcement (OPA/Kyverno) and accelerates future algorithm transitions by providing a machine-readable migration target list
@@ -40,14 +40,15 @@ The workshop has six steps:
 - FIPS 203 (ML-KEM — parameter sets: ML-KEM-512, ML-KEM-768, ML-KEM-1024)
 - FIPS 204 (ML-DSA — parameter sets: ML-DSA-44, ML-DSA-65, ML-DSA-87)
 - FIPS 205 (SLH-DSA — 12 parameter sets including SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-256s)
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final October 2026)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners)
 - NIST SP 800-208 (Recommendation for Stateful Hash-Based Signature Schemes — LMS/XMSS)
-- IETF draft-ounsworth-pq-composite-sigs (Composite X.509 signatures)
+- RFC 10073 (Composite X.509 signatures, formerly draft-ietf-lamps-pq-composite-sigs)
 - IETF draft-connolly-cfrg-xwing (X-Wing hybrid KEM combiner)
 - IETF draft-ietf-tls-mlkem (ML-KEM in TLS 1.3 — X25519MLKEM768 group)
-- CycloneDX CBOM (Cryptographic Bill of Materials schema)
-- NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0)
+- CycloneDX CBOM (Cryptographic Bill of Materials schema, ECMA-424)
+- NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0, FAQ v2.2 for NSS)
+- EO 14412 & OMB M-26-15 (US federal civilian PQC transition) and EU PQC Roadmap v1.1
 - DTLS 1.3 (RFC 9147 — transport layer security for constrained environments)
 
 ## Cross-References

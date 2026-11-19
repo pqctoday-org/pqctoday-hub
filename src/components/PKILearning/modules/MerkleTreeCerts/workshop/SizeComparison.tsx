@@ -11,7 +11,7 @@ import {
   STANDALONE_COSIGNATURE_COUNT,
 } from '../data/mtcConstants'
 
-// Two subtree cadences, because draft-ietf-plants-merkle-tree-certs-07 §6.5 projects
+// Two subtree cadences, because draft-ietf-plants-merkle-tree-certs-08 §6.5 projects
 // two — a standalone subtree is cut every checkpoint (~3,000 certs, 12 hashes, 384 B),
 // a landmark-relative one every landmark (~5.4M certs, 23 hashes, 736 B). Driving both
 // columns from a single slider is what previously published a 736 B standalone proof,

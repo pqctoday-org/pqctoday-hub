@@ -302,7 +302,7 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     description:
       'Rotating the protector (master or principal key) re-wraps the existing DEKs under a new key; the encrypted data files are not rewritten. Use an ML-KEM-based protector only where your key manager and database integration actually offer one. Old wrapped entries remain until the re-wrap completes.',
     classicalApproach:
-      'Oracle: ADMINISTER KEY MANAGEMENT SET KEY rotates the TDE master encryption key. SQL Server: ALTER DATABASE ENCRYPTION KEY ENCRYPTION BY SERVER CERTIFICATE or ASYMMETRIC KEY re-protects the same key under a different protector. pg_tde: pg_tde_set_key_using_database_key_provider rotates the principal key and re-encrypts the internal keys. MongoDB: KeyVault.rewrapManyDataKey() re-wraps data keys with a new customer master key without changing them.',
+      'Oracle: ADMINISTER KEY MANAGEMENT SET KEY rotates the TDE master encryption key. SQL Server: ALTER DATABASE ENCRYPTION KEY ENCRYPTION BY SERVER CERTIFICATE or ASYMMETRIC KEY re-protects the same key under a different protector. pg_tde: pg_tde_set_key_using_database_key_provider rotates the principal key and re-encrypts the internal keys. MongoDB Enterprise with KMIP: security.kmip.rotateMasterKey rotates the master key and re-encrypts the internal keystore without changing database keys. MongoDB Queryable Encryption/CSFLE: KeyVault.rewrapManyDataKey() re-wraps field DEKs with a new CMK without changing the DEKs.',
     pqcApproach:
       'Design target, not a documented engine command: generate an ML-KEM-1024 key pair in the HSM or key manager, use ML-KEM.Encaps to produce a shared secret, derive a key-encryption key from it (KDF), and wrap the DEK with that key; keep the KEM ciphertext (1,568 bytes) with the wrapped DEK during the transition. None of the commands above is shown here to accept an ML-KEM protector, so confirm engine and key-manager support before planning this step.',
     downtime:
@@ -340,11 +340,11 @@ export const TDE_MIGRATION_STEPS: TDEMigrationStep[] = [
     step: 5,
     title: 'Integrity Verification & Decrypt Test',
     description:
-      'Validate that all re-encrypted tablespaces/collections can be decrypted using the new ML-KEM-wrapped DEKs. Run checksum validation on critical tables. Perform decrypt-test on sample rows.',
+      'Validate that the new protector recovers the data keys needed to read protected tablespaces or collections. Verify integrity and restore a representative backup.',
     classicalApproach:
       'DBCC CHECKDB (SQL Server) / Oracle RMAN validation. Verify DEK decryption by querying sample encrypted columns.',
     pqcApproach:
-      'Same integrity checks plus: verify that the ML-KEM ciphertext stored in KMS metadata decapsulates correctly to yield the same DEK. Test HYOK path end-to-end: DB → KMS → HSM → decapsulate.',
+      'For the proposed ML-KEM design, decapsulate the stored KEM ciphertext to recover the shared secret, derive the wrapping key and unwrap the DEK. Confirm the recovered DEK decrypts the sample. Test the full DB → KMS → HSM path.',
     downtime: 'None',
     risk: 'low',
     tooling: ['DBCC CHECKDB', 'Oracle RMAN', 'pg_tde_verify_key', 'Custom decrypt test scripts'],
@@ -556,7 +556,7 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     deadlineNote:
       'HHS has not issued PQC-specific HIPAA guidance; NSM-10 applies to federal healthcare systems.',
     pqcImplication:
-      'ePHI (Protected Health Information) retained for 50+ years (lifespan records) is at highest HNDL risk. Healthcare organizations should prioritize ML-KEM-1024 DEK wrapping for long-retention databases.',
+      'Prioritize ePHI datasets whose confidentiality requirements extend for decades; retention periods vary by record type and jurisdiction. HIPAA does not prescribe ML-KEM or a fixed PQC migration date. This module recommends assessing post-quantum key management based on the dataset’s confidentiality horizon and risk.',
   },
   {
     id: 'dora-9',

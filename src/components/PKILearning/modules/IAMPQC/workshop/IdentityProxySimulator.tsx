@@ -72,7 +72,7 @@ export const IdentityProxySimulator: React.FC = () => {
           <Server size={48} className="text-warning" />
           <h3 className="font-bold">Legacy App (SP)</h3>
           <div className="text-sm text-center">
-            <span className="bg-warning/20 text-warning-foreground px-2 py-1 rounded text-xs">
+            <span className="bg-warning/20 text-foreground px-2 py-1 rounded text-xs">
               Classical Only
             </span>
             <p className="mt-2 text-muted-foreground text-xs">

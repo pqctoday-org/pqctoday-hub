@@ -36,14 +36,14 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         name: 'Webhook HMAC Secrets',
         type: 'secret',
         algorithm: 'hmac',
-        keySize: 'SHA-256 / 256-bit',
+        keySize: '256-bit sample key / HMAC-SHA-256',
         quantumVulnerable: false,
         hndlRisk: 'none',
-        pqcReplacement: 'HMAC-SHA-256 (already quantum-safe)',
+        pqcReplacement: 'Retain HMAC-SHA-256 and check key and tag policy',
         pqcAlgorithm: 'hmac',
         exposureWindow: 'Short-lived (rotate with each deployment)',
         notes:
-          "Grover's algorithm provides only a quadratic speedup against HMAC. SHA-256 remains quantum-safe at 128-bit post-quantum security.",
+          'A 256-bit sample key and a SHA-256 digest are different quantities. For webhook authentication, verify the key’s randomness, how it is stored and whether the protocol truncates the tag.',
       },
       {
         id: 'src-deploy-key',
@@ -60,11 +60,11 @@ export const PIPELINE_STAGES: PipelineStage[] = [
         quantumVulnerable: true,
         hndlRisk: 'none',
         pqcReplacement:
-          'ML-DSA-44 (pending IETF PQ SSH draft; OpenSSH 9.x has PQ key exchange only)',
+          'OpenSSH 10.6: ssh-mldsa44-ed25519 hybrid signatures (ML-DSA-44 + Ed25519); verify version and role',
         pqcAlgorithm: 'ml-dsa',
         exposureWindow: '2–5 years (typically rotated with repo access reviews)',
         notes:
-          'SSH now supports sntrup761x25519 for key exchange, but Ed25519/RSA signing keys remain quantum-vulnerable.',
+          'OpenSSH 10.4 introduced composite ML-DSA-44+Ed25519 signatures experimentally and off by default. OpenSSH 10.6 adds ssh-mldsa44-ed25519; 10.6p2 permits it as a CA signature algorithm. This is a hybrid signature, not a pure ML-DSA SSH key. The IETF SSHM composite-signature specification is draft-ietf-sshm-composite-sigs-01 (17 Nov 2026), still an Internet-Draft. Check the installed release, enabled algorithms and whether the required user, host or CA role is supported. Sources: https://www.openssh.org/releasenotes.html and https://datatracker.ietf.org/doc/html/draft-ietf-sshm-composite-sigs-01.',
       },
     ],
   },

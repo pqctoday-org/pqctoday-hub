@@ -1,12 +1,40 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
-import { getCvesForProduct, hasCpeCoverage, __setCachedSnapshotForTests } from './cveSnapshotData'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import {
+  loadCveSnapshot,
+  getCvesForProduct,
+  hasCpeCoverage,
+  __setCachedSnapshotForTests,
+} from './cveSnapshotData'
 import { cpeByProduct } from './cpeXrefData'
 import type { CveSnapshot } from '@/types/CveTypes'
 
 describe('cveSnapshotData', () => {
   beforeEach(() => {
     __setCachedSnapshotForTests(null)
+  })
+
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('shares a load attempt and retries after both network and snapshot validation failures', async () => {
+    const snapshot = {
+      generatedAt: '2026-11-14T00:00:00Z',
+      sourceCsv: 'fixture.csv',
+      byCpe: {},
+    }
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('', { status: 503 }))
+      .mockResolvedValueOnce(Response.json({ ...snapshot, byCpe: undefined }))
+      .mockResolvedValueOnce(Response.json(snapshot))
+    vi.stubGlobal('fetch', fetch)
+
+    await expect(Promise.all([loadCveSnapshot(), loadCveSnapshot()])).rejects.toThrow('503')
+    expect(fetch).toHaveBeenCalledTimes(1)
+    await expect(loadCveSnapshot()).rejects.toThrow('snapshot is incomplete')
+    await expect(loadCveSnapshot()).resolves.toEqual(snapshot)
+    await expect(loadCveSnapshot()).resolves.toEqual(snapshot)
+    expect(fetch).toHaveBeenCalledTimes(3)
   })
 
   it('returns the CVE list for a product whose CPE matches the snapshot', async () => {

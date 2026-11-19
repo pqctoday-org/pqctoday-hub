@@ -39,4 +39,20 @@ describe('QuantumThreatsExercises: post-quantum resistance wording', () => {
     expect(t).toMatch(/policy or safety-margin choice/)
     expect(t).toMatch(/not a gate, time or cost estimate/)
   })
+
+  it('does not teach quantum forgery as changing old certificates retroactively', () => {
+    const t = text()
+    expect(t).toMatch(/modeled deadline/)
+    expect(t).toMatch(/not an arrival forecast/)
+    expect(t).toMatch(/Existing certificates do not change/)
+    expect(t).toMatch(/issuance-time and archive evidence/)
+    expect(t).not.toMatch(/every certificate it has ever signed becomes retroactively forgeable/i)
+  })
+
+  it('scopes HNDL to healthcare data carried in vulnerable recorded sessions', () => {
+    const t = text()
+    expect(t).toMatch(/planning scenario/)
+    expect(t).toMatch(/sessions that rely on vulnerable classical key establishment/)
+    expect(t).toMatch(/does not mean every healthcare record is exposed/)
+  })
 })

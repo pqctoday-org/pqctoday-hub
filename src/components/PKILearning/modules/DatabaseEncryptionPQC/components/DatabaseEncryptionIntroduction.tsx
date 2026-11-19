@@ -231,7 +231,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </div>
             <p>
               <InlineTooltip term="TDE">TDE</InlineTooltip> encrypts database files on disk (data
-              pages, log files, backups) using AES-256. It protects against physical theft of
+              pages, log files, backups). Supported ciphers vary by database engine and
+              configuration; AES-256 is one common option. TDE protects against physical theft of
               storage media or backup exfiltration &mdash; but provides{' '}
               <strong>no protection against a privileged DBA</strong> who has direct database
               access. The database engine decrypts data transparently on read.
@@ -262,10 +263,11 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               3. Field-Level Encryption (FLE) &mdash; Application-Controlled
             </div>
             <p>
-              FLE is performed by the application before data reaches the database wire. MongoDB FLE
-              1.0/2.0 encrypts document fields client-side; the server stores only ciphertext. Key
-              material never leaves the application, so the server stores only ciphertext. This
-              architecture limits server-side query capabilities.
+              FLE encrypts document fields client-side before data reaches the database wire. The
+              database stores encrypted fields and key-vault records; data keys are wrapped by a
+              customer master key managed through a local key or supported KMS provider. The
+              database server does not receive the field plaintext, while query capabilities depend
+              on the selected FLE or Queryable Encryption mode.
             </p>
           </div>
 
@@ -291,9 +293,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             PQC Impact on Encryption Layers
           </div>
           <p className="text-xs text-muted-foreground">
-            AES-256 symmetric encryption used at every layer is already quantum-safe (Grover&apos;s
-            algorithm reduces effective security to 128 bits &mdash; still above the 112-bit
-            minimum).
+            Shor&apos;s algorithm does not break AES. Grover&apos;s algorithm can reduce the
+            effective key-search strength, so AES-256 retains a 128-bit margin; the exact data
+            cipher still depends on the database engine and configuration.
           </p>
         </div>
       </LearnSection>
@@ -316,9 +318,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               Provider-Managed (Weakest)
             </div>
             <p className="text-xs text-muted-foreground">
-              Cloud provider generates and stores all key material. PQC migration timeline is
-              entirely at the provider&apos;s discretion. No customer control over ML-KEM adoption
-              date.
+              The provider manages the keys for this example. Customers still need to confirm the
+              service&apos;s PQC support, migration controls, import options and release schedule;
+              they can also assess a different key-custody design or service.
             </p>
           </div>
           <div className="bg-status-warning/5 rounded-lg p-4 border border-status-warning/20">
@@ -326,11 +328,11 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               <InlineTooltip term="BYOK">BYOK</InlineTooltip> (Bring Your Own Key)
             </div>
             <p className="text-xs text-muted-foreground">
-              Customer generates keys in on-prem HSM, uploads to cloud KMS. Can enforce ML-KEM-1024
-              wrapping for CMK import on customer&apos;s own schedule. Cloud KMS must support an
-              ML-KEM import-wrapping format (AWS KMS offers ML-KEM key specs, but its import
-              wrapping keys are RSA (SM2 in the China Regions); check Azure and Google Cloud per
-              service).
+              In this example, the customer generates key material in an on-prem HSM and imports it
+              into a cloud KMS. ML-KEM import wrapping is a design target, not a generally available
+              cloud-KMS capability; the service must support the required import format. AWS KMS
+              offers ML-KEM key specifications, but its import wrapping keys are RSA (SM2 in the
+              China Regions); check each service&apos;s documentation before planning this flow.
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
@@ -390,15 +392,20 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
         title="Online vs Offline Migration, Performance Overhead"
       >
         <p>
-          The good news for database PQC migration: AES-256, used to encrypt actual data files, is{' '}
-          <strong>already quantum-safe</strong>. The migration effort targets only the DEK wrapping
-          algorithm. Oracle and SQL Server both support <strong>online TDE re-keying</strong> with
-          zero application downtime.
+          For data at rest, a sufficiently strong symmetric cipher such as AES-256 is not broken by
+          Shor&apos;s algorithm. A PQC migration must also review asymmetric key wrapping and key
+          management links. Distinguish changing a key protector from changing a database data
+          encryption key: the Oracle and SQL Server commands below can rewrite or re-encrypt data,
+          while MongoDB&apos;s field-key rewrap operation changes the wrapping key. Online-capable
+          commands do not guarantee zero workload impact or availability for every engine and
+          version; test the exact operation and recovery plan.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-status-success/5 rounded-lg p-4 border border-status-success/20">
-            <div className="text-xs font-bold text-status-success mb-2">Online Migration</div>
+            <div className="text-xs font-bold text-status-success mb-2">
+              Online-Capable Key Rotation Examples (Different Scopes)
+            </div>
             <ul className="space-y-1 text-xs text-muted-foreground">
               <li>
                 &bull; Oracle:{' '}
@@ -413,13 +420,17 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
                 </code>
               </li>
               <li>
-                &bull; MongoDB: <code className="bg-muted px-1 rounded">rotateMasterKey</code>;
-                client-side encrypted fields:{' '}
-                <code className="bg-muted px-1 rounded">KeyVault.rewrapManyDataKey</code>
+                &bull; MongoDB Enterprise KMIP master-key rotation:{' '}
+                <code className="bg-muted px-1 rounded">security.kmip.rotateMasterKey</code>{' '}
+                re-encrypts the internal keystore; database keys stay unchanged. For client-side
+                encrypted fields,{' '}
+                <code className="bg-muted px-1 rounded">KeyVault.rewrapManyDataKey</code> re-wraps
+                data keys under a new customer master key.
               </li>
               <li>
-                &bull; No application downtime is expected for these commands; Oracle's ONLINE
-                conversion builds new datafiles and needs free space
+                &bull; Oracle&apos;s ONLINE conversion builds replacement datafiles and needs free
+                space; SQL Server&apos;s encryption operations have workload and operation
+                restrictions. Validate availability on the engine/version you run.
               </li>
               <li>
                 &bull; Sample assumption: CPU overhead of 5&ndash;15% during the re-encryption
@@ -455,10 +466,10 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
                     Algorithm
                   </th>
                   <th className="text-right py-1.5 px-2 text-muted-foreground font-medium">
-                    Public Key
+                    Encoded Key / Share
                   </th>
                   <th className="text-right py-1.5 px-2 text-muted-foreground font-medium">
-                    Ciphertext
+                    Ciphertext / Output
                   </th>
                   <th className="text-left py-1.5 px-2 text-muted-foreground font-medium">
                     Use Case
@@ -469,30 +480,30 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
                 {[
                   {
                     alg: 'RSA-2048',
-                    pub: '256 B',
+                    pub: '256 B modulus',
                     ct: '256 B',
-                    use: 'Current TDE DEK wrap',
+                    use: 'Example RSA-2048 encoding',
                     color: 'text-status-error',
                   },
                   {
                     alg: 'ECDH P-256',
-                    pub: '64 B',
-                    ct: '65 B',
-                    use: 'Current CMK exchange',
+                    pub: '65 B',
+                    ct: '—',
+                    use: '65 B uncompressed SEC1 point',
                     color: 'text-status-error',
                   },
                   {
                     alg: 'ML-KEM-768',
                     pub: '1,184 B',
                     ct: '1,088 B',
-                    use: 'Recommended hybrid',
+                    use: 'NIST default parameter set',
                     color: 'text-primary',
                   },
                   {
                     alg: 'ML-KEM-1024',
                     pub: '1,568 B',
                     ct: '1,568 B',
-                    use: 'NSM-8 / CNSA 2.0',
+                    use: 'CNSA 2.0 profile',
                     color: 'text-primary',
                   },
                 ].map((row) => (
@@ -507,17 +518,18 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             </table>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
-            The ML-KEM ciphertext (stored in KMS metadata per DEK) increases from 256 bytes to 1,568
-            bytes &mdash; a 6&times; increase in key metadata storage, not data file size. This
-            overhead is negligible relative to multi-TB database sizes.
+            Sizes are algorithm encodings, not complete serialized keys or certificates; ECDH
+            produces a shared secret, not a ciphertext. Under this module&apos;s proposed per-DEK
+            ML-KEM wrapping design, each stored ML-KEM-1024 ciphertext is 1,568 bytes; total
+            metadata growth depends on the number of wrapped keys and the format. This is not a
+            current database-engine command or a measured storage estimate.
           </p>
         </div>
 
         <p>
-          The actual data encryption layer uses{' '}
-          <InlineTooltip term="TDE">AES-256-XTS</InlineTooltip> or AES-256-GCM regardless of
-          classical or PQC key wrapping. Only the KEM ciphertext stored in KMS metadata grows.
-          Performance overhead on OLTP query paths is zero after the re-encryption window.
+          Data-file ciphers and modes depend on the engine and its configuration. A protector change
+          does not inherently change the data cipher, but performance and metadata effects depend on
+          the implementation; measure them with the target database and workload.
         </p>
       </LearnSection>
 
@@ -614,7 +626,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               framework: 'HIPAA § 164.312',
               requirement: 'Encryption and decryption of ePHI at rest.',
               pqcNote:
-                'ePHI (medical records, biometrics) may be retained for 50+ years — extreme HNDL risk. Healthcare databases are the highest-priority migration target. HHS has not issued PQC-specific HIPAA guidance yet; NSM-10 applies to federal healthcare.',
+                'Prioritize ePHI datasets whose confidentiality requirements extend for decades; retention periods vary by record type and jurisdiction. HIPAA’s Security Rule requires a risk analysis and treats encryption as an addressable implementation specification, not a named PQC algorithm mandate. Apply federal NSS requirements only where the system is in scope.',
               color: 'border-status-warning/30 bg-status-warning/5',
               labelColor: 'text-status-warning',
             },

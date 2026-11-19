@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-candidates',
-  contentVersion: 17,
+  contentVersion: 18,
   lm_id: 'LM-053',
   title: 'PQC Candidates & Lifecycle',
   description:
@@ -32,7 +32,7 @@ const manifest: ModuleManifest = {
   ],
   startHere: {
     step: 'comparator',
-    text: 'Sort and filter the nine candidates for one use case in the Candidate Comparator: it tells ML-KEM-768 apart from Classic McEliece by what each is for, not by name.',
+    text: 'Sort and filter the third-round signature candidates by use case in the Candidate Comparator: compare public-key, signature, and combined sizes across MPCitH, multivariate, and isogeny families (with withdrawn HAWK excluded from recommendations).',
   },
   taxonomy: { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'Falcon', 'HQC'] },
   embeddable: true,

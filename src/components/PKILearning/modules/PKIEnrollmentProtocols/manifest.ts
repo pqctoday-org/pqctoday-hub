@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-enrollment-protocols',
-  contentVersion: 13,
+  contentVersion: 14,
   lm_id: 'LM-055',
   title: 'PKI Enrollment Protocols (EST & CMP)',
   description:

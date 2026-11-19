@@ -17,6 +17,7 @@ export interface ModuleCapabilitySpec {
   productionCapabilities: [string, string, string]
   evaluationMethod: string
   evidenceRequired: string
+  sources?: { label: string; href: string }[]
   educationalBoundary: string
 }
 
@@ -30,6 +31,7 @@ interface RawModuleCapabilitySeed {
   productionCapabilities: [string, string, string]
   evaluationMethod: string
   evidenceRequired: string
+  sources?: { label: string; href: string }[]
 }
 
 const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
@@ -60,14 +62,22 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'hybrid-crypto': {
     roleFocus: 'Security Architects & Protocol Engineers',
     productionCapabilities: [
-      'Standards-compliant PQ/T hybrid key exchange (e.g., X25519MLKEM768 or SecP256r1MLKEM768 per RFC 10024; terminology per RFC 9794; generic hybrid framework per ETSI TS 103 744) with FIPS-approved KDF combiners.',
-      'Dual/composite or parallel certificate chain validation where policy requires both classical and PQC cryptographic assurances.',
-      'Downgrade-detection alerts when peers fall back from hybrid PQ/T groups to classical-only key exchange.',
+      'Negotiate an RFC 10024 hybrid key agreement group in TLS 1.3 and record the group selected by the server.',
+      'Verify the peer name, certificate path, and actual CertificateVerify signature against the authentication policy. RFC 10073 defines composite ML-DSA in X.509. Composite ML-DSA in TLS 1.3 has a separate Internet-Draft.',
+      'Enforce the expected group, signature and trust policy. Exercise rejection of a classical-only peer when hybrid key agreement is required, a peer with a disallowed signature, and a certificate with an unexpected name or trust anchor.',
     ],
     evaluationMethod:
-      'Capture staging TLS 1.3 `ClientHello` / `ServerHello` `key_share` extensions and test negative rejection when either component share is corrupted.',
+      'Use the exact client, server, provider and trust configuration planned for rollout. Record a classical baseline and test each intended certificate choice on both peers. Capture the selected key agreement separately from peer verification and CertificateVerify.',
     evidenceRequired:
-      'Packet captures (`pcap`) confirming negotiated hybrid codepoints (`0x11EC` / `0x11EB`) and negative-test failure logs.',
+      'Build and configuration identifiers, negotiated group, peer certificate and trust anchor identifiers, the verified CertificateVerify scheme, and results of expected rejections.',
+    sources: [
+      { label: 'RFC 10024', href: 'https://www.rfc-editor.org/rfc/rfc10024.html' },
+      { label: 'RFC 10073', href: 'https://www.rfc-editor.org/rfc/rfc10073.html' },
+      {
+        label: 'TLS composite ML-DSA draft',
+        href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-composite-mldsa/',
+      },
+    ],
   },
   'crypto-agility': {
     roleFocus: 'Software Architects & Platform Engineers',
@@ -108,7 +118,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'vpn-ssh-pqc': {
     roleFocus: 'Network Security & Infrastructure Operations',
     productionCapabilities: [
-      'IKEv2 Multiple Key Exchanges (RFC 9370 `ADDKE1..ADDKE7`) with `ML-KEM-768` / `ML-KEM-1024` (draft-ietf-ipsecme-ikev2-mlkem) and IKEv2 message fragmentation (RFC 7383; TCP encapsulation is RFC 8229).',
+      'IKEv2 Multiple Key Exchanges (RFC 9370 `ADDKE1..ADDKE7`) with `ML-KEM-768` / `ML-KEM-1024` (draft-ietf-ipsecme-ikev2-mlkem). Check RFC 7383 IKE fragmentation for message-size limits and RFC 9329 TCP encapsulation for paths that block UDP.',
       'OpenSSH 9.9+ hybrid key exchange (`mlkem768x25519-sha256` or `sntrup761x25519-sha512`) enforced via `KexAlgorithms` in `sshd_config`.',
       'PQC X.509 or raw public key authentication for site-to-site and remote-access VPN tunnels.',
     ],
@@ -120,14 +130,24 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'dnssec-pqc': {
     roleFocus: 'DNS Administrators & Network Architects',
     productionCapabilities: [
-      'Authoritative signer and recursive resolver support for post-quantum DNSSEC algorithms and EDNS0 UDP buffer sizing / TCP fallback handling.',
+      'Test both an authoritative signer and a validating recursive resolver for the same DNSSEC algorithm and identifier. ML-DSA-44 is registered as algorithm 18, with its DNSSEC profile described in an Internet-Draft.',
       'Automated ZSK/KSK algorithm rollover orchestration supporting increased `DNSKEY` and `RRSIG` wire sizes.',
-      'Support for compact or stateless/stateful hash-based and lattice-based DNSSEC transport optimizations as IETF DNSOP standards mature.',
+      'Verify EDNS UDP sizing and TCP fallback for the actual name, algorithm and response size used by the zone.',
     ],
     evaluationMethod:
       'Sign a staging DNS zone in a lab environment, query via `dig +dnssec +bufsize=1232`, and measure TC-bit truncation and TCP fallback rates.',
     evidenceRequired:
-      'Staging `dig` DNSSEC validation output (`ad` flag), packet size distribution histogram, and resolver fallback logs.',
+      'For a trusted lab resolver, record the signed baseline response, validated data, tampered signature rejection, response size, TC bit and TCP retry result. Record the signer and resolver builds.',
+    sources: [
+      {
+        label: 'IANA DNSSEC algorithm registry',
+        href: 'https://www.iana.org/assignments/dns-sec-alg-numbers',
+      },
+      {
+        label: 'ML-DSA DNSSEC profile draft',
+        href: 'https://datatracker.ietf.org/doc/draft-westerbaan-dnssec-mldsa/',
+      },
+    ],
   },
   'email-signing': {
     roleFocus: 'Messaging Architects & Enterprise PKI Engineers',
@@ -161,7 +181,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
       'Immutable CloudTrail / KMS audit logging recording key-usage mechanisms (`Encapsulate`, `Decapsulate`, `Sign`, `Verify`).',
     ],
     evaluationMethod:
-      'Execute a staging envelope-encryption and key-rotation workflow via KMS API/CLI and verify that tampered ciphertexts trigger implicit rejection.',
+      'Exercise a valid staging envelope, then change the KEM ciphertext and check end-to-end authenticated opening. For a valid-length ciphertext, ML-KEM decapsulation may return a different shared key without an error. Require the authenticated envelope to reject.',
     evidenceRequired:
       'KMS key metadata JSON showing `ML-KEM` / `ML-DSA` customer master key spec, rotation timestamp, and CloudTrail audit event.',
   },
@@ -240,14 +260,20 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'data-asset-sensitivity': {
     roleFocus: 'Data Governance Leads, CISOs & Enterprise Architects',
     productionCapabilities: [
-      'Automated data discovery and sensitivity classification binding confidentiality lifetimes (1–30+ years) to cryptographic protection profiles.',
-      'HNDL risk-scoring integration prioritizing long-lived regulated datasets (PII, health records, state secrets, financial ledgers) for immediate PQC key-exchange protection.',
-      'Re-encryption pipeline capability for stored archives encrypted under classical key-transport envelopes.',
+      'Record the confidentiality period separately from retention and key lifetime. A signing-only object may have an integrity or trust lifetime instead of a confidentiality period.',
+      'For data exposed to harvest-now, decrypt-later risk, identify the copy or network path, actual key-establishment or wrapping mechanism and the remaining confidentiality horizon.',
+      'For archives with vulnerable key-transport envelopes, test rewrapping or re-encryption and restore a representative archived record under the new policy.',
     ],
     evaluationMethod:
-      'Audit data-classification tags against KMS/database encryption policies and network transit captures for high-sensitivity data flows.',
+      'Trace one stored copy and one transfer. Compare their confidentiality periods, observed protection and whether each has a quantum-vulnerable dependency. Record source-system and archive scopes separately.',
     evidenceRequired:
-      'Data sensitivity register mapped to encryption-in-transit and encryption-at-rest mechanism identifiers.',
+      'Retention and confidentiality records, data flow and envelope identifiers, captured negotiated protection on the named path, and an authorized restore result if the archive is in scope.',
+    sources: [
+      {
+        label: 'NIST security life of data',
+        href: 'https://csrc.nist.gov/glossary/term/security_life_of_data',
+      },
+    ],
   },
   'stateful-signatures': {
     roleFocus: 'Firmware Security Engineers & HSM Architects',
@@ -389,7 +415,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
       'Cross-vendor interoperability test matrices (e.g., OpenSSL 3.6 ↔ BoringSSL ↔ wolfSSL ↔ Bouncy Castle).',
     ],
     evaluationMethod:
-      'Execute positive KAT vectors, corrupt 1 bit of ciphertext/signature to confirm deterministic rejection, and run 1,500-byte MTU constrained handshake tests.',
+      'Run known-answer cases first. Check that a modified signature fails verification. For ML-KEM, check implicit rejection against the expected alternative secret or authenticated-open failure on a modified ciphertext. Record the packet and completion results under a 1,500-byte MTU.',
     evidenceRequired:
       'CI test report showing 100% ACVP KAT pass, negative tamper rejection logs, and cross-vendor interop matrix.',
   },
@@ -516,14 +542,24 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'emv-payment-pqc': {
     roleFocus: 'Payment Systems Architects, Card Issuers & Terminal Engineers',
     productionCapabilities: [
-      "Transition planning for EMVCo contact/contactless Offline Data Authentication (ODA: DDA/CDA) within ISO/IEC 7816-4 and 14443 APDU payload limits and the scheme's contactless transaction-time target.",
-      'Acquirer-to-issuer ISO 8583 / ISO 20022 host links secured with TLS 1.3 hybrid PQC (`X25519MLKEM768`) and TR-31 key blocks.',
-      'Payment HSM support for post-quantum issuer root/CA hierarchies and elliptic-curve/PQC dual-mode terminal kernel updates.',
+      'For the exact contact or contactless terminal kernel and scheme profile, capture local card authentication separately from the issuer’s online authorization response.',
+      'For the terminal, acquirer and issuer connections you operate, identify each leg’s protection and record the negotiated group and authentication. TLS deployment decisions are separate from approval of the card and terminal flow.',
+      'Measure complete terminal exchanges and transaction times against the applicable scheme limits. Record the version and supported features of the HSM and terminal used for testing.',
     ],
     evaluationMethod:
-      'Benchmark contactless transaction tap time and APDU exchange count in a terminal simulator and verify host-to-acquirer TLS 1.3 PQC cipher negotiation.',
+      'Compare a fictional locally verified card followed by issuer decline with a locally failed check. Identify the decision made by the terminal and the different evidence supplied by the issuer. Then reproduce the acceptance checks on the named kernel and scheme profile.',
     evidenceRequired:
-      'Terminal APDU timing trace, acquirer gateway TLS 1.3 capture, and Payment HSM firmware capability matrix.',
+      'Exact card and terminal profiles, kernel version, the terminal data-authentication result, the issuer result, trace timing for all in-scope steps, and the separate TLS evidence.',
+    sources: [
+      {
+        label: 'EMVCo Contact Chip security and testing',
+        href: 'https://www.emvco.com/emv-technologies/emv-contact-chip/',
+      },
+      {
+        label: 'RFC 10024 TLS key agreement',
+        href: 'https://www.rfc-editor.org/rfc/rfc10024.html#section-4',
+      },
+    ],
   },
   'crypto-dev-apis': {
     roleFocus: 'Software Engineers, Library Maintainers & AppSec Leads',
@@ -541,7 +577,7 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     roleFocus: 'Platform Engineers, Kubernetes Administrators & SREs',
     productionCapabilities: [
       'Service mesh mTLS (Istio, Envoy, Linkerd; Cilium PQC is a community demo) configured with hybrid post-quantum key exchange (`X25519MLKEM768`) and automated workload identity rotation (SPIFFE/SPIRE).',
-      'cert-manager integration with CMPv3 (RFC 9810), ACME (RFC 8555), or Private CA issuers supporting `ML-DSA` and `ML-KEM` certificates.',
+      'For TLS workload authentication, confirm each issuer and peer supports the selected signing certificate, such as ML-DSA. An ML-KEM subject key under RFC 9935 performs key encapsulation and cannot sign CertificateVerify.',
       'Base container images packaging FIPS-validated or PQC-enabled OpenSSL 3.5+ / BoringSSL / Go 1.24+ runtimes across all Kubernetes namespaces.',
     ],
     evaluationMethod:
@@ -564,38 +600,61 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'healthcare-pqc': {
     roleFocus: 'Healthcare CISOs, Biomedical Device Engineers & HIPAA Compliance Leads',
     productionCapabilities: [
-      'Long-term Electronic Health Record (EHR) and genomic archive protection against HNDL via hybrid PQC TLS 1.3 (`X25519MLKEM768`) on HL7 FHIR / DICOMweb APIs and `AES-256` at rest.',
-      'FDA premarket cybersecurity (FD&C Act §524B requires an SBOM; a CBOM is a voluntary addition) and post-quantum firmware update signing (`ML-DSA` / `LMS`) for connected medical devices.',
-      'Zero-downtime cryptographic proxy / gateway shielding for legacy clinical imaging modalities.',
+      'Record the negotiated TLS group on the exact FHIR or DICOMweb connection and trace the separate encryption and key-wrapping controls on the retained clinical or genomic record.',
+      'For an FDA premarket submission for a cyber device, preserve the section 524B(b)(3) software bill of materials, including commercial, open-source and off-the-shelf components. A cryptographic inventory can supplement the SBOM for the migration.',
+      'Test the deployed clinical-device update verification boundary and preserve service availability when a legacy imaging device has to connect through a gateway.',
     ],
     evaluationMethod:
-      'Verify HL7 FHIR / DICOM TLS 1.3 hybrid key exchange in staging and review medical-device SBOM and CBOM artifacts prepared for the FDA §524B submission.',
+      'Use an isolated device and synthetic clinical data. Test a supported gateway connection, a peer that cannot negotiate the required group and an update signed by an unapproved test key. Verify the submission SBOM covers the exact device software version.',
     evidenceRequired:
-      'FHIR/DICOM gateway TLS scan, device CycloneDX CBOM, and signed firmware update verification log.',
+      'Gateway and peer build IDs, the negotiated-group trace and archive key evidence, the version-matched SBOM, and positive and negative update verification records.',
+    sources: [
+      {
+        label: 'FDA section 524B questions and answers',
+        href: 'https://www.fda.gov/medical-devices/medical-device-cybersecurity/cybersecurity-resources-medical-device-manufacturers-guidance-resources-and-faqs',
+      },
+      {
+        label: 'FDA February 2026 final guidance',
+        href: 'https://www.fda.gov/regulatory-information/search-fda-guidance-documents/cybersecurity-medical-devices-quality-management-system-considerations-and-content-premarket',
+      },
+      {
+        label: 'RFC 10024 hybrid TLS key agreement',
+        href: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+      },
+    ],
   },
   'aerospace-pqc': {
     roleFocus: 'Avionics Architects, Satellite Communications Engineers & Defense Leads',
     productionCapabilities: [
-      'High-latency, bandwidth-constrained satellite/space link key establishment (CCSDS SDLS / Space Packet Protocol) using `ML-KEM-1024` (CNSA 2.0) or hybrid KEM with pre-staged public keys.',
-      'Radiation-tolerant / SEU-resilient hardware secure boot (`LMS/HSS` per SP 800-208 or `ML-DSA-87`) for non-field-serviceable orbital and avionics platforms (ARINC 811 / 827, DO-326A).',
-      'Crypto-agile FPGA/SDR waveform uploads allowing post-launch algorithm updates with dual-signature authorization.',
+      'For a mission using CCSDS SDLS, match the sending and receiving Security Association and measure the complete frame against the channel budget. Determine the mission’s key-establishment policy separately.',
+      'For an onboard firmware update, verify the complete signed package on the exact boot verifier and compare the measured transfer and verification time with the authorized maintenance window.',
+      'For an in-flight update path, confirm which verifier trusts the new signing profile, within the mission’s allowed rollback and recovery policy.',
     ],
     evaluationMethod:
-      'Simulate CCSDS link key establishment over high-BER/high-RTT satellite channel profiles and verify dual-bank FPGA bitstream signature checks.',
+      'Use the specified mission and test build. Separate a ground-only verifier from a flight link and check any proposed scope exclusion against the approved mission plan. Measure actual bytes and time for both the baseline and candidate package.',
     evidenceRequired:
-      'Link-budget and handshake frame-error test report, DO-326A / CNSA 2.0 compliance matrix, and secure-boot fault-injection log.',
+      'Mission scope and link profile, sender and receiver versions, Security Association parameters where used, complete package size, verification and transfer times, and recovery evidence.',
+    sources: [
+      { label: 'CCSDS 355.0-B-2 §4.2.2 and §6', href: 'https://ccsds.org/Pubs/355x0b2.pdf' },
+    ],
   },
   'automotive-pqc': {
     roleFocus: 'Automotive Cybersecurity Architects (ISO/SAE 21434) & V2X Engineers',
     productionCapabilities: [
-      'Uptane / UNECE R156 Over-the-Air (OTA) ECU software update signing using `ML-DSA`, `SLH-DSA`, or `LMS/XMSS` verified by hardware security modules (EVITA / SHE / AutoSAR Crypto Stack).',
-      'ISO 15118-20 Plug & Charge TLS 1.3 and IEEE 1609.2 V2X pseudonym certificate size/latency optimization for vehicle-to-grid and BSM safety messages.',
-      'In-vehicle SecOC (AUTOSAR Secure Onboard Communication) 256-bit symmetric key distribution via post-quantum key agreement during diagnostic/ECU pairing.',
+      'In an Uptane rollout, verify the metadata for the ECU’s full or partial verification role and check the image against the Director Targets record for its hardware ID, release counter, hash and length.',
+      'Test the exact legacy and updated verifiers in the planned signing transition. The older vehicle still needs a supported, trusted signature and metadata profile.',
+      'Measure the complete transfer and verification window on the target ECU, including safe installation conditions and a tested recovery path.',
     ],
     evaluationMethod:
-      'Benchmark AUTOSAR CSM PQC signature verification time on target TriCore/Arm automotive MCUs and test ISO 15118-20 TLS handshake timing.',
+      'Run the same fictional update with old and new ECU verifier builds on an isolated test bench. Compare a correct image, an image with changed bytes and a correctly signed package for a different hardware or release counter.',
     evidenceRequired:
-      'ISO/SAE 21434 TARA cryptographic risk entry, ECU benchmark trace, and OTA signature verification test log.',
+      'Vehicle and ECU build identifiers, Director and Image metadata used where applicable, verified image length and digest, acceptance or rejection decision and a measured installation-window trace.',
+    sources: [
+      {
+        label: 'Uptane Standard 2.1.0 §5.4.3–5.4.4',
+        href: 'https://uptane.org/docs/2.1.0/standard/uptane-standard#543-installing-images-on-primary-or-secondary-ecus',
+      },
+    ],
   },
   'exec-quantum-impact': {
     roleFocus: 'Chief Executive Officers, Boards of Directors & CISOs',
@@ -792,26 +851,33 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'mls-group-messaging': {
     roleFocus: 'Messaging Security Architects & Collaboration Platform Engineers',
     productionCapabilities: [
-      'IETF RFC 9420 Messaging Layer Security (MLS) TreeKEM ratchet configured with hybrid post-quantum KEM cipher suites from the Internet-Draft draft-ietf-mls-pq-ciphersuites (e.g., `MLS_128_MLKEM768X25519_AES256GCM_SHA384_Ed25519`).',
-      'Forward Secrecy (FS) and Post-Compromise Security (PCS) epoch updates refreshing leaf and intermediate ratchet nodes with fresh `ML-KEM` encapsulation keys.',
-      'Authenticated KeyPackage distribution signed with `ML-DSA` and verified against enterprise identity directories.',
+      'For an RFC 9420 group reinitialization, confirm the explicit target cipher suite, each member’s matching KeyPackage and the new epoch 1 Welcome bound to the old group.',
+      'Test key deletion for forward secrecy and recovery after a fresh leaf key for the affected member is committed. Use a controlled, one-time compromise scenario.',
+      'Verify each KeyPackage’s suite, signature and credential binding. A draft suite using Ed25519 offers post-quantum confidentiality against passive attacks. Select a suite with ML-DSA and verify the credential assumptions when the policy calls for post-quantum authentication.',
     ],
     evaluationMethod:
-      'Simulate multi-member MLS group creation, member join/remove `Commit` processing, and epoch key updates in staging, measuring TreeKEM update bandwidth.',
+      'Stage a group reinitialization with a mismatched KeyPackage followed by a matching one. Capture the ReInit Commit and Welcome and verify their binding. In a separate run, test member join/remove and committed leaf-key recovery while measuring update bandwidth.',
     evidenceRequired:
-      'MLS ciphersuite negotiation log, epoch ratchet transcript, and KeyPackage signature verification output.',
+      'Target suite and KeyPackage validation receipts, ReInit Commit and matching Welcome metadata, credential verification, and positive and negative epoch recovery cases for the tested build.',
   },
   'pqc-candidates': {
     roleFocus: 'Cryptographic Researchers, Security Architects & Standards Analysts',
     productionCapabilities: [
-      'Support for NIST Round 4 / alternate PQC algorithms (`HQC-128/192/256` code-based KEM selected March 2025, `FN-DSA-512/1024` / Falcon, planned as FIPS 206, `FrodoKEM-976/1344` ISO/BSI/ANSSI conservative LWE) where cryptographic diversity or compact signatures are required.',
-      'Strict algorithm lifecycle gating preventing experimental or unselected Round 4 candidates (`BIKE`, `SIKE`) from entering production configurations.',
-      'Modular crypto-provider architecture capable of adding NIST FIPS 206 (`FN-DSA`) and future `HQC` FIPS standards upon final publication.',
+      'For a policy requiring a published NIST KEM standard, record the actual FIPS 203 ML-KEM parameter set. HQC is selected for standardization. Provider support for the submission is separate from publication of its FIPS.',
+      'For signature pilots, record the precise Falcon candidate encoding and library version. NIST’s selected-algorithms registry lists Falcon’s FIPS as forthcoming.',
+      'Keep research profiles scoped to the test environment and test that production policy rejects an available candidate when its applicable publication or approval is missing.',
     ],
     evaluationMethod:
-      'Test candidate algorithms in isolated `liboqs` / OpenSSL `oqsprovider` staging sandboxes and verify production policy gates block non-standardized candidates.',
+      'Compare the selected-algorithm entry with the final publication and the exact provider output. Record separate outcomes for a supported profile and one kept in a research configuration.',
     evidenceRequired:
-      'Candidate benchmark & Trade-off matrix, provider policy configuration, and standards-status review log.',
+      'Dated standards review log, versioned provider and encoding, scope of the policy, and the acceptance or refusal result for the tested configuration.',
+    sources: [
+      {
+        label: 'NIST selected algorithms and publication status',
+        href: 'https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization/selected-algorithms',
+      },
+      { label: 'NIST IR 8547 final', href: 'https://csrc.nist.gov/pubs/ir/8547/final' },
+    ],
   },
   'verification-closure': {
     roleFocus: 'Internal Auditors, QA Leads, CISOs & Release Approvers',
@@ -828,14 +894,24 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'media-drm-pqc': {
     roleFocus: 'Media Security Architects, Broadcast Engineers & Content Protection Leads',
     productionCapabilities: [
-      'C2PA 2.x content provenance and manifest signing (`COSE_Sign1`, RFC 3161 timestamps) with a crypto-agility path to post-quantum signatures once C2PA specifies them.',
-      'DRM license-acquisition and key-exchange pipelines (Widevine, FairPlay, PlayReady, CI Plus, AACS) protected with hybrid PQC TLS 1.3 (`X25519MLKEM768`) and RFC 10024 hybrid key agreement.',
-      'Clone-resistant device certificate provisioning and revocation-list delivery for long-lived smart TVs and set-top boxes.',
+      'Verify a C2PA claim signature and content binding with the allowed algorithms and trust configuration for the exact Content Credentials profile. Use Section 8.2 for the C2PA 2.4 claim-signature algorithm list.',
+      'For the DRM license service, measure the actually negotiated TLS group and authentication on each relevant leg. Confirm that a hybrid requirement survives gateway termination.',
+      'Verify provisioning and revocation on the exact device profiles that consume licenses. A gateway-only build has a different scope from a player or device provisioning service.',
     ],
     evaluationMethod:
-      'Sign and verify a C2PA media asset manifest with a PQC signature in staging and inspect DRM license-server TLS 1.3 key-exchange negotiation.',
+      'Verify an original and modified asset in the chosen C2PA validator. Record claim signature and content-binding results separately. Test the license connection in its own scope, including a peer that lacks the required group.',
     evidenceRequired:
-      'C2PA manifest validation report (`c2patool`), DRM license gateway TLS 1.3 capture, and device root-of-trust specification.',
+      'C2PA profile version, signer trust and content-binding results, TLS group and authentication evidence for each in-scope leg, and the applicable device provisioning scope.',
+    sources: [
+      {
+        label: 'C2PA 2.4 Content Credentials §8.2',
+        href: 'https://spec.c2pa.org/specifications/specifications/2.4/specs/ContentCredentials.html',
+      },
+      {
+        label: 'RFC 10024 §4 hybrid key agreement',
+        href: 'https://www.rfc-editor.org/rfc/rfc10024.html#section-4',
+      },
+    ],
   },
   cbom: {
     roleFocus: 'AppSec Engineers, Supply Chain Leads & Enterprise Architects',
@@ -876,26 +952,46 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
   'government-defense-pqc': {
     roleFocus: 'Defense System Architects, Federal CISOs & NSS Authorizing Officials',
     productionCapabilities: [
-      'Strict NSA CNSA 2.0 compliance for National Security Systems (NSS): `ML-KEM-1024` for key establishment, `ML-DSA-87` for general signatures, `LMS/XMSS` (SP 800-208) for firmware/software signing, `AES-256`, and `SHA-384`/`SHA-512`.',
-      'OMB M-23-02 annual cryptographic inventory submission and high-value-asset prioritization, aligned to NIST IR 8547 milestones, supported by automated discovery.',
-      'Cross-domain and coalition interoperability profiles bridging CNSA 2.0 pure-PQC level-5 mandates with NATO/allied hybrid PQC standards.',
+      'For an NSS profile under CNSA 2.0, document ML-KEM-1024 for key establishment, ML-DSA-87 for signing, AES-256 and SHA-384 or SHA-512. For software and firmware, the FAQ prefers validated single-tree LMS or XMSS where possible and also approves ML-DSA-87.',
+      'For a covered civilian federal system, record its High Value Asset or high-impact status, the priority in the OMB M-26-15 migration plan and the separate dates for key establishment and signatures. NSS is excluded from the memorandum.',
+      'For coalition interoperability, collect the selected group, signature, certificate trust and retry behavior from the exact paired configuration. Resolve the applicable policies before approving a mixed deployment.',
     ],
     evaluationMethod:
-      "Verify NSS staging configurations reject Category 1/3 parameter sets where CNSA 2.0 mandates Category 5 (`ML-KEM-1024` / `ML-DSA-87`) and validate CMVP (FIPS 140-3) module certificates at the level required by the system's authorizing official.",
+      'Classify the test asset as NSS or covered civilian, then test both an allowed configuration and an incompatible parameter or peer. Review the CMVP record for the exact module and operating environment where required.',
     evidenceRequired:
-      'CNSA 2.0 configuration compliance scan, OMB M-23-02 inventory submission receipt, and ATO cryptographic test package.',
+      'Written system scope, authoritative policy and milestone references, exact configuration and peer negotiation records, and the appropriate validation and authorization artifacts.',
+    sources: [
+      {
+        label: 'NSA CNSA 2.0 FAQ v2.2',
+        href: 'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/1/CSI_CNSA_2.0_FAQ_.PDF',
+      },
+      {
+        label: 'OMB M-26-15 §1 and §3',
+        href: 'https://www.whitehouse.gov/wp-content/uploads/2026/06/M-26-15-Execution-of-the-Migration-to-Post-Quantum-Cryptography.pdf',
+      },
+      {
+        label: 'Executive Order 14412 §4',
+        href: 'https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/',
+      },
+    ],
   },
   'trust-services-pqc': {
     roleFocus: 'Qualified Trust Service Providers (QTSPs), Public CAs & Auditors',
     productionCapabilities: [
-      'ETSI EN 319 401 / 319 411 / 319 421 compliant CA and TSA operations supporting `ML-DSA` (RFC 9881), `SLH-DSA` (RFC 9909), and Composite ML-DSA (RFC 10073).',
-      'Long-term validation (LTV) archival timestamping (`PAdES-LTA`, `XAdES-A`, `CAdES-A`, RFC 4998 / RFC 6283 ERS) re-timestamping historical classical signatures with post-quantum TSA tokens before classical deprecation.',
-      'Hardware Security Module (EN 419 221-5 / FIPS 140-3 Level 3+) ceremony controls for PQC root key generation.',
+      'Identify the specific trust service, status and applicable standards or profiles before changing cryptography. Where EU 2025/2530 applies, record the significant-change notification for the cryptographic material or techniques used by the service.',
+      'For an archival validation service, verify a retained signature, timestamp chain and validation material independently against the agreed profile and trust anchors.',
+      'For a CA or TSA ceremony, verify the approved module, configuration and key use for that service. Treat a TLS certificate for the portal as separate evidence from the qualified service’s signing key.',
     ],
     evaluationMethod:
-      'Generate a PAdES/CAdES signature with a PQC archive timestamp in staging and verify LTV chain validation when the original classical signing key is marked expired/deprecated.',
+      'Select the exact service and its applicable profile. Replay a representative archival validation or ceremony, then change one trust assumption. For a non-qualified service, document its status and the scope of any proposed exclusion.',
     evidenceRequired:
-      'Witnessed Root CA ceremony transcript, ETSI conformity assessment report, and LTV archive-timestamp verification log.',
+      'Service and qualification scope, applicable profile and algorithm references, exact CA or TSA key use, observed validation-path outcome, and any required notification or conformity evidence.',
+    sources: [
+      {
+        label: 'Commission Implementing Regulation (EU) 2025/2530 Article 1',
+        href: 'https://eur-lex.europa.eu/eli/reg_impl/2025/2530/oj/eng',
+      },
+    ],
   },
   'pqc-grc': {
     roleFocus: 'GRC Analysts, Internal Audit & Risk Compliance Teams',

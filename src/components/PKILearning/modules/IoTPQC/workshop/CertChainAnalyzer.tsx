@@ -3,7 +3,7 @@
  * Step 4 — Certificate chain analyzer.
  *
  * FIXED 2026-10-01: each certificate now carries its ISSUER's signature
- * (RFC 5280 §4.1.1.3), the root is shown as stored-not-sent (RFC 8446 §4.4.2),
+ * (RFC 5280 §4.1.1.3), the root is shown as stored-not-sent (RFC 9846 §4.5.1),
  * mitigations are delivery modes with their own caveats instead of stacked
  * percentages, C509 is an option, and Merkle Tree Certificates are modelled as
  * an inclusion proof with the relying-party condition spelled out.
@@ -33,7 +33,7 @@ const CERT_ALGS = [
 ]
 
 const MODES: { id: DeliveryMode; name: string; ref: string }[] = [
-  { id: 'full', name: 'Full X.509 chain', ref: 'RFC 5280 / RFC 8446 §4.4.2' },
+  { id: 'full', name: 'Full X.509 chain', ref: 'RFC 5280 / RFC 9846 §4.5.1' },
   { id: 'compressed', name: 'Certificate compression', ref: 'RFC 8879' },
   {
     id: 'c509',

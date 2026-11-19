@@ -272,12 +272,19 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <div className="flex items-start gap-2">
               <ArrowRight size={14} className="text-primary shrink-0 mt-0.5" />
               <span>
-                <strong className="text-foreground">cosign / Sigstore</strong> — Sigstore says (June
-                2025) it wants to enable post-quantum signing as soon as possible and has added
-                ML-DSA to its protocol specification for client experiments; its services will adopt
-                post-quantum algorithms once vetted implementations are in the Go ecosystem. No date
-                is given, the post does not mention cosign, and the Rekor transparency log must also
-                be migrated.
+                <strong className="text-foreground">cosign / Sigstore</strong> — the current
+                algorithm registry still marks ML-DSA experimental and not operational, and current
+                Cosign releases do not document ML-DSA signing or verification. Sigstore’s{' '}
+                <a
+                  href="https://blog.sigstore.dev/pqc-sigstore/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary underline"
+                >
+                  October 2026 architecture proposal
+                </a>{' '}
+                targets a separate PQC public instance for mid-2027, initially opt-in. Treat this as
+                a roadmap target, not current Cosign capability.
               </span>
             </div>
             <div className="flex items-start gap-2">

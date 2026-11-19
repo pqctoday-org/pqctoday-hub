@@ -11,8 +11,8 @@ import { CNSA_ACQUISITION_LABEL, CNSA_MANDATE_LABEL, CNSA_PHASE_OUT_LABEL } from
 export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
   version: '1.0.1',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-14',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     // Subject documents first. The accuracy spot-check samples this list by even
@@ -68,12 +68,13 @@ export const content: ModuleContent = {
       source: 'CNSA 2.0',
     },
     {
-      label: 'NIST: deprecate RSA, ECC and DH (all key sizes, 112-bit security and up)',
+      label: 'NIST: covered quantum-vulnerable public-key parameters deprecated after 2030',
       year: NIST_DEPRECATION.deprecateClassical,
       source: 'NIST IR 8547',
     },
     {
-      label: 'NIST: disallow all classical public-key crypto',
+      label:
+        'NIST: covered quantum-vulnerable public-key parameters disallowed after 2035 under NIST standards/guidelines',
       year: NIST_DEPRECATION.disallowClassical,
       source: 'NIST IR 8547',
     },
@@ -81,13 +82,13 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'The PQC Risk Management module teaches CISOs and security leaders how to identify, quantify, and prioritize quantum computing risks to their organization. It covers CRQC (Cryptographically Relevant Quantum Computer) scenario planning with adjustable timelines from 2028-2045, building comprehensive risk registers for quantum-vulnerable cryptographic assets, and generating likelihood-by-impact risk heatmaps.',
+      'The PQC Risk Management module teaches CISOs and security leaders how to identify, quantify, and prioritize quantum computing risks to their organization. It covers CRQC (Cryptographically Relevant Quantum Computer) scenario planning with adjustable scenario years from 2028-2045, building a risk register for quantum-vulnerable cryptographic assets, and generating an editable likelihood-by-impact worksheet heatmap.',
     keyConcepts:
-      'CRQC Scenario Planning — model the cascading impact of a cryptographically relevant quantum computer arriving in a given year; shows which algorithms break, which compliance deadlines are missed, and the HNDL (Harvest Now, Decrypt Later) exposure window. Risk Register Construction — systematic cataloging of cryptographic assets with fields for asset name, current algorithm, threat vector, likelihood (1-5), impact (1-5), and mitigation strategy; auto-calculates risk scores.',
+      'CRQC Scenario Planning — compare a hypothetical cryptographically relevant quantum computer (CRQC) year; shows which algorithms are modeled as vulnerable in the selected scenario and compares configured, scope-labeled reference dates. Its HNDL view is a retention/date-overlap illustration; actual exposure also depends on capture, vulnerable public-key key establishment and recoverable session secrets. Risk Register Construction — systematic cataloging of cryptographic assets with fields for asset name, current algorithm, threat vector, likelihood (1-5), impact (1-5), and mitigation strategy; auto-calculates risk scores.',
     workshopSummary:
-      'The workshop has 4 interactive steps: CRQC Scenario Planner — adjust a year slider (2028-2045) to model when a quantum computer could break current algorithms; see cascading impacts on 10 algorithms, 6 compliance deadlines, and HNDL exposure windows across 7 data retention periods. Risk Register Builder — create a multi-row risk register with pre-populated examples (TLS certificates, database encryption, code signing, VPN tunnels); export as Markdown and save to learning portfolio. Risk Heatmap — assign a treatment strategy to each risk (select any cell on the heatmap) and set your migration priority order. Compliance Gap Analysis — map your risk register against CNSA 2.0 and NIST IR 8547 deadlines to identify compliance gaps.',
+      'The workshop has 4 interactive steps: CRQC Scenario Planner — adjust a scenario-year slider (2028-2045) to view modeled algorithm vulnerability and compare configured reference dates; see the scenario effects for 10 algorithm rows, configured scope-labeled reference dates, and retention overlap for 7 data-lifetime examples. Risk Register Builder — create a multi-row risk register with pre-populated examples (TLS certificates, database encryption, code signing, VPN tunnels); export as Markdown and save to learning portfolio. Risk Heatmap — assign a treatment strategy to each risk (select any cell on the heatmap) and set your migration priority order. Compliance Gap Analysis — inspect algorithm-name patterns and configured CNSA 2.0/NIST IR 8547 reference years. This worksheet does not determine applicability or compliance.',
     relatedStandards:
-      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0). NIST SP 800-30 (Guide for Conducting Risk Assessments). ISO 27005 (Information Security Risk Management)',
+      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final October 2026). NSA CNSA 2.0 (FAQ v2.2, National Security Systems only). EO 14412 & OMB M-26-15 (U.S. federal civilian agencies). EU PQC Coordinated Implementation Roadmap v1.1 (advisory Member State guidance; DORA/NIS2 impose cyber risk-management duties rather than fixed PQC dates). NIST SP 800-30 (Guide for Conducting Risk Assessments). ISO 27005 (Information Security Risk Management)',
   },
 }
 

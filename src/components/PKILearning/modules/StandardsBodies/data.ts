@@ -3,7 +3,12 @@
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type OrgType =
-  'standards-body' | 'certification-body' | 'compliance-framework' | 'regulatory-agency'
+  | 'standards-body'
+  | 'certification-body'
+  | 'compliance-framework'
+  | 'regulatory-agency'
+  | 'governmental-agency'
+  | 'mutual-recognition-arrangement'
 
 export type OrgScope = 'global' | 'regional'
 export type OrgAuthority = 'governmental' | 'non-governmental'
@@ -94,6 +99,8 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'FIPS 204 (ML-DSA, August 2024)',
       'FIPS 205 (SLH-DSA, August 2024)',
       'FIPS 206 (FN-DSA / Falcon — in development, not yet published)',
+      'NIST IR 8545 (Round 4 HQC selection as backup KEM, March 2025)',
+      'NIST IR 8610 (Additional Signatures Round 2 → Round 3, May 2026; HAWK withdrawn July 2026)',
       'NIST IR 8547 (Transition to PQC, final October 2026)',
       'NIST SP 800-227 (KEM recommendations)',
       'FIPS 140-3 (cryptographic module standard)',
@@ -171,10 +178,17 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'RFC 9629 (KEM Algorithms in CMS, LAMPS WG)',
       'RFC 9882 (ML-DSA in CMS)',
       'RFC 9814 (SLH-DSA in CMS)',
-      'draft-ietf-pquip-pqc-engineers (PQC for engineers guide)',
-      'RFC 9954 (hybrid design) and RFC 10024 (X25519MLKEM768)',
+      'RFC 9958 (PQC for engineers guide, formerly draft-ietf-pquip-pqc-engineers)',
+      'RFC 9846 (TLS 1.3, obsoleting RFC 8446), RFC 9954 (hybrid key exchange design) and RFC 10024 (TLS 1.3 PQ/T hybrid key agreement groups)',
+      'RFC 10073 (composite ML-DSA signature format for X.509/PKIX certificates; does not itself define TLS negotiation)',
+      'RFC 10082 (composite ML-DSA signatures for CMS signed-data objects)',
     ],
-    libraryRefs: ['RFC 9629', 'draft-ietf-pquip-pqc-engineers-14'],
+    libraryRefs: [
+      'RFC 9629',
+      'RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra',
+      'RFC 10082',
+      'draft-ietf-pquip-pqc-engineers-14',
+    ],
     websiteUrl: 'https://datatracker.ietf.org/wg/pquip/about/',
     glossaryTerm: 'IETF',
   },
@@ -211,13 +225,13 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'France',
     founded: '2009',
     mission:
-      'French national cybersecurity agency. It strongly recommends hybrid (classical + PQC) cryptography, and hybridisation is mandatory only inside the regulated perimeter: defence-classified and Diffusion Restreinte information, vital information systems, and products certified or qualified through ANSSI security visas. ANSSI published influential PQC position papers in 2022 and 2023 distinguishing hash-based algorithms (no systematic hybridisation recommended) from lattice-based algorithms (hybrid recommended).',
+      'French national cybersecurity agency. Its PQC transition papers recommend hybrid (classical + PQC) mechanisms for suitable use cases and describe a phased transition. They do not establish a blanket legal requirement for hybridisation across a named regulated perimeter. ANSSI distinguishes hash-based signatures (no systematic hybridisation recommended) from lattice-based mechanisms (hybridisation recommended in relevant contexts).',
     decisionMaking:
-      'Government agency (under Prime Minister). Issues position papers and technical notes through expert review. Three-phase roadmap (2022 position paper): Phase 1 (the situation in 2022) hybridation to add post-quantum defence-in-depth to pre-quantum assurance; Phase 2 (not earlier than 2025) hybridation to provide post-quantum security assurance; Phase 3 (probably not earlier than 2030) optional standalone post-quantum cryptography. The one exception to systematic hybridisation is hash-based signatures (SLH-DSA, XMSS, LMS): ANSSI considers them usable without hybridisation because of their well-studied underlying problem, while noting their limited range of application.',
+      'Government agency (under the Prime Minister). Issues position papers and technical notes through expert review. Its 2022 position paper proposed three phases: Phase 1 treats PQC as optional defence-in-depth; Phase 2 would require hybridisation for products claiming PQ security assurance; Phase 3 envisioned optional standalone PQC. The paper expressly says hybrid PQC was not mandatory at publication, and these phase dates are a non-binding roadmap rather than current legal deadlines. Check the applicable law, procurement rule, evaluation conditions or current ANSSI guidance for any specific obligation. ANSSI’s FAQ says it does not recommend systematic hybridisation for hash-based signatures (SLH-DSA, XMSS, LMS), while noting their limited range of application.',
     keyPqcOutputs: [
       'ANSSI PQC Position Paper (2022)',
       'ANSSI PQC Follow-up Paper (2023)',
-      'Hybrid PQC position: strongly recommended for lattice-based schemes such as ML-DSA, mandatory inside the regulated perimeter',
+      'Hybrid PQC position: recommends combining classical and PQC mechanisms in appropriate transition profiles; not a blanket legal mandate for a defined perimeter',
       'Hash-based signatures (SLH-DSA, XMSS, LMS): systematic hybridisation not recommended',
     ],
     libraryRefs: ['ANSSI PQC Position Paper', 'ANSSI PQC Follow-up Paper'],
@@ -229,7 +243,7 @@ export const ORGANIZATIONS: OrgEntry[] = [
     id: 'enisa',
     name: 'European Union Agency for Cybersecurity',
     acronym: 'ENISA',
-    type: 'regulatory-agency',
+    type: 'governmental-agency',
     scope: 'regional',
     authority: 'governmental',
     region: 'EU',
@@ -244,21 +258,21 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'ENISA Post-Quantum Cryptography: Integration study (October 2022)',
       'EUCC (European Common Criteria-based cybersecurity certification scheme; Regulation (EU) 2024/482)',
     ],
-    libraryRefs: ['EUCC v2.0 ACM'],
+    libraryRefs: ['EUCC v2.0 ACM', 'CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme'],
     websiteUrl: 'https://www.enisa.europa.eu/topics/cryptography/post-quantum-cryptography',
     glossaryTerm: 'ENISA',
   },
   {
     id: 'common-criteria',
     name: 'Common Criteria Recognition Arrangement',
-    acronym: 'CC / CCRA',
-    type: 'certification-body',
+    acronym: 'CCRA',
+    type: 'mutual-recognition-arrangement',
     scope: 'global',
     authority: 'governmental',
     region: 'Global',
-    founded: '1994',
+    founded: '1998',
     mission:
-      'Mutual recognition arrangement for IT security evaluations based on ISO/IEC 15408. Products are evaluated by accredited labs; certificates are issued by national Certification Bodies (e.g., BSI, ANSSI, NIAP).',
+      'International mutual-recognition arrangement for qualifying Common Criteria certificates and Protection Profiles. It does not evaluate products or issue product certificates; accredited evaluation facilities and national certification bodies perform those roles.',
     decisionMaking:
       'Protection Profiles (PP) define security requirements for product categories (e.g., "PKI digital signatures"). Independent labs test products against PPs. EUCC is a separate EU scheme, set up by Commission Implementing Regulation (EU) 2024/482, that applies Common Criteria and the Common Evaluation Methodology under EU rules.',
     keyPqcOutputs: [
@@ -266,8 +280,8 @@ export const ORGANIZATIONS: OrgEntry[] = [
       'PQC Protection Profiles (in development for HSMs, certificates, firewalls)',
       'EUCC (EU Common Criteria-based scheme, Regulation (EU) 2024/482 – certification bodies issue, national authorities supervise)',
     ],
-    libraryRefs: [],
-    websiteUrl: 'https://www.commoncriteriaportal.org/',
+    libraryRefs: ['COMMON-CRITERIA', 'CCMC-011-CCRA-EUCC-Coexistence'],
+    websiteUrl: 'https://www.commoncriteriaportal.org/ccra/members/',
     glossaryTerm: 'Common Criteria',
   },
   {
@@ -302,15 +316,14 @@ export const ORGANIZATIONS: OrgEntry[] = [
     region: 'UK',
     founded: '2016',
     mission:
-      'UK national cybersecurity authority (part of GCHQ), providing guidance on PQC migration via a three-phase roadmap: Discovery (2025–2028), Priority Migration (2028–2031), Full Migration (2031–2035). Works with Five Eyes partners on classified PQC guidance (not sourced in the Library).',
+      'UK national cybersecurity authority (part of GCHQ) that provides PQC migration guidance. Its March 2025 guidance sets target dates: by 2028 complete discovery and an initial migration plan; by 2031 carry out highest-priority migration activities and refine that plan; by 2035 complete migration across all systems, services and products. These are target dates in guidance, not a separate statutory phase schedule.',
     decisionMaking:
-      'Government agency publishes whitepapers and migration timelines. Aligned with NIST algorithm recommendations.',
+      'Publishes technical guidance and migration targets. The PQC guidance sets milestones for 2028, 2031 and 2035; it does not establish a separate statutory phase schedule.',
     keyPqcOutputs: [
-      'UK PQC Migration Timelines (2025)',
-      'Three-phase roadmap: Discovery (2025–2028), Priority (2028–2031), Full (2031–2035)',
+      'NCSC PQC Migration Timelines Guidance (March 2025): discovery and initial plan by 2028; highest-priority migration and refined plan by 2031; complete migration by 2035',
       'NCSC whitepaper on preparing for quantum-safe cryptography',
     ],
-    libraryRefs: [],
+    libraryRefs: ['UK-NCSC-Migration-Timelines-2025'],
     websiteUrl: 'https://www.ncsc.gov.uk/collection/post-quantum-cryptography',
   },
   {
@@ -422,7 +435,7 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'anssi',
     name: 'ANSSI',
     acronym: "Agence nationale de la sécurité des systèmes d'information (France)",
-    hint: 'Strongly recommends hybrid PQC (classical + PQC); mandatory inside the French regulated perimeter. Hash-based signatures (SLH-DSA, XMSS, LMS) are the exception.',
+    hint: 'Its PQC position paper describes phased hybridisation guidance, not a blanket regulated-perimeter mandate. Hash-based signatures (SLH-DSA, XMSS, LMS) are an exception to systematic hybridisation.',
     correctType: 'regulatory-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',
@@ -431,8 +444,8 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
     id: 'enisa',
     name: 'ENISA',
     acronym: 'EU Agency for Cybersecurity',
-    hint: 'EU agency under the Cybersecurity Act. Supports the EUCC certification scheme and the ECCG, which agrees the Agreed Cryptographic Mechanisms (ACM), and publishes EUCC certificates. Accredited certification bodies issue them, not ENISA. It is an EU agency that supports and promotes the framework (Cybersecurity Act Art. 8), not a regulator and not a certification body (Art. 56: conformity assessment bodies issue certificates) (not sourced in the Library).',
-    correctType: 'regulatory-agency',
+    hint: 'EU agency under the Cybersecurity Act. Supports EU cybersecurity policy and the EUCC scheme; it publishes certificates and supporting material, but accredited certification bodies issue EUCC certificates. ENISA is a governmental agency, not the certifying body.',
+    correctType: 'governmental-agency',
     correctScope: 'regional',
     correctAuthority: 'governmental',
   },
@@ -474,10 +487,10 @@ export const CLASSIFY_CARDS: ClassifyCard[] = [
   },
   {
     id: 'common-criteria',
-    name: 'Common Criteria',
-    acronym: 'CC / CCRA — based on ISO/IEC 15408',
-    hint: 'Mutual recognition arrangement for IT product security evaluations. Its participants are government organisations or government agencies, so it is governmental.',
-    correctType: 'certification-body',
+    name: 'Common Criteria Recognition Arrangement',
+    acronym: 'CCRA — recognition framework for ISO/IEC 15408 evaluations',
+    hint: 'Recognizes eligible certificates issued by national certification bodies. The arrangement itself does not evaluate products or issue certificates.',
+    correctType: 'mutual-recognition-arrangement',
     correctScope: 'global',
     correctAuthority: 'governmental',
   },
@@ -640,7 +653,12 @@ export interface CoverageCell {
 
 export type RegionKey = 'global' | 'us' | 'eu' | 'uk' | 'asia-pacific'
 export type OrgTypeKey =
-  'standards-body' | 'certification-body' | 'compliance-framework' | 'regulatory-agency'
+  | 'standards-body'
+  | 'certification-body'
+  | 'compliance-framework'
+  | 'regulatory-agency'
+  | 'governmental-agency'
+  | 'mutual-recognition-arrangement'
 
 export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> = {
   global: {
@@ -649,16 +667,21 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       note: 'Globally recognized; no single country controls these bodies',
     },
     'certification-body': {
-      orgs: ['CCRA (Common Criteria)'],
-      note: 'Recognition covers only collaborative Protection Profile or EAL1–2 + ALC_FLR certificates',
+      orgs: ['—'],
+      note: 'National certification bodies issue certificates; the CCRA recognises qualifying certificates',
     },
     'compliance-framework': {
       orgs: ['—'],
-      note: 'No truly global binding compliance framework exists; closest is CCRA mutual recognition',
+      note: 'No truly global binding compliance framework exists',
     },
     'regulatory-agency': {
       orgs: ['ITU-T (treaty body)', 'G7 Cyber Expert Group'],
       note: 'Coordination bodies — recommendations only, no enforcement authority',
+    },
+    'governmental-agency': { orgs: ['—'] },
+    'mutual-recognition-arrangement': {
+      orgs: ['CCRA'],
+      note: 'The arrangement recognizes qualifying certificates issued by national certification bodies; it does not issue product certificates itself',
     },
   },
   us: {
@@ -671,13 +694,15 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       note: 'Federal agencies must use validated cryptographic modules where cryptography is required (FISMA)',
     },
     'compliance-framework': {
-      orgs: ['FIPS 140-3', 'CNSA 2.0', 'FedRAMP', 'CMMC', 'FISMA'],
-      note: 'CNSA 2.0 binding for NSS; FIPS 140-3 binding for federal procurement',
+      orgs: ['FIPS 140-3', 'CNSA 2.0', 'EO 14412 & OMB M-26-15', 'FedRAMP', 'CMMC', 'FISMA'],
+      note: 'CNSA 2.0 (FAQ v2.2) binding for NSS; EO 14412 & OMB M-26-15 set federal civilian deadlines (key establishment by Dec 2030, signatures by Dec 2031); FIPS 140-3 binding for federal procurement',
     },
     'regulatory-agency': {
       orgs: ['NSA', 'CISA', 'NIST (dual role)'],
       note: 'NSA issues NSS mandates; CISA issues procurement guidance',
     },
+    'governmental-agency': { orgs: ['—'] },
+    'mutual-recognition-arrangement': { orgs: ['—'] },
   },
   eu: {
     'standards-body': {
@@ -685,21 +710,28 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       note: 'ETSI TS 103 744 covers hybrid key establishment (ECDH combined with ML-KEM), not quantum-safe cryptography in general',
     },
     'certification-body': {
-      orgs: [
-        'EUCC certification bodies',
-        'National authorities (e.g., BSI, ANSSI)',
-        'ENISA (publishes)',
-      ],
+      orgs: ['EUCC certification bodies', 'National authorities (e.g., BSI, ANSSI)'],
       note: 'EUCC is one EU-wide scheme (Regulation (EU) 2024/482): certification bodies issue certificates, national authorities supervise, ENISA publishes them',
     },
     'compliance-framework': {
-      orgs: ['NIS2 Directive', 'eIDAS 2.0', 'DORA', 'EU Cyber Resilience Act'],
-      note: 'NIS2 is a Directive that Member States transpose into national law; eIDAS 2.0, DORA and the Cyber Resilience Act are Regulations that apply directly in every Member State',
+      orgs: [
+        'NIS2 Directive',
+        'eIDAS 2.0',
+        'DORA',
+        'EU Cyber Resilience Act',
+        'EU PQC Roadmap v1.1 (NIS CG)',
+      ],
+      note: 'NIS2 is a Directive that Member States transpose into national law; eIDAS 2.0, DORA and the Cyber Resilience Act are Regulations that apply directly in every Member State; the EU NIS Cooperation Group Coordinated Implementation Roadmap v1.1 harmonizes Member State PQC timelines',
     },
     'regulatory-agency': {
-      orgs: ['European Commission (EC)', 'ENISA (dual role)'],
-      note: 'The Commission adopts implementing acts such as EUCC; ENISA does not issue EUCC certificates',
+      orgs: ['European Commission (EC)'],
+      note: 'The Commission adopts implementing acts such as EUCC; certification bodies issue EUCC certificates',
     },
+    'governmental-agency': {
+      orgs: ['ENISA'],
+      note: 'ENISA supports EU cybersecurity policy and the certification framework; it does not issue EUCC certificates or act as the certifying body',
+    },
+    'mutual-recognition-arrangement': { orgs: ['—'] },
   },
   uk: {
     'standards-body': {
@@ -712,12 +744,14 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
     },
     'compliance-framework': {
       orgs: ['UK Gov PQC Roadmap (2025)', 'NCSC Cyber Essentials'],
-      note: 'Three-phase roadmap: Discovery (2025–2028), Priority (2028–2031), Full (2031–2035)',
+      note: 'NCSC guidance sets target dates: discovery and initial plan by 2028; highest-priority migration and refined plan by 2031; complete migration by 2035. The dates are guidance milestones, not a statutory three-phase schedule.',
     },
     'regulatory-agency': {
       orgs: ['NCSC (part of GCHQ)', 'DSIT'],
       note: 'NCSC aligned with NIST algorithm recommendations (FIPS 203/204/205)',
     },
+    'governmental-agency': { orgs: ['—'] },
+    'mutual-recognition-arrangement': { orgs: ['—'] },
   },
   'asia-pacific': {
     'standards-body': {
@@ -736,6 +770,8 @@ export const COVERAGE_GRID: Record<RegionKey, Record<OrgTypeKey, CoverageCell>> 
       orgs: ['NIS / MSIT (Korea)', 'OSCCA/NGCC (China)', 'NISC (Japan)', 'MAS (Singapore)'],
       note: 'National regulators; algorithms may diverge from NIST (especially China SM*)',
     },
+    'governmental-agency': { orgs: ['—'] },
+    'mutual-recognition-arrangement': { orgs: ['—'] },
   },
 }
 
@@ -751,7 +787,9 @@ export const ORG_TYPE_LABELS: Record<OrgTypeKey, string> = {
   'standards-body': 'Standards Body',
   'certification-body': 'Certification Body',
   'compliance-framework': 'Compliance Framework',
-  'regulatory-agency': 'Government Agency',
+  'regulatory-agency': 'Regulatory Agency',
+  'governmental-agency': 'Government Agency',
+  'mutual-recognition-arrangement': 'Recognition Arrangement',
 }
 
 // ─── Scenario Challenge (Step 5) ──────────────────────────────────────────────

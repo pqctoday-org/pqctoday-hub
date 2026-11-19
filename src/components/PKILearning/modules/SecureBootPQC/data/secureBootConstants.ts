@@ -128,13 +128,13 @@ export const UEFI_KEY_TYPES: UEFIKeyTypeInfo[] = [
     name: 'dbx',
     fullName: 'Forbidden Signatures Database',
     description:
-      'Contains revoked hashes of known-bad binaries and compromised certificates. Must be updated when vulnerabilities (e.g., BootHole, GRUB2 CVEs) are discovered. Critical for supply chain integrity.',
-    currentAlgorithm: 'SHA-256 hashes',
+      'Contains forbidden image digests and certificate revocation entries. Certificate digest records can carry a revocation time. Keep the list current under the platform’s update policy.',
+    currentAlgorithm: 'Image digests and certificate revocation records',
     typicalSize: 'Variable (grows over time)',
-    pqcAlgorithm: 'SHA-256 hashes (unchanged for revocation)',
+    pqcAlgorithm: 'Preserve applicable revocation records',
     cnsaAlgorithm: 'SHA-384 or SHA-512 (CNSA 2.0 hash algorithms)',
 
-    pqcSize: 'Unchanged (hashes are quantum-safe at 256-bit)',
+    pqcSize: 'Depends on the record type and the number of entries',
     quantumVulnerable: false,
     owner: 'UEFI Forum / OEM / OS Vendor',
     migrationPriority: 'low',

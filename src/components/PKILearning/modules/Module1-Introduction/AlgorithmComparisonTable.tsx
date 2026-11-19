@@ -6,9 +6,9 @@ import { ShieldCheck, ShieldAlert } from 'lucide-react'
 const ALGO_DATA = [
   {
     name: 'RSA-2048',
-    type: 'KEM + Sig',
+    type: 'Key Transport / Sig',
     quantumSafe: false,
-    nistStd: '—',
+    nistStd: 'FIPS 186-5 / SP 800-56B',
     pubKeyB: 256,
     privKeyB: 1192,
     outputB: 256,
@@ -17,14 +17,14 @@ const ALGO_DATA = [
   },
   {
     name: 'ECC P-256',
-    type: 'KEM + Sig',
+    type: 'Key Agreement / Sig',
     quantumSafe: false,
-    nistStd: 'FIPS 186-5',
+    nistStd: 'FIPS 186-5 / SP 800-56A',
     pubKeyB: 65,
     privKeyB: 32,
     outputB: 64,
     level: 'Classical',
-    note: "Broken by Shor's Algorithm. Widely used today in TLS, SSH, and code signing.",
+    note: "Broken by Shor's Algorithm. Used for ECDH key agreement (32 B shared secret) and ECDSA signatures (64 B raw r||s).",
   },
   {
     name: 'ML-KEM-768',
@@ -49,7 +49,7 @@ const ALGO_DATA = [
     note: 'Lattice-based signature. Replaces ECDSA in certificates and code signing; keys and signatures are much larger, so certificate chains, storage and protocols must allow for them.',
   },
   {
-    name: 'SLH-DSA-128s',
+    name: 'SLH-DSA-SHA2-128s',
     type: 'Signature',
     quantumSafe: true,
     nistStd: 'FIPS 205',
@@ -145,18 +145,19 @@ export const AlgorithmComparisonTable: React.FC = () => {
         </table>
       </div>
 
-      {/* Exercise 5 callout */}
+      {/* Exercise 7 callout */}
       <div className="glass-panel p-4 border-l-4 border-l-primary bg-primary/5">
         <p className="text-sm text-foreground">
-          <span className="font-semibold">Exercise 5 preview:</span> ECC P-256 has a{' '}
-          <span className="font-mono font-bold text-primary">{fmt(65)}</span> public key. ML-KEM-768
-          has a <span className="font-mono font-bold text-success">{fmt(1184)}</span> public key —
-          roughly <span className="font-bold">18× larger</span>. This size increase is the main
-          migration cost of PQC.
+          <span className="font-semibold">Exercise 7 preview:</span> ECC P-256 has a{' '}
+          <span className="font-mono font-bold text-primary">{fmt(65)}</span> raw uncompressed
+          public key (or 91 B when wrapped in an X.509 SubjectPublicKeyInfo DER container in Step
+          3). ML-KEM-768 has a <span className="font-mono font-bold text-success">{fmt(1184)}</span>{' '}
+          raw public key — roughly <span className="font-bold">18× larger</span>. This size increase
+          is the main migration cost of PQC.
         </p>
       </div>
 
-      {/* Exercise 4 callout — M-LWE explanation */}
+      {/* Exercise 6 callout — M-LWE explanation */}
       <div className="glass-panel p-5 border-l-4 border-l-success">
         <h3 className="font-semibold text-foreground mb-2">Why is ML-KEM quantum-resistant?</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">

@@ -15,4 +15,4 @@ Read what a certificate covers before you read its grade. A deadline to move to 
 
 ### What's Happening
 
-As of 22 October 2026, the FIPS 140-3 standard itself is unchanged, the EU's scheme already lists post-quantum algorithms in its approved cryptography guidance, and PCI's newest HSM standard adds post-quantum definitions without naming a required algorithm or deadline.
+As of November 2026, FIPS 140-2 certificates moved to the CMVP Historical list in September 2026 while FIPS 140-3 itself is unchanged, NIST published final NIST IR 8547 (October 2026) deprecating quantum-vulnerable public-key algorithms after 2030 and disallowing them under NIST standards after 2035, the EU's EUCC scheme already lists post-quantum algorithms in its approved cryptography guidance (ECCG ACM v2), and PCI's newest HSM standard (PTS HSM v5.0) adds post-quantum definitions without naming a required algorithm or deadline.

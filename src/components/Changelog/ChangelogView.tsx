@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, useMemo, useEffect, type ComponentType } from 'react'
+import { useState, useMemo, useEffect, useRef, type ComponentType } from 'react'
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -26,7 +26,7 @@ import {
   Heart,
   ClipboardCheck,
 } from 'lucide-react'
-import { Link, useLocation } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import clsx from 'clsx'
 import { getCurrentVersion } from '../../store/useVersionStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -41,6 +41,7 @@ import { sortCSVFiles } from '../../data/csvUtils'
 import { Button } from '@/components/ui/button'
 import { SPONSORS } from '@/data/sponsors'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
 
@@ -128,6 +129,11 @@ const VIEW_LABELS: Record<string, string> = {
   '/threats': 'Threats',
   '/algorithms': 'Algorithms',
   '/library': 'Library',
+  '/business': 'Command Center',
+  '/learn/cc-eucc-certification': 'Common Criteria, EUCC & eIDAS Certification',
+  '/learn/pki-enrollment-protocols': 'PKI Enrollment',
+  '/learn/automotive-pqc': 'Automotive PQC',
+  '/navigate': 'Navigate',
 }
 
 // ── Data Freshness ───────────────────────────────────────────────────────────
@@ -264,6 +270,10 @@ export const PERSONA_KEYWORDS: Record<string, RegExp> = {
 export const ChangelogView = () => {
   const version = getCurrentVersion()
   const location = useLocation()
+  const navigate = useNavigate()
+  const params = new URLSearchParams(location.search)
+  const release = params.get('release') ?? ''
+  const searchInput = useRef<HTMLInputElement>(null)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [highlightedVersion, setHighlightedVersion] = useState<string | null>(null)
 
@@ -274,9 +284,23 @@ export const ChangelogView = () => {
     data: true,
     security: true,
   })
-  const [personaOnly, setPersonaOnly] = useState(false)
+  const personaOnly = params.get('for-role') === '1'
   const [showDetails, setShowDetails] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
+
+  const setFilterParam = (key: string, value: string) => {
+    const next = new URLSearchParams(location.search)
+    if (value) next.set(key, value)
+    else next.delete(key)
+    navigate(
+      { search: next.toString(), hash: location.hash },
+      { replace: true, preventScrollReset: true }
+    )
+  }
+
+  const { text: searchQuery, update: updateSearch } = useUrlBackedText(
+    params.get('q') ?? '',
+    (query) => setFilterParam('q', query)
+  )
 
   const toggleFilter = (type: FilterType) => {
     setFilters((prev) => ({ ...prev, [type]: !prev[type] }))
@@ -291,38 +315,43 @@ export const ChangelogView = () => {
   const normalizedQuery = searchQuery.trim().toLowerCase()
 
   const filteredVersions = useMemo(() => {
-    return ALL_CHANGELOG_VERSIONS.map((v) => ({
-      ...v,
-      sections: v.sections
-        .filter((s) => {
-          if (s.type === 'other') return true
-          if (s.type === 'added') return filters.added
-          if (s.type === 'changed') return filters.changed
-          if (s.type === 'fixed') return filters.fixed
-          if (s.type === 'data') return filters.data
-          if (s.type === 'security') return filters.security
-          return true
-        })
-        .map((s) => {
-          let entries = s.entries
-          if (personaOnly && selectedPersona) {
-            entries = entries.filter((e) => {
-              if (e.meta.personas.includes(selectedPersona)) return true
-              if (e.meta.personas.length > 0) return false
-              if (personaKeyword && personaKeyword.test(`${e.title} ${e.body}`)) return true
-              return false
-            })
-          }
-          if (normalizedQuery) {
-            entries = entries.filter((e) =>
-              `${e.title} ${e.body}`.toLowerCase().includes(normalizedQuery)
-            )
-          }
-          return { ...s, entries }
-        })
-        .filter((s) => s.entries.length > 0),
-    })).filter((v) => v.sections.length > 0)
-  }, [filters, personaOnly, selectedPersona, personaKeyword, normalizedQuery])
+    const versions = release
+      ? ALL_CHANGELOG_VERSIONS.filter((entry) => entry.version === release)
+      : ALL_CHANGELOG_VERSIONS
+    return versions
+      .map((v) => ({
+        ...v,
+        sections: v.sections
+          .filter((s) => {
+            if (s.type === 'other') return true
+            if (s.type === 'added') return filters.added
+            if (s.type === 'changed') return filters.changed
+            if (s.type === 'fixed') return filters.fixed
+            if (s.type === 'data') return filters.data
+            if (s.type === 'security') return filters.security
+            return true
+          })
+          .map((s) => {
+            let entries = s.entries
+            if (personaOnly && selectedPersona) {
+              entries = entries.filter((e) => {
+                if (e.meta.personas.includes(selectedPersona)) return true
+                if (e.meta.personas.length > 0) return false
+                if (personaKeyword && personaKeyword.test(`${e.title} ${e.body}`)) return true
+                return false
+              })
+            }
+            if (normalizedQuery) {
+              entries = entries.filter((e) =>
+                `${e.title} ${e.body}`.toLowerCase().includes(normalizedQuery)
+              )
+            }
+            return { ...s, entries }
+          })
+          .filter((s) => s.entries.length > 0),
+      }))
+      .filter((v) => v.sections.length > 0)
+  }, [filters, personaOnly, selectedPersona, personaKeyword, normalizedQuery, release])
 
   // B+ remediation 4.1 (2026-08-10). The "For me" control was a keyword regex
   // presented to the reader as a filter: only ~25 of ~1,150 entries carry an
@@ -507,21 +536,42 @@ export const ChangelogView = () => {
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
           />
           <input
+            ref={searchInput}
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => updateSearch(e.target.value)}
             placeholder="Search changelog entries…"
             aria-label="Search changelog entries"
             className="w-full pl-9 pr-3 py-2 min-h-[44px] rounded-lg border border-border bg-muted/20 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
+        <label className="mb-3 flex flex-wrap items-center gap-2 text-sm">
+          <span>Release</span>
+          {/* eslint-disable-next-line no-restricted-syntax -- Native <select> preserves <label> association, combobox role, and selectOption() test semantics for arbitrary URL release values */}
+          <select
+            value={release}
+            onChange={(event) => setFilterParam('release', event.target.value)}
+            className="min-h-11 rounded-md border border-border bg-background px-3 text-sm"
+          >
+            <option value="">All releases</option>
+            {release && !ALL_CHANGELOG_VERSIONS.some((entry) => entry.version === release) && (
+              <option value={release}>Unavailable release</option>
+            )}
+            {ALL_CHANGELOG_VERSIONS.map((entry) => (
+              <option key={entry.version} value={entry.version}>
+                v{entry.version}
+              </option>
+            ))}
+          </select>
+        </label>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-muted-foreground">Filter:</span>
             {selectedPersona && (
               <Button
                 variant="ghost"
-                onClick={() => setPersonaOnly((v) => !v)}
+                onClick={() => setFilterParam('for-role', personaOnly ? '' : '1')}
+                aria-pressed={personaOnly}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                   personaOnly
@@ -668,6 +718,23 @@ export const ChangelogView = () => {
         </p>
       )}
 
+      {groupedByDate.length === 0 && (
+        <div className="glass-panel my-4 space-y-2 p-4 text-sm">
+          <p role="status">No releases match these filters.</p>
+          {searchQuery && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                updateSearch('')
+                searchInput.current?.focus()
+              }}
+            >
+              Clear changelog search
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* Changelog Content — vertical timeline layout */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -735,7 +802,7 @@ export const ChangelogView = () => {
                     <span className="text-xs font-mono text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-full border border-border">
                       {versionLabel}
                     </span>
-                    {idx === 0 && (
+                    {group.versions.some((entry) => entry.version === version) && (
                       <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
                         Current
                       </span>
@@ -805,14 +872,29 @@ export const ChangelogView = () => {
                                             </span>
                                           )
                                         })}
-                                        {entry.meta.views.map((viewPath) => (
-                                          <span
-                                            key={viewPath}
-                                            className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-muted/50 text-muted-foreground border border-border"
-                                          >
-                                            {VIEW_LABELS[viewPath] ?? viewPath}
-                                          </span>
-                                        ))}
+                                        {entry.meta.views.map((viewPath) => {
+                                          const label = Object.hasOwn(VIEW_LABELS, viewPath)
+                                            ? VIEW_LABELS[viewPath]
+                                            : undefined
+                                          const className =
+                                            'inline-flex min-h-8 items-center rounded border border-border bg-muted/50 px-1.5 py-0.5 text-xs'
+                                          return label ? (
+                                            <Link
+                                              key={viewPath}
+                                              to={viewPath}
+                                              className={className + ' text-primary underline'}
+                                            >
+                                              {label}
+                                            </Link>
+                                          ) : (
+                                            <span
+                                              key={viewPath}
+                                              className={className + ' text-muted-foreground'}
+                                            >
+                                              {viewPath}
+                                            </span>
+                                          )
+                                        })}
                                       </div>
                                     )}
                                     {showDetails && entry.body && (

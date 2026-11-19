@@ -3252,8 +3252,9 @@
       "file": "src/components/PKILearning/modules/WebGatewayPQC/data/gatewayData.ts",
       "line": 418,
       "field": "publicKeyBytes",
-      "value": 1376,
-      "units": "bytes (field-name claim; encoding scope requires review)",
+      "value": 1377,
+      "units": "bytes (RFC 10073 uncompressed composite public-key payload)",
+      "encoding": "rfc10073-composite-uncompressed-public-key",
       "labels": ["ECDSA + ML-DSA-44", "ecdsa-ml-dsa-44"],
       "parameters": ["ML-DSA-44"],
       "disposition": "outside-bounded-raw-size-oracle"
@@ -3262,8 +3263,9 @@
       "file": "src/components/PKILearning/modules/WebGatewayPQC/data/gatewayData.ts",
       "line": 419,
       "field": "signatureBytes",
-      "value": 2484,
-      "units": "bytes (field-name claim; encoding scope requires review)",
+      "value": 2492,
+      "units": "bytes (RFC 10073 maximum composite signature payload)",
+      "encoding": "rfc10073-composite-der-signature-max",
       "labels": ["ECDSA + ML-DSA-44", "ecdsa-ml-dsa-44"],
       "parameters": ["ML-DSA-44"],
       "disposition": "outside-bounded-raw-size-oracle"

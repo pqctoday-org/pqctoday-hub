@@ -9,7 +9,7 @@ The VPN/IPsec and SSH PQC module explores how post-quantum key exchange is being
 - **IKEv2 handshake** (RFC 7296) — two-phase process: IKE_SA_INIT (Diffie-Hellman key exchange with KE payload, nonces, and SPIs) and IKE_AUTH (identity verification with encrypted auth payloads); derives SKEYSEED from shared secret
 - **ML-KEM in IKEv2** — draft-ietf-ipsecme-ikev2-mlkem uses the multiple key exchanges framework (RFC 9370) to add ML-KEM encapsulation in IKE_INTERMEDIATE with RFC 9370 limiting its changes to the exchanged messages and the IKEv2 state machine; encapsulation key is 1,184 bytes; combined SKEYSEED derived from both DH and KEM shared secrets via PRF
 - **ML-DSA in IKEv2** — draft-ietf-ipsecme-ikev2-pqc-auth updates IKE_AUTH to support ML-DSA (FIPS 204) for post-quantum certificate-based authentication
-- **SSH PQC evolution**: OpenSSH 8.5 (2021) added sntrup761x25519-sha512; OpenSSH 9.0 (2022) made it the default KEX; OpenSSH 9.9 (2024) added mlkem768x25519-sha256, OpenSSH's hybrid of ML-KEM-768 (FIPS 203, standardised by NIST) and X25519, enabled by default; OpenSSH 10.0 (2025) made it the default KEX
+- **SSH PQC evolution**: OpenSSH 8.5 (2021) added sntrup761x25519-sha512; OpenSSH 9.0 (2022) made it the default KEX; OpenSSH 9.9 (2024) added mlkem768x25519-sha256, OpenSSH's hybrid of ML-KEM-768 (FIPS 203, standardised by NIST) and X25519, in the default KexAlgorithms list; OpenSSH 10.0 (2025) made it the preferred default KEX
 - **SSH hybrid KEX** works by concatenating classical and PQC public keys in SSH_MSG_KEX_ECDH_INIT and combining shares in SSH_MSG_KEX_ECDH_REPLY
 - **WireGuard** uses a fixed cipher suite (X25519, ChaCha20-Poly1305, BLAKE2s) with zero crypto agility — algorithms cannot be negotiated
 - **Rosenpass** — a companion daemon that runs a separate post-quantum key exchange (Classic McEliece-460896 for the static keys, round-3 Kyber-512 for the ephemeral keys; this is not FIPS 203 ML-KEM) and injects the resulting PSK into WireGuard's pre-shared key slot; WireGuard's classical security holds even if Rosenpass is compromised, but the post-quantum protection does not
@@ -34,5 +34,5 @@ The workshop has 3 simulation steps:
 - draft-ietf-ipsecme-ikev2-pqc-auth-12 (Post-Quantum Authentication in IKEv2 using ML-DSA and SLH-DSA; in the RFC Editor queue, October 2026)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
-- OpenSSH 9.9 Release Notes (mlkem768x25519-sha256)
+- OpenSSH 9.9 & 10.0 Release Notes (mlkem768x25519-sha256 added in 9.9, default in 10.0)
 - Rosenpass white paper (protocol specification)

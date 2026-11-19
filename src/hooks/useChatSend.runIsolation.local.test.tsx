@@ -369,7 +369,7 @@ describe('Assistant request ownership and stop boundaries', () => {
     })
     await waitFor(() => expect(m.cloud).toHaveBeenCalledTimes(2))
     expect(state().isStreaming).toBe(true)
-    expect(state().streamingContent).toBe('Controlled unverified draft')
+    expect(state().streamingContent).toBe('')
     unsubscribe()
     await act(async () => {
       second.gate.resolve()

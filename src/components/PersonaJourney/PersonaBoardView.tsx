@@ -14,6 +14,7 @@ import { essentialsTrackChips } from '@/data/trackChips'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { RoleToolsRow } from './RoleToolsRow'
 import { boardRelatedLinks } from '@/data/boardRelatedLinks'
+import { DeveloperPythonEntry } from './DeveloperPythonEntry'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
@@ -568,6 +569,7 @@ export function PersonaBoardView({
         {/* Hero */}
         <div className="min-w-0 flex-1">
           {heroText}
+          {personaId === 'developer' && <DeveloperPythonEntry />}
           {ctaRow}
           {proofChips}
         </div>

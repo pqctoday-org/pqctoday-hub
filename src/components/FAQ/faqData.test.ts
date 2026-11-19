@@ -17,13 +17,15 @@ import { findLibraryItemByRef } from '@/data/libraryData'
 const LEARN_SLUG_ALIASES = ['mls', 'common-ground']
 const VALID_LEARN_SLUGS = new Set<string>([...MANIFESTS.map((m) => m.id), ...LEARN_SLUG_ALIASES])
 
-// Non-`/learn` top-level routes the FAQ deep-links into (see App.tsx).
-const VALID_TOP_LEVEL_ROUTES = new Set<string>([
+// Non-`/learn` routes the FAQ deep-links into (see App.tsx).
+const VALID_NON_LEARN_ROUTES = new Set<string>([
   '/learn',
   '/timeline',
   '/algorithms',
   '/library',
   '/playground',
+  '/playground/hsm',
+  '/playground/hybrid-certs',
   '/openssl',
   '/threats',
   '/leaders',
@@ -64,12 +66,12 @@ describe('FAQ_DATA deep links', () => {
     }
   })
 
-  it('every non-/learn deep link resolves to a real top-level route', () => {
+  it('every non-/learn deep link resolves to a real route', () => {
     for (const item of allItems) {
       if (item.deepLink.startsWith('/learn/')) continue
       const path = item.deepLink.split('?')[0]
       expect(
-        VALID_TOP_LEVEL_ROUTES.has(path),
+        VALID_NON_LEARN_ROUTES.has(path),
         `unknown route "${item.deepLink}" on question "${item.question}"`
       ).toBe(true)
     }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { rowsToCsv, spreadsheetSafeText } from './csvExport'
+import { rowsToCsv, rowsToSpreadsheetCsv, spreadsheetSafeText } from './csvExport'
 
 describe('rowsToCsv (RFC-4180)', () => {
   it('joins plain cells with commas and CRLF rows', () => {
@@ -28,7 +28,7 @@ describe('rowsToCsv (RFC-4180)', () => {
 })
 
 describe('spreadsheetSafeText', () => {
-  it.each(['=SUM(A1)', '+1', '-1', '@cmd', '\tcmd', '\rcmd'])(
+  it.each(['=1+1', '+1', '-1', '@name', '\tname', '\rname', '\nname', '  =1+1', '＝1+1'])(
     'prefixes an apostrophe when text starts with a formula character: %j',
     (value) => {
       expect(spreadsheetSafeText(value)).toBe(`'${value}`)
@@ -39,5 +39,16 @@ describe('spreadsheetSafeText', () => {
     expect(spreadsheetSafeText('Fictional service, A')).toBe('Fictional service, A')
     expect(spreadsheetSafeText('')).toBe('')
     expect(spreadsheetSafeText('Q4 = done + signed')).toBe('Q4 = done + signed')
+  })
+})
+
+describe('rowsToSpreadsheetCsv', () => {
+  it('preserves typed negative numbers and quotes guarded text as a single cell', () => {
+    expect(
+      rowsToSpreadsheetCsv([
+        ['Label', 'Estimate'],
+        ['=1+1, "review"', -2],
+      ])
+    ).toBe(`Label,Estimate\r\n"'=1+1, ""review""",-2`)
   })
 })

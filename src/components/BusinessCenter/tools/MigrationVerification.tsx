@@ -28,7 +28,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
-import { rowsToCsv } from '@/services/export/csvExport'
+import { rowsToSpreadsheetCsv } from '@/services/export/csvExport'
 import { useModuleStore } from '@/store/useModuleStore'
 import {
   FRAMEWORK_AUTHOR,
@@ -425,7 +425,7 @@ export const MigrationVerification: React.FC = () => {
       '',
       '',
     ])
-    return rowsToCsv([header, ...recordRows, ...decommRows])
+    return rowsToSpreadsheetCsv([header, ...recordRows, ...decommRows])
   }, [state])
   const verifiedTotal = state.records.filter(isVerified).length
 

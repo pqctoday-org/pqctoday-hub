@@ -2,6 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -104,8 +105,8 @@ export const TOOLS: ToolDef[] = [
     importance: 2,
     recommendations: {
       0: 'Configure TLS handshake logging on at least your public-facing load balancers; route to your SIEM.',
-      1: 'Write detection rules for deprecated cipher suites (TLS 1.0/1.1, RC4, 3DES) and historical FIPS certs.',
-      2: 'Add ML-KEM/ML-DSA negotiation events as positive signals; set up weekly posture-trend reports.',
+      1: 'Detect prohibited protocol versions, suites and module certificate status separately.',
+      2: 'Record the observed TLS 1.3 key agreement group and CertificateVerify scheme as separate fields in the weekly posture report.',
       3: 'Confirm that drift alerts trigger automated tickets and feed back into the CBOM remediation loop.',
     },
   },
@@ -121,7 +122,7 @@ export const TOOLS: ToolDef[] = [
       0: 'Define a crypto policy baseline (minimum TLS 1.2, approved cipher suites); document it in Governance.',
       1: 'Enforce policy on your service mesh or API gateway for internal east-west traffic.',
       2: 'Extend enforcement to all north-south egress; automate policy-as-code deployment via CI/CD.',
-      3: 'Verify policy violations generate SIEM alerts; confirm PQC cipher suites are in the allow list.',
+      3: 'Verify policy violations generate SIEM alerts. Check TLS 1.3 key agreement groups, certificate/signature policy and cipher suites separately.',
     },
   },
   {
@@ -190,14 +191,40 @@ export function gapReason(
   return null
 }
 
-function describeGap(
-  t: ToolDef,
-  levels: Record<string, CoverageLevel>,
-  sysPct: Record<string, number>
-): string {
-  return gapReason(levels[t.id], sysPct[t.id]) === 'low-systems-coverage'
-    ? `${LEVEL_LABELS[levels[t.id]]}, but only ${sysPct[t.id] ?? 0}% of systems covered`
-    : `currently ${LEVEL_LABELS[levels[t.id]]}`
+type InventoryCounts = { active: boolean; inScope: string; covered: string }
+const EMPTY_COUNTS: InventoryCounts = { active: false, inScope: '', covered: '' }
+
+export function inventoryCoveragePct(
+  counts: Pick<InventoryCounts, 'inScope' | 'covered'>
+): number | null {
+  if (!/^\d+$/.test(counts.inScope) || !/^\d+$/.test(counts.covered)) return null
+  const scoped = Number(counts.inScope)
+  const covered = Number(counts.covered)
+  return Number.isSafeInteger(scoped) &&
+    Number.isSafeInteger(covered) &&
+    scoped > 0 &&
+    covered <= scoped
+    ? (covered / scoped) * 100
+    : null
+}
+
+const coverageNumberFormat = new Intl.NumberFormat('en', { maximumFractionDigits: 2 })
+
+function formatCoverage(pct: number): string {
+  if (pct < LOW_COVERAGE_PCT && pct >= LOW_COVERAGE_PCT - 0.005) return `<${LOW_COVERAGE_PCT}%`
+  return coverageNumberFormat.format(pct) + '%'
+}
+
+function describeGap(level: CoverageLevel, pct: number): string {
+  return gapReason(level, pct) === 'low-systems-coverage'
+    ? `${LEVEL_LABELS[level]}, but only ${formatCoverage(pct)} of systems covered`
+    : `currently ${LEVEL_LABELS[level]}`
+}
+
+function gapRecommendation(tool: ToolDef, level: CoverageLevel): string {
+  return level === 3
+    ? 'Find the systems outside the reported coverage and verify which can use the same automated control.'
+    : tool.recommendations[level]
 }
 
 export const ManagementToolsAudit: React.FC = () => {
@@ -213,18 +240,40 @@ export const ManagementToolsAudit: React.FC = () => {
   const savedInputs = useSavedArtifactInputs<{
     levels: Record<string, CoverageLevel>
     sysPct: Record<string, number>
+    inventoryCounts?: Record<string, InventoryCounts>
   }>('management-tools-audit')
 
-  const [levels, setLevels] = useState<Record<string, CoverageLevel>>(
-    () => savedInputs?.levels ?? initLevels()
+  const [levels, setLevels] = useState<Record<string, CoverageLevel>>(() => ({
+    ...initLevels(),
+    ...savedInputs?.levels,
+  }))
+  const [estimatedPct, setEstimatedPct] = useState<Record<string, number>>(() => ({
+    ...initPct(),
+    ...savedInputs?.sysPct,
+  }))
+  const [inventoryCounts, setInventoryCounts] = useState<Record<string, InventoryCounts>>(
+    () => savedInputs?.inventoryCounts ?? {}
   )
-  const [sysPct, setSysPct] = useState<Record<string, number>>(
-    () => savedInputs?.sysPct ?? initPct()
-  )
+  const { sysPct, missingCoverage } = useMemo(() => {
+    const sysPct: Record<string, number> = {}
+    const missingCoverage = new Set<string>()
+    for (const tool of TOOLS) {
+      const counts = inventoryCounts[tool.id]
+      const pct = counts?.active ? inventoryCoveragePct(counts) : (estimatedPct[tool.id] ?? 0)
+      if (pct === null) missingCoverage.add(tool.id)
+      else sysPct[tool.id] = pct
+    }
+    return { sysPct, missingCoverage }
+  }, [estimatedPct, inventoryCounts])
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
   const setLevel = (id: string, lvl: CoverageLevel) => setLevels((prev) => ({ ...prev, [id]: lvl }))
-  const setPct = (id: string, val: number) => setSysPct((prev) => ({ ...prev, [id]: val }))
+  const setPct = (id: string, val: number) => setEstimatedPct((prev) => ({ ...prev, [id]: val }))
+  const updateCounts = (id: string, patch: Partial<InventoryCounts>) =>
+    setInventoryCounts((previous) => ({
+      ...previous,
+      [id]: { ...(previous[id] ?? EMPTY_COUNTS), ...patch },
+    }))
 
   // Weighted by each tool's declared `importance`. It was a flat unweighted
   // mean, so a missing crypto scanner (importance 3) and a missing
@@ -234,20 +283,20 @@ export const ManagementToolsAudit: React.FC = () => {
   const completeness = useMemo(() => computeMaturityScore(levels), [levels])
 
   const coverageAdjusted = useMemo(
-    () => computeCoverageAdjustedScore(levels, sysPct),
-    [levels, sysPct]
+    () => (missingCoverage.size > 0 ? null : computeCoverageAdjustedScore(levels, sysPct)),
+    [levels, sysPct, missingCoverage]
   )
 
   // A category is a gap when its rating is below Partial, or when it is rated
   // Partial/Automated but reaches under half of the systems.
   const gaps = useMemo(
     () =>
-      TOOLS.filter((t) => gapReason(levels[t.id], sysPct[t.id]) !== null).sort(
-        (a, b) => b.importance - a.importance
-      ),
-    [levels, sysPct]
+      TOOLS.filter(
+        (t) => !missingCoverage.has(t.id) && gapReason(levels[t.id], sysPct[t.id]) !== null
+      ).sort((a, b) => b.importance - a.importance),
+    [levels, sysPct, missingCoverage]
   )
-  const gapLabel = (t: ToolDef) => describeGap(t, levels, sysPct)
+  const gapLabel = (t: ToolDef) => describeGap(levels[t.id], sysPct[t.id])
 
   /** Markdown serialization of the current audit state for Command Center export. */
   const exportMarkdown = useMemo(() => {
@@ -255,7 +304,8 @@ export const ManagementToolsAudit: React.FC = () => {
     lines.push('# Management Tools Audit')
     lines.push('')
     lines.push(`**Hub tool-category rating:** ${completeness}%`)
-    lines.push(`**Coverage-adjusted readiness:** ${coverageAdjusted}%`)
+    const readiness = coverageAdjusted === null ? 'Unavailable' : `${coverageAdjusted}%`
+    lines.push(`**Coverage-adjusted readiness:** ${readiness}`)
     lines.push('')
     lines.push(
       'Reference reading: NIST CSWP.39 §5. The weights and display bands are Hub teaching heuristics, not NIST completeness thresholds.'
@@ -266,11 +316,21 @@ export const ManagementToolsAudit: React.FC = () => {
     lines.push('')
     lines.push('## Coverage by tool category')
     lines.push('')
-    lines.push('| Tool category | Coverage | Systems covered | CPM pillar | Reference |')
-    lines.push('|---|---|---|---|---|')
+    lines.push(
+      '| Tool category | Coverage | Systems covered | Input basis | CPM pillar | Reference |'
+    )
+    lines.push('|---|---|---|---|---|---|')
     for (const t of TOOLS) {
+      const counts = inventoryCounts[t.id]
+      const invalid = missingCoverage.has(t.id)
+      const coverage = invalid ? 'Unavailable' : formatCoverage(sysPct[t.id])
+      const basis = counts?.active
+        ? invalid
+          ? 'Correct the inventory counts'
+          : `${counts.covered} of ${counts.inScope} systems, entered inventory counts`
+        : 'Entered estimate'
       lines.push(
-        `| ${t.name} | ${LEVEL_LABELS[levels[t.id]]} (${levels[t.id]}/3) | ${sysPct[t.id]}% | ${t.cpmPillar} | ${t.cswpRef} |`
+        `| ${t.name} | ${LEVEL_LABELS[levels[t.id]]} (${levels[t.id]}/3) | ${coverage} | ${basis} | ${t.cpmPillar} | ${t.cswpRef} |`
       )
     }
     lines.push('')
@@ -281,20 +341,27 @@ export const ManagementToolsAudit: React.FC = () => {
       lines.push('')
       for (const t of gaps) {
         const lvl = levels[t.id]
-        lines.push(`### ${t.name} — ${describeGap(t, levels, sysPct)}`)
+        lines.push(`### ${t.name} — ${describeGap(lvl, sysPct[t.id])}`)
         lines.push('')
-        lines.push(`> ${t.recommendations[lvl]}`)
+        lines.push(`> ${gapRecommendation(t, lvl)}`)
         lines.push('')
       }
-    } else {
+    } else if (missingCoverage.size === 0) {
       lines.push('## No gaps in the sample ratings')
       lines.push('')
       lines.push(
         `All selected category ratings are Partial or Automated and reach at least ${LOW_COVERAGE_PCT}% of systems; this does not establish implemented capability or systems coverage.`
       )
     }
+    if (missingCoverage.size > 0) {
+      lines.push('## Incomplete coverage inputs', '')
+      for (const tool of TOOLS) {
+        if (missingCoverage.has(tool.id))
+          lines.push(`- ${tool.name}: correct the inventory counts.`)
+      }
+    }
     return lines.join('\n')
-  }, [levels, sysPct, completeness, coverageAdjusted, gaps])
+  }, [levels, sysPct, inventoryCounts, missingCoverage, completeness, coverageAdjusted, gaps])
 
   return (
     <div className="space-y-6">
@@ -321,7 +388,9 @@ export const ManagementToolsAudit: React.FC = () => {
       <div className="space-y-4">
         {TOOLS.map((tool) => {
           const lvl = levels[tool.id]
-          const pct = sysPct[tool.id]
+          const counts = inventoryCounts[tool.id] ?? EMPTY_COUNTS
+          const invalid = missingCoverage.has(tool.id)
+          const pct = invalid ? 'Unavailable' : formatCoverage(sysPct[tool.id])
           return (
             <div
               key={tool.id}
@@ -366,30 +435,77 @@ export const ManagementToolsAudit: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                  {/* Systems coverage slider */}
                   <div>
-                    <div className="text-[10px] text-muted-foreground mb-1 font-medium">
-                      Systems covered: <span className="text-foreground font-bold">{pct}%</span>
+                    <div className="text-xs text-muted-foreground mb-1 font-medium">
+                      Systems covered: <span className="text-foreground font-bold">{pct}</span>
                     </div>
-                    <input
-                      type="range"
-                      min={0}
-                      max={100}
-                      step={5}
-                      value={pct}
-                      onChange={(e) => setPct(tool.id, Number(e.target.value))}
-                      className="w-full h-1.5 accent-primary"
-                      aria-label={`Systems covered by ${tool.name}`}
-                    />
+                    {counts.active ? (
+                      <div className="space-y-2">
+                        <label htmlFor={`tool-in-scope-${tool.id}`} className="block text-xs">
+                          Systems in scope
+                          <Input
+                            id={`tool-in-scope-${tool.id}`}
+                            inputMode="numeric"
+                            value={counts.inScope}
+                            maxLength={16}
+                            aria-invalid={invalid || undefined}
+                            onChange={(event) =>
+                              updateCounts(tool.id, { inScope: event.target.value })
+                            }
+                          />
+                        </label>
+                        <label htmlFor={`tool-covered-${tool.id}`} className="block text-xs">
+                          Observed covered systems
+                          <Input
+                            id={`tool-covered-${tool.id}`}
+                            inputMode="numeric"
+                            value={counts.covered}
+                            maxLength={16}
+                            aria-invalid={invalid || undefined}
+                            onChange={(event) =>
+                              updateCounts(tool.id, { covered: event.target.value })
+                            }
+                          />
+                        </label>
+                        {invalid && (
+                          <p role="status" className="text-xs text-status-warning">
+                            Enter a positive whole number in scope and a covered count between zero
+                            and that number.
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={5}
+                        value={estimatedPct[tool.id] ?? 0}
+                        onChange={(event) => setPct(tool.id, Number(event.target.value))}
+                        className="w-full h-1.5 accent-primary"
+                        aria-label={`Systems covered by ${tool.name}`}
+                      />
+                    )}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2 min-h-11 max-w-full whitespace-normal text-left"
+                      onClick={() => updateCounts(tool.id, { active: !counts.active })}
+                    >
+                      {counts.active ? 'Use estimate slider' : 'Enter inventory counts'}
+                    </Button>
                   </div>
                 </div>
               </div>
 
               {/* Recommendation for current level */}
-              {lvl < 3 && (
+              {(lvl < 3 || (!invalid && sysPct[tool.id] < LOW_COVERAGE_PCT)) && (
                 <div className="mt-3 flex items-start gap-2 bg-muted/30 rounded p-2">
                   <Info size={13} className="text-status-info mt-0.5 shrink-0" />
-                  <p className="text-[11px] text-muted-foreground">{tool.recommendations[lvl]}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {gapRecommendation(tool, lvl)}
+                  </p>
                 </div>
               )}
             </div>
@@ -406,9 +522,19 @@ export const ManagementToolsAudit: React.FC = () => {
         <div className="flex justify-between items-center">
           <div className="font-bold text-foreground">Coverage-Adjusted Readiness</div>
           <div className="text-xl font-bold text-primary" data-testid="coverage-adjusted">
-            {coverageAdjusted}%
+            {coverageAdjusted === null ? 'Unavailable' : `${coverageAdjusted}%`}
           </div>
         </div>
+
+        {missingCoverage.size > 0 && (
+          <p className="text-xs text-status-warning">
+            Correct inventory counts for{' '}
+            {TOOLS.filter((tool) => missingCoverage.has(tool.id))
+              .map((tool) => tool.name)
+              .join(', ')}
+            .
+          </p>
+        )}
 
         {/* Completeness bar */}
         <div className="w-full bg-muted/50 rounded-full h-2.5">
@@ -432,8 +558,8 @@ export const ManagementToolsAudit: React.FC = () => {
           reach. The category rating ignores them: all categories set to Automated still score 100%
           with 0% systems coverage. The coverage-adjusted readiness multiplies each rating by its
           share of systems covered, so the same audit reads 0% there, and any category under{' '}
-          {LOW_COVERAGE_PCT}% of systems stays on the gap list. Neither number verifies a
-          capability.
+          {LOW_COVERAGE_PCT}% of systems stays on the gap list. Inventory counts can replace each
+          slider estimate. Count each system once in the chosen inventory scope.
         </p>
 
         {/* Selected category rating heatmap */}
@@ -451,7 +577,10 @@ export const ManagementToolsAudit: React.FC = () => {
                 >
                   <div className="font-bold truncate">{t.name.split(' (')[0]}</div>
                   <div>
-                    {LEVEL_LABELS[lvl]} · {sysPct[t.id]}% systems
+                    {LEVEL_LABELS[lvl]} ·{' '}
+                    {missingCoverage.has(t.id)
+                      ? 'Coverage unavailable'
+                      : `${formatCoverage(sysPct[t.id])} systems`}
                   </div>
                 </div>
               )
@@ -478,7 +607,7 @@ export const ManagementToolsAudit: React.FC = () => {
               ))}
             </div>
           </div>
-        ) : completeness >= 75 ? (
+        ) : missingCoverage.size > 0 ? null : completeness >= 75 ? (
           <div className="flex items-center gap-2 text-status-success text-sm font-medium">
             <CheckCircle2 size={16} />
             Selected ratings and systems coverage reach the Hub display band — implemented
@@ -513,7 +642,13 @@ export const ManagementToolsAudit: React.FC = () => {
             type: 'management-tools-audit',
             title: `Management Tools Audit — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
-            inputs: { levels, sysPct, completeness, coverageAdjusted },
+            inputs: {
+              levels,
+              sysPct: estimatedPct,
+              inventoryCounts,
+              completeness,
+              coverageAdjusted,
+            },
             createdAt: Date.now(),
           })
         }}

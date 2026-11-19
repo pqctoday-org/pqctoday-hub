@@ -4,7 +4,7 @@ Today's digital world is secured by public-key cryptography (like RSA and ECC), 
 
 ### Why It Matters
 
-The risk starts before that machine exists because of "Harvest Now, Decrypt Later" (HNDL): government security agencies, including NSA, CISA and the UK NCSC, warn that adversaries may record encrypted data now to decrypt it later. Likewise, "Harvest Now, Forge Later" matters for long-lived digital signatures on firmware and roots of trust (not sourced in the Library).
+The risk starts before that machine exists because of "Harvest Now, Decrypt Later" (HNDL): government security agencies, including NSA, CISA and the UK NCSC, warn that adversaries may record encrypted data now to decrypt it later. Likewise, "Harvest Now, Forge Later" (HNFL) describes the signature side of the quantum threat: once a quantum computer can derive a signing private key from its public key, an attacker can forge new signatures on firmware, certificates, or software updates as that signer.
 
 ### The Key Takeaway
 

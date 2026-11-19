@@ -6,6 +6,7 @@
  * latestSafeStartYear/alreadyLate in one copy but not the other three), so a
  * chained value could silently lose fields at a step boundary. One definition.
  */
+import type { BreachBaselineSourceId } from '@/data/roiBaselines'
 import type { DataSensitivityClass } from '@/utils/breachCostModel'
 import type {
   BreachProbabilityOriginLabel,
@@ -34,9 +35,11 @@ export interface InactionScenarioRecord {
     annualUSD: number
     oneTimeUSD: number
     sourceNote: string
+    country?: string
   }
   sourceStatus: {
-    breachBaseline: 'IBM 2025 sector assumption — one edition behind and not independently verified'
+    breachBaseline: string
+    breachBaselineSource?: string
     breachProbability: BreachProbabilityOriginLabel
     crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model'
   }
@@ -61,6 +64,8 @@ export interface BreachOutput {
   /** Industry the figures below were computed for — lets downstream steps detect a mismatch. */
   industry: string
   classicalCostUSD: number
+  /** Source for the benchmark before the scenario applies severity and geography. */
+  breachBaselineSourceId?: BreachBaselineSourceId
   quantumCostUSD: number
   deltaUSD: number
   /** Probability a CRQC exists within the planning horizon (consensus scenario). */

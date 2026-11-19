@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Migration Program Management module teaches executives how to plan, execute, and track a PQC migration program at enterprise scale. It covers roadmap building with milestone planning overlaid on real country and compliance deadlines, stakeholder communication planning with audience-specific messaging frameworks, and KPI tracking for measuring migration progress. The module aligns with a phased migration model (per CISA / NIST NCCoE guidance) (not sourced in the Library) — NIST IR 8547 itself is the algorithm deprecation/disallow timeline, not a migration framework — and integrates live timeline data from the app's country deadline database.
+The Migration Program Management module teaches executives how to plan, execute, and track a PQC migration program at enterprise scale. It covers roadmap building with milestone planning overlaid on real country and compliance deadlines, stakeholder communication planning with audience-specific messaging frameworks, and KPI tracking for measuring migration progress. Its seven-step sequence is a module-recommended planning model, not an official CISA or NIST phase taxonomy. NIST NCCoE publishes migration guidance, OMB M-26-15 sets a separate five-phase schedule for covered federal agencies, and CISA's automated discovery strategy has a narrower federal civilian scope excluding national security systems. NIST IR 8547 provides the algorithm transition dates, not a migration framework. Roadmap milestones integrate live timeline data from the app's country deadline database.
 
 ## Key Concepts
 
@@ -24,8 +24,10 @@ The workshop has 4 interactive steps:
 
 ## Related Standards
 
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
-- NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0)
+- NIST IR 8547 (final, October 2026 — Transition to Post-Quantum Cryptography Standards)
+- NSA CNSA 2.0 (FAQ v2.2 — Commercial National Security Algorithm Suite 2.0 for National Security Systems)
+- OMB M-26-15 (five-phase PQC migration schedule for covered federal agencies)
+- Executive Order 14412 (June 2026) and OMB M-23-02
 - PMI PMBOK (Project Management Body of Knowledge)
 - CISA Post-Quantum Cryptography Initiative
 

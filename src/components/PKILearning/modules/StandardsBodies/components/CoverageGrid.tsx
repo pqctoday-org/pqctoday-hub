@@ -21,6 +21,8 @@ const ORG_TYPES: OrgTypeKey[] = [
   'certification-body',
   'compliance-framework',
   'regulatory-agency',
+  'governmental-agency',
+  'mutual-recognition-arrangement',
 ]
 
 function orgTypeBadgeClass(type: OrgTypeKey): string {
@@ -33,6 +35,10 @@ function orgTypeBadgeClass(type: OrgTypeKey): string {
       return 'text-status-warning'
     case 'regulatory-agency':
       return 'text-status-error'
+    case 'governmental-agency':
+      return 'text-muted-foreground'
+    case 'mutual-recognition-arrangement':
+      return 'text-status-info'
   }
 }
 

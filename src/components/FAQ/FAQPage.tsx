@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, useMemo, useEffect } from 'react'
-import { Link } from 'react-router'
+import { useState, useMemo, useEffect, useId, useRef } from 'react'
+import { Link, useSearchParams } from 'react-router'
 import { HelpCircle, ChevronDown, ChevronRight, Search, ExternalLink, Sparkles } from 'lucide-react'
 import { FAQ_DATA, personaLeadItems, type FAQCategory, type FAQItem } from './faqData'
 import { PERSONAS } from '@/data/learningPersonas'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { Input } from '@/components/ui/input'
 import { logFaqSearch, logFaqExpand } from '@/utils/analytics'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
+import { matchesAllWords } from '@/utils/searchMatch'
 import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimatesNotice'
 
 /** Answers that quote a CRQC year or a qubit count; each carries the open-estimates notice. */
@@ -19,12 +22,27 @@ export const FAQ_ESTIMATE_QUESTIONS: readonly string[] = [
   'What is the difference between physical and logical qubits?',
 ]
 
-function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: boolean }) {
-  const [open, setOpen] = useState(false)
+function FAQAccordionItem({
+  item,
+  recommended,
+  openDirectly = false,
+}: {
+  item: FAQItem
+  recommended: boolean
+  openDirectly?: boolean
+}) {
+  const [open, setOpen] = useState(openDirectly)
+  const answerId = useId()
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (openDirectly) buttonRef.current?.focus()
+  }, [openDirectly])
 
   return (
     <div className="border-b border-border last:border-b-0">
       <Button
+        ref={buttonRef}
         variant="ghost"
         className={`flex h-auto w-full items-start gap-3 whitespace-normal py-4 min-h-[44px] text-left transition-colors hover:text-accent ${recommended ? 'bg-primary/5' : ''}`}
         onClick={() => {
@@ -32,6 +50,7 @@ function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: b
           setOpen((o) => !o)
         }}
         aria-expanded={open}
+        aria-controls={answerId}
       >
         {open ? (
           <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
@@ -46,21 +65,47 @@ function FAQAccordionItem({ item, recommended }: { item: FAQItem; recommended: b
           </span>
         )}
       </Button>
-      {open && (
-        <div className="pb-4 pl-7">
-          <p className="text-sm leading-relaxed text-secondary">{item.answer}</p>
-          {FAQ_ESTIMATE_QUESTIONS.includes(item.question) && (
-            <UnresolvedEstimatesNotice detail="faq" className="mt-3" />
-          )}
-          <Link
-            to={item.deepLink}
-            className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
-          >
-            Learn more
-            <ExternalLink className="h-3 w-3" />
-          </Link>
-        </div>
-      )}
+      <div id={answerId} hidden={!open} className="pb-4 pl-7">
+        {open && (
+          <>
+            <p className="text-sm leading-relaxed text-secondary">{item.answer}</p>
+            {FAQ_ESTIMATE_QUESTIONS.includes(item.question) && (
+              <UnresolvedEstimatesNotice detail="faq" className="mt-3" />
+            )}
+            <Link
+              to={item.deepLink}
+              className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
+            >
+              {item.deepLinkLabel ?? 'Learn more'}
+            </Link>
+            {item.sources && (
+              <ul className="mt-2 space-y-1 text-sm">
+                {item.sources.map((source) => (
+                  <li key={source.href}>
+                    <a
+                      href={source.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-primary underline"
+                    >
+                      {source.label}
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {item.id && !openDirectly && (
+              <Link
+                to={`/faq?answer=${item.id}`}
+                className="mt-3 block text-sm text-primary underline"
+              >
+                Open this answer on its own
+              </Link>
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -86,8 +131,12 @@ function FAQCategorySection({
     <section className="glass-panel p-6" id={category.id}>
       <h2 className="mb-4 text-lg font-semibold text-foreground">{category.title}</h2>
       <div>
-        {orderedItems.map((item, i) => (
-          <FAQAccordionItem key={i} item={item} recommended={item.persona === activePersona} />
+        {orderedItems.map((item) => (
+          <FAQAccordionItem
+            key={item.question}
+            item={item}
+            recommended={item.persona === activePersona}
+          />
         ))}
       </div>
     </section>
@@ -114,8 +163,24 @@ function buildFAQPageSchema(data: FAQCategory[]) {
   }
 }
 
-export function FAQPage() {
-  const [search, setSearch] = useState('')
+export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
+  const Heading = inDrawer ? 'h2' : 'h1'
+  const [params, setParams] = useSearchParams()
+  const searchRef = useRef<HTMLInputElement>(null)
+  const [drawerSearch, setDrawerSearch] = useState('')
+  const routeSearch = useUrlBackedText(inDrawer ? '' : (params.get('q') ?? ''), (next) => {
+    setParams(
+      (prev) => {
+        const updated = new URLSearchParams(prev)
+        if (next) updated.set('q', next)
+        else updated.delete('q')
+        return updated
+      },
+      { replace: true }
+    )
+  })
+  const search = inDrawer ? drawerSearch : routeSearch.text
+  const setSearch = inDrawer ? setDrawerSearch : routeSearch.update
   const { selectedPersona } = usePersonaStore()
   // Hidden while searching: a lead block pinned above filtered results would
   // show three questions that do not match the query, which reads as a bug.
@@ -132,18 +197,38 @@ export function FAQPage() {
 
   const filteredData = useMemo(() => {
     if (!search.trim()) return FAQ_DATA
-    const terms = search.toLowerCase().split(/\s+/)
     return FAQ_DATA.map((cat) => ({
       ...cat,
-      items: cat.items.filter((item) => {
-        const text = `${item.question} ${item.answer}`.toLowerCase()
-        return terms.every((t) => text.includes(t))
-      }),
+      items: cat.items.filter((item) => matchesAllWords([item.question, item.answer], search)),
     })).filter((cat) => cat.items.length > 0)
   }, [search])
 
+  const answerKey = inDrawer ? null : params.get('answer')
+  const directAnswer = answerKey
+    ? FAQ_DATA.flatMap((category) => category.items).find((item) => item.id === answerKey)
+    : undefined
+
   const totalQuestions = FAQ_DATA.reduce((sum, cat) => sum + cat.items.length, 0)
   const schema = useMemo(() => buildFAQPageSchema(FAQ_DATA), [])
+
+  if (directAnswer) {
+    return (
+      <div className="mx-auto max-w-4xl space-y-5 px-4 py-8">
+        <h1 className="text-gradient text-2xl font-bold">PQC Frequently Asked Questions</h1>
+        <Link to="/faq" className="text-sm text-primary underline">
+          All questions
+        </Link>
+        <section className="glass-panel p-4 sm:p-6">
+          <FAQAccordionItem
+            key={directAnswer.id}
+            item={directAnswer}
+            recommended={false}
+            openDirectly
+          />
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
@@ -154,9 +239,9 @@ export function FAQPage() {
       <div className="space-y-2">
         <div className="flex items-center gap-3">
           <HelpCircle className="h-7 w-7 text-accent" />
-          <h1 className="text-gradient text-2xl font-bold sm:text-3xl">
+          <Heading className="text-gradient text-2xl font-bold sm:text-3xl">
             PQC Frequently Asked Questions
-          </h1>
+          </Heading>
         </div>
         <p className="text-muted-foreground">
           {totalQuestions} answers about post-quantum cryptography — algorithms, NIST standards,
@@ -166,11 +251,20 @@ export function FAQPage() {
 
       <PersonaPageNote route="/faq" />
 
+      {answerKey && (
+        <p role="status">
+          This answer link could not be found. Browse or search the questions below.
+        </p>
+      )}
+
       {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
+          ref={searchRef}
+          type="search"
           className="pl-10"
+          aria-label="Search questions"
           placeholder="Search questions..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -192,23 +286,26 @@ export function FAQPage() {
             The three questions this role asks first. Everything below is the full list.
           </p>
           <div className="space-y-2">
-            {leadItems.map((item, i) => (
-              <FAQAccordionItem key={`lead-${i}`} item={item} recommended />
+            {leadItems.map((item) => (
+              <FAQAccordionItem key={item.question} item={item} recommended />
             ))}
           </div>
         </section>
       )}
 
-      {/* Category quick links */}
-      <nav className="flex flex-wrap gap-2" aria-label="FAQ categories">
-        {FAQ_DATA.map((cat) => (
-          <a key={cat.id} href={`#${cat.id}`}>
-            <Button variant="outline" size="sm">
+      {filteredData.length > 0 && (
+        <nav className="flex flex-wrap gap-2" aria-label="FAQ categories">
+          {filteredData.map((cat) => (
+            <a
+              key={cat.id}
+              href={`#${cat.id}`}
+              className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            >
               {cat.title}
-            </Button>
-          </a>
-        ))}
-      </nav>
+            </a>
+          ))}
+        </nav>
+      )}
 
       {/* FAQ sections */}
       {filteredData.length > 0 ? (
@@ -217,9 +314,19 @@ export function FAQPage() {
         ))
       ) : (
         <div className="glass-panel p-8 text-center">
-          <p className="text-muted-foreground">
-            No questions match &ldquo;{search}&rdquo;. Try a different search term.
+          <p role="status" className="text-muted-foreground">
+            No questions match &ldquo;{search}&rdquo;.
           </p>
+          <Button
+            variant="outline"
+            className="mt-3"
+            onClick={() => {
+              setSearch('')
+              searchRef.current?.focus()
+            }}
+          >
+            Clear search
+          </Button>
         </div>
       )}
 

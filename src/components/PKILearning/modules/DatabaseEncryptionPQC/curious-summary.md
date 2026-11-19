@@ -1,15 +1,15 @@
 ### What This Is About
 
-Database encryption operates in layers: Transparent Data Encryption (TDE) for storage, Column-Level Encryption (CLE) for specific fields, and Queryable Encryption for searching ciphertext. PQC migration for databases does not require changing how the actual data is encrypted, because the underlying AES-256 symmetric encryption is already quantum-safe against Grover's algorithm.
+Database encryption operates in layers: Transparent Data Encryption (TDE) for storage, Column-Level Encryption (CLE) for specific fields, and Queryable Encryption for searching ciphertext. A PQC plan must check each layer, the database engine's cipher configuration, and the key-management path. Shor's algorithm does not break AES; Grover's algorithm reduces the effective key-search strength, so AES-256 retains a 128-bit margin.
 
 ### Why It Matters
 
-The quantum vulnerability in databases lies entirely in the **key wrapping layer**. The Data Encryption Keys (DEKs) and Column Master Keys (CMKs) are currently protected by vulnerable algorithms like RSA-OAEP and ECDH. If an adversary harvests the wrapped keys today, they can decrypt the entire database later. Organizations using Provider-Managed keys are entirely at the mercy of their cloud vendor's timeline, while BYOK and HYOK architectures offer control over when PQC wrapping is enforced.
+Quantum risk is not limited to one **key-wrapping layer**: review key establishment, key wrapping, certificates and transport links in the database and KMS path. Which components use RSA/ECDH depends on the engine, version and integration. Harvest-now-decrypt-later exposure depends on the captured material and the required confidentiality period. BYOK and HYOK can change customer control of key custody, but do not guarantee that a cloud service supports post-quantum import wrapping.
 
 ### The Key Takeaway
 
-Organizations with long-lived data may want to consider HYOK (Hold Your Own Key) architectures and to plan the move of key wrapping to ML-KEM-1024; this is this module's advice, not a regulatory requirement. Because the AES data layer remains unchanged, modern databases (like Oracle and SQL Server) support online TDE re-keying, allowing you to migrate the wrapping keys with zero application downtime.
+For long-lived data, this module recommends assessing key-management paths and testing a post-quantum design; that is advice, not a regulatory requirement or a claim that database vendors support ML-KEM key wrapping. Do not conflate re-wrapping a key with rotating a data-encryption key: Oracle tablespace rekeying and SQL Server DEK regeneration can rewrite or re-encrypt data, while MongoDB's client-side `rewrapManyDataKey` operation re-wraps field data keys. Online-capable operations still need workload, space, recovery and availability testing.
 
 ### What's Happening
 
-Cloud providers and database vendors are rolling out ML-KEM support for key wrapping operations, enabling organizations with BYOK and HYOK architectures to begin migrating their Data Encryption Key protection to quantum-safe algorithms without disrupting the underlying AES data layer.
+Cloud and database capabilities differ by product and release. Treat an ML-KEM key-wrapping workflow as a design proposal until the specific KMS, database integration and key format document support for it.

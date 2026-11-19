@@ -113,7 +113,7 @@ None of those labels turns a local demonstration into an ACVP, CAVP, CMVP, Commo
 Release **4.214.0** · source-data snapshot through **2026-11-16**. These figures are derived from the committed registries and current CSV lineages; they are not live counts.
 
 - **Learn:** 75 instructional modules and 1,159 quiz questions.
-- **Core references:** 130 algorithm records, 198 timeline events and 1,498 active Library records.
+- **Core references:** 130 algorithm records, 198 timeline events and 1,501 active Library records.
 - **Educational catalogues:** 909 active products, 189 active compliance references, 75 active threat records and 361 active community profiles.
 - **Main glossary:** 648 terms.
 - **Assistant corpus:** 19,446 chunks across 47 source collections; 99.97% carry a Hub deep link.

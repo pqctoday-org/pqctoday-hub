@@ -412,6 +412,14 @@ export interface EvidenceDoc {
   note: string
 }
 
+export const PAYMENT_HSM_SAMPLE = {
+  approvedFirmware: ['3.2.0', '3.2.1'],
+  proposedFirmware: '4.0.0',
+  fipsFirmware: '3.1.0',
+  listingNumber: 'FICT-0007',
+  fipsNumber: 'FICT-0008',
+} as const
+
 export const EVIDENCE_DOCS: EvidenceDoc[] = [
   {
     id: 'listing',
@@ -420,8 +428,8 @@ export const EVIDENCE_DOCS: EvidenceDoc[] = [
       ['Company', 'Orrin Systems (fictional)'],
       ['Product', 'Orrin N7'],
       ['Hardware #', 'N7-HW 2.x'],
-      ['Firmware #', '3.2.0, 3.2.1'],
-      ['Approval Number', 'FICT-0007 (not a real approval number)'],
+      ['Firmware #', PAYMENT_HSM_SAMPLE.approvedFirmware.join(', ')],
+      ['Approval Number', `${PAYMENT_HSM_SAMPLE.listingNumber} (fictional)`],
       ['Product Type', 'HSM'],
       ['Version', '4.x'],
       ['Expiry Date', '30 Apr 2033'],
@@ -449,9 +457,11 @@ export const EVIDENCE_DOCS: EvidenceDoc[] = [
     id: 'fips-certificate',
     title: 'FIPS 140-3 certificate (fictional)',
     fields: [
-      ['Certificate', 'FICT-0008 (not a real CMVP number)'],
+      ['Certificate', `${PAYMENT_HSM_SAMPLE.fipsNumber} (fictional)`],
       ['Module', 'Orrin N7 Cryptographic Module'],
-      ['Firmware', '3.1.0'],
+      ['Hardware #', 'N7-HW 2.x'],
+      ['Configuration', 'Approved mode'],
+      ['Firmware', PAYMENT_HSM_SAMPLE.fipsFirmware],
       ['Overall Security Level', '3'],
       ['Status', 'Active'],
       ['Approved algorithms', 'AES, SHA-2, HMAC, RSA, ECDSA'],
@@ -548,7 +558,7 @@ export const EVIDENCE_SCENARIOS: EvidenceScenario[] = [
         claim: 'The FIPS 140-3 certificate in the packet covers the firmware Northgate runs.',
         verdict: 'not-supported',
         doc: 'fips-certificate',
-        why: 'This certificate covers firmware 3.1.0, not 3.2.1, and a FIPS certificate is a different scheme from the PTS listing: the PTS listing is the evidence that names 3.2.1. Which HSM evidence a PCI standard accepts is set out in that standard, which this module does not read.',
+        why: 'This certificate covers firmware 3.1.0, not 3.2.1, and a FIPS certificate is a different scheme from the PTS listing: the PTS listing is the evidence that names 3.2.1. The device exercise applies the PIN Security v3.1 requirements for this particular sample.',
       },
     ],
   },
@@ -641,7 +651,8 @@ export interface EvidenceAnswer {
 export function buildEvidenceMemo(
   scenario: EvidenceScenario,
   answers: Record<string, EvidenceAnswer>,
-  checked: boolean
+  checked: boolean,
+  deploymentEvidence = ''
 ): string {
   const lines = [
     `Evidence review memo — ${ANCHOR_SCENARIO.name} (${ANCHOR_SCENARIO.fictionalLabel} product)`,
@@ -649,6 +660,7 @@ export function buildEvidenceMemo(
     `Sources as of ${PCI_AS_OF_LABEL}; practitioner orientation, not laboratory training.`,
     '',
   ]
+  if (deploymentEvidence) lines.push(deploymentEvidence, '')
   scenario.claims.forEach((c, i) => {
     const a = answers[c.id] ?? {}
     lines.push(`${i + 1}. Claim: ${c.claim}`)

@@ -29,6 +29,16 @@ describe('timelineData', () => {
     }
   })
 
+  it('describes NCSC migration targets as guidance milestones', () => {
+    const ncsc = timelineData
+      .find((country) => country.countryName === 'United Kingdom')
+      ?.bodies.find((body) => body.name === 'NCSC')
+      ?.events.find((event) => event.title === 'NCSC PQC Migration Roadmap Published')
+    expect(ncsc).toBeDefined()
+    expect(ncsc!.description).toMatch(/indicative target dates.*2028.*2031.*2035/i)
+    expect(ncsc!.sourceUrl).toBe('https://www.ncsc.gov.uk/guidance/pqc-migration-timelines')
+  })
+
   it('has unique primary keys or combination keys', () => {
     const ids = timelineData.map((item) => item.countryName)
     const validIds = ids.filter((id) => id)

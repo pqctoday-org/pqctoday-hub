@@ -216,8 +216,8 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
           threatLevel: 'low',
           vulnerableAlgorithms: [],
           quantumAttack:
-            'Transaction hashing uses SHA-256/Keccak-256 which provide quantum resistance at 128-bit security via Grover (reduced from 256-bit).',
-          pqcCountermeasures: ['SHA-3 transition for long-term collision resistance'],
+            'SHA-256 and Keccak-256 produce 256-bit digests. The ideal preimage search for a specified digest is about 2^128 Grover queries. A collision between any two messages is a separate property.',
+          pqcCountermeasures: ['Check the protocol’s actual digest and collision requirements'],
           migrationReadiness: 'ready',
           migrationNotes:
             'Hash-based operations are already quantum-resistant. No urgent migration needed.',

@@ -414,9 +414,9 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     yearHigh: 2035,
     confidence: 'Planning horizon',
     notes:
-      'Deprecate quantum-vulnerable public-key crypto (RSA/ECC) after 2030, disallow it under NIST standards and guidelines after 2035. Assumes CRQC is imminent enough to act now. Re-verified 2026-10-27 directly against csrc.nist.gov: the final version was published on 27 October 2026, replacing the November 2024 initial public draft.',
+      'Deprecate quantum-vulnerable public-key crypto (RSA/ECC) after 2030, disallow it under NIST standards and guidelines after 2035. These are NIST transition milestones, not a prediction that a CRQC will arrive by either date. Re-verified 2026-11-18 against NIST’s final publication record; the final version was published on 27 October 2026, replacing the November 2024 initial public draft.',
     url: 'https://nvlpubs.nist.gov/nistpubs/ir/2026/NIST.IR.8547.pdf',
-    lastReviewed: '2026-10-27',
+    lastReviewed: '2026-11-18',
   },
   {
     source: 'NSA CNSA 2.0 FAQ version 2.2 (October 2026)',

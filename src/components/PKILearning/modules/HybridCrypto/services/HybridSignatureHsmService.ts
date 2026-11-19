@@ -106,7 +106,7 @@ export function hsmConcatenationVerify(
   const R = ecBytes.slice(0, 33)
   const s = ecBytes.slice(33, 65)
   const ecValid = ecSchnorrVerify(msg, keys.ecPk, R, s)
-  const mlValid = hsm_verifyBytes(M, hSession, keys.mlPubHandle, msg, mlSig)
+  const mlValid = hsm_verifyBytes(M, hSession, keys.mlPubHandle, msg, mlSig, true)
   return {
     valid: ecValid && mlValid,
     ecValid,
@@ -166,8 +166,8 @@ export function hsmNestingVerify(
   const s = ecBytes.slice(33, 65)
   const nestedMsg = concat(msg, ecBytes)
   const ecValid = ecSchnorrVerify(msg, keys.ecPk, R, s)
-  const mlValid = hsm_verifyBytes(M, hSession, keys.mlPubHandle, nestedMsg, mlSig)
+  const mlValid = hsm_verifyBytes(M, hSession, keys.mlPubHandle, nestedMsg, mlSig, true)
   // ML-DSA signed over msg‖ecSig — verifying on raw msg alone must fail
-  const mlAloneValid = hsm_verifyBytes(M, hSession, keys.mlPubHandle, msg, mlSig)
+  const mlAloneValid = hsm_verifyBytes(M, hSession, keys.mlPubHandle, msg, mlSig, true)
   return { valid: ecValid && mlValid, ecValid, mlValid, ecAloneValid: ecValid, mlAloneValid }
 }

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
+import { Terminal } from 'lucide-react'
+import { PYTHON_SIGNATURE_EXERCISE_PATH } from '@/data/pythonWorkbench'
 import type { PersonaId } from '@/data/learningPersonas'
 import { NAV_PATH_LABELS } from '@/data/personaConfig'
 import { Button } from '@/components/ui/button'
@@ -51,6 +53,7 @@ export interface MobileGroupPanelProps {
  */
 export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGroupPanelProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const { forYou } = getRailSections(persona)
   const groupablePaths = persona ? forYou : getUngatedGroupablePaths()
   const groups = getForYouGroups(groupablePaths)
@@ -79,6 +82,21 @@ export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGrou
 
       {paths.length > 0 && (
         <div className="grid grid-cols-3 gap-2.5">
+          {groupId === 'practice' && persona === 'developer' && (
+            <Link
+              to={PYTHON_SIGNATURE_EXERCISE_PATH}
+              onClick={onClose}
+              aria-current={
+                location.pathname + location.search === PYTHON_SIGNATURE_EXERCISE_PATH
+                  ? 'page'
+                  : undefined
+              }
+              className="flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-[11px] border border-border bg-muted/30 p-3 text-center text-[10px] font-bold text-primary hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <Terminal size={20} aria-hidden="true" />
+              Python signature lab
+            </Link>
+          )}
           {paths.map((path) => {
             const Icon = RAIL_ICON_MAP[path]
             const label = NAV_PATH_LABELS[path] ?? path

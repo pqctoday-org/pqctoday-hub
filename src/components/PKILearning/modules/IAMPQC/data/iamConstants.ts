@@ -236,9 +236,9 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
       'A Golden Ticket needs the KRBTGT long-term key, which attackers obtain by classical means such as credential dumping on a domain controller (MITRE ATT&CK T1558.001); a quantum computer adds no step to a key already stolen, and post-quantum PKINIT would not stop it',
     ],
     migrationPath:
-      "This module's target design: hybrid Kerberos with ML-KEM PKINIT once Microsoft ships it (we found no published Microsoft date for PKINIT PQC); disable NTLM; enforce LDAPS with hybrid TLS 1.3",
+      'Planning target, not current capability: evaluate hybrid Kerberos PKINIT when Microsoft documents support; the Microsoft sources checked 2026-11-18 do not give a PKINIT delivery date. Disable NTLM where feasible and test hybrid TLS 1.3 on every LDAPS path.',
     vendorTimeline:
-      'Microsoft Entra / Windows Server PQC: no published date found (this module assumes 2026-2027)',
+      'Windows Server / AD CS (checked 2026-11-18): ML-DSA certificate issuance is available on supported, updated Windows Server 2025; ML-KEM and composite certificates are planned. Microsoft has not published a PKINIT PQC date in the sources checked. See Microsoft Learn: https://learn.microsoft.com/en-us/windows-server/identity/ad-cs/post-quantum-cryptography-overview',
   },
   {
     id: 'openldap',
@@ -248,13 +248,14 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     authAlgorithm: 'SASL/GSSAPI (delegates to Kerberos), simple bind (LDAP password)',
     quantumScore: 7,
     vulnerabilities: [
-      'TLS channel uses RSA/ECDH key exchange — HNDL captures expose all LDAP traffic',
+      'Recorded LDAPS/StartTLS traffic can face HNDL exposure when its TLS key establishment is quantum-vulnerable; LDAP traffic without TLS is already exposed to network observers',
       'Simple bind passwords transmitted over TLS; quantum-broken TLS exposes them',
       'SASL/GSSAPI security depends on Kerberos channel security',
     ],
     migrationPath:
-      'Update OpenSSL 3.x TLS to hybrid ML-KEM-768+X25519 for LDAPS; verify GnuTLS or NSS backend supports PQC if not using OpenSSL',
-    vendorTimeline: 'OpenLDAP + OpenSSL 3.x oqsprovider: Available now (experimental)',
+      'Plan hybrid TLS only after confirming the deployed TLS library, version, build/provider configuration and peer support; test the negotiated group end to end before enabling it for LDAPS',
+    vendorTimeline:
+      'Hybrid TLS availability depends on the OpenLDAP build, TLS library, provider configuration and peer; verify the exact deployed combination',
   },
   {
     id: 'azure-ad',
@@ -266,12 +267,13 @@ export const DIRECTORY_SERVICES: DirectoryService[] = [
     vulnerabilities: [
       'JWT ID tokens signed with RSA-2048 — a quantum computer that breaks the signing key can forge them (a forgery risk, not harvest-now-decrypt-later)',
       'SAML assertions are long-lived signed federation tokens — a forged assertion is accepted while the verifier trusts the signing key',
-      'Refresh tokens are opaque encrypted blobs (not RSA-signed JWTs); the quantum-exposed parts are the RSA-signed access and ID tokens (forgery) and the TLS key exchange that carries them (HNDL)',
+      'Refresh tokens are provider-issued bearer credentials, not necessarily JWTs; theft/replay is distinct from quantum risk. Public-key signatures on access/ID tokens create a forgery risk, while TLS key establishment can create HNDL exposure for recorded transport',
       'Entra DS LDAPS uses TLS with classical ciphers',
     ],
     migrationPath:
-      "This module's target design: ML-DSA token signing for Entra ID once Microsoft offers it (we found no published Microsoft Entra PQC date or Conditional Access PQC policy); enable hybrid TLS for MSAL SDK connections",
-    vendorTimeline: 'Microsoft Entra PQC: no published date found (this module assumes 2026-2027)',
+      'Planning target: assess post-quantum token signing when Microsoft documents the algorithm and deployment path; the published 2033 target covers the full Entra authentication transition, not a confirmed token-signing release date. Enable hybrid TLS for MSAL SDK connections only where the client, service and TLS path support and negotiate it.',
+    vendorTimeline:
+      'Microsoft Entra (checked 2026-11-18): Microsoft says Entra authentication, including passkeys, is not fully quantum safe today and targets a full transition by 2033. The FAQ does not give a separate token-signing algorithm release date. Source: https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-faq',
   },
 ]
 
@@ -286,7 +288,7 @@ export const ZERO_TRUST_LAYERS: ZeroTrustLayer[] = [
       'ML-DSA-65 for all identity assertions; hybrid certificates during transition; PQC-capable IdP',
     migrationComplexity: 'high',
     description:
-      'All identity tokens (JWT, SAML, OIDC ID tokens) must be signed with PQC algorithms. This requires IdP software updates and relying party validation updates.',
+      'Public-key-signed identity tokens (for example RS256 or ES256 JWTs and signed SAML assertions) will need post-quantum signature support when their signing keys and trust chains migrate. HMAC-signed tokens use symmetric keys and have a different quantum-risk analysis. IdP software and relying-party validation must agree on supported algorithms and key distribution.',
   },
   {
     id: 'device-trust',
@@ -358,7 +360,7 @@ export const CRYPTO_RISKS: CryptoRisk[] = [
     quantumRisk: 'high',
     rationale:
       'JWTs are signed and commonly cached and reused for their full validity period. A forged JWT is accepted while the verifier trusts the signing key, so the risk is forgery, not harvest-now-decrypt-later. Refresh tokens (weeks/months) give the longest window; access tokens (1h) a shorter but still significant one.',
-    typicalLifetime: 'Access: 1h; Refresh: 7-90 days',
+    typicalLifetime: 'Access and refresh token lifetimes vary by issuer, client type and policy',
   },
   {
     tokenType: 'OIDC',
@@ -371,8 +373,8 @@ export const CRYPTO_RISKS: CryptoRisk[] = [
     tokenType: 'OAuth2',
     quantumRisk: 'medium',
     rationale:
-      'Short-lived access tokens (1h) shorten the window in which a forged token is useful, but long-lived refresh tokens are critical. Client credentials and device flow tokens may have longer lifetimes requiring priority migration.',
-    typicalLifetime: 'Access: 1h; Refresh: 14-90 days',
+      'A public-key-signed access token may be forged if its signing key is broken; token lifetimes and refresh-token behavior vary by issuer, client type and policy. Treat token forgery, bearer-token theft, and TLS HNDL as separate risks.',
+    typicalLifetime: 'Access and refresh token lifetimes vary by issuer, client type and policy',
   },
 ]
 

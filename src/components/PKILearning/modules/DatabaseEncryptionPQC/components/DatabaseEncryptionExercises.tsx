@@ -45,11 +45,11 @@ export const DatabaseEncryptionExercises: React.FC<DatabaseEncryptionExercisesPr
       id: 'tde-migration-plan',
       title: '2. TDE Migration Step-by-Step',
       description:
-        "Walk through all 6 TDE migration steps for SQL Server. Pay attention to Step 3 (Master Key Rotation) and Step 4 (Online Re-Encryption). Switch to MongoDB at Step 4 to see how rotateMasterKey differs from SQL Server's ALTER DATABASE ENCRYPTION KEY command.",
+        "Walk through all 6 TDE migration steps for SQL Server. Pay attention to Step 3 (Master Key Rotation) and Step 4 (DEK Rotation and Bulk Rewrite). Compare SQL Server DEK regeneration with MongoDB Enterprise's KMIP master-key rotation, which re-encrypts the internal keystore without changing database keys.",
       badge: 'Migration',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'Step 4 (Online Re-Encryption) has "High Risk" rating despite zero downtime — because a failure mid-migration leaves the database in a dual-key state requiring careful recovery. Both Oracle and SQL Server support online migration; PostgreSQL requires offline maintenance window.',
+        'Step 4 (DEK Rotation and Bulk Rewrite) is high risk because it changes the data-encryption key and may rewrite data files. Oracle online tablespace conversion needs temporary free space; SQL Server encryption operations have workload restrictions. In Percona pg_tde, changing a principal key re-wraps internal keys, while regenerating a table internal key through a file rewrite takes an exclusive lock. Test the exact engine/version and recovery procedure; do not assume a zero-downtime window.',
       config: { step: 1 },
     },
     {
@@ -71,7 +71,7 @@ export const DatabaseEncryptionExercises: React.FC<DatabaseEncryptionExercisesPr
       badge: 'Queryable',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        'pg_tde shows no queryable encryption support because it is a TDE-only solution — all queries run on plaintext after block-level decryption. The matrix compares documented conditions per operation, not an overall ranking. MongoDB documents equality queries from 7.0, range queries from 8.0, and prefix, suffix and substring queries as public preview in 8.2 and generally available in 9.0. SQL Server Always Encrypted adds range and LIKE matching only with a secure enclave. None of these schemes is shown as PQC-ready.',
+        'pg_tde shows no queryable encryption support because it is a TDE-only solution — queries run on plaintext after block-level decryption. The matrix compares documented conditions per operation, not an overall ranking. MongoDB documents equality queries from 7.0, range queries from 8.0, and prefix, suffix and substring queries as public preview in 8.2 and generally available in 9.0 with compatible 9.0 drivers. SQL Server Always Encrypted adds range and LIKE matching only with a secure enclave. None of these schemes is shown as PQC-ready.',
       config: { step: 3 },
     },
     {

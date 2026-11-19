@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { CatalogReleaseCheck } from '@/components/ui/CatalogReleaseCheck'
 import {
   Suspense,
   useCallback,
@@ -1187,6 +1188,10 @@ function MobileProductDetailSheet({
                 </Badge>
               )}
             </div>
+          )}
+
+          {!historicalRecord && product.latestVersion?.trim() && (
+            <CatalogReleaseCheck key={product.productId} version={product.latestVersion} />
           )}
 
           {certsByType.size > 0 && (

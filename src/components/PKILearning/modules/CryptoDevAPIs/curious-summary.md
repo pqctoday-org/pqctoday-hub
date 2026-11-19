@@ -10,8 +10,8 @@ These APIs utilize "provider models," meaning the specific algorithm implementat
 
 ## The Key Takeaway
 
-Different APIs have vastly different mechanisms for PQC integration. For example, OpenSSL 3.5 and later include ML-KEM, ML-DSA and SLH-DSA out of the box (older versions needed the `oqsprovider` plug-in), while PKCS#11 requires meticulous session management to communicate with external hardware security modules that are just beginning to support PQC.
+Different APIs have vastly different mechanisms for PQC integration. For example, OpenSSL 3.5 and later include ML-KEM, ML-DSA and SLH-DSA out of the box (older versions needed the `oqsprovider` plug-in), while PKCS#11 v3.2 now specifies PQC mechanisms. Actual availability still depends on the HSM model, firmware, client/provider versions, and validated configuration.
 
 ## What's Happening
 
-Open-source libraries are actively leading the charge in PQC adoption. Bouncy Castle has provided ML-KEM and ML-DSA since release 1.79 (October 2024). Platform runtimes have caught up: Java (JDK 24+), Go (1.24+ for ML-KEM, 1.27+ for ML-DSA), .NET 10 and Python's cryptography library (48+) now ship them, and Windows CNG has offered ML-KEM and ML-DSA to everyone on Windows 11 24H2 and Windows Server 2025 since November 2025 — though not SLH-DSA.
+Open-source libraries are actively leading the charge in PQC adoption. Bouncy Castle added ML-KEM and ML-DSA in release 1.79 (October 2024); treat that as a feature floor, not a current-version recommendation. BC Java 1.87 (11 November 2026) deprecates Classic McEliece and says it is no longer believed safe to use. Platform support differs by API, version, and backend: JDK 24+ and Go 1.24/1.27 provide the named primitives; pyca/cryptography 47+ availability depends on its linked backend; .NET 10 provides ML-KEM and marks ML-DSA experimental (SYSLIB5006); Windows documents ML-KEM/ML-DSA BCRYPT identifiers for Windows 11 24H2, while current end-to-end CNG examples are marked prerelease. Always verify target-platform support and keep primitive, key-storage, certificate, and TLS support separate.

@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.215.0] - 2026-11-18
+
+All 33 Essential Learn Modules across all 8 roles are updated for 2026 standards accuracy and actionable decision checklists, alongside the full Grade-A remediation sweep across Business Center worksheets, Playground labs, Mobile views, and Learn workshops.
+
+### Added
+
+- **Decision checklists, step-linked exercises, and 2026 standards alignment across all 33 Essential Learn Modules** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: audited and upgraded every Essential module for all 8 personas with finalized 2026 standards (`NIST IR 8547` final October 2026, `NSA CNSA 2.0 FAQ v2.2`, `EO 14412` & `OMB M-26-15`, `RFC 9846`, `RFC 9958`, `RFC 10024`, `RFC 10073`, `RFC 10082`, `NIST IR 8545`, `NIST IR 8610`), expandable executive/GRC/ops decision checklists, direct workshop step navigation from exercises, and complete multi-step workshop coverage.
+- **Grade-A decision workshops, production evidence worksheets, and interactive calculators across Learn, Business Center, and Playground** [view:/learn] [view:/business] [view:/playground] [view:/timeline] [view:/algorithms] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: integrated the full 4.214 Grade-A remediation suite (batches 66–329), adding interactive deployment scope checks, canary rollback and two-track roadmap planners, TLS key-share budget and comparison tools, HSM token signing and capacity sizing checks, KMIP/AWS KMS policy labs, PCI/FIPS/EUCC evidence workflows, and responsive Mobile view parity.
+
+### Fixed
+
+- **Workshop step tracking, withdrawn candidate filtering, and OpenSSH/algorithm reference accuracy** [view:/learn] [view:/migrate] [persona:developer] [persona:architect] [persona:ops] [persona:researcher] [persona:cert-engineer]: fixed TLS Basics step-completion tracking (`simulate`), excluded withdrawn `HAWK` from PQC Candidates winner selection, aligned OpenSSH 9.9 vs. 10.0 default hybrid key exchange guidance, wired 5 orphaned PQC 101 scenario questions, fixed Executive Quantum Impact step ordering and evidence-scope driver summaries, and corrected `ietf-lamps-composite-sigs-ref` vendor attribution to IETF (`VND-081`).
+
 ## [4.214.0] - 2026-11-18
 
 Hands-on workshops, Business Center worksheets, Playground tools, the Navigate knowledge graph, the Migrate catalog, and the AI Assistant are updated with verified decision exercises, RFC 10073 and HPKE/FN-DSA reference coverage, full Industry Landscape graph links, and resilient cloud and local assistant grounding.

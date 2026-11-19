@@ -71,7 +71,10 @@ describe('the About page says the same about analytics on a laptop and on a phon
 
   it('the phone points to section 10 of the Terms with a link', () => {
     phoneText()
-    expect(screen.getByRole('link', { name: 'Terms' })).toHaveAttribute('href', '/terms')
+    expect(screen.getByRole('link', { name: 'Terms' })).toHaveAttribute(
+      'href',
+      '/terms#terms-privacy-analytics'
+    )
   })
 
   it('the phone no longer says local data stays put "unless you opt in to sync"', () => {

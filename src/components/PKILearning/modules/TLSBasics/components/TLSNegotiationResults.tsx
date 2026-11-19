@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, FileText, Check, Copy, Activity } from 'lucide-react'
 import { AsnConvert } from '@peculiar/asn1-schema'
 import { Certificate } from '@peculiar/asn1-x509'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
-import { useTLSStore } from '@/store/tls-learning.store'
+import { type SimulationResult, useTLSStore } from '@/store/tls-learning.store'
 import { CryptoLogDisplay } from './CryptoLogDisplay'
 import type { TraceEvent } from './CryptoLogDisplay'
 import { KeyColumn } from './KeyOverview'
@@ -82,6 +82,9 @@ const getCaTypeFromPem = (caPem: string | undefined): string => {
   return labels.length > 0 ? [...new Set(labels)].join(' + ') : UNKNOWN_CA_KEY_TYPE
 }
 
+// One result object represents one execution even when multiple views render it.
+const recordedResults = new WeakSet<SimulationResult>()
+
 export const TLSNegotiationResults: React.FC = () => {
   const {
     results,
@@ -96,11 +99,11 @@ export const TLSNegotiationResults: React.FC = () => {
     !!runInputs &&
     (JSON.stringify(draftClientConfig) !== JSON.stringify(runInputs.clientConfig) ||
       JSON.stringify(draftServerConfig) !== JSON.stringify(runInputs.serverConfig))
-  const lastRecordedRef = useRef<string | null>(null)
 
   // Record run to history when simulation completes - MUST be before early return
   useEffect(() => {
-    if (!results || results.status === 'idle') return
+    if (!results || results.status === 'idle' || recordedResults.has(results)) return
+    recordedResults.add(results)
 
     // Parse events for recording
     const events: TraceEvent[] = (results.trace || []).map((t: Partial<TraceEvent>) => ({
@@ -138,16 +141,6 @@ export const TLSNegotiationResults: React.FC = () => {
         }
       }
     })
-
-    // Create a unique key for this run to prevent duplicate recording
-    const runKey = JSON.stringify({
-      cipher: negotiatedCipher,
-      totalBytes,
-      timestamp: results.trace?.[0]?.details,
-    })
-
-    if (lastRecordedRef.current === runKey) return
-    lastRecordedRef.current = runKey
 
     // Extract key exchange and signature from events
     const keyExchangeEvent = events.find((e) => e.details.includes('Key Exchange:'))

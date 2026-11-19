@@ -3,7 +3,7 @@ import { text } from 'node:stream/consumers'
 import { expect, test } from './fixtures/blockAnalytics'
 
 for (const width of [1280, 390]) {
-  test(`changing capture history changes the stored-data decision and artifact at ${width}px`, async ({
+  test(`storage operator records a captured-backup decision and handoff at ${width}px`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: 900 })
@@ -14,6 +14,12 @@ for (const width of [1280, 390]) {
       )
     })
     await page.goto('/business/tools/data-at-rest-strategy')
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Data-at-Rest Strategy', exact: true })
+    ).toBeVisible()
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
+    ).toBeLessThanOrEqual(1)
     const archive = page.getByRole('group', { name: 'Backups & archives', exact: true })
     const history = archive.getByRole('button', { name: /Old wrapped key exposure/ })
     const result = archive.getByRole('status')
@@ -28,6 +34,10 @@ for (const width of [1280, 390]) {
     await archive.getByRole('button', { name: /Re-encrypt with fresh AES-256 DEK/ }).click()
     await expect(result).toContainText('Re-encrypt the controlled copies with a fresh data key')
     await expect(result).toContainText('Captured copies still depend on the old key')
+    const ownerNote = 'Storage platform team: validate restore from retained copies before rollout.'
+    await archive.getByRole('textbox', { name: 'Note (optional)' }).fill(ownerNote)
+    await page.getByRole('button', { name: /^Save/ }).click()
+    await expect(page.getByRole('button', { name: 'Saved', exact: true })).toBeVisible()
 
     const [download] = await Promise.all([
       page.waitForEvent('download'),
@@ -40,9 +50,11 @@ for (const width of [1280, 390]) {
     expect(archiveRow).toContain('Old wrap captured')
     expect(archiveRow).toContain('Re-encrypt the controlled copies with a fresh data key')
     expect(archiveRow).toContain('Captured copies still depend on the old key')
+    expect(archiveRow).toContain(ownerNote)
 
     await page.reload()
     await expect(history).toContainText('Old wrap captured')
     await expect(result).toContainText('Re-encrypt the controlled copies with a fresh data key')
+    await expect(archive.getByRole('textbox', { name: 'Note (optional)' })).toHaveValue(ownerNote)
   })
 }

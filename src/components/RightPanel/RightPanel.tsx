@@ -7,7 +7,7 @@ import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
-import { PanelHeader } from './PanelHeader'
+import { PanelHeader, RIGHT_PANEL_TABS } from './PanelHeader'
 import { ChatPanelContent } from './ChatPanelContent'
 
 const HistoryPanel = React.lazy(() =>
@@ -27,6 +27,7 @@ const WorkshopPanel = React.lazy(() =>
 )
 
 export const RightPanel: React.FC = () => {
+  const idPrefix = React.useId()
   const mobileShell = useIsMobileShell()
   const { isOpen, activeTab, isExpanded, setTab, close, minimize, toggleExpanded } =
     useRightPanelStore()
@@ -100,11 +101,12 @@ export const RightPanel: React.FC = () => {
                 isExpanded ? 'sm:w-[85vw]' : 'sm:w-[40vw]'
               }`}
               role="dialog"
-              aria-modal={modelessWorkshop ? false : undefined}
+              aria-modal={modelessWorkshop ? false : mobileShell || undefined}
               aria-label={panelLabel}
               onClick={(e) => e.stopPropagation()}
             >
               <PanelHeader
+                idPrefix={idPrefix}
                 activeTab={activeTab}
                 onTabChange={setTab}
                 onClose={workshopActive ? () => {} : close}
@@ -113,53 +115,69 @@ export const RightPanel: React.FC = () => {
                 onToggleExpanded={toggleExpanded}
               />
 
-              {activeTab === 'chat' && <ChatPanelContent />}
-              {activeTab === 'workshop' && (
-                <React.Suspense
-                  fallback={
-                    <div className="flex-1 flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              {RIGHT_PANEL_TABS.filter(({ id }) => id !== activeTab).map(({ id }) => (
+                <div
+                  key={id}
+                  id={`${idPrefix}-panel-${id}`}
+                  role="tabpanel"
+                  aria-labelledby={`${idPrefix}-tab-${id}`}
+                  hidden
+                />
+              ))}
+              <div
+                id={`${idPrefix}-panel-${activeTab}`}
+                role="tabpanel"
+                aria-labelledby={`${idPrefix}-tab-${activeTab}`}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                {activeTab === 'chat' && <ChatPanelContent />}
+                {activeTab === 'workshop' && (
+                  <React.Suspense
+                    fallback={
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      </div>
+                    }
+                  >
+                    <WorkshopPanel />
+                  </React.Suspense>
+                )}
+                {activeTab === 'history' && (
+                  <React.Suspense
+                    fallback={
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      </div>
+                    }
+                  >
+                    <HistoryPanel />
+                  </React.Suspense>
+                )}
+                {activeTab === 'bookmarks' && (
+                  <React.Suspense
+                    fallback={
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      </div>
+                    }
+                  >
+                    <BookmarksPanel />
+                  </React.Suspense>
+                )}
+                {activeTab === 'faq' && (
+                  <React.Suspense
+                    fallback={
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      </div>
+                    }
+                  >
+                    <div className="flex-1 overflow-y-auto max-md:overscroll-y-contain">
+                      <FAQPage inDrawer />
                     </div>
-                  }
-                >
-                  <WorkshopPanel />
-                </React.Suspense>
-              )}
-              {activeTab === 'history' && (
-                <React.Suspense
-                  fallback={
-                    <div className="flex-1 flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                    </div>
-                  }
-                >
-                  <HistoryPanel />
-                </React.Suspense>
-              )}
-              {activeTab === 'bookmarks' && (
-                <React.Suspense
-                  fallback={
-                    <div className="flex-1 flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                    </div>
-                  }
-                >
-                  <BookmarksPanel />
-                </React.Suspense>
-              )}
-              {activeTab === 'faq' && (
-                <React.Suspense
-                  fallback={
-                    <div className="flex-1 flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                    </div>
-                  }
-                >
-                  <div className="flex-1 overflow-y-auto max-md:overscroll-y-contain">
-                    <FAQPage />
-                  </div>
-                </React.Suspense>
-              )}
+                  </React.Suspense>
+                )}
+              </div>
             </motion.div>
           </FocusLock>
         </>

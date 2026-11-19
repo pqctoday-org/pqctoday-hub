@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /** Round 9, wave 2 (2026-09-19) — "Try it" under a Playground tool (src/data/toolExercises.ts). */
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TOOL_EXERCISES } from '@/data/toolExercises'
 import { BUSINESS_TOOL_EXERCISES } from '@/data/businessToolExercises'
 import { PAGE_EXERCISES } from '@/data/pageExercises'
+import { TOOL_TRANSFER_EXERCISES } from '@/data/toolTransferExercises'
 import { cn } from '@/lib/utils'
 import type { StepExercise } from '@/data/stepExercises'
 
@@ -49,9 +50,12 @@ function ExerciseQuestions({ toolId, family = 'playground', className }: ToolExe
       : family === 'page'
         ? PAGE_EXERCISES[toolId]
         : TOOL_EXERCISES[toolId]
+  const transfer = TOOL_TRANSFER_EXERCISES[`${family}/${toolId}`]
   /* eslint-enable security/detect-object-injection */
+  const id = useId()
   const [picked, setPicked] = useState<Record<number, number>>({})
-  if (!list || list.length === 0) return null
+  const questions = transfer ? [...(list ?? []), transfer] : list
+  if (!questions?.length) return null
   return (
     <section
       aria-label="Try it"
@@ -72,14 +76,21 @@ function ExerciseQuestions({ toolId, family = 'playground', className }: ToolExe
           <span className="font-semibold text-foreground">3. Explain</span> what the result shows.
         </li>
       </ol>
-      {list.map((ex, qi) => {
+      {questions.map((ex, qi) => {
         const shown = presentExercise(toolId, qi, ex)
         // eslint-disable-next-line security/detect-object-injection -- qi is the map index
         const p = picked[qi]
         const correct = p !== undefined && p === shown.answer
         return (
-          <div key={ex.prompt} className={cn(qi > 0 && 'mt-4 border-t border-border pt-4')}>
-            <p className="mt-1 text-sm font-medium text-foreground">{ex.prompt}</p>
+          <div
+            key={ex.prompt}
+            role="group"
+            aria-labelledby={`${id}-question-${qi}`}
+            className={cn(qi > 0 && 'mt-4 border-t border-border pt-4')}
+          >
+            <p id={`${id}-question-${qi}`} className="mt-1 text-sm font-medium text-foreground">
+              {ex.prompt}
+            </p>
             <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Answers">
               {shown.options.map((opt, i) => (
                 <Button
@@ -126,6 +137,19 @@ function ExerciseQuestions({ toolId, family = 'playground', className }: ToolExe
                     {correct ? 'Right. ' : `Not quite — it is "${shown.options[shown.answer]}". `}
                   </span>
                   {ex.why}
+                  {ex.source && (
+                    <>
+                      {' '}
+                      <a
+                        href={ex.source.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary underline underline-offset-2"
+                      >
+                        {ex.source.label}
+                      </a>
+                    </>
+                  )}
                 </span>
               </p>
             )}

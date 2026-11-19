@@ -38,7 +38,7 @@ function spdx(c: SampleComponent) {
     name: c.name,
     versionInfo: c.version,
     supplier: `Organization: ${c.supplier}`,
-    licenseConcluded: c.license,
+    licenseDeclared: c.license,
     externalRefs: [{ referenceType: 'purl', referenceLocator: c.purl }],
     checksums: [{ algorithm: 'SHA256', checksumValue: c.hash.replace('sha256:', '') }],
   }
@@ -47,7 +47,7 @@ function spdx(c: SampleComponent) {
 const ELEMENT_MAP: { element: string; cdx: string; spdx: string; addedIn2026?: boolean }[] = [
   { element: 'Supplier Name', cdx: 'component.supplier.name', spdx: 'PackageSupplier' },
   { element: 'Component Name', cdx: 'component.name', spdx: 'PackageName' },
-  { element: 'Version', cdx: 'component.version', spdx: 'PackageVersionInfo' },
+  { element: 'Version of the Component', cdx: 'component.version', spdx: 'PackageVersionInfo' },
   { element: 'Other Unique Identifiers', cdx: 'component.purl', spdx: 'ExternalRef (purl)' },
   { element: 'Dependency Relationship', cdx: 'dependencies[]', spdx: 'Relationship' },
   { element: 'Author of SBOM Data', cdx: 'metadata.authors[]', spdx: 'CreationInfo.Creator' },
@@ -61,7 +61,7 @@ const ELEMENT_MAP: { element: string; cdx: string; spdx: string; addedIn2026?: b
   {
     element: 'Component License',
     cdx: 'component.licenses[]',
-    spdx: 'licenseConcluded',
+    spdx: 'licenseDeclared',
     addedIn2026: true,
   },
 ]
@@ -81,7 +81,8 @@ export function SbomFormatExplorer() {
         </div>
         <p className="text-sm text-muted-foreground">
           Same package, both formats. Neither expresses cryptographic properties — that&apos;s the
-          CBOM module&apos;s job, one layer up.
+          CBOM module&apos;s job, one layer up. These are illustrative excerpts: dependency
+          relationships are represented elsewhere in a complete BOM document.
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {SAMPLE_COMPONENTS.map((c) => (
@@ -116,7 +117,9 @@ export function SbomFormatExplorer() {
       </div>
 
       <div className="glass-panel p-4">
-        <h4 className="mb-2 text-sm font-semibold text-foreground">9 minimum elements, mapped</h4>
+        <h4 className="mb-2 text-sm font-semibold text-foreground">
+          Example mappings for nine minimum elements
+        </h4>
         <div className="space-y-1">
           {ELEMENT_MAP.map((m) => (
             <div
@@ -148,11 +151,12 @@ export function SbomFormatExplorer() {
             {SBOM_DOCUMENT_META.createdBy}, {SBOM_DOCUMENT_META.created}
           </code>
           . The two <span className="text-status-info">2026</span>-tagged rows show fields the 2026
-          update newly requires — both formats already carried them, which is why they show up as
-          real fields above rather than gaps. The general SBOM fields shown here do not describe
-          cryptographic assets such as algorithms, key sizes or quantum-vulnerability status;
-          CycloneDX covers cryptographic assets such as algorithms and key lengths through its
-          cryptographic-asset model (CBOM), which is why a crypto inventory uses that extension.{' '}
+          update newly requires. The schemas provide these fields, but generators can omit values
+          when the source data is unavailable; this example does not certify complete CISA
+          conformance. The general SBOM fields shown here do not describe cryptographic assets such
+          as algorithms, key sizes or quantum-vulnerability status; CycloneDX covers cryptographic
+          assets such as algorithms and key lengths through its cryptographic-asset model (CBOM),
+          which is why a crypto inventory uses that extension.{' '}
           <X size={12} className="inline text-status-error" />
         </p>
       </div>

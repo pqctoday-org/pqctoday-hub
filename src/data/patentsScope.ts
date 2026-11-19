@@ -52,6 +52,12 @@ export function normalizePatentNumber(raw: string | null | undefined): string | 
   return compact.startsWith('US') ? compact : `US${compact}`
 }
 
+/** Full US publication or grant numbers should bypass fuzzy and semantic results. */
+export function exactUSPatentNumber(query: string): string | null {
+  const normalized = normalizePatentNumber(query)
+  return normalized && /^US\d{7,11}$/.test(normalized) ? normalized : null
+}
+
 const BY_NUMBER = new Map<string, PatentItem>(patentsData.map((p) => [p.patentNumber, p]))
 
 /** The patent a `?patent=` value names, in either form, or null if unknown/retired. */

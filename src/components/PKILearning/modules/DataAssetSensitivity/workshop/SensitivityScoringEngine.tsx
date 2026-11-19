@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import {
   scoreAsset,
   getPriorityBand,
+  formatConfidentialityPeriod,
   DEFAULT_SCORING_WEIGHTS,
   SENSITIVITY_TIERS,
   RETENTION_CONFIGS,
@@ -208,7 +209,9 @@ function AssetScoreRow({
             <div className="bg-muted/30 rounded p-2 text-center">
               <p className="text-[10px] text-muted-foreground">HNDL Window</p>
               <p className="text-lg font-bold text-foreground">{scored.hndlScore}</p>
-              <p className="text-[9px] text-muted-foreground">{scored.industry}</p>
+              <p className="text-[9px] text-muted-foreground">
+                {formatConfidentialityPeriod(scored)}
+              </p>
               <p className="text-[9px] text-primary font-semibold">
                 +{Math.round(scored.hndlScore * (weights.hndlWindow / 100))} pts (
                 {weights.hndlWindow}%)

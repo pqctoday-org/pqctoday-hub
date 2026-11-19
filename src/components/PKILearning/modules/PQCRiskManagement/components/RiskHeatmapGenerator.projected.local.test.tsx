@@ -75,14 +75,24 @@ describe('strategy choices do not implement risk reduction', () => {
       const view = render(<RiskHeatmapGenerator riskEntries={baseline} />)
       openCell(20)
       fireEvent.click(screen.getByRole('button', { name: strategy }))
-      fireEvent.click(screen.getByRole('button', { name: 'Choose likelihood 1–5' }))
+      expect(
+        screen.getByRole('button', { name: 'Hypothetical likelihood for Fictional Portal' })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Hypothetical impact for Fictional Portal' })
+      ).toBeInTheDocument()
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Hypothetical likelihood for Fictional Portal' })
+      )
       fireEvent.click(screen.getByRole('option', { name: /^4/ }))
       expect(save().inputs.residualOverrides).toEqual({ portal: { likelihood: 4 } })
       expect(
         screen.getByRole('button', { name: /score 20 .*Fictional Portal/ })
       ).toBeInTheDocument()
       expect(screen.getByText(/Hypothetical impact — draft: not entered/)).toBeInTheDocument()
-      fireEvent.click(screen.getByRole('button', { name: 'Choose impact 1–5' }))
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Hypothetical impact for Fictional Portal' })
+      )
       fireEvent.click(screen.getByRole('option', { name: /^3/ }))
       expect(
         screen.getByRole('button', { name: /score 12 .*Fictional Portal/ })

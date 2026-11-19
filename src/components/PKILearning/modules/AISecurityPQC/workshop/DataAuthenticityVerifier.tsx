@@ -14,12 +14,13 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
 import { ObservationEvaluation } from './ObservationEvaluation'
+import { ModelManifestCheck } from './ModelManifestCheck'
 
 const AI_SECURITY_PRIMITIVE_SPECS: KatTestSpec[] = [
   {
     id: 'ai-model-sigver',
-    useCase: 'AI model weight authenticity (ML-DSA-65)',
-    standard: 'NIST AI 100-1 (AI RMF) + FIPS 204',
+    useCase: 'ML-DSA-65 sign and verify of sample text',
+    standard: 'FIPS 204',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-functional', variant: 65 },
@@ -27,15 +28,15 @@ const AI_SECURITY_PRIMITIVE_SPECS: KatTestSpec[] = [
   },
   {
     id: 'ai-agent-encrypt',
-    useCase: 'Agent credential envelope encryption',
-    standard: 'SP 800-38D + NIST AI 100-1 (AI RMF)',
+    useCase: 'AES-GCM round-trip on sample credential text',
+    standard: 'SP 800-38D',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-functional' },
     message: 'Agent credential token: iss=pqc-ai-platform,sub=agent-7b3f,exp=1735689600',
   },
   {
     id: 'ai-data-integrity',
-    useCase: 'Training data integrity hash',
+    useCase: 'SHA-256 reference digest',
     standard: 'FIPS 180-4 ACVP',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
     kind: { type: 'sha256-hash', testIndex: 1 },
@@ -90,6 +91,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
           onSelect={(id) => setSelectedScenario(id)}
           label="Dataset"
           defaultLabel="Select Dataset"
+          hideDefaultOption
           noContainer
         />
         <span
@@ -103,7 +105,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
       <div className="glass-panel p-4">
         <p className="text-sm text-foreground/80">{scenario.description}</p>
         <p className="text-xs text-muted-foreground mt-2">
-          Typical synthetic content: <strong>{scenario.typicalSyntheticPercent}%</strong>
+          Illustrative synthetic share: <strong>{scenario.typicalSyntheticPercent}%</strong>
         </p>
       </div>
 
@@ -121,6 +123,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
               <Button
                 variant="ghost"
                 type="button"
+                aria-pressed={isEnabled}
                 key={layer.id}
                 className={`flex-col items-stretch h-auto whitespace-normal w-full text-left glass-panel p-4 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   isEnabled ? 'border-primary/50 ring-1 ring-primary/30' : ''
@@ -222,6 +225,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
             onSelect={(id) => setSelectedSigning(id)}
             label="Algorithm"
             defaultLabel="Select Algorithm"
+            hideDefaultOption
             noContainer
           />
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
@@ -229,15 +233,19 @@ export const DataAuthenticityVerifier: React.FC = () => {
               <p className="text-lg font-bold text-foreground">
                 {signingProfile.signatureSize.toLocaleString()}
               </p>
-              <p className="text-xs text-muted-foreground">Signature (bytes)</p>
+              <p className="text-xs text-muted-foreground">
+                {signingProfile.id === 'ecdsa-p256'
+                  ? 'Raw r || s signature (bytes)'
+                  : 'Signature (bytes)'}
+              </p>
             </div>
             <div>
               <p className="text-lg font-bold text-foreground">{signingProfile.signTimeMs}ms</p>
-              <p className="text-xs text-muted-foreground">Sign Time</p>
+              <p className="text-xs text-muted-foreground">Illustrative signing time</p>
             </div>
             <div>
               <p className="text-lg font-bold text-foreground">{signingProfile.verifyTimeMs}ms</p>
-              <p className="text-xs text-muted-foreground">Verify Time</p>
+              <p className="text-xs text-muted-foreground">Illustrative verification time</p>
             </div>
             <div>
               <p className="text-lg font-bold text-foreground">{signingProfile.nistLevel || '—'}</p>
@@ -255,9 +263,14 @@ export const DataAuthenticityVerifier: React.FC = () => {
               </span>
             </div>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Timing values are planning assumptions. Measure your actual library, device and workload
+            to compare performance.
+          </p>
         </div>
       </div>
 
+      <ModelManifestCheck />
       <ObservationEvaluation />
 
       <KatValidationPanel

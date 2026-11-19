@@ -59,14 +59,19 @@ describe('buildCloudResponsibilityMatrix - matrix shape', () => {
     expect(rec.matrix.find((c) => c.serviceModel === 'FaaS')).toBeUndefined()
   })
 
-  it('container-as-a-service collapses into FaaS for matrix population', () => {
+  it('keeps container workload TLS separate from function payloads', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
-      assetClasses: ['FaaS function payloads'],
-      serviceModelMix: ['container-as-a-service'],
+      assetClasses: ['TLS termination', 'FaaS function payloads'],
+      serviceModelMix: ['container-as-a-service', 'FaaS'],
     })
-    expect(rec.matrix).toHaveLength(1)
-    expect(rec.matrix[0].serviceModel).toBe('FaaS')
+    expect(rec.matrix.map(({ assetClass, serviceModel }) => [assetClass, serviceModel])).toEqual([
+      ['TLS termination', 'CaaS'],
+      ['TLS termination', 'FaaS'],
+      ['FaaS function payloads', 'FaaS'],
+    ])
+    expect(rec.matrix[0].notes).toContain('deployed container configuration')
+    expect(rec.matrix[0].pqcAvailability).toBe('unverified')
   })
 
   it('returns an empty matrix when no service models picked', () => {
@@ -154,14 +159,28 @@ describe('buildCloudResponsibilityMatrix - PQC availability lookup', () => {
   // roadmap (a different product); re-sourced to Oracle's own Key Vault page
   // (migrate remediation r2, 2026-09-25), which states no Key Vault PQC plan,
   // so its canonical status is now 'unknown' → 'unverified' on this scale.
-  it('AWS for TLS asset class returns "available" (catalog: AWS gateway/ALB available)', () => {
+  it('does not apply a managed load balancer catalog result to self-operated TLS', () => {
     const rec = buildCloudResponsibilityMatrix({
       ...baseInputs,
       cloudProviders: ['AWS'],
       assetClasses: ['TLS termination'],
-      serviceModelMix: ['IaaS'],
+      serviceModelMix: ['IaaS', 'PaaS'],
     })
-    expect(rec.matrix[0].pqcAvailability).toBe('available')
+    expect(rec.matrix.map((cell) => cell.pqcAvailability)).toEqual(['unverified', 'available'])
+  })
+
+  it('does not treat related KMS availability as customer key import or managed database evidence', () => {
+    const rec = buildCloudResponsibilityMatrix({
+      ...baseInputs,
+      cloudProviders: ['AWS'],
+      assetClasses: ['KMS-backed keys', 'Customer-managed keys', 'Managed database'],
+      serviceModelMix: ['PaaS'],
+    })
+    expect(rec.matrix.map((cell) => cell.pqcAvailability)).toEqual([
+      'available',
+      'unverified',
+      'unverified',
+    ])
   })
 
   it('AWS for KMS asset class returns "available" (catalog: AWS KMS available)', () => {
@@ -362,7 +381,7 @@ describe('renderCloudMatrixMarkdown - export', () => {
   it('emits a shared-responsibility matrix table with all 7 columns', () => {
     const markdown = renderCloudMatrixMarkdown(data)
     expect(markdown).toMatch(
-      /\| Asset class \| Service model \| Owner \| Customer actions \| Provider actions \| PQC availability \| Notes \|/
+      /\| Asset class \| Service model \| Owner \| Customer actions \| Provider actions \| PQC catalog lead \| Notes \|/
     )
   })
 

@@ -79,6 +79,20 @@ describe('ProgramCharter buildMarkdown', () => {
     expect(md).toContain('ESCALATE-X')
   })
 
+  it('keeps date-only and future approvals in draft', () => {
+    const reference = 'Fictional steering committee decision A-10'
+    expect(buildMarkdown(makeState())).toContain('Draft. Record an approval reference.')
+    expect(
+      buildMarkdown(makeState({ signOffDate: '2099-01-01', approvalReference: reference }))
+    ).toContain('Draft. Record the date of the completed approval.')
+    const recorded = buildMarkdown(makeState({ approvalReference: reference }))
+    expect(recorded).toContain(reference)
+    expect(recorded).toContain('Approval reference recorded.')
+    expect(buildMarkdown(makeState({ sponsorName: '', approvalReference: reference }))).toContain(
+      'Draft. Record a named sponsor.'
+    )
+  })
+
   it('offers the full eight-role SteerCo seat list', () => {
     expect(STEERCO_ROLE_IDS).toHaveLength(8)
   })

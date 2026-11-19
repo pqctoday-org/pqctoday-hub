@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import {
   BookOpen,
@@ -235,6 +235,17 @@ export const ModuleCard = ({
       <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-grow line-clamp-2 md:line-clamp-none">
         {module.description}
       </p>
+
+      <div className="mb-3">
+        <Link
+          to={`/learn/${module.id}`}
+          onClick={(event) => event.stopPropagation()}
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-primary/40 bg-primary/5 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          aria-label={`Open ${module.title}`}
+        >
+          Open module <ArrowRight size={14} aria-hidden="true" />
+        </Link>
+      </div>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-4 border-t border-border">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs @sm:text-sm text-muted-foreground min-w-0">

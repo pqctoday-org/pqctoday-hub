@@ -103,7 +103,9 @@ export default function TpmPlayground() {
                 WebAssembly-compiled
                 <code>pqctpm</code> emulator. Explore ML-KEM and ML-DSA using an engine derived from
                 the earlier TCG V1.85 RC4 snapshot. The current normative reference is the final TCG
-                TPM 2.0 Library Version 185.
+                TPM 2.0 Library Version 185. Commands run against this local software emulator, not
+                a physical TPM; the displayed results do not demonstrate hardware-backed key
+                protection or device attestation.
               </p>
               <div className="flex gap-4">
                 <span
@@ -139,9 +141,9 @@ export default function TpmPlayground() {
 
         <WhyThisMatters title="TPM Hierarchy & Hardware-Bound PQC Keys" variant="info">
           <p>
-            TPM 2.0 commonly presents three persistent primary <strong>hierarchies</strong>:{' '}
-            <em>Owner</em> (user-controlled storage), <em>Endorsement</em>
-            (manufacturer-provisioned attestation roots), and <em>Platform</em>
+            TPM 2.0 commonly presents three primary <strong>hierarchies</strong>: <em>Owner</em>{' '}
+            (user-controlled storage), <em>Endorsement</em>
+            (used for endorsement keys and related authorization), and <em>Platform</em>
             (firmware-controlled). It also defines the <em>Null</em> hierarchy for transient
             objects. A hierarchy seed helps derive primary objects, but hierarchy authorization
             alone does not decide whether a child object can be moved.
@@ -155,8 +157,10 @@ export default function TpmPlayground() {
             hierarchy.
           </p>
           <p>
-            The V2.7 EK tab below lets you explore the manufacturer-provisioned Endorsement Keys and
-            their X.509 certificates, which form the root of the TPM remote attestation chain.
+            The V2.7 EK tabs show sample Endorsement Keys and certificates created by this local
+            emulator. The published TCG profile defines templates and certificate slots, but does
+            not require every manufacturer to pre-provision those certificates. The browser sample
+            is not a manufacturer credential or proof of a physical TPM.
           </p>
         </WhyThisMatters>
 

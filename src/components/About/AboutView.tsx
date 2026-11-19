@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useRef } from 'react'
+import { Link, useLocation } from 'react-router'
 import { ReleaseNotesSection } from './sections/ReleaseNotesSection'
 import { VisionSection } from './sections/VisionSection'
 import { PersonalizationSection } from './sections/PersonalizationSection'
@@ -27,6 +28,7 @@ import { MobileAboutView } from '@/components/Mobile/screens/MobileAboutView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 export function AboutView() {
+  const { hash } = useLocation()
   const isMobileShell = useIsMobileShell()
   const isEmbedded = useIsEmbedded()
   const isExecutive = usePersonaStore((s) => s.selectedPersona) === 'executive'
@@ -83,6 +85,15 @@ export function AboutView() {
           Screen readers and axe both get the landmark they need. */}
       <h1 className="sr-only">About PQC Today</h1>
       <PersonaPageNote route="/about" />
+      <nav
+        aria-label="Project sources and policies"
+        className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-primary underline"
+      >
+        <Link to="#about-sbom">Find a software component</Link>
+        <Link to="/editorial-independence">Editorial independence</Link>
+        <Link to="/terms">Terms of service</Link>
+        <Link to="/sponsor">Sponsorship</Link>
+      </nav>
       {isExecutive && !isEmbedded && <ExecutiveAboutSummary />}
       <AboutSection slug="vision">
         <VisionSection defaultExpanded={isExecutive} />
@@ -118,7 +129,7 @@ export function AboutView() {
         <DataFoundationSection />
       </AboutSection>
       <AboutSection slug="sbom">
-        <SbomSection />
+        <SbomSection openFromLink={hash === '#about-sbom'} />
       </AboutSection>
       <AboutSection slug="security-audit">
         <SecurityAuditSection />

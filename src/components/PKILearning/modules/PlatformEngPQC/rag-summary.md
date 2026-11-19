@@ -14,7 +14,7 @@
 
 1. Identify every cryptographic primitive embedded in a CI/CD pipeline from source control to runtime
 2. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority
-3. Migrate container image signing from ECDSA P-256 to ML-DSA-65 via cosign or Notation
+3. Plan container image signature migration after signing, trust and verification support is confirmed; Sigstore has proposed a separate opt-in PQC public instance for mid-2027
 4. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time
 5. Monitor crypto posture by checking which sources can supply certificate algorithms (an exporter's expiry metrics do not carry the key algorithm), using SIEM checklists and capacity planning data
 6. Execute a six-phase migration runway with explicit rollback procedures
@@ -38,10 +38,11 @@
 
 ### Step 3: Container Signing Migration
 
-- 5 signing tools: cosign (post-quantum status unconfirmed), Notation (ML-DSA support unconfirmed), GPG/OpenPGP (post-quantum signatures defined in RFC 9980; GnuPG and Sequoia support not stated), Sigstore Bundle (on roadmap, no date stated), Docker Content Trust (being retired)
+- 5 signing tools: cosign (current ML-DSA support unconfirmed; separate Sigstore PQC service targeted for mid-2027), Notation (JWS/COSE envelope formats; current ML-DSA support unconfirmed), GPG/OpenPGP (RFC 9980 specifies PQ/T algorithms; GnuPG 2.5.24 documents opt-in RFC 9980 processing and ML-KEM hybrid encryption, but not RFC 9980 signature operations), Sigstore Bundle (on roadmap for separate PQC service, mid-2027 target), Docker Content Trust (retirement scheduled for Dec. 8, 2026)
 - ML-DSA-65 signature size: 3,309B vs ECDSA P-256: 64B (52× larger)
-- Notation: the Library holds no vendor documentation that states ML-DSA support, so treat it as unconfirmed; Sigstore (June 2025) says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments and gives no production date
-- Docker Content Trust: being fully retired with the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained); Docker names Sigstore/Cosign and Notation as the alternatives and says nothing about post-quantum signatures (Docker, 16 June 2026)
+- Notation uses Notary Project signature envelopes. The project specifies JWS and COSE; its listed algorithms are RSA-PSS and ECDSA. No Notation or AWS Signer plugin documentation checked here confirms ML-DSA. RFC 10073 now standardizes Composite ML-DSA for X.509/PKIX, but standardization does not prove tool, provider, CA or verifier adoption. Sources: https://github.com/notaryproject/specifications/blob/main/specs/signature-specification.md; https://github.com/notaryproject/specifications/blob/main/specs/signature-envelope-jws.md; https://github.com/aws/aws-signer-notation-plugin; https://www.rfc-editor.org/rfc/rfc10073.html
+- RFC 9980 specifies composite ML-DSA+EdDSA signatures and ML-KEM+ECDH encryption for OpenPGP. GnuPG 2.5.24 documents the opt-in `--allow-9980` mode and ML-KEM hybrid encryption, but its release notes do not document RFC 9980 signature operations; GnuPG's default mode remains oriented toward its distinct LibrePGP format. Do not infer signature support from parsing or encryption support. Sources: https://www.rfc-editor.org/rfc/rfc9980.html; https://lists.gnupg.org/pipermail/gnupg-announce/2026q3/000516.html; https://gnupg.org/documentation/manuals/gnupg/GPG-Esoteric-Options.html
+- Docker Content Trust: Docker states that DCT and notary.docker.io are being retired, with service shutdown scheduled for 8 December 2026, and names Sigstore/Cosign and Notation as alternatives. Verify current service status and migration instructions before acting. Source: https://docs.docker.com/retired/
 - SLH-DSA preferred for SBOMs (stateless, long signature lifetime, 20+ year validity)
 
 ### Step 4: Policy-as-Code Enforcer
@@ -63,6 +64,10 @@
 - 6 phases with dependency graph, action checklists, rollback strategies
 - Phase 0: Inventory (2w) → Phase 1: Root CA ML-DSA-65 (4w, CRITICAL) → Phase 2: X25519MLKEM768 TLS KEX (3w, CRITICAL) → Phase 3: Artifact Signing ML-DSA (6w, HIGH) → Phase 4: Source Control + CI Identity (4w, HIGH) → Phase 5: Policy Enforcement Cut-Over (2w, MEDIUM)
 - Rollback decision tree with 11 nodes covering TLS failures, cert validation, policy blocks
+
+## SSH deploy-key status (checked 18 November 2026)
+
+OpenSSH 10.4 added experimental ML-DSA-44+Ed25519 hybrid signatures, initially off by default. OpenSSH 10.6 includes the `ssh-mldsa44-ed25519` algorithm, and 10.6p2 permits it as a CA signature algorithm. This hybrid signature does not establish support for a pure ML-DSA SSH key. The current SSHM composite-signature document is draft-ietf-sshm-composite-sigs-01, an Internet-Draft published 17 November 2026. Verify the installed release, algorithm configuration, and the needed user, host, or CA role. [OpenSSH release notes](https://www.openssh.org/releasenotes.html) · [Current SSHM draft](https://datatracker.ietf.org/doc/html/draft-ietf-sshm-composite-sigs-01)
 
 ## Key Data Points
 

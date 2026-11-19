@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
+import React, { useState } from 'react'
 import { Lock, Key as KeyIcon } from 'lucide-react'
 import { DataInput } from '../DataInput'
 import { useSettingsContext } from '../contexts/SettingsContext'
@@ -9,6 +9,8 @@ import { FilterDropdown } from '../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 
 export const SymmetricTab: React.FC = () => {
+  const [inputValid, setInputValid] = useState(true)
+  const [ciphertextValid, setCiphertextValid] = useState(true)
   const { loading } = useSettingsContext()
   const { selectedSymKeyId, setSelectedSymKeyId, keyStore } = useKeyStoreContext()
   const { symData, setSymData, symOutput, setSymOutput, runOperation } = useOperationsContext()
@@ -19,6 +21,9 @@ export const SymmetricTab: React.FC = () => {
         <Lock size={18} className="text-accent" /> Symmetric Encryption (AES-GCM)
       </h3>
 
+      <p className="mb-4 text-sm text-muted-foreground">
+        AES-GCM runs in Web Crypto with the AES key you select from the Key Store.
+      </p>
       {/* Key Selection */}
       <div className="mb-6 p-6 bg-muted/20 rounded-xl border border-border">
         <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
@@ -31,6 +36,7 @@ export const SymmetricTab: React.FC = () => {
             .filter((k) => k.type === 'symmetric')
             .map((k) => ({ id: k.id, label: k.name }))}
           defaultLabel="Select AES Key..."
+          ariaLabel="AES key"
           noContainer
         />
 
@@ -69,6 +75,7 @@ export const SymmetricTab: React.FC = () => {
             label="Input Data (Hex/ASCII)"
             value={symData}
             onChange={setSymData}
+            onValidityChange={setInputValid}
             placeholder="Enter data to encrypt..."
             inputType="binary"
             height="h-32"
@@ -76,7 +83,7 @@ export const SymmetricTab: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => runOperation('symEncrypt')}
-            disabled={!selectedSymKeyId || loading}
+            disabled={!selectedSymKeyId || !inputValid || loading}
             className="w-full mt-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Encrypt
@@ -92,6 +99,7 @@ export const SymmetricTab: React.FC = () => {
             label="Output / Ciphertext (Hex/ASCII)"
             value={symOutput}
             onChange={setSymOutput}
+            onValidityChange={setCiphertextValid}
             placeholder="Result will appear here..."
             inputType="binary"
             height="h-32"
@@ -99,10 +107,10 @@ export const SymmetricTab: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => runOperation('symDecrypt')}
-            disabled={!selectedSymKeyId || loading}
+            disabled={!selectedSymKeyId || !ciphertextValid || loading}
             className="w-full mt-4 py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
-            Decrypt (Reverse)
+            Decrypt
           </Button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Info, Link2, ChevronDown, Download } from 'lucide-react'
@@ -39,7 +39,7 @@ function SbomRow({ component }: { component: SbomComponent }) {
         <span className="text-muted-foreground">{component.name}</span>
       )}
       <div className="flex flex-col items-end text-right max-w-[60%]">
-        <span className="text-xs text-muted-foreground/40 font-mono">{sbomLicense(component)}</span>
+        <span className="text-xs text-muted-foreground font-mono">{sbomLicense(component)}</span>
         <span className="text-xs text-muted-foreground">{sbomVersionLabel(component)}</span>
       </div>
       {component.note && (
@@ -55,8 +55,25 @@ function SbomRow({ component }: { component: SbomComponent }) {
   )
 }
 
-export function SbomSection() {
-  const [isSbomOpen, setIsSbomOpen] = useState(false)
+export function SbomSection({ openFromLink = false }: { openFromLink?: boolean }) {
+  const [isSbomOpen, setIsSbomOpen] = useState(openFromLink)
+  const searchInput = useRef<HTMLInputElement>(null)
+  const [query, setQuery] = useState('')
+  const search = query.trim().toLowerCase()
+  const groups = SBOM_GROUPS.map((group) => ({
+    ...group,
+    components: group.components.filter((component) =>
+      `${component.name} ${sbomVersionLabel(component)} ${group.category}`
+        .toLowerCase()
+        .includes(search)
+    ),
+  })).filter((group) => group.components.length > 0)
+
+  const [prevOpenFromLink, setPrevOpenFromLink] = useState(openFromLink)
+  if (openFromLink !== prevOpenFromLink) {
+    setPrevOpenFromLink(openFromLink)
+    if (openFromLink) setIsSbomOpen(true)
+  }
 
   return (
     <motion.div
@@ -65,21 +82,26 @@ export function SbomSection() {
       transition={{ delay: 0.33 }}
       className="glass-panel p-4 md:p-6"
     >
-      <Button
-        variant="ghost"
-        onClick={() => setIsSbomOpen(!isSbomOpen)}
-        className="flex items-center gap-3 w-full text-left cursor-pointer"
-      >
-        <Info className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold flex-1">Software Bill of Materials (SBOM)</h2>
-        <ChevronDown
-          size={18}
-          className={clsx(
-            'text-muted-foreground transition-transform duration-200 shrink-0',
-            isSbomOpen && 'rotate-180'
-          )}
-        />
-      </Button>
+      <h2>
+        <Button
+          variant="ghost"
+          onClick={() => setIsSbomOpen(!isSbomOpen)}
+          aria-expanded={isSbomOpen}
+          className="flex items-center gap-3 w-full text-left cursor-pointer"
+        >
+          <Info className="text-primary shrink-0" size={24} />
+          <span className="text-base md:text-xl font-semibold flex-1 whitespace-normal">
+            Software Bill of Materials (SBOM)
+          </span>
+          <ChevronDown
+            size={18}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isSbomOpen && 'rotate-180'
+            )}
+          />
+        </Button>
+      </h2>
       <AnimatePresence>
         {isSbomOpen && (
           <motion.div
@@ -89,8 +111,36 @@ export function SbomSection() {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-3 md:p-6 mt-6 items-start">
-              {SBOM_GROUPS.map((group) => (
+            <div className="mt-4 flex flex-wrap items-end gap-2 px-3 md:px-6">
+              <label className="block min-w-0 flex-1 text-sm font-medium">
+                Search SBOM components
+                <input
+                  ref={searchInput}
+                  type="search"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  className="mt-1 block min-h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
+                />
+              </label>
+              {query && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setQuery('')
+                    searchInput.current?.focus()
+                  }}
+                >
+                  Clear search
+                </Button>
+              )}
+            </div>
+            {groups.length === 0 && (
+              <p role="status" className="mt-3 px-3 text-sm text-muted-foreground md:px-6">
+                No components match that search.
+              </p>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-3 md:p-6 items-start">
+              {groups.map((group) => (
                 <div key={group.category} className="break-inside-avoid">
                   <h3 className="text-lg font-semibold text-primary mb-3">
                     {group.category}

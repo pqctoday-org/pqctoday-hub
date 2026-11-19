@@ -2,6 +2,7 @@
 import { CmsSourceGuide, LibraryReviewProcess } from '@/components/common/LibrarySourceLabels'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import { Search, Bookmark, BookmarkCheck, ExternalLink, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -131,7 +132,6 @@ export function MobileLibraryView() {
   const quickView: QuickView = QUICK_VIEWS.some((view) => view.id === quickViewParam)
     ? (quickViewParam as QuickView)
     : 'all'
-  const searchText = params.get('q') ?? ''
   const updateFilter = useCallback(
     (key: 'purpose' | 'qv' | 'q', value: string) => {
       const next = new URLSearchParams(params)
@@ -142,6 +142,10 @@ export function MobileLibraryView() {
       setParams(next, { replace: key === 'q' })
     },
     [params, setParams]
+  )
+  const { text: searchText, update: setSearchText } = useUrlBackedText(
+    params.get('q') ?? '',
+    (value) => updateFilter('q', value)
   )
   const detailRef = params.get('ref')
   const sortParam = params.get('sort')
@@ -490,7 +494,7 @@ export function MobileLibraryView() {
         <input
           type="text"
           value={searchText}
-          onChange={(e) => updateFilter('q', e.target.value)}
+          onChange={(e) => setSearchText(e.target.value)}
           aria-label="Search Library"
           placeholder='Search — try "ML-KEM", "FIPS 203", or "hybrid TLS"'
           className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
@@ -583,6 +587,7 @@ export function MobileLibraryView() {
                 type="button"
                 variant="ghost"
                 onClick={() => setDetailRef(item.referenceId)}
+                aria-label={item.documentTitle}
                 // Button's own base classes hard-code whitespace-nowrap; this
                 // button wraps item.documentTitle (a real document title),
                 // which inherited nowrap and would run off the right edge

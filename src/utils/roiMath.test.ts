@@ -25,11 +25,11 @@ describe('resolveIndustryBreachBaseline', () => {
   })
 
   it('falls back to Other for an unknown industry', () => {
-    expect(resolveIndustryBreachBaseline('Blockchain Ponies')).toBe(4_440_000)
+    expect(resolveIndustryBreachBaseline('Blockchain Ponies')).toBe(4_990_000)
   })
 
   it('falls back to Other when industry is undefined', () => {
-    expect(resolveIndustryBreachBaseline(undefined)).toBe(4_440_000)
+    expect(resolveIndustryBreachBaseline(undefined)).toBe(4_990_000)
   })
 })
 

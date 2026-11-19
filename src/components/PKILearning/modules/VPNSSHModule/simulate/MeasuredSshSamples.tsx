@@ -25,6 +25,22 @@ export function MeasuredSshSamples({ entries }: { entries: ProtocolSizeEntry[] }
         remain drafts. A hybrid exchange can also be paired with PQC authentication; this table’s
         hybrid sample deliberately retains Ed25519 so the exchange-size change can be compared.
       </p>
+      <p className="text-xs text-muted-foreground">
+        OpenSSH version support is role-specific. OpenSSH 10.6 enabled the hybrid
+        ssh-mldsa44-ed25519 signature algorithm; 10.6p2 enabled it as an allowed CA signature
+        algorithm. The separate OpenSSH PQ overview still describes signatures as future work, so
+        use the newer{' '}
+        <a
+          className="underline text-primary"
+          href="https://www.openssh.org/releasenotes.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          official release notes
+        </a>{' '}
+        for current role and version support. This is a hybrid signature with Ed25519, not pure
+        ML-DSA support in every key or certificate role.
+      </p>
       {entries.map((entry) => {
         const sample = sshSample(entry.mode)
         return (

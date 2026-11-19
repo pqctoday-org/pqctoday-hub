@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { ThreatResponsePractice } from '@/components/Threats/ThreatResponsePractice'
 import React, { useMemo, useRef } from 'react'
 import {
   ShieldAlert,
@@ -474,6 +475,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
               </Tabs>
             </div>
 
+            <ThreatResponsePractice threatId={threat.threatId} />
             {threatStandardLinks(threat).length > 0 && (
               <div className="pt-4 border-t border-border mt-4">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">

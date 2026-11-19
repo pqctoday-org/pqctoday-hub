@@ -77,29 +77,33 @@ export const ALGORITHM_DB: Record<
   },
   'AES-128': {
     quantumVulnerable: false,
-    replacement: 'AES-256 (recommended upgrade)',
+    replacement: 'Check the governing profile',
     notes:
-      "Grover's theoretically reduces to ~64-bit but deemed impractical by NIST (2024). CNSA 2.0 recommends AES-256 for national security systems.",
+      'The ideal Grover key-search estimate is about 2^64 sequential iterations. NIST IR 8547 §4.1.3 places approved primitives with 128 bits of classical strength at least at Category 1. For National Security Systems under CNSA 2.0, use AES-256.',
   },
   'AES-192': {
     quantumVulnerable: false,
     replacement: 'No change needed',
-    notes: "Grover's reduces to ~96-bit — provides good quantum margin.",
+    notes:
+      'The ideal Grover key-search estimate is about 2^96 sequential iterations. Check the required deployment profile.',
   },
   'AES-256': {
     quantumVulnerable: false,
     replacement: 'No change needed',
-    notes: "Quantum-safe. Grover's reduces to ~128-bit, still secure.",
+    notes:
+      'AES-256 is NIST’s Category 5 key-search reference. The ideal estimate of about 2^128 sequential queries is a separate model.',
   },
   'SHA-256': {
     quantumVulnerable: false,
     replacement: 'No change needed',
-    notes: "Quantum-safe at current sizes. Grover's has limited impact on hash functions.",
+    notes:
+      'Finding a preimage for a chosen SHA-256 digest and finding any collision are different tasks. NIST’s Category 2 benchmark uses collision search on a 256-bit hash.',
   },
   'SHA-3': {
     quantumVulnerable: false,
     replacement: 'No change needed',
-    notes: 'Quantum-safe. Modern hash function with strong security margins.',
+    notes:
+      'Check the SHA-3 variant, output length and required property. NIST uses SHA3-256 and SHA3-384 collision search as two category references.',
   },
   '3DES': {
     quantumVulnerable: false,

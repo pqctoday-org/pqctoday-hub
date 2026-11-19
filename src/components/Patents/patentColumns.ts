@@ -2,6 +2,7 @@
 
 import type { CsvColumnConfig } from '@/utils/csvExport'
 import type { PatentItem } from '@/types/PatentTypes'
+import { publicationScope, USPTO_PUBLIC_SEARCH } from '@/data/patentFilters'
 
 export type ColumnId =
   | 'num'
@@ -93,6 +94,11 @@ export const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
     accessor: (p) =>
       p.publicationKind === 'published_application' ? 'Published application' : 'Granted patent',
   },
+  {
+    header: 'USPTO Public Search',
+    accessor: (p) => (p.patentNumber.startsWith('US') ? USPTO_PUBLIC_SEARCH : ''),
+  },
+  { header: 'Current Status Lookup Guidance', accessor: publicationScope },
   { header: 'Filing Date', accessor: (p) => p.filingDate },
   { header: 'Grant or Publication Date', accessor: (p) => p.issueDate },
   { header: 'Crypto Agility', accessor: (p) => p.cryptoAgilityMode },

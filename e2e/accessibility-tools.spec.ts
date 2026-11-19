@@ -199,11 +199,53 @@ for (const { path, name } of BUSINESS_TOOLS) {
   test(`business tool: ${name} — no serious/critical a11y violations`, async ({ page }) => {
     await scan(page, path)
   })
+
+  test(`business tool: ${name} — phone layout has no serious/critical a11y violations or horizontal overflow`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await scan(page, path)
+    if (name === 'Crypto Architecture Diagram') {
+      const table = page.getByRole('region', {
+        name: 'Crypto architecture components; scroll horizontally to view all columns',
+      })
+      await expect(table).toBeVisible()
+      const nameField = page.getByRole('textbox', { name: 'Name of app-1' })
+      await expect(nameField).toBeVisible()
+      await nameField.fill('Payment gateway on phone')
+      await expect(nameField).toHaveValue('Payment gateway on phone')
+    }
+    const dimensions = await page.evaluate(() => {
+      const tableScroll = document.querySelector('.overflow-x-auto')
+      return {
+        viewport: document.documentElement.clientWidth,
+        pageContent: document.documentElement.scrollWidth,
+        tableViewport: tableScroll?.clientWidth ?? 0,
+        tableContent: tableScroll?.scrollWidth ?? 0,
+      }
+    })
+    expect(
+      dimensions.pageContent,
+      `${name} at 390px overflows: ${JSON.stringify(dimensions)}`
+    ).toBeLessThanOrEqual(dimensions.viewport)
+  })
 }
 
 for (const { path, name } of COMPUTE_ONLY_LAB_TOOLS) {
   test(`lab tool: ${name} — no serious/critical a11y violations`, async ({ page }) => {
     await scan(page, path)
+  })
+
+  test(`lab tool: ${name} — phone layout has no serious/critical a11y violations or horizontal overflow`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await scan(page, path)
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+    }))
+    expect(dimensions.content, `${name} at 390px`).toBeLessThanOrEqual(dimensions.viewport)
   })
 }
 

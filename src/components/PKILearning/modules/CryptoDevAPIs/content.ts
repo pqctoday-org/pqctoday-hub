@@ -13,11 +13,16 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'crypto-dev-apis',
-  version: '1.0.4',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-10',
+  version: '1.0.5',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   standards: [
+    // Primary current JDK security-update and Bouncy Castle release evidence,
+    // added after the 17 November 2026 releases changed the latest-version facts.
+    getStandard('Oracle-JDK-21-Consolidated-Release-Notes'),
+    getStandard('Oracle-Java-SE-Latest-Releases'),
+    getStandard('BouncyCastle-Java-1-87-Release'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
@@ -94,10 +99,10 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Intermediate-level module (120 min, 8 workshop steps) covering post-quantum cryptography integration across the major cryptographic APIs and programming language ecosystems — JCA/JCE, OpenSSL EVP, PKCS#11 v3.2, Windows CNG, and language-specific PQC libraries. Teaches developers how to migrate production cryptographic code to PQC without vendor lock-in, using crypto agility patterns.',
+      'Intermediate-level module (80 min, 8 workshop steps) covering post-quantum cryptography integration across the major cryptographic APIs and programming language ecosystems — JCA/JCE, OpenSSL EVP, PKCS#11 v3.2, Windows CNG, and language-specific PQC libraries. Teaches developers how to migrate production cryptographic code to PQC without vendor lock-in, using crypto agility patterns.',
     keyConcepts:
-      'JCA/JCE (Java Cryptography Architecture / Extension): Provider-based architecture — Security.addProvider() inserts pluggable crypto backends. JDK 24+ includes ML-KEM (JEP 496, javax.crypto.KEM) and ML-DSA (JEP 497, Signature "ML-DSA") in the default providers; Oracle JDK 25 has them, and Oracle backported them to JDK 21.0.13 and 17.0.21 in October 2026 (JDK 11 and 8 planned for the second half of 2027). On a JDK without them, or for SLH-DSA, register BouncyCastle 1.79+ as a JCA provider (BC or BCFIPS). Algorithm strings: "ML-KEM" / "ML-DSA" families with parameter sets such as "ML-KEM-768", "ML-DSA-65".',
+      'JCA/JCE (Java Cryptography Architecture / Extension): Provider-based architecture — Security.addProvider() inserts pluggable crypto backends. JDK 24+ includes ML-KEM (JEP 496, javax.crypto.KEM) and ML-DSA (JEP 497, Signature "ML-DSA") in the default providers; Oracle JDK 25 has them, and Oracle backported them to JDK 21.0.13 and 17.0.21 in October 2026. Oracle’s latest security updates on 17 November 2026 are JDK 25.0.5.1, 21.0.13.1, 17.0.21.1, 11.0.33.1 and 8u513; install the latest update in the chosen JDK line. Oracle JDK 11 and 8 are planned to receive PQC backports in the second half of 2027. On a JDK without the algorithms, or for SLH-DSA, register a current Bouncy Castle JCA provider (BC or BCFIPS); 1.79 is the historical ML-KEM/ML-DSA feature floor, not a recommendation to run that old release. Bouncy Castle Java 1.87 (11 November 2026) deprecates Classic McEliece and says it is no longer believed safe to use. Algorithm strings: "ML-KEM" / "ML-DSA" families with parameter sets such as "ML-KEM-768", "ML-DSA-65".',
     workshopSummary:
-      'APIArchitectureExplorer — Visualize the provider/plugin architecture of each API; compare abstraction layers; identify where PQC plugs in and what still changes around it (algorithm names, sizes, encodings, negotiation). LanguageEcosystemComparator — Side-by-side code comparison for ML-KEM-768 key generation and ML-DSA-65 signing across C++, Rust, Zig, Java, Python, Go, and .NET; highlight import paths and API ergonomics differences.',
+      'Eight interactive steps: (1) API Architecture Explorer — visualize the provider/plugin architecture of JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, Bouncy Castle, and JCProv, and identify what still changes around the provider boundary. (2) Language Ecosystem Comparator — compare ML-KEM-768 and ML-DSA-65 code ergonomics, memory safety, and bindings across C++, Rust, Zig, Java, Python, Go, and .NET. (3) Provider Pattern Workshop — side-by-side KeyGen, Sign, Verify, Encrypt, and KEM Encapsulate examples highlighting provider registration. (4) Build vs Buy vs Open Source — evaluate sourcing tradeoffs using transparent Hub teaching weights and fictional planning scenarios. (5) PQC Library Explorer — inspect 8 open-source PQC libraries (liboqs, AWS-LC, Bouncy Castle, pqcrypto, PQClean, BoringSSL, wolfSSL, Botan) for algorithm coverage and FIPS status. (6) PQC Support Matrix — interactive API × Algorithm support table with version floors and code snippets. (7) Crypto Agility Patterns — five design patterns for algorithm-agile code. (8) Migration Decision Lab — stack-based decision wizard with before/after refactoring examples and cross-API interop patterns.',
   },
 }

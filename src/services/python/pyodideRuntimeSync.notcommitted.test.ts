@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
-// public/pyodide/* is Pyodide's self-hosted runtime — 7 files, 12 MB, copied
+// public/pyodide/* is Pyodide's self-hosted runtime — 7 files, about 13 MB, copied
 // straight out of node_modules/pyodide by `npm run sync:pyodide-runtime`, which
 // predev and prebuild both run. package-lock.json already pins the version, so
 // the copy carries no information the lockfile does not.
@@ -72,5 +72,7 @@ describe('public/pyodide/ is generated, not committed', () => {
 
     expect(pkg.scripts.predev).toContain('sync:pyodide-runtime')
     expect(pkg.scripts.prebuild).toContain('sync:pyodide-runtime')
+    expect(pkg.scripts['sync:pyodide-runtime']).toContain('pyodide.asm.mjs')
+    expect(pkg.scripts['sync:pyodide-runtime']).not.toContain('pyodide.asm.js')
   })
 })

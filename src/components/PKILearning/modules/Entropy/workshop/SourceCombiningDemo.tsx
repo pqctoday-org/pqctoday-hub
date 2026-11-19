@@ -359,14 +359,16 @@ export const SourceCombiningDemo: React.FC = () => {
     seedPath === 'unconditioned'
       ? { kind: 'unconditioned', bitstringBits: assembledBits }
       : { kind: 'conditioned-block', inputBits: assembledBits, bound: conditionerBound }
-  const { inputEntropyBits: credited, seedEntropyBits } = accountEntropy(sources, seed, {
-    adversaryControl,
-    assembly,
-  })
+  const creditOptions = { adversaryControl, assembly, independence, inputFreshness }
+  const { inputEntropyBits: credited, seedEntropyBits } = accountEntropy(
+    sources,
+    seed,
+    creditOptions
+  )
   const conditionedBlockBits = accountEntropy(
     sources,
     { kind: 'conditioned-block', inputBits: assembledBits, bound: conditionerBound },
-    { adversaryControl, assembly }
+    creditOptions
   ).seedEntropyBits
   const sourceAZeroed =
     !!healthA &&
@@ -755,15 +757,24 @@ export const SourceCombiningDemo: React.FC = () => {
           </h3>
           <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-1 text-xs">
             <p className="text-foreground" data-testid="entropy-credited">
-              <strong>Entropy credited to the assembled bitstring:</strong> {credited} bits (only
-              sources with no failure signalled, {SAMPLES_PER_REQUEST} samples &times;{' '}
-              {DECLARED_MIN_ENTROPY_PER_SAMPLE} bits each; summing two sources assumes they are
-              independent and concatenated — SP 800-90C §2.6 item 8
-              {assembly !== 'concat' && includedCount === 2
-                ? '; with this assembly only the larger source is credited'
-                : ''}
-              ).
+              <strong>Entropy credited to the assembled bitstring:</strong> {credited} bits.
             </p>
+            <p className="text-muted-foreground">
+              The sample assumes {SAMPLES_PER_REQUEST} eligible samples at{' '}
+              {DECLARED_MIN_ENTROPY_PER_SAMPLE} bits per sample. SP 800-90C §2.6 item 8 adds entropy
+              across independent, concatenated sources.
+            </p>
+            {inputFreshness !== 'fresh' ? (
+              <p>No fresh entropy is credited when samples are reused or stale.</p>
+            ) : includedCount === 2 && independence !== 'independent' ? (
+              <p>
+                {assembly === 'concat'
+                  ? 'Without established independence, only one source is credited in this concatenation.'
+                  : 'Without established independence, this assembly earns no entropy credit.'}
+              </p>
+            ) : includedCount === 2 && assembly !== 'concat' ? (
+              <p>The sample credits at most one source for this assembly.</p>
+            ) : null}
             {sourceAZeroed && (
               <p className="text-status-warning">
                 Source A counts 0 bits: you stated in Step 6 that the adversary can{' '}

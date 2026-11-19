@@ -570,7 +570,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       },
     ],
     dataSources: [
-      'Industry breach cost baselines from IBM Cost of a Data Breach Report 2025.',
+      'IBM 2026 breach costs for the global, finance and energy averages. Other sector benchmarks use labeled historical values.',
       'Illustrative regulatory maximums or baselines used as editable scenario inputs, not predicted penalties.',
       'Editorial infrastructure-layer cost assumptions; no measured market benchmark is claimed.',
     ],

@@ -64,7 +64,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Signing',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'We found no vendor documentation that confirms ML-DSA support in Notation, and the Sigstore post (June 2025) does not mention cosign, so both are shown as unconfirmed; the post says it wants to enable post-quantum signing as soon as possible, has added ML-DSA to its protocol specification for client experiments, and gives no production date. Vendor timelines move quickly, so confirm current status before choosing a tool. Docker Content Trust (DCT) should be migrated immediately — Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026), and the upstream Notary v1 codebase is no longer maintained.',
+        'The Notary Project specifies JWS and COSE signature envelopes, and its listed algorithms are RSA-PSS and ECDSA. RFC 10073 now standardizes Composite ML-DSA for X.509/PKIX, but that does not establish Notation or AWS Signer plugin support. For Cosign, current releases still do not document ML-DSA signing or verification, while the Sigstore algorithm registry marks ML-DSA experimental. Sigstore’s October 2026 proposal targets a separate PQC public instance for mid-2027; this is not current tool support. Docker says the Notary v1 service is scheduled to shut down on December 8, 2026. Check each product’s current documentation before choosing a migration path.',
       config: { step: 2 },
     },
     {

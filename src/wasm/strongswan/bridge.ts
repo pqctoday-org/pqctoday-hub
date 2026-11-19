@@ -4,6 +4,7 @@ import { useVpnPacketStore } from '@/store/useVpnPacketStore'
 export interface StrongSwanLog {
   level: 'info' | 'error'
   text: string
+  role?: 'initiator' | 'responder'
 }
 
 export type StrongSwanState = 'UNINITIALIZED' | 'LOADING' | 'READY' | 'RUNNING' | 'ERROR'
@@ -219,7 +220,7 @@ export class StrongSwanEngine {
       const { type, payload } = e.data
       switch (type) {
         case 'LOG':
-          this.dispatchLog(payload as StrongSwanLog)
+          this.dispatchLog({ ...(payload as StrongSwanLog), role })
           break
         case 'PKCS11_RPC':
           if (this.rpcHandler) {
@@ -517,6 +518,8 @@ export class StrongSwanEngine {
       childSa?: boolean
       /** TEST/VERIFICATION HOOK ONLY — see _spawnWorker's kemOverride doc. */
       kemOverride?: string
+      /** Optional independent responder proposal for the local peer exercise. */
+      responderKemOverride?: string
     }
   ): Promise<void> {
     if (this.initWorker) return Promise.resolve()
@@ -588,7 +591,7 @@ export class StrongSwanEngine {
       this._authMode,
       respKeyId, // local for responder
       initKeyId, // remote for responder
-      options?.kemOverride
+      options?.responderKemOverride ?? options?.kemOverride
     )
     return readyPromise
   }

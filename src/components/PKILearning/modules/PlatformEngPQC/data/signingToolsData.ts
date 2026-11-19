@@ -13,7 +13,15 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: true,
     pqcReadiness: 'unconfirmed',
     pqcNotes:
-      'Sigstore says (June 2025) that it wants people to be able to sign content with post-quantum keys as soon as possible. ML-DSA, chosen over SLH-DSA for its smaller signature size, has been added to the Sigstore protocol buffer specification so that clients can experiment with ML-DSA keys in Sigstore bundles, while the Sigstore services (Fulcio, Rekor and a timestamp authority) will adopt post-quantum algorithms when reliable, vetted implementations are available in the Go ecosystem. The post gives no production date and does not mention cosign; the held cosign changelog (v3.0.x) lists no post-quantum feature.',
+      'As of 2026-11-18, the Sigstore algorithm registry labels ML-DSA experimental and not operational within Sigstore, and the current Cosign release notes do not document ML-DSA signing or verification. Sigstore’s Oct 2, 2026 architecture proposal targets a separate production-ready PQC public instance for mid-2027, with major client revisions; that is a project target, not current Cosign support or a guarantee. The existing classical public instance is expected to remain supported until a tentative 2029/2030 turndown. Sources: https://blog.sigstore.dev/pqc-sigstore/ and https://github.com/sigstore/cosign/releases',
+    sources: [
+      { label: 'Sigstore PQC proposal', url: 'https://blog.sigstore.dev/pqc-sigstore/' },
+      { label: 'Cosign releases', url: 'https://github.com/sigstore/cosign/releases' },
+      {
+        label: 'Sigstore algorithm registry',
+        url: 'https://github.com/sigstore/protobuf-specs/blob/main/protos/sigstore_common.proto',
+      },
+    ],
     estimatedPqcYear: 'Not stated',
     strengths: [
       'Keyless signing via OIDC (no long-lived private key to protect)',
@@ -24,7 +32,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     limitations: [
       "Current ECDSA P-256 signature vulnerable to Shor's algorithm",
       'PQC ML-DSA signatures are much larger than ECDSA P-256 (2,420 B for ML-DSA-44, 3,309 B for ML-DSA-65, 4,627 B for ML-DSA-87, vs 64 B)',
-      'Rekor log must be migrated to ML-DSA before keyless signing is quantum-safe',
+      'The proposed PQC public instance changes the keyless flow to use a signed transparency-log proof instead of an ephemeral key and certificate; do not assume this design or its security properties apply to today’s classical instance',
       'Verification tooling must be updated to handle larger signature blobs',
     ],
   },
@@ -35,11 +43,27 @@ export const SIGNING_TOOLS: SigningTool[] = [
       'OCI artifact signing tool from CNCF. Signs any OCI artifact (images, Helm charts, SBOMs) using X.509 certificate-backed signatures. Integrates with hardware keystores and TSAs.',
     vendor: 'CNCF / Microsoft',
     signingAlgorithm: 'ecdsa',
-    signatureFormat: 'COSE Sign1 / JWS (ECDSA-P256 or RSA-PSS)',
+    signatureFormat:
+      'Notary Project signature envelope: JWS or COSE; signing algorithm depends on the configured provider',
     transparencyLog: false,
     pqcReadiness: 'unconfirmed',
     pqcNotes:
-      'We found no vendor documentation stating that Notation, or the plugin that signs through AWS Signer, supports ML-DSA, so any ML-DSA support is unconfirmed. Check the Notary Project and plugin documentation for current status.',
+      'The Notary Project signature specification supports JWS and COSE envelopes and its listed signature algorithms are currently RSA-PSS and ECDSA. We found no Notation or AWS Signer Notation plugin documentation confirming ML-DSA signing. RFC 10073 now standardizes Composite ML-DSA in X.509/PKIX, but a standard does not establish CLI, plugin, CA, or verifier support. Sources: https://github.com/notaryproject/specifications/blob/main/specs/signature-specification.md, https://github.com/notaryproject/specifications/blob/main/specs/signature-envelope-jws.md, https://github.com/aws/aws-signer-notation-plugin, https://www.rfc-editor.org/rfc/rfc10073.html',
+    sources: [
+      {
+        label: 'Notary signature specification',
+        url: 'https://github.com/notaryproject/specifications/blob/main/specs/signature-specification.md',
+      },
+      {
+        label: 'JWS envelope specification',
+        url: 'https://github.com/notaryproject/specifications/blob/main/specs/signature-envelope-jws.md',
+      },
+      {
+        label: 'AWS Signer Notation plugin',
+        url: 'https://github.com/aws/aws-signer-notation-plugin',
+      },
+      { label: 'RFC 10073', url: 'https://www.rfc-editor.org/rfc/rfc10073.html' },
+    ],
     estimatedPqcYear: 'Not stated',
     strengths: [
       'Certificate-backed (X.509): integrates with existing PKI and CAs',
@@ -50,7 +74,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
     limitations: [
       'No built-in transparency log (must pair with Rekor or similar)',
       'X.509 certificate chain must also be migrated to ML-DSA',
-      'Composite cert format not yet standardized (OID in draft)',
+      'RFC 10073 now standardizes Composite ML-DSA algorithm identifiers and their use in X.509/PKIX. Check whether each Notation implementation, signing provider, certificate authority and verifier supports the required profile before deployment.',
       'Registry must support OCI referrers API for signature storage',
     ],
   },
@@ -61,16 +85,27 @@ export const SIGNING_TOOLS: SigningTool[] = [
       'Legacy signing tool used for Helm charts, Debian/RPM package signing, and Git commit signing. RSA or ECDSA keys stored in keyring files. Widely deployed but difficult to migrate.',
     vendor: 'GnuPG project',
     signingAlgorithm: 'rsa',
-    signatureFormat: 'OpenPGP packet format (RFC 9580)',
+    signatureFormat: 'OpenPGP packets (RFC 9580; RFC 9980 adds PQ/T algorithm IDs)',
     transparencyLog: false,
     pqcReadiness: 'unconfirmed',
     pqcNotes:
-      'RFC 9980 (Standards Track, June 2026, the former draft-ietf-openpgp-pqc) adds post-quantum OpenPGP: for signatures a conformant implementation MUST implement the composite scheme ML-DSA-65+Ed25519 and SHOULD also implement ML-DSA-87+Ed448; standalone SLH-DSA is optional (MAY). Note: GnuPG is pursuing the LibrePGP format (diverging from RFC 9580); Sequoia-PGP implements RFC 9580 (OpenPGP v6). Whether each implements RFC 9980 is not stated in the held documents. Migration requires re-signing all artifacts with new PQC keys.',
+      'RFC 9980 specifies composite ML-DSA+EdDSA signatures and ML-KEM+ECDH encryption for OpenPGP. GnuPG 2.5.24 adds --allow-9980 and documents ML-KEM hybrid encryption in that mode; its release notes do not document RFC 9980 signature creation or verification. GnuPG’s default mode remains oriented toward LibrePGP, which has a distinct PQC format. Do not infer signing support from RFC 9980 parsing or encryption support, and verify the selected implementation and mode. Sources: https://www.rfc-editor.org/rfc/rfc9980.html, https://lists.gnupg.org/pipermail/gnupg-announce/2026q3/000516.html, https://gnupg.org/documentation/manuals/gnupg/GPG-Esoteric-Options.html',
+    sources: [
+      { label: 'RFC 9980', url: 'https://www.rfc-editor.org/rfc/rfc9980.html' },
+      {
+        label: 'GnuPG 2.5.24 release announcement',
+        url: 'https://lists.gnupg.org/pipermail/gnupg-announce/2026q3/000516.html',
+      },
+      {
+        label: 'GnuPG --allow-9980 manual',
+        url: 'https://gnupg.org/documentation/manuals/gnupg/GPG-Esoteric-Options.html',
+      },
+    ],
     pqcAlgorithm: 'ml-dsa',
     estimatedPqcYear: 'Not stated',
     strengths: [
       'Ubiquitous — supported by every Linux package manager',
-      'RFC 9980 adds post-quantum signatures to OpenPGP: composite ML-DSA schemes and standalone SLH-DSA',
+      'RFC 9980 defines OpenPGP post-quantum algorithms, including composite ML-DSA signatures; implementation support depends on the product and mode',
       'Decentralized key distribution via keyservers',
     ],
     limitations: [
@@ -91,9 +126,16 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: true,
     pqcReadiness: 'roadmap',
     pqcNotes:
-      'Sigstore says (June 2025) that ML-DSA has been added to its protocol buffer specification so that clients can experiment with ML-DSA ephemeral keys in Sigstore bundles. The post gives no date for its public services; this module reasons that bundle signatures would only be quantum-safe end-to-end once the Rekor log and Fulcio CA are post-quantum enabled.',
+      'The current algorithm registry labels ML-DSA experimental and not yet operational. Sigstore’s Oct 2, 2026 architecture proposal targets a separate PQC public instance for mid-2027, initially opt-in, with a new ML-DSA-signed trust repository and a redesigned log-proof signing flow. This is a roadmap target, not a currently deployed public service. Source: https://blog.sigstore.dev/pqc-sigstore/',
+    sources: [
+      { label: 'Sigstore PQC proposal', url: 'https://blog.sigstore.dev/pqc-sigstore/' },
+      {
+        label: 'Sigstore algorithm registry',
+        url: 'https://github.com/sigstore/protobuf-specs/blob/main/protos/sigstore_common.proto',
+      },
+    ],
     pqcAlgorithm: 'ml-dsa',
-    estimatedPqcYear: 'No date stated',
+    estimatedPqcYear: 'Mid-2027 target for separate PQC instance (proposal)',
     strengths: [
       'Self-contained: verification needs only the bundle, no external lookups',
       'Includes Rekor inclusion proof and certificate chain',
@@ -102,8 +144,8 @@ export const SIGNING_TOOLS: SigningTool[] = [
     ],
     limitations: [
       'Larger than raw signatures (~3KB+ with inclusion proof)',
-      'No production date for post-quantum signing in the public Sigstore services (Sigstore, June 2025)',
-      'Rekor and Fulcio PQC migration are prerequisites',
+      'The proposed PQC public instance has a mid-2027 target; verify current project status before planning against it',
+      'The PQC design proposes a separate infrastructure stack and a changed keyless flow; do not model it as a simple in-place Rekor/Fulcio algorithm upgrade',
     ],
   },
   {
@@ -117,7 +159,14 @@ export const SIGNING_TOOLS: SigningTool[] = [
     transparencyLog: false,
     pqcReadiness: 'retiring',
     pqcNotes:
-      "Docker is fully retiring DCT and the Notary v1 service (full shutdown 8 December 2026; the upstream Notary v1 codebase is no longer maintained) and names Sigstore/Cosign and Notation as the alternatives; its guidance says nothing about post-quantum signatures. Ed25519 is a Schnorr-type signature scheme — quantum-vulnerable to Shor's algorithm despite being resistant to classical attacks.",
+      "Docker's retirement notice says Docker Content Trust and notary.docker.io are being fully retired, with the service shutdown scheduled for December 8, 2026; Docker names Sigstore/Cosign and Notation as migration alternatives and makes no PQ signature-support claim. Recheck the service status and migration guidance before acting. Source: https://docs.docker.com/retired/. Ed25519 is quantum-vulnerable to Shor's algorithm despite being resistant to classical attacks.",
+    sources: [
+      { label: 'Docker retired products and features', url: 'https://docs.docker.com/retired/' },
+      {
+        label: 'Docker Content Trust guide',
+        url: 'https://docs.docker.com/engine/security/trust/',
+      },
+    ],
     estimatedPqcYear: 'N/A',
     strengths: [
       'Built into Docker CLI (DOCKER_CONTENT_TRUST=1)',

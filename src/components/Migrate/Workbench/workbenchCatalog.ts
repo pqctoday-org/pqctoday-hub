@@ -68,6 +68,18 @@ export function domainProductCount(domain: DomainId): number {
   return INDEX.get(domain)?.length ?? 0
 }
 
+/** A query may include the exact version label alongside the name or vendor. */
+function matchesReleaseSearch(product: SoftwareItem, query: string, vendorName = ''): boolean {
+  const version = product.latestVersion?.trim().toLowerCase()
+  if (!version) return false
+  if (query === version) return true
+  if (!query.endsWith(` ${version}`)) return false
+  const name = query.slice(0, -(version.length + 1)).trimEnd()
+  return [product.softwareName, product.productId, vendorName].some((label) =>
+    label.toLowerCase().includes(name)
+  )
+}
+
 /** Free-text filter within a product list (name / vendor-ish / category). */
 /** `productIds`, when given, is an EXACT membership filter (by SoftwareItem.productId)
  * that takes over from the free-text `query` entirely — added 2026-07-30 for the
@@ -90,7 +102,8 @@ export function filterProducts(
       p.softwareName.toLowerCase().includes(q) ||
       (p.categoryName || '').toLowerCase().includes(q) ||
       (p.vendorId || '').toLowerCase().includes(q) ||
-      p.productId.toLowerCase() === q
+      p.productId.toLowerCase() === q ||
+      matchesReleaseSearch(p, q, p.vendorId ? vendorMap.get(p.vendorId)?.vendorName : undefined)
   )
 }
 
@@ -166,7 +179,8 @@ export function searchProducts(query: string, limit = 6): ProductSearchHit[] {
       if (
         product.softwareName.toLowerCase().includes(q) ||
         (vendorName || '').toLowerCase().includes(q) ||
-        product.productId.toLowerCase() === q
+        product.productId.toLowerCase() === q ||
+        matchesReleaseSearch(product, q, vendorName)
       ) {
         hits.push({ domain, product, vendorName })
       }

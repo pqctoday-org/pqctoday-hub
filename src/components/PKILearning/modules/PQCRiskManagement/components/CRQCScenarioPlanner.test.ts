@@ -19,11 +19,17 @@ describe('CRQC scenario compliance overlays', () => {
 
   it('shows scope and source version beside every dated overlay', () => {
     expect(text).toContain('| Framework | Year | Scope | Source | Status |')
+    expect(text).toContain('## Policy and guidance reference dates')
+    expect(text).not.toContain('missed deadlines')
     const dated = rows(text).filter((r) => /CNSA 2\.0|EO 14412|NIST|EU/.test(r))
     expect(dated.length).toBeGreaterThanOrEqual(8)
     for (const r of dated) expect(r.split('|').length).toBeGreaterThanOrEqual(7)
     expect(text).toContain('NSA CNSA 2.0 FAQ, version 2.2 (October 2026)')
     expect(text).toContain('NIST IR 8547 (final, October 2026)')
+    expect(text).toContain('Scenario interval band (worksheet heuristic)')
+    expect(text).toContain('Overlap alone does not establish exposure')
+    expect(text).toContain('No overlap')
+    expect(text).not.toContain('| Safe |')
   })
 
   it('separates CNSA 2.0 acquisition, phase-out and algorithm-mandate dates for NSS only', () => {

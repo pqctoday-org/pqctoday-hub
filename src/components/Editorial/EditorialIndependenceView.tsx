@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { ShieldCheck, ExternalLink } from 'lucide-react'
+import { Link } from 'react-router'
+import { useScrollToHash } from '@/hooks/useScrollToHash'
+import { DATA_SUGGESTION_URL } from '@/components/About/aboutData'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const EFFECTIVE_DATE = 'May 9, 2026'
@@ -31,7 +34,11 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section id={`editorial-independence-${slug}`} className="glass-panel p-6 scroll-mt-20">
+    <section
+      id={`editorial-independence-${slug}`}
+      tabIndex={-1}
+      className="glass-panel p-6 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
+    >
       <h2 className="text-lg font-semibold text-foreground mb-4">
         {number}. {title}
       </h2>
@@ -41,6 +48,7 @@ function Section({
 }
 
 export function EditorialIndependenceView() {
+  useScrollToHash({ focusTarget: true })
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-8">
@@ -64,9 +72,12 @@ export function EditorialIndependenceView() {
         <ol className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm list-decimal list-inside">
           {TOC_SECTIONS.map((s) => (
             <li key={s.slug}>
-              <a href={`#editorial-independence-${s.slug}`} className="text-accent hover:underline">
+              <Link
+                to={`#editorial-independence-${s.slug}`}
+                className="text-accent hover:underline"
+              >
                 {s.title}
-              </a>
+              </Link>
             </li>
           ))}
         </ol>
@@ -178,12 +189,18 @@ export function EditorialIndependenceView() {
             </li>
             <li>Update data that has changed in the underlying authoritative source.</li>
           </ol>
-          <p>Disclosure is published in the changelog and on the relevant data page.</p>
+          <p>
+            Disclosure is published in the{' '}
+            <Link to="/changelog" className="text-accent hover:underline">
+              changelog
+            </Link>{' '}
+            and on the relevant data page.
+          </p>
           <p>
             Anyone, vendor or not, can propose a correction or a new record with its source through
             a{' '}
             <a
-              href="https://github.com/pqctoday-org/pqctoday-hub/issues/new?template=data_suggestion.yml"
+              href={DATA_SUGGESTION_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:underline inline-flex items-center gap-1"
@@ -201,7 +218,11 @@ export function EditorialIndependenceView() {
             <li>Vendor and enterprise sponsorship (custom direct agreements)</li>
             <li>
               Community sponsorship via GitHub Sponsors &mdash; Supporter, Sponsor, and Patron tiers
-              (see <code className="text-accent">/sponsor</code>)
+              (see{' '}
+              <Link to="/sponsor#sponsorship-tiers" className="text-accent hover:underline">
+                sponsorship tiers
+              </Link>
+              )
             </li>
           </ul>
           <p>

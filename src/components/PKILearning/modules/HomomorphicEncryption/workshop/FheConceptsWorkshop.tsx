@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { CkksAccuracyCheck } from './CkksAccuracyCheck'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence, MotionConfig } from 'framer-motion'
 import {
@@ -709,6 +710,7 @@ const CircuitDemo: React.FC<{ onInteract: () => void }> = ({ onInteract }) => {
           <p className="text-muted-foreground">{p.ckksNote}</p>
         </div>
       </div>
+      <CkksAccuracyCheck onComplete={onInteract} />
       <div className="glass-panel p-3 bg-muted/30 text-xs text-muted-foreground">
         TFHE-rs CPU benchmark, FheUint64 (vendor figures, AWS hpc8a.96xlarge): add{' '}
         {TFHE_RS_U64_MS.add} ms, compare {TFHE_RS_U64_MS.compare} ms, select {TFHE_RS_U64_MS.select}{' '}

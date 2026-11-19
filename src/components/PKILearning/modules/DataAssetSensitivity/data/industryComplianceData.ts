@@ -83,7 +83,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     region: 'EU',
     scope: 'Essential and important entities in EU member states',
     pqcRequirement:
-      'Article 21 mandates cryptography and encryption policies. ENISA guidance explicitly covers PQC transition planning for essential services.',
+      'Cyber risk-management duty: Article 21(2)(h) requires documented policies and procedures on cryptography and encryption. It names no fixed PQC algorithm or deadline; EU Member State transition milestones are coordinated under the EU PQC Roadmap v1.1 and ENISA guidance.',
     // NIS2 transposition deadline (Oct 2024) is past — no specific forward PQC deadline yet
     hardDeadline: null,
     deadlineYear: null,
@@ -99,7 +99,7 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     region: 'EU',
     scope: 'Financial entities (banks, insurers, investment firms) in EU',
     pqcRequirement:
-      'Article 9 requires ICT security policies including cryptographic controls. Enforceable January 2025. Implicit PQC obligation as regulators update guidance.',
+      'Cyber risk-management duty: Article 9 requires ICT security policies including cryptographic controls aligned with state-of-the-art standards (enforced January 2025). It names no fixed PQC algorithm or deadline; monitor EU PQC Roadmap v1.1 and ESA supervisory guidance.',
     // DORA became applicable Jan 2025 — that date is past; no specific forward PQC deadline yet
     hardDeadline: null,
     deadlineYear: null,
@@ -176,7 +176,8 @@ export const COMPLIANCE_MANDATES: ComplianceMandate[] = [
     fullName: 'ISO/IEC 27001 Information Security Management',
     region: 'Global',
     scope: 'Organizations voluntarily seeking ISMS certification',
-    pqcRequirement: '',
+    pqcRequirement:
+      'Annex A.8.24 requires documented rules for effective use of cryptography and key lifecycle management. ISO/IEC 27001 names no PQC algorithm or deadline; organizations address quantum transition risk through ISO/IEC 27005 risk assessments.',
     hardDeadline: null,
     deadlineYear: null,
     pqcMandatoryNow: false,

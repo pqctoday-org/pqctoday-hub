@@ -14,7 +14,16 @@ import {
 import { Button } from '../ui/button'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import type { RightPanelTab } from '@/types/HistoryTypes'
+
+export const RIGHT_PANEL_TABS: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
+  { id: 'chat', label: 'Assistant', icon: Bot },
+  { id: 'history', label: 'Journey', icon: Clock },
+  { id: 'workshop', label: 'Workshop', icon: GraduationCap },
+  { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark },
+  { id: 'faq', label: 'FAQ', icon: HelpCircle },
+]
 interface PanelHeaderProps {
+  idPrefix?: string
   activeTab: RightPanelTab
   onTabChange: (tab: RightPanelTab) => void
   onClose: () => void
@@ -24,6 +33,7 @@ interface PanelHeaderProps {
 }
 
 export const PanelHeader: React.FC<PanelHeaderProps> = ({
+  idPrefix = 'tools-drawer',
   activeTab,
   onTabChange,
   onClose,
@@ -31,13 +41,31 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   isExpanded,
   onToggleExpanded,
 }) => {
-  const tabs: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
-    { id: 'chat', label: 'Assistant', icon: Bot },
-    { id: 'history', label: 'Journey', icon: Clock },
-    { id: 'workshop', label: 'Workshop', icon: GraduationCap },
-    { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark },
-    { id: 'faq', label: 'FAQ', icon: HelpCircle },
-  ]
+  const tabList = React.useRef<HTMLDivElement>(null)
+
+  function handleTabKey(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    const count = RIGHT_PANEL_TABS.length
+    let next: number
+    switch (event.key) {
+      case 'ArrowRight':
+        next = (index + 1) % count
+        break
+      case 'ArrowLeft':
+        next = (index + count - 1) % count
+        break
+      case 'Home':
+        next = 0
+        break
+      case 'End':
+        next = count - 1
+        break
+      default:
+        return
+    }
+    event.preventDefault()
+    onTabChange(RIGHT_PANEL_TABS[next].id)
+    tabList.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]').item(next)?.focus()
+  }
 
   return (
     <div className="px-4 md:px-12 pt-4 pb-0 border-b border-border shrink-0">
@@ -58,20 +86,25 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
             ScrollFadeContainer (already used elsewhere for this exact
             problem) adds the fade hint and keyboard-scroll focusability. */}
         <ScrollFadeContainer
+          ref={tabList}
           className="min-w-0"
           scrollClassName="flex items-center gap-1"
-          scrollProps={{ role: 'tablist' }}
+          scrollProps={{ role: 'tablist', tabIndex: -1, 'aria-label': 'Tools drawer tabs' }}
         >
-          {tabs.map((tab) => (
+          {RIGHT_PANEL_TABS.map((tab, index) => (
             <Button
               variant="ghost"
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
+              onKeyDown={(event) => handleTabKey(event, index)}
               className={`shrink-0 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
                 activeTab === tab.id
                   ? 'border-primary text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
+              id={`${idPrefix}-tab-${tab.id}`}
+              aria-controls={`${idPrefix}-panel-${tab.id}`}
+              tabIndex={activeTab === tab.id ? 0 : -1}
               aria-label={tab.label}
               aria-selected={activeTab === tab.id}
               role="tab"

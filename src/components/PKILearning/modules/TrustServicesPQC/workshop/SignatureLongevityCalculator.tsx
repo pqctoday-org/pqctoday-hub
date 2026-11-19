@@ -14,6 +14,95 @@ import { Clock, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { LTV_STAGES, LTV_SCENARIO, longevityScenario } from '../data/trustServicesData'
 import { Button } from '@/components/ui/button'
 
+const ARCHIVE_EXAMPLE = {
+  signerExpiry: 2029,
+  timestampDeadline: 2034,
+  hashDeadline: 2032,
+  reviewYears: [2031, 2032, 2034],
+} as const
+
+function ArchiveRenewalPractice() {
+  const [renewalYear, setRenewalYear] = useState<number>(2034)
+  const [replaceHash, setReplaceHash] = useState(false)
+  const deadline = replaceHash ? ARCHIVE_EXAMPLE.hashDeadline : ARCHIVE_EXAMPLE.timestampDeadline
+  const inTime = renewalYear < deadline
+
+  return (
+    <section className="glass-panel space-y-4 p-4 sm:p-6" aria-labelledby="archive-renewal">
+      <div className="space-y-2">
+        <h4 id="archive-renewal" className="font-semibold">
+          Choose an archive renewal plan
+        </h4>
+        <p className="text-sm text-muted-foreground">
+          In this fictional archive the original signer’s certificate expires in{' '}
+          {ARCHIVE_EXAMPLE.signerExpiry}. You already have a trusted time of signing and retained
+          certificate chain and status evidence. The active archive timestamp must be renewed before{' '}
+          {ARCHIVE_EXAMPLE.timestampDeadline}. If the hash is being retired, the earlier deadline is{' '}
+          {ARCHIVE_EXAMPLE.hashDeadline}. These are the sample archive’s policy dates.
+        </p>
+      </div>
+      <label className="flex min-h-11 items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={replaceHash}
+          onChange={(event) => setReplaceHash(event.target.checked)}
+        />
+        The archive hash must be replaced
+      </label>
+      <fieldset className="space-y-2">
+        <legend className="mb-2 text-sm font-medium">Planned renewal year</legend>
+        <div className="flex flex-wrap gap-2">
+          {ARCHIVE_EXAMPLE.reviewYears.map((year) => (
+            <Button
+              key={year}
+              type="button"
+              variant={renewalYear === year ? 'gradient' : 'outline'}
+              aria-pressed={renewalYear === year}
+              onClick={() => setRenewalYear(year)}
+              className="min-h-11"
+            >
+              {year}
+            </Button>
+          ))}
+        </div>
+      </fieldset>
+      <div role="status" className="space-y-1 rounded-md border border-border p-3 text-sm">
+        <p className="font-semibold">
+          {inTime ? 'Before the example deadline' : 'Deadline missed in this example'}
+        </p>
+        <p>
+          {replaceHash
+            ? 'Hash-tree renewal covers the original records and the existing archive evidence with a new hash tree and timestamp.'
+            : 'Timestamp renewal timestamps the existing archive timestamp with an acceptable timestamp service while retaining the existing hash protection.'}
+        </p>
+        <p className="text-muted-foreground">
+          {inTime
+            ? 'This schedule leaves time to validate the records and obtain renewal evidence.'
+            : 'A timestamp collected after trust is lost cannot repair the gap. Review independently preserved evidence.'}
+        </p>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        This exercise checks the dates and evidence required by these assumptions. It does not
+        validate an archive. See{' '}
+        <a
+          className="underline underline-offset-2"
+          href="https://www.rfc-editor.org/rfc/rfc4998.html#section-5"
+        >
+          RFC 4998 §5
+        </a>{' '}
+        for renewal and{' '}
+        <a
+          className="underline underline-offset-2"
+          href="https://www.rfc-editor.org/rfc/rfc3161.html#section-4"
+        >
+          RFC 3161 §4
+        </a>{' '}
+        for using a timestamp with a signature.
+      </p>
+    </section>
+  )
+}
+
 const HORIZONS = [
   { years: 3, label: '3y — commercial contract' },
   { years: 7, label: '7y — tax/audit retention' },
@@ -106,26 +195,26 @@ export const SignatureLongevityCalculator = () => {
             <p className="text-sm text-muted-foreground">
               {spansAlgorithmChange ? (
                 <>
-                  A {horizon}-year signature would need renewal (for example re-timestamping under a
-                  quantum-safe algorithm) before the earliest of: a weakness in the signing
-                  algorithm, the signing certificate becoming invalid, and a policy cutoff such as{' '}
-                  {scenario.cutoffYear}. That obligation applies to every signature already in the
-                  archive, so the work scales with what you have stored, not with how many
-                  signatures you make from here.
+                  Review this {horizon}-year archive’s validation policy and current evidence.
+                  Preserve evidence from the original signing and renew archive protection before
+                  the active timestamp or hash becomes unacceptable. The work scales with the
+                  records already in the archive.
                 </>
               ) : (
                 <>
                   Ending by {scenario.cutoffYear} does not prove the signature survives its window.
-                  Certificate expiry and revocation-data availability are the nearer risks, and a
-                  weakness in the algorithm, an invalid certificate or an earlier policy cutoff
-                  would still require renewal. Capture a timestamp at signing and archive the
-                  revocation data.
+                  Capture trusted time, the certificate chain and status evidence under your policy.
+                  Ordinary expiry of the original signing certificate can still allow evaluation at
+                  the earlier proven time. Monitor the archive timestamp and hash for their own
+                  renewal deadlines.
                 </>
               )}
             </p>
           </div>
         </div>
       </section>
+
+      <ArchiveRenewalPractice />
 
       <section className="space-y-3">
         <h4 className="font-semibold">Stages inside a {horizon}-year window</h4>

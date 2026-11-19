@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useMemo, useState } from 'react'
+import React, { useId, useMemo, useState } from 'react'
 import { ShieldCheck, ShieldAlert, Cloud, Code, FileJson, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { validateKmsPqcPolicy } from '../utils/kmsPolicyEngine'
+import { validateKmsPqcPolicy, type SampleCreateKeyRequest } from '../utils/kmsPolicyEngine'
 
 // An IAM policy for the people who create KMS keys. kms:CreateKey is governed
 // by IAM policy, not by a key policy (the key does not exist yet).
@@ -47,9 +47,24 @@ const ML_KEM_OPTIONAL = `    ,{
       }
     }`
 
+const SAMPLE_REQUESTS = [
+  { id: 'signer', label: 'ML-DSA-65 for signing', spec: 'ML_DSA_65', usage: 'SIGN_VERIFY' },
+  {
+    id: 'kem',
+    label: 'ML-KEM-768 for key establishment',
+    spec: 'ML_KEM_768',
+    usage: 'ENCAPSULATE_DECAPSULATE',
+  },
+  { id: 'mismatched', label: 'ML-KEM-768 for signing', spec: 'ML_KEM_768', usage: 'SIGN_VERIFY' },
+] as const satisfies ReadonlyArray<SampleCreateKeyRequest & { id: string; label: string }>
+
 export const AwsKmsPolicyLab: React.FC = () => {
   const [policyJson, setPolicyJson] = useState(INITIAL_JSON)
-  const validation = useMemo(() => validateKmsPqcPolicy(policyJson), [policyJson])
+  const id = useId()
+  const [requestId, setRequestId] = useState<string>(SAMPLE_REQUESTS[0].id)
+  const request = SAMPLE_REQUESTS.find((sample) => sample.id === requestId) ?? SAMPLE_REQUESTS[0]
+  const validation = useMemo(() => validateKmsPqcPolicy(policyJson, request), [policyJson, request])
+  const requestResult = validation.request
 
   const insertSnippet = (snippet: string) => {
     const insertPos = policyJson.lastIndexOf(']')
@@ -193,6 +208,52 @@ export const AwsKmsPolicyLab: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <section aria-labelledby={id} className="glass-panel space-y-3 p-4 text-sm">
+        <h3 id={id} className="font-semibold">
+          Try a sample CreateKey request
+        </h3>
+        <p className="text-muted-foreground">
+          Compare the key specification and intended use with the supported IAM fragment above.
+          Creating a key and authorizing a later cryptographic operation are separate decisions.
+        </p>
+        <label htmlFor={`${id}-request`} className="block font-medium">
+          Sample key request
+        </label>
+        {/* eslint-disable-next-line no-restricted-syntax -- Native <select> preserved for form semantics and Playwright combobox/selectOption tests */}
+        <select
+          id={`${id}-request`}
+          value={requestId}
+          onChange={(event) => setRequestId(event.target.value)}
+          className="w-full rounded-md border border-input bg-background p-2 sm:w-auto"
+        >
+          {SAMPLE_REQUESTS.map((sample) => (
+            <option key={sample.id} value={sample.id}>
+              {sample.label}
+            </option>
+          ))}
+        </select>
+        <p>
+          <code>{request.spec}</code> with <code>{request.usage}</code>
+        </p>
+        <p role="status" aria-label="CreateKey sample result">
+          {requestResult?.outcome === 'matching-allow'
+            ? `The request matches an Allow in this sample fragment. Matching statement numbers: ${requestResult.statements.join(', ')}.`
+            : requestResult?.outcome === 'no-matching-allow'
+              ? 'No Allow in this sample fragment matches the request.'
+              : requestResult?.outcome === 'invalid-combination'
+                ? 'The selected key specification and usage are incompatible.'
+                : 'The fragment needs valid JSON in the supported subset before checking the request.'}
+        </p>
+        <a
+          href="https://docs.aws.amazon.com/kms/latest/developerguide/symm-asymm-choose-key-spec.html"
+          className="text-primary underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          AWS KMS key specification reference
+        </a>
+      </section>
 
       <div className="glass-panel p-5 space-y-2 text-sm text-muted-foreground">
         <h3 className="flex items-center gap-2 font-semibold text-foreground">

@@ -69,6 +69,16 @@ describe('structured deadlines', () => {
     }
   })
 
+  it('keeps UK NCSC milestones as guidance targets without statutory phase labels', () => {
+    const ncsc = byId('UK-NCSC')
+    expect(ncsc).toBeDefined()
+    expect(ncsc!.deadline).toMatch(
+      /2028.*discovery.*2031.*highest-priority.*2035.*complete migration/i
+    )
+    expect(ncsc!.notes).toMatch(/indicative target dates/)
+    expect(ncsc!.notes).not.toMatch(/phase 1|phase 2|phase 3/i)
+  })
+
   it('every parsed deadline year is plausible', () => {
     for (const fw of complianceFrameworks) {
       for (const d of fw.deadlineDates ?? []) {

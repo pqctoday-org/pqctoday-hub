@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
-import { rowsToCsv } from '@/services/export/csvExport'
+import { rowsToSpreadsheetCsv } from '@/services/export/csvExport'
 import type { ArtifactFieldEdit, ArtifactFormData } from '../../../common/executive/ArtifactBuilder'
 import { clearAuditPrefill, editAuditDraft, initializeAuditPrefill } from './auditPrefillOwnership'
 
@@ -547,7 +547,7 @@ function renderAuditCsv(
       sections.push([e.productOrAsset, e.cmvpCertNumber, e.acvpRunId, e.esvStatus, e.cveScanDate])
   }
 
-  return rowsToCsv(sections)
+  return rowsToSpreadsheetCsv(sections)
 }
 
 /** Persisted shape for the read-back half of the "save with `inputs`, restore

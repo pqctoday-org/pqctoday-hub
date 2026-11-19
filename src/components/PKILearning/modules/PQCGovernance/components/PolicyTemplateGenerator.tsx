@@ -69,55 +69,6 @@ interface BuildArgs {
   simplified: boolean
 }
 
-interface RotationSuggestion {
-  value: string
-  rationale: string
-}
-
-function suggestRotationPeriod(
-  dataSensitivity: string[],
-  cryptoAgility: string
-): RotationSuggestion {
-  // Starting point only: the longest interval is pre-selected when the assessment
-  // records hardcoded crypto (key replacement and algorithm agility are separate,
-  // so each system needs its own decision); agile orgs with critical data get 90 days.
-  if (cryptoAgility === 'hardcoded')
-    return {
-      value: '2-years',
-      rationale:
-        'Starting point only: this tool pre-selects its longest interval when the assessment records hardcoded crypto; key replacement and algorithm agility are separate, so confirm per system (SP 800-57 Pt 1 Rev 5 Sec 5.3.1).',
-    }
-  if (cryptoAgility === 'agile' && dataSensitivity.includes('critical'))
-    return {
-      value: '90-days',
-      rationale:
-        'Suggested from your assessment: a crypto-agile architecture plus critical data sensitivity supports an aggressive 90-day rotation.',
-    }
-  if (dataSensitivity.includes('critical'))
-    return {
-      value: '90-days',
-      rationale:
-        'Suggested from your assessment: critical data sensitivity favors the shortest rotation window.',
-    }
-  if (dataSensitivity.includes('high'))
-    return {
-      value: '180-days',
-      rationale:
-        'Suggested from your assessment: high data sensitivity favors a moderate rotation window.',
-    }
-  if (dataSensitivity.includes('medium'))
-    return {
-      value: '1-year',
-      rationale:
-        'Suggested from your assessment: medium data sensitivity supports an annual rotation.',
-    }
-  return {
-    value: '',
-    rationale:
-      'No assessment data available to suggest a period — choose based on data sensitivity and crypto agility.',
-  }
-}
-
 function generalSection(args: BuildArgs): ArtifactSection {
   const { frameworkNames, country, industry } = args
   const defaultFrameworks: { value: string; label: string }[] = [
@@ -376,9 +327,8 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
 }
 
 function keyManagementSections(args: BuildArgs): ArtifactSection[] {
-  const { simplified, dataSensitivity, cryptoAgility } = args
+  const { simplified } = args
   const common = generalSection(args)
-  const suggestedRotation = suggestRotationPeriod(dataSensitivity, cryptoAgility)
 
   return [
     common,
@@ -405,8 +355,8 @@ function keyManagementSections(args: BuildArgs): ArtifactSection[] {
             { value: '1-year', label: '1 year' },
             { value: '2-years', label: '2 years' },
           ],
-          defaultValue: suggestedRotation.value,
-          helperText: suggestedRotation.rationale,
+          helperText:
+            'Choose an interval for the specific key type and use. Consider expected data volume, exposure, consequences of compromise, recovery and rekey capability, and binding requirements. Data sensitivity or algorithm agility alone does not determine a rotation period. NIST SP 800-57 Part 1 Rev. 5 provides key-management guidance, not one universal interval; Revision 6 is still an initial public draft.',
         },
         {
           id: 'storage',
@@ -693,7 +643,18 @@ export function renderPolicyPreview(
         }
         md += '\n'
       } else if (value) {
-        md += `**${fieldLabel}:** ${value}\n\n`
+        const displayValue =
+          fieldId === 'rotation-period'
+            ? ((
+                {
+                  '90-days': '90 days',
+                  '180-days': '180 days',
+                  '1-year': '1 year',
+                  '2-years': '2 years',
+                } as const
+              )[value as '90-days' | '180-days' | '1-year' | '2-years'] ?? value)
+            : value
+        md += `**${fieldLabel}:** ${displayValue}\n\n`
       }
     }
   }

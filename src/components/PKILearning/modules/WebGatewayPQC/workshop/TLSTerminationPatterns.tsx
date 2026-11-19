@@ -12,6 +12,7 @@ import {
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+import { GatewayTlsLegs } from './GatewayTlsLegs'
 
 const GATEWAY_KAT_SPECS: KatTestSpec[] = [
   {
@@ -150,6 +151,7 @@ export const TLSTerminationPatterns: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <GatewayTlsLegs />
       {/* Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex-1 min-w-[200px]">

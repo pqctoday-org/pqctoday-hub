@@ -10,10 +10,12 @@ import {
   ASSET_TYPES,
   AVAILABLE_INDUSTRIES,
   DEFAULT_ASSETS,
-  computeHndlRiskYear,
+  computeAssetHndlRiskYear,
+  formatConfidentialityPeriod,
   CURRENT_YEAR,
   ESTIMATED_CRQC_YEAR,
   type DataAsset,
+  type ConfidentialityPeriod,
   type SensitivityTier,
   type AssetType,
   type RetentionPeriod,
@@ -42,14 +44,9 @@ function SensitivityBadge({ tier }: { tier: SensitivityTier }) {
   )
 }
 
-function HndlIndicator({
-  retentionPeriod,
-  crqcYear = ESTIMATED_CRQC_YEAR,
-}: {
-  retentionPeriod: RetentionPeriod
-  crqcYear?: number
-}) {
-  const riskYear = computeHndlRiskYear(retentionPeriod, crqcYear)
+function HndlIndicator({ riskYear }: { riskYear: number | null }) {
+  if (riskYear === null)
+    return <span className="text-xs text-muted-foreground">Not applicable</span>
   const isAtRisk = riskYear <= CURRENT_YEAR
   return (
     <span
@@ -82,6 +79,7 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
   const [assetType, setAssetType] = useState<AssetType>('data-store')
   const [sensitivityTier, setSensitivityTier] = useState<SensitivityTier>('medium')
   const [retentionPeriod, setRetentionPeriod] = useState<RetentionPeriod>('1-5y')
+  const [confidentialityPeriod, setConfidentialityPeriod] = useState<ConfidentialityPeriod>()
   const [currentEncryption, setCurrentEncryption] = useState('')
   const [businessOwner, setBusinessOwner] = useState('')
   const [industry, setIndustry] = useState(AVAILABLE_INDUSTRIES[0])
@@ -104,6 +102,7 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
       assetType,
       sensitivityTier,
       retentionPeriod,
+      confidentialityPeriod,
       currentEncryption: currentEncryption.trim() || 'Not specified',
       businessOwner: businessOwner.trim() || 'Unassigned',
       industry,
@@ -116,6 +115,7 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
     setName('')
     setCurrentEncryption('')
     setBusinessOwner('')
+    setConfidentialityPeriod(undefined)
     // Applicability belongs to one asset: do not carry the ticks over to the next one.
     setComplianceFlags([])
   }
@@ -250,8 +250,34 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
               selectedId={retentionPeriod}
               onSelect={(id) => setRetentionPeriod(id as RetentionPeriod)}
               defaultLabel="Select period"
+              ariaLabel="Retention period"
+              hideDefaultOption
               noContainer
             />
+          </div>
+
+          <div>
+            <div className="mb-1 text-xs text-muted-foreground">Confidentiality Period</div>
+            <FilterDropdown
+              items={[
+                { id: 'retention', label: 'Use retention as estimate' },
+                ...retentionItems,
+                { id: 'not-applicable', label: 'Not applicable (signing or verification only)' },
+              ]}
+              selectedId={confidentialityPeriod ?? 'retention'}
+              onSelect={(id) =>
+                setConfidentialityPeriod(
+                  id === 'retention' ? undefined : (id as ConfidentialityPeriod)
+                )
+              }
+              defaultLabel="Choose confidentiality period"
+              ariaLabel="Confidentiality period"
+              hideDefaultOption
+              noContainer
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Estimate how long the data must stay private, including any copies.
+            </p>
           </div>
 
           <div className="md:col-span-2">
@@ -332,6 +358,7 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                   <th className="text-left py-2 pr-4 font-medium">Type</th>
                   <th className="text-left py-2 pr-4 font-medium">Sensitivity</th>
                   <th className="text-left py-2 pr-4 font-medium">Retention</th>
+                  <th className="text-left py-2 pr-4 font-medium">Confidentiality</th>
                   <th className="text-left py-2 pr-4 font-medium">HNDL Risk Year</th>
                   <th className="text-left py-2 pr-4 font-medium">Industry</th>
                   <th className="text-left py-2 pr-4 font-medium">Encryption</th>
@@ -360,11 +387,11 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
                       <td className="py-3 pr-4 text-muted-foreground text-xs">
                         {retConfig?.label ?? asset.retentionPeriod}
                       </td>
+                      <td className="py-3 pr-4 text-xs text-muted-foreground">
+                        {formatConfidentialityPeriod(asset)}
+                      </td>
                       <td className="py-3 pr-4">
-                        <HndlIndicator
-                          retentionPeriod={asset.retentionPeriod}
-                          crqcYear={crqcYear}
-                        />
+                        <HndlIndicator riskYear={computeAssetHndlRiskYear(asset, crqcYear)} />
                       </td>
                       <td className="py-3 pr-4 text-muted-foreground text-xs">{asset.industry}</td>
                       <td className="py-3 pr-4 text-muted-foreground text-xs font-mono">

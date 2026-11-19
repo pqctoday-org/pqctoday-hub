@@ -17,7 +17,7 @@ workshop_steps: 7
 - Complete envelope sizes in the module's HKE1 project sample format (not a standard): 284 bytes for RSA-2048, 1,191 bytes for ML-KEM-768 and 1,218 bytes for X25519+ML-KEM-768, counted from one layout (18-byte header, key ID, salt, info, ephemeral key, KEM ciphertext, 40-byte AES-KW wrapped DEK); the older 1,088 + 40 = 1,128 and 32 + 1,088 = 1,120 figures count data fields only, not a complete envelope
 - Hybrid key wrapping (X25519+ML-KEM-768, ECDH P-256+ML-KEM-768, ECDH P-384+ML-KEM-1024, X-Wing); these KMS key-wrap combiners differ from the TLS hybrid groups of RFC 10024
 - KMS provider PQC landscape (AWS KMS, Google Cloud KMS, Azure Key Vault, OpenBao, Thales CipherTrust, Fortanix DSM)
-- PQC key rotation strategies and compliance deadlines (CNSA 2.0, NIST IR 8547)
+- PQC key rotation strategies and compliance deadlines (CNSA 2.0 FAQ v2.2 for NSS, NIST IR 8547 final Oct 2026, EO 14412 & OMB M-26-15 for US federal civilian, EU PQC Roadmap v1.1)
 - Enterprise architecture patterns for multi-cloud PQC key management
 - KMIP v3.0 (Committee Specification Draft 02; KMIP 2.1 is the OASIS Standard) protocol operations and PQC key type enumerations; Re-key vs Re-key Key Pair and the key lifecycle
 - Cross-provider key sync via KMIP orchestration
@@ -45,5 +45,7 @@ workshop_steps: 7
 - NIST IR 8547 (PQC Transition, final October 2026)
 - NIST SP 800-57 Part 1 Rev. 6 (Initial Public Draft): ML-KEM-aware cryptoperiods
 - RFC 9180 (HPKE) and RFC 10024 (TLS hybrid groups)
-- CNSA 2.0 (NSA)
+- CNSA 2.0 (NSA FAQ v2.2 for NSS)
+- EO 14412 & OMB M-26-15 (US federal civilian) and EU PQC Roadmap v1.1
+- FIPS 140-3 (CMVP) and FIPS 140-2 Historical transition (September 2026)
 - KMIP v3.0 draft and KMIP 2.1 (OASIS Key Management Interoperability Protocol)

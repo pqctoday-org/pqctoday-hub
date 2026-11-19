@@ -10,8 +10,8 @@ Migrating to new algorithms requires locating every piece of cryptography in an 
 
 ## The Key Takeaway
 
-The transition demands architectural patterns that completely decouple the cryptographic math from the business application. As algorithms get heavier, these patterns protect the app. For example, when Cloudflare enabled hybrid PQC key exchange, the key size grew from 32 bytes to 1,216 bytes, but the core network routing code remained untouched.
+The transition demands architectural patterns that decouple cryptographic choices from application logic. For example, a hybrid TLS client key share combines X25519 and ML-KEM-768 material and is 1,216 bytes, compared with 32 bytes for X25519 alone. Application code still needs to handle the larger share and related encoding changes.
 
 ## What's Happening
 
-NIST devotes a white paper, CSWP 39, to crypto agility. Tech giants are already utilizing this agility—Google Chrome and Apple's iMessage have natively enabled hybrid PQC key exchanges through rapid, phased rollouts.
+NIST's current crypto-agility white paper is CSWP 39-upd1. Google Chrome and Apple's iMessage have deployed hybrid post-quantum key agreement in phased rollouts.

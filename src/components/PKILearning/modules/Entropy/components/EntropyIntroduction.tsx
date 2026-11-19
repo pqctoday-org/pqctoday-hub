@@ -125,8 +125,8 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               <InlineTooltip term="SP 800-90C">SP 800-90C</InlineTooltip>
             </div>
             <p className="text-xs text-muted-foreground">
-              RBG Constructions: How to combine entropy sources with DRBGs into complete Random Bit
-              Generators. Defines RBG1, RBG2, RBG3, and RBGC classes.
+              RBG Constructions (final, September 2025): How to combine entropy sources with DRBGs
+              into complete Random Bit Generators. Defines RBG1, RBG2, RBG3, and RBGC classes.
             </p>
           </div>
         </div>
@@ -256,6 +256,11 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             <div className="text-sm font-bold text-primary mb-2">
               Min-Entropy Estimation (Validation)
             </div>
+            <p className="text-xs text-muted-foreground mb-2">
+              Min-entropy measures worst-case predictability per sample,{' '}
+              <code className="text-[11px]">H_min = &minus;log₂(max p_i)</code>. For non-IID
+              sources, SP 800-90B takes the conservative minimum across all applicable estimators.
+            </p>
             <div className="space-y-2">
               <div>
                 <div className="text-xs font-medium text-foreground/80 mb-1">Key Estimators</div>
@@ -450,6 +455,13 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           </table>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
+          <strong>NIST, BSI, and ANSSI guidance on QRNG vs. DRBG:</strong> Neither NIST (SP
+          800-90B/90C), Germany&apos;s BSI (AIS 20/31), nor France&apos;s ANSSI treats a
+          &quot;quantum&quot; label as a substitute for a vetted DRBG or entropy-source evaluation.
+          All three require a justified stochastic/noise model for the physical source, raw entropy
+          assessment, online health tests, and a cryptographic post-processing or DRBG boundary.
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">
           A certificate covers the implementation and versions it lists, not a vendor&apos;s whole
           product line.
         </p>

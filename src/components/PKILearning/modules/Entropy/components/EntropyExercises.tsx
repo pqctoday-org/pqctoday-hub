@@ -12,6 +12,7 @@ import {
   ToggleLeft,
   Activity,
   ShieldAlert,
+  Microscope,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router'
@@ -165,6 +166,19 @@ export const EntropyExercises: React.FC<EntropyExercisesProps> = ({
       observe:
         'All Zeros trips Repetition Count in the first batch — a stuck source is the failure it exists for (SP 800-90B §4.4.1). The repeating pattern never repeats a byte back-to-back, so Repetition Count stays quiet and Adaptive Proportion fires instead (§4.4.2, here on a 64-sample partial window). Continuous tests run on the noise-source output while it operates, to detect failures (§4.2), and SP 800-90B requires them (§4.3). These gauges run on 64-byte batches of browser output, so they demonstrate the idea; they are not an entropy-source health test.',
       config: { step: 1 },
+    },
+    {
+      id: 'evidence-lab-boundary',
+      title: '10. Entropy Evidence Lab: What Does a Real Device Recording Establish?',
+      description:
+        'Open the Entropy Evidence Lab (NIST SP 800-90B WASM estimators). Compare a real CPU-jitter recording (KV260, i.MX 95, or Mac) against the DRBG-output contrast set and a synthetic failure. Decide what a high min-entropy estimate on one dataset establishes — and why the DRBG-output contrast set still cannot be validated as an entropy source.',
+      badge: 'SP 800-90B Lab',
+      badgeColor: 'bg-primary/20 text-primary border-primary/50',
+      borderColor: 'border-primary',
+      icon: Microscope,
+      observe:
+        'The NIST SP 800-90B estimators take the conservative minimum across applicable non-IID estimators (or MCV for IID). On a DRBG-output contrast set, the estimators report high min-entropy even though the output is deterministic — proving that statistical estimator output on conditioned or DRBG bytes is never an entropy-source validation. On real hardware jitter recordings, the estimate applies only to that specific dataset under its recorded operating conditions; formal ESV validation additionally requires a noise-source justification, restart tests, and continuous health tests (§3.1, §4.3).',
+      config: { step: 5 },
     },
   ]
 

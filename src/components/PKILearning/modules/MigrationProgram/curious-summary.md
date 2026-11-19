@@ -1,15 +1,15 @@
 ### What This Is About
 
-Migrating an enterprise to post-quantum cryptography is not a single IT project—it is a massive, multi-year, cross-functional program encompassing a 7-Phase framework (Discovery, Inventory, Prioritization, Planning, Pilot, Migration, Validation) aligned with official CISA and NIST guidance.
+For a large enterprise, moving to post-quantum cryptography may require a multi-year, cross-functional program. This module recommends seven planning steps—Discovery, Inventory, Prioritization, Planning, Pilot, Migration, and Validation; that sequence is not an official CISA or NIST phase taxonomy.
 
 ### Why It Matters
 
-A rushed "big-bang" migration is far too risky for core cryptographic infrastructure. The critical path to success is almost always constrained by third-party dependencies; vendor PQC readiness dictates when you can actually transition. Programs fail when they lack executive sponsorship, cross-team coordination, and measurable key performance indicators (KPIs).
+A rushed migration can create service and interoperability risks. Third-party dependencies, vendor readiness, internal capacity, and release windows can all affect sequencing. Clear ownership, cross-team coordination, and useful measures can help the program manage those risks.
 
 ### The Key Takeaway
 
-Agencies and enterprises must establish a dedicated migration program today. Success requires building a Cryptographic Bill of Materials (CBOM), securing C-suite authority, and carefully executing phased rollouts to ensure infrastructure remains operational and compliant throughout the transition.
+Organizations should determine the governance and resources needed for their systems and applicable requirements. A cryptographic inventory or CBOM, accountable owners, staged deployment, and tested recovery plans can support the transition; they do not guarantee uninterrupted operation or compliance.
 
 ### What's Happening
 
-Government agencies are already executing their PQC migration programs following CISA and NIST guidance, while early adopters in the private sector are completing their Discovery and Inventory phases to establish Cryptographic Bills of Materials as the foundation for phased rollouts.
+Federal agencies have current migration guidance in [OMB M-26-15](https://www.whitehouse.gov/wp-content/uploads/2026/06/m-26-15-execution-of-the-migration-to-post-quantum-cryptography.pdf), and CISA publishes a [federal civilian strategy for automated cryptographic discovery and inventory](https://www.cisa.gov/sites/default/files/2024-09/Strategy-for-Migrating-to-Automated-PQC-Discovery-and-Inventory-Tools.pdf). [NIST NCCoE](https://pages.nist.gov/nccoe-migration-post-quantum-cryptography/) publishes migration guidance for government and industry. These sources have different scopes and are not evidence that all agencies or private organizations have completed particular migration phases.

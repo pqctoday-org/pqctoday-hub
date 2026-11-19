@@ -140,7 +140,7 @@ export interface RequirementsPick {
   reason: string
 }
 
-export const OUT_OF_SCOPE_REASON = 'Outside your current country and sector — opened from a link.'
+export const OUT_OF_SCOPE_REASON = 'Outside the selected country and sector.'
 
 /**
  * Resolve `?reqfw=<framework id>` against the in-scope obligations (ADDED
@@ -168,3 +168,41 @@ export function resolveRequirementsPick(
     return { selected: { framework, reason: OUT_OF_SCOPE_REASON }, status: 'out-of-scope' }
   return { selected: rows[0], status: 'unknown' }
 }
+
+/** Reading guides checked against the linked instrument itself. */
+export const instrumentReadingNotes = new Map<
+  string,
+  { scope: string; dates: string; locator: string }
+>([
+  [
+    'OMB-M-26-15',
+    {
+      scope:
+        'U.S. federal agency information systems covered by the memorandum. National Security Systems are excluded.',
+      dates:
+        'Submit the agency migration plan within 120 days of June 24, 2026. The memo phases prioritized key establishment through 2030 and prioritized digital signatures in 2031.',
+      locator: 'Read §1 for applicability and §3.B and §3.D for the plan and milestones.',
+    },
+  ],
+  [
+    'EO-14412',
+    {
+      scope:
+        'Section 4(b) addresses federal High Value Assets and high-impact systems in the non-NSS inventory.',
+      dates:
+        'For those systems, §4(b) sets December 31, 2030 for key establishment and December 31, 2031 for digital signatures.',
+      locator:
+        'Read §4(b)(i)–(iv) together. Section 5(c) has a separate reporting provision for National Security Systems.',
+    },
+  ],
+  [
+    'NIST-IR-8547',
+    {
+      scope: 'NIST transition guidance for algorithm standards and their applicable uses.',
+      dates:
+        'The final report was published October 27, 2026. Read the transition date and status for the precise algorithm and use.',
+      locator:
+        'Read §4 and its algorithm tables before carrying a date into an agency policy decision.',
+    },
+  ],
+])

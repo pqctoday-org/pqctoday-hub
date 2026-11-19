@@ -13,9 +13,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'quantum-threats',
-  version: '1.0.2',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-15',
+  version: '1.0.6',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     // Resource-estimate papers first — every qubit figure in this module comes
@@ -85,12 +85,12 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      "The Quantum Threats module provides an in-depth technical explanation of how quantum computers threaten current cryptographic systems. It covers the physics of qubits and superposition, explains Shor's algorithm (which breaks RSA and ECC) and Grover's algorithm (which weakens AES and SHA), presents CRQC timeline projections from multiple agencies, and details both the HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attack models.",
+      "The Quantum Threats module provides an in-depth technical explanation of how quantum computers threaten current cryptographic systems. It covers the physics of qubits and superposition, explains that a sufficiently capable CRQC running Shor's algorithm threatens RSA and discrete-log public-key cryptography, while Grover gives a quadratic query speedup for unstructured search and hash-collision attacks use different analysis. It presents CRQC planning scenarios and migration milestones from multiple sources, and details both the HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attack models.",
     keyConcepts:
-      "Qubits and superposition — quantum bits exist in a combination of 0 and 1 simultaneously; entanglement correlates them, so an N-qubit register holds a superposition over 2^N basis states at once. That is not 2^N computations run in parallel: a measurement returns one outcome, so an algorithm only wins when interference concentrates amplitude onto the answer — which is precisely what Shor's does. Shor's Algorithm — solves integer factorization (RSA) and discrete logarithm (ECC/DH) in polynomial time O(n^3); RSA-2048 needs approximately 1,537 logical qubits (Gidney 2025, Google Quantum AI — down from the 2016-era ~4,098 figure); per the Google Quantum AI / Ethereum Foundation circuits (March 2026), 256-bit elliptic curves (P-256, Curve25519, secp256k1) break with ≤1,200 logical qubits, a low-end estimate other published work puts higher.",
+      "Qubits and superposition — quantum bits exist in a combination of 0 and 1 simultaneously; entanglement correlates them, so an N-qubit register holds a superposition over 2^N basis states at once. That is not 2^N computations run in parallel: a measurement returns one outcome, so an algorithm only wins when interference concentrates amplitude onto the answer — which is precisely what Shor's does. Shor's Algorithm — solves integer factorization and discrete logarithms in polynomial time. Concrete gate, depth, and qubit counts depend on the circuit and hardware model. Gidney's 2025 RSA-2048 estimate reports 1,537 logical qubits for its particular circuit; the Google Quantum AI / Ethereum Foundation 2026 estimate is specific to secp256k1 and must not be generalized to every 256-bit curve.",
     workshopSummary:
-      'The workshop has 5 interactive steps: Security Level Degradation — visualize how quantum attacks reduce the effective security level of classical algorithms, with configurable algorithm selection. Algorithm Vulnerability Matrix — comprehensive comparison grid of all algorithms versus quantum attack types. Key Size Analyzer — side-by-side comparison of two algorithms showing key sizes, ciphertext sizes, and security parameters.',
+      'The workshop has 6 interactive steps: Step 1 (Security Level Degradation) — visualize how quantum attacks reduce the effective security level of classical algorithms, with configurable algorithm selection; Step 2 (Algorithm Vulnerability Matrix) — comprehensive comparison grid of all algorithms versus quantum attack types; Step 3 (Key Size Analyzer) — side-by-side comparison of two algorithms showing key sizes, ciphertext sizes, and security parameters; Step 4 (HNDL Timeline) — model confidentiality migration deadlines using Mosca’s Theorem; Step 5 (HNFL Risk Calculator) — model signing-credential rotation windows before CRQC recovery; Step 6 (Trajectory to Q-Day) — compare logical-qubit roadmaps against published, model-specific RSA and elliptic-curve resource estimates.',
     relatedStandards:
-      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0. BSI Technical Recommendations (Germany). ANSSI Guidance on Post-Quantum Cryptography (France). Global Risk Institute Quantum Threat Timeline',
+      'NIST IR 8547 (final, October 2026 — Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0 (FAQ v2.2). BSI Technical Recommendations (Germany). ANSSI Guidance on Post-Quantum Cryptography (France). Global Risk Institute Quantum Threat Timeline.',
   },
 }

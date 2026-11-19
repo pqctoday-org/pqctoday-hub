@@ -1,14 +1,15 @@
 /**
  * AttestationPanel.tsx — ML-DSA Quote / Certify with in-browser verification.
  *
- * Marquee TpmPlayground tab. Drives real TPM2_Quote / TPM2_Certify against
- * the WASM TPM using an ML-DSA-{44,65,87} restricted+sign AK, then verifies
+ * Marquee TpmPlayground tab. Drives actual TPM2_Quote / TPM2_Certify wire
+ * commands against the WASM software TPM using an ML-DSA-{44,65,87} restricted+sign AK, then verifies
  * the returned signature in-browser via OpenSSL WASM (`liboqs_dsa.verify`).
  *
  * NOT a trust-anchored production flow — the AK is locally provisioned, the
  * ephemeral EK cert issuer is not a real CA. This demonstrates the
- * cryptographic plumbing end-to-end (TPM-resident ML-DSA AK → real signed
- * attestation → sample cross-stack signature check).
+ * cryptographic plumbing end-to-end (emulator-resident ML-DSA AK → signed
+ * sample attestation → sample cross-stack signature check), without claiming
+ * a physical TPM identity or hardware-backed key protection.
  */
 import { useCallback, useState } from 'react'
 import { AlertCircle, CheckCircle2, Download, Play, Shield, XCircle } from 'lucide-react'

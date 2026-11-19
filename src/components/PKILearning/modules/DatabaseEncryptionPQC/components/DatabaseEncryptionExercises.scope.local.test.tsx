@@ -19,6 +19,19 @@ function renderExercises() {
 }
 
 describe('database encryption exercise wording', () => {
+  it('does not treat data-key operations as simple key-protector rotation', () => {
+    renderExercises()
+    expect(
+      screen.getByText(
+        /Step 4 \(DEK Rotation and Bulk Rewrite\) is high risk because it changes the data-encryption key/
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByText(/principal key re-wraps internal keys/)).toBeInTheDocument()
+    expect(screen.getByText(/file rewrite takes an exclusive lock/)).toBeInTheDocument()
+    expect(screen.queryByText(/PostgreSQL requires offline maintenance window/)).toBeNull()
+    expect(screen.queryByText(/zero downtime/)).toBeNull()
+  })
+
   it('describes the HSM and key-provider routes and the DEK wrap without a blanket FIPS or RSA claim', () => {
     renderExercises()
     expect(

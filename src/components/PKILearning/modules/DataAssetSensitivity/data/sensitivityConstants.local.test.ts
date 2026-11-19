@@ -114,12 +114,12 @@ describe('sample classification scenarios keep storage, confidentiality and cred
     expect(s.explanation).toMatch(/ECDHE is itself quantum-vulnerable/)
   })
 
-  it('computes sample threshold years the right way round for retained records', () => {
-    // Records captured in year c and kept for N years are still held at CRQC year C when c + N >= C,
-    // so with C = 2034 and N = 7 only records captured from 2027 on are in scope; 2026 records are gone by 2033.
+  it('computes sample threshold years from the continuing confidentiality requirement', () => {
+    // Data captured in year c with a confidentiality period of N years still needs protection at C when c + N >= C.
+    // With C = 2034 and N = 7, a captured copy from 2027 is within that period even if the source has been deleted.
     const s = CLASSIFICATION_SCENARIOS.find((c) => c.id === 'cls-05')!
     expect(s.hndlImplication).toMatch(/2034 − 7 = 2027/)
-    expect(s.hndlImplication).toMatch(/captured today \(2026\) would be deleted in 2033/)
+    expect(s.hndlImplication).toMatch(/even if the merchant has deleted its own copy/)
   })
 })
 

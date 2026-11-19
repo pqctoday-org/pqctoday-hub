@@ -52,4 +52,13 @@ describe('Code signing introduction keeps each threat and date in its own catego
     expect(t).toMatch(/verifiers/)
     expect(t).toMatch(/Upgrading Fulcio and Rekor does not change signatures already made/)
   })
+
+  it('separates npm registry signatures from Sigstore provenance and labels roadmap dates as targets', () => {
+    const t = text()
+    expect(t).toMatch(/npm registry signatures use ECDSA P-256/)
+    expect(t).toMatch(/npm.s separate provenance attestations and PyPI attestations use Sigstore/)
+    expect(t).toMatch(/Sigstore.s ML-DSA identifiers remain experimental/)
+    expect(t).toMatch(/production-ready public instance targeted for mid-2027/)
+    expect(t).toMatch(/These are project targets, not current npm or PyPI support/)
+  })
 })

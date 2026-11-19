@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import {
   Trash2,
   FileKey,
@@ -221,20 +221,14 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
 }) => {
   const parts = playgroundMode ? ALL_PARTS.slice(0, 5) : ALL_PARTS
 
-  // ModuleShell owns the tabs, header (context rail), deep-link and time
-  // tracking; this component owns its own stepper state and renders the workshop
-  // through the `workshop` slot so the Playground embed (playgroundMode) can
-  // reuse the exact same panel standalone.
-  const [currentStep, setCurrentStep] = useState(() => clampStep(initialStep, parts.length))
+  // Learn uses the shell's step state, including its URL and embedded step.
+  // The standalone five-step Playground keeps its own local state.
+  const [playgroundStep, setPlaygroundStep] = useState(() => clampStep(initialStep, parts.length))
   const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
   const [workshopRevision, setWorkshopRevision] = useState(0)
   const completedSteps = useModuleStore((state) => state.modules[MODULE_ID]?.completedSteps)
   const earlierStepsRecorded = parts.slice(0, -1).every((part) => completedSteps?.includes(part.id))
   const allStepsRecorded = parts.every((part) => completedSteps?.includes(part.id))
-
-  const handleSetWorkshopStep = useCallback((step: number) => {
-    setCurrentStep(step)
-  }, [])
 
   const recordStep = (stepIndex: number) => {
     const part = ALL_PARTS.at(stepIndex)
@@ -245,55 +239,56 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
     markStepComplete(MODULE_ID, part.id, stepIndex)
   }
 
-  const handlePartChange = (newStep: number) => {
-    if (newStep > currentStep) recordStep(currentStep)
-    setCurrentStep(newStep)
-  }
-
-  const handleReset = () => {
-    if (confirm('Reset PKI workshop progress and return to the first exercise?')) {
-      resetModuleProgress(MODULE_ID)
-      setCurrentStep(0)
-      setWorkshopRevision((revision) => revision + 1)
+  const renderWorkshopPanel = (currentStep: number, setCurrentStep: (step: number) => void) => {
+    const handlePartChange = (newStep: number) => {
+      if (newStep > currentStep) recordStep(currentStep)
+      setCurrentStep(newStep)
     }
-  }
 
-  const workshopPanel = (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Reset button */}
-      <div className="flex justify-end">
-        <Button
-          variant="ghost"
-          onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-status-error rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+    const handleReset = () => {
+      if (confirm('Reset PKI workshop progress and return to the first exercise?')) {
+        resetModuleProgress(MODULE_ID)
+        setCurrentStep(0)
+        setWorkshopRevision((revision) => revision + 1)
+      }
+    }
+
+    return (
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Reset button */}
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            onClick={handleReset}
+            className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-status-error rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+          >
+            <Trash2 size={16} />
+            Reset
+          </Button>
+        </div>
+
+        {/* Part Progress Steps */}
+        <ScrollFadeContainer
+          scrollClassName="px-2 sm:px-0"
+          showScrollHint
+          scrollProps={{ role: 'navigation', 'aria-label': 'PKI workshop steps' }}
         >
-          <Trash2 size={16} />
-          Reset
-        </Button>
-      </div>
+          <div className="flex justify-evenly relative min-w-0">
+            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
-      {/* Part Progress Steps */}
-      <ScrollFadeContainer
-        scrollClassName="px-2 sm:px-0"
-        showScrollHint
-        scrollProps={{ role: 'navigation', 'aria-label': 'PKI workshop steps' }}
-      >
-        <div className="flex justify-evenly relative min-w-0">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
-
-          {parts.map((part, idx) => {
-            const Icon = part.icon
-            return (
-              <Button
-                variant="ghost"
-                key={part.id}
-                onClick={() => setCurrentStep(idx)}
-                aria-label={part.title}
-                aria-current={idx === currentStep ? 'step' : undefined}
-                className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+            {parts.map((part, idx) => {
+              const Icon = part.icon
+              return (
+                <Button
+                  variant="ghost"
+                  key={part.id}
+                  onClick={() => setCurrentStep(idx)}
+                  aria-label={part.title}
+                  aria-current={idx === currentStep ? 'step' : undefined}
+                  className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                     ${
                       idx === currentStep
                         ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -301,91 +296,92 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
                           ? 'border-success text-success'
                           : 'border-border text-muted-foreground'
                     }`}
-                >
-                  <Icon size={16} />
-                </div>
-                <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
-                  {part.title.split(':')[0]}
-                </span>
-              </Button>
-            )
-          })}
-        </div>
-      </ScrollFadeContainer>
+                  >
+                    <Icon size={16} />
+                  </div>
+                  <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
+                    {part.title.split(':')[0]}
+                  </span>
+                </Button>
+              )
+            })}
+          </div>
+        </ScrollFadeContainer>
 
-      {/* Content Area */}
-      <div
-        key={workshopRevision}
-        className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in"
-      >
-        <WorkshopStepHeader
-          moduleId={MODULE_ID}
-          stepId={parts[currentStep].id}
-          stepTitle={parts[currentStep].title}
-          stepDescription={parts[currentStep].description}
-          stepIndex={currentStep}
-          totalSteps={parts.length}
-          steps={parts.map((p) => ({ id: p.id, label: p.title }))}
-          onStepClick={setCurrentStep}
-        />
-
-        <ArtifactSummaryStrip />
-
-        {currentStep === 0 && <CSRGenerator onComplete={() => recordStep(0)} />}
-        {currentStep === 1 && <RootCAGenerator onComplete={() => recordStep(1)} />}
-        {currentStep === 2 && <CertSigner onComplete={() => recordStep(2)} />}
-        {currentStep === 3 && <CertParser onComplete={() => recordStep(3)} />}
-        {currentStep === 4 && <CRLGenerator onComplete={() => recordStep(4)} />}
-        {currentStep === 5 && <MTCComparison onComplete={() => recordStep(5)} />}
-        {currentStep === 6 && <AcmePqcWalkthrough />}
-        {currentStep === 7 && <CertCapacityCalculator />}
-      </div>
-
-      {/* Part Navigation */}
-      <div className="flex flex-col sm:flex-row justify-between gap-3">
-        <Button
-          variant="ghost"
-          onClick={() => handlePartChange(Math.max(0, currentStep - 1))}
-          disabled={currentStep === 0}
-          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+        {/* Content Area */}
+        <div
+          key={workshopRevision}
+          className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in"
         >
-          &larr; Previous Step
-        </Button>
-        {currentStep === parts.length - 1 ? (
-          <div className="space-y-2 sm:text-right">
+          <WorkshopStepHeader
+            moduleId={MODULE_ID}
+            stepId={parts[currentStep].id}
+            stepTitle={parts[currentStep].title}
+            stepDescription={parts[currentStep].description}
+            stepIndex={currentStep}
+            totalSteps={parts.length}
+            steps={parts.map((p) => ({ id: p.id, label: p.title }))}
+            onStepClick={setCurrentStep}
+          />
+
+          <ArtifactSummaryStrip />
+
+          {currentStep === 0 && <CSRGenerator onComplete={() => recordStep(0)} />}
+          {currentStep === 1 && <RootCAGenerator onComplete={() => recordStep(1)} />}
+          {currentStep === 2 && <CertSigner onComplete={() => recordStep(2)} />}
+          {currentStep === 3 && <CertParser onComplete={() => recordStep(3)} />}
+          {currentStep === 4 && <CRLGenerator onComplete={() => recordStep(4)} />}
+          {currentStep === 5 && <MTCComparison onComplete={() => recordStep(5)} />}
+          {currentStep === 6 && <AcmePqcWalkthrough />}
+          {currentStep === 7 && <CertCapacityCalculator />}
+        </div>
+
+        {/* Part Navigation */}
+        <div className="flex flex-col sm:flex-row justify-between gap-3">
+          <Button
+            variant="ghost"
+            onClick={() => handlePartChange(Math.max(0, currentStep - 1))}
+            disabled={currentStep === 0}
+            className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+          >
+            &larr; Previous Step
+          </Button>
+          {currentStep === parts.length - 1 ? (
+            <div className="space-y-2 sm:text-right">
+              <Button
+                variant="gradient"
+                onClick={() => recordStep(currentStep)}
+                disabled={!earlierStepsRecorded || allStepsRecorded}
+                className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
+              >
+                {allStepsRecorded ? 'Workshop steps recorded' : 'Finish workshop'}
+              </Button>
+              {!earlierStepsRecorded && (
+                <p className="text-xs text-muted-foreground">
+                  Review the earlier workshop steps to finish this section.
+                </p>
+              )}
+            </div>
+          ) : (
             <Button
               variant="gradient"
-              onClick={() => recordStep(currentStep)}
-              disabled={!earlierStepsRecorded || allStepsRecorded}
+              onClick={() => handlePartChange(Math.min(parts.length - 1, currentStep + 1))}
               className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
             >
-              {allStepsRecorded ? 'Workshop steps recorded' : 'Finish workshop'}
+              Next Step &rarr;
             </Button>
-            {!earlierStepsRecorded && (
-              <p className="text-xs text-muted-foreground">
-                Review the earlier workshop steps to finish this section.
-              </p>
-            )}
-          </div>
-        ) : (
-          <Button
-            variant="gradient"
-            onClick={() => handlePartChange(Math.min(parts.length - 1, currentStep + 1))}
-            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
-          >
-            Next Step &rarr;
-          </Button>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   // Playground embed: the 5-step workshop stands alone (no tabs/header) plus a
   // hand-off to the capacity calculator.
   if (playgroundMode) {
     return (
       <div>
-        {workshopPanel}
+        {renderWorkshopPanel(playgroundStep, setPlaygroundStep)}
         <PlaygroundNextStep
           toolId="cert-capacity"
           name="Cert Capacity Calculator"
@@ -409,11 +405,11 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
         </>
       }
       learn={(api) => <PKIIntroduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
-      workshop={workshopPanel}
+      workshop={(api) => renderWorkshopPanel(api.currentWorkshopStep, api.selectWorkshopStep)}
       exercises={(api) => (
         <PKIExercises
           onNavigateToWorkshop={() => api.goToWorkshop()}
-          onSetWorkshopStep={handleSetWorkshopStep}
+          onSetWorkshopStep={api.selectWorkshopStep}
         />
       )}
     />

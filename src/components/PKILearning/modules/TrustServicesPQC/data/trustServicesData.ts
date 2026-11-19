@@ -135,22 +135,25 @@ export const LTV_STAGES: LtvStage[] = [
     id: 'creation',
     label: 'Signature creation',
     horizon: 'Day 0',
-    risk: 'None yet — the certificate is valid and the algorithm is current.',
-    action: 'Sign, and capture a qualified timestamp at the moment of signing.',
+    risk: 'This example assumes the signing certificate and algorithm are acceptable at signing.',
+    action:
+      'Obtain a trusted timestamp over the signature and collect the validation evidence required by your profile.',
   },
   {
     id: 'cert-expiry',
     label: 'Certificate expiry',
     horizon: '1–3 years',
     risk: 'The signing certificate expires. Without evidence of when the signature was made, verification becomes ambiguous.',
-    action: 'The timestamp from day 0 is what carries the signature past this point.',
+    action:
+      'Use the trusted timestamp and retained certificate chain and status evidence to evaluate the signature at the relevant earlier time.',
   },
   {
     id: 'revocation-data',
     label: 'Revocation data ages out',
     horizon: '3–10 years',
     risk: 'CRLs and OCSP responses are no longer retrievable, so a verifier cannot establish that the certificate was good at signing time.',
-    action: 'Archive revocation data alongside the signature (the LTV form of the signature).',
+    action:
+      'Preserve the certificate chain and the status evidence required by the validation policy.',
   },
   {
     id: 'algorithm-weakens',
@@ -158,7 +161,7 @@ export const LTV_STAGES: LtvStage[] = [
     horizon: '5–20 years',
     risk: 'The original algorithm is deprecated or broken. A CRQC breaks RSA and ECDSA outright.',
     action:
-      'Re-timestamp with a current algorithm before the old one becomes untrustworthy. Each new timestamp attests to the whole previous structure, so the chain stays evaluable.',
+      'Keep the validated evidence protected by trusted archive timestamps. Renew before an existing protection becomes unacceptable and cover the original records again if the archive hash needs replacing.',
   },
   {
     id: 'archival',
@@ -166,12 +169,12 @@ export const LTV_STAGES: LtvStage[] = [
     horizon: '20–30+ years',
     risk: 'Land registries, notarial deeds and medical consent can outlive several algorithm generations.',
     action:
-      'A repeated re-timestamping policy is the only mechanism that survives this. It has to be planned at signing time — it cannot be retrofitted once the evidence is gone.',
+      'Plan to collect and verify validation evidence at signing and to monitor and renew archive protection as needed. A later timestamp cannot supply missing proof from an earlier period.',
   },
 ]
 
 export const ARCHIVAL_WARNING =
-  'The migration deadline for a 30-year signature is not the CRQC date. It is the earliest of the dates by which the algorithm weakens, the signing certificate stops being valid or a policy cuts the algorithm off. By then every signature you have already made must have been renewed (for example re-timestamped under a quantum-safe algorithm), and that work is proportional to the archive, not to the flow of new signatures.'
+  'Check the active archive timestamp and hash against the applicable policy. Renew before the earliest loss of trust in the current archive protection. Ordinary expiry of the original signer’s certificate can be handled with earlier trusted time and preserved validation evidence. Renewal work covers the affected archive as well as new signatures.'
 
 /**
  * The Signature Longevity Calculator is an illustrative scenario, not a prediction. It assumes a

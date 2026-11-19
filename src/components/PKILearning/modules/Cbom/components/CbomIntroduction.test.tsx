@@ -50,6 +50,16 @@ describe('CBOM introduction: key identity', () => {
   })
 })
 
+describe('CBOM format currency', () => {
+  it('distinguishes released CycloneDX CBOM support from SPDX work in progress', () => {
+    const t = contextText()
+    expect(t).toMatch(/CycloneDX.*ECMA-424.*current spec v1\.7/)
+    expect(t).toMatch(/released SPDX 3\.0\.1 has no comparable dedicated cryptographic-asset model/)
+    expect(t).toMatch(/SPDX 3\.1 work is still a release candidate/)
+    expect(t).toMatch(/separate community list rather than a released CBOM schema/)
+  })
+})
+
 describe('CBOM introduction: attestation', () => {
   it('teaches what to verify and does not equate attestation with non-exportability', () => {
     const t = contextText()

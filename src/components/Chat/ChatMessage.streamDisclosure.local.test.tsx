@@ -16,19 +16,18 @@ function message(
   )
 }
 
-describe('visible provisional assistant text', () => {
-  it('shows a visible provisional status beside actual streamed Markdown and removes it for the final response', () => {
+describe('assistant verification progress', () => {
+  it('shows a progress status and displays content after verification', () => {
     const view = render(message('**Controlled unsupported draft**', true))
     const status = screen.getByRole('status')
     expect(status).toBeVisible()
     expect(status).not.toHaveClass('sr-only')
-    expect(status).toHaveTextContent(
-      'Unverified draft. Automated source checks run after generation.'
-    )
-    expect(screen.getByText('Controlled unsupported draft', { selector: 'strong' })).toBeVisible()
+    expect(status).toHaveTextContent('Checking sources before showing the answer')
+    expect(screen.queryByText('Controlled unsupported draft')).toBeNull()
     expect(screen.queryByRole('button', { name: 'Copy response' })).not.toBeInTheDocument()
     view.rerender(message('Changed draft text', true))
-    expect(screen.getByRole('status')).toHaveTextContent('Unverified draft')
+    expect(screen.getByRole('status')).toHaveTextContent('Checking sources')
+    expect(screen.queryByText('Changed draft text')).toBeNull()
     view.rerender(message('Final source-linked text', false))
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
     expect(screen.getByText('Final source-linked text')).toBeVisible()

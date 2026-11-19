@@ -73,7 +73,7 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       id: 'legacy-server-interop',
       title: 'Legacy Server Interop Failure Analysis',
       description:
-        'After enabling hybrid PQC on your corporate clients (Chrome 130+), help desk tickets spike. Users report intermittent TLS connection failures to internal applications. Use the interoperability matrix to diagnose which server configurations reject the hybrid ClientHello and why.',
+        'After enabling hybrid PQC on supported corporate browsers (Chrome 131+ or Firefox 132+ desktop / 145+ Android, if enabled by policy), help desk tickets spike. Users report intermittent TLS connection failures to internal applications. Use the interoperability matrix to identify which configured server profiles lack a shared group, then validate the exact browser, server, and middlebox path before assigning a cause.',
       badge: 'Interop Testing',
       badgeColor: 'bg-warning/20 text-status-warning border-warning/50',
       observe:

@@ -29,6 +29,12 @@ const HIGH: MilestoneStatusInputs = {
   migrationStarted: true,
   artifactCount: 5,
   execDocCount: 5,
+  businessDocumentTypes: new Set([
+    'compliance-checklist',
+    'risk-treatment-plan',
+    'vendor-scorecard',
+    'migration-verification',
+  ]),
   opensslFileCount: 5,
 }
 
@@ -61,6 +67,23 @@ function allMilestoneRoutes(): string[] {
 }
 
 describe('getMilestoneStatus — coverage guard', () => {
+  it('requires the corresponding artifact, even when another milestone has saved evidence', () => {
+    const afterChecklist: MilestoneStatusInputs = {
+      ...HIGH,
+      businessDocumentTypes: new Set(['compliance-checklist', 'roi-model']),
+    }
+    expect(getMilestoneStatus('/business/tools/compliance-checklist', afterChecklist)).toBe(
+      'completed'
+    )
+    expect(getMilestoneStatus('/business/tools/risk-treatment-plan', afterChecklist)).toBe(
+      'available'
+    )
+    expect(getMilestoneStatus('/business/tools/vendor-scorecard', afterChecklist)).toBe('available')
+    expect(getMilestoneStatus('/business/tools/migration-verification', afterChecklist)).toBe(
+      'available'
+    )
+  })
+
   const routes = allMilestoneRoutes().filter((r) => !(r in EXEMPT))
 
   it.each(routes)('status for %s can move off its baseline', (route) => {

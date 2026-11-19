@@ -58,7 +58,7 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   minisearch: '7.2.0',
   papaparse: '5.7.0',
   prettier: '3.9.9',
-  pyodide: '0.28.3',
+  pyodide: '314.0.8',
   react: '19.3.0',
   'react-dom': '19.3.0',
   'react-focus-lock': '2.13.7',

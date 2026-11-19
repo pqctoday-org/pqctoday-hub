@@ -22,9 +22,10 @@ for (const width of [1280, 390]) {
     await expect(
       page.getByRole('heading', { level: 1, name: /frequently asked questions/i })
     ).toBeVisible()
-    const trigger = page.getByRole('button', { name: /Search \(⌘K\)/ }).first()
-    if (width === 390) await page.keyboard.press('Meta+k')
-    else await trigger.click()
+    const trigger = page.getByRole('button', { name: /^Search/ }).first()
+    // Use the visible control at both widths so the phone case verifies the
+    // touch entry point as well as the responsive search flow.
+    await trigger.click()
 
     const dialog = page.getByRole('dialog', { name: 'Search PQC Today' })
     const input = dialog.getByRole('combobox', { name: 'Search' })

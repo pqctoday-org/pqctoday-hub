@@ -12,4 +12,4 @@ We need researchers to improve post-quantum cryptography. Experiment with NIST a
 
 ### What's Happening
 
-The global research community is actively stress-testing NIST's standardized algorithms through cryptanalysis challenges, side-channel evaluations, and formal verification efforts, ensuring that the foundations of post-quantum security remain robust as deployment scales worldwide.
+NIST finalized its core PQC standards (FIPS 203, 204, and 205), selected code-based HQC as a backup key-encapsulation mechanism in Round 4 (NIST IR 8545), and published its final transition plan (NIST IR 8547, October 2026). Meanwhile, NIST's Additional Digital Signatures process reached Round 3 in 2026 — where active cryptanalysis led to HAWK's withdrawal in July 2026 — underscoring why ongoing academic peer review, side-channel evaluation, and formal verification remain essential as deployment scales worldwide.

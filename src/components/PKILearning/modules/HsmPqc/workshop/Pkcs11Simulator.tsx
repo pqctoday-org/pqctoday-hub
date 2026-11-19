@@ -33,11 +33,13 @@ import {
   hsm_sign,
   hsm_verify,
   hsm_aesWrapKey,
-  hsm_getMechanismList,
+  hsm_getAllMechanisms,
+  hsm_getSessionInfo,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { TokenSigningCapability } from './TokenSigningCapability'
 
 const HSMPQC_KAT_SPECS: KatTestSpec[] = [
   {
@@ -242,42 +244,26 @@ export const runStep = async (
     }
 
     case 7: {
-      // Step 8: Mechanism discovery — C_GetMechanismList + C_GetMechanismInfo
-      const mechs = hsm_getMechanismList(M, 1) // slot 1 (initialized token)
-      const pqcMechs = mechs.filter(
-        (m) =>
-          // ML-KEM, ML-DSA, SLH-DSA ranges
-          (m >= 0x0f && m <= 0x3f) ||
-          // AES family
-          (m >= 0x1080 && m <= 0x210a)
-      )
-      const pqcCount = mechs.filter((m) => m >= 0x0f && m <= 0x3f).length
+      const slot = hsm_getSessionInfo(M, hSession).slotID
+      const mechanisms = hsm_getAllMechanisms(M, slot)
+      if (mechanisms.length === 0) {
+        throw new Error('The HSM returned no mechanism list for this session’s token.')
+      }
+      const sample = ['CKM_ML_KEM', 'CKM_ML_DSA', 'CKM_SLH_DSA'].map((name) => {
+        const info = mechanisms.find((item) => item.name === name)
+        if (!info) return `  ${name}: absent from the mechanism list`
+        const flags = info.flagNames
+          .map((flag) => (flag === 'KEY_PAIR_GEN' ? 'CKF_GENERATE_KEY_PAIR' : `CKF_${flag}`))
+          .join(' | ')
+        return `  ${name} (${info.typeHex}): ${flags || 'no flags returned'}`
+      })
       return [
         'CKR_OK',
-        `  Total mechanisms:   ${mechs.length}`,
-        `  PQC mechanisms:     ${pqcCount}  ← ML-KEM + ML-DSA + SLH-DSA`,
-        `  PQC + AES sample:   0x${pqcMechs
-          .slice(0, 8)
-          .map((m) => m.toString(16).padStart(8, '0'))
-          .join(', 0x')}`,
-        '',
-        '  PQC Mechanism Flags:',
-        '  ML-KEM (0x00000017): CKF_GENERATE_KEY_PAIR | CKF_ENCAPSULATE | CKF_DECAPSULATE',
-        '  ML-DSA (0x0000001d): CKF_GENERATE_KEY_PAIR | CKF_SIGN | CKF_VERIFY',
-        '  SLH-DSA(0x0000002e): CKF_GENERATE_KEY_PAIR | CKF_SIGN | CKF_VERIFY',
-        '',
-        '  Flag Legend (PKCS#11 v3.2 §5.12):',
-        '  CKF_ENCRYPT / DECRYPT    — Symmetric or asymmetric data encryption',
-        '  CKF_SIGN / VERIFY        — Digital signature creation and validation',
-        '  CKF_GENERATE_KEY_PAIR    — Asymmetric key pair generation',
-        '  CKF_GENERATE             — Symmetric key generation',
-        '  CKF_WRAP / UNWRAP        — Key encryption for secure transport',
-        '  CKF_DERIVE               — Key derivation (KDF, ECDH, HKDF)',
-        '  CKF_ENCAPSULATE          — KEM encapsulation (FIPS 203, v3.2 only)',
-        '  CKF_DECAPSULATE          — KEM decapsulation (FIPS 203, v3.2 only)',
-        '  CKF_DIGEST               — Cryptographic hashing (SHA-2, SHA-3)',
-        '',
-        '  Calls:  C_GetMechanismList + C_GetMechanismInfo (per mechanism)',
+        `  Token slot: ${slot}`,
+        `  Total mechanisms: ${mechanisms.length}`,
+        '  Sample mechanism flags:',
+        ...sample,
+        '  Calls: C_GetSessionInfo, C_GetMechanismList and C_GetMechanismInfo',
       ].join('\n')
     }
 
@@ -296,7 +282,7 @@ const STEP_OPERATIONS: string[][] = [
   ['C_GenerateKeyPair', 'C_MessageSignInit', 'C_SignMessage', 'C_MessageSignFinal'], // 5: DSA sign
   ['C_MessageVerifyInit', 'C_VerifyMessage', 'C_MessageVerifyFinal'], // 6: DSA verify
   ['C_GenerateKeyPair', 'C_GenerateKey', 'C_WrapKey'], // 7: Hybrid + wrap
-  ['C_GetMechanismList', 'C_GetMechanismInfo'], // 8: Discovery
+  ['C_GetSessionInfo', 'C_GetMechanismList', 'C_GetMechanismInfo'], // 8: Discovery
 ]
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -452,6 +438,7 @@ export const Pkcs11Simulator: React.FC = () => {
 
       {/* Live HSM Toggle */}
       <LiveHSMToggle hsm={hsm} operations={STEP_OPERATIONS[currentStep] ?? []} autoInit={false} />
+      <TokenSigningCapability hsm={hsm} />
 
       {/* Progress Bar */}
       <div className="glass-panel p-4">

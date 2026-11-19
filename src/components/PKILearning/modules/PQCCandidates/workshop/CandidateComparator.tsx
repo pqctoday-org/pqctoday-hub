@@ -92,11 +92,13 @@ export const CandidateComparator: React.FC<CandidateComparatorProps> = ({ initia
   }, [familyFilter, sortKey, sortDir])
 
   const winner = useMemo(() => {
-    return CANDIDATES.reduce((best, c) => {
+    const eligible = CANDIDATES.filter((c) => c.status !== 'withdrawn')
+    const pool = eligible.length > 0 ? eligible : CANDIDATES
+    return pool.reduce((best, c) => {
       const score = useCase.score(c.publicKeyBytes, c.signatureBytes)
       const bestScore = useCase.score(best.publicKeyBytes, best.signatureBytes)
       return useCase.lowerIsBetter ? (score < bestScore ? c : best) : score > bestScore ? c : best
-    }, CANDIDATES[0])
+    }, pool[0])
   }, [useCase])
 
   const toggleSort = (key: SortKey) => {

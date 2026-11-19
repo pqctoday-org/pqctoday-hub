@@ -41,7 +41,7 @@ function substantiveStatements(answer: string): string[] {
   return answer
     .split(/(?<=[.!?])\s+|\n+/)
     .map(visibleText)
-    .filter((line) => line.length >= 12)
+    .filter(Boolean)
 }
 
 /**
@@ -61,7 +61,7 @@ export function enforceGrounding(
   if (!trimmed) return { approved: false, reasons: ['empty-answer'] }
 
   // The one permitted citation-free output contains no factual answer.
-  if (SAFE_REFUSAL.test(trimmed)) return { approved: true, reasons: [] }
+  if (SAFE_REFUSAL.test(trimmed) && !/[.!?]\s/.test(trimmed)) return { approved: true, reasons: [] }
 
   const reasons = new Set<GroundingFailureReason>()
   if (citations.length === 0) reasons.add('missing-citations')

@@ -279,7 +279,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Startup',
     cc: 0x00000144,
     name: 'TPM2_Startup',
-    section: 'TCG Part 3 §9.3 Tables 4-5 (V1.85 RC4)',
+    section: 'TCG Part 3 §9.3 Tables 4-5 (Version 185, published)',
     phase: 'startup',
     description:
       'Initialize the TPM and establish its internal state. Must be the first command after power-on. TPM_SU_CLEAR resets all transient objects and sessions while preserving NV data.',
@@ -323,11 +323,11 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_SelfTest',
     cc: 0x00000143,
     name: 'TPM2_SelfTest',
-    section: 'TCG Part 3 §10.2 Tables 8-9 (V1.85 RC4)',
+    section: 'TCG Part 3 §10.2 Tables 8-9 (Version 185, published)',
     phase: 'explore',
     description:
       'Instruct the TPM to execute cryptographic self-tests for all or untested algorithms. Returns RC_SUCCESS once all tests pass.',
-    why: 'Verify PQC algorithm implementations (ML-KEM, ML-DSA) are operating correctly before creating keys. Required by FIPS 140-3 power-up testing and TCG V1.85 compliance validation.',
+    why: 'Run the TPM emulator’s algorithm self-tests. A successful command response does not establish FIPS 140-3 validation, prove that required power-up self-tests occurred, or demonstrate conformance to the published specification.',
     showAlgorithm: false,
     params: () => [
       {
@@ -367,7 +367,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_GetCapability',
     cc: 0x0000017a,
     name: 'TPM2_GetCapability',
-    section: 'TCG Part 3 §30.2 Tables 238-239 (V1.85 RC4)',
+    section: 'TCG Part 3 §30.2 Tables 238-239 (Version 185, published)',
     phase: 'explore',
     description:
       'Query the TPM for registered capabilities — algorithm IDs, supported commands, PCR properties, and active handles.',
@@ -453,11 +453,11 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_GetRandom',
     cc: 0x0000017b,
     name: 'TPM2_GetRandom',
-    section: 'TCG Part 3 §16.1 Tables 75-76 (V1.85 RC4)',
+    section: 'TCG TPM 2.0 Library Part 3 §16.1 Tables 75-76 (Version 185, published)',
     phase: 'explore',
     description:
-      'Draw bytes from the TPM internal DRBG (AES-256-CTR, seeded at manufacture). Returns cryptographically strong random bytes isolated from OS-level entropy.',
-    why: 'Access hardware entropy for key generation, nonce creation, or attestation challenges. TPM-sourced randomness is isolated and cannot be manipulated by an OS-level attacker.',
+      'Request random bytes through TPM2_GetRandom. The Library spec requires a TPM random-number generator; this browser uses a software emulator and does not assess the generator, its seed, entropy quality, or isolation from the host.',
+    why: 'Use this command to learn its request/response format. Do not infer hardware entropy, cryptographic quality, or protection from an OS-level attacker from this emulator output.',
     showAlgorithm: false,
     params: () => [
       {
@@ -465,7 +465,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         tpmType: 'UINT16',
         value: '0x0020 (32)',
         description:
-          'Request 32 bytes (256 bits). The TPM may return fewer if the DRBG buffer is low — always check the returned size.',
+          'Request 32 bytes (256 bits). The response may contain fewer bytes than requested; check the returned size. The specification does not identify a particular internal reason such as a low DRBG buffer.',
       },
     ],
     respFields: () => [
@@ -503,7 +503,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         byteOffset: 12,
         byteSize: 0,
         description:
-          'Random bytes from the AES-256-CTR DRBG. Verify non-trivial entropy (not all zeros, not repeating pattern).',
+          'Bytes returned by the local software TPM emulator. A nonconstant sample is not an entropy test and does not assess the generator or its seeding.',
       },
     ],
   },
@@ -512,10 +512,10 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_CreatePrimary',
     cc: 0x00000131,
     name: 'TPM2_CreatePrimary',
-    section: 'TCG Part 3 §24.1 Tables 191-192 (V1.85 RC4)',
+    section: 'TCG Part 3 §24.1 Tables 191-192 (Version 185, published)',
     phase: 'create',
     description:
-      'Create a primary key in a specified hierarchy and load it into the TPM. Primary keys are derived deterministically from the hierarchy seed and the public template — the same template always reproduces the same key.',
+      'Create a primary key in a specified hierarchy and load it into the TPM. Primary-key derivation is deterministic from the hierarchy seed and public template; with the same seed and template in the same hierarchy, the primary key is reproducible.',
     why: 'Establishes the root of trust for PQC operations. An ML-KEM-768 primary key forms the Endorsement Key (EK) for key encapsulation. An ML-DSA-65 primary key forms the Attestation Key (AK) for platform identity signing.',
     showAlgorithm: true,
     params: (algorithm: string) => {
@@ -585,7 +585,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
           tpmType: 'TPMI_RH_HIERARCHY',
           value: isKem ? '0x4000000B (TPM_RH_ENDORSEMENT)' : '0x40000001 (TPM_RH_OWNER)',
           description: isKem
-            ? 'Endorsement hierarchy — EK keys identify the platform; certified by the TPM manufacturer.'
+            ? 'Endorsement hierarchy — commonly used for EKs. A manufacturer may issue an EK credential; this emulator sample is not one.'
             : 'Owner/Storage hierarchy — AK keys are user-controlled and used for attestation.',
         },
         {
@@ -713,7 +713,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Encapsulate',
     cc: 0x000001a7,
     name: 'TPM2_Encapsulate',
-    section: 'TCG Part 3 §14.10 Tables 60-61 (V1.85 RC4)',
+    section: 'TCG Part 3 §14.10 Tables 60-61 (Version 185, published)',
     phase: 'use',
     requiresKem: true,
     showAlgorithm: false,
@@ -791,7 +791,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Decapsulate',
     cc: 0x000001a8,
     name: 'TPM2_Decapsulate',
-    section: 'TCG Part 3 §14.11 Tables 62-63 (V1.85 RC4)',
+    section: 'TCG Part 3 §14.11 Tables 62-63 (Version 185, published)',
     phase: 'use',
     requiresKem: true,
     showAlgorithm: false,
@@ -1006,7 +1006,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_SignDigest',
     cc: 0x000001a6,
     name: 'TPM2_SignDigest',
-    section: 'TCG Part 3 §20.7 Tables 126-127 (V1.85 RC4)',
+    section: 'TCG Part 3 §20.7 Tables 126-127 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: false,
@@ -1130,7 +1130,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_VerifyDigestSignature',
     cc: 0x000001a5,
     name: 'TPM2_VerifyDigestSignature',
-    section: 'TCG Part 3 §20.4 Tables 120-121 (V1.85 RC4)',
+    section: 'TCG Part 3 §20.4 Tables 120-121 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: false,
@@ -1252,7 +1252,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_SignSequenceStart',
     cc: 0x000001aa,
     name: 'TPM2_SignSequenceStart',
-    section: 'TCG Part 3 §17.5 Tables 89-90 (V1.85 RC4)',
+    section: 'TCG Part 3 §17.5 Tables 87-88 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: true,
@@ -1332,7 +1332,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_SignSequenceComplete',
     cc: 0x000001a4,
     name: 'TPM2_SignSequenceComplete',
-    section: 'TCG Part 3 §20.6 Tables 124-125 (V1.85 RC4)',
+    section: 'TCG Part 3 §20.6 Tables 124-125 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: true,
@@ -1427,7 +1427,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_VerifySequenceStart',
     cc: 0x000001a9,
     name: 'TPM2_VerifySequenceStart',
-    section: 'TCG Part 3 §17.6 Tables 87-88 (V1.85 RC4)',
+    section: 'TCG Part 3 §17.6 Tables 89-90 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: false,
@@ -1586,7 +1586,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_VerifySequenceComplete',
     cc: 0x000001a3,
     name: 'TPM2_VerifySequenceComplete',
-    section: 'TCG Part 3 §20.3 Tables 118-119 (V1.85 RC4)',
+    section: 'TCG Part 3 §20.3 Tables 118-119 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: false,
@@ -1695,7 +1695,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_ReadPublic',
     cc: 0x00000173,
     name: 'TPM2_ReadPublic',
-    section: 'TCG Part 3 §12.4 Tables 24-25 (V1.85 RC4)',
+    section: 'TCG Part 3 §12.4 Tables 24-25 (Version 185, published)',
     phase: 'use',
     showAlgorithm: false,
     description:
@@ -1760,7 +1760,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Quote',
     cc: 0x00000158,
     name: 'TPM2_Quote',
-    section: 'TCG Part 3 §18.4 Tables 101-102 (V1.85 RC4)',
+    section: 'TCG Part 3 §18.4 Tables 101-102 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: false,
@@ -1823,7 +1823,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Certify',
     cc: 0x00000148,
     name: 'TPM2_Certify',
-    section: 'TCG Part 3 §18.2 Tables 97-98 (V1.85 RC4)',
+    section: 'TCG Part 3 §18.2 Tables 97-98 (Version 185, published)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: false,
@@ -1885,7 +1885,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_NV_ReadPublic',
     cc: 0x00000169,
     name: 'TPM2_NV_ReadPublic',
-    section: 'TCG Part 3 §31.6 Tables 251-252 (V1.85 RC4)',
+    section: 'TCG Part 3 §31.6 Tables 251-252 (Version 185, published)',
     phase: 'use',
     showAlgorithm: false,
     description:
@@ -2010,7 +2010,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_NV_Read',
     cc: 0x0000014e,
     name: 'TPM2_NV_Read',
-    section: 'TCG Part 3 §31.13 Tables 265-266 (V1.85 RC4)',
+    section: 'TCG Part 3 §31.13 Tables 265-266 (Version 185, published)',
     phase: 'use',
     showAlgorithm: false,
     description:

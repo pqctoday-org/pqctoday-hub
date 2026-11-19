@@ -8,8 +8,8 @@ Passing algorithm tests is only the first step toward FIPS 140-3; the module cer
 
 ### The Key Takeaway
 
-A listing on the Modules In Process list (voluntary, and not every module in review is shown) is a queue position, not a certificate; a module is validated only once NIST and CCCS issue a FIPS 140-3 certificate.
+A listing on the Modules In Process list (voluntary, and not every module in review is shown) is a queue position, not a certificate; a module is validated only once NIST and CCCS issue a FIPS 140-3 certificate. Adding ML-KEM, ML-DSA or SLH-DSA also requires module-internal cryptographic algorithm self-tests (CASTs) and pair-wise consistency tests (PCTs) under IG 10.3.A, not just external ACVP vectors.
 
 ### What's Happening
 
-A US executive order directs the Secretary of Commerce, through NIST's Director, to revise the module validation program's processes within 180 days of the order's date, insofar as appropriate and consistent with applicable law, so that validations of cryptographic modules are accelerated.
+All FIPS 140-2 certificates moved to the CMVP Historical list in September 2026 (still usable for existing systems, but not recommended for new federal procurements). Meanwhile, US Executive Order 14412 directs the Secretary of Commerce, through NIST's Director, to revise CMVP processes within 180 days (around 19 December 2026) to accelerate validations of cryptographic modules.

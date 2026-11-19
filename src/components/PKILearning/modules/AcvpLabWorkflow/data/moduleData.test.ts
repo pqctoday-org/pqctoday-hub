@@ -37,11 +37,13 @@ describe('acvp-lab-workflow sources', () => {
     for (const s of all) expect(s.url, s.id).toMatch(/^https:\/\//)
   })
 
-  it('pins the core draft by commit, not by a site rebuild date', () => {
+  it('records the current published protocol draft and immutable example snapshot', () => {
     expect(SOURCES.acvpSpec.revision).toBe(
-      'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)'
+      'draft-ietf-acvp-spec-01, 30 October 2026 (Internet-Draft; current published edition). Reproducible protocol examples remain pinned to usnistgov/ACVP @ d13c633.'
     )
     expect(content.narratives.acvpSpecRevision).toBe(SOURCES.acvpSpec.revision)
+    expect(SOURCES.acvpMlDsaCurrent.revision).toContain('published 2026-10-30')
+    expect(SOURCES.acvpMlDsaCurrent.revision).toContain('not a final standard')
   })
 
   it('usnistgov sources are pinned to a full commit, never a branch', () => {

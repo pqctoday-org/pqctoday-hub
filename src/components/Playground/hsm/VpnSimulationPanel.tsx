@@ -628,6 +628,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     return () => clearInterval(id)
   }, [ssState])
   const [charonFailed, setCharonFailed] = useState(false)
+  const [childSaRoles, setChildSaRoles] = useState<ReadonlySet<'initiator' | 'responder'>>(
+    () => new Set()
+  )
+  const [proposalRejected, setProposalRejected] = useState(false)
+  const [responderKemSize, setResponderKemSize] = useState<KemSize | null>(null)
   const [sabError, setSabError] = useState<string | null>(null)
   const [rpcMode, setRpcMode] = useState(() => {
     const p = new URLSearchParams(window.location.search).get('vpnRpc')
@@ -829,6 +834,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     const p = new URLSearchParams(window.location.search).get('vpnAuth')
     return p === 'dual' ? 'dual' : 'psk'
   })
+  const canCompareProposals =
+    authMode === 'psk' && selectedMode !== 'classical' && !vpnKemProposalOverride
+  const activeResponderKemSize = canCompareProposals ? (responderKemSize ?? kemSize) : kemSize
+  const responderKemOverride = canCompareProposals
+    ? buildKemOverrideProposal(selectedMode, activeResponderKemSize)
+    : undefined
   const [clientPsk, setClientPsk] = useState('pqc-wasm-demo-key-2026')
   const [serverPsk, setServerPsk] = useState('pqc-wasm-demo-key-2026')
   const pskMismatch = clientPsk !== serverPsk
@@ -1007,13 +1018,28 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       buildIpsecConf('initiator', selectedMode, authMode, allowFragmentation, kemSize)
     )
     setActiveRespIpsec(
-      buildIpsecConf('responder', selectedMode, authMode, allowFragmentation, kemSize)
+      buildIpsecConf(
+        'responder',
+        selectedMode,
+        authMode,
+        allowFragmentation,
+        activeResponderKemSize
+      )
     )
 
     const updatedCharon = buildCharonConf(authMode, mtu)
     setActiveInitConfig(updatedCharon)
     setActiveRespConfig(updatedCharon)
-  }, [selectedMode, kemSize, authMode, mtu, allowFragmentation, buildIpsecConf, buildCharonConf])
+  }, [
+    selectedMode,
+    kemSize,
+    activeResponderKemSize,
+    authMode,
+    mtu,
+    allowFragmentation,
+    buildIpsecConf,
+    buildCharonConf,
+  ])
 
   React.useEffect(() => {
     const handleLog = (log: StrongSwanLog) => {
@@ -1039,6 +1065,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
       // Auto-advance UI slideshow based on actual charon log output
       const text = log.text.toLowerCase()
+
+      if (log.role && /\bchild_sa\b.* established with spis\b/.test(text)) {
+        const role = log.role
+        setChildSaRoles((previous) => new Set(previous).add(role))
+      }
+      if (log.role && text.includes('no_proposal_chosen')) setProposalRejected(true)
 
       // Basic IKEv2 heuristic log parser mapping
       if (text.includes('initiating ike_sa')) {
@@ -1067,6 +1099,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     }
     const handleState = (state: StrongSwanState) => {
       setSsState(state)
+      if (state === 'UNINITIALIZED' || state === 'LOADING') {
+        setChildSaRoles(new Set())
+        setProposalRejected(false)
+      }
       setSsErrorMsg(state === 'ERROR' ? strongSwanEngine.lastError : null)
     }
 
@@ -2518,8 +2554,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const stepsLengthRef = React.useRef(steps.length)
   stepsLengthRef.current = steps.length
 
-  const hasCrashed = useMemo(() => {
-    if (charonFailed) return true
+  const hasCrashed = charonFailed || proposalRejected || ssState === 'ERROR'
+  const modeledMtuExceeded = useMemo(() => {
     if (exchange && steps.length > 0) {
       const stepData = steps[currentStep]
       if (stepData) {
@@ -2530,9 +2566,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       }
     }
     return false
-  }, [currentStep, mtu, allowFragmentation, exchange, steps, charonFailed])
+  }, [currentStep, mtu, allowFragmentation, exchange, steps])
 
-  const tunnelUp = steps.length > 0 && currentStep === steps.length - 1 && !hasCrashed
+  const tunnelUp = childSaRoles.size === 2 && !hasCrashed
 
   // Every setting that shapes the exchange. The run may only be saved with the
   // settings it was established with: `currentStep` survives changes to auth,
@@ -2541,6 +2577,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const runSettingsKey = [
     selectedMode,
     kemSize,
+    activeResponderKemSize,
     authMode,
     clientAlg,
     clientSize,
@@ -3651,10 +3688,32 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   </Button>
                 ))}
               </div>
+              {canCompareProposals && (
+                <label className="block text-sm space-y-1">
+                  <span className="block font-semibold">Responder ML-KEM requirement</span>
+                  {/* eslint-disable-next-line no-restricted-syntax -- Native <select> preserves <label> association, combobox role, and selectOption() test semantics */}
+                  <select
+                    value={responderKemSize ?? 'match'}
+                    className="min-h-[44px] max-w-full rounded-md border border-border bg-background px-2"
+                    onChange={(event) => {
+                      const value = Number(event.target.value)
+                      handleReset()
+                      setResponderKemSize(
+                        value === 512 || value === 768 || value === 1024 ? value : null
+                      )
+                    }}
+                  >
+                    <option value="match">Match the initiator</option>
+                    <option value="512">Require ML-KEM-512</option>
+                    <option value="768">Require ML-KEM-768</option>
+                    <option value="1024">Require ML-KEM-1024</option>
+                  </select>
+                </label>
+              )}
               <p className="text-[11px] text-muted-foreground">
                 {selectedMode === 'classical'
                   ? 'Classical mode uses ECDH/MODP key exchange, not ML-KEM — this selector has no effect.'
-                  : `NIST ${KEM_NIST_LEVEL[kemSize]} · encapsulation key ${KEM_PUBKEY_BYTES[kemSize].toLocaleString()} B · ciphertext ${KEM_CIPHERTEXT_BYTES[kemSize].toLocaleString()} B (FIPS 203). Real C_GenerateKeyPair/C_EncapsulateKey/C_DecapsulateKey run at this size — verify via the PKCS#11 trace log below.`}
+                  : `NIST ${KEM_NIST_LEVEL[kemSize]} · encapsulation key ${KEM_PUBKEY_BYTES[kemSize].toLocaleString()} B · ciphertext ${KEM_CIPHERTEXT_BYTES[kemSize].toLocaleString()} B (FIPS 203). These are the initiator proposal sizes. The daemon log shows whether the peers agree.`}
               </p>
             </div>
 
@@ -3875,6 +3934,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       createdAt: Date.now(),
                       mode: selectedMode,
                       authMode,
+                      initiatorKemSize: kemSize,
+                      responderKemSize: canCompareProposals ? responderKemSize : null,
                       clientVariant: clientAlg === 'RSA' ? clientClassAlg : `ML-DSA-${clientSize}`,
                       serverVariant: serverAlg === 'RSA' ? serverClassAlg : `ML-DSA-${serverSize}`,
                       mtu,
@@ -3931,6 +3992,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </TabsContent>
       </Tabs>
 
+      {modeledMtuExceeded && !hasCrashed && (
+        <p className="text-xs text-status-warning">
+          The illustrated packet exceeds the selected MTU with fragmentation disabled. The live
+          daemon outcome appears below.
+        </p>
+      )}
       {hasCrashed && (
         <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-xl flex items-center justify-between text-destructive animate-in fade-in slide-in-from-top-4">
           <div className="flex items-center gap-3">
@@ -3938,9 +4005,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <div>
               <h2 className="font-bold">Tunnel initialization failed</h2>
               <p className="text-xs opacity-80">
-                charon aborted the IKE_SA. Common causes: PKCS#11 session not logged in, proposal
-                mismatch, MTU exceeded with fragmentation off ({mtu}-byte limit), or cert-auth
-                failure. Check the charon.log panel below for the specific error.
+                {proposalRejected
+                  ? 'The daemon reported NO_PROPOSAL_CHOSEN. The peers did not agree on a proposal.'
+                  : 'Check the charon.log panel for the reported daemon or negotiation error.'}
               </p>
             </div>
           </div>
@@ -4053,7 +4120,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                               payload={payload}
                               index={pIdx}
                               highlighted={idx === currentStep}
-                              isFragmented={hasCrashed && idx === currentStep}
+                              isFragmented={modeledMtuExceeded && idx === currentStep}
                             />
                           ))
                           if (totalSize > mtu && !canFragment(step.label)) {
@@ -4172,7 +4239,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                               payload={payload}
                               index={pIdx}
                               highlighted={idx === currentStep}
-                              isFragmented={hasCrashed && idx === currentStep}
+                              isFragmented={modeledMtuExceeded && idx === currentStep}
                             />
                           ))
                           if (totalSize > mtu && !canFragment(step.label)) {
@@ -4218,7 +4285,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             Sequence {currentStep + 1} of {steps.length}
           </span>
           <span
-            className={`px-2 py-0.5 rounded text-[10px] uppercase ${ssState === 'RUNNING' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}`}
+            className={`px-2 py-0.5 rounded text-[10px] uppercase ${ssState === 'RUNNING' ? 'bg-success/20 text-foreground' : 'bg-muted text-muted-foreground'}`}
           >
             Daemon: {ssState}
           </span>
@@ -4523,6 +4590,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           fragmentation: allowFragmentation,
                           childSa: true,
                           kemOverride: kemOverrideProposal,
+                          responderKemOverride,
                         }
                       )
                     }
@@ -4563,7 +4631,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             >
               {hasCrashed
                 ? 'Tunnel Failed'
-                : currentStep === steps.length - 1
+                : tunnelUp
                   ? 'Tunnel Established'
                   : 'Awaiting Negotiation...'}
             </Button>
@@ -4608,9 +4676,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               return (
                 <div
                   key={i}
-                  className={log.level === 'error' ? 'text-destructive' : 'text-success/80'}
+                  className={log.level === 'error' ? 'text-destructive' : 'text-foreground'}
                 >
-                  <span className="opacity-50 mr-2">
+                  <span className="text-muted-foreground mr-2">
                     [{new Date().toISOString().split('T')[1]?.split('.')[0]}]
                   </span>
                   {phase && (
@@ -4660,7 +4728,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           )}
         </div>
         <VpnScorecard
-          tunnelEstablished={tunnelUp}
+          tunnelEstablished={runSavable}
           keMode={selectedMode}
           authAlg={initiatorAuthAlg}
           fragmentationEnabled={allowFragmentation}
@@ -4695,14 +4763,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         )}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div
-            className={`p-3 rounded-xl border flex flex-col justify-center items-center ${currentStep === steps.length - 1 && !hasCrashed ? 'bg-success/10 border-success/30' : 'bg-card border-border'}`}
+            className={`p-3 rounded-xl border flex flex-col justify-center items-center ${tunnelUp ? 'bg-success/10 border-success/30' : 'bg-card border-border'}`}
           >
-            <span
-              className={`text-2xl font-bold ${currentStep === steps.length - 1 && !hasCrashed ? 'text-success' : ''}`}
-            >
+            <span className={`text-2xl font-bold ${tunnelUp ? 'text-success' : ''}`}>
               {hasCrashed ? (
                 '--'
-              ) : currentStep === steps.length - 1 ? (
+              ) : tunnelUp ? (
                 <CheckCircle className="inline-block text-success" />
               ) : (
                 '...'
@@ -5437,6 +5503,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         if (!rec) return
                         setSelectedMode(rec.mode)
                         setAuthMode(rec.authMode)
+                        setKemSize(rec.initiatorKemSize ?? 768)
+                        setResponderKemSize(rec.responderKemSize ?? null)
                         setMtu(rec.mtu)
                         setAllowFragmentation(rec.allowFragmentation)
                         setActiveInitConfig(rec.strongswanConfInit)

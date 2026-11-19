@@ -78,10 +78,12 @@ describe('secret classification: key-protection boundaries', () => {
     expect(everything).not.toMatch(/their KEK wrappers need ML-KEM/i)
   })
 
-  it('says only the asymmetric step needs replacing and symmetric KEKs stay', () => {
+  it('separates asymmetric migration from checking the symmetric KEK policy', () => {
     const dek = category('encryption-keys')
     expect(dek.atRestRisk).toMatch(/symmetric AES KEK are not broken by Shor/i)
-    expect(dek.mitigationStrategy).toMatch(/leave symmetric KEKs as they are/i)
+    expect(dek.mitigationStrategy).toMatch(
+      /check symmetric KEK strength against your security profile/i
+    )
     const rotation = ROTATION_POLICIES.find((p) => p.id === 'dek-rotation')
     expect(rotation?.pqcConsideration).toMatch(
       /rotating the DEK itself means re-encrypting the data/i

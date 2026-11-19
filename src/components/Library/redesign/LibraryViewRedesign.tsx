@@ -15,6 +15,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import { BookOpen, ChevronDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -160,7 +161,10 @@ export function LibraryViewRedesign({
   const activePurpose = (params.get('purpose') as LibraryPurposeSelection | null) ?? 'all'
   const activeCategory = params.get('cat') ?? 'All'
   const activeOrg = params.get('org') ?? 'All'
-  const filterText = params.get('q') ?? ''
+  const { text: filterText, update: setFilterText } = useUrlBackedText(
+    params.get('q') ?? '',
+    (value) => setParam('q', value, { replace: true })
+  )
   // Old shared links (?lifecycle=Published) open with the matching new label.
   const lifecycleBucket = parseLifecycleParam(params.get('lifecycle')) ?? 'All'
   // Research topics the Library has documents for — empty until rows are
@@ -708,7 +712,7 @@ export function LibraryViewRedesign({
         <div className="@container min-w-0 flex-1 space-y-4">
           <LibraryControlDeck
             search={filterText}
-            onSearch={(q) => setParam('q', q, { replace: true })}
+            onSearch={setFilterText}
             semanticMode={semantic.mode}
             semanticLoading={semantic.loading}
             semanticHitCount={semantic.hits.length}

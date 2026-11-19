@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { Search, LayoutGrid, List, Bookmark, SlidersHorizontal, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,6 +9,9 @@ import type { PersonaId } from '@/data/learningPersonas'
 import type { NiceProficiencyTier } from '@/data/niceFramework'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
+import { WorkshopSearchMatches } from '@/components/ui/WorkshopSearchMatches'
 import { useModuleTopicKeywords } from '@/hooks/useModuleTopicKeywords'
 import { getNiceMapping } from '@/data/niceModuleMapping'
 import { ModuleCard } from '../ModuleCard'
@@ -64,10 +67,26 @@ export const BrowseAllView = ({
   initialTrack?: string
 }) => {
   const navigate = useNavigate()
+  const isEmbedded = useIsEmbedded()
   const modules = useModuleStore((s) => s.modules)
   const myLearnModules = useBookmarkStore((s) => s.myLearnModules)
 
-  const [search, setSearch] = useState('')
+  const [params, setParams] = useSearchParams()
+  const {
+    text: search,
+    update: setSearch,
+    reset: resetSearch,
+  } = useUrlBackedText(params.get('q') ?? '', (next) => {
+    setParams(
+      (prev) => {
+        const updated = new URLSearchParams(prev)
+        if (next) updated.set('q', next)
+        else updated.delete('q')
+        return updated
+      },
+      { replace: true }
+    )
+  })
   // Curated per-module topic keywords (e.g. "Purdue model" for IoT & OT), loaded lazily on the
   // first search; until they arrive, title + description still match.
   const hasSearch = search.trim().length > 0
@@ -114,6 +133,26 @@ export const BrowseAllView = ({
     [search, status, sort, track, savedOnly, savedSet, tier, taxonomyIds, modules, topicKeywords]
   )
 
+  const clearFilters = () => {
+    resetSearch('')
+    if (!isEmbedded) {
+      setParams(
+        (prev) => {
+          const updated = new URLSearchParams(prev)
+          updated.delete('q')
+          updated.delete('track')
+          return updated
+        },
+        { replace: true }
+      )
+    }
+    setTrack(BROWSE_ALL)
+    setStatus(BROWSE_ALL)
+    setSavedOnly(false)
+    setTier('expert')
+    setTaxonomy({ algorithm: null, standard: null })
+  }
+
   const shownCount = matches.reduce((n, g) => n + g.modules.length, 0)
   const trackChips = [BROWSE_ALL, ...MODULE_TRACKS.map((t) => t.track)]
 
@@ -148,7 +187,7 @@ export const BrowseAllView = ({
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search modules — try 'TLS' or 'HSM'"
+              placeholder="Search module or workshop topics"
               aria-label="Search modules"
               className="pl-8 h-8 text-xs"
             />
@@ -168,7 +207,7 @@ export const BrowseAllView = ({
             defaultLabel="Recommended"
           />
           <div className="flex items-center gap-2 ml-auto">
-            <span className="text-xs text-muted-foreground">
+            <span role="status" className="text-xs text-muted-foreground">
               Showing <span className="font-semibold text-foreground">{shownCount}</span> of{' '}
               {TOTAL_MODULE_COUNT}
             </span>
@@ -281,12 +320,19 @@ export const BrowseAllView = ({
         )}
       </div>
 
+      {!isEmbedded && !niceMode && (
+        <WorkshopSearchMatches groups={matches} search={search} track={track} />
+      )}
+
       {/* Body: workforce lens OR the catalog */}
       {niceMode ? (
         <NiceView navigate={(id: string) => navigate(id)} activePersonaId={personaId} />
       ) : shownCount === 0 ? (
         <div className="glass-panel rounded-xl p-8 text-center text-sm text-muted-foreground">
-          No modules match your filters.
+          <p>No modules match your filters.</p>
+          <Button type="button" variant="outline" size="sm" className="mt-3" onClick={clearFilters}>
+            Clear filters
+          </Button>
         </div>
       ) : view === 'grid' ? (
         <div className="space-y-6">

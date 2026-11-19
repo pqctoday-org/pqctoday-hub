@@ -222,15 +222,12 @@ describe('ChatMessage — copy functionality', () => {
 })
 
 describe('ChatMessage — streaming', () => {
-  it('shows streaming cursor when isStreaming is true', () => {
-    render(<ChatMessage sender="assistant" content="Thinking..." isStreaming />)
+  it('shows source-check progress without rendering provisional Markdown', () => {
+    render(<ChatMessage sender="assistant" content="Controlled draft" isStreaming />)
 
-    // The streaming cursor is an inline element next to the markdown content.
-    // It has animate-pulse class. We can find it via the markdown testid's sibling.
-    const markdown = screen.getByTestId('markdown')
-    const wrapper = markdown.parentElement
-    const cursor = wrapper?.querySelector('[class*="animate-pulse"]')
-    expect(cursor).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Checking sources')
+    expect(screen.queryByText('Controlled draft')).toBeNull()
+    expect(screen.queryByTestId('markdown')).toBeNull()
   })
 
   it('hides source attribution during streaming', () => {

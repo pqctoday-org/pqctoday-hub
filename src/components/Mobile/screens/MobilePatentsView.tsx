@@ -7,12 +7,13 @@ import { patentsData } from '@/data/patentsData'
 import {
   PQC_ONLY_LS_KEY,
   SCOPE_PARAM,
+  exactUSPatentNumber,
   findPatentByNumber,
   readPqcOnly,
   readScopeParam,
 } from '@/data/patentsScope'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
-import { isPqcPatent } from '@/components/Patents/patentColumns'
+import { isPqcPatent, PATENTS_CSV_COLUMNS } from '@/components/Patents/patentColumns'
 import { usePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
 import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/PatentTypes'
 import { cn } from '@/lib/utils'
@@ -25,9 +26,13 @@ import {
   PUBLICATION_KIND_LABELS,
   QUANTUM_SAFE_BASIS_LABELS,
   publicationDateVerb,
+  publicationScope,
+  USPTO_PUBLIC_SEARCH,
 } from '@/data/patentFilters'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
-import { logExternalLink } from '@/utils/analytics'
+import { logExternalLink, logPatentExport } from '@/utils/analytics'
+import { csvFilename, downloadCsv, generateCsv } from '@/utils/csvExport'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 
 const AGILITY_ORDER: CryptoAgilityMode[] = [
   'classical_only',
@@ -156,17 +161,15 @@ export function MobilePatentsView() {
   // The search box reads desktop's Search-tab query (?sq), else its Explore
   // text filter (?search), and writes ?sq back (replace), so a phone link
   // opens desktop on the same query and vice versa.
-  const [searchText, setSearchText] = useState(() => params.get('sq') ?? params.get('search') ?? '')
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      setSearchText(value)
+  const { text: searchText, update: handleSearchChange } = useUrlBackedText(
+    params.get('sq') ?? params.get('search') ?? '',
+    (value) => {
       const next = new URLSearchParams(params)
-      if (value.trim()) next.set('sq', value.trim())
+      if (value) next.set('sq', value)
       else next.delete('sq')
       next.delete('search')
       setParams(next, { replace: true })
-    },
-    [params, setParams]
+    }
   )
   const patentParam = params.get('patent')
   // Same ?patent param as desktop, either `US…` or bare-number form, resolved
@@ -260,7 +263,9 @@ export function MobilePatentsView() {
   const filtered = useMemo(() => {
     let data = urlFiltered
     if (searchText) {
-      const q = searchText.toLowerCase()
+      const exact = exactUSPatentNumber(searchText)
+      if (exact) return data.filter((patent) => patent.patentNumber === exact)
+      const q = searchText.trim().toLowerCase()
       data = data.filter(
         (p) =>
           p.patentNumber.toLowerCase().includes(q) ||
@@ -388,7 +393,8 @@ export function MobilePatentsView() {
           type="text"
           value={searchText}
           onChange={(e) => handleSearchChange(e.target.value)}
-          placeholder="Search assignee, algorithm or protocol"
+          aria-label="Patent search"
+          placeholder="Search patent number, assignee or algorithm"
           className="h-11 flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
       </div>
@@ -416,7 +422,24 @@ export function MobilePatentsView() {
         </div>
       )}
 
-      <p className="mb-2 text-[11px] text-muted-foreground">{filtered.length} patents</p>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground" role="status">
+          {filtered.length} patents
+        </p>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="min-h-11"
+          disabled={!filtered.length}
+          onClick={() => {
+            logPatentExport(filtered.length)
+            downloadCsv(generateCsv(filtered, PATENTS_CSV_COLUMNS), csvFilename('pqc-patents'))
+          }}
+        >
+          Export matching patents
+        </Button>
+      </div>
 
       <div className="flex flex-col gap-2.5">
         {filtered.length === 0 && (
@@ -500,9 +523,18 @@ export function MobilePatentsView() {
               </p>
               <p className="mt-1 text-[11px] text-muted-foreground">
                 {selected.publicationKind === 'published_application'
-                  ? 'Published application — its claims are still under examination.'
+                  ? 'Published application.'
                   : 'Granted patent.'}
               </p>
+              <p className="mt-1 text-xs text-muted-foreground">{publicationScope(selected)}</p>
+              <a
+                href={USPTO_PUBLIC_SEARCH}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[44px] items-center text-xs text-primary underline"
+              >
+                Look up {selected.patentNumber} at USPTO
+              </a>
             </div>
             <p className="text-[11.5px] text-muted-foreground">
               Filing office: {filingJurisdictionLabel(selected)}

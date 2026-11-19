@@ -18,6 +18,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { initialSampleCertificateSelection } from './utils/sampleTrust'
 import { SampleTrustControls } from './components/SampleTrustControls'
+import { SignatureSizeReference } from './components/SignatureSizeReference'
+import { TLS_SIGNATURE_SIZES } from './utils/tlsSignatureSizes'
 
 // ... (existing constants) ...
 // Note: We are relying on the previous content for constants between imports and component definition
@@ -63,14 +65,6 @@ const CERTS = [
   { id: 'default', label: 'Default (RSA 2048)' },
   { id: 'mldsa44', label: 'Default (ML-DSA-44)' },
   { id: 'mldsa87', label: 'Default (ML-DSA-87)' },
-  // Composite signatures per draft-ietf-lamps-pq-composite-sigs-19.
-  // Current shipping defaults fall back to the closest pre-baked ML-DSA cert; the
-  // OpenSSL WASM build (3.5+ with oqs-provider 0.10) supports composite sig OIDs
-  // (id-MLDSA44-RSA2048-PSS, id-MLDSA65-ECDSA-P256, id-MLDSA87-Ed25519) once a
-  // composite PEM is generated via the OpenSSL Studio "Custom" path.
-  { id: 'composite-mldsa44-rsa2048', label: 'Composite (ML-DSA-44 + RSA-2048)' },
-  { id: 'composite-mldsa65-ecdsa-p256', label: 'Composite (ML-DSA-65 + ECDSA-P256)' },
-  { id: 'composite-mldsa87-ed25519', label: 'Composite (ML-DSA-87 + Ed25519)' },
   { id: 'none', label: 'None' },
   { id: 'custom', label: 'Custom from OpenSSL Studio' },
 ]
@@ -100,17 +94,6 @@ const GROUP_SIZE: Record<string, string> = {
   X25519MLKEM768: '1,216 B combined (ML-KEM-768 1,184 + X25519 32)',
   SecP256r1MLKEM768: '1,249 B combined (P-256 65 + ML-KEM-768 1,184)',
   SecP384r1MLKEM1024: '1,665 B combined (P-384 97 + ML-KEM-1024 1,568)',
-}
-
-// Signature and public key sizes — source: FIPS 204 (final) Table 2
-const SIG_SIZE: Record<string, { sig: string; pub: string }> = {
-  mldsa44: { sig: '2,420 B', pub: '1,312 B' },
-  mldsa65: { sig: '3,309 B', pub: '1,952 B' },
-  mldsa87: { sig: '4,627 B', pub: '2,592 B' },
-  ecdsa_secp256r1_sha256: { sig: '~72 B', pub: '64 B' },
-  rsa_pss_rsae_sha256: { sig: '256 B', pub: '256 B' },
-  rsa_pss_pss_sha256: { sig: '256 B', pub: '256 B' },
-  ed25519: { sig: '64 B', pub: '32 B' },
 }
 
 export const TLSClientPanel: React.FC = () => {
@@ -167,29 +150,6 @@ export const TLSClientPanel: React.FC = () => {
         },
       })
     } else if (certSelection === 'mldsa87') {
-      setClientConfig({
-        certificates: {
-          ...clientConfig.certificates,
-          certPem: DEFAULT_MLDSA87_CLIENT_CERT,
-          keyPem: DEFAULT_MLDSA87_CLIENT_KEY,
-        },
-      })
-    } else if (
-      certSelection === 'composite-mldsa44-rsa2048' ||
-      certSelection === 'composite-mldsa65-ecdsa-p256'
-    ) {
-      // Composite ML-DSA-44/65 fallback: ship the PQ half (ML-DSA-44 default).
-      // Composite cert generation per draft-ietf-lamps-pq-composite-sigs-19 is
-      // delegated to OpenSSL Studio (Custom) until composite PEMs ship as defaults.
-      setClientConfig({
-        certificates: {
-          ...clientConfig.certificates,
-          certPem: DEFAULT_MLDSA_CLIENT_CERT,
-          keyPem: DEFAULT_MLDSA_CLIENT_KEY,
-        },
-      })
-    } else if (certSelection === 'composite-mldsa87-ed25519') {
-      // Composite ML-DSA-87 fallback: ship the PQ half (ML-DSA-87 default).
       setClientConfig({
         certificates: {
           ...clientConfig.certificates,
@@ -604,6 +564,7 @@ export const TLSClientPanel: React.FC = () => {
                       variant="ghost"
                       key={group}
                       onClick={() => toggleGroup(group)}
+                      aria-pressed={clientConfig.groups.includes(group)}
                       className={clsx(
                         'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
                         clientConfig.groups.includes(group)
@@ -626,6 +587,7 @@ export const TLSClientPanel: React.FC = () => {
                       variant="ghost"
                       key={group}
                       onClick={() => toggleGroup(group)}
+                      aria-pressed={clientConfig.groups.includes(group)}
                       title={GROUP_SIZE[group]}
                       className={clsx(
                         'px-3 py-1.5 rounded-md text-sm font-mono border transition-all flex items-center gap-1',
@@ -654,6 +616,7 @@ export const TLSClientPanel: React.FC = () => {
                       variant="ghost"
                       key={group}
                       onClick={() => toggleGroup(group)}
+                      aria-pressed={clientConfig.groups.includes(group)}
                       title={GROUP_SIZE[group]}
                       className={clsx(
                         'px-3 py-1.5 rounded-md text-sm font-mono border transition-all flex items-center gap-1',
@@ -726,11 +689,7 @@ export const TLSClientPanel: React.FC = () => {
                     variant="ghost"
                     key={alg}
                     onClick={() => toggleSigAlg(alg)}
-                    title={
-                      SIG_SIZE[alg]
-                        ? `sig: ${SIG_SIZE[alg].sig} · pub key: ${SIG_SIZE[alg].pub}`
-                        : undefined
-                    }
+                    title={TLS_SIGNATURE_SIZES.get(alg)?.signature}
                     className={clsx(
                       'px-3 py-1.5 rounded-md text-xs font-mono border transition-all flex items-center gap-1',
                       clientConfig.signatureAlgorithms.includes(alg)
@@ -750,47 +709,7 @@ export const TLSClientPanel: React.FC = () => {
                 schemes, so it cannot be negotiated here. No IETF working-group draft yet specifies
                 SLH-DSA for TLS 1.3 (an individual draft exists; signatures are 7–50 KB).
               </p>
-              <details className="text-xs">
-                <summary className="cursor-pointer text-muted-foreground hover:text-foreground list-none select-none py-0.5">
-                  ▸ Signature size reference (FIPS 204)
-                </summary>
-                <div className="mt-1 rounded-lg border border-border overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-[10px]">
-                      <thead>
-                        <tr className="bg-muted text-muted-foreground">
-                          <th className="p-1.5 text-left font-medium">Algorithm</th>
-                          <th className="p-1.5 text-right font-medium">Signature</th>
-                          <th className="p-1.5 text-right font-medium">Public Key</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {SIG_ALGS.filter((a) => SIG_SIZE[a]).map((alg, i) => (
-                          <tr
-                            key={alg}
-                            className={clsx(
-                              'border-t border-border',
-                              i % 2 === 0 ? 'bg-card' : 'bg-muted/30'
-                            )}
-                          >
-                            <td
-                              className={clsx(
-                                'p-1.5 font-mono',
-                                clientConfig.signatureAlgorithms.includes(alg) &&
-                                  'text-primary font-bold'
-                              )}
-                            >
-                              {alg}
-                            </td>
-                            <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].sig}</td>
-                            <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].pub}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </details>
+              <SignatureSizeReference selected={clientConfig.signatureAlgorithms} />
             </div>
 
             <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-sm text-foreground/80">

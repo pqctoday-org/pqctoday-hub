@@ -17,6 +17,7 @@
 import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
+import { buttonVariants } from './button-variants'
 
 const SRC = path.resolve(__dirname, '../..')
 
@@ -207,6 +208,12 @@ function over(
 }
 
 const FILLS = ['primary', 'secondary', 'success', 'accent', 'destructive']
+
+it('secondary buttons keep the AA-safe /90 purple hover instead of the failing /80 tint', () => {
+  const classes = buttonVariants({ variant: 'secondary' })
+  expect(classes).toContain('hover:bg-secondary/90')
+  expect(classes).not.toContain('hover:bg-secondary/80')
+})
 
 describe('coloured fills keep their label at AA in both themes', () => {
   for (const [theme, t] of Object.entries(THEMES)) {

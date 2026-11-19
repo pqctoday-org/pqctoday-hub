@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { Compass, Unlock, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -7,6 +7,7 @@ import { logExploreTileClick, logExploreUnlock } from '@/utils/analytics'
 import { PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
 import { PERSONAS } from '@/data/learningPersonas'
 import { TILES, type ExploreTile } from '@/data/exploreTiles'
+import { PYTHON_SIGNATURE_EXERCISE_PATH } from '@/data/pythonWorkbench'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 export function ExploreView({
@@ -72,7 +73,36 @@ export function ExploreView({
         </p>
       </div>
 
-      {!simEmbed && <PersonaPageNote route="/explore" className="mb-8 text-left" />}
+      {!simEmbed && (
+        <>
+          <PersonaPageNote route="/explore" className="mb-6 text-left" />
+          <nav aria-label="Try a specific task" className="mb-8 flex flex-wrap gap-3">
+            {!isGated && (
+              <Link
+                to={PYTHON_SIGNATURE_EXERCISE_PATH}
+                onClick={() => logExploreTileClick(PYTHON_SIGNATURE_EXERCISE_PATH)}
+                className="inline-flex min-h-11 items-center rounded-lg border border-border bg-card px-3 text-sm text-primary underline"
+              >
+                Edit and run a Python signature check
+              </Link>
+            )}
+            <Link
+              to="/playground/hybrid-certs"
+              onClick={() => logExploreTileClick('/playground/hybrid-certs')}
+              className="inline-flex min-h-11 items-center rounded-lg border border-border bg-card px-3 text-sm text-primary underline"
+            >
+              Compare TLS certificates and key exchange
+            </Link>
+            <Link
+              to="/compliance?tab=requirements"
+              onClick={() => logExploreTileClick('/compliance?tab=requirements')}
+              className="inline-flex min-h-11 items-center rounded-lg border border-border bg-card px-3 text-sm text-primary underline"
+            >
+              Look up a requirement and its source
+            </Link>
+          </nav>
+        </>
+      )}
       {simEmbed && (
         <p className="mb-4 text-sm text-muted-foreground" data-testid="explore-sim-note">
           Each area below is its own hub page. Opening one leaves the simulation; your run is saved

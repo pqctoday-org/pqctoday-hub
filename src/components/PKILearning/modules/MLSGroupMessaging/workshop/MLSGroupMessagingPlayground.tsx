@@ -3,6 +3,7 @@ import React from 'react'
 import { TreeKEMVisualizer } from './TreeKEMVisualizer'
 import { ProviderArchitecture } from './ProviderArchitecture'
 import { MLSCryptoOperations } from './MLSCryptoOperations'
+import { MLSReinitializationCheck } from './MLSReinitializationCheck'
 import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 
 /**
@@ -17,6 +18,7 @@ import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 export const MLSGroupMessagingPlayground: React.FC = () => (
   <div className="max-w-7xl mx-auto space-y-6">
     <MLSCryptoOperations />
+    <MLSReinitializationCheck />
     <WhyThisMatters
       title="TreeKEM: From Double-Ratchet to Group Post-Compromise Security"
       variant="info"
@@ -65,7 +67,8 @@ export const MLSGroupMessagingPlayground: React.FC = () => (
         (draft-ietf-mls-pq-ciphersuites-07), path secrets are HPKE-encrypted to{' '}
         <strong>ML-KEM-768</strong> public keys and signatures use <strong>ML-DSA-65</strong>, so
         both confidentiality and authentication use post-quantum algorithms. The draft&apos;s first
-        eight suites keep a traditional signature and give post-quantum confidentiality only.
+        eight suites keep a traditional signature and provide post-quantum confidentiality against
+        passive attackers. Active forgery can compromise later epochs.
       </p>
     </WhyThisMatters>
     <TreeKEMVisualizer />

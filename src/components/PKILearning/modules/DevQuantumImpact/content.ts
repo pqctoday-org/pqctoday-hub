@@ -9,8 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'dev-quantum-impact',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-11',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,5: RFC 8446 (TLS 1.3 handshake growth), FIPS 203 (key and
@@ -55,7 +55,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has four steps: Why It Matters shows six expandable impact/scenario cards and links to separate sample tools; What to Learn lets you self-rate skills and follow linked learning modules; How to Act provides a phased action checklist with Markdown export; Skill Self-Assessment is a nine-item exposure checklist. Separate API migration and code-signing lessons, the Token Size Analyzer, TLS Simulator, Hybrid KEM + ECDH tool and VectorSet Anatomy lesson support the next technical investigations; they are not embedded calculators or automated source-code analysis in the role cards.',
     relatedStandards:
-      'FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 205 (SLH-DSA, Stateless Hash-Based Digital Signature Standard). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners). RFC 9980 (OpenPGP with ECC-composite ML-KEM and ML-DSA, plus standalone SLH-DSA). RFC 8446 (TLS 1.3 — key_share extension, hybrid group negotiation). IETF draft-connolly-cfrg-xwing (X-Wing hybrid KEM combiner).',
+      'FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 205 (SLH-DSA, Stateless Hash-Based Digital Signature Standard). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners). RFC 9980 (OpenPGP with ECC-composite ML-KEM and ML-DSA, plus standalone SLH-DSA). RFC 9846 (TLS 1.3, obsoletes RFC 8446 — key_share extension, hybrid group negotiation). IETF draft-connolly-cfrg-xwing (X-Wing hybrid KEM combiner).',
   },
 }
 

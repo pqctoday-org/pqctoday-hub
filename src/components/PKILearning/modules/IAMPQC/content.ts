@@ -13,9 +13,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'iam-pqc',
-  version: '1.0.2',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-01',
+  version: '1.0.3',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -72,7 +72,8 @@ export const content: ModuleContent = {
       source: 'NIST IR 8547',
     },
     {
-      label: 'NIST: disallow all classical public-key crypto',
+      label:
+        'After 2035: disallow quantum-vulnerable public-key algorithms under NIST standards and guidelines',
       year: NIST_DEPRECATION.disallowClassical,
       source: 'NIST IR 8547',
     },
@@ -80,7 +81,7 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'JWT, SAML, OIDC token signing migration to ML-DSA (FIPS 204). Active Directory, LDAP, Kerberos quantum vulnerabilities and quantum risk scores. IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak. Zero trust identity architecture with PQC across five pillars. Harvest Now, Decrypt Later (HNDL) risk for Kerberos tickets, SAML assertions, and JWT refresh tokens',
+      'JWT, SAML, OIDC token signing migration to ML-DSA (FIPS 204). Active Directory, LDAP, Kerberos quantum vulnerabilities and quantum risk scores. IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak. Zero trust identity architecture with PQC across five pillars. HNDL risk applies to recorded channels and key-establishment exchanges such as TLS and PKINIT; quantum-vulnerable token signatures create a forgery risk, not an HNDL risk for the token itself',
     workshopSummary:
       'IAM Crypto Inventory — audit 8 components by quantum risk level and migration priority. Token Migration Lab — compare RS256/ES256 vs ML-DSA-44/65/87 signature sizes and header changes. Directory Services Analyzer — AD/LDAP/Azure AD quantum risk scoring and attack scenario analysis. Vendor Readiness Scorer — score IAM vendors across token signing, MFA, API security, roadmap dimensions. Zero Trust Identity Architect — assign migration years to 5 identity pillars and generate a phased roadmap',
   },

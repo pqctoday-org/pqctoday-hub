@@ -1055,6 +1055,21 @@ export const EuccScheme = () => (
       ]}
     />
 
+    <Callout tone="current" title="New supporting guidance — November 2026">
+      <p>
+        ENISA published version 1 of its{' '}
+        <SourceCite
+          id="EUCC-Guidelines-on-Cryptography"
+          label="CSP-based evaluation guidance for secure elements"
+        />{' '}
+        in November 2026. It describes how to evaluate an application that relies on a certified
+        cryptographic service provider (CSP), including composition evidence, a representative CSP
+        platform, and the application’s use of CSP services. ENISA labels it a guideline supporting
+        EUCC; it does not add a new legal certification requirement or replace the applicable
+        Security Target, Protection Profile, or EUCC rules.
+      </p>
+    </Callout>
+
     <H3>Two assurance levels, defined by AVA_VAN</H3>
     <Quote
       cite={
@@ -2367,7 +2382,7 @@ export const EuccPqcToday = () => (
       Security Target.
     </P>
 
-    <Callout tone="current" title="Applicable guidance checked 21 October 2026">
+    <Callout tone="current" title="Applicable cryptographic guidance checked 18 November 2026">
       <p>
         <SourceCite id="EUCC v2.0 ACM" label="ECCG Agreed Cryptographic Mechanisms v2" /> (the
         document is dated April 2025) and the EUCC Guidelines on Cryptography v2; ENISA’s page lists
@@ -2811,6 +2826,7 @@ const NIAP_TD1012_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1012'
 const NIAP_TD1013_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1013'
 const NIAP_TD1025_URL = 'https://www.niap-ccevs.org/technical-decisions/TD1025'
 const NIAP_TD0966_URL = 'https://www.niap-ccevs.org/technical-decisions/TD0966'
+const NIAP_HOME_URL = 'https://www.niap-ccevs.org/'
 
 type ProfileRow = {
   profile: string
@@ -3148,6 +3164,16 @@ export const NiapPqcRoute = () => (
       />
       .
     </p>
+    <Callout tone="planning" title="Coverage and freshness">
+      <p>
+        This table is a bounded snapshot: the 11 profile documents were read by 23 October 2026.
+        When checked on 18 November, NIAP&apos;s public index listed 58 approved profiles, and its
+        homepage listed a 10 November notice titled “NIAP Postings Delay.” The table does not cover
+        profile changes posted after 23 October. Check the current individual profile and its
+        Technical Decisions before making a certification decision.{' '}
+        <ExternalSource name="NIAP profile index and current notices" href={NIAP_HOME_URL} />
+      </p>
+    </Callout>
     <P>
       Three of the profiles (Dedicated Security Component, Network Devices and Hardcopy Devices) are
       international collaborative profiles whose text lists classical algorithms below CNSA 1.0,

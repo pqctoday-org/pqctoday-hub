@@ -231,7 +231,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'User identity certificates for machine authentication and code trust',
     quantumStatus: 'vulnerable',
     recommendation:
-      'Plan ML-DSA-44 migration for user certs; weigh a composite root against separate traditional and PQC roots (CSWP 39 Sect. 3.2)',
+      'Plan ML-DSA-44 migration for user certs; weigh a composite root against separate traditional and PQC roots (NIST CSWP 39-upd1 §3.2)',
     infrastructureLayer: 'OS',
   },
   // Hardware layer

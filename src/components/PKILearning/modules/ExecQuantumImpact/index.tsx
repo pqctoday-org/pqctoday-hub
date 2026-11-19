@@ -1,13 +1,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, type FC } from 'react'
+import { useState, useEffect, type FC } from 'react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
-import { AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
+import {
+  AlertTriangle,
+  BookOpen,
+  Rocket,
+  ClipboardCheck,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { EXEC_GUIDE_DATA } from './data'
 import { EXEC_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
+import { useModuleStore } from '@/store/useModuleStore'
 import manifest from './manifest'
 
 const PARTS: WorkshopPart[] = [
@@ -45,11 +53,18 @@ export function SelfAssessmentStep() {
   const items = EXEC_GUIDE_DATA.selfAssessment
   type Answer = 'yes' | 'no' | 'unknown'
   const [answers, setAnswers] = useState<Record<string, Answer>>({})
+  const markStepComplete = useModuleStore((s) => s.markStepComplete)
   const answered = Object.keys(answers).length
   const applicable = items.filter((item) => answers[item.id] === 'yes')
-  const unknownCount =
-    items.filter((item) => answers[item.id] === 'unknown').length + (items.length - answered)
+  const unknownItems = items.filter((item) => !answers[item.id] || answers[item.id] === 'unknown')
+  const unknownCount = unknownItems.length
   const completionPct = Math.round((answered / items.length) * 100)
+
+  useEffect(() => {
+    if (answered === items.length && items.length > 0) {
+      markStepComplete(manifest.id, 'self-assessment')
+    }
+  }, [answered, items.length, markStepComplete])
 
   return (
     <div className="space-y-6">
@@ -100,19 +115,43 @@ export function SelfAssessmentStep() {
           {answered === 0 ? (
             <p>No conclusion is shown until you answer. Unanswered never means low exposure.</p>
           ) : (
-            <>
-              <p>
-                <strong className="text-foreground">Applicable drivers:</strong> {applicable.length}
-              </p>
-              <p>
-                <strong className="text-foreground">Questions requiring evidence:</strong>{' '}
-                {unknownCount}
-              </p>
+            <div className="space-y-3">
+              <div>
+                <p>
+                  <strong className="text-foreground">Applicable drivers:</strong>{' '}
+                  {applicable.length}
+                </p>
+                {applicable.length > 0 && (
+                  <ul className="list-disc list-inside mt-1 space-y-0.5 text-foreground/80">
+                    {applicable.map((item) => (
+                      <li key={item.id}>{item.label}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div>
+                <p>
+                  <strong className="text-foreground">Questions requiring evidence:</strong>{' '}
+                  {unknownCount}
+                </p>
+                {unknownItems.length > 0 && (
+                  <ul className="list-disc list-inside mt-1 space-y-0.5 text-foreground/80">
+                    {unknownItems.map((item) => (
+                      <li key={item.id}>
+                        {item.label}{' '}
+                        <span className="text-muted-foreground">
+                          ({answers[item.id] === 'unknown' ? 'Marked Unknown' : 'Unanswered'})
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               <p>
                 Ask accountable teams to validate every Yes or Unknown before using it in a board
                 decision or KPI.
               </p>
-            </>
+            </div>
           )}
         </div>
         <Link
@@ -126,28 +165,71 @@ export function SelfAssessmentStep() {
   )
 }
 
-function ExercisesTab() {
+function ExercisesTab({ onGoToWorkshop }: { onGoToWorkshop: (step?: number) => void }) {
+  const [openRubrics, setOpenRubrics] = useState<Record<number, boolean>>({})
+
   return (
     <div className="w-full space-y-6">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Executive Exercises</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these executive-level scenarios.
+          Apply what you learned in the workshop to these executive-level scenarios. Open the
+          executive decision checklist on each scenario to verify your framing against authority,
+          scope, and evidence rules.
         </p>
         <div className="space-y-4">
-          {EXEC_QUANTUM_EXERCISES.map((exercise, idx) => (
-            <div key={idx} className="glass-panel p-5 space-y-3">
-              <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
-              <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Use all four workshop steps. Classify claims by authority, record Unknown where
-                  evidence is missing, and carry only verified organizational measurements into the
-                  KPI Dashboard.
-                </p>
+          {EXEC_QUANTUM_EXERCISES.map((exercise, idx) => {
+            const isOpen = Boolean(openRubrics[idx])
+            return (
+              <div key={idx} className="glass-panel p-5 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onGoToWorkshop(exercise.workshopStepIndex)}
+                  >
+                    Open {exercise.workshopStepLabel} &rarr;
+                  </Button>
+                </div>
+                <p className="text-sm text-foreground/80">{exercise.prompt}</p>
+                <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs text-muted-foreground italic">
+                      Use all four workshop steps. Classify claims by authority, record Unknown
+                      where evidence is missing, and carry only verified organizational measurements
+                      into the KPI Dashboard.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setOpenRubrics((prev) => ({ ...prev, [idx]: !prev[idx] }))}
+                      className="shrink-0 text-xs"
+                    >
+                      {isOpen ? (
+                        <>
+                          Hide decision checklist <ChevronUp size={14} className="ml-1" />
+                        </>
+                      ) : (
+                        <>
+                          Show decision checklist <ChevronDown size={14} className="ml-1" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  {isOpen && (
+                    <ul className="list-disc list-inside space-y-1.5 pt-2 border-t border-border text-xs text-foreground/90">
+                      {exercise.decisionChecklist.map((point, pointIdx) => (
+                        <li key={pointIdx}>{point}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>
@@ -159,7 +241,7 @@ export const ExecQuantumImpactModule: FC = () => (
     manifest={manifest}
     description="Understand the quantum threat from an executive and governance perspective — why it matters, what to learn, and how to act."
     learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={<ExercisesTab />}
+    exercises={(api) => <ExercisesTab onGoToWorkshop={api.goToWorkshop} />}
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey) => {
       switch (index) {

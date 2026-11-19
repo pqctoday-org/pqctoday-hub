@@ -14,8 +14,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'ops-quantum-impact',
   version: '1.0.1',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-11',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. RFC 4253 leads because SSH host-key
@@ -77,8 +77,8 @@ export const content: ModuleContent = {
     keyConcepts:
       "PQC Certificate Rotation at Scale — public TLS certificate lifetimes are shrinking (CA/Browser Forum TLS Baseline Requirements, section 6.3.2: Subscriber Certificates issued before 2026-03-15 must not exceed 398 days, then 200 days from 2026-03-15, 100 days from 2027-03-15 and 47 days from 2029-03-15; 90-day certs are a Let's Encrypt practice, not a baseline maximum); at 10,000 certificates on 90-day cycles, rotation events increase 4× compared to 1-year classical certs; Let's Encrypt's published post-quantum plan is Merkle Tree Certificates (staging late 2026, production 2027), with ML-DSA X.509 only tracked.",
     workshopSummary:
-      'The workshop has 3 interactive steps: Threat Impact Explorer — six-panel operational briefing: certificate rotation scale calculator (input: cert count + validity period → output: rotations/day, ACME request rate, cert-manager replica sizing), VPN/SSH migration checklist with config snippet diffs for strongSwan and OpenSSH, monitoring threshold recalibration guide with before/after values for the most common alert rules, CI/CD signing migration decision matrix (cosign vs. Notation vs.',
+      'The workshop has 4 interactive steps: Step 1 (Why It Matters) — six operational disruption briefings covering certificate rotation at scale, VPN/SSH key exchange upgrades, monitoring threshold recalibration, CI/CD signing pipelines, configuration management drift, and PQC incident response; Step 2 (What to Learn) — operational skill gaps and knowledge domains mapped to deep-dive modules; Step 3 (How to Act) — phased operational action plan (immediate, 30-day, 90-day, 6-month), quick wins, and KPI metrics; Step 4 (Ops Readiness Self-Assessment) — nine-criterion weighted infrastructure exposure checklist.',
     relatedStandards:
-      'FIPS 203 (ML-KEM — key encapsulation for TLS and VPN key exchange). FIPS 204 (ML-DSA — digital signatures for certificates, code signing, SSH host keys). RFC 8555 (ACME v2 — Automatic Certificate Management Environment). RFC 7030 (EST — Enrollment over Secure Transport for certificate automation). RFC 4253 (SSH Transport Layer Protocol — host key algorithm negotiation). RFC 7296 (IKEv2 — Internet Key Exchange for IPsec VPN). NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations).',
+      'FIPS 203 (ML-KEM — key encapsulation for TLS and VPN key exchange). FIPS 204 (ML-DSA — digital signatures for certificates, code signing, SSH host keys). RFC 8555 (ACME v2 — Automatic Certificate Management Environment). RFC 7030 (EST — Enrollment over Secure Transport for certificate automation). RFC 4253 (SSH Transport Layer Protocol — host key algorithm negotiation). RFC 7296 (IKEv2 — Internet Key Exchange for IPsec VPN). NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations). NIST IR 8547 (final, October 2026 — Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0 (FAQ v2.2 — National Security Systems).',
   },
 }

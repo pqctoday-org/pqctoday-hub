@@ -45,7 +45,8 @@ import {
 } from './roiProductCount'
 import {
   ANNUAL_BREACH_PROBABILITY_PCT,
-  IBM_BASELINE_UNVERIFIED_NOTE,
+  describeIndustryBreachBaseline,
+  formatBreachBaselineUSD,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -124,6 +125,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
   const data = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const industryBreachBaseline = resolveIndustryBreachBaseline(data.industry)
+  const baselineSource = describeIndustryBreachBaseline(data.industry)
 
   // F13: default applicable frameworks to the mandated subset the user actually
   // faces, not every framework in the industry. Priority:
@@ -434,7 +436,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     md += `- **Total capex: ${formatCurrency(financials.totalMigrationCost)}**\n`
     md += `- Annual opex: ${assumptions.annualOpexPct}% of capex = ${formatCurrency(financials.annualOpex)}/year\n\n`
     md += `### Risk Reduction (quantum amplification ${quantumMultiplier.toFixed(2)}× - illustrative)\n`
-    md += `- Industry baseline (${data.industry || 'Other'}): ${formatCurrency(industryBreachBaseline)} (IBM 2025)\n`
+    md += `- Industry baseline (${data.industry || 'Other'}): ${formatBreachBaselineUSD(industryBreachBaseline)} — ${baselineSource.source ? `[${baselineSource.label}](${baselineSource.source})` : baselineSource.label}\n`
     md += `- HNDL exposure: ${assumptions.hndlExposurePct}%\n`
     md += `- Post-CRQC attacker uplift: ${assumptions.crqcAttackerUpliftPct}%\n`
     md += `- Detection-timeline uplift: ${assumptions.detectionTimelineUpliftPct}%\n`
@@ -481,8 +483,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     for (const row of tornado) {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
-    md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025 per-sector table (one edition behind; IBM published its 2026 global report). Regulatory contribution: selected framework count, editable penalty amount and illustrative incident-rate assumptions; not sourced enforcement statistics.*\n`
-    md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
+    md += `\n*Educational estimate for planning purposes. Regulatory contribution: selected framework count, editable penalty amount and illustrative incident-rate assumptions; not sourced enforcement statistics.*\n`
     md += '\n---\n\n'
     md +=
       '*Aligned to NIST CSWP 39 §2.4 (Resource and Performance Challenges) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
@@ -493,6 +494,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
     data.industry,
     data.country,
     data.frameworksByIndustry.length,
+    baselineSource,
     industryBreachBaseline,
     quantumMultiplier,
     tornado,
@@ -830,10 +832,21 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             <p className="text-xs text-muted-foreground">
               Industry breach baseline ({data.industry || 'Other'}):{' '}
               <span className="font-mono text-foreground font-semibold">
-                {formatCurrency(industryBreachBaseline)}
+                {formatBreachBaselineUSD(industryBreachBaseline)}
               </span>{' '}
-              &mdash; IBM Cost of a Data Breach Report 2025. Quantum amplification is composed from
-              three defensible factors below.
+              —{' '}
+              {baselineSource.source ? (
+                <a
+                  href={baselineSource.source}
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {baselineSource.label}
+                </a>
+              ) : (
+                baselineSource.label
+              )}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -964,7 +977,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           </div>
           <div className="bg-muted/50 rounded-lg p-3">
             <p className="text-xs font-mono text-muted-foreground">
-              {formatCurrency(industryBreachBaseline)} × quantum amp{' '}
+              {formatBreachBaselineUSD(industryBreachBaseline)} × quantum amp{' '}
               <span className="text-foreground font-bold">{quantumMultiplier.toFixed(2)}×</span> ×{' '}
               {assumptions.breachProbability}% ={' '}
               <span className="text-primary font-bold">
@@ -1187,12 +1200,11 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             maintenance, key rotation, and audit — industry defaults are 10–20% of capex.
           </p>
           <p>
-            <strong>Risk reduction:</strong> Industry breach baseline (IBM Cost of a Data Breach
-            Report 2025) × a composed quantum amplification factor × annual breach probability. The
-            amplification factor is the sum of three defensible components — HNDL exposure (fraction
-            of data at risk of retroactive decryption), post-CRQC attacker uplift (new capability
-            ceiling once a CRQC exists), and detection-timeline uplift (mean time to detect will
-            lengthen).
+            <strong>Risk reduction:</strong> Selected breach baseline × a composed quantum
+            amplification factor × annual breach probability. The amplification factor is the sum of
+            three defensible components — HNDL exposure (fraction of data at risk of retroactive
+            decryption), post-CRQC attacker uplift (new capability ceiling once a CRQC exists), and
+            detection-timeline uplift (mean time to detect will lengthen).
           </p>
           <p>
             <strong>Illustrative regulatory contribution:</strong> Selected framework count ×

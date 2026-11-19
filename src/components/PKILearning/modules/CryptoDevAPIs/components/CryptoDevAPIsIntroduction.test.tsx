@@ -44,4 +44,11 @@ describe('CryptoDevAPIsIntroduction', () => {
     expect(text).toMatch(/does not check that code is constant-time/i)
     expect(text).toMatch(/unsafe blocks and C bindings do not get them/i)
   })
+
+  it('explains that browser Python cannot establish TLS or validate certificates', () => {
+    const text = sectionText('languages')
+    expect(text).toMatch(/cannot open TLS sockets or validate certificates/i)
+    expect(text).toMatch(/Pyodide’s browser ssl module is a stub/i)
+    expect(text).toMatch(/Pyodide’s documented limits/i)
+  })
 })

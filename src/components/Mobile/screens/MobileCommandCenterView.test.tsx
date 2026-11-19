@@ -46,6 +46,9 @@ describe('MobileCommandCenterView', () => {
     expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
     expect(screen.getByText("What's at risk?")).toBeInTheDocument()
     expect(screen.getByText('Who owns it?')).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: `Browse all ${BUSINESS_TOOLS.length} planning tools →` })
+    ).toHaveAttribute('href', '/business/tools')
   })
 
   it('the tiered dashboard links to the full planning tools list instead of a laptop note', () => {

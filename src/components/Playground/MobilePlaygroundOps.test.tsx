@@ -19,6 +19,9 @@ vi.mock('./hsm/HsmContext', () => ({
 }))
 vi.mock('./tabs/KemOpsTab', () => ({ KemOpsTab: () => <p>KEM screen</p> }))
 vi.mock('./tabs/SignVerifyTab', () => ({ SignVerifyTab: () => <p>Sign screen</p> }))
+vi.mock('./tabs/DataTab', () => ({ DataTab: () => <p>Data screen</p> }))
+vi.mock('./tabs/SymmetricTab', () => ({ SymmetricTab: () => <p>Symmetric screen</p> }))
+vi.mock('./tabs/HashingTab', () => ({ HashingTab: () => <p>Hashing screen</p> }))
 vi.mock('./tabs/KeyStoreTab', () => ({
   KeyStoreTab: () => {
     keys.render()

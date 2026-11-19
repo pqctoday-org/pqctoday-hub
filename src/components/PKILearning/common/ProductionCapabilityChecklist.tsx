@@ -1,16 +1,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
+import React, { type Ref } from 'react'
 import { ShieldCheck, ChevronDown } from 'lucide-react'
 import { getModuleCapabilityChecklist } from '@/data/moduleCapabilityChecklists'
+import { ProductionEvidenceWorksheet } from './ProductionEvidenceWorksheet'
 
 export interface ProductionCapabilityChecklistProps {
   moduleId: string
   defaultOpen?: boolean
+  worksheetRef?: Ref<HTMLDetailsElement>
+  onReturn?: () => void
 }
 
 export const ProductionCapabilityChecklist: React.FC<ProductionCapabilityChecklistProps> = ({
   moduleId,
   defaultOpen = false,
+  worksheetRef,
+  onReturn,
 }) => {
   const spec = getModuleCapabilityChecklist(moduleId)
   if (!spec) return null
@@ -64,7 +69,28 @@ export const ProductionCapabilityChecklist: React.FC<ProductionCapabilityCheckli
           </div>
         </div>
 
+        {spec.sources && (
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            {spec.sources.map(({ label, href }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline underline-offset-2"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        )}
         <p className="text-xs italic text-muted-foreground">{spec.educationalBoundary}</p>
+        <ProductionEvidenceWorksheet
+          key={moduleId}
+          spec={spec}
+          ref={worksheetRef}
+          onReturn={onReturn}
+        />
       </div>
     </details>
   )

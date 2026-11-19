@@ -15,15 +15,19 @@ The Vendor & Supply Chain Risk module teaches executives how to assess, score, a
 
 ## Workshop / Interactive Activities
 
-The workshop has 3 interactive steps:
+The workshop has 4 interactive steps:
 
-1. **Vendor Scorecard Builder** — interactive scorecard with 6 weighted slider dimensions; FIPS validation auto-scored from migration catalog data; saves assessment as executive document
-2. **Contract Clause Generator** — 5-section artifact builder producing legal-style contract articles (PQC Timeline, FIPS Validation, CBOM Delivery, Crypto Change Notification, Audit Rights) with customizable parameters
-3. **Supply Chain Risk Matrix** — heatmap visualization showing vendor PQC readiness across infrastructure layers; cells display count ratios with percentage-based color coding; includes per-layer detail table
+1. **Infrastructure Selector** — select the products in your infrastructure from the migration catalog to scope your vendor portfolio
+2. **Vendor Scorecard Builder** — interactive scorecard with 6 weighted slider dimensions; FIPS validation auto-scored from migration catalog data; saves assessment as executive document
+3. **Contract Clause Generator** — 5-section artifact builder producing legal-style contract articles (PQC Timeline, FIPS Validation, CBOM Delivery, Crypto Change Notification, Audit Rights) with customizable parameters
+4. **Supply Chain Risk Matrix** — heatmap visualization showing vendor PQC readiness across infrastructure layers; cells display count ratios with percentage-based color coding; includes per-layer detail table
 
 ## Related Standards
 
 - NIST SP 800-161 (Cybersecurity Supply Chain Risk Management)
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards; final, October 2026)
+- NSA CNSA 2.0 FAQ v2.2 (US National Security Systems)
+- EO 14412 & OMB M-26-15 (US federal civilian mandate + directed FAR contractor rule)
+- EU PQC Roadmap v1.1; DORA & NIS2 (EU ICT third-party cyber risk-management duties)
 - CycloneDX CBOM Specification
-- FIPS 140-3 (Security Requirements for Cryptographic Modules)
+- FIPS 140-3 (CMVP module-level validation vs. ACVP algorithm conformance vs. vendor marketing claims)

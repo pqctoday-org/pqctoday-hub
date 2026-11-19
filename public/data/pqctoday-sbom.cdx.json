@@ -1,13 +1,13 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:ba4d5c7c-a475-5492-84a2-c2ffa6d421ec",
+  "serialNumber": "urn:uuid:c13570ce-badd-5030-98b1-7cd8712e2553",
   "version": 1,
   "metadata": {
     "component": {
       "type": "application",
       "name": "pqctoday-hub",
-      "version": "4.214.0"
+      "version": "4.215.0"
     },
     "properties": [
       {
@@ -7277,8 +7277,8 @@
     {
       "type": "library",
       "name": "pyodide",
-      "version": "0.28.3",
-      "purl": "pkg:npm/pyodide@0.28.3",
+      "version": "314.0.8",
+      "purl": "pkg:npm/pyodide@314.0.8",
       "licenses": [
         {
           "license": {
@@ -7289,7 +7289,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "aed0acc93539e68346a4bcd256e01de7966faee243117f28ea479275628df633de05548d9729da2851bb791aa4888814ee2d8ce8712062d9b46ad084417deee0"
+          "content": "ef85aad645ce0be08213301fc6e4403bbd359c070230b8dff0daf0bd6a6ef12e35755317c1798b434e5d601f85e1ee3a01d9c6a34a2aed81d2554a47b286ab2d"
         }
       ],
       "properties": [

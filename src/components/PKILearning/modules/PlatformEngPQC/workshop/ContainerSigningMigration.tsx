@@ -260,6 +260,24 @@ export const ContainerSigningMigration: React.FC = () => {
                       <span className="text-xs font-bold text-foreground">PQC Migration Path</span>
                     </div>
                     <p className="text-xs text-muted-foreground">{tool.pqcNotes}</p>
+                    {tool.sources && tool.sources.length > 0 && (
+                      <div
+                        className="mt-2 flex flex-wrap gap-x-3 gap-y-1"
+                        aria-label={`${tool.name} sources`}
+                      >
+                        {tool.sources.map((source) => (
+                          <a
+                            key={source.url}
+                            href={source.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs text-primary underline underline-offset-2"
+                          >
+                            {source.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {tool.limitations.length > 0 && (
                     <div>
@@ -327,12 +345,14 @@ export const ContainerSigningMigration: React.FC = () => {
 
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Recommendation:</strong> Do not plan around Notation or cosign for ML-DSA signing
-          yet: we found no vendor documentation that either supports ML-DSA, and Sigstore (June
-          2025) gives no production date for its services. For new deployments choose an OCI-native
-          tool (Notation or cosign) and keep the signing key in a place where the algorithm can be
-          swapped later. Avoid DCT (Docker Content Trust): it and the Notary v1 service are being
-          retired, with full shutdown on 8 December 2026.
+          <strong>Recommendation:</strong> Do not treat either tool as having current ML-DSA
+          support: Notation support is unconfirmed, and current Cosign releases do not document
+          ML-DSA signing or verification. Sigstore’s October 2026 architecture proposal targets a
+          separate PQC public instance for mid-2027; verify implementation and release status before
+          relying on that target. For new deployments choose an OCI-native tool (Notation or cosign)
+          and keep the signing key in a place where the algorithm can be swapped later. Avoid DCT
+          (Docker Content Trust): it and the Notary v1 service are being retired, with full shutdown
+          on 8 December 2026.
         </p>
       </div>
 

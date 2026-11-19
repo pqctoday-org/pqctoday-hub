@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { TLSSimulatorCapabilities } from '@/components/PKILearning/modules/TLSBasics/components/TLSSimulatorCapabilities'
+import { parseTLSSimulationResult } from '@/components/PKILearning/modules/TLSBasics/utils/parseTLSSimulationResult'
 import { exactTlsLaunchConfig } from './tlsLaunch'
 import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
 import { requireSampleTrustInputs } from '@/components/PKILearning/modules/TLSBasics/utils/sampleTrust'
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router'
 import { Download, ExternalLink, Loader2, Play } from 'lucide-react'
-import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
+import { useTLSStore } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from '../PKILearning/modules/TLSBasics/utils/configGenerator'
 import { TLSClientPanel } from '../PKILearning/modules/TLSBasics/TLSClientPanel'
@@ -128,20 +130,7 @@ export const TLSSimulatorTab: React.FC = () => {
         currentCommands
       )
 
-      try {
-        const parsed = JSON.parse(resultStr) as Record<string, unknown>
-        setResults({
-          trace: (parsed.trace as SimulationResult['trace']) || [],
-          status: (parsed.status as SimulationResult['status']) || 'success',
-          error: parsed.error as string | undefined,
-        })
-      } catch {
-        setResults({
-          trace: [],
-          status: 'error',
-          error: resultStr.substring(0, 200) || 'Unknown WASM error',
-        })
-      }
+      setResults(parseTLSSimulationResult(resultStr))
     } catch (error) {
       setResults({
         trace: [],
@@ -263,49 +252,7 @@ export const TLSSimulatorTab: React.FC = () => {
         </Link>
       </div>
 
-      {/* Capabilities banner — what this simulator does and does NOT exercise
-       *  today. Surfaces gaps explicitly so users aren't misled by dropdown
-       *  options whose runtime support is incomplete. */}
-      <div className="glass-panel p-4 border-l-4 border-primary/50">
-        <div className="text-sm font-semibold mb-2">What this TLS 1.3 simulator supports today</div>
-        <ul className="text-xs text-muted-foreground space-y-1">
-          <li>
-            <span className="text-status-success font-semibold">✓ Pure PQC keys</span> — ML-DSA-44 /
-            ML-DSA-65 / ML-DSA-87 server &amp; client certs (FIPS 204)
-          </li>
-          <li>
-            <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
-            X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, RFC 10024);
-            pure ML-KEM-512/768/1024 groups (draft-ietf-tls-mlkem, in the RFC Editor queue)
-          </li>
-          <li>
-            <span className="text-status-success font-semibold">✓ Classical certs</span> — RSA-2048,
-            ECDSA-P256, Ed25519 (bundled PEMs, OpenSSL native sign)
-          </li>
-          <li>
-            <span className="text-status-success font-semibold">✓ Pure PQC certs</span> — ML-DSA-44
-            / ML-DSA-87 cert + key bundled, real ML-DSA CertificateVerify
-          </li>
-          <li>
-            <span className="text-status-warning font-semibold">
-              ⚠ Hybrid (composite) certs — not supported yet
-            </span>{' '}
-            — LAMPS composite-sig (ML-DSA + RSA-PSS / ECDSA / Ed25519) is on the roadmap. The
-            dropdown rows for composite are currently a placeholder that substitutes the nearest
-            pure ML-DSA PEM (the wire signature is ML-DSA, not composite). Provider machinery for
-            composite is built in the vendored pkcs11-provider fork (composite.c) but the runtime
-            cert-minting path is not yet wired here.
-          </li>
-          <li>
-            <span className="text-status-warning font-semibold">
-              ⚠ HSM-backed signing — removed
-            </span>{' '}
-            — The previous "HSM ON" toggle never produced a successful handshake for end-users and
-            was misleading. Removed pending a deliberate revival. softhsm v3 + pkcs11-provider
-            remain statically linked into openssl.wasm; the wiring just isn't user-facing.
-          </li>
-        </ul>
-      </div>
+      <TLSSimulatorCapabilities />
 
       <WhyThisMatters title="TLS 1.3 Security Model & Where PQC Applies" variant="info">
         <p>
@@ -322,10 +269,9 @@ export const TLSSimulatorTab: React.FC = () => {
           authentication entirely.
         </p>
         <p>
-          A complete migration requires both: a <strong>hybrid or pure-PQC certificate</strong>{' '}
-          (ML-DSA in the cert chain) <em>and</em> a <strong>hybrid KEM group</strong> in the key
-          share. The &quot;Hybrid (composite) certs&quot; capability above is on the roadmap
-          precisely because half-migration is not sufficient for long-term security.
+          Post-quantum TLS deployment needs a post-quantum key exchange and a server authentication
+          path that uses post-quantum signatures, including the handshake signature and certificates
+          in the validated chain. Test each of those independently.
         </p>
       </WhyThisMatters>
 

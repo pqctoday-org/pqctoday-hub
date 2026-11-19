@@ -72,6 +72,7 @@ export interface SigningTool {
   transparencyLog: boolean
   pqcReadiness: PQCReadiness
   pqcNotes: string
+  sources?: Array<{ label: string; url: string }>
   pqcAlgorithm?: AlgorithmFamily
   estimatedPqcYear: string
   strengths: string[]

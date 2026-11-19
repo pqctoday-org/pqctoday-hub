@@ -130,8 +130,7 @@ export function cleanPatentTitle(raw: string | undefined): string {
 
 /**
  * A US number of 11 digits starting with the year ("20260189535") is a
- * pre-grant publication of an application: its claims are still being
- * examined. Shorter numbers ("12470376") are granted patents.
+ * pre-grant publication of a US application in this corpus. Shorter numbers ("12470376") are granted patents.
  */
 export function publicationKindOf(rawNumber: string): PublicationKind {
   const digits = rawNumber.trim().replace(/^US/i, '')

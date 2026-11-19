@@ -49,8 +49,8 @@ export const EMV_KAT_SPECS: KatTestSpec[] = [
     // RSA-based step that genuinely has to migrate. The ARPC entry below already
     // modelled the symmetric half correctly as AES-CMAC; the two are now consistent.
     id: 'emv-cda-sign',
-    useCase: 'Combined Data Authentication — card signature (ML-DSA-44)',
-    standard: 'EMVCo CDA + FIPS 204',
+    useCase: 'Experimental card authentication signature on sample data (ML-DSA-44)',
+    standard: 'FIPS 204 primitive demonstration',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 44 },
     message:
@@ -88,6 +88,69 @@ export const EMV_KAT_SPECS: KatTestSpec[] = [
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
+
+const EMV_CHIP_SOURCE = 'https://www.emvco.com/emv-technologies/emv-contact-chip/'
+
+function AuthorizationEvidencePractice() {
+  const [card, setCard] = useState('Verified')
+  const [issuer, setIssuer] = useState('Declined')
+  return (
+    <section
+      aria-label="Separate card authentication from issuer authorization"
+      className="glass-panel space-y-3 p-4"
+    >
+      <h3 className="font-semibold">Separate card authentication from issuer authorization</h3>
+      <p className="text-sm text-muted-foreground">
+        Change one observation in this fictional payment. Local card authentication is checked by
+        the terminal. The issuer verifies the symmetric request cryptogram and makes a separate
+        authorization decision.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="block text-sm">
+          Local card authentication
+          {/* eslint-disable-next-line no-restricted-syntax -- Native <select> preserved for form semantics and Playwright combobox/selectOption tests */}
+          <select
+            className="mt-1 block min-h-11 w-full rounded-md border border-border bg-background px-2"
+            value={card}
+            onChange={(event) => setCard(event.target.value)}
+          >
+            <option>Verified</option>
+            <option>Failed</option>
+            <option>Not performed</option>
+          </select>
+        </label>
+        <label className="block text-sm">
+          Issuer response
+          {/* eslint-disable-next-line no-restricted-syntax -- Native <select> preserved for form semantics and Playwright combobox/selectOption tests */}
+          <select
+            className="mt-1 block min-h-11 w-full rounded-md border border-border bg-background px-2"
+            value={issuer}
+            onChange={(event) => setIssuer(event.target.value)}
+          >
+            <option>Declined</option>
+            <option>Approved</option>
+            <option>No response</option>
+          </select>
+        </label>
+      </div>
+      <div role="status" aria-label="Recorded payment observations" className="space-y-1 text-sm">
+        <p>Terminal card check — {card}</p>
+        <p>Online issuer decision — {issuer}</p>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        The payment scheme and terminal profile determine how the terminal handles each combination.
+      </p>
+      <a
+        href={EMV_CHIP_SOURCE}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm text-primary underline"
+      >
+        EMVCo Contact Chip security and testing
+      </a>
+    </section>
+  )
+}
 
 const MODE_ORDER: TransactionMode[] = [
   'online',
@@ -183,6 +246,8 @@ export const TransactionSimulator: React.FC = () => {
             key={mode}
             variant={selectedMode === mode ? 'gradient' : 'outline'}
             size="sm"
+            aria-pressed={selectedMode === mode}
+            className="min-h-11"
             onClick={() => handleModeChange(mode)}
           >
             {TRANSACTION_MODE_LABELS[mode]}
@@ -196,6 +261,8 @@ export const TransactionSimulator: React.FC = () => {
         <p className="text-sm text-muted-foreground">{flow.description}</p>
       </div>
 
+      {selectedMode === 'online' && <AuthorizationEvidencePractice />}
+
       {/* Summary stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="glass-panel p-3 text-center">
@@ -206,12 +273,12 @@ export const TransactionSimulator: React.FC = () => {
         <div className="glass-panel p-3 text-center">
           <ShieldAlert size={18} className="mx-auto text-status-error mb-1" />
           <div className="text-xl font-bold text-status-error">{vulnerableCount}</div>
-          <div className="text-xs text-muted-foreground">Quantum Vulnerable</div>
+          <div className="text-xs text-muted-foreground">Steps flagged for PQC review</div>
         </div>
         <div className="glass-panel p-3 text-center">
           <Clock size={18} className="mx-auto text-primary mb-1" />
           <div className="text-xl font-bold text-foreground">{totalLatency} ms</div>
-          <div className="text-xs text-muted-foreground">Total Latency</div>
+          <div className="text-xs text-muted-foreground">Illustrative total latency</div>
         </div>
       </div>
 
@@ -288,6 +355,7 @@ export const TransactionSimulator: React.FC = () => {
                 role="button"
                 tabIndex={0}
                 aria-label={`Step ${step.order}: ${step.label}`}
+                aria-current={isActive ? 'step' : undefined}
                 className={`glass-panel p-4 transition-all duration-300 cursor-pointer ${
                   isActive ? 'ring-2 ring-primary shadow-glow' : ''
                 } ${isPast ? 'opacity-60' : ''} ${dimmed ? 'opacity-30' : ''} ${
@@ -317,11 +385,11 @@ export const TransactionSimulator: React.FC = () => {
                       <h4 className="font-semibold text-foreground text-sm">{step.label}</h4>
                       {step.quantumVulnerable ? (
                         <span className="flex items-center gap-1 text-xs text-status-error">
-                          <ShieldAlert size={13} /> Vulnerable
+                          <ShieldAlert size={13} /> PQC review
                         </span>
                       ) : (
                         <span className="flex items-center gap-1 text-xs text-status-success">
-                          <ShieldCheck size={13} /> Safe
+                          <ShieldCheck size={13} /> Outside this PQC example
                         </span>
                       )}
                     </div>
@@ -352,7 +420,9 @@ export const TransactionSimulator: React.FC = () => {
                       )}
                       {step.pqcReplacement && (
                         <div className="text-muted-foreground">
-                          <span className="font-medium text-status-success">PQC:</span>{' '}
+                          <span className="font-medium text-secondary">
+                            Illustrative migration option:
+                          </span>{' '}
                           {step.pqcReplacement}
                         </div>
                       )}
@@ -397,6 +467,10 @@ export const TransactionSimulator: React.FC = () => {
         </div>
       </div>
 
+      <p className="text-sm text-muted-foreground">
+        These primitive tests operate on sample data. Card and terminal profiles need their own
+        interoperability and approval evidence.
+      </p>
       <KatValidationPanel
         specs={EMV_KAT_SPECS}
         label="EMV Payment PQC Known Answer Tests"

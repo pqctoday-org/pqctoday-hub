@@ -93,9 +93,19 @@ const EXERCISES = [
     badge: 'Mitigate/Migrate',
     badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
     scenario:
-      'A 15-year-old PKI system issues SHA-1 certificates. The original development team is gone, the source code is partially unavailable, and the system cannot be taken offline. CSWP.39 describes a "crypto gateway" option (a bump-in-the-wire). Walk through the decision: gateway now + sunset plan, or emergency migration?',
-    hint: 'CSWP.39: use a bump-in-the-wire (crypto gateway) when direct modification is infeasible. Key questions: Is there a scheduled replacement? Can the gateway itself be made agile? The gateway buys time — it is not a permanent solution. Model the sunset date in the ROI Builder. See the Visual tab for the Mitigation vs. Migration zones in the CSWP.39 process diagram.',
-    step: 3,
+      'A 15-year-old PKI system issues SHA-1 certificates. The original development team is gone, the source code is partially unavailable, and the system cannot be taken offline. CSWP.39 §4.6 describes a "crypto gateway" option (a bump-in-the-wire). Walk through the decision: gateway now + sunset plan, or emergency migration?',
+    hint: 'Use Step 8 (Implement — Mitigate or Migrate) to weigh agility criteria, then model the sunset date in Step 4 (No-Regret ROI Builder). A bump-in-the-wire gateway buys time when direct modification is infeasible, but it is not a permanent solution — confirm that the gateway itself is crypto-agile and pair it with a retirement date.',
+    step: 7,
+  },
+  {
+    id: 'clm-vendor-criteria',
+    title: 'Evaluating CLM platform capabilities for PQC',
+    badge: 'CLM Evaluation',
+    badgeColor: 'bg-primary/20 text-primary border-primary/50',
+    scenario:
+      'Your organization is issuing an RFP for a Certificate Lifecycle Management platform that must handle both 47-day public TLS renewals and future ML-DSA/hybrid certificate issuance. Define the non-negotiable technical capabilities and proof-of-concept tests.',
+    hint: 'Use Step 9 (CLM Vendor Evaluator) to practice weighting fictional platform profiles on ACME/EST/CMP automation, HSM orchestration, hybrid certificate profiles, and CBOM/observability export. In production procurement, verify each vendor claim in a staging lab rather than accepting roadmap slides.',
+    step: 8,
   },
 ]
 
@@ -107,8 +117,8 @@ export const CryptoMgmtModernizationExercises: React.FC<CryptoMgmtModernizationE
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">CMM Exercises</h2>
         <p className="text-muted-foreground text-sm">
-          Nine real-world scenarios that stress-test Cryptographic Posture Management thinking. Each
-          points at the workshop tool where you can build the answer.
+          Ten scenarios that stress-test Cryptographic Posture Management thinking. Each links
+          directly to the workshop step where you can model the decision.
         </p>
       </div>
 
@@ -135,7 +145,7 @@ export const CryptoMgmtModernizationExercises: React.FC<CryptoMgmtModernizationE
                 onClick={() => onNavigateToWorkshop(exercise.step)}
                 className="whitespace-nowrap text-xs"
               >
-                Go to Workshop
+                Open Step {exercise.step + 1}
               </Button>
             </div>
           </div>

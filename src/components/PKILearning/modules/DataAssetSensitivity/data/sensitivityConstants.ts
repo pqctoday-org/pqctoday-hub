@@ -6,6 +6,7 @@ export type SensitivityTier = 'low' | 'medium' | 'high' | 'critical'
 export type AssetType =
   'data-store' | 'key-material' | 'communication' | 'credential' | 'code-artifact'
 export type RetentionPeriod = 'under-1y' | '1-5y' | '5-10y' | '10-25y' | '25-plus' | 'indefinite'
+export type ConfidentialityPeriod = RetentionPeriod | 'not-applicable'
 export type MigrationEffort = 'low' | 'medium' | 'high'
 
 export interface DataAsset {
@@ -14,6 +15,7 @@ export interface DataAsset {
   assetType: AssetType
   sensitivityTier: SensitivityTier
   retentionPeriod: RetentionPeriod
+  confidentialityPeriod?: ConfidentialityPeriod
   currentEncryption: string
   businessOwner: string
   industry: string
@@ -293,6 +295,7 @@ export const DEFAULT_ASSETS: DataAsset[] = [
     assetType: 'communication',
     sensitivityTier: 'medium',
     retentionPeriod: 'under-1y',
+    confidentialityPeriod: 'not-applicable',
     currentEncryption: 'ECDSA P-256 (auto-rotating 90d)',
     businessOwner: 'Platform Engineering',
     industry: 'Technology',
@@ -305,6 +308,7 @@ export const DEFAULT_ASSETS: DataAsset[] = [
     assetType: 'key-material',
     sensitivityTier: 'critical',
     retentionPeriod: '25-plus',
+    confidentialityPeriod: 'not-applicable',
     currentEncryption: 'RSA-4096 in Luna HSM',
     businessOwner: 'PKI Operations',
     industry: 'Government & Defense',
@@ -611,7 +615,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     explanation:
       'Payment records fall under PCI DSS, which does not set a retention period: Requirement 3.2.1 requires a retention and disposal policy that limits storage to what is necessary for legal, regulatory and business purposes, and sensitive authentication data such as the card verification code must not be stored after authorization (Requirement 3.3.1). The 7 years here is a sample business assumption, not a PCI DSS figure. While CVV is not stored and PAN is masked, the combination of transaction history, timing, and merchant data can still be used for fraud or identity inference. With this sample horizon the threshold year is about 2027 — moderate urgency.',
     hndlImplication:
-      'Sample threshold year: 2034 − 7 = 2027. Records captured in or after 2027 and kept for 7 years would still be held at the assumed CRQC year; records captured today (2026) would be deleted in 2033, before it. Exposure also depends on whether any copy was recorded under quantum-vulnerable protection.',
+      'Sample threshold year: 2034 − 7 = 2027. This assumes a seven-year confidentiality period. A copy captured in or after 2027 under quantum-vulnerable protection would still be within that period at the assumed CRQC year, even if the merchant has deleted its own copy.',
     commonMistake:
       'Classifying as Critical because "financial data." No full PAN or CVV stored reduces impact. The sample 7-year horizon lands this at High; the tier is this module\'s policy, not a PCI DSS classification.',
     relevantFrameworks: ['PCI-DSS', 'GDPR'],
@@ -691,7 +695,7 @@ export const CLASSIFICATION_SCENARIOS: ClassificationScenario[] = [
     explanation:
       'Payroll records include SSNs and bank account numbers — two of the most impactful categories in identity theft. With the 7-year sample horizon the threshold year is about 2027. Regulatory exposure could include GDPR (if its territorial scope is met, for example through an establishment in the EU), US state privacy laws, and employment regulations; which of them apply depends on facts the scenario does not state. This is squarely High.',
     hndlImplication:
-      'Sample threshold year: 2034 − 7 = 2027. Records created in or after 2027 would still be held at the assumed CRQC year; records created today (2026) would be deleted in 2033, before it.',
+      'Sample threshold year: 2034 − 7 = 2027. This assumes a seven-year confidentiality period. Reassess the horizon if identifiers remain sensitive after scheduled deletion. Deleting payroll records does not erase copies already captured elsewhere.',
     commonMistake:
       'Classifying as Critical because it contains SSNs. While SSNs are highly sensitive, payroll records are bounded by employment tenure and the sample 7-year horizon — enough for High but not the indefinite/irreplaceable threshold of Critical.',
     relevantFrameworks: ['GDPR', 'CCPA', 'NIST-SP-800-122'],
@@ -965,11 +969,23 @@ export const RELATED_MODULE_MAP: Record<AssetType, { id: string; title: string }
 
 // ── Scoring Logic ─────────────────────────────────────────────────────────────
 
+export function formatConfidentialityPeriod(asset: DataAsset): string {
+  if (asset.confidentialityPeriod === 'not-applicable') return 'Not applicable'
+  const period = asset.confidentialityPeriod ?? asset.retentionPeriod
+  const label = RETENTION_CONFIGS.find((range) => range.id === period)?.label ?? period
+  return asset.confidentialityPeriod ? label : `${label} (retention estimate)`
+}
+
+export function computeAssetHndlRiskYear(asset: DataAsset, crqcYear: number): number | null {
+  if (asset.confidentialityPeriod === 'not-applicable') return null
+  return computeHndlRiskYear(asset.confidentialityPeriod ?? asset.retentionPeriod, crqcYear)
+}
+
 export function computeHndlRiskYear(
-  retentionPeriod: RetentionPeriod,
+  confidentialityPeriod: RetentionPeriod,
   crqcYear: number = ESTIMATED_CRQC_YEAR
 ): number {
-  const config = RETENTION_CONFIGS.find((r) => r.id === retentionPeriod)
+  const config = RETENTION_CONFIGS.find((r) => r.id === confidentialityPeriod)
   const years = config?.years ?? 0
   return Math.round(crqcYear - years)
 }
@@ -993,14 +1009,13 @@ export function scoreAsset(
   const complianceScore = Math.min(baseCompliance + (hasUrgentDeadline ? 20 : 0), 80)
 
   // HNDL window score
-  const hndlYear = computeHndlRiskYear(asset.retentionPeriod, crqcYear)
-  let hndlScore: number
-  if (hndlYear <= CURRENT_YEAR) {
-    hndlScore = 100
-  } else {
-    const remainingYears = hndlYear - CURRENT_YEAR
+  const hndlYear = computeAssetHndlRiskYear(asset, crqcYear)
+  let hndlScore = 0
+  if (hndlYear !== null) {
+    const remainingYears = Math.max(0, hndlYear - CURRENT_YEAR)
     const totalWindow = crqcYear - CURRENT_YEAR
-    hndlScore = Math.max(0, Math.round((1 - remainingYears / totalWindow) * 100))
+    hndlScore =
+      remainingYears === 0 ? 100 : Math.max(0, Math.round((1 - remainingYears / totalWindow) * 100))
   }
 
   const wS = weights.sensitivity / 100

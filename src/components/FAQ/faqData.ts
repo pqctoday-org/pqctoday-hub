@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { PYTHON_SIGNATURE_EXERCISE_PATH } from '@/data/pythonWorkbench'
 import type { PersonaId } from '@/data/learningPersonas'
 
 /**
@@ -12,9 +13,12 @@ export const FIPS_206_STATUS =
   "FIPS 206 is planned, not published: NIST's post-quantum standardization page (updated 27 October 2026) lists it as in development, and NIST's FIPS list (checked 5 November 2026) shows no draft or final text."
 
 export interface FAQItem {
+  id?: string
   question: string
   answer: string
   deepLink: string
+  deepLinkLabel?: string
+  sources?: readonly { label: string; href: string }[]
   /** Persona this Q&A is written for — used only to float/highlight matching
    *  entries in the "Role-Specific Guidance" category for the active persona.
    *  Never used to hide questions from other viewers. */
@@ -184,7 +188,7 @@ export const FAQ_DATA: FAQCategory[] = [
     title: 'NIST Standards & Timeline',
     items: [
       {
-        question: 'What are the four FIPS standards for PQC?',
+        question: 'Which PQC FIPS standards are published, and what is planned?',
         answer:
           'NIST has published three PQC FIPS standards: FIPS 203 (ML-KEM, lattice-based key encapsulation), FIPS 204 (ML-DSA, lattice-based digital signatures), and FIPS 205 (SLH-DSA, stateless hash-based signatures). All three were published in August 2024. A fourth standard, for FN-DSA, is planned. ' +
           FIPS_206_STATUS +
@@ -332,10 +336,18 @@ export const FAQ_DATA: FAQCategory[] = [
     title: 'Compliance & Regulation',
     items: [
       {
+        id: 'fips-module-scope',
         question: 'What is FIPS 140-3 and why does the validation backlog matter?',
         answer:
-          "FIPS 140-3 is the US standard for cryptographic module security certification, required for federal procurement and widely adopted in regulated industries. The validation backlog at NIST's CMVP (Cryptographic Module Validation Program) means that PQC module certifications can take 18 months or longer, creating a gap between algorithm standardization and deployable certified products. The Compliance Tracker shows validation status across PQC products.",
-        deepLink: '/compliance?framework=FIPS-140-3',
+          'FIPS 140-3 specifies requirements for cryptographic modules. Algorithm validation, a submission listed as in process and a CMVP module validation certificate record different things. Before relying on a module for a deployment, compare the certificate and security policy with the exact deployed version, operating environment, approved mode and service being used. Recheck the certificate status at the time of procurement or deployment.',
+        deepLink: '/learn/fips-140-3-certification?tab=workshop',
+        deepLinkLabel: 'Check the boundary of a sample validated module',
+        sources: [
+          {
+            label: 'NIST CMVP validated module records',
+            href: 'https://csrc.nist.gov/Projects/Cryptographic-Module-Validation-Program/Validated-Modules',
+          },
+        ],
       },
       {
         question: "What is eIDAS 2.0's PQC requirement?",
@@ -344,16 +356,32 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/compliance?framework=EIDAS',
       },
       {
+        id: 'dora-cryptography',
         question: 'What is DORA and when did it take effect?',
         answer:
-          'The Digital Operational Resilience Act (DORA) is an EU regulation that took effect in January 2025, requiring financial institutions to address ICT risk management including cryptographic resilience. DORA mandates that organizations assess and mitigate risks from emerging technologies, which includes the quantum computing threat to current encryption. The Compliance Tracker maps DORA requirements to PQC migration actions.',
+          'DORA has applied since 17 January 2025. For financial entities covered by the general ICT risk management framework, Article 6 of Delegated Regulation (EU) 2024/1774 requires an encryption and cryptographic-controls policy based on data classification and ICT risk. The technical standards address monitoring developments in cryptanalysis and responding to them. Check the applicable scope and record the evidence for your cryptographic controls. The policy obligation gives no universal PQC deadline.',
         deepLink: '/compliance?framework=DORA',
+        deepLinkLabel: 'Inspect the DORA scope in the Compliance Tracker',
+        sources: [
+          {
+            label: 'DORA technical standards, Article 6',
+            href: 'https://eur-lex.europa.eu/eli/reg_del/2024/1774/oj/eng',
+          },
+        ],
       },
       {
+        id: 'nis2-cryptography',
         question: 'What does NIS2 require for PQC?',
         answer:
-          'The EU NIS2 Directive (Network and Information Security Directive 2) mandates comprehensive risk management for essential and important entities, requiring them to adopt appropriate and proportionate technical measures — which increasingly includes quantum-resilient cryptography. NIS2 applies to energy, transport, health, digital infrastructure, and other critical sectors. The Compliance Tracker shows how NIS2 intersects with PQC migration requirements.',
+          'Article 21(2)(h) of NIS2 calls for policies and procedures for cryptography and, where appropriate, encryption. The directive names no PQC algorithm or algorithm-specific migration deadline. Establish the organization and service that are in scope, then check the relevant national implementing rules, applicable EU implementing acts and sector requirements. Record PQC adoption as a migration decision tied to those sources and your risk assessment.',
         deepLink: '/compliance?framework=NIS2',
+        deepLinkLabel: 'Inspect the NIS2 scope in the Compliance Tracker',
+        sources: [
+          {
+            label: 'NIS2 Directive, Article 21',
+            href: 'https://eur-lex.europa.eu/eli/dir/2022/2555/oj/eng',
+          },
+        ],
       },
       {
         question: 'What is Executive Order 14306?',
@@ -472,10 +500,38 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/learn/tls-basics',
       },
       {
+        id: 'hybrid-tls-certificate',
+        question: 'Which certificate can authenticate a hybrid TLS 1.3 handshake?',
+        answer:
+          'RFC 10024 defines hybrid key agreement. TLS negotiates peer authentication separately. A trusted RSA certificate can authenticate a connection that negotiates X25519MLKEM768, so that connection has hybrid key agreement and classical authentication. Peers with compatible support can use a single-algorithm ML-DSA certificate for post-quantum authentication. RFC 10073 defines composite ML-DSA in X.509, combining ML-DSA with a traditional signature algorithm. Use of composite ML-DSA in the TLS handshake is covered by a separate IETF working group draft. Check the negotiated group, the TLS CertificateVerify signature scheme and the chain validation result for the tested peers.',
+        deepLink: '/playground/hybrid-certs',
+        deepLinkLabel: 'Run the certificate-to-TLS exercise',
+        sources: [
+          {
+            label: 'RFC 10024 hybrid key agreement',
+            href: 'https://www.rfc-editor.org/rfc/rfc10024.html#section-4',
+          },
+          {
+            label: 'RFC 10073 composite ML-DSA in X.509',
+            href: 'https://www.rfc-editor.org/rfc/rfc10073.html#section-1',
+          },
+          {
+            label: 'IETF composite TLS draft',
+            href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-composite-mldsa/',
+          },
+        ],
+      },
+      {
         question: 'What is X25519MLKEM768?',
         answer:
-          'X25519MLKEM768 is a hybrid key exchange method for TLS 1.3 that combines the classical X25519 ECDH key exchange with ML-KEM-768 (NIST Level 3 security), producing a combined shared secret that is secure against both classical and quantum attacks. It is already supported in Chrome, Firefox, and Edge, making it the most widely deployed PQC mechanism on the internet today. The TLS Basics module demonstrates this handshake interactively.',
+          'X25519MLKEM768 combines an ephemeral X25519 exchange with ML-KEM-768 for TLS 1.3 key agreement. The combined secret feeds the TLS key schedule. Check the negotiated group on both endpoints to confirm they used it. Inspect the CertificateVerify signature scheme separately to determine the authentication algorithm.',
         deepLink: '/learn/tls-basics',
+        sources: [
+          {
+            label: 'RFC 10024 negotiated groups',
+            href: 'https://www.rfc-editor.org/rfc/rfc10024.html#section-4',
+          },
+        ],
       },
       {
         question: 'What PQC algorithms work for VPN/IPsec?',
@@ -821,6 +877,14 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/learn/qkd',
       },
       {
+        id: 'editable-python',
+        question: 'Where can I edit and run Python crypto code in the browser?',
+        answer:
+          'Open the Python Workbench to edit real Python and run it in your browser. The signature exercise uses the Hub’s PKCS#11 adapter and a software token to sign and verify a sample message with ML-DSA-65. Change only the verification message and inspect the rejection. Restore the original bytes to confirm the signature again.',
+        deepLink: PYTHON_SIGNATURE_EXERCISE_PATH,
+        deepLinkLabel: 'Open the editable Python signature exercise',
+      },
+      {
         question: 'What is the TLS Handshake Simulator?',
         answer:
           'The TLS Handshake Simulator lets you step through a complete TLS 1.3 handshake in classical (X25519), hybrid (X25519MLKEM768), and pure PQC (ML-KEM-768) modes, showing the byte-level content of each message and a side-by-side comparison of handshake size overhead. It visualizes the ClientHello key shares, ServerHello encapsulation, and the resulting shared secret derivation. The simulator is part of the TLS Basics workshop.',
@@ -894,7 +958,7 @@ export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
   ],
   developer: [
     'What PQC libraries should developers use?',
-    'How does ML-KEM change the TLS 1.3 handshake?',
+    'Where can I edit and run Python crypto code in the browser?',
     'When should I use ML-KEM vs ML-DSA vs SLH-DSA?',
   ],
   architect: [
@@ -906,7 +970,7 @@ export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
     // Method first — the researcher's actual first question, and the one the
     // page previously answered twelfth if at all.
     'What PQC research areas are active?',
-    'What are the four FIPS standards for PQC?',
+    'Which PQC FIPS standards are published, and what is planned?',
     'Is PQC Today open source?',
   ],
   'cert-engineer': [

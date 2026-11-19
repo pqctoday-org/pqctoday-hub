@@ -51,7 +51,7 @@ const BitCell: React.FC<{
       }`}
       onClick={interactive ? onClick : undefined}
       title={`Byte ${byteIdx}, Bit ${bitIdx} = ${value ? '1' : '0'}`}
-      aria-label={`Byte ${byteIdx} bit ${bitIdx} is ${value ? '1' : '0'}`}
+      aria-label={interactive ? `Byte ${byteIdx} bit ${bitIdx} is ${value ? '1' : '0'}` : undefined}
       role={interactive ? 'button' : undefined}
       tabIndex={interactive ? 0 : undefined}
       onKeyDown={
@@ -84,7 +84,6 @@ const ByteCell: React.FC<{
         transition: 'background-color 200ms',
       }}
       title={`Byte ${byteIdx}: 0x${value.toString(16).padStart(2, '0')} (${value})`}
-      aria-label={`Byte ${byteIdx} value ${value}`}
     />
   )
 })

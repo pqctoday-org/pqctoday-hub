@@ -20,7 +20,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       id: 'library-transition',
       title: 'Crypto Library Transitions',
       description:
-        'OpenSSL, BoringSSL, Go crypto, and AWS-LC are adding PQC support. Your code may need API changes.',
+        'OpenSSL 3.5+, BoringSSL, Go 1.24+ (crypto/mlkem), and AWS-LC ship PQC primitives. Your code may need API and configuration changes to negotiate them.',
       severity: 'critical',
       timeframe: '2024-2027',
       exampleScenario:
@@ -205,7 +205,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       description:
         'Writing tests for PQC operations, performance benchmarking, and interoperability testing.',
       targetLevel: 'basic',
-      linkedModules: [],
+      linkedModules: [{ id: 'acvp-lab-workflow', label: 'ACVP Lab Workflow' }],
     },
   ],
 

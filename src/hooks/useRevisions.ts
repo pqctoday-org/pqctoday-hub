@@ -118,7 +118,7 @@ export function byDomain(revisions: RevisionEntry[], domain: string): RevisionEn
 }
 
 /**
- * Filter revisions to a specific record within a domain.
+ * Filter revisions to a specific record. Omit the domain to match recorded IDs across the feed.
  * Uses `record_ids` array when present; falls back to scope_summary substring match.
  * For module/tool domains, matches on `module_id`/`tool_id` fields.
  */
@@ -128,14 +128,14 @@ export function byRecord(
   recordId: string
 ): RevisionEntry[] {
   return revisions.filter((r) => {
-    if (r.domain !== domain) return false
+    if (domain && r.domain !== domain) return false
     // Preferred: explicit record_ids array
     if (r.record_ids && r.record_ids.length > 0) return r.record_ids.includes(recordId)
     // Module / tool domain: dedicated ID fields
-    if (domain === 'module' && r.module_id) return r.module_id === recordId
-    if (domain === 'tool' && r.tool_id) return r.tool_id === recordId
+    if (r.domain === 'module' && r.module_id) return r.module_id === recordId
+    if (r.domain === 'tool' && r.tool_id) return r.tool_id === recordId
     // Fallback: substring match in scope_summary (brittle, but works until record_ids ships)
-    return r.scope_summary.includes(recordId)
+    return Boolean(domain) && r.scope_summary.includes(recordId)
   })
 }
 

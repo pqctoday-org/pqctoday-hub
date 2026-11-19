@@ -12,4 +12,4 @@ A PCI listing's post-quantum flag only says that support exists — it does not 
 
 ### What's Happening
 
-As of 30 October 2026, PCI's newest HSM standard adds post-quantum definitions without naming a required algorithm or deadline.
+As of November 2026, PCI PTS HSM v5.0 adds post-quantum definitions without naming a required algorithm or deadline, PCI KMO v1.0 (published 14 September 2026) consolidates key-management operations requirements, P2PE v3.2 applies to new submissions from 1 January 2026, and PCI DSS v4.0.1 is the only active PCI DSS version. This lesson covers PTS HSM and its operating stack (PIN, P2PE, KMO), not PTS POI terminals.

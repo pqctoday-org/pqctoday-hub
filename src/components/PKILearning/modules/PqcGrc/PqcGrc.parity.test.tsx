@@ -26,6 +26,21 @@ describe('PqcGrc render parity', () => {
     expect(
       screen.getByText(/Make the post-quantum migration governable, measurable, and auditable/)
     ).toBeInTheDocument()
+    expect(
+      screen.getByText(/U\.S\. federal example — NIST IR 8547 \(final, October 2026\)/)
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /key establishment by 31 December 2030 and digital signatures by 31 December 2031/
+      )
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'NIST IR 8547 final publication and history' })
+    ).toHaveAttribute('href', 'https://csrc.nist.gov/pubs/ir/8547/final')
+    expect(
+      screen.getByText(/planning recommendation, not a universal legal requirement/)
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/CRQC estimates span 10 to 30\+ years/)).not.toBeInTheDocument()
     // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',

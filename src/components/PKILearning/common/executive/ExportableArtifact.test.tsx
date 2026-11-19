@@ -14,6 +14,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ARTIFACT_AUTOSAVE_DELAY_MS, ExportableArtifact } from './ExportableArtifact'
 import { ArtifactBuilder } from './ArtifactBuilder'
 import type { ArtifactSection } from './ArtifactBuilder'
+import * as clipboard from '@/utils/clipboard'
+import * as pdfExport from '@/services/export/pdfExport'
 
 /** The autosave only follows a real interaction, never the artifact's own
  *  data settling after mount — simulate the user touching the page. */
@@ -161,6 +163,87 @@ describe('ExportableArtifact autosave', () => {
 
     advance(ARTIFACT_AUTOSAVE_DELAY_MS * 2)
     expect(onExport).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('ExportableArtifact saves the current revision', () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.useRealTimers()
+  })
+
+  it('ignores an older clipboard completion after saving a revised report', async () => {
+    let finishCopy!: (ok: boolean) => void
+    const copy = vi.spyOn(clipboard, 'copyToClipboard').mockReturnValue(
+      new Promise<boolean>((resolve) => {
+        finishCopy = resolve
+      })
+    )
+    const onExport = vi.fn()
+    const report = (markdown: string) => (
+      <ExportableArtifact title="T" exportData={markdown} onExport={() => onExport(markdown)}>
+        <p>body</p>
+      </ExportableArtifact>
+    )
+    const { rerender } = render(report('Original scope'))
+    fireEvent.click(screen.getByRole('button', { name: /^Copy$/ }))
+    expect(copy).toHaveBeenCalledWith(expect.stringContaining('Original scope'))
+
+    rerender(report('Revised scope'))
+    fireEvent.click(screen.getByRole('button', { name: /^Save/ }))
+    await act(async () => finishCopy(true))
+    expect(onExport.mock.calls).toEqual([['Revised scope']])
+    expect(screen.getByRole('button', { name: /^Copy$/ })).toBeInTheDocument()
+  })
+
+  it('never writes an old PDF export to the store after leaving its edit', async () => {
+    let finishPdf!: () => void
+    const download = vi.spyOn(pdfExport, 'markdownToPdf').mockReturnValue(
+      new Promise<void>((resolve) => {
+        finishPdf = resolve
+      })
+    )
+    const onExport = vi.fn()
+    const report = (markdown: string) => (
+      <ExportableArtifact
+        title="T"
+        exportData={markdown}
+        formats={['pdf']}
+        onExport={() => onExport(markdown)}
+      >
+        <p>body</p>
+      </ExportableArtifact>
+    )
+    const { rerender, unmount } = render(report('Original scope'))
+    fireEvent.click(screen.getByRole('button', { name: /^\.pdf$/ }))
+    expect(download.mock.calls[0][0]).toContain('Original scope')
+
+    userTouchesPage()
+    rerender(report('Revised scope'))
+    unmount()
+    await act(async () => finishPdf())
+    expect(onExport.mock.calls).toEqual([['Revised scope']])
+  })
+
+  it('persists changes to structured CSV even when Markdown remains the same', () => {
+    const onExport = vi.fn()
+    const report = (csvData: string) => (
+      <ExportableArtifact
+        title="T"
+        exportData="Same report title"
+        csvData={csvData}
+        onExport={() => onExport(csvData)}
+      >
+        <p>body</p>
+      </ExportableArtifact>
+    )
+    const { rerender } = render(report('coverage,31'))
+    fireEvent.click(screen.getByRole('button', { name: /^Save/ }))
+    userTouchesPage()
+    rerender(report('coverage,32'))
+    advance(ARTIFACT_AUTOSAVE_DELAY_MS + 1)
+    expect(onExport.mock.calls).toEqual([['coverage,31'], ['coverage,32']])
   })
 })
 

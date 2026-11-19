@@ -15,6 +15,7 @@ vi.mock('@/services/crypto/OpenSSLService', () => ({
   openSSLService: { execute: vi.fn() },
 }))
 
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { RandomGenerationDemo } from './RandomGenerationDemo'
 
 describe('RandomGenerationDemo guided experiment', () => {
@@ -67,6 +68,25 @@ describe('RandomGenerationDemo guided experiment', () => {
       )
     )
   })
+
+  it.each(['', 'ff', 'z'.repeat(256)])(
+    'reports invalid OpenSSL output without publishing any bytes',
+    async (stdout) => {
+      vi.mocked(openSSLService.execute).mockResolvedValueOnce({ stdout, stderr: '', files: [] })
+      render(
+        <MemoryRouter>
+          <RandomGenerationDemo />
+        </MemoryRouter>
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Explore more sources' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle source: OpenSSL WASM' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Cannot tell from appearance' }))
+      fireEvent.click(screen.getByRole('button', { name: /^Generate$/ }))
+      expect(await screen.findByRole('alert')).toHaveTextContent('No sample was recorded.')
+      const source = screen.getByRole('region', { name: 'OpenSSL WASM output' })
+      expect(source.querySelector('pre')).toBeNull()
+    }
+  )
 
   it('reveals optional sources without allowing four-column plot layouts', () => {
     render(

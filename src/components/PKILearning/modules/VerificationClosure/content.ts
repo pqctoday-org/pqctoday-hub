@@ -9,9 +9,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'verification-closure',
-  lastReviewed: '2026-10-27',
-  version: '1.1.0',
-  lastEdited: '2026-11-11',
+  lastReviewed: '2026-10-28',
+  version: '1.1.1',
+  lastEdited: '2026-11-18',
 
   // CORRECTED 2026-08-23. This read that NCSC-UK's 2028/2031/2035 targets and ISO/IEC
   // 27001 "have no ACTIVE library row to cite". Both halves were wrong by the time it was
@@ -70,10 +70,10 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'The end of a PQC migration is two distinct jobs that are routinely neglected: decommissioning the classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, final October 2026: deprecate quantum-vulnerable public-key at 112-bit security and up after 2030, disallow after 2035), executed via an inventory→plan→execute lifecycle drawn from ETSI TR 103 619 and TR 104 016 (ETSI TC CYBER) and the separate AIVD/CWI/TNO PQC Migration Handbook (2nd ed., 2024).',
+      'The end of a PQC migration is two distinct jobs that are routinely neglected: decommissioning the classical cryptography on a defensible schedule, and closing the program into business-as-usual. The independently-sourced spine is the deprecation timeline (NIST IR 8547, final October 2026: deprecate quantum-vulnerable public-key at 112-bit security and up after 2030, disallow after 2035; alongside EO 14412 & OMB M-26-15 for federal civilian agencies + directed FAR contractor rule, CNSA 2.0 FAQ v2.2 for NSS, and EU PQC Roadmap v1.1 with DORA/NIS2 risk-management duties), executed via an inventory→plan→execute lifecycle drawn from ETSI TR 103 619 and TR 104 016 (ETSI TC CYBER) and the separate AIVD/CWI/TNO PQC Migration Handbook (2nd ed., 2024).',
     verification:
-      'A system is "migrated" when its behaviour shows it — the handshake negotiates ML-KEM/ML-DSA — not when a change ticket says so. This evidence-by-observed-behaviour standard and the estate-scale sampling approach are the framework author\'s practitioner guidance; the control basis (mapping migration capabilities to risk frameworks) is NIST CSWP 48 (draft) onto CSF 2.0 and SP 800-53.',
+      'A system is "migrated" when its behaviour shows it — the handshake negotiates ML-KEM/ML-DSA and classical fallback is verified removed — not when a change ticket or vendor marketing sheet says so. Distinguish ACVP algorithm conformance from active CMVP FIPS 140-3 module validation. This evidence-by-observed-behaviour standard and the estate-scale sampling approach are practitioner guidance; the control basis (mapping migration capabilities to risk frameworks) is NIST CSWP 48 (draft) onto CSF 2.0 and SP 800-53.',
     closure:
-      "Close deliberately: define closure criteria in advance, accept residual risk with a named owner and re-evaluation date, and hand the standing capabilities (CBOM, continuous discovery, vendor cadence, SOC content, KRIs, crypto-agility) to permanent owners with an archived evidence dossier. The generic governance hooks are ISO/IEC 27001 and the NIST Risk Management Framework (SP 800-37); ongoing procurement should follow CISA's product-category list for PQC-capable technologies (2026); the PQC-specific closure detail is practitioner guidance.",
+      "Close deliberately: define closure criteria in advance, accept residual risk with a named owner and re-evaluation date, and hand the standing capabilities (CBOM, continuous discovery, vendor cadence, SOC content, KRIs, crypto-agility) to permanent owners with an archived evidence dossier. Distinguish business services (such as an archiving and retrieval service) from protected data assets (long-lived records). The generic governance hooks are ISO/IEC 27001 and the NIST Risk Management Framework (SP 800-37); ongoing procurement should follow CISA's product-category list for PQC-capable technologies (2026); the PQC-specific closure detail is practitioner guidance.",
   },
 }

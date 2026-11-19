@@ -92,6 +92,13 @@ export function MobileCommandCenterView() {
   const zoneTiers = useMemo(() => computeZoneTiers(metrics), [metrics])
   // Shared by every zone's hint below, so the step tiers are computed once per render.
   const stepTiers = useMemo(() => computeStepTiers(metrics), [metrics])
+  const browseTools = (
+    <div className="mt-4 border-t border-border pt-3">
+      <Link to="/business/tools" className="text-[11.5px] font-bold text-primary">
+        Browse all {BUSINESS_TOOLS.length} planning tools →
+      </Link>
+    </div>
+  )
 
   if (metrics.isFullyEmpty && !showZoneMap) {
     const intro = commandCenterIntroFor(selectedPersona)
@@ -169,6 +176,7 @@ export function MobileCommandCenterView() {
             </div>
           </>
         )}
+        {browseTools}
       </div>
     )
   }
@@ -244,11 +252,7 @@ export function MobileCommandCenterView() {
         })}
       </div>
 
-      <div className="mt-4 border-t border-border pt-3">
-        <Link to="/business/tools" className="text-[11.5px] font-bold text-primary">
-          Browse all {BUSINESS_TOOLS.length} planning tools →
-        </Link>
-      </div>
+      {browseTools}
     </div>
   )
 }

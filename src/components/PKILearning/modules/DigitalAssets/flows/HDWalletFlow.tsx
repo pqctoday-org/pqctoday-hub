@@ -33,6 +33,7 @@ import { hsm_bip32MasterDerive, hsm_bip32ChildDerive } from '@/wasm/softhsm/clas
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { HDWalletFlowDiagram } from '../components/CryptoFlowDiagram'
 import { AlertTriangle } from 'lucide-react'
+import { Bip32VectorCheck } from './Bip32VectorCheck'
 
 function derivePathWasm(
   M: SoftHSMModule,
@@ -741,6 +742,8 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack, onComplete }
           operations={['C_GenerateRandom', 'C_DeriveKey', 'C_CreateObject']}
         />
       </div>
+
+      <Bip32VectorCheck hsm={hsm} />
 
       <StepWizard
         steps={steps}

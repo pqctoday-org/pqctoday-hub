@@ -38,7 +38,7 @@ const COMPARISON: TrackRow[] = [
   {
     label: 'Clock',
     kem: 'Already running. Anything with a long secrecy lifetime is at risk now.',
-    sig: 'Starts at CRQC arrival. Short-lived signatures rotate out before then.',
+    sig: 'Forgery risk materializes when a CRQC can forge and a signature is trusted or verified; long-lived signatures may need earlier migration.',
   },
   {
     label: 'Primary target',
@@ -48,12 +48,12 @@ const COMPARISON: TrackRow[] = [
   {
     label: 'NIST standard',
     kem: 'ML-KEM (FIPS 203) — stable since Aug 2024.',
-    sig: 'ML-DSA (FIPS 204) / SLH-DSA (FIPS 205); on-ramp signatures still maturing.',
+    sig: 'ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) are standardized; deployment readiness depends on implementation and PKI interoperability.',
   },
   {
     label: 'Sequencing rule',
     kem: 'Lead. Prioritise by data secrecy-lifetime vs. Mosca window.',
-    sig: 'Follow / parallel. Gate on PKI readiness, HSM support, and standards finalisation.',
+    sig: 'Plan in parallel. Sequence by signature lifetime, PKI interoperability, implementation and HSM readiness.',
   },
 ]
 
@@ -116,7 +116,7 @@ export const TwoTrackSequencing: React.FC = () => (
             bullets={[
               'Migrate key establishment first: TLS, VPN/IPsec, stored-data key wrapping.',
               'Prioritise by data secrecy-lifetime — long-lived secrets are already exposed.',
-              'ML-KEM (FIPS 203) is standardised; hybrid (X25519+ML-KEM) is deployable now in TLS 1.3 (RFC 10024).',
+              'ML-KEM (FIPS 203) is standardized. RFC 10024 specifies PQ/T hybrid key agreement for TLS 1.3; endpoint support and deployment readiness still need to be checked.',
             ]}
           />
           <TrackCard
@@ -127,8 +127,8 @@ export const TwoTrackSequencing: React.FC = () => (
             accent="border-secondary/30 bg-secondary/5"
             bullets={[
               'Migrate signing & PKI: code-signing, firmware, document & certificate signing.',
-              'Urgency is gated on CRQC arrival, PKI/HSM readiness, and standards finalisation.',
-              'ML-DSA / SLH-DSA (FIPS 204/205) plus on-ramp candidates still maturing.',
+              'Forgery risk depends on CRQC capability and signature use; plan migration based on signature lifetime, PKI interoperability, and implementation/HSM readiness.',
+              'ML-DSA and SLH-DSA (FIPS 204/205) are standardized. Composite hybrid X.509 signatures are specified in RFC 10073; check issuer, relying-party, and product support before deployment.',
               'Long-lived signatures (firmware, roots of trust, archives) may need to migrate earlier, because they must stay verifiable for years after signing.',
             ]}
           />

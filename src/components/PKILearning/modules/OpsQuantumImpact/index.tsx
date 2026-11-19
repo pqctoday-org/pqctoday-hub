@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState, type FC } from 'react'
-import { AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
+import { AlertTriangle, BookOpen, Rocket, ClipboardCheck, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { OPS_GUIDE_DATA } from './data'
 import { OPS_QUANTUM_EXERCISES } from './exercises'
@@ -127,24 +128,41 @@ function SelfAssessmentStep() {
   )
 }
 
-function ExercisesTab() {
+function ExercisesTab({ onOpenWorkshopStep }: { onOpenWorkshopStep: (step: number) => void }) {
   return (
     <div className="w-full space-y-6">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Ops Exercises</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these operations-focused scenarios.
+          Apply what you learned in the workshop to these operations-focused scenarios. Each
+          exercise includes a concise decision checklist for what to verify in your own production
+          tools.
         </p>
         <div className="space-y-4">
           {OPS_QUANTUM_EXERCISES.map((exercise, idx) => (
             <div key={idx} className="glass-panel p-5 space-y-3">
-              <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onOpenWorkshopStep(exercise.recommendedStep)}
+                  className="shrink-0"
+                >
+                  {exercise.recommendedStepLabel}
+                  <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                </Button>
+              </div>
               <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Use the Why It Matters (Step 1), What to Learn (Step 2), and How to Act (Step 3)
-                  tools in the Workshop tab to model your response.
+              <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-1.5">
+                <p className="text-xs font-semibold text-foreground">
+                  Operational decision checklist
                 </p>
+                <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
+                  {exercise.decisionChecklist.map((item, itemIdx) => (
+                    <li key={itemIdx}>{item}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           ))}
@@ -159,7 +177,7 @@ export const OpsQuantumImpactModule: FC = () => (
     manifest={manifest}
     description="Understand how the quantum threat impacts IT operations — certificates, VPN/SSH, monitoring, and deployment pipelines."
     learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={<ExercisesTab />}
+    exercises={(api) => <ExercisesTab onOpenWorkshopStep={api.goToWorkshop} />}
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey) => {
       switch (index) {

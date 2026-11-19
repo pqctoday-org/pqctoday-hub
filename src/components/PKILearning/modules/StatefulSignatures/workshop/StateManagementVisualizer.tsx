@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import {
   AlertTriangle,
   PenLine,
@@ -122,6 +122,9 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
   const [counter, setCounter] = useState(0)
   const [signatureLog, setSignatureLog] = useState<SignatureLogEntry[]>([])
   const [isExhausted, setIsExhausted] = useState(false)
+  const [counterUnavailable, setCounterUnavailable] = useState(false)
+  const [operationPending, setOperationPending] = useState(false)
+  const operationInProgress = useRef(false)
   const [opError, setOpError] = useState<string | null>(null)
   const [showStateLossExplainer, setShowStateLossExplainer] = useState(false)
   const [showAlgoInfo, setShowAlgoInfo] = useState(false)
@@ -164,6 +167,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
     return s + h
   }, 0)
   const maxSigs = Math.pow(2, totalHeightSum)
+  // The PKCS #11 HSS remaining-key attribute saturates at an unsigned 32-bit count.
+  const supportsExactCounter = maxSigs <= 0xffff_ffff
   // Estimated keygen duration for CSS animation pacing (rough, based on total tree size)
   const keygenDurationMs = (() => {
     if (totalHeightSum <= 5) return 500
@@ -195,10 +200,27 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
   const rollbackRefused =
     rollback !== null &&
     rollback.probe.attempts.every((a) => a.refused) &&
+    rollback.probe.remainingAfter !== null &&
+    rollback.probe.remainingBefore !== null &&
     !rollback.probe.counterMoved
 
   const progressPercent = Math.min(100, (counter / maxSigs) * 100)
   const remainingSigs = maxSigs - counter
+
+  const signingDisabled =
+    operationPending || counterUnavailable || isExhausted || !hsm.isReady || !supportsExactCounter
+
+  const runKeyOperation = async (operation: () => Promise<void>) => {
+    if (operationInProgress.current) return
+    operationInProgress.current = true
+    setOperationPending(true)
+    try {
+      await operation()
+    } finally {
+      operationInProgress.current = false
+      setOperationPending(false)
+    }
+  }
 
   const generateBackendKey = useCallback(async () => {
     if (!hsm || !hsm.isReady || !hsm.hSessionRef?.current || !hsm.moduleRef?.current) return null
@@ -249,32 +271,34 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
   const signBackend = useCallback(
     async (handle: number, msgBytes: Uint8Array) => {
-      if (!hsm || !hsm.isReady || !hsm.moduleRef?.current) return false
+      if (!hsm.isReady || !hsm.moduleRef?.current || !hsm.hSessionRef.current) {
+        throw new Error('The HSM session is unavailable. Check the live engine and try again.')
+      }
       const { hsm_statefulSignBytes } = await import('@/wasm/softhsm/stateful')
       const { hsm_getKeysRemaining } = await import('@/wasm/softhsm/stateful')
+      const module = hsm.moduleRef.current
+      const session = hsm.hSessionRef.current
+      const t0 = performance.now()
+      let sigBytes: Uint8Array
       try {
-        const t0 = performance.now()
-        const sigBytes = hsm_statefulSignBytes(
-          hsm.moduleRef.current,
-          hsm.hSessionRef.current,
-          CKM_HSS,
-          handle,
-          msgBytes
-        )
-        const computeTimeMs = performance.now() - t0
-        const remainingBytes = hsm_getKeysRemaining(
-          hsm.moduleRef.current,
-          hsm.hSessionRef.current,
-          handle
-        )
-        return { success: true, remaining: remainingBytes ?? 0, sigBytes, computeTimeMs }
+        sigBytes = hsm_statefulSignBytes(module, session, CKM_HSS, handle, msgBytes)
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e)
-        if (msg.includes('0x00000203') || msg.includes('CKR_KEY_EXHAUSTED')) {
-          return { success: false, remaining: 0, sigBytes: new Uint8Array(0), computeTimeMs: 0 }
-        }
+        if (msg.includes('0x00000203') || msg.includes('CKR_KEY_EXHAUSTED')) return null
         throw e
       }
+      const computeTimeMs = performance.now() - t0
+      try {
+        const remaining = hsm_getKeysRemaining(module, session, handle)
+        if (remaining !== null) return { remaining, sigBytes, computeTimeMs }
+      } catch (e: unknown) {
+        setCounterUnavailable(true)
+        throw e
+      }
+      setCounterUnavailable(true)
+      throw new Error(
+        'The HSM signed the message but could not report the counter. Reset the sample key to continue.'
+      )
     },
     [hsm]
   )
@@ -299,7 +323,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
       const result = await signBackend(currentHandle, msgBytes)
 
-      if (!result || !result.success) {
+      if (!result) {
+        setCounter(maxSigs)
         setIsExhausted(true)
         return
       }
@@ -365,8 +390,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       try {
         for (let i = 0; i < actualCount; i++) {
           const result = await signBackend(currentHandle, batchMsgBytes)
-          if (!result || !result.success) {
-            setIsExhausted(true)
+          if (!result) {
+            lastRemaining = 0
             break
           }
           lastRemaining = result.remaining
@@ -397,17 +422,14 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       setCounter(newCounter)
       setSignatureLog((prev) => [...newEntries.reverse(), ...prev].slice(0, 20))
 
-      if (lastRemaining === 0 || batchEntries.length < actualCount || newCounter >= maxSigs) {
+      if (lastRemaining === 0) {
         setIsExhausted(true)
       }
     },
     [counter, isExhausted, maxSigs, remainingSigs, activeKeyHandle, generateBackendKey, signBackend]
   )
 
-  // State loss is a real attempt on the live key, not a counter edit: the HSM is asked to
-  // take the key back to an earlier signature (write the counter, read the state out, copy
-  // the key) and the replies are shown. The counter is then read from the engine, so it can
-  // never disagree with the signature log.
+  // Report the HSM's replies and read back its counter before allowing another signature.
   const handleSimulateStateLoss = useCallback(async () => {
     if (counter === 0 || !activeKeyHandle || !hsm?.moduleRef?.current) return
     setOpError(null)
@@ -424,6 +446,9 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       if (probe.remainingAfter !== null) {
         setCounter(maxSigs - probe.remainingAfter)
         setIsExhausted(probe.remainingAfter === 0)
+      } else {
+        setCounterUnavailable(true)
+        setOpError('The HSM could not report the counter. Reset the sample key to continue.')
       }
     } catch (e: unknown) {
       setOpError(e instanceof Error ? e.message : String(e))
@@ -431,7 +456,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
   }, [counter, activeKeyHandle, hsm, maxSigs])
 
   const handleReset = useCallback(() => {
+    if (operationInProgress.current) return
     setCounter(0)
+    setCounterUnavailable(false)
+    setInspectedEntry(null)
     setSignatureLog([])
     setIsExhausted(false)
     setOpError(null)
@@ -509,7 +537,11 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       </div>
 
       {/* SP 800-208 cascading parameter selector */}
-      <div className="space-y-3 bg-muted/30 rounded-lg p-4 border border-border">
+      <fieldset
+        disabled={operationPending}
+        className="min-w-0 space-y-3 bg-muted/30 rounded-lg p-4 border border-border"
+      >
+        <legend className="sr-only">Signing key parameters</legend>
         {/* Hash family */}
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground w-14 shrink-0">Hash</span>
@@ -786,7 +818,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <span className="text-muted-foreground">·</span>
           <span className="text-foreground">{security}</span>
         </div>
-      </div>
+      </fieldset>
 
       {/* Collapsible algorithm details */}
       <div className="border border-border rounded-lg overflow-hidden">
@@ -900,52 +932,77 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               <p className="text-[10px] text-muted-foreground">
                 {keygenPhase === 'done'
                   ? `✓ ${formatSignatureCount(maxSigs)} one-time signatures available`
-                  : `Computing 2^${totalHeightSum} = ${formatSignatureCount(maxSigs)} leaf keys + Merkle authentication paths`}
+                  : 'Generating the sample key. Larger LMS trees take longer.'}
               </p>
             </div>
           )}
 
-          {/* Counter and progress */}
-          <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-bold text-foreground">Signature Counter</h4>
-              <span className="text-2xl font-bold font-mono text-primary">
-                {counter} / {formatSignatureCount(maxSigs)}
-              </span>
-            </div>
-
-            {/* Progress bar */}
-            <div className="w-full bg-background rounded-full h-4 border border-border mb-2">
-              <div
-                className={`h-full rounded-full transition-all duration-300 ${
-                  isExhausted
-                    ? 'bg-destructive'
-                    : progressPercent > 80
-                      ? 'bg-warning'
-                      : 'bg-primary/60'
-                }`}
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-
-            <div className="flex justify-between text-[10px] text-muted-foreground">
-              <span>Used: {counter}</span>
-              <span>
-                Remaining: {remainingSigs > 0 ? formatSignatureCount(remainingSigs) : 'NONE'}
-              </span>
-            </div>
-
-            {/* Warning thresholds */}
-            {progressPercent > 80 && !isExhausted && (
-              <div className="mt-3 flex items-center gap-2 bg-warning/10 rounded p-2 border border-warning/30">
-                <AlertTriangle size={14} className="text-warning shrink-0" />
-                <p className="text-[10px] text-warning">
-                  Warning: {Math.round(progressPercent)}% of signing capacity used. Plan key
-                  rotation.
-                </p>
+          {supportsExactCounter ? (
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-bold text-foreground">Signature Counter</h4>
+                <span className="text-2xl font-bold font-mono text-primary">
+                  {counter} / {formatSignatureCount(maxSigs)}
+                </span>
               </div>
-            )}
-          </div>
+
+              {/* Progress bar */}
+              <div className="w-full bg-background rounded-full h-4 border border-border mb-2">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    isExhausted
+                      ? 'bg-destructive'
+                      : progressPercent > 80
+                        ? 'bg-warning'
+                        : 'bg-primary/60'
+                  }`}
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+
+              <div className="flex justify-between text-[10px] text-muted-foreground">
+                <span>
+                  {counterUnavailable ? 'Last confirmed used' : 'Used'}: {counter}
+                </span>
+                <span>
+                  {counterUnavailable
+                    ? 'Counter unavailable'
+                    : `Remaining: ${remainingSigs > 0 ? formatSignatureCount(remainingSigs) : 'NONE'}`}
+                </span>
+              </div>
+
+              {/* Warning thresholds */}
+              {progressPercent > 80 && !isExhausted && !counterUnavailable && (
+                <div className="mt-3 flex items-center gap-2 bg-warning/10 rounded p-2 border border-warning/30">
+                  <AlertTriangle size={14} className="text-warning shrink-0" />
+                  <p className="text-[10px] text-warning">
+                    Warning: {Math.round(progressPercent)}% of signing capacity used. Plan key
+                    rotation.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div
+              className="space-y-2 rounded-lg border border-border bg-muted/50 p-4"
+              role="status"
+            >
+              <h4 className="text-sm font-bold text-foreground">Capacity preview</h4>
+              <p className="text-xs text-muted-foreground">
+                This configuration has room for 2<sup>{totalHeightSum}</sup> signatures. The HSS
+                counter can report at most 4,294,967,295 remaining. Choose a smaller configuration
+                to sign and observe the exact remaining count.
+              </p>
+              <a
+                href="https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-primary underline"
+              >
+                PKCS #11 v3.2 HSS private key attributes
+              </a>
+            </div>
+          )}
 
           {/* Exhaustion warning */}
           {isExhausted && (
@@ -987,7 +1044,9 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 >
                   {rollbackRefused
                     ? `ROLLBACK REFUSED — the HSM kept the counter at ${rollback.fromIndex}`
-                    : 'THE ENGINE LET PART OF THE ROLLBACK THROUGH'}
+                    : rollback.probe.remainingAfter === null
+                      ? 'ROLLBACK COUNTER UNAVAILABLE'
+                      : 'THE ENGINE LET PART OF THE ROLLBACK THROUGH'}
                 </span>
               </div>
               <p className="text-xs text-foreground/80">
@@ -998,11 +1057,10 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     The HSM refused every way in, so <strong>no leaf was reused</strong>: signing
                     continues at leaf {rollback.fromIndex}, and the counter and the log agree.
                   </>
+                ) : rollback.probe.remainingAfter === null ? (
+                  'The engine returned no counter. Reset the sample key before signing again.'
                 ) : (
-                  <>
-                    The replies are below; the counter now reads {counter} because it is read from
-                    the engine.
-                  </>
+                  <>The engine reported {maxSigs - rollback.probe.remainingAfter} leaves used.</>
                 )}
               </p>
               <ul className="space-y-2" aria-label="Rollback attempts and the HSM's replies">
@@ -1045,13 +1103,14 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               type="text"
               value={messageToSign}
               onChange={(e) => setMessageToSign(e.target.value)}
-              disabled={isExhausted}
+              disabled={operationPending || counterUnavailable || isExhausted}
               className="w-full bg-background border border-input rounded px-3 py-2 text-sm disabled:opacity-50"
             />
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={preHash}
+                disabled={operationPending || counterUnavailable || isExhausted}
                 onChange={(e) => setPreHash(e.target.checked)}
                 className="w-4 h-4 accent-primary"
               />
@@ -1065,8 +1124,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <div className="flex flex-wrap gap-2">
             <Button
               variant="gradient"
-              onClick={handleSign}
-              disabled={isExhausted}
+              onClick={() => void runKeyOperation(handleSign)}
+              disabled={signingDisabled}
               className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
             >
               <PenLine size={14} />
@@ -1075,8 +1134,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             {maxSigs > 32 && (
               <Button
                 variant="ghost"
-                onClick={() => handleBatchSign(10)}
-                disabled={isExhausted}
+                onClick={() => void runKeyOperation(() => handleBatchSign(10))}
+                disabled={signingDisabled}
                 className="flex items-center gap-2 px-4 py-2 bg-secondary/20 text-secondary font-medium rounded-lg hover:bg-secondary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-secondary/30"
               >
                 Batch Sign (10)
@@ -1084,8 +1143,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             )}
             <Button
               variant="ghost"
-              onClick={handleSimulateStateLoss}
-              disabled={counter === 0}
+              onClick={() => void runKeyOperation(handleSimulateStateLoss)}
+              disabled={operationPending || counterUnavailable || !hsm.isReady || counter === 0}
               className="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-status-error font-medium rounded-lg hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-destructive/30"
             >
               <AlertTriangle size={14} />
@@ -1094,10 +1153,11 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             <Button
               variant="ghost"
               onClick={handleReset}
+              disabled={operationPending}
               className="flex items-center gap-2 px-3 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors text-sm border border-border"
             >
               <RotateCcw size={14} />
-              Reset
+              Reset key
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground">

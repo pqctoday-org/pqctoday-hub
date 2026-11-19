@@ -88,7 +88,7 @@ export function useSyncDeepLink(
       url.searchParams.delete('flow')
     }
 
-    window.history.replaceState(null, '', url.toString())
+    window.history.replaceState(window.history.state, '', url.toString())
 
     // Track tab switches — skip the initial mount (deep-link or default)
     if (isMounted.current) {

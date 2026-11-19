@@ -3,15 +3,19 @@ import React from 'react'
 import { Lock, Unlock } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore } from '@/store/tls-learning.store'
+import { HYBRID_TLS_KEY_SHARES } from '../utils/hybridKeyShareSizes'
 
 // Key-share sizes (client share / server share in bytes) per group.
 // Keys match the canonical group names stored in tls-learning.store.
 // Hybrids carry both components: e.g. X25519MLKEM768 = ML-KEM-768 ek 1,184 + X25519 32.
 // Source: FIPS 203, RFC 7748, RFC 10024.
 const GROUP_KEY_SHARE: Record<string, { ek: number; ct: number }> = {
-  X25519MLKEM768: { ek: 1216, ct: 1120 },
-  SecP256r1MLKEM768: { ek: 1249, ct: 1153 },
-  SecP384r1MLKEM1024: { ek: 1665, ct: 1665 },
+  ...Object.fromEntries(
+    Object.entries(HYBRID_TLS_KEY_SHARES).map(([group, sizes]) => [
+      group,
+      { ek: sizes.client, ct: sizes.server },
+    ])
+  ),
   MLKEM512: { ek: 800, ct: 768 },
   MLKEM768: { ek: 1184, ct: 1088 },
   MLKEM1024: { ek: 1568, ct: 1568 },
@@ -136,17 +140,19 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
   const { clientConfig, serverConfig } = useTLSStore()
   const selectedGroup = clientConfig?.groups?.[0] ?? 'X25519MLKEM768'
   const sigAlg = serverConfig?.signatureAlgorithms?.[0] ?? 'mldsa65'
-  const ks = GROUP_KEY_SHARE[selectedGroup] ?? GROUP_KEY_SHARE['X25519MLKEM768']
+  const ks = Object.hasOwn(GROUP_KEY_SHARE, selectedGroup)
+    ? GROUP_KEY_SHARE[selectedGroup]
+    : undefined
   const sigSize = SIG_BYTES[sigAlg]
 
   const dynamicMessages = MESSAGES.map((msg) => {
-    if (msg.label === 'ClientHello') {
+    if (msg.label === 'ClientHello' && ks) {
       return {
         ...msg,
         sublabel: `+ key_share (${selectedGroup}, client share ${ks.ek} B), supported_groups`,
       }
     }
-    if (msg.label === 'ServerHello' && msg.direction === 'left') {
+    if (msg.label === 'ServerHello' && msg.direction === 'left' && ks) {
       return {
         ...msg,
         sublabel: `+ key_share (KEM ciphertext / ECDH response, ${ks.ct} B)`,
@@ -228,15 +234,15 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
           </div>
         </div>
 
-        {/* PQC note — dynamic based on current group selection */}
         <p className="mt-4 text-[10px] text-muted-foreground text-center">
-          Current group: <span className="font-mono">{selectedGroup}</span> — client key share{' '}
-          {ks.ek} B, server response {ks.ct} B (classical X25519 uses 32 B each; hybrid sizes
-          include both components).
+          First offered group <span className="font-mono">{selectedGroup}</span>.{' '}
+          {ks
+            ? `Client share ${ks.ek} B and server share ${ks.ct} B. Hybrid shares include both components.`
+            : 'This diagram has no size data for that group.'}
           {sigSize && (
             <>
               {' '}
-              CertificateVerify with <span className="font-mono">{sigAlg}</span>: {sigSize}.
+              First offered signature scheme <span className="font-mono">{sigAlg}</span>, {sigSize}.
             </>
           )}
         </p>

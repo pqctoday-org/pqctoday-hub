@@ -406,12 +406,18 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
         <p>
           TLS also needs support at both ends: in TLS 1.3 a server may not send a key share for a
           group that the client did not list in its{' '}
-          <code className="text-foreground/70">supported_groups</code> extension (RFC 8446, Section
-          4.2.8). The difference is that the choice is negotiated live in every handshake, so a
-          server can add support first and clients that offer it benefit while others still connect
-          with a classical group. Fallback of that kind keeps connections working but also means a
-          classical-only peer gets classical protection, so deployment scope (which clients and
-          servers can be updated) decides the outcome.
+          <code className="text-foreground/70">supported_groups</code> extension (
+          <a
+            className="text-primary underline"
+            href="https://www.ietf.org/ietf-ftp/rfc/rfc9846.html#section-4.3.8"
+          >
+            RFC 9846 key shares
+          </a>
+          ). The choice is negotiated live in each handshake that performs an asymmetric key
+          exchange, so a server can add support first and clients that offer it benefit while others
+          still connect with a classical group. Fallback of that kind keeps connections working but
+          also means a classical-only peer gets classical protection, so deployment scope (which
+          clients and servers can be updated) decides the outcome.
         </p>
         <div className="space-y-2">
           {[

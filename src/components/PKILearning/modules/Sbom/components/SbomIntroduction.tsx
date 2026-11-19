@@ -67,9 +67,10 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
       <Section id="sbom-why" icon={Package} title="Why an SBOM, and what it isn't">
         <p>
           <Badge kind="std" />A <strong>Software Bill of Materials (SBOM)</strong> is a
-          machine-readable inventory of every software component a build depends on — packages,
-          libraries, their versions, suppliers, and how they relate to each other. It answers{' '}
-          <em>what is in this build?</em>
+          machine-readable inventory of software components within a product&apos;s stated scope,
+          with information such as names, versions, suppliers or producers, and dependency
+          relationships. Coverage depends on how the SBOM is generated and maintained; it should not
+          be assumed to include every dependency. It helps answer <em>what is in this build?</em>
         </p>
         <p>
           <Badge kind="view" />
@@ -77,29 +78,27 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
           <Link to="/learn/cbom" className="text-primary hover:underline">
             CBOM module
           </Link>
-          &apos;s job, one layer up. An SBOM lists software; a CBOM extends that list with
-          algorithm, key size, protocol, and quantum-vulnerability fields the SBOM has no place for.
-          Keep the two separate: this module is the software inventory, not the crypto one.
+          &apos;s job, one layer up. An SBOM lists software components. A CBOM records cryptographic
+          assets and related properties; discovery can also require scanners, certificate and key
+          inventories, runtime observation, and manual investigation.
         </p>
       </Section>
 
       <Section id="sbom-formats" icon={FileJson} title="SPDX vs CycloneDX — general BOM formats">
         <p>
           <Badge kind="std" />
-          <strong>SPDX</strong> (Linux Foundation; standardized as{' '}
-          <strong>ISO/IEC 5962:2021</strong>) grew out of license-compliance tooling and has the
-          deeper license/provenance model. <strong>CycloneDX</strong> (OWASP; standardized as{' '}
-          <strong>ECMA-424</strong>) grew out of application-security tooling and is the more
-          extensible object model — SaaSBOM, HBOM, ML-BOM and VDR/VEX are all sibling BOM types
-          built on the same schema.
+          <strong>SPDX</strong> is an international open standard (ISO/IEC 5962:2021).{' '}
+          <strong>CycloneDX</strong> is an OWASP community specification; CycloneDX 1.6 was
+          published as ECMA-424. Both formats represent software components and relationships, but
+          use different schemas and field models. Compare the versions and downstream tool support
+          your workflow requires instead of assuming one is universally more complete.
         </p>
         <p>
           <Badge kind="view" />
-          Neither format has a cryptography object model built in for general use. CycloneDX does
-          have a crypto-specific extension (assetType: cryptographic-asset) — that extension, and
-          the SPDX-vs-CycloneDX trade-off <em>for a crypto inventory specifically</em>, is covered
-          in the CBOM module, not repeated here. Likewise, CycloneDX&apos;s own cross-tool
-          algorithm/curve naming registry is covered in the{' '}
+          General software inventory does not establish a complete cryptographic asset inventory.
+          CycloneDX includes a cryptographic-asset model; the extension and the SPDX-vs-CycloneDX
+          trade-off <em>for a crypto inventory specifically</em> are covered in the CBOM module.
+          CycloneDX&apos;s own cross-tool algorithm/curve naming registry is covered in the{' '}
           <Link to="/learn/crypto-registry" className="text-primary hover:underline">
             CycloneDX Cryptography Registry module
           </Link>
@@ -119,18 +118,19 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
         <p>
           <Badge kind="std" />
           NTIA&apos;s 2021 <em>Minimum Elements for a Software Bill of Materials</em> defines seven
-          required fields per component: <strong>Supplier Name</strong>,{' '}
-          <strong>Component Name</strong>, <strong>Version</strong>,{' '}
-          <strong>Other Unique Identifiers</strong>, <strong>Dependency Relationship</strong>,{' '}
-          <strong>Author of SBOM Data</strong>, and <strong>Timestamp</strong>. Two of the seven —
-          author and timestamp — live at the document level, not per component.
+          data fields: <strong>Supplier Name</strong>, <strong>Component Name</strong>,{' '}
+          <strong>Version of the Component</strong>, <strong>Other Unique Identifiers</strong>,{' '}
+          <strong>Dependency Relationship</strong>, <strong>Author of SBOM Data</strong>, and{' '}
+          <strong>Timestamp</strong>. NTIA&apos;s framing applies the first five fields to
+          components; author and timestamp are metadata about the SBOM itself.
         </p>
         <p>
           <Badge kind="std" />
           CISA finalized a successor on 29 July 2026 — the{' '}
           <em>2026 Minimum Elements for a Software Bill of Materials</em>, v2.1 — co-authored with
-          NSA, FBI, and 15 international partner cyber agencies. It keeps all seven of the above and
-          adds ten more; see the next section for what changed and why.
+          NSA, FBI, and 15 international partner cyber agencies. It revises or replaces several 2021
+          fields and adds ten new elements; it is not a strict superset. See the next section for
+          what changed and why.
         </p>
       </Section>
 
@@ -154,19 +154,11 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
         </p>
         <p>
           <Badge kind="view" />
-          Real-world tooling hasn&apos;t caught up yet. We checked seven generators&apos; actual
-          current default output (not the format&apos;s theoretical capability) against these ten
-          elements: none is fully 2026-compliant out of the box.{' '}
-          <strong>
-            npm&apos;s native <code>npm sbom</code>
-          </strong>{' '}
-          comes closest at 9 of 10 fields (missing only the signature); <strong>pip-audit</strong>{' '}
-          trails furthest behind at 2 of 10, and still emits the older CycloneDX 1.4 schema. Two
-          gaps are universal across every tool checked: none sign the SBOM automatically, and{' '}
-          <strong>SBOM Generation Context</strong> has no clean mapping in any of them. Treat this
-          as an August 2026 snapshot, not a fixed verdict — SBOM generators are actively adding
-          fields as adoption of the 2026 baseline spreads, so expect these numbers to climb;
-          re-check a tool&apos;s current release before relying on it for a real compliance claim.
+          Generator features and output change by release, ecosystem, lock file, and configuration.
+          A supported format does not guarantee that every value is present or that an SBOM meets a
+          particular contract or regulatory requirement. The workshop links tool documentation and
+          shows what to inspect; check your generated artifact against the applicable CISA guidance
+          and requirements.
         </p>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -191,54 +183,57 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
       <Section id="sbom-vex" icon={Bug} title="VEX closes the vulnerability-triage gap">
         <p>
           <Badge kind="std" />
-          An SBOM lists what is present; it says nothing about whether a listed component&apos;s
-          known vulnerabilities are actually reachable in this product.{' '}
+          An SBOM lists components; it does not determine whether a vulnerable code path is
+          reachable in a particular product.{' '}
           <strong>VEX (Vulnerability Exploitability eXchange)</strong> — Profile 5 of{' '}
-          <strong>OASIS CSAF 2.0</strong> — closes that gap with a machine-readable{' '}
-          <em>affected / not affected / fixed / under investigation</em> statement per CVE per
-          product.
+          <strong>OASIS CSAF 2.0</strong> — closes that gap with a machine-readable product status
+          and supporting rationale for a vulnerability. CSAF&apos;s VEX profile includes statuses
+          such as known affected, known not affected, fixed, or under investigation. A VEX statement
+          supports triage; it does not prove by itself that a vulnerability is or is not
+          exploitable.
         </p>
         <p>
           <Badge kind="view" />
-          Without VEX, a CVE in a widely-used component (a compression library, a crypto library)
-          fires an alert for every product that merely lists it in an SBOM, regardless of whether
-          the vulnerable code path is ever called. VEX turns that into a triage decision instead of
-          a fire drill.
+          Product status and justification can help teams prioritize investigation. Validate the
+          statement against the product version and evidence available to your organization.
         </p>
       </Section>
 
-      <Section
-        id="sbom-regulation"
-        icon={Scale}
-        title="What's actually mandated: EO 14028 & EU CRA"
-      >
+      <Section id="sbom-regulation" icon={Scale} title="U.S. procurement guidance & EU CRA">
         <p>
           <Badge kind="std" />
-          US <strong>Executive Order 14028</strong> (May 2021) directs NIST to publish software
-          supply chain security guidelines that include providing purchasers an SBOM, and calls for
-          contract language requiring suppliers of software sold to federal agencies to comply with
-          and attest to the resulting requirements — the order that produced NTIA&apos;s
-          minimum-elements work above. The <strong>EU Cyber Resilience Act</strong> (Regulation EU
-          2024/2847) requires manufacturers of products with digital elements to maintain an SBOM
-          covering top-level dependencies, with the main obligations applying from{' '}
-          <strong>11 December 2027</strong>.
+          <strong>Executive Order 14028</strong> directed federal software supply-chain security
+          work, including the original NTIA minimum-elements effort. For federal procurement,{' '}
+          <a
+            href="https://www.whitehouse.gov/wp-content/uploads/2022/09/M-22-18.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-primary underline underline-offset-2"
+          >
+            OMB M-22-18
+          </a>{' '}
+          says agencies may require an SBOM in solicitations based on software criticality or agency
+          determination; this is not a blanket rule that every federal software vendor must provide
+          one. The <strong>EU Cyber Resilience Act</strong> (Regulation EU 2024/2847) requires
+          manufacturers of in-scope products with digital elements to document components and
+          vulnerabilities, including an SBOM in a commonly used machine-readable format covering at
+          least top-level dependencies. Its general application date is{' '}
+          <strong>11 December 2027</strong>, with earlier dates for specified provisions.
         </p>
         <p>
           <Badge kind="view" />
-          Neither mandate is PQC-specific — they are general software supply-chain requirements. The
-          reason a PQC migration program cares is downstream: an SBOM built to satisfy EO 14028 or
-          the CRA is exactly the existing data source a crypto-discovery effort should integrate
-          rather than duplicate.
+          These are general software supply-chain requirements, not PQC-specific mandates. A PQC
+          discovery effort can use a relevant SBOM as one input, while checking its scope and
+          cross-referencing it with other evidence.
         </p>
       </Section>
 
       <Section id="sbom-to-cbom" icon={ArrowRightLeft} title="Bridge: from SBOM to CBOM">
         <p>
           <Badge kind="view" />
-          An SBOM is <strong>Phase 1 discovery input</strong>, not a Phase 2 output: it is one of
-          the existing data sources a crypto-discovery effort should cross-reference rather than
-          rebuild from scratch. Skipping that cross-reference — building a CBOM without linking it
-          back to SBOM dependency chains — is a named common failure in PQC migration programs.
+          In this module&apos;s staged model, an SBOM is a discovery input, not the CBOM output. A
+          crypto-discovery effort can cross-reference its component and dependency information
+          rather than assume it already describes cryptographic assets.
         </p>
         <p>
           <Badge kind="view" />

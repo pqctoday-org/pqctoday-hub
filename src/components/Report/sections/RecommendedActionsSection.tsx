@@ -99,7 +99,9 @@ export const RecommendedActionsSection = ({
                   className="text-xs text-primary hover:underline flex items-center gap-1 print:hidden"
                 >
                   <ArrowRight size={10} />
-                  Explore
+                  {action.drivers?.includes('currentCrypto:unknown')
+                    ? 'Start a sample inventory'
+                    : 'Explore'}
                 </Link>
               )}
             </div>

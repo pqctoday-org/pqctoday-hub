@@ -2,7 +2,7 @@
 
 ## What This Is About
 
-Identity and Access Management (IAM) is built entirely on cryptographic signatures. Every time you log in, protocols like SAML, JWT, or Kerberos use math to assert your identity.
+Identity and Access Management (IAM) combines passwords, symmetric authenticators, public-key signatures, key exchange, and policy checks. Protocols such as SAML, JWT, and Kerberos use different combinations of these mechanisms.
 
 ## Why It Matters
 
@@ -10,7 +10,7 @@ Adversaries are actively capturing and storing these secure exchanges today. Ker
 
 ## The Key Takeaway
 
-All enterprise token signing will soon migrate to the new ML-DSA (FIPS 204) standard. Because ML-DSA comes in different sizes, engineers will calibrate it to the task: ML-DSA-44 for short-lived access tokens, ML-DSA-65 for enterprise SAML logins, and ML-DSA-87 for highly classified government infrastructure.
+Public-key token signatures may need a post-quantum migration, but there is no universal rollout date or rule assigning ML-DSA parameter sets by token lifetime or application type. Choose algorithms and deployment profiles from applicable standards, vendor support, security requirements, interoperability, and measured size/performance constraints. HMAC-signed tokens have a different quantum-risk analysis.
 
 ## What's Happening
 

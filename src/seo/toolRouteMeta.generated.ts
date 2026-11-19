@@ -1230,7 +1230,7 @@ export const TOOL_ROUTE_META: readonly ToolRouteMeta[] = [
     path: '/playground/tls-simulator',
     title: 'TLS 1.3 Simulator — PQC Crypto Lab | PQC Today',
     description:
-      'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
+      'Client–server TLS 1.3 handshake simulator: configure cipher suites, classical or hybrid key exchange, and RSA or ML-DSA certificates',
     kind: 'browser-tool',
     index: true,
     sourceGlobs: [

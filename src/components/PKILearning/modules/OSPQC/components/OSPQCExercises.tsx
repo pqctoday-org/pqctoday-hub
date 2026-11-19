@@ -34,11 +34,11 @@ export const OSPQCExercises: React.FC<OSPQCExercisesProps> = ({
       id: 'os-crypto-audit',
       title: '1. OS Crypto Audit',
       description:
-        'Perform a complete OS-level cryptographic component inventory. Review all 8 system components — from system TLS and SSH daemon to the container runtime — and identify which are critical risk vs. easy wins. Use the risk and effort filters to prioritize your migration roadmap.',
+        'Review eight sample cryptographic components. Change the host TLS configuration and compare its effect on the OpenSSL and bundled Go clients. Use the observed group to decide which application needs its own change.',
       badge: 'Inventory',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'System TLS and SSH daemon are both Critical risk but only Medium effort to migrate — making them the highest-ROI first steps. Package signing is High risk AND High effort, requiring ecosystem coordination. Note the 2 "Easy Win" components that benefit automatically from system TLS migration.',
+        'The host OpenSSL client follows its system defaults. The bundled Go client keeps its own classical group until you change its configuration. Both clients verify the same RSA certificate.',
       config: { step: 0 },
     },
     {

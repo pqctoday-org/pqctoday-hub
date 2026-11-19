@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'os-pqc',
-  contentVersion: 18,
+  contentVersion: 19,
   lm_id: 'LM-024',
   title: 'Operating System & Platform Crypto PQC',
   description:
     'Migrate OS-level cryptography to quantum-safe algorithms. Covers system TLS policy (OpenSSL, GnuTLS, SChannel), SSH host key migration to ML-DSA, RPM/DEB package signing, and FIPS mode compatibility for PQC-enabled operating systems.',
   whyThisMatters:
-    'The OS crypto stack — OpenSSL, SChannel, SSH host keys, package signing — is the foundation every application above it silently depends on; get this layer wrong and every app inherits the vulnerability, whether it knows it or not.',
+    'System crypto policy can change how applications use shared TLS backends. Applications with bundled libraries or explicit settings may need their own migration. Identify what each client actually uses before rolling out a policy.',
   duration: '50 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p6',

@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * MobilePlaygroundOps — reduced interactive Playground for mobile.
- * Provides KEM, Sign & Verify, Crypto Lab and Keys via a capability-checked carousel.
+ * Interactive cryptographic operations in a capability-checked phone carousel.
  */
 import { useState, useRef, useEffect, useCallback, useId, lazy, Suspense } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useSearchParams } from 'react-router'
 import {
   AlertTriangle,
   Key,
@@ -13,10 +12,16 @@ import {
   ChevronUp,
   ChevronDown,
   Monitor,
+  FileText,
+  Lock,
+  Hash,
 } from 'lucide-react'
 import { PlaygroundProvider } from './PlaygroundProvider'
 import { KemOpsTab } from './tabs/KemOpsTab'
 import { SignVerifyTab } from './tabs/SignVerifyTab'
+import { DataTab } from './tabs/DataTab'
+import { SymmetricTab } from './tabs/SymmetricTab'
+import { HashingTab } from './tabs/HashingTab'
 import { WorkshopToolsTab } from './tabs/WorkshopToolsTab'
 import { LogsTab } from './tabs/LogsTab'
 import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
@@ -38,10 +43,13 @@ const MobilePlaygroundView = lazy(() =>
 type CapabilityStatus = 'checking' | 'supported' | 'unsupported' | 'dismissed'
 
 const TABS = [
-  { id: 'kem', label: 'KEM', icon: Key },
-  { id: 'sign', label: 'Sign & Verify', icon: FileSignature },
-  { id: 'workshop', label: 'Crypto Lab', icon: FlaskConical },
-  { id: 'keystore', label: 'Keys', icon: Key },
+  { id: 'kem_ops', label: 'KEM', icon: Key, Panel: KemOpsTab },
+  { id: 'sign_verify', label: 'Sign & Verify', icon: FileSignature, Panel: SignVerifyTab },
+  { id: 'workshop', label: 'Crypto Lab', icon: FlaskConical, Panel: WorkshopToolsTab },
+  { id: 'keystore', label: 'Keys', icon: Key, Panel: KeyStoreTab },
+  { id: 'data', label: 'Data', icon: FileText, Panel: DataTab },
+  { id: 'symmetric', label: 'Symmetric', icon: Lock, Panel: SymmetricTab },
+  { id: 'hashing', label: 'Hashing', icon: Hash, Panel: HashingTab },
 ] as const
 
 type TabId = (typeof TABS)[number]['id']
@@ -92,66 +100,87 @@ function LaunchNotice() {
   )
 }
 
-function phoneTab(search: string): TabId {
-  const tab = new URLSearchParams(search).get('tab')
-  if (tab === 'keystore') return 'keystore'
-  if (tab === 'sign_verify') return 'sign'
-  return 'kem'
-}
-
 function MobileOpsContent() {
-  const { search } = useLocation()
-  const { executionMode, wasmLoaded } = useSettingsContext()
+  const [params, setParams] = useSearchParams()
+  const requestedTab = params.get('tab')
+  const activeTab: TabId =
+    TABS.find((tab) => tab.id === requestedTab)?.id ??
+    (params.get('phonePanel') === 'workshop' ? 'workshop' : 'kem_ops')
+  const { executionMode, wasmLoaded, error } = useSettingsContext()
   const { hsmLog, clearHsmLog } = useHsmContext()
-  const [activeTab, setActiveTab] = useState<TabId>(() => phoneTab(search))
-  const [previousSearch, setPreviousSearch] = useState(search)
-  if (previousSearch !== search) {
-    setPreviousSearch(search)
-    setActiveTab(phoneTab(search))
-  }
-  const [logOpen, setLogOpen] = useState(false)
+  const [logOpen, setLogOpen] = useState(requestedTab === 'logs')
   const [logSource, setLogSource] = useState<'software' | 'pkcs11'>('software')
   const logPanelId = useId()
   const logTitle = logSource === 'software' ? 'Software playground log' : 'Shared PKCS#11 log'
   const scrollRef = useRef<HTMLDivElement>(null)
+  const errorRef = useRef<HTMLParagraphElement>(null)
+  const swipeInProgress = useRef(false)
 
-  // Sync scroll position to active tab indicator
-  const handleScroll = useCallback(() => {
+  const selectTab = useCallback(
+    (id: TabId) => {
+      swipeInProgress.current = false
+      if (id === activeTab) return
+      const next = new URLSearchParams(params)
+      if (id === 'workshop') {
+        next.delete('tab')
+        next.set('phonePanel', id)
+      } else {
+        next.set('tab', id)
+        next.delete('phonePanel')
+      }
+      setParams(next, { replace: true })
+    },
+    [activeTab, params, setParams]
+  )
+
+  useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    const idx = Math.round(el.scrollLeft / el.clientWidth)
-    const tabId = TABS[idx]?.id
-    if (tabId && tabId !== activeTab) setActiveTab(tabId)
+    swipeInProgress.current = false
+    const idx = TABS.findIndex((tab) => tab.id === activeTab)
+    el.scrollTo({ left: idx * el.clientWidth, behavior: 'auto' })
   }, [activeTab])
 
-  // Scroll to tab on dot click
-  const scrollToTab = useCallback((id: TabId, behavior: ScrollBehavior = 'smooth') => {
-    const el = scrollRef.current
-    if (!el) return
-    const idx = TABS.findIndex((t) => t.id === id)
-    el.scrollTo({ left: idx * el.clientWidth, behavior })
-    setActiveTab(id)
-  }, [])
-
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    const idx = TABS.findIndex((tab) => tab.id === phoneTab(search))
-    el.scrollTo({ left: idx * el.clientWidth, behavior: 'auto' })
-  }, [search])
+    const handleScrollEnd = () => {
+      // Programmatic repositioning can deliver a delayed event for the previous tab.
+      if (!swipeInProgress.current) return
+      swipeInProgress.current = false
+      const tab = TABS[Math.round(el.scrollLeft / el.clientWidth)]
+      if (tab) selectTab(tab.id)
+    }
+    el.addEventListener('scrollend', handleScrollEnd, { passive: true })
+    return () => el.removeEventListener('scrollend', handleScrollEnd)
+  }, [selectTab])
 
   useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    el.addEventListener('scrollend', handleScroll, { passive: true })
-    return () => el.removeEventListener('scrollend', handleScroll)
-  }, [handleScroll])
+    if (error) errorRef.current?.focus()
+  }, [error])
+
+  // A shared Logs link opens the disclosure even if the carousel is already mounted.
+  const [previousRequestedTab, setPreviousRequestedTab] = useState(requestedTab)
+  if (previousRequestedTab !== requestedTab) {
+    setPreviousRequestedTab(requestedTab)
+    if (requestedTab === 'logs') setLogOpen(true)
+  }
 
   return (
     <div className="flex min-w-0 flex-col h-full">
       <h2 className="sr-only">Interactive cryptographic operations</h2>
       <InteractiveExecutionNotice executionMode={executionMode} wasmLoaded={wasmLoaded} />
-      {/* Tab indicator dots */}
+      {error && (
+        <p
+          ref={errorRef}
+          role="alert"
+          tabIndex={-1}
+          className="mx-3 my-2 rounded-lg border border-status-error p-3 text-sm text-status-error"
+        >
+          {error}
+        </p>
+      )}
+      {/* Operation selection */}
       <div className="flex flex-wrap items-center justify-center gap-2 px-3 py-3 border-b border-border shrink-0">
         {TABS.map((tab) => {
           const Icon = tab.icon
@@ -160,7 +189,7 @@ function MobileOpsContent() {
             <Button
               variant="ghost"
               key={tab.id}
-              onClick={() => scrollToTab(tab.id)}
+              onClick={() => selectTab(tab.id)}
               aria-pressed={isActive}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 isActive
@@ -178,36 +207,33 @@ function MobileOpsContent() {
       {/* Swipeable carousel */}
       <div
         ref={scrollRef}
+        onTouchMove={() => {
+          swipeInProgress.current = true
+        }}
+        onWheel={(event) => {
+          if (event.deltaX !== 0 || event.shiftKey) swipeInProgress.current = true
+        }}
         className="min-w-0 flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar"
       >
-        <div
-          inert={activeTab !== 'kem'}
-          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
-        >
-          <KemOpsTab />
-        </div>
-        <div
-          inert={activeTab !== 'sign'}
-          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
-        >
-          <SignVerifyTab />
-        </div>
-        <div
-          inert={activeTab !== 'workshop'}
-          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
-        >
-          <WorkshopToolsTab />
-        </div>
-        <div
-          inert={activeTab !== 'keystore'}
-          className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
-        >
-          {activeTab === 'keystore' && (
-            <Suspense fallback={<p role="status">Loading Keys…</p>}>
-              <KeyStoreTab />
-            </Suspense>
-          )}
-        </div>
+        {TABS.map(({ id, label, Panel }) => (
+          <div
+            key={id}
+            inert={activeTab !== id}
+            aria-hidden={activeTab !== id}
+            role="region"
+            aria-label={label}
+            className="snap-center shrink-0 min-w-0 w-full overflow-y-auto p-3"
+          >
+            {(activeTab === id ||
+              id === 'kem_ops' ||
+              id === 'sign_verify' ||
+              id === 'workshop') && (
+              <Suspense fallback={<p role="status">Loading {label}…</p>}>
+                <Panel />
+              </Suspense>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Collapsible log panel */}

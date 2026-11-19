@@ -38,7 +38,7 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   TPM2_GetRandom: {
     hex: '0x0000017B',
-    def: 'Part 3 §16.1 — returns bytes from the TPM’s DRBG. Both classical and PQC keys draw from this same entropy source.',
+    def: 'Part 3 §16.1 — requests bytes from the TPM random-number generator. Here the response comes from a local software emulator; output length does not assess entropy, seeding, or hardware isolation.',
   },
   TPM2_CreatePrimary: {
     hex: '0x00000131',
@@ -178,7 +178,7 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   TPM_ALG_SHA256: {
     hex: '0x000B',
-    def: 'SHA-256 — used as nameAlg (object naming/authorization) and as the scheme hash for classical signing. Grover’s algorithm only halves its effective strength, so SHA-256 survives the transition.',
+    def: 'SHA-256 — used as nameAlg (object naming/authorization) and as the scheme hash for classical signing. The digest length describes the output. Preimage search, collisions and keyed authorization depend on different security properties.',
   },
   TPM_ALG_NULL: {
     hex: '0x0010',
@@ -198,11 +198,11 @@ export const TAG_GLOSSARY: Record<string, TagGlossaryEntry> = {
   },
   TPM_ALG_MLKEM: {
     hex: '0x00A0',
-    def: 'NEW in v1.85 (Part 2 §6.3) — ML-KEM (FIPS 203), the module-lattice KEM. Optional in the Library spec; PC Client PTP v1.07 makes ML-KEM-768 or -1024 MANDATORY for PC-class TPMs.',
+    def: 'NEW in Library v1.85 (Part 2 §6.3) — ML-KEM (FIPS 203), the module-lattice KEM. Optional in the Library spec; the PC Client PTP v1.07 profile requires ML-KEM-768 or -1024 for TPMs claiming conformance to that profile. TCG lists PTP Errata v1.1 (27 Aug 2026) as current: https://www.trustedcomputinggroup.org/resources/documents/pc-client-platform-tpm-profile-ptp-specification',
   },
   TPM_ALG_MLDSA: {
     hex: '0x00A1',
-    def: 'NEW in v1.85 (Part 2 §6.3) — ML-DSA (FIPS 204), the module-lattice signature. Optional in the Library spec; PTP v1.07 makes ML-DSA-65 or -87 mandatory for PC-class TPMs.',
+    def: 'NEW in Library v1.85 (Part 2 §6.3) — ML-DSA (FIPS 204), the module-lattice signature. Optional in the Library spec; the PC Client PTP v1.07 profile requires ML-DSA-65 or -87 for TPMs claiming conformance to that profile. TCG lists PTP Errata v1.1 (27 Aug 2026) as current: https://www.trustedcomputinggroup.org/resources/documents/pc-client-platform-tpm-profile-ptp-specification',
   },
   TPM_ALG_HASH_MLDSA: {
     hex: '0x00A2',
@@ -223,13 +223,13 @@ export const TERMS: GlossaryTerm[] = [
     id: 'ek',
     label: 'EK (Endorsement Key)',
     cat: 'protocol',
-    def: 'The manufacturer-provisioned identity key in the Endorsement hierarchy. Classically RSA (activated via OAEP key transport); in the V2.7 profile, ML-KEM EKs are activated via encapsulation.',
+    def: 'A key in the Endorsement hierarchy used in platform identity and credential flows. Manufacturers may provision an EK credential; the V2.7 profile does not require every certificate to be stored in TPM NV. Classically RSA EKs use OAEP key transport; the profile defines ML-KEM EK templates. This playground generates a local sample and its certificate is issued by an ephemeral development CA.',
   },
   {
     id: 'ak',
     label: 'AK (Attestation Key)',
     cat: 'protocol',
-    def: 'A restricted signing key used to sign attestations (Quote). Restricted = it only signs TPM-generated data, so a relying party knows a Quote wasn’t forged over arbitrary input.',
+    def: 'A restricted signing key used to sign attestations (Quote). Restricted keys bind what may be signed to TPM-generated data, but a relying party still needs an authenticated key/credential binding, freshness, and PCR-policy evaluation. This emulator sample proves no physical device identity.',
   },
   {
     id: 'pcr',
@@ -295,7 +295,7 @@ export const TERMS: GlossaryTerm[] = [
     id: 'ptp-v107',
     label: 'PC Client PTP v1.07',
     cat: 'pqc',
-    def: 'The published PC Client Platform TPM Profile v1.07 (2026) MANDATES ML-KEM and ML-DSA support for PC-class TPMs — the Library spec keeps them optional. Requirements live in profiles, not only the Library.',
+    def: 'The published PC Client Platform TPM Profile v1.07 (2026) mandates ML-KEM and ML-DSA support for TPMs claiming conformance to that profile; the TPM Library spec keeps them optional. TCG lists Errata v1.1, dated 27 Aug 2026, as the current PTP errata: https://www.trustedcomputinggroup.org/resources/documents/pc-client-platform-tpm-profile-ptp-specification. Requirements live in profiles as well as the Library.',
   },
   {
     id: 'v27-ek-profile',

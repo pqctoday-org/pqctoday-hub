@@ -32,7 +32,7 @@ const BANNED_PHRASES: RegExp[] = [
   /(?<!MLKemAlgorithm(?:\.|\]::))\bMLKem768\b/,
   /cryptography 4[0-6]/i,
   /JDK 21\+ does not include/i,
-  // Oracle JDK 21.0.13 and 17.0.21 (20 Oct 2026) carry ML-KEM and ML-DSA.
+  // Oracle JDK 21.0.13 and 17.0.21 introduced the primitives; later CPUs retain them.
   /JDK 21 LTS (does not have|has neither)/i,
   /JDK 21 \(which has no built-in/i,
   /JDK 24[–-]26 expose the primitive only/i,
@@ -88,6 +88,30 @@ describe('PQC support table (pqcSupportData)', () => {
       (r) => r.sampleId && r.status !== 'stable' && r.status !== 'experimental'
     ).map((r) => `${r.runtimeId} × ${r.algorithm}`)
     expect(misplaced).toEqual([])
+  })
+
+  it('sources the Oracle JDK 21.0.13 license change beside both Java PQC rows', () => {
+    for (const algorithm of ['ML-KEM', 'ML-DSA'] as const) {
+      const row = getRuntimeSupport('java', algorithm)
+      expect(row.licenseNote).toMatch(/changed the license from earlier JDK 21 updates/i)
+      expect(row.licenseEvidenceUrl).toBe(
+        'https://www.oracle.com/java/technologies/javase/21all-relnotes.html'
+      )
+      expect(row.licenseCheckedDate).toBe('2026-11-18')
+      expect(row.checkedDate).toBe('2026-11-18')
+      expect(row.backend).toContain('25.0.5.1, 21.0.13.1, and 17.0.21.1')
+      expect(row.privateKeyEncodingNote).toMatch(
+        /defaults .* private keys to the seed PKCS #8 encoding/
+      )
+      expect(row.privateKeyEncodingEvidenceUrl).toBe(row.licenseEvidenceUrl)
+      const cell = PQC_SUPPORT_MATRIX.find(
+        (entry) => entry.apiId === 'jca-jce' && entry.algorithmId === algorithm.toLowerCase()
+      )
+      expect(cell?.licenseNote).toBe(row.licenseNote)
+      expect(cell?.licenseEvidenceUrl).toBe(row.licenseEvidenceUrl)
+      expect(cell?.privateKeyEncodingNote).toBe(row.privateKeyEncodingNote)
+      expect(cell?.privateKeyEncodingEvidenceUrl).toBe(row.privateKeyEncodingEvidenceUrl)
+    }
   })
 
   it('the API matrix reads the derived rows from the table', () => {

@@ -92,8 +92,9 @@ const Step1WhyConceptsCosts: React.FC = () => (
             </div>
             <p className="text-xs text-muted-foreground mb-2 flex-grow">
               Adversaries capture encrypted traffic <strong>today</strong> and store it to decrypt
-              once a quantum computer exists. The risk is active now — any data whose
-              confidentiality must outlast the quantum threat horizon is already exposed.
+              once a quantum computer exists. The risk is active now for traffic captured over
+              quantum-vulnerable public-key key establishment whose confidentiality must outlast the
+              quantum threat horizon.
             </p>
             <div className="text-[11px] text-muted-foreground/80 border-t border-border pt-2">
               <strong>Drives urgency on:</strong> long-lived secrets (trade secrets, M&amp;A, health
@@ -235,9 +236,11 @@ const Step1WhyConceptsCosts: React.FC = () => (
               <li>&bull; Regulatory fines (GDPR, HIPAA, PCI DSS)</li>
               <li>&bull; Government contract eligibility (CMMC, FedRAMP)</li>
               <li>
-                &bull; Mandate dates (CNSA 2.0, ANSSI), which are binding for national security
-                systems in the case of CNSA 2.0 and mandatory in some certification contexts in the
-                case of ANSSI
+                &bull; Scope-bound transition dates: CNSA 2.0 (FAQ v2.2, National Security Systems
+                only), EO 14412 &amp; OMB M-26-15 (U.S. federal civilian agencies), and ANSSI
+                (mandatory in specific certification contexts). By contrast, EU PQC Roadmap v1.1 is
+                advisory Member State guidance, and DORA/NIS2 impose cyber risk-management duties
+                rather than fixed PQC cutoff dates
               </li>
               <li>&bull; Audit and remediation costs</li>
             </ul>

@@ -74,7 +74,12 @@ export const BusinessToolRoute = () => {
   }
 
   // Back to the catalogue view the tool was opened from, filters included.
-  const handleBack = () => navigate(businessToolsBackHref(location.state))
+  const fromCatalog = typeof location.state?.fromToolsSearch === 'string'
+  const handleBack = () =>
+    navigate(businessToolsBackHref(location.state), {
+      state: fromCatalog ? { focusBusinessTool: tool.id } : undefined,
+      replace: fromCatalog,
+    })
 
   const Comp = toolId ? BUSINESS_TOOL_COMPONENTS[toolId] : undefined
 

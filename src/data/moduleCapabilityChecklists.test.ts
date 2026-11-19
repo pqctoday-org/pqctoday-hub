@@ -66,6 +66,8 @@ describe('Module production-tool capability checklists', () => {
     expect(panel.open).toBe(true)
     const spec = getModuleCapabilityChecklist('pqc-101')!
     expect(screen.getAllByRole('listitem')).toHaveLength(spec.productionCapabilities.length)
-    expect(screen.queryByRole('button')).toBeNull()
+    const summary = screen.getByText('Record evidence for your environment')
+    expect(summary.closest('details')).not.toHaveAttribute('open')
+    expect(screen.getByRole('button', { name: 'Download evidence worksheet' })).toBeInTheDocument()
   })
 })

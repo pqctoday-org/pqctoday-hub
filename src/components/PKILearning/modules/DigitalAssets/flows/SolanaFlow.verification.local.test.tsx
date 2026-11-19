@@ -118,7 +118,7 @@ async function atVerification(live: boolean, altered: boolean) {
   }
   act(() => control.jump(8))
   if (altered)
-    await userEvent.click(screen.getByRole('switch', { name: 'Simulate invalid signature' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'Simulate invalid signature' }))
   await userEvent.click(screen.getByRole('button', { name: 'Execute' }))
 }
 describe.each([false, true])('Solana selected verifier, live=%s', (live) => {

@@ -205,6 +205,8 @@ export function sbomHref(c: SbomComponent): string | undefined {
   }
   // An embedded-version row that is also a recorded build (strongSwan): link that commit.
   if ('embedded' in c && c.embedded !== undefined) {
+    if (c.embedded === 'openssl' && SBOM_EMBEDDED_VERSIONS.openssl)
+      return `https://github.com/openssl/openssl/tree/openssl-${SBOM_EMBEDDED_VERSIONS.openssl}`
     const b = (SBOM_BUILDS as Record<string, (typeof SBOM_BUILDS)[string] | undefined>)[c.embedded]
     if (b?.repo && b.commit) return `https://github.com/${b.repo}/commit/${b.commit}`
   }

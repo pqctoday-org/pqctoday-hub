@@ -54,6 +54,13 @@ import {
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type ConstructionId = 'concatenation' | 'nesting' | 'silithium'
+type VerificationInput = 'original' | 'ec' | 'ml-dsa'
+
+const VERIFICATION_INPUTS = [
+  { id: 'original', label: 'Original components' },
+  { id: 'ec', label: 'Change only the EC component' },
+  { id: 'ml-dsa', label: 'Change only the ML-DSA component' },
+] as const
 
 /** HSM or noble key pair, carrying the backend tag for dispatch. */
 type KeyState =
@@ -63,6 +70,7 @@ interface ConstructionState {
   keys: KeyState | null
   sigResult: HybridSigResult | null
   verifyResult: VerifyResult | null
+  verificationInput?: VerificationInput
   recombinationResult: VerifyResult | null
   loading: boolean
   error: string | null
@@ -380,6 +388,7 @@ export const HybridSignatures: React.FC = () => {
               ...item,
               sigResult: null,
               verifyResult: null,
+              verificationInput: 'original',
               recombinationResult: null,
               error: null,
             },
@@ -399,6 +408,7 @@ export const HybridSignatures: React.FC = () => {
         error: null,
         sigResult: null,
         verifyResult: null,
+        verificationInput: 'original',
         recombinationResult: null,
       })
       const op = beginOp(
@@ -445,6 +455,7 @@ export const HybridSignatures: React.FC = () => {
         error: null,
         sigResult: null,
         verifyResult: null,
+        verificationInput: 'original',
         recombinationResult: null,
       })
       if (intervalRef.current) clearInterval(intervalRef.current)
@@ -499,7 +510,7 @@ export const HybridSignatures: React.FC = () => {
 
   const handleVerify = useCallback(
     async (id: ConstructionId) => {
-      const { keys, sigResult } = state[id]
+      const { keys, sigResult, verificationInput = 'original' } = state[id]
       if (!keys || !sigResult) return
       const revision = beginRun(id)
       if (revision === null) return
@@ -514,16 +525,22 @@ export const HybridSignatures: React.FC = () => {
           return
         }
         const msgBytes = new TextEncoder().encode(message)
+        const sample = sigResult.signatureBytes.slice()
+        if (id !== 'silithium' && verificationInput !== 'original') {
+          const offset =
+            verificationInput === 'ec' ? sigResult.sizes.ecBytes - 1 : sigResult.sizes.ecBytes
+          sample[offset] ^= 1
+        }
         let verifyResult: VerifyResult
         if (id === 'silithium' && keys.backend === 'noble') {
-          verifyResult = silithiumVerify(msgBytes, sigResult.signatureBytes, keys.pair)
+          verifyResult = silithiumVerify(msgBytes, sample, keys.pair)
         } else if (keys.backend === 'hsm') {
           if (!hsmRef.current) throw new Error('HSM session lost')
           const { M, hSession } = hsmRef.current
           verifyResult =
             id === 'concatenation'
-              ? hsmConcatenationVerify(msgBytes, sigResult.signatureBytes, keys.pair, M, hSession)
-              : hsmNestingVerify(msgBytes, sigResult.signatureBytes, keys.pair, M, hSession)
+              ? hsmConcatenationVerify(msgBytes, sample, keys.pair, M, hSession)
+              : hsmNestingVerify(msgBytes, sample, keys.pair, M, hSession)
         } else {
           throw new Error('Backend mismatch')
         }
@@ -835,6 +852,34 @@ export const HybridSignatures: React.FC = () => {
         />
       </div>
 
+      {current.sigResult && activeConstruction !== 'silithium' && (
+        <fieldset className="space-y-1 rounded-lg border border-border p-3 text-sm">
+          <legend className="font-semibold">Components to verify</legend>
+          <p className="text-xs text-muted-foreground">
+            Compare the original signature with a copy that changes one component. The message and
+            both public keys stay the same.
+          </p>
+          {VERIFICATION_INPUTS.map(({ id, label }) => (
+            <label key={id} className="flex min-h-10 items-center gap-2">
+              <input
+                type="radio"
+                name={`verify-input-${activeConstruction}`}
+                checked={(current.verificationInput ?? 'original') === id}
+                disabled={current.loading}
+                onChange={() =>
+                  updateState(activeConstruction, {
+                    verificationInput: id,
+                    verifyResult: null,
+                    error: null,
+                  })
+                }
+              />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+      )}
+
       {/* Action row */}
       <div className="flex flex-wrap gap-3">
         <Button
@@ -1007,7 +1052,7 @@ export const HybridSignatures: React.FC = () => {
 
       {/* Verification result */}
       {current.verifyResult && (
-        <div className="glass-panel p-4 space-y-4">
+        <div role="region" aria-label="Verification results" className="glass-panel p-4 space-y-4">
           <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
             <ShieldCheck size={15} className="text-primary" />
             Verification Results
@@ -1058,7 +1103,9 @@ export const HybridSignatures: React.FC = () => {
                   ? 'Separable ⚠ — ML-DSA verifies on raw message alone'
                   : activeConstruction === 'silithium'
                     ? 'Raw-message ML-DSA check did not pass'
-                    : 'Blocked ✓ — ML-DSA signed over msg‖ecSig, not msg alone'
+                    : activeConstruction === 'nesting' && current.verifyResult.mlValid
+                      ? 'The ML-DSA component verifies on the nested input only'
+                      : 'Raw-message ML-DSA check did not pass'
               }
             />
           </div>

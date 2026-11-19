@@ -14,8 +14,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'arch-quantum-impact',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-12',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,5: FIPS 203 (the ML-KEM ciphertext sizes this module quotes),
@@ -67,7 +67,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has six steps. Why It Matters shows six expandable impact/scenario cards and links to separate sample tools. What to Learn offers skill self-ratings and linked learning modules. How to Act provides a phased action checklist with Markdown export. Architecture Readiness is a nine-item exposure checklist, not an architecture scanner. Strangler Fig models migration of a legacy monolithic crypto service behind a PQC API gateway. Trust Hardware Selector compares eight kinds of trust hardware in cards and a 10-row grid, with Pick the right one and How they combine exercises. Its source-attributed Tessera material distinguishes specification and code from a product or certificate. Separate certificate-capacity, TLS and hybrid-certificate tools support design investigations; the role cards do not calculate chain/OCSP sizes or P99 budgets.',
     relatedStandards:
-      'FIPS 203 (ML-KEM — parameter sets: ML-KEM-512, ML-KEM-768, ML-KEM-1024). FIPS 204 (ML-DSA — parameter sets: ML-DSA-44, ML-DSA-65, ML-DSA-87). FIPS 205 (SLH-DSA — 12 parameter sets including SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-256s). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners). NIST SP 800-208 (Recommendation for Stateful Hash-Based Signature Schemes — LMS/XMSS).',
+      'FIPS 203 (ML-KEM — parameter sets: ML-KEM-512, ML-KEM-768, ML-KEM-1024). FIPS 204 (ML-DSA — parameter sets: ML-DSA-44, ML-DSA-65, ML-DSA-87). FIPS 205 (SLH-DSA — 12 parameter sets including SLH-DSA-SHAKE-128f, SLH-DSA-SHAKE-256s). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final Oct 2026). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners). NIST SP 800-208 (Recommendation for Stateful Hash-Based Signature Schemes — LMS/XMSS). NSA CNSA 2.0 (FAQ v2.2 for NSS). EO 14412 & OMB M-26-15 (US federal civilian). EU PQC Roadmap v1.1.',
   },
 }
 

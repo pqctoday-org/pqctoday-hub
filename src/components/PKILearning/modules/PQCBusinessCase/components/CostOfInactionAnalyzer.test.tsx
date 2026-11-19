@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, act } from '@testing-library/react'
+import { render, screen, fireEvent, act, within } from '@testing-library/react'
 import { CostOfInactionAnalyzer } from './CostOfInactionAnalyzer'
 import { DELAY_COST_PROFILES } from '../data/businessCaseScenarios'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -144,6 +144,34 @@ describe('CostOfInactionAnalyzer', () => {
     expect(
       screen.getAllByText(/carried over from the Breach Scenario Simulator/i).length
     ).toBeGreaterThan(0)
+    expect(
+      within(screen.getByRole('region', { name: 'Scenario assumptions' })).getByText(
+        /Saved simulator estimate/
+      )
+    ).toHaveTextContent('$5,560,000')
+  })
+
+  it('preserves recorded benchmark provenance for a matching simulator result', () => {
+    const onOutput = vi.fn<(output: InactionOutput) => void>()
+    render(
+      <CostOfInactionAnalyzer
+        breachOutput={{
+          ...chainedBreachOutput,
+          classicalCostUSD: 7_560_000,
+          breachBaselineSourceId: 'sector2026',
+        }}
+        onOutput={onOutput}
+      />
+    )
+    expect(onOutput.mock.calls.at(-1)?.[0].scenario).toMatchObject({
+      breachBaselineUSD: 7_560_000,
+      sourceStatus: {
+        breachBaseline: 'Simulator estimate based on IBM 2026 global sector average (USD)',
+      },
+    })
+    expect(
+      screen.getByRole('link', { name: /Simulator estimate based on IBM 2026/ })
+    ).toHaveAttribute('href', expect.stringContaining('https://newsroom.ibm.com/2026-07-29'))
   })
 
   it('falls back to the industry baseline and flags a mismatch when industries differ', () => {
@@ -168,7 +196,10 @@ describe('CostOfInactionAnalyzer', () => {
     expect(lastCall.crossoverYear === null || typeof lastCall.crossoverYear === 'number').toBe(true)
     expect(lastCall.scenario?.modelVersion).toBe('coi-2')
     expect(lastCall.scenario?.verifiedConsequence.annualUSD).toBe(0)
-    expect(lastCall.scenario?.sourceStatus.breachBaseline).toMatch(/one edition behind/i)
+    expect(lastCall.scenario?.breachBaselineUSD).toBe(6_300_000)
+    expect(lastCall.scenario?.sourceStatus.breachBaseline).toBe(
+      'IBM 2026 global sector average (USD)'
+    )
   })
 
   it('does not infer a dollar penalty from framework matches', () => {
@@ -185,12 +216,22 @@ describe('CostOfInactionAnalyzer', () => {
     fireEvent.change(screen.getByLabelText(/Verified annual consequence/i), {
       target: { value: '1000000' },
     })
+    expect(
+      screen.getByRole('button', { name: 'Include consequence in this scenario' })
+    ).toBeDisabled()
     fireEvent.change(screen.getByLabelText(/Verified consequence source or owner/i), {
       target: { value: 'Legal memo 2026-10-01' },
     })
+    expect(onOutput.mock.calls.at(-1)?.[0].scenario?.verifiedConsequence.annualUSD).toBe(0)
+    fireEvent.click(screen.getByRole('button', { name: 'Include consequence in this scenario' }))
     const lastCall = onOutput.mock.calls.at(-1)?.[0]
     expect(lastCall?.scenario?.verifiedConsequence.annualUSD).toBe(1_000_000)
     expect(lastCall?.scenario?.verifiedConsequence.sourceNote).toBe('Legal memo 2026-10-01')
+    expect(lastCall?.scenario?.verifiedConsequence.country).toBe('United States')
+    fireEvent.change(screen.getByLabelText(/Verified annual consequence/i), {
+      target: { value: '2000000' },
+    })
+    expect(onOutput.mock.calls.at(-1)?.[0].scenario?.verifiedConsequence.annualUSD).toBe(0)
   })
 
   it('shows an executive decision brief only for the executive runtime role', () => {
@@ -202,9 +243,14 @@ describe('CostOfInactionAnalyzer', () => {
     expect(screen.getByText(/Before using this result/i)).toBeInTheDocument()
   })
 
-  it('surfaces the stale baseline and CRQC scenario uncertainty beside the result', () => {
+  it('surfaces the historical baseline and CRQC scenario uncertainty beside the result', () => {
+    mockData = { ...baseMockData, industry: 'Technology' }
     render(<CostOfInactionAnalyzer />)
-    expect(screen.getAllByText(/one edition behind/i).length).toBeGreaterThan(0)
+    expect(
+      within(screen.getByRole('region', { name: 'Scenario assumptions' })).getByText(
+        /IBM 2025 sector average.*historical assumption/i
+      )
+    ).toHaveTextContent('$4,790,000')
     expect(screen.getByText(/CRQC scenario range/i)).toBeInTheDocument()
     expect(screen.getByText(/not a confidence interval/i)).toBeInTheDocument()
   })
@@ -227,7 +273,9 @@ describe('CostOfInactionAnalyzer', () => {
     const exported = screen.getByTestId('export-data').textContent ?? ''
     expect(exported).toMatch(/Reproducible scenario inputs \(model coi-2\)/i)
     expect(exported).toMatch(/No framework-derived fine is included automatically/i)
-    expect(exported).toMatch(/one edition behind and not independently verified/i)
+    expect(exported).toMatch(
+      /Breach baseline \| \$6,300,000 — \[IBM 2026 global sector average \(USD\)\]/i
+    )
   })
 
   it('shows the methodology section', () => {

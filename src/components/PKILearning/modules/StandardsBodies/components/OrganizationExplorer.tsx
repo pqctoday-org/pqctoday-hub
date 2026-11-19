@@ -21,6 +21,10 @@ function typeBadgeClass(type: OrgType): string {
       return 'bg-status-warning/10 text-status-warning border-status-warning/30'
     case 'regulatory-agency':
       return 'bg-status-error/10 text-status-error border-status-error/30'
+    case 'governmental-agency':
+      return 'bg-muted text-foreground border-border'
+    case 'mutual-recognition-arrangement':
+      return 'bg-secondary text-secondary-foreground border-border'
   }
 }
 
@@ -33,7 +37,11 @@ function typeLabel(type: OrgType): string {
     case 'compliance-framework':
       return 'Compliance Framework'
     case 'regulatory-agency':
+      return 'Regulatory Agency'
+    case 'governmental-agency':
       return 'Government Agency'
+    case 'mutual-recognition-arrangement':
+      return 'Mutual Recognition Arrangement'
   }
 }
 

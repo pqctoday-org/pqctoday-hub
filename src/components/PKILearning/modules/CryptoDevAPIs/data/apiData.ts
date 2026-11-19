@@ -69,7 +69,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'Java checked exceptions: NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException. Provider-not-found errors are compile-time catchable.',
     providerPattern:
       'KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA"); // JDK 24+ built-in\n// or a third-party provider: Security.addProvider(new BouncyCastleProvider()); KeyPairGenerator.getInstance("ML-DSA-65", "BC");',
-    pqcStatus: `Built-in JDK support — ${describeRuntimeSupport('java')}. JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026 (JDK 11 and 8 planned for the second half of 2027). The javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds SLH-DSA (and Falcon) on any JDK and ML-KEM/ML-DSA on older JDKs. For a Thales Luna HSM, the JCA/JCE provider (Luna JSP) and the separate JCPROV PKCS#11 wrapper are different Java routes to the same HSM; see the JCProv / Luna entry.`,
+    pqcStatus: `Built-in JDK support — ${describeRuntimeSupport('java')}. JDK 24+ adds native ML-KEM (JEP 496) and ML-DSA (JEP 497); JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026. As of 17 November 2026, Oracle's latest security updates are 25.0.5.1, 21.0.13.1 and 17.0.21.1; JDK 11 and 8 PQC backports are planned for the second half of 2027. The javax.crypto.KEM API arrived in JDK 21 (JEP 452). Bouncy Castle adds SLH-DSA (and Falcon) on any JDK and ML-KEM/ML-DSA on older JDKs. For a Thales Luna HSM, the JCA/JCE provider (Luna JSP) and the separate JCPROV PKCS#11 wrapper are different Java routes to the same HSM; see the JCProv / Luna entry.`,
     strengths: [
       'Mature provider architecture — swap algorithms without code changes',
       'Extensive ecosystem — hundreds of providers available',
@@ -299,7 +299,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'NTSTATUS return codes (STATUS_SUCCESS, STATUS_INVALID_PARAMETER, STATUS_NOT_SUPPORTED). HRESULT wrappers in .NET. Error codes documented but not always descriptive.',
     providerPattern:
       'BCryptOpenAlgorithmProvider(&hAlg, BCRYPT_RSA_ALGORITHM, NULL, 0); NCryptOpenStorageProvider(&hProv, MS_KEY_STORAGE_PROVIDER, 0);',
-    pqcStatus: `${describeRuntimeSupport('windows-cng')}. ML-KEM and ML-DSA are generally available since November 2025 on Windows 11 24H2+ and Windows Server 2025. BCRYPT_SLHDSA_ALGORITHM is defined but not currently implemented by the default CNG provider; for composite formats see KB5095093 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026). Primitive availability in CNG is separate from what Schannel negotiates in TLS.`,
+    pqcStatus: `${describeRuntimeSupport('windows-cng')}. Microsoft lists ML-KEM and ML-DSA BCRYPT identifiers beginning with Windows 11 24H2 for desktop apps, while the current end-to-end BCrypt examples are marked prerelease. Confirm the target build/provider; primitive availability does not establish NCrypt/KSP persisted-key, certificate, or Schannel TLS support. BCRYPT_SLHDSA_ALGORITHM is defined but not implemented by the default CNG provider. See the algorithm identifier page for currently documented composite-algorithm status.`,
     strengths: [
       'Deep Windows OS integration — certificate store, smart card, TPM 2.0',
       'Key isolation — keys can be non-exportable and process-isolated',
@@ -358,9 +358,9 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'Java/C# exceptions: InvalidCipherTextException, DataLengthException, InvalidKeyException. Lightweight API throws runtime exceptions. JCA mode uses standard JCA exception hierarchy.',
     providerPattern:
       'Security.addProvider(new BouncyCastleProvider()); // JCA mode\n// or Lightweight API:\nMLDSAKeyPairGenerator gen = new MLDSAKeyPairGenerator(); gen.init(new MLDSAKeyGenerationParameters(random, MLDSAParameters.ml_dsa_65));',
-    pqcStatus: `${describeRuntimeSupport('bouncy-castle')}. Most comprehensive PQC support in managed languages: ML-KEM (all parameter sets), ML-DSA, SLH-DSA (all 12 variants), FN-DSA (Falcon), LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU. Both JCA and lightweight API.`,
+    pqcStatus: `${describeRuntimeSupport('bouncy-castle')}. Broad PQC support in managed languages: ML-KEM (all parameter sets), ML-DSA, SLH-DSA (all 12 variants), FN-DSA (Falcon), LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU. Both JCA and lightweight API. BC Java 1.87 deprecates Classic McEliece and says it is no longer believed safe to use; implementation presence is not a recommendation.`,
     strengths: [
-      'Supports ML-KEM, ML-DSA, SLH-DSA (all 12 variants), FN-DSA, LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU',
+      'Supports ML-KEM, ML-DSA, SLH-DSA (all 12 variants), FN-DSA, LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU. BC Java 1.87 deprecates Classic McEliece and says it is no longer believed safe to use.',
       'Dual API: JCA compatible + standalone lightweight',
       'Cross-platform: Java + C#/.NET',
       'BC-FIPS variant for regulated environments',

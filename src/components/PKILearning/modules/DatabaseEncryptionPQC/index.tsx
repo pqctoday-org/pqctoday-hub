@@ -21,7 +21,7 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'tde-migration-planner',
     title: 'Step 2: TDE Migration Planner',
-    description: 'Step through TDE migration from AES-256 to ML-KEM-wrapped key hierarchy.',
+    description: 'Plan a TDE protector change and test how rewrapping affects backup recovery.',
     icon: ArrowRightLeft,
   },
   {

@@ -4,6 +4,7 @@ import {
   revisionReviewLabel,
   hasCommitReference,
   nonCommitReferenceLabel,
+  formatRevisionDate,
 } from './revisionProvenance'
 import { useRef } from 'react'
 import { X, GitMerge, Bot } from 'lucide-react'
@@ -26,18 +27,6 @@ interface RevisionDrilldownPanelProps {
    *  given, the panel carries a Share for it: the panel covers the parent
    *  overlay's own Share. History itself has no URL; the link reopens the item. */
   sharePath?: string
-}
-
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  } catch {
-    return iso.slice(0, 10)
-  }
 }
 
 function ChangeTypeBadge({ type }: { type: string }) {
@@ -152,9 +141,9 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
             </span>
           )}
         </div>
-        <span className="text-xs text-muted-foreground shrink-0">
-          {formatDate(r.merge_timestamp)}
-        </span>
+        <time dateTime={r.merge_timestamp} className="text-xs text-muted-foreground shrink-0">
+          {formatRevisionDate(r.merge_timestamp)}
+        </time>
       </div>
       <div className="flex flex-wrap items-center gap-2 mt-1 ml-5">
         <ChangeTypeBadge type={r.change_type} />

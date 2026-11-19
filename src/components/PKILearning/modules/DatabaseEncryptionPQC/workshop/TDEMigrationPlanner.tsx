@@ -5,6 +5,7 @@ import { AlertTriangle, CheckCircle, Clock, Wrench } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { TDE_MIGRATION_STEPS, DATABASE_PROFILES } from '../data/databaseConstants'
 import { Button } from '@/components/ui/button'
+import { BackupWrappingExercise } from './BackupWrappingExercise'
 
 const SUPPORTED_DBS = ['oracle', 'sqlserver', 'postgresql', 'mongodb']
 const DB_ITEMS = DATABASE_PROFILES.filter((p) => SUPPORTED_DBS.includes(p.id)).map((p) => ({
@@ -35,9 +36,9 @@ const DB_NOTES: Record<string, { commandNote: string; reencrNote: string }> = {
       'This module’s projection, not a Percona statement: a KMIP key provider for ML-KEM master keys. Upstream PostgreSQL does not have native TDE — requires Percona build. Converting existing tables rewrites them.',
   },
   mongodb: {
-    commandNote: 'db.adminCommand({ rotateMasterKey: 1 })',
+    commandNote: 'security.kmip.rotateMasterKey: true (MongoDB Enterprise)',
     reencrNote:
-      'MongoDB WiredTiger online rotation via rotateMasterKey. Atlas: key rotation via Atlas API. FLE 2.0 DEK rotation requires client-side re-encryption.',
+      'With KMIP, MongoDB Enterprise rotates the master key and re-encrypts its internal keystore; database keys remain unchanged. Follow the documented replica-set procedure. Queryable Encryption / CSFLE field-key rotation is separate: KeyVault.rewrapManyDataKey() re-wraps existing DEKs with a new CMK.',
   },
 }
 
@@ -67,6 +68,7 @@ export const TDEMigrationPlanner: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <BackupWrappingExercise />
       {/* Database selector */}
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-sm text-muted-foreground font-medium">Target Database:</span>
@@ -272,10 +274,10 @@ export const TDEMigrationPlanner: React.FC = () => {
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
             <div className="text-xs font-bold text-primary mb-2">Key Migration Insight</div>
             <p className="text-xs text-muted-foreground">
-              AES-256 data encryption is already quantum-safe. The entire PQC migration effort for
-              TDE is focused on upgrading the DEK wrapping algorithm from RSA-OAEP to ML-KEM-1024.
-              This upgrade is transparent to applications and can be performed online on Oracle and
-              SQL Server.
+              Keep AES-256 for data encryption when it meets your policy. Inventory the public-key
+              protectors and evaluate a KEM-based replacement where the engine and key manager
+              support it. Measure downtime and test active data, backups, and replicas before
+              retiring a protector.
             </p>
           </div>
           <Button

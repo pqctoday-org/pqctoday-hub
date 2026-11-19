@@ -1,6 +1,6 @@
 ### What This Is About
 
-Global governments and standards bodies—including NIST, NSA, ETSI, ANSSI, and BSI—are all publishing direction for the transition to Post-Quantum Cryptography (PQC), with different legal force. Organizations operating internationally must reconcile differing priorities: the NSA's CNSA 2.0 requires exclusive PQC by 2030 for certain systems, while European agencies like ANSSI recommend a "Hybrid" phase (mandatory only inside France's regulated perimeter) (running classical and PQC algorithms in parallel) before full migration.
+Global governments and standards bodies—including NIST (NIST IR 8547, final October 2026), NSA (CNSA 2.0 FAQ v2.2 for U.S. National Security Systems), the EU (EU PQC Roadmap v1.1), ETSI, ANSSI, and BSI—are publishing direction for the transition to Post-Quantum Cryptography (PQC) with different legal force. Organizations operating internationally must verify scope and reconcile differing priorities: CNSA 2.0 sets pure-PQC milestones for U.S. National Security Systems (acquisitions from 1 January 2027, phase-out by 31 December 2030, mandated by 31 December 2031), EO 14412 and OMB M-26-15 mandate federal civilian agency HVAs/high-impact systems (2030 key establishment / 2031 digital signatures) plus a directed FAR contractor rule, while European agencies like ANSSI recommend a "Hybrid" phase (mandatory inside France's regulated perimeter) before full migration.
 
 ### Why It Matters
 

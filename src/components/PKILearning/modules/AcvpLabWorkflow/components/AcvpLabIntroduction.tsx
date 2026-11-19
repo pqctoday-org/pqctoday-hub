@@ -161,12 +161,13 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
 
       <Callout title="Revision discipline: ACVP is a moving protocol family">
         <p>
-          The core protocol used here is <strong>draft-ietf-acvp-spec-01</strong>, an independent
-          draft whose name has stayed the same while NIST has kept revising its protocol sections in
-          the repository (the latest change is dated 16 October 2025); this module pins it by
-          repository commit <Cite s="acvpSpec" />. What changes is the algorithm JSON
-          specifications, which evolve separately, so evidence must name the exact core draft,
-          algorithm-specification revision, operational environment and vector-set source.
+          The current published core protocol remains <strong>draft-ietf-acvp-spec-01</strong> and
+          this is still an Internet-Draft, not a final standard <Cite s="acvpSpec" />. The Hub pins
+          an older repository snapshot for reproducible protocol examples; it is not the newest
+          published text. Algorithm JSON specifications evolve separately. For example, NIST
+          published a newer ML-DSA draft on 30 October 2026 <Cite s="acvpMlDsaCurrent" />. Evidence
+          must name the exact protocol and algorithm-specification revisions, operational
+          environment and vector-set source.
         </p>
         <p>
           The eight evidence classes and the nine-rung claim ladder in this module are PQC Today’s
@@ -313,7 +314,10 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
           <li>
             The <code>revision</code> is part of the identity: the sub-specification lists ML-DSA /
             sigGen as both <code>FIPS204</code> and <code>FIPS204-tr1</code>, “a new test revision
-            against the same standard” <Cite s="acvpMlDsaSupported" />.
+            against the same standard” <Cite s="acvpMlDsaCurrent" />. The ACVP-Server v1.1.0.43
+            release notes report that FIPS204-tr1 sigGen and FIPS203-tr1 encapDecap are enabled on
+            ACVTS Production; the release is distinct from this draft specification{' '}
+            <Cite s="acvpServer" />.
           </li>
         </ul>
         <Callout title="Register what you can answer, not what you implement">
@@ -469,6 +473,14 @@ export const AcvpLabIntroduction: React.FC<AcvpLabIntroductionProps> = ({
             ],
           ]}
         />
+        <p>
+          Note the difference from classical key-generation suites: classical RSA and ECDSA
+          specifications use <strong>GDT</strong> (Generation-Driven Test) groups where the
+          implementation generates fresh keys or parameters without a server-supplied seed and ACVTS
+          checks their mathematical validity, whereas ML-KEM, ML-DSA and SLH-DSA <code>keyGen</code>{' '}
+          use deterministic seed-driven <strong>AFT</strong> groups against the FIPS 203/204/205
+          internal interfaces.
+        </p>
         <Callout title="Minimums are part of the test design">
           <p>
             The sub-specifications fix minimum test counts per combination of capabilities — for

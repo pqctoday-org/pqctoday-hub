@@ -135,7 +135,15 @@ export function publicationDateVerb(p: Pick<PatentItem, 'publicationKind'>): str
 
 /** One line on what the two kinds of record establish. */
 export const PUBLICATION_KIND_HINT =
-  'Granted patent: examined, with the claims allowed, on the date shown. Published application: the patent office published the application on the date shown; its claims are still under examination and may be narrowed, refused or abandoned.'
+  'The document type and date identify a published application or a granted patent. Check the official record for subsequent events and current status.'
+
+export const USPTO_PUBLIC_SEARCH = 'https://www.uspto.gov/patents/search/patent-public-search'
+
+export function publicationScope(p: Pick<PatentItem, 'publicationKind'>): string {
+  return p.publicationKind === 'published_application'
+    ? 'This document records an application publication. Check the application history to see whether it later issued, was abandoned, or remains pending.'
+    : 'This document records a patent grant. Check the official record for later changes to its status.'
+}
 
 export const QUANTUM_SAFE_BASIS_LABELS: Record<string, string> = {
   pqc_algorithm: 'Names a PQC algorithm',

@@ -10,6 +10,8 @@ import { logPatentSearch, logPatentView } from '@/utils/analytics'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
 
+import { exactUSPatentNumber } from '@/data/patentsScope'
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface SearchDoc {
@@ -38,6 +40,7 @@ interface PatentSearchPanelProps {
   /** Redesign: expose the current ranked results (in order) so a host can drive
    *  prev/next through the search hits from a detail drawer. */
   onResults?: (patents: PatentItem[]) => void
+  onExport?: (patents: PatentItem[]) => void
   /** The query held in the host's URL (`?sq`). Seeds the box on load and
    *  re-syncs it when the URL changes underneath (Back/Forward, a new link). */
   urlQuery?: string
@@ -146,6 +149,7 @@ export function PatentSearchPanel({
   patents,
   onSelectPatent,
   onResults,
+  onExport,
   urlQuery = '',
   onQueryChange,
 }: PatentSearchPanelProps) {
@@ -210,12 +214,17 @@ export function PatentSearchPanel({
   // unioned in so claim-language queries ("formally verified
   // post-quantum key exchange") surface relevant prior art whose
   // wording differs from the user's phrasing.
-  const semantic = useSemanticSearch('patents', debouncedQuery, { limit: 30 })
+  const exactNumber = exactUSPatentNumber(debouncedQuery)
+  const semantic = useSemanticSearch('patents', exactNumber ? '' : debouncedQuery, { limit: 30 })
 
   // Search
   const results = useMemo<PatentSearchResult[]>(() => {
     const q = debouncedQuery.trim()
     if (!q || q.length < 2) return []
+    if (exactNumber) {
+      const patent = patentMap.get(exactNumber)
+      return patent ? [{ patent, score: 1, matchedFields: ['patentNumber'] }] : []
+    }
     const raw = index.search(q).slice(0, 30)
     const lexical = raw
       .map((r) => {
@@ -255,15 +264,20 @@ export function PatentSearchPanel({
     const merged = [...normLexical, ...semanticOnly]
     merged.sort((a, b) => b.score - a.score)
     return merged.slice(0, 30)
-  }, [debouncedQuery, index, patentMap, semantic.mode, semantic.hits])
+  }, [debouncedQuery, exactNumber, index, patentMap, semantic.mode, semantic.hits])
 
-  // Lift the ranked results to a host (redesign drawer prev/next).
+  const queryIsCurrent = debouncedQuery.trim() === query.trim() && !isBuilding
+  const currentPatents = useMemo(
+    () => (queryIsCurrent ? results.map((result) => result.patent) : []),
+    [queryIsCurrent, results]
+  )
+
   useEffect(() => {
-    onResults?.(results.map((r) => r.patent))
-  }, [results, onResults])
+    onResults?.(currentPatents)
+  }, [currentPatents, onResults])
 
-  const showEmpty = debouncedQuery.trim().length >= 2 && results.length === 0 && !isBuilding
-  const showResults = results.length > 0
+  const showEmpty = queryIsCurrent && debouncedQuery.trim().length >= 2 && !results.length
+  const showResults = currentPatents.length > 0
 
   return (
     <div className="flex flex-col h-full gap-4">
@@ -354,6 +368,19 @@ export function PatentSearchPanel({
           <span className="text-primary font-medium">&ldquo;{debouncedQuery}&rdquo;</span>
           {results.length === 30 ? ' — showing top 30' : ''}
         </p>
+      )}
+
+      {onExport && query.trim() && (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="self-start"
+          disabled={!showResults}
+          onClick={() => onExport(currentPatents)}
+        >
+          Export matching patents
+        </Button>
       )}
 
       {/* Empty state */}

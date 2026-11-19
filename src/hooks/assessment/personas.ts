@@ -640,7 +640,7 @@ export function generatePersonaNarrative(
   hnfl: TNFLRiskWindow | undefined,
   pqcFrameworkCount: number
 ): string | undefined {
-  if (!persona) return undefined
+  if (!persona || input.currentCryptoUnknown) return undefined
 
   switch (persona) {
     case 'executive':

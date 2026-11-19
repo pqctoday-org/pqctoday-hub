@@ -8,9 +8,9 @@
  * canonical Application -> Protocol -> Crypto-API -> Provider stack).
  *
  * Crypto agility lives at the API boundary between the protocol implementation
- * and the provider. An app that calls `RSA_sign()` directly is not agile; an
- * app that calls `EVP_DigestSign()` with the algorithm selected at run-time IS
- * agile. This audit grades the current agility state, recommends a refactor
+ * and the provider. A runtime-selected algorithm helps when the dispatch
+ * also enforces the profile and provider policy. This audit grades the
+ * current agility state, recommends a refactor
  * phase, and emits language-specific call-site guidance.
  */
 import React, { useCallback, useMemo } from 'react'
@@ -41,6 +41,8 @@ export interface CryptoApiInputs {
   cryptoAgilityNow: string
   /** must-support / must-fail-closed / no-preference. */
   runtimeFallback: string
+  /** Selected evidence in the fictional provider dispatch example. */
+  fallbackEvidence?: string
   /** Editable narrative carried into the export. */
   refactorPlan: string
 }
@@ -51,6 +53,7 @@ export interface CryptoApiRecommendation {
   callSiteChecklist: string[]
   recommendedFacadePattern: string
   providerCompatNotes: string[]
+  fallbackTest: string
   watchOuts: string[]
 }
 
@@ -96,7 +99,7 @@ function classifyPhase(inputs: CryptoApiInputs): { phase: string; rationale: str
   return {
     phase: 'Phase 4 - Provider-compatibility test',
     rationale:
-      'The app is agility-friendly today. Verify each provider supports the target algorithm set; add explicit fallback paths if the runtime-fallback policy requires it.',
+      'The app is agility-friendly today. Verify each provider for the exact operation and parameter set. Test the dispatch behavior when a required operation is unavailable.',
   }
 }
 
@@ -107,7 +110,7 @@ function classifyPhase(inputs: CryptoApiInputs): { phase: string; rationale: str
 const UNIVERSAL_PATTERNS: string[] = [
   'Replace hardcoded algorithm names with run-time-selected algorithm parameters',
   'Push provider selection above the call sites (config or dependency injection) - the call site should not know whether the provider is software, HSM, TPM, or KMS',
-  'Add a fallback path when a provider lacks the requested algorithm; CSWP-39 Section 4.1 warns providers vary in PQC support timing',
+  'Enforce the application policy at the facade before dispatch. Test loss of the primary provider and record the reason for the result.',
   'Centralise algorithm IDs (OIDs, IANA codepoints, JWA names) in one constant table - the facade reads from this table, never inlines literals',
   'Wrap the facade with a feature flag so a problematic algorithm can be hot-disabled without redeploy',
 ]
@@ -309,20 +312,6 @@ function computeWatchOuts(inputs: CryptoApiInputs): string[] {
       'Kernel space: provider APIs differ (Linux Kernel Crypto API, BSD opencrypto). Refactor inside the kernel facade equivalent; userspace facade patterns do not transfer.'
     )
   }
-  if (inputs.runtimeFallback === 'must-support') {
-    const hardwarePqcLikelyMissing =
-      inputs.provider.includes('tpm') || inputs.provider.includes('accelerator')
-    if (hardwarePqcLikelyMissing) {
-      out.push(
-        'Runtime-fallback "must-support" with TPM / accelerator providers: today these providers lack PQC. Build the software-fallback path explicitly and exercise it in CI.'
-      )
-    }
-  }
-  if (inputs.runtimeFallback === 'must-fail-closed' && inputs.provider.length > 1) {
-    out.push(
-      'Fail-closed with multiple providers: ensure the negotiation logic does not silently downgrade to a non-PQC provider when the PQC provider is unavailable.'
-    )
-  }
   if (
     inputs.targetAlgorithms.some((a) => /SLH-DSA/.test(a)) &&
     inputs.applicationType === 'embedded firmware'
@@ -349,6 +338,32 @@ function computeWatchOuts(inputs: CryptoApiInputs): string[] {
 // Public engine entry
 // ─────────────────────────────────────────────────────────────────────────────
 
+const FALLBACK_EVIDENCE_OPTIONS = [
+  { value: 'unverified', label: 'No matching approval supplied' },
+  { value: 'equivalent', label: 'ML-DSA-65 signing in the approved boundary' },
+  { value: 'wrong-profile', label: 'ML-DSA-44 signing in the approved boundary' },
+  { value: 'wrong-boundary', label: 'ML-DSA-65 signing outside the approved boundary' },
+]
+
+function checkFallback(inputs: CryptoApiInputs): string {
+  if (inputs.runtimeFallback === 'must-fail-closed') {
+    return 'Reject the signing request under the selected fail-closed policy.'
+  }
+  if (inputs.runtimeFallback !== 'must-support') {
+    return 'Hold the signing request until the owner records a fallback policy.'
+  }
+  switch (inputs.fallbackEvidence) {
+    case 'equivalent':
+      return 'Route the signing request to the approved ML-DSA-65 alternate in this sample.'
+    case 'wrong-profile':
+      return 'Reject the signing request. The alternate offers ML-DSA-44, while the request requires ML-DSA-65.'
+    case 'wrong-boundary':
+      return 'Reject the signing request. The alternate is outside the approved key handling boundary.'
+    default:
+      return 'Reject the signing request. The alternate lacks matching operation, profile and boundary evidence.'
+  }
+}
+
 /**
  * Audit an application's crypto API surface and emit a refactor plan.
  * Pure function — no React, no state, no I/O. Unit-tested directly.
@@ -368,6 +383,7 @@ export function auditCryptoApi(inputs: CryptoApiInputs): CryptoApiRecommendation
     callSiteChecklist: checklist,
     recommendedFacadePattern: facade,
     providerCompatNotes: provNotes,
+    fallbackTest: checkFallback(inputs),
     watchOuts,
   }
 }
@@ -529,12 +545,19 @@ const SECTIONS: ArtifactSection[] = [
         options: [
           {
             value: 'must-support',
-            label: 'Must support provider-lacks-algorithm path (fail open with alternate)',
+            label: 'Use an approved alternate for the same operation and profile',
           },
           { value: 'must-fail-closed', label: 'Must fail closed (no fallback acceptable)' },
-          { value: 'no-preference', label: 'No preference' },
+          { value: 'no-preference', label: 'Policy undecided' },
         ],
         defaultValue: 'must-support',
+      },
+      {
+        id: 'fallbackEvidence',
+        label: 'Alternate provider evidence',
+        type: 'select',
+        options: FALLBACK_EVIDENCE_OPTIONS,
+        defaultValue: 'unverified',
       },
     ],
   },
@@ -606,9 +629,9 @@ const CALL_SITE_LABELS: Record<string, string> = {
 }
 
 const FALLBACK_LABELS: Record<string, string> = {
-  'must-support': 'Must support provider-lacks-algorithm path',
+  'must-support': 'Use an approved alternate for the same operation and profile',
   'must-fail-closed': 'Must fail closed',
-  'no-preference': 'No preference',
+  'no-preference': 'Policy undecided',
 }
 
 function labelOr(map: Record<string, string>, key: string): string {
@@ -646,7 +669,11 @@ export function renderCryptoApiMarkdown(
     targetAlgorithms: Array.isArray(rs.targetAlgorithms) ? (rs.targetAlgorithms as string[]) : [],
     callSiteCount: (rs.callSiteCount as string) || 'medium',
     cryptoAgilityNow: (rs.cryptoAgilityNow as string) || 'partially-hardcoded',
-    runtimeFallback: (rs.runtimeFallback as string) || 'must-support',
+    runtimeFallback:
+      typeof rs.runtimeFallback === 'string'
+        ? rs.runtimeFallback || 'no-preference'
+        : 'must-support',
+    fallbackEvidence: (rs.fallbackEvidence as string) || 'unverified',
     refactorPlan: (plan.refactorPlan as string) || '',
   }
 
@@ -694,6 +721,14 @@ export function renderCryptoApiMarkdown(
     for (const note of rec.providerCompatNotes) md += `- ${note}\n`
     md += `\n`
   }
+
+  md += `### Provider outage test (fictional)\n\n`
+  md += `The primary provider cannot sign with ML-DSA-65. The caller requires that exact profile and the approved key handling boundary.\n\n`
+  const evidence = FALLBACK_EVIDENCE_OPTIONS.find(
+    (option) => option.value === inputs.fallbackEvidence
+  )
+  md += `- Alternate provider evidence: ${evidence?.label ?? 'No matching approval supplied'}\n`
+  md += `- Expected dispatch: ${rec.fallbackTest}\n\n`
 
   md += `## 6. Watch-Outs\n\n`
   for (const w of rec.watchOuts) md += `- ${w}\n`
@@ -767,8 +802,8 @@ export const CryptoApiRefactorAudit: React.FC = () => {
           <div>
             <p className="font-medium text-foreground">Agility lives at the API boundary</p>
             <p className="text-muted-foreground">
-              An app that calls `RSA_sign()` directly is NOT agile; one that calls
-              `EVP_DigestSign()` with the algorithm selected at run-time IS.
+              A direct RSA call fixes the algorithm. Runtime selection through EVP helps when the
+              provider dispatch also enforces the allowed profile and key boundary.
             </p>
           </div>
         </div>
@@ -787,8 +822,8 @@ export const CryptoApiRefactorAudit: React.FC = () => {
           <div>
             <p className="font-medium text-foreground">Providers vary in PQC timing</p>
             <p className="text-muted-foreground">
-              Build the fallback path explicitly - CSWP-39 Section 4.1 warns providers ship PQC at
-              different times.
+              In the fictional outage, the primary provider cannot sign with ML-DSA-65. Compare an
+              approved alternate with one that changes the profile or key boundary.
             </p>
           </div>
         </div>

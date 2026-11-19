@@ -515,9 +515,9 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   {
     id: 'mti-negotiator',
     goodAnswer:
-      'A mandatory-to-implement set both ends can actually negotiate today, checked against the protocol matrix rather than assumed.',
+      'Compare the exact TLS 1.3 groups both peers enable and identify which remain eligible under the worksheet policy. Confirm the result with a real handshake before deploying.',
     workedExample:
-      "Keep TLS 1.3, Global commercial and 'Must interop with non-PQC peers': the table names ML-DSA-65 as signature MTI, X25519MLKEM768 as KEM with ML-KEM-768 as alternate and SHA-256 as hash, and a watch-out gives the TLS named-group codepoint.",
+      'Select X25519MLKEM768 for both sample peers. Preview the common group, then remove it from the server and review the blocked result. If both peers also support X25519, change the local rule to see when that classical group becomes eligible.',
     name: 'MTI Negotiator',
     audience: 'architect',
     description:
@@ -645,7 +645,7 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     goodAnswer:
       'You know which of your own tools would have to change before a single production key does.',
     workedExample:
-      "Rate each of the seven categories — None, Manual, Partial or Automated — and set Systems covered: an Automated Crypto Scanner that reaches only 30% of systems keeps its Hub Tool-Category Rating but lowers Coverage-Adjusted Readiness and stays on the gap list, ordered by importance, as 'Automated, but only 30% of systems covered'.",
+      'Set Crypto Scanners to Automated and enter inventory counts. With 31 of 64 systems observed, the category stays below the Hub’s 50% coverage threshold. Change the numerator to 32 and check the gap list and exported audit.',
     name: 'Management Tools Audit',
     description:
       'Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5',

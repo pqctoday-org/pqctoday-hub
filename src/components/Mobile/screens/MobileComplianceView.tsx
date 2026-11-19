@@ -13,7 +13,6 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  Users,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -44,12 +43,7 @@ import {
   roleFramingFor,
   roleNoteFor,
 } from '@/components/Compliance/obligations/roleLens'
-import {
-  citationIndex,
-  documentsFor,
-  resolveRequirementsPick,
-  totalFor,
-} from '@/components/Compliance/requirements/requirementsModel'
+import { RequirementsTab } from '@/components/Compliance/requirements/RequirementsTab'
 import { CSWP39_STEPS, CSWP39_SOURCE_METADATA } from '@/components/Compliance/cswp39Data'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { buildDrawerDetail, pillarForBodyType } from '@/components/Compliance/redesign/pillarModel'
@@ -310,7 +304,7 @@ const TIER_TONE: Record<ApplicabilityTier, string> = {
  * Every section reuses the real desktop model verbatim: useApplicability()
  * (same industry/country/region/persona stores every desktop tab reads),
  * buildObligations/groupObligations/applyRoleOrder/roleFramingFor/roleNoteFor
- * (the real register + role-lens), citationIndex/documentsFor/totalFor (the
+ * (the register and role lens), RequirementsTab (the shared
  * real Requirements reading-room model), isComplianceFrameworkEmphasized
  * (the real Landscape role-reduction, corrected from the README's "2 of 9"
  * claim to the real ~5-6-of-N framework-card reduction), and CSWP39_STEPS
@@ -542,18 +536,6 @@ export function MobileComplianceView({
     }
   }, [records])
 
-  const index = useMemo(() => citationIndex(rows.map((r) => r.framework)), [rows])
-  const { selected: selectedRow, status: reqfwStatus } = useMemo(
-    () => resolveRequirementsPick(rows, reqfwParam, complianceFrameworks),
-    [rows, reqfwParam]
-  )
-  const docs = useMemo(
-    () => (selectedRow ? documentsFor(selectedRow.framework, index) : []),
-    [selectedRow, index]
-  )
-  // The out-of-scope note is informational; dismissing it keeps the pick.
-  const [dismissedReqNoteFor, setDismissedReqNoteFor] = useState<string | null>(null)
-
   // `?evref=<library ref id>` — desktop filters the CSWP.39 evidence map to
   // that document's extracted requirements. The phone has no pillar × tier
   // grid, so it lists the same rows (capped) and says the map is on a laptop.
@@ -644,7 +626,7 @@ export function MobileComplianceView({
         />
       )}
 
-      {isEmpty && (section === 'obligations' || (section === 'requirements' && !selectedRow)) && (
+      {isEmpty && (section === 'obligations' || (section === 'requirements' && !reqfwParam)) && (
         <div className="glass-panel p-4 text-center">
           <p className="text-[12.5px] font-semibold text-foreground">Nothing in scope yet</p>
           <p className="mt-1 text-[11px] text-muted-foreground">
@@ -728,122 +710,13 @@ export function MobileComplianceView({
         </div>
       )}
 
-      {section === 'requirements' && reqfwStatus === 'unknown' && (
-        <DeepLinkNotice
-          kind="not-found"
-          message={`No tracked framework has the ID “${reqfwParam}” — it may have been renamed or retired.`}
-          onDismiss={() => setSectionParams('requirements', { reqfw: null })}
+      {section === 'requirements' && (
+        <RequirementsTab
+          profile={profile}
+          headingLevel={2}
+          selectedId={reqfwParam}
+          onSelect={(id) => setSectionParams('requirements', { reqfw: id })}
         />
-      )}
-
-      {section === 'requirements' &&
-        reqfwStatus === 'out-of-scope' &&
-        selectedRow &&
-        dismissedReqNoteFor !== reqfwParam && (
-          <DeepLinkNotice
-            kind="widened"
-            message={`${selectedRow.framework.label} is not among the instruments for your current country and sector — it is shown because the link named it.`}
-            onDismiss={() => setDismissedReqNoteFor(reqfwParam)}
-          />
-        )}
-
-      {/* A linked framework (`?reqfw=`) is shown even with an empty profile or
-          outside the reader's scope — same as desktop RequirementsTab. */}
-      {section === 'requirements' && (!isEmpty || selectedRow) && (
-        <div className="flex flex-col gap-3">
-          {!selectedRow ? (
-            <p className="text-[12.5px] text-muted-foreground">Nothing in scope yet.</p>
-          ) : (
-            <>
-              {rows.length > 0 && (
-                <div className="-mx-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
-                  {rows.map((r) => (
-                    <Button
-                      key={r.framework.id}
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setSectionParams('requirements', { reqfw: r.framework.id })}
-                      aria-pressed={selectedRow?.framework.id === r.framework.id}
-                      className={cn(
-                        'h-8 shrink-0 snap-start rounded-full border px-3 text-[11px] font-semibold',
-                        selectedRow?.framework.id === r.framework.id
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border bg-card text-foreground'
-                      )}
-                    >
-                      {r.framework.label}
-                    </Button>
-                  ))}
-                </div>
-              )}
-
-              {selectedRow && (
-                <div className="glass-panel p-3.5">
-                  <h2 className="text-[13px] font-bold text-foreground">
-                    {selectedRow.framework.label}
-                  </h2>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">{selectedRow.reason}</p>
-                  <p className="mt-2 text-[10.5px] text-muted-foreground">
-                    These practices are machine-extracted from documents this instrument{' '}
-                    <span className="font-semibold text-foreground">cites</span> — not from its own
-                    text. Verify the primary passage before treating one as a requirement.
-                    {docs.length > 0 &&
-                      ` ${totalFor(docs)} extracted practice${totalFor(docs) === 1 ? '' : 's'} across ${docs.length} cited document${docs.length === 1 ? '' : 's'}.`}
-                  </p>
-                </div>
-              )}
-
-              {docs.length === 0 ? (
-                <p className="text-[12px] text-muted-foreground">
-                  No extracted practices for this one — a gap in the corpus, not a statement about
-                  the instrument.
-                </p>
-              ) : (
-                docs.map((doc) => (
-                  <div key={doc.refId} className="glass-panel p-3">
-                    <div className="flex flex-wrap items-baseline gap-x-1.5">
-                      <h3 className="text-[12px] font-bold text-foreground">{doc.sourceName}</h3>
-                      <span className="font-mono text-sim-chip text-muted-foreground">
-                        {doc.refId}
-                      </span>
-                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                        {doc.total}
-                      </span>
-                    </div>
-                    <p className="mt-1 font-mono text-sim-chip text-muted-foreground">
-                      <span className="mr-1 inline-flex rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0.5 font-sans font-semibold text-status-warning">
-                        Human review not recorded
-                      </span>
-                      extracted by {doc.extractionModel || 'unknown model'}
-                      {doc.extractionDate ? ` · ${doc.extractionDate}` : ''} · confidence{' '}
-                      {doc.confidence}
-                    </p>
-                    {doc.alsoCitedBy.length > 0 && (
-                      <p className="mt-1 flex items-start gap-1 text-[10.5px] text-muted-foreground">
-                        <Users
-                          size={11}
-                          className="mt-0.5 shrink-0 text-primary"
-                          aria-hidden="true"
-                        />
-                        Also cited by {doc.alsoCitedBy.join(', ')}
-                      </p>
-                    )}
-                    {doc.sourceUrl && (
-                      <a
-                        href={doc.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1 inline-flex items-center gap-1 text-[10.5px] font-semibold text-primary"
-                      >
-                        Source <ExternalLink size={10} aria-hidden="true" />
-                      </a>
-                    )}
-                  </div>
-                ))
-              )}
-            </>
-          )}
-        </div>
       )}
 
       {section === 'progress' && (

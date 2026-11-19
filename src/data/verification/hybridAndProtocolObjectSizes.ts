@@ -12,7 +12,7 @@
  * - draft-kampanakis-curdle-ssh-pq-ke: PQ/T Hybrid Key Exchange in SSH (mlkem768x25519-sha256)
  * - RFC 9976: Streamlined NTRU Prime sntrup761 + X25519 in SSH (sntrup761x25519-sha512)
  * - RFC 9370 + draft-ietf-ipsecme-ikev2-mlkem: Multiple Key Exchanges in IKEv2 with ML-KEM
- * - RFC 10073 / draft-ietf-lamps-pq-composite-sigs: Composite ML-DSA for X.509 & PKIX
+ * - RFC 10073: Composite ML-DSA for X.509 & PKIX
  */
 
 import { FIPS_OBJECT_SIZES } from './fipsObjectSizes'
@@ -74,7 +74,7 @@ export const HYBRID_KEM_OBJECT_SIZES: Record<string, HybridKemSpec> = {
     serverCiphertextShareBytes:
       FIPS_OBJECT_SIZES['ML-KEM-1024'].signatureOrCiphertextBytes +
       CLASSICAL_ECDSA_SIZES['ECDSA P-384'].uncompressedPublicKeyBytes, // 1568 + 97 = 1665
-    sharedSecretBytes: 64,
+    sharedSecretBytes: 48 + 32,
     standard: 'RFC 10024',
   },
   'mlkem768x25519-sha256': {
@@ -118,8 +118,6 @@ export interface CompositeSignatureSpec {
   id: string
   classicalComponent: string
   pqcComponent: string
-  rawConcatenatedPublicKeyBytes: number
-  rawConcatenatedSignatureBytes: number
   uncompressedConcatenatedPublicKeyBytes: number
   derSignatureMaxConcatenatedBytes: number
   standard: string
@@ -128,57 +126,39 @@ export interface CompositeSignatureSpec {
 export const COMPOSITE_SIGNATURE_OBJECT_SIZES: Record<string, CompositeSignatureSpec> = {
   'ECDSA-P256+ML-DSA-44': {
     id: 'ECDSA-P256+ML-DSA-44',
-    classicalComponent: 'ECDSA P-256 (64 B raw xy / 65 B SEC1, 64 B raw sig / 72 B DER)',
+    classicalComponent: 'ECDSA P-256 (65 B uncompressed point, up to 72 B DER signature)',
     pqcComponent: 'ML-DSA-44 (1312 B pk, 2420 B sig)',
-    rawConcatenatedPublicKeyBytes:
-      CLASSICAL_ECDSA_SIZES['ECDSA P-256'].rawCoordinatePairBytes +
-      FIPS_OBJECT_SIZES['ML-DSA-44'].publicKeyBytes, // 64 + 1312 = 1376
-    rawConcatenatedSignatureBytes:
-      CLASSICAL_ECDSA_SIZES['ECDSA P-256'].rawSignatureBytes +
-      FIPS_OBJECT_SIZES['ML-DSA-44'].signatureOrCiphertextBytes, // 64 + 2420 = 2484
     uncompressedConcatenatedPublicKeyBytes:
       CLASSICAL_ECDSA_SIZES['ECDSA P-256'].uncompressedPublicKeyBytes +
       FIPS_OBJECT_SIZES['ML-DSA-44'].publicKeyBytes, // 65 + 1312 = 1377
     derSignatureMaxConcatenatedBytes:
       CLASSICAL_ECDSA_SIZES['ECDSA P-256'].derSignatureMaxBytes +
       FIPS_OBJECT_SIZES['ML-DSA-44'].signatureOrCiphertextBytes, // 72 + 2420 = 2492
-    standard: 'RFC 10073 / draft-ietf-lamps-pq-composite-sigs (id-MLDSA44-ECDSA-P256-SHA256)',
+    standard: 'RFC 10073 §4 and Appendix A (id-MLDSA44-ECDSA-P256-SHA256)',
   },
   'ECDSA-P256+ML-DSA-65': {
     id: 'ECDSA-P256+ML-DSA-65',
     classicalComponent: 'ECDSA P-256',
     pqcComponent: 'ML-DSA-65',
-    rawConcatenatedPublicKeyBytes:
-      CLASSICAL_ECDSA_SIZES['ECDSA P-256'].rawCoordinatePairBytes +
-      FIPS_OBJECT_SIZES['ML-DSA-65'].publicKeyBytes, // 64 + 1952 = 2016
-    rawConcatenatedSignatureBytes:
-      CLASSICAL_ECDSA_SIZES['ECDSA P-256'].rawSignatureBytes +
-      FIPS_OBJECT_SIZES['ML-DSA-65'].signatureOrCiphertextBytes, // 64 + 3309 = 3373
     uncompressedConcatenatedPublicKeyBytes:
       CLASSICAL_ECDSA_SIZES['ECDSA P-256'].uncompressedPublicKeyBytes +
       FIPS_OBJECT_SIZES['ML-DSA-65'].publicKeyBytes, // 65 + 1952 = 2017
     derSignatureMaxConcatenatedBytes:
       CLASSICAL_ECDSA_SIZES['ECDSA P-256'].derSignatureMaxBytes +
       FIPS_OBJECT_SIZES['ML-DSA-65'].signatureOrCiphertextBytes, // 72 + 3309 = 3381
-    standard: 'RFC 10073 / draft-ietf-lamps-pq-composite-sigs (id-MLDSA65-ECDSA-P256-SHA512)',
+    standard: 'RFC 10073 §4 and Appendix A (id-MLDSA65-ECDSA-P256-SHA512)',
   },
   'ECDSA-P384+ML-DSA-87': {
     id: 'ECDSA-P384+ML-DSA-87',
     classicalComponent: 'ECDSA P-384',
     pqcComponent: 'ML-DSA-87',
-    rawConcatenatedPublicKeyBytes:
-      CLASSICAL_ECDSA_SIZES['ECDSA P-384'].rawCoordinatePairBytes +
-      FIPS_OBJECT_SIZES['ML-DSA-87'].publicKeyBytes, // 96 + 2592 = 2688
-    rawConcatenatedSignatureBytes:
-      CLASSICAL_ECDSA_SIZES['ECDSA P-384'].rawSignatureBytes +
-      FIPS_OBJECT_SIZES['ML-DSA-87'].signatureOrCiphertextBytes, // 96 + 4627 = 4723
     uncompressedConcatenatedPublicKeyBytes:
       CLASSICAL_ECDSA_SIZES['ECDSA P-384'].uncompressedPublicKeyBytes +
       FIPS_OBJECT_SIZES['ML-DSA-87'].publicKeyBytes, // 97 + 2592 = 2689
     derSignatureMaxConcatenatedBytes:
       CLASSICAL_ECDSA_SIZES['ECDSA P-384'].derSignatureMaxBytes +
       FIPS_OBJECT_SIZES['ML-DSA-87'].signatureOrCiphertextBytes, // 104 + 4627 = 4731
-    standard: 'RFC 10073 / draft-ietf-lamps-pq-composite-sigs (id-MLDSA87-ECDSA-P384-SHA512)',
+    standard: 'RFC 10073 §4 and Appendix A (id-MLDSA87-ECDSA-P384-SHA512)',
   },
 } as const
 
@@ -298,13 +278,15 @@ export function verifyInventoriedClaim(claim: InventoriedClaim): VerifiedClaimRe
   if (joinedLabels.includes('ECDSA + ML-DSA-44') || joinedLabels.includes('ecdsa-ml-dsa-44')) {
     const spec = COMPOSITE_SIGNATURE_OBJECT_SIZES['ECDSA-P256+ML-DSA-44']
     const expected = isPubField
-      ? spec.rawConcatenatedPublicKeyBytes
-      : spec.rawConcatenatedSignatureBytes
+      ? spec.uncompressedConcatenatedPublicKeyBytes
+      : spec.derSignatureMaxConcatenatedBytes
     return {
       ...claim,
       expected,
       source: spec.standard,
-      encodingScope: 'Concatenated ECDSA P-256 (64 B) + ML-DSA-44 (1312 B pk / 2420 B sig)',
+      encodingScope: isPubField
+        ? 'ML-DSA-44 public key plus uncompressed P-256 point including its 0x04 byte'
+        : 'Maximum ML-DSA-44 signature plus DER Ecdsa-Sig-Value; the actual DER length varies',
       disposition: 'matches-independent-oracle',
     }
   }

@@ -44,6 +44,7 @@ export const groupOutcomes = (items: PlanItem[]): Map<number, GroupOutcome> => {
 export interface EvidenceSummary {
   evidenceClass: string
   knownFixture: string | null
+  responseSha256: string | null
   engine: string
   answered: number
   unsupported: number
@@ -79,11 +80,12 @@ const goldenOf = (g: unknown): EvidenceSummary['golden'] => {
 
 /** Pure: pull the fields a reviewer reads first out of an evidence.json. */
 export const summarizeEvidence = (doc: unknown): EvidenceSummary => {
-  const e = doc as JsonObject
+  const e = (doc ?? {}) as JsonObject
   const prompt = (e.prompt ?? {}) as JsonObject
   const known = prompt.knownPublicFixture as JsonObject | null | undefined
   const engine = (e.engine ?? {}) as JsonObject
   const summary = (e.summary ?? {}) as JsonObject
+  const reportedDigest = (e.response as JsonObject | undefined)?.sha256
   if (typeof e.evidenceClass !== 'string') {
     throw new Error('not an evidence.json from the Hub’s ACVP-format prototype (no evidenceClass)')
   }
@@ -92,6 +94,10 @@ export const summarizeEvidence = (doc: unknown): EvidenceSummary => {
     knownFixture: known
       ? `${String(known.upstreamPath)} @ ${String(known.commit).slice(0, 7)}`
       : null,
+    responseSha256:
+      typeof reportedDigest === 'string' && /^[a-f0-9]{64}$/i.test(reportedDigest)
+        ? reportedDigest.toLowerCase()
+        : null,
     engine: typeof engine.label === 'string' ? engine.label : 'unknown engine',
     answered: Number(summary.answered ?? 0),
     unsupported: Number(summary.unsupported ?? 0),

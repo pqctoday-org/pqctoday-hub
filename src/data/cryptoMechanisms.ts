@@ -439,7 +439,7 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     cycloneDxFamilies: ['AES'],
     oids: [],
     quantumSafeNote:
-      'Not replaced — re-sized. Grover halves the effective key length, so AES-256 stays at 128-bit post-quantum strength.',
+      'NIST IR 8547 keeps approved AES in scope for use. AES-256 is the Category 5 key-search reference. Its ideal Grover query exponent is 128. Use the key size required by the deployment profile.',
   },
   {
     family: 'SHA',

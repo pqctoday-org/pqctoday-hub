@@ -40,15 +40,34 @@ const engine: CertificateTlsEngine = {
 }
 
 describe('certificate-to-TLS exercise with shipped OpenSSL', () => {
-  it('authenticates all three profiles and rejects wrong hostname, CA and signing scheme', async () => {
+  it('authenticates all three RFC 10024 groups and rejects a mismatched peer and a KEM signer', async () => {
     const result = await runCertificateTlsExercise(engine)
-    expect(result.runs).toHaveLength(3)
+    expect(result.runs).toHaveLength(6)
     expect(result.runs.filter((r) => !r.passed)).toEqual([])
-    expect(result.checks).toHaveLength(6)
+    expect(result.checks).toHaveLength(12)
     expect(
       result.checks.filter((c) => !c.passed),
       JSON.stringify(result.checks)
     ).toEqual([])
+    expect(result.runs[3]).toMatchObject({
+      group: 'X25519MLKEM768',
+      signature: 'rsa_pss_rsae_sha256',
+      subjectKey: 'rsaEncryption',
+      issuerSignature: 'ML-DSA-65',
+      passed: true,
+    })
+    expect(
+      result.runs.slice(4).map(({ group, subjectKey, observedSignature }) => ({
+        group,
+        subjectKey,
+        signatureMatches: /rsa_pss_rsae_sha256/i.test(observedSignature),
+      }))
+    ).toEqual([
+      { group: 'SecP256r1MLKEM768', subjectKey: 'rsaEncryption', signatureMatches: true },
+      { group: 'SecP384r1MLKEM1024', subjectKey: 'rsaEncryption', signatureMatches: true },
+    ])
+    expect(result.kemAuthenticationRejected).toBe(true)
+    expect(result.certificates).toHaveLength(4)
     expect(result.certificates.every((c) => c.pem.includes('BEGIN CERTIFICATE'))).toBe(true)
   }, 120_000)
 })

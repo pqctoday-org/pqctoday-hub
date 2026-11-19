@@ -23,6 +23,7 @@ export const PKIEnrollmentProtocolsModule: FC = () => {
   const handleKeyReady = useCallback((algorithm: string, keyPem: Uint8Array) => {
     setEeKeyAlgorithm(algorithm)
     setEeKeyPem(keyPem)
+    setEeCertPem(null)
   }, [])
 
   return (

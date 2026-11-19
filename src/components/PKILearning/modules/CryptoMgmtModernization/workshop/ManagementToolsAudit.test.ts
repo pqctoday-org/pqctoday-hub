@@ -4,6 +4,7 @@ import {
   computeCoverageAdjustedScore,
   computeMaturityScore,
   gapReason,
+  inventoryCoveragePct,
   TOOLS,
   type CoverageLevel,
 } from './ManagementToolsAudit'
@@ -75,5 +76,28 @@ describe('computeCoverageAdjustedScore and gapReason (systems coverage counts)',
     expect(gapReason(3, 40)).toBe('low-systems-coverage')
     expect(gapReason(2, 50)).toBeNull()
     expect(gapReason(1, 100)).toBe('rating-below-partial')
+  })
+})
+
+describe('inventory coverage counts', () => {
+  it('keeps distinct coverage decisions through the exact half-coverage boundary', () => {
+    const before = inventoryCoveragePct({ inScope: '64', covered: '31' })!
+    const boundary = inventoryCoveragePct({ inScope: '64', covered: '32' })!
+    expect(before).toBe(48.4375)
+    expect(boundary).toBe(50)
+    expect(gapReason(3, before)).toBe('low-systems-coverage')
+    expect(gapReason(3, boundary)).toBeNull()
+    expect(inventoryCoveragePct({ inScope: '64', covered: '0' })).toBe(0)
+  })
+
+  it.each([
+    ['', '0'],
+    ['0', '0'],
+    ['25', '26'],
+    ['64', '-1'],
+    ['64', '31.5'],
+    ['9007199254740992', '31'],
+  ])('withholds coverage for in-scope %s and covered %s', (inScope, covered) => {
+    expect(inventoryCoveragePct({ inScope, covered })).toBeNull()
   })
 })

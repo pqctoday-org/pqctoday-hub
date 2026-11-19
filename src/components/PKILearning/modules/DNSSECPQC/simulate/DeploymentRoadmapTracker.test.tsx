@@ -26,10 +26,13 @@ describe('DNSSEC deployment roadmap: root zone rollover', () => {
 
   it('keeps the first (classical, ICANN/IANA) rollover apart from the second (possible post-quantum) one', () => {
     const t = pageText()
-    expect(t).toMatch(/First rollover \(ICANN\/IANA plan, classical\)/)
-    expect(t).toMatch(/new ECDSA Root KSK in 2027 and ends with retiring the RSA Root KSK in 2029/)
-    expect(t).toMatch(/ICANN org said it will proceed with the rollover as proposed/)
-    expect(t).toMatch(/this plan does not make the root post-quantum/)
-    expect(t).toMatch(/Second rollover/)
+    expect(t).toMatch(/Next algorithm rollover \(ICANN proposal, classical\)/)
+    expect(t).toMatch(
+      /generate an ECDSA Root KSK in 2027 and complete decommissioning the RSA key in 2030/
+    )
+    expect(t).toMatch(/it is a proposal, not a completed or final deployment schedule/)
+    expect(t).toMatch(/RSA-to-RSA rollover to KSK-2024 began on 11 October 2026/)
+    expect(t).toMatch(/this proposal does not make the root post-quantum/)
+    expect(t).toMatch(/Possible later PQ rollover/)
   })
 })

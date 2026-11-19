@@ -121,16 +121,18 @@ RFC 9794 (IETF, June 2025, Informational) defines terminology for post-quantum/t
 
 The mechanism sits in the protocol document, not in RFC 9794. For TLS 1.3, the hybrid key exchange construction (draft-ietf-tls-hybrid-design, published as RFC 9954, Informational, July 2026, section 3.3) concatenates the two component shared secrets (classical || post-quantum) and inserts the result into the TLS 1.3 key schedule in place of the (EC)DHE secret, so a session only gets a hybrid secret if both components completed. Section 1.4 describes a non-hybrid result with a non-hybrid-aware peer as expected only if the hybrid-aware endpoint is willing to downgrade, so a test should confirm that any fallback is a visible, intended outcome.
 
-### Real-world interoperability status (as of 2025):
+### Browser and endpoint support notes (checked 18 November 2026):
 
-| Client                | OQS Server | Cloudflare                       | Legacy TLS 1.2     |
-| --------------------- | ---------- | -------------------------------- | ------------------ |
-| Chrome 130+ (hybrid)  | Compatible | Compatible                       | Partial (fallback) |
-| Firefox 128+ (hybrid) | Compatible | Compatible                       | Partial (fallback) |
-| Pure PQC client       | Compatible | **Incompatible** (server policy) | **Incompatible**   |
-| Classical-only        | Partial    | Partial                          | Compatible         |
+| Client                                               | OQS Server                                                              | Cloudflare                                                                                                   | Legacy TLS 1.2                                                                                          |
+| ---------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Chrome 131+ (hybrid default)                         | Documented browser support; exact server port/profile must be tested    | Cloudflare documents Chrome 131+ and X25519MLKEM768 for visitor TLS; not a captured pairwise test            | TLS 1.2-only cannot negotiate the TLS 1.3 hybrid group; fallback depends on peer and middlebox behavior |
+| Firefox 132+ desktop / 145+ Android (hybrid default) | Documented browser support; exact server port/profile must be tested    | Cloudflare documents these Firefox versions and X25519MLKEM768; not a captured pairwise test                 | TLS 1.2-only cannot negotiate the TLS 1.3 hybrid group; fallback depends on peer and middlebox behavior |
+| Pure ML-KEM-768 client                               | Depends on the selected OQS server port/configuration                   | Untested: Cloudflare visitor docs checked list X25519MLKEM768, not a pure ML-KEM profile or rejection policy | No shared group in this named TLS 1.2-only scenario                                                     |
+| Classical-only client                                | Depends on the selected OQS server configuration; PQC is not negotiated | Classical group may be used if both sides permit it; capture the negotiated group                            | Classical TLS can work when versions/groups overlap, but is quantum-vulnerable                          |
 
-**Oversized ClientHello risk**: Pure PQC ClientHellos (1,536B) exceed TCP MSS on some network devices — load balancers and firewalls may silently drop fragmented ClientHellos.
+The workshop matrix is illustrative scenario data, not test evidence. A vendor support page does not prove that a particular client/server pair negotiated a group. For AWS KMS, use a supported SDK configuration and verify CloudTrail `tlsDetails.keyExchange`; do not infer the result from an API call succeeding.
+
+**Oversized ClientHello risk**: Large hybrid/PQC ClientHellos can expose middlebox assumptions about message size. Measure the actual ClientHello and test the path; do not treat one illustrative byte count as universal across profiles.
 
 **Test infrastructure**: test.openquantumsafe.org (OQS Test Server, free public access, all NIST algorithm combinations available on separate ports).
 

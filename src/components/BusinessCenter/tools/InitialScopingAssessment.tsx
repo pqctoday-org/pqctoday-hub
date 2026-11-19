@@ -38,6 +38,9 @@ export interface ScopedSystem {
   ownership: Ownership
   /** Optional "if known" note — protocols / sensitivity / dependents. Discovery + the CBOM fill these in. */
   notes: string
+  excluded?: boolean
+  dependencies?: string
+  protectedData?: string
 }
 
 export interface EstateBreakdown {
@@ -82,6 +85,9 @@ export function normalizeSystem(v: unknown): ScopedSystem {
       ? o.ownership
       : 'Internal') as Ownership,
     notes: o.notes ?? '',
+    ...(o.excluded === true ? { excluded: true } : {}),
+    ...(typeof o.dependencies === 'string' ? { dependencies: o.dependencies } : {}),
+    ...(typeof o.protectedData === 'string' ? { protectedData: o.protectedData } : {}),
   }
 }
 
@@ -98,6 +104,33 @@ export function normalizeState(s: unknown): ScopingState | null {
   }
 }
 
+function scopingBoundary(systems: ScopedSystem[]) {
+  const named = systems.filter((system) => system.name.trim())
+  const included = named.filter((system) => !system.excluded)
+  const excluded = named.filter((system) => system.excluded).map((system) => system.name.trim())
+  const dependencies = new Map<string, string>()
+  const protectedData = new Map<string, string>()
+  for (const system of included) {
+    for (const dependency of (system.dependencies ?? '').split(',').map((value) => value.trim())) {
+      if (dependency && !dependencies.has(dependency.toLowerCase())) {
+        dependencies.set(dependency.toLowerCase(), dependency)
+      }
+    }
+    for (const asset of (system.protectedData ?? '').split(',').map((value) => value.trim())) {
+      if (asset && !protectedData.has(asset.toLowerCase())) {
+        protectedData.set(asset.toLowerCase(), asset)
+      }
+    }
+  }
+  return {
+    included,
+    excluded,
+    dependencies: [...dependencies.values()],
+    protectedData: [...protectedData.values()],
+    conflicts: excluded.filter((name) => dependencies.has(name.toLowerCase())),
+  }
+}
+
 export function buildMarkdown(s: ScopingState, industry: string): string {
   const lines: string[] = []
   lines.push('# Initial Scoping Assessment')
@@ -111,7 +144,8 @@ export function buildMarkdown(s: ScopingState, industry: string): string {
 
   lines.push(`## Top systems in scope (max ${MAX_SYSTEMS})`)
   lines.push('')
-  const systems = s.systems.filter((sys) => sys.name.trim())
+  const boundary = scopingBoundary(s.systems)
+  const systems = boundary.included
   if (systems.length === 0) {
     lines.push('_No systems listed yet._')
   } else {
@@ -128,6 +162,26 @@ export function buildMarkdown(s: ScopingState, industry: string): string {
     '_Priority tiers (framework Activity 1.0): A = internet-exposed + long-lived secrecy/trust; ' +
       'B = internal Tier-1 with significant data sensitivity; C = everything else. Detailed ' +
       'per-system protocols and algorithms come from Discovery / the CBOM Builder._'
+  )
+  lines.push('')
+
+  lines.push('## Scope boundaries')
+  lines.push('')
+  lines.push(`- Excluded systems: ${boundary.excluded.join(', ') || 'None recorded'}`)
+  lines.push(
+    `- Dependencies of included systems: ${boundary.dependencies.join(', ') || 'None recorded'}`
+  )
+  lines.push(
+    `- Assets of included systems: ${boundary.protectedData.join(', ') || 'None recorded'}`
+  )
+  if (boundary.conflicts.length > 0) {
+    lines.push(
+      `- Review required. Included systems still depend on excluded systems: ${boundary.conflicts.join(', ')}`
+    )
+  }
+  lines.push('')
+  lines.push(
+    'Reconcile the separately entered estate estimates and vendor list after a scope change.'
   )
   lines.push('')
 
@@ -358,6 +412,7 @@ export const InitialScopingAssessment: React.FC = () => {
   const [estateOpen, setEstateOpen] = useState(false)
 
   const exportMarkdown = useMemo(() => buildMarkdown(state, industry), [state, industry])
+  const boundary = scopingBoundary(state.systems)
 
   const setSystem = (i: number, patch: Partial<ScopedSystem>) =>
     setState((prev) => ({
@@ -413,9 +468,14 @@ export const InitialScopingAssessment: React.FC = () => {
 
       <DataSourcesPanel />
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
+      <section
+        aria-labelledby="scoping-systems"
+        className="glass-panel border border-border rounded-lg p-4 space-y-3"
+      >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-foreground">Top systems in scope</span>
+          <h3 id="scoping-systems" className="text-sm font-semibold text-foreground">
+            Systems under review
+          </h3>
           <span className="text-[10px] text-muted-foreground">
             {state.systems.length} / {MAX_SYSTEMS}
           </span>
@@ -477,6 +537,37 @@ export const InitialScopingAssessment: React.FC = () => {
                   aria-label={`System ${i + 1} notes`}
                 />
               </div>
+              <div className="grid gap-2 pl-7 sm:grid-cols-2">
+                <label htmlFor={`scope-sys-${i}-dependencies`} className="space-y-1 text-xs">
+                  <span>Dependencies</span>
+                  <Input
+                    id={`scope-sys-${i}-dependencies`}
+                    aria-label={`System ${i + 1} dependencies`}
+                    placeholder="e.g. Gateway, Key service"
+                    value={sys.dependencies ?? ''}
+                    onChange={(event) => setSystem(i, { dependencies: event.target.value })}
+                  />
+                </label>
+                <label htmlFor={`scope-sys-${i}-protected-assets`} className="space-y-1 text-xs">
+                  <span>Protected assets</span>
+                  <Input
+                    id={`scope-sys-${i}-protected-assets`}
+                    aria-label={`System ${i + 1} protected assets`}
+                    placeholder="e.g. Customer records"
+                    value={sys.protectedData ?? ''}
+                    onChange={(event) => setSystem(i, { protectedData: event.target.value })}
+                  />
+                </label>
+              </div>
+              <label className="flex min-h-9 items-center gap-2 pl-7 text-sm">
+                <input
+                  type="checkbox"
+                  aria-label={`Exclude system ${i + 1} from scope`}
+                  checked={sys.excluded === true}
+                  onChange={(event) => setSystem(i, { excluded: event.target.checked })}
+                />
+                Exclude from scope
+              </label>
             </div>
           ))}
         </div>
@@ -502,6 +593,28 @@ export const InitialScopingAssessment: React.FC = () => {
           </Link>{' '}
           — this stays a rapid triage.
         </p>
+        <section
+          aria-labelledby="scoping-boundary"
+          className="space-y-1 rounded border border-border p-3 text-sm"
+        >
+          <h4 id="scoping-boundary" className="font-medium">
+            Scope boundaries
+          </h4>
+          <p>Excluded systems: {boundary.excluded.join(', ') || 'None recorded'}</p>
+          <p>
+            Dependencies of included systems: {boundary.dependencies.join(', ') || 'None recorded'}
+          </p>
+          <p>Assets of included systems: {boundary.protectedData.join(', ') || 'None recorded'}</p>
+          {boundary.conflicts.length > 0 && (
+            <p role="status" className="text-status-warning">
+              Review required. Included systems still depend on excluded systems:{' '}
+              {boundary.conflicts.join(', ')}.
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Reconcile the estate estimates and vendor list after changing scope.
+          </p>
+        </section>
       </section>
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-2">

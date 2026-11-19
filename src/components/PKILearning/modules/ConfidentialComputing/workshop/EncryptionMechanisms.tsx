@@ -21,7 +21,7 @@ const QUANTUM_IMPACT_BADGES: Record<QuantumImpact, { label: string; className: s
     className: 'bg-muted text-muted-foreground border-border',
   },
   'grover-halved': {
-    label: 'Grover Halved',
+    label: 'Idealized key search',
     className: 'bg-status-warning/20 text-status-warning border-status-warning/50',
   },
   'key-expansion-needed': {

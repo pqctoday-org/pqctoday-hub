@@ -14,6 +14,7 @@ import {
   resolveIndustryBreachBaseline,
   type ROIMetrics,
 } from '@/utils/roiMath'
+import { describeIndustryBreachBaseline } from '@/data/roiBaselines'
 import { computeBreachCosts, type BreachCosts } from '@/utils/breachCostModel'
 import {
   DELAY_MODEL_DEFAULTS,
@@ -216,7 +217,7 @@ export function deriveBreachDoc(sector: DemoSector): DemoDoc {
       '',
       'Currency: USD. Shared-model amounts are shown without currency conversion.',
       '',
-      `Industry baseline (${s.industry}), IBM Cost of a Data Breach 2025.`,
+      `Industry baseline (${s.industry}), ${describeIndustryBreachBaseline(s.industry).label}.`,
       '',
       '| Metric | Value |',
       '|--------|-------|',

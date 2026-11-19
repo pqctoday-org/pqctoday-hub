@@ -51,6 +51,14 @@ export const checkRV = (rv: number, fn: string): void => {
   if (u !== 0) throw new Error(`${fn} → ${rvName(u)} (0x${u.toString(16).padStart(8, '0')})`)
 }
 
+// Operational failures are separate from a negative signature check.
+export function signatureAccepted(rv: number, strictErrors: boolean, operation: string): boolean {
+  if (strictErrors && rv !== 0 && rv !== 0x000000c0 && rv !== 0x000000c1) {
+    checkRV(rv, operation)
+  }
+  return rv === 0
+}
+
 // Build a CK_ATTRIBUTE array in WASM memory.
 // attrs: [{ type, boolVal? | ulongVal? | bytesPtr?/len? }]
 // ── PKCS#11 v3.2 Derived Key Profile ─────────────────────────────────────────

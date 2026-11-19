@@ -14,4 +14,4 @@ Hardware random number generators do not depend on math problems that a quantum 
 
 ## What's Happening
 
-NIST's SP 800-90 series explains how to build and test these generators. NIST's Cryptographic Module Validation Program issues Entropy Validation Certificates to entropy sources after an accredited testing lab has shown that they meet SP 800-90B.
+NIST's SP 800-90 series — SP 800-90A (DRBGs), SP 800-90B (entropy sources), and SP 800-90C (RBG constructions, published in final form in September 2025) — explains how to build and test these generators. NIST's Cryptographic Module Validation Program issues Entropy Validation Certificates to entropy sources after an accredited testing lab has shown that they meet SP 800-90B, while European authorities (BSI AIS 20/31 and ANSSI) apply comparable physical-noise-model and DRBG separation requirements to both classical TRNGs and QRNGs.

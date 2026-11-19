@@ -61,20 +61,23 @@ Whether either case has a positive return depends on the selected costs and assu
 
 ## Workshop tools
 
-1. **CPM Maturity Self-Assessment** — 5 pillars × 5 levels with per-asset-class indicators.
+1. **CPM Maturity Self-Assessment** — 5×4 grid (five pillars × four asset classes, rated 1–4 per CSWP.39 tier scale) with per-asset-class indicators.
 2. **Inventory Lifecycle Simulator** — sample assets through the 6-stage loop with canonical
    CLM scenarios.
 3. **Library & Hardware CBOM Builder** — SBOM → CBOM mapper, library + HSM FIPS 140-3 L3
    status trackers.
 4. **No-Regret ROI Builder** — ROI, NPV, and payback under quantum-happens / never-happens. Every headline (program cost + 6 benefit streams) expands into an editable sub-model with formula, parameters, source citation, and plain-English explanation. Globals: horizon, discount rate, P(CRQC within horizon). "Pull from Step 3 CBOM" populates HSM/library counts.
 5. **Posture KPI Dashboard Designer** — KPI taxonomy across five pillars.
-6. **CLM Vendor Evaluator** — interactive scorecard for practising how to evaluate fictional CLM platform profiles on PQC readiness criteria (HSM orchestration, hybrid certificates, ACME automation); the profiles describe no real product.
+6. **Management Tools Coverage Audit** — rate tooling coverage across the six CSWP.39 Management Tools categories (data scanners, crypto scanners, vulnerability scanners, asset management, SIEM, zero-trust enforcement) to generate a gap heatmap.
+7. **Risk Analysis & Prioritisation Engine** — score CBOM assets from Step 3 on FIPS status, ESV status, PQC readiness, and EoL to produce a prioritised remediation queue.
+8. **Implement — Mitigate or Migrate** — five-question planning exercise comparing illustrative migration and compensating crypto-gateway suggestions (referencing CSWP.39 §4.6).
+9. **CLM Vendor Evaluator** — interactive scorecard for practising how to evaluate fictional CLM platform profiles on PQC readiness criteria (HSM orchestration, hybrid certificates, ACME automation); the profiles describe no real product.
 
 ## Key standards
 
-CA/B Forum SC-081v3 · NIST FIPS 140-3 IG (last updated 19 Aug 2026) · SP 800-140B · CMVP Validated Modules + MIP
-· OMB M-23-02 · NSA CNSA 2.0 · ENISA PQC Integration Study · BSI/ANSSI joint 2025 · OWASP
-CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI of DigiCert ONE (2025) · NIST IR 8547 (HNDL) · Microsoft
+CA/B Forum SC-081v3 · NIST FIPS 140-3 IG (last updated 19 Aug 2026) · FIPS 140-2 Historical transition (Sept 2026) · SP 800-140B · CMVP Validated Modules + MIP
+· OMB M-23-02 · EO 14412 & OMB M-26-15 · EU PQC Roadmap v1.1 · NSA CNSA 2.0 (FAQ v2.2 for NSS) · ENISA PQC Integration Study · BSI/ANSSI joint 2025 · OWASP
+CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI of DigiCert ONE (2025) · NIST IR 8547 (final Oct 2026) · Microsoft
 CPM (2026-04) · Keyfactor/EJBCA CPM.
 
 ## Pairs with

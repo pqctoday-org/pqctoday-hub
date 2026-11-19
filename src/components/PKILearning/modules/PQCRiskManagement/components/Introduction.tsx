@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import { describeIndustryBreachBaseline } from '@/data/roiBaselines'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -34,12 +35,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       {/* Quantum Computing Primer */}
       <section className="glass-panel p-4 border-primary/10">
         <p className="text-sm text-foreground/80">
-          Quantum computers exploit quantum mechanical properties to solve certain mathematical
-          problems exponentially faster than classical computers. Most critically,{' '}
+          Quantum computers can offer substantial speedups for some mathematical problems; those
+          speedups do not apply to every task. Most critically,{' '}
           <strong>Shor&apos;s algorithm</strong> &mdash; running on a sufficiently powerful quantum
           computer &mdash; can factor large integers and solve discrete logarithm problems in
-          polynomial time, which would break RSA, Diffie-Hellman, and elliptic curve cryptography
-          that protect virtually all internet communications today.
+          polynomial time, threatening RSA, finite-field Diffie-Hellman, and elliptic-curve uses in
+          many deployed protocols and systems.
         </p>
       </section>
 
@@ -53,14 +54,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            The arrival of a{' '}
+            A sufficiently capable{' '}
             <InlineTooltip term="CRQC">
               cryptographically relevant quantum computer (CRQC)
             </InlineTooltip>{' '}
-            will break the asymmetric cryptography that protects virtually all digital
-            communications. Risk management provides the framework for understanding <em>when</em>{' '}
-            this threat becomes real, <em>what</em> assets are exposed, and <em>how</em> to
-            prioritize migration efforts.
+            could break widely used public-key algorithms such as RSA, finite-field Diffie-Hellman,
+            and elliptic-curve cryptography. Risk management provides a framework for assessing{' '}
+            <em>when</em> this threat may become real, <em>what</em> assets are exposed, and{' '}
+            <em>how</em> to prioritize migration efforts.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -144,10 +145,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </div>
               <p className="text-xs text-muted-foreground">
                 <InlineTooltip term="HNDL">HNDL</InlineTooltip> attacks involve adversaries
-                capturing encrypted data today with the intent to decrypt it once quantum computers
-                become available. Data with long confidentiality requirements (healthcare records,
-                classified information, financial data) is already at risk even though quantum
-                computers don&apos;t yet exist.
+                capturing encrypted sessions today with the intent to decrypt them later. The
+                exposure depends on the session using quantum-vulnerable public-key key
+                establishment, an adversary recording the ciphertext, and the session secrets being
+                recoverable from that exchange. Long-lived sensitive data warrants assessment; this
+                does not mean all stored records or encrypted traffic can be harvested and
+                decrypted.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -156,11 +159,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                 <div className="text-sm font-bold text-foreground">Risk Quantification</div>
               </div>
               <p className="text-xs text-muted-foreground">
-                Quantum risk is quantified as <strong>Likelihood x Impact</strong> on a 1&ndash;5
-                scale for each dimension, producing a risk score from 1 to 25. Likelihood considers
-                the probability that the asset&apos;s algorithm will be broken within its required
-                protection lifetime. Impact considers the business, regulatory, and reputational
-                consequences of a breach.
+                This worksheet multiplies editable <strong>Likelihood x Impact</strong> ratings from
+                1&ndash;5 to produce a relative score from 1 to 25. Likelihood is an organizational
+                planning judgment about the threat within an asset&apos;s protection lifetime, not a
+                measured event probability or CRQC forecast. Impact records the assessed business,
+                regulatory and reputational consequences; document the assumptions behind both
+                ratings.
               </p>
             </div>
           </div>
@@ -187,11 +191,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </p>
           <div className="bg-status-error/5 rounded-lg p-4 border border-status-error/20">
             <p className="text-sm text-foreground/90">
-              <strong>ECC-256 is as urgent as RSA-2048.</strong> Classically, a 256-bit elliptic
-              curve looks far stronger than a 2048-bit RSA modulus. But Shor solves the
-              elliptic-curve discrete-log problem with <em>fewer</em> logical qubits than it needs
-              to factor RSA-2048 &mdash; so a CRQC reaches ECC-256 at least as early (not sourced in
-              the Library). Both belong in the same top-urgency band.
+              Classical key sizes do not provide a reliable ranking of quantum migration urgency.
+              RSA and elliptic-curve systems are both vulnerable to Shor&apos;s algorithm, but the
+              affected operation, required protection lifetime, implementation resources, transition
+              requirements and business consequences must be assessed before ranking individual
+              assets.
             </p>
           </div>
           <div className="overflow-x-auto">
@@ -212,22 +216,25 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   {
                     algo: 'RSA-2048',
                     classical: 'Standard baseline',
-                    quantum: 'Critical — Shor-breakable; HNDL clock running',
+                    quantum: 'Shor-vulnerable; assess the actual operation and protection lifetime',
                   },
                   {
                     algo: 'ECC-256 (P-256)',
                     classical: 'Appears far stronger than RSA-2048',
-                    quantum: 'Critical — broken with fewer qubits than RSA-2048',
+                    quantum:
+                      'Shor-vulnerable; classical key-size comparisons do not set an arrival date',
                   },
                   {
                     algo: 'RSA-4096 / ECC-384',
                     classical: 'Stronger still',
-                    quantum: 'Critical — bigger keys buy little against Shor',
+                    quantum:
+                      'Shor-vulnerable; larger parameters do not make it post-quantum secure',
                   },
                   {
                     algo: 'AES-256 (symmetric)',
                     classical: 'Strong',
-                    quantum: 'Low — only Grover (halved strength → 128-bit); no Shor break',
+                    quantum:
+                      'Key-search reference — Category 5 for AES-256. About 2^128 sequential queries in the idealized model.',
                   },
                 ].map((row) => (
                   <tr key={row.algo} className="border-b border-border/50 align-top">
@@ -242,11 +249,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </table>
           </div>
           <p className="text-xs text-muted-foreground">
-            Scoring rule: weight likelihood by <strong>Shor-breakability and key size</strong>, not
-            classical key-strength. Asymmetric public-key algorithms (RSA, ECC, DH) share the same
-            critical band; symmetric ciphers and hashes are only weakened (Grover), so doubling key
-            length restores their margin. Source: Applied Quantum PQC Migration Framework §3 (Risk
-            Scoring).
+            Scoring rule: weight likelihood by{' '}
+            <strong>the affected operation and quantum-vulnerable algorithm family</strong>, not
+            classical key-strength alone. Rank assets using their protection lifetime, applicable
+            requirements and consequences; symmetric key search and hash preimage search have
+            different quantum analyses, while hash-collision search has a different bound again. Do
+            not infer that doubling key length restores every symmetric or hash security objective.
+            Source: NIST IR 8547 Table 1 and FIPS 203/204/205.
           </p>
         </div>
       </section>
@@ -268,25 +277,25 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               {
                 n: 1,
                 t: 'CRQC Scenario Planning',
-                d: 'Model when a quantum computer could arrive and see which algorithms, compliance deadlines, and data are at risk.',
+                d: 'Choose a hypothetical CRQC year to view modeled vulnerable algorithms, reference dates, and retention overlap; it is not a forecast or compliance assessment.',
                 icon: Clock,
               },
               {
                 n: 2,
                 t: 'Risk Register Building',
-                d: 'Document every quantum-vulnerable cryptographic asset with likelihood, impact, and mitigation strategies.',
+                d: 'Record in-scope cryptographic assets with their assumed use, likelihood and impact ratings, and proposed mitigation.',
                 icon: ClipboardList,
               },
               {
                 n: 3,
                 t: 'Risk Heatmap Visualization',
-                d: 'Plot your risks on a 5x5 likelihood-impact grid to identify critical migration priorities.',
+                d: 'Plot worksheet ratings on a 5x5 grid to compare relative priorities; the score does not set a migration deadline.',
                 icon: Grid3X3,
               },
               {
                 n: 4,
                 t: 'Compliance Gap Analysis',
-                d: 'Map your risk register against CNSA 2.0 and NIST IR 8547 deadlines to identify compliance gaps.',
+                d: 'Inspect algorithm-name patterns beside CNSA 2.0 and NIST IR 8547 reference dates; determine applicability and compliance separately.',
                 icon: GitCompareArrows,
               },
             ].map((step) => {
@@ -320,8 +329,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
             For CISOs and security leaders, quantum risk management is not a future concern &mdash;
-            it&apos;s a present-day requirement. Regulatory bodies worldwide are setting migration
-            deadlines, and the HNDL threat means sensitive data is already at risk.
+            it&apos;s a present-day requirement. Regulatory bodies worldwide are setting transition
+            timelines within their respective scopes, and the HNDL threat means long-lived sensitive
+            data carried over quantum-vulnerable key establishment can already be exposed to capture
+            today.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -336,17 +347,37 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                   Scenario Planner shows each date with its scope and source
                 </li>
                 <li>
+                  &bull; EO 14412 &amp; OMB M-26-15 (June 2026): U.S. federal civilian High Value
+                  Assets and high-impact systems (excludes NSS; does not directly bind private
+                  contractors until finalized in contract rules)
+                </li>
+                <li>
                   &bull; NIST IR 8547 (final, October 2026): quantum-vulnerable public-key
                   algorithms deprecated after 2030, disallowed under NIST standards and guidelines
                   after 2035
                 </li>
-                <li>&bull; EU/ANSSI: Active PQC transition guidance</li>
+                <li>
+                  &bull; EU Coordinated Implementation Roadmap v1.1 (June 2025): advisory 2030
+                  milestone for Member States&apos; national programmes; DORA and NIS2 impose cyber
+                  risk-management duties rather than fixed PQC cutoff dates
+                </li>
               </ul>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-foreground mb-2">Business Impact</div>
               <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; Data breach costs averaging $4.44M globally (IBM, 2025)</li>
+                <li>
+                  &bull; The global average breach cost in IBM’s 2026 study was{' '}
+                  <a
+                    href={describeIndustryBreachBaseline('Other').source}
+                    className="underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    $4.99 million USD
+                  </a>
+                  .
+                </li>
                 <li>&bull; Supply chain trust dependent on digital signatures</li>
                 <li>&bull; Possible competitive advantage from early PQC adoption</li>
                 <li>&bull; Insurance and audit implications</li>

@@ -92,7 +92,7 @@ describe('actual compliance view with declared NSS worked cases', () => {
     expect(screen.getAllByText('Applicability not assessed', { exact: true })).toHaveLength(5)
     const keyBefore = status(keyTitle).textContent
     const signingBefore = status(signingTitle).textContent
-    fireEvent.change(screen.getByRole('slider', { name: 'CRQC arrival year' }), {
+    fireEvent.change(screen.getByRole('slider', { name: 'CRQC planning year (scenario)' }), {
       target: { value: '2028' },
     })
     expect(status(keyTitle).textContent).toBe(keyBefore)

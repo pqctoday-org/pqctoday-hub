@@ -87,3 +87,29 @@ describe('hybrid TLS is not presented as universally available quantum-safe cove
     expect(session.description).toMatch(/classical/i)
   })
 })
+
+describe('vendor roadmap claims distinguish published milestones from planning targets', () => {
+  it('scopes Microsoft Entra’s 2033 target to full authentication, not token-signing release', () => {
+    const entra = DIRECTORY_SERVICES.find((d) => d.id === 'azure-ad')!
+    expect(entra.vendorTimeline).toMatch(/2033/)
+    expect(entra.vendorTimeline).toMatch(/full transition/i)
+    expect(entra.vendorTimeline).toMatch(/token-signing.*release date/i)
+    expect(entra.vendorTimeline).toMatch(/learn\.microsoft\.com/)
+    expect(entra.migrationPath).toMatch(/Planning target/)
+  })
+
+  it('separates current AD CS ML-DSA support from planned ML-KEM/composite and undated PKINIT', () => {
+    const activeDirectory = DIRECTORY_SERVICES.find((d) => d.id === 'active-directory')!
+    expect(activeDirectory.vendorTimeline).toMatch(/ML-DSA.*available/i)
+    expect(activeDirectory.vendorTimeline).toMatch(/ML-KEM.*planned/i)
+    expect(activeDirectory.vendorTimeline).toMatch(/no.*PKINIT.*date/i)
+    expect(activeDirectory.vendorTimeline).toMatch(/learn\.microsoft\.com/)
+  })
+
+  it('limits signature migration to public-key-signed tokens and separates HMAC risk', () => {
+    const identity = ZERO_TRUST_LAYERS.find((l) => l.id === 'identity-verification')!
+    expect(identity.description).toMatch(/public-key-signed/i)
+    expect(identity.description).toMatch(/HMAC/i)
+    expect(identity.description).not.toMatch(/^All identity tokens .*must be signed with PQC/)
+  })
+})

@@ -775,9 +775,11 @@ export const BinarySigning: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <span className="font-bold text-foreground block mb-1">Sigstore / Rekor</span>
-              Transparency logs provide tamper-evident records of signing events. ML-DSA signatures
-              are 9-18x larger than RSA (38-72x vs ECDSA), impacting log storage and Merkle tree
-              sizes.
+              Transparency logs provide tamper-evident records of signing events. Raw ML-DSA-44 and
+              ML-DSA-87 signatures are 2,420 and 4,627 bytes: about 4.7&ndash;9 times an RSA-4096
+              signature and 38&ndash;72 times a 64-byte raw ECDSA P-256 signature. These sizes can
+              affect log-entry storage and transfer; Merkle hash sizes do not grow with signature
+              size.
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <span className="font-bold text-foreground block mb-1">SBOM Signing</span>

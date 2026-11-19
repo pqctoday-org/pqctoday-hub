@@ -156,6 +156,29 @@ export interface ExecutiveDocument {
   output?: unknown
 }
 
+export interface ProductionEvidenceObservation {
+  requirement: string
+  scope: string
+  result: 'pass' | 'fail' | 'excluded'
+  reference: string
+}
+
+export interface ProductionEvidenceDraft {
+  scope: string
+  observations: ProductionEvidenceObservation[]
+  comparisonScope?: string
+}
+
+export interface WorkshopPracticeAnswer {
+  question: string
+  choice: number
+}
+
+export interface WorkshopPracticeAnswers {
+  first?: WorkshopPracticeAnswer
+  transfer?: WorkshopPracticeAnswer
+}
+
 export interface LearningProgress {
   version: string // Format version for compatibility
   timestamp: number // Last save timestamp
@@ -168,6 +191,8 @@ export interface LearningProgress {
       timeSpent: number // Minutes (accumulated as elapsedMs / 60000 on unmount)
       completedSteps: string[]
       quizScores: { [quizId: string]: number }
+      productionEvidence?: ProductionEvidenceDraft
+      workshopPractice?: Record<string, WorkshopPracticeAnswers>
       learnSectionChecks?: Record<string, boolean> // sectionId → manually checked by user
       roleActionPlan?: {
         completedActions: string[]

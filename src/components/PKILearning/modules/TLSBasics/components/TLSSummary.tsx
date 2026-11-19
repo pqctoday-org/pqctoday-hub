@@ -13,11 +13,9 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
   if (status === 'idle') return null
 
   // Extract negotiated parameters
-  const connectionEvent = events.find(
-    (e) => e.event === 'established' || (e.side === 'connection' && e.event !== 'error')
-  )
+  const connectionEvent = events.find((e) => e.side === 'connection' && e.event === 'established')
   const cipher = connectionEvent?.details?.match(/Negotiated: (.+)/)?.[1]
-  const keyExchangeEvent = events.find((e) => e.details.includes('Key Exchange:'))
+  const keyExchangeEvent = events.find((e) => e.side === 'connection' && e.event === 'key_exchange')
   const keyExchange = keyExchangeEvent?.details.match(/Key Exchange: (.+)/)?.[1]
   const sigEvent = events.find((e) => e.details.includes('Peer Signature Algorithm:'))
   const signature = sigEvent?.details.match(/Peer Signature Algorithm: (.+)/)?.[1]
@@ -59,9 +57,8 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
 
   // Format signature name
   const formatSig = (sig: string) => {
-    if (sig === 'SHA256' || sig === 'SHA384' || sig === 'SHA512') return 'RSA-PSS'
-    if (sig.toLowerCase().includes('ecdsa')) return 'ECDSA'
-    return sig.toUpperCase()
+    const mldsa = sig.match(/^mldsa(44|65|87)$/i)
+    return mldsa ? `ML-DSA-${mldsa[1]}` : sig
   }
 
   const isSuccess = status === 'success'
@@ -118,8 +115,8 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
               )}
               {isHybrid && (
                 <p className="mt-1 text-warning">
-                  You used hybrid key exchange, combining classical ECDH with post-quantum ML-KEM
-                  for security against both classical and quantum attacks.
+                  You used hybrid key exchange, combining classical ECDH with post-quantum ML-KEM to
+                  protect the session keys.
                 </p>
               )}
               {isPQC && (

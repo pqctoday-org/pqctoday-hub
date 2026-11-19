@@ -47,7 +47,7 @@ import {
 } from './pipelineCodegen'
 import { StepInspectPanel } from './StepInspectPanel'
 import { optionsFor, validate, type Finding } from './pipelineBindings'
-import { TEMPLATES, TEMPLATE_NAMES } from './pipelineTemplates'
+import { SIGNATURE_EXERCISE_TEMPLATE, TEMPLATES, TEMPLATE_NAMES } from './pipelineTemplates'
 import {
   loadStore,
   saveStore,
@@ -139,9 +139,18 @@ const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
 export interface PkcsDevWorkbenchProps {
   openPython?: boolean
+  startSignatureExercise?: boolean
 }
 
-export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = ({ openPython = false }) => {
+export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = ({
+  openPython = false,
+  startSignatureExercise = false,
+}) => {
+  const showSignatureExercise = openPython && startSignatureExercise
+  const initialTemplate = showSignatureExercise
+    ? SIGNATURE_EXERCISE_TEMPLATE
+    : 'Encrypt + sign (PQ)'
+
   const hsmCtx = useHsmContext()
   const { moduleRef, rawModuleRef, isReady, autoInit, engineMode } = hsmCtx
 
@@ -178,9 +187,9 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = ({ openPython =
     }
   }, [])
 
-  const [pipelineName, setPipelineName] = useState('Encrypt + sign (PQ)')
+  const [pipelineName, setPipelineName] = useState(initialTemplate)
   const [pipeline, setPipeline] = useState<PipelineStep[]>(() =>
-    instantiate(TEMPLATES['Encrypt + sign (PQ)'] ?? [])
+    instantiate(TEMPLATES[initialTemplate])
   )
   const [pipelineInput, setPipelineInput] = useState(DEFAULT_PIPELINE_INPUT)
   const [store, setStore] = useState<PipelineStore>(() => loadStore(STORE_KEY))
@@ -188,7 +197,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = ({ openPython =
   const [running, setRunning] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
   const [attempt, setAttempt] = useState<PkcsAttempt | null>(null)
-  const [templateName, setTemplateName] = useState<string | null>('Encrypt + sign (PQ)')
+  const [templateName, setTemplateName] = useState<string | null>(initialTemplate)
   const runningRef = useRef(false)
   const attemptModule = useRef<unknown>(null)
   const elapsedMs = attempt?.elapsedMs ?? null
@@ -1049,6 +1058,23 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = ({ openPython =
           the sync-status chip live in the persistent header above (visible from
           both tabs) since Change 1 — see the file-scope note there. ── */}
       <TabsContent value="code" className="mt-0 flex-1 min-h-0 flex flex-col">
+        {showSignatureExercise && templateName === SIGNATURE_EXERCISE_TEMPLATE && (
+          <div className="space-y-2 rounded-md border border-border bg-muted/30 p-3 text-sm">
+            <p className="font-semibold">Check which bytes a signature covers</p>
+            <p>
+              Run the original Python and check that verification passes. In the editor, find the
+              <code className="mx-1">s.verify</code> call and change only its second argument from
+              <code className="mx-1">pipeline_input</code> to
+              <code className="mx-1">b'changed message'</code>. Run again and check that the
+              verification fails. Restore the original argument and rerun.
+            </p>
+            <p>
+              The browser runs PKCS#11 through the Hub’s Python adapter and its software token. Read
+              the output to see which operation accepted or rejected the message.
+            </p>
+          </div>
+        )}
+
         {/* Change 2: explicit "edit as custom script" gate — shown only while the
             editor is read-only-and-synced. */}
         {readOnly && (

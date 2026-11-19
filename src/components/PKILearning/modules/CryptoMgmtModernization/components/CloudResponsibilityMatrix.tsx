@@ -29,7 +29,7 @@ import { softwareData } from '@/data/migrateData'
 // Recommendation engine (pure function — testable in isolation)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type ServiceModel = 'IaaS' | 'PaaS' | 'SaaS' | 'FaaS'
+export type ServiceModel = 'IaaS' | 'PaaS' | 'SaaS' | 'FaaS' | 'CaaS'
 export type Owner = 'customer' | 'provider' | 'shared'
 export type PqcAvailability = 'available' | 'partial' | 'roadmap' | 'no-public-plan' | 'unverified'
 
@@ -65,17 +65,13 @@ export interface CloudMatrixRecommendation {
 // Service-model normaliser
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** The wizard accepts FaaS + container-as-a-service as separate checklist
- *  entries; for the matrix we collapse "container-as-a-service" into FaaS
- *  (the closest CSWP-39 §6.4 analogue — provider runs the runtime, customer
- *  packages the workload). Returns the canonical four-tuple. */
 function normaliseServiceModels(raw: string[]): ServiceModel[] {
   const out = new Set<ServiceModel>()
-  for (const r of raw) {
-    if (r === 'IaaS' || r === 'PaaS' || r === 'SaaS' || r === 'FaaS') {
-      out.add(r)
-    } else if (r === 'container-as-a-service') {
-      out.add('FaaS')
+  for (const model of raw) {
+    if (model === 'IaaS' || model === 'PaaS' || model === 'SaaS' || model === 'FaaS') {
+      out.add(model)
+    } else if (model === 'container-as-a-service') {
+      out.add('CaaS')
     }
   }
   return Array.from(out)
@@ -141,6 +137,39 @@ const CELL_TEMPLATES: Record<string, CellTemplate | typeof NOT_APPLICABLE> = {
     providerActions: ['Provider runs the API gateway / function URL TLS listener'],
     notes:
       'FaaS function URLs / API gateways inherit the cloud TLS roadmap. Customer has policy levers, not implementation.',
+  },
+
+  'TLS termination__CaaS': {
+    owner: 'shared',
+    customerActions: [
+      'Identify whether each listener runs in the workload, an ingress controller or a managed load balancer.',
+      'Capture the negotiated group separately on client and origin legs.',
+    ],
+    providerActions: [
+      'Document the supported policy and negotiated-group evidence at managed listeners.',
+    ],
+    notes:
+      'Workload TLS follows the deployed container configuration. A managed ingress listener has a separate provider boundary.',
+  },
+  'KMS-backed keys__CaaS': {
+    owner: 'shared',
+    customerActions: [
+      'Identify the KMS key operation called by the workload and pin the permitted identity.',
+    ],
+    providerActions: [
+      'Provide the supported key profile and operation for the selected region and service.',
+    ],
+    notes: 'Managed container hosting and managed key operations are separate services.',
+  },
+  'Customer-managed keys__CaaS': {
+    owner: 'shared',
+    customerActions: [
+      'Identify where the key is held and which container workload or gateway can use it.',
+    ],
+    providerActions: [
+      'Provide evidence for the exact import or external custody path if the service offers one.',
+    ],
+    notes: 'A container service label provides no evidence of an import operation or key boundary.',
   },
 
   // Managed database encryption
@@ -452,9 +481,9 @@ function pickWorstAvailability(providers: string[], family: 'kmsHsm' | 'tls'): P
   for (const p of providers) {
     // eslint-disable-next-line security/detect-object-injection
     const entry = PQC_ROADMAP[p]
-    if (!entry) continue
+    if (p === 'multi-cloud') continue
     // eslint-disable-next-line security/detect-object-injection
-    const idx = AVAIL_ORDER.indexOf(entry[family])
+    const idx = AVAIL_ORDER.indexOf(entry?.[family] ?? 'unverified')
     if (idx > worstIdx) worstIdx = idx
   }
   if (worstIdx < 0) return 'unverified'
@@ -462,17 +491,18 @@ function pickWorstAvailability(providers: string[], family: 'kmsHsm' | 'tls'): P
   return AVAIL_ORDER[worstIdx]
 }
 
-function classifyAssetFamily(assetClass: string): 'kmsHsm' | 'tls' {
-  // Anything that touches a KMS / HSM key custody surface uses the kmsHsm
-  // roadmap; TLS termination follows the TLS roadmap. The rest default to
-  // kmsHsm because the encryption ultimately rides on the cloud KMS.
-  if (assetClass === 'TLS termination') return 'tls'
-  return 'kmsHsm'
-}
-
-function pqcAvailabilityFor(assetClass: string, providers: string[]): PqcAvailability {
-  const family = classifyAssetFamily(assetClass)
-  return pickWorstAvailability(providers, family)
+function pqcAvailabilityFor(
+  assetClass: string,
+  model: ServiceModel,
+  providers: string[]
+): PqcAvailability {
+  if (assetClass === 'TLS termination' && model === 'PaaS') {
+    return pickWorstAvailability(providers, 'tls')
+  }
+  if (assetClass === 'KMS-backed keys' && (model === 'IaaS' || model === 'PaaS')) {
+    return pickWorstAvailability(providers, 'kmsHsm')
+  }
+  return 'unverified'
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -494,7 +524,7 @@ function buildMatrix(inputs: CloudMatrixInputs): ResponsibilityCell[] {
         owner: tpl.owner,
         customerActions: tpl.customerActions,
         providerActions: tpl.providerActions,
-        pqcAvailability: pqcAvailabilityFor(assetClass, inputs.cloudProviders),
+        pqcAvailability: pqcAvailabilityFor(assetClass, model, inputs.cloudProviders),
         notes: tpl.notes,
       })
     }
@@ -509,6 +539,11 @@ function buildMatrix(inputs: CloudMatrixInputs): ResponsibilityCell[] {
 function computeWatchOuts(inputs: CloudMatrixInputs): string[] {
   const out: string[] = []
   const providers = inputs.cloudProviders
+  if (inputs.serviceModelMix.includes('container-as-a-service')) {
+    out.push(
+      'The container sample covers TLS listeners and key custody. For other container workloads, record who operates the actual service and verify that boundary with the provider.'
+    )
+  }
   const isMultiCloud =
     providers.includes('multi-cloud') ||
     providers.filter((p) => p !== 'on-prem' && p !== 'multi-cloud').length > 1
@@ -630,7 +665,7 @@ function computeRecommendations(inputs: CloudMatrixInputs): string[] {
   }
 
   out.push(
-    'PQC availability here is derived from the PQCToday product catalog (per-product, proof-backed status) — still verify current GA status with each provider before committing; this market moves quarterly. Cells with no catalog coverage show "unverified". FIPS 140-3 re-validation status also shifts the customer/provider boundary in practice.'
+    'Catalog leads identify related managed TLS and KMS products. Check the specific deployed service, region, key operation and validation evidence. An unverified cell still needs service-level evidence.'
   )
 
   return out
@@ -876,9 +911,9 @@ const OWNER_LABELS: Record<Owner, string> = {
 }
 
 const AVAILABILITY_LABELS: Record<PqcAvailability, string> = {
-  available: 'Available',
-  partial: 'Partial / preview',
-  roadmap: 'Roadmap',
+  available: 'Related product available',
+  partial: 'Related product partial / preview',
+  roadmap: 'Related product roadmap',
   'no-public-plan': 'No public plan',
   unverified: 'Unverified — confirm with vendor',
 }
@@ -920,7 +955,7 @@ function renderMatrixTable(cells: ResponsibilityCell[]): string {
     return '(No matrix cells - pick at least one asset class and one service model in Steps 1-2.)\n\n'
   }
   let out =
-    '| Asset class | Service model | Owner | Customer actions | Provider actions | PQC availability | Notes |\n'
+    '| Asset class | Service model | Owner | Customer actions | Provider actions | PQC catalog lead | Notes |\n'
   out += '|---|---|---|---|---|---|---|\n'
   for (const c of cells) {
     const cust = escapePipe(c.customerActions.join(' ; '))
@@ -997,7 +1032,7 @@ export function renderCloudMatrixMarkdown(
   }
 
   md += `---\n\n`
-  md += `> **Data vintage:** PQC availability per provider is derived from the PQCToday product catalog (per-product, proof-backed) — verify current GA status with each provider.\n\n`
+  md += `> **Data vintage:** PQC catalog leads reflect related products. Verify the selected service and operation with the provider.\n\n`
   md += `> Per CSWP 39 Section 6.4: "${CSWP39_64_QUOTE}"\n\n`
   md += `*Generated by PQC Today Hub. Standards citations: NIST CSWP 39 Section 6.4, Section 5.3. https://doi.org/10.6028/NIST.CSWP.39-upd1*\n`
 
@@ -1079,8 +1114,9 @@ export const CloudResponsibilityMatrix: React.FC = () => {
           <div>
             <p className="font-medium text-foreground">Shared responsibility is per cell</p>
             <p className="text-muted-foreground">
-              Each (asset class, service model) pair has its own owner. The PQC timeline is also
-              per-cell, not per-cloud.
+              The asset and service model determine which responsibilities to investigate. The
+              catalog provides leads for related services, with operation-level evidence still
+              needed.
             </p>
           </div>
         </div>
@@ -1103,8 +1139,8 @@ export const CloudResponsibilityMatrix: React.FC = () => {
           <div>
             <p className="font-medium text-foreground">Customer keys are the customer lever</p>
             <p className="text-muted-foreground">
-              CSWP-39 Section 6.4: even when the provider runs the hardware, customers retain
-              custody of their keys. That custody is the PQC opt-in.
+              Check who controls the key bytes and authorizes usage, import, rotation and deletion.
+              Those duties depend on the selected service and key custody mode.
             </p>
           </div>
         </div>

@@ -101,7 +101,9 @@ test('executive Cost of Inaction flow explains assumptions and never invents a p
   await expect(page.getByRole('region', { name: 'Scenario assumptions' })).toBeVisible()
   await expect(page.getByText('$0 by default', { exact: false })).toBeVisible()
   await expect(page.getByText('CRQC scenario range')).toBeVisible()
-  await expect(page.getByText('one edition behind', { exact: false }).first()).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'IBM 2026 global sector average (USD)' })
+  ).toBeVisible()
 
   const delayControl = page.getByLabel(/Migration delay:/)
   const initialDelay = Number(await delayControl.inputValue())
@@ -112,6 +114,7 @@ test('executive Cost of Inaction flow explains assumptions and never invents a p
   await page.getByText('Optional organization-verified consequence').click()
   await page.getByLabel('Verified annual consequence').fill('1000000')
   await page.getByLabel('Verified consequence source or owner').fill('Legal memo 2026-10-01')
+  await page.getByRole('button', { name: 'Include consequence in this scenario' }).click()
   await expect(page.getByText('Legal memo 2026-10-01', { exact: false })).toBeVisible()
 
   const overflow = await page.evaluate(

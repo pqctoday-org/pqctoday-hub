@@ -3,9 +3,10 @@
  * Structured content for the PQCGovernance module.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
-import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import {
-  CNSA_2022_PREFERRED_LABEL,
+  CNSA_ACQUISITION_LABEL,
+  CNSA_MANDATE_LABEL,
   CNSA_PHASE_OUT_LABEL,
 } from '@/components/PKILearning/modules/PQCRiskManagement/data/cnsaLabels'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -14,8 +15,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-governance',
   version: '1.0.1',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-14',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   standards: [
     // Governance documents first, algorithm specifications after. This module's
@@ -70,11 +71,27 @@ export const content: ModuleContent = {
 
   deadlines: [
     {
-      label: CNSA_2022_PREFERRED_LABEL,
-      year: CNSA_2_0.softwarePreferred,
+      label: CNSA_ACQUISITION_LABEL,
+      year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0',
     },
     { label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    {
+      label: CNSA_MANDATE_LABEL,
+      year: CNSA_2_0.networkingExclusive,
+      source: 'CNSA 2.0',
+    },
+    {
+      label: 'NIST: covered quantum-vulnerable public-key parameters deprecated after 2030',
+      year: NIST_DEPRECATION.deprecateClassical,
+      source: 'NIST IR 8547',
+    },
+    {
+      label:
+        'NIST: covered quantum-vulnerable public-key parameters disallowed after 2035 under NIST standards/guidelines',
+      year: NIST_DEPRECATION.disallowClassical,
+      source: 'NIST IR 8547',
+    },
   ],
 
   narratives: {
@@ -83,9 +100,9 @@ export const content: ModuleContent = {
     keyConcepts:
       'RACI Matrix — Responsible, Accountable, Consulted, Informed assignment matrix mapping 10 migration activities (crypto inventory, risk assessment, vendor assessment, algorithm selection, testing, deployment, monitoring, training & awareness, compliance auditing, stakeholder communications) across 6 organizational roles. Includes validation that warns when activities lack an Accountable assignment.',
     workshopSummary:
-      'The workshop has 3 interactive steps: RACI Matrix Builder — interactive 10×6 matrix with color-coded click-to-cycle cells (click cycles: empty → R → A → C → I → empty); includes validation warning for missing Accountable assignments, legend, export to Markdown, and save to learning portfolio as an executive document.',
+      'The workshop has 4 interactive steps: RACI Matrix — interactive 10×6 matrix with click-to-cycle cells (empty → R → A → C → I → empty) and single-Accountable validation. Policy Generator — draft four policy types (Cryptographic Algorithm, Key Management, Vendor Crypto Requirements, Migration Timeline) with scope-checked frameworks and FIPS 203/204/205 algorithms. KPI Dashboard — configure six weighted governance and migration KPIs for board reporting. Escalation Framework — review four escalation tiers and score policy exception requests with compensating controls.',
     relatedStandards:
-      'OMB M-23-02 (Migrating to Post-Quantum Cryptography). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-53 (Security and Privacy Controls). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development). ISO 27001 (Information Security Management Systems). COBIT (Control Objectives for Information and Related Technologies)',
+      'EO 14412 & OMB M-26-15 (June 2026, U.S. federal civilian agencies) and OMB M-23-02 (2022). NSA CNSA 2.0 (FAQ v2.2, National Security Systems only). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final October 2026). EU PQC Coordinated Implementation Roadmap v1.1 (advisory; DORA/NIS2 impose cyber risk-management duties rather than fixed PQC dates). NIST SP 800-53. FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and planned FIPS 206 (FN-DSA, in development with no public draft). ISO 27001. COBIT',
   },
 }
 

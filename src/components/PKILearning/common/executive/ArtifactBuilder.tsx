@@ -358,6 +358,58 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                   // critical axe violation, systemic across the Command Center
                   // because all 37 business tools render through this component.
                   const controlId = `${fieldNamespace}-${section.id}-${field.id}`
+                  if (field.type === 'checklist') {
+                    return (
+                      <fieldset
+                        key={field.id}
+                        className="min-w-0"
+                        aria-describedby={field.helperText ? `${controlId}-help` : undefined}
+                      >
+                        <legend className="block text-sm font-medium text-foreground mb-1.5">
+                          {field.label}
+                        </legend>
+                        <div className="space-y-2 mt-1">
+                          {field.options?.map((opt) => {
+                            const checked = (
+                              (formData[section.id]?.[field.id] as string[]) || []
+                            ).includes(opt.value)
+                            return (
+                              <label
+                                key={opt.value}
+                                className="flex items-center gap-2 cursor-pointer text-sm text-foreground"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() =>
+                                    toggleChecklistItem(section.id, field.id, opt.value)
+                                  }
+                                  className="rounded border-input"
+                                />
+                                {/* Checklist labels are where most of this
+                                    suite's standards citations live — folded
+                                    into an interpolated string, so there was
+                                    nowhere to hang a link. CitedText links the
+                                    ones that resolve and leaves the rest as
+                                    plain text. (Audit 2026-08-10, W3-3.) */}
+                                <span>
+                                  <CitedText>{opt.label}</CitedText>
+                                </span>
+                              </label>
+                            )
+                          })}
+                        </div>
+                        {field.helperText && (
+                          <p
+                            id={`${controlId}-help`}
+                            className="text-xs text-muted-foreground mt-1"
+                          >
+                            {field.helperText}
+                          </p>
+                        )}
+                      </fieldset>
+                    )
+                  }
                   return (
                     <div key={field.id}>
                       <label
@@ -407,39 +459,6 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                             label: opt.label,
                           }))}
                         />
-                      )}
-                      {field.type === 'checklist' && (
-                        <div className="space-y-2 mt-1">
-                          {field.options?.map((opt) => {
-                            const checked = (
-                              (formData[section.id]?.[field.id] as string[]) || []
-                            ).includes(opt.value)
-                            return (
-                              <label
-                                key={opt.value}
-                                className="flex items-center gap-2 cursor-pointer text-sm text-foreground"
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={checked}
-                                  onChange={() =>
-                                    toggleChecklistItem(section.id, field.id, opt.value)
-                                  }
-                                  className="rounded border-input"
-                                />
-                                {/* Checklist labels are where most of this
-                                    suite's standards citations live — folded
-                                    into an interpolated string, so there was
-                                    nowhere to hang a link. CitedText links the
-                                    ones that resolve and leaves the rest as
-                                    plain text. (Audit 2026-08-10, W3-3.) */}
-                                <span>
-                                  <CitedText>{opt.label}</CitedText>
-                                </span>
-                              </label>
-                            )
-                          })}
-                        </div>
                       )}
                       {field.helperText && (
                         <p className="text-xs text-muted-foreground mt-1">{field.helperText}</p>

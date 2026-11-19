@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Shield, AlertTriangle, CheckCircle, ChevronDown, ChevronRight, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { UEFI_KEY_TYPES, BOOT_CHAIN_STAGES } from '../data/secureBootConstants'
+import { DbxRevocationCheck } from './DbxRevocationCheck'
 
 type AnalysisState = 'idle' | 'analyzed'
 
@@ -46,9 +47,9 @@ const KEY_ANALYSIS_RESULTS: KeyAnalysisResult[] = [
     keyId: 'dbx',
     risk: 'low',
     finding:
-      "dbx stores SHA-256 hashes of revoked binaries, not signatures. SHA-256 at 256-bit output is quantum-safe (Grover's algorithm reduces to ~128-bit security — acceptable). No migration needed for revocation hashes.",
+      'The dbx can block a matching image digest or contain a certificate revocation record. UEFI 2.11 §32.4 defines EFI_CERT_X509_SHA256 as a digest of the certificate’s to-be-signed portion paired with a revocation time.',
     pqcAction:
-      'No action required for dbx hash entries. If dbx also contains revoked certificates (EFI_CERT_X509_SHA256), those may need re-evaluation if the cert used RSA-2048.',
+      'Keep applicable revocation entries and verify the firmware’s supported record and timestamp semantics. Reassess the trusted image-signing chain independently.',
     effort: 'Low — hash-only entries require no migration',
   },
   {
@@ -200,7 +201,7 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="bg-status-error/5 rounded-lg p-3 border border-status-error/20">
                           <div className="text-[10px] font-bold text-status-error mb-1">
-                            Current (Classical)
+                            {keyType.id === 'dbx' ? 'Record types' : 'Current (Classical)'}
                           </div>
                           <div className="text-xs text-muted-foreground">
                             {keyType.currentAlgorithm}
@@ -211,7 +212,7 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                         </div>
                         <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
                           <div className="text-[10px] font-bold text-primary mb-1">
-                            Target (PQC)
+                            {keyType.id === 'dbx' ? 'Review action' : 'Target (PQC)'}
                           </div>
                           <div className="text-xs text-muted-foreground">
                             {keyType.pqcAlgorithm}
@@ -224,6 +225,8 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                           </div>
                         </div>
                       </div>
+
+                      {isAnalyzed && keyType.id === 'dbx' && <DbxRevocationCheck />}
 
                       {isAnalyzed && analysis && (
                         <div className={`rounded-lg p-3 border ${PRIORITY_BG[analysis.risk]}`}>

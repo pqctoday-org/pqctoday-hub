@@ -76,9 +76,11 @@ export function assessFit(
   alg: ConstrainedAlgorithm,
   classIdx: number,
   role: DeviceRole,
-  build: Build
+  build: Build,
+  availableRamBytes?: number
 ): FitResult {
   const dc = DEVICE_CLASSES[classIdx] ?? DEVICE_CLASSES[1]
+  const ramBudget = availableRamBytes ?? dc.ramBytes
   const bench = (build === 'speed' ? alg.builds.speed : undefined) ?? alg.builds.stack
   const ops = opsForRole(alg, role)
   const benches = ops.map((o) => bench.ops[o]).filter((b) => b !== undefined)
@@ -91,7 +93,7 @@ export function assessFit(
     applicable && role !== 'verify' && bench.codeBytes !== undefined
       ? verdictFor(bench.codeBytes, dc.flashBytes)
       : undefined
-  const ramVerdict = verdictFor(peakBytes, dc.ramBytes)
+  const ramVerdict = verdictFor(peakBytes, ramBudget)
   const verdict: FitVerdict =
     flashVerdict === 'too-large' || ramVerdict === 'too-large'
       ? 'too-large'
@@ -103,7 +105,7 @@ export function assessFit(
     stackBytes,
     bufferBytes,
     peakBytes,
-    ramPct: dc.ramBytes > 0 ? (peakBytes / dc.ramBytes) * 100 : 0,
+    ramPct: peakBytes === 0 ? 0 : (peakBytes / ramBudget) * 100,
     verdict,
     cycles,
     ms: (cycles / MODEL_MCU_HZ) * 1000,
@@ -117,10 +119,15 @@ export function assessFit(
 }
 
 /** Algorithms grouped by verdict for a class/role/build — the step 1 summary is generated from this. */
-export function fitSummary(classIdx: number, role: DeviceRole, build: Build) {
+export function fitSummary(
+  classIdx: number,
+  role: DeviceRole,
+  build: Build,
+  availableRamBytes?: number
+) {
   const rows = CONSTRAINED_ALGORITHMS.map((alg) => ({
     alg,
-    fit: assessFit(alg, classIdx, role, build),
+    fit: assessFit(alg, classIdx, role, build, availableRamBytes),
   })).filter((r) => r.fit.applicable)
   return {
     fits: rows.filter((r) => r.fit.verdict === 'fits').map((r) => r.alg.name),

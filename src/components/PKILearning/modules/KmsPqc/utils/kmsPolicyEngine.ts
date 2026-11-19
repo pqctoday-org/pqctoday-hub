@@ -6,6 +6,16 @@ export const ML_DSA_KEY_SPECS = ['ML_DSA_44', 'ML_DSA_65', 'ML_DSA_87'] as const
 /** AWS KMS ML-KEM key specs (key usage ENCAPSULATE_DECAPSULATE), available since 26 October 2026. */
 export const ML_KEM_KEY_SPECS = ['ML_KEM_512', 'ML_KEM_768', 'ML_KEM_1024'] as const
 
+export interface SampleCreateKeyRequest {
+  spec: (typeof ML_DSA_KEY_SPECS)[number] | (typeof ML_KEM_KEY_SPECS)[number]
+  usage: 'SIGN_VERIFY' | 'ENCAPSULATE_DECAPSULATE'
+}
+
+type SampleCreateKeyResult =
+  | { outcome: 'invalid-combination' }
+  | { outcome: 'no-matching-allow' }
+  | { outcome: 'matching-allow'; statements: number[] }
+
 export interface PolicyValidationResult {
   isValidJson: boolean
   allowsCreateKey: boolean
@@ -24,6 +34,7 @@ export interface PolicyValidationResult {
   /** Every CreateKey Allow path in the supported fragment meets both constraints. */
   isComplete: boolean
   errorMessage?: string
+  request?: SampleCreateKeyResult
 }
 
 type JsonObject = Record<string, unknown>
@@ -87,7 +98,10 @@ function duplicateMember(raw: string): string | null {
 }
 
 /** No unknown feature is silently ignored and no value is coerced to a string. */
-export function validateKmsPqcPolicy(jsonString: string): PolicyValidationResult {
+export function validateKmsPqcPolicy(
+  jsonString: string,
+  request?: SampleCreateKeyRequest
+): PolicyValidationResult {
   const result: PolicyValidationResult = {
     isValidJson: false,
     allowsCreateKey: false,
@@ -199,6 +213,27 @@ export function validateKmsPqcPolicy(jsonString: string): PolicyValidationResult
   result.allowsCreateKey = creating.length > 0
   const matches = (value: string, expected: string, ignoreCase: boolean) =>
     ignoreCase ? value.toLowerCase() === expected.toLowerCase() : value === expected
+  if (request) {
+    const isSigningSpec = ML_DSA_KEY_SPECS.some((spec) => spec === request.spec)
+    const validUsage = isSigningSpec ? 'SIGN_VERIFY' : 'ENCAPSULATE_DECAPSULATE'
+    if (request.usage !== validUsage) {
+      result.request = { outcome: 'invalid-combination' }
+    } else {
+      const matching = creating.filter(({ condition }) => {
+        if (!condition) return true
+        const specMatches =
+          !condition.specs ||
+          condition.specs.some((value) => matches(value, request.spec, condition.ignoreCase))
+        const usageMatches =
+          !condition.usage ||
+          condition.usage.some((value) => matches(value, request.usage, condition.ignoreCase))
+        return specMatches && usageMatches
+      })
+      result.request = matching.length
+        ? { outcome: 'matching-allow', statements: matching.map(({ index }) => index) }
+        : { outcome: 'no-matching-allow' }
+    }
+  }
   const specIsRestricted = (s: CheckedStatement) =>
     !!s.condition?.specs?.length &&
     s.condition.specs.every((value) =>

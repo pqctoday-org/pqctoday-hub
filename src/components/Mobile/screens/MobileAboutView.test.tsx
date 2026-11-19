@@ -155,7 +155,7 @@ describe('MobileAboutView', () => {
   it('states what was cut rather than silently dropping it', () => {
     renderView()
     expect(
-      screen.getByText(/The full Content Audit Trail feed, per-package SBOM listing/i)
+      screen.getByText(/The full Content Audit Trail feed and complete platform-data grid/i)
     ).toBeInTheDocument()
   })
 })

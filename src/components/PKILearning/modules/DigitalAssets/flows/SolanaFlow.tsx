@@ -19,7 +19,6 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
 import { Skull } from 'lucide-react'
 
 interface SolanaFlowProps {
@@ -45,7 +44,9 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack, onComplete }) =>
     }[]
   } | null>(null)
   const [editableRecipientAddress, setEditableRecipientAddress] = useState<string>('')
-  const [simulateError, setSimulateError] = useState(false)
+  const [verificationCase, setVerificationCase] = useState<'original' | 'signature' | 'message'>(
+    'original'
+  )
 
   // SoftHSM State linked to interactive UI
   const hsm = useHSM()
@@ -516,31 +517,37 @@ const isValid = hsm_eddsaVerify(
     onBack,
   })
 
-  // Bind interactive controls to current attempt state, separate from lesson metadata.
   const displaySteps = steps.map((step) =>
     step.id === 'verify'
       ? {
           ...step,
           customControls: (
-            <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
-              <Switch
-                checked={simulateError}
-                onCheckedChange={(checked) => {
-                  setSimulateError(checked)
-                  wizard.setIsStepComplete(false)
-                  wizard.setOutput(null)
-                }}
-                aria-label="Simulate invalid signature"
-                className="mt-0.5 shrink-0"
-              />
-              <div>
-                <p className="text-sm font-medium text-foreground">Simulate Invalid Signature</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Flip a signature byte and check that the selected verifier rejects it. Unexpected
-                  acceptance fails the exercise; operation errors are incomplete checks.
-                </p>
-              </div>
-            </div>
+            <fieldset className="mb-4 space-y-2 rounded-lg border border-border p-3 text-sm">
+              <legend className="font-semibold">Verification sample</legend>
+              {(
+                [
+                  ['original', 'Original signed message and signature'],
+                  ['signature', 'Simulate invalid signature'],
+                  ['message', 'Verify a changed message with the original signature'],
+                ] as const
+              ).map(([id, label]) => (
+                <label key={id} className="flex min-h-11 items-center gap-3">
+                  <input
+                    type="radio"
+                    name="solana-verification-sample"
+                    checked={verificationCase === id}
+                    disabled={wizard.isExecuting}
+                    onChange={() => {
+                      setVerificationCase(id)
+                      wizard.setIsStepComplete(false)
+                      wizard.setOutput(null)
+                      wizard.setError(null)
+                    }}
+                  />
+                  {label}
+                </label>
+              ))}
+            </fieldset>
           ),
         }
       : step
@@ -812,11 +819,16 @@ Note: Address derived from the HSM Ed25519 public key.`
           'Missing artifacts — please run step 7 (Visualize Message) and step 8 (Sign Message) first.'
         )
 
-      const signatureToVerify = simulateError
-        ? new Uint8Array(sigBytes).map((b, i, arr) => (i === arr.length - 1 ? b ^ 0xff : b))
-        : sigBytes
-
-      const corruptMsg = simulateError ? '\n\n[TEST MODE] Simulating invalid signature...' : ''
+      const signatureToVerify =
+        verificationCase === 'signature'
+          ? sigBytes.map((byte, index) => (index === sigBytes.length - 1 ? byte ^ 1 : byte))
+          : sigBytes
+      const messageToVerify =
+        verificationCase === 'message'
+          ? transBytes.map((byte, index) => (index === 0 ? byte ^ 1 : byte))
+          : transBytes
+      const isAltered = verificationCase !== 'original'
+      const rejected = `Altered sample ${verificationCase} rejected as expected.`
 
       const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
       if (hsmActive) {
@@ -831,14 +843,16 @@ Note: Address derived from the HSM Ed25519 public key.`
             M,
             hSession,
             pubHandle,
-            transBytes,
+            messageToVerify,
             signatureToVerify,
             true
           )
-          if (simulateError) {
+          if (isAltered) {
             if (isValid)
-              throw new Error('Sample check failed: verifier accepted the altered signature.')
-            result.SoftHSMv3 = `Altered sample signature rejected as expected.\nC_Verify returned a signature-invalid outcome; this checks this sample only.\nTrace in PKCS#11 Log.`
+              throw new Error(
+                `Sample check failed: verifier accepted the altered ${verificationCase}.`
+              )
+            result.SoftHSMv3 = `${rejected}\nC_Verify returned a signature-invalid outcome; this checks this sample only.\nTrace in PKCS#11 Log.`
           } else if (isValid) {
             result.SoftHSMv3 = `Signature Evaluation: ✅ VALID\nVerified inside WebAssembly SoftHSM via C_Verify.\nTrace in PKCS#11 Log.`
           } else {
@@ -846,26 +860,25 @@ Note: Address derived from the HSM Ed25519 public key.`
             throw new Error('C_Verify: signature verification failed')
           }
         } catch (e) {
-          // Re-throw — an unexpected verification failure (not the
-          // intentional simulateError test-mode path above, which doesn't
-          // throw) must not be presented as if the step completed.
+          // Report operational errors as incomplete checks.
           throw e instanceof Error ? e : new Error(`SoftHSM Error: ${e}`)
         }
       } else {
         // JS fallback
         if (!keyGen.publicKey) throw new Error('Public key not found')
-        const isValid = ed25519.verify(signatureToVerify, transBytes, keyGen.publicKey)
+        const isValid = ed25519.verify(signatureToVerify, messageToVerify, keyGen.publicKey)
         let verifyResult: string
-        if (simulateError) {
+        if (isAltered) {
           if (isValid)
-            throw new Error('Sample check failed: verifier accepted the altered signature.')
-          verifyResult =
-            'Altered sample signature rejected as expected. This checks this sample only.'
+            throw new Error(
+              `Sample check failed: verifier accepted the altered ${verificationCase}.`
+            )
+          verifyResult = `${rejected} This checks this sample only.`
         } else {
           if (isValid) verifyResult = 'Signature Verified Successfully'
           else throw new Error('Verification Failed — signature does not match')
         }
-        result = `Ed25519 Signature Verification Complete!${corruptMsg}\n\nResult: ${verifyResult}`
+        result = `Ed25519 Signature Verification Complete!\n\nResult: ${verifyResult}`
       }
     }
 

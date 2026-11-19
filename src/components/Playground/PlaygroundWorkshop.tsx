@@ -15,7 +15,8 @@ import { PythonWorkbenchLink } from '@/components/ui/PythonWorkbenchLink'
 // reports the container reachable. Access is gated via useSandboxStore.
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import FocusLock from 'react-focus-lock'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { playgroundReturnState, usePlaygroundCatalogState } from '@/hooks/usePlaygroundCatalogState'
 import {
   Search,
   X,
@@ -300,6 +301,7 @@ interface ToolCardProps {
   recommended: boolean
   bookmarked: boolean
   showCategory?: boolean
+  catalogueParams: URLSearchParams
   onOpen: (_tool: WorkshopTool) => void
   onToggleBookmark: (_id: string) => void
 }
@@ -310,6 +312,7 @@ const ToolCardView: React.FC<ToolCardProps> = ({
   recommended,
   bookmarked,
   showCategory,
+  catalogueParams,
   onOpen,
   onToggleBookmark,
 }) => {
@@ -326,6 +329,7 @@ const ToolCardView: React.FC<ToolCardProps> = ({
       <div
         role="presentation"
         data-tool-card={tool.id}
+        data-playground-result={tool.id}
         onClick={() => onOpen(tool)}
         className={cn(
           'glass-panel p-3.5 rounded-xl cursor-pointer transition-colors hover:border-primary/50',
@@ -340,6 +344,8 @@ const ToolCardView: React.FC<ToolCardProps> = ({
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link
                 to={`/playground/${tool.id}`}
+                state={playgroundReturnState(catalogueParams, tool.id)}
+                data-playground-open
                 onClick={(e) => e.stopPropagation()}
                 className="font-semibold text-[13px] text-foreground underline-offset-2 hover:text-primary hover:underline"
               >
@@ -860,7 +866,11 @@ const SandboxRuntimeToggle: React.FC = () => {
 export const PlaygroundWorkshop = () => {
   const navigate = useNavigate()
   const isMobileShell = useIsMobileShell()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const {
+    params: searchParams,
+    setParams: setSearchParams,
+    setFilter,
+  } = usePlaygroundCatalogState()
 
   // Older links open a tool as /playground?tool=<id>. The catalog never read
   // that parameter, so those links landed on the overview with nothing
@@ -892,10 +902,14 @@ export const PlaygroundWorkshop = () => {
   const runtimeOn = isSandboxAvailable(sandboxStatus)
 
   // Local UI state.
-  const [searchText, setSearchText] = useState('')
+  const searchText = searchParams.get('q') ?? ''
+  const setSearchText = (value: string) => setFilter('q', value)
   // The tools tagged for the role beyond the few picks shown first (overview only).
   const [showAllForRole, setShowAllForRole] = useState(false)
-  const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
+  const difficulty =
+    DIFFICULTY_CHIPS.find(({ value }) => value === searchParams.get('difficulty'))?.value ?? 'All'
+  const setDifficulty = (value: DifficultyValue) =>
+    setFilter('difficulty', value === 'All' ? null : value)
   const caps = useDeviceCapabilities()
   const isBelowLg = useIsBelowLgViewport()
   // WS8c (2026-08-07): the device-fitness badge and modal explanation already
@@ -906,14 +920,19 @@ export const PlaygroundWorkshop = () => {
   // where a real capability mismatch — Safari/Firefox missing SAB, mainly —
   // is actually common). A one-time default, not a live viewport tracker: a
   // visitor's own toggle should not be overridden by a later resize.
-  const [runsHereOnly, setRunsHereOnly] = useState(() => isBelowLg)
+  const [defaultRunsHereOnly] = useState(isBelowLg)
+  const runsParam = searchParams.get('runs')
+  const runsHereOnly = runsParam === '1' || (runsParam !== '0' && defaultRunsHereOnly)
+  const setRunsHereOnly = (value: boolean) => setFilter('runs', value ? '1' : '0')
   // WS6a-bis (2026-08-02): default to the browser catalogue. `WORKSHOP_TOOLS`
   // includes 24 Docker sandbox scenarios (workshopRegistry.tsx pushes them in),
   // so an 'all' default meant ~41% of the cards a visitor scrolled could not be
   // executed in the browser at all — a discoverability tax on the 34 that can.
   // The Sandbox/All chips are one click away and `hiddenSandboxInCategory`
   // below keeps the hidden count visible, so breadth is never concealed.
-  const [runFilter, setRunFilter] = useState<RunValue>('browser')
+  const runFilter =
+    RUN_CHIPS.find(({ value }) => value === searchParams.get('runtime'))?.value ?? 'browser'
+  const setRunFilter = (value: RunValue) => setFilter('runtime', value === 'browser' ? null : value)
   const [selectedTool, setSelectedTool] = useState<WorkshopTool | null>(null)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -957,6 +976,7 @@ export const PlaygroundWorkshop = () => {
           else next.set('cat', target)
           next.delete('group') // sub-theme is per-category; reset on nav change
           next.delete('verb') // leaving the intent view
+          next.delete('q')
           return next
         },
         { replace: true }
@@ -1155,9 +1175,9 @@ export const PlaygroundWorkshop = () => {
     (tool: WorkshopTool) => {
       logEvent('Playground', 'Tool Open', personaLabel(tool.id))
       setSelectedTool(null)
-      navigate(`/playground/${tool.id}`)
+      navigate(`/playground/${tool.id}`, { state: playgroundReturnState(searchParams, tool.id) })
     },
-    [navigate]
+    [navigate, searchParams, setSelectedTool]
   )
 
   const startRuntime = useCallback(() => {
@@ -1214,6 +1234,7 @@ export const PlaygroundWorkshop = () => {
           recommended={isRecommended(tool)}
           bookmarked={myPlaygroundTools.includes(tool.id)}
           showCategory={showCategory}
+          catalogueParams={searchParams}
           onOpen={setSelectedTool}
           onToggleBookmark={toggleBookmark}
         />
@@ -1249,7 +1270,6 @@ export const PlaygroundWorkshop = () => {
           label={<span>◇ Overview</span>}
           active={activeNav === 'overview' && !searchActive}
           onClick={() => {
-            setSearchText('')
             setActiveNav('overview')
           }}
         />
@@ -1273,7 +1293,6 @@ export const PlaygroundWorkshop = () => {
               count={count}
               active={activeNav === cat && !searchActive}
               onClick={() => {
-                setSearchText('')
                 setActiveNav(cat)
                 setSidebarOpen(false)
               }}
@@ -1294,7 +1313,6 @@ export const PlaygroundWorkshop = () => {
           count={myPlaygroundTools.length}
           active={activeNav === 'mytools' && !searchActive}
           onClick={() => {
-            setSearchText('')
             setActiveNav('mytools')
             setSidebarOpen(false)
           }}
@@ -1749,6 +1767,7 @@ export const PlaygroundWorkshop = () => {
                 onChange={(e) => setSearchText(e.target.value)}
                 placeholder={`Search ${GRID_TOOL_COUNT} tools, algorithms or keywords…`}
                 aria-label="Search tools"
+                data-playground-search
                 className="h-[42px] rounded-lg pl-10 text-[13.5px]"
               />
               {searchActive ? (
@@ -1827,7 +1846,7 @@ export const PlaygroundWorkshop = () => {
             <div className="flex gap-1.5">
               <Button
                 variant="ghost"
-                onClick={() => setRunsHereOnly((v) => !v)}
+                onClick={() => setRunsHereOnly(!runsHereOnly)}
                 aria-pressed={runsHereOnly}
                 className={cn(
                   'rounded-lg px-3 py-1.5 text-[11.5px] h-auto font-medium',

@@ -52,8 +52,9 @@ function HexField({ label, value, mono = true }: { label: string; value: string;
         <Button
           variant="ghost"
           onClick={copy}
+          aria-label={`${copied ? 'Copied' : 'Copy'} ${label}`}
           className="text-xs text-muted-foreground hover:text-primary shrink-0 pt-1"
-          title="Copy"
+          title={`${copied ? 'Copied' : 'Copy'} ${label}`}
         >
           {copied ? '✓' : '⎘'}
         </Button>
@@ -202,6 +203,7 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
           <Button
             variant="ghost"
             onClick={onClose}
+            aria-label="Close reference vectors"
             className="text-muted-foreground hover:text-foreground p-1"
           >
             <X size={16} />
@@ -225,7 +227,14 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
 
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
             <ExternalLink size={11} />
-            <span>Source: 3GPP TS 33.501 Annex C.4 (V19.5.0), publicly available via ETSI</span>
+            <a
+              href="https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              Source: 3GPP TS 33.501 Annex C.4 (V19.7.0, Release 19)
+            </a>
           </div>
         </div>
 

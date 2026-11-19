@@ -148,7 +148,7 @@ const TPM_KEYS: TPMKey[] = [
     keySize: 'Up to 32 bytes',
     pqcStatus: 'quantum-safe',
     pqcNote:
-      "HMAC-SHA-256 auth values use symmetric operations. SHA-256 at 256-bit output is quantum-safe (Grover's algorithm yields ~128-bit security). No migration needed for Platform Hierarchy authorization.",
+      'This authorization path uses a symmetric key or authorization value. Evaluate its entropy, protection and authorization policy separately from the 256-bit hash output and from attestation signatures.',
     usedFor: ['TPM initialization', 'Hierarchy control', 'OEM platform management'],
     standardsRef: 'TCG TPM Library Part 1, Section 9 (Platform Authorization)',
   },

@@ -64,7 +64,7 @@ export const PQCRiskManagementModule: FC = () => {
       description="Identify, quantify, and prioritize quantum computing risks to your organization’s cryptographic infrastructure."
       learn={(api) => <Introduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
       exercises={(api) => (
-        <PQCRiskManagementExercises onNavigateToWorkshop={() => api.goToWorkshop()} />
+        <PQCRiskManagementExercises onNavigateToWorkshop={(step) => api.goToWorkshop(step)} />
       )}
       workshopParts={PARTS}
       onReset={() => {

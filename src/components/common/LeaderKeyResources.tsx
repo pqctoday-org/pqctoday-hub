@@ -44,7 +44,7 @@ export function LeaderKeyResources({
 }) {
   const refs = leader.keyResourceRefs ?? []
   const urls = leader.keyResourceUrl ?? []
-  if (refs.length === 0 && urls.length === 0) return null
+  if (refs.length === 0 && urls.length === 0 && !leader.roleSource) return null
 
   const linkClass = clsx(
     'font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1.5 min-w-0',
@@ -66,6 +66,20 @@ export function LeaderKeyResources({
       className="rounded-lg bg-muted/20 border border-border p-2.5 space-y-2.5"
       data-testid="leader-key-resources"
     >
+      {leader.roleSource && (
+        <div>
+          <p className={headingClass}>Role and affiliation source</p>
+          <a
+            href={leader.roleSource.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+          >
+            <ExternalLink size={iconSize} className="shrink-0" aria-hidden="true" />
+            <span>{leader.roleSource.label}</span>
+          </a>
+        </div>
+      )}
       {refs.length > 0 && (
         <div>
           <p className={headingClass}>

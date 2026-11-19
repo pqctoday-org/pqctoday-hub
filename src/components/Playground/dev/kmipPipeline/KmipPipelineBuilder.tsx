@@ -684,7 +684,9 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     <Tabs
       value={activeView}
       onValueChange={(v) => setActiveView(v as 'builder' | 'code')}
-      className="flex flex-col h-[70vh] border rounded-lg overflow-hidden bg-background text-sm"
+      className={`flex flex-col border rounded-lg overflow-hidden bg-background text-sm ${
+        activeView === 'code' && paletteSource === 'standard' ? 'min-h-[70vh]' : 'h-[70vh]'
+      }`}
     >
       <div className="p-4 border-b flex justify-between items-center gap-4 flex-wrap">
         <div className="min-w-0 flex-1">
@@ -1265,6 +1267,28 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           </div>
         ) : (
           <>
+            {templateName === 'Governed lifecycle' && (
+              <details className="border-b px-4 py-2 text-sm">
+                <summary className="cursor-pointer font-medium">
+                  Practice activating a signing key
+                </summary>
+                <ol className="mt-2 list-decimal space-y-1 pl-5 text-xs text-muted-foreground">
+                  <li>
+                    Run the generated Python and open the recorded attempt. Early signing is
+                    refused. The private key can sign after Activate.
+                  </li>
+                  <li>
+                    Select Edit as custom script. In the <code>c.submit('Activate', …)</code> line,
+                    change <code>priv_create</code> to <code>pub_create</code>. Run again. Compare
+                    the identifier returned by Activate with the one in the Sign error.
+                  </li>
+                  <li>
+                    Select Discard edits, resync and rerun. Activating the private key lets signing
+                    complete again.
+                  </li>
+                </ol>
+              </details>
+            )}
             {/* Change 2: explicit "edit as custom script" gate — shown only while the
                 editor is read-only-and-synced. */}
             {readOnly && (
@@ -1303,8 +1327,8 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               </div>
             )}
 
-            <div className="flex-1 min-h-0 p-4">
-              <div className="h-full border rounded overflow-hidden">
+            <div className="flex-1 p-4">
+              <div className="h-[min(55vh,32rem)] border rounded overflow-hidden">
                 {monacoReady ? (
                   <Editor
                     height="100%"

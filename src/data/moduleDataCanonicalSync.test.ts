@@ -153,12 +153,11 @@ describe('independently sourced classical & stateful specification tables (@nobl
     expect(HYBRID_KEM_OBJECT_SIZES.X25519MLKEM768.serverCiphertextShareBytes).toBe(1088 + 32)
     expect(HYBRID_KEM_OBJECT_SIZES.SecP256r1MLKEM768.clientPublicKeyShareBytes).toBe(1184 + 65)
     expect(HYBRID_KEM_OBJECT_SIZES.SecP384r1MLKEM1024.clientPublicKeyShareBytes).toBe(1568 + 97)
-    expect(
-      COMPOSITE_SIGNATURE_OBJECT_SIZES['ECDSA-P256+ML-DSA-44'].rawConcatenatedPublicKeyBytes
-    ).toBe(64 + 1312)
-    expect(
-      COMPOSITE_SIGNATURE_OBJECT_SIZES['ECDSA-P256+ML-DSA-44'].rawConcatenatedSignatureBytes
-    ).toBe(64 + 2420)
+    expect(HYBRID_KEM_OBJECT_SIZES.SecP384r1MLKEM1024.sharedSecretBytes).toBe(48 + 32)
+    const composite = COMPOSITE_SIGNATURE_OBJECT_SIZES['ECDSA-P256+ML-DSA-44']
+    // RFC 10073 Table 6 includes the SEC 1 prefix and a variable DER signature.
+    expect(composite.uncompressedConcatenatedPublicKeyBytes).toBe(1377)
+    expect(composite.derSignatureMaxConcatenatedBytes).toBe(2492)
   })
 })
 
@@ -183,6 +182,8 @@ describe('Module size inventory and encoding verification', () => {
       { file: 'secureBootConstants.ts', line: 419, alternate: 64 },
       { file: 'secureBootConstants.ts', line: 409, alternate: 2348 },
       { file: 'gatewayData.ts', line: 390, alternate: 33 },
+      { file: 'gatewayData.ts', line: 418, alternate: 1376 },
+      { file: 'gatewayData.ts', line: 419, alternate: 2484 },
     ]
     for (const probe of alternateEncodingProbes) {
       const claim = inventory.claims.find(

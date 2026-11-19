@@ -2266,8 +2266,8 @@ const kat = (
 const k = (c: RegisteredCase, katKind: KatKindRef): RegisteredCase => ({ ...c, katKind })
 
 const TS33501_C441 = {
-  citation: 'ETSI TS 133 501 V19.5.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI',
-  url: 'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+  citation: 'ETSI TS 133 501 V19.7.0 (3GPP TS 33.501 Rel-19) Annex C.4.4.1 — ECIES Profile B, IMSI',
+  url: 'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf',
 }
 const suciNote =
   'Expected values printed in Annex C.4.4.1 (src/data/kat/gsma_suci_ts33501_annex_c.json, profile-b-imsi); the file is outside the src/data/acvp vector manifest.'

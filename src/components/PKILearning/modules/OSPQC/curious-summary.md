@@ -2,7 +2,7 @@
 
 ## What This Is About
 
-Modern operating systems have a deep cryptographic stack. When you upgrade the system's foundational TLS configurations (like OpenSSL), those quantum protections automatically cascade to every tool and application running on the OS.
+Modern operating systems have a deep cryptographic stack. A TLS configuration change can reach the applications that use a shared backend and its defaults. A bundled TLS library or an application override can leave some connections on the old group.
 
 ## Why It Matters
 
@@ -10,7 +10,7 @@ System TLS traffic and SSH sessions can be recorded today and decrypted later ("
 
 ## The Key Takeaway
 
-While upgrading a system's TLS is as simple as a configuration change (like enabling `X25519MLKEM768`), moving OS package signing (like RPM or DEB files) to post-quantum signatures is harder, because the signing server, repository metadata, and every end-user client must support the new signature. Red Hat has started signing RHEL 10.1 packages with a hybrid ML-DSA-87 + Ed448 key next to its RSA key, so clients that cannot check the new signature still check the old one; this lesson cites no equivalent for DEB.
+A TLS setting such as `X25519MLKEM768` only protects connections that negotiate it. A package-signing migration also needs support across the signing server, repository metadata, and the clients that verify the new signature. Red Hat has started signing RHEL 10.1 packages with a hybrid ML-DSA-87 + Ed448 key next to its RSA key, so clients that cannot check the new signature still check the old one; this lesson cites no equivalent for DEB.
 
 ## What's Happening
 

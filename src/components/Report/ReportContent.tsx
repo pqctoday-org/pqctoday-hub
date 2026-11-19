@@ -693,6 +693,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Algorithm Migration Matrix */}
                     {phaseVisible('algorithmMigration') &&
+                      !result.recommendedActions.some((action) =>
+                        action.drivers?.includes('currentCrypto:unknown')
+                      ) &&
                       result.algorithmMigrations.length > 0 &&
                       cfg('algorithmMigration').state !== 'hidden' && (
                         <AlgorithmMigrationSection

@@ -135,8 +135,8 @@ export function leaderForwardedMessage(forwardedFrom: string, leader: Leader): s
 }
 
 /** Lexical half of the page's search filter (the semantic supplement is async). */
-function matchesSearch(leader: Leader, query: string): boolean {
-  const q = query.toLowerCase()
+export function matchesLeaderSearch(leader: Leader, query: string): boolean {
+  const q = query.trim().toLowerCase()
   return (
     leader.name.toLowerCase().includes(q) ||
     leader.title.toLowerCase().includes(q) ||
@@ -212,7 +212,7 @@ export function planLeaderDeepLink(
     widened.push(`sector "${sector}"`)
   }
   const q = params.get('q')
-  if (q && q.trim() && !matchesSearch(leader, q)) {
+  if (q && q.trim() && !matchesLeaderSearch(leader, q)) {
     next.delete('q')
     widened.push(`search "${q}"`)
   }
@@ -255,7 +255,7 @@ export function filterLeadersByParams(
       (!cat || leaderMatchesCategory(l, cat)) &&
       (country ? l.country === country : !region || regionIncludes(region, l.country)) &&
       (!sector || l.type === sector) &&
-      (!q || matchesSearch(l, q))
+      (!q || matchesLeaderSearch(l, q))
   )
 }
 

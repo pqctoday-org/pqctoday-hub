@@ -12,4 +12,4 @@ Most large organizations adopt a Hybrid governance model—centralizing algorith
 
 ### What's Happening
 
-Leading enterprises are establishing dedicated PQC governance boards with formal RACI matrices and KPI dashboards, recognizing that without centralized policy coordination, migration efforts fragment across business units and miss critical deadlines.
+Leading enterprises are establishing dedicated PQC governance boards with formal RACI matrices, KPI dashboards, and escalation frameworks — aligning internal policies to the mandates that actually apply to their scope (such as CNSA 2.0 FAQ v2.2 for National Security Systems, EO 14412 / OMB M-26-15 for U.S. federal civilian agencies, NIST IR 8547 standards timelines, and DORA/NIS2 cyber risk-management duties).

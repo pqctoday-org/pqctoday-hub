@@ -73,17 +73,17 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div className="text-xs text-muted-foreground">
               ML-DSA-44 keys + signatures per handshake
               <span className="block text-[10px] mt-0.5">
-                (7,260 B of authentication overhead from two SCTs and a leaf certificate signature
-                with a directly-trusted intermediate; 9,927 B with ML-DSA-65)
+                (7,260 B across the three ML-DSA-44 signatures alone; 9,927 B across three ML-DSA-65
+                signatures alone, before keys, SCTs and metadata)
               </span>
             </div>
           </div>
         </div>
         <p className="text-foreground/80 leading-relaxed">
-          This &ldquo;certificate bloat&rdquo; breaks constrained clients that reject chains larger
-          than 10 KB (not sourced in the Library), degrades connection setup times (especially on
-          mobile networks), and increases bandwidth costs for high-traffic servers handling millions
-          of TLS handshakes per second.
+          These larger authentication messages can challenge clients or networks with strict size,
+          memory, or latency constraints. The effect depends on the client, chain, transport, and
+          connection; the figures above are a component model, not measured connection times or a
+          universal client-size limit.
         </p>
       </section>
 
@@ -124,8 +124,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                 One CA signing operation covers the entire batch &mdash; potentially millions of
                 certificates. Depending on the relying party&apos;s cosigner policy, additional
                 external witnesses may also co-sign the subtree to guarantee public transparency.
-                For <strong>signatureless certificates</strong>, no embedded signatures are needed
-                at all (relying parties use predistributed trusted subtrees instead).
+                For <strong>landmark-relative certificates</strong>, certificate cosignatures can be
+                omitted when the relying party has already synchronized and trusts the relevant
+                subtree; the TLS CertificateVerify signature is still sent.
               </p>
             </div>
           </div>
@@ -463,10 +464,19 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           <Globe size={20} /> IETF Standardization Status
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          Merkle Tree Certificates originated as <em>draft-davidben-tls-merkle-tree-certs</em>{' '}
-          (reaching draft-10 in 2026) and have since been adopted by the IETF PLANTS working group
-          as <em>draft-ietf-plants-merkle-tree-certs</em>. The draft has five co-equal authors
-          across Google, Cloudflare, and Geomys.{' '}
+          Merkle Tree Certificates originated as <em>draft-davidben-tls-merkle-tree-certs</em> and
+          have since been adopted by the IETF PLANTS working group as{' '}
+          <a
+            className="text-primary underline"
+            href="https://datatracker.ietf.org/doc/html/draft-ietf-plants-merkle-tree-certs-08"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <em>draft-ietf-plants-merkle-tree-certs-08</em>
+          </a>
+          . This active working-group Internet-Draft is intended for the Standards Track, but it is
+          not a published RFC. Version 08 says its wire format remains compatible with version 07.
+          The draft has five authors across Google, Apple, Cloudflare, and Geomys.{' '}
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-warning/20 text-warning border border-warning/40">
             Draft — not yet an RFC
           </span>
@@ -475,31 +485,29 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-primary mb-1">Timeline</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; October 2025: Cloudflare + Chrome experiment announced</li>
+              <li>&bull; February 2026: Chrome announces its Cloudflare MTC feasibility study</li>
               <li>
                 &bull; 2026: <code>draft-davidben-tls-merkle-tree-certs-10</code> submitted; adopted
                 by IETF PLANTS WG as <code>draft-ietf-plants-merkle-tree-certs-00</code>
               </li>
               <li>
-                &bull; February 2026: <code>draft-ietf-plants-merkle-tree-certs-01</code> published
+                &bull; 28 October 2026: Chrome publishes test instructions for MTC trust testing
               </li>
               <li>
-                &bull; 2026: <code>draft-ietf-plants-merkle-tree-certs-02</code> published
-              </li>
-              <li>
-                &bull; 7 October 2026: <code>draft-ietf-plants-merkle-tree-certs-07</code>, the
-                latest version; not yet proposed for publication
+                &bull; 2 November 2026: <code>draft-ietf-plants-merkle-tree-certs-08</code>, the
+                latest version checked; compatible on the wire with version 07
               </li>
               <li className="text-warning font-medium pt-1">
-                &bull; Status: Active IETF draft — not yet standardized as an RFC. This module's
-                advice: Not recommended for production deployment without vendor support.
+                &bull; Status: Active IETF PLANTS working-group draft, intended Standards Track; not
+                yet a published RFC. Follow implementation and deployment guidance from the relevant
+                vendors and root programs.
               </li>
             </ul>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-primary mb-1">Authors &amp; Analysis</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; David Benjamin + Devon O&apos;Brien (Google)</li>
+              <li>&bull; David Benjamin (Google) + Devon O&apos;Brien (Apple)</li>
               <li>&bull; Bas Westerbaan + Luke Valenta (Cloudflare)</li>
               <li>&bull; Filippo Valsorda (Geomys)</li>
               <li>&bull; Radboud University (independent implementation analysis, 2025)</li>

@@ -32,7 +32,6 @@ export const ChatPanelContent: React.FC = () => {
     messages,
     isLoading,
     isStreaming,
-    streamingContent,
     error,
     setError,
     clearMessages,
@@ -109,7 +108,7 @@ export const ChatPanelContent: React.FC = () => {
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, streamingContent])
+  }, [messages, isStreaming])
 
   // Focus input on open
   useEffect(() => {
@@ -472,9 +471,7 @@ export const ChatPanelContent: React.FC = () => {
                 )
               })}
 
-              {isStreaming && (
-                <ChatMessage sender="assistant" content={streamingContent} isStreaming />
-              )}
+              {isStreaming && <ChatMessage sender="assistant" content="" isStreaming />}
 
               {isLoading && !isStreaming && (
                 <div className="flex gap-2" role="status" aria-label="Searching for answer">
@@ -539,7 +536,7 @@ export const ChatPanelContent: React.FC = () => {
                 <Send size={18} />
               </Button>
             </div>
-            <p className="text-[11px] text-muted-foreground text-center mt-1.5 opacity-70">
+            <p className="text-[11px] text-muted-foreground text-center mt-1.5">
               {assistantTitle} can be inaccurate. Please double-check its responses.
             </p>
           </div>

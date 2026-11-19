@@ -425,7 +425,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   }, [markdown, mermaidSource])
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 w-full max-w-full space-y-6">
       <ScenarioComparison reportId="architecture" report={markdown} />
       <div className="flex items-start gap-3">
         <Network size={24} className="text-primary mt-1 shrink-0" />
@@ -495,8 +495,14 @@ export const CryptoArchitectureDiagram: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-md border border-border">
-          <table className="w-full text-sm">
+        <div
+          className="min-w-0 max-w-full overflow-x-auto rounded-md border border-border"
+          role="region"
+          aria-label="Crypto architecture components; scroll horizontally to view all columns"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- WCAG scrollable-region-focusable: keyboard users need to focus and horizontally scroll this wide table region
+          tabIndex={0}
+        >
+          <table className="w-full table-fixed text-sm">
             <thead className="bg-muted">
               <tr>
                 <th className="px-3 py-2 text-left font-semibold text-foreground">Kind</th>
@@ -535,7 +541,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
                       onChange={(e) => updateRow(c.id, { name: e.target.value })}
                       placeholder="Component name"
                       aria-label={`Name of ${c.id}`}
-                      className="h-8 min-w-[12rem] text-xs"
+                      className="h-8 w-full min-w-0 text-xs"
                     />
                   </td>
                   <td className="px-3 py-2 align-top">
@@ -544,7 +550,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
                       onChange={(e) => updateRow(c.id, { detail: e.target.value })}
                       placeholder={KIND_PLACEHOLDERS[c.kind]}
                       aria-label={`Detail of ${c.id}`}
-                      className="h-8 min-w-[18rem] text-xs"
+                      className="h-8 w-full min-w-0 text-xs"
                     />
                   </td>
                   <td className="px-3 py-2 align-top">
@@ -557,7 +563,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
                       placeholder="lib-1, hsm-1"
                       aria-label={`Ids ${c.id} depends on, comma-separated`}
                       list={`arch-ids-${c.id}`}
-                      className="h-8 min-w-[10rem] text-xs font-mono"
+                      className="h-8 w-full min-w-0 text-xs font-mono"
                     />
                     <datalist id={`arch-ids-${c.id}`}>
                       {components

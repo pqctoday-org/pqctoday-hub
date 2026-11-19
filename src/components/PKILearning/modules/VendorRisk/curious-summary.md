@@ -12,4 +12,4 @@ Organizations can choose to require a Crypto Bill of Materials (CBOM), such as C
 
 ### What's Happening
 
-Some procurement and compliance teams are choosing to ask for Cryptographic Bills of Materials (CBOMs) in vendor contracts, using frameworks like CycloneDX 1.6+ to systematically score third-party PQC readiness before renewal deadlines.
+Procurement and GRC teams are tracking overlapping 2026 milestones: NIST IR 8547 (final, October 2026) deprecates classical public-key algorithms after 2030 and disallows them after 2035; US federal civilian agencies follow EO 14412 and OMB M-26-15 (plus a directed FAR contractor rule targeting 31 December 2030 NIST FIPS compliance); NSS follows CNSA 2.0 FAQ v2.2; and EU entities address third-party ICT cryptographic risk under DORA/NIS2 and the EU PQC Roadmap v1.1. Teams are asking for Cryptographic Bills of Materials (CBOMs, e.g., CycloneDX 1.6+) in vendor contracts and verifying active CMVP FIPS 140-3 module certificates rather than accepting ACVP-only listings or marketing claims.

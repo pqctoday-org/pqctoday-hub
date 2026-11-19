@@ -2,12 +2,12 @@
 
 ## What This Is About
 
-Imagine buying a pre-built car and having no idea which factory made the brakes, the airbags, or the engine control unit — you'd have no way to know if any of them were just recalled. An SBOM is that missing parts list for software: every component a product is built from, where it came from, and what version it is.
+Imagine buying a pre-built car with a parts list that says which parts the maker recorded and where they came from. An SBOM is a machine-readable version for software: components within the inventory's stated scope, their versions, and how they relate. The list can miss dependencies if its generation or maintenance is incomplete.
 
 ## Why It Matters
 
-Almost no software is written entirely from scratch anymore — it's assembled from hundreds of open-source and third-party packages. When one of those packages turns out to have a security flaw, an SBOM is what lets an organization answer "are we affected?" in minutes instead of weeks of manual auditing. It's also the reason regulators (the US government via Executive Order 14028, the EU via the Cyber Resilience Act) now require one for many products.
+When a package has a reported security flaw, a current SBOM can help teams search where it may be present. It does not prove that vulnerable code is reachable or that the inventory is complete. Requirements depend on the applicable contract or law: US agencies may require SBOMs in solicitations, and the EU Cyber Resilience Act sets SBOM duties for manufacturers of in-scope products.
 
 ## The Key Takeaway
 
-An SBOM tells you what's inside the box; a companion document called VEX tells you whether what's inside is actually dangerous in this particular product, since not every known flaw in a library is reachable in every product that uses it. And an SBOM is only the first layer — a separate, cryptography-specific inventory (a CBOM) has to be built on top of it before an organization can find and replace vulnerable encryption ahead of quantum computers.
+An SBOM lists software components. A VEX statement records a product's status for a vulnerability and supporting rationale; neither one alone proves exploitability. A Cryptography Bill of Materials (CBOM) is another useful input for finding cryptographic assets, alongside scanners, certificate and key inventories, runtime observation, and manual investigation. It is not a complete inventory by itself or a mandatory output built only from an SBOM.

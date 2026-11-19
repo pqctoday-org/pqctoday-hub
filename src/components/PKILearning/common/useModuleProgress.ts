@@ -89,6 +89,7 @@ export function useModuleProgress(moduleId: string, opts: UseModuleProgressOptio
           completedSteps: [],
           timeSpent: 0,
           roleActionPlan: undefined,
+          workshopPractice: undefined,
         })
         // runs ONLY on a confirmed reset — lets the shell clear its pre-fill
         // config and a module clear FC-held cross-tab state (its onReset slot).

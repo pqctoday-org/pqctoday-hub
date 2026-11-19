@@ -121,6 +121,10 @@ export interface CreditOptions {
   adversaryControl?: AdversaryControl
   /** How the sources' samples are assembled into one bitstring (default: concatenation). */
   assembly?: CombinationMode
+  /** Independence of the supplied sources. */
+  independence?: Independence
+  /** Whether this request can claim any fresh samples. */
+  inputFreshness?: InputFreshness
 }
 
 /**
@@ -147,22 +151,31 @@ export function isAdversaryControlled(a: AdversaryControl): boolean {
 }
 
 /**
- * Entropy credited to the assembled bitstring for one request, SP 800-90C §2.3
- * Method 1 style. Per-source credit comes from sourceCreditBits(). SP 800-90C
- * §2.6 item 8 sums entropy only for CONCATENATED output of independent
- * sources; for any other assembly (XOR, hash, HMAC) the sum is not justified,
- * so only the largest single source is credited. Independence itself is the
- * learner's to state in assessConstruction().
+ * Sample accounting for one request. SP 800-90C §2.6 item 8 sums only
+ * concatenated independent sources. A correlated or unverified concatenation
+ * retains at most the modeled credit for one source. For other assemblies the
+ * sample needs independent inputs before making even that single-source claim.
  */
 export function creditedEntropyBits(
   contributions: SourceContribution[],
   H = DECLARED_MIN_ENTROPY_PER_SAMPLE,
   opts: CreditOptions = {}
 ): number {
+  if (opts.inputFreshness && opts.inputFreshness !== 'fresh') return 0
   const credits = contributions.map((c) => sourceCreditBits(c, H, opts.adversaryControl))
   const assembly = opts.assembly ?? 'concat'
-  if (assembly === 'concat') return credits.reduce((sum, b) => sum + b, 0)
-  return credits.reduce((max, b) => Math.max(max, b), 0)
+  const independence = opts.independence ?? 'independent'
+  if (assembly === 'concat' && independence === 'independent') {
+    return credits.reduce((sum, bits) => sum + bits, 0)
+  }
+  if (
+    assembly !== 'concat' &&
+    independence !== 'independent' &&
+    contributions.filter((source) => !source.failed).length > 1
+  ) {
+    return 0
+  }
+  return credits.reduce((max, bits) => Math.max(max, bits), 0)
 }
 
 // ── Conditioner bounds (plan P0.5 "the conditioner's input and output bounds") ──
@@ -350,6 +363,8 @@ export function assessConstruction(
   const { inputEntropyBits, seedEntropyBits } = accountEntropy(a.sources, a.seed, {
     adversaryControl: a.adversaryControl,
     assembly: a.assembly,
+    independence: a.independence,
+    inputFreshness: a.inputFreshness,
   })
   const controlled = a.sources.filter(
     (c) => c.mayBeAdversaryControlled && !c.failed && isAdversaryControlled(a.adversaryControl)
@@ -364,7 +379,9 @@ export function assessConstruction(
   }
   if (a.assembly !== 'concat' && a.sources.filter((c) => !c.failed).length > 1) {
     notes.push(
-      'The sources are not concatenated, so their entropy is not summed: SP 800-90C §2.6 item 8 sums entropy only for the concatenated output of independent sources. Only the largest single source is credited.'
+      a.independence === 'independent'
+        ? 'SP 800-90C §2.6 item 8 permits summing independent sources when concatenated. This assembly uses a single-source bound for the illustration.'
+        : 'A non-concatenating assembly with dependent or unverified inputs earns no credit in this sample.'
     )
   }
   if (a.seed.kind === 'conditioned-block') {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import {
   Bot,
@@ -59,6 +59,7 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const location = useLocation()
   const navigate = useNavigate()
   const openRightPanel = useRightPanelStore((s) => s.open)
+  const nextPanel = useRef<'chat' | 'history' | null>(null)
   const [sourcesOpen, setSourcesOpen] = useState(false)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
   const { hasUnread, count } = useMobileWhatsNewStatus()
@@ -71,15 +72,21 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
       : action
   )
 
+  useEffect(() => {
+    if (open || !nextPanel.current) return
+    // The sheet restores focus to More during cleanup. Open the drawer after
+    // that restoration so its focus lock captures the persistent trigger.
+    const tab = nextPanel.current
+    nextPanel.current = null
+    openRightPanel(tab)
+  }, [open, openRightPanel])
+
   const handleSelect = (id: MobilePageActionId) => {
     switch (id) {
       case 'assistant':
-        onClose()
-        openRightPanel('chat')
-        return
       case 'journey':
+        nextPanel.current = id === 'assistant' ? 'chat' : 'history'
         onClose()
-        openRightPanel('history')
         return
       case 'faq':
         onClose()

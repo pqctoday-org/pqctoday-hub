@@ -53,7 +53,7 @@ const ATTACK_SCENARIOS: Record<
     {
       title: 'NTLM Credential Exposure',
       description:
-        'NTLM challenge-response uses MD4 hashing with no forward secrecy. Captured NTLM exchanges and rainbow table attacks combined with quantum computation expose domain credentials.',
+        'NTLM challenge-response uses password-derived hashes and does not provide forward secrecy. Captured challenge-response material can support offline password guessing; that is a classical credential risk, not an RSA/ECC quantum break. A quantum computer does not directly reveal a password or domain credentials from an NTLM exchange.',
       mitigation:
         'Disable NTLM via Group Policy (Network Security: Restrict NTLM). Enforce Kerberos authentication exclusively. Use Protected Users security group for privileged accounts.',
     },
@@ -69,9 +69,9 @@ const ATTACK_SCENARIOS: Record<
     {
       title: 'LDAPS TLS Channel Decryption',
       description:
-        'All LDAP directory queries, including user enumeration and attribute reads, travel over TLS. A CRQC decrypting captured LDAPS sessions exposes all directory data including group memberships, email addresses, and organizational structure.',
+        'When LDAP traffic uses LDAPS or StartTLS, the TLS key exchange and server authentication protect that session. If a recorded session used only quantum-vulnerable key establishment and is later decrypted, its directory data could be exposed. LDAP deployments that do not use TLS do not have this recorded-session HNDL scenario; their traffic is already exposed to network observers.',
       mitigation:
-        'Upgrade OpenSSL to 3.x and enable hybrid ML-KEM-768+X25519 cipher suites in slapd.conf. Verify TLS configuration with: openssl s_client -connect ldap.corp.example:636',
+        'Configure and verify TLS according to the OpenLDAP build and TLS library actually deployed. Do not assume that upgrading to OpenSSL 3.x alone enables hybrid ML-KEM: hybrid key establishment depends on the TLS library, version, provider/build configuration, and peer support. Check the negotiated group with the library’s supported diagnostics and test both client and server paths.',
     },
     {
       title: 'Simple Bind Credential Exposure',
@@ -92,7 +92,7 @@ const ATTACK_SCENARIOS: Record<
     {
       title: 'Refresh Token Interception',
       description:
-        'Refresh tokens (90-day lifetime) stored in browser storage or mobile keychain are long-lived HNDL targets. A CRQC decrypting captured OAuth2 refresh token exchanges could grant persistent access.',
+        'Refresh tokens are bearer credentials whose lifetime and storage depend on the identity provider and client. For Microsoft Entra, defaults vary by client type; for example, refresh tokens last 24 hours for single-page applications and 90 days for other scenarios, and replacement tokens inherit the original expiration. Token theft or replay is an access-token security risk, not a consequence of decrypting a recorded TLS session; TLS key establishment is the HNDL exposure for the channel carrying tokens.',
       mitigation:
         'Enable refresh token rotation and revocation. Use device-bound tokens with TPM attestation (Windows Hello for Business). Monitor for anomalous refresh token usage via Entra ID Sign-in logs.',
     },
@@ -101,7 +101,7 @@ const ATTACK_SCENARIOS: Record<
       description:
         'SAML 2.0 assertions signed with RSA-SHA256 can be replayed if the signature is quantum-forged. This would allow an attacker to authenticate as any user to all SAML federated relying parties.',
       mitigation:
-        'Reduce SAML assertion lifetime to 5 minutes. Enable assertion replay prevention (NotBefore/NotOnOrAfter strict enforcement). Migrate to OIDC where possible — easier PQC migration path.',
+        'Set assertion validity windows to the shortest duration compatible with clock skew and application behavior; there is no universal five-minute requirement. Enforce audience, recipient, NotBefore/NotOnOrAfter, and request correlation/replay checks as applicable. Changing from SAML to OIDC does not by itself provide a PQC migration path; both depend on the signing algorithms and TLS used by the deployment.',
     },
   ],
 }

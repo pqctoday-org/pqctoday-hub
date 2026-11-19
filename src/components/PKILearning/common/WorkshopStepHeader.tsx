@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
+import React, { useContext } from 'react'
+import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MODULE_CATALOG } from '../moduleData'
 import { WorkshopStepper, type WorkshopStep } from './WorkshopStepper'
+import { WorkshopEvidenceNavigation } from './workshopEvidenceNavigation'
 
 interface WorkshopStepHeaderProps {
   moduleId: string
@@ -43,6 +45,7 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
   completedSteps,
   onStepClick,
 }) => {
+  const openWorksheet = useContext(WorkshopEvidenceNavigation)
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
   const moduleTitle = moduleMeta?.title ?? moduleId
 
@@ -123,6 +126,18 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
           onStepClick={onStepClick}
           className="mt-3"
         />
+      )}
+      {openWorksheet && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-3 min-h-11 scroll-mt-24"
+          aria-controls="production-evidence-worksheet"
+          onClick={(event) => openWorksheet(event.currentTarget)}
+        >
+          Record production evidence
+        </Button>
       )}
     </div>
   )

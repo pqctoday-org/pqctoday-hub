@@ -14,4 +14,4 @@ This module covers the end of a post-quantum migration — two jobs that are rou
 
 ## Standards & Sources
 
-NIST IR 8547, NIST SP 800-131A, NIST CSWP 48 (draft), NIST CSF 2.0, NIST SP 800-53, NIST SP 800-37 (RMF), NCSC-UK migration timelines, ETSI TR 103 619 / TR 104 016, Dutch PQC Migration Handbook (AIVD/CWI/TNO), ISO/IEC 27001.
+NIST IR 8547 (final, October 2026), NIST SP 800-131A, NIST CSWP 48 (draft), NIST CSF 2.0, NIST SP 800-53, NIST SP 800-37 (RMF), EO 14412 & OMB M-26-15 (US federal civilian + directed FAR contractor rule), NSA CNSA 2.0 FAQ v2.2 (US NSS), EU PQC Roadmap v1.1, DORA & NIS2 (EU cyber risk-management duties), NCSC-UK migration timelines, ETSI TR 103 619 / TR 104 016, Dutch PQC Migration Handbook (AIVD/CWI/TNO), ISO/IEC 27001.

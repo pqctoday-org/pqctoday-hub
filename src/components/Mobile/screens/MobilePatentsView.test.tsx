@@ -77,7 +77,7 @@ describe('MobilePatentsView', () => {
     const before = Number(screen.getByText(/^\d+ patents$/).textContent!.split(' ')[0])
     const scoped = patentsData.filter(isPqcPatent)
     const sample = scoped[0]
-    fireEvent.change(screen.getByPlaceholderText(/Search assignee, algorithm or protocol/i), {
+    fireEvent.change(screen.getByRole('textbox', { name: 'Patent search' }), {
       target: { value: sample.assignee },
     })
     const after = Number(screen.getByText(/^\d+ patents$/).textContent!.split(' ')[0])
@@ -205,7 +205,7 @@ describe('MobilePatentsView', () => {
   it('search matches a patent number', () => {
     renderView()
     const p = patentsData.filter(isPqcPatent)[0]
-    fireEvent.change(screen.getByPlaceholderText(/Search assignee, algorithm or protocol/i), {
+    fireEvent.change(screen.getByRole('textbox', { name: 'Patent search' }), {
       target: { value: p.patentNumber.replace(/^US/, '') },
     })
     expect(screen.getByText(p.title)).toBeInTheDocument()
@@ -252,9 +252,7 @@ describe('MobilePatentsView', () => {
 
     it('keeps reading ?search into the search box', () => {
       renderView('/patents?search=lattice')
-      expect(screen.getByPlaceholderText(/Search assignee, algorithm or protocol/i)).toHaveValue(
-        'lattice'
-      )
+      expect(screen.getByRole('textbox', { name: 'Patent search' })).toHaveValue('lattice')
     })
   })
 

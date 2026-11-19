@@ -176,14 +176,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             still insufficient for <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> (3,309 bytes
             at security level 3). Both would need the signature split across several frames by a
             transport or application protocol. Automotive Ethernet (typically a 1,500-byte MTU) can
-            carry an ML-KEM-768 ciphertext (1,088 bytes) in one packet, but not an ML-DSA-44
-            signature (2,420 bytes). That does not by itself force IP fragmentation: over TCP, which
-            is a byte stream, the transport splits the data into segments, and TLS splits handshake
-            messages across records (RFC 8446 section 5.1); over UDP, the protocol or application is
-            expected to avoid IP fragmentation, for example by fragmenting DTLS handshake messages
-            across records that each fit one datagram (RFC 9147 sections 3.3 and 4.3) or by sizing
-            messages to the path MTU. How a large signature is split depends on the protocol&rsquo;s
-            framing.
+            carry an ML-KEM-768 ciphertext (1,088 bytes) in one packet if the path MTU also
+            accommodates its protocol headers and framing. An ML-DSA-44 signature (2,420 bytes)
+            already exceeds that MTU. Over TCP, the transport splits the byte stream into segments,
+            and TLS can split handshake messages across records (RFC 9846 Section 5.1). Over UDP,
+            the protocol or application is expected to avoid IP fragmentation, for example by
+            fragmenting DTLS handshake messages across records that each fit one datagram (RFC 9147
+            sections 3.3 and 4.3) or by sizing messages to the path MTU. How a large signature is
+            split depends on the protocol&rsquo;s framing.
           </p>
         </div>
       </LearnSection>

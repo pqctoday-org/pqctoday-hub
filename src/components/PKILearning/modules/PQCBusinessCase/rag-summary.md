@@ -25,7 +25,12 @@ The workshop has 5 interactive steps:
 
 ## Related Standards
 
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final October 2026)
+- NSA CNSA 2.0 (FAQ v2.2, October 2026 — National Security Systems only)
+- Executive Order 14412 & OMB M-26-15 (June 2026 — U.S. federal civilian agencies)
+- EU Coordinated Implementation Roadmap v1.1 (June 2025 — advisory Member State guidance; DORA and NIS2 impose cyber risk-management duties rather than fixed PQC cutoff dates)
+- NIST CSWP 39 (Migration to Post-Quantum Cryptography)
+- FAIR (Factor Analysis of Information Risk)
 
 ## Proposal scope and funding safeguards
 

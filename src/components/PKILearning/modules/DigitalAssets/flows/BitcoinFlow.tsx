@@ -18,6 +18,7 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 
 interface BitcoinFlowProps {
   onBack: () => void
@@ -65,6 +66,7 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack, onComplete }) 
   const [recipientAddress, setRecipientAddress] = React.useState<string | null>(null)
   const [editableRecipientAddress, setEditableRecipientAddress] = React.useState<string>('')
   const [transactionBytes, setTransactionBytes] = React.useState<Uint8Array | null>(null)
+  const [verifyEditedOutput, setVerifyEditedOutput] = React.useState(false)
 
   const steps: Step[] = useMemo(
     () => [
@@ -593,27 +595,70 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
       if (!hsmSigRef.current) throw new Error('Signature not found — execute Step 8 first.')
       const pubHandle = hsmHandlesRef.current.srcPubHandle
       if (!pubHandle) throw new Error('Sender public key not found — execute Step 1 first.')
-      const hsmSighash = sha256(sha256(transactionBytes))
+      let verifiedBytes = transactionBytes
+      if (verifyEditedOutput) {
+        // This is always the app's own JSON sample from the visualizer.
+        const edited = JSON.parse(new TextDecoder().decode(transactionBytes)) as {
+          outputs: { value: number }[]
+        }
+        edited.outputs[0].value += 1
+        verifiedBytes = new TextEncoder().encode(JSON.stringify(edited, null, 2))
+      }
+      const hsmSighash = sha256(sha256(verifiedBytes))
       const isValid = hsm_ecdsaVerify(
         M,
         hSession,
         pubHandle,
         hsmSighash,
         hsmSigRef.current,
-        CKM_ECDSA
+        CKM_ECDSA,
+        true
       )
       hsm.addStepLog('Step 9 — Verify Signature')
-      const verifyTamperNote =
-        !isValid && editableRecipientAddress !== recipientAddress
-          ? '\n\n⚠️ Verification failed because the recipient address was modified in Step 6. The signature committed to a different transaction — this is the correct behavior; it proves the signature is bound to the exact transaction bytes.'
-          : ''
-      return `Sighash recomputed (32 bytes):\n${bytesToHex(hsmSighash)}\n\nSignature Evaluation via C_VerifyInit + C_Verify (CKM_ECDSA):\n${isValid ? '✅ VALID' : '❌ INVALID'}${verifyTamperNote}\n\nVerified using sender public key handle ${pubHandle}.\nFull trace in PKCS#11 Call Log below.`
+      if (isValid === verifyEditedOutput) {
+        throw new Error(
+          verifyEditedOutput
+            ? 'Unexpected acceptance of the edited sample output.'
+            : 'The original sample signature failed verification.'
+        )
+      }
+      const verdict = verifyEditedOutput
+        ? 'Edited sample output rejected with the original signature.'
+        : 'Original sample signature verified.'
+      return `${verdict}\nSample bytes: ${verifyEditedOutput ? 'first output increased by 1 satoshi' : 'original serialized JSON'}\nDouble SHA-256 (32 bytes): ${bytesToHex(hsmSighash)}\nC_Verify (CKM_ECDSA), sender public key handle ${pubHandle}.`
     }
 
     return ''
   }
 
   const wizard = useStepWizard({ steps, onBack })
+  const displaySteps = steps.map((step) =>
+    step.id === 'verify'
+      ? {
+          ...step,
+          customControls: (
+            <label
+              htmlFor="bitcoin-verify-edited-output"
+              className="mb-4 flex min-h-11 items-center gap-3 rounded-lg border p-3 text-sm"
+            >
+              <Switch
+                id="bitcoin-verify-edited-output"
+                aria-label="Verify with the first output increased by 1 satoshi"
+                checked={verifyEditedOutput}
+                disabled={wizard.isExecuting}
+                onCheckedChange={(checked) => {
+                  setVerifyEditedOutput(checked)
+                  wizard.setIsStepComplete(false)
+                  wizard.setOutput(null)
+                  wizard.setError(null)
+                }}
+              />
+              Verify with the first output increased by 1 satoshi
+            </label>
+          ),
+        }
+      : step
+  )
 
   const gatedHandleNext = React.useCallback(() => {
     if (!wizard.isStepComplete) {
@@ -638,9 +683,12 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
       </p>
 
       <StepWizard
-        steps={steps}
+        steps={displaySteps}
         currentStepIndex={wizard.currentStep}
-        onExecute={() => wizard.execute(executeStep)}
+        onExecute={() => {
+          wizard.setIsStepComplete(false)
+          return wizard.execute(executeStep)
+        }}
         output={wizard.output}
         isExecuting={wizard.isExecuting}
         error={wizard.error}

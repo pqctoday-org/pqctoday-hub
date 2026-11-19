@@ -86,6 +86,7 @@ export function RunActionsMenu({
               variant="ghost"
               onClick={() => {
                 setOpen(false)
+                triggerRef.current?.focus()
                 it.onSelect()
               }}
               className="flex h-auto w-full flex-col items-start justify-start gap-0.5 whitespace-normal rounded-none px-3 py-2 text-left hover:bg-muted"

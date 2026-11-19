@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { Button } from '@/components/ui/button'
+import { SCENARIO_QUESTIONS } from './data/scenarioQuestions'
 
 export interface WorkshopConfig {
   step: number
@@ -87,6 +88,52 @@ export const PQC101Exercises: React.FC<PQC101ExercisesProps> = ({
           )}
         </div>
       ))}
+
+      <div className="pt-4 space-y-4">
+        <div>
+          <h3 className="text-lg font-bold text-foreground">
+            Apply It: Real-World Decision Scenarios
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1">
+            Practice making migration, algorithm-selection, and risk-prioritization decisions across
+            different industries.
+          </p>
+        </div>
+
+        {SCENARIO_QUESTIONS.map((item) => {
+          const borderClass =
+            item.urgency === 'critical'
+              ? 'border-l-destructive'
+              : item.urgency === 'high'
+                ? 'border-l-status-warning'
+                : 'border-l-secondary'
+          return (
+            <div key={item.title} className={`glass-panel p-6 border-l-4 ${borderClass} space-y-3`}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h4 className="font-semibold text-foreground">{item.title}</h4>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                    {item.industry}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full font-semibold uppercase bg-primary/10 text-primary border border-primary/20">
+                    {item.urgency} urgency
+                  </span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">{item.scenario}</p>
+              <p className="text-sm font-medium text-foreground">{item.question}</p>
+              <details className="text-sm text-muted-foreground">
+                <summary className="text-primary hover:underline cursor-pointer select-none">
+                  Show recommended decision &amp; rationale
+                </summary>
+                <p className="mt-2 leading-relaxed pl-4 border-l-2 border-primary/30">
+                  {item.answer}
+                </p>
+              </details>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

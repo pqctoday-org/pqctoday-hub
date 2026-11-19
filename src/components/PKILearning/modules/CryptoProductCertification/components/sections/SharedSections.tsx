@@ -1067,9 +1067,13 @@ export const TransitionDeadlines = () => {
         {MANDATE_SCOPE_NOTE}
       </p>
       <p className="text-xs text-muted-foreground">
-        The payment processor and the secure-element manufacturer have no row of their own: payment
-        requirements come from PCI SSC and the brands (the v5.0 announcement and the listing
-        definitions name no PQC deadline, <AsOf />
+        In the US, <SourceLink source={SHARED_SOURCES.ir8547} label="NIST IR 8547" /> (final,
+        October 2026) sets the federal algorithm transition plan — deprecating quantum-vulnerable
+        public-key algorithms after 2030 and disallowing them under NIST standards after 2035, in
+        support of EO 14412 and OMB M-26-15 — yet like any policy deadline, it drives urgency
+        without shortcutting CMVP validation routes. The payment processor and the secure-element
+        manufacturer have no row of their own: payment requirements come from PCI SSC and the brands
+        (the v5.0 announcement and the listing definitions name no PQC deadline, <AsOf />
         ), and the chip maker inherits the deadlines of the programmes it sells into.
       </p>
 

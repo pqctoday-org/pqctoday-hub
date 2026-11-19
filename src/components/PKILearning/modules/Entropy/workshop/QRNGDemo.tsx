@@ -100,11 +100,11 @@ function formatTestValue(result: TestResult): string {
  * uses system data (SP 800-90B §2.2.1), so it is not a QRNG noise-source
  * certificate.
  * Every field is copied from the certificate page on csrc.nist.gov, checked
- * 2026-09-24. Replaces an unsourced product-certification line: the CMVP
+ * 2026-11-18. Replaces an unsourced product-certification line: the CMVP
  * search found no such certificate, and a web search for a BSI entry
  * returned only vendor pages.
  */
-const QRNG_ESV_CHECKED_ON = '2026-09-24'
+const QRNG_ESV_CHECKED_ON = '2026-11-18'
 const ESV_CERT_BASE =
   'https://csrc.nist.gov/projects/cryptographic-module-validation-program/entropy-validations/certificate/'
 const QRNG_ESV_CERTIFICATES = [

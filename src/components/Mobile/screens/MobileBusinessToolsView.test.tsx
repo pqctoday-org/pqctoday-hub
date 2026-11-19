@@ -116,11 +116,10 @@ describe('MobileBusinessToolsView', () => {
   it('states what was cut, including why the dropped tool is missing, rather than silently dropping it', () => {
     renderView()
     expect(
-      screen.getByText(/role-specific "Start here" sequence is available above/i)
+      screen.getByText(/Links with Zone, Phase and Audience filters preserve those filters here/i)
     ).toBeInTheDocument()
-    expect(screen.getByText(/Zone, Phase and Audience filters/i)).toBeInTheDocument()
     expect(
-      screen.getByText(/Crypto Architecture Diagram tool also needs a wider screen/i)
+      screen.getByText(/Crypto Architecture Diagram tool needs a wider screen/i)
     ).toBeInTheDocument()
   })
 

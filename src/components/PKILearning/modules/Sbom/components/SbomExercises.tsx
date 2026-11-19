@@ -28,7 +28,7 @@ const EXERCISES: { prompt: string; step: number; cta: string }[] = [
   },
   {
     prompt:
-      'Your CBOM effort keeps missing library dependency chains that a widely-used crypto library brings in transitively. What existing artifact should have been cross-referenced first?',
+      'Your CBOM effort is missing software dependency relationships for a crypto library. Which existing artifact could contribute that information, and what other evidence would you still need?',
     step: 1,
     cta: 'See the SBOM-CBOM bridge',
   },
@@ -38,7 +38,8 @@ export const SbomExercises: FC<Props> = ({ onNavigateToWorkshop }) => (
   <div className="space-y-3">
     <p className="text-sm text-muted-foreground">
       Apply each idea in the workshop. There&apos;s no single right answer — reason through the
-      trade-off, then check it against the tool.
+      trade-off, compare it with the example, and confirm the requirements and output for your own
+      tools.
     </p>
     {EXERCISES.map((ex, i) => (
       <div key={i} className="glass-panel p-4">

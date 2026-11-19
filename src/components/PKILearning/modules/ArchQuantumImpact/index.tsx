@@ -16,6 +16,7 @@ import { ARCH_GUIDE_DATA } from './data'
 import { ARCH_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
+import { Button } from '@/components/ui/button'
 import manifest from './manifest'
 import { rolePracticeResources } from './content'
 
@@ -150,23 +151,39 @@ function SelfAssessmentStep() {
   )
 }
 
-function ExercisesTab() {
+function ExercisesTab({ onOpenWorkshopStep }: { onOpenWorkshopStep: (step: number) => void }) {
   return (
     <div className="w-full space-y-6">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Architecture Exercises</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these architecture-focused scenarios.
+          Apply what you learned in the workshop to these architecture-focused scenarios. Each
+          exercise links directly to the most relevant workshop step and highlights what to verify
+          with your own production tools.
         </p>
         <div className="space-y-4">
           {ARCH_QUANTUM_EXERCISES.map((exercise, idx) => (
             <div key={idx} className="glass-panel p-5 space-y-3">
-              <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onOpenWorkshopStep(exercise.recommendedStep)}
+                  className="shrink-0 text-xs"
+                >
+                  Open {exercise.recommendedStepLabel}
+                </Button>
+              </div>
               <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Use the Why It Matters (Step 1), What to Learn (Step 2), and How to Act (Step 3)
-                  tools in the Workshop tab to model your response.
+              <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-1.5 text-xs text-muted-foreground">
+                <p>
+                  <strong className="text-foreground">Decision focus:</strong>{' '}
+                  {exercise.decisionFocus}
+                </p>
+                <p>
+                  <strong className="text-foreground">Production evidence to verify:</strong>{' '}
+                  {exercise.evidenceToVerify}
                 </p>
               </div>
             </div>
@@ -182,7 +199,7 @@ export const ArchQuantumImpactModule: FC = () => (
     manifest={manifest}
     description="Understand how the quantum threat impacts system architecture, key management, and infrastructure design decisions."
     learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={<ExercisesTab />}
+    exercises={(api) => <ExercisesTab onOpenWorkshopStep={(step) => api.goToWorkshop(step)} />}
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey) => {
       switch (index) {

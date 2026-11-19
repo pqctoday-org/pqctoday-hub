@@ -16,7 +16,9 @@ describe('retirement worked sample stays separate from planning completion', () 
   it('shows all snapshots without changing checklist selections or saving a document', () => {
     render(<DeploymentPlaybook />)
     const sample = screen.getByRole('region', { name: 'Fictional retirement worked sample' })
-    expect(within(sample).getByRole('status')).toHaveTextContent('Incomplete')
+    expect(
+      within(sample).getByRole('status', { name: 'Retirement sample result' })
+    ).toHaveTextContent('Incomplete')
     const checkboxes = screen.getAllByRole('checkbox')
     expect(
       checkboxes.every(
@@ -27,24 +29,28 @@ describe('retirement worked sample stays separate from planning completion', () 
     ).toBe(true)
     fireEvent.click(screen.getByRole('button', { name: 'Fictional snapshot:' }))
     fireEvent.click(screen.getByRole('option', { name: 'Gateway removed, fallback remains' }))
-    expect(within(sample).getByRole('status')).toHaveTextContent('Incomplete')
+    expect(
+      within(sample).getByRole('status', { name: 'Retirement sample result' })
+    ).toHaveTextContent('Incomplete')
     expect(within(sample).getByText('Old path still accepts: direct-legacy')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Fictional snapshot:' }))
     fireEvent.click(screen.getByRole('option', { name: 'Follow-up cleanup' }))
-    expect(within(sample).getByRole('status')).toHaveTextContent(
-      'Consistent for the declared sample paths'
-    )
+    expect(
+      within(sample).getByRole('status', { name: 'Retirement sample result' })
+    ).toHaveTextContent('Consistent for the declared sample paths')
     expect(checkboxes.every((checkbox) => checkbox.getAttribute('aria-checked') !== 'true')).toBe(
       true
     )
     expect(addExecutiveDocument).not.toHaveBeenCalled()
     fireEvent.click(checkboxes[0])
-    expect(within(sample).getByRole('status')).toHaveTextContent(
-      'Consistent for the declared sample paths'
-    )
+    expect(
+      within(sample).getByRole('status', { name: 'Retirement sample result' })
+    ).toHaveTextContent('Consistent for the declared sample paths')
     fireEvent.click(screen.getByRole('button', { name: 'Fictional snapshot:' }))
     fireEvent.click(screen.getByRole('option', { name: 'Before cutover' }))
-    expect(within(sample).getByRole('status')).toHaveTextContent('Incomplete')
+    expect(
+      within(sample).getByRole('status', { name: 'Retirement sample result' })
+    ).toHaveTextContent('Incomplete')
   })
   it('copies the selected packet without creating a saved checklist', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined)

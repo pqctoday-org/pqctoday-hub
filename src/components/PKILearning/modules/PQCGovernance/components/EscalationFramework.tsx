@@ -431,20 +431,39 @@ export const EscalationFramework: React.FC = () => {
             </div>
 
             {allRated && (
-              <div className="w-full bg-muted rounded-full h-2">
-                <div
-                  className="h-2 rounded-full transition-all duration-500"
-                  style={{
-                    width: `${riskScore}%`,
-                    backgroundColor:
-                      riskScore >= 70
-                        ? 'hsl(var(--status-error))'
-                        : riskScore >= 40
-                          ? 'hsl(var(--status-warning))'
-                          : 'hsl(var(--status-success))',
-                  }}
-                />
-              </div>
+              <>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div
+                    className="h-2 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${riskScore}%`,
+                      backgroundColor:
+                        riskScore >= 70
+                          ? 'hsl(var(--status-error))'
+                          : riskScore >= 40
+                            ? 'hsl(var(--status-warning))'
+                            : 'hsl(var(--status-success))',
+                    }}
+                  />
+                </div>
+                <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 space-y-1.5 text-xs">
+                  <p className="font-semibold text-foreground">
+                    Decision Takeaway &amp; Required Exception Package
+                  </p>
+                  <p className="text-foreground/80">
+                    {riskScore >= 70
+                      ? 'Escalate to Tier 3 (CISO) with a time-bound expiry date, documented compensating controls, and a funded remediation path. Escalate further to Tier 4 (Executive Steering Committee) if a program-wide binding compliance deadline or regulatory enforcement action is at risk.'
+                      : riskScore >= 40
+                        ? 'Route to Tier 2 (PQC Program Manager) for cross-team dependency review, contractual vendor commitment tracking, and scheduled re-evaluation before the next phase gate.'
+                        : 'Eligible for Tier 1 (Team Lead) review within 5 business days, provided the exception scope, expiration date, and verification checks are recorded in your production GRC or ticketing system.'}
+                  </p>
+                  <p className="text-muted-foreground">
+                    In production governance tools, require named owners, automatic expiry
+                    reminders, and evidence that each selected compensating control is actually
+                    deployed and monitored.
+                  </p>
+                </div>
+              </>
             )}
           </div>
         </div>

@@ -22,8 +22,8 @@ beforeEach(() => {
   })
 })
 
-describe('CRQC scenario compliance deadline ticks', () => {
-  it('starts with every deadline ticked and counts only ticked deadlines before the CRQC year', () => {
+describe('CRQC scenario reference-date checkboxes', () => {
+  it('starts with reference dates included and counts only checked dates before the CRQC scenario year', () => {
     render(
       <MemoryRouter>
         <CRQCScenarioPlanner />
@@ -32,14 +32,16 @@ describe('CRQC scenario compliance deadline ticks', () => {
     const boxes = screen.getAllByRole('checkbox', { name: /^Applies to my systems:/ })
     expect(boxes.length).toBeGreaterThanOrEqual(8)
     for (const b of boxes) expect(b).toBeChecked()
-    const tile = screen.getByText('Pre-CRQC Deadlines').closest('div')!.parentElement!
+    const tile = screen.getByText('Reference dates before scenario').closest('div')!.parentElement!
     const before = Number(tile.querySelector('.text-2xl')!.textContent)
     const cnsa = screen.getByRole('checkbox', {
       name: /Applies to my systems: CNSA 2\.0 .*National Security System acquisitions/,
     })
     fireEvent.click(cnsa)
     expect(cnsa).not.toBeChecked()
-    expect(tile).toHaveTextContent(`ticked milestones (${boxes.length - 1} of ${boxes.length})`)
+    expect(tile).toHaveTextContent(
+      `included reference dates (${boxes.length - 1} of ${boxes.length})`
+    )
     expect(Number(tile.querySelector('.text-2xl')!.textContent)).toBe(before - 1)
   })
 

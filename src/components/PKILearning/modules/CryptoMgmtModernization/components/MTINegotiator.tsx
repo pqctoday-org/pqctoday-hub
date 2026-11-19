@@ -25,6 +25,10 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 const CNSA_FAQ_SOURCE =
   'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF'
 
+const TLS_GROUPS = ['X25519MLKEM768', 'SecP256r1MLKEM768', 'SecP384r1MLKEM1024', 'X25519'] as const
+const TLS_GROUP_OPTIONS = TLS_GROUPS.map((group) => ({ value: group, label: group }))
+const TLS_GROUP_SOURCE = 'https://www.rfc-editor.org/rfc/rfc10024.html#section-7'
+
 export interface MTIInputs {
   /** e.g. 'TLS 1.3', 'IKEv2', 'SSH', 'S/MIME', 'JOSE/COSE', 'custom-binary' */
   protocol: string
@@ -42,6 +46,9 @@ export interface MTIInputs {
   signatureSizePreference: string
   /** Optional free-text local-policy note. */
   localPolicyOverride: string
+  clientGroups?: string[]
+  serverGroups?: string[]
+  peerPolicy?: string
 }
 
 export interface MTIRecommendation {
@@ -117,7 +124,15 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
 }
 
 function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; rationale: string } {
-  const { audience, interopProfile, standardsPosture, hardwareConstraints } = inputs
+  const { protocol, audience, interopProfile, standardsPosture, hardwareConstraints } = inputs
+
+  if (protocol === 'TLS 1.2') {
+    return {
+      mti: 'Upgrade to TLS 1.3 for the RFC 10024 groups',
+      alternates: [],
+      rationale: 'TLS 1.2 requires a separately scoped migration plan.',
+    }
+  }
 
   if (audience === 'us-nss') {
     return {
@@ -129,7 +144,7 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
   }
 
   // Must interop with non-PQC peers -> hybrid KEM MTI
-  if (interopProfile.includes('non-pqc-peers')) {
+  if (protocol === 'TLS 1.3' && interopProfile.includes('non-pqc-peers')) {
     return {
       mti: 'X25519MLKEM768 (RFC 10024)',
       alternates: ['ML-KEM-768 (FIPS 203, pure PQC)'],
@@ -166,7 +181,9 @@ function recommendKem(inputs: MTIInputs): { mti: string; alternates: string[]; r
     mti: 'ML-KEM-768 (FIPS 203, NIST Cat 3)',
     alternates: ['HQC-128 (code-based, NIST alternate)'],
     rationale:
-      'ML-KEM-768 is the default recommendation for hybrid TLS (paired with X25519); HQC-128 is the code-based hedge against a lattice break.',
+      protocol === 'TLS 1.3'
+        ? 'Evaluate ML-KEM-768 in a TLS named group implemented by both endpoints.'
+        : 'Evaluate the exact key-establishment profile for the selected protocol. The primitive name alone does not identify its wire format.',
   }
 }
 
@@ -280,7 +297,7 @@ function computeWatchOuts(
   }
 
   // Interop: a hybrid or pure-PQC group only works when both peers support it.
-  if (inputs.interopProfile.includes('non-pqc-peers')) {
+  if (inputs.protocol === 'TLS 1.3' && inputs.interopProfile.includes('non-pqc-peers')) {
     out.push(
       `Classical-only peers cannot negotiate "${kem.mti}": the group is used only when both peers support it. For those peers the connection uses a separately negotiated classical key exchange if your policy allows one, and then has no post-quantum protection; if policy forbids classical fallback, the handshake fails. State which classical groups stay allowed, which peers may fall back, and how fallbacks are logged.`
     )
@@ -333,6 +350,30 @@ function computeWatchOuts(
   )
 
   return out
+}
+
+export function compareSampleTlsGroups(inputs: MTIInputs) {
+  if (inputs.protocol !== 'TLS 1.3') return null
+  const clientGroups = new Set(inputs.clientGroups)
+  const serverGroups = new Set(inputs.serverGroups)
+  const sharedGroups = TLS_GROUPS.filter(
+    (group) => clientGroups.has(group) && serverGroups.has(group)
+  )
+  const permitsClassical = inputs.peerPolicy === 'hybrid-or-classical'
+  const allowedGroups = sharedGroups.filter((group) => group !== 'X25519' || permitsClassical)
+  const decision =
+    clientGroups.size === 0 || serverGroups.size === 0
+      ? 'Record at least one supported group for each sample peer.'
+      : allowedGroups.length > 0
+        ? 'The sample peers share at least one group allowed by the worksheet policy.'
+        : 'No mutually supported group meets the worksheet policy.'
+  return {
+    sharedGroups,
+    allowedGroups,
+    decision,
+    scope:
+      'This compares configured TLS 1.3 key exchange groups. Test a handshake and check certificate authentication separately.',
+  }
 }
 
 /**
@@ -451,6 +492,36 @@ const SECTIONS: ArtifactSection[] = [
           { value: 'vendor-controlled', label: 'Vendor-controlled-only (no third-party peers)' },
         ],
         defaultValue: ['non-pqc-peers'],
+      },
+      {
+        id: 'clientGroups',
+        label: 'Sample TLS 1.3 client groups',
+        type: 'checklist',
+        options: TLS_GROUP_OPTIONS.map((group) => ({
+          ...group,
+          label: `Client supports ${group.label}`,
+        })),
+        defaultValue: [],
+      },
+      {
+        id: 'serverGroups',
+        label: 'Sample TLS 1.3 server groups',
+        type: 'checklist',
+        options: TLS_GROUP_OPTIONS.map((group) => ({
+          ...group,
+          label: `Server supports ${group.label}`,
+        })),
+        defaultValue: [],
+      },
+      {
+        id: 'peerPolicy',
+        label: 'Sample TLS 1.3 policy',
+        type: 'select',
+        options: [
+          { value: 'hybrid-only', label: 'Require a hybrid group' },
+          { value: 'hybrid-or-classical', label: 'Allow classical key exchange' },
+        ],
+        defaultValue: 'hybrid-only',
       },
       {
         id: 'complianceDeadline',
@@ -641,6 +712,9 @@ function mtiInputs(data: Record<string, Record<string, string | string[]>>) {
     protocol: (pa.protocol as string) || 'TLS 1.3',
     audience: (pa.audience as string) || 'global-commercial',
     interopProfile: Array.isArray(pa.interopProfile) ? (pa.interopProfile as string[]) : [],
+    clientGroups: Array.isArray(pa.clientGroups) ? pa.clientGroups : [],
+    serverGroups: Array.isArray(pa.serverGroups) ? pa.serverGroups : [],
+    peerPolicy: typeof pa.peerPolicy === 'string' ? pa.peerPolicy : 'hybrid-only',
     complianceDeadline: (pa.complianceDeadline as string) || '2030',
     standardsPosture: (sc.standardsPosture as string) || 'nist-pqc-only',
     hardwareConstraints: Array.isArray(sc.hardwareConstraints)
@@ -693,6 +767,18 @@ export function renderMTIMarkdown(data: Record<string, Record<string, string | s
   md += `| KEM / KEX | ${rec.kemMTI} | ${rec.kemAlternates.join('; ') || '-'} | ${rec.rationaleKem} |\n`
   md += `| Hash | ${rec.hashMTI} | ${rec.hashAlternates.join('; ') || '-'} | ${rec.rationaleHash} |\n\n`
 
+  const peers = compareSampleTlsGroups(inputs)
+  if (peers) {
+    md += '### Sample TLS 1.3 peer compatibility\n\n'
+    md += `- Client groups: ${inputs.clientGroups?.join(', ') || 'None recorded'}\n`
+    md += `- Server groups: ${inputs.serverGroups?.join(', ') || 'None recorded'}\n`
+    md += `- Policy allows: ${inputs.peerPolicy === 'hybrid-or-classical' ? 'hybrid or classical' : 'hybrid groups only'}\n`
+    md += `- Common groups: ${peers.sharedGroups.join(', ') || 'None'}\n`
+    md += `- Common groups allowed by policy: ${peers.allowedGroups.join(', ') || 'None'}\n`
+    md += `- ${peers.decision} ${peers.scope}\n`
+    md += `- Hybrid group definitions: ${TLS_GROUP_SOURCE}\n\n`
+  }
+
   md += `## 4. Watch-outs\n\n`
   for (const w of rec.watchOuts) md += `- ${w}\n`
   md += `\n`
@@ -722,10 +808,11 @@ export function renderMTICsv(data: Record<string, Record<string, string | string
   const inputs = mtiInputs(data)
   return decisionModelToCsv({
     inputs,
-    result: recommendMTI(inputs),
+    result: { ...recommendMTI(inputs), ...(compareSampleTlsGroups(inputs) ?? {}) },
     notes: data.plan ?? {},
     sources: [
       'NIST CSWP 39: https://doi.org/10.6028/NIST.CSWP.39-upd1',
+      ...(inputs.protocol === 'TLS 1.3' ? [TLS_GROUP_SOURCE] : []),
       ...(inputs.audience === 'us-nss' ? [CNSA_FAQ_SOURCE] : []),
     ],
   })
@@ -794,7 +881,8 @@ export const MTINegotiator: React.FC = () => {
           <div>
             <p className="font-medium text-foreground">MTI = interop floor</p>
             <p className="text-muted-foreground">
-              Every implementation must support the MTI - it is the basic-interop guarantee.
+              A published MTI gives conforming implementations a common capability. Check the
+              profiles and policy both peers actually enable.
             </p>
           </div>
         </div>

@@ -50,13 +50,16 @@ const Step1WhyRaciPolicy: React.FC = () => (
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <p className="text-sm text-foreground/90">
-            OMB Memorandum M-23-02 directs federal agencies to establish governance structures with
-            clear roles, responsibilities, and executive sponsorship for their cryptographic
-            transition to post-quantum algorithms &mdash; a model that applies equally to
-            private-sector organizations managing complex PQC migrations.
+            OMB Memorandum M-23-02 (2022), followed by Executive Order 14412 and OMB M-26-15 (June
+            2026), directs U.S. federal civilian agencies to establish governance structures with
+            clear roles, responsibilities, and executive sponsorship for their post-quantum
+            transition. While those directives bind federal civilian agencies only (NSA CNSA 2.0 FAQ
+            v2.2 governs National Security Systems, EU PQC Roadmap v1.1 is advisory Member State
+            guidance, and DORA/NIS2 impose cyber risk-management duties rather than fixed PQC cutoff
+            dates), the same governance discipline applies to private-sector programs.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
-            &mdash; OMB M-23-02, Migrating to Post-Quantum Cryptography (2022)
+            &mdash; OMB M-23-02 (2022), EO 14412 &amp; OMB M-26-15 (June 2026)
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -708,7 +711,8 @@ const Step3ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
         Start Workshop <ArrowRight size={18} />
       </Button>
       <p className="text-xs text-muted-foreground mt-2">
-        Build a RACI matrix, generate PQC policies, and design a governance KPI dashboard.
+        Build a RACI matrix, generate PQC policies, design a governance KPI dashboard, and configure
+        an escalation framework.
       </p>
     </div>
   </div>
@@ -725,7 +729,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
     },
     {
       id: 'policy',
-      label: 'Governance Models',
+      label: 'Escalation & KPIs',
       content: <Step2ModelsEscalationKpis />,
     },
     {

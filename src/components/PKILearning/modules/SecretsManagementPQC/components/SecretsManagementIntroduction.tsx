@@ -217,8 +217,9 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             Cryptographically Relevant Quantum Computer (CRQC)
           </InlineTooltip>{' '}
           arrives, the attacker can decrypt the harvested TLS session, extract the API key, and use
-          it to access your systems — or re-sell it. Short-lived OAuth tokens (1h TTL) have much
-          lower HNDL risk since they expire before a CRQC is practically deployable.
+          it to access your systems if the key still works. A short-lived OAuth token limits later
+          reuse of that token. Other confidential data in the same captured session can still be
+          sensitive when it is decrypted.
         </p>
 
         <p>
@@ -226,7 +227,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           decrypted by breaking its <strong>key exchange</strong>: static RSA key transport, where
           the client encrypts the premaster secret to the server certificate&apos;s public key (TLS
           1.2 and earlier, RFC 5246), or the (EC)DH values of an ephemeral exchange. TLS 1.3 removed
-          static RSA key transport (RFC 8446). The certificate&apos;s ECDSA or RSA signing key
+          static RSA key transport (RFC 9846). The certificate&apos;s ECDSA or RSA signing key
           instead <strong>authenticates</strong> the handshake: recovering it later lets an attacker
           impersonate the server while the certificate is still accepted, but it does not recover
           past session keys. Replace or rotate signing keys to address authentication risk, and use

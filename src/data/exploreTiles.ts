@@ -56,7 +56,7 @@ export const TILES: ExploreTile[] = [
     icon: Globe,
     title: 'Global Migration Timeline',
     description:
-      'See which governments and organizations have already committed to post-quantum cryptography — and when.',
+      'Compare dated migration plans, policy milestones and technical publications by jurisdiction.',
     path: '/timeline',
     firstLookMinutes: 3,
     accent: 'text-secondary bg-secondary/10',
@@ -65,7 +65,7 @@ export const TILES: ExploreTile[] = [
     icon: AlertTriangle,
     title: 'Understand the Threat',
     description:
-      '"Harvest now, decrypt later" attacks are happening today. Learn what data is already at risk.',
+      'Compare data exposed to collection now with information that could become readable if future quantum capabilities mature.',
     path: '/threats',
     firstLookMinutes: 3,
     accent: 'text-status-warning bg-status-warning/10',
@@ -74,7 +74,7 @@ export const TILES: ExploreTile[] = [
     icon: ShieldCheck,
     title: 'Compliance Landscape',
     description:
-      'NIST, FIPS, NSA CNSA — see which regulations apply to your industry and how to stay ahead.',
+      'Read published requirements and technical guidance. Check the issuing authority, affected systems and relevant dates.',
     path: '/compliance',
     firstLookMinutes: 4,
     accent: 'text-accent bg-accent/10',

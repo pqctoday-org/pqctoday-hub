@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pki-enrollment-protocols',
-  version: '0.1.1',
-  lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-14',
+  version: '0.1.2',
+  lastReviewed: '2026-08-23',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('IETF-RFC-7030-EST'),

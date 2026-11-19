@@ -1,49 +1,70 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import {
   AUDIT_SAMPLE_REQUIREMENT,
   AUDIT_SAMPLE_RECORDS,
   compareAuditSampleScope,
+  type AuditSampleRecord,
 } from './auditSampleScope'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export function AuditSampleScopeExercise() {
-  const [selected, setSelected] = useState(1)
+  const id = useId()
+  const [record, setRecord] = useState<AuditSampleRecord>(AUDIT_SAMPLE_RECORDS[1])
+  const [reviewDate, setReviewDate] = useState(AUDIT_SAMPLE_REQUIREMENT.date)
   const [checked, setChecked] = useState(false)
-  const record = AUDIT_SAMPLE_RECORDS.find((_, index) => index === selected)!
-  const gaps = compareAuditSampleScope(record)
+  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(reviewDate)
+  const gaps = checked ? compareAuditSampleScope(record, reviewDate) : []
   return (
-    <section className="glass-panel p-4 space-y-3" aria-labelledby="audit-scope-exercise-title">
-      <h2 id="audit-scope-exercise-title" className="font-bold">
+    <section className="glass-panel p-4 space-y-3" aria-labelledby={`${id}-title`}>
+      <h2 id={`${id}-title`} className="font-bold">
         Practice: does the record cover the sample system?
       </h2>
       <p className="text-sm">
         You are reviewing the fictional customer portal’s cryptographic module:{' '}
         {AUDIT_SAMPLE_REQUIREMENT.module} {AUDIT_SAMPLE_REQUIREMENT.version},{' '}
-        {AUDIT_SAMPLE_REQUIREMENT.platform}, on {AUDIT_SAMPLE_REQUIREMENT.date}. Predict which
-        record supports this scope before checking.
+        {AUDIT_SAMPLE_REQUIREMENT.platform}. Predict which record supports this scope before
+        checking.
       </p>
+      <div className="space-y-1">
+        <label htmlFor={`${id}-date`} className="block text-sm font-medium">
+          Sample review date
+        </label>
+        <Input
+          id={`${id}-date`}
+          type="date"
+          className="w-full sm:max-w-48"
+          value={reviewDate}
+          onChange={(event) => {
+            setReviewDate(event.target.value)
+            setChecked(false)
+          }}
+        />
+      </div>
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium">Fictional evidence record</legend>
-        {AUDIT_SAMPLE_RECORDS.map((item, index) => (
+        {AUDIT_SAMPLE_RECORDS.map((item) => (
           <label key={item.id} className="flex gap-2 text-sm p-2 border border-border rounded">
             <input
               type="radio"
-              name="audit-sample-record"
-              checked={selected === index}
+              name={id}
+              checked={record.id === item.id}
               onChange={() => {
-                setSelected(index)
+                setRecord(item)
                 setChecked(false)
               }}
             />
             <span>
-              {item.label}: version {item.version}, {item.platform}, valid through{' '}
+              {item.label}: version {item.version}, {item.platform}, valid {item.validFrom} through{' '}
               {item.validThrough}
             </span>
           </label>
         ))}
       </fieldset>
-      <Button onClick={() => setChecked(true)}>Check sample scope</Button>
+      <Button onClick={() => setChecked(true)} disabled={!validDate}>
+        Check sample scope
+      </Button>
       <div role="status" aria-live="polite">
         {checked &&
           (gaps.length ? (

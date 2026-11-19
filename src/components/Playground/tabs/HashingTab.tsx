@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
+import React, { useState } from 'react'
 import { Hash, Info } from 'lucide-react'
 import { DataInput } from '../DataInput'
 import { useSettingsContext } from '../contexts/SettingsContext'
@@ -9,6 +9,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 
 export const HashingTab: React.FC = () => {
+  const [hashInputValid, setHashInputValid] = useState(true)
   const { loading } = useSettingsContext()
   const {
     selectedHashMethod,
@@ -28,6 +29,9 @@ export const HashingTab: React.FC = () => {
         <Hash size={18} className="text-accent" /> Cryptographic Hashing
       </h3>
 
+      <p className="mb-4 text-sm text-muted-foreground">
+        Hashes use the browser’s JavaScript implementation from noble-hashes.
+      </p>
       {/* Hash Method Selection */}
       <div className="mb-6 p-6 bg-muted/20 rounded-xl border border-border">
         <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
@@ -39,7 +43,10 @@ export const HashingTab: React.FC = () => {
             label: `${method.name} - ${method.description}`,
           }))}
           selectedId={selectedHashMethod}
-          onSelect={(id) => setSelectedHashMethod(id)}
+          onSelect={(id) => {
+            setSelectedHashMethod(id)
+            setHashOutput('')
+          }}
           defaultLabel="Select algorithm…"
           noContainer
         />
@@ -73,9 +80,13 @@ export const HashingTab: React.FC = () => {
             <Hash size={16} /> Input Data
           </div>
           <DataInput
-            label="Data to Hash (ASCII)"
+            label="Data to hash (UTF-8)"
             value={hashInput}
-            onChange={setHashInput}
+            onChange={(input) => {
+              setHashInput(input)
+              setHashOutput('')
+            }}
+            onValidityChange={setHashInputValid}
             placeholder="Enter data to hash..."
             inputType="text"
             height="h-32"
@@ -87,7 +98,7 @@ export const HashingTab: React.FC = () => {
           <Button
             variant="ghost"
             onClick={() => runOperation('hash')}
-            disabled={!hashInput || loading}
+            disabled={!hashInput || !hashInputValid || loading}
             className="w-full mt-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Compute Hash
@@ -101,14 +112,14 @@ export const HashingTab: React.FC = () => {
           </div>
           <DataInput
             label="Hash Result (Hex)"
-            value={hashOutput}
+            value={hashInputValid ? hashOutput : ''}
             onChange={setHashOutput}
             placeholder="Hash result will appear here..."
-            inputType="text"
+            inputType="binary"
             height="h-32"
             readOnly
           />
-          {hashOutput && (
+          {hashOutput && hashInputValid && (
             <div className="mt-2 flex items-start gap-2 text-xs text-muted-foreground">
               <Info size={12} className="mt-0.5 shrink-0" />
               <span>
@@ -123,7 +134,7 @@ export const HashingTab: React.FC = () => {
                 navigator.clipboard.writeText(hashOutput)
               }
             }}
-            disabled={!hashOutput}
+            disabled={!hashOutput || !hashInputValid}
             className="w-full mt-4 py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Copy Hash

@@ -78,7 +78,28 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
               RFC 4211 / RFC 9810 §5.2.8.3) for KEM keys (ML-KEM), or <code>raVerified</code>
             </li>
             <li>
-              EJBCA 9.1+ issues ML-DSA and ML-KEM certificates through CMP (encrCert POP for ML-KEM)
+              Keyfactor&apos;s EJBCA 9.4.2 PQC guide says CMP <code>encrCert</code> POP for ML-KEM
+              is supported as of EJBCA 9.1. Its EJBCA 9.6.2 algorithm table lists ML-DSA via ACME,
+              EST, and CMP. These are version-specific product claims; verify your deployed version,
+              edition, CA profile, and HSM support. See the{' '}
+              <a
+                href="https://docs.keyfactor.com/ejbca/9.4.2/post-quantum-cryptography-keys-and-signatures"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                EJBCA PQC guide
+              </a>{' '}
+              and{' '}
+              <a
+                href="https://docs.keyfactor.com/ejbca/9.6.2/supported-algorithms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                supported-algorithms table
+              </a>
+              .
             </li>
           </ul>
         </div>
@@ -111,11 +132,15 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
             <code>challengePassword</code>) provides native KEM private-key POP.
           </li>
           <li>
-            <strong>Composite &amp; parallel enrollment.</strong> Hybrid X.509 certificates combine
-            classical and PQC keys under standardized Composite ML-DSA OIDs (RFC 10073) and the
-            companion composite KEM track (<code>draft-ietf-lamps-pq-composite-kem</code>). While
-            enterprise CAs and validators transition, organizations also test parallel classical and
-            PQC certificate chains.
+            <strong>Composite &amp; parallel enrollment.</strong> RFC 10073 defines Composite ML-DSA
+            algorithms for X.509/PKIX, combining a classical signature with ML-DSA under composite
+            identifiers. It does not require every CA or validator to support them. The separate
+            Composite ML-KEM document is still an Internet-Draft: revision 23, dated October 14,
+            2026, submitted to the RFC Editor queue as a Proposed Standard. Its status is not an
+            assigned RFC number. Before adopting Composite ML-DSA, review RFC 10073&apos;s security
+            caveat: it provides EUF-CMA but not SUF-CMA security against quantum adversaries, and is
+            not recommended where the stronger property is required. The workshop demonstrates
+            separate parallel certificates; it does not create a composite certificate.
           </li>
         </ol>
       </section>

@@ -151,7 +151,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'What kinds of cryptography do you use?',
     subtitle:
       'Select all that apply — these map to the quantum-vulnerable algorithms in your estate.',
-    why: "Public-key crypto (key exchange & signatures) is broken by Shor's algorithm; symmetric and hashing only need larger parameters. Knowing your mix sizes the migration.",
+    why: 'A sufficiently capable quantum computer running Shor’s algorithm would break RSA, finite-field Diffie–Hellman and elliptic-curve cryptography. Your algorithm mix determines which systems to investigate first.',
     changesInReport:
       'Determines which of your algorithms are listed as quantum-vulnerable, and what each is replaced by.',
     freelyOptional: false,

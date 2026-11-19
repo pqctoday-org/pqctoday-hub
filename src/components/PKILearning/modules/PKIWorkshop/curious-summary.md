@@ -4,7 +4,7 @@ Public Key Infrastructure (PKI) manages the digital certificates that build trus
 
 ### Why It Matters
 
-Because Root Certificate Authorities can live for 20+ years, they are highly vulnerable to "Harvest Now, Forge Later" attacks where a quantum computer could forge signatures and issue rogue certificates. Additionally, moving to quantum-safe replacements like ML-DSA introduces massive certificate bloat (up to a 37x size increase), breaking constrained clients.
+Because Root Certificate Authorities can live for 20+ years, they are highly vulnerable to quantum-era signature forgery where a quantum computer could forge signatures and issue rogue certificates. Additionally, moving to quantum-safe replacements like ML-DSA introduces substantial certificate bloat (for example, an ML-DSA-65 certificate is ~5.6 KB vs ~648 bytes for ECDSA P-256, and ML-DSA-44 signatures are 2,420 bytes vs 64–72 bytes), breaking constrained clients.
 
 ### The Key Takeaway
 

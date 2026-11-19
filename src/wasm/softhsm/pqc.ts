@@ -61,6 +61,7 @@ import {
   buildMech,
   buildTemplate,
   checkRV,
+  signatureAccepted,
   freeTemplate,
   readUlong,
   writeBytes,
@@ -1012,7 +1013,8 @@ export const hsm_verifyBytes = (
   hSession: number,
   pubHandle: number,
   msgBytes: Uint8Array,
-  sigBytes: Uint8Array
+  sigBytes: Uint8Array,
+  strictErrors = false
 ): boolean => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA, 'i32')
@@ -1024,13 +1026,15 @@ export const hsm_verifyBytes = (
   const sigPtr = M._malloc(sigBytes.length)
   M.HEAPU8.set(sigBytes, sigPtr)
 
-  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit')
+  let initialized = false
   try {
+    checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit')
+    initialized = true
     const rv =
       M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
-    return rv === 0
+    return signatureAccepted(rv, strictErrors, 'C_VerifyMessage')
   } finally {
-    M._C_MessageVerifyFinal(hSession)
+    if (initialized) M._C_MessageVerifyFinal(hSession)
     M._free(mech)
     M._free(msgPtr)
     M._free(sigPtr)

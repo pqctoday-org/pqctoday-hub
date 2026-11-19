@@ -137,7 +137,7 @@ export function summarizeAnswer(key: AssessStepKey, s: AssessReviewState): Answe
       return val(s.country || 'Not answered')
     case 'crypto':
       return s.cryptoUnknown
-        ? def(recommended)
+        ? val('Unknown — inventory needed')
         : val(
             listText(s.currentCryptoCategories.map(prettify)) ||
               // answers saved before the family picker hold only specific algorithms

@@ -77,6 +77,11 @@ export const HNDLTimeline: React.FC = () => {
           requirements and the expected arrival of a Cryptographically Relevant Quantum Computer
           (CRQC).
         </p>
+        <p className="text-xs text-muted-foreground mt-2">
+          This scenario models records captured from sessions that rely on quantum-vulnerable
+          public-key key establishment. It is not a claim that every encrypted archive is exposed or
+          a prediction of CRQC arrival.
+        </p>
       </div>
 
       {/* Input controls */}
@@ -146,8 +151,12 @@ export const HNDLTimeline: React.FC = () => {
               htmlFor="crqc-year-slider"
               className="block text-sm font-medium text-foreground mb-2"
             >
-              Expected CRQC Arrival Year
+              CRQC Planning Year (Scenario)
             </label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Set a scenario year to explore the Mosca planning calculation. This input is not a
+              prediction of when a CRQC will arrive.
+            </p>
             <div className="flex items-center gap-3">
               <input
                 id="crqc-year-slider"

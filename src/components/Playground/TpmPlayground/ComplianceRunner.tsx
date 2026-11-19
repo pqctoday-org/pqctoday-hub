@@ -1050,13 +1050,16 @@ export function ComplianceRunner() {
         updateCheck('V185-020', { status: 'running' })
         await delay()
         let signSeqHandle = 0
-        addLine('send', '    → TPM2_SignSequenceStart(keyHandle, auth=∅, context=∅)  [Table 89]')
+        addLine(
+          'send',
+          '    → TPM2_SignSequenceStart(keyHandle, auth=∅, context=∅)  [Published Part 3 Table 87]'
+        )
         if (akHandle === 0) {
           markFail('V185-020', 'Skipped — no AK')
         } else {
           try {
             const startP: number[] = []
-            putU16(startP, 0x8001) // TPM_ST_NO_SESSIONS (Auth Index: None per Table 89)
+            putU16(startP, 0x8001) // TPM_ST_NO_SESSIONS (Auth Index: None per Published Part 3 Table 87)
             putU32(startP, 0)
             putU32(startP, CC_SIGN_SEQ_START)
             putU32(startP, akHandle)
@@ -1154,7 +1157,7 @@ export function ComplianceRunner() {
         let verifySeqHandle = 0
         addLine(
           'send',
-          '    → TPM2_VerifySequenceStart(keyHandle, auth=∅, hint=∅, context=∅)  [Table 87]'
+          '    → TPM2_VerifySequenceStart(keyHandle, auth=∅, hint=∅, context=∅)  [Published Part 3 Table 89]'
         )
         if (akHandle === 0) {
           markFail('V185-022', 'Skipped — no AK')

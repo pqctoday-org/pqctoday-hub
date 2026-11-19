@@ -31,16 +31,16 @@ export const KEM_HISTORY: KemHistoryEntry[] = [
     name: 'HQC',
     family: 'Code',
     outcome: 'alternate',
-    finalName: 'HQC alternate (2025)',
+    finalName: 'HQC alternate (NIST IR 8545, 2025)',
     summary:
-      'Hamming Quasi-Cyclic selected in March 2025 as the code-based KEM alternate — diversifies the KEM portfolio against an unexpected lattice break.',
+      'Hamming Quasi-Cyclic selected in March 2025 (NIST IR 8545) as the code-based KEM alternate — diversifies the KEM portfolio against an unexpected lattice break.',
   },
   {
     name: 'Classic McEliece',
     family: 'Code',
     outcome: 'monitoring',
     summary:
-      'NIST Round 4 concluded in 2025 with HQC selected — McEliece was not selected and continues on an ISO standardisation track. Public key is ~1 MB but its encryption/KEM security has held since 1978.',
+      'NIST Round 4 concluded in March 2025 with HQC selected — Classic McEliece was not selected by NIST (continues on an ISO track). Public keys are ~261 KB–1.36 MB; in October 2026 Germany’s BSI advised against new use of Classic McEliece in new developments after structural attacks on binary Goppa codes.',
   },
   {
     name: 'BIKE',

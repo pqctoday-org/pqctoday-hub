@@ -39,15 +39,19 @@ export function useLearnModuleId(): string {
  *  picked or the stored id is stale. */
 export function useActiveLearnPathId(
   moduleId: string,
-  manifest?: ModuleManifest
+  manifest?: ModuleManifest,
+  linkedPathId?: string
 ): string | undefined {
   const stored = useModuleStore((s) => s.modules[moduleId]?.activeLearnPath)
   const persona = usePersonaStore((s) => s.selectedPersona)
   const resolvedManifest = manifest ?? MANIFEST_BY_ID[moduleId]
-  const path = resolveLearnPath(resolvedManifest, stored)
-  if (!path) return undefined
-  if (path.personas && (!persona || !path.personas.includes(persona))) return undefined
-  return path.id
+  const linkedPath = resolveLearnPath(resolvedManifest, linkedPathId)
+  if (linkedPath && (!linkedPath.personas || (persona && linkedPath.personas.includes(persona)))) {
+    return linkedPath.id
+  }
+  const storedPath = resolveLearnPath(resolvedManifest, stored)
+  if (storedPath?.personas && (!persona || !storedPath.personas.includes(persona))) return undefined
+  return storedPath?.id
 }
 
 /**

@@ -5,7 +5,7 @@
  * v2 design (2026-07 rebuild — see pqctoday-priv/plans/breach-simulator-improvement-plan-2026-07-06.md):
  *
  *  - ONE source of truth for the baseline: the industry average total breach
- *    cost from roiBaselines (IBM 2025), passed in — no private, drifted table.
+ *    cost from roiBaselines (IBM benchmarks), passed in — no private, drifted table.
  *    The baseline is IBM's *total* breach cost (already inclusive of detection,
  *    notification, lost business and reputational damage), so we do NOT add a
  *    separate reputational term on top (that would double-count).

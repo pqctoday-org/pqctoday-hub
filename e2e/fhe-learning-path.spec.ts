@@ -116,3 +116,56 @@ test('references follow the selected path and no empty products tab is offered',
     []
   )
 })
+
+for (const width of [1280, 390]) {
+  test(`CKKS accuracy depends on the plaintext reference at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await seedPersona(page, 'researcher')
+    await page.goto('/learn/homomorphic-encryption?tab=workshop')
+    const circuit = page.getByRole('button', { name: /^From a program to an FHE circuit/ })
+    await circuit.focus()
+    await circuit.press('Enter')
+    await expect(circuit).toHaveAttribute('aria-expanded', 'true')
+
+    const check = page.getByRole('region', { name: 'Does the CKKS result meet your error limit?' })
+    const result = check.getByRole('status', { name: 'CKKS accuracy decision' })
+    const run = check.getByRole('button', { name: 'Check recorded result' })
+    const reference = check.getByRole('combobox', { name: 'Plaintext reference' })
+    const tolerance = check.getByRole('textbox', { name: 'Maximum absolute error allowed' })
+    await expect(tolerance).toHaveValue('0.001')
+    const reportPath = '/data/fhe-evidence/ckks-scoring-service-x86-vm-kmip-5f0ff3d/check.json'
+    await expect(
+      check.getByRole('link', { name: 'Open the archived CKKS report' })
+    ).toHaveAttribute('href', reportPath)
+    const receipt = page.waitForResponse((response) => response.url().endsWith(reportPath))
+    await run.click()
+    const response = await receipt
+    expect(response.ok()).toBeTruthy()
+    const report = await response.json()
+    expect(report.scoreVsPlaintextPolynomial_uniqueRows.maxAbs).toBeCloseTo(4.767176588e-7, 13)
+    await expect(result).toContainText('Within the sample error limit.')
+    await expect(result).toContainText('4.767e-7 across 6,000 held-out rows')
+
+    await reference.selectOption('sigmoid')
+    await expect(result).toBeEmpty()
+    await run.click()
+    await expect(result).toContainText('Exceeds the sample error limit.')
+    await expect(result).toContainText('0.1040 across 6,000 held-out rows')
+
+    await tolerance.fill('0')
+    await run.click()
+    await expect(check.getByRole('alert')).toContainText('greater than 0')
+    await expect(result).toBeEmpty()
+
+    const reportUrl = '**' + reportPath
+    await page.route(reportUrl, (route) => route.abort())
+    await tolerance.fill('0.11')
+    await run.click()
+    await expect(check.getByRole('alert')).toContainText('Unable to read the archived CKKS result')
+    await expect(result).toBeEmpty()
+    await page.unroute(reportUrl)
+    await run.click()
+    await expect(result).toContainText('Within the sample error limit.')
+    await expect(check.getByRole('alert')).toHaveCount(0)
+  })
+}

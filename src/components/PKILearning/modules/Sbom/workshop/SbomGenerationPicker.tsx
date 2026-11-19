@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button'
 
 interface ToolInfo {
   name: string
-  /** Verified against the tool's own source/docs/changelog (Aug 2026) against
-   * the 10 elements the 2026 CISA SBOM Minimum Elements v2.1 newly requires —
-   * not a guess from the CycloneDX/SPDX schema's theoretical capabilities. */
-  gaps2026: string
+  source: string
+  sourceUrl: string
+  outputNote: string
 }
 
 interface Scenario {
@@ -26,13 +25,17 @@ const SCENARIOS: Scenario[] = [
     tools: [
       {
         name: 'Syft',
-        gaps2026:
-          '4/10 new elements solid (format/tool identity), 4 partial (SBOM version, hash, license — ecosystem-dependent) — no signature, no generation context.',
+        source: 'Syft documentation',
+        sourceUrl: 'https://github.com/anchore/syft',
+        outputNote:
+          'Scans container images and other sources. Verify coverage, identifiers, hashes, licenses, and generation metadata in the output for your image and Syft version.',
       },
       {
         name: 'Trivy',
-        gaps2026:
-          'Same shape as Syft — no signature, no generation context; hash/license inconsistent per ecosystem (e.g. often missing for npm/pip components).',
+        source: 'Trivy SBOM documentation',
+        sourceUrl: 'https://trivy.dev/latest/docs/supply-chain/sbom/',
+        outputNote:
+          'Can create SBOMs from container images and other supported targets. Results depend on target, scanner options, package ecosystem, and version; inspect your actual output.',
       },
     ],
     format: 'Either',
@@ -44,12 +47,17 @@ const SCENARIOS: Scenario[] = [
     tools: [
       {
         name: 'npm sbom (native)',
-        gaps2026:
-          'CycloneDX mode: 9/10 — the strongest default of any tool here, missing only Author Signature. SPDX mode: 7/10 — also drops SBOM Version and Generation Context.',
+        source: 'npm sbom documentation',
+        sourceUrl: 'https://docs.npmjs.com/cli/commands/npm-sbom',
+        outputNote:
+          'The npm CLI can emit SPDX or CycloneDX. Confirm the npm version, selected format, lockfile mode, workspaces, and generated metadata in your own output.',
       },
       {
         name: 'cyclonedx-npm',
-        gaps2026: '8/10 — missing Author Signature and Generation Context.',
+        source: 'CycloneDX Node NPM project',
+        sourceUrl: 'https://github.com/CycloneDX/cyclonedx-node-npm',
+        outputNote:
+          'An alternative CycloneDX generator for npm projects. Check supported npm/package-lock versions and output fields against the current project documentation.',
       },
     ],
     format: 'CycloneDX',
@@ -60,18 +68,22 @@ const SCENARIOS: Scenario[] = [
     label: 'Python package',
     tools: [
       {
-        name: 'cyclonedx-bom (Python)',
-        gaps2026:
-          '6/10 solid; component hashes only populate when a lock file (poetry.lock, Pipfile.lock, pinned requirements.txt) is the source — missing Author Signature and Generation Context.',
+        name: 'cyclonedx-py (Python)',
+        source: 'CycloneDX Python project',
+        sourceUrl: 'https://github.com/CycloneDX/cyclonedx-python',
+        outputNote:
+          'The project provides Python environment and dependency-file workflows. Supported inputs and emitted metadata vary by command and version; inspect the chosen workflow’s output.',
       },
       {
         name: 'pip-audit --format=cyclonedx-json',
-        gaps2026:
-          'Weakest tool surveyed: 2/10 — no tool identity, hashes, license, signature, or generation context, and it still emits CycloneDX 1.4, not 1.6.',
+        source: 'pip-audit documentation and changelog',
+        sourceUrl: 'https://github.com/pypa/pip-audit',
+        outputNote:
+          'Emits CycloneDX SBOM output while auditing Python packages against vulnerability services. It is a vulnerability-audit workflow, not a VEX statement; verify schema version and metadata for the installed release.',
       },
     ],
     format: 'CycloneDX',
-    note: 'pip-audit doubles as the VEX-relevant step: it cross-references the generated SBOM against the OSV vulnerability feed in the same run.',
+    note: 'Use the audit result as vulnerability evidence. A vulnerability finding or SBOM export does not by itself create a product-specific VEX statement.',
   },
   {
     id: 'maven',
@@ -79,12 +91,14 @@ const SCENARIOS: Scenario[] = [
     tools: [
       {
         name: 'cyclonedx-maven-plugin',
-        gaps2026:
-          '6/10 solid; hashes are reliable for dependencies but not the top-level artifact; license depends on upstream POM data quality — no signature.',
+        source: 'CycloneDX Maven plugin documentation',
+        sourceUrl: 'https://github.com/CycloneDX/cyclonedx-maven-plugin',
+        outputNote:
+          'Generates CycloneDX output for Maven projects and can be bound into a build lifecycle. Configure the goal deliberately and inspect the resulting artifact, version, and component metadata.',
       },
     ],
     format: 'CycloneDX',
-    note: 'Runs as a build-lifecycle plugin, so the SBOM is regenerated on every release rather than drifting from what actually shipped.',
+    note: 'Binding generation to the release lifecycle can keep the SBOM aligned with a release; verify that the goal actually runs in your build and archive the output for the released artifact.',
   },
 ]
 
@@ -130,7 +144,15 @@ export function SbomGenerationPicker() {
             <div key={t.name} className="rounded border border-border p-2">
               <span className="text-xs font-medium text-foreground">{t.name}</span>
               <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
-                {t.gaps2026}
+                {t.outputNote}{' '}
+                <a
+                  href={t.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary underline underline-offset-2"
+                >
+                  {t.source}
+                </a>
               </p>
             </div>
           ))}
@@ -146,16 +168,23 @@ export function SbomGenerationPicker() {
           </h4>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          This authored comparison is an educational snapshot, not a universal compliance finding.
-          The rows differ: the npm CycloneDX example lists only Author Signature as missing, while
-          other examples also list Generation Context. Treat signing as a separate step in these
-          examples and inspect how your selected generator and version record generation context.
-          Check the actual output, package ecosystem and available lock files before relying on
-          hash, license or other metadata coverage.
+          This is a tool-finding starting point, not a compliance score or a claim that a named
+          generator emits every required field.{' '}
+          <a
+            href="https://www.cisa.gov/sites/default/files/2026-07/2026_cisa_sbom_minimum_elements_508c.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline underline-offset-2"
+          >
+            CISA&apos;s 2026 Minimum Elements
+          </a>{' '}
+          describe the information to include; the exact output depends on the tool version,
+          ecosystem, lock file, and configuration. Inspect generated SBOMs and add or attest to
+          missing metadata in the appropriate part of your build process.
         </p>
         <p className="text-[11px] text-muted-foreground/80">
-          Verified against each tool&apos;s own source, docs, and changelog as of August 2026 — SBOM
-          tooling moves fast; re-check before treating this as a compliance decision.
+          Tool references were rechecked on 18 November 2026. Their documentation changes; review
+          the linked source and your installed version before using this workflow in production.
         </p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { ShieldCheck, Building2, ExternalLink, X, Award, FolderGit2, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -24,6 +24,7 @@ import {
   leaderTimelineCountry,
   productLabelFromId,
 } from '@/components/Leaders/leadersConstants'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import { LeaderKeyResources } from '@/components/common/LeaderKeyResources'
 
 const TYPE_STYLE: Record<string, string> = {
@@ -53,7 +54,6 @@ const LINK_FILTERS: { key: string; label: string; format?: (v: string) => string
   { key: 'region', label: 'Region', format: (v) => LEADERS_REGION_LABELS[v] ?? v },
   // Shown in the rows' spelling: an old ?country=USA link reads "United States".
   { key: 'country', label: 'Country', format: (v) => canonicalLeaderCountry(v) },
-  { key: 'q', label: 'Search' },
 ]
 
 /**
@@ -94,6 +94,7 @@ export function MobileCommunityView() {
   // too. Resolved against ALL rows (not just the curated list below), so a
   // linked document-contributor stub still opens. Open pushes; close replaces.
   const [searchParams, setSearchParams] = useSearchParams()
+  const searchInput = useRef<HTMLInputElement>(null)
   const leaderParam = searchParams.get('leader')?.trim() || null
   const match = useMemo(
     () =>
@@ -145,6 +146,10 @@ export function MobileCommunityView() {
     },
     [setSearchParams]
   )
+  const { text: query, update: updateSearch } = useUrlBackedText(
+    searchParams.get('q') ?? '',
+    (value) => setFilterParam('q', value || null)
+  )
   const linkChips = LINK_FILTERS.flatMap(({ key, label, format }) => {
     const value = searchParams.get(key)?.trim()
     return value && value !== 'All' ? [{ key, label, text: format ? format(value) : value }] : []
@@ -193,6 +198,30 @@ export function MobileCommunityView() {
 
       {/* Same role note as desktop /leaders (it carries the certification role's directory-gap disclosure). */}
       <MobilePersonaPageNote route="/leaders" className="mb-3" />
+
+      <div className="mb-3 flex flex-wrap items-end gap-2">
+        <label className="min-w-0 flex-1 text-sm">
+          Search community by name or role
+          <input
+            ref={searchInput}
+            type="search"
+            value={query}
+            onChange={(event) => updateSearch(event.target.value)}
+            className="mt-1 block min-h-11 w-full rounded-md border border-border bg-background px-3 text-sm"
+          />
+        </label>
+        {query && (
+          <Button
+            variant="outline"
+            onClick={() => {
+              updateSearch('')
+              searchInput.current?.focus()
+            }}
+          >
+            Clear community search
+          </Button>
+        )}
+      </div>
 
       <div className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
         <Button
@@ -253,8 +282,8 @@ export function MobileCommunityView() {
 
       <div className="flex flex-col gap-2.5">
         {filtered.length === 0 && (
-          <p className="text-[12.5px] text-muted-foreground">
-            {linkChips.length > 0
+          <p role="status" className="text-[12.5px] text-muted-foreground">
+            {query || linkChips.length > 0
               ? 'No one matches these filters.'
               : 'No one matches this category.'}
           </p>

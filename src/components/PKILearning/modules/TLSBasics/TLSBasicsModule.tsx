@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { TLSSimulatorCapabilities } from './components/TLSSimulatorCapabilities'
+import { parseTLSSimulationResult } from './utils/parseTLSSimulationResult'
 import { requireSampleTrustInputs } from './utils/sampleTrust'
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Play, Loader2 } from 'lucide-react'
@@ -20,6 +22,7 @@ import { generateOpenSSLConfig } from './utils/configGenerator'
 
 import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { KeyEncodingSizingExercise } from '@/components/ui/KeyEncodingSizingExercise'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { hsm_importMLDSAPublicKey } from '@/wasm/softhsm'
@@ -137,33 +140,13 @@ export const TLSBasicsModule: React.FC = () => {
         currentCommands
       )
 
-      try {
-        const parsed = JSON.parse(resultStr)
-        const simulationResult = {
-          trace: parsed.trace || [],
-          status: parsed.status || 'success',
-          error: parsed.error,
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setResults(simulationResult as any)
-
-        if (simulationResult.status === 'success') {
-          markStepComplete(MODULE_ID, 'workshop')
-          markStepComplete(MODULE_ID, 'comparison')
-        }
-
-        if (simulationResult.status !== 'success') {
-          console.error('[TLS Debug] Simulation Failed:', simulationResult.error)
-        }
-      } catch (parseError) {
-        console.error('JSON Parse Error:', parseError)
-        setResults({
-          trace: [],
-          status: 'error',
-          error: resultStr.substring(0, 200) || 'Unknown WASM error',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any)
+      const result = parseTLSSimulationResult(resultStr)
+      setResults(result)
+      if (result.status === 'success') {
+        markStepComplete(MODULE_ID, 'simulate')
+        markStepComplete(MODULE_ID, 'comparison')
+      } else {
+        console.error('[TLS Debug] Simulation Failed:', result.error)
       }
     } catch (error) {
       console.error('Simulation execution failed:', error)
@@ -171,8 +154,7 @@ export const TLSBasicsModule: React.FC = () => {
         trace: [],
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error',
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any)
+      })
     } finally {
       setIsSimulating(false)
     }
@@ -323,52 +305,7 @@ export const TLSBasicsModule: React.FC = () => {
       workshop={
         <>
           <div className="space-y-6">
-            {/* Capabilities banner — what this simulator does and does NOT
-             *  exercise today. Surfaces the gaps explicitly so users aren't
-             *  misled by dropdown options whose runtime support is incomplete. */}
-            <div className="glass-panel p-4 border-l-4 border-primary/50">
-              <div className="text-sm font-semibold mb-2">
-                What this TLS 1.3 simulator supports today
-              </div>
-              <ul className="text-xs text-muted-foreground space-y-1">
-                <li>
-                  <span className="text-status-success font-semibold">✓ Pure PQC keys</span> —
-                  ML-DSA-44 / ML-DSA-65 / ML-DSA-87 server &amp; client certs (FIPS 204)
-                </li>
-                <li>
-                  <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
-                  X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024 (TLS 1.3 key share, RFC
-                  10024); pure ML-KEM-512/768/1024 groups (draft-ietf-tls-mlkem-11)
-                </li>
-                <li>
-                  <span className="text-status-success font-semibold">✓ Classical certs</span> —
-                  RSA-2048, ECDSA-P256, Ed25519 (bundled PEMs, OpenSSL native sign)
-                </li>
-                <li>
-                  <span className="text-status-success font-semibold">✓ Pure PQC certs</span> —
-                  ML-DSA-44 / ML-DSA-87 cert + key bundled, real ML-DSA CertificateVerify
-                </li>
-                <li>
-                  <span className="text-status-warning font-semibold">
-                    ⚠ Hybrid (composite) certs — not supported yet
-                  </span>{' '}
-                  — LAMPS composite-sig (ML-DSA + RSA-PSS / ECDSA / Ed25519) is on the roadmap. The
-                  dropdown rows for composite are currently a placeholder that substitutes the
-                  nearest pure ML-DSA PEM (the wire signature is ML-DSA, not composite). Provider
-                  machinery for composite is built in the vendored pkcs11-provider fork
-                  (composite.c) but the runtime cert-minting path is not yet wired here.
-                </li>
-                <li>
-                  <span className="text-status-warning font-semibold">
-                    ⚠ HSM-backed signing — removed
-                  </span>{' '}
-                  — The previous "HSM ON" toggle never produced a successful handshake for end-users
-                  and was misleading. Removed pending a deliberate revival. softhsm v3 +
-                  pkcs11-provider remain statically linked into openssl.wasm; the wiring just isn't
-                  user-facing.
-                </li>
-              </ul>
-            </div>
+            <TLSSimulatorCapabilities />
 
             {/* Simulation Controls */}
             <div className="flex justify-end gap-3">
@@ -454,6 +391,7 @@ export const TLSBasicsModule: React.FC = () => {
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />
+              <KeyEncodingSizingExercise />
 
               {hsm.isReady && (
                 <div className="glass-panel p-4 space-y-3">
@@ -513,7 +451,7 @@ export const TLSBasicsModule: React.FC = () => {
                 <Button
                   variant="gradient"
                   onClick={() => {
-                    markStepComplete(MODULE_ID, 'workshop')
+                    markStepComplete(MODULE_ID, 'simulate')
                     updateModuleProgress(MODULE_ID, { status: 'completed' })
                   }}
                   className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"

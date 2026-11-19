@@ -741,6 +741,7 @@ export const HsmPlayground = () => {
           <DeveloperTab
             activeSubTab={devSubTab}
             openPython={searchParams.get('editor') === 'python'}
+            startSignatureExercise={searchParams.get('exercise') === 'signature'}
             onSubTabChange={setDevSubTab}
             onOpenLesson={(lessonId) =>
               goTo(resolveHsmLocation({ tab: 'learn', ltrack: 'v33', lesson: lessonId }))

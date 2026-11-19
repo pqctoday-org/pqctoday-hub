@@ -32,6 +32,7 @@ import {
   TRACK_META,
   TRACK_ORDER,
   criticalPathLength,
+  milestoneDateConflicts,
   trackForFunction,
   type RoadmapMilestone,
 } from './roadmapTracks'
@@ -135,6 +136,13 @@ export function buildRoadmapMarkdown(
       md += `| ${m.year} | ${phaseGateTag(m.phaseId)} | ${m.label} | ${deps} |\n`
     }
     md += '\n'
+  }
+
+  const dateConflicts = milestoneDateConflicts(currentMilestones)
+  if (dateConflicts.length > 0) {
+    md += '## Milestone dates to review\n\n'
+    for (const conflict of dateConflicts) md += `- ${conflict}\n`
+    md += '\nUpdate either planned year after checking the prerequisite and the work it blocks.\n\n'
   }
 
   // Gate table for the phases present.

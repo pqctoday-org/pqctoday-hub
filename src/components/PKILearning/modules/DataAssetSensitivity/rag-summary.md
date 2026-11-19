@@ -3,7 +3,7 @@ module_id: data-asset-sensitivity
 title: Data & Asset Sensitivity Assessment
 track: Strategy
 difficulty: intermediate
-duration: 75 min
+duration: 50 min
 workshop_steps: 5
 ---
 
@@ -11,24 +11,24 @@ workshop_steps: 5
 
 ## Topics Covered
 
-- Four-tier data sensitivity classification model (Low / Medium / High / Critical)
+- Four-tier data sensitivity classification model (Low / Medium / High / Critical) and distinguishing business services (such as an archiving and retrieval service) from protected data assets (such as long-lived records)
 - Asset type taxonomy: data stores, key material, communications, credentials, code artifacts
-- HNDL (Harvest Now, Decrypt Later) risk windows — formula: CRQC arrival − retention years
-- Global data protection regulations: GDPR, HIPAA, PCI DSS, CCPA/CPRA, NIS2, DORA, FIPS 140-3, CNSA 2.0, NIST IR 8547, ISO 27001
+- HNDL (Harvest Now, Decrypt Later) risk windows — formula: CRQC arrival − confidentiality years
+- Global data protection and PQC frameworks: GDPR, HIPAA, PCI DSS v4.0.1, CCPA/CPRA, NIS2 & DORA (EU cyber risk-management duties), EU PQC Roadmap v1.1, FIPS 140-3 (CMVP vs. ACVP), CNSA 2.0 FAQ v2.2 (US NSS), EO 14412 & OMB M-26-15 (US federal civilian + directed FAR contractor rule), NIST IR 8547 (final, October 2026), ISO/IEC 27001
 - Industry-specific compliance obligation mapping across 16 sectors
 - NIST Risk Management Framework (RMF) SP 800-37 — 7-step process: Prepare → Categorize → Select → Implement → Assess → Authorize → Monitor
 - ISO 27005 risk assessment — threat scenario modeling, 5×5 likelihood × consequence matrix, treatment options
 - FAIR model (Factor Analysis of Information Risk) — TEF, vulnerability, loss event frequency, annualized loss expectancy in USD
-- DORA/NIS2 operational resilience pillars — 5 ICT risk management pillars with gap scoring
+- DORA/NIS2 operational resilience pillars — cyber risk-management duties and ICT cryptographic policies
 - PQC algorithm selection by sensitivity tier and asset type (ML-KEM, ML-DSA, hybrid combinations)
 - Composite risk scoring with configurable weights (sensitivity, retention, compliance, HNDL window)
 - Migration effort estimation and priority band assignment (Critical / High / Medium / Low)
 
 ## Workshop
 
-1. Asset Inventory Builder — Create and classify organizational data assets with sensitivity tiers, asset types, retention periods, and HNDL risk indicators
-2. Compliance Matrix — Map compliance mandates to assets by industry, filter by region (US Federal / EU / Industry-Specific / Global), track obligation urgency and earliest deadline
-3. Risk Methodology Explorer — Apply all four methodologies (NIST RMF, ISO 27005, FAIR, DORA/NIS2) to selected assets; compare outputs in a unified summary table
+1. Asset Inventory Builder — Catalog organizational data assets with sensitivity tiers, asset types, retention and confidentiality periods, and HNDL risk indicators
+2. Classification Challenge — Classify 10 real-world data scenarios using the four-tier model with immediate feedback on HNDL windows and applicable frameworks
+3. Sensitivity Conflict Resolver — Resolve multi-framework sensitivity conflicts when GDPR, HIPAA, CNSA 2.0, and FIPS 140-3 disagree
 4. Sensitivity Scoring Engine — Configure composite scoring weights, view per-asset score breakdowns, sort by priority band
 5. PQC Migration Priority Map — Review prioritized migration recommendations with PQC algorithm assignments, compliance mandates, migration effort, and exportable Markdown report
 
@@ -39,15 +39,17 @@ workshop_steps: 5
 - NIST SP 800-53 (Security Controls)
 - FIPS 199 (Information Categorization)
 - FIPS 200 (Minimum Security Requirements)
-- ISO 27001 (Information Security Management)
-- ISO 27005 (Information Security Risk Management)
+- ISO/IEC 27001 (Information Security Management)
+- ISO/IEC 27005 (Information Security Risk Management)
 - FAIR (Factor Analysis of Information Risk)
-- DORA (Digital Operational Resilience Act — EU)
-- NIS2 Directive (EU Network and Information Security)
+- DORA (Digital Operational Resilience Act — EU cyber risk-management duty)
+- NIS2 Directive (EU Network and Information Security — cyber risk-management duty)
+- EU PQC Roadmap v1.1 (EU Coordinated Implementation Roadmap)
 - GDPR (EU General Data Protection Regulation)
 - HIPAA (US Health Insurance Portability and Accountability Act)
-- PCI DSS v4.0 (Payment Card Industry Data Security Standard)
+- PCI DSS v4.0.1 (Payment Card Industry Data Security Standard)
 - CCPA/CPRA (California Consumer Privacy Act)
-- CNSA 2.0 (NSA Commercial National Security Algorithm Suite)
-- NIST IR 8547 (PQC Transition Guidance)
-- FIPS 140-3 (Cryptographic Module Validation)
+- CNSA 2.0 FAQ v2.2 (NSA Commercial National Security Algorithm Suite — US NSS)
+- EO 14412 & OMB M-26-15 (US federal civilian PQC mandate + directed FAR contractor rule)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards; final, October 2026)
+- FIPS 140-3 (Cryptographic Module Validation Program — CMVP vs. ACVP)

@@ -54,7 +54,7 @@ export const ComplianceStrategyModule: FC = () => {
       description="Navigate the complex landscape of PQC compliance requirements across jurisdictions and frameworks."
       learn={(api) => <Introduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
       exercises={(api) => (
-        <ComplianceStrategyExercises onNavigateToWorkshop={() => api.goToWorkshop()} />
+        <ComplianceStrategyExercises onNavigateToWorkshop={(step) => api.goToWorkshop(step)} />
       )}
       workshopParts={PARTS}
       onReset={() => {

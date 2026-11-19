@@ -20,6 +20,21 @@ function intro() {
 }
 
 describe('MTC learning surfaces use the existing authentication component model', () => {
+  it('states the current draft version and bounds client-impact claims', () => {
+    const { container } = intro()
+    const text = container.textContent ?? ''
+    expect(text).toContain('draft-ietf-plants-merkle-tree-certs-08')
+    expect(text).toContain('intended for the Standards Track')
+    expect(text).toContain('wire format remains compatible with version 07')
+    expect(text).toContain('Google, Apple, Cloudflare, and Geomys')
+    expect(text).toContain('not measured connection times or a universal client-size limit')
+    expect(text).not.toMatch(/10 KB limit some constrained clients/)
+    expect(summary).toContain('draft-ietf-plants-merkle-tree-certs-08')
+    expect(summary).not.toMatch(
+      /not yet proposed for publication|10 KB limit some constrained clients/
+    )
+  })
+
   it('derives the visible default table and advantage from the real model, with explicit denominator', () => {
     const { container } = intro()
     fireEvent.click(screen.getByRole('button', { name: /Deep Dive: Landmark Certificates/ }))

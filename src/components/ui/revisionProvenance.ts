@@ -28,3 +28,9 @@ export function nonCommitReferenceLabel(reference: string | undefined): string {
   if (reference === 'pending') return 'Commit reference pending'
   return reference ? `Recorded reference: ${reference}` : 'Commit reference not recorded'
 }
+
+export function formatRevisionDate(timestamp: string) {
+  // Keep the calendar date recorded by the author, regardless of the reader's time zone.
+  const day = /^\d{4}-\d{2}-\d{2}/.exec(timestamp)?.[0]
+  return day ?? 'Date not recorded'
+}

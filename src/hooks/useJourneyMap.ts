@@ -18,6 +18,7 @@ import {
 } from '@/components/PKILearning/moduleData'
 import { SECTION_TO_ROUTE } from '@/components/AchievementSectionTracker'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import type { ExecutiveDocumentType } from '@/services/storage/types'
 
 // Pre-compute question ID → category mapping for checkpoint completion tracking
 const questionCategoryMap = new Map<string, string>()
@@ -44,6 +45,8 @@ export interface JourneyItem {
   stepProgress?: { done: number; total: number }
   /** Navigation target */
   route: string
+  /** Role-specific purpose for a page milestone. */
+  purpose?: string
   /** Track name for off-path items */
   track?: string
 }
@@ -72,12 +75,20 @@ export interface MilestoneStatusInputs {
   migrationStarted: boolean
   artifactCount: number
   execDocCount: number
+  businessDocumentTypes?: ReadonlySet<ExecutiveDocumentType>
   opensslFileCount: number
 }
 
 // An options object, not more positional args — this switch already juggled
 // five, and a sixth/seventh positional is exactly how the wrong value ends up
 // passed to the wrong parameter (2026-08-15 journey-tracking remediation).
+const scopedMilestoneDocuments = new Map<string, ExecutiveDocumentType>([
+  ['/business/tools/compliance-checklist', 'compliance-checklist'],
+  ['/business/tools/risk-treatment-plan', 'risk-treatment-plan'],
+  ['/business/tools/vendor-scorecard', 'vendor-scorecard'],
+  ['/business/tools/migration-verification', 'migration-verification'],
+])
+
 export function getMilestoneStatus(
   route: string,
   inputs: MilestoneStatusInputs
@@ -92,6 +103,10 @@ export function getMilestoneStatus(
   } = inputs
   // A route may carry a query (a milestone that opens a tool on a given tab); the signal is the page's.
   const path = route.split('?')[0]
+  const expectedDocument = scopedMilestoneDocuments.get(path)
+  if (expectedDocument)
+    return inputs.businessDocumentTypes?.has(expectedDocument) ? 'completed' : 'available'
+
   switch (path) {
     case '/assess':
       return assessmentStatus === 'complete'
@@ -174,7 +189,11 @@ export function useJourneyMap(): JourneyMapResult {
       milestonesByPhase.set(m.afterPhase, existing)
     }
 
-    const execDocCount = artifacts.executiveDocuments?.length ?? 0
+    const documents = artifacts.executiveDocuments ?? []
+    const execDocCount = documents.length
+    const businessDocumentTypes = new Set(
+      documents.filter((doc) => !doc.simulationRunId && doc.data.trim()).map((doc) => doc.type)
+    )
     const artifactCount =
       artifacts.keys.length + artifacts.certificates.length + artifacts.csrs.length + execDocCount
 
@@ -202,6 +221,7 @@ export function useJourneyMap(): JourneyMapResult {
           migrationStarted,
           artifactCount,
           execDocCount,
+          businessDocumentTypes,
           opensslFileCount,
         })
         const msId = `milestone-${ms.route}-${ms.label.toLowerCase().replace(/\s+/g, '-')}`
@@ -218,6 +238,7 @@ export function useJourneyMap(): JourneyMapResult {
               type: 'page-action',
               status: msStatus,
               route: ms.route,
+              purpose: ms.purpose,
             },
           ],
         })

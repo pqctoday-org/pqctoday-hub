@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { GateReason } from '@/components/shared/GateReason'
 import { Loader2, Inbox, AlertTriangle, CheckCircle2, Info } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
@@ -27,10 +27,9 @@ interface EstSimpleEnrollProps {
  *   3. Server returns base64(PKCS#7 SignedData) containing one certificate.
  *
  * OpenSSL does not ship an EST client (only a CMP client). For this workshop we
- * exercise the CSR build + PKCS#7 wrap stages — the two parts EST actually
- * adds on top of standard PKI — using `openssl req` (CSR) and `openssl ca` /
- * `openssl crl2pkcs7` (response wrap). The HTTP/TLS transport is illustrated
- * by labelling the steps (no live network).
+ * build and verify the CSR with OpenSSL, issue through the local CMP-backed
+ * fixture, and wrap the resulting certificate with `openssl crl2pkcs7`.
+ * This models the simpleenroll artifacts without HTTPS or EST authorization.
  */
 export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
   eeKeyPem,
@@ -43,56 +42,81 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
   const [pkcs7Pem, setPkcs7Pem] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+  const runRevision = useRef(0)
+
+  useEffect(() => {
+    setBusy(false)
+    setCsrPem(null)
+    setPkcs7Pem(null)
+    setError(null)
+    setLogEntries([])
+    return () => {
+      runRevision.current += 1
+    }
+  }, [eeKeyPem])
 
   const handleRun = async () => {
     if (!eeKeyPem) {
       setError('Generate an end-entity key in Step 1 first.')
       return
     }
-    setBusy(true)
+    if (busy) return
+    const revision = ++runRevision.current
     setError(null)
     setCsrPem(null)
     setPkcs7Pem(null)
+    setLogEntries([])
+    if (eeKeyAlgorithm?.startsWith('ML-KEM-')) {
+      setError(
+        'This simpleenroll sample requires a signed PKCS#10 request. ML-KEM cannot sign the request. No certificate was issued. Use Step 4 to exercise ML-KEM proof of possession.'
+      )
+      return
+    }
+    if (!subject.startsWith('/') || /["\r\n]/.test(subject)) {
+      setError('Enter a slash-form subject such as /CN=Fictional Workshop Device.')
+      return
+    }
+    setBusy(true)
     const startedAt = performance.now()
     setLogEntries([
       { status: 'pending', message: 'Building PKCS#10 CSR + simulating EST simpleenroll…' },
     ])
     try {
-      const ca = await ensureMockCA()
       const keyFileName = EE_KEY_PATH.replace(/^\//, '')
 
-      // 1. Build the PKCS#10 CSR with the EE key.
-      //    For ML-DSA EE keys this CSR build is itself sensitive to the same
-      //    apps/req.c digest-default trap that breaks `req -x509` — if it
-      //    fails we still surface a useful error, but for ECDSA / RSA EE keys
-      //    this is the standard EST request body shown end-to-end.
-      const csrPath = '/ee.csr.pem'
+      const csrPath = '/est-request.csr.pem'
+      const csrName = csrPath.slice(1)
       const csrResult = await openSSLService.execute(
         `openssl req -new -key ${EE_KEY_PATH} -out ${csrPath} -subj "${subject}"`,
         [{ name: keyFileName, data: eeKeyPem }]
       )
-      const csrFile = csrResult.files.find((f) => f.name === csrPath.replace(/^\//, ''))
-      if (csrFile) {
-        setCsrPem(new TextDecoder().decode(csrFile.data))
-      } else {
-        // CSR build failed — for ML-KEM keys, PKCS#10 CSRs require a self-signature
-        // (signature POP) over CertificationRequestInfo, which KEM keys cannot produce.
-        const isKemKey = eeKeyAlgorithm?.toUpperCase().includes('KEM')
-        setCsrPem(
-          (isKemKey
-            ? `(PKCS#10 CSR signature POP is not possible for ${eeKeyAlgorithm}: KEM keys only support encapsulation/decapsulation and cannot sign CertificationRequestInfo. In production PKI, enroll ML-KEM keys via CMPv3 CRMF POPOPrivKey (encrCert or challengeResp) rather than a PKCS#10 CSR.\nFor this educational step, the issuance stage below demonstrates the PKCS#7 response envelope using the EE public key directly.)\n\n`
-            : `(CSR build via 'openssl req -new' is not available for this key algorithm in OpenSSL 3.6 CLI;\nthe issuance step below uses the same EE key directly via the CMP shim.)\n\n`) +
-            (csrResult.stderr || '')
+      const csrFile = csrResult.files.find((file) => file.name === csrName)
+      if (csrResult.error || !csrFile?.data.length) {
+        throw new Error(
+          'OpenSSL did not produce a signed PKCS#10 request. No certificate was issued.'
         )
       }
+      const verification = await openSSLService.execute(
+        `openssl req -verify -pubkey -noout -in ${csrPath}`,
+        [csrFile]
+      )
+      const verified =
+        !verification.error &&
+        `${verification.stdout}\n${verification.stderr}`
+          .split(/\r?\n/)
+          .some((line) => /^Certificate request self-signature verify OK$/i.test(line.trim()))
+      const csrPublicKey = verification.stdout.match(
+        /-----BEGIN PUBLIC KEY-----[\s\S]+?-----END PUBLIC KEY-----/
+      )?.[0]
+      if (!verified || !csrPublicKey) {
+        throw new Error('The request signature could not be verified. No certificate was issued.')
+      }
+      if (runRevision.current !== revision) return
+      setCsrPem(new TextDecoder().decode(csrFile.data))
 
-      // 2. Issue the cert via the in-process CMP server. Routes through
-      //    simulateCmp because `openssl x509 -req -CA -CAkey` hits the same
-      //    ML-DSA-can't-sign-via-CLI trap that broke our mock-CA self-sign.
-      //    The C shim's process_cert_request callback uses X509_sign(NULL md)
-      //    which handles "pure" PQC signatures correctly. The resulting cert
-      //    is identical in shape to what an EST server would return — only
-      //    the wire envelope differs.
+      // The fixture uses CMP for local issuance after verifying the EST request artifact.
+      const ca = await ensureMockCA()
+      if (runRevision.current !== revision) return
       const enrollResult = await openSSLService.simulateCmp({
         eeKeyPath: EE_KEY_PATH,
         subjectDn: subject,
@@ -110,7 +134,15 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
       if (!enrollResult.ok || !enrollResult.certPem) {
         throw new Error(`Issuance failed: ${enrollResult.error || 'unknown'}`)
       }
-      onCertIssued?.(enrollResult.certPem)
+      const certificate = { name: EE_CERT_PATH.slice(1), data: enrollResult.certPem }
+      const issuedPublicKey = await openSSLService.execute(
+        `openssl x509 -in ${EE_CERT_PATH} -pubkey -noout`,
+        [certificate]
+      )
+      if (issuedPublicKey.error || issuedPublicKey.stdout.trim() !== csrPublicKey.trim()) {
+        throw new Error('The issued sample certificate did not match the verified request key.')
+      }
+      if (runRevision.current !== revision) return
 
       // 3. Wrap the issued cert in a PKCS#7 (degenerate SignedData) — the EST
       //    response envelope (RFC 7030 §4.2.3). This is the actual wire shape
@@ -118,21 +150,25 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
       const p7Path = '/est-response.p7b'
       const p7Result = await openSSLService.execute(
         `openssl crl2pkcs7 -nocrl -certfile ${EE_CERT_PATH} -out ${p7Path}`,
-        [{ name: EE_CERT_PATH.replace(/^\//, ''), data: enrollResult.certPem }]
+        [certificate]
       )
       if (p7Result.error)
         throw new Error(`PKCS#7 wrap failed: ${p7Result.error}\n${p7Result.stderr}`)
       const p7File = p7Result.files.find((f) => f.name === p7Path.replace(/^\//, ''))
       if (!p7File) throw new Error('PKCS#7 wrap produced no output')
+      if (runRevision.current !== revision) return
       setPkcs7Pem(new TextDecoder().decode(p7File.data))
+      onCertIssued?.(enrollResult.certPem)
       setLogEntries([
         {
           status: 'success',
-          message: 'CSR + PKCS#7 envelope produced — issued cert ready downstream.',
+          message:
+            'Verified CSR and issued certificate contain the same public key. PKCS#7 response ready.',
           durationMs: Math.round(performance.now() - startedAt),
         },
       ])
     } catch (e) {
+      if (runRevision.current !== revision) return
       const msg = e instanceof Error ? e.message : String(e)
       setError(msg)
       setLogEntries([
@@ -143,7 +179,7 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
         },
       ])
     } finally {
-      setBusy(false)
+      if (runRevision.current === revision) setBusy(false)
     }
   }
 
@@ -154,11 +190,11 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
         <div>
           <div className="font-medium text-foreground">RFC 7030 simpleenroll — simulated</div>
           <p className="mt-1 text-muted-foreground">
-            OpenSSL ships a CMP client but not an EST client. This step exercises the two
-            EST-specific pieces directly: (1) the <strong>PKCS#10 CSR</strong> the client POSTs to{' '}
-            <code>/.well-known/est/simpleenroll</code>, and (2) the{' '}
-            <strong>PKCS#7 SignedData</strong> envelope the server returns. The HTTP+TLS transport
-            is described in the Learn tab.
+            The browser verifies the <strong>PKCS#10 request signature</strong> before issuing a
+            sample certificate through its local CA. It checks that the certificate contains the
+            requested key, then builds the <strong>PKCS#7 response</strong>. This exercises the
+            artifacts for <code>/.well-known/est/simpleenroll</code>. Real EST uses HTTPS and
+            separate client authentication and authorization.
           </p>
         </div>
       </div>
@@ -174,7 +210,18 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
         <label htmlFor="est-csr-subject" className="text-sm font-medium text-foreground">
           CSR Subject
         </label>
-        <Input id="est-csr-subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
+        <Input
+          id="est-csr-subject"
+          value={subject}
+          disabled={busy}
+          onChange={(e) => {
+            setSubject(e.target.value)
+            setCsrPem(null)
+            setPkcs7Pem(null)
+            setError(null)
+            setLogEntries([])
+          }}
+        />
       </div>
 
       <GateReason when={!busy && !eeKeyPem} className="mt-0">
@@ -192,13 +239,17 @@ export const EstSimpleEnroll: React.FC<EstSimpleEnrollProps> = ({
 
       {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
 
-      {error && <ErrorAlert message={error} onRetry={handleRun} />}
+      {error && (
+        <div role="alert">
+          <ErrorAlert message={error} onRetry={handleRun} />
+        </div>
+      )}
 
       {csrPem && (
         <details open className="rounded border border-border bg-muted/30 p-3">
           <summary className="cursor-pointer text-sm font-medium text-foreground flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-status-success" /> POST body — base64(PKCS#10
-            CSR), {eeKeyAlgorithm} signed
+            <CheckCircle2 size={14} className="text-status-success" /> Request PEM — verified
+            PKCS#10 self-signature ({eeKeyAlgorithm})
           </summary>
           <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-all font-mono text-[10px] text-muted-foreground">
             {csrPem}

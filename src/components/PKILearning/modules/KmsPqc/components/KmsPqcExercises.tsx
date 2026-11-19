@@ -88,8 +88,30 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       config: { step: 3 },
     },
     {
+      id: 'kmip-cross-provider-sync',
+      title: '6. KMIP Cross-Provider Sync & Lifecycle',
+      description:
+        'Open the KMIP Protocol Explorer (Step 5) to compare KMIP v3.0 draft PQC enumerations against native provider APIs (such as OpenBao Transit). Inspect Re-key vs. Re-key Key Pair lifecycle semantics and walk through the migration-readiness checklist.',
+      badge: 'KMIP',
+      badgeColor: 'bg-accent/20 text-accent border-accent/50',
+      observe:
+        'KMIP 2.1 is the OASIS Standard while KMIP v3.0 (Committee Specification Draft 02) adds PQC key types; verify whether each production KMS exposes a native KMIP endpoint or requires provider-specific HTTP/CLI APIs, and keep signing keys (ML-DSA) separate from encapsulation keys (ML-KEM).',
+      config: { step: 4 },
+    },
+    {
+      id: 'aws-kms-policy-guardrails',
+      title: '7. AWS KMS IAM Policy Guardrails',
+      description:
+        'Open the AWS Policy Lab (Step 6) to author and evaluate a sample IAM policy restricting kms:CreateKey to approved PQC key specs and usages, and check how hybrid post-quantum TLS to the KMS endpoint is enforced.',
+      badge: 'Policy',
+      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      observe:
+        'Every Allow statement on kms:CreateKey must constrain kms:KeySpec and kms:KeyUsage explicitly so classical keys cannot slip through an unguarded path. Hybrid post-quantum TLS to KMS is controlled by the client SDK/TLS configuration and verified in CloudTrail (tlsDetails.keyExchange), not by a key policy.',
+      config: { step: 5 },
+    },
+    {
       id: 'partner-hsm-to-aws-kms',
-      title: '6. Partner HSM to AWS KMS: Which Path Is Quantum-Safe?',
+      title: '8. Partner HSM to AWS KMS: Which Path Is Quantum-Safe?',
       description:
         'A partner HSM must deliver an AES key to AWS KMS. Compare the import path, an ML-KEM exchange with Decapsulate, and a hybrid secret combined in the application, then ask what stays classical on each path. Compare Google Cloud KMS quantum-safe import, which uses HPKE.',
       badge: 'Key exchange',

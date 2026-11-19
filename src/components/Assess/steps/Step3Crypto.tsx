@@ -140,7 +140,8 @@ const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepPro
       </Button>
       {cryptoUnknown && (
         <p className="text-xs text-muted-foreground italic">
-          Recommended for {industry || 'your industry'}. You can adjust any selection.
+          Your inventory is recorded as unknown. The report uses conservative exposure assumptions
+          and recommends identifying which algorithms your services and dependencies actually use.
         </p>
       )}
 

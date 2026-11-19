@@ -14,8 +14,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'crypto-agility',
   version: '1.0.1',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-11',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('NIST SP 800-208'),
@@ -75,12 +75,12 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'The Crypto Agility module teaches how to design systems that can switch cryptographic algorithms, protocols, and implementations with as little change as possible to the applications that use them. Callers can be insulated from the primitive, but credentials, encodings, key/signature/ciphertext sizes, negotiation, storage, rollback and tests still change with each algorithm. NIST devotes a white paper, CSWP 39 (Considerations for Achieving Crypto Agility), to it.',
+      'The Crypto Agility module teaches how to design systems that can switch cryptographic algorithms, protocols, and implementations with as little change as possible to the applications that use them. Callers can be insulated from the primitive, but credentials, encodings, key/signature/ciphertext sizes, negotiation, storage, rollback and tests still change with each algorithm. NIST’s current crypto-agility white paper is CSWP 39-upd1 (Considerations for Achieving Crypto Agility: Strategies and Practices).',
     keyConcepts:
       'Crypto agility is the ability to switch cryptographic algorithms, protocols, and implementations without rewriting the applications that call them. Three dimensions of agility: Algorithm agility — select algorithms in configuration rather than hard-coding them; moving from RSA encryption to ML-KEM still changes the call pattern (a KEM cannot encrypt data directly — NIST SP 800-227) and key and ciphertext sizes. Protocol agility — support multiple protocol versions simultaneously (TLS 1.2/1.3, hybrid key exchange). Implementation agility — switch between crypto providers (OpenSSL, BoringSSL, AWS-LC) without changing application call sites.',
     workshopSummary:
-      'The workshop has 3 interactive steps: Abstraction Layer Demo — interactive demonstration of how algorithm-agnostic APIs keep call sites unchanged when the backend changes, and what still changes around them; select different crypto providers and see how the same API calls produce results from different algorithm implementations. CBOM Scanner — scan a sample enterprise architecture to discover and catalog all quantum-vulnerable cryptographic algorithms in use; produces a CycloneDX-format CBOM with risk assessments.',
+      'The workshop has 4 interactive steps: (1) Abstraction Layer Demo — interactive demonstration of how algorithm-agnostic APIs keep call sites unchanged when the backend changes, and what still changes around them (key/ciphertext sizes, encodings, negotiation, tests). (2) CBOM Scanner — scan a sample enterprise architecture to discover and catalog quantum-vulnerable cryptographic algorithms in a CycloneDX-format CBOM with risk assessments. (3) Migration Planning Exercise — walk through the 7-phase PQC migration teaching framework to practice prioritization, tooling selection, and phased rollout decisions. (4) Agility Readiness Assessment — score an organization across four crypto-agility dimensions (Algorithm, Protocol, Implementation, Inventory & Visibility) to pinpoint the weakest dimension to address first.',
     relatedStandards:
-      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0). CISA Post-Quantum Cryptography Initiative. CycloneDX CBOM Specification. NIST SP 800-227',
+      'NIST CSWP 39-upd1 (Considerations for Achieving Crypto Agility: Strategies and Practices). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0). CISA Post-Quantum Cryptography Initiative. CycloneDX CBOM Specification. NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms). RFC 9846 (TLS 1.3).',
   },
 }

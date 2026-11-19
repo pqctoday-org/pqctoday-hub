@@ -13,6 +13,7 @@ export const AUDIT_SAMPLE_RECORDS = [
     module: 'Example Crypto',
     version: '2.1',
     platform: 'Linux test platform',
+    validFrom: '2025-11-16',
     validThrough: '2027-11-16',
   },
   {
@@ -21,6 +22,7 @@ export const AUDIT_SAMPLE_RECORDS = [
     module: 'Example Crypto',
     version: '2.0',
     platform: 'Linux test platform',
+    validFrom: '2025-11-16',
     validThrough: '2027-11-16',
   },
   {
@@ -29,6 +31,7 @@ export const AUDIT_SAMPLE_RECORDS = [
     module: 'Example Crypto',
     version: '2.1',
     platform: 'Windows test platform',
+    validFrom: '2025-11-16',
     validThrough: '2027-11-16',
   },
   {
@@ -37,17 +40,24 @@ export const AUDIT_SAMPLE_RECORDS = [
     module: 'Example Crypto',
     version: '2.1',
     platform: 'Linux test platform',
+    validFrom: '2025-11-16',
     validThrough: '2026-10-16',
   },
 ] as const
-export function compareAuditSampleScope(record: (typeof AUDIT_SAMPLE_RECORDS)[number]): string[] {
+export type AuditSampleRecord = (typeof AUDIT_SAMPLE_RECORDS)[number]
+
+export function compareAuditSampleScope(
+  record: AuditSampleRecord,
+  reviewDate = AUDIT_SAMPLE_REQUIREMENT.date
+): string[] {
   const gaps: string[] = []
   if (record.module !== AUDIT_SAMPLE_REQUIREMENT.module) gaps.push('Module identity differs.')
   if (record.version !== AUDIT_SAMPLE_REQUIREMENT.version)
     gaps.push('The record covers another module version.')
   if (record.platform !== AUDIT_SAMPLE_REQUIREMENT.platform)
     gaps.push('The record covers another platform.')
-  if (record.validThrough < AUDIT_SAMPLE_REQUIREMENT.date)
+  if (reviewDate < record.validFrom) gaps.push('The sample record starts after the review date.')
+  if (record.validThrough < reviewDate)
     gaps.push('The sample record expired before the review date.')
   return gaps
 }

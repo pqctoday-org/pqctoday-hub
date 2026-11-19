@@ -38,6 +38,16 @@ const WORKED_EXAMPLE_TABLES: [string, string[]][] = [
 ]
 
 describe('Common Criteria lesson tables on a phone', () => {
+  it('links the November 2026 ENISA CSP guidance and labels it as guidance', () => {
+    renderSection(<EuccScheme />)
+    expect(
+      screen.getByRole('link', { name: 'CSP-based evaluation guidance for secure elements' })
+    ).toHaveAttribute('href', expect.stringContaining('EUCC-Guidelines-on-Cryptography'))
+    expect(
+      screen.getByText(/does not add a new legal certification requirement/)
+    ).toBeInTheDocument()
+  })
+
   it.each([
     ['CcModel', <CcModel key="1" />],
     ['CcEalDecoding', <CcEalDecoding key="2" />],

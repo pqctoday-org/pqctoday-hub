@@ -125,7 +125,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
             },
             {
               title: 'Know How Long It Stays',
-              desc: 'Data retained for 10+ years is already at HNDL risk if a CRQC arrives in the early 2030s.',
+              desc: 'A captured copy that must stay confidential for 10+ years may be exposed if a CRQC arrives in the early 2030s.',
             },
             {
               title: 'Know Who Wants It',
@@ -199,11 +199,15 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
 
           <div className="bg-muted/30 rounded-lg p-4 border border-border">
             <p className="text-xs text-muted-foreground">
-              <strong className="text-foreground">Asset type also matters:</strong> Assess key
-              material and signing credentials as assets in their own right. Consider what a
-              compromise would expose or allow an attacker to impersonate, which services rely on
-              that trust, and how keys can be replaced. Classification requires this context rather
-              than an automatic tier based only on asset type.
+              <strong className="text-foreground">
+                Distinguish business services from protected assets:
+              </strong>{' '}
+              A business service (for example, a records archiving and retrieval service) protects
+              long-lived records; the records themselves are protected data assets, not a service.
+              Assess key material and signing credentials as assets in their own right as well:
+              consider what a compromise would expose or allow an attacker to impersonate, which
+              services rely on that trust, and how keys can be replaced. Classification requires
+              this context rather than an automatic tier based only on asset type.
             </p>
           </div>
         </CollapsibleSection>
@@ -219,15 +223,29 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           <strong>
             <InlineTooltip term="HNDL">HNDL exposure year</InlineTooltip>
           </strong>{' '}
-          formula is simple but profound:
+          uses how long the data needs confidentiality.
         </p>
 
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20 font-mono text-sm text-center">
-          HNDL_risk_year = CRQC_arrival ({ESTIMATED_CRQC_YEAR}) − data_retention_years
+          HNDL_risk_year = CRQC_arrival ({ESTIMATED_CRQC_YEAR}) − confidentiality_years
         </div>
 
         <p>
-          If an adversary harvests your encrypted data today and a{' '}
+          The record-retention period describes how long the organization keeps a copy. The
+          confidentiality period can last longer, including after deletion. See the{' '}
+          <a
+            href="https://csrc.nist.gov/glossary/term/security_life_of_data"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            NIST definition of security life of data
+          </a>
+          .
+        </p>
+
+        <p>
+          If an adversary harvests a copy protected by quantum-vulnerable cryptography today and a{' '}
           <InlineTooltip term="CRQC">CRQC</InlineTooltip> arrives in {ESTIMATED_CRQC_YEAR}, any data
           that must remain confidential beyond {ESTIMATED_CRQC_YEAR} is{' '}
           <strong>already at risk</strong>. Use the table below as a quick reference.
@@ -237,7 +255,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           <table className="w-full text-xs border-collapse">
             <thead>
               <tr className="border-b border-border text-muted-foreground">
-                <th className="text-left py-2 pr-4 font-medium">Retention</th>
+                <th className="text-left py-2 pr-4 font-medium">Confidentiality period</th>
                 <th className="text-left py-2 pr-4 font-medium">Typical Years</th>
                 <th className="text-left py-2 pr-4 font-medium">HNDL Risk Year</th>
                 <th className="text-left py-2 font-medium">
@@ -368,21 +386,21 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     name: 'NIS2',
                     region: 'EU',
                     scope: 'Essential and important entities',
-                    req: 'Art. 21(2)(h) — explicit cryptography policies; ENISA covers PQC planning',
+                    req: 'Cyber risk-management duty: Art. 21(2)(h) requires cryptography policies; EU PQC Roadmap v1.1 coordinates Member State timelines',
                     deadline: '2024',
                   },
                   {
                     name: 'DORA',
                     region: 'EU',
                     scope: 'EU financial entities',
-                    req: 'Art. 9 — ICT security incl. cryptographic controls; enforced Jan 2025',
+                    req: 'Cyber risk-management duty: Art. 9 requires ICT cryptographic controls (enforced Jan 2025); no fixed PQC algorithm mandate',
                     deadline: '2025',
                   },
                   {
                     name: 'CNSA 2.0',
                     region: 'US NSS',
-                    scope: 'National Security Systems',
-                    req: 'Transition to QR algorithms for NSS expected to be complete by 2035 in line with NSM-10',
+                    scope: 'National Security Systems only',
+                    req: 'FAQ v2.2: new NSS acquisitions Jan 2027, phase-out Dec 2030, mandated Dec 2031; NSM-10 targets 2035. Federal civilian HVAs/high-impact systems follow EO 14412 & OMB M-26-15 (2030/2031) + directed FAR contractor rule; NIST IR 8547 (final Oct 2026) deprecates classical PKC after 2030 and disallows after 2035',
                     deadline: '2035',
                   },
                 ].map(({ name, region, scope, req, deadline }) => (
@@ -453,6 +471,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     origin: 'NIST / US Federal',
                     output: 'FIPS 199 impact level + SP 800-53 control gaps + risk score (1–25)',
                     audience: 'US federal agencies, government contractors, DoD',
+                    pqc: 'Maps FIPS 199 impact and SP 800-53 SC-12/SC-13 controls to NIST IR 8547 and EO 14412 / OMB M-26-15 migration targets',
                   },
                   {
                     name: 'ISO 27005',
@@ -461,6 +480,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     output:
                       'Risk level (Low–Critical) + risk treatment (Accept/Mitigate/Transfer/Avoid)',
                     audience: 'ISO 27001 certified orgs, international enterprises',
+                    pqc: 'Evaluates HNDL threat scenarios against ISO 27001 Annex A.8.24 cryptographic controls and documents risk treatment',
                   },
                   {
                     name: 'FAIR',
@@ -476,7 +496,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
                     origin: 'European Commission',
                     output: 'ICT resilience gap score (0–10) + compliance articles affected',
                     audience: 'EU financial entities, essential service operators',
-                    pqc: 'Article 9 (DORA) and Article 21 (NIS2) require crypto agility planning',
+                    pqc: 'Cyber risk-management duties (DORA Art. 9, NIS2 Art. 21(2)(h)) require documented crypto policies; EU PQC Roadmap v1.1 guides timelines',
                   },
                 ].map(({ name, detail, origin, output, audience, pqc }) => (
                   <tr key={name} className="border-b border-border/50">

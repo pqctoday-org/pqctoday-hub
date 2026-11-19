@@ -43,3 +43,7 @@ _Decode the certificate claim_ (CC and EUCC paths) and _Regulation-to-certificat
 ## Reading exact Security Target scope
 
 The claim decoder includes four source-reading cases from three Security Targets reviewed on 16 November 2026. Samsung S3D/S3K has a global EAL5 augmented claim and five separately identified EAL6 augmented sub-TSFs (PDF pages 29, 85). NesLib 6.11.6 on ST33K1M5C/ST33K1M5T C03 specifies LMS verification with LMOTS_SHA256_N32_W4 and LMS_SHA256_M32_H10 (pages 39, 57); ML-KEM mentions in objectives do not, by themselves, establish an evaluated operation and parameter set. Nuvoton NPCT7xx TPM2.0 rev 1.59 identifies product configuration 1.3.4.4 separately from Security Target revision 1.2 (pages 1, 10). The exercise asks learners to distinguish supported claims, contradicted scope and a specific unresolved evidence gap, correct a mistaken interpretation and apply the method to their production tools.
+
+## NIAP PQC profile table: scope and freshness
+
+The table’s 11 profile documents were read by 23 October 2026. On 18 November, the live NIAP profile index displayed 58 approved profiles, and NIAP’s homepage listed a 10 November notice titled “NIAP Postings Delay.” The table is a bounded snapshot and does not cover profile changes posted after 23 October. Check the current profile document and related Technical Decisions before making a certification decision. [NIAP profile index and announcements](https://www.niap-ccevs.org/)

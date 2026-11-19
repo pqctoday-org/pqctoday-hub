@@ -22,4 +22,4 @@ A security product certified under FIPS 140-3 can offer a hybrid key exchange as
 
 ## What's Happening
 
-Major tech companies, including Google and Cloudflare, have already deployed hybrid configurations (now X25519MLKEM768, which replaced the earlier X25519Kyber768Draft00) across Chrome and their web infrastructure, showing that hybrid key exchange runs at scale; Chrome reported about a 4% slower TLS handshake.
+Major tech companies, including Google and Cloudflare, have already deployed hybrid TLS key exchange (X25519MLKEM768, standardized as RFC 10024, replacing the earlier X25519Kyber768Draft00) across Chrome and web infrastructure at scale; Chrome reported about a 4% slower TLS handshake. On the certificate side, Composite ML-DSA is now published as RFC 10073, while Composite ML-KEM (`draft-ietf-lamps-pq-composite-kem-23`) is in the RFC Editor queue.

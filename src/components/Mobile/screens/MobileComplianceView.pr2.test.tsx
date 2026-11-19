@@ -58,7 +58,10 @@ describe('MobileComplianceView — deep-link PR 2', () => {
     fireEvent.click(screen.getByRole('button', { name: target.label }))
     expect(urlParams().get('reqfw')).toBe(target.id)
     expect(urlParams().get('tab')).toBe('requirements')
-    pressed(target.label)
+    expect(screen.getByRole('button', { name: target.label })).toHaveAttribute(
+      'aria-current',
+      'true'
+    )
   })
 
   it('says not-found for an unknown ?reqfw=, and dismissing clears it', () => {
@@ -98,7 +101,7 @@ describe('MobileComplianceView — deep-link PR 2', () => {
     expect(screen.queryByText('Nothing in scope yet')).toBeNull()
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(fw.label)
     expect(screen.getByTestId('deeplink-notice-widened')).toHaveTextContent(
-      'shown because the link named it'
+      'it is open for reference'
     )
   })
 

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { algorithmLaunchError } from '@/data/algorithmLaunch'
 import React, { Suspense, useEffect, useState } from 'react'
-import { useParams, useNavigate, useSearchParams, Link } from 'react-router'
+import { useLocation, useParams, useNavigate, useSearchParams, Link } from 'react-router'
+import { playgroundCatalogReturn } from '@/hooks/usePlaygroundCatalogState'
 import { ArrowLeft, ArrowRight, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
 import { NextStepCard } from '@/components/shared/NextStepCard'
@@ -27,6 +28,7 @@ import { PlaygroundCapabilityBanner } from './common/PlaygroundCapabilityBanner'
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
 
   // ?step=N opens a step-based workshop tool at that step (0-indexed) — the same
@@ -76,7 +78,12 @@ export const PlaygroundToolRoute = () => {
     )
   }
 
-  const handleBack = () => navigate('/playground')
+  const catalogReturn = playgroundCatalogReturn(location.state)
+  const handleBack = () =>
+    navigate(catalogReturn?.to ?? '/playground', {
+      state: catalogReturn?.state,
+      replace: Boolean(catalogReturn),
+    })
 
   // Wave B2 (2026-08-29) — the reverse of ModuleShell's "Related tool"
   // footer link, on the page a mobile module's "Practice on your phone"
@@ -101,7 +108,7 @@ export const PlaygroundToolRoute = () => {
       <div className="flex items-center gap-3 max-sm:flex-wrap">
         <Button variant="ghost" size="sm" onClick={handleBack}>
           <ArrowLeft className="w-4 h-4 mr-1" />
-          All Tools
+          {catalogReturn ? 'Back to tool results' : 'All Tools'}
         </Button>
         {relatedModuleId && relatedModuleTitle && (
           <Button variant="ghost" size="sm" onClick={() => navigate(tool.moduleLink)}>

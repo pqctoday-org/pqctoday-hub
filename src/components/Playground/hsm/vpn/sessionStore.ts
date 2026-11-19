@@ -14,13 +14,18 @@
  * softhsmv3 WASM build or intercepting C_* at the serialization boundary — out
  * of scope for this helper.
  */
-import type { IKEv2Mode } from '@/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants'
+import type {
+  IKEv2Mode,
+  KemSize,
+} from '@/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants'
 
 export interface VpnSessionRecord {
   id: string
   createdAt: number
   mode: IKEv2Mode
   authMode: 'psk' | 'dual'
+  initiatorKemSize?: KemSize
+  responderKemSize?: KemSize | null
   clientVariant: string
   serverVariant: string
   mtu: number

@@ -27,7 +27,12 @@ import {
   DATA_SHELF_LIFE_YEARS,
   type DataSensitivityClass,
 } from '@/utils/breachCostModel'
-import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
+import {
+  describeIndustryBreachBaseline,
+  formatBreachBaselineUSD,
+  getIndustryBreachBaselineSourceId,
+  INDUSTRY_BREACH_BASELINES,
+} from '@/data/roiBaselines'
 import {
   probabilityProvenance,
   probabilityProvenanceMarkdown,
@@ -81,6 +86,10 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
   const [sampleRevision, setSampleRevision] = useState(0)
   const [sampleInputs, setSampleInputs] = useState<Partial<BreachScenarioInputs> | undefined>()
   const [modelInputs, setModelInputs] = useState<BreachScenarioInputs | null>(null)
+  const baselineProvenance = useMemo(
+    () => describeIndustryBreachBaseline(selectedIndustry),
+    [selectedIndustry]
+  )
   const [breachCosts, setBreachCosts] = useState<{
     classicalCost: number
     quantumCost: number
@@ -117,7 +126,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
     const items: string[] = []
 
     items.push(
-      `A CRQC (cryptographically relevant quantum computer) has a ${Math.round(breachCosts.pCrqc * 100)}% chance of existing within the planning horizon (consensus scenario, GRI 2025) — the probability-weighted expected annual loss for the ${selectedIndustry} sector is ${fmtCurrency(breachCosts.quantumALE)}.`
+      `Under the GRI 2025 consensus survey band (interpolated by this model), a CRQC (cryptographically relevant quantum computer) is modeled with a ${Math.round(breachCosts.pCrqc * 100)}% scenario weight within the planning horizon — the scenario-weighted expected annual loss for the ${selectedIndustry} sector is ${fmtCurrency(breachCosts.quantumALE)}.`
     )
 
     if (breachCosts.alreadyLate) {
@@ -201,10 +210,10 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
       for (const f of findings) md += `- ${f}\n`
       md += `\n`
     }
-    md += `*Illustrative — IBM Cost of a Data Breach 2025 per-sector baselines (one edition behind; IBM published its 2026 global report) and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
-    md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
+    const { label, source } = baselineProvenance
+    md += `*Starting breach benchmark: ${formatBreachBaselineUSD(INDUSTRY_BREACH_BASELINES[selectedIndustry])} — ${source ? `[${label}](${source})` : label}. Quantum likelihood uses the Global Risk Institute Quantum Threat Timeline 2025.*\n`
     return md
-  }, [breachCosts, selectedIndustry, findings, modelInputs])
+  }, [breachCosts, selectedIndustry, baselineProvenance, findings, modelInputs])
 
   // Shared with the export below (`output:`) so Board Pitch Builder can read
   // the same numbers whether it's chained live via props (in the linear
@@ -215,6 +224,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
         ? {
             industry: selectedIndustry,
             classicalCostUSD: breachCosts.classicalCost,
+            breachBaselineSourceId: getIndustryBreachBaselineSourceId(selectedIndustry),
             quantumCostUSD: breachCosts.quantumCost,
             deltaUSD: breachCosts.delta,
             pCrqc: breachCosts.pCrqc,
@@ -409,7 +419,12 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
             ],
             ...findings.map((finding) => ['Interpretation', 'Finding', finding, '']),
             ['Method', 'Assumptions and limitations', breachScenarioMethodMarkdown(), ''],
-            ['Method', 'Baseline limitation', IBM_BASELINE_UNVERIFIED_NOTE, ''],
+            [
+              'Method',
+              'Starting breach benchmark',
+              baselineProvenance.label,
+              baselineProvenance.source ?? '',
+            ],
           ])}
           onExport={() =>
             addExecutiveDocument({
@@ -443,19 +458,21 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           <div className="mt-3 space-y-2 text-xs text-muted-foreground leading-relaxed">
             <p>
               <strong className="text-foreground/80">1. Cost of one breach today (SLE).</strong> The
-              industry-average total breach cost from{' '}
-              <a
-                href="https://www.ibm.com/reports/data-breach"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-foreground"
-              >
-                IBM&apos;s Cost of a Data Breach Report 2025
-              </a>
-              , multiplied by your severity setting. IBM&apos;s figure already includes detection,
-              notification, lost business and reputational damage, so no separate reputational term
-              is added on top — that would double-count.{' '}
-              <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
+              model starts with{' '}
+              {baselineProvenance.source ? (
+                <a
+                  href={baselineProvenance.source}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-foreground"
+                >
+                  {baselineProvenance.label}
+                </a>
+              ) : (
+                baselineProvenance.label
+              )}
+              . The severity and geography settings adjust that benchmark. IBM’s total includes
+              detection, notification and lost business.
             </p>
             <p>
               <strong className="text-foreground/80">

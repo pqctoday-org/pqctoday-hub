@@ -39,4 +39,11 @@ describe('IAMPQCExercises', () => {
     expect(text).toMatch(/not the KRBTGT key a Golden Ticket needs/i)
     expect(text).toMatch(/classical weaknesses, not quantum threats/i)
   })
+
+  it('does not confuse Windows cryptography APIs with Entra token-signing deployment', () => {
+    const text = exerciseText()
+    expect(text).toMatch(/does not establish that Microsoft Entra has deployed PQC token signing/i)
+    expect(text).toMatch(/2033 target for the full Entra authentication transition/i)
+    expect(text).toMatch(/feature-specific availability/i)
+  })
 })

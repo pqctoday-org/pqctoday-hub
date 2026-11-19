@@ -2,15 +2,15 @@
 
 ## What This Is About
 
-A Software Bill of Materials (SBOM) is a machine-readable ingredients list for software: every package and library a product depends on, its version, its supplier, and how the pieces connect. It's the software equivalent of the ingredients label on a food package — except most organizations don't have one yet.
+A Software Bill of Materials (SBOM) is a machine-readable inventory of software components within a product's stated scope, with fields such as component name, version, supplier or producer, and dependency relationships. Its coverage depends on how the SBOM is generated, reviewed and maintained; it should not be assumed to list every dependency automatically.
 
 ## Why It Matters
 
-When a vulnerability is found in a widely-used library, the first question is always "do we use that, and where?" Without an SBOM, answering that takes days of digging. With one, it's a search. That's also why an SBOM is a required input to a Cryptography Bill of Materials (CBOM): you can't build a complete list of the cryptography inside your software without first knowing what software you're running.
+When a vulnerability is found in a widely-used library, teams need to determine whether it appears in their products and where. A current, sufficiently complete SBOM can make that search easier, but it does not prove that a vulnerable code path is reachable or that the inventory is complete. An SBOM is one useful input to a Cryptography Bill of Materials (CBOM), alongside crypto-scanner results, certificate and key inventories, runtime observation and manual investigation; it is not a mandatory prerequisite or a complete crypto inventory by itself.
 
 ## The Key Takeaway
 
-An SBOM only becomes useful when it lists the right fields consistently (supplier, name, version, and how components depend on each other), is paired with a VEX statement so a listed vulnerability doesn't trigger a false alarm, and is treated as an input other disciplines build on — not a one-off compliance checkbox.
+A useful SBOM records consistent component identifiers, versions, provenance and dependency relationships for its stated scope, and is kept current. VEX adds product-specific status and justification to vulnerability findings; neither an SBOM nor VEX alone proves exploitability or non-exploitability. Treat an SBOM as an operational input that downstream disciplines can combine with other evidence, not as a one-off compliance checkbox.
 
 ## What's Happening
 

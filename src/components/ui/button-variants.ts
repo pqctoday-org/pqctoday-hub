@@ -14,7 +14,9 @@ export const buttonVariants = cva(
         // 4.5:1 WCAG AA floor, so every secondary button's label failed axe. Every
         // other `bg-secondary` surface in the codebase already uses
         // `text-secondary-foreground`; this variant was the outlier.
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        // /80 blends the light-mode purple against the page to ~3.9:1 with
+        // white text. /90 stays above 4.5:1 while preserving the hover cue.
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90',
         ghost: 'hover:bg-muted/20 hover:text-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         gradient:

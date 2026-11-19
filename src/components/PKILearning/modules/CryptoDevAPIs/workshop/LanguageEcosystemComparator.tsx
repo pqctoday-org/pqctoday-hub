@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo } from 'react'
+import { Link } from 'react-router'
+import { PYTHON_SIGNATURE_EXERCISE_PATH } from '@/data/pythonWorkbench'
 import { ChevronDown, ChevronUp, CheckSquare, Square } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { DEV_LANGUAGES, type DevLanguage, type MemorySafety } from '../data/languageData'
@@ -68,12 +70,14 @@ const LangCard: React.FC<LangCardProps> = ({
             <Button
               variant="ghost"
               onClick={onToggleSelect}
+              aria-label={`Select ${lang.name} for comparison`}
+              aria-pressed={isSelected}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               {isSelected ? (
-                <CheckSquare size={20} className="text-primary" />
+                <CheckSquare size={20} className="text-primary" aria-hidden="true" />
               ) : (
-                <Square size={20} />
+                <Square size={20} aria-hidden="true" />
               )}
             </Button>
           )}
@@ -95,6 +99,20 @@ const LangCard: React.FC<LangCardProps> = ({
 
     {isExpanded && (
       <div className="border-t border-border p-4 space-y-4">
+        {lang.id === 'python' && (
+          <div className="space-y-1 text-sm">
+            <p>
+              Run a real ML-DSA-65 signing and verification call through the browser’s PKCS#11
+              adapter. Edit the message passed to verification and inspect the result.
+            </p>
+            <Link
+              to={PYTHON_SIGNATURE_EXERCISE_PATH}
+              className="font-medium text-primary underline"
+            >
+              Edit and test Python signature verification
+            </Link>
+          </div>
+        )}
         <div>
           <h4 className="font-semibold text-sm text-foreground mb-1">Memory Safety</h4>
           <p className="text-sm text-muted-foreground">{lang.memorySafetyDescription}</p>

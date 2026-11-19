@@ -17,7 +17,7 @@ import {
 } from './pitchVariants/sectionDefaults'
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
-import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
+import { IBM_BREACH_BENCHMARK_SCOPE } from '@/data/roiBaselines'
 import { productCountOutputNote } from './roiProductCount'
 
 const MODULE_ID = 'pqc-business-case'
@@ -206,7 +206,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     '',
     '- **Proposal figures** — entered estimates require a scope, model or quotation reference, reporting date and accountable owner. Catalogue coverage does not establish an estate cost.',
     effectiveRoiOutput || effectiveBreachOutput || effectiveInactionOutput
-      ? `- **Imported financial scenarios** — inspect the saved model inputs and their baseline sources before adapting them. ${IBM_BASELINE_UNVERIFIED_NOTE}`
+      ? `- **Imported financial scenarios** — inspect the saved model inputs and their baseline sources before adapting them. ${IBM_BREACH_BENCHMARK_SCOPE}`
       : '- **Financial models** — no ROI, breach or delay-model output is attached; figures entered in this proposal have not been checked by a model.',
     '- **Funding** — distinguish total programme cost, existing commitments, the incremental request and gate-linked release conditions.',
     '',

@@ -9,14 +9,14 @@ import type { QuizQuestion } from '../../learnkit/QuizCard'
 export const TPM_QUIZZES: Record<string, QuizQuestion[]> = {
   'boot-discover': [
     {
-      q: 'GetCapability listed RSA (0x0001) and ML-KEM (0x00A0) in the same response. What does that say about V1.85?',
+      q: 'The software TPM emulator returned RSA (0x0001) and ML-KEM (0x00A0) in the same response. What does that show about V1.85?',
       options: [
         'V1.85 removed classical algorithms and emulates them for compatibility',
-        'V1.85 EXTENDED the algorithm table — classical and post-quantum coexist in one chip, and migration is coexistence, not replacement',
+        'V1.85 extends the algorithm table so classical and post-quantum algorithms can coexist; this emulator result does not prove hardware support',
         'The emulator is misconfigured; a real TPM only reports one family',
       ],
       answer: 1,
-      why: 'You read the live table: 36 algorithms spanning both eras. V1.85 added ML-KEM/ML-DSA alongside RSA/ECC — which is exactly what makes staged, hybrid migrations possible on real hardware.',
+      why: 'You read the local emulator response: 36 algorithms spanning both eras. V1.85 adds ML-KEM/ML-DSA alongside RSA/ECC. Check physical TPMs against their own reported capabilities and claimed profile.',
     },
     {
       q: 'Re-running TPM2_Startup produced TPM_RC_INITIALIZE (0x100). Why does this playground count that step as SUCCESSFUL?',
@@ -34,7 +34,7 @@ export const TPM_QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'The lesson measured the RSA-2048 public key at 256 B and ML-KEM-768 at 1184 B. Where did those numbers come from?',
       options: [
         'From a lookup table of spec constants shown for illustration',
-        'From the unique.size field of each live TPM2_CreatePrimary response — measured, not quoted',
+        'From the unique.size field of each actual response from the local software TPM emulator — measured, not quoted',
         'From the browser estimating typical key sizes',
       ],
       answer: 1,
@@ -44,11 +44,11 @@ export const TPM_QUIZZES: Record<string, QuizQuestion[]> = {
       q: 'What stayed EXACTLY the same between the RSA and ML-KEM key creations?',
       options: [
         'The public key size and the parameter fields',
-        'Deterministic derivation from hierarchy seed + template, and hardware non-exportability (fixedTPM)',
+        'The emulator reports the fixedTPM attribute and follows hierarchy-based primary-key derivation; that is not evidence of hardware key protection',
         'The hierarchy used — both keys went to the Endorsement hierarchy',
       ],
       answer: 1,
-      why: 'The trust model is era-independent: same seed derivation, same fixedTPM non-exportability. The template type (and the resulting sizes) changed; the RSA key went to Owner and the ML-KEM EK to Endorsement, and sizes obviously differ.',
+      why: 'This compares the emulator’s behavior and returned attributes only. A fixedTPM flag in a software emulator does not demonstrate a physical TPM’s non-exportability or hardware trust properties.',
     },
   ],
   'key-establishment': [
@@ -79,10 +79,10 @@ export const TPM_QUIZZES: Record<string, QuizQuestion[]> = {
       options: [
         'Purely for naming clarity',
         'V1.85 gave PQC signing its own command surface with its own layouts — e.g. the ML-DSA input is a 64-byte external µ, not a 32-byte scheme-hash digest, and the signature union has no embedded hash field',
-        'TPM2_Sign was deprecated and removed in V1.85',
+        'TPM2_Sign already accepts ML-DSA’s external µ and signature format',
       ],
       answer: 1,
-      why: 'You ran both: TPM2_Sign took a 32 B digest + RSASSA scheme; TPM2_SignDigest took a 64 B µ and returned a 3309 B signature whose structure has no hash-algorithm field (errata §2.3: its scheme union is TPMS_EMPTY). Different command, different contract.',
+      why: 'You ran both: TPM2_Sign took a 32 B digest + RSASSA scheme; TPM2_SignDigest took a 64 B µ and returned a 3309 B signature whose structure has no hash-algorithm field (errata §2.3: its scheme union is TPMS_EMPTY). Version 1.85 deprecated TPM2_Sign but still defines it; its deprecation did not cause its removal. The new command has a different contract for PQC.',
     },
     {
       q: 'The two verification tickets carried different tags (0x8022 vs 0x8027). What is that distinction FOR?',

@@ -20,7 +20,12 @@ import { FlagButton } from '@/components/ui/FlagButton'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
-import { filingJurisdictionLabel, PUBLICATION_KIND_HINT } from '@/data/patentFilters'
+import {
+  filingJurisdictionLabel,
+  PUBLICATION_KIND_HINT,
+  USPTO_PUBLIC_SEARCH,
+  publicationScope,
+} from '@/data/patentFilters'
 import { inventorLeadersFor } from './patentInventorLeaders'
 import { findAlgorithmByRef, loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { standardRefHref } from '@/utils/standardRef'
@@ -377,6 +382,18 @@ export function PatentDetail({
             </a>
           </div>
           <h2 className="text-sm font-semibold text-foreground leading-snug">{patent.title}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {publicationScope(patent)}{' '}
+            <a
+              href={USPTO_PUBLIC_SEARCH}
+              className="text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Look up {patent.patentNumber} at USPTO
+            </a>
+            .
+          </p>
           {patent.assignee ? (
             <p className="mt-0.5 text-xs text-muted-foreground">{patent.assignee}</p>
           ) : (
@@ -802,14 +819,7 @@ export function PatentDetail({
             Questions to take to your counsel
           </summary>
           <ul className="mt-2 list-disc space-y-1 pl-4 leading-relaxed">
-            <li>
-              Is this a granted patent, or a published application whose claims are still under
-              examination? This record is{' '}
-              {patent.publicationKind === 'published_application'
-                ? 'a published application'
-                : 'a granted patent'}
-              .
-            </li>
+            <li>What does the current official record say about this application or grant?</li>
             <li>
               Do the claims cover the standardised algorithm itself, or one implementation, protocol
               or hardware design that a product may or may not use?

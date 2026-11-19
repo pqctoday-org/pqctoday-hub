@@ -101,6 +101,29 @@ describe('enforceGrounding', () => {
     expect(enforceGrounding(answer, [], chunks)).toEqual({ approved: true, reasons: [] })
   })
 
+  it('rejects an empty supporting excerpt even when the source exists', () => {
+    const claim = 'The training deployment has an approved rollout.'
+    const citations = [{ claimExcerpt: claim, evidenceExcerpt: '  ', chunkId: 'algo-ml-kem' }]
+    expect(enforceGrounding(claim, citations, chunks).reasons).toContain('invalid-evidence')
+    expect(salvageGroundedClaims(claim, citations, chunks)).toBeNull()
+  })
+
+  it('requires evidence for a short factual sentence', () => {
+    const claim = 'ML-KEM is a key encapsulation mechanism standardized in FIPS 203.'
+    const result = enforceGrounding(
+      `${claim} Approved.`,
+      [{ claimExcerpt: claim, chunkId: 'algo-ml-kem' }],
+      chunks
+    )
+    expect(result.reasons).toContain('uncited-statement')
+  })
+
+  it('requires citations if a refusal also asserts a finding', () => {
+    const answer =
+      "Based on the PQC Today database, I don't have enough information about this topic. Production use is approved."
+    expect(enforceGrounding(answer, [], chunks).approved).toBe(false)
+  })
+
   it('provides a deterministic safe fallback', () => {
     expect(buildGroundingFailureResponse()).toContain("couldn't produce a fully source-verified")
   })

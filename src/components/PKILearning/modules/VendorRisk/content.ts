@@ -12,9 +12,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'vendor-risk',
-  version: '1.0.2',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-09',
+  version: '1.0.3',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. This module is about supply-chain scoring and
@@ -68,9 +68,9 @@ export const content: ModuleContent = {
     keyConcepts:
       'Vendor PQC Scorecard — six weighted dimensions: PQC Algorithm Support (25%), FIPS 140-3 Validation (20%), Published PQC Roadmap (15%), Crypto Agility (15%), SBOM/CBOM Delivery (10% — see the sbom and cbom modules for what each artifact actually contains), Hybrid Mode Support (15%).',
     workshopSummary:
-      'The workshop has 3 interactive steps: Vendor Scorecard Builder — interactive scorecard with 6 weighted slider dimensions; FIPS validation auto-scored from migration catalog data; saves assessment as executive document. Contract Clause Generator — 5-section artifact builder producing legal-style contract articles (PQC Timeline, FIPS Validation, CBOM Delivery, Crypto Change Notification, Audit Rights) with customizable parameters.',
+      'The workshop has 4 interactive steps: Step 1: Your Infrastructure — select products from the migration catalog to scope your vendor portfolio. Step 2: Vendor Scorecard Builder — interactive scorecard with 6 weighted dimensions; FIPS validation auto-scored from catalog data; saves assessment as an executive document. Step 3: Contract Clause Generator — 5-section artifact builder producing legal-style contract articles (PQC Timeline, FIPS Validation, CBOM Delivery, Crypto Change Notification, Audit Rights) with customizable parameters. Step 4: Supply Chain Risk Matrix — heatmap visualization of vendor PQC, FIPS, and hybrid readiness across infrastructure layers.',
     relatedStandards:
-      "NIST SP 800-161 (Cybersecurity Supply Chain Risk Management). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). CycloneDX CBOM Specification — this hub's OWASP CycloneDX CBOM Guide citation is deprecated pending re-capture of the source page, not because the guide changed (not sourced in the Library). FIPS 140-3 (Security Requirements for Cryptographic Modules)",
+      "NIST SP 800-161 (Cybersecurity Supply Chain Risk Management). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards; final, October 2026). NSA CNSA 2.0 FAQ v2.2 (US National Security Systems). EO 14412 & OMB M-26-15 (US federal civilian mandate + directed FAR contractor rule). EU PQC Roadmap v1.1 and DORA/NIS2 (EU ICT third-party cyber risk-management duties). CycloneDX CBOM Specification — this hub's OWASP CycloneDX CBOM Guide citation is deprecated pending re-capture of the source page, not because the guide changed (not sourced in the Library). FIPS 140-3 (CMVP module-level validation vs. ACVP algorithm testing).",
   },
 }
 

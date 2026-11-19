@@ -70,7 +70,13 @@ export const VerificationClosureIntroduction: FC<Props> = ({ onNavigateToWorksho
           <strong>2030</strong> and disallows it under NIST standards after <strong>2035</strong>;{' '}
           <strong>NCSC-UK</strong> sets phased targets — 2028 (discovery + plan), 2031
           (highest-priority migration), 2035 (complete); <strong>NIST SP 800-131A</strong> carries
-          the transition rules.
+          the transition rules. Keep regulatory scopes distinct when setting retirement dates:{' '}
+          <strong>CNSA 2.0 FAQ v2.2</strong> binds U.S. National Security Systems (acquisitions 1
+          Jan 2027, phase-out 31 Dec 2030, mandated 31 Dec 2031);{' '}
+          <strong>EO 14412 &amp; OMB M-26-15</strong> bind U.S. federal civilian HVAs/high-impact
+          systems (key establishment 2030, signatures 2031) and direct a proposed FAR contractor
+          rule; <strong>EU PQC Roadmap v1.1</strong> coordinates Member State timelines alongside{' '}
+          <strong>DORA/NIS2</strong> cyber risk-management duties.
         </p>
         <p>
           The discipline is four steps: <strong>deprecate → remove → verify removed → log</strong>.
@@ -99,6 +105,11 @@ export const VerificationClosureIntroduction: FC<Props> = ({ onNavigateToWorksho
           <Badge kind="std" />
           The control basis is independent: <strong>NIST CSWP 48</strong> (draft) maps the NCCoE
           Migration-to-PQC capabilities to <strong>CSF 2.0</strong> and <strong>SP 800-53</strong>.
+          When verifying vendor-supplied cryptographic modules, distinguish{' '}
+          <strong>ACVP algorithm conformance</strong> (mathematical test vectors) from{' '}
+          <strong>active CMVP FIPS 140-3 module validation</strong> (certificate status, module
+          version, and Security Policy operational environment). A vendor marketing claim or a Hub
+          sample export is never verification evidence.
         </p>
       </Section>
 

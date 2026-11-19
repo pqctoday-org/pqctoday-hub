@@ -182,16 +182,19 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
               <p>1,184-byte public keys</p>
               <p>AES-256-CTR encryption</p>
               <p>HMAC-SHA3-256 integrity</p>
-              <p className="text-warning font-medium pt-1">Proposed (not 3GPP)</p>
+              <p className="text-warning font-medium pt-1">
+                Research/demo — not adopted in TS 33.501
+              </p>
             </div>
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          Profile C is not a 3GPP profile: TS 33.501 Annex C defines Profiles A and B and stops
-          there. The name comes from a research proposal (Khan, Purification & Chang, Information
-          2025, 16, 617), which uses ML-KEM (Kyber-512). The parameters on this card, including
-          ML-KEM-768, and the hybrid (X25519 + ML-KEM) mode that this playground adds, are the
-          playground&apos;s own, not the proposal&apos;s and not 3GPP&apos;s.
+          Profile C is not an adopted normative profile in the cited TS 33.501 Annex C, which
+          defines the null scheme and Profiles A and B. The name comes from a research proposal
+          (Khan, Purification & Chang, Information 2025, 16, 617), which uses ML-KEM (Kyber-512).
+          The parameters on this card, including ML-KEM-768, and the hybrid (X25519 + ML-KEM) mode
+          that this playground adds, are the playground&apos;s own, not the proposal&apos;s and not
+          3GPP&apos;s.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           TS 33.501 caps the output of a proprietary protection scheme at 3000 octets plus the size
@@ -225,8 +228,8 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">f2</span>
             <span className="text-foreground/80">
-              <strong className="text-primary">XRES</strong> — Expected response (network verifies
-              the USIM is genuine)
+              <strong className="text-primary">RES</strong> — Subscriber response from f2; the
+              network derives its expected response for 5G-AKA (RES*/XRES*)
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -269,16 +272,19 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           Before a subscriber can connect, their keys must be securely generated, written to the
-          USIM, and delivered to the mobile operator. This supply chain is a critical trust boundary
-          — if keys are leaked during manufacturing or transport, all subsequent security is
-          compromised.
+          USIM, and delivered to the mobile operator. Disclosure of a subscriber&apos;s K can
+          compromise that subscription&apos;s later authentication. The sequence below is an
+          illustrative process, not a 3GPP-mandated manufacturing design; GSMA PQ.03 notes that key
+          generation is often performed in an HSM and that MNO–UICC-vendor transport commonly uses
+          TLS.
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-border text-sm space-y-2">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">1.</span>
             <span className="text-foreground/80">
               <strong className="text-primary">Generate K</strong> — 128-bit subscriber key created
-              in the factory HSM (TRNG)
+              under the operator/vendor&apos;s approved key-generation process (the owner and
+              equipment depend on deployment)
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -298,15 +304,17 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">4.</span>
             <span className="text-foreground/80">
-              <strong className="text-warning">Encrypt for Transport</strong> — K encrypted with a
-              pre-agreed Transport Key (eK)
+              <strong className="text-warning">Encrypt for Transport</strong> — protect the
+              provisioning record with a transport key established for the parties; this sample uses
+              a temporary browser-local AES-GCM key
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-mono text-xs">5.</span>
             <span className="text-foreground/80">
-              <strong className="text-success">Import at Operator</strong> — HSM decrypts eK; K
-              stored encrypted in subscriber database for authentication
+              <strong className="text-success">Import at Operator</strong> — authenticated
+              decryption and protected import of K; the sample validates an in-memory record and
+              writes no subscriber database
             </span>
           </div>
         </div>
@@ -356,25 +364,56 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>MILENAGE / 5G-AKA (AES-128)</li>
               <li>SIM provisioning (AES symmetric)</li>
-              <li>Profile C (ML-KEM lattice-based; proposed, not 3GPP)</li>
+              <li>Profile C (ML-KEM lattice-based; research/demo, not adopted in TS 33.501)</li>
             </ul>
           </div>
         </div>
         <p className="text-foreground/80 leading-relaxed mb-4 text-sm">
-          Profile C is a proposed migration path to quantum-resistant subscriber privacy. The
-          research proposal replaces ECDH key agreement with ML-KEM (Kyber-512) encapsulation; this
-          playground implements ML-KEM-768 and adds a hybrid transition mode (X25519 + ML-KEM-768)
-          next to a pure PQC target mode, and the ML-KEM-768 parameter set and the hybrid mode are
-          the playground&apos;s own, not the proposal&apos;s and not 3GPP&apos;s.
+          Profile C is an educational example of a post-quantum SUCI design. The research proposal
+          replaces ECDH key agreement with ML-KEM (Kyber-512) encapsulation; this playground
+          implements ML-KEM-768 and adds a hybrid transition mode (X25519 + ML-KEM-768) next to a
+          pure PQC target mode. These parameter and combiner choices belong to this playground, not
+          the research paper or an adopted 3GPP TS profile.
         </p>
         <p className="text-foreground/80 leading-relaxed mb-4 text-sm">
-          Telecom bodies have published post-quantum guidance and specifications, although TS 33.501
-          (Release 19, V19.5.0, February 2026) defines no post-quantum protection scheme for
-          subscriber identities. GSMA&apos;s PQ.03 guidelines for telecom use cases present a phased
-          approach to migration, and ETSI TS 103 744 covers quantum-safe hybrid key establishment.
-          3GPP&apos;s SA3 security group has started a study of the transition to post-quantum
-          cryptography (TR 33.703); this is separate from TR 33.938, which is an inventory of the
-          cryptography used in the 3GPP specifications for the 5G System in standalone mode.
+          Telecom bodies have published post-quantum guidance and specifications. The lesson&apos;s
+          cited TS 33.501 PDF (Release 19, V19.7.0, February 2026) contains no post-quantum SUCI
+          profile; 3GPP&apos;s official record lists a later Release 20 V20.3.0 version, so check
+          the current approved text before deployment. GSMA&apos;s PQ.03 guidelines for telecom use
+          cases present a phased approach to migration, and ETSI TS 103 744 covers quantum-safe
+          hybrid key establishment. 3GPP&apos;s SA3 security group is studying the transition to
+          post-quantum cryptography (TR 33.703), which is under change control. A dedicated Release
+          20 &quot;Post-quantum Cryptography Migration for SUCI&quot; work item was PCG-approved and
+          is scheduled through 3 March 2027. These are active study and work-item milestones, not an
+          adopted post-quantum SUCI profile. This work is separate from TR 33.938, the inventory of
+          cryptography used in 5G standalone specifications. See the{' '}
+          <a
+            href="https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=4422"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            TR 33.703 status
+          </a>{' '}
+          and the{' '}
+          <a
+            href="https://portal.3gpp.org/desktopmodules/WorkItem/WorkItemDetails.aspx?workitemId=1130028"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            SUCI migration work item
+          </a>
+          . See the{' '}
+          <a
+            href="https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=3169"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            current TS 33.501 version record
+          </a>
+          .
         </p>
         <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs space-y-1 mb-4">
           <p className="font-bold text-foreground/80">

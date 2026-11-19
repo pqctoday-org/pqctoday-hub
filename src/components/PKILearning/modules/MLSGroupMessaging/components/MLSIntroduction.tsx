@@ -61,9 +61,9 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
           <h3 className="font-semibold">PQ ciphersuites</h3>
           <p className="text-sm text-muted-foreground mt-1">
             <span className="text-foreground">draft-ietf-mls-pq-ciphersuites-07</span> (1 November
-            2026) registers eleven ML-KEM cipher suites, hybrid and pure; the list of suites is
-            unchanged from -06. On 8 November 2026 its datatracker page shows IESG state
-            &ldquo;Publication Requested&rdquo;.
+            2026) proposes eleven hybrid and pure ML-KEM cipher suites. The first eight retain
+            traditional signatures. Their post-quantum confidentiality claim covers passive
+            attackers.
           </p>
         </div>
         <div className="glass-panel p-4">

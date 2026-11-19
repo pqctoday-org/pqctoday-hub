@@ -25,6 +25,8 @@ import {
   TPM_CAP_HANDLES,
   TPM_CC_Startup,
   TPM_CC_RSA_Decrypt,
+  OBJ_DECRYPT,
+  OBJ_SIGN,
   type DemoCommandExtras,
 } from '../../../../wasm/tpmSerializer'
 import { getRcInfo } from '../tpmCommandDefs'
@@ -126,9 +128,9 @@ export const TPM_LESSONS: TpmLesson[] = [
     n: 1,
     tag: 'Core',
     tone: 'ok',
-    title: 'Boot & discover — one chip, two cryptographic eras',
+    title: 'Boot & discover — one software TPM, two cryptographic eras',
     blurb:
-      'The TPM booted when this page loaded. These steps interrogate the live chip: self-test, then the algorithm table — where RSA (0x0001) and ML-KEM (0x00A0) sit side by side — and finally a deliberate rule-break to see what an honest TPM refusal looks like.',
+      'The browser started a local software TPM emulator when this page loaded. These steps send actual TPM wire commands to that emulator: self-test, read its algorithm table, then make an invalid request to observe a specified refusal. This exercises the protocol and software engine; it does not probe a physical TPM.',
     setup:
       'TCG V1.85 (published March 2026) did not replace the TPM command set — it EXTENDED it. Everything classical still works; the PQC algorithms and commands were added alongside. GetCapability is the migration story in one response.',
     steps: [
@@ -159,7 +161,7 @@ export const TPM_LESSONS: TpmLesson[] = [
             )
           }
           return {
-            detail: `${count} algorithms registered. Classical: RSA (0x0001) ✓, ECC (0x0023) ${has(0x0023) ? '✓' : '✗'}. Post-quantum: ML-KEM (0x00A0) ✓, ML-DSA (0x00A1) ✓, HashML-DSA (0x00A2) ${has(0x00a2) ? '✓' : '✗'}. One chip, two eras — migration is coexistence, not replacement.`,
+            detail: `${count} algorithms registered by this software TPM. Classical: RSA (0x0001) ✓, ECC (0x0023) ${has(0x0023) ? '✓' : '✗'}. Post-quantum: ML-KEM (0x00A0) ✓, ML-DSA (0x00A1) ✓, HashML-DSA (0x00A2) ${has(0x00a2) ? '✓' : '✗'}. The protocol supports coexistence; this emulator result does not establish support on physical TPMs.`,
           }
         },
       },
@@ -184,19 +186,19 @@ export const TPM_LESSONS: TpmLesson[] = [
             )
           }
           return {
-            detail: `TPM_PT_REVISION=${revision} (Library v1.85), TPM_PT_YEAR=${year} (shall be zero per Errata v1 §2.1), errata level=${errata} (TPM_SPEC_ERRATA, the slot that used to be TPM_SPEC_DAY_OF_YEAR). This is a REAL capability query, not a claim — every TPM you meet in the field should answer the same way if it truly implements the published spec, not just its command set.`,
+            detail: `TPM_PT_REVISION=${revision} (Library v1.85), TPM_PT_YEAR=${year} (shall be zero per Errata v1 §2.1), errata level=${errata} (TPM_SPEC_ERRATA, the slot that used to be TPM_SPEC_DAY_OF_YEAR). This is an actual capability query to the local software TPM. Physical TPMs can implement earlier Library versions; check each device's reported properties and the platform profile it claims.`,
           }
         },
       },
       {
         op: 'TPM2_GetRandom(32)',
-        label: 'Draw 32 bytes from the shared entropy source',
+        label: 'Request 32 bytes from the software TPM emulator',
         run: async (ctx) => {
           const resp = await execOk(ctx, buildGetRandomCmd(32))
           const size = getU16(resp, 10)
           const preview = toHex(resp.slice(12, 12 + Math.min(size, 8)))
           return {
-            detail: `${size} B of DRBG output (first 8: ${preview} …). Classical and PQC key generation both draw from this same source — entropy quality is era-independent.`,
+            detail: `${size} B returned by the local software TPM emulator (first 8: ${preview} …). This response-length check does not assess entropy quality, seeding, isolation, or physical TPM behavior.`,
           }
         },
       },
@@ -218,15 +220,15 @@ export const TPM_LESSONS: TpmLesson[] = [
         same: false,
       },
       { label: 'Command set', a: 'unchanged', b: '+ 8 new PQC commands', same: false },
-      { label: 'Entropy source', a: 'TPM DRBG', b: 'TPM DRBG (same)', same: true },
+      { label: 'Random-number interface', a: 'TPM2_GetRandom', b: 'TPM2_GetRandom', same: true },
     ],
     compareHeaders: ['', 'Pre-quantum TPM 2.0', 'V1.85'],
     notes: [
-      'TPM_RC_INITIALIZE (0x100) on the double-Startup is the TPM enforcing its state machine — a specified, honest refusal, not a crash. This playground treats expected refusals as SUCCESSFUL outcomes.',
+      'GetRandom comparison describes the TPM command interface; this emulator does not validate hardware entropy or a device RNG implementation. TPM_RC_INITIALIZE (0x100) on the double-Startup is the TPM enforcing its state machine — a specified, honest refusal, not a crash. This playground treats expected refusals as SUCCESSFUL outcomes.',
       'The GetCapability(TPM_CAP_TPM_PROPERTIES) step above is live proof, not an assertion: Errata v1 §2.1 retired TPM_SPEC_DAY_OF_YEAR in favor of TPM_SPEC_ERRATA and requires TPM_SPEC_YEAR=0 — this engine used to fail that check silently (TPM_PT_REVISION reported 183, not 185) until the 2026-07-24 spec-alignment audit caught it.',
     ],
     whyItMatters:
-      'Migration planning starts with discovery. On real estates you will run exactly this capability query against thousands of TPMs to learn which ones already speak ML-KEM/ML-DSA — the PC Client PTP v1.07 profile (published 2026) makes them mandatory for new PC-class TPMs, but the installed base is a mix.',
+      'For a real estate inventory, query each device and record its reported Library version, algorithms, and platform profile rather than inferring them from this emulator. The PC Client PTP 1.07 profile makes ML-KEM and ML-DSA mandatory for devices claiming conformance to that profile; older installed devices can differ.',
     tryRef: ['builder'],
   },
 
@@ -238,7 +240,7 @@ export const TPM_LESSONS: TpmLesson[] = [
     tone: 'primary',
     title: 'Create primary keys — same trust model, new math',
     blurb:
-      'Create an RSA-2048 key and an ML-KEM-768 key in the live TPM and read back what each actually produced. The hierarchy seeds, deterministic derivation, and non-exportability are identical — the public key grows from 256 bytes to 1184.',
+      'Create an RSA-2048 key and an ML-KEM-768 key in the local software TPM and inspect the returned public areas. The command follows the TPM hierarchy and attributes; the emulator does not provide hardware-backed key protection. Public-key payloads measure 256 bytes and 1184 bytes.',
     setup:
       'TPM2_CreatePrimary (Part 3 §24.1) derives a key deterministically from hierarchy seed + template. The template’s `type` field selects the era: TPM_ALG_RSA (0x0001) or TPM_ALG_MLKEM (0x00A0). Everything else about the trust model carries over unchanged.',
     steps: [
@@ -249,7 +251,7 @@ export const TPM_LESSONS: TpmLesson[] = [
           await ctx.flushAll()
           return {
             detail:
-              'All transient object and sequence slots flushed. Real TPMs have single-digit slot counts too — handle hygiene is part of the programming model, not a quirk of this emulator.',
+              'All transient object and sequence slots in this emulator were flushed. Physical TPM resource limits vary by device and profile; handle cleanup is part of the TPM programming model.',
           }
         },
       },
@@ -265,8 +267,47 @@ export const TPM_LESSONS: TpmLesson[] = [
           // TPMT_PUBLIC @20; RSA unrestricted parms → unique.size @40
           const pkSize = getU16(resp, 40)
           if (pkSize !== 256) throw new Error(`Expected a 256 B RSA-2048 modulus, got ${pkSize} B`)
+          const objectAttributes = getU32(resp, 24)
+          if (!(objectAttributes & OBJ_SIGN) || objectAttributes & OBJ_DECRYPT) {
+            throw new Error('The TPM did not return the expected sign-only object attributes.')
+          }
           return {
-            detail: `handle ${hex8(handle)}, public modulus ${pkSize} B, generated in ${ms} ms (prime search is why RSA keygen is slow). Scheme=NULL — the caller picks RSASSA/OAEP per operation.`,
+            detail: `handle ${hex8(handle)}, public modulus ${pkSize} B, generated in ${ms} ms (prime search is why RSA keygen is slow). Returned object attributes: sign set, decrypt clear. Scheme=NULL lets the caller select a compatible signature scheme.`,
+          }
+        },
+      },
+      {
+        op: 'TPM2_RSA_Decrypt (sign-only key)',
+        label: 'Try to decrypt with the RSA signing key — expect an attribute refusal',
+        expect: 'refusal',
+        expectedRefusal: { commandCode: TPM_CC_RSA_Decrypt, responseCodes: [0x182] },
+        run: async (ctx) => {
+          return execRefused(
+            ctx,
+            serializeDemoCommand('TPM2_RSA_Decrypt', 'RSA-2048', ctx.chain.handles.rsaSign, {
+              rsaCiphertext: new Uint8Array(256),
+            })
+          )
+        },
+      },
+      {
+        op: 'TPM2_Sign + TPM2_VerifySignature (same sign-only key)',
+        label: 'Sign and verify with that same RSA key',
+        run: async (ctx) => {
+          const handle = ctx.chain.handles.rsaSign
+          const signed = await execOk(ctx, serializeDemoCommand('TPM2_Sign', 'RSA-2048', handle))
+          const signatureSize = getU16(signed, 18)
+          const rsaSignature = signed.slice(20, 20 + signatureSize)
+          if (signatureSize !== 256 || rsaSignature.length !== signatureSize) {
+            throw new Error('The TPM did not return a complete 256-byte RSA signature.')
+          }
+          const verified = await execOk(
+            ctx,
+            serializeDemoCommand('TPM2_VerifySignature', 'RSA-2048', handle, { rsaSignature })
+          )
+          if (getU16(verified, 10) !== 0x8022) throw new Error('Missing TPM_ST_VERIFIED ticket.')
+          return {
+            detail: 'Same key signed the sample digest. The TPM returned a TPM_ST_VERIFIED ticket.',
           }
         },
       },
@@ -311,6 +352,7 @@ export const TPM_LESSONS: TpmLesson[] = [
     ],
     compareHeaders: ['', 'RSA-2048', 'ML-KEM-768'],
     notes: [
+      'Part 3 §14.3 requires a decrypt-enabled RSA object. The fictional 256-byte input tests the key-handle attribute check. The lesson accepts only TPM_RC_ATTRIBUTES for that handle, even though other requests can fail for other reasons.',
       'The unique.size field read out of each response is the REAL byte count the live engine produced — 256 vs 1184 is measured here, not quoted.',
       'The ~4.6× public-key growth is why TPM_BUFFER_MAX grew to 8192 in V1.85: ML-DSA-87 signatures (4627 B) must fit one response.',
     ],
@@ -761,15 +803,15 @@ export const TPM_LESSONS: TpmLesson[] = [
     n: 6,
     tag: 'EK',
     tone: 'info',
-    title: 'Factory identity — V2.7 PQC EKs and their certificates',
+    title: 'Sample EKs — V2.7 PQC templates and certificates',
     blurb:
-      'This TPM was provisioned at “manufacture” (page load) with six V2.7 PQC Endorsement Keys and X.509 certificates in well-known NV slots. Find them with live queries — persistent handles first, then the DER certificate bytes themselves.',
+      'This local software TPM creates six sample V2.7 PQC Endorsement Keys and certificates when the page loads. Find these emulator objects with TPM commands, then inspect their DER certificate bytes. This is a reproducible profile example, not manufacturer provisioning.',
     setup:
-      'The published TCG EK Credential Profile v2.7 defines PQC EK templates, their persistent handles, and NV certificate slots (§5.3.1: 0x01C00060–0x01C00074). An EK cert is the manufacturer’s signed claim “this public key lives in a genuine TPM” — the root of remote attestation.',
+      'The published TCG EK Credential Profile v2.7 defines PQC EK templates and NV certificate slots (§2.2.2.5, including 0x01C00060–0x01C0007A); storing the certificate chain in TPM NV is optional. The handles below are this emulator’s sample allocation, not profile-mandated values. In production, an EK certificate is an issuer-signed credential for the EK public key; this browser certificate uses a local ephemeral development CA and proves no physical device identity.',
     steps: [
       {
         op: 'TPM2_GetCapability(TPM_CAP_HANDLES, persistent)',
-        label: 'Enumerate persistent handles — the factory-provisioned EKs',
+        label: 'Enumerate this emulator’s sample EK handles',
         run: async (ctx) => {
           const resp = await execOk(ctx, buildGetCapabilityCmd(TPM_CAP_HANDLES, 0x81000000, 16))
           const count = getU32(resp, 15)
@@ -777,11 +819,11 @@ export const TPM_LESSONS: TpmLesson[] = [
           for (let i = 0; i < count; i++) handles.push(getU32(resp, 19 + i * 4))
           if (count === 0) {
             throw new Error(
-              'No persistent handles found — V2.7 provisioning did not run (PQC bridge unavailable at boot?)'
+              'No emulator sample handles found — the sample PQC bridge provisioning may not have completed.'
             )
           }
           return {
-            detail: `${count} persistent handle(s): ${handles.map(hex8).join(', ')}. The V2.7 EKs live at 0x810100B0–B6 — created at boot, surviving “restarts”, never created by anything you clicked.`,
+            detail: `${count} emulator sample persistent handle(s): ${handles.map(hex8).join(', ')}. This build allocates the sample EKs at 0x810100B0–B6 during initialization; those handle values are not requirements of the TCG profile.`,
           }
         },
       },
@@ -796,7 +838,7 @@ export const TPM_LESSONS: TpmLesson[] = [
             )
           }
           return {
-            detail: `${der.length} B from NV — starts 0x30 0x82 (a DER SEQUENCE): a real X.509 certificate, read with the same §31.13 chunked NV_Read flow real attestation software uses. The EK Certs tab parses it fully.`,
+            detail: `${der.length} B from emulator NV — starts 0x30 0x82 (a DER SEQUENCE): a structurally valid sample X.509 certificate, read with the §31.13 chunked NV_Read command. Its ephemeral local issuer is not a production trust anchor. The EK Certs tab parses it fully.`,
           }
         },
       },
@@ -841,11 +883,11 @@ export const TPM_LESSONS: TpmLesson[] = [
     ],
     compareHeaders: ['', 'Classical EK provisioning', 'V2.7 PQC profile'],
     notes: [
-      'Honesty note (shown in the EK Certs tab too): the issuer here is an EPHEMERAL dev CA created in your browser — educational, not a production trust anchor. V2.7 deliberately doesn’t mandate a CA hierarchy.',
-      'The classical RSA EK cert slot value (0x01C00002) comes from the pre-V2.7 EK profile lineage and is cited here for contrast, not read live — this build provisions only the V2.7 PQC slots.',
+      'Honesty note (shown in the EK Certs tab too): this emulator’s issuer is an EPHEMERAL development CA created in your browser — educational, not a manufacturer CA or production trust anchor. V2.7 does not mandate a CA hierarchy, and storing EK certificates in TPM NV is optional.',
+      'The classical RSA EK cert slot value (0x01C00002) comes from the pre-V2.7 EK profile lineage and is cited here for contrast, not read live — this build creates sample V2.7 PQC certificate entries only.',
     ],
     whyItMatters:
-      'Attestation software finds EK certs by convention: well-known NV indices. The V2.7 profile extends the convention to PQC — and the queries you just ran are exactly how relying parties will discover whether a fleet TPM carries PQC identity.',
+      'Attestation software can discover EK certificates at profile-defined NV indices, when a manufacturer or platform provisions them there. This browser demonstrates the command and certificate formats with local samples; it does not discover or establish a fleet TPM identity.',
     tryRef: ['v27-eks', 'v27-certs'],
   },
 

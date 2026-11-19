@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-risk-management',
-  contentVersion: 18,
+  contentVersion: 19,
   lm_id: 'LM-034',
   title: 'PQC Risk Management',
   description:
-    'Quantify quantum risk, build risk registers, model CRQC timeline scenarios, and generate risk heatmaps from real threat data.',
+    'Compare quantum-risk planning scenarios, record asset assumptions, and rank editable likelihood-by-impact worksheets.',
   whyThisMatters:
-    'A CRQC timeline estimate is inherently uncertain — risk registers and heatmaps built from real threat data let an organization set migration priority without waiting for a certainty that will never come.',
+    'A CRQC arrival year is an uncertain planning assumption. A risk register and relative heatmap can compare documented scenarios; neither predicts arrival nor supplies measured threat probabilities.',
   duration: '30 min',
   difficulty: 'beginner',
   frameworkPhase: 'p3',

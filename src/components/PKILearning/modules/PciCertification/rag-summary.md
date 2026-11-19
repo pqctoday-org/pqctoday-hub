@@ -12,6 +12,7 @@ One timed ~60-minute route. Deeper material is kept as optional reference sectio
 
 - **PCI device approval is not entity assessment** — in this module’s reading, a PTS HSM approval is about the device (independent laboratories evaluate HSMs; PCI SSC approves and lists them), while PIN Security, P2PE and KMO are about how HSMs are operated and the solutions built on them. A PCI listing’s PQC notation records that PQC support exists; the implementation details are in the device’s security policy.
 - **A FIPS certificate is not a PCI approval** — a FIPS 140-3 certificate and a PTS approval are separate evidence under separate schemes, each tied to versions; which HSM evidence a PCI standard accepts is set out in that standard, which this module does not read.
+- **PCI DSS v4.0.1 and PTS POI boundary** — PCI DSS v4.0.1 is the only active PCI DSS version (v4.0 retired 31 December 2024; v4.0 future-dated requirements effective 31 March 2025). This module covers PTS HSM plus PIN Security, P2PE (v3.2 mandatory for new submissions from 1 January 2026) and KMO v1.0 (published 14 September 2026); PTS POI is outside this module's scope.
 
 ## Workshop / Interactive Activities
 
@@ -26,3 +27,6 @@ This module states only what public PCI SSC pages state: PCI Perspectives blogs,
 - `PCI-SSC-Blog-Publishes-PTS-HSM-v5-0`
 - `PCI-PTS-Listing-Field-Definitions`
 - `PCI-SSC-Blog-KMO-v1-0-Published`
+- `PCI-SSC-P2PE-Program-Page`
+- `PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures`
+- `NIST-CMVP-140-2-to-140-3-Transition-Timeline`

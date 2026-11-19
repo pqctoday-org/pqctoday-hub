@@ -18,7 +18,8 @@ import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
 import {
   US_VS_GLOBAL_BREACH_COST_MULTIPLIER,
   ANNUAL_BREACH_PROBABILITY_PCT,
-  IBM_BASELINE_UNVERIFIED_NOTE,
+  describeIndustryBreachBaseline,
+  formatBreachBaselineUSD,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -175,9 +176,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
 
   const asOfYear = useMemo(() => new Date().getFullYear(), [])
 
-  // Single source of truth — the same IBM 2025 baseline the ROI Calculator and
-  // Cost Model Explorer use. No private, drifted table.
   const globalBaseline = resolveIndustryBreachBaseline(industry)
+  const baselineSource = describeIndustryBreachBaseline(industry)
   const baseline =
     region === 'us' ? globalBaseline * US_VS_GLOBAL_BREACH_COST_MULTIPLIER : globalBaseline
 
@@ -294,11 +294,10 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
               <p>
                 Industry baseline ({industry}, {region === 'us' ? 'US' : 'global'}):{' '}
                 <span className="font-mono text-foreground font-semibold">
-                  {formatCurrency(baseline)}
+                  {formatBreachBaselineUSD(baseline)}
                 </span>{' '}
-                average total breach cost &mdash; IBM Cost of a Data Breach 2025. This total already
-                includes detection, notification, lost business and reputational damage, so those
-                are not added again.
+                — {baselineSource.label}
+                {region === 'us' && ', adjusted using the 2025 US-to-global ratio'}
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <span>Region:</span>
@@ -782,7 +781,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         </summary>
         <div className="mt-3 space-y-1 bg-muted/50 rounded-lg p-3">
           <p className="text-xs font-mono text-muted-foreground">
-            Classical: {formatCurrency(baseline)} × {breachScale.toFixed(2)} severity ={' '}
+            Classical: {formatBreachBaselineUSD(baseline)} × {breachScale.toFixed(2)} severity ={' '}
             <span className="text-foreground font-semibold">
               {formatCurrency(costs.classicalSLE)}
             </span>
@@ -829,10 +828,9 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         </summary>
         <div className="mt-3 text-sm text-muted-foreground space-y-2">
           <p>
-            <strong>Baseline:</strong> the industry average total breach cost (IBM Cost of a Data
-            Breach 2025), shared with the ROI Calculator and Cost Model Explorer — one source, no
-            drift. It already includes reputational and lost-business costs, so those are not added
-            separately.
+            <strong>Baseline:</strong> the selected total breach-cost benchmark. It includes
+            lost-business costs. The US preset multiplies it by the historical 2025 US-to-global
+            ratio.
           </p>
           <p>
             <strong>Severity:</strong> scales that average up or down for your scenario, instead of
@@ -877,16 +875,18 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
         </summary>
         <ul className="mt-3 text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
           <li>
-            <a
-              href="https://www.ibm.com/reports/data-breach"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              IBM Cost of a Data Breach Report 2025
-            </a>{' '}
-            — industry breach-cost baselines and per-record costs by data type.{' '}
-            <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
+            {baselineSource.source ? (
+              <a
+                href={baselineSource.source}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                {baselineSource.label}
+              </a>
+            ) : (
+              baselineSource.label
+            )}
           </li>
           <li>
             <a

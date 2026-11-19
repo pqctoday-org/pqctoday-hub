@@ -55,3 +55,5 @@ then wrap it in an annual Plan-Do-Check-Act cycle for strategy and budget.
 - Track FIPS 140-3 Level 3 status for both libraries and HSMs
 - Model ROI with and without a quantum threat
 - Pick the KPIs your board needs to see
+- Audit management-tool coverage, prioritise CBOM risks, and decide between migration and a compensating gateway
+- Practise evaluating fictional CLM platform profiles on PQC readiness criteria

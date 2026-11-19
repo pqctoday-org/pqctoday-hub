@@ -762,7 +762,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         id: 'RFC 10024',
         title:
-          'RFC 10024 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768 key agreement for TLS 1.3 (published from draft-ietf-tls-ecdhe-mlkem-05)',
+          'RFC 10024 — X25519MLKEM768, SecP256r1MLKEM768 and SecP384r1MLKEM1024 key agreement for TLS 1.3',
         url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
         date: '2026-08',
       },

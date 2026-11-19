@@ -499,11 +499,8 @@ export function useChatSend() {
           let raw = ''
           for await (const chunk of streamGen) {
             ensureCurrent()
+            // Keep provider output local until the whole answer has been checked.
             raw += chunk
-            // Restore the original immediate-feedback UX while keeping hidden
-            // citation/follow-up metadata out of the visible draft.
-            const metadataStart = raw.search(/```[ \t]*(?:citations|followups)\b/i)
-            setStreamingContent(metadataStart === -1 ? raw : raw.slice(0, metadataStart).trimEnd())
           }
           ensureCurrent()
           fullContent = raw

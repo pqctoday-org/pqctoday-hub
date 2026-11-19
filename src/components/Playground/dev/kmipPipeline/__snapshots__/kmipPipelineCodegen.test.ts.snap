@@ -48,7 +48,7 @@ try:
     r_activate_sk = None
     r_activate_sk = c.submit('Activate', leaf('UniqueIdentifier', 'Identifier', priv_reg_sk))
     if not r_activate_sk.ok: raise RuntimeError(r_activate_sk.message or 'Activate failed')
-    print(f'  activated {priv_reg_sk}')
+    print('  activated %s' % (r_activate_sk.get('UniqueIdentifier') or 'object identifier missing from response'))
     print('###STEP activate-sk detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate_sk.payload if r_activate_sk else None)}))
     print('###STEP activate-sk ok###')
 except Exception as _e:
@@ -195,7 +195,7 @@ try:
     r_activate = None
     r_activate = c.submit('Activate', leaf('UniqueIdentifier', 'Identifier', priv_create))
     if not r_activate.ok: raise RuntimeError(r_activate.message or 'Activate failed')
-    print(f'  activated {priv_create}')
+    print('  activated %s' % (r_activate.get('UniqueIdentifier') or 'object identifier missing from response'))
     print('###STEP activate detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate.payload if r_activate else None)}))
     print('###STEP activate ok###')
 except Exception as _e:
@@ -319,7 +319,7 @@ try:
     r_activate_pub = None
     r_activate_pub = c.submit('Activate', leaf('UniqueIdentifier', 'Identifier', pub_create))
     if not r_activate_pub.ok: raise RuntimeError(r_activate_pub.message or 'Activate failed')
-    print(f'  activated {pub_create}')
+    print('  activated %s' % (r_activate_pub.get('UniqueIdentifier') or 'object identifier missing from response'))
     print('###STEP activate-pub detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate_pub.payload if r_activate_pub else None)}))
     print('###STEP activate-pub ok###')
 except Exception as _e:
@@ -332,7 +332,7 @@ try:
     r_activate_priv = None
     r_activate_priv = c.submit('Activate', leaf('UniqueIdentifier', 'Identifier', priv_create))
     if not r_activate_priv.ok: raise RuntimeError(r_activate_priv.message or 'Activate failed')
-    print(f'  activated {priv_create}')
+    print('  activated %s' % (r_activate_priv.get('UniqueIdentifier') or 'object identifier missing from response'))
     print('###STEP activate-priv detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate_priv.payload if r_activate_priv else None)}))
     print('###STEP activate-priv ok###')
 except Exception as _e:

@@ -1277,10 +1277,11 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 </div>
                 <p className="text-xs text-muted-foreground">
                   A single composite OID identifies the algorithm pair. Both signatures must verify.
-                  Defined in <strong>RFC 10073</strong> (November 2026). Strongest binding &mdash;
-                  the signatures are tied to the composite algorithm: a split-off ML-DSA signature
-                  fails on its own, but the traditional signature still verifies (RFC 10073 §9.2.3).
-                  Not backward-compatible with legacy validators.
+                  Under <strong>RFC 10073 §9.2.3</strong>, the traditional component can verify over
+                  the composite’s prefixed input. The ML-DSA component also requires the composite
+                  context. X.509 verification rejects a stripped component because the signed data
+                  still names the composite algorithm. The validator must support that composite
+                  OID.
                 </p>
               </div>
             </div>

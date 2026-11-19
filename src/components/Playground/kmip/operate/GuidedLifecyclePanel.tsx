@@ -107,6 +107,7 @@ export function GuidedLifecyclePanel({ operate }: { operate: OperateContext }) {
 
       {!isKem && (
         <input
+          aria-label={isSymmetric ? 'Sample message to encrypt' : 'Sample message to sign'}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="message to sign"

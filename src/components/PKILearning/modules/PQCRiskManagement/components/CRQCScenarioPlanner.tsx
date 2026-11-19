@@ -27,59 +27,72 @@ const ALGORITHMS: AlgorithmImpact[] = [
   {
     name: 'RSA-2048',
     type: 'asymmetric',
-    breakYear: 0, // breaks when CRQC arrives
-    replacement: 'ML-KEM-768 / ML-DSA-65',
-    notes: 'Vulnerable to Shor\u2019s algorithm. Immediate migration priority.',
+    breakYear: 0, // represented as vulnerable in the selected CRQC scenario
+    replacement:
+      'Select a post-quantum key-establishment scheme for KEM use, and a post-quantum signature for signing use; choose parameters for the applicable profile.',
+    notes:
+      'Shor-vulnerable in the modeled CRQC scenario; RSA use and migration needs depend on the cryptographic operation.',
   },
   {
     name: 'RSA-3072',
     type: 'asymmetric',
     breakYear: 0,
-    replacement: 'ML-KEM-1024 / ML-DSA-87',
-    notes: 'Larger keys do not protect against quantum attack. Same urgency as RSA-2048.',
+    replacement:
+      'Select a post-quantum key-establishment scheme for KEM use, and a post-quantum signature for signing use; choose parameters for the applicable profile.',
+    notes:
+      'Shor-vulnerable in the modeled CRQC scenario; classical key size does not make RSA post-quantum secure.',
   },
   {
     name: 'RSA-4096',
     type: 'asymmetric',
     breakYear: 0,
-    replacement: 'ML-KEM-1024 / ML-DSA-87',
-    notes: 'Still vulnerable to Shor\u2019s algorithm regardless of key size.',
+    replacement:
+      'Select a post-quantum key-establishment scheme for KEM use, and a post-quantum signature for signing use; choose parameters for the applicable profile.',
+    notes:
+      'Shor-vulnerable in the modeled CRQC scenario; classical key size does not make RSA post-quantum secure.',
   },
   {
     name: 'ECDSA P-256',
     type: 'asymmetric',
     breakYear: 0,
-    replacement: 'ML-DSA-44 / SLH-DSA',
-    notes: 'Elliptic curve cryptography broken by Shor\u2019s algorithm.',
+    replacement:
+      'Choose a post-quantum signature scheme for signing or a post-quantum KEM for key establishment, according to use and profile.',
+    notes:
+      'Shor-vulnerable in the modeled CRQC scenario; confirm the key use before selecting a replacement.',
   },
   {
     name: 'ECDSA P-384',
     type: 'asymmetric',
     breakYear: 0,
-    replacement: 'ML-DSA-65 / SLH-DSA',
-    notes: 'Larger curves do not help against quantum attack.',
+    replacement:
+      'Choose a post-quantum signature scheme for signing or a post-quantum KEM for key establishment, according to use and profile.',
+    notes:
+      'Shor-vulnerable in the modeled CRQC scenario; confirm the key use before selecting a replacement.',
   },
   {
     name: 'ECDH / X25519',
     type: 'asymmetric',
     breakYear: 0,
-    replacement: 'ML-KEM-768 / X25519MLKEM768',
-    notes: 'Key exchange vulnerable to Shor\u2019s algorithm. Hybrid mode available now.',
+    replacement:
+      'For TLS 1.3, RFC 10024 defines hybrid groups such as X25519MLKEM768; use protocol-specific guidance elsewhere.',
+    notes:
+      'Key establishment is Shor-vulnerable in the modeled CRQC scenario; implementation and protocol support must be checked.',
   },
   {
     name: 'DH-2048',
     type: 'asymmetric',
     breakYear: 0,
-    replacement: 'ML-KEM-768',
-    notes: 'Classic Diffie-Hellman broken by Shor\u2019s algorithm.',
+    replacement:
+      'Select a post-quantum KEM for key establishment according to the protocol and required profile.',
+    notes: 'Finite-field Diffie-Hellman is Shor-vulnerable in the modeled CRQC scenario.',
   },
   {
     name: 'AES-128',
     type: 'symmetric',
     breakYear: null,
-    replacement: 'AES-256 (recommended)',
+    replacement: 'Check the governing profile',
     notes:
-      'Broad expert consensus holds that AES-128 stays practically secure and key sizes do not necessarily have to be doubled.',
+      'NIST uses AES-128 key search as its Category 1 reference. Use AES-256 where the governing profile requires it, such as CNSA 2.0.',
   },
   {
     name: 'AES-256',
@@ -87,7 +100,7 @@ const ALGORITHMS: AlgorithmImpact[] = [
     breakYear: null,
     replacement: 'No change needed',
     notes:
-      'Grover\u2019s reduces to 128-bit effective security, still considered safe. CNSA 2.0 approved.',
+      'AES-256 is the Category 5 key-search reference and the AES key size specified by CNSA 2.0. Its ideal Grover query count is about 2^128.',
   },
   {
     name: 'SHA-256',
@@ -95,7 +108,7 @@ const ALGORITHMS: AlgorithmImpact[] = [
     breakYear: null,
     replacement: 'No change needed',
     notes:
-      'Grover lowers preimage resistance to \u223c2\u00b9\u00b2\u2078 (still strong). The theoretical quantum collision bound (\u223c2\u2078\u2075 via BHT) requires impractical quantum memory and is not a real-world threat. NIST IR 8547 lists SHA-256 collision and preimage strengths as 128 and 256 bits, respectively, and considers NIST-approved symmetric primitives with classical security of 128 bits or more likely to satisfy at least Category 1 security.',
+      'Grover’s ideal query model for a specified SHA-256 digest is about 2^128 queries. Finding any two inputs with the same digest is a separate problem. NIST IR 8547 Table 1 compares Category 2 to 256-bit hash collision search.',
   },
 ]
 
@@ -222,15 +235,15 @@ export function buildCrqcScenarioMarkdown({
 }: CrqcScenarioInput): string {
   const yearsRemaining = crqcYear - currentYear
   const affectedAlgorithms = ALGORITHMS.filter((algo) => algo.breakYear !== null)
-  const safeAlgorithms = ALGORITHMS.filter((algo) => algo.breakYear === null)
+  const otherAlgorithms = ALGORITHMS.filter((algo) => algo.breakYear === null)
 
   let md = '# CRQC Scenario Analysis\n\n'
-  md += `**CRQC Arrival Year:** ${crqcYear}\n`
+  md += `**CRQC Planning Year (Scenario):** ${crqcYear}\n`
   md += `**Years Remaining:** ${yearsRemaining}\n`
-  md += `**Urgency Level:** ${urgencyLevel.toUpperCase()}\n`
+  md += `**Scenario interval band (worksheet heuristic):** ${urgencyLevel.toUpperCase()}\n`
   md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
 
-  md += '## Algorithms Broken\n\n'
+  md += '## Algorithm rows modeled as vulnerable in this scenario\n\n'
   md += '| Algorithm | Replacement | Notes |\n'
   md += '|-----------|-------------|-------|\n'
   for (const algo of affectedAlgorithms) {
@@ -238,15 +251,15 @@ export function buildCrqcScenarioMarkdown({
   }
   md += '\n'
 
-  md += '## Quantum-Safe Algorithms\n\n'
-  for (const algo of safeAlgorithms) {
+  md += '## Algorithms outside the modeled Shor break\n\n'
+  for (const algo of otherAlgorithms) {
     md += `- **${algo.name}**: ${algo.notes}\n`
   }
-  md += '\n'
+  md += '\n[NIST IR 8547, Table 1 and §4.1.3](https://csrc.nist.gov/pubs/ir/8547/final)\n\n'
 
-  md += '## Compliance Deadlines\n\n'
+  md += '## Policy and guidance reference dates\n\n'
   md +=
-    'Each date applies only to systems in its scope. The CRQC year is a scenario assumption, not a forecast.\n\n'
+    'These are scope-labeled policy, standards-status, proposal or guidance dates. They are not all binding deadlines, and this model does not determine applicability or compliance. The CRQC year is a scenario assumption, not a forecast.\n\n'
   md += '| Framework | Year | Scope | Source | Status |\n'
   md += '|-----------|------|-------|--------|--------|\n'
   const excluded = new Set(excludedDeadlines)
@@ -260,12 +273,14 @@ export function buildCrqcScenarioMarkdown({
     md += `**Unticked as not applying to these systems:** ${unticked.map((d) => `${d.framework} (${d.year})`).join('; ')}\n\n`
   }
 
-  md += '## HNDL Exposure Window\n\n'
-  md += '| Retention | Valid Until | At Risk? |\n'
+  md += '## HNDL retention/date-overlap illustration\n\n'
+  md +=
+    'Overlap alone does not establish exposure; HNDL also requires captured ciphertext, vulnerable public-key key establishment and recoverable session secrets.\n\n'
+  md += '| Retention | Valid Until | Retention overlaps assumed year? |\n'
   md += '|-----------|------------|----------|\n'
   for (const years of [1, 3, 5, 7, 10, 15, 25]) {
     const validUntil = currentYear + years
-    md += `| ${years} years | ${validUntil} | ${validUntil >= crqcYear ? 'AT RISK' : 'Safe'} |\n`
+    md += `| ${years} years | ${validUntil} | ${validUntil >= crqcYear ? 'Overlap' : 'No overlap'} |\n`
   }
   md += '\n'
 
@@ -306,8 +321,8 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
     'crqc-scenario'
   )
   const [crqcYear, setCrqcYear] = useState(savedInputs?.crqcYear ?? defaultCrqcYear)
-  // Which compliance deadlines the learner ticked as applying to their
-  // systems. Stored as the unticked set so every deadline starts ticked.
+  // Which policy/guidance reference dates the learner selected as relevant
+  // to their systems. Stored as the unticked set so every date starts selected.
   const [excludedDeadlines, setExcludedDeadlines] = useState<string[]>(() =>
     Array.isArray(savedInputs?.excludedDeadlines)
       ? savedInputs.excludedDeadlines.filter((f) =>
@@ -348,16 +363,19 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
   }
 
   const currentYear = new Date().getFullYear()
+  const retentionOverlapExamples = [1, 3, 5, 7, 10, 15, 25].filter(
+    (years) => currentYear + years >= crqcYear
+  ).length
 
   const affectedAlgorithms = useMemo(() => {
     return ALGORITHMS.filter((algo) => algo.breakYear !== null)
   }, [])
 
-  const safeAlgorithms = useMemo(() => {
+  const otherAlgorithms = useMemo(() => {
     return ALGORITHMS.filter((algo) => algo.breakYear === null)
   }, [])
 
-  const missedDeadlines = useMemo(() => {
+  const datesBeforeScenario = useMemo(() => {
     return COMPLIANCE_DEADLINES.filter(
       (d) => d.year <= crqcYear && !excludedDeadlines.includes(d.framework)
     )
@@ -472,20 +490,21 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <div className="flex items-center gap-3 mb-4">
           <Clock size={20} className="text-primary" />
           <h2 className="text-lg font-semibold text-foreground">
-            <InlineTooltip term="CRQC">CRQC</InlineTooltip> Arrival Year
+            <InlineTooltip term="CRQC">CRQC</InlineTooltip> Planning Year (Scenario)
           </h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          Adjust the slider to model when a cryptographically relevant quantum computer might
-          arrive. See the cascading impacts on algorithms, compliance, and data exposure.
+          Choose a hypothetical CRQC year to compare modeled algorithm vulnerability and configured
+          policy/guidance reference dates. This control is not a forecast or a compliance
+          assessment.
         </p>
         <p className="text-xs text-muted-foreground mb-4">
-          Default year is the median CRQC arrival from the Global Risk Institute&apos;s 2025 Quantum
-          Threat Timeline survey ({Math.round(medianCrqcYear('consensus'))}, consensus of its 26
-          experts&apos; low and high bounds) &mdash; the same curve the Breach Scenario Simulator
-          and Cost of Inaction Analyzer use. Move the slider to model an earlier or later arrival;
-          the slow and fast bounds are {Math.round(medianCrqcYear('slow'))} and{' '}
-          {Math.round(medianCrqcYear('fast'))}.
+          The default is a planning scenario derived from the median of the Global Risk
+          Institute&apos;s 2025 expert-survey estimates ({Math.round(medianCrqcYear('consensus'))};
+          consensus of 26 experts&apos; low and high bounds), not a prediction. Its slow and fast
+          survey bounds are {Math.round(medianCrqcYear('slow'))} and{' '}
+          {Math.round(medianCrqcYear('fast'))}; these are opinion-based scenario inputs, not
+          measured arrival probabilities.
           {migrationDeadlineYear
             ? ` Your migration deadline (${migrationDeadlineYear}) is a separate quantity — when you must be finished, not when the machine arrives.`
             : ''}{' '}
@@ -501,6 +520,10 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           &sect;2.3 (Constant Need of Transition) and &sect;6.1 (Resource Considerations).
         </p>
 
+        <p className="text-xs text-muted-foreground">
+          The band is a worksheet heuristic based only on years until your selected scenario. It is
+          not a CRQC forecast, probability, risk assessment or compliance finding.
+        </p>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">2028</span>
@@ -515,16 +538,16 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
             value={crqcYear}
             onChange={(e) => setCrqcYear(Number(e.target.value))}
             className="w-full accent-primary"
-            aria-label="CRQC arrival year"
+            aria-label="CRQC planning year (scenario)"
           />
           <div className="flex items-center justify-center gap-2">
             <span className={`text-sm font-medium ${urgencyColor}`}>
-              {yearsRemaining} years remaining
+              {yearsRemaining} years until selected scenario year
             </span>
             <span
               className={`text-xs px-2 py-0.5 rounded-full border ${urgencyBgColor} ${urgencyColor}`}
             >
-              {urgencyLevel.toUpperCase()} URGENCY
+              {urgencyLevel.toUpperCase()} SCENARIO INTERVAL BAND
             </span>
           </div>
         </div>
@@ -557,7 +580,9 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <div className={`glass-panel p-4 border ${urgencyBgColor}`}>
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle size={16} className="text-status-error" />
-            <span className="text-xs font-medium text-muted-foreground">Algorithms Broken</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              Modeled vulnerable algorithm rows
+            </span>
           </div>
           <div className="text-2xl font-bold text-foreground">{affectedAlgorithms.length}</div>
           <p className="text-xs text-muted-foreground mt-1">
@@ -567,35 +592,63 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <div className="glass-panel p-4">
           <div className="flex items-center gap-2 mb-2">
             <ShieldCheck size={16} className="text-status-success" />
-            <span className="text-xs font-medium text-muted-foreground">Quantum-Safe</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              Outside the modeled Shor break
+            </span>
           </div>
-          <div className="text-2xl font-bold text-foreground">{safeAlgorithms.length}</div>
+          <div className="text-2xl font-bold text-foreground">{otherAlgorithms.length}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            algorithms unaffected by quantum attack
+            symmetric, hash and post-quantum entries
           </p>
         </div>
         <div className="glass-panel p-4">
           <div className="flex items-center gap-2 mb-2">
             <Calendar size={16} className="text-status-warning" />
-            <span className="text-xs font-medium text-muted-foreground">Pre-CRQC Deadlines</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              Reference dates before scenario
+            </span>
           </div>
-          <div className="text-2xl font-bold text-foreground">{missedDeadlines.length}</div>
+          <div className="text-2xl font-bold text-foreground">{datesBeforeScenario.length}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            ticked milestones ({tickedCount} of {COMPLIANCE_DEADLINES.length}) before the assumed
-            CRQC year, each with its own scope
+            included reference dates ({tickedCount} of {COMPLIANCE_DEADLINES.length}) before the
+            assumed CRQC year, each with its own scope
           </p>
         </div>
         <div className="glass-panel p-4">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp size={16} className="text-primary" />
-            <span className="text-xs font-medium text-muted-foreground">HNDL Window</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              Retention overlap examples
+            </span>
           </div>
-          <div className="text-2xl font-bold text-foreground">{yearsRemaining} yr</div>
+          <div className="text-2xl font-bold text-foreground">{retentionOverlapExamples} / 7</div>
           <p className="text-xs text-muted-foreground mt-1">
-            data captured today decryptable in {crqcYear}
+            date overlap only; assess HNDL conditions separately
           </p>
         </div>
       </div>
+
+      <details className="glass-panel p-4">
+        <summary className="cursor-pointer text-sm font-semibold text-foreground">
+          Inspect symmetric, hash and post-quantum entries
+        </summary>
+        <dl className="mt-3 space-y-3 text-sm">
+          {otherAlgorithms.map((algorithm) => (
+            <div key={algorithm.name}>
+              <dt className="font-semibold">{algorithm.name}</dt>
+              <dd className="text-muted-foreground">{algorithm.notes}</dd>
+            </div>
+          ))}
+        </dl>
+        <a
+          href="https://csrc.nist.gov/pubs/ir/8547/final"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-block text-sm text-primary underline"
+        >
+          NIST IR 8547, Table 1 and §4.1.3
+        </a>
+      </details>
 
       {/* Algorithms Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -604,7 +657,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           <div className="flex items-center gap-2 mb-4">
             <ShieldAlert size={18} className="text-status-error" />
             <h2 className="text-base font-semibold text-foreground">
-              Algorithms Broken at {crqcYear}
+              Algorithms modeled as vulnerable for {crqcYear}
             </h2>
           </div>
           <div
@@ -612,7 +665,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx / BB84Simulator.tsx).
             tabIndex={0}
             role="region"
-            aria-label={`Algorithms broken at ${crqcYear}`}
+            aria-label={`Algorithms modeled as vulnerable for ${crqcYear}`}
           >
             {affectedAlgorithms.map((algo) => (
               <div
@@ -622,7 +675,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium text-foreground">{algo.name}</span>
                   <span className="text-xs px-2 py-0.5 rounded bg-status-error/10 text-status-error">
-                    Broken
+                    Modeled vulnerable
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">{algo.notes}</p>
@@ -638,24 +691,26 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <div className="glass-panel p-6">
           <div className="flex items-center gap-2 mb-4">
             <Calendar size={18} className="text-status-warning" />
-            <h2 className="text-base font-semibold text-foreground">Compliance Deadlines</h2>
+            <h2 className="text-base font-semibold text-foreground">
+              Policy and guidance reference dates
+            </h2>
           </div>
           <p className="text-xs text-muted-foreground mb-3">
             Each date applies only to systems in its own scope, and each is shown with its source
             version. National Security System requirements, federal civilian directives, NIST
             standards status, proposals and guidance are different things; the CRQC year is your
             scenario assumption, not a forecast. Untick a date that does not apply to your systems;
-            the Pre-CRQC Deadlines count and the export use only ticked dates.
+            the Reference dates before scenario count and the export use only ticked dates.
           </p>
           <div
             className="space-y-2 max-h-[300px] overflow-y-auto"
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx / BB84Simulator.tsx).
             tabIndex={0}
             role="region"
-            aria-label="Compliance deadlines"
+            aria-label="Policy and guidance reference dates"
           >
             {COMPLIANCE_DEADLINES.map((deadline) => {
-              const isMissed = deadline.year <= crqcYear
+              const isBeforeScenario = deadline.year <= crqcYear
               const isPast = deadline.year <= currentYear
               const ticked = !excludedDeadlines.includes(deadline.framework)
               const checkboxId = `crqc-deadline-${deadline.framework.replace(/[^a-z0-9]+/gi, '-')}`
@@ -667,7 +722,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
                       ? 'bg-muted/30 border-dashed border-border/60'
                       : isPast
                         ? 'bg-status-error/5 border-status-error/20'
-                        : isMissed
+                        : isBeforeScenario
                           ? 'bg-status-warning/5 border-status-warning/20'
                           : 'bg-muted/50 border-border'
                   }`}
@@ -693,7 +748,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
                           ? 'bg-muted text-muted-foreground'
                           : isPast
                             ? 'bg-status-error/10 text-status-error'
-                            : isMissed
+                            : isBeforeScenario
                               ? 'bg-status-warning/10 text-status-warning'
                               : 'bg-status-success/10 text-status-success'
                       }`}
@@ -721,12 +776,15 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
       <div className="glass-panel p-6">
         <div className="flex items-center gap-2 mb-4">
           <ShieldAlert size={18} className="text-primary" />
-          <h2 className="text-base font-semibold text-foreground">HNDL Exposure Window</h2>
+          <h2 className="text-base font-semibold text-foreground">
+            HNDL retention/date-overlap illustration
+          </h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          Data encrypted today with quantum-vulnerable algorithms can be stored by adversaries and
-          decrypted when a CRQC arrives. The table below shows exposure for different data retention
-          periods.
+          This table compares a retention horizon with an assumed CRQC year. It is only a
+          date-overlap illustration: HNDL also requires ciphertext to have been captured,
+          quantum-vulnerable public-key key establishment and recoverable session secrets. Retention
+          overlap alone does not prove exposure.
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -745,7 +803,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
                   CRQC Arrives
                 </th>
                 <th className="p-2 text-left text-xs font-medium text-muted-foreground">
-                  At Risk?
+                  Retention overlaps assumed year?
                 </th>
               </tr>
             </thead>
@@ -762,11 +820,11 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
                     <td className="p-2">
                       {atRisk ? (
                         <span className="text-xs px-2 py-0.5 rounded bg-status-error/10 text-status-error font-medium">
-                          AT RISK
+                          Overlap
                         </span>
                       ) : (
                         <span className="text-xs px-2 py-0.5 rounded bg-status-success/10 text-status-success font-medium">
-                          Safe
+                          No overlap
                         </span>
                       )}
                     </td>
@@ -786,7 +844,10 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         formats={['markdown', 'pdf', 'csv']}
         csvData={decisionModelToCsv({
           inputs: { crqcYear, currentYear, industry, country, migrationDeadlineYear },
-          result: { urgencyLevel, missedDeadlines },
+          result: {
+            scenarioIntervalBand: urgencyLevel,
+            referenceDatesBeforeScenario: datesBeforeScenario,
+          },
           decisionBrief: exportMarkdown,
         })}
         wideTable

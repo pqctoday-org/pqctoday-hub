@@ -2,7 +2,7 @@
 /**
  * Pre-built risk register seed scenarios for PQC Risk Management.
  *
- * These sets provide realistic starting points for each industry/use case.
+ * These fictional sets provide adjustable teaching inputs for each example use case; they do not assert real deployments or measured industry risk.
  * Used by RiskRegisterBuilder's "Load Example" feature and by PQCRiskManagementExercises
  * as reference answers.
  */
@@ -31,26 +31,27 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
     label: 'Financial Services',
     industry: 'Finance & Banking',
     description:
-      'Core cryptographic assets for a mid-size bank: payment rails, customer data, inter-bank settlement, and digital signatures for regulatory filings.',
+      'Fictional mid-size bank planning example. Asset names, algorithms, ratings and cryptographic uses are assumed for the exercise, not observed deployment data.',
     entries: [
       {
         id: 'fin-001',
-        assetName: 'TLS Certificates (Customer Portal)',
+        assetName: 'TLS 1.2 RSA key-transport sessions (fictional customer portal)',
         currentAlgorithm: 'RSA-2048',
         threatVector: 'hndl',
         likelihood: 4,
         impact: 5,
-        mitigation: 'Migrate to ML-KEM + X25519 hybrid TLS; deploy ML-DSA leaf certificates',
+        mitigation:
+          'For this fictional legacy RSA key-transport case, plan a supported migration to TLS 1.3 with an RFC 10024 hybrid group such as X25519MLKEM768. Certificate signature migration is a separate workstream.',
       },
       {
         id: 'fin-002',
-        assetName: 'Wire Transfer Encryption (SWIFT)',
+        assetName: 'Application message signing (fictional RSA-2048)',
         currentAlgorithm: 'RSA-2048',
-        threatVector: 'hndl',
+        threatVector: 'forgery',
         likelihood: 5,
         impact: 5,
         mitigation:
-          'Prioritize for immediate migration; coordinate with SWIFT PQC working group (SA-MIG-005)',
+          'Plan a signature and verifier trust migration with the application owner and counterparties. Key recovery may enable new forged signatures under relying-party policy; it does not change historical signed messages.',
       },
       {
         id: 'fin-003',
@@ -59,7 +60,8 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'forgery',
         likelihood: 3,
         impact: 4,
-        mitigation: 'Migrate signing keys to ML-DSA-65; dual-sign during transition period',
+        mitigation:
+          'Assess a profile-appropriate post-quantum signature and verifier/receiver support. ML-DSA-65 and dual-signing are options only where the applicable profile, protocol and relying parties support them.',
       },
       {
         id: 'fin-004',
@@ -68,7 +70,8 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         threatVector: 'grover',
         likelihood: 2,
         impact: 4,
-        mitigation: 'Upgrade to AES-256; Grover halves effective security (128→64 bits post-CRQC)',
+        mitigation:
+          'Check the required profile and data lifetime. AES-256 increases the key-search margin. About 2^64 Grover iterations is an ideal AES-128 search estimate, separate from runtime or policy.',
       },
     ],
   },
@@ -77,27 +80,27 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
     label: 'Healthcare',
     industry: 'Healthcare',
     description:
-      'Long-lived patient data and medical devices with 20–50 year record-keeping requirements and strict HIPAA obligations.',
+      'Fictional healthcare planning example with a 30-year data-confidentiality assumption. It does not assert a universal medical-record retention period or a HIPAA migration deadline.',
     entries: [
       {
         id: 'hc-001',
-        assetName: 'Electronic Health Records (EHR)',
+        assetName: 'EHR transport (fictional TLS 1.2 RSA key transport)',
         currentAlgorithm: 'RSA-2048',
         threatVector: 'hndl',
         likelihood: 5,
         impact: 5,
         mitigation:
-          'Critical — re-encrypt archived records with AES-256 + migrate key exchange to ML-KEM',
+          'For this fictional legacy RSA key-transport case, prioritize a supported migration to TLS 1.3 with a PQC or hybrid key-establishment group. Assess stored-record encryption and key wrapping separately; ML-KEM alone does not re-encrypt archives.',
       },
       {
         id: 'hc-002',
-        assetName: 'Medical Device Firmware Signing',
+        assetName: 'Medical Device Firmware Signing (fictional 15-year planning life)',
         currentAlgorithm: 'ECDSA P-256',
         threatVector: 'forgery',
         likelihood: 3,
         impact: 5,
         mitigation:
-          "This module's advice: Migrate to SLH-DSA for stateless signing; 15-year device lifecycle requires quantum-safe signing now",
+          'Assess post-quantum firmware-signature choices against the device lifecycle, signature size, verification cost, boot/update constraints and ecosystem support. Stateless signing may be useful, but this example does not select an algorithm or migration deadline.',
       },
       {
         id: 'hc-003',
@@ -107,7 +110,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 3,
         impact: 3,
         mitigation:
-          'Enable IKEv2 multiple key exchanges (RFC 9370) and add an ML-KEM-768 exchange alongside ECDH (draft-ietf-ipsecme-ikev2-mlkem, in the RFC Editor queue)',
+          'RFC 9370 defines multiple IKEv2 key exchanges. The separate ML-KEM extension is draft-ietf-ipsecme-ikev2-mlkem-09 in the RFC Editor queue (checked 18 Nov 2026), not a published RFC; assess support and the applicable profile before selecting it.',
       },
     ],
   },
@@ -126,17 +129,17 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 4,
         impact: 5,
         mitigation:
-          'Issue new root with ML-DSA-87; 20-year validity window makes this the highest-priority item',
+          'Assess a supported post-quantum root and certificate profile with relying parties. The 20-year planning lifetime is an input to review priority, not proof that this is the highest-priority asset or that ML-DSA-87 fits every root role.',
       },
       {
         id: 'gov-002',
-        assetName: 'Classified Data Archive',
+        assetName: 'Classified archive DEK wrapping (fictional RSA-2048)',
         currentAlgorithm: 'RSA-2048',
         threatVector: 'hndl',
         likelihood: 5,
         impact: 5,
         mitigation:
-          'Re-encrypt Tier 1 archives immediately with AES-256 (not sourced in the Library).',
+          'Inventory archive encryption, key-wrapping and backup paths. Select a profile-approved replacement for the key-establishment or key-wrapping mechanism; AES-256 alone does not replace a quantum-vulnerable public-key mechanism.',
       },
       {
         id: 'gov-003',
@@ -156,7 +159,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 3,
         impact: 4,
         mitigation:
-          'Deploy an ML-KEM + X25519 hybrid: RFC 9370 multiple key exchanges carry the ML-KEM exchange (draft-ietf-ipsecme-ikev2-mlkem, in the RFC Editor queue)',
+          'Evaluate an implementation of RFC 9370 together with draft-ietf-ipsecme-ikev2-mlkem-09 (RFC Editor queue as checked 18 Nov 2026; not a published RFC). Confirm the exact exchange, vendor support and applicable profile before deployment.',
       },
     ],
   },
@@ -165,7 +168,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
     label: 'IoT & Automotive',
     industry: 'IoT & Automotive',
     description:
-      'Long-lifecycle connected devices where firmware signing and OTA update integrity must remain valid across 10–15 year product lifetimes.',
+      'Fictional connected-device planning examples with assumed 10–15 year lifetimes; validate each product life, protocol and verifier profile for the actual fleet.',
     entries: [
       {
         id: 'iot-001',
@@ -175,7 +178,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 3,
         impact: 5,
         mitigation:
-          'Consider SLH-DSA, which is stateless and so avoids state-management complexity, but whether it fits a firmware signing role depends on the target device',
+          'Compare post-quantum signature options against device-side verification, signature size, secure-boot/OTA format and verifier support; statelessness can help with state management but does not establish fit.',
       },
       {
         id: 'iot-002',
@@ -185,7 +188,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 3,
         impact: 3,
         mitigation:
-          'Enable hybrid ML-KEM in TLS 1.3; devices provisioned today must be secure for their 10-year lifecycle',
+          'For this assumed 10-year planning life, evaluate a supported TLS 1.3 hybrid group such as an RFC 10024 group. Confirm device/client support and the actual confidentiality horizon; this sample does not set a universal deadline.',
       },
       {
         id: 'iot-003',
@@ -195,7 +198,7 @@ export const RISK_SCENARIO_SETS: RiskScenarioSet[] = [
         likelihood: 2,
         impact: 3,
         mitigation:
-          'Issue new device certs with ML-DSA-44 (smallest footprint); archive legacy chain',
+          'Evaluate ML-DSA-44 against certificate-chain size, device memory, verifier support and the governing profile. It is the smallest ML-DSA parameter set, but not automatically the right deployed choice; plan legacy-chain handling.',
       },
     ],
   },

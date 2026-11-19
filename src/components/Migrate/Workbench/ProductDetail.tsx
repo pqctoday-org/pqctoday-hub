@@ -51,6 +51,7 @@ import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
+import { CatalogReleaseCheck } from '@/components/ui/CatalogReleaseCheck'
 import { OptionalSection } from '@/components/ui/OptionalSection'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 
@@ -231,6 +232,9 @@ export function ProductDetail({
               {product.latestVersion && product.releaseDate && ' · '}
               {product.releaseDate && <>released {product.releaseDate}</>}
             </p>
+          )}
+          {!readOnly && product.latestVersion?.trim() && (
+            <CatalogReleaseCheck key={product.productId} version={product.latestVersion} />
           )}
           {familyMembers.length > 0 && (
             <p className="mt-0.5 text-muted-foreground">

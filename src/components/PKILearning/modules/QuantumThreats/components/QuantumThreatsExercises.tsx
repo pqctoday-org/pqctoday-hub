@@ -62,11 +62,11 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       id: 'vuln-matrix',
       title: '3. Vulnerability Matrix: Who Survives?',
       description:
-        "Open the full vulnerability matrix to see every algorithm's exposure to Shor's and Grover's attacks. Identify which algorithms are broken, weakened, or safe.",
+        "Open the full vulnerability matrix to see every algorithm's exposure to Shor's and Grover's attacks. Identify which algorithms are vulnerable in the CRQC model, weakened by an attack, or have no known efficient quantum attack.",
       badge: 'Analysis',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'All asymmetric algorithms based on factoring or discrete logs are marked "broken" (by Shor\'s algorithm, on a large fault-tolerant quantum computer). Symmetric algorithms are "weakened" in the idealised query bound but survivable with larger keys or the policy your authority sets. The PQC algorithms are marked "safe" because no efficient quantum attack on their underlying problems is known: that is an assumption under continued cryptanalysis, not a proof, and it says nothing about implementation or protocol flaws.',
+        'All asymmetric algorithms based on factoring or discrete logs are marked CRQC-vulnerable because Shor\'s algorithm solves their underlying problem on a sufficiently capable fault-tolerant quantum computer. Symmetric algorithms are "weakened" in the idealised query bound but survivable with larger keys or the policy your authority sets. The PQC algorithms are marked as having no known efficient quantum attack on their underlying problems: that is an assumption under continued cryptanalysis, not a proof, and it says nothing about implementation or protocol flaws.',
       config: { step: 1 },
     },
     {
@@ -75,7 +75,7 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       description: `Calculate the HNDL migration deadline for medical records that must remain confidential for 50 years, assuming a 5-year migration time. With the one published expert forecast putting a CRQC in ${crqc.low}–${crqc.high}, when should migration have started?`,
       badge: 'HNDL',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
-      observe: `With 50-year data sensitivity, a 5-year migration time, and a CRQC in ${crqc.planningYear} (the midpoint of the ${crqc.low}–${crqc.high} planning range this site uses), the migration deadline was ${crqc.planningYear - 50 - 5}. This illustrates why healthcare data intercepted today is already at risk — HNDL is not a future problem.`,
+      observe: `With 50-year data sensitivity, a 5-year migration time, and a CRQC planning scenario set to ${crqc.planningYear} (the midpoint of this site's ${crqc.low}–${crqc.high} planning range), the modeled migration deadline is ${crqc.planningYear - 50 - 5}. This scenario highlights records intercepted today from sessions that rely on vulnerable classical key establishment; it is not an arrival forecast and does not mean every healthcare record is exposed.`,
       config: { step: 3 },
     },
     {
@@ -85,19 +85,8 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
         'A Root CA issued today with a 20-year validity period — calculate when the PKI infrastructure must migrate to PQC signing to avoid HNFL exposure. Assume a 5-year re-issuance time.',
       badge: 'HNFL',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
-      observe: `With a CRQC in ${crqc.planningYear} (the midpoint of the ${crqc.low}–${crqc.high} planning range this site uses) and a 5-year re-issuance time, the deadline is ${crqc.planningYear - 5}. A Root CA valid until 2046 remains trusted well into the forge window — every certificate it has ever signed becomes retroactively forgeable. Migration to ML-DSA must begin now.`,
+      observe: `With a CRQC in ${crqc.planningYear} (the midpoint of the ${crqc.low}–${crqc.high} planning range this site uses) and a 5-year re-issuance time, the modeled deadline is ${crqc.planningYear - 5}. This is a scenario based on the site's planning input, not an arrival forecast. After key recovery, an attacker could issue new certificates that appear to chain to this root. Existing certificates do not change; durable issuance-time and archive evidence can help distinguish historical records from later forgeries. Migration to ML-DSA must be planned before the classical key becomes recoverable.`,
       config: { step: 4 },
-    },
-    {
-      id: 'ecc-blockchain',
-      title: '7. ECC Blockchain Under Quantum Attack',
-      description:
-        'A Bitcoin transaction is broadcast to the mempool but not yet confirmed. Google Quantum AI (Mar 2026) estimated that breaking secp256k1 ECDLP would require\u22641,200 logical qubits — roughly half prior estimates. Use the Security Level tool to compare secp256k1 with RSA-2048 and see why fast-clock CRQCs pose an on-spend threat before PQC migration.',
-      badge: "Shor's",
-      badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
-      observe:
-        'secp256k1 would require an estimated\u22641,200 logical qubits — fewer than RSA-2048 (~1,537 per Gidney 2025). A fast-clock CRQC (superconducting) reaching this threshold could derive the private key from an exposed public key within the mempool confirmation window (~10 min for Bitcoin). Migration to PQC signatures is critical for blockchain infrastructure.',
-      config: { step: 0, algorithmA: 'ECDSA secp256k1' },
     },
     {
       id: 'pqc-safe',
@@ -109,6 +98,17 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       observe:
         "The tool shows the same bit figure for classical and quantum because no efficient quantum attack on their lattice problems is known (FIPS 203 says ML-KEM is believed to be secure even against adversaries who possess a quantum computer, and FIPS 204 says the same of ML-DSA). That is a belief under continued analysis, not a proof of identical work: the figure comes from the NIST category, which claims the parameter set is at least as hard to break as AES-192 key search and is not a measured attack cost. Shor's algorithm targets factoring and discrete logs, which these schemes do not use, but 'resistant' does not mean 'completely safe': implementation, protocol and key-management failures are separate risks.",
       config: { step: 2, algorithmA: 'ML-KEM-768', algorithmB: 'ML-DSA-65' },
+    },
+    {
+      id: 'ecc-blockchain',
+      title: '7. ECC Blockchain Under Quantum Attack',
+      description:
+        'A Bitcoin transaction is broadcast to the mempool but not yet confirmed. Google Quantum AI (Mar 2026) estimated that breaking secp256k1 ECDLP would require \u22641,200 logical qubits — a circuit-specific estimate that should not be generalized to other curves or interpreted as a machine-readiness date. Use the Security Level tool to compare secp256k1 with RSA-2048 and see why fast-clock CRQCs pose an on-spend threat before PQC migration.',
+      badge: "Shor's",
+      badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
+      observe:
+        'secp256k1 would require an estimated \u22641,200 logical qubits — fewer than RSA-2048 (~1,537 per Gidney 2025). A fast-clock CRQC (superconducting) reaching this threshold could derive the private key from an exposed public key within the mempool confirmation window (~10 min for Bitcoin). Migration to PQC signatures is critical for blockchain infrastructure.',
+      config: { step: 0, algorithmA: 'ECDSA secp256k1' },
     },
   ]
 

@@ -289,7 +289,7 @@ describe('MobileCommunityView', () => {
       expect(cardCount()).toBe(CURATED.filter((l) => l.country === country).length)
     })
 
-    it('?q filters by the lexical search fields and shows a Search chip', () => {
+    it('?q filters by the lexical search fields and restores the search field', () => {
       const org = CURATED.find((l) => l.organizations.length > 0)!.organizations[0]
       renderView(`/leaders?q=${encodeURIComponent(org)}`)
       const q = org.toLowerCase()
@@ -303,7 +303,9 @@ describe('MobileCommunityView', () => {
       )
       expect(cardCount()).toBe(expected.length)
       expect(cardCount()).toBeLessThan(CURATED.length)
-      expect(screen.getByTestId('leader-link-filters')).toHaveTextContent(`Search:${org}`)
+      expect(
+        screen.getByRole('searchbox', { name: 'Search community by name or role' })
+      ).toHaveValue(org)
     })
 
     it("treats desktop's 'All' values as no filter", () => {

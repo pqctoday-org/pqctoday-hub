@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { expect, test } from './fixtures/blockAnalytics'
+import { getViolations, injectAxe } from 'axe-playwright'
+
+async function expectNoSeriousAxeViolations(page: import('@playwright/test').Page) {
+  await page.waitForTimeout(300)
+  await injectAxe(page)
+  const violations = await getViolations(page, 'main', {
+    runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+  })
+  expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')).toEqual([])
+}
 
 for (const width of [1280, 390]) {
   test(`repetition-count cutoff follows the stated entropy assumption at ${width}px`, async ({
@@ -13,6 +23,7 @@ for (const width of [1280, 390]) {
       )
     })
     await page.goto('/playground/entropy-test')
+    await expectNoSeriousAxeViolations(page)
     const paste = page.getByRole('button', { name: 'Paste Hex', exact: true })
     await paste.click()
     const input = page.getByRole('textbox', { name: 'Sample bytes in hexadecimal' })
@@ -20,7 +31,8 @@ for (const width of [1280, 390]) {
     await input.fill('0000000000')
     await load.click()
     const run = page.getByRole('button', { name: 'Run the checks', exact: true })
-    await run.click()
+    await run.focus()
+    await page.keyboard.press('Space')
     const repetition = page.getByRole('group', { name: 'Repetition Count', exact: true })
     await expect(repetition).toContainText('Failure signalled')
     await expect(repetition).toContainText('Longest run: 5')
@@ -40,5 +52,9 @@ for (const width of [1280, 390]) {
     await expect(
       page.getByRole('group', { name: 'Adaptive Proportion', exact: true })
     ).toContainText('Insufficient data')
+    await expectNoSeriousAxeViolations(page)
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+      .toBeLessThanOrEqual(1)
   })
 }

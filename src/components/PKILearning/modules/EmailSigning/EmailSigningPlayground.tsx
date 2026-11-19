@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState } from 'react'
+import React, { useId, useState } from 'react'
 import { Link } from 'react-router'
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { SMIMECertViewer } from './workshop/SMIMECertViewer'
 import { CMSSigningDemo } from './workshop/CMSSigningDemo'
 import { CMSEncryptionDemo } from './workshop/CMSEncryptionDemo'
@@ -34,6 +35,7 @@ const SECTIONS = [
 ]
 
 export const EmailSigningPlayground: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
+  const namespace = useId()
   // A ?step=N link opens just that section; without one the usual sections open.
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
     initialStep === undefined
@@ -68,6 +70,9 @@ export const EmailSigningPlayground: React.FC<{ initialStep?: number }> = ({ ini
           <div key={id} className="rounded-lg border border-border bg-card">
             <Button
               variant="ghost"
+              id={`${namespace}-${id}-trigger`}
+              aria-expanded={Boolean(expanded[id])}
+              aria-controls={`${namespace}-${id}-panel`}
               onClick={() => toggle(id)}
               className="flex w-full items-center justify-start gap-3 px-4 py-3 text-left hover:bg-muted/30 transition-colors rounded-lg h-auto whitespace-normal"
             >
@@ -81,23 +86,28 @@ export const EmailSigningPlayground: React.FC<{ initialStep?: number }> = ({ ini
                 <p className="text-xs text-muted-foreground">{description}</p>
               </div>
             </Button>
-            {expanded[id] && (
-              <div className="border-t border-border px-4 pb-4 pt-3">
-                {id === 'smime-certs' && <SMIMECertViewer />}
-                {id === 'cms-signing' && <CMSSigningDemo />}
-                {id === 'cms-encryption' && <CMSEncryptionDemo />}
-                {id === 'live-hsm' && <LiveHSMProvider />}
-              </div>
-            )}
+            <div
+              id={`${namespace}-${id}-panel`}
+              role="region"
+              aria-labelledby={`${namespace}-${id}-trigger`}
+              hidden={!expanded[id]}
+              className="border-t border-border px-4 pb-4 pt-3"
+            >
+              {expanded[id] && id === 'smime-certs' && <SMIMECertViewer />}
+              {expanded[id] && id === 'cms-signing' && <CMSSigningDemo />}
+              {expanded[id] && id === 'cms-encryption' && <CMSEncryptionDemo />}
+              {expanded[id] && id === 'live-hsm' && <LiveHSMProvider />}
+            </div>
           </div>
         ))}
       </div>
 
       <div className="pt-2 border-t border-border">
-        <Link to="/learn/email-signing">
-          <Button variant="outline" className="gap-1">
-            Open full module <ExternalLink size={14} />
-          </Button>
+        <Link
+          to="/learn/email-signing"
+          className={buttonVariants({ variant: 'outline', className: 'gap-1' })}
+        >
+          Open full module <ExternalLink size={14} aria-hidden="true" />
         </Link>
       </div>
     </div>

@@ -1,9 +1,9 @@
 /**
- * V2p7EkExplorer.tsx — V2.7 RC1 PQC EK Template Explorer
+ * V2p7EkExplorer.tsx — published V2.7 PQC EK Template Explorer
  *
  * For each of the 6 V2.7 EK persistent handles, TPM2_ReadPublic +
  * byte-level unmarshal of the returned TPMT_PUBLIC, then a selected-field
- * comparison vs V2.7 RC1 Tables 13/14 + Table 8 PolicyB digests + FIPS
+ * comparison vs published V2.7 Tables 13/14 + Table 8 PolicyB digests + FIPS
  * 203/204 pubkey-size tables.
  *
  * NOT a parser library — TPM 2.0 structures are length-prefixed plain
@@ -105,17 +105,18 @@ export function V2p7EkExplorer({ isWasmReady, v2p7Status }: Props) {
       <div className="glass-panel p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold mb-2">V2.7 RC1 EK Template Explorer</h2>
+            <h2 className="text-xl font-bold mb-2">V2.7 EK Template Explorer</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               For each of six sample PQC EK templates, the playground issues a{' '}
               <code>TPM2_ReadPublic</code> against its persistent handle, unmarshals the returned{' '}
-              <code>TPMT_PUBLIC</code>, and compares five selected fields with the reference
-              snapshot in <strong>TCG EK Credential Profile V2.7 RC1, Tables 13/14</strong> (ML-KEM
-              Storage / ML-DSA Signing templates), Table 8 PolicyB digests, and FIPS 203 Table 3 /
-              FIPS 204 Table 2 pubkey sizes. These checks cover type, nameAlg, attributes, policy
-              and public-key length. The decoder assumes the reference parameter layout; it does not
-              validate every parameter or the full public-key encoding. For production tools,
-              evaluate complete structure decoding and template validation for the claimed version.
+              <code>TPMT_PUBLIC</code>, and compares five selected fields with the reference sample
+              structures from the published{' '}
+              <strong>TCG EK Credential Profile v2.7, Tables 13/14</strong> (ML-KEM Storage / ML-DSA
+              Signing templates), Table 8 PolicyB digests, and FIPS 203 Table 3 / FIPS 204 Table 2
+              pubkey sizes. These checks cover type, nameAlg, attributes, policy and public-key
+              length. The decoder assumes the reference parameter layout; it does not validate every
+              parameter or the full public-key encoding. For production tools, evaluate complete
+              structure decoding and template validation for the claimed version.
             </p>
           </div>
           <Button

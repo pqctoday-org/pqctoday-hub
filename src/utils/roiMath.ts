@@ -18,8 +18,9 @@ export const MIGRATION_COST_FLOOR = 50_000
 export const DEFAULT_MANDATED_PENALTY_FALLBACK = 2_000_000
 
 export function resolveIndustryBreachBaseline(industry: string | undefined): number {
-  if (!industry) return INDUSTRY_BREACH_BASELINES.Other
-  return INDUSTRY_BREACH_BASELINES[industry] ?? INDUSTRY_BREACH_BASELINES.Other
+  return industry && Object.hasOwn(INDUSTRY_BREACH_BASELINES, industry)
+    ? INDUSTRY_BREACH_BASELINES[industry]
+    : INDUSTRY_BREACH_BASELINES.Other
 }
 
 export interface BreachSavingsInputs {

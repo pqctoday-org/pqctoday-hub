@@ -17,8 +17,9 @@ import {
   BookOpenCheck,
   type LucideIcon,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
+import { useScrollToHash } from '@/hooks/useScrollToHash'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 const SPONSORSHIP_EMAIL = 'sponsor@pqctoday.com'
@@ -185,19 +186,32 @@ function Hero() {
       </p>
       <PersonaPageNote route="/sponsor" className="mx-auto mb-8 max-w-2xl text-left" />
       <div className="flex flex-wrap justify-center gap-3">
-        <a href={GITHUB_SPONSORS_URL} target="_blank" rel="noopener noreferrer">
-          <Button variant="gradient" size="lg" className="gap-2">
-            Sponsor on GitHub
-            <ExternalLink size={16} />
-          </Button>
+        <a
+          href={GITHUB_SPONSORS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={buttonVariants({ variant: 'gradient', size: 'lg', className: 'gap-2' })}
+        >
+          Sponsor on GitHub
+          <ExternalLink size={16} aria-hidden="true" />
         </a>
-        <a href={`mailto:${SPONSORSHIP_EMAIL}?subject=Sponsorship%20Inquiry`}>
-          <Button variant="outline" size="lg" className="gap-2">
-            <Mail size={16} />
-            Contact us
-          </Button>
+        <a
+          href={`mailto:${SPONSORSHIP_EMAIL}?subject=Sponsorship%20Inquiry`}
+          className={buttonVariants({ variant: 'outline', size: 'lg', className: 'gap-2' })}
+        >
+          <Mail size={16} />
+          Contact us
         </a>
       </div>
+      <nav
+        aria-label="Sponsorship information"
+        className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-primary underline"
+      >
+        <Link to="#sponsorship-tiers">Compare sponsorship tiers</Link>
+        <Link to="/editorial-independence#editorial-independence-what-sponsorship-buys">
+          Editorial independence policy
+        </Link>
+      </nav>
     </section>
   )
 }
@@ -305,15 +319,19 @@ function TierCard({ tier, mode }: { tier: Tier; mode: BillingMode }) {
           </li>
         ))}
       </ul>
-      <a href={GITHUB_SPONSORS_URL} target="_blank" rel="noopener noreferrer" className="mt-auto">
-        <Button
-          variant={tier.highlight ? 'gradient' : 'outline'}
-          size="lg"
-          className="w-full gap-2"
-        >
-          {ctaLabel}
-          <ExternalLink size={14} />
-        </Button>
+      <a
+        href={GITHUB_SPONSORS_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${ctaLabel} as ${tier.name} on GitHub`}
+        className={buttonVariants({
+          variant: tier.highlight ? 'gradient' : 'outline',
+          size: 'lg',
+          className: 'mt-auto w-full gap-2',
+        })}
+      >
+        {ctaLabel}
+        <ExternalLink size={14} aria-hidden="true" />
       </a>
     </div>
   )
@@ -327,33 +345,23 @@ function BillingToggle({
   onChange: (next: BillingMode) => void
 }) {
   return (
-    <div
-      role="tablist"
-      aria-label="Billing frequency"
-      className="inline-flex items-center p-1 rounded-full bg-muted/40 border border-border"
-    >
-      {(['monthly', 'one-time'] as const).map((option) => {
-        const active = mode === option
-        return (
-          <Button
-            key={option}
-            type="button"
-            variant="ghost"
-            size="sm"
-            role="tab"
-            aria-selected={active}
-            onClick={() => onChange(option)}
-            className={`rounded-full px-4 ${
-              active
-                ? 'bg-primary/15 text-primary hover:bg-primary/15'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
+    <fieldset className="inline-flex rounded-full border border-border bg-muted/40 p-1">
+      <legend className="sr-only">Billing frequency</legend>
+      {(['monthly', 'one-time'] as const).map((option) => (
+        <label key={option} className="cursor-pointer">
+          <input
+            type="radio"
+            className="peer sr-only"
+            name="sponsor-billing-frequency"
+            checked={mode === option}
+            onChange={() => onChange(option)}
+          />
+          <span className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium text-muted-foreground peer-checked:bg-primary/15 peer-checked:text-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary">
             {option === 'monthly' ? 'Monthly' : 'One-time'}
-          </Button>
-        )
-      })}
-    </div>
+          </span>
+        </label>
+      ))}
+    </fieldset>
   )
 }
 
@@ -361,7 +369,11 @@ function Tiers() {
   const [mode, setMode] = useState<BillingMode>('monthly')
 
   return (
-    <section className="mb-12">
+    <section
+      id="sponsorship-tiers"
+      tabIndex={-1}
+      className="mb-12 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
+    >
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2 text-center">
         Sponsorship tiers
       </h2>
@@ -404,11 +416,12 @@ function EditorialPromise() {
             This is the entire reason vendors and enterprises trust our data — and the entire reason
             sponsoring is worth what we charge.
           </p>
-          <Link to="/editorial-independence#editorial-independence-what-sponsorship-buys">
-            <Button variant="outline" size="sm" className="gap-2">
-              Read the full policy
-              <ArrowRight size={14} />
-            </Button>
+          <Link
+            to="/editorial-independence#editorial-independence-what-sponsorship-buys"
+            className={buttonVariants({ variant: 'outline', size: 'sm', className: 'gap-2' })}
+          >
+            Read the full policy
+            <ArrowRight size={14} aria-hidden="true" />
           </Link>
         </div>
       </div>
@@ -466,17 +479,21 @@ function ContactCTA() {
         to discuss a custom vendor or enterprise sponsorship.
       </p>
       <div className="flex flex-wrap justify-center gap-3">
-        <a href={GITHUB_SPONSORS_URL} target="_blank" rel="noopener noreferrer">
-          <Button variant="gradient" size="lg" className="gap-2">
-            Sponsor on GitHub
-            <ExternalLink size={16} />
-          </Button>
+        <a
+          href={GITHUB_SPONSORS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={buttonVariants({ variant: 'gradient', size: 'lg', className: 'gap-2' })}
+        >
+          Sponsor on GitHub
+          <ExternalLink size={16} aria-hidden="true" />
         </a>
-        <a href={`mailto:${SPONSORSHIP_EMAIL}?subject=Sponsorship%20Inquiry`}>
-          <Button variant="outline" size="lg" className="gap-2">
-            <Mail size={16} />
-            {SPONSORSHIP_EMAIL}
-          </Button>
+        <a
+          href={`mailto:${SPONSORSHIP_EMAIL}?subject=Sponsorship%20Inquiry`}
+          className={buttonVariants({ variant: 'outline', size: 'lg', className: 'gap-2' })}
+        >
+          <Mail size={16} />
+          {SPONSORSHIP_EMAIL}
         </a>
       </div>
     </section>
@@ -484,6 +501,7 @@ function ContactCTA() {
 }
 
 export function SponsorView() {
+  useScrollToHash({ focusTarget: true })
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <Hero />

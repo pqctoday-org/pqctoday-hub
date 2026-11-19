@@ -486,7 +486,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
                           }`}
                         >
                           {engine.quantumImpact === 'grover-halved'
-                            ? 'GROVER HALVED'
+                            ? 'Idealized key search'
                             : engine.quantumImpact === 'key-expansion-needed'
                               ? 'EXPANSION NEEDED'
                               : 'NO AES KEY DOCUMENTED'}

@@ -38,6 +38,7 @@ import {
 import { computeHNDLRiskWindow, computeTNFLRiskWindow, computeMigrationEffort } from './riskWindows'
 import {
   generateCategoryDrivers,
+  inventoryDiscoveryAction,
   generateExtendedActions,
   generateExecutiveSummary,
   generateQuickSummary,
@@ -224,14 +225,7 @@ export function computeAssessment(rawInput: AssessmentInput): AssessmentResult {
     let priority = 1
 
     if (input.currentCryptoUnknown) {
-      recommendedActions.push({
-        priority: priority++,
-        action:
-          'Conduct a cryptographic asset inventory to identify all algorithms in use across systems, services, and dependencies.',
-        category: 'immediate',
-        effort: 'high' as const,
-        relatedModule: '/migrate',
-      })
+      recommendedActions.push(inventoryDiscoveryAction(priority++))
     }
 
     if (input.sensitivityUnknown) {

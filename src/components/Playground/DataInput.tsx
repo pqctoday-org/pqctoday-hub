@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useId } from 'react'
 import { clsx } from 'clsx'
 import { FileText, Binary } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,10 +11,11 @@ interface DataInputProps {
   placeholder?: string
   readOnly?: boolean
   height?: string
-  inputType?: 'text' | 'binary' // 'text' = value is ASCII, 'binary' = value is Hex string
+  inputType?: 'text' | 'binary'
+  onValidityChange?: (valid: boolean) => void
 }
 
-import { asciiToHex, hexToAscii, isHex } from '../../utils/dataInputUtils'
+import { asciiToHex, bytesToHex, hexToAscii, hexToBytes, isHex } from '../../utils/dataInputUtils'
 
 export const DataInput: React.FC<DataInputProps> = ({
   label,
@@ -24,16 +25,10 @@ export const DataInput: React.FC<DataInputProps> = ({
   readOnly = false,
   height = 'h-32',
   inputType = 'text',
+  onValidityChange,
 }) => {
-  // viewMode determines how we DISPLAY the data.
-  // If inputType='text' (value is ASCII):
-  //   viewMode='ascii' -> show value
-  //   viewMode='hex'   -> show asciiToHex(value)
-  // If inputType='binary' (value is Hex):
-  //   viewMode='hex'   -> show value
-  //   viewMode='ascii' -> show hexToAscii(value)
-
-  // Default view mode depends on input type
+  const inputId = useId()
+  const errorId = `${inputId}-error`
   const [viewMode, setViewMode] = useState<'ascii' | 'hex'>(inputType === 'text' ? 'ascii' : 'hex')
   const [localValue, setLocalValue] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -41,7 +36,7 @@ export const DataInput: React.FC<DataInputProps> = ({
   // Calculate display value based on current props and view mode
   const getDisplayValue = (val: string, mode: 'ascii' | 'hex', type: 'text' | 'binary') => {
     if (type === 'text') {
-      return mode === 'ascii' ? val : asciiToHex(val)
+      return mode === 'ascii' ? val : bytesToHex(new TextEncoder().encode(val))
     } else {
       // type === 'binary' (val is hex)
       return mode === 'hex' ? val : hexToAscii(val)
@@ -53,53 +48,52 @@ export const DataInput: React.FC<DataInputProps> = ({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalValue(getDisplayValue(value, viewMode, inputType))
     setError(null)
-  }, [value, viewMode, inputType])
+    onValidityChange?.(true)
+  }, [value, viewMode, inputType, onValidityChange])
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value
     setLocalValue(newValue)
-    setError(null)
+    if (viewMode === 'hex' && !isHex(newValue)) {
+      setError('Enter complete hexadecimal bytes.')
+      onValidityChange?.(false)
+      return
+    }
 
     try {
-      if (inputType === 'text') {
-        if (viewMode === 'ascii') {
-          // Direct edit of ASCII
-          onChange(newValue)
-        } else {
-          // Editing Hex representation of ASCII
-          if (isHex(newValue)) {
-            onChange(hexToAscii(newValue))
-          } else {
-            setError('Invalid Hexadecimal')
-          }
-        }
-      } else {
-        // inputType === 'binary' (value is Hex)
-        if (viewMode === 'hex') {
-          // Direct edit of Hex
-          if (isHex(newValue)) {
-            onChange(newValue)
-          } else {
-            setError('Invalid Hexadecimal')
-          }
-        } else {
-          // Editing ASCII representation of Binary
-          onChange(asciiToHex(newValue))
-        }
+      const parsed =
+        inputType === 'text'
+          ? viewMode === 'ascii'
+            ? newValue
+            : new TextDecoder('utf-8', { fatal: true }).decode(hexToBytes(newValue))
+          : viewMode === 'hex'
+            ? newValue
+            : asciiToHex(newValue)
+      if (inputType === 'binary' && !isHex(parsed)) {
+        setError('Enter complete hexadecimal bytes to represent this input.')
+        onValidityChange?.(false)
+        return
       }
+      onChange(parsed)
+      setError(null)
+      onValidityChange?.(true)
     } catch {
-      setError('Conversion Error')
+      setError('These hexadecimal bytes are not valid UTF-8 text.')
+      onValidityChange?.(false)
     }
   }
 
   return (
     <div className="bg-muted/30 rounded-xl border border-border p-4 transition-colors hover:border-primary/20">
-      <div className="flex justify-between items-center mb-3">
-        <label className="text-sm font-bold text-foreground flex items-center gap-2">{label}</label>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <label htmlFor={inputId} className="text-sm font-bold text-foreground">
+          {label}
+        </label>
         <div className="flex bg-muted rounded-lg p-1 border border-border">
           <Button
             variant="ghost"
             onClick={() => setViewMode('ascii')}
+            aria-pressed={viewMode === 'ascii'}
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
               viewMode === 'ascii'
@@ -112,6 +106,7 @@ export const DataInput: React.FC<DataInputProps> = ({
           <Button
             variant="ghost"
             onClick={() => setViewMode('hex')}
+            aria-pressed={viewMode === 'hex'}
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
               viewMode === 'hex'
@@ -125,6 +120,9 @@ export const DataInput: React.FC<DataInputProps> = ({
       </div>
 
       <textarea
+        id={inputId}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
         value={localValue}
         onChange={handleChange}
         readOnly={readOnly}
@@ -137,7 +135,11 @@ export const DataInput: React.FC<DataInputProps> = ({
         )}
       />
 
-      {error && <div className="mt-2 text-xs text-status-error font-medium">{error}</div>}
+      {error && (
+        <div id={errorId} role="status" className="mt-2 text-xs font-medium text-status-error">
+          {error}
+        </div>
+      )}
     </div>
   )
 }

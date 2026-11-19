@@ -100,6 +100,7 @@ export interface CharterState {
   budgetHorizonYears: string
   steerCo: Record<FrameworkRoleId, boolean>
   signOffDate: string
+  approvalReference?: string
   workstreams: Record<string, boolean>
   successCriteria: string
   riskAppetiteStatement: string
@@ -107,6 +108,27 @@ export interface CharterState {
 }
 
 const todayIso = (): string => new Date().toISOString().slice(0, 10)
+
+function mandateReview(state: CharterState): string {
+  const missing = [
+    !state.sponsorName.trim() && 'a named sponsor',
+    !state.scopeInclude.trim() && 'the included scope',
+    !state.successCriteria.trim() && 'success criteria',
+    !state.approvalReference?.trim() && 'an approval reference',
+  ].filter(Boolean)
+  if (missing.length) return `Draft. Record ${missing.join(', ')}.`
+
+  const approvalDate = new Date(state.signOffDate)
+  const dateValid =
+    /^\d{4}-\d{2}-\d{2}$/.test(state.signOffDate) &&
+    Number.isFinite(approvalDate.getTime()) &&
+    approvalDate.toISOString().slice(0, 10) === state.signOffDate
+  if (!dateValid || state.signOffDate > todayIso()) {
+    return 'Draft. Record the date of the completed approval.'
+  }
+
+  return 'Approval reference recorded. Verify the record covers this charter revision before advancing Gate G0.'
+}
 
 export function buildMarkdown(s: CharterState): string {
   const lines: string[] = []
@@ -134,7 +156,9 @@ export function buildMarkdown(s: CharterState): string {
   lines.push('')
   lines.push(`- **Sponsor:** ${s.sponsorName.trim() || '_(unassigned)_'}`)
   lines.push(`- **Title:** ${s.sponsorTitle.trim() || '_(unassigned)_'}`)
-  lines.push(`- **Mandate sign-off date:** ${s.signOffDate || '_(pending)_'}`)
+  lines.push(`- **Reported approval date:** ${s.signOffDate || '_(pending)_'}`)
+  lines.push(`- **Approval reference:** ${s.approvalReference?.trim() || '_(pending)_'}`)
+  lines.push(`- **Mandate review:** ${mandateReview(s)}`)
   lines.push('')
 
   lines.push('## 4. Program leadership')
@@ -241,7 +265,8 @@ export const ProgramCharter: React.FC = () => {
         'vendor-lead': false,
         'pmo-analyst': true,
       },
-      signOffDate: todayIso(),
+      signOffDate: '',
+      approvalReference: '',
       workstreams: Object.fromEntries(WORKSTREAMS.map((w) => [w.id, false])),
       successCriteria: '',
       riskAppetiteStatement: '',
@@ -261,6 +286,8 @@ export const ProgramCharter: React.FC = () => {
           'Systems past their confidentiality horizon or slated for retirement — addressed via crypto-shred / decommission rather than migration.',
         sponsorName: 'Chief Information Security Officer',
         sponsorTitle: 'Executive Sponsor',
+        signOffDate: todayIso(),
+        approvalReference: 'Fictional simulation sponsor decision',
         qrpmName: 'Head of Cryptographic Engineering',
         budgetYear1: '$1.5M–$4M — discovery, tooling, 2–3 hybrid pilots, training',
         budgetMultiYear: 'Phased multi-year program aligned to infrastructure refresh cycles',
@@ -448,7 +475,7 @@ export const ProgramCharter: React.FC = () => {
               htmlFor="charter-signoff-date"
               className="text-xs font-medium text-muted-foreground"
             >
-              Mandate sign-off date
+              Reported approval date
             </label>
             <Input
               id="charter-signoff-date"
@@ -456,6 +483,21 @@ export const ProgramCharter: React.FC = () => {
               className="mt-1"
               value={state.signOffDate}
               onChange={(e) => set('signOffDate', e.target.value)}
+            />
+          </div>
+          <div className="block">
+            <label
+              htmlFor="charter-approval-reference"
+              className="text-xs font-medium text-muted-foreground"
+            >
+              Approval reference
+            </label>
+            <Input
+              id="charter-approval-reference"
+              className="mt-1"
+              value={state.approvalReference ?? ''}
+              onChange={(event) => set('approvalReference', event.target.value)}
+              placeholder="Example: meeting minutes or a signed decision record"
             />
           </div>
           <div className="block">
@@ -683,6 +725,10 @@ export const ProgramCharter: React.FC = () => {
           />
         </div>
       </section>
+
+      <p role="status" aria-label="Mandate review" className="text-sm font-semibold">
+        {mandateReview(state)}
+      </p>
 
       <ExportableArtifact
         title="Program Charter — Export"

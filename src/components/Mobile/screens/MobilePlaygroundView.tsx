@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { PythonWorkbenchLink } from '@/components/ui/PythonWorkbenchLink'
 import { useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { Link } from 'react-router'
+import { playgroundReturnState, usePlaygroundCatalogState } from '@/hooks/usePlaygroundCatalogState'
 import { Bookmark, BookmarkCheck, GraduationCap, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
@@ -11,7 +12,6 @@ import {
   SANDBOX_TOOL_COUNT,
   CATEGORIES,
   type WorkshopTool,
-  type WorkshopCategory,
   type ToolDifficulty,
 } from '@/components/Playground/workshopRegistry'
 import { PERSONA_CHIP_LABEL, roleLabel } from '@/components/Playground/cryptoLabMeta'
@@ -96,16 +96,14 @@ const DIFFICULTY_BADGE: Record<ToolDifficulty, string> = {
  * not a second copy of each tool's own UI.
  */
 export function MobilePlaygroundView() {
-  const [search, setSearch] = useState('')
+  const { params: searchParams, setFilter } = usePlaygroundCatalogState()
+  const search = searchParams.get('q') ?? ''
   // A shared /playground?cat=<category> link opens on that category here too,
   // matching the desktop catalog (which keeps ?cat= in the URL).
-  const [searchParams] = useSearchParams()
-  const [category, setCategory] = useState<WorkshopCategory | null>(() => {
-    const cat = searchParams.get('cat')
-    return cat && (CATEGORIES as readonly string[]).includes(cat) ? (cat as WorkshopCategory) : null
-  })
-  const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
-  const [runsHereOnly, setRunsHereOnly] = useState(true)
+  const category = CATEGORIES.find((value) => value === searchParams.get('cat')) ?? null
+  const difficulty =
+    DIFFICULTY_CHIPS.find(({ value }) => value === searchParams.get('difficulty'))?.value ?? 'All'
+  const runsHereOnly = searchParams.get('runs') !== '0'
   const [selected, setSelected] = useState<WorkshopTool | null>(null)
 
   const caps = useDeviceCapabilities()
@@ -211,7 +209,9 @@ export function MobilePlaygroundView() {
       <input
         type="search"
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => setFilter('q', e.target.value)}
+        aria-label="Search tools"
+        data-playground-search
         placeholder='Search — try "ML-KEM", "entropy", or "hybrid cert"'
         className="mb-3 h-10 w-full rounded-lg border border-border bg-card px-3 text-[13px] text-foreground placeholder:text-muted-foreground"
       />
@@ -220,7 +220,7 @@ export function MobilePlaygroundView() {
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setCategory(null)}
+          onClick={() => setFilter('cat', null)}
           aria-pressed={category === null}
           className={cn(
             'h-8 rounded-full border px-3 text-[11px] font-semibold',
@@ -236,7 +236,7 @@ export function MobilePlaygroundView() {
             type="button"
             variant="ghost"
             key={cat}
-            onClick={() => setCategory((c) => (c === cat ? null : cat))}
+            onClick={() => setFilter('cat', category === cat ? null : cat)}
             aria-pressed={category === cat}
             className={cn(
               'h-8 rounded-full border px-3 text-[11px] font-semibold',
@@ -256,7 +256,7 @@ export function MobilePlaygroundView() {
             type="button"
             variant="ghost"
             key={chip.value}
-            onClick={() => setDifficulty(chip.value)}
+            onClick={() => setFilter('difficulty', chip.value === 'All' ? null : chip.value)}
             aria-pressed={difficulty === chip.value}
             className={cn(
               'h-8 rounded-full border px-3 text-[11px] font-semibold capitalize',
@@ -274,7 +274,7 @@ export function MobilePlaygroundView() {
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setRunsHereOnly((v) => !v)}
+          onClick={() => setFilter('runs', runsHereOnly ? '0' : '1')}
           aria-pressed={runsHereOnly}
           className={cn(
             'mb-4 h-8 rounded-full border px-3 text-[11px] font-semibold',
@@ -318,7 +318,9 @@ export function MobilePlaygroundView() {
         shareUrl={selected ? `/playground/${encodeURIComponent(selected.id)}` : undefined}
         testId="playground-tool-detail-sheet"
       >
-        {selected && <ToolDetailSheetBody tool={selected} caps={caps} />}
+        {selected && (
+          <ToolDetailSheetBody tool={selected} caps={caps} catalogueParams={searchParams} />
+        )}
       </MobileSheet>
     </div>
   )
@@ -341,7 +343,7 @@ function ToolCardMobile({
   const unmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
 
   return (
-    <article className="glass-panel relative flex flex-col p-3.5">
+    <article className="glass-panel relative flex flex-col p-3.5" data-playground-result={tool.id}>
       <Button
         type="button"
         variant="ghost"
@@ -366,6 +368,7 @@ function ToolCardMobile({
         type="button"
         variant="ghost"
         onClick={onSelect}
+        data-playground-open
         // Button's own base classes hard-code whitespace-nowrap; same defect
         // class found and fixed on Threats/Patents/Compliance/Library (2026-08-24).
         className="h-auto w-full flex-col items-start gap-1.5 whitespace-normal rounded-none p-0 pr-8 text-left font-normal"
@@ -414,9 +417,11 @@ function ToolCardMobile({
 function ToolDetailSheetBody({
   tool,
   caps,
+  catalogueParams,
 }: {
   tool: WorkshopTool
   caps: ReturnType<typeof useDeviceCapabilities>
+  catalogueParams: URLSearchParams
 }) {
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
   const toggleBookmark = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
@@ -508,6 +513,7 @@ function ToolDetailSheetBody({
             Chromium) where that warning fires far more often than desktop. */}
         <Link
           to={`/playground/${tool.id}`}
+          state={playgroundReturnState(catalogueParams, tool.id)}
           className={cn(
             buttonVariants({ variant: unmet.length > 0 ? 'outline' : 'gradient' }),
             'h-auto flex-1 rounded-lg py-2.5 font-bold'

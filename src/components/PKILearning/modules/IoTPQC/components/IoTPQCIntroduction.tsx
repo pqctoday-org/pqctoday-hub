@@ -443,9 +443,9 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
       >
         <p>
           Each certificate holds its subject&apos;s public key and its{' '}
-          <strong>issuer&apos;s</strong> signature (RFC 5280). In a TLS or DTLS handshake the server
-          sends its leaf and intermediate and may omit the trust-anchor root when peers are known to
-          possess it (RFC 8446 §4.4.2).
+          <strong>issuer&apos;s</strong> signature (RFC 5280). The modeled TLS server sends a leaf
+          and an intermediate. TLS allows it to omit a trust anchor distributed separately (RFC 9846
+          Section 4.5.1).
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-xs font-bold text-foreground mb-2">

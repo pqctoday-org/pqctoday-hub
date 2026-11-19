@@ -27,19 +27,23 @@ export const JourneyMilestoneRow: React.FC<JourneyMilestoneRowProps> = ({ phase 
       }`}
     >
       {isCompleted ? (
-        <Check size={14} className="text-status-success shrink-0" />
+        <Check aria-hidden="true" size={14} className="text-status-success shrink-0" />
       ) : (
-        <Target size={14} className="text-accent shrink-0" />
+        <Target aria-hidden="true" size={14} className="text-accent shrink-0" />
       )}
-      <span
-        className={`text-xs font-medium flex-1 min-w-0 truncate ${
-          isCompleted ? 'text-muted-foreground line-through' : 'text-foreground'
-        } group-hover:text-foreground transition-colors`}
-      >
-        {item.label}
+      <span className="min-w-0 flex-1">
+        <span className="block text-xs font-medium text-foreground">{item.label}</span>
+        {item.purpose && (
+          <span className="mt-1 block whitespace-normal text-[11px] leading-relaxed text-muted-foreground">
+            {item.purpose}
+          </span>
+        )}
       </span>
-      <span className="text-[10px] font-mono text-muted-foreground shrink-0">{item.route}</span>
+      <span className="shrink-0 text-[10px] text-muted-foreground">
+        {isCompleted ? 'Completed' : item.status === 'in-progress' ? 'In progress' : 'Available'}
+      </span>
       <ArrowRight
+        aria-hidden="true"
         size={12}
         className="text-muted-foreground group-hover:text-primary transition-colors shrink-0"
       />

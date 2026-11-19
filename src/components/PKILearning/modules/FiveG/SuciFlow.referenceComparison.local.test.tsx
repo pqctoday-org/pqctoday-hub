@@ -44,7 +44,7 @@ vi.mock('@/utils/katRunner', async (original) => ({
 }))
 import { SuciFlow } from './SuciFlow'
 const section = () =>
-  screen.getByRole('region', { name: 'Official Profile B fixed-vector comparison' })
+  screen.getByRole('region', { name: 'Profile B fixed-vector exercise instructions' })
 const steps = ['3-ecdh', '4-kdf', '5-encrypt', '6-mac', '7-e2e']
 function result(spec: KatTestSpec, status = 'pass') {
   return {

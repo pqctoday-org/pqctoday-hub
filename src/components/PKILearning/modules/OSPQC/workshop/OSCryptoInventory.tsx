@@ -7,6 +7,7 @@ import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCove
 import { EDUCATION_NOTICE } from '@/data/educationNotice'
 import { migrateLayerHref } from '@/utils/migrateLinks'
 import manifest from '../manifest'
+import { OsTlsPolicyEvidence } from './OsTlsPolicyEvidence'
 
 interface CryptoComponent {
   id: string
@@ -29,7 +30,7 @@ const CRYPTO_COMPONENTS: CryptoComponent[] = [
     quantumRisk: 'critical',
     migrationEffort: 'medium',
     notes:
-      'Highest priority. Affects all web traffic. Mitigatable with hybrid X25519MLKEM768 groups in TLS 1.3 with a single config change.',
+      'Check which applications use this backend and accept its default configuration. Confirm the negotiated key-exchange group with each peer.',
   },
   {
     id: 'ssh-daemon',
@@ -40,7 +41,7 @@ const CRYPTO_COMPONENTS: CryptoComponent[] = [
     quantumRisk: 'critical',
     migrationEffort: 'medium',
     notes:
-      'Host keys exposed to HNDL attacks. ML-DSA-65 host keys are named ssh-mldsa-65 in the Internet-Draft draft-sfluhrer-ssh-mldsa-06 (this lesson writes ssh-mldsa65 for short); an Internet-Draft is not a standard. Key exchange uses the mlkem768x25519-sha256 hybrid — standard since OpenSSH 9.9 and the default since OpenSSH 10.0.',
+      'Host keys authenticate servers and are a future impersonation risk; classical session key exchange creates the harvest-now-decrypt-later risk. ML-DSA-65 host keys are named ssh-mldsa-65 in the Internet-Draft draft-sfluhrer-ssh-mldsa-06 (this lesson writes ssh-mldsa65 for short); an Internet-Draft is not a standard. Key exchange uses the mlkem768x25519-sha256 hybrid — supported since OpenSSH 9.9 and the default since OpenSSH 10.0.',
   },
   {
     id: 'package-manager',
@@ -79,23 +80,23 @@ const CRYPTO_COMPONENTS: CryptoComponent[] = [
     id: 'curl-wget',
     component: 'curl / wget',
     category: 'HTTP Clients',
-    currentAlgorithm: 'Inherits system OpenSSL / GnuTLS TLS config',
+    currentAlgorithm: 'TLS groups depend on the client backend and its settings',
     osDependency: 'OpenSSL 3.x or GnuTLS (distro-dependent)',
     quantumRisk: 'medium',
     migrationEffort: 'low',
     notes:
-      'curl 8.x with OpenSSL 3.5.0+ backend automatically supports X25519MLKEM768 if openssl.cnf groups are configured. No application-level changes needed.',
+      'Check the installed TLS backend and any application-level group settings. OpenSSL 3.5 supports X25519MLKEM768. Peer support and the actual negotiation determine the result.',
   },
   {
     id: 'git',
     component: 'git (HTTPS / SSH transport)',
     category: 'Developer Tools',
-    currentAlgorithm: 'HTTPS: inherits system TLS. SSH: inherits system SSH config',
+    currentAlgorithm: 'HTTPS: libcurl backend. SSH: selected SSH client',
     osDependency: 'libcurl (HTTPS) + OpenSSH / libssh (SSH)',
     quantumRisk: 'medium',
     migrationEffort: 'low',
     notes:
-      'git inherits TLS and SSH settings from system libraries. No git-specific PQC changes needed once system TLS and SSH are migrated. git commit signing (GPG) is separate.',
+      'For HTTPS, inspect the libcurl backend and Git transport settings. For SSH, inspect the actual SSH client and configuration. Commit signing is a separate operation.',
   },
   {
     id: 'container-runtime',
@@ -106,7 +107,7 @@ const CRYPTO_COMPONENTS: CryptoComponent[] = [
     quantumRisk: 'medium',
     migrationEffort: 'medium',
     notes:
-      "containerd uses Go's crypto/tls which has ML-KEM support in Go 1.23+. Docker daemon TLS and registry communication benefit automatically from Go 1.23+ upgrade. Container image signing (Notary/sigstore) separate.",
+      "Go 1.24 added X25519MLKEM768 and enabled it for default TLS preferences, replacing Go 1.23's experimental Kyber draft group. Inspect the installed binary's Go version, TLS options and observed sessions. Image signing is separate.",
   },
 ]
 
@@ -217,6 +218,7 @@ export const OSCryptoInventory: React.FC = () => {
   return (
     <div className="space-y-6">
       <VendorCoverageNotice migrateLayer="OS" className="mb-2" />
+      <OsTlsPolicyEvidence />
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="glass-panel p-3 text-center">

@@ -72,7 +72,7 @@ const OFFICIAL_PROFILE_B_SPECS: KatTestSpec[] = [
     useCase: 'Profile B published ECDH shared key',
     standard: '3GPP TS 33.501 Annex C.4.4.1',
     referenceUrl:
-      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf',
     kind: { type: 'suci-profile-b', step: '3-ecdh' },
   },
   {
@@ -83,7 +83,7 @@ const OFFICIAL_PROFILE_B_SPECS: KatTestSpec[] = [
     useCase: 'SUCI Profile B key derivation (X9.63-KDF + SHA-256)',
     standard: '3GPP TS 33.501 Annex C.4.4.1',
     referenceUrl:
-      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf',
     kind: { type: 'suci-profile-b', step: '4-kdf' },
   },
   {
@@ -91,7 +91,7 @@ const OFFICIAL_PROFILE_B_SPECS: KatTestSpec[] = [
     useCase: 'Profile B published ciphertext',
     standard: '3GPP TS 33.501 Annex C.4.4.1',
     referenceUrl:
-      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf',
     kind: { type: 'suci-profile-b', step: '5-encrypt' },
   },
   {
@@ -99,7 +99,7 @@ const OFFICIAL_PROFILE_B_SPECS: KatTestSpec[] = [
     useCase: 'Profile B published MAC tag',
     standard: '3GPP TS 33.501 Annex C.4.4.1',
     referenceUrl:
-      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf',
     kind: { type: 'suci-profile-b', step: '6-mac' },
   },
   {
@@ -107,7 +107,7 @@ const OFFICIAL_PROFILE_B_SPECS: KatTestSpec[] = [
     useCase: 'SUCI Profile B scheme output (ECDH → KDF → AES-CTR → HMAC)',
     standard: '3GPP TS 33.501 Annex C.4.4.1',
     referenceUrl:
-      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+      'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf',
     kind: { type: 'suci-profile-b', step: '7-e2e' },
   },
 ]
@@ -1474,7 +1474,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 <Radio size={16} className={profile === 'A' ? 'fill-primary' : ''} />
                 Profile A
               </div>
-              <div className="text-xs opacity-70 mt-1">Curve25519 (X25519) + AES-128</div>
+              <div className="text-xs mt-1">Curve25519 (X25519) + AES-128</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Faster Montgomery-curve ECDH, 32-byte keys
               </div>
@@ -1498,7 +1498,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 <Radio size={16} className={profile === 'B' ? 'fill-secondary' : ''} />
                 Profile B
               </div>
-              <div className="text-xs opacity-70 mt-1">NIST P-256 + AES-128</div>
+              <div className="text-xs mt-1">NIST P-256 + AES-128</div>
               <div className="text-xs text-muted-foreground mt-1">
                 Wider HSM &amp; national standard support (NIST P-256)
               </div>
@@ -1522,7 +1522,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
                 <Radio size={16} className={profile === 'C' ? 'fill-tertiary' : ''} />
                 Profile C (PQC)
               </div>
-              <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
+              <div className="text-xs text-foreground mt-1">ML-KEM (FIPS 203) + AES-256</div>
               <div className="text-xs italic text-muted-foreground mt-1">
                 Research proposal (Khan et al. 2025) · not a 3GPP profile
               </div>
@@ -1704,9 +1704,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         </div>
       )}
 
-      <section aria-label="Official Profile B fixed-vector comparison" className="space-y-3">
+      <section aria-label="Profile B fixed-vector exercise instructions" className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          Run the published Profile B sample: 3GPP TS 33.501 V19.5.0, Annex C.4.4.1, vector
+          Run the published Profile B sample: 3GPP TS 33.501 V19.7.0, Annex C.4.4.1, vector
           profile-b-imsi. Its fixed inputs use MCC|MNC 274012, MSIN 001002086 and plaintext block
           00012080F6, independently of the wizard selection above. The five checks compare ECDH Z,
           the entire Enc key || ICB || MAC key output, ciphertext, MAC tag and scheme output. The
@@ -1717,7 +1717,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         <KatValidationPanel
           specs={OFFICIAL_PROFILE_B_SPECS}
           label="Official Profile B fixed-vector comparison"
-          authorityNote="Published 3GPP TS 33.501 V19.5.0 Annex C.4.4.1 sample — all five required checks must pass"
+          authorityNote="Published 3GPP TS 33.501 V19.7.0 Annex C.4.4.1 sample — all five required checks must pass"
         />
       </section>
 

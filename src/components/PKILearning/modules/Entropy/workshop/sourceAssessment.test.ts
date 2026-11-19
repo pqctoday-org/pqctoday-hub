@@ -257,6 +257,22 @@ describe('H1 — adversary control zeroes the controlled source', () => {
     expect(creditedEntropyBits(sources(), 4, { adversaryControl: 'unknown' })).toBe(512)
   })
 
+  it('uses one source for dependent and unverified concatenation and zero for XOR', () => {
+    for (const independence of ['correlated', 'unknown'] as const) {
+      expect(creditedEntropyBits(sources(), 4, { independence, assembly: 'concat' })).toBe(256)
+      expect(creditedEntropyBits(sources(), 4, { independence, assembly: 'xor' })).toBe(0)
+    }
+  })
+
+  it('gives no fresh credit to repeated or stale requests', () => {
+    for (const inputFreshness of ['repeated', 'stale-remote'] as const) {
+      expect(accountEntropy(sources(), UNCONDITIONED, { inputFreshness })).toEqual({
+        inputEntropyBits: 0,
+        seedEntropyBits: 0,
+      })
+    }
+  })
+
   it('XOR / hash / HMAC assembly credits only the largest single source (§2.6 item 8)', () => {
     for (const assembly of ['xor', 'hash', 'hmac'] as const) {
       expect(creditedEntropyBits(sources(), 4, { assembly }), assembly).toBe(256)

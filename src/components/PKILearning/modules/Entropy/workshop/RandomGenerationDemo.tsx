@@ -61,13 +61,13 @@ const SOURCES: SourceConfig[] = [
   {
     id: 'webcrypto',
     label: 'Web Crypto API',
-    description: 'Browser CSPRNG backed by OS entropy',
+    description: 'The browser returns these bytes from crypto.getRandomValues().',
     secure: true,
   },
   {
     id: 'openssl',
     label: 'OpenSSL WASM',
-    description: 'OpenSSL DRBG seeded from OS entropy',
+    description: 'The OpenSSL WebAssembly instance returns these bytes through openssl rand.',
     secure: true,
   },
   {
@@ -234,7 +234,10 @@ const SourceCard: React.FC<{
   error: string | null
   loading: boolean
 }> = ({ source, result, error, loading }) => (
-  <div className="glass-panel p-4 flex-1 min-w-0 space-y-3">
+  <section
+    aria-label={`${source.label} output`}
+    className="glass-panel p-4 flex-1 min-w-0 space-y-3"
+  >
     <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-2 min-w-0">
         {source.secure ? (
@@ -246,22 +249,28 @@ const SourceCard: React.FC<{
       </div>
     </div>
 
-    {!source.secure && (
-      <p className="text-[10px] text-warning leading-tight">{source.description}</p>
-    )}
+    <p
+      className={`text-xs leading-tight ${source.secure ? 'text-muted-foreground' : 'text-warning'}`}
+    >
+      {source.description}
+    </p>
 
     {loading ? (
       <div className="h-24 flex items-center justify-center">
         <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent" />
       </div>
     ) : error ? (
-      <div className="h-24 flex flex-col items-center justify-center text-status-error text-xs gap-1 text-center px-4 bg-status-error/5 rounded border border-status-error/20">
+      <div
+        role="alert"
+        className="h-24 flex flex-col items-center justify-center text-status-error text-xs gap-1 text-center px-4 bg-status-error/5 rounded border border-status-error/20"
+      >
         <AlertTriangle size={16} />
         <span className="line-clamp-2">{error}</span>
       </div>
     ) : result ? (
       <>
-        <div className="flex justify-end mb-1">
+        <div className="flex justify-between items-center mb-1">
+          <p className="text-xs text-muted-foreground">{result.data.length} bytes returned</p>
           <CopyButton
             text={formatHex(result.data)}
             label="Copy hex"
@@ -287,7 +296,7 @@ const SourceCard: React.FC<{
         No data yet — click Generate
       </div>
     )}
-  </div>
+  </section>
 )
 
 export const RandomGenerationDemo: React.FC = () => {
@@ -373,6 +382,15 @@ export const RandomGenerationDemo: React.FC = () => {
               const result = await openSSLService.execute(`rand -hex ${byteCount}`)
               const timeMs = performance.now() - t0
               const hexString = result.stdout.trim().replace(/[\s\n]/g, '')
+              if (
+                result.error ||
+                hexString.length !== byteCount * 2 ||
+                !/^[0-9a-f]+$/i.test(hexString)
+              ) {
+                throw new Error(
+                  `OpenSSL did not return ${byteCount} complete random bytes. No sample was recorded.`
+                )
+              }
               const bytes = new Uint8Array(byteCount)
               for (let i = 0; i < byteCount; i++) {
                 bytes[i] = parseInt(hexString.substring(i * 2, i * 2 + 2), 16)
@@ -540,6 +558,7 @@ export const RandomGenerationDemo: React.FC = () => {
               }
               size="sm"
               onClick={() => toggleSource(src.id)}
+              disabled={loading}
               aria-pressed={enabledSources.includes(src.id)}
               aria-label={`Toggle source: ${src.label}`}
               className={`gap-1.5 ${
@@ -576,6 +595,7 @@ export const RandomGenerationDemo: React.FC = () => {
                     variant={enabledSources.includes(src.id) ? 'outline' : 'ghost'}
                     size="sm"
                     onClick={() => toggleSource(src.id)}
+                    disabled={loading}
                     aria-pressed={enabledSources.includes(src.id)}
                     aria-label={`Toggle source: ${src.label}`}
                     className={
@@ -608,6 +628,7 @@ export const RandomGenerationDemo: React.FC = () => {
           items={byteCountItems}
           selectedId={String(byteCount)}
           onSelect={(id) => setByteCount(Number(id))}
+          disabled={loading}
           label="Bytes"
           noContainer
         />

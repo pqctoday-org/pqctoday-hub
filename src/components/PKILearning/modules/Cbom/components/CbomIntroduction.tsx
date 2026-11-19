@@ -101,15 +101,19 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
       <Section id="cbom-formats" icon={FileText} title="Formats & governance: CycloneDX vs SPDX">
         <p>
           <Badge kind="std" />
-          Two BOM standards compete, with different stewards: <strong>CycloneDX</strong> (OWASP;
-          standardized as <strong>ECMA-424</strong>, current spec v1.7) and <strong>SPDX</strong>{' '}
-          (Linux Foundation; <strong>ISO/IEC 5962</strong>; v3.0.1).
+          Two widely used BOM specifications have different stewards and CBOM coverage:{' '}
+          <strong>CycloneDX</strong> (OWASP; <strong>ECMA-424</strong>, 2nd edition, current spec
+          v1.7) and <strong>SPDX</strong> (Linux Foundation; <strong>ISO/IEC 5962</strong> for v2.3;
+          released v3.0.1).
         </p>
         <p>
-          The decider for a CBOM:{' '}
-          <strong>SPDX 3.0.1 has no dedicated cryptography object model yet</strong>, so CycloneDX
-          is the practical choice today. CycloneDX 1.7 adds a <strong>Cryptography Registry</strong>{' '}
-          (consistent algorithm-family and curve naming) built for PQC-readiness reviews.
+          For a native, interoperable CBOM today, CycloneDX is the more complete released
+          specification: version 1.7 defines cryptographic assets and a{' '}
+          <strong>Cryptography Registry</strong> for consistent algorithm identifiers. Released SPDX
+          3.0.1 has no comparable dedicated cryptographic-asset model. SPDX 3.1 work is still a
+          release candidate, and the SPDX Cryptographic Algorithms List is a separate community list
+          rather than a released CBOM schema. Treat SPDX cryptographic inventory support as
+          evolving; check the target specification and tool support before choosing it.
         </p>
         <p>
           <Badge kind="std" />

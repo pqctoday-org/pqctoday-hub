@@ -9,8 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'vpn-ssh-pqc',
   version: '1.0.1',
-  lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-15',
+  lastReviewed: '2026-08-23',
+  lastEdited: '2026-11-18',
 
   // Expanded from a single line 2026-08-23. The one-line form is why the five
   // declarations below first landed in algorithms[] — an applier that looked for the
@@ -34,8 +34,9 @@ export const content: ModuleContent = {
     // the revisioned WG documents below, and one site still named Fluhrer's individual
     // submission, whose own capture reads "Expired Internet-Draft (individual) Expired &
     // archived".
-    // Both IKEv2 drafts are in the RFC Editor queue (October 2026): ikev2-pqc-auth is at
-    // revision -12 and ikev2-mlkem at -09. The library ID below still carries the
+    // As of 2026-11-18, both IKEv2 documents are Active Internet-Drafts submitted to IESG
+    // and listed in the RFC Editor queue, awaiting a first editor. pqc-auth is at -12
+    // (updated 2026-11-03) and mlkem at -09 (latest revision 2026-07-05). The library ID below still carries the
     // older pqc-auth revision until the library row is refreshed; it links to the
     // Datatracker page, which always shows the latest revision.
     getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-12'),
@@ -43,7 +44,8 @@ export const content: ModuleContent = {
     // RFC 9329 (obsoletes RFC 8229): the reliable-transport route the limits section names
     getStandard('RFC-9329'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
-    getStandard('OpenSSH-9-9'), // m-vpn-ssh-pqc: September 2024
+    getStandard('OpenSSH-9-9'), // Historical source for ML-KEM key exchange introduction
+    getStandard('OpenSSH-Post-Quantum-Cryptography'), // Current PQ status; release notes qualify role/version support
     getStandard('Multiple-Authentication-Exchanges-in-the-Internet-Key-Exchan'), // pt-vpn-sim: RFC 4739
   ],
 

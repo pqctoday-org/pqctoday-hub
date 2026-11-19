@@ -13,9 +13,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'data-asset-sensitivity',
-  version: '1.0.1',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-08',
+  version: '1.0.2',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 199'),
@@ -109,10 +109,10 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Four-tier data sensitivity classification model (Low / Medium / High / Critical). Asset type taxonomy: data stores, key material, communications, credentials, code artifacts. HNDL (Harvest Now, Decrypt Later) risk windows — formula: CRQC arrival − retention years. Global data protection regulations: GDPR, HIPAA, PCI DSS, CCPA/CPRA, NIS2, DORA, FIPS 140-3, CNSA 2.0, NIST IR 8547, ISO 27001. Industry-specific compliance obligation mapping across 16 sectors.',
+      'Four-tier data sensitivity classification model (Low / Medium / High / Critical) that distinguishes business services (such as an archiving and retrieval service) from protected data assets (such as long-lived records). Asset type taxonomy: data stores, key material, communications, credentials, code artifacts. HNDL (Harvest Now, Decrypt Later) risk windows — formula: CRQC arrival − confidentiality years. Regulatory and standards context: GDPR, HIPAA, PCI DSS v4.0.1, CCPA/CPRA, NIS2 and DORA (cyber risk-management duties), EU PQC Roadmap v1.1, FIPS 140-3 (CMVP vs. ACVP), CNSA 2.0 FAQ v2.2 (US NSS), EO 14412 & OMB M-26-15 (US federal civilian + proposed FAR contractor rule), NIST IR 8547 (final, October 2026), and ISO/IEC 27001.',
     workshopSummary:
-      'Asset Inventory Builder — Create and classify organizational data assets with sensitivity tiers, asset types, retention periods, and HNDL risk indicators. Compliance Matrix — Map compliance mandates to assets by industry, filter by region (US Federal / EU / Industry-Specific / Global), track obligation urgency and earliest deadline. Risk Methodology Explorer — Apply all four methodologies (NIST RMF, ISO 27005, FAIR, DORA/NIS2) to selected assets; compare outputs in a unified summary table.',
+      'Step 1: Asset Inventory Builder — Catalog data assets with sensitivity tiers, asset types, retention and confidentiality periods, and HNDL risk indicators. Step 2: Classification Challenge — Classify 10 real-world scenarios using the four-tier model with immediate HNDL and framework feedback. Step 3: Sensitivity Conflict Resolver — Apply resolution rules when multiple frameworks disagree on a tier. Step 4: Sensitivity Scoring Engine — Configure composite scoring weights across four dimensions and inspect per-asset drivers. Step 5: PQC Migration Priority Map — Review ranked migration priorities, algorithm recommendations, compliance deadlines, and exportable Markdown.',
     relatedStandards:
-      'NIST SP 800-37 (Risk Management Framework). NIST SP 800-60 (Information Type Sensitivity). NIST SP 800-53 (Security Controls). FIPS 199 (Information Categorization). FIPS 200 (Minimum Security Requirements). ISO 27001 (Information Security Management). ISO 27005 (Information Security Risk Management). FAIR (Factor Analysis of Information Risk). DORA (Digital Operational Resilience Act — EU). NIS2 Directive (EU Network and Information Security). GDPR (EU General Data Protection Regulation).',
+      'NIST SP 800-37 (Risk Management Framework). NIST SP 800-60 (Information Type Sensitivity). NIST SP 800-53 (Security Controls). FIPS 199 (Information Categorization). FIPS 200 (Minimum Security Requirements). NIST IR 8547 (final, October 2026 — deprecate classical PKC after 2030, disallow after 2035). NSA CNSA 2.0 FAQ v2.2 (US National Security Systems). EO 14412 & OMB M-26-15 (US federal civilian agencies + directed FAR contractor rule). EU PQC Roadmap v1.1. ISO/IEC 27001 & ISO/IEC 27005. FAIR (Factor Analysis of Information Risk). DORA & NIS2 (EU cyber risk-management duties). GDPR (EU General Data Protection Regulation).',
   },
 }

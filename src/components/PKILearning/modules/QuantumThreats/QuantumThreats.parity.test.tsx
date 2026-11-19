@@ -25,7 +25,9 @@ describe('QuantumThreats render parity', () => {
     expect(screen.getByRole('heading', { name: 'Quantum Threat Mechanics' })).toBeInTheDocument()
     // in-page description differs from the catalog description (the override slot)
     expect(
-      screen.getByText(/How quantum computers break RSA, ECC, and weaken AES/)
+      screen.getByText(
+        /How sufficiently capable quantum computers threaten public-key cryptography/
+      )
     ).toBeInTheDocument()
     // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [

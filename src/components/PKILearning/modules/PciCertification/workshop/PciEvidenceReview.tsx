@@ -28,6 +28,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CopyButton } from '@/components/ui/CopyButton'
+import { downloadBlob } from '@/services/exportBundle'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 import { ANCHOR_SCENARIO } from '@/components/PKILearning/modules/CryptoProductCertification/data/anchorScenario'
@@ -43,6 +44,7 @@ import {
   type EvidenceScenario,
   type Verdict,
 } from '../data/pciData'
+import { PciDeploymentEvidence } from './PciDeploymentEvidence'
 import { PciCite } from '../components/sections/PciSections'
 
 const VERDICTS: Verdict[] = ['supported', 'not-supported', 'needs-more']
@@ -168,6 +170,7 @@ export const PciEvidenceReview: FC<CertWorkshopStepProps> = ({ config }) => {
   )
   const [answers, setAnswers] = useState<Record<string, EvidenceAnswer>>({})
   const [checked, setChecked] = useState(false)
+  const [deploymentEvidence, setDeploymentEvidence] = useState('')
 
   const scenario = EVIDENCE_SCENARIOS.find((s) => s.id === scenarioId) ?? EVIDENCE_SCENARIOS[0]
   const complete = scenario.claims.every((c) => answers[c.id]?.verdict && answers[c.id]?.doc)
@@ -175,8 +178,8 @@ export const PciEvidenceReview: FC<CertWorkshopStepProps> = ({ config }) => {
     (c) => answers[c.id]?.verdict === c.verdict && answers[c.id]?.doc === c.doc
   ).length
   const memo = useMemo(
-    () => buildEvidenceMemo(scenario, answers, checked),
-    [scenario, answers, checked]
+    () => buildEvidenceMemo(scenario, answers, checked, deploymentEvidence),
+    [scenario, answers, checked, deploymentEvidence]
   )
 
   const setAnswer = (claimId: string, patch: EvidenceAnswer) => {
@@ -187,6 +190,7 @@ export const PciEvidenceReview: FC<CertWorkshopStepProps> = ({ config }) => {
   const switchScenario = (id: string) => {
     const next = EVIDENCE_SCENARIOS.find((s) => s.id === id)
     if (!next) return
+    setDeploymentEvidence('')
     setScenarioId(next.id)
     setAnswers({})
     setChecked(false)
@@ -254,6 +258,8 @@ export const PciEvidenceReview: FC<CertWorkshopStepProps> = ({ config }) => {
             </div>
           ))}
         </div>
+
+        {scenario.id === 'appliance' && <PciDeploymentEvidence onResult={setDeploymentEvidence} />}
 
         <ol className="space-y-4">
           {scenario.claims.map((c, i) => {
@@ -363,11 +369,26 @@ export const PciEvidenceReview: FC<CertWorkshopStepProps> = ({ config }) => {
       </section>
 
       <section className="glass-panel space-y-3 p-5" aria-labelledby="pci-evidence-memo">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 id="pci-evidence-memo" className="text-lg font-bold text-foreground">
             Your evidence-review memo
           </h3>
-          <CopyButton text={memo} label="Copy memo" />
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <CopyButton text={memo} label="Copy memo" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="min-h-11"
+              onClick={() =>
+                downloadBlob(
+                  new Blob([memo], { type: 'text/markdown;charset=utf-8' }),
+                  'pci-pin-evidence.md'
+                )
+              }
+            >
+              Download memo
+            </Button>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">
           The step’s artifact: each claim, your verdict and the document you would check — plus,

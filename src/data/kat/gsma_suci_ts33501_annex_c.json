@@ -1,10 +1,10 @@
 {
   "_provenance": {
-    "source_url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf",
-    "source_release": "ETSI TS 133 501 V19.5.0 (2026-02) = 3GPP TS 33.501 version 19.5.0 Release 19",
-    "retrieved": "2026-09-11",
+    "source_url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf",
+    "source_release": "ETSI TS 133 501 V19.7.0 (2026-08) = 3GPP TS 33.501 version 19.7.0 Release 19",
+    "retrieved": "2026-11-18",
     "producer": "3GPP TS 33.501 Annex C.4 (published test vectors, not from ACVP)",
-    "source_sha256": "91d949e68792d5cae0c9b8f096f903c67cda2a636f0e8c30bbeba92a59e5b9fc",
+    "source_sha256": "a9331407330f3aaae79c3c990f1423a330a69ea0bd4fde68e52173ac6c41ac0f",
     "localCopy": "library/3GPP_TS_33.501_Rel-19.pdf (pqctoday-priv/local-evidence-cache)",
     "note": "official_3gpp_vectors[*] are copied from Annex C.4 (C.4.3.1/C.4.3.2 Profile A, C.4.4.1/C.4.4.2 Profile B). The profile-b-imsi intermediate values (eph_shared_key_hex … eph_mac_key_hex, plaintext_block_hex) were added 2026-09-24 verbatim from C.4.4.1 and re-derived with Node crypto (OpenSSL): X9.63-KDF(SHA-256, Z, SharedInfo = the COMPRESSED ephemeral public key) → Enc key (16) || ICB (16) || MAC key (32); AES-128-CTR(Enc key, ICB) over the plaintext block; HMAC-SHA-256(MAC key, ciphertext) truncated to 8 bytes — all equal the published values. profiles.B is NOT an Annex C vector: it is a tool-default example whose derived values (K_enc, K_mac, cipher_msin, mac_tag) were computed locally with a different KDF output layout (no ICB, zero counter block, uncompressed SharedInfo) and does not reproduce any published value; katRunner does not use it.",
     "reverified": "28 Oct 2026 against ETSI TS 133 501 V19.7.0 (sha256 a9331407330f3aaae79c3c990f1423a330a69ea0bd4fde68e52173ac6c41ac0f): every Annex C.4 value in official_3gpp_vectors matches the specification. One stored value, profile-a-imsi eph_priv_hex, had two extra hex digits (33 bytes) and was corrected to the specification's 32-byte value, which derives the published ephemeral public key. The pinned release above is unchanged."

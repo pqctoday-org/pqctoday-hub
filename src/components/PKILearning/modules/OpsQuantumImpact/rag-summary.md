@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Ops/DevOps Quantum Impact module equips infrastructure operators, SREs, and DevOps engineers with the operational runbooks, configuration patterns, and monitoring tooling needed to manage PQC migration at scale. It covers six high-impact operational disruptions — certificate rotation at scale, VPN and SSH algorithm changes, monitoring threshold recalibration, CI/CD signing pipeline migration, config management template updates, and incident response for PQC-specific failures — alongside a nine-criterion ops readiness self-assessment and an Operations Playbook Builder that produces actionable runbooks. Content is calibrated for operators who manage fleets rather than write application code.
+The Ops/DevOps Quantum Impact module equips infrastructure operators, SREs, and DevOps engineers with the operational runbooks, configuration patterns, and monitoring tooling needed to manage PQC migration at scale. It covers six high-impact operational disruptions — certificate rotation at scale, VPN and SSH algorithm changes, monitoring threshold recalibration, CI/CD signing pipeline migration, config management template updates, and incident response for PQC-specific failures — alongside a phased operational action plan in How to Act and a nine-criterion ops readiness self-assessment. Content is calibrated for operators who manage fleets rather than write application code.
 
 ## Key Concepts
 
@@ -38,11 +38,12 @@ The [PKCS#11 sample operations](/learn/hsm-pqc?tab=workshop&step=0) separately e
 
 ## Workshop / Interactive Activities
 
-The workshop has 3 interactive steps:
+The workshop has 4 interactive steps:
 
-1. **Threat Impact Explorer** — six-panel operational briefing: certificate rotation scale calculator (input: cert count + validity period → output: rotations/day, ACME request rate, cert-manager replica sizing), VPN/SSH migration checklist with config snippet diffs for strongSwan and OpenSSH, monitoring threshold recalibration guide with before/after values for the most common alert rules, CI/CD signing migration decision matrix (cosign vs. Notation vs. GPG with PQC readiness dates), config management template update library (Terraform/Ansible/Puppet/Chef PQC patterns), and PQC incident response runbook catalog (5 failure mode runbooks with diagnosis steps)
-2. **Self-Assessment Survey** — nine-criterion ops readiness evaluation covering: manages TLS certificate fleet at scale (>500 certs), owns VPN infrastructure (IPsec/IKEv2 or OpenVPN), manages server OS fleet (RHEL/Ubuntu/Windows Server), uses config management tools (Terraform/Ansible/Puppet/Chef), owns CI/CD pipelines with artifact signing, operates certificate automation (ACME/EST endpoints), runs SIEM/monitoring with crypto-specific alerting, operates HSMs in production (Luna/nShield/CloudHSM), manages cloud key management (AWS KMS/Azure Key Vault/GCP KMS); outputs an operational risk tier with sequenced remediation priorities
-3. **Operations Playbook Builder** — generates a structured PQC operations playbook with four sections: (1) Certificate Lifecycle Runbook — ACME/EST enrollment config, cert-manager YAML templates, rotation schedule calculator, alert thresholds; (2) VPN/SSH Migration Runbook — strongSwan IKEv2 config diffs, OpenSSH KexAlgorithms update, `known_hosts` re-provisioning steps, rollback procedure; (3) Monitoring Configuration — Prometheus scrape config, TLS group-observation checks (see the worked OpenSSL example) and documented certificate-expiry signals, SIEM query templates (Splunk/Elastic/Datadog); (4) CI/CD Signing Migration Steps — Notation ML-DSA plugin deployment, Kyverno policy update, cosign deprecation timeline; exports as Markdown with copy-paste-ready config blocks
+1. **Why It Matters** — six operational disruption briefings covering certificate rotation at scale, VPN and SSH key exchange upgrades, performance monitoring threshold recalibration, CI/CD signing pipeline updates, configuration management drift, and PQC incident response runbooks
+2. **What to Learn** — operational skill gaps (certificate lifecycle, TLS configuration, VPN/SSH, KMS, fleet migration, monitoring, IoT/OT, crypto agility) and knowledge domains mapped to deep-dive modules
+3. **How to Act** — phased operational action plan (Immediate, 30-day, 90-day, 6-month checklists), quick wins (`ssh -V`, certificate discovery, VPN vendor roadmaps), and KPI metrics for tracking migration readiness
+4. **Ops Readiness Self-Assessment** — nine-criterion weighted infrastructure exposure checklist covering TLS certificate fleets, VPN/SSH infrastructure, server fleets, config management, CI/CD verification, monitoring thresholds, PQC playbooks, manual certificate operations, and multi-CA environments; outputs an operational exposure band and prioritized next steps
 
 ## Related Standards
 
@@ -55,7 +56,7 @@ The workshop has 3 interactive steps:
 - NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms)
 - NSA CNSA 2.0 FAQ version 2.2 (new NSS acquisitions: 2027; unsupported equipment and services phased out: 2030; algorithms mandated: 2031 unless otherwise noted)
-- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards)
+- NIST IR 8547 (final, October 2026 — Transition to Post-Quantum Cryptography Standards)
 - CIS Kubernetes Benchmark v1.9 (crypto policy controls, etcd encryption-at-rest)
 
 ## Cross-References

@@ -253,8 +253,8 @@ function HistorySeeder() {
 /** `/playground/cacp-kmip` is the same view as `/playground/cacp`: send it to
  * the one canonical address, keeping `?tab=` and any `#hash`. */
 function KmipToolRedirect() {
-  const { search, hash } = useLocation()
-  return <Navigate to={{ pathname: '/playground/cacp', search, hash }} replace />
+  const { search, hash, state } = useLocation()
+  return <Navigate to={{ pathname: '/playground/cacp', search, hash }} state={state} replace />
 }
 
 function App() {

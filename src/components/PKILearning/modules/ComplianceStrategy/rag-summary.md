@@ -12,18 +12,19 @@ The Compliance & Regulatory Strategy module teaches executives how to navigate t
 - **Compliance-First vs. Risk-First Strategy** — two approaches: compliance-first (driven by regulatory deadlines, ensures certification) vs. risk-first (driven by threat assessment, prioritizes highest-risk systems)
 - **Jurisdiction Mapping** — multi-select picker across 24 jurisdictions in 4 regions (North America, Europe, Asia Pacific, Middle East) showing applicable frameworks, earliest deadlines, and cross-jurisdiction conflicts
 - **Conflict Detection** — identifies deadline divergence (>3 years apart), algorithm preference conflicts (hybrid vs. pure PQC), and China's divergent OSCCA/NGCC algorithm ecosystem. The CNSA 2.0 conflicts (U.S. versus EU/France/Germany) are worded firmly only when the user ticks "This sample system is a U.S. national security system or under an NSS contract"; otherwise they read "if the system is a national security system"
-- **Audit Readiness** — 25-item checklist across 5 categories: cryptographic inventory (5), policy & governance (5), technical controls (5), vendor management (5), evidence & documentation (5)
+- **Audit Planning Topics** — 30-item checklist across 6 categories: cryptographic inventory (5), policy & governance (5), risk assessment (5), technical controls (5), vendor management (5), evidence & documentation (5)
 - **Compliance Timeline** — framework deadlines and country milestones overlaid with organizational milestones; gap analysis showing which deadlines are completed, on-track, or at-risk
 - **Country-Specific Deadlines** — Australia (ASD, recommends ceasing traditional asymmetric cryptography by end of 2030), Canada (CCCS, plans by Apr 2026), UK (NCSC, 3-phase 2025-2035), Czech Republic (end of 2030, NUKIB annex estimate), EU Coordinated Roadmap (2030/2035), Israel (INCD: no PQC deadline found; the INCD cybersecurity strategy document we hold does not mention quantum), Germany QUANTITY initiative (2030), G7 CEG financial sector (no fixed timelines prescribed; guidance often points to 2035 as an overall target, and 2030–32 reflects approaches envisaged for critical systems)
 - **Compliance Dependencies** — FIPS 140-3/CMVP validation backlog, eIDAS 2.0 digital wallets (Dec 2026 mandatory, 2027 private sector acceptance), EO 14306 and CISA procurement guidance (Jan 2026), EO 14412 and OMB M-26-15 (June 2026), DORA (EU financial resilience, Jan 2025), CBOM (Cryptographic Bill of Materials)
 
 ## Workshop / Interactive Activities
 
-The workshop has 3 interactive steps:
+The workshop has 4 interactive steps:
 
 1. **Jurisdiction Mapper** — select from 24 jurisdictions across 4 regions (North America, Europe, Asia Pacific, Middle East); see matching compliance frameworks, earliest deadlines, and automatically detected conflicts including China algorithm divergence and early-deadline countries; export as Markdown/CSV
-2. **Audit Readiness Checklist** — 5-section, 25-item checklist with pre-populated items when assessment is complete; generates readiness percentage and structured evidence checklist; saves as executive document
+2. **Audit Planning Topics** — 6-section, 30-item topic list with optional assessment pre-fill and an audit-sample scope exercise; generates a structured planning checklist (selections do not establish audit readiness)
 3. **Compliance Timeline Builder** — interactive timeline with external deadlines from country and framework data; gap analysis computing completion status for each deadline; visual indicators for at-risk deadlines
+4. **Regulatory Gap Case** — editable fictional case assessment and dependency review across selected jurisdictions; teaches how to verify scope and evidence gaps rather than treating a catalogue lookup as a compliance finding
 
 ## Related Standards
 

@@ -634,7 +634,7 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       <DataDrivenScorecard
         key={scorecardSeed.key}
         title="PQC Migration KPI Tracker"
-        description={`Educational planning worksheet — ${activePersona} lens; values are not independently verified.`}
+        description={`Educational planning worksheet — ${activePersona} lens; values are not independently verified. Target thresholds are illustrative starting points, not NIST or regulatory criteria.`}
         minimumCoverageForOverall={OVERALL_SCORE_MIN_COVERAGE}
         dimensions={dimensions}
         colorScale="readiness"

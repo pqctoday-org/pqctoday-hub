@@ -40,7 +40,7 @@ export const HNFLTimeline: React.FC = () => {
       label: 'OVERDUE',
       color: 'text-destructive',
       bg: 'bg-destructive/10 border-destructive/20',
-      message: `Re-issuance should have started ${Math.abs(yearsRemaining)} year${Math.abs(yearsRemaining) === 1 ? '' : 's'} ago. Credentials issued today are already in the HNFL forge window.`,
+      message: `The scenario's re-issuance deadline passed ${Math.abs(yearsRemaining)} year${Math.abs(yearsRemaining) === 1 ? '' : 's'} ago. Start the inventory and signing migration review; this planning result is not evidence that a CRQC exists.`,
     },
     critical: {
       label: 'CRITICAL',
@@ -77,9 +77,11 @@ export const HNFLTimeline: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">HNFL Credential Risk Calculator</h3>
         <p className="text-sm text-muted-foreground">
-          Calculate when signing credentials must migrate to PQC. Any credential still valid when a
-          CRQC arrives can be retroactively forged — an adversary recovers the signing private key
-          and issues fraudulent signatures on any document, firmware, or certificate.
+          Explore a planning scenario for re-issuing signing credentials before a selected CRQC
+          year. If a CRQC can recover a classical signing key, an attacker could create new
+          signatures under that key. This does not change old files or signatures; preserved
+          timestamps and archive evidence can help establish their history. The year below is a
+          scenario input, not an arrival prediction.
         </p>
       </div>
 
@@ -153,7 +155,7 @@ export const HNFLTimeline: React.FC = () => {
               htmlFor="hnfl-crqc-year-slider"
               className="block text-sm font-medium text-foreground mb-2"
             >
-              Expected CRQC Arrival Year
+              CRQC Planning Year (Scenario)
             </label>
             <div className="flex items-center gap-3">
               <input
@@ -184,17 +186,17 @@ export const HNFLTimeline: React.FC = () => {
             </div>
             <EstimateClaims estimates={CRQC_ESTIMATES.slice(0, 3)} headingLevel={4} collapsible />
             <p className="text-[10px] text-muted-foreground mt-2">
-              <strong>Fast-clock CRQCs</strong> (superconducting, photonic) enable
-              &quot;on-setup&quot; key compromise during handshakes. Once a CRQC can forge
-              signatures, every credential signed by a compromised CA becomes retroactively
-              forgeable — the HNFL threat modeled here.{' '}
+              One published Google Quantum AI and Ethereum Foundation study estimates a secp256k1
+              key-recovery circuit in minutes under its stated hardware assumptions. That
+              algorithm-specific estimate does not establish a general TLS handshake attack time or
+              a CRQC arrival date. Read the{' '}
               <a
                 href="https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-foreground"
               >
-                Google Quantum AI, Mar 2026
+                source study
               </a>
             </p>
           </div>
@@ -262,7 +264,7 @@ export const HNFLTimeline: React.FC = () => {
           {/* Timeline bar */}
           <div className="absolute top-1/2 left-0 right-0 h-1 bg-border -translate-y-1/2 rounded" />
 
-          {/* Forge window danger zone (credential expiry → CRQC, if credential at risk) */}
+          {/* Scenario window in which an unretired classical key may be recoverable */}
           {credentialAtRisk && (
             <div
               className="absolute top-1/2 h-1 bg-destructive/30 -translate-y-1/2 rounded"
@@ -347,8 +349,10 @@ export const HNFLTimeline: React.FC = () => {
           require the adversary to intercept any traffic. Signed artifacts — certificate chains,
           firmware images, code-signing blobs — are often <em>publicly accessible</em>. Any
           organization relying on RSA or ECDSA signatures must rotate to{' '}
-          <strong>ML-DSA or SLH-DSA</strong> before a CRQC arrives, or every past and future
-          signature becomes forgeable.
+          <strong>ML-DSA or SLH-DSA</strong> before a CRQC can recover the classical key. This
+          reduces the opportunity to create new forged signatures; long-term validation of old
+          signatures also depends on trusted timestamps, archived certificate status and evidence
+          preservation.
         </p>
       </div>
     </div>

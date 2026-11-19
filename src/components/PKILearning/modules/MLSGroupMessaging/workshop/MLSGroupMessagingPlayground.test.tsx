@@ -45,6 +45,6 @@ describe('MLSGroupMessagingPlayground explanation', () => {
   it('ties the post-quantum pairing to a suite the draft registers', () => {
     const text = playgroundText()
     expect(text).toMatch(/MLS_192_MLKEM768_AES256GCM_SHA384_MLDSA65/)
-    expect(text).toMatch(/post-quantum confidentiality only/i)
+    expect(text).toMatch(/post-quantum confidentiality against passive attackers/i)
   })
 })

@@ -12,6 +12,7 @@ import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/le
 // its own mobile-styled list off the same computed relations instead of
 // reusing that component. See eslint.config.js's no-restricted-imports rule.
 import { moduleRelations } from '@/data/moduleRelations'
+import { TOOL_TITLE_BY_ID } from '@/data/moduleToolLinks'
 import { PERSONAS } from '@/data/learningPersonas'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { MobileNextStepCard } from '../MobileNextStepCard'
@@ -60,6 +61,7 @@ export interface MobileModuleShellProps {
    *  declare learnPaths. Passed in as a node — this directory may not import
    *  desktop view components (eslint no-restricted-imports). */
   pathPicker?: ReactNode
+  workshopSearchHref?: string
 }
 
 /**
@@ -120,6 +122,7 @@ export function MobileModuleShell({
   durationLabel,
   showStartHere = true,
   pathPicker,
+  workshopSearchHref,
 }: MobileModuleShellProps) {
   const showWorkshop = Boolean(workshopContent) && activeTab === 'workshop'
   const mobileViewId = useId()
@@ -152,6 +155,14 @@ export function MobileModuleShell({
 
   return (
     <div className="flex flex-col gap-4 px-4 pb-4 pt-4">
+      {workshopSearchHref && (
+        <Link
+          to={workshopSearchHref}
+          className="inline-flex min-h-11 items-center text-sm text-primary underline"
+        >
+          Back to workshop search
+        </Link>
+      )}
       <div>
         <div className="mb-2 flex flex-wrap items-center gap-1.5">
           {track && <span className={mobileChip}>{track}</span>}
@@ -264,6 +275,37 @@ export function MobileModuleShell({
         </div>
       ) : null}
 
+      {practiceTool ? (
+        <Link
+          to={`/playground/${practiceTool}`}
+          className="flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-3.5 transition-colors active:bg-primary/10"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/12">
+            <Wrench size={16} className="text-primary" aria-hidden="true" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[10.5px] font-bold uppercase tracking-wide text-primary">
+              Practice on your phone
+            </span>
+            <span className="block text-[12.5px] font-medium text-foreground">
+              {TOOL_TITLE_BY_ID.get(practiceTool) ?? practiceTool}
+            </span>
+          </span>
+        </Link>
+      ) : (
+        !workshopContent &&
+        manifest.workshopSteps &&
+        manifest.workshopSteps.length > 0 && (
+          <p
+            id="mobile-workshop-banner"
+            className="rounded-lg text-center text-[11px] text-muted-foreground transition-shadow"
+          >
+            This module&apos;s guided workshop isn&apos;t built for mobile yet — switch to a laptop
+            to run it.
+          </p>
+        )
+      )}
+
       {!showWorkshop && sections.length > 0 && (
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3.5">
           <MobileProgress
@@ -322,36 +364,6 @@ export function MobileModuleShell({
         >
           {learnContent}
         </div>
-      )}
-
-      {workshopContent ? null : practiceTool ? (
-        <Link
-          to={`/playground/${practiceTool}`}
-          className="flex items-center gap-2.5 rounded-xl border border-primary/30 bg-primary/5 p-3.5 transition-colors active:bg-primary/10"
-        >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/12">
-            <Wrench size={16} className="text-primary" aria-hidden="true" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[10.5px] font-bold uppercase tracking-wide text-primary">
-              Practice on your phone
-            </span>
-            <span className="block text-[12.5px] font-medium text-foreground">
-              This module has a workshop tool that works right here — try it now
-            </span>
-          </span>
-        </Link>
-      ) : (
-        manifest.workshopSteps &&
-        manifest.workshopSteps.length > 0 && (
-          <p
-            id="mobile-workshop-banner"
-            className="rounded-lg text-center text-[11px] text-muted-foreground transition-shadow"
-          >
-            This module&apos;s guided workshop isn&apos;t built for mobile yet — switch to a laptop
-            to run it.
-          </p>
-        )
       )}
 
       {/* Wave C2 (2026-08-29) — mirrors ModuleShell.tsx's desktop-only

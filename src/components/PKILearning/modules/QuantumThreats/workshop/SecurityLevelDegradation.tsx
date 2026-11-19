@@ -122,10 +122,10 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
                 className={`bg-muted/50 border border-border rounded px-3 py-2 text-sm font-bold ${getStatusColor(algorithmData.status)}`}
               >
                 {algorithmData.status === 'broken'
-                  ? 'BROKEN'
+                  ? 'CRQC-VULNERABLE'
                   : algorithmData.status === 'weakened'
                     ? 'WEAKENED'
-                    : 'SAFE'}
+                    : 'NO KNOWN EFFICIENT QUANTUM ATTACK'}
               </div>
             </div>
           </>
@@ -178,7 +178,7 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
                   ) : (
                     <div className="h-full flex items-center pl-3">
                       <span className="text-xs font-bold text-destructive">
-                        0-bit — Completely broken
+                        Shor-vulnerable in CRQC scenario
                       </span>
                     </div>
                   )}

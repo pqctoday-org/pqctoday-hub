@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { rowsToCsv } from './csvExport'
+import { rowsToSpreadsheetCsv } from './csvExport'
 /** Structured path/value export of the tool's actual input/result model.
  * Arrays retain their positions; narrative and source notes remain separate fields.
  */
@@ -13,9 +13,9 @@ export function decisionModelToCsv(model: Record<string, unknown>): string {
       Object.entries(value).forEach(([key, item]) => append(path ? `${path}.${key}` : key, item))
     } else {
       const cell = typeof value === 'number' ? value : value == null ? '' : String(value)
-      rows.push([path, typeof cell === 'string' && /^[=+@\t\r-]/.test(cell) ? `'${cell}` : cell])
+      rows.push([path, cell])
     }
   }
   append('', model)
-  return rowsToCsv(rows)
+  return rowsToSpreadsheetCsv(rows)
 }

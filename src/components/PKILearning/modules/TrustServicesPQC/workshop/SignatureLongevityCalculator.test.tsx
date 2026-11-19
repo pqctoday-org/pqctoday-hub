@@ -25,12 +25,10 @@ describe('Signature Longevity Calculator', () => {
     expect(t).toMatch(/runs past the assumed policy cutoff/)
   })
 
-  it('makes renewal precede the earliest weakness, invalid certificate or policy cutoff', () => {
+  it('renews the active archive protection before it becomes unacceptable', () => {
     render(<SignatureLongevityCalculator />)
     fireEvent.click(screen.getByRole('button', { name: /30y/ }))
-    expect(text()).toMatch(
-      /before the earliest of: a weakness in the signing algorithm, the signing certificate becoming invalid, and a policy cutoff such as 2035/
-    )
+    expect(text()).toMatch(/before the active timestamp or hash becomes unacceptable/)
     // the old fixed-date promise is gone
     expect(text()).not.toMatch(/before roughly 2035/)
   })

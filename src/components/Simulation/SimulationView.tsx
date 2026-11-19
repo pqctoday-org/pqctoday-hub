@@ -218,7 +218,7 @@ import {
   logSimRunQuality,
 } from '@/utils/analytics'
 import { EmbedRunContextProvider } from '@/components/shared/embedRunContext'
-import { validateSave, previewSave } from '@/simulation/saveSchema'
+import { validateSave, previewSave, type SavePreview } from '@/simulation/saveSchema'
 import {
   distinctRunQuarters,
   documentApplicability,
@@ -1428,6 +1428,9 @@ export function SimulationView() {
   // WS-08 — durable save: download the run as JSON / restore it from a file, so a
   // run survives a cache-clear or moves between browsers without an account.
   const importFileRef = useRef<HTMLInputElement>(null)
+  const [pendingImport, setPendingImport] = useState<{ text: string; preview: SavePreview } | null>(
+    null
+  )
   const exportRun = () => {
     const blob = new Blob([exportSave()], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -1460,45 +1463,62 @@ export function SimulationView() {
       .then(() => toast.success('Challenge link copied — same scenario and seed, clean baseline.'))
       .catch(() => toast.error('Could not copy the link — copy it from the address bar instead.'))
   }
-  const onImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    e.target.value = '' // allow re-importing the same file
+  const onImportFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
     if (!file) return
-    file.text().then((txt) => {
-      // W5.3: validate and PREVIEW before applying. A rejected import must
-      // leave the current run untouched and say what was wrong, rather than
-      // reporting a generic failure (or, as before, applying a malformed
-      // payload field by field).
-      let parsed: unknown
-      try {
-        parsed = JSON.parse(txt)
-      } catch {
-        toast.error('That file is not valid JSON.')
-        return
-      }
-      const result = validateSave(parsed)
-      if (!result.ok) {
-        toast.error(`Save not imported — ${result.errors.slice(0, 2).join('; ')}`)
-        return
-      }
-      // What the player is about to get back, and what this build cannot
-      // resolve (a resource the save references that no longer exists here).
-      const preview = previewSave(result.data, (id) => KNOWN_RESOURCE_IDS.has(id))
-      if (!importSave(txt)) {
-        toast.error('Save not imported — the run was left unchanged.')
-        return
-      }
-      const missing = preview.missingDependencies.length
-      toast.success(
-        `Restored ${preview.scenario} · ${preview.at} · ${preview.difficulty} — ` +
-          `${preview.evidenceCount} evidence record${preview.evidenceCount === 1 ? '' : 's'}` +
-          (preview.demonstrationCount > 0
-            ? ` (${preview.demonstrationCount} from demonstrations, not your own work)`
-            : '') +
-          (missing > 0 ? ` · ${missing} unresolved dependenc${missing === 1 ? 'y' : 'ies'}` : '')
-      )
+
+    let text: string
+    let parsed: unknown
+    try {
+      text = await file.text()
+      parsed = JSON.parse(text)
+    } catch {
+      toast.error('Could not read this file as JSON.')
+      return
+    }
+    const result = validateSave(parsed)
+    if (!result.ok) {
+      toast.error(`Save could not be imported. ${result.errors.slice(0, 2).join('. ')}`)
+      return
+    }
+    setPendingImport({
+      text,
+      preview: previewSave(result.data, (id) => KNOWN_RESOURCE_IDS.has(id)),
     })
   }
+  const importConfirmation = pendingImport && (
+    <SimConfirmDialog
+      title="Restore this simulation run?"
+      description={`${pendingImport.preview.scenario} · ${pendingImport.preview.at} · ${pendingImport.preview.difficulty}. This save contains ${pendingImport.preview.evidenceCount} evidence records, including ${pendingImport.preview.demonstrationCount} from demonstrations. ${pendingImport.preview.missingDependencies.length} referenced resources are unavailable in this build. Restoring replaces the current simulation run.`}
+      confirmLabel="Restore run"
+      onCancel={() => setPendingImport(null)}
+      onConfirm={() => {
+        mobileWatchSelSnapshot.current = null
+        autoRunPlayer.stop()
+        if (importSave(pendingImport.text)) {
+          toast.success(`Restored the ${pendingImport.preview.at} simulation run.`)
+        } else {
+          toast.error('The current run is unchanged. The save could not be imported.')
+        }
+        setPendingImport(null)
+      }}
+    />
+  )
+  const saveActions: RunActionItem[] = [
+    {
+      key: 'export',
+      label: 'Export',
+      description: 'Download this run as a JSON save.',
+      onSelect: exportRun,
+    },
+    {
+      key: 'import',
+      label: 'Import',
+      description: 'Review a JSON save before restoring the run.',
+      onSelect: () => importFileRef.current?.click(),
+    },
+  ]
   const docTypes = useMemo(() => new Set((docs ?? []).map((d) => d.type)), [docs])
   const runFp = runFingerprint(size, country, sector)
   const activeRunLearnEvidence = useMemo(
@@ -2310,6 +2330,7 @@ export function SimulationView() {
                 ref={importFileRef}
                 type="file"
                 accept="application/json,.json"
+                aria-label="Saved simulation file"
                 onChange={onImportFile}
                 className="hidden"
                 aria-hidden="true"
@@ -2339,6 +2360,7 @@ export function SimulationView() {
             </div>
           </div>
         </main>
+        {importConfirmation}
       </div>
     )
   }
@@ -2394,6 +2416,7 @@ export function SimulationView() {
       description: 'Plain-English sim vocabulary + the full PQC glossary.',
       onSelect: () => setTermsOpen(true),
     },
+    ...saveActions,
   ]
   const phoneMenuTrigger =
     'h-auto rounded-md border border-border px-2.5 py-1 font-mono text-sim-chip font-bold text-foreground hover:bg-muted'
@@ -3874,6 +3897,7 @@ export function SimulationView() {
             ref={importFileRef}
             type="file"
             accept="application/json,.json"
+            aria-label="Saved simulation file"
             onChange={onImportFile}
             className="hidden"
             aria-hidden="true"
@@ -3909,18 +3933,7 @@ export function SimulationView() {
                   description: 'Copy a link — same world, different choices.',
                   onSelect: copyChallenge,
                 },
-                {
-                  key: 'export',
-                  label: 'Export',
-                  description: 'Download this run as a JSON save.',
-                  onSelect: exportRun,
-                },
-                {
-                  key: 'import',
-                  label: 'Import',
-                  description: 'Restore a run from a JSON save.',
-                  onSelect: () => importFileRef.current?.click(),
-                },
+                ...saveActions,
                 {
                   key: 'reset',
                   label: 'Reset run',
@@ -6079,6 +6092,7 @@ export function SimulationView() {
           }}
         />
       )}
+      {importConfirmation}
       {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
       {/* 09-28 (WP2 / D6): outside the desktop-only wrapper so the phone's Mode
           control can use it too. */}

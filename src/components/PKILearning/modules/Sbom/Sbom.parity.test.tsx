@@ -23,7 +23,7 @@ describe('SBOM module render', () => {
       screen.getByRole('heading', { name: 'Software Bill of Materials (SBOM)' })
     ).toBeInTheDocument()
     expect(
-      screen.getByText(/Inventory every software component a product depends on/)
+      screen.getByText(/Inventory software components within a stated scope/)
     ).toBeInTheDocument()
     for (const name of [
       'Learn',

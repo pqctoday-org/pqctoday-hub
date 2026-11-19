@@ -163,7 +163,7 @@ export const SECRET_CATEGORIES: SecretCategory[] = [
     atRestRisk:
       "DEKs wrapped with RSA-OAEP or ECDH-ES are directly vulnerable to a CRQC. DEKs wrapped under a symmetric AES KEK are not broken by Shor's algorithm. A KEM-derived wrapping key (for example from ML-KEM) can replace the asymmetric step where the product supports it.",
     mitigationStrategy:
-      "Find which DEK-protection steps are asymmetric (RSA-OAEP, ECDH-ES, or the TLS channel to the KMS) and migrate those; leave symmetric KEKs as they are. AES-256-GCM for the data layer is not broken by Shor's algorithm (Grover halves the effective strength in the idealized model, still 128 bits for AES-256). Prioritize longest-lived data first.",
+      'Find which DEK-protection steps are asymmetric (RSA-OAEP, ECDH-ES, or the TLS channel to the KMS) and migrate those; check symmetric KEK strength against your security profile. AES-256 is the NIST Category 5 key-search reference. Keep evidence about key exchanges, wrapping modes and data retention separate, and prioritize the longest-lived data.',
     exampleProducts: ['AWS KMS', 'Google Cloud KMS', 'Azure Key Vault', 'HashiCorp Vault'],
   },
   {

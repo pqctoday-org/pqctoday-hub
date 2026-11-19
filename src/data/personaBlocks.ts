@@ -331,7 +331,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   '/business/tools/breach-simulator': {
     executive:
       "Choose your industry sector and region, the data type you hold and the years of stored data: the classical and quantum-enabled breach costs update together, and the Mosca's theorem verdict says whether migration is already late.",
-    grc: 'Set Years of Stored Data to your retention period and the migration time to your plan: the HNDL exposure factor and the Key Findings give the risk-register entry its likelihood and impact, with the IBM 2025 baseline cited on the page.',
+    grc: 'Set Years of Stored Data to your retention period and the migration time to your plan: the HNDL exposure factor and the Key Findings give the risk-register entry its likelihood and impact, with the selected breach benchmark cited on the page.',
   },
   '/business/tools/cost-of-inaction': {
     executive:

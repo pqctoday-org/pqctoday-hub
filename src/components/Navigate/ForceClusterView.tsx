@@ -13,7 +13,7 @@
  * component owns its own THREE.Scene/renderer/animation-loop lifecycle
  * directly instead.
  */
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BookOpen, ChevronDown, Filter, Home, Search, X } from 'lucide-react'
 import { useSearchParams } from 'react-router'
 import * as THREE from 'three'
@@ -1174,6 +1174,12 @@ export function ForceClusterView() {
   }, [graph])
 
   const selectedNode = selectedNodeId ? (nodesById.get(selectedNodeId) ?? null) : null
+  const listOnly = Boolean(error && graph)
+  const listRegion = useRef<HTMLElement>(null)
+  const closeNode = useCallback(() => {
+    setSelectedNodeId(null)
+    if (listOnly) listRegion.current?.querySelector<HTMLInputElement>('[role="combobox"]')?.focus()
+  }, [listOnly])
 
   // Hidden while the filter panel is open: both sit in the left margin, and the guide
   // (about 400 px tall) would cover the top of a tall panel. It returns when the panel closes.
@@ -1208,7 +1214,7 @@ export function ForceClusterView() {
       if (event.key !== 'Escape' || event.defaultPrevented) return
       if (document.querySelector('[role="dialog"], [role="alertdialog"]')) return
       if (selectedNodeId) {
-        setSelectedNodeId(null)
+        closeNode()
       } else if (clusterSelection) {
         resetView()
       } else {
@@ -1218,7 +1224,7 @@ export function ForceClusterView() {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [selectedNodeId, guideVisible, clusterSelection])
+  }, [selectedNodeId, guideVisible, clusterSelection, closeNode])
 
   // A spotlight is a choice the reader made, like picking a record: the guide stays closed.
   // A tour stop's caption also goes: it would sit on the spotlight chip at the top.
@@ -1311,7 +1317,7 @@ export function ForceClusterView() {
   // moves the selection every few seconds, so it does not write the URL.
   const urlHydratedRef = useRef(false)
   useEffect(() => {
-    if (loading || error || !graph || urlHydratedRef.current) return
+    if (loading || !graph || urlHydratedRef.current) return
     urlHydratedRef.current = true
     const nodeParam = searchParams.get('node')
     const typeParam = searchParams.get('type')
@@ -1319,7 +1325,7 @@ export function ForceClusterView() {
     if (nodeParam && nodesById.has(nodeParam)) {
       openedFromLinkRef.current = true
       focusNode(nodeParam)
-    } else if (typeParam && (NODE_TYPES as readonly string[]).includes(typeParam)) {
+    } else if (!error && typeParam && (NODE_TYPES as readonly string[]).includes(typeParam)) {
       openedFromLinkRef.current = Boolean(breadcrumbSelectRef.current)
       const type = typeParam as ForceClusterNodeType
       const sub =
@@ -1329,7 +1335,12 @@ export function ForceClusterView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once, when the scene is first ready
   }, [loading, error, graph])
   useEffect(() => {
-    if (!urlHydratedRef.current || motionMode === 'tour') return
+    if (
+      !urlHydratedRef.current ||
+      (motionMode === 'tour' && !listOnly) ||
+      (openedFromLinkRef.current && !selectedNodeId && !clusterSelection)
+    )
+      return
     const next = new URLSearchParams(searchParams)
     next.delete('node')
     next.delete('type')
@@ -1342,7 +1353,7 @@ export function ForceClusterView() {
     }
     if (next.toString() !== searchParams.toString()) setSearchParams(next, { replace: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps -- written from the view; reading searchParams must not re-trigger it
-  }, [selectedNodeId, clusterSelection, motionMode])
+  }, [selectedNodeId, clusterSelection, motionMode, listOnly])
 
   useEffect(() => {
     let cancelled = false
@@ -2178,6 +2189,18 @@ export function ForceClusterView() {
     }
   }, [])
 
+  const detailPanel = selectedNode && (
+    <NavigateDetailPanel
+      node={selectedNode}
+      connections={connections}
+      onSelectNode={focusNode}
+      onSelectCategory={listOnly ? undefined : (type) => breadcrumbSelectRef.current?.(type, null)}
+      onSelectSub={listOnly ? undefined : (type, sub) => breadcrumbSelectRef.current?.(type, sub)}
+      onClose={closeNode}
+      listView={listOnly}
+    />
+  )
+
   return (
     <div className="relative h-full w-full bg-background">
       {/* Wave A (2026-09-18): the graph is a full-bleed canvas with no visible
@@ -2194,20 +2217,41 @@ export function ForceClusterView() {
           </div>
         </div>
       )}
-      {error && (
+      {error && !graph && (
         <div className="absolute inset-0 flex items-center justify-center text-status-error">
           Failed to load the graph: {error}
         </div>
       )}
-      {selectedNode && (
-        <NavigateDetailPanel
-          node={selectedNode}
-          connections={connections}
-          onSelectNode={focusNode}
-          onSelectCategory={(type) => breadcrumbSelectRef.current?.(type, null)}
-          onSelectSub={(type, sub) => breadcrumbSelectRef.current?.(type, sub)}
-          onClose={() => setSelectedNodeId(null)}
-        />
+      {listOnly && graph ? (
+        <section
+          ref={listRegion}
+          aria-label="Graph list view"
+          className="absolute inset-0 space-y-3 overflow-y-auto bg-background p-4"
+        >
+          <p role="status" className="text-sm text-muted-foreground">
+            3D graphics are unavailable. Search the catalogue and follow the same relationships
+            here.
+          </p>
+          <NavigateSearch graph={graph} onPick={focusNode} />
+          {detailPanel}
+          <ul aria-label="Most connected visible records" className="space-y-1">
+            {visibleNodeList.slice(0, 12).map((node) => (
+              <li key={node.id}>
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => focusNode(node.id)}
+                  aria-current={node.id === selectedNodeId ? 'true' : undefined}
+                  className="h-auto min-h-11 justify-start whitespace-normal text-left"
+                >
+                  {node.label}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : (
+        detailPanel
       )}
       {!loading && !error && (
         <Button

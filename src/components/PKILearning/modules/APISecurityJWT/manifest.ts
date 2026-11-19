@@ -9,7 +9,7 @@ const manifest: ModuleManifest = {
   description:
     'JWT/JWS/JWE with post-quantum algorithms: ML-DSA signing, ML-KEM key agreement, hybrid tokens, and OAuth 2.0 migration.',
   whyThisMatters:
-    'Every OAuth token and API call your systems sign today could be forged retroactively once ML-DSA-breaking hardware exists — JWT/JWS is one of the most exposed, highest-volume surfaces in any stack.',
+    'Public-key-signed JWTs such as RS256 and ES256 face a future forgery risk: a cryptographically relevant quantum computer could reveal signing keys and enable new tokens while verifiers still trust those keys. That is not a harvest-now-decrypt-later threat or a claim that every existing token is forged retroactively. HMAC-based HS256 has a different quantum risk.',
   duration: '60 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',

@@ -37,9 +37,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            As an executive or GRC leader, the quantum threat impacts you differently than it does
-            engineers or architects. Your responsibility is not to implement cryptographic changes
-            &mdash; it is to ensure the organization is{' '}
+            As an executive or business leader, the quantum threat impacts you differently than it
+            does engineers, architects, or GRC specialists. Your responsibility is not to implement
+            cryptographic changes &mdash; it is to ensure the organization is{' '}
             <strong>prepared, funded, governed, and accountable</strong> for a multi-year
             cryptographic transition.
           </p>
@@ -176,8 +176,8 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
         </div>
         <div className="space-y-3 text-sm text-foreground/80">
           <p>
-            This 30-minute module is designed specifically for executives and GRC leaders. The
-            interactive workshop guides you through four steps:
+            This 30-minute module is designed specifically for C-suite executives, CISOs, and board
+            members. The interactive workshop guides you through four steps:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -197,17 +197,17 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-primary mb-1">Step 4: Scope Your Evidence</div>
-              <p className="text-xs text-muted-foreground">
-                Answer Yes, No, or Unknown to identify applicable drivers and evidence requests
-                without turning unanswered questions into a low-risk score.
-              </p>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-status-success mb-1">Step 3: How to Act</div>
               <p className="text-xs text-muted-foreground">
                 Build a phased action plan with concrete milestones from this week to six months
                 out. Export it as a Markdown document.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-primary mb-1">Step 4: Scope Your Evidence</div>
+              <p className="text-xs text-muted-foreground">
+                Answer Yes, No, or Unknown to identify applicable drivers and evidence requests
+                without turning unanswered questions into a low-risk score.
               </p>
             </div>
           </div>

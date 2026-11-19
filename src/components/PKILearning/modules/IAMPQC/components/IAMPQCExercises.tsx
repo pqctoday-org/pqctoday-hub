@@ -71,7 +71,7 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Vendor PQC',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        "Microsoft Entra ID relies on SymCrypt, which has added ML-KEM and ML-DSA support (a separate matter from its FedRAMP High authorization). Roadmap timelines vary by vendor — check each vendor's public announcements for GA dates.",
+        'Windows exposes ML-KEM and ML-DSA through platform cryptography APIs, and AD CS currently supports ML-DSA certificate issuance on specified updated Windows Server versions. That platform support does not establish that Microsoft Entra has deployed PQC token signing. Microsoft publishes a 2033 target for the full Entra authentication transition; check vendor announcements for feature-specific availability and GA dates.',
       config: { step: 3 },
     },
     {

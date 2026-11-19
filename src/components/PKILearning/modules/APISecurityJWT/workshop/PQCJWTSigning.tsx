@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { JwtReceiverPolicy } from './JwtReceiverPolicy'
 
 const JWT_KAT_SPECS: KatTestSpec[] = [
   {
@@ -551,6 +552,15 @@ export const PQCJWTSigning: React.FC = () => {
               </span>
             )}
           </div>
+
+          {keypair && (
+            <JwtReceiverPolicy
+              key={signedJwt.token}
+              token={signedJwt.token}
+              signerAlgorithm={keypair.alg}
+              publicKey={keypair.publicKey}
+            />
+          )}
 
           {/* Size Info */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs mt-4">

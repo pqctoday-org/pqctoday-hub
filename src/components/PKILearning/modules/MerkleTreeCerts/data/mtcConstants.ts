@@ -77,7 +77,7 @@ export const TYPICAL_SCT_COUNT = 2
 export const CERT_METADATA_BYTES = 200
 
 /**
- * The two subtree sizes draft-ietf-plants-merkle-tree-certs-07 §6.5 ("Size
+ * The two subtree sizes draft-ietf-plants-merkle-tree-certs-08 §6.5 ("Size
  * Estimates") projects. They are NOT the same number, and this module once
  * applied the larger one to both, so each constant is named for the certificate
  * type it belongs to.
@@ -112,7 +112,7 @@ export const MTC_LANDMARK_SUBTREE_CERTS = 5_400_000
 
 /**
  * Compute inclusion proof size for a given batch size (number of certificates).
- * Per draft-ietf-plants-merkle-tree-certs-07: proof = ⌈log₂(batchSize)⌉ hashes × 32 bytes.
+ * Per draft-ietf-plants-merkle-tree-certs-08: proof = ⌈log₂(batchSize)⌉ hashes × 32 bytes.
  * The draft's own two data points both satisfy this: 3,000 certs → 12 × 32 = 384 B,
  * and 5,400,000 certs → 23 × 32 = 736 B (§6.5). The demo tree of 8 certs → 3 × 32 = 96 B.
  * Proof size depends ONLY on subtree size — never on the signature algorithm.

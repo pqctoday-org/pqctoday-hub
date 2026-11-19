@@ -14,8 +14,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'code-signing',
   version: '1.0.1',
-  lastReviewed: '2026-08-22',
-  lastEdited: '2026-10-31',
+  lastReviewed: '2026-08-23',
+  lastEdited: '2026-11-18',
 
   standards: [
     // Added 2026-08-22. This module states "CNSA 2.0 mandates LMS/XMSS for firmware

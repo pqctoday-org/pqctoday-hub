@@ -26,10 +26,10 @@ describe('signature longevity scenario', () => {
     expect(longevityScenario(10, 2026).endsAfterCutoff).toBe(true)
   })
 
-  it('names renewal as preceding the earliest weakness, invalid certificate or policy cutoff', () => {
-    expect(ARCHIVAL_WARNING).toMatch(/earliest of the dates/)
+  it('separates archive protection deadlines from ordinary signer expiry', () => {
+    expect(ARCHIVAL_WARNING).toMatch(/earliest loss of trust in the current archive protection/)
     expect(ARCHIVAL_WARNING).toMatch(
-      /algorithm weakens, the signing certificate stops being valid or a policy cuts/
+      /Ordinary expiry of the original signer’s certificate can be handled with earlier trusted time/
     )
     expect(ARCHIVAL_WARNING).not.toMatch(
       /is the date by which every signature you have already made must be re-timestamped/

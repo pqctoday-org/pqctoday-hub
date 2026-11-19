@@ -69,7 +69,7 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
     },
     {
       id: 'ssh-mlkem',
-      title: '4. SSH with ML-KEM-768 Hybrid (OpenSSH 9.9)',
+      title: '4. SSH with ML-KEM-768 Hybrid (OpenSSH 9.9+ / Default 10.0)',
       description:
         'Switch to mlkem768x25519-sha256, the ML-KEM-768 + X25519 hybrid KEX added in OpenSSH 9.9 (and made the default in OpenSSH 10.0). Compare the message sizes with the classical X25519 exchange.',
       badge: 'PQC',

@@ -114,7 +114,7 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
   {
     id: 'ibm-breach-baselines',
     claim:
-      'Industry breach-cost baselines sourced from IBM Cost of a Data Breach 2025 (annual refresh ~end of July — re-source the table when the next edition lands)',
+      'IBM publishes the global, finance and energy breach-cost averages for 2026. Other sectors use labeled 2025 historical benchmarks or assumptions.',
     source: 'src/data/roiBaselines.ts',
     ...IBM_BREACH_BASELINES_FRESHNESS,
   },

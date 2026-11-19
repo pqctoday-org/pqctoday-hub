@@ -1,17 +1,17 @@
 ### What This Is About
 
-Post-quantum digital signatures are enormously bloated. While an older ECDSA signature is just 64 bytes, a quantum-safe ML-DSA-44 signature is 2,420 bytes. Merkle Tree Certificates (MTCs) solve this "certificate bloat" problem by replacing heavy, per-certificate signatures with a single, highly efficient batch-signing architecture.
+Post-quantum signatures can make TLS authentication messages larger. Merkle Tree Certificates (MTCs) are an IETF PLANTS working-group proposal that replaces issuer signatures carried in individual certificates with log inclusion proofs. A TLS handshake still carries the server's public key and CertificateVerify signature.
 
 ### Why It Matters
 
-Massive PQC signatures break constrained internet clients, degrade connection setup times, and drastically increase bandwidth costs for TLS handshakes. Under the MTC architecture, a Certificate Authority (CA) signs a single Merkle Tree root hash covering millions of certificates. Clients receive a compact "inclusion proof" instead of a massive signature.
+Larger authentication messages may affect clients or networks with strict size, memory, or latency limits. The effect depends on the chain, signature algorithms, client, and transport. This module's byte comparisons are an explicit component model, not measured whole-handshake performance.
 
-And because every MTC issuance is recorded in a public, append-only transparency log, a second property emerges: if a server that previously held an MTC-backed PQC certificate suddenly starts presenting only a classical X.509 certificate, monitors can detect that rollback — turning a silent downgrade into an auditable event. This insight, developed by Bas Westerbaan (Cloudflare Research), means MTC adoption strengthens security, not just performance.
+MTCs also integrate issuance logging. Their transparency value depends on relying-party cosigner policy, log access, and monitoring. The current draft does not say that a fallback to a classical certificate is automatically detected just because a domain previously used an MTC.
 
 ### The Key Takeaway
 
-Merkle Tree Certificates cut the authentication data in a PQC handshake — about 36% with standalone ML-DSA-44 certificates and about 56% with landmark certificates, compared with a leaf-plus-intermediate chain (the server still sends its own key and handshake signature). By moving to inclusion proofs and hash recomputation, MTCs provide an approach, described in an IETF PLANTS Internet-Draft, to deploying PQC certificates at internet scale. Chrome's Quantum-Resistant Root Store (CQRS) coexists alongside the existing Web PKI root store, enabling maximum compatibility: PQC for capable browsers, classical fallback for legacy clients, with the MTC log creating the audit trail.
+For the module's stated leaf-plus-intermediate example, ML-DSA-44 has 10,522 B of modeled authentication components in the traditional chain, 6,736 B with a standalone MTC, and 4,668 B with a landmark-relative MTC. The standalone format carries cosignatures; the landmark-relative format can omit certificate cosignatures when the relying party has pre-synced the trusted subtree. The TLS handshake still carries the server key and CertificateVerify signature. These are modeled bytes, not a universal percentage of total handshake traffic.
 
 ### What's Happening
 
-The IETF PLANTS working group is actively standardizing Merkle Tree Certificates (draft-ietf-plants-merkle-tree-certs). Cloudflare and Chrome have run live production experiments. Bas Westerbaan (Cloudflare Research) has highlighted MTCs as a critical piece of the downgrade detection stack, complementing PQ Lock and PQC Continuity (`draft-sheffer-tls-pqc-continuity`) as the layered defense against quantum rollback attacks during the transition period.
+As of 18 November 2026, the latest document is [draft-ietf-plants-merkle-tree-certs-08](https://datatracker.ietf.org/doc/html/draft-ietf-plants-merkle-tree-certs-08), published 2 November. It is an active working-group Internet-Draft intended for the Standards Track, not an RFC. Versions -07 and -08 are wire-compatible. Chrome has published draft quantum-resistant root-program policy and test guidance; its early feasibility experiment backed MTC connections with a traditional trusted X.509 certificate. Those testing materials do not establish general production trust or deployment to all Chrome users.

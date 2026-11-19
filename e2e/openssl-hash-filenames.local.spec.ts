@@ -43,7 +43,7 @@ for (const width of [1280, 390]) {
       return text(await file.createReadStream())
     }
     expect(await download()).toContain(createHash('sha256').update(sample).digest('hex'))
-    await page.getByRole('button', { name: /Hash Algorithm|SHA-256/i }).click()
+    await page.getByRole('button', { name: 'Hash Algorithm', exact: true }).click()
     await page.getByRole('option', { name: 'SHA-512', exact: true }).click()
     await run.click()
     await expect(page.getByText(`File created: ${outputName}`, { exact: true })).toBeVisible()

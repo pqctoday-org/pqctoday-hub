@@ -21,6 +21,7 @@ interface Scenario {
   badge: string
   badgeColor: string
   observe: string
+  evidenceCheck: string
   config: WorkshopConfig
 }
 
@@ -36,44 +37,52 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       id: 'healthcare-hndl',
       title: '1. Healthcare HNDL Classification Challenge',
       description:
-        'A regional hospital system stores electronic health records (ePHI) under HIPAA. HIPAA’s 6-year rule covers required compliance documentation, not patient records; state law and other requirements set medical-record retention. For this sample, assume a 30-year retention period set by the hospital’s own legal and business requirements. Using the Asset Inventory Builder, create an asset entry for this ePHI database: Asset Type = Data Store, Sensitivity = High, Retention = 25+ years, Industry = Healthcare. Then check the HNDL Risk Year column.',
+        'A regional hospital system stores electronic health records (ePHI) under HIPAA. HIPAA’s 6-year rule covers required compliance documentation, not patient records; state law and other requirements set medical-record retention. For this sample, assume a 30-year retention period set by the hospital’s own legal and business requirements. Using the Asset Inventory Builder, create an asset entry for this ePHI database: Asset Type = Data Store, Sensitivity = High, Retention = 25+ years, Confidentiality Period = 25+ years for this sample, Industry = Healthcare. Then check the HNDL Risk Year column.',
       badge: 'HNDL',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'Compare the selected hypothetical CRQC year with the sample retention period to inspect the calculated HNDL planning threshold. This does not establish when records were collected or that an adversary captured them. In Step 4, inspect the score, urgency band and drivers produced by the current weights and selected framework flags. These are illustrative prioritization results, not a guaranteed Critical result or a compliance finding.',
+        'Compare the selected hypothetical CRQC year with the sample confidentiality period to inspect the calculated HNDL planning threshold. This does not establish when records were collected or that an adversary captured them. In Step 4, inspect the score, urgency band and drivers produced by the current weights and selected framework flags. These are illustrative prioritization results, not a guaranteed Critical result or a compliance finding.',
+      evidenceCheck:
+        'Distinguish the business service (the EHR archiving and retrieval service) from the protected data asset (long-lived patient records). In production, verify the retention schedule with Legal and inspect actual transport/storage encryption configuration rather than relying on a policy label.',
       config: { step: 0 },
     },
     {
       id: 'multi-jurisdiction-finance',
       title: '2. Multi-Jurisdiction Financial Institution',
       description:
-        'Your bank operates across the US, EU, and Australia. In the Compliance Matrix (Step 2), select "Finance & Banking" as your industry. Identify which compliance frameworks apply. Your TLS server certificates (ECDSA P-256) rotate every 90 days. In the Risk Methodology Explorer (Step 3), apply the DORA/NIS2 tab to a communication channel asset. Is the ECDSA P-256 encryption compliant with "state-of-the-art" requirements? What does the FAIR model say about the ALE for non-migration?',
+        'Your bank rotates its ECDSA P-256 TLS certificates every 90 days. Add two sample Communication assets in Step 1 for the data carried over TLS. Keep the same sensitivity and retention, then choose Under 1 year of confidentiality for a short-lived status message and 10–25 years for confidential transaction history. Compare the HNDL thresholds and verify the key agreement used by the connection independently of the certificate.',
       badge: 'Compliance',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Finance & Banking maps to DORA, GDPR, PCI DSS, NIST IR 8547, ISO 27001, and FIPS 140-3. The DORA/NIS2 tab will flag ECDSA P-256 as a potential "Protect" gap — "state-of-the-art" is a living standard that increasingly implies PQC planning. Short-lived TLS certs (under-1y retention) have low HNDL risk individually, but the FAIR ALE for non-migration is dominated by DORA periodic-penalty risk (a share of average daily worldwide turnover, for critical ICT third-party providers), easily outweighing migration costs.',
-      config: { step: 1 },
+        'ECDSA authenticates the server in this example. The connection key agreement protects the confidentiality of the data. A copied ciphertext may still matter long after the certificate rotates or internal records are deleted. Record only confirmed applicable obligations. DORA Article 35 periodic penalty payments concern designated critical ICT third-party providers in the circumstances specified in that article.',
+      evidenceCheck:
+        'In production, capture live TLS handshakes to confirm the negotiated key-agreement group (for example X25519MLKEM768) independently of certificate rotation, and confirm whether DORA/NIS2 risk-management duties or EU PQC Roadmap v1.1 milestones apply to the entity.',
+      config: { step: 0 },
     },
     {
       id: 'root-ca-methodology',
-      title: '3. Root CA Migration — Methodology Comparison',
+      title: '3. Root CA Migration — Signing Trust',
       description:
-        "Your organization's offline Root CA (RSA-4096, 25-year lifespan, CNSA 2.0 scope) needs PQC migration. In the Risk Methodology Explorer (Step 3), select the Root CA Signing Key asset and apply all four tabs: NIST RMF, ISO 27005, FAIR, and DORA/NIS2. Compare how each methodology assesses urgency. Which produces the highest urgency score? Then jump to Step 5 (Priority Map) to see the recommended PQC algorithm.",
+        'In Step 4, find the sample Root CA Signing Key and expand its scoring breakdown. The key signs certificates and the signing trust lasts for years. Inspect its retention and HNDL contributions, then open the Priority Map and record the replacement signature profile for the sample national security system.',
       badge: 'Methodology',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'NIST RMF categorizes the root CA as FIPS 199 "High" impact — for national security systems, CNSA 2.0 specifies ML-DSA-87 (FIPS 204) for signing (with LMS/XMSS for software/firmware signing). NSA\'s CNSA 2.0 FAQ (version 2.2) sets three dates for national security systems: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted. ISO 27005 scores it Critical risk (Likelihood 3 × Consequence 5 = 15) — treatment: Mitigate, immediate. FAIR ALE is highest for this asset because root CA compromise enables forging all certificates — catastrophic loss magnitude drives ALE into the tens of millions. DORA/NIS2 Protect pillar fails because RSA-4096 will no longer meet "state-of-the-art." For a CNSA 2.0-scoped CA, the compliant choice is ML-DSA-87; where CNSA compliance is not required, the Priority Map highlights SLH-DSA (stateless hash-based) as the most conservative long-term option for key material with indefinite validity periods.',
-      config: { step: 2 },
+        'For the sample national security system, CNSA 2.0 specifies ML-DSA-87 (FIPS 204) for signing certificates. Check the applicable certificate-signing profile in the cited NSA guidance. Its CNSA 2.0 FAQ v2.2 gives the general NSS dates: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted. The absence of a confidentiality threshold for a signing-only key leaves migration relevant because old verifiers may still trust forgeable signatures.',
+      evidenceCheck:
+        'Confirm system scope first (CNSA 2.0 binds NSS; federal civilian HVAs/high-impact systems follow EO 14412 & OMB M-26-15). For HSM-backed CAs, check active CMVP FIPS 140-3 module certificates and Security Policies rather than vendor marketing sheets or ACVP-only algorithm listings.',
+      config: { step: 3 },
     },
     {
       id: 'build-priority-map',
       title: '4. Build Your Own Priority Map',
       description:
-        "Add at least 6 assets to the Asset Inventory Builder covering all four sensitivity tiers (Low, Medium, High, Critical) and at least three different asset types. Complete the Compliance Matrix for your primary industry. Run through the Sensitivity Scoring Engine and adjust the weights to reflect your organization's priorities (e.g., increase the compliance weight if you are heavily regulated). Then review the Priority Map. Identify: (1) the single highest-urgency asset and why, (2) any assets that can safely wait, and (3) which compliance deadline is most constraining for your portfolio.",
+        "Add at least 6 assets to the Asset Inventory Builder covering all four sensitivity tiers (Low, Medium, High, Critical) and at least three different asset types. Record confirmed applicable obligations for each asset in its inventory entry. Run through the Sensitivity Scoring Engine and adjust the weights to reflect your organization's priorities (e.g., increase the compliance weight if you are heavily regulated). Then review the Priority Map. Identify: (1) the single highest-urgency asset and why, (2) any assets that can safely wait, and (3) which compliance deadline is most constraining for your portfolio.",
       badge: 'Workshop',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
         'Compare the assets’ displayed scores, urgency bands and contributing factors under your selected weights and framework flags. Changing those assumptions can change the order; an illustrative Low result does not establish that migration can safely wait. Check the applicable system scope and dated source guidance before using a framework or date to prioritise work. An industry label or an illustrative score does not establish which requirements apply or that they have been met. Export your Priority Map as Markdown to discuss its assumptions with your security team.',
+      evidenceCheck:
+        'Use the exported Markdown only as an educational planning template. In production, back each priority rank with a verified cryptographic inventory (CBOM), legal applicability sign-off, and documented CRQC/confidentiality-period assumptions.',
       config: { step: 0 },
     },
   ]
@@ -108,9 +117,13 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
                   </span>
                 </div>
                 <p className="text-sm text-foreground/80 mb-3">{scenario.description}</p>
-                <div className="bg-muted/40 rounded-lg p-3 border border-border">
+                <div className="bg-muted/40 rounded-lg p-3 border border-border space-y-1.5">
                   <p className="text-xs text-muted-foreground">
                     <strong className="text-foreground">What to observe:</strong> {scenario.observe}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong className="text-foreground">GRC decision &amp; evidence check:</strong>{' '}
+                    {scenario.evidenceCheck}
                   </p>
                 </div>
               </div>

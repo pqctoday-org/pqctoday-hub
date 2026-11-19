@@ -10,6 +10,7 @@ import {
   type GoldenComparison,
   type GoldenMismatch,
 } from '@/services/acvp/compare'
+import { sha256Hex } from '@/services/acvp/ir'
 import { summarizeEvidence, type EvidenceSummary } from './workshopLogic'
 import {
   PUBLIC_FIXTURES,
@@ -60,10 +61,8 @@ class PrototypeBoundary extends React.Component<
 
 const FilePick: React.FC<{
   label: string
-  onText: (name: string, text: string) => void
-  /** Called when the chosen file cannot be read at all. */
-  onReadError?: (message: string) => void
-}> = ({ label, onText, onReadError }) => {
+  onFile: (file: File) => void
+}> = ({ label, onFile }) => {
   const ref = useRef<HTMLInputElement>(null)
   return (
     <>
@@ -74,15 +73,8 @@ const FilePick: React.FC<{
         aria-label={label}
         className="hidden"
         onChange={(e) => {
-          const f = e.target.files?.[0]
-          if (f) {
-            void readFileText(f).then(
-              (t) => onText(f.name, t),
-              onReadError
-                ? (err: unknown) => onReadError(err instanceof Error ? err.message : String(err))
-                : undefined
-            )
-          }
+          const file = e.target.files?.[0]
+          if (file) onFile(file)
           e.target.value = ''
         }}
       />
@@ -121,7 +113,7 @@ const MAX_LISTED = 10
  *      engine and download response.json + evidence.json;
  *   3. compare response.json with NIST's expectedResults.json (compare.ts —
  *      possible only because this is a public sample);
- *   4. read evidence.json the way a reviewer would.
+ *   4. inspect evidence.json and check the exact bytes of the associated response.
  * Everything stays in this tab: no upload, no storage.
  */
 export const ResponseArtifactLab: React.FC = () => {
@@ -131,9 +123,10 @@ export const ResponseArtifactLab: React.FC = () => {
   const [compareError, setCompareError] = useState<string | null>(null)
   const [evidence, setEvidence] = useState<EvidenceSummary | null>(null)
   const [evidenceError, setEvidenceError] = useState<string | null>(null)
-  // Only the newest upload may show a result, and only for the sample that is selected now.
+  const [binding, setBinding] = useState<'match' | 'mismatch' | 'error' | null>(null)
+  // Invalidate old asynchronous results at selection time, before a file read starts.
   const compareRun = useRef(0)
-  const selectedFixture = useRef<PublicFixtureId>(fixtureId)
+  const evidenceRun = useRef(0)
 
   const clearComparison = () => {
     compareRun.current++
@@ -142,7 +135,6 @@ export const ResponseArtifactLab: React.FC = () => {
   }
 
   const chooseFixture = (id: PublicFixtureId) => {
-    selectedFixture.current = id
     setFixtureId(id)
     clearComparison()
   }
@@ -156,35 +148,58 @@ export const ResponseArtifactLab: React.FC = () => {
     }
   }
 
-  const compare = async (_name: string, text: string) => {
+  const compare = async (file: File) => {
     clearComparison()
     const run = compareRun.current
-    const stillCurrent = () => run === compareRun.current
+    let text: string
+    try {
+      text = await readFileText(file)
+    } catch (error) {
+      if (run === compareRun.current) {
+        setCompareError(`The file could not be read: ${describeCompareFailure(error)}`)
+      }
+      return
+    }
+    if (run !== compareRun.current) return
+
     let response: unknown
     try {
       response = JSON.parse(text)
-    } catch (e) {
-      setCompareError(`The file is not valid JSON: ${describeCompareFailure(e)}`)
+    } catch (error) {
+      setCompareError(`The file is not valid JSON: ${describeCompareFailure(error)}`)
       return
     }
     try {
-      const expected: unknown = JSON.parse(
-        await PUBLIC_FIXTURES[selectedFixture.current].loadExpected()
-      )
-      const result = compareToExpected(response, expected)
-      if (stillCurrent()) setComparison(result)
-    } catch (e) {
-      if (stillCurrent()) setCompareError(describeCompareFailure(e))
+      const expected: unknown = JSON.parse(await PUBLIC_FIXTURES[fixtureId].loadExpected())
+      if (run === compareRun.current) setComparison(compareToExpected(response, expected))
+    } catch (error) {
+      if (run === compareRun.current) setCompareError(describeCompareFailure(error))
     }
   }
 
-  const inspect = (_name: string, text: string) => {
+  const inspect = async (file: File) => {
+    const run = ++evidenceRun.current
     setEvidence(null)
     setEvidenceError(null)
+    setBinding(null)
     try {
-      setEvidence(summarizeEvidence(JSON.parse(text)))
-    } catch (e) {
-      setEvidenceError(e instanceof Error ? e.message : String(e))
+      const text = await readFileText(file)
+      if (run === evidenceRun.current) setEvidence(summarizeEvidence(JSON.parse(text)))
+    } catch (error) {
+      if (run === evidenceRun.current) setEvidenceError(describeCompareFailure(error))
+    }
+  }
+
+  const checkResponseBytes = async (file: File) => {
+    const expected = evidence?.responseSha256
+    if (!expected) return
+    const run = ++evidenceRun.current
+    setBinding(null)
+    try {
+      const actual = await sha256Hex(new Uint8Array(await file.arrayBuffer()))
+      if (run === evidenceRun.current) setBinding(actual === expected ? 'match' : 'mismatch')
+    } catch {
+      if (run === evidenceRun.current) setBinding('error')
     }
   }
 
@@ -266,14 +281,7 @@ export const ResponseArtifactLab: React.FC = () => {
           public: for a vector set issued to an ACVTS session, only the server holds the expected
           answers.
         </p>
-        <FilePick
-          label="Load response.json"
-          onText={(n, t) => void compare(n, t)}
-          onReadError={(message) => {
-            clearComparison()
-            setCompareError(`The file could not be read: ${message}`)
-          }}
-        />
+        <FilePick label="Load response.json" onFile={(file) => void compare(file)} />
         <div aria-live="polite" data-testid="ral-compare-live">
           {compareError ? (
             <div
@@ -389,8 +397,8 @@ export const ResponseArtifactLab: React.FC = () => {
             </dd>
             <dt className="font-mono text-foreground">response</dt>
             <dd>
-              The SHA-256 of response.json. It ties the two files together, so neither can be
-              swapped without the mismatch showing.
+              The SHA-256 of the exact response.json bytes. Comparing it with a response file can
+              detect changes while the reviewer keeps the same evidence file.
             </dd>
             <dt className="font-mono text-foreground">engine, startedAt, finishedAt</dt>
             <dd>
@@ -429,7 +437,7 @@ export const ResponseArtifactLab: React.FC = () => {
             </dd>
           </dl>
         </details>
-        <FilePick label="Load evidence.json" onText={inspect} />
+        <FilePick label="Load evidence.json" onFile={(file) => void inspect(file)} />
         <div aria-live="polite">
           {evidenceError ? (
             <p role="alert" className="text-status-error">
@@ -445,6 +453,10 @@ export const ResponseArtifactLab: React.FC = () => {
               <dd className="font-mono text-foreground">{evidence.evidenceClass}</dd>
               <dt className="text-muted-foreground">known public fixture</dt>
               <dd className="font-mono text-foreground">{evidence.knownFixture ?? 'none'}</dd>
+              <dt className="text-muted-foreground">recorded response SHA-256</dt>
+              <dd className="min-w-0 break-all font-mono text-foreground">
+                {evidence.responseSha256 ?? 'No valid response SHA-256 in this file'}
+              </dd>
               <dt className="text-muted-foreground">engine</dt>
               <dd className="text-foreground">{evidence.engine}</dd>
               <dt className="text-muted-foreground">answered / unsupported / error</dt>
@@ -486,6 +498,33 @@ export const ResponseArtifactLab: React.FC = () => {
             </dl>
           ) : null}
         </div>
+        {evidence?.responseSha256 ? (
+          <div className="space-y-2">
+            <p className="text-foreground/80">
+              Check the downloaded response against this evidence file. The digest checks byte
+              consistency. Engine identity and official ACVTS results require separate evidence.
+            </p>
+            <FilePick
+              label="Check response.json bytes"
+              onFile={(file) => void checkResponseBytes(file)}
+            />
+            <div aria-live="polite" data-testid="ral-response-binding">
+              {binding === 'match' && (
+                <p className="font-semibold text-foreground">
+                  The selected response bytes match the SHA-256 in this evidence file.
+                </p>
+              )}
+              {binding === 'mismatch' && (
+                <p className="font-semibold text-status-error">
+                  The selected response bytes differ from the SHA-256 in this evidence file.
+                </p>
+              )}
+              {binding === 'error' && (
+                <p className="text-status-error">The response could not be read or hashed.</p>
+              )}
+            </div>
+          </div>
+        ) : null}
         <div className="rounded-md border border-primary/20 bg-primary/5 p-3 text-xs text-foreground/80">
           <p className="font-semibold text-primary">Try this</p>
           <p>
@@ -493,8 +532,8 @@ export const ResponseArtifactLab: React.FC = () => {
             case’s <code>message</code>, save it under a new name and run it through B again. A
             response still generates — but evidence.json now says{' '}
             <code>unverified-imported-vector-set</code>, because the file’s SHA-256 no longer
-            matches the pinned NIST sample. The response is a faithful answer to the edited prompt;
-            what is gone is any source that vouches for the prompt — and with it, the evidence.
+            matches the pinned NIST sample. The evidence still describes the run. The edited prompt
+            has lost its byte match to the published sample.
           </p>
         </div>
       </section>

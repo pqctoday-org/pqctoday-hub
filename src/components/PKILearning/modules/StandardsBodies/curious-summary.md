@@ -12,4 +12,4 @@ You comply with a framework, get certified against a standard, and the standard 
 
 ### What's Happening
 
-The CMVP FIPS 140-3 certification backlog is a critical bottleneck for organizations requiring validated PQC modules.
+NIST's final transition plan (NIST IR 8547, October 2026), U.S. federal mandates (EO 14412, OMB M-26-15, and NSA's CNSA 2.0 FAQ v2.2 for NSS), the EU NIS Cooperation Group PQC Roadmap v1.1, and published IETF protocol standards (RFC 10024 for TLS 1.3 hybrid key agreement, RFC 10073 for X.509 composite ML-DSA, and RFC 10082 for CMS) are all now in place — making the CMVP FIPS 140-3 and EUCC certification queues critical-path dependencies for procurement.

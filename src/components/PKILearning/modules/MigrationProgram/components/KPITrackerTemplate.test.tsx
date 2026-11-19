@@ -104,6 +104,15 @@ describe('KPITrackerTemplate', () => {
     expect(screen.getByTestId('kpi-dim-canary-coverage')).toBeInTheDocument()
   })
 
+  it('labels preset KPI targets as illustrative rather than external criteria', () => {
+    render(<KPITrackerTemplate />)
+    expect(
+      screen.getByText(
+        /Target thresholds are illustrative starting points, not NIST or regulatory criteria/i
+      )
+    ).toBeInTheDocument()
+  })
+
   it('withholds an empty executive score on screen and in the saved report', () => {
     mockPersona = 'executive'
     render(<KPITrackerTemplate />)

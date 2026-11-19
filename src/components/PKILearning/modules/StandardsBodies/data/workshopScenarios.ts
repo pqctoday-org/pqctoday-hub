@@ -71,8 +71,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     standardOptions: [
       {
         id: 'hybrid-pqc',
-        label:
-          "Hybrid PQC (classical + PQC combined; mandatory inside ANSSI's regulated perimeter)",
+        label: 'Hybrid PQC (classical + PQC combined; recommended in ANSSI guidance)',
       },
       { id: 'fips-203', label: 'FIPS 203 standalone (ML-KEM only)' },
       { id: 'etsi-ts', label: 'ETSI TS 103 744 (mandatory)' },
@@ -82,9 +81,9 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     correctOrg: 'anssi',
     correctStandard: 'hybrid-pqc',
     briefFeedback:
-      'ANSSI is a governmental regulatory agency. Its key PQC position is hybrid cryptography: it strongly recommends using classical and PQC algorithms together (not PQC standalone), and makes that mandatory inside the French regulated perimeter.',
+      'ANSSI is a governmental cybersecurity agency. Its PQC position recommends a phased transition and hybrid mechanisms for appropriate use cases; its published position paper does not make hybrid PQC a blanket legal requirement for a named French regulated perimeter.',
     detailedExplanation:
-      "ANSSI (Agence nationale de la sécurité des systèmes d'information) is France's national cybersecurity authority — a governmental regulatory agency. Unlike ISO or IETF, ANSSI has government authority, but its PQC publications are recommendations: ANSSI states that its PQC recommendations, including hybridisation, are not regulatory obligations today. Hybridisation is mandatory inside the regulated perimeter (defence-classified and Diffusion Restreinte information, vital information systems, and products certified or qualified through ANSSI security visas). ANSSI's distinctive PQC position (2022/2023 papers) is to combine a classical algorithm (e.g., ECDH) with a PQC algorithm (e.g., ML-KEM-768) in parallel, not replace classical cryptography outright. This is more conservative than NIST's approach. The rationale: if a PQC algorithm is broken, the classical component still provides protection. The exception is hash-based signatures (SLH-DSA, XMSS, LMS): ANSSI does not recommend systematic hybridisation for them, because it considers their underlying problem well studied, although their range of application is limited.",
+      "ANSSI (Agence nationale de la sécurité des systèmes d'information) is France's national cybersecurity authority. Its 2022 position paper says hybridisation would be mandatory for its proposed Phase 2, when a product claims post-quantum security assurance; it also states that hybrid deployment is not a mandatory feature at the time of that paper and that Phase 1 treats PQC as optional defence-in-depth. These phases are a policy roadmap, not a blanket law that mandates hybrid PQC for every product in a defined French regulated perimeter. Follow the specific law, procurement terms, product evaluation or current ANSSI guidance that applies to a deployment. ANSSI recommends combining a classical algorithm (such as ECDH) with a PQC algorithm (such as ML-KEM) for appropriate hybrid key-establishment profiles. Its 2025 FAQ says it does not recommend systematic hybridisation for hash-based signatures (SLH-DSA, XMSS, LMS), while noting their limited application range.",
   },
   {
     id: 'eu-cc',
@@ -141,9 +140,9 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     ],
     standardOptions: [
       { id: 'fips-203', label: 'FIPS 203 (ML-KEM algorithm spec)' },
-      { id: 'tls-hybrid', label: 'RFC 9954 / RFC 10024 (X25519MLKEM768)' },
+      { id: 'tls-hybrid', label: 'RFC 9954 / RFC 10024 (TLS 1.3 hybrid key agreement)' },
       { id: 'cnsa-2', label: 'CNSA 2.0 (NSA mandate)' },
-      { id: 'etsi-ts', label: 'ETSI TS 103 744 (TLS profile)' },
+      { id: 'etsi-ts', label: 'ETSI TS 103 744 (generic hybrid key establishment)' },
     ],
     correctBodyType: 'standards-body',
     correctOrg: 'ietf',
@@ -151,7 +150,7 @@ export const WORKSHOP_SCENARIOS: WorkshopScenario[] = [
     briefFeedback:
       'IETF TLS WG standardizes X25519MLKEM768. NIST defined the ML-KEM algorithm (FIPS 203); IETF defines how to use it in TLS. These are complementary, not competing.',
     detailedExplanation:
-      'FIPS 203 and X25519MLKEM768 come from different but complementary organizations. NIST (a standards body) published FIPS 203 defining the ML-KEM algorithm — what the math is, what the security levels are, how encapsulation/decapsulation work. The IETF TLS Working Group (also a standards body, but protocol-focused) published the hybrid key exchange draft defining how to combine X25519 (classical ECDH) with ML-KEM-768 in a TLS 1.3 handshake — specifically the NamedGroup identifier, the key_exchange format, and the key derivation. The IETF consumes NIST algorithm standards and integrates them into protocol standards. For your TLS library: implement ML-KEM per FIPS 203, then implement the hybrid key exchange per the IETF draft. Chrome and Firefox already ship X25519MLKEM768 in production.',
+      'FIPS 203 and X25519MLKEM768 come from different but complementary organizations. NIST (a standards body) published FIPS 203, which specifies the ML-KEM algorithm. The IETF TLS Working Group published RFC 10024, which defines three TLS 1.3 hybrid key agreement groups, including X25519MLKEM768, and their key-share encodings. RFC 9954 gives the general hybrid design. ETSI TS 103 744 specifies a generic quantum-safe hybrid key-establishment framework; it is not the TLS profile for X25519MLKEM768. Product support still depends on the TLS implementation and version, so a published RFC alone does not establish support in a particular deployment. For your TLS library, check its current implementation against RFC 10024 and FIPS 203.',
   },
   {
     id: 'dod-cnsa',

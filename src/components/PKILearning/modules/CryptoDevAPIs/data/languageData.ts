@@ -271,7 +271,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       {
         name: 'Bouncy Castle',
         description:
-          'Comprehensive crypto library — supports ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/HSS, XMSS, HQC, Classic McEliece, FrodoKEM, NTRU',
+          'Comprehensive crypto library — supports ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/HSS, XMSS, HQC, Classic McEliece, FrodoKEM, NTRU. BC Java 1.87 deprecates Classic McEliece and says it is no longer believed safe to use; code presence is not a recommendation.',
         pqcSupport: true,
       },
       {
@@ -312,7 +312,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       'String-based algorithm names in JCA are error-prone',
     ],
     cryptoDevContext:
-      'Java is the dominant language for enterprise crypto applications. The JCA provider model lets algorithm implementations be swapped without changing call sites (algorithm names, sizes and encodings still change). JDK 24+ ships ML-KEM and ML-DSA in the default providers (JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026). Bouncy Castle implements a broad set of PQC algorithms, including SLH-DSA (see the support table). The main challenge is memory safety for key material — GC cannot guarantee timely zeroing.',
+      'Java is the dominant language for enterprise crypto applications. The JCA provider model lets algorithm implementations be swapped without changing call sites (algorithm names, sizes and encodings still change). JDK 24+ ships ML-KEM and ML-DSA in the default providers (JDK 25 LTS has them, and Oracle backported them to Oracle JDK 21.0.13 and 17.0.21 in October 2026). As of 17 November 2026, Oracle’s latest security updates are 25.0.5.1, 21.0.13.1, and 17.0.21.1. Bouncy Castle implements a broad set of PQC algorithms, including SLH-DSA (see the support table). The main challenge is memory safety for key material — GC cannot guarantee timely zeroing.',
     radar: {
       memorySafety: 7,
       cryptoEcosystem: 10,
@@ -503,7 +503,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
     ],
     pqcBindings: [
-      '.NET 10 System.Security.Cryptography (MLKem, MLDsa; SlhDsa [Experimental])',
+      '.NET 10 System.Security.Cryptography (MLKem; MLDsa and SlhDsa [Experimental])',
       'Bouncy Castle C# (pure managed alternative; works on older .NET and any OS)',
       'CNG via P/Invoke (ML-KEM, ML-DSA on Windows 11 24H2+ / Server 2025)',
     ],
@@ -529,7 +529,7 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       "FIPS status depends on the operating system cryptographic libraries being validated (Microsoft's cross-platform cryptography page explains the dependency)",
     ],
     cryptoDevContext:
-      'System.Security.Cryptography uses the platform backend (CNG on Windows, OpenSSL on Linux), and in .NET 10 it gains MLKem and MLDsa plus an [Experimental] SlhDsa — available only where that backend has PQC (OpenSSL 3.5+ or a PQC-capable Windows CNG), so check IsSupported. Bouncy Castle C# is the alternative when you need older .NET or an OS backend without PQC. Span<T> and CryptographicOperations.ZeroMemory help with short-lived key buffers, but key lifetime still needs deliberate handling.',
+      'System.Security.Cryptography uses the platform backend (CNG on Windows, OpenSSL on Linux), and in .NET 10 it gains MLKem plus MLDsa and SlhDsa types marked [Experimental] — available only where that backend has PQC (OpenSSL 3.5+ or a PQC-capable Windows CNG), so check IsSupported. Bouncy Castle C# is the alternative when you need older .NET or an OS backend without PQC. Span<T> and CryptographicOperations.ZeroMemory help with short-lived key buffers, but key lifetime still needs deliberate handling.',
     radar: {
       memorySafety: 7,
       cryptoEcosystem: 7,

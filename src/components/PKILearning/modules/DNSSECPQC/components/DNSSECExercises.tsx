@@ -61,7 +61,7 @@ export const DNSSECExercises: React.FC<DNSSECExercisesProps> = ({
       badge: 'Roadmap',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        "Cloudflare's own company-wide PQ security target is ~2029 (not a DNSSEC-specific date); the DNS root's own algorithm rollovers are separate and broader. The ICANN/IANA first rollover is classical (new ECDSA Root KSK in 2027, RSA Root KSK retired in 2029); Verisign's December 2023 comments say a second rollover in the mid-2030s \"may well involve\" post-quantum cryptography, a conditional scenario, not an ICANN/IANA plan or a forecast. Don't conflate them.",
+        "Cloudflare's own company-wide PQ security target is ~2029 (not a DNSSEC-specific date); ICANN's separate March 2026 proposal for the next root algorithm rollover is classical, with ECDSA key generation in 2027 and RSA key decommissioning in 2030, subject to community feedback. The RSA-to-RSA rollover to KSK-2024 began in October 2026. Verisign's December 2023 comments describe a possible later PQ rollover in the mid-2030s, not an ICANN plan or forecast.",
       config: { step: 2 },
     },
   ]

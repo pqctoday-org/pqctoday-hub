@@ -120,7 +120,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
       'Generate post-quantum OpenPGP Git commit signing keys (composite ML-DSA-65+Ed25519 per RFC 9980) where your OpenPGP tool supports it',
       'Distribute new signing keys via keyserver with old key cross-signature',
       'Migrate CI OIDC signing to ML-DSA-65 (GitHub issue #tracking)',
-      'Rotate SSH deploy keys to ML-DSA-44 (pending IETF PQ SSH draft standardization)',
+      'Pilot OpenSSH 10.6 ssh-mldsa44-ed25519 hybrid signatures where both peers and policy support them; confirm the SSHM draft status before making this a fleet standard',
       'Update allowed_signers and SSHD configuration',
     ],
     rollbackNote:

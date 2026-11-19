@@ -10,6 +10,8 @@ describe('parseUpperNumber', () => {
   })
   it('is null for non-numeric input (no false zero)', () => {
     expect(parseUpperNumber('banana')).toBeNull()
+    expect(parseUpperNumber('15-5')).toBeNull()
+    expect(parseUpperNumber('5–15%')).toBe(15)
     expect(parseUpperNumber('')).toBeNull()
   })
 })
@@ -24,6 +26,9 @@ describe('capacityFlags (RM-17 — the plan now derives, not just echoes)', () =
     expect(capacityFlags('5-15', '1')).toEqual([])
   })
   it('ignores non-numeric input gracefully', () => {
-    expect(capacityFlags('banana', 'lots')).toEqual([])
+    expect(capacityFlags('5% at 100 requests/s', '20%')).toEqual([
+      'CPU impact is unassessed. Enter one percentage or an ascending range.',
+      'Certificate storage is unassessed. Enter one multiplier or an ascending range.',
+    ])
   })
 })

@@ -9,6 +9,7 @@ import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBa
 import type { RoadmapOutput } from '../types'
 import { ExportableArtifact } from '../../../common/executive'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { CanaryRollbackExercise } from './CanaryRollbackExercise'
 import {
   RETIREMENT_PACKETS,
   RETIREMENT_PACKET_LIMIT,
@@ -315,6 +316,7 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
           summary={`${effectiveRoadmapOutput.milestones.length} roadmap milestone${effectiveRoadmapOutput.milestones.length !== 1 ? 's' : ''} ${roadmapOutput ? 'from Step 1' : 'from your last Roadmap Builder export'} are available for reference. Phases covered: ${roadmapSummary}.`}
         />
       )}
+      <CanaryRollbackExercise />
       <section
         aria-label="Fictional retirement worked sample"
         className="glass-panel p-4 space-y-3"
@@ -334,7 +336,7 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
           onSelect={setRetirementSnapshot}
           hideDefaultOption
         />
-        <p role="status" className="text-sm font-semibold">
+        <p role="status" aria-label="Retirement sample result" className="text-sm font-semibold">
           {interpretation.status === 'consistent'
             ? 'Consistent for the declared sample paths'
             : 'Incomplete: old paths or evidence gaps remain'}

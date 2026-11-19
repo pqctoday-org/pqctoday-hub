@@ -22,6 +22,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CopyButton } from '@/components/ui/CopyButton'
+import { FipsDeploymentScope } from './FipsDeploymentScope'
 import { OptionTile } from '@/components/common/OptionTile'
 import type { CertWorkshopStepProps } from '@/components/PKILearning/modules/CryptoProductCertification/data/types'
 import {
@@ -557,6 +558,7 @@ export const FipsLevelPlanner: FC<CertWorkshopStepProps> = ({ config }) => {
           className="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap break-words px-4"
         />
       </div>
+      <FipsDeploymentScope />
     </div>
   )
 }

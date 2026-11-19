@@ -44,6 +44,8 @@ export interface PQCLibrary {
   algorithmSupport: AlgorithmSupport
   fipsStatus: FIPSStatus
   fipsDetails: string
+  fipsEvidenceUrl?: string
+  fipsRoadmapUrl?: string
   platforms: string[]
   performanceTier: PerformanceTier
   performanceNotes: string
@@ -221,7 +223,10 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     },
     fipsStatus: 'in-progress',
     fipsDetails:
-      'BC-FIPS Java holds FIPS 140-3 certificate #4943 (BC-FJA 2.1.1, Level 1), whose only approved PQC-family algorithm is LMS signature verification. A BC-FJA entry is on the CMVP Modules-in-Process list (Review, 4 Sep 2026), which is not evidence of the outcome (checked 2026-09-24).',
+      'BC-FJA Java certificate #4943 is an active, interim FIPS 140-3 Level 1 validation for the 2.1.1 module. Its approved PQC-family listing is LMS signature verification only; ML-KEM, ML-DSA, and SLH-DSA are not listed as approved algorithms on this certificate. Bouncy Castle lists 2.1.3 as a patch release going into submission, while its 2.2.0 Java FIPS stream adds these PQC algorithms and remains early access and under test. Roadmap status does not mean FIPS validation.',
+    fipsEvidenceUrl:
+      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4943',
+    fipsRoadmapUrl: 'https://www.bouncycastle.org/download/bouncy-castle-java-fips/roadmap/',
     platforms: ['Any JVM (Java)', 'Any CLR (.NET)', 'Android', 'Xamarin'],
     performanceTier: 'reference',
     performanceNotes:
@@ -242,6 +247,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
       'Slower than native C implementations (no SIMD)',
       'Large library size (~6MB JAR)',
       'BC-FIPS PQC support lags behind main BC release',
+      'BC Java 1.87 deprecates Classic McEliece and says it is no longer believed safe to use; implementation presence is not a recommendation (https://www.bouncycastle.org/resources/new-release-bouncy-castle-java-1-87/)',
       'GC prevents guaranteed key material zeroing (Java)',
       'API surface is very large — learning curve',
     ],

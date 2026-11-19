@@ -56,14 +56,16 @@ export const PACKAGE_MANAGERS: PackageManager[] = [
   },
   {
     name: 'npm',
-    sigAlg: 'ECDSA P-256 (Sigstore)',
-    pqcStatus: 'Via Sigstore (ML-DSA support listed as experimental)',
+    sigAlg: 'ECDSA P-256 registry signatures; separate Sigstore provenance',
+    pqcStatus:
+      'No production PQC public service; separate Sigstore PQ instance targeted for mid-2027',
     adopted: false,
   },
   {
     name: 'PyPI',
-    sigAlg: 'ECDSA P-256 (Sigstore)',
-    pqcStatus: 'Via Sigstore (ML-DSA support listed as experimental)',
+    sigAlg: 'Sigstore keyless provenance attestations',
+    pqcStatus:
+      'No production PQC public service; separate Sigstore PQ instance targeted for mid-2027',
     adopted: false,
   },
   {

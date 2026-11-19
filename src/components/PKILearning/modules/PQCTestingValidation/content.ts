@@ -15,9 +15,9 @@ export const content: ModuleContent = {
   // keyed on content.ts (learn_snapshot.py, and through it the spot-check rotation)
   // was addressing this module by a name the catalogue does not know.
   moduleId: 'pqc-testing-validation',
-  version: '1.0.3',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-11',
+  version: '1.0.4',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 186-5'),

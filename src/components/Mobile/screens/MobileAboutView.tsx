@@ -17,7 +17,7 @@ import {
   Moon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { cn } from '@/lib/utils'
 import { getCurrentVersion, useVersionStore } from '@/store/useVersionStore'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
@@ -34,7 +34,7 @@ import {
   CRYPTO_BUFF_SITES,
   CRYPTO_BUFF_BOOKS,
 } from '@/components/About/aboutData'
-import { SBOM_CATEGORIES } from '@/data/sbomCategories'
+import { SbomSection } from '@/components/About/sections/SbomSection'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 import {
   ANALYTICS_DISCLOSURE,
@@ -83,14 +83,18 @@ const GROUPS: GroupDef[] = [
  * content that assumes a standalone visit), securityAuditDate, and
  * aboutData.ts's own DISCUSSIONS/CRYPTO_BUFF_* arrays.
  *
- * Two real, honest cuts, stated below rather than faked: the SBOM's full
- * per-package list (11 real categories shown, not each dependency) and Data
- * Foundation's async algorithm-CSV count and full 10-dataset grid (4
- * synchronous real counts shown instead — Timeline/Patents/Threats/Community
- * — with the rest stated as cut, not silently dropped).
+ * The datasets summary is brief on phones. Both layouts expose the same SBOM.
  */
 export function MobileAboutView() {
-  const [openGroup, setOpenGroup] = useState<GroupId | null>(null)
+  const { hash } = useLocation()
+  const [openGroup, setOpenGroup] = useState<GroupId | null>(
+    hash === '#about-sbom' ? 'opensource' : null
+  )
+  const [prevHash, setPrevHash] = useState(hash)
+  if (hash !== prevHash) {
+    setPrevHash(hash)
+    if (hash === '#about-sbom') setOpenGroup('opensource')
+  }
   const isEmbedded = useIsEmbedded()
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
@@ -120,6 +124,15 @@ export function MobileAboutView() {
         transition and how ready most organisations actually are.
       </p>
       <MobilePersonaPageNote route="/about" className="mb-3" />
+      <nav
+        aria-label="Project sources and policies"
+        className="mb-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-primary underline"
+      >
+        <Link to="#about-sbom">Find a software component</Link>
+        <Link to="/editorial-independence">Editorial independence</Link>
+        <Link to="/terms">Terms of service</Link>
+        <Link to="/sponsor">Sponsorship</Link>
+      </nav>
 
       <div className="flex flex-col gap-2.5">
         {GROUPS.map((group) => {
@@ -252,7 +265,10 @@ export function MobileAboutView() {
                         including searches performed ({SEARCH_SCRUB_CLAUSE}) and files exported (
                         {EXPORT_EVENTS_CLAUSE}). {PAGE_ADDRESS_STATEMENT} How to stop it is in
                         section 10 of the{' '}
-                        <Link to="/terms" className="font-semibold text-primary underline">
+                        <Link
+                          to="/terms#terms-privacy-analytics"
+                          className="font-semibold text-primary underline"
+                        >
                           Terms
                         </Link>
                         .
@@ -295,11 +311,9 @@ export function MobileAboutView() {
                           />
                         </div>
                       </Row>
-                      <Row title="Software Bill of Materials">
-                        Built entirely on open-source software, across {SBOM_CATEGORIES.length} real
-                        dependency categories: {SBOM_CATEGORIES.join(', ')}. Full package-level SBOM
-                        is on a laptop.
-                      </Row>
+                      <div id="about-sbom" className="scroll-mt-16">
+                        <SbomSection openFromLink={hash === '#about-sbom'} />
+                      </div>
                       {!isEmbedded && (
                         <Row title="Enterprise">
                           <span className="font-semibold text-foreground">Sandbox</span> — 30+
@@ -386,8 +400,7 @@ export function MobileAboutView() {
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The full Content Audit Trail feed, per-package SBOM listing, and complete platform-data grid
-        are on a laptop.
+        The full Content Audit Trail feed and complete platform-data grid are on a laptop.
       </p>
     </div>
   )

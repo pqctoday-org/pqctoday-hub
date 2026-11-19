@@ -5,6 +5,7 @@ import { createRequire } from 'node:module'
 import path from 'node:path'
 import * as SoftHSM from '@/wasm/softhsm'
 import { act, fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { TLSBasicsModule } from './TLSBasicsModule'
 import * as sampleHelpers from './utils/certificateVerifySample'
 const m = vi.hoisted(() => ({
@@ -126,7 +127,7 @@ beforeEach(() => {
 })
 describe('actual captured CertificateVerify UI', () => {
   it('shows actual imported-key verification and all five negative checks before crediting the activity', async () => {
-    render(<TLSBasicsModule />)
+    render(<TLSBasicsModule />, { wrapper: MemoryRouter })
     fireEvent.click(
       screen.getByRole('button', { name: 'Verify captured CertificateVerify (live WASM)' })
     )
@@ -167,7 +168,7 @@ describe('actual captured CertificateVerify UI', () => {
       m.fail = mode === 'operation'
       m.reject = mode === 'invalid-positive'
       m.acceptNegative = mode === 'accepted-negative'
-      render(<TLSBasicsModule />)
+      render(<TLSBasicsModule />, { wrapper: MemoryRouter })
       fireEvent.click(
         screen.getByRole('button', { name: 'Verify captured CertificateVerify (live WASM)' })
       )
@@ -203,7 +204,7 @@ describe('actual captured CertificateVerify UI', () => {
         finish = resolve
       })
     )
-    const view = render(<TLSBasicsModule />)
+    const view = render(<TLSBasicsModule />, { wrapper: MemoryRouter })
     fireEvent.click(
       screen.getByRole('button', { name: 'Verify captured CertificateVerify (live WASM)' })
     )
@@ -228,7 +229,7 @@ describe('actual captured CertificateVerify UI', () => {
       },
     })
     try {
-      render(<TLSBasicsModule />)
+      render(<TLSBasicsModule />, { wrapper: MemoryRouter })
       fireEvent.click(
         screen.getByRole('button', { name: 'Verify captured CertificateVerify (live WASM)' })
       )

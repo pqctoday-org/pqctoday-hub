@@ -230,7 +230,9 @@ function emitOpStep(
       const uid = renderRef(step.params.uid)
       lines.push(`${rv} = c.submit('Activate', leaf('UniqueIdentifier', 'Identifier', ${uid}))`)
       lines.push(...raiseUnless('Activate'))
-      lines.push(`print(f'  activated {${uid}}')`)
+      lines.push(
+        `print('  activated %s' % (${rv}.get('UniqueIdentifier') or 'object identifier missing from response'))`
+      )
       break
     }
     case 'sign': {

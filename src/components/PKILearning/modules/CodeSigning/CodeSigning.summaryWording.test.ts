@@ -11,15 +11,22 @@ describe('code signing summaries: signatures are forged in future, not harvested
     expect(ragSummary).not.toContain('HNDL applied to signed artifacts')
   })
 
-  it('describes the firmware benefit as protection against future forgery', () => {
-    expect(curiousSummary).toContain('protects against future forgery of firmware signatures')
+  it('qualifies future forgery risk and avoids universal publisher compromise claims', () => {
+    expect(curiousSummary).toContain('If it recovered a trusted signing key')
+    expect(curiousSummary).toContain('under their configured trust policies')
+    expect(curiousSummary).not.toContain('compromises every publisher simultaneously')
     expect(curiousSummary).not.toContain('"harvest now, decrypt later" firmware forgery')
   })
 
-  it('keeps the Sigstore services in the migration scope', () => {
-    expect(curiousSummary).toContain(
-      'Developers no longer manage long-term signing keys themselves, but the Sigstore services (Fulcio and Rekor) must still move to post-quantum algorithms, so the migration is centralised there.'
-    )
+  it('scopes signature size ratios and requires workflow-specific measurement', () => {
+    expect(curiousSummary).toContain('64-byte raw ECDSA P-256 signature')
+    expect(curiousSummary).toContain('measure storage, bandwidth, and verification costs')
+    expect(curiousSummary).not.toContain('verified once per install')
+  })
+
+  it('scopes Sigstore migration across clients, formats, services, and verifiers', () => {
+    expect(curiousSummary).toContain('signing clients, certificate issuance, artifact formats')
+    expect(curiousSummary).toContain('upgrading a central service alone does not make')
     expect(curiousSummary).not.toContain(
       'completely eliminates the need to manage long-term private keys'
     )

@@ -135,8 +135,9 @@ export const IAMCryptoInventory: React.FC = () => {
           <strong className="text-status-error">
             {summary.critical + summary.high} of 8 components
           </strong>{' '}
-          have high or critical quantum risk. Immediate priority items should be in your 2025-2026
-          migration plan.
+          have high or critical quantum risk. Treat the priority labels as a planning aid: set dates
+          from your own data-retention needs, product support, dependencies, and applicable policy.
+          The labels are not a standards deadline or vendor commitment.
         </p>
       </div>
 

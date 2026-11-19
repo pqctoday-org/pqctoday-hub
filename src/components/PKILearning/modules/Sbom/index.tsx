@@ -27,7 +27,7 @@ export const SbomModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     title="Software Bill of Materials (SBOM)"
-    description="Inventory every software component a product depends on — the discovery input every downstream discipline builds on."
+    description="Inventory software components within a stated scope, with versions, supplier or producer details, and dependency relationships."
     learn={(api) => <SbomIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => <SbomExercises onNavigateToWorkshop={api.goToWorkshop} />}
     workshopParts={PARTS}

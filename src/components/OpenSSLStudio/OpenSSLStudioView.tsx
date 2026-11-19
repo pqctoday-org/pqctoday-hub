@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react'
 import { useSearchParams, Link } from 'react-router'
 import { Workbench } from './Workbench'
 import { WorkbenchFileManager } from './components/WorkbenchFileManager'
+import { OpenSSLDigestPractice } from './components/OpenSSLDigestPractice'
 import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
 import { FileViewer } from './components/FileViewer'
@@ -341,6 +342,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           </TabsContent>
 
           <TabsContent value="workbench">
+            <OpenSSLDigestPractice runCommand={runCommand} />
             <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
               {/* Left Pane: Workbench (Command Builder & Preview) */}
               <div className="col-span-12 lg:col-span-4 glass-panel flex flex-col overflow-hidden">
@@ -512,8 +514,8 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                               <span className="text-sm font-medium">OpenSSL Studio — ready</span>
                             </div>
                             <p className="text-xs text-muted-foreground max-w-sm">
-                              Select a command category on the left and configure your parameters,
-                              or copy and paste one of these to get started:
+                              Choose a category to generate a command, or edit and run the digest
+                              exercise above.
                             </p>
                             <div className="flex flex-col gap-2 w-full max-w-sm">
                               {[

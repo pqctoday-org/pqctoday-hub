@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { ThreatResponsePractice } from '@/components/Threats/ThreatResponsePractice'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
@@ -963,6 +964,7 @@ export function MobileThreatsView() {
                 </ul>
               </div>
             )}
+            <ThreatResponsePractice threatId={selected.threatId} />
             <div className="border-t border-border pt-3">
               <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Source

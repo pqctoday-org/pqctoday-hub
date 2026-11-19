@@ -85,6 +85,14 @@ describe('illustrative asset observations', () => {
     expect(getPriorityBand(changedWeights.compositeScore).label).toBe('Critical')
     expect(computeHndlRiskYear('25-plus', 2034)).toBe(2004)
     expect(computeHndlRiskYear('25-plus', 2044)).toBe(2014)
+    const shortConfidentiality = scoreAsset(
+      { ...asset, confidentialityPeriod: 'under-1y' },
+      DEFAULT_SCORING_WEIGHTS,
+      2034
+    )
+    expect(shortConfidentiality.retentionScore).toBe(oneFlag.retentionScore)
+    expect(shortConfidentiality.hndlScore).toBe(0)
+    expect(shortConfidentiality.compositeScore).toBe(51) // 75×.30 +95×.25 +20×.25.
     // These input records contain no collection timestamp or evidence of capture.
   })
 })

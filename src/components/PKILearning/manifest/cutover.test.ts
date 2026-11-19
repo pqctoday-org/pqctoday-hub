@@ -29,6 +29,13 @@ const historicalSecretsDescription =
 const reviewedSecretsDescription =
   'Evaluate PQC migration for secrets managers: classify exposure, compare Vault transit operations with an executable application-side ML-KEM envelope, design rotation policies, and assess Kubernetes and CI/CD integration capabilities.'
 
+// The cut-over predates the two optional PKI reference labs and the two published
+// hybrid RFCs. Keep the historic maps intact, with exact expectations for those additions.
+const pkiReferenceLabs = [
+  { id: 'acme', label: 'ACME + PQC', optional: true },
+  { id: 'capacity', label: 'Cert Capacity', optional: true },
+]
+
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
   it('MODULE_CATALOG', () => {
     // Retain the historical snapshot; only the reviewed conditional business-case
@@ -44,7 +51,10 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
     })
   })
   it('MODULE_STEP_COUNTS', () =>
-    expect(buildStepCounts(MANIFESTS)).toEqual(golden.MODULE_STEP_COUNTS))
+    expect(buildStepCounts(MANIFESTS)).toEqual({
+      ...golden.MODULE_STEP_COUNTS,
+      'pki-workshop': golden.MODULE_STEP_COUNTS['pki-workshop'] + pkiReferenceLabs.length,
+    }))
   it('LEARN_SECTIONS', () => expect(buildLearnSections(MANIFESTS)).toEqual(golden.LEARN_SECTIONS))
   it('WORKSHOP_STEPS', () => {
     // Keep the historical cut-over snapshot intact. These two reviewed labels
@@ -58,6 +68,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
     )
     const expected = {
       ...golden.WORKSHOP_STEPS,
+      'pki-workshop': [...golden.WORKSHOP_STEPS['pki-workshop'], ...pkiReferenceLabs],
       'pki-enrollment-protocols': enrollment.map((step) => {
         if (step.id === 'cmp-kur') return { ...step, label: 'ML-KEM certificate key update' }
         if (step.id === 'composite') return { ...step, label: 'Parallel certificate issuance' }
@@ -83,5 +94,14 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
   })
   it('MODULE_PLAYGROUND_TOOL', () =>
     expect(buildPlaygroundTools(MANIFESTS)).toEqual(golden.MODULE_PLAYGROUND_TOOL))
-  it('MODULE_TAXONOMY', () => expect(buildTaxonomy(MANIFESTS)).toEqual(golden.MODULE_TAXONOMY))
+  it('MODULE_TAXONOMY', () => {
+    const hybrid = golden.MODULE_TAXONOMY['hybrid-crypto']
+    expect(buildTaxonomy(MANIFESTS)).toEqual({
+      ...golden.MODULE_TAXONOMY,
+      'hybrid-crypto': {
+        ...hybrid,
+        standards: [hybrid.standards[0], 'RFC 10073', 'RFC 10024', ...hybrid.standards.slice(1)],
+      },
+    })
+  })
 })

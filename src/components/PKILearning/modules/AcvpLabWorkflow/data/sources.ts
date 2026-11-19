@@ -36,10 +36,10 @@ export interface ModuleSource {
   hubPolicy?: boolean
 }
 
-// The protocol sections of draft-ietf-acvp-spec-01 are revised in the usnistgov/ACVP
-// repository (latest change to src/protocol: 2025-10-16). This commit contains the
-// `missing` and `error` vector-set dispositions the module teaches (added 2023-10-17).
-const ACVP_PROTOCOL_COMMIT = 'd13c6330fd324a2f859844f2f4937e5ac15d083b'
+// This immutable protocol snapshot supports reproducible examples. NIST's published
+// draft remains draft-ietf-acvp-spec-01, with a newer October 2026 edition; see acvpSpec.
+// This commit contains the `missing` and `error` vector-set dispositions used here.
+export const ACVP_PROTOCOL_COMMIT = 'd13c6330fd324a2f859844f2f4937e5ac15d083b'
 const ACVP_SPEC_COMMIT = '892fd14710f3a7edbea230d0aecc5511e0257f8e'
 const ACVP_MLKEM_COMMIT = 'bccef3648f6c05b224a051188ffe66f447cfdb6d'
 const ACVP_SERVER_COMMIT = '975de31eb83d87039ec88934fdc47d8c312b892d'
@@ -92,10 +92,19 @@ export const SOURCES = {
     id: 'acvpSpec',
     short: 'ACVP spec',
     title: 'Automated Cryptographic Validation Protocol (ACVP) JSON Specification',
-    url: `https://github.com/usnistgov/ACVP/tree/${ACVP_PROTOCOL_COMMIT}/src/protocol`,
+    url: 'https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html',
     libraryRefId: 'NIST-ACVP',
     revision:
-      'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
+      'draft-ietf-acvp-spec-01, 30 October 2026 (Internet-Draft; current published edition). Reproducible protocol examples remain pinned to usnistgov/ACVP @ d13c633.',
+  },
+  acvpMlDsaCurrent: {
+    id: 'acvpMlDsaCurrent',
+    short: 'ACVP ML-DSA spec',
+    title: 'ACVP ML-DSA JSON Specification — current published Internet-Draft',
+    url: 'https://pages.nist.gov/ACVP/draft-celi-acvp-ml-dsa.html',
+    libraryRefId: 'ACVP-ML-DSA-JSON-Specification',
+    revision:
+      'draft-celi-acvp-ml-dsa-01, published 2026-10-30; Internet-Draft, not a final standard',
   },
   acvpMlKem: {
     id: 'acvpMlKem',

@@ -38,6 +38,8 @@ export interface RefreshRow {
   programName: string
   nextRefreshYear: string
   pqcTaskToEmbed: string
+  taskTargetYear?: string
+  interimAction?: string
 }
 
 export interface RefreshState {
@@ -62,12 +64,15 @@ function isValidRows(rows: unknown): rows is RefreshRow[] {
 
 const newId = (): string => `rc-${Math.random().toString(36).slice(2, 9)}`
 
-export type RefreshAlignment = 'past' | 'aligned' | 'misaligned' | 'unknown'
+export type RefreshAlignment = 'past' | 'aligned' | 'misaligned' | 'after-task-target' | 'unknown'
+const needsInterim = (alignment: RefreshAlignment) =>
+  alignment === 'misaligned' || alignment === 'after-task-target'
 
 /** Compare a complete calendar year with the existing current-year planning window. */
 export function refreshAlignment(
   nextRefreshYear: string,
-  horizonEndYear: number
+  horizonEndYear: number,
+  taskTargetYear?: string
 ): RefreshAlignment {
   if (typeof nextRefreshYear !== 'string') return 'unknown'
   const text = nextRefreshYear.trim()
@@ -76,6 +81,16 @@ export function refreshAlignment(
   if (y === 0) return 'unknown'
   const currentYear = new Date().getFullYear()
   if (y < currentYear) return 'past'
+  const target = taskTargetYear?.trim()
+  if (target) {
+    if (!/^\d{4}$/.test(target) || Number(target) === 0) return 'unknown'
+    if (
+      y > Number(target) &&
+      (!Number.isFinite(horizonEndYear) || Number(target) <= horizonEndYear)
+    ) {
+      return 'after-task-target'
+    }
+  }
   if (!Number.isFinite(horizonEndYear) || horizonEndYear < currentYear) return 'unknown'
   return y <= horizonEndYear ? 'aligned' : 'misaligned'
 }
@@ -84,6 +99,7 @@ const ALIGN_MD_LABEL: Record<RefreshAlignment, string> = {
   past: 'Past date — review schedule',
   aligned: 'Within planning window',
   misaligned: 'After horizon ⚠',
+  'after-task-target': 'After task target ⚠',
   unknown: 'Timing unknown',
 }
 
@@ -98,16 +114,22 @@ export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
       'for planning only. Dates do not establish funded capacity, cost avoidance or readiness to execute.'
   )
   lines.push('')
-  lines.push('| Refresh program | Next refresh | Alignment | PQC task to embed |')
-  lines.push('|---|---|---|---|')
+  lines.push(
+    '| Refresh program | Next refresh | Alignment | PQC task to embed | Task target year |'
+  )
+  lines.push('|---|---|---|---|---|')
+  const lateRows: RefreshRow[] = []
   let misaligned = 0
   for (const row of s.rows) {
     const program = row.programName.trim() || '_(unnamed)_'
     const year = String(row.nextRefreshYear ?? '').trim() || '_(TBD)_'
     const task = row.pqcTaskToEmbed.trim() || '_(not yet defined)_'
-    const align = refreshAlignment(row.nextRefreshYear, horizonEndYear)
+    const align = refreshAlignment(row.nextRefreshYear, horizonEndYear, row.taskTargetYear)
     if (align === 'misaligned') misaligned++
-    lines.push(`| ${program} | ${year} | ${ALIGN_MD_LABEL[align]} | ${task} |`)
+    if (needsInterim(align)) lateRows.push(row)
+    lines.push(
+      `| ${program} | ${year} | ${ALIGN_MD_LABEL[align]} | ${task} | ${row.taskTargetYear?.trim() || '_(not specified)_'} |`
+    )
   }
   lines.push('')
   if (!Number.isFinite(horizonEndYear)) {
@@ -124,6 +146,15 @@ export function buildMarkdown(s: RefreshState, horizonEndYear: number): string {
     )
   }
   lines.push('')
+  if (lateRows.length > 0) {
+    lines.push('## Interim actions for refreshes after the horizon or task target')
+    lines.push('')
+    for (const row of lateRows) {
+      const name = row.programName.trim() || 'Unnamed program'
+      lines.push(`- ${name}: ${row.interimAction?.trim() || 'Interim action needed.'}`)
+    }
+    lines.push('')
+  }
   lines.push(
     'Blank dates remain unknown; invalid years are also unknown. Past dates require schedule review. Completion is not recorded; dates alone do not establish task status.'
   )
@@ -145,6 +176,10 @@ const ALIGN_BADGE: Record<RefreshAlignment, { label: string; cls: string }> = {
   },
   misaligned: {
     label: 'After horizon',
+    cls: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  },
+  'after-task-target': {
+    label: 'After task target',
     cls: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
   },
   unknown: { label: 'Timing unknown', cls: 'border-border bg-muted text-muted-foreground' },
@@ -203,8 +238,14 @@ export const RefreshCycleAlignment: React.FC = () => {
 
   // Recompute the small derived worksheet on render, including a changed calendar year.
   const exportMarkdown = buildMarkdown(state, horizonEndYear)
-  const misalignedCount = state.rows.filter(
-    (r) => refreshAlignment(r.nextRefreshYear, horizonEndYear) === 'misaligned'
+  const alignedRows = state.rows.map((row) => ({
+    row,
+    align: refreshAlignment(row.nextRefreshYear, horizonEndYear, row.taskTargetYear),
+  }))
+  const misalignedCount = alignedRows.filter(({ align }) => align === 'misaligned').length
+  const taskLateCount = alignedRows.filter(({ align }) => align === 'after-task-target').length
+  const missingInterimActions = alignedRows.filter(
+    ({ row, align }) => needsInterim(align) && !row.interimAction?.trim()
   ).length
   const rowCount = state.rows.length
 
@@ -280,6 +321,17 @@ export const RefreshCycleAlignment: React.FC = () => {
             {horizonEndYear} — review timing options, task scope and funding separately.
           </p>
         )}
+        {taskLateCount > 0 && (
+          <p className="text-xs text-status-warning">
+            {taskLateCount} refresh{taskLateCount === 1 ? '' : 'es'} after an earlier task target.
+          </p>
+        )}
+        {missingInterimActions > 0 && (
+          <p className="text-xs text-status-warning">
+            {missingInterimActions} late refresh{missingInterimActions === 1 ? ' needs' : 'es need'}{' '}
+            an interim action.
+          </p>
+        )}
       </section>
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
@@ -288,16 +340,18 @@ export const RefreshCycleAlignment: React.FC = () => {
         </h3>
         <p className="text-xs text-muted-foreground">
           For each already-funded refresh program, record the next scheduled refresh and the sample
-          PQC task to explore. The planning window starts in {currentYear}. Past dates require
-          schedule review; completion is not recorded. No funding check is performed.
+          PQC task to explore. Enter a task target year when the work has an earlier deadline than
+          the program horizon. The planning window starts in {currentYear}. Check funding and task
+          completion in their source records.
         </p>
         <div className="space-y-3">
-          {state.rows.map((row) => {
-            const align = refreshAlignment(row.nextRefreshYear, horizonEndYear)
+          {alignedRows.map(({ row, align }) => {
             const badge = ALIGN_BADGE[align]
             return (
               <div
                 key={row.id}
+                role="group"
+                aria-label={row.programName || 'Unnamed refresh program'}
                 className="grid grid-cols-1 sm:grid-cols-[1.4fr_1fr_1.6fr_auto] gap-3 items-end border-b border-border pb-3 last:border-b-0 last:pb-0"
               >
                 <div className="block">
@@ -348,6 +402,34 @@ export const RefreshCycleAlignment: React.FC = () => {
                 >
                   ×
                 </Button>
+                <label
+                  htmlFor={`refresh-${row.id}-target-year`}
+                  className="block text-xs font-medium sm:col-span-4"
+                >
+                  Task target year (optional)
+                  <Input
+                    id={`refresh-${row.id}-target-year`}
+                    className="mt-1 max-w-[12rem]"
+                    inputMode="numeric"
+                    value={row.taskTargetYear ?? ''}
+                    onChange={(event) => setRow(row.id, 'taskTargetYear', event.target.value)}
+                    placeholder="e.g. 2028"
+                  />
+                </label>
+                {needsInterim(align) && (
+                  <label
+                    htmlFor={`refresh-${row.id}-interim-action`}
+                    className="block space-y-1 rounded border border-status-warning/30 p-2 text-xs sm:col-span-4"
+                  >
+                    <span className="font-medium">Interim action before the planned refresh</span>
+                    <Input
+                      id={`refresh-${row.id}-interim-action`}
+                      value={row.interimAction ?? ''}
+                      onChange={(event) => setRow(row.id, 'interimAction', event.target.value)}
+                      placeholder="e.g. Pilot a replacement gateway ahead of the platform refresh"
+                    />
+                  </label>
+                )}
               </div>
             )
           })}
@@ -380,6 +462,7 @@ export const RefreshCycleAlignment: React.FC = () => {
               ...state,
               rowCount,
               misalignedCount,
+              taskLateCount,
             },
             createdAt: Date.now(),
           })

@@ -151,6 +151,18 @@ export function generateCategoryDrivers(
   }
 }
 
+export function inventoryDiscoveryAction(priority: number): RecommendedAction {
+  return {
+    priority,
+    action:
+      'Conduct a cryptographic asset inventory to identify all algorithms in use across systems, services, and dependencies.',
+    category: 'immediate',
+    relatedModule: '/learn/cbom?tab=workshop&step=0',
+    effort: 'high',
+    drivers: ['currentCrypto:unknown'],
+  }
+}
+
 export function generateExtendedActions(
   input: AssessmentInput,
   vulnerableCount: number,
@@ -160,14 +172,7 @@ export function generateExtendedActions(
   const actions: RecommendedAction[] = []
   let priority = 1
   if (input.currentCryptoUnknown) {
-    actions.push({
-      priority: priority++,
-      action:
-        'Conduct a cryptographic asset inventory to identify all algorithms in use across systems, services, and dependencies.',
-      category: 'immediate',
-      relatedModule: '/migrate',
-      effort: 'high',
-    })
+    actions.push(inventoryDiscoveryAction(priority++))
   }
 
   if (input.sensitivityUnknown) {
@@ -287,7 +292,11 @@ export function generateExtendedActions(
     })
   }
 
-  if (input.cryptoUseCases?.includes('TLS/HTTPS') && vulnerableCount > 0) {
+  if (
+    !input.currentCryptoUnknown &&
+    input.cryptoUseCases?.includes('TLS/HTTPS') &&
+    vulnerableCount > 0
+  ) {
     const tlsAlgos = vulnerableAlgoNames.filter((a) =>
       [
         'ECDH P-256',
@@ -601,7 +610,11 @@ export function generateExecutiveSummary(
   parts.push(
     `Your answers for the ${input.industry} sector produce a ${riskLevel} educational priority index (${riskScore}/100).`
   )
-  if (vulnerableCount > 0) {
+  if (input.currentCryptoUnknown) {
+    parts.push(
+      'Your cryptographic inventory is unknown. Exposure is estimated using conservative assumptions.'
+    )
+  } else if (vulnerableCount > 0) {
     const quickWins = migrationEffort.filter((m) => m.estimatedScope === 'quick-win').length
     const majorProjects = migrationEffort.filter(
       (m) => m.estimatedScope === 'major-project' || m.estimatedScope === 'multi-year'
@@ -715,7 +728,11 @@ export function generateNarrative(
   parts.push(
     `Your answers for the ${input.industry} sector produce an educational priority index of ${score}/100 (${level}).`
   )
-  if (vulnerableAlgos > 0) {
+  if (input.currentCryptoUnknown) {
+    parts.push(
+      'Your cryptographic inventory is unknown. The model uses conservative exposure assumptions until you can identify the algorithms in use.'
+    )
+  } else if (vulnerableAlgos > 0) {
     parts.push(
       `You reported ${vulnerableAlgos} quantum-vulnerable cryptographic algorithm${vulnerableAlgos > 1 ? 's' : ''}; verify their use and evaluate protocol-appropriate transition options.`
     )
@@ -780,7 +797,11 @@ export function generateKeyFindings(
 
   // 1. Overall risk posture
   const vulnCount = algorithmMigrations.filter((a) => a.quantumVulnerable).length
-  if (vulnCount > 0) {
+  if (input.currentCryptoUnknown) {
+    findings.push(
+      'Inventory your cryptography to determine which algorithms require transition review.'
+    )
+  } else if (vulnCount > 0) {
     if (p === 'executive') {
       findings.push(
         `Your organization relies on ${vulnCount} encryption method${vulnCount > 1 ? 's' : ''} that quantum computers will break — board-level migration planning should begin.`

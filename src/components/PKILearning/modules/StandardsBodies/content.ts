@@ -13,9 +13,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'standards-bodies',
-  version: '1.0.2',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-02',
+  version: '1.0.3',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -26,6 +26,10 @@ export const content: ModuleContent = {
     getStandard('RFC 9629'),
     getStandard('RFC 9814'),
     getStandard('RFC 9882'),
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('RFC-10024'),
+    getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
+    getStandard('RFC 10082'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
@@ -39,13 +43,20 @@ export const content: ModuleContent = {
     getStandard('ETSI TR 103 619'),
     getStandard('ETSI TS 103 744'),
     getStandard('EUCC v2.0 ACM'),
+    getStandard('CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme'),
     getStandard('ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur'),
     getStandard('ISO/IEC 14888-4:2024'),
     getStandard('ISO/IEC 18033-2:2006'),
     getStandard('KpqC-Competition-Results'),
     getStandard('NIAP'),
+    getStandard('NIST IR 8545'),
     getStandard('NIST IR 8547'),
+    getStandard('NIST IR 8610'),
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
+    getStandard('OMB-M-26-15'),
+    getStandard('EU-NIS-CG-Roadmap-v1.1'),
     getStandard('NIST-FIPS140-3-IG-PQC'),
+    getStandard('UK-NCSC-Migration-Timelines-2025'),
     getStandard('NSA CNSA 2.0'),
     getStandard('NSA CNSA 2.0 FAQ'),
     getStandard('NSA CSfC PQC Guidance Addendum'),
@@ -61,6 +72,8 @@ export const content: ModuleContent = {
     getStandard('ISO-IEC-20085-1-2019-Test-tool-requirements-and-test-tool-ca'),
     // round 9 wave 4 (2026-09-19): cited for the figures the accuracy record found unmapped
     getStandard('3GPP-PQC-Study-2025'), // m-standards-bodies: TR 33.938
+    getStandard('COMMON-CRITERIA'),
+    getStandard('CCMC-011-CCRA-EUCC-Coexistence'),
   ],
 
   algorithms: [
@@ -82,10 +95,10 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      "Slug: standards-bodies. Difficulty: Intermediate. Estimated Time: 60 minutes. Track: Strategy. This module teaches learners how to distinguish between standards bodies (which _define_ algorithms and protocols), certification bodies (which _validate_ implementations), and compliance frameworks / regulatory agencies (which _mandate_ usage). It covers 12 key organizations globally and regionally, and directly connects to the app's /compliance and /migrate pages. ---",
+      "This module teaches learners how to distinguish between standards bodies (which define algorithms and protocols), certification bodies (which validate implementations), and compliance frameworks / regulatory agencies (which mandate usage). It covers 12 key organizations globally and regionally across a five-step workshop (~40 minutes) and directly connects to the app's /compliance and /migrate pages.",
     keyConcepts:
-      'NIST vs CMVP: NIST wrote the standard; CMVP certifies implementations against it. ETSI TS vs ETSI TR: TS = normative ("shall"), TR = informational guidance. ANSSI\'s position: recommends hybrid PQC (classical + PQC) and makes it mandatory in the French regulated perimeter; hash-based signatures (SLH-DSA, XMSS, LMS) are the exception to systematic hybridisation. CCRA vs EUCC: the CCRA is the global arrangement (36 countries: 18 issue certificates, 18 only recognise them; recognition limited to collaborative Protection Profiles or up to EAL2 + ALC_FLR); EUCC is a separate EU scheme set up by Commission Implementing Regulation (EU) 2024/482, which applies Common Criteria under EU rules (certification bodies issue the certificates, national authorities supervise, ENISA publishes). IETF vs NIST: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).',
+      'NIST vs CMVP: NIST writes the standard; CMVP validates cryptographic modules against it. ETSI TS vs ETSI TR: TS = normative ("shall"), TR = informational guidance. ANSSI\'s 2022 position paper describes phased hybridisation guidance, with hybridisation proposed for products claiming post-quantum assurance in Phase 2; it does not create a blanket regulated-perimeter mandate. Hash-based signatures (SLH-DSA, XMSS, LMS) are the exception to systematic hybridisation in ANSSI\'s guidance. CCRA vs EUCC: the CCRA is an international mutual-recognition arrangement, not a certification body; it recognises qualifying certificates issued by national certification bodies. EUCC is a separate EU scheme set up by Commission Implementing Regulation (EU) 2024/482, which applies Common Criteria under EU rules (certification bodies issue certificates, national authorities supervise, ENISA publishes). IETF vs NIST: NIST defines algorithms; IETF integrates them into Internet protocols. RFC 10024 defines TLS 1.3 hybrid key agreement groups; RFC 10073 defines composite ML-DSA signatures for X.509/PKIX; RFC 10082 defines composite ML-DSA signatures for CMS. These cover different layers and do not by themselves guarantee endpoint support or TLS deployment.',
     relatedStandards:
-      "FIPS 206 (FN-DSA), cited above alongside NIST's other PQC signature standards, is under development, with no published draft and no published date; NIST stated on April 2, 2026 that the draft was still in clearance.",
+      "FIPS 206 (FN-DSA), cited above alongside NIST's other PQC signature standards, remains in development. NIST's current PQC standardization page does not list a published draft or final standard; check that project page for status rather than relying on an old expected-draft date.",
   },
 }

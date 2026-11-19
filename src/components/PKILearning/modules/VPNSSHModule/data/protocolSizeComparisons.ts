@@ -243,7 +243,7 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
   {
     feature: 'PQC KEX Status',
     ikev2: 'draft-ietf-ipsecme-ikev2-mlkem (RFC Editor queue)',
-    ssh: 'mlkem768x25519 in OpenSSH 9.9',
+    ssh: 'mlkem768x25519 in OpenSSH 9.9+ (default 10.0+)',
     wireguard: 'Rosenpass project (external)',
     tls13: 'RFC 10024 (X25519MLKEM768)',
   },

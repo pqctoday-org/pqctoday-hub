@@ -507,11 +507,11 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
     component: 'Key Management',
     currentCrypto: 'AES-128 sealing keys derived from platform root (SGX EGETKEY, SEV-SNP ASP)',
     vulnerability:
-      "Grover's algorithm halves AES key strength. If sealing keys use AES-128, effective post-quantum security is 64-bit — feasible for a CRQC to brute-force. Combined with side-channel leakage of key bits, recovery becomes more practical.",
+      'In this AES-128 sealing example, about 2^64 ideal Grover iterations describes exhaustive key search. Assess side-channel evidence separately against the documented platform and threat model.',
     severity: 'high',
     migrationPriority: 2,
     pqcSolution:
-      'Upgrade sealing key derivation to AES-256 (128-bit post-quantum security). Add PQC KDF (HKDF-SHA3-256) for key derivation chain.',
+      'Check the processor’s documented sealing interface, the root-key protection and the applicable security profile. Use a supported 256-bit sealing option when the platform and policy call for it.',
     vendorTimeline:
       "Requires next-generation CPU silicon; no Intel or AMD dates are published in the sources we hold (the module's own estimate is Intel 2027+, AMD 2028+)",
     hndlExposure: false,
@@ -519,12 +519,12 @@ export const QUANTUM_THREAT_VECTORS: QuantumThreatVector[] = [
   },
   {
     id: 'memory-encryption-grover',
-    name: 'Memory Encryption Grover Halving',
+    name: 'Memory Encryption Key-Search Margin',
     component: 'Memory Encryption',
     currentCrypto:
       "AES memory encryption, 128-bit key in this lesson's sample (Intel TME-MK, AMD SME/SEV; key size and mode vary by generation)",
     vulnerability:
-      'In the idealized Grover model a 128-bit key (NIST Category 1) needs about 2^64 iterations. Brute-forcing memory encryption keys in real time is unlikely even with a CRQC (it requires sustained high qubit count), but a 128-bit key leaves a thinner model margin than AES-256 (Category 5).',
+      'AES-128 is the Category 1 key-search reference and AES-256 is the Category 5 reference. Ideal Grover estimates count sequential queries and leave hardware cost, timing and memory-system access out of the model.',
     severity: 'medium',
     migrationPriority: 3,
     pqcSolution:

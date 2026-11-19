@@ -245,13 +245,13 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </p>
           <p className="text-muted-foreground">
             CNG integrates with the Windows certificate store and is the foundation for Windows FIPS
-            mode. ML-KEM and ML-DSA became generally available in November 2025 on Windows 11 24H2+
-            and Windows Server 2025 (and .NET 10 uses them). SLH-DSA has an identifier
-            (BCRYPT_SLHDSA_ALGORITHM) but is not currently implemented by the default CNG provider.
-            Microsoft&rsquo;s CNG identifiers page (updated 30 May 2026) still marks the composite
-            identifiers as Insider Preview, while Microsoft&rsquo;s blog (14 July 2026 update) says
-            composite algorithms are available in Windows 11 update KB5095093 and Windows Server
-            2025 update KB5099536; confirm on your build.
+            mode. Microsoft lists ML-KEM and ML-DSA BCRYPT identifiers beginning with Windows 11
+            24H2 for desktop apps, while the current end-to-end BCrypt examples are marked
+            prerelease. Verify support on the target build and provider. A BCRYPT primitive does not
+            establish persisted-key support through NCrypt/KSP, certificate support, or TLS
+            negotiation through Schannel. SLH-DSA has an identifier but is not implemented by the
+            default CNG provider. Do not infer FIPS validation from an algorithm identifier; check
+            the exact module certificate and approved-mode scope for the target system.
           </p>
         </LearnSection>
       </div>
@@ -430,8 +430,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               {
                 lang: 'Java / Kotlin',
                 libs: ['JCA/JCE', 'Bouncy Castle', 'JCProv'],
-                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13 / 17.0.21); BC 1.79+ adds SLH-DSA and more',
-                note: 'Oracle backported ML-KEM/ML-DSA to JDK 21 and 17 in October 2026; Thales Luna HSMs have separate JCA (Luna JSP) and PKCS#11-wrapper (JCPROV) routes',
+                pqc: 'JDK 24+ built-in ML-KEM and ML-DSA (JDK 25 LTS; Oracle JDK 21.0.13+ / 17.0.21+); BC 1.79+ adds SLH-DSA and more',
+                note: 'Oracle feature backports are in 21.0.13 and 17.0.21; as of 17 Nov 2026, current Oracle security updates are 25.0.5.1, 21.0.13.1 and 17.0.21.1. Thales Luna has separate JCA (Luna JSP) and PKCS#11-wrapper (JCPROV) routes',
               },
               {
                 lang: 'Python',
@@ -469,7 +469,25 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
                   ))}
                 </div>
                 <div className="text-xs text-muted-foreground mb-1">PQC: {item.pqc}</div>
-                {item.lang === 'Python' && <PythonWorkbenchLink />}
+                {item.lang === 'Python' && (
+                  <>
+                    <PythonWorkbenchLink />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Browser limit: this Python workbench runs crypto examples, but it cannot open
+                      TLS sockets or validate certificates. Pyodide’s browser <code>ssl</code>{' '}
+                      module is a stub; see{' '}
+                      <a
+                        href="https://pyodide.org/en/314.0.8/usage/wasm-constraints.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-primary"
+                      >
+                        Pyodide’s documented limits
+                      </a>
+                      .
+                    </p>
+                  </>
+                )}
                 <div className="text-xs text-muted-foreground italic">{item.note}</div>
               </div>
             ))}

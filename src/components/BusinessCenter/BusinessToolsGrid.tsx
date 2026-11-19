@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useMemo, useEffect, useCallback } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useLocation, useSearchParams } from 'react-router'
 import { businessToolRank } from '@/data/businessToolRank'
+import { filterBusinessTools } from '@/data/businessToolFilters'
+import { useCatalogResultFocus } from '@/hooks/useCatalogResultFocus'
 import type { BusinessToolsLinkState } from './lib/businessToolsBackLink'
 import { Search, Wrench, Filter } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
@@ -84,6 +86,8 @@ export const BusinessToolsGrid = () => {
   // pattern in Algorithms/IndustryLandscapeView.tsx, including `replace: true`
   // so filtering does not stack history entries.
   const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation()
+  useCatalogResultFocus(!isMobileShell && location.state?.focusBusinessTool, 'business')
 
   const searchQuery = searchParams.get(PARAM.q) ?? ''
   const activeCategory = searchParams.get(PARAM.category)
@@ -136,23 +140,10 @@ export const BusinessToolsGrid = () => {
     return () => window.clearTimeout(t)
   }, [searchQuery])
 
-  const filteredTools = useMemo(() => {
-    const q = searchQuery.toLowerCase()
-    return BUSINESS_TOOLS.filter((t) => {
-      const matchesCategory = !activeCategory || t.category === activeCategory
-      const matchesZone = zoneFilter === 'all' || t.cswp39Zone === zoneFilter
-      const matchesPhase = phaseFilter === 'all' || t.frameworkPhase === phaseFilter
-      const matchesAudience =
-        audienceFilter === 'all' || (t.audience ?? 'business') === audienceFilter
-      const matchesSearch =
-        !q ||
-        t.name.toLowerCase().includes(q) ||
-        t.description.toLowerCase().includes(q) ||
-        t.keywords.some((k) => k.includes(q)) ||
-        t.category.toLowerCase().includes(q)
-      return matchesCategory && matchesZone && matchesPhase && matchesAudience && matchesSearch
-    })
-  }, [searchQuery, activeCategory, zoneFilter, phaseFilter, audienceFilter])
+  const filteredTools = useMemo(
+    () => filterBusinessTools(BUSINESS_TOOLS, searchParams),
+    [searchParams]
+  )
 
   // Section order + label per grouping mode. `frameworkPhase`/`cswp39Zone` are
   // required (non-optional) fields on every BusinessTool — verified against
@@ -236,6 +227,7 @@ export const BusinessToolsGrid = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"
               aria-label="Search business tools"
+              data-business-search
             />
           </div>
           <span className="text-sm text-muted-foreground">
@@ -417,6 +409,8 @@ export const BusinessToolsGrid = () => {
                     key={tool.id}
                     to={`/business/tools/${tool.id}`}
                     state={toolLinkState}
+                    data-business-result={tool.id}
+                    data-business-open
                     className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
                   >
                     <div className="flex items-start gap-3 w-full">

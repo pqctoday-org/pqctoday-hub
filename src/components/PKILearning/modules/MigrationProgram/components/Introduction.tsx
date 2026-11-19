@@ -53,7 +53,26 @@ const Step1ProgramAndFramework: React.FC = () => (
             with clear governance, milestones, and reporting structures.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
-            Aligned with CISA Post-Quantum Cryptography Initiative guidance (cisa.gov/pqc)
+            The seven-step sequence below is this workshop&apos;s recommended planning model, not an
+            official CISA or NIST phase taxonomy. For current agency guidance, see the{' '}
+            <a
+              href="https://pages.nist.gov/nccoe-migration-post-quantum-cryptography/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              NIST NCCoE migration FAQ
+            </a>{' '}
+            and CISA&apos;s{' '}
+            <a
+              href="https://www.cisa.gov/sites/default/files/2024-09/Strategy-for-Migrating-to-Automated-PQC-Discovery-and-Inventory-Tools.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              federal automated discovery and inventory strategy
+            </a>
+            , which has a narrower federal civilian scope and excludes national security systems.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -68,7 +87,8 @@ const Step1ProgramAndFramework: React.FC = () => (
             <div className="text-xs font-bold text-primary mb-1">Critical Path</div>
             <p className="text-xs text-muted-foreground">
               The longest sequence of dependent tasks determines your minimum migration timeline.
-              Vendor PQC readiness is often the binding constraint.
+              Vendor readiness can constrain the schedule, so assess it alongside internal capacity,
+              dependencies, and release windows.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -178,8 +198,9 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          Enterprise PQC migration programs that succeed share common characteristics. These success
-          factors are drawn from early adopters and regulatory guidance.
+          PQC migration plans commonly benefit from clear ownership, relevant cross-functional
+          input, staged validation, and progress measures. These are program recommendations; their
+          exact form depends on the organization and applicable requirements.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -188,8 +209,8 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
               <div className="text-sm font-bold text-foreground">Executive Sponsorship</div>
             </div>
             <p className="text-xs text-muted-foreground">
-              CISO or CTO-level ownership with regular board reporting. Migration budgets,
-              cross-team authority, and organizational priority require executive mandate.
+              CISO or CTO-level ownership and regular board reporting can help secure budget,
+              cross-team authority, and organizational priority.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -198,8 +219,8 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
               <div className="text-sm font-bold text-foreground">Cross-Functional Teams</div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Security, engineering, compliance, vendor management, and business stakeholders must
-              all be represented. Crypto touches every layer of the stack.
+              Involve the security, engineering, compliance, vendor-management, and business
+              stakeholders relevant to the systems in scope.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -208,8 +229,8 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
               <div className="text-sm font-bold text-foreground">Phased Approach</div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Start with hybrid deployments in low-risk systems, validate, then expand. Big-bang
-              migrations are too risky for cryptographic infrastructure.
+              Where suitable, pilot a hybrid deployment, validate it, and then expand in stages.
+              Plan rollback and service-continuity controls for each migration path.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

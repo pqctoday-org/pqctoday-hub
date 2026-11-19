@@ -62,6 +62,20 @@ export const AssessDone: React.FC<AssessDoneProps> = ({
           : 'Your full report is ready — every section unlocked, including the per-domain breakdown, algorithm migration map, dated roadmap and progress trending.'}
       </p>
 
+      {currentInput?.currentCryptoUnknown && (
+        <section
+          aria-label="Cryptographic inventory follow-up"
+          className="mb-5 rounded-xl border border-status-warning/30 bg-status-warning/10 p-4 text-left text-sm"
+        >
+          <h3 className="font-semibold">Cryptographic inventory needed</h3>
+          <p className="mt-1 text-muted-foreground">
+            You marked your current algorithms as unknown. The report uses conservative exposure
+            assumptions and recommends starting an inventory of your systems, services and
+            dependencies.
+          </p>
+        </section>
+      )}
+
       {isFast && (
         <div className="mb-5 flex items-center gap-3.5 rounded-2xl border border-status-warning/30 bg-status-warning/10 p-4 text-left">
           <Lock className="shrink-0 text-status-warning" size={22} />

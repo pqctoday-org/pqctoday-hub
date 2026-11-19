@@ -30,6 +30,13 @@ describe('CRQC_ESTIMATES (the Threats sources list)', () => {
       expect(e.confidence + ' ' + e.notes, e.source).not.toMatch(/predicts? (a )?CRQC arrival/i)
   })
 
+  it('NIST transition dates are not framed as a CRQC arrival assumption', () => {
+    const nist = CRQC_ESTIMATES.find((e) => e.source.startsWith('NIST IR 8547'))!
+    expect(nist.kind).toBe('migration-deadline')
+    expect(nist.notes).toMatch(/not a prediction that a CRQC will arrive/)
+    expect(nist.notes).not.toMatch(/assumes CRQC is imminent/i)
+  })
+
   it('BSI shows the dates its guideline gives, with no 2040', () => {
     const bsi = CRQC_ESTIMATES.filter((e) => e.source.startsWith('BSI'))
     expect(bsi.length).toBeGreaterThan(0)

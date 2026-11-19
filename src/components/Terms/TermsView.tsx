@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { Scale, ExternalLink } from 'lucide-react'
+import { Link } from 'react-router'
+import { useScrollToHash } from '@/hooks/useScrollToHash'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // Bump this date whenever a substantive edit is made to this file.
@@ -38,7 +40,11 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section id={`terms-${slug}`} className="glass-panel p-6 scroll-mt-20">
+    <section
+      id={`terms-${slug}`}
+      tabIndex={-1}
+      className="glass-panel p-6 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
+    >
       <h2 className="text-lg font-semibold text-foreground mb-4">
         {number}. {title}
       </h2>
@@ -48,6 +54,7 @@ function Section({
 }
 
 export function TermsView() {
+  useScrollToHash({ focusTarget: true })
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Header */}
@@ -74,9 +81,9 @@ export function TermsView() {
         <ol className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm list-decimal list-inside">
           {TOC_SECTIONS.map((s) => (
             <li key={s.slug}>
-              <a href={`#terms-${s.slug}`} className="text-accent hover:underline">
+              <Link to={`#terms-${s.slug}`} className="text-accent hover:underline">
                 {s.title}
-              </a>
+              </Link>
             </li>
           ))}
         </ol>

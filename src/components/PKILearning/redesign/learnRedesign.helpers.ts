@@ -14,8 +14,10 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
-import { matchesAllWords } from '@/utils/searchMatch'
+import { matchesAllWords, tokenizeQuery } from '@/utils/searchMatch'
 import { MODULE_TRACKS } from '../moduleData'
+import { MANIFEST_BY_ID } from '../manifest/registry'
+import { REORDERED_WORKSHOP_STEPS } from '../manifest/moduleRedirects'
 import type { ModuleItem } from '../ModuleCard'
 import type { PersonaPathPhase } from '../usePersonaPathItems'
 
@@ -235,6 +237,20 @@ export function resolveBrowseTrack(raw: string | null | undefined): string {
   return raw && MODULE_TRACKS.some((t) => t.track === raw) ? raw : BROWSE_ALL
 }
 
+export function matchingWorkshopSteps(moduleId: string, search: string) {
+  const manifest = MANIFEST_BY_ID[moduleId]
+  if (!manifest?.workshopSteps || tokenizeQuery(search).length === 0) return []
+  return manifest.workshopSteps.flatMap((step, index) => {
+    if (!matchesAllWords([step.label], search)) return []
+    const params = new URLSearchParams({ tab: 'workshop', step: String(index), diveDeeper: 'true' })
+    const version = REORDERED_WORKSHOP_STEPS.get(moduleId)?.version
+    if (version) params.set('sv', version)
+    const path = manifest.learnPaths?.find((candidate) => step.paths?.includes(candidate.id))
+    if (path) params.set('path', path.id)
+    return [{ id: step.id, label: step.label, href: `/learn/${moduleId}?${params}` }]
+  })
+}
+
 /** A group of catalogue modules under one track heading. */
 export interface BrowseGroup {
   track: string
@@ -244,7 +260,7 @@ export interface BrowseGroup {
 export interface BrowseFilterInput {
   /** The catalogue to filter, grouped by track (normally `MODULE_TRACKS`). */
   tracks: ReadonlyArray<{ track: string; modules: readonly ModuleItem[] }>
-  /** Free text; every word must appear in the title, description or topic keywords. */
+  /** Free text; every word must appear in the module text or a single workshop step label. */
   search?: string
   /** Curated per-module topic keywords, once loaded (search works on title and description without them). */
   topicKeywords?: Readonly<Record<string, string>> | null
@@ -291,7 +307,12 @@ export function filterAndSortModules(input: BrowseFilterInput): BrowseGroup[] {
         if (savedOnly && !savedIds?.has(m.id)) return false
         if (status !== BROWSE_ALL && statusOf(m.id) !== status) return false
         if (extraFilter && !extraFilter(m.id)) return false
-        if (q && !matchesAllWords([m.title, m.description, topicKeywords?.[m.id]], q)) return false
+        if (
+          q &&
+          !matchesAllWords([m.title, m.description, topicKeywords?.[m.id]], q) &&
+          matchingWorkshopSteps(m.id, q).length === 0
+        )
+          return false
         return true
       }) as ModuleItem[],
     }))

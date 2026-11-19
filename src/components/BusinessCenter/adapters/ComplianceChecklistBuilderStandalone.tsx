@@ -27,7 +27,7 @@ import type { ArtifactSection, ArtifactField } from '@/components/PKILearning/co
 import type { ArtifactFormData } from '@/components/PKILearning/common/executive/ArtifactBuilder'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { rowsToCsv } from '@/services/export/csvExport'
+import { rowsToSpreadsheetCsv } from '@/services/export/csvExport'
 import { STANDARD_CHECKLIST_ITEMS, type ChecklistItem } from './complianceChecklistItems'
 
 /** Flatten each item's description + reference into the option label — the
@@ -188,7 +188,7 @@ function renderPreview(
 }
 
 /** Structured CSV mirror of `renderPreview` — one row per framework × control,
- *  built with `rowsToCsv` so `.csv` opens as real spreadsheet rows. Mirrors
+ *  built with `rowsToSpreadsheetCsv` so `.csv` opens as real spreadsheet rows. Mirrors
  *  AuditReadinessChecklist's `renderAuditCsv` / ComplianceTimelineBuilder's
  *  section-labelled CSV export. */
 function renderCsv(
@@ -215,7 +215,7 @@ function renderCsv(
       ])
     }
   }
-  return rowsToCsv(rows)
+  return rowsToSpreadsheetCsv(rows)
 }
 
 // ---------------------------------------------------------------------------

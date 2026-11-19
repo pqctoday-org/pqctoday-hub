@@ -11,6 +11,7 @@ import { TopThreeActions } from '@/components/common/TopThreeActions'
 import { ReportUpgradeNudge } from '@/components/Report/redesign/ReportUpgradeNudge'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
+import { formatDriver } from '@/data/driverLabels'
 import { riskConfig as RISK_TIER } from '@/data/riskConfig'
 import { findReferenceEstate } from '@/data/assessmentScenarios'
 import type { SharedReportView } from '@/hooks/useResolvedSharedReport'
@@ -275,6 +276,19 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
                     ? 'Short-term'
                     : 'Long-term'}
               </p>
+              {a.drivers?.includes('currentCrypto:unknown') && (
+                <>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    {formatDriver('currentCrypto:unknown')}
+                  </p>
+                  <Link
+                    to={a.relatedModule}
+                    className="mt-1 inline-flex text-[12px] text-primary underline"
+                  >
+                    Start a sample inventory
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         ))}

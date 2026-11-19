@@ -811,6 +811,11 @@ describe('libraryData revision collapse (real data)', () => {
     expect(ids.has('draft-ietf-plants-merkle-tree-certs-00')).toBe(false)
     const surv = libraryData.find((i) => i.referenceId === 'draft-ietf-plants-merkle-tree-certs')!
     expect(surv.priorRevisions?.length ?? 0).toBeGreaterThanOrEqual(2)
+    expect(surv.downloadUrl).toBe(
+      'https://datatracker.ietf.org/doc/html/draft-ietf-plants-merkle-tree-certs-08'
+    )
+    expect(surv.lastVerified).toBe('2026-11-18')
+    expect(surv.documentStatus).toContain('not an RFC')
   })
 
   it('child instances in the dependency tree carry the same enrichment (priorRevisions)', () => {

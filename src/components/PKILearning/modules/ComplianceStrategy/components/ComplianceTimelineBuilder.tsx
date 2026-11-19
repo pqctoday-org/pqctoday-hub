@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useMemo, useState, useCallback } from 'react'
+import React, { useId, useMemo, useState, useCallback } from 'react'
 import {
   AlertTriangle,
   CheckCircle2,
@@ -20,13 +20,16 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { Button } from '@/components/ui/button'
 import { GanttDetailPopover } from '@/components/Timeline/GanttDetailPopover'
+import { BindingForcePill } from '@/components/Timeline/TimelineRecordFacts'
+import type { ComplianceFramework } from '@/data/complianceData'
 import { AskAssistantButton } from '@/components/ui/AskAssistantButton'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { ExportableArtifact } from '../../../common/executive/ExportableArtifact'
-import { rowsToCsv } from '@/services/export/csvExport'
+import { rowsToSpreadsheetCsv } from '@/services/export/csvExport'
 import { ComplianceGantt } from './ComplianceGantt'
 import {
   assessPlanAlignment,
+  isSampleYear,
   isObligationKeyArray,
   validObligationKeys,
   recordedCompletionLabel,
@@ -115,7 +118,8 @@ interface FrameworkDetail {
   notes: string
   enforcementBody: string
   deadlineText: string
-  requiresPQC: boolean
+  bindingStatus?: ComplianceFramework['bindingStatus']
+  website?: string
   libraryRefs: string[]
 }
 
@@ -223,11 +227,13 @@ function GapDetailPanel({
           </div>
           <div>
             <span className="block text-muted-foreground uppercase tracking-wider font-medium mb-0.5">
-              Requires PQC
+              Binding status
             </span>
-            <span className={detail.requiresPQC ? 'text-status-error' : 'text-muted-foreground'}>
-              {detail.requiresPQC ? 'Yes' : 'No'}
-            </span>
+            {detail.bindingStatus ? (
+              <BindingForcePill value={detail.bindingStatus} />
+            ) : (
+              <span className="text-muted-foreground">Unclassified</span>
+            )}
           </div>
           {detail.libraryRefs.length > 0 && (
             <div>
@@ -242,6 +248,16 @@ function GapDetailPanel({
           <p className="text-xs text-muted-foreground italic border-t border-border pt-2">
             {detail.notes}
           </p>
+        )}
+        {detail.website && (
+          <a
+            href={detail.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex text-sm text-primary underline"
+          >
+            Open framework source
+          </a>
         )}
         <AskAssistantButton
           variant="text"
@@ -339,7 +355,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
 
   // Gap analysis UI state
   const [gapExpanded, setGapExpanded] = useState(true)
-  const [expandedGapIdx, setExpandedGapIdx] = useState<number | null>(null)
+  const gapId = useId()
+  const [expandedGapKey, setExpandedGapKey] = useState<string | null>(null)
   const [pinnedDeadlines, setPinnedDeadlines] = useState<Set<string>>(
     new Set(restoreStringList(savedInputs?.pinnedDeadlines) ?? [])
   )
@@ -424,14 +441,18 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
       )
       if (!matchesJurisdiction) continue
 
-      const year = getDeadlineYear(fw.deadline)
-      if (year) {
-        const key = `fw-${fw.id}-${year}`
+      const statedDates = (fw.deadlineDates ?? []).filter(({ year }) => isSampleYear(year))
+      const legacyYear = statedDates.length === 0 ? getDeadlineYear(fw.deadline) : null
+      const dates = legacyYear ? [{ year: legacyYear, label: '' }] : statedDates
+      for (const { year, label } of dates) {
+        const legacyKey = `fw-${fw.id}-${year}`
+        const sameYear = dates.filter((date) => date.year === year && date.label !== label)
+        const key = sameYear.length > 0 ? `${legacyKey}:${label}` : legacyKey
         if (!seen.has(key)) {
           seen.add(key)
           deadlines.push({
             key,
-            label: fw.label,
+            label: label ? `${fw.label} (${label})` : fw.label,
             year,
             source: fw.enforcementBody || 'Compliance Framework',
             detail: {
@@ -440,7 +461,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
               notes: fw.notes,
               enforcementBody: fw.enforcementBody,
               deadlineText: fw.deadline,
-              requiresPQC: fw.requiresPQC,
+              bindingStatus: fw.bindingStatus,
+              website: fw.website,
               libraryRefs: fw.libraryRefs,
             },
           })
@@ -565,10 +587,11 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
 
     if (gapAnalysis.length > 0) {
       md += '\n## Linked Sample Plan Alignment\n\n'
-      md += '| Framework | Reference year | Alignment | Notes |\n'
-      md += '|-----------|----------------|-----------|-------|\n'
+      md += '| Framework | Reference year | Alignment | Notes | Binding classification | Source |\n'
+      md += '|-----------|----------------|-----------|-------|------------------------|--------|\n'
       for (const g of gapAnalysis) {
-        md += `| ${g.framework} | ${g.deadlineYear} | ${g.alignmentLabel} | ${g.gap} |\n`
+        const framework = g.detail?.type === 'framework' ? g.detail : undefined
+        md += `| ${g.framework} | ${g.deadlineYear} | ${g.alignmentLabel} | ${g.gap} | ${framework?.bindingStatus?.replaceAll('_', ' ') ?? 'Unclassified'} | ${framework?.website ?? ''} |\n`
       }
     }
 
@@ -630,11 +653,27 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
     if (gapAnalysis.length > 0) {
       if (sections.length) sections.push([])
       sections.push(['Linked Sample Plan Alignment'])
-      sections.push(['Framework', 'Reference Year', 'Alignment', 'Notes'])
-      for (const g of gapAnalysis)
-        sections.push([g.framework, g.deadlineYear, g.alignmentLabel, g.gap])
+      sections.push([
+        'Framework',
+        'Reference Year',
+        'Alignment',
+        'Notes',
+        'Binding Classification',
+        'Source',
+      ])
+      for (const g of gapAnalysis) {
+        const framework = g.detail?.type === 'framework' ? g.detail : undefined
+        sections.push([
+          g.framework,
+          g.deadlineYear,
+          g.alignmentLabel,
+          g.gap,
+          framework?.bindingStatus?.replaceAll('_', ' ') ?? 'Unclassified',
+          framework?.website ?? '',
+        ])
+      }
     }
-    return rowsToCsv(sections)
+    return rowsToSpreadsheetCsv(sections)
   }, [ganttRows, milestones, gapAnalysis, scenarioAsOfYear])
 
   const handleSaveToDocuments = () => {
@@ -749,6 +788,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             <span className="block text-xs font-medium text-muted-foreground mb-1">Year</span>
             <FilterDropdown
               noContainer
+              ariaLabel={`Milestone year, currently ${newYear}`}
+              hideDefaultOption
               selectedId={String(newYear)}
               onSelect={(id) => setNewYear(parseInt(id))}
               items={yearOptions.map((y) => ({ id: String(y), label: String(y) }))}
@@ -987,12 +1028,10 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             <>
               <div className="space-y-2">
                 {gapAnalysis.map((item, idx) => (
-                  <div key={idx}>
+                  <div key={item.key}>
                     <div
-                      role="button"
-                      tabIndex={0}
-                      className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                        expandedGapIdx === idx ? 'rounded-b-none' : ''
+                      className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg border transition-colors ${
+                        expandedGapKey === item.key ? 'rounded-b-none' : ''
                       } ${
                         item.status === 'at-risk'
                           ? 'border-status-error/30 bg-status-error/5'
@@ -1000,16 +1039,17 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                             ? 'border-status-success/30 bg-status-success/5'
                             : 'border-border bg-muted/30'
                       }`}
-                      onClick={() => setExpandedGapIdx(expandedGapIdx === idx ? null : idx)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          setExpandedGapIdx(expandedGapIdx === idx ? null : idx)
-                        }
-                      }}
-                      aria-expanded={expandedGapIdx === idx}
                     >
-                      <div className="flex items-center gap-3">
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        className="flex h-auto min-h-11 min-w-0 items-center justify-start gap-3 rounded p-0 text-left hover:bg-transparent focus-visible:outline focus-visible:outline-2"
+                        aria-expanded={expandedGapKey === item.key}
+                        aria-controls={`${gapId}-record-${idx}`}
+                        onClick={() =>
+                          setExpandedGapKey(expandedGapKey === item.key ? null : item.key)
+                        }
+                      >
                         {item.status === 'unknown' && (
                           <Info size={16} className="text-muted-foreground shrink-0" />
                         )}
@@ -1022,13 +1062,13 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                         {item.status === 'at-risk' && (
                           <AlertTriangle size={16} className="text-status-error shrink-0" />
                         )}
-                        <div>
-                          <div className="text-sm font-medium text-foreground">
+                        <span>
+                          <span className="block text-sm font-medium text-foreground">
                             {item.framework}
-                          </div>
-                          <div className="text-xs text-muted-foreground">{item.gap}</div>
-                        </div>
-                      </div>
+                          </span>
+                          <span className="block text-xs text-muted-foreground">{item.gap}</span>
+                        </span>
+                      </Button>
                       <div className="flex flex-wrap items-center gap-3">
                         <span className="text-sm font-mono text-primary">{item.deadlineYear}</span>
                         <span
@@ -1047,11 +1087,9 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            togglePinned(item.key)
-                          }}
+                          className="h-11 w-11 p-0"
+                          onClick={() => togglePinned(item.key)}
+                          aria-pressed={pinnedDeadlines.has(item.key)}
                           aria-label={
                             pinnedDeadlines.has(item.key)
                               ? `Remove ${item.framework} from timeline`
@@ -1069,17 +1107,14 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
                             <ToggleLeft size={16} className="text-muted-foreground" />
                           )}
                         </Button>
-                        {expandedGapIdx === idx ? (
-                          <ChevronDown size={14} className="text-primary shrink-0" />
-                        ) : (
-                          <ChevronRight size={14} className="text-muted-foreground shrink-0" />
-                        )}
                       </div>
                     </div>
 
-                    {expandedGapIdx === idx && item.detail && (
-                      <GapDetailPanel detail={item.detail} framework={item.framework} />
-                    )}
+                    <div id={`${gapId}-record-${idx}`} hidden={expandedGapKey !== item.key}>
+                      {expandedGapKey === item.key && item.detail && (
+                        <GapDetailPanel detail={item.detail} framework={item.framework} />
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

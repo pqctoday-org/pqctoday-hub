@@ -77,7 +77,7 @@ describe('CcEuccCertification render parity', () => {
     // The notice must not present the earlier review as approval of the changed content.
     expect(notes[0]).toHaveTextContent('Owner review recorded on 1 November 2026.')
     expect(notes[0]).toHaveTextContent(
-      'Content updated 2 November 2026 since that review; these changes are not covered by that recorded review.'
+      'Content updated 18 November 2026 since that review; these changes are not covered by that recorded review.'
     )
     expect(notes[0]).not.toHaveTextContent('Reviewed and signed off by the PQC Today owner')
     expect(notes[0]).toHaveTextContent(NOT_LAB_REVIEWED)

@@ -38,9 +38,28 @@ export interface ProfileState {
   triggers: Record<TriggerOption, boolean>
   otherTrigger: string
   compressedSequence: string
+  deadlineDays?: string
+  prerequisiteDays?: string
+  rolloutDays?: string
   riskAcceptances: string
   resourceRequest: string
   activationAuthority: string
+}
+
+function calendarFit(state: ProfileState): string {
+  const values = [state.deadlineDays ?? '', state.prerequisiteDays ?? '', state.rolloutDays ?? '']
+  if (values.every((value) => value === '')) return 'Enter the target and both sequence durations.'
+  if (values.some((value) => !/^\d{1,4}$/.test(value))) {
+    return 'Use whole numbers from 0 to 9,999 for all three durations.'
+  }
+  const [deadline, prerequisite, rollout] = values.map(Number)
+  const finish = prerequisite + rollout
+  const difference = deadline - finish
+  if (difference < 0) {
+    const lateDays = -difference
+    return `The sequence finishes on day ${finish}, ${lateDays} ${lateDays === 1 ? 'day' : 'days'} after the target. Rework the sequence or resolve the remaining schedule risk.`
+  }
+  return `The sequence finishes on day ${finish}, with ${difference} ${difference === 1 ? 'day' : 'days'} of margin before the target.`
 }
 
 export function buildMarkdown(s: ProfileState): string {
@@ -73,6 +92,13 @@ export function buildMarkdown(s: ProfileState): string {
   lines.push('## 2. Compressed Sequence')
   lines.push('')
   lines.push(s.compressedSequence.trim() || '_(compressed wave order not yet defined)_')
+  lines.push('')
+  lines.push(`- **Target from activation:** ${s.deadlineDays || '_(TBD)_'} calendar days`)
+  lines.push(
+    `- **Prerequisite and compatibility checks:** ${s.prerequisiteDays || '_(TBD)_'} calendar days`
+  )
+  lines.push(`- **Rollout after prerequisite:** ${s.rolloutDays || '_(TBD)_'} calendar days`)
+  lines.push(`- **Sequence check:** ${calendarFit(s)}`)
   lines.push('')
 
   lines.push('## 3. Pre-Approved Risk Acceptances')
@@ -114,6 +140,9 @@ export const AcceleratedExecutionProfile: React.FC = () => {
       },
       otherTrigger: '',
       compressedSequence: '',
+      deadlineDays: '',
+      prerequisiteDays: '',
+      rolloutDays: '',
       riskAcceptances: '',
       resourceRequest: '',
       activationAuthority: '',
@@ -128,6 +157,9 @@ export const AcceleratedExecutionProfile: React.FC = () => {
           'Regulatory deadline pulled forward': true,
           'Active HNDL campaign detected': true,
         },
+        deadlineDays: '90',
+        prerequisiteDays: '40',
+        rolloutDays: '30',
         compressedSequence:
           'Collapse Phases 4–6: run discovery, risk scoring and Tier-1 pilots in parallel; pre-approve hybrid (X25519+ML-KEM-768) for all internet-facing TLS; defer long-tail / OT to a contained track.',
         riskAcceptances:
@@ -251,6 +283,43 @@ export const AcceleratedExecutionProfile: React.FC = () => {
             placeholder="e.g. Wave 1 (crown-jewel HNDL data) → Wave 2 (external TLS) → defer low-risk waves"
           />
         </div>
+      </section>
+
+      <section
+        className="glass-panel border border-border rounded-lg p-4 space-y-3"
+        aria-labelledby="aep-schedule-check"
+      >
+        <h3 id="aep-schedule-check" className="text-sm font-semibold">
+          Check the shortened schedule
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          Treat activation as day zero. The rollout starts only after the prerequisite and its
+          compatibility checks finish. Record staffing and risk acceptance below before committing.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {(
+            [
+              ['deadlineDays', 'Target from activation (days)'],
+              ['prerequisiteDays', 'Prerequisite and checks (days)'],
+              ['rolloutDays', 'Rollout after prerequisite (days)'],
+            ] as const
+          ).map(([field, label]) => (
+            <label key={field} className="block text-xs font-medium">
+              {label}
+              <Input
+                type="number"
+                min={0}
+                max={9999}
+                className="mt-1"
+                value={state[field] ?? ''}
+                onChange={(event) => set(field, event.target.value)}
+              />
+            </label>
+          ))}
+        </div>
+        <p role="status" aria-label="Accelerated schedule result" className="text-sm font-semibold">
+          {calendarFit(state)}
+        </p>
       </section>
 
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">

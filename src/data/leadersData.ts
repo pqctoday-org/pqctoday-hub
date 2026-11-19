@@ -42,6 +42,8 @@ export interface Leader {
    *  source, parsed from `data_quality_notes`. Absent means never explicitly
    *  re-verified since import. */
   verifiedDate?: string
+  /** A primary source that explicitly identifies the listed role or affiliation. */
+  roleSource?: { label: string; url: string }
 }
 
 interface RawLeaderRow {
@@ -77,6 +79,23 @@ interface RawLeaderRow {
 // in leaders_11142026) from the hand-curated profiles (252) — see the
 // `data_quality_notes` convention set 2026-05-10 by the library-authors import.
 const isAutoImportedRow = (note: string): boolean => note.includes('auto-imported from library')
+
+const roleSources = new Map<string, NonNullable<Leader['roleSource']>>([
+  [
+    'dustin-moody-nist',
+    {
+      label: 'NIST identifies the PQC standardization project lead',
+      url: 'https://www.nist.gov/news-events/news/2026/10/nist-report-provides-guidelines-transition-post-quantum-cryptography',
+    },
+  ],
+  [
+    'bill-newhouse',
+    {
+      label: 'NIST staff profile identifies the NCCoE cybersecurity engineer and project lead',
+      url: 'https://www.nist.gov/people/bill-newhouse',
+    },
+  ],
+])
 
 const modules = import.meta.glob('./leaders_*.csv', {
   query: '?raw',
@@ -127,6 +146,7 @@ const {
       vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
       sourceKind: isAutoImportedRow(row.data_quality_notes ?? '') ? 'auto-imported' : 'curated',
       verifiedDate: row.verified_date || undefined,
+      roleSource: roleSources.get(row.leader_id?.trim() ?? ''),
     }
   },
   true // withPrevious for status badges

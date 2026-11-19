@@ -22,7 +22,7 @@ export type SupportStatus =
   'stable' | 'experimental' | 'preview' | 'not-implemented' | 'third-party-only' | 'unverified'
 
 /** The API × algorithm matrix also tracks standards that have not shipped yet. */
-export type MatrixStatus = SupportStatus | 'planned'
+export type MatrixStatus = SupportStatus | 'planned' | 'deprecated'
 
 export type StandardAlgorithm = 'ML-KEM' | 'ML-DSA' | 'SLH-DSA'
 
@@ -44,6 +44,11 @@ export interface RuntimeSupportRow {
   /** Protocol integration (TLS, X.509), kept separate from primitive availability */
   protocolNote: string
   evidenceUrl: string
+  licenseNote?: string
+  licenseEvidenceUrl?: string
+  privateKeyEncodingNote?: string
+  privateKeyEncodingEvidenceUrl?: string
+  licenseCheckedDate?: string
   /** ISO date the row was last checked against evidenceUrl */
   checkedDate: string
   /** Id of the runnable sample that exercises this row, when one exists */
@@ -52,12 +57,12 @@ export interface RuntimeSupportRow {
 }
 
 /** Date the table as a whole was last reviewed. Rows older than 180 days before it fail the guard test. */
-export const TABLE_REVIEW_DATE = '2026-10-27'
+export const TABLE_REVIEW_DATE = '2026-11-18'
 
-const CHECKED = '2026-10-15'
+const CHECKED = '2026-11-18'
 
-/** Java rows re-checked against Oracle's October 2026 Critical Patch Update release notes. */
-const JAVA_CHECKED = '2026-10-27'
+/** Java rows re-checked against Oracle's November 17, 2026 Critical Patch Update. */
+const JAVA_CHECKED = '2026-11-18'
 const ORACLE_JDK_RELNOTES = 'https://www.oracle.com/java/technologies/javase/'
 
 const GO_124 = 'https://go.dev/doc/go1.24'
@@ -65,6 +70,7 @@ const GO_127 = 'https://go.dev/doc/go1.27'
 const PYCA = 'https://cryptography.io/en/latest/changelog/'
 const DOTNET_API = 'https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.'
 const CNG_IDS = 'https://learn.microsoft.com/en-us/windows/win32/seccng/cng-algorithm-identifiers'
+const DOTNET_10_PQC = 'https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/libraries'
 const OPENSSL_35 = 'https://openssl-library.org/news/openssl-3.5-notes/'
 const BC_JAVA = 'https://www.bouncycastle.org/download/bouncy-castle-java/'
 
@@ -124,7 +130,7 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     backend:
       'Depends on the linked crypto library. From 48.0.0 the official wheels (which bundle OpenSSL 3.5 or later) include it; 47.x wheels did not.',
     protocolNote:
-      'cryptography does not do TLS. Python’s ssl module uses the system OpenSSL; OpenSSL 3.5+ offers X25519MLKEM768 in its default key shares.',
+      'For TLS, inspect ssl.OPENSSL_VERSION in the deployed interpreter and check the negotiated group in a test handshake. The OpenSSL bundled with cryptography wheels does not determine what the ssl module loads.',
     evidenceUrl: PYCA,
     checkedDate: CHECKED,
     sampleId: 'python-mlkem',
@@ -139,7 +145,7 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     backend:
       'Depends on the linked crypto library. From 48.0.0 the official wheels (which bundle OpenSSL 3.5 or later) include it.',
     protocolNote:
-      'Later releases added ML-DSA to X.509 certificate, CSR and CRL signing and verification; check the changelog for the exact version you need.',
+      'Since cryptography 49.0.0, ML-DSA keys can sign and verify X.509 certificates, CSRs and CRLs, and certificates containing ML-DSA public keys can be loaded. Since 50.0.0, the X.509 path-validation APIs accept ML-DSA-44/65/87 public keys and signatures by default. These are certificate API capabilities, not TLS negotiation; the ssl module uses the interpreter’s OpenSSL, so verify an actual handshake separately.',
     evidenceUrl: PYCA,
     checkedDate: CHECKED,
     sampleId: 'python-mldsa',
@@ -179,12 +185,12 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     runtime: '.NET 10',
     api: 'System.Security.Cryptography.MLDsa',
     algorithm: 'ML-DSA',
-    status: 'stable',
+    status: 'experimental',
     minVersion: '.NET 10',
     backend:
-      'Needs OpenSSL 3.5+ on Linux, or Windows with CNG PQC support. Check MLDsa.IsSupported. The class is not [Experimental]; CompositeMLDsa is [Experimental] (SYSLIB5006).',
+      'Needs OpenSSL 3.5+ on Linux, or Windows with CNG PQC support. Check MLDsa.IsSupported. Microsoft marks MLDsa [Experimental] under SYSLIB5006 in .NET 10.',
     protocolNote: 'Certificate and TLS use depend on the platform X.509 and TLS stacks.',
-    evidenceUrl: `${DOTNET_API}mldsa?view=net-10.0`,
+    evidenceUrl: DOTNET_10_PQC,
     checkedDate: CHECKED,
     sampleId: 'dotnet-mldsa',
     codeSnippet: 'using MLDsa key = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa65);',
@@ -212,10 +218,17 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     status: 'stable',
     minVersion: 'JDK 24; Oracle JDK 25, 21.0.13 and 17.0.21',
     backend:
-      "Built into the default JDK providers. Oracle backported it to its LTS releases in the 20 October 2026 update (JDK 21.0.13 and 17.0.21; JDK 25 has it); Oracle JDK 11 and 8 are planned for the second half of 2027. Other OpenJDK builds: check your vendor's release notes.",
+      "Built into the default JDK providers. Oracle backported it to its LTS releases in the 20 October 2026 update (feature floor: JDK 21.0.13 and 17.0.21; JDK 25 has it). As of 17 November 2026, Oracle's latest security updates are JDK 25.0.5.1, 21.0.13.1, and 17.0.21.1; use the latest update for your JDK line. Oracle JDK 11 and 8 are planned for the second half of 2027. Other OpenJDK builds: check your vendor's release notes.",
+    licenseNote:
+      'Oracle JDK 21.0.13 changed the license from earlier JDK 21 updates. Review Oracle’s current terms before deployment.',
+    licenseEvidenceUrl: `${ORACLE_JDK_RELNOTES}21all-relnotes.html`,
+    privateKeyEncodingNote:
+      'Oracle JDK 21.0.13 defaults new ML-KEM and ML-DSA private keys to the seed PKCS #8 encoding. The JDK can also write expandedKey or both, and reads all three; check the format when storing or exchanging keys.',
+    privateKeyEncodingEvidenceUrl: `${ORACLE_JDK_RELNOTES}21all-relnotes.html`,
+    licenseCheckedDate: '2026-11-18',
     protocolNote:
-      'JSSE hybrid post-quantum key exchange for TLS 1.3 (JEP 527, X25519MLKEM768 on by default) shipped in JDK 27 and in Oracle JDK 25.0.5 (20 October 2026); Oracle plans it for JDK 21 and 17 in the first half of 2027.',
-    evidenceUrl: `${ORACLE_JDK_RELNOTES}25-0-5-relnotes.html`,
+      'JSSE hybrid post-quantum key exchange for TLS 1.3 (JEP 527, X25519MLKEM768 on by default) shipped in JDK 27 and Oracle JDK 25.0.5; Oracle’s latest security update for that line is 25.0.5.1 (17 November 2026). Oracle plans the feature for JDK 21 and 17 in the first half of 2027.',
+    evidenceUrl: `${ORACLE_JDK_RELNOTES}25all-relnotes.html`,
     checkedDate: JAVA_CHECKED,
     sampleId: 'java-mlkem',
     codeSnippet:
@@ -229,10 +242,17 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     status: 'stable',
     minVersion: 'JDK 24; Oracle JDK 25, 21.0.13 and 17.0.21',
     backend:
-      "Built into the default JDK providers. Oracle backported it to its LTS releases in the 20 October 2026 update (JDK 21.0.13 and 17.0.21; JDK 25 has it); Oracle JDK 11 and 8 are planned for the second half of 2027. Other OpenJDK builds: check your vendor's release notes.",
+      "Built into the default JDK providers. Oracle backported it to its LTS releases in the 20 October 2026 update (feature floor: JDK 21.0.13 and 17.0.21; JDK 25 has it). As of 17 November 2026, Oracle's latest security updates are JDK 25.0.5.1, 21.0.13.1, and 17.0.21.1; use the latest update for your JDK line. Oracle JDK 11 and 8 are planned for the second half of 2027. Other OpenJDK builds: check your vendor's release notes.",
+    licenseNote:
+      'Oracle JDK 21.0.13 changed the license from earlier JDK 21 updates. Review Oracle’s current terms before deployment.',
+    licenseEvidenceUrl: `${ORACLE_JDK_RELNOTES}21all-relnotes.html`,
+    privateKeyEncodingNote:
+      'Oracle JDK 21.0.13 defaults new ML-KEM and ML-DSA private keys to the seed PKCS #8 encoding. The JDK can also write expandedKey or both, and reads all three; check the format when storing or exchanging keys.',
+    privateKeyEncodingEvidenceUrl: `${ORACLE_JDK_RELNOTES}21all-relnotes.html`,
+    licenseCheckedDate: '2026-11-18',
     protocolNote:
       'JEP 497 covers the signature APIs; check your JDK release notes before relying on ML-DSA certificates in JSSE.',
-    evidenceUrl: `${ORACLE_JDK_RELNOTES}21-0-13-relnotes.html`,
+    evidenceUrl: `${ORACLE_JDK_RELNOTES}21all-relnotes.html`,
     checkedDate: JAVA_CHECKED,
     sampleId: 'java-mldsa',
     codeSnippet:
@@ -259,9 +279,9 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     api: 'BCRYPT_MLKEM_ALGORITHM',
     algorithm: 'ML-KEM',
     status: 'stable',
-    minVersion: 'Windows 11 24H2 / Windows Server 2025 (GA November 2025)',
+    minVersion: 'Windows 11 24H2 (desktop apps; BCRYPT identifiers; verify target build/provider)',
     backend:
-      'Default CNG provider (SymCrypt). ML-KEM-512/768/1024 via BCRYPT_PARAMETER_SET_NAME. For composite formats see KB5095093 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026).',
+      'Microsoft lists BCRYPT_MLKEM support beginning with Windows 11 24H2. The documented end-to-end BCrypt sample is marked prerelease. This describes the primitive API; verify the target build and provider. It does not establish NCrypt/KSP persisted-key support.',
     protocolNote:
       'A CNG primitive does not by itself mean Schannel negotiates ML-KEM in TLS; check the Schannel documentation for your Windows build.',
     evidenceUrl: CNG_IDS,
@@ -274,10 +294,11 @@ export const RUNTIME_SUPPORT: RuntimeSupportRow[] = [
     api: 'BCRYPT_MLDSA_ALGORITHM',
     algorithm: 'ML-DSA',
     status: 'stable',
-    minVersion: 'Windows 11 24H2 / Windows Server 2025 (GA November 2025)',
+    minVersion: 'Windows 11 24H2 (desktop apps; BCRYPT identifiers; verify target build/provider)',
     backend:
-      'Default CNG provider (SymCrypt). ML-DSA-44/65/87 via BCRYPT_PARAMETER_SET_NAME. For composite formats see KB5095093 (Windows 11) and KB5099536 (Windows Server 2025, 14 July 2026).',
-    protocolNote: 'Certificate and Schannel use of ML-DSA depend on the Windows build.',
+      'Microsoft lists BCRYPT_MLDSA support beginning with Windows 11 24H2. The documented end-to-end BCrypt sample is marked prerelease. This describes the primitive API; verify the target build and provider. It does not establish NCrypt/KSP persisted-key support.',
+    protocolNote:
+      'BCrypt primitive availability does not establish NCrypt/KSP persisted-key, certificate, or Schannel TLS support; verify each API and negotiated protocol on the target build.',
     evidenceUrl: CNG_IDS,
     checkedDate: CHECKED,
     codeSnippet: 'BCryptOpenAlgorithmProvider(&hAlg, BCRYPT_MLDSA_ALGORITHM, NULL, 0);',
@@ -394,6 +415,7 @@ export const STATUS_TEXT: Record<MatrixStatus, string> = {
   'third-party-only': 'Third-party only',
   planned: 'Planned',
   unverified: 'Not verified here',
+  deprecated: 'Deprecated — vendor advises against use',
 }
 
 export function getRuntimeSupport(
@@ -440,6 +462,11 @@ export interface PQCSupportCell {
   /** Present when the cell is derived from RUNTIME_SUPPORT */
   protocolNote?: string
   evidenceUrl?: string
+  licenseNote?: string
+  licenseEvidenceUrl?: string
+  privateKeyEncodingNote?: string
+  privateKeyEncodingEvidenceUrl?: string
+  licenseCheckedDate?: string
   checkedDate?: string
   sampleId?: string
 }
@@ -469,6 +496,7 @@ export const SUPPORT_STATUS_COLORS: Record<MatrixStatus, string> = {
   planned: 'bg-status-info/20 text-status-info border-status-info/50',
   'not-implemented': 'bg-muted/50 text-muted-foreground border-border',
   unverified: 'bg-muted/30 text-muted-foreground border-dashed border-border',
+  deprecated: 'bg-destructive/10 text-destructive border-destructive/30',
 }
 
 export const SUPPORT_STATUS_LABELS: Record<MatrixStatus, string> = STATUS_TEXT
@@ -498,6 +526,11 @@ function cellFromRuntime(apiId: string, algorithmId: string): PQCSupportCell {
     codeSnippet: row.codeSnippet,
     protocolNote: row.protocolNote,
     evidenceUrl: row.evidenceUrl,
+    licenseNote: row.licenseNote,
+    licenseEvidenceUrl: row.licenseEvidenceUrl,
+    privateKeyEncodingNote: row.privateKeyEncodingNote,
+    privateKeyEncodingEvidenceUrl: row.privateKeyEncodingEvidenceUrl,
+    licenseCheckedDate: row.licenseCheckedDate,
     checkedDate: row.checkedDate,
     sampleId: row.sampleId,
   }
@@ -687,10 +720,10 @@ const OTHER_CELLS: PQCSupportCell[] = [
   {
     apiId: 'bouncy-castle',
     algorithmId: 'mceliece',
-    status: 'stable',
+    status: 'deprecated',
     version: '1.71+ (BCPQC provider)',
     notes:
-      'Classic McEliece added to the BC PQC provider in 1.71; parameter-set coverage not verified here',
+      'Classic McEliece is present in the BC PQC provider, but BC Java 1.87 (11 Nov 2026) deprecates it and says it is no longer believed safe to use; do not treat implementation presence as a recommendation. https://www.bouncycastle.org/resources/new-release-bouncy-castle-java-1-87/',
   },
 
   // JCProv (Thales)
@@ -803,7 +836,8 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
   {
     apiId: '.NET',
     date: '2025-Q4',
-    event: '.NET 10: MLKem and MLDsa; SlhDsa as [Experimental]',
+    event:
+      '.NET 10: MLKem; MLDsa, SlhDsa and CompositeMLDsa APIs marked [Experimental] (SYSLIB5006)',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
@@ -823,7 +857,7 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
     apiId: 'ksp-cng',
     date: '2025-Q4',
     event:
-      'Windows CNG ML-KEM and ML-DSA generally available (Nov 2025); SLH-DSA not implemented by the default provider',
+      'Windows 11 24H2 CNG identifiers list ML-KEM and ML-DSA support. The current BCrypt samples are marked prerelease; primitive support does not establish NCrypt/KSP persistence or Schannel TLS integration. SLH-DSA is not implemented by the default provider.',
     algorithms: ['ml-kem', 'ml-dsa'],
   },
   {
@@ -849,7 +883,7 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
     apiId: 'jca-jce',
     date: '2026-Q4',
     event:
-      'Oracle JDK LTS backports: 25.0.5 adds hybrid TLS (JEP 527); 21.0.13 and 17.0.21 add ML-KEM and ML-DSA',
+      'Oracle JDK LTS backports: 25.0.5 adds hybrid TLS (JEP 527; latest CPU 25.0.5.1); 21.0.13 and 17.0.21 add ML-KEM and ML-DSA (latest CPUs 21.0.13.1 and 17.0.21.1)',
     algorithms: ['ml-kem', 'ml-dsa'],
   },
 ]

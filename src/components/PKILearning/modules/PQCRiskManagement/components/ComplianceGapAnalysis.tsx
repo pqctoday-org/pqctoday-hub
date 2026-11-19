@@ -107,7 +107,7 @@ export const ComplianceGapAnalysis: React.FC<ComplianceGapAnalysisProps> = ({ ri
           value={crqcYear}
           onChange={(e) => setCrqcYear(Number(e.target.value))}
           className="w-full accent-primary"
-          aria-label="CRQC arrival year"
+          aria-label="CRQC planning year (scenario)"
         />
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>2028</span>

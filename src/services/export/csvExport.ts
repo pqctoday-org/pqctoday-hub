@@ -21,11 +21,19 @@ function csvCell(value: string | number): string {
 }
 
 /**
- * Free text typed into a form can begin a spreadsheet formula (`=`, `+`, `-`,
- * `@`, or a tab or carriage return that some programs skip). A leading
- * apostrophe makes the spreadsheet read the cell as text. Use it for
- * learner-typed cells; `rowsToCsv` quoting alone does not stop a formula.
+ * Prefix formula markers, including full-width variants and markers after
+ * whitespace, and leading control characters with an apostrophe for text
+ * import. Spreadsheet behavior varies, especially after re-saving the CSV.
  */
 export function spreadsheetSafeText(value: string): string {
-  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value
+  return /^\s*[=+\-@＝＋－＠]|^[\t\r\n]/.test(value) ? `'${value}` : value
+}
+
+/** Serialize a spreadsheet download containing authored text and typed numbers. */
+export function rowsToSpreadsheetCsv(rows: ReadonlyArray<ReadonlyArray<string | number>>): string {
+  return rowsToCsv(
+    rows.map((row) =>
+      row.map((cell) => (typeof cell === 'string' ? spreadsheetSafeText(cell) : cell))
+    )
+  )
 }

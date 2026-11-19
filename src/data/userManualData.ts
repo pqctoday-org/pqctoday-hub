@@ -266,7 +266,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Granted patents and published applications',
-        body: 'A granted patent has been examined and its claims allowed on the grant date. A published application (an 11-digit US number beginning with the year) is an application the patent office has published; its claims are still under examination and may be narrowed, refused or abandoned. The Granted / pub. column, the detail panel and the export say which each record is.',
+        body: 'A granted patent has been examined and its claims allowed on the grant date. A published application (an 11-digit US number beginning with the year) is an application the patent office has published; the publication alone gives no current prosecution status. The patent office record records any subsequent grant or abandonment. The Granted / pub. column, the detail panel and the export say which each record is.',
       },
       {
         heading: 'Impact level and PQC migration score',

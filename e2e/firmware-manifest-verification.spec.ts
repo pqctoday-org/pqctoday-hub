@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect } from './fixtures/blockAnalytics'
+import { getViolations, injectAxe } from 'axe-playwright'
+
+async function expectNoSeriousAxeViolations(page: import('@playwright/test').Page) {
+  await page.waitForTimeout(350)
+  await injectAxe(page)
+  const violations = await getViolations(page, 'main', {
+    runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+  })
+  expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')).toEqual([])
+}
 
 for (const { route, width } of [
   { route: '/playground/firmware-signing', width: 1280 },
@@ -23,6 +33,7 @@ for (const { route, width } of [
     await expect(page.getByText('Live HSM Mode Active', { exact: true })).toBeVisible({
       timeout: 20_000,
     })
+    await expectNoSeriousAxeViolations(page)
     const next = page.getByRole('button', { name: 'Next Step', exact: true })
     await next.click()
     await page.getByRole('button', { name: 'Generate Both Keys', exact: true }).first().click()
@@ -57,5 +68,9 @@ for (const { route, width } of [
     await expect(decision).toHaveText(
       'Sample meets the sequence policy and both signatures verify.'
     )
+    await expectNoSeriousAxeViolations(page)
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+      .toBeLessThanOrEqual(1)
   })
 }

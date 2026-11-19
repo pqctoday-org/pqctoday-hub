@@ -30,6 +30,7 @@ import { TPM_QUIZZES } from './tpmQuiz'
 import { TAG_GLOSSARY, TERMS } from './tpmGlossary'
 import { CC_NAMES } from '../tpmWireDecode'
 import * as SER from '../../../../wasm/tpmSerializer'
+import { COMMAND_DEFS } from '../tpmCommandDefs'
 
 const REPO_ROOT = process.cwd()
 const WASM_DIR = join(REPO_ROOT, 'public', 'wasm')
@@ -57,9 +58,60 @@ function loadFactory(): Factory {
 
 // ── Structural curriculum invariants (no engine needed) ────────────────────
 describe('TPM curriculum structure', () => {
+  it('labels emulator evidence without implying physical TPM or hardware security', () => {
+    const boot = TPM_LESSONS.find((lesson) => lesson.id === 'boot-discover')!
+    const keys = TPM_LESSONS.find((lesson) => lesson.id === 'create-keys')!
+    const bootQuiz = TPM_QUIZZES['boot-discover']
+    const keyQuiz = TPM_QUIZZES['create-keys']
+    expect(boot.blurb).toContain('local software TPM emulator')
+    expect(boot.whyItMatters).toContain('rather than inferring them from this emulator')
+    expect(keys.blurb).toContain('local software TPM')
+    expect(bootQuiz[0].why).toContain('local emulator response')
+    expect(keyQuiz[1].why).toContain('does not demonstrate a physical TPM')
+    expect(TERMS.find((term) => term.id === 'ptp-v107')?.def).toContain('Errata v1.1')
+    const ekReader = readFileSync(join(__dirname, '../V2p7EkCertReader.tsx'), 'utf-8')
+    expect(ekReader).toContain('Certificate storage is optional')
+    expect(ekReader.replace(/\s+/g, ' ')).toContain('not manufacturer credentials')
+    expect(ekReader).toContain('profile-defined NV indices')
+    expect(ekReader).not.toContain('spec-mandated NV slots')
+    expect(ekReader).not.toContain('V2.7 RC1')
+    const signingQuiz = TPM_QUIZZES['sign-verify'][0]
+    expect(signingQuiz.why).toContain('deprecated TPM2_Sign but still defines it')
+    expect(signingQuiz.options).not.toContain('TPM2_Sign was deprecated and removed in V1.85')
+    const selfTest = COMMAND_DEFS.find((command) => command.key === 'TPM2_SelfTest')!
+    expect(selfTest.section).toContain('Version 185, published')
+    expect(selfTest.why).toContain('does not establish FIPS 140-3 validation')
+    expect(selfTest.why).not.toContain('Required by FIPS 140-3')
+    const getRandom = COMMAND_DEFS.find((command) => command.key === 'TPM2_GetRandom')!
+    expect(
+      getRandom.params?.('')?.find((param) => param.name === 'bytesRequested')?.description
+    ).toContain('does not identify a particular internal reason')
+    const createPrimary = COMMAND_DEFS.find((command) => command.key === 'TPM2_CreatePrimary')!
+    expect(createPrimary.section).toContain('Version 185, published')
+    expect(createPrimary.description).toContain('same seed and template in the same hierarchy')
+    expect(
+      COMMAND_DEFS.filter((command) => command.section).every((command) =>
+        command.section!.includes('RC4')
+      )
+    ).toBe(false)
+    expect(
+      COMMAND_DEFS.find((command) => command.key === 'TPM2_SignSequenceStart')?.section
+    ).toContain('§17.5 Tables 87-88 (Version 185, published)')
+    expect(
+      COMMAND_DEFS.find((command) => command.key === 'TPM2_VerifySequenceStart')?.section
+    ).toContain('§17.6 Tables 89-90 (Version 185, published)')
+    const complianceRunner = readFileSync(join(__dirname, '../ComplianceRunner.tsx'), 'utf-8')
+    expect(complianceRunner).toContain(
+      'TPM2_SignSequenceStart(keyHandle, auth=∅, context=∅)  [Published Part 3 Table 87]'
+    )
+    expect(complianceRunner).toContain(
+      'TPM2_VerifySequenceStart(keyHandle, auth=∅, hint=∅, context=∅)  [Published Part 3 Table 89]'
+    )
+  })
+
   it('every expected-refusal step declares a command and exact nonzero response codes', () => {
     const refusals = TPM_LESSONS.flatMap((l) => l.steps.filter((s) => s.expect === 'refusal'))
-    expect(refusals).toHaveLength(2)
+    expect(refusals).toHaveLength(3)
     for (const step of refusals) {
       expect(step.expectedRefusal?.commandCode).toBeGreaterThan(0)
       expect(step.expectedRefusal?.responseCodes.length).toBeGreaterThan(0)

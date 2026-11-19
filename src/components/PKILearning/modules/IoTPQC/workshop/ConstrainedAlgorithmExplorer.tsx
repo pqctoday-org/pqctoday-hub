@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useMemo, useState } from 'react'
+import React, { useId, useMemo, useState } from 'react'
 import { CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react'
 import {
   BENCH_SOURCES,
@@ -18,6 +18,7 @@ import {
   type FitResult,
 } from '../utils/sizing'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export interface AlgorithmExplorerConfig {
   classIdx?: number
@@ -41,26 +42,35 @@ export const ConstrainedAlgorithmExplorer: React.FC<{ initial?: AlgorithmExplore
   const [classIdx, setClassIdx] = useState(initial?.classIdx ?? 1)
   const [role, setRole] = useState<DeviceRole>(initial?.role ?? 'verify')
   const [build, setBuild] = useState<Build>(initial?.build ?? 'stack')
-  const dc = DEVICE_CLASSES[classIdx]
+  const dc = DEVICE_CLASSES[classIdx] ?? DEVICE_CLASSES[1]
+  const fieldId = useId()
+  const [customRam, setCustomRam] = useState<string | null>(null)
+  const ramBudget = customRam === null ? dc.ramBytes : Number(customRam)
+  const validRam =
+    customRam !== '' && Number.isInteger(ramBudget) && ramBudget >= 0 && ramBudget <= dc.ramBytes
+  const availableRam = validRam ? ramBudget : undefined
 
   const rows = useMemo(
     () =>
       CONSTRAINED_ALGORITHMS.map((alg) => ({
         alg,
-        fit: assessFit(alg, classIdx, role, build),
+        fit: assessFit(alg, classIdx, role, build, availableRam),
       })).filter((r) => r.fit.applicable),
-    [classIdx, role, build]
+    [classIdx, role, build, availableRam]
   )
-  const summary = useMemo(() => fitSummary(classIdx, role, build), [classIdx, role, build])
+  const summary = useMemo(
+    () => fitSummary(classIdx, role, build, availableRam),
+    [classIdx, role, build, availableRam]
+  )
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-foreground/80">
         Pick a device class and what the device has to do. Each algorithm&apos;s peak RAM is its
         Cortex-M4 benchmark stack plus the keys, ciphertext or signature it must hold. Green fits in
-        half the class&apos;s RAM or less, amber uses more than {TIGHT_FRACTION * 100}% of it, red
-        does not fit (or, when signing or running a KEM, the full-scheme code does not fit in
-        flash).
+        half the available RAM or less, amber uses more than {TIGHT_FRACTION * 100}% of it, red
+        exceeds the RAM budget (or, when signing or running a KEM, the full-scheme code exceeds
+        available flash).
       </p>
 
       {/* Device class */}
@@ -71,7 +81,11 @@ export const ConstrainedAlgorithmExplorer: React.FC<{ initial?: AlgorithmExplore
             <Button
               variant="ghost"
               key={c.id}
-              onClick={() => setClassIdx(idx)}
+              onClick={() => {
+                setClassIdx(idx)
+                setCustomRam(null)
+              }}
+              aria-pressed={idx === classIdx}
               className={`h-auto flex-col items-start whitespace-normal p-3 rounded-lg border text-left ${
                 idx === classIdx
                   ? 'border-primary bg-primary/10 text-foreground'
@@ -91,6 +105,40 @@ export const ConstrainedAlgorithmExplorer: React.FC<{ initial?: AlgorithmExplore
           {dc.description} Model uses {fmtBytes(dc.ramBytes)} RAM and {fmtBytes(dc.flashBytes)}{' '}
           flash.
         </p>
+        <div className="mt-3 space-y-2">
+          <label htmlFor={fieldId} className="block text-sm font-medium">
+            Available RAM for cryptography (bytes)
+          </label>
+          <div className="flex flex-wrap items-center gap-2">
+            <Input
+              id={fieldId}
+              type="number"
+              min={0}
+              max={dc.ramBytes}
+              step={1}
+              value={customRam ?? dc.ramBytes}
+              onChange={(event) => setCustomRam(event.target.value)}
+              className="w-40"
+              aria-invalid={!validRam}
+              aria-describedby={`${fieldId}-help`}
+            />
+            <Button
+              variant="outline"
+              onClick={() => setCustomRam(null)}
+              disabled={customRam === null}
+            >
+              Use class RAM
+            </Button>
+          </div>
+          <p id={`${fieldId}-help`} className="text-xs text-muted-foreground">
+            Enter the RAM left after reserving memory for the application and operating system.
+          </p>
+          {!validRam && (
+            <p role="alert" className="text-xs text-status-error">
+              Enter a whole number from 0 to {dc.ramBytes.toLocaleString('en-US')}.
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Role + build */}
@@ -103,6 +151,7 @@ export const ConstrainedAlgorithmExplorer: React.FC<{ initial?: AlgorithmExplore
                 variant="ghost"
                 key={r}
                 onClick={() => setRole(r)}
+                aria-pressed={r === role}
                 className={`w-full h-auto justify-start whitespace-normal text-left p-2 rounded-lg border text-xs ${
                   r === role
                     ? 'border-primary bg-primary/10 text-foreground'
@@ -127,6 +176,7 @@ export const ConstrainedAlgorithmExplorer: React.FC<{ initial?: AlgorithmExplore
                 variant="ghost"
                 key={b}
                 onClick={() => setBuild(b)}
+                aria-pressed={b === build}
                 className={`w-full h-auto justify-start whitespace-normal text-left p-2 rounded-lg border text-xs ${
                   b === build
                     ? 'border-primary bg-primary/10 text-foreground'
@@ -144,43 +194,50 @@ export const ConstrainedAlgorithmExplorer: React.FC<{ initial?: AlgorithmExplore
         </div>
       </div>
 
-      {/* Rows */}
-      <div className="glass-panel p-4 space-y-3">
-        <div className="text-sm font-bold text-foreground">
-          {role === 'kem' ? 'Key establishment' : 'Signature'} algorithms on {dc.name}
-        </div>
-        {rows.map(({ alg, fit }) => (
-          <AlgorithmRow key={alg.id} alg={alg} fit={fit} role={role} />
-        ))}
-      </div>
+      {validRam && (
+        <>
+          {/* Rows */}
+          <div className="glass-panel p-4 space-y-3">
+            <div className="text-sm font-bold text-foreground">
+              {role === 'kem' ? 'Key establishment' : 'Signature'} algorithms on {dc.name}
+            </div>
+            {rows.map(({ alg, fit }) => (
+              <AlgorithmRow key={alg.id} alg={alg} fit={fit} role={role} />
+            ))}
+          </div>
 
-      {/* Generated summary */}
-      <div className="bg-muted/50 rounded-lg p-4 border border-border" data-testid="fit-summary">
-        <div className="text-xs font-bold text-foreground mb-2">
-          {dc.name} summary — model estimate
-        </div>
-        <ul className="text-xs text-muted-foreground space-y-1">
-          <li>
-            <span className="text-success font-medium">Fits:</span>{' '}
-            {summary.fits.length ? summary.fits.join(', ') : 'none'}
-          </li>
-          <li>
-            <span className="text-warning font-medium">Tight:</span>{' '}
-            {summary.tight.length ? summary.tight.join(', ') : 'none'}
-          </li>
-          <li>
-            <span className="text-destructive font-medium">Too large:</span>{' '}
-            {summary.tooLarge.length ? summary.tooLarge.join(', ') : 'none'}
-          </li>
-        </ul>
-        {classIdx === 0 && (
-          <p className="text-xs text-muted-foreground mt-2">
-            Class 0 devices are expected to reach the Internet through a gateway or proxy; secure
-            them with pre-shared symmetric keys and let the gateway run the PQC (see the Hybrid
-            section).
-          </p>
-        )}
-      </div>
+          {/* Generated summary */}
+          <div
+            className="bg-muted/50 rounded-lg p-4 border border-border"
+            data-testid="fit-summary"
+          >
+            <div className="text-xs font-bold text-foreground mb-2">
+              {dc.name} summary — model estimate
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>
+                <span className="text-success font-medium">Fits:</span>{' '}
+                {summary.fits.length ? summary.fits.join(', ') : 'none'}
+              </li>
+              <li>
+                <span className="text-warning font-medium">Tight:</span>{' '}
+                {summary.tight.length ? summary.tight.join(', ') : 'none'}
+              </li>
+              <li>
+                <span className="text-destructive font-medium">Too large:</span>{' '}
+                {summary.tooLarge.length ? summary.tooLarge.join(', ') : 'none'}
+              </li>
+            </ul>
+            {classIdx === 0 && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Class 0 devices are expected to reach the Internet through a gateway or proxy;
+                secure them with pre-shared symmetric keys and let the gateway run the PQC (see the
+                Hybrid section).
+              </p>
+            )}
+          </div>
+        </>
+      )}
 
       <div className="text-[10px] text-muted-foreground flex items-start gap-1">
         <Info size={12} className="shrink-0 mt-0.5" />
@@ -233,7 +290,7 @@ function AlgorithmRow({
     fit.verdict === 'too-large' ? XCircle : fit.verdict === 'tight' ? AlertTriangle : CheckCircle
   const src = BENCH_SOURCES[fit.sourceId]
   return (
-    <div className={`rounded-lg p-3 border ${tone.box}`}>
+    <article aria-label={alg.name} className={`rounded-lg p-3 border ${tone.box}`}>
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
           <Icon size={16} className={tone.text} />
@@ -254,10 +311,12 @@ function AlgorithmRow({
       <div className="mt-2">
         <div className="flex justify-between text-[10px] mb-0.5">
           <span className="text-muted-foreground">
-            Peak RAM {fmtBytes(fit.peakBytes)} = stack {fmtBytes(fit.stackBytes)}
+            Peak RAM {fit.peakBytes.toLocaleString('en-US')} B = stack {fmtBytes(fit.stackBytes)}
             {fit.approximate ? ' (upper bound)' : ''} + buffers {fmtBytes(fit.bufferBytes)}
           </span>
-          <span className="font-mono text-foreground">{fit.ramPct.toFixed(0)}%</span>
+          <span className="font-mono text-foreground">
+            {Number.isFinite(fit.ramPct) ? `${fit.ramPct.toFixed(0)}%` : 'No free RAM'}
+          </span>
         </div>
         <div className="w-full bg-muted rounded-full h-2">
           <div
@@ -305,6 +364,6 @@ function AlgorithmRow({
       <p className="text-[10px] text-muted-foreground mt-0.5 italic">
         Sizes: {alg.sizeSource}. Benchmark: {fit.impl} — {src.label}.
       </p>
-    </div>
+    </article>
   )
 }

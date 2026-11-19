@@ -280,10 +280,14 @@ const Step2GovVsNonGov: React.FC = () => (
                 { body: 'BSI', role: 'Germany: TR-02102 series', region: '🇩🇪' },
                 {
                   body: 'ANSSI',
-                  role: 'France: PQC hybrid position (mandatory in the regulated perimeter)',
+                  role: 'France: phased PQC transition guidance; no blanket hybridisation mandate',
                   region: '🇫🇷',
                 },
-                { body: 'NCSC', role: 'UK: Three-phase migration roadmap', region: '🇬🇧' },
+                {
+                  body: 'NCSC',
+                  role: 'UK: PQC migration targets for 2028, 2031 and 2035',
+                  region: '🇬🇧',
+                },
                 { body: 'ENISA', role: 'EU: supports the EUCC certification scheme', region: '🇪🇺' },
                 {
                   body: 'NIS / NSR',
@@ -495,14 +499,14 @@ const Step3GlobalRegional: React.FC = () => (
             region: 'Germany & France',
             bodies: [
               'BSI — TR-02102 series (technical guidelines: recommendations on cryptographic mechanisms)',
-              'ANSSI — PQC position papers; hybrid strongly recommended, mandatory inside the regulated perimeter',
+              'ANSSI — PQC position papers; phased hybridisation guidance, not a blanket regulated-perimeter mandate',
             ],
           },
           {
             flag: '🇬🇧',
             region: 'United Kingdom',
             bodies: [
-              'NCSC — three-phase roadmap (2025–2035), CAPS assurance of High Grade products (the NCSC no longer runs CPA)',
+              'NCSC — PQC migration targets for 2028, 2031 and 2035; CAPS assurance of High Grade products (the NCSC no longer runs CPA)',
               'BSI UK — post-Brexit standards alignment',
             ],
           },
@@ -804,13 +808,13 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
               wg: 'LAMPS (Limited Additional Mechanisms for PKIX and SMIME)',
               role: 'CMS / PKIX PQC',
               output:
-                'RFC 9629 (KEM in CMS), RFC 9882 (ML-DSA in CMS), RFC 9814 (SLH-DSA in CMS), composite signature drafts.',
+                'RFC 9629 (KEM in CMS), RFC 9882 (ML-DSA in CMS), RFC 9814 (SLH-DSA in CMS), RFC 10073 (composite ML-DSA for X.509/PKIX), and RFC 10082 (composite ML-DSA for CMS).',
             },
             {
               wg: 'TLS Working Group',
               role: 'TLS 1.3 PQC integration',
               output:
-                'RFC 9954 (hybrid design) and RFC 10024 (X25519MLKEM768), deployed in Chrome, Firefox and Cloudflare.',
+                'RFC 9846 (TLS 1.3 base specification, July 2026, obsoleting RFC 8446), RFC 9954 (hybrid design), and RFC 10024 (TLS 1.3 hybrid key agreement); implementation support depends on the TLS product and version.',
             },
             {
               wg: 'COSE (CBOR Object Signing and Encryption)',

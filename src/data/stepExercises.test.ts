@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { STEP_EXERCISES } from './stepExercises'
+import { STEP_TRANSFER_EXERCISES } from './stepTransferExercises'
 import { POSTURE_KPIS } from '@/components/PKILearning/modules/CryptoMgmtModernization/data/postureKPIs'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 
@@ -28,6 +29,25 @@ describe('STEP_EXERCISES (round 9, wave 2)', () => {
       expect(ex.prompt, key).toMatch(/\?$/)
       expect(ex.why.length, key).toBeGreaterThanOrEqual(60)
       expect(ex.why.toLowerCase(), key).not.toMatch(/^correct[.!]/)
+    }
+  })
+})
+
+describe('application cases', () => {
+  it('uses a real workshop step and has one reviewed choice per case', () => {
+    for (const [key, exercise] of Object.entries(STEP_TRANSFER_EXERCISES)) {
+      const [moduleId, stepId] = key.split('/')
+      const manifest = MANIFEST_BY_ID[moduleId]
+      expect(
+        manifest?.workshopSteps?.some((step) => step.id === stepId),
+        key
+      ).toBe(true)
+      expect(exercise, key).toBeDefined()
+      if (!exercise) continue
+      expect(exercise.options[exercise.answer], key).toBeTruthy()
+      expect(new Set(exercise.options).size, key).toBe(exercise.options.length)
+      expect(exercise.why, key).toMatch(/\S/)
+      if (exercise.source) expect(new URL(exercise.source.href).protocol, key).toBe('https:')
     }
   })
 })

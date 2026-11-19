@@ -12,6 +12,6 @@ A Common Criteria grade such as "EAL4+" only means something once you know which
 
 ### What's Happening
 
-As of 24 September 2026, the EU's scheme already lists post-quantum algorithms in its approved cryptography guidance, and says lattice-based algorithms should be combined with a classical one.
+As of November 2026, the EU's EUCC scheme (Commission Implementing Regulation (EU) 2024/482, succeeding SOG-IS national certificates across the EU) lists post-quantum algorithms in its applicable ECCG Agreed Cryptographic Mechanisms v2 guidance and says lattice-based mechanisms (ML-KEM, ML-DSA) should be combined with a classical mechanism, while US NIAP Policy #33 sets CNSA 2.0 cut-offs starting 1 January 2028 for products evaluated by NIAP or CCRA partners.
 
-The lesson also has two panels that stay closed until you open them. One is an invented example of how three post-quantum requirements could be written in a Security Target. The other is a box on how a laboratory might look at attacks on lattice-based code. No certification scheme or laboratory has reviewed either one.
+The lesson also includes Security Target source-reading cases (reviewed November 2026) and two collapsed reference panels: an invented example of how three post-quantum requirements could be written in a Security Target, and a box on how a laboratory might look at attacks on lattice-based code. No certification scheme or laboratory has reviewed either reference panel.

@@ -415,8 +415,8 @@ export const GATEWAY_SIG_OPTIONS: GatewaySigOption[] = [
     id: 'ecdsa-ml-dsa-44',
     name: 'ECDSA + ML-DSA-44',
     category: 'hybrid',
-    publicKeyBytes: 1376,
-    signatureBytes: 2484,
+    publicKeyBytes: 1377, // RFC 10073 composite payload, excluding SubjectPublicKeyInfo
+    signatureBytes: 2492, // RFC 10073 maximum; the DER ECDSA component varies
   },
 ]
 

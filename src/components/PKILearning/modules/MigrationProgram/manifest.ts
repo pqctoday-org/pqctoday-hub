@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'migration-program',
-  contentVersion: 19,
+  contentVersion: 27,
   lm_id: 'LM-039',
   title: 'Migration Program Mgmt',
   description:
@@ -35,7 +35,14 @@ const manifest: ModuleManifest = {
   // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
   taxonomy: {
     algorithms: ['RSA'],
-    standards: ['EO 14306', 'OMB M-23-02', 'NIST CSWP 39', 'NSA CNSA 2.0', 'NIST IR 8547'],
+    standards: [
+      'EO 14306',
+      'OMB M-23-02',
+      'OMB M-26-15',
+      'NIST CSWP 39',
+      'NSA CNSA 2.0',
+      'NIST IR 8547',
+    ],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.MigrationProgramModule })),

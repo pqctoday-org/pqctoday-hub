@@ -1,10 +1,10 @@
 ---
 module_id: hsm-pqc
 title: HSM & PQC Operations
-track: Infrastructure
+track: Hardware Infrastructure
 difficulty: advanced
-duration: 90 min
-workshop_steps: 4
+duration: 60 min
+workshop_steps: 5
 ---
 
 # HSM & PQC Operations
@@ -12,7 +12,7 @@ workshop_steps: 4
 ## Topics Covered
 
 - HSM architecture for PQC (FIPS 140-3 levels, on-prem vs cloud side-by-side)
-- PKCS#11 v3.2 PQC mechanisms (CKM*ML_KEM*_, CKM*ML_DSA*_, CKK\_\* key types)
+- PKCS#11 v3.2 PQC mechanisms (`CKM_ML_KEM`, `CKM_ML_DSA`, `CKM_SLH_DSA`, and `CKK_ML_KEM`, `CKK_ML_DSA`, `CKK_SLH_DSA` key types)
 - On-prem HSM deep dive (Thales Luna 7.9.0 or newer, Entrust nShield v13.8+ (ML-KEM: v13.8.3+), Utimaco Quantum Protect, Securosys Primus HSM CyberVault)
 - Cloud HSM deep dive (AWS CloudHSM, Azure Cloud HSM, Azure Managed HSM, Azure Dedicated HSM, Google Cloud HSM), and Tessera as a specification with no product or certificate yet
 - Side-channel attack surfaces (NTT power analysis, EM emanation, fault injection, ML-DSA hedged signing)
@@ -27,6 +27,7 @@ workshop_steps: 4
 2. Vendor Comparison — Interactive matrix with PQC Maturity Score (0-100)
 3. HSM Migration Planner — 4-phase firmware migration wizard
 4. FIPS Validation Tracker — CMVP/CAVP PQC validation status per vendor
+5. HSM Capacity Calculator — Size an HSM fleet across enterprise use cases and compare classical vs next-gen HSM throughput and quantum-crypto impact
 
 ## Vendor statements on the Learn tab (checked 23 October 2026 unless stated)
 
@@ -60,11 +61,12 @@ A PQC-capable HSM is checked in four places. CAVP is NIST's algorithm validation
 
 ## Key Standards
 
-- FIPS 140-3 (Cryptographic Module Validation) and its Implementation Guidance (IG 10.3.A, IG D.S, IG C.N, IG 12.A)
+- FIPS 140-3 (Cryptographic Module Validation), FIPS 140-2 Historical transition (September 2026), and FIPS 140-3 Implementation Guidance (IG 10.3.A, IG D.S, IG C.N, IG 12.A)
 - CMVP FIPS 140-3 Management Manual (version 2.7, 9 April 2026)
 - PKCS#11 v3.2 (OASIS Standard, 3 June 2026)
 - FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA)
 - NIST SP 800-208 (Stateful Hash-Based Signatures)
-- CNSA 2.0 (NSA)
+- NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final October 2026)
+- CNSA 2.0 (NSA FAQ v2.2 for NSS), EO 14412 & OMB M-26-15 (US federal civilian), and EU PQC Roadmap v1.1
 
 Vendor algorithm availability and validation evidence are shown from shared, product-specific capability records with source links, checked dates and the recorded review state. Availability, approved mode and inclusion on a named CMVP certificate are separate facts; missing records remain unknown. Version-specific documentation examples and integration scenarios do not establish support for another firmware, parameter set or environment.

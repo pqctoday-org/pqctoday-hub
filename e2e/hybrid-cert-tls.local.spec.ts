@@ -27,9 +27,9 @@ test('certificate playground runs classical and PQ TLS authentication with measu
   await exercise
     .getByRole('button', { name: 'Run certificate-to-TLS exercise', exact: true })
     .click()
-  await expect(exercise.getByText('All three handshakes and rejection checks passed.')).toBeVisible(
-    { timeout: 90_000 }
-  )
+  await expect(exercise.getByText('All handshakes and rejection checks passed.')).toBeVisible({
+    timeout: 90_000,
+  })
   await expect(
     exercise.getByText('Compare the first two rows and try the prediction again.')
   ).toBeVisible()
@@ -44,6 +44,19 @@ test('certificate playground runs classical and PQ TLS authentication with measu
   await expect(
     exercise.getByRole('row', { name: /Hybrid exchange \+ PQ authentication/ })
   ).toContainText('mldsa65')
+  const mixed = exercise.getByRole('row', {
+    name: /Hybrid exchange \+ RSA leaf issued by ML-DSA CA/,
+  })
+  await expect(mixed.getByRole('cell').nth(1)).toContainText(
+    /Subject key\s*rsaEncryption\s*Issuer signature\s*ML-DSA-65/i
+  )
+  await expect(mixed.getByRole('cell').nth(2)).toContainText('rsa_pss_rsae_sha256')
+  await expect(
+    exercise.getByText(
+      'Passed — RSA leaf with ML-DSA issuer rejected when only the RSA CA is trusted',
+      { exact: true }
+    )
+  ).toBeVisible()
   await expect(
     exercise.getByText('Passed — Unrelated CA rejected by TLS', { exact: true })
   ).toBeVisible()
@@ -54,9 +67,9 @@ test('certificate playground runs classical and PQ TLS authentication with measu
   await exercise
     .getByRole('button', { name: 'Run certificate-to-TLS exercise', exact: true })
     .click()
-  await expect(exercise.getByText('All three handshakes and rejection checks passed.')).toBeVisible(
-    { timeout: 90_000 }
-  )
+  await expect(exercise.getByText('All handshakes and rejection checks passed.')).toBeVisible({
+    timeout: 90_000,
+  })
 })
 
 test('the phone workshop connects the certificate prediction to measured TLS authentication', async ({

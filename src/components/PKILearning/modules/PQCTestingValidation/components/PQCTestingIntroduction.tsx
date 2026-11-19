@@ -425,7 +425,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
       {/* Section 4: Interoperability Testing */}
       <CollapsibleSection
         icon={<GitBranch size={24} className="text-primary" />}
-        title="Interoperability Testing & RFC 9794 Compliance"
+        title="Interoperability Testing & Hybrid Key Exchange"
         sectionId="interop-testing"
       >
         <p>
@@ -466,13 +466,16 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         </p>
 
         <p className="mt-3">
-          Test coverage must include: hybrid client → hybrid server, hybrid client → classical-only
-          server (fallback path), and pure-PQC client → hybrid server (should fail per policy at
-          most enterprises). The Open Quantum Safe test server at{' '}
+          Test coverage should include: hybrid client → hybrid server, hybrid client →
+          classical-only server, and pure-PQC client → hybrid server. Each result depends on the
+          groups enabled by both peers; a pure-PQC client cannot connect when the server offers no
+          matching pure-PQC group. Fallback is a configuration and policy outcome, so capture the
+          negotiated group and the reason for any failure. The Open Quantum Safe test server at{' '}
           <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">
             test.openquantumsafe.org
           </span>{' '}
-          provides a reference endpoint for each algorithm combination.
+          provides reference endpoints; check its current port and profile documentation before
+          assuming that a particular algorithm combination is available.
         </p>
 
         <ReadingCompleteButton />

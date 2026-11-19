@@ -152,6 +152,16 @@ describe('niap-pqc-route section', () => {
     expect(text).toContain('(a package, not a profile)')
     expect(within(table).getAllByText(/NIAP approved /)).toHaveLength(11)
     expect(text).toContain('which lists all 11 as CC:2022')
+    expect(text).toContain(
+      'This table is a bounded snapshot: the 11 profile documents were read by 23 October 2026.'
+    )
+    expect(text).toContain(
+      "When checked on 18 November, NIAP's public index listed 58 approved profiles"
+    )
+    expect(text).toContain('The table does not cover profile changes posted after 23 October.')
+    expect(
+      screen.getByRole('link', { name: 'Source: NIAP profile index and current notices' })
+    ).toHaveAttribute('href', 'https://www.niap-ccevs.org/')
     // Quotes restored or added for terms that had none.
     expect(text).toContain(
       'ECC key generation with support for P-384 has been made mandatory in support of IPsec'

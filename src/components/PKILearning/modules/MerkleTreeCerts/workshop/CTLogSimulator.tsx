@@ -53,6 +53,7 @@ import {
   type CertLeaf,
 } from '../utils/merkleTree'
 import { verifySampleBatch, type BatchVerificationResult } from '../utils/batchVerification'
+import { SignedMembershipCheck } from './SignedMembershipCheck'
 import { bindSubjectKeys } from '../utils/subjectKeys'
 import { SAMPLE_CERTS, truncateHash } from '../data/mtcConstants'
 
@@ -70,7 +71,7 @@ interface SignedBatch {
   signatureStatus: 'signed' | 'unsigned'
   root: string
   treeSize: number
-  /** UTF-8 encoding of "MTC|<root>|<treeSize>|<ts>" — the raw message the CA signs */
+  /** SHA-256 of the UTF-8 encoding of "MTC|<root>|<treeSize>|<ts>" */
   signedPayload: Uint8Array
   /** ML-DSA signature from the CA over signedPayload */
   caSig: Uint8Array
@@ -185,7 +186,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           <span className="text-destructive font-mono">
             {caSize.sig.toLocaleString()} bytes × N
           </span>{' '}
-          certs. In Merkle Tree Certificates (RFC draft-ietf-plants-merkle-tree-certs), the CA signs{' '}
+          certs. In the current Merkle Tree Certificates Internet-Draft, the CA signs{' '}
           <strong className="text-success">only the tree root once</strong> — one {caAlgo} signature
           covers all N certs in the batch.
         </p>
@@ -1463,6 +1464,23 @@ export const CTLogSimulator: React.FC = () => {
     setSnapshot({ certs: structuredClone(issuedCerts), levels: structuredClone(logLevels) })
   }, [issuedCerts, logLevels])
 
+  const verifyCheckpoint = useCallback(
+    (batch: SignedBatch) => {
+      if (!hsm.isReady || !hsm.moduleRef.current || !caKeyHandles) {
+        throw new Error('The trusted sample CA key is unavailable.')
+      }
+      hsm.addStepLog(`CA Signature Verify — ${batch.caAlgo} · root ${batch.root.slice(0, 8)}…`)
+      return hsm_verifyBytes(
+        hsm.moduleRef.current,
+        hsm.hSessionRef.current,
+        caKeyHandles.pubHandle,
+        batch.signedPayload,
+        batch.caSig
+      )
+    },
+    [hsm, caKeyHandles]
+  )
+
   /** Verify a (possibly tampered) cert list against the published signed batch */
   const handleVerifyBatch = useCallback(
     async (certs: IssuedCert[]): Promise<BatchVerificationResult> => {
@@ -1471,22 +1489,11 @@ export const CTLogSimulator: React.FC = () => {
       const computedRoot = result.levels[result.levels.length - 1][0].hash
       const verify =
         currentBatch && hsm.isReady && hsm.moduleRef.current && caKeyHandles
-          ? () => {
-              hsm.addStepLog(
-                `CA Signature Verify — ${currentBatch.caAlgo} · root ${computedRoot.slice(0, 8)}…`
-              )
-              return hsm_verifyBytes(
-                hsm.moduleRef.current!,
-                hsm.hSessionRef.current,
-                caKeyHandles.pubHandle,
-                currentBatch.signedPayload,
-                currentBatch.caSig
-              )
-            }
+          ? () => verifyCheckpoint(currentBatch)
           : undefined
       return verifySampleBatch(computedRoot, certs.length, currentBatch, verify)
     },
-    [currentBatch, hsm, caKeyHandles]
+    [currentBatch, hsm, caKeyHandles, verifyCheckpoint]
   )
 
   const PANELS: { id: Panel; label: string }[] = [
@@ -1564,6 +1571,22 @@ export const CTLogSimulator: React.FC = () => {
             onGenerateCAKey={handleGenerateCAKey}
           />
         )}
+        {activePanel === 'submission' &&
+          logLevels &&
+          currentBatch?.signatureStatus === 'signed' &&
+          currentBatch.treeSize === issuedCerts.length &&
+          hsm.isReady &&
+          caKeyReady && (
+            <div className="mt-4">
+              <SignedMembershipCheck
+                key={`${currentBatch.root}-${currentBatch.timestamp}`}
+                certs={issuedCerts}
+                levels={logLevels}
+                publishedRoot={currentBatch.root}
+                verifyCheckpoint={() => verifyCheckpoint(currentBatch)}
+              />
+            </div>
+          )}
         {activePanel === 'consistency' && (
           <ConsistencyPanel
             logCerts={issuedCerts}

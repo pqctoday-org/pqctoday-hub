@@ -13,7 +13,11 @@ import {
 } from 'lucide-react'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 import { DefaultsUsedChip } from '../Report/DefaultsUsedChip'
-import { FRAMEWORK_PENALTY_BASELINES, IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
+import {
+  FRAMEWORK_PENALTY_BASELINES,
+  describeIndustryBreachBaseline,
+  formatBreachBaselineUSD,
+} from '@/data/roiBaselines'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import { Button } from '@/components/ui/button'
 import {
@@ -271,8 +275,8 @@ function ComputationBreakdown({
               />
               <BreakdownRow
                 label="Industry breach baseline"
-                value={formatUSD(breachBaseline)}
-                detail={`${industry} — IBM Cost of a Data Breach 2025`}
+                value={formatBreachBaselineUSD(breachBaseline)}
+                detail={describeIndustryBreachBaseline(industry).label}
               />
             </div>
           </div>
@@ -677,10 +681,8 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
       <div className="flex items-start gap-2 text-xs text-muted-foreground mt-2">
         <AlertCircle size={13} className="shrink-0 mt-0.5" />
         <span>
-          Breach cost baselines from IBM Cost of a Data Breach Report 2025. Compliance penalties
-          from published regulatory enforcement data. Figures are illustrative estimates for
-          financial planning purposes only.{' '}
-          <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
+          Breach baseline — {describeIndustryBreachBaseline(industry).label}. The calculation uses
+          benchmark and scenario assumptions for illustrative planning.
         </span>
       </div>
     </CollapsibleSection>

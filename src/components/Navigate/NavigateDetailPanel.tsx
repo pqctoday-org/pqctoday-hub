@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, ChevronDown, ExternalLink, X } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
@@ -36,10 +36,11 @@ interface NavigateDetailPanelProps {
   connections: Connection[]
   onSelectNode: (nodeId: string) => void
   /** Spotlights node.type as a whole category — same zoom + hide-the-rest a category's 3D label click does, but (unlike that click) leaves this node's own panel open, since it's always inside the category it names. */
-  onSelectCategory: (type: ForceClusterNodeType) => void
+  onSelectCategory?: (type: ForceClusterNodeType) => void
   /** Spotlights node.type + node.sub — same as onSelectCategory, one level deeper. */
-  onSelectSub: (type: ForceClusterNodeType, sub: string) => void
+  onSelectSub?: (type: ForceClusterNodeType, sub: string) => void
   onClose: () => void
+  listView?: boolean
 }
 
 // A high-degree hub node (a major certbody, say) can have 50+ connections
@@ -79,7 +80,12 @@ export function NavigateDetailPanel({
   onSelectCategory,
   onSelectSub,
   onClose,
+  listView = false,
 }: NavigateDetailPanelProps) {
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  useEffect(() => {
+    if (listView) titleRef.current?.focus()
+  }, [listView, node.id])
   const grouped = new Map<string, Connection[]>()
   for (const c of connections) {
     const key =
@@ -120,7 +126,11 @@ export function NavigateDetailPanel({
 
   return (
     <div
-      className="absolute inset-x-3 bottom-3 top-3 z-20 w-auto overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:top-4 sm:w-[340px]"
+      className={
+        listView
+          ? 'rounded-2xl border border-border bg-card p-4'
+          : 'absolute inset-x-3 bottom-3 top-3 z-20 w-auto overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:top-4 sm:w-[340px]'
+      }
       role="complementary"
     >
       {/* Deliberately opaque, not .glass-panel (bg-card/80 + blur) — this
@@ -130,29 +140,37 @@ export function NavigateDetailPanel({
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-1.5">
           <TypeDot type={node.type} />
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => onSelectCategory(node.type)}
-            className="h-auto rounded px-1 py-0 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground hover:underline"
-          >
-            {TYPE_LABEL[node.type]}
-          </Button>
+          {onSelectCategory ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onSelectCategory(node.type)}
+              className="h-auto rounded px-1 py-0 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {TYPE_LABEL[node.type]}
+            </Button>
+          ) : (
+            <span className="text-xs text-muted-foreground">{TYPE_LABEL[node.type]}</span>
+          )}
           {node.sub && (
             <>
               <span className="text-xs text-muted-foreground" aria-hidden="true">
                 ·
               </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => onSelectSub(node.type, node.sub)}
-                className="h-auto rounded px-1 py-0 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground hover:underline"
-              >
-                {node.sub}
-              </Button>
+              {onSelectSub ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onSelectSub(node.type, node.sub)}
+                  className="h-auto rounded px-1 py-0 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground hover:underline"
+                >
+                  {node.sub}
+                </Button>
+              ) : (
+                <span className="text-xs text-muted-foreground">{node.sub}</span>
+              )}
             </>
           )}
         </div>
@@ -161,7 +179,13 @@ export function NavigateDetailPanel({
         </Button>
       </div>
 
-      <h2 className="mt-2 text-lg font-semibold text-foreground">{node.label}</h2>
+      <h2
+        ref={titleRef}
+        tabIndex={listView ? -1 : undefined}
+        className="mt-2 text-lg font-semibold text-foreground"
+      >
+        {node.label}
+      </h2>
       <p className="mt-1 text-sm text-muted-foreground">{node.description}</p>
       <p className="mt-2 text-xs text-muted-foreground">
         {node.degree} connection{node.degree === 1 ? '' : 's'}

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
 import {
+  algorithmSizeBytes,
   exportAlgorithmSize,
   exportStackRam,
   formatAesEquivalent,
@@ -100,5 +101,46 @@ describe('snapshot dates and freshness', () => {
     expect(getCatalogueFreshness(new Date(2026, 9, 15, 12), now).label).toBe(
       'Snapshot is 2 days old'
     )
+  })
+})
+
+describe('published raw PQC sizes', () => {
+  it('matches FIPS 203 Table 3 and FIPS 204 Table 2', async () => {
+    const rows = [
+      ['ML-KEM-512', 800, 1632, 768, 32],
+      ['ML-KEM-768', 1184, 2400, 1088, 32],
+      ['ML-KEM-1024', 1568, 3168, 1568, 32],
+      ['ML-DSA-44', 1312, 2560, 2420, null],
+      ['ML-DSA-65', 1952, 4032, 3309, null],
+      ['ML-DSA-87', 2592, 4896, 4627, null],
+    ] as const
+    for (const [name, publicKey, privateKey, output, sharedSecret] of rows) {
+      const record = await byName(name)
+      expect(algorithmSizeBytes(record, 'publicKey'), name).toBe(publicKey)
+      expect(algorithmSizeBytes(record, 'privateKey'), name).toBe(privateKey)
+      expect(algorithmSizeBytes(record, 'signatureOrCiphertext'), name).toBe(output)
+      expect(algorithmSizeBytes(record, 'sharedSecret'), name).toBe(sharedSecret)
+    }
+  })
+
+  it('matches FIPS 205 Table 2 and the four n-byte private-key fields in Algorithm 18', async () => {
+    const rows = [
+      ['128s', 16, 7856],
+      ['128f', 16, 17088],
+      ['192s', 24, 16224],
+      ['192f', 24, 35664],
+      ['256s', 32, 29792],
+      ['256f', 32, 49856],
+    ] as const
+    for (const family of ['SHA2', 'SHAKE']) {
+      for (const [variant, n, signature] of rows) {
+        const name = `SLH-DSA-${family}-${variant}`
+        const record = await byName(name)
+        expect(algorithmSizeBytes(record, 'publicKey'), name).toBe(2 * n)
+        expect(algorithmSizeBytes(record, 'privateKey'), name).toBe(4 * n)
+        expect(algorithmSizeBytes(record, 'signatureOrCiphertext'), name).toBe(signature)
+        expect(algorithmSizeBytes(record, 'sharedSecret'), name).toBeNull()
+      }
+    }
   })
 })

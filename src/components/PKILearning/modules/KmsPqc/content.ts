@@ -15,8 +15,8 @@ import { citedStandards } from '../trustHardwareCitations'
 export const content: ModuleContent = {
   moduleId: 'kms-pqc',
   version: '1.1.0',
-  lastReviewed: '2026-10-27',
-  lastEdited: '2026-11-14',
+  lastReviewed: '2026-10-28',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -157,5 +157,9 @@ export const content: ModuleContent = {
     primaryHybridCombiner: 'X25519MLKEM768',
     mlKemPrivateKeySize: '2,400 bytes',
     hybridCertOverhead: '2,017 bytes',
+    workshopSummary:
+      'Seven interactive steps: (1) Key Hierarchy Designer; (2) Envelope Encryption Demo (ML-KEM vs. RSA-OAEP); (3) Hybrid Key Wrapping; (4) KMS Rotation Planner; (5) KMIP Protocol Explorer and Migration Runbook; (6) AWS Policy Lab; (7) Cloud KMS Key Exchange (classical RSA vs. HPKE import simulation).',
+    relatedStandards:
+      'FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), NIST SP 800-227 (KEM recommendations), NIST SP 800-57 Part 1 (Rev. 5 final; Rev. 6 IPD), NIST IR 8547 (final Oct 2026), NSA CNSA 2.0 FAQ v2.2 (NSS), EO 14412 & OMB M-26-15 (US federal civilian), EU PQC Roadmap v1.1, FIPS 140-3 (CMVP; FIPS 140-2 Historical Sept 2026), PKCS#11 v3.2 (OASIS Standard, June 2026), KMIP 2.1 / v3.0 draft, RFC 9180 (HPKE), RFC 10024.',
   },
 }

@@ -31,6 +31,10 @@ test.use({ reducedMotion: 'reduce' })
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.addInitScript(() => {
+    localStorage.setItem(
+      'pqc-disclaimer-storage',
+      JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+    )
     // The WhatsNew alertdialog (z-[100]) intercepts the tab clicks below.
     localStorage.setItem(
       'pqc-version-storage',
@@ -61,6 +65,7 @@ const MODULES = [
   { id: 'crypto-agility', track: 'Strategy' },
   { id: 'api-security-jwt', track: 'Protocols' },
   { id: 'pki-workshop', track: 'Software Infrastructure' },
+  { id: 'crypto-dev-apis', track: 'Developer APIs (additional coverage)' },
   { id: 'qkd', track: 'Hardware Infrastructure (+ WS7 named critical)' },
   { id: 'digital-id', track: 'Applications' },
   { id: '5g-security', track: 'Industries' },
@@ -124,6 +129,33 @@ for (const { id, track } of MODULES) {
     await assertNoNewViolations(page, id, 'desktop')
   })
 }
+
+test('module: /learn/crypto-dev-apis — full axe inventory across Learn and all workshops', async ({
+  page,
+}) => {
+  test.setTimeout(90_000)
+  for (const width of [1280, 390]) {
+    for (const route of [
+      '/learn/crypto-dev-apis',
+      ...Array.from({ length: 8 }, (_, step) => `/learn/crypto-dev-apis?tab=workshop&step=${step}`),
+    ]) {
+      await page.setViewportSize({ width, height: 844 })
+      await page.goto(route)
+      await settle(page)
+      await injectAxe(page)
+      const violations = await getViolations(page, undefined, A11Y_OPTIONS.axeOptions)
+      expect(violations, `${route} at ${width}px`).toEqual([])
+      if (route.endsWith('step=1')) {
+        await page.getByRole('button', { name: 'Compare Mode' }).click()
+        const pythonToggle = page.locator('button[aria-label="Select Python for comparison"]')
+        await expect(pythonToggle).toHaveCount(1)
+        await injectAxe(page)
+        const compareViolations = await getViolations(page, undefined, A11Y_OPTIONS.axeOptions)
+        expect(compareViolations, `Compare mode at ${width}px`).toEqual([])
+      }
+    }
+  }
+})
 
 /* ───────────────────────────────────────────────────────────────────────────
  * WS7 — the tab pattern itself.

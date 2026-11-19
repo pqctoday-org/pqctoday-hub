@@ -74,7 +74,7 @@ export interface NistStatus {
   status: NistStatusValue
 }
 
-/** Granted patent, or a published application whose claims are still under examination. */
+/** Document type in the corpus. Current legal status requires a separate check. */
 export type PublicationKind = 'granted_patent' | 'published_application'
 
 export interface PatentItem {

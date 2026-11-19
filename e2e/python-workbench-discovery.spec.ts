@@ -4,6 +4,29 @@ import { test, expect } from './fixtures/blockAnalytics'
 import { PYTHON_WORKBENCH_PATH } from '../src/data/pythonWorkbench'
 
 for (const width of [1280, 390]) {
+  test(`Python API lesson states its browser TLS limit at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'pqc-disclaimer-storage',
+        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+      )
+      localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+      )
+      localStorage.setItem('pqc-tour-completed', 'true')
+    })
+    await page.goto('/learn/crypto-dev-apis?section=languages')
+    const scope = page.getByText(/Browser limit: this Python workbench runs crypto examples/)
+    await expect(scope).toBeVisible()
+    await expect(scope).toContainText('cannot open TLS sockets or validate certificates')
+    await expect(scope.getByRole('link', { name: 'Pyodide’s documented limits' })).toHaveAttribute(
+      'href',
+      'https://pyodide.org/en/314.0.8/usage/wasm-constraints.html'
+    )
+  })
+
   test(`search for Python at ${width}px and run editable code in the actual browser workbench`, async ({
     page,
   }) => {
@@ -43,9 +66,11 @@ for (const width of [1280, 390]) {
     if (await unlock.isVisible()) await unlock.click()
     const run = page.getByRole('button', { name: /^Run$/ })
     async function replaceCode(source: string) {
-      await editor.locator('.view-lines').click()
-      await page.keyboard.press('ControlOrMeta+a')
-      await page.keyboard.insertText(source)
+      const input = page.getByRole('textbox', { name: 'Editor content' })
+      await input.focus()
+      await input.press('ControlOrMeta+Home')
+      await input.press('ControlOrMeta+Shift+End')
+      await input.pressSequentially(source)
     }
 
     await replaceCode('raise ValueError("training input was rejected")\n')
@@ -54,9 +79,17 @@ for (const width of [1280, 390]) {
       timeout: 40_000,
     })
 
+    // Reset the run session after the intentional exception; this case checks
+    // error reporting and successful execution in independent clean sessions.
+    await page.reload()
+    await expect(editor).toBeVisible({ timeout: 25_000 })
+    if (await unlock.isVisible()) await unlock.click()
+
     await replaceCode('import hashlib\nprint(hashlib.sha256(b"grade A exercise").hexdigest())\n')
     await run.click()
     const expected = createHash('sha256').update('grade A exercise').digest('hex')
-    await expect(page.getByText(expected, { exact: true })).toBeVisible({ timeout: 40_000 })
+    await expect(page.getByRole('region', { name: 'Scrollable content' })).toContainText(expected, {
+      timeout: 40_000,
+    })
   })
 }

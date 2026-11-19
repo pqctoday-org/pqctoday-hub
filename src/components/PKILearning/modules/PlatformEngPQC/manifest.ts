@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'platform-eng-pqc',
-  contentVersion: 17,
+  contentVersion: 19,
   lm_id: 'LM-031',
   title: 'Platform Engineering & PQC',
   description:
@@ -34,7 +34,7 @@ const manifest: ModuleManifest = {
   ],
   startHere: {
     step: 'container-signing-migration',
-    text: 'Compare OCI signing tools in Container Signing Migration and walk the ECDSA-to-ML-DSA path for cosign and Notation.',
+    text: 'Compare OCI signing tools and their current PQC support. Review the proposed Sigstore deployment separately from the future ECDSA-to-ML-DSA migration path for cosign and Notation.',
   },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to
@@ -42,7 +42,15 @@ const manifest: ModuleManifest = {
   // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
   taxonomy: {
     algorithms: ['ML-DSA', 'ML-KEM', 'SLH-DSA'],
-    standards: ['RFC 3161', 'RFC 9580', 'FIPS 186-5', 'NIST SP 800-227', 'NSA CNSA 2.0'],
+    standards: [
+      'RFC 3161',
+      'RFC 9580',
+      'RFC 9980',
+      'RFC 10073',
+      'FIPS 186-5',
+      'NIST SP 800-227',
+      'NSA CNSA 2.0',
+    ],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PlatformEngPQCModule })),

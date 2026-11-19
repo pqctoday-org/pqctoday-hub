@@ -37,7 +37,7 @@ PrivateKey priv = kp.getPrivate();
 // JDK 21 or earlier: register Bouncy Castle and use
 // KeyPairGenerator.getInstance("ML-DSA-65", "BC")`,
     notes:
-      'Built into JDK 24+, JDK 25 LTS and Oracle JDK 21.0.13 / 17.0.21 (October 2026). On a JDK without it, register the Bouncy Castle provider. Algorithm name is string-based.',
+      'Built into JDK 24+, JDK 25 LTS and Oracle JDK 21.0.13+ / 17.0.21+ (feature updates October 2026). As of 17 November 2026, Oracle’s latest security updates are 25.0.5.1, 21.0.13.1, and 17.0.21.1. On a JDK without it, register the Bouncy Castle provider. Algorithm name is string-based.',
   },
   {
     apiId: 'openssl',
@@ -132,7 +132,7 @@ BCryptSetProperty(hKey, BCRYPT_PARAMETER_SET_NAME,
     sizeof(BCRYPT_MLDSA_PARAMETER_SET_65), 0);
 BCryptFinalizeKeyPair(hKey, 0);`,
     notes:
-      'ML-KEM and ML-DSA are generally available in the default CNG provider; SLH-DSA is defined but not implemented by it. Older Windows builds return STATUS_NOT_SUPPORTED. Use NCrypt with a KSP for persisted keys.',
+      'Microsoft lists ML-KEM and ML-DSA BCRYPT identifiers beginning with Windows 11 24H2, but its current end-to-end BCrypt examples are marked prerelease. Verify support on the target build/provider. BCrypt primitive support does not itself establish NCrypt/KSP persisted-key support. SLH-DSA is defined but not implemented by the default CNG provider.',
   },
   {
     apiId: 'bouncy-castle',

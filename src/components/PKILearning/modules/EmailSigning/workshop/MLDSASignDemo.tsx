@@ -1,19 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-/**
- * MLDSASignDemo — Phase 2 end-to-end CMS sign + verify using ML-DSA-65.
- *
- * Pipeline (all four commands run inside the OpenSSL WASM worker, no
- * network, no external tools):
- *   1. openssl genpkey -algorithm ML-DSA-65 -out alice.key
- *   2. openssl req -new -x509 -key alice.key -out alice.crt -subj /CN=Alice
- *   3. openssl cms -sign -signer alice.crt -inkey alice.key -in payload
- *   4. openssl cms -verify -in signed.p7m -certfile alice.crt
- *
- * Today this runs entirely on software-resident keys. Once openssl.wasm
- * is rebuilt to export pqctoday_cms_init, the Step 4 banner flips to
- * "provider ok" and a follow-up Phase 3 toggle lets the same demo route
- * through pkcs11: URIs into softhsmv3.
- */
+// The sample generates a signer certificate, creates an opaque CMS SignedData
+// message, and verifies it in the in-browser CMS worker.
+import { AsnConvert, OctetString } from '@peculiar/asn1-schema'
+import { ContentInfo, EncapsulatedContent, SignedData, id_signedData } from '@peculiar/asn1-cms'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   CheckCircle2,
@@ -61,7 +50,7 @@ const ALG_CHOICES: CmsAlg[] = [
   'SLH-DSA-SHA2-128s',
   'RSA-PSS',
   'EC',
-  // LAMPS draft-19 composite (HSM-only — auto-forces useHsm on selection)
+  // Composite algorithms require the sample HSM provider.
   'id-MLDSA44-RSA2048-PSS-SHA256',
   'id-MLDSA65-ECDSA-P256-SHA512',
   'id-MLDSA87-ECDSA-P384-SHA512',
@@ -81,8 +70,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
   const [payload, setPayload] = useState<string>(DEFAULT_PAYLOAD)
   // Raw user intent; the effective flag below ignores it when the provider
   // isn't ready so the demo never accidentally routes to a dead HSM path.
-  // Composite algorithms (LAMPS draft-19) only exist inside pkcs11-provider
-  // — selecting one forces useHsm to true.
+  // Selecting a composite algorithm forces this sample to use pkcs11-provider.
   const [useHsmIntent, setUseHsmIntent] = useState<boolean>(true)
   const composite = isCompositeAlg(alg)
   const useHsm = providerReady && (useHsmIntent || composite)
@@ -94,6 +82,9 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     useHsm: boolean
     payload: string
   } | null>(null)
+  const [receivedBody, setReceivedBody] = useState<string | null>(null)
+  const [receivedCheck, setReceivedCheck] = useState<'accepted' | 'rejected' | 'error' | null>(null)
+  const [checkingReceived, setCheckingReceived] = useState(false)
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // Append a pending entry and return a closer that records duration on
@@ -142,6 +133,8 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     setResultInputs(null)
     setError('')
     setResult({})
+    setReceivedBody(null)
+    setReceivedCheck(null)
     setLogEntries([])
   }
 
@@ -151,6 +144,8 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     setResultInputs({ alg, useHsm, payload })
     setError('')
     setResult({})
+    setReceivedBody(null)
+    setReceivedCheck(null)
     setLogEntries([])
     let op = beginOp(`Generating ${alg} key pair${useHsm ? ' (HSM)' : ''}…`)
     try {
@@ -213,6 +208,40 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     }
   }, [result.verifyPayload])
 
+  const verifyReceived = async () => {
+    const svc = serviceRef.current
+    if (!svc || !resultInputs || !result.signedP7m) return
+    setCheckingReceived(true)
+    setReceivedCheck(null)
+    try {
+      let signedP7m = result.signedP7m
+      if (receivedBody !== null && receivedBody !== verifyPayloadText) {
+        const envelope = AsnConvert.parse(signedP7m.slice().buffer, ContentInfo)
+        if (envelope.contentType !== id_signedData) throw new Error('Expected CMS SignedData')
+        const signedData = AsnConvert.parse(envelope.content, SignedData)
+        if (!signedData.encapContentInfo.eContent?.single) {
+          throw new Error('Expected an embedded message body')
+        }
+        signedData.encapContentInfo.eContent = new EncapsulatedContent({
+          single: new OctetString(new TextEncoder().encode(receivedBody).buffer),
+        })
+        envelope.content = AsnConvert.serialize(signedData)
+        signedP7m = new Uint8Array(AsnConvert.serialize(envelope))
+      }
+      const checked = await svc.verify({
+        signedP7m,
+        certId: CERT_ID,
+        useHsm: resultInputs.useHsm,
+        alg: resultInputs.alg,
+      })
+      setReceivedCheck(checked.ok ? 'accepted' : 'rejected')
+    } catch {
+      setReceivedCheck('error')
+    } finally {
+      setCheckingReceived(false)
+    }
+  }
+
   const sizes = useMemo(
     () => ({
       keyBytes: result.keyPem?.length ?? 0,
@@ -222,9 +251,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     [result]
   )
 
-  // LAMPS draft-19 composite profile constants — used to show a breakdown
-  // of the composite signature's two halves (ML-DSA + classical) when the
-  // user selects a composite OID. Sizes per FIPS 204 Table 1 + draft-19 §6.
+  // ML-DSA and classical signature sizes from RFC 10073 Appendix A.
   const compositeProfile = useMemo(() => {
     switch (resultInputs?.alg ?? alg) {
       case 'id-MLDSA44-RSA2048-PSS-SHA256':
@@ -256,7 +283,11 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     }
   }, [alg, resultInputs])
 
-  const busy = stage !== 'idle' && stage !== 'done' && stage !== 'error'
+  const trustScope =
+    resultInputs && isCompositeAlg(resultInputs.alg)
+      ? 'The composite verifier uses the sample certificate’s public key and skips certificate path validation.'
+      : 'OpenSSL uses the self-signed sample certificate as its local trust anchor.'
+  const busy = checkingReceived || (stage !== 'idle' && stage !== 'done' && stage !== 'error')
 
   return (
     <div className="space-y-4">
@@ -299,7 +330,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
             } ${composite ? 'cursor-not-allowed opacity-90' : ''}`}
             title={
               composite
-                ? 'LAMPS draft-19 composite algorithms only exist in pkcs11-provider — HSM mode forced.'
+                ? 'This exercise uses pkcs11-provider for Composite ML-DSA.'
                 : providerReady
                   ? useHsm
                     ? 'Private key stays inside softhsmv3; sign routed via pkcs11-provider'
@@ -320,16 +351,16 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
           {composite && (
             <span
               className="inline-flex items-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-[10px] font-medium text-accent"
-              title="LAMPS draft-ietf-lamps-pq-composite-sigs-19 — single combined-OID SignerInfo. Verifier MUST validate both ML-DSA and the classical half. Wired end-to-end through pkcs11-provider's composite.c (real composite cert + real composite signature)."
+              title="The sample CMS SignerInfo uses a Composite ML-DSA identifier from RFC 10073. Both signature components must verify."
             >
-              LAMPS composite -19 · live
+              Composite ML-DSA · live
             </span>
           )}
           <Button onClick={run} disabled={busy} variant="gradient" size="sm" className="gap-1.5">
             {busy ? (
               <>
                 <RefreshCw size={14} className="animate-spin" />
-                Running {stage}…
+                {checkingReceived ? 'Checking received body…' : `Running ${stage}…`}
               </>
             ) : (
               <>
@@ -339,7 +370,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
             )}
           </Button>
           {(stage === 'done' || stage === 'error') && (
-            <Button onClick={reset} variant="ghost" size="sm">
+            <Button onClick={reset} disabled={busy} variant="ghost" size="sm">
               Clear
             </Button>
           )}
@@ -521,9 +552,10 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
                 <div className="flex items-center gap-1.5 text-xs text-status-success">
                   <CheckCircle2 size={14} />
                   {compositeProfile
-                    ? 'Both halves (ML-DSA + classical) verified per draft-19 §5'
+                    ? 'Both signature components verified'
                     : 'Signature verifies against signer cert'}
                 </div>
+                <p>{trustScope}</p>
                 <KVRow
                   label="Payload"
                   value={`${result.verifyPayload?.length ?? 0} bytes recovered`}
@@ -558,6 +590,62 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
             )}
           </StageCard>
         </div>
+      )}
+
+      {stage === 'done' && result.verifyOk === true && (
+        <section
+          aria-labelledby="received-cms-heading"
+          className="space-y-3 rounded-md border border-border p-4"
+        >
+          <h3 id="received-cms-heading" className="text-sm font-semibold">
+            Verify a received CMS message
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            Edit the received body and run the same verifier using the original signature and signer
+            certificate. This checks message integrity with the sample signer key. Certificate trust
+            and the signer’s email identity are separate checks.
+          </p>
+          <label htmlFor="received-cms-body" className="block text-xs font-medium">
+            Received message body
+          </label>
+          <Textarea
+            id="received-cms-body"
+            value={receivedBody ?? verifyPayloadText}
+            disabled={checkingReceived}
+            rows={4}
+            className="font-mono text-xs"
+            onChange={(event) => {
+              setReceivedBody(event.target.value)
+              setReceivedCheck(null)
+            }}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => void verifyReceived()} disabled={checkingReceived}>
+              Verify received message
+            </Button>
+            <Button
+              variant="outline"
+              disabled={checkingReceived}
+              onClick={() => {
+                setReceivedBody(null)
+                setReceivedCheck(null)
+              }}
+            >
+              Restore original body
+            </Button>
+          </div>
+          <div role="status" aria-label="Received CMS result" className="space-y-1 text-xs">
+            {checkingReceived && <p>Verifying the received body…</p>}
+            {receivedCheck === 'accepted' && <p>Message integrity verified.</p>}
+            {receivedCheck === 'rejected' && (
+              <p>Message rejected. CMS integrity verification failed.</p>
+            )}
+            {receivedCheck === 'error' && (
+              <p>The browser could not finish verification. Try again.</p>
+            )}
+            {receivedCheck && <p>{trustScope} Sender email identity is outside this check.</p>}
+          </div>
+        </section>
       )}
     </div>
   )

@@ -52,8 +52,8 @@ export function verifyCitations(
     }
     // Legacy citations used claimExcerpt for both fields. New citations keep
     // the answer's paraphrase separate from a verbatim supporting excerpt.
-    const evidence = citation.evidenceExcerpt ?? citation.claimExcerpt
-    if (!normalize(chunkText(chunk)).includes(normalize(evidence))) {
+    const evidence = normalize(citation.evidenceExcerpt ?? citation.claimExcerpt)
+    if (!evidence || !normalize(chunkText(chunk)).includes(evidence)) {
       violations.push({ ...citation, reason: 'evidence-not-found' })
     }
   }

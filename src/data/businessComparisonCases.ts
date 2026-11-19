@@ -148,7 +148,7 @@ export const BUSINESS_COMPARISON_CASES: Record<string, { change: string; interpr
   },
   'management-tools-audit': {
     change:
-      'Reduce the number of systems covered by the crypto scanner and leave the tooling maturity rating fixed.',
+      'Enter inventory counts for the automated scanner. Move from 32 of 64 to 31 of 64 systems while holding the category rating fixed.',
     interpret:
       'Distinguish automation capability from estate coverage. An automated scanner can still leave a material blind spot.',
   },
@@ -175,9 +175,10 @@ export const BUSINESS_COMPARISON_CASES: Record<string, { change: string; interpr
       'Compare the implied staffing need for the same population. Treat the ratio as a planning assumption and check whether specialist skills are available.',
   },
   'crypto-vulnerability-watch': {
-    change: 'Load the sample watchlist and inspect the entries for the chosen products.',
+    change:
+      'Keep the sample watchlist and remove the High severity filter selection. Leave the products fixed.',
     interpret:
-      'Check product and version scope before assigning follow-up. A match against the watchlist records a lead, and a missing match does not establish safety.',
+      'Check which records disappear from the digest. The changed filter changes visibility. Use the CVE and vendor advisory for the installed version before assigning a follow-up.',
   },
   'refresh-cycle-alignment': {
     change: 'Move the next refresh year for one program beyond the planning horizon.',
@@ -185,9 +186,10 @@ export const BUSINESS_COMPARISON_CASES: Record<string, { change: string; interpr
       'Identify the asset that can no longer wait for the scheduled refresh. Record an earlier intervention or an explicit exception.',
   },
   'infra-modernization-planner': {
-    change: 'Extend the root CA lifetime while keeping the end-entity certificate lifetime fixed.',
+    change:
+      'Move the planned HSM readiness date after the PKI cutover while keeping the cutover and capacity assumptions fixed.',
     interpret:
-      'Compare the trust-anchor and leaf lifecycles separately. Frequent leaf renewal does not shorten the lifetime of the trust anchor.',
+      'Check the resulting schedule conflict. The prerequisite must be ready for the cutover. Update the plan and record who can confirm it.',
   },
   'accelerated-execution-profile': {
     change: 'Replace the escalation trigger or change who can authorize the compressed rollout.',

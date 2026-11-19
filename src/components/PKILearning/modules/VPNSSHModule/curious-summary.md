@@ -12,4 +12,4 @@ This complex migration strictly targets the "Control Plane" (Key Exchange and Au
 
 ### What's Happening
 
-OpenSSH already ships with hybrid PQC key exchange (mlkem768x25519-sha256) enabled by default, and the IETF drafts for ML-KEM and ML-DSA in IKEv2 are in the RFC Editor queue (October 2026). WireGuard users can add quantum protection through the Rosenpass companion tool.
+OpenSSH 10.0+ ships with hybrid PQC key exchange (`mlkem768x25519-sha256`, added in 9.9) as the default, and the IETF drafts for ML-KEM and ML-DSA in IKEv2 are in the RFC Editor queue (October 2026). WireGuard users can add quantum protection through the Rosenpass companion tool.

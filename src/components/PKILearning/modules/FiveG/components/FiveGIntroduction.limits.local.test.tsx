@@ -39,6 +39,32 @@ describe('FiveGIntroduction identity privacy', () => {
       /Home Network Identifier \(MCC and MNC\) and the Routing\s+Indicator are not concealed/
     )
   })
+
+  it('distinguishes current SUCI standards from active Release 20 study work', () => {
+    const text = introText()
+    expect(text).toMatch(/TR 33\.703\), which is under change control/)
+    expect(text).toMatch(/Post-quantum Cryptography Migration for SUCI/)
+    expect(text).toMatch(/not an adopted post-quantum SUCI profile/)
+    expect(text).toMatch(/TR 33\.703 status/)
+    expect(text).toMatch(/SUCI migration work item/)
+    expect(text).toMatch(/Release 20 V20\.3\.0 version/)
+    expect(text).toMatch(/current TS 33\.501 version record/)
+  })
+
+  it('distinguishes MILENAGE RES from the 5G-AKA network expected response', () => {
+    const text = introText()
+    expect(text).toMatch(/RES.*Subscriber response from f2/)
+    expect(text).toMatch(/network derives its expected response for 5G-AKA/)
+    expect(text).not.toMatch(/f2 XRES/)
+  })
+
+  it('labels SIM manufacturing steps as illustrative and scopes the local sample', () => {
+    const text = introText()
+    expect(text).toMatch(/not a 3GPP-mandated manufacturing design/)
+    expect(text).toMatch(/temporary browser-local AES-GCM key/)
+    expect(text).toMatch(/writes no subscriber database/)
+    expect(text).not.toMatch(/factory HSM \(TRNG\)/)
+  })
 })
 
 describe('FiveGIntroduction hybrid combiner', () => {

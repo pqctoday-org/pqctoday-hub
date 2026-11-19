@@ -36,6 +36,7 @@ import {
 import { tierBadge, tierBadgeClasses } from '@/data/algorithmStatusTier'
 import { resolveAlgoXrefs } from '@/data/algoProductXrefData'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { StandardSizeBudget } from './StandardSizeBudget'
 import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
 
 interface AlgorithmDetailDrawerProps {
@@ -227,13 +228,30 @@ function DrawerPanel({ algo, onClose }: { algo: AlgorithmDetail; onClose: () => 
 
             <Section title="Sizes">
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <Fact label="Public key">{bytes(algo, 'publicKey')}</Fact>
-                <Fact label="Private key">{bytes(algo, 'privateKey')}</Fact>
-                <Fact label="Signature / ciphertext">{bytes(algo, 'signatureOrCiphertext')}</Fact>
+                <Fact label={algo.fipsStandard === 'FIPS 203' ? 'Encapsulation key' : 'Public key'}>
+                  {bytes(algo, 'publicKey')}
+                </Fact>
+                <Fact
+                  label={algo.fipsStandard === 'FIPS 203' ? 'Decapsulation key' : 'Private key'}
+                >
+                  {bytes(algo, 'privateKey')}
+                </Fact>
+                <Fact
+                  label={
+                    algo.type === 'KEM' || algo.type === 'Hybrid KEM'
+                      ? 'Ciphertext'
+                      : algo.type === 'Signature' || algo.type === 'Classical Sig'
+                        ? 'Signature'
+                        : 'Signature / ciphertext'
+                  }
+                >
+                  {bytes(algo, 'signatureOrCiphertext')}
+                </Fact>
                 {algo.evidenceStates?.sharedSecret !== 'not-applicable' && (
                   <Fact label="Shared secret">{bytes(algo, 'sharedSecret')}</Fact>
                 )}
               </dl>
+              <StandardSizeBudget algorithm={algo} />
             </Section>
 
             <Section title="Implementation resources">

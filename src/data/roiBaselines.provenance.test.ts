@@ -27,6 +27,7 @@ import {
   ORG_SIZE_BREACH_COST_ANCHORS,
   FINANCIAL_BASELINE_EVIDENCE,
   INDUSTRY_BREACH_BASELINES,
+  describeIndustryBreachBaseline,
   INDUSTRY_CLAIM_COST_BASELINES,
   INDUSTRY_CLAIM_COST_SAMPLE_SIZE,
   CLAIM_COST_THIN_SAMPLE_THRESHOLD,
@@ -96,9 +97,17 @@ describe('financial baseline provenance', () => {
     })
 
     it('still admits IBM is unproven rather than quietly upgrading it', () => {
-      // The IBM per-sector table is behind a registration wall with no public
-      // asset path. Downgrading this claim honestly is the point of the field.
-      expect(FINANCIAL_BASELINE_EVIDENCE.ibmBreachCosts).toBe('landing-page-only')
+      expect(FINANCIAL_BASELINE_EVIDENCE.ibmBreachCosts).toBe('partial-primary-coverage')
+      expect(INDUSTRY_BREACH_BASELINES.Other).toBe(4_990_000)
+      expect(INDUSTRY_BREACH_BASELINES['Finance & Banking']).toBe(6_300_000)
+      expect(INDUSTRY_BREACH_BASELINES['Energy & Utilities']).toBe(5_200_000)
+      expect(describeIndustryBreachBaseline('Finance & Banking').source).toMatch(/2026-07-29/)
+      expect(describeIndustryBreachBaseline('Healthcare').source).toMatch(/2025-07-30/)
+      expect(describeIndustryBreachBaseline('Technology')).toMatchObject({
+        label: expect.stringContaining('historical assumption'),
+        source: undefined,
+      })
+      expect(describeIndustryBreachBaseline('Automotive').label).toMatch(/Industrial proxy/)
     })
   })
 

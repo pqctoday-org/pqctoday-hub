@@ -4,8 +4,9 @@ import {
   revisionReviewLabel,
   hasCommitReference,
   nonCommitReferenceLabel,
+  formatRevisionDate,
 } from './revisionProvenance'
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useId, useMemo, useState } from 'react'
 import { GitMerge, Bot, Filter, X } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { useRevisions, byRecord, type RevisionEntry } from '@/hooks/useRevisions'
@@ -71,19 +72,7 @@ interface GlobalRevisionsFeedProps {
   domainFilter?: string
 }
 
-function formatRelative(iso: string): string {
-  try {
-    const diff = Date.now() - new Date(iso).getTime()
-    const days = Math.floor(diff / 86400000)
-    if (days === 0) return 'Today'
-    if (days === 1) return 'Yesterday'
-    if (days < 30) return `${days}d ago`
-    if (days < 365) return `${Math.floor(days / 30)}mo ago`
-    return `${Math.floor(days / 365)}y ago`
-  } catch {
-    return iso.slice(0, 10)
-  }
-}
+const RevisionArtifactLinks = lazy(() => import('./RevisionArtifactLinks'))
 
 function DomainChip({
   domain,
@@ -99,6 +88,7 @@ function DomainChip({
       variant="ghost"
       size="sm"
       onClick={onClick}
+      aria-pressed={active}
       className={`px-2 py-0.5 h-auto rounded text-xs capitalize transition-colors ${
         active
           ? 'bg-primary/10 text-primary border border-primary/30'
@@ -170,11 +160,13 @@ function EntityChips({ ids, domain }: { ids: string[]; domain: string }) {
 }
 
 function FeedEntry({ r }: { r: RevisionEntry }) {
+  const scopeId = useId()
+  const [showScope, setShowScope] = useState(false)
   const offlineSuffix =
     r.approval_method === 'offline' && r.approved_via ? ` · via ${r.approved_via}` : ''
 
   return (
-    <div className="flex max-sm:flex-col items-start gap-3 py-3 border-b border-border last:border-0">
+    <article className="flex max-sm:flex-col items-start gap-3 py-3 border-b border-border last:border-0">
       <div className="mt-0.5 shrink-0">
         {r.authored_by_llm ? (
           <Bot
@@ -197,7 +189,37 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
           <span className="text-xs text-muted-foreground">{r.change_type.replace(/_/g, ' ')}</span>
           <BypassChip revision={r} />
         </div>
-        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{r.scope_summary}</p>
+        <p
+          id={`${scopeId}-summary`}
+          className={`mt-0.5 text-xs text-muted-foreground ${showScope ? '' : 'line-clamp-2'}`}
+        >
+          {r.scope_summary}
+        </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          type="button"
+          aria-expanded={showScope}
+          aria-controls={`${scopeId}-summary ${scopeId}`}
+          onClick={() => setShowScope((open) => !open)}
+          className="mt-1 h-auto min-h-8 px-1 text-xs text-primary"
+        >
+          {showScope ? 'Hide revision scope' : 'Inspect revision scope'}
+        </Button>
+        <div id={scopeId} hidden={!showScope} className="space-y-2 rounded border p-2">
+          {showScope && (
+            <>
+              {typeof r.rows_affected === 'number' && (
+                <p className="text-xs text-muted-foreground">
+                  {r.rows_affected} affected {r.rows_affected === 1 ? 'row' : 'rows'} recorded.
+                </p>
+              )}
+              <Suspense fallback={<p role="status">Loading affected record links…</p>}>
+                <RevisionArtifactLinks revision={r} />
+              </Suspense>
+            </>
+          )}
+        </div>
         {r.record_ids && r.record_ids.length > 0 && (
           <EntityChips ids={r.record_ids} domain={r.domain} />
         )}
@@ -229,10 +251,10 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
           {offlineSuffix && <span className="text-xs text-muted-foreground">{offlineSuffix}</span>}
         </div>
       </div>
-      <span className="text-xs text-muted-foreground shrink-0 mt-0.5">
-        {formatRelative(r.merge_timestamp)}
-      </span>
-    </div>
+      <time dateTime={r.merge_timestamp} className="mt-0.5 shrink-0 text-xs text-muted-foreground">
+        {formatRevisionDate(r.merge_timestamp)}
+      </time>
+    </article>
   )
 }
 
@@ -404,7 +426,7 @@ export function GlobalRevisionsFeed({
       ) : (
         <div>
           {visible.map((r, i) => (
-            <FeedEntry key={`${r.pr_number}-${i}`} r={r} />
+            <FeedEntry key={`${r.domain}-${r.merge_sha}-${r.merge_timestamp}-${i}`} r={r} />
           ))}
         </div>
       )}

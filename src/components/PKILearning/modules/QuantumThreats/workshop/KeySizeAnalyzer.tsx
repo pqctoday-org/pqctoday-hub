@@ -25,7 +25,7 @@ export const KeySizeAnalyzer: React.FC<KeySizeAnalyzerProps> = ({
       case 'broken':
         return (
           <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold">
-            BROKEN
+            CRQC-VULNERABLE
           </span>
         )
       case 'weakened':
@@ -37,7 +37,7 @@ export const KeySizeAnalyzer: React.FC<KeySizeAnalyzerProps> = ({
       case 'safe':
         return (
           <span className="text-xs px-2 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
-            SAFE
+            NO KNOWN EFFICIENT QUANTUM ATTACK
           </span>
         )
     }

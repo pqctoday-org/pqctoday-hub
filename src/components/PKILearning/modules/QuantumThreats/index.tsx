@@ -46,7 +46,8 @@ const PARTS: WorkshopPart[] = [
   {
     id: 'crqc-trajectory',
     title: 'Step 6: Trajectory to Q-Day',
-    description: 'Track logical-qubit progress against the qubits needed to break ECC and RSA.',
+    description:
+      'Compare logical-qubit trajectories with published, model-specific RSA and elliptic-curve resource estimates.',
     icon: TrendingUp,
   },
 ]
@@ -55,7 +56,7 @@ export const QuantumThreatsModule: FC = () => (
   <ModuleShell
     manifest={manifest}
     title="Quantum Threat Mechanics"
-    description="How quantum computers break RSA, ECC, and weaken AES — and why PQC algorithms survive."
+    description="How sufficiently capable quantum computers threaten public-key cryptography, affect symmetric security margins, and shape PQC migration planning."
     learn={(api) => <QuantumThreatsIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
     exercises={(api) => (
       <QuantumThreatsExercises

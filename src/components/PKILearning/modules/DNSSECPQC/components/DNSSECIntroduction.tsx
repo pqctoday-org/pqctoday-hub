@@ -80,12 +80,42 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <strong>draft-westerbaan-dnssec-mldsa</strong> (Westerbaan/Cloudflare, Schmieg/Google)
-            specifies DNSSEC&apos;s DS, DNSKEY, and RRSIG resource records for{' '}
+            The current{' '}
+            <a
+              className="text-primary underline"
+              href="https://datatracker.ietf.org/doc/draft-westerbaan-dnssec-mldsa/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <strong>draft-westerbaan-dnssec-mldsa-04</strong>
+            </a>{' '}
+            (Westerbaan/Cloudflare, Schmieg/Google) is an individual Internet-Draft, not an IETF
+            standard. It specifies DNSSEC&apos;s DS, DNSKEY, and RRSIG resource records for{' '}
             <InlineTooltip term="FIPS 204">ML-DSA</InlineTooltip>-44 &mdash; the smallest of{' '}
             <InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>&apos;s three parameter sets (44
             / 65 / 87), chosen specifically to minimize DNS message size. IANA has assigned it{' '}
-            <strong>DNSSEC algorithm number 18</strong> (mnemonic <code>MLDSA44</code>).
+            <strong>DNSSEC algorithm number 18</strong> (mnemonic <code>MLDSA44</code>). The{' '}
+            <a
+              className="text-primary underline"
+              href="https://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml"
+              target="_blank"
+              rel="noreferrer"
+            >
+              IANA registry
+            </a>{' '}
+            currently records MAY for signing, validation, and implementation; that assignment is
+            not a standards-track approval or a general recommendation. Its reference remains draft
+            version 03, which the current version says uses the same codepoint.{' '}
+            <a
+              className="text-primary underline"
+              href="https://www.rfc-editor.org/rfc/rfc9904.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              RFC 9904
+            </a>{' '}
+            defines the registry guidance fields; their values should not be read as blanket
+            deployment approval.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
@@ -109,11 +139,20 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
           </div>
           <p>
             An RRSIG carrying a 2,420-byte ML-DSA-44 signature dwarfs <strong>1,232 bytes</strong>
-            &mdash; a common conservative UDP payload limit (RFC 9715 recommends up to 1,400 bytes).
-            Responses over that limit need another transport, normally TCP &mdash; a real
-            operational cost, not just a theoretical one. Signature size is one of several open
-            migration challenges alongside compatibility and downgrade protection; the specification
-            remains an individual draft rather than a working-group-adopted standard.
+            &mdash; a common conservative UDP payload limit.{' '}
+            <a
+              className="text-primary underline"
+              href="https://www.rfc-editor.org/rfc/rfc9715.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              RFC 9715
+            </a>{' '}
+            recommends up to 1,400 bytes. Responses over that limit need another transport, normally
+            TCP &mdash; a real operational cost, not just a theoretical one. Signature size is one
+            of several open migration challenges alongside compatibility and downgrade protection;
+            the specification remains an individual draft rather than a working-group-adopted
+            standard.
           </p>
           <div className="bg-warning/5 rounded-lg p-4 border border-warning/20">
             <div className="flex items-center gap-2 mb-1">
@@ -220,23 +259,26 @@ export const DNSSECIntroduction: React.FC<DNSSECIntroductionProps> = ({ onNaviga
             DNSSEC-specific completion date, and delivering Cloudflare&apos;s own two features above
             is not the same as full end-to-end PQ DNSSEC: that also needs the root to become a
             trusted PQ anchor and other registries/registrars to adopt algorithm 18. Keep that
-            distinct from the DNS root zone&apos;s own algorithm rollovers. The first is a classical
-            ICANN/IANA plan: a new ECDSA Root KSK in <strong>2027</strong> and the RSA Root KSK
-            retired in <strong>2029</strong>. For a possible second rollover, Verisign&apos;s
-            December 2023 comments say it &ldquo;in the mid-2030s may well involve the incorporation
-            of post-quantum cryptography&rdquo;, a dated, conditional scenario rather than an
-            ICANN/IANA plan or a forecast. Every level of the chain needs PQ support before the
-            downgrade-safety design above is fully post-quantum-secure, though the order in which
-            levels migrate isn&apos;t prescribed. Keep the dates separate: one vendor&apos;s
-            roadmap, one global infrastructure migration.
+            distinct from the DNS root zone&apos;s own algorithm rollovers. ICANN&apos;s published
+            <em> proposal</em> for the next algorithm rollover is classical: generate an ECDSA Root
+            KSK in <strong>2027</strong> and complete RSA key decommissioning in{' '}
+            <strong>2030</strong>; community feedback was invited before operational execution. This
+            is separate from the completed 11 October 2026 RSA-to-RSA rollover to KSK-2024. For a
+            possible later rollover, Verisign&apos;s December 2023 comments say it &ldquo;in the
+            mid-2030s may well involve the incorporation of post-quantum cryptography&rdquo;, a
+            dated, conditional scenario rather than an ICANN/IANA plan or a forecast. Every level of
+            the chain needs PQ support before the downgrade-safety design above is fully
+            post-quantum-secure, though the order in which levels migrate isn&apos;t prescribed.
+            Keep the dates separate: one vendor&apos;s roadmap, one global infrastructure migration.
           </p>
           <p className="text-xs text-muted-foreground">
             Two parallel efforts attack the same signature-size problem differently:{' '}
             <strong>draft-sheth-pqc-dnssec-strategy</strong> surveys SLH-DSA-MTL, Falcon, XMSS, and
-            LMS as DNSSEC candidates, while <strong>draft-fregly-dnsop-slh-dsa-mtl-dnssec</strong>{' '}
-            and <strong>draft-kaizer-dnsop-ml-dsa-mtl-dnssec</strong> both apply{' '}
-            <em>Merkle Tree Ladder</em> mode &mdash; to SLH-DSA and ML-DSA respectively &mdash; to
-            shrink the per-query signature cost. None of these has IETF working-group status yet.
+            LMS as DNSSEC candidates. The Fregly SLH-DSA-MTL draft -06 expired on 1 October 2026; it
+            is an expired individual Internet-Draft, not an active standard. The Fregly and Kaizer
+            drafts explore <em>Merkle Tree Ladder</em> mode with SLH-DSA and ML-DSA respectively to
+            shrink per-query signature cost. These remain individual drafts without IETF
+            working-group adoption.
           </p>
         </div>
       </section>

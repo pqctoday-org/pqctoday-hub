@@ -46,7 +46,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
             without rewriting the applications that use them. It is a design goal, not a switch:
             callers can be insulated from the primitive, but credentials, encodings, key and
             signature sizes, negotiation, storage, rollback and tests still change with each
-            algorithm. NIST devotes a white paper, CSWP 39, to it.
+            algorithm. NIST&apos;s current crypto-agility white paper is CSWP 39-upd1.
           </p>
           <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
             <blockquote className="text-sm italic text-foreground/90">
@@ -230,11 +230,11 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            <InlineTooltip term="Post-Quantum Cryptography">PQC</InlineTooltip> migration follows a
-            structured framework aligned with{' '}
+            This module&apos;s seven-phase migration framework is informed by{' '}
             <InlineTooltip term="NIST IR 8547">NIST IR 8547</InlineTooltip>, CISA guidance, and NSA{' '}
-            <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> timelines. Each phase builds on
-            the previous.
+            <InlineTooltip term="CNSA 2.0">CNSA 2.0</InlineTooltip> timelines. The phases are this
+            module&apos;s teaching model, not a seven-step sequence prescribed by those sources; the
+            NSA dates apply to U.S. national security systems.
           </p>
           <div className="space-y-2">
             {[
@@ -272,10 +272,10 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-primary mb-2">Cloudflare</div>
             <p className="text-xs text-muted-foreground">
-              Enabled hybrid PQC key exchange (X25519Kyber768, later{' '}
+              Deployed hybrid PQC key agreement (X25519Kyber768, later{' '}
               <InlineTooltip term="X25519MLKEM768">X25519MLKEM768</InlineTooltip>) across its
-              network in 2024. TLS handshake times increased ~4%; hybrid client key share is 1,216
-              bytes vs 32 bytes for X25519 alone.
+              network. The combined client key share is 1,216 bytes versus 32 bytes for X25519
+              alone. Chrome reported about a 4% TLS handshake slowdown in its deployment testing.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">

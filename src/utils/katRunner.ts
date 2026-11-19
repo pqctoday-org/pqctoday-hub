@@ -1751,7 +1751,7 @@ function getAlgorithmName(kind: KatKind): string {
 
 // ── 5G SUCI Profile B (3GPP TS 33.501 Annex C.4.4.1) KAT ─────────────────────
 //
-// Every step checks a value PRINTED in TS 33.501 V19.5.0 Annex C.4.4.1
+// Every step checks a value PRINTED in TS 33.501 V19.7.0 Annex C.4.4.1
 // (ECIES Profile B, IMSI MCC|MNC 274012 / MSIN 001002086) — the file's
 // official_3gpp_vectors "profile-b-imsi" entry. (Until 2026-09-24 steps 4, 6
 // and 7 returned 'pass' without checking anything, and steps 3/5 compared

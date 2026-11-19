@@ -56,6 +56,7 @@ export function formatDriver(tag: string): string {
       if (value === 'unknown') return 'Data sensitivity not assessed'
       return `Data classified as ${value}`
     case 'currentCrypto':
+      if (value === 'unknown') return 'Cryptographic algorithms not yet inventoried'
       if (value === 'signing') return 'Signing algorithms in use (RSA / ECDSA / Ed25519)'
       return `Algorithm in use: ${value}`
     case 'vendorDependency':

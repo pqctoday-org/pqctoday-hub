@@ -133,6 +133,22 @@ export function criticalPathSpanYears(milestones: RoadmapMilestone[]): number {
   return span
 }
 
+export function milestoneDateConflicts(milestones: RoadmapMilestone[]): string[] {
+  const byId = new Map(milestones.map((milestone) => [milestone.id, milestone]))
+  const conflicts: string[] = []
+  for (const milestone of milestones) {
+    for (const id of milestone.dependsOn ?? []) {
+      const prerequisite = byId.get(id)
+      if (prerequisite && prerequisite.year > milestone.year) {
+        conflicts.push(
+          `${milestone.label} (${milestone.year}) is planned before ${prerequisite.label} (${prerequisite.year}).`
+        )
+      }
+    }
+  }
+  return conflicts
+}
+
 /** Stable-ish id for a new user-added milestone (app runtime; not used in tests). */
 export function newMilestoneId(): string {
   return `m-${Math.random().toString(36).slice(2, 9)}`

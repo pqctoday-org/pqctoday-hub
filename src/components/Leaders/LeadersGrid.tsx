@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import type { useSearchParams } from 'react-router'
 import { useEmbedSearchParams } from '@/hooks/useEmbedSearchParams'
+import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import {
   Search,
   Briefcase,
@@ -52,7 +53,12 @@ import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { DeepLinkNotice } from '@/components/common/DeepLinkNotice'
 import { useScrollToDeepLinkTarget, deepLinkSelector } from '@/hooks/useScrollToDeepLinkTarget'
-import { findLeaderByParam, leaderForwardedMessage, planLeaderDeepLink } from './leaderDeepLink'
+import {
+  findLeaderByParam,
+  leaderForwardedMessage,
+  matchesLeaderSearch,
+  planLeaderDeepLink,
+} from './leaderDeepLink'
 import { readLeadersTableSort, writeLeadersTableSort } from './leadersTableSort'
 import { compareLeaderCountries, compareLeaderNames, leaderMatchesIndustries } from './leadersSort'
 import { canonicalLeaderCountry } from '@/data/leaderCountry'
@@ -208,7 +214,21 @@ export const LeadersGrid = ({
   const selectedSector = filters.values.sector
   const activeCategory = filters.values.category
   const activeLayer = STACK_LAYERS.has(filters.values.layer) ? filters.values.layer : 'All'
-  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
+  const {
+    text: searchQuery,
+    update: handleSearchChange,
+    reset: resetSearch,
+  } = useUrlBackedText(searchParams.get('q') ?? '', (value) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (value) next.set('q', value)
+        else next.delete('q')
+        return next
+      },
+      { replace: true }
+    )
+  })
   const [deepLinkNotice, setDeepLinkNotice] = useState<{
     kind: 'widened' | 'not-found' | 'moved'
     message: string
@@ -247,6 +267,7 @@ export const LeadersGrid = ({
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false)
   const [isRemovalModalOpen, setIsRemovalModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
+  const searchInput = useRef<HTMLInputElement>(null)
 
   const activeFilterCount =
     FILTER_KEYS.filter((k) => filters.values[k] !== LEADER_FILTERS[k].defaultValue).length +
@@ -257,13 +278,12 @@ export const LeadersGrid = ({
   // would restore the filter params the first removed.
   const handleClearAll = useCallback(() => {
     filters.reset({ alsoDelete: ['q'] })
-    setSearchQuery('')
-  }, [filters])
+    resetSearch('')
+  }, [filters, resetSearch])
 
   // Sync non-filter URL params on same-route navigations (e.g. chatbot deep links).
   // Filter params (region/country/sector/cat/layer) are synced by useLeaderFilters internally.
   useEffect(() => {
-    const nextQ = searchParams.get('q') ?? ''
     const nextSort =
       (searchParams.get('sort') as LeaderSortOption | null) ??
       (selectedPersona === 'executive' ? 'relevance' : 'name')
@@ -277,7 +297,6 @@ export const LeadersGrid = ({
       ? (findLeaderByParam(leadersData, nextLeader, deprecatedLeaderSuccessors)?.id ?? null)
       : null
 
-    setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
     setShowAllContributors((prev) => (prev !== nextShowAll ? nextShowAll : prev))
@@ -490,15 +509,8 @@ export const LeadersGrid = ({
 
     // Search filter — lexical floor + semantic supplement.
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
       result = result.filter((l) => {
-        const lexicalMatch =
-          l.name.toLowerCase().includes(q) ||
-          l.title.toLowerCase().includes(q) ||
-          l.organizations.some((o) => o.toLowerCase().includes(q)) ||
-          l.bio.toLowerCase().includes(q) ||
-          l.category.toLowerCase().includes(q)
-        if (lexicalMatch) return true
+        if (matchesLeaderSearch(l, searchQuery)) return true
         // Leaders chunkToResource maps to chunk.title (the leader's name).
         if (semanticNameSet && semanticNameSet.has(l.name.toLowerCase())) return true
         return false
@@ -606,19 +618,6 @@ export const LeadersGrid = ({
     )
     logEvent('Leaders', 'Toggle Show All Contributors', next ? 'all' : 'curated')
   }, [showAllContributors, setSearchParams])
-
-  const handleSearchChange = (q: string) => {
-    setSearchQuery(q)
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        if (q) next.set('q', q)
-        else next.delete('q')
-        return next
-      },
-      { replace: true }
-    )
-  }
 
   const handleCategorySelect = (category: string) => {
     filters.set({ category })
@@ -893,11 +892,12 @@ export const LeadersGrid = ({
               aria-hidden="true"
             />
             <label htmlFor="leader-search" className="sr-only">
-              Search community by name or title
+              Search community by name or role
             </label>
             <input
+              ref={searchInput}
               id="leader-search"
-              type="text"
+              type="search"
               placeholder="Search community..."
               value={searchQuery}
               onChange={(e) => {
@@ -1015,6 +1015,17 @@ export const LeadersGrid = ({
           icon={<Users size={32} />}
           title="No people found"
           description="Try adjusting the category, sector, region, country, or search query."
+          action={
+            searchQuery
+              ? {
+                  label: 'Clear community search',
+                  onClick: () => {
+                    handleSearchChange('')
+                    searchInput.current?.focus()
+                  },
+                }
+              : undefined
+          }
         />
       )}
 

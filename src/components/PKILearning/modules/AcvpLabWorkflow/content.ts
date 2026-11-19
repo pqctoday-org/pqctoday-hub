@@ -21,7 +21,7 @@ export const content: ModuleContent = {
   // lastReviewed is the owner's sign-off of 1 November 2026 (moduleReviewHonesty.test.ts); the
   // revision record backs it. The on-page notice follows it (common/moduleReviewStatus.ts).
   version: '0.1.0',
-  lastEdited: '2026-11-02',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('NIST-ACVP'),
@@ -57,7 +57,7 @@ export const content: ModuleContent = {
   narratives: {
     reviewStatus: AWAITING_RESIGNOFF_NOTICE,
     acvpSpecRevision:
-      'draft-ietf-acvp-spec-01 (draft name kept; NIST has revised its protocol sections since, latest 16 October 2025; usnistgov/ACVP @ d13c633)',
+      'draft-ietf-acvp-spec-01, 30 October 2026 (Internet-Draft; current published edition). Reproducible protocol examples remain pinned to usnistgov/ACVP @ d13c633.',
     acvpSubSpecCommit: 'usnistgov/ACVP @ 892fd14 (ML-DSA, SLH-DSA, SHA); @ bccef36 (ML-KEM)',
     publicSampleCommit: 'usnistgov/ACVP-Server @ 975de31',
     evidenceClassCount: '8',

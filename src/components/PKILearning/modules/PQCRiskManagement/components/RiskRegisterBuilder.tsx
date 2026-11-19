@@ -252,15 +252,19 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
             <span className="font-medium text-foreground">
               CRQC modelled to arrive {scenarioCrqcYear}
             </span>{' '}
-            — assets with data lifetime extending past this year are high-urgency. Consider
-            assigning likelihood: 5 and impact: 5 to those entries.
+            — use this year only as a planning assumption. It does not set likelihood or impact.
+            Check whether captured data uses quantum-vulnerable public-key key establishment and
+            remains confidential past the scenario year, then assign documented ratings using your
+            organization's rubric.
           </p>
         </div>
       )}
       {showExampleBanner && showingExamples && (
         <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2 text-xs text-muted-foreground">
-          <span className="font-medium text-foreground">Example entries</span> — illustrative
-          placeholders, not your data. Edit or replace them to build your own register.
+          <span className="font-medium text-foreground">Example entries</span> — fictional
+          placeholders, not your data. Their starting likelihood and impact values are editable
+          teaching inputs, not measured probabilities or a calibrated risk assessment. Replace them
+          and document your own assumptions.
         </div>
       )}
       <aside
@@ -269,6 +273,10 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
       >
         <p>
           <strong className="text-foreground">Sample risk worksheet.</strong> {WORKSHEET_SCOPE}
+        </p>
+        <p>
+          Automatic starting values and pre-filled scenario scores are adjustable teaching inputs;
+          they are not event probabilities or measured risk.
         </p>
         <p>{PRODUCTION_CAPABILITIES}</p>
       </aside>

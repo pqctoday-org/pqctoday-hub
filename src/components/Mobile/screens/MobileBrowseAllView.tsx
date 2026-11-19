@@ -8,6 +8,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useModuleTopicKeywords } from '@/hooks/useModuleTopicKeywords'
 import { useUrlBackedText } from '@/hooks/useUrlBackedText'
+import { WorkshopSearchMatches } from '@/components/ui/WorkshopSearchMatches'
 import { MODULE_TRACKS } from '@/components/PKILearning/moduleData'
 import {
   BROWSE_ALL,
@@ -160,7 +161,7 @@ export function MobileBrowseAllView() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search modules"
+            placeholder="Search module or workshop topics"
             autoComplete="off"
             enterKeyHint="search"
             className="h-11 min-w-0 flex-1 bg-transparent text-[16px] text-foreground placeholder:text-muted-foreground focus:outline-none"
@@ -241,6 +242,8 @@ export function MobileBrowseAllView() {
         Showing <span className="font-semibold text-foreground">{shown}</span> of{' '}
         {TOTAL_MODULE_COUNT}
       </p>
+
+      <WorkshopSearchMatches groups={groups} search={search} track={track} phone />
 
       {shown === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card px-4 py-6 text-center">

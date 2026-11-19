@@ -17,6 +17,7 @@ import type { UseHSMResult } from '@/hooks/useHSM'
 import { StateManagementVisualizer } from './StateManagementVisualizer'
 
 let remaining = 32
+let counterReadable = true
 let engineAllowsCounterWrite = false
 
 vi.mock('@/wasm/softhsm/stateful', () => ({
@@ -25,7 +26,7 @@ vi.mock('@/wasm/softhsm/stateful', () => ({
     remaining -= 1
     return new Uint8Array(60)
   }),
-  hsm_getKeysRemaining: vi.fn(() => remaining),
+  hsm_getKeysRemaining: vi.fn(() => (counterReadable ? remaining : null)),
 }))
 vi.mock('@/wasm/softhsm', async (original) => ({
   ...(await original<typeof import('@/wasm/softhsm')>()),
@@ -69,6 +70,7 @@ const signUpTo = async (used: number) => {
 describe('StateManagementVisualizer: Simulate State Loss', () => {
   beforeEach(() => {
     remaining = 32
+    counterReadable = true
     engineAllowsCounterWrite = false
   })
 
@@ -127,6 +129,21 @@ describe('StateManagementVisualizer: Simulate State Loss', () => {
     // 29 left on the engine means 3 used: the page reads that, it does not invent a number
     expect(screen.getByText('3 / 32')).toBeInTheDocument()
     expect(screen.getByText('Remaining: 29')).toBeInTheDocument()
+  })
+
+  it('pauses signing when the HSM cannot report the counter and recovers on reset', async () => {
+    render(<StateManagementVisualizer hsm={fakeHsm()} />)
+    await signOnce(1)
+    counterReadable = false
+    const sign = screen.getByRole('button', { name: 'Sign Message' })
+    fireEvent.click(sign)
+    expect(await screen.findByText('Counter unavailable')).toBeInTheDocument()
+    expect(screen.getByText('Last confirmed used: 1')).toBeInTheDocument()
+    expect(screen.queryByText('KEY EXHAUSTED')).toBeNull()
+    expect(sign).toBeDisabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Reset key' }))
+    expect(screen.getByText('Used: 0')).toBeInTheDocument()
+    expect(sign).toBeEnabled()
   })
 
   it('has no old banner text and clears the result on Reset', async () => {

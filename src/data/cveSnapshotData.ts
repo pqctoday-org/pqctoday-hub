@@ -19,10 +19,23 @@ export async function loadCveSnapshot(): Promise<CveSnapshot> {
       throw new Error(`cve-snapshot.json fetch failed: ${resp.status}`)
     }
     const json = (await resp.json()) as CveSnapshot
+    if (
+      !json ||
+      typeof json.generatedAt !== 'string' ||
+      !Number.isFinite(Date.parse(json.generatedAt)) ||
+      typeof json.sourceCsv !== 'string' ||
+      !json.byCpe ||
+      typeof json.byCpe !== 'object' ||
+      Array.isArray(json.byCpe) ||
+      !Object.values(json.byCpe).every(Array.isArray)
+    ) {
+      throw new Error('The vulnerability snapshot is incomplete.')
+    }
     cachedSnapshot = json
-    inflight = null
     return json
-  })()
+  })().finally(() => {
+    inflight = null
+  })
   return inflight
 }
 

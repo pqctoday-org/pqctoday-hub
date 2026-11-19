@@ -27,7 +27,10 @@ import {
 } from '@/utils/roiMath'
 import {
   ANNUAL_BREACH_PROBABILITY_PCT,
-  IBM_BASELINE_UNVERIFIED_NOTE,
+  describeBreachBaselineSource,
+  describeIndustryBreachBaseline,
+  formatBreachBaselineUSD,
+  SAVED_BREACH_BASELINE_LABEL,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -91,6 +94,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     verifiedAnnualConsequenceUSD?: number
     verifiedOneTimeConsequenceUSD?: number
     verifiedConsequenceSource?: string
+    confirmedConsequenceScope?: string | null
   }>('cost-of-inaction')
   // `||`, not `??`. When no industry is set, useExecutiveModuleData returns an
   // EMPTY STRING, which is not nullish — so the 'Finance & Banking' fallback was
@@ -149,6 +153,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   const [verifiedConsequenceSource, setVerifiedConsequenceSource] = useState<string>(
     savedInputs?.verifiedConsequenceSource ?? ''
   )
+  const [confirmedConsequenceScope, setConfirmedConsequenceScope] = useState(
+    savedInputs?.confirmedConsequenceScope ?? null
+  )
 
   const profile = useMemo(
     () =>
@@ -191,6 +198,24 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
   const shelfLifeYears = DATA_SHELF_LIFE_YEARS[dataSensitivityClass]
 
   const currentYear = new Date().getFullYear()
+  const country = data.country || 'Country not selected'
+  const consequenceScope = JSON.stringify([selectedIndustry, country])
+  const consequenceSource = verifiedConsequenceSource.trim()
+  const hasConsequenceAmount = verifiedAnnualConsequenceUSD > 0 || verifiedOneTimeConsequenceUSD > 0
+  const consequenceReady =
+    hasConsequenceAmount &&
+    Number.isFinite(verifiedAnnualConsequenceUSD) &&
+    verifiedAnnualConsequenceUSD >= 0 &&
+    Number.isFinite(verifiedOneTimeConsequenceUSD) &&
+    verifiedOneTimeConsequenceUSD >= 0 &&
+    Number.isInteger(verifiedEffectiveYear) &&
+    verifiedEffectiveYear >= 1 &&
+    verifiedEffectiveYear <= 9999 &&
+    consequenceSource.length > 0
+  const consequenceIncluded = consequenceReady && confirmedConsequenceScope === consequenceScope
+  const annualConsequence = consequenceIncluded ? verifiedAnnualConsequenceUSD : 0
+  const oneTimeConsequence = consequenceIncluded ? verifiedOneTimeConsequenceUSD : 0
+  const includedSource = consequenceIncluded ? consequenceSource : ''
   const moscaVerdict = useMemo(
     () =>
       computeMoscaVerdict(
@@ -199,6 +224,14 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       ),
     [shelfLifeYears, migrationDurationYears, currentYear]
   )
+
+  const breachBaselineProvenance = useMemo(() => {
+    if (!chainedFromSimulator) return describeIndustryBreachBaseline(selectedIndustry)
+    const saved = describeBreachBaselineSource(chainedFromSimulator.breachBaselineSourceId)
+    return saved
+      ? { label: `Simulator estimate based on ${saved.label}`, source: saved.source }
+      : { label: SAVED_BREACH_BASELINE_LABEL, source: undefined }
+  }, [chainedFromSimulator, selectedIndustry])
 
   const inputs: DelayScenarioInputs = useMemo(() => {
     const breachBaseline = chainedFromSimulator
@@ -217,11 +250,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       // A framework match is educational context, not proof that a dollar
       // consequence applies to this organization. Only explicit learner input
       // enters the calculation.
-      mandateType:
-        verifiedAnnualConsequenceUSD > 0 || verifiedOneTimeConsequenceUSD > 0 ? 'HARD' : 'NONE',
+      mandateType: consequenceIncluded ? 'HARD' : 'NONE',
       hardDeadlineYear: verifiedEffectiveYear,
-      annualFineUSD: verifiedAnnualConsequenceUSD,
-      cliffLossUSD: verifiedOneTimeConsequenceUSD,
+      annualFineUSD: annualConsequence,
+      cliffLossUSD: oneTimeConsequence,
       currentYear,
       horizonYears: DELAY_MODEL_DEFAULTS.horizonYears,
       discountRatePct,
@@ -236,8 +268,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     profile.delayPremiumPerYear,
     migrationDurationYears,
     verifiedEffectiveYear,
-    verifiedAnnualConsequenceUSD,
-    verifiedOneTimeConsequenceUSD,
+    consequenceIncluded,
+    annualConsequence,
+    oneTimeConsequence,
     discountRatePct,
     currentYear,
   ])
@@ -309,19 +342,21 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       discountRatePct,
       verifiedConsequence: {
         effectiveYear: verifiedEffectiveYear,
-        annualUSD: verifiedAnnualConsequenceUSD,
-        oneTimeUSD: verifiedOneTimeConsequenceUSD,
-        sourceNote: verifiedConsequenceSource.trim(),
+        annualUSD: annualConsequence,
+        oneTimeUSD: oneTimeConsequence,
+        sourceNote: includedSource,
+        country: consequenceIncluded ? country : undefined,
       },
       sourceStatus: {
-        breachBaseline:
-          'IBM 2025 sector assumption — one edition behind and not independently verified',
+        breachBaseline: breachBaselineProvenance.label,
+        breachBaselineSource: breachBaselineProvenance.source,
         breachProbability: probabilityRecord.originLabel,
         crqcCurve: 'GRI 2025 expert-survey bands, interpolated by this model',
       },
     }),
     [
       currentYear,
+      breachBaselineProvenance,
       inputs,
       selectedIndustry,
       delayYears,
@@ -334,9 +369,11 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       dataSensitivityClass,
       discountRatePct,
       verifiedEffectiveYear,
-      verifiedAnnualConsequenceUSD,
-      verifiedOneTimeConsequenceUSD,
-      verifiedConsequenceSource,
+      annualConsequence,
+      oneTimeConsequence,
+      includedSource,
+      consequenceIncluded,
+      country,
     ]
   )
 
@@ -386,13 +423,16 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     md += `## Reproducible scenario inputs (model coi-2)\n\n`
     md += `| Input | Value / origin |\n|---|---|\n`
     md += `| As-of year / horizon | ${currentYear} / ${inputs.horizonYears} years |\n`
+    const { label: baselineLabel, source: baselineSource } = breachBaselineProvenance
+    md += `| Breach baseline | ${formatBreachBaselineUSD(inputs.breachBaseline)} — ${baselineSource ? `[${baselineLabel}](${baselineSource})` : baselineLabel} |\n`
     md += `| Migration cost | ${fmt(migrationCostUSD)} (${migrationCostOverrideUSD === null ? 'suggested scenario value' : 'learner-entered'}) |\n`
     md += `| Delay premium | ${fmt(profile.delayPremiumPerYear)}/year (analyst assumption) |\n`
     md += `| Discount rate | ${discountRatePct}% (learner-adjustable assumption) |\n`
     md += `| Stored-data / HNDL assumptions | ${inputs.baseYearsOfData} years / ${inputs.hndlFactorPct}% |\n`
     md += `| Data class / assumed shelf life | ${DATA_SENSITIVITY_LABELS[dataSensitivityClass]} / ${shelfLifeYears} years |\n`
-    md += `| Verified consequence effective year | ${verifiedAnnualConsequenceUSD > 0 || verifiedOneTimeConsequenceUSD > 0 ? verifiedEffectiveYear : 'not included'} |\n`
-    md += `| Verified consequence source | ${verifiedConsequenceSource.trim() || 'none supplied'} |\n\n`
+    md += `| Verified consequence effective year | ${consequenceIncluded ? verifiedEffectiveYear : 'not included'} |\n`
+    md += `| Verified consequence scope | ${consequenceIncluded ? `${selectedIndustry} / ${country}` : 'not included'} |\n`
+    md += `| Verified consequence source | ${includedSource.replace(/[\r\n]+/g, ' ').replaceAll('|', '\\|') || 'none included'} |\n\n`
     if (migrationCostRecon) {
       md += `Assessment-profile migration estimate: ${fmt(migrationCostRecon.assessmentCost)} (${migrationCostRecon.recon.verdict} with the industry baseline).\n\n`
     }
@@ -402,10 +442,11 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
       const delayed = delayedResult.rows[i]
       md += `| ${row.year} | ${fmt(row.cumulativeTotal)} | ${fmt(delayed.cumulativeTotal)} | ${fmt(delayed.cumulativeTotal - row.cumulativeTotal)} |\n`
     })
-    md += `\n*Illustrative financial scenario, not a forecast or investment recommendation. IBM 2025 per-sector baseline: one edition behind and not independently verified. GRI 2025 expert-survey bands are interpolated by this model. Migration cost, delay premium and most data shelf lives are assumptions. No framework-derived fine is included automatically; only the learner-entered, organization-verified consequence above enters the arithmetic.*\n`
+    md += `\n*Illustrative financial scenario, not a forecast or investment recommendation. GRI 2025 expert-survey bands are interpolated by this model. Migration cost, delay premium and most data shelf lives are assumptions. No framework-derived fine is included automatically; only the learner-entered, organization-verified consequence above enters the arithmetic.*\n`
     return md
   }, [
     selectedIndustry,
+    breachBaselineProvenance,
     delayYears,
     annualBreachProbPct,
     probabilityRecord,
@@ -422,9 +463,9 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     dataSensitivityClass,
     shelfLifeYears,
     verifiedEffectiveYear,
-    verifiedAnnualConsequenceUSD,
-    verifiedOneTimeConsequenceUSD,
-    verifiedConsequenceSource,
+    consequenceIncluded,
+    includedSource,
+    country,
     nowResult,
     delayedResult,
     costOfInaction,
@@ -604,14 +645,17 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         </p>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="space-y-1 text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">Effective year</span>
+            <span className="font-medium text-foreground">Applies after this year</span>
             <input
               aria-label="Verified consequence effective year"
               type="number"
-              min={currentYear}
-              max={currentYear + 30}
+              min={1}
+              max={9999}
               value={verifiedEffectiveYear}
-              onChange={(e) => setVerifiedEffectiveYear(Number(e.target.value))}
+              onChange={(e) => {
+                setVerifiedEffectiveYear(Number(e.target.value))
+                setConfirmedConsequenceScope(null)
+              }}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
           </label>
@@ -623,7 +667,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               min={0}
               step={10000}
               value={verifiedAnnualConsequenceUSD}
-              onChange={(e) => setVerifiedAnnualConsequenceUSD(Math.max(0, Number(e.target.value)))}
+              onChange={(e) => {
+                setVerifiedAnnualConsequenceUSD(Math.max(0, Number(e.target.value)))
+                setConfirmedConsequenceScope(null)
+              }}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
           </label>
@@ -635,9 +682,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               min={0}
               step={10000}
               value={verifiedOneTimeConsequenceUSD}
-              onChange={(e) =>
+              onChange={(e) => {
                 setVerifiedOneTimeConsequenceUSD(Math.max(0, Number(e.target.value)))
-              }
+                setConfirmedConsequenceScope(null)
+              }}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
           </label>
@@ -647,11 +695,33 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               aria-label="Verified consequence source or owner"
               type="text"
               value={verifiedConsequenceSource}
-              onChange={(e) => setVerifiedConsequenceSource(e.target.value)}
+              onChange={(e) => {
+                setVerifiedConsequenceSource(e.target.value)
+                setConfirmedConsequenceScope(null)
+              }}
               placeholder="e.g. Legal memo, 2026-10-01"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             />
           </label>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11"
+            disabled={!consequenceReady}
+            onClick={() =>
+              setConfirmedConsequenceScope(consequenceIncluded ? null : consequenceScope)
+            }
+          >
+            {consequenceIncluded
+              ? 'Remove consequence from scenario'
+              : 'Include consequence in this scenario'}
+          </Button>
+          <p role="status" className="text-sm text-muted-foreground">
+            {consequenceIncluded ? 'Included' : 'Excluded'} for {selectedIndustry} · {country}.
+            {!consequenceReady && ' Enter an amount, an effective year and an evidence reference.'}
+          </p>
         </div>
       </details>
 
@@ -699,8 +769,19 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           <div>
             <dt className="font-semibold text-foreground">Breach baseline</dt>
             <dd>
-              {fmt(inputs.breachBaseline)} — IBM 2025 sector assumption, one edition behind and not
-              independently verified
+              {formatBreachBaselineUSD(inputs.breachBaseline)} —{' '}
+              {breachBaselineProvenance.source ? (
+                <a
+                  href={breachBaselineProvenance.source}
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {breachBaselineProvenance.label}
+                </a>
+              ) : (
+                breachBaselineProvenance.label
+              )}
             </dd>
           </div>
           <div>
@@ -753,9 +834,6 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             </dd>
           </div>
         </dl>
-        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          {IBM_BASELINE_UNVERIFIED_NOTE}
-        </p>
       </section>
 
       {selectedPersona === 'executive' && (
@@ -1045,13 +1123,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             <p className="text-xs text-muted-foreground mb-0.5">Verified consequence</p>
             <p className="font-semibold text-status-warning">{fmt(delayedResult.totalPenalty)}</p>
             <p className="text-xs text-muted-foreground">
-              {verifiedAnnualConsequenceUSD > 0 || verifiedOneTimeConsequenceUSD > 0 ? (
+              {consequenceIncluded ? (
                 <>
                   Learner-entered amounts apply while migration remains incomplete after{' '}
-                  {verifiedEffectiveYear}. Source/owner:{' '}
-                  {verifiedConsequenceSource.trim() ||
-                    'not supplied — add one before relying on it'}
-                  .
+                  {verifiedEffectiveYear}. Source/owner: {includedSource}.
                 </>
               ) : (
                 <>
@@ -1155,6 +1230,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               verifiedAnnualConsequenceUSD,
               verifiedOneTimeConsequenceUSD,
               verifiedConsequenceSource,
+              confirmedConsequenceScope,
               scenario: scenarioRecord,
             },
             output: outputPayload,

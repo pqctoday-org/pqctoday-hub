@@ -6,7 +6,7 @@
  * behaviour-preserving.
  */
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
@@ -57,5 +57,22 @@ describe('Executive organizational evidence scope', () => {
     expect(
       screen.getByRole('link', { name: 'Build the executive measurement pack' })
     ).toHaveAttribute('href', '/business/tools/kpi-dashboard')
+  })
+
+  it('lists selected applicable drivers and evidence questions when answered', () => {
+    render(
+      <MemoryRouter>
+        <SelfAssessmentStep />
+      </MemoryRouter>
+    )
+
+    const yesButtons = screen.getAllByRole('button', { name: 'yes' })
+    fireEvent.click(yesButtons[0])
+
+    expect(screen.getByText('1/9')).toBeInTheDocument()
+    expect(
+      screen.getAllByText('We store data requiring confidentiality beyond 10 years')
+    ).toHaveLength(2)
+    expect(screen.getAllByText(/Unanswered/)).toHaveLength(8)
   })
 })

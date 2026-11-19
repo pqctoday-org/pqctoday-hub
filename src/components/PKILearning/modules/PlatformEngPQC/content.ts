@@ -13,9 +13,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'platform-eng-pqc',
-  version: '1.0.0',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-14',
+  version: '1.0.3',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -23,6 +23,8 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('RFC 8879'),
     getStandard('RFC 9580'),
+    getStandard('RFC 9980'),
+    getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
     getStandard('NIST SP 800-227'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
@@ -38,6 +40,7 @@ export const content: ModuleContent = {
     // updates but does not obsolete it, so the protocol spec is the citation and cited nothing for it.
     getStandard('RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp'),
     getStandard('Sigstore-Post-Quantum-Cryptography-2025'),
+    getStandard('OpenSSH-Post-Quantum-Cryptography'),
   ],
 
   algorithms: [
@@ -68,7 +71,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Identify every cryptographic primitive embedded in a CI/CD pipeline from source control to runtime. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority. Migrate container image signing from ECDSA P-256 to ML-DSA-65 via cosign or Notation. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time. Monitor crypto posture by checking which sources can supply certificate algorithms (the expiry metrics of an exporter do not carry the key algorithm), using SIEM checklists and capacity planning data.',
+      'Identify every cryptographic primitive embedded in a CI/CD pipeline from source control to runtime. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority. Plan container-image signature migration from ECDSA P-256 to a post-quantum scheme only after the selected signing tool, trust infrastructure, and verifiers support it; Sigstore has proposed a separate opt-in PQC public instance for mid-2027. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time. Monitor crypto posture by checking which sources can supply certificate algorithms (the expiry metrics of an exporter do not carry the key algorithm), using SIEM checklists and capacity planning data.',
     keyConcepts:
       '### Algorithm Sizes (container signing and TLS). ECDSA P-256 signature: 64 bytes. ML-DSA-44 signature: 2,420 bytes (38×). ML-DSA-65 signature: 3,309 bytes (52×). SLH-DSA-128f signature: 17,088 bytes (267×). ECDSA P-256 X.509 cert: 800 bytes. ML-DSA-65 X.509 cert: 5,800 bytes (7.25×). TLS 1.3 handshake (classical): 4,096 bytes. TLS 1.3 handshake (PQC): 18,432 bytes (4.5×). TLS handshake latency P99: 12ms (classical) → 28ms (PQC, +133%). ### IaC Quantum-Vulnerable Defaults.',
     workshopSummary:

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { GitBranch, CheckCircle, XCircle, AlertCircle, HelpCircle, Info } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   CLIENT_CONFIGS,
   SERVER_CONFIGS,
@@ -14,25 +15,25 @@ const STATUS_CONFIG: Record<
 > = {
   compatible: {
     icon: <CheckCircle size={14} className="text-status-success" />,
-    label: 'Compatible',
+    label: 'Compatible (expected)',
     cls: 'text-status-success bg-status-success/10 border-status-success/30',
     cellCls: 'bg-status-success/10',
   },
   partial: {
     icon: <AlertCircle size={14} className="text-status-warning" />,
-    label: 'Partial (fallback)',
+    label: 'Partial (expected)',
     cls: 'text-status-warning bg-status-warning/10 border-status-warning/30',
     cellCls: 'bg-status-warning/10',
   },
   incompatible: {
     icon: <XCircle size={14} className="text-destructive" />,
-    label: 'Incompatible',
+    label: 'Blocked (expected)',
     cls: 'text-status-error bg-destructive/10 border-destructive/30',
     cellCls: 'bg-destructive/10',
   },
   untested: {
     icon: <HelpCircle size={14} className="text-muted-foreground" />,
-    label: 'Untested',
+    label: 'Not assessed',
     cls: 'text-muted-foreground bg-muted border-border',
     cellCls: 'bg-muted/30',
   },
@@ -69,9 +70,37 @@ export const InteropTestMatrix: React.FC = () => {
       <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
         <GitBranch size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">Reference:</span> OQS Test Server
-          (test.openquantumsafe.org) + real-world browser/library compatibility data. Click a cell
-          to see test details and hybrid test notes.
+          <span className="font-semibold text-foreground">Illustrative matrix:</span> these cells
+          are configuration-based expectations, not captured handshakes or compatibility
+          certifications. Browser versions and Cloudflare visitor support are documented in the{' '}
+          <a
+            href="https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-support/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline"
+          >
+            Cloudflare PQC support guide
+          </a>
+          ; Firefox enterprise behavior is described in the{' '}
+          <a
+            href="https://firefox-admin-docs.mozilla.org/reference/policies/postquantumkeyagreementenabled/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline"
+          >
+            Firefox policy reference
+          </a>
+          . Verify exact versions, endpoint configuration, and the negotiated group in your own
+          environment. For AWS KMS, use its supported SDK setup and inspect CloudTrail
+          <a
+            href="https://docs.aws.amazon.com/kms/latest/developerguide/pqtls.html"
+            target="_blank"
+            rel="noreferrer"
+            className="ml-1 text-primary underline"
+          >
+            tlsDetails.keyExchange
+          </a>
+          .
         </p>
       </div>
 
@@ -128,22 +157,30 @@ export const InteropTestMatrix: React.FC = () => {
                   return (
                     <td
                       key={s.id}
-                      className={`border-l border-b border-border cursor-pointer transition-colors ${cfg.cellCls} ${
+                      className={`border-l border-b border-border transition-colors ${cfg.cellCls} ${
                         isSelected ? 'ring-2 ring-primary ring-inset' : ''
                       } ${isHovered && !isSelected ? 'brightness-95' : ''}`}
-                      onClick={() => {
-                        if (selectedClient === c.id && selectedServer === s.id) {
-                          setSelectedClient(null)
-                          setSelectedServer(null)
-                        } else {
-                          setSelectedClient(c.id)
-                          setSelectedServer(s.id)
-                        }
-                      }}
                       onMouseEnter={() => setHoveredCell({ client: c.id, server: s.id })}
                       onMouseLeave={() => setHoveredCell(null)}
                     >
-                      <div className="flex items-center justify-center p-2">{cfg.icon}</div>
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        aria-label={`${c.label} to ${s.label}: ${cfg.label}. Select details.`}
+                        aria-pressed={isSelected}
+                        className="flex h-auto w-full items-center justify-center rounded-sm p-2 hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                        onClick={() => {
+                          if (selectedClient === c.id && selectedServer === s.id) {
+                            setSelectedClient(null)
+                            setSelectedServer(null)
+                          } else {
+                            setSelectedClient(c.id)
+                            setSelectedServer(s.id)
+                          }
+                        }}
+                      >
+                        {cfg.icon}
+                      </Button>
                     </td>
                   )
                 })}
@@ -201,12 +238,11 @@ export const InteropTestMatrix: React.FC = () => {
       <div className="p-3 rounded-lg bg-muted border border-border text-xs text-muted-foreground space-y-1.5">
         <p className="font-semibold text-foreground">Oversized ClientHello risk:</p>
         <p>
-          Pure PQC clients send ClientHello messages up to 1,536 bytes. When a server&apos;s TCP MSS
-          is 1,460 bytes (standard Ethernet), the ClientHello spans 2 TCP segments, which is inside
-          the initial window of up to 10 segments that RFC 6928 applies. Cloudflare reported that
-          some middleboxes assume the ClientHello fits in one packet, which can cause silent
-          failures. Use <span className="font-mono">pqcscan</span> to probe affected endpoints and
-          verify they handle oversized ClientHellos correctly.
+          ClientHello size varies with the offered groups, extensions, TLS implementation, and
+          network path. Larger messages can expose middlebox or path-MTU problems, but an MSS value
+          alone does not predict whether a handshake succeeds. Capture the actual ClientHello and
+          test the full route. Use <span className="font-mono">pqcscan</span> to probe endpoints and
+          record the observed failure or negotiated group.
         </p>
       </div>
     </div>

@@ -44,9 +44,9 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
         <p>
           Modern operating systems rely on a layered cryptographic stack that spans from the kernel
           to user applications. Understanding where each layer sits is essential for a complete{' '}
-          <InlineTooltip term="PQC">PQC</InlineTooltip> migration. Unlike application-layer
-          cryptography (where you control the library), OS-level crypto changes affect every service
-          running on the system.
+          <InlineTooltip term="PQC">PQC</InlineTooltip> migration. OS-level policy affects the
+          applications that use the relevant backend and accept its defaults. Check for bundled
+          libraries and application overrides.
         </p>
 
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
@@ -92,9 +92,10 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
             ))}
           </div>
           <p className="text-[10px] text-muted-foreground mt-3">
-            PQC migration touches every layer. System TLS configuration cascades to all applications
-            that use system OpenSSL. SSH host key migration requires new key types. Package signing
-            requires coordinated infrastructure upgrades.
+            PQC migration touches every layer. OpenSSL applies its system defaults when applications
+            create a TLS context, and applications can override those settings. SSH host key
+            migration requires new key types. Package signing requires coordinated infrastructure
+            upgrades.
           </p>
         </div>
 

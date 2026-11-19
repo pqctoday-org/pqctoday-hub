@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { expect, test } from './fixtures/blockAnalytics'
+import { getViolations, injectAxe } from 'axe-playwright'
 
 const routes = [
   { target: 'Learn', route: '/learn/digital-id?tab=workshop' },
@@ -21,6 +22,8 @@ for (const { target, route } of routes) {
       await page.goto(route)
       const step = (name: string) => page.getByRole('button', { name, exact: true }).first()
 
+      await step('Step 1: EUDI Wallet').click()
+      await expect(page.getByText('No credentials installed yet.')).toBeVisible()
       await step('Step 2: PID Issuer').click()
       await step('Start Issuance Flow').click()
       await step('Proceed with Authentication').click()
@@ -60,6 +63,35 @@ for (const { target, route } of routes) {
       await expect(
         page.getByRole('heading', { name: 'Sample account opening accepted' })
       ).toBeVisible({ timeout: 25_000 })
+
+      await step('Step 5: QTSP (QES)').click()
+      await expect(
+        page.getByText(/this exercise uses local sample keys and simulated authorization/i)
+      ).toBeVisible()
+      await page.getByRole('button', { name: 'Proceed to Sign' }).click()
+      await expect(page.getByText('Authorization Required')).toBeVisible()
+      await page.getByRole('button', { name: 'Authorize Access' }).click()
+      await page.getByRole('button', { name: 'Sign Document' }).click()
+      await expect(page.getByRole('heading', { name: 'Sample Signature Checked' })).toBeVisible({
+        timeout: 25_000,
+      })
+      await expect(page.getByText(/does not establish legal QES status/i)).toBeVisible()
+
+      // Exercise accessibility after the actual wallet and relying-party flow
+      // has rendered its result states, at both desktop and phone widths.
+      await injectAxe(page)
+      const violations = await getViolations(page, undefined, {
+        runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+      })
+      expect(violations, `${target} completed flow at ${width}px`).toEqual([])
+      const dimensions = await page.evaluate(() => ({
+        viewport: document.documentElement.clientWidth,
+        content: document.documentElement.scrollWidth,
+      }))
+      expect(
+        dimensions.content,
+        `${target} completed flow at ${width}px overflows`
+      ).toBeLessThanOrEqual(dimensions.viewport)
     })
   }
 }

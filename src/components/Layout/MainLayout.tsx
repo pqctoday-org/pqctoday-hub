@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   X,
   Plane,
+  Terminal,
   Clock,
   Search,
   UserCog,
@@ -61,6 +62,7 @@ import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
 import { RouteRelated } from './RouteRelated'
 import { isResourceDeepLink, isSameRoute, resourceDeepLinkRoute } from '@/utils/resourceDeepLink'
+import { PYTHON_SIGNATURE_EXERCISE_PATH } from '@/data/pythonWorkbench'
 import { BUILD_COMMIT, shortCommit, sourceCodeUrl } from '@/utils/sourceLink'
 
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
@@ -817,6 +819,20 @@ export const MainLayout = () => {
                     hover away, and the rail stays a rail. */}
                 {groupExpanded && (
                   <div id={groupContentId} className="flex flex-col gap-0.5">
+                    {group.id === 'practice' && selectedPersona === 'developer' && (
+                      <Link
+                        to={PYTHON_SIGNATURE_EXERCISE_PATH}
+                        aria-current={
+                          location.pathname + location.search === PYTHON_SIGNATURE_EXERCISE_PATH
+                            ? 'page'
+                            : undefined
+                        }
+                        className="flex min-h-9 items-center gap-2 rounded-md px-2 text-xs font-medium text-primary hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary"
+                      >
+                        <Terminal size={16} aria-hidden="true" className="shrink-0" />
+                        Python signature lab
+                      </Link>
+                    )}
                     {displayPaths.map((path) => {
                       const active = isPathActive(path)
                       const treatment = getRowTreatment(selectedPersona, path, active)

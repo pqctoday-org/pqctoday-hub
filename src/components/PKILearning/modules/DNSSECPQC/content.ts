@@ -58,6 +58,6 @@ export const content: ModuleContent = {
     cloudflareTarget:
       '~2029 (Cloudflare’s company-wide post-quantum security target, not a DNSSEC-specific completion date)',
     rootZoneRollover:
-      'Separate from Cloudflare’s roadmap: the ICANN/IANA first rollover is classical (new ECDSA Root KSK in 2027, RSA Root KSK retired in 2029); Verisign’s December 2023 comments describe a second rollover in the mid-2030s that “may well involve” post-quantum cryptography, a conditional scenario rather than an ICANN/IANA plan or a forecast',
+      'Separate from Cloudflare’s roadmap: the RSA-to-RSA rollover to KSK-2024 began on 11 October 2026. ICANN’s 2 March 2026 proposal for the next, classical algorithm rollover describes ECDSA key generation in 2027 and RSA key decommissioning in 2030, subject to community feedback before execution. Verisign’s December 2023 comments describe a possible later rollover in the mid-2030s that “may well involve” post-quantum cryptography, a conditional scenario rather than an ICANN plan or forecast',
   },
 }

@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { PROVENANCE_LABEL } from '@/components/PersonaJourney/PersonaBoardView'
 import { boardRelatedLinks } from '@/data/boardRelatedLinks'
+import { DeveloperPythonEntry } from '@/components/PersonaJourney/DeveloperPythonEntry'
 import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
@@ -529,6 +530,7 @@ export function MobileHomeBoard({
       {headerRow}
       {variantChips}
       {heroText}
+      {persona === 'developer' && <DeveloperPythonEntry />}
       {ctaButtons}
       {proofChips}
       {sideCard}

@@ -63,8 +63,8 @@ const Step1WhyAndCascade: React.FC = () => (
         </p>
         <p>
           Standard enterprise risk management assumes observable precursors, historical frequency,
-          and bounded timelines. Quantum risk has none: CRQC estimates span 10 to 30+ years, there
-          are no historical incidents to calibrate against, and the risk straddles technology,
+          and bounded timelines. Quantum risk has no historical incident base rate or reliable date
+          for a cryptanalytically relevant quantum computer, and it straddles technology,
           compliance, strategic, and operational categories at once. Logging it as &quot;Low
           likelihood / High impact, review annually&quot; is risk <em>acknowledgment</em>, not risk{' '}
           <em>management</em>.
@@ -181,12 +181,39 @@ const Step2AppetiteAndHorizon: React.FC = () => (
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          PQC regulation is moving faster than most GRC teams appreciate. Annual review is too
-          infrequent; <strong>quarterly is the minimum</strong>, and monthly is more appropriate in
-          regulated sectors. The output is a quarterly <strong>Regulatory Horizon Report</strong> to
-          the Steering Committee and risk committee, listing each development&apos;s jurisdiction,
-          effective date, migration-plan implications, and required action.
+          PQC policy and standards can change between annual reviews. As a governance practice, this
+          module recommends a quarterly horizon review, with more frequent checks where sector rules
+          or active proposals warrant them. This cadence is a planning recommendation, not a
+          universal legal requirement. The output is a quarterly{' '}
+          <strong>Regulatory Horizon Report</strong> to the Steering Committee and risk committee,
+          listing each development&apos;s jurisdiction, effective date, migration-plan implications,
+          and required action.
         </p>
+        <div className="rounded-lg border border-primary/20 bg-muted/50 p-4">
+          <h3 className="text-sm font-semibold text-foreground">
+            U.S. federal example — NIST IR 8547 (final, October 2026)
+          </h3>
+          <p className="mt-2 text-xs text-foreground/80">
+            For federal high-value assets and high-impact systems, the report gives earlier targets:
+            post-quantum key establishment by 31 December 2030 and digital signatures by 31 December
+            2031 (mandated for federal civilian agencies under EO 14412 and OMB M-26-15, which also
+            directs a proposed FAR contractor rule). NIST plans to deprecate quantum-vulnerable
+            public-key cryptography after 2030 and disallow it under NIST standards and guidelines
+            after 2035. Keep scopes separate: NSA CNSA 2.0 FAQ v2.2 governs National Security
+            Systems (acquisitions 1 Jan 2027, phase-out 31 Dec 2030, mandated 31 Dec 2031); EU
+            Member States coordinate under the EU PQC Roadmap v1.1 while DORA and NIS2 impose cyber
+            risk-management duties rather than fixed PQC algorithm mandates. Treat federal guidance
+            as scoped to its mandate and verify the rules that apply to your organization.
+          </p>
+          <a
+            className="mt-2 inline-block text-xs text-primary underline underline-offset-2"
+            href="https://csrc.nist.gov/pubs/ir/8547/final"
+            target="_blank"
+            rel="noreferrer"
+          >
+            NIST IR 8547 final publication and history
+          </a>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {REG_CLASSIFICATIONS.map((c) => (
             <div key={c.status} className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -423,7 +450,7 @@ const Step5ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
     </section>
 
     <div className="text-center">
-      <Button variant="gradient" onClick={onNavigateToWorkshop} className="gap-2">
+      <Button variant="gradient" onClick={() => onNavigateToWorkshop()} className="gap-2">
         Start Workshop <ArrowRight size={18} />
       </Button>
       <p className="text-xs text-muted-foreground mt-2">

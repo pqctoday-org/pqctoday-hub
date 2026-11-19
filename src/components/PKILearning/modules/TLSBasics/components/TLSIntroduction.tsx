@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
+import { TLSKeyShareBudget } from './TLSKeyShareBudget'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
@@ -121,6 +122,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           traffic keys derived via <InlineTooltip term="HKDF">HKDF</InlineTooltip>.
         </p>
         <TLSHandshakeDiagram />
+        <TLSKeyShareBudget />
       </section>
 
       {/* Cipher Suites Explained */}
@@ -406,10 +408,28 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             <FileSearch size={12} /> Certificate Transparency (RFC 9162)
           </h3>
           <p className="text-xs text-muted-foreground">
-            Certificate Transparency (CT) requires CAs to log all issued certificates in publicly
-            auditable append-only logs. Browsers verify that certificates appear in CT logs,
-            preventing misissued certificates from going undetected. Understanding CT is essential
-            context for Merkle Tree Certificates, which leverage this same log infrastructure.
+            Certificate Transparency gives public TLS issuance an auditable record. Chrome and Apple
+            require eligible Signed Certificate Timestamps (SCTs) for publicly trusted TLS server
+            certificates under their respective policies. An SCT is a signed promise of inclusion.
+            An auditor verifies actual inclusion separately. Private trust anchors sit outside those
+            public-trust policies.
+          </p>
+          <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <a
+              className="text-primary underline"
+              href="https://googlechrome.github.io/CertificateTransparency/ct_policy.html"
+            >
+              Chrome CT policy
+            </a>
+            <a className="text-primary underline" href="https://support.apple.com/en-us/103214">
+              Apple CT policy
+            </a>
+            <a
+              className="text-primary underline"
+              href="https://www.rfc-editor.org/rfc/rfc9162.html#section-5.4"
+            >
+              RFC 9162 inclusion proof
+            </a>
           </p>
         </div>
 

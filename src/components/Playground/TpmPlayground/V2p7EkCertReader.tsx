@@ -1,5 +1,5 @@
 /**
- * V2p7EkCertReader.tsx — V2.7 RC1 EK Certificate NV Slot Reader
+ * V2p7EkCertReader.tsx — published V2.7 EK Certificate NV Slot Reader
  *
  * For each of the 6 V2.7 §5.3.1 NV cert indices, TPM2_NV_Read (chunked) →
  * @peculiar/x509 parse → byte-exact SPKI OID match vs the NIST CSOR
@@ -125,14 +125,16 @@ export function V2p7EkCertReader({ isWasmReady, v2p7Status }: Props) {
       <div className="glass-panel p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold mb-2">V2.7 RC1 EK Certificate NV Reader</h2>
+            <h2 className="text-xl font-bold mb-2">Published V2.7 EK Certificate NV Reader</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Reads the X.509 EK certificate from each of the 6 spec-mandated NV slots in V2.7
-              §5.3.1 (<code>0x01c00060/62/64/70/72/74</code>), parses with{' '}
-              <code>@peculiar/x509</code>, and byte-matches the SPKI AlgorithmIdentifier OID against
-              the NIST CSOR reference per V2.7 §6.2.3 (ML-KEM) / §6.2.4 (ML-DSA). This is the same
-              five-step conformance check that <code>make ek-cert-conformance-xcheck</code> runs in
-              C against native swtpm — now running entirely in your browser.
+              Reads X.509 certificates from the six profile-defined NV indices in published V2.7
+              §5.3.1 (<code>0x01c00060/62/64/70/72/74</code>). Certificate storage is optional;
+              these are local emulator samples issued by an ephemeral development CA, not
+              manufacturer credentials. The reader parses with <code>@peculiar/x509</code>, and
+              byte-matches the SPKI AlgorithmIdentifier OID against the NIST CSOR reference per V2.7
+              §6.2.3 (ML-KEM) / §6.2.4 (ML-DSA). This is the same five-step conformance check that{' '}
+              <code>make ek-cert-conformance-xcheck</code> runs in C against native swtpm — now
+              running entirely in your browser.
             </p>
           </div>
           <Button
@@ -295,7 +297,8 @@ function CertCard({ r }: { r: CertResult }) {
 
       <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
         Note: issuer is an ephemeral ML-DSA-65 dev CA. Cert is <strong>educational</strong>, not a
-        production trust anchor — V2.7 RC1 deliberately doesn't mandate a CA hierarchy.
+        production trust anchor. V2.7 defines certificate formats and NV indices; it does not
+        require every manufacturer to pre-provision certificates or mandate a single CA hierarchy.
       </div>
     </div>
   )

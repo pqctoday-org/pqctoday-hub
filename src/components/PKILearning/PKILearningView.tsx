@@ -10,6 +10,7 @@ import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { ProductionCapabilityChecklist } from './common/ProductionCapabilityChecklist'
+import { WorkshopEvidenceNavigation } from './common/workshopEvidenceNavigation'
 import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
 import { MANIFESTS } from './manifest/registry'
 import {
@@ -62,6 +63,11 @@ export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const contentRef = useRef<HTMLDivElement>(null)
+  const worksheetRef = useRef<HTMLDetailsElement>(null)
+  const [returnTarget, setReturnTarget] = useState<{
+    moduleId: string
+    trigger: HTMLButtonElement
+  } | null>(null)
   const [revisionDrilldownOpen, setRevisionDrilldownOpen] = useState(false)
   const { revisions } = useRevisions()
   // The dashboard owns its header via the shared PageHeader and needs no back
@@ -101,6 +107,26 @@ export const PKILearningView: React.FC = () => {
   //     below — without it they'd have no way back at all.
   const hasOwnBackLink = Boolean(moduleMeta) && !CUSTOM_MODULE_IDS.has(moduleId)
   const showStandaloneBackLink = !isDashboard && !isEmbed && !hasOwnBackLink
+
+  const openWorksheet = (trigger: HTMLButtonElement) => {
+    const worksheet = worksheetRef.current
+    const checklist = worksheet?.parentElement?.closest('details')
+    if (!worksheet || !checklist) return
+
+    checklist.open = true
+    worksheet.open = true
+    setReturnTarget({ moduleId, trigger })
+    worksheet.querySelector('summary')?.focus()
+  }
+
+  const returnToWorkshop = () => {
+    const trigger = returnTarget?.trigger
+    const worksheet = worksheetRef.current
+    if (worksheet) worksheet.open = false
+    setReturnTarget(null)
+    if (trigger?.isConnected) trigger.focus()
+    else worksheet?.querySelector('summary')?.focus()
+  }
 
   const showModuleActions = showSidebar && Boolean(moduleMeta)
   const hasReviewRecord = Boolean(LM_ID_MAP[moduleId])
@@ -204,45 +230,56 @@ export const PKILearningView: React.FC = () => {
                 </div>
               }
             >
-              <Routes>
-                <Route index element={<LearnRedesignView />} />
-                {/* The legacy five-mode dashboard is retired (learn.md remediation item 8):
+              <WorkshopEvidenceNavigation.Provider
+                value={showSidebar && !isEmbed && moduleMeta ? openWorksheet : null}
+              >
+                <Routes>
+                  <Route index element={<LearnRedesignView />} />
+                  {/* The legacy five-mode dashboard is retired (learn.md remediation item 8):
                     no in-app links point to it, it was already excluded from SEO indexing
                     as a legacy duplicate (routeMeta.ts), and the redesign restores its
                     useful deep-link params (?track=, ?persona=, ?mode=) on /learn itself.
                     Redirect rather than 404 in case an old bookmark/external link remains. */}
-                <Route path="legacy" element={<Navigate to="/learn" replace />} />
-                {/* Module routes — derived from the manifests (single source). */}
-                {[...MODULE_COMPONENTS].map(([path, Component]) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={
-                      MOVED_CONTENT_REDIRECTS.has(path) || REORDERED_WORKSHOP_STEPS.has(path) ? (
-                        // This module gave content to another one, or reordered its workshop steps: old links move on.
-                        <MovedContentGate from={path}>
+                  <Route path="legacy" element={<Navigate to="/learn" replace />} />
+                  {/* Module routes — derived from the manifests (single source). */}
+                  {[...MODULE_COMPONENTS].map(([path, Component]) => (
+                    <Route
+                      key={path}
+                      path={path}
+                      element={
+                        MOVED_CONTENT_REDIRECTS.has(path) || REORDERED_WORKSHOP_STEPS.has(path) ? (
+                          // This module gave content to another one, or reordered its workshop steps: old links move on.
+                          <MovedContentGate from={path}>
+                            <Component />
+                          </MovedContentGate>
+                        ) : (
                           <Component />
-                        </MovedContentGate>
-                      ) : (
-                        <Component />
-                      )
-                    }
-                  />
-                ))}
-                {/* Legacy/short aliases that resolve to a canonical module. */}
-                {ROUTE_ALIAS_ENTRIES.map(({ alias, Component }) => (
-                  <Route key={alias} path={alias} element={<Component />} />
-                ))}
-                {/* Old URLs of modules that were split into several. */}
-                {[...SPLIT_MODULE_REDIRECTS.keys()].map((from) => (
-                  <Route key={from} path={from} element={<SplitModuleRedirect from={from} />} />
-                ))}
-                {/* Non-module journey path (no manifest). */}
-                <Route path="common-ground" element={<CommonGroundPath />} />
-              </Routes>
+                        )
+                      }
+                    />
+                  ))}
+                  {/* Legacy/short aliases that resolve to a canonical module. */}
+                  {ROUTE_ALIAS_ENTRIES.map(({ alias, Component }) => (
+                    <Route key={alias} path={alias} element={<Component />} />
+                  ))}
+                  {/* Old URLs of modules that were split into several. */}
+                  {[...SPLIT_MODULE_REDIRECTS.keys()].map((from) => (
+                    <Route key={from} path={from} element={<SplitModuleRedirect from={from} />} />
+                  ))}
+                  {/* Non-module journey path (no manifest). */}
+                  <Route path="common-ground" element={<CommonGroundPath />} />
+                </Routes>
+              </WorkshopEvidenceNavigation.Provider>
             </Suspense>
           )}
-          {showSidebar && !isEmbed && <ProductionCapabilityChecklist moduleId={moduleId} />}
+          {showSidebar && !isEmbed && (
+            <ProductionCapabilityChecklist
+              key={moduleId}
+              moduleId={moduleId}
+              worksheetRef={worksheetRef}
+              onReturn={returnTarget?.moduleId === moduleId ? returnToWorkshop : undefined}
+            />
+          )}
           {showSidebar && (
             <p className="text-[11px] text-muted-foreground text-center mt-4">
               Learning module content can be inaccurate. Please double-check its information. Report

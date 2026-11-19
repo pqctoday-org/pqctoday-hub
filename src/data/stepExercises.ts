@@ -19,6 +19,7 @@ export interface StepExercise {
   answer: number
   /** Why that option is right — the concept, one or two sentences. */
   why: string
+  source?: { label: string; href: string }
 }
 
 export const STEP_EXERCISES: Record<string, StepExercise> = {
@@ -68,7 +69,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Pick an algorithm that ends at 0-bit security under quantum attack. Which attack did that?',
     options: ["Shor's algorithm", "Grover's algorithm", 'Both equally'],
     answer: 0,
-    why: "Shor's solves factoring and discrete logs in polynomial time, taking RSA and ECC to zero. Grover's only halves the effective bits of symmetric ciphers and hashes.",
+    why: 'Shor’s algorithm changes the work required to solve the problems behind RSA and ECC on a sufficiently capable quantum computer. Grover’s ideal query estimate concerns key search or finding a preimage for a chosen digest.',
   },
   'quantum-threats/vulnerability-matrix': {
     prompt: "In the matrix, what does Grover's algorithm do to AES-128?",
@@ -78,7 +79,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Nothing at all',
     ],
     answer: 0,
-    why: "Grover's gives a quadratic speedup on search, so 128 bits of key become about 64 bits of work: weakened, which is why AES-256 is the recommendation, not a new cipher.",
+    why: 'In the idealized model, AES-128 key search takes about 2^64 sequential Grover queries. NIST still uses AES-128 as its Category 1 reference. Deployment policy and data lifetime determine whether to use AES-256.',
   },
   'quantum-threats/key-size-analyzer': {
     prompt:
@@ -208,7 +209,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'Its certificate chain (at least about 11.9 KB in the lab) is far larger than a classical chain and may exceed the buffer sizes or parsing limits of the devices that inspect TLS chains',
     ],
     answer: 2,
-    why: 'Intercepting proxies must parse and re-sign the full certificate chain. The lab flags every PQC certificate type because the chain is much larger than a classical one and, as the Applied Quantum PQC Migration Framework notes, larger certificates may exceed the buffer sizes or parsing limits of the devices that inspect them.',
+    why: 'An inspecting proxy terminates separate TLS connections. It parses and validates the upstream chain, then presents a certificate signed under a trust anchor configured for its downstream clients. Larger certificates can exceed a device’s parsing or buffer limits.',
   },
   'network-security-pqc/ids-signature-updater': {
     prompt:
@@ -261,7 +262,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       'It negotiates the deprecated TLS 1.2',
     ],
     answer: 1,
-    why: 'A hybrid X25519+ML-KEM-768 key exchange protects the session secret, but authentication still rests on the classical ECDSA certificate, so the endpoint is not fully quantum-safe until the certificate moves to ML-DSA or a composite.',
+    why: 'The negotiated hybrid group protects key agreement. In this example the reported authentication certificate uses ECDSA. Verify the actual CertificateVerify signature and certificate path before making a broader authentication claim.',
   },
   'pqc-testing-validation/tvla-leakage-analyzer': {
     prompt:
@@ -505,10 +506,14 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
   // skills-team-structure
   'skills-team-structure/team-sizing': {
     prompt:
-      'With the default 2,000 cryptographic instances, the First two years phase (1 / 500) and OT in scope, how many estimated program FTEs does the calculator show?',
-    options: ['8', '5', '4'],
-    answer: 1,
-    why: '2,000 instances at one FTE per 500 gives a variable pool of 4, which already covers the three-person dedicated core (QRPM, Cryptographic Architect, PMO Analyst) rather than adding to it, and the OT toggle adds one specialist on top: 4 + 1 = 5.',
+      'Set 2,000 instances, First two years and OT in scope. With sample allocations reset, what does the worksheet show?',
+    options: [
+      '6.5 allocated FTE, made up of 4 delivery and 2.5 coordination',
+      '5 allocated FTE, because OT adds one to the delivery ratio',
+      '4 allocated FTE, with no coordination allocation',
+    ],
+    answer: 0,
+    why: 'The ratio seeds 4 delivery FTE, with OT sharing that pool. The editable coordination defaults add 2.5 FTE. The resulting 6.5 is a sample allocation.',
   },
   'skills-team-structure/crypto-champions': {
     prompt:
@@ -918,7 +923,7 @@ export const STEP_EXERCISES: Record<string, StepExercise> = {
       "The Mission PQC Readiness panel shows an 'Algorithm Decision Window'. How many years before the Launch / Delivery Year does that window open?",
     options: ['3 years before', '1 year before', '5 years before'],
     answer: 0,
-    why: 'The planner back-dates a three-year design phase from launch: algorithm selection fills the first year, crypto library integration and DO-178C certification the second, key provisioning the last, so the algorithm choice must be locked three years out.',
+    why: 'The planner back-dates a three-year design phase from launch: algorithm selection fills the first year, crypto library integration and DO-178C certification the second, key provisioning the last, so the worksheet opens the decision window three years out. This is a scenario assumption.',
   },
   // ot-pqc
   'ot-pqc/protocol-security-analyzer': {

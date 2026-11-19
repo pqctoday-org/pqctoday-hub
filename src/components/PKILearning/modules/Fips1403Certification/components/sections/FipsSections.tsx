@@ -1166,13 +1166,13 @@ export const FipsAcvpBridge = () => (
     <SubHeading>What algorithm testing does not cover</SubHeading>
     <p>
       Algorithm testing checks outputs against test vectors. The module must also test{' '}
-      <em>itself</em>. <Cite std={IG}>IG</Cite> 10.3.A names self-tests for ML-KEM key generation,
-      encapsulation and decapsulation, and for ML-DSA and SLH-DSA. Its 19 August 2026 update adds
-      that the pair-wise consistency test is required only before the first export of the seed or
-      key pair, or before the first operational use of the key pair after the seed is generated in
-      the module; regenerating the key pair later from the stored seed is a reconstitution and needs
-      no new test. Entropy is a separate track again: entropy source validation (
-      <Cite std={ESV}>ESV</Cite>).
+      <em>itself</em>. <Cite std={IG}>IG</Cite> 10.3.A names cryptographic algorithm self-tests
+      (CASTs) for ML-KEM key generation, encapsulation and decapsulation, and for ML-DSA and
+      SLH-DSA. Its 19 August 2026 update adds that the pair-wise consistency test (PCT) is required
+      only before the first export of the seed or key pair, or before the first operational use of
+      the key pair after the seed is generated in the module; regenerating the key pair later from
+      the stored seed is a reconstitution and needs no new test. Entropy is a separate track again:
+      entropy source validation (<Cite std={ESV}>ESV</Cite>).
     </p>
     <p>For ML-DSA, three checks answer different questions:</p>
     <ul className="list-disc space-y-2 pl-5" aria-label="Three different ML-DSA checks">

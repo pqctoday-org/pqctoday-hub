@@ -518,7 +518,7 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
             status="safe"
           />
           <ComplexityBar
-            label="Quantum (Grover's) on SHA-256"
+            label="Ideal Grover preimage queries for a specified SHA-256 digest"
             exponent={128}
             maxExponent={256}
             status="safe"
@@ -530,9 +530,10 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
             status="broken"
           />
           <p className="text-xs text-muted-foreground">
-            Grover&apos;s halves the exponent: 2<sup>256</sup> → 2<sup>128</sup>. Still
-            astronomically hard. Shor&apos;s <em>collapses</em> RSA to polynomial time &mdash;
-            that&apos;s the difference.
+            For a specified SHA-256 output, ideal search changes from about 2<sup>256</sup>{' '}
+            classical evaluations to 2<sup>128</sup> sequential Grover queries. Finding any pair
+            with the same digest is a different problem. Shor’s algorithm changes the scaling for
+            integer factoring.
           </p>
         </div>
 
@@ -967,7 +968,7 @@ export const AlgorithmFamilyWorkshop: React.FC<AlgorithmFamilyWorkshopProps> = (
 
       <FamilySection
         title="Code-Based"
-        subtitle="Classic McEliece, HQC"
+        subtitle="HQC (NIST Round 4 selection), Classic McEliece"
         borderColor="border-l-accent"
         icon={Binary}
         isExpanded={expandedFamily === 'code'}

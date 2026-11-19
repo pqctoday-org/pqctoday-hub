@@ -214,13 +214,23 @@ describe('auditCryptoApi - watch-outs', () => {
     expect(rec.watchOuts.join(' ')).toMatch(/WASM/i)
   })
 
-  it('must-support fallback + TPM provider emits explicit fallback-path TODO', () => {
-    const rec = auditCryptoApi({
-      ...baseInputs,
-      runtimeFallback: 'must-support',
-      provider: ['tpm'],
-    })
-    expect(rec.watchOuts.join(' ')).toMatch(/software-fallback/i)
+  it('only routes to an equivalent approved alternate under the explicit fallback policy', () => {
+    const primary = { ...baseInputs, provider: ['tpm'] }
+    expect(auditCryptoApi(primary).fallbackTest).toContain('lacks matching')
+    expect(
+      auditCryptoApi({ ...primary, fallbackEvidence: 'wrong-profile' }).fallbackTest
+    ).toContain('requires ML-DSA-65')
+    expect(
+      auditCryptoApi({ ...primary, fallbackEvidence: 'wrong-boundary' }).fallbackTest
+    ).toContain('outside the approved key handling boundary')
+    const equivalent = { ...primary, fallbackEvidence: 'equivalent' }
+    expect(auditCryptoApi(equivalent).fallbackTest).toContain('Route the signing request')
+    expect(
+      auditCryptoApi({ ...equivalent, runtimeFallback: 'must-fail-closed' }).fallbackTest
+    ).toContain('fail-closed policy')
+    expect(
+      auditCryptoApi({ ...equivalent, runtimeFallback: 'no-preference' }).fallbackTest
+    ).toContain('records a fallback policy')
   })
 
   it('SLH-DSA on embedded warns about signature size + OTA budget', () => {

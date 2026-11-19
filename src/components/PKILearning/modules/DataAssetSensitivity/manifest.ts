@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'data-asset-sensitivity',
-  contentVersion: 19,
+  contentVersion: 20,
   lm_id: 'LM-005',
   title: 'Data & Asset Sensitivity',
   description:
@@ -30,7 +30,7 @@ const manifest: ModuleManifest = {
   // Round 9, wave 2 (2026-09-19): "Start here" — one real workshop step, written from that step's component.
   startHere: {
     step: 'asset-inventory',
-    text: "Fill in the Add Data Asset form — name, type, sensitivity tier, retention — and drag the CRQC arrival slider: each asset's HNDL Risk Year in the inventory table updates live.",
+    text: "Fill in the Add Data Asset form — name, type, sensitivity tier, retention and confidentiality — and drag the CRQC arrival slider: each asset's HNDL Risk Year in the inventory table updates live.",
   },
   // Wave B (2026-09-18): derived from the algorithm and standard ids this
   // module's content.ts declares (the References tab's own data), restricted to

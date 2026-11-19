@@ -90,14 +90,18 @@ for (const width of [1280, 390]) {
       await page.getByRole('option', { name: 'ML-KEM-768', exact: true }).click()
       await sample.getByLabel('Long-lived data:', { exact: false }).uncheck()
       await sample.getByRole('button', { name: 'Evaluate the fictional scenario' }).click()
-      await expect(sample.getByRole('status')).toContainText(
+      await expect(sample.getByRole('status', { name: 'Policy scenario result' })).toContainText(
         'No contradiction under these sample inputs.'
       )
       await sample.getByLabel('Long-lived data:', { exact: false }).check()
       await sample.getByLabel('The fictional portal policy applies').uncheck()
       await sample.getByRole('button', { name: 'Evaluate the fictional scenario' }).click()
-      await expect(sample.getByRole('status')).toContainText('out-of-scope')
-      await expect(sample.getByRole('status')).toContainText('scenario-risk')
+      await expect(sample.getByRole('status', { name: 'Policy scenario result' })).toContainText(
+        'out-of-scope'
+      )
+      await expect(sample.getByRole('status', { name: 'Policy scenario result' })).toContainText(
+        'scenario-risk'
+      )
     })
 
     test('audit scope identifies a mismatched record and accepts the matching sample', async ({

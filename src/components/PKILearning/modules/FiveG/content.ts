@@ -8,9 +8,9 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: '5g-security',
-  version: '1.0.2',
-  lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-11',
+  version: '1.0.4',
+  lastReviewed: '2026-08-18',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),

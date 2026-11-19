@@ -434,6 +434,18 @@ export function MobileAssessView() {
           Your answers are saved. Open the educational report to review its modelled score, sourced
           milestones and suggested next steps.
         </p>
+        {store.cryptoUnknown && (
+          <section
+            aria-label="Cryptographic inventory follow-up"
+            className="max-w-xs rounded-lg border border-primary/25 bg-primary/5 p-3 text-[11.5px]"
+          >
+            <h2 className="font-semibold">Cryptographic inventory needed</h2>
+            <p>
+              Your score uses conservative exposure assumptions until you identify the algorithms in
+              use.
+            </p>
+          </section>
+        )}
         <Link
           to="/report"
           className="mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gradient-to-r from-secondary to-primary px-5 text-[12.5px] font-bold text-primary-foreground"
@@ -712,6 +724,12 @@ export function MobileAssessView() {
               }
             )}
             <UnknownToggle checked={store.cryptoUnknown} onChange={store.setCryptoUnknown} />
+            {store.cryptoUnknown && (
+              <p className="text-[11px] text-muted-foreground">
+                Your inventory is recorded as unknown. The report uses conservative exposure
+                assumptions until you identify the algorithms in use.
+              </p>
+            )}
           </>
         )}
 

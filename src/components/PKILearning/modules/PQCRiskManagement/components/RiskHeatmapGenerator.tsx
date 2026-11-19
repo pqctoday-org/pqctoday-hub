@@ -94,7 +94,7 @@ const TREATMENT_OPTIONS: {
     color: 'text-success',
     bg: 'bg-success/10 border-success/20',
     guidance:
-      'Propose acceptance; the selection does not establish that risk is within tolerance or approved. Example: NIST IR 8547 states that NIST-approved symmetric primitives with 128 or more bits of classical security are believed to satisfy no less than Category 1 security requirements.',
+      'Record the proposed accepting authority, scope and rationale, then follow your organization’s approval process. Selecting Accept here does not establish that the risk is within tolerance or approved.',
   },
   {
     value: 'transfer',
@@ -239,6 +239,7 @@ function TreatmentSelector({
             </span>
             <FilterDropdown
               noContainer
+              ariaLabel={`Hypothetical likelihood for ${entry.assetName || 'unnamed asset'}`}
               defaultLabel="Choose likelihood 1–5"
               selectedId={
                 validHypotheticalRating(residualOverride?.likelihood)
@@ -268,6 +269,7 @@ function TreatmentSelector({
             </span>
             <FilterDropdown
               noContainer
+              ariaLabel={`Hypothetical impact for ${entry.assetName || 'unnamed asset'}`}
               defaultLabel="Choose impact 1–5"
               selectedId={
                 validHypotheticalRating(residualOverride?.impact)
@@ -1127,9 +1129,9 @@ export function EducationalGuide({
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                {isRegister ? '' : 'Top-right zone. '}Immediate action required. Assets using
-                RSA/ECC with near-term CRQC exposure and catastrophic breach consequences. Migrate
-                first.
+                {isRegister ? '' : 'Top-right zone. '}Highest relative score in this worksheet.
+                Validate the asset, assumptions and consequences with your organization&apos;s risk
+                process; the score alone does not set a migration date or approve treatment.
               </p>
             </div>
 
@@ -1139,8 +1141,9 @@ export function EducationalGuide({
                 <span className="text-sm font-semibold text-warning">High (12&ndash;19)</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Either likelihood is high or impact is severe. Plan migration within 12 months.
-                Often includes key exchange protocols vulnerable to HNDL attacks.
+                A high worksheet score. Review assumptions, ownership, dependencies and applicable
+                migration dates. This band does not create a universal 12-month schedule. HNDL
+                applies only when the recorded-session and key-recovery conditions are met.
               </p>
             </div>
 
@@ -1150,8 +1153,9 @@ export function EducationalGuide({
                 <span className="text-sm font-semibold text-primary">Medium (6&ndash;11)</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                {isRegister ? '' : 'Center zone. '}Real but manageable risks within normal planning
-                cycles. Schedule for migration as part of broader PQC transition.
+                {isRegister ? '' : 'Center zone. '}A middle relative score under this worksheet.
+                Review it alongside the organization&apos;s risk process, asset lifetime and
+                applicable transition dates.
               </p>
             </div>
 
@@ -1161,8 +1165,9 @@ export function EducationalGuide({
                 <span className="text-sm font-semibold text-success">Low (1&ndash;5)</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                {isRegister ? '' : 'Bottom-left zone. '}Threat is unlikely or impact is contained.
-                May include quantum-safe algorithms (AES-256) that need monitoring only.
+                {isRegister ? '' : 'Bottom-left zone. '}The lowest relative score under this
+                worksheet; it does not mean an asset is safe or needs no review. Confirm its
+                cryptographic use, data lifetime and required profile.
               </p>
             </div>
           </div>

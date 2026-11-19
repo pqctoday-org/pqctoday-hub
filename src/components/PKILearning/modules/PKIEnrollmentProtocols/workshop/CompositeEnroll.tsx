@@ -286,7 +286,7 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
             rel="noopener noreferrer"
           >
             <Button variant="outline" size="sm" className="gap-1">
-              RFC 10073 (Composite ML-DSA) <ExternalLink size={12} />
+              RFC 10073 (final: Composite ML-DSA) <ExternalLink size={12} />
             </Button>
           </a>
           <a
@@ -295,7 +295,7 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
             rel="noopener noreferrer"
           >
             <Button variant="outline" size="sm" className="gap-1">
-              draft-composite-kem <ExternalLink size={12} />
+              Composite ML-KEM draft -23 (RFC Editor queue) <ExternalLink size={12} />
             </Button>
           </a>
           <a

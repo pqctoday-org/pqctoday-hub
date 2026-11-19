@@ -213,6 +213,12 @@ export default defineConfig([
                 // device that the laptop About and the phone About both print, so
                 // the two pages can never say different things.
                 '!@/components/About/analyticsStatement',
+                // SbomSection.tsx (About/sections) — self-contained collapsible
+                // panel with no desktop-only layout; shared so phone and desktop
+                // About expose the exact same SBOM list and search.
+                '!@/components/About/sections',
+                '@/components/About/sections/*',
+                '!@/components/About/sections/SbomSection',
                 // useBusinessMetrics.ts (hooks) / cswp39Tier.ts (lib) — pure
                 // hook + pure logic, no JSX: the real metrics hook and tier
                 // computation every desktop Command Center panel reads, so
@@ -345,6 +351,9 @@ export default defineConfig([
                 '!@/components/Compliance/requirements',
                 '@/components/Compliance/requirements/*',
                 '!@/components/Compliance/requirements/requirementsModel',
+                // RequirementsTab.tsx — shared requirements view reused by
+                // MobileComplianceView so requirement filtering/text cannot drift.
+                '!@/components/Compliance/requirements/RequirementsTab',
                 // pillarModel.ts (traceability-chain/deadline-phases/dossier
                 // derivation for the "about this standard" detail view) and
                 // tones.ts (Tone -> Tailwind-class mapping) — both pure logic,
@@ -376,6 +385,10 @@ export default defineConfig([
                 // JSX) over the workshop registry, shared so a phone chip opens
                 // the same page the laptop chip does.
                 '!@/components/Algorithms/matrixToolLink',
+                // StandardSizeBudget.tsx — self-contained vertical size-budget
+                // calculator with no desktop-only layout; shared so phone and
+                // desktop use the same FIPS 203/204/205 buffer check.
+                '!@/components/Algorithms/StandardSizeBudget',
                 // Glossary.tsx / UserManualPanel.tsx (common) — same category
                 // as RoleHomeView: self-contained isOpen/onClose content
                 // panels already responsive (w-full with a max-w cap), reused
@@ -484,6 +497,10 @@ export default defineConfig([
                 // ordering the desktop table/cards and the phone list use, so
                 // a shared ?sort= link orders the same way on both.
                 '!@/components/Threats/threatSort',
+                // ThreatResponsePractice.tsx — self-contained vertical guidance
+                // card with no desktop-only layout; shared so phone and desktop
+                // show the same Project Leap Phase 2 link and practice copy.
+                '!@/components/Threats/ThreatResponsePractice',
                 // useLibraryPipeline.ts / libraryPills.ts (Library/redesign)
                 // — the real filter/sort pipeline and pill-formatting
                 // helpers every desktop Library surface already reads (no
@@ -549,6 +566,10 @@ export default defineConfig([
                 // followed-fields store and reporting window; this exact reuse
                 // avoids duplicate counters and selection behavior on phones.
                 '!@/components/PersonaJourney/ResearcherFieldWatchCard',
+                // DeveloperPythonEntry.tsx — self-contained vertical entry card
+                // with no desktop-only layout; shared so phone and desktop show
+                // the same browser-Python signature exercise entry point.
+                '!@/components/PersonaJourney/DeveloperPythonEntry',
                 // usePersonaPathItems.ts / manifest/registry.ts / manifest/types.ts
                 // (PKILearning) — pure logic/data, no JSX. Phase 5's Learn list
                 // needs the same phase-partitioned path data + manifest

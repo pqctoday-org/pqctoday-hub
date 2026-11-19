@@ -93,14 +93,16 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       {/* Shor's Algorithm */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Calculator size={20} /> Shor&apos;s Algorithm — Breaking{' '}
+          <Calculator size={20} /> Shor&apos;s Algorithm — Threat to{' '}
           <InlineTooltip term="RSA">RSA</InlineTooltip> &amp;{' '}
           <InlineTooltip term="ECC">ECC</InlineTooltip>
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Peter Shor showed in 1994 (Polynomial-Time Algorithms for Prime Factorization and Discrete
-          Logarithms on a Quantum Computer) that a quantum computer can solve two hard mathematical
-          problems <strong>exponentially faster</strong> than any classical computer:
+          Logarithms on a Quantum Computer) that a sufficiently capable quantum computer can solve
+          integer factoring and discrete-log problems in polynomial time on a sufficiently capable
+          fault-tolerant quantum computer. No polynomial-time classical algorithm for these problems
+          is known:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
@@ -171,13 +173,13 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       {/* Grover's Algorithm */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Search size={20} /> Grover&apos;s Algorithm — Weakening{' '}
-          <InlineTooltip term="AES">AES</InlineTooltip> &amp; SHA
+          <Search size={20} /> Grover&apos;s Algorithm — Search and Symmetric-Key Effects
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           Lov Grover showed in 1996 (A fast quantum mechanical algorithm for database search) that a
-          quantum computer can search an unstructured database quadratically faster. This affects
-          symmetric encryption and hash functions:
+          quantum computer can search an unstructured database quadratically faster. This gives a
+          quadratic query speedup for unstructured search. AES key search and hash collision
+          resistance have different analyses:
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
@@ -336,8 +338,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           <InlineTooltip term="HNDL">Harvest Now, Decrypt Later (HNDL)</InlineTooltip>
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          The most urgent quantum threat is not future code-breaking — it&apos;s data being
-          intercepted <strong>today</strong> for future decryption. This attack is called{' '}
+          A time-sensitive quantum risk for long-lived secrets is recorded encrypted traffic that
+          used vulnerable public-key key establishment and could later be decrypted if an attacker
+          recovers the session secrets. This attack is called{' '}
           <strong>Harvest Now, Decrypt Later (HNDL)</strong>, also known as &quot;Store Now, Decrypt
           Later&quot; or &quot;retrospective decryption.&quot;
         </p>
@@ -346,7 +349,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <div className="text-2xl mb-1">📡</div>
             <div className="text-sm font-bold text-status-error mb-1">Phase 1: Harvest</div>
             <p className="text-xs text-muted-foreground">
-              Adversaries intercept encrypted traffic today (VPN, TLS, email) and store it.
+              Adversaries record selected encrypted sessions today (for example, VPN or TLS) when
+              their key establishment is quantum-vulnerable.
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-center">
@@ -360,8 +364,10 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <div className="text-2xl mb-1">🔓</div>
             <div className="text-sm font-bold text-primary mb-1">Phase 3: Decrypt</div>
             <p className="text-xs text-muted-foreground">
-              Once CRQC is available, Shor&apos;s breaks the key exchange. Symmetric keys are
-              recovered, all data is decrypted.
+              If Shor&apos;s algorithm can recover the recorded session&apos;s classical key
+              establishment secret, the attacker can derive its traffic keys and decrypt data
+              protected only by that session. This does not cover every encrypted archive or
+              sessions with effective post-quantum key establishment.
             </p>
           </div>
         </div>
@@ -387,9 +393,12 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
           HNDL targets confidentiality. <strong>HNFL targets authenticity and integrity.</strong>{' '}
-          Adversaries collect signed artifacts today — firmware images, certificate chains,
-          code-signing blobs — and store them. Once a CRQC arrives, Shor&apos;s algorithm recovers
-          the signer&apos;s private key, enabling forged signatures on any document or binary.
+          Adversaries may collect signed artifacts and public keys today. Once a CRQC can recover a
+          vulnerable signer&apos;s private key, the attacker can create new signatures that verify
+          under that key and may present new artifacts as if the signer approved them. This does not
+          alter files that were signed earlier. Whether an old record can be distinguished from a
+          later forgery depends on preserved evidence, such as trusted timestamp and archive
+          records.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
@@ -412,8 +421,10 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <div className="text-2xl mb-1">✍️</div>
             <div className="text-sm font-bold text-primary mb-1">Phase 3: Forge</div>
             <p className="text-xs text-muted-foreground">
-              CRQC runs Shor&apos;s algorithm on the signer&apos;s public key, recovers the private
-              key, and forges arbitrary signatures retroactively.
+              CRQC runs Shor&apos;s algorithm on the public key, recovers the private key, and can
+              create new signatures that verify under it. Previously signed files do not change;
+              reliable time and archive evidence can help distinguish old records from later
+              forgeries.
             </p>
           </div>
         </div>
@@ -433,15 +444,27 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-xs font-bold text-foreground mb-1">Why it&apos;s urgent now</div>
             <p className="text-xs text-muted-foreground">
-              A Root CA issued today with a 20-year validity period will still be trusted in 2046.
-              If a CRQC arrives within the planning range this site uses ({crqc.low}&ndash;
-              {crqc.high}), that CA&apos;s RSA or ECDSA key is breakable — and every certificate it
-              ever signed becomes forgeable. Migration to{' '}
+              A Root CA issued today with a 20-year validity period is modeled as trusted through
+              2046. If a CRQC arrives within the planning range this site uses ({crqc.low}&ndash;
+              {crqc.high}), an attacker could recover its RSA or ECDSA key and issue new
+              certificates that appear to chain to that root. Existing certificates are not changed,
+              but their history may be harder to establish without durable issuance-time and archive
+              evidence.{' '}
+              <a
+                href="https://www.rfc-editor.org/rfc/rfc3161.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                RFC 3161
+              </a>{' '}
+              describes trusted timestamps as proof that data existed before a time; timestamp
+              service security and retained certificate status still matter. Migration to{' '}
               <strong>
                 <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> or{' '}
                 <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>
               </strong>{' '}
-              must complete before CRQC arrival.
+              must complete before a CRQC makes the classical key recoverable.
             </p>
           </div>
         </div>

@@ -4,7 +4,7 @@
  * fixtures and the real WS-F pipeline (no mocks of parsing or planning).
  */
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
+import { act, render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -115,12 +115,17 @@ describe('ResponseArtifactLab helpers', () => {
           commit: '975de31eb83d87039ec88934fdc47d8c312b892d',
         },
       },
+      response: { sha256: 'A1'.repeat(32) },
       engine: { label: 'softhsmv3 Rust engine', artifactSha256Note: 'not computed' },
       summary: { answered: 30, unsupported: 135, error: 0 },
     })
     expect(s.evidenceClass).toBe('nist-acvp-reference-sample')
     expect(s.knownFixture).toContain('@ 975de31')
     expect(s.answered).toBe(30)
+    expect(s.responseSha256).toBe('a1'.repeat(32))
+    expect(
+      summarizeEvidence({ evidenceClass: 'unknown', response: { sha256: 'bad' } }).responseSha256
+    ).toBeNull()
     expect(() => summarizeEvidence({ vsId: 42 })).toThrow(/evidenceClass/)
     // A version 2 file has neither the input-kind breakdown nor, here, a comparison.
     expect(s.byInputKind).toBeNull()
@@ -469,6 +474,33 @@ describe('ResponseArtifactLab step C: uploaded response.json', () => {
     await chooseResponse(user, '[1')
     await screen.findByRole('alert')
     await user.click(screen.getByRole('button', { name: 'ML-KEM / encapDecap / FIPS203' }))
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  it('a slow file read cannot overwrite a newer response or appear under a new sample', async () => {
+    const user = userEvent.setup()
+    renderLab()
+    const good = await answersFor('ML-KEM-encapDecap-FIPS203')
+    const startRead = async () => {
+      let finishRead: (text: string) => void = () => undefined
+      const pending = new Promise<string>((resolve) => (finishRead = resolve))
+      const slow = new File([], 'slow.json', { type: 'application/json' })
+      Object.defineProperty(slow, 'text', { value: () => pending })
+      await user.upload(screen.getByLabelText('Load response.json'), slow)
+      return finishRead
+    }
+
+    const completeOlderRead = await startRead()
+    await chooseResponse(user, good)
+    await shown()
+    await act(async () => completeOlderRead('[invalid'))
+    expect(screen.getByTestId('ral-comparison-verdict')).toHaveTextContent('All 165 expected')
+    expect(screen.queryByRole('alert')).toBeNull()
+
+    const completePriorSampleRead = await startRead()
+    await user.click(screen.getByRole('button', { name: 'ML-DSA / sigVer / FIPS204' }))
+    await act(async () => completePriorSampleRead('[invalid'))
+    expect(screen.queryByTestId('ral-comparison')).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
   })
 

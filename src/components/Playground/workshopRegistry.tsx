@@ -573,7 +573,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.4',
     name: 'TLS 1.3 Simulator',
     description:
-      'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
+      'Client–server TLS 1.3 handshake simulator: configure cipher suites, classical or hybrid key exchange, and RSA or ML-DSA certificates',
     category: 'Protocol Simulations',
     algorithms: ['TLS 1.3', 'ML-KEM', 'X25519MLKEM768', 'ML-DSA', 'ECDSA', 'RSA'],
     icon: Shield,
@@ -605,7 +605,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'Simulated TLS 1.3 handshake transcript; master secret and HKDF-derived traffic keys (hex); leaf certificate chain with PQC or hybrid signature verified against configured trust anchor.',
+      'OpenSSL TLS 1.3 handshake trace with the negotiated cipher, key exchange group and server handshake signature scheme, or an error when the handshake fails.',
   },
   {
     id: 'vpn-sim',
@@ -1174,11 +1174,11 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Run nine steps: generate the source key, extract its public key, create the source address, generate a recipient key and address, format the transaction, visualize the message, sign it and verify the signature.',
       workedExample:
-        "Format a 0.5 BTC transfer with a 0.0001 BTC fee between the two generated addresses, sign it with secp256k1 ECDSA, and Verify Signature reports VALID against the sender's public key.",
+        'Format the sample 0.5 BTC transfer, sign it with secp256k1 ECDSA and verify the original. Increase the first output by one satoshi and try the same signature again.',
     },
     hasOutput: true,
     outputSpec:
-      'secp256k1 keypair (compressed public key 33 bytes); ECDSA signature (DER) verifiable against public key.',
+      '33-byte compressed secp256k1 public key, a raw 64-byte r || s signature over the double SHA-256 of the sample JSON, and the verification results.',
   },
   {
     id: 'hd-wallet',
@@ -1202,7 +1202,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     },
     hasOutput: true,
     outputSpec:
-      'BIP39 mnemonic (12/24 words); BIP32 child keys deterministic from same mnemonic + derivation path.',
+      'BIP39 mnemonic, derived sample account addresses and a BIP 32 reference check for the software token’s public derivation.',
   },
 
   // ── OpenSSL Studio ────────────────────────────────────────────────────────
@@ -1224,11 +1224,11 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       whatYouWillDo:
         'Follow a Solana transfer from an Ed25519 keypair to an address, a formatted transaction and a signed message.',
       workedExample:
-        'The eight steps end with the signed message; the notes explain why an Ed25519 signature is a post-quantum liability and what would replace it.',
+        'Sign the sample JSON message, change one message or signature byte and compare the verification result with the original.',
     },
     hasOutput: true,
     outputSpec:
-      'Ed25519 keypair (public key 32 bytes); signature (64 bytes) must verify against message under same public key.',
+      '32-byte Ed25519 public key, 64-byte signature over the sample JSON message and the result of verifying the original or changed bytes.',
   },
   {
     id: 'openssl-studio',

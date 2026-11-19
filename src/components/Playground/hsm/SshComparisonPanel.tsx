@@ -223,19 +223,21 @@ function LegCard({
 
         {result.token_module && (
           <div className="flex justify-between gap-4 pt-1">
-            <dt className="text-muted-foreground">Token</dt>
-            <dd className="font-mono text-muted-foreground text-right truncate">
+            <span className="text-muted-foreground">Token</span>
+            <span className="font-mono text-muted-foreground text-right truncate">
               {result.token_module}
-            </dd>
+            </span>
           </div>
         )}
 
         <div className="pt-2 border-t border-border/30 space-y-1">
           <div className="flex justify-between items-center">
-            <dt className="text-muted-foreground text-xs">
+            <span className="text-muted-foreground text-xs">
               {realResult ? 'Auth wall-time' : 'Sample operation wall-time'}
-            </dt>
-            <dd className="font-mono text-foreground text-xs">{result.auth_ms.toFixed(1)} ms</dd>
+            </span>
+            <span className="font-mono text-foreground text-xs">
+              {result.auth_ms.toFixed(1)} ms
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[10px] text-muted-foreground font-mono">
             <span>keygen: {result.keygen_ms.toFixed(1)} ms</span>

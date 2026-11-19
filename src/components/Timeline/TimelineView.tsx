@@ -53,6 +53,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { eventsToIcs, downloadIcs } from '../../utils/timelineIcs'
 import { WhenDoesThisReachMe } from './WhenDoesThisReachMe'
+import { TimelineMilestoneComparison } from './TimelineMilestoneComparison'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileTimelineView } from '@/components/Mobile/screens/MobileTimelineView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
@@ -670,7 +671,7 @@ export const TimelineView = () => {
   // for mobile, so this is a pure early return with zero risk to the
   // flag-off path (Rule 1).
   if (isMobileShell) {
-    return <MobileTimelineView />
+    return <MobileTimelineView comparison={<TimelineMilestoneComparison />} />
   }
 
   const ganttDataEmpty = ganttData.length === 0
@@ -702,6 +703,7 @@ export const TimelineView = () => {
       />
 
       <PersonaPageNote route="/timeline" className="mb-4" />
+      <TimelineMilestoneComparison />
 
       {eventNotice && (
         <DeepLinkNotice

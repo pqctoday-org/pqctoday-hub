@@ -20,6 +20,7 @@ export type TestSuite = 'standard' | 'acvp' | 'conformance' | 'v33'
 
 interface DeveloperTabProps {
   openPython?: boolean
+  startSignatureExercise?: boolean
   activeSubTab: TestSuite
   onSubTabChange: (tab: TestSuite) => void
   /** Open a lesson of the Learn tab's v3.3 track (the bench links to it). */
@@ -49,6 +50,7 @@ export const DeveloperTab = ({
   onSubTabChange,
   onOpenLesson,
   openPython,
+  startSignatureExercise,
 }: DeveloperTabProps) => {
   const role = usePersonaStore((s) => s.selectedPersona)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
@@ -77,7 +79,7 @@ export const DeveloperTab = ({
         {showWorkbenchTabs && <TabsTrigger value="v33">v3.3 draft</TabsTrigger>}
       </TabsList>
       <TabsContent value="standard">
-        <PkcsDevWorkbench openPython={openPython} />
+        <PkcsDevWorkbench openPython={openPython} startSignatureExercise={startSignatureExercise} />
       </TabsContent>
       {showWorkbenchTabs && (
         <TabsContent value="acvp">

@@ -29,9 +29,9 @@ const steps = ['3-ecdh', '4-kdf', '5-encrypt', '6-mac', '7-e2e'] as const
 const specs: KatTestSpec[] = steps.map((step) => ({
   id: step,
   useCase: 'Fixed Profile B published sample',
-  standard: '3GPP TS 33.501 V19.5.0 C.4.4.1',
+  standard: '3GPP TS 33.501 V19.7.0 C.4.4.1',
   referenceUrl:
-    'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.05.00_60/ts_133501v190500p.pdf',
+    'https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/19.07.00_60/ts_133501v190700p.pdf',
   kind: { type: 'suci-profile-b', step },
 }))
 const changes: Array<{

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { Download, Copy, Printer, Check, Presentation, FileText, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CompleteStepAction } from '../CompleteStepAction'
@@ -97,6 +97,15 @@ interface ExportableArtifactProps {
   csvData?: string
 }
 
+interface ArtifactRevision {
+  markdown: string
+  csv: string | undefined
+}
+
+function sameReport(previous: ArtifactRevision | null, current: ArtifactRevision): boolean {
+  return previous?.markdown === current.markdown && previous?.csv === current.csv
+}
+
 export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   title,
   children,
@@ -107,9 +116,26 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   wideTable = false,
   csvData,
 }) => {
-  const [copyResult, setCopyResult] = React.useState<{ data: string; ok: boolean } | null>(null)
+  const revision = useMemo(() => ({ markdown: exportData, csv: csvData }), [exportData, csvData])
+  const committed = useRef({ revision, onExport })
+  useLayoutEffect(() => {
+    committed.current = { revision, onExport }
+  }, [revision, onExport])
+  const mounted = useRef(false)
+  useLayoutEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+    }
+  }, [])
+
+  const [copyResult, setCopyResult] = React.useState<{
+    revision: ArtifactRevision
+    ok: boolean
+  } | null>(null)
+  const copyRequest = useRef(0)
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const currentCopyResult = copyResult?.data === exportData ? copyResult : null
+  const currentCopyResult = copyResult?.revision === revision ? copyResult : null
   const copied = currentCopyResult?.ok === true
 
   useEffect(
@@ -118,35 +144,20 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
     },
     []
   )
-  // Persistent done-state: `wasSaved` stays set across edits; once the content
-  // changes after a save the badge reads "Saved · edited since" rather than
-  // flickering back to "Save" on every recompute (sliders/calculators).
-  const [wasSaved, setWasSaved] = React.useState(false)
-  const [lastSavedData, setLastSavedData] = React.useState<string | null>(null)
-  const editedSince = wasSaved && lastSavedData !== null && exportData !== lastSavedData
 
-  const triggerSave = useCallback(() => {
-    // Save only when there's something new — preserves the no-double-save guard
-    // while still allowing a re-save after the artifact is edited.
-    if (onExport && (lastSavedData === null || exportData !== lastSavedData)) {
-      setLastSavedData(exportData)
-      setWasSaved(true)
-      onExport()
-    }
-  }, [onExport, exportData, lastSavedData])
+  const savedRef = useRef<ArtifactRevision | null>(null)
+  const [savedRevision, setSavedRevision] = React.useState<ArtifactRevision | null>(null)
+  const wasSaved = savedRevision !== null
+  const editedSince = wasSaved && !sameReport(savedRevision, revision)
 
-  // --- Debounced autosave ---------------------------------------------------
-  // Root cause #1 of the 2026-07-03 remediation ("no persistence across
-  // navigation") was never fixed: `onExport` only ever fired from an
-  // export-adjacent click, so in-progress edits died on navigation. This
-  // effect writes them through the SAME guarded `triggerSave()` the Save
-  // button calls, so it inherits both of its guards for free — it no-ops when
-  // `onExport` is undefined (e.g. DataDrivenScorecard's internal render) and
-  // never re-saves unchanged content. (WS6 task 1.)
-  const triggerSaveRef = useRef(triggerSave)
-  useEffect(() => {
-    triggerSaveRef.current = triggerSave
-  }, [triggerSave])
+  const triggerSave = useCallback((expected?: ArtifactRevision) => {
+    const { revision: current, onExport: save } = committed.current
+    if (!save || (expected && expected !== current) || sameReport(savedRef.current, current)) return
+
+    save()
+    savedRef.current = current
+    if (mounted.current) setSavedRevision(current)
+  }, [])
 
   const dirtyTokenRef = useRef({})
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -170,7 +181,10 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       mountedOnceRef.current = true
       return
     }
-    if (!onExport) return
+    if (!onExport || sameReport(savedRef.current, revision)) {
+      cancelPendingAutoSave()
+      return
+    }
     // Only a real edit — not the artifact's own data settling after mount.
     if (!userInteracted.current) return
     autoSavePendingRef.current = true
@@ -179,7 +193,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       autoSaveTimerRef.current = null
       autoSavePendingRef.current = false
       setArtifactDirty(dirtyTokenRef.current, false)
-      triggerSaveRef.current()
+      triggerSave()
     }, ARTIFACT_AUTOSAVE_DELAY_MS)
     return () => {
       if (autoSaveTimerRef.current) {
@@ -187,7 +201,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
         autoSaveTimerRef.current = null
       }
     }
-  }, [exportData, csvData, onExport, userInteracted])
+  }, [revision, onExport, userInteracted, triggerSave, cancelPendingAutoSave])
 
   // Navigating away inside the debounce window must not drop the last edit —
   // that is the exact failure this work stream exists to fix. The cleanup
@@ -197,11 +211,11 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
     return () => {
       if (autoSavePendingRef.current) {
         autoSavePendingRef.current = false
-        triggerSaveRef.current()
+        triggerSave()
       }
       setArtifactDirty(token, false)
     }
-  }, [])
+  }, [triggerSave])
 
   // An explicit Save must cancel the pending timer's now-redundant fire.
   const handleSaveClick = useCallback(() => {
@@ -210,13 +224,21 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   }, [cancelPendingAutoSave, triggerSave])
 
   const handleCopy = useCallback(async () => {
-    const ok = await copyToClipboard(withEducationNoticeMarkdown(exportData))
+    const request = ++copyRequest.current
+    const ok = await copyToClipboard(withEducationNoticeMarkdown(revision.markdown))
+    if (
+      !mounted.current ||
+      request !== copyRequest.current ||
+      revision !== committed.current.revision
+    )
+      return
+
     if (copyTimer.current) clearTimeout(copyTimer.current)
-    setCopyResult({ data: exportData, ok })
+    setCopyResult({ revision, ok })
     if (!ok) return
     copyTimer.current = setTimeout(() => setCopyResult(null), 2000)
-    triggerSave()
-  }, [exportData, triggerSave])
+    triggerSave(revision)
+  }, [revision, triggerSave])
 
   const handleDownload = useCallback(
     async (format: ExportFormat) => {
@@ -225,20 +247,20 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       // engine for ~40 GRC/policy/contract/roadmap tools, so injecting here is
       // what makes "covered" the default for all of them
       // (education-notice remediation 2026-09-26).
-      const noticed = withEducationNoticeMarkdown(exportData)
+      const noticed = withEducationNoticeMarkdown(revision.markdown)
       if (format === 'pptx') {
         await markdownToPptx(noticed, filename)
-        triggerSave()
+        if (mounted.current) triggerSave(revision)
         return
       }
       if (format === 'docx') {
         await markdownToDocx(noticed, filename, title)
-        triggerSave()
+        if (mounted.current) triggerSave(revision)
         return
       }
       if (format === 'pdf') {
         await markdownToPdf(noticed, filename, title, { wideTable })
-        triggerSave()
+        if (mounted.current) triggerSave(revision)
         return
       }
       const ext = format === 'markdown' ? 'md' : format
@@ -250,7 +272,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       // For `.csv`, prefer the tool's structured CSV; fall back to the markdown
       // body only if the tool didn't provide one (avoids pipe-text-in-Excel).
       const payload =
-        format === 'csv' && csvData != null ? withEducationNoticeCsv(csvData) : noticed
+        format === 'csv' && revision.csv != null ? withEducationNoticeCsv(revision.csv) : noticed
       // eslint-disable-next-line security/detect-object-injection
       const blob = new Blob([payload], { type: mimeMap[format] || 'text/plain' })
       const url = URL.createObjectURL(blob)
@@ -259,15 +281,15 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       link.download = `${filename}.${ext}`
       link.click()
       URL.revokeObjectURL(url)
-      triggerSave()
+      triggerSave(revision)
     },
-    [exportData, filename, title, triggerSave, wideTable, csvData]
+    [revision, filename, title, triggerSave, wideTable]
   )
 
   const handlePrint = useCallback(() => {
     window.print()
-    triggerSave()
-  }, [triggerSave])
+    triggerSave(revision)
+  }, [revision, triggerSave])
 
   return (
     <div className="glass-panel p-6 space-y-4">
