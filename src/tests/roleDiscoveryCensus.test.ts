@@ -52,7 +52,7 @@ interface LibraryRow {
 
 const repoRoot = path.resolve(__dirname, '../..')
 const ragCorpusPath = path.resolve(repoRoot, 'public/data/rag-corpus.json')
-const libraryCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.library)
+const libraryCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.library ?? '')
 const censusOutputPath = path.resolve(
   repoRoot,
   '../backups/hub-4213/role-discovery-census-180.json'
