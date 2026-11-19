@@ -146,6 +146,9 @@ function renderPreview(
 ): string {
   const lines: string[] = []
   lines.push('# PQC Compliance Checklist\n')
+  lines.push(
+    '_Educational planning checklist — checked items record planning scope for sample or learner-supplied context; they do not verify a deployed system, establish compliance, or replace production GRC/attestation records._\n'
+  )
 
   const ctx = data.context || {}
   const industry = (ctx.industry as string) || ''
@@ -197,6 +200,9 @@ function renderCsv(
 ): string {
   const rows: (string | number)[][] = []
   rows.push(['PQC Compliance Checklist'])
+  rows.push([
+    'Educational planning checklist — checked items do not verify a deployed system or replace production GRC records.',
+  ])
   rows.push(['Framework', 'Deadline', 'Owner', 'Control', 'Checked', 'Reference'])
   for (const fw of frameworks) {
     const sec = data[frameworkSectionId(fw.id)]
@@ -229,7 +235,7 @@ type Framework = (typeof complianceFrameworks)[number]
 const SAMPLE_CHECKLIST_CONTEXT = {
   industry: 'Government & Defense',
   country: 'United States',
-  frameworkIds: ['CNSA-2', 'OMB-M-23-02', 'NIST-IR-8547'],
+  frameworkIds: ['CNSA-2', 'OMB-M-26-15', 'NIST-IR-8547'],
 } as const
 
 const PQC_REQUIREMENT_ORDER: Record<PQCRequirement, number> = {
@@ -633,7 +639,7 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
       )}
       <ArtifactBuilder
         title="PQC Compliance Checklist"
-        description="Per-framework checklist of the PQC controls that compliance audits will probe. Add frameworks above or star them on /compliance; complete the assessment to flag PQC-required frameworks."
+        description="Educational per-framework planning checklist of the PQC controls that compliance audits probe. Checking items here records planning scope — it does not verify a deployed system or replace production GRC, CBOM, or attestation tools. Add frameworks above or star them on /compliance; complete the assessment to flag PQC-required frameworks."
         sections={sections}
         controlledForm={controlledForm}
         onExport={handleExport}

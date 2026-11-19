@@ -23,8 +23,8 @@ const SPEC_CITATIONS = [
   { label: 'RFC 4252 (SSH Auth)', href: 'https://www.rfc-editor.org/rfc/rfc4252' },
   { label: 'RFC 8731 (curve25519-sha256)', href: 'https://www.rfc-editor.org/rfc/rfc8731' },
   {
-    label: 'draft-kampanakis-curdle-ssh-pq-ke-07',
-    href: 'https://datatracker.ietf.org/doc/draft-kampanakis-curdle-ssh-pq-ke/',
+    label: 'RFC 10042 (SSH PQ/T Hybrid KEX)',
+    href: 'https://www.rfc-editor.org/rfc/rfc10042',
   },
   {
     label: 'draft-josefsson-ntruprime-ssh',

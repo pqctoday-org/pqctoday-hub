@@ -110,6 +110,8 @@ export function buildRaciMarkdown(matrix: MatrixState): string {
 
   md += '\n**Legend:** R = Responsible, A = Accountable, C = Consulted, I = Informed\n'
   md +=
+    '\n_Educational planning template: completing or exporting this matrix does not assign live organizational authority or sign-off. Formalize role accountability in your governance charter and ITSM/GRC controls._\n'
+  md +=
     '\n*Aligned to NIST CSWP 39 §5 — Strategic Plan (governance roles and responsibilities). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'
   return md
 }
@@ -253,7 +255,9 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ initialMatrix, onOutpu
         <strong>Consulted</strong> gives two-way input before the work happens, and{' '}
         <strong>Informed</strong> gets a one-way status update after. Exactly one role must be
         Accountable per activity — accountability split across two people is accountability held by
-        no one. Click a cell to cycle through R, A, C, I, or empty.
+        no one. Click a cell to cycle through R, A, C, I, or empty. This is an educational planning
+        template; formalize real-world role authority and sign-off in your organization&apos;s
+        governance charter and ITSM/GRC system.
       </p>
 
       {/* RACI Matrix Table */}
@@ -261,12 +265,16 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ initialMatrix, onOutpu
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr>
-              <th className="text-left p-2 border-b border-border text-foreground font-semibold min-w-[160px]">
+              <th
+                scope="col"
+                className="text-left p-2 border-b border-border text-foreground font-semibold min-w-[160px]"
+              >
                 Activity
               </th>
               {ROLES.map((role) => (
                 <th
                   key={role}
+                  scope="col"
                   className="text-center p-2 border-b border-border text-foreground font-semibold min-w-[90px]"
                 >
                   <span className="text-xs">{role}</span>
@@ -277,9 +285,12 @@ export const RACIBuilder: React.FC<RACIBuilderProps> = ({ initialMatrix, onOutpu
           <tbody>
             {ACTIVITIES.map((activity) => (
               <tr key={activity} className="hover:bg-muted/30 transition-colors">
-                <td className="p-2 border-b border-border text-foreground font-medium text-xs">
+                <th
+                  scope="row"
+                  className="p-2 border-b border-border text-left text-foreground font-medium text-xs"
+                >
                   {activity}
-                </td>
+                </th>
                 {ROLES.map((role) => {
                   const value = matrix[activity]?.[role] || ''
                   return (

@@ -845,7 +845,8 @@ export function PatentDetail({
         {/* Disclaimer */}
         <p className="border-t border-border pt-4 text-xs text-muted-foreground leading-relaxed">
           Patent data sourced from USPTO public records. AI-generated enrichments are for research
-          purposes only and do not constitute legal or IP advice.
+          and educational purposes only and do not constitute legal, IP, or freedom-to-operate (FTO)
+          advice.
         </p>
       </div>
     </div>

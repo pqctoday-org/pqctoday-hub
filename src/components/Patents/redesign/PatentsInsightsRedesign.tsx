@@ -388,7 +388,8 @@ export function PatentsInsightsRedesign({ patents, onFilter, selectedYear = null
       </p>
 
       <p className="pt-2 text-center text-[11px] text-muted-foreground">
-        Patent data sourced from USPTO. For research and education — not legal or IP advice.
+        Patent data sourced from USPTO. For research and education — not legal, IP, or
+        freedom-to-operate (FTO) advice.
       </p>
     </div>
   )

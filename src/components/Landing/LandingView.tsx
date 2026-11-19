@@ -109,9 +109,9 @@ export const PERSONA_HERO_TAGLINE: Record<string, string> = {
 
 // Rendered until the live derivation below resolves (and if it ever can't find
 // a matching row) — both verified against their authoritative source as of
-// this writing (NSA CSI CNSA 2.0 FAQ; RFC 9964 / RFC Editor).
+// this writing (NSA CSI CNSA 2.0 FAQ v2.2; RFC 10082 / RFC Editor).
 const NSS_DEADLINE_FALLBACK = 'NSS acquisitions due January 2027'
-const LATEST_RFC_FALLBACK = 'RFC 9964 just landed'
+const LATEST_RFC_FALLBACK = 'RFC 10082 just landed'
 
 function resolveTagline(template: string, values: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_match, key: string) =>

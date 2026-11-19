@@ -814,11 +814,18 @@ export function LibraryViewRedesign({
           {displayedItems.length === 0 ? (
             <div className="glass-panel flex flex-col items-center gap-4 rounded-2xl p-10 text-center text-muted-foreground">
               <span>No documents match these filters.</span>
-              {activeFilterChips.length > 0 && (
-                <Button type="button" variant="outline" onClick={resetFilters}>
-                  Clear all filters
-                </Button>
-              )}
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {activeFilterChips.length > 0 && (
+                  <Button type="button" variant="outline" onClick={resetFilters}>
+                    Clear all filters
+                  </Button>
+                )}
+                {pipeline.personaPreferredActive && (
+                  <Button type="button" variant="outline" onClick={() => setParam('prefs', 'off')}>
+                    Show all documents
+                  </Button>
+                )}
+              </div>
             </div>
           ) : view === 'table' ? (
             <>

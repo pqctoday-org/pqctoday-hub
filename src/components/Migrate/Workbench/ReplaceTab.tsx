@@ -462,9 +462,27 @@ export function ReplaceTab({
                   )}
                 </div>
               ) : filtered.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
-                  No products match “{filter}”.
-                </p>
+                <div className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+                  <p>
+                    {filter.trim()
+                      ? `No products match “${filter.trim()}” under the current filters.`
+                      : 'No products match the current filters.'}
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3"
+                    onClick={() => {
+                      setFilter('')
+                      setProductIdFilter(undefined)
+                      setFacets(NO_FACETS)
+                      setFacetsBeforeLink(null)
+                      reportFilterState({ filter: '', facets: NO_FACETS })
+                    }}
+                  >
+                    Clear filters
+                  </Button>
+                </div>
               ) : (
                 filtered.map((p) => {
                   const isLinked = !!expandProductId && p.productId === expandProductId

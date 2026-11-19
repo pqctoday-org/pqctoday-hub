@@ -93,8 +93,11 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
         ) {
           const parts: string[] = []
           if (effectiveRoiOutput) {
+            const paybackLabel = Number.isFinite(effectiveRoiOutput.paybackMonths)
+              ? `${Math.round(effectiveRoiOutput.paybackMonths)} months`
+              : 'N/A'
             parts.push(
-              `Migration investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)}${countNote ? ` (${countNote})` : ''} | 3-year ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}% | Payback: ${Math.round(effectiveRoiOutput.paybackMonths)} months | Annual breach cost savings: ${formatCurrency(effectiveRoiOutput.breachCostSavingsUSD)}`
+              `Migration investment: ${formatCurrency(effectiveRoiOutput.totalCostUSD)}${countNote ? ` (${countNote})` : ''} | Modeled ROI: ${effectiveRoiOutput.roiPercent.toFixed(0)}% | Payback: ${paybackLabel} | Annual breach cost savings: ${formatCurrency(effectiveRoiOutput.breachCostSavingsUSD)}`
             )
           }
           if (effectiveInactionOutput) {
@@ -286,7 +289,7 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
           <p className="text-xs text-muted-foreground">
             Draft fields can be pre-populated from assessment and saved scenarios. Record the
             sources and assumptions actually used, edit any field inline, switch to Preview to see
-            the formatted document, then export as Markdown or PPTX.
+            the formatted document, then export as Markdown, PDF, or PPTX.
           </p>
           {data.isAssessmentComplete && (
             <p className="text-xs text-muted-foreground mt-2">

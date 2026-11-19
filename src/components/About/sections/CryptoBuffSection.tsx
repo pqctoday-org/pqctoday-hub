@@ -30,6 +30,7 @@ export function CryptoBuffSection() {
         <Button
           variant="ghost"
           onClick={() => setIsCryptoBuffSitesOpen(!isCryptoBuffSitesOpen)}
+          aria-expanded={isCryptoBuffSitesOpen}
           className="flex items-center gap-2 w-full text-left cursor-pointer"
         >
           <Globe className="text-primary shrink-0" size={16} />
@@ -81,6 +82,7 @@ export function CryptoBuffSection() {
         <Button
           variant="ghost"
           onClick={() => setIsCryptoBuffBooksOpen(!isCryptoBuffBooksOpen)}
+          aria-expanded={isCryptoBuffBooksOpen}
           className="flex items-center gap-2 w-full text-left cursor-pointer mt-4 pt-4 border-t border-border"
         >
           <BookMarked className="text-primary shrink-0" size={16} />

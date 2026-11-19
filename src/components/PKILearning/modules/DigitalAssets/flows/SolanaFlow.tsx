@@ -492,9 +492,10 @@ const signature = hsm_eddsaSign(
             sufficiently powerful quantum computer (CRQC). All Solana wallet public keys are visible
             on-chain from account creation, making them permanent targets for{' '}
             <InfoTooltip term="hnfl" /> attacks — adversaries harvest public keys today and forge
-            signatures after <InfoTooltip term="qday" />. Post-quantum signature standards (Falcon,
-            ML-DSA/FIPS 204) are being standardized as replacements for Ed25519; any Ed25519-based
-            blockchain will require a coordinated protocol migration.
+            signatures after <InfoTooltip term="qday" />. Post-quantum signature standards — ML-DSA
+            (FIPS 204) and SLH-DSA (FIPS 205), with FN-DSA (Falcon, draft FIPS 206) in progress —
+            provide quantum-resistant alternatives to Ed25519; any Ed25519-based blockchain will
+            require a coordinated protocol migration.
           </>
         ),
         code: `// SoftHSMv3 Verification (CKM_EDDSA)
@@ -925,6 +926,11 @@ Note: Address derived from the HSM Ed25519 public key.`
           onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
         />
       )}
+
+      <p className="text-[11px] text-muted-foreground/70 text-center pt-4">
+        Educational browser sandbox — keys and transactions generated here are not for production
+        wallets or mainnet use.
+      </p>
     </div>
   )
 }

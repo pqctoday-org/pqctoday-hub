@@ -275,9 +275,11 @@ export const InfraModernizationPlanner: React.FC = () => {
           <span className="font-semibold text-foreground">Why these defaults:</span> the
           framework&apos;s PKI modernization guidance (activity 6.1) recommends shortening root CA
           lifetimes from 20+ years to 10 years, intermediate CAs to 5 years, and end-entity
-          certificates to 90–365 days — this limits Trust-Now-Forge-Later exposure on long-lived
-          signing keys and builds the certificate-rotation discipline needed before dual-stack/PQC
-          certificates arrive (NIST CSWP 39 §3.2.1 — Preserving Protocol Interoperability).
+          certificates to 90 days or shorter (public TLS already stepped down to 200 days in March
+          2026 and moves to 100 days in March 2027 and 47 days in 2029 under CA/B Forum SC-081v3) —
+          this limits Trust-Now-Forge-Later exposure on long-lived signing keys and builds the
+          certificate-rotation discipline needed before dual-stack/PQC certificates arrive (NIST
+          CSWP 39 §3.2.1 — Preserving Protocol Interoperability).
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="block">
@@ -326,7 +328,7 @@ export const InfraModernizationPlanner: React.FC = () => {
             />
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="PKI modernization options">
           <Button
             type="button"
             variant="ghost"
@@ -362,8 +364,9 @@ export const InfraModernizationPlanner: React.FC = () => {
         <h3 className="text-sm font-semibold text-foreground">HSM &amp; KMS Upgrade Schedule</h3>
         <p className="text-xs text-muted-foreground">
           In this planning check, the CA depends on the upgraded HSM. Enter the target dates and
-          compare the sequence. A date records a plan; verify access to the required mechanism in
-          staging.
+          compare the sequence. A date records a plan; verify access to the required mechanism and
+          active FIPS 140-3 module validation in staging (FIPS 140-2 certificates moved to the
+          Historical list in September 2026).
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label htmlFor="infra-hsm-ready-date" className="block text-xs font-medium">
@@ -413,7 +416,7 @@ export const InfraModernizationPlanner: React.FC = () => {
             evidence that must be complete before the CA uses the HSM.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="HSM and KMS upgrade actions">
           <Button
             type="button"
             variant="ghost"
@@ -470,7 +473,11 @@ export const InfraModernizationPlanner: React.FC = () => {
           client/server versions and network path; inspect negotiated parameters and failure cases.
           Protocol compatibility remains unassessed.
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Network compatibility protocol planning topics"
+        >
           {PROTOCOL_OPTIONS.map((id) => {
             const on = state.protocols[id]
             return (

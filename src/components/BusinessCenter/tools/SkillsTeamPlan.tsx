@@ -16,7 +16,7 @@ import {
   FTE_PER_CRYPTO_INSTANCES_PRODUCTION,
   type FrameworkRoleId,
 } from '@/data/roleCrosswalk'
-import { NICE_WORK_ROLES } from '@/data/niceFramework'
+import { NICE_COMPONENTS_VERSION, NICE_WORK_ROLES } from '@/data/niceFramework'
 import { FRAMEWORK_NAME, FRAMEWORK_URL } from '@/data/frameworkPhases'
 import {
   ALLOCATION_ROLE_ORDER,
@@ -79,10 +79,10 @@ export function buildMarkdown(state: PlanState): string {
         }`
     ),
     '',
-    '## NICE work roles',
+    `## NICE work roles (NIST SP 800-181r1 / NICE Framework v${NICE_COMPONENTS_VERSION})`,
     ...ROLE_ORDER.map((id) => `- ${ROLE_CROSSWALK[id].label}: ${niceTitles(id)}`),
     '',
-    `Reference: ${FRAMEWORK_NAME} §5, ${FRAMEWORK_URL}. Ratios and role bands are references; fractional defaults and allocation weights are Hub teaching assumptions. Governance reading: https://doi.org/10.6028/NIST.CSWP.39-upd1`,
+    `Reference: ${FRAMEWORK_NAME} §5, ${FRAMEWORK_URL}. Ratios and role bands are references; fractional defaults and allocation weights are Hub teaching assumptions. Work-role titles aligned to NIST SP 800-181 Rev. 1 / NICE Framework Components v${NICE_COMPONENTS_VERSION}. Governance reading: https://doi.org/10.6028/NIST.CSWP.39-upd1`,
   ].join('\n')
 }
 export const SkillsTeamPlan: React.FC = () => {
@@ -107,6 +107,7 @@ export const SkillsTeamPlan: React.FC = () => {
           : saved.allocationDraft,
     }
   })
+  const [seedDismissed, setSeedDismissed] = useState(false)
   const [notice, setNotice] = useState('')
   const context = contextFor(state)
   const assessment = assessTeamAllocation(context, state.allocationDraft)
@@ -137,10 +138,13 @@ export const SkillsTeamPlan: React.FC = () => {
   }
   return (
     <div className="space-y-4">
-      {seedInstances !== '' && (
+      {seedInstances !== '' && !seedDismissed && state.estateInstances === seedInstances && (
         <PreFilledBanner
           summary={`Estate size seeded from ${myProducts.length} product${myProducts.length === 1 ? '' : 's'} in your /migrate selection. This is an editable instance-count assumption.`}
-          onClear={() => updateContext({ estateInstances: '' })}
+          onClear={() => {
+            setSeedDismissed(true)
+            updateContext({ estateInstances: '' })
+          }}
         />
       )}
       <header>
@@ -168,6 +172,8 @@ export const SkillsTeamPlan: React.FC = () => {
         />
         <div role="radiogroup" aria-label="Program stage" className="flex flex-wrap gap-2">
           <Button
+            type="button"
+            variant={state.sizingPhase === 'early' ? 'secondary' : 'outline'}
             role="radio"
             aria-checked={state.sizingPhase === 'early'}
             onClick={() => updateContext({ sizingPhase: 'early' })}
@@ -175,6 +181,8 @@ export const SkillsTeamPlan: React.FC = () => {
             Year 1–2 (1:{FTE_PER_CRYPTO_INSTANCES})
           </Button>
           <Button
+            type="button"
+            variant={state.sizingPhase === 'production' ? 'secondary' : 'outline'}
             role="radio"
             aria-checked={state.sizingPhase === 'production'}
             onClick={() => updateContext({ sizingPhase: 'production' })}
@@ -183,6 +191,8 @@ export const SkillsTeamPlan: React.FC = () => {
           </Button>
         </div>
         <Button
+          type="button"
+          variant={context.otInScope ? 'secondary' : 'outline'}
           role="switch"
           aria-label="OT in scope"
           aria-checked={context.otInScope}
@@ -270,7 +280,8 @@ export const SkillsTeamPlan: React.FC = () => {
           finding.
         </p>
         <p>
-          Governance reading:{' '}
+          Work-role mapping: NIST SP 800-181 Rev. 1 / NICE Framework Components v
+          {NICE_COMPONENTS_VERSION}. Governance reading:{' '}
           <a
             href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
             target="_blank"

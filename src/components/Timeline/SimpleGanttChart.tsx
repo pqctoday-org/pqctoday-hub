@@ -794,15 +794,23 @@ export const SimpleGanttChart = ({
                 />
               </div>
             </div>
-            <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
+            <label
+              htmlFor="timeline-gantt-search"
+              className="hidden md:inline text-muted-foreground px-2"
+            >
+              Search:
+            </label>
             <div className="relative flex-1 min-w-0 md:min-w-[200px] w-full">
               <Search
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
               />
               <input
+                id="timeline-gantt-search"
                 type="text"
                 placeholder="Search countries, agencies or records..."
+                aria-label="Search countries, agencies, or timeline records"
                 value={filterText}
                 onChange={handleFilterTextChange}
                 onBlur={handleFilterBlur}

@@ -407,6 +407,7 @@ function PriorityRankingList({
               {isReordered && (
                 <input
                   type="text"
+                  aria-label={`Priority reason for ${entry.assetName || 'Unnamed'}`}
                   className="mt-2 w-full px-2 py-1.5 rounded border border-input bg-background text-foreground placeholder:text-muted-foreground text-xs"
                   placeholder="Why is this prioritized differently? (e.g., compliance deadline)"
                   value={priorityReasons[id] ?? ''}
@@ -589,7 +590,12 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
     return [...existing, ...newIds]
   }, [riskEntries, userPriorityOrder])
 
-  const hasTreatments = Object.keys(treatmentDecisions).length > 0
+  const treatedCount = useMemo(
+    () => riskEntries.filter((e) => Boolean(treatmentDecisions[e.id])).length,
+    [riskEntries, treatmentDecisions]
+  )
+
+  const hasTreatments = treatedCount > 0
 
   // Compute residual entries
   const residualEntries = useMemo(() => {
@@ -629,9 +635,8 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
   }, [riskEntries, residualEntries])
 
   const treatmentProgress = useMemo(() => {
-    const treated = riskEntries.filter((e) => treatmentDecisions[e.id]).length
-    return riskEntries.length > 0 ? Math.round((treated / riskEntries.length) * 100) : 0
-  }, [riskEntries, treatmentDecisions])
+    return riskEntries.length > 0 ? Math.round((treatedCount / riskEntries.length) * 100) : 0
+  }, [riskEntries.length, treatedCount])
 
   const handleCellClick = useCallback((row: number, col: number) => {
     setSelectedCell((prev) => (prev?.row === row && prev?.col === col ? null : { row, col }))
@@ -675,10 +680,10 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
     md += '## Planned Strategy Choices\n\n'
     md += '| Treatment | Count |\n|-----------|-------|\n'
     for (const s of strategies) {
-      const count = Object.values(treatmentDecisions).filter((d) => d.strategy === s).length
+      const count = riskEntries.filter((e) => treatmentDecisions[e.id]?.strategy === s).length
       md += `| ${s.charAt(0).toUpperCase() + s.slice(1)} | ${count} |\n`
     }
-    const untreated = riskEntries.length - Object.keys(treatmentDecisions).length
+    const untreated = riskEntries.length - treatedCount
     md += `| No strategy selected | ${untreated} |\n\n`
 
     md += '## Baseline vs. Projected Sample Scores\n\n'
@@ -738,6 +743,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
   }, [
     riskEntries,
     treatmentDecisions,
+    treatedCount,
     residualOverrides,
     riskDelta,
     priorityOrder,
@@ -837,7 +843,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
           </div>
           <span className="text-xs text-muted-foreground">
             {hasTreatments
-              ? `${treatmentProgress}% strategy choices recorded (${Object.keys(treatmentDecisions).length} of ${riskEntries.length})`
+              ? `${treatmentProgress}% strategy choices recorded (${treatedCount} of ${riskEntries.length})`
               : 'No strategy choices recorded yet — select a cell to start'}
           </span>
         </div>
@@ -992,8 +998,8 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
           {TREATMENT_OPTIONS.map((opt) => {
             const Icon = opt.icon
-            const count = Object.values(treatmentDecisions).filter(
-              (d) => d.strategy === opt.value
+            const count = riskEntries.filter(
+              (e) => treatmentDecisions[e.id]?.strategy === opt.value
             ).length
             return (
               <div key={opt.value} className={`rounded-lg p-3 border text-center ${opt.bg}`}>
@@ -1006,7 +1012,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
           <div className="rounded-lg p-3 border border-border bg-muted/30 text-center">
             <Shield size={16} className="mx-auto mb-1 text-muted-foreground" />
             <div className="text-xl font-bold text-muted-foreground">
-              {riskEntries.length - Object.keys(treatmentDecisions).length}
+              {riskEntries.length - treatedCount}
             </div>
             <div className="text-xs text-muted-foreground">No strategy selected</div>
           </div>

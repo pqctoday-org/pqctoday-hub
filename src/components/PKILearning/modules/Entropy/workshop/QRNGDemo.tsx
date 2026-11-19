@@ -282,17 +282,20 @@ export const QRNGDemo: React.FC = () => {
           SP 800-90B specifies the requirements and validation tests for entropy sources; it does
           not certify anything. CMVP issues Entropy Validation Certificates after an accredited
           testing lab submits the source&apos;s SP 800-90B conformance justification. Statistical
-          tests on output are not that evidence.
+          tests on output are not that evidence. Similarly, BSI AIS 20/31 and ANSSI guidance treat a
+          QRNG as a physical noise source (PTRNG) whose raw output must still be conditioned and fed
+          into a validated DRBG or hybrid construction rather than replacing DRBG post-processing.
         </p>
       </WhyThisMatters>
 
       {/* Sample Size Selector */}
       <div className="flex items-center gap-3">
         <span className="text-sm font-medium text-foreground">Sample Size:</span>
-        <div className="flex gap-2">
+        <div className="flex gap-2" role="group" aria-label="Sample size">
           <Button
             variant={sampleSize === 64 ? 'secondary' : 'outline'}
             size="sm"
+            aria-pressed={sampleSize === 64}
             onClick={() => handleSizeChange(64)}
           >
             64 bytes
@@ -300,6 +303,7 @@ export const QRNGDemo: React.FC = () => {
           <Button
             variant={sampleSize === 128 ? 'secondary' : 'outline'}
             size="sm"
+            aria-pressed={sampleSize === 128}
             onClick={() => handleSizeChange(128)}
           >
             128 bytes

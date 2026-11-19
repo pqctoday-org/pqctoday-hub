@@ -432,7 +432,7 @@ export const HsmPlayground = () => {
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()
     setPageActions({
       shareTitle: 'PKCS#11 HSM Playground — PQC Today',
-      shareText: 'Drive a real PKCS#11 HSM in your browser',
+      shareText: 'Explore PKCS#11 v3.2 operations in an educational browser SoftHSM sandbox',
     })
     return () => clearPageActions()
   }, [])
@@ -877,7 +877,11 @@ export const HsmPlayground = () => {
                 for curious/executive same as the ACVP suite; they run on the
                 'rust' default without needing to choose. */}
             {!workbenchHidden ? (
-              <div className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
+              <div
+                role="radiogroup"
+                aria-label="SoftHSM engine"
+                className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner"
+              >
                 <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
                   Engine:
                 </span>
@@ -986,7 +990,7 @@ export const HsmPlayground = () => {
           id="hsm-playground-error"
           role="alert"
           tabIndex={-1}
-          className="mt-6 p-4 bg-status-error border border-status-error rounded-xl flex items-center gap-3 text-status-error text-sm shrink-0"
+          className="mt-6 p-4 bg-status-error/15 border border-status-error/40 rounded-xl flex items-center gap-3 text-status-error text-sm shrink-0"
         >
           <AlertCircle size={20} aria-hidden="true" />
           <span className="font-medium">{error}</span>

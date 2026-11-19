@@ -185,6 +185,7 @@ export function ComplianceTimelineBuilderStandalone() {
                       variant={isMine ? 'secondary' : 'outline'}
                       size="sm"
                       className="h-6 px-2 text-[10px] ml-auto"
+                      aria-pressed={isMine}
                       onClick={() => toggleMyFramework(fwId)}
                       title={
                         isMine
@@ -246,6 +247,7 @@ export function ComplianceTimelineBuilderStandalone() {
                       key={j.id}
                       variant={active ? 'secondary' : 'outline'}
                       size="sm"
+                      aria-pressed={active}
                       onClick={() => toggle(j.id)}
                       className="h-7 px-2.5 text-xs"
                     >

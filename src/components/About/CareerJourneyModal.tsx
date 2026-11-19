@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
+import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { Button } from '@/components/ui/button'
 
 interface CareerJourneyModalProps {
@@ -57,6 +59,8 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
 
   // Ref-counted: never unlocks the page under another open overlay.
   useBodyScrollLock(isOpen)
+  const focusTrapRef = useFocusTrap(isOpen)
+  useOverlayEscape(isOpen, onClose)
 
   const next = () => setCurrentIndex((prev) => (prev + 1) % PANELS.length)
   const prev = () => setCurrentIndex((prev) => (prev - 1 + PANELS.length) % PANELS.length)
@@ -76,6 +80,10 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
 
           {/* Modal Container */}
           <motion.div
+            ref={focusTrapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="career-journey-title"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -83,7 +91,10 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 md:p-4 border-b border-border">
-              <h2 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h2
+                id="career-journey-title"
+                className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+              >
                 My Career Journey
               </h2>
               <Button

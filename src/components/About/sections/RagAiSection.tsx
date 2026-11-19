@@ -35,6 +35,7 @@ export function RagAiSection() {
       <Button
         variant="ghost"
         onClick={() => setIsPqcAssistantOpen(!isPqcAssistantOpen)}
+        aria-expanded={isPqcAssistantOpen}
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <BrainCircuit className="text-primary shrink-0" size={24} />

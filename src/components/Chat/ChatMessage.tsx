@@ -134,6 +134,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
               <textarea
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
+                aria-label="Edit message"
                 className="w-full bg-muted/30 border border-border rounded-md px-2 py-1.5 text-sm text-foreground resize-none focus:outline-none focus:border-primary/50"
                 rows={Math.min(editText.split('\n').length + 1, 6)}
                 // eslint-disable-next-line jsx-a11y/no-autofocus
@@ -286,9 +287,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                   aria-label="Helpful"
+                  aria-pressed={feedback === 'helpful'}
                   title="Helpful"
                 >
-                  <ThumbsUp size={12} />
+                  <ThumbsUp size={12} aria-hidden="true" />
                 </Button>
                 <Button
                   variant="ghost"
@@ -301,9 +303,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                   aria-label="Not helpful"
+                  aria-pressed={feedback === 'unhelpful'}
                   title="Not helpful"
                 >
-                  <ThumbsDown size={12} />
+                  <ThumbsDown size={12} aria-hidden="true" />
                 </Button>
               </>
             )}

@@ -19,6 +19,8 @@ import { Link } from 'react-router'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Trophy, ShieldCheck, LayoutDashboard, CalendarClock, Users, FileDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
+import { cn } from '@/lib/utils'
 import { readTrapTally, remediation, phaseName } from './simTrapTally'
 import { personaDebrief, completionTypeNote } from '@/simulation/personaDebrief'
 import {
@@ -324,17 +326,21 @@ export function SimRunComplete({
                 Save my roadmap
               </Button>
             )}
-            <Link to="/business" onClick={onClose}>
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <LayoutDashboard size={14} aria-hidden="true" />
-                Open the Command Center
-              </Button>
+            <Link
+              to="/business"
+              onClick={onClose}
+              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5')}
+            >
+              <LayoutDashboard size={14} aria-hidden="true" />
+              Open the Command Center
             </Link>
-            <Link to="/compliance" onClick={onClose}>
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <CalendarClock size={14} aria-hidden="true" />
-                See your deadlines
-              </Button>
+            <Link
+              to="/compliance"
+              onClick={onClose}
+              className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5')}
+            >
+              <CalendarClock size={14} aria-hidden="true" />
+              See your deadlines
             </Link>
             {onCopyChallenge && (
               <Button

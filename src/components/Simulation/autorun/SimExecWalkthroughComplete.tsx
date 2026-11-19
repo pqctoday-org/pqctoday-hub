@@ -3,6 +3,8 @@ import { useEffect } from 'react'
 import { Link } from 'react-router'
 import { CheckCircle2, LayoutDashboard, CalendarClock, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
+import { cn } from '@/lib/utils'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 /**
@@ -93,17 +95,21 @@ export function SimExecWalkthroughComplete({
           tools need, and plan how your team will demonstrate them.
         </p>
         <div className="flex flex-wrap gap-2">
-          <Link to="/business" onClick={onClose}>
-            <Button variant="gradient" size="sm" className="gap-1.5">
-              <LayoutDashboard size={14} aria-hidden="true" />
-              Open the Command Center
-            </Button>
+          <Link
+            to="/business"
+            onClick={onClose}
+            className={cn(buttonVariants({ variant: 'gradient', size: 'sm' }), 'gap-1.5')}
+          >
+            <LayoutDashboard size={14} aria-hidden="true" />
+            Open the Command Center
           </Link>
-          <Link to="/compliance" onClick={onClose}>
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <CalendarClock size={14} aria-hidden="true" />
-              Review requirements
-            </Button>
+          <Link
+            to="/compliance"
+            onClick={onClose}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-1.5')}
+          >
+            <CalendarClock size={14} aria-hidden="true" />
+            Review requirements
           </Link>
         </div>
       </div>

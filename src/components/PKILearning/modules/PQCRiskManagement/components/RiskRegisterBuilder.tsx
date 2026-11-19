@@ -364,6 +364,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                   onClick={() => removeEntry(entry.id)}
                   className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-status-error transition-colors"
                   title="Remove entry"
+                  aria-label={`Remove entry ${idx + 1}`}
                 >
                   <Trash2 size={14} />
                 </Button>
@@ -395,6 +396,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                   </span>
                   <FilterDropdown
                     noContainer
+                    ariaLabel={`Current algorithm for entry ${idx + 1}`}
                     selectedId={entry.currentAlgorithm}
                     onSelect={(id) => updateEntry(entry.id, 'currentAlgorithm', id)}
                     items={ALGORITHM_OPTIONS.map((algo) => ({ id: algo, label: algo }))}
@@ -408,6 +410,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                   </span>
                   <FilterDropdown
                     noContainer
+                    ariaLabel={`Threat vector for entry ${idx + 1}`}
                     selectedId={entry.threatVector}
                     onSelect={(id) => updateEntry(entry.id, 'threatVector', id)}
                     items={THREAT_VECTORS.map((tv) => ({ id: tv.value, label: tv.label }))}
@@ -422,6 +425,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                     </span>
                     <FilterDropdown
                       noContainer
+                      ariaLabel={`Likelihood for entry ${idx + 1}`}
                       selectedId={String(entry.likelihood)}
                       onSelect={(id) => updateEntry(entry.id, 'likelihood', Number(id))}
                       items={[
@@ -439,6 +443,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                     </span>
                     <FilterDropdown
                       noContainer
+                      ariaLabel={`Impact for entry ${idx + 1}`}
                       selectedId={String(entry.impact)}
                       onSelect={(id) => updateEntry(entry.id, 'impact', Number(id))}
                       items={[

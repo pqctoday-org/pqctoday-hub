@@ -576,7 +576,7 @@ export function PatentsViewRedesign({
         <PageHeader
           icon={ScrollText}
           title="PQC Patents"
-          description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research — not legal or IP advice."
+          description="Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions. For research and education — not legal, IP, or freedom-to-operate (FTO) advice."
         />
       )}
 

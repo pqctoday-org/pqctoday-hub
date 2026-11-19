@@ -26,7 +26,7 @@ const INVENTORY_ITEMS: ChecklistItem[] = [
     label: 'All systems cataloged',
     description:
       'Comprehensive inventory of all systems using cryptographic operations, including embedded and third-party components.',
-    reference: 'EO 14028 §4; OMB M-23-02',
+    reference: 'EO 14412; OMB M-26-15; OMB M-23-02',
   },
   {
     value: 'algo-documented',
@@ -102,7 +102,7 @@ const RISK_ITEMS: ChecklistItem[] = [
     label: 'HNDL risk assessment completed',
     description:
       'Harvest Now, Decrypt Later (HNDL) exposure assessed — data at risk of retroactive decryption when CRQCs arrive.',
-    reference: 'NSA CNSA 2.0 FAQ; NIST IR 8547',
+    reference: 'NSA CNSA 2.0 FAQ v2.2; NIST IR 8547 (Oct 2026)',
   },
   {
     value: 'data-classified',
@@ -191,7 +191,7 @@ const VENDOR_ITEMS: ChecklistItem[] = [
     value: 'fips-verified',
     label: 'FIPS 140-3 validation verified',
     description:
-      'Vendor cryptographic modules verified for FIPS 140-3 validation. Distinct from FIPS 203/204/205 algorithm compliance.',
+      'Vendor cryptographic modules verified via NIST CMVP for FIPS 140-3 validation (FIPS 140-2 moved to Historical in September 2026). Distinct from CAVP/ACVP algorithm testing and vendor marketing claims.',
     reference: 'FIPS 140-3; CMVP',
   },
   {
@@ -199,7 +199,7 @@ const VENDOR_ITEMS: ChecklistItem[] = [
     label: 'Supply chain risk evaluated',
     description:
       'Cryptographic dependencies in the supply chain mapped and assessed for quantum vulnerability.',
-    reference: 'NIST SP 800-161r1; EO 14028',
+    reference: 'NIST SP 800-161r1; EO 14412',
   },
   {
     value: 'vendor-cbom',
@@ -541,7 +541,7 @@ function renderAuditCsv(
 
   if (evidence.length > 0) {
     sections.push([])
-    sections.push(['Evidence'])
+    sections.push(['Fictional reference examples'])
     sections.push(['Product / Asset', 'CMVP cert #', 'ACVP run ID', 'ESV status', 'CVE-scan date'])
     for (const e of evidence)
       sections.push([e.productOrAsset, e.cmvpCertNumber, e.acvpRunId, e.esvStatus, e.cveScanDate])
@@ -757,7 +757,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
 
       {selectedJurisdictions && selectedJurisdictions.length > 0 && (
         <PreFilledBanner
-          summary={`Filtering for: ${selectedJurisdictions.join(', ')}. Items shown cover all jurisdictions — jurisdiction-specific filtering coming in a future update.`}
+          summary={`Planning context: ${selectedJurisdictions.join(', ')}. These planning topics apply across jurisdictions; review jurisdiction-specific obligations in the Compliance Timeline or /compliance.`}
         />
       )}
 
@@ -807,6 +807,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"
                   placeholder="Scope (asset / system)"
+                  aria-label={`Exception ${idx + 1} scope`}
                   value={row.scope}
                   onChange={(e) => updateException(idx, { scope: e.target.value })}
                 />
@@ -814,6 +815,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"
                   placeholder="Compensating control"
+                  aria-label={`Exception ${idx + 1} compensating control`}
                   value={row.compensatingControl}
                   onChange={(e) => updateException(idx, { compensatingControl: e.target.value })}
                 />
@@ -821,6 +823,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"
                   placeholder="Owner"
+                  aria-label={`Exception ${idx + 1} owner`}
                   value={row.owner}
                   onChange={(e) => updateException(idx, { owner: e.target.value })}
                 />
@@ -829,6 +832,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                     type="text"
                     className="text-sm rounded-md border border-input bg-background p-2 flex-1"
                     placeholder="Sunset (YYYY-MM-DD)"
+                    aria-label={`Exception ${idx + 1} sunset date`}
                     value={row.sunset}
                     onChange={(e) => updateException(idx, { sunset: e.target.value })}
                   />
@@ -876,6 +880,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"
                   placeholder="Product / asset"
+                  aria-label={`Evidence ${idx + 1} product or asset`}
                   value={row.productOrAsset}
                   onChange={(e) => updateEvidence(idx, { productOrAsset: e.target.value })}
                 />
@@ -883,6 +888,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"
                   placeholder="CMVP cert #"
+                  aria-label={`Evidence ${idx + 1} CMVP cert number`}
                   value={row.cmvpCertNumber}
                   onChange={(e) => updateEvidence(idx, { cmvpCertNumber: e.target.value })}
                 />
@@ -890,6 +896,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"
                   placeholder="ACVP run ID"
+                  aria-label={`Evidence ${idx + 1} ACVP run ID`}
                   value={row.acvpRunId}
                   onChange={(e) => updateEvidence(idx, { acvpRunId: e.target.value })}
                 />
@@ -897,6 +904,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"
                   placeholder="ESV status (SP 800-90B)"
+                  aria-label={`Evidence ${idx + 1} ESV status`}
                   value={row.esvStatus}
                   onChange={(e) => updateEvidence(idx, { esvStatus: e.target.value })}
                 />
@@ -905,6 +913,7 @@ export const AuditReadinessChecklist: React.FC<AuditReadinessChecklistProps> = (
                     type="text"
                     className="text-sm rounded-md border border-input bg-background p-2 flex-1"
                     placeholder="CVE-scan date"
+                    aria-label={`Evidence ${idx + 1} CVE-scan date`}
                     value={row.cveScanDate}
                     onChange={(e) => updateEvidence(idx, { cveScanDate: e.target.value })}
                   />

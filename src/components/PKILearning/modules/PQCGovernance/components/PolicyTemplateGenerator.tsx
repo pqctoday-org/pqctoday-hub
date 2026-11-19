@@ -76,7 +76,9 @@ function generalSection(args: BuildArgs): ArtifactSection {
     { value: 'FIPS 203 (ML-KEM)', label: 'FIPS 203 (ML-KEM)' },
     { value: 'FIPS 204 (ML-DSA)', label: 'FIPS 204 (ML-DSA)' },
     { value: 'FIPS 205 (SLH-DSA)', label: 'FIPS 205 (SLH-DSA)' },
-    { value: 'CNSA 2.0', label: 'NSA CNSA 2.0' },
+    { value: 'NIST IR 8547', label: 'NIST IR 8547 (final, October 2026)' },
+    { value: 'EO 14412 / OMB M-26-15', label: 'EO 14412 / OMB M-26-15 (US federal civilian)' },
+    { value: 'CNSA 2.0', label: 'NSA CNSA 2.0 (National Security Systems)' },
     { value: 'ANSSI', label: 'ANSSI Recommendations' },
     { value: 'BSI TR-02102', label: 'BSI TR-02102' },
   ]
@@ -166,7 +168,7 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
     { value: 'ML-KEM-512', label: 'ML-KEM-512 (FIPS 203 — Category 1)' },
     { value: 'ML-KEM-768', label: 'ML-KEM-768 (FIPS 203 — Category 3)' },
     { value: 'ML-KEM-1024', label: 'ML-KEM-1024 (FIPS 203 — Category 5)' },
-    { value: 'X25519MLKEM768', label: 'X25519MLKEM768 (hybrid, IETF draft)' },
+    { value: 'X25519MLKEM768', label: 'X25519MLKEM768 (hybrid, RFC 10024)' },
     {
       value: 'FrodoKEM-1344',
       label:
@@ -185,7 +187,7 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
     },
     {
       value: 'X25519MLKEM768',
-      label: 'Hybrid KEM (classical + PQC, IETF draft) — recommended for transition',
+      label: 'Hybrid KEM (classical + PQC, RFC 10024) — recommended for transition',
     },
   ]
 
@@ -438,7 +440,10 @@ function vendorSections(args: BuildArgs): ArtifactSection[] {
             { value: 'ml-kem-support', label: 'ML-KEM support (GA or beta)' },
             { value: 'ml-dsa-support', label: 'ML-DSA support (GA or beta)' },
             { value: 'hybrid-support', label: 'Hybrid mode support' },
-            { value: 'fips-validated', label: 'FIPS 140-3 validated crypto module' },
+            {
+              value: 'fips-validated',
+              label: 'FIPS 140-3 CMVP-validated crypto module (FIPS 140-2 Historical Sept 2026)',
+            },
             { value: 'crypto-agile', label: 'Crypto-agile architecture (algorithm swappable)' },
             { value: 'cbom', label: 'Cryptographic Bill of Materials (CBOM) provided' },
           ],
@@ -452,7 +457,7 @@ function vendorSections(args: BuildArgs): ArtifactSection[] {
           type: 'textarea',
           placeholder: simplified
             ? 'e.g., Vendor commits to PQC-readiness by a stated date. Vendor discloses cryptographic vulnerabilities within 30 days.'
-            : 'e.g., Vendor must achieve PQC readiness by [date]. Vendor must notify within 30 days of any cryptographic vulnerability. Vendor must support hybrid TLS within 12 months of NIST finalization. Vendor must provide CBOM/SBOM with SHA-256 attestation on each release.',
+            : 'e.g., Vendor must achieve PQC readiness by [date]. Vendor must notify within 30 days of any cryptographic vulnerability. Vendor must support hybrid TLS (e.g., X25519MLKEM768 / RFC 10024) by [date]. Vendor must provide CBOM/SBOM with SHA-256 attestation on each release.',
         },
         {
           id: 'assessment-frequency',
@@ -511,25 +516,25 @@ function migrationTimelineSections(args: BuildArgs): ArtifactSection[] {
           id: 'phase-0-deadline',
           label: 'Phase 0: Crypto Discovery & Inventory Complete By',
           type: 'text',
-          placeholder: 'e.g., Q1 2026',
+          placeholder: 'e.g., Q1 2027',
         },
         {
           id: 'phase-1-deadline',
           label: 'Phase 1: Risk Assessment & Prioritization Complete By',
           type: 'text',
-          placeholder: 'e.g., Q2 2026',
+          placeholder: 'e.g., Q2 2027',
         },
         {
           id: 'phase-2-deadline',
           label: 'Phase 2: Hybrid Deployment Complete By',
           type: 'text',
-          placeholder: 'e.g., Q4 2027',
+          placeholder: 'e.g., Q4 2028',
         },
         {
           id: 'phase-3-deadline',
           label: 'Phase 3: Full PQC Migration Complete By',
           type: 'text',
-          placeholder: 'e.g., Q4 2029',
+          placeholder: 'e.g., Q4 2030',
         },
       ],
     },
@@ -610,6 +615,8 @@ export function renderPolicyPreview(
   const policyTitle = POLICY_TYPES.find((p) => p.id === policyType)?.label || 'Policy'
 
   let md = `# ${orgName} - ${policyTitle}\n\n`
+  md +=
+    "_Hub educational policy draft template. Formal approval, legal review, and enforcement take place in your organization's own governance and policy-as-code systems._\n\n"
   md += `**Version:** ${policyVersion}\n\n`
   md += `**Effective Date:** ${effectiveDate}\n\n`
   md += `**Policy Owner:** ${policyOwner}\n\n`
@@ -970,9 +977,11 @@ export const PolicyTemplateGenerator: React.FC<PolicyTemplateGeneratorProps> = (
         <PreFilledBanner summary={`Policy fields seeded from ${seedSources.join(' + ')}.`} />
       )}
       <p className="text-sm text-muted-foreground">
-        Select a policy type, fill in the template fields, and export a customized PQC policy
-        document. Framework options, jurisdiction, industry, and suggested key rotation are
-        auto-populated from your assessment data when available.
+        Select a policy type, fill in the template fields, and export a customized educational PQC
+        policy draft. Framework options, jurisdiction, and industry are auto-populated from your
+        assessment data when available; key rotation intervals are chosen per key type rather than
+        inferred. Formal policy approval and enforcement take place in your organization&apos;s
+        production governance tools.
         {simplified && (
           <>
             {' '}

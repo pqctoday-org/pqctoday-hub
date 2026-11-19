@@ -53,7 +53,7 @@ export function EditorialIndependenceView() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <ShieldCheck className="text-primary shrink-0" size={28} />
+          <ShieldCheck className="text-primary shrink-0" size={28} aria-hidden="true" />
           <h1 className="text-2xl font-bold text-gradient">Editorial Independence</h1>
         </div>
         <p className="text-muted-foreground text-sm">
@@ -206,7 +206,7 @@ export function EditorialIndependenceView() {
               className="text-accent hover:underline inline-flex items-center gap-1"
             >
               Data Suggestion issue
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>{' '}
             on GitHub. It is public, and the same evidence rule applies.
           </p>
@@ -243,7 +243,7 @@ export function EditorialIndependenceView() {
               className="text-accent hover:underline inline-flex items-center gap-1"
             >
               GitHub
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>
             .
           </p>
@@ -260,7 +260,7 @@ export function EditorialIndependenceView() {
               className="text-accent hover:underline inline-flex items-center gap-1"
             >
               GitHub Discussions
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>
             , which does not require disclosing your real identity to us.
           </p>

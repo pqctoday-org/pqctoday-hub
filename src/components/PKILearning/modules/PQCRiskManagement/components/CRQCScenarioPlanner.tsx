@@ -517,7 +517,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           >
             NIST CSWP 39
           </a>{' '}
-          &sect;2.3 (Constant Need of Transition) and &sect;6.1 (Resource Considerations).
+          &sect;2.3 (Constant Needs of Transition) and &sect;6.1 (Resource Considerations).
         </p>
 
         <p className="text-xs text-muted-foreground">

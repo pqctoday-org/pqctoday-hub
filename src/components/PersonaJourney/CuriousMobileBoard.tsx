@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router'
 import { Search, Menu, X, Bot, Map, HelpCircle, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useCommandPaletteStore } from '@/store/useCommandPaletteStore'
@@ -119,23 +120,20 @@ const TONE_CLASS: Record<string, { panel: string; label: string; punchline: stri
 
 function RoutedBottomTab({ path, label, icon: Icon, testId }: RoutedTabDef) {
   return (
-    <NavLink to={path} end={path === '/'} className="flex flex-1">
-      {({ isActive }) => (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          aria-label={`${label} view`}
-          aria-current={isActive ? 'page' : undefined}
-          className={cn(
-            'flex min-h-[52px] w-full flex-col items-center justify-center gap-1 rounded-none',
-            isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-          )}
-        >
-          <Icon size={20} aria-hidden="true" data-testid={testId} />
-          <span className="text-[11px] leading-none">{label}</span>
-        </Button>
-      )}
+    <NavLink
+      to={path}
+      end={path === '/'}
+      aria-label={`${label} view`}
+      className={({ isActive }) =>
+        cn(
+          buttonVariants({ variant: 'ghost', size: 'sm' }),
+          'flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 rounded-none',
+          isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+        )
+      }
+    >
+      <Icon size={20} aria-hidden="true" data-testid={testId} />
+      <span className="text-[11px] leading-none">{label}</span>
     </NavLink>
   )
 }
@@ -164,6 +162,15 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
     setMoreOpen(false)
     openRightPanel('history')
   }
+
+  useEffect(() => {
+    if (!moreOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMoreOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [moreOpen])
 
   return (
     <div className="flex min-h-dvh w-full flex-col bg-background text-foreground">
@@ -380,11 +387,13 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
                 <Map size={18} aria-hidden="true" />
                 Journey
               </Button>
-              <Link to="/faq" onClick={() => setMoreOpen(false)}>
-                <Button type="button" variant="ghost" className="w-full justify-start gap-2.5">
-                  <HelpCircle size={18} aria-hidden="true" />
-                  FAQ
-                </Button>
+              <Link
+                to="/faq"
+                onClick={() => setMoreOpen(false)}
+                className={cn(buttonVariants({ variant: 'ghost' }), 'w-full justify-start gap-2.5')}
+              >
+                <HelpCircle size={18} aria-hidden="true" />
+                FAQ
               </Link>
             </div>
           </div>

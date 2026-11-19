@@ -755,13 +755,18 @@ export const HybridSignatures: React.FC = () => {
           <p className="text-xs">
             Standards: IETF RFC 10073 (a labelled concatenation, not the bare form shown here); RFC
             9955, Hybrid Signature Spectrums (the concatenation, nesting and fused categories);
-            ePrint 2025/2059 (Silithium).
+            ePrint 2025/2059 (Silithium). Profile distinction: RFC 10073 specifies Composite ML-DSA
+            for X.509 PKI, whereas RFC 10082 specifies Composite ML-DSA for CMS / S/MIME.
           </p>
         </div>
       </details>
 
       {/* Construction tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-border pb-4">
+      <div
+        role="group"
+        aria-label="Hybrid signature constructions"
+        className="flex flex-wrap gap-2 border-b border-border pb-4"
+      >
         {CONSTRUCTIONS.map((c) => {
           const CIcon = c.icon
           const isActive = activeConstruction === c.id
@@ -771,6 +776,7 @@ export const HybridSignatures: React.FC = () => {
             <Button
               key={c.id}
               variant={isActive ? 'gradient' : 'outline'}
+              aria-pressed={isActive}
               onClick={() => setActiveConstruction(c.id)}
               className="flex items-center gap-2 text-sm relative"
             >
@@ -1207,8 +1213,10 @@ export const HybridSignatures: React.FC = () => {
       <div className="flex gap-2 p-3 bg-muted/50 rounded-lg border border-border text-xs text-muted-foreground">
         <Info size={14} className="shrink-0 mt-0.5" />
         <span>
-          Educational demonstration. Keys are ephemeral and never leave your browser. The local
-          shared-binding model uses fresh random EC signing nonces and is inspired by{' '}
+          Educational sandbox demonstration. Keys are ephemeral in browser memory (SoftHSM3 WASM and{' '}
+          <code>@noble</code>) — this is not a FIPS 140-3 / CMVP-validated production HSM or an
+          interoperable RFC 10073 / RFC 10082 implementation. The local shared-binding model uses
+          fresh random EC signing nonces and is inspired by{' '}
           <a
             href="https://eprint.iacr.org/2025/2059"
             target="_blank"
@@ -1218,7 +1226,8 @@ export const HybridSignatures: React.FC = () => {
             ePrint 2025/2059
           </a>{' '}
           (Devevey, Guerreau, Roméas). Its approximation uses ML-DSA external-μ operations; it is
-          not the published scheme or its security proof.
+          not the published scheme or its security proof. Validate target profiles, HSM support, and
+          relying-party verification in your production environment.
         </span>
       </div>
     </div>

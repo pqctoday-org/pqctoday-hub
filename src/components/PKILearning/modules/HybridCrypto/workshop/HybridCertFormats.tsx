@@ -612,6 +612,7 @@ export const HybridCertFormats: React.FC = () => {
                         type="button"
                         size="sm"
                         variant={compositeSigning === 'by-hand' ? 'default' : 'outline'}
+                        aria-pressed={compositeSigning === 'by-hand'}
                         disabled={generating !== null}
                         onClick={() => setCompositeSigning('by-hand')}
                       >
@@ -626,6 +627,7 @@ export const HybridCertFormats: React.FC = () => {
                         type="button"
                         size="sm"
                         variant={compositeSigning === 'one-call' ? 'default' : 'outline'}
+                        aria-pressed={compositeSigning === 'one-call'}
                         disabled={generating !== null}
                         onClick={() => setCompositeSigning('one-call')}
                       >
@@ -867,6 +869,11 @@ export const HybridCertFormats: React.FC = () => {
                             <Button
                               variant="ghost"
                               size="sm"
+                              aria-label={
+                                isCopied
+                                  ? 'Copied to clipboard'
+                                  : `Copy ${cert.label} ${currentView}`
+                              }
                               onClick={() =>
                                 copyToClipboard(
                                   currentView === 'pem' ? cert.pem.trim() : cert.parsed.trim(),
@@ -884,6 +891,7 @@ export const HybridCertFormats: React.FC = () => {
                             <Button
                               variant="ghost"
                               size="sm"
+                              aria-label={`Download ${cert.label} ${currentView}`}
                               onClick={() =>
                                 downloadContent(
                                   currentView === 'pem' ? cert.pem.trim() : cert.parsed.trim(),

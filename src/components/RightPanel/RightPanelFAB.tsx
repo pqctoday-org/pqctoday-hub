@@ -132,12 +132,13 @@ export const RightPanelFAB: React.FC = () => {
           {isChat ? (
             <img
               src="/ChatBotFlow.gif"
-              alt="PQC Assistant"
+              alt=""
+              aria-hidden="true"
               className="w-full h-full rounded-full object-cover"
               draggable={false}
             />
           ) : (
-            <Icon size={24} />
+            <Icon size={24} aria-hidden="true" />
           )}
           {/* Badge when minimized with active conversation */}
           {isMinimized && (

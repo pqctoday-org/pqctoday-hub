@@ -14,17 +14,22 @@ export function AppearanceSection() {
       transition={{ delay: 0.5 }}
       className="glass-panel p-4 md:p-6 flex flex-col items-center justify-center gap-4"
     >
-      <h3 className="text-lg font-semibold">Appearance</h3>
+      <h2 className="text-lg font-semibold">Appearance</h2>
       <p className="text-sm text-muted-foreground text-center max-w-md">
         Choose your preferred color scheme.
       </p>
-      <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border">
+      <div
+        role="group"
+        aria-label="Color scheme"
+        className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border"
+      >
         {(['light', 'dark'] as const).map((t) => (
           <Button
             key={t}
             variant="ghost"
             size="icon"
             onClick={() => setTheme(t)}
+            aria-pressed={theme === t}
             className={clsx(
               'px-4 py-2 min-h-[44px] rounded-md text-sm font-medium capitalize flex items-center gap-2',
               theme === t

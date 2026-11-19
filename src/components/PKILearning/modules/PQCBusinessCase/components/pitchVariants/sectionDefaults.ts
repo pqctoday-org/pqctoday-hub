@@ -388,7 +388,7 @@ export function buildExecutiveSummaryDefault(data: Data, persona: PersonaId): st
     case 'ops':
       return 'Post-quantum cryptography migration touches every TLS endpoint, every signing credential, and every HSM-backed key in production. This runbook defines how we roll out safely without service disruption.'
     default:
-      return 'Post-quantum cryptography (PQC) migration is a critical infrastructure investment. Current encryption (RSA, ECDSA, ECDH) will be broken by quantum computers. This proposal outlines the business case, cost-benefit, and recommended timeline.'
+      return 'Post-quantum cryptography (PQC) migration is a critical infrastructure investment. Classical public-key cryptography (RSA, ECDSA, ECDH) is vulnerable to a future cryptographically relevant quantum computer (CRQC). This proposal outlines the business case, cost-benefit, and recommended timeline.'
   }
 }
 

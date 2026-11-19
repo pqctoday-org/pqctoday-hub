@@ -17,6 +17,7 @@ import { CalendarClock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { getCswp39RefForArtifactType } from '@/components/BusinessCenter/businessToolsRegistry'
@@ -355,24 +356,34 @@ export const RefreshCycleAlignment: React.FC = () => {
                 className="grid grid-cols-1 sm:grid-cols-[1.4fr_1fr_1.6fr_auto] gap-3 items-end border-b border-border pb-3 last:border-b-0 last:pb-0"
               >
                 <div className="block">
-                  <span className="text-xs font-medium text-muted-foreground">Refresh program</span>
+                  <label
+                    htmlFor={`refresh-${row.id}-program`}
+                    className="text-xs font-medium text-muted-foreground"
+                  >
+                    Refresh program
+                  </label>
                   <Input
+                    id={`refresh-${row.id}-program`}
                     className="mt-1"
                     value={row.programName}
                     onChange={(e) => setRow(row.id, 'programName', e.target.value)}
                     placeholder="e.g. Data center hardware"
-                    aria-label="Refresh program"
                   />
                 </div>
                 <div className="block">
-                  <span className="text-xs font-medium text-muted-foreground">Next refresh</span>
+                  <label
+                    htmlFor={`refresh-${row.id}-year`}
+                    className="text-xs font-medium text-muted-foreground"
+                  >
+                    Next refresh year
+                  </label>
                   <Input
+                    id={`refresh-${row.id}-year`}
                     className="mt-1"
                     inputMode="numeric"
                     value={row.nextRefreshYear}
                     onChange={(e) => setRow(row.id, 'nextRefreshYear', e.target.value)}
                     placeholder="e.g. 2027"
-                    aria-label="Next refresh year"
                   />
                   <span
                     className={`mt-1 inline-block rounded-full border px-1.5 py-0.5 text-[10px] font-semibold ${badge.cls}`}
@@ -381,15 +392,18 @@ export const RefreshCycleAlignment: React.FC = () => {
                   </span>
                 </div>
                 <div className="block">
-                  <span className="text-xs font-medium text-muted-foreground">
+                  <label
+                    htmlFor={`refresh-${row.id}-task`}
+                    className="text-xs font-medium text-muted-foreground"
+                  >
                     PQC task to embed
-                  </span>
+                  </label>
                   <Input
+                    id={`refresh-${row.id}-task`}
                     className="mt-1"
                     value={row.pqcTaskToEmbed}
                     onChange={(e) => setRow(row.id, 'pqcTaskToEmbed', e.target.value)}
                     placeholder="e.g. Swap to PQC-capable load balancers"
-                    aria-label="PQC task to embed"
                   />
                 </div>
                 <Button
@@ -449,7 +463,12 @@ export const RefreshCycleAlignment: React.FC = () => {
         title="Refresh-Cycle Alignment — Export"
         exportData={exportMarkdown}
         filename="refresh-cycle-alignment"
-        formats={['markdown', 'pdf', 'docx']}
+        formats={['markdown', 'pdf', 'docx', 'csv']}
+        csvData={decisionModelToCsv({
+          inputs: state,
+          result: { horizonEndYear, misalignedCount, taskLateCount, missingInterimActions },
+          decisionBrief: exportMarkdown,
+        })}
         wideTable
         onExport={() => {
           addExecutiveDocument({

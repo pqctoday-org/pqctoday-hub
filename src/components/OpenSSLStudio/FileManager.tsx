@@ -250,6 +250,7 @@ export const FileManager = () => {
                 onClick={() => setEditingFile(null)}
                 className="p-1.5 hover:bg-muted text-muted-foreground hover:text-foreground rounded transition-colors"
                 title="Close"
+                aria-label="Close file editor"
               >
                 <X size={14} />
               </Button>
@@ -257,6 +258,7 @@ export const FileManager = () => {
           </div>
           <div className="flex-1 p-0 overflow-hidden">
             <textarea
+              aria-label={`Edit ${editingFile.name}`}
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               className="w-full h-full bg-transparent text-xs font-mono p-4 text-foreground/90 outline-none resize-none"

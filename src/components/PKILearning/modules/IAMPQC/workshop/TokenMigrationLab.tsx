@@ -469,6 +469,7 @@ export const TokenMigrationLab: React.FC = () => {
             selectedId={selectedAlgorithm}
             onSelect={handleAlgorithmSelect}
             label="Algorithm"
+            ariaLabel="Signing Algorithm"
             defaultLabel="Select Algorithm"
             noContainer
           />
@@ -891,9 +892,11 @@ export const TokenMigrationLab: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong>{' '}
           {isLive
-            ? 'All signing and verification operations execute in SoftHSM3 WASM — a reference PKCS#11 v3.2 implementation. Real key pairs are generated and cached per algorithm. Signature sizes match the actual FIPS 204 / PKCS#1 / ECDSA specifications.'
-            : 'In simulation mode, signature data is representative. Disable Simulation to execute real PKCS#11 v3.2 signing and verification operations across all five algorithms.'}{' '}
-          Generated keys are for educational purposes only.
+            ? 'All signing and verification operations execute in SoftHSMv3 WASM — an in-browser educational PKCS#11 v3.2 sandbox (not a FIPS 140-3 CMVP-validated production HSM). Real key pairs are generated and cached per algorithm, and signature sizes match the FIPS 204 / PKCS#1 / ECDSA specifications.'
+            : 'In illustration mode, signature data is representative. Enable Live HSM mode above to execute real PKCS#11 v3.2 signing and verification operations across all five algorithms.'}{' '}
+          Keys generated here are for educational use only — in production IAM deployments, verify
+          your HSM/KMS active FIPS 140-3 CMVP certificate, IdP/JWKS RFC 9964 support, and
+          proxy/gateway HTTP header limits.
         </p>
       </div>
 

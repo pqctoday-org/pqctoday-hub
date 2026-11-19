@@ -260,7 +260,7 @@ const CELL_TEMPLATES: Record<string, CellTemplate | typeof NOT_APPLICABLE> = {
     owner: 'customer',
     customerActions: [
       'Decide CloudHSM vs cloud KMS for key custody',
-      'Generate ML-DSA / ML-KEM keys where your KMS already offers them (AWS KMS does) and plan the rest as each provider ships them',
+      'Generate ML-DSA / ML-KEM keys where your KMS already offers them (AWS KMS ships ML-DSA and ML-KEM; Google Cloud KMS ships ML-DSA and SLH-DSA GA as of July 2026) and plan the rest as each provider ships them',
     ],
     providerActions: ['Provider supplies the KMS / CloudHSM service and FIPS 140-3 module'],
     notes: 'Customer controls key custody choice. PQC GA depends on the KMS roadmap per region.',
@@ -862,7 +862,7 @@ const SECTIONS: ArtifactSection[] = [
         label: 'Shared-responsibility plan narrative',
         type: 'textarea',
         placeholder:
-          'e.g., We operate on AWS + Azure under FedRAMP High. The PQC migration for KMS-backed keys is gated by FIPS 140-3 re-validation; we expect a 12-month lag. Code-signing leads the customer-side migration and ships ML-DSA-65 by 2026-Q3.',
+          'e.g., We operate on AWS + Azure under FedRAMP High. The PQC migration for KMS-backed keys is gated by FIPS 140-3 re-validation; we expect a 12-month lag. Code-signing leads the customer-side migration and ships ML-DSA-65 by 2027-Q3.',
       },
     ],
   },
@@ -1128,9 +1128,10 @@ export const CloudResponsibilityMatrix: React.FC = () => {
             </p>
             <p className="text-muted-foreground">
               FIPS 140-3 says agencies may purchase any of the products on the CMVP validated
-              modules list, and that the CMVP Historical list should not be used for procurement
-              decisions. In this module&apos;s reading, a module&apos;s validation is a separate
-              event from the algorithm becoming available.
+              modules list, and that the CMVP Historical list (where FIPS 140-2 modules moved in
+              September 2026) should not be used for procurement decisions. In this module&apos;s
+              reading, a module&apos;s validation is a separate event from the algorithm becoming
+              available.
             </p>
           </div>
         </div>

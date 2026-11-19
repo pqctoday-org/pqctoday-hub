@@ -690,10 +690,11 @@ const HybridKemDemo: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
             The TLS simulator negotiates the X25519MLKEM768 group with real OpenSSL.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
-            Note: softhsmv3 WASM uses X25519 (Montgomery) for the classical leg via{' '}
-            <code>CKM_EC_MONTGOMERY_KEY_PAIR_GEN</code> + <code>CKM_ECDH1_DERIVE</code>. This demo
-            is for educational use only — keys generated here must not be used in production
-            systems.
+            Note: softhsmv3 WASM is an in-browser educational PKCS#11 v3.2 sandbox (not a FIPS 140-3
+            CMVP-validated production HSM). It uses X25519 (Montgomery) for the classical leg via{' '}
+            <code>CKM_EC_MONTGOMERY_KEY_PAIR_GEN</code> + <code>CKM_ECDH1_DERIVE</code>. Keys
+            generated here are for learning only — in production, verify your HSM&apos;s active FIPS
+            140-3 CMVP certificate, Security Policy, and supported hybrid combiner profile.
           </p>
         </div>
       </div>

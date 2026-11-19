@@ -51,7 +51,7 @@ export const STANDARD_CHECKLIST_ITEMS: ChecklistItem[] = [
     value: 'attestation',
     label: 'Attestation / sign-off from framework owner',
     description:
-      'A named, accountable owner for this framework has reviewed and signed off on the checklist state.',
+      "Plan how a named, accountable owner for this framework will review and sign off on compliance status in your organization's production governance or GRC system (checking this box is a planning reminder, not a live attestation).",
     reference: 'NIST CSWP.39 §5.1 (standards, regulations, and mandates)',
   },
 ]

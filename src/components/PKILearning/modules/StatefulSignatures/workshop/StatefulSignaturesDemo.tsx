@@ -36,7 +36,13 @@ import { tamperSampleMessage } from './tamperSampleMessage'
 import { XMSSKeyGenDemo } from './XMSSKeyGenDemo'
 
 function hexToBytes(hex: string): Uint8Array {
-  return Uint8Array.from(hex.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
+  const cleaned = hex.replace(/\s+/g, '')
+  if (cleaned.length === 0 || cleaned.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(cleaned)) {
+    throw new Error(
+      'Invalid signature hex — enter an even number of hexadecimal characters (0–9, a–f).'
+    )
+  }
+  return Uint8Array.from(cleaned.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
 }
 function bytesToHex(bytes: Uint8Array): string {
   return Array.from(bytes)
@@ -547,7 +553,10 @@ export function StatefulSignaturesDemo() {
                     </h3>
                     <p className="text-xs">
                       State exhaustion is managed by the WASM boundary natively returning{' '}
-                      <code>CKR_KEY_EXHAUSTED</code> when the Final Node is consumed.
+                      <code>CKR_KEY_EXHAUSTED</code> when the Final Node is consumed. Note: this
+                      browser WASM engine is an educational sandbox with volatile memory, not a
+                      CMVP-validated production HSM with non-volatile monotonic state storage (SP
+                      800-208 §6.2).
                     </p>
                   </div>
                 </div>
@@ -648,24 +657,42 @@ export function StatefulSignaturesDemo() {
                         copy signature hex from signing log above
                       </span>
                     </div>
-                    <Input
-                      value={verifyMessage}
-                      onChange={(e) => {
-                        setVerifyMessage(e.target.value)
-                        setVerifyResult(null)
-                      }}
-                      placeholder="Message that was signed"
-                      className="font-mono text-xs"
-                    />
-                    <Textarea
-                      value={verifySignatureHex}
-                      onChange={(e) => {
-                        setVerifySignatureHex(e.target.value.trim())
-                        setVerifyResult(null)
-                      }}
-                      placeholder="Paste signature hex here (copy from signature log above)"
-                      className="font-mono text-[10px] h-20"
-                    />
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="hss-verify-message"
+                        className="block text-[11px] font-medium text-muted-foreground"
+                      >
+                        Signed message
+                      </label>
+                      <Input
+                        id="hss-verify-message"
+                        value={verifyMessage}
+                        onChange={(e) => {
+                          setVerifyMessage(e.target.value)
+                          setVerifyResult(null)
+                        }}
+                        placeholder="Message that was signed"
+                        className="font-mono text-xs"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="hss-verify-signature"
+                        className="block text-[11px] font-medium text-muted-foreground"
+                      >
+                        Signature hex
+                      </label>
+                      <Textarea
+                        id="hss-verify-signature"
+                        value={verifySignatureHex}
+                        onChange={(e) => {
+                          setVerifySignatureHex(e.target.value.trim())
+                          setVerifyResult(null)
+                        }}
+                        placeholder="Paste signature hex here (copy from signature log above)"
+                        className="font-mono text-[10px] h-20"
+                      />
+                    </div>
                     {verifySignatureHex && (
                       <p className="text-[10px] text-muted-foreground">
                         {verifySignatureHex.length / 2} bytes
@@ -910,24 +937,42 @@ export function StatefulSignaturesDemo() {
                         copy signature hex from signing log above
                       </span>
                     </div>
-                    <Input
-                      value={verifyMessage}
-                      onChange={(e) => {
-                        setVerifyMessage(e.target.value)
-                        setVerifyResult(null)
-                      }}
-                      placeholder="Message that was signed"
-                      className="font-mono text-xs"
-                    />
-                    <Textarea
-                      value={verifySignatureHex}
-                      onChange={(e) => {
-                        setVerifySignatureHex(e.target.value.trim())
-                        setVerifyResult(null)
-                      }}
-                      placeholder="Paste signature hex here (copy from signature log above)"
-                      className="font-mono text-[10px] h-20"
-                    />
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="hss-verify-message"
+                        className="block text-[11px] font-medium text-muted-foreground"
+                      >
+                        Signed message
+                      </label>
+                      <Input
+                        id="hss-verify-message"
+                        value={verifyMessage}
+                        onChange={(e) => {
+                          setVerifyMessage(e.target.value)
+                          setVerifyResult(null)
+                        }}
+                        placeholder="Message that was signed"
+                        className="font-mono text-xs"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="hss-verify-signature"
+                        className="block text-[11px] font-medium text-muted-foreground"
+                      >
+                        Signature hex
+                      </label>
+                      <Textarea
+                        id="hss-verify-signature"
+                        value={verifySignatureHex}
+                        onChange={(e) => {
+                          setVerifySignatureHex(e.target.value.trim())
+                          setVerifyResult(null)
+                        }}
+                        placeholder="Paste signature hex here (copy from signature log above)"
+                        className="font-mono text-[10px] h-20"
+                      />
+                    </div>
                     {verifySignatureHex && (
                       <p className="text-[10px] text-muted-foreground">
                         {verifySignatureHex.length / 2} bytes
@@ -1282,7 +1327,7 @@ export function StatefulSignaturesDemo() {
                           ],
                           [
                             'Catastrophic failure mode',
-                            'State rollback → OTS key reuse → full key compromise',
+                            'State rollback → OTS key reuse → partial chain exposure and forgery risk (SP 800-208 §1.2); treat the key as compromised and retire it',
                             'No counter to roll back. A FORS key can be selected again, and its security degrades gradually as signatures accumulate (FIPS 205 section 8).',
                           ],
                           [

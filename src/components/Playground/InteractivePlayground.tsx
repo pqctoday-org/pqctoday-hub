@@ -416,7 +416,7 @@ export const InteractivePlayground = () => {
           id="playground-error"
           role="alert"
           tabIndex={-1}
-          className="mt-6 p-4 bg-status-error border border-status-error rounded-xl flex items-center gap-3 text-status-error text-sm shrink-0"
+          className="mt-6 p-4 bg-status-error/15 border border-status-error/40 rounded-xl flex items-center gap-3 text-status-error text-sm shrink-0"
         >
           <AlertCircle size={20} aria-hidden="true" />
           <span className="font-medium">{error}</span>

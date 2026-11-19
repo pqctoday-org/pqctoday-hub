@@ -347,7 +347,8 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                 }}
               />
               <p className="text-xs text-muted-foreground">
-                Use an assumed value to compare cutoffs. The sample does not estimate it.
+                Use an assumed min-entropy H<sub>min</sub> = &minus;log<sub>2</sub>(max p
+                <sub>i</sub>) to compare cutoffs. The sample does not estimate it.
               </p>
             </div>
           )}
@@ -585,10 +586,11 @@ const ModeSelector: React.FC<{
   onChange: (mode: TestingMode) => void
 }> = ({ mode, onChange }) => (
   <div className="glass-panel p-2">
-    <div className="flex gap-1">
+    <div className="flex gap-1" role="group" aria-label="Testing mode">
       <Button
         variant={mode === 'static' ? 'secondary' : 'ghost'}
         size="sm"
+        aria-pressed={mode === 'static'}
         onClick={() => onChange('static')}
         className="gap-1.5 flex-1"
       >
@@ -599,6 +601,7 @@ const ModeSelector: React.FC<{
       <Button
         variant={mode === 'bitflip' ? 'secondary' : 'ghost'}
         size="sm"
+        aria-pressed={mode === 'bitflip'}
         onClick={() => onChange('bitflip')}
         className="gap-1.5 flex-1"
       >
@@ -609,6 +612,7 @@ const ModeSelector: React.FC<{
       <Button
         variant={mode === 'streaming' ? 'secondary' : 'ghost'}
         size="sm"
+        aria-pressed={mode === 'streaming'}
         onClick={() => onChange('streaming')}
         className="gap-1.5 flex-1"
       >

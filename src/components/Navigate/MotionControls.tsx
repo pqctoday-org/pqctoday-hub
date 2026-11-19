@@ -60,19 +60,25 @@ export function MotionControls({
   return (
     <div className="space-y-2 border-t border-border pt-2">
       <div className="flex flex-wrap items-center gap-1.5">
-        {MODE_OPTIONS.map(({ mode: m, label, icon: Icon }) => (
-          <Button
-            key={m}
-            variant={mode === m ? 'secondary' : 'outline'}
-            size="sm"
-            onClick={() => onModeChange(m)}
-            className="h-auto gap-1.5 rounded-full px-2.5 py-1 text-xs"
-            aria-pressed={mode === m}
-          >
-            <Icon className="h-3 w-3" aria-hidden="true" />
-            {label}
-          </Button>
-        ))}
+        <div
+          role="group"
+          aria-label="Camera motion mode"
+          className="inline-flex flex-wrap items-center gap-1.5"
+        >
+          {MODE_OPTIONS.map(({ mode: m, label, icon: Icon }) => (
+            <Button
+              key={m}
+              variant={mode === m ? 'secondary' : 'outline'}
+              size="sm"
+              onClick={() => onModeChange(m)}
+              className="h-auto gap-1.5 rounded-full px-2.5 py-1 text-xs"
+              aria-pressed={mode === m}
+            >
+              <Icon className="h-3 w-3" aria-hidden="true" />
+              {label}
+            </Button>
+          ))}
+        </div>
         {mode === 'tour' && tourProgress && (
           <span className="inline-flex items-center gap-1">
             <Button

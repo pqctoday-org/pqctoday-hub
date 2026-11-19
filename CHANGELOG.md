@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.216.0] - 2026-11-18
+
+All 37 Business Center tools, all 34 Playground tools, and all 33 top-level Hub pages and shared surfaces are upgraded for late-2026 standards accuracy, full CSV/Markdown export parity, keyboard and ARIA accessibility, zero-match filter recovery, and honest educational sandbox disclosures.
+
+### Added
+
+- **CSV export parity, CBOM-to-Runtime evidence chains, and finalized 2026 standards across all 37 Business Center tools** [view:/business] [persona:executive] [persona:grc] [persona:architect] [persona:developer] [persona:ops]: added CSV export parity to Refresh-Cycle Alignment and Data-at-Rest Strategy, added explicit CBOM → ACVP → CMVP → Runtime evidence-chain guidance to Migration Verification, updated Infrastructure Modernization Planner to CA/B Forum SC-081v3 certificate lifetimes (`200 → 100 → 47` days), updated Hybrid Transition Planner and MTI Negotiator to `RFC 9846`, `RFC 10024`, `RFC 10073`, `RFC 10082`, and TCG TPM 2.0 v185, and aligned all compliance, vendor, and governance builders with `NIST IR 8547` (final Oct 2026), `NSA CNSA 2.0 FAQ v2.2`, `EO 14412`, `OMB M-26-15`, `FIPS 140-2` Historical (Sept 2026), and `NIST SP 800-181r1` (NICE v2.2.0).
+- **Updated protocol citations and consistent browser-sandbox disclosures across all 34 Playground tools** [view:/playground] [view:/openssl] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: updated the PQC SSH Simulator to `RFC 10042` and OpenSSH 9.9 vs. 10.0 defaults, aligned 5G SUCI Profile C with 3GPP Rel-20 `TR 33.703` study status, added `RFC 9883` CRMF KEM proof-of-possession to PKI Enrollment, added BSI AIS 20/31 and ANSSI QRNG-vs.-DRBG guidance, and added clear browser SoftHSMv3/OpenSSL WASM sandbox vs. CMVP-validated production hardware disclosures across KMIP, HSM, OpenSSL, JWT, HD Wallet, and Solana labs.
+
+### Fixed
+
+- **Calculation guards, accessibility semantics, contrast bugs, and zero-match recovery across all 33 top-level pages and tools** [view:/] [view:/business] [view:/playground] [view:/learn] [view:/algorithms] [view:/compliance] [view:/migrate] [view:/timeline] [view:/library] [view:/threats] [view:/patents] [view:/leaders] [view:/about] [view:/faq] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: prevented `"Infinity months"` payback output in Board Pitch Builder, fixed negative untreated counts in Risk Heatmap when register rows are removed, removed duplicate paragraphs in HPKE Workshop, fixed hardcoded RSA mechanism labels in Firmware Signing and uncaught hex parsing errors in Stateful Signatures, fixed unreadable error/reset banner contrast in Save/Restore and Playground shells, eliminated nested `<Link><Button>` interactive controls across 9 pages, added `Clear filters` / `Show all documents` zero-match recovery in Migrate, Library, Leaders, and Business Center, added modal focus-trap and Escape handling to Career Journey Modal, and wired `htmlFor`/`id`, `aria-pressed`, `aria-expanded`, and `role="group"` across all interactive surfaces.
+
 ## [4.215.0] - 2026-11-18
 
 All 75 Hub Learn Modules (all 33 Essentials across all 8 roles plus all 42 remaining specialization modules) are updated for 2026 standards accuracy and actionable decision checklists, alongside the full Grade-A remediation sweep across Business Center worksheets, Playground labs, Mobile views, and Learn workshops.

@@ -204,7 +204,8 @@ const ALL_PARTS = [
   {
     id: 'capacity',
     title: 'Step 8: Cert Capacity',
-    description: 'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA.',
+    description:
+      'Estimate certificate-related TLS payload and annual leaf issuance storage for classical and PQC chains (no CPU prediction).',
     icon: BarChart2,
   },
 ]
@@ -380,12 +381,17 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
   // hand-off to the capacity calculator.
   if (playgroundMode) {
     return (
-      <div>
+      <div className="space-y-4">
+        <p className="text-xs text-muted-foreground">
+          Browser learning sandbox — keys and certificates are generated in-memory via OpenSSL WASM
+          and must not be used in production. Verify CA policy, HSM key protection, and chain
+          validation with your production PKI tools.
+        </p>
         {renderWorkshopPanel(playgroundStep, setPlaygroundStep)}
         <PlaygroundNextStep
           toolId="cert-capacity"
           name="Cert Capacity Calculator"
-          description="Model the storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA at scale."
+          description="Estimate certificate-related TLS payload and annual leaf issuance storage for classical and PQC chains (no CPU prediction)."
         />
       </div>
     )

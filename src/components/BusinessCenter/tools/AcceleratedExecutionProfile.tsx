@@ -119,6 +119,10 @@ export function buildMarkdown(s: ProfileState): string {
   lines.push('---')
   lines.push('')
   lines.push(
+    '*Hub educational contingency tabletop template — recording risk acceptances, resource requests, or activation authority here does not constitute formal organizational pre-approval or budget authorization.*'
+  )
+  lines.push('')
+  lines.push(
     '*Pre-drafted per the Applied Quantum Phase 4 Activity 4.7 contingency framework. ' +
       'Exercise this profile annually as a tabletop so it can be pulled off the shelf and ' +
       'activated without delay.*'
@@ -161,7 +165,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         prerequisiteDays: '40',
         rolloutDays: '30',
         compressedSequence:
-          'Collapse Phases 4–6: run discovery, risk scoring and Tier-1 pilots in parallel; pre-approve hybrid (X25519+ML-KEM-768) for all internet-facing TLS; defer long-tail / OT to a contained track.',
+          'Collapse Phases 4–6: run discovery, risk scoring and Tier-1 pilots in parallel; pre-approve hybrid (X25519MLKEM768 / RFC 10024) for all internet-facing TLS; defer long-tail / OT to a contained track.',
         riskAcceptances:
           'Pre-approved: temporary classical fallback for non-Tier-1 systems during transition; vendor roadmap commitments accepted for up to two quarters; residual risk re-reviewed quarterly.',
         resourceRequest:
@@ -217,7 +221,10 @@ export const AcceleratedExecutionProfile: React.FC = () => {
             Activity 4.7 names three trigger conditions — a credible reassessment of CRQC timelines,
             regulatory deadline compression, and a cryptanalytic event against a deployed algorithm.
             &ldquo;Active HNDL campaign detected&rdquo; and &ldquo;Vendor critical-path slip&rdquo;
-            are this tool&apos;s additions, not the framework&apos;s.
+            are this tool&apos;s additions, not the framework&apos;s. This is an educational
+            tabletop template; formal risk acceptances, emergency budgets, and activation authority
+            must be ratified in your organization&apos;s own governance and incident-response
+            systems.
           </p>
         </div>
       </header>
@@ -304,9 +311,12 @@ export const AcceleratedExecutionProfile: React.FC = () => {
               ['rolloutDays', 'Rollout after prerequisite (days)'],
             ] as const
           ).map(([field, label]) => (
-            <label key={field} className="block text-xs font-medium">
-              {label}
+            <div key={field} className="block">
+              <label htmlFor={`aep-${field}`} className="block text-xs font-medium">
+                {label}
+              </label>
               <Input
+                id={`aep-${field}`}
                 type="number"
                 min={0}
                 max={9999}
@@ -314,7 +324,7 @@ export const AcceleratedExecutionProfile: React.FC = () => {
                 value={state[field] ?? ''}
                 onChange={(event) => set(field, event.target.value)}
               />
-            </label>
+            </div>
           ))}
         </div>
         <p role="status" aria-label="Accelerated schedule result" className="text-sm font-semibold">

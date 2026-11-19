@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { Link, useLocation } from 'react-router'
 import { CalendarClock, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { filterGanttView, deadlineYear } from '@/data/timelineViewFilter'
 import { TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME } from '@/data/timelineFacts.generated'
 import type { GanttCountryData, TimelineEvent } from '@/types/timeline'
@@ -167,21 +167,36 @@ export function TimelineExecutiveDeadline({
             </p>
           )}
           <div className="flex flex-wrap gap-2">
-            <Link to="/migrate?tab=plan">
-              <Button variant="gradient" size="sm" className="h-7 px-2 text-xs gap-1">
-                Build your migration plan
-                <ArrowRight size={12} aria-hidden="true" />
-              </Button>
+            <Link
+              to="/migrate?tab=plan"
+              className={buttonVariants({
+                variant: 'gradient',
+                size: 'sm',
+                className: 'h-7 px-2 text-xs gap-1',
+              })}
+            >
+              Build your migration plan
+              <ArrowRight size={12} aria-hidden="true" />
             </Link>
-            <Link to="/compliance">
-              <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                Learn how scope is assessed →
-              </Button>
+            <Link
+              to="/compliance"
+              className={buttonVariants({
+                variant: 'outline',
+                size: 'sm',
+                className: 'h-7 px-2 text-xs',
+              })}
+            >
+              Learn how scope is assessed →
             </Link>
-            <Link to={`/timeline?${deadlinesSearch}`}>
-              <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                Show all deadlines
-              </Button>
+            <Link
+              to={`/timeline?${deadlinesSearch}`}
+              className={buttonVariants({
+                variant: 'outline',
+                size: 'sm',
+                className: 'h-7 px-2 text-xs',
+              })}
+            >
+              Show all deadlines
             </Link>
           </div>
         </div>

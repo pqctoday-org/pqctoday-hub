@@ -265,7 +265,7 @@ describe('AlgorithmsView', () => {
       expect(
         screen.getByRole('button', { name: /Show full algorithm comparison/ })
       ).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Learn the basics first/ })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: /Learn the basics first/ })).toBeInTheDocument()
     })
 
     it('shows the full comparison when curious clicks Unlock', async () => {

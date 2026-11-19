@@ -43,7 +43,7 @@ const SIGNATURE_ALGORITHM_TEXT = /\b(ECDSA|EdDSA|Ed25519|Ed448|DSA|ML-DSA|SLH-DS
 const SIGNATURE_USE_ACRONYMS = /\b(PKI|CA)\b/
 const SIGNATURE_USE_WORDS =
   /\b(signature\w*|signing|signed|code[- ]sign\w*|certificate\w*|firmware|secure boot|forgery|authenticity|authentication)\b/i
-const SYMMETRIC_ACRONYMS = /\b(AES(-\d+)?|3DES|SHA-?\d+|SHA|HMAC)\b/
+const SYMMETRIC_ACRONYMS = /\b(AES-\d+|AES|3DES|SHA-?\d+|SHA|HMAC)\b/
 const SYMMETRIC_WORDS = /\b(symmetric|hash\w*|Grover)\b/i
 const RSA_TEXT = /\bRSA\b/
 
@@ -187,7 +187,7 @@ export function RiskRegisterBuilderStandalone() {
   const transitions = useAlgorithmTransitionsForAssessment()
   const { myFrameworks, myProducts, myThreats } = useExecutiveModuleData()
 
-  const sensitivities = input?.dataSensitivity ?? []
+  const sensitivities = useMemo(() => input?.dataSensitivity ?? [], [input?.dataSensitivity])
   const hasFrameworkPressure = myFrameworks.length > 0
 
   const fullSeed = useMemo(() => {

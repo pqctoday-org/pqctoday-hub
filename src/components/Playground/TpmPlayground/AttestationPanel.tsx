@@ -491,10 +491,14 @@ export function AttestationPanel({ isWasmReady }: Props) {
 
         {operation === 'quote' && (
           <div>
-            <div className="text-xs uppercase tracking-wider text-muted-foreground font-mono">
+            <label
+              htmlFor="tpm-attest-pcr"
+              className="block text-xs uppercase tracking-wider text-muted-foreground font-mono"
+            >
               PCR selection
-            </div>
+            </label>
             <Input
+              id="tpm-attest-pcr"
               value={pcrSel}
               onChange={(e) => setPcrSel(e.target.value)}
               placeholder="sha256:0,1,2,3,7"
@@ -504,10 +508,14 @@ export function AttestationPanel({ isWasmReady }: Props) {
         )}
 
         <div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground font-mono">
+          <label
+            htmlFor="tpm-attest-nonce"
+            className="block text-xs uppercase tracking-wider text-muted-foreground font-mono"
+          >
             Qualifying data (nonce, hex)
-          </div>
+          </label>
           <Input
+            id="tpm-attest-nonce"
             value={nonce}
             onChange={(e) => setNonce(e.target.value)}
             placeholder="deadbeef…"

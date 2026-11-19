@@ -452,7 +452,8 @@ export function KmipPlaygroundView() {
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()
     setPageActions({
       shareTitle: 'KMIP Control Plane — PQC Today',
-      shareText: 'A real KMIP 3.0 control plane + PKCS#11 HSM running in the browser',
+      shareText:
+        'Explore KMIP 3.0 control-plane policies and SoftHSM PKCS#11 operations in an educational browser WASM sandbox',
     })
     return () => clearPageActions()
   }, [])
@@ -1253,11 +1254,11 @@ export function KmipPlaygroundView() {
           <>
             <PersonaPageNote route="/playground/cacp" className="mb-3" />
             <p className="text-sm text-muted-foreground -mt-1 mb-2">
-              A real <Term t="KMIP" /> 3.0 control plane + <Term t="PKCS#11" /> <Term t="HSM" />,
-              compiled to WebAssembly and running{' '}
+              An educational <Term t="KMIP" /> 3.0 control plane + <Term t="PKCS#11" /> SoftHSM
+              sandbox, compiled to WebAssembly and running{' '}
               <span className="font-medium text-foreground">entirely in this tab</span> — no server,
-              no Docker. Every operation is a genuine KMIP request answered by the same Rust engine
-              the appliance ships.
+              no Docker. Every operation is a genuine KMIP request answered by the in-browser Rust
+              engine.
             </p>
             {/* In-scope chip (A-grade review item #8) — this sandbox proves the
                 control-plane decision + key-management-at-rest path; it does not
@@ -1268,7 +1269,8 @@ export function KmipPlaygroundView() {
               </span>
               control plane + key management{' '}
               <span className="font-medium text-foreground">at rest</span>{' '}
-              <ShieldCheck size={11} className="inline text-status-success" /> ·{' '}
+              <ShieldCheck size={11} className="inline text-status-success" aria-hidden="true" /> ·{' '}
+              educational WASM sandbox (not a FIPS 140-3 CMVP-validated HSM) ·{' '}
               <span className="italic">TLS handshake &amp; persistence → full Docker sandbox</span>
             </p>
             {/* Spec-status disclosure. "Real KMIP 3.0" is true of the engine but

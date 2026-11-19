@@ -386,7 +386,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is Executive Order 14306?',
         answer:
-          "Executive Order 14306 (June 2025) streamlined its predecessor EO 14144 and removed the binding PQC procurement requirement for federal agencies. CISA's PQC product-category list (January 2026) remains advisory, while National Security System acquisitions must be CNSA 2.0-compliant from January 1, 2027 under CNSSP-15. Binding civilian deadlines now come from the June 2026 PQC Executive Order: post-quantum key establishment by 2030 and signatures by 2031. The Compliance Tracker tracks these US federal requirements and their intersection with NIST IR 8547 migration timelines.",
+          "Executive Order 14306 (June 2025) streamlined its predecessor EO 14144 and removed the binding PQC procurement requirement for federal agencies. CISA's PQC product-category list (January 2026) remains advisory, while National Security System acquisitions must be CNSA 2.0-compliant from January 1, 2027 under CNSSP-15. Binding civilian deadlines now come from Executive Order 14412 (June 2026) and OMB M-26-15: post-quantum key establishment by 2030 and signatures by 2031. The Compliance Tracker tracks these US federal requirements and their intersection with NIST IR 8547 migration timelines.",
         deepLink: '/compliance?framework=EO-14306-TLS-1-3-AGENCY-SUPPOR',
       },
       {
@@ -804,7 +804,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What should executives know about quantum risk?',
         answer:
-          'The Executive Quantum Impact module is a 30-minute briefing covering the Harvest Now Decrypt Later threat to corporate data, dated guidance and requirements with their scope (the draft NIST 2030/2035 horizon, CNSA 2.0 NSS milestones in 2027/2030/2031, and EU roadmap milestones), budget implications of infrastructure-wide crypto migration, and board-level action items for starting a PQC program. It includes a risk assessment framework calibrated for business decision-makers rather than technical staff. The module provides a board-ready presentation template.',
+          'The Executive Quantum Impact module is a 30-minute briefing covering the Harvest Now Decrypt Later threat to corporate data, dated guidance and requirements with their scope (the NIST IR 8547 2030/2035 horizon, CNSA 2.0 NSS milestones in 2027/2030/2031, and EU roadmap milestones), budget implications of infrastructure-wide crypto migration, and board-level action items for starting a PQC program. It includes a risk assessment framework calibrated for business decision-makers rather than technical staff. The module provides a board-ready presentation template.',
         deepLink: '/learn/exec-quantum-impact',
         persona: 'executive',
       },

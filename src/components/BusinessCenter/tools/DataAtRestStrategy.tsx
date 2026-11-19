@@ -25,6 +25,7 @@ import { StandardRef } from '@/components/common/StandardRef'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import { decisionModelToCsv } from '@/services/export/decisionModelCsv'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
@@ -200,6 +201,8 @@ export function buildMarkdown(s: DataAtRestState): string {
   lines.push('')
   lines.push(
     '*Aligned to Applied Quantum Phase 5 Activity 5.6 (Data-at-Rest Strategy). ' +
+      'Educational planning worksheet — replace starter sample stores with your own inventory and ' +
+      'verify key-wrapping, re-encryption, and SP 800-88 sanitization in your production environment. ' +
       'Record the chosen strategy per store in the CBOM.*'
   )
   return lines.join('\n')
@@ -264,8 +267,10 @@ export const DataAtRestStrategy: React.FC = () => {
           Data stores · {storeCount} store{storeCount === 1 ? '' : 's'}
         </h3>
         <p className="text-xs text-muted-foreground">
-          Give backups &amp; archives their own line — cold copies are not covered by the live-store
-          decision and often outlive it.
+          Starter rows are fictional sample stores — replace them with your own inventory. Recording
+          a strategy here does not verify key-wrapping, re-encryption, or SP 800-88 sanitization in
+          production. Give backups &amp; archives their own line — cold copies are not covered by
+          the live-store decision and often outlive it.
         </p>
         <p className="text-xs text-muted-foreground">
           Re-wrap replaces only the wrapped DEK; the DEK and the stored ciphertext stay the same, so
@@ -430,7 +435,12 @@ export const DataAtRestStrategy: React.FC = () => {
         title="Data-at-Rest Strategy — Export"
         exportData={exportMarkdown}
         filename="data-at-rest-strategy"
-        formats={['markdown', 'pdf', 'docx']}
+        formats={['markdown', 'pdf', 'docx', 'csv']}
+        csvData={decisionModelToCsv({
+          inputs: state,
+          result: { storeCount },
+          decisionBrief: exportMarkdown,
+        })}
         onExport={() => {
           addExecutiveDocument({
             id: `data-at-rest-strategy-${Date.now()}`,

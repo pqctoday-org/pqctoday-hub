@@ -711,8 +711,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
         <Globe size={36} className="mx-auto text-muted-foreground mb-3" />
         <h3 className="text-lg font-semibold text-foreground mb-2">No Jurisdictions Selected</h3>
         <p className="text-sm text-muted-foreground">
-          Select your operating jurisdictions in Step 1 to see the regulatory timeline and build
-          your migration plan.
+          Select your operating jurisdictions above (or in Step 1 of the workshop) to see the
+          regulatory timeline and build your sample migration plan.
         </p>
       </div>
     )
@@ -799,6 +799,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             <span className="block text-xs font-medium text-muted-foreground mb-1">Category</span>
             <FilterDropdown
               noContainer
+              ariaLabel={`Milestone category, currently ${newCategory}`}
               selectedId={newCategory}
               onSelect={(id) => setNewCategory(id)}
               items={MILESTONE_CATEGORIES.map((c) => ({ id: c, label: c }))}
@@ -997,6 +998,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             <Button
               variant="ghost"
               onClick={() => setGapExpanded((prev) => !prev)}
+              aria-expanded={gapExpanded}
               className="flex items-center gap-2"
             >
               {gapExpanded ? (

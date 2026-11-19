@@ -55,19 +55,19 @@ export const SATISFIES_ROWS: SatisfiesRow[] = [
   },
   {
     regulation: 'NIS2 — Art. 21',
-    obligation: 'Risk-based assessment of crypto exposure',
+    obligation: 'Cyber risk-management duty including cryptography (sets no fixed PQC deadline)',
     deliverable: 'Quantum Risk Assessment (QRA)',
     phase: 'Risk scoring',
   },
   {
-    regulation: 'OMB M-23-02 / NSM-10',
-    obligation: 'Prioritised crypto inventory of in-scope systems',
+    regulation: 'OMB M-26-15 / EO 14412 (M-23-02 / NSM-10)',
+    obligation: 'Prioritised crypto inventory and federal non-NSS migration plan',
     deliverable: 'Crypto inventory & asset map',
     phase: 'Inventory',
   },
   {
     regulation: 'EU DORA',
-    obligation: 'Board-approved governance for ICT/crypto resilience',
+    obligation: 'Board-approved ICT cyber risk-management governance (sets no fixed PQC deadline)',
     deliverable: 'Program Charter & governance',
     phase: 'Program',
   },

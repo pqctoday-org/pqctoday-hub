@@ -817,6 +817,11 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack, onComplete }
           onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
         />
       )}
+
+      <p className="text-[11px] text-muted-foreground/70 text-center pt-4">
+        Educational browser sandbox — mnemonics, seeds, and derived keys generated here are not for
+        production wallets or real funds.
+      </p>
     </div>
   )
 }

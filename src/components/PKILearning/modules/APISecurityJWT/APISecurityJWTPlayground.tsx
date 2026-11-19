@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { readAlgorithmLaunch } from '@/data/algorithmLaunch'
-import React, { useState } from 'react'
+import React, { useId, useState } from 'react'
 import { Link } from 'react-router'
 import { ExternalLink, ChevronDown, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { JWTInspector } from './workshop/JWTInspector'
 import { PQCJWTSigning } from './workshop/PQCJWTSigning'
 import { HybridJWT } from './workshop/HybridJWT'
@@ -57,6 +58,7 @@ const SECTIONS = [
 ]
 
 export const APISecurityJWTPlayground: React.FC<{ initialStep?: number }> = ({ initialStep }) => {
+  const namespace = useId()
   // A ?step=N link opens just that section; without one the usual sections open.
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
     initialStep === undefined
@@ -81,7 +83,9 @@ export const APISecurityJWTPlayground: React.FC<{ initialStep?: number }> = ({ i
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm text-foreground/80">
         Full API Security &amp; JWT workshop — real PQC signing (ML-DSA, SLH-DSA, composite) and
         HPKE-based ML-KEM JWE encryption, which can run entirely inside softhsmv3 via the PQCToday
-        candidate PKCS#11 CKM_HPKE mechanism.{' '}
+        candidate PKCS#11 CKM_HPKE mechanism. Keys and tokens live in browser memory for learning;
+        in production, verify IdP/KMS key protection, JWKS rotation, and RFC 8725 claim validation
+        with your own API gateway and auth tools.{' '}
         <Link
           to="/learn/api-security-jwt?tab=workshop"
           className="text-primary underline underline-offset-2"
@@ -95,6 +99,9 @@ export const APISecurityJWTPlayground: React.FC<{ initialStep?: number }> = ({ i
           <div key={id} className="rounded-lg border border-border bg-card">
             <Button
               variant="ghost"
+              id={`${namespace}-${id}-trigger`}
+              aria-expanded={Boolean(expanded[id])}
+              aria-controls={`${namespace}-${id}-panel`}
               onClick={() => toggle(id)}
               className="flex w-full items-center justify-start gap-3 px-4 py-3 text-left hover:bg-muted/30 transition-colors rounded-lg h-auto whitespace-normal"
             >
@@ -108,26 +115,31 @@ export const APISecurityJWTPlayground: React.FC<{ initialStep?: number }> = ({ i
                 <p className="text-xs text-muted-foreground">{description}</p>
               </div>
             </Button>
-            {expanded[id] && (
-              <div className="border-t border-border px-4 pb-4 pt-3">
-                {id === 'jwt-inspector' && <JWTInspector />}
-                {id === 'pqc-signing' && <PQCJWTSigning />}
-                {id === 'hybrid-jwt' && <HybridJWT />}
-                {id === 'jwe-encryption' && <JWEEncryption />}
-                {id === 'token-size' && <TokenSizeAnalyzer />}
-                {id === 'matrix-audit' && <JOSEProtocolMatrixAudit />}
-                {id === 'attack-lab' && <JWTAttackLab />}
-              </div>
-            )}
+            <div
+              id={`${namespace}-${id}-panel`}
+              role="region"
+              aria-labelledby={`${namespace}-${id}-trigger`}
+              hidden={!expanded[id]}
+              className="border-t border-border px-4 pb-4 pt-3"
+            >
+              {expanded[id] && id === 'jwt-inspector' && <JWTInspector />}
+              {expanded[id] && id === 'pqc-signing' && <PQCJWTSigning />}
+              {expanded[id] && id === 'hybrid-jwt' && <HybridJWT />}
+              {expanded[id] && id === 'jwe-encryption' && <JWEEncryption />}
+              {expanded[id] && id === 'token-size' && <TokenSizeAnalyzer />}
+              {expanded[id] && id === 'matrix-audit' && <JOSEProtocolMatrixAudit />}
+              {expanded[id] && id === 'attack-lab' && <JWTAttackLab />}
+            </div>
           </div>
         ))}
       </div>
 
       <div className="pt-2 border-t border-border">
-        <Link to="/learn/api-security-jwt?tab=workshop">
-          <Button variant="outline" className="gap-1">
-            Open full module <ExternalLink size={14} />
-          </Button>
+        <Link
+          to="/learn/api-security-jwt?tab=workshop"
+          className={buttonVariants({ variant: 'outline', className: 'gap-1' })}
+        >
+          Open full module <ExternalLink size={14} aria-hidden="true" />
         </Link>
       </div>
     </div>

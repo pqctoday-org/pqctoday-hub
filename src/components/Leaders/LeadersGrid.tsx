@@ -780,7 +780,7 @@ export const LeadersGrid = ({
             <p className="text-muted-foreground text-xs">
               These are the researchers, engineers, and policymakers contributing to the advances of
               post-quantum cryptography — authoring algorithms and standards, shipping
-              implementations, and shaping government policy. Use the filters above to explore by
+              implementations, and shaping government policy. Use the filters below to explore by
               region, sector, or category.
             </p>
           </div>
@@ -1024,7 +1024,12 @@ export const LeadersGrid = ({
                     searchInput.current?.focus()
                   },
                 }
-              : undefined
+              : activeFilterCount > 0
+                ? {
+                    label: 'Clear all filters',
+                    onClick: handleClearAll,
+                  }
+                : undefined
           }
         />
       )}

@@ -416,7 +416,7 @@ export const ChangelogView = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/20">
-              <FileText className="text-primary" size={24} />
+              <FileText className="text-primary" size={24} aria-hidden="true" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gradient">Changelog</h1>
@@ -485,7 +485,7 @@ export const ChangelogView = () => {
               className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0"
               title="Days since each dataset's newest snapshot file. An amber dot means that dataset hasn't been refreshed in over 30 days."
             >
-              <Calendar size={12} />
+              <Calendar size={12} aria-hidden="true" />
               <span>Data last updated:</span>
             </div>
             {DATA_FRESHNESS.map(({ label, date }) => {
@@ -533,6 +533,7 @@ export const ChangelogView = () => {
         <div className="relative mb-3">
           <Search
             size={14}
+            aria-hidden="true"
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
           />
           <input
@@ -565,7 +566,11 @@ export const ChangelogView = () => {
           </select>
         </label>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
-          <div className="flex flex-wrap items-center gap-2">
+          <div
+            role="group"
+            aria-label="Changelog entry filters"
+            className="flex flex-wrap items-center gap-2"
+          >
             <span className="text-muted-foreground">Filter:</span>
             {selectedPersona && (
               <Button
@@ -580,13 +585,14 @@ export const ChangelogView = () => {
                 )}
                 title="Entries tagged for your role, plus a keyword guess over the untagged ones — see the note below when active"
               >
-                <UserCheck size={14} />
+                <UserCheck size={14} aria-hidden="true" />
                 <span>For me</span>
               </Button>
             )}
             <Button
               variant="ghost"
               onClick={() => toggleFilter('added')}
+              aria-pressed={filters.added}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                 filters.added
@@ -594,12 +600,13 @@ export const ChangelogView = () => {
                   : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
               )}
             >
-              <Plus size={14} />
+              <Plus size={14} aria-hidden="true" />
               <span>New Features</span>
             </Button>
             <Button
               variant="ghost"
               onClick={() => toggleFilter('changed')}
+              aria-pressed={filters.changed}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                 filters.changed
@@ -607,12 +614,13 @@ export const ChangelogView = () => {
                   : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
               )}
             >
-              <Sparkles size={14} />
+              <Sparkles size={14} aria-hidden="true" />
               <span>Improvements</span>
             </Button>
             <Button
               variant="ghost"
               onClick={() => toggleFilter('fixed')}
+              aria-pressed={filters.fixed}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                 filters.fixed
@@ -620,13 +628,14 @@ export const ChangelogView = () => {
                   : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
               )}
             >
-              <Bug size={14} />
+              <Bug size={14} aria-hidden="true" />
               <span>Bug Fixes</span>
             </Button>
             {HAS_DATA_SECTIONS && (
               <Button
                 variant="ghost"
                 onClick={() => toggleFilter('data')}
+                aria-pressed={filters.data}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                   filters.data
@@ -634,7 +643,7 @@ export const ChangelogView = () => {
                     : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
                 )}
               >
-                <Database size={14} />
+                <Database size={14} aria-hidden="true" />
                 <span>Data Updates</span>
               </Button>
             )}
@@ -642,6 +651,7 @@ export const ChangelogView = () => {
               <Button
                 variant="ghost"
                 onClick={() => toggleFilter('security')}
+                aria-pressed={filters.security}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                   filters.security
@@ -649,7 +659,7 @@ export const ChangelogView = () => {
                     : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
                 )}
               >
-                <Shield size={14} />
+                <Shield size={14} aria-hidden="true" />
                 <span>Security</span>
               </Button>
             )}
@@ -674,6 +684,7 @@ export const ChangelogView = () => {
           <Button
             variant="ghost"
             onClick={() => setShowDetails((prev) => !prev)}
+            aria-expanded={showDetails}
             className={clsx(
               'flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all text-sm whitespace-nowrap',
               showDetails
@@ -681,7 +692,11 @@ export const ChangelogView = () => {
                 : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
             )}
           >
-            {showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {showDetails ? (
+              <ChevronUp size={14} aria-hidden="true" />
+            ) : (
+              <ChevronDown size={14} aria-hidden="true" />
+            )}
             <span>{showDetails ? 'Hide details' : 'Show details'}</span>
           </Button>
         </div>

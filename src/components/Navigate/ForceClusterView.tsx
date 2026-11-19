@@ -2373,7 +2373,7 @@ export function ForceClusterView() {
           {graph && (
             <NavigateSearch graph={graph} onPick={focusNode} focusOnMount={searchRequested} />
           )}
-          <div className="flex flex-wrap gap-1.5">
+          <div role="group" aria-label="Filter by category" className="flex flex-wrap gap-1.5">
             {NODE_TYPES.map((type) => {
               const on = enabledTypes.has(type)
               // eslint-disable-next-line security/detect-object-injection -- type is drawn from the typed ForceClusterNodeType union (NODE_TYPES), not user input
@@ -2458,7 +2458,11 @@ export function ForceClusterView() {
                   </Button>
                 </span>
               </div>
-              <div className="flex max-h-32 flex-wrap gap-1 overflow-y-auto">
+              <div
+                role="group"
+                aria-label={`${TYPE_LABEL[expandedType]} sub-category filters`}
+                className="flex max-h-32 flex-wrap gap-1 overflow-y-auto"
+              >
                 {(subsByType.get(expandedType) ?? []).map(({ sub, count }) => {
                   const key = subKey(expandedType, sub)
                   const on = !disabledSubs.has(key)

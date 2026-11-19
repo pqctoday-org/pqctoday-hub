@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { ExternalLink } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { KeyGenStep } from './workshop/KeyGenStep'
 import { CmpInitialReq } from './workshop/CmpInitialReq'
 import { EstSimpleEnroll } from './workshop/EstSimpleEnroll'
@@ -22,9 +22,10 @@ export const PKIEnrollmentPlayground: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
-        Four-step PKI enrollment showcase — RFC 9810 (CMP, obsoletes RFC 4210) · RFC 7030 (EST).
-        Generate a key, enroll via CMP, enroll the same key via EST, then perform a quantum-safe KEM
-        key update.{' '}
+        Four-step PKI enrollment showcase — RFC 9810 (CMP, obsoletes RFC 4210) · RFC 9883 (CRMF KEM
+        POP) · RFC 7030 (EST). Generate a key, enroll via CMP, enroll the same key via EST, then
+        perform a quantum-safe KEM key update against an in-browser mock CA (for production, verify
+        authorization, HSM key protection, and CA interoperability with your own PKI tools).{' '}
         {/* `underline`, not `hover:underline`: this link sits inside a
             paragraph, so colour alone is not a sufficient affordance
             (axe link-in-text-block / WCAG 1.4.1). */}
@@ -44,31 +45,32 @@ export const PKIEnrollmentPlayground: React.FC = () => {
       </section>
 
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-foreground">
           Step 2 — CMP Initial Request (ML-DSA signed)
-        </h3>
+        </h2>
         <CmpInitialReq eeKeyPem={eeKeyPem} eeKeyAlgorithm={eeKeyAlgorithm} />
       </section>
 
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-foreground">
           Step 3 — EST simpleenroll (RFC 7030)
-        </h3>
+        </h2>
         <EstSimpleEnroll eeKeyPem={eeKeyPem} eeKeyAlgorithm={eeKeyAlgorithm} />
       </section>
 
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground">
-          Step 4 — CMP KEM Key Update (RFC 9810 encrCert POP)
-        </h3>
+        <h2 className="text-lg font-semibold text-foreground">
+          Step 4 — CMP KEM Key Update (RFC 9810 / RFC 9883 encrCert POP)
+        </h2>
         <CmpKemKeyUpdate />
       </section>
 
       <div className="pt-4 border-t border-border">
-        <Link to="/learn/pki-enrollment-protocols">
-          <Button variant="outline" className="gap-1">
-            Open full module <ExternalLink size={14} />
-          </Button>
+        <Link
+          to="/learn/pki-enrollment-protocols"
+          className={buttonVariants({ variant: 'outline', className: 'gap-1' })}
+        >
+          Open full module <ExternalLink size={14} aria-hidden="true" />
         </Link>
       </div>
     </div>

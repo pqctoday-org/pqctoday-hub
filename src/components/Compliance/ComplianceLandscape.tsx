@@ -418,11 +418,11 @@ export function DeadlineTimeline({
 const REGION_CONTEXT: Record<RegionBloc, { title: string; body: string }> = {
   'North America': {
     title: 'North America',
-    body: 'US federal policy has several distinct scopes: CNSA 2.0 sets dated requirements for National Security Systems, while NIST IR 8547 (final, October 2026) sets the transition horizon for systems that follow NIST standards: quantum-vulnerable public-key algorithms deprecated after 2030 and disallowed after 2035. FIPS 140-3 (NIST CMVP) and FedRAMP carry certification and authorization weight. Canada (CCCS) cross-recognises FIPS 140-3 and tracks NIST PQC for federal procurement.',
+    body: 'US federal policy has several distinct scopes: CNSA 2.0 sets dated requirements for National Security Systems; Executive Order 14412 (June 2026) and OMB M-26-15 direct federal non-NSS agencies to transition prioritized key establishment by 31 Dec 2030 and signatures by 31 Dec 2031; and NIST IR 8547 (final, October 2026) sets the transition horizon for systems that follow NIST standards (quantum-vulnerable public-key algorithms deprecated after 2030 and disallowed after 2035). FIPS 140-3 (NIST CMVP) and FedRAMP carry certification and authorization weight. Canada (CCCS) cross-recognises FIPS 140-3 and tracks NIST PQC for federal procurement.',
   },
   'European Union': {
     title: 'European Union',
-    body: 'Layered framework: ENISA publishes the technical PQC guidance, EUCC is the cross-border certification scheme, NIS2 + DORA + eIDAS 2.0 are the operative legal instruments. National authorities (ANSSI, BSI, AgID, RIA, NCSC-IE, CCB, A-SIT, NASK) transpose NIS2 and add country-specific PQC roadmaps.',
+    body: 'Layered framework: ENISA publishes the technical PQC guidance, EUCC is the cross-border certification scheme, and NIS2 + DORA + eIDAS 2.0 are the operative legal instruments (NIS2 and DORA impose cyber risk-management duties rather than fixed PQC deadlines). National authorities (ANSSI, BSI, AgID, RIA, NCSC-IE, CCB, A-SIT, NASK) transpose NIS2 and add country-specific PQC roadmaps.',
   },
   'Europe (non-EU)': {
     title: 'Europe (non-EU)',

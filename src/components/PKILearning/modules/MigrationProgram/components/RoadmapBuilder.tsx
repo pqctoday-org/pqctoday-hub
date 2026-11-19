@@ -657,10 +657,12 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
                 Executive Order 14412, &ldquo;Securing the Nation Against Advanced Cryptographic
                 Attacks&rdquo;
               </a>{' '}
-              (June 22, 2026), which directs federal agencies to transition their High Value Assets
-              and high impact systems (excluding National Security Systems) to PQC for key
-              establishment by December 31, 2030, and for digital signatures by December 31, 2031.
-              It directs those agencies; it is not a deadline for other organizations.
+              (June 22, 2026) and its implementing guidance OMB M-26-15 (June 24, 2026), which
+              direct federal agencies to transition their High Value Assets and high impact systems
+              (excluding National Security Systems) to PQC for key establishment by December 31,
+              2030, and for digital signatures by December 31, 2031, and direct the FAR Council to
+              propose a contractor rule. They direct those agencies; they are not a deadline for
+              other organizations.
             </p>
           </div>
           <div className="flex items-center justify-between flex-wrap gap-2">

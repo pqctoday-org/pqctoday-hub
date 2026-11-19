@@ -31,8 +31,8 @@ import {
   describeIndustryBreachBaseline,
   formatBreachBaselineUSD,
   getIndustryBreachBaselineSourceId,
-  INDUSTRY_BREACH_BASELINES,
 } from '@/data/roiBaselines'
+import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
 import {
   probabilityProvenance,
   probabilityProvenanceMarkdown,
@@ -211,7 +211,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
       md += `\n`
     }
     const { label, source } = baselineProvenance
-    md += `*Starting breach benchmark: ${formatBreachBaselineUSD(INDUSTRY_BREACH_BASELINES[selectedIndustry])} — ${source ? `[${label}](${source})` : label}. Quantum likelihood uses the Global Risk Institute Quantum Threat Timeline 2025.*\n`
+    md += `*Starting breach benchmark: ${formatBreachBaselineUSD(resolveIndustryBreachBaseline(selectedIndustry))} — ${source ? `[${label}](${source})` : label}. Quantum likelihood uses the Global Risk Institute Quantum Threat Timeline 2025.*\n`
     return md
   }, [breachCosts, selectedIndustry, baselineProvenance, findings, modelInputs])
 
@@ -361,10 +361,10 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
                 <p className="text-sm font-medium text-foreground">Cost of Inaction</p>
               </div>
               <p className="text-xs text-muted-foreground">
-                Every year without PQC migration increases your exposure to quantum-enabled attacks.
-                HNDL (Harvest Now, Decrypt Later) means adversaries are already collecting encrypted
-                data that will become readable once quantum computers mature. The longer you wait,
-                the more historical data is at risk.
+                Under HNDL (Harvest Now, Decrypt Later), encrypted data using quantum-vulnerable key
+                establishment could be captured today and decrypted later if a CRQC arrives before
+                its secrecy lifetime expires. Each year of delay adds another year of potentially
+                exposed ciphertext.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-4 border border-border">

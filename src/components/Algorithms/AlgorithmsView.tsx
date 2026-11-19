@@ -23,6 +23,7 @@ import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { Cnsa20Panel } from './Cnsa20Panel'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
+import { buttonVariants } from '../ui/button-variants'
 import { getAlgorithmDefaults } from '../../data/personaConfig'
 import type { PersonaId } from '../../data/learningPersonas'
 import { useAlgorithmExplorer, MAX_COMPARE } from './useAlgorithmExplorer'
@@ -770,10 +771,11 @@ export function AlgorithmsView({
             >
               Show full algorithm comparison
             </Button>
-            <Link to="/learn/pqc-101">
-              <Button variant="outline" className="sm:w-auto">
-                Learn the basics first
-              </Button>
+            <Link
+              to="/learn/pqc-101"
+              className={buttonVariants({ variant: 'outline', className: 'sm:w-auto' })}
+            >
+              Learn the basics first
             </Link>
           </div>
         </div>
@@ -812,15 +814,25 @@ export function AlgorithmsView({
                     agency, sector, and region in scope.
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <Link to="/compliance">
-                      <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                        Compliance deadlines →
-                      </Button>
+                    <Link
+                      to="/compliance"
+                      className={buttonVariants({
+                        variant: 'outline',
+                        size: 'sm',
+                        className: 'h-7 px-2 text-xs',
+                      })}
+                    >
+                      Compliance deadlines →
                     </Link>
-                    <Link to="/timeline">
-                      <Button variant="outline" size="sm" className="h-7 px-2 text-xs">
-                        Migration timeline →
-                      </Button>
+                    <Link
+                      to="/timeline"
+                      className={buttonVariants({
+                        variant: 'outline',
+                        size: 'sm',
+                        className: 'h-7 px-2 text-xs',
+                      })}
+                    >
+                      Migration timeline →
                     </Link>
                   </div>
                 </div>
