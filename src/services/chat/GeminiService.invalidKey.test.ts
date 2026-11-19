@@ -82,3 +82,24 @@ describe('Gemini key transport', () => {
     expect(init.headers['x-goog-api-key']).toBe('secret-key')
   })
 })
+
+describe('Gemini 402 message', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it("adds Google's own reason to the payment-required message", async () => {
+    const body = { error: { code: 402, message: 'Free tier is not available for this project.' } }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(
+        async () =>
+          new Response(JSON.stringify(body), {
+            status: 402,
+            headers: { 'Content-Type': 'application/json' },
+          })
+      )
+    )
+    await expect(drain(streamResponse('k', MESSAGES, []))).rejects.toThrow(
+      /402.*Google says: "Free tier is not available for this project\."/
+    )
+  })
+})

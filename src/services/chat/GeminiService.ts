@@ -90,6 +90,17 @@ async function fetchWithRetry(
   return response
 }
 
+/** Google's own error text from a failed response, shortened, for the reader. */
+export async function readGoogleErrorMessage(response: Response): Promise<string> {
+  try {
+    const body = (await response.clone().json()) as { error?: { message?: string } }
+    const msg = body?.error?.message?.trim() ?? ''
+    return msg.length > 300 ? `${msg.slice(0, 297)}...` : msg
+  } catch {
+    return ''
+  }
+}
+
 /** True when a Gemini error body says the API key itself is invalid. */
 export async function isInvalidKeyResponse(response: Response): Promise<boolean> {
   try {
@@ -168,8 +179,10 @@ export async function* streamResponse(
       throw new Error('Invalid API key. Please check your key and try again.')
     }
     if (status === 402) {
+      const googleReason = await readGoogleErrorMessage(response)
       throw new Error(
-        'Gemini API error: 402 (Payment Required). Your Google AI Studio API key requires billing enabled or free-tier quota for Gemini Flash. Enable billing in Google AI Studio or switch to Local (Private) mode.'
+        'Gemini API error: 402 (Payment Required). Your Google AI Studio API key requires billing enabled or free-tier quota for Gemini Flash. Enable billing in Google AI Studio or switch to Local (Private) mode.' +
+          (googleReason ? ` Google says: "${googleReason}"` : '')
       )
     }
     if (status === 429) {
