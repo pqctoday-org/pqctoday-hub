@@ -27,7 +27,7 @@ export const EXEC_QUANTUM_EXERCISES: ExecExercise[] = [
     workshopStepIndex: 3,
     workshopStepLabel: 'Step 4: Organisational Evidence Scope',
     decisionChecklist: [
-      'Require product- and version-scoped evidence (e.g., CMVP/ACVP certificate numbers for FIPS 203/204/205, CycloneDX CBOM, or release notes for the exact deployed edition) rather than marketing press releases.',
+      'Require product- and version-scoped evidence (e.g., CMVP module or CAVP algorithm certificate numbers for FIPS 203/204/205, CycloneDX CBOM, or release notes for the exact deployed edition) rather than marketing press releases.',
       'Record Unknown for any vendor where the deployed product edition, firmware tier, or KMS/HSM dependency is not yet verified—never count Unknown as compliant or low risk.',
       'Assign a named vendor owner (Procurement / Architecture lead) and a 30- or 90-day verification deadline before including the vendor in the KPI Dashboard.',
     ],
