@@ -88,7 +88,7 @@ afterEach(() => {
 describe('citeProtoFlags', () => {
   it('defaults to A + guard + id check with B off', () => {
     expect(CITE_PROTO_DEFAULT).toBe('a+guard+id')
-    expect(citeProtoFlags()).toEqual({
+    expect(citeProtoFlags()).toMatchObject({
       bySentence: true,
       partial: false,
       relevanceGuard: true,
@@ -98,14 +98,14 @@ describe('citeProtoFlags', () => {
 
   it('keeps the legacy values: a is A alone, none is everything off, ab is A and B', () => {
     process.env.CITE_PROTO = 'a'
-    expect(citeProtoFlags()).toEqual({
+    expect(citeProtoFlags()).toMatchObject({
       bySentence: true,
       partial: false,
       relevanceGuard: false,
       idRepair: false,
     })
     process.env.CITE_PROTO = 'none'
-    expect(citeProtoFlags()).toEqual({
+    expect(citeProtoFlags()).toMatchObject({
       bySentence: false,
       partial: false,
       relevanceGuard: false,
@@ -120,13 +120,70 @@ describe('citeProtoFlags', () => {
   })
 })
 
+describe('guard-excerpt and title-ids switches', () => {
+  it('are off by default and parse as extra tokens', () => {
+    expect(citeProtoFlags()).toMatchObject({ guardExcerpts: false, titleIdentifiers: false })
+    process.env.CITE_PROTO = 'guard+guard-excerpt+title-ids'
+    expect(citeProtoFlags()).toMatchObject({
+      bySentence: false,
+      relevanceGuard: true,
+      guardExcerpts: true,
+      titleIdentifiers: true,
+    })
+  })
+
+  it('judge an excerpt citation with its verbatim excerpt as the cited text, only when asked', () => {
+    const excerptCite: ClaimCitation = {
+      claimExcerpt:
+        'This approach ensures forward secrecy and resistance to quantum computing attacks while maintaining compatibility.',
+      evidenceExcerpt: 'Type: RFC | Status: Released (Informational RFC)',
+      chunkId: SSH.id,
+    }
+    process.env.CITE_PROTO = 'none'
+    expect(verifyCitations([excerptCite], [SSH])).toEqual([])
+    process.env.CITE_PROTO = 'a+guard+id'
+    expect(verifyCitations([excerptCite], [SSH])).toEqual([])
+    process.env.CITE_PROTO = 'guard+guard-excerpt'
+    expect(verifyCitations([excerptCite], [SSH]).map((v) => v.reason)).toEqual(['weak-evidence'])
+    const good: ClaimCitation = {
+      claimExcerpt: 'It specifies the sntrup761x25519-sha512 hybrid key exchange for SSH.',
+      evidenceExcerpt:
+        'Description: Specifies sntrup761x25519-sha512 hybrid key exchange for SSH; supersedes draft-ietf-sshm-ntruprime-ssh.',
+      chunkId: SSH.id,
+    }
+    expect(verifyCitations([good], [SSH])).toEqual([])
+  })
+})
+
 describe('extractTerms', () => {
-  it('keeps number runs whole, removes thousands commas and plural endings', () => {
-    const t = extractTerms('FIPS 203 keys are ~1,184 bytes in TLS 1.3 libraries and ML-KEM-768.')
-    expect(t.numbers.sort()).toEqual(['1.3', '1184', '203', '768'])
-    expect(t.words).toEqual(expect.arrayContaining(['key', 'byte', 'tls', 'library', 'kem']))
+  it('treats a name with its number as one unit, and keeps other numbers bare', () => {
+    const t = extractTerms(
+      'FIPS 203/204 keys are ~1,184 bytes in TLS 1.3 and ML-KEM-768 after 2035; SP 800-208, FIPS 140-3.'
+    )
+    expect(t.names.sort()).toEqual(
+      ['fips|203', 'fips|204', 'tls|1.3', 'kem|768', 'sp|800-208', 'fips|140-3'].sort()
+    )
+    expect(t.numbers.sort()).toEqual(['1184', '2035'])
+    expect(t.words).toEqual(expect.arrayContaining(['key', 'byte', 'tls', 'kem']))
     expect(t.words).not.toContain('are')
     expect(t.words).not.toContain('keys')
+  })
+
+  it('does not turn "of 60 institutions" or "November 2025" into a name', () => {
+    const t = extractTerms('A survey of 60 institutions between November 2025 and January 2026.')
+    expect(t.names).toEqual([])
+    expect(t.numbers.sort()).toEqual(['2025', '2026', '60'])
+  })
+
+  it('writes short unit forms after a number in their canonical form', () => {
+    for (const text of ['10 min', '10 minutes', '10min']) {
+      expect(extractTerms(text).words).toEqual(['minute'])
+    }
+    expect(extractTerms('1,184 B').words).toEqual(['byte'])
+    expect(extractTerms('1.2 KB').words).toEqual(['kilobyte'])
+    expect(extractTerms('32 s').words).toEqual(['second'])
+    // A bare "b" or "s" that does not follow a number is not a unit.
+    expect(extractTerms('signer B').words).toEqual(['signer'])
   })
 
   it('does not strip the s from words that merely end in s', () => {
@@ -139,92 +196,186 @@ describe('extractTerms', () => {
 })
 
 describe('assessClaimSupport', () => {
-  const ctx = { titles: ['RFC 9881'], ids: ['library-RFC 9881'] }
+  const ctx = { titles: ['RFC 9881'] }
+  const supported = (claim: string, sentences: string[], c: { titles: string[] } = ctx) =>
+    assessClaimSupport(claim, sentences, c)
 
   it('accepts a verbatim or lightly reworded claim', () => {
     const sentence =
       'Definition: IETF standard defining how to use ML-DSA digital signatures in X.509 certificates and Certificate Revocation Lists (CRLs).'
     expect(
-      assessClaimSupport(
-        'RFC 9881 standardizes how to use ML-DSA digital signatures in X.509 certificates and Certificate Revocation Lists (CRLs).',
-        [sentence],
-        ctx
+      supported(
+        'The standard defines how to use ML-DSA digital signatures in X.509 certificates and Certificate Revocation Lists (CRLs).',
+        [sentence]
       ).supported
     ).toBe(true)
   })
 
-  it('rejects a number that is nowhere in the evidence', () => {
-    const a = assessClaimSupport(
-      'The standard is a Proposed Standard and was published in 2025.',
-      ['Document Status: Proposed Standard'],
-      ctx
-    )
+  it('rejects a number that is nowhere in the cited sentence', () => {
+    const a = supported('The standard is a Proposed Standard and was published in 2025.', [
+      'Document Status: Proposed Standard',
+    ])
     expect(a).toMatchObject({
       supported: false,
-      reason: 'missing-number',
-      missingNumbers: ['2025'],
+      reason: 'missing-identifier',
+      missingIdentifiers: ['2025'],
     })
   })
 
-  it('takes a number from the chunk id or title (NIST IR 8547 is the chunk, not the sentence)', () => {
-    const a = assessClaimSupport(
-      'NIST IR 8547 requires that quantum-vulnerable public-key algorithms be disallowed after 2035.',
-      [
-        'Every quantum-vulnerable public-key algorithm is deprecated after 2030 and disallowed after 2035.',
-      ],
-      {
-        titles: ['Transition to Post-Quantum Cryptography Standards'],
-        ids: ['library-NIST IR 8547'],
+  describe('names with a version number are matched as a unit', () => {
+    it('accepts the same name, with or without the space, and from a list', () => {
+      expect(
+        supported('TLS 1.3 adds a hybrid group.', ['TLS 1.3 adds a hybrid key exchange group.'])
+          .supported
+      ).toBe(true)
+      expect(
+        supported('It uses SHA-512 for hashing.', ['The hash is SHA512 for hashing.']).supported
+      ).toBe(true)
+      expect(
+        supported('FIPS 204 defines the signature scheme.', [
+          'FIPS 203/204/205 define the lattice schemes and the signature scheme.',
+        ]).supported
+      ).toBe(true)
+      expect(
+        supported('ML-KEM-768 gives security level 3.', [
+          'ML-KEM-512/768/1024 give security levels 1, 3 and 5; level 3 is the middle.',
+        ]).supported
+      ).toBe(true)
+      expect(
+        supported('SP 800-208 covers stateful hash-based signatures.', [
+          'NIST SP 800-208 covers stateful hash-based signatures.',
+        ]).supported
+      ).toBe(true)
+      expect(
+        supported('FIPS 140-3 validation is required.', [
+          'FIPS 140-3 validation is required for the module.',
+        ]).supported
+      ).toBe(true)
+    })
+
+    it('does not demand a bare "1.3" when the sentence names the same thing', () => {
+      const a = supported('The TLS 1.3 handshake grows.', ['TLS 1.3 handshake grows with PQC.'])
+      expect(a.supported).toBe(true)
+      expect(a.missingIdentifiers).toEqual([])
+    })
+
+    it('rejects the same word with another number', () => {
+      for (const [claim, sentence] of [
+        ['TLS 1.3 adds a hybrid group.', 'TLS 1.2 adds a hybrid key exchange group.'],
+        [
+          'FIPS 203 defines the key encapsulation mechanism.',
+          'FIPS 204 defines the key encapsulation mechanism.',
+        ],
+        ['ML-KEM-768 gives security level 3.', 'ML-KEM-512 gives security level 1.'],
+      ]) {
+        expect(supported(claim, [sentence]).reason).toBe('missing-identifier')
       }
-    )
-    expect(a.missingNumbers).toEqual([])
-    expect(a.supported).toBe(true)
+    })
   })
 
-  it('treats 1,184 and 1184 as the same number', () => {
-    expect(
-      assessClaimSupport('Public keys are 1184 bytes.', ['ML-KEM public keys are ~1,184 bytes.'], {
-        titles: [],
-        ids: [],
-      }).supported
-    ).toBe(true)
+  describe('units and abbreviations', () => {
+    it('treats min/minutes, B/bytes, KB/kilobytes and s/seconds as the same', () => {
+      expect(
+        supported('This module has a duration of 10 minutes.', ['Duration: 10 min']).supported
+      ).toBe(true)
+      expect(supported('The key is 1,184 bytes.', ['Key size: 1184 B']).supported).toBe(true)
+      expect(supported('The message is 2 kilobytes.', ['Message size: 2 KB']).supported).toBe(true)
+      expect(supported('Handshake time is 3 seconds.', ['Handshake time: 3 s']).supported).toBe(
+        true
+      )
+    })
+
+    it('still rejects a different number with the same unit', () => {
+      expect(
+        supported('This module has a duration of 20 minutes.', ['Duration: 10 min']).supported
+      ).toBe(false)
+    })
+  })
+
+  describe('identifiers come from the cited sentences only', () => {
+    // "RFC 9881" is in the chunk id and the title, not in the cited description sentence.
+    const claim = 'RFC 9881 defines X.509 OIDs and certificate structures for ML-DSA signatures.'
+    const sentence =
+      'Description: Defines X.509 OIDs and certificate structures for ML-DSA signatures.'
+
+    it('a name or number found only in the chunk id or the title does not count', () => {
+      const a = supported(claim, [sentence], {
+        titles: ['RFC 9881: Algorithm Identifiers for ML-DSA'],
+      })
+      expect(a).toMatchObject({ supported: false, reason: 'missing-identifier' })
+      expect(a.missingIdentifiers).toEqual(['rfc 9881'])
+    })
+
+    it('the title may supply identifiers only when that measurement switch is on (never the id)', () => {
+      const withSwitch = assessClaimSupport(claim, [sentence], {
+        titles: ['RFC 9881: Algorithm Identifiers for ML-DSA'],
+        titleIdentifiers: true,
+      })
+      expect(withSwitch.supported).toBe(true)
+    })
+
+    it('title words still count towards content-word coverage', () => {
+      const a = supported(
+        'Hybrid key exchange for SSH is specified.',
+        ['Specified: sntrup761x25519 for SSH.'],
+        {
+          titles: ['Hybrid Key Exchange'],
+        }
+      )
+      expect(a.inSentencesOrTitle).toBeGreaterThan(a.inSentences)
+    })
+  })
+
+  describe('each reference on its own, then pooling for words only', () => {
+    // The real "ACVP tests ML-KEM, ML-DSA, SLH-DSA" claim: only the ML-DSA and SLH-DSA
+    // specifications are ACVP specifications; the ML-KEM sentence is the FIPS 203 record.
+    const acvpClaim =
+      'NIST ACVP tests ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205).'
+    const sentences = [
+      'Description: Specifies ML-KEM (Kyber) with three parameter sets (512, 768, 1024) for quantum-resistant key establishment.',
+      'Description: NIST CAVP draft defining the ACVP JSON for testing ML-DSA (FIPS 204) implementations.',
+      'Description: NIST CAVP draft defining the ACVP JSON for testing SLH-DSA (FIPS 205) implementations.',
+    ]
+
+    it('closes the hole: pooled refs cannot supply the identifier that no cited sentence has', () => {
+      const a = supported(acvpClaim, sentences, { titles: ['FIPS 203'] })
+      expect(a.supported).toBe(false)
+      expect(a.reason).toBe('missing-identifier')
+      expect(a.missingIdentifiers).toContain('fips 203')
+    })
+
+    it('one sentence must hold every identifier, even when each is in some cited sentence', () => {
+      const a = supported('Signer A uses FIPS 204 and signer B uses FIPS 205 here.', [
+        'Signer A uses FIPS 204 here.',
+        'Signer B uses FIPS 205 here.',
+      ])
+      expect(a.supported).toBe(false)
+      expect(a.reason).toBe('missing-identifier')
+    })
+
+    it('pooling still tops up content-word overlap when one sentence holds the identifiers', () => {
+      const claim =
+        'The scheme combines lattice signatures with Ed25519 for X.509 certificates in enterprise deployments.'
+      const one = supported(claim, ['It combines lattice signatures with Ed25519 for X.509 data.'])
+      const pooled = supported(claim, [
+        'It combines lattice signatures with Ed25519 for X.509 data.',
+        'The certificates use the classical scheme in enterprise deployments.',
+      ])
+      expect(one.supported).toBe(false)
+      expect(pooled.supported).toBe(true)
+    })
   })
 
   it('rejects a title that carries the claim: title words cannot replace the sentence', () => {
     // Every claim word is in the title, but only one is in the cited sentence.
-    const a = assessClaimSupport('Hybrid key exchange deployment guidance.', ['Status: Draft'], {
+    const a = supported('Hybrid key exchange deployment guidance.', ['Status: Draft'], {
       titles: ['Hybrid Key Exchange Deployment Guidance'],
-      ids: [],
     })
     expect(a).toMatchObject({ supported: false, reason: 'title-only', inSentences: 0 })
   })
 
-  it('pools several cited sentences', () => {
-    const claim = 'The scheme combines lattice signatures with Ed25519 for X.509 certificates.'
-    const one = assessClaimSupport(
-      claim,
-      ['It combines lattice signatures with a classical scheme.'],
-      {
-        titles: [],
-        ids: [],
-      }
-    )
-    const both = assessClaimSupport(
-      claim,
-      [
-        'It combines lattice signatures with a classical scheme.',
-        'The classical scheme is Ed25519, used in X.509 certificates.',
-      ],
-      { titles: [], ids: [] }
-    )
-    expect(one.supported).toBe(false)
-    expect(both.supported).toBe(true)
-  })
-
   it('does not judge a claim that has no content words, only its numbers', () => {
-    expect(
-      assessClaimSupport('It is 2035.', ['Deadline 2035.'], { titles: [], ids: [] }).supported
-    ).toBe(true)
+    expect(supported('It is 2035.', ['Deadline 2035.'], { titles: [] }).supported).toBe(true)
   })
 })
 
@@ -253,10 +404,9 @@ describe('verifyCitations with the relevance guard (the two weak citations from 
 
   it('still accepts a claim that the same sentence supports', () => {
     process.env.CITE_PROTO = 'a+guard+id'
-    const good = cite(
-      'RFC 9941 specifies the sntrup761x25519-sha512 hybrid key exchange for SSH.',
-      [ref(SSH, 3)]
-    )
+    const good = cite('The sntrup761x25519-sha512 hybrid key exchange for SSH is specified.', [
+      ref(SSH, 3),
+    ])
     expect(verifyCitations([good], chunks)).toEqual([])
   })
 
@@ -310,7 +460,7 @@ describe('weak-evidence in grounding', () => {
 
   it('keeps the supported claim when a weak one sits next to it (salvage)', () => {
     process.env.CITE_PROTO = 'a+guard+id'
-    const good = 'RFC 9941 specifies the sntrup761x25519-sha512 hybrid key exchange for SSH.'
+    const good = 'It specifies the sntrup761x25519-sha512 hybrid key exchange for SSH.'
     const result = finalizeGroundedResponse(
       `- ${good}\n- ${claim}`,
       [cite(good, [ref(SSH, 3)]), weak],

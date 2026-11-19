@@ -71,7 +71,7 @@ interface HarnessResult {
       coverage: number
       inSentences: number
       claimWords: number
-      missingNumbers: string[]
+      missingIdentifiers: string[]
     } | null
     idRepaired: boolean
     repairedFrom: string[] | null
@@ -241,7 +241,7 @@ if (!model) {
                 coverage: violation.support.coverage,
                 inSentences: violation.support.inSentences,
                 claimWords: violation.support.claimWords,
-                missingNumbers: violation.support.missingNumbers,
+                missingIdentifiers: violation.support.missingIdentifiers,
               }
             : null,
           idRepaired: citation.idRepaired === true,

@@ -6,6 +6,11 @@
  *          `evidenceRef` ("<chunkId>#<n>") instead of a copied `evidenceExcerpt`.
  *   guard  a reference only counts when the cited sentence(s) support the claim
  *          lexically (citationRelevance.ts); otherwise the citation is "weak-evidence".
+ *   guard-excerpt  also apply the guard to excerpt (evidenceExcerpt) citations, with the
+ *          verbatim excerpt as the cited text. Used to score the baseline on the same
+ *          yardstick; not part of the default.
+ *   title-ids  let a chunk title also supply the claim's names and numbers (never the id).
+ *          Off by default; measured on the bench page as an owner decision.
  *   id     a chunk id that is not among this turn's chunks is resolved to the one
  *          retrieved chunk it names, when exactly one matches (citationIds.ts).
  *   b      a draft that fails the strict whole-answer check keeps its verified
@@ -25,6 +30,10 @@ export interface CiteProtoFlags {
   partial: boolean
   /** Require the cited sentence(s) to support the claim (reference citations only). */
   relevanceGuard: boolean
+  /** Also guard excerpt citations (benchmark yardstick only). */
+  guardExcerpts: boolean
+  /** Let titles supply names and numbers to the guard. */
+  titleIdentifiers: boolean
   /** Repair near-miss chunk ids in references. */
   idRepair: boolean
 }
@@ -43,6 +52,8 @@ export function citeProtoFlags(): CiteProtoFlags {
     bySentence: tokens.has('a'),
     partial: tokens.has('b'),
     relevanceGuard: tokens.has('guard'),
+    guardExcerpts: tokens.has('guard-excerpt'),
+    titleIdentifiers: tokens.has('title-ids'),
     idRepair: tokens.has('id'),
   }
 }

@@ -55,7 +55,8 @@ function chunkText(chunk: RAGChunk): string {
  */
 export function assessCitationSupport(
   citation: ClaimCitation,
-  chunkById: Map<string, RAGChunk>
+  chunkById: Map<string, RAGChunk>,
+  titleIdentifiers = false
 ): SupportAssessment | null {
   if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) return null
   const sentences: string[] = []
@@ -70,7 +71,20 @@ export function assessCitationSupport(
   const chunksCited = [...cited.values()]
   return assessClaimSupport(citation.claimExcerpt, sentences, {
     titles: chunksCited.map((c) => c.title),
-    ids: chunksCited.map((c) => c.id),
+    titleIdentifiers,
+  })
+}
+
+/** Same check for a legacy citation: its verbatim excerpt is the cited text. */
+export function assessExcerptSupport(
+  citation: ClaimCitation,
+  chunk: RAGChunk,
+  titleIdentifiers = false
+): SupportAssessment {
+  const evidence = citation.evidenceExcerpt ?? citation.claimExcerpt
+  return assessClaimSupport(citation.claimExcerpt, [evidence], {
+    titles: [chunk.title],
+    titleIdentifiers,
   })
 }
 
@@ -80,7 +94,8 @@ export function verifyCitations(
 ): CitationViolation[] {
   const chunkById = new Map(chunks.map((c) => [c.id, c]))
   const violations: CitationViolation[] = []
-  const guard = citeProtoFlags().relevanceGuard
+  const flags = citeProtoFlags()
+  const guard = flags.relevanceGuard
 
   for (const citation of citations) {
     // Cite-by-sentence: the references are the evidence. Every reference must
@@ -94,7 +109,7 @@ export function verifyCitations(
         continue
       }
       if (guard) {
-        const support = assessCitationSupport(citation, chunkById)
+        const support = assessCitationSupport(citation, chunkById, flags.titleIdentifiers)
         if (support && !support.supported) {
           violations.push({ ...citation, reason: 'weak-evidence', support })
         }
@@ -111,6 +126,13 @@ export function verifyCitations(
     const evidence = citation.evidenceExcerpt ?? citation.claimExcerpt
     if (!normalize(chunkText(chunk)).includes(normalize(evidence))) {
       violations.push({ ...citation, reason: 'evidence-not-found' })
+      continue
+    }
+    // Excerpt citations are guarded only when asked for (benchmark yardstick; the
+    // Gemini/cloud path is a separate decision).
+    if (flags.guardExcerpts) {
+      const support = assessExcerptSupport(citation, chunk, flags.titleIdentifiers)
+      if (!support.supported) violations.push({ ...citation, reason: 'weak-evidence', support })
     }
   }
 
