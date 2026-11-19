@@ -101,6 +101,16 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'arch-quantum-impact': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'ops-quantum-impact': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'research-quantum-impact': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
+  'cert-quantum-impact': { phasesServed: ['p0', 'p7'], legs: ['learn', 'reference'] },
+  'cloud-pqc': { phasesServed: ['p5', 'p6'], legs: ['learn', 'practice', 'reference'] },
+  'pqc-implementation-security': {
+    phasesServed: ['p5', 'p6'],
+    legs: ['learn', 'practice', 'reference'],
+  },
+  'energy-utilities-pqc': {
+    phasesServed: ['p5', 'p6'],
+    legs: ['learn', 'practice', 'reference'],
+  },
   'secrets-management-pqc': { phasesServed: ['p6'], legs: ['learn', 'reference'] },
   'network-security-pqc': { phasesServed: ['p6'], legs: ['learn', 'practice', 'reference'] },
   'pqc-testing-validation': { phasesServed: ['p6'], legs: ['learn', 'practice', 'reference'] },

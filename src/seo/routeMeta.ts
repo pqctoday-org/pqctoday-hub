@@ -887,6 +887,42 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('Researcher Quantum Impact Guide', 'PT20M', 'Beginner'),
   },
 
+  '/learn/cert-quantum-impact': {
+    title: 'Certification Engineer Quantum Impact — FIPS 140-3, ACVP, ESV & EUCC | PQC Today',
+    description:
+      'How PQC reshapes cryptographic module validation: FIPS 140-2 Historical transition, CMVP/ACVP PQC testing, ESV entropy validation, EUCC/NIAP Policy #33, and PCI PTS HSM v5.0 scope boundaries.',
+    canonical: `${BASE_URL}/learn/cert-quantum-impact`,
+    structuredData: buildModuleSchema('Certification Engineer Quantum Impact', 'PT25M', 'Beginner'),
+  },
+
+  '/learn/cloud-pqc': {
+    title: 'Cloud-Native & SaaS PQC Migration — AWS, Azure, GCP & Hybrid TLS | PQC Today',
+    description:
+      'Map customer-controlled vs. provider-managed cryptography across AWS, Azure, GCP, and SaaS: hybrid edge/origin TLS, cloud KMS/BYOK boundaries, cutover failure modes, and vendor evidence scoping.',
+    canonical: `${BASE_URL}/learn/cloud-pqc`,
+    structuredData: buildModuleSchema('Cloud-Native & SaaS PQC Migration', 'PT50M', 'Intermediate'),
+  },
+
+  '/learn/pqc-implementation-security': {
+    title: 'PQC Implementation Security & Side-Channel Resistance — TVLA & FO | PQC Today',
+    description:
+      'Analyze constant-time pitfalls, Fujisaki-Okamoto implicit rejection, masking and fault-injection countermeasures, and TVLA/FIPS 140-3/EUCC certification evidence for ML-KEM, ML-DSA, and SLH-DSA.',
+    canonical: `${BASE_URL}/learn/pqc-implementation-security`,
+    structuredData: buildModuleSchema(
+      'PQC Implementation Security & Side-Channel Resistance',
+      'PT60M',
+      'Advanced'
+    ),
+  },
+
+  '/learn/energy-utilities-pqc': {
+    title: 'Energy, Utilities & Grid PQC — Substation, SCADA & AMI Migration | PQC Today',
+    description:
+      'Plan post-quantum migration across power generation, transmission substations, SCADA control centers, AMI smart-meter meshes, and DER edge gateways under real-time latency, MTU, and 15–25 year field-lifecycle constraints.',
+    canonical: `${BASE_URL}/learn/energy-utilities-pqc`,
+    structuredData: buildModuleSchema('Energy, Utilities & Grid PQC', 'PT50M', 'Intermediate'),
+  },
+
   '/learn/ai-security-pqc': {
     title:
       'AI Security & PQC — Model Protection, Federated Learning & ML Pipeline Security | PQC Today',

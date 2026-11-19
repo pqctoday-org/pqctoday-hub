@@ -164,8 +164,8 @@ describe('certification engineer next steps follow the role path', () => {
     // Tests first (owner decision, 29 Oct 2026): the Learn landing hands on to the workbench, like the home board.
     '/learn': '/playground/hsm?tab=build&dtab=acvp&engine=dual',
     // Tools that practise Entropy & Randomness hand on to the lesson after it.
-    '/playground/entropy-test': '/learn/hsm-pqc',
-    '/playground/drbg-demo': '/learn/hsm-pqc',
+    '/playground/entropy-test': '/learn/cbom',
+    '/playground/drbg-demo': '/learn/cbom',
     // Tools the later lessons lead to hand on to the lesson after the one they practise.
     '/playground/slh-dsa': '/learn/hybrid-crypto',
     '/playground/hybrid-certs': '/learn/secure-boot-pqc',
@@ -246,6 +246,9 @@ describe('certification engineer next steps follow the role path', () => {
   it('names the missing exits: HSM, Common Criteria and the SLH-DSA tool', () => {
     expect(nextStepFor('/learn/hsm-pqc', 'cert-engineer')?.to).toBe('/learn/pqc-testing-validation')
     expect(nextStepFor('/learn/cc-eucc-certification', 'cert-engineer')?.to).toBe(
+      '/learn/pqc-implementation-security'
+    )
+    expect(nextStepFor('/learn/pqc-implementation-security', 'cert-engineer')?.to).toBe(
       '/learn/stateful-signatures'
     )
     expect(nextStepFor('/playground/slh-dsa', 'cert-engineer')?.to).toBe('/learn/hybrid-crypto')

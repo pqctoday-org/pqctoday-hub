@@ -357,7 +357,7 @@ describe('module relations — a learner on a persona path sees the path neighbo
       'fips-140-3-certification',
       'entropy-randomness',
       'crypto-product-certification',
-      'hsm-pqc',
+      'cbom',
     ])
     expect(entries.map((e) => e.reason)).toEqual([
       'Previous on your path',
@@ -378,8 +378,8 @@ describe('module relations — a learner on a persona path sees the path neighbo
     const { entries } = moduleRelations('standards-bodies', MANIFESTS, path)
     expect(entries).toHaveLength(RELATED_MODULES_CAP)
     expect(entries.slice(0, 2).map((e) => e.id)).toEqual([
+      'cert-quantum-impact',
       'crypto-product-certification',
-      'fips-140-3-certification',
     ])
     expect(new Set(entries.map((e) => e.id)).size).toBe(entries.length)
   })

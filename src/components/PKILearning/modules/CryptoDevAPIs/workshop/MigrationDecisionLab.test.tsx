@@ -41,4 +41,38 @@ describe('MigrationDecisionLab wizard', () => {
     expect(screen.getByText('Bouncy Castle: Add PQC algorithms')).toBeInTheDocument()
     expect(screen.getByText('View full migration path')).toBeInTheDocument()
   })
+
+  it('routes Node.js 24+ through the wizard to its side-by-side Before/After diff and decision guidance', () => {
+    render(<MigrationDecisionLab />)
+    fireEvent.click(screen.getByRole('button', { name: 'Node.js / TypeScript' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Node.js 24+ (node:crypto / node:tls)' }))
+    expect(
+      screen.getByText('Node.js 24+: Native node:crypto ML-KEM, ML-DSA & Hybrid TLS')
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /View full migration path/ }))
+    expect(screen.getByText('Before (Classical)')).toBeInTheDocument()
+    expect(screen.getByText('After (PQC / Hybrid)')).toBeInTheDocument()
+    expect(screen.getByText(/generateKeyPairSync\('ml-kem-768'\)/)).toBeInTheDocument()
+    expect(screen.getByText(/X25519MLKEM768:X25519:P-256/)).toBeInTheDocument()
+    expect(screen.getByText('API Capability Shift')).toBeInTheDocument()
+    expect(screen.getByText('What This Diff Proves vs. Production Checks')).toBeInTheDocument()
+  })
+
+  it.each([
+    ['go-stdlib-pqc', 'crypto/mlkem', 'tls.X25519MLKEM768'],
+    ['openssl-provider', 'EVP_PKEY_encapsulate', 'ML-DSA-65'],
+    ['nodejs24-native', 'decapsulate(', 'ml-dsa-65'],
+    ['jca-native-pqc', 'KEM.getInstance("ML-KEM")', 'Signature.getInstance("ML-DSA-65")'],
+  ])(
+    'core stack %s includes verified Before/After PQC API identifiers and decision guidance',
+    (pathId, apiTokenA, apiTokenB) => {
+      const path = MIGRATION_PATHS.find((p) => p.id === pathId)
+      expect(path).toBeDefined()
+      expect(path?.afterCode.code).toContain(apiTokenA)
+      expect(path?.afterCode.code).toContain(apiTokenB)
+      expect(path?.decisionGuidance?.apiShift).toBeTruthy()
+      expect(path?.decisionGuidance?.interopAndFallback).toBeTruthy()
+      expect(path?.decisionGuidance?.verificationScope).toBeTruthy()
+    }
+  )
 })

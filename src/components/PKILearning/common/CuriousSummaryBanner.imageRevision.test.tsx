@@ -30,17 +30,17 @@ describe('corrected AI infographic cache identity', () => {
   })
 
   it('preserves other modules and resets the URL when the module changes', () => {
-    const { rerender } = render(view('hybrid-crypto'))
+    const { rerender } = render(view('crypto-agility'))
     expect(imageSources()).toEqual(
-      Array(2).fill('/images/infographics/pqcstd_hybrid-crypto.png?v=pqcstd_v4')
+      Array(2).fill('/images/infographics/pqcstd_crypto-agility.png?v=pqcstd_v4')
     )
     rerender(view('ai-security-pqc'))
     expect(imageSources()).toEqual(
       Array(2).fill('/images/infographics/pqcstd_ai-security-pqc.png?v=65181ab040311ff4')
     )
-    rerender(view('hybrid-crypto'))
+    rerender(view('crypto-agility'))
     expect(imageSources()).toEqual(
-      Array(2).fill('/images/infographics/pqcstd_hybrid-crypto.png?v=pqcstd_v4')
+      Array(2).fill('/images/infographics/pqcstd_crypto-agility.png?v=pqcstd_v4')
     )
   })
 })

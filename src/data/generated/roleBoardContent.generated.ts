@@ -71,10 +71,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
         trackNote:
-          "Five essentials against the full 25-module path plus the quiz, 1090 minutes in all. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
-        trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
+          "Six essentials against the full 25-module path plus the quiz, 1090 minutes in all. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Vendor risk',
+        ],
         capstoneChip: { label: 'Governing' },
       },
     },
@@ -141,9 +148,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
 
-        trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Vendor risk',
+        ],
         capstoneChip: { label: 'Governing' },
       },
     },
@@ -208,9 +222,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
 
-        trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Vendor risk',
+        ],
         capstoneChip: { label: 'Governing' },
       },
     },
@@ -280,9 +301,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
 
-        trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Vendor risk',
+        ],
         capstoneChip: { label: 'Governing' },
       },
     },
@@ -353,9 +381,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
 
-        trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Vendor risk',
+        ],
         capstoneChip: { label: 'Governing' },
       },
     },
@@ -421,9 +456,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 10 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
 
-        trackChips: ['PQC 101', 'Quantum impact', 'Risk management', 'Business case', 'Governance'],
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Vendor risk',
+        ],
         capstoneChip: { label: 'Governing' },
       },
     },
@@ -488,9 +530,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
+          'Then, the background: 5 hours 10 minutes of essentials, not the full 20¾ hours.',
         trackNote:
-          "Eight essentials against the full 22-module path plus the quiz, 1026 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
+          "Nine essentials against the full 26-module path plus the quiz, 1246 minutes in all. The path already inserts real checkpoints like Review Compliance Obligations, Record a Risk Treatment and Complete a Verification Artifact right where they're relevant.",
         trackChips: [
           'PQC 101',
           'Risk management',
@@ -498,6 +540,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PQC GRC',
           'Compliance strategy',
           'Governance',
+          'CBOM',
           'Vendor risk',
           'Verification & closure',
         ],
@@ -560,7 +603,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
+          'Then, the background: 5 hours 10 minutes of essentials, not the full 20¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -569,6 +612,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PQC GRC',
           'Compliance strategy',
           'Governance',
+          'CBOM',
           'Vendor risk',
           'Verification & closure',
         ],
@@ -604,7 +648,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Essentials in your path', value: 'eight' },
+            { label: 'Essentials in your path', value: 'nine' },
             { label: 'Library categories emphasised', value: 'four' },
           ],
           punchline: 'A checklist someone can actually close, item by item.',
@@ -633,7 +677,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
+          'Then, the background: 5 hours 10 minutes of essentials, not the full 20¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -642,6 +686,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PQC GRC',
           'Compliance strategy',
           'Governance',
+          'CBOM',
           'Vendor risk',
           'Verification & closure',
         ],
@@ -702,7 +747,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
+          'Then, the background: 5 hours 10 minutes of essentials, not the full 20¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -711,6 +756,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PQC GRC',
           'Compliance strategy',
           'Governance',
+          'CBOM',
           'Vendor risk',
           'Verification & closure',
         ],
@@ -746,7 +792,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Essentials in your path', value: 'eight' },
+            { label: 'Essentials in your path', value: 'nine' },
             { label: 'Governance artifacts attached', value: 'three' },
           ],
           punchline: 'What you can already prove — and what still needs a source, named as a gap.',
@@ -777,7 +823,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
+          'Then, the background: 5 hours 10 minutes of essentials, not the full 20¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -786,6 +832,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PQC GRC',
           'Compliance strategy',
           'Governance',
+          'CBOM',
           'Vendor risk',
           'Verification & closure',
         ],
@@ -851,7 +898,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 4 hours 10 minutes of essentials, not the full 17 hours.',
+          'Then, the background: 5 hours 10 minutes of essentials, not the full 20¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -860,6 +907,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PQC GRC',
           'Compliance strategy',
           'Governance',
+          'CBOM',
           'Vendor risk',
           'Verification & closure',
         ],
@@ -929,17 +977,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 5 hours 25 minutes of essentials, not the full 37¾ hours.',
+          'Then, the background: 5 hours 20 minutes of essentials, not the full 39½ hours.',
 
         trackChips: [
           'PQC 101',
           'Dev quantum impact',
-          'PQC candidates',
           'TLS basics',
           'Hybrid crypto',
           'Crypto agility',
           'PKI workshop',
           'Crypto dev APIs',
+          'Code signing',
         ],
         capstoneChip: { label: 'Pilot-Ready' },
       },
@@ -1007,17 +1055,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 5 hours 25 minutes of essentials, not the full 37¾ hours.',
+          'Then, the background: 5 hours 20 minutes of essentials, not the full 39½ hours.',
 
         trackChips: [
           'PQC 101',
           'Dev quantum impact',
-          'PQC candidates',
           'TLS basics',
           'Hybrid crypto',
           'Crypto agility',
           'PKI workshop',
           'Crypto dev APIs',
+          'Code signing',
         ],
         capstoneChip: { label: 'Pilot-Ready' },
       },
@@ -1083,17 +1131,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 5 hours 25 minutes of essentials, not the full 37¾ hours.',
+          'Then, the background: 5 hours 20 minutes of essentials, not the full 39½ hours.',
 
         trackChips: [
           'PQC 101',
           'Dev quantum impact',
-          'PQC candidates',
           'TLS basics',
           'Hybrid crypto',
           'Crypto agility',
           'PKI workshop',
           'Crypto dev APIs',
+          'Code signing',
         ],
         capstoneChip: { label: 'Pilot-Ready' },
       },
@@ -1162,17 +1210,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 5 hours 25 minutes of essentials, not the full 37¾ hours.',
+          'Then, the background: 5 hours 20 minutes of essentials, not the full 39½ hours.',
 
         trackChips: [
           'PQC 101',
           'Dev quantum impact',
-          'PQC candidates',
           'TLS basics',
           'Hybrid crypto',
           'Crypto agility',
           'PKI workshop',
           'Crypto dev APIs',
+          'Code signing',
         ],
         capstoneChip: { label: 'Pilot-Ready' },
       },
@@ -1239,17 +1287,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 5 hours 25 minutes of essentials, not the full 37¾ hours.',
+          'Then, the background: 5 hours 20 minutes of essentials, not the full 39½ hours.',
 
         trackChips: [
           'PQC 101',
           'Dev quantum impact',
-          'PQC candidates',
           'TLS basics',
           'Hybrid crypto',
           'Crypto agility',
           'PKI workshop',
           'Crypto dev APIs',
+          'Code signing',
         ],
         capstoneChip: { label: 'Pilot-Ready' },
       },
@@ -1314,17 +1362,17 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 5 hours 25 minutes of essentials, not the full 37¾ hours.',
+          'Then, the background: 5 hours 20 minutes of essentials, not the full 39½ hours.',
 
         trackChips: [
           'PQC 101',
           'Dev quantum impact',
-          'PQC candidates',
           'TLS basics',
           'Hybrid crypto',
           'Crypto agility',
           'PKI workshop',
           'Crypto dev APIs',
+          'Code signing',
         ],
         capstoneChip: { label: 'Pilot-Ready' },
       },
@@ -1390,7 +1438,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1467,7 +1515,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1552,7 +1600,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1633,7 +1681,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1710,7 +1758,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1787,7 +1835,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 44 hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1868,14 +1916,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours of essentials, not the full 36¾ hours.',
+        trackTitle:
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
 
         trackChips: [
           'PQC 101',
           'Ops quantum impact',
           'TLS basics',
           'VPN/SSH',
-          'PKI workshop',
+          'OS & platform PQC',
           'Crypto agility',
           'Migration program',
           'KMS',
@@ -1945,14 +1994,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours of essentials, not the full 36¾ hours.',
+        trackTitle:
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
 
         trackChips: [
           'PQC 101',
           'Ops quantum impact',
           'TLS basics',
           'VPN/SSH',
-          'PKI workshop',
+          'OS & platform PQC',
           'Crypto agility',
           'Migration program',
           'KMS',
@@ -2021,14 +2071,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours of essentials, not the full 36¾ hours.',
+        trackTitle:
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
 
         trackChips: [
           'PQC 101',
           'Ops quantum impact',
           'TLS basics',
           'VPN/SSH',
-          'PKI workshop',
+          'OS & platform PQC',
           'Crypto agility',
           'Migration program',
           'KMS',
@@ -2098,14 +2149,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours of essentials, not the full 36¾ hours.',
+        trackTitle:
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
 
         trackChips: [
           'PQC 101',
           'Ops quantum impact',
           'TLS basics',
           'VPN/SSH',
-          'PKI workshop',
+          'OS & platform PQC',
           'Crypto agility',
           'Migration program',
           'KMS',
@@ -2174,14 +2226,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours of essentials, not the full 36¾ hours.',
+        trackTitle:
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
 
         trackChips: [
           'PQC 101',
           'Ops quantum impact',
           'TLS basics',
           'VPN/SSH',
-          'PKI workshop',
+          'OS & platform PQC',
           'Crypto agility',
           'Migration program',
           'KMS',
@@ -2250,14 +2303,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Then, the background: 6 hours of essentials, not the full 36¾ hours.',
+        trackTitle:
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
 
         trackChips: [
           'PQC 101',
           'Ops quantum impact',
           'TLS basics',
           'VPN/SSH',
-          'PKI workshop',
+          'OS & platform PQC',
           'Crypto agility',
           'Migration program',
           'KMS',
@@ -2331,13 +2385,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackChips: [
           'PQC 101',
           'Research quantum impact',
+          'Quantum threats',
           'PQC candidates',
           'Entropy & randomness',
+          'SLH-DSA',
           'Hybrid crypto',
           'Crypto agility',
           'Standards bodies',
-          'TLS basics',
-          'PKI workshop',
         ],
         capstoneChip: { label: 'Evidence-Ready' },
       },
@@ -2411,13 +2465,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackChips: [
           'PQC 101',
           'Research quantum impact',
+          'Quantum threats',
           'PQC candidates',
           'Entropy & randomness',
+          'SLH-DSA',
           'Hybrid crypto',
           'Crypto agility',
           'Standards bodies',
-          'TLS basics',
-          'PKI workshop',
         ],
         capstoneChip: { label: 'Evidence-Ready' },
       },
@@ -2489,13 +2543,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackChips: [
           'PQC 101',
           'Research quantum impact',
+          'Quantum threats',
           'PQC candidates',
           'Entropy & randomness',
+          'SLH-DSA',
           'Hybrid crypto',
           'Crypto agility',
           'Standards bodies',
-          'TLS basics',
-          'PKI workshop',
         ],
         capstoneChip: { label: 'Evidence-Ready' },
       },
@@ -2567,13 +2621,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackChips: [
           'PQC 101',
           'Research quantum impact',
+          'Quantum threats',
           'PQC candidates',
           'Entropy & randomness',
+          'SLH-DSA',
           'Hybrid crypto',
           'Crypto agility',
           'Standards bodies',
-          'TLS basics',
-          'PKI workshop',
         ],
         capstoneChip: { label: 'Evidence-Ready' },
       },
@@ -2644,13 +2698,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackChips: [
           'PQC 101',
           'Research quantum impact',
+          'Quantum threats',
           'PQC candidates',
           'Entropy & randomness',
+          'SLH-DSA',
           'Hybrid crypto',
           'Crypto agility',
           'Standards bodies',
-          'TLS basics',
-          'PKI workshop',
         ],
         capstoneChip: { label: 'Evidence-Ready' },
       },
@@ -2720,13 +2774,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackChips: [
           'PQC 101',
           'Research quantum impact',
+          'Quantum threats',
           'PQC candidates',
           'Entropy & randomness',
+          'SLH-DSA',
           'Hybrid crypto',
           'Crypto agility',
           'Standards bodies',
-          'TLS basics',
-          'PKI workshop',
         ],
         capstoneChip: { label: 'Evidence-Ready' },
       },
@@ -2794,16 +2848,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 41 minutes of essentials, not the full 15½ hours).',
+          'Learning path: certification fundamentals, FIPS 140-3, the ACVP lab workflow, entropy, then Common Criteria / EUCC and PCI (8 hours 6 minutes of essentials, not the full 18 hours).',
         trackNote:
-          'Six essentials against the full 13-module path plus the quiz, 936 minutes in all. The path also inserts hands-on actions like Run Validation Tests, Check Certificate Records and Browse Migration Workbench, with checkpoint quizzes between the lessons.',
+          'Six essentials against the full 16-module path plus the quiz, 1081 minutes in all. The path also inserts hands-on actions like Run Validation Tests, Check Certificate Records and Browse Migration Workbench, with checkpoint quizzes between the lessons.',
         trackChips: [
           'Product certification',
           'FIPS 140-3',
           'ACVP lab workflow',
           'Entropy',
           'CC criteria and EUCC scheme rules',
-          'PCI certification',
+          'Quantum impact on certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -2867,8 +2921,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle:
-          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
+        trackTitle: 'Then, the background: 8 hours 6 minutes of essentials, not the full 18 hours.',
 
         trackChips: [
           'Product certification',
@@ -2876,7 +2929,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'ACVP lab workflow',
           'Entropy',
           'CC criteria and EUCC scheme rules',
-          'PCI certification',
+          'Quantum impact on certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -2941,8 +2994,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle:
-          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
+        trackTitle: 'Then, the background: 8 hours 6 minutes of essentials, not the full 18 hours.',
 
         trackChips: [
           'Product certification',
@@ -2950,7 +3002,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'ACVP lab workflow',
           'Entropy',
           'CC criteria and EUCC scheme rules',
-          'PCI certification',
+          'Quantum impact on certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -3019,8 +3071,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle:
-          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
+        trackTitle: 'Then, the background: 8 hours 6 minutes of essentials, not the full 18 hours.',
 
         trackChips: [
           'Product certification',
@@ -3028,7 +3079,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'ACVP lab workflow',
           'Entropy',
           'CC criteria and EUCC scheme rules',
-          'PCI certification',
+          'Quantum impact on certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -3089,8 +3140,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle:
-          'Then, the background: 8 hours 41 minutes of essentials, not the full 15½ hours.',
+        trackTitle: 'Then, the background: 8 hours 6 minutes of essentials, not the full 18 hours.',
 
         trackChips: [
           'Product certification',
@@ -3098,7 +3148,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'ACVP lab workflow',
           'Entropy',
           'CC criteria and EUCC scheme rules',
-          'PCI certification',
+          'Quantum impact on certification',
         ],
         capstoneChip: { label: 'Lab-Ready' },
       },
@@ -3164,7 +3214,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
           'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
-        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        trackChips: ['PQC 101', 'Quantum threats', 'Talking about PQC'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3224,10 +3274,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
           { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Three modules, about 90 minutes.',
+        trackTitle: 'Three modules, about 80 minutes.',
         trackNote:
           'Take one module at a time and stop whenever you like — your progress is saved between visits.',
-        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        trackChips: ['PQC 101', 'Quantum threats', 'Talking about PQC'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3290,7 +3340,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         trackTitle: 'Start anywhere. Every page is open.',
         trackNote:
           'The guided path suggests an order; the optional capstone quiz opens after its Essentials. Pick what looks interesting and stop when you have had enough.',
-        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        trackChips: ['PQC 101', 'Quantum threats', 'Talking about PQC'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3360,7 +3410,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        trackChips: ['PQC 101', 'Quantum threats', 'Talking about PQC'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3426,7 +3476,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        trackChips: ['PQC 101', 'Quantum threats', 'Talking about PQC'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },
@@ -3492,7 +3542,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Start anywhere. Every page is open.',
 
-        trackChips: ['PQC 101', 'Quantum threats', 'TLS basics'],
+        trackChips: ['PQC 101', 'Quantum threats', 'Talking about PQC'],
         capstoneChip: { label: 'PQC Foundations' },
       },
     },

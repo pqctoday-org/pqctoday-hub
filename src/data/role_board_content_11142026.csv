@@ -35,7 +35,7 @@ ops,capacity,track_chip,0,PQC 101,active,,,2026-08-02,
 ops,capacity,track_chip,1,Ops quantum impact,active,,,2026-08-02,
 ops,capacity,track_chip,2,TLS basics,active,,,2026-08-02,
 ops,capacity,track_chip,3,VPN/SSH,active,,,2026-08-02,
-ops,capacity,track_chip,4,PKI workshop,active,,,2026-08-02,
+ops,capacity,track_chip,4,OS & platform PQC,active,,,2026-11-18,Phase 1 curriculum remediation: swapped pki-workshop for os-pqc in Ops Essentials.
 ops,capacity,track_chip,5,Crypto agility,active,,,2026-08-02,
 ops,capacity,track_chip,6,Migration program,active,,,2026-08-02,
 ops,capacity,track_chip,7,KMS,active,,,2026-08-02,
@@ -80,6 +80,7 @@ executive,mandate,track_chip,1,Quantum impact,active,,,2026-08-02,
 executive,mandate,track_chip,3,Risk management,active,,,2026-08-02,
 executive,mandate,track_chip,4,Business case,active,,,2026-08-02,
 executive,mandate,track_chip,5,Governance,active,,,2026-08-02,
+executive,mandate,track_chip,6,Vendor risk,active,,,2026-11-18,Phase 1 curriculum remediation: added vendor-risk to Executive Essentials.
 executive,mandate,capstone_chip_label,,Governing,active,,,2026-08-02,
 developer,pilot,hero_eyebrow,,Developer · Node + Go services · TLS termination at the edge,active,,,2026-08-02,
 developer,pilot,hero_badge_text,,Americas · Technology,deprecated,2026-09-03,"Superseded by live region/industry personalisation (WS7.2, PersonaBoardView.tsx liveBadgeText) -- this literal is no longer read by the app. Kept, not deleted, per CSV convention; hero_badge_tone rows for the same boards are left alone since heroBadge.tone is still part of the PersonaJourneyBoard type even though unread.",2026-09-03,
@@ -115,12 +116,12 @@ developer,pilot,grid_card_body,2,"This shows one way to combine ML-KEM and X2551
 developer,pilot,track_title,,"Then, the background: {essentials_vs_full:developer}.",active,,,2026-08-02,
 developer,pilot,track_chip,0,PQC 101,active,,,2026-08-02,
 developer,pilot,track_chip,1,Dev quantum impact,active,,,2026-08-02,
-developer,pilot,track_chip,2,PQC candidates,active,,,2026-08-02,
-developer,pilot,track_chip,3,TLS basics,active,,,2026-08-02,
-developer,pilot,track_chip,4,Hybrid crypto,active,,,2026-08-02,
-developer,pilot,track_chip,5,Crypto agility,active,,,2026-08-02,
-developer,pilot,track_chip,6,PKI workshop,active,,,2026-08-02,
-developer,pilot,track_chip,7,Crypto dev APIs,active,,,2026-08-02,
+developer,pilot,track_chip,2,TLS basics,active,,,2026-11-18,Phase 1 curriculum remediation: swapped pqc-candidates for code-signing in Developer Essentials.
+developer,pilot,track_chip,3,Hybrid crypto,active,,,2026-11-18,Phase 1 curriculum remediation: swapped pqc-candidates for code-signing in Developer Essentials.
+developer,pilot,track_chip,4,Crypto agility,active,,,2026-11-18,Phase 1 curriculum remediation: swapped pqc-candidates for code-signing in Developer Essentials.
+developer,pilot,track_chip,5,PKI workshop,active,,,2026-11-18,Phase 1 curriculum remediation: swapped pqc-candidates for code-signing in Developer Essentials.
+developer,pilot,track_chip,6,Crypto dev APIs,active,,,2026-11-18,Phase 1 curriculum remediation: swapped pqc-candidates for code-signing in Developer Essentials.
+developer,pilot,track_chip,7,Code signing,active,,,2026-11-18,Phase 1 curriculum remediation: swapped pqc-candidates for code-signing in Developer Essentials.
 developer,pilot,capstone_chip_label,,Pilot-Ready,active,,,2026-08-07,
 architect,controlplane,hero_eyebrow,,Security Architect · policy-driven control plane,active,,,2026-09-03,"2026-09-03: was '...Multi-region PKI · 40k certificates' — no 40,000 or 40k figure exists anywhere in the repo for this context; every other architect board eyebrow follows 'Security Architect · <topic>'."
 architect,controlplane,hero_badge_text,,"Global · Technology, Telecommunications",deprecated,2026-09-03,"Superseded by live region/industry personalisation (WS7.2, PersonaBoardView.tsx liveBadgeText) -- this literal is no longer read by the app. Kept, not deleted, per CSV convention; hero_badge_tone rows for the same boards are left alone since heroBadge.tone is still part of the PersonaJourneyBoard type even though unread.",2026-09-03,
@@ -194,13 +195,13 @@ researcher,provenance,track_title,,"Learning path: available, never pushed.",act
 researcher,provenance,track_note,,"This is a reference shelf, not a curriculum — browse at your own pace, nothing here is sequenced for you.",active,,,2026-08-02,"Reworded 2026-08-02: was 'For this persona it is a reference shelf, not a curriculum, and the UI should say so' — instruction TO A DEVELOPER about what the UI should do, shipped as visitor-facing copy."
 researcher,provenance,track_chip,0,PQC 101,active,,,2026-08-02,
 researcher,provenance,track_chip,1,Research quantum impact,active,,,2026-08-02,
-researcher,provenance,track_chip,2,PQC candidates,active,,,2026-08-02,
-researcher,provenance,track_chip,3,Entropy & randomness,active,,,2026-08-02,
-researcher,provenance,track_chip,4,Hybrid crypto,active,,,2026-08-02,
-researcher,provenance,track_chip,5,Crypto agility,active,,,2026-08-02,
-researcher,provenance,track_chip,6,Standards bodies,active,,,2026-08-02,
-researcher,provenance,track_chip,7,TLS basics,active,,,2026-08-02,
-researcher,provenance,track_chip,8,PKI workshop,active,,,2026-08-02,
+researcher,provenance,track_chip,2,Quantum threats,active,,,2026-11-18,Phase 1 curriculum remediation: swapped tls-basics and pki-workshop for quantum-threats and slh-dsa in Researcher Essentials.
+researcher,provenance,track_chip,3,PQC candidates,active,,,2026-11-18,Phase 1 curriculum remediation: swapped tls-basics and pki-workshop for quantum-threats and slh-dsa in Researcher Essentials.
+researcher,provenance,track_chip,4,Entropy & randomness,active,,,2026-11-18,Phase 1 curriculum remediation: swapped tls-basics and pki-workshop for quantum-threats and slh-dsa in Researcher Essentials.
+researcher,provenance,track_chip,5,SLH-DSA,active,,,2026-11-18,Phase 1 curriculum remediation: swapped tls-basics and pki-workshop for quantum-threats and slh-dsa in Researcher Essentials.
+researcher,provenance,track_chip,6,Hybrid crypto,active,,,2026-11-18,Phase 1 curriculum remediation: swapped tls-basics and pki-workshop for quantum-threats and slh-dsa in Researcher Essentials.
+researcher,provenance,track_chip,7,Crypto agility,active,,,2026-11-18,Phase 1 curriculum remediation: swapped tls-basics and pki-workshop for quantum-threats and slh-dsa in Researcher Essentials.
+researcher,provenance,track_chip,8,Standards bodies,active,,,2026-11-18,Phase 1 curriculum remediation: swapped tls-basics and pki-workshop for quantum-threats and slh-dsa in Researcher Essentials.
 curious,break,hero_eyebrow,,No background needed · about 6 minutes · nothing to install,active,,,2026-08-02,
 curious,break,hero_badge_text,,Americas · unfiltered,deprecated,2026-09-03,"Superseded by live region/industry personalisation (WS7.2, PersonaBoardView.tsx liveBadgeText) -- this literal is no longer read by the app. Kept, not deleted, per CSV convention; hero_badge_tone rows for the same boards are left alone since heroBadge.tone is still part of the PersonaJourneyBoard type even though unread.",2026-09-03,
 curious,break,hero_badge_tone,,illustrative,deprecated,2026-09-03,"Orphaned once hero_badge_text was deprecated in the same pass -- the generator only emits heroBadge when hero_badge_text resolves (generate-role-board-content.ts), so this row has had nothing to pair with since.",2026-09-03,
@@ -236,7 +237,7 @@ curious,break,track_title,,"{Essentials_count:curious} modules, about {essential
 curious,break,track_note,,Take one module at a time and stop whenever you like — your progress is saved between visits.,active,,,2026-08-02,
 curious,short,track_chip,0,PQC 101,active,,,2026-08-09,"Moved from `break` to `short` on 2026-08-09 with the re-rank: track_chip and capstone_chip_label are authored on the order-1 board and inherited by the rest, so they follow whichever board opens the page."
 curious,short,track_chip,1,Quantum threats,active,,,2026-08-09,"Moved from `break` to `short` on 2026-08-09 with the re-rank: track_chip and capstone_chip_label are authored on the order-1 board and inherited by the rest, so they follow whichever board opens the page."
-curious,short,track_chip,2,TLS basics,active,,,2026-08-09,"Moved from `break` to `short` on 2026-08-09 with the re-rank: track_chip and capstone_chip_label are authored on the order-1 board and inherited by the rest, so they follow whichever board opens the page."
+curious,short,track_chip,2,Talking about PQC,active,,,2026-11-18,"Phase 1 curriculum remediation: swapped tls-basics for talking-about-pqc in Curious Essentials."
 curious,short,track_chip,3,Risk basics,deprecated,2026-10-16,"Curious Essentials cut to PQC 101, Quantum Threats, TLS Basics (about 1½ hours). Retired on review 2026-10-16.",2026-08-09,"Moved from `break` to `short` on 2026-08-09 with the re-rank: track_chip and capstone_chip_label are authored on the order-1 board and inherited by the rest, so they follow whichever board opens the page."
 curious,short,track_chip,4,Compliance timelines,deprecated,2026-10-16,"Curious Essentials cut to PQC 101, Quantum Threats, TLS Basics (about 1½ hours). Retired on review 2026-10-16.",2026-08-09,"Moved from `break` to `short` on 2026-08-09 with the re-rank: track_chip and capstone_chip_label are authored on the order-1 board and inherited by the rest, so they follow whichever board opens the page."
 curious,short,track_chip,5,TLS basics,deprecated,2026-10-16,"Curious Essentials cut to PQC 101, Quantum Threats, TLS Basics (about 1½ hours). Retired on review 2026-10-16.",2026-08-09,"Moved from `break` to `short` on 2026-08-09 with the re-rank: track_chip and capstone_chip_label are authored on the order-1 board and inherited by the rest, so they follow whichever board opens the page."
@@ -1349,8 +1350,9 @@ grc,applicability,track_chip,2,Data & asset sensitivity,active,,,2026-09-07,Adde
 grc,applicability,track_chip,3,PQC GRC,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
 grc,applicability,track_chip,4,Compliance strategy,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
 grc,applicability,track_chip,5,Governance,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
-grc,applicability,track_chip,6,Vendor risk,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
-grc,applicability,track_chip,7,Verification & closure,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
+grc,applicability,track_chip,6,CBOM,active,,,2026-11-18,Phase 1 curriculum remediation: added cbom to GRC Essentials.
+grc,applicability,track_chip,7,Vendor risk,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
+grc,applicability,track_chip,8,Verification & closure,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
 grc,applicability,capstone_chip_label,,Assurance-Ready,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
 grc,applicability,track_note,,"{Essentials_count:grc} essentials against the full {recommended_path_no_quiz_count:grc}-module path plus the quiz, {estimated_minutes:grc} minutes in all. The path already inserts real checkpoints like {milestones_checkpoints:grc} right where they're relevant.",active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
 grc,risk-register,hero_eyebrow,,GRC · exposure · owner · treatment,active,,,2026-09-07,Added 2026-09-07 for the Executive/GRC split (executive-grc-split-plan.md).
@@ -1550,7 +1552,8 @@ cert-engineer,testing,track_chip,3,Entropy,active,,,2026-09-29,"Added 2026-09-29
 cert-engineer,testing,track_chip,4,HSMs,deprecated,2026-10-22,HSM PQC becomes an optional section of the certification engineer journey. Retired on review 2026-10-22.,2026-09-29,"Added 2026-09-29 for the cert-engineer persona (certification-engineer-persona-plan-09282026.md §4.2, Work Package D)."
 cert-engineer,testing,track_chip,5,Testing & validation,deprecated,2026-10-23,Certification engineer Essentials cut to six: PQC Network Testing & Validation leaves the essentials and stays on the full path. Retired on review 2026-10-23.,2026-09-29,"Added 2026-09-29 for the cert-engineer persona (certification-engineer-persona-plan-09282026.md §4.2, Work Package D)."
 cert-engineer,testing,track_chip,6,CC criteria and EUCC scheme rules,active,,,2026-10-21,Clarified criteria versus scheme in the certification-resource remediation review.
-cert-engineer,testing,track_chip,7,PCI certification,active,,,2026-09-29,"Added 2026-09-29 for the cert-engineer persona (certification-engineer-persona-plan-09282026.md §4.2, Work Package D)."
+cert-engineer,testing,track_chip,7,PCI certification,deprecated,2026-11-18,Phase 1 curriculum remediation: PCI certification leaves Certification Engineer Essentials and stays on the full path as optional scheme mastery.,2026-09-29,"Added 2026-09-29 for the cert-engineer persona (certification-engineer-persona-plan-09282026.md §4.2, Work Package D)."
+cert-engineer,testing,track_chip,8,Quantum impact on certification,active,,,2026-11-18,"Added 2026-11-18 for cert-quantum-impact (LM-079) joining Certification Engineer Essentials."
 cert-engineer,testing,capstone_chip_label,,Lab-Ready,active,,,2026-09-29,"Added 2026-09-29 for the cert-engineer persona (certification-engineer-persona-plan-09282026.md §4.2, Work Package D)."
 cert-engineer,testing,track_note,,"{Essentials_count:cert-engineer} essentials against the full {recommended_path_no_quiz_count:cert-engineer}-module path plus the quiz, {estimated_minutes:cert-engineer} minutes in all. The path also inserts hands-on actions like {milestones_checkpoints:cert-engineer}, with checkpoint quizzes between the lessons.",active,,,2026-09-29,"Added 2026-09-29 for the cert-engineer persona (certification-engineer-persona-plan-09282026.md §4.2, Work Package D)."
 cert-engineer,entropy,hero_eyebrow,,Certification & validation · noise source · health tests,active,,,2026-09-29,"Added 2026-09-29 for the cert-engineer persona (certification-engineer-persona-plan-09282026.md §4.2, Work Package D)."

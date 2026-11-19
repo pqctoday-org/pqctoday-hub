@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.217.0] - 2026-11-18
+
+All 8 role learning paths are rebalanced and expanded with 4 new hands-on Learn modules (79 total), before/after migration code diffs for Go, OpenSSL, Node.js, and Java, 19 new late-2026 quiz scenarios, and 6 refreshed Visual tab infographics.
+
+### Added
+
+- **Four new hands-on Learn modules covering certification, multi-cloud PQC, implementation security, and energy/utilities grids** [view:/learn] [persona:cert-engineer] [persona:architect] [persona:ops] [persona:developer] [persona:grc] [persona:researcher]: added **Quantum Impact on Certification Engineers** (FIPS 140-3, EUCC, ACVP evidence scope), **Cloud & Multi-Cloud PQC** (AWS, Azure, and GCP KMS, hybrid TLS, BYOK/HYOK shared responsibility), **PQC Implementation Security** (constant-time lattice arithmetic, ML-KEM Fujisaki-Okamoto implicit rejection, masking overhead, TVLA ISO/IEC 17825), and **Energy, Utilities & Grid PQC** (NERC CIP, IEC 62351/61850 substation MTU budgets, 15–20 year smart meter firmware lifecycles), complete with workshops, capability checklists, decision scenarios, Library cross-links, and high-DPI infographics.
+- **Before-and-after PQC migration code diffs for late-2026 developer runtimes** [view:/learn] [persona:developer] [persona:architect]: added side-by-side classical-to-PQC/hybrid code diffs with API shift notes, fallback caveats, and verification boundaries for **Go 1.24+** (`crypto/mlkem`, `tls.X25519MLKEM768`), **OpenSSL 3.5+** (native EVP ML-KEM/ML-DSA), **Node.js 24+** (`node:crypto` native ML-KEM/ML-DSA & `node:tls`), and **Java 24+ JCA** (`KEM`, `ML-DSA`) inside the Developer Quantum Impact and Crypto Dev APIs workshops.
+- **Nineteen new late-2026 scenario-based quiz questions** [view:/learn/quiz] [persona:cert-engineer] [persona:architect] [persona:ops] [persona:developer] [persona:grc] [persona:researcher]: expanded the quiz pool (`1,159 → 1,178`) with decision-oriented questions covering FIPS 140-2 Historical List / IG D.S, EUCC AVA_VAN.5, cloud KMS shared responsibility, KyberSlash/FO implicit rejection/TVLA, IEC 62351/NERC CIP grid constraints, NIST IR 8547 (final Oct 2026), EO 14412 / OMB M-26-15, CNSA 2.0 FAQ v2.2, RFC 10024/10073, and OpenSSH 10.0+.
+
+### Changed
+
+- **Rebalanced all 8 persona Essentials and Full learning paths** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: streamlined Curious Essentials to 3 modules (80 min), focused Certification Engineer Essentials on FIPS 140-3 + EUCC + Quantum Impact while adding CBOM to its full path, sharpened Developer vs. Researcher differentiation (Jaccard overlap reduced from `0.55` to `0.214`), added Vendor Risk to Executive Essentials and CBOM to GRC Essentials, swapped OS PQC into IT Ops Essentials with DNSSEC and Code Signing in its full path, and eliminated single-persona orphan modules across Architect and GRC paths.
+
+### Fixed
+
+- **Six Visual tab infographics regenerated to eliminate late-2026 factual contradictions** [view:/learn] [persona:developer] [persona:ops] [persona:architect] [persona:researcher] [persona:curious]: regenerated static Visual tab infographics with cache-busting revisions for SLH-DSA (HashSLH-DSA context strings & CNSA 2.0 non-approval), OS PQC (OpenSSH 10.0+ KEX vs. host keys, RHEL 10.1 hybrid signing, Windows Server 2025 KB5099536), VPN & SSH PQC (Rosenpass 2,464-byte handshake & Kyber), Hybrid Crypto (TLS 1.3 transcript integrity), Developer Quantum Impact (accurate wire sizes), and Code Signing (CNSA 2.0 FAQ v2.2 milestones & ML-DSA-87/LMS/XMSS scope), and fixed mobile revision wiring for Merkle Tree Certs.
+- **Aligned embedded Pyodide Python version (`3.14.2`) in the generated CycloneDX SBOM** [view:/about] [persona:ops] [persona:cert-engineer]: synced the committed SBOM and About version metadata with `pyodide@314.0.8` so post-deploy production SBOM verification matches the CI build byte-for-byte.
+
 ## [4.216.0] - 2026-11-18
 
 All 37 Business Center tools, all 34 Playground tools, and all 33 top-level Hub pages and shared surfaces are upgraded for late-2026 standards accuracy, full CSV/Markdown export parity, keyboard and ARIA accessibility, zero-match filter recovery, and honest educational sandbox disclosures.
