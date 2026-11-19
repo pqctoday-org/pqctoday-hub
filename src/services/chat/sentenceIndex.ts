@@ -14,6 +14,7 @@
  *      upper-case letter, digit, quote or opening bracket follows, unless the
  *      word before the full stop is a known abbreviation or a single capital
  *      initial.
+ *      A bare list marker at the start of a line ("1. Foo") never ends a sentence.
  *   3. Rule lines made only of `-`, `=`, `_` or `*`, and blank lines, are skipped.
  * Sentences are numbered from 1.
  */
@@ -61,7 +62,9 @@ function splitLine(line: string): string[] {
     const isAbbreviation =
       match[1] === '.' &&
       (ABBREVIATIONS.has(lastWord.replace(/\.$/, '')) || /^[a-z]$/.test(lastWord))
-    if (isAbbreviation) continue
+    // A list marker at the start of a line ("1. Foo") is not a sentence.
+    const isListMarker = match[1] === '.' && /^\s*\d{1,3}$/.test(head)
+    if (isAbbreviation || isListMarker) continue
     const piece = line.slice(start, end).trim()
     if (piece) out.push(piece)
     start = match.index + match[0].length

@@ -64,6 +64,12 @@ describe('splitSentences', () => {
     ])
   })
 
+  it('keeps a numbered list marker with its item', () => {
+    expect(
+      splitSentences('1. Data Protection Analyzer — audit crypto.\n2. Model Vault. It wraps keys.')
+    ).toEqual(['1. Data Protection Analyzer — audit crypto.', '2. Model Vault.', 'It wraps keys.'])
+  })
+
   it('skips blank lines and rule lines, and is deterministic', () => {
     const text = 'One thing.\r\n\r\n---\nAnother thing. Third thing!'
     expect(splitSentences(text)).toEqual(['One thing.', 'Another thing.', 'Third thing!'])
