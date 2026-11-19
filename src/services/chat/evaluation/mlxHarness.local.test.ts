@@ -18,6 +18,7 @@ import { buildLocalSystemPrompt } from '../promptBuilder'
 import { parseCitations } from '../parseCitations'
 import { parseFollowUps } from '../parseFollowUps'
 import { finalizeGroundedResponse } from '../responseFinalization'
+import { resolveCitationEvidence, verifyCitations } from '../citationVerification'
 import { selectLocalPromptChunks } from '../WebLLMService'
 import {
   CURRENT_CORPUS_BASELINE,
@@ -53,6 +54,16 @@ interface HarnessResult {
   groundingMode: ReturnType<typeof finalizeGroundedResponse>['mode']
   groundingReasons: ReturnType<typeof finalizeGroundedResponse>['decision']['reasons']
   citationCount: number
+  droppedStatements: number
+  citeProto: string
+  /** What the parsed citations resolved to, for offline relevance review. */
+  citationDetails: Array<{
+    claim: string
+    refs: string[]
+    chunkId: string
+    evidence: string | null
+    valid: boolean
+  }>
   thinkingLeak: boolean
   refused: boolean
   termRecall: number
@@ -202,6 +213,15 @@ if (!model) {
       groundingMode: finalized.mode,
       groundingReasons: finalized.decision.reasons,
       citationCount: citations.length,
+      droppedStatements: finalized.droppedStatements,
+      citeProto: process.env.CITE_PROTO ?? 'ab',
+      citationDetails: citations.map((citation) => ({
+        claim: citation.claimExcerpt,
+        refs: citation.evidenceRefs ?? [],
+        chunkId: citation.chunkId,
+        evidence: resolveCitationEvidence(citation, chunks) ?? citation.evidenceExcerpt ?? null,
+        valid: verifyCitations([citation], chunks).length === 0,
+      })),
       thinkingLeak: /<\/?think>/i.test(raw),
       refused,
       termRecall: refused ? 0 : matchedTerms.length / question.answerTerms.length,
@@ -218,6 +238,15 @@ if (!model) {
     )
   }
 
+  const median = (values: number[]) => {
+    const sorted = [...values].sort((a, b) => a - b)
+    const mid = Math.floor(sorted.length / 2)
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+  }
+  const modeCounts: Record<string, number> = {}
+  for (const result of results) {
+    modeCounts[result.groundingMode] = (modeCounts[result.groundingMode] ?? 0) + 1
+  }
   const mean = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length
   const report = {
     model,
@@ -230,11 +259,21 @@ if (!model) {
     contextWindow,
     maxTokens,
     questionCount: results.length,
+    citeProto: process.env.CITE_PROTO ?? 'ab',
+    modeCounts,
+    partiallyVerifiedRate:
+      results.filter((result) => result.groundingMode === 'partially-verified').length /
+      results.length,
+    medianTotalMs: Math.round(median(results.map((result) => result.totalMs))),
+    medianGenerationMs: Math.round(median(results.map((result) => result.generationMs))),
     verifiedRate:
       results.filter((result) => result.groundingMode === 'verified').length / results.length,
     evidenceBackedAnswerRate:
       results.filter(
-        (result) => result.groundingMode === 'verified' || result.groundingMode === 'salvaged'
+        (result) =>
+          result.groundingMode === 'verified' ||
+          result.groundingMode === 'partially-verified' ||
+          result.groundingMode === 'salvaged'
       ).length / results.length,
     usefulAnswerRate:
       results.filter((result) => result.groundingMode !== 'extractive' && !result.refused).length /

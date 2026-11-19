@@ -14,13 +14,14 @@
  */
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { ClaimCitation } from './parseCitations'
+import { resolveEvidenceRef } from './sentenceIndex'
 
 export interface CitationViolation extends ClaimCitation {
   /** unknown-chunk: cited an id not among this turn's retrieved chunks
    *  (the citation itself is fabricated). evidence-not-found: the cited
    *  chunk is real, but doesn't contain the quoted evidence (the claim is
    *  misattributed, or fabricated with a real-looking source attached). */
-  reason: 'unknown-chunk' | 'evidence-not-found'
+  reason: 'unknown-chunk' | 'evidence-not-found' | 'sentence-not-found' | 'malformed-ref'
 }
 
 /** Collapse whitespace and case for a tolerant-but-still-exact substring
@@ -45,6 +46,15 @@ export function verifyCitations(
   const violations: CitationViolation[] = []
 
   for (const citation of citations) {
+    // Cite-by-sentence: the references are the evidence. Every reference must
+    // name a chunk retrieved this turn and a sentence that exists in it.
+    if (citation.evidenceRefs && citation.evidenceRefs.length > 0) {
+      const failure = citation.evidenceRefs
+        .map((ref) => resolveEvidenceRef(ref, chunkById))
+        .find((resolved) => !resolved.ok)
+      if (failure && !failure.ok) violations.push({ ...citation, reason: failure.reason })
+      continue
+    }
     const chunk = chunkById.get(citation.chunkId)
     if (!chunk) {
       violations.push({ ...citation, reason: 'unknown-chunk' })
@@ -59,4 +69,40 @@ export function verifyCitations(
   }
 
   return violations
+}
+
+/**
+ * The evidence text a citation stands for: the resolved sentence(s) for a
+ * cite-by-sentence citation, the quoted excerpt otherwise. Null when a
+ * reference does not resolve.
+ */
+export function resolveCitationEvidence(
+  citation: ClaimCitation,
+  chunks: RAGChunk[]
+): string | null {
+  if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) {
+    return citation.evidenceExcerpt ?? null
+  }
+  const chunkById = new Map(chunks.map((c) => [c.id, c]))
+  const sentences: string[] = []
+  for (const ref of citation.evidenceRefs) {
+    const resolved = resolveEvidenceRef(ref, chunkById)
+    if (!resolved.ok) return null
+    sentences.push(resolved.sentence)
+  }
+  return sentences.join(' ')
+}
+
+/** Fill `evidenceExcerpt` from the resolved sentences so everything downstream
+ *  that shows or stores evidence sees the same text as before. References that
+ *  do not resolve are left untouched (they fail verification). */
+export function withResolvedEvidence(
+  citations: ClaimCitation[],
+  chunks: RAGChunk[]
+): ClaimCitation[] {
+  return citations.map((citation) => {
+    if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) return citation
+    const evidence = resolveCitationEvidence(citation, chunks)
+    return evidence === null ? citation : { ...citation, evidenceExcerpt: evidence }
+  })
 }

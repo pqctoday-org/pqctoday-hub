@@ -149,13 +149,27 @@ describe('structured citations (useStructuredCitations flag)', () => {
     expect(result).not.toContain('id: test-1')
   })
 
-  it('local prompt: includes the citations instruction and chunk id when on', () => {
+  it('local prompt: includes the citations instruction and chunk id when on (excerpt format, cite-by-sentence off)', () => {
+    structuredCitationsEnabled = true
+    process.env.CITE_PROTO = 'none'
+    try {
+      const result = buildLocalSystemPrompt([mockChunk])
+      expect(result).toMatch(/```citations/)
+      expect(result).toContain('id: test-1')
+      expect(result).toMatch(/claimExcerpt/)
+      expect(result).toMatch(/chunkId/)
+    } finally {
+      delete process.env.CITE_PROTO
+    }
+  })
+
+  it('local prompt: cite-by-sentence numbers sentences and asks for evidenceRef', () => {
     structuredCitationsEnabled = true
     const result = buildLocalSystemPrompt([mockChunk])
     expect(result).toMatch(/```citations/)
     expect(result).toContain('id: test-1')
-    expect(result).toMatch(/claimExcerpt/)
-    expect(result).toMatch(/chunkId/)
+    expect(result).toMatch(/\[1\] /)
+    expect(result).toMatch(/evidenceRef/)
   })
 
   it('gemini prompt: includes the citations instruction and chunk id when on', () => {

@@ -129,6 +129,92 @@ export function salvageGroundedClaims(
   return { content, citations: valid }
 }
 
+export interface PartiallyVerifiedAnswer {
+  /** The original answer with every unverified sentence or bullet removed. */
+  content: string
+  /** Verified citations whose claim is still shown. */
+  citations: ClaimCitation[]
+  /** Number of substantive sentences removed. */
+  dropped: number
+  /** Number of substantive sentences kept. */
+  kept: number
+}
+
+/**
+ * Judge each statement, not the whole answer. Keep a substantive sentence only
+ * when a citation whose claim contains it passes the same per-claim checks as
+ * salvageGroundedClaims (claim present in the answer, evidence resolves, no fact
+ * contradiction, no ungrounded entity). Everything else - uncited sentences,
+ * sentences backed only by an invalid citation, headings - is removed from the
+ * text, so the reader never sees it. Unlike salvage, the surviving sentences
+ * keep their original wording, order and line structure.
+ *
+ * Returns null when no verified statement remains (the caller then falls back
+ * exactly as before).
+ */
+export function keepVerifiedStatements(
+  answer: string,
+  citations: ClaimCitation[],
+  chunks: RAGChunk[]
+): PartiallyVerifiedAnswer | null {
+  const normalizedAnswer = visibleText(answer)
+  const validClaims: Array<{ claim: string; citation: ClaimCitation }> = []
+  for (const citation of citations) {
+    const claim = visibleText(citation.claimExcerpt)
+    if (claim.length < 12 || !normalizedAnswer.includes(claim)) continue
+    if (verifyCitations([citation], chunks).length > 0) continue
+    if (verifyFacts(citation.claimExcerpt, chunks).length > 0) continue
+    if (checkGrounding(citation.claimExcerpt, chunks).hasWarning) continue
+    validClaims.push({ claim, citation })
+  }
+  if (validClaims.length === 0) return null
+
+  const keptLines: string[] = []
+  let kept = 0
+  let dropped = 0
+  for (const line of answer.split(/\r?\n/)) {
+    if (!line.trim()) {
+      if (keptLines.length > 0 && keptLines[keptLines.length - 1] !== '') keptLines.push('')
+      continue
+    }
+    if (/^\s{0,3}#{1,6}\s/.test(line)) continue
+    // Split after the bullet marker so it stays attached to the first sentence.
+    const marker = line.match(/^\s*(?:[-+*]\s+|\d+[.)]\s+)?/)?.[0] ?? ''
+    const body = line.slice(marker.length)
+    const pieces = body.split(/(?<=[.!?])\s+/).filter((piece) => piece.trim())
+    const keptPieces: string[] = []
+    for (const piece of pieces) {
+      const visible = visibleText(piece)
+      if (visible.length < 12) {
+        keptPieces.push(piece)
+        continue
+      }
+      if (validClaims.some(({ claim }) => claim.includes(visible))) {
+        keptPieces.push(piece)
+        kept += 1
+      } else {
+        dropped += 1
+      }
+    }
+    if (keptPieces.length > 0) keptLines.push(`${marker}${keptPieces.join(' ')}`)
+  }
+  if (kept === 0) return null
+
+  const content = keptLines
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+  const normalizedContent = visibleText(content)
+  const seen = new Set<string>()
+  const shown: ClaimCitation[] = []
+  for (const { claim, citation } of validClaims) {
+    if (seen.has(claim) || !normalizedContent.includes(claim)) continue
+    seen.add(claim)
+    shown.push(citation)
+  }
+  return { content, citations: shown, dropped, kept }
+}
+
 const STOPWORDS = new Set([
   'that',
   'this',

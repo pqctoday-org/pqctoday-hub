@@ -4,33 +4,61 @@ import { appendGroundedDeepLinks } from './deepLinkInjection'
 import {
   buildRetrievedEvidenceResponse,
   enforceGrounding,
+  keepVerifiedStatements,
   salvageGroundedClaims,
   type GroundingDecision,
 } from './groundingPolicy'
-import type { ClaimCitation } from './parseCitations'
+import { citeProtoFlags } from './citeProtoFlags'
+import { citationChunkIds, type ClaimCitation } from './parseCitations'
+import { withResolvedEvidence } from './citationVerification'
 
-export type GroundedResponseMode = 'verified' | 'salvaged' | 'extractive'
+export type GroundedResponseMode = 'verified' | 'partially-verified' | 'salvaged' | 'extractive'
 
 export interface FinalizedGroundedResponse {
   content: string
   decision: GroundingDecision
   mode: GroundedResponseMode
   citedChunkIds: string[]
+  /** Citations behind the displayed text, with reference evidence resolved. */
+  citations: ClaimCitation[]
+  /** Sentences removed from the draft (partially-verified only). */
+  droppedStatements: number
+}
+
+function chunkIdsOf(citations: ClaimCitation[]): string[] {
+  return [...new Set(citations.flatMap(citationChunkIds))]
 }
 
 /** Convert one model draft into the safest useful response available. */
 export function finalizeGroundedResponse(
   answer: string,
-  citations: ClaimCitation[],
+  rawCitations: ClaimCitation[],
   chunks: RAGChunk[]
 ): FinalizedGroundedResponse {
+  const citations = withResolvedEvidence(rawCitations, chunks)
   const decision = enforceGrounding(answer, citations, chunks)
   if (decision.approved) {
     return {
       content: appendGroundedDeepLinks(answer, citations, chunks),
       decision,
       mode: 'verified',
-      citedChunkIds: [...new Set(citations.map((c) => c.chunkId).filter(Boolean))],
+      citedChunkIds: chunkIdsOf(citations),
+      citations,
+      droppedStatements: 0,
+    }
+  }
+
+  if (citeProtoFlags().partial) {
+    const partial = keepVerifiedStatements(answer, citations, chunks)
+    if (partial) {
+      return {
+        content: appendGroundedDeepLinks(partial.content, partial.citations, chunks),
+        decision,
+        mode: 'partially-verified',
+        citedChunkIds: chunkIdsOf(partial.citations),
+        citations: partial.citations,
+        droppedStatements: partial.dropped,
+      }
     }
   }
 
@@ -40,7 +68,9 @@ export function finalizeGroundedResponse(
       content: appendGroundedDeepLinks(salvaged.content, salvaged.citations, chunks),
       decision,
       mode: 'salvaged',
-      citedChunkIds: [...new Set(salvaged.citations.map((c) => c.chunkId).filter(Boolean))],
+      citedChunkIds: chunkIdsOf(salvaged.citations),
+      citations: salvaged.citations,
+      droppedStatements: 0,
     }
   }
 
@@ -49,5 +79,7 @@ export function finalizeGroundedResponse(
     decision,
     mode: 'extractive',
     citedChunkIds: [],
+    citations: [],
+    droppedStatements: 0,
   }
 }

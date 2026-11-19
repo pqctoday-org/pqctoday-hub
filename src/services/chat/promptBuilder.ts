@@ -2,6 +2,8 @@
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { useStructuredCitations } from '@/services/featureFlags'
+import { citeProtoFlags } from './citeProtoFlags'
+import { formatNumberedSentences } from './sentenceIndex'
 import { MODULE_CATALOG, MODULE_TRACKS } from '@/components/PKILearning/moduleData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
@@ -180,7 +182,8 @@ function buildContextBlocks(
   chunks: RAGChunk[],
   maxChars = MAX_CONTEXT_CHARS,
   compact = false,
-  includeIds = false
+  includeIds = false,
+  numberSentences = false
 ): string {
   const allBlocks: string[] = []
   let totalChars = 0
@@ -206,7 +209,12 @@ function buildContextBlocks(
       ? `--- Source: ${c.source} | ${c.title} | id: ${c.id} ---`
       : `--- Source: ${c.source} | ${c.title} ---`
     const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
-    const content = compactContent(c.content)
+    // Numbered sentences: whole sentences only, the "[n] " markers count toward
+    // the same per-chunk limit as unnumbered content, and every block still goes
+    // through the maxChars check below.
+    const content = numberSentences
+      ? formatNumberedSentences(c, chunkContentLimit)
+      : compactContent(c.content)
     const block = [header, deepLinkLine, content, '---'].filter(Boolean).join('\n')
 
     if (totalChars + block.length > maxChars) break
@@ -511,10 +519,19 @@ export function buildLocalSystemPrompt(
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const citationsEnabled = useStructuredCitations()
   // Compact mode: truncate chunk content to fit more chunks in limited context
-  const contextBlocks = buildContextBlocks(chunks, maxContextChars, true, citationsEnabled)
-  const citationsNote = citationsEnabled
-    ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceExcerpt":"<one contiguous verbatim excerpt copied from its context chunk; never add ...>","chunkId":"<that chunk's exact id>"}. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
-    : ''
+  const bySentence = citationsEnabled && citeProtoFlags().bySentence
+  const contextBlocks = buildContextBlocks(
+    chunks,
+    maxContextChars,
+    true,
+    citationsEnabled,
+    bySentence
+  )
+  const citationsNote = bySentence
+    ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Context sentences are numbered [n] inside each source. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceRef":"<chunk id>#<n>"} where n is the number of the context sentence that supports the bullet, for example "algo-ml-kem-768#2". If a bullet needs several sentences, give an array: "evidenceRef":["algo-ml-kem-768#2","algo-ml-kem-768#3"]. Use only chunk ids and numbers that appear in the context; never copy source text into the citation. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
+    : citationsEnabled
+      ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceExcerpt":"<one contiguous verbatim excerpt copied from its context chunk; never add ...>","chunkId":"<that chunk's exact id>"}. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
+      : ''
 
   // Compact page/persona context — every token counts at 4K
   let pageNote = ''
