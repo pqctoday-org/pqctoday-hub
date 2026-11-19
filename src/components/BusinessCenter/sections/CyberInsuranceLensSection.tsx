@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState, useMemo, useCallback } from 'react'
+import { useId, useState, useMemo, useCallback } from 'react'
 import {
   LineChart,
   Line,
@@ -68,18 +68,23 @@ function SliderRow({
   tooltip: string
   onChange: (v: number) => void
 }) {
+  const inputId = useId()
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-foreground flex items-center gap-1">
+        <label
+          htmlFor={inputId}
+          className="text-xs font-medium text-foreground flex items-center gap-1"
+        >
           {label}
           <span title={tooltip} className="text-muted-foreground cursor-help" aria-label={tooltip}>
-            <Info size={11} />
+            <Info size={11} aria-hidden="true" />
           </span>
         </label>
         <span className="text-xs font-mono text-primary">{format(value)}</span>
       </div>
       <input
+        id={inputId}
         type="range"
         min={min}
         max={max}
@@ -87,7 +92,6 @@ function SliderRow({
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-full accent-primary"
-        aria-label={label}
       />
     </div>
   )

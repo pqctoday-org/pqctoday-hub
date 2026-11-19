@@ -131,10 +131,12 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label className="text-xs text-muted-foreground block">
+        <label htmlFor="kem-keyfile-select" className="text-xs text-muted-foreground block">
           {kemAction === 'encap' ? 'Public Key' : 'Private Key'}
         </label>
         <FilterDropdown
+          triggerId="kem-keyfile-select"
+          ariaLabel={kemAction === 'encap' ? 'Public Key' : 'Private Key'}
           selectedId={kemKeyFile}
           onSelect={(id) => setKemKeyFile(id)}
           items={files
@@ -187,8 +189,12 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       {kemAction === 'decap' && (
         <>
           <div className="space-y-3">
-            <span className="text-xs text-muted-foreground block">Ciphertext Input</span>
+            <label htmlFor="kem-infile-select" className="text-xs text-muted-foreground block">
+              Ciphertext Input
+            </label>
             <FilterDropdown
+              triggerId="kem-infile-select"
+              ariaLabel="Ciphertext Input"
               selectedId={kemInFile}
               onSelect={(id) => setKemInFile(id)}
               items={files

@@ -1276,10 +1276,12 @@ export const ThreatsDashboard: React.FC<{
                 <Search
                   size={16}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden="true"
                 />
                 <input
                   type="text"
                   placeholder="Search threats..."
+                  aria-label="Search threats"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
@@ -1294,8 +1296,9 @@ export const ThreatsDashboard: React.FC<{
                 className="h-[44px] w-[44px] shrink-0"
                 onClick={() => setShowMobileFilters(!showMobileFilters)}
                 aria-label="Toggle filters"
+                aria-expanded={showMobileFilters}
               >
-                <Filter size={18} />
+                <Filter size={18} aria-hidden="true" />
               </Button>
             </div>
 
@@ -1331,10 +1334,12 @@ export const ThreatsDashboard: React.FC<{
                   <Search
                     size={16}
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    aria-hidden="true"
                   />
                   <input
                     type="text"
                     placeholder='Search — try "HNDL settlement data"'
+                    aria-label="Search threats"
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value)
@@ -1361,7 +1366,11 @@ export const ThreatsDashboard: React.FC<{
                     : 'Set your role'}
                 </Button>
 
-                <div className="flex flex-wrap items-center gap-1.5">
+                <div
+                  className="flex flex-wrap items-center gap-1.5"
+                  role="group"
+                  aria-label="Filter by site priority"
+                >
                   <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
                     Site priority
                   </span>
@@ -1396,7 +1405,11 @@ export const ThreatsDashboard: React.FC<{
                   difficulty—not a probability or an assessment of your organisation.
                 </span>
 
-                <div className="flex flex-wrap items-center gap-1.5">
+                <div
+                  className="flex flex-wrap items-center gap-1.5"
+                  role="group"
+                  aria-label="Filter by threat class"
+                >
                   <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
                     Class
                   </span>

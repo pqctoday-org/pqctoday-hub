@@ -120,7 +120,8 @@ const COMPOSITE_SIGNATURE_CANDIDATES = new Map([
 function suggestSigPair(
   targetState: TargetState,
   currentAlgorithm: string,
-  cnsa2: boolean
+  cnsa2: boolean,
+  protocol: string
 ): string {
   // CNSA 2.0 mandates ML-DSA-87 (Category 5).
   if (cnsa2) return 'ML-DSA-87 (FIPS 204 — CNSA 2.0 Category 5 mandate)'
@@ -132,8 +133,10 @@ function suggestSigPair(
     return 'Gateway-terminated ML-DSA-65 (legacy peer keeps classical sig)'
   }
   const profile = COMPOSITE_SIGNATURE_CANDIDATES.get(currentAlgorithm)
+  const rfcLabel =
+    protocol === 'S/MIME' ? 'RFC 10082 CMS/S/MIME profile' : 'RFC 10073 X.509 profile'
   return profile
-    ? `${profile} (RFC 10073 X.509 profile). Confirm signature scheme support in the application.`
+    ? `${profile} (${rfcLabel}). Confirm signature scheme support in the application.`
     : 'Record the current signing key separately before selecting a compatible signature profile.'
 }
 
@@ -240,7 +243,7 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
 
   // A KEM-only or signature-only deployment doesn't need the other pair.
   let kemPair = suggestKemPair(targetState, currentAlgorithm, cnsa2, inputs.protocol)
-  let sigPair = suggestSigPair(targetState, currentAlgorithm, cnsa2)
+  let sigPair = suggestSigPair(targetState, currentAlgorithm, cnsa2, inputs.protocol)
   if (cryptoFunction === 'kem') sigPair = 'Not applicable — KEM-only function'
   if (cryptoFunction === 'signature') kemPair = 'Not applicable — signature-only function'
 
@@ -262,7 +265,7 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
   }
   if (fipsRequired) {
     watchOuts.push(
-      'FIPS-validated module required: gate production on a CMVP module certificate whose Approved Algorithms list includes the PQC algorithm you need, not on algorithm GA or an algorithm (CAVP) certificate. As of 24 Sep 2026 such certificates exist (e.g. Level 3 HSMs #5282, #5450, #5497, #5503; ML-KEM in the Level 1 AWS-LC module #5314), but most active certificates list no PQC algorithm.'
+      'FIPS-validated module required: gate production on an Active FIPS 140-3 CMVP module certificate whose Approved Algorithms list includes the PQC algorithm you need — not on algorithm GA, an ACVP/CAVP algorithm certificate, or FIPS 140-2 (moved to the CMVP Historical List in September 2026). As of 24 Sep 2026 such certificates exist (e.g. Level 3 HSMs #5282, #5450, #5497, #5503; ML-KEM in the Level 1 AWS-LC module #5314), but most active certificates list no PQC algorithm.'
     )
   }
 

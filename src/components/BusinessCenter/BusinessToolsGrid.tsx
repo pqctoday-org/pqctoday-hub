@@ -236,7 +236,7 @@ export const BusinessToolsGrid = () => {
         </div>
 
         {/* Category filter pills */}
-        <div className="flex flex-wrap gap-2">
+        <div role="group" aria-label="Filter by category" className="flex flex-wrap gap-2">
           <Button
             variant="ghost"
             onClick={() => {
@@ -289,7 +289,11 @@ export const BusinessToolsGrid = () => {
 
         {/* Zone / phase / audience facets — same registry metadata each tool card
             already carries, just exposed as filters (additive to category + text). */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div
+          role="group"
+          aria-label="Filter by zone, phase, or audience"
+          className="flex flex-wrap items-center gap-2"
+        >
           <Filter size={14} className="text-muted-foreground shrink-0" />
           <FilterDropdown
             items={ZONE_FILTER_ITEMS}
@@ -332,7 +336,7 @@ export const BusinessToolsGrid = () => {
         {/* WS6c: how the grid is sectioned — independent of the facets above,
             which narrow WHICH tools show; this changes how the remaining
             ones are organized into headed groups. */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div role="group" aria-label="Group tools by" className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium text-muted-foreground shrink-0">Group by</span>
           {GROUP_MODE_ITEMS.map((mode) => (
             <Button
@@ -388,7 +392,11 @@ export const BusinessToolsGrid = () => {
       {Object.keys(groupedTools).length === 0 && (
         <EmptyState
           icon={<Search className="w-6 h-6" />}
-          title={`No tools match \u201c${searchQuery}\u201d`}
+          title={
+            searchQuery.trim()
+              ? `No tools match \u201c${searchQuery}\u201d`
+              : 'No tools match the active filters'
+          }
         />
       )}
 
@@ -398,9 +406,9 @@ export const BusinessToolsGrid = () => {
         if (!tools) return null
         return (
           <div key={section.key} data-testid={`tool-group-${section.key}`}>
-            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
               {section.label}
-            </h4>
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {tools.map((tool) => {
                 const Icon = tool.icon

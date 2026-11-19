@@ -25,6 +25,7 @@ export function DataPrivacySection() {
       <Button
         variant="ghost"
         onClick={() => setIsDataPrivacyOpen(!isDataPrivacyOpen)}
+        aria-expanded={isDataPrivacyOpen}
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <Lock className="text-primary shrink-0" size={24} />

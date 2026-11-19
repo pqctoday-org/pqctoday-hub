@@ -384,8 +384,9 @@ export function SshLearnSection() {
             </p>
             <p className="text-xs text-muted-foreground mb-2">
               Stock OpenSSH 9.9 added the hybrid key exchange{' '}
-              <span className="font-mono">mlkem768x25519-sha256</span>. That key-exchange support
-              does not add the experimental post-quantum host or user signatures shown here.
+              <span className="font-mono">mlkem768x25519-sha256</span>, and OpenSSH 10.0 made it the
+              default (RFC 10042). That key-exchange support does not add the experimental
+              post-quantum host or user signatures shown here.
               <a
                 href="https://www.openssh.org/pq.html"
                 target="_blank"

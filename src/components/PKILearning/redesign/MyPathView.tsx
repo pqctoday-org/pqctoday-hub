@@ -16,6 +16,7 @@ import {
   FlaskConical,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import {
   PERSONAS,
   capstoneTitle,
@@ -343,15 +344,17 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
             that is a finding worth telling us about.
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
-            <Link to="/algorithms?tab=validation">
-              <Button variant="gradient" size="sm">
-                Run the ACVP vectors
-              </Button>
+            <Link
+              to="/algorithms?tab=validation"
+              className={buttonVariants({ variant: 'gradient', size: 'sm' })}
+            >
+              Run the ACVP vectors
             </Link>
-            <Link to="/library?ref=usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets">
-              <Button variant="outline" size="sm">
-                Find the published vectors
-              </Button>
+            <Link
+              to="/library?ref=usnistgov-ACVP-Server-Public-Reference-Sample-Vector-Sets"
+              className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            >
+              Find the published vectors
             </Link>
           </div>
         </div>

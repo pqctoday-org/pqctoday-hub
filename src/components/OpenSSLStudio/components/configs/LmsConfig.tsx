@@ -773,10 +773,12 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
       {/* Data File Selection */}
       <div className="space-y-3">
-        <label className="text-xs text-muted-foreground block">
+        <label htmlFor="lms-datafile-select" className="text-xs text-muted-foreground block">
           Data File to {mode === 'sign' ? 'Sign' : 'Verify'}
         </label>
         <FilterDropdown
+          triggerId="lms-datafile-select"
+          ariaLabel={`Data File to ${mode === 'sign' ? 'Sign' : 'Verify'}`}
           disabled={isSigning}
           selectedId={lmsDataFile}
           onSelect={(id) => setLmsDataFile(id)}

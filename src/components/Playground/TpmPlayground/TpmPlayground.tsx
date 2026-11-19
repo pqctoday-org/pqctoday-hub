@@ -103,9 +103,9 @@ export default function TpmPlayground() {
                 WebAssembly-compiled
                 <code>pqctpm</code> emulator. Explore ML-KEM and ML-DSA using an engine derived from
                 the earlier TCG V1.85 RC4 snapshot. The current normative reference is the final TCG
-                TPM 2.0 Library Version 185. Commands run against this local software emulator, not
-                a physical TPM; the displayed results do not demonstrate hardware-backed key
-                protection or device attestation.
+                TPM 2.0 Library Version 185 (March 2026). Commands run against this local software
+                emulator, not a physical TPM; the displayed results do not demonstrate
+                hardware-backed key protection or device attestation.
               </p>
               <div className="flex gap-4">
                 <span
@@ -160,7 +160,10 @@ export default function TpmPlayground() {
             The V2.7 EK tabs show sample Endorsement Keys and certificates created by this local
             emulator. The published TCG profile defines templates and certificate slots, but does
             not require every manufacturer to pre-provision those certificates. The browser sample
-            is not a manufacturer credential or proof of a physical TPM.
+            is not a manufacturer credential or proof of a physical TPM. Note also that TCG TPM 2.0
+            (discrete or firmware TPMs) is distinct from silicon root-of-trust architectures such as
+            OCP Caliptra, which define their own DICE/attestation flows rather than the TPM 2.0
+            command set.
           </p>
         </WhyThisMatters>
 

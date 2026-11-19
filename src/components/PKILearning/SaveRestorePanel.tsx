@@ -163,10 +163,19 @@ export const SaveRestorePanel: React.FC = () => {
           </p>
 
           <div className="flex gap-2">
-            <label className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded cursor-pointer transition-colors">
+            <label
+              htmlFor="learning-import-progress"
+              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded cursor-pointer transition-colors"
+            >
               <Upload size={16} />
               Import Progress
-              <input type="file" accept=".json" onChange={handleImport} className="hidden" />
+              <input
+                id="learning-import-progress"
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="hidden"
+              />
             </label>
           </div>
         </div>
@@ -181,7 +190,7 @@ export const SaveRestorePanel: React.FC = () => {
           <Button
             variant="ghost"
             onClick={handleReset}
-            className="flex items-center gap-2 px-4 py-2 bg-status-error text-status-error rounded hover:bg-status-error transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-status-error/15 text-status-error rounded hover:bg-status-error/25 transition-colors"
           >
             <Trash2 size={16} />
             Reset Everything

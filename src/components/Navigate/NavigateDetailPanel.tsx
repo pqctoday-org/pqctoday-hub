@@ -132,6 +132,7 @@ export function NavigateDetailPanel({
           : 'absolute inset-x-3 bottom-3 top-3 z-20 w-auto overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:top-4 sm:w-[340px]'
       }
       role="complementary"
+      aria-label={`${node.label} details`}
     >
       {/* Deliberately opaque, not .glass-panel (bg-card/80 + blur) — this
           panel sits directly over the busiest part of the scene (dense

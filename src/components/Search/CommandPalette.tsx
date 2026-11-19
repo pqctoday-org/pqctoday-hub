@@ -584,6 +584,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       variant="link"
                       size="sm"
                       onClick={() => setShowAdvanced((v) => !v)}
+                      aria-pressed={showAdvanced}
                       className="text-primary h-auto p-0"
                     >
                       {showAdvanced ? 'Hide advanced' : 'Include advanced'}

@@ -960,6 +960,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                 setCompletedSteps(new Set())
               }}
               label="TEE Vendor"
+              ariaLabel="TEE Vendor"
               defaultLabel="Select TEE"
               defaultIcon={<Cpu size={16} className="text-primary" />}
               noContainer
@@ -975,6 +976,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                 setCompletedSteps(new Set())
               }}
               label="HSM Vendor"
+              ariaLabel="HSM Vendor"
               defaultLabel="Select HSM"
               defaultIcon={<Server size={16} className="text-primary" />}
               noContainer
@@ -1054,10 +1056,15 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           <div className="glass-panel p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm font-bold text-foreground">Protocol Mode</div>
-              <div className="flex rounded-lg overflow-hidden border border-border">
+              <div
+                role="group"
+                aria-label="Protocol mode"
+                className="flex rounded-lg overflow-hidden border border-border"
+              >
                 <Button
                   variant={!pqcMode ? 'default' : 'ghost'}
                   size="sm"
+                  aria-pressed={!pqcMode}
                   onClick={() => {
                     setPqcMode(false)
                     clearLiveOutcome()
@@ -1071,6 +1078,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
                 <Button
                   variant={pqcMode ? 'default' : 'ghost'}
                   size="sm"
+                  aria-pressed={pqcMode}
                   onClick={() => {
                     setPqcMode(true)
                     clearLiveOutcome()
@@ -1688,16 +1696,25 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
       </div>
 
       {/* ── Cross-reference callout ───────────────────────────────── */}
-      <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
-        <strong>Note:</strong> HSM PQC firmware details and vendor comparison are covered in the{' '}
-        <Link to="/learn/hsm-pqc" className="text-primary underline">
-          HSM &amp; PQC Operations module
-        </Link>
-        . Use the{' '}
-        <Link to="/learn/hsm-pqc?tab=workshop&step=0" className="text-primary underline">
-          PKCS#11 Simulator
-        </Link>{' '}
-        to explore the HSM side of this integration.
+      <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground space-y-1">
+        <p>
+          <strong>Educational sandbox note:</strong> The in-browser SoftHSM3 WASM session is an
+          educational sandbox, not a FIPS 140-3 / CMVP-validated production HSM or hardware TEE.
+          Production deployments must validate vendor hardware quotes, certificate chains,
+          measurement policies, and HSM validation status in their target environment.
+        </p>
+        <p>
+          <strong>Related module:</strong> HSM PQC firmware details and vendor comparison are
+          covered in the{' '}
+          <Link to="/learn/hsm-pqc" className="text-primary underline">
+            HSM &amp; PQC Operations module
+          </Link>
+          . Use the{' '}
+          <Link to="/learn/hsm-pqc?tab=workshop&step=0" className="text-primary underline">
+            PKCS#11 Simulator
+          </Link>{' '}
+          to explore the HSM side of this integration.
+        </p>
       </div>
 
       {hsm.isReady && (

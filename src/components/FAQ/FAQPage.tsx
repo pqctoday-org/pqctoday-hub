@@ -53,9 +53,12 @@ function FAQAccordionItem({
         aria-controls={answerId}
       >
         {open ? (
-          <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+          <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
         ) : (
-          <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+          <ChevronRight
+            className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"
+            aria-hidden="true"
+          />
         )}
         <span className="min-w-0 flex-1 font-medium text-foreground">{item.question}</span>
         {recommended && (
@@ -238,7 +241,7 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">
-          <HelpCircle className="h-7 w-7 text-accent" />
+          <HelpCircle className="h-7 w-7 text-accent" aria-hidden="true" />
           <Heading className="text-gradient text-2xl font-bold sm:text-3xl">
             PQC Frequently Asked Questions
           </Heading>
@@ -259,7 +262,10 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search
+          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
         <Input
           ref={searchRef}
           type="search"
@@ -335,8 +341,8 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
         <p className="mb-3 text-secondary">
           Have a question not listed here? Ask the PQC Assistant for real-time answers.
         </p>
-        <Link to="/about">
-          <Button variant="gradient">Learn about the PQC Assistant</Button>
+        <Link to="/about" className={buttonVariants({ variant: 'gradient' })}>
+          Learn about the PQC Assistant
         </Link>
       </div>
     </div>

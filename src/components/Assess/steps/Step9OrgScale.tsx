@@ -50,6 +50,7 @@ const Step9OrgScale = ({ hideHeading = false, hideHints = false }: EmbeddedStepP
 
       <Button
         variant="ghost"
+        aria-pressed={scaleUnknown}
         onClick={() => setScaleUnknown(!scaleUnknown)}
         className={clsx(
           'w-full h-auto p-3 justify-start gap-2 whitespace-normal border',

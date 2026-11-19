@@ -976,7 +976,6 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
     setWizardOutput(null)
     setWizardError(null)
     setPqcKeysReady(false)
-    setIsSimulationMode(false)
     setClassicalKeysReady(false)
     setIsSimulationMode(false)
     setPqcPubKeyBytes(0)
@@ -1228,7 +1227,12 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                fileInputRef.current?.click()
+              }
+            }}
           >
             <input
               ref={fileInputRef}
@@ -1333,30 +1337,51 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           {/* Algorithm selectors */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">PQC Algorithm</p>
+              <label
+                htmlFor="firmware-pqc-algo"
+                className="block text-xs font-medium text-muted-foreground"
+              >
+                PQC Algorithm
+              </label>
               <FilterDropdown
                 items={PQC_ALGO_OPTIONS}
                 selectedId={pqcAlgo}
                 onSelect={(id) => setPqcAlgo(id as PqcAlgo)}
                 label={pqcAlgo}
+                triggerId="firmware-pqc-algo"
+                ariaLabel="PQC Algorithm"
               />
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">Classical Algorithm</p>
+              <label
+                htmlFor="firmware-classical-algo"
+                className="block text-xs font-medium text-muted-foreground"
+              >
+                Classical Algorithm
+              </label>
               <FilterDropdown
                 items={CLASSICAL_ALGO_OPTIONS}
                 selectedId={classicalAlgo}
                 onSelect={(id) => setClassicalAlgo(id as ClassicalAlgo)}
                 label={classicalAlgo}
+                triggerId="firmware-classical-algo"
+                ariaLabel="Classical Algorithm"
               />
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">Hash Algorithm</p>
+              <label
+                htmlFor="firmware-hash-algo"
+                className="block text-xs font-medium text-muted-foreground"
+              >
+                Hash Algorithm
+              </label>
               <FilterDropdown
                 items={HASH_ALGO_OPTIONS}
                 selectedId={hashAlgo}
                 onSelect={(id) => setHashAlgo(id as HashAlgo)}
                 label={hashAlgo}
+                triggerId="firmware-hash-algo"
+                ariaLabel="Hash Algorithm"
               />
             </div>
           </div>
@@ -1376,7 +1401,8 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               <li>
                 <span className="font-mono font-semibold text-foreground">ML-DSA-87</span> — NIST
                 Level 5 · required by CNSA 2.0 for NSS; approved for firmware signing alongside the
-                preferred LMS/XMSS (SP 800-208)
+                preferred single-tree LMS/XMSS (SP 800-208; multi-tree HSS and XMSS^MT are not
+                allowed for NSS)
               </li>
               <li>
                 <span className="font-mono font-semibold text-foreground">SLH-DSA-SHA2-128S</span> —
@@ -1390,15 +1416,9 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
 
           <p className="text-xs text-muted-foreground">
             <span className="text-status-warning font-medium">Note:</span> Hash applies to classical
-            signing mechanism (
-            {hashAlgo === 'SHA-256'
-              ? 'CKM_SHA256_RSA_PKCS'
-              : hashAlgo === 'SHA-384'
-                ? 'CKM_SHA384_RSA_PKCS'
-                : 'CKM_SHA512_RSA_PKCS'}
-            ) and digest display. PQC algorithms ({pqcAlgo}) use{' '}
-            {pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'SHA-256' : 'SHAKE-256 and SHAKE-128'} internally —
-            pure mode per RFC 9882/9814 (not sourced in the Library).
+            signing mechanism ({classicalMechName}) and digest display. PQC algorithms ({pqcAlgo})
+            use {pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'SHA-256' : 'SHAKE-256 and SHAKE-128'} internally
+            — pure mode per RFC 9882/9814.
           </p>
         </div>
       ),
@@ -2095,12 +2115,12 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
           <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs flex gap-2">
             <Info size={13} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-muted-foreground">
-              <strong className="text-foreground">NSA CNSA 2.0</strong> prefers LMS/XMSS (SP
-              800-208, stateful hash-based signatures) to start software/firmware signing now, with
-              CNSA 2.0 algorithms mandated for national security systems by 31 December 2031 unless
-              otherwise noted (NSA CNSA 2.0 FAQ, version 2.2). Validated ML-DSA-87 is also approved
-              for software/firmware signing and may suit cases that need many signatures or
-              distributed signing.{' '}
+              <strong className="text-foreground">NSA CNSA 2.0</strong> prefers single-tree LMS/XMSS
+              (SP 800-208, stateful hash-based signatures; multi-tree HSS and XMSS^MT are not
+              allowed for NSS) to start software/firmware signing now, with CNSA 2.0 algorithms
+              mandated for national security systems by 31 December 2031 unless otherwise noted (NSA
+              CNSA 2.0 FAQ, version 2.2). Validated ML-DSA-87 is also approved for software/firmware
+              signing and may suit cases that need many signatures or distributed signing.{' '}
               <a
                 href="/library?ref=NSA CNSA 2.0"
                 target="_blank"
@@ -2281,11 +2301,14 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border mt-4">
         <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong>{' '}
+          <strong>Educational sandbox note:</strong>{' '}
           {isLive
-            ? 'All cryptographic operations execute in SoftHSM3 WASM (PKCS#11 v3.2). Key and signature sizes match FIPS 204/205 exactly. CMS SignedData uses pure mode per RFC 9882/9814.'
+            ? 'All cryptographic operations execute in SoftHSM3 WASM (PKCS#11 v3.2) in your browser. Key and signature sizes match FIPS 204/205 exactly, and CMS SignedData uses pure mode per RFC 9882/9814.'
             : 'Simulation mode active. Algorithm selection, comparison table, and CMS structure are always shown.'}{' '}
-          Generated keys are for educational purposes only.
+          Browser WASM is an educational sandbox, not a FIPS 140-3 / CMVP-validated production HSM.
+          Passing this exercise does not verify a deployed UEFI firmware verifier or production
+          signing pipeline — validate HSM firmware, certificate chains, and target boot-verifier
+          acceptance in your own hardware environment.
         </p>
       </div>
 

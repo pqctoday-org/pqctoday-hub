@@ -1096,7 +1096,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 KEK Algorithm
               </p>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5" role="group" aria-label="KEK Algorithm">
                 {(
                   [
                     'ml-kem-512',
@@ -1142,7 +1142,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
                   <span className="text-[10px] text-muted-foreground">{RSA_OAEP_STANDARD}</span>
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5" role="group" aria-label="Wrap Mechanism">
                   {(
                     Object.entries(WRAP_MECH_META) as [
                       WrapMechanism,
@@ -1730,6 +1730,13 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
               <span className="font-mono text-primary">HSM / PKCS#11 → Key Wrapping</span> tool
               which supports P-256+ML-KEM and X25519+ML-KEM multi-algorithm key-establishment
               combiner modes (not sourced in the Library).
+            </p>
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">Educational sandbox vs. production:</strong>{' '}
+              SoftHSMv3 WASM runs locally in the browser and is not a FIPS 140-3 CMVP-validated
+              production HSM. In production KMS/HSM deployments, verify your module&apos;s active
+              CMVP certificate, enforce non-extractable DEK/KEK policies, and test against your
+              provider&apos;s documented envelope format.
             </p>
           </div>
         </div>

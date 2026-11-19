@@ -60,7 +60,7 @@ export function TermsView() {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <Scale className="text-primary shrink-0" size={28} />
+          <Scale className="text-primary shrink-0" size={28} aria-hidden="true" />
           <h1 className="text-2xl font-bold text-gradient">Terms of Service</h1>
         </div>
         <p className="text-muted-foreground text-sm">
@@ -124,7 +124,7 @@ export function TermsView() {
               className="text-accent hover:underline inline-flex items-center gap-1"
             >
               LICENSE file
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>
             . Nothing in these Terms restricts rights granted under the AGPL-3.0.
           </p>
@@ -380,7 +380,7 @@ export function TermsView() {
               className="text-accent hover:underline inline-flex items-center gap-1"
             >
               Google&apos;s Privacy Policy
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>
             .
           </p>
@@ -398,7 +398,7 @@ export function TermsView() {
               className="text-accent hover:underline inline-flex items-center gap-1"
             >
               Google&apos;s Gemini API Terms of Service
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>
             . Alternatively, you can use the <strong>Local LLM (WebLLM)</strong> mode, which runs
             the AI model entirely in your browser &mdash; no data leaves your device.
@@ -436,7 +436,7 @@ export function TermsView() {
               className="text-accent hover:underline inline-flex items-center gap-1"
             >
               GitHub Discussions
-              <ExternalLink size={12} />
+              <ExternalLink size={12} aria-hidden="true" />
             </a>{' '}
             or contact the maintainers through the repository.
           </p>

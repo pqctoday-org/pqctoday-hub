@@ -20,6 +20,8 @@ import { MobileCommandCenterView } from '@/components/Mobile/screens/MobileComma
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
+import { cn } from '@/lib/utils'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -128,11 +130,12 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
         <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">{intro.lede}</p>
         {intro.showGuidedOverview && (
           <div className="mb-6">
-            <Link to="/simulation?run=exec">
-              <Button variant="gradient" size="sm" className="gap-1.5">
-                <PlayCircle size={14} aria-hidden="true" />
-                New here? Watch the guided overview
-              </Button>
+            <Link
+              to="/simulation?run=exec"
+              className={cn(buttonVariants({ variant: 'gradient', size: 'sm' }), 'gap-1.5')}
+            >
+              <PlayCircle size={14} aria-hidden="true" />
+              New here? Watch the guided overview
             </Link>
           </div>
         )}
@@ -744,7 +747,11 @@ export function BusinessCenterView() {
               {/* Per-zone artifact panels — left sidebar nav (desktop) + scrollable tab bar (mobile) */}
               <div>
                 {/* Mobile: horizontal scrollable zone tab bar */}
-                <div className="flex md:hidden gap-1 overflow-x-auto pb-2 -mx-4 px-4 mb-3">
+                <div
+                  role="group"
+                  aria-label="CSWP 39 zones"
+                  className="flex md:hidden gap-1 overflow-x-auto pb-2 -mx-4 px-4 mb-3"
+                >
                   {CSWP39_ZONE_ORDER.map((zone) => {
                     // eslint-disable-next-line security/detect-object-injection
                     const detail = CSWP39_ZONE_DETAILS[zone]
@@ -755,6 +762,7 @@ export function BusinessCenterView() {
                       <Button
                         key={zone}
                         variant="ghost"
+                        aria-pressed={isActive}
                         onClick={() => handleZoneSelect(zone)}
                         className={`shrink-0 h-auto min-h-[44px] px-2.5 text-[10px] font-semibold rounded-md border transition-colors ${
                           isActive
@@ -773,7 +781,10 @@ export function BusinessCenterView() {
                   {/* Left sidebar — desktop only, intermediate+ density. At basic
                    density the Fig 3 diagram is the single source of zone nav. */}
                   {density !== 'basic' && (
-                    <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
+                    <aside
+                      aria-label="CSWP 39 zones"
+                      className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start"
+                    >
                       <div className="flex items-center justify-between px-3 mb-1">
                         <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
                           Zones
@@ -804,6 +815,7 @@ export function BusinessCenterView() {
                           <Button
                             key={zone}
                             variant="ghost"
+                            aria-pressed={isActive}
                             onClick={() => handleZoneSelect(zone)}
                             className={`w-full h-auto justify-start p-0 rounded-lg border transition-colors ${
                               isActive

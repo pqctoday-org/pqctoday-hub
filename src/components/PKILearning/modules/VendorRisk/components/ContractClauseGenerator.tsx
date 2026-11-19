@@ -22,7 +22,7 @@ export const CONTRACT_SECTIONS: ArtifactSection[] = [
     id: 'pqc-timeline',
     title: 'PQC Timeline Requirements',
     description:
-      'Define when vendors must achieve post-quantum cryptographic readiness. Anchoring vendor deadlines to your own migration timeline is the primary lever for keeping vendor delay off your critical path (NIST CSWP 39 §5.3).',
+      'Define when vendors must achieve post-quantum cryptographic readiness. Anchoring vendor deadlines to your own migration timeline is the primary lever for keeping vendor delay off your critical path (NIST CSWP 39 §5.3). For US federal civilian contracting, also track EO 14412, OMB M-26-15, and the directed FAR contractor rule.',
     fields: [
       {
         id: 'deadline-year',
@@ -77,7 +77,7 @@ export const CONTRACT_SECTIONS: ArtifactSection[] = [
     id: 'fips-mandate',
     title: 'FIPS Validation Mandate',
     description:
-      'Where your policy or contract requires validated cryptographic modules, require FIPS 140-3 validation (CMVP) for the modules that cover the PQC operations in scope. This is a procurement control of this module, not a CSWP 39 requirement; NIST CSWP 39 §5.3 notes that the supply chains depend on the maturity of standards, protocols, and the cryptographic validation program.',
+      'Where your policy or contract requires validated cryptographic modules, require an Active FIPS 140-3 CMVP module certificate for the modules that cover the PQC operations in scope — not ACVP/CAVP algorithm-only validation, vendor marketing claims, or FIPS 140-2 (which moved to the CMVP Historical List in September 2026 and is not valid for new procurement). This is a procurement control of this module, not a CSWP 39 requirement; NIST CSWP 39 §5.3 notes that the supply chains depend on the maturity of standards, protocols, and the cryptographic validation program.',
     fields: [
       {
         id: 'validation-level',

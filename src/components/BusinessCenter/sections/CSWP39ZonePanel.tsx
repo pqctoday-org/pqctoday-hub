@@ -11,6 +11,8 @@ import React, { useState } from 'react'
 import { ChevronDown, ChevronUp, GraduationCap } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
+import { cn } from '@/lib/utils'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, type ZoneId } from '@/data/cswp39ZoneData'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
@@ -210,11 +212,15 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
             {detail.learnRoute && !open && (
               // Collapsed: promote "Learn this zone" to a primary button so
               // first-time learners have an obvious entry point.
-              <Link to={detail.learnRoute}>
-                <Button size="sm" variant="default" className="h-6 px-2 gap-1 text-[10px]">
-                  <GraduationCap size={11} />
-                  Learn this zone
-                </Button>
+              <Link
+                to={detail.learnRoute}
+                className={cn(
+                  buttonVariants({ size: 'sm', variant: 'default' }),
+                  'h-6 px-2 gap-1 text-[10px]'
+                )}
+              >
+                <GraduationCap size={11} aria-hidden="true" />
+                Learn this zone
               </Link>
             )}
             {detail.learnRoute && open && (
@@ -224,7 +230,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
                 className="inline-flex items-center gap-1 text-[10px] font-medium text-primary hover:underline"
                 title={`Learn ${detail.title.toLowerCase()} in the workshop`}
               >
-                <GraduationCap size={11} />
+                <GraduationCap size={11} aria-hidden="true" />
                 Learn this zone →
               </Link>
             )}

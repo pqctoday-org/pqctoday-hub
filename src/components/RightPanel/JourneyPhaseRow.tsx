@@ -73,6 +73,7 @@ export const JourneyPhaseRow: React.FC<JourneyPhaseRowProps> = ({ phase, isCurre
       <Button
         variant="ghost"
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
         className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-muted/20 rounded-lg transition-colors"
       >
         <StatusIcon status={phase.status} />

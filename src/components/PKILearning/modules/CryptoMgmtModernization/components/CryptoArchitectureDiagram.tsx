@@ -62,8 +62,8 @@ const KIND_LABELS: Record<ComponentKind, string> = {
 
 const KIND_PLACEHOLDERS: Record<ComponentKind, string> = {
   application: 'e.g. payment-gateway, version 4.2',
-  library: 'e.g. OpenSSL 3.4 (PQC via OQS provider)',
-  hsm: 'e.g. nCipher nShield XC, FIPS 140-3 L3, no ML-DSA',
+  library: 'e.g. OpenSSL 3.5 LTS (native ML-KEM-768, ML-DSA-65)',
+  hsm: 'e.g. Network HSM, FIPS 140-3 L3, ML-DSA firmware pending',
   protocol: 'e.g. TLS 1.3 hybrid X25519+ML-KEM-768',
   'key-store': 'e.g. HashiCorp Vault, transit engine',
   'certificate-authority': 'e.g. Internal Root CA, RSA-3072 (no PQC yet)',
@@ -131,7 +131,7 @@ const seedComponents = (): ArchComponent[] => [
     id: 'lib-1',
     kind: 'library',
     name: 'OpenSSL',
-    detail: '3.4 + OQS provider (ML-KEM-768, ML-DSA-65)',
+    detail: '3.5 LTS (native ML-KEM-768, ML-DSA-65; verify FIPS 140-3 boundary)',
     dependsOn: 'hsm-1',
   },
   {
@@ -219,6 +219,8 @@ function buildMarkdown(components: ArchComponent[], theme: 'light' | 'dark' = 'l
 
   md += '\n## Notes\n\n'
   md += `- Generated ${new Date().toISOString().slice(0, 10)} (CSWP.39 §5.4 — Cryptographic Architecture).\n`
+  md +=
+    '- Educational planning artifact — verify actual deployed versions, dependencies, and active NIST CMVP (FIPS 140-3; FIPS 140-2 moved to Historical in September 2026) status in your production environment.\n'
   md += '- Update this document whenever components change FIPS status, PQC support, or vendor.\n'
   md += '- Cross-link this document from the policy generator and risk register for traceability.\n'
 
@@ -396,9 +398,13 @@ export const CryptoArchitectureDiagram: React.FC = () => {
     savedAt !== null && lastSavedMarkdown !== null && markdown !== lastSavedMarkdown
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(markdown)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      await navigator.clipboard.writeText(markdown)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Clipboard API unavailable or permission denied
+    }
   }, [markdown])
 
   const handleDownloadPdf = useCallback(async () => {
@@ -529,6 +535,7 @@ export const CryptoArchitectureDiagram: React.FC = () => {
                       }))}
                       selectedId={c.kind}
                       onSelect={(id) => updateRow(c.id, { kind: id as ComponentKind })}
+                      ariaLabel={`Kind of ${c.id}`}
                       size="sm"
                     />
                     <div className="text-[10px] font-mono text-muted-foreground mt-1">

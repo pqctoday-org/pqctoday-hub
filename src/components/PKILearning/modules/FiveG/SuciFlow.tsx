@@ -1538,9 +1538,11 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               PQC Mode Configuration
             </div>
             <p className="text-xs italic text-muted-foreground mb-3">
-              Educational preview of proposed Profile C. The envelope it builds, PSC1 (1,116 bytes
-              pure, 1,148 bytes hybrid for a 9-digit MSIN), is a project sample format, not a
-              standard; Profile A and Profile B encodings are unchanged.
+              Educational preview of proposed Profile C (research proposal by Khan et al. 2025; 3GPP
+              TS 33.501 Rel-19 ratifies Profiles A &amp; B only, while PQC SUCI options remain under
+              Rel-20 TR 33.703 study). The envelope it builds, PSC1 (1,116 bytes pure, 1,148 bytes
+              hybrid for a 9-digit MSIN), is a project sample format, not a standard; Profile A and
+              Profile B encodings are unchanged.
             </p>
             <div className="flex gap-4">
               <Button

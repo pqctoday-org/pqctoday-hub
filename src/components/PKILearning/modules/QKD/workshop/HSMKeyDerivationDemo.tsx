@@ -288,7 +288,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               'The sample key belongs to a different HSM module or session. Repeat import before derivation.'
             )
           }
-          const { importedHandle } = state
+          const importedHandle = state.importedHandle
           const label = new TextEncoder().encode('session-key-v1\x00')
           const derive = (context: Uint8Array) => {
             const fixedInput = new Uint8Array(label.length + context.length + 4)
@@ -358,9 +358,11 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
         </p>
       )}
       <p className="text-xs text-muted-foreground" role="note">
-        Local sample workflow: key retrieval is simulated. Successful optional PKCS#11 calls are
-        separate from the walkthrough; no QKD network or second peer runs. The sample secret and any
-        returned key bytes are visible in browser memory. This is not a non-exportability test.
+        Local sample workflow: key retrieval is simulated and browser WASM (SoftHSM3) is an
+        educational sandbox, not a FIPS 140-3 / CMVP-validated production HSM. Successful optional
+        PKCS#11 calls are separate from the walkthrough; no QKD network or second peer runs. The
+        sample secret and any returned key bytes are visible in browser memory. This is not a
+        non-exportability test.
       </p>
       <ScopeTransparencyBanner
         realOps={[
@@ -378,7 +380,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
         <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey']} />
         <WasmModeIndicator
           isLive={hsm.isReady}
-          simulationReason="WASM mode active for SP 800-108 Key Derivation Demo"
+          simulationReason="Live HSM disabled — illustrative software walkthrough active"
         />
       </div>
       {/* Broader KDF context */}
@@ -505,12 +507,14 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
       </div>
 
       {/* Step progress pills */}
-      <div className="flex flex-wrap gap-2">
+      <div role="list" aria-label="Key derivation workflow steps" className="flex flex-wrap gap-2">
         {STEPS.map((step, idx) => {
           const Icon = step.icon
           return (
             <div
               key={step.id}
+              role="listitem"
+              aria-current={idx + 1 === currentStep ? 'step' : undefined}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full border transition-colors ${
                 idx + 1 === currentStep
                   ? 'bg-primary/10 border-primary/30 text-primary font-bold'
@@ -519,7 +523,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
                     : 'bg-muted border-border text-muted-foreground'
               }`}
             >
-              <Icon size={12} />
+              <Icon size={12} aria-hidden="true" />
               {step.label}
             </div>
           )
@@ -649,6 +653,13 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               <code className="text-xs font-mono text-foreground">
                 K(i) = PRF(KI, [i]₂ ‖ Label ‖ 0x00 ‖ Context ‖ [L]₂)
               </code>
+              <p className="text-[11px] text-muted-foreground mt-2">
+                SP 800-108 Rev. 1 defines three PRF-based KDF modes: <strong>Counter Mode</strong>{' '}
+                (§4.1, demonstrated here), <strong>Feedback Mode</strong> (§4.2, chaining{' '}
+                <code>K(i−1)</code> with an optional IV), and{' '}
+                <strong>Double-Pipeline Iteration Mode</strong> (§4.3, maintaining an internal{' '}
+                <code>A(i)</code> chain alongside <code>K(i)</code>).
+              </p>
             </div>
           </div>
           <div className="flex items-start gap-2">

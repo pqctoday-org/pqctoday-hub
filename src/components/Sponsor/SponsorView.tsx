@@ -168,7 +168,7 @@ function Hero() {
   return (
     <section className="text-center mb-12 md:mb-16">
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6">
-        <Sparkles size={14} className="text-primary" />
+        <Sparkles size={14} className="text-primary" aria-hidden="true" />
         <span className="text-xs font-medium text-primary uppercase tracking-wider">
           Sponsor program
         </span>
@@ -199,7 +199,7 @@ function Hero() {
           href={`mailto:${SPONSORSHIP_EMAIL}?subject=Sponsorship%20Inquiry`}
           className={buttonVariants({ variant: 'outline', size: 'lg', className: 'gap-2' })}
         >
-          <Mail size={16} />
+          <Mail size={16} aria-hidden="true" />
           Contact us
         </a>
       </div>
@@ -220,7 +220,7 @@ function MarketContext() {
   return (
     <section className="glass-panel p-6 md:p-8 mb-8">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
-        <Globe className="text-primary shrink-0" size={22} />
+        <Globe className="text-primary shrink-0" size={22} aria-hidden="true" />
         Why this matters now
       </h2>
       <p className="text-sm md:text-base text-secondary leading-relaxed mb-3">
@@ -252,7 +252,7 @@ function SponsorAudiences() {
             <div key={audience.title} className="glass-panel p-6 flex flex-col">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-lg bg-primary/10">
-                  <Icon className="text-primary" size={22} />
+                  <Icon className="text-primary" size={22} aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground">{audience.title}</h3>
               </div>
@@ -397,7 +397,7 @@ function EditorialPromise() {
     <section className="glass-panel p-6 md:p-8 mb-12 border-primary/30">
       <div className="flex items-start gap-4">
         <div className="p-3 rounded-lg bg-primary/10 shrink-0">
-          <ShieldCheck className="text-primary" size={28} />
+          <ShieldCheck className="text-primary" size={28} aria-hidden="true" />
         </div>
         <div className="flex-1">
           <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3">
@@ -433,7 +433,7 @@ function Goal() {
   return (
     <section className="glass-panel p-6 md:p-8 mb-12">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
-        <Briefcase className="text-primary shrink-0" size={22} />
+        <Briefcase className="text-primary shrink-0" size={22} aria-hidden="true" />
         Where your sponsorship goes
       </h2>
       <p className="text-sm md:text-base text-secondary leading-relaxed mb-6">
@@ -444,7 +444,7 @@ function Goal() {
         {FUNDED.map(({ icon: Icon, label, to }) => {
           const content = (
             <>
-              <Icon className="text-primary shrink-0" size={18} />
+              <Icon className="text-primary shrink-0" size={18} aria-hidden="true" />
               <span className="text-sm text-foreground">{label}</span>
               {to && (
                 <span className="text-xs text-primary ml-auto whitespace-nowrap">Verify →</span>
@@ -492,7 +492,7 @@ function ContactCTA() {
           href={`mailto:${SPONSORSHIP_EMAIL}?subject=Sponsorship%20Inquiry`}
           className={buttonVariants({ variant: 'outline', size: 'lg', className: 'gap-2' })}
         >
-          <Mail size={16} />
+          <Mail size={16} aria-hidden="true" />
           {SPONSORSHIP_EMAIL}
         </a>
       </div>

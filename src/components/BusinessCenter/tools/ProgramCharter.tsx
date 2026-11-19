@@ -231,6 +231,10 @@ export function buildMarkdown(s: CharterState): string {
   lines.push('---')
   lines.push('')
   lines.push(
+    "*Hub educational draft template — formal program authorization and Gate G0 sign-off happen in your organization's governance system, not in the Hub.*"
+  )
+  lines.push('')
+  lines.push(
     '*Aligned to NIST CSWP 39 §5 (Crypto Agility Strategic Plan — governance) and the ' +
       'Applied Quantum Phase 0 Executive Mandate. https://doi.org/10.6028/NIST.CSWP.39-upd1*'
   )

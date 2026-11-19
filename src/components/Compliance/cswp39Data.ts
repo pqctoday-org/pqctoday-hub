@@ -258,20 +258,20 @@ export const CSWP39_CROSS_WALK: CSWP39CrossWalkRow[] = [
     stepId: 'govern',
     frameworks: [
       {
-        label: 'OMB M-23-02',
-        hint: 'US federal crypto-inventory mandate through 2035',
+        label: 'OMB M-26-15 / M-23-02',
+        hint: 'US federal non-NSS migration planning & inventory (M-26-15, June 2026, under EO 14412, updating M-23-02)',
         searchQuery: 'OMB',
         targetTab: 'compliance',
       },
       {
         label: 'DORA Art. 9',
-        hint: 'EU ICT risk management',
+        hint: 'EU ICT cyber risk-management duty (no fixed PQC deadline)',
         searchQuery: 'DORA',
         targetTab: 'compliance',
       },
       {
         label: 'NIS2 Art. 21',
-        hint: 'EU cybersecurity measures including cryptography',
+        hint: 'EU cyber risk-management duty including cryptography (no fixed PQC deadline)',
         searchQuery: 'NIS2',
         targetTab: 'compliance',
       },
@@ -287,8 +287,8 @@ export const CSWP39_CROSS_WALK: CSWP39CrossWalkRow[] = [
     stepId: 'inventory',
     frameworks: [
       {
-        label: 'OMB M-23-02',
-        hint: 'Annual crypto-inventory submission',
+        label: 'OMB M-26-15 / M-23-02',
+        hint: 'US federal crypto inventory & migration plan (M-26-15, June 2026)',
         searchQuery: 'OMB',
         targetTab: 'compliance',
       },

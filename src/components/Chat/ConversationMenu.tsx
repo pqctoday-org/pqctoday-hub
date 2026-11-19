@@ -100,6 +100,7 @@ export const ConversationMenu: React.FC = () => {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    aria-label="Search conversations"
                     placeholder="Search conversations..."
                     className="w-full text-xs px-2 py-1.5 bg-muted/30 border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
                     // eslint-disable-next-line jsx-a11y/no-autofocus

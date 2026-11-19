@@ -637,18 +637,18 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
           roadmap is not ticked, though a planned entry that also mentions hybrid can be ticked by
           mistake, so review the ticks. The wording does not say which operations, versions or
           settings are in use. <em>FIPS 140-3 Validation</em> follows the certificate stage: it
-          ticks only products whose entry cites a FIPS 140-3 module certificate
-          (algorithm-validation-only, in-process and FIPS 140-2 entries do not count), and the
-          certificate scope is not checked, so it can cover classical algorithms only.{' '}
-          <em>Hybrid Mode Support</em> reads only the catalogue&apos;s structured hybrid
-          key-exchange and composite-signature fields, never the description text. Hybrid TLS or a
-          hybrid API counts in full, support that is only experimental counts half, and a product
-          with no structured entry is shown as Not assessed. Not assessed means the catalogue has no
-          structured hybrid entry for it, which says nothing about the product itself: it is left
-          out of that dimension&apos;s score, and if none of your products has an entry the
-          dimension is left out of the total and the remaining weights are divided among themselves.
-          Confirm hybrid support in the vendor&apos;s documentation. You tick the other three
-          dimensions yourself.
+          ticks only products whose entry cites an Active FIPS 140-3 CMVP module certificate
+          (ACVP/CAVP algorithm-validation-only, in-process, and FIPS 140-2 entries — which moved to
+          the CMVP Historical List in September 2026 — do not count), and the certificate scope is
+          not checked, so it can cover classical algorithms only. <em>Hybrid Mode Support</em> reads
+          only the catalogue&apos;s structured hybrid key-exchange and composite-signature fields,
+          never the description text. Hybrid TLS or a hybrid API counts in full, support that is
+          only experimental counts half, and a product with no structured entry is shown as Not
+          assessed. Not assessed means the catalogue has no structured hybrid entry for it, which
+          says nothing about the product itself: it is left out of that dimension&apos;s score, and
+          if none of your products has an entry the dimension is left out of the total and the
+          remaining weights are divided among themselves. Confirm hybrid support in the
+          vendor&apos;s documentation. You tick the other three dimensions yourself.
         </p>
       </div>
 

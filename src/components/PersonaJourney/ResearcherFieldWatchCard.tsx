@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { Settings2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown, type FilterDropdownItem } from '@/components/common/FilterDropdown'
@@ -74,6 +74,7 @@ export function ResearcherFieldWatchCard() {
   const [showPicker, setShowPicker] = useState(
     followedFields.length === 0 && followedTopics.length === 0
   )
+  const pickerId = useId()
 
   const corpus = loadFieldWatchCorpus()
   const topicsTagged = corpus.topicTaggedCount > 0
@@ -204,6 +205,7 @@ export function ResearcherFieldWatchCard() {
           onClick={() => setShowPicker((v) => !v)}
           className="gap-1.5 px-2 text-xs text-muted-foreground"
           aria-expanded={showPicker}
+          aria-controls={pickerId}
         >
           <Settings2 size={14} aria-hidden="true" />
           Edit your fields
@@ -211,7 +213,7 @@ export function ResearcherFieldWatchCard() {
       </div>
 
       {showPicker && (
-        <div className="border-t border-border pt-3">
+        <div id={pickerId} className="border-t border-border pt-3">
           {corpus.otherShare.total > 0 && (
             <p className="mb-2 text-xs text-muted-foreground" data-testid="field-watch-other-share">
               {corpus.otherShare.percent}% of the {corpus.otherShare.total.toLocaleString('en-US')}{' '}

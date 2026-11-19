@@ -49,7 +49,7 @@ export function ColumnPicker({
         aria-haspopup="listbox"
         className="h-7 inline-flex items-center gap-1 rounded border border-border px-2 text-xs text-muted-foreground hover:text-foreground hover:border-input hover:bg-transparent transition-colors"
       >
-        <Columns3 className="h-3 w-3" />
+        <Columns3 className="h-3 w-3" aria-hidden="true" />
         {activeLabel}
       </Button>
 
@@ -59,13 +59,14 @@ export function ColumnPicker({
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 px-1">
               Presets
             </p>
-            <div className="flex gap-1">
+            <div className="flex gap-1" role="group" aria-label="Column presets">
               {(['essential', 'algorithms', 'full'] as PresetKey[]).map((p) => (
                 <Button
                   key={p}
                   type="button"
                   variant={preset === p ? 'secondary' : 'ghost'}
                   size="sm"
+                  aria-pressed={preset === p}
                   onClick={() => {
                     onPresetChange(p)
                     setOpen(false)

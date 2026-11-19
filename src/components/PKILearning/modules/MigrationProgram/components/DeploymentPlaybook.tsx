@@ -62,7 +62,8 @@ export const DEPLOYMENT_PLAYBOOK_SECTIONS: ChecklistSection[] = [
     items: [
       {
         id: 'hybrid-tls-config',
-        label: 'Enable hybrid key exchange (e.g., X25519MLKEM768) in TLS config',
+        label:
+          'Enable hybrid key exchange (e.g., X25519MLKEM768, RFC 10024 / 0x11EC) in TLS 1.3 (RFC 9846) config',
       },
       {
         id: 'hybrid-backward-compat',

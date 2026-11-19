@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { motion } from 'framer-motion'
 import { ArrowRight, ChevronDown, Flame, GraduationCap, Info, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
+import { buttonVariants } from '../ui/button-variants'
 import { ScoringModal } from './ScoringModal'
 import { useAwarenessScore, BELT_RANKS, type BeltRank } from '@/hooks/useAwarenessScore'
 import { getBeltTierLabel } from '@/data/personaConfig'
@@ -288,12 +289,10 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
               Complete modules, take the quiz, and generate crypto artifacts to build your Composite
               Awareness Score — and advance through judo belt ranks.
             </p>
-            <Link to="/learn">
-              <Button variant="gradient" size="sm">
-                <GraduationCap size={14} className="mr-1.5" />
-                Begin the Journey
-                <ArrowRight size={14} className="ml-1.5" />
-              </Button>
+            <Link to="/learn" className={buttonVariants({ variant: 'gradient', size: 'sm' })}>
+              <GraduationCap size={14} className="mr-1.5" />
+              Begin the Journey
+              <ArrowRight size={14} className="ml-1.5" />
             </Link>
           </div>
         </div>
@@ -419,11 +418,16 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
               </>
             )}
           </div>
-          <Link to="/learn" className="shrink-0 mt-0.5">
-            <Button variant="outline" size="sm">
-              Continue Learning
-              <ArrowRight size={14} className="ml-1.5" />
-            </Button>
+          <Link
+            to="/learn"
+            className={buttonVariants({
+              variant: 'outline',
+              size: 'sm',
+              className: 'shrink-0 mt-0.5',
+            })}
+          >
+            Continue Learning
+            <ArrowRight size={14} className="ml-1.5" />
           </Link>
         </div>
 

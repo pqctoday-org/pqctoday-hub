@@ -318,7 +318,7 @@ export const ProviderSetup: React.FC = () => {
                     <span className="text-xs font-medium text-muted-foreground">
                       Context Window
                     </span>
-                    <div className="space-y-1.5">
+                    <div role="group" aria-label="Context window" className="space-y-1.5">
                       {contextPresets.map((p) => (
                         <Button
                           variant="ghost"
@@ -326,6 +326,7 @@ export const ProviderSetup: React.FC = () => {
                           key={p.tokens}
                           type="button"
                           onClick={() => setContextWindow(p.tokens)}
+                          aria-pressed={contextWindow === p.tokens}
                           className={`min-h-0 p-2.5 border transition-colors ${
                             contextWindow === p.tokens
                               ? 'border-primary bg-primary/10'
@@ -353,9 +354,10 @@ export const ProviderSetup: React.FC = () => {
                     variant="ghost"
                     type="button"
                     onClick={() => setShowInfo(!showInfo)}
+                    aria-expanded={showInfo}
                     className="flex items-center gap-1.5 text-xs text-primary hover:underline"
                   >
-                    <Info size={12} />
+                    <Info size={12} aria-hidden="true" />
                     How does local AI work?
                   </Button>
                   {showInfo && (

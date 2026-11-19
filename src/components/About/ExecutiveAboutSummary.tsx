@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { Link } from 'react-router'
 import { Briefcase, ArrowRight, PlayCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 
 /**
  * Executive-only orientation card at the top of /about. The About page is a long
@@ -29,27 +29,28 @@ export function ExecutiveAboutSummary() {
             what a decision-maker needs.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Link to="/simulation?run=exec">
-              <Button variant="gradient" size="sm" className="gap-1.5">
-                <PlayCircle size={14} aria-hidden="true" />
-                Watch the guided overview
-              </Button>
+            <Link
+              to="/simulation?run=exec"
+              className={buttonVariants({ variant: 'gradient', size: 'sm', className: 'gap-1.5' })}
+            >
+              <PlayCircle size={14} aria-hidden="true" />
+              Watch the guided overview
             </Link>
-            <Link to="/business">
-              <Button variant="outline" size="sm" className="gap-1.5">
-                Open the Command Center
-                <ArrowRight size={14} aria-hidden="true" />
-              </Button>
+            <Link
+              to="/business"
+              className={buttonVariants({ variant: 'outline', size: 'sm', className: 'gap-1.5' })}
+            >
+              Open the Command Center
+              <ArrowRight size={14} aria-hidden="true" />
             </Link>
-            <Link to="/assess">
-              <Button variant="outline" size="sm">
-                Get a board-ready risk brief
-              </Button>
+            <Link to="/assess" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+              Get a board-ready risk brief
             </Link>
-            <a href="#about-enterprise">
-              <Button variant="outline" size="sm">
-                Bring this to my organization
-              </Button>
+            <a
+              href="#about-enterprise"
+              className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            >
+              Bring this to my organization
             </a>
           </div>
         </div>

@@ -111,6 +111,7 @@ export function CommunitySection() {
       <Button
         variant="ghost"
         onClick={() => setIsShowAllDiscussions(!isShowAllDiscussions)}
+        aria-expanded={isShowAllDiscussions}
         className="mt-3 text-xs text-muted-foreground hover:text-primary"
       >
         {isShowAllDiscussions ? 'Show less' : `Show all ${DISCUSSIONS.length - 2} more`}

@@ -80,6 +80,7 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
       <Button
         variant="ghost"
         onClick={() => setIsMissionOpen(!isMissionOpen)}
+        aria-expanded={isMissionOpen}
         className="mt-4 text-xs text-muted-foreground hover:text-primary"
       >
         {isMissionOpen ? 'Collapse vision' : 'Read full vision'}

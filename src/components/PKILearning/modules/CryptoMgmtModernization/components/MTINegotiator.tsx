@@ -113,7 +113,9 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
   // Default — ML-DSA-65 + SLH-DSA defence-in-depth
   const alts = ['SLH-DSA-SHA2-128s (defence-in-depth)']
   if (interopProfile.includes('non-pqc-peers')) {
-    alts.unshift('RSA-PSS-3072 + ML-DSA-65 (LAMPS composite, transition period)')
+    alts.unshift(
+      'RSA-PSS-3072 + ML-DSA-65 (RFC 10073 X.509 / RFC 10082 CMS composite, transition period)'
+    )
   }
   return {
     mti: 'ML-DSA-65 (FIPS 204, NIST Cat 3)',
@@ -229,17 +231,17 @@ function recommendHash(inputs: MTIInputs): {
 // input drives this note (it used to be collected but never affect the output).
 const PROTOCOL_MTI_NOTES: Record<string, string> = {
   'TLS 1.3':
-    'TLS 1.3: negotiate the hybrid KEM via the IANA-registered X25519MLKEM768 named group (0x11EC) in supported_groups; PQC signatures via signature_algorithms once cert chains support them.',
+    'TLS 1.3 (RFC 9846): negotiate the hybrid KEM via the IANA-registered X25519MLKEM768 named group (0x11EC, RFC 10024) in supported_groups; PQC signatures via signature_algorithms once cert chains support them.',
   'TLS 1.2':
-    'TLS 1.2 has no standardized PQC key-exchange path - upgrade to TLS 1.3 before adding a PQC KEM.',
+    'TLS 1.2 has no standardized PQC key-exchange path - upgrade to TLS 1.3 (RFC 9846) before adding a PQC KEM.',
   IKEv2:
     'IKEv2: carry ML-KEM via RFC 9370 (Multiple Key Exchanges) as an additional key-exchange transform alongside the classical DH group.',
   'IPsec ESP':
     'IPsec ESP protects data with symmetric crypto (AES-256 is quantum-resistant) - the PQC change lives in the IKEv2 key exchange that derives ESP keys, not ESP itself.',
   SSH: 'SSH: use a hybrid KEX such as sntrup761x25519-sha512 today, moving to mlkem768x25519 as it standardises.',
   'S/MIME':
-    'S/MIME: signing uses the signature MTI; for encrypted mail carry the KEM via KEMRecipientInfo (RFC 9629).',
-  CMS: 'CMS: use KEMRecipientInfo (RFC 9629) for KEM-based content encryption; signatures via the signature MTI.',
+    'S/MIME: signing uses the signature MTI (or RFC 10082 composite ML-DSA during hybrid transition); for encrypted mail carry the KEM via KEMRecipientInfo (RFC 9629).',
+  CMS: 'CMS: use KEMRecipientInfo (RFC 9629) for KEM-based content encryption; signatures via the signature MTI (or RFC 10082 composite ML-DSA during hybrid transition).',
   'JOSE/COSE':
     'JOSE/COSE: ML-DSA / SLH-DSA algorithm registrations are still in progress - pin the MTI in your application profile until registered.',
   'custom-binary':
@@ -287,7 +289,12 @@ function computeWatchOuts(
 
   if (inputs.audience === 'us-nss') {
     out.push(
-      `Applicable profile: CNSA 2.0 for the explicitly selected National Security System. Source: ${CNSA_FAQ_SOURCE}. Scope transition milestones to the system and use case; the completion-year input is a planning assumption.`
+      `Applicable profile: NSA CNSA 2.0 (FAQ v2.2) for the explicitly selected National Security System. Source: ${CNSA_FAQ_SOURCE}. Scope transition milestones to the system and use case; the completion-year input is a planning assumption.`
+    )
+  }
+  if (inputs.audience === 'us-federal') {
+    out.push(
+      'US federal civilian scope: EO 14412 and OMB M-26-15 (plus the directed FAR contractor rule) set PQC transition deadlines for agency High Value Assets and high-impact systems (key establishment by 31 December 2030, digital signatures by 31 December 2031); NIST IR 8547 (final, October 2026) sets the NIST deprecation/disallowance schedule. Confirm which systems are in scope.'
     )
   }
   if (inputs.audience === 'us-nss' && inputs.interopProfile.includes('non-pqc-peers')) {
@@ -306,12 +313,12 @@ function computeWatchOuts(
   // HSM availability
   if (inputs.hardwareConstraints.includes('hsm-backed')) {
     out.push(
-      'HSM-backed required: FIPS 203 / 204 are still rolling out across HSM vendors (2025-2027). ML-KEM-768 + ML-DSA-65 are the safest HSM bets today; SLH-DSA support is thinner.'
+      'HSM-backed required: major HSM vendors ship FIPS 203 / 204 (and SLH-DSA on some platforms), but verify exact firmware version, PKCS#11 v3.2 mechanism IDs, and Active FIPS 140-3 CMVP module certificate algorithm scope rather than relying on ACVP/CAVP-only listings or marketing sheets.'
     )
   }
   if (inputs.hardwareConstraints.includes('tpm-backed')) {
     out.push(
-      'TPM-backed required: TCG PQC profiles are draft as of 2025; expect a 2026-2028 firmware refresh window.'
+      'TPM-backed required: TCG published Trusted Platform Module 2.0 v185 (March 2026) with ML-KEM and ML-DSA support, but silicon and firmware adoption is still rolling out — confirm target-platform hardware and firmware availability before committing.'
     )
   }
 
@@ -328,7 +335,7 @@ function computeWatchOuts(
   }
   if (inputs.standardsPosture === 'fips-validated-only') {
     out.push(
-      'FIPS-validated-only: FIPS 203, 204 and 205 standardize algorithms; they are not module certificates. "Validated" means the cryptographic module that performs the operation holds an Active CMVP certificate that lists the algorithm and parameter set you chose, for the version and operating environment you deploy. Algorithm validation (CAVP) is a prerequisite for a module certificate, not a substitute. Read the certificate and Security Policy of the exact module, including how it covers any hybrid combination.'
+      'FIPS-validated-only: FIPS 203, 204 and 205 standardize algorithms; they are not module certificates. "Validated" means the cryptographic module that performs the operation holds an Active CMVP certificate that lists the algorithm and parameter set you chose, for the version and operating environment you deploy (FIPS 140-3 only — FIPS 140-2 modules moved to the CMVP Historical List in September 2026 and are not valid for new procurement). Algorithm validation (ACVP/CAVP) is a prerequisite for a module certificate, not a substitute. Read the certificate and Security Policy of the exact module, including how it covers any hybrid combination.'
     )
     if (/X25519MLKEM768/.test(kem.mti)) {
       out.push(

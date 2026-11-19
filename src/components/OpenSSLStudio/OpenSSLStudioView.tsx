@@ -248,6 +248,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                 variant="ghost"
                 size="sm"
                 title={hint}
+                aria-pressed={category === cmd}
                 onClick={() => handleCategoryChange(cmd)}
                 className={clsx(
                   'h-auto px-2 py-0.5 text-[11px] font-mono rounded border transition-colors',
@@ -276,6 +277,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                 variant="ghost"
                 size="sm"
                 title={hint}
+                aria-pressed={category === cmd}
                 onClick={() => handleCategoryChange(cmd)}
                 className={clsx(
                   'h-auto rounded border px-2 py-0.5 font-mono text-[11px] transition-colors',
@@ -452,9 +454,14 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
 
                 <div className={showTerminal ? 'flex-1 min-h-0' : 'shrink-0'}>
                   <div className="glass-panel h-full flex flex-col overflow-hidden">
-                    <div className="flex items-center gap-1 border-b border-border px-3 py-1.5 bg-muted/20">
+                    <div
+                      role="group"
+                      aria-label="Output view"
+                      className="flex items-center gap-1 border-b border-border px-3 py-1.5 bg-muted/20"
+                    >
                       <Button
                         variant="ghost"
+                        aria-pressed={activeTab === 'terminal'}
                         onClick={() => setActiveTab('terminal')}
                         className={`h-auto flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
                           activeTab === 'terminal'
@@ -467,6 +474,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                       </Button>
                       <Button
                         variant="ghost"
+                        aria-pressed={activeTab === 'logs'}
                         onClick={() => setActiveTab('logs')}
                         className={`h-auto flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
                           activeTab === 'logs'
@@ -489,6 +497,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                         size="icon"
                         className="h-6 w-6"
                         onClick={() => setShowTerminal(!showTerminal)}
+                        aria-expanded={showTerminal}
                         title={showTerminal ? 'Hide Panel' : 'Show Panel'}
                         aria-label={showTerminal ? 'Hide Panel' : 'Show Panel'}
                       >

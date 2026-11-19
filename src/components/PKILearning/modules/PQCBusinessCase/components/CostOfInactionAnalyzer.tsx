@@ -485,6 +485,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
           <FilterDropdown
             items={DELAY_COST_PROFILES.map((p) => ({ id: p.industry, label: p.industry }))}
             selectedId={selectedIndustry}
+            ariaLabel="Industry"
             onSelect={(industry) => {
               setSelectedIndustry(industry)
               setMigrationCostOverrideUSD(null)
@@ -760,6 +761,7 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
               setVerifiedAnnualConsequenceUSD(0)
               setVerifiedOneTimeConsequenceUSD(0)
               setVerifiedConsequenceSource('')
+              setConfirmedConsequenceScope(null)
             }}
           >
             Reset financial assumptions

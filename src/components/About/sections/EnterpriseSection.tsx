@@ -21,6 +21,8 @@ export function EnterpriseSection() {
       <Button
         variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls="enterprise-content"
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <Building2 className="text-primary shrink-0" size={24} />
@@ -36,6 +38,7 @@ export function EnterpriseSection() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="enterprise-content"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

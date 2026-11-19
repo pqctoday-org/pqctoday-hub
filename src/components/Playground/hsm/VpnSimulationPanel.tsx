@@ -5106,8 +5106,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 {ssState === 'UNINITIALIZED' && (
                   <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30 space-y-3">
                     <div>
-                      <div className="text-xs font-semibold mb-1">Client PSK</div>
+                      <label htmlFor="vpn-client-psk" className="block text-xs font-semibold mb-1">
+                        Client PSK
+                      </label>
                       <input
+                        id="vpn-client-psk"
                         type="text"
                         value={clientPsk}
                         onChange={(e) => setClientPsk(e.target.value)}
@@ -5219,8 +5222,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 {ssState === 'UNINITIALIZED' && (
                   <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30 space-y-3">
                     <div>
-                      <div className="text-xs font-semibold mb-1">Server PSK</div>
+                      <label htmlFor="vpn-server-psk" className="block text-xs font-semibold mb-1">
+                        Server PSK
+                      </label>
                       <input
+                        id="vpn-server-psk"
                         type="text"
                         value={serverPsk}
                         onChange={(e) => setServerPsk(e.target.value)}

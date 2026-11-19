@@ -248,40 +248,30 @@ describe('CuriousMobileBoard', () => {
       expect(within(nav).getByText('Search')).toBeInTheDocument()
     })
 
-    // Each tab is a NavLink (<a>) wrapping a <Button> (<button>) that carries
-    // the "X view" aria-label — same nested link->button pattern MainLayout's
-    // own rail rows use. The accessible NAME of the outer <a> is computed
-    // from its rendered text ("Timeline"), not the inner button's aria-label
-    // ("Timeline view") — so, exactly like MainLayout.test.tsx, we query the
-    // inner `button` role for the "X view" name, then let the click bubble to
-    // the enclosing NavLink to actually navigate.
+    // Each routed tab is a single semantic NavLink (<a>) carrying the "X view"
+    // aria-label — no nested <button> inside <a>.
     it('tapping Timeline navigates to /timeline', () => {
       renderBoard()
-      fireEvent.click(within(getBottomNav()).getByRole('button', { name: /timeline view/i }))
+      fireEvent.click(within(getBottomNav()).getByRole('link', { name: /timeline view/i }))
       expect(screen.getByText(destinationTextFor('/timeline', 'Timeline Page'))).toBeInTheDocument()
     })
 
     it('tapping Threats navigates to /threats', () => {
       renderBoard()
-      fireEvent.click(within(getBottomNav()).getByRole('button', { name: /threats view/i }))
+      fireEvent.click(within(getBottomNav()).getByRole('link', { name: /threats view/i }))
       expect(screen.getByText(destinationTextFor('/threats', 'Threats Page'))).toBeInTheDocument()
     })
 
     it('tapping Learn navigates to /learn', () => {
       renderBoard()
-      fireEvent.click(within(getBottomNav()).getByRole('button', { name: /learn view/i }))
+      fireEvent.click(within(getBottomNav()).getByRole('link', { name: /learn view/i }))
       expect(screen.getByText(destinationTextFor('/learn', 'Learn Page'))).toBeInTheDocument()
     })
 
     it('the Start tab links to "/"', () => {
       renderBoard()
-      // The Start tab's enclosing NavLink has no distinguishing accessible
-      // name of its own (its name-from-content is the inner button's visible
-      // text, not its aria-label) — find it among the nav's links by href
-      // instead of DOM-traversing up from the button.
-      const links = within(getBottomNav()).getAllByRole('link')
-      const startLink = links.find((el) => el.getAttribute('href') === '/')
-      expect(startLink).toBeDefined()
+      const startLink = within(getBottomNav()).getByRole('link', { name: /start view/i })
+      expect(startLink).toHaveAttribute('href', '/')
     })
 
     it('tapping the Search tab opens the command palette (no route change)', () => {

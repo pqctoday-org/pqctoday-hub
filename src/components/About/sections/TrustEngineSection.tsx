@@ -19,6 +19,8 @@ function RevisionAuditCollapsible() {
       <Button
         variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls="revision-audit-content"
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <GitMerge className="text-primary shrink-0" size={24} />
@@ -40,6 +42,7 @@ function RevisionAuditCollapsible() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="revision-audit-content"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

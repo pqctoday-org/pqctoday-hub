@@ -614,20 +614,28 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
           {/* Parameter Set + Pre-hash Selection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <p className="block text-xs font-medium text-muted-foreground mb-1.5">
+              <label
+                htmlFor="slhdsa-param-set"
+                className="block text-xs font-medium text-muted-foreground mb-1.5"
+              >
                 Parameter Set (12 FIPS 205 variants)
-              </p>
+              </label>
               <FilterDropdown
                 items={dropdownItems()}
                 selectedId={paramSetId}
                 onSelect={handleParamSetChange}
                 defaultLabel="Select parameter set"
+                triggerId="slhdsa-param-set"
+                ariaLabel="Parameter Set (12 FIPS 205 variants)"
               />
             </div>
             <div>
-              <p className="block text-xs font-medium text-muted-foreground mb-1.5">
+              <label
+                htmlFor="slhdsa-prehash-mode"
+                className="block text-xs font-medium text-muted-foreground mb-1.5"
+              >
                 Pre-hash mode
-              </p>
+              </label>
               {showAdvancedPreHash ? (
                 <>
                   <FilterDropdown
@@ -635,6 +643,8 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
                     selectedId={preHash || 'All'}
                     onSelect={(id) => setPreHash(id === 'All' ? '' : id)}
                     defaultLabel="Pure (no pre-hash)"
+                    triggerId="slhdsa-prehash-mode"
+                    ariaLabel="Pre-hash mode"
                   />
                   {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
                     <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
@@ -1030,9 +1040,10 @@ export const SLHDSALiveDemo: React.FC<SLHDSALiveDemoProps> = ({ context = 'stand
           The &quot;s&quot; variants optimize for smaller signatures; the &quot;f&quot; variants
           optimize for faster signing at the expense of larger output.{' '}
           {isLive
-            ? 'All operations above execute via SoftHSM3 PKCS#11 v3.2.'
-            : 'Enable Live WASM Mode above for real cryptographic operations.'}{' '}
-          Generated keys are for educational purposes only.
+            ? 'All operations above execute via SoftHSM3 PKCS#11 v3.2 in browser WASM — an educational sandbox, not a FIPS 140-3 / CMVP-validated production HSM.'
+            : 'Enable Live WASM Mode above for browser-sandbox cryptographic operations.'}{' '}
+          Generated keys are for educational purposes only; validate key protection, signing-mode
+          policy, and ACVP/CMVP compliance in your production hardware.
         </p>
       </div>
 

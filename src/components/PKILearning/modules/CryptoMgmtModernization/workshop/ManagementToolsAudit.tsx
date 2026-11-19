@@ -59,10 +59,10 @@ export const TOOLS: ToolDef[] = [
     cswpRef: 'CSWP.39 §5 (Identify Gaps step)',
     importance: 3,
     recommendations: {
-      0: 'Subscribe to the NIST CMVP change-notice feed and NVD API for crypto CVEs. Create a weekly triage task.',
+      0: 'Subscribe to the NIST CMVP change-notice feed (including FIPS 140-2 Historical transitions from September 2026) and NVD API for crypto CVEs. Create a weekly triage task.',
       1: 'Integrate CVE feeds into your ticketing system; add crypto library EoL dates to your CBOM.',
       2: 'Automate CMVP historical-cert detection; route alerts to the Assurance pillar owner.',
-      3: 'Confirm automated patch-revalidate bind detection is in place (FIPS status tracked alongside CVE status).',
+      3: 'Confirm automated patch-revalidate bind detection is in place (FIPS 140-3 status tracked alongside CVE status).',
     },
   },
   {
@@ -74,8 +74,8 @@ export const TOOLS: ToolDef[] = [
     cswpRef: 'CSWP.39 §5 (Inventory step)',
     importance: 3,
     recommendations: {
-      0: 'Generate a CycloneDX SBOM for your top 5 critical applications using Syft or cdxgen.',
-      1: 'Enrich SBOMs with crypto component metadata (FIPS status, ESV, PQC readiness); store in CMDB.',
+      0: 'Generate a CycloneDX 1.6/1.7 (ECMA-424) SBOM/CBOM for your top 5 critical applications using Syft or cdxgen.',
+      1: 'Enrich SBOMs with crypto component metadata (FIPS 140-3 status, ESV, PQC readiness, CISA minimum CBOM elements due 19 March 2027 under EO 14412); store in CMDB.',
       2: 'Automate SBOM generation in CI/CD; set up a nightly CBOM freshness check.',
       3: 'Verify the pipeline updates the crypto asset inventory automatically; confirm completeness KPI is tracked.',
     },
@@ -421,7 +421,11 @@ export const ManagementToolsAudit: React.FC = () => {
                     <div className="text-[10px] text-muted-foreground mb-1 font-medium">
                       Selected category rating
                     </div>
-                    <div className="flex gap-1">
+                    <div
+                      className="flex gap-1"
+                      role="group"
+                      aria-label={`Category rating for ${tool.name}`}
+                    >
                       {([0, 1, 2, 3] as CoverageLevel[]).map((l) => (
                         <Button
                           key={l}
@@ -537,7 +541,14 @@ export const ManagementToolsAudit: React.FC = () => {
         )}
 
         {/* Completeness bar */}
-        <div className="w-full bg-muted/50 rounded-full h-2.5">
+        <div
+          className="w-full bg-muted/50 rounded-full h-2.5"
+          role="progressbar"
+          aria-valuenow={completeness}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Hub tool-category rating"
+        >
           <div
             className={`h-2.5 rounded-full transition-all ${completeness >= 75 ? 'bg-status-success' : completeness >= 40 ? 'bg-status-warning' : 'bg-status-error'}`}
             style={{ width: `${completeness}%` }}

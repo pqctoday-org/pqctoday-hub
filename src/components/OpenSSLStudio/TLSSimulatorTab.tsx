@@ -263,15 +263,17 @@ export const TLSSimulatorTab: React.FC = () => {
         </p>
         <p>
           <strong>Replacing only the KEX group</strong> (e.g. switching from X25519 to
-          X25519MLKEM768) protects against harvest-now-decrypt-later attacks on the session content.
-          But if the server certificate is still signed by a classical RSA/ECDSA CA, a future
-          quantum adversary can forge that certificate and impersonate the server — defeating
-          authentication entirely.
+          X25519MLKEM768, TLS NamedGroup <code>0x11EC</code> per RFC 10024) protects against
+          harvest-now-decrypt-later attacks on the session content. But if the server certificate is
+          still signed by a classical RSA/ECDSA CA, a future quantum adversary can forge that
+          certificate and impersonate the server — defeating authentication entirely.
         </p>
         <p>
           Post-quantum TLS deployment needs a post-quantum key exchange and a server authentication
           path that uses post-quantum signatures, including the handshake signature and certificates
-          in the validated chain. Test each of those independently.
+          in the validated chain. Test each of those independently. This simulator runs in an
+          in-browser OpenSSL WASM sandbox with sample keys and certificates; validate real
+          endpoints, middleboxes, load balancers, and CA chains in your own staging environment.
         </p>
       </WhyThisMatters>
 

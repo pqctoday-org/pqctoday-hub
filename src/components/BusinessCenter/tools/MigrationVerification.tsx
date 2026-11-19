@@ -230,6 +230,10 @@ export function buildMarkdown(state: VerifyState): string {
     `> ${verified}/${state.records.length} records have all five evidence fields populated. These educational references require review; entering them does not evaluate evidence or verify a deployment.`
   )
   lines.push('')
+  lines.push(
+    '> **Evidence chain (CBOM → ACVP → CMVP → Runtime):** A CBOM (e.g. CycloneDX 1.6/1.7 / ECMA-424) inventories declared cryptographic assets and does not prove runtime negotiation or module validation. ACVP/CAVP validates an algorithm implementation against NIST test vectors, not the enclosing module boundary. CMVP (FIPS 140-3; FIPS 140-2 moved to the Historical list in September 2026) validates a specific module version, approved-algorithm list, and operating configuration. Runtime verification (captured handshakes, negative/downgrade tests, certificate-chain checks) confirms what the deployed system actually negotiates.'
+  )
+  lines.push('')
 
   const withEvidence = state.records.filter((record) => verifiedCount(record) > 0)
   if (withEvidence.length > 0) {
@@ -453,6 +457,15 @@ export const MigrationVerification: React.FC = () => {
           <span className="font-medium text-foreground">Evidence recorded — review required.</span>{' '}
           Filling the five educational prompts records references. It does not test the system or
           evaluate the evidence. Different services require different technical checks.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">
+            Evidence chain (CBOM → ACVP → CMVP → Runtime):
+          </span>{' '}
+          A CBOM (CycloneDX 1.6/1.7 / ECMA-424) inventories declared assets; ACVP validates
+          algorithm test vectors, not the module boundary; CMVP (FIPS 140-3; FIPS 140-2 moved to
+          Historical in September 2026) validates the specific module version, approved algorithms
+          and configuration; runtime captures confirm what actually negotiates on the wire.
         </p>
         <p className="text-xs text-muted-foreground">
           In TLS 1.3, record the negotiated group separately from the certificate chain and peer
@@ -702,44 +715,77 @@ export const MigrationVerification: React.FC = () => {
       <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">Closure &amp; BAU handover</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <Input
-            value={state.closure.decision}
-            onChange={(e) => setClosure({ decision: e.target.value })}
-            placeholder="Closure decision / scope"
-            aria-label="Closure decision"
-            className="text-xs sm:col-span-3"
-          />
-          <Input
-            value={state.closure.signOffBy}
-            onChange={(e) => setClosure({ signOffBy: e.target.value })}
-            placeholder="Signed off by (Executive Sponsor)"
-            aria-label="Signed off by"
-            className="text-xs sm:col-span-2"
-          />
-          <Input
-            value={state.closure.signOffDate}
-            onChange={(e) => setClosure({ signOffDate: e.target.value })}
-            placeholder="Date (YYYY-MM-DD)"
-            aria-label="Sign-off date"
-            className="text-xs"
-          />
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="mv-closure-decision"
+              className="text-[11px] font-medium text-muted-foreground"
+            >
+              Closure decision / scope
+            </label>
+            <Input
+              id="mv-closure-decision"
+              value={state.closure.decision}
+              onChange={(e) => setClosure({ decision: e.target.value })}
+              placeholder="Closure decision / scope"
+              className="mt-1 text-xs"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label
+              htmlFor="mv-sign-off-by"
+              className="text-[11px] font-medium text-muted-foreground"
+            >
+              Signed off by
+            </label>
+            <Input
+              id="mv-sign-off-by"
+              value={state.closure.signOffBy}
+              onChange={(e) => setClosure({ signOffBy: e.target.value })}
+              placeholder="Signed off by (Executive Sponsor)"
+              className="mt-1 text-xs"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="mv-sign-off-date"
+              className="text-[11px] font-medium text-muted-foreground"
+            >
+              Sign-off date
+            </label>
+            <Input
+              id="mv-sign-off-date"
+              value={state.closure.signOffDate}
+              onChange={(e) => setClosure({ signOffDate: e.target.value })}
+              placeholder="Date (YYYY-MM-DD)"
+              className="mt-1 text-xs"
+            />
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">
           BAU handover — name the permanent owner of each never-ending capability:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {BAU_CAPABILITIES.map((cap) => (
-            <div key={cap} className="flex items-center gap-2">
-              <span className="text-xs font-medium text-foreground w-32 shrink-0">{cap}</span>
-              <Input
-                value={state.closure.bauOwners[cap]}
-                onChange={(e) => setBauOwner(cap, e.target.value)}
-                placeholder="owner / team"
-                aria-label={`${cap} owner`}
-                className="text-xs"
-              />
-            </div>
-          ))}
+          {BAU_CAPABILITIES.map((cap) => {
+            const capId = `mv-bau-owner-${cap.toLowerCase().replace(/\s+/g, '-')}`
+            return (
+              <div key={cap} className="flex items-center gap-2">
+                <label
+                  htmlFor={capId}
+                  className="text-xs font-medium text-foreground w-32 shrink-0"
+                >
+                  {cap}
+                </label>
+                <Input
+                  id={capId}
+                  value={state.closure.bauOwners[cap]}
+                  onChange={(e) => setBauOwner(cap, e.target.value)}
+                  placeholder="owner / team"
+                  aria-label={`${cap} owner`}
+                  className="text-xs"
+                />
+              </div>
+            )
+          })}
         </div>
       </section>
 

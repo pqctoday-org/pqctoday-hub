@@ -1201,10 +1201,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
           </p>
           <p>
             <strong>Risk reduction:</strong> Selected breach baseline × a composed quantum
-            amplification factor × annual breach probability. The amplification factor is the sum of
-            three defensible components — HNDL exposure (fraction of data at risk of retroactive
-            decryption), post-CRQC attacker uplift (new capability ceiling once a CRQC exists), and
-            detection-timeline uplift (mean time to detect will lengthen).
+            amplification factor × annual breach probability. The amplification factor is 1 plus
+            three illustrative scenario components — HNDL exposure (fraction of data at risk of
+            retroactive decryption), post-CRQC attacker uplift (new capability ceiling once a CRQC
+            exists), and detection-timeline uplift (mean time to detect will lengthen).
           </p>
           <p>
             <strong>Illustrative regulatory contribution:</strong> Selected framework count ×

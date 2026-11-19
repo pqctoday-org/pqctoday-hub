@@ -482,15 +482,16 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
       </p>
 
       <p className="text-xs text-muted-foreground">
-        CMVP snapshot links cover FIPS 140-3 records only. A missing link does not establish
-        certificate absence or validity; check the original source for its standard, module and
-        configuration scope.
+        CMVP snapshot links cover FIPS 140-3 records only (FIPS 140-2 certificates moved to the
+        Historical list on 21 September 2026). A missing link does not establish certificate absence
+        or validity; check the original source for its standard, module and configuration scope.
       </p>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2" role="group" aria-label="CBOM inventory view">
         {(hasAssessmentCrypto || mode === 'assessment') && (
           <Button
             variant={mode === 'assessment' ? 'gradient' : 'outline'}
+            aria-pressed={mode === 'assessment'}
             onClick={() => setMode('assessment')}
             className="text-xs"
           >
@@ -499,6 +500,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
         )}
         <Button
           variant={mode === 'sbom' ? 'gradient' : 'outline'}
+          aria-pressed={mode === 'sbom'}
           onClick={() => setMode('sbom')}
           className="text-xs"
         >
@@ -506,6 +508,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
         </Button>
         <Button
           variant={mode === 'libs' ? 'gradient' : 'outline'}
+          aria-pressed={mode === 'libs'}
           onClick={() => setMode('libs')}
           className="text-xs"
         >
@@ -513,6 +516,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
         </Button>
         <Button
           variant={mode === 'hsm' ? 'gradient' : 'outline'}
+          aria-pressed={mode === 'hsm'}
           onClick={() => setMode('hsm')}
           className="text-xs"
         >
@@ -520,6 +524,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
         </Button>
         <Button
           variant={mode === 'files' ? 'gradient' : 'outline'}
+          aria-pressed={mode === 'files'}
           onClick={() => setMode('files')}
           className="text-xs"
         >
@@ -612,6 +617,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
                 setSelectedSbom(id)
                 setUserSbom('')
               }}
+              ariaLabel="Sample SBOM"
               size="sm"
             />
             <p className="text-[11px] text-muted-foreground mt-2">
@@ -698,6 +704,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
                         <td className="p-2 text-muted-foreground">{row.pqcSupport}</td>
                         <td className="p-2">
                           <span
+                            role="img"
+                            aria-label={`Posture: ${row.posture}`}
+                            title={`Posture: ${row.posture}`}
                             className={`inline-block w-3 h-3 rounded-full ${POSTURE_LIGHT[row.posture]}`}
                           />
                         </td>
@@ -782,6 +791,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
                   <td className="p-2 text-center">{lib.openCveHigh}</td>
                   <td className="p-2">
                     <span
+                      role="img"
+                      aria-label={`Posture: ${lib.posture}`}
+                      title={`Posture: ${lib.posture}`}
                       className={`inline-block w-3 h-3 rounded-full ${POSTURE_LIGHT[lib.posture]}`}
                     />
                   </td>
@@ -848,6 +860,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
                   <td className="p-2 text-muted-foreground max-w-[180px]">{h.platformBinding}</td>
                   <td className="p-2">
                     <span
+                      role="img"
+                      aria-label={`Posture: ${getHsmPqcPosture(h)}`}
+                      title={`Posture: ${getHsmPqcPosture(h)}`}
                       className={`inline-block w-3 h-3 rounded-full ${POSTURE_LIGHT[getHsmPqcPosture(h)]}`}
                     />
                   </td>
@@ -900,6 +915,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
                   <td className="p-2 font-mono text-foreground max-w-[260px]">{f.pqcTarget}</td>
                   <td className="p-2">
                     <span
+                      role="img"
+                      aria-label={`Posture: ${f.posture}`}
+                      title={`Posture: ${f.posture}`}
                       className={`inline-block w-3 h-3 rounded-full ${POSTURE_LIGHT[f.posture]}`}
                     />
                   </td>
@@ -917,10 +935,12 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({
       {/* Machine-readable CycloneDX 1.7 export */}
       <div className="glass-panel p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Download a schema-valid <span className="font-medium text-foreground">CycloneDX 1.7</span>{' '}
-          CBOM of the current view — a real machine-readable artifact for Dependency-Track,
-          scanners, or auditors (PQC and classical algorithms both emit as{' '}
-          <code>cryptographic-asset</code> components).
+          Download a schema-valid{' '}
+          <span className="font-medium text-foreground">CycloneDX 1.7 (ECMA-424)</span> CBOM of the
+          current view — a machine-readable sample artifact for Dependency-Track, scanners, or
+          auditors (PQC and classical algorithms emit as <code>cryptographic-asset</code>{' '}
+          components; align production schemas with CISA minimum CBOM elements due 19 March 2027
+          under EO 14412).
         </p>
         <Button
           onClick={handleDownloadCycloneDx}

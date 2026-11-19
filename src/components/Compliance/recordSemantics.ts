@@ -462,7 +462,7 @@ export function pqcStageSummaryLine(summary: PqcStageSummary): string | null {
 // ── Snapshot scope + retrieval (sidecar) ──────────────────────────────────
 
 export const DEFAULT_SCOPE_NOTICE =
-  'FIPS 140-3 modules only (NIST CMVP; FIPS 140-2 is not included) · NIST CAVP validations for selected PQC families (ML-KEM, ML-DSA, SLH-DSA, LMS) · NIST CMVP entropy source validations (SP 800-90B) · Common Criteria Portal, ANSSI (CC and CSPN) and ENISA EUCC. Not every national certification programme is covered.'
+  'FIPS 140-3 modules only (NIST CMVP; FIPS 140-2 moved to Historical in September 2026 and is not included) · NIST CAVP validations for selected PQC families (ML-KEM, ML-DSA, SLH-DSA, LMS) · NIST CMVP entropy source validations (SP 800-90B) · Common Criteria Portal, ANSSI (CC and CSPN) and ENISA EUCC. Not every national certification programme is covered.'
 
 /** Scope notice for the records view and exports; appends the sidecar's exclusion list when present. */
 export function scopeNotice(meta: ComplianceMeta | null | undefined): string {

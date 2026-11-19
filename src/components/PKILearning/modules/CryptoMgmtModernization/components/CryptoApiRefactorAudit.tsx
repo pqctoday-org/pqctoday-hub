@@ -119,7 +119,7 @@ const LANGUAGE_CHECKLISTS: Record<string, string[]> = {
   Go: [
     'Grep for `crypto/rsa`, `crypto/ecdsa`, `crypto/ed25519` direct imports outside the facade package',
     'Replace `rsa.SignPKCS1v15` / `ecdsa.Sign` call sites with a `crypto.Signer` interface dispatched via the facade',
-    'For PQC: import an ML-DSA / ML-KEM provider (e.g. CIRCL, liboqs-go) behind the same `crypto.Signer` / KEM interfaces',
+    'For PQC: use Go 1.24+ native `crypto/mlkem` (ML-KEM-768 / ML-KEM-1024; `crypto/tls` supports `X25519MLKEM768`) for KEM, and wire an ML-DSA provider (e.g. CIRCL, liboqs-go) behind the same `crypto.Signer` / KEM interfaces',
     'Add a `golangci-lint` forbidigo rule banning direct `crypto/rsa` and `crypto/ecdsa` imports outside `internal/cryptofacade/`',
   ],
   Java: [
@@ -276,9 +276,9 @@ const CURRENT_API_NOTES: Record<string, string> = {
   'dotnet-syscrypto':
     '.NET: ML-KEM / ML-DSA are native types from .NET 10 - prefer those over third-party providers; on .NET 8/9 use BouncyCastle.NET PQC.',
   'kms-backed':
-    'KMS-backed: PQC depends on the cloud KMS roadmap - track AWS/GCP/Azure PQC key-type GA, not just algorithm standardisation.',
+    'KMS-backed: AWS KMS (ML-DSA GA June 2025, ML-KEM Oct 2026) and Google Cloud KMS (ML-DSA / SLH-DSA GA July 2026) already ship PQC key types — verify region availability, protection level (software vs HSM), and Azure Key Vault status rather than assuming parity across clouds.',
   'proprietary-hsm':
-    "Proprietary HSM SDK: PQC needs vendor firmware inside a validated module - gate on the vendor's FIPS 140-3 PQC roadmap.",
+    'Proprietary HSM SDK: PQC needs vendor firmware inside an Active FIPS 140-3 CMVP-validated module covering those algorithms — not ACVP/CAVP-only listings or FIPS 140-2 (moved to the CMVP Historical List in September 2026).',
   'hand-rolled':
     'Hand-rolled crypto is the highest-risk surface - replace it with a vetted library exposing a swappable provider before adding PQC.',
 }
@@ -471,7 +471,7 @@ const SECTIONS: ArtifactSection[] = [
         type: 'checklist',
         options: [
           { value: 'software', label: 'Software (any of the libs above)' },
-          { value: 'hsm', label: 'HSM (Luna / nCipher / AWS CloudHSM / etc.)' },
+          { value: 'hsm', label: 'HSM (Thales Luna / Entrust nShield / AWS CloudHSM / etc.)' },
           { value: 'tpm', label: 'TPM' },
           { value: 'kms', label: 'KMS-backed' },
           { value: 'accelerator', label: 'Hardware accelerator (Intel QAT / AWS Nitro)' },

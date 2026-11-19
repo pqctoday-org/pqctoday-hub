@@ -126,6 +126,7 @@ export const FileEditor = () => {
             onClick={() => setEditingFile(null)}
             className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors"
             title="Close Editor"
+            aria-label="Close Editor"
           >
             <X size={16} />
           </Button>
@@ -135,6 +136,7 @@ export const FileEditor = () => {
       {/* Editor Area */}
       <div className="flex-1 p-0 overflow-hidden flex flex-col relative">
         <textarea
+          aria-label={`Edit ${editingFile.name} (${viewMode} mode)`}
           value={content}
           onChange={(e) => {
             setContent(e.target.value)

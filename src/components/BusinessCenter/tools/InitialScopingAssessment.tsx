@@ -217,6 +217,10 @@ export function buildMarkdown(s: ScopingState, industry: string): string {
   lines.push('---')
   lines.push('')
   lines.push(
+    '*Educational first-cut scoping worksheet — not a verified asset inventory. Validate scope, dependencies, and instance counts with production CMDB and cryptographic discovery tools.*'
+  )
+  lines.push('')
+  lines.push(
     '*Aligned to NIST CSWP 39 §5 (Crypto Agility Strategic Plan — scope) and the Applied ' +
       'Quantum Activity 0.5 initial-scoping step. https://doi.org/10.6028/NIST.CSWP.39-upd1*'
   )
@@ -336,6 +340,7 @@ function RowList({
               value={row}
               onChange={(e) => setRow(i, e.target.value)}
               placeholder={placeholder}
+              aria-label={`${label} ${i + 1}`}
               className="h-8"
             />
             <Button
@@ -670,8 +675,11 @@ export const InitialScopingAssessment: React.FC = () => {
               ] as const
             ).map(([label, key]) => (
               <div key={key} className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                <span className="w-40 shrink-0">{label}</span>
+                <label htmlFor={`scoping-estate-${key}`} className="w-40 shrink-0">
+                  {label}
+                </label>
                 <Input
+                  id={`scoping-estate-${key}`}
                   type="number"
                   min={0}
                   value={state.estate[key]}

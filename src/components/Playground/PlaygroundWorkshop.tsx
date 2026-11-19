@@ -1739,6 +1739,7 @@ export const PlaygroundWorkshop = () => {
         <Button
           type="button"
           variant="ghost"
+          aria-expanded={sidebarOpen}
           onClick={() => setSidebarOpen((o) => !o)}
           className="lg:hidden mb-3 flex w-full min-h-[44px] items-center justify-between rounded-lg border border-border bg-muted/20 px-4 text-sm font-semibold"
         >
@@ -1790,7 +1791,7 @@ export const PlaygroundWorkshop = () => {
                 </Button>
               )}
             </div>
-            <div className="flex gap-1.5">
+            <div role="group" aria-label="Filter by runtime" className="flex gap-1.5">
               {RUN_CHIPS.map((chip) => {
                 const active = runFilter === chip.value
                 const Icon = chip.icon
@@ -1822,7 +1823,7 @@ export const PlaygroundWorkshop = () => {
                 )
               })}
             </div>
-            <div className="flex gap-1.5">
+            <div role="group" aria-label="Filter by difficulty" className="flex gap-1.5">
               {DIFFICULTY_CHIPS.map((chip) => {
                 const active = difficulty === chip.value
                 return (
