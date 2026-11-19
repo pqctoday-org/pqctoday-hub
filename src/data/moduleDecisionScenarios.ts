@@ -780,7 +780,7 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     adverseFailureExplanation:
       'When the ACVP `sigVer` vector flips 1 byte in the signature, the IUT returns `"testPassed": false` per FIPS 204 §6.3 (`ML-DSA.Verify_internal`).',
     recoveryActionExplanation:
-      'Re-run the unmodified control vector to confirm `"testPassed": true` and package the complete ACVP request/response JSON transcript.',
+      'Re-run the unmodified control vector to confirm `"testPassed": true` and keep the ACVP request/response JSON for both vectors with the test record.',
     transferQuestion: {
       prompt:
         'What changes if a developer leaves the deterministic ACVP seed-injection test hook (`xi`, `rnd`) enabled in the production binary release?',

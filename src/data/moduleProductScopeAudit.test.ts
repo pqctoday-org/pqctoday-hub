@@ -5,6 +5,7 @@ import path from 'node:path'
 import Papa from 'papaparse'
 import { describe, expect, it } from 'vitest'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { DATA_FILENAMES } from './generated/dataFilenames.generated'
 import {
   SECURITY_TARGET_SCOPE_EXAMPLES,
   type SecurityTargetCategory,
@@ -42,8 +43,8 @@ interface CertificationXrefRow {
 }
 
 const repoRoot = path.resolve(__dirname, '../..')
-const productCsvPath = path.resolve(repoRoot, 'src/data/pqc_product_catalog_11162026.csv')
-const certXrefCsvPath = path.resolve(repoRoot, 'src/data/migrate_certification_xref_11162026.csv')
+const productCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.migrate ?? '')
+const certXrefCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.certificationXref ?? '')
 
 function loadCsv<T>(filePath: string): T[] {
   const raw = fs.readFileSync(filePath, 'utf-8')

@@ -1,7 +1,7 @@
 {
   "description": "Proof URLs not downloadable (paywall/403/404/JS-shell), accumulated across passes",
-  "generated": "2026-07-14",
-  "count": 9,
+  "generated": "2026-11-18",
+  "count": 7,
   "skipped": [
     {
       "product_id": "nzism-new-zealand-pqc-guidance",
@@ -43,16 +43,6 @@
       "product_id": "ibm-z-vse",
       "url": "https://www.slideshare.net/ibm/titlenews-on-zvse-security-crypto-support",
       "reason": "dead-content-200 (SlideShare deck deleted by owner, confirmed 2026-07-14)"
-    },
-    {
-      "product_id": "entrust-cryptographic-platform",
-      "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
-      "reason": "js-shell (Cloudflare challenge, confirmed 2026-07-14)"
-    },
-    {
-      "product_id": "debian-13-trixie",
-      "url": "https://packages.debian.org/trixie/openssl",
-      "reason": "js-shell (Anubis anti-scraper challenge, confirmed 2026-07-14)"
     }
   ]
 }

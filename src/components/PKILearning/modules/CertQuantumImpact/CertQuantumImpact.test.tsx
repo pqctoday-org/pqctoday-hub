@@ -111,7 +111,7 @@ describe('CertQuantumImpact content metadata', () => {
   it('omits lastReviewed for an unreviewed new module and resolves all standards', () => {
     expect(content.moduleId).toBe('cert-quantum-impact')
     expect(content.lastReviewed).toBeUndefined()
-    expect(content.lastEdited).toBe('2026-11-18')
+    expect(content.lastEdited).toBe('2026-11-19')
     expect(content.standards.length).toBeGreaterThanOrEqual(15)
     expect(content.algorithms.length).toBe(3)
     expect(content.deadlines.length).toBeGreaterThanOrEqual(6)
@@ -154,7 +154,7 @@ describe('Certification engineering exercises tab', () => {
     fireEvent.click(showButtons[0])
     expect(
       screen.getByText(
-        /the ACVP certificate proves only that the ML-KEM-768 implementation passed automated test vectors/
+        /the ACVP validation record proves only that the ML-KEM-768 implementation passed automated test vectors/
       )
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Hide decision checklist/ })).toBeInTheDocument()

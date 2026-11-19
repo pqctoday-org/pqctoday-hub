@@ -15490,87 +15490,148 @@
   "successorDependencies": "ANSSI-PG-083 version 3.00 (20 March 2026) takes the quantum threat into account. A separate update of the algorithm selection guide is not covered by this entry."
  },
  "France:ANSSI — Phase 2 - Hybridization Required": {
-  "mainTopic": "ANSSI presents France's position on PQC transition, advocating hybrid schemes and providing phased guidance for government and regulated entities.",
+  "mainTopic": "ANSSI outlines France's position on the post-quantum cryptography transition, advocating for a phased hybrid migration path to mitigate quantum threats.",
   "pqcAlgorithms": [],
-  "quantumThreats": [],
-  "migrationTimeline": null,
+  "quantumThreats": [
+   "Cryptographically Relevant Quantum Computers (CRQCs)",
+   "store now, decrypt later attacks",
+   "Shor's algorithm",
+   "Grover's algorithm"
+  ],
+  "migrationTimeline": [
+   "Standards expected to be published within the next one to four years",
+   "gradual overlap transition initiated in the next months"
+  ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
     "ANSSI",
-    "BetaGouv",
-    "Direction interministérielle du numérique"
+    "NIST",
+    "NSA",
+    "BSI",
+    "NCSC",
+    "RISQ"
    ]
   },
-  "leadersContributions": [],
+  "leadersContributions": [
+   "P. Shor (introduced quantum algorithm)",
+   "Grover (introduced generic quantum algorithm for symmetric cryptography)"
+  ],
   "pqcProducts": [],
   "protocols": [],
-  "infrastructureLayers": [],
-  "standardizationBodies": [],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
-  "keyTakeaways": [
-   "Hybrid post-quantum/classical schemes are the primary migration path",
-   "A phased approach is recommended for transition",
-   "Guidance applies to French government and regulated entities"
+  "infrastructureLayers": [
+   "Public key cryptography",
+   "digital signatures",
+   "secure channel establishment"
   ],
-  "securityLevels": [],
+  "standardizationBodies": [
+   "NIST",
+   "ISO",
+   "ITU",
+   "IETF",
+   "ETSI"
+  ],
+  "complianceFrameworks": [
+   "Common Criteria",
+   "French security visas"
+  ],
+  "classicalAlgorithms": [
+   "RSA",
+   "AES",
+   "SHA-2",
+   "SHA-3"
+  ],
+  "keyTakeaways": [
+   "Hybrid mechanisms combining pre-quantum and post-quantum algorithms are recommended for transition",
+   "Direct drop-in replacement of current algorithms is not endorsed in the short/medium term due to immaturity",
+   "Transition should begin immediately to mitigate store now, decrypt later attacks",
+   "Symmetric cryptography can be mitigated by increasing key and hash output sizes"
+  ],
+  "securityLevels": [
+   "256 bits keys for AES",
+   "384 bits hash outputs for SHA-2 and SHA-3"
+  ],
   "hybridApproaches": [
-   "Hybrid post-quantum/classical schemes",
-   "Phased approach guidance"
+   "Hybrid mechanism (key establishment or signature)",
+   "gradual overlap transition"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
-   "Policy Maker",
+   "Security Architect",
    "Compliance Officer",
-   "Security Architect"
+   "Policy Maker"
   ],
   "implementationPrereqs": [],
   "relevantFeatures": [
+   "Threats",
+   "Migrate",
+   "Algorithms",
    "hybrid-crypto",
-   "migration-program",
-   "pqc-governance",
-   "compliance-strategy"
+   "pqc-governance"
   ],
-  "implementationAttackSurface": [],
+  "implementationAttackSurface": [
+   "The document notes that the implementation security of the hybridation technique should be taken into consideration, and that secure implementations of PQC are still a research topic (\"the design of secure implementations\"). No specific attack classes (side-channel, fault injection) are named."
+  ],
   "cryptoDiscovery": [],
-  "testingValidation": [],
-  "qkdProtocols": [],
+  "testingValidation": [
+   "Security visas / Common Criteria evaluation by ITSEFs: in Phase 2, evaluation will include pre-quantum security analysis, hybridation analysis and quantum resistance analysis covering both symmetric and asymmetric mechanisms",
+   "in Phase 1, the hybridation mechanism is evaluated to ensure it does not degrade security, while PQC algorithm specifications are not evaluated by ITSEFs."
+  ],
+  "qkdProtocols": [
+   "Quantum Key Distribution (QKD)"
+  ],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
+  "constrainedDeviceIoT": [
+   "embedded components"
+  ],
   "supplyChainRisk": [],
-  "deploymentComplexity": [],
-  "financialBusinessImpact": [],
-  "organizationalReadiness": [],
-  "phaseClassification": "The document explicitly states that hybridization is required for systems needing post-quantum security assurance, indicating a transition from classical to hybrid cryptographic implementations.",
+  "deploymentComplexity": [
+   "gradual overlap transition",
+   "phased approach"
+  ],
+  "financialBusinessImpact": [
+   "French government investment of more than 1 billion euro in quantum technologies"
+  ],
+  "organizationalReadiness": [
+   "ANSSI encourages all industries to initiate a gradual overlap transition in the next months, and asks that cryptoagility features be considered in the benefit/risk analysis of future products. A national group, RISQ (academics, industrials and ANSSI), was formed. No governance or team prerequisites are specified."
+  ],
+  "phaseClassification": "The paper sets out a provisional three-phase transition agenda in which Phase 2 requires every post-quantum public-key algorithm to be deployed inside hybrid mechanisms, with PQC quantum-resistance claims becoming optional or, for long-term-security products, potentially mandatory. This is a migration-planning event for security products and security visas rather than research or standardization.",
   "mandateLevel": "Recommended",
   "sectorApplicability": [
-   "All Sectors"
+   "Government",
+   "Technology"
   ],
-  "migrationUrgency": "Near-Term (1-3yr)",
-  "phaseTransition": "Transitions systems from classical-only cryptography to hybrid (classical + PQC) configurations to ensure security assurance.",
-  "historicalSignificance": "ANSSI's 2022 position paper introduced a provisional three-phase agenda; in phase 2 every post-quantum public-key algorithm should be used inside a hybrid mechanism, hash-based signatures excepted.",
-  "implementationDates": [],
-  "successorDependencies": "Deployment of hybrid cryptographic systems; integration of PQC algorithms with existing classical infrastructure"
+  "migrationUrgency": "Long-Term",
+  "phaseTransition": "Moves from Phase 1 (pre-quantum security mandatory, PQC as optional defense-in-depth with no claimed quantum resistance) to Phase 2 (hybridization mandatory, optional claimed quantum resistance, security visas may attest post-quantum assurance), and it enables Phase 3 (optional standalone PQC without hybridization, probably not before 2030).",
+  "historicalSignificance": "This is an early national-authority roadmap that makes hybridization mandatory for PQC and ties it to security-visa evaluation, and it anticipates ANSSI-defined criteria for acceptable PQC algorithms that may not exactly match NIST standards.",
+  "implementationDates": [
+   "2025: Phase 2 start (not earlier than 2025)",
+   "2030: Phase 2 should last until at least 2030",
+   "2030: Phase 3 probably not earlier than 2030"
+  ],
+  "successorDependencies": "Depends on NIST publishing its first PQC standards and on ANSSI identifying criteria for acceptable PQC algorithms and updating its official quantum-resistance guidelines and evaluation procedures; enables Phase 3 optional standalone PQC and security visas claiming post-quantum long-term assurance. The timeline may be advanced or slowed depending on global PQC progress and the NIST campaign."
  },
  "France:ANSSI — IPsec DR Referential Update (Planned)": {
-  "mainTopic": "ANSSI FAQ providing guidance on post-quantum cryptography algorithm selection, hybrid approaches, migration timelines, and practical steps for French organizations.",
+  "mainTopic": "ANSSI FAQ providing guidance on post-quantum cryptography migration, hybridization strategies, and regulatory timelines for French organizations.",
   "pqcAlgorithms": [
    "SLH-DSA",
    "XMSS",
    "LMS"
   ],
-  "quantumThreats": [],
+  "quantumThreats": [
+   "Quantum threat",
+   "Harvest Now Decrypt Later (implied by \"protection durable des informations (jusqu'à après 2030)\")"
+  ],
   "migrationTimeline": [
-   "As announced in the ANSSI FAQ (October 2025): the revision of the IPsec DR referential is planned for 2026",
-   "ANSSI aims to introduce PQC obligations for entry into product qualification from 2027",
-   "ANSSI advises it will not be reasonable to buy products without PQC after 2030"
+   "Start inventory now",
+   "PQC obligations for product qualification from 2027",
+   "Unreasonable to buy non-PQC products after 2030"
   ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
     "ANSSI",
-    "Commission européenne"
+    "European Commission"
    ]
   },
   "leadersContributions": [],
@@ -15579,64 +15640,64 @@
    "IPsec"
   ],
   "infrastructureLayers": [
-   "PKI/IGC",
-   "systèmes d'information vitale (SIIV)",
-   "systèmes embarqués"
+   "PKI",
+   "IGC (Certificate Authorities)"
   ],
   "standardizationBodies": [
    "NIST"
   ],
   "complianceFrameworks": [
-   "Référentiel général de sécurité",
-   "dispositif SAIV",
-   "Visas de sécurité ANSSI"
+   "ANSSI Security Visas",
+   "SAIV (Vital Information Systems)",
+   "Diffusion Restreinte (Restricted Distribution)"
   ],
   "classicalAlgorithms": [],
   "keyTakeaways": [
-   "Organizations must start a cryptographic inventory immediately to identify critical data and usage cases",
-   "Hybridation is essential for short and medium term except for hash-based signatures",
-   "It will be unreasonable to purchase products without PQC after 2030",
-   "ANSSI aims to implement PQC obligations for product qualification starting in 2027."
+   "Organizations must start cryptographic inventory immediately to identify critical use cases",
+   "Hybridization is essential for short and medium term security, except for hash-based signatures",
+   "Do not purchase products without PQC support after 2030",
+   "PQC obligations for product qualification will begin in 2027"
   ],
   "securityLevels": [
    "IND-CCA2"
   ],
   "hybridApproaches": [
-   "Hybridation (combining post-quantum and pre-quantum algorithms)",
-   "CatKDF",
-   "CasKDF",
-   "crypto-agilité",
-   "signature concatenation",
-   "non-séparabilité"
+   "Hybridization of asymmetric algorithms",
+   "CatKDF and CasKDF modes for KEMs",
+   "Concatenation of signatures",
+   "Crypto-agility"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
    "CISO",
    "Security Architect",
-   "Compliance Officer",
-   "Developer",
-   "Policy Maker"
+   "Compliance Officer"
   ],
   "implementationPrereqs": [
    "Cryptographic inventory",
-   "identification of critical data and business cases",
-   "contact suppliers for roadmaps",
-   "planning equipment renewal cycles",
-   "awareness of auxiliary channel and fault injection attacks for embedded systems."
+   "Identification of critical data",
+   "Contacting vendors for roadmaps"
   ],
   "relevantFeatures": [
    "Timeline",
+   "Threats",
+   "Compliance",
+   "Migrate",
+   "Assess",
+   "Algorithms",
    "hybrid-crypto",
    "crypto-agility",
    "pki-workshop",
-   "iot-ot-pqc",
+   "migration-program",
    "pqc-risk-management"
   ],
   "implementationAttackSurface": [
-   "side-channel attacks (canaux auxiliaires), fault injection attacks (injection de fautes)"
+   "Side-channel attacks",
+   "Fault injection attacks"
   ],
   "cryptoDiscovery": [
-   "inventory of cryptography usage (inventaire des usages de la cryptographie), identification of critical data and use cases, identification of equipment to be updated"
+   "Inventory of products and business uses integrating cryptography",
+   "Identification of cryptographic algorithms used"
   ],
   "testingValidation": [
    "evaluation by accredited laboratories (évaluations conduites par des laboratoires agréés), ANSSI Security Visas (Visas de sécurité ANSSI)"
@@ -15644,33 +15705,47 @@
   "qkdProtocols": [],
   "qrngEntropy": [],
   "constrainedDeviceIoT": [
-   "embedded systems (système embarqué), robustness against side-channel and fault injection attacks"
+   "Embedded systems",
+   "Vulnerability to side-channel and fault injection attacks"
   ],
   "supplyChainRisk": [
-   "contacting suppliers to know their roadmap (contacter les fournisseurs pour connaître leur feuille de route), identification of technical and organizational barriers (freins techniques et organisationnels)"
+   "Vendor roadmaps",
+   "ANSSI qualification of products",
+   "Trustworthy PQC product offer"
   ],
   "deploymentComplexity": [
-   "hybridization (hybridation), crypto-agility (crypto-agilité), renewal calendar planning (calendrier de renouvellement), transition roadmap"
+   "Phased transition based on system renewal cycles",
+   "Hybridization for non-regression"
   ],
   "financialBusinessImpact": [
-   "transition cost management through system renewal cycles, unreasonable to buy products without PQC after 2030"
+   "Cost control through anticipation in renewal cycles"
   ],
   "organizationalReadiness": [
-   "risk analysis inclusion (inclure la menace quantique dans leur analyse de risque), inventory work (travail d'inventaire), dedicated training for public agents (formation dédiée à la PQC)"
+   "Risk analysis inclusion",
+   "Crypto-agility implementation",
+   "Inventory completion"
   ],
-  "phaseClassification": "The FAQ announces a planned revision of a referential to include post-quantum algorithms; it is a plan, not a published requirement.",
-  "mandateLevel": "Informational",
+  "phaseClassification": "The document is ANSSI's official FAQ guiding organisations on how to start the post-quantum transition (inventory, hybridisation, purchasing rules, certification), and it announces that the IPsec DR referential will be updated in 2026 to allow PQC. It provides guidance and planned regulatory updates rather than a binding mandate or a technical standard.",
+  "mandateLevel": "Recommended",
   "sectorApplicability": [
-   "All Sectors"
+   "Government",
+   "Defense",
+   "Critical Infrastructure"
   ],
-  "migrationUrgency": "Long-Term (3-5yr)",
-  "phaseTransition": "Transitions from current IPsec standards to a PQC-inclusive framework; enables future compliance with updated ANSSI guidelines.",
-  "historicalSignificance": "A planned revision of ANSSI's IPsec DR referential, which at the time of the FAQ did not allow post-quantum algorithms, so that products with PQC can be approved for Diffusion Restreinte use.",
+  "migrationUrgency": "Critical Deadline",
+  "phaseTransition": "Moves from Guidance toward Regulation/Certification — the IPsec DR referential, which does not yet allow PQC algorithms, is to be revised in 2026, and PQC obligations for product qualification are targeted from 2027, enabling PQC-capable DR-approved products.",
+  "historicalSignificance": "Documents ANSSI's doctrine of mandatory hybridisation within the regulated perimeter and the first two ANSSI Visa de sécurité certifications of lattice-based PQC products in France (October 2025, Thales and Samsung). It also signals the planned update of the IPsec DR referential to allow PQC.",
   "implementationDates": [
-   "2026: revision of the IPsec DR referential planned (ANSSI FAQ, October 2025)",
-   "2 Feb 2026: ANSSI publishes the technical note \"Transition post-quantique d'IPsec\" (ANSSI-FT-117, version 1.0)"
+   "2026: planned update of the IPsec DR referential",
+   "2027: PQC obligations targeted for entry into product qualification",
+   "2030: not reasonable to buy products without PQC",
+   "end of 2025: update of ANSSI guides on cryptographic mechanisms and algorithm selection planned",
+   "end of year: technical opinion on crypto-agility planned",
+   "October 2025: first two PQC product certifications issued",
+   "June 2025: European Commission roadmap published",
+   "May 2025: ECCG Agreed Cryptographic Mechanisms update"
   ],
-  "successorDependencies": "ANSSI page capture of 15 October 2026: the IPsec DR referential is still described as being updated to include PQC. ANSSI-FT-117 (2 February 2026) is a separate technical note on the post-quantum transition of IPsec, not the referential."
+  "successorDependencies": "Enables PQC-capable products to receive DR approval once the IPsec DR referential is revised in 2026; Requires updating of the PG-083 cryptographic mechanisms guide, the algorithm selection guide and the RGS Annex B to integrate PQC; Contingent on standardisation work on certificate formats and hybridisation for ANSSI's PKI posture; Precedes PQC obligations for product qualification from 2027; Crypto-agility technical opinion to follow"
  },
  "France:ANSSI — PQC Qualification Requirement": {
   "mainTopic": "ANSSI announces the first PQC security certifications in France and mandates PQC integration for cryptographic solutions entering qualification starting in 2027.",
@@ -15774,72 +15849,128 @@
   "successorDependencies": "Requires accreditation of additional CESTI centers; enables market availability of trusted PQC products; contingent on updates to guides PG-083 and IPsecDR."
  },
  "France:ANSSI — Phase 3 - Standalone PQC Optional": {
-  "mainTopic": "ANSSI presents France's position on PQC transition, advocating hybrid schemes and providing phased guidance for government and regulated entities.",
+  "mainTopic": "ANSSI outlines France's position on the post-quantum cryptography transition, advocating for a phased hybrid migration path to mitigate quantum threats.",
   "pqcAlgorithms": [],
-  "quantumThreats": [],
-  "migrationTimeline": null,
+  "quantumThreats": [
+   "Cryptographically Relevant Quantum Computers (CRQCs)",
+   "store now, decrypt later attacks",
+   "Shor's algorithm",
+   "Grover's algorithm"
+  ],
+  "migrationTimeline": [
+   "Standards expected to be published within the next one to four years",
+   "gradual overlap transition initiated in the next months"
+  ],
   "regionsAndBodies": {
    "regions": [],
    "bodies": [
     "ANSSI",
-    "BetaGouv",
-    "Direction interministérielle du numérique"
+    "NIST",
+    "NSA",
+    "BSI",
+    "NCSC",
+    "RISQ"
    ]
   },
-  "leadersContributions": [],
+  "leadersContributions": [
+   "P. Shor (introduced quantum algorithm)",
+   "Grover (introduced generic quantum algorithm for symmetric cryptography)"
+  ],
   "pqcProducts": [],
   "protocols": [],
-  "infrastructureLayers": [],
-  "standardizationBodies": [],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
-  "keyTakeaways": [
-   "Hybrid post-quantum/classical schemes are the primary migration path",
-   "A phased approach is recommended for transition",
-   "Guidance applies to French government and regulated entities"
+  "infrastructureLayers": [
+   "Public key cryptography",
+   "digital signatures",
+   "secure channel establishment"
   ],
-  "securityLevels": [],
+  "standardizationBodies": [
+   "NIST",
+   "ISO",
+   "ITU",
+   "IETF",
+   "ETSI"
+  ],
+  "complianceFrameworks": [
+   "Common Criteria",
+   "French security visas"
+  ],
+  "classicalAlgorithms": [
+   "RSA",
+   "AES",
+   "SHA-2",
+   "SHA-3"
+  ],
+  "keyTakeaways": [
+   "Hybrid mechanisms combining pre-quantum and post-quantum algorithms are recommended for transition",
+   "Direct drop-in replacement of current algorithms is not endorsed in the short/medium term due to immaturity",
+   "Transition should begin immediately to mitigate store now, decrypt later attacks",
+   "Symmetric cryptography can be mitigated by increasing key and hash output sizes"
+  ],
+  "securityLevels": [
+   "256 bits keys for AES",
+   "384 bits hash outputs for SHA-2 and SHA-3"
+  ],
   "hybridApproaches": [
-   "Hybrid post-quantum/classical schemes",
-   "Phased approach guidance"
+   "Hybrid mechanism (key establishment or signature)",
+   "gradual overlap transition"
   ],
   "performanceConsiderations": [],
   "targetAudience": [
-   "Policy Maker",
+   "Security Architect",
    "Compliance Officer",
-   "Security Architect"
+   "Policy Maker"
   ],
   "implementationPrereqs": [],
   "relevantFeatures": [
+   "Threats",
+   "Migrate",
+   "Algorithms",
    "hybrid-crypto",
-   "migration-program",
-   "pqc-governance",
-   "compliance-strategy"
+   "pqc-governance"
   ],
-  "implementationAttackSurface": [],
+  "implementationAttackSurface": [
+   "None detected (the paper only states generically that secure implementations of PQC are still a research topic and that implementation security of the hybridation technique should be considered)"
+  ],
   "cryptoDiscovery": [],
-  "testingValidation": [],
-  "qkdProtocols": [],
+  "testingValidation": [
+   "Security visas / Common Criteria evaluation by IT Security Evaluation Facilities (ITSEF): pre-quantum mechanisms evaluated as currently defined, hybridation mechanism evaluated to ensure it does not degrade security, quantum resistance analysis (symmetric and asymmetric) added in Phase 2",
+   "PQC algorithm specifications not evaluated by ITSEF in Phase 1"
+  ],
+  "qkdProtocols": [
+   "Quantum Key Distribution (QKD)"
+  ],
   "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
+  "constrainedDeviceIoT": [
+   "embedded components"
+  ],
   "supplyChainRisk": [],
   "deploymentComplexity": [
-   "Phase 3",
-   "PQC alone becomes acceptable in 2030",
-   "Standalone PQC is optional not mandatory"
+   "gradual overlap transition",
+   "phased approach"
   ],
-  "financialBusinessImpact": [],
-  "organizationalReadiness": [],
-  "phaseClassification": "The document marks a transition where standalone PQC becomes optional rather than mandatory, indicating a shift in migration strategy. This represents a governance milestone defining when PQC-only implementations are acceptable without being required.",
-  "mandateLevel": "Voluntary",
-  "sectorApplicability": [],
-  "migrationUrgency": "Long-Term (3-5yr)",
-  "phaseTransition": "Transitions from a phase where hybrid or classical methods may be mandatory to one where standalone PQC is an acceptable option.",
-  "historicalSignificance": "Phase 3 of ANSSI's provisional agenda (probably not earlier than 2030): standalone post-quantum cryptography becomes optional; ANSSI says the timeline could be advanced or slowed.",
+  "financialBusinessImpact": [
+   "French government investment of more than 1 billion euro in quantum technologies"
+  ],
+  "organizationalReadiness": [
+   "None detected (ANSSI encourages all industries to initiate a gradual overlap transition in the next months and to take cryptoagility into account in benefit/risk analysis of future products)"
+  ],
+  "phaseClassification": "ANSSI sets out a three-phase gradual overlap transition roadmap, encouraging industry to \"initiate in the next months a gradual overlap transition\" using hybrid mechanisms. Phase 3 is the endpoint where standalone PQC becomes optional, so this is a Migration-phase guidance event.",
+  "mandateLevel": "Recommended",
+  "sectorApplicability": [
+   "All Sectors"
+  ],
+  "migrationUrgency": "Long-Term",
+  "phaseTransition": "Moves from Phase 2 (mandatory hybridation with optional claimed quantum resistance, not earlier than 2025) to Phase 3 (probably not earlier than 2030), where standalone post-quantum cryptography without hybridation becomes optional and ANSSI delivers security visas claiming pre-quantum and post-quantum long-term assurance.",
+  "historicalSignificance": "Part of an early national-authority position paper (March 2022) that defined a phased PQC transition agenda tied to French security visas and made hybridation central to the roadmap. It signaled that standalone PQC would only be accepted once its assurance level matches today's pre-quantum assurance.",
   "implementationDates": [
-   "2030: Standalone PQC becomes acceptable (optional)"
+   "Phase 1: today (2022)",
+   "Phase 2: not earlier than 2025",
+   "Phase 3: probably not earlier than 2030",
+   "Phase 2 should last until at least 2030",
+   "Phase 1 to last until after 2025",
+   "post-quantum defense-in-depth recommended for products offering protection beyond 2030"
   ],
-  "successorDependencies": null
+  "successorDependencies": "Depends on global advances in post-quantum cryptography, the progress of the NIST standardization campaign, and years of analysis raising PQC assurance to the level of today's pre-quantum algorithms; the timeline \"could be advanced or slowed down accordingly\". Requires Phases 1 and 2 (hybridation) to be completed first; enables security visas claiming PQ long-term assurance with optional hybridation, and ANSSI will update its evaluation procedure [3] and quantum-resistance guidelines."
  },
  "G7:G7 CEG — G7 Statement on Quantum Computing": {
   "mainTopic": "G7 statement on planning for opportunities and risks of quantum computing for cybersecurity.",
@@ -18298,133 +18429,6 @@
   ],
   "successorDependencies": null
  },
- "United States:NSA — NSS Quantum Resistant Majority": {
-  "mainTopic": "CNSA 2.0 algorithms are mandated for National Security Systems by December 31, 2031, unless otherwise noted.",
-  "pqcAlgorithms": [
-   "ML-KEM",
-   "ML-DSA",
-   "LMS",
-   "XMSS"
-  ],
-  "quantumThreats": [
-   "Cryptographically Relevant Quantum Computer (CRQC)",
-   "Harvest Now Decrypt Later (HNDL)",
-   "Shor's algorithm"
-  ],
-  "migrationTimeline": [
-   "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
-   "December 31, 2030: NSS equipment and services that cannot support CNSA 2.0 phased out unless an exception is granted",
-   "December 31, 2031: CNSA 2.0 algorithms mandated for use, unless otherwise noted"
-  ],
-  "regionsAndBodies": null,
-  "leadersContributions": [
-   "Matthew Stubbs (Author)"
-  ],
-  "pqcProducts": [
-   "PQMicroLib-Core",
-   "PQCryptoLib-Core",
-   "PQCryptoLib-SDK",
-   "PQPlatform-CoPro",
-   "PQPlatform-TrustSys",
-   "PQPerform-Flare",
-   "PQPerform-Inferno",
-   "PQPerform-Flex",
-   "UltraPQ suite"
-  ],
-  "protocols": [
-   "TLS"
-  ],
-  "infrastructureLayers": [
-   "Software/firmware signing",
-   "Networking Equipment (VPNs, routers)",
-   "Operating Systems",
-   "Web Browsers/Cloud Services",
-   "Niche/Custom Equipment",
-   "Legacy Systems"
-  ],
-  "standardizationBodies": [
-   "NIST",
-   "NSA"
-  ],
-  "complianceFrameworks": [
-   "CNSA 2.0",
-   "FIPS 197",
-   "FIPS 203",
-   "FIPS 204",
-   "FIPS 180-4",
-   "NIST SP 800-208",
-   "FIPS 202"
-  ],
-  "classicalAlgorithms": [
-   "AES-256",
-   "SHA-384",
-   "SHA-512",
-   "SHA-256",
-   "ECC (elliptic curve cryptography)"
-  ],
-  "keyTakeaways": [
-   "NSA's CNSA 2.0 FAQ (v2.2) sets the dates for national security systems: new acquisitions from January 1, 2027, phase-out of unsupported equipment by December 31, 2030, and mandated use by December 31, 2031",
-   "SLH-DSA is not part of CNSA and is not approved for any use in NSS"
-  ],
-  "securityLevels": [
-   "ML-KEM-1024",
-   "ML-DSA-87",
-   "SHA3-384",
-   "SHA3-512",
-   "256-bit keys"
-  ],
-  "hybridApproaches": [
-   "Crypto agility",
-   "multi-stage roadmap moving from support to exclusive use"
-  ],
-  "performanceConsiderations": [],
-  "targetAudience": [
-   "Compliance Officer",
-   "Security Architect",
-   "Policy Maker",
-   "Vendor"
-  ],
-  "implementationPrereqs": [
-   "Inventory and prioritization of high-value assets",
-   "CNSA 2.0 compliant algorithms",
-   "cryptographic agility"
-  ],
-  "relevantFeatures": [
-   "Timeline",
-   "Threats",
-   "Compliance",
-   "Migrate",
-   "Algorithms",
-   "code-signing",
-   "tls-basics",
-   "vpn-ssh-pqc",
-   "stateful-signatures"
-  ],
-  "implementationAttackSurface": [],
-  "cryptoDiscovery": [],
-  "testingValidation": [],
-  "qkdProtocols": [],
-  "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
-  "supplyChainRisk": [],
-  "deploymentComplexity": [],
-  "financialBusinessImpact": [],
-  "organizationalReadiness": [],
-  "phaseClassification": "CNSA 2.0 algorithms are mandated for National Security Systems by December 31, 2031, unless otherwise noted. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.",
-  "mandateLevel": "Mandatory (legally required, directive/mandate language)",
-  "sectorApplicability": [
-   "National Security Systems (NSS)"
-  ],
-  "migrationUrgency": "Critical Deadline (specific compliance deadline with year)",
-  "phaseTransition": "Moves from proposed recommendations to ready for implementation, transitioning vendors and agencies from supporting classical algorithms to exclusively using CNSA 2.0 compliant PQC algorithms by defined dates.",
-  "historicalSignificance": null,
-  "implementationDates": [
-   "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
-   "December 31, 2030: unsupported NSS equipment and services phased out",
-   "December 31, 2031: CNSA 2.0 algorithms mandated for use"
-  ],
-  "successorDependencies": "Requires the 2024 NIST standardization of ML-KEM, ML-DSA, and SLH-DSA; Enables vendors to deploy compliance into commercial products; Drives the supply chain to adopt PQC algorithms."
- },
  "United States:NSA — CNSA 2.0 Exclusive - OS/Web/Cloud": {
   "mainTopic": "NSA releases CNSA 2.0 specifying quantum-resistant algorithm requirements and transition deadlines for US National Security Systems.",
   "pqcAlgorithms": [
@@ -19028,76 +19032,6 @@
    "2033: all sectors"
   ],
   "successorDependencies": "Hybrid PQC plus QKD for high-assurance applications; Quantum-safe requirements integrated into procurement"
- },
- "India:DST/NQM — Full Nationwide PQC Adoption": {
-  "mainTopic": "Milestone 3 (full PQC adoption) for regular enterprises in the DST National Quantum Mission roadmap: enterprise-wide PQC or hybrid adoption, PQC-only trust chains and quantum-safe digital signatures, recommended no later than 31 December 2033; Critical Information Infrastructure sectors are recommended to complete earlier, by 31 December 2029.",
-  "pqcAlgorithms": [],
-  "quantumThreats": [],
-  "migrationTimeline": [
-   "2029: recommended date for CII sectors to complete full PQC adoption; 2033: recommended date for regular enterprises to complete full PQC adoption"
-  ],
-  "regionsAndBodies": {
-   "regions": [],
-   "bodies": [
-    "National Quantum Mission"
-   ]
-  },
-  "leadersContributions": [],
-  "pqcProducts": [],
-  "protocols": [],
-  "infrastructureLayers": [],
-  "standardizationBodies": [],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
-  "keyTakeaways": [
-   "The roadmap recommends that regular enterprises reach enterprise-wide PQC or hybrid adoption no later than 31 December 2033",
-   "It recommends that CII sectors complete adoption earlier, by 31 December 2029",
-   "Milestone 3 includes operating PQC-only trust chains and ensuring all digital signatures are quantum-safe"
-  ],
-  "securityLevels": [],
-  "hybridApproaches": [
-   "Hybrid adoption",
-   "PQC-only trust chains"
-  ],
-  "performanceConsiderations": [],
-  "targetAudience": [
-   "CISO",
-   "Policy Maker",
-   "Security Architect"
-  ],
-  "implementationPrereqs": [],
-  "relevantFeatures": [
-   "Timeline",
-   "Migration-program",
-   "pqc-governance",
-   "compliance-strategy"
-  ],
-  "implementationAttackSurface": [],
-  "cryptoDiscovery": [],
-  "testingValidation": [],
-  "qkdProtocols": [],
-  "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
-  "supplyChainRisk": [],
-  "deploymentComplexity": [
-   "Phased rollout (CII sectors by 2029, regular enterprises by 2033)"
-  ],
-  "financialBusinessImpact": [],
-  "organizationalReadiness": [],
-  "phaseClassification": "The document sets the final milestone of a phased roadmap, with recommended completion dates for CII sectors and regular enterprises; it presents its dates as time-bound recommendations.",
-  "mandateLevel": "Recommended",
-  "sectorApplicability": [
-   "All Sectors",
-   "Technology"
-  ],
-  "migrationUrgency": "Long-Term",
-  "phaseTransition": "Moves from partial/hybrid adoption phases to full nationwide PQC-only trust chains and quantum-safe signatures.",
-  "historicalSignificance": "The final milestone of the DST/NQM roadmap: recommended dates for full PQC adoption of 2029 for CII sectors and 2033 for regular enterprises.",
-  "implementationDates": [
-   "31 Dec 2029: recommended date for CII sectors to complete full PQC adoption",
-   "31 Dec 2033: recommended date for regular enterprises to complete full PQC adoption"
-  ],
-  "successorDependencies": null
  },
  "Malaysia:NACSA — National PQC Migration Plan Published": {
   "mainTopic": "Malaysia Ministry of Digital and NACSA publish National PQC Migration Plan (2025-2030) and launch PQC Sandbox 2025 proof-of-concept program.",
@@ -29020,121 +28954,6 @@
   ],
   "successorDependencies": "Requires cryptographic inventory; Enables participation in expert information event"
  },
- "Israel:Bank of Israel — Banking System Preparedness for Quantum Computing Cyber Risks": {
-  "mainTopic": "Bank of Israel directive requiring banking corporations to assess quantum computing risks, map encrypted assets, and submit preparedness plans within one year.",
-  "pqcAlgorithms": [],
-  "quantumThreats": [
-   "Harvest Now, Decrypt Later",
-   "encryption breaking in the quantum computing era"
-  ],
-  "migrationTimeline": [
-   "Risks expected to materialize within the next decade",
-   "preparedness plan submission required within one year from January 7, 2025"
-  ],
-  "regionsAndBodies": {
-   "regions": [],
-   "bodies": [
-    "Bank of Israel",
-    "NIST",
-    "World Economic Forum",
-    "Monetary Authority of Singapore"
-   ]
-  },
-  "leadersContributions": [
-   "Daniel Hahiashvili (Supervisor of Banks, author of directive)",
-   "Tal Harel Matityahu (Deputy Supervisor of Banks)",
-   "Aya Gal-Ed (Head of Supervisory Cyber Unit)",
-   "Liora Navon (Head of Technology in Banking Unit)"
-  ],
-  "pqcProducts": [],
-  "protocols": [],
-  "infrastructureLayers": [
-   "Supply chain",
-   "computing infrastructure",
-   "laboratory and testing environment"
-  ],
-  "standardizationBodies": [
-   "NIST"
-  ],
-  "complianceFrameworks": [
-   "Proper Conduct of Banking Business Directive 364"
-  ],
-  "classicalAlgorithms": [],
-  "keyTakeaways": [
-   "Banking corporations must map all encrypted information assets at rest and in motion",
-   "organizations must integrate quantum risk into supply chain management",
-   "a preparedness plan must be submitted to the Bank of Israel within one year",
-   "board-level awareness and periodic review of quantum risks are mandatory"
-  ],
-  "securityLevels": [],
-  "hybridApproaches": [
-   "Transition from vulnerable algorithms to new resilient algorithms",
-   "alternative solutions for systems that cannot be converted"
-  ],
-  "performanceConsiderations": [],
-  "targetAudience": [
-   "CISO",
-   "Compliance Officer",
-   "Security Architect"
-  ],
-  "implementationPrereqs": [
-   "Mapping of encrypted information assets",
-   "assessment of computing infrastructure compatibility",
-   "development of initial preparedness plan"
-  ],
-  "relevantFeatures": [
-   "Threats",
-   "Compliance",
-   "Assess",
-   "Migration-program",
-   "pqc-risk-management",
-   "data-asset-sensitivity",
-   "vendor-risk"
-  ],
-  "implementationAttackSurface": [],
-  "cryptoDiscovery": [
-   "Mapping encrypted information assets at rest",
-   "mapping processes using asymmetric encryption in motion",
-   "mapping asymmetrically encrypted information outside the organization"
-  ],
-  "testingValidation": [
-   "Establishing a laboratory and testing environment for solutions"
-  ],
-  "qkdProtocols": [
-   "Quantum key distribution (QKD) technology for establishing secure communication channels"
-  ],
-  "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
-  "supplyChainRisk": [
-   "Assess impact of quantum computing developments on supply chain risks",
-   "require third parties to adopt resilient solutions",
-   "avoid reliance on suppliers not preparing for the quantum era"
-  ],
-  "deploymentComplexity": [
-   "Minimizing impact on information systems during transition",
-   "defining alternative solutions for non-convertible systems"
-  ],
-  "financialBusinessImpact": [],
-  "organizationalReadiness": [
-   "Board of directors and senior management awareness",
-   "continuous monitoring of developments",
-   "integration into cyber risk management process"
-  ],
-  "phaseClassification": "This document represents a Regulatory Mandate phase event as it issues a directive from the Bank of Israel requiring specific actions (mapping, planning) from banking corporations.",
-  "mandateLevel": "Mandatory",
-  "sectorApplicability": [
-   "Banking",
-   "Finance"
-  ],
-  "migrationUrgency": "Near-Term",
-  "phaseTransition": "Moves from general awareness to mandatory regulatory compliance for the Israeli banking sector, requiring concrete asset mapping and planning.",
-  "historicalSignificance": "Represents a specific central bank directive in Israel mandating PQC preparedness planning and asset inventory for financial institutions.",
-  "implementationDates": [
-   "January 7, 2025: Directive issued",
-   "Within one year from January 7, 2025: Preparedness plan submission deadline"
-  ],
-  "successorDependencies": "Requires completion of encrypted asset mapping; contingent on availability of commercially viable PQC solutions"
- },
  "Sweden:NCSC Sweden — National Recommendations for the Transition to Quantum-Safe Cryptography": {
   "mainTopic": "National recommendations from Sweden's NCSC for the transition to quantum-safe cryptography, including timelines and algorithm guidance.",
   "pqcAlgorithms": [
@@ -34615,72 +34434,6 @@
   "implementationDates": [],
   "successorDependencies": "NIST invites feedback through a public mailing list and GitHub. NIST's PIV project page (November 2026) still describes the contents as preliminary working materials."
  },
- "Singapore:MAS — Quantum-Resilience Supervisory Expectations Announced": {
-  "mainTopic": "MAS Managing Director's remarks on the 2025/2026 Annual Report, covering economic developments, financial sector growth, and strategies to strengthen resilience against AI-enabled and quantum-computing threats.",
-  "pqcAlgorithms": [],
-  "quantumThreats": [
-   "Quantum-computing"
-  ],
-  "migrationTimeline": null,
-  "regionsAndBodies": {
-   "regions": [],
-   "bodies": [
-    "MAS"
-   ]
-  },
-  "leadersContributions": [
-   "Mr Chia Der Jiun",
-   "Managing Director",
-   "MAS"
-  ],
-  "pqcProducts": [],
-  "protocols": [],
-  "infrastructureLayers": [],
-  "standardizationBodies": [],
-  "complianceFrameworks": [],
-  "classicalAlgorithms": [],
-  "keyTakeaways": [
-   "MAS is actively working with the industry to address new challenges posed by quantum-computing and frontier AI",
-   "Financial institutions must strengthen controls to defend against sophisticated AI-enabled scam tactics",
-   "MAS is reviewing banks' efforts to enhance the effectiveness of their fraud detection models, including AI usage",
-   "The domestic financial system remains broadly resilient but has small pockets of vulnerability among highly leveraged households and corporates."
-  ],
-  "securityLevels": [],
-  "hybridApproaches": [],
-  "performanceConsiderations": [],
-  "targetAudience": [
-   "CISO",
-   "Security Architect",
-   "Policy Maker"
-  ],
-  "implementationPrereqs": [],
-  "relevantFeatures": [
-   "quantum-threats",
-   "pqc-risk-management",
-   "compliance-strategy"
-  ],
-  "implementationAttackSurface": [],
-  "cryptoDiscovery": [],
-  "testingValidation": [],
-  "qkdProtocols": [],
-  "qrngEntropy": [],
-  "constrainedDeviceIoT": [],
-  "supplyChainRisk": [],
-  "deploymentComplexity": [],
-  "financialBusinessImpact": [],
-  "organizationalReadiness": [],
-  "phaseClassification": "The document is a general annual report speech that mentions quantum-computing as a new challenge but does not detail specific PQC migration phases, mandates, or technical standards.",
-  "mandateLevel": "Informational",
-  "sectorApplicability": [
-   "Finance",
-   "Banking"
-  ],
-  "migrationUrgency": "Exploratory",
-  "phaseTransition": null,
-  "historicalSignificance": null,
-  "implementationDates": [],
-  "successorDependencies": null
- },
  "India:DST/NQM — CII Full PQC Adoption Deadline": {
   "mainTopic": "A strategic roadmap and testing framework for India's transition to Post-Quantum Cryptography (PQC) and Quantum Key Distribution (QKD) under the National Quantum Mission.",
   "pqcAlgorithms": [
@@ -36114,5 +35867,383 @@
    "June 2025: TR 33.938 completed and PQC study initiated"
   ],
   "successorDependencies": "Depends on TR 33.703 study outcomes, TR 33.938 inventory and IETF specifications for authentication; Enables later WID updates for (D)TLS and IKEv2 authentication, other certificate profiles (SEPP, NF, OAuth, CCA signing) and PQC for other 3GPP profiles"
+ },
+ "India:DST/NQM — Full PQC Adoption (Regular Enterprises)": {
+  "mainTopic": "Milestone 3 (full PQC adoption) for regular enterprises in the DST National Quantum Mission roadmap: enterprise-wide PQC or hybrid adoption, PQC-only trust chains and quantum-safe digital signatures, recommended no later than 31 December 2033; Critical Information Infrastructure sectors are recommended to complete earlier, by 31 December 2029.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [],
+  "migrationTimeline": [
+   "2029: recommended date for CII sectors to complete full PQC adoption; 2033: recommended date for regular enterprises to complete full PQC adoption"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "National Quantum Mission"
+   ]
+  },
+  "leadersContributions": [],
+  "pqcProducts": [],
+  "protocols": [],
+  "infrastructureLayers": [],
+  "standardizationBodies": [],
+  "complianceFrameworks": [],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "The roadmap recommends that regular enterprises reach enterprise-wide PQC or hybrid adoption no later than 31 December 2033",
+   "It recommends that CII sectors complete adoption earlier, by 31 December 2029",
+   "Milestone 3 includes operating PQC-only trust chains and ensuring all digital signatures are quantum-safe"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [
+   "Hybrid adoption",
+   "PQC-only trust chains"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "CISO",
+   "Policy Maker",
+   "Security Architect"
+  ],
+  "implementationPrereqs": [],
+  "relevantFeatures": [
+   "Timeline",
+   "Migration-program",
+   "pqc-governance",
+   "compliance-strategy"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [],
+  "deploymentComplexity": [
+   "Phased rollout (CII sectors by 2029, regular enterprises by 2033)"
+  ],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [],
+  "phaseClassification": "The document sets the final milestone of a phased roadmap, with recommended completion dates for CII sectors and regular enterprises; it presents its dates as time-bound recommendations.",
+  "mandateLevel": "Recommended",
+  "sectorApplicability": [
+   "All Sectors",
+   "Technology"
+  ],
+  "migrationUrgency": "Long-Term",
+  "phaseTransition": "Moves from partial/hybrid adoption phases to full nationwide PQC-only trust chains and quantum-safe signatures.",
+  "historicalSignificance": "The final milestone of the DST/NQM roadmap: recommended dates for full PQC adoption of 2029 for CII sectors and 2033 for regular enterprises.",
+  "implementationDates": [
+   "31 Dec 2029: recommended date for CII sectors to complete full PQC adoption",
+   "31 Dec 2033: recommended date for regular enterprises to complete full PQC adoption"
+  ],
+  "successorDependencies": null
+ },
+ "Israel:BOI — Banking System Preparedness for Quantum Computing Cyber Risks": {
+  "mainTopic": "Bank of Israel directive requiring banking corporations to assess quantum computing risks, map encrypted assets, and submit preparedness plans within one year.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [
+   "Harvest Now, Decrypt Later",
+   "encryption breaking in the quantum computing era"
+  ],
+  "migrationTimeline": [
+   "Risks expected to materialize within the next decade",
+   "preparedness plan submission required within one year from January 7, 2025"
+  ],
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "Bank of Israel",
+    "NIST",
+    "World Economic Forum",
+    "Monetary Authority of Singapore"
+   ]
+  },
+  "leadersContributions": [
+   "Daniel Hahiashvili (Supervisor of Banks, author of directive)",
+   "Tal Harel Matityahu (Deputy Supervisor of Banks)",
+   "Aya Gal-Ed (Head of Supervisory Cyber Unit)",
+   "Liora Navon (Head of Technology in Banking Unit)"
+  ],
+  "pqcProducts": [],
+  "protocols": [],
+  "infrastructureLayers": [
+   "Supply chain",
+   "computing infrastructure",
+   "laboratory and testing environment"
+  ],
+  "standardizationBodies": [
+   "NIST"
+  ],
+  "complianceFrameworks": [
+   "Proper Conduct of Banking Business Directive 364"
+  ],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "Banking corporations must map all encrypted information assets at rest and in motion",
+   "organizations must integrate quantum risk into supply chain management",
+   "a preparedness plan must be submitted to the Bank of Israel within one year",
+   "board-level awareness and periodic review of quantum risks are mandatory"
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [
+   "Transition from vulnerable algorithms to new resilient algorithms",
+   "alternative solutions for systems that cannot be converted"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "CISO",
+   "Compliance Officer",
+   "Security Architect"
+  ],
+  "implementationPrereqs": [
+   "Mapping of encrypted information assets",
+   "assessment of computing infrastructure compatibility",
+   "development of initial preparedness plan"
+  ],
+  "relevantFeatures": [
+   "Threats",
+   "Compliance",
+   "Assess",
+   "Migration-program",
+   "pqc-risk-management",
+   "data-asset-sensitivity",
+   "vendor-risk"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [
+   "Mapping encrypted information assets at rest",
+   "mapping processes using asymmetric encryption in motion",
+   "mapping asymmetrically encrypted information outside the organization"
+  ],
+  "testingValidation": [
+   "Establishing a laboratory and testing environment for solutions"
+  ],
+  "qkdProtocols": [
+   "Quantum key distribution (QKD) technology for establishing secure communication channels"
+  ],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [
+   "Assess impact of quantum computing developments on supply chain risks",
+   "require third parties to adopt resilient solutions",
+   "avoid reliance on suppliers not preparing for the quantum era"
+  ],
+  "deploymentComplexity": [
+   "Minimizing impact on information systems during transition",
+   "defining alternative solutions for non-convertible systems"
+  ],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [
+   "Board of directors and senior management awareness",
+   "continuous monitoring of developments",
+   "integration into cyber risk management process"
+  ],
+  "phaseClassification": "This document represents a Regulatory Mandate phase event as it issues a directive from the Bank of Israel requiring specific actions (mapping, planning) from banking corporations.",
+  "mandateLevel": "Mandatory",
+  "sectorApplicability": [
+   "Banking",
+   "Finance"
+  ],
+  "migrationUrgency": "Near-Term",
+  "phaseTransition": "Moves from general awareness to mandatory regulatory compliance for the Israeli banking sector, requiring concrete asset mapping and planning.",
+  "historicalSignificance": "Represents a specific central bank directive in Israel mandating PQC preparedness planning and asset inventory for financial institutions.",
+  "implementationDates": [
+   "January 7, 2025: Directive issued",
+   "Within one year from January 7, 2025: Preparedness plan submission deadline"
+  ],
+  "successorDependencies": "Requires completion of encrypted asset mapping; contingent on availability of commercially viable PQC solutions"
+ },
+ "Singapore:MAS — Quantum-Resilience Supervisory Expectations Announced for Later in 2026": {
+  "mainTopic": "MAS Managing Director's remarks on the 2025/2026 Annual Report, covering economic developments, financial sector growth, and strategies to strengthen resilience against AI-enabled and quantum-computing threats.",
+  "pqcAlgorithms": [],
+  "quantumThreats": [
+   "Quantum-computing"
+  ],
+  "migrationTimeline": null,
+  "regionsAndBodies": {
+   "regions": [],
+   "bodies": [
+    "MAS"
+   ]
+  },
+  "leadersContributions": [
+   "Mr Chia Der Jiun",
+   "Managing Director",
+   "MAS"
+  ],
+  "pqcProducts": [],
+  "protocols": [],
+  "infrastructureLayers": [],
+  "standardizationBodies": [],
+  "complianceFrameworks": [],
+  "classicalAlgorithms": [],
+  "keyTakeaways": [
+   "MAS is actively working with the industry to address new challenges posed by quantum-computing and frontier AI",
+   "Financial institutions must strengthen controls to defend against sophisticated AI-enabled scam tactics",
+   "MAS is reviewing banks' efforts to enhance the effectiveness of their fraud detection models, including AI usage",
+   "The domestic financial system remains broadly resilient but has small pockets of vulnerability among highly leveraged households and corporates."
+  ],
+  "securityLevels": [],
+  "hybridApproaches": [],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "CISO",
+   "Security Architect",
+   "Policy Maker"
+  ],
+  "implementationPrereqs": [],
+  "relevantFeatures": [
+   "quantum-threats",
+   "pqc-risk-management",
+   "compliance-strategy"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [],
+  "deploymentComplexity": [],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [],
+  "phaseClassification": "The document is a general annual report speech that mentions quantum-computing as a new challenge but does not detail specific PQC migration phases, mandates, or technical standards.",
+  "mandateLevel": "Informational",
+  "sectorApplicability": [
+   "Finance",
+   "Banking"
+  ],
+  "migrationUrgency": "Exploratory",
+  "phaseTransition": null,
+  "historicalSignificance": null,
+  "implementationDates": [],
+  "successorDependencies": null
+ },
+ "United States:NSA — CNSA 2.0 Algorithms Mandated for NSS": {
+  "mainTopic": "CNSA 2.0 algorithms are mandated for National Security Systems by December 31, 2031, unless otherwise noted.",
+  "pqcAlgorithms": [
+   "ML-KEM",
+   "ML-DSA",
+   "LMS",
+   "XMSS"
+  ],
+  "quantumThreats": [
+   "Cryptographically Relevant Quantum Computer (CRQC)",
+   "Harvest Now Decrypt Later (HNDL)",
+   "Shor's algorithm"
+  ],
+  "migrationTimeline": [
+   "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
+   "December 31, 2030: NSS equipment and services that cannot support CNSA 2.0 phased out unless an exception is granted",
+   "December 31, 2031: CNSA 2.0 algorithms mandated for use, unless otherwise noted"
+  ],
+  "regionsAndBodies": null,
+  "leadersContributions": [
+   "Matthew Stubbs (Author)"
+  ],
+  "pqcProducts": [
+   "PQMicroLib-Core",
+   "PQCryptoLib-Core",
+   "PQCryptoLib-SDK",
+   "PQPlatform-CoPro",
+   "PQPlatform-TrustSys",
+   "PQPerform-Flare",
+   "PQPerform-Inferno",
+   "PQPerform-Flex",
+   "UltraPQ suite"
+  ],
+  "protocols": [
+   "TLS"
+  ],
+  "infrastructureLayers": [
+   "Software/firmware signing",
+   "Networking Equipment (VPNs, routers)",
+   "Operating Systems",
+   "Web Browsers/Cloud Services",
+   "Niche/Custom Equipment",
+   "Legacy Systems"
+  ],
+  "standardizationBodies": [
+   "NIST",
+   "NSA"
+  ],
+  "complianceFrameworks": [
+   "CNSA 2.0",
+   "FIPS 197",
+   "FIPS 203",
+   "FIPS 204",
+   "FIPS 180-4",
+   "NIST SP 800-208",
+   "FIPS 202"
+  ],
+  "classicalAlgorithms": [
+   "AES-256",
+   "SHA-384",
+   "SHA-512",
+   "SHA-256",
+   "ECC (elliptic curve cryptography)"
+  ],
+  "keyTakeaways": [
+   "NSA's CNSA 2.0 FAQ (v2.2) sets the dates for national security systems: new acquisitions from January 1, 2027, phase-out of unsupported equipment by December 31, 2030, and mandated use by December 31, 2031",
+   "SLH-DSA is not part of CNSA and is not approved for any use in NSS"
+  ],
+  "securityLevels": [
+   "ML-KEM-1024",
+   "ML-DSA-87",
+   "SHA3-384",
+   "SHA3-512",
+   "256-bit keys"
+  ],
+  "hybridApproaches": [
+   "Crypto agility",
+   "multi-stage roadmap moving from support to exclusive use"
+  ],
+  "performanceConsiderations": [],
+  "targetAudience": [
+   "Compliance Officer",
+   "Security Architect",
+   "Policy Maker",
+   "Vendor"
+  ],
+  "implementationPrereqs": [
+   "Inventory and prioritization of high-value assets",
+   "CNSA 2.0 compliant algorithms",
+   "cryptographic agility"
+  ],
+  "relevantFeatures": [
+   "Timeline",
+   "Threats",
+   "Compliance",
+   "Migrate",
+   "Algorithms",
+   "code-signing",
+   "tls-basics",
+   "vpn-ssh-pqc",
+   "stateful-signatures"
+  ],
+  "implementationAttackSurface": [],
+  "cryptoDiscovery": [],
+  "testingValidation": [],
+  "qkdProtocols": [],
+  "qrngEntropy": [],
+  "constrainedDeviceIoT": [],
+  "supplyChainRisk": [],
+  "deploymentComplexity": [],
+  "financialBusinessImpact": [],
+  "organizationalReadiness": [],
+  "phaseClassification": "CNSA 2.0 algorithms are mandated for National Security Systems by December 31, 2031, unless otherwise noted. Current planning dates are those in NSA's CNSA 2.0 FAQ v2.2.",
+  "mandateLevel": "Mandatory (legally required, directive/mandate language)",
+  "sectorApplicability": [
+   "National Security Systems (NSS)"
+  ],
+  "migrationUrgency": "Critical Deadline (specific compliance deadline with year)",
+  "phaseTransition": "Moves from proposed recommendations to ready for implementation, transitioning vendors and agencies from supporting classical algorithms to exclusively using CNSA 2.0 compliant PQC algorithms by defined dates.",
+  "historicalSignificance": null,
+  "implementationDates": [
+   "January 1, 2027: CNSA 2.0 required in new NSS acquisitions",
+   "December 31, 2030: unsupported NSS equipment and services phased out",
+   "December 31, 2031: CNSA 2.0 algorithms mandated for use"
+  ],
+  "successorDependencies": "Requires the 2024 NIST standardization of ML-KEM, ML-DSA, and SLH-DSA; Enables vendors to deploy compliance into commercial products; Drives the supply chain to adopt PQC algorithms."
  }
 }

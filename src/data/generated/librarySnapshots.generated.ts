@@ -3,9 +3,9 @@
  * Current and previous Library snapshots only; older source snapshots are not
  * needed by the current-view/status-badge loader and must not grow boot JS.
  */
-import snapshot0 from '../library_11162026.csv?raw'
-import snapshot1 from '../library_11152026_r8.csv?raw'
+import snapshot0 from '../library_11182026.csv?raw'
+import snapshot1 from '../library_11162026.csv?raw'
 export const LIBRARY_CSV_SNAPSHOTS: Record<string, string> = {
-  './library_11162026.csv': snapshot0,
-  './library_11152026_r8.csv': snapshot1,
+  './library_11182026.csv': snapshot0,
+  './library_11162026.csv': snapshot1,
 }

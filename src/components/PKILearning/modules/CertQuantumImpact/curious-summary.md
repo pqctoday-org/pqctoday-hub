@@ -8,7 +8,7 @@ Active FIPS 140-2 certificates moved to the CMVP Historical List in September 20
 
 ### The Key Takeaway
 
-Never equate an ACVP algorithm certificate or a Modules in Process (MIP) listing with an active FIPS 140-3 module certificate. Verify exact firmware versions, operating environments, ESV linkage, and regional scheme boundaries (FIPS 140-3 vs. EUCC vs. PCI PTS HSM v5.0 / PCI DSS v4.0.1) in primary registries — and mark anything unverified as Unknown.
+Never equate a CAVP algorithm certificate (or ACVP validation record) or a Modules in Process (MIP) listing with an active FIPS 140-3 module certificate. Verify exact firmware versions, operating environments, ESV linkage, and regional scheme boundaries (FIPS 140-3 vs. EUCC vs. PCI PTS HSM v5.0 / PCI DSS v4.0.1) in primary registries — and mark anything unverified as Unknown.
 
 ### What's Happening
 

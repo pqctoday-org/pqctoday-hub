@@ -6,6 +6,7 @@ import Papa from 'papaparse'
 import { describe, expect, it } from 'vitest'
 import { MODULE_CATALOG, MODULE_TO_TRACK } from '@/components/PKILearning/moduleData'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
+import { DATA_FILENAMES } from '@/data/generated/dataFilenames.generated'
 import { PERSONAS, PERSONA_IDS, type PersonaId } from '@/data/learningPersonas'
 import { AUTHORED_INLINE_RELATED, moduleRelations } from '@/data/moduleRelations'
 import { resolveModuleTools } from '@/data/moduleToolLinks'
@@ -50,12 +51,8 @@ interface LibraryRow {
 }
 
 const repoRoot = path.resolve(__dirname, '../..')
-const reassessmentPath = path.resolve(
-  repoRoot,
-  '../backups/hub-4212-1116/4212-quality-reassessment.json'
-)
 const ragCorpusPath = path.resolve(repoRoot, 'public/data/rag-corpus.json')
-const libraryCsvPath = path.resolve(repoRoot, 'src/data/library_11162026.csv')
+const libraryCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.library ?? '')
 const censusOutputPath = path.resolve(
   repoRoot,
   '../backups/hub-4213/role-discovery-census-180.json'
@@ -146,12 +143,6 @@ const FALLBACK_PAGE_ITEMS: ReassessmentItem[] = [
 ]
 
 function loadOrBuildReassessmentItems(): { active_population: number; items: ReassessmentItem[] } {
-  if (fs.existsSync(reassessmentPath)) {
-    return JSON.parse(fs.readFileSync(reassessmentPath, 'utf-8')) as {
-      active_population: number
-      items: ReassessmentItem[]
-    }
-  }
   const moduleSlugs = Object.keys(MODULE_CATALOG).sort()
   const moduleItems: ReassessmentItem[] = moduleSlugs.map((slug) => ({
     id: `m-${slug}`,
@@ -218,9 +209,9 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
     }
   }
 
-  it('audits all 180 active resources across the 8 personas and writes role-discovery-census-180.json', async () => {
-    expect(reassessment.active_population).toBe(180)
-    expect(reassessment.items).toHaveLength(180)
+  it('audits all 184 active resources across the 8 personas and writes role-discovery-census-180.json', async () => {
+    expect(reassessment.active_population).toBe(184)
+    expect(reassessment.items).toHaveLength(184)
     expect(PERSONA_IDS).toEqual([
       'executive',
       'grc',
@@ -246,7 +237,7 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
 
     expect(
       moduleItems.length + playgroundItems.length + businessItems.length + pageItems.length
-    ).toBe(180)
+    ).toBe(184)
 
     const censusRecords: Array<{
       id: string
@@ -446,7 +437,7 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
       })
     }
 
-    expect(censusRecords).toHaveLength(180)
+    expect(censusRecords).toHaveLength(184)
 
     const personaSummary = Object.fromEntries(
       PERSONA_IDS.map((pid) => [
@@ -468,7 +459,7 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
           {
             version: '4.213.0',
             generatedAt: '2026-11-17T23:30:00Z',
-            activePopulation: 180,
+            activePopulation: 184,
             countsByTier: {
               modules: moduleItems.length,
               playgroundTools: playgroundItems.length,

@@ -406,13 +406,6 @@
     "total": 8
   },
   {
-    "vendor": "NXP",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 7,
-    "total": 7
-  },
-  {
     "vendor": "RISC",
     "fips": 0,
     "acvp": 0,
@@ -452,6 +445,13 @@
     "fips": 1,
     "acvp": 5,
     "cc": 0,
+    "total": 6
+  },
+  {
+    "vendor": "NXP",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 6,
     "total": 6
   },
   {

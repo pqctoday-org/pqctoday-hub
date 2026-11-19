@@ -27475,6 +27475,38 @@
       "unified": "converted",
       "admittedAt": "2026-11-15T19:37:22.303375+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "Oracle-JDK-21-Consolidated-Release-Notes",
+      "filename": "Oracle-JDK-21-Consolidated-Release-Notes.html",
+      "sizeBytes": 429327,
+      "contentType": "text/html",
+      "url": "https://www.oracle.com/java/technologies/javase/21all-relnotes.html",
+      "sha256": "535c15994406c3aa4387bac6447c4e53bd2309107cd6ce994e0088105602faec",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-19T03:49:49.861502+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/Oracle-JDK-21-Consolidated-Release-Notes.html",
+      "status": "downloaded",
+      "recoveredBy": "library copy recovery"
+    },
+    {
+      "refId": "BouncyCastle-Java-1-87-Release",
+      "filename": "BouncyCastle-Java-1-87-Release.html",
+      "sizeBytes": 277883,
+      "contentType": "text/html",
+      "url": "https://www.bouncycastle.org/resources/new-release-bouncy-castle-java-1-87/",
+      "sha256": "cf6ceafa1792bdb853dd41f0e54ccdf8970df0bf11e19f9d64b1de9a89edffc4",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-19T03:49:52.320526+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "MATCH",
+      "file": "library/BouncyCastle-Java-1-87-Release.html",
+      "status": "downloaded",
+      "recoveredBy": "library copy recovery"
     }
   ],
   "archivedEntries": [

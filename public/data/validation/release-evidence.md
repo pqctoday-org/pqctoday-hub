@@ -359,7 +359,7 @@ Machine-evaluated. A human item is never marked PASS.
 | `evidence/acvp-xplat/2026-09-25-kv260-default/targets.json`             | `fbb4a93a7c36dcadd333debe7857946d32e1f31e7031cda459c926a2d69c9ac5` |
 | `evidence/acvp-xplat/2026-09-25-native/matrix.json`                     | `2bf46211678ecf95a8e283d9db0aa05a43e5604544de9ac802d73951517471d4` |
 | `evidence/acvp-xplat/2026-09-25-native/targets.json`                    | `4beb1c02010466c5987963b0abf649ba08c17acf4116e86c835b28a766e1bc18` |
-| `public/data/validation/coverage-matrix.json`                           | `76122b82dab0acb0f74968de4c41cc8f59a6bdd7834488559de18a915a61952b` |
+| `public/data/validation/coverage-matrix.json`                           | `b001300e30c5613e03d10cc33f2e884502204345703a72fc4c4599ea3777a44f` |
 | `src/data/validation/coverage-waivers.json`                             | `67a60b365bb4b9b55ee7d992f52a02cf59ef8649017d95f5945ad4e6a597fa99` |
 | `src/data/validation/native-conformance.generated.json`                 | `dacd169b03823adb896d61e4a939bf15273633ef26580bc7b26f15dfe57d0700` |
 | `src/data/validation/open-gaps.json`                                    | `fdb9f768b8901caf0f5e2f044e00688796bc3d39bfedcb7185f4d00fc0fde7d1` |
