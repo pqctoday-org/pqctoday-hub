@@ -56,18 +56,17 @@ describe('ModuleReferencesTab — cited standards', () => {
     }
   })
 
-  it('de-dupes a module citing the same standard twice (soc-implementation-pqc cites both RFC 9846 and NIST IR 8547 twice each)', () => {
+  it('de-dupes a module citing the same standard twice', () => {
     const moduleId = 'soc-implementation-pqc'
-    const raw = MODULE_CITED_STANDARDS[moduleId] ?? []
-    const rawIds = raw.map((s) => s.id)
-    const duplicateIds = rawIds.filter((id, i) => rawIds.indexOf(id) !== i)
-    // The fixture is only meaningful if content.ts's own duplicate calls still exist.
-    expect(duplicateIds.length).toBeGreaterThan(0)
-
-    renderTab(moduleId)
-    for (const id of new Set(duplicateIds)) {
-      const std = raw.find((s) => s.id === id)
-      expect(screen.getAllByRole('link', { name: std?.title || id })).toHaveLength(1)
+    const original = MODULE_CITED_STANDARDS[moduleId] ?? []
+    expect(original.length).toBeGreaterThan(0)
+    const duplicate = original[0]
+    MODULE_CITED_STANDARDS[moduleId] = [...original, duplicate]
+    try {
+      renderTab(moduleId)
+      expect(screen.getAllByRole('link', { name: duplicate.title || duplicate.id })).toHaveLength(1)
+    } finally {
+      MODULE_CITED_STANDARDS[moduleId] = original
     }
   })
 
