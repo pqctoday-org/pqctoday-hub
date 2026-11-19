@@ -20,6 +20,11 @@ export interface MigrationPath {
   steps: string[]
   beforeCode: { language: string; code: string }
   afterCode: { language: string; code: string }
+  decisionGuidance?: {
+    apiShift: string
+    interopAndFallback: string
+    verificationScope: string
+  }
 }
 
 export interface InteropPattern {
@@ -39,6 +44,7 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
       { label: 'C / C++', nextQuestion: 'native-api' },
       { label: 'Rust', nextQuestion: 'rust-api' },
       { label: 'Go', nextQuestion: 'go-api' },
+      { label: 'Node.js / TypeScript', nextQuestion: 'node-api' },
       { label: 'C# / .NET', nextQuestion: 'dotnet-api' },
       { label: 'Python', nextQuestion: 'python-api' },
     ],
@@ -80,6 +86,14 @@ export const DECISION_QUESTIONS: DecisionQuestion[] = [
       { label: 'crypto/* (stdlib)', recommendation: 'go-stdlib-pqc' },
       { label: 'cloudflare/circl', recommendation: 'stay-circl' },
       { label: 'liboqs-go (cgo)', recommendation: 'circl-over-cgo' },
+    ],
+  },
+  {
+    id: 'node-api',
+    question: 'Which Node.js runtime and crypto API do you use?',
+    options: [
+      { label: 'Node.js 24+ (node:crypto / node:tls)', recommendation: 'nodejs24-native' },
+      { label: 'Node.js 22 LTS or older', recommendation: 'nodejs-upgrade-path' },
     ],
   },
   {
@@ -335,6 +349,22 @@ export const WIZARD_RECOMMENDATIONS: WizardRecommendation[] = [
     ],
   },
   {
+    id: 'nodejs-upgrade-path',
+    title: 'Node.js: Upgrade to Node.js 24+ for native ML-KEM and ML-DSA',
+    from: 'Node.js 22 LTS or older (classical node:crypto)',
+    to: 'Node.js 24+ (OpenSSL 3.5+ native ML-KEM, ML-DSA, and X25519MLKEM768 TLS)',
+    effort: 'medium',
+    description:
+      'Node.js 24+ bundles OpenSSL 3.5+ and exposes native ML-KEM (encapsulate/decapsulate) and ML-DSA (generateKeyPairSync, sign/verify with null digest) in node:crypto. Node.js 22.20.0+ backported default X25519MLKEM768 TLS key exchange, but full native KEM and ML-DSA primitive APIs require Node.js 24+.',
+    steps: [
+      'Check process.versions.node and process.versions.openssl in every target runtime and container image',
+      'Upgrade to Node.js 24+ (24.5.0+ enables X25519MLKEM768 by default in node:tls when ecdhCurve is left at auto)',
+      'Replace symmetric ECDH key-agreement wrappers with an asymmetric KEM interface (encapsulate / decapsulate)',
+      'Update ML-DSA call sites to pass null as the digest argument to crypto.sign / crypto.verify and resize token/header buffers for 3,309-byte ML-DSA-65 signatures',
+      'Add negative tests for tampered signatures and implicit-rejection decapsulation (authenticate ciphertext or AEAD-decrypt before trusting the derived key)',
+    ],
+  },
+  {
     id: 'fips-software',
     title: 'Software FIPS: Pick a validated module with PQC',
     from: 'Homegrown or unvalidated crypto',
@@ -401,20 +431,59 @@ byte[] signature = sig.sign();`,
     ],
     beforeCode: {
       language: 'C',
-      code: `// Before: RSA signing
-EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(NULL, "RSA", NULL);
-EVP_PKEY_keygen_init(ctx);
-EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 3072);
-EVP_PKEY_keygen(ctx, &pkey);`,
+      code: `// Before: Classical RSA-3072 signing + ECDH-only TLS groups (OpenSSL 3.x)
+#include <openssl/evp.h>
+#include <openssl/ssl.h>
+
+EVP_PKEY *pkey = NULL;
+EVP_PKEY_CTX *kctx = EVP_PKEY_CTX_new_from_name(NULL, "RSA", NULL);
+EVP_PKEY_keygen_init(kctx);
+EVP_PKEY_CTX_set_rsa_keygen_bits(kctx, 3072);
+EVP_PKEY_keygen(kctx, &pkey);
+
+// Pre-hashed streaming signature with SHA-256
+EVP_MD_CTX *mctx = EVP_MD_CTX_new();
+EVP_DigestSignInit_ex(mctx, NULL, "SHA256", NULL, NULL, pkey, NULL);
+EVP_DigestSignUpdate(mctx, msg, msg_len);
+EVP_DigestSignFinal(mctx, sig, &sig_len); // 384-byte RSA-3072 signature
+
+// TLS groups pinned to classical curves
+SSL_CTX_set1_groups_list(ssl_ctx, "X25519:P-256");`,
     },
     afterCode: {
       language: 'C',
-      code: `// After: ML-DSA-65 in the OpenSSL 3.5+ default provider
-EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_from_name(
-    NULL, "ML-DSA-65", NULL);
-EVP_PKEY_keygen_init(ctx);
-EVP_PKEY_keygen(ctx, &pkey);
-// Signatures are ~3.3 KB (vs 384 B for RSA-3072): resize buffers`,
+      code: `// After: OpenSSL 3.5+ default provider — ML-DSA-65, ML-KEM-768, Hybrid TLS
+#include <openssl/evp.h>
+#include <openssl/ssl.h>
+
+// 1. ML-DSA-65 keygen + one-shot pure signature (NULL digest)
+EVP_PKEY *sig_key = NULL;
+EVP_PKEY_CTX *sctx = EVP_PKEY_CTX_new_from_name(NULL, "ML-DSA-65", NULL);
+if (!sctx || EVP_PKEY_keygen_init(sctx) != 1 || EVP_PKEY_keygen(sctx, &sig_key) != 1) { /* handle error */ }
+EVP_MD_CTX *mctx = EVP_MD_CTX_new();
+size_t sig_len = 0; // query length first (~3,309 bytes for ML-DSA-65)
+EVP_DigestSignInit_ex(mctx, NULL, NULL, NULL, NULL, sig_key, NULL);
+EVP_DigestSign(mctx, NULL, &sig_len, msg, msg_len);
+unsigned char *sig = OPENSSL_malloc(sig_len);
+EVP_DigestSign(mctx, sig, &sig_len, msg, msg_len);
+
+// 2. ML-KEM-768 key encapsulation (1,088-byte ciphertext, 32-byte secret)
+EVP_PKEY_CTX *kctx = EVP_PKEY_CTX_new_from_pkey(NULL, recipient_pub, NULL);
+size_t ct_len = 0, ss_len = 0;
+EVP_PKEY_encapsulate_init(kctx, NULL);
+EVP_PKEY_encapsulate(kctx, NULL, &ct_len, NULL, &ss_len);
+EVP_PKEY_encapsulate(kctx, ct, &ct_len, ss, &ss_len);
+
+// 3. Hybrid TLS 1.3 key-share group with classical fallback
+SSL_CTX_set1_groups_list(ssl_ctx, "X25519MLKEM768:X25519:P-256");`,
+    },
+    decisionGuidance: {
+      apiShift:
+        'Pure ML-DSA requires the one-shot EVP_DigestSign / EVP_DigestVerify interface with a NULL digest name (not Update/Final with SHA-256), and ML-KEM uses EVP_PKEY_encapsulate / EVP_PKEY_decapsulate rather than EVP_PKEY_derive.',
+      interopAndFallback:
+        'OpenSSL 3.5+ offers X25519MLKEM768 by default, but explicit SSL_CTX_set1_groups_list calls override defaults — list X25519MLKEM768 ahead of X25519 so legacy peers still fall back cleanly.',
+      verificationScope:
+        'This diff shows the API call pattern; it does not prove your target OS ships OpenSSL 3.5+, that your FIPS provider certificate approves ML-KEM/ML-DSA, or that proxies pass larger ClientHello messages.',
     },
   },
   {
@@ -469,20 +538,53 @@ fn main() -> Result<(), ml_dsa::Error> {
     ],
     beforeCode: {
       language: 'Go',
-      code: `// Before: X25519 key exchange
-import "crypto/ecdh"
-curve := ecdh.X25519()
-priv, _ := curve.GenerateKey(rand.Reader)
-pub := priv.PublicKey()`,
+      code: `// Before: Classical X25519 ECDH + pinned classical TLS groups
+import (
+    "crypto/ecdh"
+    "crypto/rand"
+    "crypto/tls"
+)
+
+// Symmetric key agreement (32-byte public key)
+priv, err := ecdh.X25519().GenerateKey(rand.Reader)
+if err != nil { return err }
+sharedSecret, err := priv.ECDH(peerPub)
+
+// Pinned CurvePreferences silently blocks PQC hybrid negotiation
+tlsCfg := &tls.Config{
+    MinVersion:       tls.VersionTLS13,
+    CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+}`,
     },
     afterCode: {
       language: 'Go',
-      code: `// After: ML-KEM-768 from the standard library (Go 1.24+)
-import "crypto/mlkem"
-dk, _ := mlkem.GenerateKey768()
-ek := dk.EncapsulationKey() // send ek.Bytes() to the peer
-sharedKey, ciphertext := ek.Encapsulate()
-sharedKey2, _ := dk.Decapsulate(ciphertext)`,
+      code: `// After: Go 1.24+ crypto/mlkem + hybrid X25519MLKEM768 TLS
+import (
+    "crypto/mlkem"
+    "crypto/tls"
+)
+
+// Asymmetric KEM: 1,184-byte ek, 1,088-byte ciphertext, 32-byte secret
+dk, err := mlkem.GenerateKey768()
+if err != nil { return err }
+ek := dk.EncapsulationKey() // send ek.Bytes() to sender
+senderSecret, ciphertext := ek.Encapsulate()
+receiverSecret, err := dk.Decapsulate(ciphertext)
+if err != nil { return err }
+
+// Hybrid TLS 1.3: include X25519MLKEM768 first (or leave nil for Go 1.24+ default)
+tlsCfg := &tls.Config{
+    MinVersion:       tls.VersionTLS13,
+    CurvePreferences: []tls.CurveID{tls.X25519MLKEM768, tls.X25519, tls.CurveP256},
+}`,
+    },
+    decisionGuidance: {
+      apiShift:
+        'Replaces symmetric ECDH (both sides call priv.ECDH) with asymmetric ML-KEM encapsulation (sender calls ek.Encapsulate(); receiver calls dk.Decapsulate(ciphertext)). In crypto/tls, removing a classical-only CurvePreferences slice or prepending tls.X25519MLKEM768 enables hybrid key exchange.',
+      interopAndFallback:
+        'Listing tls.X25519 after tls.X25519MLKEM768 preserves fallback to classical-only peers. Note that crypto/mlkem ships ML-KEM-768 and ML-KEM-1024 (not ML-KEM-512), and ML-DSA in stdlib requires Go 1.27+ (crypto/mldsa).',
+      verificationScope:
+        'A compiling Go build does not verify negotiated TLS groups in staging, middlebox ClientHello handling, or FIPS 140-3 module mode (GOFIPS140). Inspect tls.ConnectionState.CurveID in integration tests.',
     },
   },
   {
@@ -534,20 +636,121 @@ byte[] signature = key.SignData(message);`,
     ],
     beforeCode: {
       language: 'Java',
-      code: `// Before: Default JDK provider
-KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-kpg.initialize(3072);
-KeyPair kp = kpg.generateKeyPair();`,
+      code: `// Before: Classical X25519 KeyAgreement + RSA-3072 Signature (JCA)
+KeyPairGenerator xdhKpg = KeyPairGenerator.getInstance("X25519");
+KeyPair xdhKp = xdhKpg.generateKeyPair();
+KeyAgreement ka = KeyAgreement.getInstance("XDH");
+ka.init(xdhKp.getPrivate());
+ka.doPhase(peerPublicKey, true);
+byte[] sharedSecret = ka.generateSecret();
+
+KeyPairGenerator rsaKpg = KeyPairGenerator.getInstance("RSA");
+rsaKpg.initialize(3072);
+KeyPair rsaKp = rsaKpg.generateKeyPair();
+Signature sig = Signature.getInstance("SHA256withRSA");
+sig.initSign(rsaKp.getPrivate());
+sig.update(message);
+byte[] signature = sig.sign(); // 384 bytes`,
     },
     afterCode: {
       language: 'Java',
-      code: `// After: JDK 24+ built-in ML-DSA — same JCA engine classes
-KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-DSA");
-kpg.initialize(NamedParameterSpec.ML_DSA_65);
-KeyPair kp = kpg.generateKeyPair();
-Signature sig = Signature.getInstance("ML-DSA");
-// On a JDK without ML-DSA: Security.addProvider(new BouncyCastleProvider())
-// and getInstance("ML-DSA-65", "BC")`,
+      code: `// After: JDK 24+ JCA — ML-KEM-768 (JEP 496) + ML-DSA-65 (JEP 497)
+KeyPair kemKp = KeyPairGenerator.getInstance("ML-KEM-768").generateKeyPair();
+KEM kem = KEM.getInstance("ML-KEM");
+KEM.Encapsulated enc = kem.newEncapsulator(kemKp.getPublic()).encapsulate();
+byte[] ciphertext = enc.encapsulation();     // 1,088 bytes
+SecretKey senderSecret = enc.key();          // 32 bytes
+SecretKey receiverSecret = kem.newDecapsulator(kemKp.getPrivate())
+    .decapsulate(ciphertext);
+
+KeyPair dsaKp = KeyPairGenerator.getInstance("ML-DSA-65").generateKeyPair();
+Signature sig = Signature.getInstance("ML-DSA-65");
+sig.initSign(dsaKp.getPrivate());
+sig.update(message);
+byte[] signature = sig.sign();               // 3,309 bytes
+// Older JDK without JEP 496/497: register BouncyCastleProvider ("BC")`,
+    },
+    decisionGuidance: {
+      apiShift:
+        'Key exchange moves from javax.crypto.KeyAgreement ("XDH") to javax.crypto.KEM ("ML-KEM", JEP 496). Signatures keep the same java.security.Signature lifecycle using "ML-DSA-65" (or "ML-DSA" with NamedParameterSpec.ML_DSA_65, JEP 497) with no external hash prefix.',
+      interopAndFallback:
+        'Built into JDK 24+, JDK 25 LTS, and Oracle JDK 21.0.13+ / 17.0.21+ backports; on other JDKs or for SLH-DSA, register Bouncy Castle ("BC") and handle NoSuchAlgorithmException cleanly during staged rollouts.',
+      verificationScope:
+        'Passing a local JCA round-trip does not validate X.509/PKCS#12 keystore compatibility, JSSE TLS hybrid group negotiation (JEP 527), or FIPS 140-3 approval (BC-FIPS #4943 does not list ML-KEM or ML-DSA).',
+    },
+  },
+  {
+    id: 'nodejs24-native',
+    title: 'Node.js 24+: Native node:crypto ML-KEM, ML-DSA & Hybrid TLS',
+    from: 'Node.js classical ECDH / ECDSA + classical TLS curves',
+    to: 'Node.js 24+ (OpenSSL 3.5+ native ML-KEM-768, ML-DSA-65, X25519MLKEM768)',
+    effort: 'low',
+    description:
+      'Node.js 24+ bundles OpenSSL 3.5+ and exposes native ML-KEM (generateKeyPairSync, encapsulate, decapsulate) and ML-DSA (generateKeyPairSync, sign/verify with null digest) in node:crypto. Node.js 24.5.0+ (and backported 22.20.0+) negotiates X25519MLKEM768 by default in node:tls when ecdhCurve is left at auto.',
+    steps: [
+      'Confirm process.versions.node >= 24 (24.5.0+ for default X25519MLKEM768 TLS) and process.versions.openssl >= 3.5.0',
+      'Replace symmetric createECDH() flows with generateKeyPairSync("ml-kem-768"), encapsulate(publicKey), and decapsulate(privateKey, ciphertext)',
+      'Update signing call sites to generateKeyPairSync("ml-dsa-65") and pass null as the digest argument to sign() / verify()',
+      'Check tls.createServer / tls.connect options: remove classical-only ecdhCurve pins or prepend X25519MLKEM768',
+      'Add negative tests for tampered signatures and corrupted KEM ciphertexts (implicit rejection returns a pseudorandom key instead of throwing)',
+    ],
+    beforeCode: {
+      language: 'TypeScript',
+      code: `// Before: Classical ECDH + ECDSA + pinned classical TLS curves
+import { createECDH, generateKeyPairSync, sign, verify } from 'node:crypto'
+import tls from 'node:tls'
+
+// Symmetric ECDH key agreement
+const alice = createECDH('prime256v1')
+alice.generateKeys()
+const sharedSecret = alice.computeSecret(peerPublicKeyBytes)
+
+// ECDSA P-256 signing with SHA-256 (64-byte raw / ~72-byte DER signature)
+const { publicKey, privateKey } = generateKeyPairSync('ec', {
+  namedCurve: 'prime256v1',
+})
+const sig = sign('sha256', message, privateKey)
+const ok = verify('sha256', message, publicKey, sig)
+
+// Pinned classical TLS curves block hybrid key exchange
+const server = tls.createServer({ key, cert, ecdhCurve: 'X25519:P-256' })`,
+    },
+    afterCode: {
+      language: 'TypeScript',
+      code: `// After: Node.js 24+ native node:crypto (OpenSSL 3.5+) + Hybrid TLS
+import {
+  generateKeyPairSync,
+  encapsulate,
+  decapsulate,
+  sign,
+  verify,
+} from 'node:crypto'
+import tls from 'node:tls'
+
+// 1. ML-KEM-768 key encapsulation (1,088-byte ciphertext, 32-byte sharedKey)
+const kem = generateKeyPairSync('ml-kem-768')
+const { sharedKey, ciphertext } = encapsulate(kem.publicKey)
+const recoveredKey = decapsulate(kem.privateKey, ciphertext)
+
+// 2. Pure ML-DSA-65 signing: pass null digest (3,309-byte signature)
+const dsa = generateKeyPairSync('ml-dsa-65')
+const sig = sign(null, message, dsa.privateKey)
+const ok = verify(null, message, dsa.publicKey, sig)
+
+// 3. Hybrid TLS 1.3: prepend X25519MLKEM768 (or omit ecdhCurve on 24.5.0+)
+const server = tls.createServer({
+  key,
+  cert,
+  ecdhCurve: 'X25519MLKEM768:X25519:P-256',
+})`,
+    },
+    decisionGuidance: {
+      apiShift:
+        'KEM is asymmetric (encapsulate/decapsulate) rather than symmetric ECDH, and pure ML-DSA takes null as the digest parameter in crypto.sign/verify because FIPS 204 hashes internally.',
+      interopAndFallback:
+        'ML-KEM decapsulation uses implicit rejection: a corrupted ciphertext yields a pseudorandom 32-byte key without throwing, so callers must authenticate the envelope (e.g., AES-GCM tag) before trusting recoveredKey. Keeping X25519 after X25519MLKEM768 preserves TLS fallback for older clients.',
+      verificationScope:
+        'This diff demonstrates the Node.js 24+ API shape; verify runtime OpenSSL version, @types/node typings, HTTP header/cookie size limits for 3,309-byte signatures, and FIPS provider approval in your deployment environment.',
     },
   },
 ]

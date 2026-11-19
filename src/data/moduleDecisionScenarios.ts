@@ -19,6 +19,95 @@ export interface ModuleDecisionScenario {
 }
 
 export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> = {
+  'cert-quantum-impact': {
+    moduleId: 'cert-quantum-impact',
+    domainTitle: 'Certification Engineer FIPS 140-3 / ACVP / EUCC Validation Evidence Boundary',
+    roleDecisionPrompt:
+      'Decide whether a vendor-supplied ACVP algorithm test certificate and ML-DSA-65 signature artifact suffice for FIPS 140-3 module validation compliance, or whether CMVP module boundary and ESV entropy evidence are still missing.',
+    artifactLabel: 'Fictional FIPS 140-3 Security Policy ML-DSA-65 validation attestation',
+    algorithmVariant: { operation: 'signature', variant: 65 },
+    validCaseExplanation:
+      'A valid ML-DSA-65 signature over the fictional FIPS 140-3 Security Policy attestation verifies cleanly, demonstrating intact algorithm execution inside the stated validation scope.',
+    adverseFailureExplanation:
+      'Corrupting byte 0 of the ML-DSA-65 validation attestation causes deterministic FIPS 204 verification failure, and citing an ACVP-only certificate without CMVP/ESV module coverage flags an unverified boundary.',
+    recoveryActionExplanation:
+      'Restore the unmodified ML-DSA-65 attestation to re-establish signature verification, and require the vendor to supply the linked CMVP module certificate, Security Policy approved-mode section, and ESV certificate.',
+    transferQuestion: {
+      prompt:
+        'What changes if the product is procured for an EU regulated operator requiring EUCC high-assurance evaluation instead of a U.S. federal FIPS 140-3 procurement?',
+      changedAssumptionOutcome:
+        'A U.S. CMVP FIPS 140-3 certificate alone does not satisfy EUCC; the certification engineer must verify EUCC v2.0 ACM / Protection Profile applicability and national scheme acceptance criteria.',
+    },
+    productionToolCheck:
+      'Look up the vendor certificate numbers directly on NIST CMVP/CAVP/ESV portals and verify that the exact deployed firmware version, approved mode, and PQC algorithm OIDs appear in the Security Policy.',
+  },
+  'cloud-pqc': {
+    moduleId: 'cloud-pqc',
+    domainTitle: 'Cloud Edge/Origin Hybrid TLS & KMS ML-KEM-768 Boundary Verification',
+    roleDecisionPrompt:
+      'Determine whether enabling hybrid PQC TLS at the cloud CDN edge protects the full request path when the origin leg and cloud KMS BYOK wrapping path remain classical-only.',
+    artifactLabel: 'Fictional cloud KMS ML-KEM-768 BYOK key-wrapping ciphertext',
+    algorithmVariant: { operation: 'kem', variant: 768 },
+    validCaseExplanation:
+      'ML-KEM-768 encapsulates the fictional cloud KMS wrapping key into a 1,088-byte ciphertext whose decapsulated shared secret passes AEAD key confirmation across the customer-to-cloud boundary.',
+    adverseFailureExplanation:
+      'Flipping byte 0 of the ML-KEM-768 wrapping ciphertext triggers implicit rejection and fails AEAD confirmation; leaving the origin TLS leg classical exposes inter-tier traffic to HNDL despite an edge-hybrid badge.',
+    recoveryActionExplanation:
+      'Restore the intact ML-KEM-768 ciphertext to recover key confirmation, and enforce hybrid PQ/T TLS on both edge and origin legs alongside verified cloud KMS PQC key policies.',
+    transferQuestion: {
+      prompt:
+        'What changes if a regulated workload moves from cloud-provider-managed SSE keys to customer-managed BYOK keys imported from an on-premises HSM?',
+      changedAssumptionOutcome:
+        'Responsibility for key generation entropy, wrapping-key algorithm selection, and rotation lifecycle shifts onto the customer, requiring explicit verification of the cloud KMS import wrapping specification.',
+    },
+    productionToolCheck:
+      'Inspect TLS 1.3 negotiated groups on both CDN edge and origin load balancers, and audit AWS KMS / GCP KMS / Azure Managed HSM key specifications and CloudTrail/Audit Logs for PQC key operations.',
+  },
+  'pqc-implementation-security': {
+    moduleId: 'pqc-implementation-security',
+    domainTitle:
+      'ML-KEM-768 Fujisaki-Okamoto Implicit Rejection & Constant-Time Decapsulation Audit',
+    roleDecisionPrompt:
+      'Decide whether an ML-KEM-768 decapsulation implementation that returns an early error code on ciphertext mismatch instead of constant-time implicit rejection is safe to ship into a FIPS 140-3 / EUCC evaluation.',
+    artifactLabel: 'Fictional ML-KEM-768 FO implicit-rejection decapsulation ciphertext',
+    algorithmVariant: { operation: 'kem', variant: 768 },
+    validCaseExplanation:
+      'ML-KEM-768 decapsulates the unmodified 1,088-byte ciphertext into the expected 32-byte shared secret, confirming intact FO re-encryption match and AEAD key confirmation.',
+    adverseFailureExplanation:
+      'Corrupting byte 0 of the ML-KEM-768 ciphertext forces the FO re-encryption check to fail; a compliant FIPS 203 implementation must still execute constant-time implicit rejection (deriving pseudorandom K_bar from z || c) rather than returning an early timing-distinguishable error.',
+    recoveryActionExplanation:
+      'Restore the unmodified ML-KEM-768 ciphertext to recover the matched shared secret, and replace any early-exit comparison or secret-dependent branch with constant-time masking and ct_select before TVLA and certification testing.',
+    transferQuestion: {
+      prompt:
+        'What changes if the same ML-KEM implementation is compiled for an ARM Cortex-M4 smartcard/HSM target with -O3 optimization enabled?',
+      changedAssumptionOutcome:
+        'An optimizing compiler can reintroduce secret-dependent branches or variable-time division instructions on ARM; constant-time verification must inspect the compiled target binary and run target-hardware TVLA rather than relying on C source inspection alone.',
+    },
+    productionToolCheck:
+      'Run dudect/ctgrind on the exact release binary for the target ISA, verify constant-time FO implicit-rejection behavior against malformed ciphertexts, and review accredited lab TVLA (|t| <= 4.5) and FIPS 140-3 / EUCC evidence.',
+  },
+  'energy-utilities-pqc': {
+    moduleId: 'energy-utilities-pqc',
+    domainTitle: 'Substation SCADA Gateway & AMI Firmware ML-DSA-65 Signing Boundary',
+    roleDecisionPrompt:
+      'Decide whether a utility should insert ML-DSA-65 signatures directly into IEC 61850 GOOSE protection-relay trip frames or keep GOOSE on symmetric IEC 62351-6 MACs while applying ML-DSA-65 to SCADA/AMI key-distribution and firmware-signing boundaries.',
+    artifactLabel: 'Fictional substation IED firmware update ML-DSA-65 manifest signature',
+    algorithmVariant: { operation: 'signature', variant: 65 },
+    validCaseExplanation:
+      'A valid ML-DSA-65 signature over the fictional substation IED firmware manifest verifies cleanly at the gateway/provisioning boundary, protecting 20-year field devices without touching the sub-4 ms GOOSE trip path.',
+    adverseFailureExplanation:
+      'Flipping byte 0 of the ML-DSA-65 firmware manifest causes deterministic FIPS 204 verification failure and blocks deployment; conversely, forcing asymmetric PQC signatures into real-time GOOSE frames violates the 4 ms protection-relay latency budget.',
+    recoveryActionExplanation:
+      'Restore the intact ML-DSA-65 signed firmware manifest to pass verification, and keep real-time protection-relay traffic on symmetric IEC 62351-6 MACs with PQC-protected key distribution at the substation gateway.',
+    transferQuestion: {
+      prompt:
+        'What changes if an AMI smart-meter mesh operates over constrained 250-byte RF/PLC frames with 20-year field lifecycles?',
+      changedAssumptionOutcome:
+        'Large ML-DSA certificates and signatures require fragmentation budgeting or pre-provisioned hash-based firmware roots (LMS/XMSS/SLH-DSA) plus gateway-terminated hybrid TLS rather than naive drop-in certificate replacement.',
+    },
+    productionToolCheck:
+      'Measure end-to-end GOOSE/SV relay latency and SCADA gateway hybrid TLS/IKEv2 handshakes in a utility staging lab, and verify NERC CIP-005/007/010/012/013 and EU NIS2 evidence against deployed firmware and gateway configs.',
+  },
   'pqc-101': {
     moduleId: 'pqc-101',
     domainTitle: 'Foundational NIST FIPS 203 (ML-KEM) vs FIPS 204 (ML-DSA) Primitive Selection',

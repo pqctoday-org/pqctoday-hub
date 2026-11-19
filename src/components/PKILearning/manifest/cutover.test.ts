@@ -51,6 +51,51 @@ const pkiReferenceLabs = [
   { id: 'capacity', label: 'Cert Capacity', optional: true },
 ]
 
+// Post-cutover P0 modules added after legacyMaps.golden.json was frozen.
+const postCutoverCertQuantumImpactCatalog = {
+  id: 'cert-quantum-impact',
+  lm_id: 'LM-079',
+  title: 'Certification Engineer Quantum Impact',
+  description:
+    'How PQC reshapes cryptographic module validation: FIPS 140-2 Historical transition, CMVP/ACVP PQC testing, ESV entropy validation, EUCC/NIAP Policy #33, and PCI PTS HSM v5.0 scope boundaries.',
+  duration: '25 min',
+  difficulty: 'beginner',
+  frameworkPhase: 'p0',
+}
+
+const postCutoverCloudPqcCatalog = {
+  id: 'cloud-pqc',
+  lm_id: 'LM-080',
+  title: 'Cloud-Native & SaaS PQC Migration',
+  description:
+    'Map customer-controlled vs. provider-managed cryptography across AWS, Azure, GCP, and SaaS: hybrid edge/origin TLS, cloud KMS/BYOK boundaries, cutover failure modes, and vendor evidence scoping.',
+  duration: '50 min',
+  difficulty: 'intermediate',
+  frameworkPhase: 'p5',
+}
+
+const postCutoverPqcImplementationSecurityCatalog = {
+  id: 'pqc-implementation-security',
+  lm_id: 'LM-081',
+  title: 'PQC Implementation Security & Side-Channel Resistance',
+  description:
+    'Analyze constant-time pitfalls, Fujisaki-Okamoto implicit rejection, masking and fault-injection countermeasures, and TVLA/FIPS 140-3/EUCC certification evidence for ML-KEM, ML-DSA, and SLH-DSA.',
+  duration: '60 min',
+  difficulty: 'advanced',
+  frameworkPhase: 'p5',
+}
+
+const postCutoverEnergyUtilitiesPqcCatalog = {
+  id: 'energy-utilities-pqc',
+  lm_id: 'LM-082',
+  title: 'Energy, Utilities & Grid PQC',
+  description:
+    'Plan post-quantum migration across power generation, transmission substations, SCADA control centers, AMI smart-meter meshes, and DER edge gateways under real-time latency, MTU, and 15–25 year field-lifecycle constraints.',
+  duration: '50 min',
+  difficulty: 'intermediate',
+  frameworkPhase: 'p5',
+}
+
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
   it('MODULE_CATALOG', () => {
     // Retain the historical snapshot; only reviewed module descriptions change.
@@ -72,12 +117,20 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       'pqc-risk-management': { ...riskMgmt, description: reviewedPqcRiskMgmtDescription },
       'quantum-threats': { ...quantumThreats, description: reviewedQuantumThreatsDescription },
       sbom: { ...sbom, description: reviewedSbomDescription },
+      'cert-quantum-impact': postCutoverCertQuantumImpactCatalog,
+      'cloud-pqc': postCutoverCloudPqcCatalog,
+      'pqc-implementation-security': postCutoverPqcImplementationSecurityCatalog,
+      'energy-utilities-pqc': postCutoverEnergyUtilitiesPqcCatalog,
     })
   })
   it('MODULE_STEP_COUNTS', () =>
     expect(buildStepCounts(MANIFESTS)).toEqual({
       ...golden.MODULE_STEP_COUNTS,
       'pki-workshop': golden.MODULE_STEP_COUNTS['pki-workshop'] + pkiReferenceLabs.length,
+      'cert-quantum-impact': 4,
+      'cloud-pqc': 4,
+      'pqc-implementation-security': 4,
+      'energy-utilities-pqc': 4,
     }))
   it('LEARN_SECTIONS', () => {
     const cbom = golden.LEARN_SECTIONS['cbom']
@@ -97,6 +150,29 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       'pki-enrollment-protocols': pkiEnrollment.map((s) =>
         s.id === 'pqc-enrollment' ? { ...s, label: 'PQC Enrollment Standards' } : s
       ),
+      'cert-quantum-impact': [
+        { id: 'why-it-matters', label: 'Why It Matters' },
+        { id: 'what-to-learn', label: 'Knowledge & Skills' },
+        { id: 'how-to-act', label: 'How to Act' },
+      ],
+      'cloud-pqc': [
+        { id: 'shared-responsibility', label: 'Shared Responsibility & Assets' },
+        { id: 'edge-and-tls', label: 'Edge, CDN & Origin TLS' },
+        { id: 'kms-byok-storage', label: 'Cloud KMS, BYOK & Storage' },
+        { id: 'saas-and-governance', label: 'SaaS, Federation & Evidence' },
+      ],
+      'pqc-implementation-security': [
+        { id: 'constant-time-pqc', label: 'Constant-Time PQC Pitfalls' },
+        { id: 'fo-implicit-rejection', label: 'FO Transform & Implicit Rejection' },
+        { id: 'masking-and-faults', label: 'Masking & Fault Defenses' },
+        { id: 'tvla-and-certification', label: 'TVLA, FIPS 140-3 & EUCC' },
+      ],
+      'energy-utilities-pqc': [
+        { id: 'grid-threat-model', label: 'Grid Threat Model & Assets' },
+        { id: 'substation-and-scada', label: 'Substation & SCADA Protocols' },
+        { id: 'ami-and-field-lifecycles', label: 'AMI & Field Lifecycles' },
+        { id: 'regulatory-and-migration', label: 'Regulation & Evidence Scope' },
+      ],
     })
   })
   it('WORKSHOP_STEPS', () => {
@@ -117,13 +193,36 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         if (step.id === 'composite') return { ...step, label: 'Parallel certificate issuance' }
         return step
       }),
+      'cert-quantum-impact': [
+        { id: 'why-it-matters', label: 'Why It Matters' },
+        { id: 'what-to-learn', label: 'What to Learn' },
+        { id: 'how-to-act', label: 'How to Act' },
+        { id: 'self-assessment', label: 'Certification Evidence Scope' },
+      ],
+      'cloud-pqc': [
+        { id: 'estate-mapper', label: 'Cloud Estate Mapper' },
+        { id: 'provider-capabilities', label: 'Provider Capability Matrix' },
+        { id: 'edge-tls-kms-plan', label: 'Edge TLS & KMS Cutover Lab' },
+        { id: 'saas-boundary-check', label: 'SaaS Boundary Checklist' },
+      ],
+      'pqc-implementation-security': [
+        { id: 'timing-leak-lab', label: 'Timing Leak Inspector' },
+        { id: 'fo-rejection-audit', label: 'FO Implicit Rejection Lab' },
+        { id: 'masking-budget', label: 'Masking & Fault Cost Explorer' },
+        { id: 'tvla-evidence-scope', label: 'TVLA & Certification Evidence Scope' },
+      ],
+      'energy-utilities-pqc': [
+        { id: 'grid-protocol-mapper', label: 'Grid Protocol Mapper' },
+        { id: 'substation-mtu-budget', label: 'Substation MTU & Latency Lab' },
+        { id: 'smart-meter-lifecycle', label: 'Field Asset Lifecycle Planner' },
+        { id: 'grid-evidence-scope', label: 'Grid Evidence Checklist' },
+      ],
     }
     expect(buildWorkshopSteps(MANIFESTS)).toEqual(expected)
   })
   it('MODULE_TRACKS', () => {
-    const expected = golden.MODULE_TRACKS.map((track) => ({
-      ...track,
-      modules: track.modules.map((module) => {
+    const expected = golden.MODULE_TRACKS.map((track) => {
+      const modules = track.modules.map((module) => {
         if (module.id === 'secrets-management-pqc') {
           expect(module.description).toBe(historicalSecretsDescription)
           return { ...module, description: reviewedSecretsDescription }
@@ -143,8 +242,21 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         if (module.id !== 'crypto-mgmt-modernization') return module
         expect(module.description).toBe(historicalCryptoMgmtDescription)
         return { ...module, description: reviewedCryptoMgmtDescription }
-      }),
-    }))
+      })
+      if (track.track === 'Role Guides') {
+        return { ...track, modules: [...modules, postCutoverCertQuantumImpactCatalog] }
+      }
+      if (track.track === 'Software Infrastructure') {
+        return { ...track, modules: [...modules, postCutoverCloudPqcCatalog] }
+      }
+      if (track.track === 'Hardware Infrastructure') {
+        return { ...track, modules: [...modules, postCutoverPqcImplementationSecurityCatalog] }
+      }
+      if (track.track === 'Industries') {
+        return { ...track, modules: [...modules, postCutoverEnergyUtilitiesPqcCatalog] }
+      }
+      return { ...track, modules }
+    })
     expect(buildModuleTracks(MANIFESTS)).toEqual(expected)
   })
   it('MODULE_PLAYGROUND_TOOL', () =>
@@ -185,6 +297,60 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       'soc-implementation-pqc': {
         ...socImpl,
         standards: [socImpl.standards[0], 'RFC 10024', ...socImpl.standards.slice(1)],
+      },
+      'cert-quantum-impact': {
+        algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
+        standards: [
+          'FIPS 203',
+          'FIPS 204',
+          'FIPS 205',
+          'FIPS 140-3',
+          'NIST IR 8547',
+          'NSA CNSA 2.0',
+          'OMB M-26-15',
+          'NIST SP 800-90B',
+        ],
+      },
+      'cloud-pqc': {
+        algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'X25519'],
+        standards: [
+          'FIPS 203',
+          'FIPS 204',
+          'FIPS 205',
+          'NIST IR 8547',
+          'RFC 10024',
+          'RFC 9846',
+          'OMB M-26-15',
+          'FIPS 140-3',
+          'RFC 9180',
+        ],
+      },
+      'pqc-implementation-security': {
+        algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
+        standards: [
+          'FIPS 202',
+          'FIPS 203',
+          'FIPS 204',
+          'FIPS 205',
+          'FIPS 140-3',
+          'NIST IR 8547',
+          'NIST SP 800-227',
+        ],
+      },
+      'energy-utilities-pqc': {
+        algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS/XMSS', 'ECDSA'],
+        standards: [
+          'FIPS 203',
+          'FIPS 204',
+          'FIPS 205',
+          'NIST SP 800-208',
+          'NIST IR 8547',
+          'RFC 9370',
+          'RFC 9846',
+          'RFC 10024',
+          'OMB M-26-15',
+          'FIPS 140-3',
+        ],
       },
     })
   })
