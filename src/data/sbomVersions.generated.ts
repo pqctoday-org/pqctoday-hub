@@ -390,7 +390,7 @@ export const SBOM_EMBEDDED_VERSIONS: Readonly<Record<string, string>> = {
   'entropy90b.tool': '1.1.8',
   openssl: '3.6.3',
   'pkcs11-provider': '0.4.0',
-  python: '3.13.2',
+  python: '3.14.2',
   strongswan: '6.0.5',
 }
 

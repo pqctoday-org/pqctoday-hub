@@ -1,7 +1,7 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:96d1ea04-1cfe-5d6c-a2cd-bba13df1e06d",
+  "serialNumber": "urn:uuid:0da4c1dc-9d76-5278-a125-3e97f73d8a39",
   "version": 1,
   "metadata": {
     "component": {
@@ -7306,7 +7306,7 @@
     {
       "type": "library",
       "name": "Python (CPython, inside the Pyodide runtime)",
-      "version": "3.13.2",
+      "version": "3.14.2",
       "licenses": [
         {
           "license": {
