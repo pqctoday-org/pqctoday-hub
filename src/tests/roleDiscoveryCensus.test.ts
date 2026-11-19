@@ -6,6 +6,7 @@ import Papa from 'papaparse'
 import { describe, expect, it } from 'vitest'
 import { MODULE_CATALOG, MODULE_TO_TRACK } from '@/components/PKILearning/moduleData'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
+import { DATA_FILENAMES } from '@/data/generated/dataFilenames.generated'
 import { PERSONAS, PERSONA_IDS, type PersonaId } from '@/data/learningPersonas'
 import { AUTHORED_INLINE_RELATED, moduleRelations } from '@/data/moduleRelations'
 import { resolveModuleTools } from '@/data/moduleToolLinks'
@@ -51,7 +52,7 @@ interface LibraryRow {
 
 const repoRoot = path.resolve(__dirname, '../..')
 const ragCorpusPath = path.resolve(repoRoot, 'public/data/rag-corpus.json')
-const libraryCsvPath = path.resolve(repoRoot, 'src/data/library_11162026.csv')
+const libraryCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.library)
 const censusOutputPath = path.resolve(
   repoRoot,
   '../backups/hub-4213/role-discovery-census-180.json'
