@@ -105,6 +105,41 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     workRoles: ['system-administrator', 'network-security-specialist'],
     isCommonGround: false,
   },
+  {
+    moduleId: 'cert-quantum-impact',
+    competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO'],
+    tier: 'awareness',
+    workRoles: ['validation-engineer', 'security-architect', 'risk-manager'],
+    isCommonGround: false,
+  },
+  {
+    moduleId: 'cloud-pqc',
+    competencyAreas: ['CA-SYSARCH', 'CA-NETDEF', 'CA-GOVCOMP'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'system-administrator', 'security-developer', 'risk-manager'],
+    isCommonGround: false,
+    nfExtra: ['NF-COM-004'],
+  },
+  {
+    moduleId: 'pqc-implementation-security',
+    competencyAreas: ['CA-CRYPTO', 'CA-SECPROG', 'CA-GOVCOMP'],
+    tier: 'expert',
+    workRoles: ['security-developer', 'validation-engineer', 'systems-security-analyst'],
+    isCommonGround: false,
+  },
+  {
+    moduleId: 'energy-utilities-pqc',
+    competencyAreas: ['CA-SYSARCH', 'CA-NETDEF', 'CA-GOVCOMP'],
+    tier: 'practitioner',
+    workRoles: [
+      'security-architect',
+      'system-administrator',
+      'risk-manager',
+      'network-security-specialist',
+    ],
+    isCommonGround: false,
+    nfExtra: ['NF-COM-010'],
+  },
 
   // -----------------------------------------------------------------------
   // Risk, Governance & Compliance

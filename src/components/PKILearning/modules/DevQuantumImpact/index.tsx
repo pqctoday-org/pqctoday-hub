@@ -3,6 +3,7 @@
 import { useState, type FC } from 'react'
 import { AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
 import { Introduction } from './components/Introduction'
+import { StackMigrationDiffs } from './components/StackMigrationDiffs'
 import { DEV_GUIDE_DATA } from './data'
 import { DEV_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
@@ -173,7 +174,10 @@ export const DevQuantumImpactModule: FC = () => (
           return <RoleWhatToLearn key={`what-${configKey}`} data={DEV_GUIDE_DATA} />
         case 2:
           return (
-            <RoleHowToAct moduleId={manifest.id} key={`how-${configKey}`} data={DEV_GUIDE_DATA} />
+            <div key={`how-${configKey}`} className="space-y-6">
+              <RoleHowToAct moduleId={manifest.id} data={DEV_GUIDE_DATA} />
+              <StackMigrationDiffs />
+            </div>
           )
         case 3:
           return <SelfAssessmentStep key={`assess-${configKey}`} />

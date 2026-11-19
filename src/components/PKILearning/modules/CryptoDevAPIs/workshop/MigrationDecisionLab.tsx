@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
-import { ArrowRight, RotateCcw, CheckCircle2, GitBranch } from 'lucide-react'
+import { ArrowRight, RotateCcw, CheckCircle2, GitBranch, Copy, Check } from 'lucide-react'
 import {
   DECISION_QUESTIONS,
   MIGRATION_PATHS,
@@ -35,6 +35,13 @@ export const MigrationDecisionLab: React.FC = () => {
   const [routeError, setRouteError] = useState<string | null>(null)
   const [customReference, setCustomReference] = useState(false)
   const [activeTab, setActiveTab] = useState<'wizard' | 'paths' | 'interop'>('wizard')
+  const [copiedKey, setCopiedKey] = useState<string | null>(null)
+
+  const handleCopyCode = (key: string, code: string) => {
+    void navigator.clipboard?.writeText(code)
+    setCopiedKey(key)
+    setTimeout(() => setCopiedKey((prev) => (prev === key ? null : prev)), 2000)
+  }
 
   const currentQuestion = DECISION_QUESTIONS.find((q) => q.id === currentQuestionId)
 
@@ -356,33 +363,96 @@ export const MigrationDecisionLab: React.FC = () => {
                 ))}
               </ol>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold text-sm text-status-error mb-2">
-                    Before (Classical)
-                  </h4>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground">
-                      {selectedPath.beforeCode.language}
-                    </span>
+                <div className="rounded-lg border border-status-error/40 bg-card p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="font-semibold text-sm text-status-error">Before (Classical)</h4>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground">
+                        {selectedPath.beforeCode.language}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+                        onClick={() =>
+                          handleCopyCode(`${selectedPath.id}-before`, selectedPath.beforeCode.code)
+                        }
+                        aria-label={`Copy before code for ${selectedPath.title}`}
+                      >
+                        {copiedKey === `${selectedPath.id}-before` ? (
+                          <Check size={12} className="text-status-success" />
+                        ) : (
+                          <Copy size={12} />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                   <pre className="bg-muted/50 rounded-lg p-3 overflow-x-auto text-xs font-mono text-foreground leading-relaxed">
                     <code>{selectedPath.beforeCode.code}</code>
                   </pre>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-status-success mb-2">
-                    After (PQC-Ready)
-                  </h4>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground">
-                      {selectedPath.afterCode.language}
-                    </span>
+                <div className="rounded-lg border border-status-success/40 bg-card p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="font-semibold text-sm text-status-success">
+                      After (PQC / Hybrid)
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground">
+                        {selectedPath.afterCode.language}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+                        onClick={() =>
+                          handleCopyCode(`${selectedPath.id}-after`, selectedPath.afterCode.code)
+                        }
+                        aria-label={`Copy after code for ${selectedPath.title}`}
+                      >
+                        {copiedKey === `${selectedPath.id}-after` ? (
+                          <Check size={12} className="text-status-success" />
+                        ) : (
+                          <Copy size={12} />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                   <pre className="bg-muted/50 rounded-lg p-3 overflow-x-auto text-xs font-mono text-foreground leading-relaxed">
                     <code>{selectedPath.afterCode.code}</code>
                   </pre>
                 </div>
               </div>
+              {selectedPath.decisionGuidance && (
+                <div
+                  className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2"
+                  aria-label="Migration decision guidance"
+                >
+                  <div className="rounded-lg border border-border bg-card p-3 space-y-1">
+                    <h5 className="text-xs font-semibold uppercase tracking-wide text-foreground">
+                      API Capability Shift
+                    </h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {selectedPath.decisionGuidance.apiShift}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-border bg-card p-3 space-y-1">
+                    <h5 className="text-xs font-semibold uppercase tracking-wide text-foreground">
+                      Interoperability &amp; Fallback
+                    </h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {selectedPath.decisionGuidance.interopAndFallback}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-border bg-card p-3 space-y-1">
+                    <h5 className="text-xs font-semibold uppercase tracking-wide text-foreground">
+                      What This Diff Proves vs. Production Checks
+                    </h5>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {selectedPath.decisionGuidance.verificationScope}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

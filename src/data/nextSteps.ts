@@ -101,6 +101,26 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Produce the artifact: Vendor Scorecard Builder',
     why: 'This module belongs to phase 7 (Vendor & Supply Chain); Vendor Scorecard Builder produces a deliverable of that phase in the Command Center.',
   },
+  '/learn/cert-quantum-impact': {
+    to: '/learn/crypto-product-certification',
+    label: 'Continue the certification path: Cryptographic Product Certification',
+    why: 'Cryptographic Product Certification builds directly on this role overview with scheme mechanics across FIPS 140-3, Common Criteria, and PCI.',
+  },
+  '/learn/cloud-pqc': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
+  '/learn/pqc-implementation-security': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
+  '/learn/energy-utilities-pqc': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
   '/learn/fips-140-3-certification': {
     to: '/business/tools/vendor-scorecard',
     label: 'Produce the artifact: Vendor Scorecard Builder',
@@ -1040,9 +1060,14 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       why: 'Run selected NIST reference samples and known-answer tests against the PKCS#11 engines first; the lessons then follow the path from the certificate to the tests behind it.',
     },
     '/learn/standards-bodies': {
+      to: '/learn/cert-quantum-impact',
+      label: 'Next on your path: Certification Engineer Quantum Impact',
+      why: 'This module is optional orientation on who writes standards, who certifies and who mandates; the first essential module frames how PQC reshapes validation engineering.',
+    },
+    '/learn/cert-quantum-impact': {
       to: '/learn/crypto-product-certification',
       label: 'Next on your path: certification fundamentals',
-      why: 'This module is optional orientation on who writes standards, who certifies and who mandates; the first essential module covers what a certificate covers.',
+      why: 'The next module on your path covers what a cryptographic product certificate establishes across FIPS 140-3, Common Criteria, and PCI.',
     },
     '/learn/crypto-product-certification': {
       to: '/learn/fips-140-3-certification',
@@ -1065,6 +1090,11 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       why: 'The next module on your path covers entropy sources, which key generation depends on.',
     },
     '/learn/entropy-randomness': {
+      to: '/learn/cbom',
+      label: 'Next on your path: Cryptographic Bill of Materials (CBOM)',
+      why: 'The next module on your path covers cryptographic inventory and CBOM evidence for certified modules.',
+    },
+    '/learn/cbom': {
       to: '/learn/hsm-pqc',
       label: 'Next on your path: HSM & PQC Operations',
       why: 'The next module on your path covers the module interface and what adding PQC touches.',
@@ -1075,19 +1105,24 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       why: 'The next module on your path covers the tests that produce the evidence a certificate rests on.',
     },
     '/learn/cc-eucc-certification': {
+      to: '/learn/pqc-implementation-security',
+      label: 'Next on your path: PQC Implementation Security & Side-Channel Resistance',
+      why: 'The next module on your path covers constant-time pitfalls, FO implicit rejection, masking, and TVLA evidence behind FIPS 140-3 and EUCC evaluations.',
+    },
+    '/learn/pqc-implementation-security': {
       to: '/learn/stateful-signatures',
       label: 'Next on your path: Stateful Hash Signatures',
       why: 'The next module on your path covers the hash-based signature schemes LMS and XMSS, which keep state.',
     },
     '/playground/entropy-test': {
-      to: '/learn/hsm-pqc',
-      label: 'Next on your path: HSM & PQC Operations',
-      why: 'Entropy & Randomness, the module this tool practises, is followed on your path by HSM & PQC Operations.',
+      to: '/learn/cbom',
+      label: 'Next on your path: Cryptographic Bill of Materials (CBOM)',
+      why: 'Entropy & Randomness, the module this tool practises, is followed on your path by Cryptographic Bill of Materials (CBOM).',
     },
     '/playground/drbg-demo': {
-      to: '/learn/hsm-pqc',
-      label: 'Next on your path: HSM & PQC Operations',
-      why: 'Entropy & Randomness, the module this tool practises, is followed on your path by HSM & PQC Operations.',
+      to: '/learn/cbom',
+      label: 'Next on your path: Cryptographic Bill of Materials (CBOM)',
+      why: 'Entropy & Randomness, the module this tool practises, is followed on your path by Cryptographic Bill of Materials (CBOM).',
     },
     // Tools that practise the later path lessons hand on to the lesson after them.
     '/playground/slh-dsa': {

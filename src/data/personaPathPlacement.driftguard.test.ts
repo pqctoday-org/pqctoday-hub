@@ -131,8 +131,8 @@ const WS8_PLACEMENTS: { module: string; persona: PersonaId; after: string; why: 
   {
     module: 'digital-assets',
     persona: 'executive',
-    after: 'vendor-risk',
-    why: 'digital-asset custody risk sits on the same board risk register as vendor risk',
+    after: 'migration-program',
+    why: 'digital-asset custody risk stays in the Migration Execution cluster after vendor-risk moved earlier to Executive Essentials beside pqc-governance',
   },
   {
     module: 'platform-eng-pqc',
@@ -167,6 +167,7 @@ const SINGLE_PATH_MODULES = new Set([
   'arch-quantum-impact',
   'research-quantum-impact',
   'ops-quantum-impact',
+  'cert-quantum-impact',
   // Added 1 Oct 2026 (user decision: broaden Curious instead of adding a
   // sales/marketing persona). Curious's role guide, in the same Role Guides
   // track as the five above, so single-persona by design for the same reason.

@@ -11,4 +11,11 @@ export const INFOGRAPHIC_IMAGE_REVISIONS: Record<string, string> = {
   'pqc-testing-validation': 'cba293e57a14cdea',
   'crypto-dev-apis': '2b2a9b0db236fc78',
   'pqc-hw-acceleration': '4d8c8aaeef3630d4',
+  'merkle-tree-certs': 'c443553ff4dc196b',
+  'slh-dsa': 'a2329a0de6b281f7',
+  'os-pqc': '3e776541eeb3df71',
+  'vpn-ssh-pqc': 'b3aa0ab3b0de8fe4',
+  'hybrid-crypto': '1f2a869c9b64265a',
+  'dev-quantum-impact': '6d0a29beb895c04d',
+  'code-signing': '33c00d91b9dee53f',
 }
