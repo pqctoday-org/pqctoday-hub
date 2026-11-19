@@ -22,11 +22,16 @@ export function PageMeta() {
     document.title = meta.title
   }, [meta.title])
 
-  // The saved 404 page can also serve app-only routes. Keep its title element,
-  // and remove the temporary description and robots tags once the app takes over.
+  // The saved 404 page can also serve app-only routes. Keep its title element
+  // (clearing its static-404 marker), and remove the temporary description and
+  // robots tags once the app takes over.
   useEffect(() => {
-    for (const element of document.head.querySelectorAll('[data-static-404]:not(title)')) {
-      element.remove()
+    for (const element of document.head.querySelectorAll('[data-static-404]')) {
+      if (element.tagName === 'TITLE') {
+        element.removeAttribute('data-static-404')
+      } else {
+        element.remove()
+      }
     }
   }, [])
 

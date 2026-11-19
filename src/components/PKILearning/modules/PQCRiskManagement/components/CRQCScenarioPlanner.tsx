@@ -255,7 +255,7 @@ export function buildCrqcScenarioMarkdown({
   for (const algo of otherAlgorithms) {
     md += `- **${algo.name}**: ${algo.notes}\n`
   }
-  md += '\n[NIST IR 8547, Table 1 and §4.1.3](https://csrc.nist.gov/pubs/ir/8547/final)\n\n'
+  md += '\n[NIST IR 8547, Table 1 and Section 4.1.3](https://csrc.nist.gov/pubs/ir/8547/final)\n\n'
 
   md += '## Policy and guidance reference dates\n\n'
   md +=
@@ -646,7 +646,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           rel="noopener noreferrer"
           className="mt-3 inline-block text-sm text-primary underline"
         >
-          NIST IR 8547, Table 1 and §4.1.3
+          NIST IR 8547, Table 1 and Section 4.1.3
         </a>
       </details>
 

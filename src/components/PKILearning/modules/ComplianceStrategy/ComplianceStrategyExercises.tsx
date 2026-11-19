@@ -13,7 +13,7 @@ const EXERCISES = [
     step: 0,
     cta: 'Open Step 1: Jurisdiction Mapper',
     prompt:
-      'Your commercial bank operates in the US, EU, and Singapore. First verify regulatory scope: NSA CNSA 2.0 FAQ (version 2.2) binds U.S. National Security Systems (1 January 2027 new acquisitions, 31 December 2030 phase-out, 31 December 2031 mandated use), not commercial banks unless operating under an NSS contract. In the EU, DORA and NIS2 impose cyber risk-management duties while the EU PQC Roadmap v1.1 coordinates Member State timelines and ETSI recommends hybrid transitions; in Singapore, MAS monitors NIST standards. Map the overlapping requirements, confirm which obligations actually bind the bank, and identify cross-jurisdiction conflicts.',
+      'Your commercial bank operates in the US, EU, and Singapore. First verify regulatory scope: NSA CNSA 2.0 FAQ (version 2.2) sets national security system dates of 1 January 2027 for new acquisitions, 31 December 2030 for phasing out equipment that cannot support CNSA 2.0, and 31 December 2031 for mandated use — binding U.S. National Security Systems, not commercial banks unless operating under an NSS contract. In the EU, DORA and NIS2 impose cyber risk-management duties while the EU PQC Roadmap v1.1 coordinates Member State timelines and ETSI recommends hybrid transitions; in Singapore, MAS monitors NIST standards. Map the overlapping requirements, confirm which obligations actually bind the bank, and identify cross-jurisdiction conflicts.',
     workshopHint:
       'Use the Jurisdiction Mapper (Step 1) to select US, EU, and Singapore (leave the NSS checkbox unticked for a commercial bank). Compare framework scope and gaps side-by-side in Step 4.',
     evidenceCheck:

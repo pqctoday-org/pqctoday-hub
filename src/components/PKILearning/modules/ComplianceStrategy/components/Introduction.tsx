@@ -273,14 +273,9 @@ const Step2ApproachAndDeadlines: React.FC = () => (
             },
             {
               year: '2030',
-              event: CNSA_PHASE_OUT_LABEL,
-              source: 'NSA',
-            },
-            {
-              year: '2030',
-              event:
-                'After 2030, NIST deprecates quantum-vulnerable public-key algorithms under its standards and guidelines',
-              source: 'NIST IR 8547',
+              event: `${CNSA_PHASE_OUT_LABEL}; NIST RSA/ECC deprecated`,
+              source:
+                'NSA / NIST IR 8547 (final, Oct 2026 — deprecates quantum-vulnerable public-key algorithms after 2030)',
             },
             {
               year: '2030',

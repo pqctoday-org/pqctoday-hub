@@ -109,14 +109,17 @@ export const STANDARD_TAXONOMY = [
   'NSM-10',
   'EO 14306',
   'OMB M-23-02',
+  'OMB M-26-15',
   'ETSI TS 103 744',
   'CycloneDX CBOM',
   'RFC 9370',
   // RFC 10024 (August 2026): hybrid key agreement for TLS 1.3; Digital Assets cites it for the TLS 1.3 hybrid key exchange.
   'RFC 10024',
+  'RFC 10073',
   'RFC 8555',
   'RFC 3161',
   'RFC 9580',
+  'RFC 9980',
 ] as const
 
 export type StandardTaxon = (typeof STANDARD_TAXONOMY)[number]

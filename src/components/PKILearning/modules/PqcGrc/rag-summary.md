@@ -25,8 +25,8 @@ The workshop has 2 interactive steps:
 
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards; final, October 2026)
 - NSA CNSA 2.0 FAQ v2.2 (US National Security Systems)
-- EO 14412 & OMB M-26-15 (US federal civilian PQC mandate + directed FAR contractor rule)
-- EU PQC Roadmap v1.1; DORA & NIS2 (EU cyber risk-management duties)
+- EO 14412 & OMB M-26-15 (US federal civilian agency transition requirements + directed FAR contractor rule)
+- EU PQC Roadmap v1.1; DORA & NIS2 (EU cyber risk-management duties; no fixed PQC deadlines)
 - FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
 - NIST SP 800-208 (Stateful Hash-Based Signatures)
 - CycloneDX 1.6+ / 1.7 (CBOM)

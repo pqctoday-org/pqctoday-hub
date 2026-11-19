@@ -4,7 +4,7 @@ The quantum threat is no longer solely an IT problem; it is a corporate governan
 
 ### Why It Matters
 
-Adversaries can execute "Harvest Now, Decrypt Later" (HNDL) collection—recording encrypted communications today to decrypt once a cryptographically relevant quantum computer (CRQC) matures. Any data whose confidentiality lifetime plus migration duration exceeds the time to a CRQC is exposed now. Simultaneously, scoped mandates set concrete timelines: the NSA's CNSA 2.0 suite (FAQ v2.2) governs U.S. National Security Systems (new acquisitions from 1 January 2027; non-compliant equipment phased out by 31 December 2030; full mandate by 31 December 2031), while Executive Order 14412 (June 2026) and OMB M-26-15 require federal civilian agencies to migrate High Value Assets and high-impact systems to PQC for key establishment by 31 December 2030 and digital signatures by 31 December 2031.
+Adversaries can execute "Harvest Now, Decrypt Later" (HNDL) collection—recording encrypted communications today to decrypt once a cryptographically relevant quantum computer (CRQC) matures. Any data whose confidentiality lifetime plus migration duration exceeds the time to a CRQC is exposed now. Simultaneously, scoped mandates set concrete timelines: the NSA's CNSA 2.0 suite (FAQ, version 2.2) governs U.S. National Security Systems—it requires CNSA 2.0 algorithms in new acquisitions from 1 January 2027, phases out equipment that cannot support them by 31 December 2030, and mandates them by 31 December 2031—while Executive Order 14412 (June 2026) and OMB M-26-15 require federal civilian agencies to migrate High Value Assets and high-impact systems to PQC for key establishment by 31 December 2030 and digital signatures by 31 December 2031.
 
 ### The Key Takeaway
 
@@ -12,4 +12,4 @@ Leaders cannot govern what they cannot measure. Demand an evidence-backed crypto
 
 ### What's Happening
 
-Final NIST IR 8547 (October 2026) establishes the transition baseline deprecating quantum-vulnerable public-key cryptography by 2030 and disallowing it under NIST standards after 2035. In the U.S., EO 14412 also directs the FAR Council to propose federal contractor FIPS/PQC rules, while the EU Coordinated PQC Roadmap sets 2030 (high-risk) and 2035 transition targets alongside broader cyber-resilience duties under NIS2 and DORA.
+Final NIST IR 8547 (October 2026) establishes the transition baseline deprecating quantum-vulnerable public-key cryptography by 2030 and disallowing it under NIST standards after 2035. In the U.S., NSA's CNSA 2.0 FAQ (version 2.2) requires CNSA 2.0 algorithms in new U.S. National Security System acquisitions from 1 January 2027, and EO 14412 directs the FAR Council to propose federal contractor FIPS/PQC rules, while the EU Coordinated PQC Roadmap sets 2030 (high-risk) and 2035 transition targets alongside broader cyber-resilience duties under NIS2 and DORA.

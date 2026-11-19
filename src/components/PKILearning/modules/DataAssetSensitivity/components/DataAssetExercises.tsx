@@ -67,7 +67,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
       badge: 'Methodology',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'For the sample national security system, CNSA 2.0 specifies ML-DSA-87 (FIPS 204) for signing certificates. Check the applicable certificate-signing profile in the cited NSA guidance. Its CNSA 2.0 FAQ v2.2 gives the general NSS dates: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted. The absence of a confidentiality threshold for a signing-only key leaves migration relevant because old verifiers may still trust forgeable signatures.',
+        'For the sample national security system, CNSA 2.0 specifies ML-DSA-87 (FIPS 204) for signing certificates. Check the applicable certificate-signing profile in the cited NSA guidance. Its CNSA 2.0 FAQ (version 2.2) sets three dates for national security systems: new acquisitions from 1 January 2027, equipment that cannot support CNSA 2.0 phased out by 31 December 2030 (exceptions possible), and CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted. The absence of a confidentiality threshold for a signing-only key leaves migration relevant because old verifiers may still trust forgeable signatures.',
       evidenceCheck:
         'Confirm system scope first (CNSA 2.0 binds NSS; federal civilian HVAs/high-impact systems follow EO 14412 & OMB M-26-15). For HSM-backed CAs, check active CMVP FIPS 140-3 module certificates and Security Policies rather than vendor marketing sheets or ACVP-only algorithm listings.',
       config: { step: 3 },
