@@ -43,8 +43,8 @@ interface CertificationXrefRow {
 }
 
 const repoRoot = path.resolve(__dirname, '../..')
-const productCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.migrate)
-const certXrefCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.certificationXref)
+const productCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.migrate ?? '')
+const certXrefCsvPath = path.resolve(repoRoot, 'src/data', DATA_FILENAMES.certificationXref ?? '')
 
 function loadCsv<T>(filePath: string): T[] {
   const raw = fs.readFileSync(filePath, 'utf-8')
