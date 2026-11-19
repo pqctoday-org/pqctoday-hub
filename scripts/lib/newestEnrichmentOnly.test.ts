@@ -214,7 +214,9 @@ describe('the committed enrichment files', () => {
       expect(mergeEnrichmentFiles(prunedModules), d.family).toEqual(mergeEnrichmentFiles(modules))
       const fullBytes = files.reduce((n, name) => n + statSync(join(dir, name)).size, 0)
       const retainedBytes = retained.reduce((n, name) => n + statSync(join(dir, name)).size, 0)
-      expect(retainedBytes, d.family).toBeLessThan(fullBytes / 2)
+      // With archival keeping only the newest 2 covering snapshots, retaining 1
+      // of 2 can slightly exceed 50% when the newer snapshot grew by a few KB.
+      expect(retainedBytes, d.family).toBeLessThan(fullBytes * 0.55)
     }
   })
 })
