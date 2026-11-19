@@ -30,7 +30,11 @@ export async function validateApiKey(
   model: string = DEFAULT_GEMINI_MODEL
 ): Promise<boolean> {
   try {
-    const response = await fetch(`${GEMINI_BASE}/${model}?key=${apiKey}`)
+    // The key goes in the x-goog-api-key header, as Google documents for current
+    // (authorization) keys, never in the URL where it can end up in logs.
+    const response = await fetch(`${GEMINI_BASE}/${model}`, {
+      headers: { 'x-goog-api-key': apiKey },
+    })
     return response.ok
   } catch {
     return false
@@ -113,9 +117,9 @@ export async function* streamResponse(
   const formattedMessages = formatMessages(messages)
 
   const requestStream = (targetModel: string, includeThinking = true) =>
-    fetchWithRetry(`${GEMINI_BASE}/${targetModel}:streamGenerateContent?key=${apiKey}&alt=sse`, {
+    fetchWithRetry(`${GEMINI_BASE}/${targetModel}:streamGenerateContent?alt=sse`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
         contents: formattedMessages,

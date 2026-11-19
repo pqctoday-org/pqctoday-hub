@@ -67,3 +67,18 @@ describe('Gemini invalid key detection', () => {
     expect(fetchMock.mock.calls.length).toBeGreaterThan(1)
   })
 })
+
+describe('Gemini key transport', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('sends the key in the x-goog-api-key header, never in the URL', async () => {
+    const sse = 'data: {"candidates":[{"content":{"parts":[{"text":"ok"}]}}]}\n\n'
+    const fetchMock = vi.fn().mockResolvedValue(new Response(sse, { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    await drain(streamResponse('secret-key', MESSAGES, []))
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(String(url)).not.toContain('secret-key')
+    expect(String(url)).not.toContain('key=')
+    expect(init.headers['x-goog-api-key']).toBe('secret-key')
+  })
+})

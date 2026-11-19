@@ -54,11 +54,11 @@ describe('validateApiKey', () => {
     const mockFetch = vi.fn().mockResolvedValue({ ok: true })
     vi.stubGlobal('fetch', mockFetch)
     await validateApiKey('test-key')
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('generativelanguage.googleapis.com')
-    )
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('key=test-key'))
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/gemini-3.8-flash?'))
+    const [url, init] = mockFetch.mock.calls[0]
+    expect(url).toContain('generativelanguage.googleapis.com')
+    expect(url).toMatch(/\/gemini-3\.8-flash$/)
+    expect(url).not.toContain('key=')
+    expect(init).toMatchObject({ headers: { 'x-goog-api-key': 'test-key' } })
   })
 })
 
