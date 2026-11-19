@@ -1,6 +1,6 @@
 {
   "$schema": "internal: JOSE/COSE PQC draft snapshot. Refresh with npx tsx scripts/refresh-jose-drafts-snapshot.ts; the audit panel treats a snapshot older than max_age_days as expired.",
-  "generated_at": "2026-11-08",
+  "generated_at": "2026-11-19",
   "source": "datatracker.ietf.org doc.json, via scripts/refresh-jose-drafts-snapshot.ts",
   "drafts": {
     "draft-ietf-cose-dilithium": {
@@ -43,7 +43,7 @@
       "alg_codes_introduced": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"],
       "covers": ["historical: direct ML-KEM JWE (-05 and earlier); -06 is COSE-only"],
       "title": "Post-Quantum Key Encapsulation Mechanisms (PQ KEMs) for COSE",
-      "state": "Active",
+      "state": "Replaced",
       "iesg_state": "I-D Exists",
       "rfceditor_state": null
     },
