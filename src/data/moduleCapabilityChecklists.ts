@@ -35,6 +35,54 @@ interface RawModuleCapabilitySeed {
 }
 
 const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
+  'cert-quantum-impact': {
+    roleFocus: 'Certification & Validation Engineers',
+    productionCapabilities: [
+      'Separate CAVP/ACVP algorithm-validation certificates from CMVP FIPS 140-3 module certificates and verify that FIPS 203/204/205 algorithms sit inside the validated cryptographic boundary.',
+      'Track SP 800-90B Entropy Source Validation (ESV) certificates and SP 800-90C RBG constructions required for PQC key generation under FIPS 140-3 IG.',
+      'Map scheme-specific evidence across CMVP (FIPS 140-3), EUCC v2.0 ACM / NIAP Policy #33 (Common Criteria), and PCI PTS HSM v5.0 scope boundaries without conflating scheme claims.',
+    ],
+    evaluationMethod:
+      'Cross-check vendor-supplied certificate numbers against the official NIST CMVP/CAVP/ESV portals, EUCC/NIAP certified product lists, and PCI PTS HSM approval tables, confirming exact firmware versions and approved modes.',
+    evidenceRequired:
+      'CMVP module certificate and Security Policy PDF, linked CAVP ACVP algorithm certificate numbers, ESV entropy certificate number, and scheme-specific evaluation reports (EUCC/NIAP/PCI) matching the deployed build.',
+  },
+  'cloud-pqc': {
+    roleFocus: 'Security Architects, IT Ops / DevOps, Developers & GRC Leads',
+    productionCapabilities: [
+      'Enforce hybrid PQ/T TLS 1.3 (RFC 10024, e.g., X25519MLKEM768) independently on both CDN/edge ingress and origin/east-west service legs, with downgrade monitoring.',
+      'Verify cloud KMS post-quantum key specs, ML-KEM/ML-DSA APIs, and BYOK wrapping boundaries across AWS KMS, Google Cloud KMS, and Azure Key Vault / Managed HSM.',
+      'Scope SaaS and identity-federation cryptographic boundaries (SAML/OIDC signing, webhook verification, tenant-managed encryption keys) and collect verifiable provider evidence.',
+    ],
+    evaluationMethod:
+      'Capture TLS 1.3 ClientHello/ServerHello transcripts on both edge and origin legs, inspect cloud KMS key metadata and IAM policy logs in staging, and audit SaaS provider cryptographic documentation.',
+    evidenceRequired:
+      'Edge and origin TLS negotiation telemetry showing RFC 10024 hybrid groups, cloud KMS key-spec and BYOK import audit logs, and dated SaaS provider cryptographic boundary attestations.',
+  },
+  'pqc-implementation-security': {
+    roleFocus: 'Developers, Certification & Validation Engineers, and Cryptography Researchers',
+    productionCapabilities: [
+      'Audit ML-KEM, ML-DSA, and SLH-DSA implementations for constant-time execution across modular arithmetic (Barrett/Montgomery reduction), NTT, rejection sampling, and Fujisaki-Okamoto implicit rejection.',
+      'Evaluate masking order, fresh-randomness budgets, and fault-injection countermeasures (re-execution, redundancy checks, glitch-resistant comparisons) for embedded and hardware-backed PQC modules.',
+      'Scope non-specific TVLA (t-test threshold |t| > 4.5), FIPS 140-3 IG physical/non-invasive security requirements, and EUCC/Common Criteria AVA_VAN side-channel evaluation evidence.',
+    ],
+    evaluationMethod:
+      'Run dudect or ctgrind/Valgrind constant-time checks on compiled target binaries (inspecting compiler-generated assembly for secret-dependent branches or division), and review accredited lab TVLA trace reports and FIPS 140-3/EUCC evaluation summaries.',
+    evidenceRequired:
+      'Target-architecture disassembly and constant-time verification reports, FO implicit-rejection negative test results, accredited lab TVLA/side-channel test reports, and linked FIPS 140-3 or EUCC Security Policy/Certification Report.',
+  },
+  'energy-utilities-pqc': {
+    roleFocus: 'Security Architects, IT/OT Ops Engineers, GRC Leads & Researchers',
+    productionCapabilities: [
+      'Separate sub-4 ms real-time protection-relay planes (IEC 61850 GOOSE/SV using symmetric IEC 62351-6 HMAC/AES-GMAC) from PQC-protected key-distribution, SCADA WAN (IEC 60870-5-104/DNP3-SA), and gateway boundaries.',
+      'Validate MTU, fragmentation, and handshake-latency budgets across substation serial/Ethernet links, AMI smart-meter meshes (DLMS/COSEM, IEEE 2030.5), and DER edge gateways before field cutover.',
+      'Plan 15–25 year field-asset cryptographic lifecycles (firmware signing with LMS/XMSS or SLH-DSA, hardware root-of-trust constraints) and map evidence to NERC CIP-005/007/010/011/012/013 and EU NIS2.',
+    ],
+    evaluationMethod:
+      'Benchmark hybrid TLS 1.3 (RFC 10024) and IKEv2 (RFC 9370) gateway handshakes in a utility staging lab with representative MTU/bandwidth profiles, verify relay tripping latency isolation, and audit vendor firmware-signing key management.',
+    evidenceRequired:
+      'Staging packet captures and latency measurements proving GOOSE/SV timing budgets remain unaffected, SCADA/AMI gateway hybrid handshake telemetry, field-device firmware signing verification logs, and NERC CIP / NIS2 scoped evidence records.',
+  },
   'pqc-101': {
     roleFocus: 'All Roles (Architects, Developers, Operations, Executives)',
     productionCapabilities: [

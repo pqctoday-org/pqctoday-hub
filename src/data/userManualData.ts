@@ -456,7 +456,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   learn: {
     title: 'Learning Center',
     summary:
-      'Structured PQC education: 75 modules in nine tracks, from foundations through protocols, infrastructure, governance and industry topics, with hands-on workshops where a module has them. The Practice quiz is a separate entry.',
+      'Structured PQC education: 79 modules in nine tracks, from foundations through protocols, infrastructure, governance and industry topics, with hands-on workshops where a module has them. The Practice quiz is a separate entry.',
     sections: [
       {
         heading: 'Finding a Module',

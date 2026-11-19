@@ -541,6 +541,10 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The Source Coverage Mapper reuses the scanners and build tooling you already run; the format step compares CycloneDX and SPDX for cryptographic assets, and the last step deduplicates keys by SPKI fingerprint.',
     architect:
       'Choose the BOM format, then evaluate the resulting inventory against a quantum-safe policy: the module shows what a CBOM has to carry for a migration decision to be made from it.',
+    researcher:
+      'Compare the CycloneDX 1.6 and SPDX 3.0 cryptographic schemas side by side, then inspect how SPKI-fingerprint deduplication collapses repeated artifacts into distinct logical keys without hiding algorithm parameters.',
+    'cert-engineer':
+      'Use the format and policy-evaluation steps to see which algorithm, key-length, and module-boundary fields a CBOM must preserve before it can trace back to ACVP, CMVP, or EUCC certification evidence.',
     ops: "Map your existing discovery sources first, then evaluate the inventory against policy: the gaps are the systems nobody's scanner covers, which is where key rotations fail.",
   },
   '/learn/code-signing': {
@@ -550,11 +554,14 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'The certificate-chain step and the hybrid package-signing step show the two migration patterns for software distribution; the firmware step compares LMS, XMSS and ML-DSA trust chains for secure boot.',
     researcher:
       'Compare the hybrid ML-DSA-87 plus Ed448 package signature with a pure ML-DSA one and the LMS, XMSS and ML-DSA firmware chains: the size and verification-time trade-offs are on screen.',
+    ops: 'Walk through the PQC code-signing certificate chain, RPM-style hybrid package signing, and Sigstore transparency-log verification to plan signing-key rollover and verifier deployment across build and release pipelines.',
   },
   '/learn/compliance-strategy': {
     executive:
       'Map the PQC frameworks and deadlines across the jurisdictions you operate in, then build the compliance timeline overlaying those deadlines on your migration: the gap assessment says where you are late.',
     grc: "The audit-readiness checklist and the Regulatory Gap Assessment across your selected jurisdictions produce the compliance position from live framework data rather than last year's summary.",
+    architect:
+      'Overlay multi-jurisdiction PQC deadlines onto your system transition roadmap so algorithm profiles, hybrid cutovers, and cryptographic boundaries satisfy every applicable mandate before enforcement dates arrive.',
     researcher:
       'The framework map is built from the live compliance dataset, so the deadlines and their sources can be checked on the Compliance page; the gap assessment is reproducible for any set of jurisdictions.',
     curious:
@@ -629,6 +636,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Compare RSA, ECDSA, Ed25519, ML-DSA-44 and SLH-DSA signature sizes against DNS response limits in Step 1, then walk the root, TLD and domain validation chain to see where algorithm 18 sits today.',
     architect:
       "The PQ Validation Chain Walkthrough and the Deployment Roadmap Tracker set Cloudflare's resolver-side pilot against the DNS root's separate rollover estimate: the dependencies a signed-zone plan waits on.",
+    ops: 'Check DNS UDP fragmentation, EDNS0 buffer sizes, and TCP fallback impact under ML-DSA-44 and SLH-DSA before planning authoritative zone-signing and resolver rollouts.',
   },
   '/learn/data-asset-sensitivity': {
     executive:
@@ -671,6 +679,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Get a national digital ID, add a diploma, open a bank account and sign a document with it: the module walks the European digital wallet end to end.',
   },
   '/learn/emv-payment-pqc': {
+    architect:
+      'Trace EMV offline data authentication, DUKPT key hierarchies, tokenisation vaults, and card-personalisation boundaries to size terminal-fleet replacement timelines and separate HSM upgrades from acquirer settlement rails.',
     researcher:
       'Eight steps cover the stack: payment network comparison, EMV transaction flows, card personalisation with RSA against PQC, tokenisation, DUKPT key management, a severity-effort matrix of ten components, HNDL exposure for settlement rails and the sector regulation timeline.',
   },
@@ -716,10 +726,13 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   '/learn/government-defense-pqc': {
     executive:
       'CNSA 2.0 is required for new National Security System acquisitions from 1 January 2027; the CNSA 1.0 to 2.0 comparator and the Federal Mandate Explorer say which instruments bind a system you sell into or run.',
+    grc: 'Use the Federal Mandate Explorer and CNSA 1.0-to-2.0 comparator to map which National Security System and federal civilian instruments bind each system, and verify exception-governance evidence against primary deadlines.',
     researcher:
       'The suite comparator maps every public-key purpose line by line, and the Federal PKI Profile Pair puts the classical Common Policy profile beside the draft PQC certificate profile.',
   },
   '/learn/healthcare-pqc': {
+    architect:
+      'Map long-retention clinical and biometric vaults against HNDL exposure, then separate hospital network TLS upgrades from constrained medical-device safety and firmware-update boundaries.',
     researcher:
       'The Biometric Vault Assessor and the Patient Privacy Mapper set data lifecycles that never expire against the HNDL window; the Device Safety Simulator models attacks on medical devices whose cryptography fails physically.',
     curious:
@@ -952,6 +965,8 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
       'Match your build artifact type to a generator and format in Step 2: the SBOM is what the CBOM and VEX triage read, so it has to come out of the build, not a spreadsheet.',
     architect:
       'SPDX or CycloneDX, and which generator per artifact type: the two decisions that make the dependency graph reusable downstream.',
+    researcher:
+      'Compare how SPDX and CycloneDX map onto the NTIA minimum elements and evaluate generator fidelity across build ecosystems before extending dependency graphs into CBOM and VEX analysis.',
     ops: 'Pick the generator per artifact type and keep the SBOM regenerated per build: it is the inventory that vulnerability triage with VEX closes the loop on.',
   },
   '/learn/secrets-management-pqc': {
@@ -1020,6 +1035,7 @@ export const PERSONA_BLOCKS: Record<string, PersonaBlockSet> = {
   '/learn/trust-services-pqc': {
     executive:
       'A qualified signature made today may be evaluated in 2050: the Signature Longevity Calculator shows which parts degrade first, and the ETSI standards explorer shows what changed when PQC arrived.',
+    grc: 'Use the Signature Longevity Calculator and the ETSI standards supersession explorer to audit eIDAS qualified-signature archival duties, re-timestamping evidence, and trust service provider conformity boundaries.',
     developer:
       'The longevity calculator sets how long a signature must remain evaluable; the ETSI TS 119 312 hybrid combinations step lists the algorithm pairings to implement.',
     architect:

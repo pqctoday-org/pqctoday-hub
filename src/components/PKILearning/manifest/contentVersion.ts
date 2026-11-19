@@ -46,10 +46,10 @@ export const MODULE_IDS: ReadonlySet<string> = new Set(MANIFESTS.map((m) => m.id
 export const MODULE_ID_RENAMES: Readonly<Record<string, string>> = {
   'fips-pci-certification': 'fips-140-3-certification',
   // 2026-10-01 IoT/OT split: IoT & OT Security (LM-032) became IoT & Embedded
-  // Device PQC (LM-074); Energy & Utilities PQC (LM-042) became the cross-sector
-  // OT & Industrial Control Systems PQC module (LM-075).
+  // Device PQC (LM-074). The historical energy-utilities-pqc (LM-042) → ot-pqc
+  // (LM-075) carry-over now runs only in useModuleStore's v17→v18 migration
+  // because energy-utilities-pqc returned as a live module (LM-082, 2026-11-18).
   'iot-ot-pqc': 'iot-pqc',
-  'energy-utilities-pqc': 'ot-pqc',
 }
 
 /** Lossless carry-over when both old and new ids hold progress (rare). */
