@@ -9106,59 +9106,59 @@ enrichment_method: automated extraction
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: active
-- **Main Topic**: This document defines the terminology, architecture, and manifest format for secure firmware updates in Internet of Things (IoT) devices.
-- **PQC Algorithms Covered**: HSS; LMS
-- **Quantum Threats Addressed**: Quantum-accelerated key extraction
-- **Migration Timeline Info**: Worst-case estimate for the time horizon to key extraction with quantum acceleration is approximately 2030
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IAB
-- **Leaders Contributions Mentioned**: B. Moran (Author); H. Tschofenig (Author); D. Brown (Author); M. Meriac (Author)
+- **Main Topic**: An architecture and terminology for secure firmware updates of IoT devices, motivating a transport-agnostic manifest format that describes and protects firmware images.
+- **PQC Algorithms Covered**: HSS/LMS
+- **Quantum Threats Addressed**: Quantum-accelerated key extraction against RSA and ECC signature schemes
+- **Migration Timeline Info**: Worst-case estimate for the time horizon to quantum-accelerated key extraction is approximately 2030; bootloader authors must consider product service lifetime against that horizon
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: IETF, IAB, IESG
+- **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: MQTT; CoAP; HTTP; LwM2M; DNS-SD
-- **Infrastructure Layers**: PKI; Key Management; HSM; TEE
-- **Standardization Bodies**: IETF
+- **Protocols Covered**: LwM2M; CoAP; MQTT; HTTP; DNS-SD; SUIT manifest; COSE
+- **Infrastructure Layers**: Bootloader; Secure boot; Trust anchor store; Trusted Execution Environment; Hardware security module; Secure element; Firmware server; Status tracker
+- **Standardization Bodies**: IETF; IAB; Open Mobile Alliance
 - **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; ECC
-- **Key Takeaways**: Firmware update mechanisms must support asymmetric cryptography for authentication and integrity; Unchangeable bootloader code in ROM is recommended to use post-quantum secure signature schemes such as hash-based signatures; The worst-case estimate for quantum-accelerated key extraction is approximately 2030; Manifests must support different cryptographic algorithms and algorithm extensibility to accommodate future PQC transitions
+- **Classical Algorithms Referenced**: RSA; Elliptic Curve Cryptography (ECC)
+- **Key Takeaways**: Firmware update mechanisms must authenticate and integrity-protect firmware images and manifests, with confidentiality optional; Rejecting old but valid manifests prevents rollback to vulnerable firmware; Unchangeable bootloader code in ROM should use post-quantum secure signatures such as hash-based signatures; Devices need a recovery strategy (backup or recovery image) so a failed update does not brick them; Authorization policy can require multiple signers, e.g. both firmware author and device operator
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Algorithm extensibility; Post-quantum secure signature schemes in ROM
+- **Hybrid & Transition Approaches**: Algorithm extensibility in the manifest specification; use of hash-based signatures in unchangeable ROM bootloader code
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "unchangeable bootloader code in ROM is recommended to use post-quantum secure signature schemes such as hash-based signatures"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer; Operations
-- **Implementation Prerequisites**: Trust anchor store; Cryptographic libraries with hash functions, digital signatures, and MACs; Bootloader with secure boot functionality
-- **Relevant PQC Today Features**: iot-pqc; stateful-signatures; crypto-agility; pqc-candidates
-- **Implementation Attack Surface**: None detected
+- **Performance & Size Considerations**: Firmware images often multiple kilobytes, sometimes exceeding one hundred kilobytes for low-end IoT devices and several megabytes for devices running Linux
+- **Target Audience**: Developer; Security Architect; Device Operator; Researcher
+- **Implementation Prerequisites**: Internet protocol stack for firmware downloads; Ability to write firmware to persistent storage (flash); Manifest parser with signature or MAC verification; Ability to unpack, decompress, and/or decrypt images; Status tracker; Trust anchor store; Bootloader with cryptographic libraries
+- **Relevant PQC Today Features**: iot-ot-pqc; code-signing; stateful-signatures; crypto-agility
+- **Implementation Attack Surface**: Attacker-modified firmware images; Rollback to old vulnerable firmware; Firmware extraction for reverse engineering; Update interrupted by power or network failure
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Class 1 devices; Resource constraints; Flash memory limits; Energy-efficient design
-- **Supply Chain & Vendor Risk**: Supply chain complexity; Vendor discontinuation risk; Recertification requirements
-- **Deployment & Migration Complexity**: Automatic updates; Recovery strategies; Atomic updates; Dependency resolution
+- **Constrained Device & IoT Suitability**: Optimized for Class 1 constrained devices per RFC 7228; devices without user interfaces need unattended updates; keep manifest parser code size small; battery-powered energy cost of radio communication and flash writes; non-position-independent code requires image swapping or multiple firmware versions
+- **Supply Chain & Vendor Risk**: Long supply chains delay updates reaching end customers; need for updates after a product is discontinued or a vendor goes out of business; Trust Provisioning Authority distributes trust anchors and authorization policies
+- **Deployment & Migration Complexity**: Atomic updates across multiple MCUs or secure/normal mode images; image swapping for execute-in-place devices; backup or recovery images for rollback; client-, server-initiated or hybrid update triggering
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
+- **Organizational Readiness**: Need for incentives for device operators to adopt firmware update mechanisms; need for testing and recovery strategies; recertification and user consent considerations
 - **Math Family**: Hash-based
 - **PQC Round**: Not Applicable
 - **Attack Classification**: Quantum Factorization (Shor's)
-- **Exploitation Timeline Window**: Earliest exploitation: 2030 (worst-case estimate for quantum-accelerated key extraction)
+- **Exploitation Timeline Window**: Earliest exploitation: approximately 2030 (worst-case estimate for quantum-accelerated key extraction)
 - **Financial Impact Quantification**: None detected
-- **Countermeasure Effectiveness**: Partial Mitigation — unchangeable bootloader code in ROM is recommended to use post-quantum secure signature schemes such as hash-based signatures
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: IOT-003.html (127,548 bytes, 59,922 extracted chars)
-- **Extraction Timestamp**: 2026-09-24T20:44:10
-- **Generation Model**: automated extraction, human-reviewed
+- **Countermeasure Effectiveness**: Partial Mitigation — hash-based signatures recommended for unchangeable ROM bootloader code against quantum-accelerated key extraction
+- **Source Document**: IOT-003.html (127,548 bytes, 60,040 extracted chars)
+- **Extraction Timestamp**: 2026-11-18T20:24:24
+- **Evidence SHA-256**: c841af39dd2164e0b73fd91ab3df0e817872276521352b741189060b396bac5c
+- **Generation Model**: automated extraction
 - **Evidence SHA256**: c841af39dd2164e0
-- **Reader**: unified/4 full
-- **Window Chars**: 59922
+- **Reader**: unified/5 full
+- **Window Chars**: 60040
 
 ---
 
@@ -9523,22 +9523,22 @@ enrichment_method: automated extraction
 - **Authors**: OpenSSL PQC Integration
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
-- **Document Status**: active
-- **Main Topic**: The final release of OpenSSL 3.5, which introduces support for PQC algorithms (ML-KEM, ML-DSA, SLH-DSA) and server-side QUIC.
+- **Document Status**: draft
+- **Main Topic**: Announcement of the final OpenSSL 3.5 LTS release, adding PQC algorithm support (ML-KEM, ML-DSA, SLH-DSA), server-side QUIC, and other new features, plus its support timeline.
 - **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: OpenSSL 3.5 supported until April 8, 2030; OpenSSL 3.0 fully supported until September 7, 2025; OpenSSL 3.0 security fixes until September 7, 2026; OpenSSL 3.6 release in October 2025
-- **Applicable Regions / Bodies**: Regions: None detected; Bodies: None detected
+- **Migration Timeline Info**: OpenSSL 3.5 (LTS) supported until April 8, 2030; OpenSSL 3.0 fully supported until September 7, 2025 and receives security fixes until September 7, 2026; next release OpenSSL 3.6 in October 2025; projects on 3.0 strongly encouraged to switch to 3.5
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: OpenSSL Corporation
 - **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: OpenSSL
-- **Protocols Covered**: TLS; QUIC
-- **Infrastructure Layers**: Key Management
+- **PQC Products Mentioned**: OpenSSL 3.5
+- **Protocols Covered**: TLS; QUIC (RFC 9000); CMP
+- **Infrastructure Layers**: Cryptographic Libraries; FIPS Provider
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: FIPS
-- **Classical Algorithms Referenced**: X25519
-- **Key Takeaways**: OpenSSL 3.5 is the first LTS release to include native support for ML-KEM, ML-DSA, and SLH-DSA; Organizations should migrate from OpenSSL 3.0 to 3.5 as 3.0 support ends in 2025/2026; OpenSSL 3.5 adds support for server-side QUIC and 3rd party QUIC stacks; The release includes new configuration options for TLS groups and FIPS jitter seeding
-- **Security Levels & Parameters**: ML-KEM-768, X25519MLKEM768
-- **Hybrid & Transition Approaches**: X25519MLKEM768 hybrid key exchange
+- **Compliance Frameworks Referenced**: FIPS (FIPS provider; enable-fips-jitter option)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: OpenSSL 3.5 adds ML-KEM, ML-DSA and SLH-DSA support; OpenSSL 3.5 is an LTS release supported until April 8, 2030; Projects depending on OpenSSL 3.0 should switch to 3.5 before 3.0 support ends in September 2025; Multiple TLS keyshares and improved key establishment group configurability are now supported
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Support for multiple TLS keyshares and improved TLS key establishment group configurability
 - **Pure PQC KEM Support**: No
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: No
@@ -9549,33 +9549,33 @@ enrichment_method: automated extraction
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
+- **Lifecycle State**: None detected
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Operations
-- **Implementation Prerequisites**: OpenSSL 3.5
-- **Relevant PQC Today Features**: OpenSSL Studio; Migrate; Algorithms
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: OpenSSL 3.5 (LTS); migration from OpenSSL 3.0 recommended; enable-fips-jitter option for FIPS provider JITTER seed source
+- **Relevant PQC Today Features**: Algorithms; OpenSSL Studio; Migrate; crypto-agility
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: JITTER seed source
+- **QRNG & Entropy Sources**: JITTER seed source for FIPS provider (enable-fips-jitter)
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: widespread dependency risk; Libsodium and other popular libraries lag behind
-- **Deployment & Migration Complexity**: Projects that depend on 3.0 are strongly encouraged to switch to OpenSSL 3.5
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Organisations requiring continued support beyond standard timelines are encouraged to contact the OpenSSL Corporation for premium support options
+- **Supply Chain & Vendor Risk**: Open-source library with 5-year LTS support; premium support available from OpenSSL Corporation beyond standard timelines
+- **Deployment & Migration Complexity**: Incompatible or potentially significant changes listed in CHANGES.md; OpenSSL 3.0 users should migrate to 3.5 before support ends; new configuration option no-tls-deprecated-ec disables TLS groups deprecated in RFC8422
+- **Financial & Business Impact**: Premium support options available from OpenSSL Corporation for organisations needing support beyond standard timelines (no figures stated)
+- **Organizational Readiness**: None detected
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Not Applicable
-- **Attack Classification**: None detected
+- **Attack Classification**: Unknown
 - **Exploitation Timeline Window**: None detected
 - **Financial Impact Quantification**: None detected
 - **Countermeasure Effectiveness**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 - **Source Document**: IT-001.html (34,496 bytes, 2,607 extracted chars)
-- **Extraction Timestamp**: 2026-09-24T20:44:11
-- **Generation Model**: automated extraction, human-reviewed
+- **Extraction Timestamp**: 2026-11-18T20:24:24
+- **Evidence SHA-256**: 09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91
+- **Generation Model**: automated extraction
 - **Evidence SHA256**: 09bfd7b81332cb83
-- **Reader**: unified/4 full
+- **Reader**: unified/5 full
 - **Window Chars**: 2607
 
 ---
@@ -9652,19 +9652,19 @@ enrichment_method: automated extraction
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: active
-- **Main Topic**: NIST has released the first three finalized post-quantum encryption standards (FIPS 203, 204, and 205) for general encryption and digital signatures.
-- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA
-- **Quantum Threats Addressed**: Quantum computer attacks on current encryption
-- **Migration Timeline Info**: NIST encourages immediate transition; full integration will take time; backup standards expected by end of 2024
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, U.S. Department of Commerce
-- **Leaders Contributions Mentioned**: Don Graves (Deputy Secretary of Commerce); Laurie E. Locascio (Under Secretary of Commerce for Standards and Technology and NIST Director); Dustin Moody (NIST mathematician, heads PQC standardization project)
-- **PQC Products Mentioned**: pqcrypto
-- **Protocols Covered**: HTTPS
-- **Infrastructure Layers**: Email
+- **Main Topic**: NIST announces the release of its first three finalized post-quantum encryption standards (FIPS 203, 204, 205) and encourages immediate transition.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; FALCON
+- **Quantum Threats Addressed**: A sufficiently capable quantum computer could break current encryption within a decade, threatening security and privacy of individuals, organizations and nations.
+- **Migration Timeline Info**: Milestones: 2015: NIST initiated selection and standardization; 2022: four algorithms selected; 2023: draft standards released; August 13, 2024: first three standards finalized; late 2024: draft FIPS 206 (FN-DSA) planned; end of 2024: selection of one or two backup encryption algorithms; system administrators encouraged to begin transitioning immediately
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST, U.S. Department of Commerce
+- **Leaders Contributions Mentioned**: Dustin Moody (NIST mathematician, heads the PQC standardization project); Laurie E. Locascio (Under Secretary of Commerce for Standards and Technology and NIST Director); Don Graves (Deputy Secretary of Commerce)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
 - **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205; FIPS 206 (draft)
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: NIST has finalized three primary PQC standards (ML-KEM, ML-DSA, SLH-DSA) ready for immediate use; System administrators are encouraged to begin transitioning to these standards as soon as possible; Full integration of PQC standards will take time, so early adoption is critical; NIST is continuing to evaluate backup algorithms for general encryption and digital signatures
+- **Key Takeaways**: System administrators should begin integrating the new standards immediately because full integration will take time; FIPS 203 (ML-KEM) is the primary standard for general encryption and FIPS 204 (ML-DSA) the primary standard for digital signatures; FIPS 205 (SLH-DSA) is a backup signature method based on a different math approach in case ML-DSA proves vulnerable; There is no need to wait for future standards as any later PQC standards will serve as backups
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: No
@@ -9677,34 +9677,34 @@ enrichment_method: automated extraction
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Operations; CISO
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: FIPS 203 has comparatively small encryption keys that two parties can exchange easily, as well as speed of operation (no concrete values given)
+- **Target Audience**: CISO, Security Architect, Policy Maker, Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Migrate; Timeline; Threats
+- **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Threats
 - **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: identify where vulnerable algorithms are used
-- **Testing & Validation Methods**: Cryptographic Module Validation Program
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Full integration will take time
+- **Deployment & Migration Complexity**: Full integration will take time, so system administrators are encouraged to start integrating the standards immediately
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Organizations should begin applying these standards now to migrate their systems
+- **Organizational Readiness**: None detected
 - **Math Family**: Lattice; Hash-based
 - **PQC Round**: Standardised
 - **Attack Classification**: Quantum Factorization (Shor's)
-- **Exploitation Timeline Window**: Earliest exploitation: within a decade
+- **Exploitation Timeline Window**: Earliest exploitation: within a decade (some experts predict a device capable of breaking current encryption could appear within a decade); Recommended migration: begin immediately
 - **Financial Impact Quantification**: None detected
-- **Countermeasure Effectiveness**: Full Mitigation — NIST has released finalized standards designed to withstand cyberattacks from a quantum computer
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: IT-003.html (101,434 bytes, 9,068 extracted chars)
-- **Extraction Timestamp**: 2026-09-24T20:44:11
-- **Generation Model**: automated extraction, human-reviewed
+- **Countermeasure Effectiveness**: Full Mitigation — the standardized algorithms are based on math problems that would stymie both conventional and quantum computers
+- **Source Document**: IT-003.html (101,434 bytes, 9,320 extracted chars)
+- **Extraction Timestamp**: 2026-11-18T20:24:25
+- **Evidence SHA-256**: b98b60db14db876eb3108baa089e7987ea9e1df404322e5f82711ffa70d71f39
+- **Generation Model**: automated extraction
 - **Evidence SHA256**: b98b60db14db876e
-- **Reader**: unified/4 full
-- **Window Chars**: 9068
+- **Reader**: unified/5 full
+- **Window Chars**: 9320
 
 ---
 
@@ -9712,60 +9712,63 @@ enrichment_method: automated extraction
 
 - **Reference ID**: IT-004
 - **Title**: IT Industry / Software
-- **Authors**: SLSA Supply Chain Security Framework (OpenSSF)
+- **Authors**: Sigstore & Post-Quantum Cryptography (2025)
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
-- **Document Status**: active
-- **Main Topic**: SLSA v1.0 Build track levels (L0-L3) define supply chain security guarantees for software provenance, with a note on quantum vulnerability in Sigstore's Fulcio CA and Rekor log keys.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Quantum-vulnerable surface in long-term signing keys
-- **Migration Timeline Info**: Years mentioned: 2026; Keywords: retire
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: Sigstore; Cosign; Fulcio; Rekor
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI; HSM; Build platform
-- **Standardization Bodies**: The Linux Foundation
-- **Compliance Frameworks Referenced**: SLSA v1.0
-- **Classical Algorithms Referenced**: ECDSA
-- **Key Takeaways**: SLSA L3 mandates isolated build environments and platform-generated provenance; Sigstore/Cosign uses keyless signing with ephemeral ECDSA keys bound to OIDC tokens; The persistent quantum-vulnerable surface is in the long-term Fulcio CA root and Rekor transparency log signing keys; Individual artifact signatures are not the primary quantum risk in this model; HSM-backed keys are not required for SLSA L3 compliance
-- **Security Levels & Parameters**: SLSA Build L0; SLSA Build L1; SLSA Build L2; SLSA Build L3
-- **Hybrid & Transition Approaches**: None detected
+- **Document Status**: draft
+- **Main Topic**: Sigstore's planned approach to adopting post-quantum cryptographic algorithms (PQCA), enabling client experimentation with ML-DSA keys now while waiting for vetted PQCA in Go before adopting it in the public Sigstore services.
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; FALCON; LMS; XMSS
+- **Quantum Threats Addressed**: Adversaries collecting encrypted content today to decrypt in the future (harvest-now-decrypt-later, not applicable to PQCA digital signatures)
+- **Migration Timeline Info**: Milestones: Aug 2025: planned Go 1.25 release, earliest to support SLH-DSA; Feb 2026: planned Go 1.26 release, earliest to support ML-DSA; 1 January 2027: CNSA 2.0 algorithms required in all new products and services (CNSSP 15); 2030: existing algorithms deprecated (NIST IR 8547 draft); 2035: existing algorithms disallowed (IR 8547 draft); 31 December 2031: CNSA 2.0 algorithms mandated for all protocol use
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: NIST, NSA, Sigstore, Trail of Bits
+- **Leaders Contributions Mentioned**: Zach Steindler (GitHub) authored the post; Trail of Bits is working on cryptographic agility across Sigstore services
+- **PQC Products Mentioned**: sigstore-go; Fulcio; Rekor; Sigstore; Go crypto package; TUF
+- **Protocols Covered**: TUF; Sigstore bundles
+- **Infrastructure Layers**: PKI; Key Management (KMS); Timestamp authority; Transparency log; Certificate authority; Cloud KMS
+- **Standardization Bodies**: NIST; NSA
+- **Compliance Frameworks Referenced**: CNSA 2.0; CNSSP 15; FIPS 204; FIPS 205; NIST SP 800-208; NIST IR 8547; NIST IR 8528
+- **Classical Algorithms Referenced**: RSA; elliptic curves; HMAC
+- **Key Takeaways**: Sigstore wants to let clients sign with PQCA keys as soon as possible; ML-DSA was chosen over SLH-DSA for its smaller signature size; Public good Sigstore services will wait for reliable, vetted PQCA in Go's crypto package; Private Sigstore instances can experiment end-to-end once cryptographic agility work completes; Open questions remain on trusted root format, hybrid signature bundles, and signature stripping attacks
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Cryptographic agility across Sigstore services; services returning both traditional and PQCA signed content; storing traditional and PQCA signatures in a single bundle or two bundles; trusted root accommodating both traditional and PQCA verification material
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: Pull request adds ML-DSA algorithm to the protocol buffer spec, letting clients use ML-DSA ephemeral keys in Sigstore bundles (paraphrase — not found verbatim in the document)
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer; Compliance Officer
-- **Implementation Prerequisites**: Hosted build platform; Dedicated infrastructure; Digital signature validation; Isolated build environments
-- **Relevant PQC Today Features**: Supply Chain & Vendor Risk; code-signing; pki-workshop; pqc-risk-management
-- **Implementation Attack Surface**: Compromised credentials; Insider threats; Tampering during the build
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: RSA public keys and signatures 100s of bytes; elliptic curve keys and signatures 10s of bytes; ML-DSA keys and signatures in the kilobyte range; SLH-DSA keys 10s of bytes with signatures in the 10 kilobyte range
+- **Target Audience**: Developer; Security Architect; Researcher; Operations
+- **Implementation Prerequisites**: Go 1.25 or later for SLH-DSA; Go 1.26 or later for ML-DSA; cryptographic agility in Sigstore services; client-provided PQCA implementation for sigstore-go Keypair interface
+- **Relevant PQC Today Features**: Algorithms; Timeline; Compliance; crypto-agility; code-signing
+- **Implementation Attack Surface**: Signature stripping attacks when services return both traditional and PQCA signatures
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Verification of provenance; Downstream verification
+- **Testing & Validation Methods**: Experimentation with ML-DSA ephemeral keys in Sigstore bundles; private Sigstore instances testing end-to-end PQCA
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Supply chain threats; Tampering after the build; Tampering during the build; Compromised package upload credentials
-- **Deployment & Migration Complexity**: Significant changes to existing build platforms required for L3; Parallel hardening work allowed
+- **Supply Chain & Vendor Risk**: Dependence on Go ecosystem providing reliable, vetted PQCA; technical debt risk from adopting algorithms too early; cloud providers including these algorithms in KMS offerings
+- **Deployment & Migration Complexity**: Open questions on changes to verification material (TUF) and trusted root format; separate PQCA service endpoints versus dual signed content; single versus separate bundles; user policy for accepted content; offboarding from traditional algorithms
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Governance prerequisites; Change management scope
-- **Math Family**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
 - **PQC Round**: Not Applicable
-- **Attack Classification**: None detected
+- **Attack Classification**: Harvest Now Decrypt Later (HNDL)
 - **Exploitation Timeline Window**: None detected
 - **Financial Impact Quantification**: None detected
-- **Countermeasure Effectiveness**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: IT-004.html (25,607 bytes, 6,709 extracted chars)
-- **Extraction Timestamp**: 2026-07-17T10:45:11
-- **Generation Model**: automated extraction, human-reviewed
+- **Countermeasure Effectiveness**: Partial Mitigation — PQCA digital signatures are not exposed to harvest-now-decrypt-later, but a full transition plan for Sigstore is still being worked out
+- **Source Document**: IT-004-doc.html (12,129 bytes, 6,999 extracted chars)
+- **Extraction Timestamp**: 2026-11-18T20:24:25
+- **Evidence SHA-256**: ec64c97f9f88b116cc28e235348557d1e9a3bd6c5bb50a3e8e467b550ee88fdc
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: ec64c97f9f88b116
+- **Reader**: unified/5 full
+- **Window Chars**: 6999
 
 ---
 
@@ -10127,63 +10130,63 @@ enrichment_method: automated extraction
 
 - **Reference ID**: LEG-001
 - **Title**: Legal / Notary / eSignature
-- **Authors**: eIDAS Regulation EU 910/2014 + ETSI TS 119 312
+- **Authors**: ETSI TS 119 312 V2.1.1 - Electronic Signatures and Trust Infrastructures (ESI); Cryptographic Suites
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: active
-- **Main Topic**: This document specifies the cryptographic suites, hash functions, and signature algorithms to be used for the creation and validation of digital signatures and electronic time stamps to ensure interoperability and security.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Quantum signature forgery
-- **Migration Timeline Info**: Years mentioned: 2024
-- **Applicable Regions / Bodies**: Regions: France; Germany; Bodies: ETSI, SOG-IS, ANSSI, BSI
+- **Main Topic**: ETSI technical specification listing recommended and legacy cryptographic suites (hash functions, signature algorithms, hybrid PQC schemes, key sizes, OIDs/URIs) for AdES digital signatures, time-stamps, seals and related trust-service certificates, built on the ECCG Agreed Cryptographic Mechanisms.
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; LMS; XMSS
+- **Quantum Threats Addressed**: Attacks leveraging quantum computers; Shor's algorithm; Cryptographically Relevant Quantum Computer (CRQC); "harvest now, decrypt later"; quantum collision-finding algorithms
+- **Migration Timeline Info**: Milestones: RSA keys 1900–3000 bits not to be used for new certificates after 2026-12-31, with such certificates valid no later than 2028-12-31; SHA-224 legacy until 2028; legacy (L) mechanisms default phase-out 31.12.2034; PQC migration phases and deadlines deferred to a separate post-quantum migration document under development
+- **Applicable Regions / Bodies**: Regions: European Union (Regulation (EU) No 910/2014 as amended by Regulation (EU) 2024/1183; Member States); France (ANSSI curves FRP256v1); Bodies: ECCG, ETSI ESI, NIS Cooperation Group, ENISA, ANSSI, NIST, NSA
 - **Leaders Contributions Mentioned**: None detected
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: X.509, CMS, XML Signature, Time-Stamp Protocol
-- **Infrastructure Layers**: PKI, Trust Services
-- **Standardization Bodies**: ETSI, SOG-IS, NIST, IETF, ISO, W3C, ANSSI, BSI
-- **Compliance Frameworks Referenced**: SOG-IS Crypto Evaluation Scheme, Common Criteria, Regulation (EU) No 910/2014
-- **Classical Algorithms Referenced**: RSA, DSA, EC-DSA, EC-SDSA, SHA-224, SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512
-- **Key Takeaways**: Only SOG-IS recommended mechanisms should be used for new signatures to ensure high security; Legacy mechanisms may be used for interoperability but have defined validity periods; RSA keys must be at least 1900 bits for 3-year resistance and 3000 bits for 6-year resistance; EC-DSA and EC-SDSA-opt are recommended with specific elliptic curves like P-256, P-384, and P-521; Hash functions must remain suitable for the duration of signature verification or certificate validity.
-- **Security Levels & Parameters**: 125 bits of security for recommended mechanisms; 100 bits of security for legacy mechanisms; RSA key size ≥ 1900 bits (3 years), ≥ 3000 bits (6 years); DSA pLen 2048 (3 years), 3072 (6 years); EC-DSA pLen/qLen 256, 384, or 512
-- **Hybrid & Transition Approaches**: None detected
+- **Protocols Covered**: CAdES; PAdES; XAdES; CMS; X.509; OCSP; CRL; RFC 3161 time-stamp protocol; XML DigSig
+- **Infrastructure Layers**: PKI; Certification Authorities; Time-Stamping Units; OCSP responders; CRL issuers; HSM; trust anchors
+- **Standardization Bodies**: ETSI; ECCG; IETF; NIST; ISO/IEC; W3C; ANSSI; NSA; NIS Cooperation Group; ENISA
+- **Compliance Frameworks Referenced**: ECCG Agreed Cryptographic Mechanisms v2.0; Regulation (EU) No 910/2014 (eIDAS); NSA CNSA 2.0; FIPS 180-4; FIPS 186-5; FIPS 202; FIPS 204; FIPS 205
+- **Classical Algorithms Referenced**: RSA (PKCS#1 v1.5 and PSS); DSA; ECDSA; EdDSA (Ed25519, Ed448); EC-SDSA-opt; SHA-224; SHA-256; SHA-384; SHA-512; SHA-512/256; SHA3-256; SHA3-384; SHA3-512; SHAKE256; SHA-1; RIPEMD160; WHIRLPOOL; brainpool and NIST P-curves; FRP256v1
+- **Key Takeaways**: Use only ECCG recommended mechanisms for new signatures and seals, with legacy mechanisms only for interoperability; RSA keys below 3000 bits must not be used for new certificates after 2026-12-31; Where quantum protection is required, RSA, DSA, ECDSA and EdDSA must be used in a hybrid scheme or replaced by a quantum-safe algorithm; Only pure ML-DSA is permitted (HashML-DSA excluded) and LMS/XMSS require strictly enforced state management such as in an HSM; Use SHA-384/SHA-512/SHA3 for hybrid signatures and long-term archiving (>20 years)
+- **Security Levels & Parameters**: ML-DSA-44 (≈128 bits); ML-DSA-65 (≥192 bits); ML-DSA-87 (≥256 bits); SLH-DSA 192-bit and 256-bit parameter sets (sha2/shake, s/f variants); RSA ≥3000 bits recommended; Ed25519 ≈128 bits; Ed448 ≈224 bits; recommended mechanisms ≥125 bits of security; legacy mechanisms ≥100 bits
+- **Hybrid & Transition Approaches**: Algorithm-level hybrids (two independent signatures over the same data, both must verify); protocol-level hybrids (CMS signed attributes, XAdES multi-signatures); recommended pairs e.g. RSA-PSS (≥3000 bit)+ML-DSA-65, ECDSA P-256/P-384+ML-DSA-65, EdDSA Ed25519+ML-DSA-65, ECDSA or EdDSA+SLH-DSA; hybrid CA certificates via alternative public key extensions or composite keys
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: X.509
-- **PQC Heatmap Protocols Evidence**: X.509: "Signer Certificates (IETF RFC 5280 [i.9] and IETF RFC 3279 [7])"
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "Only pure ML-DSA as specified in NIST FIPS 204 [26] shall be used." (§6.2.2.5)
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "implementations shall combine a classical signature and a post-quantum signature" (§6.4.1)
+- **PQC Heatmap Protocols Covered**: X.509; S/MIME
+- **PQC Heatmap Protocols Evidence**: X.509: Annex A tables for signer, CA, CRL and OCSP certificates citing RFC 5280/3279; S/MIME: CAdES/CMS signature profiles in Annex A.2 (CMS-based) (paraphrase — not found verbatim in the document)
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect, Compliance Officer, Developer
-- **Implementation Prerequisites**: SOG-IS Crypto Evaluation Scheme compliance; Use of OIDs or URIs for algorithm identification
-- **Relevant PQC Today Features**: Compliance; Algorithms; Migrate
-- **Implementation Attack Surface**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer; Trust service providers; Policy Maker
+- **Implementation Prerequisites**: Secure state management for LMS/XMSS (e.g. certified HSM); ECCG Agreed Cryptographic Mechanisms v2.0 alignment; algorithm OIDs/URIs per clause 10; External Mu support for HSM-based ML-DSA signing of large messages
+- **Relevant PQC Today Features**: Algorithms; Compliance; hybrid-crypto; email-signing; pki-workshop
+- **Implementation Attack Surface**: Stateful hash-based signature key reuse from poor state management (complete key compromise); fault attacks on EdDSA; side-channel attacks exploiting biased random values in DSA-type signing
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
+- **Deployment & Migration Complexity**: Legacy mechanisms may remain for interoperability with existing infrastructures; RSA certificates issued by 2026-12-31 limited to validity ending 2028-12-31; signature maintenance (archive time-stamps) needed for long-term validity; encoding and interoperability of hybrid schemes deferred to profile standards
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: None detected
+- **Math Family**: Lattice; Hash-based
 - **PQC Round**: Not Applicable
-- **Attack Classification**: None detected
-- **Exploitation Timeline Window**: None detected
+- **Attack Classification**: Quantum Factorization (Shor's); Harvest Now Forge Later (HNFL); Implementation Attack
+- **Exploitation Timeline Window**: Recommended migration: RSA below 3000 bits phased out by end of 2026; Data retention risk: long-term validity beyond 2030 and archiving over 20 years require PQC protection
 - **Financial Impact Quantification**: None detected
-- **Countermeasure Effectiveness**: None detected
-- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
-- **Source Document**: LEG-001.pdf (170,568 bytes, 60,000 extracted chars)
-- **Extraction Timestamp**: 2026-09-24T20:44:12
-- **Generation Model**: automated extraction, human-reviewed
-- **Evidence SHA256**: df74e5d5f79f21fb
-- **Reader**: unified/4 head
-- **Window Chars**: 60000
+- **Countermeasure Effectiveness**: Requires Hybrid — classical RSA, DSA, ECDSA and EdDSA must be used in a hybrid scheme or replaced by a quantum-safe algorithm where quantum protection is required
+- **Source Document**: LEG-001.pdf (303,240 bytes, 110,224 extracted chars)
+- **Extraction Timestamp**: 2026-11-18T20:24:26
+- **Evidence SHA-256**: 7d8428f6433221fae87525507ec204f39ef31a1d5547338444708a801ed18f72
+- **Generation Model**: automated extraction
+- **Evidence SHA256**: 7d8428f6433221fa
+- **Reader**: unified/5 full
+- **Window Chars**: 110224
 
 ---
 
