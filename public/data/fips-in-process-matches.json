@@ -65,15 +65,6 @@
       "firstSeen": "2026-09-26"
     },
     {
-      "product_id": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro",
-      "list": "MIP",
-      "module": "OpenSSL FIPS Provider",
-      "vendor": "The OpenSSL Corporation",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-11-10",
-      "firstSeen": "2026-09-26"
-    },
-    {
       "product_id": "amd-versal-adaptive-soc",
       "list": "IUT",
       "module": "AMD Versal ACAP",
@@ -159,8 +150,17 @@
       "list": "MIP",
       "module": "Security Builder FIPS Module",
       "vendor": "Blackberry Limited",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-11-09",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-11-13",
+      "firstSeen": "2026-09-26"
+    },
+    {
+      "product_id": "boringcrypto",
+      "list": "MIP",
+      "module": "BoringCrypto",
+      "vendor": "Google, LLC",
+      "nistStage": "Pending Review",
+      "date": "2026-11-12",
       "firstSeen": "2026-09-26"
     },
     {
@@ -189,15 +189,6 @@
       "nistStage": "Comment Resolution - Lab",
       "date": "2026-06-05",
       "firstSeen": "2026-09-26"
-    },
-    {
-      "product_id": "boringcrypto",
-      "list": "IUT",
-      "module": "BoringCrypto",
-      "vendor": "Google, LLC",
-      "nistStage": "Implementation Under Test",
-      "date": "2026-10-14",
-      "firstSeen": "2026-10-15"
     },
     {
       "product_id": "bouncy-castle-c-net",
@@ -240,8 +231,8 @@
       "list": "MIP",
       "module": "Rocky Linux 9 NSS Cryptographic Module",
       "vendor": "Ctrl IQ, Inc.",
-      "nistStage": "Comment Resolution - Lab",
-      "date": "2026-11-10",
+      "nistStage": "Comment Resolution - CMVP",
+      "date": "2026-11-12",
       "firstSeen": "2026-09-26"
     },
     {
@@ -431,24 +422,6 @@
       "vendor": "Apple Inc.",
       "nistStage": "Comment Resolution - Lab",
       "date": "2026-10-26",
-      "firstSeen": "2026-09-26"
-    },
-    {
-      "product_id": "openssl",
-      "list": "MIP",
-      "module": "OpenSSL FIPS Provider",
-      "vendor": "The OpenSSL Corporation",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-11-10",
-      "firstSeen": "2026-09-26"
-    },
-    {
-      "product_id": "pqcryptolib-core",
-      "list": "MIP",
-      "module": "PQCryptoLib-Core",
-      "vendor": "PQShield Ltd.",
-      "nistStage": "Comment Resolution - CMVP",
-      "date": "2026-10-05",
       "firstSeen": "2026-09-26"
     },
     {
