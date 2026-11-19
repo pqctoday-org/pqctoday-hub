@@ -926,10 +926,18 @@ export const useModuleStore = create<ModuleState>()(
           state.timestamp = Date.now()
         }
 
-        // Version 17 → Version 18: IoT/OT split (2026-10-01) adds two
-        // MODULE_ID_RENAMES entries (iot-ot-pqc → iot-pqc, energy-utilities-pqc
-        // → ot-pqc). No data changes here; the bump makes persist run migrate.
+        // Version 17 → Version 18: IoT/OT split (2026-10-01) moved iot-ot-pqc →
+        // iot-pqc (still in MODULE_ID_RENAMES) and the historical
+        // energy-utilities-pqc (LM-042) → ot-pqc (LM-075). Because
+        // energy-utilities-pqc returned as a live module (LM-082, 2026-11-18),
+        // that historical carry-over runs only for persisted states with
+        // version <= 17 so v18+ learners on LM-082 keep their own progress.
         if (version <= 17) {
+          if (state.modules) {
+            state.modules = applyModuleRenames(state.modules, {
+              'energy-utilities-pqc': 'ot-pqc',
+            })
+          }
           state.version = '18.0.0'
           state.timestamp = Date.now()
         }

@@ -6,6 +6,11 @@ import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, EO_14412, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
+import {
+  CNSA_ACQUISITION_LABEL,
+  CNSA_MANDATE_LABEL,
+  CNSA_PHASE_OUT_LABEL,
+} from '../PQCRiskManagement/data/cnsaLabels'
 
 export const content: ModuleContent = {
   moduleId: 'cert-quantum-impact',
@@ -48,17 +53,17 @@ export const content: ModuleContent = {
       source: 'NIST CMVP',
     },
     {
-      label: 'CNSA 2.0: new NSS acquisitions require CNSA 2.0 support',
+      label: CNSA_ACQUISITION_LABEL,
       year: CNSA_2_0.networkingRequired,
       source: 'CNSA 2.0 FAQ v2.2',
     },
     {
-      label: 'CNSA 2.0: NSS equipment without CNSA 2.0 support phased out',
+      label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
       source: 'CNSA 2.0 FAQ v2.2',
     },
     {
-      label: 'CNSA 2.0: NSS algorithms mandated unless otherwise noted',
+      label: CNSA_MANDATE_LABEL,
       year: CNSA_2_0.networkingExclusive,
       source: 'CNSA 2.0 FAQ v2.2',
     },
@@ -88,7 +93,7 @@ export const content: ModuleContent = {
     overview:
       'The Certification Engineer Quantum Impact module equips CSTL lab testers, cryptographic module vendor engineers, and scheme reviewers with the decision framework needed to plan, scope, and verify post-quantum product certifications. It covers six validation-engineering impacts (FIPS 140-2 Historical transition and CMVP queue pressure, ACVP seed-driven AFT keyGen and CAST/PCT under IG 10.3.A, Entropy Source Validation under SP 800-90B/90C, EUCC and NIAP Policy #33 cut-offs, PCI PTS HSM v5.0 vs. PCI DSS v4.0.1 boundaries, and avoiding ACVP-vs.-CMVP claim conflation), a nine-criterion certification evidence-scope checklist, and a phased action plan.',
     keyConcepts:
-      'Algorithm validation (ACVP/CAVP) is not module validation (CMVP) — an ACVP certificate proves only that an algorithm implementation passed automated test vectors on a specific OE, not that the surrounding cryptographic module satisfies FIPS 140-3 physical, firmware, SSP, or self-test requirements. Post-quantum schemes add seed-driven AFT keyGen vectors, pre-operational CASTs and conditional PCTs (IG 10.3.A), and mandatory ESV entropy certificates under SP 800-90B/90C. Multi-scheme products must map separate evidence boundaries across FIPS 140-3, EUCC (CIR (EU) 2024/482 and EUCC ACM v2), NIAP Policy #33, and PCI PTS HSM v5.0.',
+      'Algorithm validation (ACVP/CAVP) is not module validation (CMVP) — an ACVP validation record proves only that an algorithm implementation passed automated test vectors on a specific OE, not that the surrounding cryptographic module satisfies FIPS 140-3 physical, firmware, SSP, or self-test requirements. Post-quantum schemes add seed-driven AFT keyGen vectors, pre-operational CASTs and conditional PCTs (IG 10.3.A), and mandatory ESV entropy certificates under SP 800-90B/90C. Multi-scheme products must map separate evidence boundaries across FIPS 140-3, EUCC (CIR (EU) 2024/482 and EUCC ACM v2), NIAP Policy #33, and PCI PTS HSM v5.0.',
     workshopSummary:
       'The workshop has 4 interactive steps: review six certification-engineering impact drivers; identify priority learning gaps across CMVP, ACVP, ESV, EUCC, and PCI; build a phased validation-readiness plan; and complete a nine-item Certification Evidence Scope checklist with Yes, No, or Unknown. Unanswered items are never treated as low exposure.',
     relatedStandards:

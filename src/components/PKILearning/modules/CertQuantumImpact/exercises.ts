@@ -11,11 +11,11 @@ export const CERT_QUANTUM_EXERCISES: CertExercise[] = [
   {
     title: 'Scenario: Scoped CMVP vs. ACVP Evidence Audit',
     prompt:
-      'A hardware security module vendor submits a bid claiming "FIPS 140-3 Level 3 PQC validated for ML-KEM-768 and ML-DSA-65." Their packet includes an ACVP certificate number for ML-KEM-768, a Modules in Process (MIP) entry for firmware v4.2, and an active FIPS 140-3 certificate for firmware v3.9 (classical only). Audit the claim, classify each artifact by what it actually proves, and specify what must be recorded as Unknown before procurement sign-off.',
+      'A hardware security module vendor submits a bid claiming "FIPS 140-3 Level 3 PQC validated for ML-KEM-768 and ML-DSA-65." Their packet includes a CAVP algorithm certificate number (from ACVP testing) for ML-KEM-768, a Modules in Process (MIP) entry for firmware v4.2, and an active FIPS 140-3 certificate for firmware v3.9 (classical only). Audit the claim, classify each artifact by what it actually proves, and specify what must be recorded as Unknown before procurement sign-off.',
     workshopStepIndex: 0,
     workshopStepLabel: 'Step 1: Why It Matters',
     decisionChecklist: [
-      'Separate algorithm validation from module validation: the ACVP certificate proves only that the ML-KEM-768 implementation passed automated test vectors on a specified OE — it is not a FIPS 140-3 module certificate.',
+      'Separate algorithm validation from module validation: the ACVP validation record proves only that the ML-KEM-768 implementation passed automated test vectors on a specified OE — it is not a FIPS 140-3 module certificate.',
       'Check firmware and Security Policy binding: the active FIPS 140-3 Level 3 certificate covers firmware v3.9 (classical only) and cannot be extended to v4.2; the MIP listing confirms only that v4.2 is in the CMVP queue, with no guaranteed approval date.',
       'Record Unknown for ML-DSA-65 algorithm status (no ACVP number provided), ESV entropy certificate linkage on v4.2, and IG 10.3.A CAST/PCT coverage until primary CMVP/ACVP registry records and the draft/final Security Policy are verified.',
     ],

@@ -154,7 +154,7 @@ describe('Certification engineering exercises tab', () => {
     fireEvent.click(showButtons[0])
     expect(
       screen.getByText(
-        /the ACVP certificate proves only that the ML-KEM-768 implementation passed automated test vectors/
+        /the ACVP validation record proves only that the ML-KEM-768 implementation passed automated test vectors/
       )
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Hide decision checklist/ })).toBeInTheDocument()

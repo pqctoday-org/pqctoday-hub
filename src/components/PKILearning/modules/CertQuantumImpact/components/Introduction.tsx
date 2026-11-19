@@ -60,10 +60,10 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-primary mb-1">ACVP vs. CMVP Discipline</div>
               <p className="text-xs text-muted-foreground">
-                An <InlineTooltip term="ACVP">ACVP</InlineTooltip> certificate proves algorithm
-                vector conformance on a specific operating environment; it never substitutes for an
-                active <InlineTooltip term="CMVP">CMVP</InlineTooltip> FIPS 140-3 module Security
-                Policy.
+                An <InlineTooltip term="ACVP">ACVP</InlineTooltip> validation record proves
+                algorithm vector conformance on a specific operating environment; it never
+                substitutes for an active <InlineTooltip term="CMVP">CMVP</InlineTooltip> FIPS 140-3
+                module Security Policy.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

@@ -66,11 +66,11 @@ export const CERT_GUIDE_DATA: RoleGuideData = {
       id: 'acvp-cmvp-claim-conflation',
       title: 'Avoiding ACVP-vs.-CMVP & Marketing-Claim Conflation',
       description:
-        'Vendors frequently market "FIPS 140-3 PQC validated" when they hold only an ACVP algorithm certificate, an unvalidated "FIPS-ready" build, or a Modules in Process (MIP) listing. Certification engineers and reviewers must enforce a strict evidence ladder distinguishing algorithm vectors, ESV certificates, MIP entries, and active CMVP module certificates.',
+        'Vendors frequently market "FIPS 140-3 PQC validated" when they hold only a CAVP algorithm certificate, an unvalidated "FIPS-ready" build, or a Modules in Process (MIP) listing. Certification engineers and reviewers must enforce a strict evidence ladder distinguishing ACVP validation records, ESV certificates, MIP entries, and active CMVP module certificates.',
       severity: 'critical',
       timeframe: 'Ongoing procurement & review risk',
       exampleScenario:
-        'A supplier cites an ACVP certificate number for ML-KEM-768 as proof of FIPS 140-3 module compliance in a federal RFP. Checking the CMVP Validated Modules database reveals the module certificate covers only an earlier firmware build without ML-KEM in its Security Policy.',
+        'A supplier cites a CAVP algorithm certificate number (from ACVP testing) for ML-KEM-768 as proof of FIPS 140-3 module compliance in a federal RFP. Checking the CMVP Validated Modules database reveals the module certificate covers only an earlier firmware build without ML-KEM in its Security Policy.',
     },
   ],
 
@@ -120,7 +120,7 @@ export const CERT_GUIDE_DATA: RoleGuideData = {
     {
       id: 'vendor-claim-audit',
       label:
-        'We lack a formal evidence-verification checklist separating ACVP certificates, MIP listings, and active CMVP Security Policies',
+        'We lack a formal evidence-verification checklist separating ACVP validation records, MIP listings, and active CMVP Security Policies',
       weight: 10,
     },
     {
@@ -252,7 +252,7 @@ export const CERT_GUIDE_DATA: RoleGuideData = {
         'Verify every in-scope cryptographic module against the official CMVP, EUCC, NIAP, and PCI SSC registries.',
       checklist: [
         'Flag every FIPS 140-2 certificate moved to the CMVP Historical List (21 September 2026)',
-        'Separate ACVP algorithm certificates and MIP entries from active FIPS 140-3 module certificates',
+        'Separate CAVP algorithm certificates and MIP entries from active FIPS 140-3 module certificates',
         'Record Unknown wherever a vendor cites a certificate without an exact firmware/OE match',
       ],
     },
