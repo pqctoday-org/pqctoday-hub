@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-registry',
-  contentVersion: 11,
+  contentVersion: 12,
   lm_id: 'LM-062',
   title: 'CycloneDX Cryptography Registry',
   description:
@@ -33,7 +33,7 @@ const manifest: ModuleManifest = {
   // Sim-embeddable since 2026-09-28 (user decision D1): a P2 tree step.
   embeddable: true,
   taxonomy: {
-    standards: ['CycloneDX Cryptography Registry'],
+    standards: ['CycloneDX Cryptography Registry', 'CycloneDX / ECMA-424'],
   },
   load: () => import('./index').then((m) => ({ default: m.CryptoRegistryModule })),
 }

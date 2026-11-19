@@ -258,7 +258,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
         {currentStep === WORKSHOP_STEPS.length - 1 ? (
           <Button
             variant="gradient"
-            onClick={() => markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id)}
+            onClick={() => markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id, currentStep)}
             className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
           >
             Complete Module ✓

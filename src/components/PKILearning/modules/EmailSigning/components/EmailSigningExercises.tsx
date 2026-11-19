@@ -20,6 +20,7 @@ interface Scenario {
   badge: string
   badgeColor: string
   observe: string
+  productionCheck: string
   config: WorkshopConfig
 }
 
@@ -39,6 +40,8 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
         'The RSA modulus is only one component of its encoded public key. Inspect each actual issuer, certificate signature, extensions and validity; the certificate ratio is specific to these samples. Outer Subject changes MIME size without changing signed content, while PEM line endings change textual bytes without changing DER. These samples are not a proof of email-purpose profile compliance or equal security.',
+      productionCheck:
+        'Decision & evidence: Verify your CA issues separate signing (digitalSignature) and encryption (keyEncipherment for ML-KEM per RFC 9935 §5) S/MIME profiles with id-kp-emailProtection and rfc822Name SAN, and test target mail clients against actual DER chains.',
       config: { step: 0 },
     },
     {
@@ -50,6 +53,8 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
         'The CMS SignedData structure is algorithm-agnostic by design. The signer info contains the algorithm OID and signature bytes, but the overall structure is the same for ECDSA and ML-DSA.',
+      productionCheck:
+        'Decision & evidence: Confirm whether your email gateways, DLP appliances, and archival systems can parse RFC 9882 (standalone ML-DSA) or RFC 10082 (composite ML-DSA) CMS SignedData without stripping signatures or breaking long-term archive verification.',
       config: { step: 1 },
     },
     {
@@ -61,6 +66,8 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
         "RSA directly encrypts the CEK (one step). ML-KEM requires three steps: encapsulation, key derivation (HKDF), and key wrapping (AES-WRAP). The ML-KEM shared secret does not rest on RSA or elliptic curves, which Shor's algorithm breaks. A KEM alone is not the point: RSA-KEM (RFC 9690) uses the same KEM interface but still rests on RSA.",
+      productionCheck:
+        'Decision & evidence: Confirm recipient mail clients and gateways implement RFC 9629 KEMRecipientInfo with ML-KEM (RFC 9936) rather than RSA-KEM alone, and validate end-to-end decryptability on representative recipients before enforcing PQ encryption.',
       config: { step: 2 },
     },
     {
@@ -72,6 +79,8 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
         'KEMRecipientInfo adds fields for the KEM: kem (algorithm), kemct (KEM ciphertext), kdf (key derivation function), kekLength, an optional ukm, and wrap (key wrap algorithm). It keeps an encryptedKey field, so kemct and encryptedKey are two separate ciphertexts: kemct lets the recipient recompute the key-encryption key with their private key, and encryptedKey is the CEK wrapped under that key. In the CMS structure it sits in the ori choice of RecipientInfo: oriType is the id-ori-kem object identifier (1.2.840.113549.1.9.16.13.3) and oriValue is the KEMRecipientInfo.',
+      productionCheck:
+        'Decision & evidence: Inspect captured CMS envelopes from candidate S/MIME tools to confirm id-ori-kem, kemct, kdf, and wrap OIDs match RFC 9629 / RFC 9936 and that decryption fails cleanly if kemct or encryptedKey is tampered.',
       config: { step: 2 },
     },
     {
@@ -83,7 +92,22 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
         'A sender can put both a KeyTransRecipientInfo (RSA) and a KEMRecipientInfo (ML-KEM) in one message for the same recipient, but both entries wrap the same CEK, so anyone who can break the RSA entry can read the message: the weakest permitted decryption path sets the confidentiality. That is multiple-recipient fallback, not a hybrid KEM, which combines the shared secrets of two algorithms into one key-encryption key. The smimeCapabilities attribute is a partial list of the algorithms a signer says it can handle, in order of preference.',
+      productionCheck:
+        'Decision & evidence: Document your policy for mixed-capability recipients (including when classical fallback is unacceptable for HNDL-sensitive mail) and test directory/LDAP and smimeCapabilities discovery across internal and external partners.',
       config: { step: 0 },
+    },
+    {
+      id: 'live-hsm-custody',
+      title: '6. Route CMS Operations Through a Live PKCS#11 Provider',
+      description:
+        'Initialize the in-browser PKCS#11 v3.2 software token (softhsmv3) in the Live HSM Provider step, then observe how ML-DSA signing and ML-KEM key operations are routed via provider URIs rather than raw PEM key files.',
+      badge: 'Live HSM',
+      badgeColor: 'bg-accent/20 text-accent border-accent/50',
+      observe:
+        'Provider initialization separates application CMS code from key-custody mechanics, but a software token running in the same process does not provide hardware tamper resistance or host isolation.',
+      productionCheck:
+        'Decision & evidence: For production S/MIME gateways and signing servers, verify your hardware HSM firmware and PKCS#11 provider support ML-DSA and ML-KEM mechanisms, enforce non-extractable token keys, and review the vendor FIPS 140-3 Security Policy.',
+      config: { step: 3 },
     },
   ]
 
@@ -117,8 +141,12 @@ export const EmailSigningExercises: React.FC<EmailSigningExercisesProps> = ({
                   </span>
                 </div>
                 <p className="text-sm text-foreground/80 mb-2">{scenario.description}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mb-1">
                   <strong>What to observe:</strong> {scenario.observe}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  <strong>{scenario.productionCheck.split(':')[0]}:</strong>
+                  {scenario.productionCheck.slice(scenario.productionCheck.indexOf(':') + 1)}
                 </p>
               </div>
               <Button

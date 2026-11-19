@@ -31,7 +31,7 @@ PQC testing introduces challenges absent from classical cryptography assessments
 **Passive discovery** inspects network traffic on SPAN ports or network taps without injecting packets. Tools observe:
 
 - TLS ClientHello cipher suite extensions (hybrid KEM identifiers)
-- Server certificate algorithm (RSA, ECDSA, or ML-DSA), only where the certificate crosses the wire in the clear (TLS 1.2 and earlier, SSH host keys); TLS 1.3 encrypts the Certificate message (RFC 8446), so a passive tap without endpoint secrets or endpoint telemetry cannot see the chain
+- Server certificate algorithm (RSA, ECDSA, or ML-DSA), only where the certificate crosses the wire in the clear (TLS 1.2 and earlier, SSH host keys); TLS 1.3 encrypts the Certificate message (RFC 9846, obsoleting RFC 8446), so a passive tap without endpoint secrets or endpoint telemetry cannot see the chain
 - SSH key exchange algorithm negotiation
 - IKEv2 Key Exchange payload algorithm identifiers
 
@@ -47,7 +47,7 @@ Key limitation: passive tools can only detect algorithms in _current_ flows. If 
 
 ## PQC Performance Benchmarking Methodology
 
-Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN link with 50ms RTT, the TCP handshake costs one round trip (50ms) and the TLS 1.3 handshake one more (RFC 9293 section 3.5; RFC 8446 section 2) before application data flows. ML-KEM key generation adds ~0.7ms — negligible. The real cost is message size.
+Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN link with 50ms RTT, the TCP handshake costs one round trip (50ms) and the TLS 1.3 handshake one more (RFC 9293 section 3.5; RFC 9846 section 2) before application data flows. ML-KEM key generation adds ~0.7ms — negligible. The real cost is message size.
 
 ### Illustrative benchmark model:
 

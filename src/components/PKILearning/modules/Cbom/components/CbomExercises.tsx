@@ -22,13 +22,13 @@ const EXERCISES: { prompt: string; step: number; cta: string }[] = [
   },
   {
     prompt:
-      'Run a quantum-safe policy over a mixed inventory. Explain why the legacy appliance returns "unknown" rather than "pass".',
+      'Run the sample name-rule check over a mixed inventory. Explain why the legacy appliance returns "unknown" rather than "rule-accepted" — and what a production OPA/Rego policy must verify beyond algorithm names.',
     step: 2,
     cta: 'Run the policy check',
   },
   {
     prompt:
-      'The same ECDSA key appears in an HSM, a certificate, source code and a network scan under four different ids. Which identifier collapses them to one logical key?',
+      'The same ECDSA key appears in an HSM, a certificate, source code and a network scan under four different assigned ids. What shared content-derived fingerprint and normalization metadata are required to correlate them to one logical key?',
     step: 3,
     cta: 'Correlate the key',
   },

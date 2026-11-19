@@ -28,7 +28,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Key Management',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
-      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Under a CRQC threat, harvested presentations could be used to forge proofs. ML-DSA-65 (FIPS 204) is the parameter set this module standardises on for wallet device keys: BSI TR-02102-1 recommends the hedged variant of ML-DSA with all parameter sets at NIST security categories 3 and 5.',
+      'The wallet uses ECDSA P-256 for credential binding — the same key is used to sign presentation proofs sent to relying parties. Once a CRQC exists, an attacker could recover the ECDSA P-256 private key from the public key and forge presentation proofs (an active impersonation and forgery risk rather than harvest-now-decrypt-later of encrypted data). ML-DSA-65 (FIPS 204) is the parameter set this module standardises on for wallet device keys: BSI TR-02102-1 recommends the hedged variant of ML-DSA with all parameter sets at NIST security categories 3 and 5.',
     stepIndex: 0,
   },
   {
@@ -46,7 +46,7 @@ const SCENARIOS: Scenario[] = [
     id: 'selective-disclosure-privacy',
     title: '3. Selective Disclosure at the Bank',
     description:
-      "Navigate to the Bank (Relying Party, Step 4). The bank asks for your name, your degree, and age_over_18 — note it does NOT ask for birth_date. At the disclosure step you choose what to share. First run it as offered and read the log: which PID element's digest is verified, and which one never leaves the wallet? Then run it again and untick age_over_18 — what does the bank do, and is the proof itself still valid? Finally: what's the risk if the presentation proof's signature algorithm is broken by a CRQC?",
+      "First ensure María's wallet holds both a PID (Step 2) and a University Diploma (Step 3), then navigate to the Bank (Relying Party, Step 4). The bank asks for your name, your degree, and age_over_18 — note it does NOT ask for birth_date. At the disclosure step you choose what to share. First run it as offered and read the log: which PID element's digest is verified, and which one never leaves the wallet? Then run it again and untick age_over_18 — what does the bank do, and is the proof itself still valid? Finally: what's the risk if the presentation proof's signature algorithm is broken by a CRQC?",
     badge: 'Privacy by Design',
     badgeColor: 'bg-warning/20 text-warning border-warning/50',
     observe:

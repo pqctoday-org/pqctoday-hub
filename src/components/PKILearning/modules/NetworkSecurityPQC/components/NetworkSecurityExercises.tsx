@@ -21,6 +21,7 @@ interface Scenario {
   badge: string
   badgeColor: string
   observe: string
+  productionCheck: string
   config: WorkshopConfig
 }
 
@@ -41,6 +42,8 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
         'Select Entry-Level and Hybrid with the acceleration assumption off: 5,000 × 0.72 = 3,600 connections/sec. Select High-End; its generic offload flag alone still uses software handling: 500,000 × 0.72 = 360,000. Check “Assume selected algorithms are hardware-accelerated (sample)” to apply 0.90 and obtain 450,000. Switching mode, tier or the PQC toggle clears that assumption. These are illustrative settings, not measurements or verified appliance capabilities. The certificate comparison uses the existing 1.0KB TLS 1.3 baseline and at least 5.3KB hybrid sample (the ML-DSA-65 public key plus signature alone, FIPS 204 Table 2).',
+      productionCheck:
+        'Decision & evidence: Verify per-algorithm hardware offload on your exact appliance model and firmware release notes, and benchmark new-connection rate under representative hybrid/PQC cipher policies before sizing hardware refreshes.',
       config: { step: 0 },
     },
     {
@@ -52,6 +55,8 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
         'Hybrid ECDSA+ML-DSA-65 chains are at least about 11.9KB in the simulator (an IETF C509 draft example puts a two-certificate ML-DSA-65 chain at 11,869 bytes), and larger certificates may exceed the buffer sizes or parsing limits of devices that inspect TLS chains. The lab reports sizes only and simulates no handshake time; measure inspection latency on your own device. Pass-through mode avoids inspection work but loses Layer 7 visibility.',
+      productionCheck:
+        'Decision & evidence: Test every inline TLS-intercept proxy and middlebox with representative ML-KEM ClientHellos (RFC 10024, 0x11EC) and ML-DSA chains, recording handshake success, re-signing behavior, and added latency.',
       config: { step: 1 },
     },
     {
@@ -63,6 +68,8 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badgeColor: 'bg-warning/20 text-foreground border-warning/50',
       observe:
         'In this illustrative model, enabling one high false positive risk rule, such as downgrade attack detection, at 5% base FP rate increases the adjusted rate to 7% (5% × 1.4). With no high-risk rules enabled, the same base rate remains 5%. Compare the selected rules’ modelled coverage and adjusted rate; these outputs are not measured IDS performance or a calibrated detection guarantee. Evaluate the trade-off with your own tools and environment.',
+      productionCheck:
+        'Decision & evidence: Replay recorded hybrid TLS pcaps (including RFC 10024 0x11EC key shares) against your staged IDS/IPS rule set to verify parser compatibility and measure real alert volume before enabling blocking rules.',
       config: { step: 2 },
     },
     {
@@ -74,6 +81,8 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badgeColor: 'bg-destructive/20 text-status-error border-destructive/50',
       observe:
         'Vendor support varies widely and moves fast. The Cisco Secure Firewall roadmap blog (13 April 2026) targets ML-KEM support for late 2026 and ML-DSA for the second half of 2027, Sophos SFOS 22.0 MR2 detects and controls ML-KEM key exchange, and the OPNsense 26.7.4 release notes (15 September 2026) add some hybrid post-quantum variants as additional IPsec key exchange. Use the Vendor Matrix for current per-vendor status rather than relying on fixed dates.',
+      productionCheck:
+        'Decision & evidence: Require exact firmware version numbers, supported TLS/IKEv2 PQC codepoints, and lab proof-of-concept test logs in vendor RFP responses rather than roadmap slides.',
       config: { step: 3 },
     },
     {
@@ -85,7 +94,22 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
       badgeColor: 'bg-success/20 text-status-success border-success/50',
       observe:
         'In this illustrative scoring model, all five components set to Hybrid produce 28 (Low Risk). Leaving the Identity Provider on Classical while the other four remain Hybrid produces 40 (Moderate Risk), so review the IdP dependency even though this model does not label that case High Risk. Selecting Hybrid does not establish compatibility: check matching endpoint, protocol and certificate or token profile support, define the intended fallback policy, and test it with your own tools.',
+      productionCheck:
+        'Decision & evidence: Sequence ZTNA migration starting with your Identity Provider and Policy Engine, verify end-to-end token/mTLS algorithm compatibility across gateways and clients, and document explicit fallback rules.',
       config: { step: 4 },
+    },
+    {
+      id: 'network-telemetry',
+      title: '6. Network Telemetry & TCP initcwnd Impact',
+      description:
+        'Inspect how larger PQC TLS handshake flights interact with the 10-segment TCP Initial Congestion Window (RFC 6928) in the Network Telemetry Analyzer, and compare single-flight classical handshakes against multi-flight PQC payloads.',
+      badge: 'Telemetry',
+      badgeColor: 'bg-accent/20 text-accent border-accent/50',
+      observe:
+        'Once a server handshake flight exceeds the initial congestion window (~14.6 KB at 1,460-byte MSS), the connection requires an additional round trip. These profiles are illustrative payload models, not measurements of your network.',
+      productionCheck:
+        'Decision & evidence: Capture actual TLS 1.3 handshake packet traces on high-RTT links in your staging environment to verify segment counts, middlebox fragmentation handling, and whether session resumption or certificate compression reduces added round trips.',
+      config: { step: 5 },
     },
   ]
 
@@ -118,8 +142,12 @@ export const NetworkSecurityExercises: React.FC<NetworkSecurityExercisesProps> =
                   </span>
                 </div>
                 <p className="text-sm text-foreground/80 mb-2">{scenario.description}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mb-1">
                   <strong>What to observe:</strong> {scenario.observe}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  <strong>{scenario.productionCheck.split(':')[0]}:</strong>
+                  {scenario.productionCheck.slice(scenario.productionCheck.indexOf(':') + 1)}
                 </p>
               </div>
               <Button

@@ -99,6 +99,28 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
         'This sample includes a chain from HSM key wrapping through key injection and card personalization to offline authentication. Other components, including e-commerce TLS, have no prerequisites recorded here. These assumed relationships help frame readiness questions; they do not require every preparation or pilot to wait for HSM migration, or establish a duration-based critical path. A real schedule needs scoped activity durations, constraints and validated dependencies. The module\u2019s assumed 3-5 year card cycle is an estimate, not a sourced duration for every activity.',
       config: { step: 5 },
     },
+    {
+      id: 'settlement-rail-hndl',
+      title: '7. Interbank Settlement Exposure \u2014 Compare HNDL risk by retention period',
+      description:
+        'Open the Settlement Exposure Modeller and compare interbank rails by message retention and sensitivity period rather than guessing a CRQC arrival year. Identify which rails require earliest hybrid key-establishment protection.',
+      badge: 'Settlement',
+      badgeColor: 'bg-primary/20 text-primary border-primary/50',
+      observe:
+        'Harvest-now-decrypt-later exposure is driven by how long settlement records and AML/sanctions metadata remain sensitive. Use the modeller to separate transport key-establishment risk from signing-key migration and to identify what evidence to request from rail operators and correspondent banks.',
+      config: { step: 6 },
+    },
+    {
+      id: 'sector-regulation-scope',
+      title: '8. Sector Regulation & Timelines \u2014 Separate risk duties from algorithm mandates',
+      description:
+        'Open the Sector Regulation Timeline and filter across jurisdictions (BIS, G7 CEG, Europol QSFF, EU NIS CG Roadmap v1.1, DORA). Distinguish horizontal cyber risk-management duties from dated algorithm mandates.',
+      badge: 'Regulation',
+      badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
+      observe:
+        'Financial-sector bodies publish roadmaps and operational-resilience expectations rather than CNSA 2.0-style algorithm mandates. DORA and NIS2 impose cyber risk-management and state-of-the-art cryptography duties, while the EU NIS CG Coordinated Implementation Roadmap v1.1 sets horizontal Member State transition milestones (end-2030 high-risk, 2035 overall) without naming specific algorithms.',
+      config: { step: 7 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {
@@ -112,9 +134,9 @@ export const EMVPaymentExercises: React.FC<ExercisesProps> = ({
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to explore payment network comparisons, EMV transaction
-          flows, card provisioning, tokenization, DUKPT key management, and PQC migration planning.
-          Each exercise pre-configures the Workshop &mdash; click &quot;Load &amp; Run&quot; to
-          begin.
+          flows, card provisioning, tokenization, DUKPT key management, PQC migration planning,
+          interbank settlement exposure, and sector regulation. Each exercise opens the matching
+          Workshop step &mdash; click &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 

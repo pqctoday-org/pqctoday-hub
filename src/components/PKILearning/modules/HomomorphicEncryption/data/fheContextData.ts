@@ -703,7 +703,7 @@ export const FHE_REFERENCE_GROUPS: FheReferenceGroup[] = [
         url: 'https://csrc.nist.gov/projects/pec/fhe',
       },
       {
-        text: 'NSA. CNSA 2.0 FAQ, version 2.1, December 2024.',
+        text: 'NSA. CNSA 2.0 FAQ, version 2.2, October 2026.',
         url: 'https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/1/CSI_CNSA_2.0_FAQ_.PDF',
       },
       {

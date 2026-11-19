@@ -136,15 +136,16 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           </p>
           <p className="text-xs">
             A TCP connection costs one round trip before application data can flow (RFC 9293 section
-            3.5), and a TLS 1.3 handshake costs one more (RFC 8446 section 2). On high-latency links
-            (satellite, WAN) every round trip costs more. NIST SP 1800-38C&apos;s TLS 1.3 tests, at
-            a simulated 133 ms round-trip time with an ECDSA P256 server certificate, found
-            &ldquo;essentially minimal impact on the handshake time&rdquo;: the hybrid key exchange
-            even with Kyber-1024 was &ldquo;just a few milliseconds slower&rdquo; than P256. The
-            extra round trips NIST reported came from other causes: a 3% loss probability led to
-            &ldquo;almost an extra round-trip&rsquo;s delay&rdquo;, and in the QUIC tests Dilithium
-            authentication data from the server above the initial congestion window (~14 KB) or the
-            amplification window (~3.6 KB) can add one. This changes where you need to optimize.
+            3.5), and a TLS 1.3 handshake costs one more (RFC 9846 section 2, obsoleting RFC 8446).
+            On high-latency links (satellite, WAN) every round trip costs more. NIST SP
+            1800-38C&apos;s TLS 1.3 tests, at a simulated 133 ms round-trip time with an ECDSA P256
+            server certificate, found &ldquo;essentially minimal impact on the handshake
+            time&rdquo;: the hybrid key exchange even with Kyber-1024 was &ldquo;just a few
+            milliseconds slower&rdquo; than P256. The extra round trips NIST reported came from
+            other causes: a 3% loss probability led to &ldquo;almost an extra round-trip&rsquo;s
+            delay&rdquo;, and in the QUIC tests Dilithium authentication data from the server above
+            the initial congestion window (~14 KB) or the amplification window (~3.6 KB) can add
+            one. This changes where you need to optimize.
           </p>
         </div>
 

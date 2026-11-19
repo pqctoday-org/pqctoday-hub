@@ -10,16 +10,18 @@ export const content: ModuleContent = {
   moduleId: 'ai-security-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-11',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
+    getStandard('NIST IR 8547'),
     // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
     // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". Repointed off RFC 8446
     // 2026-08-22; the library row for 8446 already carried 9846 as its
     // supersession pointer.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('RFC-10024'),
     // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
     // validated module and cited nothing for it. Found by
     // audit_module_designation_aliases.py — the literal-id check could not match the
@@ -67,6 +69,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Data Protection Analyzer — Audit AI pipeline crypto operations for quantum vulnerabilities. Data Authenticity Verifier — Evaluate supplied fictional observations, compare accuracy with recall, and distinguish provenance from content truth and fictional model-collapse scores. Model Weight Vault — Compare complete wrapping envelopes, signatures and authored operation-time assumptions. Agent Auth Designer — Design delegation chains with PQC credentials. Agentic Commerce Simulator — Recompute sequential latency totals from visible authored per-step inputs. Agent-to-Agent Protocol — Compare separate primitive properties and a declared transport rubric. Scale Encryption Planner — Calculate workload counts and distinguish them from the fixed fictional migration schedule.',
     relatedStandards:
-      'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. C2PA Technical Specification v2.4 (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 9846 (TLS 1.3, July 2026 — obsoletes RFC 8446) — transport security for AI API endpoints. NIST AI 100-1 (AI RMF 1.0) — AI risk management framework',
+      'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. NIST IR 8547 (final, October 2026) — transition timeline deprecating quantum-vulnerable public-key algorithms after 2030 and disallowing them after 2035. C2PA Technical Specification v2.4 (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 9846 (TLS 1.3, July 2026 — obsoletes RFC 8446) and RFC 10024 (August 2026) — transport security and PQ/T hybrid key agreement for AI API endpoints. NIST AI 100-1 (AI RMF 1.0) — AI risk management framework.',
   },
 }

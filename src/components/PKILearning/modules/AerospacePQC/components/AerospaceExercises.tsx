@@ -84,7 +84,7 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
       badge: 'Export',
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/30',
       observe:
-        'AUKUS export is streamlined under bilateral agreement with no individual license. NATO ally requires a DSP-5 license under ITAR Category VIII. Non-aligned nation faces case-by-case review. Germany additionally mandates BSI evaluation of any imported PQC system for Bundeswehr use.',
+        'Under this hypothetical USML Category VIII example, AUKUS transfers to Australia may qualify for the trilateral 22 CFR 126.7 license exemption only when every condition is met (eligible Authorized Users, activity within Australia/UK/US, and an item not on the Supplement No. 2 excluded technology list — it is not a blanket country waiver). Transfers to a NATO ally such as Germany require an ITAR license (e.g., DSP-5) plus national BSI evaluation for Bundeswehr use, while a non-aligned destination faces case-by-case review. Real products require their own formal jurisdiction and classification determination.',
       config: { step: 4 },
     },
     {
@@ -113,8 +113,8 @@ export const AerospaceExercises: React.FC<ExercisesProps> = ({
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to explore avionics protocol constraints, satellite link
           budgets, certification costs, fleet interoperability, export controls, and mission
-          lifecycle planning. Each exercise pre-configures the Workshop &mdash; click &quot;Load
-          &amp; Run&quot; to begin.
+          lifecycle planning. Each exercise opens the matching Workshop step &mdash; click
+          &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 

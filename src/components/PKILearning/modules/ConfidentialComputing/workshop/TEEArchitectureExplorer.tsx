@@ -467,7 +467,7 @@ export const TEEArchitectureExplorer: React.FC = () => {
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong> TEE capabilities and PQC readiness are based on publicly available
-          vendor documentation and specifications as of early 2026. Always verify vendor roadmaps
+          vendor documentation and specifications as of November 2026. Always verify vendor roadmaps
           directly for deployment decisions. PQC migration timelines are estimates.
         </p>
       </div>

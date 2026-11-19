@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'soc-implementation-pqc',
-  contentVersion: 8,
+  contentVersion: 9,
   lm_id: 'LM-057',
   title: 'SOC Implementation for PQC',
   description:
@@ -46,7 +46,7 @@ const manifest: ModuleManifest = {
   // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
   taxonomy: {
     algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
-    standards: ['RFC 9846', 'NIST SP 800-227', 'NIST IR 8547'],
+    standards: ['RFC 9846', 'RFC 10024', 'NIST SP 800-227', 'NIST IR 8547'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SocImplementationPqcModule })),

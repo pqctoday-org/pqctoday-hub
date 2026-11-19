@@ -608,12 +608,13 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
         title="Hybrid on constrained hardware"
       >
         <p>
-          A hybrid key exchange such as X25519MLKEM768 combines a classical and a PQC shared secret;
-          the result stays secret as long as <strong>either</strong> component is unbroken. In this
-          module's reading, on a device that already runs ML-KEM-768 the classical half costs
-          little: X25519 adds {F.hybridExtraBytes} bytes to each direction, and its ECC routine (at
-          most {n(F.ecdhStack)} B of stack in the benchmark) runs before or after ML-KEM rather than
-          on top of its peak. Hybrid does not double the cost; the PQC half dominates it.
+          A hybrid key exchange such as X25519MLKEM768 (standardized for TLS 1.3 in RFC 10024,
+          August 2026) combines a classical and a PQC shared secret; the result stays secret as long
+          as <strong>either</strong> component is unbroken. In this module's reading, on a device
+          that already runs ML-KEM-768 the classical half costs little: X25519 adds{' '}
+          {F.hybridExtraBytes} bytes to each direction, and its ECC routine (at most{' '}
+          {n(F.ecdhStack)} B of stack in the benchmark) runs before or after ML-KEM rather than on
+          top of its peak. Hybrid does not double the cost; the PQC half dominates it.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Callout title="Gateway-mediated (Class 0–1)">
@@ -626,8 +627,9 @@ export const IoTPQCIntroduction: React.FC<IoTPQCIntroductionProps> = ({ onNaviga
           </Callout>
           <Callout title="Native (Class 2 and up; Class 1 with stack builds)">
             <p>
-              The device runs the hybrid itself. Composite or dual signatures cost both signatures
-              on the wire, so certificate chains grow by the classical sizes too.
+              The device runs the hybrid itself. Composite (RFC 10073 for X.509/PKIX) or dual
+              signatures cost both signatures on the wire, so certificate chains grow by the
+              classical sizes too.
             </p>
           </Callout>
         </div>

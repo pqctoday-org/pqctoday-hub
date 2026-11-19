@@ -36,12 +36,12 @@ beforeEach(() => {
 })
 
 describe('Testing & Validation - TCP and TLS round trips', () => {
-  it('Learn box cites RFC 9293 and RFC 8446 instead of an unsourced 6x figure', () => {
+  it('Learn box cites RFC 9293 and RFC 9846 instead of an unsourced 6x figure', () => {
     renderModule()
     const box = screen.getByText('The TCP-to-TLS Overhead Insight').closest('div')!
     expect(box).toHaveTextContent(/A TCP connection costs one round trip/)
     expect(box).toHaveTextContent('RFC 9293 section 3.5')
-    expect(box).toHaveTextContent('RFC 8446 section 2')
+    expect(box).toHaveTextContent('RFC 9846 section 2')
     expect(box.textContent).not.toMatch(/6×|6x|Research shows/)
   })
 

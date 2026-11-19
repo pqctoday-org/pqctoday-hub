@@ -23,7 +23,7 @@ const scenarios: Scenario[] = [
     id: 'bitcoin-pipeline',
     title: '1. Bitcoin Key-to-Address Pipeline',
     description:
-      'Generate a Bitcoin private key with OpenSSL, derive the public key, and trace the full SHA-256 + RIPEMD-160 + Base58Check address derivation pipeline.',
+      'Generate a Bitcoin secp256k1 key pair inside the in-browser SoftHSMv3 token via PKCS#11, derive the public key, and trace the full SHA-256 + RIPEMD-160 + Base58Check address derivation pipeline.',
     badge: 'secp256k1',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:
@@ -73,6 +73,17 @@ const scenarios: Scenario[] = [
     observe:
       "Every signature you created relies on the elliptic curve discrete logarithm problem. A quantum computer could reverse the public key derivation to recover the private key. Bitcoin's HNFL risk is particularly severe because on-chain data is immutable — exposed public keys cannot be retroactively protected.",
     chain: 'learn-pqc',
+  },
+  {
+    id: 'custody-tier-assessment',
+    title: '6. Institutional Custody Architecture: Hot, Warm, and Cold PQC Exposure',
+    description:
+      'Open the Custody Architecture flow and inspect wallet tiers, HSM/MPC signing layers, and settlement boundaries. Decide which custody layer faces immediate transport/key-wrapping risk versus on-chain signature exposure.',
+    badge: 'Custody',
+    badgeColor: 'bg-accent/20 text-accent border-accent/50',
+    observe:
+      'Institutional custody separates operational signing tiers (hot/warm/cold) from key storage (HSM/MPC). Evaluate both on-chain signature exposure (exposed secp256k1/Ed25519 public keys) and off-chain transport or HSM key-wrapping boundaries; neither FIPS 140-3 nor MPC alone eliminates on-chain ECDLP exposure.',
+    chain: 'custody-architecture',
   },
 ]
 

@@ -245,7 +245,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               description:
                 'Model distribution via TLS 1.3 with hybrid key exchange. Prevents interception during deployment to inference endpoints.',
               classical: 'ECDH P-256 (TLS 1.3)',
-              pqc: 'ML-KEM-768 hybrid (TLS 1.3)',
+              pqc: 'X25519MLKEM768 / SecP256r1MLKEM768 hybrid (TLS 1.3, RFC 10024)',
               icon: <Shield size={16} className="text-primary" />,
             },
             {
@@ -370,7 +370,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             entire transaction histories, business strategies, and negotiation patterns. Long-lived
             agent credentials (certificates with 1-year validity) are exposed once a CRQC exists: it
             could forge the agent&apos;s identity and impersonate it. That is a forgery risk, not
-            harvest-now-decrypt-later, which concerns encrypted data (NIST IR 8547).
+            harvest-now-decrypt-later, which concerns encrypted data (NIST IR 8547, final October
+            2026 — deprecates quantum-vulnerable public-key algorithms after 2030 and disallows them
+            after 2035; EO 14412 and OMB M-26-15 set earlier civilian federal deadlines of 31
+            December 2030 for key establishment and 31 December 2031 for digital signatures).
           </p>
         </div>
 

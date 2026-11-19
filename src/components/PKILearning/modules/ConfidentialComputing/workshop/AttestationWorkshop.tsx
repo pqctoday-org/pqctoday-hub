@@ -376,7 +376,7 @@ export const AttestationWorkshop: React.FC = () => {
                 quantum vulnerable. Once a cryptographically relevant quantum computer is available,
                 an adversary can forge attestation evidence and impersonate legitimate enclaves.
                 This is a signature-forgery risk, not harvest-now-decrypt-later, which concerns
-                encrypted data (NIST IR 8547).
+                encrypted data (NIST IR 8547, final, October 2026).
               </div>
             </div>
           </div>

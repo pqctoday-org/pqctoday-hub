@@ -858,12 +858,12 @@ export const COMPLIANCE_MILESTONES: ComplianceMilestone[] = [
   },
   {
     id: 'nist-ir-8547',
-    name: 'NIST IR 8547 Transition Guidance',
+    name: 'NIST IR 8547 Transition Guidance (Final, Oct 2026)',
     authority: 'NIST',
     year: 2030,
     quarter: 'Q1',
     description:
-      'Transition guidance: NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035.',
+      'NIST IR 8547 (final, October 2026): NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035. These dates govern NIST standards and federal guidance rather than serving as a healthcare-specific statutory deadline.',
     affectedLayers: [
       'patient-portal',
       'clinical-workstations',

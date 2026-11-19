@@ -161,16 +161,21 @@ interface XMSSLogEntry {
 interface XMSSKeyGenDemoProps {
   /** When provided, reuse this HSM session (embedded mode). Own controls are suppressed. */
   hsm?: UseHSMResult
+  /** Optional parameter set ID pre-selected from a guided exercise (e.g. 'xmss-sha2-10' or 'xmssmt-sha2-60-6'). */
+  initialParamId?: string
 }
 
-export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) => {
+export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp, initialParamId }) => {
   const ownHsm = useHSM('rust')
   const hsm = hsmProp ?? ownHsm
   const isEmbedded = !!hsmProp
-  const [structure, setStructure] = useState<XMSSStructure>('single')
-  const [mtSetId, setMtSetId] = useState<string>(XMSSMT_SETS[0].id)
+  const initialMtSet = initialParamId ? XMSSMT_SETS.find((s) => s.id === initialParamId) : undefined
+  const initialSingleHeight: XMSSHeight =
+    initialParamId === 'xmss-sha2-16' ? 16 : initialParamId === 'xmss-sha2-20' ? 20 : 10
+  const [structure, setStructure] = useState<XMSSStructure>(initialMtSet ? 'multi' : 'single')
+  const [mtSetId, setMtSetId] = useState<string>(initialMtSet?.id ?? XMSSMT_SETS[0].id)
   const [xmssHash, setXmssHash] = useState<XMSSHash>('SHA-256')
-  const [xmssHeight, setXmssHeight] = useState<XMSSHeight>(10)
+  const [xmssHeight, setXmssHeight] = useState<XMSSHeight>(initialSingleHeight)
   const [showAlgoInfo, setShowAlgoInfo] = useState(false)
   const [showComparison, setShowComparison] = useState(true)
 

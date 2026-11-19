@@ -22,7 +22,7 @@ implements OpenMLS's `OpenMlsProvider` trait by routing the
 ## Signature custody
 
 Generated as token objects with `CKA_SENSITIVE=TRUE` /
-`CKA_EXTRACTABLE=FALSE`. What OpenMLS persists as the &quot;private key&quot; is
+`CKA_EXTRACTABLE=FALSE`. What OpenMLS persists as the "private key" is
 an opaque `HsmKeyHandle` blob (PQTH magic + CKA_ID); raw private-key bytes are
 not returned to OpenMLS through this interface. In this sample the token is a
 software module (softhsmv3) loaded into the same process, so the key bytes still
@@ -37,9 +37,9 @@ resistance, isolation from the host and assurance evidence separately.
 - draft-ietf-mls-combiner-02 — classical + PQ hybrid combiner
 - draft-ietf-mls-extensions-11 — MLS extensions framework (working-group draft)
 
-## Status
+## Roadmap
 
-Module marked `workInProgress`. Future work tracked as Phase 3 (HSM
+Future provider work is tracked as Phase 3 (HSM
 storage) + Phase 4 (PQ ciphersuites) + Phase 5 (WASM provider so the
 hub can drive a real OpenMLS group in-browser) in
 `pqctoday-hsm/openmls-provider/README.md`.

@@ -428,7 +428,7 @@ function PhaseExplanation({ phase, evePresent }: { phase: BB84Phase; evePresent:
       'Alice and Bob publicly announce their basis choices (not the bit values). They identify which positions used matching bases.',
     sift: 'Positions where bases matched form the sifted key — typically about half the transmitted qubits. Non-matching positions are discarded.',
     detect:
-      'A random sample of sifted key bits is compared to estimate the QBER. If QBER < 11%, the key is deemed secure. Above 11% indicates eavesdropping.',
+      'A random sample of sifted key bits is compared to estimate the QBER. In the asymptotic Shor-Preskill model, ~11% is the upper bound for one-way post-processing: staying below 11% allows proceeding to error correction and privacy amplification (without by itself proving no eavesdropper is present), while exceeding 11% aborts the exchange.',
   }
 
   return <p className="text-sm text-muted-foreground">{explanations[phase] || ''}</p>

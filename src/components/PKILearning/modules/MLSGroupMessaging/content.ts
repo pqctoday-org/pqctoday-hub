@@ -7,7 +7,7 @@ export const content: ModuleContent = {
   moduleId: 'mls-group-messaging',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('RFC 9420'),
@@ -39,7 +39,7 @@ export const content: ModuleContent = {
     keyConcepts:
       'MLS (RFC 9420) provides asynchronous group key establishment with forward secrecy and post-compromise security for groups from two to thousands, using TreeKEM: every member is a leaf of a binary tree, and a Commit that carries a path refreshes the sender\'s direct path with fresh HPKE keys, advancing a shared epoch secret that the whole group derives its next application keys from. Recovery from a compromised member is conditional: it starts only when the group processes a Commit that replaces that member\'s leaf key with a fresh one the attacker never saw. `draft-ietf-mls-pq-ciphersuites` (-07, 1 November 2026; datatracker on 8 November 2026: IESG state "Publication Requested") registers eleven ML-KEM cipher suites, hybrid and pure, the first eight with traditional signatures and the last three with ML-DSA-44, ML-DSA-65 and ML-DSA-87; `draft-ietf-mls-combiner-02` specifies a hybrid path — run a traditional and a PQ MLS session in parallel and combine them by importing a secret exported from the PQ session as a Pre-Shared Key (PSK) into the traditional session.',
     workshopSummary:
-      "TreeKEM Ratchet Tree Visualizer: watch a Commit refresh a sender's direct path and advance the group epoch secret. OpenMLS ↔ PKCS#11 Provider Architecture: see how `openmls_pqctoday_crypto` routes OpenMLS's ~15-function `OpenMlsCrypto` trait through PKCS#11 v3.2 against softhsmv3, with signature keys generated as non-extractable HSM token objects.",
+      "MLS Crypto Operations & Reinitialization Check: inspect RFC 9420 cipher-suite operations and verify cipher-suite upgrade boundaries via group reinitialization. TreeKEM Ratchet Tree Visualizer: watch a Commit refresh a sender's direct path and advance the group epoch secret. OpenMLS ↔ PKCS#11 Provider Architecture: see how `openmls_pqctoday_crypto` routes OpenMLS's ~15-function `OpenMlsCrypto` trait through PKCS#11 v3.2 against softhsmv3, with signature keys generated as non-extractable token objects (in-process software token in this sample).",
   },
 }
 
@@ -56,7 +56,6 @@ export const LEARN_CHAPTERS: LearnChapter[] = [
     body: [
       "Messaging Layer Security (RFC 9420, July 2023) is the IETF's protocol for efficient asynchronous group key establishment, giving groups from two to thousands of participants forward secrecy AND post-compromise security.",
       'RFC 9420 describes the Double Ratchet as the common solution for two parties and sender keys as the common strategy for larger groups, where post-compromise security is difficult to achieve. MLS replaces both with a tree-based key encapsulation scheme — TreeKEM — that provides forward secrecy and post-compromise security for groups from two to thousands.',
-      '',
     ],
   },
   {

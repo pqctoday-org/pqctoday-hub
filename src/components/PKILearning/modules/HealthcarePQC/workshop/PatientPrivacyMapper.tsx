@@ -104,7 +104,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ profile, selected, onToggle
           <h4 className="text-sm font-bold text-foreground leading-tight">{profile.name}</h4>
         </div>
 
-        <p className="text-xs text-muted-foreground line-clamp-2">{profile.description}</p>
+        <p className="text-xs text-muted-foreground">{profile.description}</p>
 
         <div className="flex flex-wrap gap-2">
           {/* True retention badge */}

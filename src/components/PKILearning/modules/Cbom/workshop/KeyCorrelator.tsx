@@ -142,8 +142,11 @@ export function KeyCorrelator() {
             </div>
           ))}
           <p className="text-xs text-muted-foreground">
-            Record both — the home-system id (to act on the key) and the SPKI fingerprint (to
-            correlate). Symmetric keys (no public half) are excluded — they correlate by KCV.
+            Record both — the home-system id (to act on the key) and a normalized content-derived
+            SPKI fingerprint (same scheme, hash and DER encoding) to correlate, treating a match as
+            strong evidence until key material or a signature check confirms it. Symmetric keys (no
+            public half) are excluded — a 3-byte KCV has 24-bit collision risk and is only a weak
+            check value, not a unique identifier.
           </p>
         </div>
       )}

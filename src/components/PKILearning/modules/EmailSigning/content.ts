@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'email-signing',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-15',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -31,6 +31,7 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('RFC 5754'),
     getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
+    getStandard('RFC 10082'),
     // DECLARED 2026-08-23: this module names SP 800-208 as the stateful hash-based signature standard and cited nothing for it. Found by
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-208" against a row filed as NIST SP 800-208.

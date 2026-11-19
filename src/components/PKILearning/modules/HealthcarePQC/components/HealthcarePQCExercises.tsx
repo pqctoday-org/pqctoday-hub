@@ -119,7 +119,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to explore biometric threat assessment, pharmaceutical IP
           exposure, patient privacy mapping, medical device safety, and hospital migration planning.
-          Each exercise pre-configures the Workshop &mdash; click &quot;Load &amp; Run&quot; to
+          Each exercise opens the matching Workshop step &mdash; click &quot;Load &amp; Run&quot; to
           begin.
         </p>
       </div>

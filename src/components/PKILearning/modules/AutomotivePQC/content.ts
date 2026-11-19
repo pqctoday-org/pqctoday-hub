@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'automotive-pqc',
   version: '1.1.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-11',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),

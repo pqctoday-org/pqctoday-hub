@@ -184,7 +184,7 @@ export const CRYPTO_TOOLTIPS = {
   shors: {
     title: "Shor's Algorithm",
     description:
-      'A quantum algorithm that efficiently solves the discrete logarithm problem, breaking ECDSA (secp256k1) and EdDSA (Ed25519). Requires a cryptographically relevant quantum computer (CRQC) with thousands of logical qubits.',
+      'A quantum algorithm that efficiently solves the discrete logarithm problem, breaking ECDSA (secp256k1) and EdDSA (Ed25519). Recent fault-tolerant circuit estimates put 256-bit ECDLP (such as secp256k1) at ≤1,200 logical qubits (down from earlier ~2,330-qubit estimates), though fault-tolerant overhead still requires far more physical qubits depending on error rates and runtime budgets.',
   },
   hnfl: {
     title: 'Harvest Now, Forge Later (HNFL)',

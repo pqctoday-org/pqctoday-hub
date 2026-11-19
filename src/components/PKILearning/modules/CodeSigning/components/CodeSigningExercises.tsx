@@ -82,7 +82,7 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
       badge: 'Firmware',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'LMS signatures (2,512 bytes per RFC 8554) are smaller than ML-DSA (3,309 bytes), but require a monotonic state counter that must never be reset or cloned. CNSA 2.0 lists LMS and XMSS for firmware signing in national security systems and its FAQ (version 2.2) mandates CNSA 2.0 algorithms for NSS by 31 December 2031 unless otherwise noted; the FAQ also says NSA wants LMS and XMSS used whenever possible, while ML-DSA is also approved for all signing use cases, so the state management burden is the price of that preference.',
+        "LMS signatures (2,512 bytes per RFC 8554) are smaller than ML-DSA-65 (3,309 bytes) and CNSA 2.0's ML-DSA-87 (4,627 bytes), but require a monotonic state counter that must never be reset or cloned. CNSA 2.0 lists LMS and XMSS for firmware signing in national security systems and its FAQ (version 2.2) mandates CNSA 2.0 algorithms for NSS by 31 December 2031 unless otherwise noted; the FAQ also says NSA wants LMS and XMSS used whenever possible, while ML-DSA is also approved for all signing use cases, so the state management burden is the price of that preference.",
       config: { step: 4 },
     },
   ]
@@ -98,8 +98,8 @@ export const CodeSigningExercises: React.FC<CodeSigningExercisesProps> = ({
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to understand binary signing, certificate chains, package
-          signing, and keyless Sigstore verification. Each exercise pre-configures the Workshop
-          &mdash; click &quot;Load &amp; Run&quot; to begin.
+          signing, keyless Sigstore verification, and secure boot firmware verification. Each
+          exercise pre-configures the Workshop &mdash; click &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 

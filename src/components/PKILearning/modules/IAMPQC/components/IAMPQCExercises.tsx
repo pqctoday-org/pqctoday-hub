@@ -85,6 +85,17 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
         'Session Management is a sensible first pillar to pilot: hybrid TLS key exchange protects the confidentiality of a session against later decryption, but only where the client, the server and every TLS-terminating proxy or load balancer support and negotiate a hybrid group, so test each hop first. It does not make authentication quantum-safe: certificates and signatures stay classical until PQC certificates are deployed. Device Trust is the longest lead-time item in this sample plan because it depends on hardware replacement. The years in the exercise are sample planning assumptions, not current deadlines; use your own dates.',
       config: { step: 4 },
     },
+    {
+      id: 'identity-proxy-bridge',
+      title: '6. Legacy App Bridging via Identity Proxy',
+      description:
+        'Open the Identity Proxy simulator (Step 6) and trace a PQC-signed SAML assertion from the IdP through the translation proxy to a legacy service provider. Identify which hop is protected by ML-DSA and where the quantum-safe trust boundary ends.',
+      badge: 'Identity Proxy',
+      badgeColor: 'bg-accent/20 text-accent border-accent/50',
+      observe:
+        'The Identity Proxy verifies the IdP’s ML-DSA assertion and re-signs a classical RSA assertion for the legacy app. That lets you upgrade the IdP without waiting for every legacy SP, but the proxy-to-SP leg stays quantum-vulnerable to forgery and the proxy becomes a high-value trust anchor. Isolate the proxy-to-SP leg on a tightly controlled internal network and schedule the legacy SP for native PQC upgrade or retirement.',
+      config: { step: 5 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {
@@ -98,9 +109,9 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to master IAM PQC migration: audit cryptographic exposure,
-          migrate token signing, analyze directory services, evaluate vendors, and design a zero
-          trust roadmap. Each exercise pre-configures the Workshop &mdash; click &quot;Load &amp;
-          Run&quot; to begin.
+          migrate token signing, analyze directory services, evaluate vendors, design a zero trust
+          roadmap, and bridge legacy apps with an identity proxy. Each exercise pre-configures the
+          Workshop &mdash; click &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 

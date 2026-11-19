@@ -26,8 +26,10 @@ Learn how to deploy post-quantum cryptography at the web infrastructure edge: re
 ## Referenced Standards
 
 - RFC 9846 (TLS 1.3; obsoletes RFC 8446)
+- RFC 10024 (PQ/T Hybrid Key Agreement for TLS 1.3 — X25519MLKEM768, 0x11EC)
+- RFC 10073 (Composite ML-DSA for X.509 PKI)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
 - RFC 8879 (Certificate Compression)
 - IETF MTC Draft (Merkle Tree Certificates)
-- NIST SP 800-227 (PQC Migration Guidelines)
+- NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms)

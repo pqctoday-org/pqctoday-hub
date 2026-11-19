@@ -3,7 +3,7 @@ module_id: ai-security-pqc
 title: AI Security & PQC
 track: Applications
 difficulty: advanced
-duration: 120 min
+duration: 80 min
 workshop_steps: 7
 ---
 
@@ -36,5 +36,6 @@ workshop_steps: 7
 - FIPS 203 (ML-KEM) — key encapsulation for data and model encryption
 - FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials
 - C2PA (Coalition for Content Provenance and Authenticity) — content credentials standard
-- RFC 9846 (TLS 1.3, obsoletes RFC 8446) — transport security for AI API endpoints
+- RFC 9846 (TLS 1.3, obsoletes RFC 8446) and RFC 10024 (PQ/T hybrid ML-KEM key agreement for TLS 1.3, August 2026) — transport security for AI API endpoints
+- NIST IR 8547 (final, October 2026) — deprecates quantum-vulnerable public-key algorithms after 2030 and disallows them after 2035; EO 14412 and OMB M-26-15 set earlier civilian federal deadlines (31 Dec 2030 key establishment, 31 Dec 2031 digital signatures)
 - NIST AI RMF — AI risk management framework

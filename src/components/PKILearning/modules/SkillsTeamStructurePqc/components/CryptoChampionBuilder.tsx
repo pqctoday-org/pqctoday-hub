@@ -97,8 +97,10 @@ export const CryptoChampionBuilder: React.FC = () => {
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Designate one crypto champion per platform or application team, and track the four readiness
-        commitments each champion takes on. A platform with no named champion is a program gap.
+        Designate one fictional crypto champion per platform or application team, and track the four
+        readiness commitments each champion takes on. A platform with no named champion is a program
+        gap. Use sample names or role titles here to practice coverage tracking; maintain your live
+        roster in your organization&apos;s own program-management or HR system.
       </p>
 
       {/* Roster table */}

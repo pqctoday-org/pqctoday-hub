@@ -16,8 +16,8 @@ This module covers:
 
 - How TreeKEM gives forward secrecy + post-compromise security at scale
 - How HPKE encrypts path updates between members
-- How our OpenMLS provider keeps signature keys inside a PKCS#11 v3.2 token
-  (softhsmv3 here, an HSM emulation; ML-DSA-ready) — not floating in browser memory
+- How our OpenMLS provider keeps signature keys as PKCS#11 v3.2 token objects
+  (softhsmv3 here, a software token in the same process; production deployments require hardware HSM isolation and assurance evidence) — returning opaque handles rather than raw key bytes to OpenMLS
 
 Play with the TreeKEM visualizer in the Workshop tab and see how each
 Add / Remove / Update operation lights up only the affected path.

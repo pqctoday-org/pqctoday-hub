@@ -38,7 +38,7 @@ const MERKLE_KAT_SPECS: KatTestSpec[] = [
     standard: 'FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 44 },
-    message: 'Merkle tree root certificate hash for RFC PLANTS batch signing',
+    message: 'Merkle tree root certificate hash for IETF PLANTS WG batch signing',
   },
 ]
 

@@ -29,6 +29,8 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum'),
     getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('RFC-10024'),
     getStandard('Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA'),
     getStandard('RFC 9052'),
     // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
@@ -81,9 +83,9 @@ export const content: ModuleContent = {
 
   narratives: {
     keyConcepts:
-      'JWT, SAML, OIDC token signing migration to ML-DSA (FIPS 204). Active Directory, LDAP, Kerberos quantum vulnerabilities and quantum risk scores. IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak. Zero trust identity architecture with PQC across five pillars. HNDL risk applies to recorded channels and key-establishment exchanges such as TLS and PKINIT; quantum-vulnerable token signatures create a forgery risk, not an HNDL risk for the token itself',
+      'JWT, SAML, OIDC token signing migration to ML-DSA (FIPS 204). Active Directory, LDAP, Kerberos quantum vulnerabilities and quantum risk scores. IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak. Zero trust identity architecture with PQC across five pillars. HNDL risk applies to recorded channels and key-establishment exchanges such as TLS (RFC 10024 hybrid key agreement) and PKINIT; quantum-vulnerable token signatures create a forgery risk, not an HNDL risk for the token itself.',
     workshopSummary:
-      'IAM Crypto Inventory — audit 8 components by quantum risk level and migration priority. Token Migration Lab — compare RS256/ES256 vs ML-DSA-44/65/87 signature sizes and header changes. Directory Services Analyzer — AD/LDAP/Azure AD quantum risk scoring and attack scenario analysis. Vendor Readiness Scorer — score IAM vendors across token signing, MFA, API security, roadmap dimensions. Zero Trust Identity Architect — assign migration years to 5 identity pillars and generate a phased roadmap',
+      'IAM Crypto Inventory — audit 8 components by quantum risk level and migration priority. Token Migration Lab — compare RS256/ES256 vs ML-DSA-44/65/87 signature sizes and header changes. Directory Services Analyzer — AD/LDAP/Azure AD quantum risk scoring and attack scenario analysis. Vendor Readiness Scorer — score IAM vendors across token signing, MFA, API security, roadmap dimensions. Zero Trust Identity Architect — assign migration years to 5 identity pillars and generate a phased roadmap. Identity Proxy — simulate translating PQC SAML assertions to classical RSA for legacy apps.',
   },
 }
 

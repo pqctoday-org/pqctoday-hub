@@ -113,7 +113,8 @@ export const OS_VENDORS: OSVendorStatus[] = [
     catalogName: 'Ubuntu 26.04 LTS',
     fipsMode: 'fips-140-3',
     sshPqcStatus: 'No production PQC SSH; tracking OpenSSH experimental branch',
-    pkgSigningPqc: 'ML-DSA for APT package signing targeted for Ubuntu 26.04 LTS (DEP-18)',
+    pkgSigningPqc:
+      'APT signing uses OpenPGP; ML-DSA APT signing (DEP-18) remains under discussion upstream',
     roadmapYear: '2026-04 (26.04 LTS release)',
     mlKemSupport:
       'ML-KEM hybrid TLS: OpenSSL 3.5 native (Ubuntu 26.04 LTS). No oqsprovider package in the Ubuntu archive for 24.04 or 26.04.',
@@ -149,9 +150,11 @@ export const OS_VENDORS: OSVendorStatus[] = [
     fipsMode: 'not-supported',
     sshPqcStatus: 'No production PQC SSH; experimental package tracking OpenSSH PQC branch',
     pkgSigningPqc: 'DEP-18 proposal for ML-DSA APT signing; not yet scheduled',
-    roadmapYear: '2026 (Trixie release)',
-    mlKemSupport: 'ML-KEM in experimental repository; OpenSSL 3.3 baseline with oqsprovider',
-    mlDsaSupport: 'ML-DSA in experimental; native OpenSSL 3.5+ planned for Debian 14 (Forky)',
+    roadmapYear: '2025-08 (Trixie release)',
+    mlKemSupport:
+      'ML-KEM built-in via OpenSSL 3.5 in Debian 13 (Trixie); Debian 12 (Bookworm) ships OpenSSL 3.0.x (no built-in PQC)',
+    mlDsaSupport:
+      'ML-DSA built-in via OpenSSL 3.5 in Debian 13 (Trixie); Debian 12 (Bookworm) ships OpenSSL 3.0.x',
     notes: 'Verified 2026-06-19: catalog status partial.',
   },
   {
@@ -163,9 +166,11 @@ export const OS_VENDORS: OSVendorStatus[] = [
     fipsMode: 'not-supported',
     sshPqcStatus: 'No production PQC SSH; OpenSSH experimental branch required',
     pkgSigningPqc: 'APK signing uses RSA-4096 GPG',
-    roadmapYear: '2024',
-    mlKemSupport: 'ML-KEM via liboqs-provider package on OpenSSL 3.3.x',
-    mlDsaSupport: 'ML-DSA via liboqs-provider package on OpenSSL 3.3.x',
+    roadmapYear: '2025-05 (Alpine 3.22)',
+    mlKemSupport:
+      'ML-KEM built-in via OpenSSL 3.5 (Alpine 3.22+); liboqs-provider on Alpine 3.20/3.21 (OpenSSL 3.3.x)',
+    mlDsaSupport:
+      'ML-DSA built-in via OpenSSL 3.5 (Alpine 3.22+); liboqs-provider on Alpine 3.20/3.21 (OpenSSL 3.3.x)',
     notes:
       'Verified 2026-06-19: catalog status available. Alpine 3.22 ships OpenSSL 3.5, providing built-in ML-KEM/ML-DSA/SLH-DSA and hybrid X25519MLKEM768 TLS with no external plugin. (Alpine 3.20/3.21 on OpenSSL 3.3 needed the liboqs-provider package.)',
   },
@@ -183,7 +188,7 @@ export const OS_VENDORS: OSVendorStatus[] = [
     roadmapYear: '2026-03 (FreeBSD 14.4)',
     mlKemSupport:
       'ML-KEM default-on in base OpenSSH 10.0 (SSH KEX); TLS PQC still needs OpenSSL 3.5 from ports',
-    mlDsaSupport: 'Via security/oqsprovider port; pkg signing uses RSA/ECDSA signatures',
+    mlDsaSupport: 'Via security/openssl-oqsprovider port; pkg signing uses RSA/ECDSA signatures',
     notes:
       'Verified 2026-06-19: catalog status partial. FreeBSD 14.4 (Mar 2026) base OpenSSH 10.0p2 enables the hybrid mlkem768x25519-sha256 SSH key exchange by default (NIST ML-KEM). But base TLS is still OpenSSL 3.0 (no PQC) — PQC TLS requires OpenSSL 3.5 from ports (not sourced in the Library). So PQC is default-on for SSH but not TLS: inherited and partial, not a native OS feature.',
   },

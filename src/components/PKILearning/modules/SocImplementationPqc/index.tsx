@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState, type FC } from 'react'
-import { AlertTriangle, BookOpen, Rocket, Radar, ClipboardCheck } from 'lucide-react'
+import { AlertTriangle, ArrowRight, BookOpen, Rocket, Radar, ClipboardCheck } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { SOC_GUIDE_DATA } from './data'
 import { SOC_QUANTUM_EXERCISES } from './exercises'
@@ -257,7 +258,7 @@ function SelfAssessmentStep() {
   )
 }
 
-function ExercisesTab() {
+function ExercisesTab({ onNavigateToWorkshop }: { onNavigateToWorkshop: (step?: number) => void }) {
   return (
     <div className="w-full space-y-6">
       <div className="glass-panel p-6">
@@ -272,11 +273,19 @@ function ExercisesTab() {
             <div key={idx} className="glass-panel p-5 space-y-3">
               <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
               <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-muted/50 rounded-lg p-3 border border-border">
                 <p className="text-xs text-muted-foreground italic">
-                  Use the Why It Matters (Step 1), What to Learn (Step 2), How to Act (Step 3), and
-                  Detection Planner (Step 4) tools in the Workshop tab to model your response.
+                  Model your response in the Workshop tab, then validate detection rules and
+                  playbooks in your own SIEM and incident-response tooling.
                 </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onNavigateToWorkshop(exercise.step)}
+                  className="gap-1.5 border-primary text-primary hover:bg-primary/10 shrink-0"
+                >
+                  {exercise.cta} <ArrowRight size={13} />
+                </Button>
               </div>
             </div>
           ))}
@@ -297,7 +306,7 @@ export const SocImplementationPqcModule: FC = () => (
       </>
     }
     learn={(api) => <Introduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={<ExercisesTab />}
+    exercises={(api) => <ExercisesTab onNavigateToWorkshop={api.goToWorkshop} />}
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey) => {
       switch (index) {

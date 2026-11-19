@@ -75,14 +75,14 @@ const DEADLINE_OPTIONS: {
     label: 'NIST IR 8547: deprecated after 2030',
     urgency: 'medium',
     scope:
-      'NIST IR 8547 plans to deprecate quantum-vulnerable public-key algorithms (such as RSA, ECDSA and ECDH) after 2030 under NIST standards and guidelines. Whether it binds you depends on the policy that adopts it.',
+      'NIST IR 8547 (final, October 2026) deprecates quantum-vulnerable public-key algorithms (such as RSA, ECDSA and ECDH) after 2030 under NIST standards and guidelines. Whether it binds you depends on the policy that adopts it.',
   },
   {
     id: 'nist-2035',
     label: 'NIST IR 8547: disallowed after 2035',
     urgency: 'low',
     scope:
-      'NIST IR 8547 plans to disallow those algorithms under NIST standards and guidelines after 2035. Whether it binds you depends on the policy that adopts it.',
+      'NIST IR 8547 (final, October 2026) disallows those algorithms under NIST standards and guidelines after 2035. Whether it binds you depends on the policy that adopts it.',
   },
 ]
 

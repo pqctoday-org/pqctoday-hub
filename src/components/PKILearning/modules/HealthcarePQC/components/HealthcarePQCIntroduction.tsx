@@ -774,7 +774,7 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <div>
               <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
               <div className="text-xs text-muted-foreground">
-                HIPAA, FDA 510(k), and NIS2 quantum-readiness requirements
+                HIPAA, FDA premarket cybersecurity guidance, and NIS2 cyber risk-management duties
               </div>
             </div>
           </Link>

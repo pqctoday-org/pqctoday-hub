@@ -86,6 +86,28 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
         'The HSM engine refuses all three attempts (counter write, state read-out, key copy), so the counter does not move and the next signature uses the next leaf. This is how this emulator answers, not proof that any certified module does. A signer that keeps its state in an ordinary file would reuse the rolled-back leaves, and two signatures on different messages from one one-time key make forgery computationally feasible (SP 800-208 §1.2). That is why §8.1 requires that the cryptographic module not allow private keying material to be exported.',
       config: { step: 2 },
     },
+    {
+      id: 'slh-dsa-stateless-tradeoff',
+      title: '6. Stateful LMS/XMSS vs Stateless SLH-DSA',
+      description:
+        'Open the SLH-DSA Live Demo, generate a key pair and sign a message, then compare the signature size, statefulness, and CNSA 2.0 status against LMS and ML-DSA.',
+      badge: 'Comparison',
+      badgeColor: 'bg-primary/20 text-primary border-primary/50',
+      observe:
+        'SLH-DSA (FIPS 205) eliminates per-key state management, making it safe for distributed or serverless signers, but signatures are much larger (7,856–49,856 B) and NSA CNSA 2.0 FAQ v2.2 states SLH-DSA is not approved for any NSS use (where single-tree LMS/XMSS or ML-DSA-87 is required).',
+      config: { step: 3 },
+    },
+    {
+      id: 'threshold-signing-quorum',
+      title: '7. Distributed Threshold Signing (t-of-n)',
+      description:
+        'Run the Threshold Signing simulator to distribute key control across t-of-n trustees using the Haystack coalition construction. Test signing with a valid quorum and observe what happens when fewer than t trustees participate.',
+      badge: 'Threshold',
+      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      observe:
+        'Threshold signing prevents any single compromised trustee or operator from issuing a valid firmware signature alone, while still requiring careful coordination so no underlying one-time signing leaf is ever reused.',
+      config: { step: 4 },
+    },
   ]
 
   const handleLoadAndRun = (scenario: Scenario) => {

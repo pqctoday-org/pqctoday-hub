@@ -44,11 +44,11 @@ export const CLAIMS: DrillItem[] = [
     context:
       'The module appears on NIST’s Modules In Process list. It has no FIPS 140-3 certificate yet.',
     options: [
-      { text: 'Our module is FIPS 140-3 validated.', correct: false },
       {
         text: 'Our module is in process for FIPS 140-3 validation and appears on NIST’s Modules In Process list.',
         correct: true,
       },
+      { text: 'Our module is FIPS 140-3 validated.', correct: false },
       { text: 'Our module is NIST-approved.', correct: false },
     ],
     why: 'Being on the Modules In Process list means validation has started, not that it has finished. Only a completed validation has a certificate number, and anyone can look that number up.',
@@ -59,11 +59,11 @@ export const CLAIMS: DrillItem[] = [
     context: 'The product’s ML-DSA implementation passed algorithm testing (a CAVP certificate).',
     options: [
       { text: 'NIST approved our product.', correct: false },
+      { text: 'NIST recommends our product.', correct: false },
       {
         text: 'Our ML-DSA implementation (FIPS 204) has passed NIST algorithm testing and has a CAVP certificate.',
         correct: true,
       },
-      { text: 'NIST recommends our product.', correct: false },
     ],
     why: 'NIST standardizes algorithms; it does not approve or recommend products. A CAVP certificate covers one implementation of one algorithm, not the product around it.',
   },
@@ -87,11 +87,11 @@ export const CLAIMS: DrillItem[] = [
     id: 'q-day',
     prompt: '“Quantum computers will break encryption in 2029.”',
     options: [
-      { text: 'Quantum computers will break encryption in 2029.', correct: false },
       {
         text: 'Nobody knows when. Published estimates vary widely, and data copied today could be read once such a computer exists.',
         correct: true,
       },
+      { text: 'Quantum computers will break encryption in 2029.', correct: false },
       { text: 'Quantum computers can already break today’s encryption.', correct: false },
     ],
     why: 'The arrival date of a code-breaking quantum computer is an estimate, and experts disagree. The risk to data copied today (“harvest now, decrypt later”) does not depend on the exact year.',
@@ -104,11 +104,11 @@ export const CLAIMS: DrillItem[] = [
         text: `NIST will ban RSA in ${NIST_DEPRECATION.deprecateClassical}.`,
         correct: false,
       },
+      { text: 'RSA is already banned.', correct: false },
       {
         text: `In NIST IR 8547 (final, October 2026), NIST deprecates today’s quantum-vulnerable public-key algorithms, such as RSA and ECDSA, after ${NIST_DEPRECATION.deprecateClassical} and disallows them under NIST standards and guidelines after ${NIST_DEPRECATION.disallowClassical}.`,
         correct: true,
       },
-      { text: 'RSA is already banned.', correct: false },
     ],
     why: 'NIST IR 8547 is NIST guidance, not a ban. “Deprecated” means still allowed, with a risk the user accepts; “disallowed” comes later, and applies under NIST standards and guidelines.',
   },
@@ -120,11 +120,11 @@ export const QUESTIONS: DrillItem[] = [
     prompt: 'A customer asks: “Are you quantum-safe?”',
     options: [
       { text: 'Yes, fully.', correct: false },
+      { text: 'Quantum is not a real risk yet, so it does not matter.', correct: false },
       {
         text: 'Here is what is protected today, what is planned and when, and the evidence for each: our roadmap page and our certificate numbers.',
         correct: true,
       },
-      { text: 'Quantum is not a real risk yet, so it does not matter.', correct: false },
     ],
     why: 'A good answer splits the product into what is done, what is planned and what is unknown, and links evidence for each part. A single “yes” cannot be checked, and dismissing the risk contradicts published government guidance.',
   },
@@ -132,11 +132,11 @@ export const QUESTIONS: DrillItem[] = [
     id: 'fips-for-pqc',
     prompt: 'A buyer asks: “Is your product FIPS-validated for PQC?”',
     options: [
-      { text: 'Yes, we are FIPS.', correct: false },
       {
         text: 'Our FIPS 140-3 certificate number covers a specific version. The certificate gives the validated module name and version number, plus its tested operational environment, so let us check it together.',
         correct: true,
       },
+      { text: 'Yes, we are FIPS.', correct: false },
       { text: 'FIPS does not apply to post-quantum cryptography.', correct: false },
     ],
     why: 'A certificate covers a specific version and configuration. Post-quantum algorithms added later are only covered once a validation that includes them is complete.',
@@ -159,11 +159,11 @@ export const QUESTIONS: DrillItem[] = [
     prompt: 'Someone asks: “What does hybrid mean?”',
     options: [
       { text: 'A halfway step that is less secure than full PQC.', correct: false },
+      { text: 'It is just a marketing term.', correct: false },
       {
         text: 'It uses a traditional and a post-quantum algorithm together, so the connection stays protected as long as either one holds.',
         correct: true,
       },
-      { text: 'It is just a marketing term.', correct: false },
     ],
     why: 'Hybrid is a deliberate design that many standards bodies recommend during the transition, not a compromise. It is a good word to use once you have explained it.',
   },

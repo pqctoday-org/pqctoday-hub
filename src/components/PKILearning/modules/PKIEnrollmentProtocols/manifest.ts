@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-enrollment-protocols',
-  contentVersion: 14,
+  contentVersion: 15,
   lm_id: 'LM-055',
   title: 'PKI Enrollment Protocols (EST & CMP)',
   description:
@@ -19,7 +19,7 @@ const manifest: ModuleManifest = {
     { id: 'enrollment-overview', label: 'Enrollment Overview' },
     { id: 'est-protocol', label: 'EST RFC 7030' },
     { id: 'cmp-protocol', label: 'CMP RFC 9810' },
-    { id: 'pqc-enrollment', label: 'PQC Enrollment Drafts' },
+    { id: 'pqc-enrollment', label: 'PQC Enrollment Standards' },
   ],
   workshopSteps: [
     { id: 'keygen', label: 'Generate End-Entity Key (ML-DSA / ML-KEM)' },

@@ -22,12 +22,14 @@ export const content: ModuleContent = {
   moduleId: 'ot-pqc',
   lastReviewed: '2026-10-01',
   version: '2.1.0',
-  lastEdited: '2026-11-08',
+  lastEdited: '2026-11-18',
 
   standards: [
     // PQC algorithms and stateful hash-based signatures
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
+    getStandard('NIST IR 8547'),
+    getStandard('RFC-10024'),
     getStandard('NIST SP 800-208'),
     getStandard('RFC 8554'),
     getStandard('RFC 8391'),
@@ -133,6 +135,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Protocol Analyzer (14 OT protocols tagged forgery / HNDL / symmetric, with HMAC-SHA-256 and AES key wrap KATs); Zone & Conduit Planner (nine IEC 62443 zones including IIoT & cloud connectors; firmware signing, command authentication and traffic protection set separately; forgery and HNDL scored separately; conduits tagged by attack path, including a DMZ bypass); Substation Planner (energy worked example); Safety & Consequence Scorer (eight scenarios across five sectors, IEC 61511 safety-layer framing); Sector Roadmap (sector, jurisdiction, site count and CRQC planning year drive the plan); Firmware & Project Signing Lab (LMS/HSS vs ML-DSA bytes, key lifetime and state management, with an ML-DSA ACVP KAT).',
     relatedStandards:
-      'IEC 62443 (incl. 62443-4-2), NIST SP 800-82 Rev. 3, CISA PQC considerations for OT, CISA Barriers to Secure OT Communication (2026), CISA/FBI/EPA/DOE Primary Mitigations to Reduce Cyber Threats to OT (2025), CISA AA21-131A, CISA IR-ALERT-H-16-056-01, NIS2 Art. 21(2)(h) and the EU coordinated PQC roadmap, NERC CIP-005-7 / CIP-010-4 / CIP-012-2, TSA SD Pipeline-2021-02G, NSA CNSA 2.0, NIST SP 800-208 / RFC 8554, IEC 62351-6, RFC 8052, OPC 10000-2/-7, ODVA CIP Security, PROFINET security classes, ASHRAE 135 Addendum bj (BACnet/SC), UNISIG SUBSET-137.',
+      'IEC 62443 (incl. 62443-4-2), NIST SP 800-82 Rev. 3, NIST IR 8547 (final, October 2026), RFC 10024 (TLS 1.3 PQ/T hybrid key agreement, August 2026), CISA PQC considerations for OT, CISA Barriers to Secure OT Communication (2026), CISA/FBI/EPA/DOE Primary Mitigations to Reduce Cyber Threats to OT (2025), CISA AA21-131A, CISA IR-ALERT-H-16-056-01, NIS2 Art. 21(2)(h) and the EU coordinated PQC roadmap, NERC CIP-005-7 / CIP-010-4 / CIP-012-2, TSA SD Pipeline-2021-02G, NSA CNSA 2.0, NIST SP 800-208 / RFC 8554, IEC 62351-6, RFC 8052, OPC 10000-2/-7, ODVA CIP Security, PROFINET security classes, ASHRAE 135 Addendum bj (BACnet/SC), UNISIG SUBSET-137.',
   },
 }

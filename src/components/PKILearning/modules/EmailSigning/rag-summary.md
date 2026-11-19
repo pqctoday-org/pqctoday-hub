@@ -2,14 +2,14 @@
 
 ## Overview
 
-The Email and Document Signing module covers Cryptographic Message Syntax (CMS) and S/MIME for signing and encrypting email, including PQC transition considerations. A signature's validity does not by itself establish the sender's email identity: certificate path, status, purpose and identity checks also matter. The module explains CMS SignedData and AuthEnvelopedData, RSA key transport and the KEM-based CMS alternative in RFC 9629, standalone ML-DSA signatures in CMS (RFC 9882), and composite ML-DSA signing in X.509 and CMS (RFC 10073). Standards define formats and processing; they do not prove product implementation or interoperability. Message size and recipient compatibility depend on the actual profile and deployed clients.
+The Email and Document Signing module covers Cryptographic Message Syntax (CMS) and S/MIME for signing and encrypting email, including PQC transition considerations. A signature's validity does not by itself establish the sender's email identity: certificate path, status, purpose and identity checks also matter. The module explains CMS SignedData and AuthEnvelopedData, RSA key transport and the KEM-based CMS alternative in RFC 9629, standalone ML-DSA signatures in CMS (RFC 9882), and composite ML-DSA signing in X.509 (RFC 10073) and CMS (RFC 10082). Standards define formats and processing; they do not prove product implementation or interoperability. Message size and recipient compatibility depend on the actual profile and deployed clients.
 
 ## Key Concepts
 
 - **CMS (Cryptographic Message Syntax)** — RFC 5652; foundational format for signing and encrypting arbitrary data; used in S/MIME, code signing, PDF signatures, firmware updates, timestamping, SCEP/EST, and eIDAS
 - **S/MIME signing** — creates a CMS SignedData structure; sender's private key signs a hash of the message; recipients verify using sender's certificate
 - **S/MIME encryption** — creates a CMS AuthEnvelopedData structure (RFC 5083); message is AEAD-encrypted (AES-GCM) with a random content-encryption key (CEK), which is wrapped for each recipient
-- **PQC standards in CMS**: standalone ML-DSA for signing (RFC 9882), composite ML-DSA signatures (RFC 10073), KEM-based encryption via KEMRecipientInfo (RFC 9629), RSA-KEM (RFC 9690) puts RSA behind the KEM interface and is not a post-quantum KEM; the CMS RFCs define formats, not deadlines or product support; HSS/LMS for hash-based signatures (RFC 9708)
+- **PQC standards in CMS**: standalone ML-DSA for signing (RFC 9882), composite ML-DSA signatures in X.509 (RFC 10073) and CMS (RFC 10082), KEM-based encryption via KEMRecipientInfo (RFC 9629), RSA-KEM (RFC 9690) puts RSA behind the KEM interface and is not a post-quantum KEM; the CMS RFCs define formats, not deadlines or product support; HSS/LMS for hash-based signatures (RFC 9708)
 - **KEM vs key transport** — some classical S/MIME profiles use RSA key transport to encrypt the CEK to the recipient's public key; a future cryptographically relevant quantum computer could recover the private key from a captured public key and expose recorded ciphertext. RFC 9629 defines KEMRecipientInfo: the sender transmits a KEM ciphertext, derives shared keying material, applies the specified KDF and key-wrap algorithm, and carries the KEM recipient info alongside encrypted content
 - **Why KEMs replace key transport** — NIST standardized ML-KEM (FIPS 203) as a KEM primitive, not a public-key encryption scheme; RFC 9629 bridges this with KEMRecipientInfo
 - **Signing certificates** require keyUsage: digitalSignature/nonRepudiation, extKeyUsage: id-kp-emailProtection, subjectAltName: rfc822Name; algorithm: ML-DSA-65 or ECDSA P-256
@@ -26,11 +26,12 @@ The Email and Document Signing module covers Cryptographic Message Syntax (CMS) 
 
 ## Workshop / Interactive Activities
 
-The workshop has 3 steps:
+The workshop has 4 steps:
 
 1. **S/MIME Certificate Viewer** — compare classical (RSA/ECDSA) and PQC (ML-DSA, ML-KEM) certificate structures for email signing and encryption, examining key usage extensions, algorithm OIDs, and key/signature sizes
 2. **CMS Signing Demo** — walk through the CMS SignedData workflow step by step, inspecting the ASN.1 structure including the digest algorithm, signer info, and signature value for both classical and PQC algorithms
 3. **CMS Encryption Demo** — compare RSA key transport (KeyTransRecipientInfo) with KEM-based encryption (KEMRecipientInfo per RFC 9629) using AuthEnvelopedData; visualize the KEM encapsulate, KDF, and AES-WRAP steps
+4. **Live HSM Provider** — initialize an in-browser PKCS#11 v3.2 software token (softhsmv3) and route ML-DSA signing and ML-KEM encryption operations through the provider interface
 
 ## Related Standards
 
@@ -38,7 +39,8 @@ The workshop has 3 steps:
 - RFC 5083 (CMS Authenticated-Enveloped-Data)
 - RFC 9629 (KEMRecipientInfo for CMS)
 - RFC 9882 (ML-DSA in CMS)
-- RFC 10073 (Composite ML-DSA for X.509 and CMS)
+- RFC 10073 (Composite ML-DSA for X.509 PKI)
+- RFC 10082 (Composite ML-DSA for CMS)
 - RFC 9690 (RSA-KEM in CMS)
 - RFC 9708 (HSS/LMS in CMS)
 - FIPS 203 (ML-KEM)

@@ -75,7 +75,8 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
             <li>
               POP: <code>POPOSigningKey</code> for signature keys (ML-DSA), <code>POPOPrivKey</code>{' '}
               <code>subsequentMessage</code> (<code>encrCert</code> or <code>challengeResp</code>,
-              RFC 4211 / RFC 9810 §5.2.8.3) for KEM keys (ML-KEM), or <code>raVerified</code>
+              RFC 4211 / RFC 9883 / RFC 9810 §5.2.8.3) for KEM keys (ML-KEM), or{' '}
+              <code>raVerified</code>
             </li>
             <li>
               Keyfactor&apos;s EJBCA 9.4.2 PQC guide says CMP <code>encrCert</code> POP for ML-KEM
@@ -121,12 +122,13 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
           <li>
             <strong>ML-KEM proof-of-possession (CRMF POPOPrivKey encrCert vs CSR).</strong> KEM keys
             (FIPS 203, RFC 9935 OIDs) only support encapsulation and decapsulation — they cannot
-            sign a PKCS#10 CSR. In CMPv3 (RFC 9810), CRMF replaces the CSR signature with{' '}
-            <code>POPOPrivKey</code> <code>subsequentMessage</code> (<code>encrCert</code>): the CA
-            encapsulates the newly issued certificate under the requester&apos;s ML-KEM public key,
-            and the requester decapsulates the ciphertext, derives the key, decrypts the certificate
-            and returns its hash in <code>certConf</code>; alternatively KEM-based MAC protection
-            uses a <code>KemCiphertextInfo</code> carried in <code>genm</code>/<code>genp</code> or{' '}
+            sign a PKCS#10 CSR. In CMPv3 (RFC 9810) and CRMF KEM POP (RFC 9883, updating RFC 4211),
+            CRMF replaces the CSR signature with <code>POPOPrivKey</code>{' '}
+            <code>subsequentMessage</code> (<code>encrCert</code>): the CA encapsulates the newly
+            issued certificate under the requester&apos;s ML-KEM public key, and the requester
+            decapsulates the ciphertext, derives the key, decrypts the certificate and returns its
+            hash in <code>certConf</code>; alternatively KEM-based MAC protection uses a{' '}
+            <code>KemCiphertextInfo</code> carried in <code>genm</code>/<code>genp</code> or{' '}
             <code>generalInfo</code>, with a KDF over <code>KemOtherInfo</code>. Neither EST (RFC
             7030, updated by RFC 8951, 8996, and 9908) nor SCEP (RFC 8894{' '}
             <code>challengePassword</code>) provides native KEM private-key POP.

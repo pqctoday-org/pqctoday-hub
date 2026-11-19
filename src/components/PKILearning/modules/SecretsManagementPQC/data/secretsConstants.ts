@@ -566,7 +566,7 @@ jobs:
             database/creds/readonly username | DB_USER ;
             database/creds/readonly password | DB_PASS
 
-# This module's projection, not a HashiCorp statement: Vault policy (ml-dsa signed JWT validation planned 2026):
+# This module's projection, not a HashiCorp statement: Vault policy (hypothetical ML-DSA signed JWT validation):
 # vault write auth/jwt/role/github-ci-role \\
 #   bound_subject="repo:org/repo:ref:refs/heads/main" \\
 #   bound_audiences="vault.example.com" \\

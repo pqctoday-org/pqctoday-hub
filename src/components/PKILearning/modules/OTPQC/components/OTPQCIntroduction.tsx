@@ -843,6 +843,16 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
               migrate as much as feasible by 2035.
             </li>
             <li>
+              <strong>
+                <LibLink id="NIST IR 8547">NIST IR 8547</LibLink>
+              </strong>{' '}
+              (final, October 2026) — deprecates quantum-vulnerable public-key algorithms after 2030
+              and disallows them under NIST standards after 2035; for prioritized US civilian
+              federal systems, Executive Order 14412 and OMB Memorandum M-26-15 set earlier
+              deadlines of 31 December 2030 for key establishment and 31 December 2031 for digital
+              signatures.
+            </li>
+            <li>
               <strong>TSA SD Pipeline-2021-02G</strong> — mandatory measures for designated US
               pipelines; operational-technology services may not traverse the IT system unless their
               content is encrypted while in transit. In force 3 May 2026 to 2 May 2027.

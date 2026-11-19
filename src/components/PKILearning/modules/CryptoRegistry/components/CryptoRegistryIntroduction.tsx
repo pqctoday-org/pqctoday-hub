@@ -80,9 +80,10 @@ export const CryptoRegistryIntroduction: FC<Props> = ({ onNavigateToWorkshop }) 
         </p>
         <p>
           <Badge kind="std" />
-          CycloneDX v1.7 answers this with the <strong>Cryptography Registry</strong>: one
-          versioned, machine-readable list of canonical algorithm-family and elliptic-curve names,
-          each backed by its standardization reference (RFC, FIPS, IEEE, ISO).
+          CycloneDX v1.7 (<strong>ECMA-424</strong>, 2nd edition) answers this with the{' '}
+          <strong>Cryptography Registry</strong>: one versioned, machine-readable list of canonical
+          algorithm-family and elliptic-curve names, each backed by its standardization reference
+          (RFC, FIPS, IEEE, ISO).
         </p>
       </Section>
 

@@ -351,7 +351,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
           {composite && (
             <span
               className="inline-flex items-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-[10px] font-medium text-accent"
-              title="The sample CMS SignerInfo uses a Composite ML-DSA identifier from RFC 10073. Both signature components must verify."
+              title="The sample CMS SignerInfo uses a Composite ML-DSA identifier (RFC 10073 / RFC 10082). Both signature components must verify."
             >
               Composite ML-DSA · live
             </span>

@@ -71,8 +71,19 @@ export const SecretsManagementExercises: React.FC<SecretsManagementExercisesProp
       badge: 'Cloud',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'As of mid-2026 (verify against current provider docs and the workshop comparison): HashiCorp Vault offers native dynamic secrets (DB, AWS, GCP, Azure credential generation) with FIPS 140-3 (Enterprise), and lists ML-DSA, SLH-DSA and hybrid sign/verify key types as Enterprise features in its transit documentation. AWS Secrets Manager surfaces PQC via KMS integration but does not generate dynamic secrets natively. GCP Cloud KMS lists ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA in preview, while FIPS mode is not offered for GCP Secret Manager.',
+        'Verify against current provider docs and the workshop comparison: HashiCorp Vault offers native dynamic secrets (DB, AWS, GCP, Azure credential generation) with FIPS 140-3 (Enterprise), and lists ML-DSA, SLH-DSA and hybrid sign/verify key types as Enterprise features in its transit documentation. AWS Secrets Manager surfaces PQC via KMS integration (ML-KEM hybrid TLS and ML-DSA/ML-KEM key specs) but does not generate dynamic secrets natively. GCP Cloud KMS offers ML-DSA, SLH-DSA, and ML-KEM (generally available per Google’s July 2026 announcement), while FIPS mode is not offered for GCP Secret Manager.',
       config: { step: 3 },
+    },
+    {
+      id: 'pipeline-integration',
+      title: '5. Kubernetes & CI/CD Pipeline Integration',
+      description:
+        'Walk through the Pipeline Integration Lab across Kubernetes (KMS v2 + External Secrets Operator), GitHub Actions (OIDC short-lived credentials), and Terraform state encryption. Identify which integration points eliminate static long-lived secrets vs which require PQC transport or KMS wrapping.',
+      badge: 'Pipeline',
+      badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
+      observe:
+        'Eliminating static CI/CD tokens with OIDC federation removes the long-lived secret HNDL surface altogether. For Kubernetes etcd secrets and Terraform state files that must persist at rest, protection depends on the external KMS provider’s key-wrapping mechanism and TLS transport, not on the orchestrator alone.',
+      config: { step: 4 },
     },
   ]
 

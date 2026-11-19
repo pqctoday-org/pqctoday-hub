@@ -36,6 +36,7 @@ export function CurveLookup() {
         </p>
         <input
           type="text"
+          aria-label="Curve name, alias, or OID"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="e.g. secp256r1 or 1.2.840.10045.3.1.7"

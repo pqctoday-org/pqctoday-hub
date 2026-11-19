@@ -145,8 +145,8 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
         <p className="text-muted-foreground text-sm">
           Work through these scenarios to explore zonal architecture crypto audits, sensor signing
           throughput, V2X channel load, safety-critical timing, OTA campaigns, car key protocols,
-          and vehicle lifecycle planning. Each exercise pre-configures the Workshop &mdash; click
-          &quot;Load &amp; Run&quot; to begin.
+          and vehicle lifecycle planning. Each exercise opens the matching Workshop step &mdash;
+          click &quot;Load &amp; Run&quot; to begin.
         </p>
       </div>
 

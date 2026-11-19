@@ -95,6 +95,11 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
           promote and support that useful cryptographic inventories are being created and
           maintained&rdquo; and naming CBOM as a recommended format. It is guidance to Member States
           rather than a direct obligation on you — but it is what national rules will be built from.
+          In the US, <strong>Executive Order 14412</strong> (22 Jun 2026) and{' '}
+          <strong>OMB M-26-15</strong> (24 Jun 2026) set the parallel federal civilian track: CISA
+          must publish guidance on <strong>minimum CBOM elements by 19 March 2027</strong> (EO +270
+          days), feeding agency and covered-contractor inventories ahead of the 31 December 2030
+          key-establishment and 31 December 2031 digital-signature deadlines.
         </p>
       </Section>
 

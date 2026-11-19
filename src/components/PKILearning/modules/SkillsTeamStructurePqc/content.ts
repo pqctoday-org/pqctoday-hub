@@ -9,7 +9,7 @@
  * (ROLE_CROSSWALK, FTE_PER_CRYPTO_INSTANCES).
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
-import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { CNSA_2_0, EO_14412, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import {
   CNSA_2022_PREFERRED_LABEL,
   CNSA_PHASE_OUT_LABEL,
@@ -21,7 +21,7 @@ export const content: ModuleContent = {
   moduleId: 'skills-team-structure',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-09',
+  lastEdited: '2026-11-18',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. A staffing module: what the programme must deliver and by when drives it, so the
@@ -30,6 +30,9 @@ export const content: ModuleContent = {
   standards: [
     getStandard('NIST IR 8547'),
     getStandard('NSA CNSA 2.0'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
+    getStandard('OMB-M-26-15'),
     getStandard('OWASP-CycloneDX-CBOM-Guide'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
@@ -69,9 +72,29 @@ export const content: ModuleContent = {
     {
       label: CNSA_2022_PREFERRED_LABEL,
       year: CNSA_2_0.softwarePreferred,
-      source: 'CNSA 2.0',
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
     },
-    { label: CNSA_PHASE_OUT_LABEL, year: CNSA_2_0.softwareExclusive, source: 'CNSA 2.0' },
+    {
+      label: CNSA_PHASE_OUT_LABEL,
+      year: CNSA_2_0.softwareExclusive,
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
+    },
+    {
+      label: 'CNSA 2.0 mandated for National Security Systems (31 Dec 2031)',
+      year: CNSA_2_0.fullEnforcement,
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
+    },
+    {
+      label:
+        'US federal civilian PQC key establishment (31 Dec 2030) and digital signatures (31 Dec 2031)',
+      year: EO_14412.keyEstablishment ?? 2030,
+      source: 'EO 14412 (22 Jun 2026) & OMB M-26-15 (24 Jun 2026)',
+    },
+    {
+      label: 'Classical PKC deprecated (2030) and disallowed (2035)',
+      year: NIST_DEPRECATION.deprecateClassical,
+      source: 'NIST IR 8547 (final, Oct 2026)',
+    },
   ],
 
   narratives: {
@@ -88,6 +111,6 @@ export const content: ModuleContent = {
     cryptoChampions:
       'The Crypto Champion Program designates one champion per platform or application team (web, mobile, data, infrastructure, OT, identity). Champions attend PQC foundations training, join quarterly crypto-agility briefings, serve as liaison between the PQC program and their platform team, sign off on crypto readiness in design reviews for new systems, and shepherd PQC library upgrades within their domain. The model scales the program reach without requiring every developer to become a cryptography specialist; champions become a standing network after migration, analogous to security champion programs.',
     relatedStandards:
-      "NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development — this hub cites the Falcon v1.2 specification it standardises pending NIST's final publication). NSA CNSA 2.0 (algorithm suite and timelines for national security systems). CycloneDX (CBOM format the team operates and maintains — this hub's OWASP CycloneDX CBOM Guide citation is deprecated pending re-capture of the source page, not because the guide changed).",
+      "NIST IR 8547 (Transition to Post-Quantum Cryptography Standards, final, October 2026). NIST SP 800-181r1 (Workforce Framework for Cybersecurity — NICE Framework v2.2.0 work-role mappings). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development — this hub cites the Falcon v1.2 specification it standardises pending NIST's final publication). NSA CNSA 2.0 & FAQ v2.2 (October 2026; algorithm suite and timelines for National Security Systems). EO 14412 & OMB M-26-15 (June 2026; federal civilian HVA and contractor migration timelines). CycloneDX (CBOM format the team operates and maintains).",
   },
 }

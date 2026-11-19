@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'cbom',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-11',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('OWASP-CycloneDX-CBOM-Guide'),
@@ -23,6 +23,8 @@ export const content: ModuleContent = {
     // overstated and has been corrected. Four entries is the sampler's cap, so all four
     // are read.
     getStandard('EU-NIS-CG-Roadmap-v1.1'),
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
+    getStandard('OMB-M-26-15'),
     getStandard('PKI-Consortium-Launches-the-CBOM-Profiles-Working-Group'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
@@ -73,14 +75,19 @@ export const content: ModuleContent = {
       source: 'EU NIS CG Coordinated Implementation Roadmap v1.1 (11 Jun 2025)',
     },
     {
+      label: 'CISA guidance on minimum CBOM elements due (19 March 2027, EO +270 days)',
+      year: 2027,
+      source: 'EO 14412 (22 Jun 2026) & OMB M-26-15 (24 Jun 2026)',
+    },
+    {
       label: 'Classical PKC deprecated (RSA/ECC)',
       year: NIST_DEPRECATION.deprecateClassical,
-      source: 'NIST IR 8547',
+      source: 'NIST IR 8547 (final, Oct 2026)',
     },
     {
       label: 'Classical PKC disallowed',
       year: NIST_DEPRECATION.disallowClassical,
-      source: 'NIST IR 8547',
+      source: 'NIST IR 8547 (final, Oct 2026)',
     },
   ],
 

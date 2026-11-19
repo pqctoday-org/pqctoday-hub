@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'web-gateway-pqc',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-13',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -23,6 +23,8 @@ export const content: ModuleContent = {
     // In-module prose still cites RFC 8446 sections where it discusses the original,
     // which stays accurate: TLS 1.3 the protocol is unchanged; the specification moved.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('RFC-10024'),
+    getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
     getStandard('RFC 8879'),
     getStandard('RFC-9162'),
     // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3

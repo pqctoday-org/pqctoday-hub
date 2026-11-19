@@ -125,16 +125,53 @@ export const MandateExplorer = () => {
             ))}
           </ol>
         </section>
+      ) : kind === 'civilian' ? (
+        <section className="glass-panel p-6 space-y-3">
+          <h4 className="font-semibold inline-flex items-center gap-2">
+            <CalendarClock size={16} className="text-primary" /> Your dated milestones (EO 14412
+            &amp; OMB M-26-15)
+          </h4>
+          <ol className="space-y-2">
+            <li className="text-sm">
+              <strong className="text-primary">31 December 2030</strong>{' '}
+              <span className="text-muted-foreground">
+                Move all federal civilian high value assets and high impact systems to PQC for key
+                establishment (EO 14412 Section 4(b)).
+              </span>
+            </li>
+            <li className="text-sm">
+              <strong className="text-primary">31 December 2031</strong>{' '}
+              <span className="text-muted-foreground">
+                Move all federal civilian high value assets and high impact systems to PQC for
+                digital signatures (EO 14412 Section 4(b)).
+              </span>
+            </li>
+            <li className="text-sm">
+              <strong className="text-primary">2035</strong>{' '}
+              <span className="text-muted-foreground">
+                Full migration milestone under OMB M-26-15 and NSM-10.
+              </span>
+            </li>
+          </ol>
+          <p className="text-sm text-muted-foreground">
+            <strong className="text-foreground">The CNSA 2.0 dates do not apply here.</strong>{' '}
+            National Security Systems follow CNSSP 15; federal civilian systems follow QCCPA, OMB
+            M-23-02 / M-26-15, and Executive Order 14412. Programmes sometimes adopt CNSA 2.0
+            voluntarily as a planning anchor — which is reasonable, as long as it is not described
+            to auditors as a requirement.
+          </p>
+        </section>
       ) : (
         <section className="glass-panel p-6">
           <p className="text-sm text-muted-foreground">
             <strong className="text-foreground">The CNSA 2.0 dates do not apply here.</strong> The
-            obligations are the instruments listed above: for federal civilian systems, inventory,
-            reporting and migration planning plus the Executive Order 14412 deadlines for high value
-            assets and high impact systems; for nonfederal systems, NIST SP 800-171 Rev. 3, with
-            Executive Order 14412 only directing a proposed rule. Programmes in this category often
-            adopt the CNSA 2.0 dates voluntarily as a planning anchor — which is reasonable, as long
-            as it is not described to auditors as a requirement.
+            obligations are the instruments listed above: for nonfederal systems handling CUI, NIST
+            SP 800-171 Rev. 3 (with CMMC assessments remaining against Rev. 2 until DoD adopts Rev.
+            3 through rulemaking), while Executive Order 14412 Section 6(c) only directs a proposed
+            FAR rule targeting 31 December 2030 compliance with NIST FIPS incorporating PQC — the
+            order is not itself a final FAR rule. Programmes in this category often adopt the CNSA
+            2.0 dates voluntarily as a planning anchor — which is reasonable, as long as it is not
+            described to auditors as a requirement.
           </p>
         </section>
       )}

@@ -24,7 +24,9 @@ export const content: ModuleContent = {
     getStandard('RFC 8879'),
     getStandard('RFC 9580'),
     getStandard('RFC 9980'),
+    getStandard('RFC-10024'),
     getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
+    getStandard('NIST IR 8547'),
     getStandard('NIST SP 800-227'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
@@ -73,9 +75,9 @@ export const content: ModuleContent = {
     overview:
       'Identify every cryptographic primitive embedded in a CI/CD pipeline from source control to runtime. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority. Plan container-image signature migration from ECDSA P-256 to a post-quantum scheme only after the selected signing tool, trust infrastructure, and verifiers support it; Sigstore has proposed a separate opt-in PQC public instance for mid-2027. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time. Monitor crypto posture by checking which sources can supply certificate algorithms (the expiry metrics of an exporter do not carry the key algorithm), using SIEM checklists and capacity planning data.',
     keyConcepts:
-      '### Algorithm Sizes (container signing and TLS). ECDSA P-256 signature: 64 bytes. ML-DSA-44 signature: 2,420 bytes (38×). ML-DSA-65 signature: 3,309 bytes (52×). SLH-DSA-128f signature: 17,088 bytes (267×). ECDSA P-256 X.509 cert: 800 bytes. ML-DSA-65 X.509 cert: 5,800 bytes (7.25×). TLS 1.3 handshake (classical): 4,096 bytes. TLS 1.3 handshake (PQC): 18,432 bytes (4.5×). TLS handshake latency P99: 12ms (classical) → 28ms (PQC, +133%). ### IaC Quantum-Vulnerable Defaults.',
+      'Algorithm Sizes (container signing and TLS): ECDSA P-256 signature: 64 bytes. ML-DSA-44 signature: 2,420 bytes (38×). ML-DSA-65 signature: 3,309 bytes (52×). SLH-DSA-128f signature: 17,088 bytes (267×). ECDSA P-256 X.509 cert: 800 bytes. ML-DSA-65 X.509 cert: 5,800 bytes (7.25×). TLS 1.3 handshake (classical): 4,096 bytes. TLS 1.3 handshake (PQC): 18,432 bytes (4.5×). TLS handshake latency P99: 12ms (classical) → 28ms (PQC, +133%). IaC Quantum-Vulnerable Defaults: Terraform, Helm, NGINX Ingress, and cert-manager default to classical RSA-2048/ECDSA and classical ECDHE groups; migrate TLS key exchange to RFC 10024 hybrid groups (X25519MLKEM768) first to mitigate HNDL, and enforce algorithm agility via OPA/Kyverno admission policies and OpenBao/Vault PKI roles.',
     workshopSummary:
-      '### Step 1: Pipeline Crypto Inventory. 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh. 16 crypto assets across stages with HNDL exposure ratings and PQC replacements.',
+      'Step 1: Pipeline Crypto Inventory — audit 16 crypto assets across 6 CI/CD stages (Source Control, Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh) with HNDL ratings and PQC replacements. Step 2: Quantum Threat Timeline — compare confidentiality (HNDL) and authenticity protection windows against illustrative 2030/2035 horizons. Step 3: Container Signing Migration — compare cosign, Notation, and Notary v1 PQC readiness and RFC 10073 composite certificate status. Step 4: Policy-as-Code Enforcer — inspect OPA/Kyverno admission rules, OpenBao PKI policy, and NGINX hybrid TLS configuration. Step 5: Crypto Posture Monitor — parse TLS observation captures, Prometheus alert rules, SIEM checklists, etcd capacity impact, and cert-manager lifecycle. Step 6: Platform Migration Planner — plan phased rollouts and walk through TLS rollback decision trees.',
   },
 }
 

@@ -27,7 +27,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
       severity: 'critical',
       timeframe: 'During migration onward',
       exampleScenario:
-        'A TLS 1.3 session between two systems both listed as hybrid-enabled in the posture registry completes using only ECDH — no ML-KEM key share. SIEM correlation flags it High severity. The hard part: in TLS 1.3 hybrid key exchanges are negotiated by IANA NamedGroup codepoints (ML-KEM-768/1024 and hybrid groups), not X.509 OIDs, so those codepoints must be added to traffic-analysis rules manually. And the most common false positive is your own middleboxes: legacy firewalls and SSL inspection proxies may drop or fail to reassemble fragmented oversized hybrid ClientHello messages, so the hybrid handshake fails and a classical-only retry follows, producing a benign downgrade that looks identical to an attack.',
+        'A TLS 1.3 session between two systems both listed as hybrid-enabled in the posture registry completes using only ECDH — no ML-KEM key share. SIEM correlation flags it High severity. The hard part: in TLS 1.3 (RFC 9846) hybrid key exchanges are negotiated by IANA NamedGroup codepoints defined in RFC 10024 (such as 0x11EC for X25519MLKEM768, 0x11EB for SecP256r1MLKEM768, and 0x11ED for SecP384r1MLKEM1024), not X.509 OIDs, so those codepoints must be added to Zeek, Suricata, and SIEM traffic-analysis rules manually. And the most common false positive is your own middleboxes: legacy firewalls and SSL inspection proxies may drop or fail to reassemble fragmented oversized hybrid ClientHello messages, so the hybrid handshake fails and a classical-only retry follows, producing a benign downgrade that looks identical to an attack.',
     },
     {
       id: 'crypto-drift',
@@ -81,7 +81,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
     {
       id: 'namedgroup-parsing',
       label:
-        'Our traffic-analysis rules can parse PQC NamedGroup codepoints (ML-KEM-768/1024 and hybrid key exchange groups)',
+        'Our Zeek/Suricata/SIEM traffic-analysis rules can parse RFC 10024 TLS 1.3 hybrid NamedGroup codepoints (e.g., 0x11EC X25519MLKEM768) and pure ML-KEM groups',
       weight: 12,
     },
     {
@@ -131,7 +131,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
       category: 'Detection Engineering',
       skill: 'PQC Protocol Parsing',
       description:
-        'Building custom Suricata rules, Zeek scripts, and SIEM enrichment to recognize PQC cipher suites, hybrid key exchange NamedGroups, and PQC-specific TLS extensions. Plan 2–4 weeks of engineering per platform plus ongoing maintenance.',
+        'Building custom Suricata rules, Zeek scripts, and SIEM enrichment to recognize PQC cipher suites, RFC 10024 hybrid key-exchange NamedGroups (e.g., 0x11EC X25519MLKEM768), and PQC-specific TLS extensions. Plan 2–4 weeks of engineering per platform plus ongoing maintenance.',
       targetLevel: 'advanced',
       linkedModules: [
         { id: 'tls-basics', label: 'TLS Basics' },
@@ -260,7 +260,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
       description:
         'Roadmap Phase 2 (3–9 months): implement downgrade detection for priority segments and start drift monitoring.',
       checklist: [
-        'Add ML-KEM-768/1024 and hybrid key-exchange NamedGroup codepoints to traffic-analysis rules (custom Suricata/Zeek/SIEM enrichment)',
+        'Add RFC 10024 hybrid NamedGroup codepoints (0x11EC X25519MLKEM768, 0x11EB SecP256r1MLKEM768, 0x11ED SecP384r1MLKEM1024) and pure ML-KEM groups to Zeek/Suricata/SIEM traffic-analysis rules',
         'Build the High-severity hybrid-downgrade correlation rule with middlebox-induced-downgrade suppression',
         'Begin cryptographic drift monitoring for migration-complete systems and publish Cryptographic Migration Coverage on the SOC dashboard',
         'Run the first HNDL-focused review of data classification and DLP coverage',
@@ -305,7 +305,7 @@ export const SOC_GUIDE_DATA: RoleGuideData = {
       id: 'soc-qw-namedgroups',
       label: 'Check whether your SIEM knows PQC NamedGroups',
       description:
-        'Hybrid key exchanges are negotiated by IANA NamedGroup codepoints, not X.509 OIDs. Most SIEMs cannot parse them yet — confirm this gap before promising downgrade detection.',
+        'Hybrid TLS 1.3 key exchanges are negotiated by IANA NamedGroup codepoints (RFC 10024, e.g., 0x11EC for X25519MLKEM768), not X.509 OIDs. Most SIEMs and NSM sensors need explicit Zeek/Suricata updates to parse them — confirm this gap before promising downgrade detection.',
     },
     {
       id: 'soc-qw-cti-sources',

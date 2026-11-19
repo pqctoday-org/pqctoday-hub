@@ -21,6 +21,7 @@ interface Scenario {
   badge: string
   badgeColor: string
   observe: string
+  productionCheck: string
   config: WorkshopConfig
   /** Learn paths this scenario belongs to (manifest learnPaths ids). */
   paths: string[]
@@ -42,6 +43,8 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
         'Modbus TCP appears as plaintext (no encryption at all) — highest risk. TLS 1.2 with CBC mode is present on the historian. DNP3 uses HMAC-SHA-256 (authentication only, no confidentiality). Only one segment uses hybrid TLS. Critical finding: three connections transmitting operational data with zero cryptographic protection.',
+      productionCheck:
+        'Decision & evidence: Keep OT inventory strictly passive (SPAN/TAP), classify unobserved capabilities as "unknown" rather than "unsupported", and corroborate with vendor firmware records before scheduling maintenance-window changes.',
       config: { step: 0 },
       paths: [NETWORK_PATH],
     },
@@ -54,6 +57,8 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badgeColor: 'bg-status-info/20 text-status-info border-status-info/50',
       observe:
         'VPN gateway shows DH Group 14 (2048-bit) — quantum-vulnerable and scheduled for NIST deprecation after 2030. RSA-2048 certificate also flags for replacement. SSH bastion uses legacy curve25519 key exchange without hybrid. The cloud proxy is already using X25519+ML-KEM-768 hybrid TLS — ahead of the VPN.',
+      productionCheck:
+        'Decision & evidence: Obtain operations approval before active probing, capture negotiated IKEv2/SSH/TLS parameters per endpoint, and pair scan output with change-controlled firmware upgrade windows.',
       config: { step: 1 },
       paths: [NETWORK_PATH],
     },
@@ -66,6 +71,8 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
         'The illustrative VPN setup times are 4.8 seconds for classical, 7.2 seconds for hybrid (+50%), and 95 seconds for pure PQC with ML-KEM-768. None meets the stated target below 2 seconds. Hybrid is faster than the pure-PQC sample but still misses this target; that comparison alone does not justify recommending it. Review the scenario assumptions, configurations and service requirements, evaluate alternatives, and retest with your own tools before deciding.',
+      productionCheck:
+        'Decision & evidence: Measure handshake latency, packet loss, and session-resumption rates on your actual WAN/satellite link profiles rather than relying on clean-path lab numbers.',
       config: { step: 2 },
       paths: [NETWORK_PATH],
     },
@@ -78,6 +85,8 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badgeColor: 'bg-warning/20 text-status-warning border-warning/50',
       observe:
         'Chrome sends an oversized hybrid ClientHello (it adds about 1.2 KB: a 1,216-byte key share vs 32 bytes). Legacy TLS 1.2 servers with small receive buffers reject the connection. Servers with default TLS 1.3 settings work correctly because the client can fall back to a classical key exchange the server supports. Root cause: 3 internal applications still on TLS 1.2 with default buffer sizes. Fix: update TLS 1.2 configurations or accelerate those apps to TLS 1.3.',
+      productionCheck:
+        'Decision & evidence: Capture packet traces across client, middlebox, and origin server to confirm negotiated groups (RFC 10024 / RFC 9954) and verify that any fallback to classical TLS is visible and policy-approved.',
       config: { step: 3 },
       paths: [NETWORK_PATH],
     },
@@ -90,6 +99,8 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
         'The unmasked reference implementation leaks at the NTT stage — t-test values well above the 4.5-sigma threshold. The Key Load and Polynomial Multiplication stages also show statistically significant leakage. The vendor\'s claimed "quantum-safe" status refers only to algorithm selection, not implementation security. Require first-order masking countermeasures before production deployment.',
+      productionCheck:
+        'Decision & evidence: Require independent lab test reports covering specific intermediate-value tests (NTT, sampling, FO re-encryption) alongside active CMVP/CC certificate and Security Policy verification — never accept a datasheet claim or Hub sample as certification evidence.',
       config: { step: 4 },
       paths: [NETWORK_PATH, CERTIFICATION_PATH],
     },
@@ -109,6 +120,8 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       badgeColor: 'bg-accent/20 text-accent border-accent/50',
       observe:
         'For enterprise IT in inventory phase against the EU 2026 milestone, one workable order is passive network discovery, then active endpoint scanning, then certificate inventory via a CLM platform. The durations (about 1-2 weeks, 1 week and 2-3 days) and the example tools (CryptoNext COMPASS for passive discovery, pqcscan for active scanning, Keyfactor AgileSec for certificate inventory) are an illustration from this module, not sourced figures or recommendations. CryptoNext Security is listed as a technology collaborator in the NCCoE Migration to Post-Quantum Cryptography project, and NIST SP 1800-38B states that naming a product is not intended to imply recommendation or endorsement by NIST or NCCoE. For the COBOL systems, SP 1800-38B describes IBM Application Discovery and Delivery Intelligence (ADDI) as a static analysis tool that analyzes COBOL application source files; scope the COBOL systems as their own work item.',
+      productionCheck:
+        'Decision & evidence: Map your national regulator transposition of EU PQC Roadmap v1.1 (and NIST IR 8547 / EO 14412 / OMB M-26-15 where applicable), and track inventory completeness across network, endpoint, certificate, and legacy source-code scopes in a maintained CBOM.',
       config: { step: 5 },
       paths: [NETWORK_PATH],
     },
@@ -153,9 +166,19 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
 
             <p className="text-sm text-foreground/80">{scenario.description}</p>
 
-            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1">What to observe:</p>
-              <p className="text-xs text-muted-foreground">{scenario.observe}</p>
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-1.5">
+              <div>
+                <p className="text-xs font-semibold text-primary mb-0.5">What to observe:</p>
+                <p className="text-xs text-muted-foreground">{scenario.observe}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground/90 mb-0.5">
+                  {scenario.productionCheck.split(':')[0]}:
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {scenario.productionCheck.slice(scenario.productionCheck.indexOf(':') + 1).trim()}
+                </p>
+              </div>
             </div>
 
             <Button

@@ -49,7 +49,12 @@ export const WebGatewayPQCModule: FC = () => (
     manifest={manifest}
     description="PQC deployment at the infrastructure edge — TLS termination patterns, certificate lifecycle at scale, and vendor migration paths."
     learn={(api) => <WebGatewayIntroduction onNavigateToWorkshop={api.goToWorkshop} />}
-    exercises={(api) => <WebGatewayExercises onNavigateToWorkshop={api.goToWorkshop} />}
+    exercises={(api) => (
+      <WebGatewayExercises
+        onNavigateToWorkshop={api.goToWorkshop}
+        onOpenWorkshopStep={(step) => api.openWorkshopStep(step)}
+      />
+    )}
     workshopParts={PARTS}
     renderWorkshopStep={(index, configKey) => {
       switch (index) {

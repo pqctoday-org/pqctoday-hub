@@ -46,11 +46,11 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       id: 'attestation-flow-analysis',
       title: '2. Attestation Flow Analysis — Identify quantum-vulnerable steps in Intel DCAP',
       description:
-        'Open the Attestation Workshop and select the Intel DCAP flow. Step through all 5 stages. Identify which steps use ECDSA P-256 and are therefore quantum-vulnerable. Count the total number of vulnerable steps.',
+        'Open the Attestation Workshop and select the Intel DCAP flow. Step through all 6 stages. Identify which steps use ECDSA P-256 and are therefore quantum-vulnerable. Count the total number of vulnerable steps.',
       badge: 'Attestation',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Three of five DCAP steps are quantum-vulnerable: Quote signing (step 2, ECDSA P-256), Quote verification (step 4, ECDSA P-256), and TCB Info verification (step 5, ECDSA P-256). A CRQC could forge attestation quotes, allowing enclave impersonation and bypassing all trust decisions.',
+        'Four of six DCAP steps are quantum-vulnerable: AK certification where PCK signs the QE REPORT (step 2, ECDSA P-256), Quote signing by the QE using the AK (step 3, ECDSA P-256), Verifying each key binding and signature (step 5, ECDSA P-256), and Checking TCB Info and QE Identity collateral (step 6, ECDSA P-256). A CRQC could forge attestation quotes or collateral, allowing enclave impersonation and bypassing trust decisions.',
       config: { step: 1 },
     },
     {
@@ -61,7 +61,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Encryption',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'The Grover calculator shows AES-128 brute-force search dropping from 2^128 to ~2^64 operations in the idealized Grover model. In practice that speedup is far less useful (Grover has enormous circuit depth and barely parallelizes), which is why NIST still rates AES-128 at security category 1. AES-256, used by ARM TrustZone and AWS Nitro, keeps a large margin and is the recommended choice for long-term (HNDL) confidentiality. Prefer 256-bit memory-encryption keys where your processor generation enumerates and supports them.',
+        'The Grover calculator shows AES-128 brute-force search dropping from 2^128 to ~2^64 operations in the idealized Grover model. In practice that speedup is far less useful (Grover has enormous circuit depth and barely parallelizes), which is why NIST still rates AES-128 at security category 1. AES-256 (NIST category 5) keeps a large margin for long-term (HNDL) confidentiality; note that ARM TrustZone and AWS Nitro enclaves rely on hardware or hypervisor isolation rather than a defined enclave DRAM cipher (AWS documents AES-256-GCM for in-transit encryption on compatible Nitro Cards). Prefer 256-bit memory-encryption keys where your processor generation enumerates and supports them.',
       config: { step: 2 },
     },
     {
@@ -72,7 +72,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Integration',
       badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
       observe:
-        'The PQC channel replaces ECDSA P-256 with ML-DSA-65 for attestation and ECDH P-256 with ML-KEM-768 for key exchange. ML-KEM-768 ciphertext (1,088 bytes) is ~33x larger than ECDH P-256 (33 bytes). Migration requires both Intel DCAP PQC update and Luna firmware v7.9.2+.',
+        'The PQC channel replaces ECDSA P-256 with ML-DSA-65 for attestation and ECDH P-256 with ML-KEM-768 for key exchange. ML-KEM-768 ciphertext (1,088 bytes) is ~33x larger than a compressed ECDH P-256 public key (33 bytes). Migration requires both Intel DCAP PQC update and Luna HSM firmware v7.9+.',
       config: { step: 3 },
     },
     {
@@ -83,7 +83,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Migration',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Two vectors are critical: ECDSA attestation chain forgery and TLS channel key exchange compromise. Only the TLS channel has HNDL exposure (recorded data at risk); attestation forgery is a signature risk, and NIST IR 8547 says the authentication algorithm "may be transitioned at a different time". Both are migrated first because of their severity. Memory encryption (medium severity) is lower priority because Grover only halves key strength and real-time quantum attack on AES-128 is unlikely. Sealing key and firmware vectors require silicon refresh (highest effort).',
+        'Two vectors are critical: ECDSA attestation chain forgery and TLS channel key exchange compromise. Only the TLS channel has HNDL exposure (recorded data at risk); attestation forgery is a signature risk, and NIST IR 8547 (final, October 2026) says the authentication algorithm "may be transitioned at a different time". Both are migrated first because of their severity. Memory encryption (medium severity) is lower priority because Grover only halves key strength and real-time quantum attack on AES-128 is unlikely. Sealing key and firmware vectors require silicon refresh (highest effort).',
       config: { step: 4 },
     },
     {
@@ -94,7 +94,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Assessment',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). AWS documents ML-DSA key generation and signing inside CloudHSM, in FIPS mode on hsm2m.medium clusters from 1 September 2026, but no ML-KEM, and the HSM\u2019s CMVP certificate does not list ML-DSA yet (checked October 2026). These details move faster than any catalogue, so confirm them in AWS documentation before you design around them. AES-256 memory encryption is Grover-resilient. Patient records can have long retention: state law generally governs how long medical records are retained (the HIPAA Privacy Rule has no medical-record retention requirement), while HIPAA requires covered entities to retain required compliance documentation for 6 years, making HNDL exposure critical for long-lived records. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
+        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). AWS documents ML-DSA key generation and signing inside CloudHSM, in FIPS mode on hsm2m.medium clusters from 1 September 2026, but no ML-KEM, and the HSM\u2019s CMVP certificate does not list ML-DSA yet (checked October 2026). These details move faster than any catalogue, so confirm them in AWS documentation before you design around them. Nitro Enclaves rely on hypervisor-enforced memory isolation (no enclave DRAM encryption cipher is documented; compatible Nitro Cards document AES-256-GCM for in-transit encryption, which has a large Grover margin). Patient records can have long retention: state law generally governs how long medical records are retained (the HIPAA Privacy Rule has no medical-record retention requirement), while HIPAA requires covered entities to retain required compliance documentation for 6 years, making HNDL exposure critical for long-lived records. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
       config: { step: 4 },
     },
   ]

@@ -49,17 +49,17 @@ const DATES: { what: string; who: string; status: string }[] = [
   },
   {
     what: `Post-quantum key establishment by end of ${KEY_EST_YEAR}; signatures by end of ${EO_14412.digitalSignatures}`,
-    who: 'US federal civilian high-value and high-impact systems, and their contractors (EO 14412)',
+    who: 'US federal civilian high-value and high-impact systems, and their contractors (EO 14412 & OMB M-26-15)',
     status: 'In force',
   },
   {
     what: `New acquisitions use CNSA 2.0 algorithms from 1 January ${CNSA_2_0.networkingRequired}; equipment that cannot support them is phased out by 31 December ${CNSA_2_0.softwareExclusive}, exceptions possible; the algorithms are mandated by 31 December ${CNSA_2_0.fullEnforcement}, unless otherwise noted`,
-    who: 'US national security systems (NSA CNSA 2.0)',
+    who: 'US national security systems (NSA CNSA 2.0 FAQ v2.2, Oct 2026)',
     status: 'In force',
   },
   {
     what: `Deprecate quantum-vulnerable public-key algorithms after ${NIST_DEPRECATION.deprecateClassical}; disallow them after ${NIST_DEPRECATION.disallowClassical}`,
-    who: 'Systems that follow NIST rules (NIST IR 8547)',
+    who: 'Systems that follow NIST rules (NIST IR 8547, final, Oct 2026)',
     status: 'Final NIST guidance',
   },
   {

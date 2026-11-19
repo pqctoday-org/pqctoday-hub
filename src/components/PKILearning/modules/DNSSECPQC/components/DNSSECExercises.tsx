@@ -21,6 +21,7 @@ interface Scenario {
   badge: string
   badgeColor: string
   observe: string
+  productionCheck: string
   config: SimulationConfig
 }
 
@@ -40,6 +41,8 @@ export const DNSSECExercises: React.FC<DNSSECExercisesProps> = ({
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
         'ML-DSA-44 (2,420 B) alone exceeds the UDP ceiling by roughly 2x; SLH-DSA-SHA2-128s (7,856 B) exceeds it by more than 6x. Every classical algorithm shown fits comfortably under it.',
+      productionCheck:
+        'Decision & evidence: Test DNS-over-TCP (port 53/TCP) fallback, EDNS0 buffer sizes, and firewall/load-balancer fragmentation policies on your recursive and authoritative DNS paths before enabling larger DNSSEC responses.',
       config: { step: 0, highlightAlgorithm: 'ML-DSA-44' },
     },
     {
@@ -51,6 +54,8 @@ export const DNSSECExercises: React.FC<DNSSECExercisesProps> = ({
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
         'In this simplified illustration, algorithm 18 exists only at the leaf (dnstest.dev’s own zone). Every level above it — the .dev TLD and the DNS root — still delegates classically, so the chain of trust as a whole is not yet post-quantum.',
+      productionCheck:
+        'Decision & evidence: Verify separately whether your recursive resolvers validate algorithm 18, whether your authoritative DNS provider can sign with it, and whether your registrar and parent TLD accept algorithm-18 DS records.',
       config: { step: 1 },
     },
     {
@@ -62,6 +67,8 @@ export const DNSSECExercises: React.FC<DNSSECExercisesProps> = ({
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
         "Cloudflare's own company-wide PQ security target is ~2029 (not a DNSSEC-specific date); ICANN's separate March 2026 proposal for the next root algorithm rollover is classical, with ECDSA key generation in 2027 and RSA key decommissioning in 2030, subject to community feedback. The RSA-to-RSA rollover to KSK-2024 began in October 2026. Verisign's December 2023 comments describe a possible later PQ rollover in the mid-2030s, not an ICANN plan or forecast.",
+      productionCheck:
+        'Decision & evidence: Plan DNSSEC PQC migration around real ecosystem dependencies (IETF standardization, authoritative signer support, registrar DS publishing, and root/TLD rollovers) rather than treating resolver validation alone as end-to-end PQ DNSSEC.',
       config: { step: 2 },
     },
   ]
@@ -97,8 +104,12 @@ export const DNSSECExercises: React.FC<DNSSECExercisesProps> = ({
                   </span>
                 </div>
                 <p className="text-sm text-foreground/80 mb-2">{scenario.description}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mb-1">
                   <strong>What to observe:</strong> {scenario.observe}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  <strong>{scenario.productionCheck.split(':')[0]}:</strong>
+                  {scenario.productionCheck.slice(scenario.productionCheck.indexOf(':') + 1)}
                 </p>
               </div>
               <Button

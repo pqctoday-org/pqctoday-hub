@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
-// LAMPS draft-ietf-lamps-pq-composite-sigs-19 CMS SignedData builder + verifier.
+// Composite ML-DSA CMS SignedData builder + verifier (RFC 10073 / RFC 10082; originally LAMPS draft-ietf-lamps-pq-composite-sigs-19).
 //
 // Why this exists: the openssl.wasm pkcs11-provider composite path can produce
 // composite X.509 certs but CMS_sign() trips on X509_check_private_key because

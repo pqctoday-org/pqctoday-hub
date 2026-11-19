@@ -33,7 +33,7 @@ const SCENARIOS: Scenario[] = [
     id: 'ckks-where-it-breaks',
     title: '1. CKKS single-HSM custody — find the heaviest step and what limits it',
     description:
-      'In FHE + HSM Flows, select "CKKS single-HSM custody". Walk the steps until you reach the one titled "Stream the evaluation keys: the heaviest step", open its details and evidence, then read the scenario\'s scaling note.',
+      'In Step 2 (Advanced HSM custody lab), select "CKKS single-HSM custody". Walk the steps until you reach the one titled "Stream the evaluation keys: the heaviest step", open its details and evidence, then read the scenario\'s scaling note.',
     badge: 'Custody',
     badgeColor: 'bg-primary/20 text-primary border-primary/50',
     observe:

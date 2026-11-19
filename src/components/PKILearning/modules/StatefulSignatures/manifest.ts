@@ -3,13 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'stateful-signatures',
-  contentVersion: 28,
+  contentVersion: 29,
   lm_id: 'LM-026',
   title: 'Stateful Hash Signatures',
   description:
     'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter trade-offs, and critical state management.',
   whyThisMatters:
-    'LMS/XMSS require tracking signing state correctly, forever — reuse a one-time key by accident and the private key is immediately compromised.',
+    'LMS/XMSS require tracking signing state correctly, forever — reuse a one-time key by accident and forgery becomes feasible, so the key must be treated as compromised and retired.',
   duration: '40 min',
   difficulty: 'advanced',
   frameworkPhase: 'foundations',

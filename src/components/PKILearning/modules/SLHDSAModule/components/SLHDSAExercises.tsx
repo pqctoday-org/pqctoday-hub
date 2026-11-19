@@ -72,6 +72,17 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
         "HashSLH-DSA pre-hashes M before signing: M' = 0x01 || len(ctx) || ctx || OID_DER || H(M). The 0x01 prefix marks the pre-hash variant (Pure SLH-DSA uses 0x00); both variants still support an optional context string (up to 255 bytes).",
       config: { step: 1 },
     },
+    {
+      id: 'hash-scheme-decision',
+      title: '5. Choose Between SLH-DSA, LMS, and XMSS',
+      description:
+        'Open the LMS vs XMSS vs SLH-DSA Comparison table and evaluate two scenarios: (a) a distributed CI/CD signing fleet with ephemeral runners, and (b) a CNSA 2.0 National Security System firmware signer backed by a dedicated HSM.',
+      badge: 'Decision Check',
+      badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
+      observe:
+        'Stateless SLH-DSA avoids OTS state-exhaustion and rollback risk across ephemeral runners, at the cost of larger signatures (7,856–49,856 B). For CNSA 2.0 National Security Systems, NSA CNSA 2.0 FAQ v2.2 states SLH-DSA is not part of CNSA and not approved for any NSS use — single-tree LMS or XMSS (SP 800-208) is required for firmware/software signing, or ML-DSA-87 for general signing.',
+      config: { step: 3 },
+    },
   ]
 
   return (

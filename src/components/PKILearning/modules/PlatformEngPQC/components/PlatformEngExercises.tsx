@@ -43,7 +43,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
       badge: 'Inventory',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'The Vault mTLS session (build-vault-mtls) is the highest-risk asset. It uses ECDH P-256 key exchange, has an exposure window of 10+ years (secrets fetched by the pipeline may remain sensitive long after the session ends), and is classified as HNDL: High. An adversary recording Vault mTLS traffic today can decrypt every secret the pipeline fetched post-CRQC. The PQC replacement is X25519MLKEM768 hybrid TLS.',
+        'The Vault mTLS session (build-vault-mtls) is the highest-risk asset. It uses ECDH P-256 key exchange, has an exposure window of 10+ years (secrets fetched by the pipeline may remain sensitive long after the session ends), and is classified as HNDL: High. An adversary recording Vault mTLS traffic today can decrypt every secret the pipeline fetched post-CRQC. The PQC replacement is X25519MLKEM768 hybrid TLS 1.3 (RFC 10024).',
       config: { step: 0 },
     },
     {

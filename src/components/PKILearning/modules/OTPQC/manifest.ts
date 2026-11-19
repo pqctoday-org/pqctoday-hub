@@ -11,7 +11,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'ot-pqc',
-  contentVersion: 11,
+  contentVersion: 12,
   lm_id: 'LM-075',
   title: 'OT & Industrial Control Systems PQC',
   description:

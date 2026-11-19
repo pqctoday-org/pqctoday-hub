@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'iot-pqc',
   lastReviewed: '2026-10-01',
   version: '2.0.1',
-  lastEdited: '2026-11-10',
+  lastEdited: '2026-11-18',
 
   standards: [
     // The yardstick first: RFC 7228 defines Classes 0-2 and the 7228bis draft
@@ -47,10 +47,12 @@ export const content: ModuleContent = {
     getStandard('RFC-8613'),
     getStandard('draft-ietf-lake-pqsuites'),
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('RFC-10024'),
     getStandard('Matter-1-6-Core-Specification'),
     getStandard('LoRaWAN-Specification-v1-1'),
     // Certificates and identity
     getStandard('RFC 5280'),
+    getStandard('RFC-10073-Composite-ML-DSA-for-Use-in-X-509-Public-Key-Infra'),
     getStandard('RFC 8879'),
     getStandard('RFC 7250'),
     getStandard('draft-ietf-cose-cbor-encoded-cert'),

@@ -290,9 +290,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
                         </span>
                         <ThreatBadge level={worstThreat} />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                        {layer.description}
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{layer.description}</p>
                     </div>
                   </div>
                   <div className="shrink-0 ml-2 text-muted-foreground">

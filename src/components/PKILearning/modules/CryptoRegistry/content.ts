@@ -7,10 +7,11 @@ export const content: ModuleContent = {
   moduleId: 'crypto-registry',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-11-14',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('CycloneDX-Cryptography-Registry'),
+    getStandard('CycloneDX-Spec-Overview'),
     getStandard('OWASP-CycloneDX-CBOM-Guide'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
@@ -19,6 +20,7 @@ export const content: ModuleContent = {
     getStandard('RFC 9881'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('EU-NIS-CG-Roadmap-v1.1'), // m-crypto-registry: 2026; m-crypto-registry: 23 Jun 2025
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768'), getAlgorithm('ML-DSA-65'), getAlgorithm('ECDSA P-256')],
@@ -27,7 +29,12 @@ export const content: ModuleContent = {
     {
       label: 'EU roadmap: Member States complete First Steps (incl. cryptographic inventories)',
       year: 2026,
-      source: 'EU PQC Roadmap (2025)',
+      source: 'EU NIS CG Coordinated Implementation Roadmap v1.1 (11 Jun 2025)',
+    },
+    {
+      label: 'CISA guidance on minimum CBOM elements due (19 March 2027, EO +270 days)',
+      year: 2027,
+      source: 'EO 14412 (22 Jun 2026)',
     },
   ],
 

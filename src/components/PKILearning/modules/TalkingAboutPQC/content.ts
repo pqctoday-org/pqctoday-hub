@@ -20,7 +20,7 @@ export const content: ModuleContent = {
   version: '1.0.0',
   // lastReviewed set by record_module_review.py: owner review, 1 Oct 2026,
   // clean (revisions.jsonl review_only entry). Never edit it by hand.
-  lastEdited: '2026-11-02',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -28,6 +28,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('NIST IR 8547'),
     getStandard('NSA CNSA 2.0'),
+    getStandard('NSA CNSA 2.0 FAQ'),
     getStandard('EO-2026-06-22-Securing-the-Nation'),
     getStandard('OMB-M-26-15'),
     getStandard('FIPS-140-3-STANDARD'),
@@ -43,22 +44,32 @@ export const content: ModuleContent = {
     {
       label: 'US federal civilian key establishment (EO 14412)',
       year: EO_14412.keyEstablishment ?? 2030,
-      source: 'EO 14412',
+      source: 'EO 14412 & OMB M-26-15 (Jun 2026)',
+    },
+    {
+      label: 'US federal civilian digital signatures (EO 14412)',
+      year: EO_14412.digitalSignatures,
+      source: 'EO 14412 & OMB M-26-15 (Jun 2026)',
     },
     {
       label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
-      source: 'CNSA 2.0',
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
+    },
+    {
+      label: 'CNSA 2.0 mandated for National Security Systems (31 Dec 2031)',
+      year: CNSA_2_0.fullEnforcement,
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
     },
     {
       label: 'Deprecation of quantum-vulnerable algorithms',
       year: NIST_DEPRECATION.deprecateClassical,
-      source: 'NIST IR 8547',
+      source: 'NIST IR 8547 (final, Oct 2026)',
     },
     {
       label: 'Disallowance of quantum-vulnerable algorithms',
       year: NIST_DEPRECATION.disallowClassical,
-      source: 'NIST IR 8547',
+      source: 'NIST IR 8547 (final, Oct 2026)',
     },
   ],
 
@@ -66,8 +77,9 @@ export const content: ModuleContent = {
     oneMinute:
       'Most online security relies on mathematics a large quantum computer could undo. No such computer exists yet, but data copied today could be read once one does. NIST published the replacements in August 2024 (FIPS 203, 204 and 205). The slow part now is fitting them into every product and system.',
     dates:
-      'Every real date belongs to someone and applies to specific systems. CNSA 2.0 covers US National Security Systems; EO 14412 covers US federal civilian high-value and high-impact systems; NIST IR 8547 (final, October 2026) is NIST guidance for systems that follow NIST standards. When a quantum computer will arrive is an estimate, and experts disagree.',
-    certificates: 'Read what a certificate covers before its level.',
+      'Every real date belongs to someone and applies to specific systems. CNSA 2.0 (FAQ v2.2, October 2026) covers US National Security Systems; EO 14412 and OMB M-26-15 cover US federal civilian high-value and high-impact systems; NIST IR 8547 (final, October 2026) is NIST guidance for systems that follow NIST standards. When a quantum computer will arrive is an estimate, and experts disagree.',
+    certificates:
+      'Read what a certificate covers before its level. Under FIPS 140-3, algorithm testing (CAVP), Modules In Process (MIP), and full module validation are three distinct stages — and a validated certificate covers only the specific module version and tested operational environment listed on it, not PQC algorithms added in a later release.',
     words:
       'Avoid "quantum-proof" and "unbreakable": no cryptography is proven unbreakable. NIST approves algorithms, not products. Say which standard a product implements, from which version, and point to the evidence.',
   },

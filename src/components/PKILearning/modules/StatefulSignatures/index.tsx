@@ -66,7 +66,7 @@ export const StatefulSignaturesModule: FC = () => (
         case 0:
           return <LMSKeyGenDemo key={`lms-${configKey}`} initialParamId={c?.paramId} />
         case 1:
-          return <XMSSKeyGenDemo key={`xmss-${configKey}`} />
+          return <XMSSKeyGenDemo key={`xmss-${configKey}`} initialParamId={c?.paramId} />
         case 2:
           return <StateManagementVisualizer key={`state-${configKey}`} />
         case 3:

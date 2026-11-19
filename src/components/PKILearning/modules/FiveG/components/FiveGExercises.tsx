@@ -56,9 +56,9 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
     },
     {
       id: 'profile-c-hybrid',
-      title: '3. Profile C: Post-Quantum SUCI (Hybrid)',
+      title: '3. Proposed Profile C: Post-Quantum SUCI (Hybrid — Research Proposal)',
       description:
-        'Use Profile C in hybrid mode — combining X25519 classical ECDH with ML-KEM-768 lattice-based KEM. The shared secret is derived from both algorithms, providing quantum resistance with a classical fallback.',
+        'Use the proposed Profile C (not yet a normative 3GPP TS 33.501 Rel-19 profile; 3GPP Rel-20 TR 33.703 / SUCI PQC migration work is underway) in hybrid mode — combining X25519 classical ECDH with ML-KEM-768 lattice-based KEM. The shared secret is derived from both algorithms, providing quantum resistance with a classical fallback.',
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
@@ -67,9 +67,9 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
     },
     {
       id: 'profile-c-pure',
-      title: '4. Profile C: Post-Quantum SUCI (Pure)',
+      title: '4. Proposed Profile C: Post-Quantum SUCI (Pure — Research Proposal)',
       description:
-        'Use Profile C in pure PQC mode — ML-KEM-768 only, with no classical component. This is the target end-state for quantum-resistant subscriber privacy, using AES-256-CTR and HMAC-SHA3-256.',
+        'Use the proposed Profile C (research proposal, not yet a normative 3GPP profile) in pure PQC mode — ML-KEM-768 only, with no classical component — modelling a pure post-quantum option with AES-256-CTR and HMAC-SHA3-256.',
       badge: 'PQC',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
@@ -112,7 +112,7 @@ export const FiveGExercises: React.FC<FiveGExercisesProps> = ({
         <p className="text-muted-foreground text-sm">
           Run these scenarios to compare classical, NIST-compliant, and post-quantum 5G security
           configurations. Each exercise pre-configures the simulator — click &quot;Load &amp;
-          Run&quot; to apply the settings and switch to the Simulate tab.
+          Run&quot; to apply the settings and switch to the Workshop tab.
         </p>
       </div>
 

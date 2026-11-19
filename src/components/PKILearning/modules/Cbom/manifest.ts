@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'cbom',
-  contentVersion: 9,
+  contentVersion: 10,
   lm_id: 'LM-060',
   title: 'Cryptography Bill of Materials (CBOM)',
   description:
@@ -19,6 +19,7 @@ const manifest: ModuleManifest = {
     { id: 'cbom-why', label: 'Why a CBOM' },
     { id: 'cbom-formats', label: 'CycloneDX vs SPDX' },
     { id: 'cbom-discovery', label: 'Layered Crypto Discovery' },
+    { id: 'cbom-estate', label: 'Estate Fields' },
     { id: 'cbom-context', label: 'Key Identity & Provenance' },
     { id: 'cbom-codify', label: 'Codifying Crypto' },
     { id: 'cbom-verify', label: 'Machine-Verifiable CBOM' },

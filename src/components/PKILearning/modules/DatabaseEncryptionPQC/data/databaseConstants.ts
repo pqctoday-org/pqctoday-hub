@@ -170,7 +170,7 @@ export const DATABASE_PROFILES: DatabaseEncryptionProfile[] = [
     keyManagement: ['provider-managed', 'byok'],
     hsmIntegration: true,
     fipsScope:
-      'MongoDB documentation: FIPS mode exists only in MongoDB Enterprise, runs with a FIPS 140-2 certified OpenSSL library on the supported platforms, and covers MongoDB’s use of TLS/SSL, SCRAM and X.509 authentication. The module, certificate number and approved configuration are not verified here, and the documentation does not extend this to other features.',
+      'MongoDB documentation: FIPS mode exists only in MongoDB Enterprise, historically ran with a FIPS 140-2 certified OpenSSL library on supported platforms (note: FIPS 140-2 certificates moved to the CMVP Historical List in September 2026 — check for a FIPS 140-3 validated module on your target release), and covers MongoDB’s use of TLS/SSL, SCRAM and X.509 authentication. The module, certificate number and approved configuration are not verified here, and the documentation does not extend this to other features.',
     migrationComplexity: 'medium',
     notes:
       'FLE 2.0 supports equality and range queries on encrypted fields. DEK wrapping uses RSA-OAEP; ML-KEM wrapping for the key management endpoint is this module’s projection. Atlas provides BYOK via AWS/Azure/GCP KMS.',
@@ -579,7 +579,7 @@ export const COMPLIANCE_REQUIREMENTS: ComplianceRequirement[] = [
     deadlineNote:
       'PCI SSC has not mandated PQC; monitoring ANSI X9/ASC X9 quantum-safe standards (X9.146).',
     pqcImplication:
-      'PAN data retained for chargebacks (13 months) has low immediate HNDL risk, but card infrastructure (HSMs, KIFs) has 10-15 year lifecycle. X9.146 quantum-safe framework (draft, expected 2026) — plan DUKPT upgrade.',
+      'PAN data retained for chargebacks (13 months) has low immediate HNDL risk, but card infrastructure (HSMs, KIFs) has 10-15 year lifecycle. Monitor ANSI X9.146 quantum-safe framework progress and plan DUKPT upgrade.',
   },
   {
     id: 'nsm8-cnsa20',

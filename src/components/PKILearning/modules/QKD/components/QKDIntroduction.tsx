@@ -420,19 +420,45 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
             </ul>
           </div>
         </div>
-        <div className="bg-muted/50 rounded-lg p-4 border border-border">
-          <div className="text-sm font-bold text-foreground mb-1">NSA Position on QKD</div>
-          <p className="text-xs text-muted-foreground italic">
-            &quot;NSA does not recommend the usage of quantum key distribution and quantum
-            cryptography for securing the transmission of data in National Security Systems
-            &hellip;&quot; QKD addresses only the key distribution problem, requires special-purpose
-            equipment, and is only proven secure under theoretical models that may not match
-            real-world implementations.
-          </p>
-          <p className="text-xs text-muted-foreground mt-2">
-            NSA instead considers mathematically based cryptography a better alternative for
-            protecting National Security Systems from future quantum computing developments.
-          </p>
+        <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+          <div>
+            <div className="text-sm font-bold text-foreground mb-1">
+              NSA Position on QKD (CNSA 2.0 FAQ v2.2, October 2026)
+            </div>
+            <p className="text-xs text-muted-foreground italic">
+              &quot;NSA does not recommend the usage of quantum key distribution and quantum
+              cryptography for securing the transmission of data in National Security Systems
+              &hellip;&quot; QKD addresses only the key distribution problem, requires
+              special-purpose equipment, and is only proven secure under theoretical models that may
+              not match real-world implementations.
+            </p>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              NSA does not generally consider QKD a practical security solution for protecting NSS,
+              instructs NSS owners not to use or research QKD without consulting NSA, and instead
+              considers mathematically based post-quantum cryptography a better alternative.
+            </p>
+          </div>
+          <div className="border-t border-border/60 pt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <div className="text-xs font-bold text-foreground mb-1">
+                BSI (Germany) &amp; ANSSI (France)
+              </div>
+              <p className="text-xs text-muted-foreground">
+                In their joint European technical position, BSI and ANSSI state that QKD can in
+                practice only be considered for niche use cases (such as dedicated point-to-point
+                links) and only in hybrid combination with PQC or symmetric keying, which remain the
+                primary migration solutions.
+              </p>
+            </div>
+            <div>
+              <div className="text-xs font-bold text-foreground mb-1">NCSC (United Kingdom)</div>
+              <p className="text-xs text-muted-foreground">
+                NCSC does not endorse QKD for any government or military applications, citing lack
+                of built-in authentication, trusted-node exposure, hardware cost, denial-of-service
+                risks, and absence of certified assurance, and directs organizations toward PQC.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

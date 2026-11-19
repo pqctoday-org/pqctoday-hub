@@ -259,9 +259,9 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
           PQ + classical dual signature (multi-SignerInfo)
           <span
             className="ml-2 rounded border border-status-warning/30 bg-status-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-status-warning"
-            title="Multi-SignerInfo (RFC 5652) is NOT LAMPS draft-19 composite. A malicious party can strip one SignerInfo. LAMPS composite-sigs (single combined OID) requires both to verify atomically."
+            title="Multi-SignerInfo (RFC 5652) is NOT Composite ML-DSA (RFC 10073 / RFC 10082). A malicious party can strip one SignerInfo. Composite ML-DSA (single combined OID) requires both to verify atomically."
           >
-            Multi-SignerInfo ≠ LAMPS composite
+            Multi-SignerInfo ≠ Composite ML-DSA
           </span>
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -269,12 +269,12 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
           requires exactly the two generated certificate identities and selected signature profiles,
           then runs one joint signature check. Certificate chain trust is not checked.{' '}
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/"
+            href="https://www.rfc-editor.org/rfc/rfc10082.html"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-0.5 text-primary hover:underline"
           >
-            LAMPS composite <ExternalLink size={10} />
+            RFC 10082 composite CMS <ExternalLink size={10} />
           </a>{' '}
           is the strictly-stronger Phase 5 path once pkcs11-provider's composite dispatch is
           verified for the target OID pair.

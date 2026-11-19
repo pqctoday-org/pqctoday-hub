@@ -31,6 +31,8 @@ Module covering PQC migration for network security infrastructure including NGFW
 
 ## Standards References
 
+- RFC 9846: The Transport Layer Security (TLS) Protocol Version 1.3 (obsoletes RFC 8446)
+- RFC 10024: Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3 (X25519MLKEM768, 0x11EC)
 - NIST SP 800-227: Recommendations for Key-Encapsulation Mechanisms (KEMs in general, not specific to TLS)
 - NIST SP 800-207A: access-control model for cloud-native, multi-location zero trust (no post-quantum content)
 - RFC 9370: Multiple Key Exchanges in IKEv2 (hybrid KEM for IPsec)

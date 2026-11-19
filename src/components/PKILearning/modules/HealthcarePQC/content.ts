@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'healthcare-pqc',
   version: '1.0.2',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-11-09',
+  lastEdited: '2026-11-18',
 
   standards: [
     getStandard('FIPS 203'),
@@ -66,7 +66,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'Intermediate-level module (75 min, 5 workshop steps) covering post-quantum cryptography migration for the healthcare industry — a sector with the highest density of irreplaceable biometric data, long data retention requirements (PHI, genomic records), life-critical medical device security, and complex regulatory obligations under HIPAA, GDPR Article 9, and FDA cybersecurity guidance.',
+      'Intermediate-level module (60 min, 5 workshop steps) covering post-quantum cryptography migration for the healthcare industry — a sector with the highest density of irreplaceable biometric data, long data retention requirements (PHI, genomic records), life-critical medical device security, and complex regulatory obligations under HIPAA, GDPR Article 9, and FDA cybersecurity guidance.',
     keyConcepts:
       'Biometric data profiles and irreplaceability: Healthcare holds uniquely irreplaceable biometric data — unlike passwords, biometrics cannot be rotated when compromised. PQC protection priority is driven by replaceability and lifetime sensitivity: Fingerprint (512-byte template, irreplaceable — unique ridge patterns, recommend ML-KEM-768 + ML-DSA-65). Iris (256-byte template, irreplaceable — stable for life, unique per person, ML-KEM-768 + ML-DSA-65).',
     workshopSummary:

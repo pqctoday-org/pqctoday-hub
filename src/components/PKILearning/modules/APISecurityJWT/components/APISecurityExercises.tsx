@@ -20,6 +20,7 @@ interface Scenario {
   badge: string
   badgeColor: string
   observe: string
+  productionCheck: string
   config: WorkshopConfig
 }
 
@@ -39,6 +40,8 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
         'The header is the only part that changes between algorithms. The ES256 signature is ~85 base64url characters while the ML-DSA-65 signature is ~4,412 characters (3,309 × 4 ÷ 3 = 4,412 in base64url).',
+      productionCheck:
+        'Decision & evidence: Inventory every token issuer and verifier allowlist; verify that production verifiers resolve keys from a configured JWKS and pin expected algorithms per key rather than trusting the header alg claim.',
       config: { step: 0 },
     },
     {
@@ -50,6 +53,8 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
         'The JWT structure is identical for both algorithms. Only the signature length differs dramatically: ~300 bytes total for ES256 vs ~4,700 bytes for ML-DSA-65.',
+      productionCheck:
+        'Decision & evidence: Confirm your identity provider, JOSE library, and KMS/HSM support RFC 9964 AKP JWKs and ML-DSA signing/verification, and retain interoperability test traces between issuer and resource servers.',
       config: { step: 1 },
     },
     {
@@ -61,6 +66,8 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
         'The nested sample base64url-encodes the complete inner JWT again as the outer payload, so its size is not the simple sum of two token lengths. Inspect the actual character counts displayed by the sample. An unmodified classical-only verifier cannot validate the outer algorithm; an explicitly defined intermediary path would need to handle the nesting, and accepting only the inner classical signature does not provide PQC protection.',
+      productionCheck:
+        'Decision & evidence: Decide whether your transition uses dual-endpoint rollout, nested JWTs (requiring both layers verified), or draft composite signatures, and test negative cases where one signature is corrupted to prove verifiers reject partial validation.',
       config: { step: 2 },
     },
     {
@@ -72,6 +79,8 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
         'JWE keeps its 5 parts (vs 3 for JWS), but in HPKE Integrated Encryption the IV and tag are empty: the Encrypted Key carries the HPKE encapsulated secret (1,088 bytes for ML-KEM-768, 1,120 for the hybrid) and the GCM tag sits inside the ciphertext.',
+      productionCheck:
+        'Decision & evidence: Track IETF publication status before locking production JWE formats; verify whether confidentiality is required at the token layer (HNDL exposure) or already covered by hybrid TLS, and keep recipient private keys non-extractable in your HSM/KMS.',
       config: { step: 3 },
     },
     {
@@ -83,17 +92,34 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
         'SLH-DSA-SHA2-128s produces the largest signature (7,856 bytes) but the smallest public key (32 bytes). ML-DSA-87 balances key and signature sizes. Only classical algorithms fit comfortably in standard HTTP headers.',
+      productionCheck:
+        'Decision & evidence: Measure actual Authorization and DPoP header lines against configured per-header and aggregate limits on your API gateways, load balancers, and CDNs before choosing self-contained PQC JWTs versus reference tokens.',
       config: { step: 4 },
     },
     {
+      id: 'matrix-audit',
+      title: '6. Audit the JOSE Protocol Matrix and evidence scope',
+      description:
+        'Inspect the JOSE row of the PQC Protocol Matrix against primary IETF references (RFC 9964, RFC 9864, and active JOSE/COSE drafts). Identify which claims are backed by finalized RFCs versus working-group drafts.',
+      badge: 'Matrix Audit',
+      badgeColor: 'bg-accent/20 text-accent border-accent/50',
+      observe:
+        'ML-DSA for JOSE is finalized in RFC 9964, while SLH-DSA, composite signatures, and HPKE PQ JWE remain IETF drafts. Standardizing a format does not prove library or gateway interoperability.',
+      productionCheck:
+        'Decision & evidence: Separate specification maturity from vendor deployment readiness in procurement and architecture reviews; require versioned library release notes and live interop test results rather than draft citations alone.',
+      config: { step: 5 },
+    },
+    {
       id: 'attack-lab',
-      title: '6. Break a JWT verifier',
+      title: '7. Break a JWT verifier',
       description:
         'Issue a real ML-DSA-65 access token, then try five attacks on it: "alg": "none", edited claims under the original signature, a token minted for another API, an expired token, and an ID token presented as an access token. Compare what a strict RFC 8725 validator and a naive verifier each accept.',
       badge: 'Attack Lab',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
         'The naive verifier is fooled by four of the five attacks, including a token with no signature at all. Only edited claims fail on the signature; every other attack is stopped by a check the API must do itself: pinning the algorithm, the audience, the expiry and the token type. Changing the signature algorithm to ML-DSA fixes none of them.',
+      productionCheck:
+        'Decision & evidence: Add automated negative-case tests (alg:none, wrong aud, wrong typ, expired token, key confusion) to your API CI pipeline so PQC migration preserves RFC 8725 validation invariants.',
       config: { step: 6 },
     },
   ]
@@ -128,8 +154,12 @@ export const APISecurityExercises: React.FC<APISecurityExercisesProps> = ({
                   </span>
                 </div>
                 <p className="text-sm text-foreground/80 mb-2">{scenario.description}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mb-1">
                   <strong>What to observe:</strong> {scenario.observe}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  <strong>{scenario.productionCheck.split(':')[0]}:</strong>
+                  {scenario.productionCheck.slice(scenario.productionCheck.indexOf(':') + 1)}
                 </p>
               </div>
               <Button

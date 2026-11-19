@@ -240,9 +240,13 @@ export const FIPSCompatibilityChecker: React.FC = () => {
     <div className="space-y-6">
       {/* FIPS + PQC matrix overview */}
       <div className="glass-panel p-4">
-        <div className="text-sm font-bold text-foreground mb-3">
+        <div className="text-sm font-bold text-foreground mb-1">
           FIPS 140-3 + PQC Compatibility Matrix
         </div>
+        <p className="text-xs text-muted-foreground mb-3">
+          FIPS 140-2 certificates moved to the CMVP Historical List in September 2026; new federal
+          procurements and PQC validations require active FIPS 140-3 modules.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>

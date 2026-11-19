@@ -70,6 +70,17 @@ export const MTCExercises: React.FC<MTCExercisesProps> = ({
         "An inclusion proof depends only on how large its subtree is, never on the signature algorithm: ~96 bytes for this 8-leaf demo, 384 bytes for a standalone certificate reaching the latest checkpoint (~3,000 entries), 736 bytes for a landmark subtree of ~5.4M — the two figures the draft projects in §6.5. Every column also carries the server's public key and its CertificateVerify signature, and the traditional column is a leaf-plus-intermediate chain (the root is in the trust store). Because the proof is a fixed cost and the signatures it replaces are not, MTC savings scale with signature size: ECDSA (64 B sig) saves 183 bytes standalone, ~19%; ML-DSA-44 (2,420 B sig) saves 3,786 bytes, ~36% standalone (one CA cosignature) and 5,854 bytes, ~56% landmark; SLH-DSA-128s (7,856 B sig) saves 7,942 bytes, ~33% standalone and 15,446 bytes, ~64% landmark. Watch what landmark mode does to ECDSA: at 1,065 bytes it is LARGER than the 960-byte traditional chain, because a 736 B landmark proof costs more than the two certificate signatures it replaces. This is the authored authentication-component model: raw keys/signatures (ECDSA fixed at 64 B with a 65 B public point), 200 B metadata per certificate and 2 × 119 B SCTs in the traditional chain. It excludes KEM shares, other handshake messages, DER/record/transport framing and background landmark synchronization. These are not whole TLS byte savings. For compact classical signatures, a landmark proof can be larger than the signatures it replaces.",
       workshopStep: 3,
     },
+    {
+      id: 'ct-log-consistency',
+      title: '5. Verify Append-Only CT Log Consistency & Misissuance Detection',
+      description:
+        'Open the CT Log Simulator, sign a Tree Head with ML-DSA-65 via SoftHSMv3, append new certificates, and generate a consistency proof between tree sizes. Then inspect how a monitor detects an unauthorized certificate leaf.',
+      badge: 'CT Log',
+      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      observe:
+        'An RFC 9162 consistency proof proves that the newer tree is an append-only extension of the older tree without modifying historical leaves. One ML-DSA-65 signature over the Signed Tree Head covers the entire batch, and any unauthorized leaf is visible to independent monitors auditing the log.',
+      workshopStep: 4,
+    },
   ]
 
   const handleStartExercise = (scenario: Scenario) => {

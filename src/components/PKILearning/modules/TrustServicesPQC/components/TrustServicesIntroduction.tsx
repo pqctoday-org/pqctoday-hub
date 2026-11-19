@@ -122,7 +122,16 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
       >
         <p className="text-muted-foreground">
           A signature does not fail all at once. It degrades in stages, and each stage has a
-          different remedy that must be in place <em>before</em> the stage arrives.
+          different remedy that must be in place <em>before</em> the stage arrives. Keep the service
+          boundary clear: under eIDAS 2.0, the{' '}
+          <strong className="text-foreground">
+            qualified preservation or records archiving and retrieval service
+          </strong>{' '}
+          (maintaining AdES-LTA / Long-Term Archival evidence and archive timestamps) is the
+          business and trust service you operate or procure; the{' '}
+          <strong className="text-foreground">long-lived signed records</strong> themselves
+          (notarial deeds, land registries, medical consent) are the protected assets, not a
+          service.
         </p>
         <ol className="space-y-3">
           {LTV_STAGES.map((s, i) => (

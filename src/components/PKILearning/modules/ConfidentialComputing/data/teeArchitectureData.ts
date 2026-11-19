@@ -32,7 +32,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
       'Widest third-party tooling support',
     ],
     limitations: [
-      'Limited EPC size (256 MB) — performance cliff on large workloads',
+      'Legacy pre-3rd-Gen Xeon EPC cap (256 MB) causes paging overhead on large workloads (expanded to hundreds of GB on recent Xeon platforms)',
       'History of side-channel vulnerabilities (Foreshadow, Plundervolt, ÆPIC)',
       'This module covers Xeon data center deployments only; consumer CPU support is not covered',
       'Complex programming model (must partition code into enclave/non-enclave)',
@@ -57,11 +57,11 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
       'Per-TD encryption key managed by TME-MK hardware; sealing via TD Report binding',
     sideChannelProtection: ['TD partitioning', 'Interrupt filtering', 'MSR access control'],
     deploymentModel: 'cloud',
-    cloudProviders: ['Azure DCesv5', 'GCP C3 (GA, 2025)', 'Alibaba Cloud g8i'],
+    cloudProviders: ['Azure DCesv5', 'GCP C3 (GA, Sep 2024)', 'Alibaba Cloud g8i'],
     maturityLevel: 'emerging',
     pqcReadiness: 'planned',
     pqcNotes:
-      "Shares DCAP attestation infrastructure with SGX — The module's own estimate puts its PQC migration around 2027, aligned with SGX; no Intel date is published. TME-MK uses AES-128 (Grover concern). The module expects future CPUs to support AES-256 and ML-KEM-based memory sealing; we found no published Intel plan for either.",
+      "Shares DCAP attestation infrastructure with SGX — the module's own estimate puts its PQC migration around 2027, aligned with SGX; no Intel date is published. TME-MK supports 128- or 256-bit AES-XTS keys depending on processor generation and selection (prefer 256-bit where enumerated). The module expects future CPUs to add ML-KEM-based memory sealing; we found no published Intel plan for it.",
     strengths: [
       'Full VM isolation — run unmodified OS and applications',
       'No EPC size limitation — full VM memory encrypted',
@@ -132,7 +132,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     sideChannelProtection: ['RME hardware isolation', 'Speculation barriers', 'GPT access control'],
     deploymentModel: 'cloud',
     cloudProviders: [
-      "Emerging availability: no cloud-provider dates are published in the sources we hold (the module's own estimate is ARM CCA silicon in select cloud providers from Q2 2026 and broad GA in 2027)",
+      'Emerging availability: no cloud-provider GA dates are published in the sources we hold; verify current cloud announcements for ARM v9.2 CCA silicon availability',
     ],
     maturityLevel: 'emerging',
     pqcReadiness: 'planned',
@@ -178,7 +178,7 @@ export const TEE_ARCHITECTURES: TEEArchitecture[] = [
     maturityLevel: 'mature',
     pqcReadiness: 'planned',
     pqcNotes:
-      'AMD VCEK uses ECDSA P-384 (quantum-vulnerable). We found no published AMD date or plan for PQC attestation signing (ML-DSA). SEV memory encryption uses AES-128 (Grover concern).',
+      'AMD VCEK uses ECDSA P-384 (quantum-vulnerable). We found no published AMD date or plan for PQC attestation signing (ML-DSA). AMD documents AES-128 XEX and AES-256 XTS memory encryption modes (check your EPYC generation and guest policy for 256-bit support).',
     strengths: [
       'No application changes needed — encrypts full VM transparently',
       'Strong memory integrity via RMP (prevents hypervisor remapping)',

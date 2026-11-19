@@ -87,11 +87,12 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
       <Section id="sbom-formats" icon={FileJson} title="SPDX vs CycloneDX — general BOM formats">
         <p>
           <Badge kind="std" />
-          <strong>SPDX</strong> is an international open standard (ISO/IEC 5962:2021).{' '}
-          <strong>CycloneDX</strong> is an OWASP community specification; CycloneDX 1.6 was
-          published as ECMA-424. Both formats represent software components and relationships, but
-          use different schemas and field models. Compare the versions and downstream tool support
-          your workflow requires instead of assuming one is universally more complete.
+          <strong>SPDX</strong> is an international open standard (ISO/IEC 5962:2021 for v2.x;
+          released v3.0.1). <strong>CycloneDX</strong> is an OWASP community specification;
+          CycloneDX 1.6 was published as ECMA-424 and v1.7 is the 2nd edition. Both formats
+          represent software components and relationships, but use different schemas and field
+          models. Compare the versions and downstream tool support your workflow requires instead of
+          assuming one is universally more complete.
         </p>
         <p>
           <Badge kind="view" />
@@ -137,8 +138,8 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
       <Section id="sbom-2026-update" icon={Sparkles} title="What changed in the 2026 update">
         <p>
           <Badge kind="std" />
-          The seven elements above went unchanged for four years while SBOM tooling matured well
-          past what they were designed for. The 2026 update adds{' '}
+          The seven elements above remained the baseline for about five years while SBOM tooling
+          matured well past what they were designed for. The 2026 update adds{' '}
           <strong>ten new required elements</strong>: seven at the document level (
           <strong>SBOM Author Signature</strong>, <strong>SBOM Data Format Name</strong>,{' '}
           <strong>SBOM Data Format Version</strong>, <strong>SBOM Tool Name</strong>,{' '}
@@ -233,7 +234,10 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
           <Badge kind="view" />
           In this module&apos;s staged model, an SBOM is a discovery input, not the CBOM output. A
           crypto-discovery effort can cross-reference its component and dependency information
-          rather than assume it already describes cryptographic assets.
+          rather than assume it already describes cryptographic assets. US policy draws the same
+          distinction: CISA&apos;s July 2026 guidance defines minimum <em>SBOM</em> elements, while
+          Executive Order 14412 (22 Jun 2026) directs CISA to publish separate guidance on minimum{' '}
+          <em>CBOM</em> elements by 19 March 2027.
         </p>
         <p>
           <Badge kind="view" />

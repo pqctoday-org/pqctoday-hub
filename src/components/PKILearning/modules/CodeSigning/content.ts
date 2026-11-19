@@ -31,6 +31,8 @@ export const content: ModuleContent = {
     // says any choice of XMSS or LMS satisfies CNSA 2.0.
     // Declared FIRST so the four-document stride opens it.
     getStandard('NSA CNSA 2.0'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('NIST IR 8547'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('NIST SP 800-208'),

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'iam-pqc',
-  contentVersion: 18,
+  contentVersion: 19,
   lm_id: 'LM-028',
   title: 'Identity & Access Management with PQC',
   description:

@@ -645,7 +645,10 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               services that cannot support CNSA 2.0 phased out by 31 December 2030 unless excepted;
               CNSA 2.0 algorithms mandated by 31 December 2031 unless otherwise noted; NSM-10 sets a
               2035 goal for quantum-resistant NSS. Check NSA&apos;s current documents for the date
-              that applies to your equipment type.
+              that applies to your equipment type. For non-NSS systems, NIST IR 8547 (final, October
+              2026) deprecates quantum-vulnerable signatures after 2030 and disallows them after
+              2035, while EO 14412 and OMB M-26-15 require prioritized civilian federal systems to
+              complete digital signature migration by 31 December 2031.
             </p>
           </div>
 

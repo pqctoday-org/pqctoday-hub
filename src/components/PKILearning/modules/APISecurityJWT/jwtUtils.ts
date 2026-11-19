@@ -285,7 +285,7 @@ const slhDsaParamSet = (): Record<SlhDsaAlg, number> => ({
 //
 // -06 (October 2026) no longer restates the algorithm: §4 defers key
 // generation, signing, verification and serialization to
-// draft-ietf-lamps-pq-composite-sigs, and §4.1 fixes the JOSE/COSE context
+// draft-ietf-lamps-pq-composite-sigs (now RFC 10073), and §4.1 fixes the JOSE/COSE context
 // string to empty, which gives the same M' as below. -06 adds ML-DSA-65-ES384.
 // Section numbers below are -04's (§4.1-§4.4 are now -06 §4/§4.1; §4.5.x is
 // now §4.2.x).

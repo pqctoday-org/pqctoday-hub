@@ -5,7 +5,7 @@
  * "SOC Implementation" section (pp. 165–175). Licensed under CC BY 4.0.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
-import { CNSA_2_0 } from '@/data/regulatoryTimelines'
+import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import {
   CNSA_ACQUISITION_LABEL,
   CNSA_PHASE_OUT_LABEL,
@@ -17,27 +17,22 @@ export const content: ModuleContent = {
   moduleId: 'soc-implementation-pqc',
   lastReviewed: '2026-08-23',
   version: '1.0.0',
-  lastEdited: '2026-10-31',
+  lastEdited: '2026-11-18',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
-  // reads only four. Detection engineering: RFC 8446 leads because hybrid-downgrade detection parses
-  // TLS 1.3 NamedGroups, which is this module's distinctive claim.
+  // reads only four. Detection engineering: RFC 9846 + RFC 10024 lead because
+  // hybrid-downgrade detection parses TLS 1.3 NamedGroups (e.g. 0x11EC X25519MLKEM768).
   standards: [
-    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
-    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". In-module prose still cites
-    // RFC 8446 sections where it discusses the original, which stays accurate.
+    // RFC 9846 (July 2026) obsoletes RFC 8446 as the base TLS 1.3 specification;
+    // RFC 10024 defines PQ/T hybrid key agreement NamedGroups for TLS 1.3.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('RFC 10024'),
     getStandard('NIST IR 8547'),
     getStandard('FIPS 203'),
     getStandard('NIST SP 800-227'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('NIST IR 8547'),
-    // RFC 9846 REPLACES RFC 8446 here, 2026-08-22. RFC 9846 (July 2026) obsoletes it —
-    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446" in its header — and the library
-    // row for 8446 already carried 9846 as its supersession pointer. TLS 1.3 the
-    // protocol is unchanged; the live specification moved.
-    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('NSA CNSA 2.0 FAQ'),
   ],
 
   algorithms: [
@@ -50,12 +45,22 @@ export const content: ModuleContent = {
     {
       label: CNSA_ACQUISITION_LABEL,
       year: CNSA_2_0.networkingRequired,
-      source: 'CNSA 2.0',
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
     },
     {
       label: CNSA_PHASE_OUT_LABEL,
       year: CNSA_2_0.softwareExclusive,
-      source: 'CNSA 2.0',
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
+    },
+    {
+      label: 'CNSA 2.0 mandated for National Security Systems (31 Dec 2031)',
+      year: CNSA_2_0.fullEnforcement,
+      source: 'CNSA 2.0 FAQ v2.2 (Oct 2026)',
+    },
+    {
+      label: 'Classical PKC deprecated (2030) and disallowed (2035)',
+      year: NIST_DEPRECATION.deprecateClassical,
+      source: 'NIST IR 8547 (final, Oct 2026)',
     },
   ],
 
@@ -75,6 +80,6 @@ export const content: ModuleContent = {
     skillsAndGaps:
       'Three recurring gaps shape the build plan. The protocol-parsing gap: most SIEMs and network tools cannot yet parse PQC cipher-suite identifiers, hybrid key-exchange groups, or PQC TLS extensions — plan 2–4 weeks of custom Suricata/Zeek/SIEM engineering per platform plus ongoing maintenance. The CTI skills gap: tactical CTI suits existing analysts with modest training, but strategic CTI requires specialized quantum knowledge best contracted externally while in-house tactical/operational capability matures over 12–18 months. The east-west visibility gap: limited internal traffic inspection, especially in cloud-native and service-mesh environments, is a prerequisite for drift monitoring and may require infrastructure investment flagged in the Phase 0 business case.',
     relatedStandards:
-      'FIPS 203 (ML-KEM — the key-encapsulation NamedGroups that hybrid downgrade detection must parse). FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA — the certificate and code-signing algorithms behind certificate-lifecycle and TNFL monitoring). NIST SP 800-227 (KEM recommendations underpinning hybrid configurations). NIST IR 8547 (Transition to PQC Standards — the program context the posture registry derives from). RFC 8446 (TLS 1.3 — where hybrid key shares are negotiated by NamedGroup codepoints, not X.509 OIDs).',
+      'FIPS 203 (ML-KEM — the key-encapsulation mechanism behind hybrid NamedGroups that downgrade detection must parse). FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA — the certificate and code-signing algorithms behind certificate-lifecycle and TNFL monitoring). NIST SP 800-227 (KEM recommendations underpinning hybrid configurations). NIST IR 8547 (Transition to PQC Standards, final, October 2026 — the program context the posture registry derives from). RFC 9846 (TLS 1.3, obsoleting RFC 8446) and RFC 10024 (PQ/T hybrid key agreement mechanisms for TLS 1.3, including X25519MLKEM768 codepoint 0x11EC, SecP256r1MLKEM768 0x11EB, and SecP384r1MLKEM1024 0x11ED — negotiated by IANA NamedGroup codepoints, not X.509 OIDs).',
   },
 }

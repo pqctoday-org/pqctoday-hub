@@ -14,4 +14,4 @@ Migration requires compatible capabilities at both ends of each operation: recip
 
 ## What's Happening
 
-IETF standards define ML-DSA signatures in CMS (RFC 9882), composite ML-DSA signatures in X.509 certificates and CMS (RFC 10073), and KEM-based CMS encryption (RFC 9629). These standards specify formats and processing; they do not say that a particular mail client, gateway or certificate authority has implemented them.
+IETF standards define ML-DSA signatures in CMS (RFC 9882), composite ML-DSA signatures in X.509 certificates (RFC 10073) and CMS (RFC 10082), and KEM-based CMS encryption (RFC 9629). These standards specify formats and processing; they do not say that a particular mail client, gateway or certificate authority has implemented them.

@@ -648,6 +648,16 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               color: 'border-status-error/30 bg-status-error/5',
               labelColor: 'text-status-error',
             },
+            {
+              framework:
+                'NIST IR 8547 (Final, Oct 2026) & U.S. Federal PQC (EO 14412 / OMB M-26-15)',
+              requirement:
+                'Deprecate quantum-vulnerable public-key algorithms after 2030 and disallow them after 2035; federal acquisitions require FIPS 140-3 validated modules.',
+              pqcNote:
+                'NIST IR 8547 (finalized October 2026) establishes the transition schedule for classical RSA/ECC key establishment and signatures, while EO 14412 and OMB M-26-15 drive civilian federal agency PQC migration planning and procurement. Because FIPS 140-2 certificates moved to the CMVP Historical List in September 2026, verify that any database KMS or HSM target carries an active FIPS 140-3 validation.',
+              color: 'border-primary/30 bg-primary/5',
+              labelColor: 'text-primary',
+            },
           ].map((item) => (
             <div key={item.framework} className={`rounded-lg p-4 border ${item.color}`}>
               <div className={`text-xs font-bold mb-1 ${item.labelColor}`}>{item.framework}</div>
