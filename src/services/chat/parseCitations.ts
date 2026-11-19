@@ -20,6 +20,11 @@ export interface ClaimCitation {
    *  are the evidence; `chunkId` is the first reference's chunk. */
   evidenceRefs?: string[]
   chunkId: string
+  /** True when a near-miss chunk id in the references was rewritten to the one
+   *  retrieved chunk it names (citationIds.ts). `evidenceRefs` then hold the repaired
+   *  references and `repairedFrom` what the model wrote. */
+  idRepaired?: boolean
+  repairedFrom?: string[]
 }
 
 /** Every chunk id a citation points at (its chunkId plus any reference chunks). */

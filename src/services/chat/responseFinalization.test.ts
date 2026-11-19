@@ -24,14 +24,14 @@ describe('finalizeGroundedResponse', () => {
     expect(result.content).toContain('[PQC 101](/learn/pqc-101)')
   })
 
-  it('keeps the verified claim, drops the uncited introduction and records citedChunkIds', () => {
+  it('retains valid cited claims and records citedChunkIds when an uncited introduction fails strict coverage', () => {
     const claim = 'PQC 101 introduces post-quantum cryptography fundamentals.'
     const result = finalizeGroundedResponse(
       `Available learning content includes:\n\n${claim}`,
       [{ claimExcerpt: claim, evidenceExcerpt: claim, chunkId: 'module-pqc-101' }],
       chunks
     )
-    expect(result.mode).toBe('partially-verified')
+    expect(result.mode).toBe('salvaged')
     expect(result.citedChunkIds).toEqual(['module-pqc-101'])
     expect(result.content).toContain(claim)
     expect(result.content).not.toContain('Available learning content includes')

@@ -11,6 +11,7 @@ export type GroundingFailureReason =
   | 'claim-not-in-answer'
   | 'uncited-statement'
   | 'invalid-evidence'
+  | 'weak-evidence'
   | 'fact-contradiction'
   | 'ungrounded-entity'
 
@@ -79,7 +80,12 @@ export function enforceGrounding(
     reasons.add('uncited-statement')
   }
 
-  if (verifyCitations(citations, chunks).length > 0) reasons.add('invalid-evidence')
+  // A reference that resolves but does not support its claim (weak-evidence) blocks
+  // the answer exactly like evidence that cannot be found; the reason is kept
+  // separate so logs show which of the two happened.
+  const violations = verifyCitations(citations, chunks)
+  if (violations.some((v) => v.reason !== 'weak-evidence')) reasons.add('invalid-evidence')
+  if (violations.some((v) => v.reason === 'weak-evidence')) reasons.add('weak-evidence')
   if (verifyFacts(trimmed, chunks).length > 0) reasons.add('fact-contradiction')
   if (checkGrounding(trimmed, chunks).hasWarning) reasons.add('ungrounded-entity')
 

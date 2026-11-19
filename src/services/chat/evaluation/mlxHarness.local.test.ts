@@ -17,7 +17,8 @@ import { RetrievalService } from '../RetrievalService'
 import { buildLocalSystemPrompt } from '../promptBuilder'
 import { parseCitations } from '../parseCitations'
 import { parseFollowUps } from '../parseFollowUps'
-import { finalizeGroundedResponse } from '../responseFinalization'
+import { finalizeGroundedResponse, prepareCitations } from '../responseFinalization'
+import { CITE_PROTO_DEFAULT } from '../citeProtoFlags'
 import { resolveCitationEvidence, verifyCitations } from '../citationVerification'
 import { selectLocalPromptChunks } from '../WebLLMService'
 import {
@@ -63,6 +64,17 @@ interface HarnessResult {
     chunkId: string
     evidence: string | null
     valid: boolean
+    /** Violation reason when not valid (e.g. weak-evidence, unknown-chunk). */
+    violation: string | null
+    /** Relevance-guard numbers for reference citations. */
+    support: {
+      coverage: number
+      inSentences: number
+      claimWords: number
+      missingNumbers: string[]
+    } | null
+    idRepaired: boolean
+    repairedFrom: string[] | null
   }>
   thinkingLeak: boolean
   refused: boolean
@@ -214,14 +226,28 @@ if (!model) {
       groundingReasons: finalized.decision.reasons,
       citationCount: citations.length,
       droppedStatements: finalized.droppedStatements,
-      citeProto: process.env.CITE_PROTO ?? 'ab',
-      citationDetails: citations.map((citation) => ({
-        claim: citation.claimExcerpt,
-        refs: citation.evidenceRefs ?? [],
-        chunkId: citation.chunkId,
-        evidence: resolveCitationEvidence(citation, chunks) ?? citation.evidenceExcerpt ?? null,
-        valid: verifyCitations([citation], chunks).length === 0,
-      })),
+      citeProto: process.env.CITE_PROTO ?? CITE_PROTO_DEFAULT,
+      citationDetails: prepareCitations(citations, chunks).map((citation) => {
+        const violation = verifyCitations([citation], chunks)[0]
+        return {
+          claim: citation.claimExcerpt,
+          refs: citation.evidenceRefs ?? [],
+          chunkId: citation.chunkId,
+          evidence: resolveCitationEvidence(citation, chunks) ?? citation.evidenceExcerpt ?? null,
+          valid: !violation,
+          violation: violation?.reason ?? null,
+          support: violation?.support
+            ? {
+                coverage: violation.support.coverage,
+                inSentences: violation.support.inSentences,
+                claimWords: violation.support.claimWords,
+                missingNumbers: violation.support.missingNumbers,
+              }
+            : null,
+          idRepaired: citation.idRepaired === true,
+          repairedFrom: citation.repairedFrom ?? null,
+        }
+      }),
       thinkingLeak: /<\/?think>/i.test(raw),
       refused,
       termRecall: refused ? 0 : matchedTerms.length / question.answerTerms.length,
@@ -259,7 +285,7 @@ if (!model) {
     contextWindow,
     maxTokens,
     questionCount: results.length,
-    citeProto: process.env.CITE_PROTO ?? 'ab',
+    citeProto: process.env.CITE_PROTO ?? CITE_PROTO_DEFAULT,
     modeCounts,
     partiallyVerifiedRate:
       results.filter((result) => result.groundingMode === 'partially-verified').length /

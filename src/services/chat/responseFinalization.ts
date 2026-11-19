@@ -11,6 +11,7 @@ import {
 import { citeProtoFlags } from './citeProtoFlags'
 import { citationChunkIds, type ClaimCitation } from './parseCitations'
 import { withResolvedEvidence } from './citationVerification'
+import { repairCitationIds } from './citationIds'
 
 export type GroundedResponseMode = 'verified' | 'partially-verified' | 'salvaged' | 'extractive'
 
@@ -25,6 +26,17 @@ export interface FinalizedGroundedResponse {
   droppedStatements: number
 }
 
+/**
+ * The citations as the rest of the pipeline should see them: near-miss chunk ids
+ * repaired (when the id check is on) and reference evidence resolved.
+ */
+export function prepareCitations(
+  rawCitations: ClaimCitation[],
+  chunks: RAGChunk[]
+): ClaimCitation[] {
+  return withResolvedEvidence(repairCitationIds(rawCitations, chunks), chunks)
+}
+
 function chunkIdsOf(citations: ClaimCitation[]): string[] {
   return [...new Set(citations.flatMap(citationChunkIds))]
 }
@@ -35,7 +47,7 @@ export function finalizeGroundedResponse(
   rawCitations: ClaimCitation[],
   chunks: RAGChunk[]
 ): FinalizedGroundedResponse {
-  const citations = withResolvedEvidence(rawCitations, chunks)
+  const citations = prepareCitations(rawCitations, chunks)
   const decision = enforceGrounding(answer, citations, chunks)
   if (decision.approved) {
     return {

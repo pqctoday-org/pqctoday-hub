@@ -205,9 +205,14 @@ function buildContextBlocks(
   }
 
   for (const c of chunks) {
-    const header = includeIds
-      ? `--- Source: ${c.source} | ${c.title} | id: ${c.id} ---`
-      : `--- Source: ${c.source} | ${c.title} ---`
+    // Cite-by-sentence: the id is the ONLY name shown for a chunk. When the header
+    // also carried the source name, the model sometimes cited the source
+    // ("capability-checklist#4") instead of the id, and a source can name many chunks.
+    const header = numberSentences
+      ? `--- id: ${c.id} | ${c.title} ---`
+      : includeIds
+        ? `--- Source: ${c.source} | ${c.title} | id: ${c.id} ---`
+        : `--- Source: ${c.source} | ${c.title} ---`
     const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
     // Numbered sentences: whole sentences only, the "[n] " markers count toward
     // the same per-chunk limit as unnumbered content, and every block still goes
@@ -529,7 +534,7 @@ export function buildLocalSystemPrompt(
   )
   const exampleId = chunks[0]?.id ?? 'algo-ml-kem-768'
   const citationsNote = bySentence
-    ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Context sentences are numbered [n] inside each source. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceRef":"<chunk id>#<n>"}. The chunk id is the exact value after "id:" in that source's header line (for example "${exampleId}"), never the Source name; n is the number of the context sentence that supports the bullet, so the reference looks like "${exampleId}#2". If a bullet needs several sentences, give an array: "evidenceRef":["${exampleId}#2","${exampleId}#3"]. Use only chunk ids and numbers that appear in the context; never copy source text into the citation. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
+    ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Context sentences are numbered [n] inside each source. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceRef":"<chunk id>#<n>"}. The chunk id is the exact value after "id:" in that source's header line (for example "${exampleId}"), copied in full including any number at the end, never a title; n is the number of the context sentence that supports the bullet, so the reference looks like "${exampleId}#2". If a bullet needs several sentences, give an array: "evidenceRef":["${exampleId}#2","${exampleId}#3"]. Use only chunk ids and numbers that appear in the context; never copy source text into the citation. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
     : citationsEnabled
       ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceExcerpt":"<one contiguous verbatim excerpt copied from its context chunk; never add ...>","chunkId":"<that chunk's exact id>"}. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
       : ''

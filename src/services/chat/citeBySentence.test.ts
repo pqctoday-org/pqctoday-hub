@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { citeProtoFlags } from './citeProtoFlags'
 import { parseCitations } from './parseCitations'
@@ -158,6 +158,11 @@ describe('parseCitations with evidenceRef', () => {
 })
 
 describe('verifyCitations with evidenceRefs', () => {
+  // Reference resolution only: change A alone, no relevance guard (see citationGuard.test.ts).
+  beforeEach(() => {
+    process.env.CITE_PROTO = 'a'
+  })
+
   const cite = (refs: string[]) => ({
     claimExcerpt: 'It provides NIST security level 3.',
     chunkId: refs[0].slice(0, refs[0].lastIndexOf('#')),
@@ -201,6 +206,10 @@ describe('verifyCitations with evidenceRefs', () => {
 })
 
 describe('finalizeGroundedResponse by sentence ref', () => {
+  beforeEach(() => {
+    process.env.CITE_PROTO = 'a'
+  })
+
   it('verifies an answer whose citations are all refs and exposes resolved evidence', () => {
     const claim = 'ML-KEM-768 provides NIST security level 3.'
     const result = finalizeGroundedResponse(
@@ -215,6 +224,11 @@ describe('finalizeGroundedResponse by sentence ref', () => {
 })
 
 describe('partial finalisation (change B)', () => {
+  // B is off in the recommended configuration; these tests run it explicitly.
+  beforeEach(() => {
+    process.env.CITE_PROTO = 'ab'
+  })
+
   const good = 'ML-KEM-768 provides NIST security level 3.'
   const good2 = 'ML-DSA-65 is a lattice-based signature scheme.'
   const badClaim = 'ML-DSA-65 was withdrawn by NIST in 2026.'
@@ -276,7 +290,7 @@ describe('partial finalisation (change B)', () => {
 
   it('with B off, behaves as before (salvaged, rebuilt from claims)', () => {
     process.env.CITE_PROTO = 'a'
-    expect(citeProtoFlags()).toEqual({ bySentence: true, partial: false })
+    expect(citeProtoFlags()).toMatchObject({ bySentence: true, partial: false })
     const result = finalizeGroundedResponse(answer, cites, chunks)
     expect(result.mode).toBe('salvaged')
     expect(result.content).not.toContain('withdrawn')
