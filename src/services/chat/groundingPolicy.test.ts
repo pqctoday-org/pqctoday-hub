@@ -6,7 +6,7 @@ import {
   buildRetrievedEvidenceResponse,
   deriveCorpusCitations,
   enforceGrounding,
-  salvageGroundedClaims,
+  keepVerifiedStatements,
 } from './groundingPolicy'
 
 const chunks: RAGChunk[] = [
@@ -105,7 +105,7 @@ describe('enforceGrounding', () => {
     expect(buildGroundingFailureResponse()).toContain("couldn't produce a fully source-verified")
   })
 
-  it('salvages verified claims when an uncited introduction rejects the whole draft', () => {
+  it('keeps verified claims in their own words when an uncited introduction rejects the whole draft', () => {
     const claim = 'ML-KEM provides key encapsulation under FIPS 203.'
     const answer = `Here is what the corpus says:\n\n${claim}`
     const citations = [
@@ -117,16 +117,16 @@ describe('enforceGrounding', () => {
     ]
 
     expect(enforceGrounding(answer, citations, chunks).reasons).toContain('uncited-statement')
-    expect(salvageGroundedClaims(answer, citations, chunks)).toEqual({
-      content: `- ${claim}`,
-      citations,
-    })
+    const kept = keepVerifiedStatements(answer, citations, chunks)
+    expect(kept?.content).toBe(claim)
+    expect(kept?.dropped).toBe(1)
+    expect(kept?.citations).toEqual(citations)
   })
 
-  it('never salvages a claim backed by fabricated evidence', () => {
+  it('never keeps a claim backed by fabricated evidence', () => {
     const answer = 'ML-KEM was standardized on Mars.'
     expect(
-      salvageGroundedClaims(
+      keepVerifiedStatements(
         answer,
         [
           {

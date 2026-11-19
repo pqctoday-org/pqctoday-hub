@@ -241,3 +241,30 @@ describe('ChatMessage — streaming', () => {
     expect(screen.queryByText('3 sources')).not.toBeInTheDocument()
   })
 })
+
+describe('ChatMessage — removed-statements note', () => {
+  it('shows a short neutral note under an answer that had statements left out', () => {
+    render(<ChatMessage sender="assistant" content="Kept answer." removedStatements={1} />)
+    expect(screen.getByTestId('removed-statements-note')).toHaveTextContent(
+      '1 statement from the draft was left out because the retrieved sources did not support it.'
+    )
+  })
+
+  it('uses the plural for several statements', () => {
+    render(<ChatMessage sender="assistant" content="Kept answer." removedStatements={2} />)
+    expect(screen.getByTestId('removed-statements-note')).toHaveTextContent(
+      '2 statements from the draft were left out'
+    )
+  })
+
+  it('shows no note for a fully verified answer, a user message, or a streaming draft', () => {
+    const { rerender } = render(<ChatMessage sender="assistant" content="Whole answer." />)
+    expect(screen.queryByTestId('removed-statements-note')).not.toBeInTheDocument()
+    rerender(<ChatMessage sender="assistant" content="Whole answer." removedStatements={0} />)
+    expect(screen.queryByTestId('removed-statements-note')).not.toBeInTheDocument()
+    rerender(<ChatMessage sender="user" content="Question" removedStatements={2} />)
+    expect(screen.queryByTestId('removed-statements-note')).not.toBeInTheDocument()
+    rerender(<ChatMessage sender="assistant" content="Draft" removedStatements={2} isStreaming />)
+    expect(screen.queryByTestId('removed-statements-note')).not.toBeInTheDocument()
+  })
+})

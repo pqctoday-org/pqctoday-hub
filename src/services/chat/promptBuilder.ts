@@ -2,7 +2,6 @@
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
 import { useStructuredCitations } from '@/services/featureFlags'
-import { citeProtoFlags } from './citeProtoFlags'
 import { formatNumberedSentences } from './sentenceIndex'
 import { MODULE_CATALOG, MODULE_TRACKS } from '@/components/PKILearning/moduleData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
@@ -183,7 +182,8 @@ function buildContextBlocks(
   maxChars = MAX_CONTEXT_CHARS,
   compact = false,
   includeIds = false,
-  numberSentences = false
+  numberSentences = false,
+  idOnlyHeader = false
 ): string {
   const allBlocks: string[] = []
   let totalChars = 0
@@ -205,10 +205,12 @@ function buildContextBlocks(
   }
 
   for (const c of chunks) {
-    // Cite-by-sentence: the id is the ONLY name shown for a chunk. When the header
-    // also carried the source name, the model sometimes cited the source
-    // ("capability-checklist#4") instead of the id, and a source can name many chunks.
-    const header = numberSentences
+    // Cite-by-sentence: with `idOnlyHeader` the id is the ONLY name shown for a chunk.
+    // When the header also carried the source name, the small local model sometimes
+    // cited the source ("capability-checklist#4") instead of the id, and a source can
+    // name many chunks. The cloud prompt keeps the source name (its instructions refer
+    // to it) and tells the model to cite the id, never the source.
+    const header = idOnlyHeader
       ? `--- id: ${c.id} | ${c.title} ---`
       : includeIds
         ? `--- Source: ${c.source} | ${c.title} | id: ${c.id} ---`
@@ -419,11 +421,21 @@ export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageCo
   // ones (like this one) meant to be read from prompt-building code.
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const citationsEnabled = useStructuredCitations()
-  const contextBlocks = buildContextBlocks(chunks, MAX_CONTEXT_CHARS, false, citationsEnabled)
+  // Cite by sentence number: every context sentence is numbered, and the model cites
+  // "<chunk id>#<n>". The same parser, id check, relevance guard and per-claim drop as
+  // the local model then apply (see responseFinalization.ts).
+  const contextBlocks = buildContextBlocks(
+    chunks,
+    MAX_CONTEXT_CHARS,
+    false,
+    citationsEnabled,
+    citationsEnabled
+  )
+  const exampleId = chunks[0]?.id ?? 'algo-ml-kem-768'
   const citationsSection = citationsEnabled
-    ? `CORPUS EVIDENCE (REQUIRED): every substantive sentence in the answer must map to retrieved evidence. Use the complete sentence as claimExcerpt; a shorter substring does not count. Before the follow-ups fence, add a \`\`\`citations code fence containing a JSON array of {"claimExcerpt": "<the complete sentence exactly as written in your answer>", "evidenceExcerpt": "<a verbatim supporting excerpt copied from the cited context chunk>", "chunkId": "<the chunk's exact id>"}. A paraphrase is allowed only when its evidenceExcerpt directly supports it. Never cite a chunk merely because it is topically related. Only use chunk ids and evidence text that appear below. Example:
+    ? `CORPUS EVIDENCE (REQUIRED): every substantive sentence in the answer must map to retrieved evidence. Context sentences are numbered [n] inside each source. Use the complete sentence as claimExcerpt; a shorter substring does not count. Before the follow-ups fence, add a \`\`\`citations code fence containing a JSON array of {"claimExcerpt": "<the complete sentence exactly as written in your answer>", "evidenceRef": "<chunk id>#<n>"}. The chunk id is the exact value after "id:" in that source's header line (for example "${exampleId}"), copied in full including any number at the end, never the Source name or a title; n is the number of the context sentence that supports your sentence, so the reference looks like "${exampleId}#2". If a sentence needs several context sentences, give an array: "evidenceRef": ["${exampleId}#2", "${exampleId}#3"]. A paraphrase is allowed only when the cited sentence directly supports it and it keeps every name and number (such as FIPS 203, TLS 1.3 or 2035) that the sentence states. Never cite a chunk merely because it is topically related, and never copy source text into the citation. Only use chunk ids and sentence numbers that appear below. Example:
 \`\`\`citations
-[{"claimExcerpt": "ML-KEM-768 provides NIST security level 3.", "evidenceExcerpt": "Security Level: 3", "chunkId": "algo-ml-kem-768"}]
+[{"claimExcerpt": "ML-KEM-768 provides NIST security level 3.", "evidenceRef": "algo-ml-kem-768#3"}]
 \`\`\`
 
 `
@@ -524,20 +536,18 @@ export function buildLocalSystemPrompt(
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const citationsEnabled = useStructuredCitations()
   // Compact mode: truncate chunk content to fit more chunks in limited context
-  const bySentence = citationsEnabled && citeProtoFlags().bySentence
   const contextBlocks = buildContextBlocks(
     chunks,
     maxContextChars,
     true,
     citationsEnabled,
-    bySentence
+    citationsEnabled,
+    citationsEnabled
   )
   const exampleId = chunks[0]?.id ?? 'algo-ml-kem-768'
-  const citationsNote = bySentence
+  const citationsNote = citationsEnabled
     ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Context sentences are numbered [n] inside each source. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceRef":"<chunk id>#<n>"}. The chunk id is the exact value after "id:" in that source's header line (for example "${exampleId}"), copied in full including any number at the end, never a title; n is the number of the context sentence that supports the bullet, so the reference looks like "${exampleId}#2". If a bullet needs several sentences, give an array: "evidenceRef":["${exampleId}#2","${exampleId}#3"]. Use only chunk ids and numbers that appear in the context; never copy source text into the citation. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
-    : citationsEnabled
-      ? `\nOUTPUT FORMAT (REQUIRED): Write at most 3 short bullet sentences, even when the context contains more than 3 matching items. Then write exactly one \`\`\`citations fence containing one JSON array. Add one object per bullet: {"claimExcerpt":"<copy the complete bullet sentence exactly as written above, without the bullet marker>","evidenceExcerpt":"<one contiguous verbatim excerpt copied from its context chunk; never add ...>","chunkId":"<that chunk's exact id>"}. The number of citation objects must equal the number of bullets. Never substitute source wording for the exact bullet text in claimExcerpt.\n`
-      : ''
+    : ''
 
   // Compact page/persona context — every token counts at 4K
   let pageNote = ''

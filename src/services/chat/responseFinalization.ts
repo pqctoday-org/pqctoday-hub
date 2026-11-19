@@ -5,15 +5,13 @@ import {
   buildRetrievedEvidenceResponse,
   enforceGrounding,
   keepVerifiedStatements,
-  salvageGroundedClaims,
   type GroundingDecision,
 } from './groundingPolicy'
-import { citeProtoFlags } from './citeProtoFlags'
 import { citationChunkIds, type ClaimCitation } from './parseCitations'
 import { withResolvedEvidence } from './citationVerification'
 import { repairCitationIds } from './citationIds'
 
-export type GroundedResponseMode = 'verified' | 'partially-verified' | 'salvaged' | 'extractive'
+export type GroundedResponseMode = 'verified' | 'partially-verified' | 'extractive'
 
 export interface FinalizedGroundedResponse {
   content: string
@@ -22,13 +20,13 @@ export interface FinalizedGroundedResponse {
   citedChunkIds: string[]
   /** Citations behind the displayed text, with reference evidence resolved. */
   citations: ClaimCitation[]
-  /** Sentences removed from the draft (partially-verified only). */
+  /** Statements removed from the draft (partially-verified only). The reader is told. */
   droppedStatements: number
 }
 
 /**
  * The citations as the rest of the pipeline should see them: near-miss chunk ids
- * repaired (when the id check is on) and reference evidence resolved.
+ * repaired and reference evidence resolved.
  */
 export function prepareCitations(
   rawCitations: ClaimCitation[],
@@ -41,7 +39,16 @@ function chunkIdsOf(citations: ClaimCitation[]): string[] {
   return [...new Set(citations.flatMap(citationChunkIds))]
 }
 
-/** Convert one model draft into the safest useful response available. */
+/**
+ * Convert one model draft into the safest useful response available, for every
+ * provider alike:
+ *   verified            every statement is backed by a citation that resolves and
+ *                       supports it; the draft is shown as written.
+ *   partially-verified  at least one statement is backed; only those statements are
+ *                       shown, in their original wording and order. The text of every
+ *                       other statement is gone from the result.
+ *   extractive          nothing is backed; the retrieved sources are listed instead.
+ */
 export function finalizeGroundedResponse(
   answer: string,
   rawCitations: ClaimCitation[],
@@ -60,29 +67,15 @@ export function finalizeGroundedResponse(
     }
   }
 
-  if (citeProtoFlags().partial) {
-    const partial = keepVerifiedStatements(answer, citations, chunks)
-    if (partial) {
-      return {
-        content: appendGroundedDeepLinks(partial.content, partial.citations, chunks),
-        decision,
-        mode: 'partially-verified',
-        citedChunkIds: chunkIdsOf(partial.citations),
-        citations: partial.citations,
-        droppedStatements: partial.dropped,
-      }
-    }
-  }
-
-  const salvaged = salvageGroundedClaims(answer, citations, chunks)
-  if (salvaged) {
+  const partial = keepVerifiedStatements(answer, citations, chunks)
+  if (partial) {
     return {
-      content: appendGroundedDeepLinks(salvaged.content, salvaged.citations, chunks),
+      content: appendGroundedDeepLinks(partial.content, partial.citations, chunks),
       decision,
-      mode: 'salvaged',
-      citedChunkIds: chunkIdsOf(salvaged.citations),
-      citations: salvaged.citations,
-      droppedStatements: 0,
+      mode: 'partially-verified',
+      citedChunkIds: chunkIdsOf(partial.citations),
+      citations: partial.citations,
+      droppedStatements: partial.dropped,
     }
   }
 

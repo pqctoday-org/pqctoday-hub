@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import type { RAGChunk } from '@/types/ChatTypes'
-import { citeProtoFlags } from './citeProtoFlags'
 import { parseCitations } from './parseCitations'
 import { resolveCitationEvidence, verifyCitations } from './citationVerification'
 import { finalizeGroundedResponse } from './responseFinalization'
@@ -35,10 +34,6 @@ const SIG = chunk(
 )
 const chunks = [KEM, SIG]
 const byId = new Map(chunks.map((c) => [c.id, c]))
-
-afterEach(() => {
-  delete process.env.CITE_PROTO
-})
 
 describe('splitSentences', () => {
   it('treats each line as a unit and splits sentences within a line', () => {
@@ -158,13 +153,8 @@ describe('parseCitations with evidenceRef', () => {
 })
 
 describe('verifyCitations with evidenceRefs', () => {
-  // Reference resolution only: change A alone, no relevance guard (see citationGuard.test.ts).
-  beforeEach(() => {
-    process.env.CITE_PROTO = 'a'
-  })
-
-  const cite = (refs: string[]) => ({
-    claimExcerpt: 'It provides NIST security level 3.',
+  const cite = (refs: string[], claimExcerpt = 'It provides NIST security level 3.') => ({
+    claimExcerpt,
     chunkId: refs[0].slice(0, refs[0].lastIndexOf('#')),
     evidenceRefs: refs,
   })
@@ -190,7 +180,7 @@ describe('verifyCitations with evidenceRefs', () => {
   })
 
   it('needs every ref of a multi-ref citation to resolve', () => {
-    const ok = cite(['algo-ml-kem-768#2', 'algo-ml-dsa-65#1'])
+    const ok = cite(['algo-ml-kem-768#2', 'algo-ml-dsa-65#1'], 'Both schemes are lattice-based.')
     expect(verifyCitations([ok], chunks)).toEqual([])
     expect(resolveCitationEvidence(ok, chunks)).toContain('FIPS 203')
     expect(resolveCitationEvidence(ok, chunks)).toContain('FIPS 204')
@@ -206,10 +196,6 @@ describe('verifyCitations with evidenceRefs', () => {
 })
 
 describe('finalizeGroundedResponse by sentence ref', () => {
-  beforeEach(() => {
-    process.env.CITE_PROTO = 'a'
-  })
-
   it('verifies an answer whose citations are all refs and exposes resolved evidence', () => {
     const claim = 'ML-KEM-768 provides NIST security level 3.'
     const result = finalizeGroundedResponse(
@@ -223,12 +209,7 @@ describe('finalizeGroundedResponse by sentence ref', () => {
   })
 })
 
-describe('partial finalisation (change B)', () => {
-  // B is off in the recommended configuration; these tests run it explicitly.
-  beforeEach(() => {
-    process.env.CITE_PROTO = 'ab'
-  })
-
+describe('per-claim drop (partially verified answers)', () => {
   const good = 'ML-KEM-768 provides NIST security level 3.'
   const good2 = 'ML-DSA-65 is a lattice-based signature scheme.'
   const badClaim = 'ML-DSA-65 was withdrawn by NIST in 2026.'
@@ -251,7 +232,7 @@ describe('partial finalisation (change B)', () => {
     expect(result.citedChunkIds.sort()).toEqual(['algo-ml-dsa-65', 'algo-ml-kem-768'])
   })
 
-  it('keeps original wording and order (unlike salvage, which rebuilds from claims)', () => {
+  it('keeps original wording and order (nothing is rebuilt from claims)', () => {
     const kept = keepVerifiedStatements(answer, cites, chunks)!
     expect(kept.content.split('\n')).toEqual([`- ${good}`, `- ${good2}`])
     expect(kept.kept).toBe(2)
@@ -287,34 +268,17 @@ describe('partial finalisation (change B)', () => {
     expect(result.mode).toBe('verified')
     expect(result.droppedStatements).toBe(0)
   })
-
-  it('with B off, behaves as before (salvaged, rebuilt from claims)', () => {
-    process.env.CITE_PROTO = 'a'
-    expect(citeProtoFlags()).toMatchObject({ bySentence: true, partial: false })
-    const result = finalizeGroundedResponse(answer, cites, chunks)
-    expect(result.mode).toBe('salvaged')
-    expect(result.content).not.toContain('withdrawn')
-  })
 })
 
-describe('local prompt (change A)', () => {
-  it('numbers context sentences and asks for evidenceRef when A is on', () => {
-    process.env.CITE_PROTO = 'ab'
+describe('local prompt (cite by sentence)', () => {
+  it('numbers context sentences and asks for evidenceRef ', () => {
     const prompt = buildLocalSystemPrompt([KEM], undefined, 4000, 8)
     expect(prompt).toContain('[3] It provides NIST security level 3.')
     expect(prompt).toContain('evidenceRef')
     expect(prompt).not.toContain('evidenceExcerpt')
   })
 
-  it('leaves the prompt unchanged when A is off', () => {
-    process.env.CITE_PROTO = 'b'
-    const prompt = buildLocalSystemPrompt([KEM], undefined, 4000, 8)
-    expect(prompt).not.toContain('[3] ')
-    expect(prompt).toContain('evidenceExcerpt')
-  })
-
   it('counts numbering inside the context budget: fewer sentences fit, none are cut mid-way', () => {
-    process.env.CITE_PROTO = 'ab'
     const long = chunk(
       'c-long',
       Array.from({ length: 40 }, (_, i) => `Sentence number ${i} is here.`).join(' ')

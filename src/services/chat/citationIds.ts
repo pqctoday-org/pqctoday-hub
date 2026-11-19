@@ -19,7 +19,6 @@
  * the sentence.
  */
 import type { RAGChunk } from '@/types/ChatTypes'
-import { citeProtoFlags } from './citeProtoFlags'
 import type { ClaimCitation } from './parseCitations'
 import { parseEvidenceRef } from './sentenceIndex'
 
@@ -86,11 +85,9 @@ export function resolveNearMissChunkId(rawId: string, chunks: RAGChunk[]): IdRep
 /**
  * Rewrite references whose chunk id is not among this turn's chunks when exactly one
  * retrieved chunk matches. A repaired citation gets `idRepaired: true` and keeps the
- * model's original references in `repairedFrom`. Does nothing unless the id check is
- * switched on.
+ * model's original references in `repairedFrom`.
  */
 export function repairCitationIds(citations: ClaimCitation[], chunks: RAGChunk[]): ClaimCitation[] {
-  if (!citeProtoFlags().idRepair) return citations
   const known = new Set(chunks.map((c) => c.id))
   return citations.map((citation) => {
     if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) return citation

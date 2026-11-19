@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ChatMessage, Conversation } from '@/types/ChatTypes'
+import { removedStatementsNote } from './removedStatementsNote'
 
 function markdownText(value: string): string {
   return value.replace(/\r?\n/g, ' ').replace(/([\\`*_{}[\]()<>#+!|])/g, '\\$1')
@@ -48,7 +49,8 @@ export function conversationToMarkdown(conv: Conversation): string {
     .map((m) => {
       const sender = m.role === 'user' ? '**You**' : '**PQC Assistant**'
       const time = new Date(m.timestamp).toLocaleTimeString()
-      return `${sender} _(${time})_\n\n${m.content}\n${recordedSources(m)}`
+      const note = removedStatementsNote(m.removedStatements ?? 0)
+      return `${sender} _(${time})_\n\n${m.content}\n${note ? `\n_${note}_\n` : ''}${recordedSources(m)}`
     })
     .join('\n---\n\n')
   return header + body

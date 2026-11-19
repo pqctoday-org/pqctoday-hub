@@ -11,12 +11,13 @@
  *   1. Identifiers. The claim's identifiers are (a) names with a number attached,
  *      treated as ONE unit: "TLS 1.3", "RFC 9941", "SP 800-208", "FIPS 140-3",
  *      "ML-KEM-768", "SHA-512", and (b) bare numbers: 2035, 1184, 0-7.
- *      ONE cited sentence must contain all of them. A name is found when the
- *      sentence has the same name unit, or has the name word and the number
- *      ("FIPS 203/204/205" holds FIPS 203; "ML-KEM-512/768/1024" holds ML-KEM-768).
- *      Identifiers are never taken from the chunk id or the title, and pooling
- *      several references never supplies an identifier that no single cited
- *      sentence has.
+ *      ONE cited sentence (read together with its chunk title, which names the
+ *      subject: "RFC 9881 standardizes ..." cited to that RFC's description line)
+ *      must contain all of them. A name is found when the text has the same name
+ *      unit, or has the name word and the number ("FIPS 203/204/205" holds FIPS 203;
+ *      "ML-KEM-512/768/1024" holds ML-KEM-768). Identifiers are never taken from the
+ *      chunk id, and pooling several references never supplies an identifier that
+ *      no single cited sentence (with its own title) has.
  *   2. Content words. Take the claim's content words: lower case, letters only, at
  *      least three letters, not a function word, plural endings removed, units
  *      written in their canonical form (see UNIT_FORMS). At least
@@ -209,14 +210,8 @@ export interface SupportAssessment {
 }
 
 export interface SupportContext {
-  /** Titles of the cited chunks: they count for content words only. */
+  /** Titles of the cited chunks: they count for content words and for names and numbers (never chunk ids). */
   titles: string[]
-  /**
-   * Measurement switch, off in the product: also let the titles supply names and
-   * numbers (so "RFC 9881 standardizes ..." passes on the description sentence of
-   * the RFC 9881 chunk). Chunk ids never count either way.
-   */
-  titleIdentifiers?: boolean
 }
 
 function mergeTerms(a: TextTerms, b: TextTerms): TextTerms {
@@ -241,9 +236,9 @@ export function assessClaimSupport(
   // Each cited sentence is checked on its own for the identifiers; the best one decides.
   let missingIdentifiers: string[] = []
   if (claimTerms.names.length + claimTerms.numbers.length > 0) {
-    const holders = context.titleIdentifiers
-      ? perSentence.map((s) => titleTerms.reduce(mergeTerms, s))
-      : perSentence
+    // The chunk title names the subject, so it is read together with each cited
+    // sentence for the identifier check (chunk ids are never read).
+    const holders = perSentence.map((s) => titleTerms.reduce(mergeTerms, s))
     const results = holders.map((s) => missingFrom(claimTerms, s))
     const best = results.reduce<string[] | null>(
       (acc, cur) => (acc === null || cur.length < acc.length ? cur : acc),

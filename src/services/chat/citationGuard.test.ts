@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { afterEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import type { RAGChunk } from '@/types/ChatTypes'
-import { CITE_PROTO_DEFAULT, citeProtoFlags } from './citeProtoFlags'
 import { assessClaimSupport, extractTerms } from './citationRelevance'
 import { repairCitationIds, resolveNearMissChunkId } from './citationIds'
 import { verifyCitations } from './citationVerification'
-import { enforceGrounding, salvageGroundedClaims } from './groundingPolicy'
+import { enforceGrounding } from './groundingPolicy'
 import { finalizeGroundedResponse } from './responseFinalization'
 import { buildLocalSystemPrompt } from './promptBuilder'
 import type { ClaimCitation } from './parseCitations'
@@ -79,80 +78,6 @@ const cite = (claim: string, refs: string[]): ClaimCitation => ({
   claimExcerpt: claim,
   chunkId: refs[0].slice(0, refs[0].lastIndexOf('#')),
   evidenceRefs: refs,
-})
-
-afterEach(() => {
-  delete process.env.CITE_PROTO
-})
-
-describe('citeProtoFlags', () => {
-  it('defaults to A + guard + id check with B off', () => {
-    expect(CITE_PROTO_DEFAULT).toBe('a+guard+id')
-    expect(citeProtoFlags()).toMatchObject({
-      bySentence: true,
-      partial: false,
-      relevanceGuard: true,
-      idRepair: true,
-    })
-  })
-
-  it('keeps the legacy values: a is A alone, none is everything off, ab is A and B', () => {
-    process.env.CITE_PROTO = 'a'
-    expect(citeProtoFlags()).toMatchObject({
-      bySentence: true,
-      partial: false,
-      relevanceGuard: false,
-      idRepair: false,
-    })
-    process.env.CITE_PROTO = 'none'
-    expect(citeProtoFlags()).toMatchObject({
-      bySentence: false,
-      partial: false,
-      relevanceGuard: false,
-      idRepair: false,
-    })
-    process.env.CITE_PROTO = 'ab'
-    expect(citeProtoFlags()).toMatchObject({
-      bySentence: true,
-      partial: true,
-      relevanceGuard: false,
-    })
-  })
-})
-
-describe('guard-excerpt and title-ids switches', () => {
-  it('are off by default and parse as extra tokens', () => {
-    expect(citeProtoFlags()).toMatchObject({ guardExcerpts: false, titleIdentifiers: false })
-    process.env.CITE_PROTO = 'guard+guard-excerpt+title-ids'
-    expect(citeProtoFlags()).toMatchObject({
-      bySentence: false,
-      relevanceGuard: true,
-      guardExcerpts: true,
-      titleIdentifiers: true,
-    })
-  })
-
-  it('judge an excerpt citation with its verbatim excerpt as the cited text, only when asked', () => {
-    const excerptCite: ClaimCitation = {
-      claimExcerpt:
-        'This approach ensures forward secrecy and resistance to quantum computing attacks while maintaining compatibility.',
-      evidenceExcerpt: 'Type: RFC | Status: Released (Informational RFC)',
-      chunkId: SSH.id,
-    }
-    process.env.CITE_PROTO = 'none'
-    expect(verifyCitations([excerptCite], [SSH])).toEqual([])
-    process.env.CITE_PROTO = 'a+guard+id'
-    expect(verifyCitations([excerptCite], [SSH])).toEqual([])
-    process.env.CITE_PROTO = 'guard+guard-excerpt'
-    expect(verifyCitations([excerptCite], [SSH]).map((v) => v.reason)).toEqual(['weak-evidence'])
-    const good: ClaimCitation = {
-      claimExcerpt: 'It specifies the sntrup761x25519-sha512 hybrid key exchange for SSH.',
-      evidenceExcerpt:
-        'Description: Specifies sntrup761x25519-sha512 hybrid key exchange for SSH; supersedes draft-ietf-sshm-ntruprime-ssh.',
-      chunkId: SSH.id,
-    }
-    expect(verifyCitations([good], [SSH])).toEqual([])
-  })
 })
 
 describe('extractTerms', () => {
@@ -292,26 +217,25 @@ describe('assessClaimSupport', () => {
     })
   })
 
-  describe('identifiers come from the cited sentences only', () => {
-    // "RFC 9881" is in the chunk id and the title, not in the cited description sentence.
+  describe('identifiers come from the cited sentence and its chunk title, never the chunk id', () => {
+    // "RFC 9881" names the chunk; the description sentence itself does not repeat it.
     const claim = 'RFC 9881 defines X.509 OIDs and certificate structures for ML-DSA signatures.'
     const sentence =
       'Description: Defines X.509 OIDs and certificate structures for ML-DSA signatures.'
 
-    it('a name or number found only in the chunk id or the title does not count', () => {
+    it('a name that is only in the chunk id does not count', () => {
       const a = supported(claim, [sentence], {
-        titles: ['RFC 9881: Algorithm Identifiers for ML-DSA'],
+        titles: ['Algorithm Identifiers for ML-DSA in X.509'],
       })
       expect(a).toMatchObject({ supported: false, reason: 'missing-identifier' })
       expect(a.missingIdentifiers).toEqual(['rfc 9881'])
     })
 
-    it('the title may supply identifiers only when that measurement switch is on (never the id)', () => {
-      const withSwitch = assessClaimSupport(claim, [sentence], {
+    it('the chunk title may name the subject and its number', () => {
+      const a = supported(claim, [sentence], {
         titles: ['RFC 9881: Algorithm Identifiers for ML-DSA'],
-        titleIdentifiers: true,
       })
-      expect(withSwitch.supported).toBe(true)
+      expect(a.supported).toBe(true)
     })
 
     it('title words still count towards content-word coverage', () => {
@@ -338,10 +262,10 @@ describe('assessClaimSupport', () => {
     ]
 
     it('closes the hole: pooled refs cannot supply the identifier that no cited sentence has', () => {
-      const a = supported(acvpClaim, sentences, { titles: ['FIPS 203'] })
+      const a = supported(acvpClaim, sentences, { titles: ['ACVP JSON Specification'] })
       expect(a.supported).toBe(false)
       expect(a.reason).toBe('missing-identifier')
-      expect(a.missingIdentifiers).toContain('fips 203')
+      expect(a.missingIdentifiers.length).toBeGreaterThan(0)
     })
 
     it('one sentence must hold every identifier, even when each is in some cited sentence', () => {
@@ -383,7 +307,6 @@ describe('verifyCitations with the relevance guard (the two weak citations from 
   const chunks = [SSH, CNSA]
 
   it('rejects the SSH forward-secrecy claim cited to the description line', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const weak = cite(
       'This approach ensures forward secrecy and resistance to quantum computing attacks while maintaining compatibility with existing SSH protocols.',
       [ref(SSH, 3)]
@@ -394,7 +317,6 @@ describe('verifyCitations with the relevance guard (the two weak citations from 
   })
 
   it('rejects the CNSA claim cited to "Requires PQC: US"', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const weak = cite(
       'CNSA 2.0 allows pure PQC for national security systems at General Authority (GA) but mandates ML-KEM as the sole approved KEM for NSS.',
       [ref(CNSA, 5)]
@@ -403,34 +325,30 @@ describe('verifyCitations with the relevance guard (the two weak citations from 
   })
 
   it('still accepts a claim that the same sentence supports', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const good = cite('The sntrup761x25519-sha512 hybrid key exchange for SSH is specified.', [
       ref(SSH, 3),
     ])
     expect(verifyCitations([good], chunks)).toEqual([])
   })
 
-  it('without the guard (change A alone) both weak citations pass, as measured', () => {
-    process.env.CITE_PROTO = 'a'
-    const weak = cite(
-      'This approach ensures forward secrecy and resistance to quantum computing attacks.',
-      [ref(SSH, 3)]
-    )
-    expect(verifyCitations([weak], chunks)).toEqual([])
-  })
-
-  it('leaves legacy evidenceExcerpt citations alone', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
-    const legacy: ClaimCitation = {
-      claimExcerpt: 'Something far from the excerpt entirely, with many other words.',
-      evidenceExcerpt: 'Requires PQC: US',
-      chunkId: CNSA.id,
+  it('holds an excerpt citation to the same rule, with the verbatim excerpt as the cited text', () => {
+    const weakExcerpt: ClaimCitation = {
+      claimExcerpt:
+        'This approach ensures forward secrecy and resistance to quantum computing attacks while maintaining compatibility.',
+      evidenceExcerpt: 'Type: RFC | Status: Released (Informational RFC)',
+      chunkId: SSH.id,
     }
-    expect(verifyCitations([legacy], chunks)).toEqual([])
+    expect(verifyCitations([weakExcerpt], [SSH]).map((v) => v.reason)).toEqual(['weak-evidence'])
+    const goodExcerpt: ClaimCitation = {
+      claimExcerpt: 'It specifies the sntrup761x25519-sha512 hybrid key exchange for SSH.',
+      evidenceExcerpt:
+        'Description: Specifies sntrup761x25519-sha512 hybrid key exchange for SSH; supersedes draft-ietf-sshm-ntruprime-ssh.',
+      chunkId: SSH.id,
+    }
+    expect(verifyCitations([goodExcerpt], [SSH])).toEqual([])
   })
 
   it('reports invalid references before weak ones', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const bad = cite('Anything at all.', ['library-RFC 9941#99'])
     expect(verifyCitations([bad], chunks).map((v) => v.reason)).toEqual(['sentence-not-found'])
   })
@@ -443,32 +361,30 @@ describe('weak-evidence in grounding', () => {
   const weak = cite(claim, [ref(SSH, 3)])
 
   it('blocks a verified answer with its own reason, separate from invalid-evidence', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const decision = enforceGrounding(claim, [weak], chunks)
     expect(decision.approved).toBe(false)
     expect(decision.reasons).toContain('weak-evidence')
     expect(decision.reasons).not.toContain('invalid-evidence')
   })
 
-  it('is handled like invalid evidence when salvaging and finalising', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
-    expect(salvageGroundedClaims(claim, [weak], chunks)).toBeNull()
+  it('drops only the weak statement: nothing supported is left, so the sources list is shown', () => {
     const result = finalizeGroundedResponse(`- ${claim}`, [weak], chunks)
     expect(result.mode).toBe('extractive')
     expect(result.content).not.toContain('forward secrecy')
   })
 
-  it('keeps the supported claim when a weak one sits next to it (salvage)', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
+  it('keeps the supported statement and removes the weak one, counting it', () => {
     const good = 'It specifies the sntrup761x25519-sha512 hybrid key exchange for SSH.'
     const result = finalizeGroundedResponse(
       `- ${good}\n- ${claim}`,
       [cite(good, [ref(SSH, 3)]), weak],
       chunks
     )
-    expect(result.mode).toBe('salvaged')
+    expect(result.mode).toBe('partially-verified')
+    expect(result.droppedStatements).toBe(1)
     expect(result.content).toContain('sntrup761x25519-sha512')
     expect(result.content).not.toContain('forward secrecy')
+    expect(result.citations).toHaveLength(1)
   })
 })
 
@@ -531,7 +447,6 @@ describe('repairCitationIds', () => {
   const claim = 'The sample server encrypts a newly issued certificate to the fresh ML-KEM-768 key.'
 
   it('rewrites the ref, records idRepaired and keeps what the model wrote', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const [fixed] = repairCitationIds(
       [cite(claim, ['mc-pkienrollmentprotocols-cmpkemkeyupdate#3'])],
       chunks
@@ -543,13 +458,11 @@ describe('repairCitationIds', () => {
   })
 
   it('leaves exact ids untouched (no idRepaired flag)', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const original = cite(claim, [ref(CMP, 3)])
     expect(repairCitationIds([original], chunks)[0]).toBe(original)
   })
 
   it('leaves an ambiguous id invalid so verification still rejects it', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const c = cite(
       'Collection and immutable retention of 5-point technical migration evidence per system is required.',
       ['capability-checklist#3']
@@ -559,14 +472,7 @@ describe('repairCitationIds', () => {
     expect(verifyCitations([same], chunks).map((v) => v.reason)).toEqual(['unknown-chunk'])
   })
 
-  it('does nothing when the id check is off', () => {
-    process.env.CITE_PROTO = 'a'
-    const c = cite(claim, ['mc-pkienrollmentprotocols-cmpkemkeyupdate#3'])
-    expect(repairCitationIds([c], chunks)[0]).toBe(c)
-  })
-
   it('repairs each ref of a multi-ref citation independently', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const [fixed] = repairCitationIds(
       [
         cite(claim, [
@@ -583,7 +489,6 @@ describe('repairCitationIds', () => {
   })
 
   it('a wrong repair is still caught by the guard when the claim does not match the sentence', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const [fixed] = repairCitationIds(
       [
         cite('The five evidence-reference fields are filled in the dashboard.', [
@@ -597,7 +502,6 @@ describe('repairCitationIds', () => {
   })
 
   it('finalises an answer whose only fault was the dropped suffix as verified', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const result = finalizeGroundedResponse(
       `- ${claim}`,
       [cite(claim, ['mc-pkienrollmentprotocols-cmpkemkeyupdate#3'])],
@@ -607,30 +511,13 @@ describe('repairCitationIds', () => {
     expect(result.citations[0].idRepaired).toBe(true)
     expect(result.citedChunkIds).toEqual(['mc-pkienrollmentprotocols-cmpkemkeyupdate-0'])
   })
-
-  it('without the id check the same answer fails as before', () => {
-    process.env.CITE_PROTO = 'a+guard'
-    const result = finalizeGroundedResponse(
-      `- ${claim}`,
-      [cite(claim, ['mc-pkienrollmentprotocols-cmpkemkeyupdate#3'])],
-      chunks
-    )
-    expect(result.mode).toBe('extractive')
-  })
 })
 
 describe('local prompt: the id is the only name shown for a chunk', () => {
   it('drops the source name from the header when sentences are numbered', () => {
-    process.env.CITE_PROTO = 'a+guard+id'
     const prompt = buildLocalSystemPrompt([CAP_MIGRATION], undefined, 4000, 8)
     expect(prompt).toContain('--- id: cap-business-migration-verification | ')
     expect(prompt).not.toContain('capability-checklist')
     expect(prompt).not.toContain('Source:')
-  })
-
-  it('keeps the source name in the legacy (unnumbered) prompt', () => {
-    process.env.CITE_PROTO = 'none'
-    const prompt = buildLocalSystemPrompt([CAP_MIGRATION], undefined, 4000, 8)
-    expect(prompt).toContain('Source: capability-checklist')
   })
 })

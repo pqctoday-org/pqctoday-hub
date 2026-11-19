@@ -18,7 +18,6 @@ import { buildLocalSystemPrompt } from '../promptBuilder'
 import { parseCitations } from '../parseCitations'
 import { parseFollowUps } from '../parseFollowUps'
 import { finalizeGroundedResponse, prepareCitations } from '../responseFinalization'
-import { CITE_PROTO_DEFAULT } from '../citeProtoFlags'
 import { resolveCitationEvidence, verifyCitations } from '../citationVerification'
 import { selectLocalPromptChunks } from '../WebLLMService'
 import {
@@ -56,7 +55,7 @@ interface HarnessResult {
   groundingReasons: ReturnType<typeof finalizeGroundedResponse>['decision']['reasons']
   citationCount: number
   droppedStatements: number
-  citeProto: string
+  citePipeline: string
   /** What the parsed citations resolved to, for offline relevance review. */
   citationDetails: Array<{
     claim: string
@@ -226,7 +225,7 @@ if (!model) {
       groundingReasons: finalized.decision.reasons,
       citationCount: citations.length,
       droppedStatements: finalized.droppedStatements,
-      citeProto: process.env.CITE_PROTO ?? CITE_PROTO_DEFAULT,
+      citePipeline: 'a+guard+id+title-ids+per-claim-drop',
       citationDetails: prepareCitations(citations, chunks).map((citation) => {
         const violation = verifyCitations([citation], chunks)[0]
         return {
@@ -285,8 +284,10 @@ if (!model) {
     contextWindow,
     maxTokens,
     questionCount: results.length,
-    citeProto: process.env.CITE_PROTO ?? CITE_PROTO_DEFAULT,
+    citePipeline: 'a+guard+id+title-ids+per-claim-drop',
     modeCounts,
+    answersWithRemovalNote: results.filter((result) => result.droppedStatements > 0).length,
+    removedStatementsTotal: results.reduce((sum, result) => sum + result.droppedStatements, 0),
     partiallyVerifiedRate:
       results.filter((result) => result.groundingMode === 'partially-verified').length /
       results.length,
@@ -297,9 +298,7 @@ if (!model) {
     evidenceBackedAnswerRate:
       results.filter(
         (result) =>
-          result.groundingMode === 'verified' ||
-          result.groundingMode === 'partially-verified' ||
-          result.groundingMode === 'salvaged'
+          result.groundingMode === 'verified' || result.groundingMode === 'partially-verified'
       ).length / results.length,
     usefulAnswerRate:
       results.filter((result) => result.groundingMode !== 'extractive' && !result.refused).length /
