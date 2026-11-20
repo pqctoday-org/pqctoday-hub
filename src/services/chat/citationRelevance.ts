@@ -116,9 +116,6 @@ export interface TextTerms {
   names: string[]
   /** Numbers that are not part of a name. */
   numbers: string[]
-  /** Of those, the ones that continue a list ("TLS 1.2 and 1.3", "1.2, 1.3"): the only
-   *  numbers a name word elsewhere in the sentence may take. */
-  listNumbers: string[]
   /** Every number in the text, including those inside names and the parts of "140-3". */
   allNumbers: Set<string>
   /** Distinct content words after the stop list, unit forms and plural stemming. */
@@ -137,7 +134,7 @@ export function extractTerms(text: string): TextTerms {
 
   const names = new Set<string>()
   const allNumbers = new Set<string>()
-  const consumed: Array<[number, number]> = []
+  const consumed: Array<{ from: number; to: number; word: string }> = []
   for (const m of source.matchAll(NAME_UNIT)) {
     const [whole, word, sep, number] = m
     const lower = word.toLowerCase()
@@ -150,22 +147,31 @@ export function extractTerms(text: string): TextTerms {
       allNumbers.add(variant)
       for (const part of numberParts(variant)) allNumbers.add(part)
     }
-    consumed.push([m.index, m.index + whole.length])
+    consumed.push({ from: m.index, to: m.index + whole.length, word: lower })
   }
 
   const numbers = new Set<string>()
-  const listNumbers = new Set<string>()
+  // A list continues the name that starts it: "TLS 1.2 and 1.3" holds tls|1.2 and
+  // tls|1.3. The chain is the name word and the end of its last number.
+  let chain: { word: string; end: number } | null = null
   for (const m of source.matchAll(BARE_NUMBER)) {
+    const end = m.index + m[0].length
     for (const variant of numberVariants(m[0])) {
       allNumbers.add(variant)
       for (const part of numberParts(variant)) allNumbers.add(part)
     }
-    if (consumed.some(([from, to]) => m.index >= from && m.index < to)) continue
-    for (const variant of numberVariants(m[0])) numbers.add(variant)
-    const before = source.slice(Math.max(0, m.index - 40), m.index)
-    if (listContinues(before)) {
-      for (const variant of numberVariants(m[0])) listNumbers.add(variant)
+    const owner = consumed.find(({ from, to }) => m.index >= from && m.index < to)
+    if (owner) {
+      chain = { word: owner.word, end }
+      continue
     }
+    if (chain && m.index - chain.end <= 40 && listContinues(source.slice(chain.end - 1, m.index))) {
+      for (const variant of numberVariants(m[0])) names.add(`${chain.word}|${variant}`)
+      chain = { word: chain.word, end }
+      continue
+    }
+    chain = null
+    for (const variant of numberVariants(m[0])) numbers.add(variant)
   }
 
   const words = new Set<string>()
@@ -178,7 +184,6 @@ export function extractTerms(text: string): TextTerms {
   return {
     names: [...names],
     numbers: [...numbers],
-    listNumbers: [...listNumbers],
     allNumbers,
     words: [...words],
     letterWords,
@@ -186,9 +191,9 @@ export function extractTerms(text: string): TextTerms {
 }
 
 /**
- * Does the text just before a number mark it as the next item of a list? It must end
- * with a separator (",", "/", "&", "and", "or") that follows another number, optionally
- * with one short note in brackets between them: "1.2 and", "1.2,", "1.2 (legacy) and".
+ * Is the text between a number (its last digit included) and the next number the joint
+ * of a list? It must end with a separator (",", "/", "&", "and", "or") that follows the
+ * digit, optionally with one short note in brackets between: "2 and", "2,", "2 (legacy) and".
  */
 function listContinues(before: string): boolean {
   let rest = before.trimEnd()
@@ -217,12 +222,9 @@ function missingFrom(claim: TextTerms, sentence: TextTerms): string[] {
   const missing: string[] = []
   for (const name of claim.names) {
     const [word, number] = name.split('|')
-    // Otherwise the name word may take a number only when that number continues a
-    // list ("TLS 1.2 and 1.3"), never one that another word labels ("versions 1.3",
-    // "build 1.3") or one inside another number ("140-3").
-    const found =
-      sentenceNames.has(name) ||
-      (sentence.letterWords.has(word) && sentence.listNumbers.includes(number))
+    // Names match only as name-number pairs. A list item counts as a version of the
+    // name that starts the list (see extractTerms), never of another word in the sentence.
+    const found = sentenceNames.has(name)
     if (!found) missing.push(`${word} ${number}`)
   }
   for (const number of claim.numbers) {
@@ -261,7 +263,6 @@ function mergeTerms(a: TextTerms, b: TextTerms): TextTerms {
   return {
     names: [...new Set([...a.names, ...b.names])],
     numbers: [...new Set([...a.numbers, ...b.numbers])],
-    listNumbers: [...new Set([...a.listNumbers, ...b.listNumbers])],
     allNumbers: new Set([...a.allNumbers, ...b.allNumbers]),
     words: [...new Set([...a.words, ...b.words])],
     letterWords: new Set([...a.letterWords, ...b.letterWords]),

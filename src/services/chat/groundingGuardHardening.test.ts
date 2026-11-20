@@ -309,3 +309,20 @@ describe('fifth review: a short note between list items', () => {
     ).toBe(true)
   })
 })
+
+describe('sixth review: a list belongs to the name that starts it', () => {
+  it('does not give TLS a number from a list that another name starts', () => {
+    expect(
+      assessClaimSupport(
+        'TLS 1.3 is supported.',
+        ['TLS is supported in Python 2 (legacy) and 1.3 seconds is the handshake timeout.'],
+        { titles: [] }
+      ).supported
+    ).toBe(false)
+  })
+
+  it('reads every item of a list as a version of its name', () => {
+    const terms = extractTerms('TLS 1.2, 1.3 and 1.4 are listed.')
+    expect(terms.names).toEqual(expect.arrayContaining(['tls|1.2', 'tls|1.3', 'tls|1.4']))
+  })
+})
