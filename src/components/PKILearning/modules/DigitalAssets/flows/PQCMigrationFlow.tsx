@@ -127,7 +127,8 @@ const VulnerabilityLandscape: React.FC = () => (
                 Medium
               </span>
               <p className="text-xs mt-1">
-                AA path available today; no hard fork needed for early adopters
+                Custom validation via smart accounts (prototype PQ verifiers; no mainnet PQ
+                precompile yet); no hard fork needed for early adopters
               </p>
             </td>
           </tr>
@@ -379,9 +380,10 @@ const EthereumPQC: React.FC = () => (
           Ethereum: Two Paths to Quantum Resistance
         </h3>
         <p className="text-sm text-muted-foreground">
-          Ethereum has a structural advantage over Bitcoin and Solana: it can deploy PQC signing
-          today, without a hard fork, using its Account Abstraction infrastructure. A protocol-level
-          replacement is on the long-term roadmap.
+          Ethereum has a structural advantage over Bitcoin and Solana: smart accounts can deploy
+          prototype PQ signature verifiers today without a hard fork using its Account Abstraction
+          infrastructure (subject to gas costs and audit maturity; no mainnet PQ precompile is
+          live). A protocol-level replacement is on the long-term roadmap.
         </p>
       </div>
     </div>
@@ -393,7 +395,7 @@ const EthereumPQC: React.FC = () => (
           A
         </span>
         <h4 className="font-semibold text-foreground">
-          Account Abstraction (EIP-4337) — Available Now
+          Account Abstraction (ERC-4337) — Available Now
         </h4>
         <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-accent/20 text-accent">
           Live on Mainnet
@@ -443,7 +445,7 @@ const EthereumPQC: React.FC = () => (
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
       >
-        Read EIP-4337 <ExternalLink size={11} />
+        Read ERC-4337 <ExternalLink size={11} />
       </a>
     </div>
 
@@ -698,7 +700,7 @@ const SolanaHardProblem: React.FC = () => (
           <span>
             <strong className="text-foreground">Programme-level PQC verification</strong>: Using
             Solana&apos;s native programs to verify PQC signatures, similar to how Ethereum&apos;s
-            EIP-4337 uses smart contracts — but with Solana&apos;s programme model. A comment in the
+            ERC-4337 uses smart contracts — but with Solana&apos;s programme model. A comment in the
             SIMD-0461 thread cites a Falcon implementation in SBF at under 170,000 compute units.
           </span>
         </li>
@@ -741,12 +743,15 @@ const SolanaHardProblem: React.FC = () => (
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">AA migration path?</td>
-            <td className="p-3 text-status-success font-medium">Yes — EIP-4337 live today</td>
+            <td className="p-3 text-status-success font-medium">Yes — ERC-4337 live today</td>
             <td className="p-3">No direct equivalent</td>
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">PQC usable today?</td>
-            <td className="p-3 text-status-success font-medium">Yes — via smart accounts</td>
+            <td className="p-3 text-status-success font-medium">
+              Custom validation via smart accounts (prototype PQ verifiers; no mainnet PQ precompile
+              yet)
+            </td>
             <td className="p-3">
               Reported: Falcon-512 and Hawk-512 verifiers run as on-chain programmes without
               protocol changes (SIMD-0461 thread); HAWK was withdrawn from the NIST process in July
@@ -756,7 +761,8 @@ const SolanaHardProblem: React.FC = () => (
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">Official PQC proposal?</td>
             <td className="p-3 text-status-success font-medium">
-              Multiple EIPs active (4337, 7702, 8141)
+              ERC-4337 &amp; EIP-7702 live (algorithm-agnostic); EIP-8141 native AA draft; PQ
+              precompile EIPs drafts
             </td>
             <td className="p-3 text-status-warning">
               SIMD-0461 (Falcon verification syscall) closed by its author in June 2026

@@ -1029,8 +1029,8 @@
   {
     "term": "Account Abstraction",
     "acronym": "AA",
-    "definition": "An Ethereum protocol feature (EIP-4337) that enables smart contract wallets with arbitrary signature verification logic. This allows users to switch from ECDSA to PQC signatures (ML-DSA or FN-DSA) today without a protocol hard fork.",
-    "technicalNote": "EIP-4337 smart accounts can run arbitrary signature-verification code on-chain, so a PQC signature scheme can in principle be verified in contract code at a higher gas cost than the built-in ECDSA check. The actual cost depends on the algorithm, its implementation, the network and the EVM version, and has to be measured. 21k gas is the base cost of a simple transaction, not the cost of an ECDSA verification. Combined with EIP-7702 (code delegation for EOAs), contract-based verification can offer existing accounts a path to PQC signatures where the network supports it.",
+    "definition": "An Ethereum mechanism (ERC-4337) that enables smart contract wallets with arbitrary signature verification logic. ERC-4337 itself specifies no post-quantum algorithm; smart accounts can deploy custom validation code (such as prototype in-contract ML-DSA or FN-DSA verifiers) without a protocol hard fork, subject to gas cost and audit maturity.",
+    "technicalNote": "ERC-4337 smart accounts can run arbitrary signature-verification code on-chain via inline contract verification (no PQ signature precompile is live on Ethereum mainnet; precompile EIPs remain drafts), at a higher gas cost than the built-in ECDSA check. The actual cost depends on the algorithm, its implementation, the network and the EVM version, and has to be measured. 21k gas is the base cost of a simple transaction, not the cost of an ECDSA verification. Combined with EIP-7702 (persistent delegation code for EOAs until replaced or cleared), contract-based verification offers a migration path, though an EIP-7702 EOA's underlying secp256k1 key retains authority.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
     "category": "concept"
