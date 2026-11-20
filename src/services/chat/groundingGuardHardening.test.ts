@@ -295,3 +295,17 @@ describe('fourth review: lists need a number before the separator; tilde fences'
     expect(r!.content).toContain(claim)
   })
 })
+
+describe('fifth review: a short note between list items', () => {
+  it('accepts a version list with a parenthetical note', () => {
+    expect(
+      assessClaimSupport(
+        'TLS 1.3 is supported.',
+        ['TLS 1.2 (legacy) and 1.3 (current) are supported.'],
+        {
+          titles: [],
+        }
+      ).supported
+    ).toBe(true)
+  })
+})

@@ -162,8 +162,8 @@ export function extractTerms(text: string): TextTerms {
     }
     if (consumed.some(([from, to]) => m.index >= from && m.index < to)) continue
     for (const variant of numberVariants(m[0])) numbers.add(variant)
-    const before = source.slice(Math.max(0, m.index - 8), m.index)
-    if (LIST_CONTINUES.test(before)) {
+    const before = source.slice(Math.max(0, m.index - 40), m.index)
+    if (listContinues(before)) {
       for (const variant of numberVariants(m[0])) listNumbers.add(variant)
     }
   }
@@ -185,8 +185,27 @@ export function extractTerms(text: string): TextTerms {
   }
 }
 
-/** Text just before a number that marks it as the next item of a list. */
-const LIST_CONTINUES = /\d\s*(?:,|\/|&|\band|\bor)\s*$/i
+/**
+ * Does the text just before a number mark it as the next item of a list? It must end
+ * with a separator (",", "/", "&", "and", "or") that follows another number, optionally
+ * with one short note in brackets between them: "1.2 and", "1.2,", "1.2 (legacy) and".
+ */
+function listContinues(before: string): boolean {
+  let rest = before.trimEnd()
+  const separator = [',', '/', '&', 'and', 'or'].find(
+    (sep) =>
+      rest.toLowerCase().endsWith(sep) &&
+      (sep.length === 1 || !/[a-z]/i.test(rest.charAt(rest.length - sep.length - 1)))
+  )
+  if (!separator) return false
+  rest = rest.slice(0, rest.length - separator.length).trimEnd()
+  if (rest.endsWith(')')) {
+    const open = rest.lastIndexOf('(')
+    if (open < 0 || rest.length - open > 26) return false
+    rest = rest.slice(0, open).trimEnd()
+  }
+  return /\d$/.test(rest)
+}
 
 function numberFound(number: string, sentence: TextTerms): boolean {
   return sentence.allNumbers.has(number)
