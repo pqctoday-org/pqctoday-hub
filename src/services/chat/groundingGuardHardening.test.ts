@@ -421,4 +421,14 @@ describe('tenth review: "times out of" is a count', () => {
       ).supported
     ).toBe(false)
   })
+
+  it('also when the count is in brackets', () => {
+    expect(
+      assessClaimSupport(
+        'HTTP 3 times out under load.',
+        ['HTTP 3 times out (of every 10 requests) under load.'],
+        { titles: [] }
+      ).supported
+    ).toBe(false)
+  })
 })

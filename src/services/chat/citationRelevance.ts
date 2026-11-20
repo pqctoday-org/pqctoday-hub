@@ -259,7 +259,8 @@ function measured(source: string, end: number): boolean {
   const word = first.match(/^[a-z]+/)?.[0]
   if (word === undefined) return false
   // "times out" is a verb ("TLS 1.3 times out during..."), but "3 times out of 10" is a count.
-  if (word === 'times' && second.startsWith('out') && third !== 'of') return false
+  if (word === 'times' && second.startsWith('out') && third.replace(/^[^a-z]+/, '') !== 'of')
+    return false
   return MEASURE_WORDS.has(stem(word))
 }
 
