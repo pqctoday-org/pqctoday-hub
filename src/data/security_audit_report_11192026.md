@@ -11,7 +11,7 @@ A production dependency scan and a static review of the application source in th
 
 ## Executive Summary
 
-No high or critical dependency advisories were found in production dependencies. The static checks found four places that insert HTML; each escapes or sanitises its input. The Content Security Policy trade-offs recorded in March are unchanged. One cosmetic display defect is recorded below.
+No high or critical dependency advisories were found in production dependencies. The static checks found two components that insert HTML; both escape or sanitise their input. The Content Security Policy trade-offs recorded in March are unchanged. One cosmetic display defect was found and fixed (below).
 
 ## 1. Dependency Analysis
 
@@ -29,14 +29,14 @@ Searches excluded test files, fixtures and stories.
 
 `dangerouslySetInnerHTML` is used in production code in two components (the March report recorded none):
 
-| Component                                  | What is inserted                                          | Control                                                                                                                                                                           |
-| ------------------------------------------ | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `components/Patents/PatentSearchPanel.tsx` | Patent titles and summaries with search-term highlighting | Text is HTML-escaped (`&`, `<`, `>`) before the only markup, a fixed `<mark>` element, is added; the search terms are regex-escaped. Inserted as element content, not attributes. |
-| `components/Simulation/MermaidDiagram.tsx` | SVG produced by Mermaid 11.17.2                           | Mermaid is initialised with `securityLevel: 'strict'` (`components/Simulation/mermaidRender.ts`), which sanitises labels with DOMPurify.                                          |
+| Component                                  | What is inserted                                          | Control                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------ | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components/Patents/PatentSearchPanel.tsx` | Patent titles and summaries with search-term highlighting | Highlighting is done by `components/Patents/highlightTerms.ts`: the search terms are regex-escaped, the raw text is split on them, and every segment is HTML-escaped (`&`, `<`, `>`) before the only markup, a fixed `<mark>` element, is added. Inserted as element content, not attributes. |
+| `components/Simulation/MermaidDiagram.tsx` | SVG produced by Mermaid 11.17.2                           | Mermaid is initialised with `securityLevel: 'strict'` (`components/Simulation/mermaidRender.ts`), which sanitises labels with DOMPurify.                                                                                                                                                      |
 
 `components/Search/CommandPalette.tsx` and `components/Mobile/screens/MobileBusinessToolsView.tsx` mention the API only in comments.
 
-**Display defect (not a security issue):** in the patent search, a query containing the word `amp` can highlight inside an escaped `&amp;` and show it as literal text. It changes what is displayed, not what runs.
+**Display defect, fixed in this review (not a security issue):** the patent search used to escape the text before matching, so a query containing `amp` could highlight inside an escaped `&amp;` and show it as literal text. Matching now runs on the raw text and each segment is escaped afterwards; `highlightTerms.test.ts` covers the case.
 
 ### External links (tabnabbing)
 
@@ -66,4 +66,3 @@ Persisted browser state now spans about 30 named stores (up from 8 in March), al
 
 1. **Production CSP** (carried over): GitHub Pages cannot send headers; evaluate a `<meta>` CSP compatible with the WebAssembly engines and the analytics and OAuth origins.
 2. **CSP nonces** (carried over): replace `'unsafe-inline'` once the toolchain supports nonces.
-3. **Patent highlighting:** highlight against the unescaped text and escape each segment, so search terms cannot match inside HTML entities.
