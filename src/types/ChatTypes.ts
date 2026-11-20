@@ -55,6 +55,8 @@ export interface ChatMessage {
   sources?: string[]
   sourceRefs?: ChatSourceRef[]
   followUps?: string[]
+  /** Statements left out of this answer because the sources did not support them. */
+  removedStatements?: number
   feedback?: 'helpful' | 'unhelpful'
 }
 

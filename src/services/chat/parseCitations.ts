@@ -16,7 +16,25 @@ export interface ClaimCitation {
   claimExcerpt: string
   /** Verbatim text copied from the cited RAG chunk that supports the claim. */
   evidenceExcerpt?: string
+  /** Sentence references "<chunkId>#<n>" (cite-by-sentence). When present they
+   *  are the evidence; `chunkId` is the first reference's chunk. */
+  evidenceRefs?: string[]
   chunkId: string
+  /** True when a near-miss chunk id in the references was rewritten to the one
+   *  retrieved chunk it names (citationIds.ts). `evidenceRefs` then hold the repaired
+   *  references and `repairedFrom` what the model wrote. */
+  idRepaired?: boolean
+  repairedFrom?: string[]
+}
+
+/** Every chunk id a citation points at (its chunkId plus any reference chunks). */
+export function citationChunkIds(citation: ClaimCitation): string[] {
+  const ids = [citation.chunkId]
+  for (const ref of citation.evidenceRefs ?? []) {
+    const hash = ref.lastIndexOf('#')
+    if (hash > 0) ids.push(ref.slice(0, hash).trim())
+  }
+  return [...new Set(ids.filter(Boolean))]
 }
 
 export function parseCitations(content: string): {
@@ -80,21 +98,42 @@ function parseCitationsJson(raw: string): ClaimCitation[] {
 
   const citations: ClaimCitation[] = []
   for (const entry of parsed) {
-    if (
-      entry &&
-      typeof entry === 'object' &&
-      typeof (entry as Record<string, unknown>).claimExcerpt === 'string' &&
-      ((entry as Record<string, unknown>).evidenceExcerpt === undefined ||
-        typeof (entry as Record<string, unknown>).evidenceExcerpt === 'string') &&
-      typeof (entry as Record<string, unknown>).chunkId === 'string'
-    ) {
-      const e = entry as { claimExcerpt: string; evidenceExcerpt?: string; chunkId: string }
-      if (e.claimExcerpt.trim() && e.chunkId.trim()) {
-        const citation: ClaimCitation = { claimExcerpt: e.claimExcerpt, chunkId: e.chunkId }
-        if (e.evidenceExcerpt?.trim()) citation.evidenceExcerpt = e.evidenceExcerpt.trim()
-        citations.push(citation)
-      }
+    if (!entry || typeof entry !== 'object') continue
+    const e = entry as Record<string, unknown>
+    if (typeof e.claimExcerpt !== 'string' || !e.claimExcerpt.trim()) continue
+    if (e.evidenceExcerpt !== undefined && typeof e.evidenceExcerpt !== 'string') continue
+
+    const refs = parseRefs(e.evidenceRef)
+    // A reference carries its own chunk id, so chunkId is optional when one is given.
+    const explicitChunkId = typeof e.chunkId === 'string' ? e.chunkId.trim() : ''
+    const refChunkId =
+      refs.length > 0 ? refs[0].slice(0, Math.max(refs[0].lastIndexOf('#'), 0)).trim() : ''
+    const chunkId = refChunkId || explicitChunkId
+    if (!chunkId) continue
+
+    const citation: ClaimCitation = { claimExcerpt: e.claimExcerpt, chunkId }
+    if (typeof e.evidenceExcerpt === 'string' && e.evidenceExcerpt.trim()) {
+      citation.evidenceExcerpt = e.evidenceExcerpt.trim()
     }
+    if (refs.length > 0) citation.evidenceRefs = refs
+    citations.push(citation)
   }
   return citations
+}
+
+/** Accept "id#n", ["id#n", ...] or a comma/space separated string of refs. */
+function parseRefs(value: unknown): string[] {
+  const items: unknown[] = Array.isArray(value) ? value : typeof value === 'string' ? [value] : []
+  const refs: string[] = []
+  for (const item of items) {
+    if (typeof item !== 'string') continue
+    // Chunk ids may contain spaces, so refs are found by their "#<n>" tail
+    // rather than by splitting on whitespace.
+    const found = item.match(/[^,;]*?#\d+(?=\s*(?:[,;]|$))/g)
+    for (const part of found ?? [item]) {
+      const ref = part.replace(/^[\s"'[]+|[\s"'\]]+$/g, '')
+      if (ref) refs.push(ref)
+    }
+  }
+  return [...new Set(refs)]
 }

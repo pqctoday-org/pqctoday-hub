@@ -4,6 +4,7 @@ import type { ClaimCitation } from './parseCitations'
 import { verifyCitations } from './citationVerification'
 import { verifyFacts } from './factVerification'
 import { checkGrounding } from './groundingCheck'
+import { chunkSentences } from './sentenceIndex'
 
 export type GroundingFailureReason =
   | 'empty-answer'
@@ -11,6 +12,7 @@ export type GroundingFailureReason =
   | 'claim-not-in-answer'
   | 'uncited-statement'
   | 'invalid-evidence'
+  | 'weak-evidence'
   | 'fact-contradiction'
   | 'ungrounded-entity'
 
@@ -79,7 +81,12 @@ export function enforceGrounding(
     reasons.add('uncited-statement')
   }
 
-  if (verifyCitations(citations, chunks).length > 0) reasons.add('invalid-evidence')
+  // A reference that resolves but does not support its claim (weak-evidence) blocks
+  // the answer exactly like evidence that cannot be found; the reason is kept
+  // separate so logs show which of the two happened.
+  const violations = verifyCitations(citations, chunks)
+  if (violations.some((v) => v.reason !== 'weak-evidence')) reasons.add('invalid-evidence')
+  if (violations.some((v) => v.reason === 'weak-evidence')) reasons.add('weak-evidence')
   if (verifyFacts(trimmed, chunks).length > 0) reasons.add('fact-contradiction')
   if (checkGrounding(trimmed, chunks).hasWarning) reasons.add('ungrounded-entity')
 
@@ -93,40 +100,91 @@ export function buildGroundingFailureResponse(): string {
   )
 }
 
+export interface PartiallyVerifiedAnswer {
+  /** The original answer with every unverified sentence or bullet removed. */
+  content: string
+  /** Verified citations whose claim is still shown. */
+  citations: ClaimCitation[]
+  /** Number of substantive sentences removed. */
+  dropped: number
+  /** Number of substantive sentences kept. */
+  kept: number
+}
+
 /**
- * Recover individually verified claims from a draft that failed the strict
- * whole-answer contract (usually because the model added an uncited heading
- * or introduction). Invalid evidence, contradictions, and ungrounded entities
- * are still rejected claim by claim. This keeps useful corpus-backed content
- * without weakening the evidence boundary.
+ * Judge each statement, not the whole answer. Keep a substantive sentence only
+ * when a citation whose claim contains it passes the per-claim checks (claim present
+ * in the answer, evidence resolves and supports the claim, no fact contradiction, no
+ * ungrounded entity). Everything else - uncited sentences,
+ * sentences backed only by an invalid or weak citation, short fragments that no
+ * verified claim contains, headings - is removed from the text, so the reader never
+ * sees it. The surviving sentences keep their original wording, order and line
+ * structure; nothing is rebuilt from claims.
+ *
+ * Returns null when no verified statement remains (the caller then falls back to
+ * the retrieved-sources list).
  */
-export function salvageGroundedClaims(
+export function keepVerifiedStatements(
   answer: string,
   citations: ClaimCitation[],
   chunks: RAGChunk[]
-): GroundedClaimFallback | null {
+): PartiallyVerifiedAnswer | null {
   const normalizedAnswer = visibleText(answer)
-  const seen = new Set<string>()
-  const valid: ClaimCitation[] = []
-
+  const validClaims: Array<{ claim: string; citation: ClaimCitation }> = []
   for (const citation of citations) {
     const claim = visibleText(citation.claimExcerpt)
-    if (claim.length < 12 || !normalizedAnswer.includes(claim) || seen.has(claim)) continue
+    if (claim.length < 12 || !normalizedAnswer.includes(claim)) continue
     if (verifyCitations([citation], chunks).length > 0) continue
     if (verifyFacts(citation.claimExcerpt, chunks).length > 0) continue
     if (checkGrounding(citation.claimExcerpt, chunks).hasWarning) continue
-    seen.add(claim)
-    valid.push(citation)
+    validClaims.push({ claim, citation })
   }
+  if (validClaims.length === 0) return null
 
-  if (valid.length === 0) return null
+  const keptLines: string[] = []
+  let kept = 0
+  let dropped = 0
+  for (const line of answer.split(/\r?\n/)) {
+    if (!line.trim()) {
+      if (keptLines.length > 0 && keptLines[keptLines.length - 1] !== '') keptLines.push('')
+      continue
+    }
+    if (/^\s{0,3}#{1,6}\s/.test(line)) continue
+    // Split after the bullet marker so it stays attached to the first sentence.
+    const marker = line.match(/^\s*(?:[-+*]\s+|\d+[.)]\s+)?/)?.[0] ?? ''
+    const body = line.slice(marker.length)
+    const pieces = body.split(/(?<=[.!?])\s+/).filter((piece) => piece.trim())
+    const keptPieces: string[] = []
+    for (const piece of pieces) {
+      const visible = visibleText(piece)
+      const supported = validClaims.some(({ claim }) => claim.includes(visible))
+      if (supported && visible.length >= 12) {
+        keptPieces.push(piece)
+        kept += 1
+      } else if (supported || !/[a-z0-9]/.test(visible)) {
+        // A fragment inside a verified claim, or bare punctuation: nothing to judge.
+        keptPieces.push(piece)
+      } else if (visible.length >= 12 || /\s/.test(visible)) {
+        dropped += 1 // a statement, however short, that no verified claim contains
+      }
+    }
+    if (keptPieces.length > 0) keptLines.push(`${marker}${keptPieces.join(' ')}`)
+  }
+  if (kept === 0) return null
 
-  const content = valid
-    .map((citation) => citation.claimExcerpt.trim().replace(/^[-+*]\s+/, ''))
-    .map((claim) => `- ${claim}`)
+  const content = keptLines
     .join('\n')
-
-  return { content, citations: valid }
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+  const normalizedContent = visibleText(content)
+  const seen = new Set<string>()
+  const shown: ClaimCitation[] = []
+  for (const { claim, citation } of validClaims) {
+    if (seen.has(claim) || !normalizedContent.includes(claim)) continue
+    seen.add(claim)
+    shown.push(citation)
+  }
+  return { content, citations: shown, dropped, kept }
 }
 
 const STOPWORDS = new Set([
@@ -169,13 +227,16 @@ const STOPWORDS = new Set([
 
 /**
  * Deterministically synthesize corpus-backed citations for any substantive statement
- * in `answer` that was omitted from or slightly paraphrased in the model's ```citations
- * block (common on 8B local WebLLM models), provided the statement:
+ * in `answer` that the model left out of its ```citations block (common on small
+ * local models), provided the statement:
  *   1. passes `verifyFacts(statement, chunks)` (zero factual contradictions),
  *   2. passes `checkGrounding(statement, chunks)` (zero ungrounded entities), and
- *   3. has direct content-token overlap with at least one retrieved chunk in `chunks`.
- * Every synthesized citation uses a verbatim `evidenceExcerpt` from the matched chunk,
- * so it still goes through `verifyCitations`, `enforceGrounding`, and `salvageGroundedClaims`.
+ *   3. shares at least two content tokens with one sentence of a retrieved chunk.
+ * The synthesized citation points at that sentence ("<chunkId>#<n>"), exactly like a
+ * model-written one, so it still goes through the same id check and relevance guard
+ * in `verifyCitations` and `enforceGrounding`: a statement whose best sentence does not
+ * support it is dropped, not shown. A statement that already has a model citation
+ * (even one the guard rejects) is never re-derived.
  */
 export function deriveCorpusCitations(
   answer: string,
@@ -187,6 +248,7 @@ export function deriveCorpusCitations(
 
   const result: ClaimCitation[] = [...existingCitations]
   const existingNormClaims = new Set(existingCitations.map((c) => visibleText(c.claimExcerpt)))
+  const sentencesByChunk = new Map(chunks.map((c) => [c.id, chunkSentences(c)]))
 
   const rawStatements = trimmed
     .split(/(?<=[.!?])\s+|\n+/)
@@ -211,37 +273,27 @@ export function deriveCorpusCitations(
     )
     if (stmtTokens.length === 0) continue
 
-    let bestChunk: RAGChunk | null = null
+    let best: { chunkId: string; n: number } | null = null
     let bestOverlap = 0
     for (const chunk of chunks) {
-      const hay = `${chunk.title} ${chunk.content}`.toLowerCase()
-      const titleLower = chunk.title?.toLowerCase().trim() ?? ''
-      let overlap = 0
-      if (titleLower.length >= 4 && normStmt.includes(titleLower)) {
-        overlap += 2
-      }
-      for (const tok of stmtTokens) {
-        if (hay.includes(tok)) overlap += 1
-      }
-      if (overlap > bestOverlap) {
-        bestOverlap = overlap
-        bestChunk = chunk
-      }
+      const sentences = sentencesByChunk.get(chunk.id) ?? []
+      sentences.forEach((sentence, index) => {
+        const hay = sentence.toLowerCase()
+        let overlap = 0
+        for (const tok of stmtTokens) {
+          if (hay.includes(tok)) overlap += 1
+        }
+        if (overlap > bestOverlap) {
+          bestOverlap = overlap
+          best = { chunkId: chunk.id, n: index + 1 }
+        }
+      })
     }
 
-    if (bestChunk && bestOverlap >= 2) {
-      const verbatimEvidence =
-        bestChunk.title?.trim() ||
-        bestChunk.content.split(/\r?\n/)[0]?.trim() ||
-        bestChunk.content.slice(0, 80).trim()
-      if (verbatimEvidence) {
-        result.push({
-          claimExcerpt: rawStmt,
-          evidenceExcerpt: verbatimEvidence,
-          chunkId: bestChunk.id,
-        })
-        existingNormClaims.add(normStmt)
-      }
+    if (best && bestOverlap >= 2) {
+      const { chunkId, n } = best as { chunkId: string; n: number }
+      result.push({ claimExcerpt: rawStmt, chunkId, evidenceRefs: [`${chunkId}#${n}`] })
+      existingNormClaims.add(normStmt)
     }
   }
 
@@ -270,10 +322,3 @@ export function buildRetrievedEvidenceResponse(chunks: RAGChunk[], maxEntries = 
   if (entries.length === 0) return buildGroundingFailureResponse()
   return `These are the most relevant entries retrieved from the PQC Today corpus:\n\n${entries.join('\n')}`
 }
-
-export const GROUNDING_RETRY_INSTRUCTION = `Your previous draft failed corpus-only verification.
-Regenerate it using ONLY the supplied CONTEXT. Return 2-6 short bullet sentences with no heading, introduction, conclusion, table, or follow-up block. Every bullet must have one citations entry with:
-- claimExcerpt: that complete sentence exactly as written in your answer; a shorter substring does not count
-- evidenceExcerpt: a verbatim supporting excerpt copied from the cited context chunk
-- chunkId: that chunk's exact id
-Do not use model memory or outside knowledge. If the context is insufficient, output exactly one sentence: "Based on the PQC Today database, I don't have enough information about this topic."`

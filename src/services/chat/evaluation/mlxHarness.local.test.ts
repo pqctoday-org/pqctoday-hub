@@ -17,7 +17,8 @@ import { RetrievalService } from '../RetrievalService'
 import { buildLocalSystemPrompt } from '../promptBuilder'
 import { parseCitations } from '../parseCitations'
 import { parseFollowUps } from '../parseFollowUps'
-import { finalizeGroundedResponse } from '../responseFinalization'
+import { finalizeGroundedResponse, prepareCitations } from '../responseFinalization'
+import { resolveCitationEvidence, verifyCitations } from '../citationVerification'
 import { selectLocalPromptChunks } from '../WebLLMService'
 import {
   CURRENT_CORPUS_BASELINE,
@@ -53,6 +54,27 @@ interface HarnessResult {
   groundingMode: ReturnType<typeof finalizeGroundedResponse>['mode']
   groundingReasons: ReturnType<typeof finalizeGroundedResponse>['decision']['reasons']
   citationCount: number
+  droppedStatements: number
+  citePipeline: string
+  /** What the parsed citations resolved to, for offline relevance review. */
+  citationDetails: Array<{
+    claim: string
+    refs: string[]
+    chunkId: string
+    evidence: string | null
+    valid: boolean
+    /** Violation reason when not valid (e.g. weak-evidence, unknown-chunk). */
+    violation: string | null
+    /** Relevance-guard numbers for reference citations. */
+    support: {
+      coverage: number
+      inSentences: number
+      claimWords: number
+      missingIdentifiers: string[]
+    } | null
+    idRepaired: boolean
+    repairedFrom: string[] | null
+  }>
   thinkingLeak: boolean
   refused: boolean
   termRecall: number
@@ -202,6 +224,29 @@ if (!model) {
       groundingMode: finalized.mode,
       groundingReasons: finalized.decision.reasons,
       citationCount: citations.length,
+      droppedStatements: finalized.droppedStatements,
+      citePipeline: 'a+guard+id+title-ids+per-claim-drop',
+      citationDetails: prepareCitations(citations, chunks).map((citation) => {
+        const violation = verifyCitations([citation], chunks)[0]
+        return {
+          claim: citation.claimExcerpt,
+          refs: citation.evidenceRefs ?? [],
+          chunkId: citation.chunkId,
+          evidence: resolveCitationEvidence(citation, chunks) ?? citation.evidenceExcerpt ?? null,
+          valid: !violation,
+          violation: violation?.reason ?? null,
+          support: violation?.support
+            ? {
+                coverage: violation.support.coverage,
+                inSentences: violation.support.inSentences,
+                claimWords: violation.support.claimWords,
+                missingIdentifiers: violation.support.missingIdentifiers,
+              }
+            : null,
+          idRepaired: citation.idRepaired === true,
+          repairedFrom: citation.repairedFrom ?? null,
+        }
+      }),
       thinkingLeak: /<\/?think>/i.test(raw),
       refused,
       termRecall: refused ? 0 : matchedTerms.length / question.answerTerms.length,
@@ -218,6 +263,15 @@ if (!model) {
     )
   }
 
+  const median = (values: number[]) => {
+    const sorted = [...values].sort((a, b) => a - b)
+    const mid = Math.floor(sorted.length / 2)
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+  }
+  const modeCounts: Record<string, number> = {}
+  for (const result of results) {
+    modeCounts[result.groundingMode] = (modeCounts[result.groundingMode] ?? 0) + 1
+  }
   const mean = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length
   const report = {
     model,
@@ -230,11 +284,21 @@ if (!model) {
     contextWindow,
     maxTokens,
     questionCount: results.length,
+    citePipeline: 'a+guard+id+title-ids+per-claim-drop',
+    modeCounts,
+    answersWithRemovalNote: results.filter((result) => result.droppedStatements > 0).length,
+    removedStatementsTotal: results.reduce((sum, result) => sum + result.droppedStatements, 0),
+    partiallyVerifiedRate:
+      results.filter((result) => result.groundingMode === 'partially-verified').length /
+      results.length,
+    medianTotalMs: Math.round(median(results.map((result) => result.totalMs))),
+    medianGenerationMs: Math.round(median(results.map((result) => result.generationMs))),
     verifiedRate:
       results.filter((result) => result.groundingMode === 'verified').length / results.length,
     evidenceBackedAnswerRate:
       results.filter(
-        (result) => result.groundingMode === 'verified' || result.groundingMode === 'salvaged'
+        (result) =>
+          result.groundingMode === 'verified' || result.groundingMode === 'partially-verified'
       ).length / results.length,
     usefulAnswerRate:
       results.filter((result) => result.groundingMode !== 'extractive' && !result.refused).length /

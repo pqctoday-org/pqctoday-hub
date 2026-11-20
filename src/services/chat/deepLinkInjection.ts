@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { RAGChunk } from '@/types/ChatTypes'
 import { validateDeepLink } from '@/services/search/deepLinkGrammar'
-import type { ClaimCitation } from './parseCitations'
+import { citationChunkIds, type ClaimCitation } from './parseCitations'
 
 const MAX_INLINE_DEEP_LINKS = 5
 
@@ -23,7 +23,9 @@ export function appendGroundedDeepLinks(
   const seen = new Set<string>()
   const links: string[] = []
 
-  for (const citation of citations) {
+  for (const citation of citations.flatMap((c) =>
+    c.evidenceRefs?.length ? citationChunkIds(c).map((chunkId) => ({ ...c, chunkId })) : [c]
+  )) {
     const chunk = chunkById.get(citation.chunkId)
     const deepLink = chunk?.deepLink
     if (
