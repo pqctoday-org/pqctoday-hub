@@ -220,3 +220,53 @@ describe('second review: remaining gaps and false rejections', () => {
     ).toBe(false)
   })
 })
+
+describe('third review: list numbers and wrapped lines', () => {
+  it.each([
+    'TLS is supported alongside library versions 1.3.',
+    'TLS is supported alongside library build 1.3.',
+  ])('does not let TLS take a number labelled by another word: %s', (sentence) => {
+    expect(
+      assessClaimSupport('TLS 1.3 is supported by the library.', [sentence], { titles: [] })
+        .supported
+    ).toBe(false)
+  })
+
+  it.each(['TLS 1.2, 1.3 are supported.', 'TLS 1.2 or 1.3 is supported.'])(
+    'accepts a version that continues a list: %s',
+    (sentence) => {
+      expect(
+        assessClaimSupport('TLS 1.3 is supported.', [sentence], { titles: [] }).supported
+      ).toBe(true)
+    }
+  )
+
+  it('keeps a verified sentence the model wrapped over two lines', () => {
+    const kem = chunk('algo-ml-kem-768', 'ML-KEM-768', [
+      'ML-KEM-768 provides NIST security level 3.',
+    ])
+    const claim = 'ML-KEM-768 provides NIST security level 3.'
+    const r = keepVerifiedStatements(
+      'ML-KEM-768 provides NIST\nsecurity level 3.\nIt is the fastest option.',
+      [{ claimExcerpt: claim, chunkId: kem.id, evidenceRefs: [`${kem.id}#1`] }],
+      [kem]
+    )
+    expect(r).not.toBeNull()
+    expect(r!.content).toBe('ML-KEM-768 provides NIST security level 3.')
+    expect(r!.kept).toBe(1)
+    expect(r!.dropped).toBe(1)
+  })
+
+  it('does not join a bullet onto the line above', () => {
+    const kem = chunk('algo-ml-kem-768', 'ML-KEM-768', [
+      'ML-KEM-768 provides NIST security level 3.',
+    ])
+    const claim = 'ML-KEM-768 provides NIST security level 3.'
+    const r = keepVerifiedStatements(
+      `- ${claim}\n- It is the fastest option.`,
+      [{ claimExcerpt: claim, chunkId: kem.id, evidenceRefs: [`${kem.id}#1`] }],
+      [kem]
+    )
+    expect(r!.content).toBe(`- ${claim}`)
+  })
+})

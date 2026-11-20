@@ -124,6 +124,29 @@ export interface PartiallyVerifiedAnswer {
  * Returns null when no verified statement remains (the caller then falls back to
  * the retrieved-sources list).
  */
+/**
+ * Markdown shows a line break inside a paragraph as a space, so a sentence the model
+ * wrapped over two lines is one sentence. Join such lines; a blank line, a list item,
+ * a heading, a quote, a table row or a code fence starts a new line.
+ */
+const BLOCK_START = /^\s*(?:[-+*]\s|\d+[.)]\s|#{1,6}\s|>|\||```)/
+
+function joinSoftWraps(answer: string): string[] {
+  const out: string[] = []
+  for (const raw of answer.split(/\r?\n/)) {
+    const prev = out.length > 0 ? out[out.length - 1] : ''
+    const joinable =
+      raw.trim() !== '' &&
+      prev.trim() !== '' &&
+      !BLOCK_START.test(raw) &&
+      !/^\s{0,3}#{1,6}\s/.test(prev) &&
+      !/^\s*(?:\||```)/.test(prev)
+    if (joinable) out[out.length - 1] = `${prev.trimEnd()} ${raw.trim()}`
+    else out.push(raw)
+  }
+  return out
+}
+
 /** A sentence ends at . ! ? followed by space, or at CJK 。！？ (no space follows those). */
 const SENTENCE_BREAK = /(?<=[.!?])\s+|(?<=[。！？])\s*/u
 
@@ -157,7 +180,7 @@ export function keepVerifiedStatements(
   const keptLines: string[] = []
   let kept = 0
   let dropped = 0
-  for (const line of answer.split(/\r?\n/)) {
+  for (const line of joinSoftWraps(answer)) {
     if (!line.trim()) {
       if (keptLines.length > 0 && keptLines[keptLines.length - 1] !== '') keptLines.push('')
       continue
