@@ -334,8 +334,8 @@ export function assessClaimSupport(
   context: SupportContext
 ): SupportAssessment {
   const claimTerms = extractTerms(claim, { asClaim: true })
-  const perSentence = sentences.map(extractTerms)
-  const titleTerms = context.titles.map(extractTerms)
+  const perSentence = sentences.map((s) => extractTerms(s))
+  const titleTerms = context.titles.map((t) => extractTerms(t))
 
   // Each cited sentence is checked on its own for the identifiers; the best one decides.
   let missingIdentifiers: string[] = []
