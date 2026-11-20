@@ -87,6 +87,12 @@ const NAME_WORDS = new Set(
 const NUMBER = String.raw`\d+(?:\.\d+)*(?:-\d+)?(?:\/\d+(?:\.\d+)*)*`
 // eslint-disable-next-line security/detect-non-literal-regexp -- built from fixed constants, never from input
 const NAME_UNIT = new RegExp(String.raw`(?<![A-Za-z])([A-Za-z]+)([-\s]?)(${NUMBER})`, 'g')
+// "TLS versions are 1.2 and 1.3", "TLS version: 1.3": the name owns the list that follows.
+// eslint-disable-next-line security/detect-non-literal-regexp -- built from fixed constants, never from input
+const VERSION_HEAD = new RegExp(
+  String.raw`(?<![A-Za-z])([A-Za-z]+)\s+versions?\s*(?:are\s+|is\s+|includes?\s+|:\s*)?(${NUMBER})`,
+  'gi'
+)
 // eslint-disable-next-line security/detect-non-literal-regexp -- built from fixed constants, never from input
 const BARE_NUMBER = new RegExp(NUMBER, 'g')
 // eslint-disable-next-line security/detect-non-literal-regexp -- built from fixed constants, never from input
@@ -135,6 +141,19 @@ export function extractTerms(text: string): TextTerms {
   const names = new Set<string>()
   const allNumbers = new Set<string>()
   const consumed: Array<{ from: number; to: number; word: string }> = []
+  for (const m of source.matchAll(VERSION_HEAD)) {
+    const [whole, word, number] = m
+    const lower = word.toLowerCase()
+    const isName = (word.length >= 2 && word === word.toUpperCase()) || NAME_WORDS.has(lower)
+    if (!isName || lower === 'version' || STOP_WORDS.has(lower)) continue
+    for (const variant of numberVariants(number)) {
+      names.add(`${lower}|${variant}`)
+      allNumbers.add(variant)
+      for (const part of numberParts(variant)) allNumbers.add(part)
+    }
+    const at = m.index + whole.length - number.length
+    consumed.push({ from: at, to: at + number.length, word: lower })
+  }
   for (const m of source.matchAll(NAME_UNIT)) {
     const [whole, word, sep, number] = m
     const lower = word.toLowerCase()

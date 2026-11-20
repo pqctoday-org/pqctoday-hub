@@ -326,3 +326,23 @@ describe('sixth review: a list belongs to the name that starts it', () => {
     expect(terms.names).toEqual(expect.arrayContaining(['tls|1.2', 'tls|1.3', 'tls|1.4']))
   })
 })
+
+describe('seventh review: "<name> versions are" starts a list', () => {
+  it.each([
+    'Supported TLS versions are 1.2 and 1.3.',
+    'Supported TLS versions: 1.2, 1.3.',
+    'The supported TLS version is 1.3.',
+  ])('supports TLS 1.3 from: %s', (sentence) => {
+    expect(assessClaimSupport('TLS 1.3 is supported.', [sentence], { titles: [] }).supported).toBe(
+      true
+    )
+  })
+
+  it('does not start a list from a word that is not a name', () => {
+    expect(
+      assessClaimSupport('TLS 1.3 is supported.', ['TLS is supported; library versions are 1.3.'], {
+        titles: [],
+      }).supported
+    ).toBe(false)
+  })
+})
