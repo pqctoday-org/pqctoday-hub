@@ -100,8 +100,20 @@ describe('Selected target and operation produce useful export recipes', () => {
     }
   )
 })
+// Each dropdown trigger is named by its field label (ArtifactBuilder passes
+// ariaLabel={field.label}); the current value is its visible text.
+const FIELD_OF: Record<string, string> = {
+  'TLS 1.3': 'Protocol / asset',
+  X25519: 'Algorithm in use today',
+  'Key encapsulation / key exchange': 'Cryptographic function',
+  '5 - 15 years': 'Data lifetime (HNDL exposure window)',
+  'In production - crypto-agile (modular APIs)': 'Deployment maturity',
+  'Medium (config-file driven)': 'Crypto agility',
+}
 const choose = (from: string, to: string) => {
-  fireEvent.click(screen.getByRole('button', { name: from }))
+  const trigger = screen.getByRole('button', { name: FIELD_OF[from] })
+  expect(trigger).toHaveTextContent(from)
+  fireEvent.click(trigger)
   fireEvent.click(screen.getByRole('option', { name: to }))
 }
 describe('Actual planner controls, preview and saved markdown', () => {

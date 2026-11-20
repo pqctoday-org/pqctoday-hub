@@ -103,6 +103,9 @@ describe('linked sample plan inputs and real serialized outputs', () => {
       '2030',
       'Recorded by reference year',
       expect.stringContaining('exact dated deadline'),
+      // The fictional framework carries no binding status or source URL.
+      'Unclassified',
+      '',
     ])
     fireEvent.click(screen.getByRole('button', { name: 'Save sample timeline' }))
     const doc = sample.add.mock.calls[0][0]
@@ -236,12 +239,21 @@ describe('linked sample plan inputs and real serialized outputs', () => {
     expect(md).toContain('Planned by reference year')
     expect(md).not.toContain('Palette')
     expect(md).not.toContain('ON-TRACK')
-    expect(csv).toContainEqual(['Framework', 'Reference Year', 'Alignment', 'Notes'])
+    expect(csv).toContainEqual([
+      'Framework',
+      'Reference Year',
+      'Alignment',
+      'Notes',
+      'Binding Classification',
+      'Source',
+    ])
     expect(csv).toContainEqual([
       'Fictional, obligation',
       '2030',
       'Planned by reference year',
       expect.stringContaining('not delivered work'),
+      'Unclassified',
+      '',
     ])
     expect(csv.flat()).not.toContain('ON-TRACK')
   })

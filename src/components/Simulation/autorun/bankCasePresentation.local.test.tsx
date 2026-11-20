@@ -26,8 +26,11 @@ describe('bank risk presentation', () => {
       screen.getByDisplayValue('Software signing service — release authenticity and trust')
     ).toBeVisible()
     expect(useRiskRegisterStore.getState().riskEntries).toEqual(saved)
-    expect(screen.getByRole('button', { name: 'ECDH / X25519' })).toBeVisible()
-    expect(screen.getByRole('button', { name: 'RSA-2048' })).toBeVisible()
-    expect(screen.getByRole('button', { name: 'ECDSA P-256' })).toBeVisible()
+    // Each algorithm dropdown is named per entry; its current value is the visible text.
+    ;(['ECDH / X25519', 'RSA-2048', 'ECDSA P-256'] as const).forEach((algorithm, i) => {
+      const trigger = screen.getByRole('button', { name: `Current algorithm for entry ${i + 1}` })
+      expect(trigger).toBeVisible()
+      expect(trigger).toHaveTextContent(algorithm)
+    })
   })
 })

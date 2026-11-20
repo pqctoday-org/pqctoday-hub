@@ -396,16 +396,22 @@ function selectTab(tabName: string): void {
   setTimeout(tick, 200)
 }
 
+/**
+ * Sets an input's value the way React observes it. Retries like a click cue, so
+ * a fill aimed at a lazily loaded tool still lands once the tool has mounted;
+ * the first attempt runs immediately, as before.
+ */
 function fillElement(selector: string, value: string): void {
-  const el = document.querySelector(selector)
-  if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+  retrySelector(selector, (el) => {
+    if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return false
     const proto =
       el instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype
     const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set
     setter?.call(el, value)
     el.dispatchEvent(new Event('input', { bubbles: true }))
     el.dispatchEvent(new Event('change', { bubbles: true }))
-  }
+    return true
+  })
 }
 
 function selectOption(selector: string, label: string): void {

@@ -124,6 +124,15 @@ export const SECTOR_STEPS: Partial<Record<string, Partial<Record<PhaseId, Sector
         to: '/learn/iot-pqc',
       },
     ],
+    // Added 2026-11-19: the energy-sector module (4.217.0) serves Phase 5 first
+    // (phaseResourceMap) and was in no sector track.
+    p5: [
+      {
+        moduleId: 'energy-utilities-pqc',
+        label: 'Energy, utilities & grid PQC migration',
+        to: '/learn/energy-utilities-pqc',
+      },
+    ],
   },
   telecom: {
     p0: [

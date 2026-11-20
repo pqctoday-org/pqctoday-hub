@@ -99,14 +99,21 @@ describe('role lessons carry no invented latency or approximate handshake sizes'
     expect(body).not.toMatch(/\d\s?milliseconds?\b/i)
   })
 
-  it.each(Object.entries(surfaces))('%s mentions P50 or P99 only to disclaim it', (_name, body) => {
-    for (const hit of body.matchAll(/P50|P99/gi)) {
-      const before = body.slice(Math.max(0, hit.index! - 90), hit.index)
-      expect(before, `un-negated percentile near: ${before}`).toMatch(
-        /\b(not|no|nor|never|without|does not|do not|did not)\b|\bnot a\b/i
-      )
+  // A percentile may be disclaimed ("does not calculate P99") or assigned to the
+  // learner as their own measurement ("measure P99 handshake latency on your
+  // staging traffic"); either way the lesson states no latency figure.
+  it.each(Object.entries(surfaces))(
+    '%s mentions P50 or P99 only to disclaim it or to ask the learner to measure it',
+    (_name, body) => {
+      for (const hit of body.matchAll(/P50|P99/gi)) {
+        const before = body.slice(Math.max(0, hit.index! - 90), hit.index)
+        if (/\b(measure|record|collect|track)\s+$/i.test(before)) continue
+        expect(before, `un-negated percentile near: ${before}`).toMatch(
+          /\b(not|no|nor|never|without|does not|do not|did not)\b|\bnot a\b/i
+        )
+      }
     }
-  })
+  )
 
   it('the architect IoT exercise states the captured certificate message sizes', () => {
     const exercise = ARCH_QUANTUM_EXERCISES.find((e) => e.title.includes('IoT Certificate'))!

@@ -729,6 +729,8 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                 variant="ghost"
                 type="button"
                 className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/30 transition-colors"
+                aria-expanded={isExpanded}
+                data-workshop-target={`vendor-scorecard-dimension-${d.id}`}
                 onClick={() => setExpandedDim(isExpanded ? null : d.id)}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -815,6 +817,7 @@ export const VendorScorecardBuilder: React.FC<{ onOutput?: (output: ScorecardOut
                         min="0"
                         max="100"
                         aria-label={d.label}
+                        data-workshop-target={`vendor-scorecard-score-${d.id}`}
                         value={sliderScores[d.id] ?? 0}
                         onChange={(e) =>
                           setSliderScores((prev) => ({

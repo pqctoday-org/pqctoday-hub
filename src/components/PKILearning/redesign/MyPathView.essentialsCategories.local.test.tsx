@@ -14,7 +14,9 @@ import { QUIZ_QUESTIONS } from '@/data/quizData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useLearnStore } from '@/store/useLearnStore'
 
-// Pinned expected topics: the current Essentials curricula, with shared foundations deduplicated.
+// Pinned expected topics: the current Essentials curricula (the 4.217.0 eight-persona
+// curriculum), with shared foundations deduplicated. pqc-candidates counts toward
+// pqc-fundamentals, and cert-quantum-impact has no quiz category of its own.
 // This table is independent of the module-to-category mapping under test.
 const EXPECTED = new Map<PersonaId, readonly string[]>([
   [
@@ -25,6 +27,7 @@ const EXPECTED = new Map<PersonaId, readonly string[]>([
       'pqc-risk-management',
       'pqc-business-case',
       'pqc-governance',
+      'vendor-risk',
     ],
   ],
   [
@@ -36,6 +39,7 @@ const EXPECTED = new Map<PersonaId, readonly string[]>([
       'pqc-grc',
       'compliance-strategy',
       'pqc-governance',
+      'cbom',
       'vendor-risk',
       'verification-closure',
     ],
@@ -50,6 +54,7 @@ const EXPECTED = new Map<PersonaId, readonly string[]>([
       'crypto-agility',
       'pki-infrastructure',
       'crypto-dev-apis',
+      'code-signing',
     ],
   ],
   [
@@ -70,12 +75,12 @@ const EXPECTED = new Map<PersonaId, readonly string[]>([
     [
       'pqc-fundamentals',
       'research-quantum-impact',
+      'quantum-threats',
       'entropy-randomness',
+      'slh-dsa',
       'hybrid-crypto',
       'crypto-agility',
       'standards-bodies',
-      'tls-basics',
-      'pki-infrastructure',
     ],
   ],
   [
@@ -86,7 +91,6 @@ const EXPECTED = new Map<PersonaId, readonly string[]>([
       'acvp-lab-workflow',
       'entropy-randomness',
       'cc-eucc-certification',
-      'pci-certification',
     ],
   ],
   [
@@ -96,14 +100,14 @@ const EXPECTED = new Map<PersonaId, readonly string[]>([
       'ops-quantum-impact',
       'tls-basics',
       'vpn-ssh-pqc',
-      'pki-infrastructure',
+      'os-pqc',
       'crypto-agility',
       'migration-program',
       'kms-pqc',
       'hsm-pqc',
     ],
   ],
-  ['curious', ['pqc-fundamentals', 'quantum-threats', 'tls-basics']],
+  ['curious', ['pqc-fundamentals', 'quantum-threats', 'talking-about-pqc']],
 ])
 
 function markRead(ids: readonly string[]) {

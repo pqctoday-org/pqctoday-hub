@@ -34,8 +34,8 @@ describe('language comparison carries no 0-10 rating bars', () => {
       </MemoryRouter>
     )
     fireEvent.click(screen.getByRole('button', { name: 'Compare Mode' }))
-    // The select control has no accessible name; the card's other buttons are named.
-    const pick = screen.getAllByRole('button', { name: '' })
+    // Each language card has a named select button ("Select C++ for comparison").
+    const pick = screen.getAllByRole('button', { name: /^Select .+ for comparison$/ })
     expect(pick.length).toBeGreaterThanOrEqual(2)
     fireEvent.click(pick[0])
     fireEvent.click(pick[1])

@@ -65,25 +65,28 @@ describe('components-shaped teaching input scope', () => {
     expect(publish).not.toHaveBeenCalled()
     expect(save).not.toHaveBeenCalled()
   })
+  // The builder also has a screen-reader-only live region with role="status";
+  // these checks are about the visible input-scope line.
+  const visibleStatus = () => {
+    const visible = screen.getAllByRole('status').filter((el) => !el.classList.contains('sr-only'))
+    expect(visible).toHaveLength(1)
+    return visible[0]
+  }
   it('distinguishes supported empty, unmatched and recovered valid inputs without byte coercion', () => {
     start()
     publish.mockClear()
     edit('{"components":[]}')
-    expect(screen.getByRole('status')).toHaveTextContent('Supported empty components sample')
+    expect(visibleStatus()).toHaveTextContent('Supported empty components sample')
     expect(publish).toHaveBeenLastCalledWith([])
     expect(screen.getByRole('button', { name: 'Download CycloneDX 1.7' })).toBeEnabled()
     edit('{"components":[{"name":"Unknown Ω","version":"01.00"}]}')
-    expect(screen.getByRole('status')).toHaveTextContent(
-      '1 mapped sample rows; 1 without a catalogue match'
-    )
+    expect(visibleStatus()).toHaveTextContent('1 mapped sample rows; 1 without a catalogue match')
     expect(publish.mock.lastCall![0][0]).toMatchObject({ name: 'Unknown Ω', version: '01.00' })
     publish.mockClear()
     edit('{')
     expect(publish).not.toHaveBeenCalled()
     edit('{"components":[{"name":"openssl","version":"1.1.1w"}]}')
-    expect(screen.getByRole('status')).toHaveTextContent(
-      '1 mapped sample rows; 0 without a catalogue match'
-    )
+    expect(visibleStatus()).toHaveTextContent('1 mapped sample rows; 0 without a catalogue match')
     expect(publish.mock.lastCall![0][0]).toMatchObject({ name: 'openssl', version: '1.1.1w' })
   })
   it('retains saved valid data and blocks pending autosave/unmount publication after invalidation', () => {

@@ -90,11 +90,11 @@ describe('TEE sample provisioning verification gates', () => {
     vi.mocked(hsm_verify).mockReturnValue(false)
     runPqc()
     await screen.findAllByText(
-      /Sample attestation signature verification failed; provisioning stopped\./
+      /did not verify with the expected sample signer\. No provisioning key was unwrapped\./
     )
     expect(hsm_decapsulate).not.toHaveBeenCalled()
     expect(hsm_unwrapKeyMech).not.toHaveBeenCalled()
-    expect(screen.queryByText(/(?:Protocol|Sample sequence) complete/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/(?:Provisioning|Sample sequence) complete/)).not.toBeInTheDocument()
   })
 
   it('stops before unwrap when recovered secrets differ, including unequal lengths', async () => {
@@ -108,7 +108,7 @@ describe('TEE sample provisioning verification gates', () => {
   it('allows unwrap after both checks succeed', async () => {
     runPqc()
     await waitFor(() => expect(hsm_unwrapKeyMech).toHaveBeenCalledTimes(1))
-    expect(await screen.findByText(/Protocol complete/)).toBeInTheDocument()
+    expect(await screen.findByText(/Provisioning complete \(PQC\)/)).toBeInTheDocument()
   })
 })
 

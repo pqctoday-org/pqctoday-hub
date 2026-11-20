@@ -16,7 +16,7 @@ export const content: ModuleContent = {
   moduleId: 'hsm-pqc',
   version: '1.0.3',
   lastReviewed: '2026-10-28',
-  lastEdited: '2026-11-18',
+  lastEdited: '2026-11-19',
 
   standards: [
     getStandard('FIPS 203'),
@@ -54,6 +54,9 @@ export const content: ModuleContent = {
     getStandard('NIST-Cryptographic-Algorithm-Validation-Program-CAVP'), // CAVP vs CMVP
     getStandard('PKCS11-V32-OS-OASIS'), // OASIS Standard, 3 June 2026
     getStandard('NIST-SP-800-140F'), // section 6.2: no approved non-invasive test metrics
+    // Declared 19 Nov 2026: the regulatory notes name "NIST IR 8547 (final October 2026)"
+    // and cited nothing for it (library row: Final, last updated 2026-10-27).
+    getStandard('NIST IR 8547'),
     // round 9 wave 4c (2026-09-20): cited for the figures the accuracy record found unmapped
     getStandard('What-is-Azure-Dedicated-HSM'), // m-hsm-pqc: wave 4c
     // Release 4.202 trust-hardware changes: the Library rows the new statements come from.
