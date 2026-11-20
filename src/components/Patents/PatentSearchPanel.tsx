@@ -11,6 +11,7 @@ import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { expandAlgorithmAliases } from '@/data/algorithmNameAliases'
 
 import { exactUSPatentNumber } from '@/data/patentsScope'
+import { highlightTerms } from './highlightTerms'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -121,27 +122,6 @@ const EXAMPLE_QUERIES = [
   'QuSecure quantum PKI',
   'ECDSA secp256k1 replacement',
 ]
-
-// ── Highlight helper ──────────────────────────────────────────────────────────
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-}
-
-function highlight(text: string, query: string): string {
-  if (!query.trim() || !text) return escapeHtml(text)
-  const words = query
-    .trim()
-    .split(/\s+/)
-    .filter((w) => w.length > 2)
-    .map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-  if (words.length === 0) return escapeHtml(text)
-  const pattern = new RegExp(`(${words.join('|')})`, 'gi')
-  return escapeHtml(text).replace(
-    new RegExp(pattern.source, 'gi'),
-    '<mark class="bg-primary/20 text-primary rounded px-0.5">$1</mark>'
-  )
-}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -454,9 +434,9 @@ function PatentResultCard({
     return text.length > 220 ? text.slice(0, 220) + '…' : text
   }, [patent])
 
-  const highlightedTitle = useMemo(() => highlight(patent.title, query), [patent.title, query])
+  const highlightedTitle = useMemo(() => highlightTerms(patent.title, query), [patent.title, query])
   const highlightedSummary = useMemo(
-    () => highlight(summarySnippet, query),
+    () => highlightTerms(summarySnippet, query),
     [summarySnippet, query]
   )
 

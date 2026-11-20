@@ -1149,11 +1149,16 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
           'sources',
           'modules',
           'patents',
+          'vendors',
+          'roadmaps',
+          'landscape',
+          'protocols',
+          'glossary',
         ] as DataFoundationKey[]
       ).map((k) => [k, 10])
     ) as Record<DataFoundationKey, number>
     const foundationRows = buildDataFoundation(dummyFoundation)
-    expect(foundationRows.length).toBe(11)
+    expect(foundationRows.length).toBe(16)
 
     recordReceipt({
       id: 'about',
@@ -1165,7 +1170,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
         'public/data/pqctoday-sbom.cdx.json',
       ],
       wholeTaskChecks: [
-        'Verified 230 npm packages (51 direct + 179 transitive) in CycloneDX SBOM and 11 Data Foundation rows',
+        'Verified 230 npm packages (51 direct + 179 transitive) in CycloneDX SBOM and 16 Data Foundation rows',
       ],
       boundaryAndAdverseChecks: [
         'Verified 0 unresolved ("?") versions or blank licenses across all SBOM_GROUPS rows',

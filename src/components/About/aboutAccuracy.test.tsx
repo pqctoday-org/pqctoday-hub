@@ -134,6 +134,11 @@ describe('FIPS 206 status', () => {
         'sources',
         'modules',
         'patents',
+        'vendors',
+        'roadmaps',
+        'landscape',
+        'protocols',
+        'glossary',
       ] as DataFoundationKey[]
     ).map((k) => [k, 1])
   ) as Record<DataFoundationKey, number>

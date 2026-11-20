@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Database } from 'lucide-react'
-import { buildDataFoundation } from '../aboutData'
+import { buildDataFoundation, totalModuleMinutes } from '../aboutData'
 import { timelineData } from '@/data/timelineData'
 import { countSovereignCountries } from '@/data/timelineCountries'
 import { libraryData } from '@/data/libraryData'
@@ -15,12 +15,36 @@ import { authoritativeSources } from '@/data/authoritativeSourcesData'
 import { patentsData } from '@/data/patentsData'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { vendors } from '@/data/vendorData'
+import { vendorRoadmaps } from '@/data/vendorRoadmapData'
+import { loadIndustryLandscape } from '@/data/industryLandscapeData'
+import { PROTOCOL_MATRIX } from '@/data/pqcProtocolMatrix'
+import { glossaryTerms } from '@/data/glossaryData'
 
 // Excludes the synthetic 'quiz' entry — matches the count Landing already shows.
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 const TIMELINE_EVENT_COUNT = timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events)).length
 // Sovereign countries only: blocs, bodies and territories are left out (see timelineCountries.ts).
 const TIMELINE_COUNTRY_COUNT = countSovereignCountries(timelineData)
+const TIMELINE_ORG_COUNT = new Set(
+  timelineData.flatMap((c) => c.bodies.flatMap((b) => b.events.map((e) => e.orgName)))
+).size
+const THREAT_SECTOR_COUNT = new Set(threatsData.map((t) => t.industry)).size
+// A product can sit on several layers ("Hardware,Security Stack"); count each layer once.
+const MIGRATE_LAYER_COUNT = new Set(
+  softwareData.flatMap((p) =>
+    p.infrastructureLayer
+      .split(',')
+      .map((l) => l.trim())
+      .filter(Boolean)
+  )
+).size
+const MODULE_MINUTES = totalModuleMinutes(
+  Object.entries(MODULE_CATALOG)
+    .filter(([k]) => k !== 'quiz')
+    .map(([, m]) => m.duration)
+)
+const LANDSCAPE_USE_CASE_COUNT = loadIndustryLandscape().useCases.length
 
 function formatLastUpdate(date: Date | null | undefined): string | null {
   if (!date) return null
@@ -50,8 +74,20 @@ export function DataFoundationSection() {
       sources: authoritativeSources.length,
       modules: MODULE_COUNT,
       patents: patentsData.length,
+      vendors: vendors.length,
+      roadmaps: vendorRoadmaps.length,
+      landscape: LANDSCAPE_USE_CASE_COUNT,
+      protocols: PROTOCOL_MATRIX.length,
+      glossary: glossaryTerms.length,
     },
-    `80+ orgs, ${TIMELINE_COUNTRY_COUNT} countries`
+    {
+      timeline: `${TIMELINE_ORG_COUNT} orgs, ${TIMELINE_COUNTRY_COUNT} countries`,
+      threats: `${THREAT_SECTOR_COUNT} industry sectors`,
+      migrate: `${MIGRATE_LAYER_COUNT} infrastructure layers`,
+      ...(MODULE_MINUTES > 0
+        ? { modules: `${MODULE_MINUTES.toLocaleString()}+ min of content` }
+        : {}),
+    }
   )
 
   const totalRecords = dataFoundation.reduce(
@@ -76,7 +112,7 @@ export function DataFoundationSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
         {dataFoundation.map(({ dataset, records, sources }) => (
           <div
             key={dataset}

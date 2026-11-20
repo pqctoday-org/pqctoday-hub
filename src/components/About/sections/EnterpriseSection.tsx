@@ -5,6 +5,13 @@ import clsx from 'clsx'
 import { Building2, ChevronDown, Mail, Container, AppWindow } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SANDBOX_ACCESS_URL } from '@/components/Playground/cryptoLabMeta'
+import {
+  SANDBOX_NAMED_TOOLS,
+  SANDBOX_NAMED_USE_CASES,
+  SANDBOX_SCENARIO_COUNT,
+  SANDBOX_TRACK_LABELS,
+  joinWithAnd,
+} from '@/data/sandboxSummary'
 
 const EMBEDDING_MODE_REQUEST_URL = `${SANDBOX_ACCESS_URL}&title=%5BEmbedding+Mode%5D+`
 
@@ -56,11 +63,11 @@ export function EnterpriseSection() {
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   The <strong className="text-foreground">Sandbox</strong> section of the Crypto
-                  Workshop provides 30+ real-world PQC migration scenarios powered by actual
-                  open-source tools running inside isolated Docker containers — strongSwan, OpenSSH,
-                  HAProxy, PostgreSQL, Hyperledger Besu, Algorand, and more. Each scenario targets a
-                  concrete enterprise use case such as quantum-resistant VPNs, DNSSEC zone signing,
-                  supply-chain provenance, and CBOM compliance auditing.
+                  Workshop provides {SANDBOX_SCENARIO_COUNT} real-world PQC migration scenarios
+                  powered by actual open-source tools running inside isolated Docker containers
+                  &mdash; {SANDBOX_NAMED_TOOLS.join(', ')} and more. Each scenario targets a
+                  concrete enterprise use case such as{' '}
+                  {joinWithAnd(SANDBOX_NAMED_USE_CASES.map((u) => u.label))}.
                 </p>
                 <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground list-disc list-inside">
                   <li>
@@ -69,12 +76,14 @@ export function EnterpriseSection() {
                   </li>
                   <li>
                     <strong className="text-foreground">Real tools, real protocols</strong> &mdash;
-                    no simulations; actual TLS handshakes, IKEv2 key exchange, and PKCS#11 calls.
+                    the scenarios run the real programs: actual TLS handshakes, IKEv2 key exchanges
+                    and PKCS#11 calls.
                   </li>
                   <li>
-                    <strong className="text-foreground">Four tracks</strong> &mdash; Cryptographic
-                    Infrastructure, Web &amp; Network Security, Application Security, and Quantum
-                    &amp; Discovery.
+                    <strong className="text-foreground">
+                      {SANDBOX_TRACK_LABELS.length} tracks
+                    </strong>{' '}
+                    &mdash; {joinWithAnd(SANDBOX_TRACK_LABELS)}.
                   </li>
                 </ul>
                 <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20 text-sm text-muted-foreground">

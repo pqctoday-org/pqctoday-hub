@@ -1628,6 +1628,22 @@
               "selector": "[data-workshop-target=\"business-artifact-vendor-scorecard-create\"]"
             },
             {
+              "tMs": 20416,
+              "kind": "caption",
+              "text": "Score at least one dimension: an unscored scorecard is not saved. This sample enters 60 for PQC algorithm support."
+            },
+            {
+              "tMs": 20416,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"vendor-scorecard-dimension-pqc-algorithm-support\"]"
+            },
+            {
+              "tMs": 20916,
+              "kind": "fill-literal",
+              "selector": "[data-workshop-target=\"vendor-scorecard-score-pqc-algorithm-support\"]",
+              "value": "60"
+            },
+            {
               "tMs": 21416,
               "kind": "click",
               "selector": "[data-workshop-target=\"executive-artifact-save\"], [data-workshop-target=\"artifact-builder-save\"]"

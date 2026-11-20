@@ -40,6 +40,15 @@ const NOT_IN_SIM: Record<string, string> = {
     'Phase 5 Resources list only (phaseResourceMap); the sim has no media or entertainment sector to place a content-protection module in',
   'software-supply-chain-pqc':
     'Phase 5 Resources list only (phaseResourceMap); the sim estate models code-signing keys but no software build or release pipeline, and the Phase 5 code-signing step already carries the related code-signing module',
+  // Modules added in 4.217.0. Each is in the per-phase Resources list
+  // (phaseResourceMap LEARN_PHASES); energy-utilities-pqc is placed in the energy
+  // sector track instead (sectorTrack.ts).
+  'cert-quantum-impact':
+    'seat-scoped orientation for the certification engineer, who has no framework seat in the sim (personaDebrief); Phase 0 and 7 Resources list (phaseResourceMap)',
+  'cloud-pqc':
+    'Phase 5 and 6 Resources list (phaseResourceMap); no generated tree step or sector step carries it',
+  'pqc-implementation-security':
+    'Phase 5 and 6 Resources list (phaseResourceMap); no generated tree step or sector step carries it',
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.

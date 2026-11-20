@@ -163,6 +163,22 @@ it('executes the published reset URL from previous answers through the real repo
   const before = useModuleStore.getState().artifacts.executiveDocuments?.length ?? 0
   const governanceSteps = steps.filter((step) => step.id.startsWith('a1'))
   for (const cue of governanceSteps.flatMap((step) => step.cues ?? [])) {
+    if (cue.kind === 'fill-literal') {
+      // The vendor scorecard saves only once a dimension is scored; the tour's
+      // fill cue sets the value the way useCueApplier does (native setter + input).
+      const target = cue.selector
+      await waitFor(() => expect(document.querySelector(target), target).not.toBeNull(), {
+        timeout: 10000,
+      })
+      const input = document.querySelector(target) as HTMLInputElement
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(
+        input,
+        cue.value
+      )
+      fireEvent.input(input)
+      expect(input.value).toBe(cue.value)
+      continue
+    }
     if (cue.kind !== 'click') continue
     const selector = cue.selector
     await waitFor(() => expect(document.querySelector(selector), selector).not.toBeNull(), {

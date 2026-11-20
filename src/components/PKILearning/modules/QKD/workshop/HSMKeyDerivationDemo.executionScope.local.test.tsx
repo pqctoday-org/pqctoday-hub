@@ -19,8 +19,12 @@ const fixture = vi.hoisted(() => ({
   derived: vi.fn(),
   random: vi.fn(),
 }))
+const LABEL = 'session-key-v1\x00'
 vi.mock('@/hooks/useHSM', () => ({ useHSM: () => fixture.hsm }))
 vi.mock('@/wasm/softhsm', () => ({
+  // Real PKCS#11 value (src/wasm/softhsm/constants.ts): the demo passes it as the KBKDF PRF.
+  CKM_SHA256_HMAC: 0x251,
+  hsm_destroyObject: vi.fn(),
   hsm_importGenericSecret: fixture.imported,
   hsm_kbkdf: fixture.derived,
 }))
@@ -39,7 +43,13 @@ beforeEach(() => {
   fixture.hsm.hSessionRef.current = 11
   fixture.hsm.registerKey.mockImplementation(() => undefined)
   fixture.imported.mockReturnValue(7)
-  fixture.derived.mockReturnValue(new Uint8Array(32).fill(0xab))
+  // A deterministic stand-in KDF: the output depends on the first context byte
+  // (fixed input = 15-byte label || 16-byte context || 32-bit L), so the demo's
+  // repeated-context check matches and its changed-context check differs.
+  fixture.derived.mockImplementation(
+    (_m: unknown, _s: number, _h: number, _mech: number, fixed: Uint8Array) =>
+      new Uint8Array(32).fill(fixed[LABEL.length] === 0x55 ? 0xab : 0xcd)
+  )
   fixture.random.mockImplementation((bytes: Uint8Array) => bytes.fill(0x55))
   Object.defineProperty(window, 'crypto', {
     configurable: true,
@@ -107,19 +117,31 @@ describe('QKD sample HSM step outcomes and origins', () => {
     })
     await click('Attempt Sample HSM Derivation', 400)
     expect(screen.getByRole('alert')).toHaveTextContent('sample PRF rejected')
-    expect(screen.queryByText('Sample Output — View A')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: /Step 4: Session Key Output/ })
+    ).not.toBeInTheDocument()
     fixture.derived.mockReturnValueOnce(new Uint8Array(0))
     await click('Attempt Sample HSM Derivation', 400)
     expect(screen.getByRole('alert')).toHaveTextContent('requested 32 bytes')
     await click('Attempt Sample HSM Derivation', 400)
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent('displayed in JavaScript')
+    // Original and repeated context show the same key; the changed context a different one.
     expect(screen.getAllByText('ab'.repeat(32))).toHaveLength(2)
-    const call = fixture.derived.mock.calls.at(-1)!
-    expect(call[2]).toBe(7)
-    expect(call[3]).toBe(0x00000251)
-    expect(call[5]).toBe(32)
-    expect(new TextDecoder().decode(call[4])).toBe(`session-key-v1\x00${'55'.repeat(16)}`)
+    expect(screen.getByText('cd'.repeat(32))).toBeInTheDocument()
+    // The successful attempt is the last three calls: original, repeated, changed context.
+    const [original, repeated, changed] = fixture.derived.mock.calls.slice(-3)
+    for (const call of [original, repeated, changed]) {
+      expect(call[2]).toBe(7)
+      expect(call[3]).toBe(0x00000251)
+      expect(call[5]).toBe(32)
+    }
+    const fixedInput = (context: number[]) =>
+      new Uint8Array([...new TextEncoder().encode(LABEL), ...context, 0, 0, 1, 0])
+    const context = new Array(16).fill(0x55)
+    expect(original[4]).toEqual(fixedInput(context))
+    expect(repeated[4]).toEqual(fixedInput(context))
+    expect(changed[4]).toEqual(fixedInput([0x54, ...context.slice(1)]))
     expect(fixture.imported).toHaveBeenCalledTimes(1)
   })
 
@@ -138,12 +160,16 @@ describe('QKD sample HSM step outcomes and origins', () => {
     await click('Import into HSM', 300)
     await click('Show Illustrative Random Output', 400)
     expect(screen.getByText('Illustrative random output — no KDF executed.')).toBeInTheDocument()
-    expect(screen.getByText(/Both views repeat the same locally stored value/)).toBeInTheDocument()
+    // An illustration runs no KDF, so it shows no repeated/changed-context comparison.
+    expect(screen.queryByRole('region', { name: 'Repeated context' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Changed context' })).not.toBeInTheDocument()
     expect(fixture.derived).not.toHaveBeenCalled()
     fixture.hsm.isReady = true
     fixture.hsm.moduleRef.current = {}
     view.rerender(<HSMKeyDerivationDemo />)
-    expect(screen.queryByText('Sample Output — View A')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: /Step 4: Session Key Output/ })
+    ).not.toBeInTheDocument()
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
@@ -176,7 +202,9 @@ describe('QKD sample HSM step outcomes and origins', () => {
       await vi.advanceTimersByTimeAsync(400)
     })
     expect(screen.getByRole('button', { name: 'Import into HSM' })).toBeEnabled()
-    expect(screen.queryByText('Sample Output — View A')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: /Step 4: Session Key Output/ })
+    ).not.toBeInTheDocument()
     expect(screen.queryByText('ab'.repeat(32))).not.toBeInTheDocument()
   })
 
