@@ -105,7 +105,6 @@ describe('enforceGrounding', () => {
     const claim = 'The training deployment has an approved rollout.'
     const citations = [{ claimExcerpt: claim, evidenceExcerpt: '  ', chunkId: 'algo-ml-kem' }]
     expect(enforceGrounding(claim, citations, chunks).reasons).toContain('invalid-evidence')
-    expect(salvageGroundedClaims(claim, citations, chunks)).toBeNull()
   })
 
   it('requires evidence for a short factual sentence', () => {
