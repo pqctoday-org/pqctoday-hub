@@ -410,3 +410,15 @@ describe('ninth review: the claim keeps its names; "times out" is not a measure'
     ).toBe(false)
   })
 })
+
+describe('tenth review: "times out of" is a count', () => {
+  it('does not support HTTP 3 from a count of time-outs', () => {
+    expect(
+      assessClaimSupport(
+        'HTTP 3 times out under load.',
+        ['HTTP 3 times out of every 10 requests under load.'],
+        { titles: [] }
+      ).supported
+    ).toBe(false)
+  })
+})

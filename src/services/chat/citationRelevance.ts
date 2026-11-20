@@ -253,12 +253,13 @@ const MEASURE_WORDS = new Set(
 
 /** Is the number ending at `end` a measurement ("1.2 seconds", "1.3%", "2x")? */
 function measured(source: string, end: number): boolean {
-  const after = source.slice(end, end + 24)
+  const after = source.slice(end, end + 32)
   if (/^\s*%/.test(after)) return true
-  const [first = '', second = ''] = after.trimStart().toLowerCase().split(/\s+/)
+  const [first = '', second = '', third = ''] = after.trimStart().toLowerCase().split(/\s+/)
   const word = first.match(/^[a-z]+/)?.[0]
   if (word === undefined) return false
-  if (word === 'times' && second.startsWith('out')) return false // "times out" is a verb
+  // "times out" is a verb ("TLS 1.3 times out during..."), but "3 times out of 10" is a count.
+  if (word === 'times' && second.startsWith('out') && third !== 'of') return false
   return MEASURE_WORDS.has(stem(word))
 }
 
