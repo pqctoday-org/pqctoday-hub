@@ -346,3 +346,35 @@ describe('seventh review: "<name> versions are" starts a list', () => {
     ).toBe(false)
   })
 })
+
+describe('eighth review: a measured number is not a version', () => {
+  it.each([
+    [
+      'TLS 1.2 is faster during handshakes.',
+      'New TLS versions are 1.2 seconds faster during handshakes.',
+    ],
+    [
+      'TLS 1.3 is faster during handshakes.',
+      'TLS 1.2 and 1.3 seconds faster handshakes were measured.',
+    ],
+    ['TLS 1.3 handshakes are faster.', 'TLS versions are 1.3% faster in handshakes.'],
+  ])('%s is not supported by: %s', (claim, sentence) => {
+    expect(assessClaimSupport(claim, [sentence], { titles: [] }).supported).toBe(false)
+  })
+
+  it('does not read "TLS 1.2 seconds" as TLS 1.2', () => {
+    expect(
+      assessClaimSupport(
+        'TLS 1.2 is faster during handshakes.',
+        ['TLS 1.2 seconds faster during handshakes.'],
+        {
+          titles: [],
+        }
+      ).supported
+    ).toBe(false)
+  })
+
+  it('still reads a hyphenated name such as ML-KEM-768 bytes as the name', () => {
+    expect(extractTerms('ML-KEM-768 public keys are 1184 bytes.').names).toContain('kem|768')
+  })
+})

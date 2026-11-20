@@ -146,6 +146,7 @@ export function extractTerms(text: string): TextTerms {
     const lower = word.toLowerCase()
     const isName = (word.length >= 2 && word === word.toUpperCase()) || NAME_WORDS.has(lower)
     if (!isName || lower === 'version' || STOP_WORDS.has(lower)) continue
+    if (measured(source, m.index + whole.length)) continue
     for (const variant of numberVariants(number)) {
       names.add(`${lower}|${variant}`)
       allNumbers.add(variant)
@@ -161,6 +162,7 @@ export function extractTerms(text: string): TextTerms {
     const allowed =
       !spaced || NAME_WORDS.has(lower) || (word.length >= 2 && word === word.toUpperCase())
     if (!allowed || STOP_WORDS.has(lower)) continue
+    if (spaced && measured(source, m.index + whole.length)) continue // "TLS 1.2 seconds"
     for (const variant of numberVariants(number)) {
       names.add(`${lower}|${variant}`)
       allNumbers.add(variant)
@@ -184,7 +186,12 @@ export function extractTerms(text: string): TextTerms {
       chain = { word: owner.word, end }
       continue
     }
-    if (chain && m.index - chain.end <= 40 && listContinues(source.slice(chain.end - 1, m.index))) {
+    if (
+      chain &&
+      m.index - chain.end <= 40 &&
+      !measured(source, end) &&
+      listContinues(source.slice(chain.end - 1, m.index))
+    ) {
       for (const variant of numberVariants(m[0])) names.add(`${chain.word}|${variant}`)
       chain = { word: chain.word, end }
       continue
@@ -229,6 +236,22 @@ function listContinues(before: string): boolean {
     rest = rest.slice(0, open).trimEnd()
   }
   return /\d$/.test(rest)
+}
+
+/** Words after a number that make it a measurement, never a version. */
+const MEASURE_WORDS = new Set(
+  (
+    'second millisecond microsecond nanosecond minute hour day week month year ' +
+    'byte kilobyte megabyte gigabyte bit percent time x'
+  ).split(' ')
+)
+
+/** Is the number ending at `end` a measurement ("1.2 seconds", "1.3%", "2x")? */
+function measured(source: string, end: number): boolean {
+  const after = source.slice(end, end + 24)
+  if (/^\s*%/.test(after)) return true
+  const word = after.match(/^\s*([A-Za-z]+)/)?.[1]
+  return word !== undefined && MEASURE_WORDS.has(stem(word.toLowerCase()))
 }
 
 function numberFound(number: string, sentence: TextTerms): boolean {
