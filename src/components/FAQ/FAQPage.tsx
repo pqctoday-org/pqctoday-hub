@@ -248,7 +248,8 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
         </div>
         <p className="text-muted-foreground">
           {totalQuestions} answers about post-quantum cryptography — algorithms, NIST standards,
-          migration timelines, compliance, and more.
+          migration timelines, compliance, 8 role learning paths, interactive labs, and governance
+          tools.
         </p>
       </div>
 
