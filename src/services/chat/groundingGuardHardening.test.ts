@@ -378,3 +378,35 @@ describe('eighth review: a measured number is not a version', () => {
     expect(extractTerms('ML-KEM-768 public keys are 1184 bytes.').names).toContain('kem|768')
   })
 })
+
+describe('ninth review: the claim keeps its names; "times out" is not a measure', () => {
+  it('does not support TLS 1.3 from another name whose 1.3 times out', () => {
+    expect(
+      assessClaimSupport(
+        'TLS 1.3 times out during handshakes.',
+        ['The library version 1.3 times out during handshakes.'],
+        { titles: [] }
+      ).supported
+    ).toBe(false)
+  })
+
+  it('supports TLS 1.3 times out from the same sentence', () => {
+    expect(
+      assessClaimSupport(
+        'TLS 1.3 times out during handshakes.',
+        ['TLS 1.3 times out during handshakes.'],
+        { titles: [] }
+      ).supported
+    ).toBe(true)
+  })
+
+  it('a claim never loses a name to the measurement rule', () => {
+    expect(
+      assessClaimSupport(
+        'TLS 1.2 seconds faster handshakes were seen.',
+        ['Version 1.2 seconds faster handshakes were seen.'],
+        { titles: [] }
+      ).supported
+    ).toBe(false)
+  })
+})
