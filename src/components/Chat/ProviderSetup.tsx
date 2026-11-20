@@ -29,7 +29,8 @@ import {
 
 type ValidationState = 'idle' | 'validating' | 'success' | 'error'
 type WebGPUCheck = 'checking' | 'supported' | 'unsupported'
-type BufferCheck = 'checking' | 'sufficient' | { insufficientMB: number }
+type BufferCheck =
+  'checking' | 'sufficient' | { insufficientMB: number } | { missingShaderF16: true }
 
 export const ProviderSetup: React.FC = () => {
   const setApiKey = useChatStore((s) => s.setApiKey)
@@ -75,6 +76,8 @@ export const ProviderSetup: React.FC = () => {
       checkWebGPUBufferCapability().then((capability) => {
         if (!capability || capability.ok) {
           setBufferCheck('sufficient')
+        } else if (!capability.shaderF16) {
+          setBufferCheck({ missingShaderF16: true })
         } else {
           setBufferCheck({
             insufficientMB: Math.round(capability.maxStorageBufferBindingSize / (1024 * 1024)),
@@ -260,12 +263,21 @@ export const ProviderSetup: React.FC = () => {
                     <AlertTriangle size={14} />
                     This device&apos;s GPU can&apos;t run local AI
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    This app&apos;s local AI needs GPU buffers of at least 128MB. Your
-                    browser&apos;s WebGPU driver reports a maximum of {bufferCheck.insufficientMB}MB
-                    on this device — a limit common on lower-end mobile GPUs. Please use Cloud
-                    (Gemini) instead.
-                  </p>
+                  {'missingShaderF16' in bufferCheck ? (
+                    <p className="text-xs text-muted-foreground">
+                      The local models need the GPU&apos;s half-precision (16-bit) shader support,
+                      and this browser does not offer it on this device. Nothing has been
+                      downloaded. A current Chrome or Edge on a recent GPU usually provides it;
+                      otherwise please use Cloud (Gemini).
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      This app&apos;s local AI needs GPU buffers of at least 128MB. Your
+                      browser&apos;s WebGPU driver reports a maximum of {bufferCheck.insufficientMB}
+                      MB on this device — a limit common on lower-end mobile GPUs. Please use Cloud
+                      (Gemini) instead.
+                    </p>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"
