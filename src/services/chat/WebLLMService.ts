@@ -282,6 +282,17 @@ export async function initializeEngine(
     }
 
     const capability = await checkWebGPUBufferCapability()
+    if (capability && !capability.ok && !capability.shaderF16) {
+      onProgress({
+        status: 'unsupported',
+        text: "This device's GPU does not support half-precision (16-bit) shaders.",
+        progress: 0,
+      })
+      throw new Error(
+        "Your device's WebGPU driver does not offer half-precision (shader-f16) support, which " +
+          'the local models need. Please switch to Cloud (Gemini) instead.'
+      )
+    }
     if (capability && !capability.ok) {
       const reportedMB = Math.round(capability.maxStorageBufferBindingSize / (1024 * 1024))
       onProgress({

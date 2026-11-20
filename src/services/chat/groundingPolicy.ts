@@ -124,6 +124,9 @@ export interface PartiallyVerifiedAnswer {
  * Returns null when no verified statement remains (the caller then falls back to
  * the retrieved-sources list).
  */
+/** A sentence ends at . ! ? followed by space, or at CJK 。！？ (no space follows those). */
+const SENTENCE_BREAK = /(?<=[.!?])\s+|(?<=[。！？])\s*/u
+
 export function keepVerifiedStatements(
   answer: string,
   citations: ClaimCitation[],
@@ -141,6 +144,16 @@ export function keepVerifiedStatements(
   }
   if (validClaims.length === 0) return null
 
+  // A piece of the answer is kept only when it is a whole sentence of a verified claim
+  // (or the whole claim). A fragment that merely occurs inside a claim ("FIPS 140-3
+  // validated." inside "... is not FIPS 140-3 validated.") is not the claim.
+  const verifiedPieces = new Set<string>()
+  for (const { claim } of validClaims) {
+    verifiedPieces.add(claim)
+    for (const piece of claim.split(SENTENCE_BREAK))
+      if (piece.trim()) verifiedPieces.add(piece.trim())
+  }
+
   const keptLines: string[] = []
   let kept = 0
   let dropped = 0
@@ -153,19 +166,17 @@ export function keepVerifiedStatements(
     // Split after the bullet marker so it stays attached to the first sentence.
     const marker = line.match(/^\s*(?:[-+*]\s+|\d+[.)]\s+)?/)?.[0] ?? ''
     const body = line.slice(marker.length)
-    const pieces = body.split(/(?<=[.!?])\s+/).filter((piece) => piece.trim())
+    const pieces = body.split(SENTENCE_BREAK).filter((piece) => piece.trim())
     const keptPieces: string[] = []
     for (const piece of pieces) {
       const visible = visibleText(piece)
-      const supported = validClaims.some(({ claim }) => claim.includes(visible))
-      if (supported && visible.length >= 12) {
+      if (/^[\p{P}\s]*$/u.test(visible)) {
+        keptPieces.push(piece) // bare punctuation: nothing to judge
+      } else if (verifiedPieces.has(visible)) {
         keptPieces.push(piece)
         kept += 1
-      } else if (supported || !/[a-z0-9]/.test(visible)) {
-        // A fragment inside a verified claim, or bare punctuation: nothing to judge.
-        keptPieces.push(piece)
-      } else if (visible.length >= 12 || /\s/.test(visible)) {
-        dropped += 1 // a statement, however short, that no verified claim contains
+      } else {
+        dropped += 1 // any statement, symbol or word, in any script, not in a verified claim
       }
     }
     if (keptPieces.length > 0) keptLines.push(`${marker}${keptPieces.join(' ')}`)

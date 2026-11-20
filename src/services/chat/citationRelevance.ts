@@ -86,7 +86,7 @@ const NAME_WORDS = new Set(
 
 const NUMBER = String.raw`\d+(?:\.\d+)*(?:-\d+)?(?:\/\d+(?:\.\d+)*)*`
 // eslint-disable-next-line security/detect-non-literal-regexp -- built from fixed constants, never from input
-const NAME_UNIT = new RegExp(String.raw`([A-Za-z]+)([-\s]?)(${NUMBER})`, 'g')
+const NAME_UNIT = new RegExp(String.raw`(?<![A-Za-z])([A-Za-z]+)([-\s]?)(${NUMBER})`, 'g')
 // eslint-disable-next-line security/detect-non-literal-regexp -- built from fixed constants, never from input
 const BARE_NUMBER = new RegExp(NUMBER, 'g')
 // eslint-disable-next-line security/detect-non-literal-regexp -- built from fixed constants, never from input
@@ -171,9 +171,7 @@ export function extractTerms(text: string): TextTerms {
 }
 
 function numberFound(number: string, sentence: TextTerms): boolean {
-  if (sentence.allNumbers.has(number)) return true
-  const parts = numberParts(number)
-  return parts.length > 1 && parts.every((p) => sentence.allNumbers.has(p))
+  return sentence.allNumbers.has(number)
 }
 
 /** The claim identifiers that one sentence does not contain (empty = it holds them all). */
@@ -182,8 +180,12 @@ function missingFrom(claim: TextTerms, sentence: TextTerms): string[] {
   const missing: string[] = []
   for (const name of claim.names) {
     const [word, number] = name.split('|')
+    // Otherwise the name word may take a number only when that number stands alone in
+    // the sentence ("TLS 1.2 and 1.3"), never one attached to another word
+    // ("version 1.3") or to another number ("140-3").
     const found =
-      sentenceNames.has(name) || (sentence.letterWords.has(word) && numberFound(number, sentence))
+      sentenceNames.has(name) ||
+      (sentence.letterWords.has(word) && sentence.numbers.includes(number))
     if (!found) missing.push(`${word} ${number}`)
   }
   for (const number of claim.numbers) {
@@ -212,6 +214,10 @@ export interface SupportAssessment {
 export interface SupportContext {
   /** Titles of the cited chunks: they count for content words and for names and numbers (never chunk ids). */
   titles: string[]
+  /** The title of the chunk each cited sentence comes from, in the same order as the
+   *  sentences. When given, a sentence is read for names and numbers with its own title
+   *  only, so identifiers from two different sources never combine into one. */
+  sentenceTitles?: string[]
 }
 
 function mergeTerms(a: TextTerms, b: TextTerms): TextTerms {
@@ -222,6 +228,13 @@ function mergeTerms(a: TextTerms, b: TextTerms): TextTerms {
     words: [...new Set([...a.words, ...b.words])],
     letterWords: new Set([...a.letterWords, ...b.letterWords]),
   }
+}
+
+function plain(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim()
 }
 
 export function assessClaimSupport(
@@ -238,7 +251,10 @@ export function assessClaimSupport(
   if (claimTerms.names.length + claimTerms.numbers.length > 0) {
     // The chunk title names the subject, so it is read together with each cited
     // sentence for the identifier check (chunk ids are never read).
-    const holders = perSentence.map((s) => titleTerms.reduce(mergeTerms, s))
+    const holders = perSentence.map((s, i) => {
+      const own = context.sentenceTitles?.at(i)
+      return own === undefined ? titleTerms.reduce(mergeTerms, s) : mergeTerms(s, extractTerms(own))
+    })
     const results = holders.map((s) => missingFrom(claimTerms, s))
     const best = results.reduce<string[] | null>(
       (acc, cur) => (acc === null || cur.length < acc.length ? cur : acc),
@@ -263,7 +279,14 @@ export function assessClaimSupport(
   const base = { missingIdentifiers, claimWords, inSentences, inSentencesOrTitle, coverage }
   if (missingIdentifiers.length > 0)
     return { supported: false, reason: 'missing-identifier', ...base }
-  if (claimWords === 0) return { supported: true, reason: 'supported', ...base }
+  if (claimWords === 0) {
+    const identifiers = claimTerms.names.length + claimTerms.numbers.length
+    return identifiers > 0
+      ? { supported: true, reason: 'supported', ...base }
+      : plain(claim) !== '' && sentences.some((s) => plain(s).includes(plain(claim)))
+        ? { supported: true, reason: 'supported', ...base } // quoted word for word
+        : { supported: false, reason: 'low-coverage', ...base }
+  }
   if (coverage < RELEVANCE_MIN_COVERAGE) {
     return { supported: false, reason: 'low-coverage', ...base }
   }

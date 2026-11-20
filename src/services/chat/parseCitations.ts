@@ -108,7 +108,9 @@ function parseCitationsJson(raw: string): ClaimCitation[] {
     const explicitChunkId = typeof e.chunkId === 'string' ? e.chunkId.trim() : ''
     const refChunkId =
       refs.length > 0 ? refs[0].slice(0, Math.max(refs[0].lastIndexOf('#'), 0)).trim() : ''
-    const chunkId = refChunkId || explicitChunkId
+    // A reference without "#<n>" is kept (named by its own text) so the id check
+    // rejects it; dropping it would leave the claim uncited and open to re-derivation.
+    const chunkId = refChunkId || explicitChunkId || (refs[0] ?? '')
     if (!chunkId) continue
 
     const citation: ClaimCitation = { claimExcerpt: e.claimExcerpt, chunkId }
@@ -121,6 +123,18 @@ function parseCitationsJson(raw: string): ClaimCitation[] {
   return citations
 }
 
+/** Longest evidenceRef text read; a real one is a few chunk ids. */
+const MAX_REF_TEXT = 2000
+const REF_EDGE = new Set([' ', '\t', '\n', '\r', '"', "'", '[', ']'])
+
+function trimRefPunctuation(part: string): string {
+  let start = 0
+  let end = part.length
+  while (start < end && REF_EDGE.has(part.charAt(start))) start += 1
+  while (end > start && REF_EDGE.has(part.charAt(end - 1))) end -= 1
+  return part.slice(start, end)
+}
+
 /** Accept "id#n", ["id#n", ...] or a comma/space separated string of refs. */
 function parseRefs(value: unknown): string[] {
   const items: unknown[] = Array.isArray(value) ? value : typeof value === 'string' ? [value] : []
@@ -128,10 +142,12 @@ function parseRefs(value: unknown): string[] {
   for (const item of items) {
     if (typeof item !== 'string') continue
     // Chunk ids may contain spaces, so refs are found by their "#<n>" tail
-    // rather than by splitting on whitespace.
-    const found = item.match(/[^,;]*?#\d+(?=\s*(?:[,;]|$))/g)
-    for (const part of found ?? [item]) {
-      const ref = part.replace(/^[\s"'[]+|[\s"'\]]+$/g, '')
+    // rather than by splitting on whitespace. Plain splitting and trimming keep this
+    // linear on any input (no backtracking regex over model output).
+    const text = item.slice(0, MAX_REF_TEXT)
+    const found = text.split(/[,;]/).filter((part) => /#\d+$/.test(part.trimEnd()))
+    for (const part of found.length > 0 ? found : [text]) {
+      const ref = trimRefPunctuation(part)
       if (ref) refs.push(ref)
     }
   }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { checkWebGPUBufferCapability } from './WebLLMService'
+import { checkWebGPUBufferCapability, initializeEngine, WEBLLM_MODELS } from './WebLLMService'
 
 function stubAdapter(features: string[], storageMB = 1024) {
   vi.stubGlobal('navigator', {
@@ -36,5 +36,18 @@ describe('checkWebGPUBufferCapability shader-f16', () => {
     stubAdapter(['shader-f16'], 64)
     const cap = await checkWebGPUBufferCapability()
     expect(cap).toMatchObject({ ok: false, shaderF16: true })
+  })
+})
+
+describe('initializeEngine without shader-f16', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('names the missing half-precision support, not a buffer size', async () => {
+    stubAdapter([])
+    const progress: string[] = []
+    await expect(
+      initializeEngine(WEBLLM_MODELS[0].id, (p) => progress.push(p.text))
+    ).rejects.toThrow(/half-precision/)
+    expect(progress.join(' ')).not.toMatch(/MB buffers/)
   })
 })

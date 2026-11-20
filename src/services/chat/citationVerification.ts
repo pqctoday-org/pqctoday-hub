@@ -58,17 +58,20 @@ export function assessCitationSupport(
 ): SupportAssessment | null {
   if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) return null
   const sentences: string[] = []
+  const sentenceTitles: string[] = []
   const cited = new Map<string, RAGChunk>()
   for (const ref of citation.evidenceRefs) {
     const resolved = resolveEvidenceRef(ref, chunkById)
     if (!resolved.ok) return null
     sentences.push(resolved.sentence)
     const chunk = chunkById.get(resolved.chunkId)
+    sentenceTitles.push(chunk?.title ?? '')
     if (chunk) cited.set(chunk.id, chunk)
   }
   const chunksCited = [...cited.values()]
   return assessClaimSupport(citation.claimExcerpt, sentences, {
     titles: chunksCited.map((c) => c.title),
+    sentenceTitles,
   })
 }
 
