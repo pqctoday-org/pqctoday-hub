@@ -567,7 +567,7 @@ export const ARCHITECTURE_LAYERS: ArchitectureLayer[] = [
             'The broadcast transaction contains the public key and signature. Between broadcast and block inclusion, a quantum adversary could theoretically extract the private key and submit a competing transaction.',
           pqcCountermeasures: [
             'Commit-reveal schemes (hash commitment before signature reveal)',
-            'Chain-level PQC signature support (EIP-7702)',
+            'Protocol-level PQC signature support (or PQ-verifying smart accounts without a legacy EOA key)',
             'Minimize mempool exposure time',
           ],
           migrationReadiness: 'not-ready',
