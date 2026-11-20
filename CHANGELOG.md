@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.218.0] - 2026-11-19
+
+Comprehensive November 2026 data refresh across Library, Migrate, Timeline, Threats, Vendors, Certifications, and Protocols, paired with an updated and re-signed search index and a 5.8× reduction in live notes footprint.
+
+### Data
+
+- **Library, Migrate, Timeline, and Threats catalog refresh** [view:/library] [view:/migrate] [view:/timeline] [view:/threats] [persona:executive] [persona:grc] [persona:architect] [persona:developer] [persona:ops] [persona:researcher]: added algorithm-family and protocol/tool impact tags to 15 Library documents while preserving all 56 new-module citations (`LM-079`–`LM-082`), re-verified 7 Migrate products with downloaded proof plus 1 new certification link, widened hybrid-support display to PKI/CA and file-encryption tools, refreshed 11 government milestones (4 under current titles: India DST/NQM, Israel BOI, Singapore MAS, US NSA CNSA 2.0), and refreshed 5 Threats entries (`IOT-003`, `IT-001`, `IT-003`, `IT-004`, `LEG-001`).
+- **Vendor roadmaps, vendor directory, certifications, and JOSE/COSE drafts refresh** [view:/migrate] [view:/algorithms] [view:/compliance] [persona:grc] [persona:architect] [persona:cert-engineer] [persona:ops] [persona:developer]: refreshed AWS, Futurex, Google, IBM, and Infineon vendor roadmaps, re-verified 375 vendor records with corrected legal names for IBM, Siemens, and Zodia, refreshed FIPS 140-3 in-process lists (MIP 222, IUT 249) and added CAVP validation for Utimaco uTrust HSM, and refreshed the JOSE/COSE drafts snapshot.
+- **Rebuilt and re-signed search index & archived historical notes** [view:/about] [view:/learn] [persona:ops] [persona:researcher] [persona:curious]: rebuilt and signed the RAG search index (`19,606` chunks across `47` source collections) to cover all 79 Learn modules and November 2026 data refreshes, and archived 71 superseded notes copies (`318 MB → 55 MB` live notes footprint) with no visible content loss.
+
+### Fixed
+
+- **Wording & validation-claim refinements in Learn modules** [view:/learn] [persona:executive] [persona:cert-engineer]: clarified wording in Executive Quantum Impact and ACVP Lab Workflow, aligned Quantum Impact on Certification Engineers to distinguish ACVP validation records from CAVP algorithm certificates, and resolved drift-guard test updates for the 79-module catalog.
+
 ## [4.217.0] - 2026-11-18
 
 All 8 role learning paths are rebalanced and expanded with 4 new hands-on Learn modules (79 total), before/after migration code diffs for Go, OpenSSL, Node.js, and Java, 19 new late-2026 quiz scenarios, and 6 refreshed Visual tab infographics.
