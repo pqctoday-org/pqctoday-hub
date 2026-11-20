@@ -98,6 +98,11 @@ export type DataFoundationKey =
   | 'sources'
   | 'modules'
   | 'patents'
+  | 'vendors'
+  | 'roadmaps'
+  | 'landscape'
+  | 'protocols'
+  | 'glossary'
 
 export interface DataFoundationRow {
   dataset: string
@@ -105,21 +110,32 @@ export interface DataFoundationRow {
   sources: string
 }
 
+/**
+ * Fixed copy for each dataset tile. A `sources` text that states a figure
+ * (organisations, countries, sectors, layers, minutes) is a fallback only:
+ * DataFoundationSection replaces it with a value computed from the data, so
+ * the figure cannot go stale.
+ */
 const DATA_FOUNDATION_META: Record<DataFoundationKey, Omit<DataFoundationRow, 'records'>> = {
-  timeline: { dataset: 'Timeline Events', sources: '80+ orgs' },
+  timeline: { dataset: 'Timeline Events', sources: 'Governments and standards bodies' },
   library: { dataset: 'Library Resources', sources: '30+ standards bodies' },
   algorithms: {
     dataset: 'Algorithm Reference',
     sources: 'FIPS 203/204/205 (FIPS 206 in development)',
   },
   compliance: { dataset: 'Compliance Frameworks', sources: 'NIST, CAVP, CC, ANSSI' },
-  migrate: { dataset: 'Migrate Products', sources: '9 infrastructure layers' },
-  threats: { dataset: 'Threat Landscape', sources: '8+ industry sectors' },
+  migrate: { dataset: 'Migrate Products', sources: 'Infrastructure layers' },
+  threats: { dataset: 'Threat Landscape', sources: 'Industry sectors' },
   leaders: { dataset: 'Industry Leaders', sources: 'Public, Private, Academic' },
   quiz: { dataset: 'Quiz Questions', sources: 'All PQC topic areas' },
   sources: { dataset: 'Authoritative Sources', sources: 'Gov, Academic, Industry' },
-  modules: { dataset: 'Learning Modules', sources: '3,800+ min of content' },
-  patents: { dataset: 'PQC Patents', sources: 'USPTO, EPO, WIPO' },
+  modules: { dataset: 'Learning Modules', sources: 'Hands-on lessons' },
+  patents: { dataset: 'PQC Patents', sources: 'USPTO patents and applications' },
+  vendors: { dataset: 'Vendors', sources: 'Behind the migrate catalog' },
+  roadmaps: { dataset: 'Vendor Roadmaps', sources: 'Public vendor PQC plans' },
+  landscape: { dataset: 'Industry Landscape', sources: 'Use cases by industry' },
+  protocols: { dataset: 'Protocol Matrix', sources: 'IETF and other protocol work' },
+  glossary: { dataset: 'Glossary Terms', sources: 'PQC and crypto vocabulary' },
 }
 
 const DATA_FOUNDATION_ORDER: DataFoundationKey[] = [
@@ -134,6 +150,11 @@ const DATA_FOUNDATION_ORDER: DataFoundationKey[] = [
   'sources',
   'modules',
   'patents',
+  'vendors',
+  'roadmaps',
+  'landscape',
+  'protocols',
+  'glossary',
 ]
 
 /**
@@ -145,14 +166,23 @@ const DATA_FOUNDATION_ORDER: DataFoundationKey[] = [
  */
 export function buildDataFoundation(
   records: Record<DataFoundationKey, number | string>,
-  /** Replaces the Timeline row's fixed `sources` text, whose country figure is derived from the data. */
-  timelineSources?: string
+  /** Replaces a row's fixed `sources` text with one whose figure is derived from the data. */
+  sourcesOverride: Partial<Record<DataFoundationKey, string>> = {}
 ): DataFoundationRow[] {
   return DATA_FOUNDATION_ORDER.map((key) => ({
     ...DATA_FOUNDATION_META[key],
-    ...(key === 'timeline' && timelineSources ? { sources: timelineSources } : {}),
+    ...(sourcesOverride[key] ? { sources: sourcesOverride[key] } : {}),
     records: records[key],
   }))
+}
+
+/** Sum of a module catalogue's `duration` strings ("45 min", "1 hr 30 min", "2 hours"). */
+export function totalModuleMinutes(durations: string[]): number {
+  return durations.reduce((sum, d) => {
+    const hours = /(\d+)\s*(?:hours?|hrs?)\b/i.exec(d)
+    const mins = /(\d+)\s*min/i.exec(d)
+    return sum + (hours ? Number(hours[1]) * 60 : 0) + (mins ? Number(mins[1]) : 0)
+  }, 0)
 }
 
 export const DISCUSSIONS_BASE = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/'

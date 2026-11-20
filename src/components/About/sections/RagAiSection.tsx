@@ -67,13 +67,13 @@ export function RagAiSection() {
                 The PQC Assistant chatbot uses{' '}
                 <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
                 deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-                question, it searches a curated corpus of ~{(chunkCount ?? 12000).toLocaleString()}{' '}
-                PQC knowledge chunks &mdash; covering algorithms, standards, threats, compliance
-                certifications, migration products, leaders, and learning modules &mdash; retrieves
-                the 10&ndash;20 most relevant passages (adaptive per query intent), and injects them
-                as context into the language model&apos;s prompt. The result is an answer grounded
-                in platform data, enriched with deep links to the exact page or section being
-                discussed.
+                question, it searches a curated corpus of{' '}
+                {chunkCount !== null ? `${chunkCount.toLocaleString()} ` : ''}PQC knowledge chunks
+                &mdash; covering algorithms, standards, threats, compliance certifications,
+                migration products, leaders, and learning modules &mdash; retrieves the 10&ndash;20
+                most relevant passages (adaptive per query intent), and injects them as context into
+                the language model&apos;s prompt. The result is an answer grounded in platform data,
+                enriched with deep links to the exact page or section being discussed.
               </p>
               <p className="text-muted-foreground mt-3">
                 The model is instructed to ground its answer in retrieved passages. Automated

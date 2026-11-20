@@ -35,6 +35,11 @@ import {
   CRYPTO_BUFF_BOOKS,
 } from '@/components/About/aboutData'
 import { SbomSection } from '@/components/About/sections/SbomSection'
+import {
+  SANDBOX_NAMED_TOOLS,
+  SANDBOX_SCENARIO_COUNT,
+  SANDBOX_TRACK_LABELS,
+} from '@/data/sandboxSummary'
 import { MobilePersonaPageNote } from '@/components/Mobile/MobilePersonaPageNote'
 import {
   ANALYTICS_DISCLOSURE,
@@ -172,9 +177,9 @@ export function MobileAboutView() {
                       </Row>
                       <Row title="How this hub adapts to you">
                         Telling the hub your role changes which pages lead your navigation, which
-                        sections your report opens on, and which progress ladder you climb. It never
-                        removes a page — a route you're not offered is still reachable by URL, deep
-                        link or search.
+                        sections your report opens on, where the reference pages land on first
+                        paint, and which progress ladder you climb. It never removes a page — a
+                        route you're not offered is still reachable by URL, deep link or search.
                       </Row>
                       <Row title="Release notes">
                         <span className="block text-[11px] text-muted-foreground">
@@ -247,8 +252,9 @@ export function MobileAboutView() {
                           <Stat label="Community profiles" value={leadersData.length} />
                         </div>
                         <p className="mt-2 text-[10.5px] text-muted-foreground">
-                          Plus compliance, library, algorithms, migrate, quiz and sources datasets —
-                          the full breakdown is on a laptop.
+                          Plus compliance, library, algorithms, migrate, quiz, sources, vendors,
+                          vendor roadmaps, industry landscape, protocol matrix and glossary datasets
+                          — the full breakdown is on a laptop.
                         </p>
                       </Row>
                       <Row title="Data privacy">
@@ -316,9 +322,10 @@ export function MobileAboutView() {
                       </div>
                       {!isEmbedded && (
                         <Row title="Enterprise">
-                          <span className="font-semibold text-foreground">Sandbox</span> — 30+
-                          real-world PQC migration scenarios (strongSwan, OpenSSH, HAProxy,
-                          PostgreSQL, Hyperledger Besu, Algorand) in isolated Docker containers.{' '}
+                          <span className="font-semibold text-foreground">Sandbox</span> —{' '}
+                          {SANDBOX_SCENARIO_COUNT} real-world PQC migration scenarios in{' '}
+                          {SANDBOX_TRACK_LABELS.length} tracks ({SANDBOX_NAMED_TOOLS.join(', ')} and
+                          more) in isolated Docker containers.{' '}
                           <span className="font-semibold text-foreground">Embedding mode</span> lets
                           organisations integrate tailored sections via a no-code visual designer,
                           gated by a zero-trust ECDSA-signed vendor certificate and a secure
