@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.218.1] - 2026-11-19
+
+Expanded the FAQ page to cover the full 79-module, 37-business-tool, 34-playground-tool, and 8-role Hub scope, and unified 21 Learn module Visual tab posters in the 1254×1254 Storybook Blue illustration style with late-2026 standards milestones.
+
+### Added
+
+- **Expanded FAQ coverage for Cloud, Implementation Security, Certification, Curious Explorer, Knowledge Graph, Quiz, and Provenance** [view:/faq] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: added dedicated FAQ entries for Cloud & Multi-Cloud PQC, PQC Implementation Security, Certification Engineer validation scope, Curious Explorer plain-language onboarding, the 8 role learning paths and Knowledge Graph (`/explore`), the 1,178-question adaptive Quiz (`/learn/quiz`), and ML-DSA-65-signed dataset and SBOM provenance (`/revisions`), while updating platform counts (`79` modules, `37` Business Center tools, `34` Playground tools, `1,500+` Reference Library documents), Energy & Utilities grid constraints, Node.js 24+ and Java 24+ developer guidance, and OpenSSH 10.0+ hybrid key exchange defaults.
+
+### Changed
+
+- **Unified 21 Learn module Visual tab posters in Storybook Blue with late-2026 regulatory and standards facts** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: added and refreshed 1254×1254 Storybook Blue Visual tab posters with cache-busting image revisions across the four newest Learn modules (Quantum Impact on Certification Engineers, Cloud & Multi-Cloud PQC, PQC Implementation Security, Energy, Utilities & Grid PQC), six core technical modules (SLH-DSA, OS PQC, VPN & SSH PQC, Hybrid Crypto, Developer Quantum Impact, Code Signing), and eleven governance, PKI, KMS, and foundations modules (Talking About PQC Accurately, Compliance Strategy, PQC Risk Management, PQC Governance, Vendor & Supply Chain Risk, PKI Workshop, KMS & PQC, Stateful Hash Signatures, Quantum Threats, PQC 101, and PQC Business Case), reflecting NSA CNSA 2.0 FAQ v2.2 (2027/2030/2031 NSS milestones), EO 14412 & OMB M-26-15 (2030/2031 federal civilian milestones), final NIST IR 8547 (2030/2035), and FIPS 140-2 Historical status.
+
 ## [4.218.0] - 2026-11-19
 
 Comprehensive November 2026 data refresh across Library, Migrate, Timeline, Threats, Vendors, Certifications, and Protocols, paired with an updated and re-signed search index and a 5.8× reduction in live notes footprint.

@@ -3,6 +3,8 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { FAQPage } from './FAQPage'
+import { FAQ_DATA } from './faqData'
+import { PERSONA_IDS } from '@/data/learningPersonas'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 function renderPage() {
@@ -36,7 +38,19 @@ describe('FAQPage persona highlight ("float, don\'t filter")', () => {
     const questionButtons = withinSection.getAllByRole('button')
     expect(questionButtons[0]).toHaveTextContent('What PQC libraries should developers use?')
 
-    // Nothing was hidden — all eight Role-Specific Guidance questions remain.
-    expect(questionButtons.length).toBe(8)
+    // Nothing was hidden — all ten Role-Specific Guidance questions remain.
+    const rolesCat = FAQ_DATA.find((c) => c.id === 'roles')!
+    expect(questionButtons.length).toBe(rolesCat.items.length)
+    expect(rolesCat.items.length).toBe(10)
+  })
+
+  it('gives every one of the 8 personas exactly one highlighted Role-Specific Guidance question', () => {
+    for (const persona of PERSONA_IDS) {
+      usePersonaStore.getState().setPersona(persona)
+      const { unmount } = renderPage()
+      const section = document.getElementById('roles') as HTMLElement
+      expect(within(section).getAllByText('For you'), persona).toHaveLength(1)
+      unmount()
+    }
   })
 })

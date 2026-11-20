@@ -542,7 +542,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What OpenSSH version supports PQC?',
         answer:
-          "OpenSSH 8.5 (2021) introduced the sntrup761x25519-sha512 hybrid key exchange, which combines the NTRU Prime lattice-based KEM with classical X25519 ECDH, and OpenSSH 9.0 made it the default. More recent OpenSSH development includes support for ML-KEM-768-based hybrid key exchange, aligning with NIST's standardized algorithms. The VPN/SSH module explains host key migration and client configuration for PQC.",
+          'OpenSSH 8.5 (2021) introduced the sntrup761x25519-sha512 hybrid key exchange, and OpenSSH 9.0 made it the default. OpenSSH 9.9 added the NIST-standardized mlkem768x25519-sha256 hybrid key exchange (RFC 10042), and OpenSSH 10.0 made mlkem768x25519-sha256 the default key-exchange algorithm. Note that hybrid key exchange protects session confidentiality against Harvest Now, Decrypt Later attacks, while SSH host-key and user authentication remain classical (such as Ed25519 or ECDSA) unless separately configured; verify negotiated algorithms with ssh -vvv against your actual jump hosts and clients. The VPN/SSH module covers configuration and verification.',
         deepLink: '/learn/vpn-ssh-pqc',
       },
       {
@@ -633,6 +633,20 @@ export const FAQ_DATA: FAQCategory[] = [
           'Zero Trust architecture relies heavily on cryptographic authentication at every access point — device attestation certificates, mutual TLS, JWT and SAML token signatures, and API gateway authentication all use algorithms that are quantum-vulnerable and need PQC upgrades. The transition is especially complex because Zero Trust systems often involve multiple identity providers, device management platforms, and micro-segmentation controllers. The IAM PQC module covers the identity and authentication layer migration.',
         deepLink: '/learn/iam-pqc',
       },
+      {
+        id: 'cloud-pqc-migration',
+        question: 'How does PQC migration work across AWS, Azure, and Google Cloud (Cloud & SaaS)?',
+        answer:
+          'Start by separating the cloud service (such as object storage, managed databases, or records archiving) from the protected asset (long-lived encrypted records exposed to Harvest Now, Decrypt Later risk) — moving workloads to the cloud does not migrate customer-controlled TLS policies, origin legs, KMS keys, or BYOK wrappers automatically. Edge CDNs and load balancers may negotiate TLS 1.3 hybrid key exchange (X25519MLKEM768, 0x11EC under RFC 9846 and RFC 10024) while origin connections stay classical, and ~1,216-byte ClientHello key_share payloads can trigger middlebox truncation. Cloud KMS offerings also differ sharply: AWS KMS supports ML-DSA (June 2025) and ML-KEM (October 2026, with China/UAE/Bahrain regional exclusions, RSA-only BYOK import, 32-byte plaintext Decapsulate output, and no key-policy condition requiring PQ-TLS — verify negotiated keyExchange in CloudTrail); Google Cloud KMS reached GA for ML-DSA and SLH-DSA in July 2026 with HPKE key import in Preview; and Azure Key Vault uses CKM_RSA_AES_KEY_WRAP for BYOK without KMIP. Across SaaS, OIDC, and SAML dependencies, treat any unverified or Unknown vendor answer as an evidence gap rather than low exposure. The Cloud & Multi-Cloud PQC module walks through each layer.',
+        deepLink: '/learn/cloud-pqc',
+      },
+      {
+        id: 'pqc-implementation-security',
+        question: 'Why is mathematical security not enough — what is PQC implementation security?',
+        answer:
+          'Known-answer validation (such as ACVP vector testing) confirms that an implementation computes the right mathematical output, not that its compiled binary or silicon resists timing, power, electromagnetic, or fault-injection attacks. Real-world lattice vulnerabilities such as KyberSlash leaked ML-KEM secret keys through variable-latency hardware division instructions on modulus q = 3329, requiring constant-time Barrett or Montgomery reduction verified on compiled binaries via per-ISA disassembly scans (banning DIV/SDIV/UDIV), dudect timing statistics, and Timecop/ctgrind taint analysis. FIPS 203 Algorithm 18 also mandates Fujisaki-Okamoto implicit rejection in ML-KEM.Decaps — computing K_bar = J(z || c) unconditionally, comparing re-encrypted ciphertexts in constant time, selecting K or K_bar via branchless conditional move, and zeroizing intermediate values without returning a decryption error oracle. For HSMs, smart cards, and embedded targets, defenses combine arithmetic and boolean masking, operation shuffling, and verify-after-sign fault checks, evaluated with leakage screening such as ISO/IEC 17825 Welch’s t-test (TVLA |t| <= 4.5, noting that a first-order TVLA pass screens statistical leakage rather than proving higher-order or template-attack resistance). The PQC Implementation Security module covers each defense and its evaluation limits.',
+        deepLink: '/learn/pqc-implementation-security',
+      },
     ],
   },
 
@@ -682,8 +696,8 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the energy sector PQC migration?',
         answer:
-          'The energy sector must migrate PQC across SCADA and ICS protocols (including DNP3 and IEC 61850 Secure Authentication), substation automation (IEC 62351), and grid management systems, while managing long equipment lifecycles. The NERC-CIP standards named in the NERC-CIP entry above do not mention PQC, so quantum-resilient cryptography for bulk electric system protection is a readiness recommendation based on those lifecycles, not a NERC-CIP requirement today. The Energy and Utilities module covers the specific protocols and regulatory requirements.',
-        deepLink: '/learn/ot-pqc',
+          'Energy and utility operators must separate operational grid services (SCADA telecontrol, AMI meter collection, IED firmware distribution) from protected assets (long-lived grid topology records, metering histories, and signing roots) and match PQC patterns to strict physical constraints. Inside substations, IEC 61850 GOOSE and Sampled Values protection loops operate under a sub-4 ms trip budget and 1,500-byte Ethernet MTU where 2,420-byte ML-DSA-44 signatures do not fit, so real-time IEC 62351-6 frames retain 32-byte HMAC-SHA-256 and AES-256-GCM while out-of-band GDOI (RFC 8052) and TLS 1.3 key distribution migrate to ML-KEM-768. Control-center WAN links upgrade primary fiber and failover paths to hybrid TLS 1.3 (RFC 10024) and IKEv2 (RFC 9370), while 15-to-25-year field assets and 127-byte IEEE 802.15.4g AMI meter meshes (DLMS/COSEM IEC 62056) pair head-end PQC VPNs and 256-bit symmetric keys with LMS-SHA256 or ML-DSA firmware verification in new RFPs. The NERC-CIP standards named in the NERC-CIP entry above do not mention PQC, so quantum-resilient cryptography for bulk electric system protection is a readiness recommendation based on those lifecycles, not a NERC-CIP requirement today. The Energy, Utilities & Grid PQC module covers these protocols, MTU budgets, and regulatory boundaries.',
+        deepLink: '/learn/energy-utilities-pqc',
       },
       {
         question: 'How does PQC protect AI systems?',
@@ -716,7 +730,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'Can I test PQC algorithms in my browser?',
         answer:
-          "Yes, PQC Today's Playground runs ML-KEM, ML-DSA, SLH-DSA, and over 40 additional algorithms directly in your browser using WebAssembly, performing real cryptographic operations without sending any data to a server. You can generate keys, encapsulate/decapsulate shared secrets, sign and verify messages, and compare algorithm performance. The Playground supports both the liboqs library and a PKCS#11 v3.2 HSM simulator.",
+          "Yes. PQC Today's Playground provides 34 interactive WebAssembly and client-side cryptographic tools — including ML-KEM, ML-DSA, SLH-DSA, LMS/HSS, XMSS, dual-engine SoftHSMv3 (C++ and Rust) PKCS#11 v3.2, OpenSSL 3.6.3 WASM, KMIP, TPM 2.0, SP 800-90B entropy assessment, SSH/IKEv2/TLS/HPKE/Hybrid Certs labs, ACVP vector suites, and editable Pyodide (Python 3.14.2) PKCS#11 and KMIP workbenches — without sending keys or sample data to a server. Playground runs teach mechanism behavior, wire framing, and capability requirements using sample keys; they do not substitute for testing or certifying your own CMVP-validated production hardware and software.",
         deepLink: '/playground',
       },
       {
@@ -728,7 +742,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many learning modules does PQC Today offer?',
         answer:
-          'PQC Today offers dozens of interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Governance & Risk, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 10 minutes to 120 minutes depending on complexity.',
+          'PQC Today offers 79 interactive learning modules (plus a 1,178-question adaptive quiz) organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Governance & Risk, and Role Guides. Each module includes an introduction with glossary-linked terms, a Storybook Blue visual summary, interactive workshop exercises, role capability checklists, decision scenarios, and Reference Library backlinks. Completing sample exercises builds decision readiness for your role; it does not verify a deployed production system.',
         deepLink: '/learn',
       },
       {
@@ -746,7 +760,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the PQC Reference Library?',
         answer:
-          'The PQC Reference Library is a curated collection of hundreds of standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
+          'The PQC Reference Library is a curated collection of over 1,500 standards, RFCs, research papers, certification schemes, and national migration guides relevant to post-quantum cryptography, with cross-references linking related documents to Learn modules, compliance frameworks, and algorithms, plus enrichment summaries and PQC relevance assessments. The Library supports full-text search, topic filtering, and shareable deep links.',
         deepLink: '/library',
       },
       {
@@ -764,13 +778,13 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: "Where should I start if I'm new to PQC?",
         answer:
-          "Start with PQC 101 — a 30-minute foundational module covering what quantum computers can break, why migration is urgent, and how to use Mosca's Theorem to gauge your own deadline. If you prefer context by role: executives should visit the Executive Quantum Impact module, developers the Developer Quantum Impact module, and architects the Architect module. For an organization-specific starting point, run the PQC Risk Assessment wizard — it takes about 15 minutes and produces a prioritized action list based on your industry, country, and data profile. Use this FAQ's search bar to jump directly to any specific topic.",
+          "Start with PQC 101 — a 30-minute foundational module covering what quantum computers can break, why migration is urgent, and how to use Mosca's Theorem to gauge your own deadline — or pick one of the 8 role-tailored learning paths (Executive, GRC & Compliance, Developer, Architect, Researcher, Certification Engineer, IT Operations, or Curious Explorer), each split into a focused Essentials path and a full mastery curriculum. For an organization-specific starting point, run the PQC Risk Assessment wizard to generate a prioritized educational roadmap based on your industry, country, and data profile.",
         deepLink: '/learn/pqc-101',
       },
       {
         question: 'What is the Business Center (GRC Command Center)?',
         answer:
-          'The Business Center is a governance, risk, and compliance command center aligned to NIST CSWP.39, with 34 board-ready planning tools — including an ROI Calculator, Board Pitch builder, CRQC Scenario, Risk Register, Risk Treatment Plan, RACI Builder, Roadmap Builder, KPI dashboards, Vendor Scorecard, and Deployment Playbook. Each tool produces a downloadable artifact (DOCX, PDF, or CSV) you can take into stakeholder and audit conversations.',
+          'The Business Center is a governance, risk, and compliance command center aligned to NIST CSWP 39, with 37 planning and governance tools — including an ROI Calculator, Board Pitch Builder, CRQC Scenario Planner, Risk Register, Risk Treatment Plan, RACI Builder, Roadmap Builder, Migration Verification, Cloud Responsibility Matrix, Vendor Scorecard, and Deployment Playbook. Each tool uses transparent sample scenarios and exports structured planning artifacts (DOCX, PDF, CSV, or Markdown) to guide what your team must configure, test, and evidence in your own production tools.',
         deepLink: '/business',
       },
       {
@@ -784,6 +798,25 @@ export const FAQ_DATA: FAQCategory[] = [
         answer:
           'Yes. The Patents page is a searchable landscape of post-quantum cryptography patents, scored for quantum relevance and crypto-agility and tagged by assignee, region, protocol, replaced classical algorithm, hardware component, and NIST standardization status. It also serves as CSWP.39 maturity evidence. Use the Insights, Explore, and Search tabs to filter, and open any patent record directly with a shareable link.',
         deepLink: '/patents',
+      },
+      {
+        question: 'How do the 8 role learning paths and Knowledge Graph (/explore) work?',
+        answer:
+          'PQC Today curates dedicated learning journeys for eight roles — Executive, GRC & Compliance, Developer, Architect, Researcher, Certification Engineer, IT Operations, and Curious Explorer — separating a streamlined Essentials track from deeper domain mastery so each role focuses on the decisions it actually owns. The Explore page connects those paths with an interactive Knowledge Graph mapping relationships across modules, standards, algorithms, threats, compliance frameworks, and interactive tools.',
+        deepLink: '/explore',
+      },
+      {
+        question: 'How does the adaptive PQC Quiz work?',
+        answer:
+          'The PQC Quiz draws from a pool of 1,178 scenario- and decision-based questions spanning FIPS 203/204/205, NIST IR 8547, CNSA 2.0 FAQ v2.2, EO 14412 / OMB M-26-15, FIPS 140-3 and EUCC validation, cloud KMS boundaries, side-channel defenses, and sector-specific OT/grid constraints. Learners can take role-scoped Essentials checks or topic-filtered practice sets with detailed source-backed explanations.',
+        deepLink: '/learn/quiz',
+      },
+      {
+        question:
+          'How does PQC Today verify data provenance, revisions, and software supply-chain trust?',
+        answer:
+          'Key platform datasets and inventory artifacts — including the content revision log, the RAG search corpus and vector embeddings, the CycloneDX 1.7 Software Bill of Materials (SBOM), the Cryptography Bill of Materials (CBOM), and OSCAL governance bundles — carry detached ML-DSA-65 cryptographic signatures verified at build and deploy time. You can inspect dataset freshness, software inventory versions, and revision history directly on the Revisions and About pages.',
+        deepLink: '/revisions',
       },
       {
         question: 'Can I bookmark or share a specific view?',
@@ -811,7 +844,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What PQC libraries should developers use?',
         answer:
-          "Treat sample and research libraries and production libraries as two different decisions. For learning, prototypes and interoperability tests, liboqs (C, with wrappers such as liboqs-python) and oqsprovider for OpenSSL are sample and research options: their own documentation says not to rely on them in a production environment or to protect sensitive data. For production, evaluate the supported library already in your platform and language stack. For example, OpenSSL 3.5 and later include ML-KEM, ML-DSA and SLH-DSA natively; Go's standard library has had crypto/mlkem since Go 1.24 and enables X25519MLKEM768 by default in crypto/tls; and Bouncy Castle for Java and AWS-LC include ML-KEM and ML-DSA implementations. The Rust pqcrypto crates are marked unmaintained by their maintainers, who advise against using them in new projects. For any library, evaluate before production: whether the release is supported and maintained, what validation applies (a FIPS 140-3 certificate covers a specific validated module, as with the FIPS module of AWS-LC, not every feature of a library), and whether the protocols you need interoperate with your peers. The Developer Quantum Impact module covers library API transitions across OpenSSL, Bouncy Castle and liboqs bindings.",
+          "Treat sample and research libraries and production libraries as two different decisions. For learning, prototypes and interoperability tests, liboqs (C, with wrappers such as liboqs-python) and oqsprovider for OpenSSL are sample and research options: their own documentation says not to rely on them in a production environment or to protect sensitive data. For production, evaluate the supported library already in your platform and language stack. For example, OpenSSL 3.5 and later include ML-KEM, ML-DSA and SLH-DSA natively; Go's standard library has had crypto/mlkem since Go 1.24 and enables X25519MLKEM768 by default in crypto/tls; Node.js 24+ includes native node:crypto ML-KEM and ML-DSA APIs plus hybrid TLS groups; Java 24+ JCA provides standard KEM and ML-DSA Signature APIs alongside Bouncy Castle; and AWS-LC includes ML-KEM and ML-DSA implementations. The Rust pqcrypto crates are marked unmaintained by their maintainers, who advise against using them in new projects. For any library, evaluate before production: whether the release is supported and maintained, what validation applies (a FIPS 140-3 certificate covers a specific validated module, as with the FIPS module of AWS-LC, not every feature of a library), and whether the protocols you need interoperate with your peers. The Developer Quantum Impact and Crypto Dev APIs modules include side-by-side before-and-after migration code diffs across Go 1.24+, OpenSSL 3.5+, Node.js 24+ and Java 24+ JCA.",
         deepLink: '/learn/dev-quantum-impact',
         persona: 'developer',
       },
@@ -847,6 +880,23 @@ export const FAQ_DATA: FAQCategory[] = [
         answer:
           "The PQC Governance module provides a RACI (Responsible, Accountable, Consulted, Informed) matrix builder for PQC migration stakeholders, policy templates covering four organizational layers (board, executive, management, operational), governance model selection guidance, and a KPI dashboard for tracking migration progress at the board level. It integrates with the Risk Assessment to align governance decisions with your organization's specific risk profile.",
         deepLink: '/learn/pqc-governance',
+        persona: 'grc',
+      },
+      {
+        id: 'cert-engineer-quantum-impact',
+        question: 'What should certification engineers know about PQC validation?',
+        answer:
+          'Active FIPS 140-2 certificates moved to the CMVP Historical List on 21 September 2026, so adding ML-KEM, ML-DSA, or SLH-DSA runs through FIPS 140-3 and a congested Modules in Process (MIP) queue across new validations and 1SUB/3SUB/5SUB updates. PQC validation combines deterministic seed-driven ACVP Algorithm Functional Tests (AFT) for keyGen, FIPS 140-3 IG 10.3.A pre-operational CASTs and conditional PCTs inside the module boundary, and mandatory SP 800-90B Entropy Source Validation (ESV) paired with SP 800-90C seeding rules, alongside regional schemes such as EUCC (CIR (EU) 2024/482), NIAP Policy #33, and PCI PTS HSM v5.0 (kept separate from PCI DSS v4.0.1 operational rules). Never equate an ACVP validation record, a CAVP algorithm certificate, or a MIP queue listing with an active FIPS 140-3 module certificate — verify exact firmware, operating environment, and Security Policy, and record Unknown wherever evidence is missing. The Quantum Impact on Certification Engineers module maps these lab schedules and evidence boundaries.',
+        deepLink: '/learn/cert-quantum-impact',
+        persona: 'cert-engineer',
+      },
+      {
+        id: 'curious-talking-about-pqc',
+        question: 'How do I explain PQC to non-specialists or explore as a Curious learner?',
+        answer:
+          'The Curious Explorer Essentials path pairs three short, plain-language modules — PQC 101, Quantum Threats, and Talking About PQC (80 minutes total) — with Storybook Blue visual summaries on every module so newcomers can grasp why RSA and ECC need replacing, why Harvest Now, Decrypt Later creates immediate urgency for long-lived secrets, and how to separate sourced government timelines from hype without heavy math or organizational jargon.',
+        deepLink: '/learn/talking-about-pqc',
+        persona: 'curious',
       },
       {
         question: 'How do I assess vendor PQC readiness?',
@@ -974,9 +1024,9 @@ export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
     'Is PQC Today open source?',
   ],
   'cert-engineer': [
+    'What should certification engineers know about PQC validation?',
     'What is FIPS 140-3 and why does the validation backlog matter?',
     "What is Common Criteria's role in PQC?",
-    'What HSMs support ML-KEM and ML-DSA?',
   ],
   ops: [
     'What PQC operations tasks should IT teams plan?',
@@ -984,8 +1034,8 @@ export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
     'How do you configure PQC TLS on Linux?',
   ],
   curious: [
+    'How do I explain PQC to non-specialists or explore as a Curious learner?',
     "Where should I start if I'm new to PQC?",
-    'What is post-quantum cryptography (PQC)?',
     'What is a "Harvest Now, Decrypt Later" (HNDL) attack?',
   ],
 }

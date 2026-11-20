@@ -368,6 +368,25 @@ describe('library and protocol-stack answers', () => {
     // The answer spells the count out; a tenth track means the answer needs rewording.
     expect(MODULE_TRACKS).toHaveLength(9)
     expect(answer).toContain('nine tracks')
+    expect(answer).toContain('79 interactive learning modules')
+  })
+
+  it('reflects expanded Hub platform counts and links all four v4.217.0 Learn modules', () => {
+    const biz = answerOf('What is the Business Center (GRC Command Center)?')
+    expect(biz).toContain('37 planning and governance tools')
+    const pg = answerOf('Can I test PQC algorithms in my browser?')
+    expect(pg).toContain('34 interactive')
+    const lib = answerOf('What is the PQC Reference Library?')
+    expect(lib).toContain('over 1,500')
+
+    const deepLinks = new Set(FAQ_DATA.flatMap((c) => c.items).map((i) => i.deepLink.split('?')[0]))
+    expect(deepLinks.has('/learn/cert-quantum-impact')).toBe(true)
+    expect(deepLinks.has('/learn/cloud-pqc')).toBe(true)
+    expect(deepLinks.has('/learn/pqc-implementation-security')).toBe(true)
+    expect(deepLinks.has('/learn/energy-utilities-pqc')).toBe(true)
+    expect(deepLinks.has('/explore')).toBe(true)
+    expect(deepLinks.has('/revisions')).toBe(true)
+    expect(deepLinks.has('/learn/quiz')).toBe(true)
   })
 })
 
