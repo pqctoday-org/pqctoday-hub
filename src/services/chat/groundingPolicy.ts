@@ -129,7 +129,7 @@ export interface PartiallyVerifiedAnswer {
  * wrapped over two lines is one sentence. Join such lines; a blank line, a list item,
  * a heading, a quote, a table row or a code fence starts a new line.
  */
-const BLOCK_START = /^\s*(?:[-+*]\s|\d+[.)]\s|#{1,6}\s|>|\||```)/
+const BLOCK_START = /^\s*(?:[-+*]\s|\d+[.)]\s|#{1,6}\s|>|\||```|~~~)/
 
 function joinSoftWraps(answer: string): string[] {
   const out: string[] = []
@@ -140,7 +140,7 @@ function joinSoftWraps(answer: string): string[] {
       prev.trim() !== '' &&
       !BLOCK_START.test(raw) &&
       !/^\s{0,3}#{1,6}\s/.test(prev) &&
-      !/^\s*(?:\||```)/.test(prev)
+      !/^\s*(?:\||```|~~~)/.test(prev)
     if (joinable) out[out.length - 1] = `${prev.trimEnd()} ${raw.trim()}`
     else out.push(raw)
   }

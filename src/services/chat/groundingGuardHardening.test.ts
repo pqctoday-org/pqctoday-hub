@@ -270,3 +270,28 @@ describe('third review: list numbers and wrapped lines', () => {
     expect(r!.content).toBe(`- ${claim}`)
   })
 })
+
+describe('fourth review: lists need a number before the separator; tilde fences', () => {
+  it.each([
+    'TLS is supported, 1.3 seconds is the latency.',
+    'TLS is supported and 1.3 seconds is the latency.',
+  ])('does not treat a separator alone as a list: %s', (sentence) => {
+    expect(assessClaimSupport('TLS 1.3 is supported.', [sentence], { titles: [] }).supported).toBe(
+      false
+    )
+  })
+
+  it('does not join a tilde code fence onto its content', () => {
+    const kem = chunk('algo-ml-kem-768', 'ML-KEM-768', [
+      'ML-KEM-768 provides NIST security level 3.',
+    ])
+    const claim = 'ML-KEM-768 provides NIST security level 3.'
+    const r = keepVerifiedStatements(
+      `~~~text\n${claim}\n~~~`,
+      [{ claimExcerpt: claim, chunkId: kem.id, evidenceRefs: [`${kem.id}#1`] }],
+      [kem]
+    )
+    expect(r).not.toBeNull()
+    expect(r!.content).toContain(claim)
+  })
+})

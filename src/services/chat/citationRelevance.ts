@@ -186,7 +186,7 @@ export function extractTerms(text: string): TextTerms {
 }
 
 /** Text just before a number that marks it as the next item of a list. */
-const LIST_CONTINUES = /(?:\d\s*(?:,|\/|&|\band\b|\bor\b)?|,|\/|&|\band|\bor)\s*$/i
+const LIST_CONTINUES = /\d\s*(?:,|\/|&|\band|\bor)\s*$/i
 
 function numberFound(number: string, sentence: TextTerms): boolean {
   return sentence.allNumbers.has(number)
