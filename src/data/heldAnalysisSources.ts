@@ -39,11 +39,6 @@ export const HELD_ANALYSIS_SOURCES: readonly HeldAnalysisSource[] = [
     seen: 'page not found',
   },
   {
-    vendorId: 'VND-240',
-    url: 'https://www.orange.com/en/news/2025/orange-leading-way-quantum-technologies-safer-smarter-future',
-    seen: 'page not found',
-  },
-  {
     vendorId: 'VND-379',
     url: 'https://www.businesswire.com/news/home/20260324083438/en/HPE-Introduces-Sweeping-Security-Advancements-to-Secure-AI-Adoption-and-Strengthen-Enterprise-Resiliency',
     seen: 'could not be opened (connection error in a desktop browser, access refused to automated checks)',
