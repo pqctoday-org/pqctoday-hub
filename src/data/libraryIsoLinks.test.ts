@@ -142,6 +142,8 @@ const ISO_LINKS: [string, string, string][] = [
     'https://www.iso.org/standard/82424.html',
     'ISO/IEC 24759:2025',
   ],
+  ['ISO-22301-2019', 'https://www.iso.org/standard/75106.html', 'ISO 22301:2019'],
+  ['ISO-IEC-19790-2012', 'https://www.iso.org/standard/52906.html', 'ISO/IEC 19790:2012'],
 ]
 
 const rows = latestLibraryRows()
