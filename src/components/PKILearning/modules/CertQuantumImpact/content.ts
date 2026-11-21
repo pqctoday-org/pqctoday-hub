@@ -15,7 +15,7 @@ import {
 export const content: ModuleContent = {
   moduleId: 'cert-quantum-impact',
   version: '1.0.0',
-  lastEdited: '2026-11-19',
+  lastEdited: '2026-11-21',
 
   standards: [
     getStandard('FIPS 203'),

@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'vendor-risk',
   version: '1.0.3',
   lastReviewed: '2026-10-28',
-  lastEdited: '2026-11-18',
+  lastEdited: '2026-11-21',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. This module is about supply-chain scoring and
