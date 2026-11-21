@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.220.0] - 2026-11-21
+
+Five new hands-on learning modules expand digital-asset custody security and evidence-bounded AI cryptography threats, accompanied by 145 newly admitted primary-source Library references, 47 new quiz questions with a dedicated AI Cryptography Threats category, five illustrated Visual tab posters, and a refreshed AI Assistant search index.
+
+### Added
+
+- **Custody Key Threats & Controls module** [view:/learn/custody-threats-controls] [persona:architect] [persona:ops] [persona:executive]: Explains why storing keys inside an HSM does not stop unauthorized signing on its own, walks through real custody incident patterns, compares HSM, MPC, and enclave limits, and provides five interactive workshops including live browser SoftHSMv3 clear-signing, quorum-approval, and FROST threshold labs.
+- **Custody Key Lifecycle Operations module** [view:/learn/custody-lifecycle-ops] [persona:architect] [persona:ops]: Covers key creation, proactive refresh, why on-chain keys require sweeps and explicit allowance or EIP-7702 revocations, recovery and inheritance, witnessed key ceremonies, pre-finality monitoring, access separation, disaster-recovery drills, and safe decommissioning across seven interactive workshops.
+- **Custody PQC Migration module** [view:/learn/custody-pqc-migration] [persona:architect] [persona:ops] [persona:researcher] [persona:grc] [persona:executive]: Separates platform-controlled post-quantum upgrades you can run today from account-layer smart-account verification and draft chain proposals, with four workshops covering quantum limits, hybrid backup envelopes, Shamir/SLIP-39 seeds, and hardware-wallet claim evaluation.
+- **Custody Governance & Assurance module** [view:/learn/custody-governance] [persona:grc] [persona:executive] [persona:cert-engineer]: Equips governance and assurance teams with six custody-design evaluation questions, a side-by-side jurisdiction regulatory control mapper with mandatory applicability gates, and clear scope boundaries for custody insurance, SOC 1/ISAE 3402, SOC 2, ISAE 3000, and proof-of-reserves reports.
+- **AI as an Attacker of Cryptography module and quiz category** [view:/learn/ai-crypto-attacks] [view:/learn/quiz] [persona:architect] [persona:developer] [persona:ops] [persona:grc] [persona:executive] [persona:researcher] [persona:curious]: Evaluates AI threats across software secrets, crypto-library bugs, side-channel trace learning, KMS/HSM policies, and mathematical cryptanalysis using a strict demonstrated/reported/hypothesised rubric, paired with five defensive workshops and a new 12-question AI Cryptography Threats quiz category.
+- **Five Storybook Blue Visual tab posters** [view:/learn]: Added illustrated 1254x1254 summary posters for all five new modules.
+
+### Data
+
+- **Expanded Library, Quiz bank, and AI Assistant search index** [view:/library] [view:/learn/quiz]: Admitted 145 primary-source custody and AI-cryptography references (1,669 active Library entries), added 47 new quiz questions (1,225 total), and rebuilt and signed the AI Assistant search index so all five new modules are immediately searchable.
+
 ## [4.219.0] - 2026-11-20
 
 The PQC Assistant now checks every statement against the exact source sentence it cites and shows the verified ones instead of discarding the whole answer, with corrected About-page figures, clearer post-quantum wording in the Digital Assets lesson, and several smaller fixes.
