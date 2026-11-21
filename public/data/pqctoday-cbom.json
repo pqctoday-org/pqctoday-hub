@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:a2658a90-2551-4729-836d-ea5291d15146",
+  "serialNumber": "urn:uuid:324970c1-fc54-4c7e-bb66-93fa7bf3f794",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-16T00:00:00.000Z",
+    "timestamp": "2026-11-18T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -402,7 +402,7 @@
           "primitive": "other"
         }
       },
-      "description": "Bouncy Castle for .NET. Version 2.7.0 adds hybrid post-quantum key exchange and post-quantum authentication for TLS 1.3 (hybrid ML-KEM key exchange; ML-DSA and SLH-DSA authentication) and updated HQC implementations.",
+      "description": "Bouncy Castle for .NET. Version 2.7.0 adds hybrid post-quantum key exchange and post-quantum authentication for TLS 1.3 (hybrid ML-KEM key exchange; ML-DSA and SLH-DSA authentication) and updated HQC implementations. Also supports composite ML-DSA (RFC 10073) and composite ML-KEM PKIX certificate and CMS operations.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -454,7 +454,7 @@
           "primitive": "other"
         }
       },
-      "description": "Java provider and lightweight API. The vendor's 1.86 announcement names ML-KEM, ML-DSA and SLH-DSA together with the stateful hash-based signatures LMS/HSS and XMSS/XMSS^MT in the core library with JCA support, and post-quantum and hybrid key encapsulation (FrodoKEM, Classic McEliece, NTRU LPRime, NTRU+, SMAUG-T, Composite ML-KEM, the X-Wing hybrid and SecP/ML-KEM hybrids) through CMS/S-MIME (RFC 9629), HPKE, BCJSSE and the javax.crypto.KEM API.",
+      "description": "Java provider and lightweight API. The vendor's 1.86 announcement names ML-KEM, ML-DSA and SLH-DSA together with the stateful hash-based signatures LMS/HSS and XMSS/XMSS^MT in the core library with JCA support, and post-quantum and hybrid key encapsulation (FrodoKEM, Classic McEliece, NTRU LPRime, NTRU+, SMAUG-T, Composite ML-DSA per RFC 10073, Composite ML-KEM, the X-Wing hybrid and SecP/ML-KEM hybrids) through CMS/S-MIME (RFC 9629), HPKE, BCJSSE and the javax.crypto.KEM API.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -510,7 +510,7 @@
           "primitive": "other"
         }
       },
-      "description": "Long-term support branch of Bouncy Castle Java. The vendor's LTS 2.73.13 release notes (22 September 2026) record fixes to its ML-DSA, ML-KEM, SLH-DSA, composite ML-DSA and composite ML-KEM implementations, so these are present in the LTS line.",
+      "description": "Long-term support branch of Bouncy Castle Java. The vendor's LTS 2.73.13 release notes (22 September 2026) record fixes to its ML-DSA, ML-KEM, SLH-DSA, composite ML-DSA (RFC 10073) and composite ML-KEM implementations, so these are present in the LTS line.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -859,7 +859,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Native ML-KEM-768 and ML-KEM-1024 since Go 1.24 (Feb 2025). Hybrid post-quantum TLS enabled by default since Go 1.24 combining classical elliptic-curve cryptography with ML-KEM. Go 1.26 adds crypto/hpke and crypto/mlkem/mlkemtest packages with derandomized encapsulation for known-answer tests. FIPS 203 compliant.",
+      "description": "Native ML-KEM-768 and ML-KEM-1024 since Go 1.24 (Feb 2025). Hybrid post-quantum TLS enabled by default since Go 1.24 combining classical elliptic-curve cryptography with ML-KEM. Go 1.26 adds crypto/hpke and crypto/mlkem/mlkemtest packages with derandomized encapsulation for known-answer tests. FIPS 203 compliant. The Go 1.26 crypto/hpke package implements RFC 9180 HPKE with post-quantum ML-KEM-768, ML-KEM-1024, and hybrid MLKEM768-X25519 (X-Wing) KEMs.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2058,7 +2058,7 @@
           "primitive": "other"
         }
       },
-      "description": "Supports NIST-standardized PQC algorithms: ML-DSA and ML-KEM (added EJBCA 9.1, Nov 2024, replacing draft Dilithium/Kyber), SLH-DSA (added EJBCA 9.3.2, Jun 2025), and composite (hybrid classical+PQC) certificate support (added EJBCA 9.5, Feb 2026). Issuance, inventory, signing and migration automation across EJBCA 9.x.",
+      "description": "Supports NIST-standardized PQC algorithms: ML-DSA and ML-KEM (added EJBCA 9.1, Nov 2024, replacing draft Dilithium/Kyber), SLH-DSA (added EJBCA 9.3.2, Jun 2025), and RFC 10073 composite (hybrid classical+PQC) certificate support (added EJBCA 9.5, Feb 2026). Issuance, inventory, signing and migration automation across EJBCA 9.x.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2208,7 +2208,7 @@
           "primitive": "other"
         }
       },
-      "description": "Google's fork with ML-KEM support. Used in Chrome browser and Google infrastructure. Pioneering deployment of quantum-safe key exchange at internet scale.",
+      "description": "Google's fork with ML-KEM support. Used in Chrome browser and Google infrastructure. Pioneering deployment of quantum-safe key exchange at internet scale. Also implements EVP_HPKE (RFC 9180) and hybrid X-Wing (ML-KEM-768 + X25519) and ML-DSA/SLH-DSA primitives.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -3405,7 +3405,7 @@
           "primitive": "other"
         }
       },
-      "description": "Supports KEMs: ML-KEM (modes 512, 768, 1024), X-Wing, Kyber (modes 512, 768, 1024), FrodoKEM (mode 640-SHAKE), CSIDH. Supports Signatures: Dilithium (modes 2, 3, 5), ML-DSA (modes 44, 65, 87), SLH-DSA (twelve parameter sets). SIDH/SIKE is marked insecure and deprecated. Status is experimental; not recommended for production without caution.",
+      "description": "Supports KEMs: ML-KEM (modes 512, 768, 1024), X-Wing, Kyber (modes 512, 768, 1024), FrodoKEM (mode 640-SHAKE), CSIDH. Supports Signatures: Dilithium (modes 2, 3, 5), ML-DSA (modes 44, 65, 87), SLH-DSA (twelve parameter sets). SIDH/SIKE is marked insecure and deprecated. Status is experimental; not recommended for production without caution. Includes the circl/hpke package implementing RFC 9180 Hybrid Public Key Encryption with post-quantum ML-KEM and hybrid X-Wing (ML-KEM-768 + X25519) KEM suites.",
       "externalReferences": [
         {
           "type": "website",
@@ -6973,7 +6973,7 @@
           "primitive": "kem"
         }
       },
-      "description": ".NET 10 (Nov 2025 GA) provides native PQC APIs: MLKem class (FIPS 203), MLDsa class (FIPS 204), SlhDsa class (FIPS 205), and CompositeMLDsa class for composite signatures. Per Microsoft's own .NET 10 documentation, only the SlhDsa and CompositeMLDsa classes are marked [Experimental] under diagnostic SYSLIB5006 (pending full OS-level platform support for SLH-DSA and Composite ML-DSA); the MLKem and MLDsa classes themselves are not marked [Experimental], though a handful of their methods still carry the SYSLIB5006 diagnostic. Microsoft's documentation does not describe any of these APIs as 'production-ready'; Experimental-flagged types are explicitly described as subject to potential breaking structural changes until platform support is complete. Uses Windows CNG on Windows and OpenSSL 3.5+ on Linux. First-party Microsoft implementation with all three NIST PQC standards available to every .NET 10 application.",
+      "description": ".NET 10 (Nov 2025 GA) provides native PQC APIs: MLKem class (FIPS 203), MLDsa class (FIPS 204), SlhDsa class (FIPS 205), and CompositeMLDsa class for RFC 10073 composite signatures. Per Microsoft's own .NET 10 documentation, only the SlhDsa and CompositeMLDsa classes are marked [Experimental] under diagnostic SYSLIB5006 (pending full OS-level platform support for SLH-DSA and Composite ML-DSA); the MLKem and MLDsa classes themselves are not marked [Experimental], though a handful of their methods still carry the SYSLIB5006 diagnostic. Microsoft's documentation does not describe any of these APIs as 'production-ready'; Experimental-flagged types are explicitly described as subject to potential breaking structural changes until platform support is complete. Uses Windows CNG on Windows and OpenSSL 3.5+ on Linux. First-party Microsoft implementation with all three NIST PQC standards available to every .NET 10 application.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -17842,7 +17842,7 @@
           "primitive": "other"
         }
       },
-      "description": "Native support for post-quantum algorithms including ML-DSA (Dilithium: 44, 65, 87), ML-KEM (Kyber: 512, 768, 1024), and composite variants (MLDSA/MLKEM) per draft-ietf-lamps-pq-composite-sigs/kem. Supports X.509 certificates with these algorithms.",
+      "description": "Native support for post-quantum algorithms including ML-DSA (Dilithium: 44, 65, 87), ML-KEM (Kyber: 512, 768, 1024), and composite variants (MLDSA/MLKEM) per RFC 10073 (formerly draft-ietf-lamps-pq-composite-sigs) and draft-ietf-lamps-pq-composite-kem. Supports X.509 certificates with these algorithms.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -33799,7 +33799,7 @@
           "primitive": "other"
         }
       },
-      "description": "OpenSSL 3.x provider (latchset pkcs11-provider fork + pqctoday-org composite extensions) bridging OpenSSL EVP operations to a PKCS#11 token. In the sandbox it exposes LAMPS draft-19 composite signature OIDs (ML-DSA+Ed25519, ML-DSA+ECDSA) and passes ML-KEM, SLH-DSA and XMSS operations through to the softhsmv3 backend. Built from pqctoday-hsm/src/vendor/pkcs11-provider; drives sandbox scenarios for TLS, VPN, KMS and composite certificates.",
+      "description": "OpenSSL 3.x provider (latchset pkcs11-provider fork + pqctoday-org composite extensions) bridging OpenSSL EVP operations to a PKCS#11 token. In the sandbox it exposes RFC 10073 (LAMPS draft-19) composite signature OIDs (ML-DSA+Ed25519, ML-DSA+ECDSA) and passes ML-KEM, SLH-DSA and XMSS operations through to the softhsmv3 backend. Built from pqctoday-hsm/src/vendor/pkcs11-provider; drives sandbox scenarios for TLS, VPN, KMS and composite certificates.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -33914,7 +33914,7 @@
           "algorithmFamily": "ML-DSA"
         }
       },
-      "description": "In-tree pqctoday C utility (docker/composite_mkcert.c) that generates LAMPS draft-19 composite certificates by calling the pkcs11-provider symbols against softhsmv3. Used in the sandbox hybrid-certificate scenario to mint composite ML-DSA+classical certs. Not an upstream product; lives in the sandbox image build tree.",
+      "description": "In-tree pqctoday C utility (docker/composite_mkcert.c) that generates RFC 10073 (LAMPS draft-19) composite certificates by calling the pkcs11-provider symbols against softhsmv3. Used in the sandbox hybrid-certificate scenario to mint composite ML-DSA+classical certs. Not an upstream product; lives in the sandbox image build tree.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -34465,7 +34465,7 @@
           "primitive": "other"
         }
       },
-      "description": "Python cryptography library with ML-KEM (FIPS 203) and ML-DSA (FIPS 204) support added across v47–v49 (Apr–Jun 2026). v47.0.0 added ML-KEM/ML-DSA for AWS-LC and BoringSSL backends; v48.0.0 extended to OpenSSL 3.5.0+ making PQC available in standard pip wheels; v49.0.0 added ML-DSA X.509 certificate/CSR/CRL signing. SLH-DSA not yet present.",
+      "description": "Python cryptography library with ML-KEM (FIPS 203) and ML-DSA (FIPS 204) support added across v47–v49 (Apr–Jun 2026). v47.0.0 added ML-KEM/ML-DSA for AWS-LC and BoringSSL backends; v48.0.0 extended to OpenSSL 3.5.0+ making PQC available in standard pip wheels; v49.0.0 added ML-DSA X.509 certificate/CSR/CRL signing. SLH-DSA not yet present. Also exposes post-quantum and hybrid HPKE ciphersuites (KEM.MLKEM768, KEM.MLKEM1024, and hybrid X-Wing KEM.MLKEM768_X25519) under cryptography.hazmat.primitives.hpke.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -39708,6 +39708,360 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f8a2926ab88e42fe",
+      "name": "Google Conscrypt",
+      "version": "2.5.3",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "other"
+        }
+      },
+      "description": "Java Security Provider (JCA/JSSE) backed by BoringSSL for Android and OpenJDK. Exposes hybrid X25519MLKEM768 TLS 1.3 key exchange, ML-KEM, ML-DSA, SLH-DSA, and registers RFC 10073 composite signature OIDs (including 1.3.6.1.5.5.7.6.45 id-MLDSA65-ECDSA-P256-SHA512) in OpenSSLProvider. Validated module status depends on the underlying BoringCrypto build; PQC algorithms operate outside the classical FIPS 140-3 boundary.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/google/conscrypt"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/google/conscrypt"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "google-conscrypt"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (BoringCrypto FIPS module covers classical primitives only; PQC algorithms run outside the validated boundary)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "88da1187d1187a23",
+      "name": "IETF LAMPS Composite Signatures Reference Implementation",
+      "version": "RFC 10073 (r5)",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "Official IETF LAMPS working-group reference implementation (lamps-wg/draft-composite-sigs and IETF-Hackathon/pqc-certificates) for RFC 10073 Composite ML-DSA X.509 certificates and signatures. Implements the CompositeAlgorithmSignatures2025 domain separator, raw ML-DSA || classical public-key and signature concatenation, and PKIX OIDs 1.3.6.1.5.5.7.6.37 through .51 to generate normative KAT vectors and trust-anchor test certificates. Reference and interoperability tool only; not a production or FIPS-validated library.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/lamps-wg/draft-composite-sigs"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/lamps-wg/draft-composite-sigs"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ietf-lamps-composite-sigs-ref"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (IETF standards reference implementation and test-vector generator; not a CMVP/CAVP validated module)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "79676b0ed2dcecb0",
+      "name": "filippo.io/hpke",
+      "version": "v0.4.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "Go implementation of RFC 9180 Hybrid Public Key Encryption (filippo.io/hpke, maintained by Filippo Valsorda) with post-quantum ML-KEM-768, ML-KEM-1024, and hybrid X-Wing (MLKEM768-X25519 / MLKEM768-P256 / MLKEM1024-P384) KEMs per draft-ietf-hpke-pq. Powers native post-quantum recipients in age v1.3.0+ and served as the upstream foundation for the Go 1.26 standard library crypto/hpke package.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/FiloSottile/hpke"
+        },
+        {
+          "type": "website",
+          "url": "https://pkg.go.dev/filippo.io/hpke"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "filippo-hpke"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (standalone Go package; Go 1.26 stdlib crypto/hpke carries the FIPS 140-3 Go Cryptographic Module boundary)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c3e6cd9540ddab7c",
+      "name": "rust-hpke (hpke crate)",
+      "version": "0.13.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "Pure-Rust implementation of RFC 9180 Hybrid Public Key Encryption (crates.io hpke, github.com/rozbb/rust-hpke). Implements post-quantum and hybrid KEMs from draft-ietf-hpke-pq and draft-connolly-cfrg-xwing-kem including ML-KEM-768, ML-KEM-1024, X-Wing (MLKEM768-X25519), MLKEM768-P256, and MLKEM1024-P384, alongside SHAKE128/256 and TurboSHAKE KDFs.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/rozbb/rust-hpke"
+        },
+        {
+          "type": "website",
+          "url": "https://crates.io/crates/hpke"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "rust-hpke"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (open-source Rust crate; not a CMVP/CAVP validated module)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a51f6abc3eedfb02",
+      "name": "@panva/hpke (hpke-js)",
+      "version": "0.25.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "JavaScript and TypeScript implementation of RFC 9180 Hybrid Public Key Encryption (@panva/hpke and @panva/hpke-noble) for WebCrypto, Node.js, Deno, Bun, and Cloudflare Workers. Implements draft-ietf-hpke-pq post-quantum KEMs (ML-KEM-512, ML-KEM-768, ML-KEM-1024) and hybrid X-Wing (MLKEM768-X25519) using @noble/post-quantum or native WebCrypto.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/panva/hpke"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/panva/hpke"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "panva-hpke"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (open-source JavaScript/TypeScript package; not a FIPS 140-3 validated module)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7a29528f90199525",
+      "name": "fn-dsa (rust-fn-dsa)",
+      "version": "0.3.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "Falcon",
+          "primitive": "signature"
+        }
+      },
+      "description": "Pure-Rust, no_std, constant-time implementation of FN-DSA (draft FIPS 206, derived from Falcon) by Falcon/FN-DSA co-author Thomas Pornin (crates.io fn-dsa, fn-dsa-kgen, fn-dsa-sign, fn-dsa-vrfy, fn-dsa-comm). Signature verification (fn-dsa-vrfy) is 100% integer NTT arithmetic modulo q=12289 with zero floating-point operations. Key generation and signing include a complete pure-integer (u64) constant-time IEEE-754 binary64 emulator (used automatically on non-x86/aarch64 targets or forced via the no_fpu Cargo feature) that executes zero hardware FPU instructions while remaining bit-for-bit identical to the hardware-FPU/AVX2 paths. Pre-standardization scope: NIST FIPS 206 is still in draft; wire formats and domain separation follow draft FIPS 206 and may change before final publication.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pornin/rust-fn-dsa"
+        },
+        {
+          "type": "website",
+          "url": "https://crates.io/crates/fn-dsa"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pornin-rust-fn-dsa"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (draft FIPS 206 implementation; NIST FIPS 206 is not yet finalized and no CMVP/CAVP validation exists for FN-DSA)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ca7d507a2526d687",
+      "name": "c-fn-dsa",
+      "version": "draft-FIPS-206",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "Falcon",
+          "primitive": "signature"
+        }
+      },
+      "description": "Portable C99 constant-time implementation of FN-DSA (draft FIPS 206, derived from Falcon) by Falcon/FN-DSA co-author Thomas Pornin (github.com/pornin/c-fn-dsa). Signature verification uses pure 16-bit/32-bit integer NTT arithmetic (mod 12289). Key generation and signing provide a portable 100% integer-based (uint64_t) constant-time IEEE-754 binary64 emulation backend requiring no hardware FPU, alongside optimized assembly/SIMD paths for ARM Cortex-M4, ARMv8-A NEON, and x86-64 AVX2. Pre-standardization scope: NIST FIPS 206 is not yet finalized; keys and signatures follow current draft FIPS 206 domain-separation rules and are not a CMVP/CAVP validated module.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pornin/c-fn-dsa"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pornin/c-fn-dsa"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pornin-c-fn-dsa"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No (draft FIPS 206 implementation; NIST FIPS 206 is not yet finalized and no CMVP/CAVP validation exists for FN-DSA)"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
         }
       ]
     }
