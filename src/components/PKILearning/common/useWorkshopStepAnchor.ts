@@ -21,7 +21,7 @@ export const useWorkshopStepAnchor = (steps: readonly { id: string }[] | undefin
     const raf = requestAnimationFrame(() => {
       document
         .querySelector(`[data-workshop-step="${CSS.escape(id)}"]`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
     })
     return () => cancelAnimationFrame(raf)
   }, [steps])

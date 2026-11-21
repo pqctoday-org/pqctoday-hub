@@ -643,7 +643,7 @@ export const PQC101Module: React.FC = () => {
     const raf = requestAnimationFrame(() => {
       document
         .querySelector(`[data-section-id="${deepLinkSection}"]`)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
     })
     return () => cancelAnimationFrame(raf)
   }, [deepLinkSection])

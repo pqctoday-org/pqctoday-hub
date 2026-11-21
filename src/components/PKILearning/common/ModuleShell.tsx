@@ -260,7 +260,7 @@ function WorkshopStepper({
     const dl = getModuleDeepLink()
     if (!dl.stepGiven || dl.initialTab !== 'workshop') return
     const raf = requestAnimationFrame(() => {
-      stepTitleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      stepTitleRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
     })
     return () => cancelAnimationFrame(raf)
   }, [embedded])
