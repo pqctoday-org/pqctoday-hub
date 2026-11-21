@@ -38,4 +38,25 @@ describe('UnderstandingCheckCard (round 9, wave 2)', () => {
     const covered = MANIFESTS.filter((m) => m.id !== 'quiz' && ids.has(m.id)).length
     expect(covered).toBeGreaterThanOrEqual(55)
   })
+  it('resolves custody-threats-controls to the digital-assets quiz category', () => {
+    const digitalAssetsCat = quizCategories.find((c) => c.id === 'digital-assets')!
+    render(
+      <MemoryRouter>
+        <UnderstandingCheckCard
+          moduleId="custody-threats-controls"
+          moduleTitle="Custody Key Threats & Controls"
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getByTestId('understanding-check')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Take the quiz/ })).toHaveAttribute(
+      'href',
+      '/learn/quiz?category=digital-assets'
+    )
+    expect(
+      screen.getByText(
+        new RegExp(`${digitalAssetsCat.questionCount} questions? on Custody Key Threats & Controls`)
+      )
+    ).toBeInTheDocument()
+  })
 })

@@ -445,6 +445,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('Quantum Threats to Cryptography', 'PT40M', 'Intermediate'),
   },
 
+  '/learn/ai-crypto-attacks': {
+    title: 'AI as an Attacker of Cryptography — Evidence & Capability Rubric | PQC Today',
+    description:
+      'Evidence-bounded assessment of AI threats across software secret leakage, crypto-library bugs, side-channel trace learning, KMS/HSM policies, and mathematical cryptanalysis.',
+    canonical: `${BASE_URL}/learn/ai-crypto-attacks`,
+    structuredData: buildModuleSchema('AI as an Attacker of Cryptography', 'PT50M', 'Intermediate'),
+  },
+
   '/learn/hybrid-crypto': {
     title: 'Hybrid Cryptography — Transitional PQC Key Exchange & Signatures | PQC Today',
     description:
@@ -587,6 +595,38 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       'Quantum threats to blockchain: how PQC impacts Bitcoin, Ethereum, and Solana. Key derivation, address generation, and post-quantum migration paths.',
     canonical: `${BASE_URL}/learn/digital-assets`,
     structuredData: buildModuleSchema('Digital Assets & PQC', 'PT50M', 'Intermediate'),
+  },
+
+  '/learn/custody-threats-controls': {
+    title: 'Custody Key Threats & Controls — Signing Authority, MPC & HSMs | PQC Today',
+    description:
+      'Who can make a custody system sign and which control combinations stop unauthorized transfers: blind vs clear signing, Bybit/Drift/Binance case studies, HSM/MPC/TEE limits, and hybrid MPC+HSM variants.',
+    canonical: `${BASE_URL}/learn/custody-threats-controls`,
+    structuredData: buildModuleSchema('Custody Key Threats & Controls', 'PT35M', 'Intermediate'),
+  },
+
+  '/learn/custody-lifecycle-ops': {
+    title: 'Custody Key Lifecycle Operations — Rotation, Ceremonies, DR & Disposal | PQC Today',
+    description:
+      'How digital-asset custody keys are created, refreshed, watched, recovered, and retired safely: DKG, sweeps vs revocations, ceremonies, monitoring, access control, DR drills, and decommissioning.',
+    canonical: `${BASE_URL}/learn/custody-lifecycle-ops`,
+    structuredData: buildModuleSchema('Custody Key Lifecycle Operations', 'PT38M', 'Intermediate'),
+  },
+
+  '/learn/custody-pqc-migration': {
+    title: 'Custody PQC Migration — HSM, MPC, SLIP-39 & Smart Accounts | PQC Today',
+    description:
+      'What a quantum attacker changes for digital-asset custody and how to migrate: HSM/MPC/enclave deltas, PQ threshold research, SLIP-39 seeds, hardware wallet claims, and PQ smart accounts.',
+    canonical: `${BASE_URL}/learn/custody-pqc-migration`,
+    structuredData: buildModuleSchema('Custody PQC Migration', 'PT40M', 'Intermediate'),
+  },
+
+  '/learn/custody-governance': {
+    title: 'Custody Governance & Assurance — Regulation, Insurance & Audits | PQC Today',
+    description:
+      'How a digital-asset custody design is evaluated, regulated, insured, and audited: Q1–Q6 evaluation patterns with Rule G1 checks, jurisdiction control maps with applicability gates, and SOC/ISAE/PoR limits.',
+    canonical: `${BASE_URL}/learn/custody-governance`,
+    structuredData: buildModuleSchema('Custody Governance & Assurance', 'PT30M', 'Intermediate'),
   },
 
   '/learn/5g-security': {

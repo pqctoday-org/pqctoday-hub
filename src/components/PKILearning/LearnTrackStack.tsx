@@ -34,6 +34,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
   Foundations: [
     'pqc-fundamentals',
     'quantum-threats',
+    'ai-crypto-threats',
     'algorithm-families',
     'nist-standards',
     'entropy-randomness',

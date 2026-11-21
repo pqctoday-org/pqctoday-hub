@@ -77,6 +77,16 @@ const CURIOUS_INFOGRAPHIC_ALT_TEXT: Record<string, string> = {
     "Six panels on content protection read as written: a compromised padlock beside a row of identical padlocks; the AACS key ladder from Device Keys through a Processing Key to a Media Key; the CI Plus signature, key negotiation and scrambler primitives; the hybrid key agreement mechanisms of RFC 10024; the signature algorithms C2PA 2.4 allows; and NIST's 2030 and 2035 dates, which the media documents do not set.",
   'software-supply-chain-pqc':
     "Six panels on signatures along the software supply chain: signed releases; a status map of what each held document says about post-quantum signatures and where it is silent; the TUF roles root, targets, snapshot, timestamp and the optional mirrors; Uptane's Director and Image repositories checked against each other; the SLSA Build track levels; and what changes after a verifier has shipped.",
+  'custody-threats-controls':
+    'Custody signing authority vs raw key storage: blind signing a delegatecall upgrade vs clear signing with policy enforcement, Bybit/Drift/Binance threat paths, HSM/MPC/TEE limits, and five hybrid MPC+HSM architectures.',
+  'custody-lifecycle-ops':
+    'Custody key lifecycle operations from creation to retirement: DKG and proactive refresh, sweeps vs on-chain allowance and EIP-7702 revocations, recovery and ceremonies, alerting, access separation, DR drills, and safe decommissioning.',
+  'custody-pqc-migration':
+    'Custody PQC migration across three clocks: platform-controlled channels, backup envelopes and ML-DSA approvals now, account-controlled smart-account verification with residual classical checks, and chain-controlled protocol proposals.',
+  'custody-governance':
+    'Custody governance and assurance overview: six evaluation questions with Rule G1 authority checks, jurisdiction-scoped regulatory control maps with applicability gates, a separate US accounting/permissibility context band, and what custody insurance, SOC 1/ISAE 3402, SOC 2, ISAE 3000 (Revised), and proof of reserves do and do not prove.',
+  'ai-crypto-attacks':
+    'Evidence-bounded assessment of AI as an attacker of cryptography across five layers: software secret leakage, code and library bugs, deep-learning side channels, KMS/HSM control-plane policies, and bounded mathematical cryptanalysis results showing FIPS 203/204/205 and full AES remain unbroken.',
 }
 
 export const INFOGRAPHIC_SAMPLE_ASSUMPTIONS: Record<
@@ -143,6 +153,7 @@ export const INFOGRAPHIC_SAMPLE_ASSUMPTIONS: Record<
 const DIR_TO_MODULE_ID: Record<string, string> = {
   'Module1-Introduction': 'pqc-101',
   QuantumThreats: 'quantum-threats',
+  AICryptoAttacks: 'ai-crypto-attacks',
   HybridCrypto: 'hybrid-crypto',
   CryptoAgility: 'crypto-agility',
   TalkingAboutPQC: 'talking-about-pqc',
@@ -161,6 +172,10 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   DataAssetSensitivity: 'data-asset-sensitivity',
   StatefulSignatures: 'stateful-signatures',
   DigitalAssets: 'digital-assets',
+  CustodyThreatsControls: 'custody-threats-controls',
+  CustodyLifecycleOps: 'custody-lifecycle-ops',
+  CustodyPqcMigration: 'custody-pqc-migration',
+  CustodyGovernance: 'custody-governance',
   FiveG: '5g-security',
   DigitalID: 'digital-id',
   Entropy: 'entropy-randomness',

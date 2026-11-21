@@ -98,6 +98,8 @@ export const QUIZ_CATEGORIES = [
   'talking-about-pqc',
   // 10-29: LM-077, Media, Entertainment & DRM PQC.
   'media-drm-pqc',
+  // 11-21: LM-087, AI as an Attacker of Cryptography.
+  'ai-crypto-threats',
 ] as const
 
 export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]

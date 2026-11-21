@@ -31,6 +31,10 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'pqc-101': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'talking-about-pqc': { phasesServed: ['foundations'], legs: ['learn', 'practice', 'reference'] },
   'quantum-threats': { phasesServed: ['foundations', 'p0'], legs: ['learn', 'reference'] },
+  'ai-crypto-attacks': {
+    phasesServed: ['foundations', 'p0', 'p2'],
+    legs: ['learn', 'practice', 'reference'],
+  },
   'pqc-candidates': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'hybrid-crypto': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'crypto-agility': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
@@ -58,6 +62,10 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
   'slh-dsa': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'stateful-signatures': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'digital-assets': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
+  'custody-threats-controls': { phasesServed: ['p5'], legs: ['learn', 'practice', 'reference'] },
+  'custody-lifecycle-ops': { phasesServed: ['p5'], legs: ['learn', 'practice', 'reference'] },
+  'custody-pqc-migration': { phasesServed: ['p5'], legs: ['learn', 'practice', 'reference'] },
+  'custody-governance': { phasesServed: ['p5'], legs: ['learn', 'practice', 'reference'] },
   '5g-security': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'digital-id': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   // Added 'p1' 07082026 — required by P1 Activity 1.6 (continuous discovery)

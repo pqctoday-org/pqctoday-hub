@@ -10,6 +10,7 @@
 import { Link } from 'react-router'
 import { GraduationCap, ArrowRight } from 'lucide-react'
 import { quizCategories } from '@/data/quizDataLoader'
+import { resolveModuleQuizCategory } from '@/data/moduleQuizCategory'
 import { cn } from '@/lib/utils'
 
 interface UnderstandingCheckCardProps {
@@ -23,7 +24,8 @@ export function UnderstandingCheckCard({
   moduleTitle,
   className,
 }: UnderstandingCheckCardProps) {
-  const cat = quizCategories.find((c) => c.id === moduleId)
+  const quizCategory = resolveModuleQuizCategory(moduleId)
+  const cat = quizCategories.find((c) => c.id === quizCategory)
   if (!cat || cat.questionCount === 0) return null
   return (
     <section
@@ -40,7 +42,7 @@ export function UnderstandingCheckCard({
         each with its answer and the reason.
       </p>
       <Link
-        to={`/learn/quiz?category=${moduleId}`}
+        to={`/learn/quiz?category=${quizCategory}`}
         className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
       >
         Take the quiz

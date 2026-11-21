@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import { Link } from 'react-router'
 import {
   Globe,
   Settings,
@@ -210,7 +211,15 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
               Explore the five layers of an institutional digital asset custody platform. Click each
               layer to reveal its cryptographic primitives and quantum threat assessment. Then walk
               through a complete transaction flow to see how a withdrawal moves through the entire
-              stack.
+              stack.{' '}
+              <Link
+                to="/learn/custody-threats-controls"
+                className="text-primary font-medium hover:underline"
+              >
+                Continue to Custody Key Threats &amp; Controls (LM-083)
+              </Link>{' '}
+              (optional further reading) for key-compromise paths, control combinations, and
+              incident case studies.
             </p>
           </div>
         </div>

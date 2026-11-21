@@ -58,6 +58,7 @@ import { moduleDurationLabel } from '../manifest/learnPathDuration'
 import { LearnModuleContext, useActiveLearnPathId } from './useLearnPath'
 import { LearnPathPicker, OptionalReferenceBadge } from './LearnPathPicker'
 import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
+import { resolveModuleQuizCategory } from '@/data/moduleQuizCategory'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
 import { NextStepCard } from '@/components/shared/NextStepCard'
@@ -886,19 +887,22 @@ export const ModuleShell = ({
                 effectively unreachable from the module itself. Gated on the
                 module id actually being a quiz category: 59 of 65 are, and the
                 remaining 6 correctly get no CTA rather than a dead link. */}
-              {(QUIZ_CATEGORIES as readonly string[]).includes(manifest.id) ? (
-                <Link to={`/learn/quiz?category=${manifest.id}`} className={footerLink}>
-                  <GraduationCap size={15} className="shrink-0 text-primary" />
-                  <span className="min-w-0">
-                    <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
-                      Check your understanding
+              {(() => {
+                const quizCategory = resolveModuleQuizCategory(manifest.id)
+                return (QUIZ_CATEGORIES as readonly string[]).includes(quizCategory) ? (
+                  <Link to={`/learn/quiz?category=${quizCategory}`} className={footerLink}>
+                    <GraduationCap size={15} className="shrink-0 text-primary" />
+                    <span className="min-w-0">
+                      <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+                        Check your understanding
+                      </span>
+                      <span className="block truncate font-medium text-foreground">
+                        Take the {manifest.title} quiz
+                      </span>
                     </span>
-                    <span className="block truncate font-medium text-foreground">
-                      Take the {manifest.title} quiz
-                    </span>
-                  </span>
-                </Link>
-              ) : null}
+                  </Link>
+                ) : null
+              })()}
             </div>
           </div>
         ) : null}

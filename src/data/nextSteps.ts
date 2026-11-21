@@ -27,6 +27,12 @@ export interface NextStep {
 }
 
 export const NEXT_STEPS: Record<string, NextStep> = {
+  // ── module→track ──
+  '/learn/ai-crypto-attacks': {
+    to: '/learn/pqc-implementation-security',
+    label: 'Continue hardening implementations: PQC Implementation Security',
+    why: 'PQC Implementation Security deepens the constant-time, masking, TVLA, and FIPS 140-3 / EUCC evaluation defences introduced in AI as an Attacker of Cryptography.',
+  },
   // ── module→business ──
   '/learn/ai-security-pqc': {
     to: '/business/tools/data-at-rest-strategy',
@@ -166,6 +172,26 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     to: '/playground/bitcoin-flow',
     label: 'Practice it: Bitcoin Transaction',
     why: 'Bitcoin Transaction is the hands-on version of this module: the same ideas, run in your browser.',
+  },
+  '/learn/custody-threats-controls': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
+  '/learn/custody-lifecycle-ops': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
+  '/learn/custody-pqc-migration': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
+  '/learn/custody-governance': {
+    to: '/compliance',
+    label: 'Explore the Compliance Directory',
+    why: 'Cross-check jurisdiction-scoped custody obligations alongside broader regulatory frameworks and deadlines.',
   },
   '/learn/digital-id': {
     to: '/playground/digital-id',
@@ -1136,9 +1162,14 @@ export const PERSONA_NEXT_STEPS: Partial<Record<PersonaId, Record<string, NextSt
       why: 'Hybrid Cryptography, the module this tool practises, is followed on your path by Secure Boot & Firmware PQC.',
     },
     '/playground/firmware-signing': {
+      to: '/learn/custody-governance',
+      label: 'Next on your path: Custody Governance & Assurance',
+      why: 'Secure Boot & Firmware PQC, the module this tool practises, is followed on your path by Custody Governance & Assurance.',
+    },
+    '/learn/custody-governance': {
       to: '/learn/pci-certification',
       label: 'Next on your path: PCI Certification',
-      why: 'Secure Boot & Firmware PQC, the module this tool practises, is followed on your path by PCI Certification.',
+      why: 'Custody Governance & Assurance separates SOC 1/ISAE 3402, SOC 2, and ISAE 3000 scopes before PCI Certification closes your path.',
     },
     // The validation workbench is the lab behind the ACVP lesson, so the page points at that lesson.
     '/playground/hsm': {
