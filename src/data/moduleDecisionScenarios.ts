@@ -86,6 +86,28 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     productionToolCheck:
       'Run dudect/ctgrind on the exact release binary for the target ISA, verify constant-time FO implicit-rejection behavior against malformed ciphertexts, and review accredited lab TVLA (|t| <= 4.5) and FIPS 140-3 / EUCC evidence.',
   },
+  'custody-threats-controls': {
+    moduleId: 'custody-threats-controls',
+    domainTitle: 'Institutional Custody Signing Boundary & Quorum Approval Verification',
+    roleDecisionPrompt:
+      'Decide whether keeping secp256k1 private keys non-extractable inside a PKCS#11 HSM prevents unauthorized delegatecall upgrades when transaction parsing and quorum approvals sit only in the browser UI.',
+    artifactLabel: 'Fictional custody quorum ML-DSA-65 decoded transaction approval',
+    algorithmVariant: { operation: 'signature', variant: 65 },
+    validCaseExplanation:
+      'A valid ML-DSA-65 quorum approval over the decoded custody transaction payload, fresh nonce, and bounded expiry verifies cleanly before the signer issues the chain transaction.',
+    adverseFailureExplanation:
+      'Corrupting byte 0 of the ML-DSA-65 quorum approval causes deterministic verification failure; relying on a policy-free C_Sign HSM without in-boundary parsing lets a spoofed frontend submit a malicious delegatecall payload.',
+    recoveryActionExplanation:
+      'Restore the unmodified ML-DSA-65 quorum approval to re-establish verification, and move transaction parsing, allowlist policy, nonce binding, and approval checks inside the HSM/TEE/trusted-display boundary.',
+    transferQuestion: {
+      prompt:
+        'What changes if the custody stack switches from an HSM wrapping keys into host MPC RAM (Variant a) to mixed trust domains across custodian HSM, TEE co-signer, and hardware approver device (Variant c)?',
+      changedAssumptionOutcome:
+        'Compromising a single host OS root no longer reveals a full signing quorum or unwrapped key in RAM, provided t > 1, DKG was used, and no shared orchestrator can command >= t parties.',
+    },
+    productionToolCheck:
+      'Audit custody policy enforcement points in staging by replaying tampered calldata, expired approvals, replayed nonces, and single-party threshold refusals, and check CMVP Excluded Components boundaries.',
+  },
   'energy-utilities-pqc': {
     moduleId: 'energy-utilities-pqc',
     domainTitle: 'Substation SCADA Gateway & AMI Firmware ML-DSA-65 Signing Boundary',

@@ -49,6 +49,10 @@ const NOT_IN_SIM: Record<string, string> = {
     'Phase 5 and 6 Resources list (phaseResourceMap); no generated tree step or sector step carries it',
   'pqc-implementation-security':
     'Phase 5 and 6 Resources list (phaseResourceMap); no generated tree step or sector step carries it',
+  // Module A1 (LM-083): placed in Phase 5 Resources list (phaseResourceMap);
+  // no generated tree step or sector step carries it yet.
+  'custody-threats-controls':
+    'Phase 5 Resources list (phaseResourceMap); no generated tree step or sector step carries it',
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.

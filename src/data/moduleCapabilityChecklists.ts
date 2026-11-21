@@ -1077,6 +1077,18 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     evidenceRequired:
       'PQC CoE charter, role-to-skill matrix mapped to NICE work roles, and completed practical lab verification records.',
   },
+  'custody-threats-controls': {
+    roleFocus: 'Custody Security Architects, Operations Leads & Risk Governance Teams',
+    productionCapabilities: [
+      'In-boundary transaction parsing, allowlist checks, and m-of-n quorum enforcement executed inside the HSM, enclave co-signer, or attested approver boundary rather than a host application.',
+      'Independent trusted-display clear signing (e.g., ERC-7730 descriptors paired with bounded ERC-8176 attestations) and bounded approval expiry/nonce binding preventing replay or silent delegatecall upgrades.',
+      'Explicit Rule G1 authority separation across signing shares, orchestrators, recovery quorums, and contract-upgrade admins (avoiding single-operator or host-RAM key unwrap exposure).',
+    ],
+    evaluationMethod:
+      'Exercise staging custody policies against negative test cases: tampered amounts, expired approvals, replayed nonces, unallowlisted delegatecalls, and single-party threshold refusal.',
+    evidenceRequired:
+      'Signed custody policy ruleset, FIPS 140-3 CMVP module certificate & Excluded Components boundary review, and staging negative-test rejection logs.',
+  },
   quiz: {
     roleFocus: 'All Learners & Role Practitioners',
     productionCapabilities: [

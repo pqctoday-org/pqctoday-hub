@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/button'
 import { EmbedProvider } from '../../../embed/EmbedProvider'
 import { EmbeddedLearnProvider } from '../embeddedLearnContext'
 import { ModuleShell } from './ModuleShell'
+import { resolveModuleQuizCategory } from '@/data/moduleQuizCategory'
 import { useModuleProgress } from './useModuleProgress'
+import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { ModuleManifest } from '../manifest/types'
 
@@ -333,6 +335,32 @@ describe('ModuleShell', () => {
     expect(
       screen.queryByRole('link', { name: /Practice in the Simulation/i })
     ).not.toBeInTheDocument()
+  })
+
+  it('routes mapped custody modules to the digital-assets quiz category on completion', () => {
+    expect(resolveModuleQuizCategory('custody-threats-controls')).toBe('digital-assets')
+    expect(resolveModuleQuizCategory('hsm-pqc')).toBe('hsm-pqc')
+
+    useModuleStore.getState().updateModuleProgress('custody-threats-controls', {
+      status: 'completed',
+    })
+
+    renderShell(
+      <ModuleShell
+        manifest={{
+          ...base,
+          id: 'custody-threats-controls',
+          title: 'Custody Key Threats & Controls',
+          frameworkPhase: 'p5',
+        }}
+        learn={<div>L</div>}
+      />
+    )
+    const quizLink = screen.getByRole('link', {
+      name: /Take the Custody Key Threats & Controls quiz/i,
+    })
+    expect(quizLink).toHaveAttribute('href', '/learn/quiz?category=digital-assets')
+    useModuleStore.getState().resetModuleProgress('custody-threats-controls')
   })
 })
 

@@ -589,6 +589,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('Digital Assets & PQC', 'PT50M', 'Intermediate'),
   },
 
+  '/learn/custody-threats-controls': {
+    title: 'Custody Key Threats & Controls — Signing Authority, MPC & HSMs | PQC Today',
+    description:
+      'Who can make a custody system sign and which control combinations stop unauthorized transfers: blind vs clear signing, Bybit/Drift/Binance case studies, HSM/MPC/TEE limits, and hybrid MPC+HSM variants.',
+    canonical: `${BASE_URL}/learn/custody-threats-controls`,
+    structuredData: buildModuleSchema('Custody Key Threats & Controls', 'PT35M', 'Intermediate'),
+  },
+
   '/learn/5g-security': {
     title: '5G Security — 3GPP SUCI, 5G-AKA & PQC in Telecoms | PQC Today',
     description:

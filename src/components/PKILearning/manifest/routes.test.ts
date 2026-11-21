@@ -39,6 +39,7 @@ const GOLDEN_ROUTE_PATHS = [
   'crypto-mgmt-modernization',
   'crypto-product-certification',
   'crypto-registry',
+  'custody-threats-controls',
   'data-asset-sensitivity',
   'database-encryption-pqc',
   'dev-quantum-impact',

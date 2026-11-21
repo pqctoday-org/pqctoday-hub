@@ -71,9 +71,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¾ hours.',
         trackNote:
-          "Six essentials against the full 25-module path plus the quiz, 1090 minutes in all. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
+          "Six essentials against the full 26-module path plus the quiz, 1125 minutes in all. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
         trackChips: [
           'PQC 101',
           'Quantum impact',
@@ -148,7 +148,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -222,7 +222,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -271,7 +271,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Governance artifacts', value: 'five' },
             { label: 'Report sections', value: '16' },
-            { label: 'Teaching modules on your path', value: '25' },
+            { label: 'Teaching modules on your path', value: '26' },
           ],
           punchline: 'A plan, not a slide.',
           footnote:
@@ -301,7 +301,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -381,7 +381,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -456,7 +456,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¼ hours.',
+          'Then, if you want the background: 2 hours 40 minutes of essentials, not the full 18¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1438,7 +1438,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1515,7 +1515,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1600,7 +1600,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1681,7 +1681,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1758,7 +1758,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1835,7 +1835,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¼ hours.',
+          'Then, the background: 6 hours 30 minutes of essentials, not the full 49¾ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1917,7 +1917,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 40¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -1995,7 +1995,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 40¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -2072,7 +2072,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 40¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -2150,7 +2150,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 40¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -2227,7 +2227,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 40¼ hours.',
 
         trackChips: [
           'PQC 101',
@@ -2304,7 +2304,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           { title: string; body: string; href?: string },
         ],
         trackTitle:
-          'Then, the background: 6 hours 10 minutes of essentials, not the full 39¾ hours.',
+          'Then, the background: 6 hours 10 minutes of essentials, not the full 40¼ hours.',
 
         trackChips: [
           'PQC 101',

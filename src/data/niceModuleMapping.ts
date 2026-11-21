@@ -654,6 +654,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: false,
   },
   {
+    moduleId: 'custody-threats-controls',
+    competencyAreas: ['CA-SYSARCH', 'CA-CRYPTO', 'CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'systems-security-analyst', 'risk-manager'],
+    isCommonGround: false,
+  },
+  {
     moduleId: '5g-security',
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],

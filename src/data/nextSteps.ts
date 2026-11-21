@@ -167,6 +167,11 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Practice it: Bitcoin Transaction',
     why: 'Bitcoin Transaction is the hands-on version of this module: the same ideas, run in your browser.',
   },
+  '/learn/custody-threats-controls': {
+    to: '/business/tools/deployment-playbook',
+    label: 'Produce the artifact: Deployment Playbook',
+    why: 'This module belongs to phase 5 (Pilots & Migration); Deployment Playbook produces a deliverable of that phase in the Command Center.',
+  },
   '/learn/digital-id': {
     to: '/playground/digital-id',
     label: 'Practice it: EUDI Wallet Architecture',

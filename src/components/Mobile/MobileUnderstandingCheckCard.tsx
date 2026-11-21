@@ -3,6 +3,7 @@
 import { Link } from 'react-router'
 import { GraduationCap, ArrowRight } from 'lucide-react'
 import { quizCategories } from '@/data/quizDataLoader'
+import { resolveModuleQuizCategory } from '@/data/moduleQuizCategory'
 
 export function MobileUnderstandingCheckCard({
   moduleId,
@@ -11,7 +12,8 @@ export function MobileUnderstandingCheckCard({
   moduleId: string
   moduleTitle: string
 }) {
-  const cat = quizCategories.find((c) => c.id === moduleId)
+  const quizCategory = resolveModuleQuizCategory(moduleId)
+  const cat = quizCategories.find((c) => c.id === quizCategory)
   if (!cat || cat.questionCount === 0) return null
   return (
     <section
@@ -28,7 +30,7 @@ export function MobileUnderstandingCheckCard({
         with answers.
       </p>
       <Link
-        to={`/learn/quiz?category=${moduleId}`}
+        to={`/learn/quiz?category=${quizCategory}`}
         className="mt-1.5 inline-flex min-h-[44px] items-center gap-1.5 text-sm font-medium text-primary"
       >
         Take the quiz

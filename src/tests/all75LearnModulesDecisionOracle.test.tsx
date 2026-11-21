@@ -19,8 +19,8 @@ const RECEIPT_OUTPUT_PATH = resolve(
 describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Decision Oracle', () => {
   const allModuleIds = MANIFESTS.map((m) => m.id).sort()
 
-  it('covers all 80 Learn module manifests (79 workshop modules + quiz) with unique, domain-tailored scenarios and capability checklists', () => {
-    expect(allModuleIds).toHaveLength(80)
+  it('covers all 81 Learn module manifests (80 workshop modules + quiz) with unique, domain-tailored scenarios and capability checklists', () => {
+    expect(allModuleIds).toHaveLength(81)
     expect(allModuleIds).toContain('quiz')
 
     const seenTitles = new Set<string>()
@@ -54,9 +54,9 @@ describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Deci
       expect(checklist.educationalBoundary.length).toBeGreaterThan(20)
     }
 
-    expect(seenTitles.size).toBe(80)
-    expect(seenPrompts.size).toBe(80)
-    expect(seenArtifacts.size).toBe(80)
+    expect(seenTitles.size).toBe(81)
+    expect(seenPrompts.size).toBe(81)
+    expect(seenArtifacts.size).toBe(81)
   })
 
   it('renders tailored domain scenario copy in CryptoTamperExercise and PolicyScopeExercise without generic placeholder text', () => {
@@ -144,7 +144,7 @@ describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Deci
       })
     }
 
-    expect(receipts).toHaveLength(80)
+    expect(receipts).toHaveLength(81)
 
     if (existsSync(resolve(process.cwd(), '../backups'))) {
       mkdirSync(dirname(RECEIPT_OUTPUT_PATH), { recursive: true })

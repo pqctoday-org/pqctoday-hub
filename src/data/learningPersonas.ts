@@ -130,6 +130,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-agility',
       'migration-program',
       'digital-assets',
+      'custody-threats-controls',
       'verification-closure',
       'iam-pqc',
       'quiz',
@@ -190,6 +191,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'crypto-agility' },
       { type: 'module', moduleId: 'migration-program' },
       { type: 'module', moduleId: 'digital-assets' },
+      { type: 'module', moduleId: 'custody-threats-controls' },
       { type: 'module', moduleId: 'verification-closure' },
       { type: 'module', moduleId: 'iam-pqc' },
       {
@@ -225,7 +227,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // back deliberately, and the ~10h concern that motivated that trim is now
     // carried by `essentials` (200 min) rather than by the full path, since the
     // capstone unlocks on essentials, not on the whole recommendedPath.
-    estimatedMinutes: 1090,
+    estimatedMinutes: 1125,
     // 2026-09-07 Executive/GRC split: Essentials narrowed to the five modules a
     // busy sponsor needs to fund and govern a program (§4 of the split plan).
     // `quantum-threats` and `compliance-strategy` stay in the full path as
@@ -689,6 +691,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'api-security-jwt',
       'code-signing',
       'software-supply-chain-pqc',
+      'custody-threats-controls',
       'iot-pqc',
       'ot-pqc',
       'energy-utilities-pqc',
@@ -809,6 +812,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'api-security-jwt' },
       { type: 'module', moduleId: 'code-signing' },
       { type: 'module', moduleId: 'software-supply-chain-pqc' },
+      { type: 'module', moduleId: 'custody-threats-controls' },
       { type: 'module', moduleId: 'iot-pqc' },
       { type: 'module', moduleId: 'ot-pqc' },
       { type: 'module', moduleId: 'energy-utilities-pqc' },
@@ -832,7 +836,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2955,
+    estimatedMinutes: 2990,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -1318,6 +1322,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'ot-pqc',
       'energy-utilities-pqc',
       'ai-security-pqc',
+      'custody-threats-controls',
       'aerospace-pqc',
       'automotive-pqc',
       'quiz',
@@ -1421,6 +1426,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'ot-pqc' },
       { type: 'module', moduleId: 'energy-utilities-pqc' },
       { type: 'module', moduleId: 'ai-security-pqc' },
+      { type: 'module', moduleId: 'custody-threats-controls' },
       { type: 'module', moduleId: 'aerospace-pqc' },
       { type: 'module', moduleId: 'automotive-pqc' },
       {
@@ -1431,7 +1437,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2385,
+    estimatedMinutes: 2420,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',

@@ -96,6 +96,17 @@ const postCutoverEnergyUtilitiesPqcCatalog = {
   frameworkPhase: 'p5',
 }
 
+const postCutoverCustodyThreatsControlsCatalog = {
+  id: 'custody-threats-controls',
+  lm_id: 'LM-083',
+  title: 'Custody Key Threats & Controls',
+  description:
+    'Who can make a custody system sign, and which control combinations stop unauthorized signing today: blind vs clear signing, exfiltration paths, adversary models, AI agent spend authority, the Bybit/Drift/Binance case studies, limits of HSM/MPC/enclaves, control combinations, and hybrid MPC+HSM designs.',
+  duration: '35 min',
+  difficulty: 'intermediate',
+  frameworkPhase: 'p5',
+}
+
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
   it('MODULE_CATALOG', () => {
     // Retain the historical snapshot; only reviewed module descriptions change.
@@ -121,6 +132,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       'cloud-pqc': postCutoverCloudPqcCatalog,
       'pqc-implementation-security': postCutoverPqcImplementationSecurityCatalog,
       'energy-utilities-pqc': postCutoverEnergyUtilitiesPqcCatalog,
+      'custody-threats-controls': postCutoverCustodyThreatsControlsCatalog,
     })
   })
   it('MODULE_STEP_COUNTS', () =>
@@ -131,6 +143,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       'cloud-pqc': 4,
       'pqc-implementation-security': 4,
       'energy-utilities-pqc': 4,
+      'custody-threats-controls': 5,
     }))
   it('LEARN_SECTIONS', () => {
     const cbom = golden.LEARN_SECTIONS['cbom']
@@ -172,6 +185,17 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         { id: 'substation-and-scada', label: 'Substation & SCADA Protocols' },
         { id: 'ami-and-field-lifecycles', label: 'AMI & Field Lifecycles' },
         { id: 'regulatory-and-migration', label: 'Regulation & Evidence Scope' },
+      ],
+      'custody-threats-controls': [
+        { id: 'signing-authority', label: '1. Keys vs Signing Authority' },
+        { id: 'exfiltration-paths', label: '2. Exfiltration & Misuse Paths' },
+        { id: 'adversary-model', label: '2b. Adversary Model' },
+        { id: 'agent-authority', label: '2c. AI Agent Spend Authority' },
+        { id: 'case-studies', label: '3. Case Studies: Bybit, Drift & Binance' },
+        { id: 'limits-of-the-three', label: '4. Limits of HSM, MPC & Enclaves' },
+        { id: 'combinations', label: '5. Control Combinations & Assumptions' },
+        { id: 'mpc-plus-hsm', label: '5b. Hybrid MPC + HSM Variants' },
+        { id: 'takeaways', label: '9A. Takeaways Matrix' },
       ],
     })
   })
@@ -217,6 +241,13 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         { id: 'smart-meter-lifecycle', label: 'Field Asset Lifecycle Planner' },
         { id: 'grid-evidence-scope', label: 'Grid Evidence Checklist' },
       ],
+      'custody-threats-controls': [
+        { id: 'blind-vs-clear', label: 'Blind vs Clear Signing (HSM)' },
+        { id: 'quorum-approvals', label: 'Quorum Approvals (ML-DSA-65 + secp256k1)' },
+        { id: 'threshold-signing', label: 'Threshold Signing (RFC 9591 FROST)' },
+        { id: 'combination-builder', label: 'Control Combination Builder' },
+        { id: 'agent-wallet-scope', label: 'Agent Wallet Scoping' },
+      ],
     }
     expect(buildWorkshopSteps(MANIFESTS)).toEqual(expected)
   })
@@ -253,7 +284,14 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         return { ...track, modules: [...modules, postCutoverPqcImplementationSecurityCatalog] }
       }
       if (track.track === 'Industries') {
-        return { ...track, modules: [...modules, postCutoverEnergyUtilitiesPqcCatalog] }
+        return {
+          ...track,
+          modules: [
+            ...modules,
+            postCutoverEnergyUtilitiesPqcCatalog,
+            postCutoverCustodyThreatsControlsCatalog,
+          ],
+        }
       }
       return { ...track, modules }
     })
@@ -351,6 +389,10 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
           'OMB M-26-15',
           'FIPS 140-3',
         ],
+      },
+      'custody-threats-controls': {
+        algorithms: ['ECDSA', 'ML-DSA', 'Falcon'],
+        standards: ['FIPS 140-3', 'PKCS#11'],
       },
     })
   })
