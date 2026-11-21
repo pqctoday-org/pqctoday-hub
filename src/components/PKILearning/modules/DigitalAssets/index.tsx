@@ -172,7 +172,7 @@ export const DigitalAssetsModule: React.FC = () => {
           </div>
         </>
       ) : (
-        <div>
+        <div data-workshop-step={activeChain}>
           <Button
             variant="ghost"
             onClick={backToSelection}

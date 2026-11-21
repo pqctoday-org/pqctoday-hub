@@ -17,8 +17,8 @@ const manifest: ModuleManifest = {
   trackOrder: 0,
   learnSections: [
     { id: 'why-it-matters', label: 'Why It Matters' },
-    { id: 'what-to-learn', label: 'Knowledge & Skills' },
-    { id: 'how-to-act', label: 'How to Act' },
+    { id: 'what-to-learn', label: 'Why Now' },
+    { id: 'how-to-act', label: 'What This Module Covers' },
   ],
   workshopSteps: [
     { id: 'why-it-matters', label: 'Why It Matters' },
