@@ -22,6 +22,7 @@ import { generateFollowUps } from './generateFollowUps'
 import type { ChatSourceRef } from '@/types/ChatTypes'
 import { CitationTierChip } from '@/components/ui/CitationTierChip'
 import { sanitizeDeepLink } from '@/services/search/deepLinkGrammar'
+import { removedStatementsNote } from '@/services/chat/removedStatementsNote'
 import { createLogger } from '@/utils/logger'
 
 const deepLinkLogger = createLogger('ChatDeepLink')
@@ -34,6 +35,8 @@ interface ChatMessageProps {
   onFollowUp?: (question: string) => void
   activeTab?: string
   followUps?: string[]
+  /** Statements left out of this answer because the sources did not support them. */
+  removedStatements?: number
   persona?: string | null
   feedback?: 'helpful' | 'unhelpful'
   onFeedback?: (feedback: 'helpful' | 'unhelpful' | undefined) => void
@@ -49,6 +52,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onFollowUp,
   activeTab,
   followUps,
+  removedStatements,
   persona,
   feedback,
   onFeedback,
@@ -56,6 +60,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onEdit,
 }) => {
   const isUser = sender === 'user'
+  const removedNote = removedStatementsNote(removedStatements ?? 0)
   const navigate = useNavigate()
   const closePanel = useRightPanelStore((s) => s.close)
   const [copied, setCopied] = useState(false)
@@ -234,6 +239,15 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             >
               {content}
             </ReactMarkdown>
+            {!isStreaming && removedNote && (
+              <p
+                role="note"
+                data-testid="removed-statements-note"
+                className="not-prose mt-2 rounded-md border border-border bg-muted/30 px-2 py-1 text-xs text-muted-foreground"
+              >
+                {removedNote}
+              </p>
+            )}
           </div>
         )}
 

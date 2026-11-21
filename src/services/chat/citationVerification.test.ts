@@ -99,7 +99,7 @@ describe('verifyCitations', () => {
     const violations = verifyCitations(
       [
         {
-          claimExcerpt: 'FIPS 203 standardizes ML-KEM-768 at security level 3.',
+          claimExcerpt: 'ML-KEM-768 gives NIST security level 3.',
           evidenceExcerpt: 'ML-KEM-768 provides NIST security level 3',
           chunkId: 'algo-ml-kem-768',
         },
@@ -107,5 +107,19 @@ describe('verifyCitations', () => {
       [CHUNK]
     )
     expect(violations).toEqual([])
+  })
+
+  it('rejects a paraphrase that adds a name the cited excerpt does not state', () => {
+    const violations = verifyCitations(
+      [
+        {
+          claimExcerpt: 'FIPS 204 standardizes ML-KEM-768 at security level 3.',
+          evidenceExcerpt: 'ML-KEM-768 provides NIST security level 3',
+          chunkId: 'algo-ml-kem-768',
+        },
+      ],
+      [CHUNK]
+    )
+    expect(violations.map((v) => v.reason)).toEqual(['weak-evidence'])
   })
 })
