@@ -25,6 +25,7 @@ import { TLSKeyShareBudget } from './TLSKeyShareBudget'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import {
   MEASURED_HANDSHAKE_FACTS,
   formatBytes,
@@ -35,6 +36,7 @@ interface TLSIntroductionProps {
 }
 
 export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSimulate }) => {
+  useSectionAnchors()
   return (
     <div className="space-y-6 w-full">
       {/* Learning Objectives & Prerequisites */}
@@ -110,7 +112,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
       </section>
 
       {/* The Handshake */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="handshake">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Zap size={20} /> The TLS 1.3{' '}
           <InlineTooltip term="TLS Handshake">Handshake</InlineTooltip>
@@ -126,7 +128,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
       </section>
 
       {/* Cipher Suites Explained */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="ciphers">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Lock size={20} /> <InlineTooltip term="Cipher Suite">Cipher Suites</InlineTooltip>{' '}
           Explained
@@ -330,7 +332,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
       </section>
 
       {/* PQC in TLS */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="pqc-tls">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> Post-Quantum Cryptography in TLS
         </h2>
@@ -377,7 +379,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
       </section>
 
       {/* Certificate Overhead Mitigations */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="certificates">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <TreePine size={20} /> Scaling PQC for HTTPS
         </h2>

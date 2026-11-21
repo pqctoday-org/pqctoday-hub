@@ -796,10 +796,6 @@
         "label": "ML-DSA JWT Signing"
       },
       {
-        "id": "hybrid-jwt",
-        "label": "Hybrid JWT Compatibility"
-      },
-      {
         "id": "jwe",
         "label": "ML-KEM JWE Key Agreement"
       },
@@ -2161,12 +2157,24 @@
     ],
     "pqc-grc": [
       {
-        "id": "kri-cascade",
-        "label": "KRI Cascade Thresholds"
+        "id": "cascade",
+        "label": "GRC & KRI Cascade"
       },
       {
-        "id": "exception-triage",
-        "label": "GRC-SOC Exception Triage"
+        "id": "appetite",
+        "label": "Risk & Regulatory"
+      },
+      {
+        "id": "handoff",
+        "label": "GRC-SOC Handoff"
+      },
+      {
+        "id": "assurance",
+        "label": "Audit & Crisis Comms"
+      },
+      {
+        "id": "resources",
+        "label": "Resources & Workshop"
       }
     ],
     "qkd": [
@@ -2305,12 +2313,20 @@
     ],
     "skills-team-structure": [
       {
-        "id": "team-sizing",
-        "label": "Team Sizing Heuristic"
+        "id": "challenge",
+        "label": "Skills & Core Roles"
       },
       {
-        "id": "crypto-champions",
-        "label": "Crypto Champion Roster"
+        "id": "sizing",
+        "label": "Team Sizing & Build"
+      },
+      {
+        "id": "training",
+        "label": "Training & Champions"
+      },
+      {
+        "id": "resources",
+        "label": "Resources & Workshop"
       }
     ],
     "soc-implementation-pqc": [
@@ -2392,7 +2408,7 @@
       },
       {
         "id": "certificates",
-        "label": "Certificate Trust Chains"
+        "label": "PQC Certificate Chains"
       },
       {
         "id": "ciphers",

@@ -19,6 +19,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { VULNERABILITY_TABLE, JOSE_HEADER_COMPARISONS, OAUTH_MIGRATION_ITEMS } from '../constants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 
 interface APISecurityIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -27,10 +28,11 @@ interface APISecurityIntroductionProps {
 export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: JWT/JWS/JWE Fundamentals */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="jwt">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <FileCode2 size={24} className="text-primary" />
@@ -200,7 +202,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
       </section>
 
       {/* Section 3: PQC JWT Signing with ML-DSA */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="pqc-sign">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-success/10">
             <ShieldCheck size={24} className="text-success" />
@@ -270,7 +272,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
       </section>
 
       {/* Section 4: PQC JWT Key Agreement with ML-KEM */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="jwe">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <KeyRound size={24} className="text-primary" />
@@ -532,7 +534,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
       </section>
 
       {/* Section 7: OAuth 2.0 / OIDC with PQC */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="oauth">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Globe size={24} className="text-primary" />

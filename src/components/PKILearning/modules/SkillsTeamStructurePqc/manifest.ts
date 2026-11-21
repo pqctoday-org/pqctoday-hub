@@ -16,8 +16,10 @@ const manifest: ModuleManifest = {
   track: 'Governance & Risk',
   trackOrder: 7,
   learnSections: [
-    { id: 'team-sizing', label: 'Team Sizing Heuristic' },
-    { id: 'crypto-champions', label: 'Crypto Champion Roster' },
+    { id: 'challenge', label: 'Skills & Core Roles' },
+    { id: 'sizing', label: 'Team Sizing & Build' },
+    { id: 'training', label: 'Training & Champions' },
+    { id: 'resources', label: 'Resources & Workshop' },
   ],
   workshopSteps: [
     { id: 'team-sizing', label: 'Team Sizing Calculator' },

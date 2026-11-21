@@ -26,7 +26,7 @@ const manifest: ModuleManifest = {
   ],
   learnSections: [
     { id: 'handshake', label: 'TLS 1.3 Handshake' },
-    { id: 'certificates', label: 'Certificate Trust Chains' },
+    { id: 'certificates', label: 'PQC Certificate Chains' },
     { id: 'ciphers', label: 'Cipher Suites' },
     { id: 'pqc-tls', label: 'PQC in TLS & Hybrid Modes' },
   ],
