@@ -2,6 +2,7 @@
 import React from 'react'
 import { ArrowRight, ExternalLink, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 
 interface EnrollmentIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -10,6 +11,7 @@ interface EnrollmentIntroductionProps {
 export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <section id="enrollment-overview" data-section-id="enrollment-overview">
