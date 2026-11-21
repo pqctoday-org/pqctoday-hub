@@ -18,7 +18,7 @@ const manifest: ModuleManifest = {
   learnSections: [
     { id: 'crqc', label: 'CRQC Timeline & HNDL' },
     { id: 'hndl', label: 'HNDL Risk Prioritization' },
-    { id: 'security-levels', label: 'PQ Security Levels' },
+    { id: 'security-levels', label: 'Harvest Now, Forge Later' },
   ],
   workshopSteps: [
     { id: 'security-levels', label: 'Security Level Degradation' },

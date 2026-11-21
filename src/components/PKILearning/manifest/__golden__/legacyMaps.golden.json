@@ -1715,7 +1715,7 @@
       },
       {
         "id": "kmip",
-        "label": "KMIP Cross-Provider Sync"
+        "label": "Enterprise Architecture Patterns"
       },
       {
         "id": "cloud-responsibility",
@@ -2055,15 +2055,15 @@
     "pqc-risk-management": [
       {
         "id": "crqc",
-        "label": "CRQC Timeline Modeling"
+        "label": "Why PQC Risk Management"
       },
       {
         "id": "register",
-        "label": "Risk Register"
+        "label": "Key Concepts"
       },
       {
         "id": "heatmap",
-        "label": "Risk Heatmap"
+        "label": "Executive Perspective"
       }
     ],
     "pqc-testing-validation": [
@@ -2206,7 +2206,7 @@
       },
       {
         "id": "security-levels",
-        "label": "PQ Security Levels"
+        "label": "Harvest Now, Forge Later"
       }
     ],
     "research-quantum-impact": [
@@ -2484,7 +2484,7 @@
       },
       {
         "id": "supply-chain",
-        "label": "Supply Chain Crypto Deps"
+        "label": "Vendor PQC Scorecards"
       },
       {
         "id": "cbom",
@@ -2496,7 +2496,7 @@
       },
       {
         "id": "risk-matrix",
-        "label": "Layer-wise Risk Matrix"
+        "label": "Vendor Assessment Framework"
       }
     ],
     "verification-closure": [

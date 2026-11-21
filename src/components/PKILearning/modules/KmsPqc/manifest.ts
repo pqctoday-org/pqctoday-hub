@@ -20,7 +20,7 @@ const manifest: ModuleManifest = {
     { id: 'envelope', label: 'ML-KEM Envelope Encrypt' },
     { id: 'hybrid-wrap', label: 'Hybrid Key Wrapping' },
     { id: 'rotation', label: 'Key Rotation Planning' },
-    { id: 'kmip', label: 'KMIP Cross-Provider Sync' },
+    { id: 'kmip', label: 'Enterprise Architecture Patterns' },
     { id: 'cloud-responsibility', label: 'Cloud Shared Responsibility' },
   ],
   workshopSteps: [

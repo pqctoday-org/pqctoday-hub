@@ -16,9 +16,9 @@ const manifest: ModuleManifest = {
   track: 'Governance & Risk',
   trackOrder: 0,
   learnSections: [
-    { id: 'crqc', label: 'CRQC Timeline Modeling' },
-    { id: 'register', label: 'Risk Register' },
-    { id: 'heatmap', label: 'Risk Heatmap' },
+    { id: 'crqc', label: 'Why PQC Risk Management' },
+    { id: 'register', label: 'Key Concepts' },
+    { id: 'heatmap', label: 'Executive Perspective' },
   ],
   workshopSteps: [
     { id: 'crqc-scenario-planner', label: 'CRQC Scenario Planner' },

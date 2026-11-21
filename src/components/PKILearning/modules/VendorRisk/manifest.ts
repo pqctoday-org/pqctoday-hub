@@ -17,10 +17,10 @@ const manifest: ModuleManifest = {
   trackOrder: 5,
   learnSections: [
     { id: 'readiness', label: 'Vendor PQC Readiness' },
-    { id: 'supply-chain', label: 'Supply Chain Crypto Deps' },
+    { id: 'supply-chain', label: 'Vendor PQC Scorecards' },
     { id: 'cbom', label: 'CBOM: Crypto Bill of Materials' },
     { id: 'contracts', label: 'PQC Contract Requirements' },
-    { id: 'risk-matrix', label: 'Layer-wise Risk Matrix' },
+    { id: 'risk-matrix', label: 'Vendor Assessment Framework' },
   ],
   workshopSteps: [
     { id: 'infrastructure-selector', label: 'Infrastructure Selector' },
