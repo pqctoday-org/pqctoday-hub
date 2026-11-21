@@ -2,11 +2,16 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { MemoryRouter } from 'react-router'
 import { EnrollmentIntroduction } from './EnrollmentIntroduction'
 
 describe('PKI enrollment source and support scope', () => {
   it('distinguishes the final composite signature RFC from the current KEM draft', () => {
-    render(<EnrollmentIntroduction onNavigateToWorkshop={vi.fn()} />)
+    render(
+      <MemoryRouter>
+        <EnrollmentIntroduction onNavigateToWorkshop={vi.fn()} />
+      </MemoryRouter>
+    )
 
     expect(
       screen.getByText(/Composite ML-KEM document is still an Internet-Draft: revision 23/i)
@@ -25,7 +30,11 @@ describe('PKI enrollment source and support scope', () => {
   })
 
   it('links version-scoped vendor support and avoids a fixed signature-size multiplier', () => {
-    render(<EnrollmentIntroduction onNavigateToWorkshop={vi.fn()} />)
+    render(
+      <MemoryRouter>
+        <EnrollmentIntroduction onNavigateToWorkshop={vi.fn()} />
+      </MemoryRouter>
+    )
 
     expect(screen.getByRole('link', { name: 'EJBCA PQC guide' })).toHaveAttribute(
       'href',

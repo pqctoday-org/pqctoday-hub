@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'skills-team-structure',
-  contentVersion: 12,
+  contentVersion: 13,
   lm_id: 'LM-059',
   title: 'Skills & Team Structure',
   description:
@@ -16,8 +16,10 @@ const manifest: ModuleManifest = {
   track: 'Governance & Risk',
   trackOrder: 7,
   learnSections: [
-    { id: 'team-sizing', label: 'Team Sizing Heuristic' },
-    { id: 'crypto-champions', label: 'Crypto Champion Roster' },
+    { id: 'challenge', label: 'Skills & Core Roles' },
+    { id: 'sizing', label: 'Team Sizing & Build' },
+    { id: 'training', label: 'Training & Champions' },
+    { id: 'resources', label: 'Resources & Workshop' },
   ],
   workshopSteps: [
     { id: 'team-sizing', label: 'Team Sizing Calculator' },

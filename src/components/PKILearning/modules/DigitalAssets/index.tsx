@@ -72,9 +72,12 @@ export const DigitalAssetsModule: React.FC = () => {
   // rides the ModuleShell `workshop` slot. ModuleShell owns tabs, header, time
   // tracking; this component owns the selected-chain state. Inbound `?flow=`
   // deep-links still land on a chain (read once); the shell owns the URL after.
-  const [activeChain, setActiveChain] = useState<string | null>(
-    () => getModuleDeepLink().initialFlow
-  )
+  // `?step=N` (the manifest's workshop step order, the same order as CHAINS)
+  // opens that chain too, so step links land like every other module's.
+  const [activeChain, setActiveChain] = useState<string | null>(() => {
+    const dl = getModuleDeepLink({ maxStep: CHAINS.length - 1 })
+    return dl.initialFlow ?? (dl.stepGiven ? (CHAINS[dl.initialStep]?.id ?? null) : null)
+  })
   const [configKey, setConfigKey] = useState(0)
 
   const selectChain = (chain: string) => {
@@ -169,7 +172,7 @@ export const DigitalAssetsModule: React.FC = () => {
           </div>
         </>
       ) : (
-        <div>
+        <div data-workshop-step={activeChain}>
           <Button
             variant="ghost"
             onClick={backToSelection}

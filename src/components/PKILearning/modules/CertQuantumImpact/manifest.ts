@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'cert-quantum-impact',
-  contentVersion: 3,
+  contentVersion: 4,
   lm_id: 'LM-079',
   title: 'Certification Engineer Quantum Impact',
   description:
@@ -17,8 +17,8 @@ const manifest: ModuleManifest = {
   trackOrder: 6,
   learnSections: [
     { id: 'why-it-matters', label: 'Why It Matters' },
-    { id: 'what-to-learn', label: 'Knowledge & Skills' },
-    { id: 'how-to-act', label: 'How to Act' },
+    { id: 'what-to-learn', label: 'Why Now' },
+    { id: 'how-to-act', label: 'What This Module Covers' },
   ],
   workshopSteps: [
     { id: 'why-it-matters', label: 'Why It Matters' },

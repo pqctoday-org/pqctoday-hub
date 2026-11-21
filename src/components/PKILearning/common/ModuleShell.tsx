@@ -40,6 +40,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ModuleTabBar } from './ModuleTabBar'
 import { useEmbeddedLearn } from '../embeddedLearnContext'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { ModuleVisualTab } from './ModuleVisualTab'
 import { ModuleReferencesTab } from './ModuleReferencesTab'
@@ -248,6 +249,21 @@ function WorkshopStepper({
     pendingStepFocus.current = null
     stepTitleRef.current?.focus()
   }, [currentPart])
+
+  // Arriving from a step link (`?tab=workshop&step=N`): bring the step on
+  // screen. On a phone the module header and tab bar fill the first screen,
+  // so the selected step used to sit below the fold. Once per mount, and not
+  // when embedded (the host page owns the scroll there).
+  const embedded = useEmbeddedLearn()
+  useEffect(() => {
+    if (embedded) return
+    const dl = getModuleDeepLink()
+    if (!dl.stepGiven || dl.initialTab !== 'workshop') return
+    const raf = requestAnimationFrame(() => {
+      stepTitleRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [embedded])
 
   const remainingRequired = visibleIndices.filter(
     (i) =>

@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'tls-basics',
   version: '1.1.1',
   lastReviewed: '2026-08-23',
-  lastEdited: '2026-11-18',
+  lastEdited: '2026-11-21',
 
   standards: [
     getStandard('FIPS 203'),

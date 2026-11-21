@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'quantum-threats',
-  contentVersion: 29,
+  contentVersion: 30,
   lm_id: 'LM-002',
   title: 'Quantum Threats',
   description:
@@ -18,7 +18,7 @@ const manifest: ModuleManifest = {
   learnSections: [
     { id: 'crqc', label: 'CRQC Timeline & HNDL' },
     { id: 'hndl', label: 'HNDL Risk Prioritization' },
-    { id: 'security-levels', label: 'PQ Security Levels' },
+    { id: 'security-levels', label: 'Harvest Now, Forge Later' },
   ],
   workshopSteps: [
     { id: 'security-levels', label: 'Security Level Degradation' },

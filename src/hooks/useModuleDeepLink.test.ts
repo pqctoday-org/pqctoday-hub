@@ -20,7 +20,12 @@ describe('getModuleDeepLink', () => {
 
   it('returns defaults when no URL params', () => {
     const result = getModuleDeepLink()
-    expect(result).toEqual({ initialTab: 'learn', initialStep: 0, initialFlow: null })
+    expect(result).toEqual({
+      initialTab: 'learn',
+      initialStep: 0,
+      initialFlow: null,
+      stepGiven: false,
+    })
   })
 
   it('parses ?tab=workshop', () => {
@@ -29,6 +34,7 @@ describe('getModuleDeepLink', () => {
       initialTab: 'workshop',
       initialStep: 0,
       initialFlow: null,
+      stepGiven: false,
     })
   })
 
@@ -38,22 +44,38 @@ describe('getModuleDeepLink', () => {
       initialTab: 'workshop',
       initialStep: 3,
       initialFlow: null,
+      stepGiven: true,
     })
   })
 
   it('ignores invalid tab values', () => {
     setSearch('?tab=invalid')
-    expect(getModuleDeepLink()).toEqual({ initialTab: 'learn', initialStep: 0, initialFlow: null })
+    expect(getModuleDeepLink()).toEqual({
+      initialTab: 'learn',
+      initialStep: 0,
+      initialFlow: null,
+      stepGiven: false,
+    })
   })
 
   it('clamps negative step to 0', () => {
     setSearch('?step=-1')
-    expect(getModuleDeepLink()).toEqual({ initialTab: 'learn', initialStep: 0, initialFlow: null })
+    expect(getModuleDeepLink()).toEqual({
+      initialTab: 'learn',
+      initialStep: 0,
+      initialFlow: null,
+      stepGiven: false,
+    })
   })
 
   it('ignores non-numeric step', () => {
     setSearch('?step=abc')
-    expect(getModuleDeepLink()).toEqual({ initialTab: 'learn', initialStep: 0, initialFlow: null })
+    expect(getModuleDeepLink()).toEqual({
+      initialTab: 'learn',
+      initialStep: 0,
+      initialFlow: null,
+      stepGiven: false,
+    })
   })
 
   it('clamps step to maxStep', () => {
@@ -62,6 +84,7 @@ describe('getModuleDeepLink', () => {
       initialTab: 'learn',
       initialStep: 4,
       initialFlow: null,
+      stepGiven: true,
     })
   })
 
@@ -71,6 +94,7 @@ describe('getModuleDeepLink', () => {
       initialTab: 'learn',
       initialStep: 2,
       initialFlow: null,
+      stepGiven: true,
     })
   })
 
@@ -80,21 +104,37 @@ describe('getModuleDeepLink', () => {
       initialTab: 'simulate',
       initialStep: 0,
       initialFlow: null,
+      stepGiven: false,
     })
   })
 
   it('uses custom defaultTab', () => {
     const result = getModuleDeepLink({ defaultTab: 'workshop' })
-    expect(result).toEqual({ initialTab: 'workshop', initialStep: 0, initialFlow: null })
+    expect(result).toEqual({
+      initialTab: 'workshop',
+      initialStep: 0,
+      initialFlow: null,
+      stepGiven: false,
+    })
   })
 
   it('handles step=0 explicitly', () => {
     setSearch('?step=0')
-    expect(getModuleDeepLink()).toEqual({ initialTab: 'learn', initialStep: 0, initialFlow: null })
+    expect(getModuleDeepLink()).toEqual({
+      initialTab: 'learn',
+      initialStep: 0,
+      initialFlow: null,
+      stepGiven: true,
+    })
   })
 
   it('parses ?flow=btc', () => {
     setSearch('?flow=btc')
-    expect(getModuleDeepLink()).toEqual({ initialTab: 'learn', initialStep: 0, initialFlow: 'btc' })
+    expect(getModuleDeepLink()).toEqual({
+      initialTab: 'learn',
+      initialStep: 0,
+      initialFlow: 'btc',
+      stepGiven: false,
+    })
   })
 })

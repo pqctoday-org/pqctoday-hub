@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { ClaimLine, ReadingNote } from './ClaimLine'
 import { TAKEAWAYS_MATRIX } from '../data/lifecycleOpsData'
 
@@ -24,6 +25,7 @@ interface IntroductionProps {
 export const CustodyLifecycleIntroduction: React.FC<IntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
   return (
     <div className="space-y-8 w-full">
       {/* Educational Scope Banner */}

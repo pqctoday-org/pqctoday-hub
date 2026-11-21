@@ -79,6 +79,41 @@ export const MOVED_CONTENT_REDIRECTS: ReadonlyMap<string, MovedContentRedirect> 
       learnSections: new Map([['homomorphic-encryption', 'fhe-fundamentals']]),
     },
   ],
+  // 2026-11-21: three modules listed Learn sections that never existed on their
+  // pages (their manifests named workshop steps instead), so those section links
+  // opened the module top. The manifests now list the sections the pages show; a
+  // link with an old id lands on the section that covers it. A module that
+  // renamed its own sections points `to` at itself.
+  [
+    'pqc-grc',
+    {
+      to: 'pqc-grc',
+      workshopSteps: new Map(),
+      learnSections: new Map([
+        ['kri-cascade', 'cascade'],
+        ['exception-triage', 'handoff'],
+      ]),
+    },
+  ],
+  [
+    'skills-team-structure',
+    {
+      to: 'skills-team-structure',
+      workshopSteps: new Map(),
+      learnSections: new Map([
+        ['team-sizing', 'sizing'],
+        ['crypto-champions', 'training'],
+      ]),
+    },
+  ],
+  [
+    'api-security-jwt',
+    {
+      to: 'api-security-jwt',
+      workshopSteps: new Map(),
+      learnSections: new Map([['hybrid-jwt', 'pqc-sign']]),
+    },
+  ],
 ])
 
 /**

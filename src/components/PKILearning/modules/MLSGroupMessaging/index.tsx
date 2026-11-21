@@ -9,9 +9,11 @@ import { TreeKEMVisualizer } from './workshop/TreeKEMVisualizer'
 import { ProviderArchitecture } from './workshop/ProviderArchitecture'
 import { MLSCryptoOperations } from './workshop/MLSCryptoOperations'
 import { MLSReinitializationCheck } from './workshop/MLSReinitializationCheck'
+import { useWorkshopStepAnchor } from '../../common/useWorkshopStepAnchor'
 
 export function MLSGroupMessagingModule() {
   const [resetKey, setResetKey] = useState(0)
+  useWorkshopStepAnchor(manifest.workshopSteps)
   return (
     <ModuleShell
       manifest={manifest}
@@ -31,8 +33,12 @@ export function MLSGroupMessagingModule() {
           </div>
           <MLSCryptoOperations />
           <MLSReinitializationCheck key={resetKey} />
-          <TreeKEMVisualizer />
-          <ProviderArchitecture />
+          <div data-workshop-step="treekem">
+            <TreeKEMVisualizer />
+          </div>
+          <div data-workshop-step="provider-arch">
+            <ProviderArchitecture />
+          </div>
         </div>
       )}
     />

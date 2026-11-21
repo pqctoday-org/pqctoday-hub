@@ -2,12 +2,19 @@
 import React from 'react'
 import { GitBranch, MessageSquare, Shield, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { LEARN_CHAPTERS } from '../content'
 import { MLS_CIPHERSUITES } from '../data/mlsData'
 
 interface MLSIntroductionProps {
   onNavigateToWorkshop: () => void
 }
+
+/** Chapters that carry a manifest learn section (`learnSections[].id`). */
+const SECTION_FOR_CHAPTER = new Map<string, string>([
+  ['treekem', 'mls-overview'],
+  ['ciphersuites', 'pq-mls'],
+])
 
 const statusLabel: Record<string, { label: string; cls: string }> = {
   baseline: { label: 'RFC 9420 baseline', cls: 'bg-primary/15 text-primary' },
@@ -22,6 +29,7 @@ const statusLabel: Record<string, { label: string; cls: string }> = {
 }
 
 export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  useSectionAnchors()
   return (
     <div className="space-y-8">
       <div className="glass-panel p-6 md:p-8">
@@ -80,7 +88,11 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
 
       <div className="space-y-6">
         {LEARN_CHAPTERS.map((ch) => (
-          <section key={ch.id} className="glass-panel p-6">
+          <section
+            key={ch.id}
+            className="glass-panel p-6"
+            data-section-id={SECTION_FOR_CHAPTER.get(ch.id)}
+          >
             <h3 className="text-xl font-semibold text-foreground">{ch.title}</h3>
             <div className="mt-3 space-y-3 text-muted-foreground">
               {ch.body.map((para, i) => (

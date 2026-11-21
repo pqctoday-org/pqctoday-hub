@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'kms-pqc',
-  contentVersion: 23,
+  contentVersion: 24,
   lm_id: 'LM-016',
   title: 'KMS & PQC Key Management',
   description:
@@ -20,7 +20,7 @@ const manifest: ModuleManifest = {
     { id: 'envelope', label: 'ML-KEM Envelope Encrypt' },
     { id: 'hybrid-wrap', label: 'Hybrid Key Wrapping' },
     { id: 'rotation', label: 'Key Rotation Planning' },
-    { id: 'kmip', label: 'KMIP Cross-Provider Sync' },
+    { id: 'kmip', label: 'Enterprise Architecture Patterns' },
     { id: 'cloud-responsibility', label: 'Cloud Shared Responsibility' },
   ],
   workshopSteps: [

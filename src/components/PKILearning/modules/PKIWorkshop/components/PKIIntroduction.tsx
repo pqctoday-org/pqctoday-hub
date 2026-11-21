@@ -20,16 +20,18 @@ import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 
 interface PKIIntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
 export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWorkshop }) => {
+  useSectionAnchors()
   return (
     <div className="space-y-6 w-full">
       {/* Section 1: What is PKI? */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="fundamentals">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> What is PKI?
         </h2>
@@ -52,7 +54,10 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
               <li>End Entities (subscribers)</li>
             </ul>
           </div>
-          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+          <div
+            className="bg-muted/50 rounded-lg p-3 border border-border"
+            data-section-id="ca-hierarchy"
+          >
             <div className="text-sm font-bold text-success mb-1">Trust Models</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>Hierarchical (Root → Intermediate → EE)</li>
@@ -75,7 +80,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 2: Certificate Lifecycle */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="lifecycle">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <RefreshCw size={20} /> The Certificate Lifecycle
         </h2>
@@ -91,7 +96,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 3: X.509 Certificate Structure */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="cert-structure">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <FileText size={20} /> X.509 Certificate Structure
         </h2>
@@ -231,7 +236,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 6: PQC Migration for PKI */}
-      <section className="glass-panel p-6">
+      <section className="glass-panel p-6" data-section-id="pqc-pki">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> PQC Migration for PKI
         </h2>

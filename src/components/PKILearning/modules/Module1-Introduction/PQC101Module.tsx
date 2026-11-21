@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ChoosePqcOperation } from './ChoosePqcOperation'
+import { useDeepLinkTarget } from '@/components/PKILearning/common/LearnSection'
 
 const MODULE_ID = 'pqc-101'
 
@@ -620,10 +621,32 @@ const Step5NextSteps: React.FC = () => {
   )
 }
 
+/** Learn sections in step order; must match the manifest's `learnSections[].id`. */
+const STEP_SECTIONS = [
+  'quantum-threat',
+  'algorithms',
+  'timeline',
+  'readiness',
+  'next-steps',
+] as const
+
 export const PQC101Module: React.FC = () => {
   const { markLearnSectionRead, updateModuleProgress } = useModuleStore()
   const progress = useModuleStore((state) => state.modules[MODULE_ID])
-  const [currentStep, setCurrentStep] = useState(0)
+  // A `?section=` / `#section` link opens the step that holds that section.
+  const deepLinkSection = useDeepLinkTarget()
+  const [currentStep, setCurrentStep] = useState(() =>
+    Math.max(0, (STEP_SECTIONS as readonly string[]).indexOf(deepLinkSection))
+  )
+  useEffect(() => {
+    if (!(STEP_SECTIONS as readonly string[]).includes(deepLinkSection)) return
+    const raf = requestAnimationFrame(() => {
+      document
+        .querySelector(`[data-section-id="${deepLinkSection}"]`)
+        ?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [deepLinkSection])
   const startTimeRef = useRef(0)
 
   // Mark module in-progress as soon as the user opens it
@@ -648,31 +671,31 @@ export const PQC101Module: React.FC = () => {
   const steps = [
     {
       id: 'why-pqc',
-      section: 'quantum-threat',
+      section: STEP_SECTIONS[0],
       title: 'Why PQC?',
       component: <Step1WhyPQC />,
     },
     {
       id: 'whats-changing',
-      section: 'algorithms',
+      section: STEP_SECTIONS[1],
       title: "What's Changing",
       component: <Step2WhatsChanging />,
     },
     {
       id: 'the-timeline',
-      section: 'timeline',
+      section: STEP_SECTIONS[2],
       title: 'The Timeline',
       component: <Step3Timeline />,
     },
     {
       id: 'who-acts',
-      section: 'readiness',
+      section: STEP_SECTIONS[3],
       title: 'Who Needs to Act',
       component: <Step4WhoNeedsToAct />,
     },
     {
       id: 'next-steps',
-      section: 'next-steps',
+      section: STEP_SECTIONS[4],
       title: 'Your Next Steps',
       component: <Step5NextSteps />,
     },
@@ -732,7 +755,11 @@ export const PQC101Module: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="glass-panel p-6 md:p-8 min-h-[400px]">
+      <div
+        className="glass-panel p-6 md:p-8 min-h-[400px]"
+        // eslint-disable-next-line security/detect-object-injection
+        data-section-id={steps[currentStep].section}
+      >
         {/* eslint-disable-next-line security/detect-object-injection */}
         <h2 className="text-2xl font-bold text-foreground mb-6">{steps[currentStep].title}</h2>
         {/* eslint-disable-next-line security/detect-object-injection */}

@@ -11,6 +11,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { ClaimLine, AnalysisLine, ReadingNote } from './ClaimLine'
 import {
   ASSURANCE_REGIMES,
@@ -28,6 +29,7 @@ interface IntroductionProps {
 export const CustodyGovernanceIntroduction: React.FC<IntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
+  useSectionAnchors()
   return (
     <div className="space-y-8 w-full">
       {/* Framing Banner */}

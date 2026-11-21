@@ -166,3 +166,33 @@ describe('reordered workshop steps (a module that keeps its id)', () => {
     ).toBe('/learn/hybrid-crypto?tab=workshop&step=3&flow=x&sv=2#top')
   })
 })
+
+describe('renamed learn sections inside a module (redirect to itself)', () => {
+  it('sends an old section id to the section that covers it, by query and by hash', () => {
+    expect(resolveMovedContentRedirect('pqc-grc', '?section=kri-cascade')).toBe(
+      '/learn/pqc-grc?section=cascade'
+    )
+    expect(resolveMovedContentRedirect('skills-team-structure', '', '#crypto-champions')).toBe(
+      '/learn/skills-team-structure#training'
+    )
+    expect(resolveMovedContentRedirect('api-security-jwt', '?section=hybrid-jwt')).toBe(
+      '/learn/api-security-jwt?section=pqc-sign'
+    )
+  })
+
+  it('leaves current section ids alone, so the redirect cannot loop', () => {
+    expect(resolveMovedContentRedirect('pqc-grc', '?section=cascade')).toBeNull()
+    expect(resolveMovedContentRedirect('api-security-jwt', '', '#jwt')).toBeNull()
+  })
+
+  it('every old id points at a section the module lists today', () => {
+    for (const id of ['pqc-grc', 'skills-team-structure', 'api-security-jwt']) {
+      const rule = MOVED_CONTENT_REDIRECTS.get(id)
+      const current = new Set(MANIFESTS.find((m) => m.id === id)?.learnSections?.map((s) => s.id))
+      for (const [old, now] of rule?.learnSections ?? []) {
+        expect(current.has(old), `${id}: ${old} is still a section`).toBe(false)
+        expect(current.has(now), `${id}: ${now} is not a section`).toBe(true)
+      }
+    }
+  })
+})

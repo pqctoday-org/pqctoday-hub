@@ -217,8 +217,8 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       ),
       'cert-quantum-impact': [
         { id: 'why-it-matters', label: 'Why It Matters' },
-        { id: 'what-to-learn', label: 'Knowledge & Skills' },
-        { id: 'how-to-act', label: 'How to Act' },
+        { id: 'what-to-learn', label: 'Why Now' },
+        { id: 'how-to-act', label: 'What This Module Covers' },
       ],
       'cloud-pqc': [
         { id: 'shared-responsibility', label: 'Shared Responsibility & Assets' },

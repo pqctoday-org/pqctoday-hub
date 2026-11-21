@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'api-security-jwt',
-  contentVersion: 23,
+  contentVersion: 24,
   lm_id: 'LM-011',
   title: 'API Security & JWT',
   description:
@@ -18,7 +18,6 @@ const manifest: ModuleManifest = {
   learnSections: [
     { id: 'jwt', label: 'JWT/JWS/JWE Structure' },
     { id: 'pqc-sign', label: 'ML-DSA JWT Signing' },
-    { id: 'hybrid-jwt', label: 'Hybrid JWT Compatibility' },
     { id: 'jwe', label: 'ML-KEM JWE Key Agreement' },
     { id: 'oauth', label: 'OAuth 2.0 PQC Migration' },
   ],

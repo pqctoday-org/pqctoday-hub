@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-grc',
-  contentVersion: 12,
+  contentVersion: 13,
   lm_id: 'LM-058',
   title: 'PQC GRC',
   description:
@@ -16,8 +16,11 @@ const manifest: ModuleManifest = {
   track: 'Governance & Risk',
   trackOrder: 8,
   learnSections: [
-    { id: 'kri-cascade', label: 'KRI Cascade Thresholds' },
-    { id: 'exception-triage', label: 'GRC-SOC Exception Triage' },
+    { id: 'cascade', label: 'GRC & KRI Cascade' },
+    { id: 'appetite', label: 'Risk & Regulatory' },
+    { id: 'handoff', label: 'GRC-SOC Handoff' },
+    { id: 'assurance', label: 'Audit & Crisis Comms' },
+    { id: 'resources', label: 'Resources & Workshop' },
   ],
   workshopSteps: [
     { id: 'kri-cascade', label: 'KRI Cascade' },
