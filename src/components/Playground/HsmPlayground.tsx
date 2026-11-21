@@ -46,6 +46,8 @@ import { InlineTooltip } from '../ui/InlineTooltip'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useAchievementStore } from '@/store/useAchievementStore'
+import { HSM_PLAYGROUND_TOOL_ID } from '@/data/achievementCatalog'
 import { hidesWorkbench } from '@/utils/workbenchAccess'
 import { logEvent } from '../../utils/analytics'
 import {
@@ -226,6 +228,12 @@ export const HsmPlayground = () => {
     hsmKeys,
     setLogOrigin,
   } = useHsmContext()
+
+  // This route sits outside WORKSHOP_TOOLS, so PlaygroundToolRoute never
+  // recorded it and the "HSM Operator" achievement could not be earned.
+  useEffect(() => {
+    useAchievementStore.getState().recordPlaygroundToolUsage(HSM_PLAYGROUND_TOOL_ID)
+  }, [])
 
   // ── URL deep-link setup ──────────────────────────────────────────────────
   const [searchParams, setSearchParams] = useSearchParams()

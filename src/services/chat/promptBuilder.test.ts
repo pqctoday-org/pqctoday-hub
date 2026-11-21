@@ -149,22 +149,34 @@ describe('structured citations (useStructuredCitations flag)', () => {
     expect(result).not.toContain('id: test-1')
   })
 
-  it('local prompt: includes the citations instruction and chunk id when on', () => {
+  it('local prompt: cite-by-sentence numbers sentences and asks for evidenceRef', () => {
     structuredCitationsEnabled = true
     const result = buildLocalSystemPrompt([mockChunk])
     expect(result).toMatch(/```citations/)
     expect(result).toContain('id: test-1')
-    expect(result).toMatch(/claimExcerpt/)
-    expect(result).toMatch(/chunkId/)
+    expect(result).toMatch(/\[1\] /)
+    expect(result).toMatch(/evidenceRef/)
   })
 
-  it('gemini prompt: includes the citations instruction and chunk id when on', () => {
+  it('local prompt: shows the chunk id as the only name, not the source name', () => {
+    structuredCitationsEnabled = true
+    const result = buildLocalSystemPrompt([mockChunk])
+    expect(result).toContain(`--- id: ${mockChunk.id} | `)
+    expect(result).not.toContain(`Source: ${mockChunk.source}`)
+  })
+
+  it('gemini prompt: cites by sentence number with the same numbered-sentence context', () => {
     structuredCitationsEnabled = true
     const result = buildGeminiSystemPrompt([mockChunk])
     expect(result).toMatch(/```citations/)
     expect(result).toContain('id: test-1')
+    expect(result).toMatch(/\[1\] /)
+    expect(result).toMatch(/evidenceRef/)
     expect(result).toMatch(/claimExcerpt/)
-    expect(result).toMatch(/chunkId/)
+    expect(result).not.toMatch(/evidenceExcerpt/)
+    expect(result).not.toMatch(/"chunkId"/)
+    // The cloud prompt keeps its source label (its guidelines refer to it) next to the id.
+    expect(result).toContain(`Source: ${mockChunk.source} | `)
     expect(result).not.toContain('```followups')
   })
 })

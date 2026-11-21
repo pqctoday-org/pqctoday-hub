@@ -333,6 +333,7 @@ export function useChatSend() {
             sources: cached.sourceIds,
             sourceRefs: cached.sourceRefs,
             followUps: cached.followUps,
+            removedStatements: cached.removedStatements,
           })
           return
         }
@@ -588,6 +589,7 @@ export function useChatSend() {
           sources: sourceIds,
           sourceRefs,
           followUps,
+          removedStatements: verified.droppedStatements || undefined,
         }
         addMessage(assistantMessage)
 
@@ -596,7 +598,13 @@ export function useChatSend() {
         setCache(
           trimmed,
           pageContext.page,
-          { content: finalContent, sourceIds, sourceRefs, followUps },
+          {
+            content: finalContent,
+            sourceIds,
+            sourceRefs,
+            followUps,
+            removedStatements: verified.droppedStatements || undefined,
+          },
           personaDims,
           cacheProvider
         )

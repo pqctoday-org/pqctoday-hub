@@ -127,7 +127,8 @@ const VulnerabilityLandscape: React.FC = () => (
                 Medium
               </span>
               <p className="text-xs mt-1">
-                AA path available today; no hard fork needed for early adopters
+                Custom validation via smart accounts (prototype PQ verifiers; no mainnet PQ
+                precompile yet); no hard fork needed for early adopters
               </p>
             </td>
           </tr>
@@ -379,9 +380,10 @@ const EthereumPQC: React.FC = () => (
           Ethereum: Two Paths to Quantum Resistance
         </h3>
         <p className="text-sm text-muted-foreground">
-          Ethereum has a structural advantage over Bitcoin and Solana: it can deploy PQC signing
-          today, without a hard fork, using its Account Abstraction infrastructure. A protocol-level
-          replacement is on the long-term roadmap.
+          Ethereum has a structural advantage over Bitcoin and Solana: smart accounts can deploy
+          prototype PQ signature verifiers today without a hard fork using its Account Abstraction
+          infrastructure (subject to gas costs and audit maturity; no mainnet PQ precompile is
+          live). A protocol-level replacement is on the long-term roadmap.
         </p>
       </div>
     </div>
@@ -393,35 +395,37 @@ const EthereumPQC: React.FC = () => (
           A
         </span>
         <h4 className="font-semibold text-foreground">
-          Account Abstraction (EIP-4337) — Available Now
+          Account Abstraction (ERC-4337) — Available Now
         </h4>
         <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-accent/20 text-accent">
           Live on Mainnet
         </span>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-        EIP-4337 introduced <em>smart contract wallets</em> (also called smart accounts) that can
-        define arbitrary signature verification logic. A PQC-enabled smart account verifies ML-DSA
-        or FALCON signatures instead of ECDSA — no protocol change required.
+        ERC-4337 introduced <em>smart contract wallets</em> (also called smart accounts) that can
+        define arbitrary signature validation logic. ERC-4337 itself specifies no post-quantum
+        algorithm; a smart account can deploy custom validation code (such as prototype in-contract
+        ML-DSA or Falcon verifiers) without a protocol change, subject to gas cost and audit
+        maturity.
       </p>
       <div className="bg-muted/50 rounded p-3 space-y-2 text-xs">
         <div className="flex items-start gap-2">
           <ArrowRight size={12} className="text-accent mt-0.5 shrink-0" />
           <span className="text-muted-foreground">
-            User deploys a smart account with a PQC verification module
+            User deploys a smart account with a custom PQC verification module
           </span>
         </div>
         <div className="flex items-start gap-2">
           <ArrowRight size={12} className="text-accent mt-0.5 shrink-0" />
           <span className="text-muted-foreground">
-            Transactions are signed with an ML-DSA or FALCON key pair off-chain
+            Transactions are signed with an ML-DSA or Falcon key pair off-chain
           </span>
         </div>
         <div className="flex items-start gap-2">
           <ArrowRight size={12} className="text-accent mt-0.5 shrink-0" />
           <span className="text-muted-foreground">
-            The smart account validates the PQC signature on-chain via a precompile or inline
-            Solidity verification
+            The smart account validates the PQC signature on-chain via inline contract verification
+            (no PQ signature precompile is live on Ethereum mainnet; precompile EIPs remain drafts)
           </span>
         </div>
         <div className="flex items-start gap-2">
@@ -441,7 +445,7 @@ const EthereumPQC: React.FC = () => (
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
       >
-        Read EIP-4337 <ExternalLink size={11} />
+        Read ERC-4337 <ExternalLink size={11} />
       </a>
     </div>
 
@@ -459,10 +463,12 @@ const EthereumPQC: React.FC = () => (
         </span>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        EIP-7702 (authored by Vitalik Buterin) allows Externally Owned Accounts (EOAs) to
-        temporarily set executable code, effectively delegating their account to a smart contract
-        for a transaction. This bridges the gap between EOAs and full smart accounts, enabling PQC
-        signing for existing addresses without a full migration.
+        EIP-7702 (live in Pectra) lets Externally Owned Accounts (EOAs) set persistent delegation
+        code that remains active across transactions until replaced or cleared. Because the
+        EOA&apos;s underlying secp256k1 key retains authority to re-delegate (and remains accepted
+        by legacy <code className="font-mono">ecrecover</code> /{' '}
+        <code className="font-mono">permit</code> paths), EIP-7702 alone does not remove quantum
+        exposure to that legacy key.
       </p>
       <a
         href="https://eips.ethereum.org/EIPS/eip-7702"
@@ -564,12 +570,14 @@ const EthereumPQC: React.FC = () => (
           spending
         </li>
         <li className="flex items-start gap-1.5">
-          <CheckCircle size={12} className="text-status-success mt-0.5 shrink-0" /> EIP-4337 lets
-          users switch to PQC wallets today, without waiting for a protocol change
+          <CheckCircle size={12} className="text-status-success mt-0.5 shrink-0" /> ERC-4337 lets
+          smart accounts deploy custom signature validation without a protocol change (subject to
+          verifier maturity and gas costs)
         </li>
         <li className="flex items-start gap-1.5">
-          <CheckCircle size={12} className="text-status-success mt-0.5 shrink-0" /> EIP-7702
-          provides a migration bridge for existing EOAs
+          <CheckCircle size={12} className="text-status-success mt-0.5 shrink-0" /> EIP-7702 lets
+          existing EOAs delegate persistently to smart-account code, though the underlying secp256k1
+          key retains authority until key deactivation is adopted
         </li>
         <li className="flex items-start gap-1.5">
           <CheckCircle size={12} className="text-status-success mt-0.5 shrink-0" /> Ethereum&apos;s
@@ -692,7 +700,7 @@ const SolanaHardProblem: React.FC = () => (
           <span>
             <strong className="text-foreground">Programme-level PQC verification</strong>: Using
             Solana&apos;s native programs to verify PQC signatures, similar to how Ethereum&apos;s
-            EIP-4337 uses smart contracts — but with Solana&apos;s programme model. A comment in the
+            ERC-4337 uses smart contracts — but with Solana&apos;s programme model. A comment in the
             SIMD-0461 thread cites a Falcon implementation in SBF at under 170,000 compute units.
           </span>
         </li>
@@ -735,12 +743,15 @@ const SolanaHardProblem: React.FC = () => (
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">AA migration path?</td>
-            <td className="p-3 text-status-success font-medium">Yes — EIP-4337 live today</td>
+            <td className="p-3 text-status-success font-medium">Yes — ERC-4337 live today</td>
             <td className="p-3">No direct equivalent</td>
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">PQC usable today?</td>
-            <td className="p-3 text-status-success font-medium">Yes — via smart accounts</td>
+            <td className="p-3 text-status-success font-medium">
+              Custom validation via smart accounts (prototype PQ verifiers; no mainnet PQ precompile
+              yet)
+            </td>
             <td className="p-3">
               Reported: Falcon-512 and Hawk-512 verifiers run as on-chain programmes without
               protocol changes (SIMD-0461 thread); HAWK was withdrawn from the NIST process in July
@@ -750,7 +761,8 @@ const SolanaHardProblem: React.FC = () => (
           <tr className="border-b border-border/50">
             <td className="p-3 font-medium text-foreground">Official PQC proposal?</td>
             <td className="p-3 text-status-success font-medium">
-              Multiple EIPs active (4337, 7702, 8141)
+              ERC-4337 &amp; EIP-7702 live (algorithm-agnostic); EIP-8141 native AA draft; PQ
+              precompile EIPs drafts
             </td>
             <td className="p-3 text-status-warning">
               SIMD-0461 (Falcon verification syscall) closed by its author in June 2026

@@ -70,10 +70,11 @@ export const PQCThreatSummary: React.FC = () => {
                 </td>
                 <td className="p-3 space-y-1">
                   <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-accent/20 text-accent">
-                    EIP-7702 + AA path — Active
+                    ERC-4337 + EIP-7702 — Active
                   </span>
                   <p className="text-xs text-muted-foreground">
-                    PQC signing available today via Account Abstraction; EF PQC team funded
+                    Custom validation possible via smart accounts (prototype PQ verifiers; no
+                    mainnet PQ precompile yet); EF PQC team funded
                   </p>
                 </td>
               </tr>
@@ -163,14 +164,16 @@ export const PQCThreatSummary: React.FC = () => {
               Active Research
             </span>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Two complementary paths: EIP-4337 Account Abstraction (live) lets smart-contract
-              wallets verify PQC signatures today. EIP-7702 (Pectra) allows EOAs to delegate to
-              contract code, enabling PQC signing without a full migration. The Ethereum
-              Foundation&apos;s Lean Ethereum roadmap proposes replacing validator BLS signatures
-              with the hash-based leanXMSS scheme and using EIP-8141 account abstraction (considered
-              for Hegotá in the second half of 2026) to give accounts signature agility, targeting
-              core post-quantum infrastructure by approximately 2029. STARK-based and lattice-based
-              commitments are the two leading candidates to replace KZG commitments.
+              Two complementary paths: ERC-4337 Account Abstraction (live, algorithm-agnostic) lets
+              smart-contract wallets deploy custom validation logic (including prototype PQ
+              verifiers, though no PQ signature precompile is live on mainnet). EIP-7702 (Pectra)
+              lets EOAs set persistent delegation code (active until replaced or cleared), though
+              the underlying secp256k1 key retains authority. The Ethereum Foundation&apos;s Lean
+              Ethereum roadmap proposes replacing validator BLS signatures with the hash-based
+              leanXMSS scheme and using EIP-8141 account abstraction (considered for Hegotá in the
+              second half of 2026) to give accounts signature agility, targeting core post-quantum
+              infrastructure by approximately 2029. STARK-based and lattice-based commitments are
+              the two leading candidates to replace KZG commitments.
             </p>
             <div className="flex flex-wrap gap-2">
               <a

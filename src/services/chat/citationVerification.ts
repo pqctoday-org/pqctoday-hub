@@ -14,13 +14,24 @@
  */
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { ClaimCitation } from './parseCitations'
+import { assessClaimSupport, type SupportAssessment } from './citationRelevance'
+import { resolveEvidenceRef } from './sentenceIndex'
 
 export interface CitationViolation extends ClaimCitation {
   /** unknown-chunk: cited an id not among this turn's retrieved chunks
    *  (the citation itself is fabricated). evidence-not-found: the cited
    *  chunk is real, but doesn't contain the quoted evidence (the claim is
    *  misattributed, or fabricated with a real-looking source attached). */
-  reason: 'unknown-chunk' | 'evidence-not-found'
+  reason:
+    | 'unknown-chunk'
+    | 'evidence-not-found'
+    | 'sentence-not-found'
+    | 'malformed-ref'
+    /** Every reference resolves, but the cited sentence(s) do not support the claim
+     *  (relevance guard; reference citations only). */
+    | 'weak-evidence'
+  /** Why a weak-evidence citation failed (numbers, coverage and counts). */
+  support?: SupportAssessment
 }
 
 /** Collapse whitespace and case for a tolerant-but-still-exact substring
@@ -37,6 +48,39 @@ function chunkText(chunk: RAGChunk): string {
   return `${chunk.title} ${chunk.content}`
 }
 
+/**
+ * Does the sentence evidence behind a reference citation support its claim? Returns
+ * null when the citation has no resolvable references (verifyCitations reports those).
+ */
+export function assessCitationSupport(
+  citation: ClaimCitation,
+  chunkById: Map<string, RAGChunk>
+): SupportAssessment | null {
+  if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) return null
+  const sentences: string[] = []
+  const sentenceTitles: string[] = []
+  const cited = new Map<string, RAGChunk>()
+  for (const ref of citation.evidenceRefs) {
+    const resolved = resolveEvidenceRef(ref, chunkById)
+    if (!resolved.ok) return null
+    sentences.push(resolved.sentence)
+    const chunk = chunkById.get(resolved.chunkId)
+    sentenceTitles.push(chunk?.title ?? '')
+    if (chunk) cited.set(chunk.id, chunk)
+  }
+  const chunksCited = [...cited.values()]
+  return assessClaimSupport(citation.claimExcerpt, sentences, {
+    titles: chunksCited.map((c) => c.title),
+    sentenceTitles,
+  })
+}
+
+/** Same check for a legacy citation: its verbatim excerpt is the cited text. */
+export function assessExcerptSupport(citation: ClaimCitation, chunk: RAGChunk): SupportAssessment {
+  const evidence = citation.evidenceExcerpt ?? citation.claimExcerpt
+  return assessClaimSupport(citation.claimExcerpt, [evidence], { titles: [chunk.title] })
+}
+
 export function verifyCitations(
   citations: ClaimCitation[],
   chunks: RAGChunk[]
@@ -45,6 +89,22 @@ export function verifyCitations(
   const violations: CitationViolation[] = []
 
   for (const citation of citations) {
+    // Cite-by-sentence: the references are the evidence. Every reference must
+    // name a chunk retrieved this turn and a sentence that exists in it.
+    if (citation.evidenceRefs && citation.evidenceRefs.length > 0) {
+      const failure = citation.evidenceRefs
+        .map((ref) => resolveEvidenceRef(ref, chunkById))
+        .find((resolved) => !resolved.ok)
+      if (failure && !failure.ok) {
+        violations.push({ ...citation, reason: failure.reason })
+        continue
+      }
+      const support = assessCitationSupport(citation, chunkById)
+      if (support && !support.supported) {
+        violations.push({ ...citation, reason: 'weak-evidence', support })
+      }
+      continue
+    }
     const chunk = chunkById.get(citation.chunkId)
     if (!chunk) {
       violations.push({ ...citation, reason: 'unknown-chunk' })
@@ -55,8 +115,49 @@ export function verifyCitations(
     const evidence = normalize(citation.evidenceExcerpt ?? citation.claimExcerpt)
     if (!evidence || !normalize(chunkText(chunk)).includes(evidence)) {
       violations.push({ ...citation, reason: 'evidence-not-found' })
+      continue
     }
+    // An excerpt citation is held to the same relevance rule, with the verbatim
+    // excerpt as the cited text.
+    const support = assessExcerptSupport(citation, chunk)
+    if (!support.supported) violations.push({ ...citation, reason: 'weak-evidence', support })
   }
 
   return violations
+}
+
+/**
+ * The evidence text a citation stands for: the resolved sentence(s) for a
+ * cite-by-sentence citation, the quoted excerpt otherwise. Null when a
+ * reference does not resolve.
+ */
+export function resolveCitationEvidence(
+  citation: ClaimCitation,
+  chunks: RAGChunk[]
+): string | null {
+  if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) {
+    return citation.evidenceExcerpt ?? null
+  }
+  const chunkById = new Map(chunks.map((c) => [c.id, c]))
+  const sentences: string[] = []
+  for (const ref of citation.evidenceRefs) {
+    const resolved = resolveEvidenceRef(ref, chunkById)
+    if (!resolved.ok) return null
+    sentences.push(resolved.sentence)
+  }
+  return sentences.join(' ')
+}
+
+/** Fill `evidenceExcerpt` from the resolved sentences so everything downstream
+ *  that shows or stores evidence sees the same text as before. References that
+ *  do not resolve are left untouched (they fail verification). */
+export function withResolvedEvidence(
+  citations: ClaimCitation[],
+  chunks: RAGChunk[]
+): ClaimCitation[] {
+  return citations.map((citation) => {
+    if (!citation.evidenceRefs || citation.evidenceRefs.length === 0) return citation
+    const evidence = resolveCitationEvidence(citation, chunks)
+    return evidence === null ? citation : { ...citation, evidenceExcerpt: evidence }
+  })
 }

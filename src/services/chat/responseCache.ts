@@ -6,6 +6,7 @@ interface CacheEntry {
   sourceIds: string[]
   sourceRefs: ChatSourceRef[]
   followUps: string[]
+  removedStatements?: number
   timestamp: number
 }
 

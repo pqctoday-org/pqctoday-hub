@@ -136,6 +136,13 @@ export interface GPUBufferCapability {
   /** Bytes, as reported by this device's actual WebGPU adapter — not estimated. */
   maxStorageBufferBindingSize: number
   maxBufferSize: number
+  /**
+   * Whether the adapter exposes the WebGPU `shader-f16` feature. Every model in
+   * WEBLLM_MODELS is a q4f16 build whose kernels start with `enable f16;`, so
+   * without it engine init fails AFTER the multi-GB download ("extension 'f16'
+   * is not allowed in the current environment").
+   */
+  shaderF16: boolean
 }
 
 // @mlc-ai/web-llm's own engine init always requests 1GB for both
@@ -171,10 +178,12 @@ export async function checkWebGPUBufferCapability(): Promise<GPUBufferCapability
     if (!adapter) return null
     const maxStorageBufferBindingSize: number = adapter.limits.maxStorageBufferBindingSize
     const maxBufferSize: number = adapter.limits.maxBufferSize
+    const shaderF16 = Boolean(adapter.features?.has?.('shader-f16'))
     return {
-      ok: maxStorageBufferBindingSize >= WEBLLM_MIN_STORAGE_BUFFER_BYTES,
+      ok: maxStorageBufferBindingSize >= WEBLLM_MIN_STORAGE_BUFFER_BYTES && shaderF16,
       maxStorageBufferBindingSize,
       maxBufferSize,
+      shaderF16,
     }
   } catch {
     return null
@@ -273,6 +282,17 @@ export async function initializeEngine(
     }
 
     const capability = await checkWebGPUBufferCapability()
+    if (capability && !capability.ok && !capability.shaderF16) {
+      onProgress({
+        status: 'unsupported',
+        text: "This device's GPU does not support half-precision (16-bit) shaders.",
+        progress: 0,
+      })
+      throw new Error(
+        "Your device's WebGPU driver does not offer half-precision (shader-f16) support, which " +
+          'the local models need. Please switch to Cloud (Gemini) instead.'
+      )
+    }
     if (capability && !capability.ok) {
       const reportedMB = Math.round(capability.maxStorageBufferBindingSize / (1024 * 1024))
       onProgress({

@@ -29,6 +29,31 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.219.0] - 2026-11-20
+
+The PQC Assistant now checks every statement against the exact source sentence it cites and shows the verified ones instead of discarding the whole answer, with corrected About-page figures, clearer post-quantum wording in the Digital Assets lesson, and several smaller fixes.
+
+### Changed
+
+- **The PQC Assistant shows the statements it can verify, sentence by sentence** [view:/learn] [view:/] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: every statement in an answer now cites the exact source sentence behind it, for the local model and Gemini alike. Statements that check out are shown in the model's own words; statements that do not are removed, and a short note says how many were left out. Before, one unsupported sentence replaced the whole answer with a "couldn't verify" message.
+- **Stricter source checks before a statement counts as verified** [view:/learn] [persona:researcher] [persona:cert-engineer] [persona:developer]: version numbers must match as written (FIPS 140-2 is not found in a sentence about 140-3), a version list belongs to the name that starts it ("TLS 1.2 and 1.3"), a measurement such as "1.2 seconds" is never read as a version, facts from two different sources are never combined into one claim, and a fragment cut from a longer sentence is not kept on its own. Uncited text is removed in any script, including symbols and bare links.
+- **Clearer post-quantum wording in the Digital Assets lesson** [view:/learn/digital-assets] [persona:developer] [persona:architect] [persona:researcher]: EIP-7702 delegations are no longer described as temporary, and the ERC-4337 smart-account post-quantum claim is qualified, in the PQC Defense section, the comparison table, its labels and the matching glossary entry.
+
+### Fixed
+
+- **Gemini key problems explain themselves in the PQC Assistant** [view:/learn] [persona:developer] [persona:curious]: an invalid key, or a key without billing, now shows Google's own reason instead of a generic error, and the key travels in a request header rather than the web address.
+- **Local AI checks the graphics card before a large download** [view:/learn] [persona:developer] [persona:curious]: before downloading a multi-gigabyte local model, the PQC Assistant checks that the GPU supports half-precision (16-bit) shaders, and explains why when it does not, so nothing is downloaded that cannot run.
+- **About page figures match the data** [view:/about] [persona:executive] [persona:curious]: the Sandbox shows 23 scenarios in 6 tracks with the tools they actually use, patents are labelled USPTO, the dataset figures are computed from the data, the data tiles cover 16 collections, and the current security report is linked.
+- **The executive workshop tour no longer stalls at the Vendor Scorecard** [view:/learn] [view:/business] [persona:executive]: the tour now scores "PQC Algorithm Support" before saving, with a caption saying why.
+- **Patent search shows "&" as written** [view:/patents] [persona:researcher]: searching no longer turns an ampersand into a visible `&amp;`.
+- **The HSM Operator badge can be earned again** [view:/playground/hsm] [persona:developer] [persona:ops]: using the HSM Playground counts toward the badge again.
+- **The HSM PQC lesson lists NIST IR 8547** [view:/learn/hsm-pqc] [persona:grc] [persona:cert-engineer]: the lesson already cited the final NIST IR 8547 in its notes and now lists it among its sources.
+- **The energy simulation track offers the Energy, Utilities & Grid module** [view:/simulation] [persona:ops]: Phase 5 of the energy sector track now includes it.
+
+### Security
+
+- **Updated three software libraries** [view:/about] [persona:ops]: fast-uri, serialize-javascript and undici are on their latest patched versions.
+
 ## [4.218.1] - 2026-11-19
 
 Expanded the FAQ page to cover the full 79-module, 37-business-tool, 34-playground-tool, and 8-role Hub scope, and unified 21 Learn module Visual tab posters in the 1254×1254 Storybook Blue illustration style with late-2026 standards milestones.

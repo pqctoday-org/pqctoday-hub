@@ -30,7 +30,11 @@ export async function validateApiKey(
   model: string = DEFAULT_GEMINI_MODEL
 ): Promise<boolean> {
   try {
-    const response = await fetch(`${GEMINI_BASE}/${model}?key=${apiKey}`)
+    // The key goes in the x-goog-api-key header, as Google documents for current
+    // (authorization) keys, never in the URL where it can end up in logs.
+    const response = await fetch(`${GEMINI_BASE}/${model}`, {
+      headers: { 'x-goog-api-key': apiKey },
+    })
     return response.ok
   } catch {
     return false
@@ -86,6 +90,32 @@ async function fetchWithRetry(
   return response
 }
 
+/** Google's own error text from a failed response, shortened, for the reader. */
+export async function readGoogleErrorMessage(response: Response): Promise<string> {
+  try {
+    const body = (await response.clone().json()) as { error?: { message?: string } }
+    const msg = body?.error?.message?.trim() ?? ''
+    return msg.length > 300 ? `${msg.slice(0, 297)}...` : msg
+  } catch {
+    return ''
+  }
+}
+
+/** True when a Gemini error body says the API key itself is invalid. */
+export async function isInvalidKeyResponse(response: Response): Promise<boolean> {
+  try {
+    const body = (await response.clone().json()) as {
+      error?: { message?: string; details?: Array<{ reason?: string }> }
+    }
+    const err = body?.error
+    if (!err) return false
+    if (err.details?.some((d) => d?.reason === 'API_KEY_INVALID')) return true
+    return /api key not valid|api key expired/i.test(err.message ?? '')
+  } catch {
+    return false
+  }
+}
+
 export async function* streamResponse(
   apiKey: string,
   messages: ChatMessage[],
@@ -98,9 +128,9 @@ export async function* streamResponse(
   const formattedMessages = formatMessages(messages)
 
   const requestStream = (targetModel: string, includeThinking = true) =>
-    fetchWithRetry(`${GEMINI_BASE}/${targetModel}:streamGenerateContent?key=${apiKey}&alt=sse`, {
+    fetchWithRetry(`${GEMINI_BASE}/${targetModel}:streamGenerateContent?alt=sse`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
         contents: formattedMessages,
@@ -111,6 +141,14 @@ export async function* streamResponse(
     })
 
   let response = await requestStream(model, true)
+
+  // Google answers an invalid or revoked key with 400 (INVALID_ARGUMENT,
+  // reason API_KEY_INVALID), not 401/403. Detect it before the model fallback
+  // chain below, which treats 400 as a thinkingConfig rejection and would
+  // otherwise end in a generic "Gemini API error: 400".
+  if (response.status === 400 && (await isInvalidKeyResponse(response))) {
+    throw new Error('Invalid API key. Please check your key and try again.')
+  }
 
   // Automatic fallback when the primary model requires a paid billing tier (402),
   // is unavailable on the key's project (404), or rejects thinkingConfig (400).
@@ -141,8 +179,10 @@ export async function* streamResponse(
       throw new Error('Invalid API key. Please check your key and try again.')
     }
     if (status === 402) {
+      const googleReason = await readGoogleErrorMessage(response)
       throw new Error(
-        'Gemini API error: 402 (Payment Required). Your Google AI Studio API key requires billing enabled or free-tier quota for Gemini Flash. Enable billing in Google AI Studio or switch to Local (Private) mode.'
+        'Gemini API error: 402 (Payment Required). Your Google AI Studio API key requires billing enabled or free-tier quota for Gemini Flash. Enable billing in Google AI Studio or switch to Local (Private) mode.' +
+          (googleReason ? ` Google says: "${googleReason}"` : '')
       )
     }
     if (status === 429) {

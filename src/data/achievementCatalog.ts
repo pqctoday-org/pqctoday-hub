@@ -2,6 +2,9 @@
 import type { AchievementDefinition, ActivitySnapshot } from '@/types/AchievementTypes'
 import type { PersonaId } from './learningPersonas'
 
+/** Recorded by HsmPlayground (/playground/hsm), which is not a WORKSHOP_TOOLS entry. */
+export const HSM_PLAYGROUND_TOOL_ID = 'hsm'
+
 export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   // ═══════════════════════════════════════════════════════════════
   // CONSISTENCY
@@ -261,11 +264,18 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'playground-hsm',
     title: 'HSM Operator',
-    description: 'Used the PKCS#11 Walkthrough tool',
+    description: 'Opened the HSM Playground (PKCS#11)',
     category: 'cross-feature',
     rarity: 'uncommon',
     icon: 'ShieldCheck',
-    condition: (s) => s.playgroundToolsUsed.includes('pkcs11-sim'),
+    // The PKCS#11 Walkthrough tool ('pkcs11-sim') was removed in v2.94.2 and
+    // its successor, /playground/hsm, is a dedicated route outside
+    // WORKSHOP_TOOLS that recorded nothing — so this rung had been unreachable
+    // since. HsmPlayground now records HSM_PLAYGROUND_TOOL_ID on open; the
+    // legacy id stays accepted so a badge earned before the removal still counts.
+    condition: (s) =>
+      s.playgroundToolsUsed.includes(HSM_PLAYGROUND_TOOL_ID) ||
+      s.playgroundToolsUsed.includes('pkcs11-sim'),
   },
   {
     id: 'playground-hybrid',

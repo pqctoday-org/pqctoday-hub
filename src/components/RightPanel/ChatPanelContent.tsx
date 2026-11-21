@@ -440,6 +440,7 @@ export const ChatPanelContent: React.FC = () => {
                     sourceRefs={msg.sourceRefs}
                     activeTab={pageContext.tab}
                     followUps={msg.followUps}
+                    removedStatements={msg.removedStatements}
                     persona={pageContext.persona}
                     onFollowUp={isLastAssistant ? sendQuery : undefined}
                     feedback={msg.feedback}
