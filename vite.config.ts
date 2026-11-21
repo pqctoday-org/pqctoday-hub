@@ -720,6 +720,7 @@ export default defineConfig({
           'vendor-pqc': ['@oqs/liboqs-js', '@noble/hashes'],
           'vendor-zip': ['jszip'],
           'vendor-csv': ['papaparse'],
+          'canonical-binance': ['./src/data/canonicalBinanceIncident.ts'],
           'vendor-markdown': ['react-markdown', 'remark-gfm'],
           'vendor-chat': ['minisearch'],
           'vendor-three': ['three'],

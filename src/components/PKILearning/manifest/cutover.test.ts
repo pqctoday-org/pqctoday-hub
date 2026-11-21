@@ -523,10 +523,10 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       },
       'custody-lifecycle-ops': {
         algorithms: ['ECDSA', 'ML-DSA', 'ML-KEM'],
-        standards: ['FIPS 140-3', 'PKCS#11', 'KMIP', 'SP 800-57', 'SP 800-88'],
+        standards: ['FIPS 140-3', 'PKCS#11', 'KMIP', 'NIST SP 800-57', 'SP 800-88'],
       },
       'custody-pqc-migration': {
-        algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'FN-DSA', 'ECDSA'],
+        algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'Falcon', 'ECDSA'],
         standards: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'PKCS#11', 'RFC 10024'],
       },
       'custody-governance': {

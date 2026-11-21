@@ -37,7 +37,7 @@ const manifest: ModuleManifest = {
     text: 'Start with the Quantum Limits & HNDL Check to pinpoint what a CRQC breaks first in each custody combination and which party-to-party messages are exposed to harvest-now-decrypt-later today.',
   },
   taxonomy: {
-    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'FN-DSA', 'ECDSA'],
+    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'Falcon', 'ECDSA'],
     standards: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'PKCS#11', 'RFC 10024'],
   },
   load: () => import('./index').then((m) => ({ default: m.CustodyPqcMigrationModule })),

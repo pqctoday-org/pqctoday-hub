@@ -492,7 +492,7 @@ export const CustodyPqcIntroduction: React.FC<IntroProps> = ({ onNavigateToWorks
               envelope (ML-KEM encapsulation + KDF + AEAD, not ML-KEM wrapping alone; PKCS#11 v3.2
               defines encapsulate/decapsulate), secure peer channels with RFC 10024, and use ML-DSA
               HSM firmware for protocol auth. Future threshold ML-DSA would still need in-HSM party
-              computation to preserve Variant (b) (§8b).
+              computation to preserve Variant (b) (Section 8b).
             </p>
           </div>
           <div className="p-4 rounded-lg bg-muted/40 border border-border space-y-1.5">
@@ -502,7 +502,8 @@ export const CustodyPqcIntroduction: React.FC<IntroProps> = ({ onNavigateToWorks
             <p>
               After a CRQC arrives, an exposed on-chain key cannot be revoked — only outrun. MPC
               refresh and classical HSM rotation do not remove on-chain Shor exposure; planned
-              migration (§8c) and control-plane ML-DSA rotation must precede CRQC availability.
+              migration (Section 8c) and control-plane ML-DSA rotation must precede CRQC
+              availability.
             </p>
           </div>
           <div className="p-4 rounded-lg bg-muted/40 border border-border space-y-1.5">
@@ -514,7 +515,8 @@ export const CustodyPqcIntroduction: React.FC<IntroProps> = ({ onNavigateToWorks
               (§5c). A classical heir key behind a multi-year timelock may outlive CRQC arrival; a
               hidden Taproot script leaf does not help if the tweaked key-path public key is broken
               by Shor, whereas P2WSH/P2SH or draft BIP-360 P2MR hide keys only until first spend
-              (mempool race). PQ smart accounts can rotate guardians without moving funds (§8d).
+              (mempool race). PQ smart accounts can rotate guardians without moving funds (Section
+              8d).
             </p>
           </div>
           <div className="p-4 rounded-lg bg-muted/40 border border-border space-y-1.5">
@@ -553,9 +555,9 @@ export const CustodyPqcIntroduction: React.FC<IntroProps> = ({ onNavigateToWorks
             </h3>
             <p>
               FIDO2/WebAuthn hardware PQ deployment is not yet established despite RFC 9964 COSE IDs
-              (§8). Destroying a classical private key does not protect funds behind an already
-              exposed on-chain public key, and retired classical encrypted backups stay HNDL targets
-              until destroyed.
+              (Section 8). Destroying a classical private key does not protect funds behind an
+              already exposed on-chain public key, and retired classical encrypted backups stay HNDL
+              targets until destroyed.
             </p>
           </div>
         </div>

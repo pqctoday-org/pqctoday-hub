@@ -102,6 +102,13 @@ describe('moduleEnrichment — researcher taxonomy (P2-3)', () => {
       'draft-ietf-hpke-pq',
       'draft-ietf-cose-hpke',
       'draft-ietf-jose-hpke-encrypt',
+      'KMIP',
+      'SP 800-88',
+      'MiCA',
+      'DORA',
+      'SOC 2',
+      'ISAE 3402',
+      'ISAE 3000',
     ])
     for (const entry of Object.values(MODULE_TAXONOMY)) {
       for (const alg of entry.algorithms ?? []) {

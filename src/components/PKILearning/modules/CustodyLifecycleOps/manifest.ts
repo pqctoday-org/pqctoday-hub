@@ -41,7 +41,7 @@ const manifest: ModuleManifest = {
   },
   taxonomy: {
     algorithms: ['ECDSA', 'ML-DSA', 'ML-KEM'],
-    standards: ['FIPS 140-3', 'PKCS#11', 'KMIP', 'SP 800-57', 'SP 800-88'],
+    standards: ['FIPS 140-3', 'PKCS#11', 'KMIP', 'NIST SP 800-57', 'SP 800-88'],
   },
   load: () => import('./index').then((m) => ({ default: m.CustodyLifecycleOpsModule })),
 }
