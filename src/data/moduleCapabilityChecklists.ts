@@ -107,6 +107,18 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     evidenceRequired:
       'Asset retention schedule mapped to negotiated KEM/cipher suites and key-rotation logs for long-lived archives.',
   },
+  'ai-crypto-attacks': {
+    roleFocus: 'Security Architects, Developers, Operations, GRC Leads & Researchers',
+    productionCapabilities: [
+      'Enforce pre-commit secret push protection, immediate credential revocation, and short-lived OIDC workload identities across repositories and CI/CD pipelines.',
+      'Maintain rapid CVE patching workflows and human-in-the-loop cryptographic code review (especially for newly enabled PQC builds and direct FIPS API callers).',
+      'Protect signing and wrapping keys inside non-exportable HSM/KMS policies (CKA_EXTRACTABLE=false, IAM policy separation, dual control, signed audit logs) and scope embedded SCA resistance via attack-based evaluation.',
+    ],
+    evaluationMethod:
+      'Run pre-commit secret scanners in CI, audit KMS/HSM key templates and IAM policy separation in staging, verify library versions against CBOM inventories, and review lab TVLA/attack-based SCA reports where physical capture applies.',
+    evidenceRequired:
+      'CI push-protection and OIDC federation configs, dated CBOM and crypto-library patch records (e.g., wolfSSL/OpenSSL advisory remediation), immutable HSM key-policy exports, and scoped SCA evaluation summaries.',
+  },
   'hybrid-crypto': {
     roleFocus: 'Security Architects & Protocol Engineers',
     productionCapabilities: [
@@ -346,6 +358,18 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
       'Simulate transaction signing, witness size overhead, and verification gas/compute cost using PQC signature schemes on a staging testnet.',
     evidenceRequired:
       'Testnet transaction receipt, serialized witness/signature byte-size profile, and custody HSM signing audit log.',
+  },
+  'custody-lifecycle-ops': {
+    roleFocus: 'Custody Operations Leads, Security Architects & Key Custodians',
+    productionCapabilities: [
+      'Pre-planned emergency sweep templates, on-chain ERC-20 allowance and EIP-7702 delegation revocation workflows, and smart-account owner-rotation governance.',
+      'Separated signing and administration paths enforcing AC-5 separation of duties, PKCS#11 CKA_ALWAYS_AUTHENTICATE per-use auth, and short-lived workload mTLS.',
+      'Cross-site quorum-protected backups with authoritative epoch inventories, canary-key DR drills, and FIPS 140-3 / SP 800-88 Rev. 2 verified decommissioning.',
+    ],
+    evaluationMethod:
+      'Execute scheduled canary-key restore drills, ceremony script audits, effective-permission access reviews, and pre-signing vs confirmed-chain alert tabletop exercises in staging.',
+    evidenceRequired:
+      'Signed ceremony minutes and artifact hashes, canary restore drill sign-off, effective-permission review log, immutable off-box alert history, and witnessed sanitization attestations.',
   },
   '5g-security': {
     roleFocus: 'Telecom Security Architects & Mobile Core Engineers',
@@ -1088,6 +1112,30 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
       'Exercise staging custody policies against negative test cases: tampered amounts, expired approvals, replayed nonces, unallowlisted delegatecalls, and single-party threshold refusal.',
     evidenceRequired:
       'Signed custody policy ruleset, FIPS 140-3 CMVP module certificate & Excluded Components boundary review, and staging negative-test rejection logs.',
+  },
+  'custody-pqc-migration': {
+    roleFocus: 'Custody Architects, Security Researchers, Operations Leads, Executives & GRC Teams',
+    productionCapabilities: [
+      'Authenticated, transcript-bound PQ/T hybrid TLS (RFC 10024) for HSM clusters, MPC peer channels, and enclave attested TLS, paired with hybrid KEM-DEM (draft-ietf-hpke-pq) share and recovery backup envelopes.',
+      'CAVP/CMVP-scoped HSM firmware (PKCS#11 v3.2 ML-KEM, ML-DSA, SLH-DSA) moving control-plane approvals, policy rules, and RFC 4998 evidence renewal chains to post-quantum signatures before CRQC arrival.',
+      'Explicit separation of platform-, account-, and chain-controlled migration clocks, including Rule G1 verification of residual classical authorization dependencies on EIP-7702 and ERC-4337 smart accounts.',
+    ],
+    evaluationMethod:
+      'Audit custody CBOM classifications in staging: verify RFC 10024 hybrid handshakes on HSM/MPC links, confirm hybrid KEM-DEM backup re-wrapping with ceremony metadata binding, and test negative smart-account legacy-key bypass cases.',
+    evidenceRequired:
+      'Custody CBOM with exposed-address register, HSM firmware CAVP vs CMVP module-boundary records, hybrid TLS/KEM-DEM test transcripts, and account-type residual-dependency sign-off.',
+  },
+  'custody-governance': {
+    roleFocus: 'GRC Leads, Executives & Certification / Assurance Engineers',
+    productionCapabilities: [
+      'Structured custody-design evaluation across all six signing-boundary questions (Q1–Q6) with explicit Rule G1 authority assumptions for policy edits, approver enrolment, replay counters, and recovery.',
+      'Jurisdiction-scoped regulatory mapping that applies entity/licence applicability gates first, distinguishes binding statutory verbs ("shall") from guidance ("should"), and separates accounting/permissibility texts into a context band.',
+      'Independent scoping review of custody insurance policies (cold specie vs hot crime sub-limits and exclusions), SOC 1/ISAE 3402, SOC 2, ISAE 3000 (Revised), and proof-of-reserves boundaries.',
+    ],
+    evaluationMethod:
+      'Review primary regulatory texts and assurance system descriptions against your actual signing boundary, confirming whether frontend transaction builders, policy updates, and recovery quorums were inside the tested scope.',
+    evidenceRequired:
+      'Jurisdiction applicability memo, SOC/ISAE system-description boundary review, policy-change quorum evidence, and insurance exclusion schedule review.',
   },
   quiz: {
     roleFocus: 'All Learners & Role Practitioners',

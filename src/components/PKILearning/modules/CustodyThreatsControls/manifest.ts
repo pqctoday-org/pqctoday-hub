@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'custody-threats-controls',
-  contentVersion: 1,
+  contentVersion: 2,
   lm_id: 'LM-083',
   title: 'Custody Key Threats & Controls',
   description:

@@ -33,4 +33,9 @@ export const INFOGRAPHIC_IMAGE_REVISIONS: Record<string, string> = {
   'quantum-threats': 'fda6a876467d304d',
   'pqc-101': 'e74cdd7139486800',
   'pqc-business-case': '7ac77def4093e729',
+  'custody-threats-controls': '614274a00e2d1086',
+  'custody-lifecycle-ops': '77eff36bbba18351',
+  'custody-pqc-migration': '1ba3f4fa78d67651',
+  'custody-governance': '158f8e7be1435b6a',
+  'ai-crypto-attacks': '65fca6185663857a',
 }

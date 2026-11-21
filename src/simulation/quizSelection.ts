@@ -48,6 +48,7 @@ export function hashString(s: string): number {
  */
 export const MODULE_QUIZ_CATEGORY: Readonly<Record<string, string>> = {
   'pki-workshop': 'pki-infrastructure',
+  'ai-crypto-attacks': 'ai-crypto-threats',
 }
 
 /** The bank category a module's questions actually live under. */

@@ -169,7 +169,7 @@ describe('certification engineer next steps follow the role path', () => {
     // Tools the later lessons lead to hand on to the lesson after the one they practise.
     '/playground/slh-dsa': '/learn/hybrid-crypto',
     '/playground/hybrid-certs': '/learn/secure-boot-pqc',
-    '/playground/firmware-signing': '/learn/pci-certification',
+    '/playground/firmware-signing': '/learn/custody-governance',
     // The validation workbench is the lab behind the ACVP lesson.
     '/playground/hsm': '/learn/acvp-lab-workflow',
     // The last lesson on the path hands on to the quiz that closes it.

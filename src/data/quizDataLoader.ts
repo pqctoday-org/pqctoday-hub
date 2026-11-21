@@ -595,6 +595,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Detection use cases, quantum threat intelligence, incident-response playbooks, and tabletop exercises for operationalizing PQC defense in the SOC.',
       icon: 'ScanSearch',
     },
+    'ai-crypto-threats': {
+      label: 'AI & Cryptographic Threats',
+      description:
+        'Evidence-bounded assessment of AI attacks on software secrets, crypto libraries, side channels, KMS/HSM policies, and mathematical primitives.',
+      icon: 'AlertTriangle',
+    },
   }
 
 // Compute question counts dynamically from loaded data

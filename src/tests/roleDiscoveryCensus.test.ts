@@ -209,9 +209,9 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
     }
   }
 
-  it('audits all 185 active resources across the 8 personas and writes role-discovery-census-180.json', async () => {
-    expect(reassessment.active_population).toBe(185)
-    expect(reassessment.items).toHaveLength(185)
+  it('audits all 189 active resources across the 8 personas and writes role-discovery-census-180.json', async () => {
+    expect(reassessment.active_population).toBe(189)
+    expect(reassessment.items).toHaveLength(189)
     expect(PERSONA_IDS).toEqual([
       'executive',
       'grc',
@@ -237,7 +237,7 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
 
     expect(
       moduleItems.length + playgroundItems.length + businessItems.length + pageItems.length
-    ).toBe(185)
+    ).toBe(189)
 
     const censusRecords: Array<{
       id: string
@@ -437,7 +437,7 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
       })
     }
 
-    expect(censusRecords).toHaveLength(185)
+    expect(censusRecords).toHaveLength(189)
 
     const personaSummary = Object.fromEntries(
       PERSONA_IDS.map((pid) => [
@@ -459,7 +459,7 @@ describe('180-Resource Per-Role Discovery Census (v4.213.0)', () => {
           {
             version: '4.213.0',
             generatedAt: '2026-11-17T23:30:00Z',
-            activePopulation: 185,
+            activePopulation: 189,
             countsByTier: {
               modules: moduleItems.length,
               playgroundTools: playgroundItems.length,

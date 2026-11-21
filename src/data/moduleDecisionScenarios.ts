@@ -108,6 +108,28 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     productionToolCheck:
       'Audit custody policy enforcement points in staging by replaying tampered calldata, expired approvals, replayed nonces, and single-party threshold refusals, and check CMVP Excluded Components boundaries.',
   },
+  'custody-governance': {
+    moduleId: 'custody-governance',
+    domainTitle: 'Custody Governance Evaluation, Regulatory Gates & Assurance Scope Verification',
+    roleDecisionPrompt:
+      'Decide whether a clean SOC 2 Type II report and a Proof-of-Reserves snapshot establish that a custody provider enforces spending policies inside its signing boundary across EU (MiCA/DORA) and Hong Kong (SFC) operations.',
+    artifactLabel: 'Fictional custody governance policy-change ML-DSA-65 quorum attestation',
+    algorithmVariant: { operation: 'signature', variant: 65 },
+    validCaseExplanation:
+      'A valid ML-DSA-65 governance-change attestation verifies cleanly over the policy update, quorum sign-off, and effective jurisdiction scope before an auditor records it as ceremony evidence.',
+    adverseFailureExplanation:
+      'Corrupting byte 0 of the governance attestation causes deterministic verification failure; similarly, relying on a SOC 2 report whose system boundary excluded the signing UI or treating a Proof-of-Reserves snapshot as an audit leaves liabilities and signing-authority gaps unverified.',
+    recoveryActionExplanation:
+      'Restore the unmodified ML-DSA-65 attestation to re-establish verification, apply jurisdiction applicability gates side by side (never cumulatively), and inspect exact SOC 1/ISAE 3402, SOC 2, ISAE 3000 (Revised), and insurance exclusion scopes.',
+    transferQuestion: {
+      prompt:
+        'What changes if a US national bank cites SEC SAB 122 and OCC Interpretive Letter 1184 in its custody key-management control matrix?',
+      changedAssumptionOutcome:
+        'Those texts belong in the accounting and banking-permissibility context band — not key-management control cells — so cryptographic controls, segregation, and Rule G1 authority assumptions must still be evaluated separately.',
+    },
+    productionToolCheck:
+      'Verify primary regulatory articles by entity licence, inspect SOC/ISAE system descriptions and CSOC carve-outs, review insurer exclusion schedules (collusion, social engineering, hot-wallet sub-limits), and test Q1–Q6 authority assumptions.',
+  },
   'energy-utilities-pqc': {
     moduleId: 'energy-utilities-pqc',
     domainTitle: 'Substation SCADA Gateway & AMI Firmware ML-DSA-65 Signing Boundary',
@@ -129,6 +151,29 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     },
     productionToolCheck:
       'Measure end-to-end GOOSE/SV relay latency and SCADA gateway hybrid TLS/IKEv2 handshakes in a utility staging lab, and verify NERC CIP-005/007/010/012/013 and EU NIS2 evidence against deployed firmware and gateway configs.',
+  },
+  'custody-pqc-migration': {
+    moduleId: 'custody-pqc-migration',
+    domainTitle: 'Custody Control-Plane ML-DSA Approval & Hybrid Backup Envelope Migration',
+    roleDecisionPrompt:
+      'Decide which custody layers can migrate to post-quantum standards today (RFC 10024 channels, hybrid KEM-DEM backup envelopes, ML-DSA control-plane approvals) versus which layers depend on account-level or Layer-1 chain upgrades.',
+    artifactLabel:
+      'Fictional custody policy-approval ML-DSA-65 signature over hybrid KEM-DEM re-wrap manifest',
+    algorithmVariant: { operation: 'signature', variant: 65 },
+    validCaseExplanation:
+      'An unmodified ML-DSA-65 control-plane approval over the hybrid KEM-DEM backup re-wrap manifest verifies cleanly, allowing platform-controlled HNDL mitigation to proceed without waiting for Layer-1 consensus changes.',
+    adverseFailureExplanation:
+      'Flipping byte 0 of the ML-DSA-65 approval deterministically fails verification and blocks unauthenticated re-wrapping; similarly, leaving share backups under RSA-OAEP or assuming EIP-7702 removes legacy secp256k1 authority leaves residual quantum exposure.',
+    recoveryActionExplanation:
+      'Restore the intact ML-DSA-65 approval signature to re-establish verification, protect HSM/MPC channels with RFC 10024 hybrid TLS, re-wrap stored backups with hybrid KEM-DEM, and track chain proposals separately.',
+    transferQuestion: {
+      prompt:
+        'What changes if a custodian migrates an EOA to an EIP-7702 delegated smart account that checks ML-DSA signatures inside validateUserOp?',
+      changedAssumptionOutcome:
+        'Because EIP-7702 writes a persistent delegation controlled by the EOA’s original secp256k1 key (and permit/ecrecover token contracts still accept it), a quantum attacker who derives that classical key can re-delegate the account unless a future protocol mechanism like draft EIP-7851 revokes it.',
+    },
+    productionToolCheck:
+      'Verify RFC 10024 hybrid TLS negotiation on HSM/MPC channels, inspect CMVP module boundaries beyond CAVP algorithm certificates, and audit smart-account guardian, upgrade, and permit paths in staging.',
   },
   'pqc-101': {
     moduleId: 'pqc-101',
@@ -173,6 +218,29 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     },
     productionToolCheck:
       'Cross-reference your data-classification retention schedule against live TLS/VPN key-exchange telemetry to identify all flows where X + Y exceeds your risk horizon.',
+  },
+  'ai-crypto-attacks': {
+    moduleId: 'ai-crypto-attacks',
+    domainTitle:
+      'Evidence-Bounded AI Threat Assessment & PQC Library Patch / Key-Policy Prioritisation',
+    roleDecisionPrompt:
+      'Decide whether a reported AI cryptanalysis benchmark or an AI-discovered implementation flaw (such as a digest/OID check omission in a PQC-enabled library build) warrants delaying PQC migration or prioritising immediate library patching and secret/key-policy hardening.',
+    artifactLabel: 'Fictional AI-threat executive verdict & ML-DSA-65 release signature artifact',
+    algorithmVariant: { operation: 'signature', variant: 65 },
+    validCaseExplanation:
+      'An intact ML-DSA-65 verification signature confirms release-artifact integrity while keeping standards-based FIPS 203–205 migration schedules on track (as of 2026-11-21).',
+    adverseFailureExplanation:
+      'Mutating byte 0 of the ML-DSA-65 signature causes deterministic verification failure; treating an unstandardised candidate flaw (HAWK) or 7-round AES-128 research result as a break of FIPS 203–205 misallocates effort away from real library CVEs and credential hygiene.',
+    recoveryActionExplanation:
+      'Restore the valid signature artifact, patch affected cryptographic libraries (and audit direct FIPS callers), enforce non-extractable HSM templates, and retain NIST IR 8547 / CNSA 2.0 timelines.',
+    transferQuestion: {
+      prompt:
+        'What changes if a developer enables ML-DSA alongside ECDSA in a C library build and accepts AI-generated wrapper code without human review or regression tests?',
+      changedAssumptionOutcome:
+        'Implementation defects in newly enabled PQC code paths (such as missing digest/OID validation) create immediate verification risk even while the underlying ML-DSA mathematics remains unbroken.',
+    },
+    productionToolCheck:
+      'Audit deployed cryptographic library versions via CBOM against vendor security advisories, verify GitHub/CI push protection and OIDC policies, and inspect KMS/HSM key templates for CKA_EXTRACTABLE and IAM separation.',
   },
   'hybrid-crypto': {
     moduleId: 'hybrid-crypto',
@@ -569,6 +637,28 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     },
     productionToolCheck:
       'Benchmark PQC witness serialization size and verification compute/gas cost on your target testnet and custody HSM.',
+  },
+  'custody-lifecycle-ops': {
+    moduleId: 'custody-lifecycle-ops',
+    domainTitle: 'Custody Control-Plane Policy & Quorum Approval Integrity (ML-DSA-65)',
+    roleDecisionPrompt:
+      'Verify how an operational custody policy update or emergency sweep authorization signed by an approver quorum detects tampering before execution across signing, backup, and decommissioning workflows.',
+    artifactLabel: 'Fictional custody quorum policy-update & emergency-sweep bundle (ML-DSA-65)',
+    algorithmVariant: { operation: 'signature', variant: 65 },
+    validCaseExplanation:
+      'A valid ML-DSA-65 signature over the canonical policy or sweep payload confirms the approver quorum authorized the exact allowlist, threshold, and destination addresses.',
+    adverseFailureExplanation:
+      'Flipping a single byte in the sweep destination or allowlist breaks ML-DSA-65 verification, blocking unauthorized governance changes at the pre-signing stage.',
+    recoveryActionExplanation:
+      'Reject the tampered policy or sweep bundle, keep the signing path paused, verify the authoritative backup inventory, and re-issue under full approver quorum.',
+    transferQuestion: {
+      prompt:
+        'What changes if an attacker already attached an on-chain EIP-7702 delegation or ERC-20 permit before off-chain withdrawals were paused?',
+      changedAssumptionOutcome:
+        'Pausing off-chain withdrawals does not invalidate existing on-chain authorizations; responders must submit explicit on-chain revocations (type-4 zero-address delegation or zero-allowance tx) and sweep remaining funds.',
+    },
+    productionToolCheck:
+      'Verify your production custody platform enforces quorum-signed policy updates, immutable off-box audit logs, authoritative backup inventories, and rehearsed canary-key restore drills.',
   },
   '5g-security': {
     moduleId: '5g-security',

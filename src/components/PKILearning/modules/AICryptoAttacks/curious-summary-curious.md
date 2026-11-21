@@ -1,0 +1,5 @@
+People often ask whether artificial intelligence can suddenly crack the locks that protect our banking, cloud accounts, and software updates. Looking closely at the real tests published so far gives a clear, calmer answer: AI has helped researchers find bugs in encryption software and weaken an experimental signature proposal before it ever became a standard, yet it has not broken the main encryption or post-quantum standards we rely on today.
+
+Where AI actually changes day-to-day security is around the edges—where keys sit in developer files, where programmers accept buggy code from an AI assistant, or where attackers write convincing fake job lures and phishing messages faster. In real incidents, criminals mostly use AI as a helper for social engineering or searching files, rather than an autonomous robot cracking cryptography on its own.
+
+So the sensible response is not panic and not ignoring your quantum upgrade schedule. Keep sensitive keys inside dedicated hardware vaults, block secrets from being pushed into code repositories, patch cryptographic libraries promptly, and keep human experts reviewing AI-suggested code.
