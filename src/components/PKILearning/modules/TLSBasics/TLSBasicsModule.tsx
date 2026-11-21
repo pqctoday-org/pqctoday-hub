@@ -44,10 +44,12 @@ const TLS_HSM_OPERATIONS = [
 
 import { useSampleTrustDefaults } from './utils/useSampleTrustDefaults'
 import manifest from './manifest'
+import { useWorkshopStepAnchor } from '../../common/useWorkshopStepAnchor'
 
 const MODULE_ID = 'tls-basics'
 
 export const TLSBasicsModule: React.FC = () => {
+  useWorkshopStepAnchor(manifest.workshopSteps)
   const { updateModuleProgress, markStepComplete } = useModuleStore()
 
   /* The TLS simulator's HSM mode (live softhsm keygen + cert-mint at session
@@ -308,7 +310,7 @@ export const TLSBasicsModule: React.FC = () => {
             <TLSSimulatorCapabilities />
 
             {/* Simulation Controls */}
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-3" data-workshop-step="simulate">
               {results && (
                 <Button
                   variant="ghost"
@@ -337,7 +339,7 @@ export const TLSBasicsModule: React.FC = () => {
             </div>
 
             {/* Config Panels */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-workshop-step="config">
               <TLSClientPanel />
               <TLSServerPanel />
             </div>
@@ -355,7 +357,7 @@ export const TLSBasicsModule: React.FC = () => {
             <TLSNegotiationResults />
 
             {/* HSM-Backed Server — Live PKCS#11 Demo */}
-            <div className="space-y-3">
+            <div className="space-y-3" data-workshop-step="hsm-demo">
               <h3 className="text-base font-semibold text-foreground">
                 Captured TLS CertificateVerify — construct and verify
               </h3>
@@ -441,7 +443,7 @@ export const TLSBasicsModule: React.FC = () => {
             </div>
 
             {/* Comparison Table */}
-            <div className="mt-6">
+            <div className="mt-6" data-workshop-step="comparison">
               <TLSComparisonTable />
             </div>
 

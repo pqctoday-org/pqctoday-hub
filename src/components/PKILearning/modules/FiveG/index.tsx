@@ -13,6 +13,7 @@ import { ModuleShell } from '@/components/PKILearning/common/ModuleShell'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { Button } from '@/components/ui/button'
 import manifest from './manifest'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 
 const MODULE_ID = '5g-security'
 
@@ -58,7 +59,10 @@ export const FiveGModule: React.FC = () => {
       ? (pqcModeParam as 'hybrid' | 'pure')
       : undefined
 
-  const [currentPart, setCurrentPart] = useState(0)
+  // `?step=N` opens that part, like the generic stepper does.
+  const [currentPart, setCurrentPart] = useState(
+    () => getModuleDeepLink({ maxStep: PARTS.length - 1 }).initialStep
+  )
   const [initialProfile, setInitialProfile] = useState<'A' | 'B' | 'C' | undefined>(parsedProfile)
   const [initialPqcMode, setInitialPqcMode] = useState<'hybrid' | 'pure' | undefined>(parsedPqcMode)
 

@@ -15,6 +15,7 @@ import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 import { Button } from '@/components/ui/button'
 import { DigitalIDExercises } from './components/DigitalIDExercises'
 import manifest from './manifest'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 
 const MODULE_ID = 'digital-id'
 
@@ -74,7 +75,10 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
   // `wallet` between them), so it rides the ModuleShell `workshop` slot verbatim
   // rather than the generic stepper. ModuleShell owns the tabs, header, deep-link
   // and time tracking; this component owns only the workshop's own step state.
-  const [currentStep, setCurrentStep] = useState(0)
+  // `?step=N` opens that actor's step, like the generic stepper does.
+  const [currentStep, setCurrentStep] = useState(
+    () => getModuleDeepLink({ maxStep: WORKSHOP_STEPS.length - 1 }).initialStep
+  )
   const [wallet, setWallet] = useState<WalletInstance>(INITIAL_WALLET)
   // One PKCS#11 session for the whole workshop: the wallet is a single physical
   // device, so a key generated in one actor's step (e.g. PID Issuer) must still

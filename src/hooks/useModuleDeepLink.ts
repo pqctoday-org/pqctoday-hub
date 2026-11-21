@@ -14,7 +14,13 @@ export function getModuleDeepLink(
     maxStep?: number
     defaultTab?: string
   } = {}
-): { initialTab: string; initialStep: number; initialFlow: string | null } {
+): {
+  initialTab: string
+  initialStep: number
+  initialFlow: string | null
+  /** true when the URL names a valid step (`?step=N`), so step 0 can be told from no step */
+  stepGiven: boolean
+} {
   const {
     validTabs = ['learn', 'visual', 'workshop', 'exercises', 'references', 'tools'],
     maxStep,
@@ -27,16 +33,18 @@ export function getModuleDeepLink(
 
   const stepParam = params.get('step')
   let initialStep = 0
+  let stepGiven = false
   if (stepParam !== null) {
     const parsed = parseInt(stepParam, 10)
     if (!Number.isNaN(parsed) && parsed >= 0) {
+      stepGiven = true
       initialStep = maxStep !== undefined ? Math.min(parsed, maxStep) : parsed
     }
   }
 
   const flowParam = params.get('flow')
 
-  return { initialTab, initialStep, initialFlow: flowParam }
+  return { initialTab, initialStep, initialFlow: flowParam, stepGiven }
 }
 
 /**
