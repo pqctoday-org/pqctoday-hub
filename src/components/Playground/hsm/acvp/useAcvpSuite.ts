@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
-import mlkemTestVectors from '@/data/acvp/mlkem_test.json'
 import mldsaTestVectors from '@/data/acvp/mldsa_test.json'
 import mldsaExtendedTestVectors from '@/data/acvp/mldsa_extended_test.json'
 import aesGcmTestVectors from '@/data/acvp/aesgcm_test.json'
@@ -44,8 +43,6 @@ import {
   hsm_ecdsaSign,
   hsm_ecdsaVerify,
   hsm_ecdsaVerifyBytes,
-  hsm_importMLKEMPrivateKey,
-  hsm_decapsulate,
   hsm_extractKeyValue,
   hsm_importMLDSAPublicKey,
   hsm_verifyBytes,
@@ -54,8 +51,6 @@ import {
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
-  hsm_generateMLKEMKeyPair,
-  hsm_encapsulate,
   hsm_generateSLHDSAKeyPair,
   hsm_slhdsaSign,
   hsm_slhdsaVerify,
@@ -143,10 +138,9 @@ import type { SoftHSMModule, SLHDSASignOptions } from '@/wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { runMldsaAcvpSection, type AcvpCaseMeta } from './sections/mldsaAcvp'
 import { runMldsaDepthSection } from './sections/mldsaDepth'
-import { runMlkemAcvpSection } from './sections/mlkemAcvp'
+import { runMlkemCategory } from './sections/mlkemCategoryRunner'
 import { runOptionalInputSection } from './sections/optionalInputAcvp'
 import { runMldsaNegBoundarySection } from './sections/mldsaNegBoundary'
-import { runMlkemKeyCheckDepthSection } from './sections/mlkemKeyCheckDepth'
 import { runSlhdsaCoverageSection } from './sections/slhdsaCoverage'
 import { runSlhdsaPreHashSection } from './sections/slhdsaPreHash'
 import { runSlhdsaAcvpSection } from './sections/slhdsaAcvp'
@@ -1355,272 +1349,23 @@ export function useAcvpSuite() {
           }
         }
 
-        // ── 7. ML-KEM Decapsulation from upstream encapsulation AFT (FIPS 203) ──
-        // D1-1 (2026-09-24): mlkem_test.json holds cases from the upstream
-        // ENCAPSULATION group (ek, m -> c, k). The hub imports dk and runs
-        // C_DecapsulateKey on c, comparing against k: a transformation, not a
-        // NIST decapsulation case. Row text and caseMeta say so; dedicated
-        // decapsulation VAL cases live in section 7b (sections/mlkemAcvp.ts).
+        // ── 7..8. ML-KEM (FIPS 203): upstream AFT decapsulation, reference-sample
+        // depth, optional-input encapsulation AFT, key-check depth, and round-trip.
         if (activeCategories.has('ml_kem')) {
           currentCategory = 'ml_kem'
-          for (const group of mlkemTestVectors.testGroups) {
-            const test = group.tests[0]
-            const algo = group.parameterSet
-            const variantNum = (parseInt(algo.split('-')[2]) || 768) as 512 | 768 | 1024
-            const id7 = `test-${algo}-decap-${eName}`
-            const testCase7 = `Decapsulate · upstream encapsulation AFT tg${group.tgId}/tc${test.tcId} → local decapsulation`
-            const lineage7 =
-              'NIST encapsulation-group output (dk, c, k) re-used as a decapsulation KAT; upstream m → c not executed ' +
-              '(ACVP-Server@975de31e ML-KEM-encapDecap-FIPS203)'
-            const caseMeta7: AcvpCaseMeta = {
-              origin: 'nist-acvp-server',
-              upstreamOperation: 'encapsulation',
-              localOperation: 'decapsulation',
-              parameterSet: algo,
-              expected: 'byte-match',
-              expectedRv: 'CKR_OK',
-              tgId: group.tgId,
-              tcId: test.tcId,
-              source: {
-                repo: 'https://github.com/usnistgov/ACVP-Server',
-                commit: mlkemTestVectors._provenance.source_release,
-                path: 'gen-val/json-files/ML-KEM-encapDecap-FIPS203/internalProjection.json',
-                sha256: mlkemTestVectors._provenance.source_sha256,
-              },
-            }
-            addLog(`[${eName}] Testing ${algo} Decapsulate KAT...`)
-            addLog(
-              `  ACVP SK: ${test.sk.slice(0, 32)}… | CT[${test.ct.length / 2}B]: ${test.ct.slice(0, 32)}…`
-            )
-            addLog(`  ACVP Expected SS: ${test.ss}`)
-
-            try {
-              const skBytes = hexToBytes(test.sk)
-              const ctBytes = hexToBytes(test.ct)
-              const expectedSsBytes = hexToBytes(test.ss)
-
-              // Import private key from NIST vector
-              const privHandle = hsm_importMLKEMPrivateKey(M, hSession, variantNum, skBytes)
-              regKey({
-                handle: privHandle,
-                family: 'ml-kem',
-                role: 'private',
-                label: `NIST sample ${algo} Private (${eName})`,
-                variant: String(variantNum),
-                engine: engineId,
-              })
-
-              // Decapsulate using NIST ciphertext
-              const secretHandle = hsm_decapsulate(M, hSession, privHandle, ctBytes, variantNum)
-
-              // Extract recovered shared secret
-              const recoveredSs = hsm_extractKeyValue(M, hSession, secretHandle)
-
-              // Compare byte-by-byte against NIST expected shared secret
-              const matches =
-                recoveredSs.length === expectedSsBytes.length &&
-                // eslint-disable-next-line security/detect-object-injection
-                recoveredSs.every((b: number, i: number) => b === expectedSsBytes[i])
-              logByteComparison(
-                addLog,
-                `[${eName}] [id:${id7}]`,
-                recoveredSs,
-                test.ss,
-                'shared secret'
-              )
-
-              if (matches) {
-                const ssHex = toHex(recoveredSs)
-                await pushResult({
-                  id: id7,
-                  algorithm: `${algo} (${eName})`,
-                  testCase: testCase7,
-                  caseMeta: caseMeta7,
-                  referenceUrl: REF.mlkem,
-                  status: 'pass',
-                  details: `SS[${recoveredSs.length}B]: ${ssHex} · ${lineage7}`,
-                })
-                addLog(`[${eName}] [id:${id7}] ${algo} Decapsulate: PASS | SS: ${ssHex}`)
-              } else {
-                const gotHex = Array.from(recoveredSs.slice(0, 16))
-                  .map((b: number) => b.toString(16).padStart(2, '0'))
-                  .join('')
-                const expHex = Array.from(expectedSsBytes.slice(0, 16))
-                  .map((b: number) => b.toString(16).padStart(2, '0'))
-                  .join('')
-                await pushResult({
-                  id: id7,
-                  algorithm: `${algo} (${eName})`,
-                  testCase: testCase7,
-                  caseMeta: caseMeta7,
-                  referenceUrl: REF.mlkem,
-                  status: 'fail',
-                  details: `SS mismatch: got ${gotHex}... expected ${expHex}... · ${lineage7}`,
-                })
-                addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
-                // The PKCS#11 call itself succeeded (CKR_OK) — the recovered
-                // shared secret just doesn't match NIST's expected value.
-                // That's a data-comparison failure, not a failed PKCS#11
-                // call, so the log shows the real return code; the mismatch
-                // is flagged in args instead of fabricating a CKR_* error.
-                addHsmLog({
-                  id: Date.now(),
-                  timestamp: new Date().toLocaleTimeString(),
-                  fn: `[${eName}] C_DecapsulateKey(${algo})`,
-                  args: 'ACVP KAT Validation — SS MISMATCH',
-                  rvHex: '0x00000000',
-                  rvName: 'CKR_OK',
-                  ms: 0,
-                  ok: true,
-                })
-              }
-            } catch (err: unknown) {
-              const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-              await pushResult({
-                id: `test-${algo}-err-${eName}`,
-                algorithm: `${algo} (${eName})`,
-                testCase: testCase7,
-                caseMeta: caseMeta7,
-                referenceUrl: REF.mlkem,
-                status: 'fail',
-                details: `${errorMessage} · ${lineage7}`,
-              })
-              addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Error: ${errorMessage}`)
-              addHsmLog({
-                id: Date.now(),
-                timestamp: new Date().toLocaleTimeString(),
-                fn: `[${eName}] C_DecapsulateKey(${algo})`,
-                args: 'ACVP KAT Validation',
-                rvHex: '0x00000005',
-                rvName: `CKR_GENERAL_ERROR: ${errorMessage}`,
-                ms: 0,
-                ok: false,
-              })
-            }
-          }
-
-          // ── 7b. ML-KEM reference-sample depth — keyGen from seed, VAL
-          // decapsulation (incl. implicit rejection) and key checks, honest
-          // encapsulation skip, product-authored boundary probes. Self-
-          // contained in sections/mlkemAcvp.ts (WS-D D1-2..D1-5).
-          await runMlkemAcvpSection({
+          await runMlkemCategory({
             M,
             hSession,
             eName,
+            engineId,
             mechs: engine.mechs,
             referenceUrl: REF.mlkem,
             pushResult,
             addLog,
+            regKey,
+            addHsmLog,
+            toHex,
           })
-
-          // ── 7b+. ML-KEM encapsulation AFT with NIST's m as the CKM_ML_KEM
-          // parameter (a test input outside the PKCS#11 standard).
-          // sections/optionalInputAcvp.ts.
-          await runOptionalInputSection(
-            {
-              M,
-              hSession,
-              eName,
-              mechs: engine.mechs,
-              referenceUrl: REF.mlkem,
-              pushResult,
-              addLog,
-            },
-            'ml_kem'
-          )
-
-          // ── 7c. ML-KEM encapsulation-key check depth — every remaining
-          // invalid NIST ek of the encapsulationKeyCheck groups (FIPS 203 §7.2).
-          // sections/mlkemKeyCheckDepth.ts (gap-closure P5).
-          await runMlkemKeyCheckDepthSection({
-            M,
-            hSession,
-            eName,
-            mechs: engine.mechs,
-            referenceUrl: REF.mlkem,
-            pushResult,
-            addLog,
-          })
-
-          // ── 8. ML-KEM Encap+Decap Round-Trip (FIPS 203) ─────────────────
-          for (const kemVariant of [512, 768, 1024] as const) {
-            const kemAlgo = `ML-KEM-${kemVariant}`
-            const id8 = `mlkem-rt-${kemVariant}-${eName}`
-            addLog(`[${eName}] Testing ${kemAlgo} Encap+Decap Round-Trip (FIPS 203)...`)
-            try {
-              const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, kemVariant)
-              regKey({
-                handle: pubHandle,
-                family: 'ml-kem',
-                role: 'public',
-                label: `Round-trip ${kemAlgo} RT Public (${eName})`,
-                variant: String(kemVariant),
-                engine: engineId,
-              })
-              regKey({
-                handle: privHandle,
-                family: 'ml-kem',
-                role: 'private',
-                label: `Round-trip ${kemAlgo} RT Private (${eName})`,
-                variant: String(kemVariant),
-                engine: engineId,
-              })
-              const { ciphertextBytes, secretHandle: encapSecret } = hsm_encapsulate(
-                M,
-                hSession,
-                pubHandle,
-                kemVariant
-              )
-              const encapSs = hsm_extractKeyValue(M, hSession, encapSecret)
-              const decapSecret = hsm_decapsulate(
-                M,
-                hSession,
-                privHandle,
-                ciphertextBytes,
-                kemVariant
-              )
-              const decapSs = hsm_extractKeyValue(M, hSession, decapSecret)
-
-              const ssMatch =
-                encapSs.length === decapSs.length &&
-                // eslint-disable-next-line security/detect-object-injection
-                encapSs.every((b: number, i: number) => b === decapSs[i])
-
-              if (ssMatch) {
-                const ssHex = toHex(encapSs)
-                await pushResult({
-                  id: id8,
-                  algorithm: `${kemAlgo} (${eName})`,
-                  testCase: 'Encap+Decap Round-Trip',
-                  referenceUrl: REF.mlkem,
-                  status: 'pass',
-                  details: `SS[${encapSs.length}B]: ${ssHex} | ct=${ciphertextBytes.length}B`,
-                })
-                addLog(`[${eName}] [id:${id8}] ${kemAlgo} Round-Trip: PASS | SS: ${ssHex}`)
-              } else {
-                await pushResult({
-                  id: id8,
-                  algorithm: `${kemAlgo} (${eName})`,
-                  testCase: 'Encap+Decap Round-Trip',
-                  referenceUrl: REF.mlkem,
-                  status: 'fail',
-                  details: `SS mismatch: encap=${toHex(encapSs, 8)}… decap=${toHex(decapSs, 8)}…`,
-                })
-                addLog(`[DISCREPANCY] [${eName}] [id:${id8}] ${kemAlgo} Round-Trip: SS mismatch`)
-              }
-            } catch (e: unknown) {
-              const errMessage = e instanceof Error ? e.message : String(e)
-              await pushResult({
-                id: `mlkem-rt-${kemVariant}-err-${eName}`,
-                algorithm: `${kemAlgo} (${eName})`,
-                testCase: 'Encap+Decap Round-Trip',
-                referenceUrl: REF.mlkem,
-                status: 'fail',
-                details: errMessage,
-              })
-              addLog(`[DISCREPANCY] [${eName}] [id:${id8}] ${kemAlgo} Round-Trip: ${errMessage}`)
-            }
-          }
         }
 
         // ── 9. SLH-DSA Functional Sign+Verify (FIPS 205) — all 12 sets ──
