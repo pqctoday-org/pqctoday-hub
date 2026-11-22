@@ -1,22 +1,27 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Non-vacuity proof for the test gate-reachability check.
+ * Non-vacuity and wiring-truth proofs for the test gate-reachability check.
  *
- * The failure mode this whole tool exists to eliminate is a green result that
- * could not have been red. So the checker's own matching is proven HERE in both
- * directions — a known-reached file must be reported reached, and a path no
- * gate can run must be reported orphaned — plus the invariants that keep the
- * gate table honest.
- *
- * This file is itself the reachability sentinel: it lives under the default
- * vitest include with no positional filter in front of it, so `ci:test` runs it.
- * If that stops being true, check-test-reachability.ts fails its own direction-1
- * assertion.
+ * Proves:
+ * 1. `computeReport` catches orphans and stale allowlist entries in both directions.
+ * 2. `GATES` matches the actual workflows, `.husky/pre-push`, and `package.json`
+ *    in the live repository (`validateGateWiring(GATES, ROOT) === []`).
+ * 3. Removing a workflow job, rerouting `.husky/pre-push`, or narrowing `test:local`
+ *    to KMIP paths fails `validateGateWiring` for the exact affected venue — even
+ *    when another venue still reaches the same test files.
  */
-import { readFileSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { describe, expect, it } from 'vitest'
-import { ALLOWLIST, GATES, computeReport, enumerateUniverse } from './check-test-reachability'
+import { afterEach, describe, expect, it } from 'vitest'
+import {
+  ALLOWLIST,
+  GATES,
+  computeReport,
+  enumerateUniverse,
+  validateGateWiring,
+  type Gate,
+} from './check-test-reachability'
 
 const ROOT = path.resolve(__dirname, '../..')
 
@@ -27,28 +32,26 @@ describe('computeReport — both directions', () => {
   const universe = [SELF, SYNTHETIC, 'src/components/Playground/kmip/thing.local.test.ts']
 
   it('reports a file a gate resolves as REACHED, not orphaned', () => {
-    const resolved = new Map([['ci:test (vitest shards 1-2)', [SELF]]])
+    const resolved = new Map([['ci:test (vitest shards 1-3)', [SELF]]])
     const report = computeReport(universe, resolved, [])
-    expect(report.reached.get(SELF)).toEqual(['ci:test (vitest shards 1-2)'])
+    expect(report.reached.get(SELF)).toEqual(['ci:test (vitest shards 1-3)'])
     expect(report.orphans.map((o) => o.file)).not.toContain(SELF)
   })
 
   it('reports a file NO gate resolves as an ORPHAN, with a reason', () => {
-    const resolved = new Map([['ci:test (vitest shards 1-2)', [SELF]]])
+    const resolved = new Map([['ci:test (vitest shards 1-3)', [SELF]]])
     const report = computeReport(universe, resolved, [])
     const orphan = report.orphans.find((o) => o.file === SYNTHETIC)
     expect(orphan).toBeDefined()
     expect(orphan?.reason).toMatch(/no enforced gate/i)
   })
 
-  it('explains a local-tier orphan by naming the local-config scoping, not a generic message', () => {
+  it('explains a local-tier orphan accurately (release-only unscoped test:local, not pre-push/CI)', () => {
     const report = computeReport(['src/wasm/softhsm/x.local.test.ts'], new Map(), [])
     expect(report.orphans[0]?.reason).toMatch(/vitest\.local\.config\.ts/)
-    expect(report.orphans[0]?.reason).toMatch(/test:local:cacp/)
-    // Since gate:local runs test:local unscoped, the reason must point the
-    // reader at the config's own exclude/filename, not at a missing gate that
-    // now exists — a stale reason sends whoever hits this down the wrong path.
+    expect(report.orphans[0]?.reason).toMatch(/gate:release/)
     expect(report.orphans[0]?.reason).toMatch(/UNSCOPED/)
+    expect(report.orphans[0]?.reason).toMatch(/not invoked by `\.husky\/pre-push`/)
   })
 
   it('explains a local-tier e2e orphan by naming the playwright local project', () => {
@@ -60,12 +63,11 @@ describe('computeReport — both directions', () => {
   it('an allowlist entry suppresses the orphan…', () => {
     const report = computeReport([SYNTHETIC], new Map(), [{ file: SYNTHETIC, reason: 'test' }])
     expect(report.orphans).toEqual([])
-    // …and, because the file is in the universe and unreached, it is not stale.
     expect(report.staleAllowlist).toEqual([])
   })
 
   it('…but a STALE allowlist entry is reported: reached anyway', () => {
-    const resolved = new Map([['ci:test (vitest shards 1-2)', [SELF]]])
+    const resolved = new Map([['ci:test (vitest shards 1-3)', [SELF]]])
     const report = computeReport([SELF], resolved, [{ file: SELF, reason: 'test' }])
     expect(report.staleAllowlist.map((s) => s.file)).toEqual([SELF])
     expect(report.staleAllowlist[0]?.reason).toMatch(/actually reached/)
@@ -83,74 +85,176 @@ describe('the universe glob is real', () => {
     const universe = await enumerateUniverse()
     expect(universe).toContain(SELF)
     expect(universe).toContain('e2e/basic.spec.ts')
-    // Sanity floor: this repo has hundreds of test files. A universe that
-    // collapsed to a handful would make "0 orphans" meaningless.
     expect(universe.length).toBeGreaterThan(500)
     expect(universe).not.toContain(SYNTHETIC)
   })
 })
 
-describe('the gate table stays honest', () => {
-  it('has unique ids and a cited source for every gate', () => {
+describe('the gate table stays honest against the real repo', () => {
+  it('has unique ids and valid wiring for every declared gate', () => {
     expect(new Set(GATES.map((g) => g.id)).size).toBe(GATES.length)
-    for (const g of GATES) {
-      // package.json counts as a citation ONLY for the local-release tier:
-      // gate:release is not invoked from a workflow or a hook (it needs a
-      // production build first), so package.json is genuinely where it is
-      // written down. Every other tier must point at the workflow or hook that
-      // actually invokes it — naming an npm script there would let an aggregate
-      // that nothing calls masquerade as a gate, which is this tool's whole
-      // subject matter.
-      const expected =
-        g.tier === 'local-release' ? /package\.json/ : /\.github\/workflows\/|\.husky\//
-      expect(g.source, `gate ${g.id} must cite where it is written down`).toMatch(expected)
-    }
+    expect(validateGateWiring(GATES, ROOT)).toEqual([])
   })
 
-  it('gates the local unit tier and the local e2e tier, unscoped', () => {
-    // The two holes this check found on its first run (2026-09-26): 69
-    // *.local.test.* files and 18 *.local.spec.ts files that no gate ran.
-    // Removing either gate below silently re-opens one of them, so assert they
-    // are present AND unfiltered — a scoped version would look identical here
-    // while covering only a fraction.
+  it('includes PR desktop, PR mobile, and PR module-a11y Playwright projects', () => {
+    const projects = GATES.filter((g) => g.kind === 'playwright').map((g) => g.project)
+    expect(projects).toContain('playground-pr-desktop')
+    expect(projects).toContain('playground-pr-mobile')
+    expect(projects).toContain('a11y-modules-pr')
+  })
+
+  it('labels local Vitest and local E2E gates as release-only (not local-pre-push)', () => {
     const localUnit = GATES.find(
       (g) => g.kind === 'vitest' && g.config === 'vitest.local.config.ts' && g.filters.length === 0
     )
-    expect(localUnit, 'gate:local must run `npm run test:local` UNSCOPED').toBeDefined()
-    expect(localUnit?.source).toContain('test:local')
+    expect(localUnit).toBeDefined()
+    expect(localUnit?.tier).toBe('local-release')
 
     const localE2e = GATES.find((g) => g.kind === 'playwright' && g.project === 'local')
-    expect(localE2e, 'gate:release must run `playwright test --project=local`').toBeDefined()
+    expect(localE2e).toBeDefined()
     expect(localE2e?.tier).toBe('local-release')
+
+    // `.husky/pre-push` runs `gate:prepush` (no test suites), so no gate may claim `local-pre-push`.
+    expect(GATES.filter((g) => g.tier === 'local-pre-push')).toEqual([])
   })
 
-  it('gates the nightly unit tier, unscoped, from a workflow that really invokes it', () => {
-    // *.nightly.test.* moved off pre-push on 2026-09-26 (the SLH-DSA vector suite
-    // was 26 of test:local's 29 min). That only holds if something still runs the
-    // tier: assert the gate is listed AND that the cited workflow contains the
-    // command, so deleting the workflow step fails here instead of orphaning
-    // the suite silently.
+  it('gates the nightly unit tier, unscoped, from validation-nightly.yml', () => {
     const nightly = GATES.find(
       (g) =>
         g.kind === 'vitest' && g.config === 'vitest.nightly.config.ts' && g.filters.length === 0
     )
-    expect(nightly, 'validation-nightly.yml must run `npm run test:nightly` UNSCOPED').toBeDefined()
+    expect(nightly).toBeDefined()
     expect(nightly?.tier).toBe('nightly-ci')
-    const wf = readFileSync(path.join(ROOT, '.github/workflows/validation-nightly.yml'), 'utf8')
-    expect(wf).toMatch(/npm run test:nightly/)
-    expect(wf).toMatch(/schedule:/)
-  })
-
-  it('contains the positive control: an unfiltered vitest run from ci.yml', () => {
-    const control = GATES.find(
-      (g) =>
-        g.kind === 'vitest' && g.tier === 'github-ci' && g.config === null && g.filters.length === 0
-    )
-    expect(control, 'ci.yml runs `npx vitest run --shard` — the tracing must find it').toBeDefined()
-    expect(control?.source).toContain('vitest run --shard')
   })
 
   it('every allowlist entry carries a reason', () => {
     for (const a of ALLOWLIST) expect(a.reason.length).toBeGreaterThan(20)
+  })
+})
+
+describe('validateGateWiring — fixture failure proofs', () => {
+  const tempDirs: string[] = []
+
+  function makeFixture(files: Record<string, string>): string {
+    const dir = mkdtempSync(path.join(tmpdir(), 'reachability-wiring-'))
+    tempDirs.push(dir)
+    for (const [rel, content] of Object.entries(files)) {
+      const full = path.join(dir, rel)
+      mkdirSync(path.dirname(full), { recursive: true })
+      writeFileSync(full, content, 'utf8')
+    }
+    return dir
+  }
+
+  afterEach(() => {
+    while (tempDirs.length > 0) {
+      const dir = tempDirs.pop()
+      if (dir) rmSync(dir, { recursive: true, force: true })
+    }
+  })
+
+  it('fails specifically for the removed CI job even when another workflow still reaches default unit tests', () => {
+    const fixtureDir = makeFixture({
+      'package.json': JSON.stringify({ scripts: { test: 'vitest run' } }),
+      '.github/workflows/pr-check.yml': [
+        'jobs:',
+        '  pr-test:',
+        '    steps:',
+        '      - run: npx vitest run --shard=1/3',
+      ].join('\n'),
+      // `test` job removed from ci.yml; only `checks` remains.
+      '.github/workflows/ci.yml': [
+        'jobs:',
+        '  checks:',
+        '    steps:',
+        '      - run: npm run lint',
+      ].join('\n'),
+    })
+
+    const gates: Gate[] = [
+      {
+        kind: 'vitest',
+        id: 'pr:pr-test (vitest shards 1-3)',
+        tier: 'github-ci',
+        source: '.github/workflows/pr-check.yml job "pr-test"',
+        wiring: { rootKind: 'workflow', file: '.github/workflows/pr-check.yml', job: 'pr-test' },
+        config: null,
+        filters: [],
+      },
+      {
+        kind: 'vitest',
+        id: 'ci:test (vitest shards 1-3)',
+        tier: 'github-ci',
+        source: '.github/workflows/ci.yml job "test"',
+        wiring: { rootKind: 'workflow', file: '.github/workflows/ci.yml', job: 'test' },
+        config: null,
+        filters: [],
+      },
+    ]
+
+    const problems = validateGateWiring(gates, fixtureDir)
+    expect(problems).toHaveLength(1)
+    expect(problems[0]?.gateId).toBe('ci:test (vitest shards 1-3)')
+    expect(problems[0]?.reason).toMatch(/job "test" not found/)
+  })
+
+  it('fails when .husky/pre-push is rerouted away from gate:local to gate:prepush', () => {
+    const fixtureDir = makeFixture({
+      'package.json': JSON.stringify({
+        scripts: {
+          'gate:prepush': 'npm run audit:test-reachability',
+          'gate:local': 'npm run test && npm run test:local',
+          test: 'vitest run',
+          'test:local': 'vitest run --config vitest.local.config.ts',
+        },
+      }),
+      '.husky/pre-push': '#!/bin/sh\nnpm run gate:prepush\n',
+    })
+
+    const hookGate: Gate[] = [
+      {
+        kind: 'vitest',
+        id: 'local:pre-push (npm run test)',
+        tier: 'local-pre-push',
+        source: '.husky/pre-push: npm run gate:local -> npm run test',
+        wiring: { rootKind: 'hook', file: '.husky/pre-push' },
+        config: null,
+        filters: [],
+      },
+    ]
+
+    const problems = validateGateWiring(hookGate, fixtureDir)
+    expect(problems).toHaveLength(1)
+    expect(problems[0]?.gateId).toBe('local:pre-push (npm run test)')
+    expect(problems[0]?.reason).toMatch(/no matching vitest invocation/)
+  })
+
+  it('fails when test:local is narrowed to KMIP paths instead of running unscoped', () => {
+    const fixtureDir = makeFixture({
+      'package.json': JSON.stringify({
+        scripts: {
+          'gate:release-local': 'npm run test:local',
+          'test:local':
+            'vitest run --config vitest.local.config.ts src/components/Playground/kmip src/wasm/kmip',
+        },
+      }),
+    })
+
+    const unscopedLocalGate: Gate[] = [
+      {
+        kind: 'vitest',
+        id: 'release:gate:release-local (vitest local config)',
+        tier: 'local-release',
+        source: 'package.json "gate:release-local": npm run test:local',
+        wiring: { rootKind: 'package-script', file: 'package.json', script: 'gate:release-local' },
+        config: 'vitest.local.config.ts',
+        filters: [],
+      },
+    ]
+
+    const problems = validateGateWiring(unscopedLocalGate, fixtureDir)
+    expect(problems).toHaveLength(1)
+    expect(problems[0]?.gateId).toBe('release:gate:release-local (vitest local config)')
+    expect(problems[0]?.reason).toMatch(/unscoped/)
   })
 })
