@@ -77,6 +77,7 @@ import {
 } from './autorun/simAutoRun'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { edgeKey } from '@/data/simArchitecture'
+import { decideResourceRestore } from '@/simulation/restoreDecision'
 import {
   EXEC_TOUR_STAGES,
   EXEC_TOUR_OPENING_CONCEPTS,
@@ -895,33 +896,30 @@ export function SimulationView() {
     return useSimulationStore.persist.onFinishHydration(() => setHydrated(true))
   }, [hydrated])
   useEffect(() => {
-    if (restoredResourceRef.current || !hydrated) return
     const st = useSimulationStore.getState()
     const saved = st.openStepRef as unknown as TreeStep | null
-    // A sandbox lab can't be judged until the sandbox check settles — wait
-    // (without latching) rather than silently drop it.
-    if (saved && isScenarioStep(saved) && sandboxAvail === 'checking') return
-    restoredResourceRef.current = true
-    if (!saved) return
-    // The URL wins: an explicit `?open=` is resolved by the URL sync below.
-    if (searchParams.get(OPEN_PARAM)) return
-    // A `?phase=` deep link to a different phase is a deliberate jump: don't
-    // reopen an unrelated resource from the old phase under the new label.
-    const phaseParam = searchParams.get('phase')
-    if (phaseParam && phaseParam !== st.sel) {
+    const decision = decideResourceRestore({
+      alreadyRestored: restoredResourceRef.current,
+      hydrated,
+      savedStep: saved,
+      selectedPhase: st.sel,
+      searchParams,
+      sandboxAvail,
+      isScenarioStep,
+      canEmbedStep,
+    })
+    if (decision.latch) restoredResourceRef.current = true
+    if (decision.action === 'wait' || decision.action === 'noop') return
+    if (decision.action === 'clear-saved') {
       setOpenStepRef(null)
       return
     }
-    // Replay the stored step directly. Re-deriving it from the trees cannot
-    // work: the Resources tab builds steps from the phase RESOURCE MAP, which
-    // surfaces resources no tree contains (e.g. /learn/quantum-threats).
-    if (canEmbedStep(saved) && openStepPane(saved)) {
+    if (decision.action === 'restore' && openStepPane(decision.step)) {
       // Tie the URL to it (replace — a reload is not a new history step), so
       // closing it and copying the link behave the same as a fresh open.
-      const value = encodeOpen(st.sel, saved)
-      urlOpenRef.current = value
+      urlOpenRef.current = decision.encodedOpen
       const next = new URLSearchParams(searchParams)
-      next.set(OPEN_PARAM, value)
+      next.set(OPEN_PARAM, decision.encodedOpen)
       setSearchParams(next, { replace: true })
     } else {
       // W7.5: the run remembered a resource this build cannot reopen, so the
