@@ -39,6 +39,8 @@ export type NiceProficiencyTier = 'awareness' | 'practitioner' | 'expert'
 export const NICE_COMPONENTS_VERSION = '2.2.0'
 
 /** Internal work-role slug (stable key; maps to an official v2.2.0 work-role ID via `niceCode`). */
+import type { PersonaId } from './personaIds'
+
 export type NiceWorkRoleId =
   | 'security-architect'
   | 'security-developer'
@@ -49,6 +51,13 @@ export type NiceWorkRoleId =
   | 'systems-security-analyst'
   | 'is-security-manager'
   | 'validation-engineer'
+  | 'executive-leader'
+  | 'policy-planner'
+  | 'control-assessor'
+  | 'supply-chain-risk-manager'
+  | 'rd-specialist'
+  | 'ot-security-engineer'
+  | 'software-security-assessor'
 
 /** Official NICE Framework v2.2.0 work-role category. */
 export type NiceWorkRoleCategory = 'DD' | 'IO' | 'PD' | 'IN' | 'OG'
@@ -376,6 +385,79 @@ export const NICE_WORK_ROLES: Record<NiceWorkRoleId, NiceWorkRole> = {
       'Nearest v2.2.0 match: no work role is specific to cryptographic-module validation; Systems Testing and Evaluation (DD-WRL-007) covers planning and executing tests and evaluating results against specifications.',
     competencyAreas: ['CA-CRYPTO', 'CA-GOVCOMP'],
   },
+  // Added 2026-11-21: seven further v2.2.0 work roles that PQC modules teach to.
+  // niceCode, officialName and description are verbatim from
+  // pqc-references/NICE-Framework-Components-v2.2.0.json.
+  'executive-leader': {
+    id: 'executive-leader',
+    niceCode: 'OG-WRL-007',
+    officialName: 'Executive Cybersecurity Leadership',
+    category: 'OG',
+    title: 'Executive Cybersecurity Leader',
+    description:
+      "Responsible for establishing vision and direction for an organization's cybersecurity operations and resources and their impact on digital and physical spaces. Possesses authority to make and execute decisions that impact an organization broadly, including policy approval and stakeholder engagement.",
+    competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
+  },
+  'policy-planner': {
+    id: 'policy-planner',
+    niceCode: 'OG-WRL-002',
+    officialName: 'Cybersecurity Policy and Planning',
+    category: 'OG',
+    title: 'Cybersecurity Policy & Planning Specialist',
+    description:
+      'Responsible for developing and maintaining cybersecurity plans, strategy, and policy to support and align with organizational cybersecurity initiatives and regulatory compliance.',
+    competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
+  },
+  'control-assessor': {
+    id: 'control-assessor',
+    niceCode: 'OG-WRL-012',
+    officialName: 'Security Control Assessment',
+    category: 'OG',
+    title: 'Security Control Assessor',
+    description:
+      'Responsible for conducting independent comprehensive assessments of management, operational, and technical security controls and control enhancements employed within or inherited by a system to determine their overall effectiveness.',
+    competencyAreas: ['CA-GOVCOMP', 'CA-RISK', 'CA-SYSARCH'],
+  },
+  'supply-chain-risk-manager': {
+    id: 'supply-chain-risk-manager',
+    niceCode: 'OG-WRL-017',
+    officialName: 'Cybersecurity Supply Chain Risk Management',
+    category: 'OG',
+    title: 'Supply Chain Risk Manager',
+    description:
+      'Responsible for developing cybersecurity supply chain risk management (C-SCRM) policies, processes, and procedures to identify, assess, protect against, and respond to cybersecurity risks throughout the supply chain, and for advising other stakeholders within an enterprise about supply chain risks.',
+    competencyAreas: ['CA-RISK', 'CA-GOVCOMP', 'CA-SECPROG'],
+  },
+  'rd-specialist': {
+    id: 'rd-specialist',
+    niceCode: 'DD-WRL-008',
+    officialName: 'Technology Research and Development',
+    category: 'DD',
+    title: 'Research & Development Specialist',
+    description:
+      'Responsible for conducting software and systems engineering and software systems research to develop new capabilities with fully integrated cybersecurity. Conducts comprehensive technology research to evaluate potential vulnerabilities in cyberspace systems.',
+    competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
+  },
+  'ot-security-engineer': {
+    id: 'ot-security-engineer',
+    niceCode: 'DD-WRL-009',
+    officialName: 'Operational Technology (OT) Cybersecurity Engineering',
+    category: 'DD',
+    title: 'OT Cybersecurity Engineer',
+    description:
+      'Responsible for working within the engineering department to design and create systems, processes, and procedures that maintain the safety, reliability, controllability and security of industrial systems in the face of intentional and incidental cyber events. Interfaces with Chief Information Security Officer, plant managers and industrial cybersecurity technicians.',
+    competencyAreas: ['CA-NETDEF', 'CA-SYSARCH', 'CA-CRYPTO'],
+  },
+  'software-security-assessor': {
+    id: 'software-security-assessor',
+    niceCode: 'DD-WRL-005',
+    officialName: 'Software Security Assessment',
+    category: 'DD',
+    title: 'Software Security Assessor',
+    description:
+      'Responsible for analyzing the security of new or existing computer applications, software, or specialized utility programs and delivering actionable results.',
+    competencyAreas: ['CA-SECPROG', 'CA-CRYPTO'],
+  },
 }
 
 // ---------------------------------------------------------------------------
@@ -507,6 +589,28 @@ export function getCompetencyAreas(ids: NiceCompetencyAreaId[]): NiceCompetencyA
 }
 
 /** Return Work Role objects for a given list of IDs */
+/**
+ * Persona → best-fit NICE work role, used to pre-select the role filter.
+ * `curious` is deliberately `null`: no v2.2.0 work role describes a general
+ * learner, so that persona opens on "All roles" (2026-11-21).
+ */
+export const PERSONA_DEFAULT_ROLE: Record<PersonaId, NiceWorkRoleId | null> = {
+  executive: 'executive-leader',
+  grc: 'policy-planner',
+  developer: 'security-developer',
+  architect: 'security-architect',
+  researcher: 'rd-specialist',
+  'cert-engineer': 'validation-engineer',
+  ops: 'system-administrator',
+  curious: null,
+}
+
+/** The default work role for a persona id, or null when it has none. */
+export function personaDefaultRole(personaId: string | null | undefined): NiceWorkRoleId | null {
+  if (!personaId || !(personaId in PERSONA_DEFAULT_ROLE)) return null
+  return PERSONA_DEFAULT_ROLE[personaId as PersonaId]
+}
+
 export function getWorkRoles(ids: NiceWorkRoleId[]): NiceWorkRole[] {
   return ids.map((id) => NICE_WORK_ROLES[id])
 }
