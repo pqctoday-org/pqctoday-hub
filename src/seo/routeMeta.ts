@@ -453,6 +453,18 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('AI as an Attacker of Cryptography', 'PT50M', 'Intermediate'),
   },
 
+  '/learn/pqc-algorithms': {
+    title: 'The PQC Algorithms: How They Work and How to Choose | PQC Today',
+    description:
+      'How the standardised post-quantum algorithms work, read from the standards and guidance documents one sentence at a time: ML-KEM and ML-DSA in full, hash-based signatures in brief, and what named standards bodies say about choosing between them.',
+    canonical: `${BASE_URL}/learn/pqc-algorithms`,
+    structuredData: buildModuleSchema(
+      'The PQC Algorithms: How They Work and How to Choose',
+      'PT40M',
+      'Intermediate'
+    ),
+  },
+
   '/learn/hybrid-crypto': {
     title: 'Hybrid Cryptography — Transitional PQC Key Exchange & Signatures | PQC Today',
     description:

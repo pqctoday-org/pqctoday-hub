@@ -35,6 +35,7 @@ export const LEARN_PHASES: Record<string, PhaseResource> = {
     phasesServed: ['foundations', 'p0', 'p2'],
     legs: ['learn', 'practice', 'reference'],
   },
+  'pqc-algorithms': { phasesServed: ['foundations'], legs: ['learn', 'practice', 'reference'] },
   'pqc-candidates': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },
   'hybrid-crypto': { phasesServed: ['p5'], legs: ['learn', 'reference'] },
   'crypto-agility': { phasesServed: ['foundations'], legs: ['learn', 'reference'] },

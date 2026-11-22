@@ -33,6 +33,11 @@ export const NEXT_STEPS: Record<string, NextStep> = {
     label: 'Continue hardening implementations: PQC Implementation Security',
     why: 'PQC Implementation Security deepens the constant-time, masking, TVLA, and FIPS 140-3 / EUCC evaluation defences introduced in AI as an Attacker of Cryptography.',
   },
+  '/learn/pqc-algorithms': {
+    to: '/learn/pqc-candidates',
+    label: 'Continue to PQC Candidates & Lifecycle',
+    why: 'PQC Candidates & Lifecycle is where this module hands off the history of how the standardised algorithms were selected.',
+  },
   // ── module→business ──
   '/learn/ai-security-pqc': {
     to: '/business/tools/data-at-rest-strategy',

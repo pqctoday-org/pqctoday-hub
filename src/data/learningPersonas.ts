@@ -452,6 +452,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'ai-crypto-attacks',
       'entropy-randomness',
+      'pqc-algorithms',
       'pqc-candidates',
       'tls-basics',
       'vpn-ssh-pqc',
@@ -498,6 +499,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quantum-threats' },
       { type: 'module', moduleId: 'ai-crypto-attacks' },
       { type: 'module', moduleId: 'entropy-randomness' },
+      { type: 'module', moduleId: 'pqc-algorithms' },
       { type: 'module', moduleId: 'pqc-candidates' },
       {
         type: 'checkpoint',
@@ -611,7 +613,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 2425,
+    estimatedMinutes: 2465,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -677,6 +679,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'quantum-threats',
       'ai-crypto-attacks',
       'entropy-randomness',
+      'pqc-algorithms',
       'pqc-candidates',
       'crypto-agility',
       'crypto-mgmt-modernization',
@@ -734,6 +737,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'quantum-threats' },
       { type: 'module', moduleId: 'ai-crypto-attacks' },
       { type: 'module', moduleId: 'entropy-randomness' },
+      { type: 'module', moduleId: 'pqc-algorithms' },
       { type: 'module', moduleId: 'pqc-candidates' },
       {
         type: 'checkpoint',
@@ -867,7 +871,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 3118,
+    estimatedMinutes: 3158,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',

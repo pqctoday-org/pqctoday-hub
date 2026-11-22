@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Foundations',
-  trackOrder: 3,
+  trackOrder: 4,
   learnSections: [
     { id: 'two-threats', label: 'Two Threats: Quantum vs AI' },
     { id: 'keys-in-software', label: 'Keys & Secrets in Software' },

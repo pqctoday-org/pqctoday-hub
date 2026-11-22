@@ -696,6 +696,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     isCommonGround: true,
   },
   {
+    moduleId: 'pqc-algorithms',
+    competencyAreas: ['CA-CRYPTO'],
+    tier: 'practitioner',
+    workRoles: ['security-architect', 'security-developer', 'validation-engineer'],
+    isCommonGround: false,
+  },
+  {
     moduleId: '5g-security',
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-NETDEF', 'CA-CRYPTO'],

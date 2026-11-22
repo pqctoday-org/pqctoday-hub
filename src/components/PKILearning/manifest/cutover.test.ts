@@ -140,6 +140,17 @@ const postCutoverAICryptoAttacksCatalog = {
   frameworkPhase: 'foundations',
 }
 
+const postCutoverPqcAlgorithmsCatalog = {
+  id: 'pqc-algorithms',
+  lm_id: 'LM-088',
+  title: 'The PQC Algorithms: How They Work and How to Choose',
+  description:
+    'How the standardised post-quantum algorithms work, read from the standards and guidance documents one sentence at a time: ML-KEM and ML-DSA in full, hash-based signatures in brief, and what named standards bodies say about choosing between them. The workshop runs ML-KEM and ML-DSA in the browser and compares sizes.',
+  duration: '40 min',
+  difficulty: 'intermediate',
+  frameworkPhase: 'foundations',
+}
+
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
   it('MODULE_CATALOG preserves all structural legacy fields without locking editable prose', () => {
     const liveCatalog = buildCatalog(MANIFESTS)
@@ -158,6 +169,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         'custody-pqc-migration': postCutoverCustodyPqcMigrationCatalog,
         'custody-governance': postCutoverCustodyGovernanceCatalog,
         'ai-crypto-attacks': postCutoverAICryptoAttacksCatalog,
+        'pqc-algorithms': postCutoverPqcAlgorithmsCatalog,
       })
     )
   })
@@ -174,6 +186,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       'custody-pqc-migration': 4,
       'custody-governance': 1,
       'ai-crypto-attacks': 5,
+      'pqc-algorithms': 3,
     }))
   it('LEARN_SECTIONS', () => {
     const cbom = golden.LEARN_SECTIONS['cbom']
@@ -265,6 +278,21 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         { id: 'defences', label: 'Defences & Verification' },
         { id: 'takeaways', label: 'Takeaways & Executive Verdict' },
       ],
+      'pqc-algorithms': [
+        { id: 'two-jobs-new-tools', label: 'Two jobs, new tools' },
+        { id: 'the-families-at-a-glance', label: 'The families at a glance' },
+        { id: 'ml-kem-fips-203', label: 'ML-KEM (FIPS 203)' },
+        { id: 'ml-dsa-fips-204', label: 'ML-DSA (FIPS 204)' },
+        { id: 'hash-based-signatures-in-brief', label: 'Hash-based signatures in brief' },
+        {
+          id: 'how-standards-bodies-map-use-cases-to-algorithms',
+          label: 'How standards bodies map use cases to algorithms',
+        },
+        {
+          id: 'common-pitfalls-noted-in-the-standards',
+          label: 'Common pitfalls noted in the standards',
+        },
+      ],
     })
   })
   it('WORKSHOP_STEPS', () => {
@@ -344,6 +372,11 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         { id: 'claim-sorter', label: 'Claim & Rubric Sorter' },
         { id: 'defence-planner', label: 'Layered Defence Planner' },
       ],
+      'pqc-algorithms': [
+        { id: 'ml-kem-round-trip', label: 'ML-KEM Round Trip' },
+        { id: 'ml-dsa-sign-verify', label: 'ML-DSA Sign and Verify' },
+        { id: 'size-comparator', label: 'Size Comparator' },
+      ],
     }
     expect(buildWorkshopSteps(MANIFESTS)).toEqual(expected)
   })
@@ -355,6 +388,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
           ...track,
           modules: [
             ...modules.slice(0, 3),
+            omitDescription(postCutoverPqcAlgorithmsCatalog),
             omitDescription(postCutoverAICryptoAttacksCatalog),
             ...modules.slice(3),
           ],
@@ -515,6 +549,19 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
           'NIST IR 8547',
           'NSA CNSA 2.0',
           'PKCS#11',
+        ],
+      },
+      'pqc-algorithms': {
+        algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS/XMSS', 'HQC', 'Falcon', 'RSA', 'ECDSA'],
+        standards: [
+          'FIPS 203',
+          'FIPS 204',
+          'FIPS 205',
+          'NIST SP 800-208',
+          'NIST SP 800-227',
+          'NIST IR 8547',
+          'NSA CNSA 2.0',
+          'RFC 10024',
         ],
       },
     })

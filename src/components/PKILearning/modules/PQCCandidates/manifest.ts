@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Foundations',
-  trackOrder: 4,
+  trackOrder: 5,
   learnSections: [
     { id: 'rolling-process', label: 'Rolling Standardisation' },
     { id: 'validation', label: 'Candidate Validation' },

@@ -154,6 +154,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   'Module1-Introduction': 'pqc-101',
   QuantumThreats: 'quantum-threats',
   AICryptoAttacks: 'ai-crypto-attacks',
+  PQCAlgorithms: 'pqc-algorithms',
   HybridCrypto: 'hybrid-crypto',
   CryptoAgility: 'crypto-agility',
   TalkingAboutPQC: 'talking-about-pqc',
