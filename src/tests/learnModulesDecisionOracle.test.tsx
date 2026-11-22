@@ -16,11 +16,99 @@ const RECEIPT_OUTPUT_PATH = resolve(
   '../backups/hub-4213/learn-decision-receipts-76.json'
 )
 
-describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Decision Oracle', () => {
+const EXPECTED_LEARN_MODULE_IDS = [
+  '5g-security',
+  'acvp-lab-workflow',
+  'aerospace-pqc',
+  'ai-crypto-attacks',
+  'ai-security-pqc',
+  'api-security-jwt',
+  'arch-quantum-impact',
+  'automotive-pqc',
+  'cbom',
+  'cc-eucc-certification',
+  'cert-quantum-impact',
+  'cloud-pqc',
+  'code-signing',
+  'compliance-strategy',
+  'confidential-computing',
+  'crypto-agility',
+  'crypto-dev-apis',
+  'crypto-mgmt-modernization',
+  'crypto-product-certification',
+  'crypto-registry',
+  'custody-governance',
+  'custody-lifecycle-ops',
+  'custody-pqc-migration',
+  'custody-threats-controls',
+  'data-asset-sensitivity',
+  'database-encryption-pqc',
+  'dev-quantum-impact',
+  'digital-assets',
+  'digital-id',
+  'dnssec-pqc',
+  'email-signing',
+  'emv-payment-pqc',
+  'energy-utilities-pqc',
+  'entropy-randomness',
+  'exec-quantum-impact',
+  'fips-140-3-certification',
+  'government-defense-pqc',
+  'healthcare-pqc',
+  'homomorphic-encryption',
+  'hsm-pqc',
+  'hybrid-crypto',
+  'iam-pqc',
+  'iot-pqc',
+  'kms-pqc',
+  'media-drm-pqc',
+  'merkle-tree-certs',
+  'migration-program',
+  'mls-group-messaging',
+  'network-security-pqc',
+  'ops-quantum-impact',
+  'os-pqc',
+  'ot-pqc',
+  'pci-certification',
+  'pki-enrollment-protocols',
+  'pki-workshop',
+  'platform-eng-pqc',
+  'pqc-101',
+  'pqc-business-case',
+  'pqc-candidates',
+  'pqc-governance',
+  'pqc-grc',
+  'pqc-hw-acceleration',
+  'pqc-implementation-security',
+  'pqc-risk-management',
+  'pqc-testing-validation',
+  'qkd',
+  'quantum-threats',
+  'quiz',
+  'research-quantum-impact',
+  'sbom',
+  'secrets-management-pqc',
+  'secure-boot-pqc',
+  'skills-team-structure',
+  'slh-dsa',
+  'soc-implementation-pqc',
+  'software-supply-chain-pqc',
+  'standards-bodies',
+  'stateful-signatures',
+  'talking-about-pqc',
+  'tls-basics',
+  'trust-services-pqc',
+  'vendor-risk',
+  'verification-closure',
+  'vpn-ssh-pqc',
+  'web-gateway-pqc',
+] as const
+
+describe('Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Decision Oracle', () => {
   const allModuleIds = MANIFESTS.map((m) => m.id).sort()
 
-  it('covers all 85 Learn module manifests (84 workshop modules + quiz) with unique, domain-tailored scenarios and capability checklists', () => {
-    expect(allModuleIds).toHaveLength(85)
+  it('covers the reviewed Learn module inventory with unique, domain-tailored scenarios and capability checklists', () => {
+    expect(allModuleIds).toEqual([...EXPECTED_LEARN_MODULE_IDS].sort())
     expect(allModuleIds).toContain('quiz')
 
     const seenTitles = new Set<string>()
@@ -54,9 +142,9 @@ describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Deci
       expect(checklist.educationalBoundary.length).toBeGreaterThan(20)
     }
 
-    expect(seenTitles.size).toBe(85)
-    expect(seenPrompts.size).toBe(85)
-    expect(seenArtifacts.size).toBe(85)
+    expect(seenTitles.size).toBe(allModuleIds.length)
+    expect(seenPrompts.size).toBe(allModuleIds.length)
+    expect(seenArtifacts.size).toBe(allModuleIds.length)
   })
 
   it('renders tailored domain scenario copy in CryptoTamperExercise and PolicyScopeExercise without generic placeholder text', () => {
@@ -82,7 +170,7 @@ describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Deci
     unmount()
   })
 
-  it('executes real cryptographic tamper/recovery (runTamperSample) and scoped policy/horizon evaluation across all 76 modules and writes receipt JSON', async () => {
+  it('executes real cryptographic tamper/recovery (runTamperSample) and scoped policy/horizon evaluation across all registered modules and writes receipt JSON', async () => {
     const receipts: Record<string, unknown>[] = []
 
     for (const moduleId of allModuleIds) {
@@ -144,7 +232,7 @@ describe('All 75 Learn Modules (+ Quiz) Tailored Failure, Recovery & Policy Deci
       })
     }
 
-    expect(receipts).toHaveLength(85)
+    expect(receipts).toHaveLength(allModuleIds.length)
 
     if (existsSync(resolve(process.cwd(), '../backups'))) {
       mkdirSync(dirname(RECEIPT_OUTPUT_PATH), { recursive: true })

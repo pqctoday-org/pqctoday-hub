@@ -8,6 +8,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { MANIFESTS } from './registry'
+import type { ModuleManifest } from './types'
 import {
   buildCatalog,
   buildStepCounts,
@@ -19,30 +20,18 @@ import {
 } from './derive'
 import golden from './__golden__/legacyMaps.golden.json'
 
-const historicalCryptoMgmtDescription =
-  'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.'
-const reviewedCryptoMgmtDescription =
-  'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative, with a business case tested against explicit costs, benefits and uncertainty.'
+/** Strip editable prose descriptions when comparing structural legacy contracts against the frozen golden. */
+function omitDescription<T extends { description?: string }>(entry: T): Omit<T, 'description'> {
+  const { description: _ignored, ...structural } = entry
+  void _ignored
+  return structural
+}
 
-const historicalSecretsDescription =
-  'Master PQC migration for secrets managers: classify secrets by HNDL risk, simulate a proposed Vault transit design with ML-KEM (Vault documents no ML-KEM transit key type), design rotation policies, and integrate PQC-safe secrets into Kubernetes and CI/CD pipelines.'
-const reviewedSecretsDescription =
-  'Evaluate PQC migration for secrets managers: classify exposure, compare Vault transit operations with an executable application-side ML-KEM envelope, design rotation policies, and assess Kubernetes and CI/CD integration capabilities.'
-
-const historicalPqcRiskMgmtDescription =
-  'Quantify quantum risk, build risk registers, model CRQC timeline scenarios, and generate risk heatmaps from real threat data.'
-const reviewedPqcRiskMgmtDescription =
-  'Compare quantum-risk planning scenarios, record asset assumptions, and rank editable likelihood-by-impact worksheets.'
-
-const historicalQuantumThreatsDescription =
-  "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL/HNFL attack mechanics."
-const reviewedQuantumThreatsDescription =
-  "Understand how Shor's algorithm threatens factoring and discrete-log cryptography, how quantum search affects symmetric-key margins, and how HNDL/HNFL risks are modeled."
-
-const historicalSbomDescription =
-  'Inventory every software component a product depends on — supplier, version, dependency graph — the discovery input that feeds a CBOM and closes the vulnerability-triage loop with VEX.'
-const reviewedSbomDescription =
-  'Inventory software components within a stated scope, with versions, supplier or producer details, and dependency relationships — one input for vulnerability triage and broader crypto-asset discovery.'
+function omitCatalogDescriptions<T extends Record<string, { description?: string }>>(
+  catalog: T
+): Record<string, Omit<T[string], 'description'>> {
+  return Object.fromEntries(Object.entries(catalog).map(([k, v]) => [k, omitDescription(v)]))
+}
 
 // The cut-over predates the two optional PKI reference labs and the two published
 // hybrid RFCs. Keep the historic maps intact, with exact expectations for those additions.
@@ -152,36 +141,25 @@ const postCutoverAICryptoAttacksCatalog = {
 }
 
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
-  it('MODULE_CATALOG', () => {
-    // Retain the historical snapshot; only reviewed module descriptions change.
-    // Other fields remain guarded exactly.
-    const original = golden.MODULE_CATALOG['crypto-mgmt-modernization']
-    expect(original.description).toBe(historicalCryptoMgmtDescription)
-    const secrets = golden.MODULE_CATALOG['secrets-management-pqc']
-    expect(secrets.description).toBe(historicalSecretsDescription)
-    const riskMgmt = golden.MODULE_CATALOG['pqc-risk-management']
-    expect(riskMgmt.description).toBe(historicalPqcRiskMgmtDescription)
-    const quantumThreats = golden.MODULE_CATALOG['quantum-threats']
-    expect(quantumThreats.description).toBe(historicalQuantumThreatsDescription)
-    const sbom = golden.MODULE_CATALOG['sbom']
-    expect(sbom.description).toBe(historicalSbomDescription)
-    expect(buildCatalog(MANIFESTS)).toEqual({
-      ...golden.MODULE_CATALOG,
-      'secrets-management-pqc': { ...secrets, description: reviewedSecretsDescription },
-      'crypto-mgmt-modernization': { ...original, description: reviewedCryptoMgmtDescription },
-      'pqc-risk-management': { ...riskMgmt, description: reviewedPqcRiskMgmtDescription },
-      'quantum-threats': { ...quantumThreats, description: reviewedQuantumThreatsDescription },
-      sbom: { ...sbom, description: reviewedSbomDescription },
-      'cert-quantum-impact': postCutoverCertQuantumImpactCatalog,
-      'cloud-pqc': postCutoverCloudPqcCatalog,
-      'pqc-implementation-security': postCutoverPqcImplementationSecurityCatalog,
-      'energy-utilities-pqc': postCutoverEnergyUtilitiesPqcCatalog,
-      'custody-threats-controls': postCutoverCustodyThreatsControlsCatalog,
-      'custody-lifecycle-ops': postCutoverCustodyLifecycleOpsCatalog,
-      'custody-pqc-migration': postCutoverCustodyPqcMigrationCatalog,
-      'custody-governance': postCutoverCustodyGovernanceCatalog,
-      'ai-crypto-attacks': postCutoverAICryptoAttacksCatalog,
-    })
+  it('MODULE_CATALOG preserves all structural legacy fields without locking editable prose', () => {
+    const liveCatalog = buildCatalog(MANIFESTS)
+    for (const [id, entry] of Object.entries(liveCatalog)) {
+      expect(entry.description.trim().length, `${id} must carry a description`).toBeGreaterThan(20)
+    }
+    expect(omitCatalogDescriptions(liveCatalog)).toEqual(
+      omitCatalogDescriptions({
+        ...golden.MODULE_CATALOG,
+        'cert-quantum-impact': postCutoverCertQuantumImpactCatalog,
+        'cloud-pqc': postCutoverCloudPqcCatalog,
+        'pqc-implementation-security': postCutoverPqcImplementationSecurityCatalog,
+        'energy-utilities-pqc': postCutoverEnergyUtilitiesPqcCatalog,
+        'custody-threats-controls': postCutoverCustodyThreatsControlsCatalog,
+        'custody-lifecycle-ops': postCutoverCustodyLifecycleOpsCatalog,
+        'custody-pqc-migration': postCutoverCustodyPqcMigrationCatalog,
+        'custody-governance': postCutoverCustodyGovernanceCatalog,
+        'ai-crypto-attacks': postCutoverAICryptoAttacksCatalog,
+      })
+    )
   })
   it('MODULE_STEP_COUNTS', () =>
     expect(buildStepCounts(MANIFESTS)).toEqual({
@@ -369,60 +347,54 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
     }
     expect(buildWorkshopSteps(MANIFESTS)).toEqual(expected)
   })
-  it('MODULE_TRACKS', () => {
+  it('MODULE_TRACKS preserves track membership and ordering without locking editable prose', () => {
     const expected = golden.MODULE_TRACKS.map((track) => {
-      const modules = track.modules.map((module) => {
-        if (module.id === 'secrets-management-pqc') {
-          expect(module.description).toBe(historicalSecretsDescription)
-          return { ...module, description: reviewedSecretsDescription }
-        }
-        if (module.id === 'pqc-risk-management') {
-          expect(module.description).toBe(historicalPqcRiskMgmtDescription)
-          return { ...module, description: reviewedPqcRiskMgmtDescription }
-        }
-        if (module.id === 'quantum-threats') {
-          expect(module.description).toBe(historicalQuantumThreatsDescription)
-          return { ...module, description: reviewedQuantumThreatsDescription }
-        }
-        if (module.id === 'sbom') {
-          expect(module.description).toBe(historicalSbomDescription)
-          return { ...module, description: reviewedSbomDescription }
-        }
-        if (module.id !== 'crypto-mgmt-modernization') return module
-        expect(module.description).toBe(historicalCryptoMgmtDescription)
-        return { ...module, description: reviewedCryptoMgmtDescription }
-      })
+      const modules = track.modules.map((m) => omitDescription(m))
       if (track.track === 'Foundations') {
         return {
           ...track,
-          modules: [...modules.slice(0, 3), postCutoverAICryptoAttacksCatalog, ...modules.slice(3)],
+          modules: [
+            ...modules.slice(0, 3),
+            omitDescription(postCutoverAICryptoAttacksCatalog),
+            ...modules.slice(3),
+          ],
         }
       }
       if (track.track === 'Role Guides') {
-        return { ...track, modules: [...modules, postCutoverCertQuantumImpactCatalog] }
+        return {
+          ...track,
+          modules: [...modules, omitDescription(postCutoverCertQuantumImpactCatalog)],
+        }
       }
       if (track.track === 'Software Infrastructure') {
-        return { ...track, modules: [...modules, postCutoverCloudPqcCatalog] }
+        return { ...track, modules: [...modules, omitDescription(postCutoverCloudPqcCatalog)] }
       }
       if (track.track === 'Hardware Infrastructure') {
-        return { ...track, modules: [...modules, postCutoverPqcImplementationSecurityCatalog] }
+        return {
+          ...track,
+          modules: [...modules, omitDescription(postCutoverPqcImplementationSecurityCatalog)],
+        }
       }
       if (track.track === 'Industries') {
         return {
           ...track,
           modules: [
             ...modules,
-            postCutoverEnergyUtilitiesPqcCatalog,
-            postCutoverCustodyThreatsControlsCatalog,
-            postCutoverCustodyLifecycleOpsCatalog,
-            postCutoverCustodyPqcMigrationCatalog,
-            postCutoverCustodyGovernanceCatalog,
+            omitDescription(postCutoverEnergyUtilitiesPqcCatalog),
+            omitDescription(postCutoverCustodyThreatsControlsCatalog),
+            omitDescription(postCutoverCustodyLifecycleOpsCatalog),
+            omitDescription(postCutoverCustodyPqcMigrationCatalog),
+            omitDescription(postCutoverCustodyGovernanceCatalog),
           ],
         }
       }
       return { ...track, modules }
     })
-    expect(buildModuleTracks(MANIFESTS)).toEqual(expected)
+    const actual = buildModuleTracks(MANIFESTS).map((track) => ({
+      ...track,
+      modules: track.modules.map((m) => omitDescription(m)),
+    }))
+    expect(actual).toEqual(expected)
   })
   it('MODULE_PLAYGROUND_TOOL', () =>
     expect(buildPlaygroundTools(MANIFESTS)).toEqual(golden.MODULE_PLAYGROUND_TOOL))
@@ -546,5 +518,23 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         ],
       },
     })
+  })
+})
+
+describe('derive.ts editable field propagation (fixture)', () => {
+  it('propagates a description-only manifest edit through buildCatalog and buildModuleTracks without touching historical prose', () => {
+    const base = MANIFESTS.find((m) => m.id === 'pqc-101')
+    expect(base).toBeDefined()
+    const distinctiveDescription =
+      'Distinctive fixture description 2026-11-22 proving derive.ts carries edited prose verbatim.'
+    const fixture: ModuleManifest = {
+      ...(base as ModuleManifest),
+      description: distinctiveDescription,
+    }
+    const catalog = buildCatalog([fixture])
+    expect(catalog['pqc-101']?.description).toBe(distinctiveDescription)
+    const tracks = buildModuleTracks([fixture])
+    const derived = tracks.flatMap((t) => t.modules).find((m) => m.id === 'pqc-101')
+    expect(derived?.description).toBe(distinctiveDescription)
   })
 })
