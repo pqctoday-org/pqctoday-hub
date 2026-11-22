@@ -15,9 +15,10 @@ import {
   hsm_extractKeyValue,
   hsm_generateMLKEMKeyPair,
   hsm_importMLKEMPrivateKey,
+  type Pkcs11LogEntry,
   type SoftHSMModule,
 } from '@/wasm/softhsm'
-import type { HsmKey, HsmLogEntry } from '../../HsmContext'
+import type { HsmKey } from '../../HsmContext'
 import { logByteComparison } from '../comparisonLog'
 import type { AcvpCaseMeta, MldsaAcvpSectionCtx } from './mldsaAcvp'
 import { runMlkemAcvpSection } from './mlkemAcvp'
@@ -27,7 +28,7 @@ import { runOptionalInputSection } from './optionalInputAcvp'
 export interface MlkemCategoryRunnerCtx extends MldsaAcvpSectionCtx {
   engineId: HsmKey['engine']
   regKey: (key: Omit<HsmKey, 'generatedAt' | 'uniqueId' | 'slotId'>) => void
-  addHsmLog: (entry: HsmLogEntry) => void
+  addHsmLog: (entry: Pkcs11LogEntry) => void
   toHex: (bytes: Uint8Array, maxBytes?: number) => string
 }
 
