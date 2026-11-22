@@ -7,82 +7,80 @@
  * A test file can exist, run, and FAIL, while no gate ever executes it. That is
  * not a hypothetical: on 2026-09-26 three separate misses came from it in one
  * day, and twice an honest "0 failures" was reported by a command that
- * structurally could not execute the file being asked about:
- *
- *   • `npm run test:local` resolves ONLY `**\/*.local.test.{ts,tsx}`
- *     (vitest.local.config.ts `include`), so a plain `*.test.ts` is invisible
- *     to it no matter which path you pass as a positional filter.
- *   • `npm run gate:pkcs11` narrows to
- *     src/components/Playground/{hsm,tabs,dev,learnkit} +
- *     HsmPlayground.test.tsx + src/wasm/softhsm, so anything outside those
- *     paths is invisible to it — e.g.
- *     src/components/PKILearning/modules/HybridCrypto/services/hpkeService.test.ts,
- *     which had 54 genuine failures at the time.
- *   • `gate:pkcs11` itself is wired into NO gate — not ci.yml, not
- *     .husky/pre-push, not gate:local/gate:release. It is a manual command
- *     documented in TESTING.md. Whatever only it covers is covered by nobody.
+ * structurally could not execute the file being asked about.
  *
  * WHAT IT DOES
  * ------------
  * 1. Enumerates every test-shaped file in the repo (tinyglobby — the same
  *    globber vitest itself uses — minus git-ignored paths).
- * 2. Asks the REAL tools which files each enforced gate would run:
+ * 2. Validates every declared gate against the ACTUAL workflow YAML jobs,
+ *    `.husky/pre-push`, and `package.json` scripts (recursively expanding
+ *    `npm run` chains). Listing a deleted CI job, a rerouted hook, or an
+ *    unscoped gate whose script was narrowed to a single directory FAILS loud.
+ * 3. Asks the REAL tools which files each enforced gate would run:
  *      - `vitest list --filesOnly --json [--config X] [filters…]`
  *      - `playwright test --list --reporter=json --project=P`
- *    We never re-implement glob/filter semantics. A hand-rolled matcher that is
- *    subtly different produces a wrong answer that looks authoritative, which is
- *    the exact failure mode this check exists to eliminate.
- * 3. Fails, naming every file no enforced gate would run ("orphan"), with the
- *    reason.
- * 4. Proves itself non-vacuous on every run (see assertNonVacuous below): a
- *    sentinel file that MUST be reached is asserted reached, and a synthetic
- *    path that cannot exist is asserted orphaned. A reachability checker that
- *    reports "0 orphans" because its own matching broke would be the same class
- *    of defect it is meant to catch.
+ *    We never re-implement glob/filter semantics.
+ * 4. Fails, naming every file no enforced gate would run ("orphan"), with the
+ *    reason, and every stale allowlist entry.
+ * 5. Proves itself non-vacuous on every run (see assertNonVacuous below).
  *
- * AND IT IS ITSELF GATED. The obvious irony to avoid was shipping a check for
- * ungated checks as the only ungated check. `npm run audit:test-reachability` is
- * a step of `gate:local` (package.json), i.e. it runs on every push via
- * .husky/pre-push, immediately before the unit suites — so a new test file that
- * no gate would run fails the push that adds it, which is the only moment the
- * information is cheap to act on. Its own test file
- * (check-test-reachability.test.ts) sits under the default vitest include with no
- * positional filter, so `ci:test` runs it too; that is asserted every run as
- * non-vacuity direction 1.
- *
- * The gate table below is derived by READING .github/workflows/*.yml,
- * .husky/pre-push and package.json — not by grepping the workflows for script
- * names. Grep gives false negatives here: ci.yml never mentions `test:local:cacp`
- * or `validate:data`; it invokes `gate:cacp` / `gate:data`, which invoke them.
- * Aggregates must be traced through. `ci.yml → test` (`npx vitest run --shard`)
- * is the positive control: it is visible verbatim in the workflow, and the
- * tracing below must — and does — find it.
+ * AND IT IS ITSELF GATED. `npm run audit:test-reachability` runs in
+ * `gate:prepush` (`.husky/pre-push`) and `gate:local`, verifying command wiring
+ * and file reachability before push. Its own test file
+ * (`scripts/ci/check-test-reachability.test.ts`) runs under `pr-test` and
+ * `ci:test`, asserted every run as non-vacuity direction 1.
  */
 import { execFileSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { glob } from 'tinyglobby'
 
 const ROOT = path.resolve(import.meta.dirname, '..', '..')
 
-/** Where a gate runs. github-ci/nightly-ci/local-pre-push are ENFORCED on every
- *  push (a push cannot skip the local tier without `--no-verify`).
- *  `local-release` is `npm run gate:release` — not run on every push, because it
- *  needs a production build first, but it IS the gate that has to pass before a
- *  release and it writes the `.gate-ok-<sha>` receipt .husky/pre-push honours.
- *  Anything not in this table is a manual command covered by nobody. */
-type Tier = 'github-ci' | 'nightly-ci' | 'local-pre-push' | 'local-release'
+/**
+ * Where a gate runs:
+ * - `github-ci`: runs on GitHub Actions for PRs (`pr-check.yml`) or pushes to `main` (`ci.yml`).
+ * - `nightly-ci`: runs on GitHub Actions on a daily schedule and opens/updates an issue when red.
+ * - `local-pre-push`: invoked by `.husky/pre-push` on every push (currently no test suites run
+ *   directly in `gate:prepush`; the hook runs static checks + `audit:test-reachability`).
+ * - `local-release`: release-only local command (`gate:release` / `gate:release-local`) required
+ *   before shipping a release; not invoked automatically by `.husky/pre-push`.
+ */
+export type Tier = 'github-ci' | 'nightly-ci' | 'local-pre-push' | 'local-release'
 
-type Gate =
+export type GateWiring =
+  | {
+      rootKind: 'workflow'
+      /** Repo-relative path to the workflow file, e.g. `.github/workflows/ci.yml`. */
+      file: string
+      /** Exact job key under `jobs:` in the workflow file. */
+      job: string
+    }
+  | {
+      rootKind: 'hook'
+      /** Repo-relative path to the git hook, e.g. `.husky/pre-push`. */
+      file: string
+    }
+  | {
+      rootKind: 'package-script'
+      /** Always `package.json`. */
+      file: 'package.json'
+      /** Root npm script name, e.g. `gate:release` or `gate:release-local`. */
+      script: string
+    }
+
+export type Gate =
   | {
       kind: 'vitest'
       id: string
       tier: Tier
-      /** Where this invocation is written down — cite, don't infer. */
+      /** Human-readable citation of where this invocation lives. */
       source: string
+      wiring: GateWiring
       /** vitest --config, or null for the default (vite.config.ts). */
       config: string | null
-      /** Positional path filters (vitest substring-matches these against file paths). */
+      /** Positional path filters (empty = unscoped). */
       filters: string[]
     }
   | {
@@ -90,148 +88,148 @@ type Gate =
       id: string
       tier: Tier
       source: string
+      wiring: GateWiring
       project: string
     }
 
 /**
  * THE ENFORCED-GATE TOPOLOGY.
  *
- * Adding a test-running step to CI or to .husky/pre-push without adding it here
- * makes this check UNDER-report reachability (it will call reached files
- * orphans) — which fails loudly. The opposite mistake (listing a gate that no
- * longer runs) makes it OVER-report reachability, which is silent, so keep the
- * `source` field accurate and re-read it when the workflows change.
+ * Every entry's `wiring` is verified against the actual workflow YAML job,
+ * hook file, or `package.json` script on every run (see `validateGateWiring`).
+ * Manual-only commands (`gate:cacp`, `gate:pkcs11`) are deliberately excluded.
  */
 export const GATES: Gate[] = [
-  // ci.yml job `test`, matrix shard 1..3: `npx vitest run --shard=N/3`.
-  // Default config, NO positional filter -> every file vitest's own
-  // include/exclude resolves. `--shard` only partitions that set, so the union
-  // over shards is exactly the unfiltered set. This is the positive control.
+  // PR check (`pr-check.yml`, pull_request -> main)
+  {
+    kind: 'vitest',
+    id: 'pr:pr-test (vitest shards 1-3)',
+    tier: 'github-ci',
+    source:
+      '.github/workflows/pr-check.yml job "pr-test": npx vitest run --shard=${{ matrix.shard }}/3',
+    wiring: { rootKind: 'workflow', file: '.github/workflows/pr-check.yml', job: 'pr-test' },
+    config: null,
+    filters: [],
+  },
+  {
+    kind: 'playwright',
+    id: 'pr:pr-check (playwright playground-pr-desktop)',
+    tier: 'github-ci',
+    source:
+      '.github/workflows/pr-check.yml job "pr-check": npx playwright test --project=playground-pr-desktop ...',
+    wiring: { rootKind: 'workflow', file: '.github/workflows/pr-check.yml', job: 'pr-check' },
+    project: 'playground-pr-desktop',
+  },
+  {
+    kind: 'playwright',
+    id: 'pr:pr-check (playwright playground-pr-mobile)',
+    tier: 'github-ci',
+    source:
+      '.github/workflows/pr-check.yml job "pr-check": npx playwright test ... --project=playground-pr-mobile ...',
+    wiring: { rootKind: 'workflow', file: '.github/workflows/pr-check.yml', job: 'pr-check' },
+    project: 'playground-pr-mobile',
+  },
+  {
+    kind: 'playwright',
+    id: 'pr:pr-check (playwright a11y-modules-pr)',
+    tier: 'github-ci',
+    source:
+      '.github/workflows/pr-check.yml job "pr-check": npx playwright test ... --project=a11y-modules-pr',
+    wiring: { rootKind: 'workflow', file: '.github/workflows/pr-check.yml', job: 'pr-check' },
+    project: 'a11y-modules-pr',
+  },
+
+  // Main CI (`ci.yml`, push -> main + workflow_dispatch)
   {
     kind: 'vitest',
     id: 'ci:test (vitest shards 1-3)',
     tier: 'github-ci',
     source: '.github/workflows/ci.yml job "test": npx vitest run --shard=${{ matrix.shard }}/3',
+    wiring: { rootKind: 'workflow', file: '.github/workflows/ci.yml', job: 'test' },
     config: null,
     filters: [],
   },
-  // ci.yml job `gate-cacp` -> `npm run gate:cacp`, whose FIRST leg is
-  // `npm run test -- src/components/Playground/kmip src/wasm/kmip`.
-  // A strict subset of the gate above; listed because the gate table must
-  // mirror what CI actually invokes, not a minimised equivalent.
-  {
-    kind: 'vitest',
-    id: 'ci:gate-cacp (vitest, kmip paths)',
-    tier: 'github-ci',
-    source:
-      '.github/workflows/ci.yml job "gate-cacp": npm run gate:cacp -> npm run test -- <kmip paths>',
-    config: null,
-    filters: ['src/components/Playground/kmip', 'src/wasm/kmip'],
-  },
-  // ci.yml job `gate-cacp` -> `npm run gate:cacp` -> `npm run test:local:cacp`
-  // = `vitest run --config vitest.local.config.ts <kmip paths>`.
-  // THE ONLY place any CI job runs the *.local.test.* tier. Everything in that
-  // tier outside these two paths is CI-unreachable by construction.
-  {
-    kind: 'vitest',
-    id: 'ci:gate-cacp (vitest local config, kmip paths)',
-    tier: 'github-ci',
-    source:
-      '.github/workflows/ci.yml job "gate-cacp": npm run gate:cacp -> npm run test:local:cacp',
-    config: 'vitest.local.config.ts',
-    filters: ['src/components/Playground/kmip', 'src/wasm/kmip'],
-  },
-  // ci.yml job `checks` -> `npm run test:e2e:ci-smoke` = `playwright test --project=smoke`.
   {
     kind: 'playwright',
     id: 'ci:checks (playwright smoke)',
     tier: 'github-ci',
-    source: '.github/workflows/ci.yml job "checks": npm run test:e2e:ci-smoke',
+    source:
+      '.github/workflows/ci.yml job "checks": npm run test:e2e:ci-smoke (= playwright test --project=smoke)',
+    wiring: { rootKind: 'workflow', file: '.github/workflows/ci.yml', job: 'checks' },
     project: 'smoke',
   },
-  // e2e-nightly.yml (cron 07:00 UTC) -> `npx playwright test --project=chromium --shard`.
-  // Scheduled, not a PR gate, but it IS a CI gate that opens/updates an issue
-  // when red — so a file it runs is not an orphan.
+
+  // Nightly CI (scheduled + workflow_dispatch, opens/updates GitHub issue on red)
   {
     kind: 'playwright',
     id: 'nightly:e2e-full (playwright chromium)',
     tier: 'nightly-ci',
-    source: '.github/workflows/e2e-nightly.yml: npx playwright test --project=chromium --shard',
+    source:
+      '.github/workflows/e2e-nightly.yml job "e2e-full": npx playwright test --project=chromium --shard',
+    wiring: { rootKind: 'workflow', file: '.github/workflows/e2e-nightly.yml', job: 'e2e-full' },
     project: 'chromium',
   },
-  // ADDED 2026-09-26: validation-nightly.yml (cron 05:00 UTC) -> `npm run
-  // test:nightly` = `vitest run --config vitest.nightly.config.ts`, UNSCOPED, so
-  // every `*.nightly.test.{ts,tsx}` runs. Opens/updates a "Nightly validation
-  // vectors are red" issue when red, so like the e2e nightly a file it runs is
-  // reached, not orphaned — but only once a day, which is why the venue is
-  // reserved for suites too slow for pre-push (maintainer decision 2026-09-26).
   {
     kind: 'vitest',
     id: 'nightly:validation-vectors (vitest nightly config)',
     tier: 'nightly-ci',
-    source: '.github/workflows/validation-nightly.yml: npm run test:nightly',
+    source:
+      '.github/workflows/validation-nightly.yml job "vectors": npm run test:nightly (= vitest run --config vitest.nightly.config.ts)',
+    wiring: {
+      rootKind: 'workflow',
+      file: '.github/workflows/validation-nightly.yml',
+      job: 'vectors',
+    },
     config: 'vitest.nightly.config.ts',
     filters: [],
   },
-  // .husky/pre-push -> `npm run gate:local` -> ... `&& npm run test` (unfiltered,
-  // default config). Same file set as ci:test; encoded so the redundancy between
-  // the two tiers is visible rather than assumed.
+
+  // Local release-only gates (`package.json`, NOT run by `.husky/pre-push`)
   {
     kind: 'vitest',
-    id: 'local:gate:local (npm run test)',
-    tier: 'local-pre-push',
-    source: '.husky/pre-push: npm run gate:local -> ... && npm run test',
+    id: 'release:gate:release (vitest default via gate:local)',
+    tier: 'local-release',
+    source: 'package.json "gate:release": ... -> gate:local -> npm run test',
+    wiring: { rootKind: 'package-script', file: 'package.json', script: 'gate:release' },
     config: null,
     filters: [],
   },
-  // .husky/pre-push -> `npm run gate:cacp` (same two legs as the CI job above).
   {
     kind: 'vitest',
-    id: 'local:gate:cacp (vitest, kmip paths)',
-    tier: 'local-pre-push',
-    source: '.husky/pre-push: npm run gate:cacp -> npm run test -- <kmip paths>',
-    config: null,
-    filters: ['src/components/Playground/kmip', 'src/wasm/kmip'],
-  },
-  {
-    kind: 'vitest',
-    id: 'local:gate:cacp (vitest local config, kmip paths)',
-    tier: 'local-pre-push',
-    source: '.husky/pre-push: npm run gate:cacp -> npm run test:local:cacp',
-    config: 'vitest.local.config.ts',
-    filters: ['src/components/Playground/kmip', 'src/wasm/kmip'],
-  },
-  // ADDED 2026-09-26, closing the 69-file local-tier hole this check found on
-  // its first run: `.husky/pre-push` -> `npm run gate:local` -> ...
-  // `&& npm run test:local`, UNSCOPED (no positional filter), so every
-  // `*.local.test.{ts,tsx}` in the repo runs on every push. Before this, the
-  // ONLY enforced invocation of vitest.local.config.ts was test:local:cacp's
-  // two kmip paths, and the other 69 files in that tier were run by nothing.
-  // Measured cheap: all of them were already green.
-  {
-    kind: 'vitest',
-    id: 'local:gate:local (npm run test:local, unscoped)',
-    tier: 'local-pre-push',
-    source: '.husky/pre-push: npm run gate:local -> ... && npm run test:local',
+    id: 'release:gate:release (vitest local config via gate:local)',
+    tier: 'local-release',
+    source:
+      'package.json "gate:release": ... -> gate:local -> npm run test:local (= vitest run --config vitest.local.config.ts)',
+    wiring: { rootKind: 'package-script', file: 'package.json', script: 'gate:release' },
     config: 'vitest.local.config.ts',
     filters: [],
   },
-  // ADDED 2026-09-26, closing the local-tier E2E hole: `npm run gate:release`
-  // -> `npm run test:e2e:local-tier` = `E2E_SERVER=dev playwright test
-  // --project=local` (testMatch '**\/*.local.spec.ts'). On gate:release rather
-  // than .husky/pre-push for TIME: 18 WASM/crypto/WebGL specs is minutes, and
-  // pre-push already carries the whole unit suite plus test:local. `E2E_SERVER=dev`
-  // matches every other local-tier script in package.json — several of these
-  // specs `page.evaluate`-import source modules, which resolves under the dev
-  // server and not against a `vite preview` bundle. `source` cites package.json
-  // rather than a workflow/hook file because gate:release genuinely is not
-  // invoked from either; that exception is asserted in the accompanying test.
+  {
+    kind: 'vitest',
+    id: 'release:gate:release-local (vitest local config)',
+    tier: 'local-release',
+    source:
+      'package.json "gate:release-local": npm run test:local (= vitest run --config vitest.local.config.ts)',
+    wiring: { rootKind: 'package-script', file: 'package.json', script: 'gate:release-local' },
+    config: 'vitest.local.config.ts',
+    filters: [],
+  },
+  {
+    kind: 'playwright',
+    id: 'release:gate:release (playwright chromium via gate:e2e)',
+    tier: 'local-release',
+    source:
+      'package.json "gate:release": ... -> gate:e2e -> npm run test:e2e:ci-full (= playwright test --project=chromium)',
+    wiring: { rootKind: 'package-script', file: 'package.json', script: 'gate:release' },
+    project: 'chromium',
+  },
   {
     kind: 'playwright',
     id: 'release:gate:release (playwright local project)',
     tier: 'local-release',
     source:
       'package.json "gate:release": ... && npm run test:e2e:local-tier (= E2E_SERVER=dev playwright test --project=local)',
+    wiring: { rootKind: 'package-script', file: 'package.json', script: 'gate:release' },
     project: 'local',
   },
 ]
@@ -241,23 +239,11 @@ export const GATES: Gate[] = [
  *
  * Keep it SMALL and give every entry a reason plus the decision that made it
  * one. An entry that is actually reached, or that names a file that no longer
- * exists, is reported as a stale allowlist entry and FAILS: a rotting allowlist
- * is how a real orphan gets hidden.
+ * exists, is reported as a stale allowlist entry and FAILS.
  */
 export const ALLOWLIST: { file: string; reason: string }[] = [
   {
     file: 'e2e/sim-mobile.spec.ts',
-    // VERIFIED against playwright.config.ts (2026-09-26), not taken on trust:
-    //  - It is in MOBILE_SMOKE_SPECS and NOT in SMOKE_SPECS, so `--project=smoke`
-    //    (the PR gate) cannot match it.
-    //  - `--project=chromium` (nightly) lists it in `testIgnore`
-    //    ('**/sim-mobile.spec.ts') — it has no viewport override of its own and
-    //    every test in it failed a nightly run at Desktop Chrome width.
-    //  - `--project=mobile-smoke` is the only project that matches it, and that
-    //    project is deliberately NOT wired into ci.yml ("NOT yet CI-gated …
-    //    that's a separate decision about CI time/cost budget"). Confirmed:
-    //    `grep -rn 'mobile-smoke' .github/ .husky/ package.json` -> no hits.
-    // Run it explicitly: `npx playwright test --project=mobile-smoke e2e/sim-mobile.spec.ts`.
     reason:
       'mobile-smoke-only spec; the mobile-smoke playwright project is deliberately not CI-gated (playwright.config.ts)',
   },
@@ -267,10 +253,311 @@ const SENTINEL_REACHED = 'scripts/ci/check-test-reachability.test.ts'
 const SENTINEL_REACHED_E2E = 'e2e/basic.spec.ts'
 const SENTINEL_SYNTHETIC_ORPHAN = 'src/__reachability_probe__/synthetic-orphan.test.ts'
 
+// ---------------------------------------------------------------------------
+// Command wiring validation (verifies GATES against actual workflows / hooks / package.json)
+// ---------------------------------------------------------------------------
+
+/** Matches `npm run <name>` with optional `-- <forwarded args>` inside a single shell segment. */
+const NPM_RUN_SEGMENT_RE = /\bnpm\s+run(?:-script)?\s+([A-Za-z0-9:_-]+)(?:\s+--\s+(.+))?$/
+
+/** Split a shell command on `&&`, `||`, `;`, or newlines into individual command segments. */
+function splitShellSegments(command: string): string[] {
+  return command
+    .split(/\s*(?:&&|\|\||;|\n)\s*/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0 && !s.startsWith('#'))
+}
+
+/**
+ * Recursively expand `npm run <script>` segments through `package.json`'s `scripts` map,
+ * returning all concrete leaf shell commands (with `-- <extraArgs>` appended when forwarded).
+ */
+export function expandNpmCommands(
+  command: string,
+  npmScripts: Record<string, string>,
+  seen: Set<string> = new Set()
+): string[] {
+  const leaves: string[] = []
+  for (const segment of splitShellSegments(command)) {
+    const match = segment.match(NPM_RUN_SEGMENT_RE)
+    if (match) {
+      const scriptName = match[1]
+      const forwardedArgs = match[2]?.trim()
+      if (seen.has(scriptName)) continue
+      const body = npmScripts[scriptName]
+      if (!body) continue
+      const nextSeen = new Set(seen)
+      nextSeen.add(scriptName)
+      const expanded = expandNpmCommands(body, npmScripts, nextSeen)
+      if (forwardedArgs && expanded.length > 0) {
+        // `npm run x -- args` appends args to the script's command.
+        leaves.push(...expanded.map((leaf) => `${leaf} ${forwardedArgs}`))
+      } else {
+        leaves.push(...expanded)
+      }
+    } else {
+      leaves.push(segment)
+    }
+  }
+  return leaves
+}
+
+/**
+ * Extract all `run:` step commands belonging to a named job under `jobs:` in a GitHub Actions YAML.
+ * Handles single-line `run: ...` and block scalars (`run: |`, `run: >-`, `run: >`).
+ */
+export function extractWorkflowJobCommands(workflowYaml: string, jobName: string): string[] | null {
+  const lines = workflowYaml.split('\n')
+  let inJobs = false
+  let jobIndent = -1
+  let inTargetJob = false
+  let foundJob = false
+  const commands: string[] = []
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const raw = lines[i]
+    const trimmed = raw.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+    const indent = raw.length - raw.trimStart().length
+
+    if (!inJobs) {
+      if (indent === 0 && trimmed === 'jobs:') inJobs = true
+      continue
+    }
+
+    if (indent === 0 && !trimmed.startsWith('-')) {
+      // Left the `jobs:` top-level section.
+      break
+    }
+
+    // Detect job keys directly under `jobs:`.
+    const keyMatch = trimmed.match(/^([A-Za-z0-9_-]+):\s*$/)
+    if (keyMatch && (jobIndent === -1 || indent === jobIndent)) {
+      if (jobIndent === -1) jobIndent = indent
+      if (keyMatch[1] === jobName) {
+        inTargetJob = true
+        foundJob = true
+      } else if (inTargetJob) {
+        break
+      }
+      continue
+    }
+
+    if (!inTargetJob) continue
+
+    const runMatch = trimmed.match(/^(?:-\s+)?run:\s*(.*)$/)
+    if (!runMatch) continue
+
+    const rest = runMatch[1].trim()
+    if (/^[|>][-+]?$/.test(rest)) {
+      // Block scalar: collect all subsequent lines indented deeper than `run:`.
+      const blockLines: string[] = []
+      const runIndent = indent
+      let j = i + 1
+      while (j < lines.length) {
+        const nextRaw = lines[j]
+        const nextTrimmed = nextRaw.trim()
+        if (nextTrimmed === '') {
+          j += 1
+          continue
+        }
+        const nextIndent = nextRaw.length - nextRaw.trimStart().length
+        if (nextIndent <= runIndent) break
+        blockLines.push(nextTrimmed)
+        j += 1
+      }
+      i = j - 1
+      commands.push(rest.startsWith('>') ? blockLines.join(' ') : blockLines.join('\n'))
+    } else if (rest) {
+      commands.push(rest)
+    }
+  }
+
+  return foundJob ? commands : null
+}
+
+/** Extract non-comment command lines from a shell hook script (e.g. `.husky/pre-push`). */
+export function extractHookCommands(hookText: string): string[] {
+  return hookText
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('#'))
+}
+
+/** Parse a single leaf `vitest` invocation into its config and positional path filters. */
+function parseVitestInvocation(leaf: string): { config: string | null; filters: string[] } | null {
+  const normalized = leaf.replace(/\$\{\{[^}]*\}\}/g, '__EXPR__')
+  const tokens = normalized.split(/\s+/).filter(Boolean)
+  const vitestIdx = tokens.findIndex((t) => t === 'vitest' || t.endsWith('/vitest'))
+  if (vitestIdx < 0) return null
+
+  let config: string | null = null
+  const filters: string[] = []
+  const VALUE_FLAGS = new Set([
+    '--config',
+    '-c',
+    '--shard',
+    '--reporter',
+    '--outputFile',
+    '--pool',
+    '--maxWorkers',
+    '--minWorkers',
+    '--testTimeout',
+    '--hookTimeout',
+    '--root',
+    '-r',
+    '--mode',
+    '--dir',
+  ])
+
+  for (let i = vitestIdx + 1; i < tokens.length; i += 1) {
+    const tok = tokens[i]
+    if (i === vitestIdx + 1 && (tok === 'run' || tok === 'list' || tok === 'watch')) continue
+    if (tok === '--') continue
+    if (tok.startsWith('--config=')) {
+      config = tok.slice('--config='.length)
+      continue
+    }
+    if (tok === '--config' || tok === '-c') {
+      config = tokens[i + 1] ?? null
+      i += 1
+      continue
+    }
+    if (tok.startsWith('-')) {
+      if (!tok.includes('=') && VALUE_FLAGS.has(tok)) {
+        i += 1
+      }
+      continue
+    }
+    filters.push(tok)
+  }
+
+  return { config, filters }
+}
+
+/** Parse a single leaf `playwright test` invocation into its declared `--project` list. */
+function parsePlaywrightProjects(leaf: string): string[] | null {
+  const normalized = leaf.replace(/\$\{\{[^}]*\}\}/g, '__EXPR__')
+  const tokens = normalized.split(/\s+/).filter(Boolean)
+  const pwIdx = tokens.findIndex((t) => t === 'playwright' || t.endsWith('/playwright'))
+  if (pwIdx < 0 || tokens[pwIdx + 1] !== 'test') return null
+
+  const projects: string[] = []
+  for (let i = pwIdx + 2; i < tokens.length; i += 1) {
+    const tok = tokens[i]
+    if (tok.startsWith('--project=')) {
+      projects.push(tok.slice('--project='.length))
+    } else if (tok === '--project') {
+      if (tokens[i + 1]) projects.push(tokens[i + 1])
+      i += 1
+    }
+  }
+  return projects
+}
+
+export type WiringProblem = {
+  gateId: string
+  reason: string
+}
+
+/**
+ * Verify that every declared gate in `gates` actually exists in its cited workflow job,
+ * git hook, or `package.json` script with matching runner, config/project, and filter scope.
+ */
+export function validateGateWiring(gates: Gate[], rootDir: string = ROOT): WiringProblem[] {
+  const pkgPath = path.join(rootDir, 'package.json')
+  if (!existsSync(pkgPath)) {
+    return [{ gateId: '*', reason: `package.json not found under ${rootDir}` }]
+  }
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8')) as {
+    scripts?: Record<string, string>
+  }
+  const npmScripts = pkg.scripts ?? {}
+  const problems: WiringProblem[] = []
+
+  for (const gate of gates) {
+    const { wiring } = gate
+    const fullPath = path.join(rootDir, wiring.file)
+    if (!existsSync(fullPath)) {
+      problems.push({ gateId: gate.id, reason: `cited file does not exist: ${wiring.file}` })
+      continue
+    }
+
+    let rawCommands: string[] = []
+    if (wiring.rootKind === 'workflow') {
+      const yaml = readFileSync(fullPath, 'utf8')
+      const jobCmds = extractWorkflowJobCommands(yaml, wiring.job)
+      if (!jobCmds) {
+        problems.push({
+          gateId: gate.id,
+          reason: `job "${wiring.job}" not found in ${wiring.file}`,
+        })
+        continue
+      }
+      rawCommands = jobCmds
+    } else if (wiring.rootKind === 'hook') {
+      rawCommands = extractHookCommands(readFileSync(fullPath, 'utf8'))
+    } else {
+      const scriptBody = npmScripts[wiring.script]
+      if (!scriptBody) {
+        problems.push({
+          gateId: gate.id,
+          reason: `npm script "${wiring.script}" not found in package.json`,
+        })
+        continue
+      }
+      rawCommands = [scriptBody]
+    }
+
+    const leaves = rawCommands.flatMap((cmd) => expandNpmCommands(cmd, npmScripts))
+
+    if (gate.kind === 'vitest') {
+      const parsed = leaves
+        .map((leaf) => parseVitestInvocation(leaf))
+        .filter((v): v is { config: string | null; filters: string[] } => v !== null)
+
+      const matched = parsed.some((inv) => {
+        if (inv.config !== gate.config) return false
+        if (gate.filters.length === 0) return inv.filters.length === 0
+        return (
+          inv.filters.length === gate.filters.length &&
+          gate.filters.every((f) => inv.filters.includes(f))
+        )
+      })
+
+      if (!matched) {
+        const expectedConfig = gate.config ?? 'default'
+        const expectedScope =
+          gate.filters.length === 0 ? 'unscoped' : `filters=[${gate.filters.join(', ')}]`
+        problems.push({
+          gateId: gate.id,
+          reason: `no matching vitest invocation (config=${expectedConfig}, ${expectedScope}) reached from ${wiring.file}${wiring.rootKind === 'workflow' ? ` job "${wiring.job}"` : wiring.rootKind === 'package-script' ? ` script "${wiring.script}"` : ''}`,
+        })
+      }
+    } else {
+      const projects = leaves
+        .map((leaf) => parsePlaywrightProjects(leaf))
+        .filter((p): p is string[] => p !== null)
+        .flat()
+
+      if (!projects.includes(gate.project)) {
+        problems.push({
+          gateId: gate.id,
+          reason: `no matching playwright invocation (--project=${gate.project}) reached from ${wiring.file}${wiring.rootKind === 'workflow' ? ` job "${wiring.job}"` : wiring.rootKind === 'package-script' ? ` script "${wiring.script}"` : ''}`,
+        })
+      }
+    }
+  }
+
+  return problems
+}
+
+// ---------------------------------------------------------------------------
+// Universe discovery & real-tool resolution
+// ---------------------------------------------------------------------------
+
 /** Every test-shaped file in the repo, POSIX-relative to ROOT, git-ignored paths removed. */
 export async function enumerateUniverse(): Promise<string[]> {
-  // Same pattern shape as vitest's own default `include`, so nothing test-shaped
-  // can fall outside the universe while still being matched by some config.
   const files = await glob(['**/*.{test,spec}.?(c|m)[jt]s?(x)'], {
     cwd: ROOT,
     ignore: ['**/node_modules/**'],
@@ -282,8 +569,6 @@ export async function enumerateUniverse(): Promise<string[]> {
 
 function dropGitIgnored(files: string[]): string[] {
   if (files.length === 0) return files
-  // `git check-ignore --stdin` prints only the ignored paths; exit 1 just means
-  // "none matched", which is not an error here.
   let out = ''
   try {
     out = execFileSync('git', ['check-ignore', '--stdin'], {
@@ -305,7 +590,6 @@ function run(cmd: string, args: string[]): string {
     cwd: ROOT,
     encoding: 'utf8',
     maxBuffer: 64 * 1024 * 1024,
-    // A tool that writes progress to stderr must not pollute the JSON we parse.
     stdio: ['ignore', 'pipe', 'pipe'],
     env: { ...process.env, CI: process.env.CI ?? '', FORCE_COLOR: '0' },
   })
@@ -314,9 +598,7 @@ function run(cmd: string, args: string[]): string {
 /** Ask vitest itself which files this invocation resolves. */
 function resolveVitest(gate: Extract<Gate, { kind: 'vitest' }>): string[] {
   // `--json` MUST be last: it is declared as `--json [path]`, so any positional
-  // that follows it is swallowed as an output FILE PATH instead of a test filter
-  // (with a directory filter that surfaces as `EISDIR … writeFileSync`). With
-  // nothing after it, it stays boolean and the list goes to stdout.
+  // that follows it is swallowed as an output FILE PATH instead of a test filter.
   const args = ['vitest', 'list', '--filesOnly']
   if (gate.config) args.push('--config', gate.config)
   args.push(...gate.filters, '--json')
@@ -389,8 +671,6 @@ export function computeReport(
     for (const f of files) {
       const cur = reached.get(f)
       if (cur) cur.push(gateId)
-      // A gate resolving a file outside the universe would mean the universe
-      // glob is too narrow. Surfaced by assertNonVacuous, not silently dropped.
       else reached.set(f, [gateId])
     }
   }
@@ -412,28 +692,22 @@ export function computeReport(
   return { universe, reached, orphans, staleAllowlist }
 }
 
-/** Human-readable WHY, derived from the file's own shape + the gate table. */
+/** Human-readable WHY, derived from the file's own shape + the actual gate table. */
 function reasonFor(file: string): string {
   if (/\.local\.test\.(ts|tsx)$/.test(file)) {
-    return 'local-tier unit suite: only vitest.local.config.ts includes it. Since 2026-09-26 `gate:local` runs `npm run test:local` UNSCOPED, so reaching this branch means the file is excluded by that config too (check its exclude list, and that the filename really ends .local.test.ts/.tsx) — not merely that the CI-side invocation (test:local:cacp, scoped to src/components/Playground/kmip + src/wasm/kmip) misses it. Note `gate:pkcs11` is still wired into no gate.'
+    return 'local-tier unit suite: only vitest.local.config.ts includes it. `gate:release` (via `gate:local`) and `gate:release-local` run `npm run test:local` UNSCOPED (release-only; not invoked by `.husky/pre-push` or GitHub CI), so reaching this branch means vitest.local.config.ts excluded the file too (check its include/exclude rules and filename). Note `gate:cacp` and `gate:pkcs11` are manual-only commands.'
   }
   if (/\.local\.spec\.(ts|tsx)$/.test(file)) {
-    return "local-tier e2e spec: matched only by the playwright `local` project. Since 2026-09-26 `gate:release` runs that project (test:e2e:local-tier), so reaching this branch means the `local` project does not match it either — check playwright.config.ts's testMatch ('**/*.local.spec.ts') and testDir. Neither CI project can match it (both exclude '**/*.local.spec.ts')."
+    return "local-tier e2e spec: matched only by the playwright `local` project. `gate:release` runs that project via `test:e2e:local-tier` (release-only), so reaching this branch means the `local` project does not match it either — check playwright.config.ts's testMatch ('**/*.local.spec.ts') and testDir."
   }
   if (file.startsWith('e2e/')) {
-    return 'e2e spec matched by no CI-run playwright project (not in SMOKE_SPECS, and excluded from or unmatched by the chromium project).'
+    return 'e2e spec matched by no enforced playwright project (not in PR projects, SMOKE_SPECS, or the nightly chromium project).'
   }
   return "no enforced gate's resolved file set contains it (check vite.config.ts `test.exclude` and each gate's positional path filters)."
 }
 
 /**
  * NON-VACUITY, asserted on every real run.
- *
- * Direction 1: a file we KNOW is reached must be reported reached.
- * Direction 2: a path that cannot be reached must be reported orphaned.
- * Direction 3: no gate may resolve a file the universe glob missed.
- * If any of these breaks, the "0 orphans" this tool might otherwise print is
- * worthless, so it is a hard failure rather than a warning.
  */
 function assertNonVacuous(report: Report, resolved: Map<string, string[]>): string[] {
   const problems: string[] = []
@@ -469,6 +743,7 @@ function assertNonVacuous(report: Report, resolved: Map<string, string[]>): stri
 
 async function main(): Promise<void> {
   const asJson = process.argv.includes('--json')
+  const wiringProblems = validateGateWiring(GATES, ROOT)
   const universe = await enumerateUniverse()
   const resolved = new Map<string, string[]>()
   for (const gate of GATES) {
@@ -491,6 +766,7 @@ async function main(): Promise<void> {
           })),
           orphans: report.orphans,
           staleAllowlist: report.staleAllowlist,
+          wiringProblems,
           nonVacuityProblems: problems,
         },
         null,
@@ -509,6 +785,8 @@ async function main(): Promise<void> {
     const reachedCount = [...report.reached.values()].filter((v) => v.length > 0).length
     console.log(`reached by >=1 enforced gate: ${reachedCount}`)
     console.log(`allowlisted (deliberately ungated): ${ALLOWLIST.length}`)
+    console.log(`WIRING PROBLEMS: ${wiringProblems.length}`)
+    for (const w of wiringProblems) console.log(`  ✗ [${w.gateId}] ${w.reason}`)
     console.log(`ORPHANS: ${report.orphans.length}`)
     for (const o of report.orphans) console.log(`  ✗ ${o.file}\n      ${o.reason}`)
     for (const s of report.staleAllowlist)
@@ -516,14 +794,16 @@ async function main(): Promise<void> {
     for (const p of problems) console.log(`  !! ${p}`)
   }
 
-  if (problems.length > 0 || report.orphans.length > 0 || report.staleAllowlist.length > 0) {
+  if (
+    wiringProblems.length > 0 ||
+    problems.length > 0 ||
+    report.orphans.length > 0 ||
+    report.staleAllowlist.length > 0
+  ) {
     process.exitCode = 1
   }
 }
 
-// `import.meta.main` is not available under tsx/node 22 for this entry shape;
-// compare the resolved entry path instead so importing this module from a test
-// never kicks off a multi-minute tool sweep.
 const invokedDirectly =
   process.argv[1] !== undefined &&
   path.resolve(process.argv[1]) === path.resolve(import.meta.dirname, 'check-test-reachability.ts')
