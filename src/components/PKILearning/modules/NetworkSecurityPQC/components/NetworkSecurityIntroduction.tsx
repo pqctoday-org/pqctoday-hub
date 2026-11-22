@@ -30,6 +30,8 @@ import {
   MEASURED_HANDSHAKE_FACTS,
   formatBytes,
 } from '../../VPNSSHModule/data/measuredHandshakeFacts'
+import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
+import { NETWORK_OPERATIONS_SECTION } from '../data/networkOperationsSection'
 
 interface CollapsibleSectionProps {
   icon: React.ReactNode
@@ -483,6 +485,16 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
               broader NSM-10 objective. CNSA 2.0 does not generally require hybrid constructions.
             </p>
           </div>
+        </CollapsibleSection>
+      </div>
+
+      {/* Section 6: Network operations during the PQC transition */}
+      <div data-section-id="network-operations-pqc" className="scroll-mt-20">
+        <CollapsibleSection
+          icon={<Wrench size={24} className="text-primary" />}
+          title={NETWORK_OPERATIONS_SECTION.title}
+        >
+          <SourcedSectionBody section={NETWORK_OPERATIONS_SECTION} />
         </CollapsibleSection>
       </div>
 

@@ -19,6 +19,8 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
+import { SECURE_DELIVERY_SECTION } from '../data/secureDeliverySection'
 
 // ── Local CollapsibleSection ──────────────────────────────────────────────────
 
@@ -591,6 +593,16 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       </div>
 
       <VendorCoverageNotice migrateLayer="Libraries" />
+
+      {/* Section 8: Secure software delivery during the PQC transition */}
+      <div data-section-id="secure-software-delivery" className="scroll-mt-20">
+        <CollapsibleSection
+          title={`8. ${SECURE_DELIVERY_SECTION.title}`}
+          icon={<FileCode size={20} className="text-primary" />}
+        >
+          <SourcedSectionBody section={SECURE_DELIVERY_SECTION} />
+        </CollapsibleSection>
+      </div>
 
       {/* ── Workshop CTA ────────────────────────────────────────────────── */}
       <div className="glass-panel p-6 border-primary/20">

@@ -22,6 +22,8 @@ import {
   ESTIMATED_CRQC_YEAR,
   CURRENT_YEAR,
 } from '../data/sensitivityConstants'
+import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
+import { STORED_DATA_SECTION } from '../data/storedDataSection'
 
 interface DataAssetIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -524,7 +526,17 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
         </CollapsibleSection>
       </div>
 
-      {/* Section 6: Workshop Overview */}
+      {/* Section 6: Stored data, backups and key recovery */}
+      <div data-section-id="stored-data-key-recovery" className="scroll-mt-20">
+        <CollapsibleSection
+          icon={<Database size={24} className="text-primary" />}
+          title={STORED_DATA_SECTION.title}
+        >
+          <SourcedSectionBody section={STORED_DATA_SECTION} />
+        </CollapsibleSection>
+      </div>
+
+      {/* Section 7: Workshop Overview */}
       <CollapsibleSection
         icon={<FlaskConical size={24} className="text-primary" />}
         title="Workshop Overview — What You Will Build"

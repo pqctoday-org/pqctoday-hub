@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'platform-eng-pqc',
-  contentVersion: 20,
+  contentVersion: 21,
   lm_id: 'LM-031',
   title: 'Platform Engineering & PQC',
   description:
     'Inventory, migrate, and monitor every cryptographic primitive in your software delivery pipeline — CI/CD crypto assets, container image signing, IaC quantum-vulnerable defaults, OPA/Kyverno algorithm enforcement, and crypto posture monitoring.',
   whyThisMatters:
     'CI/CD pipelines and container images are full of cryptographic defaults nobody chose deliberately — IaC and policy-engine enforcement (OPA/Kyverno) are how you find and fix them before they ship, not after.',
-  duration: '80 min',
+  duration: '90 min',
   difficulty: 'advanced',
   frameworkPhase: ['p1', 'p5'],
   track: 'Applications',
@@ -23,6 +23,7 @@ const manifest: ModuleManifest = {
     { id: 'policy-enforcement', label: 'Algorithm Agility Policy' },
     { id: 'monitoring-posture', label: 'Crypto Posture Monitoring' },
     { id: 'migration-runway', label: 'Migration & Rollback' },
+    { id: 'secure-software-delivery', label: 'Secure Software Delivery' },
   ],
   workshopSteps: [
     { id: 'pipeline-crypto-inventory', label: 'Pipeline Crypto Inventory' },
