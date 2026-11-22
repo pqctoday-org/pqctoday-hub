@@ -27,9 +27,9 @@ function omitDescription<T extends { description?: string }>(entry: T): Omit<T, 
   return structural
 }
 
-function omitCatalogDescriptions<T extends Record<string, { description?: string }>>(
-  catalog: T
-): Record<string, Omit<T[string], 'description'>> {
+function omitCatalogDescriptions<V extends { description?: string }>(
+  catalog: Record<string, V>
+): Record<string, Omit<V, 'description'>> {
   return Object.fromEntries(Object.entries(catalog).map(([k, v]) => [k, omitDescription(v)]))
 }
 
