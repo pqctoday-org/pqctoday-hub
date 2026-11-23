@@ -2,7 +2,7 @@
 
 ## Overview
 
-The The PQC Algorithms: How They Work and How to Choose module (40 minutes, intermediate, Foundations track) reads the standardised post-quantum algorithms from the documents that define and guide their use, one sentence at a time. Each sentence below comes from a named document; the lesson shows the document, its edition and the place in it beside every sentence. The workshop runs ML-KEM and ML-DSA in the browser and compares sizes.
+The PQC Algorithms: How They Work and How to Choose module (40 minutes, intermediate, Foundations track) reads the standardised post-quantum algorithms from the documents that define and guide their use, one sentence at a time. Each sentence below comes from a named document; the lesson shows the document, its edition and the place in it beside every sentence. The workshop runs ML-KEM and ML-DSA in the browser and compares sizes.
 
 ## Key Concepts
 
