@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-algorithms',
-  contentVersion: 1,
+  contentVersion: 2,
   lm_id: 'LM-088',
   title: 'The PQC Algorithms: How They Work and How to Choose',
   description:

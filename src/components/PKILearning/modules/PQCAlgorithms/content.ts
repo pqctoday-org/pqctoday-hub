@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-algorithms',
   version: '1.0.0',
   // lastReviewed is left unset: it is written together with the module's review record.
-  lastEdited: '2026-11-22',
+  lastEdited: '2026-11-23',
 
   standards: [
     getStandard('FIPS 203'),
