@@ -290,7 +290,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
         },
         {
           id: 'common-pitfalls-noted-in-the-standards',
-          label: 'Common pitfalls noted in the standards',
+          label: 'Implementation considerations',
         },
       ],
     })

@@ -27,7 +27,7 @@ const manifest: ModuleManifest = {
     },
     {
       id: 'common-pitfalls-noted-in-the-standards',
-      label: 'Common pitfalls noted in the standards',
+      label: 'Implementation considerations',
     },
   ],
   workshopSteps: [

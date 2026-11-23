@@ -28,7 +28,7 @@ export const LESSON_OUTLINE: OutlineSection[] = [
   {
     id: 'two-jobs-new-tools',
     title: 'Two jobs, new tools',
-    lead: 'This section introduces the core cryptographic jobs covered in this lesson and how they fit together in a system. Understanding which role each tool plays helps you see where post-quantum replacements apply and where existing symmetric tools remain relevant.',
+    lead: 'This section introduces the core cryptographic jobs covered in this lesson and how they fit together in a system.',
     blocks: [
       {
         heading: 'Key establishment and key derivation',
@@ -59,19 +59,18 @@ export const LESSON_OUTLINE: OutlineSection[] = [
   {
     id: 'the-families-at-a-glance',
     title: 'The families at a glance',
-    lead: 'This section surveys the mathematical families behind post-quantum algorithms and why standards bodies look beyond a single approach. It closes with a brief look at upcoming standards that are still in progress.',
+    lead: 'This section introduces mathematical families and then discusses FALCON and HQC.',
     blocks: [
       {
-        heading: 'Multiple families for resilience',
+        heading: 'Mathematical families',
         panel: 'none',
         bridge: '',
         claims: ['ALG-D03', 'ALG-D04', 'ALG-D28', 'ALG-D29', 'ALG-H05'],
       },
       {
-        heading: 'Coming next: FN-DSA and HQC',
+        heading: 'FALCON and HQC',
         panel: 'none',
-        bridge:
-          'Beyond the initial finalized standards, the following points note what is currently in the pipeline.',
+        bridge: 'The following points discuss FN-DSA and HQC.',
         claims: ['ALG-D05', 'ALG-D09', 'ALG-D10', 'ALG-D11', 'ALG-H07'],
       },
     ],
@@ -80,7 +79,7 @@ export const LESSON_OUTLINE: OutlineSection[] = [
   {
     id: 'ml-kem-fips-203',
     title: 'ML-KEM (FIPS 203)',
-    lead: 'This section examines ML-KEM, the standardized key-encapsulation mechanism, from its basic operations to its parameter sets and sizes. Expandable panels cover implementation requirements for developers and validation engineers.',
+    lead: 'This section introduces ML-KEM, then walks through its operations, parameter sets, sizes, and implementation panels.',
     blocks: [
       {
         heading: 'What ML-KEM is and how KEMs compare to classical methods',
@@ -163,16 +162,16 @@ export const LESSON_OUTLINE: OutlineSection[] = [
   {
     id: 'hash-based-signatures-in-brief',
     title: 'Hash-based signatures in brief',
-    lead: 'This section introduces stateless and stateful hash-based signature schemes and explains where they fit when choosing a signature algorithm. Deeper internals are left to their dedicated modules.',
+    lead: 'This section provides a brief introduction to hash-based signature schemes.',
     blocks: [
       {
-        heading: 'SLH-DSA: stateless hash-based signatures',
+        heading: 'SLH-DSA',
         panel: 'none',
         bridge: '',
         claims: ['ALG-C01', 'ALG-C02', 'ALG-C03', 'ALG-C05'],
       },
       {
-        heading: 'LMS and XMSS: stateful hash-based signatures',
+        heading: 'LMS and XMSS',
         panel: 'none',
         bridge: 'Next, we contrast stateless schemes with stateful hash-based signatures.',
         claims: ['ALG-C10', 'ALG-C19', 'ALG-C16', 'ALG-C17'],
@@ -255,8 +254,8 @@ export const LESSON_OUTLINE: OutlineSection[] = [
   },
   {
     id: 'common-pitfalls-noted-in-the-standards',
-    title: 'Common pitfalls noted in the standards',
-    lead: 'This section highlights practical mistakes and interoperability hazards explicitly called out in the standards. Reviewing these pitfalls helps teams avoid costly deployment and compliance errors.',
+    title: 'Implementation considerations',
+    lead: 'This section examines selected implementation and usage considerations.',
     blocks: [
       {
         heading: 'Pre-standard Kyber and Dilithium differences',

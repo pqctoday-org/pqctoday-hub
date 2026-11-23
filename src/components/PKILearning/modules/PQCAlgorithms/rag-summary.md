@@ -16,28 +16,28 @@ The The PQC Algorithms: How They Work and How to Choose module (40 minutes, inte
 
 **Authentication and digital signatures**
 
-- NIST SP 800-227 states that most applications need authentication to prevent machine-in-the-middle attacks, which typically requires additional cryptographic elements such as digital signatures and certificates.
-- NIST SP 800-227 requires that a party using another party's static encapsulation key must have assurance of key ownership, such as through a certificate authority or proof of possession.
+- NIST SP 800-227 states that most applications require authentication and cryptographic integrity checking, for example to prevent machine-in-the-middle attacks, typically using additional elements such as digital signatures and certificates.
+- NIST SP 800-227 requires that an encapsulating party obtaining another party's static encapsulation key have assurance of the other party's ownership before or during key establishment, such as from a trusted party like a certificate authority or from proof of possession combined with verification of real-world identity.
 - According to FIPS 204, digital signatures detect unauthorized modifications to data, authenticate the signatory's identity, and provide non-repudiation by giving recipients evidence for a third party that the claimed signatory generated the signature.
 
 **Symmetric algorithms in the transition**
 
-- NIST IR 8547 states that existing symmetric-cryptography standards, including hash functions, are significantly less vulnerable to known quantum attacks than public-key standards, and NIST does not expect to transition away from them.
+- NIST IR 8547 states that existing symmetric-cryptography standards, including hash functions, are significantly less vulnerable to known quantum attacks than public-key standards; NIST does not expect to need to transition away from them as part of the PQC migration, although applications should move away from 112-bit symmetric standards.
 - The NSA CNSA 2.0 FAQ specifies the Advanced Encryption Standard (AES) with 256-bit keys and Secure Hash Algorithm (SHA) SHA-384 or SHA-512 for all classification levels.
 
 ### The families at a glance
 
-**Multiple families for resilience**
+**Mathematical families**
 
 - NIST IR 8413 states that NIST aims to standardize schemes from different cryptographic families so a single advance in cryptanalysis does not leave the world without a viable standard.
 - NIST IR 8413 explains that NIST selected hash-based SPHINCS+ so its signature standards do not rely entirely on lattices, providing a fallback against unforeseen cryptanalytic attacks.
-- NIST IR 8413 classifies CRYSTALS-Kyber as a structured-lattice KEM and notes that CRYSTALS-Dilithium and Falcon are both based on structured lattices.
+- NIST IR 8413 describes CRYSTALS-Kyber as a module-learning-with-errors-based KEM and notes that CRYSTALS-Dilithium and Falcon are both based on structured lattices.
 - NIST IR 8413 describes SPHINCS+ as a stateless hash-based signature scheme whose cryptographic security relies only on the security of its underlying hash functions.
 - NIST IR 8413 explains that the learning with errors (LWE) problem for public-key encryption relates quantum security to the worst-case hardness of finding short vectors in lattices, known as the approximate Shortest Vector Problem (SVP).
 
-**Coming next: FN-DSA and HQC**
+**FALCON and HQC**
 
-- Although Dilithium and Falcon are based on structured lattices, NIST standardized Falcon as well because some applications cannot work as designed when signatures and signed data exceed one internet packet.
+- Although Dilithium and Falcon are based on structured lattices, NIST decided to standardize Falcon as well because some applications cannot work as designed when signatures and signed data exceed one internet packet.
 - On March 11, 2025, NIST announced that HQC, like ML-KEM, is a key encapsulation mechanism, built around error-correcting codes rather than structured lattices.
 - NIST's announcement explains that HQC will serve as a backup to ML-KEM using different mathematics in case a weakness is discovered in ML-KEM, while ML-KEM remains the recommended choice.
 - NIST's announcement states that NIST plans to release a draft HQC standard for public comment in about a year, followed by a 90-day comment period and a finalized standard in 2027.
@@ -56,7 +56,7 @@ The The PQC Algorithms: How They Work and How to Choose module (40 minutes, inte
 
 **How key generation, encapsulation, and decapsulation work**
 
-- NIST SP 800-227 states that using a KEM should produce a shared secret key that is random, unknown to adversaries, and identical for both parties.
+- NIST SP 800-227 states that using a KEM should produce a shared secret key that is random, unknown to adversaries, and identical for both parties with high probability.
 - In a KEM, the receiving party begins by running KeyGen to generate a public encapsulation key and a private decapsulation key.
 - Using the encapsulation key, the other party runs Encaps to produce a copy of the shared secret key and an associated ciphertext, then sends the ciphertext back.
 - The first party completes key establishment by running Decaps with the decapsulation key and the received ciphertext to produce a copy of the shared secret key.
@@ -82,7 +82,7 @@ The The PQC Algorithms: How They Work and How to Choose module (40 minutes, inte
 **Randomness and intermediate data requirements** (for validation engineers)
 
 - FIPS 203 requires random bytes to be generated using an approved RBG with at least 128 bits of security strength for ML-KEM-512, 192 bits for ML-KEM-768, and 256 bits for ML-KEM-1024.
-- FIPS 203 requires implementers to destroy intermediate data as soon as it is no longer needed, retaining only the designated output in memory after an ML-KEM algorithm terminates.
+- FIPS 203 requires implementers to destroy intermediate data as soon as it is no longer needed and, except for specified storage exceptions, retain only the designated output in memory after an ML-KEM algorithm terminates.
 
 ### ML-DSA (FIPS 204)
 
@@ -122,14 +122,14 @@ The The PQC Algorithms: How They Work and How to Choose module (40 minutes, inte
 
 ### Hash-based signatures in brief
 
-**SLH-DSA: stateless hash-based signatures**
+**SLH-DSA**
 
 - FIPS 205 specifies SLH-DSA, a stateless hash-based digital signature algorithm used to detect unauthorized modifications to data and authenticate identity.
 - FIPS 205 bases SLH-DSA on SPHINCS+, which was selected for standardization as part of the NIST Post-Quantum Cryptography Standardization process.
 - The security of SLH-DSA relies on the presumed difficulty of finding preimages for hash functions and related hash-function properties, and it is designed to resist attacks from a large-scale quantum computer.
 - In FIPS 205 parameter set names, the suffix 's' indicates relatively small signatures, whereas 'f' indicates relatively fast signature generation.
 
-**LMS and XMSS: stateful hash-based signatures**
+**LMS and XMSS**
 
 - NIST SP 800-208 specifies two stateful hash-based signature schemes, the Leighton-Micali Signature (LMS) system and the eXtended Merkle Signature Scheme (XMSS), along with their multi-tree variants, HSS and multi-tree XMSS.
 - RFC 8391 states that XMSS can sign a potentially large but fixed number of messages, using a tree of height h to produce a key pair that can sign 2^h messages.
@@ -190,18 +190,18 @@ The The PQC Algorithms: How They Work and How to Choose module (40 minutes, inte
 - RFC 10024 defines three hybrid key agreement mechanisms for TLS 1.3—X25519MLKEM768, SecP256r1MLKEM768, and SecP384r1MLKEM1024—that combine post-quantum ML-KEM with ephemeral elliptic curve Diffie-Hellman (ECDHE).
 - The draft-ietf-tls-mlkem-11 specification defines standalone ML-KEM-512, ML-KEM-768, and ML-KEM-1024 as NamedGroups in the IANA TLS Supported Groups registry for post-quantum key establishment in TLS 1.3.
 
-### Common pitfalls noted in the standards
+### Implementation considerations
 
 **Pre-standard Kyber and Dilithium differences**
 
-- FIPS 203 lists differences between CRYSTALS-KYBER and ML-KEM that change input-output behavior, including fixing the shared secret key to 256 bits and removing the ciphertext hash from ML-KEM.Encaps.
+- FIPS 203 lists differences between CRYSTALS-KYBER and ML-KEM that change input-output behavior, including fixing the shared secret key to 256 bits and no longer including a hash of the ciphertext in ML-KEM.Encaps’s shared-secret derivation.
 - FIPS 203 also adds explicit input checking that was not part of the third-round specification, and introduces domain separation in K-PKE.KeyGen to prevent a saved seed from being misused across security levels.
 - Unlike Version 3.1 of the CRYSTALS-DILITHIUM submission, where signing was deterministic by default, FIPS 204 makes ML-DSA signing hedged by default by incorporating a 256-bit random string.
 - Compared with CRYSTALS-DILITHIUM Version 3.1, ML-DSA increases tr to 512 bits and c-tilde to 384 and 512 bits for ML-DSA-65 and ML-DSA-87; the final standard also adds direct-versus-pre-hash domain separation.
 
 **KEM key confirmation and ephemeral key handling**
 
-- NIST SP 800-227 recommends using key confirmation during KEM usage because confirming that both parties established the same shared secret key can address transmission or decapsulation errors.
+- NIST SP 800-227 recommends using key confirmation during KEM usage because confirming successful establishment of the shared secret key can address transmission or decapsulation errors.
 - NIST SP 800-227 requires that an ephemeral KEM key pair be used for only one key-establishment execution and destroyed as soon as possible afterward.
 
 **Stateful key reuse and compliance pitfalls** (for developers)
