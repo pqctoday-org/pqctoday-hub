@@ -35,6 +35,14 @@ const manifest: ModuleManifest = {
     { id: 'ml-dsa-sign-verify', label: 'ML-DSA Sign and Verify' },
     { id: 'size-comparator', label: 'Size Comparator' },
   ],
+  // No Exercises tab: the module has no exercises; the default tab set would render it empty.
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'references', label: 'References' },
+    { value: 'tools', label: 'Tools & Products' },
+  ],
   startHere: {
     step: 'ml-kem-round-trip',
     text: 'Open ML-KEM Round Trip, generate a key pair, encapsulate and decapsulate, then change one byte of the ciphertext and decapsulate again.',
