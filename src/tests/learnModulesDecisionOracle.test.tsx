@@ -74,6 +74,7 @@ const EXPECTED_LEARN_MODULE_IDS = [
   'pki-workshop',
   'platform-eng-pqc',
   'pqc-101',
+  'pqc-algorithms',
   'pqc-business-case',
   'pqc-candidates',
   'pqc-governance',
