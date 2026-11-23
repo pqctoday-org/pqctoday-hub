@@ -432,7 +432,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/pqc-101`,
     structuredData: buildModuleSchema(
       'PQC 101 — Introduction to Post-Quantum Cryptography',
-      'PT10M',
+      'PT15M',
       'Beginner'
     ),
   },
@@ -763,7 +763,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/data-asset-sensitivity`,
     structuredData: buildModuleSchema(
       'Data & Asset Sensitivity Assessment',
-      'PT50M',
+      'PT60M',
       'Intermediate'
     ),
   },
@@ -856,7 +856,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Migrate your platform to post-quantum: CI/CD pipeline crypto inventory, container signing with ML-DSA via cosign/Notation, IaC defaults, OPA/Kyverno policy enforcement, and crypto posture monitoring.',
     canonical: `${BASE_URL}/learn/platform-eng-pqc`,
-    structuredData: buildModuleSchema('Platform Engineering & PQC', 'PT80M', 'Advanced'),
+    structuredData: buildModuleSchema('Platform Engineering & PQC', 'PT90M', 'Advanced'),
   },
 
   '/learn/ot-pqc': {
@@ -997,7 +997,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum network security: next-gen firewall cipher analysis, TLS inspection with ML-KEM, IDS/IPS signature updates, vendor migration matrices, and Zero Trust Network Access with PQC.',
     canonical: `${BASE_URL}/learn/network-security-pqc`,
-    structuredData: buildModuleSchema('Network Security & PQC Migration', 'PT90M', 'Advanced'),
+    structuredData: buildModuleSchema('Network Security & PQC Migration', 'PT100M', 'Advanced'),
   },
 
   '/learn/database-encryption-pqc': {
