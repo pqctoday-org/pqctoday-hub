@@ -3,6 +3,8 @@
 /**
  * Render and registration checks for the PQC Algorithms module.
  */
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
@@ -96,5 +98,11 @@ describe('PQCAlgorithms', () => {
   it('loads the plain-language summary for the Visual tab', () => {
     render(<CuriousSummaryBanner moduleId="pqc-algorithms" isFullPage />)
     expect(screen.queryByText('No visual summary yet')).not.toBeInTheDocument()
+  })
+
+  it('ships its infographic for the Visual tab', () => {
+    expect(
+      existsSync(resolve(process.cwd(), 'public/images/infographics/pqcstd_pqc-algorithms.png'))
+    ).toBe(true)
   })
 })
