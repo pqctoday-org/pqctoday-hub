@@ -18,7 +18,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.3',
   lastReviewed: '2026-10-28',
-  lastEdited: '2026-11-18',
+  lastEdited: '2026-11-23',
 
   standards: [
     getStandard('FIPS 203'),
