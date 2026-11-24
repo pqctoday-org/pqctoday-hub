@@ -101,7 +101,7 @@ export const AIR_GAPPED_VAULT_SECTION: SourcedSectionData = {
           sourceId: 'Post-Quantum-Evidence-Records-with-Algorithm-Agility-Wathiqa',
           edition:
             'Post-Quantum Evidence Records with Algorithm Agility (Wathiqa Profile), 2026-09',
-          locator: 'Section 8 (Security considerations), page 11',
+          locator: 'Section 8 (Security considerations)',
         },
         {
           id: 'S0929-11',
@@ -109,7 +109,7 @@ export const AIR_GAPPED_VAULT_SECTION: SourcedSectionData = {
           sourceId: 'Post-Quantum-Evidence-Records-with-Algorithm-Agility-Wathiqa',
           edition:
             'Post-Quantum Evidence Records with Algorithm Agility (Wathiqa Profile), 2026-09',
-          locator: 'Section 1 (Introduction), pages 2-3',
+          locator: 'Section 1 (Introduction)',
         },
       ],
     },

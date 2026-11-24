@@ -16,7 +16,7 @@ export const TERMINATION_POINT_SECTION: SourcedSectionData = {
           text: 'The IETF draft "Post-Quantum Cryptography Recommendations for TLS-Based Applications" states that upgrading to a TLS 1.3 library with PQC extensions may not be sufficient, and applications configuring protocol versions or cipher suites explicitly must update those settings to enable hybrid or pure PQC key exchange groups.',
           sourceId: 'Post-Quantum-Cryptography-Recommendations-for-TLS-based-Appl',
           edition: 'Post-Quantum Cryptography Recommendations for TLS-Based Applications, 2026-07',
-          locator: 'Section 4 Data Confidentiality, page 7',
+          locator: 'Section 4 Data Confidentiality',
         },
         {
           id: 'K1375-03',
@@ -38,7 +38,7 @@ export const TERMINATION_POINT_SECTION: SourcedSectionData = {
           text: 'The IETF draft "Post-Quantum Cryptography Recommendations for TLS-Based Applications" describes PQC adoption as a gradual transition rather than a simple binary decision, where application providers will need to assess algorithm selection, performance impact, interoperability, and security requirements for their specific use cases.',
           sourceId: 'Post-Quantum-Cryptography-Recommendations-for-TLS-based-Appl',
           edition: 'Post-Quantum Cryptography Recommendations for TLS-Based Applications, 2026-07',
-          locator: 'Section 9 Operational Considerations, page 19',
+          locator: 'Section 9 Operational Considerations',
         },
         {
           id: 'K1375-07',
