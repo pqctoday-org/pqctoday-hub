@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-assets',
-  contentVersion: 20,
+  contentVersion: 21,
   lm_id: 'LM-045',
   title: 'Digital Assets',
   description:
     'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana. Explore institutional custody architecture with PQC threat analysis.',
   whyThisMatters:
     "Bitcoin, Ethereum, and Solana wallets sign with ECDSA/EdDSA today — a cryptographically-relevant quantum computer doesn't just threaten future transactions, it threatens every public key already exposed on-chain.",
-  duration: '50 min',
+  duration: '55 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p5',
   track: 'Industries',
@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'signatures', label: 'Digital Signatures: ECDSA vs EdDSA' },
     { id: 'hd-wallets', label: 'HD Wallets and Key Management' },
     { id: 'pqc-blockchain', label: 'Post-Quantum Threats to Blockchains' },
+    { id: 'air-gapped-vault-design', label: 'Air-Gapped Vault Design' },
   ],
   workshopSteps: [
     { id: 'bitcoin', label: 'Bitcoin Flow' },

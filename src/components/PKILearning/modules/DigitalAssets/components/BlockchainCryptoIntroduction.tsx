@@ -22,6 +22,8 @@ import { DERIVATION_PATH_EXPLANATIONS } from '../utils/cryptoConstants'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import { SourcedSectionPanel } from '@/components/PKILearning/common/SourcedSection'
+import { AIR_GAPPED_VAULT_SECTION } from '../data/airGappedVaultSection'
 
 interface BlockchainCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -307,6 +309,8 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
           </Button>
         </div>
       </section>
+
+      <SourcedSectionPanel section={AIR_GAPPED_VAULT_SECTION} />
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
