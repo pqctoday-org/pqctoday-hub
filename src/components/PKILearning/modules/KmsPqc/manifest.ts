@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'kms-pqc',
-  contentVersion: 24,
+  contentVersion: 25,
   lm_id: 'LM-016',
   title: 'KMS & PQC Key Management',
   description:
     'PQC key management patterns: envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
   whyThisMatters:
     "The KMS is where every other system's keys live — get PQC key management wrong at this layer and you've broken envelope encryption for everything downstream, not just one application.",
-  duration: '60 min',
+  duration: '68 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p6',
   track: 'Hardware Infrastructure',
@@ -22,6 +22,7 @@ const manifest: ModuleManifest = {
     { id: 'rotation', label: 'Key Rotation Planning' },
     { id: 'kmip', label: 'Enterprise Architecture Patterns' },
     { id: 'cloud-responsibility', label: 'Cloud Shared Responsibility' },
+    { id: 'key-escrow-recovery', label: 'Key Escrow & Recovery' },
   ],
   workshopSteps: [
     { id: 'key-hierarchy', label: 'Key Hierarchy' },

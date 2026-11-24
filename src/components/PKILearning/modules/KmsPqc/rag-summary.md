@@ -3,7 +3,7 @@ module_id: kms-pqc
 title: KMS & PQC Key Management
 track: Hardware Infrastructure
 difficulty: intermediate
-duration: 60 min
+duration: 68 min
 workshop_steps: 7
 ---
 

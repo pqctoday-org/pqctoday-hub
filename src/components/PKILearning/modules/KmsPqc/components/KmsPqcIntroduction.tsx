@@ -33,6 +33,8 @@ import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
+import { SourcedLearnSection } from '@/components/PKILearning/common/SourcedSection'
+import { KEY_ESCROW_SECTION } from '../data/keyEscrowSection'
 
 interface KmsPqcIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -1179,6 +1181,11 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
           . What was missing was this ownership framing.
         </p>
       </LearnSection>
+
+      <SourcedLearnSection
+        section={KEY_ESCROW_SECTION}
+        icon={<Lock size={20} className="text-primary" />}
+      />
 
       <RecordDecisionLink topic="kms-design" />
       <ReadingCompleteButton />
