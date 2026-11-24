@@ -288,9 +288,10 @@ describe('module → tool reverse links', () => {
   })
 
   it('TOOLS_BY_MODULE_ID is exactly what the registry implies', () => {
-    // The map is a checked-in literal because a live import of WORKSHOP_TOOLS
-    // from ModuleShell costs 2.11 MB of eager JS (see moduleToolLinks.ts). This
-    // is the guard that makes the literal safe: it re-derives the same map from
+    // The map is derived from the tools data file because a live import of
+    // WORKSHOP_TOOLS from ModuleShell costs 2.11 MB of eager JS (see
+    // moduleToolLinks.ts). This is the guard that keeps the file's `module`
+    // column honest: it re-derives the same map from each tool's moduleLink in
     // the real registry, so a new, renamed or re-ordered tool moduleLink fails
     // here instead of silently leaving a module without its tool links.
     const derived = new Map<string, string[]>()
@@ -305,8 +306,8 @@ describe('module → tool reverse links', () => {
       [...m.entries()].map(([k, v]) => `['${k}', [${v.map((x) => `'${x}'`).join(', ')}]],`).sort()
     expect(
       fmt(TOOLS_BY_MODULE_ID),
-      'TOOLS_BY_MODULE_ID drifted from workshopRegistry — paste the derived entries below ' +
-        'into src/data/moduleToolLinks.ts (registry order preserved).'
+      'TOOLS_BY_MODULE_ID drifted from workshopRegistry — fix the `module` column of ' +
+        'the tools data file (src/data/tools_*.csv) and run `npm run gen:tools`.'
     ).toEqual(fmt(derived))
     for (const [moduleId, tools] of TOOLS_BY_MODULE_ID) {
       expect(TOOL_BY_MODULE_ID.get(moduleId)).toBe(tools[0])
@@ -317,7 +318,7 @@ describe('module → tool reverse links', () => {
     const derived = new Map(WORKSHOP_TOOLS.filter((t) => !t.sandbox).map((t) => [t.id, t.name]))
     expect(
       [...TOOL_TITLE_BY_ID.entries()].sort(),
-      'TOOL_TITLE_BY_ID drifted from workshopRegistry — regenerate the literal in moduleToolLinks.ts'
+      'TOOL_TITLE_BY_ID drifted from workshopRegistry — run `npm run gen:tools`'
     ).toEqual([...derived.entries()].sort())
   })
 

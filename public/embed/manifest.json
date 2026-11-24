@@ -579,14 +579,14 @@
     ],
     "playgroundTools": [
       {
-        "id": "slh-dsa",
-        "name": "SLH-DSA Sign & Verify",
+        "id": "cacp-kmip",
+        "name": "KMIP Control Plane",
         "category": "HSM / PKCS#11",
-        "difficulty": "intermediate"
+        "difficulty": "advanced"
       },
       {
-        "id": "lms-hss",
-        "name": "Stateful Hash Signatures",
+        "id": "hsm-capacity",
+        "name": "HSM Capacity Calculator",
         "category": "HSM / PKCS#11",
         "difficulty": "intermediate"
       },
@@ -603,14 +603,14 @@
         "difficulty": "intermediate"
       },
       {
-        "id": "token-migration",
-        "name": "Multi-Algorithm Signing",
+        "id": "cloud-kms-key-exchange",
+        "name": "Cloud KMS Key Exchange",
         "category": "HSM / PKCS#11",
-        "difficulty": "intermediate"
+        "difficulty": "advanced"
       },
       {
-        "id": "tee-channel",
-        "name": "TEE-HSM Secure Channel",
+        "id": "token-migration",
+        "name": "Multi-Algorithm Signing",
         "category": "HSM / PKCS#11",
         "difficulty": "intermediate"
       },
@@ -621,28 +621,82 @@
         "difficulty": "intermediate"
       },
       {
+        "id": "slh-dsa",
+        "name": "SLH-DSA Sign & Verify",
+        "category": "HSM / PKCS#11",
+        "difficulty": "advanced"
+      },
+      {
+        "id": "lms-hss",
+        "name": "Stateful Hash Signatures",
+        "category": "HSM / PKCS#11",
+        "difficulty": "advanced"
+      },
+      {
+        "id": "hybrid-sigs",
+        "name": "Hybrid Signature Spectrums",
+        "category": "HSM / PKCS#11",
+        "difficulty": "advanced"
+      },
+      {
         "id": "kdf-derivation",
         "name": "SP 800-108 KDF",
         "category": "HSM / PKCS#11",
+        "difficulty": "advanced"
+      },
+      {
+        "id": "tee-channel",
+        "name": "TEE-HSM Secure Channel",
+        "category": "HSM / PKCS#11",
+        "difficulty": "advanced"
+      },
+      {
+        "id": "tls-simulator",
+        "name": "TLS 1.3 Simulator",
+        "category": "Protocol Simulations",
         "difficulty": "intermediate"
       },
       {
         "id": "vpn-sim",
         "name": "PQC VPN Simulator",
-        "category": "",
-        "difficulty": "intermediate"
+        "category": "Protocol Simulations",
+        "difficulty": "advanced"
       },
       {
         "id": "pqc-ssh-sim",
         "name": "PQC SSH Simulator",
-        "category": "",
+        "category": "Protocol Simulations",
+        "difficulty": "advanced"
+      },
+      {
+        "id": "suci-flow",
+        "name": "5G SUCI Construction",
+        "category": "Protocol Simulations",
+        "difficulty": "advanced"
+      },
+      {
+        "id": "mls-group-messaging",
+        "name": "MLS Group Messaging",
+        "category": "Protocol Simulations",
         "difficulty": "intermediate"
+      },
+      {
+        "id": "tpm-playground",
+        "name": "TPM 2.0 PQC Playground",
+        "category": "Protocol Simulations",
+        "difficulty": "advanced"
       },
       {
         "id": "rng-demo",
         "name": "Random Generation",
         "category": "Entropy & Random",
-        "difficulty": "intermediate"
+        "difficulty": "beginner"
+      },
+      {
+        "id": "qrng-demo",
+        "name": "QRNG Demo",
+        "category": "Entropy & Random",
+        "difficulty": "beginner"
       },
       {
         "id": "entropy-test",
@@ -651,28 +705,28 @@
         "difficulty": "intermediate"
       },
       {
-        "id": "qrng-demo",
-        "name": "QRNG Demo",
+        "id": "drbg-demo",
+        "name": "SP 800-90A DRBG",
         "category": "Entropy & Random",
-        "difficulty": "intermediate"
+        "difficulty": "advanced"
       },
       {
         "id": "source-combining",
         "name": "Source Combining",
         "category": "Entropy & Random",
-        "difficulty": "intermediate"
-      },
-      {
-        "id": "drbg-demo",
-        "name": "SP 800-90A DRBG",
-        "category": "Entropy & Random",
-        "difficulty": "intermediate"
+        "difficulty": "advanced"
       },
       {
         "id": "pki-workshop",
         "name": "PKI Workshop",
         "category": "Certificates & Proofs",
         "difficulty": "intermediate"
+      },
+      {
+        "id": "cert-capacity",
+        "name": "Cert Capacity Calculator",
+        "category": "Certificates & Proofs",
+        "difficulty": "beginner"
       },
       {
         "id": "hybrid-certs",
@@ -683,31 +737,7 @@
       {
         "id": "merkle-proof",
         "name": "Merkle Tree Workshop",
-        "category": "",
-        "difficulty": "intermediate"
-      },
-      {
-        "id": "cert-capacity",
-        "name": "Cert Capacity Calculator",
         "category": "Certificates & Proofs",
-        "difficulty": "intermediate"
-      },
-      {
-        "id": "hsm-capacity",
-        "name": "HSM Capacity Calculator",
-        "category": "",
-        "difficulty": "intermediate"
-      },
-      {
-        "id": "hybrid-sigs",
-        "name": "Hybrid Signature Spectrums",
-        "category": "HSM / PKCS#11",
-        "difficulty": "intermediate"
-      },
-      {
-        "id": "suci-flow",
-        "name": "5G SUCI Construction",
-        "category": "Protocol Simulations",
         "difficulty": "intermediate"
       },
       {
@@ -723,14 +753,14 @@
         "difficulty": "intermediate"
       },
       {
-        "id": "solana-flow",
-        "name": "Solana Transaction",
+        "id": "hd-wallet",
+        "name": "HD Wallet Derivation",
         "category": "Blockchain & Digital Assets",
         "difficulty": "intermediate"
       },
       {
-        "id": "hd-wallet",
-        "name": "HD Wallet Derivation",
+        "id": "solana-flow",
+        "name": "Solana Transaction",
         "category": "Blockchain & Digital Assets",
         "difficulty": "intermediate"
       },
@@ -741,10 +771,22 @@
         "difficulty": "intermediate"
       },
       {
-        "id": "tls-simulator",
-        "name": "TLS 1.3 Simulator",
+        "id": "api-security-jwt",
+        "name": "API Security & JWT Workshop",
         "category": "OpenSSL Studio",
         "difficulty": "intermediate"
+      },
+      {
+        "id": "pki-enrollment",
+        "name": "PKI Enrollment (EST + CMP)",
+        "category": "OpenSSL Studio",
+        "difficulty": "advanced"
+      },
+      {
+        "id": "email-signing",
+        "name": "S/MIME & CMS Workshop",
+        "category": "OpenSSL Studio",
+        "difficulty": "advanced"
       }
     ],
     "businessTools": [
@@ -756,6 +798,21 @@
       {
         "id": "board-pitch",
         "name": "Board Pitch Builder",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "breach-simulator",
+        "name": "Breach Scenario Simulator",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "cost-of-inaction",
+        "name": "Cost of Inaction Analyzer",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "cost-model-explorer",
+        "name": "Cost Model Explorer",
         "category": "Risk & Strategy"
       },
       {
@@ -772,6 +829,11 @@
         "id": "risk-treatment-plan",
         "name": "Risk Heatmap & Treatment Plan",
         "category": "Risk & Strategy"
+      },
+      {
+        "id": "compliance-checklist",
+        "name": "Compliance Checklist",
+        "category": "Compliance & Audit"
       },
       {
         "id": "audit-checklist",
@@ -831,6 +893,86 @@
       {
         "id": "deployment-playbook",
         "name": "Deployment Playbook",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "hybrid-transition-planner",
+        "name": "Hybrid Transition Planner",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "mti-negotiator",
+        "name": "MTI Negotiator",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "crypto-api-refactor-audit",
+        "name": "Crypto API Refactor Audit",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "cloud-responsibility-matrix",
+        "name": "Cloud Responsibility Matrix",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "crypto-architecture-diagram",
+        "name": "Crypto Architecture Diagram",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "management-tools-audit",
+        "name": "Management Tools Audit",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "crypto-cbom-builder",
+        "name": "Crypto BOM (CBOM) Builder",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "crypto-vulnerability-watch",
+        "name": "Crypto Vulnerability Watch",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "program-charter",
+        "name": "Program Charter",
+        "category": "Governance & Policy"
+      },
+      {
+        "id": "initial-scoping",
+        "name": "Initial Scoping Assessment",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "skills-team-plan",
+        "name": "Skills & Team Plan",
+        "category": "Governance & Policy"
+      },
+      {
+        "id": "infra-modernization-planner",
+        "name": "Infrastructure Modernization Planner",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "refresh-cycle-alignment",
+        "name": "Refresh-Cycle Alignment",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "accelerated-execution-profile",
+        "name": "Accelerated Execution Profile",
+        "category": "Governance & Policy"
+      },
+      {
+        "id": "data-at-rest-strategy",
+        "name": "Data-at-Rest Strategy",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "migration-verification",
+        "name": "Migration Verification & Closure",
         "category": "Migration Planning"
       }
     ],
