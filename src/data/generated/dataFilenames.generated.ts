@@ -31,7 +31,7 @@ export const DATA_FILENAMES: GeneratedDataFilenames = {
   migrate: 'pqc_product_catalog_11182026_r2.csv',
   threats: 'quantum_threats_hsm_industries_11252026.csv',
   leaders: 'leaders_11152026_r3.csv',
-  compliance: 'compliance_11182026_r3.csv',
+  compliance: 'compliance_11252026.csv',
   algorithms: 'algorithms_transitions_11252026.csv',
   authoritativeSources: 'pqc_authoritative_sources_reference_11242026.csv',
   certificationXref: 'migrate_certification_xref_11182026_r2.csv',

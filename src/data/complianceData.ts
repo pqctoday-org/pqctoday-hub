@@ -162,6 +162,24 @@ export interface ComplianceFramework {
    * as evidence of staleness on its own.
    */
   lastVerified?: string
+  /**
+   * Largest penalty the framework's regime allows, in USD millions (whole millions, a
+   * regulatory maximum rather than an expected value), from `max_fine_usd_millions`.
+   * Absent = no penalty data on file, which counts as 0 in the exposure index.
+   */
+  maxFineUsdMillions?: number
+  /**
+   * Personas whose view emphasises this framework, with the place it takes in that persona's
+   * list (`emphasis_personas`, written `persona:rank`). Emphasis only styles a card; it never
+   * filters the landscape.
+   */
+  emphasisPersonas?: { persona: string; rank: number }[]
+  /**
+   * The certification-record source (`NIST`, `Common Criteria`, `ENISA`, `ANSSI`) that this
+   * certification-body row's "Certs" link opens on the Records tab (`cert_record_source`).
+   * Absent = the row has no records to link to.
+   */
+  certRecordSource?: string
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -200,6 +218,9 @@ export interface RawComplianceRow {
   binding_basis?: string
   binding_scope?: string
   binding_scope_en?: string
+  max_fine_usd_millions?: string
+  emphasis_personas?: string
+  cert_record_source?: string
 }
 
 // '[0-9]' not a bare '*' — the broad pattern also matched
@@ -431,6 +452,21 @@ export function mapComplianceRow(row: RawComplianceRow): ComplianceFramework | n
     bindingBasis: row.binding_basis?.trim() || undefined,
     bindingScope: row.binding_scope?.trim() || undefined,
     bindingScopeEn: row.binding_scope_en?.trim() || undefined,
+    maxFineUsdMillions: ((): number | undefined => {
+      const raw = (row.max_fine_usd_millions || '').trim()
+      if (!raw) return undefined
+      const n = Number(raw)
+      return Number.isFinite(n) ? n : undefined
+    })(),
+    emphasisPersonas: ((): ComplianceFramework['emphasisPersonas'] => {
+      const found = splitSemicolon(row.emphasis_personas).flatMap((token) => {
+        const [persona, rank] = token.split(':')
+        const n = Number(rank)
+        return persona && Number.isFinite(n) ? [{ persona: persona.trim(), rank: n }] : []
+      })
+      return found.length ? found : undefined
+    })(),
+    certRecordSource: row.cert_record_source?.trim() || undefined,
   }
 }
 
