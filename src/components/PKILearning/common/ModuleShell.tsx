@@ -78,6 +78,7 @@ import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell
 import { MOBILE_WORKSHOP_READY } from '@/data/mobileWorkshops'
 import { INFOGRAPHIC_IMAGE_REVISIONS } from '@/data/infographicImageRevisions'
 import { LearnOrderStrip } from '@/components/ui/LearnOrderStrip'
+import { NiceCoveragePanel } from '@/components/ui/NiceCoveragePanel'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
  *  modules (frameworkPhase is an array) show their first/primary phase. */
@@ -619,6 +620,7 @@ export const ModuleShell = ({
         </div>
         <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>
         <LearnOrderStrip moduleId={manifest.id} />
+        <NiceCoveragePanel moduleId={manifest.id} />
         {/* UX batch 2 (2026-09-19, CC-5): on the Workshop tab the description,
             "Why this matters" and "Start here" are Learn-tab framing that pushed
             the first workshop control below the fold at 1280×800. They fold to one
