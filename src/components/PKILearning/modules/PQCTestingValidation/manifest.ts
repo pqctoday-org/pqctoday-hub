@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-testing-validation',
-  contentVersion: 27,
+  contentVersion: 28,
   lm_id: 'LM-014',
   title: 'PQC Network Testing & Validation',
   description:
     'Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program.',
   whyThisMatters:
     "An algorithm that passes NIST's test vectors can still fail in your actual deployment — passive discovery, endpoint scanning, and interoperability testing catch the gap between 'PQC-capable' and 'PQC-working'.",
-  duration: '120 min',
+  duration: '130 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Protocols',
@@ -22,6 +22,8 @@ const manifest: ModuleManifest = {
     { id: 'interop-testing', label: 'Interoperability & RFC' },
     { id: 'side-channel-tvla', label: 'TVLA Side-Channel Testing' },
     { id: 'fips-acvp', label: 'FIPS 140-3 & ACVP Testing' },
+    { id: 'system-integration', label: 'System Integration' },
+    { id: 'static-analysis-discovery', label: 'Static Analysis in Discovery' },
   ],
   // The whole module is network and operations testing, except two parts a certification
   // engineer needs: side-channel (TVLA) assessment and FIPS 140-3 / ACVP testing. The
@@ -31,7 +33,7 @@ const manifest: ModuleManifest = {
       id: 'network-practitioner',
       label: 'Network practitioner',
       entrySection: 'why-pqc-testing',
-      duration: '120 min',
+      duration: '130 min',
       audience: 'Security and operations teams testing PQC in a live estate',
       sections: [
         'why-pqc-testing',
@@ -40,6 +42,8 @@ const manifest: ModuleManifest = {
         'interop-testing',
         'side-channel-tvla',
         'fips-acvp',
+        'system-integration',
+        'static-analysis-discovery',
       ],
     },
     {
