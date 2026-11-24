@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.221.0] - 2026-11-23
+
+A new Foundations module explains how the standardised post-quantum algorithms work and how to choose between them, with every statement shown beside the standard, edition and section it comes from.
+
+### Added
+
+- **The PQC Algorithms: How They Work and How to Choose module** [view:/learn/pqc-algorithms] [persona:developer] [persona:architect] [persona:researcher]: Covers ML-KEM and ML-DSA in full, hash-based signatures in brief, what named standards bodies say about matching use cases to algorithms, and implementation considerations, each sentence linked to its source document. Three workshops run ML-KEM and ML-DSA in the browser and compare key and signature sizes; an illustrated Visual tab poster summarises the module.
+- **Twelve quiz questions and fifteen AI Assistant answers on the new module** [view:/learn/quiz] [persona:developer] [persona:architect] [persona:curious]: The quiz bank now holds 1,237 questions, and the AI Assistant answers common questions about the algorithms from the module's sources.
+
+### Changed
+
+- **Developer and Architect learning paths include the new module** [view:/learn] [persona:developer] [persona:architect]: It sits third in the Foundations track, so AI as an Attacker of Cryptography and PQC Candidates move one place down.
+
+### Data
+
+- **Cleaner AI Assistant search passages** [persona:curious] [persona:researcher]: Page headers, menus and footers captured with 169 passages from Library documents were removed, so search results quote the documents' own text. The search index was rebuilt and signed with the new module.
+
 ## [4.220.0] - 2026-11-21
 
 Five new hands-on learning modules expand digital-asset custody security and evidence-bounded AI cryptography threats, accompanied by 145 newly admitted primary-source Library references, 47 new quiz questions with a dedicated AI Cryptography Threats category, five illustrated Visual tab posters, and a refreshed AI Assistant search index.

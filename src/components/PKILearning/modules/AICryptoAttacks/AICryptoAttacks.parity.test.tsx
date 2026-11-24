@@ -38,7 +38,7 @@ describe('AICryptoAttacks module parity & workshop safety invariants', () => {
     expect(manifest.id).toBe('ai-crypto-attacks')
     expect(manifest.lm_id).toBe('LM-087')
     expect(manifest.track).toBe('Foundations')
-    expect(manifest.trackOrder).toBe(3)
+    expect(manifest.trackOrder).toBe(4)
     expect(manifest.duration).toBe('50 min')
     expect(manifest.learnSections?.map((s) => s.id)).toEqual([
       'two-threats',

@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'ai-crypto-attacks',
   version: '1.0.0',
   // lastReviewed is left unset until the module review record is written.
-  lastEdited: '2026-11-21',
+  lastEdited: '2026-11-24',
 
   standards: [
     getStandard('Discovering-cryptographic-weaknesses-with-Claude'),

@@ -932,6 +932,22 @@ const MODULE_CAPABILITY_SEEDS: Record<string, RawModuleCapabilitySeed> = {
     evidenceRequired:
       'Target suite and KeyPackage validation receipts, ReInit Commit and matching Welcome metadata, credential verification, and positive and negative epoch recovery cases for the tested build.',
   },
+  'pqc-algorithms': {
+    roleFocus: 'Security Architects, Cryptographic Developers & Validation Engineers',
+    productionCapabilities: [
+      'Require FIPS 203 ML-KEM implementations to verify encapsulation-key byte length and valid integer range before ML-KEM.Encaps, check the decapsulation key and check the ciphertext on every ML-KEM.Decaps execution, and destroy the implicit-reject comparison flag before terminating without returning it.',
+      "Use FIPS 204's default hedged signing variant with fresh and precomputed randomness, accept context strings of 255 or fewer bytes for signing and verification, and recognize HashML-DSA as a domain-separated pre-hash variant while pure ML-DSA is generally preferred.",
+      'Use final FIPS 203 ML-KEM and FIPS 204 ML-DSA rather than non-adherent CRYSTALS-Kyber or CRYSTALS-Dilithium, which differ in input-output behavior and direct-versus-pre-hash domain separation and are not CNSA 2.0 compliant per the NSA CNSA 2.0 FAQ.',
+    ],
+    evaluationMethod:
+      'Test ML-KEM by submitting encapsulation keys with invalid byte lengths or out-of-range integers to ML-KEM.Encaps and ciphertexts to ML-KEM.Decaps to confirm required checking and that no comparison flag is returned. Test ML-DSA by checking that default signing uses hedged randomness, that signing and verification accept context strings of 255 or fewer bytes, and that HashML-DSA signs a digest with domain-separation information.',
+    evidenceRequired:
+      'Versioned library, HSM or service inventory with the exact FIPS 203 and FIPS 204 parameter sets in use, the ML-KEM input-check test results, and the ML-DSA hedged-signing and context-string test results.',
+    sources: [
+      { label: 'FIPS 203 (ML-KEM)', href: 'https://csrc.nist.gov/pubs/fips/203/final' },
+      { label: 'FIPS 204 (ML-DSA)', href: 'https://csrc.nist.gov/pubs/fips/204/final' },
+    ],
+  },
   'pqc-candidates': {
     roleFocus: 'Cryptographic Researchers, Security Architects & Standards Analysts',
     productionCapabilities: [

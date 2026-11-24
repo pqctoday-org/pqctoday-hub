@@ -61,6 +61,9 @@ const NOT_IN_SIM: Record<string, string> = {
     'Phase 5 Resources list (phaseResourceMap); no generated tree step or sector step carries it',
   'ai-crypto-attacks':
     'Foundations, Phase 0, and Phase 2 Resources list (phaseResourceMap); no generated tree step or sector step carries it',
+  // Module added in 4.221.0: in the Foundations Resources list (phaseResourceMap).
+  'pqc-algorithms':
+    'Foundations Resources list (phaseResourceMap); no generated tree step or sector step carries it',
   // Scheduled by simulation-content-integration-plan-09282026.md. Each entry is
   // deleted by the work package that places it — the stale-entry check below
   // fails until it is, so none of these can outlive the branch.

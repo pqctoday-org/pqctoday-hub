@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-candidates',
-  contentVersion: 18,
+  contentVersion: 19,
   lm_id: 'LM-053',
   title: 'PQC Candidates & Lifecycle',
   description:
@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Foundations',
-  trackOrder: 4,
+  trackOrder: 5,
   learnSections: [
     { id: 'rolling-process', label: 'Rolling Standardisation' },
     { id: 'validation', label: 'Candidate Validation' },

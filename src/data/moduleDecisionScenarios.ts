@@ -1695,6 +1695,29 @@ export const MODULE_DECISION_SCENARIOS: Record<string, ModuleDecisionScenario> =
     productionToolCheck:
       'Test C2PA manifest validation and inspect DRM license-server TLS 1.3 key-exchange groups in staging.',
   },
+  'pqc-algorithms': {
+    moduleId: 'pqc-algorithms',
+    domainTitle: 'General-Purpose Key Establishment Parameter Selection (ML-KEM-768)',
+    roleDecisionPrompt:
+      'Choose a standardized post-quantum key-encapsulation parameter set for general-purpose key establishment over a public channel, verify that ML-KEM-768 produces matching 32-byte shared secret keys, and confirm how decapsulation behaves when one byte of the ciphertext is changed.',
+    artifactLabel: 'Fictional ML-KEM-768 key-establishment ciphertext (1088 bytes)',
+    algorithmVariant: { operation: 'kem', variant: 768 },
+    validCaseExplanation:
+      'With FIPS 203 ML-KEM-768 (security category 3, 1184-byte encapsulation key, 2400-byte decapsulation key, and 1088-byte ciphertext), KeyGen, Encaps, and Decaps produce identical 32-byte shared secret keys for both parties with high probability.',
+    adverseFailureExplanation:
+      'If changing one byte of the 1088-byte ML-KEM-768 ciphertext causes the re-encrypted ciphertext not to match during decapsulation, FIPS 203 performs implicit rejection, destroys the comparison flag without returning it, and outputs a hash of the ciphertext with a secret random value.',
+    recoveryActionExplanation:
+      'Restore the unmodified ciphertext or re-establish the shared secret with a fresh ephemeral KEM key pair (destroying the used ephemeral key pair as soon as possible), and use key confirmation as recommended by NIST SP 800-227 to address transmission or decapsulation errors.',
+    transferQuestion: {
+      prompt:
+        'What changes if this key-establishment deployment is for a National Security System subject to NSA CNSA 2.0 rather than a general-purpose deployment?',
+      changedAssumptionOutcome:
+        'The NSA CNSA 2.0 FAQ lists ML-KEM-1024 (security category 5, with a 1568-byte encapsulation key, 3168-byte decapsulation key, and 1568-byte ciphertext, still producing a 32-byte shared secret key) for all classification levels, and any CRYSTALS-Kyber implementation that does not adhere to FIPS 203 is not CNSA 2.0 compliant.',
+    },
+    productionToolCheck:
+      'Test FIPS 203 ML-KEM-768 encapsulation-key and ciphertext input checks, implicit rejection when a modified ciphertext causes the re-encrypted ciphertext not to match, and key confirmation in your staging environment.',
+  },
+
   cbom: {
     moduleId: 'cbom',
     domainTitle: 'CycloneDX 1.6 CBOM Attestation Signing (ML-DSA-65) & Runtime Reconciliation',
