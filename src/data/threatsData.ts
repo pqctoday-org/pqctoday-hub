@@ -11,7 +11,7 @@ import {
   UNRATED_CRITICALITY,
   type ReviewedThreatClass,
 } from './threatRowRules'
-import { threatRecordTypeFor, type ThreatRecordType } from './threatRecordTypes'
+import { parseThreatRecordType, type ThreatRecordType } from './threatRecordTypes'
 
 export interface ThreatData {
   industry: string
@@ -124,9 +124,11 @@ interface RawThreatRow {
   secondary_claims?: string
   threat_class?: string
   source_mirror_of?: string
+  record_type?: string
 }
 
-const THREATS_FILE_RE = /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+export const THREATS_FILE_RE =
+  /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
 
 const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
   query: '?raw',
@@ -169,7 +171,7 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
     lastVerified: row.last_verified || undefined,
     threatClass: parseThreatClass(row.threat_class),
     sourceMirrorOf: row.source_mirror_of?.trim() || undefined,
-    recordType: threatRecordTypeFor(row.threat_id || ''),
+    recordType: parseThreatRecordType(row.record_type?.trim() ?? null) ?? undefined,
     secondarySources: (() => {
       const found = parseSecondarySources(row.secondary_source_ref, row.secondary_claims)
       return found.length ? found : undefined
@@ -195,8 +197,12 @@ const {
 )
 
 // Compute status map
+// (`recordType` is left out: a snapshot made before the column existed has none,
+// and adding the column must not mark every row Updated.)
+const withoutRecordType = (items: ThreatData[]) =>
+  items.map((item) => ({ ...item, recordType: undefined }))
 const statusMap = previousItems
-  ? compareDatasets(currentItems, previousItems, 'threatId')
+  ? compareDatasets(withoutRecordType(currentItems), withoutRecordType(previousItems), 'threatId')
   : new Map<string, ItemStatus>()
 
 // Inject status
