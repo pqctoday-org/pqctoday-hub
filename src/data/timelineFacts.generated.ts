@@ -12,10 +12,10 @@ export const TIMELINE_COUNTRY_DEADLINE_YEAR: Record<string, number> = {
   DE: 2030, // Very High Protection Requirements — Transition to Quantum-Safe Mechanisms by End of 2030 Using Hybrid Form
   EU: 2035, // Full EU PQC Transition
   FR: 2027, // PQC Qualification Requirement
+  GB: 2035, // Complete migration to PQC
   IN: 2027, // CII PQC Foundations Deadline
   JP: 2035, // Government PQC Transition Deadline
   KR: 2035, // K-PQC Master Plan to 2035
-  UK: 2035, // Complete migration to PQC
   US: 2030, // Key-Establishment Migration Deadline (EO June 22 2026)
 }
 
@@ -51,10 +51,10 @@ export const TIMELINE_COUNTRY_DEADLINE_MANDATE: Record<string, DeadlineMandate> 
   DE: 'SOFT',
   EU: 'SOFT',
   FR: 'HARD',
+  GB: 'SOFT',
   IN: 'SOFT',
   JP: 'SOFT',
   KR: 'SOFT',
-  UK: 'SOFT',
   US: 'HARD',
 }
 

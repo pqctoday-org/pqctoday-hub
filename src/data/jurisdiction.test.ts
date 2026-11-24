@@ -68,7 +68,7 @@ describe('jurisdiction', () => {
   // PR-5 — broadened to ten jurisdictions.
   it('covers all ten jurisdictions', () => {
     expect(Object.keys(JURISDICTION_RULES).sort()).toEqual(
-      ['AU', 'CA', 'DE', 'EU', 'FR', 'JP', 'KR', 'SG', 'UK', 'US'].sort()
+      ['AU', 'CA', 'DE', 'EU', 'FR', 'JP', 'KR', 'SG', 'GB', 'US'].sort()
     )
   })
 

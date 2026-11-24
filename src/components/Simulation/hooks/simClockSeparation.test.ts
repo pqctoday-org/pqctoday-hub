@@ -77,15 +77,13 @@ describe('a country deadline states what it actually binds (W4.2/W4.3)', () => {
   })
 
   it('distinguishes guidance from a requirement', () => {
-    // The UK's jurisdiction code in this repo is 'UK' (flag code 'gb'), and
-    // TIMELINE_COUNTRY_DEADLINE_YEAR is keyed the same way. The first version of
-    // this scope table was hand-written in moscaClock.ts under 'GB' — a key no
-    // run ever produces, so it could never have matched. Moving the table into
-    // jurisdictions_*.csv, where the codes are authoritative, surfaced it.
+    // The UK's jurisdiction code in this repo is the ISO code 'GB', and
+    // TIMELINE_COUNTRY_DEADLINE_YEAR is keyed the same way. The scope table lives
+    // in jurisdictions_*.csv, where the codes are authoritative.
     expect(deadlineScopeFor('US')!.force).toBe('requirement')
-    expect(deadlineScopeFor('UK')!.force).toBe('guidance')
-    expect(deadlineScopeFor('UK')!.appliesTo).toMatch(/not a single binding cut-off/i)
-    expect(deadlineScopeFor('GB')).toBeNull()
+    expect(deadlineScopeFor('GB')!.force).toBe('guidance')
+    expect(deadlineScopeFor('GB')!.appliesTo).toMatch(/not a single binding cut-off/i)
+    expect(deadlineScopeFor('UK')).toBeNull()
   })
 
   it('reports scope for every jurisdiction that has a dated obligation', () => {

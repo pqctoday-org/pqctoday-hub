@@ -81,7 +81,7 @@ const STANDARDS_BY_COUNTRY: Record<string, { HNDL: string; TNFL: string }> = {
     HNDL: 'ANSSI / ML-KEM (hybrid strongly recommended)',
     TNFL: 'ANSSI / ML-DSA (hybrid strongly recommended)',
   },
-  UK: { HNDL: 'NCSC / ML-KEM-768', TNFL: 'NCSC / ML-DSA-65' },
+  GB: { HNDL: 'NCSC / ML-KEM-768', TNFL: 'NCSC / ML-DSA-65' },
 }
 const DEFAULT_STANDARDS = { HNDL: 'PQC key establishment', TNFL: 'PQC digital signatures' }
 
@@ -90,7 +90,7 @@ const NAME_TO_CODE: Record<string, string> = {
   'United States': 'US',
   France: 'FR',
   Germany: 'DE',
-  'United Kingdom': 'UK',
+  'United Kingdom': 'GB',
   Japan: 'JP',
   Canada: 'CA',
   'South Korea': 'KR',
@@ -106,7 +106,6 @@ export function resolveCountryCode(country: string): string {
 // Reverse of NAME_TO_CODE (+ a few common extras), for display: 'FR' → 'France'.
 const CODE_TO_NAME: Record<string, string> = {
   ...Object.fromEntries(Object.entries(NAME_TO_CODE).map(([name, code]) => [code, name])),
-  GB: 'United Kingdom',
   IN: 'India',
   AU: 'Australia',
   NL: 'Netherlands',

@@ -38,7 +38,7 @@ describe('moscaClock', () => {
 
   it('uses the sooner of the CRQC estimate and the country deadline as Z', () => {
     expect(horizonYearFor('DE')).toBe(Math.min(SIM_CRQC_YEAR, 2030)) // sooner of CRQC / BSI mandate
-    expect(horizonYearFor('UK')).toBe(Math.min(SIM_CRQC_YEAR, 2035))
+    expect(horizonYearFor('GB')).toBe(Math.min(SIM_CRQC_YEAR, 2035))
     expect(horizonYearFor('XX')).toBe(SIM_CRQC_YEAR) // unknown → CRQC baseline
   })
 
@@ -59,7 +59,7 @@ describe('moscaClock', () => {
   // were re-reviewed and published again on 2026-10-22); SG
   // (guidance-only, no tagged row) falls back to the Q-Day anchor.
   it('derives per-country deadlines from the timeline CSV (tagged rows)', () => {
-    for (const c of ['US', 'FR', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN', 'DE', 'UK'] as const) {
+    for (const c of ['US', 'FR', 'EU', 'CA', 'KR', 'JP', 'AU', 'IN', 'DE', 'GB'] as const) {
       expect(typeof COUNTRY_DEADLINE_YEAR[c], `${c} deadline`).toBe('number')
       expect(COUNTRY_DEADLINE_PROVENANCE[c], `${c} provenance`).toBe('planning')
     }
@@ -73,7 +73,7 @@ describe('moscaClock', () => {
     // (binding_force: recommendation, tagged as simulator deadlines): BSI's end of
     // 2030 for very-high-protection applications, and the NCSC's indicative 2035.
     expect(COUNTRY_DEADLINE_YEAR.DE).toBe(2030)
-    expect(COUNTRY_DEADLINE_YEAR.UK).toBe(2035)
+    expect(COUNTRY_DEADLINE_YEAR.GB).toBe(2035)
     // Guidance-only jurisdictions have no national deadline milestone → fall back to Q-Day.
     for (const c of ['SG'] as const) {
       expect(COUNTRY_DEADLINE_YEAR[c], `${c} absent`).toBeUndefined()
@@ -87,8 +87,8 @@ describe('moscaClock', () => {
     }
     // IN's CII deadline (2027) falls before Q-Day → binds the horizon directly.
     expect(horizonYearFor('IN'), 'IN horizon').toBe(2027)
-    // DE and UK bind only if their date is sooner than Q-Day.
+    // DE and GB bind only if their date is sooner than Q-Day.
     expect(horizonYearFor('DE'), 'DE horizon').toBe(Math.min(SIM_CRQC_YEAR, 2030))
-    expect(horizonYearFor('UK'), 'UK horizon').toBe(Math.min(SIM_CRQC_YEAR, 2035))
+    expect(horizonYearFor('GB'), 'GB horizon').toBe(Math.min(SIM_CRQC_YEAR, 2035))
   })
 })

@@ -24,7 +24,7 @@
  *     it uses a different taxonomy ('European Union', 'Asia-Pacific', etc.) and
  *     serves a different purpose from the picker region grouping here.
  *   - EU cascade (Phase 2): use EU_MEMBER_CODES to seed all EU-member compliance
- *     rows when a user selects "European Union" in Assess. UK is explicitly NOT
+ *     rows when a user selects "European Union" in Assess. GB (the UK) is explicitly NOT
  *     in this set despite being in region='eu' for picker grouping.
  */
 import { loadLatestCSV } from './csvUtils'
@@ -37,7 +37,7 @@ import type { JurisdictionRule, HybridStance, EndState } from './jurisdiction'
  * Simulation archetypes: codes for which the sim has 1:1 modelled rules,
  * scenario data, and deadline entries in TIMELINE_COUNTRY_DEADLINE_YEAR.
  *
- * Original five: US/DE/FR/UK/AU.
+ * Original five: US/DE/FR/GB/AU.
  * Phase 3 additions: CA, JP, KR, SG (wired in assessBridge).
  * Phase 3 additions: IN (deadline + compliance coverage; hybrid/endState
  *   uncurated until DST/NQM stance formally verified).
@@ -50,7 +50,7 @@ import type { JurisdictionRule, HybridStance, EndState } from './jurisdiction'
  * sector-specific milestones (TIMELINE_COUNTRY_MILESTONES) may be absent.
  */
 export type SimArchetype =
-  'US' | 'DE' | 'FR' | 'UK' | 'AU' | 'CA' | 'JP' | 'KR' | 'SG' | 'IN' | 'EU'
+  'US' | 'DE' | 'FR' | 'GB' | 'AU' | 'CA' | 'JP' | 'KR' | 'SG' | 'IN' | 'EU'
 
 /**
  * Region keys for all entries in the jurisdiction registry.
@@ -63,7 +63,7 @@ export type SimArchetype =
  * africa: ZA, NG, KE — appear in compliance framework rows only.
  *
  * NOTE: region='eu' is a PICKER GROUPING label ("Europe"), not a statement
- * of EU membership. UK is region='eu' (correct for a Europe group) but
+ * of EU membership. GB (the UK) is region='eu' (correct for a Europe group) but
  * eu_member=no (correct for compliance cascade exclusion). Always use
  * EU_MEMBER_CODES, not the eu region, to determine EU regulatory scope.
  */
@@ -74,13 +74,13 @@ export type PickerRegion = 'americas' | 'eu' | 'mena' | 'apac'
 const PICKER_REGIONS = new Set<PickerRegion>(['americas', 'eu', 'mena', 'apac'])
 
 export interface JurisdictionEntry {
-  /** ISO 3166-1 alpha-2 uppercase (US, DE, UK…). Key for JURISDICTION_RULES and assessBridge. */
+  /** ISO 3166-1 alpha-2 uppercase (US, DE, GB…). Key for JURISDICTION_RULES and assessBridge. */
   code: string
   /** Canonical full display name. Must match the Country column in the timeline CSV. */
   name: string
   /**
-   * Lowercase 2-letter code for flagcdn.com (e.g. `gb` for UK).
-   * Usually equals code.toLowerCase() except UK → gb.
+   * Lowercase 2-letter code for flagcdn.com (e.g. `gb` for GB).
+   * Equals code.toLowerCase().
    */
   flagCode: string
   /** Region grouping for all entries (picker + reference-only). */
@@ -199,7 +199,7 @@ const VALID_ARCHETYPES = new Set<SimArchetype>([
   'US',
   'DE',
   'FR',
-  'UK',
+  'GB',
   'AU',
   'CA',
   'JP',
@@ -315,16 +315,14 @@ export const JURISDICTION_BY_NAME: Record<string, JurisdictionEntry> = Object.fr
  * ISO code → canonical full name for ALL entries (picker + reference-only).
  * Replaces COUNTRY_CODE_TO_NAME in complianceData.ts (Phase 6).
  * PQC-REGION-* synthetic overlay tokens stay inline in complianceData.ts.
- * GB is emitted as an alias for UK (compliance CSV uses GB for United Kingdom).
  */
 export const COUNTRY_CODE_TO_NAME: Record<string, string> = {
   ...Object.fromEntries(ACTIVE_ALL.map((j) => [j.code, j.name])),
-  GB: 'United Kingdom', // compliance CSV uses GB; jurisdiction CSV key is UK
 }
 
 /**
  * EU member state ISO codes. Use this — not the eu region — to determine
- * EU regulatory scope. UK is excluded (left EU 2020). Used by Phase 2
+ * EU regulatory scope. GB (the UK) is excluded (left EU 2020). Used by Phase 2
  * compliance cascade: selecting European Union seeds frameworks for all
  * of these codes in addition to the EU code itself.
  */
