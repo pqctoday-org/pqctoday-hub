@@ -96,9 +96,9 @@ describe('See all links in the For You panel', () => {
   })
 
   it('does not say nothing matches when the role filter left every document out', () => {
-    // For a developer in Australia in Finance & Banking the category filter leaves out all
-    // fifteen applicable library documents, so the section is empty but not "no match".
-    const hidden = { country: 'Australia', industry: 'Finance & Banking' }
+    // For a developer in Australia in Healthcare the category filter leaves out all twelve
+    // applicable library documents, so the section is empty but not "no match".
+    const hidden = { country: 'Australia', industry: 'Healthcare' }
     const lensed = applyLens(allApplicable(hidden), 'developer')
     expect(lensed.library).toHaveLength(0)
     const omitted = sum(lensed.droppedCounts.library)
