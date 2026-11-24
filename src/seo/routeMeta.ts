@@ -470,7 +470,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Combine classical and post-quantum algorithms for safe migration. Hybrid KEMs, composite signatures, and interactive certificate format comparison.',
     canonical: `${BASE_URL}/learn/hybrid-crypto`,
-    structuredData: buildModuleSchema('Hybrid Cryptography', 'PT40M', 'Intermediate'),
+    structuredData: buildModuleSchema('Hybrid Cryptography', 'PT48M', 'Intermediate'),
   },
 
   '/learn/crypto-agility': {
@@ -478,7 +478,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Design crypto-agile architectures for PQC transition. Abstraction layers, CBOM scanning, and the 7-phase migration framework from assessment to optimization.',
     canonical: `${BASE_URL}/learn/crypto-agility`,
-    structuredData: buildModuleSchema('Crypto Agility', 'PT40M', 'Intermediate'),
+    structuredData: buildModuleSchema('Crypto Agility', 'PT45M', 'Intermediate'),
   },
 
   '/learn/tls-basics': {
@@ -525,7 +525,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Master PQC key management patterns: ML-KEM envelope encryption, hybrid key wrapping combiners, multi-provider rotation planning across AWS, Google, Azure, and on-prem KMS.',
     canonical: `${BASE_URL}/learn/kms-pqc`,
-    structuredData: buildModuleSchema('KMS & PQC Key Management', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('KMS & PQC Key Management', 'PT68M', 'Intermediate'),
   },
 
   '/learn/pqc-hw-acceleration': {
@@ -606,7 +606,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Quantum threats to blockchain: how PQC impacts Bitcoin, Ethereum, and Solana. Key derivation, address generation, and post-quantum migration paths.',
     canonical: `${BASE_URL}/learn/digital-assets`,
-    structuredData: buildModuleSchema('Digital Assets & PQC', 'PT50M', 'Intermediate'),
+    structuredData: buildModuleSchema('Digital Assets & PQC', 'PT55M', 'Intermediate'),
   },
 
   '/learn/custody-threats-controls': {
@@ -763,7 +763,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/data-asset-sensitivity`,
     structuredData: buildModuleSchema(
       'Data & Asset Sensitivity Assessment',
-      'PT60M',
+      'PT65M',
       'Intermediate'
     ),
   },
@@ -801,7 +801,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Plan PQC migration for web infrastructure: CDN edge TLS, WAF inspection with ML-KEM, load balancer cipher suite updates, and reverse proxy certificate chain management.',
     canonical: `${BASE_URL}/learn/web-gateway-pqc`,
-    structuredData: buildModuleSchema('Web Gateway PQC', 'PT60M', 'Intermediate'),
+    structuredData: buildModuleSchema('Web Gateway PQC', 'PT65M', 'Intermediate'),
   },
 
   '/learn/emv-payment-pqc': {
@@ -845,7 +845,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/crypto-dev-apis`,
     structuredData: buildModuleSchema(
       'Cryptographic APIs & Developer Languages',
-      'PT80M',
+      'PT106M',
       'Intermediate'
     ),
   },
@@ -888,7 +888,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum migration for automotive: V2X communication security, AUTOSAR crypto stack, ISO 21434 compliance, ECU firmware signing, and connected vehicle PKI.',
     canonical: `${BASE_URL}/learn/automotive-pqc`,
-    structuredData: buildModuleSchema('Automotive PQC', 'PT80M', 'Advanced'),
+    structuredData: buildModuleSchema('Automotive PQC', 'PT85M', 'Advanced'),
   },
 
   '/learn/exec-quantum-impact': {
@@ -997,7 +997,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Post-quantum network security: next-gen firewall cipher analysis, TLS inspection with ML-KEM, IDS/IPS signature updates, vendor migration matrices, and Zero Trust Network Access with PQC.',
     canonical: `${BASE_URL}/learn/network-security-pqc`,
-    structuredData: buildModuleSchema('Network Security & PQC Migration', 'PT100M', 'Advanced'),
+    structuredData: buildModuleSchema('Network Security & PQC Migration', 'PT105M', 'Advanced'),
   },
 
   '/learn/database-encryption-pqc': {
@@ -1052,7 +1052,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program.',
     canonical: `${BASE_URL}/learn/pqc-testing-validation`,
-    structuredData: buildModuleSchema('PQC Network Testing & Validation', 'PT120M', 'Advanced'),
+    structuredData: buildModuleSchema('PQC Network Testing & Validation', 'PT130M', 'Advanced'),
   },
 
   '/learn/acvp-lab-workflow': {
