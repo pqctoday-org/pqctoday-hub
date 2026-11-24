@@ -38,15 +38,36 @@ export const REGION_LABELS = new Map<string, string>([
   ['ZA', 'South Africa'],
   ['KE', 'Kenya'],
   ['NZ', 'New Zealand'],
+  ['BE', 'Belgium'],
+  ['PL', 'Poland'],
+  ['DK', 'Denmark'],
+  ['FI', 'Finland'],
+  ['EE', 'Estonia'],
+  ['TR', 'Turkey'],
+  ['BG', 'Bulgaria'],
+  ['GR', 'Greece'],
+  ['HR', 'Croatia'],
+  ['HU', 'Hungary'],
+  ['LT', 'Lithuania'],
+  ['LU', 'Luxembourg'],
+  ['LV', 'Latvia'],
+  ['PT', 'Portugal'],
+  ['RO', 'Romania'],
+  ['SI', 'Slovenia'],
+  ['SK', 'Slovakia'],
   ['G7', 'G7'],
   ['NATO', 'NATO'],
 ])
 
-/** Region groups GeoFilter offers as built-in overlay options. */
+/** Region groups (the codes of pqc-vocab-overlay.json) and their reader-facing labels. */
 export const GEO_OVERLAY_LABELS = new Map<string, string>([
   ['PQC-REGION-GLOBAL', 'Global'],
   ['PQC-REGION-FIVEEYES', 'Five Eyes'],
   ['PQC-REGION-EU', 'European Union'],
+  ['PQC-REGION-EUROPE', 'Europe'],
+  ['PQC-REGION-AMERICAS', 'Americas'],
+  ['PQC-REGION-APAC', 'Asia-Pacific'],
+  ['PQC-REGION-MEA', 'Middle East & Africa'],
 ])
 
 /** Spellings that name a place another token already codes, → that code. */
