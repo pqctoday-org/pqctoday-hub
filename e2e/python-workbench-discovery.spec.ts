@@ -66,10 +66,12 @@ for (const width of [1280, 390]) {
     if (await unlock.isVisible()) await unlock.click()
     const run = page.getByRole('button', { name: /^Run$/ })
     async function replaceCode(source: string) {
+      // Select the whole buffer. Ctrl+Shift+End and Cmd+Shift+End do not behave
+      // the same in Monaco (Cmd+Shift+End on macOS leaves generated pipeline code
+      // behind), so select-all is used on every platform.
       const input = page.getByRole('textbox', { name: 'Editor content' })
       await input.focus()
-      await input.press('ControlOrMeta+Home')
-      await input.press('ControlOrMeta+Shift+End')
+      await input.press('ControlOrMeta+a')
       await input.pressSequentially(source)
     }
 
@@ -88,8 +90,13 @@ for (const width of [1280, 390]) {
     await replaceCode('import hashlib\nprint(hashlib.sha256(b"grade A exercise").hexdigest())\n')
     await run.click()
     const expected = createHash('sha256').update('grade A exercise').digest('hex')
-    await expect(page.getByRole('region', { name: 'Scrollable content' })).toContainText(expected, {
-      timeout: 40_000,
-    })
+    // The Python output is a live <pre> inside the recorded-attempt region. Assert on it
+    // directly: the generic "Scrollable content" region only exists when the output
+    // happens to overflow its box, which a one-line hash does not.
+    await expect(
+      page
+        .getByRole('region', { name: 'Recorded sample attempt' })
+        .locator('pre[aria-live="polite"]')
+    ).toContainText(expected, { timeout: 40_000 })
   })
 }
