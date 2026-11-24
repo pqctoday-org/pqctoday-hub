@@ -116,23 +116,38 @@ describe('the move changed nothing a page shows', () => {
     'taxonomy',
     'playgroundTools',
     'contentVersions',
-    'learnOrder',
     'quizLabels',
     'relatedLessonLinks',
   ])('%s is identical to the pre-move snapshot', (key) => {
     expect(now[key]).toEqual(before[key])
   })
 
-  // Owner decision (24 Nov 2026, "Tier to practitioner (Recommended)", three times): these three
-  // industry lessons teach hands-on in their workshops, so their NICE tier moves from awareness
-  // to practitioner. Their stage stays 4. Every other NICE field and lesson stays as before the move.
+  // Deliberate post-move changes, each with the owner's answer (24 Nov 2026). Every other NICE
+  // field, tier, stage and lesson stays exactly as before the move, so any other drift fails.
+  //
+  // Tier changes. "Tier to practitioner (Recommended)", three times: aerospace, AI security and
+  // healthcare PQC teach hands-on in their workshops (stage stays 4). Then the answers to
+  // "2: Research Quantum Impact", "3: Cert Quantum Impact" and "4: SBOM".
   const TIER_CHANGES: Record<string, { was: string; now: string }> = {
     'aerospace-pqc': { was: 'awareness', now: 'practitioner' },
     'ai-security-pqc': { was: 'awareness', now: 'practitioner' },
     'healthcare-pqc': { was: 'awareness', now: 'practitioner' },
+    'research-quantum-impact': { was: 'expert', now: 'practitioner' },
+    'cert-quantum-impact': { was: 'awareness', now: 'practitioner' },
+    sbom: { was: 'practitioner', now: 'awareness' },
   }
 
-  it('nice is identical to the pre-move snapshot except the three tier changes', () => {
+  // Stage changes. "1: four lessons to stage 4" (tier stays expert) and "2: Research Quantum Impact"
+  // (to stage 2, Core concepts).
+  const STAGE_CHANGES: Record<string, { was: number; now: number; nowName: string }> = {
+    'confidential-computing': { was: 3, now: 4, nowName: 'Specialist' },
+    'homomorphic-encryption': { was: 3, now: 4, nowName: 'Specialist' },
+    qkd: { was: 3, now: 4, nowName: 'Specialist' },
+    'stateful-signatures': { was: 3, now: 4, nowName: 'Specialist' },
+    'research-quantum-impact': { was: 3, now: 2, nowName: 'Core concepts' },
+  }
+
+  it('nice is identical to the pre-move snapshot except the six tier changes', () => {
     const expected = structuredClone(before.nice) as { moduleId: string; tier: string }[]
     for (const [id, { was, now: changed }] of Object.entries(TIER_CHANGES)) {
       const entry = expected.find((e) => e.moduleId === id)
@@ -140,6 +155,20 @@ describe('the move changed nothing a page shows', () => {
       entry!.tier = changed
     }
     expect(now.nice).toEqual(expected)
+  })
+
+  it('learn order is identical to the pre-move snapshot except the five stage changes', () => {
+    const expected = structuredClone(before.learnOrder) as Record<
+      string,
+      { stage: number; stageName: string }
+    >
+    for (const [id, { was, now: changed, nowName }] of Object.entries(STAGE_CHANGES)) {
+      const entry = expected[id]
+      expect(entry.stage).toBe(was)
+      entry.stage = changed
+      entry.stageName = nowName
+    }
+    expect(now.learnOrder).toEqual(expected)
   })
 
   it('route meta is identical to the pre-move snapshot except the nine level corrections', () => {
