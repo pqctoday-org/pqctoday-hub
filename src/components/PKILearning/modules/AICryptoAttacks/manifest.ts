@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'ai-crypto-attacks',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-087',
   title: 'AI as an Attacker of Cryptography',
   description:

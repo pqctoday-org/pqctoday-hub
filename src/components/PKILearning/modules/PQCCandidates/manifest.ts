@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-candidates',
-  contentVersion: 18,
+  contentVersion: 19,
   lm_id: 'LM-053',
   title: 'PQC Candidates & Lifecycle',
   description:
