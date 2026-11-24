@@ -62,124 +62,34 @@
     ],
     "modules": [
       {
-        "id": "pqc-101",
-        "title": "PQC 101",
-        "difficulty": "beginner",
-        "duration": "10 min"
-      },
-      {
-        "id": "quantum-threats",
-        "title": "Quantum Threats",
-        "difficulty": "beginner",
-        "duration": "40 min"
-      },
-      {
-        "id": "hybrid-crypto",
-        "title": "Hybrid Cryptography",
-        "difficulty": "intermediate",
-        "duration": "40 min"
-      },
-      {
-        "id": "crypto-agility",
-        "title": "Crypto Agility",
-        "difficulty": "intermediate",
-        "duration": "40 min"
-      },
-      {
-        "id": "crypto-mgmt-modernization",
-        "title": "Cryptographic Management Modernization",
-        "difficulty": "intermediate",
-        "duration": "55 min"
-      },
-      {
-        "id": "tls-basics",
-        "title": "TLS Basics",
-        "difficulty": "intermediate",
-        "duration": "40 min"
-      },
-      {
-        "id": "vpn-ssh-pqc",
-        "title": "VPN/IPsec & SSH",
-        "difficulty": "advanced",
-        "duration": "60 min"
-      },
-      {
-        "id": "email-signing",
-        "title": "Email & Document Signing",
-        "difficulty": "intermediate",
-        "duration": "40 min"
-      },
-      {
-        "id": "pki-workshop",
-        "title": "PKI",
-        "difficulty": "intermediate",
-        "duration": "40 min"
-      },
-      {
-        "id": "kms-pqc",
-        "title": "KMS & PQC Key Management",
-        "difficulty": "intermediate",
-        "duration": "60 min"
-      },
-      {
-        "id": "hsm-pqc",
-        "title": "HSM & PQC Operations",
-        "difficulty": "advanced",
-        "duration": "60 min"
-      },
-      {
-        "id": "slh-dsa",
-        "title": "SLH-DSA: Stateless Hash Signatures",
-        "difficulty": "advanced",
-        "duration": "45 min"
-      },
-      {
-        "id": "stateful-signatures",
-        "title": "Stateful Hash Signatures",
-        "difficulty": "advanced",
-        "duration": "40 min"
-      },
-      {
-        "id": "digital-assets",
-        "title": "Digital Assets",
-        "difficulty": "intermediate",
-        "duration": "50 min"
-      },
-      {
         "id": "5g-security",
         "title": "5G Security",
         "difficulty": "advanced",
         "duration": "60 min"
       },
       {
-        "id": "digital-id",
-        "title": "Digital ID",
+        "id": "acvp-lab-workflow",
+        "title": "ACVP Lab Workflow: From Vector Set to Evidence",
+        "difficulty": "advanced",
+        "duration": "90 min"
+      },
+      {
+        "id": "aerospace-pqc",
+        "title": "Aerospace PQC",
         "difficulty": "advanced",
         "duration": "80 min"
       },
       {
-        "id": "entropy-randomness",
-        "title": "Entropy & Randomness",
-        "difficulty": "advanced",
-        "duration": "40 min"
-      },
-      {
-        "id": "merkle-tree-certs",
-        "title": "Merkle Tree Certificates",
-        "difficulty": "advanced",
-        "duration": "40 min"
-      },
-      {
-        "id": "qkd",
-        "title": "Quantum Key Distribution",
-        "difficulty": "advanced",
-        "duration": "100 min"
-      },
-      {
-        "id": "code-signing",
-        "title": "Code Signing",
+        "id": "ai-crypto-attacks",
+        "title": "AI as an Attacker of Cryptography",
         "difficulty": "intermediate",
         "duration": "50 min"
+      },
+      {
+        "id": "ai-security-pqc",
+        "title": "AI Security & PQC",
+        "difficulty": "advanced",
+        "duration": "80 min"
       },
       {
         "id": "api-security-jwt",
@@ -188,20 +98,350 @@
         "duration": "60 min"
       },
       {
-        "id": "crypto-dev-apis",
-        "title": "Cryptographic APIs & Developer Languages",
-        "difficulty": "intermediate",
-        "duration": "80 min"
+        "id": "arch-quantum-impact",
+        "title": "Architect Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "30 min"
       },
       {
-        "id": "web-gateway-pqc",
-        "title": "Web Gateway PQC",
+        "id": "automotive-pqc",
+        "title": "Automotive PQC",
+        "difficulty": "advanced",
+        "duration": "85 min"
+      },
+      {
+        "id": "cbom",
+        "title": "Cryptography Bill of Materials (CBOM)",
         "difficulty": "intermediate",
         "duration": "60 min"
       },
       {
-        "id": "iot-ot-pqc",
-        "title": "IoT & OT Security",
+        "id": "cc-eucc-certification",
+        "title": "Common Criteria, EUCC & eIDAS Certification",
+        "difficulty": "advanced",
+        "duration": "66 min"
+      },
+      {
+        "id": "cert-quantum-impact",
+        "title": "Certification Engineer Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "25 min"
+      },
+      {
+        "id": "cloud-pqc",
+        "title": "Cloud-Native & SaaS PQC Migration",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "code-signing",
+        "title": "Code Signing",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "compliance-strategy",
+        "title": "Compliance & Regulatory Strategy",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "confidential-computing",
+        "title": "Confidential Computing & TEEs",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "crypto-agility",
+        "title": "Crypto Agility",
+        "difficulty": "intermediate",
+        "duration": "45 min"
+      },
+      {
+        "id": "crypto-dev-apis",
+        "title": "Cryptographic APIs & Developer Languages",
+        "difficulty": "intermediate",
+        "duration": "106 min"
+      },
+      {
+        "id": "crypto-mgmt-modernization",
+        "title": "Cryptographic Management Modernization",
+        "difficulty": "intermediate",
+        "duration": "55 min"
+      },
+      {
+        "id": "crypto-product-certification",
+        "title": "Cryptographic Product Certification: Fundamentals",
+        "difficulty": "advanced",
+        "duration": "95 min"
+      },
+      {
+        "id": "crypto-registry",
+        "title": "CycloneDX Cryptography Registry",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
+        "id": "custody-governance",
+        "title": "Custody Governance & Assurance",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
+        "id": "custody-lifecycle-ops",
+        "title": "Custody Key Lifecycle Operations",
+        "difficulty": "intermediate",
+        "duration": "38 min"
+      },
+      {
+        "id": "custody-pqc-migration",
+        "title": "Custody PQC Migration",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "custody-threats-controls",
+        "title": "Custody Key Threats & Controls",
+        "difficulty": "intermediate",
+        "duration": "35 min"
+      },
+      {
+        "id": "data-asset-sensitivity",
+        "title": "Data & Asset Sensitivity",
+        "difficulty": "intermediate",
+        "duration": "65 min"
+      },
+      {
+        "id": "database-encryption-pqc",
+        "title": "Database Encryption & PQC",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "dev-quantum-impact",
+        "title": "Developer Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "20 min"
+      },
+      {
+        "id": "digital-assets",
+        "title": "Digital Assets",
+        "difficulty": "intermediate",
+        "duration": "55 min"
+      },
+      {
+        "id": "digital-id",
+        "title": "Digital ID",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "dnssec-pqc",
+        "title": "DNSSEC & Post-Quantum Signatures",
+        "difficulty": "intermediate",
+        "duration": "35 min"
+      },
+      {
+        "id": "email-signing",
+        "title": "Email & Document Signing",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "emv-payment-pqc",
+        "title": "Financial Services & Payments PQC",
+        "difficulty": "advanced",
+        "duration": "120 min"
+      },
+      {
+        "id": "energy-utilities-pqc",
+        "title": "Energy, Utilities & Grid PQC",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "entropy-randomness",
+        "title": "Entropy & Randomness",
+        "difficulty": "advanced",
+        "duration": "130 min"
+      },
+      {
+        "id": "exec-quantum-impact",
+        "title": "Executive Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "fips-140-3-certification",
+        "title": "FIPS 140-3 Certification",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "government-defense-pqc",
+        "title": "Government & Defense PQC",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "healthcare-pqc",
+        "title": "Healthcare PQC",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "homomorphic-encryption",
+        "title": "Homomorphic Encryption (FHE)",
+        "difficulty": "intermediate",
+        "duration": "105 min"
+      },
+      {
+        "id": "hsm-pqc",
+        "title": "HSM & PQC Operations",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "hybrid-crypto",
+        "title": "Hybrid Cryptography",
+        "difficulty": "intermediate",
+        "duration": "48 min"
+      },
+      {
+        "id": "iam-pqc",
+        "title": "Identity & Access Management with PQC",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "iot-pqc",
+        "title": "IoT & Embedded Device PQC",
+        "difficulty": "advanced",
+        "duration": "90 min"
+      },
+      {
+        "id": "kms-pqc",
+        "title": "KMS & PQC Key Management",
+        "difficulty": "intermediate",
+        "duration": "68 min"
+      },
+      {
+        "id": "media-drm-pqc",
+        "title": "Media, Entertainment & DRM PQC",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "merkle-tree-certs",
+        "title": "Merkle Tree Certificates",
+        "difficulty": "advanced",
+        "duration": "40 min"
+      },
+      {
+        "id": "migration-program",
+        "title": "Migration Program Mgmt",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
+        "id": "mls-group-messaging",
+        "title": "MLS — Group Messaging",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "network-security-pqc",
+        "title": "Network Security & PQC Migration",
+        "difficulty": "advanced",
+        "duration": "105 min"
+      },
+      {
+        "id": "ops-quantum-impact",
+        "title": "Ops Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "20 min"
+      },
+      {
+        "id": "os-pqc",
+        "title": "Operating System & Platform Crypto PQC",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "ot-pqc",
+        "title": "OT & Industrial Control Systems PQC",
+        "difficulty": "advanced",
+        "duration": "90 min"
+      },
+      {
+        "id": "pci-certification",
+        "title": "PCI Certification",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "pki-enrollment-protocols",
+        "title": "PKI Enrollment Protocols (EST & CMP)",
+        "difficulty": "advanced",
+        "duration": "50 min"
+      },
+      {
+        "id": "pki-workshop",
+        "title": "PKI",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "platform-eng-pqc",
+        "title": "Platform Engineering & PQC",
+        "difficulty": "advanced",
+        "duration": "90 min"
+      },
+      {
+        "id": "pqc-101",
+        "title": "PQC 101",
+        "difficulty": "beginner",
+        "duration": "15 min"
+      },
+      {
+        "id": "pqc-algorithms",
+        "title": "The PQC Algorithms: How They Work and How to Choose",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "pqc-business-case",
+        "title": "PQC Business Case",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "pqc-candidates",
+        "title": "PQC Candidates & Lifecycle",
+        "difficulty": "intermediate",
+        "duration": "55 min"
+      },
+      {
+        "id": "pqc-governance",
+        "title": "PQC Governance & Policy",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "pqc-grc",
+        "title": "PQC GRC",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
+        "id": "pqc-hw-acceleration",
+        "title": "PQC Hardware Acceleration",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "pqc-implementation-security",
+        "title": "PQC Implementation Security & Side-Channel Resistance",
         "difficulty": "advanced",
         "duration": "60 min"
       },
@@ -212,124 +452,27 @@
         "duration": "30 min"
       },
       {
-        "id": "pqc-business-case",
-        "title": "PQC Business Case",
+        "id": "pqc-testing-validation",
+        "title": "PQC Network Testing & Validation",
+        "difficulty": "advanced",
+        "duration": "130 min"
+      },
+      {
+        "id": "qkd",
+        "title": "Quantum Key Distribution",
+        "difficulty": "advanced",
+        "duration": "100 min"
+      },
+      {
+        "id": "quantum-threats",
+        "title": "Quantum Threats",
         "difficulty": "beginner",
-        "duration": "30 min"
-      },
-      {
-        "id": "pqc-governance",
-        "title": "PQC Governance & Policy",
-        "difficulty": "beginner",
-        "duration": "30 min"
-      },
-      {
-        "id": "vendor-risk",
-        "title": "Vendor & Supply Chain Risk",
-        "difficulty": "intermediate",
-        "duration": "30 min"
-      },
-      {
-        "id": "migration-program",
-        "title": "Migration Program Mgmt",
-        "difficulty": "intermediate",
-        "duration": "30 min"
-      },
-      {
-        "id": "compliance-strategy",
-        "title": "Compliance & Regulatory Strategy",
-        "difficulty": "beginner",
-        "duration": "30 min"
-      },
-      {
-        "id": "data-asset-sensitivity",
-        "title": "Data & Asset Sensitivity",
-        "difficulty": "intermediate",
-        "duration": "50 min"
-      },
-      {
-        "id": "standards-bodies",
-        "title": "Standards, Certification & Compliance Bodies",
-        "difficulty": "intermediate",
         "duration": "40 min"
       },
       {
-        "id": "confidential-computing",
-        "title": "Confidential Computing & TEEs",
-        "difficulty": "advanced",
-        "duration": "60 min"
-      },
-      {
-        "id": "database-encryption-pqc",
-        "title": "Database Encryption & PQC",
-        "difficulty": "intermediate",
-        "duration": "50 min"
-      },
-      {
-        "id": "energy-utilities-pqc",
-        "title": "Energy & Utilities PQC",
-        "difficulty": "intermediate",
-        "duration": "60 min"
-      },
-      {
-        "id": "emv-payment-pqc",
-        "title": "EMV Payment Systems & PQC",
-        "difficulty": "advanced",
-        "duration": "80 min"
-      },
-      {
-        "id": "ai-security-pqc",
-        "title": "AI Security & PQC",
-        "difficulty": "advanced",
-        "duration": "80 min"
-      },
-      {
-        "id": "platform-eng-pqc",
-        "title": "Platform Engineering & PQC",
-        "difficulty": "advanced",
-        "duration": "80 min"
-      },
-      {
-        "id": "healthcare-pqc",
-        "title": "Healthcare PQC",
-        "difficulty": "intermediate",
-        "duration": "60 min"
-      },
-      {
-        "id": "aerospace-pqc",
-        "title": "Aerospace PQC",
-        "difficulty": "advanced",
-        "duration": "80 min"
-      },
-      {
-        "id": "automotive-pqc",
-        "title": "Automotive PQC",
-        "difficulty": "advanced",
-        "duration": "80 min"
-      },
-      {
-        "id": "exec-quantum-impact",
-        "title": "Executive Quantum Impact",
-        "difficulty": "beginner",
-        "duration": "30 min"
-      },
-      {
-        "id": "dev-quantum-impact",
-        "title": "Developer Quantum Impact",
-        "difficulty": "beginner",
-        "duration": "20 min"
-      },
-      {
-        "id": "arch-quantum-impact",
-        "title": "Architect Quantum Impact",
-        "difficulty": "beginner",
-        "duration": "20 min"
-      },
-      {
-        "id": "ops-quantum-impact",
-        "title": "Ops Quantum Impact",
-        "difficulty": "beginner",
-        "duration": "20 min"
+        "id": "quiz",
+        "title": "PQC Quiz",
+        "duration": "10 min"
       },
       {
         "id": "research-quantum-impact",
@@ -338,27 +481,15 @@
         "duration": "20 min"
       },
       {
+        "id": "sbom",
+        "title": "Software Bill of Materials (SBOM)",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
         "id": "secrets-management-pqc",
         "title": "Secrets Management & PQC",
         "difficulty": "advanced",
-        "duration": "60 min"
-      },
-      {
-        "id": "network-security-pqc",
-        "title": "Network Security & PQC Migration",
-        "difficulty": "advanced",
-        "duration": "90 min"
-      },
-      {
-        "id": "pqc-testing-validation",
-        "title": "PQC Network Testing & Validation",
-        "difficulty": "advanced",
-        "duration": "120 min"
-      },
-      {
-        "id": "iam-pqc",
-        "title": "Identity & Access Management with PQC",
-        "difficulty": "intermediate",
         "duration": "60 min"
       },
       {
@@ -368,10 +499,82 @@
         "duration": "60 min"
       },
       {
-        "id": "os-pqc",
-        "title": "Operating System & Platform Crypto PQC",
+        "id": "skills-team-structure",
+        "title": "Skills & Team Structure",
         "difficulty": "intermediate",
-        "duration": "50 min"
+        "duration": "30 min"
+      },
+      {
+        "id": "slh-dsa",
+        "title": "SLH-DSA: Stateless Hash Signatures",
+        "difficulty": "advanced",
+        "duration": "45 min"
+      },
+      {
+        "id": "soc-implementation-pqc",
+        "title": "SOC Implementation for PQC",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "software-supply-chain-pqc",
+        "title": "Software Supply Chain PQC",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "standards-bodies",
+        "title": "Standards, Certification & Compliance Bodies",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "stateful-signatures",
+        "title": "Stateful Hash Signatures",
+        "difficulty": "advanced",
+        "duration": "40 min"
+      },
+      {
+        "id": "talking-about-pqc",
+        "title": "Talking About PQC Accurately",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "tls-basics",
+        "title": "TLS Basics",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "trust-services-pqc",
+        "title": "Trust Services & Long-Term Signatures",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "vendor-risk",
+        "title": "Vendor & Supply Chain Risk",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
+        "id": "verification-closure",
+        "title": "Decommissioning & Program Closure",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "vpn-ssh-pqc",
+        "title": "VPN/IPsec & SSH",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "web-gateway-pqc",
+        "title": "Web Gateway PQC",
+        "difficulty": "intermediate",
+        "duration": "65 min"
       }
     ],
     "playgroundTools": [
