@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'automotive-pqc',
-  contentVersion: 17,
+  contentVersion: 18,
   lm_id: 'LM-043',
   title: 'Automotive PQC',
   description:
     'Post-quantum cryptography for connected and autonomous vehicles: V2X PKI, sensor data integrity, ISO 26262 safety-crypto intersection, HSM lifecycle management, OTA orchestration, digital car keys, in-vehicle payments, and 15-20 year lifecycle crypto-agility.',
   whyThisMatters:
     'A car sold today is expected to stay on the road, and stay securely updatable, for 15-20 years — its V2X and OTA crypto has to already assume a post-quantum adversary.',
-  duration: '80 min',
+  duration: '85 min',
   difficulty: 'advanced',
   frameworkPhase: 'p5',
   track: 'Industries',
@@ -25,6 +25,7 @@ const manifest: ModuleManifest = {
     { id: 'vehicle-payments', label: 'In-Vehicle Payments' },
     { id: 'digital-car-key', label: 'Digital Car Key' },
     { id: 'supply-chain', label: 'TISAX, VDA & AUTOSAR' },
+    { id: 'system-life-cycles', label: 'System Life Cycles' },
   ],
   workshopSteps: [
     { id: 'vehicle-architecture-mapper', label: 'Vehicle Architecture Mapper' },
