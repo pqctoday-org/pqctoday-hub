@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 /**
  * Common Criteria, EUCC & eIDAS Certification (LM-068).
@@ -18,18 +19,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'cc-eucc-certification',
-  contentVersion: 26,
-  lm_id: 'LM-068',
-  title: 'Common Criteria, EUCC & eIDAS Certification',
-  description:
-    'Common Criteria and the CC:2022 transition, EUCC as the EU scheme, eIDAS qualified devices and the Protection Profiles that connect them: what each claim proves and what adding PQC means for a certified product.',
   whyThisMatters:
     'In Europe, a Common Criteria evaluation may support an EUCC certificate and, for applicable qualified electronic-signature or seal devices, form part of an eIDAS conformity chain. CCRA recognition is separate and depends on the certificate, scheme, assurance claim and recognition rules. Reading the exact claim is what tells you whether adding PQC is a change the certificate survives.',
-  duration: '66 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p7',
-  track: 'Hardware Infrastructure',
-  trackOrder: 8,
   learnSections: [
     { id: 'cc-model', label: 'The Common Criteria model' },
     { id: 'cc-eal-decoding', label: 'EALs and "EAL4+"' },
@@ -159,13 +150,8 @@ const manifest: ModuleManifest = {
     step: 'cc-claim-decoder',
     text: 'Open Decode the certificate claim and decode a Common Criteria claim — the EAL, each named augmentation, and what it does and does not cover.',
   },
-  // Derived from content.ts, restricted to the STANDARD_TAXONOMY vocabulary
-  // (moduleEnrichment.ts). Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-KEM', 'ML-DSA'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.CcEuccCertificationModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

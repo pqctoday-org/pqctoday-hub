@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'dnssec-pqc',
-  contentVersion: 8,
-  lm_id: 'LM-064',
-  title: 'DNSSEC & Post-Quantum Signatures',
-  description:
-    'DNSSEC moving to post-quantum signatures: the ML-DSA-44 mechanism behind IANA DNSSEC algorithm 18, Cloudflare’s 1.1.1.1 resolver-side pilot against the dnstest.dev signed test zone, and what’s still missing before production zones can be signed.',
   whyThisMatters:
     'DNSSEC is a signature-only protocol that protects DNS data authenticity and integrity when a validating resolver checks a signed zone — a cryptographically relevant quantum computer could forge its RSA/ECDSA signatures outright. Cloudflare’s 2026-09-10 announcement adds ML-DSA-44 validation to resolvers as one of the first PQC deployment steps.',
-  duration: '35 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Protocols',
-  trackOrder: 9,
   learnSections: [
     { id: 'dnssec-basics', label: 'What DNSSEC Protects' },
     { id: 'mldsa44-mechanism', label: 'ML-DSA-44 & Algorithm 18' },
@@ -31,12 +22,8 @@ const manifest: ModuleManifest = {
     step: 'signature-size-explorer',
     text: 'Click each algorithm row in the Signature Size Explorer: its signature is drawn against the 1,232-byte DNS UDP limit, and the two post-quantum rows show why an ML-DSA-44 or SLH-DSA response needs TCP.',
   },
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ECDSA'],
-    standards: ['RFC 4034', 'RFC 9364', 'draft-westerbaan-dnssec-mldsa'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DNSSECPQCModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'digital-assets',
-  contentVersion: 21,
-  lm_id: 'LM-045',
-  title: 'Digital Assets',
-  description:
-    'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana. Explore institutional custody architecture with PQC threat analysis.',
   whyThisMatters:
     "Bitcoin, Ethereum, and Solana wallets sign with ECDSA/EdDSA today — a cryptographically-relevant quantum computer doesn't just threaten future transactions, it threatens every public key already exposed on-chain.",
-  duration: '55 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 4,
   // learnSections CORRECTED 2026-07-30 to describe this module's actual
   // learn tab. The previous ids read like the module's workshop steps and
   // did not correspond to any rendered heading — which made the table of
@@ -41,17 +32,8 @@ const manifest: ModuleManifest = {
     step: 'bitcoin',
     text: 'Choose Bitcoin on the chain selector and walk its nine steps: a secp256k1 key is generated inside the in-browser HSM, an address derived, then a transaction formatted, signed and verified.',
   },
-  playgroundTool: 'bitcoin-flow',
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['Falcon', 'ML-DSA', 'ML-KEM', 'SLH-DSA'],
-    standards: ['RFC 10024', 'FIPS 140-3'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DigitalAssetsModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

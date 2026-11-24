@@ -6,16 +6,16 @@
  * (./conformance.test.ts) asserts the two agree until the legacy maps are
  * deleted and these manifests become the only source of truth.
  */
-import type { ModuleManifest } from './types'
+import type { ResolvedModuleManifest } from './types'
 
-const modules = import.meta.glob<{ default: ModuleManifest }>('../modules/*/manifest.ts', {
+const modules = import.meta.glob<{ default: ResolvedModuleManifest }>('../modules/*/manifest.ts', {
   eager: true,
 })
 
-/** Every module manifest discovered on disk. */
-export const MANIFESTS: ModuleManifest[] = Object.values(modules).map((m) => m.default)
+/** Every module manifest discovered on disk, joined with its lessons-data row. */
+export const MANIFESTS: ResolvedModuleManifest[] = Object.values(modules).map((m) => m.default)
 
 /** id → manifest. */
-export const MANIFEST_BY_ID: Record<string, ModuleManifest> = Object.fromEntries(
+export const MANIFEST_BY_ID: Record<string, ResolvedModuleManifest> = Object.fromEntries(
   MANIFESTS.map((m) => [m.id, m])
 )

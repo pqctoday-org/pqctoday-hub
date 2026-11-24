@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { CheckCircle2, Circle, Network, ArrowRight, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { handleTabListKeyDown } from '@/components/ui/tabs'
-import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
 import { LearnOrderStrip } from '@/components/ui/LearnOrderStrip'
 import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/learnPathScope'
@@ -26,7 +26,7 @@ import { DESKTOP_ONLY_WORKSHOP_LABEL, useDesktopOnlyWorkshopEntries } from '../d
 import { cn } from '@/lib/utils'
 
 export interface MobileModuleShellProps {
-  manifest: ModuleManifest
+  manifest: ResolvedModuleManifest
   title?: ReactNode
   description?: ReactNode
   /** Already-resolved Learn tab body — same real content desktop's Learn tab

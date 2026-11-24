@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'os-pqc',
-  contentVersion: 20,
-  lm_id: 'LM-024',
-  title: 'Operating System & Platform Crypto PQC',
-  description:
-    'Migrate OS-level cryptography to quantum-safe algorithms. Covers system TLS policy (OpenSSL, GnuTLS, SChannel), SSH host key migration to ML-DSA, RPM/DEB package signing, and FIPS mode compatibility for PQC-enabled operating systems.',
   whyThisMatters:
     'System crypto policy can change how applications use shared TLS backends. Applications with bundled libraries or explicit settings may need their own migration. Identify what each client actually uses before rolling out a policy.',
-  duration: '50 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p6',
-  track: 'Software Infrastructure',
-  trackOrder: 2,
   learnSections: [
     { id: 'os-crypto-landscape', label: 'OS Crypto Subsystems' },
     { id: 'ssh-host-keys', label: 'SSH Host Key Migration' },
@@ -33,16 +24,8 @@ const manifest: ModuleManifest = {
     step: 'ssh-keys',
     text: 'Migrate SSH host keys to ML-DSA-65 in step 3: the sshd_config changes and the known_hosts roll-out across a fleet are laid out in order.',
   },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ML-KEM'],
-    standards: ['NIST SP 800-227', 'FIPS 140-3'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.OSPQCModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

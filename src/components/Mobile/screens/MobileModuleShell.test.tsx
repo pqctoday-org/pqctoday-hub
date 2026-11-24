@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileModuleShell } from './MobileModuleShell'
 import { useModuleStore } from '@/store/useModuleStore'
-import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 import { Button } from '@/components/ui/button'
 
 afterEach(() => {
@@ -15,7 +15,7 @@ afterEach(() => {
 // component's own conditional rendering from any real module's section/track
 // data (which the "real data" path is covered by
 // ModuleShell.mobileShell.test.tsx against an actual module, hsm-pqc).
-const minimal: ModuleManifest = {
+const minimal: ResolvedModuleManifest = {
   id: 'not-a-real-module-fixture',
   title: 'Minimal Module',
   description: 'A minimal description',
@@ -35,7 +35,7 @@ describe('MobileModuleShell', () => {
   })
 
   it('hides the Start here box when told the step is not on the learner path', () => {
-    const manifest: ModuleManifest = {
+    const manifest: ResolvedModuleManifest = {
       ...minimal,
       workshopSteps: [{ id: 'a', label: 'A' }],
       startHere: { step: 'a', text: 'Decode the claim.' },
@@ -134,7 +134,7 @@ describe('MobileModuleShell', () => {
   // computer" at every entry point instead of being a button that does nothing.
   describe('desktop-only workshop (no ready workshop, no twin)', () => {
     const startHere = { step: 'a', text: 'Decode the claim.' }
-    const manifest: ModuleManifest = {
+    const manifest: ResolvedModuleManifest = {
       ...minimal,
       workshopSteps: [{ id: 'a', label: 'A' }],
       startHere,

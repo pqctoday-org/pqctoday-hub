@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'automotive-pqc',
-  contentVersion: 18,
-  lm_id: 'LM-043',
-  title: 'Automotive PQC',
-  description:
-    'Post-quantum cryptography for connected and autonomous vehicles: V2X PKI, sensor data integrity, ISO 26262 safety-crypto intersection, HSM lifecycle management, OTA orchestration, digital car keys, in-vehicle payments, and 15-20 year lifecycle crypto-agility.',
   whyThisMatters:
     'A car sold today is expected to stay on the road, and stay securely updatable, for 15-20 years — its V2X and OTA crypto has to already assume a post-quantum adversary.',
-  duration: '85 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 2,
   learnSections: [
     { id: 'vehicle-crypto-landscape', label: 'Automotive Crypto' },
     { id: 'autonomous-data', label: 'Autonomous Data Integrity' },
@@ -39,16 +30,8 @@ const manifest: ModuleManifest = {
     step: 'ota-orchestration-planner',
     text: 'Plan a multi-ECU firmware campaign in the OTA Orchestration Planner: dependency ordering, fleet size and the bandwidth cost of PQC signatures on every update.',
   },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['Falcon', 'ML-DSA', 'ML-KEM', 'SLH-DSA'],
-    standards: ['NSM-10', 'NSA CNSA 2.0', 'FIPS 140-3'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AutomotivePQCModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

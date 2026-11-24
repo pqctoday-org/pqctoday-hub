@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'pqc-101',
-  contentVersion: 21,
-  lm_id: 'LM-001',
-  title: 'PQC 101',
-  description:
-    'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
-  duration: '15 min',
   whyThisMatters:
     'The quantum threat isn\'t hypothetical: "harvest now, decrypt later" means data you send today can be unlocked the day a quantum computer arrives. This is the ground floor.',
-  difficulty: 'beginner',
-  frameworkPhase: 'foundations',
-  track: 'Foundations',
-  trackOrder: 1,
   learnSections: [
     { id: 'quantum-threat', label: 'Quantum Threat' },
     { id: 'building-blocks', label: 'The Building Blocks' },
@@ -34,9 +25,8 @@ const manifest: ModuleManifest = {
     step: 'algorithm-families',
     text: 'Expand each of the three families in Algorithm Families — lattice, hash and code-based — and play with its visual: add noise to a lattice, watch a hash avalanche, inject bit errors into a code.',
   },
-  taxonomy: { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.Module1 })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

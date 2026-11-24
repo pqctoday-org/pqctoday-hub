@@ -20,7 +20,7 @@ import { describe, it, expect } from 'vitest'
 import fs from 'fs'
 import path from 'path'
 import { MANIFESTS, MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
-import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 import {
   AUTHORED_INLINE_RELATED,
   RELATED_MODULES_CAP,
@@ -136,7 +136,7 @@ describe('module relations — the output is topically plausible', () => {
 })
 
 describe('module relations — the authored override replaces, never stacks', () => {
-  const fixtures: ModuleManifest[] = [
+  const fixtures: ResolvedModuleManifest[] = [
     {
       id: 'a',
       title: 'A',

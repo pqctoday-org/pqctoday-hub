@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'pqc-algorithms',
-  contentVersion: 2,
-  lm_id: 'LM-088',
-  title: 'The PQC Algorithms: How They Work and How to Choose',
-  description:
-    'How the standardised post-quantum algorithms work, read from the standards and guidance documents one sentence at a time: ML-KEM and ML-DSA in full, hash-based signatures in brief, and what named standards bodies say about choosing between them. The workshop runs ML-KEM and ML-DSA in the browser and compares sizes.',
   whyThisMatters:
     'Each new algorithm is defined in one document and used under others. This lesson shows each statement with the document, edition and place it comes from, so that a choice of algorithm can be traced to its source.',
-  duration: '40 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'foundations',
-  track: 'Foundations',
-  trackOrder: 3,
   learnSections: [
     { id: 'two-jobs-new-tools', label: 'Two jobs, new tools' },
     { id: 'the-families-at-a-glance', label: 'The families at a glance' },
@@ -47,20 +38,7 @@ const manifest: ModuleManifest = {
     step: 'ml-kem-round-trip',
     text: 'Open ML-KEM Round Trip, generate a key pair, encapsulate and decapsulate, then change one byte of the ciphertext and decapsulate again.',
   },
-  taxonomy: {
-    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS/XMSS', 'HQC', 'Falcon', 'RSA', 'ECDSA'],
-    standards: [
-      'FIPS 203',
-      'FIPS 204',
-      'FIPS 205',
-      'NIST SP 800-208',
-      'NIST SP 800-227',
-      'NIST IR 8547',
-      'NSA CNSA 2.0',
-      'RFC 10024',
-    ],
-  },
   load: () => import('./index').then((m) => ({ default: m.PQCAlgorithmsModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

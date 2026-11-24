@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'acvp-lab-workflow',
-  contentVersion: 23,
-  lm_id: 'LM-066',
-  title: 'ACVP Lab Workflow: From Vector Set to Evidence',
-  description:
-    'How algorithm validation testing actually runs: CAVP versus CMVP, capability registration and vector sets, the prompt → response → disposition → validation lifecycle, ACVP test types, deterministic versus randomized algorithms, the limits of a PKCS#11 test adapter, negative testing, and how to state a result at exactly the evidence level it reached.',
   whyThisMatters:
     'A passing test is only evidence for the exact operation, parameters, build and source it was run against. Laboratories, vendors and buyers who blur a public reference sample, an ACVTS-issued vector set and a validation certificate make claims no evidence supports.',
-  duration: '90 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p7',
-  track: 'Hardware Infrastructure',
-  trackOrder: 11,
   learnSections: [
     { id: 'algorithm-vs-module', label: 'Algorithm vs Module Validation' },
     { id: 'capability-registration', label: 'Capability Registration & Vector Sets' },
@@ -36,12 +27,8 @@ const manifest: ModuleManifest = {
     step: 'evidence-classifier',
     text: 'Classify ten real-world test-log observations into the evidence classes, then see the highest claim each one supports and the overclaim it tempts you into.',
   },
-  taxonomy: {
-    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
-    standards: ['FIPS 203', 'FIPS 204', 'FIPS 205', 'FIPS 140-3', 'PKCS#11'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.AcvpLabWorkflowModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

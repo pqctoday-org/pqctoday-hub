@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 /**
  * Cryptographic Product Certification — Fundamentals (LM-065).
@@ -24,20 +25,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'crypto-product-certification',
-  contentVersion: 36,
-  lm_id: 'LM-065',
-  title: 'Cryptographic Product Certification: Fundamentals',
-  description:
-    'What a FIPS 140-3, Common Criteria, EUCC or PCI certificate proves, why scope comes before level, and what adding PQC changes in each scheme. Deep dives: FIPS 140-3 Certification; Common Criteria, EUCC & eIDAS Certification; and PCI Certification.',
   whyThisMatters:
     'A certificate proves something narrow — a defined module, target or device, at a version and configuration, against one scheme’s requirements. Adding PQC changes the product, and each scheme has its own route for that change: a market deadline creates urgency, but no shortcut.',
-  // Seven required Learn sections (about 9,700 words of text and tables) plus three required
-  // workshop steps, one of them the 20-minute timed capstone; the optional sections are excluded.
-  duration: '95 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p7',
-  track: 'Hardware Infrastructure',
-  trackOrder: 6,
   learnSections: [
     { id: 'four-questions', label: 'Standards, evaluation criteria and certification schemes' },
     { id: 'scope-before-level', label: 'Scope before level' },
@@ -60,14 +49,8 @@ const manifest: ModuleManifest = {
     step: 'scheme-selector',
     text: 'Open Which scheme answers the question? and match each certification claim to FIPS 140-3, Common Criteria, EUCC or PCI — the scheme whose certificate can actually answer it.',
   },
-  // Derived from content.ts, restricted to the STANDARD_TAXONOMY vocabulary
-  // (moduleEnrichment.ts). Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-KEM', 'ML-DSA'],
-    standards: ['FIPS 140-3', 'NIST IR 8547'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.CryptoProductCertificationModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

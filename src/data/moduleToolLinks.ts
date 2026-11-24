@@ -30,7 +30,7 @@
  * Precedence: an explicitly declared `playgroundTool` always wins; this is the
  * fallback for the modules that never declared one.
  */
-import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 
 /** `/learn/iam-pqc?tab=workshop&step=2` → `iam-pqc`; anything else → null. */
 export function moduleIdFromToolLink(moduleLink: string): string | null {
@@ -131,7 +131,7 @@ export const TOOL_TITLE_BY_ID: ReadonlyMap<string, string> = new Map([
  * The playground tool to offer from a module: its own declaration first, then
  * the reverse of any tool that already links to it.
  */
-export function resolveModuleTool(manifest: ModuleManifest): string | undefined {
+export function resolveModuleTool(manifest: ResolvedModuleManifest): string | undefined {
   return manifest.playgroundTool ?? TOOL_BY_MODULE_ID.get(manifest.id)
 }
 
@@ -139,7 +139,7 @@ export function resolveModuleTool(manifest: ModuleManifest): string | undefined 
  * Every playground tool a module should offer: its own declaration first, then
  * each tool whose `moduleLink` points here, without duplicates.
  */
-export function resolveModuleTools(manifest: ModuleManifest): string[] {
+export function resolveModuleTools(manifest: ResolvedModuleManifest): string[] {
   const out: string[] = []
   const primary = resolveModuleTool(manifest)
   if (primary) out.push(primary)
@@ -175,7 +175,7 @@ const MOBILE_PRACTICE_EXCLUDED = new Set([
  * above. Same resolution as `resolveModuleTool` — the mobile shortlist is a
  * subset, not a different data source.
  */
-export function mobilePracticeTool(manifest: ModuleManifest): string | undefined {
+export function mobilePracticeTool(manifest: ResolvedModuleManifest): string | undefined {
   if (MOBILE_PRACTICE_EXCLUDED.has(manifest.id)) return undefined
   return resolveModuleTool(manifest)
 }

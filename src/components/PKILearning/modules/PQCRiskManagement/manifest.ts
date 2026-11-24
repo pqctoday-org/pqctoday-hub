@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'pqc-risk-management',
-  contentVersion: 20,
-  lm_id: 'LM-034',
-  title: 'PQC Risk Management',
-  description:
-    'Compare quantum-risk planning scenarios, record asset assumptions, and rank editable likelihood-by-impact worksheets.',
   whyThisMatters:
     'A CRQC arrival year is an uncertain planning assumption. A risk register and relative heatmap can compare documented scenarios; neither predicts arrival nor supplies measured threat probabilities.',
-  duration: '30 min',
-  difficulty: 'beginner',
-  frameworkPhase: 'p3',
-  track: 'Governance & Risk',
-  trackOrder: 0,
   learnSections: [
     { id: 'crqc', label: 'Why PQC Risk Management' },
     { id: 'register', label: 'Key Concepts' },
@@ -30,16 +21,8 @@ const manifest: ModuleManifest = {
     step: 'risk-register-builder',
     text: 'Write one HNDL risk in the Risk Register Builder — asset, likelihood, impact, owner — then carry it into the heatmap in step 3 to assign its treatment.',
   },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ML-KEM'],
-    standards: ['NIST SP 800-131A', 'RFC 9370', 'NIST CSWP 39', 'NSA CNSA 2.0', 'NIST IR 8547'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PQCRiskManagementModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

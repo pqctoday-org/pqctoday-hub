@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'pki-workshop',
-  contentVersion: 25,
-  lm_id: 'LM-020',
-  title: 'PKI',
-  description:
-    'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
   whyThisMatters:
     "PKI is the trust infrastructure everything else in this curriculum assumes exists — certificate chains, revocation, and CA hierarchies are what make 'this key belongs to this identity' a claim anyone can verify.",
-  duration: '40 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p6',
-  track: 'Software Infrastructure',
-  trackOrder: 5,
   learnSections: [
     { id: 'fundamentals', label: 'PKI Fundamentals' },
     { id: 'cert-structure', label: 'Certificate Structure' },
@@ -37,10 +28,8 @@ const manifest: ModuleManifest = {
     step: 'csr',
     text: 'Pick a private key source and a CSR profile, fill in the subject attributes, then press Generate CSR: the console shows the OpenSSL run and the resulting PEM request.',
   },
-  playgroundTool: 'pki-workshop',
-  taxonomy: { algorithms: ['ML-DSA', 'ECDSA', 'RSA'], standards: ['X.509', 'FIPS 204'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PKIWorkshop })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

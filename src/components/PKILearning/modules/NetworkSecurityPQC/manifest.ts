@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'network-security-pqc',
-  contentVersion: 19,
-  lm_id: 'LM-012',
-  title: 'Network Security & PQC Migration',
-  description:
-    'Prepare NGFWs, IDS/IPS, and network security appliances for post-quantum cryptography. Covers TLS inspection impacts, DPI with larger PQC certs, vendor migration roadmaps (Cisco, Palo Alto, Fortinet, Juniper), and PQC-aware zero trust network architecture.',
   whyThisMatters:
     "TLS inspection and DPI already strain under today's certificate sizes — PQC certificates are bigger still, and NGFW/IDS vendors (Cisco, Palo Alto, Fortinet, Juniper) are migrating on different schedules you have to plan around.",
-  duration: '105 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p6',
-  track: 'Protocols',
-  trackOrder: 1,
   learnSections: [
     { id: 'pqc-network-impact', label: 'PQC Network Impact' },
     { id: 'tls-inspection-pqc', label: 'TLS & DPI Challenges' },
@@ -36,16 +27,8 @@ const manifest: ModuleManifest = {
     step: 'ngfw-cipher-analyzer',
     text: 'Switch the NGFW Cipher Policy from classical to hybrid to pure PQC: the analyzer shows the certificate-size and hardware-offload impact of each.',
   },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ML-KEM'],
-    standards: ['RFC 9370', 'NSM-10', 'RFC 9846', 'NIST SP 800-227', 'NIST IR 8547'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.NetworkSecurityPQCModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

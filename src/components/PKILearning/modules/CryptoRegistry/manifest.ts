@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'crypto-registry',
-  contentVersion: 12,
-  lm_id: 'LM-062',
-  title: 'CycloneDX Cryptography Registry',
-  description:
-    'One canonical name per cryptographic mechanism — resolve the same algorithm or curve across HSM, certificate, protocol and library notations, and see exactly where PQC families fit.',
-  duration: '30 min',
   whyThisMatters:
     'Every discovery tool names the same mechanism differently; the registry is the shared vocabulary that makes a CBOM — or any crypto inventory — queryable across tools.',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p2',
-  track: 'Strategy',
-  trackOrder: 5,
   learnSections: [
     { id: 'registry-why', label: 'Why a Registry' },
     { id: 'registry-scope', label: "What's Inside" },
@@ -32,10 +23,7 @@ const manifest: ModuleManifest = {
   },
   // Sim-embeddable since 2026-09-28 (user decision D1): a P2 tree step.
   embeddable: true,
-  taxonomy: {
-    standards: ['CycloneDX Cryptography Registry', 'CycloneDX / ECMA-424'],
-  },
   load: () => import('./index').then((m) => ({ default: m.CryptoRegistryModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

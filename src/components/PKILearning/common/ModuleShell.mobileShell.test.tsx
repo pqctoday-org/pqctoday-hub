@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router'
 import { EmbedProvider } from '@/embed/EmbedProvider'
 import { Button } from '@/components/ui/button'
 import { ModuleShell, type ModuleSlotApi } from './ModuleShell'
-import type { ModuleManifest } from '../manifest/types'
+import type { ResolvedModuleManifest } from '../manifest/types'
 import { useModuleStore } from '@/store/useModuleStore'
 import entropyManifest from '../modules/Entropy/manifest'
 import testingManifest from '../modules/PQCTestingValidation/manifest'
@@ -35,7 +35,7 @@ afterEach(() => {
 // silently ignored (confirmed while writing this test: the real HsmPqc
 // module's real 3 sections rendered regardless), so the checklist test below
 // asserts against HsmPqc's real, current section data on purpose.
-const base: ModuleManifest = {
+const base: ResolvedModuleManifest = {
   id: 'hsm-pqc',
   title: 'Test Module',
   description: 'Catalog description',
@@ -155,7 +155,7 @@ describe('ModuleShell — mobile UX layer wiring', () => {
 describe('ModuleShell — phone header follows the active learning path', () => {
   const chosePath = (moduleId: string, pathId: string) =>
     useModuleStore.getState().setActiveLearnPath(moduleId, pathId)
-  const pathMinutes = (m: ModuleManifest, pathId: string) =>
+  const pathMinutes = (m: ResolvedModuleManifest, pathId: string) =>
     m.learnPaths?.find((p) => p.id === pathId)?.duration
 
   it('Entropy on the certification path shows that path minutes and hides the step it skips', () => {

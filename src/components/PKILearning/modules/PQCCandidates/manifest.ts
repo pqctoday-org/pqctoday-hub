@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'pqc-candidates',
-  contentVersion: 19,
-  lm_id: 'LM-053',
-  title: 'PQC Candidates & Lifecycle',
-  description:
-    'How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates (NIST IR 8610, May 2026; HAWK since withdrawn) across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
-  duration: '55 min',
   whyThisMatters:
     "ML-KEM, ML-DSA, and SLH-DSA are the algorithms you'll actually deploy; choosing the wrong one means migrating twice.",
-  difficulty: 'intermediate',
-  frameworkPhase: 'foundations',
-  track: 'Foundations',
-  trackOrder: 5,
   learnSections: [
     { id: 'rolling-process', label: 'Rolling Standardisation' },
     { id: 'validation', label: 'Candidate Validation' },
@@ -34,9 +25,8 @@ const manifest: ModuleManifest = {
     step: 'comparator',
     text: 'Sort and filter the third-round signature candidates by use case in the Candidate Comparator: compare public-key, signature, and combined sizes across MPCitH, multivariate, and isogeny families (with withdrawn HAWK excluded from recommendations).',
   },
-  taxonomy: { algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'Falcon', 'HQC'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.PQCCandidatesModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

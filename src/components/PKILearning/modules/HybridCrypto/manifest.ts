@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'hybrid-crypto',
-  contentVersion: 52,
-  lm_id: 'LM-006',
-  title: 'Hybrid Cryptography',
-  description:
-    'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
-  duration: '48 min',
   whyThisMatters:
     'Hybrid (classical + PQC) lets you deploy now without betting everything on algorithms still maturing in the field.',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Strategy',
-  trackOrder: 2,
   learnSections: [
     { id: 'why-hybrid', label: 'Why Hybrid Cryptography?' },
     { id: 'hybrid-risks', label: 'Hybrid or Pure PQC: The Risks' },
@@ -42,20 +33,8 @@ const manifest: ModuleManifest = {
     step: 'key-generation',
     text: 'Choose KEM or Signatures and press Generate All Keys: classical, post-quantum and hybrid key pairs are generated side by side, with a table of key, ciphertext or signature sizes and gen time.',
   },
-  playgroundTool: 'hybrid-certs',
-  taxonomy: {
-    algorithms: ['ML-KEM', 'X25519', 'ECDH'],
-    standards: [
-      'RFC 9180',
-      'RFC 10073',
-      'RFC 10024',
-      'draft-ietf-hpke-pq',
-      'draft-ietf-cose-hpke',
-      'draft-ietf-jose-hpke-encrypt',
-    ],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HybridCryptoModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

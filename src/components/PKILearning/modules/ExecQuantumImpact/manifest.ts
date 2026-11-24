@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'exec-quantum-impact',
-  contentVersion: 18,
-  lm_id: 'LM-047',
-  title: 'Executive Quantum Impact',
-  description:
-    'Why quantum matters to leadership: board oversight, regulatory milestones (CNSA 2.0, EO 14412, EU PQC roadmap), and building a board-level PQC action plan.',
   whyThisMatters:
     'Quantum risk is a governance question before it becomes an implementation programme: executives need to identify long-lived exposure, determine which scoped milestones apply, assign ownership and ask for measurable evidence.',
-  duration: '30 min',
-  difficulty: 'beginner',
-  frameworkPhase: 'p0',
-  track: 'Role Guides',
-  trackOrder: 0,
   learnSections: [
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'Why Now' },
@@ -31,15 +22,8 @@ const manifest: ModuleManifest = {
     step: 'self-assessment',
     text: 'Answer Yes, No, or Unknown in the Organisational Evidence Scope: nine questions identify applicable decision drivers and evidence requests without turning unanswered items into a low-risk score.',
   },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    standards: ['EO 14306', 'NSM-10', 'NSA CNSA 2.0', 'NIST IR 8547'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.ExecQuantumImpactModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

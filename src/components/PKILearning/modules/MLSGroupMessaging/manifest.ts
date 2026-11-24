@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'mls-group-messaging',
-  contentVersion: 12,
-  lm_id: 'LM-054',
-  title: 'MLS — Group Messaging',
-  description:
-    "Messaging Layer Security (RFC 9420), which uses HPKE and provides efficient asynchronous group key establishment with forward secrecy and, conditionally, post-compromise security (once a committed fresh leaf key replaces the compromised one) for groups from two to thousands. In this module's illustration, an openmls provider holds signature keys as token objects of a PKCS#11 module (a software token in this sample).",
   whyThisMatters:
     "MLS's TreeKEM provides forward secrecy and, conditionally, post-compromise security (once a committed fresh leaf key replaces the compromised one) for groups from two to thousands, and the draft PQ MLS cipher suites (draft-ietf-mls-pq-ciphersuites-07) have been sent to the IESG with a request for publication.",
-  duration: '40 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Protocols',
-  trackOrder: 8,
   learnSections: [
     { id: 'mls-overview', label: 'TreeKEM & HPKE (RFC 9420)' },
     { id: 'pq-mls', label: 'PQ Ciphersuites & Crypto' },
@@ -27,8 +18,6 @@ const manifest: ModuleManifest = {
     step: 'treekem',
     text: 'Alice and Bob start the group in the TreeKEM visualizer; add a third member and see which nodes on the direct path have to re-key.',
   },
-  playgroundTool: 'mls-group-messaging',
-  taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['JOSE'] },
   // reduced 5-tab set (no Exercises) — matches the original render
   tabs: [
     { value: 'learn', label: 'Learn' },
@@ -41,4 +30,4 @@ const manifest: ModuleManifest = {
   load: () => import('./index').then((m) => ({ default: m.MLSGroupMessagingModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

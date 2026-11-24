@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: '5g-security',
-  contentVersion: 24,
-  lm_id: 'LM-046',
-  title: '5G Security',
-  description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
   whyThisMatters:
     "5G's SUCI concealment and 5G-AKA protect subscriber identity at the protocol level — if that concealment breaks under a quantum attack, every subscriber on the network is de-anonymized retroactively, not just future ones.",
-  duration: '60 min',
-  difficulty: 'advanced',
-  workInProgress: true,
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 5,
   // learnSections CORRECTED 2026-07-30 to describe this module's actual
   // learn tab. The previous ids read like the module's workshop steps and
   // did not correspond to any rendered heading — which made the table of
@@ -37,10 +28,8 @@ const manifest: ModuleManifest = {
     step: 'suci',
     text: 'Enter a 15-digit SUPI, pick Profile A, B or C (PQC), then execute the steps one by one: the subscriber identity is concealed into a SUCI and finally decrypted again by the home network.',
   },
-  playgroundTool: 'suci-flow',
-  taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['X.509'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.FiveGModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

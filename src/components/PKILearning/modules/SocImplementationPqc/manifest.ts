@@ -1,29 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'soc-implementation-pqc',
-  contentVersion: 9,
-  lm_id: 'LM-057',
-  title: 'SOC Implementation for PQC',
-  description:
-    'Operationalize PQC defense in the SOC: five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators), the posture registry they depend on, detection-engineering and CTI skills, and a phased SOC implementation plan with four quantum playbooks.',
   whyThisMatters:
     "Detection engineering hasn't caught up to PQC yet — a SOC that can't detect hybrid downgrade or crypto drift will miss a PQC-relevant incident even with a perfect migration on paper.",
-  duration: '60 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p6',
-  // WS8 (2026-08-21) — reclassified from `track: 'Executive'`. The content is
-  // five SOC detection use cases (hybrid downgrade, crypto drift,
-  // certificate-lifecycle anomalies, signature integrity, HNDL indicators), a
-  // posture registry, detection-engineering/CTI skills and four playbooks —
-  // operational security monitoring, not executive/GRC material. 'Software
-  // Infrastructure' already houses the implementation-layer modules this is the
-  // monitoring-layer counterpart to (secrets-management-pqc,
-  // database-encryption-pqc, os-pqc, pki-workshop); it is the closest of the 9
-  // tracks that exist. A dedicated 'Operations' track is a separate decision.
-  track: 'Software Infrastructure',
-  trackOrder: 8,
   learnSections: [
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'Detection & CTI Skills' },
@@ -40,16 +22,8 @@ const manifest: ModuleManifest = {
     step: 'detection-planner',
     text: 'Set each of the five detection use cases to not-started, building or operational in the Detection Planner and watch the SOC coverage score move.',
   },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
-    standards: ['RFC 9846', 'RFC 10024', 'NIST SP 800-227', 'NIST IR 8547'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SocImplementationPqcModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

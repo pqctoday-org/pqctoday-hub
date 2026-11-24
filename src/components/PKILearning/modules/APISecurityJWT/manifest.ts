@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'api-security-jwt',
-  contentVersion: 24,
-  lm_id: 'LM-011',
-  title: 'API Security & JWT',
-  description:
-    'JWT/JWS/JWE with post-quantum algorithms: ML-DSA signing, ML-KEM key agreement, hybrid tokens, and OAuth 2.0 migration.',
   whyThisMatters:
     'Public-key-signed JWTs such as RS256 and ES256 face a future forgery risk: a cryptographically relevant quantum computer could reveal signing keys and enable new tokens while verifiers still trust those keys. That is not a harvest-now-decrypt-later threat or a claim that every existing token is forged retroactively. HMAC-based HS256 has a different quantum risk.',
-  duration: '60 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Protocols',
-  trackOrder: 3,
   learnSections: [
     { id: 'jwt', label: 'JWT/JWS/JWE Structure' },
     { id: 'pqc-sign', label: 'ML-DSA JWT Signing' },
@@ -35,10 +26,8 @@ const manifest: ModuleManifest = {
     step: 'jwt-inspector',
     text: 'Paste a JWT or pick a sample token in the JWT Inspector: the header, payload and signature are decoded, and the declared algorithm is classed as classical or post-quantum (a claim the token makes, not proof) with its key and signature sizes.',
   },
-  playgroundTool: 'api-security-jwt',
-  taxonomy: { algorithms: ['ML-DSA', 'SLH-DSA'], standards: ['JOSE', 'RFC 9421'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.APISecurityJWTModule })),
 }
 
-export default manifest
+export default resolveManifest(manifest)

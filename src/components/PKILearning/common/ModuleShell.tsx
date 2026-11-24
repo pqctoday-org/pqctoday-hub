@@ -48,7 +48,7 @@ import { ModuleMigrateTab } from './ModuleMigrateTab'
 import { WorkshopStepHeader } from './WorkshopStepHeader'
 import { GlossaryAutoWrap } from './GlossaryAutoWrap'
 import { useModuleProgress } from './useModuleProgress'
-import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
+import { STANDARD_TABS, type ResolvedModuleManifest } from '../manifest/types'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   isInLearnPath,
@@ -96,7 +96,7 @@ function simPracticeHref(phase: PhaseId | PhaseId[]): string {
   return FRAMEWORK_PHASES[id] ? `/simulation?phase=${id}` : '/simulation'
 }
 
-const difficultyChip: Record<NonNullable<ModuleManifest['difficulty']>, string> = {
+const difficultyChip: Record<NonNullable<ResolvedModuleManifest['difficulty']>, string> = {
   beginner: 'bg-status-success/15 text-status-success',
   intermediate: 'bg-status-warning/15 text-status-warning',
   advanced: 'bg-status-error/15 text-status-error',
@@ -138,7 +138,7 @@ export interface ModuleSlotApi {
 export type ModuleSlot = ReactNode | ((api: ModuleSlotApi) => ReactNode)
 
 export interface ModuleShellProps {
-  manifest: ModuleManifest
+  manifest: ResolvedModuleManifest
   /** header title; defaults to manifest.title */
   title?: ReactNode
   /** header description; defaults to manifest.description (often overridden) */

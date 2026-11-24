@@ -8,7 +8,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { MANIFESTS } from './registry'
-import type { ModuleManifest } from './types'
+import type { ResolvedModuleManifest } from './types'
 import {
   buildCatalog,
   buildStepCounts,
@@ -233,7 +233,6 @@ const sectionAdditions: Record<
   },
 }
 const withSectionDuration = <T extends { id: string; duration?: string }>(m: T): T =>
-  // eslint-disable-next-line security/detect-object-injection
   sectionAdditions[m.id] ? { ...m, duration: sectionAdditions[m.id].duration } : m
 const withSectionAdditions = <T extends Record<string, { id: string; label: string }[]>>(
   maps: T
@@ -680,8 +679,8 @@ describe('derive.ts editable field propagation (fixture)', () => {
     expect(base).toBeDefined()
     const distinctiveDescription =
       'Distinctive fixture description 2026-11-22 proving derive.ts carries edited prose verbatim.'
-    const fixture: ModuleManifest = {
-      ...(base as ModuleManifest),
+    const fixture: ResolvedModuleManifest = {
+      ...(base as ResolvedModuleManifest),
       description: distinctiveDescription,
     }
     const catalog = buildCatalog([fixture])
