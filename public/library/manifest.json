@@ -30024,6 +30024,21 @@
       "unified": "converted",
       "admittedAt": "2026-11-21T01:35:11.953601+00:00",
       "admittedBy": "evidence admission"
+    },
+    {
+      "refId": "NIST-SP-800-209-R1-IPD",
+      "title": "NIST SP 800-209 Rev. 1 (Initial Public Draft): Security Guidelines for Storage Infrastructure",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-209r1.ipd.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-209-R1-IPD.pdf",
+      "sizeBytes": 1316537,
+      "contentType": "application/pdf",
+      "sha256": "20771e15b140946495a3fd73652d9d8fbca786519fb486a7161720e26f33f8ee",
+      "artefact": "SOURCE",
+      "identity": "SKIPPED",
+      "unified": "converted",
+      "admittedAt": "2026-11-22T22:30:11.970547+00:00",
+      "admittedBy": "evidence admission"
     }
   ],
   "archivedEntries": [

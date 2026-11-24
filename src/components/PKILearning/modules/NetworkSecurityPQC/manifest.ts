@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'network-security-pqc',
-  contentVersion: 16,
+  contentVersion: 18,
   lm_id: 'LM-012',
   title: 'Network Security & PQC Migration',
   description:
     'Prepare NGFWs, IDS/IPS, and network security appliances for post-quantum cryptography. Covers TLS inspection impacts, DPI with larger PQC certs, vendor migration roadmaps (Cisco, Palo Alto, Fortinet, Juniper), and PQC-aware zero trust network architecture.',
   whyThisMatters:
     "TLS inspection and DPI already strain under today's certificate sizes — PQC certificates are bigger still, and NGFW/IDS vendors (Cisco, Palo Alto, Fortinet, Juniper) are migrating on different schedules you have to plan around.",
-  duration: '90 min',
+  duration: '100 min',
   difficulty: 'advanced',
   frameworkPhase: 'p6',
   track: 'Protocols',
@@ -21,6 +21,7 @@ const manifest: ModuleManifest = {
     { id: 'ids-ips-migration', label: 'IDS/IPS Migration' },
     { id: 'vendor-roadmaps', label: 'Vendor Roadmaps' },
     { id: 'zero-trust-pqc', label: 'Zero Trust with PQC' },
+    { id: 'network-operations-pqc', label: 'Network Operations' },
   ],
   workshopSteps: [
     { id: 'ngfw-cipher-analyzer', label: 'NGFW Cipher Policy Analyzer' },

@@ -25,6 +25,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { ChoosePqcOperation } from './ChoosePqcOperation'
 import { useDeepLinkTarget } from '@/components/PKILearning/common/LearnSection'
+import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
+import { BUILDING_BLOCKS_SECTION } from './data/buildingBlocksSection'
 
 const MODULE_ID = 'pqc-101'
 
@@ -624,6 +626,7 @@ const Step5NextSteps: React.FC = () => {
 /** Learn sections in step order; must match the manifest's `learnSections[].id`. */
 const STEP_SECTIONS = [
   'quantum-threat',
+  'building-blocks',
   'algorithms',
   'timeline',
   'readiness',
@@ -676,26 +679,32 @@ export const PQC101Module: React.FC = () => {
       component: <Step1WhyPQC />,
     },
     {
-      id: 'whats-changing',
+      id: 'building-blocks',
       section: STEP_SECTIONS[1],
+      title: 'The Building Blocks',
+      component: <SourcedSectionBody section={BUILDING_BLOCKS_SECTION} />,
+    },
+    {
+      id: 'whats-changing',
+      section: STEP_SECTIONS[2],
       title: "What's Changing",
       component: <Step2WhatsChanging />,
     },
     {
       id: 'the-timeline',
-      section: STEP_SECTIONS[2],
+      section: STEP_SECTIONS[3],
       title: 'The Timeline',
       component: <Step3Timeline />,
     },
     {
       id: 'who-acts',
-      section: STEP_SECTIONS[3],
+      section: STEP_SECTIONS[4],
       title: 'Who Needs to Act',
       component: <Step4WhoNeedsToAct />,
     },
     {
       id: 'next-steps',
-      section: STEP_SECTIONS[4],
+      section: STEP_SECTIONS[5],
       title: 'Your Next Steps',
       component: <Step5NextSteps />,
     },

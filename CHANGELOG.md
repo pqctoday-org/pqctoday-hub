@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.222.0] - 2026-11-23
+
+Four existing modules gain a new section each, written one sourced sentence at a time with the document, edition and place shown for every statement, with twelve new quiz questions on them.
+
+### Added
+
+- **PQC 101: The Building Blocks** [view:/learn/pqc-101] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: A new section explains keys, encryption, hash functions, digital signatures and key establishment in plain language; the module now takes about 15 minutes.
+- **Network Security & PQC Migration: Network Operations** [view:/learn/network-security-pqc] [persona:architect] [persona:ops] [persona:researcher]: A new section covers handshake size and packet fragmentation, service meshes and cryptographic gateways, segmented rollout, and fallback planning; the module now takes about 100 minutes.
+- **Platform Engineering & PQC: Secure Software Delivery** [view:/learn/platform-eng-pqc] [persona:developer] [persona:architect] [persona:ops] [persona:researcher]: A new section covers integrity controls in build and deployment pipelines, finding vulnerable cryptography, inventory reporting, and toolchain and policy upkeep; the module now takes about 90 minutes.
+- **Data & Asset Sensitivity: Stored Data & Key Recovery** [view:/learn/data-asset-sensitivity] [persona:executive] [persona:grc] [persona:researcher] [persona:curious]: A new section covers why stored data is exposed differently from data in transit, key backups and recovery, isolating recovery copies, and retention and future re-encryption; the module now takes about 60 minutes.
+- **Twelve quiz questions on the four new sections** [view:/learn/quiz] [persona:curious] [persona:developer] [persona:architect] [persona:ops]: The quiz bank now holds 1,249 questions.
+
+### Data
+
+- **NIST SP 800-209 Rev. 1 initial public draft in the Library** [view:/library] [persona:architect] [persona:ops] [persona:grc]: The draft revision of NIST's storage infrastructure security guidance is now listed (1,670 active Library entries), and the AI Assistant search index includes it and the four new sections.
+
 ## [4.221.0] - 2026-11-23
 
 A new Foundations module explains how the standardised post-quantum algorithms work and how to choose between them, with every statement shown beside the standard, edition and section it comes from.

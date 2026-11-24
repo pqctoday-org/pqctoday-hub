@@ -3,12 +3,12 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-101',
-  contentVersion: 19,
+  contentVersion: 21,
   lm_id: 'LM-001',
   title: 'PQC 101',
   description:
     'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
-  duration: '10 min',
+  duration: '15 min',
   whyThisMatters:
     'The quantum threat isn\'t hypothetical: "harvest now, decrypt later" means data you send today can be unlocked the day a quantum computer arrives. This is the ground floor.',
   difficulty: 'beginner',
@@ -17,6 +17,7 @@ const manifest: ModuleManifest = {
   trackOrder: 1,
   learnSections: [
     { id: 'quantum-threat', label: 'Quantum Threat' },
+    { id: 'building-blocks', label: 'The Building Blocks' },
     { id: 'algorithms', label: 'PQC Algorithms' },
     { id: 'timeline', label: 'Global Migration Timeline' },
     { id: 'readiness', label: 'Organizational Readiness' },

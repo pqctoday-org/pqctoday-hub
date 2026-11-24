@@ -151,6 +151,54 @@ const postCutoverPqcAlgorithmsCatalog = {
   frameworkPhase: 'foundations',
 }
 
+// Sourced sections added to existing modules after the golden was frozen: one new
+// learn section each (placed after `after`) and the module's longer duration.
+const sectionAdditions: Record<
+  string,
+  { after: string; section: { id: string; label: string }; duration: string }
+> = {
+  'network-security-pqc': {
+    after: 'zero-trust-pqc',
+    section: { id: 'network-operations-pqc', label: 'Network Operations' },
+    duration: '100 min',
+  },
+  'platform-eng-pqc': {
+    after: 'migration-runway',
+    section: { id: 'secure-software-delivery', label: 'Secure Software Delivery' },
+    duration: '90 min',
+  },
+  'data-asset-sensitivity': {
+    after: 'methodology',
+    section: { id: 'stored-data-key-recovery', label: 'Stored Data & Key Recovery' },
+    duration: '60 min',
+  },
+  'pqc-101': {
+    after: 'quantum-threat',
+    section: { id: 'building-blocks', label: 'The Building Blocks' },
+    duration: '15 min',
+  },
+}
+const withSectionDuration = <T extends { id: string; duration?: string }>(m: T): T =>
+  // eslint-disable-next-line security/detect-object-injection
+  sectionAdditions[m.id] ? { ...m, duration: sectionAdditions[m.id].duration } : m
+const withSectionAdditions = <T extends Record<string, { id: string; label: string }[]>>(
+  maps: T
+): T => {
+  const out: Record<string, { id: string; label: string }[]> = { ...maps }
+  for (const [id, add] of Object.entries(sectionAdditions)) {
+    // eslint-disable-next-line security/detect-object-injection
+    const list = out[id]
+    const at = list.findIndex((x) => x.id === add.after)
+    expect(at).toBeGreaterThanOrEqual(0)
+    // eslint-disable-next-line security/detect-object-injection
+    out[id] = [...list.slice(0, at + 1), add.section, ...list.slice(at + 1)]
+  }
+  return out as T
+}
+const withCatalogDurations = <T extends Record<string, { id: string; duration?: string }>>(
+  c: T
+): T => Object.fromEntries(Object.entries(c).map(([k, v]) => [k, withSectionDuration(v)])) as T
+
 describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () => {
   it('MODULE_CATALOG preserves all structural legacy fields without locking editable prose', () => {
     const liveCatalog = buildCatalog(MANIFESTS)
@@ -158,19 +206,21 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
       expect(entry.description.trim().length, `${id} must carry a description`).toBeGreaterThan(20)
     }
     expect(omitCatalogDescriptions(liveCatalog)).toEqual(
-      omitCatalogDescriptions({
-        ...golden.MODULE_CATALOG,
-        'cert-quantum-impact': postCutoverCertQuantumImpactCatalog,
-        'cloud-pqc': postCutoverCloudPqcCatalog,
-        'pqc-implementation-security': postCutoverPqcImplementationSecurityCatalog,
-        'energy-utilities-pqc': postCutoverEnergyUtilitiesPqcCatalog,
-        'custody-threats-controls': postCutoverCustodyThreatsControlsCatalog,
-        'custody-lifecycle-ops': postCutoverCustodyLifecycleOpsCatalog,
-        'custody-pqc-migration': postCutoverCustodyPqcMigrationCatalog,
-        'custody-governance': postCutoverCustodyGovernanceCatalog,
-        'ai-crypto-attacks': postCutoverAICryptoAttacksCatalog,
-        'pqc-algorithms': postCutoverPqcAlgorithmsCatalog,
-      })
+      omitCatalogDescriptions(
+        withCatalogDurations({
+          ...golden.MODULE_CATALOG,
+          'cert-quantum-impact': postCutoverCertQuantumImpactCatalog,
+          'cloud-pqc': postCutoverCloudPqcCatalog,
+          'pqc-implementation-security': postCutoverPqcImplementationSecurityCatalog,
+          'energy-utilities-pqc': postCutoverEnergyUtilitiesPqcCatalog,
+          'custody-threats-controls': postCutoverCustodyThreatsControlsCatalog,
+          'custody-lifecycle-ops': postCutoverCustodyLifecycleOpsCatalog,
+          'custody-pqc-migration': postCutoverCustodyPqcMigrationCatalog,
+          'custody-governance': postCutoverCustodyGovernanceCatalog,
+          'ai-crypto-attacks': postCutoverAICryptoAttacksCatalog,
+          'pqc-algorithms': postCutoverPqcAlgorithmsCatalog,
+        })
+      )
     )
   })
   it('MODULE_STEP_COUNTS', () =>
@@ -196,104 +246,106 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
     expect(pkiEnrollment.find((s) => s.id === 'pqc-enrollment')?.label).toBe(
       'PQC Enrollment Drafts'
     )
-    expect(buildLearnSections(MANIFESTS)).toEqual({
-      ...golden.LEARN_SECTIONS,
-      cbom: [
-        ...cbom.slice(0, cbomDiscoveryIdx + 1),
-        { id: 'cbom-estate', label: 'Estate Fields' },
-        ...cbom.slice(cbomDiscoveryIdx + 1),
-      ],
-      'pki-enrollment-protocols': pkiEnrollment.map((s) =>
-        s.id === 'pqc-enrollment' ? { ...s, label: 'PQC Enrollment Standards' } : s
-      ),
-      'cert-quantum-impact': [
-        { id: 'why-it-matters', label: 'Why It Matters' },
-        { id: 'what-to-learn', label: 'Why Now' },
-        { id: 'how-to-act', label: 'What This Module Covers' },
-      ],
-      'cloud-pqc': [
-        { id: 'shared-responsibility', label: 'Shared Responsibility & Assets' },
-        { id: 'edge-and-tls', label: 'Edge, CDN & Origin TLS' },
-        { id: 'kms-byok-storage', label: 'Cloud KMS, BYOK & Storage' },
-        { id: 'saas-and-governance', label: 'SaaS, Federation & Evidence' },
-      ],
-      'pqc-implementation-security': [
-        { id: 'constant-time-pqc', label: 'Constant-Time PQC Pitfalls' },
-        { id: 'fo-implicit-rejection', label: 'FO Transform & Implicit Rejection' },
-        { id: 'masking-and-faults', label: 'Masking & Fault Defenses' },
-        { id: 'tvla-and-certification', label: 'TVLA, FIPS 140-3 & EUCC' },
-      ],
-      'energy-utilities-pqc': [
-        { id: 'grid-threat-model', label: 'Grid Threat Model & Assets' },
-        { id: 'substation-and-scada', label: 'Substation & SCADA Protocols' },
-        { id: 'ami-and-field-lifecycles', label: 'AMI & Field Lifecycles' },
-        { id: 'regulatory-and-migration', label: 'Regulation & Evidence Scope' },
-      ],
-      'custody-threats-controls': [
-        { id: 'signing-authority', label: '1. Keys vs Signing Authority' },
-        { id: 'exfiltration-paths', label: '2. Exfiltration & Misuse Paths' },
-        { id: 'adversary-model', label: '2b. Adversary Model' },
-        { id: 'agent-authority', label: '2c. AI Agent Spend Authority' },
-        { id: 'case-studies', label: '3. Case Studies: Bybit, Drift & Binance' },
-        { id: 'limits-of-the-three', label: '4. Limits of HSM, MPC & Enclaves' },
-        { id: 'combinations', label: '5. Control Combinations & Assumptions' },
-        { id: 'mpc-plus-hsm', label: '5b. Hybrid MPC + HSM Variants' },
-        { id: 'takeaways', label: '9A. Takeaways Matrix' },
-      ],
-      'custody-lifecycle-ops': [
-        { id: 'key-lifecycle', label: '5a. Threshold Key Lifecycle' },
-        { id: 'rotation-and-revocation', label: '5e. Rotation & Revocation' },
-        { id: 'recovery-and-inheritance', label: '5f. Recovery & Inheritance' },
-        { id: 'key-ceremonies', label: '5g. Key Ceremonies' },
-        { id: 'monitoring-and-alerting', label: '5h. Monitoring & Alerting' },
-        { id: 'access-control', label: '5i. Access Control & Separation' },
-        { id: 'backup-and-dr', label: '5j. Backup & Disaster Recovery' },
-        { id: 'destruction-and-decommissioning', label: '5k. Destruction & Decommissioning' },
-        { id: 'takeaways', label: '9A. Takeaways Matrix' },
-      ],
-      'custody-pqc-migration': [
-        { id: 'quantum-limits', label: '7. Quantum Limits (Delta)' },
-        { id: 'evolution', label: '8. How Each Model Is Evolving' },
-        { id: 'pq-mpc-research', label: '8b. PQ Threshold & MPC Research' },
-        { id: 'shamir-seeds', label: '5c. Shamir Seeds & SLIP-39' },
-        { id: 'pq-hardware-wallets', label: '5d. PQ Hardware Wallet Claims' },
-        { id: 'pq-smart-accounts', label: '8d. PQ Smart Accounts & Custody' },
-        { id: 'custody-migration-path', label: '8c. Custody Migration Path' },
-        { id: 'quantum-views-of-module-A', label: '7b. Quantum Views of Custody Ops' },
-        { id: 'takeaways', label: '9B. Takeaways Matrix' },
-      ],
-      'custody-governance': [
-        { id: 'evaluation-questions', label: '6. Six Custody Evaluation Questions' },
-        { id: 'regulatory-requirements', label: '6b. Regulatory Control Map & Gates' },
-        { id: 'insurance-and-audit', label: '6c. Insurance, Audit & Proof of Reserves' },
-        { id: 'takeaways', label: '9C. Governance & Assurance Takeaways' },
-      ],
-      'ai-crypto-attacks': [
-        { id: 'two-threats', label: 'Two Threats: Quantum vs AI' },
-        { id: 'keys-in-software', label: 'Keys & Secrets in Software' },
-        { id: 'finding-flaws', label: 'Finding Flaws in Crypto Code' },
-        { id: 'side-channels', label: 'AI-Enhanced Side Channels' },
-        { id: 'kms-hsm-attacks', label: 'KMS, HSM & Key-Policy Attacks' },
-        { id: 'ai-cryptanalysis', label: 'AI Cryptanalysis & Its Limits' },
-        { id: 'defences', label: 'Defences & Verification' },
-        { id: 'takeaways', label: 'Takeaways & Executive Verdict' },
-      ],
-      'pqc-algorithms': [
-        { id: 'two-jobs-new-tools', label: 'Two jobs, new tools' },
-        { id: 'the-families-at-a-glance', label: 'The families at a glance' },
-        { id: 'ml-kem-fips-203', label: 'ML-KEM (FIPS 203)' },
-        { id: 'ml-dsa-fips-204', label: 'ML-DSA (FIPS 204)' },
-        { id: 'hash-based-signatures-in-brief', label: 'Hash-based signatures in brief' },
-        {
-          id: 'how-standards-bodies-map-use-cases-to-algorithms',
-          label: 'How standards bodies map use cases to algorithms',
-        },
-        {
-          id: 'common-pitfalls-noted-in-the-standards',
-          label: 'Implementation considerations',
-        },
-      ],
-    })
+    expect(buildLearnSections(MANIFESTS)).toEqual(
+      withSectionAdditions({
+        ...golden.LEARN_SECTIONS,
+        cbom: [
+          ...cbom.slice(0, cbomDiscoveryIdx + 1),
+          { id: 'cbom-estate', label: 'Estate Fields' },
+          ...cbom.slice(cbomDiscoveryIdx + 1),
+        ],
+        'pki-enrollment-protocols': pkiEnrollment.map((s) =>
+          s.id === 'pqc-enrollment' ? { ...s, label: 'PQC Enrollment Standards' } : s
+        ),
+        'cert-quantum-impact': [
+          { id: 'why-it-matters', label: 'Why It Matters' },
+          { id: 'what-to-learn', label: 'Why Now' },
+          { id: 'how-to-act', label: 'What This Module Covers' },
+        ],
+        'cloud-pqc': [
+          { id: 'shared-responsibility', label: 'Shared Responsibility & Assets' },
+          { id: 'edge-and-tls', label: 'Edge, CDN & Origin TLS' },
+          { id: 'kms-byok-storage', label: 'Cloud KMS, BYOK & Storage' },
+          { id: 'saas-and-governance', label: 'SaaS, Federation & Evidence' },
+        ],
+        'pqc-implementation-security': [
+          { id: 'constant-time-pqc', label: 'Constant-Time PQC Pitfalls' },
+          { id: 'fo-implicit-rejection', label: 'FO Transform & Implicit Rejection' },
+          { id: 'masking-and-faults', label: 'Masking & Fault Defenses' },
+          { id: 'tvla-and-certification', label: 'TVLA, FIPS 140-3 & EUCC' },
+        ],
+        'energy-utilities-pqc': [
+          { id: 'grid-threat-model', label: 'Grid Threat Model & Assets' },
+          { id: 'substation-and-scada', label: 'Substation & SCADA Protocols' },
+          { id: 'ami-and-field-lifecycles', label: 'AMI & Field Lifecycles' },
+          { id: 'regulatory-and-migration', label: 'Regulation & Evidence Scope' },
+        ],
+        'custody-threats-controls': [
+          { id: 'signing-authority', label: '1. Keys vs Signing Authority' },
+          { id: 'exfiltration-paths', label: '2. Exfiltration & Misuse Paths' },
+          { id: 'adversary-model', label: '2b. Adversary Model' },
+          { id: 'agent-authority', label: '2c. AI Agent Spend Authority' },
+          { id: 'case-studies', label: '3. Case Studies: Bybit, Drift & Binance' },
+          { id: 'limits-of-the-three', label: '4. Limits of HSM, MPC & Enclaves' },
+          { id: 'combinations', label: '5. Control Combinations & Assumptions' },
+          { id: 'mpc-plus-hsm', label: '5b. Hybrid MPC + HSM Variants' },
+          { id: 'takeaways', label: '9A. Takeaways Matrix' },
+        ],
+        'custody-lifecycle-ops': [
+          { id: 'key-lifecycle', label: '5a. Threshold Key Lifecycle' },
+          { id: 'rotation-and-revocation', label: '5e. Rotation & Revocation' },
+          { id: 'recovery-and-inheritance', label: '5f. Recovery & Inheritance' },
+          { id: 'key-ceremonies', label: '5g. Key Ceremonies' },
+          { id: 'monitoring-and-alerting', label: '5h. Monitoring & Alerting' },
+          { id: 'access-control', label: '5i. Access Control & Separation' },
+          { id: 'backup-and-dr', label: '5j. Backup & Disaster Recovery' },
+          { id: 'destruction-and-decommissioning', label: '5k. Destruction & Decommissioning' },
+          { id: 'takeaways', label: '9A. Takeaways Matrix' },
+        ],
+        'custody-pqc-migration': [
+          { id: 'quantum-limits', label: '7. Quantum Limits (Delta)' },
+          { id: 'evolution', label: '8. How Each Model Is Evolving' },
+          { id: 'pq-mpc-research', label: '8b. PQ Threshold & MPC Research' },
+          { id: 'shamir-seeds', label: '5c. Shamir Seeds & SLIP-39' },
+          { id: 'pq-hardware-wallets', label: '5d. PQ Hardware Wallet Claims' },
+          { id: 'pq-smart-accounts', label: '8d. PQ Smart Accounts & Custody' },
+          { id: 'custody-migration-path', label: '8c. Custody Migration Path' },
+          { id: 'quantum-views-of-module-A', label: '7b. Quantum Views of Custody Ops' },
+          { id: 'takeaways', label: '9B. Takeaways Matrix' },
+        ],
+        'custody-governance': [
+          { id: 'evaluation-questions', label: '6. Six Custody Evaluation Questions' },
+          { id: 'regulatory-requirements', label: '6b. Regulatory Control Map & Gates' },
+          { id: 'insurance-and-audit', label: '6c. Insurance, Audit & Proof of Reserves' },
+          { id: 'takeaways', label: '9C. Governance & Assurance Takeaways' },
+        ],
+        'ai-crypto-attacks': [
+          { id: 'two-threats', label: 'Two Threats: Quantum vs AI' },
+          { id: 'keys-in-software', label: 'Keys & Secrets in Software' },
+          { id: 'finding-flaws', label: 'Finding Flaws in Crypto Code' },
+          { id: 'side-channels', label: 'AI-Enhanced Side Channels' },
+          { id: 'kms-hsm-attacks', label: 'KMS, HSM & Key-Policy Attacks' },
+          { id: 'ai-cryptanalysis', label: 'AI Cryptanalysis & Its Limits' },
+          { id: 'defences', label: 'Defences & Verification' },
+          { id: 'takeaways', label: 'Takeaways & Executive Verdict' },
+        ],
+        'pqc-algorithms': [
+          { id: 'two-jobs-new-tools', label: 'Two jobs, new tools' },
+          { id: 'the-families-at-a-glance', label: 'The families at a glance' },
+          { id: 'ml-kem-fips-203', label: 'ML-KEM (FIPS 203)' },
+          { id: 'ml-dsa-fips-204', label: 'ML-DSA (FIPS 204)' },
+          { id: 'hash-based-signatures-in-brief', label: 'Hash-based signatures in brief' },
+          {
+            id: 'how-standards-bodies-map-use-cases-to-algorithms',
+            label: 'How standards bodies map use cases to algorithms',
+          },
+          {
+            id: 'common-pitfalls-noted-in-the-standards',
+            label: 'Implementation considerations',
+          },
+        ],
+      })
+    )
   })
   it('WORKSHOP_STEPS', () => {
     // Keep the historical cut-over snapshot intact. These two reviewed labels
@@ -382,7 +434,7 @@ describe('cut-over: manifests rebuild every legacy map (vs frozen golden)', () =
   })
   it('MODULE_TRACKS preserves track membership and ordering without locking editable prose', () => {
     const expected = golden.MODULE_TRACKS.map((track) => {
-      const modules = track.modules.map((m) => omitDescription(m))
+      const modules = track.modules.map((m) => omitDescription(withSectionDuration(m)))
       if (track.track === 'Foundations') {
         return {
           ...track,
