@@ -18,9 +18,16 @@ import path from 'path'
 import Papa from 'papaparse'
 
 const DATA_DIR = path.join(process.cwd(), 'src/data')
-const LIVE_CATEGORIES = new Set(['use_case', 'retention', 'sensitivity', 'industry'])
+const LIVE_CATEGORIES = new Set(['use_case', 'retention', 'sensitivity', 'industry', 'algorithm'])
 // The categories industryAssessConfig.ts reads; every other row is dropped by the loader.
-const READ_CATEGORIES = new Set(['compliance', 'use_case', 'retention', 'sensitivity', 'industry'])
+const READ_CATEGORIES = new Set([
+  'compliance',
+  'use_case',
+  'retention',
+  'sensitivity',
+  'industry',
+  'algorithm',
+])
 // The archived copy that still holds the removed rows.
 const ARCHIVED_FILE = path.join(DATA_DIR, 'archive', 'pqcassessment_11082026.csv')
 
