@@ -25,10 +25,14 @@ for (const width of [1280, 390]) {
       page,
     }) => {
       await page.goto('/learn/crypto-agility?tab=workshop&step=0')
+      // This step mounts the same "Predict a one-byte change" exercise twice (once in the
+      // sample-checks region, once after the step body), each lazily. A `.last()` locator
+      // re-resolves between the click and the assertion, so the click and the read can
+      // land on different instances. Scope to one named instance instead.
       const sample = page
+        .getByRole('region', { name: 'Crypto Agility sample checks' })
         .locator('section')
         .filter({ has: page.getByRole('heading', { name: 'Predict a one-byte change' }) })
-        .last()
       await sample.getByRole('button', { name: 'Run valid → mutate → restore sample' }).click()
       const status = sample.getByRole('status')
       await expect(status).toContainText('original control true')
