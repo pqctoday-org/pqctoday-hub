@@ -4,20 +4,15 @@
 /**
  * Bridges WORKSHOP_TOOLS to NICE Framework metadata.
  *
- * Two sources feed this:
- *   1. Learn-module tools (most playground tools): tool.moduleLink → moduleId
- *      → getNiceMapping(moduleId) from niceModuleMapping.ts
- *   2. Sandbox tools (id prefix 'sbx-'): strip prefix → getSandboxNiceMapping()
- *      from sandboxNiceMapping.ts
- *
- * Tools without a NICE mapping under either source are returned as undefined
- * and won't appear in NICE-view buckets.
+ * Each tool's tier, competency areas and work roles are columns of its row in
+ * the tools data file (`src/data/tools_*.csv`, read through
+ * `tools.generated.ts`). Tools whose row has no tier (the KMIP control plane,
+ * OpenSSL Studio) are returned as undefined and won't appear in NICE-view
+ * buckets.
  */
 import type { NiceCompetencyAreaId, NiceProficiencyTier, NiceWorkRoleId } from './niceFramework'
-import { getNiceMapping } from './niceModuleMapping'
-import { getSandboxNiceMapping } from './sandboxNiceMapping'
+import { TOOL_RECORD_BY_ID } from './generated/tools.generated'
 import type { WorkshopTool } from '@/components/Playground/workshopRegistry'
-import { SANDBOX_TOOL_PREFIX } from '@/components/Playground/workshopRegistry'
 
 export interface ToolNiceRef {
   toolId: string
@@ -27,45 +22,17 @@ export interface ToolNiceRef {
 }
 
 /**
- * Extract the moduleId from a tool's moduleLink (e.g. '/learn/slh-dsa' → 'slh-dsa',
- * '/learn/hybrid-crypto?tab=workshop&step=3' → 'hybrid-crypto').
- * Returns null when moduleLink is empty or points outside /learn/.
- */
-function extractLearnModuleId(moduleLink: string): string | null {
-  if (!moduleLink.startsWith('/learn/')) return null
-  const rest = moduleLink.slice('/learn/'.length)
-  const idEnd = rest.search(/[/?#]/)
-  return idEnd === -1 ? rest : rest.slice(0, idEnd)
-}
-
-/**
- * Resolve a workshop tool to its NICE metadata. Returns undefined when no
- * mapping exists (the tool will be excluded from NICE-view buckets).
+ * Resolve a workshop tool to its NICE metadata. Returns undefined when its row
+ * names no tier (the tool will be excluded from NICE-view buckets).
  */
 export function getToolNiceMapping(tool: WorkshopTool): ToolNiceRef | undefined {
-  // Sandbox path
-  if (tool.id.startsWith(SANDBOX_TOOL_PREFIX)) {
-    const scenarioId = tool.id.slice(SANDBOX_TOOL_PREFIX.length)
-    const sbx = getSandboxNiceMapping(scenarioId)
-    if (!sbx) return undefined
-    return {
-      toolId: tool.id,
-      competencyAreas: sbx.competencyAreas,
-      tier: sbx.tier,
-      workRoles: sbx.workRoles,
-    }
-  }
-
-  // Learn-module path
-  const moduleId = extractLearnModuleId(tool.moduleLink)
-  if (!moduleId) return undefined
-  const mod = getNiceMapping(moduleId)
-  if (!mod) return undefined
+  const record = TOOL_RECORD_BY_ID[tool.id]
+  if (!record || record.kind === 'business' || !record.niceTier) return undefined
   return {
     toolId: tool.id,
-    competencyAreas: mod.competencyAreas,
-    tier: mod.tier,
-    workRoles: mod.workRoles,
+    competencyAreas: [...record.niceCompetencyAreas],
+    tier: record.niceTier,
+    workRoles: [...record.niceWorkRoles],
   }
 }
 

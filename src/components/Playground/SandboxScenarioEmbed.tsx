@@ -6,6 +6,7 @@ import { buttonVariants } from '../ui/button-variants'
 import { Skeleton } from '../ui/skeleton'
 import { EmptyState } from '../ui/empty-state'
 import { SANDBOX_SCENARIOS, SANDBOX_TRACKS } from '@/data/sandboxScenarios'
+import { SANDBOX_TOOL_RECORDS } from '@/data/generated/tools.generated'
 import { getSandboxProtocolRef, protocolMatrixHref } from '@/data/sandboxProtocolMapping'
 import { resolveSandboxSession } from '@/services/sandboxOrchestrator'
 import type { SandboxSession } from '@/services/sandboxOrchestrator'
@@ -51,7 +52,13 @@ export function SandboxScenarioEmbed({ scenarioId: scenarioIdProp }: { scenarioI
     scenarioIdProp ??
     (toolId?.startsWith(TOOL_ID_PREFIX) ? toolId.slice(TOOL_ID_PREFIX.length) : toolId)
   const scenario = useMemo(() => SANDBOX_SCENARIOS.find((s) => s.id === scenarioId), [scenarioId])
-  const track = useMemo(() => SANDBOX_TRACKS.find((t) => t.id === scenario?.trackId), [scenario])
+  // The track a scenario belongs to is a column of its row in the tools data file.
+  const track = useMemo(() => {
+    const trackId = SANDBOX_TOOL_RECORDS.find(
+      (r) => r.toolId === `${TOOL_ID_PREFIX}${scenario?.id}`
+    )?.sandboxTrack
+    return SANDBOX_TRACKS.find((t) => t.id === trackId)
+  }, [scenario])
   const protocolRef = useMemo(
     () => (scenarioId ? getSandboxProtocolRef(scenarioId) : undefined),
     [scenarioId]
