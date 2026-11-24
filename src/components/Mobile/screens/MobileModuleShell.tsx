@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { handleTabListKeyDown } from '@/components/ui/tabs'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
+import { LearnOrderStrip } from '@/components/ui/LearnOrderStrip'
 import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/learnPathScope'
 // moduleRelations() is pure data/logic (no JSX) — src/components/Mobile may
 // not import a desktop VIEW component (RelatedModulesPanel), so this renders
@@ -174,6 +175,7 @@ export function MobileModuleShell({
         <h1 className="text-[19px] font-extrabold leading-tight text-foreground">
           {title ?? manifest.title}
         </h1>
+        <LearnOrderStrip moduleId={manifest.id} />
         {(description ?? manifest.description) && (
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
             {description ?? manifest.description}

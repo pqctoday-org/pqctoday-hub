@@ -11,6 +11,7 @@ import {
   NICE_WORK_ROLES,
   CA_TO_NFCOM,
   NF_COMPETENCY_AREAS,
+  personaDefaultRole,
 } from '@/data/niceFramework'
 import type {
   NiceCompetencyAreaId,
@@ -74,16 +75,6 @@ const TIER_ROWS: { id: NiceProficiencyTier; label: string; className: string }[]
   },
 ]
 
-// pqctoday persona → best-fit NICE Work Role for auto-selection
-const PERSONA_DEFAULT_ROLE: Record<string, NiceWorkRoleId> = {
-  architect: 'security-architect',
-  developer: 'security-developer',
-  ops: 'system-administrator',
-  executive: 'is-security-manager',
-  researcher: 'systems-security-analyst',
-  'cert-engineer': 'validation-engineer',
-}
-
 interface NiceViewProps {
   navigate: (path: string) => void
   activePersonaId?: string | null
@@ -99,9 +90,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
   const defaultRole: NiceWorkRoleId | 'all' = (() => {
     const urlRole = searchParams.get('role')
     if (urlRole && VALID_ROLE_IDS.has(urlRole)) return urlRole as NiceWorkRoleId
-    if (activePersonaId && PERSONA_DEFAULT_ROLE[activePersonaId])
-      return PERSONA_DEFAULT_ROLE[activePersonaId]
-    return 'all'
+    return personaDefaultRole(activePersonaId) ?? 'all'
   })()
 
   const [selectedRole, setSelectedRole] = useState<NiceWorkRoleId | 'all'>(defaultRole)
@@ -190,8 +179,7 @@ export function NiceView({ navigate, activePersonaId }: NiceViewProps) {
             All Roles
           </Button>
           {workRoles.map((role) => {
-            const isPersonaMatch =
-              activePersonaId && PERSONA_DEFAULT_ROLE[activePersonaId] === role.id
+            const isPersonaMatch = personaDefaultRole(activePersonaId) === role.id
             return (
               <Button
                 key={role.id}

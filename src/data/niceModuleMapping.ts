@@ -20,7 +20,9 @@ import type {
   NfComId,
   NfCompetencyArea,
 } from './niceFramework'
-import { getOfficialCompetencyAreas, NF_COMPETENCY_AREAS } from './niceFramework'
+import { getOfficialCompetencyAreas, NF_COMPETENCY_AREAS, NICE_WORK_ROLES } from './niceFramework'
+
+const ALL_WORK_ROLE_IDS = Object.keys(NICE_WORK_ROLES) as NiceWorkRoleId[]
 
 export interface NiceModuleRef {
   moduleId: string
@@ -42,14 +44,35 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pqc-101',
     competencyAreas: ['CA-CRYPTO', 'CA-RISK'],
     tier: 'awareness',
-    workRoles: ['security-architect', 'risk-manager', 'is-security-manager'],
+    workRoles: ['security-architect', 'risk-manager', 'is-security-manager', 'executive-leader'],
+    isCommonGround: true,
+  },
+  // Added 2026-11-21: the two modules that had no NICE mapping. The quiz tests
+  // every module, so it is open to every work role.
+  {
+    moduleId: 'talking-about-pqc',
+    competencyAreas: ['CA-RISK', 'CA-GOVCOMP'],
+    tier: 'awareness',
+    workRoles: ['executive-leader', 'policy-planner', 'is-security-manager'],
+    isCommonGround: true,
+  },
+  {
+    moduleId: 'quiz',
+    competencyAreas: ['CA-CRYPTO', 'CA-RISK'],
+    tier: 'awareness',
+    workRoles: ALL_WORK_ROLE_IDS,
     isCommonGround: true,
   },
   {
     moduleId: 'quantum-threats',
     competencyAreas: ['CA-RISK', 'CA-CRYPTO'],
     tier: 'awareness',
-    workRoles: ['risk-manager', 'is-security-manager', 'systems-security-analyst'],
+    workRoles: [
+      'risk-manager',
+      'is-security-manager',
+      'systems-security-analyst',
+      'executive-leader',
+    ],
     isCommonGround: true,
   },
   {
@@ -63,7 +86,12 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pqc-candidates',
     competencyAreas: ['CA-CRYPTO'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'security-developer', 'systems-security-analyst'],
+    workRoles: [
+      'security-architect',
+      'security-developer',
+      'systems-security-analyst',
+      'rd-specialist',
+    ],
     isCommonGround: false,
   },
 
@@ -74,7 +102,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'exec-quantum-impact',
     competencyAreas: ['CA-RISK', 'CA-GOVCOMP'],
     tier: 'awareness',
-    workRoles: ['is-security-manager', 'risk-manager'],
+    workRoles: ['is-security-manager', 'risk-manager', 'executive-leader'],
     isCommonGround: true,
   },
   {
@@ -95,7 +123,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'research-quantum-impact',
     competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
     tier: 'expert',
-    workRoles: ['security-architect', 'security-developer'],
+    workRoles: ['security-architect', 'security-developer', 'rd-specialist'],
     isCommonGround: false,
   },
   {
@@ -124,7 +152,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pqc-implementation-security',
     competencyAreas: ['CA-CRYPTO', 'CA-SECPROG', 'CA-GOVCOMP'],
     tier: 'expert',
-    workRoles: ['security-developer', 'validation-engineer', 'systems-security-analyst'],
+    workRoles: [
+      'security-developer',
+      'validation-engineer',
+      'systems-security-analyst',
+      'rd-specialist',
+      'software-security-assessor',
+    ],
     isCommonGround: false,
   },
   {
@@ -136,6 +170,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
       'system-administrator',
       'risk-manager',
       'network-security-specialist',
+      'ot-security-engineer',
     ],
     isCommonGround: false,
     nfExtra: ['NF-COM-010'],
@@ -148,42 +183,52 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pqc-risk-management',
     competencyAreas: ['CA-RISK', 'CA-GOVCOMP'],
     tier: 'awareness',
-    workRoles: ['risk-manager', 'is-security-manager', 'systems-security-analyst'],
+    workRoles: [
+      'risk-manager',
+      'is-security-manager',
+      'systems-security-analyst',
+      'policy-planner',
+    ],
     isCommonGround: true,
   },
   {
     moduleId: 'data-asset-sensitivity',
     competencyAreas: ['CA-RISK', 'CA-DATASEC'],
     tier: 'awareness',
-    workRoles: ['risk-manager', 'systems-security-analyst'],
+    workRoles: ['risk-manager', 'systems-security-analyst', 'policy-planner'],
     isCommonGround: true,
   },
   {
     moduleId: 'pqc-business-case',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
     tier: 'awareness',
-    workRoles: ['is-security-manager', 'risk-manager'],
+    workRoles: ['is-security-manager', 'risk-manager', 'executive-leader'],
     isCommonGround: true,
   },
   {
     moduleId: 'pqc-governance',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
     tier: 'awareness',
-    workRoles: ['is-security-manager', 'risk-manager'],
+    workRoles: ['is-security-manager', 'risk-manager', 'executive-leader', 'policy-planner'],
     isCommonGround: true,
   },
   {
     moduleId: 'compliance-strategy',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
     tier: 'awareness',
-    workRoles: ['is-security-manager', 'risk-manager', 'systems-security-analyst'],
+    workRoles: [
+      'is-security-manager',
+      'risk-manager',
+      'systems-security-analyst',
+      'policy-planner',
+    ],
     isCommonGround: true,
   },
   {
     moduleId: 'standards-bodies',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO'],
     tier: 'awareness',
-    workRoles: ['risk-manager', 'security-architect', 'is-security-manager'],
+    workRoles: ['risk-manager', 'security-architect', 'is-security-manager', 'policy-planner'],
     isCommonGround: true,
   },
   {
@@ -191,7 +236,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     nfExtra: ['NF-COM-011'],
     competencyAreas: ['CA-RISK', 'CA-GOVCOMP'],
     tier: 'awareness',
-    workRoles: ['risk-manager', 'is-security-manager'],
+    workRoles: ['risk-manager', 'is-security-manager', 'supply-chain-risk-manager'],
     isCommonGround: true,
   },
   {
@@ -199,7 +244,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     nfExtra: ['NF-COM-011'],
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK', 'CA-SYSARCH'],
     tier: 'awareness',
-    workRoles: ['is-security-manager', 'risk-manager', 'security-architect'],
+    workRoles: [
+      'is-security-manager',
+      'risk-manager',
+      'security-architect',
+      'executive-leader',
+      'policy-planner',
+    ],
     isCommonGround: true,
   },
   {
@@ -207,7 +258,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pqc-grc',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
     tier: 'awareness',
-    workRoles: ['is-security-manager', 'risk-manager'],
+    workRoles: ['is-security-manager', 'risk-manager', 'policy-planner', 'control-assessor'],
     isCommonGround: true,
   },
   {
@@ -215,7 +266,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'skills-team-structure',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
     tier: 'awareness',
-    workRoles: ['is-security-manager', 'risk-manager'],
+    workRoles: ['is-security-manager', 'risk-manager', 'executive-leader'],
     isCommonGround: true,
   },
 
@@ -311,7 +362,12 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'sbom',
     competencyAreas: ['CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'security-developer', 'systems-security-analyst'],
+    workRoles: [
+      'security-architect',
+      'security-developer',
+      'systems-security-analyst',
+      'supply-chain-risk-manager',
+    ],
     isCommonGround: false,
     nfExtra: ['NF-COM-011'],
   },
@@ -319,7 +375,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'cbom',
     competencyAreas: ['CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'security-developer', 'systems-security-analyst'],
+    workRoles: [
+      'security-architect',
+      'security-developer',
+      'systems-security-analyst',
+      'supply-chain-risk-manager',
+      'software-security-assessor',
+    ],
     isCommonGround: false,
     nfExtra: ['NF-COM-004', 'NF-COM-011'],
   },
@@ -334,7 +396,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'verification-closure',
     competencyAreas: ['CA-RISK', 'CA-GOVCOMP'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'control-assessor'],
     isCommonGround: false,
   },
   {
@@ -356,7 +418,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'qkd',
     competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
     tier: 'expert',
-    workRoles: ['security-architect'],
+    workRoles: ['security-architect', 'rd-specialist'],
     isCommonGround: false,
   },
 
@@ -381,7 +443,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'merkle-tree-certs',
     competencyAreas: ['CA-CRYPTO', 'CA-IDENT'],
     tier: 'expert',
-    workRoles: ['security-architect', 'security-developer', 'iam-specialist'],
+    workRoles: ['security-architect', 'security-developer', 'iam-specialist', 'rd-specialist'],
     isCommonGround: false,
   },
   {
@@ -403,7 +465,12 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     nfExtra: ['NF-COM-011'],
     competencyAreas: ['CA-CRYPTO', 'CA-IDENT'],
     tier: 'practitioner',
-    workRoles: ['security-developer', 'security-architect', 'iam-specialist'],
+    workRoles: [
+      'security-developer',
+      'security-architect',
+      'iam-specialist',
+      'supply-chain-risk-manager',
+    ],
     isCommonGround: false,
   },
 
@@ -486,7 +553,14 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'crypto-product-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'validation-engineer'],
+    workRoles: [
+      'risk-manager',
+      'is-security-manager',
+      'security-architect',
+      'validation-engineer',
+      'control-assessor',
+      'supply-chain-risk-manager',
+    ],
     isCommonGround: false,
   },
   {
@@ -495,7 +569,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'fips-140-3-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'validation-engineer'],
+    workRoles: [
+      'risk-manager',
+      'is-security-manager',
+      'security-architect',
+      'validation-engineer',
+      'control-assessor',
+    ],
     isCommonGround: false,
   },
   {
@@ -504,7 +584,13 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'cc-eucc-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'validation-engineer'],
+    workRoles: [
+      'risk-manager',
+      'is-security-manager',
+      'security-architect',
+      'validation-engineer',
+      'control-assessor',
+    ],
     isCommonGround: false,
   },
   {
@@ -513,7 +599,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'pci-certification',
     competencyAreas: ['CA-GOVCOMP', 'CA-CRYPTO', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'security-architect'],
+    workRoles: ['risk-manager', 'is-security-manager', 'security-architect', 'control-assessor'],
     isCommonGround: false,
   },
   {
@@ -564,7 +650,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'homomorphic-encryption',
     competencyAreas: ['CA-SYSARCH', 'CA-CRYPTO'],
     tier: 'expert',
-    workRoles: ['security-architect'],
+    workRoles: ['security-architect', 'rd-specialist'],
     isCommonGround: false,
   },
 
@@ -575,7 +661,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'crypto-dev-apis',
     competencyAreas: ['CA-SECPROG', 'CA-CRYPTO'],
     tier: 'practitioner',
-    workRoles: ['security-developer'],
+    workRoles: ['security-developer', 'software-security-assessor'],
     isCommonGround: false,
   },
 
@@ -599,14 +685,14 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-SYSARCH', 'CA-NETDEF', 'CA-CRYPTO'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'network-security-specialist'],
+    workRoles: ['security-architect', 'network-security-specialist', 'ot-security-engineer'],
     isCommonGround: false,
   },
   {
     moduleId: 'software-supply-chain-pqc',
     competencyAreas: ['CA-CRYPTO', 'CA-SYSARCH'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'security-developer'],
+    workRoles: ['security-architect', 'security-developer', 'supply-chain-risk-manager'],
     isCommonGround: false,
   },
   {
@@ -615,7 +701,12 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-SYSARCH', 'CA-NETDEF', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'network-security-specialist', 'risk-manager'],
+    workRoles: [
+      'security-architect',
+      'network-security-specialist',
+      'risk-manager',
+      'ot-security-engineer',
+    ],
     isCommonGround: false,
   },
 
@@ -678,7 +769,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     moduleId: 'custody-governance',
     competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
     tier: 'practitioner',
-    workRoles: ['risk-manager', 'is-security-manager', 'validation-engineer'],
+    workRoles: ['risk-manager', 'is-security-manager', 'validation-engineer', 'control-assessor'],
     isCommonGround: false,
   },
   {
@@ -692,6 +783,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
       'security-developer',
       'systems-security-analyst',
       'is-security-manager',
+      'rd-specialist',
     ],
     isCommonGround: true,
   },
@@ -722,7 +814,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     nfExtra: ['NF-COM-010'],
     competencyAreas: ['CA-SYSARCH', 'CA-NETDEF'],
     tier: 'practitioner',
-    workRoles: ['security-architect', 'network-security-specialist'],
+    workRoles: ['security-architect', 'network-security-specialist', 'ot-security-engineer'],
     isCommonGround: false,
   },
   {
@@ -756,6 +848,7 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
       // iam-specialist: owns CA-IDENT — Federal PKI / PIV and the draft
       // ML-DSA/ML-KEM certificate profile are a credentialing/PKI job.
       'iam-specialist',
+      'policy-planner',
     ],
     isCommonGround: false,
   },

@@ -1,0 +1,86 @@
+module_id,stage,stage_name,take_first
+5g-security,4,Specialist,hybrid-crypto;pqc-101
+acvp-lab-workflow,5,Expert,crypto-product-certification;fips-140-3-certification;hsm-pqc
+aerospace-pqc,4,Specialist,crypto-agility;pqc-101
+ai-crypto-attacks,3,Practitioner,pqc-101;quantum-threats
+ai-security-pqc,4,Specialist,pqc-101;quantum-threats;tls-basics
+api-security-jwt,3,Practitioner,hybrid-crypto;pqc-101
+arch-quantum-impact,2,Core concepts,pki-workshop
+automotive-pqc,4,Specialist,crypto-agility;pki-workshop;pqc-101
+cbom,2,Core concepts,pqc-101;sbom
+cc-eucc-certification,4,Specialist,crypto-product-certification;pqc-algorithms;hsm-pqc
+cert-quantum-impact,3,Practitioner,pqc-101;crypto-product-certification;entropy-randomness
+cloud-pqc,3,Practitioner,kms-pqc;pqc-101;tls-basics
+code-signing,3,Practitioner,pki-workshop;pqc-101
+compliance-strategy,2,Core concepts,pqc-101;standards-bodies
+confidential-computing,3,Practitioner,pqc-101;tls-basics;pqc-algorithms
+crypto-agility,2,Core concepts,pqc-101;cbom
+crypto-dev-apis,3,Practitioner,crypto-agility;pqc-101;pqc-algorithms
+crypto-mgmt-modernization,3,Practitioner,cbom;pqc-101;crypto-agility
+crypto-product-certification,3,Practitioner,pqc-101;standards-bodies
+crypto-registry,2,Core concepts,pqc-101;cbom
+custody-governance,4,Specialist,custody-threats-controls;digital-assets;pqc-governance
+custody-lifecycle-ops,4,Specialist,custody-threats-controls;digital-assets;pqc-101
+custody-pqc-migration,5,Expert,custody-lifecycle-ops;custody-threats-controls;digital-assets
+custody-threats-controls,4,Specialist,digital-assets;hsm-pqc
+data-asset-sensitivity,2,Core concepts,pqc-101;pqc-risk-management;quantum-threats
+database-encryption-pqc,3,Practitioner,kms-pqc;pqc-101
+dev-quantum-impact,2,Core concepts,pqc-101;cbom;tls-basics
+digital-assets,3,Practitioner,pqc-101;quantum-threats
+digital-id,4,Specialist,api-security-jwt;pki-workshop;pqc-101
+dnssec-pqc,3,Practitioner,pqc-101;quantum-threats
+email-signing,3,Practitioner,pki-workshop;pqc-101
+emv-payment-pqc,4,Specialist,kms-pqc;pqc-101;hsm-pqc
+energy-utilities-pqc,4,Specialist,crypto-agility;pqc-101;vpn-ssh-pqc
+entropy-randomness,3,Practitioner,pqc-101;pqc-algorithms
+exec-quantum-impact,1,Basics,
+fips-140-3-certification,4,Specialist,crypto-product-certification;entropy-randomness;pqc-algorithms
+government-defense-pqc,4,Specialist,compliance-strategy;pki-workshop;pqc-101
+healthcare-pqc,4,Specialist,data-asset-sensitivity;pqc-101
+homomorphic-encryption,3,Practitioner,pqc-101;quantum-threats
+hsm-pqc,4,Specialist,crypto-product-certification;pqc-101;entropy-randomness
+hybrid-crypto,2,Core concepts,pqc-101;quantum-threats;pqc-algorithms
+iam-pqc,3,Practitioner,api-security-jwt;pqc-101
+iot-pqc,4,Specialist,pki-workshop;pqc-101;tls-basics
+kms-pqc,3,Practitioner,hybrid-crypto;pqc-101
+media-drm-pqc,4,Specialist,pqc-101;pki-workshop;tls-basics
+merkle-tree-certs,4,Specialist,pki-workshop;tls-basics
+migration-program,2,Core concepts,compliance-strategy;pqc-101;pqc-governance;pqc-risk-management
+mls-group-messaging,3,Practitioner,hybrid-crypto;pqc-101
+network-security-pqc,3,Practitioner,pqc-101;tls-basics;vpn-ssh-pqc
+ops-quantum-impact,2,Core concepts,pqc-101;pki-workshop
+os-pqc,3,Practitioner,pki-workshop;pqc-101;tls-basics
+ot-pqc,4,Specialist,pqc-101;pki-workshop;vpn-ssh-pqc
+pci-certification,4,Specialist,crypto-product-certification;hsm-pqc
+pki-enrollment-protocols,4,Specialist,pki-workshop;tls-basics
+pki-workshop,2,Core concepts,pqc-101;pqc-algorithms
+platform-eng-pqc,3,Practitioner,code-signing;crypto-agility;pqc-101
+pqc-101,1,Basics,
+pqc-algorithms,2,Core concepts,pqc-101;quantum-threats
+pqc-business-case,2,Core concepts,pqc-101;pqc-risk-management
+pqc-candidates,2,Core concepts,pqc-101;pqc-algorithms
+pqc-governance,2,Core concepts,pqc-101
+pqc-grc,2,Core concepts,compliance-strategy;pqc-governance;pqc-risk-management
+pqc-hw-acceleration,5,Expert,pqc-101;pqc-algorithms;hsm-pqc
+pqc-implementation-security,5,Expert,fips-140-3-certification;pqc-101;pqc-hw-acceleration
+pqc-risk-management,2,Core concepts,pqc-101;quantum-threats
+pqc-testing-validation,3,Practitioner,cbom;crypto-product-certification;pqc-101;tls-basics
+qkd,3,Practitioner,hybrid-crypto;pqc-101;quantum-threats
+quantum-threats,1,Basics,pqc-101
+research-quantum-impact,3,Practitioner,tls-basics
+sbom,1,Basics,
+secrets-management-pqc,3,Practitioner,kms-pqc;pqc-101
+secure-boot-pqc,3,Practitioner,code-signing;pki-workshop;pqc-101
+skills-team-structure,2,Core concepts,migration-program;pqc-governance
+slh-dsa,4,Specialist,pqc-101;stateful-signatures
+soc-implementation-pqc,3,Practitioner,cbom;pqc-101;tls-basics
+software-supply-chain-pqc,3,Practitioner,code-signing;pqc-101;pki-workshop
+standards-bodies,2,Core concepts,pqc-101;pqc-algorithms
+stateful-signatures,3,Practitioner,pqc-101
+talking-about-pqc,1,Basics,
+tls-basics,2,Core concepts,pqc-101;pqc-algorithms
+trust-services-pqc,4,Specialist,pki-workshop;pqc-101
+vendor-risk,2,Core concepts,cbom;pqc-101;pqc-risk-management
+verification-closure,3,Practitioner,cbom;migration-program;crypto-agility
+vpn-ssh-pqc,3,Practitioner,hybrid-crypto;pqc-101
+web-gateway-pqc,3,Practitioner,hybrid-crypto;pki-workshop;pqc-101;tls-basics

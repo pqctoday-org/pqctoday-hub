@@ -23,6 +23,8 @@ import { requiredLearnSectionIdsFor, requiredWorkshopStepIdsFor } from './manife
 import { Button } from '@/components/ui/button'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { getNiceMapping } from '@/data/niceModuleMapping'
+import { getLearnOrder } from '@/data/learnOrderData'
+import { CategoryBadge } from '@/components/ui/category-badge'
 
 const CA_CHIP_COLORS: Record<string, string> = {
   'CA-CRYPTO': 'bg-primary/10 text-primary',
@@ -100,6 +102,7 @@ export const ModuleCard = ({
 
   const trackName = MODULE_TO_TRACK[module.id]
   const trackColor = trackName ? (TRACK_COLORS[trackName] ?? 'bg-muted text-muted-foreground') : ''
+  const learnOrder = getLearnOrder(module.id)
 
   return (
     <motion.article
@@ -218,6 +221,13 @@ export const ModuleCard = ({
       </div>
 
       <h3 className="text-xl font-bold mb-2">{module.title}</h3>
+      {learnOrder ? (
+        <CategoryBadge
+          category="global"
+          label={`Stage ${learnOrder.stage} · ${learnOrder.stageName}`}
+          className="mb-2"
+        />
+      ) : null}
       {/* onClick is a non-interactive stopPropagation guard so the inner badge's
           own button handles its own click without bubbling to the card. */}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
