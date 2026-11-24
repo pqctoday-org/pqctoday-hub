@@ -4,6 +4,8 @@
  * dated lessons CSV (src/data/learn_modules_*.csv, latest date wins) and write
  *
  *   - src/data/generated/learnModules.generated.ts   (typed records)
+ *   - src/data/generated/niceStatementText.generated.ts  (the official wording of the
+ *     NICE statements the lessons teach or practise; loaded on demand, never in the main bundle)
  *   - public/embed/manifest.json  (the `resources.modules` list only)
  *
  * Every organising field of a lesson (title, description, minutes, level,
@@ -24,6 +26,8 @@ import prettier from 'prettier'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const DATA = join(ROOT, 'src', 'data')
 const OUT = join(DATA, 'generated', 'learnModules.generated.ts')
+const NICE_OUT = join(DATA, 'generated', 'niceStatementText.generated.ts')
+const NICE_COMPONENTS = join(ROOT, 'pqc-references', 'NICE-Framework-Components-v2.2.0.json')
 const EMBED = join(ROOT, 'public', 'embed', 'manifest.json')
 
 const COLUMNS = [
@@ -55,6 +59,10 @@ const COLUMNS = [
   'seo_name',
   'quiz_label',
   'short_label',
+  'nice_statements_taught',
+  'nice_statements_practised',
+  'nice_statements_mentioned',
+  'nice_read',
 ]
 
 // Latest dated lessons CSV (learn_modules_MMDDYYYY[_rN].csv).
@@ -81,6 +89,22 @@ const list = (value) =>
 const text = (value) => (value === '' ? undefined : value)
 const int = (value) => (value === '' ? undefined : Number(value))
 const bool = (value) => (value === '' ? undefined : value === 'true')
+const STATEMENT_ID = /^[KST]\d{4}$/
+const statements = (row, column) => {
+  const ids = list(row[column])
+  for (const id of ids) {
+    if (!STATEMENT_ID.test(id)) throw new Error(`${row.module_id}: bad ${column} id "${id}"`)
+  }
+  if (new Set(ids).size !== ids.length)
+    throw new Error(`${row.module_id}: repeated id in ${column}`)
+  return ids
+}
+const yesNo = (row, column) => {
+  if (row[column] !== 'yes' && row[column] !== 'no') {
+    throw new Error(`${row.module_id}: ${column} must be yes or no, got "${row[column]}"`)
+  }
+  return row[column] === 'yes'
+}
 
 function load() {
   const file = latestCsv()
@@ -100,6 +124,23 @@ function load() {
     const durationMin = Number(row.duration_min)
     if (!Number.isInteger(durationMin) || durationMin <= 0) {
       throw new Error(`${row.module_id}: bad duration_min "${row.duration_min}"`)
+    }
+    const niceStatementsTaught = statements(row, 'nice_statements_taught')
+    const niceStatementsPractised = statements(row, 'nice_statements_practised')
+    const niceStatementsMentioned = statements(row, 'nice_statements_mentioned')
+    const niceRead = yesNo(row, 'nice_read')
+    const everyId = [
+      ...niceStatementsTaught,
+      ...niceStatementsPractised,
+      ...niceStatementsMentioned,
+    ]
+    if (new Set(everyId).size !== everyId.length) {
+      throw new Error(
+        `${row.module_id}: a NICE statement is listed under more than one of taught, practised, mentioned`
+      )
+    }
+    if (!niceRead && everyId.length > 0) {
+      throw new Error(`${row.module_id}: nice_read is no but statements are listed`)
     }
     return {
       id: row.module_id,
@@ -130,6 +171,10 @@ function load() {
       seoName: text(row.seo_name),
       quizLabel: text(row.quiz_label),
       shortLabel: text(row.short_label),
+      niceStatementsTaught,
+      niceStatementsPractised,
+      niceStatementsMentioned,
+      niceRead,
     }
   })
   return { file, rows }
@@ -187,6 +232,14 @@ export interface LearnModuleRecord {
   quizLabel?: string
   /** Short label for related-page chips where it differs from \`title\`. */
   shortLabel?: string
+  /** NICE Framework v2.2.0 statement ids the lesson teaches (K, S or T) */
+  niceStatementsTaught: readonly string[]
+  /** Statement ids a reader practises in the lesson's Workshop */
+  niceStatementsPractised: readonly string[]
+  /** Statement ids the lesson only mentions in passing; not shown to readers */
+  niceStatementsMentioned: readonly string[]
+  /** Whether the lesson text has been read against NICE; false means no coverage claim at all */
+  niceRead: boolean
 }
 
 export const LEARN_MODULES: readonly LearnModuleRecord[] = ${JSON.stringify(rows, null, 2)} satisfies readonly LearnModuleRecord[]
@@ -194,6 +247,32 @@ export const LEARN_MODULES: readonly LearnModuleRecord[] = ${JSON.stringify(rows
 export const LEARN_MODULE_BY_ID: Readonly<Record<string, LearnModuleRecord>> = Object.fromEntries(
   LEARN_MODULES.map((row) => [row.id, row])
 )
+`
+}
+
+// The official wording of the statements readers see (taught and practised), for the coverage panel.
+function niceStatementText(rows) {
+  const official = new Map(
+    JSON.parse(readFileSync(NICE_COMPONENTS, 'utf8')).elements.map((e) => [
+      e.element_identifier,
+      e.text,
+    ])
+  )
+  const ids = [
+    ...new Set(rows.flatMap((r) => [...r.niceStatementsTaught, ...r.niceStatementsPractised])),
+  ].sort()
+  const entries = ids.map((id) => {
+    const wording = official.get(id)
+    if (!wording) throw new Error(`NICE statement ${id} is not in the vendored v2.2.0 components`)
+    return [id, wording]
+  })
+  return `// SPDX-License-Identifier: AGPL-3.0-only
+// GENERATED by scripts/ci/gen-learn-modules.mjs from the lessons data file and the vendored
+// NICE Framework Components v2.2.0 — DO NOT EDIT BY HAND.
+// Wording of the statements the lessons teach or practise. Loaded on demand by the lesson
+// coverage panel, so it stays out of the main bundle.
+
+export const NICE_STATEMENT_TEXT: Readonly<Record<string, string>> = ${JSON.stringify(Object.fromEntries(entries), null, 2)}
 `
 }
 
@@ -221,11 +300,16 @@ const next = await prettier.format(generate(derived), {
   ...(await prettier.resolveConfig(OUT)),
   filepath: OUT,
 })
+const nextNice = await prettier.format(niceStatementText(derived.rows), {
+  ...(await prettier.resolveConfig(NICE_OUT)),
+  filepath: NICE_OUT,
+})
 const nextEmbed = embed(derived.rows)
 
 if (process.argv.includes('--check')) {
   const stale = [
     [OUT, next],
+    [NICE_OUT, nextNice],
     [EMBED, nextEmbed],
   ].some(([file, want]) => {
     try {
@@ -241,6 +325,7 @@ if (process.argv.includes('--check')) {
   console.log('✓ learn module generated files up to date')
 } else {
   writeFileSync(OUT, next)
+  writeFileSync(NICE_OUT, nextNice)
   writeFileSync(EMBED, nextEmbed)
   console.log(`wrote ${OUT} and ${EMBED} from ${derived.file}`)
 }

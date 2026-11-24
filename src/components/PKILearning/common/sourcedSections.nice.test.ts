@@ -5,6 +5,7 @@ import { resolve } from 'node:path'
 import type { SourcedSectionData } from './SourcedSection'
 import { getStandard } from '@/data/standardsRegistry'
 import { MANIFEST_BY_ID } from '../manifest/registry'
+import { LEARN_MODULE_BY_ID } from '@/data/generated/learnModules.generated'
 import { TAILORING_CODE_ANALYSIS_SECTION } from '../modules/CryptoDevAPIs/data/tailoringCodeAnalysisSection'
 import { STATIC_CODE_ANALYSIS_SECTION } from '../modules/CryptoDevAPIs/data/staticCodeAnalysisSection'
 import { DYNAMIC_ANALYSIS_SECTION } from '../modules/CryptoDevAPIs/data/dynamicAnalysisSection'
@@ -72,6 +73,18 @@ describe('NICE-gap sourced sections', () => {
         expect(el, `${n.id} is not in the vendored NICE Framework Components`).toBeDefined()
         expect(['knowledge', 'skill']).toContain(el?.element_type)
         expect(n.statement).toBe(el?.text)
+      }
+    }
+  )
+
+  it.each(SECTIONS.map((s) => [s.section.id, s] as const))(
+    '%s: its statements are listed as taught by the host lesson, and not as merely mentioned',
+    (_id, { moduleId, section }) => {
+      // eslint-disable-next-line security/detect-object-injection
+      const lesson = LEARN_MODULE_BY_ID[moduleId]
+      for (const n of section.nice ?? []) {
+        expect(lesson.niceStatementsTaught).toContain(n.id)
+        expect(lesson.niceStatementsMentioned).not.toContain(n.id)
       }
     }
   )
