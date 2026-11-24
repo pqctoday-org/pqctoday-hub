@@ -3,8 +3,9 @@
   "type": "array",
   "items": {
     "type": "object",
-    "required": ["term", "definition", "complexity", "category"],
+    "required": ["id", "term", "definition", "complexity", "category"],
     "properties": {
+      "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
       "term": { "type": "string", "minLength": 1 },
       "acronym": { "type": "string" },
       "definition": { "type": "string", "minLength": 10 },

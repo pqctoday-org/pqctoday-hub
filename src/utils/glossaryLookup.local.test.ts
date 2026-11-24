@@ -5,6 +5,7 @@ import { glossaryTerms } from '@/data/glossaryData'
 import type { GlossaryTerm } from '@/data/glossary/types'
 
 const sample = (term: string, acronym: string): GlossaryTerm => ({
+  id: term.toLowerCase().replaceAll(' ', '-'),
   term,
   acronym,
   definition: `${term} sample definition`,

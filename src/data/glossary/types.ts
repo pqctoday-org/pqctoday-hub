@@ -2,6 +2,8 @@
 // Glossary types — shared by all category JSON files and consumers.
 
 export interface GlossaryTerm {
+  /** Permanent identifier that remains stable when the display term changes. */
+  id: string
   term: string
   acronym?: string
   definition: string
@@ -14,6 +16,7 @@ export interface GlossaryTerm {
 }
 
 export interface GlossaryChipTerm {
+  id: string
   term: string
   definition: string
 }

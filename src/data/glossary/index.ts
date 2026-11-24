@@ -16,6 +16,7 @@ export type { GlossaryTerm, GlossaryChipTerm }
 // ── Cached promises — each category is fetched at most once ──────────────────
 
 let _allTermsCache: GlossaryTerm[] | null = null
+let _termsByIdCache: Map<string, GlossaryTerm> | null = null
 let _curiousCache: Record<string, string> | null = null
 let _pkcs11Cache: GlossaryChipTerm[] | null = null
 
@@ -47,6 +48,14 @@ export const loadGlossary = async (): Promise<GlossaryTerm[]> => {
 
   _allTermsCache = [...algorithms, ...protocols, ...standards, ...concepts, ...organizations]
   return _allTermsCache
+}
+
+/** Load one glossary term by its permanent id. */
+export const loadGlossaryTermById = async (id: string): Promise<GlossaryTerm | undefined> => {
+  if (!_termsByIdCache) {
+    _termsByIdCache = new Map((await loadGlossary()).map((term) => [term.id, term]))
+  }
+  return _termsByIdCache.get(id)
 }
 
 /** Load a single category of glossary terms. */
