@@ -33,15 +33,16 @@ import {
   hsmNestingVerify,
   type HsmHybridKeyPair,
 } from '../services/HybridSignatureHsmService'
-import { getSoftHSMRustModule, createLoggingProxy } from '@/wasm/softhsm'
+import {
+  getSoftHSMRustModule,
+  createLoggingProxy,
+  hsm_getAllSlots,
+  hsm_getFirstFreeSlot,
+  hsm_getTokenInfo,
+} from '@/wasm/softhsm'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
-import {
-  hsm_initialize,
-  hsm_getFirstSlot,
-  hsm_initToken,
-  hsm_openUserSession,
-} from '@/wasm/softhsm/session'
+import { hsm_initialize, hsm_initToken, hsm_openUserSession } from '@/wasm/softhsm/session'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
@@ -55,6 +56,9 @@ import {
 
 type ConstructionId = 'concatenation' | 'nesting' | 'silithium'
 type VerificationInput = 'original' | 'ec' | 'ml-dsa'
+
+/** This tool's own token on the shared engine; other tools hold tokens of their own. */
+const TOKEN_LABEL = 'hybrid-sig-workshop'
 
 const VERIFICATION_INPUTS = [
   { id: 'original', label: 'Original components' },
@@ -302,9 +306,23 @@ export const HybridSignatures: React.FC = () => {
           // CKR_CRYPTOKI_ALREADY_INITIALIZED — module shared with Playground, proceed
         }
         stage = 'C_GetSlotList'
-        const slot0 = hsm_getFirstSlot(M)
+        // A free slot of its own: the engine is shared with the page's other HSM
+        // tools, which may already hold slot 0 under a different SO PIN, and
+        // re-initialising that token is refused (CKR_PIN_INCORRECT).
+        const slot0 = hsm_getFirstFreeSlot(M)
         stage = 'C_InitToken'
-        const slot = hsm_initToken(M, slot0, 'softhsm', 'hybrid-sig-workshop')
+        hsm_initToken(M, slot0, 'softhsm', TOKEN_LABEL)
+        // hsm_initToken returns the engine's FIRST initialised slot, which is another
+        // tool's token when one already exists. Use the slot holding this tool's label.
+        stage = 'C_GetTokenInfo'
+        const slot =
+          hsm_getAllSlots(M).find((s) => {
+            try {
+              return hsm_getTokenInfo(M, s).label.trim() === TOKEN_LABEL
+            } catch {
+              return false
+            }
+          }) ?? slot0
         stage = 'C_OpenSession + C_Login'
         const hSession = hsm_openUserSession(M, slot, 'softhsm', '1234')
         if (!cancelled) {
