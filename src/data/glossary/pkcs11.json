@@ -54,7 +54,7 @@
     "relatedModule": "/learn/5g-security"
   },
   {
-    "id": "sha-256-2",
+    "id": "sha-256-pkcs11",
     "term": "SHA-256",
     "definition": "NIST 256-bit classical hash function (SHA-2 family).",
     "relatedModule": "/learn/digital-assets"
@@ -84,31 +84,31 @@
     "relatedModule": "/learn/hybrid-crypto"
   },
   {
-    "id": "x25519-2",
+    "id": "x25519-pkcs11",
     "term": "X25519",
     "definition": "Montgomery-curve Diffie-Hellman over Curve25519; 32-byte raw keys.",
     "relatedModule": "/learn/hybrid-crypto"
   },
   {
-    "id": "p-256-2",
+    "id": "p-256-pkcs11",
     "term": "P-256",
     "definition": "NIST prime256v1 (secp256r1) elliptic curve; 65-byte uncompressed points.",
     "relatedModule": "/learn/confidential-computing"
   },
   {
-    "id": "suci",
+    "id": "suci-pkcs11",
     "term": "SUCI",
     "definition": "5G Subscription Concealed Identifier — the encrypted form of the SUPI transmitted on air.",
     "relatedModule": "/learn/5g-security"
   },
   {
-    "id": "supi-2",
+    "id": "supi-pkcs11",
     "term": "SUPI",
     "definition": "5G Subscription Permanent Identifier (e.g. your IMSI) — the plaintext identity.",
     "relatedModule": "/learn/5g-security"
   },
   {
-    "id": "sidf-2",
+    "id": "sidf-pkcs11",
     "term": "SIDF",
     "definition": "5G Subscription Identifier De-concealing Function at the home network — recovers SUPI from SUCI.",
     "relatedModule": "/learn/5g-security"

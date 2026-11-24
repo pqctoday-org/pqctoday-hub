@@ -63,7 +63,7 @@
     "category": "protocol"
   },
   {
-    "id": "suci-2",
+    "id": "suci",
     "term": "SUCI",
     "acronym": "SUCI",
     "definition": "Subscription Concealed Identifier, a privacy-protecting identifier used in 5G that encrypts the subscriber's permanent identity.",
