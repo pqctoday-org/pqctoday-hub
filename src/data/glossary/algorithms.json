@@ -1,5 +1,6 @@
 [
   {
+    "id": "diffie-hellman",
     "term": "Diffie-Hellman",
     "acronym": "DH",
     "definition": "The original public-key key exchange protocol, allowing two parties to establish a shared secret over an insecure channel. Quantum-vulnerable.",
@@ -9,6 +10,7 @@
     "category": "algorithm"
   },
   {
+    "id": "rsa",
     "term": "RSA",
     "definition": "A widely used classical public-key algorithm based on the difficulty of factoring large numbers. Vulnerable to quantum attacks via Shor's algorithm.",
     "technicalNote": "Common key sizes: 2048, 3072, 4096 bits. Being replaced by ML-DSA for signatures and ML-KEM for key exchange.",
@@ -17,6 +19,7 @@
     "category": "algorithm"
   },
   {
+    "id": "dsa",
     "term": "DSA",
     "acronym": "DSA",
     "definition": "Digital Signature Algorithm, a classical signature scheme based on discrete logarithms, specified in FIPS 186-4. FIPS 186-5 (February 2023) no longer approves DSA for generating digital signatures; DSA may only be used to verify signatures generated before that standard's implementation date. FIPS 186-4 was withdrawn on 3 February 2024.",
@@ -26,6 +29,7 @@
     "category": "algorithm"
   },
   {
+    "id": "elliptic-curve-cryptography",
     "term": "Elliptic Curve Cryptography",
     "acronym": "ECC",
     "definition": "A classical public-key algorithm using the mathematics of elliptic curves. More efficient than RSA but equally vulnerable to quantum attacks.",
@@ -35,6 +39,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ml-kem",
     "term": "ML-KEM",
     "definition": "Module-Lattice-Based Key Encapsulation Mechanism, the NIST-standardized PQC algorithm for key exchange (formerly Kyber). Defined in FIPS 203.",
     "technicalNote": "Variants: ML-KEM-512, ML-KEM-768 and ML-KEM-1024 target NIST security categories 1, 3 and 5 (FIPS 203). Categories are reference attack-cost levels, not exact proven bit strengths; \"128/192/256-bit\" is informal shorthand for comparable AES key-search cost. ML-KEM establishes a shared secret; it does not encrypt data or wrap a chosen key by itself.",
@@ -43,6 +48,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ml-dsa",
     "term": "ML-DSA",
     "definition": "Module-Lattice-Based Digital Signature Algorithm, the NIST-standardized PQC algorithm for digital signatures (formerly Dilithium). Defined in FIPS 204.",
     "technicalNote": "Variants: ML-DSA-44, ML-DSA-65, ML-DSA-87 corresponding to security levels 2, 3, 5.",
@@ -51,6 +57,7 @@
     "category": "algorithm"
   },
   {
+    "id": "slh-dsa",
     "term": "SLH-DSA",
     "definition": "Stateless Hash-Based Digital Signature Algorithm, a conservative NIST-standardized hash-based PQC signature scheme (formerly SPHINCS+). Defined in FIPS 205.",
     "technicalNote": "12 variants: combinations of SHA-256/SHAKE, 128/192/256-bit security, and fast/small trade-offs.",
@@ -59,6 +66,7 @@
     "category": "algorithm"
   },
   {
+    "id": "fn-dsa",
     "term": "FN-DSA",
     "definition": "FFT over NTRU-Lattice-Based Digital Signature Algorithm, based on Falcon, and planned for FIPS 206. FIPS 206 remains in development; no Initial Public Draft or final standard has been published.",
     "technicalNote": "Variants: FN-DSA-512 (Level 1) and FN-DSA-1024 (Level 5). Known for very small signatures but requires careful floating-point implementation.",
@@ -67,6 +75,7 @@
     "category": "algorithm"
   },
   {
+    "id": "frodokem",
     "term": "FrodoKEM",
     "definition": "A conservative lattice-based KEM algorithm based on the \"plain\" Learning With Errors problem, offering strong security guarantees at the cost of larger key sizes.",
     "relatedModule": "/algorithms?highlight=FrodoKEM",
@@ -74,6 +83,7 @@
     "category": "algorithm"
   },
   {
+    "id": "hqc",
     "term": "HQC",
     "definition": "Hamming Quasi-Cyclic, a code-based KEM selected by NIST as an additional standard. Uses error-correcting codes for security.",
     "relatedModule": "/learn/pqc-101",
@@ -81,6 +91,7 @@
     "category": "algorithm"
   },
   {
+    "id": "classic-mceliece",
     "term": "Classic McEliece",
     "definition": "A code-based KEM with very large public keys but extremely conservative security assumptions. One of the oldest post-quantum proposals.",
     "relatedModule": "/learn/pqc-101",
@@ -88,6 +99,7 @@
     "category": "algorithm"
   },
   {
+    "id": "xmss",
     "term": "XMSS",
     "acronym": "XMSS",
     "definition": "eXtended Merkle Signature Scheme, a stateful hash-based digital signature algorithm standardized in RFC 8391 and NIST SP 800-208.",
@@ -97,6 +109,7 @@
     "category": "algorithm"
   },
   {
+    "id": "lms-hss",
     "term": "LMS/HSS",
     "acronym": "LMS",
     "definition": "Leighton-Micali Signature / Hierarchical Signature System. A stateful hash-based signature scheme for firmware and software signing.",
@@ -106,6 +119,7 @@
     "category": "algorithm"
   },
   {
+    "id": "aes",
     "term": "AES",
     "acronym": "AES",
     "definition": "Advanced Encryption Standard, a symmetric block cipher with 128-, 192- or 256-bit keys. Quantum key-search costs depend on the attack model and implementation resources, not just the key-size label.",
@@ -115,6 +129,7 @@
     "category": "algorithm"
   },
   {
+    "id": "shor-s-algorithm",
     "term": "Shor's Algorithm",
     "definition": "A quantum algorithm that can efficiently factor large numbers and compute discrete logarithms, breaking RSA and ECC.",
     "relatedModule": "/learn/quantum-threats",
@@ -122,6 +137,7 @@
     "category": "algorithm"
   },
   {
+    "id": "grover-s-algorithm",
     "term": "Grover's Algorithm",
     "definition": "A quantum algorithm offering a quadratic speedup for unstructured search in an idealized query model. Practical cryptanalytic cost depends on implementation resources; hash collision search and preimage search are different goals.",
     "relatedModule": "/learn/quantum-threats",
@@ -129,6 +145,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ecdsa",
     "term": "ECDSA",
     "acronym": "ECDSA",
     "definition": "Elliptic Curve Digital Signature Algorithm, a classical signature scheme used in TLS, Bitcoin, and many other systems. Quantum-vulnerable.",
@@ -137,6 +154,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ecdh",
     "term": "ECDH",
     "acronym": "ECDH",
     "definition": "Elliptic Curve Diffie-Hellman, a classical key agreement protocol. Quantum-vulnerable and being replaced by ML-KEM.",
@@ -145,6 +163,7 @@
     "relatedModule": "/learn/5g-security"
   },
   {
+    "id": "x25519",
     "term": "X25519",
     "definition": "An elliptic curve Diffie-Hellman key exchange function using Curve25519. Widely used in TLS 1.3 and the basis for hybrid PQC key exchange.",
     "technicalNote": "Combined with ML-KEM-768 to form the X25519MLKEM768 hybrid key exchange, now deployed by major browsers and cloud providers.",
@@ -153,6 +172,7 @@
     "category": "algorithm"
   },
   {
+    "id": "x448",
     "term": "X448",
     "definition": "An elliptic curve Diffie-Hellman key exchange function using Curve448, providing higher security than X25519. Quantum-vulnerable.",
     "relatedModule": "/algorithms?algo=x448",
@@ -160,6 +180,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ed25519",
     "term": "Ed25519",
     "definition": "A high-performance digital signature algorithm using the Edwards curve Curve25519. Used in SSH, TLS, and Solana.",
     "relatedModule": "/learn/digital-assets",
@@ -167,6 +188,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ed448",
     "term": "Ed448",
     "definition": "An EdDSA signature algorithm using the Edwards curve Curve448, providing 224-bit security. Quantum-vulnerable.",
     "relatedModule": "/algorithms?algo=ed448",
@@ -174,6 +196,7 @@
     "category": "algorithm"
   },
   {
+    "id": "sha-256",
     "term": "SHA-256",
     "definition": "A hash function producing a 256-bit digest, used in applications such as Bitcoin and TLS. Collision resistance and preimage resistance are different properties; digest length alone is not a quantum security-strength claim.",
     "relatedModule": "/learn/digital-assets",
@@ -181,6 +204,7 @@
     "category": "algorithm"
   },
   {
+    "id": "hkdf",
     "term": "HKDF",
     "acronym": "HKDF",
     "definition": "HMAC-based Key Derivation Function, used to derive cryptographic keys from a shared secret. Essential in TLS 1.3.",
@@ -189,6 +213,7 @@
     "category": "algorithm"
   },
   {
+    "id": "keccak-256",
     "term": "Keccak-256",
     "definition": "The hash function used by Ethereum, based on the SHA-3 algorithm family. Produces 256-bit digests.",
     "relatedModule": "/learn/digital-assets",
@@ -196,6 +221,7 @@
     "category": "algorithm"
   },
   {
+    "id": "secp256k1",
     "term": "secp256k1",
     "definition": "The elliptic curve used by Bitcoin for digital signatures. Quantum-vulnerable and a key concern for cryptocurrency PQC migration.",
     "relatedModule": "/learn/digital-assets",
@@ -203,6 +229,7 @@
     "category": "algorithm"
   },
   {
+    "id": "kyber",
     "term": "Kyber",
     "definition": "The original name (CRYSTALS-Kyber) for the lattice-based KEM standardized by NIST as ML-KEM in FIPS 203. Often still referenced in older documents and libraries.",
     "technicalNote": "Kyber was selected from the NIST PQC competition Round 3. It was renamed to ML-KEM for the final standard.",
@@ -211,6 +238,7 @@
     "category": "algorithm"
   },
   {
+    "id": "dilithium",
     "term": "Dilithium",
     "definition": "The original name (CRYSTALS-Dilithium) for the lattice-based signature scheme standardized by NIST as ML-DSA in FIPS 204.",
     "technicalNote": "Dilithium was selected from the NIST PQC competition Round 3. It was renamed to ML-DSA for the final standard.",
@@ -219,6 +247,7 @@
     "category": "algorithm"
   },
   {
+    "id": "falcon",
     "term": "Falcon",
     "definition": "The NTRU-lattice-based signature scheme selected by NIST as the basis for the planned FN-DSA standard. FIPS 206 remains in development with no published Initial Public Draft or final standard.",
     "technicalNote": "Falcon uses fast Fourier transforms over NTRU lattices. NIST plans to use the FN-DSA name when FIPS 206 is published.",
@@ -227,6 +256,7 @@
     "category": "algorithm"
   },
   {
+    "id": "sphincs",
     "term": "SPHINCS+",
     "definition": "The original name for the stateless hash-based signature scheme standardized by NIST as SLH-DSA in FIPS 205. Very conservative security assumptions.",
     "technicalNote": "SPHINCS+ relies only on the security of its underlying hash function, making it a strong fallback if lattice assumptions are broken.",
@@ -235,6 +265,7 @@
     "category": "algorithm"
   },
   {
+    "id": "bike",
     "term": "BIKE",
     "acronym": "BIKE",
     "definition": "Bit Flipping Key Encapsulation, a code-based KEM that was a NIST PQC Round 4 candidate. Uses quasi-cyclic moderate-density parity-check codes.",
@@ -243,6 +274,7 @@
     "category": "algorithm"
   },
   {
+    "id": "sha-3",
     "term": "SHA-3",
     "definition": "The third generation Secure Hash Algorithm standard (FIPS 202), based on the Keccak sponge construction. Includes SHA3-256, SHA3-512, and SHAKE variants.",
     "technicalNote": "SHA-3 provides an independent alternative to SHA-2 with different mathematical foundations. Used in SLH-DSA parameter sets.",
@@ -251,6 +283,7 @@
     "category": "algorithm"
   },
   {
+    "id": "shake",
     "term": "SHAKE",
     "definition": "Extendable-Output Functions from the SHA-3 family (SHAKE128, SHAKE256). Unlike fixed-length hashes, SHAKE can produce output of any desired length.",
     "technicalNote": "Used in SLH-DSA-SHAKE parameter sets and as a key derivation mechanism in several PQC algorithms.",
@@ -259,6 +292,7 @@
     "category": "algorithm"
   },
   {
+    "id": "eddsa",
     "term": "EdDSA",
     "definition": "Edwards-curve Digital Signature Algorithm, the family of signature schemes including Ed25519 and Ed448. Offers high performance and resistance to side-channel attacks.",
     "technicalNote": "EdDSA is deterministic (no random nonce), reducing implementation risks. Quantum-vulnerable via Shor's algorithm.",
@@ -267,6 +301,7 @@
     "category": "algorithm"
   },
   {
+    "id": "chacha20-poly1305",
     "term": "ChaCha20-Poly1305",
     "definition": "A modern authenticated encryption with associated data (AEAD) cipher combining the ChaCha20 stream cipher with the Poly1305 authenticator. Quantum-safe at current key sizes.",
     "technicalNote": "Widely used in TLS 1.3, WireGuard, and SSH as an alternative to AES-GCM. Efficient in software without hardware AES acceleration.",
@@ -275,6 +310,7 @@
     "category": "algorithm"
   },
   {
+    "id": "triple-des",
     "term": "Triple-DES",
     "acronym": "3DES",
     "definition": "A legacy symmetric cipher that applies DES three times to each block. Being phased out in favor of AES due to its small 64-bit block size.",
@@ -284,6 +320,7 @@
     "category": "algorithm"
   },
   {
+    "id": "p-256",
     "term": "P-256",
     "definition": "A NIST standard elliptic curve (also called secp256r1 or prime256v1) widely used in TLS, FIDO2, and government systems. Quantum-vulnerable.",
     "technicalNote": "Suite B (RFC 6460) allowed P-256 as well as P-384, but CNSA 1.0 uses P-384 only (RFC 9151), and NSA's CNSA 2.0 FAQ names P-384, not P-256, as the curve compliant devices should currently use. Combined with ML-KEM-768 in the SecP256r1MLKEM768 hybrid key exchange (RFC 10024).",
@@ -292,6 +329,7 @@
     "category": "algorithm"
   },
   {
+    "id": "p-384",
     "term": "P-384",
     "definition": "A NIST standard elliptic curve (secp384r1) offering 192-bit security. Used in high-security TLS configurations and government systems. Quantum-vulnerable.",
     "technicalNote": "Combined with ML-KEM-1024 in the SecP384r1MLKEM1024 hybrid key exchange for NIST Level 5 security.",
@@ -300,6 +338,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ascon",
     "term": "Ascon",
     "definition": "A lightweight authenticated encryption cipher selected by NIST as the standard for constrained environments (IoT, embedded devices). Very low resource requirements.",
     "relatedModule": "/learn/iot-pqc",
@@ -307,6 +346,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ripemd-160",
     "term": "RIPEMD-160",
     "definition": "A 160-bit cryptographic hash function used in Bitcoin address derivation (applied to the SHA-256 digest of a public key). Its 160-bit output gives about 80 bits of generic classical collision resistance, and an ideal Grover preimage search is about 2^80 queries before circuit costs; it is not a NIST-approved hash, and no blanket \"quantum-safe\" verdict follows from its output size.",
     "relatedModule": "/learn/digital-assets",
@@ -314,6 +354,7 @@
     "category": "algorithm"
   },
   {
+    "id": "sm2",
     "term": "SM2",
     "definition": "China's national standard elliptic curve public-key algorithm for digital signatures and key exchange, managed by OSCCA. Quantum-vulnerable.",
     "technicalNote": "Combined with ML-KEM-768 in the curveSM2MLKEM768 hybrid key exchange for Chinese PQC migration.",
@@ -322,6 +363,7 @@
     "category": "algorithm"
   },
   {
+    "id": "pbkdf2",
     "term": "PBKDF2",
     "definition": "Password-Based Key Derivation Function 2, used to derive cryptographic keys from passwords. Applies a pseudorandom function (typically HMAC-SHA) iteratively.",
     "technicalNote": "Used in BIP39 to derive seed bytes from mnemonic phrases (2048 iterations of HMAC-SHA512).",
@@ -330,6 +372,7 @@
     "category": "algorithm"
   },
   {
+    "id": "x25519mlkem768",
     "term": "X25519MLKEM768",
     "definition": "A hybrid key exchange algorithm combining X25519 (classical ECDH) with ML-KEM-768 (post-quantum KEM). Both shared secrets are combined via HKDF so the result is secure if either algorithm holds.",
     "technicalNote": "In TLS 1.3, this combined group supplies concatenated shared secrets to the TLS key schedule. The negotiated cipher suite selects its HKDF hash: TLS_AES_128_GCM_SHA256 uses SHA-256, while TLS_AES_256_GCM_SHA384 uses SHA-384. The group name does not force SHA-256 or specify the certificate-signature algorithm. Check support and actual negotiation for the application and peer in use. Reference: https://www.rfc-editor.org/rfc/rfc9846#section-7.1.",
@@ -338,6 +381,7 @@
     "category": "algorithm"
   },
   {
+    "id": "sntrup761",
     "term": "sntrup761",
     "definition": "A lattice-based key encapsulation mechanism used in OpenSSH hybrid key exchange. Combined with X25519 to provide post-quantum protection for SSH connections.",
     "technicalNote": "Available in OpenSSH since version 9.0 as sntrup761x25519-sha512. Being superseded by mlkem768x25519-sha256 in newer OpenSSH versions.",
@@ -346,6 +390,7 @@
     "category": "algorithm"
   },
   {
+    "id": "winternitz-one-time-signature",
     "term": "Winternitz One-Time Signature",
     "acronym": "WOTS+",
     "definition": "A family of hash-based one-time signature schemes that sign a message digest with hash chains. XMSS (RFC 8391) uses the WOTS+ variant, and LMS (RFC 8554) uses LM-OTS, a related Winternitz-style scheme. Each key pair can only sign one message safely.",
@@ -355,6 +400,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ecies",
     "term": "ECIES",
     "acronym": "ECIES",
     "definition": "Elliptic Curve Integrated Encryption Scheme, used in 5G networks to conceal subscriber identity (SUCI). Combines ECDH key agreement with symmetric encryption.",
@@ -364,6 +410,7 @@
     "category": "algorithm"
   },
   {
+    "id": "drbg",
     "term": "DRBG",
     "acronym": "DRBG",
     "definition": "Deterministic Random Bit Generator. An algorithm that produces a sequence of pseudorandom bits from a secret seed value. NIST SP 800-90A defines three approved mechanisms: CTR_DRBG, Hash_DRBG, and HMAC_DRBG.",
@@ -373,6 +420,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ecc",
     "term": "ECC",
     "acronym": "ECC",
     "definition": "Elliptic Curve Cryptography — a public-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. Offers smaller key sizes than RSA for equivalent classical security, but like RSA it is fully broken by Shor's algorithm on a CRQC.",
@@ -382,6 +430,7 @@
     "category": "algorithm"
   },
   {
+    "id": "lms",
     "term": "LMS",
     "acronym": "LMS",
     "definition": "Leighton-Micali Signature — a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Built from LM-OTS one-time signatures, a Winternitz-style scheme, combined in a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.",
@@ -391,6 +440,7 @@
     "category": "algorithm"
   },
   {
+    "id": "hawk",
     "term": "HAWK",
     "definition": "A lattice-based signature scheme that NIST advanced to the third round of its additional-signature process in May 2026; its team withdrew it on 29 July 2026, so it is no longer a candidate. It was designed as an integer-only alternative to FN-DSA (Falcon) and avoids the floating-point operations that complicate Falcon implementations.",
     "relatedModule": "/learn/pqc-candidates",
@@ -398,6 +448,7 @@
     "category": "algorithm"
   },
   {
+    "id": "mayo",
     "term": "MAYO",
     "definition": "A multivariate signature candidate in the NIST signature on-ramp. Produces very small signatures (~420 bytes at NIST Cat 1) with relatively small public keys, derived from the Oil-and-Vinegar trapdoor.",
     "technicalNote": "MAYO-2 lost ~30 bits of security in the 2025 Ran wedge attack. Reparameterisation to odd-characteristic fields restores the original target.",
@@ -406,6 +457,7 @@
     "category": "algorithm"
   },
   {
+    "id": "uov",
     "term": "UOV",
     "acronym": "Unbalanced Oil and Vinegar",
     "definition": "A multivariate signature scheme using more vinegar variables than oil variables. A NIST signature on-ramp candidate with tiny signatures but large public keys.",
@@ -415,6 +467,7 @@
     "category": "algorithm"
   },
   {
+    "id": "sqisign",
     "term": "SQIsign",
     "definition": "An isogeny-based PQC signature candidate in the NIST on-ramp. Smallest combined public key + signature of any PQC candidate (~148 bytes at NIST Cat 1) — fits in a single network packet.",
     "technicalNote": "Cousin scheme SIKE was broken in 2022 by the Castryck–Decru attack. SQIsign avoids the structural exploit but constant-time signing is still an open implementation challenge.",
@@ -423,6 +476,7 @@
     "category": "algorithm"
   },
   {
+    "id": "faest",
     "term": "FAEST",
     "definition": "An MPC-in-the-Head signature candidate in the NIST signature on-ramp. Builds a signature out of a simulated multi-party computation over the AES block cipher.",
     "technicalNote": "Security reduces to the one-wayness of AES, which is among the best-studied symmetric primitives. Signatures are kilobytes — large versus multivariate or isogeny candidates.",
@@ -431,6 +485,7 @@
     "category": "algorithm"
   },
   {
+    "id": "mqom",
     "term": "MQOM",
     "acronym": "Multivariate Quadratic on MPC-in-the-Head",
     "definition": "An MPC-in-the-Head signature candidate in the NIST on-ramp whose security reduces to the hardness of solving systems of multivariate quadratic equations.",
@@ -439,6 +494,7 @@
     "category": "algorithm"
   },
   {
+    "id": "sdith",
     "term": "SDitH",
     "acronym": "Syndrome Decoding in the Head",
     "definition": "An MPC-in-the-Head signature candidate in the NIST on-ramp whose security reduces to the hardness of syndrome decoding (the same combinatorial problem underlying code-based KEMs).",
@@ -447,6 +503,7 @@
     "category": "algorithm"
   },
   {
+    "id": "snova",
     "term": "SNOVA",
     "definition": "A multivariate signature candidate in the NIST PQC signature on-ramp. Combines UOV-style trapdoors with a noncommutative algebra structure.",
     "technicalNote": "Most SNOVA parameter sets were broken by the 2025 Ran wedge attack and require reparameterisation to remain candidates.",
@@ -455,6 +512,7 @@
     "category": "algorithm"
   },
   {
+    "id": "wots",
     "term": "WOTS+",
     "acronym": "Winternitz One-Time Signature Plus",
     "definition": "A hash-based one-time signature primitive that signs a message digest by walking chains of n-byte hash values. Used as the one-time signing component inside the XMSS trees of the SLH-DSA hypertree (FIPS 205). XMSS (RFC 8391) uses a related WOTS+ variant, and LMS uses LM-OTS instead.",
@@ -464,6 +522,7 @@
     "category": "algorithm"
   },
   {
+    "id": "fors",
     "term": "FORS",
     "acronym": "Forest of Random Subsets",
     "definition": "The few-time signature component of SLH-DSA (FIPS 205). It signs part of the message digest using k hash trees of height a. The hypertree authenticates the resulting FORS public key.",
@@ -473,6 +532,7 @@
     "category": "algorithm"
   },
   {
+    "id": "hmac",
     "term": "HMAC",
     "acronym": "HMAC",
     "definition": "Hash-based Message Authentication Code, a keyed construction that combines a secret key with a hash function (e.g. SHA-256) to provide message integrity and authenticity.",
@@ -482,6 +542,7 @@
     "category": "algorithm"
   },
   {
+    "id": "aes-gcm",
     "term": "AES-GCM",
     "acronym": "GCM",
     "definition": "Galois/Counter Mode, an authenticated-encryption (AEAD) mode for AES that combines counter-mode encryption with a GHASH-based authentication tag in one pass.",
@@ -491,6 +552,7 @@
     "category": "algorithm"
   },
   {
+    "id": "aes-ccm",
     "term": "AES-CCM",
     "acronym": "CCM",
     "definition": "Counter with CBC-MAC, an authenticated-encryption (AEAD) mode for AES that combines counter-mode encryption with a CBC-MAC authentication tag.",
@@ -500,6 +562,7 @@
     "category": "algorithm"
   },
   {
+    "id": "rainbow",
     "term": "Rainbow",
     "definition": "A multivariate-quadratic digital signature scheme and NIST PQC Round 3 finalist, eliminated in 2022 after a rank-based cryptanalysis attack recovered a Rainbow private key on a single laptop in about a weekend.",
     "relatedModule": "/learn/pqc-candidates",
@@ -507,6 +570,7 @@
     "category": "algorithm"
   },
   {
+    "id": "saber",
     "term": "Saber",
     "definition": "A module-lattice-based key encapsulation mechanism and NIST PQC Round 3 finalist alongside Kyber and NTRU; not selected because NIST judged Kyber (now ML-KEM) the stronger overall combination of security and performance among the lattice KEMs.",
     "relatedModule": "/learn/pqc-candidates",
@@ -514,6 +578,7 @@
     "category": "algorithm"
   },
   {
+    "id": "picnic",
     "term": "Picnic",
     "definition": "A signature scheme built from symmetric primitives and zero-knowledge proofs rather than a hard math problem; a NIST PQC Round 3 alternate candidate not standardized, mainly due to large signature sizes and slow performance relative to SLH-DSA and ML-DSA.",
     "relatedModule": "/learn/pqc-candidates",
@@ -521,6 +586,7 @@
     "category": "algorithm"
   },
   {
+    "id": "gemss",
     "term": "GeMSS",
     "acronym": "Great Multivariate Short Signature",
     "definition": "A multivariate-quadratic signature scheme and NIST PQC Round 3 alternate candidate, notable for very large public keys; not selected for standardization.",
@@ -529,6 +595,7 @@
     "category": "algorithm"
   },
   {
+    "id": "ntru",
     "term": "NTRU",
     "definition": "A lattice-based key encapsulation mechanism built on the NTRU problem, one of the oldest practical lattice cryptosystems (1996) and a NIST PQC Round 3 finalist; not selected as ML-KEM (Kyber) became the primary standardized lattice KEM.",
     "technicalNote": "NTRU Prime, a variant designed to avoid the extra algebraic structure of cyclotomic-ring NTRU, produced the sntrup761 parameter set already in this glossary — used in some early hybrid TLS/SSH PQC deployments.",
@@ -537,6 +604,7 @@
     "category": "algorithm"
   },
   {
+    "id": "xmss-mt",
     "term": "XMSS-MT",
     "acronym": "XMSS^MT",
     "definition": "A multi-tree variant of XMSS that chains multiple XMSS trees hierarchically, extending the total number of signatures a single key pair can produce.",
@@ -546,6 +614,7 @@
     "category": "algorithm"
   },
   {
+    "id": "lm-ots",
     "term": "LM-OTS",
     "acronym": "Leighton-Micali One-Time Signature",
     "definition": "The one-time signature primitive underlying LMS: each LM-OTS key pair is valid for exactly one signature, and many are combined via a Merkle tree to build a reusable LMS key.",
