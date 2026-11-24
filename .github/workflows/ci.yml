@@ -107,6 +107,12 @@ jobs:
       - name: README facts, claims and links match the repository
         run: npm run gen:readme-facts:check && npm run audit:readme
 
+      - name: Generated data files are current
+        # Each generated file must match the data it is made from. Until now these ran
+        # only in the local gates, so a data change that skipped regeneration reached
+        # `main` unnoticed.
+        run: npm run gen:timeline-facts:check && npm run gen:landing-counts:check && npm run generate:data-filenames:check && npm run gen:algorithm-properties:check
+
       - name: Lint
         # Carries the eslint-plugin-security rules — a security gate, not style.
         # It therefore has to actually RUN; a lint step that aborts gates nothing.
