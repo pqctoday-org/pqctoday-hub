@@ -3,12 +3,12 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-agility',
-  contentVersion: 17,
+  contentVersion: 18,
   lm_id: 'LM-007',
   title: 'Crypto Agility',
   description:
     'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
-  duration: '40 min',
+  duration: '45 min',
   whyThisMatters:
     'The one certainty is that algorithms will change again; agility is what lets you swap them without re-architecting every system.',
   difficulty: 'intermediate',
@@ -19,6 +19,7 @@ const manifest: ModuleManifest = {
     { id: 'abstraction', label: 'Crypto Abstraction Layers' },
     { id: 'cbom', label: 'CBOM' },
     { id: 'migration', label: '7-Phase Migration' },
+    { id: 'systems-security-engineering', label: 'Systems Security Engineering' },
   ],
   workshopSteps: [
     { id: 'abstraction-layer', label: 'Abstraction Layer' },

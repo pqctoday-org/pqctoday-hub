@@ -17,6 +17,8 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import { SourcedSectionPanel } from '@/components/PKILearning/common/SourcedSection'
+import { SYSTEMS_ENGINEERING_SECTION } from '../data/systemsEngineeringSection'
 
 interface CryptoAgilityIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -295,6 +297,8 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
           </div>
         </div>
       </section>
+
+      <SourcedSectionPanel section={SYSTEMS_ENGINEERING_SECTION} />
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
