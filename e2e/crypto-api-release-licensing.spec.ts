@@ -27,8 +27,8 @@ test('Java ML-KEM support shows the Oracle JDK 21 license change and its source'
   ).toBeVisible()
   await expect(
     page.getByRole('link', { name: 'Oracle JDK 21.0.13 release notes' }).last()
-  ).toHaveAttribute('href', 'https://www.oracle.com/java/technologies/javase/21-0-13-relnotes.html')
+  ).toHaveAttribute('href', 'https://www.oracle.com/java/technologies/javase/21all-relnotes.html')
   await expect(
     page.getByRole('link', { name: 'Oracle private-key encoding details' })
-  ).toHaveAttribute('href', 'https://www.oracle.com/java/technologies/javase/21-0-13-relnotes.html')
+  ).toHaveAttribute('href', 'https://www.oracle.com/java/technologies/javase/21all-relnotes.html')
 })

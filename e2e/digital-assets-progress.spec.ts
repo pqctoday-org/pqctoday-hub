@@ -92,7 +92,7 @@ test('Bitcoin records completion after the live signing and verification journey
     await page.getByRole('button', { name: 'Next Step', exact: true }).click()
   }
   await page.getByRole('button', { name: 'Verify Signature', exact: true }).click()
-  await expect(page.getByText(/✅ VALID/).first()).toBeVisible()
+  await expect(page.getByText('Original sample signature verified.').first()).toBeVisible()
   await page.getByRole('button', { name: 'Completed', exact: true }).click()
   await expect(bitcoin).toContainText('Completed')
 })
