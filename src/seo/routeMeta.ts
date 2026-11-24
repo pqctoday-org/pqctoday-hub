@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { TOOL_ROUTE_META } from './toolRouteMeta.generated'
-import { LEARN_MODULES, type LearnModuleRecord } from '@/data/generated/learnModules.generated'
+import { LEARN_MODULES, type LearnModuleRecord } from '../data/generated/learnModules.generated'
 
 const BASE_URL = 'https://www.pqctoday.com'
 
