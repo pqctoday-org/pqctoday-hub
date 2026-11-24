@@ -8,16 +8,12 @@
  *
  * AUTO-GENERATED — do not edit by hand.
  *
- * Data sourced from:
- *   - src/data/pqc_complete_algorithm_reference_11132026.csv (latest reference snapshot)
- *   - HAND_CURATED blocks in scripts/generate-algorithm-properties.ts
- *     (algorithm selection, fips_standard normalization, per-algorithm overrides)
- *
- * To update: modify the algorithm CSV (cut a NEW dated snapshot — never edit a
- * dated CSV in place) or the generator's HAND_CURATED blocks, then regenerate:
- *   npx tsx scripts/generate-algorithm-properties.ts
- * Verify freshness (CI-friendly; exits 1 when this file is stale):
- *   npx tsx scripts/generate-algorithm-properties.ts --check
+ * Data sourced from the newest src/data/pqc_complete_algorithm_reference_*.csv:
+ * the rows that carry a registry_order, in that order. To update: cut a NEW dated
+ * snapshot of the CSV (never edit a dated CSV in place), then regenerate:
+ *   npm run gen:algorithm-properties
+ * Verify freshness (exits 1 when this file is stale):
+ *   npm run gen:algorithm-properties:check
  */
 
 export interface AlgorithmProps {
@@ -39,7 +35,7 @@ export interface AlgorithmProps {
   fipsStandard: string | null
 }
 
-// ── Registry (auto-generated from the latest algorithm reference CSV) ─────
+// ── Registry (generated from the newest algorithm reference CSV) ─────────
 
 export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
   // ── ML-KEM (FIPS 203) ─────────────────────────────────────────────────
@@ -527,7 +523,7 @@ export function getAlgorithm(name: string): AlgorithmProps {
   if (!algo) {
     throw new Error(
       `[algorithmProperties] Unknown algorithm: "${name}". ` +
-        'Add it to the algorithm CSV and scripts/generate-algorithm-properties.ts, then regenerate this registry.'
+        'Give its row in the algorithm CSV a registry_order, then run npm run gen:algorithm-properties.'
     )
   }
   return algo
