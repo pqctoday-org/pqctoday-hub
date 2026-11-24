@@ -3,12 +3,12 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hybrid-crypto',
-  contentVersion: 51,
+  contentVersion: 52,
   lm_id: 'LM-006',
   title: 'Hybrid Cryptography',
   description:
     'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
-  duration: '40 min',
+  duration: '48 min',
   whyThisMatters:
     'Hybrid (classical + PQC) lets you deploy now without betting everything on algorithms still maturing in the field.',
   difficulty: 'intermediate',
@@ -26,6 +26,7 @@ const manifest: ModuleManifest = {
     { id: 'composite', label: 'Hybrid Signatures' },
     { id: 'cert-formats', label: 'Hybrid Cert Formats' },
     { id: 'crypto-apis', label: 'Hybrid in Crypto APIs & HSMs' },
+    { id: 'protocol-design-principles', label: 'Protocol Design Principles' },
   ],
   workshopSteps: [
     { id: 'key-generation', label: 'Key Generation' },

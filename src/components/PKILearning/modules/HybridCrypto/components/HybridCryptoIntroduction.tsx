@@ -28,6 +28,8 @@ import { Button } from '@/components/ui/button'
 import { HybridRisks, HybridPositions } from './HybridRisksAndPositions'
 import { CombinerComparison } from './CombinerComparison'
 import { HybridInCryptoApis } from './HybridInCryptoApis'
+import { SourcedSectionPanel } from '@/components/PKILearning/common/SourcedSection'
+import { PROTOCOL_DESIGN_SECTION } from '../data/protocolDesignSection'
 
 interface HybridCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -1471,6 +1473,8 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
       </section>
 
       <HybridInCryptoApis />
+
+      <SourcedSectionPanel section={PROTOCOL_DESIGN_SECTION} />
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
