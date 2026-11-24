@@ -43,8 +43,8 @@ import type { Region } from '../store/usePersonaStore'
 import type { XwalkRelationshipType } from '../data/conceptXwalkData'
 import { EU_MEMBER_COUNTRIES } from './euCountries'
 import { REGION_COUNTRIES_MAP, INDUSTRY_TO_THREATS_MAP } from '../data/personaConfig'
-import { canonicalizeLibraryIndustry } from './industryNormalization'
 import { resolveToNaicsSet } from '../data/sectorVocabularyData'
+import { sectorKeysFor } from '../data/industryMatch'
 import { isDomesticRegulator, isFiveEyesAffinity, isEuLevelBody } from './regulatorMap'
 import pqcVocabOverlay from '../data/pqc-vocab-overlay.json'
 
@@ -645,14 +645,12 @@ export function applicableLibraryDocs(
           .map((s) => s.trim())
           .filter(Boolean)
       : []
-    // Canonicalize the library's freeform industry tags ("IT" → "Technology",
-    // "Government" → "Government & Defense") so they line up with the user's
-    // canonical industry from the assessment store.
-    const rawIndustries = doc.applicableIndustries ?? []
-    const industries = Array.from(
-      new Set(
-        rawIndustries.map((t) => canonicalizeLibraryIndustry(t)).filter((v): v is string => !!v)
-      )
+    // The Library's `applicable_industries` column holds the industry landscape's own
+    // industry names, which the sector vocabulary resolves (see `sectorCodesOverlap`),
+    // so the tags are read as they are. A tag the vocabulary does not know (the
+    // landscape's all-industry label) names no sector and is left out of the count.
+    const industries = Array.from(new Set(doc.applicableIndustries ?? [])).filter(
+      (t) => sectorKeysFor(t) !== null
     )
     // Library uses `authorsOrOrganization` as a freeform credit string; take the
     // first canonical org as the closest analogue to "enforcementBody". Best-effort.
