@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { getStandard } from '@/data/standardsRegistry'
+import { LearnSection } from './LearnSection'
 
 /** One lesson sentence that reports what a named Library document says, with the place it rests on. */
 export interface SourcedSentence {
@@ -22,10 +23,20 @@ export interface SourcedBlock {
   sentences: SourcedSentence[]
 }
 
+/** A NICE Framework statement (task, knowledge or skill) the section teaches towards. */
+export interface SectionNiceStatement {
+  /** Official NICE Framework Components v2.2.0 statement id, e.g. 'S0882' */
+  id: string
+  /** The statement's official wording */
+  statement: string
+}
+
 export interface SourcedSectionData {
   /** Learn-section id, as listed in the module manifest */
   id: string
   title: string
+  /** NICE Framework statements this section answers; ids are checked against the vendored v2.2.0 components */
+  nice?: SectionNiceStatement[]
   /** What the section is about and why it matters; a signpost, not a fact */
   lead: string
   blocks: SourcedBlock[]
@@ -62,5 +73,25 @@ export const SourcedSectionBody: React.FC<{ section: SourcedSectionData }> = ({ 
         </ul>
       </div>
     ))}
+  </div>
+)
+
+/** A sourced section as a standalone panel, for modules whose learn tab is a stack of plain `<section data-section-id>` blocks. */
+export const SourcedSectionPanel: React.FC<{ section: SourcedSectionData }> = ({ section }) => (
+  <section data-section-id={section.id} className="glass-panel p-6 space-y-4 scroll-mt-20">
+    <h2 className="text-xl font-bold text-gradient">{section.title}</h2>
+    <SourcedSectionBody section={section} />
+  </section>
+)
+
+/** A sourced section inside the shared anchored accordion, for modules whose learn tab is a stack of `LearnSection`s. */
+export const SourcedLearnSection: React.FC<{
+  section: SourcedSectionData
+  icon: React.ReactNode
+}> = ({ section, icon }) => (
+  <div data-section-id={section.id} className="scroll-mt-20">
+    <LearnSection sectionId={section.id} title={section.title} icon={icon}>
+      <SourcedSectionBody section={section} />
+    </LearnSection>
   </div>
 )
