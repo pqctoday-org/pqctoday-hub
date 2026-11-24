@@ -77,7 +77,9 @@ for (const moduleId of ALL_MODULE_IDS) {
     } else {
       await expect(checklist).toHaveAttribute('data-module-id', moduleId)
       await expect(checklist).not.toHaveAttribute('open', '')
-      await checklist.locator('summary').click()
+      // The checklist's own summary: it also holds the evidence worksheet, a nested
+      // <details> with a summary of its own.
+      await checklist.locator(':scope > summary').click()
       await expect(checklist).toHaveAttribute('open', '')
       const items = checklist.locator('ul > li')
       await expect(items).toHaveCount(spec!.productionCapabilities.length)
