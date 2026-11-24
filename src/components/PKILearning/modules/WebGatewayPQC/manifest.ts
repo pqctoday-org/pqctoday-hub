@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'web-gateway-pqc',
-  contentVersion: 17,
+  contentVersion: 18,
   lm_id: 'LM-013',
   title: 'Web Gateway PQC',
   description:
     'PQC deployment at the infrastructure edge: TLS termination patterns, certificate lifecycle at scale, CDN/WAF/load balancer vendor migration paths.',
   whyThisMatters:
     'The edge — CDN, WAF, load balancer — is where TLS actually terminates for most traffic; if PQC certificate handling breaks at the gateway, every application behind it inherits the outage regardless of its own readiness.',
-  duration: '60 min',
+  duration: '65 min',
   difficulty: 'intermediate',
   frameworkPhase: 'p6',
   track: 'Protocols',
@@ -22,6 +22,7 @@ const manifest: ModuleManifest = {
     { id: 'inspection', label: 'WAF/IDS Inspection' },
     { id: 'cdn-edge', label: 'CDN Edge Deployment' },
     { id: 'vendor-paths', label: 'Vendor Migration Paths' },
+    { id: 'pq-tls-termination-point', label: 'PQ TLS at the Termination Point' },
   ],
   workshopSteps: [
     { id: 'topology-builder', label: 'Topology Builder' },
