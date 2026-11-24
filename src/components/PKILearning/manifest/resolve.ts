@@ -39,3 +39,14 @@ export function resolveManifest(manifest: ModuleManifest): ResolvedModuleManifes
     ...(data.contentVersion !== undefined ? { contentVersion: data.contentVersion } : {}),
   }
 }
+
+/**
+ * A manifest as a page component receives it. Module entry points hand over
+ * their raw manifest; tests may hand over a hand-built resolved one. Either way
+ * the component works from the resolved shape.
+ */
+export function asResolved(
+  manifest: ModuleManifest | ResolvedModuleManifest
+): ResolvedModuleManifest {
+  return 'title' in manifest ? manifest : resolveManifest(manifest)
+}

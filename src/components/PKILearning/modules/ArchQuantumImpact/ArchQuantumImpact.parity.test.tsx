@@ -11,7 +11,10 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { ArchQuantumImpactModule } from './index'
-import manifest from './manifest'
+import rawManifest from './manifest'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('ArchQuantumImpact render parity', () => {
   it('renders the gradient header, the in-page description, and all six tabs', () => {

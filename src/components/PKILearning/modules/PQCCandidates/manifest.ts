@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
-import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 const manifest: ModuleManifest = {
   id: 'pqc-candidates',
@@ -29,4 +28,4 @@ const manifest: ModuleManifest = {
   load: () => import('./index').then((m) => ({ default: m.PQCCandidatesModule })),
 }
 
-export default resolveManifest(manifest)
+export default manifest

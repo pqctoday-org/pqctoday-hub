@@ -21,9 +21,12 @@ import {
 import { CONCEPT_CHECKS } from './conceptChecks'
 import { REVIEW_STATUS } from './reviewStatus'
 import { content } from '../content'
-import manifest from '../manifest'
+import rawManifest from '../manifest'
 import curiousSummary from '../curious-summary.md?raw'
 import ragSummary from '../rag-summary.md?raw'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 const all = Object.values(SOURCES) as ModuleSource[]
 

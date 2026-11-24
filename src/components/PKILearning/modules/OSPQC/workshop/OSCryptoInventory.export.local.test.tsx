@@ -3,8 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { OSCryptoInventory } from './OSCryptoInventory'
-import manifest from '../manifest'
+import rawManifest from '../manifest'
 import { EDUCATION_NOTICE } from '@/data/educationNotice'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 const blobs: Blob[] = []
 let anchorClick: ReturnType<typeof vi.spyOn>

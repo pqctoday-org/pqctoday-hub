@@ -48,7 +48,8 @@ import { ModuleMigrateTab } from './ModuleMigrateTab'
 import { WorkshopStepHeader } from './WorkshopStepHeader'
 import { GlossaryAutoWrap } from './GlossaryAutoWrap'
 import { useModuleProgress } from './useModuleProgress'
-import { STANDARD_TABS, type ResolvedModuleManifest } from '../manifest/types'
+import { STANDARD_TABS, type ModuleManifest, type ResolvedModuleManifest } from '../manifest/types'
+import { asResolved } from '../manifest/resolve'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
   isInLearnPath,
@@ -138,7 +139,7 @@ export interface ModuleSlotApi {
 export type ModuleSlot = ReactNode | ((api: ModuleSlotApi) => ReactNode)
 
 export interface ModuleShellProps {
-  manifest: ResolvedModuleManifest
+  manifest: ModuleManifest | ResolvedModuleManifest
   /** header title; defaults to manifest.title */
   title?: ReactNode
   /** header description; defaults to manifest.description (often overridden) */
@@ -367,7 +368,7 @@ const PolicyScopeExercise = lazy(() =>
 )
 
 export const ModuleShell = ({
-  manifest,
+  manifest: manifestProp,
   title,
   description,
   learn,
@@ -382,6 +383,8 @@ export const ModuleShell = ({
   toolFilter,
   children,
 }: ModuleShellProps) => {
+  // Title, minutes, level, track and phase come from the lessons data file.
+  const manifest = asResolved(manifestProp)
   const isMobileShell = useIsMobileShell()
   const navigate = useNavigate()
   const location = useLocation()

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
-import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 /**
  * OT & Industrial Control Systems PQC (LM-075).
@@ -42,4 +41,4 @@ const manifest: ModuleManifest = {
   load: () => import('./index').then((m) => ({ default: m.OTPQCModule })),
 }
 
-export default resolveManifest(manifest)
+export default manifest

@@ -7,12 +7,15 @@ import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { useModuleStore } from '@/store/useModuleStore'
 import { PqcImplementationSecurityModule } from './index'
 import { content } from './content'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { TimingLeakInspector } from './workshop/TimingLeakInspector'
 import { FoRejectionLab } from './workshop/FoRejectionLab'
 import { MaskingCostExplorer } from './workshop/MaskingCostExplorer'
 import { TvlaEvidenceScope } from './workshop/TvlaEvidenceScope'
 import { ImplSecurityExercises } from './components/ImplSecurityExercises'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('PqcImplementationSecurity module (LM-081)', () => {
   beforeEach(() => {

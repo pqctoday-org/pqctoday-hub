@@ -7,9 +7,14 @@ import { Button } from '@/components/ui/button'
 import { ModuleShell, type ModuleSlotApi } from './ModuleShell'
 import type { ResolvedModuleManifest } from '../manifest/types'
 import { useModuleStore } from '@/store/useModuleStore'
-import entropyManifest from '../modules/Entropy/manifest'
-import testingManifest from '../modules/PQCTestingValidation/manifest'
-import ccManifest from '../modules/CcEuccCertification/manifest'
+import rawEntropyManifest from '../modules/Entropy/manifest'
+import rawTestingManifest from '../modules/PQCTestingValidation/manifest'
+import rawCcManifest from '../modules/CcEuccCertification/manifest'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const entropyManifest = resolveManifest(rawEntropyManifest)
+const testingManifest = resolveManifest(rawTestingManifest)
+const ccManifest = resolveManifest(rawCcManifest)
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({

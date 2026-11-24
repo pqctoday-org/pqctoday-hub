@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
-import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 /**
  * Cryptographic Product Certification — Fundamentals (LM-065).
@@ -53,4 +52,4 @@ const manifest: ModuleManifest = {
   load: () => import('./index').then((m) => ({ default: m.CryptoProductCertificationModule })),
 }
 
-export default resolveManifest(manifest)
+export default manifest

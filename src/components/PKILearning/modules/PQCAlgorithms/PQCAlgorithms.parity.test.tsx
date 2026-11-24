@@ -15,8 +15,11 @@ import { PQCAlgorithmsModule } from './index'
 import { PQCAlgorithmsIntroduction } from './components/PQCAlgorithmsIntroduction'
 import { LESSON_OUTLINE } from './data/lessonOutline'
 import { SOURCE_CLAIMS } from './data/sourceClaims'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { content } from './content'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('PQCAlgorithms', () => {
   it('renders the module header and the standard tab set', () => {

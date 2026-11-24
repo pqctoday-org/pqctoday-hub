@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // OWNER: Scaffold
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
-import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
 
 /**
  * FIPS 140-3 Certification (LM-067).
@@ -49,4 +48,4 @@ const manifest: ModuleManifest = {
   load: () => import('./index').then((m) => ({ default: m.Fips1403CertificationModule })),
 }
 
-export default resolveManifest(manifest)
+export default manifest
