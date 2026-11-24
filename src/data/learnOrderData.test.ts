@@ -31,4 +31,16 @@ describe('learn order data', () => {
 
     expect(Object.keys(MODULE_CATALOG)).toContain('quiz')
   })
+
+  it('never asks a reader to take first a lesson that sits at a later stage', () => {
+    for (const [moduleId, order] of Object.entries(LEARN_ORDER)) {
+      for (const prerequisiteId of order.takeFirst) {
+        const prerequisite = LEARN_ORDER[prerequisiteId]
+        expect(
+          prerequisite.stage,
+          `${moduleId} (stage ${order.stage}) takes ${prerequisiteId} (stage ${prerequisite.stage}) first`
+        ).toBeLessThanOrEqual(order.stage)
+      }
+    }
+  })
 })
