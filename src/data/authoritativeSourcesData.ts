@@ -88,15 +88,18 @@ export const authoritativeSources: AuthoritativeSource[] = data
 
 export const sourcesMetadata = metadata
 
-const CITED_BY_VIEW: Record<CitedView, ReadonlySet<string>> = Object.fromEntries(
-  Object.entries(VIEW_CITED_SOURCE_IDS).map(([view, ids]) => [view, new Set(ids)])
-) as Record<CitedView, ReadonlySet<string>>
+const CITED_BY_VIEW = new Map<ViewType, ReadonlySet<string>>(
+  (Object.keys(VIEW_CITED_SOURCE_IDS) as CitedView[]).map((view) => [
+    view,
+    new Set(VIEW_CITED_SOURCE_IDS[view]),
+  ])
+)
 
 /** True when the page's active records cite this source (by its id, or its trusted-sources id). */
 export function isSourceCitedInView(source: AuthoritativeSource, viewType: ViewType): boolean {
   if (viewType === 'Patents') return source.patentsCsv
-  // eslint-disable-next-line security/detect-object-injection -- viewType is the typed ViewType union
-  const cited = CITED_BY_VIEW[viewType]
+  const cited = CITED_BY_VIEW.get(viewType)
+  if (!cited) return false
   return (
     (source.id !== undefined && cited.has(source.id)) ||
     (source.trustedSourceId !== undefined && cited.has(source.trustedSourceId))
