@@ -4,14 +4,9 @@ import { render, screen } from '@testing-library/react'
 import { CoverageByRegion } from './CoverageByRegion'
 import type { GanttCountryData } from '../../types/timeline'
 
-vi.mock('../../data/personaConfig', () => ({
-  REGION_COUNTRIES_MAP: {
-    americas: ['United States', 'Canada'],
-    eu: [],
-    mena: [],
-    apac: [],
-    global: [],
-  },
+vi.mock('../../data/timelineRegionCountries', () => ({
+  timelineRegionCountries: (region: string) =>
+    region === 'americas' ? ['United States', 'Canada'] : [],
 }))
 
 function makeCountry(name: string, phases: string[]): GanttCountryData {

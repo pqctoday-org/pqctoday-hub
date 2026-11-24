@@ -24,7 +24,7 @@
  *     it uses a different taxonomy ('European Union', 'Asia-Pacific', etc.) and
  *     serves a different purpose from the picker region grouping here.
  *   - EU cascade (Phase 2): use EU_MEMBER_CODES to seed all EU-member compliance
- *     rows when a user selects "European Union" in Assess. UK is explicitly NOT
+ *     rows when a user selects "European Union" in Assess. GB (the UK) is explicitly NOT
  *     in this set despite being in region='eu' for picker grouping.
  */
 import { loadLatestCSV } from './csvUtils'
@@ -37,7 +37,7 @@ import type { JurisdictionRule, HybridStance, EndState } from './jurisdiction'
  * Simulation archetypes: codes for which the sim has 1:1 modelled rules,
  * scenario data, and deadline entries in TIMELINE_COUNTRY_DEADLINE_YEAR.
  *
- * Original five: US/DE/FR/UK/AU.
+ * Original five: US/DE/FR/GB/AU.
  * Phase 3 additions: CA, JP, KR, SG (wired in assessBridge).
  * Phase 3 additions: IN (deadline + compliance coverage; hybrid/endState
  *   uncurated until DST/NQM stance formally verified).
@@ -50,7 +50,7 @@ import type { JurisdictionRule, HybridStance, EndState } from './jurisdiction'
  * sector-specific milestones (TIMELINE_COUNTRY_MILESTONES) may be absent.
  */
 export type SimArchetype =
-  'US' | 'DE' | 'FR' | 'UK' | 'AU' | 'CA' | 'JP' | 'KR' | 'SG' | 'IN' | 'EU'
+  'US' | 'DE' | 'FR' | 'GB' | 'AU' | 'CA' | 'JP' | 'KR' | 'SG' | 'IN' | 'EU'
 
 /**
  * Region keys for all entries in the jurisdiction registry.
@@ -63,7 +63,7 @@ export type SimArchetype =
  * africa: ZA, NG, KE — appear in compliance framework rows only.
  *
  * NOTE: region='eu' is a PICKER GROUPING label ("Europe"), not a statement
- * of EU membership. UK is region='eu' (correct for a Europe group) but
+ * of EU membership. GB (the UK) is region='eu' (correct for a Europe group) but
  * eu_member=no (correct for compliance cascade exclusion). Always use
  * EU_MEMBER_CODES, not the eu region, to determine EU regulatory scope.
  */
@@ -74,13 +74,13 @@ export type PickerRegion = 'americas' | 'eu' | 'mena' | 'apac'
 const PICKER_REGIONS = new Set<PickerRegion>(['americas', 'eu', 'mena', 'apac'])
 
 export interface JurisdictionEntry {
-  /** ISO 3166-1 alpha-2 uppercase (US, DE, UK…). Key for JURISDICTION_RULES and assessBridge. */
+  /** ISO 3166-1 alpha-2 uppercase (US, DE, GB…). Key for JURISDICTION_RULES and assessBridge. */
   code: string
   /** Canonical full display name. Must match the Country column in the timeline CSV. */
   name: string
   /**
-   * Lowercase 2-letter code for flagcdn.com (e.g. `gb` for UK).
-   * Usually equals code.toLowerCase() except UK → gb.
+   * Lowercase 2-letter code for flagcdn.com (e.g. `gb` for GB).
+   * Equals code.toLowerCase().
    */
   flagCode: string
   /** Region grouping for all entries (picker + reference-only). */
@@ -199,7 +199,7 @@ const VALID_ARCHETYPES = new Set<SimArchetype>([
   'US',
   'DE',
   'FR',
-  'UK',
+  'GB',
   'AU',
   'CA',
   'JP',
@@ -315,16 +315,14 @@ export const JURISDICTION_BY_NAME: Record<string, JurisdictionEntry> = Object.fr
  * ISO code → canonical full name for ALL entries (picker + reference-only).
  * Replaces COUNTRY_CODE_TO_NAME in complianceData.ts (Phase 6).
  * PQC-REGION-* synthetic overlay tokens stay inline in complianceData.ts.
- * GB is emitted as an alias for UK (compliance CSV uses GB for United Kingdom).
  */
 export const COUNTRY_CODE_TO_NAME: Record<string, string> = {
   ...Object.fromEntries(ACTIVE_ALL.map((j) => [j.code, j.name])),
-  GB: 'United Kingdom', // compliance CSV uses GB; jurisdiction CSV key is UK
 }
 
 /**
  * EU member state ISO codes. Use this — not the eu region — to determine
- * EU regulatory scope. UK is excluded (left EU 2020). Used by Phase 2
+ * EU regulatory scope. GB (the UK) is excluded (left EU 2020). Used by Phase 2
  * compliance cascade: selecting European Union seeds frameworks for all
  * of these codes in addition to the EU code itself.
  */
@@ -394,6 +392,58 @@ export const REGION_COUNTRIES_MAP: Record<PickerRegion, string[]> = (() => {
   }
   return map
 })()
+
+/**
+ * Region → the name of every active jurisdiction in it, picker or reference-only,
+ * for all six regions of the CSV. Read this (not a hand-typed list of names) to ask
+ * "which countries are in this region?". Names follow the CSV `name` column.
+ */
+export const JURISDICTION_NAMES_BY_REGION: Record<JurisdictionRegion, string[]> = (() => {
+  const map: Record<JurisdictionRegion, string[]> = {
+    americas: [],
+    eu: [],
+    mena: [],
+    apac: [],
+    'europe-noneu': [],
+    africa: [],
+  }
+  for (const j of ACTIVE_ALL) map[j.region].push(j.name)
+  return map
+})()
+
+/**
+ * The site's region ids (the persona/Assess regions) → every active jurisdiction in
+ * them. Wider than REGION_COUNTRIES_MAP above, which lists only what the pickers offer:
+ * a reader's region matches a record for any jurisdiction the CSV places there.
+ * europe-noneu and africa belong to no site region.
+ */
+export const REGION_JURISDICTION_NAMES: Record<PickerRegion, string[]> = {
+  americas: JURISDICTION_NAMES_BY_REGION.americas,
+  eu: JURISDICTION_NAMES_BY_REGION.eu,
+  mena: JURISDICTION_NAMES_BY_REGION.mena,
+  apac: JURISDICTION_NAMES_BY_REGION.apac,
+}
+
+/**
+ * A region's lead jurisdiction: the first active row of that region in the CSV
+ * (the country a reader lands on when they pick only a region). It reads row order,
+ * so keep the lead row first when editing the file; jurisdictionsData.regionLead.test.ts
+ * pins the four leads.
+ */
+export const REGION_LEAD_JURISDICTION: Record<PickerRegion, string> = (() => {
+  const lead = {} as Record<PickerRegion, string>
+  for (const j of filterActive(allRows)) {
+    if (PICKER_REGIONS.has(j.region as PickerRegion) && !(j.region in lead)) {
+      lead[j.region as PickerRegion] = j.name
+    }
+  }
+  return lead
+})()
+
+/** Names of the EU member states plus the EU itself (`eu_member` = yes in the CSV). */
+export const EU_MEMBER_NAMES: ReadonlySet<string> = new Set(
+  ACTIVE_ALL.filter((j) => j.euMember).map((j) => j.name)
+)
 
 /**
  * Full jurisdiction rules for entries with curated hybrid + endState + note.
@@ -471,13 +521,33 @@ const REGION_DISPLAY_LABEL: Record<PickerRegion, string> = {
   apac: 'Asia Pacific',
 }
 
+function legacyConfig(j: JurisdictionEntry, id: string): LegacyJurisdictionConfig {
+  return {
+    id,
+    label: j.name,
+    region: REGION_DISPLAY_LABEL[j.region as PickerRegion] ?? j.region,
+    countryNames: [j.name],
+  }
+}
+
 /**
  * Drop-in replacement for JURISDICTIONS in
  * src/components/PKILearning/modules/ComplianceStrategy/data/jurisdictions.ts.
  */
-export const JURISDICTIONS_LEGACY: LegacyJurisdictionConfig[] = ALL_JURISDICTIONS.map((j) => ({
-  id: j.code.toLowerCase(),
-  label: j.name,
-  region: REGION_DISPLAY_LABEL[j.region as PickerRegion] ?? j.region,
-  countryNames: [j.name],
-}))
+export const JURISDICTIONS_LEGACY: LegacyJurisdictionConfig[] = ALL_JURISDICTIONS.map((j) =>
+  legacyConfig(j, j.code.toLowerCase())
+)
+
+/**
+ * The module-facing config of chosen registry jurisdictions: each `[id, code]` pair gives
+ * the id a module keys its own data by and the registry code to read the name and region
+ * from. A code with no active registry row is skipped.
+ */
+export function jurisdictionConfigsFor(
+  offered: ReadonlyArray<readonly [id: string, code: string]>
+): LegacyJurisdictionConfig[] {
+  return offered.flatMap(([id, code]) => {
+    const j = JURISDICTION_BY_CODE[code]
+    return j ? [legacyConfig(j, id)] : []
+  })
+}

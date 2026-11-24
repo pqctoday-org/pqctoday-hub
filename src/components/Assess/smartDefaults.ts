@@ -15,10 +15,9 @@ import {
 } from '../../data/industryAssessConfig'
 import { COUNTRY_PLANNING_HORIZON } from '../../hooks/assessmentData'
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
-import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import { REGION_JURISDICTION_NAMES, EU_MEMBER_NAMES } from '../../data/jurisdictionsData'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import type { ExperienceLevel, Region } from '../../store/usePersonaStore'
-import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'
 import { coversEverySector } from '../../utils/applicabilityEngine'
 
 // ── Output type ──────────────────────────────────────────────────────────
@@ -395,11 +394,11 @@ function getComplianceDefaults(
   country: string,
   region?: Region | null
 ): string[] {
-  const isEuMember = country ? EU_MEMBER_COUNTRIES.has(country) : false
+  const isEuMember = country ? EU_MEMBER_NAMES.has(country) : false
   // When no specific country is set, use the persona region as a fallback filter
   const regionCountries =
     (!country || country === 'Global') && region && region !== 'global'
-      ? new Set(REGION_COUNTRIES_MAP[region])
+      ? new Set(REGION_JURISDICTION_NAMES[region])
       : null
 
   const filtered = complianceFrameworks.filter((fw) => {
@@ -490,7 +489,7 @@ function getTimelineDefaults(country: string): SmartDefaults['timelinePressure']
   // EU fallthrough: any EU member state not explicitly listed inherits the
   // 2030 NIS2 + critical-systems horizon. Prevents silent 'no-deadline' for
   // less-frequently-named members (Ireland, Portugal, Greece, Hungary, …).
-  if (!horizon && EU_MEMBER_COUNTRIES.has(country)) {
+  if (!horizon && EU_MEMBER_NAMES.has(country)) {
     horizon = 2030
   }
   if (!horizon) return 'no-deadline'

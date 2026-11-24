@@ -65,6 +65,11 @@ export const MODULE_CATALOG: Record<string, CatalogModule> = validateCatalog(
   buildCatalog(MANIFESTS)
 )
 
+/** Learning modules in the catalogue (the quiz is listed there but is not a module). */
+export const LEARN_MODULE_COUNT: number = Object.keys(MODULE_CATALOG).filter(
+  (id) => id !== 'quiz'
+).length
+
 /** Actual step counts per module for progress calculation.
  * Must match WORKSHOP_STEPS[id].length exactly — keep in sync. */
 export const MODULE_STEP_COUNTS: Record<string, number> = buildStepCounts(MANIFESTS)

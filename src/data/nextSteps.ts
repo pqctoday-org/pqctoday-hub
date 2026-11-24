@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Round 9, wave 1.2 (2026-09-19) — the declared next step out of every routed
- * item: 65 modules, 34 playground tools, 37 business tools, 29 pages.
+ * item: every module, playground tool, business tool and page.
  *
  * Keyed by route. Rendered as the item's exit by NextStepCard (desktop) and
  * MobileNextStepCard (phone). The chain is module → the tool that practises

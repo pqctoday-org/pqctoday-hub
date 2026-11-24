@@ -12,7 +12,7 @@ import {
   AVAILABLE_USE_CASES,
   AVAILABLE_INFRASTRUCTURE,
 } from './assessmentData'
-import { REGION_COUNTRIES_MAP } from '../data/personaConfig'
+import { COUNTRY_CODE_TO_NAME } from '../data/jurisdictionsData'
 import { EXAMPLE_REPORT_PERSONA, exampleReportResultFor } from '../data/exampleReport'
 import { logReportShareLinkOpened } from '../utils/analytics'
 import { decodeShareToken, type ReportShareSchemaV1 } from '../utils/reportShareToken'
@@ -36,7 +36,8 @@ const VALID_ALGORITHMS = new Set(AVAILABLE_ALGORITHMS)
 const VALID_COMPLIANCE = new Set(AVAILABLE_COMPLIANCE)
 const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
 const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
-const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
+// Every jurisdiction in the registry, plus the 'Global' choice (no country).
+const VALID_COUNTRIES = new Set([...Object.values(COUNTRY_CODE_TO_NAME), 'Global'])
 
 function toValidPersona(persona: string | undefined): PersonaId | null {
   return persona && isPersonaId(persona) ? persona : null

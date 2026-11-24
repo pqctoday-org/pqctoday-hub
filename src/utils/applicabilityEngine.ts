@@ -41,10 +41,15 @@ import type { LibraryItem } from '../data/libraryData'
 import { libraryData } from '../data/libraryData'
 import type { Region } from '../store/usePersonaStore'
 import type { XwalkRelationshipType } from '../data/conceptXwalkData'
-import { EU_MEMBER_COUNTRIES } from './euCountries'
-import { REGION_COUNTRIES_MAP, INDUSTRY_TO_THREATS_MAP } from '../data/personaConfig'
-import { canonicalizeLibraryIndustry } from './industryNormalization'
+import {
+  COUNTRY_CODE_TO_NAME,
+  EU_MEMBER_NAMES,
+  JURISDICTION_BY_NAME,
+  REGION_JURISDICTION_NAMES,
+} from '../data/jurisdictionsData'
+import { INDUSTRY_TO_THREATS_MAP } from '../data/personaConfig'
 import { resolveToNaicsSet } from '../data/sectorVocabularyData'
+import { sectorKeysFor } from '../data/industryMatch'
 import { isDomesticRegulator, isFiveEyesAffinity, isEuLevelBody } from './regulatorMap'
 import pqcVocabOverlay from '../data/pqc-vocab-overlay.json'
 
@@ -148,11 +153,11 @@ function regionCountriesFor(profile: UserProfile): Set<string> | null {
   // Only fall back to region when country is not a specific value
   if (country && country !== 'Global') return null
   if (!region || region === 'global') return null
-  return new Set(REGION_COUNTRIES_MAP[region])
+  return new Set(REGION_JURISDICTION_NAMES[region])
 }
 
 function isEuMember(profile: UserProfile): boolean {
-  return profile.country ? EU_MEMBER_COUNTRIES.has(profile.country) : false
+  return profile.country ? EU_MEMBER_NAMES.has(profile.country) : false
 }
 
 // ── Controlled-vocabulary normalization (FR-PF-01/FR-PF-02) ─────────────
@@ -160,28 +165,9 @@ function isEuMember(profile: UserProfile): boolean {
 // strings. Returns an array of normalized country values (PQC overlay codes
 // may expand to multiple ISO codes).
 
-// Bidirectional ISO 3166-1 alpha-2 ↔ full-name map for the countries that
-// appear in our data CSVs. Needed because normalize-vocab-tags converts full
-// names to ISO codes in _r2 CSVs while the assessment store keeps full names.
-const ISO_TO_FULL: Record<string, string> = {
-  US: 'United States',
-  CA: 'Canada',
-  AU: 'Australia',
-  GB: 'United Kingdom',
-  DE: 'Germany',
-  FR: 'France',
-  NL: 'Netherlands',
-  JP: 'Japan',
-  SG: 'Singapore',
-  IL: 'Israel',
-  KR: 'South Korea',
-  IN: 'India',
-  BR: 'Brazil',
-  NZ: 'New Zealand',
-}
-const FULL_TO_ISO: Record<string, string> = Object.fromEntries(
-  Object.entries(ISO_TO_FULL).map(([k, v]) => [v, k])
-)
+// ISO 3166-1 alpha-2 ↔ full name, both read from the jurisdictions registry. Needed
+// because normalize-vocab-tags converts full names to ISO codes in _r2 CSVs while the
+// assessment store keeps full names.
 
 /**
  * Expand a CSV country token to all equivalent forms so the profile's full-
@@ -190,9 +176,9 @@ const FULL_TO_ISO: Record<string, string> = Object.fromEntries(
  */
 function expandCountry(value: string): string[] {
   const v = value.trim()
-  const full = ISO_TO_FULL[v]
+  const full = COUNTRY_CODE_TO_NAME[v]
   if (full) return [v, full]
-  const iso = FULL_TO_ISO[v]
+  const iso = JURISDICTION_BY_NAME[v]?.code
   if (iso) return [v, iso]
   return [v]
 }
@@ -645,14 +631,12 @@ export function applicableLibraryDocs(
           .map((s) => s.trim())
           .filter(Boolean)
       : []
-    // Canonicalize the library's freeform industry tags ("IT" → "Technology",
-    // "Government" → "Government & Defense") so they line up with the user's
-    // canonical industry from the assessment store.
-    const rawIndustries = doc.applicableIndustries ?? []
-    const industries = Array.from(
-      new Set(
-        rawIndustries.map((t) => canonicalizeLibraryIndustry(t)).filter((v): v is string => !!v)
-      )
+    // The Library's `applicable_industries` column holds the industry landscape's own
+    // industry names, which the sector vocabulary resolves (see `sectorCodesOverlap`),
+    // so the tags are read as they are. A tag the vocabulary does not know (the
+    // landscape's all-industry label) names no sector and is left out of the count.
+    const industries = Array.from(new Set(doc.applicableIndustries ?? [])).filter(
+      (t) => sectorKeysFor(t) !== null
     )
     // Library uses `authorsOrOrganization` as a freeform credit string; take the
     // first canonical org as the closest analogue to "enforcementBody". Best-effort.

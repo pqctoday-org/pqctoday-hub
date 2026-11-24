@@ -31,7 +31,7 @@ export interface ThreatData {
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   sourceUrlQuality?: string
-  /** The trusted-sources registry id backing this record. Present on 107 of 114
+  /** The trusted-sources registry id backing this record. Present on most
    *  active rows; parsed from the CSV since 2026-08-10 (B+ remediation 4.3) so
    *  `evidenceStrength` can weigh "who says this" rather than only how
    *  confident the extraction was. */

@@ -207,7 +207,7 @@ import { ArchitecturePanel } from './ArchitecturePanel'
 import { connectionOperationSummary } from '@/data/simOperationCapabilities'
 import { ARCHITECTURES, edgeState } from '@/data/simArchitecture'
 import { TrapInsightsPanel } from './TrapInsightsPanel'
-import { useSimulationStore, RUN_START } from '@/store/useSimulationStore'
+import { useSimulationStore, RUN_START, renameUkJurisdiction } from '@/store/useSimulationStore'
 import { hasRunStarted } from '@/simulation/runState'
 import { archStepShortfall } from '@/simulation/archCapacity'
 import { FRAMEWORK_COVERAGE, hasCompleteCoverage } from '@/simulation/frameworkCoverage'
@@ -1069,7 +1069,9 @@ export function SimulationView() {
       if (sz && SIZES.some((o) => o.id === sz)) setSize(sz)
       const sec = searchParams.get('sector')
       if (sec) setSector(sec)
-      const c = searchParams.get('country')
+      // links shared before the UK's code became GB still say country=UK
+      const c = renameUkJurisdiction({ country: searchParams.get('country') }).country as
+        string | null
       if (c && JURISDICTION_RULES[c]) setCountry(c)
     }
     const next = new URLSearchParams(searchParams)

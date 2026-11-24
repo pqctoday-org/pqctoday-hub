@@ -3,7 +3,7 @@
 //
 // Usage:
 //   import { loadGlossary, loadCuriousGlossary, loadPkcs11Glossary } from '@/data/glossary'
-//   const terms = await loadGlossary()         // all 515 terms
+//   const terms = await loadGlossary()         // all terms
 //   const curious = await loadCuriousGlossary() // simplified definitions
 //   const pkcs11 = await loadPkcs11Glossary()   // PKCS#11 chip terms
 //
