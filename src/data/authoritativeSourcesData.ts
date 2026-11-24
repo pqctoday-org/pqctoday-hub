@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { loadLatestCSV, parseBoolYesNo } from './csvUtils'
+import { VIEW_CITED_SOURCE_IDS, type CitedView } from './generated/viewSourceCitations.generated'
 
 export interface AuthoritativeSource {
   /** Raw CSV `id` column — was never captured before 2026-07-16, so nothing
@@ -17,14 +18,11 @@ export interface AuthoritativeSource {
   region: 'Americas' | 'EMEA' | 'APAC' | 'Global'
   primaryUrl: string
   description: string
-  leadersCsv: boolean
-  libraryCsv: boolean
-  algorithmCsv: boolean
-  threatsCsv: boolean
-  timelineCsv: boolean
-  complianceCsv: boolean
-  migrateCsv: boolean
-  /** ADDED 2026-08-07 — see ViewType 'Patents' below. */
+  /**
+   * Whether this source names the issuing authority of patent records. Patent records carry no
+   * trusted_source_id, so /patents is the one page whose source list is not derived from its
+   * records. Every other page's list comes from the ids its records cite (see getSourcesForView).
+   */
   patentsCsv: boolean
   lastVerifiedDate: string
 }
@@ -81,13 +79,6 @@ const { data, metadata } = loadLatestCSV<RawSourceRow, AuthoritativeSource>(
     region: row.Region as AuthoritativeSource['region'],
     primaryUrl: row.Primary_URL,
     description: row.Description,
-    leadersCsv: parseBoolYesNo(row.Leaders_CSV),
-    libraryCsv: parseBoolYesNo(row.Library_CSV),
-    algorithmCsv: parseBoolYesNo(row.Algorithm_CSV),
-    threatsCsv: parseBoolYesNo(row.Threats_CSV),
-    timelineCsv: parseBoolYesNo(row.Timeline_CSV),
-    complianceCsv: parseBoolYesNo(row.Compliance_CSV),
-    migrateCsv: parseBoolYesNo(row.Migrate_CSV),
     patentsCsv: parseBoolYesNo(row.Patents_CSV),
     lastVerifiedDate: row.Last_Verified_Date,
   })
@@ -97,22 +88,24 @@ export const authoritativeSources: AuthoritativeSource[] = data
 
 export const sourcesMetadata = metadata
 
-// Filter sources by view type
+const CITED_BY_VIEW: Record<CitedView, ReadonlySet<string>> = Object.fromEntries(
+  Object.entries(VIEW_CITED_SOURCE_IDS).map(([view, ids]) => [view, new Set(ids)])
+) as Record<CitedView, ReadonlySet<string>>
+
+/** True when the page's active records cite this source (by its id, or its trusted-sources id). */
+export function isSourceCitedInView(source: AuthoritativeSource, viewType: ViewType): boolean {
+  if (viewType === 'Patents') return source.patentsCsv
+  // eslint-disable-next-line security/detect-object-injection -- viewType is the typed ViewType union
+  const cited = CITED_BY_VIEW[viewType]
+  return (
+    (source.id !== undefined && cited.has(source.id)) ||
+    (source.trustedSourceId !== undefined && cited.has(source.trustedSourceId))
+  )
+}
+
+/** The sources a page lists: those its own records cite (derived, not hand-flagged). */
 export function getSourcesForView(viewType: ViewType): AuthoritativeSource[] {
-  const filterMap: Record<ViewType, keyof AuthoritativeSource> = {
-    Timeline: 'timelineCsv',
-    Library: 'libraryCsv',
-    Threats: 'threatsCsv',
-    Leaders: 'leadersCsv',
-    Algorithms: 'algorithmCsv',
-    Compliance: 'complianceCsv',
-    Migrate: 'migrateCsv',
-    Patents: 'patentsCsv',
-  }
-
-  const filterKey = filterMap[viewType]
-
-  return authoritativeSources.filter((source) => source[filterKey] === true)
+  return authoritativeSources.filter((source) => isSourceCitedInView(source, viewType))
 }
 
 /** Looks up a source by its raw CSV `id` (e.g. a compliance row's trustedSourceId). */

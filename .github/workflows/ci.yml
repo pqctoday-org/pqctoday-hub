@@ -111,7 +111,7 @@ jobs:
         # Each generated file must match the data it is made from. Until now these ran
         # only in the local gates, so a data change that skipped regeneration reached
         # `main` unnoticed.
-        run: npm run gen:timeline-facts:check && npm run gen:landing-counts:check && npm run generate:data-filenames:check && npm run gen:algorithm-properties:check
+        run: npm run gen:timeline-facts:check && npm run gen:landing-counts:check && npm run generate:data-filenames:check && npm run gen:algorithm-properties:check && npm run gen:view-source-citations:check
 
       - name: Lint
         # Carries the eslint-plugin-security rules — a security gate, not style.

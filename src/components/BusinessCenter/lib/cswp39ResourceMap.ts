@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { CSWP39StepId } from './cswp39Tier'
-import type { AuthoritativeSource } from '@/data/authoritativeSourcesData'
+import { isSourceCitedInView, type AuthoritativeSource } from '@/data/authoritativeSourcesData'
 
 export interface ResourceLink {
   label: string
@@ -151,7 +151,7 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
       { toolId: 'vpn-sim', label: 'VPN Simulator', hint: 'IPsec/IKEv2 PQC handshake' },
       { toolId: 'pqc-ssh-sim', label: 'PQC SSH Simulator', hint: 'SSH PQC integration' },
     ],
-    authoritativeSourceFilter: (s) => s.threatsCsv,
+    authoritativeSourceFilter: (s) => isSourceCitedInView(s, 'Threats'),
   },
 
   prioritise: {
@@ -182,7 +182,7 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
       { toolId: 'hsm-capacity', label: 'HSM Capacity Calculator' },
       { toolId: 'hybrid-sigs', label: 'Hybrid Signature Spectrums' },
     ],
-    authoritativeSourceFilter: (s) => s.complianceCsv,
+    authoritativeSourceFilter: (s) => isSourceCitedInView(s, 'Compliance'),
   },
 
   implement: {
@@ -236,6 +236,6 @@ export const CSWP39_RESOURCE_MAP: Record<CSWP39StepId, StepResources> = {
       { toolId: 'kdf-derivation', label: 'KDF Derivation' },
       { toolId: 'openssl-studio', label: 'OpenSSL Studio' },
     ],
-    authoritativeSourceFilter: (s) => s.algorithmCsv,
+    authoritativeSourceFilter: (s) => isSourceCitedInView(s, 'Algorithms'),
   },
 }
