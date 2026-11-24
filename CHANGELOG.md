@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.223.0] - 2026-11-24
+
+Every Learn module now shows where it fits in the learning path: its stage, which modules to take first, and where to go next.
+
+### Added
+
+- **Where this fits, on every Learn module** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: Under each module title, a short line shows its stage (Basics, Core concepts, Practitioner, Specialist or Expert), the modules to take first and the modules to go to next, each a link. The Learn catalogue cards show the same stage. Stages and take-first links were re-based on what each lesson explains and what it assumes you already know.
+
+### Changed
+
+- **Seven more NICE work roles** [view:/learn] [persona:executive] [persona:grc] [persona:researcher] [persona:curious]: Learn modules now point to seven more official NICE Framework v2.2.0 work roles they teach to, including Executive Cybersecurity Leadership, Cybersecurity Policy and Planning, and Technology Research and Development. Every module now has a NICE mapping, and each persona opens the NICE view on its most relevant role.
+
+### Data
+
+- **One duplicate authoritative source retired** [view:/library] [persona:researcher] [persona:grc]: KU Leuven COSIC was listed twice; the older entry is marked retired and the entry with the authoritative link remains.
+
 ## [4.222.0] - 2026-11-23
 
 Four existing modules gain a new section each, written one sourced sentence at a time with the document, edition and place shown for every statement, with twelve new quiz questions on them.

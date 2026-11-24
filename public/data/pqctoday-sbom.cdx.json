@@ -1,13 +1,13 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:4aa0d1d6-3181-55dc-9584-9b6c688fc3c7",
+  "serialNumber": "urn:uuid:a793d970-7827-5783-9eb1-39cd37d7503b",
   "version": 1,
   "metadata": {
     "component": {
       "type": "application",
       "name": "pqctoday-hub",
-      "version": "4.222.0"
+      "version": "4.223.0"
     },
     "properties": [
       {
