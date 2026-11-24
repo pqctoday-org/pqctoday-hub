@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect } from './fixtures/blockAnalytics'
 import { INFOGRAPHIC_IMAGE_REVISIONS } from '../src/data/infographicImageRevisions'
+import { INFOGRAPHIC_SAMPLE_ASSUMPTIONS } from '../src/data/infographicSampleAssumptions'
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -54,9 +55,13 @@ for (const width of [1280, 390]) {
             )
           )
           .toBe(true)
-        await expect(
-          page.locator('[data-testid="infographic-sample-assumptions"]:visible')
-        ).toBeVisible()
+        // Worked assumptions exist only for infographics that show sample numbers; the
+        // summary posters added since 4.217 have none.
+        if (id in INFOGRAPHIC_SAMPLE_ASSUMPTIONS) {
+          await expect(
+            page.locator('[data-testid="infographic-sample-assumptions"]:visible')
+          ).toBeVisible()
+        }
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
           true
         )
