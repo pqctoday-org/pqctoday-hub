@@ -9,6 +9,7 @@ import type {
 } from '@/components/PKILearning/modules/Quiz/types'
 import { loadLatestCSV, splitPipe } from './csvUtils'
 import { PERSONA_IDS } from './personaIds'
+import { LEARN_MODULE_BY_ID } from './generated/learnModules.generated'
 
 // ─── Raw CSV row shape ───
 
@@ -113,10 +114,13 @@ export function parseQuizCSV(csvContent: string): QuizQuestion[] {
 
 // ─── Dynamic category metadata ───
 
-const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string; icon: string }> =
+// A category whose id is a Learn lesson id takes its label from the lessons data
+// file (`quiz_label` where the quiz wording is deliberately different from the
+// lesson title, else the title), so it is never typed here. Only the categories
+// that are not lessons carry their own `label`.
+const CATEGORY_CONFIG: Record<QuizCategory, { label?: string; description: string; icon: string }> =
   {
     'ai-security-pqc': {
-      label: 'AI & Machine Learning PQC',
       description:
         'AI model protection, true data provenance, scale encryption, and securing agentic workflows.',
       icon: 'Cpu',
@@ -164,13 +168,11 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       icon: 'Key',
     },
     'digital-assets': {
-      label: 'Digital Assets',
       description:
         'Blockchain cryptography, elliptic curves, HD wallets, and post-quantum threats to digital assets.',
       icon: 'Bitcoin',
     },
     'tls-basics': {
-      label: 'TLS Basics',
       description:
         'TLS 1.3 handshake, cipher suites, key exchange, certificates, and PQC integration.',
       icon: 'Lock',
@@ -182,415 +184,346 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       icon: 'Award',
     },
     'digital-id': {
-      label: 'Digital Identity',
       description:
         'eIDAS 2.0, EUDI Wallets, credential formats, trust frameworks, and post-quantum readiness for digital identity.',
       icon: 'Fingerprint',
     },
     '5g-security': {
-      label: '5G Security',
       description:
         'SUCI subscriber privacy, 5G-AKA authentication, MILENAGE, SIM provisioning, and post-quantum upgrades for 5G networks.',
       icon: 'Radio',
     },
     'quantum-threats': {
-      label: 'Quantum Threats',
       description:
         "Shor's and Grover's algorithms, CRQC timelines, HNDL attack mechanics, and security level degradation.",
       icon: 'Zap',
     },
     'hybrid-crypto': {
-      label: 'Hybrid Cryptography',
       description:
         'Hybrid KEMs, composite signatures, X25519MLKEM768, dual-OID certificates, and transition standards.',
       icon: 'Combine',
     },
     'crypto-agility': {
-      label: 'Crypto Agility',
       description:
         'Abstraction layers, CBOM scanning, provider model, CycloneDX, and the 7-phase migration framework.',
       icon: 'Repeat',
     },
     'vpn-ssh-pqc': {
-      label: 'VPN/IPsec & SSH',
       description:
         'IKEv2 with ML-KEM, SSH hybrid key exchange, WireGuard Rosenpass, and protocol size comparisons.',
       icon: 'Shield',
     },
     'dnssec-pqc': {
-      label: 'DNSSEC & PQ Signatures',
       description:
         'ML-DSA-44 for DNSSEC (IANA algorithm 18), Cloudflare’s 1.1.1.1 pilot, and the signature-size problem.',
       icon: 'Globe',
     },
     'stateful-signatures': {
-      label: 'Stateful Signatures',
       description:
         'LMS/HSS, XMSS/XMSS^MT, Merkle tree signatures, one-time signature state, and NIST SP 800-208.',
       icon: 'GitBranch',
     },
     'email-signing': {
-      label: 'Email & Document Signing',
       description:
         'S/MIME, CMS SignedData/EnvelopedData, RFC 9629 KEMRecipientInfo, and PQC migration for email.',
       icon: 'Mail',
     },
     'kms-pqc': {
-      label: 'KMS & PQC Key Management',
       description:
         'Key lifecycle (NIST SP 800-57), envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
       icon: 'KeyRound',
     },
     'pqc-hw-acceleration': {
-      label: 'PQC Hardware Acceleration',
       description:
         'SIMD, crypto instructions, GPU, FPGA, ASIC and NPU acceleration of ML-DSA and SLH-DSA, with measured Arm and FPGA results.',
       icon: 'Cpu',
     },
     'hsm-pqc': {
-      label: 'HSM & PQC Operations',
       description:
         'PKCS#11 v3.2, HSM vendor comparison, firmware migration, and FIPS 140-3 validation.',
       icon: 'HardDrive',
     },
     'crypto-product-certification': {
-      label: 'Product Certification: Fundamentals',
       description:
         'What each certification scheme proves, scope before level, and what adding PQC changes in a certified product.',
       icon: 'Award',
     },
     'fips-140-3-certification': {
-      label: 'FIPS 140-3 Certification',
       description:
         'FIPS 140-3 and the CMVP, security levels, the validation queue, and algorithm validation vs module certificates.',
       icon: 'Award',
     },
     'pci-certification': {
-      label: 'PCI Certification',
       description:
         'PCI PTS HSM device approval, what v5.0 changed, and the payment operating stack (PIN, P2PE, KMO).',
       icon: 'Award',
     },
     'government-defense-pqc': {
-      label: 'Government & Defense PQC',
       description:
         'CNSA 2.0 and what it replaces, the CNSSP 15 dates, NSS vs federal civilian mandates, and NSA’s position on hybrids.',
       icon: 'Building2',
     },
     'pki-enrollment-protocols': {
-      label: 'PKI Enrollment (EST & CMP)',
       description:
         'EST and CMP enrollment, proof-of-possession for KEM keys (RFC 9810 encrCert), and the ML-DSA / ML-KEM X.509 identifiers.',
       icon: 'KeyRound',
     },
     'talking-about-pqc': {
-      label: 'Talking About PQC Accurately',
       description:
         'Which dates are real and whose they are, what a certificate proves, and which claims to avoid.',
       icon: 'FileCheck',
     },
     'acvp-lab-workflow': {
-      label: 'ACVP Lab Workflow',
       description:
         'CAVP vs CMVP, the ACVP vector-set lifecycle, what a PKCS#11 adapter can and cannot test, and evidence levels.',
       icon: 'Microscope',
     },
     'cc-eucc-certification': {
-      label: 'Common Criteria, EUCC & eIDAS',
       description:
         'Common Criteria EALs and augmentations, CC:2022, EUCC, eIDAS qualified devices and their Protection Profiles.',
       icon: 'Award',
     },
     'entropy-randomness': {
-      label: 'Entropy & Randomness',
       description:
         'SP 800-90 A/B/C, DRBGs, entropy sources, TRNG vs QRNG, and min-entropy estimation.',
       icon: 'Dice1',
     },
     'merkle-tree-certs': {
-      label: 'Merkle Tree Certificates',
       description:
         'MTC batch signing, inclusion proofs, MTCA architecture, domain-separated hashing, and IETF PLANTS WG standardization.',
       icon: 'TreePine',
     },
     qkd: {
-      label: 'Quantum Key Distribution',
       description:
         'BB84 protocol, QBER eavesdropper detection, sifted keys, privacy amplification, satellite QKD, and QKD + PQC hybrid integration.',
       icon: 'Atom',
     },
     'code-signing': {
-      label: 'Code Signing & Supply Chain',
       description:
         'Code signing certificate chains, ML-DSA package signing, Sigstore keyless signing, and supply chain integrity.',
       icon: 'Package',
     },
     'api-security-jwt': {
-      label: 'API Security & JWT',
       description:
         'JWT/JWS/JWE with PQC algorithms, JOSE header changes, ML-DSA token signing, ML-KEM key agreement, and OAuth 2.0 migration.',
       icon: 'KeyRound',
     },
     'iot-pqc': {
-      label: 'IoT & Embedded Device PQC',
       description:
         'PQC for constrained devices: algorithm fit by device class, firmware signing (SUIT/COSE), DTLS 1.3 and EDHOC, certificate size, device identity, fleet keys, and IoT regulation.',
       icon: 'Cpu',
     },
     'pqc-risk-management': {
-      label: 'PQC Risk Management',
       description:
         'Risk quantification, CRQC timeline planning, risk registers, and quantum threat-based risk assessment.',
       icon: 'AlertTriangle',
     },
     'pqc-business-case': {
-      label: 'PQC Business Case',
       description:
         'ROI modeling, breach cost analysis, budget frameworks, and executive communication for PQC investment.',
       icon: 'TrendingUp',
     },
     'pqc-governance': {
-      label: 'PQC Governance & Policy',
       description:
         'RACI matrices, PQC policies, governance models, board reporting, and organizational accountability.',
       icon: 'Building2',
     },
     'compliance-strategy': {
-      label: 'Compliance Strategy',
       description:
         'Multi-jurisdiction mapping, audit readiness, regulatory horizon scanning, and compliance planning.',
       icon: 'Scale',
     },
     'migration-program': {
-      label: 'Migration Program',
       description:
         'Roadmap construction, phase-gating, resource planning, stakeholder communications, and KPI tracking.',
       icon: 'Route',
     },
     'vendor-risk': {
-      label: 'Vendor & Supply Chain',
       description:
         'Vendor PQC scorecards, contract requirements, SBOM/CBOM evaluation, and third-party risk assessment.',
       icon: 'Package',
     },
     'data-asset-sensitivity': {
-      label: 'Data & Asset Sensitivity',
       description:
         'Classifying data assets, mapping compliance obligations, NIST RMF/ISO 27005/FAIR methodologies, and PQC migration priority.',
       icon: 'Database',
     },
     'standards-bodies': {
-      label: 'Standards, Certification & Compliance Bodies',
       description:
         'NIST, ISO/IEC, ETSI, IETF, CMVP, ENISA, ANSSI, BSI — who creates standards, who certifies, and who mandates.',
       icon: 'Building2',
     },
     'web-gateway-pqc': {
-      label: 'Web Gateway PQC',
       description:
         'PQC deployment at web gateways, CDNs, load balancers, and WAFs: TLS termination, certificate lifecycle, and vendor migration.',
       icon: 'Globe',
     },
     'ot-pqc': {
-      label: 'OT & Industrial Control Systems PQC',
       description:
         'IEC 62443 zones and conduits, OT protocol security (IEC 61850/62351, DNP3, OPC UA, CIP Security, PROFINET, BACnet/SC), safety timing, PLC signing, NERC CIP and NIS2.',
       icon: 'Zap',
     },
     'emv-payment-pqc': {
-      label: 'EMV & Payment PQC',
       description:
         'EMV chip card authentication, payment network PQC migration, tokenization, POS terminal crypto, and PCI DSS compliance.',
       icon: 'CreditCard',
     },
     'software-supply-chain-pqc': {
-      label: 'Software Supply Chain PQC',
       description:
         'Reading the signature links of a software supply chain from their documents: the status of post-quantum signatures per ecosystem, TUF and Uptane roles and thresholds, SLSA and in-toto provenance, and changing an algorithm after a verifier has shipped.',
       icon: 'FileCheck',
     },
     'healthcare-pqc': {
-      label: 'Healthcare PQC',
       description:
         'HIPAA/HITECH compliance, HL7 FHIR security, medical device cryptography, and healthcare data protection.',
       icon: 'Heart',
     },
     'aerospace-pqc': {
-      label: 'Aerospace PQC',
       description:
         'Avionics protocol constraints, satellite link budgets, DO-178C certification, export controls, and multi-decade fleet crypto interoperability.',
       icon: 'Rocket',
     },
     'media-drm-pqc': {
-      label: 'Media, Entertainment & DRM PQC',
       description:
         'Reading content-protection and provenance specifications precisely: the AACS key ladder, CI Plus, the MovieLabs ECP specification, streaming licenses, C2PA Content Credentials and NIST IR 8547.',
       icon: 'Shield',
     },
     'automotive-pqc': {
-      label: 'Automotive PQC',
       description:
         'Vehicle E/E architecture, sensor data integrity, ISO 26262 safety-crypto, automotive HSM lifecycle, digital car keys, OTA orchestration, and V2X PKI migration.',
       icon: 'Car',
     },
     'crypto-dev-apis': {
-      label: 'Cryptographic APIs & Languages',
       description:
         'JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, Bouncy Castle, and Rust/Go/Python/Java crypto ecosystems with PQC library selection, provider patterns, and migration guidance.',
       icon: 'Code2',
     },
     'confidential-computing': {
-      label: 'Confidential Computing & TEEs',
       description:
         'TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis for confidential computing.',
       icon: 'Cpu',
     },
     'homomorphic-encryption': {
-      label: 'Homomorphic Encryption & HSM Key Custody',
       description:
         'Fully homomorphic encryption (FHE): the ISO/IEC 28033 draft schemes, FHE keys and who runs each operation, FHE against the quantum threat, and how an HSM holds the FHE secret key without becoming a decryption oracle.',
       icon: 'Lock',
     },
     'platform-eng-pqc': {
-      label: 'Platform Engineering & PQC',
       description:
         'CI/CD pipeline crypto inventory, container signing migration, IaC quantum-vulnerable defaults, policy enforcement, posture monitoring, and platform migration runway.',
       icon: 'GitBranch',
     },
     'secrets-management-pqc': {
-      label: 'Secrets Management & PQC',
       description:
         'Migrate secrets managers (Vault, AWS Secrets Manager, Azure Key Vault) to quantum-safe encryption, automated rotation, and PQC key wrapping.',
       icon: 'KeyRound',
     },
     'network-security-pqc': {
-      label: 'Network Security & PQC',
       description:
         'NGFWs, IDS/IPS, TLS inspection, and zero trust network architecture migration to post-quantum cryptography.',
       icon: 'Network',
     },
     'database-encryption-pqc': {
-      label: 'Database Encryption & PQC',
       description:
         'TDE, column-level encryption, queryable encryption, and BYOK/HYOK migration for databases with external PQC KMS.',
       icon: 'Database',
     },
     'iam-pqc': {
-      label: 'Identity & Access Management with PQC',
       description:
         'JWT/SAML/OIDC token signing with ML-DSA, Active Directory quantum risks, and PQC zero trust identity architecture.',
       icon: 'UserCheck',
     },
     'secure-boot-pqc': {
-      label: 'Secure Boot & Firmware PQC',
       description:
         'Migrate UEFI Secure Boot, firmware signing, and TPM attestation to post-quantum cryptography with ML-DSA-65.',
       icon: 'Shield',
     },
     'os-pqc': {
-      label: 'OS & Platform Crypto PQC',
       description:
         'System-wide TLS policies, SSH host key migration, package signing, and FIPS mode compatibility for OS-level PQC.',
       icon: 'Monitor',
     },
     'exec-quantum-impact': {
-      label: 'Executive Quantum Impact',
       description:
         'Fiduciary risk, regulatory deadlines, board-level PQC action planning, and quantum exposure self-assessment.',
       icon: 'Briefcase',
     },
     'dev-quantum-impact': {
-      label: 'Developer Quantum Impact',
       description:
         'Library transitions, key/signature size impacts, TLS/JWT migration, and developer PQC readiness.',
       icon: 'Code',
     },
     'arch-quantum-impact': {
-      label: 'Architect Quantum Impact',
       description:
         'PKI hierarchy migration, hybrid certificate design, HSM root of trust, and crypto-agile architecture.',
       icon: 'Layers',
     },
     'ops-quantum-impact': {
-      label: 'Ops Quantum Impact',
       description:
         'Certificate operations, VPN/SSH fleet migration, monitoring recalibration, and deployment pipeline PQC.',
       icon: 'Settings',
     },
     'research-quantum-impact': {
-      label: 'Researcher Quantum Impact',
       description:
         'Research data HNDL exposure, institutional infrastructure, PQC algorithm research opportunities.',
       icon: 'Microscope',
     },
     'pqc-testing-validation': {
-      label: 'PQC Testing & Validation',
       description:
         'Passive discovery, active scanning, performance benchmarking, interoperability testing, TVLA, and test strategy design.',
       icon: 'ScanSearch',
     },
     'crypto-mgmt-modernization': {
-      label: 'Crypto Management Modernization',
       description:
         'Crypto inventory, agility, lifecycle management, and modernization programs for post-quantum readiness.',
       icon: 'RefreshCw',
     },
     'slh-dsa': {
-      label: 'SLH-DSA',
       description:
         'Stateless hash-based digital signatures (FIPS 205) — SPHINCS+ standardised for post-quantum signing.',
       icon: 'TreePine',
     },
     'mls-group-messaging': {
-      label: 'MLS Group Messaging',
       description:
         'Messaging Layer Security (RFC 9420) — PQC-hybrid group key establishment for secure group communication.',
       icon: 'MessageSquare',
     },
     'pqc-candidates': {
-      label: 'PQC Candidates',
       description:
         'NIST Round 4 and on-ramp candidates — Falcon, HQC, FrodoKEM, Classic McEliece, and other post-quantum contenders.',
       icon: 'FlaskConical',
     },
     sbom: {
-      label: 'Software Bill of Materials',
       description:
         'SPDX vs CycloneDX, NTIA minimum elements, VEX vulnerability triage, and the EO 14028 / EU CRA regulatory drivers.',
       icon: 'Package',
     },
     cbom: {
-      label: 'Cryptography Bill of Materials',
       description:
         'Cryptographic asset inventory, ghost crypto, layered discovery, key identity & provenance, and machine-verifiable CBOMs.',
       icon: 'KeyRound',
     },
     'crypto-registry': {
-      label: 'CycloneDX Cryptography Registry',
       description:
         'The canonical algorithm and elliptic-curve naming catalog that resolves the same mechanism across HSMs, certificates, protocols, and libraries.',
       icon: 'BookMarked',
     },
     'verification-closure': {
-      label: 'Decommissioning & Program Closure',
       description:
         'Retiring classical cryptography on a defensible schedule, proving migration from observed behaviour, and closing the program to business-as-usual.',
       icon: 'CheckCircle2',
     },
     'pqc-grc': {
-      label: 'PQC GRC',
       description:
         'The KRI cascade, risk-appetite statement, regulatory horizon reporting, and GRC-SOC handoff that make a PQC migration governable and auditable.',
       icon: 'Scale',
     },
     'skills-team-structure': {
-      label: 'Skills & Team Structure',
       description:
         'Staffing a PQC migration program — core roles, team-sizing heuristics, build/borrow/buy decisions, and the federated Crypto Champion network.',
       icon: 'Users',
     },
     'soc-implementation-pqc': {
-      label: 'SOC Implementation for PQC',
       description:
         'Detection use cases, quantum threat intelligence, incident-response playbooks, and tabletop exercises for operationalizing PQC defense in the SOC.',
       icon: 'ScanSearch',
@@ -602,6 +535,14 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       icon: 'AlertTriangle',
     },
   }
+
+function categoryLabel(id: QuizCategory): string {
+  const own = CATEGORY_CONFIG[id].label
+  if (own !== undefined) return own
+  const lesson = LEARN_MODULE_BY_ID[id]
+  if (!lesson) throw new Error(`quiz category "${id}" has no label and is not a Learn lesson`)
+  return lesson.quizLabel ?? lesson.title
+}
 
 // Compute question counts dynamically from loaded data
 const categoryCounts = new Map<QuizCategory, number>()
@@ -619,6 +560,7 @@ export const quizCategories: QuizCategoryMeta[] = (Object.keys(CATEGORY_CONFIG) 
   .map((id) => ({
     id,
     ...CATEGORY_CONFIG[id],
+    label: categoryLabel(id),
     questionCount: categoryCounts.get(id) || 0,
   }))
   .filter((c) => c.questionCount > 0)

@@ -9,8 +9,16 @@
  * target is a routed page, module or tool.
  */
 import type { RelatedEntry } from '@/data/toolRelations'
+import { LEARN_MODULE_BY_ID } from '@/data/generated/learnModules.generated'
 
 const P = (to: string, title: string, reason: string): RelatedEntry => ({ to, title, reason })
+
+/** A related Learn lesson: the link text is the lesson's short label (else its title) from the lessons data file. */
+const L = (id: string, reason: string): RelatedEntry => {
+  const lesson = LEARN_MODULE_BY_ID[id]
+  if (!lesson) throw new Error(`pageRelations: unknown lesson "${id}"`)
+  return P(`/learn/${id}`, lesson.shortLabel ?? lesson.title, reason)
+}
 
 export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   '/': [
@@ -26,11 +34,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
     ),
     P('/threats', 'Threats', 'The threat register the assessment scores your estate against'),
     P('/compliance', 'Compliance', 'The frameworks and deadlines behind the compliance questions'),
-    P(
-      '/learn/pqc-risk-management',
-      'PQC Risk Management',
-      'The module on the risk method the assessment applies'
-    ),
+    L('pqc-risk-management', 'The module on the risk method the assessment applies'),
   ],
   '/report': [
     P('/assess', 'Assess', 'Change an answer and the report re-computes'),
@@ -39,7 +43,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   ],
   '/learn': [
     P('/playground', 'Playground', 'The hands-on tools the modules link to'),
-    P('/learn/quiz', 'Quiz', 'Questions per module category, with answers'),
+    L('quiz', 'Questions per module category, with answers'),
     P('/explore', 'Explore', 'The same topics organised by question instead of by track'),
   ],
   '/playground': [
@@ -48,17 +52,13 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
     P('/algorithms', 'Algorithms', 'The parameter sets and sizes the tools use'),
   ],
   '/playground/cacp': [
-    P(
-      '/learn/crypto-agility',
-      'Crypto Agility',
-      'The module on changing algorithms by policy instead of by code'
-    ),
-    P('/learn/kms-pqc', 'KMS & PQC', 'The module on key-management systems and crypto agility'),
+    L('crypto-agility', 'The module on changing algorithms by policy instead of by code'),
+    L('kms-pqc', 'The module on key-management systems and crypto agility'),
     P('/playground/hsm', 'PKCS#11 HSM', 'The key store the control plane governs'),
   ],
   '/playground/hsm': [
-    P('/learn/hsm-pqc', 'HSM & PQC Operations', 'The module behind this lab'),
-    P('/learn/acvp-lab-workflow', 'ACVP Lab Workflow', 'The lesson behind the Validation tab'),
+    L('hsm-pqc', 'The module behind this lab'),
+    L('acvp-lab-workflow', 'The lesson behind the Validation tab'),
     P(
       '/playground/hsm-capacity',
       'HSM Capacity Calculator',
@@ -68,16 +68,12 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   ],
   '/playground/interactive': [
     P('/algorithms', 'Algorithms', 'What each parameter set costs in bytes and time'),
-    P('/learn/pqc-candidates', 'PQC Candidates & Lifecycle', 'Where the algorithms here came from'),
+    L('pqc-candidates', 'Where the algorithms here came from'),
     P('/playground', 'Playground', 'The rest of the hands-on tools'),
   ],
   '/openssl': [
     P('/playground/openssl-studio', 'OpenSSL Studio tool', 'The same studio inside the Playground'),
-    P(
-      '/learn/crypto-dev-apis',
-      'Cryptographic APIs & Developer Languages',
-      'The module on the APIs behind the commands'
-    ),
+    L('crypto-dev-apis', 'The module on the APIs behind the commands'),
     P(
       '/playground/pki-enrollment',
       'PKI Enrollment',
@@ -88,7 +84,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
     P('/playground/interactive', 'Interactive Playground', 'Run the algorithms compared here'),
     P('/library', 'Library', 'The FIPS documents the parameter sets are taken from'),
     P('/patents', 'Patents', 'The filings on the schemes compared here'),
-    P('/learn/pqc-candidates', 'PQC Candidates & Lifecycle', 'How the candidates were selected'),
+    L('pqc-candidates', 'How the candidates were selected'),
   ],
   '/compliance': [
     P('/timeline', 'Timeline', 'The same deadlines in date order'),
@@ -97,11 +93,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
       'Compliance Checklist',
       'Track the frameworks that apply to you'
     ),
-    P(
-      '/learn/compliance-strategy',
-      'Compliance & Regulatory Strategy',
-      'The module on building a compliance position'
-    ),
+    L('compliance-strategy', 'The module on building a compliance position'),
   ],
   '/migrate': [
     P(
@@ -110,11 +102,11 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
       'Sequence the migration the catalogue describes'
     ),
     P('/timeline', 'Timeline', 'The dates vendor support is measured against'),
-    P('/learn/migration-program', 'Migration Program Mgmt', 'The module on running the programme'),
+    L('migration-program', 'The module on running the programme'),
   ],
   '/business': [
     P('/report', 'Readiness Report', 'The recommendations the tools produce deliverables for'),
-    P('/learn/pqc-business-case', 'PQC Business Case', 'The module behind the funding tools'),
+    L('pqc-business-case', 'The module behind the funding tools'),
     P('/simulation', 'Simulation', 'A guided walk through a reference programme'),
   ],
   '/timeline': [
@@ -133,17 +125,13 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   ],
   '/threats': [
     P('/assess', 'Assess', 'Score these threats against your own estate'),
-    P('/learn/quantum-threats', 'Quantum Threats', 'The module on what breaks and when'),
+    L('quantum-threats', 'The module on what breaks and when'),
     P('/business/tools/risk-register', 'Risk Register', 'Record the threats that apply to you'),
   ],
   '/simulation': [
     P('/assess', 'Assess', 'Start the same programme on your own estate'),
     P('/business', 'Command Center', 'The tools the simulation stages use'),
-    P(
-      '/learn/migration-program',
-      'Migration Program Mgmt',
-      'The module on the programme being walked'
-    ),
+    L('migration-program', 'The module on the programme being walked'),
   ],
   '/patents': [
     P('/algorithms', 'Algorithms', 'The schemes the claims are filed on'),
@@ -152,11 +140,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   ],
   '/leaders': [
     P('/library', 'Library', 'The documents these people authored'),
-    P(
-      '/learn/standards-bodies',
-      'Standards, Certification & Compliance Bodies',
-      'The organisations they work in'
-    ),
+    L('standards-bodies', 'The organisations they work in'),
     P('/patents', 'Patents', 'Filings by the same organisations'),
   ],
   '/explore': [
@@ -176,7 +160,7 @@ export const PAGE_RELATIONS: Record<string, RelatedEntry[]> = {
   '/faq': [
     P('/learn', 'Learn', 'The modules the answers link to'),
     P('/explore', 'Explore', 'Topics by question, with a first stop for each'),
-    P('/learn/pqc-101', 'PQC 101', 'The foundations module the first answers point at'),
+    L('pqc-101', 'The foundations module the first answers point at'),
   ],
   '/about': [
     P(
