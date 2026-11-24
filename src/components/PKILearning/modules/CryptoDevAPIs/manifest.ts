@@ -3,14 +3,14 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-dev-apis',
-  contentVersion: 18,
+  contentVersion: 19,
   lm_id: 'LM-021',
   title: 'Cryptographic APIs & Developer Languages',
   description:
     'Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, and Bouncy Castle across 7 languages. Provider patterns, PQC library selection, support matrix, crypto agility patterns, and migration decision lab.',
   whyThisMatters:
     'The crypto API your language calls determines how hard your PQC migration will be — JCA sends you down a different path than raw OpenSSL EVP, and getting that provider choice wrong early means rewriting integration code twice.',
-  duration: '80 min',
+  duration: '106 min',
   difficulty: 'intermediate',
   frameworkPhase: 'foundations',
   track: 'Software Infrastructure',
@@ -26,6 +26,10 @@ const manifest: ModuleManifest = {
     { id: 'pqc-libs', label: 'Open-Source PQC Libraries' },
     { id: 'languages', label: 'Language Ecosystem' },
     { id: 'pqc-roadmap', label: 'PQC Readiness & Roadmap' },
+    { id: 'tailoring-code-analysis', label: 'Tailoring Code Analysis' },
+    { id: 'static-code-analysis', label: 'Static Code Analysis' },
+    { id: 'dynamic-analysis', label: 'Dynamic Analysis' },
+    { id: 'open-source-security', label: 'Open-Source Software Security' },
   ],
   workshopSteps: [
     { id: 'api-architecture-explorer', label: 'API Architecture Explorer' },
