@@ -757,57 +757,11 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
 }
 
 /**
- * Site sector → Threats-page industry labels. The ONE map: the assessment
- * report's threat appendix uses it too (it used to keep its own copy, which
- * disagreed on four sectors, so a sector's threats on /report and /threats
- * differed). Sectors may share a Threats industry (Legal / Notary sits under
- * both Finance and Government; Payment Card Industry under Finance and
- * Retail).
+ * Site sector → Threats-page industry labels. The ONE map, read from the `industry`
+ * rows of `pqcassessment_*.csv` (see `assessmentReferenceData.ts`); re-exported here
+ * for the files that import it from the persona configuration.
  */
-export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
-  'Finance & Banking': [
-    'Finance & Banking',
-    'Insurance',
-    'Payment Card Industry',
-    'Cryptocurrency / Blockchain',
-    'Legal / Notary / eSignature',
-  ],
-  'Government & Defense': ['Government & Defense', 'Legal / Notary / eSignature'],
-  Healthcare: ['Healthcare / Pharmaceutical'],
-  Telecommunications: ['Telecommunications'],
-  Technology: [
-    'IT Industry / Software',
-    'Cloud Computing / Data Centers',
-    'Internet of Things (IoT)',
-    'Media / Entertainment / DRM',
-    'Supply Chain / Logistics',
-    'Hardware Security Modules',
-  ],
-  'Energy & Utilities': [
-    // The Threats page's label since ruling R3 (2026-09-24) — formerly
-    // "Critical Infrastructure" / "Energy / Critical Infrastructure", which
-    // THREAT_INDUSTRY_ALIASES (threatRowRules.ts) still resolves.
-    'Critical Infrastructure / OT',
-    'Water / Wastewater',
-    'Rail / Transit',
-  ],
-  Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
-  Aerospace: ['Aerospace / Aviation / Space'],
-  'Retail & E-Commerce': ['Retail & E-Commerce', 'Payment Card Industry'],
-  // Assessment-only industries (AVAILABLE_INDUSTRIES in assessmentData.ts):
-  // without a key here, the report's Threats link passed the raw name, which
-  // matches no Threats label, so the page opened unfiltered.
-  Education: ['Education / Research'],
-  // IEC 62443 OT/ICS, industrial IoT controllers and supply-chain trust roots
-  // (the INDUSTRY_THREAT rationale for Manufacturing).
-  Manufacturing: [
-    'Critical Infrastructure / OT',
-    'Internet of Things (IoT)',
-    'Supply Chain / Logistics',
-  ],
-  'Cross-cutting & Other': ['Cross-Industry', 'Education / Research'],
-  Other: [],
-}
+export { INDUSTRY_TO_THREATS_MAP } from './assessmentReferenceData'
 
 /* ──────────────────────────────────────────────────────────────────────────────
  * Report section configuration — per-persona open/collapsed/hidden states
