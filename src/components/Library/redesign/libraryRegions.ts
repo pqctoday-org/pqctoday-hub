@@ -9,55 +9,13 @@
  * the EU overlay, and raw codes with no label (`ES`). Every Library surface that
  * lists or matches regions canonicalises through here first.
  */
+import { COUNTRY_CODE_TO_NAME } from '@/data/jurisdictionsData'
 
-/** ISO-ish codes → labels for the Geography facet and filter chips. */
-export const REGION_LABELS = new Map<string, string>([
-  ['US', 'United States'],
-  ['GB', 'United Kingdom'],
-  ['FR', 'France'],
-  ['DE', 'Germany'],
-  ['ES', 'Spain'],
-  ['IT', 'Italy'],
-  ['AU', 'Australia'],
-  ['CA', 'Canada'],
-  ['JP', 'Japan'],
-  ['KR', 'South Korea'],
-  ['CN', 'China'],
-  ['RU', 'Russia'],
-  ['SG', 'Singapore'],
-  ['IN', 'India'],
-  ['HK', 'Hong Kong'],
-  ['NL', 'Netherlands'],
-  ['AE', 'United Arab Emirates'],
-  ['SA', 'Saudi Arabia'],
-  ['IL', 'Israel'],
-  ['SE', 'Sweden'],
-  ['NO', 'Norway'],
-  ['CZ', 'Czechia'],
-  ['MY', 'Malaysia'],
-  ['ZA', 'South Africa'],
-  ['KE', 'Kenya'],
-  ['NZ', 'New Zealand'],
-  ['BE', 'Belgium'],
-  ['PL', 'Poland'],
-  ['DK', 'Denmark'],
-  ['FI', 'Finland'],
-  ['EE', 'Estonia'],
-  ['TR', 'Turkey'],
-  ['BG', 'Bulgaria'],
-  ['GR', 'Greece'],
-  ['HR', 'Croatia'],
-  ['HU', 'Hungary'],
-  ['LT', 'Lithuania'],
-  ['LU', 'Luxembourg'],
-  ['LV', 'Latvia'],
-  ['PT', 'Portugal'],
-  ['RO', 'Romania'],
-  ['SI', 'Slovenia'],
-  ['SK', 'Slovakia'],
-  ['G7', 'G7'],
-  ['NATO', 'NATO'],
-])
+/**
+ * ISO codes → labels for the Geography facet and filter chips: every jurisdiction in the
+ * jurisdictions registry (jurisdictions_*.csv), named as it is there.
+ */
+export const REGION_LABELS = new Map<string, string>(Object.entries(COUNTRY_CODE_TO_NAME))
 
 /** Region groups (the codes of pqc-vocab-overlay.json) and their reader-facing labels. */
 export const GEO_OVERLAY_LABELS = new Map<string, string>([
@@ -70,8 +28,9 @@ export const GEO_OVERLAY_LABELS = new Map<string, string>([
   ['PQC-REGION-MEA', 'Middle East & Africa'],
 ])
 
-/** Spellings that name a place another token already codes, → that code. */
+/** Spellings that name a place another token already codes, → that code (old deep links keep working). */
 const REGION_ALIASES = new Map<string, string>([
+  ['czechia', 'CZ'],
   ['united states', 'US'],
   ['usa', 'US'],
   ['united kingdom', 'GB'],

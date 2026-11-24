@@ -23,6 +23,7 @@ import {
   TIMELINE_COUNTRY_DEADLINE_YEAR,
 } from '@/data/timelineFacts.generated'
 import { PROGRAM_START_YEAR } from '@/data/narrationFacts'
+import { COUNTRY_CODE_TO_NAME, JURISDICTION_BY_NAME } from '@/data/jurisdictionsData'
 
 export type SimTrackId = 'hndl-critical' | 'tnfl-critical' | 'hndl-general' | 'tnfl-general'
 export type SimObjectiveId = 'governance' | 'critical' | 'migration'
@@ -85,35 +86,17 @@ const STANDARDS_BY_COUNTRY: Record<string, { HNDL: string; TNFL: string }> = {
 }
 const DEFAULT_STANDARDS = { HNDL: 'PQC key establishment', TNFL: 'PQC digital signatures' }
 
-/** Map a few sim display names → timeline country codes; pass codes through unchanged. */
-const NAME_TO_CODE: Record<string, string> = {
-  'United States': 'US',
-  France: 'FR',
-  Germany: 'DE',
-  'United Kingdom': 'GB',
-  Japan: 'JP',
-  Canada: 'CA',
-  'South Korea': 'KR',
-}
-
+/** Map a sim display name → its timeline country code (the jurisdictions registry); codes pass through unchanged. */
 export function resolveCountryCode(country: string): string {
   if (TIMELINE_COUNTRY_MILESTONES[country] || country in TIMELINE_COUNTRY_DEADLINE_YEAR) {
     return country
   }
-  return NAME_TO_CODE[country] ?? country
-}
-
-// Reverse of NAME_TO_CODE (+ a few common extras), for display: 'FR' → 'France'.
-const CODE_TO_NAME: Record<string, string> = {
-  ...Object.fromEntries(Object.entries(NAME_TO_CODE).map(([name, code]) => [code, name])),
-  IN: 'India',
-  AU: 'Australia',
-  NL: 'Netherlands',
+  return JURISDICTION_BY_NAME[country]?.code ?? country
 }
 
 /** Human-readable country name for a code (falls back to the code itself). */
 export function countryNameFor(code: string): string {
-  return CODE_TO_NAME[code] ?? code
+  return COUNTRY_CODE_TO_NAME[code] ?? code
 }
 
 /** Build the scenario for a sim country (accepts a timeline code or a display name). */

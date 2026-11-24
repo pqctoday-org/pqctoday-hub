@@ -20,7 +20,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { complianceFrameworks, type PQCRequirement } from '@/data/complianceData'
 import { matchesIndustry } from '@/data/industryMatch'
-import { EU_MEMBER_COUNTRIES } from '@/utils/euCountries'
+import { EU_MEMBER_NAMES } from '@/data/jurisdictionsData'
 import { Button } from '@/components/ui/button'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection, ArtifactField } from '@/components/PKILearning/common/executive'
@@ -272,7 +272,7 @@ const COUNTRY_OPTIONS: string[] = [
  *  appear when Global itself is chosen, so a country list is not swamped by them. */
 function frameworksForScope(industry: string, country: string): Framework[] {
   if (!industry && !country) return []
-  const isEu = EU_MEMBER_COUNTRIES.has(country)
+  const isEu = EU_MEMBER_NAMES.has(country)
   return complianceFrameworks
     .filter((fw) => !industry || fw.industries.some((i) => matchesIndustry(i, industry)))
     .filter(

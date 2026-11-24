@@ -7,7 +7,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { TIMELINE_REGION_LABELS } from './timelineRegions'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
+import { REGION_JURISDICTION_NAMES } from '@/data/jurisdictionsData'
 
 describe('TIMELINE_REGION_LABELS', () => {
   it('offers americas, eu, mena, apac and global', () => {
@@ -20,9 +20,9 @@ describe('TIMELINE_REGION_LABELS', () => {
     ])
   })
 
-  it('has one entry for every region the site defines (the country map plus global)', () => {
+  it('has one entry for every region the site defines (the jurisdiction regions plus global)', () => {
     expect(new Set(Object.keys(TIMELINE_REGION_LABELS))).toEqual(
-      new Set([...Object.keys(REGION_COUNTRIES_MAP), 'global'])
+      new Set([...Object.keys(REGION_JURISDICTION_NAMES), 'global'])
     )
   })
 

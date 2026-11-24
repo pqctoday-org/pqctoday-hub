@@ -394,6 +394,58 @@ export const REGION_COUNTRIES_MAP: Record<PickerRegion, string[]> = (() => {
 })()
 
 /**
+ * Region → the name of every active jurisdiction in it, picker or reference-only,
+ * for all six regions of the CSV. Read this (not a hand-typed list of names) to ask
+ * "which countries are in this region?". Names follow the CSV `name` column.
+ */
+export const JURISDICTION_NAMES_BY_REGION: Record<JurisdictionRegion, string[]> = (() => {
+  const map: Record<JurisdictionRegion, string[]> = {
+    americas: [],
+    eu: [],
+    mena: [],
+    apac: [],
+    'europe-noneu': [],
+    africa: [],
+  }
+  for (const j of ACTIVE_ALL) map[j.region].push(j.name)
+  return map
+})()
+
+/**
+ * The site's region ids (the persona/Assess regions) → every active jurisdiction in
+ * them. Wider than REGION_COUNTRIES_MAP above, which lists only what the pickers offer:
+ * a reader's region matches a record for any jurisdiction the CSV places there.
+ * europe-noneu and africa belong to no site region.
+ */
+export const REGION_JURISDICTION_NAMES: Record<PickerRegion, string[]> = {
+  americas: JURISDICTION_NAMES_BY_REGION.americas,
+  eu: JURISDICTION_NAMES_BY_REGION.eu,
+  mena: JURISDICTION_NAMES_BY_REGION.mena,
+  apac: JURISDICTION_NAMES_BY_REGION.apac,
+}
+
+/**
+ * A region's lead jurisdiction: the first active row of that region in the CSV
+ * (the country a reader lands on when they pick only a region). It reads row order,
+ * so keep the lead row first when editing the file; jurisdictionsData.regionLead.test.ts
+ * pins the four leads.
+ */
+export const REGION_LEAD_JURISDICTION: Record<PickerRegion, string> = (() => {
+  const lead = {} as Record<PickerRegion, string>
+  for (const j of filterActive(allRows)) {
+    if (PICKER_REGIONS.has(j.region as PickerRegion) && !(j.region in lead)) {
+      lead[j.region as PickerRegion] = j.name
+    }
+  }
+  return lead
+})()
+
+/** Names of the EU member states plus the EU itself (`eu_member` = yes in the CSV). */
+export const EU_MEMBER_NAMES: ReadonlySet<string> = new Set(
+  ACTIVE_ALL.filter((j) => j.euMember).map((j) => j.name)
+)
+
+/**
  * Full jurisdiction rules for entries with curated hybrid + endState + note.
  * Drop-in replacement for JURISDICTION_RULES in jurisdiction.ts.
  * EU now has its own entry (hybrid=required, endState=pure) distinct from DE.
@@ -469,13 +521,33 @@ const REGION_DISPLAY_LABEL: Record<PickerRegion, string> = {
   apac: 'Asia Pacific',
 }
 
+function legacyConfig(j: JurisdictionEntry, id: string): LegacyJurisdictionConfig {
+  return {
+    id,
+    label: j.name,
+    region: REGION_DISPLAY_LABEL[j.region as PickerRegion] ?? j.region,
+    countryNames: [j.name],
+  }
+}
+
 /**
  * Drop-in replacement for JURISDICTIONS in
  * src/components/PKILearning/modules/ComplianceStrategy/data/jurisdictions.ts.
  */
-export const JURISDICTIONS_LEGACY: LegacyJurisdictionConfig[] = ALL_JURISDICTIONS.map((j) => ({
-  id: j.code.toLowerCase(),
-  label: j.name,
-  region: REGION_DISPLAY_LABEL[j.region as PickerRegion] ?? j.region,
-  countryNames: [j.name],
-}))
+export const JURISDICTIONS_LEGACY: LegacyJurisdictionConfig[] = ALL_JURISDICTIONS.map((j) =>
+  legacyConfig(j, j.code.toLowerCase())
+)
+
+/**
+ * The module-facing config of chosen registry jurisdictions: each `[id, code]` pair gives
+ * the id a module keys its own data by and the registry code to read the name and region
+ * from. A code with no active registry row is skipped.
+ */
+export function jurisdictionConfigsFor(
+  offered: ReadonlyArray<readonly [id: string, code: string]>
+): LegacyJurisdictionConfig[] {
+  return offered.flatMap(([id, code]) => {
+    const j = JURISDICTION_BY_CODE[code]
+    return j ? [legacyConfig(j, id)] : []
+  })
+}

@@ -459,6 +459,44 @@ describe('applicableLibraryDocs — industry tags are the industry landscape nam
   })
 })
 
+// ── Countries and regions are read from the jurisdictions registry ────────
+
+describe('country and region matching reads the jurisdictions registry', () => {
+  it('matches an ISO-coded document to a reader who picked the country by name, for any registry country', () => {
+    const doc = {
+      referenceId: 'LIB-IT',
+      applicableIndustries: [],
+      regionScope: 'IT',
+      authorsOrOrganization: 'Test',
+    } as unknown as LibraryItem
+    const results = applicableLibraryDocs({ industry: null, country: 'Italy' }, [doc])
+    expect(results.map((r) => r.item.referenceId)).toEqual(['LIB-IT'])
+  })
+
+  it('puts every registry country of a region in that region, not only a short list', () => {
+    const fw = makeFramework({
+      id: 'TH',
+      countries: ['Thailand'],
+      industries: ['Technology'],
+    })
+    const results = applicableFrameworks(
+      { industry: 'Technology', country: null, region: 'apac' },
+      [fw]
+    )
+    expect(results.map((r) => r.item.id)).toEqual(['TH'])
+  })
+
+  it('treats Israel as a Middle East country, not a European one', () => {
+    const fw = makeFramework({ id: 'IL', countries: ['Israel'], industries: ['Technology'] })
+    expect(
+      applicableFrameworks({ industry: 'Technology', country: null, region: 'mena' }, [fw]).length
+    ).toBe(1)
+    expect(
+      applicableFrameworks({ industry: 'Technology', country: null, region: 'eu' }, [fw])
+    ).toEqual([])
+  })
+})
+
 // ── groupByTier ──────────────────────────────────────────────────────────
 
 describe('groupByTier', () => {

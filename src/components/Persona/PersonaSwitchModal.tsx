@@ -25,11 +25,8 @@ import type { PersonaId } from '@/data/learningPersonas'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { Region } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
-import {
-  PERSONA_TIMELINE_REGION,
-  PERSONA_THREATS_DEFAULT_INDUSTRIES,
-  REGION_COUNTRIES_MAP,
-} from '@/data/personaConfig'
+import { PERSONA_TIMELINE_REGION, PERSONA_THREATS_DEFAULT_INDUSTRIES } from '@/data/personaConfig'
+import { REGION_LEAD_JURISDICTION } from '@/data/jurisdictionsData'
 import { REGIONS, INDUSTRY_ICONS } from '@/data/regionIndustryOptions'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { logPersonaSelected, logRegionSelected } from '@/utils/analytics'
@@ -99,7 +96,7 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
   const handleRegionSelect = (id: string) => {
     const region: Region = id === 'All' ? 'global' : (id as Region)
     setRegion(region)
-    setCountry(REGION_COUNTRIES_MAP[region]?.[0] ?? '')
+    setCountry(region === 'global' ? 'Global' : REGION_LEAD_JURISDICTION[region])
     logRegionSelected(region)
     if (assessmentStatus === 'complete') editFromStep(0)
   }
