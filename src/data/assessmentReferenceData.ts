@@ -9,9 +9,9 @@
  *                          step, as for "Cross-cutting & Other").
  *   category `use_case`  : `hndl_relevance`, `migration_priority` and `tnfl_relevance` weights,
  *                          keyed by the row's label.
- *   category `retention` : `scoring_retention_years`, the years the risk score counts for the
- *                          retention id. It is written out for every id, 0 where the score has
- *                          never counted the id, so a blank is never read as a default.
+ *   category `retention` : `retention_years`, the years the choice stands for. The one copy:
+ *                          the retention choices the Assess step offers and the fallback table
+ *                          the risk score reads both come from it.
  *   category `algorithm` : `quantum_vulnerable`, `pqc_replacement` and the notes (the
  *                          `description` cell) for an algorithm the Assess step lists.
  *
@@ -28,7 +28,7 @@ interface RawReferenceRow {
   hndl_relevance?: string
   migration_priority?: string
   tnfl_relevance?: string
-  scoring_retention_years?: string
+  retention_years?: string
   industry_threat?: string
   threat_industries?: string
   quantum_vulnerable?: string
@@ -76,7 +76,7 @@ const { data: rows } = loadLatestCSV<RawReferenceRow, ReferenceRow>(
           tnfl: num(row.tnfl_relevance) ?? 0,
         }
       case 'retention':
-        return { kind: 'retention', id: row.id, years: num(row.scoring_retention_years) }
+        return { kind: 'retention', id: row.id, years: num(row.retention_years) }
       case 'algorithm':
         return {
           kind: 'algorithm',
@@ -121,7 +121,7 @@ export const USE_CASE_WEIGHTS: Record<
   ])
 )
 
-/** Retention id → years the risk score counts. */
+/** Retention id → years (the `retention_years` of its row). */
 export const DATA_RETENTION_YEARS: Record<string, number> = Object.fromEntries(
   ofKind('retention')
     .filter((r) => r.years !== undefined)

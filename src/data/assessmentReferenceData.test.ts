@@ -13,6 +13,7 @@ import {
   universalRetentionConfigs,
 } from './industryAssessConfig'
 import { threatsData } from './threatsData'
+import { getMaxRetentionYears } from '../hooks/assessment/scoring'
 
 describe('site sector to threat industries (pqcassessment industry rows)', () => {
   const sectors = Object.keys(INDUSTRY_TO_THREATS_MAP)
@@ -96,25 +97,46 @@ describe('assessment scoring tables (pqcassessment rows)', () => {
     }
   })
 
-  it('states the scoring years of every retention id explicitly, 0 included', () => {
-    const ids = [...industryRetentionConfigs, ...universalRetentionConfigs].map((r) => r.id)
-    for (const id of ids) expect(DATA_RETENTION_YEARS[id], id).toBeTypeOf('number')
-    // The ten industry-specific ids the risk score has never counted stay explicit zeros.
-    const zero = ids.filter((id) => DATA_RETENTION_YEARS[id] === 0)
-    expect(zero.sort()).toEqual(
-      [
-        '1y-pci-logs',
-        '2y-pci',
-        '3y-nerc',
-        '3y-soc2',
-        '6y-ferpa',
-        '7y-ferc',
-        'aircraft-lifetime',
-        'auto-1-3y',
-        'auto-vehicle-lifetime',
-        'permanent-transcripts',
-      ].sort()
-    )
+  it('scores every retention choice by its real retention_years, the ten industry ones included', () => {
+    const configs = [...industryRetentionConfigs, ...universalRetentionConfigs]
+    expect(configs).toHaveLength(21)
+    for (const cfg of configs) {
+      expect(DATA_RETENTION_YEARS[cfg.id], cfg.id).toBe(cfg.retentionYears)
+      expect(getMaxRetentionYears([cfg.id]), cfg.id).toBe(cfg.retentionYears)
+      expect(cfg.retentionYears, cfg.id).toBeGreaterThan(0)
+    }
+    // These ten stood at 0 in the old table; they now carry their years.
+    expect(
+      Object.fromEntries(
+        [
+          'auto-1-3y',
+          'auto-vehicle-lifetime',
+          '3y-soc2',
+          '3y-nerc',
+          '7y-ferc',
+          'aircraft-lifetime',
+          '1y-pci-logs',
+          '2y-pci',
+          '6y-ferpa',
+          'permanent-transcripts',
+        ].map((id) => [id, DATA_RETENTION_YEARS[id]])
+      )
+    ).toEqual({
+      'auto-1-3y': 3,
+      'auto-vehicle-lifetime': 15,
+      '3y-soc2': 3,
+      '3y-nerc': 3,
+      '7y-ferc': 7,
+      'aircraft-lifetime': 40,
+      '1y-pci-logs': 1,
+      '2y-pci': 2,
+      '6y-ferpa': 6,
+      'permanent-transcripts': 100,
+    })
+  })
+
+  it('an unknown retention id still counts as 0 years', () => {
+    expect(getMaxRetentionYears(['no-such-retention'])).toBe(0)
   })
 
   it('describes each algorithm with a vulnerability flag and a replacement', () => {
