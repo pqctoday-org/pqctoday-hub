@@ -116,12 +116,30 @@ describe('the move changed nothing a page shows', () => {
     'taxonomy',
     'playgroundTools',
     'contentVersions',
-    'nice',
     'learnOrder',
     'quizLabels',
     'relatedLessonLinks',
   ])('%s is identical to the pre-move snapshot', (key) => {
     expect(now[key]).toEqual(before[key])
+  })
+
+  // Owner decision (24 Nov 2026, "Tier to practitioner (Recommended)", three times): these three
+  // industry lessons teach hands-on in their workshops, so their NICE tier moves from awareness
+  // to practitioner. Their stage stays 4. Every other NICE field and lesson stays as before the move.
+  const TIER_CHANGES: Record<string, { was: string; now: string }> = {
+    'aerospace-pqc': { was: 'awareness', now: 'practitioner' },
+    'ai-security-pqc': { was: 'awareness', now: 'practitioner' },
+    'healthcare-pqc': { was: 'awareness', now: 'practitioner' },
+  }
+
+  it('nice is identical to the pre-move snapshot except the three tier changes', () => {
+    const expected = structuredClone(before.nice) as { moduleId: string; tier: string }[]
+    for (const [id, { was, now: changed }] of Object.entries(TIER_CHANGES)) {
+      const entry = expected.find((e) => e.moduleId === id)
+      expect(entry?.tier).toBe(was)
+      entry!.tier = changed
+    }
+    expect(now.nice).toEqual(expected)
   })
 
   it('route meta is identical to the pre-move snapshot except the nine level corrections', () => {
