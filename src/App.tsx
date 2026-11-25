@@ -31,9 +31,6 @@ const P11ShimGate = import.meta.env.DEV
 const KmipShimGate = import.meta.env.DEV
   ? lazyWithRetry(() => import('./dev-gate/KmipShimGate'))
   : null
-// Temporary page on which My work, Updates, the comment box and the revised-section strip are checked in a
-// browser before the integrator places them. Development builds only, never in production.
-const MyWorkGate = import.meta.env.DEV ? lazyWithRetry(() => import('./dev-gate/MyWorkGate')) : null
 
 // Lazy load route components with automatic retry on chunk fetch failures
 const TimelineView = lazyWithRetry(() =>
@@ -320,7 +317,6 @@ function App() {
       </Route>
       {P11ShimGate && <Route path="dev-gate/p11-shim" element={<P11ShimGate />} />}
       {KmipShimGate && <Route path="dev-gate/kmip-shim" element={<KmipShimGate />} />}
-      {MyWorkGate && <Route path="dev-gate/my-work" element={<MyWorkGate />} />}
       <Route
         path="openssl"
         element={

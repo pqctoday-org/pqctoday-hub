@@ -12,7 +12,7 @@
  * The panels read the learner's objectives as plain data (see `usePanelObjectives`); nothing the
  * learner wrote is copied into the journey store.
  */
-import { useNavigate } from 'react-router'
+import { useInRouterContext, useNavigate } from 'react-router'
 import {
   CommentBox,
   MyWorkPanel,
@@ -138,6 +138,15 @@ export function BeltScoreMount() {
 
 /** The "Revised" strip of a module page, when the lesson changed past what the learner last read. */
 export function ModuleUpdateStripMount({ moduleId }: { moduleId: string }) {
+  // Outside a router (a stand-alone preview) there is no page to review the update on.
+  return useInRouterContext() ? (
+    <ModuleUpdateStrip moduleId={moduleId} />
+  ) : (
+    <div data-mount="module-update-strip" data-module={moduleId} />
+  )
+}
+
+function ModuleUpdateStrip({ moduleId }: { moduleId: string }) {
   const navigate = useNavigate()
   const tag = lessonById(moduleId)?.lmId
   return (
@@ -154,6 +163,14 @@ export function ModuleUpdateStripMount({ moduleId }: { moduleId: string }) {
 
 /** "Your comments on this module" on the module page. */
 export function ModuleCommentsMount({ moduleId }: { moduleId: string }) {
+  return useInRouterContext() ? (
+    <ModuleComments moduleId={moduleId} />
+  ) : (
+    <div data-mount="module-comments" data-module={moduleId} />
+  )
+}
+
+function ModuleComments({ moduleId }: { moduleId: string }) {
   const navigate = useNavigate()
   const tag = lessonById(moduleId)?.lmId
   if (!tag) return <div data-mount="module-comments" data-module={moduleId} />

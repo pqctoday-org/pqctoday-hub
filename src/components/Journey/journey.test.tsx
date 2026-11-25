@@ -18,7 +18,8 @@ import {
 } from './journeyTestUtils'
 import { useJourneyStore } from '@/store/useJourneyStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { rolePathForPersona } from '@/services/journey/rolePaths'
+import { rolePathForPersona, rolePathForWorkRole } from '@/services/journey/rolePaths'
+import { validateDeepLink } from '@/services/search/deepLinkGrammar'
 import { lessonByTag } from '@/services/journey/lessons'
 import { barSteps } from '@/services/journey/stepRules'
 import { COPY } from '@/services/journey/stepRules'
@@ -368,6 +369,56 @@ describe('role map (P7, A36)', () => {
   it('computes nothing it stores: the journey store holds no path', () => {
     renderAt(<RoleMapView />)
     expect(JSON.stringify(useJourneyStore.getState())).not.toMatch(/parts|more for this role/)
+  })
+})
+
+describe('a link with a role: ?view=journey&role=<persona or work-role id>', () => {
+  it('is in the Hub link grammar', () => {
+    for (const id of ['architect', 'control-assessor']) {
+      expect(validateDeepLink(`/learn?view=journey&role=${id}`)).toBeNull()
+    }
+  })
+
+  it("opens Role map on that persona's path without switching the learner's role, with a way back", async () => {
+    const user = userEvent.setup()
+    usePersonaStore.setState({ selectedPersona: 'executive' })
+    renderAt(<YourJourneyView />, '/learn?view=journey&role=architect')
+    expect(screen.getByTestId('role-map')).toBeInTheDocument()
+    expect(screen.getByTestId('role-preview')).toHaveTextContent(
+      'Viewing the path for Security Architect.'
+    )
+    expect(screen.getAllByTestId('role-map-row')).toHaveLength(
+      rolePathForPersona('architect')!.parts.length
+    )
+    expect(usePersonaStore.getState().selectedPersona).toBe('executive')
+    await user.click(screen.getByRole('button', { name: /Back to my role/ }))
+    expect(screen.queryByTestId('role-preview')).not.toBeInTheDocument()
+    expect(screen.getAllByTestId('role-map-row')).toHaveLength(
+      rolePathForPersona('executive')!.parts.length
+    )
+  })
+
+  it('accepts a NICE work-role id', () => {
+    renderAt(<YourJourneyView />, '/learn?view=journey&role=control-assessor')
+    expect(screen.getByTestId('role-preview')).toHaveTextContent('Viewing the path for ')
+    expect(screen.getAllByTestId('role-map-row')).toHaveLength(
+      rolePathForWorkRole('control-assessor').parts.length
+    )
+    expect(usePersonaStore.getState().selectedPersona).toBe('architect')
+  })
+
+  it('ignores an unknown id: plain Your journey', () => {
+    renderAt(<YourJourneyView />, '/learn?view=journey&role=not-a-role')
+    expect(screen.queryByTestId('role-preview')).not.toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Objectives', selected: true })).toBeInTheDocument()
+  })
+
+  it('leaves the preview when another view is chosen', async () => {
+    const user = userEvent.setup()
+    renderAt(<YourJourneyView />, '/learn?view=journey&role=architect')
+    await user.click(screen.getByRole('tab', { name: 'Objectives' }))
+    expect(screen.getByRole('tab', { name: 'Objectives', selected: true })).toBeInTheDocument()
+    expect(screen.queryByTestId('role-preview')).not.toBeInTheDocument()
   })
 })
 

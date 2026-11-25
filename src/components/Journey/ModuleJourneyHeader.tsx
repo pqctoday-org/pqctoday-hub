@@ -19,6 +19,9 @@ import { RoleSwitchDialog, roleLabel } from './RoleSwitch'
 import { ModuleUpdateStripMount } from './mountPoints'
 import { useOpenStep } from './useJourneyNav'
 import { useFocusedObjective } from '@/hooks/useJourney'
+import { useHistoryStore } from '@/store/useHistoryStore'
+import { useMyWorkStore } from '@/store/useMyWorkStore'
+import { collectExistingOutputs } from '@/services/myWork/outputs'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
@@ -126,6 +129,27 @@ export function ModuleJourneyHeader(props: ModuleJourneyHeaderProps) {
   return useInRouterContext() ? <ModuleJourneyHeaderInner {...props} /> : null
 }
 
+/**
+ * A tool run or a saved document made while the learner is on a step's page is filed in My work under
+ * that objective and step. Only runs made after the page opened; what the Hub already held is never
+ * re-filed, and a run already in My work keeps the filing the learner gave it.
+ */
+function useFileStepOutputs(objectiveId: string | undefined, stepTag: string | undefined) {
+  const [openedAt] = useState(() => Date.now())
+  const events = useHistoryStore((s) => s.events)
+  const docs = useModuleStore((s) => s.artifacts.executiveDocuments)
+  useEffect(() => {
+    if (!objectiveId || !stepTag) return
+    const since = openedAt
+    const fresh = collectExistingOutputs(
+      events.filter((e) => e.timestamp >= since),
+      (docs ?? []).filter((d) => new Date(d.updatedAt ?? d.createdAt).getTime() >= since)
+    )
+    if (fresh.length === 0) return
+    useMyWorkStore.getState().registerOutputs(fresh.map((o) => ({ ...o, objectiveId, stepTag })))
+  }, [objectiveId, stepTag, events, docs, openedAt])
+}
+
 function ModuleJourneyHeaderInner({ moduleId, compact = false }: ModuleJourneyHeaderProps) {
   const embedded = useIsEmbedded()
   const persona = usePersonaStore((s) => s.selectedPersona)
@@ -140,6 +164,7 @@ function ModuleJourneyHeaderInner({ moduleId, compact = false }: ModuleJourneyHe
   useEffect(() => {
     if (focusedId && stepId) setCheckpoint(focusedId, { stepId })
   }, [focusedId, stepId, setCheckpoint])
+  useFileStepOutputs(focused?.state === 'active' ? focusedId : undefined, ctx.step?.resourceTag)
   // The journey adds nothing inside an embedded page, and nothing to a page that is not a lesson.
   if (embedded || !ctx.tag) return null
 

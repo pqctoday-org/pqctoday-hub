@@ -139,6 +139,7 @@ export function RoleMapView() {
                 (p) => {
                   const next = new URLSearchParams(p)
                   next.delete('role')
+                  next.set('jview', 'role-map')
                   return next
                 },
                 { replace: true }

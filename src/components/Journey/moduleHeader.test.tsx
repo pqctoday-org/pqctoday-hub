@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { beforeEach, describe, expect, it } from 'vitest'
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
+import { useHistoryStore } from '@/store/useHistoryStore'
+import { useMyWorkStore } from '@/store/useMyWorkStore'
 import userEvent from '@testing-library/user-event'
 import { ModuleJourneyHeader } from './ModuleJourneyHeader'
 import { ModuleFitStrip } from './ModuleFitStrip'
@@ -105,6 +107,42 @@ describe('the module page header (P4)', () => {
     renderAt(<ModuleJourneyHeader moduleId="tls-basics" />, '/learn/tls-basics')
     // the architect has no objective: the executive one is not shown
     expect(screen.queryByTestId('journey-step-bar')).not.toBeInTheDocument()
+  })
+})
+
+describe("a tool run made on a step's page is filed in My work under that step", () => {
+  const run = (title: string, at: number) =>
+    useHistoryStore.getState().addEvent({
+      type: 'tls_simulation',
+      timestamp: at,
+      title,
+      description: '',
+      route: '/learn/tls-basics',
+    } as never)
+
+  it('files a run made after the page opened under the objective and the step, and leaves earlier runs alone', () => {
+    useMyWorkStore.setState({ comments: [], outputs: [], answers: [], references: [] })
+    useHistoryStore.setState({ events: [] })
+    run('Earlier handshake', Date.now() - 60_000)
+    const id = saveTlsObjective()
+    renderAt(<ModuleJourneyHeader moduleId="tls-basics" />, '/learn/tls-basics')
+    expect(useMyWorkStore.getState().outputs).toHaveLength(0)
+    act(() => run('Handshake from the step', Date.now() + 1000))
+    const outputs = useMyWorkStore.getState().outputs
+    expect(outputs).toHaveLength(1)
+    expect(outputs[0]).toMatchObject({
+      title: 'Handshake from the step',
+      objectiveId: id,
+      stepTag: lessonById('tls-basics')!.lmId,
+    })
+  })
+
+  it('files nothing when the module is not a step of an active objective', () => {
+    useMyWorkStore.setState({ comments: [], outputs: [], answers: [], references: [] })
+    useHistoryStore.setState({ events: [] })
+    renderAt(<ModuleJourneyHeader moduleId="tls-basics" />, '/learn/tls-basics')
+    act(() => run('Handshake, no objective', Date.now() + 1000))
+    expect(useMyWorkStore.getState().outputs).toHaveLength(0)
   })
 })
 

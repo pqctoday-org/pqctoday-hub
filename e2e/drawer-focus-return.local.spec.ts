@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { test, expect } from './fixtures/blockAnalytics'
 
+/**
+ * The drawer has no tabs. It opens from the top bar's Assistant button (a sheet from More on a phone),
+ * closes with Escape or Close, and keyboard focus goes back to what opened it. On a phone the FAQ is a
+ * sheet of its own; the journey is a page (Learn › Your journey), not a part of the drawer.
+ */
 for (const width of [1280, 390]) {
   test(`Assistant restores keyboard focus to its opener at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
@@ -18,44 +23,51 @@ for (const width of [1280, 390]) {
     await page.goto('/playground')
     const phone = width === 390
     const trigger = page.getByRole('button', {
-      name: phone ? /^More(?: — unread updates)?$/ : 'Open PQC Assistant',
+      name: phone ? /^More(?: — unread updates)?$/ : 'Assistant',
+      exact: !phone,
     })
+    const assistant = page.getByRole('dialog', { name: 'Assistant' })
+    const openFromMore = async (name: RegExp) => {
+      await page.keyboard.press('Enter')
+      await page
+        .getByTestId('mobile-page-actions-sheet')
+        .getByRole('button', { name })
+        .press('Enter')
+    }
+
     for (const dismiss of ['Escape', 'Close']) {
+      if (dismiss === 'Close' && !phone) continue // the desktop drawer has no Close: the top bar toggles it
       await expect(trigger).toBeVisible()
       await trigger.focus()
-      await page.keyboard.press('Enter')
-      if (phone) {
-        await page
-          .getByTestId('mobile-page-actions-sheet')
-          .getByRole('button', { name: /^Assistant/ })
-          .press('Enter')
-      }
-      const assistant = page.getByRole('dialog', { name: 'PQC Assistant' })
-      await expect(assistant).toBeVisible()
-      const faq = assistant.getByRole('tab', { name: 'FAQ' })
-      await faq.press('Enter')
-      const faqDrawer = page.getByRole('dialog', { name: 'FAQ', exact: true })
-      await expect(faqDrawer).toBeVisible()
+      if (phone) await openFromMore(/^Assistant/)
+      else await page.keyboard.press('Enter')
+      await expect(
+        phone ? assistant : page.getByRole('region', { name: 'Assistant' })
+      ).toBeVisible()
       if (dismiss === 'Escape') {
         await page.keyboard.press('Escape')
       } else {
-        await faqDrawer.getByRole('button', { name: 'Close assistant' }).press('Enter')
+        await assistant.getByRole('button', { name: 'Close', exact: true }).press('Enter')
       }
-      await expect(faqDrawer).toBeHidden()
+      await expect(phone ? assistant : page.getByRole('region', { name: 'Assistant' })).toBeHidden()
       await expect(trigger).toBeFocused()
     }
 
     if (phone) {
-      await page.keyboard.press('Enter')
-      await page
-        .getByTestId('mobile-page-actions-sheet')
-        .getByRole('button', { name: /^Journey/ })
-        .press('Enter')
-      const journey = page.getByRole('dialog', { name: 'Journey History' })
-      await expect(journey).toBeVisible()
-      await journey.getByRole('button', { name: 'Close assistant' }).press('Enter')
-      await expect(journey).toBeHidden()
+      // the FAQ is a sheet over the page
+      await trigger.focus()
+      await openFromMore(/^FAQ/)
+      const faq = page.getByRole('dialog', { name: /FAQ|Frequently asked/ })
+      await expect(faq).toBeVisible()
+      await page.keyboard.press('Escape')
+      await expect(faq).toBeHidden()
       await expect(trigger).toBeFocused()
+
+      // Your journey is a page: the menu takes the learner there, and no drawer opens
+      await trigger.focus()
+      await openFromMore(/^Your journey/)
+      await expect(page).toHaveURL(/\/learn\?view=journey/)
+      await expect(assistant).toBeHidden()
     }
   })
 }

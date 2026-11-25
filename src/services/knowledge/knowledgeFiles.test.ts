@@ -27,7 +27,6 @@ const FORMS_NOT_READ_YET: Record<string, number> = {
   'glossary term': core.records.filter((r) => r.kind === 'glossary term').length,
   'playground lesson': 54,
   assessment: 130,
-  nice_role: 16,
 }
 
 describe('the knowledge core file', () => {
