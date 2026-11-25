@@ -21,7 +21,7 @@ import {
   syncTrackedOutputs,
   toolOutputCapability,
 } from './outputs'
-import { TOOL_RECORDS } from '@/data/generated/tools.generated'
+import { TOOL_RECORDS, TOOL_RECORD_BY_ID } from '@/data/generated/tools.generated'
 import { EMPTY_MY_WORK, useMyWorkStore, type MyWorkData } from '@/store/useMyWorkStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -256,13 +256,43 @@ describe('tracked outputs, phase 1 (J4)', () => {
   })
 
   it('which tools produce an output is read from the tools data file, never typed here', () => {
-    // The data file states no output column at this head, so no tool is claimed either way.
+    // A tool the file has not filled in is claimed neither way; a filled one is read as stated.
     const sample = TOOL_RECORDS[0]
     const stated = (sample as unknown as Record<string, unknown>).producesArtifact
     if (stated === undefined) expect(toolOutputCapability(sample.toolId)).toEqual({ known: false })
     else
       expect(toolOutputCapability(sample.toolId)).toMatchObject({ known: true, produces: stated })
     expect(toolOutputCapability('no-such-tool')).toEqual({ known: false })
+  })
+
+  it('a yes, a no and a blank in the tools data file read as produces, does not produce and not known', () => {
+    const records = TOOL_RECORD_BY_ID as unknown as Record<string, Record<string, unknown>>
+    const ids = TOOL_RECORDS.slice(0, 3).map((r) => r.toolId)
+    const saved = ids.map((id) => ({ ...records[id] }))
+    try {
+      // A yes carries its kind, a no carries none, a blank states neither.
+      Object.assign(records[ids[0]], { producesArtifact: true, artifactType: 'data-file' })
+      Object.assign(records[ids[1]], { producesArtifact: false })
+      delete records[ids[1]].artifactType
+      delete records[ids[2]].producesArtifact
+      delete records[ids[2]].artifactType
+      expect(toolOutputCapability(ids[0])).toEqual({
+        known: true,
+        produces: true,
+        artifactType: 'data-file',
+      })
+      expect(toolOutputCapability(ids[1])).toEqual({
+        known: true,
+        produces: false,
+        artifactType: undefined,
+      })
+      expect(toolOutputCapability(ids[2])).toEqual({ known: false })
+    } finally {
+      ids.forEach((id, i) => {
+        for (const k of ['producesArtifact', 'artifactType']) delete records[id][k]
+        Object.assign(records[id], saved[i])
+      })
+    }
   })
 
   it('O05/C04: registering outputs and writing comments leaves lesson progress alone', () => {
