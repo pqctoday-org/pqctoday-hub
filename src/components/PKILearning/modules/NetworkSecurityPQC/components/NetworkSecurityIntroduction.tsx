@@ -32,6 +32,7 @@ import {
 } from '../../VPNSSHModule/data/measuredHandshakeFacts'
 import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
 import { NETWORK_OPERATIONS_SECTION } from '../data/networkOperationsSection'
+import { CONTINGENCY_RECOVERY_SECTION } from '../data/contingencyRecoverySection'
 
 interface CollapsibleSectionProps {
   icon: React.ReactNode
@@ -495,6 +496,15 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
           title={NETWORK_OPERATIONS_SECTION.title}
         >
           <SourcedSectionBody section={NETWORK_OPERATIONS_SECTION} />
+        </CollapsibleSection>
+      </div>
+
+      <div data-section-id="network-contingency-recovery" className="scroll-mt-20">
+        <CollapsibleSection
+          icon={<Wrench size={24} className="text-primary" />}
+          title={CONTINGENCY_RECOVERY_SECTION.title}
+        >
+          <SourcedSectionBody section={CONTINGENCY_RECOVERY_SECTION} />
         </CollapsibleSection>
       </div>
 

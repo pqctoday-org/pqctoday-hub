@@ -12,7 +12,7 @@ import { resolveModuleQuizCategory } from '@/data/moduleQuizCategory'
 import { useModuleProgress } from './useModuleProgress'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import type { ModuleManifest } from '../manifest/types'
+import type { ResolvedModuleManifest } from '../manifest/types'
 
 const renderShell = (ui: React.ReactNode) =>
   render(
@@ -21,7 +21,7 @@ const renderShell = (ui: React.ReactNode) =>
     </EmbedProvider>
   )
 
-const base: ModuleManifest = {
+const base: ResolvedModuleManifest = {
   id: 'hsm-pqc',
   title: 'Test Module',
   description: 'Catalog description',
@@ -126,7 +126,7 @@ describe('ModuleShell', () => {
   })
 
   it('respects a reduced (divergent) tab set', () => {
-    const reduced: ModuleManifest = {
+    const reduced: ResolvedModuleManifest = {
       ...base,
       tabs: [
         { value: 'learn', label: 'Learn' },

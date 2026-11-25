@@ -1,6 +1,6 @@
 {
-  "version": "1.1",
-  "last_updated": "2026-05-07",
+  "version": "1.2",
+  "last_updated": "2026-11-24",
   "description": "PQC-specific overlay codes that supplement NAICS 2022 sector codes and ISO 3166 country codes in Trust Engine applicability filtering",
   "geography": [
     {
@@ -20,6 +20,79 @@
       "label": "Global / International",
       "maps_to": null,
       "rationale": "Standards with no geographic restriction (IETF RFCs, ISO standards)"
+    },
+    {
+      "code": "PQC-REGION-EUROPE",
+      "label": "Europe",
+      "maps_to": [
+        "GB",
+        "FR",
+        "DE",
+        "CZ",
+        "IT",
+        "ES",
+        "NL",
+        "BE",
+        "PL",
+        "SE",
+        "AT",
+        "DK",
+        "FI",
+        "IE",
+        "EE",
+        "CH",
+        "NO",
+        "TR",
+        "RU",
+        "BG",
+        "CY",
+        "GR",
+        "HR",
+        "HU",
+        "LT",
+        "LU",
+        "LV",
+        "MT",
+        "PT",
+        "RO",
+        "SI",
+        "SK"
+      ],
+      "rationale": "Standards and guidance addressed to Europe as a whole, the EU and the other European countries; members are the jurisdiction registry's Europe regions."
+    },
+    {
+      "code": "PQC-REGION-AMERICAS",
+      "label": "Americas",
+      "maps_to": ["US", "CA", "MX", "BR", "AR", "CL", "CO", "PE", "UY"],
+      "rationale": "Standards and guidance addressed to North and South America; members are the jurisdiction registry's Americas region."
+    },
+    {
+      "code": "PQC-REGION-APAC",
+      "label": "Asia-Pacific",
+      "maps_to": [
+        "JP",
+        "KR",
+        "AU",
+        "SG",
+        "NZ",
+        "CN",
+        "IN",
+        "TW",
+        "HK",
+        "MY",
+        "ID",
+        "PH",
+        "TH",
+        "VN",
+        "KZ"
+      ],
+      "rationale": "Standards and guidance addressed to the Asia-Pacific region; members are the jurisdiction registry's Asia-Pacific region."
+    },
+    {
+      "code": "PQC-REGION-MEA",
+      "label": "Middle East & Africa",
+      "maps_to": ["IL", "AE", "SA", "BH", "JO", "EG", "ZA", "NG", "KE", "QA"],
+      "rationale": "Standards and guidance addressed to the Middle East and Africa; members are the jurisdiction registry's Middle East and Africa regions."
     }
   ],
   "sectors": [

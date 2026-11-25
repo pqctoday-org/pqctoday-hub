@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { getCommonGroundModules } from '@/data/niceModuleMapping'
+import { LEARN_MODULE_BY_ID } from '@/data/generated/learnModules.generated'
 import type { NiceCompetencyAreaId } from '@/data/niceFramework'
 
 // ---------------------------------------------------------------------------
@@ -30,11 +31,11 @@ import type { NiceCompetencyAreaId } from '@/data/niceFramework'
 
 interface CommonGroundModule {
   moduleId: string
+  /** Audience-facing heading for this page; the lesson's own title lives in the lessons data file. */
   title: string
   audience: string
   description: string
   icon: React.ReactNode
-  estimatedMinutes: number
   primaryCA: NiceCompetencyAreaId
 }
 
@@ -46,7 +47,6 @@ const COMMON_GROUND_MODULES: CommonGroundModule[] = [
     description:
       'Understand what quantum computers are, why they threaten current cryptography, and why organizations must act before the threat window closes.',
     icon: <Shield size={20} className="text-primary" />,
-    estimatedMinutes: 15,
     primaryCA: 'CA-RISK',
   },
   {
@@ -56,7 +56,6 @@ const COMMON_GROUND_MODULES: CommonGroundModule[] = [
     description:
       'Navigate the NIST, NSA, OMB, and EU regulatory timelines for PQC migration. Understand which mandates apply to your organization and when.',
     icon: <Clock size={20} className="text-warning" />,
-    estimatedMinutes: 20,
     primaryCA: 'CA-GOVCOMP',
   },
   {
@@ -66,7 +65,6 @@ const COMMON_GROUND_MODULES: CommonGroundModule[] = [
     description:
       'Learn which PQC readiness questions to ask technology vendors, how to evaluate their migration roadmaps, and what contractual requirements to consider.',
     icon: <HelpCircle size={20} className="text-primary" />,
-    estimatedMinutes: 20,
     primaryCA: 'CA-RISK',
   },
   {
@@ -76,7 +74,6 @@ const COMMON_GROUND_MODULES: CommonGroundModule[] = [
     description:
       "Demystify risk scores, HNDL windows, and migration urgency ratings. Understand what your security team's assessment output means in plain terms.",
     icon: <FileText size={20} className="text-muted-foreground" />,
-    estimatedMinutes: 25,
     primaryCA: 'CA-RISK',
   },
   {
@@ -86,7 +83,6 @@ const COMMON_GROUND_MODULES: CommonGroundModule[] = [
     description:
       'Understand the NICE work roles needed to lead a PQC migration, what skills to hire or upskill, and how to structure a cross-functional migration program.',
     icon: <Users size={20} className="text-success" />,
-    estimatedMinutes: 25,
     primaryCA: 'CA-GOVCOMP',
   },
 ]
@@ -103,7 +99,11 @@ const CA_BADGE_COLORS: Partial<Record<NiceCompetencyAreaId, string>> = {
 
 export const CommonGroundPath: React.FC = () => {
   const navigate = useNavigate()
-  const totalMinutes = COMMON_GROUND_MODULES.reduce((sum, m) => sum + m.estimatedMinutes, 0)
+  const modules = COMMON_GROUND_MODULES.map((module) => ({
+    ...module,
+    estimatedMinutes: LEARN_MODULE_BY_ID[module.moduleId]?.durationMin ?? 0,
+  }))
+  const totalMinutes = modules.reduce((sum, m) => sum + m.estimatedMinutes, 0)
   const commonGroundData = getCommonGroundModules()
 
   return (
@@ -121,7 +121,7 @@ export const CommonGroundPath: React.FC = () => {
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <BookOpen size={14} />
-            {COMMON_GROUND_MODULES.length} modules
+            {modules.length} modules
           </span>
           <span className="flex items-center gap-1.5">
             <Clock size={14} />~{totalMinutes} minutes total
@@ -156,7 +156,7 @@ export const CommonGroundPath: React.FC = () => {
 
       {/* Module list */}
       <div className="space-y-3">
-        {COMMON_GROUND_MODULES.map((module, idx) => {
+        {modules.map((module, idx) => {
           const caBadge =
             CA_BADGE_COLORS[module.primaryCA] ?? 'bg-muted text-foreground border-border'
 

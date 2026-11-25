@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { industryComplianceConfigs } from '../../data/industryAssessConfig'
 import { coversEverySector, sectorCodesOverlap } from '../../utils/applicabilityEngine'
-import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'
+import { EU_MEMBER_NAMES } from '../../data/jurisdictionsData'
 
 /**
  * Keeps the frameworks a visitor selected that apply to their industry AND
@@ -54,7 +54,7 @@ export function splitComplianceRequirements(
       framework.countries.length === 0 ||
       framework.countries.includes('Global') ||
       framework.countries.includes(country) ||
-      (framework.countries.includes('European Union') && EU_MEMBER_COUNTRIES.has(country))
+      (framework.countries.includes('European Union') && EU_MEMBER_NAMES.has(country))
 
     ;(industryMatch && countryMatch ? kept : omitted).push(fw)
   }

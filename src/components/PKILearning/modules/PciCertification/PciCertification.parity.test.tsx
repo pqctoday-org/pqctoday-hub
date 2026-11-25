@@ -13,15 +13,20 @@ import { STEP_EXERCISES } from '@/data/stepExercises'
 import { useModuleStore } from '@/store/useModuleStore'
 import { PciCertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
-import manifest from './manifest'
-import fundamentalsManifest from '../CryptoProductCertification/manifest'
-import fips140Manifest from '../Fips1403Certification/manifest'
+import rawManifest from './manifest'
+import rawFundamentalsManifest from '../CryptoProductCertification/manifest'
+import rawFips140Manifest from '../Fips1403Certification/manifest'
 import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
 import { PRACTITIONER_DISCLAIMER } from '@/components/PKILearning/modules/CryptoProductCertification/components/sectionRegistry'
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
 import { ALL_EXERCISES } from './data/allExercises'
 import * as PciSections from './components/sections/PciSections'
 import * as pciData from './data/pciData'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
+const fundamentalsManifest = resolveManifest(rawFundamentalsManifest)
+const fips140Manifest = resolveManifest(rawFips140Manifest)
 
 const pascal = (id: string) =>
   id

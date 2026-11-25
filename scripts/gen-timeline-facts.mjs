@@ -50,9 +50,6 @@ const isUnreviewed = (status) => UNREVIEWED.has((status ?? '').trim().toLowerCas
 /** Tagged deadline/milestone rows skipped because they are unreviewed (reported on stderr). */
 const withheld = []
 
-// CSV uses ISO-3166 flags; the sim uses 'UK' for Great Britain.
-const FLAG_TO_SIM = { GB: 'UK' }
-
 // Emit an object key the way Prettier would (quoteProps: as-needed + singleQuote):
 // bare when it's a valid identifier, else single-quoted. Keeps the generated file
 // Prettier-stable so the `--check` gate doesn't fight the pre-commit formatter.
@@ -79,13 +76,13 @@ function derive() {
   }
 
   // The row each country tagged `is_sim_deadline=true` (curated canonical deadline).
-  // Keyed by sim code (UK/US/…) for the sim/timeline, and by full Country NAME for
+  // Keyed by country code (GB/US/…) for the sim/timeline, and by full Country NAME for
   // the assessment/report (whose country field is the full name) — one source, two keys.
   const deadline = {}
   const deadlineByName = {}
   for (const r of active) {
     if (r.is_sim_deadline !== 'true') continue
-    const code = FLAG_TO_SIM[r.FlagCode] ?? r.FlagCode
+    const code = r.FlagCode
     // The deadline is the END of the tagged row's window (2026-09-25): a plan row
     // that starts in 2023 and targets 2035 is a 2035 deadline. Every point-event
     // deadline row has StartYear === EndYear, so this changes none of them.
@@ -103,7 +100,7 @@ function derive() {
   for (const r of active) {
     const key = (r.sim_milestone ?? '').trim() // last-column values can carry a trailing CR/LF
     if (!key) continue
-    const code = FLAG_TO_SIM[r.FlagCode] ?? r.FlagCode
+    const code = r.FlagCode
     const yr = parseInt(r.StartYear, 10)
     if (!code || !Number.isFinite(yr)) continue
     ;(milestones[code] ??= {})[key] = yr

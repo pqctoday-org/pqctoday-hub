@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-mgmt-modernization',
-  contentVersion: 34,
-  lm_id: 'LM-052',
-  title: 'Cryptographic Management Modernization',
-  description:
-    'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative, with a business case tested against explicit costs, benefits and uncertainty.',
   whyThisMatters:
     'Certificate outages and unmanaged keys create present-day costs. Compare a management programme’s expected savings with its costs, including a case without quantum-related benefits; the return depends on scoped work and assumptions.',
-  duration: '55 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p1',
-  track: 'Governance & Risk',
-  trackOrder: 4,
   learnSections: [
     { id: 'why-now', label: 'Why Modernize Crypto Now' },
     { id: 'cpm-defined', label: 'CPM vs Crypto-Agility' },
@@ -37,14 +27,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'library-cbom-builder',
     text: 'Load a sample SBOM into the Library & Hardware CBOM Builder: it becomes a crypto-focused CBOM with library end-of-life and FIPS 140-3 status, and feeds the risk engine in step 7.',
-  },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ML-KEM', 'SLH-DSA'],
-    standards: ['NIST SP 800-90B', 'RFC 8555', 'OMB M-23-02', 'NIST SP 800-131A', 'RFC 9370'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.CryptoMgmtModernizationModule })),

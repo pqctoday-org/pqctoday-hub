@@ -721,6 +721,10 @@ export default defineConfig({
           'vendor-zip': ['jszip'],
           'vendor-csv': ['papaparse'],
           'canonical-binance': ['./src/data/canonicalBinanceIncident.ts'],
+          // Plain data with no runtime imports. On its own it cannot sit in a chunk that
+          // imports the tool registries back, which left the registries reading it before
+          // it had run (the same trap as the note in sandboxNiceMapping.ts).
+          'tools-data': ['./src/data/generated/tools.generated.ts'],
           'vendor-markdown': ['react-markdown', 'remark-gfm'],
           'vendor-chat': ['minisearch'],
           'vendor-three': ['three'],

@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'kms-pqc',
-  contentVersion: 24,
-  lm_id: 'LM-016',
-  title: 'KMS & PQC Key Management',
-  description:
-    'PQC key management patterns: envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
   whyThisMatters:
     "The KMS is where every other system's keys live — get PQC key management wrong at this layer and you've broken envelope encryption for everything downstream, not just one application.",
-  duration: '60 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p6',
-  track: 'Hardware Infrastructure',
-  trackOrder: 4,
   learnSections: [
     { id: 'key-hierarchy', label: 'PQC Key Hierarchy Design' },
     { id: 'envelope', label: 'ML-KEM Envelope Encrypt' },
@@ -22,6 +12,7 @@ const manifest: ModuleManifest = {
     { id: 'rotation', label: 'Key Rotation Planning' },
     { id: 'kmip', label: 'Enterprise Architecture Patterns' },
     { id: 'cloud-responsibility', label: 'Cloud Shared Responsibility' },
+    { id: 'key-escrow-recovery', label: 'Key Escrow & Recovery' },
   ],
   workshopSteps: [
     { id: 'key-hierarchy', label: 'Key Hierarchy' },
@@ -36,8 +27,6 @@ const manifest: ModuleManifest = {
     step: 'envelope-encryption',
     text: 'Run the Envelope Encryption step: it wraps a data key with ML-KEM and with RSA-OAEP and lays the two stored envelopes side by side, with the size difference.',
   },
-  playgroundTool: 'envelope-encrypt',
-  taxonomy: { algorithms: ['ML-KEM'], standards: ['FIPS 203'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.KmsPqcModule })),
 }

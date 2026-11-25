@@ -6,7 +6,7 @@ import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { CuriousSummaryBanner } from '../../common/CuriousSummaryBanner'
 import { AICryptoAttacksModule } from './index'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { content } from './content'
 import { SAMPLE_REPO_FILES } from './data/secretHuntData'
 import { KEY_POLICY_TEMPLATES, POLICY_SETTING_META } from './data/keyPolicyData'
@@ -16,6 +16,9 @@ import { KeyPolicyReview } from './workshop/KeyPolicyReview'
 import { TraceLearning } from './workshop/TraceLearning'
 import { ClaimSorter } from './workshop/ClaimSorter'
 import { DefencePlanner } from './workshop/DefencePlanner'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('AICryptoAttacks module parity & workshop safety invariants', () => {
   it('renders module header and standard tabs inside ModuleShell', () => {

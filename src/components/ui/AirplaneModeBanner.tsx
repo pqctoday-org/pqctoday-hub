@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Plane, X, CheckCircle, AlertTriangle } from 'lucide-react'
 import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { Button } from '@/components/ui/button'
+import { LEARN_MODULE_COUNT } from '@/components/PKILearning/moduleData'
 
 /**
  * Dismissible banner that explains Airplane Mode limitations.
@@ -43,8 +44,8 @@ export function AirplaneModeBanner() {
                 Available offline
               </p>
               <ul className="text-xs text-muted-foreground space-y-0.5">
-                <li>All 73 learning modules & workshops</li>
-                <li>Quiz (1,125 questions)</li>
+                <li>All {LEARN_MODULE_COUNT} learning modules & workshops</li>
+                <li>Quiz question bank</li>
                 <li>Assessment wizard & PDF report</li>
                 <li>Playground (KEM, DSA, Hashing, HSM)</li>
                 <li>OpenSSL Studio</li>

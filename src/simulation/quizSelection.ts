@@ -2,7 +2,7 @@
 /**
  * quizSelection (WP2.5) — deterministic per-module question pick for the
  * quiz-gated "Mark complete" flow. Reuses the REAL quiz bank that already
- * powers /learn/quiz (src/data/quizDataLoader.ts, 1005 questions) — no new
+ * powers /learn/quiz (src/data/quizDataLoader.ts) — no new
  * question authoring, no separate quiz system. `QuizQuestion.category`
  * mostly shares its vocabulary with Learn module ids (e.g. 'crypto-agility',
  * 'hybrid-crypto', 'quantum-threats').

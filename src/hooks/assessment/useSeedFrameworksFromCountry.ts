@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { complianceFrameworks } from '@/data/complianceData'
-import { EU_MEMBER_COUNTRIES } from '@/utils/euCountries'
+import { EU_MEMBER_NAMES } from '@/data/jurisdictionsData'
 
 /**
  * One-shot seeding: the first time a user lands on the Command Center with a
@@ -25,7 +25,7 @@ export function useSeedFrameworksFromCountry(): void {
     if (!country) return
     if (assessmentStatus !== 'complete') return
 
-    const isEuMember = EU_MEMBER_COUNTRIES.has(country)
+    const isEuMember = EU_MEMBER_NAMES.has(country)
     const seedIds = complianceFrameworks
       .filter((fw) => {
         if (!fw.requiresPQC) return false

@@ -7,12 +7,15 @@ import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { useModuleStore } from '@/store/useModuleStore'
 import { CloudPqcModule } from './index'
 import { content } from './content'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { CloudEstateMapper } from './workshop/CloudEstateMapper'
 import { ProviderCapabilityMatrix } from './workshop/ProviderCapabilityMatrix'
 import { EdgeTlsKmsPlanner } from './workshop/EdgeTlsKmsPlanner'
 import { SaasBoundaryChecklist } from './workshop/SaasBoundaryChecklist'
 import { CloudPqcExercises } from './components/CloudPqcExercises'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('CloudPqc module (LM-080)', () => {
   beforeEach(() => {

@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'healthcare-pqc',
-  contentVersion: 20,
-  lm_id: 'LM-041',
-  title: 'Healthcare PQC',
-  description:
-    'Healthcare-specific PQC challenges: biometric data permanence, pharmaceutical IP protection, patient privacy lifecycles, medical device safety, and hospital network migration.',
   whyThisMatters:
     "Patient biometric and genomic data doesn't expire — a compromised health record is compromised forever, making healthcare one of the starkest harvest-now-decrypt-later cases in any industry.",
-  duration: '60 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 1,
   learnSections: [
     { id: 'biometric-threat', label: 'Biometric Data Permanence' },
     { id: 'pharma-ip', label: 'Pharma IP Protection' },
@@ -32,14 +22,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'patient-privacy-mapper',
     text: 'Map a data category in the Patient Privacy Mapper: pediatric, genomic and mental-health records use illustrative planning lifetimes to explore HNDL exposure.',
-  },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ML-KEM'],
-    standards: ['NIST IR 8547', 'FIPS 203', 'FIPS 204', 'FIPS 205'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HealthcarePQCModule })),

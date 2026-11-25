@@ -4,9 +4,10 @@ import { Link } from 'react-router'
 import { CheckCircle2, Circle, Network, ArrowRight, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { handleTabListKeyDown } from '@/components/ui/tabs'
-import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
 import { LearnOrderStrip } from '@/components/ui/LearnOrderStrip'
+import { NiceCoveragePanel } from '@/components/ui/NiceCoveragePanel'
 import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/learnPathScope'
 // moduleRelations() is pure data/logic (no JSX) — src/components/Mobile may
 // not import a desktop VIEW component (RelatedModulesPanel), so this renders
@@ -26,7 +27,7 @@ import { DESKTOP_ONLY_WORKSHOP_LABEL, useDesktopOnlyWorkshopEntries } from '../d
 import { cn } from '@/lib/utils'
 
 export interface MobileModuleShellProps {
-  manifest: ModuleManifest
+  manifest: ResolvedModuleManifest
   title?: ReactNode
   description?: ReactNode
   /** Already-resolved Learn tab body — same real content desktop's Learn tab
@@ -176,6 +177,7 @@ export function MobileModuleShell({
           {title ?? manifest.title}
         </h1>
         <LearnOrderStrip moduleId={manifest.id} />
+        <NiceCoveragePanel moduleId={manifest.id} />
         {(description ?? manifest.description) && (
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
             {description ?? manifest.description}

@@ -15,18 +15,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'iot-pqc',
-  contentVersion: 16,
-  lm_id: 'LM-074',
-  title: 'IoT & Embedded Device PQC',
-  description:
-    'PQC for constrained IoT and embedded devices: algorithm fit by device class (verify vs sign), firmware and update signing (LMS, ML-DSA, SUIT/COSE), constrained protocols (DTLS 1.3, EDHOC/OSCORE, Matter, BLE Mesh, LoRaWAN), certificate size and device identity, fleet key management, secure elements, and the IoT security regulations (EU CRA, RED/EN 18031, Cyber Trust Mark, UK PSTI).',
   whyThisMatters:
     'A device shipped today may still be in the field when a quantum computer can forge its update signatures. Whether it can verify a PQC signature, fit a PQC handshake in its radio frames and rotate keys across a fleet is decided now, in hardware and protocol choices that cannot be patched in later.',
-  duration: '90 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p5',
-  track: 'Applications',
-  trackOrder: 3,
   learnSections: [
     { id: 'why-iot', label: 'Why IoT is different: device classes' },
     { id: 'algorithm-selection', label: 'Algorithm selection: verify vs sign' },
@@ -49,14 +39,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'constrained-algorithm',
     text: 'Pick a device class and a job — verify, sign or key establishment — in the Algorithm Explorer to see which PQC algorithms fit, with the benchmark behind each number.',
-  },
-  // Derived from the algorithm and standard ids this module's content.ts
-  // declares (the References tab's own data), restricted to the
-  // STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['Falcon', 'LMS/XMSS', 'ML-DSA', 'ML-KEM'],
-    standards: ['FIPS 203', 'FIPS 204', 'NIST SP 800-208', 'RFC 9846', 'NSA CNSA 2.0'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.IoTPQCModule })),

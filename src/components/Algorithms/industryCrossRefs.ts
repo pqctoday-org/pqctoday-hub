@@ -20,7 +20,7 @@ import { complianceFrameworks, type ComplianceFramework } from '@/data/complianc
 import { resolveToNaicsSet } from '@/data/sectorVocabularyData'
 import { isCrossIndustry } from '@/data/industryMatch'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
-import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 import { WORKSHOP_TOOLS, type WorkshopTool } from '@/components/Playground/workshopRegistry'
 import type { IndustryStandard, IndustryUseCase } from '@/data/industryLandscapeData'
 import { learnHref } from './learnHref'
@@ -63,7 +63,7 @@ export function librarySectorHref(industry: string): string | null {
 // ── Learn ────────────────────────────────────────────────────────────────────
 
 export interface IndustryLearnModule {
-  manifest: ModuleManifest
+  manifest: ResolvedModuleManifest
   href: string
 }
 

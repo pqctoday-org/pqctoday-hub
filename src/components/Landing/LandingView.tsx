@@ -17,7 +17,7 @@ import { resolveRoleBoardVariant, RESEARCHER_FIELD_WATCH_VARIANT_ID } from '@/da
 import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
-import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { LEARN_MODULE_COUNT } from '@/components/PKILearning/moduleData'
 import { ScoreCard } from './ScoreCard'
 import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
@@ -35,8 +35,6 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileHomeBoard } from '@/components/Mobile/screens/MobileHomeBoard'
 import { MobileRoleSelection } from '@/components/Mobile/shell/MobileRoleSelection'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
-
-const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -660,7 +658,7 @@ export const LandingView = () => {
               value: libraryCount !== null ? String(libraryCount) : '...',
               label: 'Library Documents',
             },
-            { value: String(MODULE_COUNT), label: 'Learning Modules' },
+            { value: String(LEARN_MODULE_COUNT), label: 'Learning Modules' },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4 text-center">
               <div className="text-2xl md:text-3xl font-bold text-gradient">{stat.value}</div>

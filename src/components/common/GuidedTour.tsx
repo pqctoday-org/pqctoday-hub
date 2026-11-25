@@ -29,6 +29,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { useDisclaimerStore, getAppMajorVersion } from '../../store/useDisclaimerStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 import { PERSONA_TOURS } from '../../data/personaTours'
+import { LEARN_MODULE_COUNT, MODULE_TRACKS } from '../PKILearning/moduleData'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
@@ -81,8 +82,7 @@ const featureSlides: Slide[] = [
   {
     icon: GraduationCap,
     title: 'Learning Modules',
-    description:
-      '73 modules across 9 tracks \u2014 from \u201CWhat is PQC?\u201D to migration planning. Follow a guided path or explore at your own pace.',
+    description: `${LEARN_MODULE_COUNT} modules across ${MODULE_TRACKS.length} tracks \u2014 from \u201CWhat is PQC?\u201D to migration planning. Follow a guided path or explore at your own pace.`,
     route: '/learn',
     path: '/learn',
     essential: true,

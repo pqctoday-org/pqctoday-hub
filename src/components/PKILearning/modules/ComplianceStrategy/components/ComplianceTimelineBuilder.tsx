@@ -39,6 +39,7 @@ import {
 import type { ComplianceGanttRow, UserMilestone, ComplianceDeadline } from './ComplianceGantt'
 import type { TimelinePhase, TimelineEvent, EventType } from '@/types/timeline'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { JURISDICTIONS } from '../data/jurisdictions'
 
 // ---------------------------------------------------------------------------
 // Data helpers
@@ -168,32 +169,9 @@ export function computeGapAnalysis(
 // Jurisdiction mapping
 // ---------------------------------------------------------------------------
 
-const JURISDICTION_COUNTRY_NAMES: Record<string, string[]> = {
-  us: ['United States'],
-  ca: ['Canada'],
-  eu: ['European Union'],
-  uk: ['United Kingdom'],
-  fr: ['France'],
-  de: ['Germany'],
-  cz: ['Czech Republic'],
-  it: ['Italy'],
-  es: ['Spain'],
-  jp: ['Japan'],
-  kr: ['South Korea'],
-  au: ['Australia'],
-  sg: ['Singapore'],
-  nz: ['New Zealand'],
-  cn: ['China'],
-  in: ['India'],
-  tw: ['Taiwan'],
-  hk: ['Hong Kong'],
-  my: ['Malaysia'],
-  il: ['Israel'],
-  ae: ['United Arab Emirates'],
-  sa: ['Saudi Arabia'],
-  bh: ['Bahrain'],
-  jo: ['Jordan'],
-}
+const JURISDICTION_COUNTRY_NAMES: Record<string, string[]> = Object.fromEntries(
+  JURISDICTIONS.map((j) => [j.id, j.countryNames])
+)
 
 const MILESTONE_CATEGORIES = ['Assessment', 'Remediation', 'Certification', 'Reporting', 'Renewal']
 
