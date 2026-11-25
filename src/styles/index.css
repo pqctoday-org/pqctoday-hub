@@ -163,6 +163,8 @@
   --z-index-dialog: 101;
   --z-index-disclaimer: 110;
   --z-index-tooltip: 9999;
+  /* The way back from a page opened from an Assistant answer: above any dialog the page opens. */
+  --z-index-return-bar: 10000;
 
   /* Mobile UX layer (design_handoff_pqc_mobile_ux). The bottom nav and group
      panels reuse --z-index-nav-backdrop/--z-index-nav — they're the exact

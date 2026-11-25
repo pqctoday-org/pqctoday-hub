@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect } from 'react'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -69,6 +69,50 @@ describe('return from a page opened from an answer', () => {
     await userEvent.setup().click(await screen.findByRole('button', { name: 'Back to TLS Basics' }))
     expect(screen.getByTestId('where')).toHaveTextContent('/learn')
     expect(useRightPanelStore.getState().isOpen).toBe(false)
+  })
+
+  it('moves inside a modal dialog the opened page shows, so it is not left behind the backdrop', async () => {
+    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    const dialog = document.createElement('div')
+    dialog.setAttribute('role', 'dialog')
+    dialog.setAttribute('aria-modal', 'true')
+    dialog.setAttribute('aria-label', 'CNSA 2.0 detail')
+    document.body.appendChild(dialog)
+    try {
+      mount()
+      act(() => go('/compliance'))
+      const back = await screen.findByRole('button', { name: 'Back to your answer' })
+      expect(dialog.contains(back)).toBe(true)
+      expect(screen.getAllByRole('button', { name: 'Back to your answer' })).toHaveLength(1)
+      await userEvent.setup().click(back)
+      expect(screen.getByTestId('where')).toHaveTextContent('/learn')
+      expect(useAssistantReturnStore.getState().target).toBeNull()
+    } finally {
+      dialog.remove()
+    }
+  })
+
+  it('stays in the page when a modal opens and goes back to the page when it closes', async () => {
+    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    mount()
+    act(() => go('/compliance'))
+    const inPage = await screen.findByRole('button', { name: 'Back to your answer' })
+    expect(inPage.closest('[aria-modal]')).toBeNull()
+    const dialog = document.createElement('div')
+    dialog.setAttribute('role', 'dialog')
+    dialog.setAttribute('aria-modal', 'true')
+    document.body.appendChild(dialog)
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Back to your answer' }).closest('[aria-modal]')
+      ).toBe(dialog)
+    )
+    dialog.remove()
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Back to your answer' }).closest('[aria-modal]')
+      ).toBeNull()
+    )
   })
 
   it('ends when the learner moves on from the opened page', async () => {
