@@ -33458,6 +33458,21 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "AD-FS",
+      "refId": "AD-FS",
+      "file": "AD-FS-6ee80bd9.html",
+      "sizeBytes": 59628,
+      "content_type": "text/html",
+      "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-fs/operations/configure-ts-td-certs-ad-fs",
+      "sha256": "e0d2aa9f9a4952ca383f07be9c48e5d488074305215c5fb3edf9950922e141de",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T01:47:52.425053+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
