@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { MobilePageActionsSheet } from './MobilePageActionsSheet'
 import { useVersionStore } from '@/store/useVersionStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 
 function renderSheet(initialPath: string, onClose = vi.fn()) {
   return render(
@@ -22,11 +23,53 @@ afterEach(() => {
 })
 
 describe('MobilePageActionsSheet', () => {
-  it("always shows Assistant, Journey, FAQ, Glossary, What's new and About", () => {
+  it("always shows Assistant, Your journey, Bookmarks, FAQ, Glossary, What's new and About", () => {
     renderSheet('/assess')
-    for (const label of ['Assistant', 'Journey', 'FAQ', 'Glossary', "What's new", 'About']) {
+    for (const label of [
+      'Assistant',
+      'Your journey',
+      'Bookmarks',
+      'FAQ',
+      'Glossary',
+      "What's new",
+      'About',
+    ]) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
+  })
+
+  it.each([
+    ['Bookmarks', 'bookmarks'],
+    ['FAQ', 'faq'],
+    ['Assistant', 'chat'],
+  ] as const)('opens the drawer on %s once the sheet has closed', (label, tab) => {
+    useRightPanelStore.setState({ isOpen: false, activeTab: 'chat' })
+    const onClose = vi.fn()
+    const tree = (open: boolean) => (
+      <MemoryRouter initialEntries={['/assess']}>
+        <MobilePageActionsSheet open={open} onClose={onClose} />
+      </MemoryRouter>
+    )
+    const { rerender } = render(tree(true))
+    fireEvent.click(screen.getByText(label))
+    expect(onClose).toHaveBeenCalledTimes(1)
+    rerender(tree(false))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: tab })
+  })
+
+  it('Your journey goes to Learn instead of opening a drawer tab', () => {
+    useRightPanelStore.setState({ isOpen: false, activeTab: 'chat' })
+    render(
+      <MemoryRouter initialEntries={['/assess']}>
+        <Routes>
+          <Route path="*" element={<MobilePageActionsSheet open onClose={vi.fn()} />} />
+          <Route path="/learn" element={<div>Learn page</div>} />
+        </Routes>
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByText('Your journey'))
+    expect(screen.getByText('Learn page')).toBeInTheDocument()
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
   })
 
   it('closes and navigates to /about when About is tapped — real bug fix 2026-08-23: this was the only nav path to MobileAboutView.tsx', () => {
