@@ -666,5 +666,10 @@
   "nist-ir-8413",
   "pkcs-1",
   "pkcs-7",
-  "pkcs-8"
+  "pkcs-8",
+  "lattice-based",
+  "hash-based",
+  "digital-signatures",
+  "quantum-computer",
+  "classical-cryptography"
 ]

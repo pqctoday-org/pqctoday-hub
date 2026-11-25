@@ -44,6 +44,7 @@
     "id": "cnsa-2-0",
     "term": "CNSA 2.0",
     "definition": "NSA's Commercial National Security Algorithm Suite 2.0, mandating PQC adoption timelines for national security systems.",
+    "plainDefinition": "The US National Security Agency's list of quantum-safe algorithms for national security systems. Its deadlines apply to those systems, not to everyone, and run to the end of 2031.",
     "relatedModule": "/timeline",
     "complexity": "intermediate",
     "category": "standard"

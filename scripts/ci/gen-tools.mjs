@@ -13,6 +13,8 @@
  * categories, phases, zones, roles and NICE ids are typed as the existing
  * TypeScript unions, so a bad value fails `tsc`. Content (descriptions, intro,
  * icons, keywords, requirements, outputs, components) stays in the registries.
+ * A Playground tool that belongs to a lesson reads its NICE tier, competency areas and work roles from that
+ * lesson's row in the lessons file (they are not repeated in its own row); sandbox scenarios keep their own.
  *
  *   node scripts/ci/gen-tools.mjs           # (re)generate
  *   node scripts/ci/gen-tools.mjs --check   # exit 1 if stale (CI gate)
@@ -59,9 +61,9 @@ const KINDS = ['playground', 'sandbox', 'business']
 const SEMVER = /^\d+\.\d+\.\d+$/
 const SANDBOX_PREFIX = 'sbx-'
 
-// Latest dated tools CSV (tools_MMDDYYYY[_rN].csv).
-function latestCsv() {
-  const re = /^tools_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+// Latest dated CSV of one family (<prefix>_MMDDYYYY[_rN].csv).
+function latestCsv(prefix = 'tools') {
+  const re = new RegExp(`^${prefix}_(\\d{2})(\\d{2})(\\d{4})(?:_r(\\d+))?\\.csv$`)
   let best = null
   for (const file of readdirSync(DATA)) {
     const m = file.match(re)
@@ -69,7 +71,7 @@ function latestCsv() {
     const key = `${m[3]}${m[1]}${m[2]}${(m[4] ?? '0').padStart(3, '0')}`
     if (!best || key > best.key) best = { key, file }
   }
-  if (!best) throw new Error('no tools_*.csv found')
+  if (!best) throw new Error(`no ${prefix}_*.csv found`)
   return best.file
 }
 
@@ -98,6 +100,17 @@ function statements(row, column) {
   return ids
 }
 
+// A Playground tool that belongs to a lesson takes its NICE tier, competency areas and work roles from
+// that lesson's row (one copy, in the lessons file). Sandbox scenarios keep their own: they have no lesson
+// of their own to read them from (their columns follow their track, in the order a reader sees them).
+function lessonRows() {
+  const parsed = Papa.parse(readFileSync(join(DATA, latestCsv('learn_modules')), 'utf8'), {
+    header: true,
+    skipEmptyLines: true,
+  })
+  return new Map(parsed.data.map((lesson) => [lesson.module_id, lesson]))
+}
+
 function fail(row, message) {
   throw new Error(`${row.tool_id || '(blank tool_id)'}: ${message}`)
 }
@@ -112,6 +125,7 @@ function load() {
     throw new Error(`unexpected ${file} headers`)
   }
   const seen = new Set()
+  const lessons = lessonRows()
   const rows = parsed.data.map((row) => {
     if (!row.tool_id || seen.has(row.tool_id)) fail(row, 'duplicate or blank tool_id')
     seen.add(row.tool_id)
@@ -156,6 +170,18 @@ function load() {
       }
       if (list(row.recommended_personas).length === 0) fail(row, 'blank recommended_personas')
     }
+    const lesson = row.kind === 'playground' && row.module ? lessons.get(row.module) : undefined
+    if (row.kind === 'playground' && row.module && !lesson) {
+      fail(row, `module "${row.module}" is not a lesson of the lessons file`)
+    }
+    if (lesson && (row.nice_tier || row.nice_competency_areas || row.nice_work_roles)) {
+      fail(
+        row,
+        'a tool with a lesson reads its NICE tier, areas and roles from the lesson: leave its own cells blank'
+      )
+    }
+    // where the tool's NICE tier, areas and roles come from: its lesson, else its own row
+    const nice = lesson ?? row
     const niceStatementsTaught = statements(row, 'nice_statements_taught')
     const niceStatementsPractised = statements(row, 'nice_statements_practised')
     if (niceStatementsTaught.some((id) => niceStatementsPractised.includes(id))) {
@@ -179,9 +205,9 @@ function load() {
       ...(isBusiness
         ? {}
         : {
-            ...(text(row.nice_tier) ? { niceTier: row.nice_tier } : {}),
-            niceCompetencyAreas: list(row.nice_competency_areas),
-            niceWorkRoles: list(row.nice_work_roles),
+            ...(text(nice.nice_tier) ? { niceTier: nice.nice_tier } : {}),
+            niceCompetencyAreas: list(nice.nice_competency_areas),
+            niceWorkRoles: list(nice.nice_work_roles),
           }),
       ...(text(row.framework_phase) ? { frameworkPhase: row.framework_phase } : {}),
       ...(text(row.cswp39_zone) ? { cswp39Zone: row.cswp39_zone } : {}),

@@ -12,6 +12,7 @@
 import { execFileSync } from 'node:child_process'
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
+import Papa from 'papaparse'
 import { describe, it, expect } from 'vitest'
 import {
   BUSINESS_TOOL_RECORDS,
@@ -31,6 +32,7 @@ import {
 } from '@/components/Playground/workshopRegistry'
 import { SANDBOX_SCENARIOS } from './sandboxScenarios'
 import { LEARN_MODULES, LEARN_MODULE_BY_ID } from './generated/learnModules.generated'
+import { getToolNiceMapping, getToolsForCompetencyArea } from './toolNiceMapping'
 import { moduleIdFromToolLink } from './moduleToolLinks'
 import golden from './__golden__/toolFacts.beforeMove.golden.json'
 import { captureToolFacts } from './__fixtures__/toolSnapshot'
@@ -278,13 +280,49 @@ describe('tools data file: lesson links', () => {
     }
   })
 
-  it('gives a tool the NICE values of the lesson it belongs to', () => {
+  it("repeats none of its lesson's NICE values in its own row", () => {
+    // One copy: a Playground tool with a lesson reads its NICE tier, areas and roles from that lesson
+    // (the generator does it); the tool's own cells stay blank. Sandbox scenarios keep their own.
+    const dir = join(process.cwd(), 'src', 'data')
+    const file = readdirSync(dir)
+      .filter((f) => /^tools_\d{8}(_r\d+)?\.csv$/.test(f))
+      .sort((a, b) => key(a).localeCompare(key(b)))
+      .pop()!
+    const rows = Papa.parse<Record<string, string>>(readFileSync(join(dir, file), 'utf8'), {
+      header: true,
+      skipEmptyLines: true,
+    }).data
+    const withLesson = rows.filter((row) => row.kind === 'playground' && row.module)
+    expect(withLesson.length).toBeGreaterThan(30)
+    for (const row of withLesson) {
+      expect(
+        [row.nice_tier, row.nice_competency_areas, row.nice_work_roles].filter(Boolean),
+        `${row.tool_id} repeats its lesson's NICE values`
+      ).toEqual([])
+    }
+  })
+
+  it("gives a tool with a lesson that lesson's NICE values, in the NICE view too", () => {
+    const tools = WORKSHOP_TOOLS.filter((tool) => !tool.sandbox)
     for (const row of PLAYGROUND_TOOL_RECORDS) {
       if (!row.module) continue
       const lesson = LEARN_MODULE_BY_ID[row.module]
       expect(row.niceTier, row.toolId).toBe(lesson.niceTier)
       expect(row.niceCompetencyAreas, row.toolId).toEqual(lesson.niceCompetencyAreas)
       expect(row.niceWorkRoles, row.toolId).toEqual(lesson.niceWorkRoles)
+      const tool = tools.find((t) => t.id === row.toolId)!
+      const ref = getToolNiceMapping(tool)
+      expect(ref?.tier, `${row.toolId} in the NICE view`).toBe(lesson.niceTier)
+      for (const area of lesson.niceCompetencyAreas) {
+        expect(
+          getToolsForCompetencyArea(area, tools).some((entry) => entry.tool.id === row.toolId),
+          `${row.toolId} is listed under ${area}`
+        ).toBe(true)
+      }
+    }
+    // the two that had no NICE values before they were linked to a lesson
+    for (const id of ['cacp-kmip', 'openssl-studio']) {
+      expect(getToolNiceMapping(tools.find((t) => t.id === id)!), id).toBeDefined()
     }
   })
 
@@ -318,26 +356,48 @@ describe('the move changed nothing a page shows', () => {
   // snapshot below, so everything else must still be identical to what pages showed before the move.
   //  - 25 Nov 2026 ("Link it to Crypto Agility"): the KMIP control plane tool opens the Crypto Agility
   //    lesson from its card (its own page stays /playground/cacp), so that lesson now offers it back.
+  //  - 25 Nov 2026 ("Crypto Developer APIs"): OpenSSL Studio likewise opens the Crypto Developer APIs lesson.
   const intended = (key: string): unknown => {
     const snapshot = structuredClone(before[key])
     if (key === 'workshopTools') {
-      for (const tool of snapshot as { id: string; moduleLink: string }[]) {
-        if (tool.id === 'cacp-kmip') tool.moduleLink = '/learn/crypto-agility'
+      for (const tool of snapshot as { id: string; moduleLink: string; version: string }[]) {
+        // a changed lesson link is a change to the tool: its version goes up by a patch
+        if (tool.id === 'cacp-kmip') {
+          tool.moduleLink = '/learn/crypto-agility'
+          tool.version = '1.0.10'
+        }
+        if (tool.id === 'openssl-studio') {
+          tool.moduleLink = '/learn/crypto-dev-apis'
+          tool.version = '1.0.8'
+        }
       }
     }
     if (key === 'toolNice') {
-      // the tool takes the NICE values of the lesson it now belongs to (first entry: cacp-kmip)
-      ;(snapshot as unknown[])[0] = {
-        toolId: 'cacp-kmip',
-        competencyAreas: ['CA-SYSARCH', 'CA-CRYPTO'],
-        tier: 'practitioner',
-        workRoles: ['security-architect', 'systems-security-analyst'],
+      // the two tools linked to a lesson take that lesson's NICE values (the tool's entry in the snapshot was null)
+      const ids = (before.workshopTools as { id: string }[]).map((tool) => tool.id)
+      for (const [id, lessonId] of [
+        ['cacp-kmip', 'crypto-agility'],
+        ['openssl-studio', 'crypto-dev-apis'],
+      ]) {
+        const lesson = LEARN_MODULE_BY_ID[lessonId]
+        ;(snapshot as unknown[])[ids.indexOf(id)] = {
+          toolId: id,
+          competencyAreas: [...lesson.niceCompetencyAreas],
+          tier: lesson.niceTier,
+          workRoles: [...lesson.niceWorkRoles],
+        }
       }
     }
     if (key === 'toolsByModuleId')
-      (snapshot as [string, string[]][]).push(['crypto-agility', ['cacp-kmip']])
+      (snapshot as [string, string[]][]).push(
+        ['crypto-agility', ['cacp-kmip']],
+        ['crypto-dev-apis', ['openssl-studio']]
+      )
     if (key === 'toolByModuleId')
-      (snapshot as [string, string][]).push(['crypto-agility', 'cacp-kmip'])
+      (snapshot as [string, string][]).push(
+        ['crypto-agility', 'cacp-kmip'],
+        ['crypto-dev-apis', 'openssl-studio']
+      )
     return snapshot
   }
 

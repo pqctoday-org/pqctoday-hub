@@ -4,11 +4,12 @@
 /**
  * Bridges WORKSHOP_TOOLS to NICE Framework metadata.
  *
- * Each tool's tier, competency areas and work roles are columns of its row in
- * the tools data file (`src/data/tools_*.csv`, read through
- * `tools.generated.ts`). Tools whose row has no tier (the KMIP control plane,
- * OpenSSL Studio) are returned as undefined and won't appear in NICE-view
- * buckets.
+ * A Playground tool that belongs to a lesson takes its tier, competency areas
+ * and work roles from that lesson: `tools.generated.ts` reads them from the
+ * lessons file, so they are not repeated in the tool's own row. A tool with no
+ * lesson (and every sandbox scenario) keeps its own columns in the tools data
+ * file (`src/data/tools_*.csv`). A tool whose record names no tier is returned
+ * as undefined and won't appear in NICE-view buckets.
  */
 import type { NiceCompetencyAreaId, NiceProficiencyTier, NiceWorkRoleId } from './niceFramework'
 import { TOOL_RECORD_BY_ID } from './generated/tools.generated'
