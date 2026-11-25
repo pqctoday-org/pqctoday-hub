@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { BookmarkPlus, Check } from 'lucide-react'
 import { Chip, Eyebrow, StickerCard, StoryButton } from '@/components/storybook'
+import { eyebrowClass } from '@/components/storybook/variants'
 import { cn } from '@/lib/utils'
 import type { AssistantRow } from '@/services/assistant/contract'
 import { isAnswerSaved, saveAnswer } from '@/services/assistant/savedAnswers'
@@ -54,7 +55,7 @@ export function NoteBlock({ note }: { note: string }) {
 
 export function DirectAnswerBlock({ direct }: { direct: NonNullable<PreparedAnswer['direct']> }) {
   return (
-    <StickerCard tone="highlight" padding="default" as="section" aria-label={COPY.directAnswer}>
+    <StickerCard tone="highlight" padding="default" role="group" aria-label={COPY.directAnswer}>
       <Eyebrow as="p">{COPY.directAnswer}</Eyebrow>
       <p className="mt-1 text-base font-bold text-heading">{direct.value}</p>
       <p className="mt-2 text-xs text-foreground/80">{evidenceLine(direct)}</p>
@@ -75,7 +76,7 @@ export function NameCardBlock({
 }) {
   const row = nameCardAsRow(card)
   return (
-    <StickerCard as="section" aria-label={card.title} className="space-y-2">
+    <StickerCard role="group" aria-label={card.title} className="space-y-2">
       <Chip>{card.kind}</Chip>
       <p className="text-base font-bold text-heading">{card.title}</p>
       {card.extract && <p className="text-sm text-foreground/90">{card.extract}</p>}
@@ -134,20 +135,23 @@ export function ResourceGroupsBlock({
   onAction: (row: AssistantRow) => void
 }) {
   const [showAll, setShowAll] = useState(false)
+  const base = useId()
   if (groups.length === 0) return null
   return (
     <div role="group" aria-label={COPY.resourcesIntro} className="space-y-3">
       {groups.map((g) => (
-        <section key={g.name} aria-label={g.name} className="space-y-1.5">
-          <Eyebrow as="p">{g.name}</Eyebrow>
-          <ul className="space-y-2">
+        <div key={g.name} className="space-y-1.5">
+          <h3 id={`${base}-${g.name}`} className={eyebrowClass}>
+            {g.name}
+          </h3>
+          <ul aria-labelledby={`${base}-${g.name}`} className="space-y-2">
             {g.rows.map((r) => (
               <AnswerRowItem key={r.tag} row={r} onAction={onAction} />
             ))}
             {showAll &&
               g.more.map((r) => <AnswerRowItem key={r.tag} row={r} onAction={onAction} />)}
           </ul>
-        </section>
+        </div>
       ))}
       {hiddenCount > 0 && (
         <StoryButton variant="quiet" aria-expanded={showAll} onClick={() => setShowAll((v) => !v)}>

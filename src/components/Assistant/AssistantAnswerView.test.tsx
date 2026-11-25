@@ -32,7 +32,7 @@ function show(answer: RenderableAnswer, onAction = vi.fn()) {
 describe('direct answer', () => {
   it('shows the value, its evidence line and "Answer drawn from", then the groups', () => {
     show(directAnswerCnsa as RenderableAnswer)
-    const box = screen.getByRole('region', { name: 'Direct answer' })
+    const box = screen.getByRole('group', { name: 'Direct answer' })
     expect(within(box).getByText(/2030 for software and firmware signing/)).toBeInTheDocument()
     expect(
       within(box).getByText(
@@ -50,7 +50,7 @@ describe('direct answer', () => {
 
   it('does not draw a direct answer whose evidence is missing, and says resources only', () => {
     show(directWithoutEvidence as RenderableAnswer)
-    expect(screen.queryByRole('region', { name: 'Direct answer' })).toBeNull()
+    expect(screen.queryByRole('group', { name: 'Direct answer' })).toBeNull()
     expect(screen.queryByText(/Evidence:/)).toBeNull()
     expect(screen.getByText(/No direct answer: resources only\./)).toBeInTheDocument()
     expect(screen.queryByText(/^Answer drawn from/)).toBeNull()
@@ -76,8 +76,12 @@ describe('resources only', () => {
     expect(
       screen.getByText('Closest source: Glossary term: ML-KEM (GL:ml-kem)')
     ).toBeInTheDocument()
-    const groups = screen.getAllByRole('region').map((g) => g.getAttribute('aria-label'))
-    expect(groups).toEqual(['References', 'Learn', 'Tools'])
+    const groups = screen.getAllByRole('list').map((g) => g.getAttribute('aria-labelledby'))
+    expect(groups.map((id) => document.getElementById(id!)?.textContent)).toEqual([
+      'References',
+      'Learn',
+      'Tools',
+    ])
   })
 
   it('shows at most three rows per group and hides the rest behind one "Show n more" control', async () => {
@@ -109,12 +113,12 @@ describe('resources only', () => {
 
   it('draws the planning answer with Tools first', () => {
     show(planBank as RenderableAnswer)
-    expect(screen.getAllByRole('region').map((g) => g.getAttribute('aria-label'))[0]).toBe('Tools')
+    expect(screen.getAllByRole('heading', { level: 3 })[0]).toHaveTextContent('Tools')
   })
 
   it('draws the date answer with several matches as resources only, DORA first', () => {
     show(banksEu as RenderableAnswer)
-    expect(screen.queryByRole('region', { name: 'Direct answer' })).toBeNull()
+    expect(screen.queryByRole('group', { name: 'Direct answer' })).toBeNull()
     const items = screen.getAllByRole('listitem')
     expect(within(items[0]).getByText('DORA')).toBeInTheDocument()
   })
@@ -190,7 +194,7 @@ describe('name lookup', () => {
   it('draws the record card, then related rows, with "Matched by name" and no source line', () => {
     show(nameCardMlKem as RenderableAnswer)
     expect(screen.getByText('One Hub record matches that name.')).toBeInTheDocument()
-    const card = screen.getByRole('region', { name: 'ML-KEM (FIPS 203)' })
+    const card = screen.getByRole('group', { name: 'ML-KEM (FIPS 203)' })
     expect(within(card).getByText('Algorithm')).toBeInTheDocument()
     expect(within(card).getByText(/Taught in TLS Basics/)).toBeInTheDocument()
     expect(within(card).getByText(/Try it in TLS simulator/)).toBeInTheDocument()
@@ -200,7 +204,7 @@ describe('name lookup', () => {
 
   it('draws named choices instead of a card when several records share the name', async () => {
     const onAction = show(nameChoices as RenderableAnswer)
-    expect(screen.queryByRole('region', { name: /ML-DSA/ })).toBeNull()
+    expect(screen.queryByRole('group', { name: /ML-DSA/ })).toBeNull()
     await userEvent.setup().click(screen.getByRole('button', { name: /ML-DSA \(FIPS 204\)/ }))
     expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ tag: 'ALG:ML-DSA' }))
   })

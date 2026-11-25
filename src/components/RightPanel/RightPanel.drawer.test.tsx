@@ -76,6 +76,18 @@ describe('drawer on the default path', () => {
     expect(useRightPanelStore.getState().isOpen).toBe(false)
   })
 
+  it('returns focus to what opened it when it closes, though its input took focus meanwhile', async () => {
+    const trigger = document.createElement('button')
+    trigger.textContent = 'Opener'
+    document.body.appendChild(trigger)
+    trigger.focus()
+    const { unmount } = mount()
+    expect(await screen.findByRole('textbox', { name: 'Your question' })).toHaveFocus()
+    unmount()
+    expect(trigger).toHaveFocus()
+    trigger.remove()
+  })
+
   it('shows Bookmarks in the same slot, with no Assistant objective area', async () => {
     useRightPanelStore.setState({ isOpen: true, activeTab: 'bookmarks' })
     mount()

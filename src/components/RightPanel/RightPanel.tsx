@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
@@ -78,14 +78,21 @@ export const RightPanel: React.FC = () => {
   }, [isOpen, sheet])
 
   // A drawer without a focus lock still returns focus to what opened it (the top bar's toggle).
-  const opener = useRef<Element | null>(null)
-  useEffect(() => {
-    opener.current = document.activeElement
-    return () => {
-      const el = opener.current
-      if (el instanceof HTMLElement && el.isConnected && el !== document.body) el.focus()
-    }
-  }, [])
+  // Captured while rendering, before the drawer's own content moves focus into its input.
+  const [opener] = useState<Element | null>(() =>
+    typeof document === 'undefined' ? null : document.activeElement
+  )
+  useEffect(
+    () => () => {
+      if (opener instanceof HTMLElement && opener.isConnected && opener !== document.body) {
+        opener.focus()
+      }
+    },
+    [opener]
+  )
+
+  // A region beside the page; a dialog when it is a modal sheet or the guided workshop.
+  const isDialog = sheet || activeTab === 'workshop'
 
   const title =
     activeTab === 'chat'
@@ -112,8 +119,8 @@ export const RightPanel: React.FC = () => {
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className={`fixed top-0 right-0 bottom-0 ${sheet ? 'z-dialog' : 'z-panel'} bg-background shadow-2xl flex flex-col overflow-hidden print:hidden border-l border-border ${sheet ? '' : 'rounded-l-xl'} ${widthClass}`}
-            role={sheet || activeTab === 'workshop' ? 'dialog' : 'region'}
-            aria-modal={modeless ? false : sheet || undefined}
+            role={isDialog ? 'dialog' : 'region'}
+            aria-modal={isDialog ? (modeless ? false : sheet || undefined) : undefined}
             aria-label={title}
             data-assistant-layout={layout}
             onClick={(e) => e.stopPropagation()}

@@ -25,7 +25,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   onClose,
   showObjective = true,
 }) => (
-  <header className="shrink-0 border-b border-border px-3 py-3 md:px-4">
+  <div className="shrink-0 border-b border-border px-3 py-3 md:px-4">
     <div className="flex items-center gap-2">
       {onClose && (
         <Button
@@ -47,5 +47,5 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
         <ObjectiveHeaderSlot />
       </div>
     )}
-  </header>
+  </div>
 )

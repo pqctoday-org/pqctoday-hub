@@ -16,11 +16,18 @@ type Engine = {
 // loads the stand-in engine, in development and tests only; a production build reports "data did
 // not load" instead of showing canned answers. To connect the real engine, replace the body with:
 //   return import('@/services/assistant')
-async function loadEngine(): Promise<Engine> {
+async function defaultLoader(): Promise<Engine> {
   if (import.meta.env.DEV || import.meta.env.MODE === 'test') {
     return import('@/test/fixtures/assistantFixtureEngine')
   }
   throw new Error('The answer engine is not connected')
+}
+
+let loadEngine: () => Promise<Engine> = defaultLoader
+
+/** For tests: choose the engine the client loads. Pass nothing to go back to the default. */
+export function setAssistantEngineLoader(loader?: () => Promise<Engine>): void {
+  loadEngine = loader ?? defaultLoader
 }
 
 /**

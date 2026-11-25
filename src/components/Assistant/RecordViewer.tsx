@@ -31,12 +31,13 @@ export function RecordViewer({
   onClose,
   onOpenPage,
 }: RecordViewerProps) {
-  const headingRef = useRef<HTMLHeadingElement>(null)
+  const returnRef = useRef<HTMLButtonElement>(null)
   const [saved, setSaved] = useState(() => isReferenceSaved(row.tag))
   const [saveFailed, setSaveFailed] = useState(false)
 
+  // The return control is first in the tab order; focus starts on it.
   useEffect(() => {
-    headingRef.current?.focus()
+    returnRef.current?.focus()
   }, [row.tag])
 
   const dims = row.dims
@@ -64,12 +65,12 @@ export function RecordViewer({
       <StickerCard padding="default" className="space-y-3">
         <div>
           {pinned ? (
-            <StoryButton variant="quiet" onClick={onClose} className="gap-1">
+            <StoryButton ref={returnRef} variant="quiet" onClick={onClose} className="gap-1">
               <X size={14} aria-hidden="true" />
               {COPY.close}
             </StoryButton>
           ) : (
-            <StoryButton variant="quiet" onClick={onClose} className="gap-1">
+            <StoryButton ref={returnRef} variant="quiet" onClick={onClose} className="gap-1">
               <ArrowLeft size={14} aria-hidden="true" />
               {COPY.backToAnswer}
             </StoryButton>
@@ -79,13 +80,7 @@ export function RecordViewer({
           <Chip>{row.kind}</Chip>
           {row.status && <Chip className="bg-highlight text-heading">{row.status}</Chip>}
         </div>
-        <h2
-          ref={headingRef}
-          tabIndex={-1}
-          className="text-base font-bold text-heading focus:outline-none"
-        >
-          {row.title}
-        </h2>
+        <h2 className="text-base font-bold text-heading">{row.title}</h2>
         <p className="text-xs text-muted-foreground">{from.join(' · ')}</p>
         {row.paidReferenceOnly ? (
           <p className="text-sm text-foreground/90">{COPY.paidReference}</p>
