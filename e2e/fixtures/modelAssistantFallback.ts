@@ -23,12 +23,24 @@ function latestMessage(page: Page): Promise<SavedMessage | null> {
   })
 }
 
-export async function runAssistantQuestion(
+/**
+ * The old model chat is not in the normal path. These helpers are for the model measurement suites
+ * only: they switch the hidden rollback on in the browser (the same switch a release can set in the
+ * build) and then drive the old chat inside the drawer. Nothing here is used by the default path.
+ */
+export const MODEL_ASSISTANT_STORAGE_KEY = 'pqc-feature-model-assistant'
+
+/** Switch the old chat on in this browser, before any page script runs. */
+export async function enableModelAssistantFallback(page: Page) {
+  await page.addInitScript((key) => localStorage.setItem(key, '1'), MODEL_ASSISTANT_STORAGE_KEY)
+}
+
+export async function runModelAssistantQuestion(
   page: Page,
   question: string,
   timeout: number
 ): Promise<{ answer: SavedMessage | null; error: string | null }> {
-  const assistant = page.getByRole('dialog', { name: 'PQC Assistant' })
+  const assistant = page.getByRole('region', { name: 'Assistant', exact: true })
   const input = assistant.getByRole('textbox', { name: 'Message input' })
   const alert = assistant.getByRole('alert')
   const previous = await latestMessage(page)
@@ -51,15 +63,11 @@ export async function runAssistantQuestion(
   return { answer, error }
 }
 
-export async function openAssistant(page: Page) {
-  const open = page.getByRole('button', { name: 'Open PQC Assistant', exact: true })
-  const more = page.getByRole('button', { name: 'More', exact: true })
-  await expect(open.or(more).first()).toBeVisible()
-  if (await open.isVisible()) {
-    await open.click()
-  } else {
-    await more.click()
-    await page.getByRole('button', { name: /Assistant Ask a question about this page/ }).click()
-  }
-  return page.getByRole('dialog', { name: 'PQC Assistant' })
+export async function openModelAssistant(page: Page) {
+  const open = page.getByRole('button', { name: 'Assistant', exact: true }).first()
+  await expect(open).toBeVisible()
+  await open.click()
+  const drawer = page.getByRole('region', { name: 'Assistant', exact: true })
+  await expect(drawer.getByRole('textbox', { name: 'Message input' })).toBeVisible()
+  return drawer
 }

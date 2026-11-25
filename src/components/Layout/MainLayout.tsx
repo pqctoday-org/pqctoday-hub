@@ -377,7 +377,7 @@ export const MainLayout = () => {
   }, [selectedPersona, location.pathname])
 
   // Single owner of the Playwright hook (2026-09-21): e2e/accessibility.spec.ts
-  // and e2e/rag-pipeline.spec.ts call `window.__e2e_toggle_panel(tab?)` to open
+  // and e2e/assistant-drawer.spec.ts call `window.__e2e_toggle_panel(tab?)` to open
   // the RightPanel without the FAB. RightPanel.tsx no longer assigns it — that
   // component only mounts once the panel is open (lazy, `isPanelOpen &&`), so
   // its copy could never open anything and two owners of one global made the
