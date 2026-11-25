@@ -1,0 +1,101 @@
+{
+  "about": "Public fixtures for the Assistant: a question, what it must return, and for a direct answer the record field its value is read from. No expected value is typed here: it is read from the record, so a data update never breaks a fixture and a wrong value always does.",
+  "cases": [
+    {
+      "id": "golden-1-cnsa-deadline",
+      "question": "When is the CNSA 2.0 deadline?",
+      "expect": {
+        "state": "direct",
+        "intent": "fact",
+        "directTag": "CMP:CNSA-2",
+        "directField": "deadline",
+        "sourceLabel": "Answer drawn from",
+        "sourceTag": "CMP:CNSA-2",
+        "groupOrder": ["Data pages", "References", "Learn", "Tools"],
+        "firstRow": { "group": "Data pages", "tag": "CMP:CNSA-2" }
+      }
+    },
+    {
+      "id": "golden-2-what-is-ml-kem",
+      "question": "What is ML-KEM?",
+      "expect": {
+        "state": "resources",
+        "intent": "concept",
+        "sourceLabel": "Closest source",
+        "sourceTag": "GL:ml-kem",
+        "groupOrder": ["References", "Learn", "Data pages", "Tools"],
+        "firstRow": { "group": "References", "tag": "GL:ml-kem" },
+        "noteEndsWith": "No direct answer: resources only."
+      }
+    },
+    {
+      "id": "golden-3-bare-name",
+      "question": "ML-KEM",
+      "expect": {
+        "state": "name",
+        "intent": "name",
+        "nameCardTag": "ALG:ML-KEM",
+        "answerText": "One Hub record matches that name.",
+        "note": "Matched by name: one Hub record, shown above. Related resources follow, best first, up to 3 per group.",
+        "noSource": true
+      }
+    },
+    {
+      "id": "golden-4-eu-bank-deadlines",
+      "question": "Which deadlines apply to banks in the EU?",
+      "expect": {
+        "state": "resources",
+        "intent": "dates",
+        "noDirect": true,
+        "firstRow": { "group": "Data pages", "tag": "CMP:DORA" },
+        "noteEndsWith": "No direct answer: resources only."
+      }
+    },
+    {
+      "id": "golden-5-not-a-fact",
+      "question": "Will ML-KEM be broken by 2030?",
+      "expect": {
+        "state": "not-a-fact",
+        "intent": "not_fact",
+        "note": "The Hub does not state this as a fact and gives no personal advice or prediction. These are the closest resources.",
+        "noSource": true,
+        "groupOrder": ["Learn", "References", "Tools", "Data pages"]
+      },
+      "withPersona": {
+        "executive": { "groupOrder": ["Learn", "References", "Data pages", "Tools"] },
+        "architect": { "groupOrder": ["Learn", "Tools", "References", "Data pages"] }
+      }
+    },
+    {
+      "id": "golden-6-hybrid-certificates",
+      "question": "Where can I learn about hybrid certificates?",
+      "persona": "architect",
+      "expect": {
+        "state": "resources",
+        "intent": "learning",
+        "firstGroup": "Learn",
+        "secondRowTag": "PATH:architect"
+      }
+    },
+    {
+      "id": "golden-7-bank-first-step",
+      "question": "How should a bank start its PQC migration?",
+      "expect": {
+        "state": "resources",
+        "intent": "planning",
+        "firstGroup": "Tools",
+        "toolsStartWith": ["TOOL:assess", "TOOL:report"]
+      }
+    },
+    {
+      "id": "golden-8-tell-me-something",
+      "question": "Tell me something",
+      "expect": {
+        "state": "broad",
+        "intent": "broad",
+        "note": "Broad match: the Hub has no direct answer to this. These are the closest resources.",
+        "noSource": true
+      }
+    }
+  ]
+}
