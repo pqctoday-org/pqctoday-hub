@@ -12,15 +12,9 @@ type Engine = {
   answer: (question: string, context: AssistantContext) => Promise<AssistantAnswer>
 }
 
-// INTEGRATION SEAM. The real engine lives at `@/services/assistant`. Until it is connected this
-// loads the stand-in engine, in development and tests only; a production build reports "data did
-// not load" instead of showing canned answers. To connect the real engine, replace the body with:
-//   return import('@/services/assistant')
+// The answer engine is loaded on the first question, never with the page.
 async function defaultLoader(): Promise<Engine> {
-  if (import.meta.env.DEV || import.meta.env.MODE === 'test') {
-    return import('@/test/fixtures/assistantFixtureEngine')
-  }
-  throw new Error('The answer engine is not connected')
+  return import('@/services/assistant')
 }
 
 let loadEngine: () => Promise<Engine> = defaultLoader

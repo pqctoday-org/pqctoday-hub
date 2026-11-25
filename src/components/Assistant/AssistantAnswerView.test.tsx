@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import { AssistantAnswerView } from './AssistantAnswerView'
 import type { RenderableAnswer } from './answerRules'
-import { setSavedAnswersPort } from '@/services/assistant/savedAnswers'
+import { setSavedAnswersPort } from '@/services/assistant/drawerSaves'
 import {
   banksEu,
   broadMatch,

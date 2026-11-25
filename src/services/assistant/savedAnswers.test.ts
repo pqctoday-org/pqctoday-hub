@@ -1,67 +1,64 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { afterEach, describe, expect, it } from 'vitest'
-import {
-  isAnswerSaved,
-  isReferenceSaved,
-  saveAnswer,
-  saveReference,
-  setSavedAnswersPort,
-} from './savedAnswers'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-afterEach(() => setSavedAnswersPort())
+vi.mock('@/utils/analytics', () => ({ logEvent: vi.fn() }))
 
-const draft = {
-  question: 'What is ML-KEM?',
-  answerText: 'Here is what the Hub holds on this.',
-  note: 'note',
-  sourceTag: 'GL:ml-kem',
-  rowTags: ['GL:ml-kem', 'LIB:FIPS 203'],
+import { saveAnswer, listSavedAnswers, removeSavedAnswer, savedAnswerId } from './savedAnswers'
+import { useMyWorkStore, MY_WORK_KEY } from '@/store/useMyWorkStore'
+
+const answer = {
+  question: 'When is the CNSA 2.0 deadline?',
+  savedAt: '2026-11-25T10:00:00.000Z',
+  payload: { answerText: 'Here is what the Hub holds on this.', rowTags: ['CMP:CNSA-2'] },
 }
 
-describe('saved answers hand-off', () => {
-  it('saves an answer once and remembers it for the session', () => {
-    expect(isAnswerSaved(draft)).toBe(false)
-    expect(saveAnswer(draft)).toEqual({ ok: true, alreadySaved: false })
-    expect(saveAnswer(draft)).toEqual({ ok: true, alreadySaved: true })
-    expect(isAnswerSaved(draft)).toBe(true)
-  })
+beforeEach(() => {
+  localStorage.clear()
+  useMyWorkStore.setState({ comments: [], outputs: [], answers: [], references: [] })
+})
 
-  it('saves a reference once, by tag', () => {
-    const ref = { tag: 'GL:ml-kem', title: 'ML-KEM', kind: 'Glossary term' }
-    expect(saveReference(ref).ok).toBe(true)
-    expect(saveReference(ref)).toEqual({ ok: true, alreadySaved: true })
-    expect(isReferenceSaved('GL:ml-kem')).toBe(true)
-  })
-
-  it('hands over to the port My work installs', () => {
-    const got: unknown[] = []
-    setSavedAnswersPort({
-      saveAnswer: (d) => (got.push(d), { ok: true, alreadySaved: false }),
-      isAnswerSaved: () => false,
-      saveReference: () => ({ ok: true, alreadySaved: false }),
-      isReferenceSaved: () => false,
+describe('saved answers interface (the Assistant drawer hands answers here)', () => {
+  it('saves, lists and removes an answer, and keeps it on the device', () => {
+    const r = saveAnswer(answer)
+    expect(r).toMatchObject({ ok: true, duplicate: false })
+    expect(listSavedAnswers()).toHaveLength(1)
+    expect(listSavedAnswers()[0]).toMatchObject({
+      question: answer.question,
+      payload: answer.payload,
     })
-    saveAnswer(draft)
-    expect(got).toEqual([draft])
+    expect(localStorage.getItem(MY_WORK_KEY)).toContain('CMP:CNSA-2')
+    if (!r.ok) throw new Error('unreachable')
+    expect(removeSavedAnswer(r.id)).toEqual({ ok: true })
+    expect(listSavedAnswers()).toHaveLength(0)
   })
 
-  it('reports a failure instead of throwing when the port throws', () => {
-    setSavedAnswersPort({
-      saveAnswer: () => {
-        throw new Error('disk full')
-      },
-      isAnswerSaved: () => false,
-      saveReference: () => {
-        throw new Error('disk full')
-      },
-      isReferenceSaved: () => false,
+  it('saving the same answer twice is one record (one logical change)', () => {
+    saveAnswer(answer)
+    const again = saveAnswer(answer)
+    expect(again).toMatchObject({ ok: true, duplicate: true })
+    expect(listSavedAnswers()).toHaveLength(1)
+    expect(savedAnswerId(answer)).toBe(savedAnswerId({ ...answer }))
+  })
+
+  it('refuses an empty question and a payload that is not plain JSON', () => {
+    expect(saveAnswer({ ...answer, question: '  ' })).toEqual({ ok: false, reason: 'invalid' })
+    const cyclic: Record<string, unknown> = {}
+    cyclic.self = cyclic
+    expect(saveAnswer({ ...answer, savedAt: 'x', payload: cyclic })).toEqual({
+      ok: false,
+      reason: 'invalid',
     })
-    expect(saveAnswer(draft)).toEqual({ ok: false })
-    expect(saveReference({ tag: 't', title: 't', kind: 'k' })).toEqual({ ok: false })
+    expect(listSavedAnswers()).toHaveLength(0)
   })
 
-  it('keeps tags, not the rows text', () => {
-    // the draft type has no field for a row's text
-    expect(Object.keys(draft)).not.toContain('rows')
+  it('reports a full device and keeps memory unchanged', () => {
+    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('full', 'QuotaExceededError')
+    })
+    expect(saveAnswer(answer)).toEqual({ ok: false, reason: 'quota' })
+    expect(listSavedAnswers()).toHaveLength(0)
+    spy.mockRestore()
+    expect(saveAnswer(answer)).toMatchObject({ ok: true })
+    expect(listSavedAnswers()).toHaveLength(1)
   })
 })

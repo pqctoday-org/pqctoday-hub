@@ -9,7 +9,7 @@ import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useChatStore } from '@/store/useChatStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { setSavedAnswersPort } from '@/services/assistant/savedAnswers'
+import { setSavedAnswersPort } from '@/services/assistant/drawerSaves'
 
 const client = vi.hoisted(() => ({ failNext: 0, calls: [] as string[] }))
 vi.mock('./assistantClient', async () => {

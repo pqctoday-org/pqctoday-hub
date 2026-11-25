@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Check, X } from 'lucide-react'
 import { Chip, Eyebrow, StickerCard, StoryButton } from '@/components/storybook'
 import type { AssistantRow } from '@/services/assistant/contract'
-import { isReferenceSaved, saveReference } from '@/services/assistant/savedAnswers'
+import { isReferenceSaved, saveReference } from '@/services/assistant/drawerSaves'
 import { CopyLinkButton } from './AnswerRowItem'
 import { COPY } from './copy'
 

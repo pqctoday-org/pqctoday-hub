@@ -1,83 +1,67 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * The hand-off from the drawer's "Save answer" and "Save to My work" to the learner's stored work.
+ * The small interface through which the Assistant drawer hands a saved answer to My work.
  *
- * The drawer owns the buttons; My work owns the storage. This file is only the seam between them:
- * a small port, with a session-only default so the buttons work before My work is wired in.
- * My work installs its own with `setSavedAnswersPort`.
+ * The drawer calls `saveAnswer` when the learner presses "Save answer", `listSavedAnswers` to show
+ * "Saved to My work" on an answer already saved, and `removeSavedAnswer` to undo it. Everything lands in
+ * the device-local My work store (`pqc-my-work`): never in the Drive sync, the embed auto-save or a backup.
  *
- * A saved answer keeps the question, the answer text, the note, the source tag and the tags of the
- * rows. It never keeps the rows' text (the text is read again from the knowledge files when shown).
+ * This file knows nothing about the answer's shape. The payload is stored as given (it must be plain JSON);
+ * My work reads the few fields it shows by structure only (see `myWork/answerSummary.ts`).
  */
+import { stableId, type StorageFailureReason } from '@/store/deviceLocalJson'
+import { useMyWorkStore, type SavedAnswerRecord } from '@/store/useMyWorkStore'
+import { trackMyWork } from '@/services/myWork/myWorkAnalytics'
 
-export interface SavedAnswerDraft {
+/** What the drawer hands over. `payload` is the answer as the drawer keeps it (plain JSON). */
+export interface SavedAnswerInput {
   question: string
-  answerText: string
-  note: string
-  sourceTag?: string
-  rowTags: string[]
+  /** ISO time the learner pressed Save. */
+  savedAt: string
+  payload: unknown
 }
 
-export interface SavedReferenceDraft {
-  tag: string
-  title: string
-  kind: string
-  /** The question the record was opened from, when there was one. */
-  question?: string
+export type SavedAnswer = SavedAnswerRecord
+
+export type SaveAnswerResult =
+  | {
+      ok: true
+      id: string
+      /** True when this answer was already saved: nothing was added. */ duplicate: boolean
+    }
+  | { ok: false; reason: StorageFailureReason }
+
+export type RemoveSavedAnswerResult = { ok: true } | { ok: false; reason: StorageFailureReason }
+
+/** The id a saved answer gets: the same question saved at the same moment is the same answer (J08). */
+export function savedAnswerId(input: Pick<SavedAnswerInput, 'question' | 'savedAt'>): string {
+  return stableId('ans', `${input.question}\u0000${input.savedAt}`)
 }
 
-export type SaveResult = { ok: true; alreadySaved: boolean } | { ok: false }
-
-export interface SavedAnswersPort {
-  saveAnswer: (draft: SavedAnswerDraft) => SaveResult
-  isAnswerSaved: (draft: Pick<SavedAnswerDraft, 'question' | 'answerText'>) => boolean
-  saveReference: (draft: SavedReferenceDraft) => SaveResult
-  isReferenceSaved: (tag: string) => boolean
-}
-
-function createSessionPort(): SavedAnswersPort {
-  const answers = new Map<string, SavedAnswerDraft>()
-  const references = new Map<string, SavedReferenceDraft>()
-  const answerKey = (d: Pick<SavedAnswerDraft, 'question' | 'answerText'>) =>
-    `${d.question}\u0000${d.answerText}`
-  return {
-    saveAnswer: (draft) => {
-      const key = answerKey(draft)
-      const alreadySaved = answers.has(key)
-      if (!alreadySaved) answers.set(key, draft)
-      return { ok: true, alreadySaved }
-    },
-    isAnswerSaved: (draft) => answers.has(answerKey(draft)),
-    saveReference: (draft) => {
-      const alreadySaved = references.has(draft.tag)
-      if (!alreadySaved) references.set(draft.tag, draft)
-      return { ok: true, alreadySaved }
-    },
-    isReferenceSaved: (tag) => references.has(tag),
+export function saveAnswer(answer: SavedAnswerInput): SaveAnswerResult {
+  if (typeof answer.question !== 'string' || !answer.question.trim()) {
+    return { ok: false, reason: 'invalid' }
   }
+  const id = savedAnswerId(answer)
+  const result = useMyWorkStore.getState().saveAnswer({
+    id,
+    question: answer.question,
+    savedAt: answer.savedAt,
+    payload: answer.payload,
+  })
+  if (!result.ok) return result
+  if (!result.value.duplicate) trackMyWork('answer_saved')
+  return { ok: true, id, duplicate: result.value.duplicate }
 }
 
-let port: SavedAnswersPort = createSessionPort()
-
-/** My work installs the real store here. Pass nothing to go back to the session-only default. */
-export function setSavedAnswersPort(next?: SavedAnswersPort): void {
-  port = next ?? createSessionPort()
+/** Saved answers, oldest first. */
+export function listSavedAnswers(): SavedAnswer[] {
+  return useMyWorkStore.getState().answers
 }
 
-export const saveAnswer = (draft: SavedAnswerDraft): SaveResult => {
-  try {
-    return port.saveAnswer(draft)
-  } catch {
-    return { ok: false }
-  }
+export function removeSavedAnswer(id: string): RemoveSavedAnswerResult {
+  const result = useMyWorkStore.getState().removeAnswer(id)
+  if (!result.ok) return result
+  trackMyWork('answer_removed')
+  return { ok: true }
 }
-export const isAnswerSaved = (draft: Pick<SavedAnswerDraft, 'question' | 'answerText'>): boolean =>
-  port.isAnswerSaved(draft)
-export const saveReference = (draft: SavedReferenceDraft): SaveResult => {
-  try {
-    return port.saveReference(draft)
-  } catch {
-    return { ok: false }
-  }
-}
-export const isReferenceSaved = (tag: string): boolean => port.isReferenceSaved(tag)

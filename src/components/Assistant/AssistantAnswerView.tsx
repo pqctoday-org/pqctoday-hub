@@ -5,7 +5,7 @@ import { Chip, Eyebrow, StickerCard, StoryButton } from '@/components/storybook'
 import { eyebrowClass } from '@/components/storybook/variants'
 import { cn } from '@/lib/utils'
 import type { AssistantRow } from '@/services/assistant/contract'
-import { isAnswerSaved, saveAnswer } from '@/services/assistant/savedAnswers'
+import { isAnswerSaved, saveAnswer } from '@/services/assistant/drawerSaves'
 import { AnswerRowItem } from './AnswerRowItem'
 import {
   choiceAsRow,
