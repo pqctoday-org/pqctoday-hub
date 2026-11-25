@@ -187,7 +187,7 @@ const WORKSHOP_TOOL_CONTENT: WorkshopToolContent[] = [
       'KMIP 3.0',
     ],
     icon: ShieldCheck,
-    moduleLink: '/playground/cacp',
+    moduleLink: '/learn/crypto-agility',
     keywords: [
       'kmip',
       'cacp',

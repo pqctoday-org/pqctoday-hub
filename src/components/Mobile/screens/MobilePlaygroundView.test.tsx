@@ -180,16 +180,20 @@ describe('MobilePlaygroundView', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
 
-    // cacp-kmip's real moduleLink is '/playground/cacp' — not a /learn/
-    // route, so the modal never shows a "Related module" link for it either
-    // (matches desktop's own real gating in PlaygroundWorkshop.tsx). Picked
-    // over tpm-playground because it's requires:[] — unaffected by the
-    // "Runs on this device" filter defaulting on, unlike tpm-playground
-    // (requires: ['sab'], unmet in jsdom).
-    const withoutModule = MOBILE_TOOLS.find((t) => t.id === 'cacp-kmip')
-    expect(withoutModule).toBeDefined()
-    fireEvent.click(screen.getByText(withoutModule!.name).closest('button')!)
-    const sheet2 = screen.getByTestId('playground-tool-detail-sheet')
-    expect(within(sheet2).queryByText(/Related module/i)).not.toBeInTheDocument()
+    // Every tool on the phone now opens a lesson: the one that did not (the KMIP control plane)
+    // was linked to Crypto Agility on 25 Nov 2026, and the only tool still without a lesson,
+    // OpenSSL Studio, is not offered on the phone. The "no /learn/ route, no link" rule itself
+    // is covered in moduleToolLinks.test.ts (moduleIdFromToolLink).
+    expect(
+      MOBILE_TOOLS.filter((t) => !t.moduleLink.startsWith('/learn/')).map((t) => t.id)
+    ).toEqual([])
+
+    // The KMIP control plane tool is linked to the Crypto Agility lesson (owner, 25 Nov 2026):
+    // its card shows the related module, and its own page stays /playground/cacp.
+    const kmip = MOBILE_TOOLS.find((t) => t.id === 'cacp-kmip')
+    expect(kmip?.moduleLink).toBe('/learn/crypto-agility')
+    fireEvent.click(screen.getByText(kmip!.name).closest('button')!)
+    const sheet3 = screen.getByTestId('playground-tool-detail-sheet')
+    expect(within(sheet3).getByText(/Related module/i)).toBeInTheDocument()
   })
 })
