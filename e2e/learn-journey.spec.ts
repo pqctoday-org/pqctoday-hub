@@ -80,6 +80,47 @@ for (const [name, viewport] of [
       ).toBeVisible()
     })
 
+    test('a save the device refuses keeps the goal and the preview, and Try again saves it once', async ({
+      page,
+    }) => {
+      await seed(page, 'architect')
+      await page.addInitScript(() => {
+        const original = Storage.prototype.setItem
+        Object.assign(window, { __refuse: true })
+        Storage.prototype.setItem = function (key: string, value: string) {
+          if ((window as unknown as { __refuse: boolean }).__refuse && key === 'pqc-journey') {
+            throw new DOMException('The quota has been exceeded.', 'QuotaExceededError')
+          }
+          return original.call(this, key, value)
+        }
+      })
+      await page.goto('/learn?mode=journey&new=1')
+      await page.getByLabel('What do you want to be able to do?').fill(GOAL)
+      await page.getByRole('button', { name: 'Preview' }).click()
+      await expect(page.getByText('Preview · nothing is saved yet')).toBeVisible({
+        timeout: 30_000,
+      })
+      await page.getByRole('button', { name: 'Create objective' }).click()
+
+      const notice = page.getByRole('alert').filter({ hasText: 'Your objective was not saved.' })
+      await expect(notice).toBeVisible()
+      await expect(notice).toContainText('Nothing was lost.')
+      await expect(page.getByLabel('What do you want to be able to do?')).toHaveValue(GOAL)
+      await expect(page.getByTestId('preview-ready')).toBeVisible()
+      await expect(notice.getByRole('button', { name: 'Try again' })).toBeFocused()
+      expect(await page.evaluate(() => localStorage.getItem('pqc-journey'))).toBeNull()
+
+      await page.evaluate(() => Object.assign(window, { __refuse: false }))
+      await page.keyboard.press('Enter')
+      await expect(page.getByTestId('objective-workspace')).toBeVisible()
+      const stored = await page.evaluate(
+        () =>
+          Object.keys(JSON.parse(localStorage.getItem('pqc-journey') ?? '{}').state.objectives)
+            .length
+      )
+      expect(stored).toBe(1)
+    })
+
     test('a learner with a role opens on Your journey and sees "Start here"', async ({ page }) => {
       await seed(page, 'architect')
       await page.goto('/learn')
