@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { JourneyStepBar } from './JourneyStepBar'
@@ -207,6 +207,38 @@ describe('new objective (A02, T04, T05, X04)', () => {
       const title = lessonByTag(s.resourceTag)!.title
       expect(shown.some((t) => t.includes(title))).toBe(true)
     }
+  })
+
+  it('keeps the goal and the preview when the device refuses the save, and Try again saves once (A09)', async () => {
+    const user = userEvent.setup()
+    const created: string[] = []
+    renderAt(<NewObjectiveFlow onCreated={(id) => created.push(id)} onCancel={() => {}} />)
+    await user.type(screen.getByLabelText('What do you want to be able to do?'), TLS_GOAL)
+    await user.click(screen.getByRole('button', { name: 'Preview' }))
+
+    const quota = Object.assign(new Error('full'), { name: 'QuotaExceededError' })
+    const refuse = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw quota
+    })
+    const quiet = vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      await user.click(screen.getByRole('button', { name: 'Create objective' }))
+      expect(screen.getByRole('alert')).toHaveTextContent('Your objective was not saved.')
+      expect(created).toEqual([])
+      expect(useJourneyStore.getState().order).toHaveLength(0)
+      expect(screen.getByLabelText('What do you want to be able to do?')).toHaveValue(TLS_GOAL)
+      expect(screen.getByTestId('preview-ready')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Try again' })).toHaveFocus()
+    } finally {
+      refuse.mockRestore()
+      quiet.mockRestore()
+    }
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(created).toHaveLength(1)
+    expect(useJourneyStore.getState().order).toHaveLength(1)
+    expect(Object.values(useJourneyStore.getState().objectives)[0].goal).toBe(TLS_GOAL)
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 
   it('leaving the preview creates nothing', async () => {

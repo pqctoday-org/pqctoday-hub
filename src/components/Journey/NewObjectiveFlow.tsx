@@ -59,6 +59,9 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
   const createObjective = useJourneyStore((s) => s.createObjective)
   const [goal, setGoal] = useState(initialGoal)
   const [preview, setPreview] = useState<ObjectivePreview | null>(null)
+  // Set when the device did not keep the objective: how it was being created, for Try again.
+  const [failedWith, setFailedWith] = useState<{ allowDuplicate: boolean } | null>(null)
+  const retryRef = useRef<HTMLButtonElement>(null)
   const fieldId = useId()
   const resultRef = useRef<HTMLDivElement>(null)
 
@@ -66,13 +69,24 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
     if (preview) resultRef.current?.focus()
   }, [preview])
 
+  // After a failed save, focus goes to Try again so the next key press retries.
+  useEffect(() => {
+    if (failedWith) retryRef.current?.focus()
+  }, [failedWith])
+
   const runPreview = () => {
     if (!goal.trim()) return
     setPreview(buildPreview({ goal, persona, industry, existing, isDone }))
   }
   const create = (allowDuplicate = false) => {
     if (!preview) return
-    const { id } = createObjective(preview, { allowDuplicate })
+    const { id, failed } = createObjective(preview, { allowDuplicate })
+    if (failed) {
+      // Nothing was saved. The goal and the preview stay as they are, so Try again saves them once.
+      setFailedWith({ allowDuplicate })
+      return
+    }
+    setFailedWith(null)
     onCreated(id)
   }
 
@@ -96,6 +110,7 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
         onChange={(e) => {
           setGoal(e.target.value)
           if (preview) setPreview(null)
+          setFailedWith(null)
         }}
         placeholder="For example: Review our TLS migration design"
         maxLength={300}
@@ -163,6 +178,23 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
             </>
           )}
 
+          {failedWith ? (
+            <div role="alert" className="space-y-2 rounded-2xl border-2 border-ink bg-card p-3">
+              <p className="text-sm font-bold text-heading">Your objective was not saved.</p>
+              <p className="text-sm">
+                Your goal and this preview are still here. Nothing was lost. Try again, or keep the
+                preview open while you free some space in your browser.
+              </p>
+              <StoryButton
+                ref={retryRef}
+                variant="primary"
+                onClick={() => create(failedWith.allowDuplicate)}
+              >
+                Try again
+              </StoryButton>
+            </div>
+          ) : null}
+
           <div className="flex flex-wrap gap-2">
             {preview.state === 'ready' ? (
               <StoryButton variant="primary" onClick={() => create()}>
@@ -185,7 +217,13 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
               </StoryButton>
             ) : null}
             {preview.state === 'ready' || preview.state === 'gap' ? (
-              <StoryButton variant="secondary" onClick={() => setPreview(null)}>
+              <StoryButton
+                variant="secondary"
+                onClick={() => {
+                  setPreview(null)
+                  setFailedWith(null)
+                }}
+              >
                 Change the goal
               </StoryButton>
             ) : null}

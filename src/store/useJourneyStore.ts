@@ -51,11 +51,15 @@ interface JourneyState extends PersistedJourney {
   /** The role switch the learner just made, for the undo note. Not written to the device. */
   roleSwitch: RoleSwitchNote | null
 
-  /** Saves a previewed objective. Returns the id and whether it is new; the same role and goal again returns the existing one. */
+  /**
+   * Saves a previewed objective. Returns the id and whether it is new; the same role and goal again
+   * returns the existing one. When the device refuses the write, nothing is kept: `failed` is true,
+   * the state is as it was, and calling again with the same preview saves it once (A09, J08).
+   */
   createObjective: (
     preview: ObjectivePreview,
     options?: { allowDuplicate?: boolean; now?: number }
-  ) => { id: string; created: boolean }
+  ) => { id: string; created: boolean; failed?: boolean }
   focusObjective: (id: string) => void
   pauseObjective: (id: string, now?: number) => void
   resumeObjective: (id: string, now?: number) => void
@@ -158,6 +162,18 @@ export function migrateJourneyState(persisted: unknown, fromVersion: number): Pe
 
 const touch = (o: Objective, now: number): Objective => ({ ...o, updatedAt: now })
 
+/** True when the device holds this objective now: what was written, read back. */
+function isStored(id: string): boolean {
+  try {
+    const raw = localStorage.getItem(JOURNEY_STORE_KEY)
+    if (!raw) return false
+    const stored = JSON.parse(raw) as { state?: { objectives?: Record<string, unknown> } }
+    return Boolean(stored.state?.objectives && id in stored.state.objectives)
+  } catch {
+    return false
+  }
+}
+
 export const useJourneyStore = create<JourneyState>()(
   persist(
     (set, get) => {
@@ -200,6 +216,12 @@ export const useJourneyStore = create<JourneyState>()(
             order: [...st.order, id],
             focus: { ...st.focus, [roleKey(preview.role)]: id },
           }))
+          // The write is checked, not assumed: an objective shown as saved that the device did not
+          // keep would be lost on the next visit. A refused write puts the state back.
+          if (!isStored(id)) {
+            set({ objectives: s.objectives, order: s.order, focus: s.focus })
+            return { id, created: false, failed: true }
+          }
           return { id, created: true }
         },
 
