@@ -157,6 +157,14 @@ export interface JurisdictionEntry {
   note: string
   /** DS01 status. Only 'active' rows are surfaced by default. */
   status?: 'active' | 'deprecated' | 'obsolete'
+  /**
+   * Regulatory-urgency score (0-12) the assessment adds for an organisation in this
+   * country, from published national PQC mandates and advisories. Absent = not scored
+   * (the assessment adds nothing).
+   */
+  regulatoryUrgency?: number
+  /** The instruments the urgency score rests on. */
+  regulatoryUrgencyBasis?: string
   deprecatedAt?: string
   deprecatedReason?: string
 }
@@ -174,6 +182,8 @@ interface RawJurisdictionRow {
   force: string
   scope_basis: string
   review_date: string
+  regulatory_urgency?: string
+  regulatory_urgency_basis?: string
   show_in_picker: string
   eu_member: string
   authority: string
@@ -243,6 +253,8 @@ const EXPECTED_HEADERS: (keyof RawJurisdictionRow)[] = [
   'force',
   'scope_basis',
   'review_date',
+  'regulatory_urgency',
+  'regulatory_urgency_basis',
 ]
 
 const { data: allRows } = loadLatestCSV<RawJurisdictionRow, JurisdictionEntry>(
@@ -273,6 +285,10 @@ const { data: allRows } = loadLatestCSV<RawJurisdictionRow, JurisdictionEntry>(
       force: (row.force?.trim() as JurisdictionEntry['force']) || '',
       scopeBasis: (row.scope_basis?.trim() as JurisdictionEntry['scopeBasis']) || '',
       reviewDate: row.review_date?.trim() || '',
+      regulatoryUrgency: row.regulatory_urgency?.trim()
+        ? Number(row.regulatory_urgency.trim())
+        : undefined,
+      regulatoryUrgencyBasis: row.regulatory_urgency_basis?.trim() || undefined,
       showInPicker: row.show_in_picker?.trim().toLowerCase() === 'yes',
       euMember: row.eu_member?.trim().toLowerCase() === 'yes',
       authority: row.authority?.trim() || '',
@@ -297,6 +313,9 @@ const { data: allRows } = loadLatestCSV<RawJurisdictionRow, JurisdictionEntry>(
 const ACTIVE_ALL: JurisdictionEntry[] = filterActive(allRows).sort((a, b) =>
   a.name.localeCompare(b.name)
 )
+
+/** Every active entry, picker or reference-only, sorted by name. */
+export const ALL_JURISDICTION_ENTRIES: readonly JurisdictionEntry[] = ACTIVE_ALL
 
 /** Active picker jurisdictions only — shown in Assess / Learn / Sim selectors. */
 export const ALL_JURISDICTIONS: JurisdictionEntry[] = ACTIVE_ALL.filter((j) => j.showInPicker)

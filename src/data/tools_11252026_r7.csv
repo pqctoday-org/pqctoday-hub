@@ -1,0 +1,96 @@
+tool_id,kind,pt_id,version,name,category,order,level,module,sandbox_track,recommended_personas,audience,nice_tier,nice_competency_areas,nice_work_roles,nice_statements_taught,nice_statements_practised,framework_phase,cswp39_zone,cswp39_zone_sub_element,cswp39_section_ref,cswp39_sub_section,work_in_progress
+cacp-kmip,playground,PT-033,1.0.10,KMIP Control Plane,HSM / PKCS#11,1,advanced,crypto-agility,,developer;architect;researcher,,,,,,K0698;K1360;K1363;K1364;S0970,,,,,,
+hsm-capacity,playground,PT-026,2.0.0,HSM Capacity Calculator,HSM / PKCS#11,2,intermediate,pki-workshop,,architect;ops;executive;grc,,,,,,K0715;S0495,,,,,,
+hybrid-encrypt,playground,PT-003,1.0.2,Hybrid KEM + ECDH,HSM / PKCS#11,3,intermediate,hybrid-crypto,,developer;architect;researcher,,,,,,K1359;K1365,,,,,,
+envelope-encrypt,playground,PT-004,1.0.2,Envelope Encryption,HSM / PKCS#11,4,intermediate,kms-pqc,,architect;researcher;ops,,,,,K0876,K0874;K1358;K1359,,,,,,
+cloud-kms-key-exchange,playground,PT-034,1.0.1,Cloud KMS Key Exchange,HSM / PKCS#11,5,advanced,kms-pqc,,architect;ops;developer,,,,,,K0698;K0874;K1359;K1364,,,,,,
+token-migration,playground,PT-005,1.0.2,Multi-Algorithm Signing,HSM / PKCS#11,6,intermediate,iam-pqc,,developer;architect;researcher;ops,,,,,,K0742;K1364;S0658;S0967;S0970,,,,,,
+firmware-signing,playground,PT-007,1.0.5,Firmware Signing,HSM / PKCS#11,7,intermediate,secure-boot-pqc,,developer;architect;researcher;ops;cert-engineer,,,,,,K1081;K1364;S0658;S0757;S0970,,,,,,
+slh-dsa,playground,PT-001,1.0.4,SLH-DSA Sign & Verify,HSM / PKCS#11,8,advanced,slh-dsa,,developer;architect;researcher;cert-engineer,,,,,,K1378;S0658,,,,,,
+lms-hss,playground,PT-002,1.0.4,Stateful Hash Signatures,HSM / PKCS#11,9,advanced,stateful-signatures,,developer;architect;researcher;cert-engineer,,,,,,K0698;K1367;S0658,,,,,,
+hybrid-sigs,playground,PT-027,1.0.3,Hybrid Signature Spectrums,HSM / PKCS#11,10,advanced,hybrid-crypto,,developer;architect;researcher;cert-engineer,,,,,,K1364;K1365;S0969,,,,,,
+kdf-derivation,playground,PT-008,1.0.2,SP 800-108 KDF,HSM / PKCS#11,11,advanced,qkd,,developer;architect;researcher;cert-engineer,,,,,,K0698,,,,,,
+tee-channel,playground,PT-006,1.0.3,TEE-HSM Secure Channel,HSM / PKCS#11,12,advanced,confidential-computing,,architect;researcher,,,,,K0752;K0818,K0698;K1359;K1364;S0969,,,,,,
+tls-simulator,playground,PT-024,1.0.4,TLS 1.3 Simulator,Protocol Simulations,13,intermediate,tls-basics,,developer;architect;researcher;ops;curious,,,,,,K1359;K1364;K1365,,,,,,
+vpn-sim,playground,PT-009,1.0.7,PQC VPN Simulator,Protocol Simulations,14,advanced,vpn-ssh-pqc,,developer;architect;ops;researcher,,,,,,K0781;K1359;K1364;K1365,,,,,,
+pqc-ssh-sim,playground,PT-SSH-PQC,1.0.6,PQC SSH Simulator,Protocol Simulations,15,advanced,vpn-ssh-pqc,,developer;architect;researcher,,,,,,K1364;K1365,,,,,,
+suci-flow,playground,PT-018,1.0.7,5G SUCI Construction,Protocol Simulations,16,advanced,5g-security,,developer;architect;researcher,,,,,,K0018;K1359;K1364;K1365;S0836,,,,,,
+mls-group-messaging,playground,PT-030,1.0.1,MLS Group Messaging,Protocol Simulations,17,intermediate,mls-group-messaging,,developer;architect;researcher,,,,,,K0698;K1364;S0969,,,,,,
+tpm-playground,playground,PT-028,1.0.9,TPM 2.0 PQC Playground,Protocol Simulations,18,advanced,secure-boot-pqc,,developer;architect;researcher,,,,,,K1359;K1364;S0658,,,,,,
+rng-demo,playground,PT-010,1.0.3,Random Generation,Entropy & Random,19,beginner,entropy-randomness,,researcher;developer;architect;ops;cert-engineer,,,,,,K1380,,,,,,
+qrng-demo,playground,PT-012,1.0.3,QRNG Demo,Entropy & Random,20,beginner,entropy-randomness,,researcher;curious,,,,,,K1380,,,,,,
+entropy-test,playground,PT-011,1.0.4,Entropy Testing,Entropy & Random,21,intermediate,entropy-randomness,,researcher;architect;developer;cert-engineer,,,,,,K1341;K1380;S0384,,,,,,
+drbg-demo,playground,PT-014,1.0.4,SP 800-90A DRBG,Entropy & Random,22,advanced,entropy-randomness,,architect;developer;researcher;cert-engineer,,,,,,K1341;K1380,,,,,,
+source-combining,playground,PT-013,1.0.3,Source Combining,Entropy & Random,23,advanced,entropy-randomness,,researcher;architect;developer;cert-engineer,,,,,,K1380,,,,,,
+pki-workshop,playground,PT-015,1.0.8,PKI Workshop,Certificates & Proofs,24,intermediate,pki-workshop,,developer;architect;researcher;ops;curious,,,,,,K1239;S0658,,,,,,
+cert-capacity,playground,PT-025,2.0.0,Cert Capacity Calculator,Certificates & Proofs,25,beginner,pki-workshop,,architect;ops;executive;grc,,,,,,K1239;K1364,,,,,,
+hybrid-certs,playground,PT-016,1.1.1,Hybrid Certificates,Certificates & Proofs,26,intermediate,hybrid-crypto,,developer;architect;researcher;ops,,,,,,K1239;K1365;K1367,,,,,,
+merkle-proof,playground,PT-017,1.0.2,Merkle Tree Workshop,Certificates & Proofs,27,intermediate,merkle-tree-certs,,developer;researcher;curious,,,,,,K1147;K1239,,,,,,
+digital-id,playground,PT-019,1.0.7,EUDI Wallet Architecture,Digital Identity,28,intermediate,digital-id,,developer;architect;researcher,,,,,,K0686;K0742,,,,,,
+bitcoin-flow,playground,PT-020,1.0.1,Bitcoin Transaction,Blockchain & Digital Assets,29,intermediate,digital-assets,,developer;researcher,,,,,K0818,K0942;K1147;S0622;S0658,,,,,,
+hd-wallet,playground,PT-022,1.0.2,HD Wallet Derivation,Blockchain & Digital Assets,30,intermediate,digital-assets,,developer;researcher,,,,,K0818;S0970;S0971,K0698;K0942;K1380,,,,,,
+solana-flow,playground,PT-021,1.0.3,Solana Transaction,Blockchain & Digital Assets,31,intermediate,digital-assets,,developer;researcher,,,,,K0818,K0932;K1147;S0658,,,,,,
+openssl-studio,playground,PT-023,1.0.8,OpenSSL Studio,OpenSSL Studio,32,intermediate,crypto-dev-apis,,developer;architect;researcher;ops;cert-engineer,,,,,,K1359;K1364;S0658;S0836,,,,,,
+api-security-jwt,playground,PT-032,1.3.5,API Security & JWT Workshop,OpenSSL Studio,33,intermediate,api-security-jwt,,developer;architect;researcher,,,,,,K1359;K1364;K1365;S0658;S0836,,,,,,
+pki-enrollment,playground,PT-029,1.0.1,PKI Enrollment (EST + CMP),OpenSSL Studio,34,advanced,pki-enrollment-protocols,,developer;architect;ops;researcher,,,,,,K1239;K1359;K1364,,,,,,
+email-signing,playground,PT-031,1.0.4,S/MIME & CMS Workshop,OpenSSL Studio,35,advanced,email-signing,,developer;architect;researcher,,,,,,K1359;K1364;S0658;S0836,,,,,,
+sbx-tls,sandbox,PT-SBX-001,,OpenSSL TLS 1.3 + Composite Cert,Protocol Simulations,36,advanced,tls-basics,protocol-simulation,developer;architect;researcher;curious,,expert,CA-NETDEF;CA-CRYPTO,security-architect;systems-security-analyst,,K1239;K1364;K1365,,,,,,true
+sbx-ssh,sandbox,PT-SBX-002,,SSH PQC Authentication + KEX,Protocol Simulations,37,intermediate,vpn-ssh-pqc,protocol-simulation,developer;architect;researcher;curious,,practitioner,CA-NETDEF;CA-IDENT,security-architect;systems-security-analyst,,K0686;K0932;K1359;K1364;K1365,,,,,,true
+sbx-vpn,sandbox,PT-SBX-003,,Quantum-Resistant VPN,Protocol Simulations,38,intermediate,vpn-ssh-pqc,protocol-simulation,developer;architect;researcher;curious,,practitioner,CA-NETDEF;CA-SYSARCH,security-architect;systems-security-analyst,,,,,,,,true
+sbx-pki,sandbox,PT-SBX-004,,Enterprise PKI Chains,Certificates & Proofs,39,beginner,pki-workshop,infrastructure,architect;ops;developer,,awareness,CA-IDENT;CA-CRYPTO,security-architect;security-developer,,K0932;K1239;K1364;S0658,,,,,,true
+sbx-cert-validation,sandbox,PT-SBX-005,,Certificate Chain Validation,Certificates & Proofs,40,beginner,pki-workshop,infrastructure,architect;ops;developer,,awareness,CA-IDENT;CA-CRYPTO,security-architect;security-developer,,K1239;K1364,,,,,,true
+sbx-cloud-kms,sandbox,PT-SBX-006,,Cloud KMS Key Wrapping,HSM / PKCS#11,41,beginner,kms-pqc,infrastructure,architect;ops;developer,,awareness,CA-DATASEC;CA-SYSARCH,security-architect;system-administrator,,K0859;K1359;K1364,,,,,,true
+sbx-smime,sandbox,PT-SBX-007,,Secure Email (S/MIME),OpenSSL Studio,42,intermediate,email-signing,infrastructure,architect;ops;developer,,practitioner,CA-CRYPTO;CA-DATASEC,security-architect;security-developer,,K1359;K1364,,,,,,true
+sbx-hybrid-certs,sandbox,PT-SBX-008,,Hybrid Certificate Formats,Certificates & Proofs,43,advanced,hybrid-crypto,infrastructure,architect;ops;developer,,expert,CA-IDENT;CA-CRYPTO,security-architect;security-developer,,K1239;K1364;K1365;S0658,,,,,,true
+sbx-cbom-compliance,sandbox,PT-SBX-009,,CBOM Compliance Audit — PQC Readiness Scoring,Certificates & Proofs,44,advanced,cbom,supply-chain,architect;ops;executive;grc,,expert,CA-GOVCOMP;CA-RISK,is-security-manager;risk-manager;systems-security-analyst,,K1364;S0384,,,,,,true
+sbx-tpm-pqc-migration,sandbox,PT-SBX-010,,TPM 2.0 → PQC Migration,HSM / PKCS#11,45,advanced,hsm-pqc,supply-chain,architect;ops;executive;grc,,expert,CA-SYSARCH;CA-CRYPTO,security-architect;security-developer,,K0698;K1359;K1364;S0970,,,,,,true
+sbx-supply-chain-signing,sandbox,PT-SBX-011,,Supply Chain Signing — Quantum-Safe Container Provenance,Certificates & Proofs,46,advanced,software-supply-chain-pqc,supply-chain,architect;ops;executive;grc,,expert,CA-SECPROG;CA-GOVCOMP,security-developer;is-security-manager,,K1364;S0658;S0974,,,,,,true
+sbx-sequoia,sandbox,PT-SBX-012,,PGP Code Signing (Sequoia),Certificates & Proofs,47,intermediate,code-signing,supply-chain,architect;ops;executive;grc,,practitioner,CA-CRYPTO;CA-SECPROG,security-developer;is-security-manager,,K0932;S0658,,,,,,true
+sbx-pqctoday-kmip,sandbox,PT-SBX-013,,PQCToday KMIP 3.0 KMS,HSM / PKCS#11,48,advanced,kms-pqc,secrets-kms,ops;architect;developer,,expert,CA-DATASEC;CA-SYSARCH,security-architect;system-administrator,,K0874;K1359;K1363;K1364,,,,,,true
+sbx-sops,sandbox,PT-SBX-014,,GitOps Secrets (SOPS),HSM / PKCS#11,49,intermediate,secrets-management-pqc,secrets-kms,ops;architect;developer,,practitioner,CA-DATASEC;CA-SECPROG,security-architect;system-administrator,,K0859;K1364;K1365;S0836,,,,,,true
+sbx-browser-tls,sandbox,PT-SBX-015,,Browser ML-KEM Handshake,Protocol Simulations,50,intermediate,tls-basics,web,developer;architect;ops,,practitioner,CA-NETDEF;CA-CRYPTO,security-architect;systems-security-analyst,,K1359;K1364;K1365,,,,,,true
+sbx-migration-impact,sandbox,PT-SBX-016,,Migration Impact Analysis,Protocol Simulations,51,intermediate,tls-basics,web,developer;architect;ops,,practitioner,CA-RISK;CA-GOVCOMP,risk-manager;security-architect;is-security-manager,,K1364;S0970,,,,,,true
+sbx-ab-handshake-bench,sandbox,PT-SBX-017,,A/B TLS Handshake Benchmark,Protocol Simulations,52,advanced,tls-basics,web,developer;architect;ops,,expert,CA-NETDEF;CA-RISK,security-architect;systems-security-analyst,,K1364;K1365;S0580,,,,,,true
+sbx-hsm-perf-bench,sandbox,PT-SBX-018,,HSM Performance Benchmark,Protocol Simulations,53,advanced,hsm-pqc,web,developer;architect;ops,,expert,CA-NETDEF,security-architect;systems-security-analyst,,K1359;K1364;K1366,,,,,,true
+sbx-api-security-jwt,sandbox,PT-SBX-019,,Post-Quantum JWT Identity Constraints,OpenSSL Studio,54,advanced,api-security-jwt,applications,developer;architect;researcher,,expert,CA-SECPROG;CA-IDENT,security-developer;security-architect,,K1359;K1364,,,,,,true
+sbx-database-postgres,sandbox,PT-SBX-020,,PostgreSQL TLS Hardening,Protocol Simulations,55,intermediate,database-encryption-pqc,applications,developer;architect;researcher,,practitioner,CA-DATASEC;CA-SECPROG,security-developer;security-architect,,K1364;K1365;S0596;S0970,,,,,,true
+sbx-firmware-hss,sandbox,PT-SBX-021,,Firmware Verification (HSS),HSM / PKCS#11,56,advanced,stateful-signatures,applications,developer;architect;researcher,,expert,CA-SECPROG;CA-SYSARCH,security-developer;security-architect,,K1081;S0658,,,,,,true
+sbx-osslsigncode,sandbox,PT-SBX-022,,Code Signing (osslsigncode),Certificates & Proofs,57,intermediate,code-signing,applications,developer;architect;researcher,,practitioner,CA-SECPROG;CA-SYSARCH,security-developer;security-architect,K0818,K1364;S0658,,,,,,true
+sbx-iot-mqtt,sandbox,PT-SBX-023,,Lightweight MQTT Telemetry,Protocol Simulations,58,intermediate,iot-pqc,applications,developer;architect;researcher,,practitioner,CA-NETDEF;CA-SECPROG,security-developer;security-architect,K0818,K1359;K1365;S0596,,,,,,true
+roi-calculator,business,,,ROI Calculator,Risk & Strategy,1,,pqc-business-case,,,,,,,,K0835;S0579;S0878,p0,governance,Business Requirements,§5,Strategic plan — business case,
+board-pitch,business,,,Board Pitch Builder,Risk & Strategy,2,,pqc-business-case,,,,,,,,S0579;S0923,p0,governance,Business Requirements,§5,Strategic plan — business case,
+breach-simulator,business,,,Breach Scenario Simulator,Risk & Strategy,3,,pqc-business-case,,,,,,,,K0835;S0878;S0931,p0,governance,Threats,§6.1,Resource considerations — breach exposure,
+cost-of-inaction,business,,,Cost of Inaction Analyzer,Risk & Strategy,4,,pqc-business-case,,,,,,,,K0835;S0579;S0878;S0931,p0,governance,Business Requirements,§5,Strategic plan — business case,
+cost-model-explorer,business,,,Cost Model Explorer,Risk & Strategy,5,,pqc-business-case,,,,,,,,,p0,governance,Business Requirements,§5,Strategic plan — business case,
+crqc-scenario,business,,,CRQC Scenario Planner,Risk & Strategy,6,,pqc-risk-management,,,,,,,,K0676;K0818;S0804;S0971,p0,governance,Threats,§6.1,Resource considerations — threat horizon,
+risk-register,business,,,Risk Register Builder,Risk & Strategy,7,,pqc-risk-management,,,,,,,,K0835;S0878,p3,risk-management,Risk Analysis Engine,§6.5,Maturity assessment,
+risk-treatment-plan,business,,,Risk Heatmap & Treatment Plan,Risk & Strategy,8,,pqc-risk-management,,,,,,,,S0579;S0878,p3,risk-management,Risk Analysis Engine,§6.5,Maturity assessment,
+compliance-checklist,business,,,Compliance Checklist,Compliance & Audit,9,,compliance-strategy,,,,,,,,K0676;K1377;S0384,foundations,governance,Standards,§5.1,"Standards, regulations, mandates",
+audit-checklist,business,,,Audit Readiness Checklist,Compliance & Audit,10,,compliance-strategy,,,,,,,,,foundations,governance,Standards,§5.1,"Standards, regulations, mandates",
+compliance-timeline,business,,,Compliance Timeline Builder,Compliance & Audit,11,,compliance-strategy,,,,,,,,K0676;S0579,p4,governance,Regulations/Mandates,§5.1,"Standards, regulations, mandates",
+raci-builder,business,,,RACI Builder,Governance & Policy,12,,pqc-governance,,,,,,,,,p0,governance,Crypto Policies,§5,Strategic plan — governance,
+policy-generator,business,,,Policy Template Generator,Governance & Policy,13,,pqc-governance,,,,,,,,K0698;S0967;S0970,p0,governance,Crypto Policies,§5.2,Crypto security policy enforcement,
+kpi-dashboard,business,,,KPI Dashboard Builder,Governance & Policy,14,,pqc-governance,,,,,,,,S0666;S0970,foundations,risk-management,KPI Dashboards,§6.5,Maturity assessment,
+vendor-scorecard,business,,,Vendor Scorecard Builder,Vendor & Supply Chain,15,,vendor-risk,,,,,,,,K0653;K0803;K0835;S0479;S0480,p7,governance,Supply Chains,§5.3,Technology supply chains,
+contract-clause,business,,,Contract Clause Generator,Vendor & Supply Chain,16,,vendor-risk,,,,,,,,K0653;K0803;K1378,p7,governance,Supply Chains,§5.3,Technology supply chains,
+supply-chain-matrix,business,,,Supply Chain Risk Matrix,Vendor & Supply Chain,17,,vendor-risk,,,,,,,,K0803;K0820;K0835;K0836;S0878;S0973,p7,governance,Supply Chains,§5.3,Technology supply chains,
+roadmap-builder,business,,,Roadmap Builder,Migration Planning,18,,migration-program,,,,,,,K0676;K0818,S0970;S0973,p4,migration,Library upgrades,§3.2,Algorithm transitions,
+stakeholder-comms,business,,,Stakeholder Comms Planner,Migration Planning,19,,migration-program,,,,,,,,S0923,p4,governance,Crypto Policies,§5,Strategic plan — governance,
+kpi-tracker,business,,,KPI Tracker Template,Migration Planning,20,,migration-program,,,,,,,,S0579,foundations,risk-management,KPI Dashboards,§6.5,Maturity assessment,
+deployment-playbook,business,,,Deployment Playbook,Migration Planning,21,,migration-program,,,,,,,,S0927;S0970,p5,mitigation,Crypto gateway / bump-in-the-wire,§4,System implementations,
+hybrid-transition-planner,business,,,Hybrid Transition Planner,Migration Planning,22,,crypto-mgmt-modernization,,,architect,,,,,K0769;K1360;K1365;K1367;S0967;S0970,p5,migration,Protocol negotiation updates,§3.2.4,Hybrid Cryptographic Algorithms,
+mti-negotiator,business,,,MTI Negotiator,Migration Planning,23,,crypto-mgmt-modernization,,,architect,,,,,K0769;K1365;K1367;S0967,p5,migration,Protocol negotiation updates,§3.1.1,Mandatory-to-Implement Algorithms,
+crypto-api-refactor-audit,business,,,Crypto API Refactor Audit,Migration Planning,24,,crypto-mgmt-modernization,,,developer,,,,,K0769;K1360;K1361;K1364;K1366;S0970,p5,migration,Library upgrades,§4.1,Using an API in a Crypto Library Application,
+cloud-responsibility-matrix,business,,,Cloud Responsibility Matrix,Migration Planning,25,,crypto-mgmt-modernization,,,architect,,,,K1360,K0874;K0898;S0970,p7,governance,Supply Chains,§6.4,Crypto Agility in the Cloud,
+crypto-architecture-diagram,business,,,Crypto Architecture Diagram,Migration Planning,26,,crypto-mgmt-modernization,,,,,,,,K0769;S0973,p1,governance,Crypto Architecture,§5.4,Cryptographic architecture,
+management-tools-audit,business,,,Management Tools Audit,Migration Planning,27,,crypto-mgmt-modernization,,,,,,,K0755;K0866;K1239,S0619,p1,management-tools,Log/SIEM,§5,Identify gaps in enterprise management tools,
+crypto-cbom-builder,business,,,Crypto BOM (CBOM) Builder,Migration Planning,28,,crypto-mgmt-modernization,,,,,,,,,p2,assets,Libraries,§5.3,Technology supply chains (CBOM ingestion),
+crypto-vulnerability-watch,business,,,Crypto Vulnerability Watch,Migration Planning,29,,crypto-mgmt-modernization,,,,,,,K1366,K0752;S0504;S0579,p1,management-tools,Vulnerability,§5.3,"Identify Gaps — vulnerability management (CVE feeds, library EoL tracking)",
+program-charter,business,,,Program Charter,Governance & Policy,30,,pqc-governance,,,,,,,,,p0,governance,Crypto Policies,§5,Strategic plan — governance,
+initial-scoping,business,,,Initial Scoping Assessment,Risk & Strategy,31,,pqc-governance,,,,,,,,S0579;S0973,p0,governance,Business Requirements,§5,Strategic plan — scope,
+skills-team-plan,business,,,Skills & Team Plan,Governance & Policy,32,,skills-team-structure,,,,,,,,,foundations,risk-management,KPI Dashboards,§6.5,Maturity assessment,
+infra-modernization-planner,business,,,Infrastructure Modernization Planner,Migration Planning,33,,network-security-pqc,,,,,,,,K1239;S0970,p6,mitigation,Network-layer re-encryption,§6,Infrastructure modernization,
+refresh-cycle-alignment,business,,,Refresh-Cycle Alignment,Migration Planning,34,,migration-program,,,,,,,,K1225;S0970,p4,migration,Firmware updates,§4,Roadmap — refresh-cycle alignment,
+accelerated-execution-profile,business,,,Accelerated Execution Profile,Governance & Policy,35,,migration-program,,,,,,,,S0927;S0970,p4,migration,ACME / EST / CMP automation,§4,Roadmap — contingency,
+data-at-rest-strategy,business,,,Data-at-Rest Strategy,Migration Planning,36,,data-asset-sensitivity,,,,,,,,K0818;K0931;S0808;S0967,p5,mitigation,,§5,Data-at-rest strategy,
+migration-verification,business,,,Migration Verification & Closure,Migration Planning,37,,verification-closure,,,,,,,,K1341;K1363;S0970,verify-close,governance,Processes,§5,Strategic plan — migration verification & evidence,

@@ -8,11 +8,13 @@
  *     `resources.businessTools` lists only)
  *
  * Every organising field of a tool (name and number, category, order, level,
- * recommended roles, lesson link, NICE mapping, CSWP.39 placement, framework
+ * recommended roles, lesson link, NICE mapping and statements, CSWP.39 placement, framework
  * phase, version) lives once in the CSV. Lists are `;`-separated. Ids, levels,
  * categories, phases, zones, roles and NICE ids are typed as the existing
  * TypeScript unions, so a bad value fails `tsc`. Content (descriptions, intro,
  * icons, keywords, requirements, outputs, components) stays in the registries.
+ * A Playground tool that belongs to a lesson reads its NICE tier, competency areas and work roles from that
+ * lesson's row in the lessons file (they are not repeated in its own row); sandbox scenarios keep their own.
  *
  *   node scripts/ci/gen-tools.mjs           # (re)generate
  *   node scripts/ci/gen-tools.mjs --check   # exit 1 if stale (CI gate)
@@ -24,6 +26,7 @@ import Papa from 'papaparse'
 import prettier from 'prettier'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
+const NICE_COMPONENTS = join(ROOT, 'pqc-references', 'NICE-Framework-Components-v2.2.0.json')
 const DATA = join(ROOT, 'src', 'data')
 const OUT = join(DATA, 'generated', 'tools.generated.ts')
 const EMBED = join(ROOT, 'public', 'embed', 'manifest.json')
@@ -44,6 +47,8 @@ const COLUMNS = [
   'nice_tier',
   'nice_competency_areas',
   'nice_work_roles',
+  'nice_statements_taught',
+  'nice_statements_practised',
   'framework_phase',
   'cswp39_zone',
   'cswp39_zone_sub_element',
@@ -56,9 +61,9 @@ const KINDS = ['playground', 'sandbox', 'business']
 const SEMVER = /^\d+\.\d+\.\d+$/
 const SANDBOX_PREFIX = 'sbx-'
 
-// Latest dated tools CSV (tools_MMDDYYYY[_rN].csv).
-function latestCsv() {
-  const re = /^tools_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+// Latest dated CSV of one family (<prefix>_MMDDYYYY[_rN].csv).
+function latestCsv(prefix = 'tools') {
+  const re = new RegExp(`^${prefix}_(\\d{2})(\\d{2})(\\d{4})(?:_r(\\d+))?\\.csv$`)
   let best = null
   for (const file of readdirSync(DATA)) {
     const m = file.match(re)
@@ -66,7 +71,7 @@ function latestCsv() {
     const key = `${m[3]}${m[1]}${m[2]}${(m[4] ?? '0').padStart(3, '0')}`
     if (!best || key > best.key) best = { key, file }
   }
-  if (!best) throw new Error('no tools_*.csv found')
+  if (!best) throw new Error(`no ${prefix}_*.csv found`)
   return best.file
 }
 
@@ -79,6 +84,32 @@ const list = (value) =>
     : []
 const text = (value) => (value === '' ? undefined : value)
 const bool = (value) => (value === '' ? undefined : value === 'true')
+const STATEMENT_ID = /^[KST]\d{4}$/
+// The statements a tool teaches or practises: `;`-separated NICE ids, each in the vendored v2.2.0
+// components, none repeated, none listed in both columns (the lessons file's rules).
+const officialStatements = new Set(
+  JSON.parse(readFileSync(NICE_COMPONENTS, 'utf8')).elements.map((e) => e.element_identifier)
+)
+function statements(row, column) {
+  const ids = list(row[column])
+  for (const id of ids) {
+    if (!STATEMENT_ID.test(id)) fail(row, `bad ${column} id "${id}"`)
+    if (!officialStatements.has(id)) fail(row, `${column} id ${id} is not in the NICE components`)
+  }
+  if (new Set(ids).size !== ids.length) fail(row, `repeated id in ${column}`)
+  return ids
+}
+
+// A Playground tool that belongs to a lesson takes its NICE tier, competency areas and work roles from
+// that lesson's row (one copy, in the lessons file). Sandbox scenarios keep their own: they have no lesson
+// of their own to read them from (their columns follow their track, in the order a reader sees them).
+function lessonRows() {
+  const parsed = Papa.parse(readFileSync(join(DATA, latestCsv('learn_modules')), 'utf8'), {
+    header: true,
+    skipEmptyLines: true,
+  })
+  return new Map(parsed.data.map((lesson) => [lesson.module_id, lesson]))
+}
 
 function fail(row, message) {
   throw new Error(`${row.tool_id || '(blank tool_id)'}: ${message}`)
@@ -94,6 +125,7 @@ function load() {
     throw new Error(`unexpected ${file} headers`)
   }
   const seen = new Set()
+  const lessons = lessonRows()
   const rows = parsed.data.map((row) => {
     if (!row.tool_id || seen.has(row.tool_id)) fail(row, 'duplicate or blank tool_id')
     seen.add(row.tool_id)
@@ -108,7 +140,7 @@ function load() {
       fail(row, `tool_id and kind disagree about the "${SANDBOX_PREFIX}" prefix`)
     }
     if (isBusiness) {
-      for (const column of ['pt_id', 'version', 'level', 'module', 'sandbox_track']) {
+      for (const column of ['pt_id', 'version', 'level', 'sandbox_track']) {
         if (row[column]) fail(row, `a business tool has no ${column}`)
       }
       if (row.recommended_personas) fail(row, 'a business tool has no recommended_personas')
@@ -130,7 +162,6 @@ function load() {
       }
       if (isSandbox) {
         if (row.version) fail(row, 'a sandbox tool version is generated, not stored')
-        if (row.module) fail(row, 'a sandbox tool has no lesson link')
         if (!row.sandbox_track) fail(row, 'a sandbox tool needs sandbox_track')
       } else {
         if (!SEMVER.test(row.version)) fail(row, `bad version "${row.version}"`)
@@ -138,6 +169,23 @@ function load() {
         if (row.work_in_progress) fail(row, 'only a sandbox tool has work_in_progress')
       }
       if (list(row.recommended_personas).length === 0) fail(row, 'blank recommended_personas')
+    }
+    const lesson = row.kind === 'playground' && row.module ? lessons.get(row.module) : undefined
+    if (row.kind === 'playground' && row.module && !lesson) {
+      fail(row, `module "${row.module}" is not a lesson of the lessons file`)
+    }
+    if (lesson && (row.nice_tier || row.nice_competency_areas || row.nice_work_roles)) {
+      fail(
+        row,
+        'a tool with a lesson reads its NICE tier, areas and roles from the lesson: leave its own cells blank'
+      )
+    }
+    // where the tool's NICE tier, areas and roles come from: its lesson, else its own row
+    const nice = lesson ?? row
+    const niceStatementsTaught = statements(row, 'nice_statements_taught')
+    const niceStatementsPractised = statements(row, 'nice_statements_practised')
+    if (niceStatementsTaught.some((id) => niceStatementsPractised.includes(id))) {
+      fail(row, 'a NICE statement is listed as both taught and practised')
     }
     return {
       toolId: row.tool_id,
@@ -150,14 +198,16 @@ function load() {
       ...(row.level ? { level: row.level } : {}),
       ...(text(row.module) ? { module: row.module } : {}),
       ...(text(row.sandbox_track) ? { sandboxTrack: row.sandbox_track } : {}),
+      ...(niceStatementsTaught.length > 0 ? { niceStatementsTaught } : {}),
+      ...(niceStatementsPractised.length > 0 ? { niceStatementsPractised } : {}),
       ...(isBusiness ? {} : { recommendedPersonas: list(row.recommended_personas) }),
       ...(text(row.audience) ? { audience: row.audience } : {}),
       ...(isBusiness
         ? {}
         : {
-            ...(text(row.nice_tier) ? { niceTier: row.nice_tier } : {}),
-            niceCompetencyAreas: list(row.nice_competency_areas),
-            niceWorkRoles: list(row.nice_work_roles),
+            ...(text(nice.nice_tier) ? { niceTier: nice.nice_tier } : {}),
+            niceCompetencyAreas: list(nice.nice_competency_areas),
+            niceWorkRoles: list(nice.nice_work_roles),
           }),
       ...(text(row.framework_phase) ? { frameworkPhase: row.framework_phase } : {}),
       ...(text(row.cswp39_zone) ? { cswp39Zone: row.cswp39_zone } : {}),
@@ -217,6 +267,11 @@ interface ToolRecordBase {
   /** The Hub's id (sandbox tools carry the \`sbx-\` prefix). */
   toolId: string
   name: string
+  /** The lesson this tool belongs to, where it has one (its home lesson). */
+  module?: string
+  /** NICE statements the tool teaches, and the ones it has a learner practise. Absent until filled. */
+  niceStatementsTaught?: readonly string[]
+  niceStatementsPractised?: readonly string[]
   /** Position on the page: one run across Playground and sandbox tools, its own run for business tools. */
   order: number
 }
@@ -235,8 +290,6 @@ export interface PlaygroundToolRecord extends ToolRecordBase, NiceFields {
   version: string
   category: WorkshopCategory
   level: ToolDifficulty
-  /** The lesson this tool belongs to, where it links to one. */
-  module?: string
   recommendedPersonas: readonly PersonaId[]
 }
 

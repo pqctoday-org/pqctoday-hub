@@ -96,9 +96,40 @@ describe('See all links in the For You panel', () => {
   })
 
   it('does not say nothing matches when the role filter left every document out', () => {
-    // For a developer in Australia in Healthcare the category filter leaves out all twelve
-    // applicable library documents, so the section is empty but not "no match".
-    const hidden = { country: 'Australia', industry: 'Healthcare' }
+    // Find, from the data, a profile whose developer role filter leaves out every applicable
+    // Library document, so the section is empty but not "no match". A fixed profile broke
+    // whenever new Library categories were filled in.
+    const countries = [
+      'Australia',
+      'Canada',
+      'Japan',
+      'Singapore',
+      'Germany',
+      'France',
+      'United States',
+    ]
+    const industries = [
+      'Healthcare / Pharmaceutical',
+      'Healthcare',
+      'Insurance',
+      'Retail & E-Commerce',
+      'Rail / Transit',
+      'Water / Wastewater',
+      'Media / Entertainment / DRM',
+      'Education / Research',
+    ]
+    const candidates = countries.flatMap((country) =>
+      industries.map((industry) => ({ country, industry }))
+    )
+    const hidden = candidates.find((p) => {
+      const l = applyLens(allApplicable(p), 'developer')
+      return l.library.length === 0 && sum(l.droppedCounts.library) > 0
+    })
+    expect(
+      hidden,
+      'no profile in the candidate list leaves every Library document out'
+    ).toBeDefined()
+    if (!hidden) return
     const lensed = applyLens(allApplicable(hidden), 'developer')
     expect(lensed.library).toHaveLength(0)
     const omitted = sum(lensed.droppedCounts.library)

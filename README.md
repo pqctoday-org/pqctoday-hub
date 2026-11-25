@@ -110,13 +110,13 @@ None of those labels turns a local demonstration into an ACVP, CAVP, CMVP, Commo
 
 ### Current committed snapshot
 
-Release **4.224.0** · source-data snapshot through **2026-11-24**. These figures are derived from the committed registries and current CSV lineages; they are not live counts.
+Release **4.225.0** · source-data snapshot through **2026-11-25**. These figures are derived from the committed registries and current CSV lineages; they are not live counts.
 
 - **Learn:** 85 instructional modules and 1,277 quiz questions.
 - **Core references:** 130 algorithm records, 198 timeline events and 1,670 active Library records.
-- **Educational catalogues:** 911 active products, 189 active compliance references, 75 active threat records and 361 active community profiles.
-- **Main glossary:** 648 terms.
-- **Assistant corpus:** 20,025 chunks across 47 source collections; 99.97% carry a Hub deep link.
+- **Educational catalogues:** 965 active products, 189 active compliance references, 75 active threat records and 361 active community profiles.
+- **Main glossary:** 653 terms.
+- **Assistant corpus:** 20,204 chunks across 47 source collections; 99.97% carry a Hub deep link.
 
 Edit the source registries, not this table, then run `npm run gen:readme-facts`.
 <!-- END GENERATED README FACTS -->

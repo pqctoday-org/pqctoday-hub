@@ -2,8 +2,11 @@
 import { describe, it, expect } from 'vitest'
 import { softwareData, softwareMetadata, vendorMap } from '@/data/migrateData'
 import { vendorMetadata } from '@/data/vendorData'
-import { getTrustedSource } from '@/data/trustedSourcesData'
-import { getAuthoritativeSource } from '@/data/authoritativeSourcesData'
+import { getTrustedSource, isSourceCitedInView as isTrustedCited } from '@/data/trustedSourcesData'
+import {
+  getAuthoritativeSource,
+  isSourceCitedInView as isAuthoritativeCited,
+} from '@/data/authoritativeSourcesData'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import { applyProductFacets, NO_FACETS } from '@/components/Migrate/Workbench/workbenchCatalog'
 import { productFipsBadge } from '@/components/Migrate/Workbench/productStatus'
@@ -88,8 +91,8 @@ describe('applied four-product capability and supplier joins through current loa
         authoritative = getAuthoritativeSource(e.source)
       expect(trusted?.primaryUrl).toBe(e.domain)
       expect(authoritative?.primaryUrl).toBe(e.domain)
-      expect(trusted?.migrateCsv).toBe(true)
-      expect(authoritative?.migrateCsv).toBe(true)
+      expect(trusted && isTrustedCited(trusted, 'Migrate')).toBe(true)
+      expect(authoritative && isAuthoritativeCited(authoritative, 'Migrate')).toBe(true)
       const raw = associationRows.find((r) => r.product_id === e.id)
       expect(raw?.trusted_source_id).toBe(e.source)
     }

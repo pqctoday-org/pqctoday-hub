@@ -84,15 +84,23 @@ describe('isComplianceFrameworkEmphasized', () => {
   })
 
   it('emphasizes developer-relevant frameworks for developer', () => {
-    expect(isComplianceFrameworkEmphasized('developer', 'FIPS')).toBe(true)
     expect(isComplianceFrameworkEmphasized('developer', 'CMMC')).toBe(true)
-    expect(isComplianceFrameworkEmphasized('developer', 'CC')).toBe(true)
-    expect(isComplianceFrameworkEmphasized('developer', 'FedRAMP')).toBe(true)
+    expect(isComplianceFrameworkEmphasized('developer', 'NIST')).toBe(true)
+    expect(isComplianceFrameworkEmphasized('developer', 'CNSA-2')).toBe(true)
+  })
+
+  it('no longer lists ids that matched no framework row (FIPS, FedRAMP, CC, SOX)', () => {
+    // These ids sat in the old emphasis lists but no compliance row carries them, so they
+    // styled nothing; they are gone with the move of the lists into the catalogue.
+    expect(isComplianceFrameworkEmphasized('developer', 'FIPS')).toBe(false)
+    expect(isComplianceFrameworkEmphasized('developer', 'FedRAMP')).toBe(false)
+    expect(isComplianceFrameworkEmphasized('developer', 'CC')).toBe(false)
+    expect(isComplianceFrameworkEmphasized('executive', 'SOX')).toBe(false)
   })
 
   it('does not emphasize unrelated frameworks', () => {
     expect(isComplianceFrameworkEmphasized('developer', 'HIPAA')).toBe(false)
-    expect(isComplianceFrameworkEmphasized('executive', 'FIPS')).toBe(false)
+    expect(isComplianceFrameworkEmphasized('executive', 'CMMC')).toBe(false)
   })
 
   it('exposes a non-empty emphasis set for every persona except GRC', () => {

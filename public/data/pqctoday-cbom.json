@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:7405626c-f992-4e5e-9392-f76cdad74e25",
+  "serialNumber": "urn:uuid:e556827f-c003-4357-90cf-08d3d5b87fb6",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-24T00:00:00.000Z",
+    "timestamp": "2026-11-25T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -40132,6 +40132,2065 @@
         {
           "name": "pqctoday:layer",
           "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e7d8feea33a2307e",
+      "name": "Canvas LMS",
+      "manufacturer": {
+        "name": "Instructure, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Canvas-LMS"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Learning Management Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7bfde1570c57d298",
+      "name": "D2L Brightspace",
+      "manufacturer": {
+        "name": "D2L Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "D2L-Brightspace"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Learning Management Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "6df1e4a0791d7eee",
+      "name": "Renesas RH850/U2C",
+      "manufacturer": {
+        "name": "Renesas Electronics Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Renesas reports post-quantum cryptography support in the RH850/U2C automotive microcontroller. Its product announcement does not identify a PQC algorithm or operating mode.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Renesas-RH850-U2C"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "820caa49c4eb7447",
+      "name": "Renesas RA FSP MCUboot Port",
+      "manufacturer": {
+        "name": "Renesas Electronics Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "The Renesas RA FSP MCUboot port supports ML-DSA-44, ML-DSA-65 and ML-DSA-87 for firmware image signature verification in Compatibility Mode. The RA2, RA4, RA6 and RA8 example projects require at least 32 KB of RAM.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Renesas-RA-FSP-MCUboot-Port"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secure Boot and Firmware Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c0c58967ab5aadbf",
+      "name": "Moodle LMS",
+      "manufacturer": {
+        "name": "Moodle Pty Ltd"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Moodle-LMS"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Learning Management Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "86d92a4a28573586",
+      "name": "Blackboard Learn",
+      "manufacturer": {
+        "name": "Blackboard T&L, LLC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Blackboard-Learn"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Learning Management Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e622f76376dd700c",
+      "name": "Epic",
+      "manufacturer": {
+        "name": "Epic Systems Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Epic"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Electronic Health Record Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e420dd5e9ce75fa8",
+      "name": "Oracle Health Millennium Platform",
+      "manufacturer": {
+        "name": "Oracle Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Oracle-Health-Millennium-Platform"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Electronic Health Record Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a0bdc82f1299e1fe",
+      "name": "Expanse",
+      "manufacturer": {
+        "name": "Medical Information Technology, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Expanse"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Electronic Health Record Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "bb56d478e0f9f2c7",
+      "name": "Conax Contego",
+      "manufacturer": {
+        "name": "Kudelski Group"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Conax-Contego"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Media Content Protection and Conditional Access"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f525fd1add66b520",
+      "name": "FairPlay Streaming",
+      "manufacturer": {
+        "name": "Apple Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "FairPlay-Streaming"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Media Content Protection and Conditional Access"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "232a480f6b76473b",
+      "name": "PlayReady",
+      "manufacturer": {
+        "name": "Microsoft Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PlayReady"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Media Content Protection and Conditional Access"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "df8892dde9630174",
+      "name": "AD FS",
+      "manufacturer": {
+        "name": "Microsoft Corporation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "AD-FS"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Identity & Access Management (IAM)"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "6bfc3b265ae735ec",
+      "name": "Routinator",
+      "manufacturer": {
+        "name": "Stichting NLnet Labs"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Routinator"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "65a0590f7411713b",
+      "name": "rpki-client",
+      "manufacturer": {
+        "name": "OpenBSD Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "rpki-client"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "419518f24c9c4298",
+      "name": "PhonePe",
+      "manufacturer": {
+        "name": "PhonePe Limited"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PhonePe"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Wallets and Payment Applications"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "76664095fbc8f0d5",
+      "name": "Google Pay",
+      "manufacturer": {
+        "name": "Google India Digital Services Private Limited"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Google-Pay"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Wallets and Payment Applications"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a43389fb2f98a9cd",
+      "name": "OpenWay Riva",
+      "manufacturer": {
+        "name": "Itron, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "OpenWay-Riva"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Smart Metering Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "736dcd1d070df3eb",
+      "name": "Smart Connect Consumer",
+      "manufacturer": {
+        "name": "IDEMIA Group"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Smart-Connect-Consumer"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "5G & Telecom Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a5490db9710aa034",
+      "name": "Prysm",
+      "manufacturer": {
+        "name": "Offchain Labs, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Prysm"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "721dbc004d4edf10",
+      "name": "Teku",
+      "manufacturer": {
+        "name": "Consensys Incorporated"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Teku"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "31a47d66faea2cb8",
+      "name": "Soluti",
+      "manufacturer": {
+        "name": "Soluti Soluções em Negócios Inteligentes S.A."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Soluti"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ee248d477bea1ac3",
+      "name": "SyngularID Múltipla",
+      "manufacturer": {
+        "name": "AC SyngularID Múltipla"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "SyngularID-M-ltipla"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7fb86db572313dfd",
+      "name": "Google Trust Services",
+      "manufacturer": {
+        "name": "Google Trust Services LLC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Google-Trust-Services"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ed40df20547f2b58",
+      "name": "AIRCOM",
+      "manufacturer": {
+        "name": "SITA B.V."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "AIRCOM"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "1adf67e50c2214bd",
+      "name": "ARINC GLOBALink",
+      "manufacturer": {
+        "name": "Rockwell Collins, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ARINC-GLOBALink"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "79a504e4a494159d",
+      "name": "Dropbear SSH",
+      "manufacturer": {
+        "name": "Dropbear SSH Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Dropbear-SSH"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "SSH Implementation Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7066f9a60d22d428",
+      "name": "Gridstream Connect",
+      "manufacturer": {
+        "name": "Landis+Gyr AG"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Gridstream-Connect"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Smart Metering Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "84e84431e6b3e315",
+      "name": "Colleague",
+      "manufacturer": {
+        "name": "Ellucian Company L.P."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Colleague"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Learning Management Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "00b68f138721486f",
+      "name": "BD Alaris",
+      "manufacturer": {
+        "name": "Becton, Dickinson and Company"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "BD-Alaris"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "IoT Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8f7a2507a15e541f",
+      "name": "Netcetera 3DS Server",
+      "manufacturer": {
+        "name": "Netcetera AG"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Netcetera-3DS-Server"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Wallets and Payment Applications"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a1dcc548f21871c0",
+      "name": "DigiDoc4",
+      "manufacturer": {
+        "name": "Information System Authority (RIA)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "DigiDoc4"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "3b27d95575d27664",
+      "name": "TraceLink",
+      "manufacturer": {
+        "name": "TraceLink, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "TraceLink"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "6ef9a195cbc5dfd1",
+      "name": "Q2",
+      "manufacturer": {
+        "name": "Q2 Holdings, Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Q2"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Wallets and Payment Applications"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8a39859ebf4fe22a",
+      "name": "Ignition",
+      "manufacturer": {
+        "name": "Inductive Automation, LLC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Ignition"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "IoT Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9d86aadffaaa4ca2",
+      "name": "GoDaddy SSL",
+      "manufacturer": {
+        "name": "Starfield Technologies, LLC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "GoDaddy-SSL"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f58df23829ed5cf5",
+      "name": "Onvia Cab",
+      "manufacturer": {
+        "name": "Alstom S.A."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Onvia-Cab"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "IoT Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "SecSoftware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "aca113c54983de6c",
+      "name": "Valid",
+      "manufacturer": {
+        "name": "Valid Certificadora Digital Ltda."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Valid"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "668fcf54eec6950e",
+      "name": "Certisign",
+      "manufacturer": {
+        "name": "Certisign Certificadora Digital S.A."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Certisign"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "3ed015e25d62d784",
+      "name": "Consulti Brasil",
+      "manufacturer": {
+        "name": "Consulti Brasil Certificadora Digital"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Consulti-Brasil"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8ce1e56c267c7a8e",
+      "name": "Safeweb RFB",
+      "manufacturer": {
+        "name": "Safeweb AC Repository"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Safeweb-RFB"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d27562306265e11e",
+      "name": "Serpro",
+      "manufacturer": {
+        "name": "Serviço Federal de Processamento de Dados (SERPRO)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Serpro"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Public Key Infrastructure (PKI) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "2aa26434156d0bd8",
+      "name": "Across",
+      "manufacturer": {
+        "name": "Across Protocol"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Across"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "0ec91e1fa37a04ce",
+      "name": "Ledger Live",
+      "manufacturer": {
+        "name": "Ledger SAS"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Ledger-Live"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Asset Custody"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "10469e92553fb800",
+      "name": "LayerZero",
+      "manufacturer": {
+        "name": "LayerZero Labs Ltd."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "LayerZero"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "65d67e790af085f0",
+      "name": "CCTP",
+      "manufacturer": {
+        "name": "Circle Internet Financial, LLC"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "CCTP"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f5e8035cf7f0f738",
+      "name": "Phantom",
+      "manufacturer": {
+        "name": "Phantom Technologies"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Phantom"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Asset Custody"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "7a727fc90b6487f2",
+      "name": "OP Stack",
+      "manufacturer": {
+        "name": "OP Labs"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "OP-Stack"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "fc254a6b79f84cfb",
+      "name": "Pyth",
+      "manufacturer": {
+        "name": "Pyth Data Association"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Pyth"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "74471ab581605ba3",
+      "name": "USDT0",
+      "manufacturer": {
+        "name": "USDT0"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "USDT0"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "44cb69d53059617a",
+      "name": "Electrum",
+      "manufacturer": {
+        "name": "Electrum Technologies"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Electrum"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Digital Asset Custody"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "1d8eb37db380cb73",
+      "name": "Chainlink Data Feeds",
+      "manufacturer": {
+        "name": "Chainlink Labs"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Chainlink-Data-Feeds"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "3302f41fb6f4d5c6",
+      "name": "ACE",
+      "manufacturer": {
+        "name": "U.S. Customs and Border Protection"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "ACE"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Network Security Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "933dd3584e762e6b",
+      "name": "Ellucian Student",
+      "manufacturer": {
+        "name": "Ellucian Company L.P."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Ellucian-Student"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Learning Management Systems"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",

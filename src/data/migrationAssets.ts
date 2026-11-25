@@ -449,6 +449,14 @@ export function classifyProductDomain(
 ): DomainId | null {
   const cat = (categoryName || '').toLowerCase()
   const layer = (infrastructureLayer || '').toLowerCase()
+  // Application and media delivery platforms may enter before layer placement.
+  if (
+    cat === 'learning management systems' ||
+    cat === 'electronic health record systems' ||
+    cat === 'media content protection and conditional access'
+  ) {
+    return 'platform'
+  }
   // IoT *hardware* → cryptographic hardware; IoT software/cloud stays in
   // platform (handled by the 'iot' keyword in the platform rule below).
   if (cat.includes('iot') && layer.includes('hardware')) return 'hardware'

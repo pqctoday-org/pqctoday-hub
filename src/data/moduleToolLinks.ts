@@ -104,12 +104,13 @@ export function resolveModuleTools(manifest: ResolvedModuleManifest): string[] {
  *   - vpn-ssh-pqc: its Android-only twin is Chromium-gated on iOS.
  *   - confidential-computing: its twin (tee-channel) is too narrow a tool
  *     for a first mobile practice step.
- * Two modules the plan's own B2 table also proposed (crypto-agility →
- * cacp-kmip, hsm-pqc → hsm) were dropped entirely, not just excluded: no
- * `WorkshopTool.moduleLink` in workshopRegistry.tsx actually points at
- * either module (verified directly against the registry, 2026-08-29) — that
- * table's two extra rows were wrong, not a real, drift-guarded link like the
- * 16 below.
+ * One module the plan's own B2 table also proposed (hsm-pqc → hsm) was
+ * dropped entirely, not just excluded: no `WorkshopTool.moduleLink` in
+ * workshopRegistry.tsx points at it (verified directly against the registry,
+ * 2026-08-29) — that row was wrong, not a real, drift-guarded link like the
+ * ones below. The other (crypto-agility → cacp-kmip) became real on 25 Nov
+ * 2026, when the KMIP control plane tool was linked to the Crypto Agility
+ * lesson; the tool's own page stays /playground/cacp.
  */
 const MOBILE_PRACTICE_EXCLUDED = new Set([
   'mls-group-messaging',

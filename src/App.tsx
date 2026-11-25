@@ -185,6 +185,9 @@ const PatentsViewRedesign = lazyWithRetry(() =>
     default: module.PatentsViewRedesign,
   }))
 )
+const GoRedirect = lazyWithRetry(() =>
+  import('./components/Go/GoRedirect').then((module) => ({ default: module.GoRedirect }))
+)
 const ForceClusterView = lazyWithRetry(() =>
   import('./components/Navigate/ForceClusterView').then((module) => ({
     default: module.ForceClusterView,
@@ -458,6 +461,14 @@ function App() {
         element={
           <ErrorBoundary>
             <ForceClusterView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="go/*"
+        element={
+          <ErrorBoundary>
+            <GoRedirect />
           </ErrorBoundary>
         }
       />

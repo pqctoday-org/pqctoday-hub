@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { loadLatestCSVAsync, parseIntOrNull } from './csvUtils'
-import { tierBadge, type AlgorithmStatusTier } from './algorithmStatusTier'
+import { parseStatusTier, tierBadge, type AlgorithmStatusTier } from './algorithmStatusTier'
 
 export const RESEARCH_NEEDED = 'Research needed'
 
@@ -197,6 +197,8 @@ interface RawAlgorithmRow {
   region: string
   status: string
   status_url: string
+  /** Status maturity tier — the data's own classification of the status text. */
+  status_tier?: string
   status_url_quality: string
   confidence_score?: string
   algorithm_id?: string
@@ -230,272 +232,6 @@ export function findAlgorithmByRef<T extends { id: string; name: string }>(
   const q = ref?.trim().toLowerCase()
   if (!q) return undefined
   return algorithms.find((a) => a.id === q) ?? algorithms.find((a) => a.name.toLowerCase() === q)
-}
-
-/**
- * Reference-CSV status/fips_standard → tier lookup (WORKSTREAMS.md §WS-A).
- *
- * A raw `status` value alone is ambiguous — e.g. `'Candidate'` alone covers
- * HQC (fips-draft), BIKE (round4-not-selected), FN-DSA (fips-draft), the
- * hybrid-TLS IETF groups (ietf-draft), the KpqC winners (regional), and the
- * NIST Additional-Sig Round 2 candidates all at once — so the key here is
- * the exact (status, fips_standard) pair as it literally appears in the CSV,
- * enumerated by hand against `pqc_complete_algorithm_reference_07062026.csv`.
- * Reconfirm this table against the actual wired filename if it changes.
- *
- * SMAUG-T/NTRU+/HAETAE/AIMer (KpqC) are tiered 'regional' — these four are
- * the final KpqC competition winners, officially announced 2025-01-16 at
- * https://www.kpqc.or.kr/competition_02.html (verified 2026-08-08, direct
- * fetch of the official page — supersedes the earlier PQShield-sourced
- * verification). Until 2026-08-08 this CSV's own fips_standard text still
- * said "KR-PQC Round 1 (KPQC)", which was wrong on two counts: they are
- * final winners, not Round 1 candidates, and Round 1 was Nov 2022, two
- * rounds before the Jan 2025 final selection. Note these are NOT yet a
- * published Korean national standard (KS) — the official page only
- * confirms competition selection; a secondary source (postquantum.com)
- * reports a KS draft expected 2026 and final ~2027, not independently
- * re-verified against a primary source this pass.
- *
- * Aigis-enc/Aigis-sig were ALSO tagged "KR-PQC Round 1 (KPQC)" until
- * 2026-08-07, but that was an outright misclassification, not staleness —
- * they're CACR (China) 2020 competition winners with no KpqC connection at
- * all (the CSV's own use_case_notes/vetting_body/region already said
- * "CACR"/China; only fips_standard/status_url/trusted_source_id were
- * wrong). See ALGORITHMS-AIGIS-CACR-MISCLASSIFICATION-REMEDIATION-PLAN-08072026.md
- * in pqctoday-priv/maintenance/ for the full verification trail.
- */
-const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
-  'FIPS 203|||FIPS 203': 'final',
-  'FIPS 204|||FIPS 204': 'final',
-  'FIPS 205|||FIPS 205': 'final',
-  'FIPS 186-5|||SP 800-56A': 'final',
-  'FIPS 186-5|||RFC 7748': 'final',
-  'FIPS 186-5|||FIPS 186': 'final',
-  'FIPS 186-5|||RFC 8032': 'final',
-  'SP 800-208|||NIST SP 800-208': 'final',
-  'SP 800-56B|||SP 800-56B': 'final',
-  'RFC 7919|||RFC 7919': 'final',
-  'RFC 3526 (Standards Track)|||RFC 3526': 'final',
-  'SEC 2|||SEC 2': 'final',
-  'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); BSI/ANSSI & ISO 18033-2 recommended':
-    'final',
-  'Standardised (ETSI TS 104 015)|||ETSI TS 104 015 (published Feb 2025)': 'final',
-  // ADDED 2026-08-22 with six catalogue rows for algorithms the enrichment
-  // legitimately names and the reference CSV lacked. This guard caught them
-  // immediately and said exactly what to do — the whole point of it.
-  //
-  // The four NIST Round 3 rejects are 'eliminated', not 'round4-not-selected':
-  // that tier means a concluded Round 4 (BIKE), and these lost in Round 3.
-  // Rainbow and GeMSS additionally fell to cryptanalysis, which is the same
-  // tier for a different reason and is spelled out in each row's own status.
-  'NIST Round 3 finalist — no longer being considered (NIST IR 8413-upd1 §4.3.4)|||': 'eliminated', // Saber — Kyber selected instead
-  'NIST Round 3 finalist — no longer being considered (NIST IR 8413-upd1 §4.5.3); BROKEN — do not deploy|||':
-    'eliminated', // Rainbow — Beullens cryptanalysis of UOV/Rainbow
-  'NIST Round 3 alternate — no longer being considered (NIST IR 8413-upd1 §4.5.2)|||': 'eliminated', // Picnic
-  'NIST Round 3 alternate — no longer being considered (NIST IR 8413-upd1 §4.5.1)|||': 'eliminated', // GeMSS — an attack dramatically reduced its security
-  // Ascon is a PUBLISHED standard, hence 'final' — but it is lightweight
-  // symmetric crypto, not post-quantum public-key. The row's own status says so
-  // rather than leaving a reader to infer it from the tier badge.
-  'SP 800-232 (standardised) — lightweight symmetric, NOT a post-quantum public-key algorithm|||SP 800-232':
-    'final', // Ascon-AEAD128, Ascon-Hash256
-  'Candidate|||Draft (Selected 2025)': 'fips-draft', // HQC
-  // HQC wording corrected 2026-10-28: the labels state only the selection (NIST's PQC
-  // page: "HQC was selected for standardization on March 11, 2025"); the draft-in-a-year
-  // and 2027 dates were NIST's plan of 11 March 2025, not a current schedule.
-  'Candidate|||Selected by NIST on 11 March 2025': 'fips-draft', // HQC
-  // FN-DSA: FIPS 206 is announced/in development — NO public draft exists yet
-  // (csrc.nist.gov is the source of truth; the ipd URL 404s). Tier stays
-  // 'fips-draft' (the NIST-FIPS-pipeline tier HQC also uses) — see
-  // algorithmStatusTier.ts for the honest tier description.
-  'Candidate|||FIPS 206 (in development)': 'fips-draft', // FN-DSA (07092026 snapshot)
-  'Candidate|||FIPS 206 (Draft)': 'fips-draft', // FN-DSA (legacy ≤07082026 snapshots)
-  'Draft|||NIST SP 800-230 (Draft)': 'sp-draft', // SLH-DSA-*-24
-  'Candidate|||draft-ietf-tls-hybrid-design': 'ietf-draft', // X25519MLKEM768 etc.
-  'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft', // pre-08072026 snapshots
-  'IETF Internet-Draft|||IETF Internet-Draft — In RFC Editor queue (not yet published, v19, 2026-04-21)':
-    'ietf-draft', // composite-sigs — passed IESG review, in RFC Editor queue, still not an RFC
-  'IETF Internet-Draft (alias for HPKE with PQ KEM)|||IETF Internet-Draft — DRAFT (not yet RFC)':
-    'ietf-draft', // HPKE-PQ
-  'Candidate|||NIST Additional Signatures Round 2': 'round2-candidate', // MAYO, HAWK (pre-2026-07-27 snapshots)
-  'NIST Additional Sig Round 2 — Candidate|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
-    'round2-candidate', // UOV, CROSS, LESS, FAEST, SNOVA (pre-2026-07-27 snapshots)
-  'NIST Additional Sig Round 2 — Candidate (SQIsign-I)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
-    'round2-candidate', // SQIsign (pre-2026-07-27 snapshots)
-  // 2026-07-27: 9 of these confirmed advanced to Round 3 (csrc.nist.gov's own
-  // announcement) — status text bumped, fips_standard column left as-is (still
-  // literally says "Round 2" — a separate, lower-priority cleanup). CROSS/LESS
-  // did NOT advance; status now says so explicitly instead of the stale
-  // "Round 2 — Candidate" text. No new UI tier needed for any of these — Round
-  // 3 candidacy and Round-2-eliminated are both still 'round2-candidate' in
-  // maturity terms (not yet standardised either way); a real 'round3-candidate'
-  // / 'eliminated'-for-these-specific-rows tier is future work, not this fix's
-  // job — this table's only contract is "don't crash the build."
-  'NIST Additional Sig Round 3 — Candidate|||NIST Additional Signatures Round 2':
-    'round2-candidate', // MAYO-1/2/3/5 (HAWK-512/1024 moved to 'eliminated' below, 2026-08-31)
-  'NIST Additional Sig Round 3 — Candidate|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
-    'round2-candidate', // UOV, FAEST, SNOVA
-  'NIST Additional Sig Round 3 — Candidate (SQIsign-I)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
-    'round2-candidate', // SQIsign
-  'NIST Additional Sig Round 2 — Eliminated (did not advance to Round 3, 2026-05)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
-    'eliminated', // CROSS, LESS
-  'NIST Additional Sig Round 2 — Eliminated (did not advance to Round 3, 2026-05)|||NIST Additional Sig — did not advance to Round 3 (May 2026); not standardised':
-    'eliminated', // CROSS, LESS — fips_standard corrected 2026-10-22 (NIST's Round 3 list)
-  // HAWK-512/1024 (2026-08-31): withdrawn by its own submission team on
-  // 2026-07-29 after Anthropic's Claude Mythos Preview model found a lattice
-  // key-recovery attack (2026-07-28) — confirmed directly on csrc.nist.gov's
-  // round-3-additional-signatures page, which now marks HAWK 'Withdrawn'
-  // while the other 8 Round 3 candidates remain active.
-  'NIST Additional Sig Round 3 — Withdrawn (2026-07-29)|||Withdrawn from NIST Additional Digital Signatures standardization (2026-07-29, per Round 3 Additional Signatures — Post-Quantum Cryptography: Additional Digital Signature Schemes, NIST CSRC)':
-    'eliminated', // HAWK-512/1024
-  // fips_standard corrected 2026-10-17 to name Round 3 for all nine candidates
-  // NIST advanced on 14 May 2026 (HAWK was later withdrawn; it keeps its own key).
-  'NIST Additional Sig Round 3 — Candidate|||NIST Additional Signatures Round 3 (May 2026)':
-    'round2-candidate', // MAYO-1/2/3/5, UOV, FAEST, SNOVA, MQOM, QR-UOV, SDitH
-  'NIST Additional Sig Round 3 — Candidate (SQIsign-I)|||NIST Additional Signatures Round 3 (May 2026)':
-    'round2-candidate', // SQIsign
-  'NIST Additional Sig Round 3 — Candidate|||': 'round2-candidate', // MQOM, QR-UOV, SDitH — new
-  // stub rows (2026-07-27), fips_standard genuinely blank (add_row.py leaves it for human
-  // follow-up rather than guessing). The status itself IS verified (csrc.nist.gov's own
-  // Round 3 announcement), so 'round2-candidate' (matching the other 9 Round 3 candidates
-  // above) is the honest tier — 'unverified' would misrepresent the one fact that actually
-  // is confirmed here.
-  'Candidate|||NIST PQC Round 4 (concluded 2025; not selected)': 'round4-not-selected', // BIKE
-  'BSI TR-02102-1|||NIST PQC Round 4 (Alternate)': 'regional', // Classic-McEliece
-  'Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (recommended Level 5); NOT in NIST FIPS':
-    'regional',
-  'Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
-    'regional',
-  // Classic-McEliece upgraded to 'final' 2026-07-27: ISO/IEC 18033-2:2006/Amd 2:2026
-  // formally standardized it internationally (iso.org/standard/86890.html), on top of
-  // the pre-existing BSI TR-02102-1 national recommendation — status text now carries
-  // both facts ("; "-joined, matching this CSV's existing multi-fact convention, e.g.
-  // the LAC row below). 'final' means "published FIPS/SP/RFC/ISO/ETSI standard", which
-  // this now genuinely is; 'regional' would understate it.
-  'ISO 18033-2 Amd2; BSI TR-02102-1|||NIST PQC Round 4 (Alternate)': 'final',
-  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (recommended Level 5); NOT in NIST FIPS':
-    'final',
-  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
-    'final',
-  // The BSI advised against Classic McEliece for new developments on 2026-10-01
-  // (Hinweis Classic McEliece). It stays an ISO standard and stays listed in
-  // TR-02102-1 (2026-01), so the tier is unchanged; these keys accept the corrected
-  // fips_standard wording queued for the next reference CSV. The advisory itself is
-  // shown by algorithmAdvisories.ts.
-  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (2026-01, hybrid use, Level 5); BSI advises against new use since 2026-10-01; NOT in NIST FIPS':
-    'final',
-  'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI TR-02102-1 (2026-01, hybrid use); BSI advises against new use since 2026-10-01; NOT in NIST FIPS':
-    'final',
-  'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer (pre-08082026 snapshots)
-  'Candidate|||KpqC competition winner, announced 2025-01-16 (Korean Post-Quantum Cryptography Competition Final Results) — KS national standard TBD (draft expected 2026, final ~2027)':
-    'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — corrected 2026-08-08, was mislabeled "Round 1"
-  'To Be Checked|||CACR 1st Prize (2020, China) — PKC 2020 (Zhang et al.); NOT an adopted national/international standard':
-    'unverified', // Aigis-enc/sig — corrected 2026-08-07 from a mistaken KpqC/Korea tag
-  'CACR competition winner (2020); ELIMINATED from NIST Round 2 (not advanced); NOT an adopted national standard — do not treat as deployable|||CACR national competition winner (as LAC.KEX, ~2018-2020) — NOT an issued OSCCA/GB national standard':
-    'eliminated', // LAC
-  'CONFIRMED PLACEHOLDER — official ICCS program track name (Block Cipher category); no winning algorithm selected yet|||NGCC TBD — submission window open, candidates not yet selected':
-    'placeholder', // NGCC-BC
-  'CONFIRMED PLACEHOLDER — official ICCS program track name (Cryptographic Hash category); no winning algorithm selected yet|||NGCC TBD — submission window open, candidates not yet selected':
-    'placeholder', // NGCC-CH
-  // --- Hybrid KEM mechanisms (added 2026-07-28) -----------------------------
-  // Until now the catalogue's only hybrids were the three TLS named groups, so
-  // hybrid coverage was implicitly scoped to "TLS wire construction". These
-  // entries extend it to general-purpose, SSH and X.509/CMS composite hybrids.
-  // This lookup failing closed is what caught the omission — adding rows without
-  // registering their status pair throws rather than defaulting to Certified.
-  'Candidate|||draft-connolly-cfrg-xwing-kem': 'ietf-draft', // X-Wing
-  'Candidate|||draft-ietf-sshm-mlkem-hybrid-kex': 'ietf-draft', // SSH ML-KEM hybrids
-  'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM (pre-08072026 snapshots)
-  'Candidate|||draft-ietf-lamps-pq-composite-kem-18': 'ietf-draft', // Composite ML-KEM — draft bumped to -18 (2026-07-23), still IESG "Waiting for AD Go-Ahead"
-  // -19 posted 2026-08-14; IESG state moved to "IESG Evaluation" on 2026-08-13
-  // and it is on the 2026-09-03 telechat agenda. Verified against the
-  // datatracker 2026-08-17. Older keys above are retained deliberately: this
-  // lookup throws on an unregistered pair, so the key must exist BEFORE the
-  // CSV bumps to -19, and archived CSV snapshots still carry -16/-18.
-  'Candidate|||draft-ietf-lamps-pq-composite-kem-19': 'ietf-draft', // Composite ML-KEM
-  // -23 posted 2026-10-14; datatracker shows the draft in the RFC Editor queue
-  // (checked 2026-10-17). Still an Internet-Draft, not an RFC.
-  'Candidate|||draft-ietf-lamps-pq-composite-kem-23': 'ietf-draft', // Composite ML-KEM
-  // BLS12-381 (2026-08-16): draft-irtf-cfrg-bls-signature is an active
-  // IRTF CFRG Internet-Draft, verified against the datatracker directly —
-  // not yet an RFC.
-  'Active Internet-Draft|||draft-irtf-cfrg-bls-signature': 'ietf-draft',
-  // RFC 9941 is a published RFC, so `final` — matching how RFC 7919 is treated.
-  // The sntrup761 COMPONENT is a NIST round-3 alternate rather than a FIPS
-  // algorithm, but the tier describes the standards status of the mechanism
-  // named by the row, and this one is standards-track and published.
-  'RFC 9941|||RFC 9941': 'final', // sntrup761x25519-sha512
-  // TLS 1.3 hybrid groups, published as RFC 10024 (Standards Track, Aug 2026).
-  'RFC 10073|||RFC 10073': 'final', // X.509 Composite ML-DSA signatures
-  'RFC 10024|||RFC 10024': 'final', // X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024
-  // SSH hybrid key exchange, published as RFC 10042 (Informational, Aug 2026);
-  // a published RFC, treated like RFC 9941 above.
-  'RFC 10042|||RFC 10042': 'final', // mlkem768x25519-sha256, mlkem768nistp256-sha256, mlkem1024nistp384-sha384
-  // BSI TR-02102-1 (2026-01) Tables 2.5/2.6 list only FrodoKEM-976/1344 and
-  // mceliece460896/6688128/8192128, so these rows no longer cite BSI.
-  'ISO 18033-2 Amd2|||NIST PQC Round 4 (Alternate)': 'final', // Classic-McEliece-348864
-  // 2026-10-17: Classic McEliece was a Round 4 candidate, not an alternate, and
-  // NIST IR 8545 (March 2025) did not select it. The ISO/IEC 18033-2 Amd 2
-  // standard keeps the tier at 'final'.
-  'ISO 18033-2 Amd2|||NIST PQC Round 4 (concluded 2025; not selected)': 'final', // Classic-McEliece-348864
-  'ISO 18033-2 Amd2; BSI TR-02102-1|||NIST PQC Round 4 (concluded 2025; not selected)': 'final', // Classic-McEliece-460896/8192128
-  'ISO 18033-2 Amd2|||Not listed in BSI TR-02102-1 (BSI lists mceliece460896, 6688128 and 8192128); NOT in NIST FIPS':
-    'final', // Classic-McEliece-6960119
-  'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); ISO 18033-2 Amd2; ANSSI: acceptable in hybrid; not listed by BSI (BSI lists FrodoKEM-976/1344)':
-    'final', // FrodoKEM-640: ISO/IEC 18033-2:2006/Amd 2 (published June 2026) covers Classic McEliece (BSI note); FrodoKEM not confirmed against the amendment's scope text
-  // sr25519 (2026-08-16): a Web3 Foundation (Schnorrkel) implementation, not
-  // an IETF/NIST/regional standards-track document at all — 'non-standardized'
-  // (not 'unverified', whose tooltip claims the status wasn't fact-checked;
-  // this one was, against w3f/schnorrkel's own source constants).
-  'Active|||W3F Schnorrkel implementation; NOT an IETF/NIST standard': 'non-standardized',
-  // SM2 (2026-08-16): a real published standard (GB/T 32918, ISO/IEC
-  // 14888-3:2018) — 'regional' (final within its own jurisdiction, not a
-  // NIST FIPS), same tier China/KpqC national winners already use.
-  'Published|||GB/T 32918 (China); ISO/IEC 14888-3:2018; NOT in NIST FIPS': 'regional',
-  // Exact current publication/recommendation pairs (27 October 2026).
-  'Selected by NIST for standardization|||Selected by NIST on 11 March 2025': 'fips-draft',
-  'Author specification; BSI advises against new use|||Not in ISO parameter list per scheme authors; not in NIST FIPS; BSI advisory dated 2026-09-29, announced 2026-10-01; no new developments':
-    'non-standardized',
-  'ISO 18033-2 Amd2; BSI advises against new use|||ISO/IEC 18033-2:2006/Amd 2:2026; not in NIST FIPS; BSI advisory dated 2026-09-29, announced 2026-10-01; no new developments':
-    'final',
-  'NIST Round 4 concluded; not selected|||NIST PQC Round 4 (concluded 2025; not selected)':
-    'round4-not-selected',
-  'Selected by NIST; FIPS 206 in development|||FIPS 206 (in development)': 'fips-draft',
-  'SP 800-56A Rev. 3|||SP 800-56A Rev. 3 (P-curve key agreement; revision planned 2026-01-06)':
-    'final',
-  'RFC 7748 (Informational)|||RFC 7748; not a FIPS 186-5 key-agreement approval': 'final',
-  'RFC 10024 (Proposed Standard)|||RFC 10024': 'final',
-  'Candidate|||KpqC final specifications (2026-01-30); KS KEM proposals submitted (2026-04-22)':
-    'regional',
-  'Candidate|||KpqC final specifications (2026-01-30); KS signature proposals under review (2026-04-22)':
-    'regional',
-  'Not among NIST Additional Sig Round 3 candidates (2026-05; inferred from published list)|||NIST Additional Signatures Round 3 candidate list (May 2026); not standardised':
-    'eliminated',
-  'IETF Internet-Draft; RFC Editor queue (blocked)|||draft-ietf-lamps-pq-composite-sigs-19; final approval pending; not yet RFC':
-    'ietf-draft',
-  'IETF Internet-Draft; RFC Editor queue|||draft-ietf-lamps-pq-composite-kem-23; RFC Editor queue; not yet RFC':
-    'ietf-draft',
-  'Active individual Internet-Draft (Independent Submission)|||draft-connolly-cfrg-xwing-kem-11; not an adopted IETF/IRTF standard':
-    'ietf-draft',
-  'RFC 9941 (Informational)|||RFC 9941': 'final',
-  'RFC 10042 (Informational; verified errata 9159, 9160)|||RFC 10042': 'final',
-}
-
-/** Throws on any (status, fips_standard) pair not in the lookup table above —
- *  fail closed instead of silently defaulting a new/unrecognised CSV status
- *  to "Certified" (the exact bug this enum replaces). */
-export function mapReferenceStatusToTier(
-  status: string,
-  fipsStandard: string
-): AlgorithmStatusTier {
-  const key = `${status}|||${fipsStandard}`
-  const tier = REFERENCE_STATUS_TIER_LOOKUP[key]
-  if (!tier) {
-    throw new Error(
-      `[pqcAlgorithmsData] Unrecognized (status, fips_standard) pair: ${JSON.stringify(status)} / ${JSON.stringify(fipsStandard)}. ` +
-        'Add it to REFERENCE_STATUS_TIER_LOOKUP in pqcAlgorithmsData.ts.'
-    )
-  }
-  return tier
 }
 
 const POST_QUANTUM_FAMILIES = new Set(['KEM', 'Signature', 'Hybrid KEM'])
@@ -698,7 +434,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         withheld.unclassified += 1
         return null
       }
-      const statusTier = mapReferenceStatusToTier(row.status || '', row.fips_standard || '')
+      const statusTier = parseStatusTier(row.status_tier, `algorithm ${row.algorithm}`)
       // NGCC-BC/NGCC-CH are a program track name with no algorithm selected
       // yet (confirmed by the CSV's own data-quality note) — not a real
       // algorithm to show in a user-facing comparison. Drop the row rather

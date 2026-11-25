@@ -4,6 +4,7 @@
 // MODULE_INDUSTRY_RELEVANCE (zero consumers, contradicted personaLensRegistry.ts)
 import type { PersonaId } from './learningPersonas'
 import { PERSONAS } from './learningPersonas'
+import { complianceFrameworks } from './complianceData'
 import type { Region } from '../store/usePersonaStore'
 import type { AssessmentMode } from '../store/useAssessmentStore'
 import type { PhaseId } from './frameworkPhases'
@@ -757,57 +758,11 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
 }
 
 /**
- * Site sector → Threats-page industry labels. The ONE map: the assessment
- * report's threat appendix uses it too (it used to keep its own copy, which
- * disagreed on four sectors, so a sector's threats on /report and /threats
- * differed). Sectors may share a Threats industry (Legal / Notary sits under
- * both Finance and Government; Payment Card Industry under Finance and
- * Retail).
+ * Site sector → Threats-page industry labels. The ONE map, read from the `industry`
+ * rows of `pqcassessment_*.csv` (see `assessmentReferenceData.ts`); re-exported here
+ * for the files that import it from the persona configuration.
  */
-export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
-  'Finance & Banking': [
-    'Finance & Banking',
-    'Insurance',
-    'Payment Card Industry',
-    'Cryptocurrency / Blockchain',
-    'Legal / Notary / eSignature',
-  ],
-  'Government & Defense': ['Government & Defense', 'Legal / Notary / eSignature'],
-  Healthcare: ['Healthcare / Pharmaceutical'],
-  Telecommunications: ['Telecommunications'],
-  Technology: [
-    'IT Industry / Software',
-    'Cloud Computing / Data Centers',
-    'Internet of Things (IoT)',
-    'Media / Entertainment / DRM',
-    'Supply Chain / Logistics',
-    'Hardware Security Modules',
-  ],
-  'Energy & Utilities': [
-    // The Threats page's label since ruling R3 (2026-09-24) — formerly
-    // "Critical Infrastructure" / "Energy / Critical Infrastructure", which
-    // THREAT_INDUSTRY_ALIASES (threatRowRules.ts) still resolves.
-    'Critical Infrastructure / OT',
-    'Water / Wastewater',
-    'Rail / Transit',
-  ],
-  Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
-  Aerospace: ['Aerospace / Aviation / Space'],
-  'Retail & E-Commerce': ['Retail & E-Commerce', 'Payment Card Industry'],
-  // Assessment-only industries (AVAILABLE_INDUSTRIES in assessmentData.ts):
-  // without a key here, the report's Threats link passed the raw name, which
-  // matches no Threats label, so the page opened unfiltered.
-  Education: ['Education / Research'],
-  // IEC 62443 OT/ICS, industrial IoT controllers and supply-chain trust roots
-  // (the INDUSTRY_THREAT rationale for Manufacturing).
-  Manufacturing: [
-    'Critical Infrastructure / OT',
-    'Internet of Things (IoT)',
-    'Supply Chain / Logistics',
-  ],
-  'Cross-cutting & Other': ['Cross-Industry', 'Education / Research'],
-  Other: [],
-}
+export { INDUSTRY_TO_THREATS_MAP } from './assessmentReferenceData'
 
 /* ──────────────────────────────────────────────────────────────────────────────
  * Report section configuration — per-persona open/collapsed/hidden states
@@ -1707,25 +1662,31 @@ export const RESEARCH_LADDER_ACHIEVEMENTS: readonly string[] = [
  * FrameworkCard ring/badge — does NOT filter the list, so other frameworks
  * remain reachable.
  *
- * Empty array means "no emphasis" (default rendering for every framework).
- * Framework IDs come from `complianceData.ts` (case-sensitive).
+ * Read from the `emphasis_personas` column of the compliance catalogue (each
+ * framework row names the personas that emphasise it, with its place in their
+ * list). A persona with no framework has no emphasis (default rendering for
+ * every framework); GRC is deliberately empty (executive-grc-split-plan.md §5:
+ * a GRC reader's applicable frameworks come from their country/sector via
+ * applicabilityLens, not from a job-title shortlist).
  */
 export const PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS: Partial<Record<PersonaId, readonly string[]>> =
-  {
-    executive: ['CNSA-2', 'DORA', 'NIS2', 'SOX', 'GDPR', 'PCI-DSS'],
-    // Deliberately empty (executive-grc-split-plan.md §5): a GRC reader's
-    // applicable frameworks are already derived from their country/sector via
-    // applicabilityLens, not from a job-title-based shortlist — emphasizing
-    // frameworks by role here would imply "these apply to you" independent of
-    // scope, which is exactly what this persona exists to avoid conflating.
-    grc: [],
-    developer: ['FIPS', 'FedRAMP', 'CMMC', 'CC', 'NIST', 'CNSA-2'],
-    architect: ['NIST', 'BSI', 'ANSSI', 'ENISA', 'CNSA-2', 'FIPS'],
-    ops: ['CNSA-2', 'FedRAMP', 'NIS2', 'PCI-DSS', 'DORA'],
-    researcher: ['NIST', 'ENISA', 'BSI', 'ANSSI', '3GPP-PQC', 'BIS-158-PQC'],
-    'cert-engineer': ['FIPS', 'CC', 'CNSA-2', 'NIST', 'PCI-DSS'],
-    curious: ['NIST', 'ENISA', 'CNSA-2', 'GDPR', 'HIPAA'],
-  }
+  (() => {
+    const byPersona = new Map<string, { id: string; rank: number }[]>()
+    for (const fw of complianceFrameworks) {
+      for (const { persona, rank } of fw.emphasisPersonas ?? []) {
+        const list = byPersona.get(persona) ?? []
+        list.push({ id: fw.id, rank })
+        byPersona.set(persona, list)
+      }
+    }
+    const out: Partial<Record<PersonaId, readonly string[]>> = {}
+    for (const personaId of Object.keys(PERSONAS) as PersonaId[]) {
+      out[personaId] = (byPersona.get(personaId) ?? [])
+        .sort((a, b) => a.rank - b.rank)
+        .map((e) => e.id)
+    }
+    return out
+  })()
 
 export function isComplianceFrameworkEmphasized(
   persona: PersonaId | null,

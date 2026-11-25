@@ -11,7 +11,8 @@ import concepts from './glossary/concepts.json'
 import organizations from './glossary/organizations.json'
 import pkcs11 from './glossary/pkcs11.json'
 import glossaryIdsSnapshot from './glossary/glossaryIds.snapshot.json'
-import { loadGlossaryTermById } from './glossary'
+import { loadCuriousGlossary, loadGlossaryTermById } from './glossary'
+import curiousBeforeFold from './__golden__/curiousGlossary.beforeFold.golden.json'
 
 const rawTerms = [...algorithms, ...protocols, ...standards, ...concepts, ...organizations] as {
   id: string
@@ -70,5 +71,50 @@ describe('glossary term uniqueness', () => {
     expect(sbom).toHaveLength(1)
     expect(sbom[0].definition).toMatch(/Software Bill of Materials/i)
     expect(sbom[0].definition).toMatch(/supply-chain relationships/i)
+  })
+})
+
+describe('Curious Explorer definitions are stored once, on the main terms', () => {
+  it('shows every plain-language definition exactly as before they were folded into the main terms', async () => {
+    const now = await loadCuriousGlossary()
+    // the same 23 names, each with the same text, character for character
+    expect(Object.keys(now).sort()).toEqual(Object.keys(curiousBeforeFold).sort())
+    for (const [name, text] of Object.entries(curiousBeforeFold)) {
+      expect(now[name], name).toBe(text)
+    }
+  })
+
+  it('has no separate Curious file left to drift from the main terms', () => {
+    expect(Object.keys(import.meta.glob('./glossary/curious.json'))).toEqual([])
+  })
+
+  it('keeps a plain definition only on a term that exists once, and an acronym wording only with an acronym', () => {
+    for (const term of rawTerms as {
+      id: string
+      acronym?: string
+      plainDefinition?: string
+      plainDefinitionAcronym?: string
+    }[]) {
+      if (term.plainDefinitionAcronym) {
+        expect(term.acronym, `${term.id} has an acronym wording but no acronym`).toBeTruthy()
+        expect(term.plainDefinition, `${term.id} needs its name wording too`).toBeTruthy()
+      }
+    }
+  })
+
+  it('gives the five Curious-only terms a permanent id in the ids snapshot', () => {
+    for (const id of [
+      'classical-cryptography',
+      'digital-signatures',
+      'hash-based',
+      'lattice-based',
+      'quantum-computer',
+    ]) {
+      expect(glossaryIdsSnapshot, id).toContain(id)
+      expect(
+        rawTerms.some((term) => term.id === id),
+        id
+      ).toBe(true)
+    }
   })
 })

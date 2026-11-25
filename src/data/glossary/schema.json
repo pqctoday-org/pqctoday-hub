@@ -9,6 +9,8 @@
       "term": { "type": "string", "minLength": 1 },
       "acronym": { "type": "string" },
       "definition": { "type": "string", "minLength": 10 },
+      "plainDefinition": { "type": "string" },
+      "plainDefinitionAcronym": { "type": "string" },
       "technicalNote": { "type": "string" },
       "relatedModule": { "type": "string" },
       "complexity": { "enum": ["beginner", "intermediate", "advanced"] },
