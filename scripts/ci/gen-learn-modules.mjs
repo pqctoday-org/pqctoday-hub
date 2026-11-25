@@ -242,6 +242,9 @@ export interface LearnModuleRecord {
   niceRead: boolean
 }
 
+/** The dated lessons file these records came from: the revision of the curriculum they describe. */
+export const LEARN_MODULES_SOURCE = ${JSON.stringify(file)}
+
 export const LEARN_MODULES: readonly LearnModuleRecord[] = ${JSON.stringify(rows, null, 2)} satisfies readonly LearnModuleRecord[]
 
 export const LEARN_MODULE_BY_ID: Readonly<Record<string, LearnModuleRecord>> = Object.fromEntries(
