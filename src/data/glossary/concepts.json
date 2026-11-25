@@ -164,7 +164,8 @@
     "definition": "A binary instruction format that enables near-native performance in web browsers. Used by PQC Today to run OpenSSL and liboqs in-browser.",
     "relatedModule": "/openssl",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "hsm",
@@ -173,7 +174,8 @@
     "definition": "Hardware Security Module, a dedicated physical device for managing and protecting cryptographic keys. Must be updated for PQC support.",
     "relatedModule": "/threats?industry=Hardware%20Security%20Modules",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "entanglement",
@@ -190,7 +192,8 @@
     "definition": "Hierarchical Deterministic Wallet, a cryptocurrency wallet that generates all key pairs from a single seed phrase using BIP32/39/44 standards.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "bip39",
@@ -198,7 +201,8 @@
     "definition": "Bitcoin Improvement Proposal 39 defines mnemonic seed phrases (12 or 24 words) used to back up and restore cryptocurrency wallets.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "eudi-wallet",
@@ -206,7 +210,9 @@
     "definition": "European Union Digital Identity Wallet, a mobile wallet for storing and presenting digital credentials under the eIDAS 2.0 framework.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Government Identity & Travel Documents",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "qualified-electronic-signature",
@@ -215,7 +221,9 @@
     "definition": "A digital signature with the legal equivalence of a handwritten signature under EU law, requiring a qualified certificate and a secure creation device.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Legal / Notary / eSignature",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "milenage",
@@ -223,7 +231,8 @@
     "definition": "The set of cryptographic functions (f1–f5) used in 5G authentication. Based on AES and generates authentication vectors.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Telecommunications"
   },
   {
     "id": "encapsulation-decapsulation",
@@ -304,7 +313,7 @@
     "term": "TBSCertificate",
     "definition": "The “To Be Signed” structure inside an X.509 certificate: version, serial number, issuer signature-algorithm identifier, issuer and subject names, validity, SubjectPublicKeyInfo, and optional identifiers/extensions. The issuer signs the DER encoding of this structure to produce the certificate’s signatureValue.",
     "technicalNote": "The outer Certificate SEQUENCE contains tbsCertificate, signatureAlgorithm and signatureValue. RFC 5280 Sections 4.1.1.2 and 4.1.2.3 require the outer signatureAlgorithm and the inner TBSCertificate.signature to contain the same algorithm identifier. RFC 9881 Section 3 applies ML-DSA identifiers to both locations: for ML-DSA-65 both carry OID 2.16.840.1.101.3.4.3.18 with absent parameters. This issuer-signature identifier is distinct from the subject’s key algorithm in SubjectPublicKeyInfo; an RSA issuer does not turn an EC subject key into RSA. See https://www.rfc-editor.org/rfc/rfc9881.html#section-3.",
-    "relatedModule": "/learn/hybrid-crypto",
+    "relatedModule": "/learn/pki-workshop",
     "complexity": "advanced",
     "category": "concept"
   },
@@ -332,7 +341,8 @@
     "definition": "Supervisory Control and Data Acquisition, industrial control systems used in power grids, water treatment, and manufacturing. Quantum-vulnerable via legacy crypto.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy; Water / Wastewater"
   },
   {
     "id": "v2x-communication",
@@ -341,7 +351,8 @@
     "definition": "Vehicle-to-Everything communication, enabling cars to exchange safety data with infrastructure and other vehicles. Uses ECDSA P-256 certificates that are quantum-vulnerable.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "cbdc",
@@ -350,7 +361,8 @@
     "definition": "Central Bank Digital Currency, a digital form of fiat money issued by central banks. Requires quantum-safe cryptography for long-term trust.",
     "relatedModule": "/threats?industry=Finance%20%26%20Banking",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Finance & Banking"
   },
   {
     "id": "drm",
@@ -359,7 +371,8 @@
     "definition": "Digital Rights Management, technology protecting copyrighted content through encryption. Systems like Widevine, PlayReady, and FairPlay face quantum threats to their key hierarchies.",
     "relatedModule": "/threats?industry=Media%20%2F%20Entertainment%20%2F%20DRM",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Media / Entertainment / DRM"
   },
   {
     "id": "kms",
@@ -377,7 +390,8 @@
     "definition": "Trusted Platform Module, a hardware chip providing secure key storage, platform integrity measurement, and cryptographic operations. PQC support being added via TCG specifications.",
     "relatedModule": "/migrate?domain=hsm",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "endorsement-key",
@@ -387,7 +401,8 @@
     "technicalNote": "Non-duplicable. ML-KEM-768 public key = 1184 B; ciphertext = 1088 B (FIPS 203). Which EK algorithms a TPM provides depends on the manufacturer and the platform profile (for example PC Client Platform TPM Profile 1.07).",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "attestation-identity-key",
@@ -397,7 +412,8 @@
     "technicalNote": "ML-DSA-65 public key = 1952 B; signature = 3309 B (FIPS 204). A credential provider (often called a Privacy CA) typically issues the AK certificate after the TPM proves, through credential activation, that the AK resides in a TPM with a certified EK.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "storage-root-key",
@@ -407,7 +423,8 @@
     "technicalNote": "Not exportable. Child keys are protected with symmetric keys derived from a seed held in the storage parent's sensitive area; ML-KEM applies to duplication and the other restricted-decryption protocols.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "device-identity-key",
@@ -427,7 +444,8 @@
     "technicalNote": "Extend-only: PCR_new = hash(PCR_old || measurement). 24 PCRs on TPM 2.0; SHA-256 is the standard bank.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "code-signing",
@@ -435,13 +453,14 @@
     "definition": "Digitally signing software executables and scripts to verify their authenticity and integrity. PQC migration replaces RSA/ECDSA signatures with ML-DSA or SLH-DSA.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "secure-boot",
     "term": "Secure Boot",
     "definition": "A hardware-enforced chain of trust that verifies each component in the boot process is signed by a trusted authority. Requires PQC-capable signature verification.",
-    "relatedModule": "/learn/code-signing",
+    "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -503,9 +522,10 @@
     "id": "cryptographic-inventory",
     "term": "Cryptographic Inventory",
     "definition": "A comprehensive catalog of all cryptographic algorithms, protocols, keys, and certificates in an organization, essential for planning PQC migration.",
-    "relatedModule": "/learn/migration-program",
+    "relatedModule": "/learn/compliance-strategy",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "ota-updates",
@@ -523,7 +543,8 @@
     "definition": "Electronic Health Records, digital patient medical records that require long-term confidentiality. Prime targets for Harvest Now, Decrypt Later attacks.",
     "relatedModule": "/threats?industry=Healthcare%20%2F%20Pharmaceutical",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Healthcare / Pharmaceutical"
   },
   {
     "id": "sbom",
@@ -532,7 +553,8 @@
     "definition": "Software Bill of Materials, a formal record of the components in a software product and their supply-chain relationships. Increasingly required alongside CBOM for security compliance.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "tee",
@@ -551,16 +573,18 @@
     "technicalNote": "DUKPT exists in TDES and AES variants; per-transaction derivation is symmetric. The public-key-dependent part is key delivery: initial keys are loaded at a physically secured Key Injection Facility or by remote key loading using public-key cryptography (for example ANSI TR-34, which is factoring-based). The BDK stays in the HSM, and compromising it exposes every device derived from it.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules; Payment Card Industry"
   },
   {
     "id": "root-ca",
     "term": "Root CA",
     "definition": "The top-level Certificate Authority in a PKI trust hierarchy. A Root CA issues a self-signed certificate that serves as the trust anchor — all certificates in the chain ultimately derive their trust from it.",
     "technicalNote": "Root CAs are installed in OS and browser trust stores. PQC migration for Root CAs is highest priority since a compromised root breaks the entire chain. For US national security systems, CNSA 2.0 specifies ML-DSA-87 for digital signatures, and NSA's FAQ describes moving a PKI by standing up a parallel PKI with the new algorithms rather than putting several algorithms in one certificate.",
-    "relatedModule": "/learn/code-signing",
+    "relatedModule": "/learn/pki-workshop",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Government & Defense"
   },
   {
     "id": "fulcio",
@@ -586,7 +610,8 @@
     "definition": "A code signing approach where the developer does not keep a long-term signing key. A short-lived key pair is generated per signing event, and a CA (for example Sigstore Fulcio) issues a short-lived certificate binding that key to an OIDC identity; the signing is recorded in a transparency log so it can be verified after the certificate expires. Trust moves to the identity provider, the CA and the log; keys are still used.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "time-stamping-authority",
@@ -594,7 +619,7 @@
     "acronym": "TSA",
     "definition": "A trusted service (RFC 3161) that signs a timestamp token binding a submitted hash to a time, showing the data existed by then. When the hash is of a signature, it is commonly used so the signature can still be validated after the signing certificate expires.",
     "technicalNote": "The token proves a hash existed by that time, not when the signature was originally created. PQC migration requires TSAs to issue timestamps signed with quantum-resistant algorithms; if a TSA signature algorithm later becomes forgeable and no renewed or archive timestamp exists, old tokens lose their value as evidence of backdating resistance.",
-    "relatedModule": "/learn/code-signing",
+    "relatedModule": "/learn/trust-services-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -611,18 +636,20 @@
     "id": "software-supply-chain",
     "term": "Software Supply Chain",
     "definition": "The entire pipeline from source code to deployed software, including dependencies, build systems, artifact registries, signing infrastructure, and distribution channels. Every link in this chain is a potential attack surface.",
-    "relatedModule": "/learn/code-signing",
+    "relatedModule": "/learn/software-supply-chain-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "build-provenance",
     "term": "Build Provenance",
     "definition": "A record documenting how a software artifact was built — including the source repository, build system, entry point, and build parameters — often distributed as a signed attestation. Answers the question \"who built this and how?\"",
     "technicalNote": "In the SLSA Build track (v1.2), Build L1 requires provenance to exist but sets no authenticity requirement, so it may be unsigned; Build L2 requires that consumers can validate its authenticity, which SHOULD be a digital signature from a key only the build platform can use; Build L3 adds strong resistance to forgery by build tenants. SLSA names no signature algorithm, so resistance to a quantum adversary depends on the scheme used and on verifiers accepting a post-quantum one.",
-    "relatedModule": "/learn/code-signing",
+    "relatedModule": "/learn/software-supply-chain-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "crqc",
@@ -656,7 +683,7 @@
     "id": "certificate-chain",
     "term": "Certificate Chain",
     "definition": "A linked sequence of X.509 certificates from a leaf (end-entity) certificate up through intermediates to a trusted root CA, establishing a chain of trust.",
-    "relatedModule": "/learn/pki-workshop",
+    "relatedModule": "/learn/code-signing",
     "complexity": "beginner",
     "category": "concept"
   },
@@ -684,7 +711,8 @@
     "definition": "A digital signature gives evidence of origin and integrity. Non-repudiation is a legal and process outcome that also needs control of the signing key, identity binding, trusted time and policy; a valid signature alone cannot stop a signer from claiming key compromise. Relevant for legal documents, contracts, and financial transactions.",
     "relatedModule": "/learn/pki-workshop",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Finance & Banking; Legal / Notary / eSignature"
   },
   {
     "id": "sd-jwt",
@@ -694,7 +722,8 @@
     "technicalNote": "Used in the EUDI Wallet ecosystem alongside mdoc format. Each claim is individually salted and hashed for privacy.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Government Identity & Travel Documents"
   },
   {
     "id": "mdl",
@@ -703,7 +732,8 @@
     "definition": "Mobile Driver's License, a digital credential stored on a smartphone conforming to ISO/IEC 18013-5. Uses mdoc format with cryptographic device binding.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Government Identity & Travel Documents"
   },
   {
     "id": "mdoc",
@@ -720,7 +750,8 @@
     "definition": "Concise Binary Object Representation, a compact binary data serialization format (RFC 8949). Used in mdoc credentials, IoT protocols, and WebAuthn attestations.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "verifiable-credential",
@@ -747,7 +778,8 @@
     "technicalNote": "Uses HMAC-SHA512 for key derivation. Supports hardened and normal derivation paths (e.g., m/44'/0'/0'/0/0).",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "utxo",
@@ -757,7 +789,8 @@
     "technicalNote": "PQC migration for Bitcoin must handle UTXOs locked by quantum-vulnerable ECDSA scripts, potentially requiring a network-wide migration.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "supi",
@@ -767,7 +800,8 @@
     "technicalNote": "SUCI conceals the SUPI using an ECIES profile (Profile A or B in TS 33.501 Annex C) to prevent IMSI-catching attacks. A post-quantum ML-KEM \"Profile C\" is an experimental proposal, not a 3GPP profile.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Telecommunications"
   },
   {
     "id": "fully-homomorphic-encryption",
@@ -777,7 +811,8 @@
     "technicalNote": "FHE is lattice-based and believed to be quantum-safe. Used for privacy-preserving cloud computing, but remains computationally expensive.",
     "relatedModule": "/algorithms",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "zero-knowledge-proof",
@@ -787,7 +822,8 @@
     "technicalNote": "PQC-compatible ZKP constructions (e.g., lattice-based, hash-based) are active areas of research for quantum-safe privacy systems.",
     "relatedModule": "/algorithms",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "der",
@@ -804,9 +840,10 @@
     "acronym": "DER",
     "definition": "Distributed Energy Resource. Solar inverters, battery storage systems, and EV chargers connected to the distribution grid. Not to be confused with DER the ASN.1 encoding (Distinguished Encoding Rules).",
     "technicalNote": "A DER that uses IEEE 2030.5 authenticates with X.509 device certificates over TLS 1.2 (cipher suite TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8, ECDSA with P-256), as profiled by the California Smart Inverter Profile; IEEE 1547 also allows SunSpec Modbus and IEEE 1815 (DNP3) interfaces. Because such devices can stay in service for 25 or more years and the profile fixes its algorithms, moving to post-quantum certificates would need an updated profile and reissued device certificates; the algorithm would follow whatever the updated profile specifies.",
-    "relatedModule": "/learn/ot-pqc",
+    "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "pem",
@@ -858,7 +895,9 @@
     "definition": "Qualified Trust Service Provider, an organization authorized under eIDAS 2.0 to issue qualified electronic signatures, seals, timestamps, and certificates.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Legal / Notary / eSignature",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "attestation",
@@ -866,7 +905,8 @@
     "definition": "A cryptographically signed statement vouching for the authenticity or properties of a device, key, or credential. Used in FIDO2, TPM, and digital identity systems.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "key-binding",
@@ -881,7 +921,7 @@
     "term": "Crypto Discovery",
     "definition": "The automated process of scanning an organization's systems to identify all cryptographic algorithms, keys, certificates, and protocols in use. The first step in PQC migration.",
     "technicalNote": "Tools like SandboxAQ AQtive Guard and IBM Guardium automate crypto discovery to build a Cryptographic Bill of Materials (CBOM).",
-    "relatedModule": "/learn/migration-program",
+    "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "beginner",
     "category": "concept"
   },
@@ -892,7 +932,8 @@
     "definition": "Recursive Length Prefix, Ethereum's serialization encoding for transactions, blocks, and account state. Used to encode transaction data before signing with ECDSA.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "base58check",
@@ -901,7 +942,8 @@
     "technicalNote": "Omits confusable characters (0, O, I, l). Used for Bitcoin addresses, WIF private keys, and extended public/private keys.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "harvest-now-forge-later",
@@ -946,7 +988,7 @@
     "term": "Key Lifecycle",
     "definition": "The complete management process for cryptographic keys from creation to destruction. NIST SP 800-57 Part 1 divides it into four phases (pre-operational, operational, post-operational and destroyed); this site teaches it as seven practical stages: generation, storage, activation, rotation, deactivation, compromise response, and destruction.",
     "technicalNote": "The four phases and the key states within them are defined in NIST SP 800-57 Part 1 Rev. 5 (May 2020); the seven-stage breakdown used here is a teaching framework, not NIST terminology. Revision 6 is an initial public draft (December 2025). PQC migration adds complexity — organizations must plan parallel classical and PQC key lifecycles during the transition period.",
-    "relatedModule": "/learn/kms-pqc",
+    "relatedModule": "/learn/custody-lifecycle-ops",
     "complexity": "beginner",
     "category": "concept"
   },
@@ -974,9 +1016,10 @@
     "term": "P2PKH",
     "definition": "Pay-to-Public-Key-Hash, a Bitcoin address format (starting with \"1\") that hides the public key behind a hash until the first spending transaction.",
     "technicalNote": "Provides some quantum protection for unspent outputs since the public key is not exposed. Once spent, the public key is revealed on the immutable blockchain and becomes harvestable.",
-    "relatedModule": "/learn/digital-assets",
+    "relatedModule": "/learn/pqc-101",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "ausf",
@@ -985,7 +1028,8 @@
     "definition": "Authentication Server Function, a 5G core network function that handles subscriber authentication using the 5G-AKA protocol and interfaces with the UDM for credential verification.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Telecommunications"
   },
   {
     "id": "sidf",
@@ -995,7 +1039,8 @@
     "technicalNote": "SIDF uses ECIES (Profile A or B of TS 33.501 Annex C) to recover the subscriber identity. TS 33.501 defines no post-quantum profile, so ML-KEM-based concealment is a proposal, not a standardized option. A key target for PQC migration in 5G networks.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Telecommunications"
   },
   {
     "id": "udm",
@@ -1004,7 +1049,8 @@
     "definition": "Unified Data Management, a 5G core network function that stores subscriber profiles, authentication credentials, and subscription data. Works with the AUSF for 5G-AKA authentication.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Telecommunications"
   },
   {
     "id": "person-identification-data",
@@ -1014,7 +1060,8 @@
     "technicalNote": "PID is the identity credential issued by a PID Provider; a Wallet Unit without a PID stays Operational and can still receive other attestations, but cannot present a PID. Must be cryptographically bound to the wallet holder's key to prevent transfer.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Government Identity & Travel Documents"
   },
   {
     "id": "relying-party",
@@ -1033,7 +1080,8 @@
     "technicalNote": "It reflects the Wallet Provider's integrity check at issue time (technical validity under 24 hours in the architecture); the instance can later be revoked. It does not prove the wallet cannot be compromised afterwards. Keystore properties are attested separately, by a Key Attestation.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "entropy",
@@ -1109,7 +1157,7 @@
     "acronym": "MTCA",
     "definition": "A Certificate Authority that collects certificate assertions into a Merkle tree, signs the root hash, and distributes inclusion proofs to subscribers. The MTCA replaces individual certificate signatures with batch-level tree signing.",
     "technicalNote": "The MTCA role is defined in draft-ietf-plants-merkle-tree-certs. Unlike traditional CAs that sign each certificate individually, an MTCA signs once per batch. A transparency service publishes signed roots for client synchronization.",
-    "relatedModule": "/learn/merkle-tree-certs",
+    "relatedModule": "/learn/pki-workshop",
     "complexity": "advanced",
     "category": "concept"
   },
@@ -1163,7 +1211,8 @@
     "technicalNote": "ERC-4337 smart accounts can run arbitrary signature-verification code on-chain via inline contract verification (no PQ signature precompile is live on Ethereum mainnet; precompile EIPs remain drafts), at a higher gas cost than the built-in ECDSA check. The actual cost depends on the algorithm, its implementation, the network and the EVM version, and has to be measured. 21k gas is the base cost of a simple transaction, not the cost of an ECDSA verification. Combined with EIP-7702 (persistent delegation code for EOAs until replaced or cleared), contract-based verification offers a migration path, though an EIP-7702 EOA's underlying secp256k1 key retains authority.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "information-theoretic-security",
@@ -1180,7 +1229,8 @@
     "definition": "Reference architecture for industrial control system (ICS) networks. Defines 6 levels from physical process (Level 0) to enterprise network (Level 5), guiding security zone segmentation and PQC migration priority.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "programmable-logic-controller",
@@ -1189,7 +1239,8 @@
     "definition": "An industrial computer that controls manufacturing processes, assembly lines, and infrastructure equipment. PLCs sit at Purdue Level 1 and typically use pre-shared keys or DNP3-SA for authentication.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "remote-terminal-unit",
@@ -1198,7 +1249,8 @@
     "definition": "A microprocessor-controlled device that interfaces field devices (sensors, actuators) to a SCADA system. RTUs sit at Purdue Level 1 with asset lifecycles of 15–25 years.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "human-machine-interface",
@@ -1216,7 +1268,8 @@
     "definition": "An embedded computer in a vehicle that controls one or more electrical systems (engine, brakes, infotainment). Automotive ECUs communicate via CAN bus and face PQC migration challenges for V2X and firmware signing.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "key-performance-indicator",
@@ -1288,7 +1341,7 @@
     "acronym": "CBOM",
     "definition": "Cryptography Bill of Materials — a structured inventory of all cryptographic assets, algorithms, keys, certificates, and protocols in use within a system or organisation. Analogous to a software BOM (SBOM) but focused on cryptographic dependencies.",
     "technicalNote": "A CBOM enables automated discovery of quantum-vulnerable algorithms (RSA, ECC, DH) and drives migration roadmap prioritisation. NIST SP 1800-38 and CISA guidance recommend CBOM as the first step in PQC readiness.",
-    "relatedModule": "/learn/data-asset-sensitivity",
+    "relatedModule": "/learn/cbom",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -1306,7 +1359,7 @@
     "term": "HNDL Risk Window",
     "definition": "The period during which data harvested today could realistically be decrypted by a future CRQC. Calculated as the gap between the estimated CRQC arrival year and the data's required confidentiality end date.",
     "technicalNote": "Formula: HNDL Risk Year = CRQC Arrival Year − Data Retention Years. If this value is ≤ the current year, data is already inside the risk window. The CRQC arrival year is an assumption the person using the model chooses, not a measured date; published expert estimates vary widely, so test several scenarios and treat any single year as a modelling input rather than a consensus forecast.",
-    "relatedModule": "/learn/data-asset-sensitivity",
+    "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -1344,9 +1397,10 @@
     "acronym": "ePHI",
     "definition": "Electronic Protected Health Information — individually identifiable health information in electronic form, regulated by HIPAA. Any encryption of ePHI using RSA or ECC is vulnerable to HNDL attacks, making ePHI datasets a high-priority PQC migration target.",
     "technicalNote": "HIPAA does not mandate specific algorithms, but HHS guidance and NIST SP 800-66 recommend using FIPS-validated cryptography. Once FIPS 140-3 validation for ML-KEM and ML-DSA is available, healthcare organisations should adopt them for ePHI at rest and in transit.",
-    "relatedModule": "/learn/data-asset-sensitivity",
+    "relatedModule": "/learn/healthcare-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Healthcare / Pharmaceutical"
   },
   {
     "id": "risk-treatment",
@@ -1372,7 +1426,8 @@
     "technicalNote": "The provider model is one way to achieve crypto agility at the implementation layer. Where applications call algorithms only through the provider interface and the provider supports the new algorithm, migrating to PQC can mean changing the provider rather than every call site; keys are tied to the provider that holds them (in AUTOSAR Adaptive, a key belonging to one CryptoProvider cannot be used in another), so keys and certificates may still need to be regenerated or reissued. A hard-coded crypto stack requires touching every call site.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules; IT Industry / Software"
   },
   {
     "id": "hybrid-migration",
@@ -1408,7 +1463,8 @@
     "technicalNote": "HSMs address this with NVRAM write-ahead logging and strict prohibition on key export. Cloud HSMs introduce additional complexity: multi-replica deployments must use a single authoritative state source, not distributed state. NIST SP 800-208 §6 covers state management requirements.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers; Hardware Security Modules"
   },
   {
     "id": "hedged-signing",
@@ -1417,7 +1473,8 @@
     "technicalNote": "FIPS 204 §3.5.2 defines both deterministic and hedged signing. Hedged mode uses a random seed r in addition to the message and key. HSM implementations should prefer hedged mode for ML-DSA to protect against physical attack vectors that are in-scope for FIPS 140-3 Level 3/4.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "tamper-resistance",
@@ -1426,7 +1483,8 @@
     "technicalNote": "In FIPS 140-2 wording: Level 2 adds tamper evidence such as seals; Level 3 adds tamper detection and response that zeroizes plaintext keys when covers or doors are opened; Level 4 adds a complete protective envelope and covers voltage and temperature excursions. Level 3 mechanisms are described as intended to have a high probability of detecting and responding to physical access, and tamper detection and response are not substitutes for tamper evidence.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "risk-register",
@@ -1463,7 +1521,8 @@
     "technicalNote": "SGX uses DCAP attestation with ECDSA P-256, which is quantum-vulnerable. This entry asserts no Intel date for post-quantum attestation keys; check Intel's current documentation.",
     "relatedModule": "/learn/confidential-computing",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "sev-snp",
@@ -1572,7 +1631,8 @@
     "technicalNote": "Common reverse proxies include NGINX, HAProxy, Envoy, and Traefik. PQC readiness varies by product, build and configuration; check each proxy's own documentation for its supported TLS libraries, groups and settings.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "edge-pop",
@@ -1582,7 +1642,8 @@
     "technicalNote": "Whether a PoP supports post-quantum key exchange is decided by the CDN or cloud provider, and support can differ between a provider's products. Check the provider's current documentation for what is enabled and what origin connections require.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "origin-shielding",
@@ -1591,7 +1652,8 @@
     "technicalNote": "Origin shielding means fewer CDN servers connect to the origin. Each connection in the path still negotiates its own TLS key exchange, and a hybrid post-quantum exchange between the shield and the origin is used only if the origin supports it.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "cipher-proxy",
@@ -1619,7 +1681,8 @@
     "technicalNote": "SASE platforms like Zscaler and Palo Alto Prisma Access terminate and inspect TLS at cloud PoPs. PQC migration requires the SASE provider to upgrade their inspection infrastructure to support hybrid handshakes.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "bes",
@@ -1628,7 +1691,8 @@
     "definition": "Bulk Electric System. The interconnected electrical generation and transmission resources subject to NERC reliability standards.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "ied",
@@ -1638,7 +1702,8 @@
     "technicalNote": "IEDs deployed in 2026 will operate until 2046-2051. Any cryptographic algorithms selected today must survive CRQC arrival. Firmware updates often require physical site visits.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "biometric-template",
@@ -1663,7 +1728,8 @@
     "definition": "Internet of Medical Things. Network-connected medical devices including infusion pumps, cardiac monitors, and surgical robots. IoMT devices combine the constrained-resource challenges of IoT with the safety-critical requirements of medical devices, creating unique PQC migration challenges.",
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Healthcare / Pharmaceutical; Internet of Things (IoT)"
   },
   {
     "id": "token-service-provider",
@@ -1673,7 +1739,8 @@
     "technicalNote": "TSPs use TLS for enrollment, ECDSA for device attestation, RSA/AES for key wrapping, and AES-256 for per-transaction cryptogram generation. PQC migration must address the asymmetric crypto touchpoints.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Payment Card Industry; Retail & E-Commerce"
   },
   {
     "id": "key-injection-facility",
@@ -1683,7 +1750,8 @@
     "technicalNote": "A KIF loads each terminal with its own initial key, derived from a BDK held in an HSM; the BDK itself is not loaded onto terminals (PCI PIN Security requirements). Local injection happens in the secured facility; remote key loading uses public-key cryptography (for example ANSI TR-34) to deliver keys to deployed devices without physical transport. Check the HSM and terminal vendors' documentation for post-quantum key-loading support.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules; Payment Card Industry"
   },
   {
     "id": "base-derivation-key",
@@ -1693,7 +1761,8 @@
     "technicalNote": "The BDK is held in payment HSMs and must not exist in clear text outside them. Terminals never receive the BDK: only the initial key derived from it for that terminal is loaded (PCI PIN Security requirements). Compromise of a BDK exposes every device whose keys derive from it, so entities that inject or process DUKPT keys must segment BDKs, for example by acquirer, injection vendor, terminal model or region.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules; Payment Card Industry"
   },
   {
     "id": "pan",
@@ -1703,7 +1772,8 @@
     "technicalNote": "Tokenization replaces the PAN with a non-sensitive token for mobile and e-commerce transactions, reducing the attack surface if intercepted.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Payment Card Industry; Retail & E-Commerce"
   },
   {
     "id": "softpos",
@@ -1712,7 +1782,8 @@
     "technicalNote": "SoftPOS relies on TEE (TrustZone) and device attestation (ECDSA) for security. With abundant compute resources, it is the easiest terminal type to migrate to PQC via app updates.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "single-event-upset",
@@ -1722,7 +1793,8 @@
     "technicalNote": "SEUs can corrupt PQC private key material stored in spacecraft memory. Lattice-based keys (ML-KEM, ML-DSA) are particularly vulnerable due to large key sizes. Hash-based signatures (LMS/XMSS) are more resilient because verification reconstructs from public data.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "rad-hardened-processor",
@@ -1731,7 +1803,8 @@
     "technicalNote": "Rad-hard processors (RAD750 at 200 MHz, GR740 at 250 MHz) lag commercial silicon by 2-4 generations. Their limited clock speed, RAM (256 KB to 256 MB), and instruction sets constrain PQC algorithm performance.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Aerospace / Aviation; Critical Infrastructure / Energy; Semiconductors / Secure Elements"
   },
   {
     "id": "line-replaceable-unit",
@@ -1741,7 +1814,8 @@
     "technicalNote": "LRU replacement is the primary mechanism for upgrading aircraft crypto hardware. Legacy LRUs certified under DO-178B may lack the flash/RAM capacity for PQC libraries. New LRUs require full DO-178C recertification.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "training-data-poisoning",
@@ -1803,9 +1877,10 @@
     "acronym": "HE",
     "definition": "An encryption scheme that allows computations to be performed directly on encrypted data without decrypting it first, producing encrypted results that match what would be obtained from the plaintext.",
     "technicalNote": "Most practical HE schemes (BGV, CKKS, TFHE) are based on lattice problems (LWE/RLWE), for which no efficient quantum algorithm is known; that is a hardness assumption, not a proof, and security depends on parameters. Not all HE is lattice-based: partially homomorphic schemes such as Paillier rely on factoring-type assumptions and are vulnerable to Shor-type attacks. HE enables privacy-preserving AI inference on encrypted patient data or financial records.",
-    "relatedModule": "/learn/ai-security-pqc",
+    "relatedModule": "/learn/homomorphic-encryption",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Finance & Banking; Healthcare / Pharmaceutical"
   },
   {
     "id": "model-provenance",
@@ -1823,7 +1898,8 @@
     "technicalNote": "Zonal architecture reduces the number of ECUs by an amount that depends on the vehicle and platform, and consolidates crypto operations in zone controllers. Zone controllers can have more compute and memory than many legacy domain ECUs, but whether a particular automotive SoC runs PQC algorithms within its latency, memory and safety limits has to be measured on that part.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "sensor-fusion",
@@ -1832,7 +1908,8 @@
     "technicalNote": "Sensor fusion pipelines must authenticate data integrity to prevent adversarial injection. Raw sensor streams such as LiDAR can run at very high data rates that depend on the sensor model and configuration, so per-frame signing has to be sized against the stream's actual rate. Whether ML-DSA-44 signing fits an ADAS latency budget depends on the processor, the implementation and the safety timing requirement, and has to be measured; FN-DSA-512 offers more compact signatures (666 bytes vs 2,420) for bandwidth-constrained CAN FD buses.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "a-b-partition",
@@ -1841,7 +1918,8 @@
     "technicalNote": "A/B partitioning doubles storage requirements but provides atomic updates critical for safety-critical ECUs (ASIL-C/D). Each partition is independently signed — PQC migration requires verifying both classical and PQC signatures during the transition period. Gateway ECUs and ADAS controllers typically use A/B; body ECUs may use cheaper in-place updates.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "jca-jce",
@@ -1851,7 +1929,8 @@
     "technicalNote": "JCA uses string-based algorithm selection (e.g., KeyPairGenerator.getInstance(\"ML-DSA-65\", \"BC\")) with pluggable providers. Bouncy Castle registers as a JCA provider via Security.addProvider(new BouncyCastleProvider()), giving immediate access to all NIST PQC algorithms without waiting for Oracle JDK support.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "bouncy-castle",
@@ -1860,7 +1939,8 @@
     "technicalNote": "Since BC 1.79 (October 2024), Bouncy Castle supports the finalized NIST PQC algorithms: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Also supports LMS/XMSS (SP 800-208), HQC, and Classic McEliece. Bouncy Castle announced on 9 June 2025 that its C# .NET edition (2.6.1) supports the finalized PKCS#8 private key formats for these NIST PQC algorithms, ML-DSA and SLH-DSA signatures in CMS SignedData, and ML-KEM-only TLS; check the C# release notes for the version you use.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "ksp",
@@ -1870,7 +1950,8 @@
     "technicalNote": "Applications use NCryptOpenStorageProvider() to select a KSP at initialization time. With the Microsoft software KSP, key isolation keeps long-lived private keys out of the application process, but a key can still be exported if its export policy allows it. Microsoft documents ML-KEM and ML-DSA in CNG for Windows Server 2025 and Windows 11 (24H2, 25H2); this entry does not say which KSPs (software, TPM, smart card or a vendor HSM) can store post-quantum keys, so check Microsoft's and the provider's documentation.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules; IT Industry / Software; Semiconductors / Secure Elements"
   },
   {
     "id": "cng",
@@ -1880,7 +1961,8 @@
     "technicalNote": "BCryptOpenAlgorithmProvider() opens algorithm providers for hash/symmetric operations. NCryptOpenStorageProvider() opens key storage providers for asymmetric key management. CNG is the foundation of Windows FIPS mode and integrates with the Windows certificate store.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "jcprov",
@@ -1898,7 +1980,8 @@
     "technicalNote": "Loaded with OSSL_PROVIDER_load, the -provider option or openssl.cnf; TLS groups are then chosen with the usual OpenSSL group settings. On OpenSSL 3.5 and later, an algorithm that OpenSSL's own default provider already implements (ML-KEM, ML-DSA, SLH-DSA and the hybrids it ships) is not offered through oqsprovider, and the README strongly discourages using the standardized algorithm families through it. The project says the provider is meant for research and prototyping and does not recommend relying on it in production or to protect sensitive data; check its README for the OpenSSL and liboqs versions and algorithm names of the release you use.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "rustcrypto",
@@ -1907,7 +1990,8 @@
     "technicalNote": "Key crates: aes, sha2, p256, x25519-dalek. PQC is emerging: pqcrypto crate wraps PQClean reference implementations. The aws-lc-rs crate provides FIPS-validated crypto via AWS-LC bindings. RustCrypto traits (digest::Digest, signature::Signer) define common interfaces across implementations.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "crypto-agility-pattern",
@@ -1916,7 +2000,8 @@
     "technicalNote": "Five common patterns: (1) Provider Abstraction — use a provider interface such as JCA or OpenSSL providers. (2) Config-Driven Selection — algorithm name from YAML/env var. (3) Hybrid/Composite — run classical + PQC in parallel. (4) Algorithm Negotiation — TLS-style capability advertisement. (5) Feature Flags — gradual PQC rollout per service.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "liboqs",
@@ -1925,7 +2010,8 @@
     "technicalNote": "Supports the NIST PQC algorithms plus additional candidates (for example HQC, FrodoKEM, Classic McEliece), with the exact set depending on the release and build options. Provides portable C and optimized implementations on some platforms. Not FIPS-validated itself; the Open Quantum Safe project describes it as for prototyping and evaluation. For FIPS needs, check a CMVP certificate for the exact module.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "pqclean",
@@ -1934,7 +2020,8 @@
     "technicalNote": "PQClean's automatically checked requirements include valid C99, no dynamic memory allocation and no preprocessor conditionals other than header guards; its checks for branching on secret data and for access to secret memory locations are listed as not yet done. The README says the project is retired and archived, and points to the PQ Code Package projects (mlkem-native, mldsa-native, slhdsa-c) for maintained ML-KEM, ML-DSA and SLH-DSA code. liboqs still carries code that originated in PQClean. Treat it as a reference source, not a validated module.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "aws-lc",
@@ -1971,7 +2058,8 @@
     "technicalNote": "HashiCorp Vault Transit engine supports AES-GCM-256, ChaCha20-Poly1305, RSA-OAEP, and ECDSA. Each named key has a versioned key ring — encrypting uses the latest version, decrypting accepts any version not older than the key's min_decryption_version setting. PQC migration depends on the key types the deployed Vault version documents; a KEM key type would establish a shared secret rather than encrypt data directly, and signature types such as ML-DSA only protect integrity. Rewrap re-encrypts existing ciphertext under the latest key version without exposing plaintext.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "lease-renewal",
@@ -1980,7 +2068,8 @@
     "technicalNote": "Vault lease mechanics: lease_id identifies the secret, lease_duration is the TTL in seconds, renewable indicates whether renewal is allowed. Renewal resets the TTL up to the max_lease_ttl. Automated renewal via Vault Agent Sidecar or the Vault SDK. PQC note: the lease management API channel must be TLS with PQC hybrid KEX to prevent interception.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "secret-sprawl",
@@ -1997,7 +2086,7 @@
     "acronym": "BYOK",
     "definition": "Bring Your Own Key — a cloud encryption model where the customer provides and manages the root encryption key rather than using a key generated and managed by the cloud provider. Gives customers control over key lifecycle and access.",
     "technicalNote": "BYOK implementations differ by provider. AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys. Azure Key Vault BYOK transfers a key wrapped with CKM_RSA_AES_KEY_WRAP under an RSA-HSM key exchange key of 2048, 3072 or 4096 bits. Google Cloud KMS key import wraps key material for transfer using RSA-based import methods. Google Cloud KMS quantum-safe key import, in Preview, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM. Google documents quantum-safe key import for the SOFTWARE protection level only. Where the wrap is RSA, it is the PQC-vulnerable step of BYOK; ML-KEM is not an import wrapping option for AWS KMS or Azure Key Vault. Post-import, the customer key wraps DEKs using AES-256 which is quantum-safe.",
-    "relatedModule": "/learn/secrets-management-pqc",
+    "relatedModule": "/learn/kms-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -2006,9 +2095,10 @@
     "term": "Envelope Encryption",
     "definition": "A two-level encryption scheme: a data encryption key (DEK) encrypts the data, and a key encryption key (KEK) encrypts the DEK. The encrypted DEK is stored alongside the ciphertext. Only the KEK needs to be protected in a KMS.",
     "technicalNote": "Used by AWS KMS, Azure Key Vault and Google Cloud KMS, each of which documents this pattern. PQC migration: the quantum-vulnerable step is the KEK wrapping operation when it uses RSA-OAEP or ECDH; the AES-256-GCM DEK is not itself exposed to Shor-type attacks. An ML-KEM-768 encapsulation yields a shared secret; a KDF bound to the algorithm and context derives a KEK that authenticated-wraps the DEK. A hybrid design mixes the classical and KEM secrets in that KDF, so the KEK stays secret as long as at least one of the two secrets does, provided the combiner is sound. Wrapping the same DEK separately under a classical KEK and a post-quantum KEK keeps classical-only readers working, but the DEK is then only as protected as the weaker wrap, because opening either copy recovers it. Wrapped DEKs already captured under the old wrap stay exposed.",
-    "relatedModule": "/learn/secrets-management-pqc",
+    "relatedModule": "/learn/kms-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "secrets-manager",
@@ -2073,7 +2163,7 @@
     "term": "SSL/TLS Offload",
     "definition": "Terminating TLS connections at a dedicated hardware appliance or load balancer, rather than at the application server. Reduces CPU load on application servers and centralises certificate management.",
     "technicalNote": "PQC impact on TLS offload: ML-DSA-65 operations require ~3× more compute than ECDSA P-256 per operation. ML-KEM-768 key exchange is ~5× the data size of X25519. Hardware SSL accelerators (Intel QAT, Marvell NITROX, Broadcom BCM585xx) will require firmware/hardware refresh for PQC-accelerated operations. Software offload (HAProxy, nginx, Envoy) can be patched to support hybrid TLS via OQS-OpenSSL.",
-    "relatedModule": "/learn/network-security-pqc",
+    "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "advanced",
     "category": "concept"
   },
@@ -2084,7 +2174,8 @@
     "technicalNote": "East-west PQC considerations: service meshes such as Istio and Linkerd issue short-lived workload certificates, 24 hours by default in their documentation, and rotate them automatically. A short lifetime limits how long a stolen private key can be used to impersonate a workload; it does not protect the confidentiality of recorded traffic, which depends on the key exchange negotiated in each TLS handshake (Istio lets operators set the ECDH curves). Authentication moves to post-quantum certificates only when the mesh CA, proxies and any SPIFFE/SPIRE components support them; check each project's current documentation.",
     "relatedModule": "/learn/network-security-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "micro-segmentation",
@@ -2093,7 +2184,8 @@
     "technicalNote": "Micro-segmentation policy enforcement relies on workload identity (via TLS certificates or hardware attestation). PQC migration may involve: (1) policy engine certificates moving to post-quantum or hybrid certificates; (2) workload identity tokens using post-quantum signatures; (3) policy distribution channels using hybrid TLS. Agent and controller support varies by product; confirm it in the vendor's documentation.",
     "relatedModule": "/learn/network-security-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "transparent-data-encryption",
@@ -2141,7 +2233,8 @@
     "technicalNote": "HYOK implementations: Azure Information Protection HYOK (AD RMS key on-prem), Google Workspace Client-Side Encryption (CSE). Contrast with BYOK: in BYOK the customer imports the key into the cloud KMS; in HYOK the key never leaves the customer HSM. PQC migration: the HSM must support ML-KEM for key wrapping and ML-DSA for signing before HYOK's quantum safety can be claimed.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers; Hardware Security Modules"
   },
   {
     "id": "data-encryption-key",
@@ -2149,7 +2242,7 @@
     "acronym": "DEK",
     "definition": "A symmetric key used to directly encrypt data. In envelope encryption architectures, the DEK is a short-lived, per-object AES key that encrypts actual data, while a Key Encryption Key (KEK) protects the DEK.",
     "technicalNote": "DEK sizing: AES-256 is the common choice for long-lived data confidentiality; its idealized Grover search cost is far beyond practical reach, though that is a model-dependent estimate rather than a guarantee. Rotation follows the documented cryptoperiod in the key-management policy (see NIST SP 800-57) and any applicable compliance requirement. PQC note: a DEK is only as protected as the key that wraps it. If the KEK or wrapping step uses RSA or ECDH, an adversary who captured the wrapped DEK and ciphertext can target the wrap, not the AES key.",
-    "relatedModule": "/learn/database-encryption-pqc",
+    "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -2170,7 +2263,8 @@
     "technicalNote": "Three rotation strategies: (1) Master key rotation only — re-encrypt DEKs/CEKs under a new master key without touching data. (2) DEK rotation — generate a new DEK and re-encrypt all data (expensive). (3) Combined — a new master key and new DEKs. SQL Server and Oracle each offer both kinds of rotation, and earlier master key versions are kept so older backups can be restored. A PQC migration of the master-key layer would be strategy (1) where the product and key provider document a supported scheme: the KEM shared secret goes through a KDF to a key-encryption key that authenticated-wraps the DEK, with context bound in and the key version stored with it. Rewrapping does not protect copies of the old wrapped DEK and ciphertext already captured, including backups; that needs DEK replacement and data re-encryption.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "identity-provider",
@@ -2180,7 +2274,8 @@
     "technicalNote": "PQC impact on IdPs: (1) SAML assertion signatures — migrate from RSA-SHA256 to a post-quantum signature once supported. (2) OIDC/JWT signing — migrate from RS256/ES256 to ML-DSA-65, whose JOSE identifier is registered in RFC 9964, once your libraries and relying parties support it. (3) TLS channel to IdP — hybrid ML-KEM. (4) PKI certificates for IdP servers — ML-DSA-65 or hybrid. Examples of IdPs: Okta, Microsoft Entra, PingFederate, Shibboleth. Ask each vendor for its documented PQC support; this entry asserts no roadmap.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "service-provider",
@@ -2190,7 +2285,8 @@
     "technicalNote": "SP-IdP trust: in SAML, the SP stores the IdP public key/certificate for assertion verification — this is the RSA/ECDSA-vulnerable point. In OIDC, the SP fetches the IdP JWKS (JSON Web Key Set) at runtime for JWT verification. PQC migration: IdP must update its signing key to ML-DSA-65 and advertise it in the JWKS endpoint. SPs need updated JWT libraries that support ML-DSA verification.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "saml-2-0",
@@ -2200,7 +2296,8 @@
     "technicalNote": "SAML assertions are XML documents that can be signed with XML Signature (xmldsig), for example with RSA-SHA256. The PQC migration challenge: check whether the XML Signature specification and your SAML libraries define identifiers for post-quantum signatures. One design discussed is wrapping the assertion in a JWS signed with a post-quantum algorithm; that is not a SAML interoperability standard and would need library support on both sides, although ML-DSA identifiers for JOSE are now registered (RFC 9964). This entry assumes no SAML 3.0 specification.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "oidc",
@@ -2210,7 +2307,8 @@
     "technicalNote": "OIDC PQC migration: JWTs are signed using JOSE algorithms (RS256, ES256, EdDSA). JOSE PQC draft (IETF draft-ietf-jose-pqc-signatures) adds ML-DSA-44/65/87 as alg values. ID tokens signed with ML-DSA-65 are ~3KB vs ~1KB for RS256 — HTTP header size limits may need adjustment. OIDC discovery document (/.well-known/openid-configuration) JWKS endpoint must expose ML-DSA public keys.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "kerberos",
@@ -2219,7 +2317,8 @@
     "technicalNote": "Kerberos PQC challenges: (1) Ticket Granting Tickets (TGTs) and Service Tickets are encrypted with symmetric keys whose encryption type depends on what the client, KDC and service have enabled; AES-256 types are defined (RFC 3962, RFC 8009), and a 256-bit key's quantum resistance depends on the attack model, not the label. (2) Pre-authentication uses AS-REQ with the client long-term key; certificate-based PKINIT (RFC 4556) is the existing option, and whether a given KDC supports post-quantum certificates must be confirmed with the vendor. (3) Cross-realm trust uses shared symmetric keys. This entry asserts no vendor release date.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "zero-trust-architecture",
@@ -2256,7 +2355,8 @@
     "technicalNote": "UEFI Secure Boot key hierarchy: Platform Key (PK) → Key Exchange Keys (KEK) → Signature Databases (db/dbx). Entries can be X.509 certificates, RSA-2048 public keys or image hashes. PQC migration: the UEFI Forum's April 2026 whitepaper describes post-quantum changes for the next UEFI specification release, including support for images that carry more than one signature, and states that these proposals are not yet approved. Check the published specification and the firmware vendor for what a given platform supports.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "platform-key",
@@ -2266,7 +2366,8 @@
     "technicalNote": "PK characteristics: only one PK at a time (the PK variable holds exactly one entry); in user mode a new PK must be signed with the current PK, and the PK can also be cleared by a secure platform-specific method. RSA-2048 is widely used today. PQC: the UEFI Forum's April 2026 whitepaper proposes changes for the next UEFI release and states that they are not yet approved, so no migration path is published. Microsoft Shim and MOK (Machine Owner Key) system for Linux adds another trust layer.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "key-exchange-key",
@@ -2276,7 +2377,8 @@
     "technicalNote": "KEK signers: Microsoft holds a KEK that allows updating the Windows db; OEM holds another KEK. Multiple KEKs can coexist. KEK updates require a valid PK signature. PQC: the UEFI Forum's April 2026 whitepaper describes planned post-quantum changes for the next UEFI release, including an algorithm check when PK, KEK, db or dbx entries are enrolled, and states that its proposals are not yet approved; check the published specification and the firmware vendor before planning a migration.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "dice",
@@ -2286,7 +2388,8 @@
     "technicalNote": "DICE layers: DICE layer 0 (hardware) derives the CDI from the UDS and a measurement of the first mutable code; the TCG specification allows a hash or an HMAC, HMAC(UDS, H(First Mutable Code)), and leaves the method to the manufacturer. Each subsequent layer generates a key pair from its CDI and issues a certificate binding the key to a firmware measurement. Algorithms are chosen by profiles: the Open Profile for DICE v2.6 lists ML-DSA-65 and ML-DSA-87 as acceptable post-quantum signatures, and the Android profile for DICE accepts the same two.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "tpm-pcr",
@@ -2322,7 +2425,8 @@
     "technicalNote": "The platform manufacturer chooses the boot policy: an enforcement policy (what happens if the BIOS cannot be verified) and a measurement policy (whether the BIOS startup code is measured into the TPM). Intel's datasheet pages for this technology do not state the signature algorithms or key sizes used, and this entry makes no claim about them or about post-quantum support; check the platform documentation for your processor. Availability varies between processor SKUs.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "crypto-policy",
@@ -2331,7 +2435,8 @@
     "technicalNote": "RHEL 9.7 introduces the PQ system-wide crypto-policy subpolicy: update-crypto-policies --set DEFAULT:PQ enables and prioritizes post-quantum algorithms on top of DEFAULT. Applications using OpenSSL or NSS can use hybrid ML-KEM key exchange in TLS under that policy. RHEL 10.1 enables and prefers post-quantum cryptography in the DEFAULT policy already. These named-release settings are distinct from selecting FUTURE alone or inventing a custom ML-KEM policy name. Check the exact OS release, application backend and any application overrides, then inspect the TLS group actually negotiated in a sample connection; a policy selection does not prove that every connection used a hybrid group. Matching ARM64 UBI 9.7 and 10.1 OpenSSL 3.5.1 samples exercised these profiles with fresh clients and no group override: hybrid negotiation succeeded, a classical-only peer still fell back to X25519, and a wrong hostname failed verification even when a hybrid group appeared in the log. This is one userspace application check, not whole-host, FIPS or all-backend verification.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "schannel",
@@ -2340,7 +2445,8 @@
     "technicalNote": "SChannel PQC support: check Microsoft's current CNG and SChannel documentation for which Windows versions support ML-KEM hybrid key exchange and ML-DSA, and for the exact configuration (registry keys or Group Policy). This entry asserts no version, registry path or release date.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "ssh-host-key",
@@ -2349,7 +2455,8 @@
     "technicalNote": "SSH host key algorithms: RSA (rsa-sha2-512), ECDSA P-256 (ecdsa-sha2-nistp256), Ed25519. OpenSSH's post-quantum key exchange came first (sntrup761x25519-sha512 default from 9.0; mlkem768x25519-sha256 added in 9.9 and default from 10.0); it protects session keys, not host-key authentication. For host keys, OpenSSH 10.4 added an experimental composite of ML-DSA-44 and Ed25519 (ssh-mldsa44-ed25519, not enabled by default), specified in an individual Internet-Draft, and 10.6 enables it: its sshd_config(5) lists ssh-mldsa44-ed25519 among the default host key algorithms. Both client and server need a version that supports it. Post-quantum signatures are typically much larger than Ed25519's 64-byte signature, depending on the algorithm and parameter set.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "fips-140-3-mode",
@@ -2358,7 +2465,9 @@
     "technicalNote": "FIPS 140-3 and PQC: ML-KEM, ML-DSA, and SLH-DSA are specified in FIPS 203/204/205, but a module's validation covers only the algorithms on its own certificate. For example, certificate #4282 (OpenSSL FIPS Provider 3.0.8 and 3.0.9) is a FIPS 140-2 certificate on the historical list with no ML-KEM, ML-DSA or SLH-DSA, while AWS-LC 3 certificates #5298 and #5314 are FIPS 140-3 and list ML-KEM. In the Linux crypto-policies framework the FIPS policy aids conformance but does not provide it by itself: validated modules must be installed and the kernel booted with fips=1. Test applications before enforcing: the policy allows only TLS 1.2 and later.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "gnutls-priority-string",
@@ -2367,7 +2476,8 @@
     "technicalNote": "GnuTLS priority examples: NORMAL means all the known-to-be-secure ciphersuites, and SECURE256 is currently an alias for SECURE192 (ciphersuites offering a 192-bit security level or more); a leading @ expands a keyword from the system-wide configuration. Post-quantum support depends on the GnuTLS release and its build: 3.8.8 (November 2024) added experimental X25519MLKEM768 and SecP256r1MLKEM768 key exchange, and from 3.8.10 (July 2025) post-quantum algorithms are provided only through a build with leancrypto. Check the GnuTLS documentation for the exact priority keywords before use. GnuTLS is one of several TLS libraries a program can be built with (curl, for example, can use GnuTLS, OpenSSL and others), so check which library a given program uses.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "openssl-provider",
@@ -2376,14 +2486,15 @@
     "technicalNote": "OpenSSL 3.5+ supplies ML-KEM and ML-DSA in its default provider; additional implementations may use third-party providers. Native OpenSSL 3.6 example, with sample-cert.pem and its matching sample-key.pem already prepared: openssl s_server -tls1_3 -groups X25519MLKEM768 -cert sample-cert.pem -key sample-key.pem. X25519MLKEM768 is one combined key-establishment group; a colon-separated list such as X25519:P-256 offers alternatives rather than combining them. Available groups depend on the build and providers. Check the negotiated group and cipher suite: library support alone does not establish that an application and its peer can negotiate a hybrid connection. Hybrid key establishment does not make the certificate PQC-signed. This native CLI example does not establish browser WASM command support. References: https://docs.openssl.org/3.6/man3/SSL_CTX_set1_curves/ and https://docs.openssl.org/3.6/man1/openssl-s_server/.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "compliance-gap-analysis",
     "term": "Compliance Gap Analysis",
     "definition": "A systematic comparison of an organization's current cryptographic posture against regulatory requirements, identifying where PQC migration is needed to meet compliance deadlines. Evaluates frameworks like CNSA 2.0, DORA, NIS2, and sector-specific mandates across multiple jurisdictions.",
     "technicalNote": "A PQC compliance gap analysis typically covers: (1) algorithm inventory vs. approved algorithms, (2) certificate lifecycle vs. regulatory deadlines, (3) vendor PQC readiness vs. contractual obligations, (4) data retention periods vs. HNDL exposure windows. Multi-jurisdiction organizations must reconcile overlapping requirements.",
-    "relatedModule": "/learn/compliance-strategy",
+    "relatedModule": "/learn/pqc-risk-management",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -2474,7 +2585,8 @@
     "technicalNote": "High-risk research domains: genomics and bioinformatics (patient privacy regulations extend decades), classified defense research (50+ year confidentiality), pharmaceutical R&D (patent-sensitive data during 20-year exclusivity periods), and financial modeling (proprietary algorithms with long competitive value). Research institutions should prioritize encrypting data at rest with hybrid PQC schemes.",
     "relatedModule": "/learn/research-quantum-impact",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Education / Research; Government & Defense; Healthcare / Pharmaceutical"
   },
   {
     "id": "formal-verification",
@@ -2565,7 +2677,8 @@
     "definition": "RFC 8554 stateful hash-based signature scheme that composes multiple LMS trees into a single signing capability with extended lifetime. PQC-relevant for firmware / software signing where the key state can be tracked.",
     "complexity": "advanced",
     "category": "concept",
-    "relatedModule": "/learn/stateful-signatures"
+    "relatedModule": "/learn/stateful-signatures",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "kem",
@@ -2629,7 +2742,8 @@
     "technicalNote": "NIST advanced nine candidates to the third round in May 2026: MPC-in-the-Head (FAEST, MQOM, SDitH), multivariate (UOV, MAYO, QR-UOV, SNOVA), isogeny (SQIsign) and lattice (HAWK). The HAWK team withdrew it on 29 July 2026, leaving eight candidates and none that is lattice-based. NIST expects the third round to last about two years.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "cryptographic-posture-management",
@@ -2711,7 +2825,8 @@
     "definition": "PKCS#11 function that generates an asymmetric key pair (public + private) directly inside the token, so the private key can be created non-extractable and never exists outside the HSM.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/digital-assets"
+    "relatedModule": "/learn/digital-assets",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "c-wrapkey",
@@ -2720,7 +2835,7 @@
     "technicalNote": "The wrapped key's CKA_EXTRACTABLE must be CK_TRUE for C_WrapKey to succeed.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/confidential-computing"
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "id": "c-encapsulatekey",
@@ -2728,7 +2843,7 @@
     "definition": "PKCS#11 v3.2 function for KEM encapsulation: given a recipient's public key it produces a ciphertext plus a freshly derived shared-secret key object — used for ML-KEM (FIPS 203).",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/hybrid-crypto"
+    "relatedModule": "/learn/hsm-pqc"
   },
   {
     "id": "ckm-aes-kw",
@@ -2737,7 +2852,7 @@
     "technicalNote": "CKM_AES_KWP (RFC 5649) is the padded variant for wrapping keys whose length is not a multiple of 8 bytes.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/hsm-pqc"
+    "relatedModule": "/learn/kms-pqc"
   },
   {
     "id": "cpc-code",
@@ -2789,7 +2904,9 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
     "category": "concept",
-    "acronym": "WUA"
+    "acronym": "WUA",
+    "industries": "Government Identity & Travel Documents",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "qualified-electronic-attestation-of-attributes",
@@ -2798,7 +2915,9 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
     "category": "concept",
-    "acronym": "QEAA"
+    "acronym": "QEAA",
+    "industries": "Legal / Notary / eSignature",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "public-body-electronic-attestation-of-attributes",
@@ -2858,7 +2977,8 @@
     "definition": "The GDPR principle (Article 5(1)(c)) requiring personal data to be adequate, relevant and limited to what is necessary for the purposes for which it is processed. Selective disclosure can support minimization technically, but it does not by itself establish necessity or enforce purpose limitation; that depends on the policy that decides which claims are requested and how they are used.",
     "relatedModule": "/learn/digital-id",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "trusted-list",
@@ -2866,7 +2986,8 @@
     "definition": "A machine-readable registry of Qualified Trust Service Providers published by each EU member state, enabling cross-border trust verification.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "eidas-trust-framework",
@@ -2874,7 +2995,8 @@
     "definition": "The cross-border mechanism ensuring mutual recognition of digital identities, wallets and qualified attestations across all 27 EU member states.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "remote-hsm",
@@ -2925,7 +3047,8 @@
     "technicalNote": "OpenSSL 3.5 (April 2025) added ML-KEM, ML-DSA and SLH-DSA, and changed the default TLS supported-groups list to include and prefer hybrid PQC key-exchange groups (default key shares: X25519MLKEM768 and X25519) — the capability the oqsprovider add-on supplied for older 3.x releases. An application gets hybrid PQC TLS from this only when it uses those defaults and the peer also supports a hybrid group: an application or library that sets its own group list or restricts itself to classical algorithms keeps its classical-only behavior, so verify the negotiated group rather than assuming it. Distinct from OpenSSL Provider, which is the plugin architecture that makes this pluggable.",
     "relatedModule": "/learn/os-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "governance-risk-and-compliance",
@@ -2945,7 +3068,8 @@
     "technicalNote": "Because a WAF sits inline with TLS traffic — often terminating it itself — its PQC readiness follows the same path as any other TLS termination point: the underlying TLS stack needs hybrid ML-KEM key exchange, and certificate validation needs to tolerate the larger ML-DSA certificate chains.",
     "relatedModule": "/learn/web-gateway-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "executive-order",
@@ -2955,7 +3079,9 @@
     "technicalNote": "EO 14144 (January 2025) first added PQC provisions to federal cybersecurity policy; EO 14306 (June 2025) narrowed them. EO 14412 superseded both, setting concrete deadlines (FIPS 203/ML-KEM key establishment by Dec 31 2030, FIPS 204/ML-DSA signatures by Dec 31 2031 for High Value Assets) and is implemented via OMB Memorandum M-26-15.",
     "relatedModule": "/timeline",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "cve",
@@ -2971,7 +3097,7 @@
     "term": "VEX",
     "acronym": "Vulnerability Exploitability eXchange",
     "definition": "A machine-readable statement, typically paired with an SBOM, declaring whether a product is actually affected by a specific known vulnerability (CVE) — cutting down alert fatigue from CVEs that exist in a dependency but aren't reachable or exploitable in that product.",
-    "relatedModule": "/learn/vendor-risk",
+    "relatedModule": "/learn/sbom",
     "complexity": "intermediate",
     "category": "concept"
   },
@@ -3026,7 +3152,8 @@
     "technicalNote": "Source: NIST SP 800-90B (January 2018), Section 3 'Entropy Source Validation' (p. 9) and Glossary (p. 62); NIST CMVP Entropy Validation Announcements page, 'ESV Program Rollout' of April 13, 2022 and 'Entropy Source Validation Test Server' of March 24, 2022 (page footer 'Updated August 21, 2026'); NIST ESV-Server README (usnistgov/ESV-Server). SP 800-90B states that validation provides additional assurance that adequate entropy is provided by the source. ESVTS runs the SP 800-90B Entropy Assessment Library to analyze entropy sources, and its Prod environment is available to NVLAP-accredited labs with the 17ESV accreditation scope.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "known-answer-test",
@@ -3036,7 +3163,8 @@
     "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 10.3.A (pp. 102-103, quoting ISO/IEC 19790:2012 Section 7.10.3.2) and General Notes 6-7 (p. 115). General Note 7 permits a KAT to verify equality by comparing a hash of the calculated output to a hash of the known expected output; that hash function must itself be self-tested first. For ML-KEM, ML-DSA and SLH-DSA the guidance describes KATs that use fixed, predetermined values (pp. 110-112).",
     "relatedModule": "/learn/acvp-lab-workflow",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "cryptographic-algorithm-self-test",
@@ -3044,9 +3172,10 @@
     "acronym": "CAST",
     "definition": "A conditional self-test that a FIPS 140-3 cryptographic module performs on the cryptographic functions of each approved algorithm it implements, before the algorithm's first operational use. A CAST may take the form of a known-answer test, a comparison test or a fault-detection test.",
     "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 10.3.A 'Cryptographic Algorithm Self-Test Requirements' (pp. 102-103, quoting ISO/IEC 19790:2012 Sections 7.10.3.1 and 7.10.3.2) and General Notes 5 and 8 (p. 115). Unless otherwise stated, CASTs are performed on the algorithms and parameters (for example key sizes, curves, modes) that an approved service uses. The requirement also applies to allowed algorithms with a claim of security and to legacy algorithms, but a CAST is not required before first execution in the non-approved mode.",
-    "relatedModule": "/learn/fips-140-3-certification",
+    "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "pairwise-consistency-test",
@@ -3056,7 +3185,8 @@
     "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 10.3.A (p. 103, quoting ISO/IEC 19790:2012 Section 7.10.3.3) and its Additional Comment 1 (pp. 115-116). For key pairs generated for SP 800-208 (LMS, XMSS) or FIPS 205 (SLH-DSA), the PCT may be limited to confirming that the resulting public and private key share the same key identifier.",
     "relatedModule": "/learn/fips-140-3-certification",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "sensitive-security-parameter",
@@ -3064,9 +3194,10 @@
     "acronym": "SSP",
     "definition": "In FIPS 140-3, the term that covers both critical security parameters (CSPs) and public security parameters (PSPs). For example, an AES-GCM initialization vector is considered an SSP (a PSP or a CSP) within the module validation, and SSP establishment is the process by which CSPs or PSPs are securely shared within a module or between two or more entities.",
     "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG D.A 'Acceptable SSP Establishment Protocols' (p. 176), IG D.B 'Strength of SSP Establishment Methods' (p. 178) and IG C.H Additional Comment 10 (p. 155). FIPS 140-3 and NIST SP 800-140B Rev. 1 use the term (SP 800-140B expands the abbreviation) but do not define it.",
-    "relatedModule": "/learn/fips-140-3-certification",
+    "relatedModule": "/learn/custody-lifecycle-ops",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "security-policy",
@@ -3075,16 +3206,18 @@
     "technicalNote": "Source: NIST SP 800-140B Rev. 1, CMVP Security Policy Requirements (November 2023), Abstract (p. i), 'Security Requirements' (pp. 3-5) and section 2.4 (p. 9); FIPS 140-3 (March 22, 2019), section 3.3. For example, the vendor-provided non-proprietary security policy must list all vendor-affirmed security methods (p. 5).",
     "relatedModule": "/learn/fips-140-3-certification",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "cryptographic-boundary",
     "term": "Cryptographic Boundary",
     "definition": "The explicitly defined perimeter that establishes the boundary of all components — the set of hardware, software or firmware components — of a cryptographic module. FIPS 140-3 test requirements have the tester verify that the module's block diagram indicates this boundary, and the module's security policy must define it precisely and list any hardware, software or firmware excluded from it.",
     "technicalNote": "Source: CMVP Implementation Guidance for FIPS 140-3 and the Cryptographic Module Validation Program (last update August 19, 2026), IG 9.5.A (p. 85) and IG 2.3.B (p. 27), both quoting the ISO/IEC 19790:2012 definition; NIST SP 800-140 (March 2020), assertions AS02.15, AS02.17 and AS02.18 (pp. 3-5); NIST SP 800-140B Rev. 1 (November 2023), pp. 7 and 9. The test requirements set the boundary rule separately for hardware, firmware and hybrid modules; a hybrid module's boundary is the composite of its hardware component boundary and the disjoint software or firmware component boundary.",
-    "relatedModule": "/learn/fips-140-3-certification",
+    "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "protection-profile",
@@ -3114,7 +3247,8 @@
     "technicalNote": "Source: Common Criteria for Information Technology Security Evaluation, Part 1: Introduction and general model (CC:2022 Revision 1, November 2022), clause 3.90 (p. 25) and clauses 5.3.1-5.3.2 (p. 33). The CC says the relation between the TOE and any IT product matters in one respect: the evaluation of a TOE containing only part of an IT product should not be misrepresented as the evaluation of the entire IT product.",
     "relatedModule": "/learn/cc-eucc-certification",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "modules-in-process-list",
@@ -3124,7 +3258,8 @@
     "technicalNote": "Source: NIST CMVP Modules In Process List page (csrc.nist.gov), 'Last Updated: 10/3/2026'; FIPS 140-3 CMVP Management Manual, Version 2.7 (April 9, 2026), section 4.2 (p. 31) for the voluntary-participation and no-guarantee statements. Per the page, a module moves from Pending Review to Review only after the lab pays the NIST Cost Recovery fee. Status values shown include Pending Review, Review, Comment Resolution - Lab, Comment Resolution - CMVP, Pending Resubmission, Cost Recovery and Finalization; the page does not describe each state and points to the CMVP Modules In Process page for details.",
     "relatedModule": "/compliance",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "cryptographic-and-security-testing-laboratory",
@@ -3132,8 +3267,9 @@
     "acronym": "CSTL",
     "definition": "An independent, NVLAP-accredited laboratory (also written 'CST lab') that tests cryptographic modules for the CMVP. It tests a module to the FIPS 140-3 requirements for the security level and embodiment, and produces a written test report for the CMVP Validation Authorities, who review it. Vendors submit a module and its documentation to the accredited CSTL of their choice.",
     "technicalNote": "Source: FIPS 140-3 CMVP Management Manual, Version 2.7 (April 9, 2026), sections 1.1 (p. 1), 2.6.1-2.6.2 (p. 13) and 2.6.3 (p. 15). A CSTL can conduct algorithmic testing and verify compliance with the algorithm standards (there may be additional requirements beyond what is CAVP-tested), review the module's documentation and source code, and perform the required testing in accordance with the test requirements, SP 800-140x and the Implementation Guidance.",
-    "relatedModule": "/learn/acvp-lab-workflow",
+    "relatedModule": "/learn/crypto-product-certification",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   }
 ]

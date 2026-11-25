@@ -9,13 +9,15 @@
     "id": "ckm-ecdh1-derive",
     "term": "CKM_ECDH1_DERIVE",
     "definition": "PKCS#11 mechanism for Diffie-Hellman key agreement; used for both P-256 and X25519.",
-    "relatedModule": "/learn/hybrid-crypto"
+    "relatedModule": "/learn/5g-security",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "ckm-ml-kem",
     "term": "CKM_ML_KEM",
     "definition": "PKCS#11 mechanism for ML-KEM post-quantum key encapsulation (FIPS 203).",
-    "relatedModule": "/learn/hybrid-crypto"
+    "relatedModule": "/learn/hsm-pqc",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "ckm-sha256",
@@ -63,7 +65,7 @@
     "id": "sha3-256",
     "term": "SHA3-256",
     "definition": "NIST 256-bit SHA-3 hash function; Keccak-based, distinct from SHA-2.",
-    "relatedModule": "/learn/5g-security"
+    "relatedModule": "/learn/pqc-hw-acceleration"
   },
   {
     "id": "hmac-sha-256",
@@ -87,7 +89,7 @@
     "id": "x25519-pkcs11",
     "term": "X25519",
     "definition": "Montgomery-curve Diffie-Hellman over Curve25519; 32-byte raw keys.",
-    "relatedModule": "/learn/hybrid-crypto"
+    "relatedModule": "/learn/5g-security"
   },
   {
     "id": "p-256-pkcs11",
@@ -99,7 +101,8 @@
     "id": "suci-pkcs11",
     "term": "SUCI",
     "definition": "5G Subscription Concealed Identifier — the encrypted form of the SUPI transmitted on air.",
-    "relatedModule": "/learn/5g-security"
+    "relatedModule": "/learn/5g-security",
+    "industries": "Telecommunications"
   },
   {
     "id": "supi-pkcs11",
@@ -117,6 +120,7 @@
     "id": "msin",
     "term": "MSIN",
     "definition": "Mobile Subscriber Identification Number — the portion of the IMSI that is concealed.",
-    "relatedModule": "/learn/5g-security"
+    "relatedModule": "/learn/5g-security",
+    "industries": "Telecommunications"
   }
 ]
