@@ -169,6 +169,28 @@ describe('the new-objective preview', () => {
     expect(buildPreview({ ...base, goal: 'prepare for CNSA 2.0' }).state).toBe('ready')
   })
 
+  it('does not let subject words such as "secure" and "PQC" choose the lessons when the goal names a subject', () => {
+    const p = buildPreview({ ...base, persona: null, goal: 'secure 5G with PQC' })
+    expect(p.state).toBe('ready')
+    expect(p.mapped.map((t) => lessonByTag(t)?.id)).toEqual(['5g-security'])
+  })
+
+  it("reads a lesson's longer page title: X.509 certificates lead to the PKI lesson", () => {
+    const p = buildPreview({ ...base, persona: null, goal: 'X.509 certificates with PQC' })
+    expect(p.mapped.map((t) => lessonByTag(t)?.id)).toContain('pki-workshop')
+    const matches = p.steps.filter((s) => s.required && s.origin.type === 'match')
+    expect(matches.map((s) => lessonByTag(s.tag)?.id)).toEqual(['pki-workshop'])
+  })
+
+  it('keeps a goal about digital assets on its own lesson', () => {
+    const p = buildPreview({
+      ...base,
+      persona: null,
+      goal: 'digital assets and blockchain wallets',
+    })
+    expect(p.mapped.map((t) => lessonByTag(t)?.id)).toEqual(['digital-assets'])
+  })
+
   it('is deterministic: the same inputs give the same preview', () => {
     const a = buildPreview({ ...base, goal: 'Secure boot and firmware signing for our devices' })
     const b = buildPreview({ ...base, goal: 'Secure boot and firmware signing for our devices' })

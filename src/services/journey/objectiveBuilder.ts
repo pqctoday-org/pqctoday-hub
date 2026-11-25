@@ -99,10 +99,13 @@ function goalTokens(goal: string): string[] {
     .toLowerCase()
     .split(/[^a-z0-9]+/)
     .filter(Boolean)
-  const out = parts.map(stem).filter((w) => !STOP.has(w) && w.length > 1)
+  const broad = (w: string) => BROAD.has(w) || BROAD.has(stem(w))
+  const out = parts.map(stem).filter((w) => !STOP.has(w) && !broad(w) && w.length > 1)
   parts.forEach((part, i) => {
     const next = parts.at(i + 1)
-    if (next !== undefined && !STOP.has(part) && !STOP.has(next)) out.push(`${part}${next}`)
+    if (next === undefined || STOP.has(part) || STOP.has(next)) return
+    if (broad(part) && broad(next)) return
+    out.push(`${part}${next}`)
   })
   return out
 }
@@ -127,17 +130,24 @@ interface Indexed {
   descriptionLength: number
 }
 
+/** The lesson page's own longer title, without the site name after the bar. */
+function pageTitle(seoTitle: string | undefined): string {
+  return (seoTitle ?? '').split('|')[0]
+}
+
 let index: Indexed[] | undefined
 function lessonIndex(): Indexed[] {
   index ??= TREE_LESSONS.map((lesson) => ({
     lesson,
-    title: new Set(words(`${lesson.title} ${lesson.shortLabel ?? ''}`)),
+    title: new Set(
+      words(`${lesson.title} ${lesson.shortLabel ?? ''} ${pageTitle(lesson.seoTitle)}`)
+    ),
     keys: new Set(
       words(
         [lesson.track ?? '', ...lesson.taxonomyAlgorithms, ...lesson.taxonomyStandards].join(' ')
       )
     ),
-    text: new Set(words(lesson.description)),
+    text: new Set(words(`${lesson.description} ${lesson.seoDescription ?? ''}`)),
     descriptionLength: lesson.description.split(/\s+/).filter(Boolean).length,
   }))
   return index
@@ -361,7 +371,12 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
   // Other lessons, for the optional list: what they say first, then what they are labelled with.
   const others = scoredAll
     .filter((r) => r.score < MATCH_MIN)
-    .sort((a, b) => b.score + b.label - (a.score + a.label) || byFocus(a, b))
+    .sort(
+      (a, b) =>
+        Number(b.score > 0) - Number(a.score > 0) ||
+        b.score + b.label - (a.score + a.label) ||
+        byFocus(a, b)
+    )
 
   const covered = coveredWords(specific)
   const notCovered = specific.filter((w) => !covered.has(w))
