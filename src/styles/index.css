@@ -460,9 +460,8 @@
     --ribbon: 201.8 45.8% 90.6%; /* #DCEAF2 eyebrow pills on the main ground */
     --caution: 40 51.7% 88.6%; /* #F1E7D3 the caution pill */
     --caution-foreground: 33.6 24.8% 19.8%; /* #3F3426 */
-    /* The pale tile the brand logo sits on. The logo was drawn on the ground colour
-       #F8FAFC, so the tile keeps that colour in dark mode too (set in :root only,
-       so .dark inherits it). */
+    /* The tile the brand logo sits on: the pale ground #F8FAFC the light logo was drawn on.
+       Dark mode uses the dark logo on its own navy (see .dark). */
     --logo-tile: 210 40% 98%;
   }
 
@@ -591,6 +590,7 @@
     --ribbon: 196.7 39.1% 18%; /* #1C3640 */
     --caution: 39.4 38.1% 16.5%; /* #3A2F1A */
     --caution-foreground: 37.9 75.7% 77.5%; /* #F1D19A */
+    --logo-tile: 222 74% 10.6%; /* #07132F the dark logo's own navy ground */
   }
 
   /* On screen: render as transparent block so report content is visible.
@@ -857,6 +857,23 @@
   .glass-panel {
     @apply bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl;
     -webkit-backdrop-filter: blur(0.75rem);
+  }
+
+  /* Brand logo: the light and dark images are both in the page; the theme class picks one. */
+  .brand-logo-dark {
+    display: none;
+  }
+
+  .dark .brand-logo-light {
+    display: none;
+  }
+
+  .dark .brand-logo-dark {
+    display: block;
+  }
+
+  .dark .brand-logo {
+    outline: 1px solid hsl(var(--border));
   }
 
   .text-gradient {
