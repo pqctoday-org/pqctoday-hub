@@ -11,6 +11,7 @@ import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { cn } from '@/lib/utils'
+import { ModuleJourneyHeader } from '@/components/Journey/ModuleJourneyHeader'
 
 interface CuriousModuleViewProps {
   moduleId: string
@@ -90,6 +91,10 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
             Back to Dashboard
           </Button>
           <h1 className="text-3xl font-bold text-gradient">{moduleMeta.title}</h1>
+          {/* Release 5: step bar of the objective in focus, other-role lens, resume line. */}
+          <div className="mt-3">
+            <ModuleJourneyHeader moduleId={moduleId} compact={isMobileShell} />
+          </div>
           <p className="text-muted-foreground mt-2 text-lg">{moduleMeta.description}</p>
           {/* Round 9, wave 2 — "For your role" (the curious persona's paragraph; src/data/personaBlocks.ts). */}
           <PersonaBlock route={`/learn/${moduleId}`} className="mt-3" />

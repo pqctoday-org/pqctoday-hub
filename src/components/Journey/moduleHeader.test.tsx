@@ -4,6 +4,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ModuleJourneyHeader } from './ModuleJourneyHeader'
 import { ModuleFitStrip } from './ModuleFitStrip'
+import { CuriousModuleView } from '@/components/PKILearning/common/CuriousModuleView'
 import { renderAt, resetJourneyWorld, saveObjective, saveTlsObjective } from './journeyTestUtils'
 import { useJourneyStore } from '@/store/useJourneyStore'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -158,6 +159,20 @@ describe('six-module matrix, rendered: every persona, every module', () => {
       }
     })
   }
+})
+
+describe('the curious view of a module carries the journey too', () => {
+  it('shows the other-role lens for a module outside the common-ground path, and the step bar for a step', () => {
+    usePersonaStore.setState({ selectedPersona: 'curious', experienceLevel: 'curious' })
+    const { unmount } = renderAt(<CuriousModuleView moduleId="hsm-pqc" />, '/learn/hsm-pqc')
+    expect(screen.getByTestId('other-role-lens')).toHaveTextContent(
+      'Outside the Curious Explorer path'
+    )
+    unmount()
+    saveObjective('Review our TLS migration design', 'curious')
+    renderAt(<CuriousModuleView moduleId="tls-basics" />, '/learn/tls-basics')
+    expect(screen.getByTestId('journey-step-bar')).toBeInTheDocument()
+  })
 })
 
 describe('one strip under the title', () => {

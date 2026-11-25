@@ -14,16 +14,17 @@ interface LearnViewToggleProps {
 
 // The radiogroup is the set of co-equal ways to BROWSE the module catalog.
 // NOTE: the 'path' view mode shows the learner's persona-curated journey. Its
-// label is "Journey" (not "Path") to avoid colliding with the Track filter,
-// whose options are also called "Paths" ("All Paths"). The internal value stays
-// 'path' so persisted view-mode preferences keep working.
+// label is "Recommended order" (it was "Journey" until release 5, which gives that word to
+// Learn › Your journey, and never "Path", which collides with the Track filter, whose options
+// are also called "Paths"). The internal value stays 'path' so persisted view-mode
+// preferences keep working.
 //
 // NICE is deliberately NOT in this radiogroup (A3): it's a workforce-framework
 // LENS (grouped by competency area), not a peer browse mode — it's a separate
 // toggle button rendered alongside. The grouped NiceView + the ?view=nice
 // deep-link are preserved; 'nice' is still a valid LearnViewMode.
 const OPTIONS: { value: LearnViewMode; label: string; icon: typeof Layers }[] = [
-  { value: 'path', label: 'Journey', icon: Route },
+  { value: 'path', label: 'Recommended order', icon: Route },
   { value: 'stack', label: 'Stack', icon: Layers },
   { value: 'cards', label: 'Cards', icon: LayoutGrid },
   { value: 'table', label: 'Table', icon: Table },
