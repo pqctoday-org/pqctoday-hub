@@ -10,6 +10,10 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { lessonByTag } from '@/services/journey/lessons'
 import { NO_ROLE, type Objective } from '@/services/journey/types'
+import { nowStep } from '@/services/journey/stepRules'
+import { objectiveTitle } from '@/services/journey/stepView'
+import type { MyWorkObjective } from '@/services/myWork/items'
+import type { UpdatesObjective } from '@/services/myWork/updates'
 
 /** True for a tag the learner marked complete, or a lesson the Hub's own progress shows finished. */
 export function useIsDone(): (tag: string) => boolean {
@@ -78,4 +82,41 @@ export function useIsFirstVisit(): boolean {
   const objectiveCount = useJourneyStore((s) => s.order.length)
   const touched = useModuleStore((s) => hasOpenedAnyModule(s.modules))
   return !persona && objectiveCount === 0 && !touched
+}
+
+/**
+ * The journey's objectives in the two shapes the My work and Updates panels read. Only lesson
+ * steps are given: those are the tags the panels know how to name and compare.
+ */
+export function usePanelObjectives(): {
+  work: MyWorkObjective[]
+  updates: UpdatesObjective[]
+} {
+  const objectives = useRoleObjectives()
+  const isDone = useIsDone()
+  return useMemo(() => {
+    const now = (o: Objective) => nowStep(o, isDone)?.resourceTag
+    const work = objectives.map((o) => ({
+      id: o.id,
+      title: objectiveTitle(o),
+      steps: o.steps.filter((s) => s.kind === 'module').map((s) => ({ tag: s.resourceTag })),
+    }))
+    const updates = objectives.map((o) => ({
+      id: o.id,
+      title: objectiveTitle(o),
+      state: o.state,
+      steps: o.steps
+        .filter((s) => s.kind === 'module')
+        .map((s) => ({
+          tag: s.resourceTag,
+          required: s.required && !s.deferred,
+          status: isDone(s.resourceTag)
+            ? ('completed' as const)
+            : s.resourceTag === now(o)
+              ? ('now' as const)
+              : ('not-started' as const),
+        })),
+    }))
+    return { work, updates }
+  }, [objectives, isDone])
 }

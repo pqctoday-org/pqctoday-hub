@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
+import { RoleSwitchNotice } from '@/components/Journey/RoleSwitch'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   Info,
@@ -1578,6 +1579,8 @@ export const MainLayout = () => {
                       {/* "You're viewing Phase X" banner — shows when a ?phase= param is
                           present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
                       <PhaseContextBanner />
+                      {/* After a role switch: "Now viewing as ..." with Undo (renders nothing otherwise). */}
+                      <RoleSwitchNotice />
                       <Outlet />
                       {/* Round 9, wave 1.1 / 1.2 — related content and the declared exit for routed pages. */}
                       <RoutePageExercise mobile={isMobileShell} />

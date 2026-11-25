@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { useJourneyStore } from '@/store/useJourneyStore'
 import { RoleHomeView } from '@/components/RoleHome/RoleHomeView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { MobileSheet } from '../primitives/Sheet'
@@ -38,7 +39,12 @@ export function MobileRoleSelection({ variant, open, onClose }: MobileRoleSelect
   const skipPersonalization = usePersonaStore((s) => s.skipPersonalization)
   const markPickerSeen = usePersonaStore((s) => s.markPickerSeen)
 
+  const selected = usePersonaStore((s) => s.selectedPersona)
   const handleSelect = (id: Parameters<typeof setPersona>[0]) => {
+    // A switch (not the first choice) leaves the note that offers Undo.
+    if (variant === 'switch' && selected && id && id !== selected) {
+      useJourneyStore.getState().noteRoleSwitch(selected, id)
+    }
     setPersona(id)
     markPickerSeen()
     onClose?.()

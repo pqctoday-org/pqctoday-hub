@@ -8,10 +8,10 @@ import { useRef, type KeyboardEvent } from 'react'
 import { useSearchParams } from 'react-router'
 import { cn } from '@/lib/utils'
 import { StoryButton } from '@/components/storybook'
+import { resolvePreviewRole } from '@/services/journey/previewRole'
 import { ObjectivesView } from './ObjectivesView'
 import { RoleMapView } from './RoleMapView'
 import { MyWorkMount, UpdatesMount, useUpdatesCount } from './mountPoints'
-import { RoleSwitchNotice } from './RoleSwitch'
 import { useFocusedObjective } from '@/hooks/useJourney'
 
 export type JourneyView = 'objectives' | 'role-map' | 'my-work' | 'updates'
@@ -23,7 +23,12 @@ export function journeyViewOf(raw: string | null): JourneyView {
 
 export function YourJourneyView() {
   const [params, setParams] = useSearchParams()
-  const view = journeyViewOf(params.get('jview'))
+  // A link naming a role (?role=architect or a work-role id) opens Role map on that role's path.
+  const view = params.get('jview')
+    ? journeyViewOf(params.get('jview'))
+    : resolvePreviewRole(params.get('role'))
+      ? 'role-map'
+      : 'objectives'
   const updates = useUpdatesCount()
   const focused = useFocusedObjective()
   const refs = useRef(new Map<JourneyView, HTMLButtonElement>())
@@ -40,10 +45,13 @@ export function YourJourneyView() {
       (p) => {
         const out = new URLSearchParams(p)
         out.set('mode', 'journey')
+        out.delete('view')
         if (next === 'objectives') out.delete('jview')
         else out.set('jview', next)
         out.delete('step')
         out.delete('objective')
+        // The previewed role belongs to Role map alone.
+        if (next !== 'role-map') out.delete('role')
         return out
       },
       { replace: true }
@@ -66,7 +74,6 @@ export function YourJourneyView() {
 
   return (
     <div className="space-y-4" data-testid="your-journey">
-      <RoleSwitchNotice />
       <div
         role="tablist"
         aria-label="Your journey views"

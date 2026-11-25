@@ -1,82 +1,97 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Mount points: places in Your journey and on the module page that other parts of the release fill.
- * Each is an exported component with a stable name. The journey screens render them where the panel
- * belongs; the lane that owns the panel replaces the body of its mount point (or the import in it),
- * and nothing else in the journey changes.
+ * Mount points: the places in Your journey and on the module page where the panels of other parts
+ * of the release sit. Each is an exported component with a stable name; the journey screens render
+ * them where the panel belongs. This file is the one seam between the journey and those panels:
  *
  * - MyWorkMount, UpdatesMount, useUpdatesCount, ObjectiveWorkLine, StepNotesMount: My work and
  *   Updates (comments, tracked outputs, saved answers, Markdown export, release notices).
- * - BeltScoreMount: the belt score, journey phases and recent events, re-homed to the top of Role map.
- * - ModuleUpdateStripMount, ModuleCommentsMount: the "Revised" strip and the section comments on the module page.
+ * - BeltScoreMount: the belt score, journey phases and recent events, at the top of Role map.
+ * - ModuleUpdateStripMount, ModuleCommentsMount: the "Revised" strip and the comments on the module page.
  *
- * Until a panel is mounted, each one shows the plain empty state of the handoff, so the screen is
- * complete and truthful without it.
+ * The panels read the learner's objectives as plain data (see `usePanelObjectives`); nothing the
+ * learner wrote is copied into the journey store.
  */
-import { Eyebrow, StickerCard } from '@/components/storybook'
+import { useNavigate } from 'react-router'
+import {
+  CommentBox,
+  MyWorkPanel,
+  RevisedSectionStrip,
+  UpdatesPanel,
+  useUnseenUpdateCount,
+} from '@/components/MyWork'
+import { JourneyProgressStrip } from '@/components/RightPanel/JourneyProgressStrip'
+import { useMyWorkStore } from '@/store/useMyWorkStore'
+import { useJourneyStore } from '@/store/useJourneyStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { usePanelObjectives } from '@/hooks/useJourney'
+import { buildItems, filterItems } from '@/services/myWork/items'
+import { journeyHref } from '@/services/journey/stepView'
+import { lessonById } from '@/services/journey/lessons'
+import { barSteps } from '@/services/journey/stepRules'
 
 export interface ObjectiveScope {
   /** The objective the panel is filtered to; null or absent shows everything. */
   objectiveId?: string | null
 }
 
-/** Your journey › My work. Replaced by the My work panel (comments, tracked outputs, saved answers, export). */
+/** Your journey › My work: comments, tracked outputs, saved answers and references, with export. */
 export function MyWorkMount({ objectiveId }: ObjectiveScope) {
+  const { work } = usePanelObjectives()
   return (
-    <StickerCard
-      as="section"
-      aria-label="My work"
-      data-mount="my-work"
-      data-objective={objectiveId ?? ''}
-    >
-      <Eyebrow>My work</Eyebrow>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Stored on this device only. Nothing here counts as completion.
-      </p>
-      <p className="mt-3 font-semibold text-heading">Nothing here yet</p>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Comments, saved answers and notes you keep while you learn appear here.
-      </p>
-    </StickerCard>
+    <div data-mount="my-work" data-objective={objectiveId ?? ''}>
+      {/* No "open the answer" button yet: the drawer has no way to show a stored answer again. */}
+      <MyWorkPanel objectives={work} />
+    </div>
   )
 }
 
-/** The number on the "Updates · n" tab. Replaced by the count of unseen notices. */
+/** The number on the "Updates · n" tab: the notices the learner has not yet seen. */
 export function useUpdatesCount(): number {
-  return 0
+  const { updates } = usePanelObjectives()
+  return useUnseenUpdateCount(updates)
 }
 
-/** Your journey › Updates. Replaced by the release comparison and notices. */
+/** Your journey › Updates: the release comparison and the notices. */
 export function UpdatesMount({ objectiveId }: ObjectiveScope) {
+  const { updates } = usePanelObjectives()
+  const persona = usePersonaStore((s) => s.selectedPersona)
   return (
-    <StickerCard
-      as="section"
-      aria-label="Updates"
-      data-mount="updates"
-      data-objective={objectiveId ?? ''}
-    >
-      <Eyebrow>Updates</Eyebrow>
-      <p className="mt-2 font-semibold text-heading">
-        You&apos;re up to date for your saved objectives.
-      </p>
-    </StickerCard>
+    <div data-mount="updates" data-objective={objectiveId ?? ''}>
+      <UpdatesPanel objectives={updates} personaId={persona} />
+    </div>
   )
 }
 
-/** The line "Work: 2 comments · 1 artifact" under an objective. Replaced by the counts from My work. */
+/** "Work: 2 comments · 1 artifact" under an objective, counted the way My work counts. */
 export function ObjectiveWorkLine({ objectiveId }: { objectiveId: string }) {
+  const { work } = usePanelObjectives()
+  const comments = useMyWorkStore((s) => s.comments)
+  const outputs = useMyWorkStore((s) => s.outputs)
+  const answers = useMyWorkStore((s) => s.answers)
+  const references = useMyWorkStore((s) => s.references)
+  const objective = work.find((o) => o.id === objectiveId)
+  const items = objective
+    ? filterItems(buildItems({ comments, outputs, answers, references }, work), objectiveId, 'all')
+    : []
+  const nComments = items.filter((i) => i.type === 'comment').length
+  const nArtifacts = items.filter((i) => i.type !== 'comment').length
   return (
     <p
       className="text-sm text-muted-foreground"
       data-mount="objective-work-line"
       data-objective={objectiveId}
     >
-      Work: 0 comments · 0 artifacts
+      Work: {nComments} {nComments === 1 ? 'comment' : 'comments'} · {nArtifacts}{' '}
+      {nArtifacts === 1 ? 'artifact' : 'artifacts'}
     </p>
   )
 }
 
-/** The notes area of a self-assessed step: "Start my notes from this outline" and the draft box. */
+/**
+ * The notes area of a self-assessed step. The learner's notes are comments on the last lesson of
+ * the objective, so they show in My work under this objective. They are never proof of skill.
+ */
 export function StepNotesMount({
   objectiveId,
   stepId,
@@ -87,27 +102,64 @@ export function StepNotesMount({
   /** The points the work should cover, as lines of text. */
   outline: string[]
 }) {
+  const navigate = useNavigate()
+  const objective = useJourneyStore((s) => s.objectives[objectiveId]) // eslint-disable-line security/detect-object-injection
+  const lastLesson = objective
+    ? barSteps(objective)
+        .filter((s) => s.kind === 'module')
+        .at(-1)
+    : undefined
   return (
     <div
       data-mount="step-notes"
       data-objective={objectiveId}
       data-step={stepId}
       data-outline={outline.length}
-    />
+    >
+      {lastLesson ? (
+        <CommentBox
+          tag={lastLesson.resourceTag}
+          title="Draft notes (optional)"
+          onReviewUpdate={() => navigate(journeyHref({ view: 'updates' }))}
+        />
+      ) : null}
+    </div>
   )
 }
 
-/** The belt score, journey phases and recent events, shown at the top of Role map. Renders nothing until mounted. */
+/** The belt score, journey phases, recent events and badges, at the top of Role map. */
 export function BeltScoreMount() {
-  return <div data-mount="belt-score" />
+  return (
+    <div data-mount="belt-score">
+      <JourneyProgressStrip />
+    </div>
+  )
 }
 
-/** The strip on a revised module ("Revised: ..."). Renders nothing until mounted. */
+/** The "Revised" strip of a module page, when the lesson changed past what the learner last read. */
 export function ModuleUpdateStripMount({ moduleId }: { moduleId: string }) {
-  return <div data-mount="module-update-strip" data-module={moduleId} />
+  const navigate = useNavigate()
+  const tag = lessonById(moduleId)?.lmId
+  return (
+    <div data-mount="module-update-strip" data-module={moduleId}>
+      {tag ? (
+        <RevisedSectionStrip
+          tag={tag}
+          onReview={() => navigate(journeyHref({ view: 'updates' }))}
+        />
+      ) : null}
+    </div>
+  )
 }
 
-/** "Your comments on this section" on the module page. Renders nothing until mounted. */
+/** "Your comments on this module" on the module page. */
 export function ModuleCommentsMount({ moduleId }: { moduleId: string }) {
-  return <div data-mount="module-comments" data-module={moduleId} />
+  const navigate = useNavigate()
+  const tag = lessonById(moduleId)?.lmId
+  if (!tag) return <div data-mount="module-comments" data-module={moduleId} />
+  return (
+    <div data-mount="module-comments" data-module={moduleId}>
+      <CommentBox tag={tag} onReviewUpdate={() => navigate(journeyHref({ view: 'updates' }))} />
+    </div>
+  )
 }

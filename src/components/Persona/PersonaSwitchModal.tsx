@@ -3,6 +3,7 @@
    typed union (Region / PersonaId) or a value drawn from AVAILABLE_INDUSTRIES itself, never
    free-form user input; RegionIndustryPill.tsx (folded into this modal) used the same
    file-level suppression for the identical pattern. */
+import { useJourneyStore } from '@/store/useJourneyStore'
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
@@ -135,6 +136,8 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
 
   const handleSelect = (id: PersonaId) => {
     if (id !== selectedPersona) {
+      // The role switch note, with its Undo, shows on the page the learner returns to.
+      if (selectedPersona) useJourneyStore.getState().noteRoleSwitch(selectedPersona, id)
       setPersona(id)
       logPersonaSelected(id, 'switch')
     }

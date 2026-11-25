@@ -6,7 +6,7 @@
  * to the Learn filters. Industry and region change emphasis, never hide a branch. Nothing is hidden.
  */
 import { useId, useMemo, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import {
   Chip,
   Eyebrow,
@@ -21,6 +21,7 @@ import { RoleSwitchDialog, roleLabel } from './RoleSwitch'
 import { usePersonaStore, type Region } from '@/store/usePersonaStore'
 import { useIsDone } from '@/hooks/useJourney'
 import { allOnPath, rolePathForPersona } from '@/services/journey/rolePaths'
+import { resolvePreviewRole } from '@/services/journey/previewRole'
 import { startHere } from '@/services/journey/levels'
 import { STAGES, type TreeLesson } from '@/services/journey/lessons'
 import { NICE_COMPETENCY_AREAS, type NiceProficiencyTier } from '@/data/niceFramework'
@@ -78,7 +79,10 @@ export function RoleMapView() {
   const [moreOpen, setMoreOpen] = useState(false)
   const moreId = useId()
 
-  const path = useMemo(() => rolePathForPersona(persona), [persona])
+  const [params, setParams] = useSearchParams()
+  // ?role=<persona or work-role id>: look at that role's path without switching the learner's own role.
+  const preview = useMemo(() => resolvePreviewRole(params.get('role')), [params])
+  const path = useMemo(() => preview?.path ?? rolePathForPersona(persona), [preview, persona])
   const everything = useMemo(() => (path ? allOnPath(path) : []), [path])
   const here = path ? startHere(path.parts, level, isDone) : null
 
@@ -118,6 +122,33 @@ export function RoleMapView() {
   return (
     <div className="space-y-5" data-testid="role-map">
       <BeltScoreMount />
+      {preview ? (
+        <div
+          role="status"
+          data-testid="role-preview"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border-2 border-ink bg-highlight px-4 py-3 text-heading"
+        >
+          <p className="text-sm font-bold">
+            Viewing the path for {preview.label}.{' '}
+            <span className="font-normal">This does not change your own role.</span>
+          </p>
+          <StoryButton
+            variant="secondary"
+            onClick={() =>
+              setParams(
+                (p) => {
+                  const next = new URLSearchParams(p)
+                  next.delete('role')
+                  return next
+                },
+                { replace: true }
+              )
+            }
+          >
+            {persona ? `Back to my role (${roleLabel(persona)})` : 'Back to Your journey'}
+          </StoryButton>
+        </div>
+      ) : null}
       <StickerCard as="section" aria-label="Role summary" className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <dl className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:grid-cols-4">
@@ -159,8 +190,12 @@ export function RoleMapView() {
           <section aria-label="Your path" className="space-y-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <Eyebrow>
-                {path.kind === 'common-ground' ? 'The common-ground lessons' : 'Your path'} ·{' '}
-                {shownDone} of {path.parts.length} done
+                {path.kind === 'common-ground'
+                  ? 'The common-ground lessons'
+                  : preview
+                    ? `Path for ${preview.label}`
+                    : 'Your path'}{' '}
+                · {shownDone} of {path.parts.length} done
               </Eyebrow>
               {path.lengthStatement ? (
                 <span className="text-sm font-bold text-heading" data-testid="path-length">
