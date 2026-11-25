@@ -174,7 +174,15 @@ test.describe('library — persona-overwhelm-p0', () => {
     // param commits a render tick before personaPreferredCategories flips to
     // []), so use a real retrying assertion instead of a snapshot read.
     await expect(page).toHaveURL(/prefs=off/)
-    await expect(page.getByText('Narrowed to your role')).toHaveCount(0, { timeout: 5000 })
+    // The chip and the "narrowed to your role's focus areas" banner both go once the pipeline has
+    // re-filtered the ~1,700 documents and redrawn the list. That takes about 0.8 s on a fast
+    // machine, about 3 s with the CPU slowed 6x and about 12 s at 20x (measured 25 Nov 2026,
+    // CDP CPU throttling, same build). A CI runner is several times slower than a laptop (this
+    // file's tests take 20 s there against 4 s here), so the old 5 s window closed while the page
+    // was still catching up: the nightly saw both elements for the whole window and then gave up,
+    // although the page did clear. The assertion is unchanged; only the time it may wait for the
+    // redraw matches what the page-ready checks above already allow.
+    await expect(page.getByText('Narrowed to your role')).toHaveCount(0, { timeout: 20000 })
 
     const expandedCount = await readDocumentCount(page)
     expect(expandedCount).toBeGreaterThan(narrowedCount)
