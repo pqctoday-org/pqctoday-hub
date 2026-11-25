@@ -214,7 +214,7 @@ export const PKILearningView: React.FC = () => {
               'completed'; not in the embedded sim). Keyed so each module watches
               only itself. */}
           {showSidebar && !isEmbed && (
-            <ModuleCompletionWatcher key={moduleId} moduleId={moduleId} />
+            <ModuleCompletionWatcher key={`completion-${moduleId}`} moduleId={moduleId} />
           )}
 
           {isCuriousMode && showSidebar ? (
@@ -274,7 +274,7 @@ export const PKILearningView: React.FC = () => {
           )}
           {showSidebar && !isEmbed && (
             <ProductionCapabilityChecklist
-              key={moduleId}
+              key={`checklist-${moduleId}`}
               moduleId={moduleId}
               worksheetRef={worksheetRef}
               onReturn={returnTarget?.moduleId === moduleId ? returnToWorkshop : undefined}
