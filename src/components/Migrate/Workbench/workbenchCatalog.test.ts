@@ -18,6 +18,7 @@ import {
 } from './workbenchCatalog'
 import type { SoftwareItem } from '../../../types/MigrateTypes'
 import { softwareData, vendorMap, retiredProductSuccessors } from '@/data/migrateData'
+import { classifyProductDomain } from '@/data/migrationAssets'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 
 function item(overrides: Partial<SoftwareItem>): SoftwareItem {
@@ -130,6 +131,34 @@ describe('searchProducts — catalog-wide product/vendor search (AssetList top s
     // 'a' matches a huge fraction of the ~1000-product catalog by name or
     // vendor — the cap is what keeps the sidebar a quick jump-to.
     expect(searchProducts('a', 3)).toHaveLength(3)
+  })
+})
+
+describe('industry application baselines in the Workbench', () => {
+  it.each(['Learning Management Systems', 'Electronic Health Record Systems'])(
+    'indexes %s before optional layer placement',
+    (category) => {
+      expect(classifyProductDomain(category, '')).toBe('platform')
+    }
+  )
+
+  it('finds admitted school and hospital application baselines in search and filtered browsing', () => {
+    const baselines = softwareData.filter(
+      (p) =>
+        ['CSC-163', 'CSC-164'].includes(p.categoryId) &&
+        p.cataloguePopulation === 'migration_baseline' &&
+        p.pqcStatusCanonical === 'unknown'
+    )
+    expect(baselines.length).toBeGreaterThan(0)
+    const visible = applyProductFacets(
+      productsForDomain('platform'),
+      { ...NO_FACETS, population: 'migration_baseline', pqc: 'unknown' },
+      () => false
+    )
+    for (const p of baselines) {
+      expect(visible).toContain(p)
+      expect(searchProducts(p.productId).map((hit) => hit.product)).toContain(p)
+    }
   })
 })
 
