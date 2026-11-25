@@ -9,6 +9,8 @@ export interface AssistantReturnTarget {
   path: string
   /** Plain name of that page, for "Back to <page>" on a phone. */
   label: string
+  /** The accessible name of the row action that opened the page, so focus can go back to it. */
+  origin?: string
 }
 
 interface AssistantReturnState {

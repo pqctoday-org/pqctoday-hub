@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowLeft } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router'
@@ -14,38 +14,59 @@ import { useAssistantLayout } from './useAssistantLayout'
  * its own detail dialog on arrival; its backdrop sits over the page chrome, and a screen reader
  * treats everything outside a modal dialog as unavailable. The Assistant's own sheet is not counted.
  */
+function currentModal(): HTMLElement | null {
+  const modals = document.querySelectorAll<HTMLElement>(
+    '[aria-modal="true"]:not([data-assistant-layout])'
+  )
+  return modals.length > 0 ? modals[modals.length - 1] : null
+}
+
+function subscribeToModals(onChange: () => void): () => void {
+  let frame = 0
+  const schedule = () => {
+    if (!frame)
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        onChange()
+      })
+  }
+  const observer = new MutationObserver(schedule)
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['aria-modal'],
+  })
+  return () => {
+    observer.disconnect()
+    if (frame) cancelAnimationFrame(frame)
+  }
+}
+
 function useCoveringModal(active: boolean): HTMLElement | null {
-  const [host, setHost] = useState<HTMLElement | null>(null)
-  useEffect(() => {
-    if (!active) {
-      setHost(null)
-      return
+  const modal = useSyncExternalStore(subscribeToModals, currentModal, () => null)
+  return active ? modal : null
+}
+
+/**
+ * Focus goes back to the row action that opened the page, once the drawer shows the answer again.
+ * The drawer may need a moment to mount, so the look is repeated for a short while.
+ */
+function focusOrigin(origin: string | undefined): void {
+  if (!origin) return
+  let tries = 0
+  const look = () => {
+    const el = document.querySelector<HTMLElement>(
+      `[data-assistant-layout] button[aria-label="${CSS.escape(origin)}"]`
+    )
+    if (el) {
+      el.focus()
+      el.scrollIntoView?.({ block: 'nearest' })
+    } else if (++tries < 30) {
+      requestAnimationFrame(look)
     }
-    let frame = 0
-    const look = () => {
-      frame = 0
-      const modals = Array.from(
-        document.querySelectorAll<HTMLElement>('[aria-modal="true"]:not([data-assistant-layout])')
-      )
-      setHost(modals.at(-1) ?? null)
-    }
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(look)
-    }
-    look()
-    const observer = new MutationObserver(schedule)
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['aria-modal'],
-    })
-    return () => {
-      observer.disconnect()
-      if (frame) cancelAnimationFrame(frame)
-    }
-  }, [active])
-  return host
+  }
+  requestAnimationFrame(look)
 }
 
 /**
@@ -84,7 +105,10 @@ export function AssistantReturnBar() {
     const destination = target.path
     clear()
     navigate(destination)
-    if (!phone) useRightPanelStore.getState().open('chat')
+    if (!phone) {
+      useRightPanelStore.getState().open('chat')
+      focusOrigin(target.origin)
+    }
   }
 
   const button = (

@@ -119,6 +119,7 @@ export function AssistantConversation() {
         useAssistantReturnStore.getState().begin({
           path: `${pathname}${search}`,
           label: describeCurrentPage(pathname),
+          origin: `${row.action}: ${row.title}`,
         })
       }
       // The phone sheet closes while a page is open; the desktop drawer stays beside the page.

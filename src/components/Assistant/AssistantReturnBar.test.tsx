@@ -61,6 +61,28 @@ describe('return from a page opened from an answer', () => {
     expect(useAssistantReturnStore.getState().target).toBeNull()
   })
 
+  it('desktop: focus goes back to the row action that opened the page', async () => {
+    const drawer = document.createElement('div')
+    drawer.setAttribute('data-assistant-layout', 'docked')
+    const opener = document.createElement('button')
+    opener.setAttribute('aria-label', 'Go to page: CNSA 2.0')
+    drawer.appendChild(opener)
+    document.body.appendChild(drawer)
+    try {
+      useAssistantReturnStore
+        .getState()
+        .begin({ path: '/learn', label: 'Learn', origin: 'Go to page: CNSA 2.0' })
+      mount()
+      act(() => go('/compliance'))
+      await userEvent
+        .setup()
+        .click(await screen.findByRole('button', { name: 'Back to your answer' }))
+      await waitFor(() => expect(opener).toHaveFocus())
+    } finally {
+      drawer.remove()
+    }
+  })
+
   it('phone: names where it goes, and does not reopen the sheet', async () => {
     layout.value = 'sheet'
     useAssistantReturnStore.getState().begin({ path: '/learn', label: 'TLS Basics' })
@@ -108,11 +130,10 @@ describe('return from a page opened from an answer', () => {
       ).toBe(dialog)
     )
     dialog.remove()
-    await waitFor(() =>
-      expect(
-        screen.getByRole('button', { name: 'Back to your answer' }).closest('[aria-modal]')
-      ).toBeNull()
-    )
+    await waitFor(() => {
+      const back = screen.getByRole('button', { name: 'Back to your answer' })
+      expect(back.closest('[aria-modal]')).toBeNull()
+    })
   })
 
   it('ends when the learner moves on from the opened page', async () => {
