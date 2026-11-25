@@ -50,7 +50,8 @@ for (const [name, viewport] of [
   ['390 px phone', PHONE],
 ] as const) {
   test.describe(`Assistant drawer on a ${name}`, () => {
-    test.use({ viewport })
+    // The PWA worker's own fetches cannot be refused from the page, so the data-not-loaded test needs it blocked.
+    test.use({ viewport, serviceWorkers: 'block' })
 
     test.beforeEach(async ({ page }) => {
       await seedHub(page)

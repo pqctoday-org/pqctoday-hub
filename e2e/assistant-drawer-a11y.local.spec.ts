@@ -57,7 +57,8 @@ for (const theme of ['light', 'dark'] as const) {
     ['390 px phone', PHONE],
   ] as const) {
     test.describe(`Assistant drawer accessibility, ${theme}, ${name}`, () => {
-      test.use({ viewport })
+      // The PWA worker's own fetches cannot be held or refused from the page, so it is blocked here.
+      test.use({ viewport, serviceWorkers: 'block' })
 
       test('every state has no axe violations', async ({ page }) => {
         test.setTimeout(180_000)
