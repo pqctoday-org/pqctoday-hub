@@ -96,14 +96,16 @@ describe('See all links in the For You panel', () => {
   })
 
   it('does not say nothing matches when the role filter left every document out', () => {
-    // For a developer in Australia in Healthcare the category filter leaves out all twelve
-    // applicable library documents, so the section is empty but not "no match".
+    // For a certification engineer in Australia in Healthcare the category filter leaves out all twelve
+    // applicable library documents, so the section is empty but not "no match". (It was a developer
+    // until the Library's categories were filled: one document now sits under Protocols, which the
+    // developer lens keeps.)
     const hidden = { country: 'Australia', industry: 'Healthcare' }
-    const lensed = applyLens(allApplicable(hidden), 'developer')
+    const lensed = applyLens(allApplicable(hidden), 'cert-engineer')
     expect(lensed.library).toHaveLength(0)
     const omitted = sum(lensed.droppedCounts.library)
     expect(omitted).toBeGreaterThan(0)
-    renderTab(hidden, 'developer')
+    renderTab(hidden, 'cert-engineer')
     const section = within(sectionOf('Library — Standards & Specifications'))
     expect(section.queryByText('No items match this profile.')).not.toBeInTheDocument()
     expect(section.getByText('Nothing is shown here for your role.')).toBeInTheDocument()
