@@ -8,7 +8,7 @@
  *     `resources.businessTools` lists only)
  *
  * Every organising field of a tool (name and number, category, order, level,
- * recommended roles, lesson link, NICE mapping, CSWP.39 placement, framework
+ * recommended roles, lesson link, NICE mapping and statements, CSWP.39 placement, framework
  * phase, version) lives once in the CSV. Lists are `;`-separated. Ids, levels,
  * categories, phases, zones, roles and NICE ids are typed as the existing
  * TypeScript unions, so a bad value fails `tsc`. Content (descriptions, intro,
@@ -24,6 +24,7 @@ import Papa from 'papaparse'
 import prettier from 'prettier'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
+const NICE_COMPONENTS = join(ROOT, 'pqc-references', 'NICE-Framework-Components-v2.2.0.json')
 const DATA = join(ROOT, 'src', 'data')
 const OUT = join(DATA, 'generated', 'tools.generated.ts')
 const EMBED = join(ROOT, 'public', 'embed', 'manifest.json')
@@ -44,6 +45,8 @@ const COLUMNS = [
   'nice_tier',
   'nice_competency_areas',
   'nice_work_roles',
+  'nice_statements_taught',
+  'nice_statements_practised',
   'framework_phase',
   'cswp39_zone',
   'cswp39_zone_sub_element',
@@ -79,6 +82,21 @@ const list = (value) =>
     : []
 const text = (value) => (value === '' ? undefined : value)
 const bool = (value) => (value === '' ? undefined : value === 'true')
+const STATEMENT_ID = /^[KST]\d{4}$/
+// The statements a tool teaches or practises: `;`-separated NICE ids, each in the vendored v2.2.0
+// components, none repeated, none listed in both columns (the lessons file's rules).
+const officialStatements = new Set(
+  JSON.parse(readFileSync(NICE_COMPONENTS, 'utf8')).elements.map((e) => e.element_identifier)
+)
+function statements(row, column) {
+  const ids = list(row[column])
+  for (const id of ids) {
+    if (!STATEMENT_ID.test(id)) fail(row, `bad ${column} id "${id}"`)
+    if (!officialStatements.has(id)) fail(row, `${column} id ${id} is not in the NICE components`)
+  }
+  if (new Set(ids).size !== ids.length) fail(row, `repeated id in ${column}`)
+  return ids
+}
 
 function fail(row, message) {
   throw new Error(`${row.tool_id || '(blank tool_id)'}: ${message}`)
@@ -108,7 +126,7 @@ function load() {
       fail(row, `tool_id and kind disagree about the "${SANDBOX_PREFIX}" prefix`)
     }
     if (isBusiness) {
-      for (const column of ['pt_id', 'version', 'level', 'module', 'sandbox_track']) {
+      for (const column of ['pt_id', 'version', 'level', 'sandbox_track']) {
         if (row[column]) fail(row, `a business tool has no ${column}`)
       }
       if (row.recommended_personas) fail(row, 'a business tool has no recommended_personas')
@@ -130,7 +148,6 @@ function load() {
       }
       if (isSandbox) {
         if (row.version) fail(row, 'a sandbox tool version is generated, not stored')
-        if (row.module) fail(row, 'a sandbox tool has no lesson link')
         if (!row.sandbox_track) fail(row, 'a sandbox tool needs sandbox_track')
       } else {
         if (!SEMVER.test(row.version)) fail(row, `bad version "${row.version}"`)
@@ -138,6 +155,11 @@ function load() {
         if (row.work_in_progress) fail(row, 'only a sandbox tool has work_in_progress')
       }
       if (list(row.recommended_personas).length === 0) fail(row, 'blank recommended_personas')
+    }
+    const niceStatementsTaught = statements(row, 'nice_statements_taught')
+    const niceStatementsPractised = statements(row, 'nice_statements_practised')
+    if (niceStatementsTaught.some((id) => niceStatementsPractised.includes(id))) {
+      fail(row, 'a NICE statement is listed as both taught and practised')
     }
     return {
       toolId: row.tool_id,
@@ -150,6 +172,8 @@ function load() {
       ...(row.level ? { level: row.level } : {}),
       ...(text(row.module) ? { module: row.module } : {}),
       ...(text(row.sandbox_track) ? { sandboxTrack: row.sandbox_track } : {}),
+      ...(niceStatementsTaught.length > 0 ? { niceStatementsTaught } : {}),
+      ...(niceStatementsPractised.length > 0 ? { niceStatementsPractised } : {}),
       ...(isBusiness ? {} : { recommendedPersonas: list(row.recommended_personas) }),
       ...(text(row.audience) ? { audience: row.audience } : {}),
       ...(isBusiness
@@ -217,6 +241,11 @@ interface ToolRecordBase {
   /** The Hub's id (sandbox tools carry the \`sbx-\` prefix). */
   toolId: string
   name: string
+  /** The lesson this tool belongs to, where it has one (its home lesson). */
+  module?: string
+  /** NICE statements the tool teaches, and the ones it has a learner practise. Absent until filled. */
+  niceStatementsTaught?: readonly string[]
+  niceStatementsPractised?: readonly string[]
   /** Position on the page: one run across Playground and sandbox tools, its own run for business tools. */
   order: number
 }
@@ -235,8 +264,6 @@ export interface PlaygroundToolRecord extends ToolRecordBase, NiceFields {
   version: string
   category: WorkshopCategory
   level: ToolDifficulty
-  /** The lesson this tool belongs to, where it links to one. */
-  module?: string
   recommendedPersonas: readonly PersonaId[]
 }
 
