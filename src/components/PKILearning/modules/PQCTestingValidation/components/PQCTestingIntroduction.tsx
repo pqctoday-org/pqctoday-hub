@@ -23,6 +23,9 @@ import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteB
 import { Button } from '@/components/ui/button'
 import manifest from '../manifest'
 import { CERTIFICATION_PATH } from '../data/learnPathTags'
+import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
+import { SYSTEM_INTEGRATION_SECTION } from '../data/systemIntegrationSection'
+import { STATIC_DISCOVERY_SECTION } from '../data/staticDiscoverySection'
 
 interface CollapsibleSectionProps {
   icon: React.ReactNode
@@ -767,6 +770,22 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         </p>
 
         <ReadingCompleteButton />
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        sectionId="system-integration"
+        icon={<Radio size={24} className="text-primary" />}
+        title={SYSTEM_INTEGRATION_SECTION.title}
+      >
+        <SourcedSectionBody section={SYSTEM_INTEGRATION_SECTION} />
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        sectionId="static-analysis-discovery"
+        icon={<ScanSearch size={24} className="text-primary" />}
+        title={STATIC_DISCOVERY_SECTION.title}
+      >
+        <SourcedSectionBody section={STATIC_DISCOVERY_SECTION} />
       </CollapsibleSection>
 
       {/* CTA */}

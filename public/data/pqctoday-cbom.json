@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:324970c1-fc54-4c7e-bb66-93fa7bf3f794",
+  "serialNumber": "urn:uuid:7405626c-f992-4e5e-9392-f76cdad74e25",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-18T00:00:00.000Z",
+    "timestamp": "2026-11-24T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -1232,7 +1232,7 @@
           "primitive": "other"
         }
       },
-      "description": "The vendor describes the library as containing exclusively PQC-resistant algorithms; it also includes classical Curve25519/Curve448 (ED25519/X25519, ED448/X448) for use in hybrid PQC constructions. It implements the NIST-standardized schemes ML-DSA/Dilithium, ML-KEM/Kyber and SLH-DSA/Sphincs+, plus the NIST round 4 KEM candidate BIKE. Accelerated implementations exist for x86_64, ARMv7/ARMv8, and RISCV64. Algorithms testable with NIST ACVP are tested and hold official CAVP certificates.",
+      "description": "The vendor describes the library as containing exclusively PQC-resistant algorithms; it also includes classical Curve25519/Curve448 (ED25519/X25519, ED448/X448) for use in hybrid PQC constructions. It implements the NIST-standardized schemes ML-DSA/Dilithium, ML-KEM/Kyber and SLH-DSA/Sphincs+, plus the NIST round 4 KEM candidate BIKE. Accelerated implementations exist for x86_64, ARMv7/ARMv8, and RISCV64. Algorithms testable with NIST ACVP are tested and hold official CAVP certificates. NIST lists Ascon-AEAD128 authenticated encryption and Ascon-Hash256 hashing for the AVX512 implementation without PAA.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -2738,7 +2738,7 @@
           "primitive": "other"
         }
       },
-      "description": "Open-Quantum-Safe C library. KEMs: ML-KEM-512/768/1024, BIKE, Classic McEliece, FrodoKEM (ephemeral + salted variants), HQC (updated to Aug-2025 spec, default), NTRU/NTRU-Prime. Signatures: ML-DSA (mldsa-native default), SLH-DSA (SPHINCS+ removed in 0.16.0), Falcon, CROSS, MAYO, MQOM, SNOVA, UOV. Stateful-hash: LMS, XMSS.",
+      "description": "Open-Quantum-Safe C library. KEMs: ML-KEM-512/768/1024, BIKE, Classic McEliece, FrodoKEM (ephemeral + salted variants), HQC (updated to Aug-2025 spec, default), NTRU/NTRU-Prime. Signatures: ML-DSA (mldsa-native default), SLH-DSA (SPHINCS+ removed in 0.16.0), Falcon, CROSS, MAYO, MQOM, SNOVA, UOV. Stateful-hash: LMS, XMSS. The upstream signature table also lists FAEST, QR-UOV and SDitH as Tier 3 community implementations.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -5906,7 +5906,7 @@
           "primitive": "other"
         }
       },
-      "description": "Dedicated managed HSM service in AWS. The CloudHSM CLI generates ML-DSA-44/65/87 key pairs in the cluster and signs and verifies with them; per AWS, starting September 1, 2026 ML-DSA is available in FIPS mode for hsm2m.medium clusters. Through the PKCS#11 library (compliant with PKCS#11 v2.40), ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA, CKM_CLOUDHSM_EXT_MU_ML_DSA), not the standard PKCS#11 v3.2 ML-DSA mechanisms. The CLI's key generate-asymmetric-pair category lists only ec, ml-dsa and rsa, so no ML-KEM key generation is documented. AWS KMS provides PQC TLS endpoints with ML-KEM hybrid separately. Managed service with multi-AZ redundancy.",
+      "description": "Dedicated managed HSM service in AWS. The CloudHSM CLI generates ML-DSA-44/65/87 key pairs in the cluster and signs and verifies with them; per AWS, starting September 1, 2026 ML-DSA is available in FIPS mode for hsm2m.medium clusters. Through the PKCS#11 library (compliant with PKCS#11 v2.40), ML-DSA uses vendor-defined mechanisms (CKM_CLOUDHSM_ML_DSA_KEY_PAIR_GEN, CKM_CLOUDHSM_ML_DSA, CKM_CLOUDHSM_EXT_MU_ML_DSA), not the standard PKCS#11 v3.2 ML-DSA mechanisms. The CLI's key generate-asymmetric-pair category lists only ec, ml-dsa and rsa, so no ML-KEM key generation is documented. CloudHSM public control-plane endpoints support hybrid post-quantum TLS key exchange on FIPS and non-FIPS endpoints in commercial and US GovCloud regions. Managed service with multi-AZ redundancy.",
       "externalReferences": [
         {
           "type": "website",
@@ -40062,6 +40062,88 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "8e432cec64b086ea",
+      "name": "Microchip TS1800",
+      "manufacturer": {
+        "name": "Microchip Technology Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "other"
+        }
+      },
+      "description": "Microchip describes the TS1800 as an external platform root of trust for secure boot, firmware updates, attestation and certificate handling. Its accelerators implement ML-DSA, LMS verification and ML-KEM. Microchip announced controller and evaluation-board access through its early-adopter program on April 28, 2026.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Microchip-TS1800"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "065b7fb5a018c259",
+      "name": "Microchip TS50x Family",
+      "manufacturer": {
+        "name": "Microchip Technology Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "The TS50x secure boot controller family verifies SPI flash firmware signatures using PQC and classical ECC P-384. It holds the main chipset in reset until verification succeeds. Microchip announced controller and evaluation-board access through its early-adopter program on April 28, 2026.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Microchip-TS50x-Family"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security & Semiconductors"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
         }
       ]
     }

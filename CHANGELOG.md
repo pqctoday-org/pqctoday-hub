@@ -29,6 +29,27 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.224.0] - 2026-11-25
+
+Every Learn module now shows which NICE skills it teaches, Library documents are tagged by industry and lesson, and new lesson sections close 13 NICE skill gaps.
+
+### Added
+
+- **NICE skills on every Learn module** [view:/learn] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: Under "Where this fits", a one-line summary shows how many NICE Framework skills the module teaches, how many you practise in its Workshop, and which work roles it serves. Open it to see each skill with its official NICE wording and the competency areas. Modules not yet reviewed against NICE show no panel.
+- **14 new lesson sections for NICE skills the Hub did not teach yet** [view:/learn] [persona:grc] [persona:developer] [persona:architect] [persona:ops]: New sourced sections in 10 modules cover, among others, confidentiality, integrity and availability with impact levels, cryptographic agility, system integration, hardware key protection, network and web gateway security and testing evidence. Each sentence cites its source document. 28 new quiz questions (two per section) test them, and module durations grew to match.
+
+### Changed
+
+- **Library documents tagged by industry and linked to a lesson** [view:/library] [persona:grc] [persona:architect] [persona:researcher] [persona:executive]: Every active Library document now carries industries from one shared list of 24 and a link to the Learn module that explains it; regions use standard country codes and four region groups. Industry, region and lesson filters now agree across the site.
+- **"Applies to you" uses each document's real industries** [view:/library] [persona:grc] [persona:executive]: Documents are matched to your industry by the industries they name. Before, documents whose industry tags the site could not read were shown to every industry (for example a US student-records rule shown to banks); now each appears for the readers it concerns.
+- **One country list for the whole site** [view:/leaders] [view:/compliance] [persona:grc] [persona:curious]: Pages now share one list of countries and regions. Israel appears under Middle East on the Leaders page (a new filter option), the Compliance Strategy picker says "United Arab Emirates", "Czech Republic" is used throughout (old links still work), and region filters include every country the Hub covers in that region.
+- **Lesson levels match what each lesson teaches** [view:/learn] [persona:researcher] [persona:developer] [persona:cert-engineer]: After re-reading the lessons, Confidential Computing, Homomorphic Encryption, QKD and Stateful Signatures move to the Specialist stage, Research Quantum Impact to Core concepts; the NICE level of Aerospace, AI Security, Healthcare, Cert Quantum Impact and Research Quantum Impact becomes practitioner and SBOM's becomes awareness.
+- **Module and tool facts kept in one place** [view:/learn] [view:/playground] [view:/business] [persona:developer]: Titles, durations, levels, tracks and tool categories now come from one source, so every page shows the same values. The common-ground page shows each lesson's real length (130 minutes in all), Governance & Risk lessons get their own colour, the counts on the home page and tour are computed (85 modules in 9 tracks), and the embeddable module and tool lists are complete.
+
+### Fixed
+
+- **Search engines see the right level for nine modules** [view:/learn] [persona:curious]: The level shown to search engines now matches the module page for nine modules that disagreed.
+
 ## [4.223.0] - 2026-11-24
 
 Every Learn module now shows where it fits in the learning path: its stage, which modules to take first, and where to go next.

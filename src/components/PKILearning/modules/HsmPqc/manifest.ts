@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hsm-pqc',
-  contentVersion: 30,
-  lm_id: 'LM-015',
-  title: 'HSM & PQC Operations',
-  description:
-    'Hardware Security Module operations for PQC: PKCS#11 v3.2, vendor comparison, firmware migration, and FIPS 140-3 validation.',
-  duration: '60 min',
   whyThisMatters:
     'Your keys are only as safe as the hardware holding them — HSMs are where PQC migration meets the physical root of trust.',
-  difficulty: 'advanced',
-  frameworkPhase: 'p6',
-  track: 'Hardware Infrastructure',
-  trackOrder: 3,
   learnSections: [
     { id: 'pkcs11', label: 'PKCS#11 PQC Mechanisms' },
     { id: 'vendors', label: 'HSM Vendor Landscape' },
@@ -32,7 +22,6 @@ const manifest: ModuleManifest = {
     step: 'pkcs11-simulator',
     text: 'Step through the 8 PKCS#11 operations in order: each shows the API call and detail, and Execute Operation reveals the expected output — or live output from the in-browser HSM in Live WASM mode.',
   },
-  taxonomy: { algorithms: ['ML-KEM', 'ML-DSA'], standards: ['PKCS#11'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HsmPqcModule })),
 }

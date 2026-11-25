@@ -3,14 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'quiz',
-  contentVersion: 6,
-  title: 'PQC Quiz',
-  description:
-    'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
   whyThisMatters:
     "The fastest way to find out what you don't actually understand about PQC is to be tested on it across every topic at once, not module by module.",
-  duration: '10 min',
-  frameworkPhase: 'foundations',
   custom: true,
   stepCountOverride: 1,
   embeddable: true,

@@ -27,6 +27,8 @@ import {
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { Button } from '@/components/ui/button'
+import { SourcedSectionPanel } from '@/components/PKILearning/common/SourcedSection'
+import { TERMINATION_POINT_SECTION } from '../data/terminationPointSection'
 
 interface WebGatewayIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -494,6 +496,8 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
       </section>
 
       <VendorCoverageNotice migrateLayer="Network" migrateDomain="tls" />
+
+      <SourcedSectionPanel section={TERMINATION_POINT_SECTION} />
 
       {/* Workshop CTA */}
       <div className="glass-panel p-6 border-l-4 border-l-primary">

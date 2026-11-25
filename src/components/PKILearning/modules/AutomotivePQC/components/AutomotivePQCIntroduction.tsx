@@ -27,6 +27,8 @@ import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteB
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { EstimateNote } from '@/components/ui/EstimateNote'
+import { SourcedLearnSection } from '@/components/PKILearning/common/SourcedSection'
+import { SYSTEM_LIFE_CYCLES_SECTION } from '../data/systemLifeCyclesSection'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
@@ -1302,6 +1304,11 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </div>
         </div>
       </LearnSection>
+
+      <SourcedLearnSection
+        section={SYSTEM_LIFE_CYCLES_SECTION}
+        icon={<Clock size={20} className="text-primary" />}
+      />
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">

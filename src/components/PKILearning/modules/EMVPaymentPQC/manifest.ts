@@ -11,18 +11,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'emv-payment-pqc',
-  contentVersion: 26,
-  lm_id: 'LM-044',
-  title: 'Financial Services & Payments PQC',
-  description:
-    'The whole payments and banking stack: EMV card authentication, tokenization, acquiring and retail checkout, interbank settlement rails, bank key management and key blocks, and the sector regulation that sets the pace — planned as one quantum-safe migration.',
   whyThisMatters:
     'Cards, banking rails and retail checkout share cryptography, share vendors, and increasingly share deadlines — but are usually migrated by different teams reading different documents. One un-migrated link is a fraud vector at scale, and no single institution can fix a correspondent chain alone.',
-  duration: '120 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 3,
   learnSections: [
     { id: 'emv-ecosystem', label: 'The EMV Payment Ecosystem' },
     { id: 'card-auth', label: 'Card Auth: SDA, DDA & CDA' },
@@ -100,16 +90,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'transaction-simulator',
     text: 'Step through an EMV flow in the Transaction Simulator — online, offline DDA/CDA, contactless or mobile — and see which messages are quantum-vulnerable.',
-  },
-  // simRelevance.ts already maps this module to the financial and retail
-  // scenarios; declaring it here is what actually surfaces the sim as practice.
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['Falcon', 'ML-DSA', 'ML-KEM'],
-    standards: ['FIPS 186-5', 'FIPS 140-3'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.EMVPaymentPQCModule })),

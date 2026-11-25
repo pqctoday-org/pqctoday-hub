@@ -56,11 +56,14 @@ import {
 import { ProvesPanel } from './ProvesPanel'
 import { IDLE_RUN, SELECTED, type RunState } from './runState'
 import { evidenceLabRunManifest } from '../../utils/entropyRunRecords'
-import entropyManifest from '../../manifest'
+import rawEntropyManifest from '../../manifest'
 import { downloadRunManifestJson } from '@/services/runRecordExport'
 import { bundleFilename, downloadBlob } from '@/services/exportBundle'
 import { RunProvenanceLine } from '@/components/shared/RunRecordActions'
 import { SaveRunToEvidence } from '@/components/shared/SaveRunToEvidence'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const entropyManifest = resolveManifest(rawEntropyManifest)
 
 const SCREENS: Array<{ title: string; proves: string[]; doesNotProve: string[] }> = [
   {

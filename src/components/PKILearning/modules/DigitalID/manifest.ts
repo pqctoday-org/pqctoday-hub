@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-id',
-  contentVersion: 20,
-  lm_id: 'LM-030',
-  title: 'Digital ID',
-  description:
-    'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
   whyThisMatters:
     'A digital identity credential such as the PID is issued under Union or national law and lets a person establish who they are — if its signature can be forged, a counterfeit credential would pass verification.',
-  duration: '80 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p5',
-  track: 'Applications',
-  trackOrder: 5,
   // These are the sections the Learn tab actually renders, in order. Until
   // 2026-07-31 this listed five DIFFERENT ids ('wallet', 'pid', 'qes') that
   // matched no rendered heading, and the tab emitted no anchors at all — so
@@ -40,8 +30,6 @@ const manifest: ModuleManifest = {
     step: 'pid-issuer',
     text: 'Press Start Issuance Flow at the PID Issuer: the flow walks Discovery, Authorization, HSM Key Gen and Issuance with the protocol log alongside, and the PID lands in your wallet.',
   },
-  playgroundTool: 'digital-id',
-  taxonomy: { algorithms: ['ML-DSA'], standards: ['X.509'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.DigitalIDModule })),
 }

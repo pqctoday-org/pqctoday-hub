@@ -12,8 +12,11 @@ import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { MediaDrmPQCModule } from './index'
 import { CuriousSummaryBanner } from '../../common/CuriousSummaryBanner'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { content } from './content'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('MediaDrmPQC', () => {
   it('renders the module header and the standard tab set', () => {

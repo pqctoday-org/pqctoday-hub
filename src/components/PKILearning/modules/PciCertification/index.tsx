@@ -8,9 +8,14 @@ import { CertExercises } from '@/components/PKILearning/modules/CryptoProductCer
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
 import { ALL_EXERCISES } from './data/allExercises'
-import manifest from './manifest'
-import fundamentalsManifest from '@/components/PKILearning/modules/CryptoProductCertification/manifest'
-import fips140Manifest from '@/components/PKILearning/modules/Fips1403Certification/manifest'
+import rawManifest from './manifest'
+import rawFundamentalsManifest from '@/components/PKILearning/modules/CryptoProductCertification/manifest'
+import rawFips140Manifest from '@/components/PKILearning/modules/Fips1403Certification/manifest'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
+const fundamentalsManifest = resolveManifest(rawFundamentalsManifest)
+const fips140Manifest = resolveManifest(rawFips140Manifest)
 
 /**
  * One part per manifest workshop step, SAME ORDER (workshopStepsDrift.test.ts).

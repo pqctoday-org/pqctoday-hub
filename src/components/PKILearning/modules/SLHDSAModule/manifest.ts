@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'slh-dsa',
-  contentVersion: 22,
-  lm_id: 'LM-027',
-  title: 'SLH-DSA: Stateless Hash Signatures',
-  description:
-    'Master FIPS 205 SLH-DSA: WOTS+, FORS, hypertree architecture, parameter trade-offs, context strings, deterministic signing, and migration from stateful schemes.',
   whyThisMatters:
     "SLH-DSA trades signature size for security that rests only on hash-function properties (BSI TR-02102-1 section 5.3.4; FIPS 205 section 1.1), with no number-theoretic assumption to second-guess — which matters when the whole point of PQC is not trusting today's assumptions.",
-  duration: '45 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'foundations',
-  track: 'Software Infrastructure',
-  trackOrder: 7,
   learnSections: [
     { id: 'overview', label: 'SLH-DSA Overview' },
     { id: 'internals', label: 'WOTS+, FORS & Hypertree' },
@@ -32,8 +22,6 @@ const manifest: ModuleManifest = {
     step: 'keygen',
     text: 'Turn on Live WASM mode, pick one of the 12 FIPS 205 parameter sets, then Generate Key Pair, Sign Message and Verify Signature: public key, signature and verdict come from a real in-browser HSM.',
   },
-  playgroundTool: 'slh-dsa',
-  taxonomy: { algorithms: ['SLH-DSA'], standards: ['FIPS 205'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SLHDSAModule })),
 }

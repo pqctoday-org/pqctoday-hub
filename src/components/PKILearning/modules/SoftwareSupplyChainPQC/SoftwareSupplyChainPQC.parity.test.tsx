@@ -12,8 +12,11 @@ import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { CuriousSummaryBanner } from '../../common/CuriousSummaryBanner'
 import { SoftwareSupplyChainPQCModule } from './index'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { content } from './content'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('SoftwareSupplyChainPQC', () => {
   it('renders the module header and the standard tab set', () => {

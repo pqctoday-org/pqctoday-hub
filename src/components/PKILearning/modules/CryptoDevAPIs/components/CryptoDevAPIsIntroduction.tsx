@@ -19,6 +19,11 @@ import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteB
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { describeRuntimeSupport } from '../data/pqcSupportData'
+import { SourcedLearnSection } from '@/components/PKILearning/common/SourcedSection'
+import { TAILORING_CODE_ANALYSIS_SECTION } from '../data/tailoringCodeAnalysisSection'
+import { STATIC_CODE_ANALYSIS_SECTION } from '../data/staticCodeAnalysisSection'
+import { DYNAMIC_ANALYSIS_SECTION } from '../data/dynamicAnalysisSection'
+import { OPEN_SOURCE_SECURITY_SECTION } from '../data/openSourceSecuritySection'
 
 // Local CollapsibleSection replaced by the shared anchored LearnSection
 // (2026-07-30).
@@ -622,6 +627,26 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </div>
         </LearnSection>
       </div>
+
+      <SourcedLearnSection
+        section={TAILORING_CODE_ANALYSIS_SECTION}
+        icon={<Wrench size={20} className="text-primary" />}
+      />
+
+      <SourcedLearnSection
+        section={STATIC_CODE_ANALYSIS_SECTION}
+        icon={<Code2 size={20} className="text-primary" />}
+      />
+
+      <SourcedLearnSection
+        section={DYNAMIC_ANALYSIS_SECTION}
+        icon={<Shuffle size={20} className="text-primary" />}
+      />
+
+      <SourcedLearnSection
+        section={OPEN_SOURCE_SECURITY_SECTION}
+        icon={<Package size={20} className="text-primary" />}
+      />
 
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">

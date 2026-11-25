@@ -1,12 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { loadLatestCSV, splitSemicolon } from './csvUtils'
-
-interface LearnOrderRow {
-  module_id: string
-  stage: string
-  stage_name: string
-  take_first: string
-}
+import { LEARN_MODULES } from './generated/learnModules.generated'
 
 export interface LearnOrder {
   stage: number
@@ -15,31 +8,19 @@ export interface LearnOrder {
   next: string[]
 }
 
-const csvModules = import.meta.glob('./learn_modules_*.csv', {
-  eager: true,
-  query: '?raw',
-  import: 'default',
-})
-
-const { data: rows } = loadLatestCSV<
-  LearnOrderRow,
-  Omit<LearnOrder, 'next'> & { moduleId: string }
->(
-  csvModules,
-  /learn_modules_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
-  (row) => {
-    const stage = Number.parseInt(row.stage, 10)
-    if (!row.module_id || !Number.isInteger(stage)) return null
-
-    return {
-      moduleId: row.module_id,
-      stage,
-      stageName: row.stage_name,
-      takeFirst: splitSemicolon(row.take_first),
-    }
-  },
-  false,
-  ['module_id', 'stage', 'stage_name', 'take_first']
+// Stage, stage name and "take first" prerequisites live in the lessons data file
+// (src/data/learn_modules_*.csv), read here through its generated records.
+const rows = LEARN_MODULES.flatMap((lesson) =>
+  lesson.stage === undefined || lesson.stageName === undefined
+    ? []
+    : [
+        {
+          moduleId: lesson.id,
+          stage: lesson.stage,
+          stageName: lesson.stageName,
+          takeFirst: [...lesson.takeFirst],
+        },
+      ]
 )
 
 const nextByModuleId = new Map<string, string[]>()

@@ -3,17 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'tls-basics',
-  contentVersion: 18,
-  lm_id: 'LM-008',
-  title: 'TLS Basics',
-  description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
-  duration: '40 min',
   whyThisMatters:
     "TLS protects nearly all web traffic; the 1.3 handshake is the prerequisite for every hybrid-PQC rollout you'll plan.",
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Protocols',
-  trackOrder: 5,
   // The legacy bespoke 'downgrade' tab is folded into the standard `visual` slot
   // (P3.1) so the tab *values* are catalog-standard; the label keeps its name.
   tabs: [
@@ -40,13 +31,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'simulate',
     text: 'Set the client and server panels — identity certificates and key exchange groups — then press Start Full Interaction: the handshake runs and a summary plus the negotiated results appear below.',
-  },
-  playgroundTool: 'tls-simulator',
-  taxonomy: {
-    algorithms: ['ML-KEM', 'X25519', 'ECDSA', 'ML-DSA'],
-    // RFC 9846 is TLS 1.3 — the module's core standard (it obsoleted RFC 8446, July 2026). (Previously listed RFC 9180,
-    // which is HPKE and not covered by this handshake/certificate/cipher-suite module.)
-    standards: ['RFC 9846', 'X.509'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.TLSBasicsModule })),

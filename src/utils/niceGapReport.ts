@@ -18,6 +18,7 @@ import {
   type NiceWorkRoleId,
 } from '../data/niceFramework'
 import { getModulesForCompetencyArea } from '../data/niceModuleMapping'
+import { LEARN_MODULE_BY_ID } from '../data/generated/learnModules.generated'
 
 // ---------------------------------------------------------------------------
 // Output types
@@ -233,22 +234,8 @@ function deriveCaSignals(input: AssessmentInput, result: AssessmentResult): CaSi
 // Module recommendations per CA
 // ---------------------------------------------------------------------------
 
-// Awareness-tier module time estimates (minutes)
-const MODULE_MINUTES_AWARENESS: Record<string, number> = {
-  'pqc-101': 15,
-  'quantum-threats': 20,
-  'pqc-risk-management': 25,
-  'data-asset-sensitivity': 20,
-  'pqc-business-case': 20,
-  'pqc-governance': 25,
-  'compliance-strategy': 25,
-  'standards-bodies': 20,
-  'vendor-risk': 20,
-  'migration-program': 30,
-}
-
 function getModuleMinutes(moduleId: string): number {
-  return MODULE_MINUTES_AWARENESS[moduleId] ?? 30
+  return LEARN_MODULE_BY_ID[moduleId]?.durationMin ?? 30
 }
 
 function buildCompetencyGap(signal: CaSignal): NiceCompetencyGap {

@@ -13,8 +13,11 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { TrustServicesPQCModule } from './index'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { SUPERSESSION_PAIRS, HYBRID_SUITES } from './data/trustServicesData'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('TrustServicesPQC', () => {
   it('renders the module header and the standard tab set', () => {

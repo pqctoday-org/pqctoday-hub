@@ -3,22 +3,13 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'crypto-agility',
-  contentVersion: 17,
-  lm_id: 'LM-007',
-  title: 'Crypto Agility',
-  description:
-    'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
-  duration: '40 min',
   whyThisMatters:
     'The one certainty is that algorithms will change again; agility is what lets you swap them without re-architecting every system.',
-  difficulty: 'intermediate',
-  frameworkPhase: 'foundations',
-  track: 'Strategy',
-  trackOrder: 3,
   learnSections: [
     { id: 'abstraction', label: 'Crypto Abstraction Layers' },
     { id: 'cbom', label: 'CBOM' },
     { id: 'migration', label: '7-Phase Migration' },
+    { id: 'systems-security-engineering', label: 'Systems Security Engineering' },
   ],
   workshopSteps: [
     { id: 'abstraction-layer', label: 'Abstraction Layer' },
@@ -30,14 +21,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'abstraction-layer',
     text: 'Toggle between the RSA-2048, ML-KEM-768 and X25519MLKEM768 backends in the Abstraction Layer demo: the call sites never change while the backend config flips to quantum-safe, and the key-size line shows what still has to change around them.',
-  },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ML-KEM'],
-    standards: ['RFC 9370', 'FIPS 186-5', 'RFC 9846', 'NIST SP 800-208', 'NIST SP 800-227'],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.CryptoAgilityModule })),

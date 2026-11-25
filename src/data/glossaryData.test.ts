@@ -9,12 +9,40 @@ import protocols from './glossary/protocols.json'
 import standards from './glossary/standards.json'
 import concepts from './glossary/concepts.json'
 import organizations from './glossary/organizations.json'
+import pkcs11 from './glossary/pkcs11.json'
+import glossaryIdsSnapshot from './glossary/glossaryIds.snapshot.json'
+import { loadGlossaryTermById } from './glossary'
 
 const rawTerms = [...algorithms, ...protocols, ...standards, ...concepts, ...organizations] as {
+  id: string
   term: string
 }[]
+const allRawTerms = [...rawTerms, ...pkcs11] as { id: string; term: string }[]
 
 describe('glossary term uniqueness', () => {
+  it('gives every glossary term a unique lowercase kebab-case id', () => {
+    const ids = allRawTerms.map((term) => term.id)
+    expect(ids.every((id) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(id))).toBe(true)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('keeps frozen glossary ids so renamed terms retain their identity', () => {
+    const currentIds = new Set(allRawTerms.map((term) => term.id))
+    const missingIds = glossaryIdsSnapshot.filter((id) => !currentIds.has(id))
+    expect(
+      missingIds,
+      'Glossary ids are permanent. Do not change or remove an existing id; to add a new glossary id, add it to glossaryIds.snapshot.json.'
+    ).toEqual([])
+  })
+
+  it('looks up a loaded glossary term by its permanent id', async () => {
+    await expect(loadGlossaryTermById('ml-kem')).resolves.toMatchObject({
+      id: 'ml-kem',
+      term: 'ML-KEM',
+    })
+    await expect(loadGlossaryTermById('not-a-glossary-id')).resolves.toBeUndefined()
+  })
+
   it('source JSON files contain no duplicate term names (case-insensitive)', () => {
     const counts = new Map<string, number>()
     for (const t of rawTerms) {
