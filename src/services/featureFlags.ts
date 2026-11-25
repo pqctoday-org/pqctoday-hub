@@ -108,9 +108,7 @@ export const useExecDecisionMode = (): boolean => {
 export const MODEL_ASSISTANT_STORAGE_KEY = 'pqc-feature-model-assistant'
 
 export const isModelAssistantFallback = (): boolean => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const env = (import.meta as any).env
-  const build = env?.VITE_FEATURE_MODEL_ASSISTANT
+  const build = import.meta.env.VITE_FEATURE_MODEL_ASSISTANT
   if (build === '1') return true
   if (build === '0') return false
   try {

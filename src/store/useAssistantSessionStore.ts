@@ -50,13 +50,12 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
       failedQuestion: null,
     }))
     const answer = await askAssistant(question, context)
-    if (request !== latestRequest) return
     if (answer.state === 'data-not-loaded') {
-      // Data did not load: no answer and no resources; the question goes back in the box.
+      // Data did not load: no answer and no resources; the question goes back in the box, unless
+      // a newer question has been asked since (its own outcome then decides what the box holds).
       set((s) => ({
         turns: s.turns.filter((t) => t.id !== id),
-        draft: question,
-        failedQuestion: question,
+        ...(request === latestRequest ? { draft: question, failedQuestion: question } : {}),
       }))
       return
     }

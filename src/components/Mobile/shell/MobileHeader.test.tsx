@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { MobileHeader } from './MobileHeader'
 import { useVersionStore } from '@/store/useVersionStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 
 function renderHeader(
   initialPath: string,
@@ -34,6 +35,14 @@ afterEach(() => {
 })
 
 describe('MobileHeader', () => {
+  it('has an Ask button that opens the Assistant sheet, beside the legacy Search button', () => {
+    useRightPanelStore.setState({ isOpen: false, activeTab: 'chat' })
+    renderHeader('/learn')
+    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Ask the Assistant' }))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'chat' })
+  })
+
   it('shows the brand wordmark on Home, not a back button', () => {
     renderHeader('/')
     expect(screen.getByText('PQC Today')).toBeInTheDocument()
