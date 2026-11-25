@@ -34043,6 +34043,51 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Chainlink-Data-Feeds",
+      "refId": "Chainlink-Data-Feeds",
+      "file": "Chainlink-Data-Feeds-90720881.html",
+      "sizeBytes": 410935,
+      "content_type": "text/html",
+      "url": "https://docs.chain.link/data-feeds/using-data-feeds",
+      "sha256": "67b92f64f698e3e21e67bf943fec83ea03cd0782cf90ead2499ff9deec22b63a",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T03:55:29.712571+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "ACE",
+      "refId": "ACE",
+      "file": "ACE-f03054d5.html",
+      "sizeBytes": 131946,
+      "content_type": "text/html",
+      "url": "https://www.cbp.gov/trade/automated/getting-started/portal-applying",
+      "sha256": "bcef54d3539eb144cf7ba183ff6afcf6c7a3160e509c554c4273e2b50f8c8891",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T03:56:32.149917+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Ellucian-Student",
+      "refId": "Ellucian-Student",
+      "file": "Ellucian-Student-6eadfb35.html",
+      "sizeBytes": 225878,
+      "content_type": "text/html",
+      "url": "https://www.ellucian.com/solutions/ellucian-banner",
+      "sha256": "be001dd8db333dcce56a3d0f6002e99826a8ca3421ff1f6c1fc2fb33638c9a30",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T03:56:34.949959+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
