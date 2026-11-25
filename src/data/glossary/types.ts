@@ -7,6 +7,13 @@ export interface GlossaryTerm {
   term: string
   acronym?: string
   definition: string
+  /**
+   * The plain-language definition Curious Explorer mode shows when a reader looks the term up by its
+   * name. Stored once, on the term; the Curious glossary is read from it (`loadCuriousGlossary`).
+   */
+  plainDefinition?: string
+  /** The plain-language definition shown when the reader looks the term up by its acronym, where it is worded differently. */
+  plainDefinitionAcronym?: string
   technicalNote?: string
   relatedModule?: string
   /** Stable id from trusted_sources_*.csv when the definition is a direct status claim. */

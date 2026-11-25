@@ -14,6 +14,7 @@
     "term": "NIST",
     "acronym": "NIST",
     "definition": "National Institute of Standards and Technology, the U.S. agency leading PQC standardization through its Post-Quantum Cryptography project.",
+    "plainDefinition": "The US government agency responsible for writing and choosing the global standards for new algorithms.",
     "relatedModule": "/timeline",
     "complexity": "beginner",
     "category": "organization"

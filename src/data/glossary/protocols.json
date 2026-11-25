@@ -4,6 +4,7 @@
     "term": "TLS",
     "acronym": "TLS",
     "definition": "Transport Layer Security, the protocol that secures HTTPS web traffic. TLS 1.3 is the current version.",
+    "plainDefinition": "Transport Layer Security — the protocol that puts the padlock in your browser's address bar.",
     "technicalNote": "PQC integration uses hybrid key exchange (e.g., X25519 + ML-KEM-768) to maintain backward compatibility.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "beginner",

@@ -4,6 +4,8 @@
     "term": "Post-Quantum Cryptography",
     "acronym": "PQC",
     "definition": "Cryptographic algorithms designed to be secure against attacks by both classical and quantum computers.",
+    "plainDefinition": "New math algorithms that quantum computers can't easily break.",
+    "plainDefinitionAcronym": "Post-Quantum Cryptography. New math algorithms that quantum computers can't easily break.",
     "technicalNote": "PQC algorithms are based on mathematical problems believed to be hard for quantum computers, such as lattice problems, hash functions, and error-correcting codes.",
     "relatedModule": "/learn/pqc-101",
     "complexity": "beginner",
@@ -13,6 +15,7 @@
     "id": "quantum-computing",
     "term": "Quantum Computing",
     "definition": "A type of computing that uses quantum-mechanical phenomena like superposition and entanglement to perform calculations exponentially faster than classical computers for certain problems.",
+    "plainDefinition": "A new type of computing that uses quantum physics. For certain specific problems it can be far faster than standard computers, but it is not faster at everything.",
     "relatedModule": "/learn/pqc-101",
     "complexity": "beginner",
     "category": "concept"
@@ -30,6 +33,8 @@
     "term": "Harvest Now, Decrypt Later",
     "acronym": "HNDL",
     "definition": "An attack strategy where adversaries collect encrypted data today with the intention of decrypting it once quantum computers become available.",
+    "plainDefinition": "When hackers steal encrypted data today and store it until they have a quantum computer to crack it.",
+    "plainDefinitionAcronym": "Harvest Now, Decrypt Later — attackers steal encrypted data today to crack it when quantum computers arrive.",
     "relatedModule": "/threats",
     "complexity": "beginner",
     "category": "concept"
@@ -78,6 +83,7 @@
     "id": "hybrid-cryptography",
     "term": "Hybrid Cryptography",
     "definition": "Using classical and post-quantum algorithms together during the transition period. A well-designed hybrid stays secure as long as at least one algorithm remains secure; the guarantee depends on how the algorithms are combined and implemented.",
+    "plainDefinition": "Using both old traditional math and new quantum-safe math at the same time, so that if one of them turns out to be weak the other can still protect you, as long as they are combined carefully.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "beginner",
     "category": "concept"
@@ -86,6 +92,7 @@
     "id": "crypto-agility",
     "term": "Crypto Agility",
     "definition": "The ability of a system to quickly switch between cryptographic algorithms without major redesign, critical for adapting to PQC.",
+    "plainDefinition": "The ability to quickly swap out old, broken encryption algorithms for new, secure ones without breaking the entire system.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
     "category": "concept"
@@ -171,6 +178,7 @@
     "term": "HSM",
     "acronym": "HSM",
     "definition": "Hardware Security Module, a dedicated physical device for managing and protecting cryptographic keys. Must be updated for PQC support.",
+    "plainDefinition": "Hardware Security Module — a tamper-resistant physical device that stores and protects cryptographic keys.",
     "relatedModule": "/threats?industry=Hardware%20Security%20Modules",
     "complexity": "intermediate",
     "category": "concept"
@@ -629,6 +637,7 @@
     "term": "CRQC",
     "acronym": "CRQC",
     "definition": "Cryptographically Relevant Quantum Computer, a hypothetical future quantum computer powerful enough to break RSA, ECC, and other classical public-key cryptography.",
+    "plainDefinition": "Cryptographically Relevant Quantum Computer — a future quantum machine powerful enough to break today's encryption.",
     "technicalNote": "Estimates vary, but a CRQC would need thousands of stable logical qubits. Most timelines estimate 2030-2040 for CRQC capability.",
     "relatedModule": "/learn/pqc-risk-management",
     "complexity": "beginner",
@@ -1287,6 +1296,7 @@
     "term": "CBOM",
     "acronym": "CBOM",
     "definition": "Cryptography Bill of Materials — a structured inventory of all cryptographic assets, algorithms, keys, certificates, and protocols in use within a system or organisation. Analogous to a software BOM (SBOM) but focused on cryptographic dependencies.",
+    "plainDefinition": "Cryptographic Bill of Materials — a complete inventory of every encryption algorithm used across an organization.",
     "technicalNote": "A CBOM enables automated discovery of quantum-vulnerable algorithms (RSA, ECC, DH) and drives migration roadmap prioritisation. NIST SP 1800-38 and CISA guidance recommend CBOM as the first step in PQC readiness.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
@@ -3134,6 +3144,46 @@
     "technicalNote": "Source: FIPS 140-3 CMVP Management Manual, Version 2.7 (April 9, 2026), sections 1.1 (p. 1), 2.6.1-2.6.2 (p. 13) and 2.6.3 (p. 15). A CSTL can conduct algorithmic testing and verify compliance with the algorithm standards (there may be additional requirements beyond what is CAVP-tested), review the module's documentation and source code, and perform the required testing in accordance with the test requirements, SP 800-140x and the Implementation Guidance.",
     "relatedModule": "/learn/acvp-lab-workflow",
     "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "id": "lattice-based",
+    "term": "Lattice-based",
+    "definition": "A type of math puzzle based on plotting points in a massive grid, used to build safe encryption.",
+    "plainDefinition": "A type of math puzzle based on plotting points in a massive grid, used to build safe encryption.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "id": "hash-based",
+    "term": "Hash-based",
+    "definition": "Digital signatures built from hash functions. They help check who signed data and whether it changed; they do not hide the data.",
+    "plainDefinition": "Digital signatures built from hash functions. They help check who signed data and whether it changed; they do not hide the data.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "id": "digital-signatures",
+    "term": "Digital Signatures",
+    "definition": "Mathematical stamps that prove a message or file genuinely came from a specific person or server.",
+    "plainDefinition": "Mathematical stamps that prove a message or file genuinely came from a specific person or server.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "id": "quantum-computer",
+    "term": "Quantum Computer",
+    "definition": "A new type of computer that uses quantum physics. For certain specific problems it can be far faster than a standard computer, but it is not faster at everything.",
+    "plainDefinition": "A new type of computer that uses quantum physics. For certain specific problems it can be far faster than a standard computer, but it is not faster at everything.",
+    "complexity": "beginner",
+    "category": "concept"
+  },
+  {
+    "id": "classical-cryptography",
+    "term": "Classical Cryptography",
+    "definition": "The traditional math-based encryption we use today, like RSA or ECC.",
+    "plainDefinition": "The traditional math-based encryption we use today, like RSA or ECC.",
+    "complexity": "beginner",
     "category": "concept"
   }
 ]
