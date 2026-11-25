@@ -135,17 +135,18 @@ describe('searchProducts — catalog-wide product/vendor search (AssetList top s
 })
 
 describe('industry application baselines in the Workbench', () => {
-  it.each(['Learning Management Systems', 'Electronic Health Record Systems'])(
-    'indexes %s before optional layer placement',
-    (category) => {
-      expect(classifyProductDomain(category, '')).toBe('platform')
-    }
-  )
+  it.each([
+    'Learning Management Systems',
+    'Electronic Health Record Systems',
+    'Media Content Protection and Conditional Access',
+  ])('indexes %s before optional layer placement', (category) => {
+    expect(classifyProductDomain(category, '')).toBe('platform')
+  })
 
-  it('finds admitted school and hospital application baselines in search and filtered browsing', () => {
+  it('finds admitted education, healthcare and media baselines in search and filtered browsing', () => {
     const baselines = softwareData.filter(
       (p) =>
-        ['CSC-163', 'CSC-164'].includes(p.categoryId) &&
+        ['CSC-163', 'CSC-164', 'CSC-165'].includes(p.categoryId) &&
         p.cataloguePopulation === 'migration_baseline' &&
         p.pqcStatusCanonical === 'unknown'
     )

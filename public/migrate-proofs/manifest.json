@@ -33413,6 +33413,51 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Conax-Contego",
+      "refId": "Conax-Contego",
+      "file": "Conax-Contego-7e98334d.pdf",
+      "sizeBytes": 6329266,
+      "content_type": "application/pdf",
+      "url": "https://www.nagra.com/sites/default/files/migration/EN_Plaquette_Kudelski_2018.pdf",
+      "sha256": "a38b2cbf6e84915548c0fcff59812255aa2c0c62b92ceeaff6fd1759bb2f3257",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T01:45:41.901326+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "bytes"
+    },
+    {
+      "product_id": "FairPlay-Streaming",
+      "refId": "FairPlay-Streaming",
+      "file": "FairPlay-Streaming-bdce1dee.html",
+      "sizeBytes": 106969,
+      "content_type": "text/html",
+      "url": "https://developer.apple.com/streaming/fps/",
+      "sha256": "0197b2a0d886563cd21a08fc9e7f4fc6062312230c7b2394ae2739fa9c9b5630",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T01:45:44.039159+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PlayReady",
+      "refId": "PlayReady",
+      "file": "PlayReady-d341638b.html",
+      "sizeBytes": 53397,
+      "content_type": "text/html",
+      "url": "https://learn.microsoft.com/en-us/playready/packaging/content-encryption",
+      "sha256": "f58b4096ff28b1e1ac1a49aefd28bbd15c96bde14c6eba804088072ae4e1aa17",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T01:45:45.935652+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
