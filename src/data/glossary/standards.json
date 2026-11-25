@@ -38,7 +38,9 @@
     "definition": "The U.S. government standard for validating cryptographic modules. Hardware and software must pass FIPS 140-3 testing to be used in federal systems.",
     "relatedModule": "/compliance",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "cnsa-2-0",
@@ -47,7 +49,8 @@
     "plainDefinition": "The US National Security Agency's list of quantum-safe algorithms for national security systems. Its deadlines apply to those systems, not to everyone, and run to the end of 2031.",
     "relatedModule": "/timeline",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government & Defense"
   },
   {
     "id": "common-criteria",
@@ -55,7 +58,7 @@
     "acronym": "CC",
     "definition": "An international standard (ISO/IEC 15408) for evaluating the security properties of IT products, used globally for government procurement.",
     "technicalNote": "The Common Criteria Recognition Arrangement (CCRA) is an arrangement between government participants: national Certification Bodies (e.g., BSI for Germany, ANSSI for France, NIAP for the US) authorise CC certificates, and other participants plan to recognise them within the arrangement's scope (collaborative Protection Profiles, or assurance up to EAL 2). Recognition is not an endorsement or guarantee of a product. EUCC is a separate EU scheme based on the Common Criteria, adopted under the Cybersecurity Act.",
-    "relatedModule": "/learn/standards-bodies",
+    "relatedModule": "/learn/cc-eucc-certification",
     "complexity": "intermediate",
     "category": "standard"
   },
@@ -67,7 +70,8 @@
     "technicalNote": "A European cybersecurity certificate is recognised in all Member States under the Cybersecurity Act, but certification is voluntary unless Union or national law requires it. EUCC certificates at assurance level 'substantial' or 'high' are issued by accredited certification bodies (for 'high', authorised by the national cybersecurity certification authority) after evaluation by an ITSEF. The Agreed Cryptographic Mechanisms document of the European Cybersecurity Certification Group gives recommendations on cryptographic mechanisms preferably used in products submitted to certification; it is maintained by an ECCG subgroup and is not a list of approved PQC algorithms.",
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "eidas-2-0",
@@ -75,7 +79,9 @@
     "definition": "The EU regulation establishing a framework for electronic identification and trust services, including the European Digital Identity Wallet.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government Identity & Travel Documents; Legal / Notary / eSignature",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "nis2-directive",
@@ -84,7 +90,8 @@
     "technicalNote": "Article 21(2)(h) names cryptography and encryption policies as one of the minimum elements of the measures; the Directive text does not mention post-quantum cryptography. EU-level PQC timelines come from separate documents: the Commission's Recommendation of 11 April 2024 and the roadmap that EU Member States, supported by the Commission, issued in June 2025, which the Commission describes as a high-level paper aimed at Member States.",
     "relatedModule": "/compliance",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "pkcs-12",
@@ -127,7 +134,8 @@
     "technicalNote": "The current final edition is Revision 2 (March 2019); among other things it disallows SHA-1 for digital signature generation except where NIST protocol-specific guidance allows it. Revision 3 has been released only as an initial public draft (October 2024). NIST IR 8547 (October 2026) states that NIST will revise SP 800-131A with more detailed guidelines and schedules, and that NIST will deprecate quantum-vulnerable public-key cryptography after 2030 and disallow its use under NIST standards and guidelines after 2035.",
     "relatedModule": "/library?ref=NIST-SP-800-131A-Rev3",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government & Defense"
   },
   {
     "id": "nist-sp-800-208",
@@ -152,7 +160,8 @@
     "definition": "Payment Card Industry Data Security Standard, requiring strong cryptography for cardholder data protection. Quantum threatens its RSA/ECC foundations.",
     "relatedModule": "/threats",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "hipaa",
@@ -161,7 +170,9 @@
     "definition": "Health Insurance Portability and Accountability Act, a U.S. law whose Security Rule requires covered entities and business associates to protect electronic protected health information. Encryption is an addressable specification: it must be assessed and implemented where reasonable and appropriate, or the reason documented and an equivalent measure used. Patient data faces HNDL risk.",
     "relatedModule": "/threats",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Healthcare / Pharmaceutical",
+    "place": "US"
   },
   {
     "id": "iec-62443",
@@ -169,7 +180,9 @@
     "definition": "International standard series for industrial automation and control systems (IACS) cybersecurity. Critical for IoT and energy sector PQC migration.",
     "relatedModule": "/threats",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Critical Infrastructure / Energy; Internet of Things (IoT)",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "slsa",
@@ -177,18 +190,20 @@
     "acronym": "SLSA",
     "definition": "Supply-chain Levels for Software Artifacts — a security framework (originally from Google) that defines increasing levels of supply chain integrity guarantees, from basic build provenance to fully hermetic, reproducible builds.",
     "technicalNote": "SLSA levels depend on cryptographic attestations signed during the build process. If those signatures use quantum-vulnerable algorithms (ECDSA, RSA), the entire SLSA guarantee collapses once quantum computers can forge attestations.",
-    "relatedModule": "/learn/code-signing",
+    "relatedModule": "/learn/software-supply-chain-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "in-toto",
     "term": "in-toto",
     "definition": "An open-source framework for securing the integrity of software supply chains by defining and cryptographically verifying each step of the build and release process. Each step produces a signed attestation (a \"link\") forming a verifiable chain.",
     "technicalNote": "in-toto link metadata is signed with the functionary's private key. PQC migration requires upgrading all functionary keys to ML-DSA to prevent quantum forgery of supply chain attestations.",
-    "relatedModule": "/learn/code-signing",
+    "relatedModule": "/learn/software-supply-chain-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "nist-sp-800-227",
@@ -237,7 +252,9 @@
     "definition": "International standard for mobile driving licences (mDL), defining the data model, security mechanisms, and device engagement protocols for digital identity documents.",
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government Identity & Travel Documents",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "bsi-tr-02102",
@@ -246,7 +263,8 @@
     "technicalNote": "TR-02102-1 covers general recommendations; TR-02102-2 through TR-02102-4 provide protocol-specific PQC migration guidance.",
     "relatedModule": "/library?ref=BSI TR-02102-1",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "DE"
   },
   {
     "id": "nist-sp-800-57",
@@ -263,7 +281,8 @@
     "technicalNote": "Defines C-language function calls for key generation, signing, encryption, and object management. PKCS#11 v3.2 adds CKM_ML_KEM_* and CKM_ML_DSA_* mechanisms for PQC.",
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Hardware Security Modules; Semiconductors / Secure Elements"
   },
   {
     "id": "bip44",
@@ -272,7 +291,8 @@
     "technicalNote": "Builds on BIP32 (HD wallets) and BIP43 (purpose field). Enables standard derivation paths across different cryptocurrencies and wallet implementations.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "sp-800-90a",
@@ -308,7 +328,8 @@
     "technicalNote": "P2MR addresses use bech32m encoding (bc1z…). Every spend reveals a leaf script and a control block. The BIP says P2MR outputs are resistant to long-exposure attacks (keys exposed for longer than needed to confirm a spending transaction), and that protection against short-exposure attacks, where a key is exposed in the mempool while a transaction waits to be confirmed, may require post-quantum signatures. In the BIP's depth-1 example the P2MR witness is 135 bytes, against 66 bytes for a Taproot key-path spend.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "solana-improvement-document",
@@ -317,7 +338,8 @@
     "definition": "The formal proposal process for Solana protocol changes, analogous to Bitcoin BIPs and Ethereum EIPs. SIMD-0461, a proposed Falcon (FN-DSA) signature-verification syscall, was closed by its author on 2026-06-17; a commenter in the thread says Falcon-512 and Hawk-512 verifiers already work as on-chain programmes without protocol changes. HAWK has since been withdrawn from NIST's additional signatures process (29 July 2026) after a key-recovery attack.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "suit",
@@ -326,7 +348,8 @@
     "definition": "Software Updates for Internet of Things (RFC 9019). A CBOR-based manifest format for secure firmware updates, providing metadata, conditions, and signature verification for OTA delivery.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "rfc-7228",
@@ -334,7 +357,8 @@
     "definition": "Terminology for Constrained-Node Networks. Defines device Class 0/1/2 based on RAM and Flash memory constraints, used to categorize IoT device capabilities for protocol selection.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "nist-rmf",
@@ -344,7 +368,8 @@
     "technicalNote": "The Categorise step classifies the system and its information by the impact of loss, using FIPS 199, which results in low-, moderate- or high-impact designations; the Select step then chooses and tailors control baselines. SP 800-37 Rev. 2 (December 2018) does not itself set post-quantum requirements.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cross-Industry"
   },
   {
     "id": "iso-27005",
@@ -353,7 +378,9 @@
     "technicalNote": "ISO 27005 uses a likelihood × consequence matrix to produce a risk level. For PQC, the threat is a CRQC; the vulnerability is use of RSA/ECC; the consequence is full plaintext exposure of harvested data. Risk treatment options: mitigate (migrate to PQC), accept, transfer, or avoid.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cross-Industry",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "fips-199",
@@ -362,7 +389,8 @@
     "technicalNote": "A High rating on any one of the three objectives (confidentiality, integrity or availability) makes a federal system a high impact system. As NIST IR 8547 describes OMB M-26-15, such systems and high value assets must adopt PQC for key establishment by 31 December 2030 and for digital signatures by 31 December 2031. National security systems follow CNSA 2.0 under CNSS policy instead; M-26-15 does not apply to them.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government & Defense"
   },
   {
     "id": "gdpr",
@@ -372,7 +400,8 @@
     "technicalNote": "GDPR Art. 32 (\"Security of processing\") requires a level of security appropriate to the risk, taking account of the state of the art, the costs of implementation and the nature, scope, context and purposes of processing; encryption is listed \"as appropriate\". The text does not mention quantum computing. Whether long-retained personal data needs post-quantum protection is an assessment under that risk-based test (this site's reading), and how Art. 32 applies in a given case is decided by the competent supervisory authority or court.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "pipl",
@@ -381,7 +410,8 @@
     "definition": "Personal Information Protection Law — China's primary data privacy law (effective November 2021), requiring data processors to adopt security measures protecting personal information. Mandates localisation of certain data and restricts cross-border transfers, making PQC migration relevant for multinational organisations with Chinese data subjects.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "CN"
   },
   {
     "id": "ccpa",
@@ -390,7 +420,8 @@
     "definition": "California Consumer Privacy Act — U.S. state law, operative since 1 January 2020 and amended by the CPRA from 1 January 2023, giving California residents rights over their personal data. Section 1798.150 lets consumers sue for statutory damages when nonencrypted and nonredacted personal information is exposed because a business failed to maintain reasonable security. The statute does not mention post-quantum cryptography.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "beginner",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "lgpd",
@@ -399,7 +430,8 @@
     "definition": "Lei Geral de Proteção de Dados — Brazil's data protection law (Law 13.709/2018), modelled on GDPR. Article 46 requires processing agents to adopt technical and administrative security measures to protect personal data from unauthorised access and from accidental or unlawful destruction, loss, alteration or improper processing. The national authority (ANPD) may set minimum technical standards; the law text does not mention encryption.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "BR"
   },
   {
     "id": "pdpa",
@@ -408,7 +440,8 @@
     "definition": "Personal Data Protection Act — Singapore's primary data protection law administered by the PDPC. Section 24 requires organisations to make reasonable security arrangements to protect personal data in their possession or under their control. The PDPC's guidelines say there is no one-size-fits-all solution and list encrypting personal data among example technical measures.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "SG"
   },
   {
     "id": "dora",
@@ -418,7 +451,9 @@
     "technicalNote": "DORA Art. 9(4)(d) requires policies and protocols for protecting cryptographic keys, with data encrypted based on data classification and ICT risk assessment. Delegated Regulation (EU) 2024/1774 Art. 6 (encryption and cryptographic controls) and Art. 7 (cryptographic key management) set the detailed policy content; its recitals refer to threats from quantum advancements, but the texts name no post-quantum algorithms.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Finance & Banking",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "cyclonedx",
@@ -427,7 +462,8 @@
     "technicalNote": "CycloneDX CBOM components include: algorithms (name, parameterSets, primitive), certificates (subject, validity, signatureAlgorithm), keys (algorithm, size), and protocols (type, version, cipher suites). Tooling: IBM Quantum Safe Explorer, Keyfactor.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "cavp",
@@ -445,18 +481,21 @@
     "acronym": "NERC CIP",
     "definition": "North American Electric Reliability Corporation Critical Infrastructure Protection standards. Mandatory cybersecurity requirements for bulk electric system operators.",
     "technicalNote": "CIP-012 requires an applicable Responsible Entity that owns or operates a Control Center to implement a documented plan to mitigate the risks of unauthorized disclosure and modification of real-time assessment and monitoring data sent between Control Centers; encryption is one example method, and no protocol or algorithm is named. CIP-013 requires supply chain cyber security risk management plans for high and medium impact BES Cyber Systems. Neither standard mentions post-quantum cryptography; any PQC priority for these links is analysis of a stated scenario, not a CIP requirement.",
-    "relatedModule": "/learn/ot-pqc",
+    "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "iec-61850",
     "term": "IEC 61850",
     "definition": "International standard series for communication networks and systems in power utility automation, including substations. Its mappings cover MMS, GOOSE and Sampled Values for protection and control.",
     "technicalNote": "IEC 62351-6:2020 describes time-critical Layer 2 GOOSE and Sampled Value applications as requiring 3 ms response times and does not recommend encryption for them; authentication uses a message authentication code. Key management is specified separately in IEC 62351-9, and that public-key side is where post-quantum migration questions arise.",
-    "relatedModule": "/learn/ot-pqc",
+    "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Critical Infrastructure / Energy",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "iec-62351",
@@ -465,16 +504,18 @@
     "technicalNote": "Part 3 (IEC 62351-3:2023) profiles TLS for protocols over TCP/IP; Part 4 covers profiles including MMS and derivatives (the basis for ICCP security); Part 5 (2023) secures IEC 60870-5 and derivatives, and DNP3 Secure Authentication is based on it; Part 6 (2020) secures IEC 61850 protocols including GOOSE and Sampled Values with message authentication codes; and Part 9 (2023) specifies cyber security key management. Editions differ by part, so cite the edition used.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "ieee-2030-5",
     "term": "IEEE 2030.5",
     "definition": "Smart Energy Profile 2.0 standard for distributed energy resource communication using certificate-based device authentication.",
     "technicalNote": "In the California Smart Inverter Profile, each communicating device has an X.509 v3 device certificate that chains to a root CA through a manufacturer CA, not a utility CA, and TLS 1.2 with TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8 over P-256 is specified. A move to post-quantum certificates would need an updated profile and reissued device certificates.",
-    "relatedModule": "/learn/ot-pqc",
+    "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "gina",
@@ -483,7 +524,8 @@
     "definition": "Genetic Information Nondiscrimination Act (2008). US federal law prohibiting discrimination based on genetic information in health insurance and employment. Genetic data decrypted via HNDL attacks could enable discrimination that GINA was designed to prevent.",
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "42-cfr-part-2",
@@ -491,7 +533,9 @@
     "definition": "US federal regulation providing additional privacy protections for substance use disorder patient records beyond HIPAA. Records protected under Part 2 carry heightened stigma risk if quantum-decrypted, as disclosure can lead to criminal prosecution, employment loss, and social ostracism.",
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Healthcare / Pharmaceutical",
+    "place": "US"
   },
   {
     "id": "21-cfr-part-11",
@@ -499,7 +543,8 @@
     "definition": "FDA regulation establishing criteria for electronic records and electronic signatures in the pharmaceutical industry. Requires validated cryptographic controls for data integrity. Any PQC migration in pharma must maintain Part 11 compliance throughout the transition.",
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Healthcare / Pharmaceutical"
   },
   {
     "id": "arinc-653",
@@ -508,7 +553,8 @@
     "technicalNote": "Each ARINC 653 partition has a fixed memory budget and CPU time window. PQC libraries must fit within these constraints alongside existing avionics functions, limiting algorithm choice.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "do-178c",
@@ -517,7 +563,8 @@
     "technicalNote": "Adding a PQC cryptographic library to a DAL-A system (e.g., Flight Management System) generally requires MC/DC structural coverage, traceability and independent verification of the changed software. Recertification cost and schedule depend on the system, the extent of the change, the certification authority and the supplier, so any published figure is an estimate for a stated project, not a value set by the standard.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "do-326a",
@@ -526,7 +573,8 @@
     "technicalNote": "DO-326A mandates that cryptographic protections be evaluated against evolving threats including quantum computing. Aircraft manufacturers must demonstrate PQC readiness as part of the airworthiness security risk assessment.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "international-traffic-in-arms-regulations",
@@ -536,7 +584,9 @@
     "technicalNote": "ITAR Category XI covers military cryptographic equipment. PQC implementations for military aircraft or defense satellites require State Department export licenses. No license exceptions exist for embargoed destinations.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Aerospace / Aviation; Government & Defense",
+    "place": "US"
   },
   {
     "id": "content-credentials",
@@ -544,9 +594,10 @@
     "acronym": "C2PA",
     "definition": "C2PA’s signed provenance format for associating claims about a digital asset’s creation and editing history with that asset. Validation checks cryptographic integrity, asset binding and the signer’s credentials under a trust model. It does not by itself prove that an assertion is true, that media depicts a real event, or that content is human-created or suitable for training.",
     "technicalNote": "C2PA 2.5 (October 2026) allows ML-DSA-44, ML-DSA-65 and ML-DSA-87 claim signatures (COSE identifiers -48, -49 and -50), alongside its classical algorithms. Implementation and credential-chain support still need checking; specification support does not establish a deployed system’s quantum resistance. A valid fictional claim saying a photograph was camera-captured attributes that statement to its signer; it does not prove the scene happened or the signer was honest. Assess identity, trust policy, assertions and content binding separately from training-data quality. Reference: https://spec.c2pa.org/specifications/specifications/2.5/specs/C2PA_Specification.html (Sections 1.2 and 12.3).",
-    "relatedModule": "/learn/ai-security-pqc",
+    "relatedModule": "/learn/media-drm-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Media / Entertainment / DRM"
   },
   {
     "id": "asil",
@@ -556,7 +607,8 @@
     "technicalNote": "The ASIL label does not by itself fix a cryptographic latency budget, redundancy scheme or fail-operational behaviour. Such requirements are derived for each item from its hazard analysis and its fault tolerant time interval (FTTI), the time a fault can be present before a hazardous event; checks must fit inside that budget on the target hardware. The safe reaction to a failed or late verification is decided in the item's safety concept. Any specific figure, such as a millisecond verification budget or a dual PQC and classical path, is a design assumption for a stated scenario and should be labelled as one.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "tisax",
@@ -566,7 +618,8 @@
     "technicalNote": "TISAX v7 (expected 2027) is anticipated to add PQC readiness criteria. OEMs requiring TISAX compliance from Tier-1 and Tier-2 suppliers will cascade PQC requirements through the supply chain. Assessment scope will likely cover key management, firmware signing, and cryptographic inventory.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "DE"
   },
   {
     "id": "autosar",
@@ -575,7 +628,8 @@
     "technicalNote": "The two platforms specify different crypto interfaces, so Classic and Adaptive software are not interchangeable. In release R25-11, the Adaptive Cryptography specification lists algorithm identifiers for ML-DSA, ML-KEM and SLH-DSA, while the Classic CSM, Crypto Interface and Crypto Driver specifications list algorithm families such as AES, RSA and ECDSA plus a custom family and do not mention post-quantum algorithms. Whether a given ECU can run a post-quantum algorithm depends on its crypto driver or provider, memory, processing power and any hardware security module, so it has to be assessed per ECU.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "iso-15118",
@@ -584,7 +638,9 @@
     "technicalNote": "ISO 15118 uses a PKI hierarchy (OEM Root CA → Vehicle Sub-CA → Vehicle Leaf Cert) with ECDSA P-256. PQC migration requires updating the entire Plug & Charge PKI to hybrid certificates, affecting vehicle OEMs, Charge Point Operators (CPOs), and eMobility Service Providers (eMSPs).",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Automotive / Connected Vehicles; Critical Infrastructure / Energy",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "ieee-1609-2",
@@ -593,7 +649,8 @@
     "technicalNote": "IEEE 1609.2 currently mandates ECDSA P-256 for V2X message signing and ECIES for encryption. A PQC amendment (expected 2025-2026) will add ML-DSA and ML-KEM support. The SCMS uses butterfly key expansion to generate millions of unlinkable pseudonym certificates — this mechanism must be adapted for PQC key sizes.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "fedramp",
@@ -603,7 +660,9 @@
     "technicalNote": "Under FedRAMP's Consolidated Rules for 2026, the use of cryptographic modules validated by the NIST Cryptographic Module Validation Program depends on the certification class: Class A and B providers may use them, Class C providers should and Class D providers must. OMB M-26-15 tells agencies to engage their FedRAMP-authorized cloud providers about PQC migration responsibilities. CNSA 2.0 dates apply to national security systems, not to FedRAMP.",
     "relatedModule": "/learn/compliance-strategy",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cloud Computing / Data Centers; Government & Defense",
+    "place": "US"
   },
   {
     "id": "eal",
@@ -621,7 +680,8 @@
     "definition": "NIST CSWP 39 — Considerations for Achieving Crypto Agility: Strategies and Practices (Update 1; first published December 19, 2025, updated June 29, 2026). Covers crypto agility in security protocols and in system implementations, a strategic plan for managing an organization's cryptographic risks, and an illustrative four-tier maturity model adapted from the NIST Cybersecurity Framework tiers (Partial → Risk-Informed → Repeatable → Adaptive). The five-pillar model used in PQC Today's Crypto Management module (inventory, governance, lifecycle, observability, assurance) is this site's own teaching overlay, not a NIST taxonomy.",
     "relatedModule": "/library?ref=NIST CSWP 39",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cross-Industry"
   },
   {
     "id": "nis2",
@@ -630,7 +690,9 @@
     "definition": "EU directive (2022/2555) requiring enhanced cybersecurity controls across critical-infrastructure sectors. Transposition deadline October 2024; enforcement ongoing across member states. Mandates appropriate cryptographic measures without naming PQC explicitly.",
     "complexity": "intermediate",
     "category": "standard",
-    "relatedModule": "/learn/data-asset-sensitivity"
+    "relatedModule": "/learn/data-asset-sensitivity",
+    "industries": "Critical Infrastructure / Energy",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "eidas",
@@ -639,7 +701,9 @@
     "definition": "EU regulation (No 910/2014) governing electronic identification and trust services across member states. Regulation (EU) 2024/1183 (eIDAS 2.0) establishes the European Digital Identity Framework: each Member State must provide at least one European Digital Identity Wallet within 24 months of the entry into force of the implementing acts. The amending text sets no post-quantum requirements.",
     "complexity": "intermediate",
     "category": "standard",
-    "relatedModule": "/learn/digital-id"
+    "relatedModule": "/learn/digital-id",
+    "industries": "Government Identity & Travel Documents; Legal / Notary / eSignature",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "cra",
@@ -648,7 +712,9 @@
     "definition": "EU regulation (2024/2847) imposing cybersecurity requirements on products with digital elements. Entered force December 2024; full obligations apply 11 December 2027 (reporting obligations from September 2026).",
     "complexity": "intermediate",
     "category": "standard",
-    "relatedModule": "/learn/sbom"
+    "relatedModule": "/learn/sbom",
+    "industries": "Cross-Industry",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "soc-2",
@@ -657,7 +723,7 @@
     "definition": "AICPA audit framework evaluating a service provider's controls against the Trust Services Criteria (security, availability, processing integrity, confidentiality, privacy). Cryptographic-control adequacy is evaluated within the security criterion.",
     "complexity": "beginner",
     "category": "standard",
-    "relatedModule": "/learn/compliance-strategy"
+    "relatedModule": "/learn/custody-governance"
   },
   {
     "id": "iso-iec-27001",
@@ -666,7 +732,8 @@
     "definition": "International standard specifying requirements for an Information Security Management System (ISMS). Annex A.10 covers cryptography. Does not mandate PQC directly but the control framework drives PQC adoption.",
     "complexity": "beginner",
     "category": "standard",
-    "relatedModule": "/learn/compliance-strategy"
+    "relatedModule": "/learn/compliance-strategy",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "stig",
@@ -675,7 +742,8 @@
     "definition": "DISA-maintained configuration standards that lock down DoD information systems and components. STIGs prescribe specific cryptographic-suite choices, with ongoing updates to reflect CNSA 2.0 / FIPS 140-3 alignment.",
     "complexity": "intermediate",
     "category": "standard",
-    "relatedModule": "/learn/compliance-strategy"
+    "relatedModule": "/learn/compliance-strategy",
+    "industries": "Government & Defense"
   },
   {
     "id": "cspn",
@@ -684,7 +752,8 @@
     "definition": "ANSSI's first-level security certification scheme for IT products. Faster and lighter than full Common Criteria; PQC products began entering CSPN catalogue in 2025.",
     "complexity": "intermediate",
     "category": "standard",
-    "relatedModule": "/learn/standards-bodies"
+    "relatedModule": "/learn/cc-eucc-certification",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "nist-ir-8528",
@@ -707,9 +776,11 @@
     "term": "OMB M-23-02",
     "definition": "US Office of Management and Budget memorandum (November 2022) directing federal agencies to submit an annual prioritized inventory of quantum-vulnerable cryptographic systems (excluding national security systems) until 2035 or as superseding guidance directs, plus an assessment of the funding needed to migrate them.",
     "technicalNote": "OMB M-23-02 sets the recurring inventory cadence for non-national-security federal systems, with a focus on high value assets and high impact systems. OMB M-26-15 (June 2026) later requires agencies to submit PQC Migration Plans and sets migration phases. National security systems are outside both memoranda and follow CNSA 2.0 under NSS policy.",
-    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "relatedModule": "/learn/government-defense-pqc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "nsm-10",
@@ -718,7 +789,9 @@
     "technicalNote": "Implemented via OMB Memorandum M-23-02, which required agencies to submit cryptographic inventories.",
     "relatedModule": "/timeline",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "fips-140-2",
@@ -735,7 +808,8 @@
     "technicalNote": "Superseded by CNSA 2.0 (2022, already in this glossary), which adds PQC algorithms and sets adoption timelines.",
     "relatedModule": "/timeline",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Government & Defense"
   },
   {
     "id": "nist-sp-800-56a",
