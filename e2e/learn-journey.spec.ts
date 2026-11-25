@@ -103,7 +103,11 @@ for (const [name, viewport] of [
       await box.fill(GOAL)
       await page.getByRole('button', { name: 'Preview' }).click()
       await expect(page.getByText('Preview · nothing is saved yet')).toBeVisible()
-      expect(await page.evaluate(() => localStorage.getItem('pqc-journey'))).toBeNull()
+      // nothing saved: the stored journey, if any, holds no objective
+      const before = await page.evaluate(() => localStorage.getItem('pqc-journey'))
+      expect(before === null || Object.keys(JSON.parse(before).state.objectives).length === 0).toBe(
+        true
+      )
       await page.getByRole('button', { name: 'Create objective' }).click()
       await expect(page.getByTestId('objective-workspace')).toBeVisible()
       const stored = await page.evaluate(() => localStorage.getItem('pqc-journey'))

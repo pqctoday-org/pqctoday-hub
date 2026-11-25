@@ -18,7 +18,13 @@ import { TREE_LESSONS } from './lessons'
 const core = JSON.parse(
   readFileSync(join(process.cwd(), 'public/data/knowledge-core.json'), 'utf8')
 ) as { records: { id: string; kind: string; parts?: string[]; more?: string[] }[] }
-const corePaths = core.records.filter((r) => r.kind === 'role path')
+const allCorePaths = core.records.filter((r) => r.kind === 'role path')
+const workRoleIds = new Set<string>(Object.keys(NICE_WORK_ROLES))
+// the file carries a path for each NICE work role and one for each persona (a persona's is its work role's, or the common-ground lessons)
+const corePaths = allCorePaths.filter((r) => workRoleIds.has(r.id.replace('PATH:', '')))
+const personaCorePaths = allCorePaths.filter((r) =>
+  (PERSONA_IDS as readonly string[]).includes(r.id.replace('PATH:', ''))
+)
 
 describe('role paths are computed from the lessons data file', () => {
   it('has a path record for every NICE work role to compare with', () => {
@@ -35,6 +41,15 @@ describe('role paths are computed from the lessons data file', () => {
       expect(path.more.map((l) => l.lmId)).toEqual(record.more ?? [])
     }
   )
+
+  it('has a path record for every persona beside the work-role ones', () => {
+    // What each persona record lists is the knowledge file's own (it is not compared here: the journey's
+    // persona path is the path of the persona's work role, which the work-role records above pin).
+    expect(personaCorePaths.map((r) => r.id.replace('PATH:', '')).sort()).toEqual(
+      [...PERSONA_IDS].sort()
+    )
+    expect(allCorePaths).toHaveLength(corePaths.length + personaCorePaths.length)
+  })
 
   it('shows at most ten lessons and puts the rest under "more for this role"', () => {
     for (const role of Object.keys(NICE_WORK_ROLES) as NiceWorkRoleId[]) {
