@@ -88,9 +88,14 @@ function uncompressedPoint(point: Uint8Array, coordinateBytes: number) {
 describe('actual loaded serialized algorithm examples', () => {
   it('loads the maintained November11 snapshot (or a later generation of it) rather than stale cells', () => {
     // 11132026 is the 11112026_r2 table with six trusted_source_id cells filled; byte sizes are unchanged.
-    expect(loadedFileMetadata?.filename).toMatch(
-      /pqc_complete_algorithm_reference_111[13]2026(?:_r\d+)?\.csv$/
+    // Later generations (e.g. 11252026, record facts moved into the data) keep the pinned
+    // byte sizes below, so any generation dated on or after 11112026 is accepted.
+    const m = /pqc_complete_algorithm_reference_(\d{2})(\d{2})(\d{4})(?:_r\d+)?\.csv$/.exec(
+      loadedFileMetadata?.filename ?? ''
     )
+    expect(m, 'loaded file is a dated algorithm reference generation').not.toBeNull()
+    if (!m) return
+    expect(`${m[3]}${m[1]}${m[2]}` >= '20261111').toBe(true)
   })
   it.each(expected)(
     '%s retains its pinned public/private/signature-or-ciphertext/secret byte scope',
