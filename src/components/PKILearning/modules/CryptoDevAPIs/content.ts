@@ -15,7 +15,7 @@ export const content: ModuleContent = {
   moduleId: 'crypto-dev-apis',
   version: '1.0.5',
   lastReviewed: '2026-08-18',
-  lastEdited: '2026-11-18',
+  lastEdited: '2026-11-25',
 
   standards: [
     // Primary current JDK security-update and Bouncy Castle release evidence,
