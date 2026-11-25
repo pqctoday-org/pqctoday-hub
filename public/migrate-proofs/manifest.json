@@ -33683,6 +33683,36 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Gridstream-Connect",
+      "refId": "Gridstream-Connect",
+      "file": "Gridstream-Connect-d00d6f7f.html",
+      "sizeBytes": 79495,
+      "content_type": "text/html",
+      "url": "https://www.landisgyr.com/nam/en/home/solutions/flexible-communications/gridstream-connect",
+      "sha256": "a105b557afc64559e2ee3d3b6c23a17381917e3c9e13a276e1d7d0df86636047",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T03:04:08.944089+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Colleague",
+      "refId": "Colleague",
+      "file": "Colleague-25c8c5ce.html",
+      "sizeBytes": 225878,
+      "content_type": "text/html",
+      "url": "https://www.ellucian.com/solutions/ellucian-colleague",
+      "sha256": "be001dd8db333dcce56a3d0f6002e99826a8ca3421ff1f6c1fc2fb33638c9a30",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T03:04:14.609194+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
