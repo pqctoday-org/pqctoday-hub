@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'custody-lifecycle-ops',
-  contentVersion: 2,
-  lm_id: 'LM-084',
-  title: 'Custody Key Lifecycle Operations',
-  description:
-    'How digital-asset custody keys are created, guarded, watched, recovered, and retired in daily operation: DKG and share refresh, why chain keys cannot be revoked, recovery and inheritance, key ceremonies, custody monitoring, access control, backup and disaster recovery, and safe decommissioning.',
   whyThisMatters:
     'Custody failures happen across the entire key lifecycle, not only during signing: unrevoked token allowances or EIP-7702 delegations outlive withdrawal pauses, untested recovery paths become attack paths, rushed restores re-enable attacker footholds, and premature key destruction permanently burns incoming funds.',
-  duration: '38 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 12,
   learnSections: [
     { id: 'key-lifecycle', label: '5a. Threshold Key Lifecycle' },
     { id: 'rotation-and-revocation', label: '5e. Rotation & Revocation' },
@@ -38,10 +28,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'revoke-or-rotate',
     text: 'Open W9 (Revoke or Rotate Matrix) and classify twelve custody items — including an EOA hot wallet, an MPC share, a departed approver device, a token allowance, and an EIP-7702 delegation — to see why sweeping, resharing, and revoking solve different problems.',
-  },
-  taxonomy: {
-    algorithms: ['ECDSA', 'ML-DSA', 'ML-KEM'],
-    standards: ['FIPS 140-3', 'PKCS#11', 'KMIP', 'NIST SP 800-57', 'SP 800-88'],
   },
   load: () => import('./index').then((m) => ({ default: m.CustodyLifecycleOpsModule })),
 }

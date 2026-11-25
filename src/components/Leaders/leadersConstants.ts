@@ -100,6 +100,7 @@ export const LEADERS_REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
   eu: 'Europe',
   apac: 'Asia-Pacific',
+  mena: 'Middle East',
 }
 
 /** Maps region IDs to the country name values used in the leaders CSV. The CSV
@@ -152,8 +153,8 @@ export const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
     'Ireland',
     'France/Netherlands',
     'Germany/Netherlands',
-    'Israel',
   ],
+  mena: ['Israel'],
   apac: [
     'Singapore',
     'Japan',

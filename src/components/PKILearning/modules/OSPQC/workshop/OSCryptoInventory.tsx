@@ -6,8 +6,11 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { EDUCATION_NOTICE } from '@/data/educationNotice'
 import { migrateLayerHref } from '@/utils/migrateLinks'
-import manifest from '../manifest'
+import rawManifest from '../manifest'
 import { OsTlsPolicyEvidence } from './OsTlsPolicyEvidence'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 interface CryptoComponent {
   id: string

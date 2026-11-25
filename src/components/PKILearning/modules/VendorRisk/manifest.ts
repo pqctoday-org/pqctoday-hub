@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'vendor-risk',
-  contentVersion: 22,
-  lm_id: 'LM-038',
-  title: 'Vendor & Supply Chain Risk',
-  description:
-    'Score vendor PQC readiness from real product data, generate contract requirements, and map supply chain risk.',
   whyThisMatters:
     "A vendor's PQC roadmap claim is only as good as the product data behind it — scoring readiness from real data, not marketing pages, is what actually protects a supply chain.",
-  duration: '30 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p7',
-  track: 'Governance & Risk',
-  trackOrder: 5,
   learnSections: [
     { id: 'readiness', label: 'Vendor PQC Readiness' },
     { id: 'supply-chain', label: 'Vendor PQC Scorecards' },
@@ -31,19 +21,6 @@ const manifest: ModuleManifest = {
   startHere: {
     step: 'vendor-scorecard',
     text: 'Select your products in step 1, then score two vendors on the same PQC readiness dimensions in the Vendor Scorecard and compare the totals.',
-  },
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    standards: [
-      'NIST SP 800-161r1',
-      'CycloneDX CBOM',
-      'NIST CSWP 39',
-      'NIST SP 800-208',
-      'NSA CNSA 2.0',
-    ],
   },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.VendorRiskModule })),

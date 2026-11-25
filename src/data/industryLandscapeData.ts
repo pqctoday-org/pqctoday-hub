@@ -127,8 +127,8 @@ export interface IndustryUseCase {
    * Playground tool ids (`WorkshopTool.id`, incl. generated `sbx-*` sandbox
    * scenarios) a reader can run to practise THIS use case. Hand-curated —
    * this source is `enrich: none` by design, and the three derivable signals
-   * all under-deliver (module manifests declare a tool for 17 of 65 modules;
-   * `PROTOCOL_MATRIX.playgrounds[]` is empty on 13 of 35 rows and its toolIds
+   * all under-deliver (module manifests declare a tool for only some modules;
+   * `PROTOCOL_MATRIX.playgrounds[]` is empty on many rows and its toolIds
    * are not all registry ids; algorithm-string matching is fuzzy both ways).
    *
    * Empty is legitimate — a use case with no honest match gets no tools rather

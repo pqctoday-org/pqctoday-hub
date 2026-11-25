@@ -366,6 +366,23 @@ const asDifficulty = (v: unknown): DifficultyId =>
   DIFFICULTIES.includes(v as DifficultyId) ? (v as DifficultyId) : SEED.difficulty
 
 /**
+ * The United Kingdom's jurisdiction code is the ISO code GB. Runs saved in a
+ * browser, or exported, before that change carry 'UK'; this renames it on the
+ * way in, in the run's country and in the list of jurisdictions played.
+ */
+export function renameUkJurisdiction<
+  T extends { country?: unknown; simJurisdictionsPlayed?: unknown },
+>(state: T): T {
+  const rename = (c: unknown) => (c === 'UK' ? 'GB' : c)
+  const out = { ...state }
+  if ('country' in out) out.country = rename(out.country)
+  if (Array.isArray(out.simJurisdictionsPlayed)) {
+    out.simJurisdictionsPlayed = [...new Set((out.simJurisdictionsPlayed as unknown[]).map(rename))]
+  }
+  return out
+}
+
+/**
  * The persisted store's version-upgrade path. Defensive by construction: every
  * field gets a safe default rather than trusting the shape of old localStorage
  * data. v3 introduced strict maturity gating, so any real migration (persisted
@@ -388,7 +405,7 @@ export function migrateSimulationState(persisted: unknown) {
   const s = (persisted ?? {}) as Record<string, unknown>
   return {
     size: (s.size as string) ?? SEED.size,
-    country: (s.country as string) ?? SEED.country,
+    country: (renameUkJurisdiction(s).country as string) ?? SEED.country,
     sector: (s.sector as string) ?? SEED.sector,
     seat: (s.seat as string) ?? SEED.seat,
     sel: SEED.sel,
@@ -482,7 +499,8 @@ const saveSlice = (s: SimulationState): SimulationData => ({
 function fromSave(s: Record<string, unknown>) {
   return {
     size: typeof s.size === 'string' ? s.size : SEED.size,
-    country: typeof s.country === 'string' ? s.country : SEED.country,
+    country:
+      typeof s.country === 'string' ? (renameUkJurisdiction(s).country as string) : SEED.country,
     sector: typeof s.sector === 'string' ? s.sector : SEED.sector,
     seat: typeof s.seat === 'string' ? s.seat : SEED.seat,
     sel: (typeof s.sel === 'string' ? s.sel : SEED.sel) as PhaseId,
@@ -757,6 +775,10 @@ export const useSimulationStore = create<SimulationState>()(
         simJurisdictionsPlayed: s.simJurisdictionsPlayed,
       }),
       migrate: migrateSimulationState,
+      merge: (persisted, current) => ({
+        ...current,
+        ...renameUkJurisdiction((persisted ?? {}) as Record<string, unknown>),
+      }),
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('useSimulationStore rehydrate error', error)
       },

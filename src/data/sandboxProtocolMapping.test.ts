@@ -2,7 +2,11 @@
 import { describe, it, expect } from 'vitest'
 import { PROTOCOL_MATRIX } from './pqcProtocolMatrix'
 import { SANDBOX_SCENARIOS } from './sandboxScenarios'
-import { getSandboxProtocolRef, protocolMatrixHref } from './sandboxProtocolMapping'
+import {
+  getSandboxProtocolRef,
+  protocolMatrixHref,
+  sandboxProtocolMappedIds,
+} from './sandboxProtocolMapping'
 
 describe('sandbox → protocol matrix cross-reference overlay', () => {
   const matrixIds = new Set(PROTOCOL_MATRIX.map((r) => r.id))
@@ -20,10 +24,14 @@ describe('sandbox → protocol matrix cross-reference overlay', () => {
   })
 
   it('does not reference scenarios that no longer exist', () => {
+    // Walk the overlay's own keys. (Walking the scenarios instead, as this test
+    // once did, can never fail: a key whose scenario is gone is never visited.)
     const scenarioIds = new Set(SANDBOX_SCENARIOS.map((s) => s.id))
-    const mappedButGone = SANDBOX_SCENARIOS.filter((s) => getSandboxProtocolRef(s.id))
+    const gone = sandboxProtocolMappedIds().filter((id) => !scenarioIds.has(id))
+    expect(gone, `overlay names scenarios that do not exist: ${gone.join(', ')}`).toEqual([])
     // sanity: at least the core transport scenarios are mapped
-    expect(mappedButGone.length).toBeGreaterThanOrEqual(10)
-    for (const s of mappedButGone) expect(scenarioIds.has(s.id)).toBe(true)
+    expect(
+      SANDBOX_SCENARIOS.filter((s) => getSandboxProtocolRef(s.id)).length
+    ).toBeGreaterThanOrEqual(10)
   })
 })

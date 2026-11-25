@@ -36,7 +36,7 @@ function validateCatalog(entries: Record<string, CatalogModule>): Record<string,
 /**
  * Strip undefined entries from track module arrays. A dangling
  * `MODULE_CATALOG['some-removed-id']` reference returns undefined and
- * crashes downstream `.map((m) => m.id)` consumers (Dashboard, LearnTrackStack).
+ * crashes downstream `.map((m) => m.id)` consumers (Dashboard).
  * In dev we log the dropped slot so the broken track row is visible during
  * triage; in prod we silently drop it so the page still renders.
  */
@@ -65,6 +65,11 @@ export const MODULE_CATALOG: Record<string, CatalogModule> = validateCatalog(
   buildCatalog(MANIFESTS)
 )
 
+/** Learning modules in the catalogue (the quiz is listed there but is not a module). */
+export const LEARN_MODULE_COUNT: number = Object.keys(MODULE_CATALOG).filter(
+  (id) => id !== 'quiz'
+).length
+
 /** Actual step counts per module for progress calculation.
  * Must match WORKSHOP_STEPS[id].length exactly — keep in sync. */
 export const MODULE_STEP_COUNTS: Record<string, number> = buildStepCounts(MANIFESTS)
@@ -77,9 +82,9 @@ export const TRACK_COLORS: Record<string, string> = {
   'Hardware Infrastructure': 'bg-status-warning/20 text-status-warning',
   'Software Infrastructure': 'bg-status-warning/10 text-status-warning',
   Applications: 'bg-status-success/15 text-status-success',
-  Executive: 'bg-status-error/15 text-status-error',
+  'Governance & Risk': 'bg-status-error/15 text-status-error',
   // Wave D (2026-08-29): axe color-contrast on the track badge these two
-  // feed (rendered in ModuleShell.tsx and reused by ModuleCard/LearnTrackStack/
+  // feed (rendered in ModuleShell.tsx and reused by ModuleCard/
   // ModuleTable/BrowseAllView) — text-tertiary/text-accent measured below
   // 4.5:1 against their own bg-*/10 tint. See the `-legible` tokens' comments
   // in src/styles/index.css for the measured floors.

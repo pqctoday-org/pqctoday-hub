@@ -15,8 +15,11 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { GovernmentDefensePQCModule } from './index'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { CNSA_MILESTONES, SUITE_COMPARISON } from './data/cnsaData'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('GovernmentDefensePQC', () => {
   it('renders the module header and the standard tab set', () => {

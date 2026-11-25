@@ -71,7 +71,7 @@ export const FRAMEWORK_MAX_FINE_USD_MILLIONS: Record<string, number> = {
  * which point the drift-guard test fails and the key must be REMOVED from
  * this list (it will then start counting).
  *
- * Reviewed 2026-07-10 against compliance_07092026.csv (171 active ids).
+ * Reviewed 2026-07-10 against compliance_07092026.csv.
  */
 export const KNOWN_INACTIVE_FINE_KEYS: ReadonlySet<string> = new Set([
   'EU-AI-Act', // EU AI Act — no compliance row; PQC relevance indirect

@@ -14,8 +14,8 @@
  * assembles the phase trees.
  */
 import type { ComponentType } from 'react'
-import type { PhaseId } from '@/data/frameworkPhases'
 import type { PersonaId } from '@/data/personaIds'
+import type { LearnModuleRecord } from '@/data/generated/learnModules.generated'
 
 export interface TabItem {
   value: string
@@ -115,22 +115,6 @@ export interface WorkshopStepDef extends PathScoped {
 export interface ModuleManifest {
   /** slug — equals the route path and the MODULE_CATALOG key */
   id: string
-  /** 'LM-NNN' tracking id (absent on quiz/assess) */
-  lm_id?: string
-  title: string
-  description: string
-  /** human duration, e.g. '60 min' */
-  duration: string
-  difficulty?: 'beginner' | 'intermediate' | 'advanced'
-  workInProgress?: boolean
-  /** single phase, or an array for spanning modules */
-  frameworkPhase: PhaseId | PhaseId[]
-
-  /** canonical track name; absent for quiz/assess (not in any track) */
-  track?: string
-  /** position within its track (preserves MODULE_TRACKS ordering) */
-  trackOrder?: number
-
   /** ordered Learn-tab sections (absent for custom/special modules) */
   learnSections?: LearnSectionDef[]
   /**
@@ -182,9 +166,6 @@ export interface ModuleManifest {
   /** mountable in-place inside /simulation */
   embeddable?: boolean
 
-  playgroundTool?: string
-  taxonomy?: { algorithms?: string[]; standards?: string[] }
-
   /**
    * Hand-authored module graph (WS2-module-graph.md — unbuilt as of
    * 2026-08-21, so both arrays are empty on all 65 manifests today).
@@ -198,13 +179,6 @@ export interface ModuleManifest {
    */
   prerequisiteIds?: string[]
   followOnIds?: string[]
-
-  /**
-   * Per-module learn-content version (B2). Bump when this module's content
-   * materially changes so the "What's New" surface can show "<module> updated".
-   * Absent ⇒ treated as 1. Independent of the persist/migrate store versions.
-   */
-  contentVersion?: number
 
   /**
    * One-line "why this matters" framing rendered as a callout under the module
@@ -231,3 +205,32 @@ export const STANDARD_TABS: TabItem[] = [
   { value: 'references', label: 'References' },
   { value: 'tools', label: 'Tools & Products' },
 ]
+
+/**
+ * A manifest joined with its row in the lessons data file
+ * (`src/data/learn_modules_*.csv`, via `learnModules.generated.ts`). The
+ * organising fields (title, minutes, level, track, phase, taxonomy, ...) are
+ * stored once in that file, never in the manifest; the registry adds them here
+ * so every consumer reads one resolved shape.
+ */
+export type ResolvedModuleManifest = ModuleManifest & {
+  /** 'LM-NNN' tracking id (absent on quiz/assess) */
+  lm_id?: string
+  title: string
+  description: string
+  /** human duration, e.g. '60 min' */
+  duration: string
+  difficulty?: LearnModuleRecord['difficulty']
+  workInProgress?: boolean
+  /** single phase, or an array for spanning modules */
+  frameworkPhase:
+    LearnModuleRecord['frameworkPhase'][number] | LearnModuleRecord['frameworkPhase'][number][]
+  /** canonical track name; absent for quiz/assess (not in any track) */
+  track?: string
+  /** position within its track */
+  trackOrder?: number
+  playgroundTool?: string
+  taxonomy?: { algorithms?: string[]; standards?: string[] }
+  /** per-module learn-content version; absent => 1 */
+  contentVersion?: number
+}

@@ -8,7 +8,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import { MANIFESTS } from './registry'
-import type { ModuleManifest } from './types'
+import type { ResolvedModuleManifest } from './types'
 import {
   buildCatalog,
   buildStepCounts,
@@ -151,35 +151,88 @@ const postCutoverPqcAlgorithmsCatalog = {
   frameworkPhase: 'foundations',
 }
 
-// Sourced sections added to existing modules after the golden was frozen: one new
-// learn section each (placed after `after`) and the module's longer duration.
+// Sourced sections added to existing modules after the golden was frozen: new
+// learn sections (placed, in order, after `after`) and the module's longer duration.
 const sectionAdditions: Record<
   string,
-  { after: string; section: { id: string; label: string }; duration: string }
+  { after: string; sections: { id: string; label: string }[]; duration: string }
 > = {
   'network-security-pqc': {
     after: 'zero-trust-pqc',
-    section: { id: 'network-operations-pqc', label: 'Network Operations' },
-    duration: '100 min',
+    sections: [
+      { id: 'network-operations-pqc', label: 'Network Operations' },
+      { id: 'network-contingency-recovery', label: 'Contingency & Recovery Plans' },
+    ],
+    duration: '105 min',
   },
   'platform-eng-pqc': {
     after: 'migration-runway',
-    section: { id: 'secure-software-delivery', label: 'Secure Software Delivery' },
+    sections: [{ id: 'secure-software-delivery', label: 'Secure Software Delivery' }],
     duration: '90 min',
   },
   'data-asset-sensitivity': {
     after: 'methodology',
-    section: { id: 'stored-data-key-recovery', label: 'Stored Data & Key Recovery' },
-    duration: '60 min',
+    sections: [
+      { id: 'stored-data-key-recovery', label: 'Stored Data & Key Recovery' },
+      { id: 'cia-quantum-threat', label: 'CIA & the Quantum Threat' },
+    ],
+    duration: '65 min',
   },
   'pqc-101': {
     after: 'quantum-threat',
-    section: { id: 'building-blocks', label: 'The Building Blocks' },
+    sections: [{ id: 'building-blocks', label: 'The Building Blocks' }],
     duration: '15 min',
+  },
+  'crypto-dev-apis': {
+    after: 'pqc-roadmap',
+    sections: [
+      { id: 'tailoring-code-analysis', label: 'Tailoring Code Analysis' },
+      { id: 'static-code-analysis', label: 'Static Code Analysis' },
+      { id: 'dynamic-analysis', label: 'Dynamic Analysis' },
+      { id: 'open-source-security', label: 'Open-Source Software Security' },
+    ],
+    duration: '106 min',
+  },
+  'kms-pqc': {
+    after: 'cloud-responsibility',
+    sections: [{ id: 'key-escrow-recovery', label: 'Key Escrow & Recovery' }],
+    duration: '68 min',
+  },
+  'hybrid-crypto': {
+    after: 'crypto-apis',
+    sections: [{ id: 'protocol-design-principles', label: 'Protocol Design Principles' }],
+    duration: '48 min',
+  },
+  'crypto-agility': {
+    after: 'migration',
+    sections: [{ id: 'systems-security-engineering', label: 'Systems Security Engineering' }],
+    duration: '45 min',
+  },
+  'pqc-testing-validation': {
+    after: 'fips-acvp',
+    sections: [
+      { id: 'system-integration', label: 'System Integration' },
+      { id: 'static-analysis-discovery', label: 'Static Analysis in Discovery' },
+    ],
+    duration: '130 min',
+  },
+  'automotive-pqc': {
+    after: 'supply-chain',
+    sections: [{ id: 'system-life-cycles', label: 'System Life Cycles' }],
+    duration: '85 min',
+  },
+  'web-gateway-pqc': {
+    after: 'vendor-paths',
+    sections: [{ id: 'pq-tls-termination-point', label: 'PQ TLS at the Termination Point' }],
+    duration: '65 min',
+  },
+  'digital-assets': {
+    after: 'pqc-blockchain',
+    sections: [{ id: 'air-gapped-vault-design', label: 'Air-Gapped Vault Design' }],
+    duration: '55 min',
   },
 }
 const withSectionDuration = <T extends { id: string; duration?: string }>(m: T): T =>
-  // eslint-disable-next-line security/detect-object-injection
   sectionAdditions[m.id] ? { ...m, duration: sectionAdditions[m.id].duration } : m
 const withSectionAdditions = <T extends Record<string, { id: string; label: string }[]>>(
   maps: T
@@ -191,7 +244,7 @@ const withSectionAdditions = <T extends Record<string, { id: string; label: stri
     const at = list.findIndex((x) => x.id === add.after)
     expect(at).toBeGreaterThanOrEqual(0)
     // eslint-disable-next-line security/detect-object-injection
-    out[id] = [...list.slice(0, at + 1), add.section, ...list.slice(at + 1)]
+    out[id] = [...list.slice(0, at + 1), ...add.sections, ...list.slice(at + 1)]
   }
   return out as T
 }
@@ -626,8 +679,8 @@ describe('derive.ts editable field propagation (fixture)', () => {
     expect(base).toBeDefined()
     const distinctiveDescription =
       'Distinctive fixture description 2026-11-22 proving derive.ts carries edited prose verbatim.'
-    const fixture: ModuleManifest = {
-      ...(base as ModuleManifest),
+    const fixture: ResolvedModuleManifest = {
+      ...(base as ResolvedModuleManifest),
       description: distinctiveDescription,
     }
     const catalog = buildCatalog([fixture])

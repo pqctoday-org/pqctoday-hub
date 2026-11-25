@@ -22,7 +22,10 @@ import {
 } from './data/kmsConstants'
 import { HybridKeyWrapping } from './workshop/HybridKeyWrapping'
 import { KmsPqcExercises } from './components/KmsPqcExercises'
-import manifest from './manifest'
+import rawManifest from './manifest'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 const ROOT = process.cwd()
 const MODULE_DIR = path.join(ROOT, 'src/components/PKILearning/modules/KmsPqc')

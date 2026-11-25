@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'government-defense-pqc',
-  contentVersion: 15,
-  lm_id: 'LM-069',
-  title: 'Government & Defense PQC',
-  description:
-    'The federal PQC policy layer: the CNSA 2.0 suite and its dated mandates, National Security Systems and CSfC, Federal PKI and the PQC certificate profile, the statute/EO/OMB stack, and how CISA product categories shape procurement.',
   whyThisMatters:
     'Government is the one sector where post-quantum migration is already binding rather than advisory — CNSA 2.0 is required for new National Security System acquisitions from 1 January 2027, and vendors selling into that market inherit the deadline whether or not they have planned for it.',
-  duration: '60 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 6,
   learnSections: [
     { id: 'cnsa-suite', label: 'The CNSA 2.0 Suite' },
     { id: 'cnsa-timeline', label: 'Mandates & Dated Milestones' },
@@ -40,16 +30,6 @@ const manifest: ModuleManifest = {
     { value: 'references', label: 'References' },
     { value: 'tools', label: 'Tools & Products' },
   ],
-  // Sim-embeddable since 2026-09-28 (user decision D1, simulation content
-  // integration plan): it is the government sector track's P0 module.
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA', 'ML-KEM'],
-    standards: ['X.509', 'EO 14306', 'OMB M-23-02', 'NSM-10', 'NIST SP 800-208'],
-  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.GovernmentDefensePQCModule })),
 }

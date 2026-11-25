@@ -2,8 +2,10 @@
 import { describe, it, expect } from 'vitest'
 import type { ComplianceFramework } from '../data/complianceData'
 import type { ThreatData } from '../data/threatsData'
+import type { LibraryItem } from '../data/libraryData'
 import {
   applicableFrameworks,
+  applicableLibraryDocs,
   applicableThreats,
   coversEverySector,
   groupByTier,
@@ -425,6 +427,72 @@ describe('industry matching via the shared sector vocabulary', () => {
     const energy = makeFramework({ id: 'ENERGY', industries: ['Energy & Utilities'] })
     expect(
       applicableFrameworks({ industry: 'Healthcare / Pharmaceutical', country: null }, [energy])
+    ).toEqual([])
+  })
+})
+
+// ── Library documents read their industry tags as the data holds them ─────
+
+describe('applicableLibraryDocs — industry tags are the industry landscape names', () => {
+  const doc = (applicableIndustries: string[]): LibraryItem =>
+    ({
+      referenceId: 'LIB-TEST',
+      applicableIndustries,
+      regionScope: 'US',
+      authorsOrOrganization: 'Test',
+    }) as unknown as LibraryItem
+  const reach = (industry: string, tags: string[]) =>
+    applicableLibraryDocs({ industry, country: 'United States' }, [doc(tags)]).map((r) => r.tier)
+
+  it('matches a reader whose sector the tag names, through the sector vocabulary', () => {
+    expect(reach('Technology', ['Cloud Computing / Data Centers'])).toEqual(['recognized'])
+    expect(reach('Finance & Banking', ['Cryptocurrency / Blockchain'])).toEqual(['recognized'])
+    expect(reach('Healthcare', ['Healthcare / Pharmaceutical'])).toEqual(['recognized'])
+  })
+
+  it('keeps a sector-specific document away from a reader in another sector', () => {
+    expect(reach('Finance & Banking', ['Education / Research'])).toEqual([])
+  })
+
+  it('treats a document tagged only with the all-industry label as relevant to every sector', () => {
+    expect(reach('Healthcare', ['Cross-Industry'])).toEqual(['recognized'])
+  })
+})
+
+// ── Countries and regions are read from the jurisdictions registry ────────
+
+describe('country and region matching reads the jurisdictions registry', () => {
+  it('matches an ISO-coded document to a reader who picked the country by name, for any registry country', () => {
+    const doc = {
+      referenceId: 'LIB-IT',
+      applicableIndustries: [],
+      regionScope: 'IT',
+      authorsOrOrganization: 'Test',
+    } as unknown as LibraryItem
+    const results = applicableLibraryDocs({ industry: null, country: 'Italy' }, [doc])
+    expect(results.map((r) => r.item.referenceId)).toEqual(['LIB-IT'])
+  })
+
+  it('puts every registry country of a region in that region, not only a short list', () => {
+    const fw = makeFramework({
+      id: 'TH',
+      countries: ['Thailand'],
+      industries: ['Technology'],
+    })
+    const results = applicableFrameworks(
+      { industry: 'Technology', country: null, region: 'apac' },
+      [fw]
+    )
+    expect(results.map((r) => r.item.id)).toEqual(['TH'])
+  })
+
+  it('treats Israel as a Middle East country, not a European one', () => {
+    const fw = makeFramework({ id: 'IL', countries: ['Israel'], industries: ['Technology'] })
+    expect(
+      applicableFrameworks({ industry: 'Technology', country: null, region: 'mena' }, [fw]).length
+    ).toBe(1)
+    expect(
+      applicableFrameworks({ industry: 'Technology', country: null, region: 'eu' }, [fw])
     ).toEqual([])
   })
 })

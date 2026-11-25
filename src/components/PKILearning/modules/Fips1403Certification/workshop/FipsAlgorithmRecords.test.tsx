@@ -38,7 +38,10 @@ import {
 import { STEP_EXERCISES } from '@/data/stepExercises'
 import { MANIFEST_BY_ID, MANIFESTS } from '@/components/PKILearning/manifest/registry'
 import { buildCatalog, buildStepCounts } from '@/components/PKILearning/manifest/derive'
-import manifest from '../manifest'
+import rawManifest from '../manifest'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 const compareItems = ALGORITHM_RECORD_ITEMS.filter(
   (i): i is AlgorithmRecordCompareItem => i.kind === 'compare'

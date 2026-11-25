@@ -7,9 +7,9 @@
  * modules/<X>/manifest.ts); tests that need it in MANIFEST_BY_ID mock the
  * registry.
  */
-import type { ModuleManifest } from '../types'
+import type { ResolvedModuleManifest } from '../types'
 
-export const PATH_FIXTURE: ModuleManifest = {
+export const PATH_FIXTURE: ResolvedModuleManifest = {
   id: 'ws0-path-fixture',
   title: 'Path Fixture',
   description: 'Learn-path test fixture',

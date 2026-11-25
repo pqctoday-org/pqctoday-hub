@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'merkle-tree-certs',
-  contentVersion: 15,
-  lm_id: 'LM-025',
-  title: 'Merkle Tree Certificates',
-  description:
-    'Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS.',
   whyThisMatters:
     "Merkle Tree Certificates could replace X.509's per-certificate PQC signature overhead with one tree and many inclusion proofs — the trade-off against traditional PKI shapes which TLS ecosystem wins post-quantum.",
-  duration: '40 min',
-  difficulty: 'advanced',
-  frameworkPhase: 'p6',
-  track: 'Software Infrastructure',
-  trackOrder: 4,
   // learnSections CORRECTED 2026-07-30. The previous ids (merkle, inclusion,
   // verification, comparison, ct-log) mirrored this module's workshopSteps
   // (build-tree, inclusion-proof, verify-proof, size-comparison, ct-log —
@@ -41,8 +31,6 @@ const manifest: ModuleManifest = {
     step: 'build-tree',
     text: 'Load the 8 sample certificates (or add your own subject names) and press Build Merkle Tree: SHA-256 hashes are computed level by level up to a signed root, and hovering any node reveals its full hash.',
   },
-  playgroundTool: 'merkle-proof',
-  taxonomy: { algorithms: ['LMS/XMSS'], standards: ['NIST SP 800-208'] },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.MerkleTreeCertsModule })),
 }

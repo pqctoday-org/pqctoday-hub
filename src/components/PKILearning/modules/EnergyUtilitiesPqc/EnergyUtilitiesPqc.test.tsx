@@ -7,12 +7,15 @@ import { EmbedProvider } from '../../../../embed/EmbedProvider'
 import { useModuleStore } from '@/store/useModuleStore'
 import { EnergyUtilitiesPqcModule } from './index'
 import { content } from './content'
-import manifest from './manifest'
+import rawManifest from './manifest'
 import { GridProtocolMapper } from './workshop/GridProtocolMapper'
 import { SubstationMtuBudget } from './workshop/SubstationMtuBudget'
 import { SmartMeterLifecyclePlanner } from './workshop/SmartMeterLifecyclePlanner'
 import { GridEvidenceScope } from './workshop/GridEvidenceScope'
 import { EnergyUtilitiesExercises } from './components/EnergyUtilitiesExercises'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('EnergyUtilitiesPqc module (LM-082)', () => {
   beforeEach(() => {

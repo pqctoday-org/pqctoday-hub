@@ -19,7 +19,7 @@ import {
   DATA_RETENTION_YEARS,
   CREDENTIAL_LIFETIME_YEARS,
 } from '@/hooks/assessmentData'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
+import { COUNTRY_CODE_TO_NAME } from '@/data/jurisdictionsData'
 
 // ACCURACY-0708-2: the example report is now a real `computeAssessment`
 // snapshot embedded in a v2 share token (see exampleReport.ts), not partial
@@ -31,7 +31,7 @@ import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 // quick-track fields.
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
-const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
+const VALID_COUNTRIES = new Set([...Object.values(COUNTRY_CODE_TO_NAME), 'Global'])
 
 describe('EXAMPLE_REPORT_SHARE_PAYLOAD — fixture uses canonical vocabulary', () => {
   it('industry is canonical', () => {

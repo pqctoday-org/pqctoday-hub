@@ -24,6 +24,7 @@ import {
 } from '../data/sensitivityConstants'
 import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
 import { STORED_DATA_SECTION } from '../data/storedDataSection'
+import { CIA_PRINCIPLES_SECTION } from '../data/ciaPrinciplesSection'
 
 interface DataAssetIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -533,6 +534,15 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           title={STORED_DATA_SECTION.title}
         >
           <SourcedSectionBody section={STORED_DATA_SECTION} />
+        </CollapsibleSection>
+      </div>
+
+      <div data-section-id="cia-quantum-threat" className="scroll-mt-20">
+        <CollapsibleSection
+          icon={<Database size={24} className="text-primary" />}
+          title={CIA_PRINCIPLES_SECTION.title}
+        >
+          <SourcedSectionBody section={CIA_PRINCIPLES_SECTION} />
         </CollapsibleSection>
       </div>
 

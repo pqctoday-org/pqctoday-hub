@@ -6,8 +6,8 @@
  * "Developers meet threats through protocols and are given sectors."
  *
  * THE HONEST PROBLEM, AND WHAT WE DO ABOUT IT. The threats corpus has no
- * protocol column. It has `cryptoAtRisk`, which is free text — 329 distinct
- * tokens across 114 rows — and that text is a mixture of two different things:
+ * protocol column. It has `cryptoAtRisk`, which is free text with a
+ * different spelling on almost every row, and that text is a mixture of two different things:
  * sometimes it names a protocol outright ("ground station TLS", "CAN bus
  * authentication", "TLS for telematics"), and sometimes it names only an
  * algorithm ("RSA-2048", "ECDSA").

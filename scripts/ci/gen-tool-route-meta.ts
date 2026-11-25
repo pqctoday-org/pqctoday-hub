@@ -2,7 +2,9 @@
 /**
  * Generate the plain-data SEO catalogue for every routed tool page.
  *
- * The React registries remain the authoring source, but this generated file is
+ * Each tool's name and kind come from the tools data file (through
+ * `tools.generated.ts`); its description stays in the React registries, which
+ * remain the authoring source for content. But this generated file is
  * deliberately free of components, icons and lazy imports so PageMeta can use
  * it without pulling either registry into the boot bundle.
  */
@@ -12,6 +14,7 @@ import { fileURLToPath } from 'node:url'
 import { format, resolveConfig } from 'prettier'
 import { BUSINESS_TOOLS } from '../../src/components/BusinessCenter/businessToolsRegistry'
 import { WORKSHOP_TOOLS } from '../../src/components/Playground/workshopRegistry'
+import { TOOL_RECORD_BY_ID } from '../../src/data/generated/tools.generated'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../..')
 const OUTPUT = join(ROOT, 'src/seo/toolRouteMeta.generated.ts')
@@ -96,7 +99,7 @@ const REDIRECTS_ONLY = new Set(['cacp-kmip'])
 const records: ToolRouteRecord[] = [
   ...BUSINESS_TOOLS.map((tool) => ({
     path: `/business/tools/${tool.id}`,
-    title: `${tool.name} — PQC Business Tool | PQC Today`,
+    title: `${TOOL_RECORD_BY_ID[tool.id].name} — PQC Business Tool | PQC Today`,
     description: cleanDescription(tool.description),
     kind: 'business-tool' as const,
     index: true,
@@ -108,22 +111,23 @@ const records: ToolRouteRecord[] = [
   })),
   ...WORKSHOP_TOOLS.filter((tool) => !REDIRECTS_ONLY.has(tool.id)).map((tool) => ({
     path: `/playground/${tool.id}`,
-    title: `${tool.name} — PQC Crypto Lab | PQC Today`,
+    title: `${TOOL_RECORD_BY_ID[tool.id].name} — PQC Crypto Lab | PQC Today`,
     description: cleanDescription(tool.description),
-    kind: (tool.sandbox ? 'sandbox-tool' : 'browser-tool') as Kind,
+    kind: (TOOL_RECORD_BY_ID[tool.id].kind === 'sandbox' ? 'sandbox-tool' : 'browser-tool') as Kind,
     // The Docker sandbox is a separate product the Hub no longer embeds, so its
     // scenario pages stay reachable but are kept out of search (noindex, no sitemap).
-    index: !tool.sandbox,
-    sourceGlobs: tool.sandbox
-      ? [
-          'src/data/sandboxScenarios.ts',
-          'src/components/Playground/SandboxScenarioEmbed.tsx',
-          'src/components/Playground/PlaygroundToolRoute.tsx',
-        ]
-      : [
-          'src/components/Playground/workshopRegistry.tsx',
-          'src/components/Playground/PlaygroundToolRoute.tsx',
-        ],
+    index: TOOL_RECORD_BY_ID[tool.id].kind !== 'sandbox',
+    sourceGlobs:
+      TOOL_RECORD_BY_ID[tool.id].kind === 'sandbox'
+        ? [
+            'src/data/sandboxScenarios.ts',
+            'src/components/Playground/SandboxScenarioEmbed.tsx',
+            'src/components/Playground/PlaygroundToolRoute.tsx',
+          ]
+        : [
+            'src/components/Playground/workshopRegistry.tsx',
+            'src/components/Playground/PlaygroundToolRoute.tsx',
+          ],
     contentRegion: '#main-content',
   })),
   ...LABS,

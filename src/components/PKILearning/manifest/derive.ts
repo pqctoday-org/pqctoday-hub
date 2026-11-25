@@ -5,7 +5,7 @@
  * written map; the conformance test asserts derived === legacy for every module.
  */
 import type { CatalogModule } from '../moduleData'
-import type { ModuleManifest } from './types'
+import type { ResolvedModuleManifest } from './types'
 
 // type-only import (erased) so derive.ts has no runtime dependency on moduleData
 // — required for the cut-over, where moduleData imports these builders.
@@ -13,7 +13,7 @@ type CatalogEntry = CatalogModule
 
 /** Rebuild a module's MODULE_CATALOG entry. Optional fields are *omitted* (not
  *  set to undefined) so deep-equality with the hand-written catalog holds. */
-export function deriveCatalogEntry(m: ModuleManifest): CatalogEntry {
+export function deriveCatalogEntry(m: ResolvedModuleManifest): CatalogEntry {
   return {
     id: m.id,
     ...(m.lm_id !== undefined ? { lm_id: m.lm_id } : {}),
@@ -28,7 +28,7 @@ export function deriveCatalogEntry(m: ModuleManifest): CatalogEntry {
 
 /** Rebuild MODULE_STEP_COUNTS[id]: workshop length, or the explicit override
  *  for modules without a workshop (quiz/assess). */
-export function deriveStepCount(m: ModuleManifest): number {
+export function deriveStepCount(m: ResolvedModuleManifest): number {
   return m.stepCountOverride ?? m.workshopSteps?.length ?? 0
 }
 
@@ -57,28 +57,28 @@ const HYBRID_CERTS_TAXONOMY: Record<string, Taxonomy> = {
 }
 
 /** Full MODULE_CATALOG from the manifest collection. */
-export function buildCatalog(ms: ModuleManifest[]): Record<string, CatalogModule> {
+export function buildCatalog(ms: ResolvedModuleManifest[]): Record<string, CatalogModule> {
   return Object.fromEntries(ms.map((m) => [m.id, deriveCatalogEntry(m)]))
 }
 
 /** Full MODULE_STEP_COUNTS (manifest counts + the synthetic 'assess'). */
-export function buildStepCounts(ms: ModuleManifest[]): Record<string, number> {
+export function buildStepCounts(ms: ResolvedModuleManifest[]): Record<string, number> {
   return { ...Object.fromEntries(ms.map((m) => [m.id, deriveStepCount(m)])), ...ASSESS_STEP_COUNT }
 }
 
 /** Full LEARN_SECTIONS (modules that have learn sections). */
-export function buildLearnSections(ms: ModuleManifest[]): Record<string, Section[]> {
+export function buildLearnSections(ms: ResolvedModuleManifest[]): Record<string, Section[]> {
   return Object.fromEntries(ms.filter((m) => m.learnSections).map((m) => [m.id, m.learnSections!]))
 }
 
 /** Full WORKSHOP_STEPS (modules that have a workshop). */
-export function buildWorkshopSteps(ms: ModuleManifest[]): Record<string, Section[]> {
+export function buildWorkshopSteps(ms: ResolvedModuleManifest[]): Record<string, Section[]> {
   return Object.fromEntries(ms.filter((m) => m.workshopSteps).map((m) => [m.id, m.workshopSteps!]))
 }
 
 /** Full MODULE_TRACKS — tracks in display order, modules in trackOrder. */
 export function buildModuleTracks(
-  ms: ModuleManifest[]
+  ms: ResolvedModuleManifest[]
 ): { track: string; modules: CatalogModule[] }[] {
   return TRACK_ORDER.map((track) => ({
     track,
@@ -90,14 +90,14 @@ export function buildModuleTracks(
 }
 
 /** Full MODULE_PLAYGROUND_TOOL (modules linked to a Playground tool). */
-export function buildPlaygroundTools(ms: ModuleManifest[]): Record<string, string> {
+export function buildPlaygroundTools(ms: ResolvedModuleManifest[]): Record<string, string> {
   return Object.fromEntries(
     ms.filter((m) => m.playgroundTool).map((m) => [m.id, m.playgroundTool!])
   )
 }
 
 /** Full MODULE_TAXONOMY (modules with taxonomy + the 'hybrid-certs' alias). */
-export function buildTaxonomy(ms: ModuleManifest[]): Record<string, Taxonomy> {
+export function buildTaxonomy(ms: ResolvedModuleManifest[]): Record<string, Taxonomy> {
   return {
     ...Object.fromEntries(ms.filter((m) => m.taxonomy).map((m) => [m.id, m.taxonomy!])),
     ...HYBRID_CERTS_TAXONOMY,

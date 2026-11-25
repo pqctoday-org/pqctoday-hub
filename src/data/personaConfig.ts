@@ -9,6 +9,7 @@ import type { AssessmentMode } from '../store/useAssessmentStore'
 import type { PhaseId } from './frameworkPhases'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
 import { TYPE_LABELS } from './artifactLabels'
+import { REGION_LEAD_JURISDICTION } from './jurisdictionsData'
 // Value import; `reportSectionToCswp39` imports ReportSectionId back from here
 // but as `import type`, which is erased at compile time — so this is a one-way
 // runtime edge, not a cycle.
@@ -604,22 +605,20 @@ export const PERSONA_RECOMMENDED_MODE: Record<PersonaId, AssessmentMode> = {
 }
 
 /**
- * Broad region → representative country name matching timeline CSV data.
- * null means no pre-filter (Global).
- * @deprecated Use REGION_COUNTRIES_MAP for multi-country region filtering.
+ * Broad region → representative country name matching timeline CSV data: each region's
+ * lead jurisdiction (the first row of the region in the jurisdictions registry).
+ * null means no pre-filter (Europe spans many lanes, so it has no single lead; Global).
+ * @deprecated Use REGION_JURISDICTION_NAMES (jurisdictionsData) for multi-country region
+ * filtering.
  */
 export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
-  americas: 'United States',
+  americas: REGION_LEAD_JURISDICTION.americas,
   eu: null,
-  mena: 'Israel',
-  apac: 'Japan',
+  mena: REGION_LEAD_JURISDICTION.mena,
+  apac: REGION_LEAD_JURISDICTION.apac,
   global: null,
 }
 
-/**
- * Broad region → all matching country names in the timeline CSV data.
- * Used to power multi-country region filter in the Gantt chart.
- */
 /**
  * Per-persona default region for /timeline when the user has no
  * `selectedRegion` in the persona store and no `?region=` URL param.
@@ -653,25 +652,6 @@ export const PERSONA_TIMELINE_REGION: Record<PersonaId, Region | 'All'> = {
   'cert-engineer': 'global',
   ops: 'global', // owner decision D2, 15 Oct 2026
   curious: 'global', // owner decision, 16 Oct 2026: no persona-implied region
-}
-
-export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
-  americas: ['United States', 'Canada'],
-  eu: ['European Union', 'France', 'Germany', 'Italy', 'Spain', 'United Kingdom', 'Czech Republic'],
-  mena: ['Israel', 'United Arab Emirates', 'Saudi Arabia', 'Bahrain', 'Jordan'],
-  apac: [
-    'Japan',
-    'Singapore',
-    'Australia',
-    'South Korea',
-    'Taiwan',
-    'India',
-    'China',
-    'New Zealand',
-    'Hong Kong',
-    'Malaysia',
-  ],
-  global: ['Global', 'International', 'G7', 'NATO', 'BIS', 'GSMA'],
 }
 
 /**

@@ -79,7 +79,7 @@ export const PERSONA_LENS_REGISTRY: Record<string, PersonaLensEntry> = {
   },
   '/timeline': {
     lens: 'per-persona-config',
-    configKeys: ['PERSONA_TIMELINE_REGION', 'REGION_COUNTRIES_MAP'],
+    configKeys: ['PERSONA_TIMELINE_REGION'],
     note: 'Stored region wins; the per-role constant is only the fallback before one is picked.',
   },
   '/algorithms': {

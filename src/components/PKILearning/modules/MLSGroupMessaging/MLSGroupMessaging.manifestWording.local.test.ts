@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
-import manifest from './manifest'
+import rawManifest from './manifest'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
 
 describe('MLS catalogue text: post-compromise security and key custody', () => {
   const text = [manifest.description, manifest.whyThisMatters].join(' ')

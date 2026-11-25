@@ -14,11 +14,8 @@ import {
   type ResolvedTimelineEvent,
 } from '@/data/timelineData'
 import { applyTimelineScope } from '@/data/timelineScope'
-import {
-  REGION_COUNTRIES_MAP,
-  REGION_COUNTRY_MAP,
-  PERSONA_TIMELINE_REGION,
-} from '@/data/personaConfig'
+import { REGION_COUNTRY_MAP, PERSONA_TIMELINE_REGION } from '@/data/personaConfig'
+import { REGION_JURISDICTION_NAMES } from '@/data/jurisdictionsData'
 import { timelineRegionCountries } from '@/data/timelineRegionCountries'
 import { searchLane } from '@/data/timelineViewFilter'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
@@ -103,7 +100,7 @@ function nextTwoPhases(country: GanttCountryData | undefined) {
  * get a not-found notice and the param is dropped. Opening a phase writes
  * `?event=` (push); closing clears it (replace).
  */
-const KNOWN_REGIONS = new Set<string>([...Object.keys(REGION_COUNTRIES_MAP), 'global'])
+const KNOWN_REGIONS = new Set<string>([...Object.keys(REGION_JURISDICTION_NAMES), 'global'])
 
 /** ?region= → a known Region; unknown values are ignored (fall back to stored/persona). */
 function parseRegionParam(raw: string | null): Region | 'All' | null {

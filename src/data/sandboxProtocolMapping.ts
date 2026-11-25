@@ -24,7 +24,6 @@ const SANDBOX_PROTOCOL_MAP: Record<string, SandboxProtocolRef> = {
   tls: { protocolId: 'tls-1-3', label: 'TLS 1.3' },
   'browser-tls': { protocolId: 'tls-1-3', label: 'TLS 1.3' },
   'migration-impact': { protocolId: 'tls-1-3', label: 'TLS 1.3' },
-  haproxy: { protocolId: 'tls-1-3', label: 'TLS 1.3' },
   'ab-handshake-bench': { protocolId: 'tls-1-3', label: 'TLS 1.3' },
   'database-postgres': { protocolId: 'tls-1-3', label: 'TLS 1.3' },
   'iot-mqtt': { protocolId: 'tls-1-3', label: 'TLS 1.3' },
@@ -45,6 +44,7 @@ const SANDBOX_PROTOCOL_MAP: Record<string, SandboxProtocolRef> = {
   // PKCS#11 — the benchmark drives the softhsmv3 PKCS#11 v3.2 engine directly,
   // which is the matrix's `pkcs11` row rather than any wire protocol.
   'hsm-perf-bench': { protocolId: 'pkcs11', label: 'PKCS#11' },
+  // NOTE — `haproxy` was mapped here until 2026-11-24: the scenario never shipped in the sandbox.
   // NOTE — `wireguard` was mapped here until 2026-07-28, when the sandbox
   // scenario was deleted. Rosenpass, the only PQ-WireGuard we could ship, uses
   // pre-standardisation Kyber-512 (FIPS 203 superseded it with ML-KEM, and the
@@ -61,11 +61,15 @@ const SANDBOX_PROTOCOL_MAP: Record<string, SandboxProtocolRef> = {
   'supply-chain-signing': { protocolId: 'sigstore', label: 'Sigstore' },
   // JOSE / JWT
   'api-security-jwt': { protocolId: 'jose', label: 'JOSE / JWT' },
-  // TPM 2.0
-  'tpm-playground': { protocolId: 'tpm', label: 'TPM 2.0' },
+  // TPM 2.0 (`tpm-playground` is a native Playground tool, not a sandbox scenario)
   'tpm-pqc-migration': { protocolId: 'tpm', label: 'TPM 2.0' },
   // Firmware / UEFI
   'firmware-hss': { protocolId: 'uefi', label: 'UEFI' },
+}
+
+/** Every scenario id the overlay names, so a test can prove each one still exists. */
+export function sandboxProtocolMappedIds(): string[] {
+  return Object.keys(SANDBOX_PROTOCOL_MAP)
 }
 
 export function getSandboxProtocolRef(scenarioId: string): SandboxProtocolRef | undefined {

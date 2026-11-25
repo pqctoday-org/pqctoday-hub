@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import type { ModuleManifest } from './types'
+import type { ResolvedModuleManifest } from './types'
 
 const minutesOf = (duration: string | undefined): number | null => {
   const m = /^(\d+)\s*min$/.exec((duration ?? '').trim())
@@ -15,7 +15,7 @@ const minutesOf = (duration: string | undefined): number | null => {
  * range of the paths is shown instead; otherwise the module's own number stands.
  */
 export function moduleDurationLabel(
-  manifest: Pick<ModuleManifest, 'duration' | 'learnPaths'>
+  manifest: Pick<ResolvedModuleManifest, 'duration' | 'learnPaths'>
 ): string | undefined {
   const own = manifest.duration
   const paths = (manifest.learnPaths ?? [])

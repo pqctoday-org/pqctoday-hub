@@ -1,0 +1,4223 @@
+{
+  "workshopTools": [
+    {
+      "id": "cacp-kmip",
+      "pt_id": "PT-033",
+      "version": "1.0.9",
+      "name": "KMIP Control Plane",
+      "description": "In-browser KMIP 3.0 control plane + softhsmrustv3 HSM, compiled to WebAssembly. Load a crypto-agility policy (pqc.yaml / classical.yaml), run key lifecycle ops (CreateKeyPair → Activate → Sign / Encap / Decap), and watch the policy auto-rekey a classical ECDSA-P256 key to ML-DSA-65 on the same Sign call — no server, no Docker.",
+      "category": "HSM / PKCS#11",
+      "algorithms": [
+        "ML-DSA-44",
+        "ML-DSA-65",
+        "ML-DSA-87",
+        "ML-KEM-768",
+        "ML-KEM-1024",
+        "AES-256",
+        "ECDSA",
+        "KMIP 3.0"
+      ],
+      "moduleLink": "/playground/cacp",
+      "keywords": [
+        "kmip",
+        "cacp",
+        "crypto-agility",
+        "crypto agility",
+        "control plane",
+        "hsm",
+        "softhsm",
+        "policy",
+        "rekey",
+        "key lifecycle",
+        "ml-dsa",
+        "ml-kem",
+        "ttlv",
+        "wire",
+        "pkcs11",
+        "wasm"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "hasOutput": true,
+      "outputSpec": "Produces a browser-local KMIP operation trace, policy decision, PKCS #11 result, and before/after key-lifecycle state for the selected scenario.",
+      "opensourceTool": {
+        "name": "pqctoday-kmip",
+        "url": "https://github.com/pqctoday/pqctoday-kmip"
+      },
+      "intro": {
+        "whatYouWillDo": "Load a policy (Classical, PQC or auto-migrate-on-use), pick an algorithm or Auto — let the policy decide, then step through Create, Activate, Sign, Verify and Revoke on an in-browser KMIP 3.0 engine and WebAssembly HSM.",
+        "workedExample": "Create an ECDSA-P256 signing key under Classical, switch to auto-migrate-on-use and press Sign: the result shows policy: Rekey → ML-DSA-65 as the legacy key is superseded, and Inspect records every step."
+      }
+    },
+    {
+      "id": "hsm-capacity",
+      "pt_id": "PT-026",
+      "version": "2.0.0",
+      "name": "HSM Capacity Calculator",
+      "description": "Explore fictional HSM workloads, utilisation headroom and local redundancy. Preserve per-site inventory and size payment workloads separately; not a production capacity prediction.",
+      "category": "HSM / PKCS#11",
+      "algorithms": [
+        "RSA-2048",
+        "ECDSA P-256",
+        "ECDH P-256",
+        "ML-DSA-65",
+        "ML-KEM-768",
+        "SLH-DSA-128s",
+        "AES-128",
+        "AES-256"
+      ],
+      "moduleLink": "/learn/pki-workshop",
+      "keywords": [
+        "hsm",
+        "capacity",
+        "sizing",
+        "tps",
+        "throughput",
+        "fleet",
+        "pqc",
+        "ml-dsa",
+        "rsa",
+        "ecdsa",
+        "ecdh",
+        "aes",
+        "use case",
+        "tls",
+        "code signing",
+        "payment",
+        "tde",
+        "kms",
+        "vpn",
+        "ssh",
+        "dnssec"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["architect", "ops", "executive", "grc"],
+      "intro": {
+        "whatYouWillDo": "Explore fictional per-site workloads, assumed operation rates, utilisation headroom and local redundancy. Inspect actual site allocations and separate payment-fleet results.",
+        "workedExample": "Enter ten general-purpose devices and three sites: the allocations are 4/3/3, not twelve devices. Compare each site against the model requirement at 70% target utilisation, then apply N+1."
+      },
+      "hasOutput": false
+    },
+    {
+      "id": "hybrid-encrypt",
+      "pt_id": "PT-003",
+      "version": "1.0.2",
+      "name": "Hybrid KEM + ECDH",
+      "description": "ML-KEM + X25519 ECDH + HKDF hybrid encryption pipeline",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["ML-KEM-768", "X25519", "HKDF", "HPKE-PQ"],
+      "moduleLink": "/learn/hybrid-crypto",
+      "keywords": [
+        "hybrid",
+        "kem",
+        "ecdh",
+        "hkdf",
+        "ml-kem",
+        "x25519",
+        "encryption",
+        "key agreement"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Execute six steps in order: Alice and Bob X25519 keypairs, ECDH in both directions, an ML-KEM-768 keypair, encapsulation, then decapsulate and HKDF-combine both secrets into one 32-byte session key.",
+        "workedExample": "Step 3 prints both ECDH secrets and confirms they match; Step 5 shows the 1088-byte ciphertext; Step 6 lists the HKDF inputs (ECDH secret, ML-KEM secret, info string) and the final 32-byte hybrid key."
+      },
+      "hasOutput": true,
+      "outputSpec": "ML-KEM-768 encapsulated key (1088 bytes) + shared secret (32 bytes hex); ECDH shared secret must equal both sides."
+    },
+    {
+      "id": "envelope-encrypt",
+      "pt_id": "PT-004",
+      "version": "1.0.2",
+      "name": "Envelope Encryption",
+      "description": "ML-KEM + AES key wrap in a KMS envelope encryption pattern",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["ML-KEM-768", "AES-256", "Key Wrap"],
+      "moduleLink": "/learn/kms-pqc",
+      "keywords": ["envelope", "kms", "key wrap", "ml-kem", "aes", "dek", "kek"],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["architect", "researcher", "ops"],
+      "intro": {
+        "whatYouWillDo": "Pick a KEK algorithm (ML-KEM-512/768/1024 or RSA-2048/4096) and a wrap mechanism (AES-KW, AES-KWP or AES-GCM), press Execute (Live WASM), then step through the five-step classical-vs-PQC comparison.",
+        "workedExample": "With ML-KEM-768 and AES-KW the run generates an AES-256 DEK, encapsulates a 1088 B KEM ciphertext, wraps the DEK into 40 B and unwraps it again; the Key Integrity Verification panel shows the DEK before and after match."
+      },
+      "hasOutput": true,
+      "outputSpec": "Copyable hex for the wrapped DEK. ML-KEM runs also produce a KEM ciphertext, and AES-GCM adds a nonce. Compare all 32 recovered DEK bytes with the original."
+    },
+    {
+      "id": "cloud-kms-key-exchange",
+      "pt_id": "PT-034",
+      "version": "1.0.1",
+      "name": "Cloud KMS Key Exchange",
+      "description": "Simulate importing a key into AWS KMS, Google Cloud KMS and Azure: the classical RSA key-wrap flow next to the HPKE flow, on PKCS#11 v3.2, the v3.3 draft and the candidate CKM_HPKE mechanism",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["ML-KEM-768", "ML-KEM-1024", "X-Wing", "RSA-3072", "AES-256", "HPKE"],
+      "moduleLink": "/learn/kms-pqc?tab=workshop&step=6",
+      "keywords": [
+        "cloud kms",
+        "aws kms",
+        "google cloud kms",
+        "azure key vault",
+        "byok",
+        "key import",
+        "key exchange",
+        "hpke",
+        "x-wing",
+        "ml-kem",
+        "rsa key wrap",
+        "ckm_rsa_aes_key_wrap",
+        "ckm_comp_kem",
+        "simulation"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["architect", "ops", "developer"],
+      "intro": {
+        "whatYouWillDo": "Pick AWS KMS, Google Cloud KMS or Azure, then a flow: the classical RSA import, or the HPKE import on the PKCS#11 v3.2, v3.3 draft or candidate CKM_HPKE engine. Press Run simulation and read the measured sizes and where the key sits at each step.",
+        "workedExample": "On AWS KMS choose Classical import and run it: the wrapped blob is the RSA part plus the AES-KWP part, and the recovered key matches the original. Switch to HPKE (candidate), pick X-Wing and run: the message grows to enc plus ciphertext, protected by a post-quantum KEM. Everything is a simulation; no cloud call is made."
+      },
+      "hasOutput": true,
+      "outputSpec": "Wrapped key blob (RSA-OAEP part plus AES-KWP part) or HPKE enc || ciphertext; the key imported on the provider side must be the same key the third-party HSM exported, shown by a signature or a key check value and never by reading the key out."
+    },
+    {
+      "id": "token-migration",
+      "pt_id": "PT-005",
+      "version": "1.0.2",
+      "name": "Multi-Algorithm Signing",
+      "description": "Compare ML-DSA, ECDSA, and RSA signing in a token migration workflow",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["ML-DSA", "ECDSA", "RSA"],
+      "moduleLink": "/learn/iam-pqc?tab=workshop&step=1",
+      "keywords": ["token", "migration", "iam", "ml-dsa", "ecdsa", "rsa", "multi-algorithm", "jwt"],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "ops"],
+      "intro": {
+        "whatYouWillDo": "Choose a JWT signing algorithm and sign with the browser HSM. Verify the original payload with the local public key, change the received subject, then restore it.",
+        "workedExample": "With ML-DSA-65, the signature grows from the 256-byte RS256 baseline to 3,309 bytes. Verification accepts the original payload, rejects the changed subject and succeeds when the original value is restored."
+      },
+      "hasOutput": true,
+      "outputSpec": "A signature preview and byte count, plus real PKCS#11 verification of the selected received payload in Live HSM Mode."
+    },
+    {
+      "id": "firmware-signing",
+      "pt_id": "PT-007",
+      "version": "1.0.5",
+      "name": "Firmware Signing",
+      "description": "UEFI secure boot firmware signing and verification with ML-DSA-44/65/87 or SLH-DSA (defaults to ML-DSA-65)",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87", "SLH-DSA-SHA2-128s", "SHA-256"],
+      "moduleLink": "/learn/secure-boot-pqc?tab=workshop&step=1",
+      "keywords": [
+        "firmware",
+        "uefi",
+        "secure boot",
+        "ml-dsa",
+        "sphincs",
+        "pqc",
+        "post-quantum",
+        "signing",
+        "verification"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "ops", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Upload a firmware binary or use the sample UEFI manifest. Generate classical and PQC key pairs, sign the manifest and verify both signatures. Change the received manifest to test rejection.",
+        "workedExample": "With the defaults — ML-DSA-65 against RSA-2048 with SHA-256 — both signatures come back VERIFIED and the Migration Comparison table shows the signature growing from 256 B to 3,309 B (12.9×)."
+      },
+      "hasOutput": true,
+      "outputSpec": "A PQC signature and a classical signature over the manifest. For an uploaded binary the manifest binds its byte length and SHA-256 digest. Both signatures must verify under their own public keys to finish."
+    },
+    {
+      "id": "slh-dsa",
+      "pt_id": "PT-001",
+      "version": "1.0.4",
+      "name": "SLH-DSA Sign & Verify",
+      "description": "All 12 FIPS 205 parameter sets with pre-hash support",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["SLH-DSA", "SHA2", "SHAKE"],
+      "moduleLink": "/learn/slh-dsa",
+      "keywords": ["slh-dsa", "sphincs", "fips 205", "stateless", "hash-based", "sign", "verify"],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Pick one of the 12 FIPS 205 parameter sets and a pre-hash mode, then Generate Key Pair, Sign Message and Verify Signature on a real PKCS#11 v3.2 HSM emulator in the browser.",
+        "workedExample": "With the default SHA2-128s set the 32-byte public key appears, the message signs into a 7,856 B (7.7 KB) signature, Verify Signature reports Signature Valid, and the PKCS#11 call log lists every call."
+      },
+      "hasOutput": true,
+      "outputSpec": "FIPS 205 SLH-DSA signature (hex); verify step must return true under the same key pair. Signature size depends on the parameter set (7,856–49,856 bytes)."
+    },
+    {
+      "id": "lms-hss",
+      "pt_id": "PT-002",
+      "version": "1.0.4",
+      "name": "Stateful Hash Signatures",
+      "description": "LMS and XMSS stateful signature trees using SoftHSMv3",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["LMS", "HSS", "XMSS"],
+      "moduleLink": "/learn/stateful-signatures",
+      "keywords": ["lms", "hss", "xmss", "stateful", "hash-based", "sp 800-208"],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Choose an SP 800-208 LMS/HSS parameter set (hash, height, W, levels), Sign Message to advance the one-time key counter, Simulate State Loss, then verify a Rust-signed signature with the C++ engine.",
+        "workedExample": "With the default LMS_SHA256_M32_H5 / LMOTS_W8 key each Sign Message moves the Signature Counter toward 32; at 32 the panel shows KEY EXHAUSTED, and Simulate State Loss names the leaf indexes that would be reused."
+      },
+      "hasOutput": true,
+      "outputSpec": "LMS/XMSS stateful signature (hex). Signature binds to one-time leaf; verification must succeed on unmodified message."
+    },
+    {
+      "id": "hybrid-sigs",
+      "pt_id": "PT-027",
+      "version": "1.0.3",
+      "name": "Hybrid Signature Spectrums",
+      "description": "Execute concatenation, nesting and a local shared-binding model; compare component checks and a replacement experiment. Not a security proof.",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["EC-Schnorr", "secp256k1", "ML-DSA-65", "SHA-256"],
+      "moduleLink": "/learn/hybrid-crypto?tab=workshop&step=3&sv=2",
+      "keywords": [
+        "hybrid",
+        "signature",
+        "silithium",
+        "fused",
+        "concatenation",
+        "nesting",
+        "non-separability",
+        "sns",
+        "wns",
+        "ml-dsa",
+        "ec-schnorr",
+        "secp256k1",
+        "fiat-shamir",
+        "pqc-transition"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Choose Concatenation, Nesting or Shared-binding model (Silithium-inspired), then Generate Key Pairs, Sign and Verify. Read the full-binding and raw-message EC/ML checks. The local model is not the published Silithium scheme, and this page does not claim strong non-separability or a security proof.",
+        "workedExample": "With a valid local-model sample, both full-binding components pass while the separate raw-message checks do not. Recombination Attack retains the EC public key and original EC bytes while signing a replacement ML component with its own key: inspect the actual EC, ML and combined results."
+      },
+      "hasOutput": true,
+      "outputSpec": "Sample EC-Schnorr + ML-DSA-65 bytes with executed full-binding, raw-component and replacement checks. Results apply to the selected local construction; they do not establish a published profile, interoperability or a security proof."
+    },
+    {
+      "id": "kdf-derivation",
+      "pt_id": "PT-008",
+      "version": "1.0.2",
+      "name": "SP 800-108 KDF",
+      "description": "NIST SP 800-108 counter-mode key derivation — applicable to KEM secrets, PSK, QKD, and password-derived keys",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["SP 800-108", "HMAC-SHA256", "PBKDF2", "HKDF"],
+      "moduleLink": "/learn/qkd?tab=workshop&step=4",
+      "keywords": [
+        "kdf",
+        "key derivation",
+        "sp 800-108",
+        "hmac",
+        "counter mode",
+        "kbkdf",
+        "pbkdf2",
+        "hkdf",
+        "psk",
+        "kem"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Generate a local key shaped like an ETSI QKD 014 response and import it into the browser HSM. Compare SP 800-108 counter-mode derivations with the same session context and a one-bit change.",
+        "workedExample": "Run the local HSM sample. Repeating the same inputs reproduces the key. Changing the session context gives a different key from the same imported secret and label."
+      },
+      "hasOutput": true,
+      "outputSpec": "Three 32-byte derivation outputs in hex for the live HSM sample. With the HSM disabled, the walkthrough displays one labelled illustrative random value."
+    },
+    {
+      "id": "tee-channel",
+      "pt_id": "PT-006",
+      "version": "1.0.3",
+      "name": "TEE-HSM Secure Channel",
+      "description": "Explore sample TEE-HSM provisioning with signature verification, ML-KEM and AES key wrap",
+      "category": "HSM / PKCS#11",
+      "algorithms": ["ML-DSA", "ML-KEM-768", "AES Key Wrap"],
+      "moduleLink": "/learn/confidential-computing",
+      "keywords": ["tee", "trusted execution", "confidential", "channel", "attestation", "hsm"],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Inspect generated sample attestation messages and signature-gated key unwrap. PQC mode uses ML-DSA-65 and ML-KEM; classical mode uses ECDSA and an independently generated AES wrapping key.",
+        "workedExample": "Run the flow end to end; the PKCS#11 call log shows which call each algorithm makes, and the generated-keys panel shows what ended up where."
+      },
+      "hasOutput": true,
+      "outputSpec": "Sample signature-verification results; ML-KEM-768 encapsulation ciphertext (1,088 bytes) in PQC mode; AES-wrapped provisioning key. Production quote trust, freshness and measurement-policy checks are outside this sample."
+    },
+    {
+      "id": "tls-simulator",
+      "pt_id": "PT-024",
+      "version": "1.0.4",
+      "name": "TLS 1.3 Simulator",
+      "description": "Client–server TLS 1.3 handshake simulator: configure cipher suites, classical or hybrid key exchange, and RSA or ML-DSA certificates",
+      "category": "Protocol Simulations",
+      "algorithms": ["TLS 1.3", "ML-KEM", "X25519MLKEM768", "ML-DSA", "ECDSA", "RSA"],
+      "moduleLink": "/learn/tls-basics",
+      "keywords": [
+        "tls",
+        "tls 1.3",
+        "handshake",
+        "client",
+        "server",
+        "cipher",
+        "ml-kem",
+        "x25519",
+        "hybrid",
+        "mtls",
+        "certificate",
+        "pqc",
+        "openssl",
+        "simulation"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "ops", "curious"],
+      "intro": {
+        "whatYouWillDo": "Configure the client and server panels — cipher suites, key exchange groups, an RSA-2048 or ML-DSA identity, optional client verification — then Start Full Interaction to run a real OpenSSL TLS 1.3 handshake.",
+        "workedExample": "With the defaults (X25519MLKEM768 offered first, RSA-2048 certificates) the summary names the negotiated cipher and key exchange, how many KB the handshake moved, and notes that hybrid ML-KEM plus ECDH was used."
+      },
+      "hasOutput": true,
+      "outputSpec": "OpenSSL TLS 1.3 handshake trace with the negotiated cipher, key exchange group and server handshake signature scheme, or an error when the handshake fails."
+    },
+    {
+      "id": "vpn-sim",
+      "pt_id": "PT-009",
+      "version": "1.0.7",
+      "name": "PQC VPN Simulator",
+      "description": "Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.",
+      "category": "Protocol Simulations",
+      "algorithms": [
+        "IKEv2",
+        "ML-KEM-768",
+        "ML-DSA-65",
+        "ECDH",
+        "AES-256-CBC",
+        "HMAC-SHA2-256",
+        "PKCS#11"
+      ],
+      "moduleLink": "/learn/vpn-ssh-pqc",
+      "keywords": [
+        "vpn",
+        "ipsec",
+        "ikev2",
+        "pkcs11",
+        "hsm",
+        "softhsm",
+        "ecdh",
+        "wasm",
+        "charon",
+        "strongswan",
+        "pqc",
+        "hybrid",
+        "rpc"
+      ],
+      "difficulty": "advanced",
+      "requires": ["sab", "threads", "chromium"],
+      "recommendedPersonas": ["developer", "architect", "ops", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Pick Classical, Hybrid (ECP-256 + ML-KEM) or Pure PQC key exchange, choose the ML-KEM size, set the MTU and fragmentation, choose PSK or certificate auth, then Start Daemon and watch two strongSwan WASM workers run IKEv2.",
+        "workedExample": "Select Hybrid with ML-KEM-768 and Start Daemon: the charon log tags IKE_SA_INIT, IKE_INTERMEDIATE and IKE_AUTH lines, the status turns to Tunnel Established, and Tunnel Statistics report Total Bytes, Round Trips and Quantum-Safe: KEX ✓."
+      },
+      "hasOutput": true,
+      "outputSpec": "IKEv2 SKEYSEED and child SA keys derived per RFC 7296 (prf+); ECDH shared secret (32 bytes hex); live C_* PKCS#11 call log with CK_RV return codes."
+    },
+    {
+      "id": "pqc-ssh-sim",
+      "pt_id": "PT-SSH-PQC",
+      "version": "1.0.6",
+      "name": "PQC SSH Simulator",
+      "description": "Compare byte sizes and timings from bundled modified OpenSSH handshake samples and modeled token-operation traces. Experimental PQC authentication requires matching peer and build support.",
+      "category": "Protocol Simulations",
+      "algorithms": ["ML-KEM-768", "X25519", "ML-DSA-65", "ssh-mldsa-65", "PKCS#11"],
+      "moduleLink": "/learn/vpn-ssh-pqc",
+      "keywords": [
+        "ssh",
+        "openssh",
+        "ml-kem",
+        "ml-dsa",
+        "hybrid",
+        "kex",
+        "pkcs11",
+        "softhsm",
+        "wasm",
+        "pqc",
+        "x25519",
+        "mldsa65",
+        "userauth"
+      ],
+      "difficulty": "advanced",
+      "requires": ["sab", "threads", "chromium"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Pick a PQC KEX (hybrid or pure ML-KEM) and an ML-DSA or SLH-DSA host key, press Run comparison, then compare the classical curve25519 baseline with the PQC run in the Run Log, PKCS#11 Calls and Wire tabs.",
+        "workedExample": "With the default mlkem768-curve25519-sha256 + ssh-mldsa-65 a real OpenSSH handshake runs: the log reports host and user C_Sign sizes and auth time, and the comparison bars show host pubkey, signature and KEX share bytes."
+      },
+      "hasOutput": true,
+      "outputSpec": "Algorithm identifiers, key/signature/share byte counts, operation timing and logs. Bundled OpenSSH handshake results and modeled protocol-sequence illustrations are identified separately."
+    },
+    {
+      "id": "suci-flow",
+      "pt_id": "PT-018",
+      "version": "1.0.7",
+      "name": "5G SUCI Construction",
+      "description": "Subscriber identity concealment for 5G: ECDH + ANSI X9.63-KDF + AES (Profiles A/B), plus a post-quantum Profile C using ML-KEM in hybrid and pure modes",
+      "category": "Protocol Simulations",
+      "algorithms": ["ECDH", "X25519", "ML-KEM-768", "ANSI X9.63-KDF", "AES-128/256"],
+      "moduleLink": "/learn/5g-security",
+      "keywords": [
+        "5g",
+        "suci",
+        "supi",
+        "subscriber",
+        "concealment",
+        "ecdh",
+        "hkdf",
+        "aes",
+        "ml-kem",
+        "pqc",
+        "post-quantum",
+        "hybrid",
+        "profile c",
+        "x25519"
+      ],
+      "difficulty": "advanced",
+      "requires": ["sab"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Enter a 15-digit SUPI, pick Profile A (X25519), Profile B (P-256) or Profile C (ML-KEM, hybrid or pure), then execute eleven steps from home-network key generation to SUCI assembly and SIDF decryption.",
+        "workedExample": "Default SUPI 310260123456789 under Profile A: X25519 ECDH, X9.63-KDF, AES-128 MSIN encryption and a MAC tag, then Decrypt SUCI at SIDF recovers the original SUPI."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces the synthetic SUCI, derived-key and decryption trace for the selected profile and learner-supplied demonstration SUPI."
+    },
+    {
+      "id": "mls-group-messaging",
+      "pt_id": "PT-030",
+      "version": "1.0.1",
+      "name": "MLS Group Messaging",
+      "description": "RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto routes every crypto op through softhsmv3.",
+      "category": "Protocol Simulations",
+      "algorithms": ["ML-KEM-768", "ML-DSA-65", "X25519", "Ed25519", "AES-128-GCM"],
+      "moduleLink": "/learn/mls-group-messaging?tab=workshop",
+      "keywords": [
+        "mls",
+        "rfc 9420",
+        "treekem",
+        "group messaging",
+        "forward secrecy",
+        "post-compromise security",
+        "key ratchet",
+        "ml-kem",
+        "ml-dsa"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Run the MLS primitives with real keys — ML-DSA-65 credential signing, ML-KEM-768 TreeKEM updates, AES-128-GCM messages — and watch the ratchet tree change as members join.",
+        "workedExample": "Alice and Bob start the group; add a third member and see which nodes on the direct path have to re-key."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces credential-signature, key-update and encrypted-message results plus the modelled TreeKEM epoch and re-keyed-node trace.",
+      "opensourceTool": {
+        "name": "openmls",
+        "url": "https://github.com/openmls/openmls"
+      }
+    },
+    {
+      "id": "tpm-playground",
+      "pt_id": "PT-028",
+      "version": "1.0.9",
+      "name": "TPM 2.0 PQC Playground",
+      "description": "Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.",
+      "category": "Protocol Simulations",
+      "algorithms": ["ML-KEM-768", "ML-DSA-65", "WASM"],
+      "moduleLink": "/learn/secure-boot-pqc",
+      "keywords": ["tpm", "pqc", "wasm", "ml-kem", "ml-dsa", "hardware", "tcg"],
+      "difficulty": "advanced",
+      "requires": ["sab"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Send raw TPM 2.0 commands from the Command Builder — TPM2_GetCapability, TPM2_CreatePrimary, TPM2_Encapsulate, TPM2_SignDigest — with ML-KEM or ML-DSA, then run Quote or Certify on the Attestation tab.",
+        "workedExample": "On Attestation keep the ML-DSA-65 key, PCRs sha256:0,1,2,3,7 and the default nonce, press Run Quote: the result shows the 3309-byte signature, OpenSSL WASM verify says Signature Verified Successfully, plus a JSON bundle."
+      },
+      "hasOutput": true,
+      "outputSpec": "Attestation exports sample report bytes and an AK signature for separate inspection. Format and signature checks do not by themselves establish trusted hardware origin, freshness or an acceptable PCR policy."
+    },
+    {
+      "id": "rng-demo",
+      "pt_id": "PT-010",
+      "version": "1.0.3",
+      "name": "Random Generation",
+      "description": "Web Crypto + OpenSSL DRBG random generation with statistical analysis",
+      "category": "Entropy & Random",
+      "algorithms": ["Web Crypto", "OpenSSL DRBG"],
+      "moduleLink": "/learn/entropy-randomness?tab=workshop&step=0",
+      "keywords": ["random", "rng", "drbg", "web crypto", "openssl", "math.random", "statistics"],
+      "difficulty": "beginner",
+      "requires": [],
+      "recommendedPersonas": ["researcher", "developer", "architect", "ops", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Generate random bytes from Web Crypto, OpenSSL WASM, Math.random() and a linear congruential generator, and run the same statistical tests on each.",
+        "workedExample": "Generate from the LCG source, then predict its next output from its internal state after generation — the prediction matches even though the LCG usually lands within range on the visual checks."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces sample bytes, source-labelled visual statistics and, for the LCG, the predicted next output from exposed state."
+    },
+    {
+      "id": "qrng-demo",
+      "pt_id": "PT-012",
+      "version": "1.0.3",
+      "name": "QRNG Demo",
+      "description": "Simulation — no QRNG hardware involved. Compares a simulated QRNG sample (crypto.getRandomValues() output, not a quantum source), live Web Crypto output and a deliberately broken PRNG on the same grouped checks, which cannot show whether any source is quantum.",
+      "category": "Entropy & Random",
+      "algorithms": ["TRNG", "Web Crypto"],
+      "moduleLink": "/learn/entropy-randomness",
+      "keywords": ["qrng", "quantum random", "trng", "true random", "statistics"],
+      "difficulty": "beginner",
+      "requires": [],
+      "recommendedPersonas": ["researcher", "curious"],
+      "intro": {
+        "whatYouWillDo": "Compare a simulated QRNG sample, a CSPRNG sample and a deliberately broken PRNG on the same visual checks and SP 800-90B health tests, shown as separate groups.",
+        "workedExample": "Run the checks on all three samples: only the weak PRNG stands out, because the simulated QRNG and the CSPRNG are the same kind of output."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces source-labelled synthetic sample bytes and grouped statistical/health-test results; it produces no QRNG hardware evidence."
+    },
+    {
+      "id": "entropy-test",
+      "pt_id": "PT-011",
+      "version": "1.0.4",
+      "name": "Entropy Testing",
+      "description": "Separate groups: monobit, runs and chi-squared visual checks; the SP 800-90B repetition-count and adaptive-proportion health tests (on samples treated as raw noise-source output); and SHA-256/HMAC primitive self-checks. No SP 800-90B entropy estimate is made here.",
+      "category": "Entropy & Random",
+      "algorithms": ["SP 800-90B", "SP 800-22", "Web Crypto"],
+      "keywords": [
+        "entropy",
+        "testing",
+        "sp 800-90b",
+        "sp 800-22",
+        "health test",
+        "repetition count",
+        "adaptive proportion",
+        "monobit",
+        "runs",
+        "chi-squared",
+        "frequency",
+        "min-entropy",
+        "nist"
+      ],
+      "moduleLink": "/learn/entropy-randomness?tab=workshop&step=1",
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["researcher", "architect", "developer", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Load a sample (Generate Random, All Zeros and Incrementing are 64 bytes; Repeating Pattern is 1,024 bytes; or Paste Hex), press Run the checks, and read each group separately: visual checks, health tests, estimators (not run here) and primitive self-checks.",
+        "workedExample": "Load Repeating Pattern (deadbeef repeated over 1,024 bytes) and run: the visual checks flag the pattern, Adaptive Proportion signals a failure on two full 512-sample windows (0xDE recurs 128 times against a cutoff of 13), Repetition Count stays quiet, and each result shows its value, its cutoff and its limit."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces grouped visual checks, SP 800-90B health-test outcomes and primitive self-checks for the displayed sample (64 or 1,024 bytes); no entropy estimate."
+    },
+    {
+      "id": "drbg-demo",
+      "pt_id": "PT-014",
+      "version": "1.0.4",
+      "name": "SP 800-90A DRBG",
+      "description": "Interactive HMAC_DRBG (SHA-256) state machine — Instantiate, Generate, Reseed as specified in NIST SP 800-90A Rev. 1 §10.1.2 — with a known-answer check against pinned NIST ACVP and CAVP vectors.",
+      "category": "Entropy & Random",
+      "algorithms": ["HMAC_DRBG", "SHA-256"],
+      "moduleLink": "/learn/entropy-randomness?tab=workshop&step=3",
+      "keywords": [
+        "drbg",
+        "sp 800-90a",
+        "hmac_drbg",
+        "instantiate",
+        "generate",
+        "reseed",
+        "entropy",
+        "random"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["architect", "developer", "researcher", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Instantiate HMAC_DRBG from a 32-byte entropy input, a nonce and a personalization string, then press Generate and Reseed while the Internal State Tracker shows the working key K, state value V and reseed_counter. Run the known-answer check to compare the same code with NIST vectors.",
+        "workedExample": "Instantiate with the default personalization string and generate 32 bytes ten times: reseed_counter reaches 11, above the demo interval of 10, so a Reseed required banner blocks Generate until you press Reseed, which resets it to 1."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces HMAC_DRBG output bytes, K/V/reseed-counter transitions and a known-answer comparison tied to the displayed inputs."
+    },
+    {
+      "id": "source-combining",
+      "pt_id": "PT-013",
+      "version": "1.0.3",
+      "name": "Source Combining",
+      "description": "Two simulated raw sources: SP 800-90B health tests before conditioning, SP 800-90C concatenation (XOR, hash and HMAC as educational variants), Hash_df/SHA-256/HMAC/AES-CMAC conditioning via SoftHSMv3, and an assumption-driven verdict that can end in \"not enough evidence\" or \"unsafe\".",
+      "category": "Entropy & Random",
+      "algorithms": ["SHA-256", "HMAC-SHA-256", "HKDF", "AES-CMAC", "XOR", "Hash_df"],
+      "moduleLink": "/learn/entropy-randomness?tab=workshop&step=4",
+      "keywords": [
+        "source combining",
+        "xor",
+        "hmac",
+        "hkdf",
+        "hash_df",
+        "aes-cmac",
+        "conditioning",
+        "entropy pool",
+        "sp 800-90c",
+        "rbg"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["researcher", "architect", "developer", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Health-test two simulated raw sources, assemble their samples with SP 800-90C concatenation, condition the result, then state the assumptions the combined construction rests on.",
+        "workedExample": "Load the Stuck source, detected counterexample: the health tests exclude Source A before conditioning, and Source B alone falls short of the 384 bits a 256-bit DRBG needs, so the verdict is Not enough evidence."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces source health-test outcomes, the conditioned output and an assumption-led sufficiency verdict for the simulated sources."
+    },
+    {
+      "id": "pki-workshop",
+      "pt_id": "PT-015",
+      "version": "1.0.8",
+      "name": "PKI Workshop",
+      "description": "Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL",
+      "category": "Certificates & Proofs",
+      "algorithms": ["RSA", "EC", "ML-DSA", "X.509", "CRL"],
+      "moduleLink": "/learn/pki-workshop",
+      "keywords": [
+        "pki",
+        "x509",
+        "certificate",
+        "csr",
+        "root ca",
+        "signing",
+        "crl",
+        "revocation",
+        "chain"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "ops", "curious"],
+      "intro": {
+        "whatYouWillDo": "Work through five steps: generate a CSR, create a Root CA, issue a certificate by signing the CSR with that CA, parse the certificate, then build a CRL.",
+        "workedExample": "Generate a CSR for example.com with a new RSA 2048-bit key, self-sign a Root CA, press Sign Certificate to issue the leaf, then Parse Details shows its subject and issuer."
+      },
+      "hasOutput": true,
+      "outputSpec": "DER-encoded X.509 certificate chain; leaf cert must verify under root CA public key. CSR subject matches issued cert subject."
+    },
+    {
+      "id": "cert-capacity",
+      "pt_id": "PT-025",
+      "version": "2.0.0",
+      "name": "Cert Capacity Calculator",
+      "intro": {
+        "whatYouWillDo": "Compare estimated certificate-related TLS payload and annual leaf issuance for classical and PQC three-level chains, without CPU predictions.",
+        "workedExample": "Set a 240-day renewal interval: the annualized rate is 365/240, about 1.520833. TLS sends the intermediate and leaf, excludes the root, and adds one server signature contribution."
+      },
+      "description": "Estimate certificate-related TLS payload and annual leaf issuance storage for classical and PQC three-level chains. Adjust renewal cadence and encoding assumptions; no CPU prediction.",
+      "category": "Certificates & Proofs",
+      "algorithms": ["RSA-2048", "ECDSA P-256", "ML-DSA-44", "ML-DSA-65", "ML-DSA-87"],
+      "moduleLink": "/learn/pki-workshop",
+      "keywords": [
+        "certificate",
+        "capacity",
+        "storage",
+        "bandwidth",
+        "ml-dsa",
+        "pki",
+        "migration",
+        "sizing"
+      ],
+      "difficulty": "beginner",
+      "requires": [],
+      "recommendedPersonas": ["architect", "ops", "executive", "grc"],
+      "hasOutput": false
+    },
+    {
+      "id": "hybrid-certs",
+      "pt_id": "PT-016",
+      "version": "1.1.1",
+      "name": "Hybrid Certificates",
+      "description": "Compare X.509 certificate formats, RFC 10073 composite signatures, and real TLS handshakes with a classical baseline",
+      "category": "Certificates & Proofs",
+      "algorithms": ["SLH-DSA", "ML-DSA-65", "ECDSA-P256"],
+      "moduleLink": "/learn/hybrid-crypto?tab=workshop&step=5&sv=2",
+      "keywords": ["certificate", "x509", "composite", "hybrid", "pqc", "openssl", "der"],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "ops"],
+      "intro": {
+        "whatYouWillDo": "Run the certificate-to-TLS exercise to compare classical and hybrid key exchange with RSA and ML-DSA authentication. Then enable the HSM and generate certificate formats to inspect their signatures, legacy acceptance and TLS applicability. Advanced and historical examples are generated separately.",
+        "workedExample": "Run the RSA baseline, then keep the same RSA certificate while switching to X25519MLKEM768: key exchange changes, but CertificateVerify remains RSA. The ML-DSA run changes authentication too."
+      },
+      "hasOutput": true,
+      "outputSpec": "DER-encoded X.509 certificates for each format — CA-issued where the format calls for it — each with its signature, issuer chain and key usage verified by an implementation other than the HSM that signed it."
+    },
+    {
+      "id": "merkle-proof",
+      "pt_id": "PT-017",
+      "version": "1.0.2",
+      "name": "Merkle Tree Workshop",
+      "description": "Build trees, generate inclusion proofs, verify with tamper detection, compare PQC cert sizes, and simulate Certificate Transparency logs",
+      "category": "Certificates & Proofs",
+      "algorithms": ["SHA-256", "Merkle Tree", "CT Log"],
+      "moduleLink": "/learn/merkle-tree-certs",
+      "keywords": [
+        "merkle",
+        "tree",
+        "proof",
+        "inclusion",
+        "sha-256",
+        "tamper",
+        "transparency log",
+        "ct",
+        "sct",
+        "consistency"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "researcher", "curious"],
+      "intro": {
+        "whatYouWillDo": "Add certificate leaves and build a SHA-256 Merkle tree, generate an inclusion proof for one leaf, verify it and tamper with it, compare handshake sizes, then simulate a Certificate Transparency log.",
+        "workedExample": "Load 8 sample certs and Build Merkle Tree, generate an inclusion proof for one leaf, then press Auto-Tamper and Verify Tampered: one flipped character makes the computed root diverge and verification fails."
+      },
+      "hasOutput": true,
+      "outputSpec": "Merkle root hash (SHA-256, 32 bytes hex); inclusion proof as ordered sibling-hash array verifiable by recomputation to root; consistency proof between two tree sizes."
+    },
+    {
+      "id": "digital-id",
+      "pt_id": "PT-019",
+      "version": "1.0.7",
+      "name": "EUDI Wallet Architecture",
+      "description": "Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.",
+      "category": "Digital Identity",
+      "algorithms": ["OpenID4VCI", "P-256", "mDoc", "QES"],
+      "moduleLink": "/learn/digital-id",
+      "keywords": [
+        "eudi",
+        "digital id",
+        "wallet",
+        "pid",
+        "mdoc",
+        "openid4vci",
+        "qes",
+        "qtsp",
+        "attestation"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Walk five sample steps: inspect the wallet, issue a sample PID, receive a sample diploma attestation, present selected attributes to the relying-party exercise, then explore a modelled QTSP-signing workflow.",
+        "workedExample": "Present a sample PID to see the bank refuse the missing degree. Issue the diploma, compare an audience mismatch with a complete presentation for the intended bank, and inspect which PID fields were shared."
+      },
+      "hasOutput": true,
+      "outputSpec": "Produces synthetic wallet credentials, consented presentation state and a modelled qualified-signature workflow; no real identity or trust-service transaction."
+    },
+    {
+      "id": "bitcoin-flow",
+      "pt_id": "PT-020",
+      "version": "1.0.1",
+      "name": "Bitcoin Transaction",
+      "description": "secp256k1 ECDSA keypair, SHA256 + RIPEMD160, transaction signing",
+      "category": "Blockchain & Digital Assets",
+      "algorithms": ["secp256k1", "SHA-256", "RIPEMD160"],
+      "moduleLink": "/learn/digital-assets?tab=workshop&flow=bitcoin",
+      "keywords": ["bitcoin", "secp256k1", "ecdsa", "transaction", "utxo", "sha256", "ripemd160"],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Run nine steps: generate the source key, extract its public key, create the source address, generate a recipient key and address, format the transaction, visualize the message, sign it and verify the signature.",
+        "workedExample": "Format the sample 0.5 BTC transfer, sign it with secp256k1 ECDSA and verify the original. Increase the first output by one satoshi and try the same signature again."
+      },
+      "hasOutput": true,
+      "outputSpec": "33-byte compressed secp256k1 public key, a raw 64-byte r || s signature over the double SHA-256 of the sample JSON, and the verification results."
+    },
+    {
+      "id": "hd-wallet",
+      "pt_id": "PT-022",
+      "version": "1.0.2",
+      "name": "HD Wallet Derivation",
+      "description": "BIP39 mnemonic + BIP32/SLIP-0010 multi-coin HD key derivation",
+      "category": "Blockchain & Digital Assets",
+      "algorithms": ["BIP39", "BIP32", "PBKDF2", "HMAC-SHA512"],
+      "moduleLink": "/learn/digital-assets?tab=workshop&flow=hd-wallet",
+      "keywords": ["hd wallet", "bip39", "bip32", "mnemonic", "derivation", "pbkdf2", "slip-0010"],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Generate a BIP39 mnemonic, derive the seed with PBKDF2, see hardened versus non-hardened derivation, derive Bitcoin, Ethereum and Solana addresses, then read the quantum threat assessment.",
+        "workedExample": "Generate Mnemonic gives 24 words from 32 bytes of entropy; Derive Accounts then shows a Bitcoin address at m/44'/0'/0'/0/0, an Ethereum address at m/44'/60'/0'/0/0 and a Solana address at m/44'/501'/0'/0'."
+      },
+      "hasOutput": true,
+      "outputSpec": "BIP39 mnemonic, derived sample account addresses and a BIP 32 reference check for the software token’s public derivation."
+    },
+    {
+      "id": "solana-flow",
+      "pt_id": "PT-021",
+      "version": "1.0.3",
+      "name": "Solana Transaction",
+      "description": "Ed25519 keypair generation and transaction signing",
+      "category": "Blockchain & Digital Assets",
+      "algorithms": ["Ed25519"],
+      "moduleLink": "/learn/digital-assets?tab=workshop&flow=solana",
+      "keywords": ["solana", "ed25519", "eddsa", "transaction", "base58"],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Follow a Solana transfer from an Ed25519 keypair to an address, a formatted transaction and a signed message.",
+        "workedExample": "Sign the sample JSON message, change one message or signature byte and compare the verification result with the original."
+      },
+      "hasOutput": true,
+      "outputSpec": "32-byte Ed25519 public key, 64-byte signature over the sample JSON message and the result of verifying the original or changed bytes."
+    },
+    {
+      "id": "openssl-studio",
+      "pt_id": "PT-023",
+      "version": "1.0.7",
+      "name": "OpenSSL Studio",
+      "description": "Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM",
+      "category": "OpenSSL Studio",
+      "algorithms": ["RSA", "EC", "Ed25519", "ML-KEM", "ML-DSA", "SLH-DSA", "AES", "HKDF", "X.509"],
+      "moduleLink": "/playground/openssl-studio",
+      "keywords": [
+        "openssl",
+        "studio",
+        "wasm",
+        "genpkey",
+        "req",
+        "x509",
+        "dgst",
+        "enc",
+        "kem",
+        "kdf",
+        "pkcs12",
+        "lms",
+        "certificate",
+        "csr",
+        "signing",
+        "encryption",
+        "hashing",
+        "key generation",
+        "random",
+        "pqc",
+        "terminal",
+        "command line"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher", "ops", "cert-engineer"],
+      "intro": {
+        "whatYouWillDo": "Pick the Learn, Explore or Workbench tab; in the Workbench choose a command category such as genpkey, req, x509, dgst, kem or enc, set its parameters, press Run Command and read the terminal output and logs.",
+        "workedExample": "Choose the preset Generate ML-DSA-65 key, which runs openssl genpkey with the ML-DSA-65 algorithm and writes ml-dsa-65.key into the file manager, ready for a self-signed certificate."
+      },
+      "hasOutput": true,
+      "outputSpec": "Output depends on command: keygen → PEM/DER key; sign → signature hex; KEM → encapsulated key + shared secret."
+    },
+    {
+      "id": "api-security-jwt",
+      "pt_id": "PT-032",
+      "version": "1.3.5",
+      "name": "API Security & JWT Workshop",
+      "description": "Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. Encrypt them as HPKE JWE with ML-KEM-768 or ML-KEM-768 + X25519 per draft-ietf-jose-hpke-encrypt-22 and draft-ietf-jose-hpke-pq-pqt-02, in the browser or entirely inside softhsmv3 (PQCToday candidate CKM_HPKE mechanism).",
+      "category": "OpenSSL Studio",
+      "algorithms": [
+        "ML-DSA-44",
+        "ML-DSA-65",
+        "ML-DSA-87",
+        "SLH-DSA-SHA2-128s",
+        "ML-KEM-768",
+        "X-Wing",
+        "HPKE",
+        "JWS",
+        "JWE",
+        "JOSE"
+      ],
+      "moduleLink": "/learn/api-security-jwt?tab=workshop",
+      "keywords": [
+        "jwt",
+        "jws",
+        "jwe",
+        "jose",
+        "api security",
+        "bearer token",
+        "ml-dsa",
+        "slh-dsa",
+        "ml-kem",
+        "composite",
+        "ml-dsa-65-ed25519",
+        "rfc 7519",
+        "hpke",
+        "draft-ietf-jose-hpke-encrypt",
+        "draft-ietf-jose-hpke-pq-pqt",
+        "noble",
+        "softhsmv3",
+        "pkcs11"
+      ],
+      "difficulty": "intermediate",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Open seven sections: inspect a JWT, sign one with ML-DSA or SLH-DSA, build a composite ML-DSA-65+Ed25519 JWT, encrypt a payload as an HPKE JWE with ML-KEM-768 or the X25519 hybrid, compare token sizes, run the JOSE known-answer audit, and attack a JWT verifier in the Attack Lab.",
+        "workedExample": "In PQC JWT Signing pick ML-DSA-65 on the @noble/post-quantum backend, Generate Keypair, sign the sample payload for Alice Engineer, then Verify (noble) reports Signature valid with the token's byte sizes."
+      },
+      "hasOutput": true,
+      "outputSpec": "Signed JWT with ML-DSA header; verifyJWS() must return true with the matching public key. JWE path: plaintext round-trips through ML-KEM-768 encap/decap."
+    },
+    {
+      "id": "pki-enrollment",
+      "pt_id": "PT-029",
+      "version": "1.0.1",
+      "name": "PKI Enrollment (EST + CMP)",
+      "description": "RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.",
+      "category": "OpenSSL Studio",
+      "algorithms": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87", "ML-KEM-768", "X.509", "CMP", "EST"],
+      "moduleLink": "/learn/pki-enrollment-protocols?tab=workshop",
+      "keywords": [
+        "est",
+        "cmp",
+        "rfc 7030",
+        "rfc 4210",
+        "rfc 9810",
+        "enrollment",
+        "csr",
+        "pkcs10",
+        "x509",
+        "ml-dsa",
+        "ml-kem",
+        "mock ca",
+        "certificate",
+        "issuance"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "ops", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Generate an end-entity keypair, send a CMP Initial Request to an in-browser mock CA, run EST simpleenroll with the same key, then perform an ML-KEM-768 key update with encrCert proof of possession.",
+        "workedExample": "Generate an ML-DSA-65 keypair and press Send CMP Initial Request: the mock CA issues a certificate chain-validated against its root and shows it decoded; the KEM key update then reports whether both shared secrets match."
+      },
+      "hasOutput": true,
+      "outputSpec": "Issued X.509 cert (PEM) chained to the workshop mock CA root, signed with ML-DSA-65. Chain verification must succeed (openssl verify -CAfile root.crt ee.crt → OK).",
+      "opensourceTool": {
+        "name": "OpenSSL 3.6 cmp",
+        "url": "https://www.openssl.org/docs/man3.6/man1/openssl-cmp.html"
+      }
+    },
+    {
+      "id": "email-signing",
+      "pt_id": "PT-031",
+      "version": "1.0.4",
+      "name": "S/MIME & CMS Workshop",
+      "description": "Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt. Toggle routes signing key through softhsmv3 PKCS#11.",
+      "category": "OpenSSL Studio",
+      "algorithms": [
+        "ML-DSA-44",
+        "ML-DSA-65",
+        "ML-DSA-87",
+        "SLH-DSA-SHA2-128s",
+        "ML-KEM-768",
+        "RSA-PSS",
+        "ECDSA",
+        "CMS"
+      ],
+      "moduleLink": "/learn/email-signing?tab=workshop",
+      "keywords": [
+        "s/mime",
+        "cms",
+        "pkcs7",
+        "email signing",
+        "signed data",
+        "enveloped data",
+        "ml-dsa",
+        "slh-dsa",
+        "ml-kem",
+        "rfc 8551",
+        "rfc 5652",
+        "rfc 9629",
+        "openssl",
+        "wasm",
+        "softhsmv3",
+        "pkcs11"
+      ],
+      "difficulty": "advanced",
+      "requires": [],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "intro": {
+        "whatYouWillDo": "Sign, verify, encrypt and decrypt CMS messages with real OpenSSL 3.6 running in the browser, using ML-DSA, SLH-DSA and ML-KEM-768.",
+        "workedExample": "An ML-DSA-65 CMS SignedData signed and verified end to end, then an ML-KEM-768 AuthEnvelopedData encrypted and decrypted; toggle the signing key through the PKCS#11 provider."
+      },
+      "hasOutput": true,
+      "outputSpec": "CMS SignedData DER blob: outer ASN.1 SEQUENCE header (30 82 …), recovered plaintext matches input byte-for-byte. KEM path: decrypted plaintext matches DEFAULT_PAYLOAD.",
+      "opensourceTool": {
+        "name": "OpenSSL 3.6 cms",
+        "url": "https://www.openssl.org/docs/man3.6/man1/openssl-cms.html"
+      }
+    },
+    {
+      "id": "sbx-tls",
+      "pt_id": "PT-SBX-001",
+      "version": "1.0.0",
+      "name": "OpenSSL TLS 1.3 + Composite Cert",
+      "description": "Execute OpenSSL TLS 1.3 handshakes with configurable certificate formats. In pure-ML-DSA mode the server cert is an M...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["ML-KEM-768", "TLS 1.3", "LAMPS Composite cert", "softhsmv3 PKCS#11 keys"],
+      "moduleLink": "",
+      "keywords": [
+        "tls",
+        "openssl",
+        "protocol-simulation",
+        "sandbox",
+        "ml-kem-768",
+        "tls 1.3",
+        "lamps composite cert",
+        "softhsmv3 pkcs#11 keys"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher", "curious"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL",
+        "url": "https://github.com/openssl/openssl"
+      }
+    },
+    {
+      "id": "sbx-ssh",
+      "pt_id": "PT-SBX-002",
+      "version": "1.0.0",
+      "name": "SSH PQC Authentication + KEX",
+      "description": "Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined wit...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": [
+        "ML-DSA-65",
+        "SLH-DSA-SHA2-128s",
+        "ML-KEM hybrid KEX",
+        "OpenSSH 10.5",
+        "PKCS#11 v3.2",
+        "ML-DSA-44+Ed25519 (upstream)"
+      ],
+      "moduleLink": "",
+      "keywords": [
+        "ssh",
+        "openssh (pqctoday patch)",
+        "protocol-simulation",
+        "sandbox",
+        "ml-dsa-65",
+        "slh-dsa-sha2-128s",
+        "ml-kem hybrid kex",
+        "openssh 10.5",
+        "pkcs#11 v3.2",
+        "ml-dsa-44+ed25519 (upstream)"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher", "curious"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSH (PQCToday patch)",
+        "url": "https://datatracker.ietf.org/doc/draft-sfluhrer-ssh-mldsa/"
+      }
+    },
+    {
+      "id": "sbx-vpn",
+      "pt_id": "PT-SBX-003",
+      "version": "1.0.0",
+      "name": "Quantum-Resistant VPN",
+      "description": "Secure site-to-site IPsec routing hidden behind SoftHSMv3 IKEv2 Key Exchanges, contrasting classical Diffie-Hellman v...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["ML-KEM", "IKEv2"],
+      "moduleLink": "",
+      "keywords": ["vpn", "strongswan", "protocol-simulation", "sandbox", "ml-kem", "ikev2"],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher", "curious"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "strongSwan",
+        "url": "https://www.strongswan.org"
+      }
+    },
+    {
+      "id": "sbx-pki",
+      "pt_id": "PT-SBX-004",
+      "version": "1.0.0",
+      "name": "Enterprise PKI Chains",
+      "description": "Build a hierarchical PQC Certificate Authority with OpenSSL 3.6 — a mixed-algorithm chain: Root CA (SLH-DSA-SHA2-128s...",
+      "category": "Certificates & Proofs",
+      "sandbox": true,
+      "algorithms": ["SLH-DSA-128s", "ML-DSA-65", "ML-DSA-44", "X.509"],
+      "moduleLink": "",
+      "keywords": [
+        "pki",
+        "openssl",
+        "infrastructure",
+        "sandbox",
+        "slh-dsa-128s",
+        "ml-dsa-65",
+        "ml-dsa-44",
+        "x.509"
+      ],
+      "difficulty": "beginner",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "developer"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL",
+        "url": "https://www.openssl.org"
+      }
+    },
+    {
+      "id": "sbx-cert-validation",
+      "pt_id": "PT-SBX-005",
+      "version": "1.0.0",
+      "name": "Certificate Chain Validation",
+      "description": "Verify ML-DSA-65 certificate chains end-to-end — from Root CA through Intermediate to Leaf — validating that PQC sign...",
+      "category": "Certificates & Proofs",
+      "sandbox": true,
+      "algorithms": ["ML-DSA-65", "X.509 Chain"],
+      "moduleLink": "",
+      "keywords": [
+        "cert-validation",
+        "openssl",
+        "infrastructure",
+        "sandbox",
+        "ml-dsa-65",
+        "x.509 chain"
+      ],
+      "difficulty": "beginner",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "developer"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL",
+        "url": "https://github.com/openssl/openssl"
+      }
+    },
+    {
+      "id": "sbx-cloud-kms",
+      "pt_id": "PT-SBX-006",
+      "version": "1.0.0",
+      "name": "Cloud KMS Key Wrapping",
+      "description": "Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 as a fictional KEM+DEM key-wrapping pattern for protecting ...",
+      "category": "HSM / PKCS#11",
+      "sandbox": true,
+      "algorithms": ["ML-KEM-768", "Encap/Decap"],
+      "moduleLink": "",
+      "keywords": [
+        "cloud-kms",
+        "openssl",
+        "infrastructure",
+        "sandbox",
+        "ml-kem-768",
+        "encap/decap"
+      ],
+      "difficulty": "beginner",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "developer"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL",
+        "url": "https://www.openssl.org"
+      }
+    },
+    {
+      "id": "sbx-smime",
+      "pt_id": "PT-SBX-007",
+      "version": "1.0.0",
+      "name": "Secure Email (S/MIME)",
+      "description": "Compare legacy RSA-2048 S/MIME encryption sequences against open-source ML-DSA & ML-KEM cryptographic integration pro...",
+      "category": "OpenSSL Studio",
+      "sandbox": true,
+      "algorithms": ["ML-DSA-65", "ML-KEM-768"],
+      "moduleLink": "",
+      "keywords": [
+        "smime",
+        "openssl cms (pqc) / smime (classical)",
+        "infrastructure",
+        "sandbox",
+        "ml-dsa-65",
+        "ml-kem-768"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "developer"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL cms (PQC) / smime (classical)",
+        "url": "https://github.com/openssl/openssl"
+      }
+    },
+    {
+      "id": "sbx-hybrid-certs",
+      "pt_id": "PT-SBX-008",
+      "version": "1.0.0",
+      "name": "Hybrid Certificate Formats",
+      "description": "Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Re...",
+      "category": "Certificates & Proofs",
+      "sandbox": true,
+      "algorithms": ["7 Formats", "X.509", "RFC 9935"],
+      "moduleLink": "",
+      "keywords": [
+        "hybrid-certs",
+        "openssl 3.6.3 (file-based keys; no hsm)",
+        "infrastructure",
+        "sandbox",
+        "7 formats",
+        "x.509",
+        "rfc 9935"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "developer"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL 3.6.3 (file-based keys; no HSM)",
+        "url": "https://github.com/openssl/openssl"
+      }
+    },
+    {
+      "id": "sbx-cbom-compliance",
+      "pt_id": "PT-SBX-009",
+      "version": "1.0.0",
+      "name": "CBOM Compliance Audit — PQC Readiness Scoring",
+      "description": "Generate real classical, hybrid and post-quantum key material, identify each asset algorithm with OpenSSL, and emit i...",
+      "category": "Certificates & Proofs",
+      "sandbox": true,
+      "algorithms": ["CBOM CycloneDX 1.6", "CNSA 2.0", "NIST IR 8547"],
+      "moduleLink": "",
+      "keywords": [
+        "cbom-compliance",
+        "openssl + opa",
+        "supply-chain",
+        "sandbox",
+        "cbom cyclonedx 1.6",
+        "cnsa 2.0",
+        "nist ir 8547"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "executive", "grc"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL + OPA",
+        "url": "https://github.com/open-policy-agent/opa"
+      }
+    },
+    {
+      "id": "sbx-tpm-pqc-migration",
+      "pt_id": "PT-SBX-010",
+      "version": "1.0.0",
+      "name": "TPM 2.0 → PQC Migration",
+      "description": "Walk the TCG TPM 2.0 V1.85 key hierarchy and see the concrete cost of migrating each key role (EK / SRK / AIK / IDevI...",
+      "category": "HSM / PKCS#11",
+      "sandbox": true,
+      "algorithms": ["TPM 2.0 V1.85", "ML-DSA-65", "ML-KEM-768", "softhsmv3"],
+      "moduleLink": "",
+      "keywords": [
+        "tpm-pqc-migration",
+        "pqctoday-tpm + pqctoday-hsm",
+        "supply-chain",
+        "sandbox",
+        "tpm 2.0 v1.85",
+        "ml-dsa-65",
+        "ml-kem-768",
+        "softhsmv3"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "executive", "grc"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "pqctoday-tpm + pqctoday-hsm",
+        "url": "https://github.com/pqctoday-org/pqctoday-tpm"
+      }
+    },
+    {
+      "id": "sbx-supply-chain-signing",
+      "pt_id": "PT-SBX-011",
+      "version": "1.0.0",
+      "name": "Supply Chain Signing — Quantum-Safe Container Provenance",
+      "description": "Demonstrate post-quantum software signing with the forked Sigstore cosign (v3.0.6 + ML-DSA-65) — sign a manifest with...",
+      "category": "Certificates & Proofs",
+      "sandbox": true,
+      "algorithms": ["ML-DSA-65", "Sigstore / cosign", "SLSA L3"],
+      "moduleLink": "",
+      "keywords": [
+        "supply-chain-signing",
+        "sigstore cosign (pqctoday ml-dsa fork)",
+        "supply-chain",
+        "sandbox",
+        "ml-dsa-65",
+        "sigstore / cosign",
+        "slsa l3"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "executive", "grc"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "Sigstore cosign (PQCToday ML-DSA fork)",
+        "url": "https://github.com/sigstore/cosign"
+      }
+    },
+    {
+      "id": "sbx-sequoia",
+      "pt_id": "PT-SBX-012",
+      "version": "1.0.0",
+      "name": "PGP Code Signing (Sequoia)",
+      "description": "Produce a real RFC 9580 v6 OpenPGP signature with an ML-DSA-65 + Ed25519 composite key (public-key-algorithm 30, RFC ...",
+      "category": "Certificates & Proofs",
+      "sandbox": true,
+      "algorithms": ["ML-DSA-65", "OpenPGP v6", "HSM-backed"],
+      "moduleLink": "",
+      "keywords": [
+        "sequoia",
+        "sequoia sq + opgpkcs11 (openpgp-pkcs11-sequoia)",
+        "supply-chain",
+        "sandbox",
+        "ml-dsa-65",
+        "openpgp v6",
+        "hsm-backed"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["architect", "ops", "executive", "grc"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "Sequoia sq + opgpkcs11 (openpgp-pkcs11-sequoia)",
+        "url": "https://sequoia-pgp.org"
+      }
+    },
+    {
+      "id": "sbx-pqctoday-kmip",
+      "pt_id": "PT-SBX-013",
+      "version": "1.0.0",
+      "name": "PQCToday KMIP 3.0 KMS",
+      "description": "Drive a real crypto-agile KMIP key lifecycle with pqctoday-kmip (Rust, MIT) backed by softhsmrustv3 — CreateKeyPair →...",
+      "category": "HSM / PKCS#11",
+      "sandbox": true,
+      "algorithms": ["ML-DSA/ML-KEM", "KMIP 3.0 (OASIS CSD02)"],
+      "moduleLink": "",
+      "keywords": [
+        "pqctoday-kmip",
+        "pqctoday-kmip (rust kmip 3.0)",
+        "secrets-kms",
+        "sandbox",
+        "ml-dsa/ml-kem",
+        "kmip 3.0 (oasis csd02)"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["ops", "architect", "developer"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "pqctoday-kmip (Rust KMIP 3.0)",
+        "url": "https://github.com/pqctoday-org/pqctoday-hsm/tree/main/kmip"
+      }
+    },
+    {
+      "id": "sbx-sops",
+      "pt_id": "PT-SBX-014",
+      "version": "1.0.0",
+      "name": "GitOps Secrets (SOPS)",
+      "description": "Encrypt GitOps secrets with SOPS + age using the X-Wing hybrid KEM (X25519 + ML-KEM-768) via the age-plugin-pqctoday ...",
+      "category": "HSM / PKCS#11",
+      "sandbox": true,
+      "algorithms": ["X-Wing", "ML-KEM-768", "SOPS"],
+      "moduleLink": "",
+      "keywords": [
+        "sops",
+        "sops + age + age-plugin-pqctoday",
+        "secrets-kms",
+        "sandbox",
+        "x-wing",
+        "ml-kem-768"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["ops", "architect", "developer"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "SOPS + age + age-plugin-pqctoday",
+        "url": "https://github.com/getsops/sops"
+      }
+    },
+    {
+      "id": "sbx-browser-tls",
+      "pt_id": "PT-SBX-015",
+      "version": "1.0.0",
+      "name": "Browser ML-KEM Handshake",
+      "description": "Drive headless Chromium to connect to the nginx TLS endpoint and compare a classical X25519 handshake vs a hybrid X25...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["X25519MLKEM768", "Chromium"],
+      "moduleLink": "",
+      "keywords": [
+        "browser-tls",
+        "playwright + chromium",
+        "web",
+        "sandbox",
+        "x25519mlkem768",
+        "chromium"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "ops"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "Playwright + Chromium",
+        "url": "https://playwright.dev"
+      }
+    },
+    {
+      "id": "sbx-migration-impact",
+      "pt_id": "PT-SBX-016",
+      "version": "1.0.0",
+      "name": "Migration Impact Analysis",
+      "description": "Measure the real-world performance impact of migrating from classical to PQC TLS — handshake latency, certificate siz...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["Benchmark", "Classical → PQC"],
+      "moduleLink": "",
+      "keywords": ["migration-impact", "openssl", "web", "sandbox", "benchmark", "classical → pqc"],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "ops"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL",
+        "url": "https://www.openssl.org"
+      }
+    },
+    {
+      "id": "sbx-ab-handshake-bench",
+      "pt_id": "PT-SBX-017",
+      "version": "1.0.0",
+      "name": "A/B TLS Handshake Benchmark",
+      "description": "Measure concurrent TLS 1.3 handshake throughput with Apache Bench against ephemeral nginx (session resumption OFF, so...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["ML-DSA-65", "X25519MLKEM768", "Benchmark"],
+      "moduleLink": "",
+      "keywords": [
+        "ab-handshake-bench",
+        "apache bench (ab) + nginx + openssl",
+        "web",
+        "sandbox",
+        "ml-dsa-65",
+        "x25519mlkem768",
+        "benchmark"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "ops"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "Apache Bench (ab) + nginx + OpenSSL",
+        "url": "https://httpd.apache.org/docs/2.4/programs/ab.html"
+      }
+    },
+    {
+      "id": "sbx-hsm-perf-bench",
+      "pt_id": "PT-SBX-018",
+      "version": "1.0.0",
+      "name": "HSM Performance Benchmark",
+      "description": "Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment;...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["ML-DSA", "ML-KEM", "Benchmark"],
+      "moduleLink": "",
+      "keywords": [
+        "hsm-perf-bench",
+        "bench-harness (softhsmrustv3)",
+        "web",
+        "sandbox",
+        "ml-dsa",
+        "ml-kem",
+        "benchmark"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "ops"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "bench-harness (softhsmrustv3)",
+        "url": "https://github.com/pqctoday-org/pqctoday-hsm/tree/main/rust/bench-harness"
+      }
+    },
+    {
+      "id": "sbx-api-security-jwt",
+      "pt_id": "PT-SBX-019",
+      "version": "1.0.0",
+      "name": "Post-Quantum JWT Identity Constraints",
+      "description": "Sign JSON Web Tokens with ML-DSA-65 using OpenSSL raw signatures and measure the impact on HTTP request-header limits...",
+      "category": "OpenSSL Studio",
+      "sandbox": true,
+      "algorithms": ["ML-DSA-65", "Header bloat"],
+      "moduleLink": "",
+      "keywords": [
+        "api-security-jwt",
+        "openssl (raw jose signing)",
+        "applications",
+        "sandbox",
+        "ml-dsa-65",
+        "header bloat"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "OpenSSL (raw JOSE signing)",
+        "url": "https://www.openssl.org"
+      }
+    },
+    {
+      "id": "sbx-database-postgres",
+      "pt_id": "PT-SBX-020",
+      "version": "1.0.0",
+      "name": "PostgreSQL TLS Hardening",
+      "description": "Migrate PostgreSQL client-server TLS from a classical RSA-2048 cert + prime256v1 ECDHE to an ML-DSA-65 server cert ov...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["ML-KEM-768", "ML-DSA-65 cert", "PostgreSQL"],
+      "moduleLink": "",
+      "keywords": [
+        "database-postgres",
+        "postgresql",
+        "applications",
+        "sandbox",
+        "ml-kem-768",
+        "ml-dsa-65 cert"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "PostgreSQL",
+        "url": "https://www.postgresql.org"
+      }
+    },
+    {
+      "id": "sbx-firmware-hss",
+      "pt_id": "PT-SBX-021",
+      "version": "1.0.0",
+      "name": "Firmware Verification (HSS)",
+      "description": "Secure IoT endpoint firmware updates with NIST SP 800-208 Stateful Hash-Based Signatures (HSS/LMS), generated and ver...",
+      "category": "HSM / PKCS#11",
+      "sandbox": true,
+      "algorithms": ["HSS / LMS", "Stateful Signature"],
+      "moduleLink": "",
+      "keywords": [
+        "firmware-hss",
+        "softhsmv3 (pkcs#11 ckm_hss) + openssl",
+        "applications",
+        "sandbox",
+        "hss / lms",
+        "stateful signature"
+      ],
+      "difficulty": "advanced",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "SoftHSMv3 (PKCS#11 CKM_HSS) + OpenSSL",
+        "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+      }
+    },
+    {
+      "id": "sbx-osslsigncode",
+      "pt_id": "PT-SBX-022",
+      "version": "1.0.0",
+      "name": "Code Signing (osslsigncode)",
+      "description": "Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65. WHY IT MATTERS: a code sign...",
+      "category": "Certificates & Proofs",
+      "sandbox": true,
+      "algorithms": ["ML-DSA-65", "PE/Authenticode"],
+      "moduleLink": "",
+      "keywords": [
+        "osslsigncode",
+        "osslsigncode (pqctoday pqc fork)",
+        "applications",
+        "sandbox",
+        "ml-dsa-65",
+        "pe/authenticode"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "osslsigncode (PQCToday PQC fork)",
+        "url": "https://github.com/mtrojnar/osslsigncode"
+      }
+    },
+    {
+      "id": "sbx-iot-mqtt",
+      "pt_id": "PT-SBX-023",
+      "version": "1.0.0",
+      "name": "Lightweight MQTT Telemetry",
+      "description": "Run a real Mosquitto 2.1.2 TLS broker (built against OpenSSL 3.6) and compare a classical ECDSA-P256 / secp256r1 arm ...",
+      "category": "Protocol Simulations",
+      "sandbox": true,
+      "algorithms": ["ML-KEM-768", "Battery (estimate)"],
+      "moduleLink": "",
+      "keywords": [
+        "iot-mqtt",
+        "eclipse mosquitto",
+        "applications",
+        "sandbox",
+        "ml-kem-768",
+        "battery (estimate)"
+      ],
+      "difficulty": "intermediate",
+      "requires": ["container"],
+      "recommendedPersonas": ["developer", "architect", "researcher"],
+      "wip": true,
+      "opensourceTool": {
+        "name": "Eclipse Mosquitto",
+        "url": "https://mosquitto.org/"
+      }
+    }
+  ],
+  "businessTools": [
+    {
+      "id": "roi-calculator",
+      "goodAnswer": "A payback period you would defend under questioning — which means the breach-avoidance input is a number you can source, not the one that makes the case work.",
+      "workedExample": "Pick the 'Average org' tier, enter your products to migrate and planning horizon, then halve the breach-probability input: if the payback period still lands inside the horizon, the case does not depend on the scary number.",
+      "name": "ROI Calculator",
+      "description": "Calculate migration ROI with breach avoidance, compliance savings, and payback period",
+      "category": "Risk & Strategy",
+      "keywords": ["roi", "cost", "benefit", "investment", "budget", "breach", "payback"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Business Requirements",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — business case",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "board-pitch",
+      "goodAnswer": "One ask, one date, one consequence of missing it. If the deck needs a second slide to explain the ask, the ask is not clear enough yet.",
+      "workedExample": "Run the ROI Calculator first, then open the pitch: the Budget Request field pre-fills with that investment, the Cost-Benefit section quotes the payback in months, and the export is a numbered proposal with a Basis of figures footer.",
+      "name": "Board Pitch Builder",
+      "description": "Build board-ready investment proposals with executive summary and budget request",
+      "category": "Risk & Strategy",
+      "keywords": ["board", "pitch", "executive", "proposal", "investment", "deck"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Business Requirements",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — business case",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "breach-simulator",
+      "goodAnswer": "A scenario your own incident team recognises. If nobody in the room says \"that is roughly what would happen\", the inputs are wrong, not the model.",
+      "workedExample": "Your industry, data retained for 10 years and a migration that takes 3 years: the classical and quantum-enabled breach costs update together, and the Mosca verdict says whether migration is already late.",
+      "name": "Breach Scenario Simulator",
+      "description": "Compare classical vs quantum-enabled breach cost (per-event and annual expected loss) with HNDL exposure",
+      "category": "Risk & Strategy",
+      "keywords": ["breach", "cost", "quantum", "hndl", "exposure", "ale", "risk"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Threats",
+      "cswp39SectionRef": "§6.1",
+      "cswp39SubSection": "Resource considerations — breach exposure",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "cost-of-inaction",
+      "goodAnswer": "A figure that changes a decision. If waiting and acting come out within rounding of each other, say so plainly rather than tuning the inputs until they diverge.",
+      "workedExample": "Keep the 10-year horizon fixed and compare start now with a 3-year delay: the cumulative-NPV table shows when waiting becomes more expensive, while the assumption panel shows what drives the result.",
+      "name": "Cost of Inaction Analyzer",
+      "description": "Compare the discounted cost of starting now with delaying PQC migration, with assumptions and uncertainty visible",
+      "category": "Risk & Strategy",
+      "keywords": ["delay", "inaction", "cost", "npv", "penalty", "hndl", "breach"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Business Requirements",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — business case",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "cost-model-explorer",
+      "goodAnswer": "A range, not a point. The honest output of this tool is the spread between your best and worst assumptions, and which assumption drives it.",
+      "workedExample": "Enter the systems in scope and the annual IT budget, then compare the parametric, bottom-up and Monte Carlo estimates: the spread between them is your honest range, and the driver that moves it most is the assumption to defend.",
+      "name": "Cost Model Explorer",
+      "description": "Compare the six PQC costing-model families on one scenario, with a live Monte Carlo run",
+      "category": "Risk & Strategy",
+      "keywords": ["cost", "model", "estimate", "monte carlo", "parametric", "scenario", "compare"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Business Requirements",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — business case",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "crqc-scenario",
+      "goodAnswer": "A plan that survives the machine arriving early. If your roadmap only works at the median estimate, it is a forecast, not a plan.",
+      "workedExample": "Set the CRQC arrival year to 2030 and untick any compliance deadline that does not apply to your systems: the tool lists RSA-2048, ECDSA P-256 and the others broken by a CRQC, counts the ticked deadlines that fall before that year, and shows the HNDL exposure window for data you keep past it.",
+      "name": "CRQC Scenario Planner",
+      "description": "Plan for cryptographically relevant quantum computer threat scenarios",
+      "category": "Risk & Strategy",
+      "keywords": ["crqc", "quantum", "threat", "scenario", "risk", "planning"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Threats",
+      "cswp39SectionRef": "§6.1",
+      "cswp39SubSection": "Resource considerations — threat horizon",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "risk-register",
+      "goodAnswer": "Each entry names an owner role and a next review date. An entry without them is a note, not a risk: no one is answerable for treating it. Use roles, not people's names; recording a role is not a sign-off.",
+      "workedExample": "Add a risk entry for 'TLS Certificates (Public Web)' on RSA-2048 with Shor's Algorithm as the threat vector, Likelihood 4 — Likely, Impact 5 — Catastrophic, Owner role 'PKI lead' and a Next review date: the card shows Score: 20 (Critical), the 'Note, not a risk yet' badge clears, and the Risk Summary counts it as Critical.",
+      "name": "Risk Register Builder",
+      "description": "Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact, proposed mitigation, owner role and review date",
+      "category": "Risk & Strategy",
+      "keywords": ["risk", "register", "inventory", "mitigation", "likelihood", "impact"],
+      "cswp39Zone": "risk-management",
+      "cswp39ZoneSubElement": "Risk Analysis Engine",
+      "cswp39SectionRef": "§6.5",
+      "cswp39SubSection": "Maturity assessment",
+      "frameworkPhase": "p3"
+    },
+    {
+      "id": "risk-treatment-plan",
+      "goodAnswer": "Each high risk maps to a treatment someone has actually agreed to fund. Accepting a risk is a valid answer — leaving it blank is not.",
+      "workedExample": "Load sample entries, click the Likelihood 4 / Impact 5 cell, choose Mitigate and write the rationale: it appears in the Treatment Summary and in the Migration Priority Order, where you can move it up or down and say why.",
+      "name": "Risk Heatmap & Treatment Plan",
+      "description": "Visualise residual risk and draft treatment strategies per risk category",
+      "category": "Risk & Strategy",
+      "keywords": ["heatmap", "treatment", "residual", "risk", "mitigation", "strategy"],
+      "cswp39Zone": "risk-management",
+      "cswp39ZoneSubElement": "Risk Analysis Engine",
+      "cswp39SectionRef": "§6.5",
+      "cswp39SubSection": "Maturity assessment",
+      "frameworkPhase": "p3"
+    },
+    {
+      "id": "compliance-checklist",
+      "goodAnswer": "Every \"yes\" points at evidence that exists today. A checklist of intentions passes no audit.",
+      "workedExample": "Under 'Add frameworks to this checklist', pick an industry and a primary jurisdiction (or Load sample frameworks) and add the frameworks in scope: each one gets its own checklist with a deadline, a compliance owner and controls such as 'Crypto inventory mapped to this framework'. Frameworks starred on /compliance are added automatically.",
+      "name": "Compliance Checklist",
+      "description": "Per-framework PQC compliance checklist seeded from your starred frameworks and assessment",
+      "category": "Compliance & Audit",
+      "keywords": ["compliance", "checklist", "framework", "controls", "pqc"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Standards",
+      "cswp39SectionRef": "§5.1",
+      "cswp39SubSection": "Standards, regulations, mandates",
+      "frameworkPhase": "foundations"
+    },
+    {
+      "id": "audit-checklist",
+      "goodAnswer": "Explain which fictional planning topics you selected, what information is missing and how the related reading applies. Selections and notes do not establish audit readiness.",
+      "workedExample": "Select two review topics, leave another unanswered and add a fictional reference note. The saved plan preserves those choices; topic counts describe selections, not an audit finding or validated evidence.",
+      "name": "Audit Readiness Checklist",
+      "description": "Explore a Hub planning template for inventory, policy, controls and documentation; selections do not assess readiness",
+      "category": "Compliance & Audit",
+      "keywords": ["audit", "checklist", "readiness", "compliance", "inventory", "controls"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Standards",
+      "cswp39SectionRef": "§5.1",
+      "cswp39SubSection": "Standards, regulations, mandates",
+      "frameworkPhase": "foundations"
+    },
+    {
+      "id": "compliance-timeline",
+      "goodAnswer": "Dates you did not choose, next to dates you did. The gap between the two is the plan.",
+      "workedExample": "Select jurisdictions, add a fictional milestone such as 'Complete crypto inventory' with a year, and tick the obligations it works toward in the Add Milestone form. The Obligation Review then compares only those linked deadlines (e.g. 'Planned by reference year'); obligation satisfaction stays not assessed.",
+      "name": "Compliance Timeline Builder",
+      "description": "Plot framework milestones, deadlines, and dependencies on a single timeline",
+      "category": "Compliance & Audit",
+      "keywords": ["compliance", "timeline", "deadline", "framework", "milestone", "regulatory"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Regulations/Mandates",
+      "cswp39SectionRef": "§5.1",
+      "cswp39SubSection": "Standards, regulations, mandates",
+      "frameworkPhase": "p4"
+    },
+    {
+      "id": "raci-builder",
+      "goodAnswer": "Exactly one Accountable per row. Two means nobody, and that is the failure this tool exists to prevent.",
+      "workedExample": "Set Enterprise Architect as Accountable for Crypto Inventory and the CISO as Consulted, then try a second Accountable on the same row: the row is flagged, because two Accountables means nobody.",
+      "name": "RACI Builder",
+      "description": "Build RACI matrices for 10 PQC activities across 6 organizational roles",
+      "category": "Governance & Policy",
+      "keywords": ["raci", "governance", "responsibility", "roles", "accountable"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Crypto Policies",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — governance",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "policy-generator",
+      "goodAnswer": "A policy someone can be non-compliant with. If no realistic action would breach it, it is a statement of values, not a policy.",
+      "workedExample": "Approve ML-KEM (FIPS 203) and ML-DSA (FIPS 204), list RSA, ECDSA and ECDH as classical algorithms to retire, allow a 2-year exception window and set an annual review: the generated policy names each of them.",
+      "name": "Policy Template Generator",
+      "description": "Generate cryptographic algorithm, key management, vendor, and migration policies",
+      "category": "Governance & Policy",
+      "keywords": ["policy", "template", "governance", "key management", "algorithm"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Crypto Policies",
+      "cswp39SectionRef": "§5.2",
+      "cswp39SubSection": "Crypto security policy enforcement",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "kpi-dashboard",
+      "goodAnswer": "Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.",
+      "workedExample": "On a new worksheet, click Load sample baseline: the KPIs you normally type in get fictional values labelled Hub sample baseline, so the Overall Score appears (48/100 under the Executive lens). Switch to the Architect lens and the same values re-weight to 37/100. Move a slider to replace a sample value with your own; Clear sample baseline removes only the sample values. Catalogue calculations use only products you selected in Migrate, and the combined score still needs 70% scored-value coverage, which is not verified evidence.",
+      "name": "KPI Dashboard Builder",
+      "description": "Build KPI dashboards for tracking PQC migration metrics and progress",
+      "category": "Governance & Policy",
+      "keywords": ["kpi", "dashboard", "metrics", "tracking", "progress", "migration"],
+      "cswp39Zone": "risk-management",
+      "cswp39ZoneSubElement": "KPI Dashboards",
+      "cswp39SectionRef": "§6.5",
+      "cswp39SubSection": "Maturity assessment",
+      "frameworkPhase": "foundations"
+    },
+    {
+      "id": "vendor-scorecard",
+      "goodAnswer": "Scores backed by something the vendor published, not by what they said on a call. The migrate catalog carries the proof and its date.",
+      "workedExample": "Score two HSM vendors on the same six criteria — PQC Algorithm Support, FIPS 140-3 Validation, Hybrid Mode Support, Crypto Agility, Published PQC Roadmap, SBOM/CBOM Delivery — and compare the totals, with the migrate catalog as the evidence for each score.",
+      "name": "Vendor Scorecard Builder",
+      "description": "Create vendor assessment scorecards for PQC readiness evaluation",
+      "category": "Vendor & Supply Chain",
+      "keywords": ["vendor", "scorecard", "assessment", "evaluation", "supply chain"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Supply Chains",
+      "cswp39SectionRef": "§5.3",
+      "cswp39SubSection": "Technology supply chains",
+      "frameworkPhase": "p7"
+    },
+    {
+      "id": "contract-clause",
+      "goodAnswer": "Language your procurement team will actually accept. A clause nobody will sign protects nothing.",
+      "workedExample": "Require ML-KEM (FIPS 203) and ML-DSA (FIPS 204), a CMVP certificate number as evidence, CycloneDX 1.7 CBOM delivery and 90 days' notice of cryptographic changes: the generated clause carries each obligation.",
+      "name": "Contract Clause Generator",
+      "description": "Generate PQC-ready contract clauses for vendor agreements",
+      "category": "Vendor & Supply Chain",
+      "keywords": ["contract", "clause", "vendor", "agreement", "legal", "procurement"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Supply Chains",
+      "cswp39SectionRef": "§5.3",
+      "cswp39SubSection": "Technology supply chains",
+      "frameworkPhase": "p7"
+    },
+    {
+      "id": "supply-chain-matrix",
+      "goodAnswer": "The suppliers you cannot replace inside your own deadline are visible at a glance. Those are the programme, the rest are logistics.",
+      "workedExample": "Pick your products on Migrate and set your industry: a domain such as 'HSM-protected keys' gets PQC Ready, FIPS Validated, Hybrid Support and Known CVEs counts and a Migration Gap × Impact score, and one click downloads a CycloneDX CBOM.",
+      "name": "Supply Chain Risk Matrix",
+      "description": "Assess supply chain risks with dependency mapping and impact analysis",
+      "category": "Vendor & Supply Chain",
+      "keywords": ["supply chain", "risk", "matrix", "dependency", "impact"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Supply Chains",
+      "cswp39SectionRef": "§5.3",
+      "cswp39SubSection": "Technology supply chains",
+      "frameworkPhase": "p7"
+    },
+    {
+      "id": "roadmap-builder",
+      "goodAnswer": "Each phase has an exit test, not just an end date. \"Done\" has to be checkable by someone who was not in the room.",
+      "workedExample": "Tick your country's deadline chips, keep the defaults — 'Pilot ML-KEM hybrid in TLS' (2027, Track A), 'Re-issue root / intermediate CAs (PQC)' (2030, Track B) — and add a mitigation with a sunset date: the export shows the critical path.",
+      "name": "Roadmap Builder",
+      "description": "Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G6 (+ G8 at closure) and milestone dependencies",
+      "category": "Migration Planning",
+      "keywords": [
+        "roadmap",
+        "migration",
+        "plan",
+        "milestone",
+        "phase",
+        "timeline",
+        "two-track",
+        "track",
+        "gate",
+        "dependency",
+        "hndl",
+        "tnfl"
+      ],
+      "cswp39Zone": "migration",
+      "cswp39ZoneSubElement": "Library upgrades",
+      "cswp39SectionRef": "§3.2",
+      "cswp39SubSection": "Algorithm transitions",
+      "frameworkPhase": "p4"
+    },
+    {
+      "id": "stakeholder-comms",
+      "goodAnswer": "Each audience gets the one thing they need to decide. If two audiences get the same message, one of them is being ignored.",
+      "workedExample": "Put the board in 'Manage closely' with a quarterly cadence and a dashboard status report, write the Board / C-Suite message, then give development teams their own message on a weekly cadence.",
+      "name": "Stakeholder Comms Planner",
+      "description": "Plan stakeholder communication strategies for PQC migration programs",
+      "category": "Migration Planning",
+      "keywords": ["stakeholder", "communication", "plan", "messaging", "change management"],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Crypto Policies",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — governance",
+      "frameworkPhase": "p4"
+    },
+    {
+      "id": "kpi-tracker",
+      "goodAnswer": "A trend, not a snapshot. Two data points is a line; the value starts at the third.",
+      "workedExample": "Choose the Executive lens and click Load sample baseline: fictional values labelled Hub sample baseline fill the KPIs you normally enter, and the Overall Score appears. Switch to the Ops lens to see the same values re-weighted, then replace sample values with hypothetical progress of your own. Missing or unconfirmed saved values stay unassessed; the combined score requires 70% scored-value coverage. Sample notes and review labels do not verify evidence or establish readiness.",
+      "name": "KPI Tracker Template",
+      "description": "Track migration KPIs with configurable metrics and reporting templates",
+      "category": "Migration Planning",
+      "keywords": ["kpi", "tracker", "metrics", "reporting", "migration", "progress"],
+      "cswp39Zone": "risk-management",
+      "cswp39ZoneSubElement": "KPI Dashboards",
+      "cswp39SectionRef": "§6.5",
+      "cswp39SubSection": "Maturity assessment",
+      "frameworkPhase": "foundations"
+    },
+    {
+      "id": "deployment-playbook",
+      "goodAnswer": "A colleague could run it at 3am without calling you. That is the only real test of a playbook.",
+      "workedExample": "Tick 'Configure hybrid classical+PQC mode' and 'Prepare rollback automation scripts' under Pre-Deployment Preparation: the counter reads 2/38, the outlined critical items cannot be skipped, and the saved playbook keeps the checkmarks.",
+      "name": "Deployment Playbook",
+      "description": "Generate deployment playbooks with rollback procedures and validation steps",
+      "category": "Migration Planning",
+      "keywords": ["deployment", "playbook", "rollback", "validation", "rollout"],
+      "cswp39Zone": "mitigation",
+      "cswp39ZoneSubElement": "Crypto gateway / bump-in-the-wire",
+      "cswp39SectionRef": "§4",
+      "cswp39SubSection": "System implementations",
+      "frameworkPhase": "p5"
+    },
+    {
+      "id": "hybrid-transition-planner",
+      "goodAnswer": "A stated target, its assumptions and review triggers. For a hybrid example, explain when to review continued use or a later transition. Pure-PQC and gateway choices need their own delivery plans; this worksheet does not generate those sequences.",
+      "workedExample": "Leave the defaults — TLS 1.3 on X25519, key exchange only, data lifetime 5 - 15 years, deadline 2030: the preview recommends Hybrid (Traditional + PQC) with X25519MLKEM768, a hybrid target of Q4 2028 and a pure-PQC sunset of Q4 2030.",
+      "name": "Hybrid Transition Planner",
+      "audience": "architect",
+      "description": "Explore a Hub worksheet with CSWP.39 references and illustrative traditional-plus-PQC, PQC-plus-PQC, pure-PQC or crypto-gateway suggestions",
+      "category": "Migration Planning",
+      "keywords": [
+        "hybrid",
+        "transition",
+        "composite",
+        "pqc",
+        "kem",
+        "signature",
+        "ml-kem",
+        "ml-dsa",
+        "architect"
+      ],
+      "cswp39Zone": "migration",
+      "cswp39ZoneSubElement": "Protocol negotiation updates",
+      "cswp39SectionRef": "§3.2.4",
+      "cswp39SubSection": "Hybrid Cryptographic Algorithms",
+      "frameworkPhase": "p5"
+    },
+    {
+      "id": "mti-negotiator",
+      "goodAnswer": "Compare the exact TLS 1.3 groups both peers enable and identify which remain eligible under the worksheet policy. Confirm the result with a real handshake before deploying.",
+      "workedExample": "Select X25519MLKEM768 for both sample peers. Preview the common group, then remove it from the server and review the blocked result. If both peers also support X25519, change the local rule to see when that classical group becomes eligible.",
+      "name": "MTI Negotiator",
+      "audience": "architect",
+      "description": "Protocol-designer + architect decision tool from CSWP.39 §3.1.1 - picks Mandatory-to-Implement signature / KEM / hash plus alternates from audience, deadline, and constraint inputs",
+      "category": "Migration Planning",
+      "keywords": [
+        "mti",
+        "mandatory-to-implement",
+        "cipher-suite",
+        "negotiation",
+        "protocol",
+        "tls",
+        "ikev2",
+        "ml-kem",
+        "ml-dsa",
+        "slh-dsa",
+        "cnsa"
+      ],
+      "cswp39Zone": "migration",
+      "cswp39ZoneSubElement": "Protocol negotiation updates",
+      "cswp39SectionRef": "§3.1.1",
+      "cswp39SubSection": "Mandatory-to-Implement Algorithms",
+      "frameworkPhase": "p5"
+    },
+    {
+      "id": "crypto-api-refactor-audit",
+      "goodAnswer": "A list of call sites, not a list of libraries. The refactor happens where the API is called, and that is where the estimate has to come from.",
+      "workedExample": "Choose Go, OpenSSL (libcrypto / EVP), '10 - 50 call sites' and 'Partially hardcoded': the audit grades it 'Phase 2 - Complete the facade', and the checklist names the Go imports to grep for outside the facade and a lint rule to ban them.",
+      "name": "Crypto API Refactor Audit",
+      "audience": "developer",
+      "description": "Architect + senior-developer audit from CSWP.39 §4.1 - grades current crypto-agility state and emits a phased refactor checklist with language-specific call-site guidance (Go / Java / .NET / Node / Python / Rust / C / C++ / JS)",
+      "category": "Migration Planning",
+      "keywords": [
+        "api",
+        "refactor",
+        "audit",
+        "agility",
+        "facade",
+        "evp",
+        "openssl",
+        "bouncycastle",
+        "pkcs11",
+        "call-sites",
+        "developer",
+        "architect"
+      ],
+      "cswp39Zone": "migration",
+      "cswp39ZoneSubElement": "Library upgrades",
+      "cswp39SectionRef": "§4.1",
+      "cswp39SubSection": "Using an API in a Crypto Library Application",
+      "frameworkPhase": "p5"
+    },
+    {
+      "id": "cloud-responsibility-matrix",
+      "goodAnswer": "No cell reads \"shared\" without saying who acts first. Shared responsibility is where migrations stall.",
+      "workedExample": "Keep the defaults — AWS, IaaS + PaaS, TLS termination and KMS-backed keys in scope: the matrix has four rows, each naming Customer, Provider or Shared as owner with both sides' actions and a PQC availability read from the product catalog.",
+      "name": "Cloud Responsibility Matrix",
+      "audience": "architect",
+      "description": "Architect + compliance-lead matrix from CSWP.39 §6.4 - per-asset-class shared-responsibility model across IaaS / PaaS / SaaS / FaaS, with PQC availability per cloud and watch-outs for multi-cloud, BYOK, FedRAMP, and sovereign-cloud overlays",
+      "category": "Migration Planning",
+      "keywords": [
+        "cloud",
+        "iaas",
+        "paas",
+        "saas",
+        "faas",
+        "fedramp",
+        "sovereign",
+        "shared-responsibility",
+        "byok",
+        "hyok",
+        "kms",
+        "aws",
+        "gcp",
+        "azure"
+      ],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Supply Chains",
+      "cswp39SectionRef": "§6.4",
+      "cswp39SubSection": "Crypto Agility in the Cloud",
+      "frameworkPhase": "p7"
+    },
+    {
+      "id": "crypto-architecture-diagram",
+      "goodAnswer": "Every trust boundary shows which algorithm crosses it. A diagram without algorithms on the arrows cannot tell you what breaks.",
+      "workedExample": "Add a customer-facing web app, OpenSSL, a network HSM and an internal root CA with their dependencies: the Mermaid preview draws the chain, and the HSM's detail line says whether it has ML-DSA firmware yet.",
+      "name": "Crypto Architecture Diagram",
+      "description": "Document apps, libraries, HSMs, protocols, key stores, and CAs with their dependencies; renders as a Mermaid diagram",
+      "category": "Migration Planning",
+      "keywords": [
+        "architecture",
+        "diagram",
+        "topology",
+        "dependencies",
+        "hsm",
+        "library",
+        "protocol",
+        "mermaid"
+      ],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Crypto Architecture",
+      "cswp39SectionRef": "§5.4",
+      "cswp39SubSection": "Cryptographic architecture",
+      "frameworkPhase": "p1"
+    },
+    {
+      "id": "management-tools-audit",
+      "goodAnswer": "You know which of your own tools would have to change before a single production key does.",
+      "workedExample": "Set Crypto Scanners to Automated and enter inventory counts. With 31 of 64 systems observed, the category stays below the Hub’s 50% coverage threshold. Change the numerator to 32 and check the gap list and exported audit.",
+      "name": "Management Tools Audit",
+      "description": "Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5",
+      "category": "Migration Planning",
+      "keywords": [
+        "tools",
+        "audit",
+        "scanner",
+        "siem",
+        "cmdb",
+        "sbom",
+        "zero-trust",
+        "discovery",
+        "enforcement"
+      ],
+      "cswp39Zone": "management-tools",
+      "cswp39ZoneSubElement": "Log/SIEM",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Identify gaps in enterprise management tools",
+      "frameworkPhase": "p1"
+    },
+    {
+      "id": "crypto-cbom-builder",
+      "goodAnswer": "A CBOM you can regenerate repeatably. Its accuracy depends on source coverage, input freshness and reconciliation with the scoped inventory; generation alone does not establish completeness.",
+      "workedExample": "Switch to SBOM → CBOM and pick the payments-service sample: its five components, OpenSSL 1.1.1w and a non-FIPS Bouncy Castle among them, each get an end-of-life, FIPS, ESV, PQC and posture reading (OpenSSL 1.1.1w shows EoL (2023-09-11)), and one click downloads a CycloneDX 1.7 CBOM.",
+      "name": "Crypto BOM (CBOM) Builder",
+      "description": "Build a CBOM slice from an SBOM, library posture, or HSM inventory; feeds the Assets pipeline",
+      "category": "Migration Planning",
+      "keywords": ["cbom", "sbom", "inventory", "libraries", "hsm", "fips", "cyclonedx"],
+      "cswp39Zone": "assets",
+      "cswp39ZoneSubElement": "Libraries",
+      "cswp39SectionRef": "§5.3",
+      "cswp39SubSection": "Technology supply chains (CBOM ingestion)",
+      "frameworkPhase": "p2"
+    },
+    {
+      "id": "crypto-vulnerability-watch",
+      "goodAnswer": "A short list you will actually read. A watch that surfaces everything gets ignored like everything else.",
+      "workedExample": "Bookmark OpenSSL on Migrate (or click Load sample watchlist) and switch off the MEDIUM and LOW chips: the tiles count products tracked, filtered CVEs, Critical + High and CPE coverage gaps, and expanding OpenSSL lists its top 20 CVEs by ID, score, date and summary.",
+      "name": "Crypto Vulnerability Watch",
+      "description": "NIST NVD CVE digest for the products on your /migrate selection, joined via CPE — the top CVEs per product by severity from the current snapshot",
+      "category": "Migration Planning",
+      "keywords": ["cve", "nvd", "vulnerability", "cpe", "severity", "nvd snapshot"],
+      "cswp39Zone": "management-tools",
+      "cswp39ZoneSubElement": "Vulnerability",
+      "cswp39SectionRef": "§5.3",
+      "cswp39SubSection": "Identify Gaps — vulnerability management (CVE feeds, library EoL tracking)",
+      "frameworkPhase": "p1"
+    },
+    {
+      "id": "program-charter",
+      "goodAnswer": "A named sponsor and a stated scope boundary. The boundary matters more — a charter without one absorbs every adjacent problem.",
+      "workedExample": "Name the sponsor (for example the CISO), write the purpose and the scope boundary, add the Steering Committee seats, enter a budget such as $4.5M over 3 years and tick the workstreams: the export is a one-page charter.",
+      "name": "Program Charter",
+      "description": "Phase 0 mandate artifact — sponsor sign-off, Steering Committee, QRPM appointment, governance cadence, and the multi-year budget commitment",
+      "category": "Governance & Policy",
+      "keywords": [
+        "charter",
+        "mandate",
+        "sponsor",
+        "steerco",
+        "steering committee",
+        "qrpm",
+        "governance",
+        "budget",
+        "cadence"
+      ],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Crypto Policies",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — governance",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "initial-scoping",
+      "goodAnswer": "An honest inventory gap. \"We do not know what is in this estate\" is a finding, and often the most valuable one.",
+      "workedExample": "List 'Customer-facing TLS gateway' as system 1 with priority A and owner Vendor, enter 2400 as the estate estimate and name OpenSSL, Microsoft and F5 as vendor dependencies: the export is a numbered systems table, the estimate and vendors.",
+      "name": "Initial Scoping Assessment",
+      "description": "Phase 0 first-cut scope — top-20 in-scope systems, an estate-size estimate, and the top-10 vendor dependencies; seedable from your /migrate selection",
+      "category": "Risk & Strategy",
+      "keywords": [
+        "scoping",
+        "scope",
+        "estate",
+        "systems",
+        "vendors",
+        "dependencies",
+        "inventory",
+        "top-20"
+      ],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Business Requirements",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — scope",
+      "frameworkPhase": "p0"
+    },
+    {
+      "id": "skills-team-plan",
+      "goodAnswer": "A plan that works with the people you have. Hiring is a dependency, not a mitigation.",
+      "workedExample": "Enter the instances in scope (for example 2,400): the 1-FTE-per-500-instances heuristic sizes the core roles for years 1–2 and for production rollout, and each role gets build, borrow or buy.",
+      "name": "Skills & Team Plan",
+      "description": "Foundations staffing plan — core roles + FTE from the framework role model, the 1-FTE-per-500-instances sizing heuristic, and build / borrow / buy per role",
+      "category": "Governance & Policy",
+      "keywords": [
+        "skills",
+        "team",
+        "staffing",
+        "fte",
+        "roles",
+        "build",
+        "borrow",
+        "buy",
+        "hiring",
+        "sizing"
+      ],
+      "cswp39Zone": "risk-management",
+      "cswp39ZoneSubElement": "KPI Dashboards",
+      "cswp39SectionRef": "§6.5",
+      "cswp39SubSection": "Maturity assessment",
+      "frameworkPhase": "foundations"
+    },
+    {
+      "id": "infra-modernization-planner",
+      "goodAnswer": "Explore how proposed cryptographic changes align with refresh plans. Costs, compatibility and readiness need separate assessment.",
+      "workedExample": "Enter a fictional HSM/KMS inventory and select protocol planning topics. The export records sample inputs; it does not run handshakes, measure capacity or establish infrastructure readiness.",
+      "name": "Infrastructure Modernization Planner",
+      "description": "Sample infrastructure planning worksheet for PKI, HSM/KMS, network compatibility topics and capacity assumptions; not a readiness assessment",
+      "category": "Migration Planning",
+      "keywords": [
+        "infrastructure",
+        "pki",
+        "hsm",
+        "kms",
+        "middlebox",
+        "capacity",
+        "performance",
+        "modernization",
+        "mtc"
+      ],
+      "cswp39Zone": "mitigation",
+      "cswp39ZoneSubElement": "Network-layer re-encryption",
+      "cswp39SectionRef": "§6",
+      "cswp39SubSection": "Infrastructure modernization",
+      "frameworkPhase": "p6"
+    },
+    {
+      "id": "refresh-cycle-alignment",
+      "goodAnswer": "The assets whose refresh lands AFTER your deadline are named. Those need a decision now, not later.",
+      "workedExample": "Keep the 3-year horizon, give 'HSM replacement' a next refresh of 2027 and 'Data center hardware' 2031: the first badge reads Within planning window, the second After horizon, and the banner counts how many of the seven programs refresh after the planning horizon.",
+      "name": "Refresh-Cycle Alignment",
+      "description": "Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals) so PQC work rides existing budgets",
+      "category": "Migration Planning",
+      "keywords": [
+        "refresh",
+        "cycle",
+        "roadmap",
+        "budget",
+        "cost avoidance",
+        "hardware",
+        "renewal",
+        "alignment"
+      ],
+      "cswp39Zone": "migration",
+      "cswp39ZoneSubElement": "Firmware updates",
+      "cswp39SectionRef": "§4",
+      "cswp39SubSection": "Roadmap — refresh-cycle alignment",
+      "frameworkPhase": "p4"
+    },
+    {
+      "id": "accelerated-execution-profile",
+      "goodAnswer": "The specific things you would drop to go faster, listed before you need them. Deciding under pressure is how scope gets cut badly.",
+      "workedExample": "Tick a trigger such as a board directive to accelerate, write the compressed sequence, pre-approve a risk acceptance (for example a temporary performance regression on internal APIs), size the surge request and name who can activate it.",
+      "name": "Accelerated Execution Profile",
+      "description": "Phase 4 Activity 4.7 — a pre-drafted contingency package (trigger conditions, compressed sequence, pre-approved risk acceptances, emergency resource request, activation authority) activated if the quantum timeline accelerates",
+      "category": "Governance & Policy",
+      "keywords": [
+        "accelerated",
+        "contingency",
+        "trigger",
+        "emergency",
+        "tabletop",
+        "compressed",
+        "profile"
+      ],
+      "cswp39Zone": "migration",
+      "cswp39ZoneSubElement": "ACME / EST / CMP automation",
+      "cswp39SectionRef": "§4",
+      "cswp39SubSection": "Roadmap — contingency",
+      "frameworkPhase": "p4"
+    },
+    {
+      "id": "data-at-rest-strategy",
+      "goodAnswer": "Retention drives the order. Data that stays secret for ten years is the harvest-now target; data that expires next quarter is not.",
+      "workedExample": "Keep the four seeded stores, 'Customer PII database' on High with 'Re-encrypt with fresh AES-256 DEK (PQC-wrapped KEK)' and 'Backups & archives' on 'Re-wrap existing DEK under PQC KEK': the export is a store / sensitivity / strategy table.",
+      "name": "Data-at-Rest Strategy",
+      "description": "Phase 5 Activity 5.6 — per-store data-at-rest decision (re-encrypt under PQC keys, PQC key-wrap, crypto-shred, delete, or accept & monitor), recorded back into the CBOM",
+      "category": "Migration Planning",
+      "keywords": [
+        "data at rest",
+        "encryption",
+        "key wrap",
+        "crypto-shred",
+        "aes-256",
+        "database",
+        "backups",
+        "strategy"
+      ],
+      "cswp39Zone": "mitigation",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Data-at-rest strategy",
+      "frameworkPhase": "p5"
+    },
+    {
+      "id": "migration-verification",
+      "goodAnswer": "Define the checks a workload needs, distinguish recorded references from performed tests, and plan trust retirement and continuing review.",
+      "workedExample": "Fill five sample reference fields in one fictional record and three in another. The first says 'Evidence recorded — review required'; the second remains incomplete. These counts record filled fields, not successful technical verification.",
+      "name": "Migration Verification & Closure",
+      "description": "Explore sample verification references, retirement planning and closure notes; filling this educational checklist does not verify a migration",
+      "category": "Migration Planning",
+      "keywords": [
+        "verification",
+        "closure",
+        "evidence",
+        "decommission",
+        "dossier",
+        "bau",
+        "sign-off",
+        "sp 800-88",
+        "tnfl"
+      ],
+      "cswp39Zone": "governance",
+      "cswp39ZoneSubElement": "Processes",
+      "cswp39SectionRef": "§5",
+      "cswp39SubSection": "Strategic plan — migration verification & evidence",
+      "frameworkPhase": "verify-close"
+    }
+  ],
+  "categories": [
+    "OpenSSL Studio",
+    "HSM / PKCS#11",
+    "Entropy & Random",
+    "Certificates & Proofs",
+    "Digital Identity",
+    "Blockchain & Digital Assets",
+    "Protocol Simulations"
+  ],
+  "businessCategories": [
+    "Risk & Strategy",
+    "Compliance & Audit",
+    "Governance & Policy",
+    "Vendor & Supply Chain",
+    "Migration Planning"
+  ],
+  "toolNice": [
+    null,
+    {
+      "toolId": "hsm-capacity",
+      "competencyAreas": ["CA-CRYPTO", "CA-IDENT"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer", "iam-specialist"]
+    },
+    {
+      "toolId": "hybrid-encrypt",
+      "competencyAreas": ["CA-CRYPTO", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "envelope-encrypt",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "system-administrator", "iam-specialist"]
+    },
+    {
+      "toolId": "cloud-kms-key-exchange",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "system-administrator", "iam-specialist"]
+    },
+    {
+      "toolId": "token-migration",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["iam-specialist", "security-architect"]
+    },
+    {
+      "toolId": "firmware-signing",
+      "competencyAreas": ["CA-SYSARCH", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "toolId": "slh-dsa",
+      "competencyAreas": ["CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "toolId": "lms-hss",
+      "competencyAreas": ["CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "hybrid-sigs",
+      "competencyAreas": ["CA-CRYPTO", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "kdf-derivation",
+      "competencyAreas": ["CA-CRYPTO", "CA-SYSARCH"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "rd-specialist"]
+    },
+    {
+      "toolId": "tee-channel",
+      "competencyAreas": ["CA-SYSARCH", "CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect"]
+    },
+    {
+      "toolId": "tls-simulator",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "network-security-specialist", "system-administrator"]
+    },
+    {
+      "toolId": "vpn-sim",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["network-security-specialist", "system-administrator", "security-architect"]
+    },
+    {
+      "toolId": "pqc-ssh-sim",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["network-security-specialist", "system-administrator", "security-architect"]
+    },
+    {
+      "toolId": "suci-flow",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["network-security-specialist", "security-architect"]
+    },
+    {
+      "toolId": "mls-group-messaging",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "network-security-specialist", "security-architect"]
+    },
+    {
+      "toolId": "tpm-playground",
+      "competencyAreas": ["CA-SYSARCH", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "toolId": "rng-demo",
+      "competencyAreas": ["CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect", "validation-engineer"]
+    },
+    {
+      "toolId": "qrng-demo",
+      "competencyAreas": ["CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect", "validation-engineer"]
+    },
+    {
+      "toolId": "entropy-test",
+      "competencyAreas": ["CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect", "validation-engineer"]
+    },
+    {
+      "toolId": "drbg-demo",
+      "competencyAreas": ["CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect", "validation-engineer"]
+    },
+    {
+      "toolId": "source-combining",
+      "competencyAreas": ["CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect", "validation-engineer"]
+    },
+    {
+      "toolId": "pki-workshop",
+      "competencyAreas": ["CA-CRYPTO", "CA-IDENT"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer", "iam-specialist"]
+    },
+    {
+      "toolId": "cert-capacity",
+      "competencyAreas": ["CA-CRYPTO", "CA-IDENT"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer", "iam-specialist"]
+    },
+    {
+      "toolId": "hybrid-certs",
+      "competencyAreas": ["CA-CRYPTO", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "merkle-proof",
+      "competencyAreas": ["CA-CRYPTO", "CA-IDENT"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "security-developer", "iam-specialist", "rd-specialist"]
+    },
+    {
+      "toolId": "digital-id",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["iam-specialist", "security-architect"]
+    },
+    {
+      "toolId": "bitcoin-flow",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "systems-security-analyst"]
+    },
+    {
+      "toolId": "hd-wallet",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "systems-security-analyst"]
+    },
+    {
+      "toolId": "solana-flow",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "systems-security-analyst"]
+    },
+    null,
+    {
+      "toolId": "api-security-jwt",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "iam-specialist"]
+    },
+    {
+      "toolId": "pki-enrollment",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "iam-specialist", "system-administrator"]
+    },
+    {
+      "toolId": "email-signing",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC", "CA-IDENT"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "system-administrator", "iam-specialist"]
+    },
+    {
+      "toolId": "sbx-tls",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "toolId": "sbx-ssh",
+      "competencyAreas": ["CA-NETDEF", "CA-IDENT"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "toolId": "sbx-vpn",
+      "competencyAreas": ["CA-NETDEF", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "toolId": "sbx-pki",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "awareness",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "sbx-cert-validation",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "awareness",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "sbx-cloud-kms",
+      "competencyAreas": ["CA-DATASEC", "CA-SYSARCH"],
+      "tier": "awareness",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "toolId": "sbx-smime",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "sbx-hybrid-certs",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "sbx-cbom-compliance",
+      "competencyAreas": ["CA-GOVCOMP", "CA-RISK"],
+      "tier": "expert",
+      "workRoles": ["is-security-manager", "risk-manager", "systems-security-analyst"]
+    },
+    {
+      "toolId": "sbx-tpm-pqc-migration",
+      "competencyAreas": ["CA-SYSARCH", "CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "toolId": "sbx-supply-chain-signing",
+      "competencyAreas": ["CA-SECPROG", "CA-GOVCOMP"],
+      "tier": "expert",
+      "workRoles": ["security-developer", "is-security-manager"]
+    },
+    {
+      "toolId": "sbx-sequoia",
+      "competencyAreas": ["CA-CRYPTO", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "is-security-manager"]
+    },
+    {
+      "toolId": "sbx-pqctoday-kmip",
+      "competencyAreas": ["CA-DATASEC", "CA-SYSARCH"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "toolId": "sbx-sops",
+      "competencyAreas": ["CA-DATASEC", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "toolId": "sbx-browser-tls",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "toolId": "sbx-migration-impact",
+      "competencyAreas": ["CA-RISK", "CA-GOVCOMP"],
+      "tier": "practitioner",
+      "workRoles": ["risk-manager", "security-architect", "is-security-manager"]
+    },
+    {
+      "toolId": "sbx-ab-handshake-bench",
+      "competencyAreas": ["CA-NETDEF", "CA-RISK"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "toolId": "sbx-hsm-perf-bench",
+      "competencyAreas": ["CA-NETDEF"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "toolId": "sbx-api-security-jwt",
+      "competencyAreas": ["CA-SECPROG", "CA-IDENT"],
+      "tier": "expert",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "toolId": "sbx-database-postgres",
+      "competencyAreas": ["CA-DATASEC", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "toolId": "sbx-firmware-hss",
+      "competencyAreas": ["CA-SECPROG", "CA-SYSARCH"],
+      "tier": "expert",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "toolId": "sbx-osslsigncode",
+      "competencyAreas": ["CA-SECPROG", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "toolId": "sbx-iot-mqtt",
+      "competencyAreas": ["CA-NETDEF", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect"]
+    }
+  ],
+  "sandboxNice": [
+    {
+      "scenarioId": "tls",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "scenarioId": "ssh",
+      "competencyAreas": ["CA-NETDEF", "CA-IDENT"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "scenarioId": "vpn",
+      "competencyAreas": ["CA-NETDEF", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "scenarioId": "pki",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "awareness",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "scenarioId": "cert-validation",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "awareness",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "scenarioId": "cloud-kms",
+      "competencyAreas": ["CA-DATASEC", "CA-SYSARCH"],
+      "tier": "awareness",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "scenarioId": "smime",
+      "competencyAreas": ["CA-CRYPTO", "CA-DATASEC"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "scenarioId": "hybrid-certs",
+      "competencyAreas": ["CA-IDENT", "CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "scenarioId": "cbom-compliance",
+      "competencyAreas": ["CA-GOVCOMP", "CA-RISK"],
+      "tier": "expert",
+      "workRoles": ["is-security-manager", "risk-manager", "systems-security-analyst"]
+    },
+    {
+      "scenarioId": "tpm-pqc-migration",
+      "competencyAreas": ["CA-SYSARCH", "CA-CRYPTO"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "security-developer"]
+    },
+    {
+      "scenarioId": "supply-chain-signing",
+      "competencyAreas": ["CA-SECPROG", "CA-GOVCOMP"],
+      "tier": "expert",
+      "workRoles": ["security-developer", "is-security-manager"]
+    },
+    {
+      "scenarioId": "sequoia",
+      "competencyAreas": ["CA-CRYPTO", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "is-security-manager"]
+    },
+    {
+      "scenarioId": "pqctoday-kmip",
+      "competencyAreas": ["CA-DATASEC", "CA-SYSARCH"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "scenarioId": "sops",
+      "competencyAreas": ["CA-DATASEC", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "system-administrator"]
+    },
+    {
+      "scenarioId": "browser-tls",
+      "competencyAreas": ["CA-NETDEF", "CA-CRYPTO"],
+      "tier": "practitioner",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "scenarioId": "migration-impact",
+      "competencyAreas": ["CA-RISK", "CA-GOVCOMP"],
+      "tier": "practitioner",
+      "workRoles": ["risk-manager", "security-architect", "is-security-manager"]
+    },
+    {
+      "scenarioId": "ab-handshake-bench",
+      "competencyAreas": ["CA-NETDEF", "CA-RISK"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "scenarioId": "hsm-perf-bench",
+      "competencyAreas": ["CA-NETDEF"],
+      "tier": "expert",
+      "workRoles": ["security-architect", "systems-security-analyst"]
+    },
+    {
+      "scenarioId": "api-security-jwt",
+      "competencyAreas": ["CA-SECPROG", "CA-IDENT"],
+      "tier": "expert",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "scenarioId": "database-postgres",
+      "competencyAreas": ["CA-DATASEC", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "scenarioId": "firmware-hss",
+      "competencyAreas": ["CA-SECPROG", "CA-SYSARCH"],
+      "tier": "expert",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "scenarioId": "osslsigncode",
+      "competencyAreas": ["CA-SECPROG", "CA-SYSARCH"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect"]
+    },
+    {
+      "scenarioId": "iot-mqtt",
+      "competencyAreas": ["CA-NETDEF", "CA-SECPROG"],
+      "tier": "practitioner",
+      "workRoles": ["security-developer", "security-architect"]
+    }
+  ],
+  "toolsByModuleId": [
+    ["pki-workshop", ["hsm-capacity", "pki-workshop", "cert-capacity"]],
+    ["hybrid-crypto", ["hybrid-encrypt", "hybrid-sigs", "hybrid-certs"]],
+    ["kms-pqc", ["envelope-encrypt", "cloud-kms-key-exchange"]],
+    ["qkd", ["kdf-derivation"]],
+    ["iam-pqc", ["token-migration"]],
+    ["secure-boot-pqc", ["firmware-signing", "tpm-playground"]],
+    ["slh-dsa", ["slh-dsa"]],
+    ["stateful-signatures", ["lms-hss"]],
+    ["confidential-computing", ["tee-channel"]],
+    ["tls-basics", ["tls-simulator"]],
+    ["vpn-ssh-pqc", ["vpn-sim", "pqc-ssh-sim"]],
+    ["5g-security", ["suci-flow"]],
+    ["mls-group-messaging", ["mls-group-messaging"]],
+    [
+      "entropy-randomness",
+      ["rng-demo", "qrng-demo", "entropy-test", "drbg-demo", "source-combining"]
+    ],
+    ["merkle-tree-certs", ["merkle-proof"]],
+    ["digital-id", ["digital-id"]],
+    ["digital-assets", ["bitcoin-flow", "hd-wallet", "solana-flow"]],
+    ["api-security-jwt", ["api-security-jwt"]],
+    ["pki-enrollment-protocols", ["pki-enrollment"]],
+    ["email-signing", ["email-signing"]]
+  ],
+  "toolByModuleId": [
+    ["pki-workshop", "hsm-capacity"],
+    ["hybrid-crypto", "hybrid-encrypt"],
+    ["kms-pqc", "envelope-encrypt"],
+    ["qkd", "kdf-derivation"],
+    ["iam-pqc", "token-migration"],
+    ["secure-boot-pqc", "firmware-signing"],
+    ["slh-dsa", "slh-dsa"],
+    ["stateful-signatures", "lms-hss"],
+    ["confidential-computing", "tee-channel"],
+    ["tls-basics", "tls-simulator"],
+    ["vpn-ssh-pqc", "vpn-sim"],
+    ["5g-security", "suci-flow"],
+    ["mls-group-messaging", "mls-group-messaging"],
+    ["entropy-randomness", "rng-demo"],
+    ["merkle-tree-certs", "merkle-proof"],
+    ["digital-id", "digital-id"],
+    ["digital-assets", "bitcoin-flow"],
+    ["api-security-jwt", "api-security-jwt"],
+    ["pki-enrollment-protocols", "pki-enrollment"],
+    ["email-signing", "email-signing"]
+  ],
+  "toolTitleById": [
+    ["cacp-kmip", "KMIP Control Plane"],
+    ["hsm-capacity", "HSM Capacity Calculator"],
+    ["hybrid-encrypt", "Hybrid KEM + ECDH"],
+    ["envelope-encrypt", "Envelope Encryption"],
+    ["cloud-kms-key-exchange", "Cloud KMS Key Exchange"],
+    ["token-migration", "Multi-Algorithm Signing"],
+    ["firmware-signing", "Firmware Signing"],
+    ["slh-dsa", "SLH-DSA Sign & Verify"],
+    ["lms-hss", "Stateful Hash Signatures"],
+    ["hybrid-sigs", "Hybrid Signature Spectrums"],
+    ["kdf-derivation", "SP 800-108 KDF"],
+    ["tee-channel", "TEE-HSM Secure Channel"],
+    ["tls-simulator", "TLS 1.3 Simulator"],
+    ["vpn-sim", "PQC VPN Simulator"],
+    ["pqc-ssh-sim", "PQC SSH Simulator"],
+    ["suci-flow", "5G SUCI Construction"],
+    ["mls-group-messaging", "MLS Group Messaging"],
+    ["tpm-playground", "TPM 2.0 PQC Playground"],
+    ["rng-demo", "Random Generation"],
+    ["qrng-demo", "QRNG Demo"],
+    ["entropy-test", "Entropy Testing"],
+    ["drbg-demo", "SP 800-90A DRBG"],
+    ["source-combining", "Source Combining"],
+    ["pki-workshop", "PKI Workshop"],
+    ["cert-capacity", "Cert Capacity Calculator"],
+    ["hybrid-certs", "Hybrid Certificates"],
+    ["merkle-proof", "Merkle Tree Workshop"],
+    ["digital-id", "EUDI Wallet Architecture"],
+    ["bitcoin-flow", "Bitcoin Transaction"],
+    ["hd-wallet", "HD Wallet Derivation"],
+    ["solana-flow", "Solana Transaction"],
+    ["openssl-studio", "OpenSSL Studio"],
+    ["api-security-jwt", "API Security & JWT Workshop"],
+    ["pki-enrollment", "PKI Enrollment (EST + CMP)"],
+    ["email-signing", "S/MIME & CMS Workshop"]
+  ],
+  "ptIdMap": {
+    "cacp-kmip": "PT-033",
+    "hsm-capacity": "PT-026",
+    "hybrid-encrypt": "PT-003",
+    "envelope-encrypt": "PT-004",
+    "cloud-kms-key-exchange": "PT-034",
+    "token-migration": "PT-005",
+    "firmware-signing": "PT-007",
+    "slh-dsa": "PT-001",
+    "lms-hss": "PT-002",
+    "hybrid-sigs": "PT-027",
+    "kdf-derivation": "PT-008",
+    "tee-channel": "PT-006",
+    "tls-simulator": "PT-024",
+    "vpn-sim": "PT-009",
+    "pqc-ssh-sim": "PT-SSH-PQC",
+    "suci-flow": "PT-018",
+    "mls-group-messaging": "PT-030",
+    "tpm-playground": "PT-028",
+    "rng-demo": "PT-010",
+    "qrng-demo": "PT-012",
+    "entropy-test": "PT-011",
+    "drbg-demo": "PT-014",
+    "source-combining": "PT-013",
+    "pki-workshop": "PT-015",
+    "cert-capacity": "PT-025",
+    "hybrid-certs": "PT-016",
+    "merkle-proof": "PT-017",
+    "digital-id": "PT-019",
+    "bitcoin-flow": "PT-020",
+    "hd-wallet": "PT-022",
+    "solana-flow": "PT-021",
+    "openssl-studio": "PT-023",
+    "api-security-jwt": "PT-032",
+    "pki-enrollment": "PT-029",
+    "email-signing": "PT-031",
+    "sbx-tls": "PT-SBX-001",
+    "sbx-ssh": "PT-SBX-002",
+    "sbx-vpn": "PT-SBX-003",
+    "sbx-pki": "PT-SBX-004",
+    "sbx-cert-validation": "PT-SBX-005",
+    "sbx-cloud-kms": "PT-SBX-006",
+    "sbx-smime": "PT-SBX-007",
+    "sbx-hybrid-certs": "PT-SBX-008",
+    "sbx-cbom-compliance": "PT-SBX-009",
+    "sbx-tpm-pqc-migration": "PT-SBX-010",
+    "sbx-supply-chain-signing": "PT-SBX-011",
+    "sbx-sequoia": "PT-SBX-012",
+    "sbx-pqctoday-kmip": "PT-SBX-013",
+    "sbx-sops": "PT-SBX-014",
+    "sbx-browser-tls": "PT-SBX-015",
+    "sbx-migration-impact": "PT-SBX-016",
+    "sbx-ab-handshake-bench": "PT-SBX-017",
+    "sbx-hsm-perf-bench": "PT-SBX-018",
+    "sbx-api-security-jwt": "PT-SBX-019",
+    "sbx-database-postgres": "PT-SBX-020",
+    "sbx-firmware-hss": "PT-SBX-021",
+    "sbx-osslsigncode": "PT-SBX-022",
+    "sbx-iot-mqtt": "PT-SBX-023"
+  },
+  "sandboxToolCount": 23,
+  "toolRouteMeta": [
+    {
+      "path": "/business/tools/accelerated-execution-profile",
+      "title": "Accelerated Execution Profile — PQC Business Tool | PQC Today",
+      "description": "Phase 4 Activity 4.7 — a pre-drafted contingency package (trigger conditions, compressed sequence, pre-approved risk acceptances, emergency resource…",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/audit-checklist",
+      "title": "Audit Readiness Checklist — PQC Business Tool | PQC Today",
+      "description": "Explore a Hub planning template for inventory, policy, controls and documentation; selections do not assess readiness",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/board-pitch",
+      "title": "Board Pitch Builder — PQC Business Tool | PQC Today",
+      "description": "Build board-ready investment proposals with executive summary and budget request",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/breach-simulator",
+      "title": "Breach Scenario Simulator — PQC Business Tool | PQC Today",
+      "description": "Compare classical vs quantum-enabled breach cost (per-event and annual expected loss) with HNDL exposure",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/cloud-responsibility-matrix",
+      "title": "Cloud Responsibility Matrix — PQC Business Tool | PQC Today",
+      "description": "Architect + compliance-lead matrix from CSWP.39 §6.4 - per-asset-class shared-responsibility model across IaaS / PaaS / SaaS / FaaS, with PQC availability…",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/compliance-checklist",
+      "title": "Compliance Checklist — PQC Business Tool | PQC Today",
+      "description": "Per-framework PQC compliance checklist seeded from your starred frameworks and assessment",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/compliance-timeline",
+      "title": "Compliance Timeline Builder — PQC Business Tool | PQC Today",
+      "description": "Plot framework milestones, deadlines, and dependencies on a single timeline",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/contract-clause",
+      "title": "Contract Clause Generator — PQC Business Tool | PQC Today",
+      "description": "Generate PQC-ready contract clauses for vendor agreements",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/cost-model-explorer",
+      "title": "Cost Model Explorer — PQC Business Tool | PQC Today",
+      "description": "Compare the six PQC costing-model families on one scenario, with a live Monte Carlo run",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/cost-of-inaction",
+      "title": "Cost of Inaction Analyzer — PQC Business Tool | PQC Today",
+      "description": "Compare the discounted cost of starting now with delaying PQC migration, with assumptions and uncertainty visible",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/crqc-scenario",
+      "title": "CRQC Scenario Planner — PQC Business Tool | PQC Today",
+      "description": "Plan for cryptographically relevant quantum computer threat scenarios",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/crypto-api-refactor-audit",
+      "title": "Crypto API Refactor Audit — PQC Business Tool | PQC Today",
+      "description": "Architect + senior-developer audit from CSWP.39 §4.1 - grades current crypto-agility state and emits a phased refactor checklist with language-specific…",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/crypto-architecture-diagram",
+      "title": "Crypto Architecture Diagram — PQC Business Tool | PQC Today",
+      "description": "Document apps, libraries, HSMs, protocols, key stores, and CAs with their dependencies; renders as a Mermaid diagram",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/crypto-cbom-builder",
+      "title": "Crypto BOM (CBOM) Builder — PQC Business Tool | PQC Today",
+      "description": "Build a CBOM slice from an SBOM, library posture, or HSM inventory; feeds the Assets pipeline",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/crypto-vulnerability-watch",
+      "title": "Crypto Vulnerability Watch — PQC Business Tool | PQC Today",
+      "description": "NIST NVD CVE digest for the products on your /migrate selection, joined via CPE — the top CVEs per product by severity from the current snapshot",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/data-at-rest-strategy",
+      "title": "Data-at-Rest Strategy — PQC Business Tool | PQC Today",
+      "description": "Phase 5 Activity 5.6 — per-store data-at-rest decision (re-encrypt under PQC keys, PQC key-wrap, crypto-shred, delete, or accept & monitor), recorded back…",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/deployment-playbook",
+      "title": "Deployment Playbook — PQC Business Tool | PQC Today",
+      "description": "Generate deployment playbooks with rollback procedures and validation steps",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/hybrid-transition-planner",
+      "title": "Hybrid Transition Planner — PQC Business Tool | PQC Today",
+      "description": "Explore a Hub worksheet with CSWP.39 references and illustrative traditional-plus-PQC, PQC-plus-PQC, pure-PQC or crypto-gateway suggestions",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/infra-modernization-planner",
+      "title": "Infrastructure Modernization Planner — PQC Business Tool | PQC Today",
+      "description": "Sample infrastructure planning worksheet for PKI, HSM/KMS, network compatibility topics and capacity assumptions; not a readiness assessment",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/initial-scoping",
+      "title": "Initial Scoping Assessment — PQC Business Tool | PQC Today",
+      "description": "Phase 0 first-cut scope — top-20 in-scope systems, an estate-size estimate, and the top-10 vendor dependencies; seedable from your /migrate selection",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/kpi-dashboard",
+      "title": "KPI Dashboard Builder — PQC Business Tool | PQC Today",
+      "description": "Build KPI dashboards for tracking PQC migration metrics and progress",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/kpi-tracker",
+      "title": "KPI Tracker Template — PQC Business Tool | PQC Today",
+      "description": "Track migration KPIs with configurable metrics and reporting templates",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/management-tools-audit",
+      "title": "Management Tools Audit — PQC Business Tool | PQC Today",
+      "description": "Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/migration-verification",
+      "title": "Migration Verification & Closure — PQC Business Tool | PQC Today",
+      "description": "Explore sample verification references, retirement planning and closure notes; filling this educational checklist does not verify a migration",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/mti-negotiator",
+      "title": "MTI Negotiator — PQC Business Tool | PQC Today",
+      "description": "Protocol-designer + architect decision tool from CSWP.39 §3.1.1 - picks Mandatory-to-Implement signature / KEM / hash plus alternates from audience…",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/policy-generator",
+      "title": "Policy Template Generator — PQC Business Tool | PQC Today",
+      "description": "Generate cryptographic algorithm, key management, vendor, and migration policies",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/program-charter",
+      "title": "Program Charter — PQC Business Tool | PQC Today",
+      "description": "Phase 0 mandate artifact — sponsor sign-off, Steering Committee, QRPM appointment, governance cadence, and the multi-year budget commitment",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/raci-builder",
+      "title": "RACI Builder — PQC Business Tool | PQC Today",
+      "description": "Build RACI matrices for 10 PQC activities across 6 organizational roles",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/refresh-cycle-alignment",
+      "title": "Refresh-Cycle Alignment — PQC Business Tool | PQC Today",
+      "description": "Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals)…",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/risk-register",
+      "title": "Risk Register Builder — PQC Business Tool | PQC Today",
+      "description": "Build a sample risk worksheet with current algorithm, threat vector, likelihood, impact, proposed mitigation, owner role and review date",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/risk-treatment-plan",
+      "title": "Risk Heatmap & Treatment Plan — PQC Business Tool | PQC Today",
+      "description": "Visualise residual risk and draft treatment strategies per risk category",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/roadmap-builder",
+      "title": "Roadmap Builder — PQC Business Tool | PQC Today",
+      "description": "Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G6 (+ G8 at closure) and milestone…",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/roi-calculator",
+      "title": "ROI Calculator — PQC Business Tool | PQC Today",
+      "description": "Calculate migration ROI with breach avoidance, compliance savings, and payback period",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/skills-team-plan",
+      "title": "Skills & Team Plan — PQC Business Tool | PQC Today",
+      "description": "Foundations staffing plan — core roles + FTE from the framework role model, the 1-FTE-per-500-instances sizing heuristic, and build / borrow / buy per role",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/stakeholder-comms",
+      "title": "Stakeholder Comms Planner — PQC Business Tool | PQC Today",
+      "description": "Plan stakeholder communication strategies for PQC migration programs",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/supply-chain-matrix",
+      "title": "Supply Chain Risk Matrix — PQC Business Tool | PQC Today",
+      "description": "Assess supply chain risks with dependency mapping and impact analysis",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/business/tools/vendor-scorecard",
+      "title": "Vendor Scorecard Builder — PQC Business Tool | PQC Today",
+      "description": "Create vendor assessment scorecards for PQC readiness evaluation",
+      "kind": "business-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/BusinessCenter/businessToolsRegistry.tsx",
+        "src/components/BusinessCenter/BusinessToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/api-security-jwt",
+      "title": "API Security & JWT Workshop — PQC Crypto Lab | PQC Today",
+      "description": "Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/bitcoin-flow",
+      "title": "Bitcoin Transaction — PQC Crypto Lab | PQC Today",
+      "description": "secp256k1 ECDSA keypair, SHA256 + RIPEMD160, transaction signing",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/cacp",
+      "title": "Crypto-Agility Control Plane — KMIP Policy Lab | PQC Today",
+      "description": "Test KMIP crypto-agility policies and observe cryptographic operations switch to post-quantum controls in an interactive browser lab.",
+      "kind": "lab",
+      "index": true,
+      "sourceGlobs": ["src/components/Playground/kmip", "src/wasm/kmip"],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/cert-capacity",
+      "title": "Cert Capacity Calculator — PQC Crypto Lab | PQC Today",
+      "description": "Estimate certificate-related TLS payload and annual leaf issuance storage for classical and PQC three-level chains.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/cloud-kms-key-exchange",
+      "title": "Cloud KMS Key Exchange — PQC Crypto Lab | PQC Today",
+      "description": "Simulate importing a key into AWS KMS, Google Cloud KMS and Azure: the classical RSA key-wrap flow next to the HPKE flow, on PKCS#11 v3.2, the v3.3 draft…",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/digital-id",
+      "title": "EUDI Wallet Architecture — PQC Crypto Lab | PQC Today",
+      "description": "Explore sample wallet representations, PID issuance, attestation and relying-party checks, plus a modelled QES workflow.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/docker",
+      "title": "PQC Docker Sandbox — Full-Fidelity Integration Lab | PQC Today",
+      "description": "Understand the requirements and workflows for PQC Today container scenarios that exercise full cryptographic applications outside the browser.",
+      "kind": "lab",
+      "index": false,
+      "sourceGlobs": ["src/components/Playground/DockerPlaygroundView.tsx"],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/drbg-demo",
+      "title": "SP 800-90A DRBG — PQC Crypto Lab | PQC Today",
+      "description": "Interactive HMAC_DRBG (SHA-256) state machine — Instantiate, Generate, Reseed as specified in NIST SP 800-90A Rev.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/email-signing",
+      "title": "S/MIME & CMS Workshop — PQC Crypto Lab | PQC Today",
+      "description": "Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/entropy-test",
+      "title": "Entropy Testing — PQC Crypto Lab | PQC Today",
+      "description": "Separate groups: monobit, runs and chi-squared visual checks; the SP 800-90B repetition-count and adaptive-proportion health tests (on samples treated as…",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/envelope-encrypt",
+      "title": "Envelope Encryption — PQC Crypto Lab | PQC Today",
+      "description": "ML-KEM + AES key wrap in a KMS envelope encryption pattern",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/firmware-signing",
+      "title": "Firmware Signing — PQC Crypto Lab | PQC Today",
+      "description": "UEFI secure boot firmware signing and verification with ML-DSA-44/65/87 or SLH-DSA (defaults to ML-DSA-65)",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/hd-wallet",
+      "title": "HD Wallet Derivation — PQC Crypto Lab | PQC Today",
+      "description": "BIP39 mnemonic + BIP32/SLIP-0010 multi-coin HD key derivation",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/hsm",
+      "title": "PKCS#11 HSM Playground — SoftHSM in WebAssembly | PQC Today",
+      "description": "Explore PKCS#11 v3.2 operations, post-quantum keys and dual-engine validation using SoftHSM compiled to WebAssembly.",
+      "kind": "lab",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/HsmPlayground.tsx",
+        "src/components/Playground/hsm"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/hsm-capacity",
+      "title": "HSM Capacity Calculator — PQC Crypto Lab | PQC Today",
+      "description": "Explore fictional HSM workloads, utilisation headroom and local redundancy. Preserve per-site inventory and size payment workloads separately; not a…",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/hybrid-certs",
+      "title": "Hybrid Certificates — PQC Crypto Lab | PQC Today",
+      "description": "Compare X.509 certificate formats, RFC 10073 composite signatures, and real TLS handshakes with a classical baseline",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/hybrid-encrypt",
+      "title": "Hybrid KEM + ECDH — PQC Crypto Lab | PQC Today",
+      "description": "ML-KEM + X25519 ECDH + HKDF hybrid encryption pipeline",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/hybrid-sigs",
+      "title": "Hybrid Signature Spectrums — PQC Crypto Lab | PQC Today",
+      "description": "Execute concatenation, nesting and a local shared-binding model; compare component checks and a replacement experiment. Not a security proof.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/interactive",
+      "title": "Interactive PQC Playground — Live Cryptography | PQC Today",
+      "description": "Generate keys, encapsulate secrets, sign messages and compare post-quantum algorithms in a browser-based WebAssembly cryptography playground.",
+      "kind": "lab",
+      "index": true,
+      "sourceGlobs": ["src/components/Playground/PlaygroundView.tsx"],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/kdf-derivation",
+      "title": "SP 800-108 KDF — PQC Crypto Lab | PQC Today",
+      "description": "NIST SP 800-108 counter-mode key derivation — applicable to KEM secrets, PSK, QKD, and password-derived keys",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/lms-hss",
+      "title": "Stateful Hash Signatures — PQC Crypto Lab | PQC Today",
+      "description": "LMS and XMSS stateful signature trees using SoftHSMv3",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/merkle-proof",
+      "title": "Merkle Tree Workshop — PQC Crypto Lab | PQC Today",
+      "description": "Build trees, generate inclusion proofs, verify with tamper detection, compare PQC cert sizes, and simulate Certificate Transparency logs",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/mls-group-messaging",
+      "title": "MLS Group Messaging — PQC Crypto Lab | PQC Today",
+      "description": "RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto…",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/openssl-studio",
+      "title": "OpenSSL Studio — PQC Crypto Lab | PQC Today",
+      "description": "Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/pki-enrollment",
+      "title": "PKI Enrollment (EST + CMP) — PQC Crypto Lab | PQC Today",
+      "description": "RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/pki-workshop",
+      "title": "PKI Workshop — PQC Crypto Lab | PQC Today",
+      "description": "Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/pqc-ssh-sim",
+      "title": "PQC SSH Simulator — PQC Crypto Lab | PQC Today",
+      "description": "Compare byte sizes and timings from bundled modified OpenSSH handshake samples and modeled token-operation traces.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/qrng-demo",
+      "title": "QRNG Demo — PQC Crypto Lab | PQC Today",
+      "description": "Simulation — no QRNG hardware involved. Compares a simulated QRNG sample (crypto.getRandomValues() output, not a quantum source), live Web Crypto output and…",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/rng-demo",
+      "title": "Random Generation — PQC Crypto Lab | PQC Today",
+      "description": "Web Crypto + OpenSSL DRBG random generation with statistical analysis",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-ab-handshake-bench",
+      "title": "A/B TLS Handshake Benchmark — PQC Crypto Lab | PQC Today",
+      "description": "Measure concurrent TLS 1.3 handshake throughput with Apache Bench against ephemeral nginx (session resumption OFF, so...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-api-security-jwt",
+      "title": "Post-Quantum JWT Identity Constraints — PQC Crypto Lab | PQC Today",
+      "description": "Sign JSON Web Tokens with ML-DSA-65 using OpenSSL raw signatures and measure the impact on HTTP request-header limits...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-browser-tls",
+      "title": "Browser ML-KEM Handshake — PQC Crypto Lab | PQC Today",
+      "description": "Drive headless Chromium to connect to the nginx TLS endpoint and compare a classical X25519 handshake vs a hybrid X25...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-cbom-compliance",
+      "title": "CBOM Compliance Audit — PQC Readiness Scoring — PQC Crypto Lab | PQC Today",
+      "description": "Generate real classical, hybrid and post-quantum key material, identify each asset algorithm with OpenSSL, and emit i...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-cert-validation",
+      "title": "Certificate Chain Validation — PQC Crypto Lab | PQC Today",
+      "description": "Verify ML-DSA-65 certificate chains end-to-end — from Root CA through Intermediate to Leaf — validating that PQC sign...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-cloud-kms",
+      "title": "Cloud KMS Key Wrapping — PQC Crypto Lab | PQC Today",
+      "description": "Demonstrate ML-KEM-768 key encapsulation with OpenSSL 3.6 as a fictional KEM+DEM key-wrapping pattern for protecting ...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-database-postgres",
+      "title": "PostgreSQL TLS Hardening — PQC Crypto Lab | PQC Today",
+      "description": "Migrate PostgreSQL client-server TLS from a classical RSA-2048 cert + prime256v1 ECDHE to an ML-DSA-65 server cert ov...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-firmware-hss",
+      "title": "Firmware Verification (HSS) — PQC Crypto Lab | PQC Today",
+      "description": "Secure IoT endpoint firmware updates with NIST SP 800-208 Stateful Hash-Based Signatures (HSS/LMS), generated and ver...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-hsm-perf-bench",
+      "title": "HSM Performance Benchmark — PQC Crypto Lab | PQC Today",
+      "description": "Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment;...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-hybrid-certs",
+      "title": "Hybrid Certificate Formats — PQC Crypto Lab | PQC Today",
+      "description": "Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Re...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-iot-mqtt",
+      "title": "Lightweight MQTT Telemetry — PQC Crypto Lab | PQC Today",
+      "description": "Run a real Mosquitto 2.1.2 TLS broker (built against OpenSSL 3.6) and compare a classical ECDSA-P256 / secp256r1 arm ...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-migration-impact",
+      "title": "Migration Impact Analysis — PQC Crypto Lab | PQC Today",
+      "description": "Measure the real-world performance impact of migrating from classical to PQC TLS — handshake latency, certificate siz...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-osslsigncode",
+      "title": "Code Signing (osslsigncode) — PQC Crypto Lab | PQC Today",
+      "description": "Sign Windows PE binaries using osslsigncode with classical RSA vs post-quantum ML-DSA-65. WHY IT MATTERS: a code sign...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-pki",
+      "title": "Enterprise PKI Chains — PQC Crypto Lab | PQC Today",
+      "description": "Build a hierarchical PQC Certificate Authority with OpenSSL 3.6 — a mixed-algorithm chain: Root CA (SLH-DSA-SHA2-128s...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-pqctoday-kmip",
+      "title": "PQCToday KMIP 3.0 KMS — PQC Crypto Lab | PQC Today",
+      "description": "Drive a real crypto-agile KMIP key lifecycle with pqctoday-kmip (Rust, MIT) backed by softhsmrustv3 — CreateKeyPair →...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-sequoia",
+      "title": "PGP Code Signing (Sequoia) — PQC Crypto Lab | PQC Today",
+      "description": "Produce a real RFC 9580 v6 OpenPGP signature with an ML-DSA-65 + Ed25519 composite key (public-key-algorithm 30, RFC ...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-smime",
+      "title": "Secure Email (S/MIME) — PQC Crypto Lab | PQC Today",
+      "description": "Compare legacy RSA-2048 S/MIME encryption sequences against open-source ML-DSA & ML-KEM cryptographic integration pro...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-sops",
+      "title": "GitOps Secrets (SOPS) — PQC Crypto Lab | PQC Today",
+      "description": "Encrypt GitOps secrets with SOPS + age using the X-Wing hybrid KEM (X25519 + ML-KEM-768) via the age-plugin-pqctoday ...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-ssh",
+      "title": "SSH PQC Authentication + KEX — PQC Crypto Lab | PQC Today",
+      "description": "Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined wit...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-supply-chain-signing",
+      "title": "Supply Chain Signing — Quantum-Safe Container Provenance — PQC Crypto Lab | PQC Today",
+      "description": "Demonstrate post-quantum software signing with the forked Sigstore cosign (v3.0.6 + ML-DSA-65) — sign a manifest with...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-tls",
+      "title": "OpenSSL TLS 1.3 + Composite Cert — PQC Crypto Lab | PQC Today",
+      "description": "Execute OpenSSL TLS 1.3 handshakes with configurable certificate formats. In pure-ML-DSA mode the server cert is an M...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-tpm-pqc-migration",
+      "title": "TPM 2.0 → PQC Migration — PQC Crypto Lab | PQC Today",
+      "description": "Walk the TCG TPM 2.0 V1.85 key hierarchy and see the concrete cost of migrating each key role (EK / SRK / AIK / IDevI...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/sbx-vpn",
+      "title": "Quantum-Resistant VPN — PQC Crypto Lab | PQC Today",
+      "description": "Secure site-to-site IPsec routing hidden behind SoftHSMv3 IKEv2 Key Exchanges, contrasting classical Diffie-Hellman v...",
+      "kind": "sandbox-tool",
+      "index": false,
+      "sourceGlobs": [
+        "src/data/sandboxScenarios.ts",
+        "src/components/Playground/SandboxScenarioEmbed.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/slh-dsa",
+      "title": "SLH-DSA Sign & Verify — PQC Crypto Lab | PQC Today",
+      "description": "All 12 FIPS 205 parameter sets with pre-hash support",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/solana-flow",
+      "title": "Solana Transaction — PQC Crypto Lab | PQC Today",
+      "description": "Ed25519 keypair generation and transaction signing",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/source-combining",
+      "title": "Source Combining — PQC Crypto Lab | PQC Today",
+      "description": "Two simulated raw sources: SP 800-90B health tests before conditioning, SP 800-90C concatenation (XOR, hash and HMAC as educational variants)…",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/suci-flow",
+      "title": "5G SUCI Construction — PQC Crypto Lab | PQC Today",
+      "description": "Subscriber identity concealment for 5G: ECDH + ANSI X9.63-KDF + AES (Profiles A/B), plus a post-quantum Profile C using ML-KEM in hybrid and pure modes",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/tee-channel",
+      "title": "TEE-HSM Secure Channel — PQC Crypto Lab | PQC Today",
+      "description": "Explore sample TEE-HSM provisioning with signature verification, ML-KEM and AES key wrap",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/tls-simulator",
+      "title": "TLS 1.3 Simulator — PQC Crypto Lab | PQC Today",
+      "description": "Client–server TLS 1.3 handshake simulator: configure cipher suites, classical or hybrid key exchange, and RSA or ML-DSA certificates",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/token-migration",
+      "title": "Multi-Algorithm Signing — PQC Crypto Lab | PQC Today",
+      "description": "Compare ML-DSA, ECDSA, and RSA signing in a token migration workflow",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/tpm-playground",
+      "title": "TPM 2.0 PQC Playground — PQC Crypto Lab | PQC Today",
+      "description": "Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    },
+    {
+      "path": "/playground/vpn-sim",
+      "title": "PQC VPN Simulator — PQC Crypto Lab | PQC Today",
+      "description": "Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between…",
+      "kind": "browser-tool",
+      "index": true,
+      "sourceGlobs": [
+        "src/components/Playground/workshopRegistry.tsx",
+        "src/components/Playground/PlaygroundToolRoute.tsx"
+      ],
+      "contentRegion": "#main-content"
+    }
+  ]
+}

@@ -51,7 +51,7 @@
  * up with an empty computed panel.
  */
 import { MANIFESTS, MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
-import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
+import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 
 export interface RelatedModule {
   id: string
@@ -101,15 +101,15 @@ const COMMON_TAXONOMY_SHARE = 1 / 3
 export const AUTHORED_INLINE_RELATED: readonly string[] = ['automotive-pqc', 'pqc-business-case']
 
 /** Modules that are never a related-module candidate (synthetic entries). */
-function isCandidate(m: ModuleManifest): boolean {
+function isCandidate(m: ResolvedModuleManifest): boolean {
   return !m.custom && Boolean(m.track)
 }
 
-function phasesOf(m: ModuleManifest): string[] {
+function phasesOf(m: ResolvedModuleManifest): string[] {
   return Array.isArray(m.frameworkPhase) ? m.frameworkPhase : [m.frameworkPhase]
 }
 
-function taxonomyTermsOf(m: ModuleManifest): string[] {
+function taxonomyTermsOf(m: ResolvedModuleManifest): string[] {
   const t = m.taxonomy
   if (!t) return []
   return [...(t.algorithms ?? []), ...(t.standards ?? [])]
@@ -120,7 +120,7 @@ function taxonomyTermsOf(m: ModuleManifest): string[] {
  * ("LMS/XMSS", "SPDX / ISO 5962") say two modules are about the same thing;
  * ubiquitous ones ("ML-DSA") say almost nothing. See COMMON_TAXONOMY_SHARE.
  */
-function taxonomyWeights(all: ModuleManifest[]): Map<string, number> {
+function taxonomyWeights(all: ResolvedModuleManifest[]): Map<string, number> {
   const counts = new Map<string, number>()
   let bearing = 0
   for (const m of all) {
@@ -142,7 +142,7 @@ function taxonomyWeights(all: ModuleManifest[]): Map<string, number> {
  * fixtures without the registry. Self is always excluded; only candidates with
  * a non-zero score are returned; the caller applies {@link RELATED_MODULES_CAP}.
  */
-export function relatedModules(id: string, all: ModuleManifest[]): RelatedModule[] {
+export function relatedModules(id: string, all: ResolvedModuleManifest[]): RelatedModule[] {
   const self = all.find((m) => m.id === id)
   if (!self || !isCandidate(self)) return []
 
@@ -207,7 +207,7 @@ const PATH_REACH = 2
 export function pathRelations(
   id: string,
   path: readonly string[],
-  all: ModuleManifest[]
+  all: ResolvedModuleManifest[]
 ): RelatedModule[] {
   const at = path.indexOf(id)
   if (at === -1) return []
@@ -235,8 +235,8 @@ export function pathRelations(
  * field this takes over completely; nothing computed is appended.
  */
 export function authoredRelations(
-  m: ModuleManifest,
-  byId: Record<string, ModuleManifest> = MANIFEST_BY_ID
+  m: ResolvedModuleManifest,
+  byId: Record<string, ResolvedModuleManifest> = MANIFEST_BY_ID
 ): RelatedModule[] | null {
   const prerequisites = m.prerequisiteIds ?? []
   const followOns = m.followOnIds ?? []
@@ -245,7 +245,7 @@ export function authoredRelations(
   const resolve = (ids: string[], reason: string): RelatedModule[] =>
     ids
       .map((rid) => byId[rid as keyof typeof byId])
-      .filter((target): target is ModuleManifest => Boolean(target))
+      .filter((target): target is ResolvedModuleManifest => Boolean(target))
       .map((target) => ({ id: target.id, title: target.title, score: 0, reason }))
 
   return [...resolve(prerequisites, 'Prerequisite'), ...resolve(followOns, 'Continue with')]
@@ -257,7 +257,7 @@ export function authoredRelations(
  */
 export function moduleRelations(
   id: string,
-  all: ModuleManifest[] = MANIFESTS,
+  all: ResolvedModuleManifest[] = MANIFESTS,
   learnerPath?: readonly string[]
 ): ModuleRelationsResult {
   const self = all.find((m) => m.id === id)

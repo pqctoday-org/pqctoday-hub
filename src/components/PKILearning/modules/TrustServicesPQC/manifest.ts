@@ -3,18 +3,8 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'trust-services-pqc',
-  contentVersion: 14,
-  lm_id: 'LM-070',
-  title: 'Trust Services & Long-Term Signatures',
-  description:
-    'Signatures that must still verify in thirty years: qualified vs advanced signatures, timestamping and proof of existence, long-term validation and re-timestamping, trust service provider conformity, and the ETSI suites that just gained post-quantum modes.',
   whyThisMatters:
     'A qualified signature made today may need to be evaluated in 2050 — outliving the certificate, the revocation data, and very probably the algorithm underneath it. That is a migration problem no amount of new-signature planning solves, because the work is proportional to the archive you already have.',
-  duration: '60 min',
-  difficulty: 'intermediate',
-  frameworkPhase: 'p5',
-  track: 'Industries',
-  trackOrder: 7,
   learnSections: [
     { id: 'qualified-signatures', label: 'Qualified vs Advanced Signatures' },
     { id: 'timestamping', label: 'Timestamping & Proof of Existence' },
@@ -40,14 +30,6 @@ const manifest: ModuleManifest = {
     { value: 'references', label: 'References' },
     { value: 'tools', label: 'Tools & Products' },
   ],
-  // Wave B (2026-09-18): derived from the algorithm and standard ids this
-  // module's content.ts declares (the References tab's own data), restricted to
-  // the STANDARD_TAXONOMY vocabulary so the researcher browse axis and the
-  // related-modules engine see it. Re-derive from content.ts; do not hand-tune.
-  taxonomy: {
-    algorithms: ['ML-DSA'],
-    standards: ['RFC 3161', 'NSA CNSA 2.0'],
-  },
   embeddable: false,
   load: () => import('./index').then((m) => ({ default: m.TrustServicesPQCModule })),
 }

@@ -13,10 +13,10 @@ import { STEP_EXERCISES } from '@/data/stepExercises'
 import { useModuleStore } from '@/store/useModuleStore'
 import { CryptoProductCertificationModule } from './index'
 import { STEP_COMPONENTS } from './workshop/stepRegistry'
-import manifest from './manifest'
-import fips140Manifest from '../Fips1403Certification/manifest'
-import ccEuccManifest from '../CcEuccCertification/manifest'
-import pciManifest from '../PciCertification/manifest'
+import rawManifest from './manifest'
+import rawFips140Manifest from '../Fips1403Certification/manifest'
+import rawCcEuccManifest from '../CcEuccCertification/manifest'
+import rawPciManifest from '../PciCertification/manifest'
 import { NOT_LAB_REVIEWED } from '@/components/PKILearning/common/moduleReviewStatus'
 import { PRACTITIONER_DISCLAIMER } from './components/sectionRegistry'
 import { SECTION_COMPONENTS } from './components/sectionRegistry'
@@ -25,6 +25,12 @@ import * as CoreSections from './components/sections/CoreSections'
 import * as SharedSections from './components/sections/SharedSections'
 import * as coreData from './data/coreData'
 import * as sharedData from './data/sharedData'
+import { resolveManifest } from '@/components/PKILearning/manifest/resolve'
+
+const manifest = resolveManifest(rawManifest)
+const fips140Manifest = resolveManifest(rawFips140Manifest)
+const ccEuccManifest = resolveManifest(rawCcEuccManifest)
+const pciManifest = resolveManifest(rawPciManifest)
 
 const pascal = (id: string) =>
   id
