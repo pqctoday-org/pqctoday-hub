@@ -8,9 +8,9 @@ import {
   ASSISTANT_DATA_NOT_LOADED_KEPT,
   ASSISTANT_DATA_NOT_LOADED_MESSAGE,
   answer,
-  directValueFits,
   forgetAssistant,
 } from './adapter'
+import { directValueFits } from './engineHost'
 import { buildEngineInput, extractOf, FAMILY_FILE_PREFIX, groupOf } from './buildEngine'
 import {
   ASSISTANT_GROUPS,
