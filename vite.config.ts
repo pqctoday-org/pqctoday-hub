@@ -4,6 +4,7 @@ import { defineConfig, configDefaults } from 'vitest/config'
 import { bundledPackagesPlugin } from './scripts/sbom/vite-plugin-bundle-packages'
 import { licensesPlugin } from './scripts/sbom/notices'
 import { newestEnrichmentOnlyPlugin } from './scripts/lib/newestEnrichmentOnly'
+import { newestCsvOnlyPlugin } from './scripts/lib/newestCsvOnly'
 import type { Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import wasm from 'vite-plugin-wasm'
@@ -261,6 +262,8 @@ export default defineConfig({
     // Production and dev ship the newest covering enrichment snapshot plus later corrections.
     // Vitest keeps all generations. See scripts/lib/newestEnrichmentOnly.ts.
     newestEnrichmentOnlyPlugin(path.resolve(__dirname, 'src/data/doc-enrichments')),
+    // The older generation of a data file no loader reads is left out of the bundle. See scripts/lib/newestCsvOnly.ts.
+    newestCsvOnlyPlugin(path.resolve(__dirname, 'src/data')),
     // Open-source licence notices served at /licenses/ (fails the build on a missing licence).
     licensesPlugin(process.cwd(), {
       version:
