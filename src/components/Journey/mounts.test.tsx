@@ -14,6 +14,9 @@ import { ObjectiveHeaderSlot } from '@/components/Assistant/ObjectiveHeaderSlot'
 import { renderAt, resetJourneyWorld, saveObjective, saveTlsObjective } from './journeyTestUtils'
 import { useJourneyStore } from '@/store/useJourneyStore'
 import { useMyWorkStore } from '@/store/useMyWorkStore'
+import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
+import { setAssistantEngineLoader } from '@/components/Assistant/assistantClient'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { usePanelObjectives } from '@/hooks/useJourney'
 import { barSteps } from '@/services/journey/stepRules'
@@ -70,6 +73,32 @@ describe('mount points hold the real panels', () => {
     expect(await screen.findByText('Check the hybrid group list')).toBeInTheDocument()
     expect(document.querySelector('[data-mount="my-work"]')).not.toBeNull()
     expect(screen.getByText(/Stored on this device only/)).toBeInTheDocument()
+  })
+
+  it('"Open the answer" asks the saved question again in the drawer', async () => {
+    const user = userEvent.setup()
+    setAssistantEngineLoader(() => import('@/test/fixtures/assistantFixtureEngine'))
+    useAssistantSessionStore.getState().reset()
+    useRightPanelStore.setState({ isOpen: false })
+    act(() => {
+      useMyWorkStore.getState().saveAnswer({
+        id: 'ans-1',
+        question: 'What is ML-KEM?',
+        savedAt: '2026-11-25T10:00:00.000Z',
+        payload: { answerText: 'A key encapsulation mechanism.', note: '', rowTags: ['GL:ml-kem'] },
+      })
+    })
+    renderAt(<MyWorkMount />)
+    await user.click(await screen.findByRole('button', { name: 'Open the answer' }))
+    expect(useRightPanelStore.getState().isOpen).toBe(true)
+    expect(useRightPanelStore.getState().activeTab).toBe('chat')
+    expect(useAssistantSessionStore.getState().turns.map((t) => t.question)).toEqual([
+      'What is ML-KEM?',
+    ])
+    // The saved copy is untouched.
+    expect(useMyWorkStore.getState().answers).toHaveLength(1)
+    setAssistantEngineLoader()
+    useAssistantSessionStore.getState().reset()
   })
 
   it("counts the objective's work the way My work does", () => {

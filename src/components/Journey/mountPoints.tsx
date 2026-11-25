@@ -12,6 +12,7 @@
  * The panels read the learner's objectives as plain data (see `usePanelObjectives`); nothing the
  * learner wrote is copied into the journey store.
  */
+import { useCallback } from 'react'
 import { useInRouterContext, useNavigate } from 'react-router'
 import {
   CommentBox,
@@ -23,6 +24,9 @@ import {
 import { JourneyProgressStrip } from '@/components/RightPanel/JourneyProgressStrip'
 import { useMyWorkStore } from '@/store/useMyWorkStore'
 import { useJourneyStore } from '@/store/useJourneyStore'
+import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
+import { useAssistantContext } from '@/components/Assistant/useAssistantContext'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { usePanelObjectives } from '@/hooks/useJourney'
 import { buildItems, filterItems } from '@/services/myWork/items'
@@ -38,10 +42,22 @@ export interface ObjectiveScope {
 /** Your journey › My work: comments, tracked outputs, saved answers and references, with export. */
 export function MyWorkMount({ objectiveId }: ObjectiveScope) {
   const { work } = usePanelObjectives()
+  const getContext = useAssistantContext()
+  const ask = useAssistantSessionStore((s) => s.ask)
+  const openDrawer = useRightPanelStore((s) => s.open)
+  // A saved answer keeps its question, the text and the tags of its records, never the records'
+  // wording. "Open the answer" asks the question again in the drawer, so the records read are the
+  // Hub's current ones.
+  const openAnswer = useCallback(
+    (answer: { question: string }) => {
+      openDrawer('chat')
+      void ask(answer.question, getContext())
+    },
+    [ask, openDrawer, getContext]
+  )
   return (
     <div data-mount="my-work" data-objective={objectiveId ?? ''}>
-      {/* No "open the answer" button yet: the drawer has no way to show a stored answer again. */}
-      <MyWorkPanel objectives={work} />
+      <MyWorkPanel objectives={work} onOpenAnswer={openAnswer} />
     </div>
   )
 }
