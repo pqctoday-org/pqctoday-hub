@@ -297,6 +297,7 @@ export default defineConfig({
         'pwa-maskable-512.png',
         'apple-touch-icon.png',
         'favicon-32x32.png',
+        'favicon-16x16.png',
       ],
       includeManifestIcons: false,
       injectManifest: {
@@ -444,12 +445,13 @@ export default defineConfig({
         short_name: 'PQC Today',
         description:
           'Post-Quantum Cryptography education, migration planning, and interactive cryptographic operations',
-        theme_color: '#6366f1',
-        background_color: '#0f172a',
+        theme_color: '#066474',
+        background_color: '#F8FAFC',
         display: 'standalone',
         scope: '/',
         start_url: '/',
         icons: [
+          { src: 'favicon-16x16.png', sizes: '16x16', type: 'image/png' },
           { src: 'favicon-32x32.png', sizes: '32x32', type: 'image/png' },
           { src: 'apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
@@ -467,7 +469,6 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'maskable',
           },
-          { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' },
         ],
       },
     }),

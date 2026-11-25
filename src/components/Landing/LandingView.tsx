@@ -35,6 +35,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileHomeBoard } from '@/components/Mobile/screens/MobileHomeBoard'
 import { MobileRoleSelection } from '@/components/Mobile/shell/MobileRoleSelection'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { BrandLogo } from '@/components/brand/BrandLogo'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -500,6 +501,7 @@ export const LandingView = () => {
       <section className="text-center pt-8 md:pt-16">
         <UpdatedSinceLastVisit className="mx-auto mb-8 max-w-3xl text-left" />
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
+          <BrandLogo variant="full" size={160} className="mx-auto mb-6" />
           <p className="text-sm font-mono uppercase tracking-widest text-primary-legible mb-4">
             Prepare for the Quantum Era
           </p>

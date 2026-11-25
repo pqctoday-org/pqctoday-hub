@@ -17,6 +17,7 @@ import {
   Moon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { BrandLogo } from '@/components/brand/BrandLogo'
 import { Link, useLocation } from 'react-router'
 import { cn } from '@/lib/utils'
 import { getCurrentVersion, useVersionStore } from '@/store/useVersionStore'
@@ -123,6 +124,7 @@ export function MobileAboutView() {
     <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
         <h1 className="sr-only">About</h1>
+        <BrandLogo variant="full" size={112} className="mx-auto mb-3" />
       </div>
       <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
         v{version} · PQCToday exists to close the gap between the coming quantum-cryptographic

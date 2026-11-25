@@ -251,7 +251,7 @@ import { QuizGateModal } from './QuizGateModal'
 import toast from 'react-hot-toast'
 import { pickQuizQuestion, gateCoverageFor } from '@/simulation/quizSelection'
 import type { QuizQuestion } from '@/components/PKILearning/modules/Quiz/types'
-import pqctodayLogo from '@/assets/pqctoday-logo.png'
+import pqctodayLogo from '@/assets/brand-emblem.png'
 
 // ---- option lists (from real hub data) ----------------------------------
 const SIZE_HINTS: Record<string, string> = {
@@ -2237,7 +2237,7 @@ export function SimulationView() {
             <img
               src={pqctodayLogo}
               alt="PQC Today"
-              className="h-15 w-15 shrink-0 rounded-md object-contain"
+              className="h-15 w-15 shrink-0 rounded-xl bg-logo-tile object-contain"
             />
             <div className="max-md:min-w-0">
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
@@ -3548,7 +3548,7 @@ export function SimulationView() {
             <img
               src={pqctodayLogo}
               alt="PQC Today"
-              className="h-15 w-15 shrink-0 rounded-md object-contain"
+              className="h-15 w-15 shrink-0 rounded-xl bg-logo-tile object-contain"
             />
             <div>
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>

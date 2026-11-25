@@ -181,6 +181,12 @@ export default defineConfig([
                 '!@/components/ui/*',
                 '!@/components/Mobile',
                 '!@/components/Mobile/*',
+                // BrandLogo (brand) — the one logo-on-its-own-tile component, a
+                // small pure view with no layout of its own, used by the desktop
+                // rail and the phone top bar and About screen alike so the
+                // logo can never differ between them (Storybook Blue, 7.4b).
+                '!@/components/brand',
+                '!@/components/brand/*',
                 // railNav.ts (Layout) — pure rail-section logic, no JSX.
                 '!@/components/Layout',
                 '@/components/Layout/*',

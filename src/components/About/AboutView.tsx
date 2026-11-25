@@ -26,6 +26,7 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { useScrollToHash } from '@/hooks/useScrollToHash'
 import { MobileAboutView } from '@/components/Mobile/screens/MobileAboutView'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { BrandLogo } from '@/components/brand/BrandLogo'
 
 export function AboutView() {
   const { hash } = useLocation()
@@ -84,6 +85,7 @@ export function AboutView() {
           visible one to satisfy a linter would be the tail wagging the dog.
           Screen readers and axe both get the landmark they need. */}
       <h1 className="sr-only">About PQC Today</h1>
+      <BrandLogo variant="full" size={144} className="mx-auto" />
       <PersonaPageNote route="/about" />
       <nav
         aria-label="Project sources and policies"

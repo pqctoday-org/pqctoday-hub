@@ -41,7 +41,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
           '@type': 'Organization',
           name: 'PQC Today',
           url: BASE_URL,
-          logo: `${BASE_URL}/favicon.svg`,
+          logo: `${BASE_URL}/pwa-512x512.png`,
           sameAs: [
             'https://github.com/pqctoday-org/pqctoday-hub',
             'https://github.com/pqctoday-org',

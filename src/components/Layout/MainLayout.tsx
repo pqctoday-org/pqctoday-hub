@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { BrandLogo } from '../brand/BrandLogo'
 import { buttonVariants } from '../ui/button-variants'
 import { cn } from '../../lib/utils'
 // Lazy — same reasoning as the mobile shell / RightPanel below, but for data
@@ -663,7 +664,8 @@ export const MainLayout = () => {
             }
           >
             <span className="flex items-center gap-2">
-              <span className="text-lg font-bold text-gradient">PQC Today</span>
+              <BrandLogo variant="emblem" size={32} decorative />
+              <span className="font-display text-lg font-bold text-heading">PQC Today</span>
               {airplaneMode && (
                 <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
               )}
@@ -954,7 +956,8 @@ export const MainLayout = () => {
                   airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'
                 }
               >
-                <span className="text-base font-bold text-gradient">PQC</span>
+                <BrandLogo variant="emblem" size={28} decorative />
+                <span className="font-display text-base font-bold text-heading">PQC</span>
                 {airplaneMode && (
                   <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
                 )}
