@@ -314,11 +314,38 @@ describe('the move changed nothing a page shows', () => {
   const byKey = (entries: unknown) =>
     [...(entries as [string, unknown][])].sort(([a], [b]) => a.localeCompare(b))
 
+  // Changes made on purpose since the move, each one the owner's decision. They are applied to the
+  // snapshot below, so everything else must still be identical to what pages showed before the move.
+  //  - 25 Nov 2026 ("Link it to Crypto Agility"): the KMIP control plane tool opens the Crypto Agility
+  //    lesson from its card (its own page stays /playground/cacp), so that lesson now offers it back.
+  const intended = (key: string): unknown => {
+    const snapshot = structuredClone(before[key])
+    if (key === 'workshopTools') {
+      for (const tool of snapshot as { id: string; moduleLink: string }[]) {
+        if (tool.id === 'cacp-kmip') tool.moduleLink = '/learn/crypto-agility'
+      }
+    }
+    if (key === 'toolNice') {
+      // the tool takes the NICE values of the lesson it now belongs to (first entry: cacp-kmip)
+      ;(snapshot as unknown[])[0] = {
+        toolId: 'cacp-kmip',
+        competencyAreas: ['CA-SYSARCH', 'CA-CRYPTO'],
+        tier: 'practitioner',
+        workRoles: ['security-architect', 'systems-security-analyst'],
+      }
+    }
+    if (key === 'toolsByModuleId')
+      (snapshot as [string, string[]][]).push(['crypto-agility', ['cacp-kmip']])
+    if (key === 'toolByModuleId')
+      (snapshot as [string, string][]).push(['crypto-agility', 'cacp-kmip'])
+    return snapshot
+  }
+
   it.each(Object.keys(before))('%s is identical to the pre-move snapshot', (key) => {
     if (key === 'toolsByModuleId' || key === 'toolByModuleId') {
-      expect(byKey(now[key])).toEqual(byKey(before[key]))
+      expect(byKey(now[key])).toEqual(byKey(intended(key)))
     } else {
-      expect(now[key]).toEqual(before[key])
+      expect(now[key]).toEqual(intended(key))
     }
   })
 })
