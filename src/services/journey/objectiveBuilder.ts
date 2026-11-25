@@ -89,6 +89,24 @@ export function words(text: string): string[] {
   return out
 }
 
+/**
+ * The words a goal is scored by: each content word, and each pair of neighbouring words written as
+ * one ("key" "exchange" gives "keyexchange"). A pair that holds a function word is not a term
+ * ("threats to" gives "threatsto"), so it is left out: it would only match by accident.
+ */
+function goalTokens(goal: string): string[] {
+  const parts = goal
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+  const out = parts.map(stem).filter((w) => !STOP.has(w) && w.length > 1)
+  parts.forEach((part, i) => {
+    const next = parts.at(i + 1)
+    if (next !== undefined && !STOP.has(part) && !STOP.has(next)) out.push(`${part}${next}`)
+  })
+  return out
+}
+
 /** The words of a goal that carry meaning: no function words, no bare verbs. */
 export function contentWords(goal: string): string[] {
   const parts = goal
@@ -102,8 +120,11 @@ export function contentWords(goal: string): string[] {
 interface Indexed {
   lesson: TreeLesson
   title: Set<string>
+  /** Labels the lesson carries without discussing them: its track and its algorithm and standard tags. */
   keys: Set<string>
   text: Set<string>
+  /** Words in the description, for the length of the text a term has to stand out in. */
+  descriptionLength: number
 }
 
 let index: Indexed[] | undefined
@@ -117,22 +138,90 @@ function lessonIndex(): Indexed[] {
       )
     ),
     text: new Set(words(lesson.description)),
+    descriptionLength: lesson.description.split(/\s+/).filter(Boolean).length,
   }))
   return index
 }
 
-/** Minimum score for a lesson to count as a match: one title or key hit, or three description hits. */
-const MATCH_MIN = 3
+let meanLength: number | undefined
+/** The typical description length in the data; a term in a much longer description is more likely a passing mention. */
+function meanDescriptionLength(): number {
+  meanLength ??=
+    lessonIndex().reduce((sum, r) => sum + r.descriptionLength, 0) / lessonIndex().length
+  return meanLength
+}
 
-function scoreLesson(row: Indexed, tokens: readonly string[], industry: Set<string>): number {
-  let score = 0
-  for (const t of tokens) {
-    if (row.title.has(t)) score += 3
-    else if (row.keys.has(t)) score += 3
-    else if (row.text.has(t)) score += 1
+const textHolders = new Map<string, number>()
+/** How many lessons name the word in their title or description (tags and track do not count). */
+function textHolderCount(token: string): number {
+  let n = textHolders.get(token)
+  if (n === undefined) {
+    n = lessonIndex().filter((r) => r.title.has(token) || r.text.has(token)).length
+    textHolders.set(token, n)
   }
-  for (const t of industry) if (row.text.has(t) || row.title.has(t)) score += 0.25
-  return score
+  return n
+}
+
+/** A word that some lesson carries in its title is taught by that lesson; description mentions elsewhere are side mentions. */
+function namedInATitle(token: string): boolean {
+  return lessonIndex().some((r) => r.title.has(token))
+}
+
+/** A word is distinctive when no more than this share of the lessons name it in title or description. */
+const DISTINCTIVE_SHARE = 0.06
+function isDistinctive(token: string): boolean {
+  return textHolderCount(token) <= Math.max(3, Math.round(lessonIndex().length * DISTINCTIVE_SHARE))
+}
+
+/** Minimum text score for a lesson to count as a match: one title hit, one clear hit on a distinctive word, or three plain description hits. */
+const MATCH_MIN = 3
+/** A lesson that is only tagged with, or filed under, a word of the goal is optional at best; it needs this much to be listed. */
+const OPTIONAL_MIN = 1.5
+/** What a tag or track hit is worth for ordering the optional lessons, and what each further part of the same label adds. */
+const LABEL_HIT = 1.5
+const LABEL_HIT_EXTRA = 0.5
+/** A hit on a distinctive word in a description, before the length adjustment (3.6 x factor reaches MATCH_MIN up to about 1.4 times the typical length). */
+const DISTINCTIVE_DESCRIPTION_HIT = 3.6
+const MAX_LENGTH_FACTOR = 1.2
+
+interface LessonScore {
+  /** What the lesson says: title hits and description hits. Only this makes a lesson a match. */
+  text: number
+  /** What the lesson is merely labelled with: the goal words that only its tags or track hold. */
+  label: number
+}
+
+/**
+ * Scores a lesson against the words of the goal.
+ *  - a word in the title: 3
+ *  - a word in the description: 3.6 scaled by description length when few lessons name the word
+ *    (it is "distinctive", e.g. pkcs11) and no lesson carries it in a title, else 1
+ *  - a word only in the tags or track: counted apart as `label`, never as `text`
+ */
+function scoreLesson(row: Indexed, tokens: readonly string[], industry: Set<string>): LessonScore {
+  let text = 0
+  let label = 0
+  const mean = meanDescriptionLength()
+  const lengthFactor = Math.min(MAX_LENGTH_FACTOR, (2 * mean) / (mean + row.descriptionLength))
+  // One clear hit is enough for a match, so only the first distinctive description hit counts in full:
+  // a term written as parts and joined ("ml", "kem", "mlkem") is still one mention.
+  let clearHit = false
+  let labelled = false
+  for (const t of tokens) {
+    if (row.title.has(t)) text += 3
+    else if (row.text.has(t)) {
+      if (!clearHit && isDistinctive(t) && !namedInATitle(t)) {
+        clearHit = true
+        text += DISTINCTIVE_DESCRIPTION_HIT * lengthFactor
+      } else text += 1
+    } else if (row.keys.has(t)) {
+      // A tag written as parts and joined ("ml", "kem", "mlkem") is one label.
+      label += labelled ? LABEL_HIT_EXTRA : LABEL_HIT
+      labelled = true
+    }
+  }
+  if (text > 0) for (const t of industry) if (row.text.has(t) || row.title.has(t)) text += 0.25
+  return { text, label }
 }
 
 /** The words of the goal that at least one lesson holds. */
@@ -145,9 +234,26 @@ function coveredWords(tokens: readonly string[]): Set<string> {
   return covered
 }
 
-/** How many lessons a single word names in a title or key, for the "one word, many lessons" test. */
+/** Tie-break for equal scores: the shorter description (a term there is more central), then the learning order. */
+function byFocus(a: { lesson: TreeLesson }, b: { lesson: TreeLesson }): number {
+  return (
+    a.lesson.description.length - b.lesson.description.length ||
+    compareTreeOrder(a.lesson, b.lesson)
+  )
+}
+
+/** The words of the goal that a title or a description names (tags and track do not count). */
+function coveredInText(tokens: readonly string[]): Set<string> {
+  const said = new Set<string>()
+  for (const row of lessonIndex()) {
+    for (const t of tokens) if (row.title.has(t) || row.text.has(t)) said.add(t)
+  }
+  return said
+}
+
+/** How many lessons name a single word in a title or description, for the "one word, many lessons" test. */
 function lessonsNaming(token: string): number {
-  return lessonIndex().filter((r) => r.title.has(token) || r.keys.has(token)).length
+  return textHolderCount(token)
 }
 
 const MAX_REQUIRED_LESSONS = 7
@@ -238,31 +344,44 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
     return empty
   }
 
-  const tokens = words(goal).filter((w) => !STOP.has(w) && w.length > 1)
+  const tokens = goalTokens(goal)
   const industry = new Set(input.industry ? contentWords(input.industry) : [])
   const roleId = personaDefaultRole(input.persona)
-  const scored = lessonIndex()
+  const scoredAll = lessonIndex()
     .map((row) => {
-      const base = scoreLesson(row, tokens, industry)
+      const { text, label } = scoreLesson(row, tokens, industry)
       const roleBoost = roleId && row.lesson.niceWorkRoles.includes(roleId) ? 0.5 : 0
-      return { lesson: row.lesson, score: base > 0 ? base + roleBoost : 0 }
+      return { lesson: row.lesson, score: text > 0 ? text + roleBoost : 0, label }
     })
+    .filter((r) => r.score + r.label >= OPTIONAL_MIN)
+  // Matches say the goal's words in their title or description; tag-only lessons never reach this list.
+  const scored = scoredAll
     .filter((r) => r.score >= MATCH_MIN)
-    .sort((a, b) => b.score - a.score || compareTreeOrder(a.lesson, b.lesson))
+    .sort((a, b) => b.score - a.score || b.label - a.label || byFocus(a, b))
+  // Other lessons, for the optional list: what they say first, then what they are labelled with.
+  const others = scoredAll
+    .filter((r) => r.score < MATCH_MIN)
+    .sort((a, b) => b.score + b.label - (a.score + a.label) || byFocus(a, b))
 
   const covered = coveredWords(specific)
   const notCovered = specific.filter((w) => !covered.has(w))
 
-  if (scored.length === 0) return { ...empty, state: 'gap', notCovered: specific }
+  if (scored.length === 0) {
+    // Nothing says it: a word only held as a tag or track is "not covered" for building required lessons.
+    const said = coveredInText(specific)
+    return { ...empty, state: 'gap', notCovered: specific.filter((w) => !said.has(w)) }
+  }
 
   const top = scored[0].score
   const matched = scored
     .filter((r) => r.score >= Math.max(MATCH_MIN, top * 0.5))
     .slice(0, MAX_MATCHED)
-  const optional = scored.filter((r) => !matched.includes(r)).slice(0, MAX_OPTIONAL)
+  // Matches the cap left out come first among the optional lessons (the tail of `scored`), then the others.
+  const optional = [...scored.filter((r) => !matched.includes(r)), ...others]
 
   // Required lessons: each match, then its take-first lessons, until the cap.
   const picked = new Map<string, StepOrigin>()
+  const skipped: string[] = []
   for (const m of matched) {
     const adds: [string, StepOrigin][] = []
     if (!picked.has(m.lesson.lmId)) adds.push([m.lesson.lmId, { type: 'match' }])
@@ -272,11 +391,17 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
         adds.push([pre.lmId, { type: 'take-first', for: m.lesson.lmId }])
       }
     }
-    if (picked.size > 0 && picked.size + adds.length > MAX_REQUIRED_LESSONS) continue
+    if (picked.size > 0 && picked.size + adds.length > MAX_REQUIRED_LESSONS) {
+      skipped.push(m.lesson.lmId)
+      continue
+    }
     for (const [tag, origin] of adds) picked.set(tag, origin)
   }
   const ordered = orderLessons(picked)
-  const optionalTags = optional.map((r) => r.lesson.lmId).filter((t) => !picked.has(t))
+  // A match the cap left out is still worth offering: it leads the optional lessons.
+  const optionalTags = [...new Set([...skipped, ...optional.map((r) => r.lesson.lmId)])]
+    .filter((t) => !picked.has(t))
+    .slice(0, MAX_OPTIONAL)
 
   const steps: PreviewStep[] = [
     ...ordered.map((l) => ({
@@ -296,7 +421,8 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
     })),
   ]
   const requiredModuleTags = ordered.map((l) => l.lmId)
-  const mapped = matched.map((m) => m.lesson.lmId)
+  // The matches that are steps: `mapped` and the required lessons tell the same story.
+  const mapped = matched.map((m) => m.lesson.lmId).filter((t) => picked.has(t))
   const alreadyDone = requiredModuleTags.filter((t) => input.isDone(t))
 
   const duplicate = findDuplicate(goal, role, requiredModuleTags, input.existing)
