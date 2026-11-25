@@ -286,6 +286,18 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
         asset: 'inter-font',
         href: 'https://github.com/rsms/inter',
       },
+      {
+        name: 'Fredoka (typeface)',
+        license: 'SIL Open Font License 1.1',
+        asset: 'fredoka-font',
+        href: 'https://fonts.google.com/specimen/Fredoka',
+      },
+      {
+        name: 'Nunito (typeface)',
+        license: 'SIL Open Font License 1.1',
+        asset: 'nunito-font',
+        href: 'https://fonts.google.com/specimen/Nunito',
+      },
       { name: '@monaco-editor/react (code editor)', pkg: '@monaco-editor/react' },
       {
         name: 'monaco-editor (bundled with the code editor)',

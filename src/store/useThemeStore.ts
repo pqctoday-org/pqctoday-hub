@@ -13,7 +13,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'light', // Default to light
+      theme: 'light', // Only used once `hasSetPreference` is true; until then the device's colour scheme applies (useTheme)
       hasSetPreference: false,
       setTheme: (theme) => set({ theme, hasSetPreference: true }),
     }),

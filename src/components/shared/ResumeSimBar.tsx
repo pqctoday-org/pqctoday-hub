@@ -26,7 +26,7 @@ import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { hasSimExited, hasOpenedSimThisSession } from '@/components/Simulation/simChrome'
-import pqctodayLogo from '@/assets/pqctoday-logo.png'
+import { BrandLogo } from '@/components/brand/BrandLogo'
 
 const FLAG = 'sim:resume'
 const DISMISSED = 'sim:resume:dismissed'
@@ -88,12 +88,7 @@ export function ResumeSimBar() {
       role="region"
       aria-label="Simulation in progress"
     >
-      <img
-        src={pqctodayLogo}
-        alt=""
-        aria-hidden="true"
-        className="h-8 w-8 shrink-0 rounded-md object-contain"
-      />
+      <BrandLogo variant="emblem" size={32} decorative />
       <div className="flex min-w-0 flex-col leading-tight">
         <span className="whitespace-nowrap text-[12.5px] font-extrabold">PQC Today Sim</span>
         <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-background/55">

@@ -18,6 +18,7 @@ import { pageIdForMobileRoute } from './getMobilePageActions'
 import { mobileGroupIdForPath } from './mobileNavGroups'
 import { useMobileWhatsNewStatus } from './mobileWhatsNew'
 import { MobileBadge } from '../primitives/Badge'
+import { BrandLogo } from '@/components/brand/BrandLogo'
 
 export interface MobileHeaderProps {
   persona: PersonaId | null
@@ -73,12 +74,15 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
               Business tool page). Each page names itself with exactly one h1; a phone screen
               that has none must add one (a visually hidden one is fine). */}
           {isHome ? (
-            <p
-              data-testid="mobile-header-title"
-              className="min-w-0 flex-1 text-[19px] font-extrabold text-foreground"
-            >
-              PQC Today
-            </p>
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <BrandLogo variant="emblem" size={30} decorative />
+              <p
+                data-testid="mobile-header-title"
+                className="min-w-0 flex-1 font-display text-[19px] font-bold text-heading"
+              >
+                PQC Today
+              </p>
+            </div>
           ) : (
             <>
               <Button

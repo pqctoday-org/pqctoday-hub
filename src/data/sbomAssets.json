@@ -1,5 +1,5 @@
 {
-  "_comment": "Shipped non-code assets that carry a third-party license. Every file under public/fonts must be recorded here and is pinned by sha256, so replacing a font without updating this record fails `gen:sbom-versions:check`. Name, version and copyright are read from the font file's own name table; the license is what that table points to.",
+  "_comment": "Shipped non-code assets that carry a third-party license. Every file under public/fonts must be recorded here and is pinned by sha256, so replacing a font without updating this record fails `gen:sbom-versions:check`. Name, version and copyright are read from the font file's own name table; the license is what that table points to. Fredoka and Nunito are the Latin subsets (made with fontTools pyftsubset; Fredoka also fixed at width 100, keeping the weight axis) of the variable fonts in the Google Fonts repository at the commit named in `source`; `sourceSha256` is the unmodified upstream file. The OFL text beside each font is the repository's own OFL.txt.",
   "assets": [
     {
       "key": "inter-font",
@@ -11,6 +11,36 @@
       "href": "https://github.com/rsms/inter",
       "files": {
         "public/fonts/inter-latin-wght-normal.woff2": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62"
+      }
+    },
+    {
+      "key": "fredoka-font",
+      "name": "Fredoka (variable font, latin subset)",
+      "version": "2.001",
+      "copyright": "Copyright 2016 The Fredoka Project Authors (https://github.com/hafontia/Fredoka-One)",
+      "license": "SIL Open Font License 1.1",
+      "licenseSource": "OFL.txt in the Google Fonts repository (ofl/fredoka/OFL.txt), copied to public/fonts/OFL-Fredoka.txt; the font's name table carries no licence URL",
+      "href": "https://fonts.google.com/specimen/Fredoka",
+      "source": "https://github.com/google/fonts/blob/83c62e30d87daa70216dab6b984d00d20d96d585/ofl/fredoka/Fredoka%5Bwdth,wght%5D.ttf",
+      "sourceSha256": "2ba02e68b152868aef9ba28e24b3648c7d457fe6f25c761f2c2c53fb61a73fc8",
+      "files": {
+        "public/fonts/fredoka-latin-wght-normal.woff2": "edd0d2b176bbe829bb8dd5eb5a5082770ed74f8dd001692b2960e4991af382a2",
+        "public/fonts/OFL-Fredoka.txt": "5c9e7eee5c6b25f4b05b8d53b2e470ea4962f9ced742d044a98f7d95d1375bab"
+      }
+    },
+    {
+      "key": "nunito-font",
+      "name": "Nunito (variable font, latin subset)",
+      "version": "3.602",
+      "copyright": "Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito)",
+      "license": "SIL Open Font License 1.1",
+      "licenseSource": "OFL.txt in the Google Fonts repository (ofl/nunito/OFL.txt), copied to public/fonts/OFL-Nunito.txt; the font's name table carries no licence URL",
+      "href": "https://fonts.google.com/specimen/Nunito",
+      "source": "https://github.com/google/fonts/blob/83c62e30d87daa70216dab6b984d00d20d96d585/ofl/nunito/Nunito%5Bwght%5D.ttf",
+      "sourceSha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+      "files": {
+        "public/fonts/nunito-latin-wght-normal.woff2": "df6c2430a5ef555a6c6d7dc85cea9dbad4cdf8a5c7c850791586fc0866fd1244",
+        "public/fonts/OFL-Nunito.txt": "580df76c95a1ec5ab878ceb25bb3d85c6a076804e9c970c8c6972aea775fdf65"
       }
     }
   ]
