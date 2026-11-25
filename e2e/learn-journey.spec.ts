@@ -7,9 +7,18 @@ import { injectAxe, getViolations } from 'axe-playwright'
  * them. Runs on a wide screen and on a 390 px phone. Everything the journey keeps is on the device.
  */
 
-const seed = async (page: Page, persona: string | null, level: string | null = 'basics') => {
+const seed = async (
+  page: Page,
+  persona: string | null,
+  level: string | null = 'basics',
+  theme: 'light' | 'dark' = 'light'
+) => {
   await page.addInitScript(
-    ([p, lv]) => {
+    ([p, lv, th]) => {
+      localStorage.setItem(
+        'theme-storage-v1',
+        JSON.stringify({ state: { theme: th, hasSetPreference: true }, version: 1 })
+      )
       localStorage.setItem(
         'pqc-version-storage',
         JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
@@ -40,7 +49,7 @@ const seed = async (page: Page, persona: string | null, level: string | null = '
         )
       }
     },
-    [persona, level]
+    [persona, level, theme]
   )
 }
 
@@ -181,34 +190,38 @@ for (const [name, viewport] of [
       await expect(page.getByTestId('other-role-lens')).toContainText('Nothing is hidden.')
     })
 
-    test('no serious or critical accessibility violations on Your journey, the role map and the module page', async ({
-      page,
-    }) => {
-      await seed(page, 'architect')
-      await createObjective(page)
-      const check = async (where: string) => {
-        await injectAxe(page)
-        const violations = await getViolations(page, undefined, {
-          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
-        })
-        const serious = violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
-        expect(
-          serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.html.slice(0, 140)) })),
-          `serious or critical axe violations on ${where}`
-        ).toEqual([])
-      }
-      await check('Your journey › Objectives')
-      await page.getByRole('tab', { name: 'Role map' }).click()
-      await expect(page.getByTestId('role-map')).toBeVisible()
-      await check('Your journey › Role map')
-      await page.goto('/learn?mode=journey')
-      await page
-        .getByTestId('now-box')
-        .getByRole('button', { name: /^Open / })
-        .click()
-      await expect(page.getByTestId('journey-step-bar')).toBeVisible({ timeout: 30_000 })
-      await check('a module page with the step bar')
-    })
+    for (const theme of ['light', 'dark'] as const) {
+      test(`no serious or critical accessibility violations on Your journey, the role map, My work, Updates and the module page (${theme})`, async ({
+        page,
+      }) => {
+        await seed(page, 'architect', 'basics', theme)
+        await createObjective(page)
+        const check = async (where: string) => {
+          await injectAxe(page)
+          const violations = await getViolations(page, undefined, {
+            runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+          })
+          const serious = violations.filter(
+            (v) => v.impact === 'critical' || v.impact === 'serious'
+          )
+          expect(
+            serious.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.html.slice(0, 140)) })),
+            `serious or critical axe violations on ${where}`
+          ).toEqual([])
+        }
+        await check('Your journey › Objectives')
+        await page.getByRole('tab', { name: 'Role map' }).click()
+        await expect(page.getByTestId('role-map')).toBeVisible()
+        await check('Your journey › Role map')
+        await page.goto('/learn?mode=journey')
+        await page
+          .getByTestId('now-box')
+          .getByRole('button', { name: /^Open / })
+          .click()
+        await expect(page.getByTestId('journey-step-bar')).toBeVisible({ timeout: 30_000 })
+        await check('a module page with the step bar')
+      })
+    }
 
     test('the journey stays inside the screen', async ({ page }) => {
       await seed(page, 'architect')

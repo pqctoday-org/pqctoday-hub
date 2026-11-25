@@ -194,6 +194,31 @@ describe('objective lifecycle (handoff 5.1)', () => {
   })
 })
 
+describe('objectives made before a role was chosen', () => {
+  it("become the role's when one is chosen, and objectives of another role are left alone", () => {
+    const s = useJourneyStore.getState()
+    const loose = s.createObjective(preview(GOAL_A, null)).id
+    const exec = s.createObjective(preview(GOAL_B, 'executive')).id
+    expect(useJourneyStore.getState().focus.none).toBe(loose)
+    s.adoptRolelessObjectives('architect')
+    const st = useJourneyStore.getState()
+    expect(st.objectives[loose].role).toBe('architect')
+    expect(st.objectives[exec].role).toBe('executive')
+    expect(st.focus.architect).toBe(loose)
+    expect(st.focus.none).toBeUndefined()
+    // again: nothing changes
+    s.adoptRolelessObjectives('architect')
+    expect(useJourneyStore.getState().objectives).toEqual(st.objectives)
+  })
+
+  it('does nothing for no role', () => {
+    const s = useJourneyStore.getState()
+    const loose = s.createObjective(preview(GOAL_A, null)).id
+    s.adoptRolelessObjectives('none')
+    expect(useJourneyStore.getState().objectives[loose].role).toBe('none')
+  })
+})
+
 describe('persistence', () => {
   it('declares its key and version, and writes to the device under that key', () => {
     expect(JOURNEY_STORE_KEY).toBe('pqc-journey')

@@ -82,6 +82,11 @@ interface JourneyState extends PersistedJourney {
   deferStep: (objectiveId: string, stepId: string) => void
   restoreStep: (objectiveId: string, stepId: string) => void
   setCheckpoint: (objectiveId: string, patch: Partial<Checkpoint>, now?: number) => void
+  /**
+   * The learner chose a role after making objectives with none: those objectives become the role's
+   * (they were made for no one else). Objectives that already belong to a role are not touched.
+   */
+  adoptRolelessObjectives: (role: string) => void
   noteRoleSwitch: (from: string | null, to: string | null, now?: number) => void
   clearRoleSwitch: () => void
 }
@@ -345,6 +350,21 @@ export const useJourneyStore = create<JourneyState>()(
             const next = { ...o.checkpoint, ...patch }
             if (JSON.stringify(next) === JSON.stringify(o.checkpoint)) return o
             return { ...touch(o, now), checkpoint: next }
+          }),
+
+        adoptRolelessObjectives: (role) =>
+          set((s) => {
+            if (role === NO_ROLE) return s
+            const loose = Object.values(s.objectives).filter((o) => o.role === NO_ROLE)
+            if (loose.length === 0) return s
+            const objectives = { ...s.objectives }
+            for (const o of loose) objectives[o.id] = { ...o, role } // eslint-disable-line security/detect-object-injection
+            const looseFocus = s.focus[NO_ROLE]
+            const { [NO_ROLE]: _gone, ...rest } = s.focus // eslint-disable-line @typescript-eslint/no-unused-vars
+            return {
+              objectives,
+              focus: looseFocus && !rest[role] ? { ...rest, [role]: looseFocus } : rest,
+            }
           }),
 
         noteRoleSwitch: (from, to, now = Date.now()) => set({ roleSwitch: { from, to, at: now } }),

@@ -4,7 +4,7 @@
  * the Hub's completion signal for a finished lesson), the objectives of the current role and the
  * one in focus. Nothing here writes; the store's actions do.
  */
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useJourneyStore } from '@/store/useJourneyStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -37,6 +37,11 @@ export function useRoleKey(): string {
 /** The objectives of the current role, in the order they were made. */
 export function useRoleObjectives(): Objective[] {
   const role = useRoleKey()
+  const adopt = useJourneyStore((s) => s.adoptRolelessObjectives)
+  // Objectives made before a role was chosen become that role's (see the store action).
+  useEffect(() => {
+    if (role !== NO_ROLE) adopt(role)
+  }, [role, adopt])
   const objectives = useJourneyStore((s) => s.objectives)
   const order = useJourneyStore((s) => s.order)
   return useMemo(
