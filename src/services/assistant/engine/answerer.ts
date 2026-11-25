@@ -29,6 +29,31 @@ const GENERIC = ['handshake', 'overview', 'basics', 'fundamentals', 'protocol', 
 const tokens = (t: string): string[] => String(t).toLowerCase().match(/[a-z0-9]+/g) ?? []
 /** A whole number the data file keeps as a float ("1184.0") is said "1184"; other text is left alone. */
 const plainValue = (t: string) => t.split('; ').map((p) => (/^-?\d+\.0+$/.test(p.trim()) ? p.trim().replace(/\.0+$/, '') : p)).join('; ')
+/** How a retired record is named in "X was replaced by Y": its key with its title, unless the title already carries the key. */
+const retiredName = (rec: Rec): string => {
+  const key = String(rec.key ?? ''), label = String(rec.label ?? '')
+  if (!key || label.toLowerCase().includes(key.toLowerCase()) || key.length > 40) return label || key
+  return `${key} (${label})`
+}
+/** The strict reader's "what replaced X" answer: every link of the chain carried a supporting statement it may state. */
+const provenSuccessor = (res: Result): boolean => String(res.read_as ?? '').startsWith('successor:') && !!(res.chain ?? []).length && (res.evidence ?? []).length === res.chain.length
+/** At most `n` characters of a source passage, cut at word boundaries and marked where it is cut; a mention of the retired record beyond
+ *  the first `n` characters moves the start of the excerpt to just before it. */
+const excerpt = (raw: string, key: string, n: number, fromSource = true): string => {
+  const text = String(raw).split(/\s+/).filter(Boolean).join(' ')
+  let start = 0
+  if (text.length > n && key) {
+    const i = text.toLowerCase().indexOf(key.toLowerCase())
+    if (i >= 0 && i + key.length > n) start = Math.max(0, i - 100)
+  }
+  let lead = false
+  if (start > 0) { const sp = text.indexOf(' ', start); start = sp >= 0 ? sp + 1 : start; lead = true }
+  else if (fromSource && /^\p{Ll}/u.test(text) && text.includes(' ')) { start = text.indexOf(' ') + 1; lead = true }
+  let win = text.slice(start, start + n)
+  const tail = start + n < text.length
+  if (tail && win.includes(' ')) win = win.slice(0, win.lastIndexOf(' '))
+  return (lead ? '…' : '') + win.trim() + (tail ? '…' : '')
+}
 const round = (x: number, d: number) => { const f = 10 ** d; return Math.round(x * f) / f }
 const titleCase = (s: string) => s.replace(/[A-Za-z]+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase())
 const pageOf = (l: string) => l.split('?')[0].split('#')[0].replace(/\/+$/, '') || '/'
@@ -298,6 +323,10 @@ export class Answerer {
     }
     if (cfg0.journey && reading.names.length) this.journey(reading, out, perGroup)
     if ((reading.confidence ?? 1.0) < STRONG && !reading.forced) this.withFallback(reading, out, perGroup + more)
+    // quizzes follow the lessons and sections; nothing is added or removed
+    const after = this.data.finders.learn_after as string[]
+    const quiz = (x: Item) => after.some((p) => String(x.link).startsWith(p))
+    out.Learn = [...out.Learn.filter((x) => !quiz(x)), ...out.Learn.filter(quiz)]
     return out
   }
   withFallback(reading: Reading & { question: string }, out: Record<string, Item[]>, size: number): void {
@@ -372,14 +401,19 @@ export class Answerer {
 
   // ------------------------------------------------------------ direct answer
   direct(question: string, reading: Reading): Result | null {
-    const intent = reading.intent
+    let intent = reading.intent
+    // "What replaced X?" whose name carries a word that tips the question toward another intent ("... Roadmap-2026", "... pdf ...") is
+    // still a successor question when currency is among the close readings and the reader holds a proven chain.
+    const successor = reading.intents.includes('currency') && provenSuccessor(this.answerRaw(question))
+    if (successor) intent = 'currency'
     const spec = this.data.intents.intents[intent]
     if (!spec.direct) return null
     if (intent === 'source_document') return this.documentAnswer(reading)
     const res = this.answerRaw(question)
     if (res.kind !== 'answer' || res.tier === 2 || res.from_fields) return null
     const rec = this.strict.records.get((res.record ?? {}).id ?? '')
-    if (!rec || ![undefined, '', 'active'].includes(rec.status)) return null
+    // A retired record answers one question only: what replaced it, and only when the link is proven (the reader's chain).
+    if (!rec || (![undefined, '', 'active'].includes(rec.status) && !successor)) return null
     if ((res.records ?? []).length > 1) return null
     let value = res.value
     if ((value === null || value === undefined || value === '') && res.values && res.values.length) value = res.values.map(String).join('; ')
@@ -396,7 +430,36 @@ export class Answerer {
     if (ev === null) return null
     let shown = rec
     if (intent === 'currency' && res.answer && this.strict.records.has(res.answer.id)) { shown = this.rec(res.answer.id); ev = this.evidence(shown, res) ?? ev }
+    if (successor) {
+      const { text, proof } = this.successorText(rec, res)
+      return { value: text, field: res.field ?? null, evidence: ev, tag: this.tagOf(shown.id), record_id: shown.id, evidence_line: this.fmt(this.data.notes.successor.evidence, ev).replace('{proof}', () => proof) }
+    }
     return { value: plainValue(String(value)), field: res.field ?? null, evidence: ev, tag: this.tagOf(shown.id), record_id: shown.id, evidence_line: this.fmt(this.data.notes.evidence, ev) }
+  }
+  /** The sentence "X was replaced by Y" and the proof line, from the reader's chain and the passages it cited. */
+  private successorText(rec: Rec, res: Result): { text: string; proof: string } {
+    const sp = this.data.notes.successor
+    const sub = (t: string, v: Record<string, string>) => t.replace(/\{(\w+)\}/g, (_m, k: string) => v[k])
+    const chain: Item[] = res.chain
+    const names = [retiredName(rec), ...chain.map((l) => retiredName(this.rec(l.id)))]
+    const same: boolean[] = chain.map((_l, i) => sp.same_kinds.includes(res.evidence[i].kind))
+    // a link between two rows of one document is said as that, one sentence per link
+    const text = !same.some(Boolean)
+      ? sub(sp.value, { old: names[0], new: names[1] }) + names.slice(2).map((n) => sub(sp.value_next, { new: n })).join('')
+      : same.map((s, i) => sub(s ? sp.same : sp.value, { old: names[i], new: names[i + 1] })).join('; ')
+    const proof: string[] = []
+    let prev = rec
+    chain.forEach((link, i) => {
+      const quoted = ['explicit', 'chain'].includes(res.evidence[i].kind)
+      const to = this.rec(link.id)
+      const cited = res.evidence[i]
+      const passage = excerpt(cited.passage ?? '', prev.key, sp.clip, quoted)
+      let part = !passage ? sp.names : quoted ? sub(sp.quote, { passage }) : sub(sp.basis, { passage: passage.replace(/\.+$/, '') })
+      if (cited.source_url) part += ' ' + sub(sp.source, { url: cited.source_url })
+      proof.push((chain.length > 1 ? sub(sp.step, { old: prev.key, new: to.key }) : '') + part)
+      prev = to
+    })
+    return { text, proof: proof.join(' ') }
   }
   private fmt(t: string, ev: Item) { return t.replace('{kind}', ev.kind).replace('{title}', ev.title).replace('{tag}', ev.tag).replace('{revision}', ev.revision) }
   kindChip(rec: Rec): string { return this.data.rows.kind_chip[rec.type] ?? titleCase(rec.type) }

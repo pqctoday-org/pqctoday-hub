@@ -586,6 +586,9 @@
     }
    }
   },
+  "learn_after": [
+   "/learn/quiz?category="
+  ],
   "version": 1
  },
  "intents": {
@@ -935,6 +938,22 @@
    "direct": "Answer drawn from",
    "no_direct": "Closest source"
   },
+  "successor": {
+   "basis": "The records show: {passage}.",
+   "clip": 300,
+   "evidence": "Evidence: {kind}: {title} ({tag}). {revision}. {proof} Checked against the record.",
+   "names": "Both are revisions of one Internet-Draft, as their names show.",
+   "quote": "The source says: “{passage}”",
+   "same": "{old} and {new} are the same document; the Hub lists it as {new}",
+   "same_kinds": [
+    "same-rfc",
+    "same-document"
+   ],
+   "source": "Source: {url}.",
+   "step": "{old} to {new}: ",
+   "value": "{old} was replaced by {new}",
+   "value_next": ", then by {new}"
+  },
   "version": 1
  },
  "roles": {
@@ -1021,6 +1040,7 @@
   },
   "action_by_type": {
    "page": "Go to page",
+   "quizcategory": "Open quiz",
    "section": "Go to section",
    "step": "Open workshop step",
    "term": "Read here"
@@ -1048,6 +1068,7 @@
    "playground": "Playground",
    "product": "Product",
    "protocol": "Protocol",
+   "quizcategory": "Quiz category",
    "requirement": "Governance requirement",
    "roleboard": "Role board",
    "section": "Section",
