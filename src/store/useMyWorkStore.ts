@@ -242,6 +242,10 @@ interface MyWorkState extends MyWorkData {
   editComment: (id: string, body: string, now?: Date) => WriteResult<MyComment>
   deleteComment: (id: string) => WriteResult<string>
   registerOutput: (input: RegisterOutputInput) => WriteResult<TrackedOutput>
+  /** Register many in one write. Used to bring in the outputs the Hub already holds (phase 1). */
+  registerOutputs: (
+    inputs: RegisterOutputInput[]
+  ) => WriteResult<{ added: number; updated: number }>
   /** File an output under an objective (and step), or pass null to keep it not filed (O03). */
   fileOutput: (id: string, objectiveId: string | null, stepTag?: string) => WriteResult<string>
   removeOutput: (id: string) => WriteResult<string>
@@ -339,48 +343,69 @@ export const useMyWorkStore = create<MyWorkState>()((set, get) => {
       )
     },
 
-    registerOutput: (input) => {
-      if (!input.runId || !input.title.trim()) return writeFailed('invalid')
-      const existing = get().outputs.find((o) => o.runId === input.runId)
-      if (existing) {
-        // Same run: refresh what can change (title, approval), never add a second record (O07).
-        const unchanged =
-          existing.title === input.title && existing.approvalStatus === input.approvalStatus
-        if (unchanged) return writeOk(existing)
-        const refreshed: TrackedOutput = {
-          ...existing,
-          title: input.title,
-          approvalStatus: input.approvalStatus,
-          updatedAt: (input.now ?? new Date()).toISOString(),
+    registerOutputs: (inputs) => {
+      const valid = inputs.filter((i) => i.runId && i.title.trim())
+      if (valid.length !== inputs.length) return writeFailed('invalid')
+      const current = get().outputs
+      const byRun = new Map(current.map((o) => [o.runId, o]))
+      const next = [...current]
+      let added = 0
+      let updated = 0
+      for (const input of valid) {
+        const existing = byRun.get(input.runId)
+        const stamp = (input.now ?? new Date()).toISOString()
+        if (existing) {
+          // Same run: refresh what can change (title, approval, the document it points at), never add a second record (O07).
+          const changed =
+            existing.title !== input.title.trim() ||
+            existing.approvalStatus !== input.approvalStatus ||
+            existing.ref.id !== input.ref.id ||
+            existing.unfilledFields !== input.unfilledFields
+          if (!changed) continue
+          const refreshed: TrackedOutput = {
+            ...existing,
+            title: input.title.trim(),
+            approvalStatus: input.approvalStatus,
+            ref: input.ref,
+            unfilledFields: input.unfilledFields,
+            updatedAt: stamp,
+          }
+          next[next.findIndex((o) => o.id === existing.id)] = refreshed
+          byRun.set(input.runId, refreshed)
+          updated++
+          continue
         }
-        return commit(
-          (d) => ({
-            next: { ...d, outputs: d.outputs.map((o) => (o.id === existing.id ? refreshed : o)) },
-            value: refreshed,
-          }),
-          () => refreshed
-        )
+        const record: TrackedOutput = {
+          id: stableId('out', input.runId),
+          kind: input.kind,
+          producer: input.producer,
+          ref: input.ref,
+          title: input.title.trim(),
+          storage: input.storage,
+          approvalStatus: input.approvalStatus,
+          createdAt: stamp,
+          updatedAt: stamp,
+          objectiveId: input.objectiveId,
+          stepTag: input.stepTag,
+          runId: input.runId,
+          unfilledFields: input.unfilledFields,
+        }
+        next.push(record)
+        byRun.set(input.runId, record)
+        added++
       }
-      const stamp = (input.now ?? new Date()).toISOString()
-      const record: TrackedOutput = {
-        id: stableId('out', input.runId),
-        kind: input.kind,
-        producer: input.producer,
-        ref: input.ref,
-        title: input.title.trim(),
-        storage: input.storage,
-        approvalStatus: input.approvalStatus,
-        createdAt: stamp,
-        updatedAt: stamp,
-        objectiveId: input.objectiveId,
-        stepTag: input.stepTag,
-        runId: input.runId,
-        unfilledFields: input.unfilledFields,
-      }
+      if (added === 0 && updated === 0) return writeOk({ added, updated })
       return commit(
-        (d) => ({ next: { ...d, outputs: [...d.outputs, record] }, value: record }),
-        () => record
+        (d) => ({ next: { ...d, outputs: next }, value: { added, updated } }),
+        () => ({ added, updated })
       )
+    },
+
+    registerOutput: (input) => {
+      const r = get().registerOutputs([input])
+      if (!r.ok) return r
+      const record = get().outputs.find((o) => o.runId === input.runId)
+      return record ? writeOk(record) : writeFailed('invalid')
     },
 
     fileOutput: (id, objectiveId, stepTag) => {
