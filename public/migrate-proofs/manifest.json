@@ -33503,6 +33503,51 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PhonePe",
+      "refId": "PhonePe",
+      "file": "PhonePe-2f1e9987.html",
+      "sizeBytes": 118142,
+      "content_type": "text/html",
+      "url": "https://www.phonepe.com/press/phonepe-rolls-out-upi-payments-with-biometric-authentication/",
+      "sha256": "dcb0e41ea60918bc144cfa4eb7a2b59a9c443ba28e7dae6f0bcfff90240d7abb",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T02:16:18.289643+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Google-Pay",
+      "refId": "Google-Pay",
+      "file": "Google-Pay-1d20f3b6.html",
+      "sizeBytes": 266184,
+      "content_type": "text/html",
+      "url": "https://pay.google.com/intl/en_in/about/terms/",
+      "sha256": "7084d0116411d6d5319d553c1e8e10059a36190be0e6ab391b1bc72fccdd485d",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T02:16:30.464719+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "OpenWay-Riva",
+      "refId": "OpenWay-Riva",
+      "file": "OpenWay-Riva-9dd10a15.pdf",
+      "sizeBytes": 1181887,
+      "content_type": "application/pdf",
+      "url": "https://na.itron.com/o/commerce-media/accounts/-1/attachments/3840094",
+      "sha256": "3074889fcd83d241232622cca4ac67098b5a09e876114011b6172fb0bb1b968d",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T02:17:24.875116+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "bytes"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
