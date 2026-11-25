@@ -4,6 +4,7 @@
  * Pure: it builds text from the data it is given. `downloadMarkdown` hands the text to the browser's save.
  */
 import { saveAs } from 'file-saver'
+import { withEducationNoticeMarkdown } from '@/data/educationNotice'
 import { addressOf, currentContentVersion, placeOf } from './tags'
 import { summarizeAnswerPayload } from './answerSummary'
 import { storageWords } from './storageWords'
@@ -121,5 +122,9 @@ export function exportFileName(now: Date = new Date()): string {
 }
 
 export function downloadMarkdown(text: string, now: Date = new Date()): void {
-  saveAs(new Blob([text], { type: 'text/markdown;charset=utf-8' }), exportFileName(now))
+  // The saved file states the educational-use notice at its top.
+  saveAs(
+    new Blob([withEducationNoticeMarkdown(text)], { type: 'text/markdown;charset=utf-8' }),
+    exportFileName(now)
+  )
 }

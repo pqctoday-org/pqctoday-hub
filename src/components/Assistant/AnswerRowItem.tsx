@@ -4,6 +4,7 @@ import { Check, Link2 } from 'lucide-react'
 import { Chip, Eyebrow, StoryButton, StoryRow } from '@/components/storybook'
 import { cn } from '@/lib/utils'
 import type { AssistantRow } from '@/services/assistant/contract'
+import { copyToClipboard } from '@/utils/clipboard'
 import { COPY } from './copy'
 
 /** A short address is public and always `/go/<tag>`. Anything else is not copied. */
@@ -34,14 +35,12 @@ export function CopyLinkButton({ link, title }: { link: string; title: string })
   )
   if (!isPublicGoLink(link)) return null
   const onCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}${link}`)
-      setCopied(true)
-      if (timer.current) clearTimeout(timer.current)
-      timer.current = setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // The clipboard is not available here; the link still works from the address bar.
-    }
+    // A link only: the shared helper also covers browsers that refuse the clipboard call.
+    // When it cannot copy, the link still works from the address bar.
+    if (!(await copyToClipboard(`${window.location.origin}${link}`))) return
+    setCopied(true)
+    if (timer.current) clearTimeout(timer.current)
+    timer.current = setTimeout(() => setCopied(false), 2000)
   }
   return (
     <StoryButton
