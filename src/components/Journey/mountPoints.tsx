@@ -29,6 +29,8 @@ import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useAssistantContext } from '@/components/Assistant/useAssistantContext'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { usePanelObjectives } from '@/hooks/useJourney'
+import { useAllObjectiveChanges } from '@/hooks/useObjectiveChanges'
+import { ObjectiveChangesList } from './ObjectiveChanges'
 import { buildItems, filterItems } from '@/services/myWork/items'
 import { journeyHref } from '@/services/journey/stepView'
 import { lessonById } from '@/services/journey/lessons'
@@ -65,7 +67,8 @@ export function MyWorkMount({ objectiveId }: ObjectiveScope) {
 /** The number on the "Updates · n" tab: the notices the learner has not yet seen. */
 export function useUpdatesCount(): number {
   const { updates } = usePanelObjectives()
-  return useUnseenUpdateCount(updates)
+  const changes = useAllObjectiveChanges()
+  return useUnseenUpdateCount(updates) + changes.length
 }
 
 /** Your journey › Updates: the release comparison and the notices. */
@@ -73,7 +76,8 @@ export function UpdatesMount({ objectiveId }: ObjectiveScope) {
   const { updates } = usePanelObjectives()
   const persona = usePersonaStore((s) => s.selectedPersona)
   return (
-    <div data-mount="updates" data-objective={objectiveId ?? ''}>
+    <div data-mount="updates" data-objective={objectiveId ?? ''} className="space-y-4">
+      <ObjectiveChangesList />
       <UpdatesPanel objectives={updates} personaId={persona} />
     </div>
   )

@@ -4,6 +4,7 @@
  * title and stage name); only the self-assessed step has words of its own.
  */
 import { lessonByTag } from './lessons'
+import { retiredEntry } from './retiredSteps'
 import type { Objective, Step } from './types'
 
 export interface StepView {
@@ -48,6 +49,16 @@ export function describeStep(step: Step, objective: Objective): StepView {
       groupLabel: `Stage ${lesson.stage} · ${lesson.stageName}`,
       kindLabel: 'Module',
       to: `/learn/${lesson.id}`,
+    }
+  }
+  // A lesson the Hub retired and lists: name it as it was called, and keep the step reachable.
+  const retired = step.kind === 'module' ? retiredEntry(step.resourceTag) : undefined
+  if (retired) {
+    return {
+      title: retired.name ?? step.resourceTag,
+      groupLabel: 'Retired',
+      kindLabel: 'Module',
+      to: journeyHref({ objective: objective.id, step: step.id }),
     }
   }
   // A tag the lessons data no longer holds: say so plainly and keep the step reachable.

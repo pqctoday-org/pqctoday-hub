@@ -16,6 +16,7 @@ import {
   storyButtonVariants,
 } from '@/components/storybook'
 import { JourneyStepBar } from './JourneyStepBar'
+import { ObjectiveChanges } from './ObjectiveChanges'
 import { CompletePanel } from './CompletePanel'
 import { NewObjectiveFlow } from './NewObjectiveFlow'
 import { StepPage } from './StepPage'
@@ -186,6 +187,8 @@ function Workspace({ objective }: { objective: Objective }) {
         <span className="font-bold text-heading">Finish: </span>
         {finishCondition(objective)}.
       </p>
+
+      <ObjectiveChanges objective={objective} />
 
       {currentId ? (
         <JourneyStepBar

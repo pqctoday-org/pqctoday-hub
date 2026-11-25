@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Eyebrow, StoryButton, StickerCard } from '@/components/storybook'
 import { JourneyStepBar } from './JourneyStepBar'
 import { CompletePanel } from './CompletePanel'
+import { ObjectiveChanges } from './ObjectiveChanges'
 import { RoleSwitchDialog, roleLabel } from './RoleSwitch'
 import { ModuleUpdateStripMount } from './mountPoints'
 import { useOpenStep } from './useJourneyNav'
@@ -179,6 +180,7 @@ function ModuleJourneyHeaderInner({ moduleId, compact = false }: ModuleJourneyHe
             onOpenStep={(step) => openStep(focused, step)}
             onComplete={() => setCompleteOpen(true)}
           />
+          <ObjectiveChanges objective={focused} stepId={ctx.step.id} />
           <CompletePanel
             objective={focused}
             open={completeOpen}
