@@ -946,7 +946,6 @@
   ],
   "roles": {
    "architect": {
-    "decided": true,
     "order": [
      "L",
      "T",
@@ -955,37 +954,30 @@
     ]
    },
    "cert-engineer": {
-    "decided": true,
     "order": [
      "R",
      "D",
      "L",
      "T"
-    ],
-    "why": "works from the standards and the validation records"
+    ]
    },
    "curious": {
-    "decided": true,
     "order": [
      "L",
      "R",
      "T",
      "D"
-    ],
-    "why": "is learning; lessons first, then plain readings"
+    ]
    },
    "developer": {
-    "decided": true,
     "order": [
      "T",
      "L",
      "R",
      "D"
-    ],
-    "why": "builds and tries things; tools first, then the lesson behind them"
+    ]
    },
    "executive": {
-    "decided": true,
     "order": [
      "L",
      "R",
@@ -994,34 +986,28 @@
     ]
    },
    "grc": {
-    "decided": true,
     "order": [
      "R",
      "D",
      "L",
      "T"
-    ],
-    "why": "compliance work starts from the rule and its source document, then the data"
+    ]
    },
    "ops": {
-    "decided": true,
     "order": [
      "T",
      "D",
      "L",
      "R"
-    ],
-    "why": "runs the estate; tools and product or vendor records first"
+    ]
    },
    "researcher": {
-    "decided": true,
     "order": [
      "R",
      "L",
      "D",
      "T"
-    ],
-    "why": "reads the papers and standards first, then the lessons and records"
+    ]
    }
   },
   "version": 1
@@ -1722,59 +1708,6 @@
    "^(?:i(?:'d| would)? (?:like|want|need) to (?:know|understand|find out|see|learn)|i(?:'m| am) (?:curious|wondering)|i wonder|do you know|tell me|let me know|show me|give me|i need|i want)\\s+(?:about\\s+|to\\s+)?",
    "^(?:quick question|question)[:,]?\\s*"
   ],
-  "version": 1
- },
- "tag_kinds": {
-  "kinds": {
-   "CERT": {
-    "built": false,
-    "left": "no per-certification record in the model yet",
-    "source": "migrate certification xref and product certifications csv",
-    "what": "certification"
-   },
-   "CHG": {
-    "built": false,
-    "left": "the export holds no CHANGELOG.md; the reader needs it in the knowledge files",
-    "source": "CHANGELOG.md of the Hub (one entry per release)",
-    "what": "changelog release"
-   },
-   "CHK": {
-    "built": false,
-    "left": "no record in the model",
-    "source": "businessCapabilityChecklists.ts (migration checklist)",
-    "what": "checklist item"
-   },
-   "KAT": {
-    "built": false,
-    "left": "no record in the model",
-    "source": "the Playground's test-vector data",
-    "what": "known-answer test"
-   },
-   "PAGE": {
-    "built": true,
-    "left": "",
-    "source": "the Hub's route table (ROUTE_META)",
-    "what": "routed page"
-   },
-   "PATH": {
-    "built": true,
-    "left": "persona paths stand in for NICE work-role paths until the role list of open decision 1 is chosen",
-    "source": "computed from the persona paths the model holds (`on_path_of`); never stored",
-    "what": "role path (computed)"
-   },
-   "QZ": {
-    "built": false,
-    "left": "quiz rows are passages of /learn/quiz in the catalogue; one resource per question needs the knowledge files (step 3.1)",
-    "source": "pqcquiz_*.csv (the registry already holds QZ:<id> rows)",
-    "what": "quiz question"
-   },
-   "TOOL": {
-    "built": true,
-    "left": "PT-/BT- ids remain the records' ids; TOOL: is the tag shown to learners",
-    "source": "tools data file; tag = TOOL:<tool id> (the link's last part)",
-    "what": "playground or business tool"
-   }
-  },
   "version": 1
  },
  "words": {

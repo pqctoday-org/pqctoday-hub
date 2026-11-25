@@ -8,9 +8,9 @@ import {
   ASSISTANT_DATA_NOT_LOADED_KEPT,
   ASSISTANT_DATA_NOT_LOADED_MESSAGE,
   answer,
-  directValueFits,
   forgetAssistant,
 } from './adapter'
+import { directValueFits } from './engineHost'
 import { buildEngineInput, extractOf, FAMILY_FILE_PREFIX, groupOf } from './buildEngine'
 import {
   ASSISTANT_GROUPS,
@@ -23,7 +23,7 @@ import {
 import data from './data/data.generated.json'
 import fixtures from './fixtures/assistant-fixtures.json'
 import { KNOWLEDGE_URLS, stubKnowledgeFetch } from './testSupport'
-import { PERSONA_IDS, type PersonaId } from '@/data/personaIds'
+import type { PersonaId } from '@/data/personaIds'
 
 interface Expect {
   state: string
@@ -43,6 +43,7 @@ interface Expect {
   nameCardTag?: string
   noSource?: boolean
   noDirect?: boolean
+  paidTag?: string
 }
 interface Case {
   id: string
@@ -53,12 +54,12 @@ interface Case {
 }
 const cases = (fixtures as { cases: Case[] }).cases
 
-const PERSONA_PATH_TAGS = new Set(PERSONA_IDS.map((p) => `PATH:${p}`))
 const ROOT = process.cwd()
 const core = JSON.parse(
   readFileSync(join(ROOT, 'public/data/knowledge-core.json'), 'utf8')
 ) as KnowledgeCore
 const reader = new KnowledgeReader(core)
+const paidTags = new Set(core.records.filter((r) => r.paid).map((r) => r.id))
 
 type Held = Exclude<AssistantAnswer, { state: 'data-not-loaded' }>
 const held = (a: AssistantAnswer | undefined): Held => {
@@ -148,6 +149,11 @@ describe('the Assistant answers from the Hub knowledge files', () => {
           expect(x.direct.evidence.tag).toBe(e.directTag)
         }
         if (e.noDirect) expect(x.state).not.toBe('direct')
+        if (e.paidTag) {
+          const row = allRows(x).find((r) => r.tag === e.paidTag)
+          expect(row?.paidReferenceOnly).toBe(true)
+          expect(row?.extract).toBe('')
+        }
         if (e.sourceLabel && 'source' in x) expect(x.source?.label).toBe(e.sourceLabel)
         if (e.sourceTag && 'source' in x) expect(x.source?.tag).toBe(e.sourceTag)
         if (e.noSource) expect('source' in x && x.source).toBeFalsy()
@@ -173,13 +179,12 @@ describe('the Assistant answers from the Hub knowledge files', () => {
         expect(r.kind.length).toBeGreaterThan(0)
         expect(r.action).toBeTruthy()
         expect(`${r.dims ?? ''}`).not.toMatch(/\b[KST]\d{4}\b|\bNICE\b/)
-        expect(r.paidReferenceOnly).toBe(false)
+        // a paid standard is linked, never quoted
+        expect(r.paidReferenceOnly).toBe(paidTags.has(r.tag))
+        if (r.paidReferenceOnly) expect(r.extract).toBe('')
       }
       for (const tag of tagsOf(a)) {
-        // the one tag the Hub cannot open yet: a persona's computed path (`PATH:architect`) has no record in the knowledge
-        // core; the role phase adds it. Pinned here so this test says so the day it starts to resolve.
-        if (PERSONA_PATH_TAGS.has(tag)) expect(reader.lookup(tag).found, tag).toBe(false)
-        else expect(reader.lookup(tag).found, `${id}: ${tag}`).toBe(true)
+        expect(reader.lookup(tag).found, `${id}: ${tag}`).toBe(true)
       }
     }
   })
@@ -189,6 +194,9 @@ describe('the Assistant answers from the Hub knowledge files', () => {
     const path = a.groups[0].rows[1]
     expect(path.kind).toBe('Role path')
     expect(path.goLink).toBe('/go/PATH:architect')
+    // the path is a record of the core now: the row opens where the record says
+    expect(path.link).toBe(reader.get('PATH:architect')?.link)
+    expect(path.link).toBe('/learn?view=journey&role=architect')
   })
 })
 
@@ -289,6 +297,8 @@ describe('the last check before a direct answer is shown', () => {
     expect(directValueFits('What does CNSA 2.0 require?', 'yes')).toBe(false)
     expect(directValueFits('Is PQC required by CNSA 2.0?', 'yes')).toBe(true)
     expect(directValueFits('Who enforces it?', '')).toBe(false)
+    expect(directValueFits('What does DORA require?', 'expected', 'requires_pqc')).toBe(false)
+    expect(directValueFits('Is PQC mandatory under DORA?', 'expected', 'requires_pqc')).toBe(true)
   })
 })
 
@@ -310,6 +320,26 @@ describe('what the file builder reads from the knowledge files', () => {
       const found = bases.some((b) => new RegExp(`^${prefix}_\\d{8}`).test(b))
       expect(found, `${family}: ${prefix}`).toBe(true)
     }
+  })
+
+  it('reads the learning journey, the role paths, the paid standards and the successor passages from the core', () => {
+    const cur = built.catalogue.curriculum?.modules['pqc-101'] as Record<string, unknown>
+    expect(cur.stage).toBe(1)
+    expect(cur.track).toBe('Foundations')
+    expect(cur.breadth).toBe(core.curriculum?.['LM-001'].breadth)
+    expect(cur.explains).toEqual(core.curriculum?.['LM-001'].explains)
+    // only the lessons the core's curriculum names
+    expect(Object.keys(built.catalogue.curriculum?.modules ?? {}).length).toBe(
+      Object.keys(core.curriculum ?? {}).length
+    )
+    const architect = core.records.find((r) => r.id === 'PATH:architect')
+    expect(built.catalogue.rolePaths?.architect).toEqual({
+      first: architect?.parts,
+      rest: architect?.more,
+    })
+    expect(new Set(built.catalogue.paid)).toEqual(paidTags)
+    expect(paidTags.size).toBeGreaterThan(0)
+    expect(built.statements).toBe(core.successors)
   })
 
   it('offers only active records as resources, and gives each module its stage', () => {

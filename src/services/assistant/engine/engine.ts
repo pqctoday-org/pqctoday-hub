@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * The answer engine's question reader and answer shell (stage B), in TypeScript with no dependency outside the language.
- * Logic only: every rule, word list, order, note and label is read from `data.generated.json`, which `export_ts_data.py`
- * generates from the YAML data files. The Python harness engine and this file must return the same readings; `engine_parity.py`
- * proves it. Step 5.2 of the plan copies this folder unchanged into the Hub.
+ * The answer engine's question reader and answer shell, in TypeScript with no dependency outside the language.
+ * Logic only: every rule, word list, order, note and label is read from `data.generated.json`, a generated copy of the
+ * reader's data files. It turns a question into a reading (cleaned text, names found, intents with scores, filters) and a
+ * reading into the answer text, note and source-line label.
  */
 
 export interface Data {
@@ -56,7 +56,7 @@ const TYPE_GROUP: Record<string, string[]> = {
   algorithm: ['algorithm'], transition: ['transition'],
 }
 
-/** Alias key: case, accents, punctuation and spacing folded away (generate.norm_name). */
+/** Alias key: case, accents, punctuation and spacing folded away (the same folding the knowledge files use for their alias keys). */
 export function normName(text: string): string {
   return text.normalize('NFKD').replace(/[^\x00-\x7f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
 }
@@ -71,7 +71,11 @@ export class Engine {
   private strip: RegExp[]
   private broadRx: RegExp[]
   private rules: Record<string, (Rule & { re: RegExp })[]>
-  constructor(private data: Data, private names: Names) {
+  private data: Data
+  private names: Names
+  constructor(data: Data, names: Names) {
+    this.data = data
+    this.names = names
     this.stop = new Set(data.words.stop)
     this.filler = new Set(data.words.filler)
     this.strip = data.rules.strip_prefix.map((p) => new RegExp(p, 'i'))
@@ -101,7 +105,7 @@ export class Engine {
     return q
   }
 
-  /** answer.spot_names without skip and mask: the longest known name in the question. */
+  /** The longest known name in the question (no skipped or masked words). */
   spotNames(question: string, maxLen = 40): { ids: string[]; span: [number, number] | null; toks: string[] } {
     const toks = normName(question).split(' ').filter(Boolean)
     let best: [number, number] | null = null
@@ -223,7 +227,7 @@ export class Engine {
     return order.map((x) => this.data.intents.groups[x])
   }
 
-  /** The note, answer text and source-line label the contract gives a reading (handoff 9.2, 9.5). */
+  /** The note, answer text and source-line label the contract gives a reading for a reading. */
   shell(reading: Reading, hasDirect: boolean, role: string | null): { answerText: string; note: string; sourceLabel: string | null; order: string[] } {
     const spec = this.data.intents.intents[reading.intent]
     const n = this.data.notes

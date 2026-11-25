@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * The answer engine, whole (port of engine/core.py, finders.py, direct.py and the session helpers): question in, AnswerModel out.
+ * The answer engine, whole: question in, AnswerModel out.
  * It reads the Hub through a `Catalogue` (resources, passages, curriculum, dimensions, role paths) and the strict reader's model;
- * both are what the knowledge-file reader of step 3.4 supplies. Rules, orders, notes and weights come from `data.generated.json`.
+ * both are what the Hub's knowledge-file reader supplies. Rules, orders, notes and weights come from `data.generated.json`.
  */
 import { Engine, normName, type Data, type Reading } from './engine'
 import { Strict, type Model, type Rec, type Result } from './strict'
@@ -13,6 +13,8 @@ export interface Catalogue {
   resources: Resource[]
   passages: Passage[]
   curriculum: { modules: Record<string, any>; stages: Record<string, string> } | null
+  paid?: string[]                                                    // library documents marked as paid standards: linked, never quoted
+  rolePaths?: Record<string, { first: string[]; rest: string[] }>   // the core's `PATH:<role>` records: the lessons of the path and those under "more"
   dims: Record<string, { industry: string[]; place: string[] }>
   inputs: string[]            // the data files the model was read from (for the evidence line)
   filePrefix: Record<string, string | null>
@@ -25,8 +27,10 @@ const STOP = new Set('the a an of to in on for and or is are was were be what wh
 const ASK = new Set('list show find tell explain describe learn lesson lessons module modules section sections tool tools tutorial course page pages information info resource resources material materials guide guides example examples understand know want need looking look use using work works available offer offers provide get give help site hub'.split(' '))
 const GENERIC = ['handshake', 'overview', 'basics', 'fundamentals', 'protocol', 'standard', 'algorithm', 'concept', 'concepts', 'model', 'framework', 'principles']
 const tokens = (t: string): string[] => String(t).toLowerCase().match(/[a-z0-9]+/g) ?? []
+/** A whole number the data file keeps as a float ("1184.0") is said "1184"; other text is left alone. */
+const plainValue = (t: string) => t.split('; ').map((p) => (/^-?\d+\.0+$/.test(p.trim()) ? p.trim().replace(/\.0+$/, '') : p)).join('; ')
 const round = (x: number, d: number) => { const f = 10 ** d; return Math.round(x * f) / f }
-const pyTitle = (s: string) => s.replace(/[A-Za-z]+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase())
+const titleCase = (s: string) => s.replace(/[A-Za-z]+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase())
 const pageOf = (l: string) => l.split('?')[0].split('#')[0].replace(/\/+$/, '') || '/'
 const escRx = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const cmpStr = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0)
@@ -45,7 +49,13 @@ class Search {
   len: number[] = []
   n: number
   avg: number
-  constructor(private passages: Passage[], private k1 = 1.2, private b = 0.75) {
+  private passages: Passage[]
+  private k1: number
+  private b: number
+  constructor(passages: Passage[], k1 = 1.2, b = 0.75) {
+    this.passages = passages
+    this.k1 = k1
+    this.b = b
     passages.forEach((p, i) => {
       const tf = new Map<string, number>()
       for (const w of [...tokens(p.title), ...tokens(p.title), ...tokens(p.text)]) tf.set(w, (tf.get(w) ?? 0) + 1)
@@ -86,7 +96,11 @@ class ResIndex {
   links: string[]
   n: number
   avg: number
-  constructor(res: Resource[], private k1 = 1.2, private b = 0.5) {
+  private k1: number
+  private b: number
+  constructor(res: Resource[], k1 = 1.2, b = 0.5) {
+    this.k1 = k1
+    this.b = b
     this.links = res.map((r) => r.link)
     res.forEach((r, i) => {
       const tf = new Map<string, number>()
@@ -121,7 +135,15 @@ export class Answerer {
   linkOfRec = new Map<string, string>()
   private raw = new Map<string, Result>()
   private personaPaths: Map<string, string[]> | null = null
-  constructor(private data: any, private cat: Catalogue, private model: Model, strictPatterns: any, statements: any, docHashes: any) {
+  private paid: Set<string>
+  private data: any
+  private cat: Catalogue
+  private model: Model
+  constructor(data: any, cat: Catalogue, model: Model, strictPatterns: any, statements: any, docHashes: any) {
+    this.data = data
+    this.cat = cat
+    this.paid = new Set(cat.paid ?? [])
+    this.model = model
     this.strict = new Strict(model, strictPatterns, statements, docHashes)
     const names = { aliases: model.aliases, types: Object.fromEntries(model.records.map((r) => [r.id, r.type])) }
     this.engine = new Engine(data as Data, names)
@@ -374,10 +396,10 @@ export class Answerer {
     if (ev === null) return null
     let shown = rec
     if (intent === 'currency' && res.answer && this.strict.records.has(res.answer.id)) { shown = this.rec(res.answer.id); ev = this.evidence(shown, res) ?? ev }
-    return { value: String(value), field: res.field ?? null, evidence: ev, tag: this.tagOf(shown.id), record_id: shown.id, evidence_line: this.fmt(this.data.notes.evidence, ev) }
+    return { value: plainValue(String(value)), field: res.field ?? null, evidence: ev, tag: this.tagOf(shown.id), record_id: shown.id, evidence_line: this.fmt(this.data.notes.evidence, ev) }
   }
   private fmt(t: string, ev: Item) { return t.replace('{kind}', ev.kind).replace('{title}', ev.title).replace('{tag}', ev.tag).replace('{revision}', ev.revision) }
-  kindChip(rec: Rec): string { return this.data.rows.kind_chip[rec.type] ?? pyTitle(rec.type) }
+  kindChip(rec: Rec): string { return this.data.rows.kind_chip[rec.type] ?? titleCase(rec.type) }
   evidence(rec: Rec, res: Result): Item | null {
     let rev = this.revisionOf(rec.family)
     if (rec.family === 'library') { const lv = rec.last_verified; if (lv) rev = rev ? `Verified ${lv}, ${rev}` : `Verified ${lv}`; else if (rev) rev = `Data file ${rev}` }
@@ -416,7 +438,7 @@ export class Answerer {
     const link = item.link
     let rtype = rec ? rec.type : item.type || 'page'
     if (!rec && this.resByLink.has(link) && !ids.length) rtype = 'page'
-    const kind = rows.kind_chip[rtype] ?? pyTitle(String(rtype))
+    const kind = rows.kind_chip[rtype] ?? titleCase(String(rtype))
     const tag = rec ? this.tagOf(rec.id) : this.tagForLink(link)
     let origin: string | null = null, status: string | null = null, dims: string | null = null
     if (rec) {
@@ -429,7 +451,8 @@ export class Answerer {
       dims = this.dimsLine(rec, link)
     } else if (item.group === 'Learn' && this.cat.curriculum) dims = this.dimsLine(null, link)
     const action = rows.action_by_type[rtype] || rows.action_by_group[item.group]
-    return { kind, tag, title: item.title, source: origin, status, dims, extract: item.extract, paidReferenceOnly: false, action, link, group: item.group }
+    const paid = !!rec && this.paid.has(rec.id)
+    return { kind, tag, title: item.title, source: origin, status, dims, extract: paid ? '' : item.extract, paidReferenceOnly: paid, action, link, group: item.group }
   }
   persona(): Map<string, string[]> {
     if (!this.personaPaths) {
@@ -443,26 +466,30 @@ export class Answerer {
     return this.personaPaths
   }
   rolePathRow(role: string): Item | null {
-    const mine = this.persona().get(role)
-    if (!mine) return null
-    const share = new Map(mine.map((m) => [m, [...this.persona().values()].filter((p) => p.includes(m)).length]))
-    const ranked = [...mine].sort((a, b) => share.get(a)! - share.get(b)! || cmpStr(a, b))
-    const stage = (m: string) => this.cat.curriculum?.modules[this.rec(m).key]?.stage ?? 9
-    const first = ranked.slice(0, 10).sort((a, b) => stage(a) - stage(b) || share.get(a)! - share.get(b)! || cmpStr(a, b))
-    const title = pyTitle(role.replace(/-/g, ' ')) + ' path'
-    return { kind: this.data.rows.kind_chip.path, tag: `PATH:${role}`, title, source: 'Hub curriculum', status: null, dims: null, extract: `The ${first.length} modules most specific to the ${pyTitle(role.replace(/-/g, ' '))} role, in stage order: ${first.map((m) => this.rec(m).label).join(', ')}. The rest are under "more for this role".`, paidReferenceOnly: false, action: 'Open path', link: `/go/PATH:${role}`, group: 'Learn' }
+    const stored = (this.cat.rolePaths?.[role]?.first ?? []).filter((m) => this.strict.records.has(m))
+    let first = stored
+    if (!stored.length) {
+      const mine = this.persona().get(role)
+      if (!mine) return null
+      const share = new Map(mine.map((m) => [m, [...this.persona().values()].filter((p) => p.includes(m)).length]))
+      const ranked = [...mine].sort((a, b) => share.get(a)! - share.get(b)! || cmpStr(a, b))
+      const stage = (m: string) => this.cat.curriculum?.modules[this.rec(m).key]?.stage ?? 9
+      first = ranked.slice(0, 10).sort((a, b) => stage(a) - stage(b) || share.get(a)! - share.get(b)! || cmpStr(a, b))
+    }
+    const title = titleCase(role.replace(/-/g, ' ')) + ' path'
+    return { kind: this.data.rows.kind_chip.path, tag: `PATH:${role}`, title, source: 'Hub curriculum', status: null, dims: null, extract: `The ${first.length} modules most specific to the ${titleCase(role.replace(/-/g, ' '))} role, in stage order: ${first.map((m) => this.rec(m).label).join(', ')}. The rest are under "more for this role".`, paidReferenceOnly: false, action: 'Open path', link: `/go/PATH:${role}`, group: 'Learn' }
   }
   linksOf(recs: Rec[]): Item {
     const taught: Item[] = [], tried: Item[] = []
     for (const r of recs) {
-      for (const t of (this.strict.forward.get(r.id + '\u0000taught_in') ?? []).slice(0, 2)) { const x = this.strict.records.get(t); if (x) taught.push({ title: x.label, tag: this.tagOf(t) }) }
-      for (const t of (this.strict.forward.get(r.id + '\u0000practised_with') ?? []).slice(0, 2)) { const x = this.strict.records.get(t); if (x) tried.push({ title: x.label, tag: this.tagOf(t) }) }
+      for (const t of (this.strict.forward.get(r.id + '\u0000taught_in') ?? []).slice(0, 2)) { const x = this.strict.records.get(t); if (x && !taught.some((y) => y.tag === this.tagOf(t))) taught.push({ title: x.label, tag: this.tagOf(t) }) }
+      for (const t of (this.strict.forward.get(r.id + '\u0000practised_with') ?? []).slice(0, 2)) { const x = this.strict.records.get(t); if (x && !tried.some((y) => y.tag === this.tagOf(t))) tried.push({ title: x.label, tag: this.tagOf(t) }) }
     }
     return { taughtIn: taught.slice(0, 2), tryIn: tried.slice(0, 2) }
   }
   entities(ids: string[]): Item[] {
     const recs = ids.map((i) => this.rec(i))
-    const chip = (r: Rec) => this.data.rows.kind_chip[r.type] ?? pyTitle(r.type)
+    const chip = (r: Rec) => this.data.rows.kind_chip[r.type] ?? titleCase(r.type)
     const single = (r: Rec): Item => ({ kind: chip(r), title: r.label, tag: this.tagOf(r.id), link: r.link || '', ids: [r.id], extract: extractOf(r.definition || ''), ...this.linksOf([r]) })
     const fams = recs.filter((r) => r.type === 'algorithmfamily')
     const norm = (x: string) => x.toLowerCase().replace(/[^a-z0-9]/g, '')

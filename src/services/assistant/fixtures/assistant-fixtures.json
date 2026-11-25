@@ -12,7 +12,10 @@
         "sourceLabel": "Answer drawn from",
         "sourceTag": "CMP:CNSA-2",
         "groupOrder": ["Data pages", "References", "Learn", "Tools"],
-        "firstRow": { "group": "Data pages", "tag": "CMP:CNSA-2" }
+        "firstRow": {
+          "group": "Data pages",
+          "tag": "CMP:CNSA-2"
+        }
       }
     },
     {
@@ -24,7 +27,10 @@
         "sourceLabel": "Closest source",
         "sourceTag": "GL:ml-kem",
         "groupOrder": ["References", "Learn", "Data pages", "Tools"],
-        "firstRow": { "group": "References", "tag": "GL:ml-kem" },
+        "firstRow": {
+          "group": "References",
+          "tag": "GL:ml-kem"
+        },
         "noteEndsWith": "No direct answer: resources only."
       }
     },
@@ -47,7 +53,10 @@
         "state": "resources",
         "intent": "dates",
         "noDirect": true,
-        "firstRow": { "group": "Data pages", "tag": "CMP:DORA" },
+        "firstRow": {
+          "group": "Data pages",
+          "tag": "CMP:DORA"
+        },
         "noteEndsWith": "No direct answer: resources only."
       }
     },
@@ -62,8 +71,12 @@
         "groupOrder": ["Learn", "References", "Tools", "Data pages"]
       },
       "withPersona": {
-        "executive": { "groupOrder": ["Learn", "References", "Data pages", "Tools"] },
-        "architect": { "groupOrder": ["Learn", "Tools", "References", "Data pages"] }
+        "executive": {
+          "groupOrder": ["Learn", "References", "Data pages", "Tools"]
+        },
+        "architect": {
+          "groupOrder": ["Learn", "Tools", "References", "Data pages"]
+        }
       }
     },
     {
@@ -95,6 +108,23 @@
         "intent": "broad",
         "note": "Broad match: the Hub has no direct answer to this. These are the closest resources.",
         "noSource": true
+      }
+    },
+    {
+      "id": "paid-standard-is-linked-not-quoted",
+      "question": "Where is the ANSI X9.62 standard?",
+      "expect": {
+        "state": "resources",
+        "paidTag": "LIB:ANSI X9.62"
+      }
+    },
+    {
+      "id": "rule-question-gets-no-bare-yes",
+      "question": "What does CNSA 2.0 require?",
+      "expect": {
+        "state": "resources",
+        "noDirect": true,
+        "sourceTag": "CMP:CNSA-2"
       }
     }
   ]
