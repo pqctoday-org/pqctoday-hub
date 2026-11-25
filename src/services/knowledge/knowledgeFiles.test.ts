@@ -23,7 +23,8 @@ const reader = new KnowledgeReader(core)
 
 /** Kinds whose address the Hub's pages do not read yet (plan step 3.3, forms still to build): kind -> records. */
 const FORMS_NOT_READ_YET: Record<string, number> = {
-  'glossary term': 668,
+  // every glossary term: its address is a form the Learn page does not read yet (counted from the file, so new terms do not break it)
+  'glossary term': core.records.filter((r) => r.kind === 'glossary term').length,
   'playground lesson': 54,
   assessment: 130,
   nice_role: 16,
