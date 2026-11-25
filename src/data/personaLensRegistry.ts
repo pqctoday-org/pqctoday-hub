@@ -123,6 +123,11 @@ export const PERSONA_LENS_REGISTRY: Record<string, PersonaLensEntry> = {
     onScreenNotice: 'src/components/common/SimplifiedViewNotice.tsx',
     note: 'Curious gets a labelled simplified build; executive’s row is dashed with a legend.',
   },
+  '/go': {
+    lens: 'deliberately-none',
+    onScreenNotice: 'src/components/Go/GoRedirect.tsx',
+    note: 'Redirect only: /go/<tag> opens the tagged resource on its own page, whose lens applies; an unknown tag says so on screen.',
+  },
   '/cacp-kmip': {
     lens: 'per-persona-view',
     configKeys: ['PERSONA_MARKED_NAV_PATHS'],
