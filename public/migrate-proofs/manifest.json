@@ -33008,6 +33008,51 @@
       "admittedBy": "evidence admission",
       "identity": "RELEVANT",
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Renesas-RA-FSP-MCUboot-Port",
+      "refId": "Renesas-RA-FSP-MCUboot-Port",
+      "file": "Renesas-RA-FSP-MCUboot-Port-9d6e21c0.pdf",
+      "sizeBytes": 7203736,
+      "content_type": "application/pdf",
+      "url": "https://www.renesas.com/en/document/apn/secure-bootloader-using-mcuboot-post-quantum-cryptography?r=1054161",
+      "sha256": "e92388cf4a769102289c7ce941de73b22cc6fdcf9ad588e80f1315097956ca0c",
+      "artefact": "SOURCE",
+      "unified": "current",
+      "admittedAt": "2026-11-25T01:33:45.819466+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "bytes"
+    },
+    {
+      "product_id": "Renesas-RH850-U2C",
+      "refId": "Renesas-RH850-U2C",
+      "file": "Renesas-RH850-U2C-b21b2f00-2fac0192.html",
+      "sizeBytes": 235269,
+      "content_type": "text/html",
+      "url": "https://www.renesas.com/en/about/newsroom/renesas-expands-auto-mcu-portfolio-28nm-rh850u2c-vehicle-control-and-automotive-safety-applications",
+      "sha256": "2fac019265e876e80861959b6a34612b856bf12c62a720bb396474e39f7c428a",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T01:33:52.899279+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Renesas-RH850-U2C",
+      "refId": "Renesas-RH850-U2C",
+      "file": "Renesas-RH850-U2C-b21b2f00-f4a64dcb.html",
+      "sizeBytes": 235269,
+      "content_type": "text/html",
+      "url": "https://www.renesas.com/en/about/newsroom/renesas-expands-auto-mcu-portfolio-28nm-rh850u2c-vehicle-control-and-automotive-safety-applications",
+      "sha256": "f4a64dcb5026e8c2fbf53408e9460ca4db5297a928c8dc851accfabf8592d702",
+      "artefact": "SOURCE",
+      "unified": "converted",
+      "admittedAt": "2026-11-25T01:33:53.292846+00:00",
+      "admittedBy": "evidence admission",
+      "identity": "RELEVANT",
+      "tier": "curl_cffi:chrome124"
     }
   ],
   "hashBackfillNote": "sha256 and sizeBytes added for 175 entr(ies) on 2026-09-27 by maintenance/lineage/rebuild_manifest.py --additive. No existing field was modified; entries whose file could not be located were left untouched."
