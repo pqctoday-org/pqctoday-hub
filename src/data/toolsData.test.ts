@@ -10,6 +10,7 @@
  *  - every page-visible fact is identical to what the app showed before the move.
  */
 import { execFileSync } from 'node:child_process'
+import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import {
@@ -33,6 +34,12 @@ import { LEARN_MODULES, LEARN_MODULE_BY_ID } from './generated/learnModules.gene
 import { moduleIdFromToolLink } from './moduleToolLinks'
 import golden from './__golden__/toolFacts.beforeMove.golden.json'
 import { captureToolFacts } from './__fixtures__/toolSnapshot'
+
+/** Sort key of a dated file name: date, then revision. */
+const key = (file: string) => {
+  const m = file.match(/^tools_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)!
+  return `${m[3]}${m[1]}${m[2]}${(m[4] ?? '0').padStart(3, '0')}`
+}
 
 const sources = import.meta.glob<string>(
   [
@@ -215,6 +222,44 @@ describe('tools data file: generated records', () => {
   })
 })
 
+describe('tools data file: NICE statements', () => {
+  const STATEMENT = /^[KST]\d{4}$/
+
+  it('lists only well-formed statement ids, each once, never as both taught and practised (the generator checks them against the NICE components)', () => {
+    for (const row of TOOL_RECORDS) {
+      const taught = row.niceStatementsTaught ?? []
+      const practised = row.niceStatementsPractised ?? []
+      for (const id of [...taught, ...practised]) {
+        expect(id, `${row.toolId}: ${id}`).toMatch(STATEMENT)
+      }
+      expect(new Set(taught).size, `${row.toolId}: repeated taught id`).toBe(taught.length)
+      expect(new Set(practised).size, `${row.toolId}: repeated practised id`).toBe(practised.length)
+      expect(
+        taught.filter((id) => practised.includes(id)),
+        `${row.toolId}: taught and practised`
+      ).toEqual([])
+    }
+  })
+
+  it('has the two statement columns in the newest dated file, empty or filled', () => {
+    const header = readFileSync(
+      join(
+        process.cwd(),
+        'src',
+        'data',
+        readdirSync(join(process.cwd(), 'src', 'data'))
+          .filter((f) => /^tools_\d{8}(_r\d+)?\.csv$/.test(f))
+          .sort((a, b) => key(a).localeCompare(key(b)))
+          .pop()!
+      ),
+      'utf8'
+    ).split('\n')[0]
+    expect(header.split(',')).toEqual(
+      expect.arrayContaining(['nice_statements_taught', 'nice_statements_practised'])
+    )
+  })
+})
+
 describe('tools data file: lesson links', () => {
   it('names the lesson a tool opens, and only that lesson', () => {
     for (const tool of WORKSHOP_TOOLS.filter((t) => !t.sandbox)) {
@@ -228,7 +273,7 @@ describe('tools data file: lesson links', () => {
   })
 
   it('points every module cell at a real lesson', () => {
-    for (const row of PLAYGROUND_TOOL_RECORDS) {
+    for (const row of TOOL_RECORDS) {
       if (row.module) expect(LEARN_MODULE_BY_ID[row.module], row.toolId).toBeDefined()
     }
   })
