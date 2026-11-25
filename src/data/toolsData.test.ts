@@ -360,9 +360,16 @@ describe('the move changed nothing a page shows', () => {
   const intended = (key: string): unknown => {
     const snapshot = structuredClone(before[key])
     if (key === 'workshopTools') {
-      for (const tool of snapshot as { id: string; moduleLink: string }[]) {
-        if (tool.id === 'cacp-kmip') tool.moduleLink = '/learn/crypto-agility'
-        if (tool.id === 'openssl-studio') tool.moduleLink = '/learn/crypto-dev-apis'
+      for (const tool of snapshot as { id: string; moduleLink: string; version: string }[]) {
+        // a changed lesson link is a change to the tool: its version goes up by a patch
+        if (tool.id === 'cacp-kmip') {
+          tool.moduleLink = '/learn/crypto-agility'
+          tool.version = '1.0.10'
+        }
+        if (tool.id === 'openssl-studio') {
+          tool.moduleLink = '/learn/crypto-dev-apis'
+          tool.version = '1.0.8'
+        }
       }
     }
     if (key === 'toolNice') {
