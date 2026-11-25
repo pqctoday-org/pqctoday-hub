@@ -14,6 +14,8 @@ import { personaDefaultRole } from '@/data/niceFramework'
 import { TREE_LESSONS, compareTreeOrder, lessonByTag, type TreeLesson } from './lessons'
 import type { Objective, Step, StepOrigin } from './types'
 import { NO_ROLE } from './types'
+import { BROAD, STOP, stem } from './goalWords'
+import { linkEvidence, type LessonReason, type NamedRecord } from './objectiveNamed'
 
 export type PreviewState = 'broad' | 'ready' | 'duplicate' | 'gap'
 
@@ -43,6 +45,8 @@ export interface ObjectivePreview {
   duplicateOf: string | null
   /** The first required lesson that is not done yet; null when every required lesson is done (the self-assessed step is first). */
   firstStepTag: string | null
+  /** For a lesson of the objective that the knowledge model's links put there: the named thing it teaches, and where. */
+  reasons?: Record<string, LessonReason[]>
 }
 
 export interface PreviewInput {
@@ -52,30 +56,11 @@ export interface PreviewInput {
   industry?: string | null
   existing: readonly Objective[]
   isDone: (tag: string) => boolean
-}
-
-const STOP = new Set(
-  (
-    'a an the and or but of in on at to for from by with without about as is are was were be been being it its this that these those ' +
-    'i me my we our us you your they their he she him her what which who whom how why when where can could should would will shall may might must do does did ' +
-    'want wants wanted need needs able get gets make makes use uses using like just also more most some any all each very so if then than into over under ' +
-    'learn learning understand know knowing build builds help helps new one two three first next ' +
-    'review design plan prepare create explain brief explore study cover covers covering'
-  ).split(' ')
-)
-
-/** Words that name the whole subject: a goal made only of these is too broad to map. */
-const BROAD = new Set(
-  (
-    'pqc post quantum cryptography cryptographic crypto security secure cyber cybersecurity everything anything general overview ' +
-    'introduction intro basics basic fundamentals topic topics stuff things safe resistant postquantum quantumsafe'
-  ).split(' ')
-)
-
-function stem(word: string): string {
-  if (word.length > 4 && word.endsWith('ies')) return `${word.slice(0, -3)}y`
-  if (word.length > 3 && word.endsWith('s') && !word.endsWith('ss')) return word.slice(0, -1)
-  return word
+  /**
+   * The records the goal names, already looked up in the knowledge model (`resolveNamed`). Left out while the model is
+   * not loaded or could not be loaded: the preview then reads the words only, exactly as it did before the model.
+   */
+  named?: readonly NamedRecord[]
 }
 
 /** Lowercase words of a text, with each run of letters and digits one word ("ML-KEM" gives "ml", "kem" and "mlkem"). */
@@ -333,7 +318,18 @@ function orderLessons(picked: Map<string, StepOrigin>): TreeLesson[] {
   return placed
 }
 
-/** Builds the preview of a goal. Pure: it reads the lessons data and the arguments, nothing else. */
+/**
+ * Builds the preview of a goal. Pure: it reads the lessons data and the arguments, nothing else.
+ *
+ * How the words and the knowledge model's links combine: a lesson's score is its word score (above) plus its link
+ * score (`linkEvidence`: for every record the goal names, the lessons that record is taught in, each worth up to 6,
+ * less for a link known only by a section title and much less the more lessons the record is taught in, so a term
+ * taught in one to three lessons makes each a match by itself and a document cited by twenty lessons barely moves
+ * any of them). A lesson is a match, and so required with its take-first lessons, when the sum reaches the same
+ * minimum as before, whether the goal's words are in its title or not; matches are cut at half the best score, at
+ * three matches and at seven required lessons as before. A goal that names no record, or a preview built without
+ * the model, scores by words alone, unchanged.
+ */
 export function buildPreview(input: PreviewInput): ObjectivePreview {
   const goal = input.goal.trim()
   const role = input.persona ?? NO_ROLE
@@ -350,7 +346,13 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
   }
   const content = contentWords(goal)
   const specific = content.filter((w) => !BROAD.has(w))
-  if (specific.length === 0 || (specific.length === 1 && lessonsNaming(specific[0]) > 12)) {
+  const links = linkEvidence(input.named ?? [])
+  // A single word that many lessons mention is too broad, unless the model says which lessons teach what it names.
+  const taughtByName = [...links.values()].some((e) => e.score >= MATCH_MIN)
+  if (
+    specific.length === 0 ||
+    (specific.length === 1 && lessonsNaming(specific[0]) > 12 && !taughtByName)
+  ) {
     return empty
   }
 
@@ -361,10 +363,11 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
     .map((row) => {
       const { text, label } = scoreLesson(row, tokens, industry)
       const roleBoost = roleId && row.lesson.niceWorkRoles.includes(roleId) ? 0.5 : 0
-      return { lesson: row.lesson, score: text > 0 ? text + roleBoost : 0, label }
+      const sum = text + (links.get(row.lesson.lmId)?.score ?? 0)
+      return { lesson: row.lesson, score: sum > 0 ? sum + roleBoost : 0, label }
     })
     .filter((r) => r.score + r.label >= OPTIONAL_MIN)
-  // Matches say the goal's words in their title or description; tag-only lessons never reach this list.
+  // Matches say the goal's words in their title or description, or are taught what the goal names; tag-only lessons never reach this list.
   const scored = scoredAll
     .filter((r) => r.score >= MATCH_MIN)
     .sort((a, b) => b.score - a.score || b.label - a.label || byFocus(a, b))
@@ -379,6 +382,10 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
     )
 
   const covered = coveredWords(specific)
+  // A word of a phrase the model found teaching lessons is covered.
+  for (const r of input.named ?? []) {
+    for (const w of r.phrase.split(' ')) covered.add(stem(w))
+  }
   const notCovered = specific.filter((w) => !covered.has(w))
 
   if (scored.length === 0) {
@@ -442,6 +449,11 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
 
   const duplicate = findDuplicate(goal, role, requiredModuleTags, input.existing)
   const gap = notCovered.length >= 2 && notCovered.length / specific.length >= 0.5
+  const reasons: Record<string, LessonReason[]> = {}
+  for (const s of steps) {
+    const why = (links.get(s.tag)?.reasons ?? []).filter((x) => x.strength >= OPTIONAL_MIN)
+    if (why.length > 0) reasons[s.tag] = why
+  }
 
   return {
     state: duplicate ? 'duplicate' : gap ? 'gap' : 'ready',
@@ -453,6 +465,7 @@ export function buildPreview(input: PreviewInput): ObjectivePreview {
     alreadyDone,
     duplicateOf: duplicate?.id ?? null,
     firstStepTag: steps.find((s) => s.required && !s.alreadyDone)?.tag ?? null,
+    ...(Object.keys(reasons).length > 0 ? { reasons } : {}),
   }
 }
 
