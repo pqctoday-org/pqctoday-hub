@@ -287,7 +287,30 @@ describe('Save answer', () => {
       sourceTag: 'CMP:CNSA-2',
       rowTags: ['CMP:CNSA-2', 'LIB:FIPS 203', 'LM-008'],
     })
-    expect(await screen.findByRole('button', { name: 'Saved to My work' })).toBeDisabled()
+    expect(await screen.findByRole('button', { name: 'Saved to My work' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    )
+  })
+
+  it('keeps keyboard focus on the button after saving, and a second press stores nothing more', async () => {
+    const user = userEvent.setup()
+    const saveAnswer = vi.fn(() => ({ ok: true as const, alreadySaved: false }))
+    setSavedAnswersPort({
+      saveAnswer,
+      isAnswerSaved: () => false,
+      saveReference: () => ({ ok: true, alreadySaved: false }),
+      isReferenceSaved: () => false,
+    })
+    show(directAnswerCnsa as RenderableAnswer)
+    const save = screen.getByRole('button', { name: 'Save answer' })
+    save.focus()
+    await user.keyboard('{Enter}')
+    const saved = await screen.findByRole('button', { name: 'Saved to My work' })
+    expect(saved).toBe(save)
+    expect(saved).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(saveAnswer).toHaveBeenCalledTimes(1)
   })
 
   it('keeps the button and says so when the save fails', async () => {
@@ -312,7 +335,10 @@ describe('Save answer', () => {
       isReferenceSaved: () => true,
     })
     show(directAnswerCnsa as RenderableAnswer)
-    expect(screen.getByRole('button', { name: 'Saved to My work' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Saved to My work' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    )
   })
 })
 

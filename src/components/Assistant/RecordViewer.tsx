@@ -44,6 +44,7 @@ export function RecordViewer({
   const from = [row.tag, row.source ? `Source: ${row.source}` : null, dims].filter(Boolean)
 
   const onSave = () => {
+    if (saved) return
     const result = saveReference({ tag: row.tag, title: row.title, kind: row.kind, question })
     if (result.ok) {
       setSaved(true)
@@ -99,7 +100,8 @@ export function RecordViewer({
             </StoryButton>
           ) : (
             <>
-              <StoryButton variant="secondary" onClick={onSave} disabled={saved}>
+              {/* Not `disabled`: a button that is disabled while it has focus drops keyboard focus to the page. */}
+              <StoryButton variant="secondary" onClick={onSave} aria-disabled={saved || undefined}>
                 {saved ? (
                   <>
                     <Check size={14} aria-hidden="true" />
@@ -118,7 +120,7 @@ export function RecordViewer({
         </div>
         {saveFailed && (
           <p role="alert" className="text-xs text-status-error">
-            {COPY.saveFailed}
+            {COPY.saveReferenceFailed}
           </p>
         )}
       </StickerCard>

@@ -173,6 +173,7 @@ export function SaveAnswerBlock({ answer }: { answer: RenderableAnswer }) {
   const [saved, setSaved] = useState(() => isAnswerSaved(draft))
   const [failed, setFailed] = useState(false)
   const onSave = () => {
+    if (saved) return
     const result = saveAnswer(draft)
     if (result.ok) {
       setSaved(true)
@@ -186,7 +187,8 @@ export function SaveAnswerBlock({ answer }: { answer: RenderableAnswer }) {
       <StoryButton
         variant="quiet"
         onClick={onSave}
-        disabled={saved}
+        // Not `disabled`: a button that is disabled while it has focus drops keyboard focus to the page.
+        aria-disabled={saved || undefined}
         aria-live="polite"
         className="gap-1.5"
       >

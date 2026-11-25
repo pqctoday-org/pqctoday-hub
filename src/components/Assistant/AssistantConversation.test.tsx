@@ -239,7 +239,10 @@ describe('opening a resource', () => {
     const user = await askConcept()
     await user.click(screen.getByRole('button', { name: 'Read here: ML-KEM' }))
     await user.click(screen.getByRole('button', { name: 'Save to My work' }))
-    expect(await screen.findByRole('button', { name: 'Saved to My work' })).toBeDisabled()
+    expect(await screen.findByRole('button', { name: 'Saved to My work' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    )
   })
 
   it('Go to module navigates and leaves the desktop drawer open, with no return bar', async () => {

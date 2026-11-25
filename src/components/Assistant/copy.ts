@@ -25,6 +25,7 @@ export const COPY = {
   saveAnswer: 'Save answer',
   saved: 'Saved to My work',
   saveFailed: 'Your answer was not saved. Nothing was lost. Try again.',
+  saveReferenceFailed: 'This record was not saved. Nothing was lost. Try again.',
   saveReference: 'Save to My work',
   backToAnswer: 'Back to your answer',
   close: 'Close',
