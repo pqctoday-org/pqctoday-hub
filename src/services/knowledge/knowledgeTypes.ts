@@ -27,6 +27,8 @@ export interface KnowledgeRecord {
   /** A path's members in order, and the modules shown under "more". */
   parts?: string[]
   more?: string[]
+  /** True for a library document that is a paid standard: the Hub links to it and never quotes it. */
+  paid?: boolean
   facets?: Record<string, string>
 }
 
@@ -44,5 +46,12 @@ export interface KnowledgeCore {
   /** Normalised name (see `normName`) to the records and kinds it names. */
   aliases: Record<string, [id: string, kind: string][]>
   links: KnowledgeLink[]
+  /** Per lesson tag: how general or applied it is, and the topics it explains (what the Learn ranking reads). */
+  curriculum?: Record<string, { breadth?: string; explains?: string[] }>
+  /** "<from>|replaced_by|<to>": the checked passage that says the second document replaces the first. */
+  successors?: Record<
+    string,
+    { kind: string; passage: string; source_url?: string; doc_sha256?: string }
+  >
   relations: Record<string, { forward: string; inverse: string; [k: string]: unknown }>
 }

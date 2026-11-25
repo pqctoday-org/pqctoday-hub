@@ -8,6 +8,18 @@
 export interface KnowledgeTextEntry {
   full: string
   url?: string
+  /** Other text a record keeps: lesson summaries, topics, release notes, manual text, document passages. */
+  summary?: string
+  topic?: string
+  curious?: string
+  analysis?: string
+  release_notes?: string
+  manual?: string
+  passages?: string[]
+  /** A lesson's own text: [file name, text] pairs. */
+  lesson?: [string, string][]
+  quiz?: { question: string; options: Record<string, string>; explanation?: string }
+  qa?: { id: string; question: string; answer: string }[]
   [k: string]: unknown
 }
 

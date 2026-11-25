@@ -36,6 +36,8 @@ interface Loaded {
   intents: Record<string, { label: string; direct: boolean }>
   /** The kind chip of a row: the engine's chip for the record's type, or the record's own kind when the engine has none. */
   chip: (tag: string, engineKind: string) => string
+  /** Where a row opens: the engine's address, except a short `/go/` address, which becomes the record's own address. */
+  address: (tag: string, engineLink: string) => string
 }
 
 let loading: Promise<Loaded> | null = null
@@ -47,12 +49,19 @@ const YES_NO_QUESTION =
 /**
  * Last check before a value is shown as a direct answer: when in doubt, resources only. A value that was cut short is
  * never shown, and a bare yes or no answers only a question that can be answered yes or no ("What does CNSA 2.0 require?"
- * is not one).
+ * is not one), and neither is the mark that says whether a rule asks for post-quantum cryptography.
  */
-export function directValueFits(question: string, value: string): boolean {
+export function directValueFits(
+  question: string,
+  value: string,
+  field: string | null = null
+): boolean {
   const text = value.trim()
   if (!text || text.endsWith('…')) return false
-  if (YES_NO_VALUE.test(text) && !YES_NO_QUESTION.test(question)) return false
+  const yesNo = YES_NO_QUESTION.test(question)
+  if (YES_NO_VALUE.test(text) && !yesNo) return false
+  // a record's "requires post-quantum cryptography" mark (yes, no, expected, guidance) says whether, never what
+  if (field === 'requires_pqc' && !yesNo) return false
   return true
 }
 
@@ -69,16 +78,23 @@ async function load(): Promise<Loaded> {
     import('./data/data.generated.json'),
     import('./data/answer.generated.json'),
   ])
-  const { model, catalogue } = build.buildEngineInput(reader.core, text)
+  const { model, catalogue, statements } = build.buildEngineInput(reader.core, text)
   class GuardedAnswerer extends engine.Answerer {
     override direct(question: string, reading: Reading) {
       const found = super.direct(question, reading)
-      return found && directValueFits(question, String(found.value)) ? found : null
+      return found && directValueFits(question, String(found.value), found.field ?? null)
+        ? found
+        : null
     }
   }
-  // The Hub holds no successor passages to check against (no statements), so a "what replaced it" question never gets a
-  // direct answer here: it gets the closest resources.
-  const answerer = new GuardedAnswerer(data.default, catalogue, model, patterns.default, {}, {})
+  const answerer = new GuardedAnswerer(
+    data.default,
+    catalogue,
+    model,
+    patterns.default,
+    statements,
+    {}
+  )
   const spec = data.default as unknown as {
     roles: { roles: Record<string, unknown> }
     intents: { intents: Record<string, { label: string; direct: boolean }> }
@@ -89,11 +105,14 @@ async function load(): Promise<Loaded> {
     if (!rec || rec.type in spec.rows.kind_chip) return engineKind
     return rec.kind.charAt(0).toUpperCase() + rec.kind.slice(1)
   }
+  const address = (tag: string, engineLink: string): string =>
+    engineLink.startsWith('/go/') ? (reader.get(tag)?.link ?? engineLink) : engineLink
   return {
     answerer,
     roles: new Set(Object.keys(spec.roles.roles)),
     intents: spec.intents.intents,
     chip,
+    address,
   }
 }
 
@@ -135,7 +154,7 @@ const GROUP_SET = new Set<string>(ASSISTANT_GROUPS)
 const NOT_HELD_REASON =
   /no such value|holds no value|links nothing|no successor recorded|successor recorded but no supporting/
 
-function toRow(raw: Raw, chip: Loaded['chip']): AssistantRow {
+function toRow(raw: Raw, chip: Loaded['chip'], address: Loaded['address']): AssistantRow {
   const action = ACTIONS.has(raw.action) ? (raw.action as AssistantRowAction) : 'Go to page'
   const group: AssistantGroupName = GROUP_SET.has(raw.group) ? raw.group : 'Data pages'
   return {
@@ -148,19 +167,19 @@ function toRow(raw: Raw, chip: Loaded['chip']): AssistantRow {
     extract: String(raw.extract ?? ''),
     paidReferenceOnly: raw.paidReferenceOnly === true,
     action,
-    link: String(raw.link),
+    link: address(String(raw.tag), String(raw.link)),
     goLink: assistantGoLink(String(raw.tag)),
     group,
   }
 }
 
-function toGroups(raw: Raw[], chip: Loaded['chip']): AssistantGroup[] {
+function toGroups(raw: Raw[], loaded: Loaded): AssistantGroup[] {
   return raw
     .filter((g) => GROUP_SET.has(g.name) && (g.rows.length || g.more.length))
     .map((g) => ({
       name: g.name as AssistantGroupName,
-      rows: (g.rows as Raw[]).map((r) => toRow(r, chip)),
-      more: (g.more as Raw[]).map((r) => toRow(r, chip)),
+      rows: (g.rows as Raw[]).map((r) => toRow(r, loaded.chip, loaded.address)),
+      more: (g.more as Raw[]).map((r) => toRow(r, loaded.chip, loaded.address)),
     }))
 }
 
@@ -199,7 +218,7 @@ export async function answer(
     persona,
     answerText: String(raw.answerText),
     note: String(raw.note),
-    groups: toGroups(raw.groups ?? [], loaded.chip),
+    groups: toGroups(raw.groups ?? [], loaded),
   }
 
   if (intent === 'name') {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { normName } from '@/services/knowledge/knowledgeReader'
 import type { KnowledgeCore, KnowledgeRecord } from '@/services/knowledge/knowledgeTypes'
-import type { KnowledgeTextFile } from '@/services/knowledge/knowledgeText'
+import type { KnowledgeTextEntry, KnowledgeTextFile } from '@/services/knowledge/knowledgeText'
 import type { Catalogue, Passage, Resource } from './engine/answerer'
 import type { Model, Rec } from './engine/strict'
 
@@ -18,6 +18,18 @@ const HEADER =
   /^(?:Module|Component|Term|Reference|Title|Learning Module|Document|Section|Category):\s*/i
 /** A passage keeps this many characters of a record's text, as the search index always has. */
 const PASSAGE_CHARS = 8000
+/** A lesson's text is cut into passages of this many characters. */
+const LESSON_PIECE = 3000
+/** The kinds of text a record keeps, in order, and the name each passage carries (`null`: the record's own kind). */
+const TEXT_KINDS: [keyof KnowledgeTextEntry, string | null][] = [
+  ['full', null],
+  ['summary', 'module-summaries'],
+  ['topic', 'module-topic-summaries'],
+  ['curious', 'module-curious'],
+  ['analysis', 'document-enrichment'],
+  ['release_notes', 'changelog'],
+  ['manual', 'user-manual'],
+]
 
 /**
  * The newest dated data file of each family names its revision in the evidence line ("Data file compliance_11182026_r3").
@@ -112,6 +124,8 @@ function definitionOf(r: KnowledgeRecord, full: string | undefined): string {
 export interface BuiltEngineInput {
   model: Model
   catalogue: Catalogue
+  /** The checked passages that say one document replaces another, as the strict reader reads them. */
+  statements: Record<string, unknown>
 }
 
 /** Everything the engine reads, from the core file and the text file. */
@@ -190,9 +204,7 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
 
   // ---------------------------------------------------------------- passages: each active record's own text
   const passages: Passage[] = []
-  for (const [id, entry] of Object.entries(entries)) {
-    const r = byId.get(id)
-    if (!r || !r.link || !entry.full || !ACTIVE(r)) continue
+  const addPassage = (r: KnowledgeRecord, title: string, content: string, source: string) => {
     let res = resources.get(r.link)
     if (!res) {
       res = {
@@ -207,13 +219,40 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
       resources.set(r.link, res)
     }
     res.passages.push(passages.length)
-    if (!res.extract) res.extract = extractOf(String(entry.full))
-    passages.push({
-      link: r.link,
-      title: r.label,
-      text: String(entry.full).slice(0, PASSAGE_CHARS),
-      source: r.type === 'module' ? 'module-topic-summaries' : r.kind,
-    })
+    if (!res.extract) res.extract = extractOf(content)
+    passages.push({ link: r.link, title, text: content, source })
+  }
+  for (const [id, entry] of Object.entries(entries)) {
+    const r = byId.get(id)
+    if (!r || !r.link || !ACTIVE(r)) continue
+    // one passage per kind of text, named by what it is, so the finder weighs each kind as it should
+    for (const [key, source] of TEXT_KINDS) {
+      const text = key === 'full' ? entry.full : (entry[key] as string | undefined)
+      if (text)
+        addPassage(
+          r,
+          r.label,
+          String(text).slice(0, PASSAGE_CHARS),
+          source ?? (r.type === 'module' ? 'modules' : r.kind)
+        )
+    }
+    if (entry.passages?.length)
+      addPassage(r, r.label, entry.passages.join('\n').slice(0, PASSAGE_CHARS), 'library')
+    // a lesson's own text, a file at a time, in pieces the size of a search passage
+    for (const [, text] of entry.lesson ?? []) {
+      for (let i = 0; i < text.length; i += LESSON_PIECE)
+        addPassage(r, r.label, text.slice(i, i + LESSON_PIECE), 'module-content')
+    }
+    const q = entry.quiz
+    if (q)
+      addPassage(
+        r,
+        r.label,
+        [q.question, ...Object.values(q.options), q.explanation ?? ''].join('\n'),
+        'quiz'
+      )
+    for (const qa of entry.qa ?? [])
+      addPassage(r, qa.question, `${qa.question}\n${qa.answer}`, 'module-qa')
   }
 
   // ---------------------------------------------------------------- dimensions, curriculum, file revisions
@@ -223,26 +262,38 @@ export function buildEngineInput(core: KnowledgeCore, text: KnowledgeTextFile): 
     const place = asList(r.d?.geo).sort()
     if (industry.length || place.length) dims[r.id] = { industry, place }
   }
+  // the learning journey: only the lessons the core's curriculum names, each with its stage (the stage record it belongs
+  // to), its track, how general it is and the topics it explains
   const stages: Record<string, string> = {}
   for (const r of core.records) {
-    if (r.type === 'stage') stages[r.id.replace(/^STG:/, '')] = r.label
+    if (r.id.startsWith('STG:')) stages[r.id.slice(4)] = r.label
   }
-  const trackLabel = (tag: string | undefined) => (tag ? (byId.get(tag)?.label ?? '') : '')
-  const modules: Record<string, { stage: number; track: string; title: string }> = {}
+  const modules: Record<string, Record<string, unknown>> = {}
+  for (const [tag, extra] of Object.entries(core.curriculum ?? {})) {
+    const r = byId.get(tag)
+    if (!r || !r.link.startsWith('/learn/') || !(r.parent ?? '').startsWith('STG:')) continue
+    const track = byId.get(r.facets?.track ?? '')?.label ?? ''
+    modules[r.link.slice('/learn/'.length)] = { stage: Number(r.parent?.slice(4)), track, ...extra }
+  }
+  // each role path record: the lessons of the path, and those under "more for this role"
+  const rolePaths: Record<string, { first: string[]; rest: string[] }> = {}
   for (const r of core.records) {
-    if (r.type !== 'module' || !r.link.startsWith('/learn/')) continue
-    const stage = Number((r.parent ?? '').replace(/^STG:/, ''))
-    if (!Number.isFinite(stage) || stage < 1) continue
-    modules[keyOf(r)] = { stage, track: trackLabel(r.facets?.track), title: r.label }
+    if (r.kind === 'role path' && r.parts?.length)
+      rolePaths[r.id.slice(r.id.indexOf(':') + 1)] = {
+        first: [...r.parts],
+        rest: [...(r.more ?? [])],
+      }
   }
 
   const catalogue: Catalogue = {
     resources: [...resources.values()],
     passages,
     curriculum: { modules, stages },
+    paid: core.records.filter((r) => r.paid).map((r) => r.id),
+    rolePaths,
     dims,
     inputs: core.meta.inputs.map((i) => i[0]),
     filePrefix: FAMILY_FILE_PREFIX,
   }
-  return { model, catalogue }
+  return { model, catalogue, statements: core.successors ?? {} }
 }

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * The strict direct-answer reader (port of the harness's `answer.py`): question -> pattern -> record name -> alias lookup ->
+ * The strict direct-answer reader: question -> pattern -> record name -> alias lookup ->
  * query on the link table -> answer, built only from records, links and statements. Never guesses: a name that fits several
  * records asks the reader to choose; a successor without an eligible, current passage is not stated.
  * Result kinds: answer, clarify, unanswered (with a reason), no_pattern.
- * Question words and patterns are data (`answer.generated.json`, from patterns.yaml and cues.yaml); nothing here is a model.
+ * Question words and patterns are data (`answer.generated.json`, a generated copy of the reader's pattern and cue files); no language model is involved.
  */
 
 export interface Rec {
@@ -65,7 +65,15 @@ export class Strict {
   typewords: Map<string, Set<string>>
   pats: { id: string; query: any; rx: { re: RegExp; field: string | null }[] }[]
   cues: Record<string, any>
-  constructor(private model: Model, private patterns: Patterns, private statements: Record<string, any>, private docHashes: Record<string, string | null>) {
+  private model: Model
+  private patterns: Patterns
+  private statements: Record<string, any>
+  private docHashes: Record<string, string | null>
+  constructor(model: Model, patterns: Patterns, statements: Record<string, any>, docHashes: Record<string, string | null>) {
+    this.model = model
+    this.patterns = patterns
+    this.statements = statements
+    this.docHashes = docHashes
     for (const r of model.records) this.records.set(r.id, r)
     const push = (m: Map<string, string[]>, k: string, v: string) => { const a = m.get(k); if (a) a.push(v); else m.set(k, [v]) }
     for (const e of model.links) {
@@ -481,7 +489,7 @@ export class Strict {
       for (const pair of this.cues.same_fact_fields ?? []) {
         if (pair.includes(readF)) {
           const vs = new Set<string>()
-          for (const f of pair) { const v = fieldsOf(start)[f]; if (!emptyV2(v)) vs.add(String(pyStr(v)).trim().toLowerCase().replace(/_/g, ' ')) }
+          for (const f of pair) { const v = fieldsOf(start)[f]; if (!emptyV2(v)) vs.add(String(fieldText(v)).trim().toLowerCase().replace(/_/g, ' ')) }
           if (vs.size > 1) return { kind: 'unanswered', reason: "the Hub's tables disagree on this value", read_as: readAs, record: this.brief(start), conflict: [...vs].sort() }
         }
       }
@@ -513,7 +521,7 @@ export class Strict {
       if (!start.definition) {
         const flds = Object.entries(fieldsOf(start)).filter(([, v]) => !emptyV2(v))
         if (!flds.length || !read.fields_summary_ok) return { kind: 'unanswered', reason: 'record found but it has no definition', read_as: readAs, record: this.brief(start) }
-        const text = flds.map(([k, v]) => `${k}: ${Array.isArray(v) ? v.map(pyStr).join(', ') : pyStr(v)}`).join('; ')
+        const text = flds.map(([k, v]) => `${k}: ${Array.isArray(v) ? v.map(fieldText).join(', ') : fieldText(v)}`).join('; ')
         return { kind: 'answer', read_as: readAs, record: this.brief(start), answer: this.brief(start), text: `${start.label || start.key} - ${text}`, from_fields: true, evidence: [] }
       }
       const out: Result = { kind: 'answer', read_as: readAs, record: this.brief(start), answer: this.brief(start), text: start.definition, evidence: [] }
@@ -545,5 +553,5 @@ export class Strict {
 }
 const ELIGIBLE = ['explicit', 'series', 'ietf-record', 'same-rfc', 'same-document', 'version', 'chain']
 function push2(m: Map<string, number[]>, k: string, v: number) { const a = m.get(k); if (a) a.push(v); else m.set(k, [v]) }
-/** Python's str() of a field value (floats keep ".0"); fields are strings in the harness model. */
-function pyStr(v: any): string { return typeof v === 'string' ? v : String(v) }
+/** A field value as text; fields are strings in the model. */
+function fieldText(v: any): string { return typeof v === 'string' ? v : String(v) }
