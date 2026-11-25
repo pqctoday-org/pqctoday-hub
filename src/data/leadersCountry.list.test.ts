@@ -56,7 +56,7 @@ describe('the newest leaders file', () => {
 
   it('holds only countries from the list on active rows (a jurisdiction name or code, ";"-joined for two)', () => {
     const off = rows
-      .filter((r) => !isLeaderCountryOnList(r.Country))
+      .filter((r) => r.status !== 'deprecated' && !isLeaderCountryOnList(r.Country))
       .map((r) => `${r.Name}: ${r.Country}`)
     expect(off).toEqual([])
   })
