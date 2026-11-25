@@ -11,6 +11,26 @@
   src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2');
 }
 
+/* Storybook Blue faces — self-hosted for the same reason (CSP `font-src 'self'`).
+   Latin subset of the variable fonts from the Google Fonts repository (SIL OFL 1.1);
+   source, licence and sha256 are recorded in src/data/sbomAssets.json.
+   Fredoka is the display face (headings, wordmark), Nunito the text face. */
+@font-face {
+  font-family: 'Fredoka';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/fredoka-latin-wght-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 200 1000;
+  font-display: swap;
+  src: url('/fonts/nunito-latin-wght-normal.woff2') format('woff2');
+}
+
 @theme {
   /* Simulation type floor (PR-4): legibility tokens so the console can't drop
      below the a11y floor. `text-sim-micro` (11px) is the body/label floor;
@@ -67,6 +87,21 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  /* Storybook Blue tokens (style addendum section 4). Defined per mode in
+     :root and .dark below; these make them Tailwind colours (`bg-ink`,
+     `border-ink`, `text-heading`, `bg-highlight`, `bg-chip`, `bg-ribbon`, ...). */
+  --color-ink: hsl(var(--ink));
+  --color-heading: hsl(var(--heading));
+  --color-edge: hsl(var(--edge));
+  --color-highlight: hsl(var(--highlight));
+  --color-highlight-border: hsl(var(--highlight-border));
+  --color-chip: hsl(var(--chip));
+  --color-chip-foreground: hsl(var(--chip-foreground));
+  --color-ribbon: hsl(var(--ribbon));
+  --color-logo-tile: hsl(var(--logo-tile));
+  --color-caution: hsl(var(--caution));
+  --color-caution-foreground: hsl(var(--caution-foreground));
+
   --color-success: hsl(var(--success));
   --color-success-foreground: hsl(var(--success-foreground));
 
@@ -107,10 +142,13 @@
   --color-embed-table-row: var(--embed-table-row-bg, var(--color-background));
   --color-embed-text: var(--embed-text-color, var(--color-foreground));
 
-  --font-family-sans: Inter, system-ui, sans-serif;
+  /* Storybook Blue type (style addendum section 3). Nunito is the text face and
+     the default; Fredoka is the display face, used through `font-display`. */
+  --font-family-sans: 'Nunito', Arial, sans-serif;
   /* Tailwind v4 `font-sans` utility + preflight default. Mirrors
-     --font-family-sans so existing `font-sans` usages resolve to Inter too. */
-  --font-sans: Inter, system-ui, sans-serif;
+     --font-family-sans so existing `font-sans` usages resolve to Nunito too. */
+  --font-sans: 'Nunito', Arial, sans-serif;
+  --font-display: 'Fredoka', 'Trebuchet MS', Arial, sans-serif;
 
   /* Z-index scale — centralised stacking order */
   --z-index-wip-badge: 51;
@@ -265,12 +303,16 @@
      still fail and is patched at the call site with the `-legible` variants.
      Dark mode is deliberately untouched — it already passes. */
 
+    /* STORYBOOK BLUE, 2026-11-25 (style addendum 24 Nov 2026, section 4). The
+       brand's own palette: ground #F8FAFC, warm ink #2A2620, card #FDFEFF (never
+       pure white), teal #066474, violet #6E42F0. Values are HSL channels computed
+       from those hex codes; the hex code is the source of truth. */
     --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --foreground: 36 13.5% 14.5%;
+    --card: 210 100% 99.6%;
+    --card-foreground: 36 13.5% 14.5%;
+    --popover: 210 100% 99.6%;
+    --popover-foreground: 36 13.5% 14.5%;
     --primary: 189 90% 24%;
     --primary-foreground: 210 40% 98%;
     /* Darker same-hue variant for small/thin TEXT on light surfaces — --primary
@@ -295,16 +337,19 @@
        bg-tertiary/20 (#e6d7fb), where 55% measured 4.20:1. 50% gives 4.69:1
        there and 5.38:1 on the /10 tint. */
     --tertiary-legible: 270 95% 50%;
-    --muted: 210 40% 96.1%;
+    --muted: 203.1 41.9% 93.9%;
     /* Wave A (2026-09-18): 35% was 4.42:1 once used at `/80` opacity on white
        (#fefefe), the caption pattern on Explore and Digital ID — 0.08 short of
        AA. 32% clears it (4.80:1) and lifts the plain colour from 7.35:1 to
        8.25:1. Opacities below /80 cannot be rescued by any lightness and were
        raised at the call sites in the same change. */
-    --muted-foreground: 215 16% 32%;
+    /* Storybook Blue 2026-11-25: warm soft ink #5A534A (7.2:1 on the ground). */
+    --muted-foreground: 33.7 9.8% 32.2%;
     /* a11y (2026-11-13): 32% gave white labels 4.53:1 solid but 3.82:1 on the
        bg-accent/90 hover. 28% gives 5.61:1 solid and 4.58:1 at /90. */
-    --accent: 153 60% 28%;
+    /* Storybook Blue 2026-11-25: brand green #218356, for shapes and decoration;
+       text uses --accent-legible. */
+    --accent: 152.4 59.8% 32.2%;
     --accent-foreground: 210 40% 98%;
     /* See the `-legible` note in the @theme block. Each value is the measured
        4.5:1 floor against that token's worst observed background:
@@ -321,7 +366,11 @@
        background — just under the 4.5:1 WCAG AA floor, so `.text-status-info`
        failed axe at 12px. 50% gives 4.83:1. This token exists precisely to be
        the legible-on-background variant of --info, so it has to clear AA. */
-    --info-legible: 217 91% 50%;
+    /* Storybook Blue 2026-11-25: 50% measured 4.2:1 on the pale-violet highlight
+       and 4.4:1 on the muted fill. 44% (lightness only, hue and saturation kept)
+       clears 4.5:1 on ground, card, muted and highlight; the contrast test in
+       src/styles/tokens.contrast.test.ts holds it. */
+    --info-legible: 217 91% 44%;
     /* Wave A (2026-09-18): 38% measured 4.23:1 on bg-destructive/30 (#f5babb,
        the error-boundary "Reload" button). 36% gives 4.57:1 there and 5.28:1+
        on the /10–/15 tints. */
@@ -332,10 +381,11 @@
        45% gives 5.17:1 solid and 4.72:1 at /90. */
     --destructive: 0 84.2% 45%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    /* Storybook Blue 2026-11-25: card edge #BCD0DC; inputs are outlined in ink. */
+    --border: 202.5 31.4% 80%;
+    --input: 36 13.5% 14.5%;
     --ring: 189 90% 24%;
-    --radius: 0.5rem;
+    --radius: 1rem;
     --success: 142.1 76.2% 25%;
     --success-foreground: 355.7 100% 97.3%;
     --warning: 38 92% 26%;
@@ -395,35 +445,55 @@
     --graph-leader: 10 60% 36%;
     --graph-vendor: 180 60% 30%;
     --stack-mix-base: white;
+
+    /* Storybook Blue tokens (light). Names and uses: style addendum section 4. */
+    --ink: 36 13.5% 14.5%; /* #2A2620 outlines of sticker cards, pills, chips, inputs */
+    --heading: 188.7 90.2% 23.9%; /* #066474 headings, eyebrow labels, wordmark */
+    --edge: 202.5 31.4% 80%; /* #BCD0DC offset edge under sticker cards and primary buttons */
+    --highlight: 255 92.3% 94.9%; /* #ECE6FE selected or current item */
+    --highlight-border: 254.7 76.8% 86.5%; /* #CFC2F7 */
+    --chip: 189.6 39.7% 87.6%; /* #D3E8EC chips and icon badges */
+    --chip-foreground: 189 87% 18%; /* #064A56 */
+    --ribbon: 201.8 45.8% 90.6%; /* #DCEAF2 eyebrow pills on the main ground */
+    --caution: 40 51.7% 88.6%; /* #F1E7D3 the caution pill */
+    --caution-foreground: 33.6 24.8% 19.8%; /* #3F3426 */
+    /* The pale tile the brand logo sits on. The logo was drawn on the ground colour
+       #F8FAFC, so the tile keeps that colour in dark mode too (set in :root only,
+       so .dark inherits it). */
+    --logo-tile: 210 40% 98%;
   }
 
   /* Dark Mode Overrides */
   .dark {
-    --background: 230 35% 7%;
-    --stack-mix-base: hsl(230, 35%, 5%);
-    --foreground: 210 40% 98%;
-    --card: 230 35% 7%;
-    --card-foreground: 210 40% 98%;
-    --popover: 230 35% 7%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 189 83% 53%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* STORYBOOK BLUE dark set, 2026-11-25 (style addendum section 5). PROPOSED:
+       the brand defines no dark palette; the owner approves these after looking
+       at real pages. Deep teal-black ground #0E1B20, card #13252B, soft teal
+       primary #6CCAD3, no pure black or white. */
+    --background: 196.7 39.1% 9%;
+    --stack-mix-base: hsl(196.7, 39.1%, 6%);
+    --foreground: 156 17.2% 94.3%;
+    --card: 195 38.7% 12.2%;
+    --card-foreground: 156 17.2% 94.3%;
+    --popover: 195 38.7% 12.2%;
+    --popover-foreground: 156 17.2% 94.3%;
+    --primary: 185.2 53.9% 62.5%;
+    --primary-foreground: 190.3 56.9% 10%;
     /* --primary already clears AA against the dark background at text sizes. */
-    --primary-legible: 189 83% 53%;
-    --secondary: 255 91% 76%;
+    --primary-legible: 185.2 53.9% 62.5%;
+    --secondary: 253.1 86.8% 76.3%;
     /* a11y (WS9, 2026-08-02): near-white on this light lavender was 2.63:1 —
        the worst contrast failure in the token set. Dark slate gives 6.49:1.
        Background unchanged. */
     --secondary-foreground: 222.2 47.4% 11.2%;
     --tertiary: 270 91% 65%;
     --tertiary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 194.5 37.7% 15.1%;
+    --muted-foreground: 193.3 17.2% 69.2%;
     /* a11y (2026-11-13): these fills are light in dark mode, so a light label
        read 1.83:1 (accent) and 2.56:1 (destructive). A dark label, as on
        primary and secondary, gives 9.31:1 and 6.66:1 solid, 7.65:1 and 5.54:1
        at /90. */
-    --accent: 153 66% 51%;
+    --accent: 149.4 53.2% 63.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 343 93% 71%;
     --destructive-foreground: 222.2 47.4% 11.2%;
@@ -432,16 +502,20 @@
        already light-on-dark and clear AA at text sizes, so darkening them
        here would make them WORSE. The variants exist so a single class works
        in both themes. */
-    --accent-legible: 153 66% 51%;
+    --accent-legible: 149.4 53.2% 63.1%;
     /* 2026-11-13: 71% (the base) read 4.38:1 on bg-destructive/30 here;
        76% gives 5.17:1 there and 8.48:1 on the page. */
     --destructive-legible: 343 93% 76%;
     /* Wave A (2026-09-18): was never restated here, so dark mode inherited the
        darkened light-mode purple — invisible on a dark surface. Equals base. */
-    --tertiary-legible: 270 91% 65%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 189 83% 53%;
+    /* Storybook Blue 2026-11-25: 65% measured 4.4:1 on the new ground and 4.0:1
+       on the new card, under the 4.5:1 floor. 74% (lightness only, hue and
+       saturation kept) clears it on ground, card, muted and highlight; the
+       contrast test holds it. */
+    --tertiary-legible: 270 91% 74%;
+    --border: 194.6 29.6% 24.5%;
+    --input: 196.2 19.8% 63.3%;
+    --ring: 185.2 53.9% 62.5%;
     --warning: 47.9 95.8% 53.1%;
     --warning-foreground: 26 83.3% 14.1%;
     --info: 213 93% 68%;
@@ -451,7 +525,10 @@
        restated here or dark mode would pick up the darkened light-mode one. */
     --warning-legible: 47.9 95.8% 53.1%;
     --info-legible: 213 93% 68%;
-    --success-legible: 142.1 76.2% 36.3%;
+    /* Storybook Blue 2026-11-25: 36.3% measured 4.3:1 on the new muted and
+       highlight fills (4.8:1 on the card). 40% (lightness only) gives 5.2:1 on
+       those and 5.8:1 on the card. */
+    --success-legible: 142.1 76.2% 40%;
     /* Critical — brighter magenta-red for dark mode legibility. */
     --critical: 335 90% 58%;
     --critical-foreground: 210 40% 98%;
@@ -497,6 +574,18 @@
     --graph-patent: 245 85% 76%;
     --graph-leader: 10 85% 68%;
     --graph-vendor: 180 75% 60%;
+
+    /* Storybook Blue tokens (dark, proposed). */
+    --ink: 196.2 19.8% 63.3%; /* #8FAAB4 */
+    --heading: 184.3 53% 74.1%; /* #9ADBE0 */
+    --edge: 190.1 76.3% 18.2%; /* #0B4652 deep teal under cards */
+    --highlight: 247 36.8% 22.9%; /* #2A2550 */
+    --highlight-border: 249.4 40.8% 49%; /* #5A4AB0 */
+    --chip: 191.1 38.8% 19.2%; /* #1E3D44 */
+    --chip-foreground: 185.6 50.6% 83.3%; /* #BFE6EA */
+    --ribbon: 196.7 39.1% 18%; /* #1C3640 */
+    --caution: 39.4 38.1% 16.5%; /* #3A2F1A */
+    --caution-foreground: 37.9 75.7% 77.5%; /* #F1D19A */
   }
 
   /* On screen: render as transparent block so report content is visible.
@@ -637,6 +726,17 @@
       --pillar-inventory-foreground: 210 40% 98%;
       --pillar-architecture: 271 65% 45%;
       --pillar-architecture-foreground: 210 40% 98%;
+      /* Storybook Blue tokens — print forces the light values */
+      --ink: 36 13.5% 14.5%;
+      --heading: 188.7 90.2% 23.9%;
+      --edge: 202.5 31.4% 80%;
+      --highlight: 255 92.3% 94.9%;
+      --highlight-border: 254.7 76.8% 86.5%;
+      --chip: 189.6 39.7% 87.6%;
+      --chip-foreground: 189 87% 18%;
+      --ribbon: 201.8 45.8% 90.6%;
+      --caution: 40 51.7% 88.6%;
+      --caution-foreground: 33.6 24.8% 19.8%;
     }
 
     /* Force white background and remove glass-panel effects */
