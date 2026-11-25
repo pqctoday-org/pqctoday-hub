@@ -681,6 +681,19 @@ export default defineConfig([
                 '!@/components/Simulation',
                 '@/components/Simulation/*',
                 '!@/components/Simulation/simChrome',
+                // Journey (release 5) — Your journey, the step bar, the new-objective
+                // flow, the role switch and the module-page additions are single
+                // responsive components that serve the desktop and the phone alike
+                // (one component, one behaviour, columns that stack): the phone mounts
+                // the same file instead of a second copy that could drift. The
+                // mount-point file is the places other panels fill, shared the same way.
+                '!@/components/Journey',
+                '@/components/Journey/*',
+                '!@/components/Journey/YourJourneyView',
+                '!@/components/Journey/FirstVisitPrompt',
+                '!@/components/Journey/ModuleFitStrip',
+                '!@/components/Journey/ModuleJourneyHeader',
+                '!@/components/Journey/mountPoints',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',

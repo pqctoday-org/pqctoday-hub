@@ -50,15 +50,15 @@ async function expectNoSidewaysScroll(page: Page, screenWidth: number) {
 const list = (page: Page) => page.getByTestId('mobile-browse-list')
 const moduleLinks = (page: Page) => list(page).getByRole('link')
 
-/** The module count the tab announces ("Browse all 75"), read off the page rather than typed here. */
+/** The module count the catalogue announces ("Showing 75 of 75"), read off the page rather than typed here. */
 async function catalogueCount(page: Page): Promise<number> {
-  const label = await page.getByRole('tab', { name: /^Browse all \d+$/ }).innerText()
-  return Number(/(\d+)$/.exec(label.trim())![1])
+  const status = await page.getByRole('status').filter({ hasText: 'Showing' }).first().innerText()
+  return Number(/of (\d+)/.exec(status)![1])
 }
 
 async function openBrowse(page: Page, query = '') {
   await page.goto(`/learn?mode=browse${query}`)
-  await expect(page.getByRole('tab', { name: /^Browse all \d+$/ })).toHaveAttribute(
+  await expect(page.getByRole('tab', { name: 'All modules' })).toHaveAttribute(
     'aria-selected',
     'true',
     { timeout: 30_000 }
@@ -169,12 +169,12 @@ test.describe('Browse all on a 390 px phone', () => {
 test.describe('The desktop workforce link on a 390 px phone', () => {
   test('/learn?view=nice opens Browse all with the desktop note, not My Path', async ({ page }) => {
     await page.goto('/learn?view=nice')
-    await expect(page.getByRole('tab', { name: /^Browse all \d+$/ })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'All modules' })).toHaveAttribute(
       'aria-selected',
       'true',
       { timeout: 30_000 }
     )
-    await expect(page.getByRole('tab', { name: 'My Path' })).toHaveAttribute(
+    await expect(page.getByRole('tab', { name: 'Recommended order' })).toHaveAttribute(
       'aria-selected',
       'false'
     )
@@ -230,21 +230,24 @@ test.describe('Guided on a 390 px phone', () => {
 })
 
 test.describe('Tabs and keyboard', () => {
-  test('arrow keys move between My Path, Browse all and Guided and update the address', async ({
+  test('arrow keys move between Your journey, All modules, Recommended order and Guided and update the address', async ({
     page,
   }) => {
-    await page.goto('/learn')
-    const myPath = page.getByRole('tab', { name: 'My Path' })
-    await expect(myPath).toHaveAttribute('aria-selected', 'true', { timeout: 30_000 })
-    await myPath.focus()
+    await page.goto('/learn?mode=journey')
+    const journey = page.getByRole('tab', { name: 'Your journey' })
+    await expect(journey).toHaveAttribute('aria-selected', 'true', { timeout: 30_000 })
+    await journey.focus()
     await page.keyboard.press('ArrowRight')
-    await expect(page.getByRole('tab', { name: /^Browse all/ })).toBeFocused()
+    await expect(page.getByRole('tab', { name: 'All modules' })).toBeFocused()
     await expect(page).toHaveURL(/mode=browse/)
+    await page.keyboard.press('ArrowRight')
+    await expect(page.getByRole('tab', { name: 'Recommended order' })).toBeFocused()
+    await expect(page).toHaveURL(/mode=mypath/)
     await page.keyboard.press('ArrowRight')
     await expect(page.getByRole('tab', { name: 'Guided' })).toBeFocused()
     await expect(page).toHaveURL(/mode=guided/)
     await page.keyboard.press('Home')
-    await expect(myPath).toBeFocused()
+    await expect(journey).toBeFocused()
   })
 })
 

@@ -224,7 +224,7 @@ test.describe('Learn — NICE / Workforce view', () => {
     await seedPersona(page, 'developer')
     await openNiceView(page)
 
-    await page.getByRole('button', { name: /^My Path/ }).click()
+    await page.getByRole('button', { name: /^Recommended order/ }).click()
 
     // My Path is now active; the CA competency-area content is gone.
     await expect(page.getByText('CA-CRYPTO')).toHaveCount(0, { timeout: 8000 })

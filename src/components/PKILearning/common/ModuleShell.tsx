@@ -77,8 +77,10 @@ import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell'
 import { MOBILE_WORKSHOP_READY } from '@/data/mobileWorkshops'
 import { INFOGRAPHIC_IMAGE_REVISIONS } from '@/data/infographicImageRevisions'
-import { LearnOrderStrip } from '@/components/ui/LearnOrderStrip'
-import { NiceCoveragePanel } from '@/components/ui/NiceCoveragePanel'
+import { ModuleFitStrip } from '@/components/Journey/ModuleFitStrip'
+import { ModuleJourneyHeader } from '@/components/Journey/ModuleJourneyHeader'
+import { ModuleCommentsMount } from '@/components/Journey/mountPoints'
+import { useJourneyOrigin } from '@/components/Journey/useJourneyNav'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
  *  modules (frameworkPhase is an array) show their first/primary phase. */
@@ -202,6 +204,8 @@ interface WorkshopStepperProps {
   visibleIndices: number[]
   /** ids of steps marked `optional` in the manifest (reference steps) */
   optionalStepIds: ReadonlySet<string>
+  /** id of the manifest's "Start here" step, when it is on the active path (marked in the step list) */
+  startHereStepId?: string
   currentPart: number
   configKey: number
   onPartChange: (index: number) => void
@@ -217,6 +221,7 @@ function WorkshopStepper({
   parts,
   visibleIndices,
   optionalStepIds,
+  startHereStepId,
   currentPart,
   configKey,
   onPartChange,
@@ -276,7 +281,12 @@ function WorkshopStepper({
   ).length
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {/* Release 5, workshop detail: how many steps there are and where they open. */}
+        <p className="text-sm text-muted-foreground" data-testid="workshop-steps-line">
+          {visibleIndices.length} workshop {visibleIndices.length === 1 ? 'step' : 'steps'}. Each
+          one opens here, in the module.
+        </p>
         <Button
           variant="ghost"
           onClick={onReset}
@@ -305,9 +315,11 @@ function WorkshopStepper({
           cswp39Step={parts[currentPart].cswp39Step}
           steps={visibleIndices.map((i) => ({
             id: parts[i].id,
-            label: optionalStepIds.has(parts[i].id)
-              ? `${parts[i].title} (optional reference)`
-              : parts[i].title,
+            label: `${
+              optionalStepIds.has(parts[i].id)
+                ? `${parts[i].title} (optional reference)`
+                : parts[i].title
+            }${parts[i].id === startHereStepId ? ' · Start here' : ''}`,
           }))}
           completedSteps={completedSteps}
           onStepClick={(p) => onPartJump(visibleIndices[p])}
@@ -550,6 +562,14 @@ export const ModuleShell = ({
   // iframe embed has a Learn dashboard to go back to.
   const iframeEmbedded = useIsEmbedded()
   const showBackLink = !embedded && !iframeEmbedded
+  // Back goes to where the learner started (Your journey or All modules), else the Learn page.
+  const origin = useJourneyOrigin()
+  const back =
+    origin === 'journey'
+      ? { to: '/learn?mode=journey', label: 'Back to Your journey' }
+      : origin === 'all-modules'
+        ? { to: '/learn?mode=browse', label: 'Back to All modules' }
+        : { to: '/learn', label: 'Back to Dashboard' }
   const browseSearch = location.state?.learnBrowseSearch
   const browseHref =
     typeof browseSearch === 'string' && browseSearch.startsWith('?mode=browse&')
@@ -589,11 +609,11 @@ export const ModuleShell = ({
         <div className="flex flex-wrap items-center gap-2 mb-2">
           {showBackLink ? (
             <Link
-              to={browseHref ?? '/learn'}
+              to={browseHref ?? back.to}
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft size={16} aria-hidden="true" />
-              {browseHref ? 'Back to workshop search' : 'Back to Dashboard'}
+              {browseHref ? 'Back to workshop search' : back.label}
             </Link>
           ) : null}
           {track ? (
@@ -619,8 +639,11 @@ export const ModuleShell = ({
           ) : null}
         </div>
         <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>
-        <LearnOrderStrip moduleId={manifest.id} />
-        <NiceCoveragePanel moduleId={manifest.id} />
+        <ModuleFitStrip moduleId={manifest.id} />
+        {/* Release 5: resume line, step bar of the objective in focus, other-role lens. */}
+        <div className="mt-3">
+          <ModuleJourneyHeader moduleId={manifest.id} />
+        </div>
         {/* UX batch 2 (2026-09-19, CC-5): on the Workshop tab the description,
             "Why this matters" and "Start here" are Learn-tab framing that pushed
             the first workshop control below the fold at 1280×800. They fold to one
@@ -719,6 +742,7 @@ export const ModuleShell = ({
         parts={parts}
         visibleIndices={visibleIndices}
         optionalStepIds={optionalStepIds}
+        startHereStepId={startHereIndex >= 0 ? manifest.startHere?.step : undefined}
         currentPart={shownPart}
         configKey={configKey}
         onPartChange={handlePartChange}
@@ -854,6 +878,7 @@ export const ModuleShell = ({
             </TabsContent>
           )}
         </Tabs>
+        {!embedded && !iframeEmbedded ? <ModuleCommentsMount moduleId={manifest.id} /> : null}
         {/* WS22 Stage 3 (2026-08-21) — module→module relations, computed from the
           `track`/`frameworkPhase`/`taxonomy` tags the manifests already carry.
           Rendered unconditionally (not gated on completion) because the point

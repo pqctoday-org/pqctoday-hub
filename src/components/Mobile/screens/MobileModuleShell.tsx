@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button'
 import { handleTabListKeyDown } from '@/components/ui/tabs'
 import type { ResolvedModuleManifest } from '@/components/PKILearning/manifest/types'
 import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
-import { LearnOrderStrip } from '@/components/ui/LearnOrderStrip'
-import { NiceCoveragePanel } from '@/components/ui/NiceCoveragePanel'
+import { ModuleFitStrip } from '@/components/Journey/ModuleFitStrip'
+import { ModuleJourneyHeader } from '@/components/Journey/ModuleJourneyHeader'
+import { ModuleCommentsMount } from '@/components/Journey/mountPoints'
 import { requiredLearnSectionIdsFor } from '@/components/PKILearning/manifest/learnPathScope'
 // moduleRelations() is pure data/logic (no JSX) — src/components/Mobile may
 // not import a desktop VIEW component (RelatedModulesPanel), so this renders
@@ -176,8 +177,10 @@ export function MobileModuleShell({
         <h1 className="text-[19px] font-extrabold leading-tight text-foreground">
           {title ?? manifest.title}
         </h1>
-        <LearnOrderStrip moduleId={manifest.id} />
-        <NiceCoveragePanel moduleId={manifest.id} />
+        <ModuleFitStrip moduleId={manifest.id} />
+        <div className="mt-3">
+          <ModuleJourneyHeader moduleId={manifest.id} compact />
+        </div>
         {(description ?? manifest.description) && (
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
             {description ?? manifest.description}
@@ -369,6 +372,7 @@ export function MobileModuleShell({
           {learnContent}
         </div>
       )}
+      <ModuleCommentsMount moduleId={manifest.id} />
 
       {/* Wave C2 (2026-08-29) — mirrors ModuleShell.tsx's desktop-only
           RelatedModulesPanel mount (WS22 Stage 3), rendered with mobile's own

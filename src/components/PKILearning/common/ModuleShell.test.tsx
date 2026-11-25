@@ -157,6 +157,62 @@ describe('ModuleShell', () => {
     expect(screen.getByRole('tab', { name: 'Workshop' })).toBeInTheDocument()
   })
 
+  it('says how many workshop steps there are, and marks the "Start here" step (release 5, workshop detail)', () => {
+    const parts = [
+      { id: 's1', title: 'Step 1: One', description: 'd1', icon: FlaskConical },
+      { id: 's2', title: 'Step 2: Two', description: 'd2', icon: FlaskConical },
+    ]
+    window.history.replaceState(null, '', '/?tab=workshop')
+    renderShell(
+      <ModuleShell
+        manifest={{
+          ...base,
+          workshopSteps: [
+            { id: 's1', label: 'One' },
+            { id: 's2', label: 'Two' },
+          ],
+          startHere: { step: 's2', text: 'Start with step two' },
+        }}
+        learn={<div>L</div>}
+        workshopParts={parts}
+        renderWorkshopStep={(i) => <div>STEP BODY {i}</div>}
+      />
+    )
+    expect(screen.getByTestId('workshop-steps-line')).toHaveTextContent(
+      '2 workshop steps. Each one opens here, in the module.'
+    )
+    expect(screen.getByRole('button', { name: /Step 2: Two · Start here/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Step 1: One/ })).not.toHaveTextContent('Start here')
+  })
+
+  it('returns to where the learner started: Your journey or All modules, else the dashboard', () => {
+    const at = (state: unknown) =>
+      render(
+        <EmbedProvider>
+          <MemoryRouter initialEntries={[{ pathname: '/learn/hsm-pqc', state }]}>
+            <ModuleShell manifest={base} learn={<div>L</div>} />
+          </MemoryRouter>
+        </EmbedProvider>
+      )
+    const { unmount: leaveFirst } = at({ journeyOrigin: 'journey' })
+    expect(screen.getByRole('link', { name: /back to your journey/i })).toHaveAttribute(
+      'href',
+      '/learn?mode=journey'
+    )
+    leaveFirst()
+    const { unmount: leaveSecond } = at({ journeyOrigin: 'all-modules' })
+    expect(screen.getByRole('link', { name: /back to all modules/i })).toHaveAttribute(
+      'href',
+      '/learn?mode=browse'
+    )
+    leaveSecond()
+    at(undefined)
+    expect(screen.getByRole('link', { name: /back to dashboard/i })).toHaveAttribute(
+      'href',
+      '/learn'
+    )
+  })
+
   it('passes a nav api to function slots (goToWorkshop switches tab)', () => {
     const parts = [{ id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical }]
     renderShell(

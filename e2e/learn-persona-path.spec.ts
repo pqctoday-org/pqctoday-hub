@@ -70,7 +70,7 @@ test.describe('Learn — My Path (persona journey) view', () => {
   for (const persona of ['executive', 'developer', 'architect', 'ops'] as const) {
     test(`${persona} lands on My Path with a curated journey`, async ({ page }) => {
       await seedPersona(page, persona)
-      await page.goto('/learn')
+      await page.goto('/learn?mode=mypath')
 
       // The Path-depth toggle only renders when a curated persona journey is
       // shown — proving My Path (not the Browse catalog) is the landing view.
@@ -78,8 +78,8 @@ test.describe('Learn — My Path (persona journey) view', () => {
       await expect(pathDepthToggle(page)).toBeVisible({ timeout: 25000 })
 
       // The mode switch exposes both My Path (active) and the Browse escape.
-      await expect(page.getByRole('button', { name: /^My Path/ })).toBeVisible()
-      await expect(page.getByRole('button', { name: /^Browse all/ })).toBeVisible()
+      await expect(page.getByRole('button', { name: /^Recommended order/ })).toBeVisible()
+      await expect(page.getByRole('button', { name: /^All modules/ })).toBeVisible()
 
       // The meta line summarises the curated path as "<label> · N modules · ~Nh".
       await expect(page.getByText(/\d+ modules · ~\d+h/).first()).toBeVisible()
@@ -88,7 +88,7 @@ test.describe('Learn — My Path (persona journey) view', () => {
 
   test('curious lands on My Path (not the unfiltered catalog)', async ({ page }) => {
     await seedPersona(page, 'curious')
-    await page.goto('/learn')
+    await page.goto('/learn?mode=mypath')
 
     // Same curated-journey affordance as the other personas — proves curious is
     // NOT dumped into the full catalog.
@@ -100,10 +100,10 @@ test.describe('Learn — My Path (persona journey) view', () => {
     // redesign): "Browse all" is now the explicit way to leave the curated path
     // and see the whole catalog.
     await seedPersona(page, 'curious')
-    await page.goto('/learn')
+    await page.goto('/learn?mode=mypath')
     await expect(pathDepthToggle(page)).toBeVisible({ timeout: 25000 })
 
-    await page.getByRole('button', { name: /^Browse all/ }).click()
+    await page.getByRole('button', { name: /^All modules/ }).click()
 
     // Catalog is now shown: its search filter appears and the curated Path-depth
     // toggle is gone.
@@ -117,19 +117,21 @@ test.describe('Learn — My Path (persona journey) view', () => {
     // The old behavior — researcher forced onto the stack catalog — no longer
     // exists; every persona now defaults to My Path.
     await seedPersona(page, 'researcher')
-    await page.goto('/learn')
+    await page.goto('/learn?mode=mypath')
 
     await expect(pathDepthToggle(page)).toBeVisible({ timeout: 25000 })
-    await expect(page.getByRole('button', { name: /^Browse all/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^All modules/ })).toBeVisible()
   })
 
   test('null persona lands on My Path with no curated path yet', async ({ page }) => {
     await seedPersona(page, null)
-    await page.goto('/learn')
+    await page.goto('/learn?mode=mypath')
 
     // My Path is the default mode, but with no persona there is no curated path,
     // so the Path-depth toggle is absent — the user is prompted to pick a role.
-    await expect(page.getByRole('button', { name: /^My Path/ })).toBeVisible({ timeout: 25000 })
+    await expect(page.getByRole('button', { name: /^Recommended order/ })).toBeVisible({
+      timeout: 25000,
+    })
     await expect(pathDepthToggle(page)).toHaveCount(0)
   })
 
@@ -138,7 +140,7 @@ test.describe('Learn — My Path (persona journey) view', () => {
     // removed from My Path in the redesign). Verifies the curated path renders
     // and its Essentials⇄Full depth toggle actually switches.
     await seedPersona(page, 'ops')
-    await page.goto('/learn')
+    await page.goto('/learn?mode=mypath')
 
     const toggle = pathDepthToggle(page)
     await expect(toggle).toBeVisible({ timeout: 25000 })

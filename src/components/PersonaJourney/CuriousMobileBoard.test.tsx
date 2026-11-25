@@ -316,12 +316,12 @@ describe('CuriousMobileBoard', () => {
       expect(useRightPanelStore.getState().activeTab).toBe('chat')
     })
 
-    it('Journey entry opens the right panel on the history tab', () => {
+    it('Journey entry opens Learn › Your journey, not the drawer', () => {
       renderBoard()
       fireEvent.click(screen.getByRole('button', { name: /more menu/i }))
       fireEvent.click(screen.getByRole('button', { name: /journey/i }))
-      expect(useRightPanelStore.getState().isOpen).toBe(true)
-      expect(useRightPanelStore.getState().activeTab).toBe('history')
+      expect(useRightPanelStore.getState().isOpen).toBe(false)
+      expect(screen.getByText(destinationTextFor('/learn', 'Learn'))).toBeInTheDocument()
     })
 
     it('FAQ entry navigates to /faq', () => {

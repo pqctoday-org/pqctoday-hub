@@ -34,9 +34,10 @@ function renderScreen(initialPath = '/learn') {
 }
 
 const where = () => screen.getByTestId('where').textContent ?? ''
-const browseTab = () => screen.getByRole('tab', { name: `Browse all ${TOTAL_MODULE_COUNT}` })
+const journeyTab = () => screen.getByRole('tab', { name: 'Your journey' })
+const browseTab = () => screen.getByRole('tab', { name: 'All modules' })
 const guidedTab = () => screen.getByRole('tab', { name: 'Guided' })
-const myPathTab = () => screen.getByRole('tab', { name: 'My Path' })
+const myPathTab = () => screen.getByRole('tab', { name: 'Recommended order' })
 
 afterEach(() => {
   usePersonaStore.getState().setPersona(null)
@@ -44,29 +45,39 @@ afterEach(() => {
 })
 
 describe('MobileLearnScreen', () => {
-  it('defaults to My Path mode', () => {
+  it('opens on All modules on a first visit, with the first-visit prompt', () => {
     renderScreen()
-    expect(screen.getByRole('tab', { name: 'My Path', selected: true })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'All modules', selected: true })).toBeInTheDocument()
+    expect(screen.getByTestId('first-visit-prompt')).toBeInTheDocument()
+  })
+
+  it('opens on Your journey once a role is chosen', () => {
+    usePersonaStore.getState().setPersona('executive')
+    renderScreen()
+    expect(screen.getByRole('tab', { name: 'Your journey', selected: true })).toBeInTheDocument()
+    expect(screen.getByTestId('your-journey')).toBeInTheDocument()
+    expect(screen.queryByTestId('first-visit-prompt')).not.toBeInTheDocument()
   })
 
   it('prompts to pick a role when no persona is selected', () => {
-    renderScreen()
+    renderScreen('/learn?mode=mypath')
     expect(screen.getByText('Pick a role for a guided path tuned to you.')).toBeInTheDocument()
   })
 
-  it('shows the real My Path content once a persona is selected', () => {
+  it('shows the real Recommended order content once a persona is selected', () => {
     usePersonaStore.getState().setPersona('executive')
-    renderScreen()
+    renderScreen('/learn?mode=mypath')
     expect(
       screen.getByText(new RegExp(`Essentials — the core ${PERSONAS.executive.essentials.length}`))
     ).toBeInTheDocument()
   })
 
-  it('offers My Path, Browse all and Guided tabs', () => {
+  it('offers Your journey, All modules, Recommended order and Guided tabs', () => {
     renderScreen()
     expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual([
-      'My Path',
-      `Browse all ${TOTAL_MODULE_COUNT}`,
+      'Your journey',
+      'All modules',
+      'Recommended order',
       'Guided',
     ])
   })
@@ -88,13 +99,13 @@ describe('MobileLearnScreen', () => {
   // self-gates (renders nothing idle-with-no-flow/running/video); this only
   // asserts on placement, not on that internal logic (covered separately).
   it('does not render the workshop entry with no persona picked yet', () => {
-    renderScreen()
+    renderScreen('/learn?mode=mypath')
     expect(screen.queryByTestId('workshop-entry-marker')).not.toBeInTheDocument()
   })
 
-  it('renders the workshop entry on the My Path tab once a persona is picked', () => {
+  it('renders the workshop entry on the Recommended order tab once a persona is picked', () => {
     usePersonaStore.getState().setPersona('executive')
-    renderScreen()
+    renderScreen('/learn?mode=mypath')
     expect(screen.getByTestId('workshop-entry-marker')).toBeInTheDocument()
   })
 })
@@ -153,13 +164,32 @@ describe('MobileLearnScreen: Browse all and Guided are on the phone', () => {
     expect(screen.getByTestId('mobile-guided-choices')).toBeInTheDocument()
   })
 
-  it.each([['/learn'], ['/learn?mode=mypath'], ['/learn?mode=nonsense']])(
-    '%s opens My Path',
+  it('/learn?mode=mypath opens Recommended order', () => {
+    renderScreen('/learn?mode=mypath')
+    expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it.each([['/learn'], ['/learn?mode=nonsense']])(
+    '%s opens All modules on a first visit and Your journey with a role',
     (path) => {
       renderScreen(path)
-      expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
+      expect(browseTab()).toHaveAttribute('aria-selected', 'true')
     }
   )
+
+  it('?view=journey opens Your journey', () => {
+    renderScreen('/learn?view=journey')
+    expect(journeyTab()).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByTestId('your-journey')).toBeInTheDocument()
+  })
+
+  it('?mode=journey opens Your journey, and leaving it drops its own address parts', async () => {
+    const user = userEvent.setup()
+    renderScreen('/learn?mode=journey&jview=role-map&objective=x&step=y')
+    expect(journeyTab()).toHaveAttribute('aria-selected', 'true')
+    await user.click(guidedTab())
+    expect(where()).toBe('/learn?mode=guided')
+  })
 
   // The desktop's workforce (NICE) link. On a phone it opens Browse all with a note, not My Path
   // (which asks for a role, so the link used to land on a prompt) and not a blank view.
@@ -285,16 +315,18 @@ describe('MobileLearnScreen: the tabs follow the tabs pattern', () => {
 
   it('arrow keys move between the tabs and open the one reached; focus follows', async () => {
     const user = userEvent.setup()
-    renderScreen()
-    myPathTab().focus()
+    renderScreen('/learn?mode=journey')
+    journeyTab().focus()
     await user.keyboard('{ArrowRight}')
     expect(browseTab()).toHaveFocus()
     expect(browseTab()).toHaveAttribute('aria-selected', 'true')
     expect(where()).toBe('/learn?mode=browse')
     await user.keyboard('{ArrowRight}')
+    expect(myPathTab()).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
     expect(guidedTab()).toHaveFocus()
     await user.keyboard('{ArrowRight}')
-    expect(myPathTab()).toHaveFocus() // wraps around
+    expect(journeyTab()).toHaveFocus() // wraps around
     await user.keyboard('{ArrowLeft}')
     expect(guidedTab()).toHaveFocus()
   })
@@ -303,35 +335,35 @@ describe('MobileLearnScreen: the tabs follow the tabs pattern', () => {
   // before it must count from the tab that took it. Measured from the old mode, both presses went
   // to Browse all and Guided was never reached.
   it('two quick arrow presses before the address updates still reach the third tab', () => {
-    renderScreen()
+    renderScreen('/learn?mode=journey')
     // Both presses must land in one batch, before the router's update is applied; separate
     // awaited presses (user-event) would let it settle in between and hide the bug.
     // eslint-disable-next-line testing-library/no-unnecessary-act
     act(() => {
-      fireEvent.keyDown(myPathTab(), { key: 'ArrowRight' })
+      fireEvent.keyDown(journeyTab(), { key: 'ArrowRight' })
       fireEvent.keyDown(browseTab(), { key: 'ArrowRight' })
     })
-    expect(guidedTab()).toHaveAttribute('aria-selected', 'true')
-    expect(where()).toBe('/learn?mode=guided')
+    expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
+    expect(where()).toBe('/learn?mode=mypath')
   })
 
   it.each([['altKey'], ['metaKey'], ['ctrlKey']])(
     'leaves %s + arrow to the browser (Back and Forward shortcuts): no tab change, not cancelled',
     (modifier) => {
-      renderScreen()
-      const notCancelled = fireEvent.keyDown(myPathTab(), {
+      renderScreen('/learn?mode=journey')
+      const notCancelled = fireEvent.keyDown(journeyTab(), {
         key: 'ArrowRight',
         [modifier]: true,
       })
       expect(notCancelled).toBe(true)
-      expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
-      expect(where()).toBe('/learn')
+      expect(journeyTab()).toHaveAttribute('aria-selected', 'true')
+      expect(where()).toBe('/learn?mode=journey')
     }
   )
 
   it('plain arrow keys are still cancelled, so the page does not scroll sideways', () => {
-    renderScreen()
-    expect(fireEvent.keyDown(myPathTab(), { key: 'ArrowRight' })).toBe(false)
+    renderScreen('/learn?mode=journey')
+    expect(fireEvent.keyDown(journeyTab(), { key: 'ArrowRight' })).toBe(false)
   })
 
   it('Home and End jump to the first and last tab', async () => {
@@ -342,8 +374,8 @@ describe('MobileLearnScreen: the tabs follow the tabs pattern', () => {
     expect(guidedTab()).toHaveFocus()
     expect(guidedTab()).toHaveAttribute('aria-selected', 'true')
     await user.keyboard('{Home}')
-    expect(myPathTab()).toHaveFocus()
-    expect(myPathTab()).toHaveAttribute('aria-selected', 'true')
+    expect(journeyTab()).toHaveFocus()
+    expect(journeyTab()).toHaveAttribute('aria-selected', 'true')
   })
 
   it('the strip scrolls sideways instead of widening the page', () => {

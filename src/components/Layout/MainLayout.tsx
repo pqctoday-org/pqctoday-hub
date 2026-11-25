@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
+import { journeyHref } from '@/services/journey/stepView'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   Info,
@@ -1012,10 +1013,10 @@ export const MainLayout = () => {
                       right panel, just on different tabs. */}
                   <Button
                     variant="ghost"
-                    onClick={() => openRightPanel('history')}
+                    onClick={() => navigate(journeyHref())}
                     className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
-                    aria-label="Open your Journey map"
-                    title="Open your Journey map"
+                    aria-label="Open Your journey"
+                    title="Open Your journey"
                   >
                     <Map size={13} aria-hidden="true" />
                     <span>Journey</span>
@@ -1334,12 +1335,12 @@ export const MainLayout = () => {
                   type="button"
                   onClick={() => {
                     setMoreMenuOpen(false)
-                    openPanel('history')
+                    navigate(journeyHref())
                   }}
                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
                 >
                   <Clock size={18} aria-hidden="true" />
-                  Journey History
+                  Your journey
                 </Button>
 
                 {/* Assistant shortcut */}

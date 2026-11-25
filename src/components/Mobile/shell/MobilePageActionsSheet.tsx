@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { journeyHref } from '@/services/journey/stepView'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import {
@@ -59,7 +60,7 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const location = useLocation()
   const navigate = useNavigate()
   const openRightPanel = useRightPanelStore((s) => s.open)
-  const nextPanel = useRef<'chat' | 'history' | null>(null)
+  const nextPanel = useRef<'chat' | null>(null)
   const [sourcesOpen, setSourcesOpen] = useState(false)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
   const { hasUnread, count } = useMobileWhatsNewStatus()
@@ -84,9 +85,12 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const handleSelect = (id: MobilePageActionId) => {
     switch (id) {
       case 'assistant':
-      case 'journey':
-        nextPanel.current = id === 'assistant' ? 'chat' : 'history'
+        nextPanel.current = 'chat'
         onClose()
+        return
+      case 'journey':
+        onClose()
+        navigate(journeyHref())
         return
       case 'faq':
         onClose()

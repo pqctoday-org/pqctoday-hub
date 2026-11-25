@@ -259,16 +259,16 @@ export const PAGE_PERSONA_NOTES: Record<string, PagePersonaNotes> = {
   },
   '/learn': {
     executive:
-      '"My Path" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to the leadership and GRC modules.',
-    grc: '"My Path" opens on your Essentials in order — PQC 101, risk, data sensitivity, PQC GRC, compliance, governance, vendors, closure; in "Browse all" the "Governance & Risk" track chip narrows the catalogue to them, and the "Workforce view" button maps modules to NICE work roles.',
+      '"Recommended order" opens on "Essentials" — the core modules that unlock your "Capstone Quiz"; in "All modules" the "Governance & Risk" track chip narrows the catalogue to the leadership and GRC modules.',
+    grc: '"Recommended order" opens on your Essentials in order — PQC 101, risk, data sensitivity, PQC GRC, compliance, governance, vendors, closure; in "All modules" the "Governance & Risk" track chip narrows the catalogue to them, and the "Workforce view" button maps modules to NICE work roles.',
     developer:
-      '"Browse all" has a search ("try \'TLS\' or \'HSM\'"), track chips such as Protocols, Software Infrastructure and Hardware Infrastructure, and a "Shortest first" sort.',
+      '"All modules" has a search ("try \'TLS\' or \'HSM\'"), track chips such as Protocols, Software Infrastructure and Hardware Infrastructure, and a "Shortest first" sort.',
     architect:
-      '"Guided routing" asks where you are — "Have an inventory, but no risk priorities", "Know the priorities, need a multi-year plan" — and names the first module; in "Browse all" the Protocols track chip is yours.',
+      '"Guided routing" asks where you are — "Have an inventory, but no risk priorities", "Know the priorities, need a multi-year plan" — and names the first module; in "All modules" the Protocols track chip is yours.',
     researcher:
       '"Check our work: reproduce a known-answer test" sits above your path — "Run the ACVP vectors" and "Find the published vectors"; the "Practice quiz" is open any time, and the Capstone Quiz unlocks after your Essentials.',
     'cert-engineer': `Start with the validation tests, then follow your essentials from the certificate: ${countWord(PERSONAS['cert-engineer'].essentials.length)} essentials, three checkpoint quizzes, then the capstone; the "Advanced" tray adds browse by Algorithms / Standards, and "Workforce view" maps modules to NICE work roles.`,
-    ops: '"My Path" has an "Essentials" / "Full track" toggle with the hours for each and a "Continue where you left off" card with "Resume"; in "Browse all", filter by status to see "In progress" modules.',
+    ops: '"Recommended order" has an "Essentials" / "Full track" toggle with the hours for each and a "Continue where you left off" card with "Resume"; in "All modules", filter by status to see "In progress" modules.',
     curious:
       '"Pick a role in the top bar for a guided path — or" browse every module; "New here? Start with the right module" includes "Not sure — assess me", and the "Quiz" button sits beside the page title.',
   },
