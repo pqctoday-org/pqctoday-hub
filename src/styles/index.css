@@ -347,9 +347,12 @@
     --muted-foreground: 33.7 9.8% 32.2%;
     /* a11y (2026-11-13): 32% gave white labels 4.53:1 solid but 3.82:1 on the
        bg-accent/90 hover. 28% gives 5.61:1 solid and 4.58:1 at /90. */
-    /* Storybook Blue 2026-11-25: brand green #218356, for shapes and decoration;
-       text uses --accent-legible. */
-    --accent: 152.4 59.8% 32.2%;
+    /* Storybook Blue 2026-11-25: the brand green is #218356 (152.4 59.8% 32.2%), but
+       the Hub paints labels on this fill (`bg-accent text-accent-foreground`), and at
+       32% the label measures 4.5:1 solid and only 3.8:1 on the /90 hover. The label
+       needs 28% or darker, so the Hub's existing value stays; it is the brand green
+       within one step (#1D724B against #218356). Text still uses --accent-legible. */
+    --accent: 153 60% 28%;
     --accent-foreground: 210 40% 98%;
     /* See the `-legible` note in the @theme block. Each value is the measured
        4.5:1 floor against that token's worst observed background:
@@ -504,8 +507,10 @@
        in both themes. */
     --accent-legible: 149.4 53.2% 63.1%;
     /* 2026-11-13: 71% (the base) read 4.38:1 on bg-destructive/30 here;
-       76% gives 5.17:1 there and 8.48:1 on the page. */
-    --destructive-legible: 343 93% 76%;
+       76% gave 5.17:1 there and 8.48:1 on the navy page. Storybook Blue
+       2026-11-25: the teal grounds are lighter, so the same tints measured
+       4.29:1 at 76%; 79% (lightness only) gives 4.7:1 or more on ground and card. */
+    --destructive-legible: 343 93% 79%;
     /* Wave A (2026-09-18): was never restated here, so dark mode inherited the
        darkened light-mode purple — invisible on a dark surface. Equals base. */
     /* Storybook Blue 2026-11-25: 65% measured 4.4:1 on the new ground and 4.0:1

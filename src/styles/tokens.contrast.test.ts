@@ -67,7 +67,9 @@ describe('Storybook Blue tokens: values', () => {
       ['light', 'secondary', '#6e42f0'],
       ['light', 'muted', '#e9f1f6'],
       ['light', 'muted-foreground', '#5a534a'],
-      ['light', 'accent', '#218356'],
+      // Brand green is #218356, but a label on it fails AA on the /90 hover (see index.css);
+      // the Hub keeps the one-step-darker #1d724b, which ghostHoverContrast.test.ts holds.
+      ['light', 'accent', '#1d724b'],
       ['light', 'border', '#bcd0dc'],
       ['light', 'ink', '#2a2620'],
       ['light', 'highlight', '#ece6fe'],
