@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { journeyHref } from '@/services/journey/stepView'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import {
   Bot,
   Map,
+  Bookmark,
   HelpCircle,
   BookOpen,
   BookOpenText,
@@ -24,6 +24,7 @@ import { MobileSheet } from '../primitives/Sheet'
 const ICONS: Record<MobilePageActionId, typeof Bot> = {
   assistant: Bot,
   journey: Map,
+  bookmarks: Bookmark,
   faq: HelpCircle,
   sources: BookOpen,
   glossary: BookOpenText,
@@ -42,9 +43,8 @@ export interface MobilePageActionsSheetProps {
  * bar uses (getMobilePageActions). Omits a disabled row entirely rather
  * than rendering one that does nothing, per the handoff's own rule.
  *
- * Assistant/Journey reuse the existing, already-mobile-responsive RightPanel
- * (w-full below the sm breakpoint) via the same store the desktop top bar's
- * Ask/Journey buttons already write to — no new panel built. Sources and
+ * Assistant, Bookmarks and FAQ open the drawer's full-screen sheet (RightPanel) through the same
+ * store the desktop top bar writes to. Your journey goes to Learn. Sources and
  * Glossary reuse their real desktop content components directly. FAQ,
  * What's new and About navigate to their real pages.
  *
@@ -60,7 +60,7 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const location = useLocation()
   const navigate = useNavigate()
   const openRightPanel = useRightPanelStore((s) => s.open)
-  const nextPanel = useRef<'chat' | null>(null)
+  const nextPanel = useRef<'chat' | 'bookmarks' | 'faq' | null>(null)
   const [sourcesOpen, setSourcesOpen] = useState(false)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
   const { hasUnread, count } = useMobileWhatsNewStatus()
@@ -88,13 +88,19 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
         nextPanel.current = 'chat'
         onClose()
         return
-      case 'journey':
+      case 'bookmarks':
+        nextPanel.current = 'bookmarks'
         onClose()
-        navigate(journeyHref())
         return
       case 'faq':
+        // On the phone the FAQ is a sheet over the page.
+        nextPanel.current = 'faq'
         onClose()
-        navigate('/faq')
+        return
+      case 'journey':
+        // The old Journey tab moved to Learn › Your journey.
+        onClose()
+        navigate('/learn?view=journey')
         return
       case 'whatsNew':
         onClose()

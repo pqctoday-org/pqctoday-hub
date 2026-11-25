@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
-import { journeyHref } from '@/services/journey/stepView'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   Info,
@@ -13,7 +12,7 @@ import {
   Search,
   UserCog,
   Bot,
-  Map,
+  Bookmark,
   ChevronDown,
   ChevronRight,
   type LucideIcon,
@@ -60,6 +59,9 @@ import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '../../hooks/useIsMobileShell'
+import { useAssistantLayout, drawerPaddingClass } from '../Assistant/useAssistantLayout'
+import { useDrawerToggle } from '../Assistant/useDrawerToggle'
+import { useAssistantReturnStore } from '../../store/useAssistantReturnStore'
 import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
 import { RouteRelated } from './RouteRelated'
@@ -97,6 +99,13 @@ const MobileWorkshopDock = React.lazy(() =>
   import('../Mobile/shell/MobileWorkshopDock').then((m) => ({ default: m.MobileWorkshopDock }))
 )
 
+// The phone's dock and the page-return bar are small and rarely shown: lazy, like the drawer itself.
+const AssistantDock = React.lazy(() =>
+  import('../Assistant/AssistantDock').then((m) => ({ default: m.AssistantDock }))
+)
+const AssistantReturnBar = React.lazy(() =>
+  import('../Assistant/AssistantReturnBar').then((m) => ({ default: m.AssistantReturnBar }))
+)
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
 )
@@ -333,7 +342,15 @@ export const MainLayout = () => {
     selectedRegion,
     selectedIndustries,
   } = usePersonaStore()
-  const { isOpen: isPanelOpen, toggle: openPanel, open: openRightPanel } = useRightPanelStore()
+  const {
+    isOpen: isPanelOpen,
+    activeTab: panelTab,
+    toggle: openPanel,
+    open: openRightPanel,
+  } = useRightPanelStore()
+  const toggleDrawer = useDrawerToggle()
+  const assistantLayout = useAssistantLayout()
+  const hasReturn = useAssistantReturnStore((s) => s.target !== null)
   const recordVisit = useHistoryStore((s) => s.recordVisit)
   // Auto-start Workshop Video Mode from `?workshop=video&autoplay=1` (Playwright recorder hook).
   useWorkshopUrlAutostart()
@@ -442,6 +459,13 @@ export const MainLayout = () => {
   // which board is actually rendering.
   const isCuriousMobileTakeover =
     selectedPersona === 'curious' && isBelowLg && location.pathname === '/' && !isMobileShell
+
+  // The phone's question dock: on Learn screens, while the Assistant sheet is closed.
+  const showAssistantDock =
+    isMobileShell &&
+    !isCuriousMobileTakeover &&
+    !isPanelOpen &&
+    (location.pathname === '/learn' || location.pathname.startsWith('/learn/'))
 
   // Navigate (force-cluster graph, design_handoff_force_cluster/IMPLEMENTATION-PLAN-2026-08-28.md
   // §2.6). Unlike isCuriousMobileTakeover, this does NOT suppress the rail/top-bar chrome
@@ -633,9 +657,11 @@ export const MainLayout = () => {
 
   return (
     <div
-      className={`h-dvh flex flex-col lg:flex-row bg-background text-foreground print:min-h-0 print:h-auto overflow-clip transition-[padding] duration-300 ${
-        isPanelOpen ? 'sm:pr-[40vw]' : ''
-      }`}
+      className={`h-dvh flex flex-col lg:flex-row bg-background text-foreground print:min-h-0 print:h-auto overflow-clip transition-[padding] duration-300 ${drawerPaddingClass(
+        isPanelOpen,
+        assistantLayout,
+        panelTab
+      )}`}
     >
       {/* Skip-to-main link — visible only on keyboard focus */}
       <a
@@ -997,29 +1023,14 @@ export const MainLayout = () => {
                 <div className="flex items-center gap-0.5 shrink-0 flex-nowrap justify-end">
                   <Button
                     variant="ghost"
-                    onClick={() => openRightPanel('chat')}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
-                    aria-label="Open PQC Assistant"
-                    title="Open PQC Assistant"
+                    onClick={() => toggleDrawer('chat')}
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors aria-pressed:text-foreground aria-pressed:bg-muted/30"
+                    aria-label="Assistant"
+                    aria-pressed={isPanelOpen && panelTab === 'chat'}
+                    title="Assistant"
                   >
                     <Bot size={13} aria-hidden="true" />
                     <span>Assistant</span>
-                  </Button>
-                  {/* Journey — moved here from the rail's lone-icon utility dock
-                      on 2026-08-02, which is exactly what that dock's own
-                      comment prescribed ("give Journey a top-bar entry point
-                      too, then this lone-icon dock can likely go away
-                      entirely"). It sits beside Ask because both open the same
-                      right panel, just on different tabs. */}
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate(journeyHref())}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
-                    aria-label="Open Your journey"
-                    title="Open Your journey"
-                  >
-                    <Map size={13} aria-hidden="true" />
-                    <span>Journey</span>
                   </Button>
                   <ShareButton
                     title={
@@ -1042,6 +1053,17 @@ export const MainLayout = () => {
                     variant="full"
                   />
                   <FAQButton compact />
+                  <Button
+                    variant="ghost"
+                    onClick={() => toggleDrawer('bookmarks')}
+                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors aria-pressed:text-foreground aria-pressed:bg-muted/30"
+                    aria-label="Bookmarks"
+                    aria-pressed={isPanelOpen && panelTab === 'bookmarks'}
+                    title="Bookmarks"
+                  >
+                    <Bookmark size={13} aria-hidden="true" />
+                    <span>Bookmarks</span>
+                  </Button>
                   {viewTypeForRoute && (
                     <SourcesButton
                       viewType={viewTypeForRoute}
@@ -1182,6 +1204,7 @@ export const MainLayout = () => {
                 MobileBottomBar via its own `bottom: var(--mobile-nav-height)`
                 offset and z-mobile-dock. */}
             <MobileWorkshopDock />
+            {showAssistantDock && <AssistantDock />}
           </React.Suspense>
         )}
 
@@ -1329,13 +1352,13 @@ export const MainLayout = () => {
                   Search
                 </Button>
 
-                {/* Journey History shortcut */}
+                {/* Your journey: Learn › Your journey (the old drawer tab moved there) */}
                 <Button
                   variant="ghost"
                   type="button"
                   onClick={() => {
                     setMoreMenuOpen(false)
-                    navigate(journeyHref())
+                    navigate('/learn?view=journey')
                   }}
                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
                 >
@@ -1384,6 +1407,12 @@ export const MainLayout = () => {
 
         {personaSwitchOpen && <PersonaSwitchModal onClose={() => setPersonaSwitchOpen(false)} />}
 
+        {hasReturn && (
+          <React.Suspense fallback={null}>
+            <AssistantReturnBar />
+          </React.Suspense>
+        )}
+
         {/* Scrollable content area */}
         <div
           ref={scrollContainerRef}
@@ -1399,7 +1428,9 @@ export const MainLayout = () => {
             // it already includes the safe-area inset. Adding a second
             // `+env(safe-area-inset-bottom)` here double-counted it,
             // over-padding the scroll area by up to the full inset again.
-            isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]'
+            isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]',
+            // The dock above the bar is about 120px tall: keep the page's last lines clear of it.
+            showAssistantDock && 'pb-[calc(var(--mobile-nav-height)+120px)]'
           )}
         >
           {isCuriousMobileTakeover || isFullBleedContentRoute ? (

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useState } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router'
-import { journeyHref } from '@/services/journey/stepView'
 import { Search, Menu, X, Bot, Map, HelpCircle, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buttonVariants } from '@/components/ui/button-variants'
@@ -161,7 +160,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
   }
   const handleJourney = () => {
     setMoreOpen(false)
-    navigate(journeyHref())
+    navigate('/learn?view=journey')
   }
 
   useEffect(() => {

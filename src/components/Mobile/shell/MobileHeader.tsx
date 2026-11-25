@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { ChevronLeft, Search, User, MoreHorizontal, BookText } from 'lucide-react'
+import { ChevronLeft, Search, User, MoreHorizontal, BookText, MessageCircle } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
 import { PERSONAS } from '@/data/learningPersonas'
 import { NAV_PATH_LABELS } from '@/data/personaConfig'
@@ -10,6 +10,7 @@ import { ShareButton } from '@/components/ui/ShareButton'
 import { UserManualPanel } from '@/components/common/UserManualPanel'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useCommandPaletteStore } from '@/store/useCommandPaletteStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { ROUTE_SHARE } from '@/data/routePageMeta'
 import { FOR_YOU_GROUP_LABELS } from '@/components/Layout/railNav'
 import { cn } from '@/lib/utils'
@@ -41,6 +42,7 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
   const location = useLocation()
   const navigate = useNavigate()
   const openPalette = useCommandPaletteStore((s) => s.open)
+  const openAssistant = useRightPanelStore((s) => s.open)
   const pageActions = usePageActionsStore((s) => s.current)
   const { hasUnread } = useMobileWhatsNewStatus()
   const [guideOpen, setGuideOpen] = useState(false)
@@ -147,6 +149,17 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
                 <BookText size={15} aria-hidden="true" />
               </Button>
             )}
+
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => openAssistant('chat')}
+              aria-label="Ask the Assistant"
+              className={cn(mobileIconButton, 'w-auto gap-1 px-2 text-[10.5px] font-bold')}
+            >
+              <MessageCircle size={15} aria-hidden="true" />
+              <span className="max-[429px]:sr-only">Ask</span>
+            </Button>
 
             <Button
               type="button"

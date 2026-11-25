@@ -1,36 +1,38 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import { PanelHeader } from './PanelHeader'
-import type { RightPanelTab } from '@/types/HistoryTypes'
-function Header() {
-  const [tab, setTab] = useState<RightPanelTab>('chat')
-  return <PanelHeader activeTab={tab} onTabChange={setTab} onClose={vi.fn()} />
-}
-describe('Panel tab names and keyboard activation', () => {
-  it('retains explicit accessible names when responsive text is hidden and updates selected state', async () => {
+
+describe('Drawer header', () => {
+  it('has no tabs and no expand or minimise controls', () => {
+    render(<PanelHeader title="Assistant" activeTab="chat" />)
+    expect(screen.queryByRole('tab')).toBeNull()
+    expect(screen.queryByRole('tablist')).toBeNull()
+    expect(screen.queryByRole('button', { name: /expand|shrink|minimi[sz]e/i })).toBeNull()
+    expect(screen.getByRole('heading', { name: 'Assistant' })).toBeInTheDocument()
+  })
+
+  it('has no close control on the desktop: the top bar toggle closes it', () => {
+    render(<PanelHeader title="Assistant" activeTab="chat" />)
+    expect(screen.queryByRole('button', { name: 'Close' })).toBeNull()
+  })
+
+  it('puts Close first in the tab order on the phone sheet', async () => {
     const user = userEvent.setup()
-    render(<Header />)
-    for (const name of ['Assistant', 'Journey', 'Workshop', 'Bookmarks', 'FAQ']) {
-      const tab = screen.getByRole('tab', { name })
-      expect(tab).toHaveAttribute('aria-label', name)
-    }
-    const journey = screen.getByRole('tab', { name: 'Journey' })
-    journey.focus()
-    await user.keyboard('{Enter}')
-    expect(journey).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('tab', { name: 'Assistant' })).toHaveAttribute('aria-selected', 'false')
-    await user.keyboard('{ArrowRight}')
-    expect(screen.getByRole('tab', { name: 'Workshop' })).toHaveFocus()
-    expect(screen.getByRole('tab', { name: 'Workshop' })).toHaveAttribute('aria-selected', 'true')
-    await user.keyboard('{End}')
-    expect(screen.getByRole('tab', { name: 'FAQ' })).toHaveFocus()
-    await user.keyboard('{ArrowRight}')
-    expect(screen.getByRole('tab', { name: 'Assistant' })).toHaveFocus()
+    const onClose = vi.fn()
+    render(<PanelHeader title="Assistant" activeTab="chat" onClose={onClose} />)
     await user.tab()
-    expect(screen.getByRole('button', { name: 'Close assistant' })).toHaveFocus()
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(onClose).toHaveBeenCalledOnce()
+  })
+
+  it('shows the objective area for the Assistant only, with "No objective yet"', () => {
+    const { rerender } = render(<PanelHeader title="Assistant" activeTab="chat" />)
+    expect(screen.getByText('No objective yet')).toBeInTheDocument()
+    rerender(<PanelHeader title="Bookmarks" activeTab="bookmarks" />)
+    expect(screen.queryByText('No objective yet')).toBeNull()
   })
 })

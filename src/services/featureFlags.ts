@@ -94,3 +94,32 @@ export const useExecDecisionMode = (): boolean => {
   }
   return true
 }
+
+/**
+ * The old language-model chat, kept for one release as a rollback only.
+ *
+ * Off by default. There is no setting for visitors: if the new Assistant has a serious fault, one
+ * line in the build brings the old chat back for everyone without a revert.
+ *
+ * Switch on at build time: `VITE_FEATURE_MODEL_ASSISTANT=1` (the build setting wins: `0` keeps it
+ * off even when a browser key says otherwise).
+ * Switch on in one browser: localStorage `pqc-feature-model-assistant` = `1`.
+ */
+export const MODEL_ASSISTANT_STORAGE_KEY = 'pqc-feature-model-assistant'
+
+export const isModelAssistantFallback = (): boolean => {
+  const build = import.meta.env.VITE_FEATURE_MODEL_ASSISTANT
+  if (build === '1') return true
+  if (build === '0') return false
+  try {
+    return (
+      typeof localStorage !== 'undefined' &&
+      localStorage.getItem(MODEL_ASSISTANT_STORAGE_KEY) === '1'
+    )
+  } catch {
+    // Storage unavailable: the default stays off.
+    return false
+  }
+}
+
+export const useModelAssistantFallback = (): boolean => isModelAssistantFallback()

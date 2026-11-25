@@ -8,6 +8,7 @@ import { getRailSections } from './railNav'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { usePageActionsStore } from '../../store/usePageActionsStore'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
+import { useRightPanelStore } from '../../store/useRightPanelStore'
 import '@testing-library/jest-dom'
 
 // Mock the build timestamp
@@ -80,6 +81,53 @@ function getRailNav() {
 function getMobileNav() {
   return screen.getByRole('navigation', { name: /main navigation/i })
 }
+
+describe('MainLayout top bar: the Assistant drawer and Bookmarks', () => {
+  beforeEach(() => useRightPanelStore.setState({ isOpen: false, activeTab: 'chat' }))
+  afterEach(() => useRightPanelStore.setState({ isOpen: false, activeTab: 'chat' }))
+
+  it('has Assistant, Share, FAQ and Bookmarks, and no Journey button', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    expect(within(bar).getByRole('button', { name: 'Assistant' })).toBeInTheDocument()
+    expect(within(bar).getByRole('button', { name: 'Bookmarks' })).toBeInTheDocument()
+    expect(
+      within(bar).getByRole('button', { name: /open frequently asked questions/i })
+    ).toBeInTheDocument()
+    expect(within(bar).queryByRole('button', { name: /journey/i })).toBeNull()
+  })
+
+  it('the Assistant button toggles the drawer and shows its state', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    const assistant = within(bar).getByRole('button', { name: 'Assistant' })
+    expect(assistant).toHaveAttribute('aria-pressed', 'false')
+    fireEvent.click(assistant)
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'chat' })
+    expect(assistant).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(assistant)
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
+  })
+
+  it('the Bookmarks button opens Bookmarks in the same slot; the same button closes it; Assistant switches back', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    const bookmarks = within(bar).getByRole('button', { name: 'Bookmarks' })
+    fireEvent.click(bookmarks)
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'bookmarks' })
+    fireEvent.click(within(bar).getByRole('button', { name: 'Assistant' }))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'chat' })
+    fireEvent.click(bookmarks)
+    fireEvent.click(bookmarks)
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
+  })
+
+  it('leaves the legacy search box in the bar, still opening the palette', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    expect(within(bar).getByRole('button', { name: /^Search/ })).toBeInTheDocument()
+  })
+})
 
 describe('MainLayout', () => {
   afterEach(() => {

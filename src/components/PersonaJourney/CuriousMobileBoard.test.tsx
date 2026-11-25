@@ -316,12 +316,13 @@ describe('CuriousMobileBoard', () => {
       expect(useRightPanelStore.getState().activeTab).toBe('chat')
     })
 
-    it('Journey entry opens Learn › Your journey, not the drawer', () => {
+    it('Journey entry goes to Learn › Your journey (the drawer has no Journey tab)', () => {
       renderBoard()
       fireEvent.click(screen.getByRole('button', { name: /more menu/i }))
       fireEvent.click(screen.getByRole('button', { name: /journey/i }))
       expect(useRightPanelStore.getState().isOpen).toBe(false)
-      expect(screen.getByText(destinationTextFor('/learn', 'Learn'))).toBeInTheDocument()
+      // the board is left for the /learn route (the hero's own CTA may claim that route in this test)
+      expect(screen.queryByRole('button', { name: /more menu/i })).toBeNull()
     })
 
     it('FAQ entry navigates to /faq', () => {

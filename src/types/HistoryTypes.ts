@@ -30,4 +30,9 @@ export interface HistoryEvent {
   meta?: Record<string, string | number | boolean>
 }
 
-export type RightPanelTab = 'chat' | 'history' | 'bookmarks' | 'faq' | 'workshop'
+/**
+ * What the drawer can show. There are no tabs: 'chat' is the Assistant, 'bookmarks' opens from the
+ * top bar, 'workshop' only while a guided workshop runs, and 'faq' only as the phone's sheet.
+ * (The old 'history' view moved to Learn › Your journey.)
+ */
+export type RightPanelTab = 'chat' | 'bookmarks' | 'faq' | 'workshop'

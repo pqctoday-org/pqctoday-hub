@@ -23,6 +23,8 @@ export default defineConfig([
       'public/coi-serviceworker.js',
       'public/embed/sdk.js',
       'public/pyRuntimeWatchdog.js',
+      // the Assistant's answer engine: copied as it is written, so it is checked by its own tests, not restyled here
+      'src/services/assistant/engine',
     ],
   },
 
