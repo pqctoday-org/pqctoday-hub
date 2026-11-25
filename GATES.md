@@ -40,7 +40,10 @@ run on this exact commit is not paid twice):
 - `audit:role-board-drift` — `roleBoardContent.generated.ts` matches `role_board_content_*.csv`.
 - `gen:timeline-facts:check` — `timelineFacts.generated.ts` matches the CSV.
 - ~~automatic~~ `sync:wasm:check` is **manual only since 2026-09-27** (owner decision — it failed every hub push whenever pqctoday-hsm moved; run it by hand during a wasm rebuild) — the vendored wasm bundles are built from the pqctoday-hsm commit they claim (needs the sibling checkout — only meaningful here). Since 2026-09-26 a Rust bundle's inputs come from its Cargo build graph (`cargoManifest` in `public/wasm/wasm-provenance.json`, derived by `scripts/ci/wasm-build-inputs.ts`) rather than a hand-written `sourceDirs` list. That hand-written list had missed a linked crate: cacp-kmip never saw a Rust engine change. It had also flagged changes that cannot alter the binary (reports, committed wasm output, the bench crate). `scripts/ci/wasm-build-inputs.local.test.ts` replays both kinds of error against real hsm commits. On CI's blobless clone the derivation reads each Rust source once, lazily: measured at ~96 s for cacp-kmip.
+- `gen:algorithm-properties:check` — `algorithmProperties.ts` matches the newest algorithm reference CSV (the rows with a `registry_order`).
+- `gen:view-source-citations:check` — `viewSourceCitations.generated.ts` (the trusted-source ids each page's records cite, which decide each page's Sources list) matches the CSVs.
 - `gen:landing-counts:check` — landing hero counts match the CSVs.
+- GitHub also runs `gen:timeline-facts:check`, `gen:landing-counts:check`, `generate:data-filenames:check` `gen:algorithm-properties:check` and `gen:view-source-citations:check` as one step ("Generated data files are current") in `pr-check.yml` and in `ci.yml` `checks` (added 2026-11-25; until then they ran only here).
 - `gen:readme-facts:check` — the bounded README snapshot matches the current
   release and committed data lineages.
 - `audit:readme` — README repository links, canonical product routes, source

@@ -4,9 +4,12 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Papa from 'papaparse'
-import { mapReferenceStatusToTier } from './pqcAlgorithmsData'
-import { mapTransitionStatusToTier } from './algorithmsData'
-import { isCertifiedTier, isDraftTier, isStatusFilterTier } from './algorithmStatusTier'
+import {
+  isCertifiedTier,
+  isDraftTier,
+  isStatusFilterTier,
+  parseStatusTier,
+} from './algorithmStatusTier'
 
 const dataDir = dirname(fileURLToPath(import.meta.url))
 
@@ -40,49 +43,41 @@ function parseRows(path: string): Record<string, string>[] {
   return data
 }
 
-// WORKSTREAMS.md §WS-A drift guard: every distinct raw status string
-// actually present in the two wired CSVs must resolve through the explicit
-// lookup tables in pqcAlgorithmsData.ts / algorithmsData.ts. A future CSV
-// snapshot that introduces a brand-new status value should fail this test
-// loudly (and fail app data-loading the same way) instead of silently
-// falling through to "Certified".
+// WORKSTREAMS.md §WS-A drift guard: the tier is a field of the data. Every row
+// of the two wired CSVs (retired rows included, so a revival cannot arrive
+// without one) must carry a `status_tier` that is one of the governed tiers.
+// A future CSV snapshot that adds a row without a tier fails here and in the
+// app's data load, instead of silently falling through to "Certified".
 describe('algorithm status tier — drift guard (WS-A)', () => {
-  it('maps every (status, fips_standard) pair in the reference CSV', () => {
+  it('gives every row of the reference CSV a valid status_tier', () => {
     const csvPath = findWiredCsv(/^pqc_complete_algorithm_reference_\d{8}(?:_r\d+)?\.csv$/)
     const rows = parseRows(csvPath)
     expect(rows.length).toBeGreaterThan(0)
-
-    const seen = new Set<string>()
     for (const row of rows) {
-      const status = row.status || ''
-      const fipsStandard = row.fips_standard || ''
-      const key = `${status}|||${fipsStandard}`
-      if (seen.has(key)) continue
-      seen.add(key)
       expect(
-        () => mapReferenceStatusToTier(status, fipsStandard),
-        `unmapped reference status pair: ${JSON.stringify(status)} / ${JSON.stringify(fipsStandard)}`
+        () => parseStatusTier(row.status_tier, row.algorithm),
+        `reference row ${JSON.stringify(row.algorithm)} (status ${JSON.stringify(row.status)}) has no valid status_tier`
       ).not.toThrow()
     }
   })
 
-  it('maps every Status (and pqc_replacement, where Status is Candidate) in the transitions CSV', () => {
+  it('gives every row of the transitions CSV a valid status_tier', () => {
     const csvPath = findWiredCsv(/^algorithms_transitions_\d{8}(?:_r\d+)?\.csv$/)
     const rows = parseRows(csvPath)
     expect(rows.length).toBeGreaterThan(0)
-
-    const seen = new Set<string>()
     for (const row of rows) {
-      const status = row.Status || ''
-      const pqcReplacement = row.pqc_replacement || ''
-      const key = `${status}|||${pqcReplacement}`
-      if (seen.has(key)) continue
-      seen.add(key)
       expect(
-        () => mapTransitionStatusToTier(status, pqcReplacement),
-        `unmapped transition status: ${JSON.stringify(status)} (pqc_replacement: ${JSON.stringify(pqcReplacement)})`
+        () => parseStatusTier(row.status_tier, row.classical_algorithm),
+        `transition row ${JSON.stringify(row.classical_algorithm)} -> ${JSON.stringify(row.pqc_replacement)} (Status ${JSON.stringify(row.Status)}) has no valid status_tier`
       ).not.toThrow()
     }
+  })
+
+  it('refuses a blank or unknown status_tier', () => {
+    expect(() => parseStatusTier('', 'x')).toThrow(/status_tier/)
+    expect(() => parseStatusTier(undefined, 'x')).toThrow(/status_tier/)
+    expect(() => parseStatusTier('certified', 'x')).toThrow(/status_tier/)
+    expect(parseStatusTier(' final ', 'x')).toBe('final')
   })
 })
 

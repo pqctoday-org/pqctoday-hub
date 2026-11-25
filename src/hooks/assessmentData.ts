@@ -1,5 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { AssessmentInput } from './assessmentTypes'
+import {
+  ALGORITHM_DB,
+  DATA_RETENTION_YEARS,
+  INDUSTRY_THREAT,
+  USE_CASE_WEIGHTS,
+} from '../data/assessmentReferenceData'
+import { ALL_JURISDICTION_ENTRIES } from '../data/jurisdictionsData'
 import { QC_FIRST_YEAR } from '../data/quantumTimeline'
 import {
   TIMELINE_COUNTRY_DEADLINE_BY_NAME,
@@ -7,193 +14,7 @@ import {
   type DeadlineMandate,
 } from '../data/timelineFacts.generated'
 
-export const ALGORITHM_DB: Record<
-  string,
-  { quantumVulnerable: boolean; replacement: string; notes: string }
-> = {
-  'RSA-2048': {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-768 / ML-DSA-65',
-    notes: "Broken by Shor's algorithm. NIST targets deprecation by 2030.",
-  },
-  'RSA-3072': {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-768 / ML-DSA-65',
-    notes: "Broken by Shor's algorithm. Extended deprecation timeline over RSA-2048.",
-  },
-  'RSA-4096': {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-1024 / ML-DSA-87',
-    notes: "Broken by Shor's algorithm. Larger key provides no quantum resistance.",
-  },
-  'ECDSA P-256': {
-    quantumVulnerable: true,
-    replacement: 'ML-DSA-44',
-    notes: "Broken by Shor's algorithm. Used widely in TLS and code signing.",
-  },
-  'ECDSA P-384': {
-    quantumVulnerable: true,
-    replacement: 'ML-DSA-65',
-    notes: "Broken by Shor's algorithm.",
-  },
-  'ECDSA P-521': {
-    quantumVulnerable: true,
-    replacement: 'ML-DSA-87',
-    notes: "Broken by Shor's algorithm. Highest NIST curve.",
-  },
-  'ECDH P-256': {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
-    notes:
-      "ECDH on P-256 curve. Key agreement is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
-  },
-  'ECDH P-384': {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
-    notes:
-      "ECDH on P-384 curve. Key agreement is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
-  },
-  'ECDH P-521': {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-1024 (hybrid: ML-KEM-1024 + X448)',
-    notes:
-      "ECDH on P-521 curve. Key agreement is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
-  },
-  Ed25519: {
-    quantumVulnerable: true,
-    replacement: 'ML-DSA-44',
-    notes: 'Used in SSH, Solana. Vulnerable to quantum attack.',
-  },
-  Ed448: {
-    quantumVulnerable: true,
-    replacement: 'ML-DSA-65',
-    notes: 'EdDSA on Curve448. Vulnerable to quantum attack.',
-  },
-  'DH (Diffie-Hellman)': {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
-    notes:
-      "Classic key exchange is vulnerable to Shor's algorithm. Some transition profiles use a classical + PQC hybrid; the applicable protocol and authority determine whether that construction is allowed or required.",
-  },
-  'AES-128': {
-    quantumVulnerable: false,
-    replacement: 'Check the governing profile',
-    notes:
-      'The ideal Grover key-search estimate is about 2^64 sequential iterations. NIST IR 8547 §4.1.3 places approved primitives with 128 bits of classical strength at least at Category 1. For National Security Systems under CNSA 2.0, use AES-256.',
-  },
-  'AES-192': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes:
-      'The ideal Grover key-search estimate is about 2^96 sequential iterations. Check the required deployment profile.',
-  },
-  'AES-256': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes:
-      'AES-256 is NIST’s Category 5 key-search reference. The ideal estimate of about 2^128 sequential queries is a separate model.',
-  },
-  'SHA-256': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes:
-      'Finding a preimage for a chosen SHA-256 digest and finding any collision are different tasks. NIST’s Category 2 benchmark uses collision search on a 256-bit hash.',
-  },
-  'SHA-3': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes:
-      'Check the SHA-3 variant, output length and required property. NIST uses SHA3-256 and SHA3-384 collision search as two category references.',
-  },
-  '3DES': {
-    quantumVulnerable: false,
-    replacement: 'AES-256 (regardless of quantum)',
-    notes: 'Already deprecated for classical security reasons. Migrate immediately.',
-  },
-  'ChaCha20-Poly1305': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'Symmetric stream cipher. Quantum-safe at current key sizes.',
-  },
-  'HMAC-SHA256': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'MAC function. Not affected by quantum computers.',
-  },
-  X25519: {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-768 (hybrid: ML-KEM-768 + X25519)',
-    notes:
-      "Curve25519 key exchange. Vulnerable to Shor's algorithm. Widely used in TLS 1.3; hybrid mode already deployed in Chrome/Firefox.",
-  },
-  X448: {
-    quantumVulnerable: true,
-    replacement: 'ML-KEM-1024 (hybrid: ML-KEM-1024 + X448)',
-    notes: "Curve448 key exchange. Vulnerable to Shor's algorithm.",
-  },
-  secp256k1: {
-    quantumVulnerable: true,
-    replacement: 'ML-DSA-44',
-    notes: 'Used in Bitcoin/Ethereum. Vulnerable to quantum attack.',
-  },
-  // ── NIST PQC Standards (FIPS 203/204/205) — quantum-safe ──
-  'ML-KEM-512': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 203 (2024). NIST Level 1 KEM. Quantum-safe key encapsulation.',
-  },
-  'ML-KEM-768': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 203 (2024). NIST Level 3 KEM. Recommended default for most applications.',
-  },
-  'ML-KEM-1024': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 203 (2024). NIST Level 5 KEM. Highest security level.',
-  },
-  'ML-DSA-44': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 204 (2024). NIST Level 2 digital signature. Replaces ECDSA P-256 / Ed25519.',
-  },
-  'ML-DSA-65': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 204 (2024). NIST Level 3 digital signature. Replaces ECDSA P-384 / RSA-3072.',
-  },
-  'ML-DSA-87': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 204 (2024). NIST Level 5 digital signature. Replaces RSA-4096.',
-  },
-  'SLH-DSA-128': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 205 (2024). Stateless hash-based signature. Conservative fallback to ML-DSA.',
-  },
-  'SLH-DSA-192': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 205 (2024). NIST Level 3 hash-based signature.',
-  },
-  'SLH-DSA-256': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'FIPS 205 (2024). NIST Level 5 hash-based signature.',
-  },
-  'LMS/HSS': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes:
-      'SP 800-208 (2020). Stateful hash-based signature for firmware/boot. Requires strict state management.',
-  },
-  'XMSS/XMSS^MT': {
-    quantumVulnerable: false,
-    replacement: 'No change needed',
-    notes: 'RFC 8391 (2018). Stateful hash-based signature. Used in specialized firmware signing.',
-  },
-}
+export { ALGORITHM_DB }
 export const VULNERABLE_ALGORITHMS = new Set(
   Object.entries(ALGORITHM_DB)
     .filter(([, info]) => info.quantumVulnerable)
@@ -248,20 +69,7 @@ export const AVAILABLE_TEAM_SIZES: AssessmentInput['teamSize'][] = [
  * exposure profiles, and regulatory urgency timelines.
  * Sources: CISA Critical Infrastructure Sectors, NIST CNSA 2.0 (2022), EU NIS2 Directive (2022).
  */
-export const INDUSTRY_THREAT: Record<string, number> = {
-  'Finance & Banking': 25, // PCI DSS, SWIFT, DORA; high HNDL (transaction records) + HNFL (code signing)
-  'Government & Defense': 30, // CNSA 2.0, CISA; highest: classified data HNDL + national security
-  Healthcare: 20, // HIPAA, long patient data retention; high HNDL
-  Telecommunications: 20, // 5G/SIM provisioning, NIS2; high infrastructure complexity
-  Technology: 15, // Broad but less regulated; agile migration capability
-  'Energy & Utilities': 20, // SCADA/OT, NERC CIP, NIS2; long-lived embedded systems
-  Automotive: 15, // V2X, ECU secure boot; 15+ year vehicle lifetime HNFL
-  Aerospace: 25, // 40+ year asset lifetime; extreme HNDL/HNFL exposure
-  'Retail & E-Commerce': 10, // PCI DSS; shorter data retention, faster migration cycles
-  Education: 12, // FERPA student records, research IP; moderate HNDL from long-lived transcripts
-  Manufacturing: 18, // IEC 62443 OT/ICS, ISO/SAE 21434 automotive supply, TISAX, TSN; long-lived embedded controllers + supply-chain trust roots
-  Other: 10, // Baseline default
-}
+export { INDUSTRY_THREAT }
 export const ALGORITHM_WEIGHTS: Record<string, number> = {
   'RSA-2048': 10,
   'RSA-3072': 9,
@@ -289,62 +97,8 @@ export const MIGRATION_STATUS_SCORES: Record<string, number> = {
   'not-started': 10,
   unknown: 15,
 }
-export const USE_CASE_WEIGHTS: Record<
-  string,
-  { hndlRelevance: number; migrationPriority: number; tnflRelevance: number }
-> = {
-  'TLS/HTTPS': { hndlRelevance: 6, migrationPriority: 10, tnflRelevance: 5 },
-  'Data-at-rest encryption': { hndlRelevance: 9, migrationPriority: 7, tnflRelevance: 1 },
-  'Digital signatures / code signing': {
-    hndlRelevance: 3,
-    migrationPriority: 8,
-    tnflRelevance: 10,
-  },
-  'Key exchange / agreement': { hndlRelevance: 8, migrationPriority: 9, tnflRelevance: 2 },
-  'Authentication / identity': { hndlRelevance: 4, migrationPriority: 7, tnflRelevance: 7 },
-  'Blockchain / cryptocurrency': { hndlRelevance: 5, migrationPriority: 6, tnflRelevance: 8 },
-  'Email encryption (S/MIME, PGP)': { hndlRelevance: 7, migrationPriority: 5, tnflRelevance: 6 },
-  'VPN / IPSec': { hndlRelevance: 7, migrationPriority: 8, tnflRelevance: 4 },
-  'IoT device communication': { hndlRelevance: 5, migrationPriority: 6, tnflRelevance: 5 },
-  'Database encryption': { hndlRelevance: 8, migrationPriority: 7, tnflRelevance: 1 },
-  // ── Industry-specific use cases (from pqcassessment CSV) ──
-  'SIM/eSIM provisioning': { hndlRelevance: 8, migrationPriority: 9, tnflRelevance: 4 },
-  '5G network slicing security': { hndlRelevance: 7, migrationPriority: 8, tnflRelevance: 4 },
-  'SS7/Diameter protocol security': { hndlRelevance: 6, migrationPriority: 8, tnflRelevance: 3 },
-  'SWIFT messaging integrity': { hndlRelevance: 9, migrationPriority: 9, tnflRelevance: 8 },
-  'Trading system code signing': { hndlRelevance: 5, migrationPriority: 8, tnflRelevance: 9 },
-  'Card payment encryption': { hndlRelevance: 6, migrationPriority: 7, tnflRelevance: 2 },
-  'Medical device communication': { hndlRelevance: 8, migrationPriority: 9, tnflRelevance: 4 },
-  'EHR/FHIR data exchange': { hndlRelevance: 9, migrationPriority: 8, tnflRelevance: 3 },
-  'V2X communication': { hndlRelevance: 7, migrationPriority: 9, tnflRelevance: 6 },
-  'OTA firmware updates': { hndlRelevance: 5, migrationPriority: 9, tnflRelevance: 9 },
-  'ECU secure boot': { hndlRelevance: 4, migrationPriority: 8, tnflRelevance: 9 },
-  'SCADA/OT system security': { hndlRelevance: 8, migrationPriority: 9, tnflRelevance: 5 },
-  'Smart meter communication': { hndlRelevance: 7, migrationPriority: 7, tnflRelevance: 4 },
-  'Avionics communication': { hndlRelevance: 8, migrationPriority: 10, tnflRelevance: 7 },
-  'Satellite link encryption': { hndlRelevance: 10, migrationPriority: 9, tnflRelevance: 4 },
-  'PKI / HSPD-12': { hndlRelevance: 6, migrationPriority: 9, tnflRelevance: 10 },
-  'Classified data exchange': { hndlRelevance: 10, migrationPriority: 10, tnflRelevance: 7 },
-  'DNS/DNSSEC': { hndlRelevance: 3, migrationPriority: 8, tnflRelevance: 9 },
-  'Timestamping services': { hndlRelevance: 9, migrationPriority: 7, tnflRelevance: 9 },
-  'Backup/archive encryption': { hndlRelevance: 9, migrationPriority: 6, tnflRelevance: 1 },
-  'API gateway / microservices': { hndlRelevance: 5, migrationPriority: 8, tnflRelevance: 5 },
-  'Secure boot (non-automotive)': { hndlRelevance: 4, migrationPriority: 8, tnflRelevance: 9 },
-}
-export const DATA_RETENTION_YEARS: Record<string, number> = {
-  'under-1y': 1,
-  '1-5y': 5,
-  '5-10y': 10,
-  '10-25y': 25,
-  '25-plus': 30,
-  indefinite: 50,
-  // ── Industry-specific retention periods (from pqcassessment CSV) ──
-  '2y': 2,
-  '6y': 6,
-  '7y': 7,
-  '75y-plus': 75,
-  permanent: 100,
-}
+export { USE_CASE_WEIGHTS }
+export { DATA_RETENTION_YEARS }
 /** Credential / signature lifetime → years (parallel to DATA_RETENTION_YEARS for HNFL). */
 export const CREDENTIAL_LIFETIME_YEARS: Record<string, number> = {
   'under-1y': 1,
@@ -402,36 +156,12 @@ export const TIMELINE_URGENCY: Record<string, number> = {
  * OSCCA NGCC Program (2023), MAS Circular (2024), CRYPTREC PQC Report (2023),
  * MSIT/KpqC Roadmap (2024), EU NIS2 Directive (2022), EU DORA (2023).
  */
-export const COUNTRY_REGULATORY_URGENCY: Record<string, number> = {
-  'United States': 12, // CNSA 2.0 mandates, FedRAMP, FIPS 140-3, OMB M-23-02
-  France: 10, // ANSSI 2025 PQC readiness mandate, hybrid TLS requirement
-  Germany: 8, // BSI TR-02102 PQC guidance, NIS2 transposition
-  Israel: 10, // INCD 2027 planning deadline, BOI directive — urgency matches early horizon
-  Netherlands: 7, // NIS2, AIVD quantum threat advisory (2023)
-  'United Kingdom': 7, // NCSC PQC White Paper (Nov 2023)
-  Australia: 6, // ASD ISM PQC controls (2024)
-  Canada: 6, // CCCS ITSAP.00.017, CCCS-2023 PQC guidance
-  China: 6, // OSCCA NGCC program (2027-2030 financial sector)
-  'New Zealand': 6, // NZISM v3.9, Five Eyes aligned
-  Singapore: 6, // MAS PQC advisory circular (2024)
-  Spain: 6, // NIS2 transposition
-  Italy: 6, // NIS2 transposition
-  Belgium: 6, // NIS2 transposition
-  Sweden: 6, // NIS2 transposition
-  Japan: 5, // CRYPTREC PQC evaluation report (2023)
-  'South Korea': 5, // KpqC standardization, MSIT roadmap (2024)
-  Denmark: 5, // NIS2 transposition
-  'Czech Republic': 6, // NIS2, DORA, eIDAS 2.0, EU-REC-2024-1101
-  India: 4, // DSCI/CERT-In PQC awareness, no formal mandate yet
-  Brazil: 3, // ITI/ICP-Brasil PQC study group, early stage
-  'United Arab Emirates': 4, // NESA guidance, financial sector PQC pilot
-  Switzerland: 6, // NCSC-CH PQC recommendations, aligned with EU NIS2
-  Norway: 6, // NIS2 transposition via EEA
-  Finland: 6, // NIS2 transposition
-  Austria: 6, // NIS2 transposition
-  Poland: 5, // NIS2 transposition, early adoption
-  Taiwan: 5, // NICS PQC study, semiconductor supply chain focus
-}
+export const COUNTRY_REGULATORY_URGENCY: Record<string, number> = Object.fromEntries(
+  ALL_JURISDICTION_ENTRIES.filter((j) => j.regulatoryUrgency !== undefined).map((j) => [
+    j.name,
+    j.regulatoryUrgency as number,
+  ])
+)
 // Aligned to the Applied Quantum framework Q-Day (first CRQC). Single source: quantumTimeline.
 export const ESTIMATED_QUANTUM_THREAT_YEAR = QC_FIRST_YEAR
 /**
