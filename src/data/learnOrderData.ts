@@ -44,3 +44,26 @@ export const LEARN_ORDER: Readonly<Record<string, LearnOrder>> = Object.fromEntr
 export function getLearnOrder(moduleId: string): LearnOrder | undefined {
   return LEARN_ORDER[moduleId]
 }
+
+const lessonById = new Map(LEARN_MODULES.map((lesson) => [lesson.id, lesson]))
+
+/**
+ * Orders the lessons that name `moduleId` as "take first" for display: lessons in the same
+ * track as `moduleId` first, then by stage (earlier stages first), then in the data file's
+ * own order. The list itself (`LearnOrder.next`) is unchanged; this only sorts a copy.
+ */
+export function orderNextLessons(moduleId: string, nextIds: readonly string[]): string[] {
+  const track = lessonById.get(moduleId)?.track
+  return nextIds
+    .map((id, index) => ({ id, index, lesson: lessonById.get(id) }))
+    .sort((a, b) => {
+      const sameA = track !== undefined && a.lesson?.track === track ? 0 : 1
+      const sameB = track !== undefined && b.lesson?.track === track ? 0 : 1
+      if (sameA !== sameB) return sameA - sameB
+      const stageA = a.lesson?.stage ?? Number.MAX_SAFE_INTEGER
+      const stageB = b.lesson?.stage ?? Number.MAX_SAFE_INTEGER
+      if (stageA !== stageB) return stageA - stageB
+      return a.index - b.index
+    })
+    .map((entry) => entry.id)
+}
