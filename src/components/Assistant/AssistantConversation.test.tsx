@@ -185,7 +185,9 @@ describe('asking', () => {
     const user = userEvent.setup()
     mount()
     await user.type(box(), 'What is the airspeed of a swallow?{Enter}')
-    expect(await screen.findByText('The Hub holds nothing on this yet.')).toBeInTheDocument()
+    expect(
+      await screen.findByText('The Hub does not hold an answer to this question.')
+    ).toBeInTheDocument()
   })
 })
 

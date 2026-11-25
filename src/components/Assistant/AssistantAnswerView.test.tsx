@@ -236,7 +236,9 @@ describe('notes without a source line', () => {
 describe('nothing held', () => {
   it('draws the fixed not-held words and no resources', () => {
     show(notHeld as RenderableAnswer)
-    expect(screen.getByText('The Hub holds nothing on this yet.')).toBeInTheDocument()
+    expect(
+      screen.getByText('The Hub does not hold an answer to this question.')
+    ).toBeInTheDocument()
     expect(screen.queryByRole('listitem')).toBeNull()
     expect(screen.queryByRole('button', { name: 'Save answer' })).toBeNull()
   })

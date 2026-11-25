@@ -265,9 +265,9 @@ export type AssistantAnswer =
   | AssistantDataNotLoaded
 
 /** The fixed words of the not-held state (copy deck: plain words, says what the Hub holds, no model words). */
-export const ASSISTANT_NOT_HELD_TEXT = 'The Hub holds nothing on this yet.'
+export const ASSISTANT_NOT_HELD_TEXT = 'The Hub does not hold an answer to this question.'
 export const ASSISTANT_NOT_HELD_NOTE =
-  'No resources match. Try other words, or browse the Hub from the menu.'
+  'Try a standard, an algorithm, a date, a product or a lesson by name, or browse a page from the rail.'
 
 /** The short address of a tag: `/go/LIB:FIPS%20203`. Colons and slashes stay readable; the rest is percent-encoded. */
 export function assistantGoLink(tag: string): string {
