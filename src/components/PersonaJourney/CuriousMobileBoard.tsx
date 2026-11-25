@@ -160,7 +160,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
   }
   const handleJourney = () => {
     setMoreOpen(false)
-    openRightPanel('history')
+    navigate('/learn?view=journey')
   }
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { MessageCircle, Clock } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { logChatOpened } from '@/utils/analytics'
@@ -40,7 +39,7 @@ function useMobileScrollFade() {
 }
 
 export const RightPanelFAB: React.FC = () => {
-  const { isOpen, activeTab, toggle, isMinimized } = useRightPanelStore()
+  const { isOpen, toggle, isMinimized } = useRightPanelStore()
   const embedConfig = useEmbedState()
   const isScrolling = useMobileScrollFade()
   // Framer Motion owns `opacity`/`scale` via inline styles once it animates
@@ -65,9 +64,7 @@ export const RightPanelFAB: React.FC = () => {
   if (embedConfig.isEmbedded && embedConfig.policy?.features?.assistantEnabled === false)
     return null
 
-  const isChat = activeTab !== 'history'
-  const Icon = isChat ? MessageCircle : Clock
-  const label = isChat ? 'Open PQC Assistant' : 'Open Journey History'
+  const label = 'Open Assistant'
 
   return (
     <motion.div
@@ -94,7 +91,7 @@ export const RightPanelFAB: React.FC = () => {
         {/* "Need Help?" speech bubble — slides in, fades out after 10 s.
             Desktop-only: on mobile its extra width sits on top of page content
             (the icon button alone already communicates the same affordance). */}
-        {isChat && !prefersReducedMotion && (
+        {!prefersReducedMotion && (
           <motion.div
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: [0, 1, 1, 0], x: [-8, 0, 0, 0] }}
@@ -112,34 +109,30 @@ export const RightPanelFAB: React.FC = () => {
 
         {/* Pulse ring — radiates outward on loop. Desktop-only: on mobile it
             expands well past the (already-shrunk) button and re-covers content. */}
-        {isChat && (
+        {
           <motion.span
             className="hidden md:block absolute inset-0 rounded-full bg-primary/40 pointer-events-none"
             animate={{ scale: [1, 1.7], opacity: [0.5, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
           />
-        )}
+        }
 
         <Button
           variant="gradient"
           onClick={() => {
-            toggle()
-            if (isChat) logChatOpened()
+            toggle('chat')
+            logChatOpened()
           }}
           className="relative w-14 h-14 md:w-24 md:h-24 rounded-full shadow-lg shadow-primary/25 p-0 overflow-hidden"
           aria-label={label}
         >
-          {isChat ? (
-            <img
-              src="/ChatBotFlow.gif"
-              alt=""
-              aria-hidden="true"
-              className="w-full h-full rounded-full object-cover"
-              draggable={false}
-            />
-          ) : (
-            <Icon size={24} aria-hidden="true" />
-          )}
+          <img
+            src="/ChatBotFlow.gif"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full rounded-full object-cover"
+            draggable={false}
+          />
           {/* Badge when minimized with active conversation */}
           {isMinimized && (
             <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-status-info rounded-full border-2 border-background" />

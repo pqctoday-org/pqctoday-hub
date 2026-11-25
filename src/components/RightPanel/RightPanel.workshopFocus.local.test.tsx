@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button'
 const viewport = vi.hoisted(() => ({ narrow: false }))
 vi.mock('@/hooks/useIsBelowLgViewport', () => ({ useIsBelowLgViewport: () => viewport.narrow }))
 vi.mock('@/hooks/useIsMobileShell', () => ({ useIsMobileShell: () => viewport.narrow }))
-vi.mock('./ChatPanelContent', () => ({
-  ChatPanelContent: () => <Button>Sample assistant control</Button>,
+vi.mock('../Assistant/AssistantConversation', () => ({
+  AssistantConversation: () => <Button>Sample assistant control</Button>,
 }))
 vi.mock('./WorkshopPanel', () => ({
   WorkshopPanel: () => <Button>Sample workshop control</Button>,
@@ -27,7 +27,7 @@ beforeEach(() => {
   viewport.narrow = false
   useWorkshopStore.getState().reset()
   useWorkshopStore.setState({ mode: 'running' })
-  useRightPanelStore.setState({ isOpen: true, activeTab: 'workshop', isExpanded: false })
+  useRightPanelStore.setState({ isOpen: true, activeTab: 'workshop' })
 })
 afterEach(() => vi.unstubAllGlobals())
 function mount() {
@@ -80,12 +80,20 @@ describe('Real focus-lock behavior for guided workshops versus modal panels', ()
     await screen.findByRole('button', { name: 'Sample workshop control' })
     await assertTrapped('Workshop')
   })
-  it('reactivates the Assistant trap when switching from the modeless workshop', async () => {
+  it('keeps the Assistant beside the page without a focus lock on a wide screen', async () => {
+    useWorkshopStore.getState().reset()
+    useRightPanelStore.setState({ isOpen: true, activeTab: 'chat' })
     mount()
-    await screen.findByRole('button', { name: 'Sample workshop control' })
+    expect(screen.getByRole('region', { name: 'Assistant' })).toBeInTheDocument()
     await assertResourceFocusAllowed()
-    await userEvent.click(screen.getByRole('tab', { name: 'Assistant' }))
-    await screen.findByRole('button', { name: 'Sample assistant control' })
-    await assertTrapped('PQC Assistant')
+  })
+
+  it('holds focus inside the Assistant sheet on a phone', async () => {
+    viewport.narrow = true
+    useWorkshopStore.getState().reset()
+    useRightPanelStore.setState({ isOpen: true, activeTab: 'chat' })
+    mount()
+    await screen.findByRole('dialog', { name: 'Assistant' })
+    await assertTrapped('Assistant')
   })
 })

@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+/**
+ * Where "Back to your answer" goes after a row opened a page. In memory only.
+ */
+import { create } from 'zustand'
+
+export interface AssistantReturnTarget {
+  /** Route and query the learner came from. */
+  path: string
+  /** Plain name of that page, for "Back to <page>" on a phone. */
+  label: string
+}
+
+interface AssistantReturnState {
+  target: AssistantReturnTarget | null
+  /** The page the row opened, once it has been reached. */
+  landedPath: string | null
+  begin: (target: AssistantReturnTarget) => void
+  land: (path: string) => void
+  clear: () => void
+}
+
+export const useAssistantReturnStore = create<AssistantReturnState>()((set) => ({
+  target: null,
+  landedPath: null,
+  begin: (target) => set({ target, landedPath: null }),
+  land: (path) => set({ landedPath: path }),
+  clear: () => set({ target: null, landedPath: null }),
+}))

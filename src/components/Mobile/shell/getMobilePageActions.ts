@@ -7,7 +7,7 @@ import { FAQ_DATA } from '@/components/FAQ/faqData'
 const FAQ_QUESTION_COUNT = FAQ_DATA.reduce((sum, cat) => sum + cat.items.length, 0)
 
 export type MobilePageActionId =
-  'assistant' | 'journey' | 'faq' | 'sources' | 'glossary' | 'whatsNew' | 'about'
+  'assistant' | 'journey' | 'bookmarks' | 'faq' | 'sources' | 'glossary' | 'whatsNew' | 'about'
 
 export interface MobilePageAction {
   id: MobilePageActionId
@@ -50,7 +50,8 @@ export function getMobilePageActions(pathname: string): MobilePageActionsResult 
   const viewType = ROUTE_VIEW_TYPE[pathname]
   const actions: MobilePageAction[] = [
     { id: 'assistant', label: 'Assistant', sub: 'Ask a question about this page' },
-    { id: 'journey', label: 'Journey', sub: 'Your recent activity, in order' },
+    { id: 'journey', label: 'Your journey', sub: 'Objectives and progress, on Learn' },
+    { id: 'bookmarks', label: 'Bookmarks', sub: 'Stored on this device only' },
     {
       id: 'faq',
       label: 'FAQ',

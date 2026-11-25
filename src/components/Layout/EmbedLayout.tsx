@@ -31,6 +31,7 @@ import { useHostCheck } from '../../embed/useHostCheck'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
+import { useAssistantLayout, drawerPaddingClass } from '../Assistant/useAssistantLayout'
 import { logEmbedPolicyApplied } from '../../utils/analytics'
 import { INDUSTRY_SLUG_TO_LABEL } from '../../data/personaConfig'
 import { useSearchParams } from 'react-router'
@@ -46,7 +47,8 @@ export const EmbedLayout = () => {
   useFocusableScrollRegions(mainRef)
   const [searchParams, setSearchParams] = useSearchParams()
   const embedConfig = useEmbed()
-  const { isOpen: isPanelOpen } = useRightPanelStore()
+  const { isOpen: isPanelOpen, activeTab: panelTab } = useRightPanelStore()
+  const assistantLayout = useAssistantLayout()
 
   // Initialize persistence and auth flows
   useEmbedPersistence()
@@ -436,9 +438,11 @@ export const EmbedLayout = () => {
   if (isSidebarLayout) {
     return (
       <div
-        className={`relative flex h-dvh bg-background text-foreground print:min-h-0 embed-root overflow-hidden transition-[padding] duration-300 ${
-          isPanelOpen ? 'sm:pr-[40vw]' : ''
-        }`}
+        className={`relative flex h-dvh bg-background text-foreground print:min-h-0 embed-root overflow-hidden transition-[padding] duration-300 ${drawerPaddingClass(
+          isPanelOpen,
+          assistantLayout,
+          panelTab
+        )}`}
       >
         {/* Left sidebar — fixed height, never scrolls with content */}
         <aside
@@ -519,9 +523,11 @@ export const EmbedLayout = () => {
   // ── Top nav layout (default) ────────────────────────────────────────────────
   return (
     <div
-      className={`relative min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root transition-[padding] duration-300 ${
-        isPanelOpen ? 'sm:pr-[40vw]' : ''
-      }`}
+      className={`relative min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root transition-[padding] duration-300 ${drawerPaddingClass(
+        isPanelOpen,
+        assistantLayout,
+        panelTab
+      )}`}
     >
       {/* Conditionally render header based on policy.features.hideNav */}
       {!embedConfig.policy.features.hideNav && (
