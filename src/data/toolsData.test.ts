@@ -318,11 +318,13 @@ describe('the move changed nothing a page shows', () => {
   // snapshot below, so everything else must still be identical to what pages showed before the move.
   //  - 25 Nov 2026 ("Link it to Crypto Agility"): the KMIP control plane tool opens the Crypto Agility
   //    lesson from its card (its own page stays /playground/cacp), so that lesson now offers it back.
+  //  - 25 Nov 2026 ("Crypto Developer APIs"): OpenSSL Studio likewise opens the Crypto Developer APIs lesson.
   const intended = (key: string): unknown => {
     const snapshot = structuredClone(before[key])
     if (key === 'workshopTools') {
       for (const tool of snapshot as { id: string; moduleLink: string }[]) {
         if (tool.id === 'cacp-kmip') tool.moduleLink = '/learn/crypto-agility'
+        if (tool.id === 'openssl-studio') tool.moduleLink = '/learn/crypto-dev-apis'
       }
     }
     if (key === 'toolNice') {
@@ -335,9 +337,15 @@ describe('the move changed nothing a page shows', () => {
       }
     }
     if (key === 'toolsByModuleId')
-      (snapshot as [string, string[]][]).push(['crypto-agility', ['cacp-kmip']])
+      (snapshot as [string, string[]][]).push(
+        ['crypto-agility', ['cacp-kmip']],
+        ['crypto-dev-apis', ['openssl-studio']]
+      )
     if (key === 'toolByModuleId')
-      (snapshot as [string, string][]).push(['crypto-agility', 'cacp-kmip'])
+      (snapshot as [string, string][]).push(
+        ['crypto-agility', 'cacp-kmip'],
+        ['crypto-dev-apis', 'openssl-studio']
+      )
     return snapshot
   }
 

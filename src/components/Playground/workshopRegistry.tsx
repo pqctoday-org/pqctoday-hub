@@ -1073,7 +1073,7 @@ const WORKSHOP_TOOL_CONTENT: WorkshopToolContent[] = [
       'Full OpenSSL v3.6.3 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
     algorithms: ['RSA', 'EC', 'Ed25519', 'ML-KEM', 'ML-DSA', 'SLH-DSA', 'AES', 'HKDF', 'X.509'],
     icon: Terminal,
-    moduleLink: '/playground/openssl-studio',
+    moduleLink: '/learn/crypto-dev-apis',
     keywords: [
       'openssl',
       'studio',
