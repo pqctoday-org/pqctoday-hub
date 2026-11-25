@@ -4,6 +4,7 @@
     "term": "TLS",
     "acronym": "TLS",
     "definition": "Transport Layer Security, the protocol that secures HTTPS web traffic. TLS 1.3 is the current version.",
+    "plainDefinition": "Transport Layer Security — the protocol that puts the padlock in your browser's address bar.",
     "technicalNote": "PQC integration uses hybrid key exchange (e.g., X25519 + ML-KEM-768) to maintain backward compatibility.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "beginner",
@@ -60,7 +61,8 @@
     "definition": "5G Authentication and Key Agreement protocol, the primary authentication mechanism in 5G networks.",
     "relatedModule": "/learn/5g-security",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Telecommunications"
   },
   {
     "id": "suci",
@@ -123,7 +125,9 @@
     "technicalNote": "Over 14 billion EMV cards are in circulation globally. Offline authentication relies on RSA/ECC signatures vulnerable to quantum forgery.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Payment Card Industry",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "s-mime",
@@ -221,7 +225,8 @@
     "definition": "Datagram Transport Layer Security, the UDP equivalent of TLS. Used in IoT (CoAP), WebRTC, and VPN protocols. DTLS 1.3 adds PQC support.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "mtls",
@@ -230,7 +235,8 @@
     "technicalNote": "mTLS raises two separate post-quantum questions: the key exchange (hybrid ML-KEM groups for TLS 1.3 are defined in RFC 10024) and the authentication of both peers (certificate signatures, which depend on what the CA and the client and server libraries support). They can be migrated independently, so test each client and server pairing.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "ocsp",
@@ -269,7 +275,8 @@
     "technicalNote": "Source: ACVP JSON Specification, draft-ietf-acvp-spec-01 (Library: NIST-ACVP) §1 Abstract, §6 (JSON over HTTP[S]), §8 Encoding; NIST CAVP project page (csrc.nist.gov/projects/cryptographic-algorithm-validation-program) for ACVTS and certificates. A passed vector-set disposition is not itself a validation; running public ACVP-Server sample vectors is not one either. The .req/.rsp request and response files belong to ACVP's predecessor, the CAVS tool (e.g. SHAVS §6.2.1), which the CAVP page lists as deprecated by ACVTS.",
     "relatedModule": "/library?ref=NIST-ACVP",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Government & Defense"
   },
   {
     "id": "pq3",
@@ -317,7 +324,8 @@
     "technicalNote": "JWTs typically use RSA or ECDSA signatures which are quantum-vulnerable. PQC JWT support (ML-DSA) is being standardized via JOSE working group.",
     "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "json-web-signature",
@@ -354,7 +362,7 @@
     "acronym": "OIDC",
     "definition": "An identity layer built on OAuth 2.0 that provides authentication via ID tokens (JWTs). Widely used for single sign-on across web and mobile applications.",
     "technicalNote": "OIDC ID tokens are signed JWTs. PQC migration requires authorization servers to sign ID tokens with ML-DSA and clients to verify PQC signatures. JWKS endpoints must serve PQC public keys.",
-    "relatedModule": "/learn/api-security-jwt",
+    "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -451,7 +459,8 @@
     "definition": "Message Queuing Telemetry Transport, a lightweight publish/subscribe messaging protocol for IoT. MQTT 5.0 supports TLS 1.3 transport security.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "lorawan",
@@ -459,7 +468,8 @@
     "definition": "Long Range Wide Area Network, a low-power WAN protocol for IoT. Uses AES-128 pre-shared keys. The maximum application payload of a frame depends on region and data rate: in the LoRaWAN 1.0.3 Regional Parameters it ranges from 11 bytes (US902-928, lowest data rate) to 242 bytes, and EU863-870 allows 51 to 222 bytes (242 without repeater compatibility). An ML-KEM-768 ciphertext alone is 1,088 bytes, so a PQC key exchange cannot fit in one frame and would need fragmentation across frames or a different exchange design.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "matter",
@@ -467,7 +477,8 @@
     "definition": "Smart home interoperability standard (formerly Project CHIP). Uses the CASE protocol with ECDSA P-256 for device attestation. PQC migration requires protocol specification update.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "coap",
@@ -476,7 +487,8 @@
     "definition": "Constrained Application Protocol, a lightweight RESTful protocol designed for IoT devices. Runs over UDP with DTLS for security. RFC 7252 sets no fixed maximum message size: it advises avoiding IP fragmentation and, when the path MTU is unknown, assuming a 1,280-byte IP MTU, for which 1,152 bytes of message and 1,024 bytes of payload are good upper bounds. Larger exchanges, such as a PQC key exchange with kilobyte-sized keys or signatures, can use block-wise transfers, so the practical limit depends on the link, the adaptation layer and the handshake design rather than on one message size.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "nb-iot",
@@ -502,9 +514,10 @@
     "acronym": "GOOSE",
     "definition": "Generic Object Oriented Substation Event. A high-speed multicast protocol in the IEC 61850 series, used for time-critical messages such as protection relay tripping.",
     "technicalNote": "IEC 62351-6:2020 secures Layer 2 GOOSE and Sampled Values with a message authentication code, and does not recommend encryption for applications requiring 3 ms response times. Group keys are managed under IEC 62351-9, which also covers long-term asymmetric keys and certificates; that public-key side is where post-quantum questions arise, and IEC 62351-9:2023 says it will consider post-quantum cryptography to a certain extent but provides no specific measures at present.",
-    "relatedModule": "/learn/ot-pqc",
+    "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "dnp3-sa",
@@ -512,9 +525,10 @@
     "acronym": "DNP3-SA",
     "definition": "DNP3 Secure Authentication, the authentication mechanism for the DNP3 protocol (IEEE Std 1815), based on IEC 62351-5. Challenge-response authentication for SCADA using a message authentication code, with session keys protected by an Update Key that is pre-shared by default. IEEE 1815.1 is a different standard: the DNP3 to IEC 61850 mapping.",
     "technicalNote": "In the version 5 specification (2011), authentication uses a MAC (HMAC-SHA-1, HMAC-SHA-256 or AES-GMAC variants) with symmetric session keys and provides authentication only, not encryption. The default remote Update Key change is symmetric (AES-256 Key Wrap with HMAC-SHA-256); the optional asymmetric methods use RSAES-OAEP and DSA, which are quantum-vulnerable public-key algorithms. IEC 62351-5:2023 removed the symmetric Update Key change method and added authenticated encryption, so check which version a product implements.",
-    "relatedModule": "/learn/ot-pqc",
+    "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "dlms-cosem",
@@ -524,7 +538,8 @@
     "technicalNote": "Security Suite 1 uses AES-GCM-128 + ECDSA P-256 + ECDH P-256. For scale, an ECDH P-256 public value is 33 bytes compressed (65 uncompressed), while ML-KEM-768 uses a 1,184-byte encapsulation key and a 1,088-byte ciphertext. Dividing the ciphertext by one 33-byte point (a 33x ratio) compares single objects, not exchanges: the real increase depends on the full message flow (both key shares or the encapsulation key plus ciphertext, signatures and certificates), the DLMS framing and block transfer, and the communication medium, and has to be measured for the chosen meter profile.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "iccp-tase-2",
@@ -532,9 +547,10 @@
     "acronym": "ICCP",
     "definition": "Inter-Control Center Communications Protocol (IEC 60870-6 TASE.2). Used for real-time data exchange between utility control centers; the IEC 62351 series defines TLS-based protection for it.",
     "technicalNote": "IEC 62351-4 carries over the IEC TS 62351-4:2007 T-profile and A-security-profile on which ICCP implementations depend, and IEC 62351-3 profiles TLS for protocols running over TCP/IP. NERC CIP-012 asks applicable Control Centers for a documented plan to mitigate disclosure and modification of real-time data sent between them; it does not name ICCP or post-quantum cryptography. Which links to migrate first is a risk decision for each operator, not a CIP-012 requirement.",
-    "relatedModule": "/learn/ot-pqc",
+    "relatedModule": "/learn/energy-utilities-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "dicom",
@@ -543,7 +559,8 @@
     "definition": "Digital Imaging and Communications in Medicine. The standard protocol for transmitting, storing, and sharing medical images (X-ray, CT, MRI). DICOM supports TLS for transport security; PQC migration requires updating both the transport layer and any encrypted archives of imaging data.",
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Healthcare / Pharmaceutical"
   },
   {
     "id": "sda",
@@ -553,7 +570,8 @@
     "technicalNote": "SDA uses a single RSA signature over static data. A terminal verifies this signature against the issuer CA certificate chain. Being deprecated in favor of DDA/CDA.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "dda",
@@ -563,7 +581,8 @@
     "technicalNote": "DDA requires the card chip to perform RSA signing using its private key. The terminal verifies via the EMVCo CA certificate chain (Root → Network CA → Issuer CA → ICC).",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "cda",
@@ -573,7 +592,8 @@
     "technicalNote": "CDA binds the authentication and transaction authorization into one cryptographic operation, preventing man-in-the-middle attacks between card and terminal. Most modern EMV cards use CDA.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "arqc",
@@ -583,7 +603,8 @@
     "technicalNote": "ARQC uses 3DES or AES-based MAC computation with issuer-derived session keys. Being symmetric, it is not exposed to Shor-type attacks on RSA or ECC, but its strength still depends on the cipher, key length and key-derivation and management, so it is not an automatic quantum-safe label.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "arpc",
@@ -603,7 +624,8 @@
     "technicalNote": "Open sources describe the issuer's signed authentication token using ES256 (ECDSA P-256) or PS256 (RSA-PSS), a P-256 Diffie-Hellman key agreement between the SDK and the issuer for the challenge channel, and device information encrypted to the directory server's public key. These public-key mechanisms are quantum-vulnerable. The EMV specification itself was not read, so this entry does not say which component signs the challenge.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "acars",
@@ -613,7 +635,8 @@
     "technicalNote": "For character-oriented VHF ACARS, the documented text field carries at most 220 printable characters per block; this is not a general 220-byte binary transport or a limit on the whole reassembled message. Worked encoding comparison: a 3,309-byte ML-DSA-65 signature encoded as Base64 occupies 4 × ceil(3309 / 3) = 4,412 printable characters, needing at least ceil(4412 / 220) = 21 text blocks even before message content, block identifiers and other overhead. Base64 is an illustrative encoding choice, not a specified ACARS authentication profile. Actual deployment planning must include the selected bearer/profile, complete authenticated message, fragmentation, retries and latency. Frame reference: https://www.wavecom.ch/content/ext/DecoderOnlineHelp/worddocuments/acars.htm.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "cpdlc",
@@ -623,7 +646,8 @@
     "technicalNote": "CPDLC messages travel over aircraft data links whose latency, message size and block framing differ by link and profile. An ML-DSA-44 signature is 2,420 bytes (FIPS 204), so how many link blocks or messages a signed clearance needs, and how much latency that adds to a safety-critical ATC clearance, depends on the chosen link and framing and has to be measured for that profile.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "ads-b",
@@ -633,7 +657,8 @@
     "technicalNote": "ADS-B transmits unauthenticated 112-bit (14-byte) messages with no encryption or signing. That is the whole over-the-air frame, including its format, address and parity fields, so the application data inside it is smaller still. A frame this small cannot carry any PQC signature (an ML-DSA-44 signature is 2,420 bytes). Authentication requires out-of-band verification or protocol redesign.",
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Aerospace / Aviation"
   },
   {
     "id": "agent-to-agent-authentication",
@@ -662,7 +687,8 @@
     "technicalNote": "In CCC Digital Key, how many APDUs (NFC) or frames (BLE) a PQC exchange needs depends on the APDU form (short or extended length), the negotiated BLE link settings and the complete message flow, so a ciphertext-only count understates it: the ML-KEM-768 ciphertext alone is 1,088 bytes, before the encapsulation key, signatures and certificates. Owner-to-friend key sharing adds another quantum-vulnerable certificate chain.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "can-bus",
@@ -672,7 +698,8 @@
     "technicalNote": "A 2,420-byte ML-DSA-44 signature alone needs at least ceil(2420 / 8) = 303 classical CAN data frames, or ceil(2420 / 64) = 38 CAN FD data frames, before segmentation headers, application data, counters and bus framing. This comparison uses full data fields; it does not specify a transport protocol or prove a latency result. With a 1,500-byte IP MTU on Ethernet, ceil(2420 / 1500) = 2 is only an optimistic packet-count lower bound: network/transport headers reduce application capacity and link headers add wire bytes. Ethernet does not make a signature fit in one packet or establish timing feasibility. Compare the complete exchange and measured timing on the intended ECU and network. CAN FD reference: https://www.st.com/content/st_com/en/technical-documents/an5348-introduction-to-fdcan-peripherals-for-stm32-mcus-stmicroelectronics_asset/chunk-001-topic-an5348-can-fd-protocol-overview.html.",
     "relatedModule": "/learn/automotive-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Automotive / Connected Vehicles"
   },
   {
     "id": "rfc-9794",
@@ -750,7 +777,7 @@
     "acronym": "Enrollment over Secure Transport",
     "definition": "IETF certificate enrollment protocol (RFC 7030) used by devices to request, renew, and re-key X.509 certificates over TLS. Common in IoT, enterprise PKI, and 802.1X NAC enrolment.",
     "technicalNote": "Often deployed alongside ACME (web-facing) and CMP (enterprise / 3GPP) as part of an automated CLM stack. PQC migration of EST mostly inherits from the underlying TLS and CSR algorithm choices.",
-    "relatedModule": "/learn/crypto-mgmt-modernization",
+    "relatedModule": "/learn/pki-enrollment-protocols",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -780,7 +807,7 @@
     "acronym": "RA",
     "definition": "The entity in a PKI that verifies a certificate applicant's identity and authorizes issuance, then forwards the approved request to the Certificate Authority (already in this glossary) for signing.",
     "technicalNote": "Separating the RA and CA roles lets an organization outsource identity vetting while keeping signing authority centralized.",
-    "relatedModule": "/learn/pki-workshop",
+    "relatedModule": "/learn/pki-enrollment-protocols",
     "complexity": "beginner",
     "category": "protocol"
   },
@@ -790,7 +817,7 @@
     "acronym": "OAuth 2.0",
     "definition": "An authorization framework (RFC 6749) that lets an application obtain limited access to a resource on a user's behalf via short-lived tokens, without handling the user's credentials directly.",
     "technicalNote": "OpenID Connect, already in this glossary, is an identity layer built on top of OAuth 2.0.",
-    "relatedModule": "/learn/iam-pqc",
+    "relatedModule": "/learn/api-security-jwt",
     "complexity": "intermediate",
     "category": "protocol"
   },
@@ -802,7 +829,8 @@
     "technicalNote": "The IETF COSE and JOSE working groups are standardizing the same ML-DSA/ML-KEM/SLH-DSA algorithm identifiers across both formats.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "lamps",

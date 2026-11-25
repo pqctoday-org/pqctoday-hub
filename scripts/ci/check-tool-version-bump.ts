@@ -155,9 +155,8 @@ const MOVED_FIELDS: Record<string, { column: string; list: boolean }> = {
 /** Other columns of the data file: compared only when both sides have a row. */
 const DATA_ONLY_COLUMNS = [
   'module',
-  'nice_tier',
-  'nice_competency_areas',
-  'nice_work_roles',
+  // The NICE tier, areas and roles of a tool with a lesson are read from that lesson, so a change
+  // there is a change to the lesson, not to the tool: they are not compared here.
   'work_in_progress',
 ]
 

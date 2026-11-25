@@ -29,6 +29,30 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.225.0] - 2026-11-25
+
+Every tool now belongs to a lesson and lists the NICE skills it teaches or lets you practise, short links open any resource, and the Library, Migrate, Timeline, Community and Glossary data is tagged by lesson, industry and place.
+
+### Added
+
+- **Short links to any resource** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: An address such as `/go/ALG:ML-KEM` opens that resource on its own page, so a lesson, algorithm, standard, threat or tool can be shared with one stable link. An unknown link says so instead of showing an empty page.
+- **Learn opens on a stage or a NICE skill area** [view:/learn] [persona:grc] [persona:developer] [persona:architect] [persona:ops]: `/learn?stage=…` and `/learn?area=…` show the lessons of one stage (Basics to Expert) or one NICE competency area, with a chip to clear the filter, on desktop and phone.
+- **Five new beginner glossary terms** [view:/learn] [persona:curious]: Classical Cryptography, Digital Signatures, Hash-based, Lattice-based and Quantum Computer now have their own glossary entries, and every plain-language definition shown in the Curious Explorer view now lives on its main term.
+- **About 90 more products in Migrate** [view:/migrate] [persona:architect] [persona:developer] [persona:ops]: Baseline and embedded products are added, with five new product categories, so more of the software and hardware in a real estate can be found and planned for.
+
+### Changed
+
+- **Every tool has a home lesson and its NICE skills** [view:/playground] [view:/business] [persona:developer] [persona:architect] [persona:grc] [persona:ops]: All Playground tools, business tools and sandbox scenarios now name the lesson they belong to and the NICE skills they teach or let you practise. The KMIP Control Plane now opens the Crypto Agility lesson and OpenSSL Studio opens Crypto Developer APIs; a tool's NICE level, areas and roles come from its lesson, so the two always agree.
+- **Next lessons under a lesson title are shorter** [view:/learn] [persona:curious] [persona:developer]: The "Next" row shows three lessons, same track first, then a "+ N more" control that opens the full list in place.
+- **Library documents all have a purpose and category, and 13 moved to a better lesson** [view:/library] [persona:grc] [persona:researcher] [persona:architect]: Every active document now states why it matters and which category it belongs to, and 13 documents now sit under the lesson that actually teaches their subject.
+- **Timeline events, community profiles and glossary terms are tagged** [view:/timeline] [view:/leaders] [persona:grc] [persona:researcher] [persona:executive]: About 1,600 records gained the lesson that covers them, the industries they concern and the place they apply to, where two independent reads agreed and a hand check confirmed them.
+- **Community profiles show their country consistently** [view:/leaders] [persona:researcher]: Country names are standardised (United States, United Kingdom and two-country profiles), three profiles gained a country from their published affiliation, and Denmark and Germany/Austria now have flags and Timeline links.
+- **Every Migrate product has a recognised CISA category** [view:/migrate] [persona:grc] [persona:architect]: Products are sorted into the CISA product categories only, so filters and groupings by category no longer leave products out.
+
+### Fixed
+
+- **The site installs faster for offline use** [persona:ops]: Older copies of data files that no page reads are left out of the offline bundle, which is now about 2.5 MB smaller.
+
 ## [4.224.0] - 2026-11-25
 
 Every Learn module now shows which NICE skills it teaches, Library documents are tagged by industry and lesson, and new lesson sections close 13 NICE skill gaps.

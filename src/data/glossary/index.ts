@@ -65,11 +65,21 @@ export const loadGlossaryCategory = async (
   return loadCategory(category + 's')
 }
 
-/** Load the simplified "Curious Explorer" glossary. Cached after first call. */
+/**
+ * Load the simplified "Curious Explorer" glossary: plain-language definitions keyed by the name a
+ * reader looks up (a term's name, or its acronym where that is worded differently). Built from the
+ * `plainDefinition` and `plainDefinitionAcronym` fields of the main terms, so each definition is
+ * stored once. Cached after first call.
+ */
 export const loadCuriousGlossary = async (): Promise<Record<string, string>> => {
   if (_curiousCache) return _curiousCache
-  const mod = await import('./curious.json')
-  _curiousCache = mod.default as Record<string, string>
+  const curious: Record<string, string> = {}
+  for (const term of await loadGlossary()) {
+    if (term.plainDefinition) curious[term.term] = term.plainDefinition
+    if (term.plainDefinitionAcronym && term.acronym)
+      curious[term.acronym] = term.plainDefinitionAcronym
+  }
+  _curiousCache = curious
   return _curiousCache
 }
 

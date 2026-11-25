@@ -9,6 +9,8 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useModuleTopicKeywords } from '@/hooks/useModuleTopicKeywords'
 import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import { WorkshopSearchMatches } from '@/components/ui/WorkshopSearchMatches'
+import { FacetChips } from '@/components/ui/FacetChips'
+import { lessonHasFacets, parseFacets } from '@/data/learnFacets'
 import { MODULE_TRACKS } from '@/components/PKILearning/moduleData'
 import {
   BROWSE_ALL,
@@ -64,6 +66,7 @@ function StatusIcon({ status }: { status: string }) {
  */
 export function MobileBrowseAllView() {
   const [params, setParams] = useSearchParams()
+  const facets = useMemo(() => parseFacets(params), [params])
   const modules = useModuleStore((s) => s.modules)
   const savedModules = useBookmarkStore((s) => s.myLearnModules)
   const toggleSaved = useBookmarkStore((s) => s.toggleMyLearnModule)
@@ -83,7 +86,7 @@ export function MobileBrowseAllView() {
   const statusLine = useRef<HTMLParagraphElement>(null)
 
   const setParam = useCallback(
-    (key: 'track' | 'q', value: string | null) => {
+    (key: 'track' | 'q' | 'stage' | 'area', value: string | null) => {
       setParams(
         (prev) => {
           const next = new URLSearchParams(prev)
@@ -117,8 +120,9 @@ export function MobileBrowseAllView() {
         savedOnly,
         savedIds: savedSet,
         progress: modules,
+        extraFilter: (id) => lessonHasFacets(id, facets),
       }),
-    [search, topicKeywords, track, status, sort, savedOnly, savedSet, modules]
+    [search, topicKeywords, track, status, sort, savedOnly, savedSet, modules, facets]
   )
   const shown = groups.reduce((n, g) => n + g.modules.length, 0)
   const sheetFilterCount =
@@ -232,6 +236,8 @@ export function MobileBrowseAllView() {
           )
         })}
       </div>
+
+      <FacetChips facets={facets} onClear={(key) => setParam(key, null)} />
 
       <p
         ref={statusLine}

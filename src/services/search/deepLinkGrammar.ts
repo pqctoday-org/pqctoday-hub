@@ -40,7 +40,12 @@ const SLUG = '[a-z0-9][a-z0-9-]*'
 export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Landing
   // `picker=open` opens the role switcher (MainLayout), as the prompt teaches.
-  { path: exact('/'), queryKeys: ['scroll', 'persona', 'ind', 'picker'], description: 'Landing' },
+  // `variant` picks a role-board option (LandingView reads it)
+  {
+    path: exact('/'),
+    queryKeys: ['scroll', 'persona', 'ind', 'picker', 'variant'],
+    description: 'Landing',
+  },
 
   // Top-level pages
   //
@@ -290,7 +295,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Learn
   {
     path: exact('/learn'),
-    queryKeys: ['track', 'persona', 'mode'],
+    queryKeys: ['track', 'persona', 'mode', 'stage', 'area'],
     description: 'Learn catalog',
   },
   {
@@ -300,7 +305,8 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   },
   {
     path: new RegExp(`^/learn/${SLUG}$`),
-    queryKeys: ['tab', 'step', 'category', 'diveDeeper'],
+    // `section` opens a Learn section (LearnSection reads it); `sv` is the version of a reordered step list
+    queryKeys: ['tab', 'step', 'category', 'diveDeeper', 'section', 'sv'],
     description: 'Learning module',
   },
 

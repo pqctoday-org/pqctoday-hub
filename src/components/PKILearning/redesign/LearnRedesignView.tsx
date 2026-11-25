@@ -13,6 +13,7 @@ import { usePersonaPathItems } from '../usePersonaPathItems'
 import { WhereToStartTree } from '../WhereToStartTree'
 import { MyPathView } from './MyPathView'
 import { BrowseAllView } from './BrowseAllView'
+import { parseFacets } from '@/data/learnFacets'
 import { PERSONA_ORDER, TOTAL_MODULE_COUNT, TRACK_COUNT } from './learnRedesign.helpers'
 import { MobileLearnScreen } from '@/components/Mobile/screens/MobileLearnScreen'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
@@ -38,6 +39,9 @@ export const LearnRedesignView = () => {
   const deepLinkNice = searchParams.get('view') === 'nice'
   // ?track= presets the Browse catalog filter (restored from the legacy dashboard).
   const deepLinkTrack = searchParams.get('track') ?? undefined
+  // ?stage= and ?area= name a stage or a NICE area (the targets of /go/STG:<n> and /go/NICE:<area>); either one opens Browse
+  const deepLinkFacets = parseFacets(searchParams)
+  const hasFacets = deepLinkFacets.stage !== null || deepLinkFacets.area !== null
 
   const isEmbed = useIsEmbedded()
 
@@ -65,7 +69,7 @@ export const LearnRedesignView = () => {
     if (m === 'browse') return 'browse'
     if (m === 'guided') return 'guided'
     if (m === 'mypath') return 'path'
-    return deepLinkNice ? 'browse' : 'path'
+    return deepLinkNice || hasFacets ? 'browse' : 'path'
   })
 
   // Toggle mode and reflect it in ?mode= so the active mode is shareable/

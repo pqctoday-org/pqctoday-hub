@@ -13,6 +13,7 @@
     "id": "rsa",
     "term": "RSA",
     "definition": "A widely used classical public-key algorithm based on the difficulty of factoring large numbers. Vulnerable to quantum attacks via Shor's algorithm.",
+    "plainDefinition": "A widely-used encryption system based on multiplying large prime numbers — vulnerable to quantum attack.",
     "technicalNote": "Common key sizes: 2048, 3072, 4096 bits. Being replaced by ML-DSA for signatures and ML-KEM for key exchange.",
     "relatedModule": "/algorithms?highlight=RSA",
     "complexity": "beginner",
@@ -42,6 +43,7 @@
     "id": "ml-kem",
     "term": "ML-KEM",
     "definition": "Module-Lattice-Based Key Encapsulation Mechanism, the NIST-standardized PQC algorithm for key exchange (formerly Kyber). Defined in FIPS 203.",
+    "plainDefinition": "The new NIST-approved key exchange algorithm (FIPS 203) for securely sharing secrets.",
     "technicalNote": "Variants: ML-KEM-512, ML-KEM-768 and ML-KEM-1024 target NIST security categories 1, 3 and 5 (FIPS 203). Categories are reference attack-cost levels, not exact proven bit strengths; \"128/192/256-bit\" is informal shorthand for comparable AES key-search cost. ML-KEM establishes a shared secret; it does not encrypt data or wrap a chosen key by itself.",
     "relatedModule": "/playground",
     "complexity": "intermediate",
@@ -51,6 +53,7 @@
     "id": "ml-dsa",
     "term": "ML-DSA",
     "definition": "Module-Lattice-Based Digital Signature Algorithm, the NIST-standardized PQC algorithm for digital signatures (formerly Dilithium). Defined in FIPS 204.",
+    "plainDefinition": "The new NIST-approved digital signature algorithm (FIPS 204) replacing RSA and ECDSA.",
     "technicalNote": "Variants: ML-DSA-44, ML-DSA-65, ML-DSA-87 corresponding to security levels 2, 3, 5.",
     "relatedModule": "/playground",
     "complexity": "intermediate",
@@ -60,6 +63,7 @@
     "id": "slh-dsa",
     "term": "SLH-DSA",
     "definition": "Stateless Hash-Based Digital Signature Algorithm, a conservative NIST-standardized hash-based PQC signature scheme (formerly SPHINCS+). Defined in FIPS 205.",
+    "plainDefinition": "A hash-based NIST signature standard (FIPS 205) used as a conservative backup when lattice math is a concern.",
     "technicalNote": "12 variants: combinations of SHA-256/SHAKE, 128/192/256-bit security, and fast/small trade-offs.",
     "relatedModule": "/algorithms?highlight=SLH-DSA",
     "complexity": "advanced",
@@ -94,7 +98,7 @@
     "id": "classic-mceliece",
     "term": "Classic McEliece",
     "definition": "A code-based KEM with very large public keys but extremely conservative security assumptions. One of the oldest post-quantum proposals.",
-    "relatedModule": "/learn/pqc-101",
+    "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -106,7 +110,8 @@
     "technicalNote": "Like LMS, XMSS is stateful and each key can only sign a limited number of messages. CNSA 2.0 allows XMSS and LMS for signing firmware and software; NSA does not allow the multi-tree variants HSS and XMSS^MT.",
     "relatedModule": "/learn/stateful-signatures",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Government & Defense; IT Industry / Software"
   },
   {
     "id": "lms-hss",
@@ -116,7 +121,8 @@
     "technicalNote": "Standardized in RFC 8554. \"Stateful\" means each key can only sign a limited number of messages.",
     "relatedModule": "/openssl",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "IT Industry / Software"
   },
   {
     "id": "aes",
@@ -132,6 +138,7 @@
     "id": "shor-s-algorithm",
     "term": "Shor's Algorithm",
     "definition": "A quantum algorithm that can efficiently factor large numbers and compute discrete logarithms, breaking RSA and ECC.",
+    "plainDefinition": "A quantum method for factoring large numbers, and for solving related problems, far faster than known classical methods. A large enough quantum computer running it could break public-key encryption such as RSA and elliptic curves; no such computer is known to exist yet.",
     "relatedModule": "/learn/quantum-threats",
     "complexity": "intermediate",
     "category": "algorithm"
@@ -151,7 +158,8 @@
     "definition": "Elliptic Curve Digital Signature Algorithm, a classical signature scheme used in TLS, Bitcoin, and many other systems. Quantum-vulnerable.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "ecdh",
@@ -169,7 +177,8 @@
     "technicalNote": "Combined with ML-KEM-768 to form the X25519MLKEM768 hybrid key exchange, now deployed by major browsers and cloud providers.",
     "relatedModule": "/algorithms?algo=x25519",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "x448",
@@ -201,7 +210,8 @@
     "definition": "A hash function producing a 256-bit digest, used in applications such as Bitcoin and TLS. Collision resistance and preimage resistance are different properties; digest length alone is not a quantum security-strength claim.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "beginner",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "hkdf",
@@ -218,7 +228,8 @@
     "definition": "The hash function used by Ethereum, based on the SHA-3 algorithm family. Produces 256-bit digests.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "secp256k1",
@@ -226,7 +237,8 @@
     "definition": "The elliptic curve used by Bitcoin for digital signatures. Quantum-vulnerable and a key concern for cryptocurrency PQC migration.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "kyber",
@@ -315,9 +327,10 @@
     "acronym": "3DES",
     "definition": "A legacy symmetric cipher that applies DES three times to each block. Being phased out in favor of AES due to its small 64-bit block size.",
     "technicalNote": "Still found in legacy payment systems (DUKPT) and some government systems. NIST deprecated 3DES after December 31, 2023.",
-    "relatedModule": "/learn/pqc-101",
+    "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Government & Defense; Payment Card Industry"
   },
   {
     "id": "p-256",
@@ -326,7 +339,8 @@
     "technicalNote": "Suite B (RFC 6460) allowed P-256 as well as P-384, but CNSA 1.0 uses P-384 only (RFC 9151), and NSA's CNSA 2.0 FAQ names P-384, not P-256, as the curve compliant devices should currently use. Combined with ML-KEM-768 in the SecP256r1MLKEM768 hybrid key exchange (RFC 10024).",
     "relatedModule": "/algorithms?highlight=ECDH%20P-256,ECDSA%20P-256",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Government & Defense"
   },
   {
     "id": "p-384",
@@ -335,7 +349,8 @@
     "technicalNote": "Combined with ML-KEM-1024 in the SecP384r1MLKEM1024 hybrid key exchange for NIST Level 5 security.",
     "relatedModule": "/algorithms?highlight=ECDH%20P-384,ECDSA%20P-384",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Government & Defense"
   },
   {
     "id": "ascon",
@@ -343,7 +358,8 @@
     "definition": "A lightweight authenticated encryption cipher selected by NIST as the standard for constrained environments (IoT, embedded devices). Very low resource requirements.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "ripemd-160",
@@ -351,7 +367,8 @@
     "definition": "A 160-bit cryptographic hash function used in Bitcoin address derivation (applied to the SHA-256 digest of a public key). Its 160-bit output gives about 80 bits of generic classical collision resistance, and an ideal Grover preimage search is about 2^80 queries before circuit costs; it is not a NIST-approved hash, and no blanket \"quantum-safe\" verdict follows from its output size.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "sm2",
@@ -360,7 +377,8 @@
     "technicalNote": "Combined with ML-KEM-768 in the curveSM2MLKEM768 hybrid key exchange for Chinese PQC migration.",
     "relatedModule": "/library?ref=draft-yang-tls-hybrid-sm2-mlkem-03",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "CN"
   },
   {
     "id": "pbkdf2",
@@ -376,7 +394,7 @@
     "term": "X25519MLKEM768",
     "definition": "A hybrid key exchange algorithm combining X25519 (classical ECDH) with ML-KEM-768 (post-quantum KEM). Both shared secrets are combined via HKDF so the result is secure if either algorithm holds.",
     "technicalNote": "In TLS 1.3, this combined group supplies concatenated shared secrets to the TLS key schedule. The negotiated cipher suite selects its HKDF hash: TLS_AES_128_GCM_SHA256 uses SHA-256, while TLS_AES_256_GCM_SHA384 uses SHA-384. The group name does not force SHA-256 or specify the certificate-signature algorithm. Check support and actual negotiation for the application and peer in use. Reference: https://www.rfc-editor.org/rfc/rfc9846#section-7.1.",
-    "relatedModule": "/learn/hybrid-crypto",
+    "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
     "category": "algorithm"
   },
@@ -407,7 +425,8 @@
     "technicalNote": "TS 33.501 Annex C defines two ECIES profiles for SUCI protection, Profile A (Curve25519, X25519) and Profile B (P-256, secp256r1), plus a null scheme that gives no concealment. A post-quantum \"Profile C\" using ML-KEM is not defined there; it is an experimental proposal that appears in this site's 5G workshop, not a 3GPP profile.",
     "relatedModule": "/learn/5g-security",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Telecommunications"
   },
   {
     "id": "drbg",
@@ -435,7 +454,7 @@
     "acronym": "LMS",
     "definition": "Leighton-Micali Signature — a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Built from LM-OTS one-time signatures, a Winternitz-style scheme, combined in a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.",
     "technicalNote": "LMS is stateful: each leaf holds one LM-OTS key that must sign at most one message, and the signer must record the used key in non-volatile memory before exporting the signature (SP 800-208). Signing two different messages with one one-time key makes forgery feasible. An LMS public key is 24 + m bytes, where m is the hash output length in bytes (56 bytes for SHA-256); private keys can be made very small (RFC 8554). PKCS#11 v3.2 has no LMS mechanism: it defines CKM_HSS_KEY_PAIR_GEN and CKM_HSS, and an HSS key with one level has essentially LMS formats.",
-    "relatedModule": "/learn/hsm-pqc",
+    "relatedModule": "/learn/stateful-signatures",
     "complexity": "advanced",
     "category": "algorithm"
   },
@@ -559,7 +578,8 @@
     "technicalNote": "Common in constrained environments (Bluetooth LE, Zigbee/802.15.4, some IoT/OT protocols) where GCM's parallel-friendly design matters less than CCM's simpler hardware footprint.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "rainbow",

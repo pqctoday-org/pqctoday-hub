@@ -2,11 +2,13 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { threatsData } from './threatsData'
+import { threatsData, THREATS_FILE_RE } from './threatsData'
 import { libraryData } from './libraryData'
 import { CNSA_2_0, CNSA_2_0_BY_CLASS } from './regulatoryTimelines'
 import { headStatement } from './openClaimsView'
-import { THREAT_RECORD_TYPES } from './threatRecordTypes'
+import Papa from 'papaparse'
+import { sortCSVFiles } from './csvUtils'
+import { THREAT_RECORD_TYPES, parseThreatRecordType } from './threatRecordTypes'
 
 describe('Threats accuracy guards', () => {
   it('keeps every published row in a governed educational record type', () => {
@@ -14,6 +16,30 @@ describe('Threats accuracy guards', () => {
     for (const threat of threatsData) {
       expect(THREAT_RECORD_TYPES, threat.threatId).toContain(threat.recordType)
     }
+  })
+
+  it('gives every row of the newest threats file, whatever its status, a valid record_type', () => {
+    const raw = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }) as Record<string, string>
+    const newest = sortCSVFiles(raw, THREATS_FILE_RE)[0]
+    const { data } = Papa.parse<Record<string, string>>(newest.content.trim(), {
+      header: true,
+      skipEmptyLines: true,
+    })
+    expect(data.length).toBeGreaterThan(0)
+    for (const row of data) {
+      expect(THREAT_RECORD_TYPES, row.threat_id).toContain(row.record_type)
+    }
+  })
+
+  it('refuses a row with a blank or unknown record_type', () => {
+    expect(parseThreatRecordType('')).toBeNull()
+    expect(parseThreatRecordType('Threat Scenario')).toBeNull()
+    expect(parseThreatRecordType(null)).toBeNull()
+    expect(parseThreatRecordType('threat scenario')).toBe('threat scenario')
   })
 
   it('gives every published source a review state and registered source identity', () => {

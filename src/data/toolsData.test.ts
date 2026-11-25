@@ -10,7 +10,9 @@
  *  - every page-visible fact is identical to what the app showed before the move.
  */
 import { execFileSync } from 'node:child_process'
+import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
+import Papa from 'papaparse'
 import { describe, it, expect } from 'vitest'
 import {
   BUSINESS_TOOL_RECORDS,
@@ -30,9 +32,16 @@ import {
 } from '@/components/Playground/workshopRegistry'
 import { SANDBOX_SCENARIOS } from './sandboxScenarios'
 import { LEARN_MODULES, LEARN_MODULE_BY_ID } from './generated/learnModules.generated'
+import { getToolNiceMapping, getToolsForCompetencyArea } from './toolNiceMapping'
 import { moduleIdFromToolLink } from './moduleToolLinks'
 import golden from './__golden__/toolFacts.beforeMove.golden.json'
 import { captureToolFacts } from './__fixtures__/toolSnapshot'
+
+/** Sort key of a dated file name: date, then revision. */
+const key = (file: string) => {
+  const m = file.match(/^tools_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)!
+  return `${m[3]}${m[1]}${m[2]}${(m[4] ?? '0').padStart(3, '0')}`
+}
 
 const sources = import.meta.glob<string>(
   [
@@ -215,6 +224,44 @@ describe('tools data file: generated records', () => {
   })
 })
 
+describe('tools data file: NICE statements', () => {
+  const STATEMENT = /^[KST]\d{4}$/
+
+  it('lists only well-formed statement ids, each once, never as both taught and practised (the generator checks them against the NICE components)', () => {
+    for (const row of TOOL_RECORDS) {
+      const taught = row.niceStatementsTaught ?? []
+      const practised = row.niceStatementsPractised ?? []
+      for (const id of [...taught, ...practised]) {
+        expect(id, `${row.toolId}: ${id}`).toMatch(STATEMENT)
+      }
+      expect(new Set(taught).size, `${row.toolId}: repeated taught id`).toBe(taught.length)
+      expect(new Set(practised).size, `${row.toolId}: repeated practised id`).toBe(practised.length)
+      expect(
+        taught.filter((id) => practised.includes(id)),
+        `${row.toolId}: taught and practised`
+      ).toEqual([])
+    }
+  })
+
+  it('has the two statement columns in the newest dated file, empty or filled', () => {
+    const header = readFileSync(
+      join(
+        process.cwd(),
+        'src',
+        'data',
+        readdirSync(join(process.cwd(), 'src', 'data'))
+          .filter((f) => /^tools_\d{8}(_r\d+)?\.csv$/.test(f))
+          .sort((a, b) => key(a).localeCompare(key(b)))
+          .pop()!
+      ),
+      'utf8'
+    ).split('\n')[0]
+    expect(header.split(',')).toEqual(
+      expect.arrayContaining(['nice_statements_taught', 'nice_statements_practised'])
+    )
+  })
+})
+
 describe('tools data file: lesson links', () => {
   it('names the lesson a tool opens, and only that lesson', () => {
     for (const tool of WORKSHOP_TOOLS.filter((t) => !t.sandbox)) {
@@ -228,18 +275,54 @@ describe('tools data file: lesson links', () => {
   })
 
   it('points every module cell at a real lesson', () => {
-    for (const row of PLAYGROUND_TOOL_RECORDS) {
+    for (const row of TOOL_RECORDS) {
       if (row.module) expect(LEARN_MODULE_BY_ID[row.module], row.toolId).toBeDefined()
     }
   })
 
-  it('gives a tool the NICE values of the lesson it belongs to', () => {
+  it("repeats none of its lesson's NICE values in its own row", () => {
+    // One copy: a Playground tool with a lesson reads its NICE tier, areas and roles from that lesson
+    // (the generator does it); the tool's own cells stay blank. Sandbox scenarios keep their own.
+    const dir = join(process.cwd(), 'src', 'data')
+    const file = readdirSync(dir)
+      .filter((f) => /^tools_\d{8}(_r\d+)?\.csv$/.test(f))
+      .sort((a, b) => key(a).localeCompare(key(b)))
+      .pop()!
+    const rows = Papa.parse<Record<string, string>>(readFileSync(join(dir, file), 'utf8'), {
+      header: true,
+      skipEmptyLines: true,
+    }).data
+    const withLesson = rows.filter((row) => row.kind === 'playground' && row.module)
+    expect(withLesson.length).toBeGreaterThan(30)
+    for (const row of withLesson) {
+      expect(
+        [row.nice_tier, row.nice_competency_areas, row.nice_work_roles].filter(Boolean),
+        `${row.tool_id} repeats its lesson's NICE values`
+      ).toEqual([])
+    }
+  })
+
+  it("gives a tool with a lesson that lesson's NICE values, in the NICE view too", () => {
+    const tools = WORKSHOP_TOOLS.filter((tool) => !tool.sandbox)
     for (const row of PLAYGROUND_TOOL_RECORDS) {
       if (!row.module) continue
       const lesson = LEARN_MODULE_BY_ID[row.module]
       expect(row.niceTier, row.toolId).toBe(lesson.niceTier)
       expect(row.niceCompetencyAreas, row.toolId).toEqual(lesson.niceCompetencyAreas)
       expect(row.niceWorkRoles, row.toolId).toEqual(lesson.niceWorkRoles)
+      const tool = tools.find((t) => t.id === row.toolId)!
+      const ref = getToolNiceMapping(tool)
+      expect(ref?.tier, `${row.toolId} in the NICE view`).toBe(lesson.niceTier)
+      for (const area of lesson.niceCompetencyAreas) {
+        expect(
+          getToolsForCompetencyArea(area, tools).some((entry) => entry.tool.id === row.toolId),
+          `${row.toolId} is listed under ${area}`
+        ).toBe(true)
+      }
+    }
+    // the two that had no NICE values before they were linked to a lesson
+    for (const id of ['cacp-kmip', 'openssl-studio']) {
+      expect(getToolNiceMapping(tools.find((t) => t.id === id)!), id).toBeDefined()
     }
   })
 
@@ -269,11 +352,60 @@ describe('the move changed nothing a page shows', () => {
   const byKey = (entries: unknown) =>
     [...(entries as [string, unknown][])].sort(([a], [b]) => a.localeCompare(b))
 
+  // Changes made on purpose since the move, each one the owner's decision. They are applied to the
+  // snapshot below, so everything else must still be identical to what pages showed before the move.
+  //  - 25 Nov 2026 ("Link it to Crypto Agility"): the KMIP control plane tool opens the Crypto Agility
+  //    lesson from its card (its own page stays /playground/cacp), so that lesson now offers it back.
+  //  - 25 Nov 2026 ("Crypto Developer APIs"): OpenSSL Studio likewise opens the Crypto Developer APIs lesson.
+  const intended = (key: string): unknown => {
+    const snapshot = structuredClone(before[key])
+    if (key === 'workshopTools') {
+      for (const tool of snapshot as { id: string; moduleLink: string; version: string }[]) {
+        // a changed lesson link is a change to the tool: its version goes up by a patch
+        if (tool.id === 'cacp-kmip') {
+          tool.moduleLink = '/learn/crypto-agility'
+          tool.version = '1.0.10'
+        }
+        if (tool.id === 'openssl-studio') {
+          tool.moduleLink = '/learn/crypto-dev-apis'
+          tool.version = '1.0.8'
+        }
+      }
+    }
+    if (key === 'toolNice') {
+      // the two tools linked to a lesson take that lesson's NICE values (the tool's entry in the snapshot was null)
+      const ids = (before.workshopTools as { id: string }[]).map((tool) => tool.id)
+      for (const [id, lessonId] of [
+        ['cacp-kmip', 'crypto-agility'],
+        ['openssl-studio', 'crypto-dev-apis'],
+      ]) {
+        const lesson = LEARN_MODULE_BY_ID[lessonId]
+        ;(snapshot as unknown[])[ids.indexOf(id)] = {
+          toolId: id,
+          competencyAreas: [...lesson.niceCompetencyAreas],
+          tier: lesson.niceTier,
+          workRoles: [...lesson.niceWorkRoles],
+        }
+      }
+    }
+    if (key === 'toolsByModuleId')
+      (snapshot as [string, string[]][]).push(
+        ['crypto-agility', ['cacp-kmip']],
+        ['crypto-dev-apis', ['openssl-studio']]
+      )
+    if (key === 'toolByModuleId')
+      (snapshot as [string, string][]).push(
+        ['crypto-agility', 'cacp-kmip'],
+        ['crypto-dev-apis', 'openssl-studio']
+      )
+    return snapshot
+  }
+
   it.each(Object.keys(before))('%s is identical to the pre-move snapshot', (key) => {
     if (key === 'toolsByModuleId' || key === 'toolByModuleId') {
-      expect(byKey(now[key])).toEqual(byKey(before[key]))
+      expect(byKey(now[key])).toEqual(byKey(intended(key)))
     } else {
-      expect(now[key]).toEqual(before[key])
+      expect(now[key]).toEqual(intended(key))
     }
   })
 })

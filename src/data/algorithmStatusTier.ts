@@ -7,28 +7,29 @@
  * `'To Be Checked'` as `'Certified'`, so NIST Additional-Sig Round-2
  * candidates, IETF Internet-Drafts, SP 800-230 drafts, the eliminated LAC
  * scheme, and the two NGCC placeholder rows all silently passed the default
- * "Certified" filter. Both loaders (`pqcAlgorithmsData.ts`,
- * `algorithmsData.ts`) now attach one of these tiers to every row via an
- * explicit lookup table that throws on any raw status string it doesn't
- * recognise — a future CSV snapshot with a new status string fails the
- * local build/test instead of silently reclassifying as "Certified".
+ * "Certified" filter. The tier is a field of each row: the `status_tier` column
+ * of the algorithm reference and transitions CSVs. Both loaders
+ * (`pqcAlgorithmsData.ts`, `algorithmsData.ts`) read it through
+ * `parseStatusTier`, which throws on a blank or unknown value — a future CSV
+ * snapshot without a tier fails the local build/test instead of silently
+ * reclassifying as "Certified".
  */
-export type AlgorithmStatusTier =
-  | 'final' // published FIPS/SP/RFC/ISO/ETSI standard
-  | 'fips-draft' // NIST FIPS in development, not yet final (FN-DSA/FIPS 206 announced — no public draft published yet; HQC pre-FIPS-number)
-  | 'sp-draft' // NIST Special Publication in draft (e.g. SP 800-230 parameter sets)
-  | 'ietf-draft' // an Internet-Draft, not yet an RFC
-  | 'round2-candidate' // NIST additional signatures candidate, Round 3 since 14 May 2026 (MAYO, UOV, SNOVA, SQIsign, FAEST, ...); id kept for compatibility
-  | 'round4-not-selected' // concluded and not selected (BIKE)
-  | 'eliminated' // publicly broken, withdrawn, or a lost national competition (LAC)
-  | 'regional' // final within its own jurisdiction (KpqC/BSI winners), not FIPS-Certified
-  | 'placeholder' // a program track name with no algorithm selected yet (NGCC)
+export const ALGORITHM_STATUS_TIERS = [
+  'final', // published FIPS/SP/RFC/ISO/ETSI standard
+  'fips-draft', // NIST FIPS in development, not yet final (FN-DSA/FIPS 206 announced — no public draft published yet; HQC pre-FIPS-number)
+  'sp-draft', // NIST Special Publication in draft (e.g. SP 800-230 parameter sets)
+  'ietf-draft', // an Internet-Draft, not yet an RFC
+  'round2-candidate', // NIST additional signatures candidate, Round 3 since 14 May 2026 (MAYO, UOV, SNOVA, SQIsign, FAEST, ...); id kept for compatibility
+  'round4-not-selected', // concluded and not selected (BIKE)
+  'eliminated', // publicly broken, withdrawn, or a lost national competition (LAC)
+  'regional', // final within its own jurisdiction (KpqC/BSI winners), not FIPS-Certified
+  'placeholder', // a program track name with no algorithm selected yet (NGCC)
   // Not part of WS-A's original 9-tier list — added because the raw CSV
   // status 'To Be Checked' / 'Research' means "not yet fact-checked", a
   // data-quality state distinct from any real standards-track tier above.
   // Treating it as e.g. round2-candidate would assert a standards claim
   // the data doesn't actually support.
-  | 'unverified'
+  'unverified',
   // Added 2026-08-16 (sr25519/Schnorrkel): genuinely outside any standards
   // pipeline, not a draft OF one. Distinct from 'unverified' — the status
   // IS fact-checked (against w3f/schnorrkel's own PUBLIC_KEY_LENGTH/
@@ -36,7 +37,22 @@ export type AlgorithmStatusTier =
   // track to be a candidate/draft/regional-winner within. Using 'unverified'
   // would render its tooltip's literal "not yet fact-checked against an
   // authoritative source" — false for a row that was.
-  | 'non-standardized'
+  'non-standardized',
+] as const
+
+export type AlgorithmStatusTier = (typeof ALGORITHM_STATUS_TIERS)[number]
+
+/** Reads a row's `status_tier` cell; fails closed on a blank or unknown value. */
+export function parseStatusTier(value: string | undefined, rowLabel: string): AlgorithmStatusTier {
+  const tier = (value ?? '').trim()
+  if (!(ALGORITHM_STATUS_TIERS as readonly string[]).includes(tier)) {
+    throw new Error(
+      `[algorithmStatusTier] ${rowLabel}: status_tier ${JSON.stringify(value ?? '')} is not one of ` +
+        `${ALGORITHM_STATUS_TIERS.join(', ')}. Set the row's status_tier column.`
+    )
+  }
+  return tier as AlgorithmStatusTier
+}
 
 /** Default "Certified" filter whitelist — everything else, including
  *  'placeholder', is excluded from the default view. Drives the green
