@@ -39,9 +39,9 @@ const MODES: readonly LearnMode[] = ['mypath', 'browse', 'guided']
  * (`?view=nice`) opens Browse all, the catalogue it sits in on the phone; anything else opens
  * My Path, as before.
  */
-function modeOf(raw: string | null, niceLink: boolean): LearnMode {
+function modeOf(raw: string | null, niceLink: boolean, facetLink = false): LearnMode {
   if ((MODES as readonly string[]).includes(raw ?? '')) return raw as LearnMode
-  return niceLink ? 'browse' : 'mypath'
+  return niceLink || facetLink ? 'browse' : 'mypath'
 }
 
 const TAB_LABELS: Record<LearnMode, string> = {
@@ -55,7 +55,7 @@ export function MobileLearnScreen() {
   const [roleSwitchOpen, setRoleSwitchOpen] = useState(false)
   const [params, setParams] = useSearchParams()
   const niceLink = params.get('view') === 'nice'
-  const mode = modeOf(params.get('mode'), niceLink)
+  const mode = modeOf(params.get('mode'), niceLink, params.has('stage') || params.has('area'))
   const baseId = useId()
   const tabRefs = useRef(new Map<LearnMode, HTMLButtonElement>())
   const tabId = (m: LearnMode) => `${baseId}-tab-${m}`

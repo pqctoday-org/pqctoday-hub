@@ -290,7 +290,7 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Learn
   {
     path: exact('/learn'),
-    queryKeys: ['track', 'persona', 'mode'],
+    queryKeys: ['track', 'persona', 'mode', 'stage', 'area'],
     description: 'Learn catalog',
   },
   {

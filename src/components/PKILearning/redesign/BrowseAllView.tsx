@@ -14,6 +14,8 @@ import { useUrlBackedText } from '@/hooks/useUrlBackedText'
 import { WorkshopSearchMatches } from '@/components/ui/WorkshopSearchMatches'
 import { useModuleTopicKeywords } from '@/hooks/useModuleTopicKeywords'
 import { getNiceMapping } from '@/data/niceModuleMapping'
+import { FacetChips } from '@/components/ui/FacetChips'
+import { lessonHasFacets, parseFacets } from '@/data/learnFacets'
 import { ModuleCard } from '../ModuleCard'
 import { NiceView } from '../NiceView'
 import { ResearcherTaxonomyFilter, type TaxonomySelection } from '../ResearcherTaxonomyFilter'
@@ -72,6 +74,16 @@ export const BrowseAllView = ({
   const myLearnModules = useBookmarkStore((s) => s.myLearnModules)
 
   const [params, setParams] = useSearchParams()
+  const facets = useMemo(() => parseFacets(params), [params])
+  const clearFacet = (key: 'stage' | 'area') =>
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete(key)
+        return next
+      },
+      { replace: true }
+    )
   const {
     text: search,
     update: setSearch,
@@ -128,9 +140,24 @@ export const BrowseAllView = ({
         savedOnly,
         savedIds: savedSet,
         progress: modules,
-        extraFilter: (id) => passesTier(id, tier) && (!taxonomyIds || taxonomyIds.has(id)),
+        extraFilter: (id) =>
+          passesTier(id, tier) &&
+          (!taxonomyIds || taxonomyIds.has(id)) &&
+          lessonHasFacets(id, facets),
       }),
-    [search, status, sort, track, savedOnly, savedSet, tier, taxonomyIds, modules, topicKeywords]
+    [
+      search,
+      status,
+      sort,
+      track,
+      savedOnly,
+      savedSet,
+      tier,
+      taxonomyIds,
+      modules,
+      topicKeywords,
+      facets,
+    ]
   )
 
   const clearFilters = () => {
@@ -141,6 +168,8 @@ export const BrowseAllView = ({
           const updated = new URLSearchParams(prev)
           updated.delete('q')
           updated.delete('track')
+          updated.delete('stage')
+          updated.delete('area')
           return updated
         },
         { replace: true }
@@ -175,6 +204,7 @@ export const BrowseAllView = ({
 
   return (
     <div className="space-y-3">
+      <FacetChips facets={facets} onClear={clearFacet} />
       {/* Filter bar */}
       <div className="glass-panel rounded-xl p-3 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
