@@ -25,7 +25,7 @@ import { connectionOperationSummary } from '@/data/simOperationCapabilities'
 import { checkChoice } from '@/data/jurisdiction'
 import type { SimSize } from '@/data/moscaClock'
 import { useSimulationStore } from '@/store/useSimulationStore'
-import { useThemeStore } from '@/store/useThemeStore'
+import { useEffectiveTheme } from '@/hooks/useTheme'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { getCatalogStatus } from '@/data/catalogStatus'
@@ -87,10 +87,9 @@ export function ArchitecturePanel({
           status: getCatalogStatus(s.softwareName)?.availability ?? 'unverified',
         }))
     : []
-  // Mirrors useTheme.ts's effective-theme rule: light until the user has
-  // explicitly chosen a theme. Read directly from the store rather than
-  // useTheme() itself, which also applies the DOM class — that's App.tsx's job.
-  const themeState = useThemeStore((s) => (s.hasSetPreference ? s.theme : 'light'))
+  // The theme in effect (the visitor's choice, else the device's scheme). Read through
+  // useEffectiveTheme rather than useTheme(), which also applies the DOM class — that's App.tsx's job.
+  const themeState = useEffectiveTheme()
 
   const verdict = checkChoice(country, choice)
 

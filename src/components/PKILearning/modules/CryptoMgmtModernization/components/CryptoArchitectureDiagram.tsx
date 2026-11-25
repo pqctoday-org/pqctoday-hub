@@ -36,7 +36,7 @@ import { useHasUserInteracted } from '@/components/PKILearning/common/executive/
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { MermaidDiagram } from '@/components/Simulation/MermaidDiagram'
 import { renderMermaidToPngDataUrl } from '@/components/Simulation/mermaidRender'
-import { useThemeStore } from '@/store/useThemeStore'
+import { useEffectiveTheme } from '@/hooks/useTheme'
 
 type ComponentKind =
   'application' | 'library' | 'hsm' | 'protocol' | 'key-store' | 'certificate-authority'
@@ -307,9 +307,9 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   const [lastSavedMarkdown, setLastSavedMarkdown] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  // Mirrors ArchitecturePanel.tsx's rule: light until the user has explicitly
-  // chosen a theme, so the diagram's node colours match the rest of the app.
-  const themeState = useThemeStore((s) => (s.hasSetPreference ? s.theme : 'light'))
+  // The theme in effect (the visitor's choice, else the device's scheme), so the
+  // diagram's node colours match the rest of the app.
+  const themeState = useEffectiveTheme()
 
   const markdown = useMemo(() => buildMarkdown(components, themeState), [components, themeState])
   const mermaidSource = useMemo(
