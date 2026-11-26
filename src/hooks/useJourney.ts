@@ -11,7 +11,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { lessonByTag } from '@/services/journey/lessons'
 import { buildBuiltOn } from '@/services/journey/curriculum'
 import { NO_ROLE, type Objective } from '@/services/journey/types'
-import { nowStep } from '@/services/journey/stepRules'
+import { nowStep, stepDone } from '@/services/journey/stepRules'
 import { objectiveTitle } from '@/services/journey/stepView'
 import type { MyWorkObjective } from '@/services/myWork/items'
 import type { UpdatesObjective } from '@/services/myWork/updates'
@@ -127,7 +127,7 @@ export function usePanelObjectives(): {
         .map((s) => ({
           tag: s.resourceTag,
           required: s.required && !s.deferred,
-          status: isDone(s.resourceTag)
+          status: stepDone(s, isDone)
             ? ('completed' as const)
             : s.resourceTag === now(o)
               ? ('now' as const)

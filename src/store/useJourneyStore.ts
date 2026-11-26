@@ -402,7 +402,9 @@ export const useJourneyStore = create<JourneyState>()(
           if (!o || !step || o.state !== 'active') return false
           // A self-assessed step is confirmed in the complete panel, never by a mark.
           if (step.kind === 'self-assessed') return false
-          if (step.resourceTag in s.completions) return false
+          // Already done: its own lesson, or one it replaced.
+          if ([step.resourceTag, ...(step.formerTags ?? [])].some((t) => t in s.completions))
+            return false
           set((st) => ({
             completions: {
               ...st.completions,

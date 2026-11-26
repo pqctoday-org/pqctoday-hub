@@ -8,7 +8,13 @@ import {
 } from './useJourneyStore'
 import { buildPreview } from '../services/journey/objectiveBuilder'
 import { CURRICULUM_REVISION, buildBuiltOn } from '../services/journey/curriculum'
-import { barSteps } from '../services/journey/stepRules'
+import {
+  barSteps,
+  nowStep,
+  requiredProgress,
+  stepDone,
+  stepStatuses,
+} from '../services/journey/stepRules'
 import type { Objective, Step } from '../services/journey/types'
 
 const GOAL = 'Review our TLS migration design'
@@ -241,6 +247,41 @@ describe('swapping a retired step (the learner’s own action)', () => {
     expect(swapped.position).toBe(1)
     expect(o.steps).toHaveLength(2)
     expect(useJourneyStore.getState().completions['LM-032'].at).toBe(5)
+  })
+
+  it('counts the completed retired step as done after the swap: progress, Now and the finish check agree', () => {
+    useJourneyStore.setState({
+      objectives: { old: oldObjective() },
+      order: ['old'],
+      focus: {},
+      completions: { 'LM-032': { tag: 'LM-032', kind: 'completed', source: 'self', at: 5 } },
+    })
+    const isDone = (t: string) => t in useJourneyStore.getState().completions
+    const before = requiredProgress(get('old'), isDone)
+    expect(useJourneyStore.getState().swapRetiredStep('old', 'old-s1', 'LM-074')).toBe(true)
+    const o = get('old')
+    expect(requiredProgress(o, isDone)).toEqual(before)
+    expect(before.done).toBe(1)
+    expect(stepDone(o.steps[0], isDone)).toBe(true)
+    expect(stepStatuses(o, isDone).get('old-s1')).toBe('completed')
+    expect(nowStep(o, isDone)?.resourceTag).toBe('LM-001')
+    // Marking the swapped step complete is not needed, and is not offered a second time.
+    expect(useJourneyStore.getState().markStepComplete('old', 'old-s1')).toBe(false)
+  })
+
+  it('reopening a completed objective by the swap leaves the replaced step done', () => {
+    useJourneyStore.setState({
+      objectives: { old: oldObjective({ state: 'completed', completedAt: 9 }) },
+      order: ['old'],
+      focus: {},
+      completions: { 'LM-032': { tag: 'LM-032', kind: 'completed', source: 'self', at: 5 } },
+    })
+    expect(
+      useJourneyStore.getState().swapRetiredStep('old', 'old-s1', 'LM-074', { reopen: true })
+    ).toBe(true)
+    const isDone = (t: string) => t in useJourneyStore.getState().completions
+    expect(get('old').state).toBe('active')
+    expect(requiredProgress(get('old'), isDone).done).toBe(1)
   })
 
   it('refuses when the objective already holds the replacement, and changes nothing', () => {

@@ -16,7 +16,7 @@ import { useJourneyStore } from '@/store/useJourneyStore'
 import { useIsDone } from '@/hooks/useJourney'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { describeStep, finishCondition, journeyHref } from '@/services/journey/stepView'
-import { barSteps } from '@/services/journey/stepRules'
+import { barSteps, stepDone } from '@/services/journey/stepRules'
 import { retiredEntry } from '@/services/journey/retiredSteps'
 import { useState } from 'react'
 import type { Objective } from '@/services/journey/types'
@@ -61,8 +61,8 @@ export function StepPage({ objective, stepId }: { objective: Objective; stepId: 
             </p>
             <div>
               <Eyebrow>
-                What your work should cover · {points.filter((s) => isDone(s.resourceTag)).length}{' '}
-                of {points.length} points covered
+                What your work should cover · {points.filter((s) => stepDone(s, isDone)).length} of{' '}
+                {points.length} points covered
               </Eyebrow>
               <ul className="mt-2 space-y-1.5">
                 {points.map((s) => {

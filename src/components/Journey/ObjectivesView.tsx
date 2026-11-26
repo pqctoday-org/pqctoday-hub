@@ -33,6 +33,7 @@ import {
   nowStep,
   optionalSteps,
   requiredProgress,
+  stepDone,
   stepStatuses,
 } from '@/services/journey/stepRules'
 import {
@@ -276,7 +277,7 @@ function Workspace({ objective }: { objective: Objective }) {
                   >
                     {v.title}
                   </Link>
-                  {statuses.get(s.id) === 'completed' || isDone(s.resourceTag) ? (
+                  {statuses.get(s.id) === 'completed' || stepDone(s, isDone) ? (
                     <StatusChip status="completed" />
                   ) : (
                     <Chip>Optional</Chip>
