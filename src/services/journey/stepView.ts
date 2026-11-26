@@ -4,7 +4,7 @@
  * title and stage name); only the self-assessed step has words of its own.
  */
 import { lessonByTag } from './lessons'
-import { retiredEntry } from './retiredSteps'
+import { retiredEntry, retiredName } from './retiredSteps'
 import type { Objective, Step } from './types'
 
 export interface StepView {
@@ -58,7 +58,7 @@ export function describeStep(step: Step, objective: Objective): StepView {
   const retired = step.kind === 'module' ? retiredEntry(step.resourceTag) : undefined
   if (retired) {
     return {
-      title: retired.name ?? step.resourceTag,
+      title: retiredName(retired),
       groupLabel: 'Retired',
       kindLabel: 'Module',
       to: journeyHref({ objective: objective.id, step: step.id }),

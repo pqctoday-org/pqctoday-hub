@@ -21,7 +21,7 @@ import {
   toolsOfLesson,
   toolVersion,
 } from './curriculum'
-import { retiredEntry } from './retiredSteps'
+import { retiredEntry, retiredName } from './retiredSteps'
 import type { Objective } from './types'
 
 export type ChangeKind =
@@ -59,6 +59,8 @@ export interface ObjectiveChange {
   href?: string
   /** Retired step: the lesson that took its place, and the Hub's reason and date. */
   replacement?: { tag: string; title: string }
+  /** Retired step whose replacement is already a step of the objective: nothing to swap in. */
+  replacementHeld?: { tag: string; title: string }
   retired?: { name: string; reason: string; date: string }
   /** New required step: the lesson the objective was built without. */
   addTag?: string
@@ -78,7 +80,8 @@ const dateWords = (iso: string): string => {
 
 /**
  * The changes an objective has not yet answered. A retired step is reported for as long as it is in the
- * objective and not put off; every other change is reported until the learner marks it seen or acts on it.
+ * objective and neither put off nor marked seen; every other change is reported until the learner marks it seen or
+ * acts on it.
  * An objective with no record of what it was built on reports retirements only.
  */
 export function computeObjectiveChanges(
@@ -97,9 +100,13 @@ export function computeObjectiveChanges(
 
     if (!lesson) {
       const entry = retiredEntry(tag)
-      if (!entry || step.deferred) continue
+      if (!entry || step.deferred || seen.has(`retired-step:${tag}`)) continue
       const to = lessonByTag(entry.to)
-      const name = entry.name ?? tag
+      const name = retiredName(entry)
+      const target =
+        to && entry.to.indexOf('/') === -1 ? { tag: entry.to, title: to.title } : undefined
+      // A replacement the objective already holds is not offered again: there is nothing to swap in.
+      const held = target && stepTags.has(target.tag)
       out.push({
         id: `retired-step:${tag}`,
         kind: 'retired-step',
@@ -110,8 +117,8 @@ export function computeObjectiveChanges(
         subject: name,
         detail: `${name} was retired on ${dateWords(entry.date)}. ${entry.reason}`,
         href: to ? addressOf(entry.to) : undefined,
-        replacement:
-          to && entry.to.indexOf('/') === -1 ? { tag: entry.to, title: to.title } : undefined,
+        replacement: held ? undefined : target,
+        replacementHeld: held ? target : undefined,
         retired: { name, reason: entry.reason, date: entry.date },
       })
       continue
@@ -198,9 +205,11 @@ export function computeObjectiveChanges(
       for (const c of comments) {
         const parsed = parseTag(c.tag)
         if (parsed?.anchorKind !== 'section' || parsed.moduleTag !== tag || !parsed.partId) continue
+        // A section the lesson no longer has (removed or renamed) is not an update to that section.
+        const label = labels.get(parsed.partId)
+        if (label === undefined) continue
         if (c.contentVersion >= version || done.has(c.tag)) continue
         done.add(c.tag)
-        const label = labels.get(parsed.partId) ?? parsed.partId
         push({
           id: `section-updated:${c.tag}@${version}`,
           kind: 'section-updated',
@@ -220,4 +229,44 @@ export function computeAllChanges(
   comments: readonly CommentStamp[] = []
 ): ObjectiveChange[] {
   return objectives.flatMap((o) => computeObjectiveChanges(o, comments))
+}
+
+/** The kinds that only inform: one card for them, whichever objectives hold the lesson. */
+const INFORMATIONAL: ReadonlySet<ChangeKind> = new Set([
+  'new-section',
+  'new-tool',
+  'section-updated',
+  'tool-updated',
+])
+
+export interface ChangeGroup {
+  /** The change to show (the first objective's). */
+  change: ObjectiveChange
+  /** Every objective the change is about, in the objectives' order. A retired or new required step is always alone. */
+  objectiveIds: string[]
+}
+
+/**
+ * The changes as the learner counts and answers them: a new section, new tool, updated section or updated tool is
+ * one change however many objectives hold the lesson (the same rule as the release notices, which list one notice per
+ * lesson); a retired step or a new required step stays one card per objective, because its buttons change one objective.
+ */
+export function groupChanges(changes: readonly ObjectiveChange[]): ChangeGroup[] {
+  const out: ChangeGroup[] = []
+  const byId = new Map<string, ChangeGroup>()
+  for (const c of changes) {
+    if (!INFORMATIONAL.has(c.kind)) {
+      out.push({ change: c, objectiveIds: [c.objectiveId] })
+      continue
+    }
+    const have = byId.get(c.id)
+    if (have) {
+      have.objectiveIds.push(c.objectiveId)
+      continue
+    }
+    const group = { change: c, objectiveIds: [c.objectiveId] }
+    byId.set(c.id, group)
+    out.push(group)
+  }
+  return out
 }

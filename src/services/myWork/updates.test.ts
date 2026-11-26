@@ -182,6 +182,39 @@ describe('A07: new prerequisite, retired step', () => {
   })
 })
 
+describe('a retired lesson the Hub lists, held by an objective', () => {
+  const held: UpdatesObjective[] = [
+    {
+      id: 'o1',
+      title: 'IoT review',
+      state: 'active',
+      steps: [{ tag: 'LM-032', required: true, status: 'now' }],
+    },
+  ]
+  const run = (
+    objs: UpdatesObjective[],
+    comments: { id: string; tag: string; contentVersion: number }[] = []
+  ) =>
+    computeUpdateNotices({
+      catalog: catalog(),
+      objectives: objs,
+      comments,
+      engaged: { 'LM-032': entry('iot-ot-pqc', 2) },
+      seen: [],
+      renames: { 'iot-ot-pqc': 'review' },
+    })
+
+  it('gets no notice: the Retired step card of that objective covers it, so it shows and counts once', () => {
+    expect(run(held)).toEqual([])
+  })
+
+  it('still gets its notice for a learner who only has a comment on it', () => {
+    const notices = run([], [{ id: 'c1', tag: 'LM-032', contentVersion: 1 }])
+    expect(notices).toHaveLength(1)
+    expect(notices[0].kind).toBe('moved')
+  })
+})
+
 describe('revision notices (U01, U03, U04)', () => {
   it('skipped revisions are one notice at the newest version, ordered current step first', () => {
     const cat = catalog()

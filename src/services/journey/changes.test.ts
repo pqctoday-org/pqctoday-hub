@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from 'vitest'
-import { computeObjectiveChanges, CHANGE_LABEL, type ObjectiveChange } from './changes'
+import {
+  computeObjectiveChanges,
+  groupChanges,
+  CHANGE_LABEL,
+  type ObjectiveChange,
+} from './changes'
 import { buildBuiltOn, sectionsOfLesson, takeFirstTags } from './curriculum'
 import { lessonByTag } from './lessons'
 import type { BuiltOn, Objective, Step } from './types'
@@ -123,6 +128,18 @@ describe('an updated section', () => {
     expect(c.href).toBe(`/learn/${tls.id}?section=${sections[0].id}`)
   })
 
+  it('is not reported for a comment on a section the lesson no longer has', () => {
+    const o = objective(withPrereqs, (b) => {
+      b.lessons[TLS].version = 0
+      b.lessons[TLS].sections.push('section-removed-in-2026')
+    })
+    const version = tls.contentVersion ?? 1
+    const cs = computeObjectiveChanges(o, [
+      { tag: `${TLS}/s:section-removed-in-2026`, contentVersion: version - 1 },
+    ])
+    expect(cs.filter((c) => c.kind === 'section-updated')).toEqual([])
+  })
+
   it('is not reported without a comment on that section: the Hub keeps no version per section', () => {
     const o = objective(withPrereqs, (b) => {
       b.lessons[TLS].version = 0
@@ -171,11 +188,30 @@ describe('a retired step', () => {
     expect(c.detail).toContain('IoT & OT Security')
   })
 
-  it('stays until the learner acts, and goes when the step is put off', () => {
+  it('stays until the learner acts, and goes when the step is put off or marked seen', () => {
+    expect(kinds(computeObjectiveChanges(retired()))).toEqual(['retired-step'])
+    expect(computeObjectiveChanges(retired({ deferred: true }))).toEqual([])
     const o = retired()
     o.acknowledged = ['retired-step:LM-032']
-    expect(kinds(computeObjectiveChanges(o))).toEqual(['retired-step'])
-    expect(computeObjectiveChanges(retired({ deferred: true }))).toEqual([])
+    expect(computeObjectiveChanges(o)).toEqual([])
+  })
+
+  it('does not offer a swap for a lesson the objective already holds, and says which it is', () => {
+    const o = retired()
+    o.steps.push(step('LM-074', 10))
+    const [c] = computeObjectiveChanges(o)
+    expect(c.kind).toBe('retired-step')
+    expect(c.replacement).toBeUndefined()
+    expect(c.replacementHeld?.tag).toBe('LM-074')
+    expect(c.href).toBe('/learn/iot-pqc')
+  })
+
+  it('names a retired lesson by its title, never by its tag (LM-042)', () => {
+    const o = objective([...withPrereqs.slice(0, -1)])
+    o.steps.push(step('LM-042', 9))
+    const [c] = computeObjectiveChanges(o)
+    expect(c.subject).toBe('Energy & Utilities PQC')
+    expect(`${c.subject} ${c.detail} ${c.lessonTitle}`).not.toMatch(/LM-\d/)
   })
 
   it('is not reported for a tag the Hub does not list: it keeps its "Not in the catalogue" wording', () => {
@@ -203,5 +239,39 @@ describe('an objective with no record of what it was built on', () => {
     const o = objective(withPrereqs)
     delete o.builtOn
     expect(computeObjectiveChanges(o)).toEqual([])
+  })
+})
+
+describe('the same change in several objectives', () => {
+  const two = () => {
+    const a = objective(withPrereqs, (b) => {
+      b.lessons[TLS].sections = b.lessons[TLS].sections.slice(1)
+    })
+    const b = {
+      ...objective(
+        withPrereqs,
+        (x) => (x.lessons[TLS].sections = x.lessons[TLS].sections.slice(1))
+      ),
+      id: 'o2',
+    }
+    return [a, b]
+  }
+
+  it('is one change for the informational kinds, naming every objective', () => {
+    const all = two().flatMap((o) => computeObjectiveChanges(o))
+    expect(all).toHaveLength(2)
+    const groups = groupChanges(all)
+    expect(groups).toHaveLength(1)
+    expect(groups[0].objectiveIds).toEqual(['o', 'o2'])
+  })
+
+  it('stays one card per objective for a retired step and a new required step', () => {
+    const mk = (id: string) => {
+      const o = objective([...withPrereqs.slice(0, -1)], undefined, { id })
+      o.steps.push(step('LM-032', 9))
+      return o
+    }
+    const groups = groupChanges([mk('o'), mk('o2')].flatMap((o) => computeObjectiveChanges(o)))
+    expect(groups.map((g) => g.objectiveIds)).toEqual([['o'], ['o2']])
   })
 })

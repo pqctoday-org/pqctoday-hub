@@ -29,3 +29,9 @@ const BY_TAG: ReadonlyMap<string, RetiredEntry> = new Map(RETIRED_STEPS.map((e) 
 export function retiredEntry(tag: string): RetiredEntry | undefined {
   return BY_TAG.get(tag)
 }
+
+/** What a retired lesson or section is called to the learner: its recorded name, never its internal tag. */
+export const RETIRED_NAME_FALLBACK = 'A retired lesson'
+export function retiredName(entry: RetiredEntry): string {
+  return entry.name ?? RETIRED_NAME_FALLBACK
+}

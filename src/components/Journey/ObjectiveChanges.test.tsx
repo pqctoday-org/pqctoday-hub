@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { beforeEach, describe, expect, it } from 'vitest'
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ObjectiveChanges, ObjectiveChangesList } from './ObjectiveChanges'
 import { UpdatesMount, useUpdatesCount, MyWorkMount } from './mountPoints'
@@ -231,6 +231,131 @@ describe('a retired step', () => {
     await user.click(screen.getByRole('button', { name: /^Swap in .* and reopen$/ }))
     expect(current().state).toBe('active')
     expect(current().steps[1].resourceTag).toBe('LM-074')
+  })
+})
+
+describe('a retired step always has a way out, and no button does nothing silently', () => {
+  const seedRetired = (state: Objective['state'] = 'active', withReplacement = false) =>
+    seed([prereqs[0], 'LM-032', ...(withReplacement ? ['LM-074'] : [])], () => {}, state)
+
+  it('on a completed objective the card can be marked seen, without reopening it, and the count drops', async () => {
+    const user = userEvent.setup()
+    seedRetired('completed')
+    function Count() {
+      return <p data-testid="count">{useUpdatesCount()}</p>
+    }
+    renderAt(
+      <>
+        <Count />
+        <Live />
+      </>
+    )
+    expect(screen.getByTestId('count')).toHaveTextContent('1')
+    await user.click(screen.getByRole('button', { name: 'Mark seen' }))
+    expect(screen.queryByTestId('objective-change')).toBeNull()
+    expect(screen.getByTestId('count')).toHaveTextContent('0')
+    expect(current().state).toBe('completed')
+    expect(current().steps[1].resourceTag).toBe('LM-032')
+  })
+
+  it('when the objective already holds the replacement there is no swap button: it says why, and the card can be answered', async () => {
+    const user = userEvent.setup()
+    seedRetired('completed', true)
+    show()
+    const card = screen.getByTestId('objective-change')
+    expect(within(card).queryByRole('button', { name: /^Swap in/ })).toBeNull()
+    expect(card).toHaveTextContent(
+      /is already a step of this objective, so there is nothing to swap in/
+    )
+    await user.click(within(card).getByRole('button', { name: 'Mark seen' }))
+    expect(screen.queryByTestId('objective-change')).toBeNull()
+  })
+
+  it('on an open objective with the replacement already held, Put this step off and Mark seen are both there', () => {
+    seedRetired('active', true)
+    show()
+    expect(screen.getByRole('button', { name: 'Put this step off' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Mark seen' })).toBeInTheDocument()
+  })
+
+  it('says so, and changes nothing, when the store cannot make the swap', async () => {
+    const user = userEvent.setup()
+    seedRetired()
+    useJourneyStore.setState({ swapRetiredStep: () => false })
+    show()
+    await user.click(screen.getByRole('button', { name: /^Swap in / }))
+    expect(screen.getByRole('status')).toHaveTextContent(/Nothing was changed/)
+    expect(current().steps[1].resourceTag).toBe('LM-032')
+  })
+
+  it('says so, and clears the card, when "Add it" cannot add the step', async () => {
+    const user = userEvent.setup()
+    const [, ...rest] = prereqs
+    seed([...rest, TLS], (o) => {
+      o.builtOn!.prerequisites[TLS] = rest
+    })
+    useJourneyStore.setState({ addRequiredStep: () => false })
+    show()
+    await user.click(screen.getByRole('button', { name: 'Add it to my objective' }))
+    expect(screen.getByRole('status')).toHaveTextContent(/Nothing was added/)
+    expect(screen.queryByTestId('objective-change')).toBeNull()
+  })
+})
+
+describe('focus after a card is answered', () => {
+  it('goes to the message on an objective page', async () => {
+    const user = userEvent.setup()
+    seed([...prereqs, TLS], (o) => {
+      o.builtOn!.lessons[TLS].sections = o.builtOn!.lessons[TLS].sections.slice(1)
+    })
+    show()
+    await user.click(screen.getByRole('button', { name: 'Mark seen' }))
+    await waitFor(() => expect(screen.getByRole('status')).toHaveFocus())
+    expect(screen.getByRole('status')).toHaveTextContent('is marked seen')
+  })
+
+  it('goes to the message in Updates too, instead of dropping to the top of the page', async () => {
+    const user = userEvent.setup()
+    seed([...prereqs, TLS], (o) => {
+      o.builtOn!.lessons[TLS].sections = o.builtOn!.lessons[TLS].sections.slice(1)
+    })
+    renderAt(<ObjectiveChangesList />)
+    await user.click(screen.getByRole('button', { name: 'Mark seen' }))
+    await waitFor(() =>
+      expect(within(screen.getByTestId('objective-changes-list')).getByRole('status')).toHaveFocus()
+    )
+  })
+})
+
+describe('the same change in two objectives', () => {
+  it('is one card and one count in Updates, and Mark seen answers it for both', async () => {
+    const user = userEvent.setup()
+    seed([...prereqs, TLS], (o) => {
+      o.builtOn!.lessons[TLS].sections = o.builtOn!.lessons[TLS].sections.slice(1)
+    })
+    const first = current()
+    const second: Objective = { ...structuredClone(first), id: 'o2' }
+    useJourneyStore.setState({
+      objectives: { o: first, o2: second },
+      order: ['o', 'o2'],
+      focus: { architect: 'o' },
+    })
+    function Count() {
+      return <p data-testid="count">{useUpdatesCount()}</p>
+    }
+    renderAt(
+      <>
+        <Count />
+        <ObjectiveChangesList />
+      </>
+    )
+    expect(screen.getAllByTestId('objective-change')).toHaveLength(1)
+    expect(screen.getByTestId('count')).toHaveTextContent('1')
+    await user.click(screen.getByRole('button', { name: 'Mark seen' }))
+    expect(screen.queryByTestId('objective-change')).toBeNull()
+    expect(screen.getByTestId('count')).toHaveTextContent('0')
+    expect(useJourneyStore.getState().objectives.o.acknowledged?.length).toBe(1)
+    expect(useJourneyStore.getState().objectives.o2.acknowledged?.length).toBe(1)
   })
 })
 

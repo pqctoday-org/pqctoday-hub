@@ -20,7 +20,7 @@ import {
 import { useJourneyStore } from '@/store/useJourneyStore'
 import { CHANGE_LABEL, type ObjectiveChange } from '@/services/journey/changes'
 import { objectiveTitle } from '@/services/journey/stepView'
-import { useAllObjectiveChanges, useObjectiveChanges } from '@/hooks/useObjectiveChanges'
+import { useAllChangeGroups, useObjectiveChanges } from '@/hooks/useObjectiveChanges'
 import { useRoleObjectives } from '@/hooks/useJourney'
 import type { Objective } from '@/services/journey/types'
 
@@ -35,14 +35,27 @@ interface CardProps {
   onDone: (message: string) => void
   /** Show which objective it is about (the Updates list covers several). */
   showObjective?: boolean
+  /** Other objectives the same change is about (a new section or tool, an update): marked seen together. */
+  alsoObjectives?: Objective[]
 }
 
-export function ChangeCard({ objective, change, onDone, showObjective = false }: CardProps) {
+export function ChangeCard({
+  objective,
+  change,
+  onDone,
+  showObjective = false,
+  alsoObjectives = [],
+}: CardProps) {
   const acknowledge = useJourneyStore((s) => s.acknowledgeChange)
   const addRequiredStep = useJourneyStore((s) => s.addRequiredStep)
   const swapRetiredStep = useJourneyStore((s) => s.swapRetiredStep)
   const deferStep = useJourneyStore((s) => s.deferStep)
   const completed = objective.state === 'completed'
+  // Marking seen answers the change for every objective it is about.
+  const markSeen = () => {
+    acknowledge(objective.id, change.id)
+    for (const o of alsoObjectives) acknowledge(o.id, change.id)
+  }
   const completedOn = dateWords(objective.completedAt)
   const open = change.href ? (
     <Link
@@ -69,7 +82,9 @@ export function ChangeCard({ objective, change, onDone, showObjective = false }:
       <div className="flex flex-wrap items-center gap-2">
         <StatusChip status="changed" label={CHANGE_LABEL[change.kind]} />
         {showObjective ? (
-          <span className="text-xs text-muted-foreground">{objectiveTitle(objective)}</span>
+          <span className="text-xs text-muted-foreground">
+            {[objective, ...alsoObjectives].map(objectiveTitle).join(' · ')}
+          </span>
         ) : null}
       </div>
       <p className="text-sm font-bold text-heading">{change.subject}</p>
@@ -79,7 +94,9 @@ export function ChangeCard({ objective, change, onDone, showObjective = false }:
         <p className="text-sm text-foreground">
           {change.replacement
             ? `Your progress and comments on it are kept. Swapping in ${change.replacement.title} keeps this step’s place in the objective.`
-            : 'Your progress and comments on it are kept.'}
+            : change.replacementHeld
+              ? `${change.replacementHeld.title} is already a step of this objective, so there is nothing to swap in. Your progress and comments on this step are kept.`
+              : 'Your progress and comments on it are kept.'}
           {completed && completedOn ? ` You completed this objective on ${completedOn}.` : ''}
         </p>
       ) : null}
@@ -97,11 +114,20 @@ export function ChangeCard({ objective, change, onDone, showObjective = false }:
             {change.replacement ? (
               <StoryButton
                 variant="primary"
-                onClick={() =>
-                  swapRetiredStep(objective.id, change.stepId, change.replacement!.tag, {
-                    reopen: true,
-                  }) && onDone(`${change.replacement!.title} is now this step.`)
-                }
+                onClick={() => {
+                  if (
+                    swapRetiredStep(objective.id, change.stepId, change.replacement!.tag, {
+                      reopen: true,
+                    })
+                  ) {
+                    onDone(`${change.replacement!.title} is now this step.`)
+                  } else {
+                    // The store refuses a swap it cannot make; the learner is told, and the card stays to be answered.
+                    onDone(
+                      `Nothing was changed: ${change.replacement!.title} could not be swapped in. You can put this step off or mark it seen.`
+                    )
+                  }
+                }}
               >
                 {completed
                   ? `Swap in ${change.replacement.title} and reopen`
@@ -117,6 +143,17 @@ export function ChangeCard({ objective, change, onDone, showObjective = false }:
                 }}
               >
                 Put this step off
+              </StoryButton>
+            ) : null}
+            {completed || !change.replacement ? (
+              <StoryButton
+                variant="quiet"
+                onClick={() => {
+                  markSeen()
+                  onDone(`${change.subject} is marked seen. Your objective is kept as it is.`)
+                }}
+              >
+                Mark seen
               </StoryButton>
             ) : null}
             {open}
@@ -146,6 +183,13 @@ export function ChangeCard({ objective, change, onDone, showObjective = false }:
                       ? `${change.subject} was added and the objective is open again.`
                       : `${change.subject} was added before ${change.lessonTitle}.`
                   )
+                } else {
+                  // Nothing could be added (the objective already holds it, or the step it goes before is gone):
+                  // say so, and clear the card, which describes a change that is no longer needed.
+                  acknowledge(objective.id, change.id)
+                  onDone(
+                    `Nothing was added: ${change.subject} is already part of this objective or could not be placed. Your path is kept as it is.`
+                  )
                 }
               }}
             >
@@ -167,7 +211,7 @@ export function ChangeCard({ objective, change, onDone, showObjective = false }:
             <StoryButton
               variant="quiet"
               onClick={() => {
-                acknowledge(objective.id, change.id)
+                markSeen()
                 onDone(`${CHANGE_LABEL[change.kind]}: ${change.subject} is marked seen.`)
               }}
             >
@@ -191,21 +235,16 @@ interface ObjectiveChangesProps {
 export function ObjectiveChanges({ objective, stepId, className }: ObjectiveChangesProps) {
   const changes = useObjectiveChanges(objective, stepId)
   const [message, setMessage] = useState('')
-  const holder = useRef<HTMLDivElement>(null)
+  const status = useRef<HTMLParagraphElement>(null)
 
   const done = (m: string) => {
     setMessage(m)
-    // The card that was answered is gone; keyboard focus goes to the list's holder, which says what happened.
-    requestAnimationFrame(() => holder.current?.focus())
+    // The card that was answered is gone; keyboard focus goes to the message, which names what happened.
+    requestAnimationFrame(() => status.current?.focus())
   }
 
   return (
-    <div
-      ref={holder}
-      tabIndex={-1}
-      className={`outline-none ${className ?? ''}`}
-      data-testid="objective-changes"
-    >
+    <div className={className} data-testid="objective-changes">
       {changes.length > 0 ? (
         <section aria-label="What changed in this objective" className="space-y-2">
           <Eyebrow>
@@ -219,9 +258,15 @@ export function ObjectiveChanges({ objective, stepId, className }: ObjectiveChan
         </section>
       ) : null}
       <p
+        ref={status}
+        tabIndex={-1}
         role="status"
         aria-live="polite"
-        className={message ? 'mt-2 text-sm font-semibold' : 'sr-only'}
+        className={
+          message
+            ? 'mt-2 rounded-lg text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring'
+            : 'sr-only'
+        }
       >
         {message}
       </p>
@@ -235,10 +280,16 @@ export function ObjectiveChanges({ objective, stepId, className }: ObjectiveChan
  */
 export function ObjectiveChangesList({ className }: { className?: string }) {
   const objectives = useRoleObjectives()
-  const changes = useAllObjectiveChanges()
+  const groups = useAllChangeGroups()
   const [message, setMessage] = useState('')
+  const status = useRef<HTMLParagraphElement>(null)
   const byId = new Map(objectives.map((o) => [o.id, o]))
-  if (changes.length === 0 && !message) return null
+  if (groups.length === 0 && !message) return null
+  const done = (m: string) => {
+    setMessage(m)
+    // The answered card is gone: focus goes to the message, so it is not lost to the top of the page.
+    requestAnimationFrame(() => status.current?.focus())
+  }
   return (
     <StickerCard
       as="section"
@@ -249,9 +300,9 @@ export function ObjectiveChangesList({ className }: { className?: string }) {
     >
       <h2 id="objective-changes-heading" className="text-xl font-extrabold text-heading">
         Changes in your objectives
-        {changes.length > 0 ? (
+        {groups.length > 0 ? (
           <span className="ml-2 align-middle text-sm font-bold text-muted-foreground">
-            ({changes.length} new)
+            ({groups.length} new)
           </span>
         ) : null}
       </h2>
@@ -260,23 +311,31 @@ export function ObjectiveChangesList({ className }: { className?: string }) {
         objectives. Nothing changes in an objective until you choose.
       </p>
       <ul className="mt-3 space-y-3" aria-label="Changes in your objectives">
-        {changes.map((c) => {
-          const objective = byId.get(c.objectiveId)
-          return objective ? (
+        {groups.map((g) => {
+          const [first, ...rest] = g.objectiveIds.map((id) => byId.get(id))
+          if (!first) return null
+          return (
             <ChangeCard
-              key={`${c.objectiveId}:${c.id}`}
-              objective={objective}
-              change={c}
+              key={`${g.change.objectiveId}:${g.change.id}`}
+              objective={first}
+              alsoObjectives={rest.filter((o): o is Objective => Boolean(o))}
+              change={g.change}
               showObjective
-              onDone={setMessage}
+              onDone={done}
             />
-          ) : null
+          )
         })}
       </ul>
       <p
+        ref={status}
+        tabIndex={-1}
         role="status"
         aria-live="polite"
-        className={message ? 'mt-2 text-sm font-semibold' : 'sr-only'}
+        className={
+          message
+            ? 'mt-2 rounded-lg text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring'
+            : 'sr-only'
+        }
       >
         {message}
       </p>

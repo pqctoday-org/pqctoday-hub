@@ -14,13 +14,7 @@
  */
 import { useCallback } from 'react'
 import { useInRouterContext, useNavigate } from 'react-router'
-import {
-  CommentBox,
-  MyWorkPanel,
-  RevisedSectionStrip,
-  UpdatesPanel,
-  useUnseenUpdateCount,
-} from '@/components/MyWork'
+import { CommentBox, MyWorkPanel, RevisedSectionStrip, UpdatesPanel } from '@/components/MyWork'
 import { JourneyProgressStrip } from '@/components/RightPanel/JourneyProgressStrip'
 import { useMyWorkStore } from '@/store/useMyWorkStore'
 import { useJourneyStore } from '@/store/useJourneyStore'
@@ -29,7 +23,7 @@ import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useAssistantContext } from '@/components/Assistant/useAssistantContext'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { usePanelObjectives } from '@/hooks/useJourney'
-import { useAllObjectiveChanges } from '@/hooks/useObjectiveChanges'
+import { useUpdateCounts } from '@/hooks/useUpdateCounts'
 import { ObjectiveChangesList } from './ObjectiveChanges'
 import { buildItems, filterItems } from '@/services/myWork/items'
 import { journeyHref } from '@/services/journey/stepView'
@@ -66,9 +60,7 @@ export function MyWorkMount({ objectiveId }: ObjectiveScope) {
 
 /** The number on the "Updates · n" tab: the notices the learner has not yet seen. */
 export function useUpdatesCount(): number {
-  const { updates } = usePanelObjectives()
-  const changes = useAllObjectiveChanges()
-  return useUnseenUpdateCount(updates) + changes.length
+  return useUpdateCounts().total
 }
 
 /** Your journey › Updates: the release comparison and the notices. */

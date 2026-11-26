@@ -4,7 +4,12 @@
  */
 import { useMemo } from 'react'
 import { useMyWorkStore } from '@/store/useMyWorkStore'
-import { computeObjectiveChanges, type ObjectiveChange } from '@/services/journey/changes'
+import {
+  computeObjectiveChanges,
+  groupChanges,
+  type ChangeGroup,
+  type ObjectiveChange,
+} from '@/services/journey/changes'
 import type { Objective } from '@/services/journey/types'
 import { useRoleObjectives } from './useJourney'
 
@@ -29,4 +34,10 @@ export function useAllObjectiveChanges(): ObjectiveChange[] {
     () => objectives.flatMap((o) => computeObjectiveChanges(o, comments)),
     [objectives, comments]
   )
+}
+
+/** The same changes as the learner counts and answers them: one per change, not one per objective (see `groupChanges`). */
+export function useAllChangeGroups(): ChangeGroup[] {
+  const changes = useAllObjectiveChanges()
+  return useMemo(() => groupChanges(changes), [changes])
 }

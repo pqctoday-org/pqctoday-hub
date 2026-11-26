@@ -2,15 +2,9 @@
 import { useId, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { Eyebrow, StatusChip, StoryButton } from '@/components/storybook'
-import { useUpdates } from '@/components/MyWork'
 import { useJourneyStore } from '@/store/useJourneyStore'
-import {
-  useFocusedObjective,
-  useIsDone,
-  usePanelObjectives,
-  useRoleObjectives,
-} from '@/hooks/useJourney'
-import { usePersonaStore } from '@/store/usePersonaStore'
+import { useFocusedObjective, useIsDone, useRoleObjectives } from '@/hooks/useJourney'
+import { useUpdateCounts } from '@/hooks/useUpdateCounts'
 import { nowStep } from '@/services/journey/stepRules'
 import { describeStep, journeyHref, objectiveTitle } from '@/services/journey/stepView'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
@@ -62,7 +56,6 @@ function FocusedObjective() {
   const list = useRoleObjectives()
   const isDone = useIsDone()
   const focusObjective = useJourneyStore((s) => s.focusObjective)
-  const role = usePersonaStore((s) => s.selectedPersona)
   const location = useLocation()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
@@ -144,22 +137,14 @@ function FocusedObjective() {
           Go to your current step
         </StoryButton>
       ) : null}
-      <UpdateLink objectiveId={objective.id} personaId={role} />
+      <UpdateLink objectiveId={objective.id} />
     </div>
   )
 }
 
-/** "1 update affects this objective ›", read from the same notices as the Updates tab. */
-function UpdateLink({
-  objectiveId,
-  personaId,
-}: {
-  objectiveId: string
-  personaId: ReturnType<typeof usePersonaStore.getState>['selectedPersona']
-}) {
-  const { updates } = usePanelObjectives()
-  const { notices } = useUpdates(updates, personaId)
-  const n = notices.filter((x) => x.affects.some((a) => a.objectiveId === objectiveId)).length
+/** "1 update affects this objective ›", counted by the same function as the Updates tab. */
+function UpdateLink({ objectiveId }: { objectiveId: string }) {
+  const n = useUpdateCounts().forObjective(objectiveId)
   if (n === 0) return null
   return (
     <Link

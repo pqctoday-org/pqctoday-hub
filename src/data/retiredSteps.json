@@ -12,6 +12,7 @@
     },
     {
       "tag": "LM-042",
+      "name": "Energy & Utilities PQC",
       "to": "LM-075",
       "relation": "replaced-by",
       "reason": "The lesson was split up. Its control-systems material moved to the OT lesson.",

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import { LEARN_MODULES } from '@/data/generated/learnModules.generated'
 import { LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
-import { RETIRED_STEPS, retiredEntry } from './retiredSteps'
+import { RETIRED_STEPS, retiredEntry, retiredName, RETIRED_NAME_FALLBACK } from './retiredSteps'
 
 /** Every lesson and section tag the Hub holds now. */
 const live = new Set<string>()
@@ -46,6 +46,15 @@ describe('the list of retired lessons and sections', () => {
       expect(e.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
       expect(Number.isNaN(new Date(e.date).getTime())).toBe(false)
     }
+  })
+
+  it('names every retired lesson, so a bare tag such as LM-042 never reaches the learner', () => {
+    for (const e of RETIRED_STEPS.filter((x) => !x.tag.includes('/s:'))) {
+      expect(e.name?.trim().length, `${e.tag} has a name`).toBeGreaterThan(2)
+      expect(retiredName(e)).toBe(e.name)
+    }
+    expect(retiredName({ ...RETIRED_STEPS[0], name: undefined })).toBe(RETIRED_NAME_FALLBACK)
+    expect(RETIRED_NAME_FALLBACK).not.toMatch(/LM-\d/)
   })
 
   it('finds an entry by tag', () => {

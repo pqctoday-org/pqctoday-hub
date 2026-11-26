@@ -12,6 +12,7 @@
  * Nothing here changes progress. A notice is information; an objective's required totals are never read or written (U02).
  */
 import { LEARN_MODULES } from '@/data/generated/learnModules.generated'
+import { retiredEntry } from '@/services/journey/retiredSteps'
 import { lessonByTag, parseTag } from './tags'
 import type { EngagedLesson, SeenNotice } from '@/store/useUpdatesStore'
 
@@ -218,6 +219,9 @@ export function computeUpdateNotices(input: ComputeNoticesInput): UpdateNotice[]
         : undefined
       if (isSeen(seen, tag, 0)) continue
       if (affects.length === 0 && lessonComments.length === 0) continue
+      // An objective that holds a lesson the Hub lists as retired has the Retired step card, which offers the swap;
+      // the notice stays for a learner who only has comments on it, and for a lesson the list does not name.
+      if (affects.length > 0 && retiredEntry(tag)) continue
       notices.push({
         id: `${tag}@0`,
         kind: replacement ? 'moved' : 'retired',

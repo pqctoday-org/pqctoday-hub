@@ -9,6 +9,7 @@ import {
   ObjectiveWorkLine,
   StepNotesMount,
   UpdatesMount,
+  useUpdatesCount,
 } from './mountPoints'
 import { ObjectiveHeaderSlot } from '@/components/Assistant/ObjectiveHeaderSlot'
 import { renderAt, resetJourneyWorld, saveObjective, saveTlsObjective } from './journeyTestUtils'
@@ -225,6 +226,47 @@ describe('the drawer header objective area', () => {
     expect(
       screen.queryByRole('button', { name: 'Go to your current step' })
     ).not.toBeInTheDocument()
+  })
+
+  it('counts the changes in an objective in its update link, with the same number as the Updates tab', () => {
+    const id = saveTlsObjective()
+    // A retired step is a change the Updates tab counts; no release notice is involved.
+    useJourneyStore.setState((s) => {
+      const o = s.objectives[id]
+      return {
+        objectives: {
+          ...s.objectives,
+          [id]: {
+            ...o,
+            steps: [
+              ...o.steps,
+              {
+                id: `${id}-s90`,
+                position: o.steps.length + 1,
+                kind: 'module',
+                resourceTag: 'LM-032',
+                required: true,
+                origin: { type: 'match' },
+              },
+            ],
+          },
+        },
+      }
+    })
+    function Tab() {
+      return <p data-testid="tab-count">{useUpdatesCount()}</p>
+    }
+    renderAt(
+      <>
+        <Tab />
+        <ObjectiveHeaderSlot />
+      </>,
+      '/playground'
+    )
+    expect(screen.getByTestId('tab-count')).toHaveTextContent('1')
+    expect(
+      screen.getByRole('link', { name: /1 update affects this objective/ })
+    ).toBeInTheDocument()
   })
 
   it('shows a paused objective as Paused', () => {
