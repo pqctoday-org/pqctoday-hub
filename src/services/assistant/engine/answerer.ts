@@ -153,8 +153,21 @@ class ResIndex {
 /** A status that does not retire a record: no status at all (undefined or null), an empty one, or "active". */
 export function isActiveStatus(s: string | null | undefined): boolean { return s === undefined || s === null || s === '' || s === 'active' }
 
-/** The link with every alias parameter written as its canonical one, so that two spellings the Hub opens as one page compare equal (the id wins when both are present). */
-export function canonicalLink(link: string, aliases: { path: string; alias: string; canonical: string }[]): string {
+/** The link with its path in lower case and without a trailing slash (a link to another site is left as it is). */
+function pagePath(link: string): string {
+  if (!link.startsWith('/')) return link
+  const q = link.indexOf('?')
+  const head = q < 0 ? link : link.slice(0, q)
+  const tail = q < 0 ? '' : link.slice(q)
+  const h = head.indexOf('#')
+  const path = h < 0 ? head : head.slice(0, h)
+  const frag = h < 0 ? '' : head.slice(h)
+  return (path.replace(/\/+$/, '') || '/').toLowerCase() + frag + tail
+}
+
+/** The link with its path normalised (`pagePath`) and every alias parameter written as its canonical one, so that two spellings the Hub opens as one page compare equal (the id wins when both are present). */
+export function canonicalLink(raw: string, aliases: { path: string; alias: string; canonical: string }[]): string {
+  const link = pagePath(raw)
   const q = link.indexOf('?')
   if (q < 0) return link
   const base = link.slice(0, q)
@@ -212,7 +225,7 @@ export class Answerer {
   }
   /** The key a link is looked up by in the records that own it: its canonical spelling without a fragment. */
   linkKey(link: string): string { return canonicalLink(link, this.data.link_aliases ?? []).split('#')[0] }
-  recordsOfLink(link: string): string[] { const a = this.recOfLink.get(link); return a && a.length ? a : this.recOfKey.get(this.linkKey(link)) ?? [] }
+  recordsOfLink(link: string): string[] { return this.recOfKey.get(this.linkKey(link)) ?? [] }
   rec(id: string): Rec { return this.strict.records.get(id)! }
   answerRaw(q: string): Result { let r = this.raw.get(q); if (!r) { r = this.strict.answer(q); this.raw.set(q, r) } return r }
   tagOf(id: string): string { const r = this.strict.records.get(id); return r && r.type === 'tool' && r.link ? 'TOOL:' + r.link.replace(/\/+$/, '').split('/').pop() : id }
@@ -272,14 +285,14 @@ export class Answerer {
     for (const rid of reading.named_ids) {
       for (const f of cfg.follow) {
         const tgt = f.dir === 'forward' ? this.strict.forward.get(rid + '\u0000' + f.rel) ?? [] : this.strict.inverse.get(rid + '\u0000' + f.rel) ?? []
-        for (const t of tgt.slice(0, 12)) { const l = this.linkOfRec.get(t); if (l && this.rec(t).active !== false) o.set(l, Math.max(o.get(l) ?? 0, f.w)) }       // a record is active unless it says it is not (null and a missing key too)
+        for (const t of tgt.slice(0, 12)) { const l = this.linkOfRec.get(t); if (l && isActiveStatus(this.rec(t).status)) o.set(l, Math.max(o.get(l) ?? 0, f.w)) }
       }
       // a record field that lists other records by id is a typed link too (an algorithm's `products`)
       for (const f of cfg.follow_fields) {
         const raw = (this.rec(rid).fields ?? {})[f.field] || []          // an empty string, 0 and null list nothing
         const vals: unknown[] = Array.isArray(raw) ? raw : [raw]
         const w = f.w / Math.sqrt(Math.max(1, vals.length))          // the more products an algorithm lists, the less each link says (every listed id counts, active or not)
-        for (const v of vals) { const t = this.strict.records.get(f.prefix + String(v)); const l = t ? this.linkOfRec.get(t.id) : undefined; if (l && t && t.active !== false) o.set(l, Math.max(o.get(l) ?? 0, w)) }
+        for (const v of vals) { const t = this.strict.records.get(f.prefix + String(v)); const l = t ? this.linkOfRec.get(t.id) : undefined; if (l && t && isActiveStatus(t.status)) o.set(l, Math.max(o.get(l) ?? 0, w)) }
       }
     }
     return o
@@ -643,6 +656,11 @@ export class Answerer {
   ask(question: string, role: string | null = null, forceIntent: string | null = null): Item {
     let reading: Reading & { question: string; forced?: boolean } = this.engine.read(question) as any
     if (forceIntent) reading = { ...reading, intent: forceIntent, intents: [forceIntent], forced: true }
+    if (reading.intent === 'name' && reading.name_match) {
+      // a retired record is never a name card or a choice: the name keeps the records that are live; when none is, the question is read as a named thing alone and answered by the finders
+      const live = reading.name_match.filter((i) => isActiveStatus(this.rec(i).status))
+      reading = live.length ? { ...reading, name_match: live } : { ...reading, intent: 'concept', intents: ['concept'], name_match: null, confidence: 0.3 }
+    }
     const intent = reading.intent
     const spec = this.data.intents.intents[intent]
     const N = this.data.notes
