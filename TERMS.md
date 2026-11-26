@@ -1,7 +1,7 @@
 # Terms of Service
 
 **Effective Date:** October 4, 2026
-**Last Updated:** November 16, 2026
+**Last Updated:** November 26, 2026
 
 ## 1. Acceptance of Terms
 

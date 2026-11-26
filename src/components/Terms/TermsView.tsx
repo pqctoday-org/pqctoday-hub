@@ -6,7 +6,7 @@ import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // Bump this date whenever a substantive edit is made to this file.
 const EFFECTIVE_DATE = 'October 4, 2026'
-const LAST_UPDATED = 'November 16, 2026'
+const LAST_UPDATED = 'November 26, 2026'
 
 const TOC_SECTIONS = [
   { number: 1, slug: 'acceptance', title: 'Acceptance of Terms' },
