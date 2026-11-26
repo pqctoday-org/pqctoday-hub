@@ -1270,39 +1270,6 @@ export const AccelerationIntroduction: React.FC<AccelerationIntroductionProps> =
         </div>
       </section>
 
-      <section className="glass-panel p-6">
-        <h3 className="text-sm font-bold text-foreground mb-3">Related modules</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          {[
-            {
-              to: '/learn/slh-dsa',
-              label: 'SLH-DSA',
-              note: 'The hash-based signature this module accelerates',
-            },
-            {
-              to: '/learn/hsm-pqc',
-              label: 'HSM & PQC',
-              note: 'Where accelerated PQC runs in production',
-            },
-            { to: '/learn/iot-pqc', label: 'IoT & Embedded', note: 'Small cores, tight budgets' },
-            {
-              to: '/learn/arch-quantum-impact?tab=workshop&step=5',
-              label: 'Compare with the other trust hardware',
-              note: 'Where accelerators sit next to TPMs, HSMs and DPUs',
-            },
-          ].map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className="rounded-lg border border-border bg-card/40 p-3 hover:bg-card transition-colors"
-            >
-              <div className="text-sm font-medium text-foreground">{l.label}</div>
-              <div className="text-xs text-muted-foreground">{l.note}</div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       <div className="text-center">
         <Button
           variant="gradient"

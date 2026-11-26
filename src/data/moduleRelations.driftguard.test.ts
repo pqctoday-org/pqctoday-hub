@@ -210,9 +210,14 @@ describe('module relations — the authored override replaces, never stacks', ()
 describe('module relations — no lesson carries its own hand-written related block', () => {
   const MODULES_DIR = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'modules')
 
+  /** A "Related modules" or "Related resources" heading, label or comment (prose that mentions them is fine). */
+  const HAND_BLOCK =
+    /(>\s*Related (modules|resources)\b|\{\/\*[\s\S]{0,12}Related (modules|resources)\b|Related (modules|resources)\s*<\/(h\d|span|div|p))/i
+
   /**
    * Lesson source files (tests excluded) that draw a hand-typed "Related Resources" or "Related Modules"
-   * block: the computed panel and the generated "Related resources" box are the only ones allowed.
+   * block, in any capitalisation: the computed panel and the generated "Related resources" box are the only
+   * ones allowed. The kept links live in src/data/lessonRelatedLinks.ts.
    */
   function handWrittenBlocks(): string[] {
     const hits: string[] = []
@@ -221,7 +226,7 @@ describe('module relations — no lesson carries its own hand-written related bl
         const full = path.join(dir, entry.name)
         if (entry.isDirectory()) walk(full)
         else if (/\.tsx?$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name)) {
-          if (/Related (Modules|Resources)/.test(fs.readFileSync(full, 'utf-8'))) {
+          if (HAND_BLOCK.test(fs.readFileSync(full, 'utf-8'))) {
             hits.push(path.relative(MODULES_DIR, full))
           }
         }
@@ -230,6 +235,14 @@ describe('module relations — no lesson carries its own hand-written related bl
     walk(MODULES_DIR)
     return hits.sort()
   }
+
+  it('the guard catches both spellings of a typed block and ignores prose', () => {
+    expect(HAND_BLOCK.test('<h3 className="x">Related modules</h3>')).toBe(true)
+    expect(HAND_BLOCK.test('<h3>Related Resources</h3>')).toBe(true)
+    expect(HAND_BLOCK.test('{/* Related Modules */}')).toBe(true)
+    expect(HAND_BLOCK.test('<BarChart3 /> Related Resources\n        </h2>')).toBe(true)
+    expect(HAND_BLOCK.test('shows the computed "Related modules" list in the panel')).toBe(false)
+  })
 
   it('finds no hand-written "Related Modules" or "Related Resources" block in any lesson', () => {
     expect(
