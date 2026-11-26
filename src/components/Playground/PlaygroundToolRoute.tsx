@@ -111,7 +111,12 @@ export const PlaygroundToolRoute = () => {
           {catalogReturn ? 'Back to tool results' : 'All Tools'}
         </Button>
         {relatedModuleId && relatedModuleTitle && (
-          <Button variant="ghost" size="sm" onClick={() => navigate(tool.moduleLink)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="max-sm:h-auto max-sm:min-w-0 max-sm:whitespace-normal max-sm:text-left"
+            onClick={() => navigate(tool.moduleLink)}
+          >
             <GraduationCap className="w-4 h-4 mr-1" />
             Back to {relatedModuleTitle}
           </Button>
@@ -123,7 +128,7 @@ export const PlaygroundToolRoute = () => {
           unchanged — this is the same breadcrumb line, now carrying the
           document's top-level heading instead of a bare span.
         */}
-        <h1 className="text-sm font-normal text-muted-foreground max-sm:min-w-0 max-sm:flex-1 max-sm:truncate">
+        <h1 className="text-sm font-normal text-muted-foreground max-sm:min-w-0 max-sm:flex-1 max-sm:break-words">
           {tool.category} / {tool.name}
         </h1>
         <div className="ml-auto flex items-center gap-1 max-sm:w-full max-sm:justify-end">

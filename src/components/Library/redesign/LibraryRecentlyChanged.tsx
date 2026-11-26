@@ -60,10 +60,16 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
                   )}
                 </span>
               </span>
-              <span className="w-full truncate font-mono text-[11px] font-semibold text-primary">
+              <span
+                className="w-full truncate font-mono text-[11px] font-semibold text-primary"
+                title={item.referenceId}
+              >
                 {item.referenceId}
               </span>
-              <span className="line-clamp-1 w-full text-[12px] text-foreground">
+              <span
+                className="line-clamp-1 w-full text-[12px] text-foreground"
+                title={item.documentTitle}
+              >
                 {item.documentTitle}
               </span>
             </Button>

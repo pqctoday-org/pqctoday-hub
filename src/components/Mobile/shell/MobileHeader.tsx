@@ -103,7 +103,7 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
                 )}
                 <p
                   data-testid="mobile-header-title"
-                  className="truncate text-[17px] font-extrabold leading-tight text-foreground"
+                  className="line-clamp-2 break-words text-[17px] font-extrabold leading-tight text-foreground max-[429px]:text-[15px]"
                 >
                   {title ?? 'PQC Today'}
                 </p>
@@ -111,7 +111,7 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
             </>
           )}
 
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1.5 max-[429px]:gap-1">
             <Button
               type="button"
               variant="ghost"

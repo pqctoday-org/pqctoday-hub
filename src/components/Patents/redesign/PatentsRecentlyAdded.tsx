@@ -54,11 +54,19 @@ export function PatentsRecentlyAdded({ items, onOpen, limit = 16 }: PatentsRecen
                 {formatPatentDate(item.issueDate)}
               </span>
             </span>
-            <span className="w-full truncate font-mono text-[11px] font-semibold text-primary">
+            <span
+              className="w-full truncate font-mono text-[11px] font-semibold text-primary"
+              title={item.patentNumber}
+            >
               {item.patentNumber}
             </span>
-            <span className="line-clamp-1 w-full text-[12px] text-foreground">{item.title}</span>
-            <span className="line-clamp-1 w-full text-[11px] text-muted-foreground">
+            <span className="line-clamp-1 w-full text-[12px] text-foreground" title={item.title}>
+              {item.title}
+            </span>
+            <span
+              className="line-clamp-1 w-full text-[11px] text-muted-foreground"
+              title={item.assignee}
+            >
               {item.assignee}
             </span>
           </Button>

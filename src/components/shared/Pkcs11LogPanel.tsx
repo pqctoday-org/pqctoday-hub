@@ -537,16 +537,16 @@ export const Pkcs11LogPanel = ({
         <Button
           variant="ghost"
           onClick={() => setOpen((v) => !v)}
-          className="flex min-w-0 max-w-full flex-1 items-center justify-start gap-2 text-left text-sm font-semibold"
+          className="flex h-auto min-w-0 max-w-full flex-1 items-center justify-start gap-2 whitespace-normal text-left text-sm font-semibold"
           aria-expanded={open}
         >
-          <span className="flex min-w-0 items-center gap-2">
+          <span className="flex min-w-0 flex-wrap items-center gap-x-2">
             {open ? (
               <ChevronDown size={14} className="shrink-0 text-muted-foreground" />
             ) : (
               <ChevronRight size={14} className="shrink-0 text-muted-foreground" />
             )}
-            <span className="truncate">{title}</span>
+            <span className="min-w-0 break-words">{title}</span>
             <span className="shrink-0 text-xs font-normal text-muted-foreground">
               ({visibleLog.length} calls
               {mechanismCount > 0 && <span> · {mechanismCount} crypto</span>}

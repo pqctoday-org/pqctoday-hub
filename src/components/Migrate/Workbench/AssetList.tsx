@@ -235,7 +235,10 @@ export function AssetList({ persona, selectedDomain, onSelect, onSelectProduct }
                         </span>
                       )}
                     </span>
-                    <span className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground">
+                    <span
+                      className="mt-0.5 block truncate font-mono text-[10px] text-muted-foreground"
+                      title={`${asset.classical} → ${asset.target}`}
+                    >
                       {asset.classical} → {asset.target}
                     </span>
                   </span>
