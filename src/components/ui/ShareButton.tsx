@@ -206,7 +206,7 @@ export const ShareButton = ({
               <div className="fixed inset-0 z-[10000]" onClick={closeMenu} />
               <div
                 role="menu"
-                className="fixed z-[10001] min-w-[160px] max-w-[calc(100vw-1rem)] rounded-lg border border-border bg-card shadow-lg p-1"
+                className="fixed z-[10001] min-w-[160px] max-w-[calc(100vw-1rem)] rounded-2xl border-2 border-ink bg-card shadow-[0_4px_0_hsl(var(--edge))] p-1"
                 style={{ top: anchor.top, right: anchor.right }}
               >
                 {menuItems}
@@ -218,7 +218,7 @@ export const ShareButton = ({
           <>
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- backdrop overlay, keyboard close handled by Escape */}
             <div className="fixed inset-0 embed-backdrop z-40" onClick={() => setShowMenu(false)} />
-            <div className="absolute right-0 top-full mt-1 z-50 min-w-[160px] max-w-[calc(100vw-1rem)] rounded-lg border border-border bg-card shadow-lg p-1">
+            <div className="absolute right-0 top-full mt-1 z-50 min-w-[160px] max-w-[calc(100vw-1rem)] rounded-2xl border-2 border-ink bg-card shadow-[0_4px_0_hsl(var(--edge))] p-1">
               {menuItems}
             </div>
           </>

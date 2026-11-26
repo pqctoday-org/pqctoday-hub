@@ -19,9 +19,9 @@ export function PoweredByBadge() {
       className={
         isEmbedded
           ? // In embed: anchor to bottom of the flex column, not the browser viewport
-            'self-end m-4 bg-card/80 text-muted-foreground px-3 py-1.5 rounded-full text-xs font-medium border shadow-sm hover:bg-card hover:text-foreground transition-all flex items-center gap-1.5 backdrop-blur-md hover:shadow-md print:hidden'
+            'self-end m-4 bg-chip text-chip-foreground px-3 py-1.5 rounded-full text-xs font-bold border-2 border-ink hover:bg-highlight hover:text-heading transition-colors flex items-center gap-1.5 print:hidden'
           : // Standard: fixed to viewport corner
-            'fixed bottom-4 right-4 z-40 bg-card/80 text-muted-foreground px-3 py-1.5 rounded-full text-xs font-medium border shadow-sm hover:bg-card hover:text-foreground transition-all flex items-center gap-1.5 backdrop-blur-md hover:shadow-md print:hidden'
+            'fixed bottom-4 right-4 z-40 bg-chip text-chip-foreground px-3 py-1.5 rounded-full text-xs font-bold border-2 border-ink hover:bg-highlight hover:text-heading transition-colors flex items-center gap-1.5 print:hidden'
       }
       title="Open PQC Today in a new tab"
     >

@@ -54,7 +54,7 @@ export function CounterClaimBadge({
             onClick={() => setOpen(false)}
             aria-hidden
           />
-          <div className="relative z-10 w-full max-w-2xl bg-card border border-border rounded-lg shadow-xl max-h-[80vh] overflow-y-auto">
+          <div className="relative z-10 w-full max-w-2xl bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] max-h-[80vh] overflow-y-auto">
             <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-border">
               <div>
                 <p className="text-xs text-muted-foreground capitalize">{recordType}</p>

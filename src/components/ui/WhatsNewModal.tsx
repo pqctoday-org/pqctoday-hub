@@ -398,7 +398,7 @@ export const WhatsNewModal = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col glass-panel border border-primary/30 shadow-lg shadow-primary/10 print:hidden pointer-events-auto"
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col print:hidden pointer-events-auto"
               role="dialog"
               aria-modal="true"
               aria-labelledby="whats-new-modal-title"

@@ -344,7 +344,7 @@ export const DocumentAnalysis = ({ enrichment, relatedLeaders }: DocumentAnalysi
   if (!hasAnyDimension) return null
 
   return (
-    <div className="glass-panel p-3">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}

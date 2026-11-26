@@ -239,7 +239,7 @@ export function RevisionDrilldownPanel({
         {/* panel */}
         <div
           ref={panelRef}
-          className="relative z-10 w-full max-w-md bg-card border-l border-border flex flex-col h-full shadow-xl"
+          className="relative z-10 w-full max-w-md bg-card border-l-2 border-ink flex flex-col h-full"
         >
           <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-border">
             <div className="min-w-0">

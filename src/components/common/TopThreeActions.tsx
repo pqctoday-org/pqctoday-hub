@@ -67,7 +67,7 @@ export const TopThreeActions: React.FC<Props> = ({
           }
 
           const cardClass =
-            'glass-panel p-4 rounded-xl border border-border hover:border-primary/40 transition-colors flex items-start gap-3 group h-full text-left w-full'
+            'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 hover:border-primary/40 transition-colors flex items-start gap-3 group h-full text-left w-full'
 
           const body = (
             <>

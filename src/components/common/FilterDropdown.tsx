@@ -22,6 +22,7 @@ interface FilterDropdownProps {
   defaultLabel?: string
   defaultIcon?: React.ReactNode
   className?: string
+  /** Kept for callers: the box is always an opaque card now. */
   opaque?: boolean
   noContainer?: boolean
   variant?: 'default' | 'ghost'
@@ -57,7 +58,6 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   defaultLabel = 'All',
   defaultIcon = <Globe size={16} className="text-primary" />,
   className,
-  opaque = false,
   noContainer = false,
   variant = 'default',
   size = 'default',
@@ -307,7 +307,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           maxWidth: 'calc(100vw - 16px)',
           zIndex: 9999,
         }}
-        className="bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top"
+        className="bg-popover border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))] overflow-hidden transform origin-top"
       >
         {/* Search input */}
         {searchable && (
@@ -513,8 +513,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             // Round 9 (2026-09-19): max-w-full so a long selected label cannot push
             // the box past its grid cell at phone width (PKI enrollment, 390 px);
             // the label span inside already truncates within the button.
-            'border border-border rounded-lg shadow-lg p-2 inline-flex max-w-full items-center gap-2',
-            opaque ? 'bg-card' : 'bg-card/95 backdrop-blur-md'
+            'border border-border rounded-2xl p-2 inline-flex max-w-full items-center gap-2',
+            'bg-card'
           )}
         >
           {label && (

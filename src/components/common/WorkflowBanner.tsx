@@ -43,7 +43,7 @@ export const WorkflowBanner: React.FC = () => {
 
   return (
     <div
-      className="glass-panel p-3 mb-4 print:hidden"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 mb-4 print:hidden"
       role="status"
       aria-label="Migration planning workflow progress"
     >

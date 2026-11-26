@@ -134,7 +134,7 @@ function EntityChips({ ids, domain }: { ids: string[]; domain: string }) {
             </Button>
             {label && (
               <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-max max-w-[220px] px-2 py-1 rounded bg-card border border-border text-[10px] text-foreground shadow-lg text-center leading-tight">
+                <div className="w-max max-w-[220px] px-2 py-1 rounded-xl bg-card border-2 border-ink text-[10px] text-foreground text-center leading-tight">
                   {label}
                 </div>
               </div>

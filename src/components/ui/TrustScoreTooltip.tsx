@@ -34,7 +34,7 @@ export const TrustScoreTooltip: React.FC<TrustScoreTooltipProps> = ({ score, sty
   return createPortal(
     <div
       role="tooltip"
-      className="fixed z-50 w-80 max-w-[calc(100vw-2rem)] glass-panel border border-border rounded-lg shadow-lg p-3 text-sm embed-backdrop"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] fixed z-50 w-80 max-w-[calc(100vw-2rem)] p-3 text-sm embed-backdrop"
       style={style}
       onMouseLeave={onClose}
     >

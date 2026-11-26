@@ -105,8 +105,8 @@ export const PageHeader = ({
 
   return (
     <div className="text-center mb-2 md:mb-12" data-testid={testId}>
-      <h1 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-2 md:gap-3">
-        <Icon className="w-5 h-5 md:w-9 md:h-9 text-primary shrink-0" aria-hidden="true" />
+      <h1 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 font-display text-heading flex items-center justify-center gap-2 md:gap-3">
+        <Icon className="w-5 h-5 md:w-9 md:h-9 text-heading shrink-0" aria-hidden="true" />
         {title}
       </h1>
       {/* Mobile: compact single-line description */}
@@ -160,7 +160,7 @@ export const PageHeader = ({
               </Button>
               {mobileMenuOpen && (
                 <div
-                  className="absolute right-0 top-full mt-1 z-50 bg-popover border border-border rounded-lg shadow-xl p-2 flex flex-col gap-1 min-w-[180px]"
+                  className="absolute right-0 top-full mt-1 z-50 bg-popover border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))] p-2 flex flex-col gap-1 min-w-[180px]"
                   role="menu"
                 >
                   {actions}

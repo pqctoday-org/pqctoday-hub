@@ -100,7 +100,7 @@ export const CuriousGuide: React.FC = () => {
   if (!opened) {
     return (
       <div
-        className="fixed bottom-4 right-4 z-overlay flex items-center gap-1 rounded-full border border-primary/30 bg-card/95 py-1 pl-3 pr-1 shadow-lg backdrop-blur"
+        className="fixed bottom-4 right-4 z-overlay flex items-center gap-1 rounded-full border-2 border-ink bg-card py-1 pl-3 pr-1"
         data-testid="curious-guide-offer"
       >
         <Button
@@ -163,7 +163,7 @@ export const CuriousGuide: React.FC = () => {
         role="dialog"
         aria-labelledby="curious-guide-title"
         aria-describedby="curious-guide-body"
-        className="fixed bottom-4 right-4 z-overlay w-[min(360px,calc(100vw-2rem))] glass-panel border border-primary/30 shadow-2xl rounded-2xl p-5"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] fixed bottom-4 right-4 z-overlay w-[min(360px,calc(100vw-2rem))] p-5"
         data-testid="curious-guide"
       >
         <div className="flex items-start justify-between gap-2 mb-3">
