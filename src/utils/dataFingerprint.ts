@@ -373,8 +373,7 @@ const RECENT_VERSIONS_COUNT = 3
 
 /**
  * Builds a dynamic RAGChunk summarising recent changelog entries and data changes,
- * filtered by persona. Used by useChatSend to inject context when the user asks
- * "what's new?" — returns null if there's nothing to report.
+ * filtered by persona. Returns null if there's nothing to report.
  */
 // Curious-friendly section labels — plain language instead of developer jargon
 const CURIOUS_SECTION_LABELS: Record<SectionType, string> = {

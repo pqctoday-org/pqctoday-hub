@@ -117,8 +117,6 @@ import {
   buildTrustRefusal,
   requiresAuthoritativeEvidence,
 } from '@/services/chat/RetrievalService'
-import { verifyFacts } from '@/services/chat/factVerification'
-import { finalizeGroundedResponse } from '@/services/chat/responseFinalization'
 
 export interface PageWholeTaskReceipt {
   id: string
@@ -1005,7 +1003,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
     })
   })
 
-  it('21. revisions, 22. changelog, 23. faq, 24. about, 25. editorial, 26. sponsor, 27. terms, 28. palette, 29. assistant, 31. rightpanel, 32. nav — verifies trust signatures (11 artifacts), SBOM (230 npm packages), Terms parity, Changelog personas, RightPanel manuals, and search/assistant gates', () => {
+  it('21. revisions, 22. changelog, 23. faq, 24. about, 25. editorial, 26. sponsor, 27. terms, 28. palette, 29. assistant, 31. rightpanel, 32. nav — verifies trust signatures (11 artifacts), SBOM (229 npm packages), Terms parity, Changelog personas, RightPanel manuals, and search/assistant gates', () => {
     // 21. revisions + 11 signed artifacts in public/data
     const topLevelSignedArtifacts = [
       'public/data/community-signals.json.sig',
@@ -1117,7 +1115,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       status: 'PASS',
     })
 
-    // 24. about (SBOM 230 npm packages + 381 total CycloneDX components + 11 signed artifacts)
+    // 24. about (SBOM 229 npm packages + 11 signed artifacts)
     const directNpmCount = Object.keys(SBOM_PACKAGE_VERSIONS).length
     const transitiveNpmCount = SBOM_BUNDLED_TRANSITIVE.count
     expect(directNpmCount).toBeGreaterThan(40)
@@ -1127,7 +1125,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       fs.readFileSync(path.resolve('public/data/pqctoday-sbom.cdx.json'), 'utf8')
     ) as { components: Array<{ purl?: string; type: string }> }
     const cdxNpmCount = cdxSbom.components.filter((c) => c.purl?.startsWith('pkg:npm/')).length
-    expect(cdxNpmCount).toBe(230)
+    expect(cdxNpmCount).toBe(229)
 
     const sbomRows = SBOM_GROUPS.flatMap((g) => g.components)
     for (const c of sbomRows) {
@@ -1170,7 +1168,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
         'public/data/pqctoday-sbom.cdx.json',
       ],
       wholeTaskChecks: [
-        'Verified 230 npm packages (51 direct + 179 transitive) in CycloneDX SBOM and 16 Data Foundation rows',
+        'Verified 229 npm packages (50 direct + 179 transitive) in CycloneDX SBOM and 16 Data Foundation rows',
       ],
       boundaryAndAdverseChecks: [
         'Verified 0 unresolved ("?") versions or blank licenses across all SBOM_GROUPS rows',
@@ -1281,28 +1279,12 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       persona: 'architect',
     })
     expect(assistantHits.length).toBeGreaterThan(0)
-    expect(
-      verifyFacts('ML-KEM-768 has a public key size of 999 bytes.', assistantHits).length
-    ).toBeGreaterThan(0)
     expect(requiresAuthoritativeEvidence('Are we required by audit regulations to comply?')).toBe(
       true
     )
     expect(buildTrustRefusal('Are we required by audit regulations to comply?', [])).toContain(
       "I don't have a sufficiently authoritative source"
     )
-
-    const verifiedResponse = finalizeGroundedResponse(
-      'ML-KEM-768 is standardized in FIPS 203.',
-      [
-        {
-          claimExcerpt: 'ML-KEM-768 is standardized in FIPS 203.',
-          evidenceExcerpt: assistantHits[0].content.slice(0, 40),
-          chunkId: assistantHits[0].id,
-        },
-      ],
-      assistantHits
-    )
-    expect(['verified', 'extractive']).toContain(verifiedResponse.mode)
 
     recordReceipt({
       id: 'palette',
@@ -1334,20 +1316,11 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       id: 'assistant',
       tier: 'page',
       routeOrSurface: 'PQC Assistant',
-      canonicalSources: [
-        'src/services/chat/RetrievalService.ts',
-        'src/services/chat/groundingPolicy.ts',
-        'src/services/chat/factVerification.ts',
-        'src/services/chat/responseFinalization.ts',
-      ],
-      wholeTaskChecks: [
-        'Verified persona-boosted retrieval, multi-turn entity carry-over, enforceGrounding(), and finalizeGroundedResponse()',
-      ],
-      boundaryAndAdverseChecks: [
-        'Verified single-entity hallucination rejection (>=1 ungrounded entity), byte-size/IR-8547 fact checks, and T10 audit refusal gate',
-      ],
+      canonicalSources: ['src/services/chat/RetrievalService.ts'],
+      wholeTaskChecks: ['Verified persona-boosted retrieval and multi-turn entity carry-over'],
+      boundaryAndAdverseChecks: ['Verified the T10 audit refusal gate'],
       provenanceAndCrossLinkChecks: [
-        'Verified citedChunkIds filtering and appendGroundedDeepLinks() injection',
+        'Verified retrieved chunks carry the source and deep link the answer cites',
       ],
       metrics: {
         topRetrievedChunks: assistantHits.length,

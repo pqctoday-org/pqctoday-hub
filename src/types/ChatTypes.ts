@@ -38,30 +38,9 @@ export interface ChatSourceRef {
   deepLink?: string
   /**
    * Trust tier inherited from the underlying record's eight-dimension score
-   * (§14.3 step 4 of trust-engine-explainability). Optional — populated by
-   * useChatSend.ts when the chunk resolves to a scored resource via
-   * chunkToResource(). When undefined, the citation renders without a chip.
+   * (§14.3 step 4 of trust-engine-explainability). Optional — populated when
+   * the chunk resolves to a scored resource via chunkToResource(). When
+   * undefined, the citation renders without a chip.
    */
   trustTier?: 'Authoritative' | 'High' | 'Moderate' | 'Low'
-}
-
-export interface ChatMessage {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: number
-  sources?: string[]
-  sourceRefs?: ChatSourceRef[]
-  followUps?: string[]
-  /** Statements left out of this answer because the sources did not support them. */
-  removedStatements?: number
-  feedback?: 'helpful' | 'unhelpful'
-}
-
-export interface Conversation {
-  id: string
-  title: string
-  messages: ChatMessage[]
-  createdAt: number
-  updatedAt: number
 }

@@ -39,7 +39,7 @@ describe('C7 — chip binding mirrors the trust engine', () => {
     return getTrustScore(ref.resourceType, ref.resourceId)?.tier
   }
 
-  it('unscored chunk → no chip rendered (parity with useChatSend behavior)', () => {
+  it('unscored chunk → no chip rendered', () => {
     const chunk = makeChunk({ source: 'glossary', title: 'Lattice' })
     const tier = tierForChunk(chunk)
     expect(tier).toBeUndefined()

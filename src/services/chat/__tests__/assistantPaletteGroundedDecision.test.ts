@@ -8,11 +8,7 @@
  *    cert-engineer, curious), capability checklists, business exercises,
  *    infographic assumptions, workshop step deep links (?tab=workshop&step=<N>),
  *    and multi-turn pronoun/short-query entity carry-over (conversationContext).
- * 2. Post-Generation Grounding, Fact Verification & Refusal Gates:
- *    - Case A: Verified grounded answer (mode: 'verified', exact citedChunkIds, deepLink injection)
- *    - Case B: Single-entity hallucination rejection (>= 1 ungrounded entity -> mode: 'extractive')
- *    - Case C: Parameter byte-size & NIST IR 8547 date fact verification rejection
- *    - Case D: T10 audit refusal gate (requiresAuthoritativeEvidence + buildTrustRefusal)
+ * 2. Refusal gate: T10 audit refusal (requiresAuthoritativeEvidence + buildTrustRefusal)
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -27,10 +23,6 @@ import {
   requiresAuthoritativeEvidence,
   topAvailableTier,
 } from '../RetrievalService'
-import { checkGrounding } from '../groundingCheck'
-import { enforceGrounding } from '../groundingPolicy'
-import { verifyFacts } from '../factVerification'
-import { finalizeGroundedResponse } from '../responseFinalization'
 
 let unifiedSearch: UnifiedSearchService
 let retrievalService: RetrievalService
@@ -197,129 +189,8 @@ describe('1. Retrieval & Role-Scoped Discovery (UnifiedSearchService + Retrieval
   })
 })
 
-describe('2. Post-Generation Grounding, Fact Verification & Refusal Gates', () => {
-  const sampleChunks: RAGChunk[] = [
-    {
-      id: 'algo-ml-kem-768',
-      source: 'algorithms',
-      title: 'ML-KEM-768',
-      content:
-        'ML-KEM-768 is a lattice-based key encapsulation mechanism standardized in FIPS 203 with NIST Security Level 3 and a 1,184-byte public key.',
-      category: 'Lattice-based',
-      metadata: {
-        referenceId: 'FIPS 203',
-        fipsStandard: 'FIPS 203',
-        algorithmFamily: 'ML-KEM',
-      },
-      deepLink: '/algorithms?highlight=ml-kem-768',
-    },
-    {
-      id: 'unclaimed-extra-chunk',
-      source: 'glossary',
-      title: 'Unused Glossary Chunk',
-      content: 'This chunk was retrieved but never cited by the assistant.',
-      category: 'concept',
-      metadata: {},
-      deepLink: '/learn/pqc-101',
-    },
-  ]
-
-  it('Case A (Verified Grounded Answer): approves verbatim-evidenced claims, records only citedChunkIds, and appends grounded deep links', () => {
-    const claim = 'ML-KEM-768 is standardized in FIPS 203 at NIST Security Level 3.'
-    const finalized = finalizeGroundedResponse(
-      claim,
-      [
-        {
-          claimExcerpt: claim,
-          evidenceExcerpt:
-            'ML-KEM-768 is a lattice-based key encapsulation mechanism standardized in FIPS 203 with NIST Security Level 3',
-          chunkId: 'algo-ml-kem-768',
-        },
-      ],
-      sampleChunks
-    )
-
-    expect(finalized.mode).toBe('verified')
-    expect(finalized.decision).toEqual({ approved: true, reasons: [] })
-    expect(finalized.citedChunkIds).toEqual(['algo-ml-kem-768'])
-    expect(finalized.citedChunkIds).not.toContain('unclaimed-extra-chunk')
-    expect(finalized.content).toContain('/algorithms?highlight=ml-kem-768')
-  })
-
-  it('Case B (Single-Entity Hallucination Rejection): rejects >= 1 ungrounded entity (RFC 99999, person, or product) and falls back to extractive mode', () => {
-    // 1. Fabricated RFC
-    const draftRfc = 'ML-KEM-768 is standardized in FIPS 203 and RFC 99999.'
-    const rfcCheck = checkGrounding(draftRfc, sampleChunks)
-    expect(rfcCheck.hasWarning).toBe(true)
-    expect(rfcCheck.ungroundedEntities).toContain('RFC 99999')
-
-    const finalizedRfc = finalizeGroundedResponse(
-      draftRfc,
-      [
-        {
-          claimExcerpt: draftRfc,
-          evidenceExcerpt:
-            'ML-KEM-768 is a lattice-based key encapsulation mechanism standardized in FIPS 203',
-          chunkId: 'algo-ml-kem-768',
-        },
-      ],
-      sampleChunks
-    )
-    expect(finalizedRfc.decision.approved).toBe(false)
-    expect(finalizedRfc.decision.reasons).toContain('ungrounded-entity')
-    expect(finalizedRfc.mode).toBe('extractive')
-    expect(finalizedRfc.citedChunkIds).toEqual([])
-    expect(finalizedRfc.content).not.toContain('RFC 99999')
-
-    // 2. Fabricated person name
-    const draftPerson = 'ML-KEM-768 was co-authored by Dr. Victor Hallucinated.'
-    const personCheck = checkGrounding(draftPerson, sampleChunks)
-    expect(personCheck.hasWarning).toBe(true)
-    expect(personCheck.ungroundedEntities.some((e) => e.includes('Victor Hallucinated'))).toBe(true)
-
-    // 3. Fabricated product version
-    const draftProduct = 'ML-KEM-768 is deployed in QuantumShield v9.4.2.'
-    const productCheck = checkGrounding(draftProduct, sampleChunks)
-    expect(productCheck.hasWarning).toBe(true)
-    expect(productCheck.ungroundedEntities.some((e) => e.includes('QuantumShield'))).toBe(true)
-  })
-
-  it('Case C (Byte-Size & NIST IR 8547 Date Fact Verification): rejects misstated ML-KEM-768 public key bytes and wrong NIST IR 8547 years', () => {
-    // Misstated ML-KEM-768 public key size (999 bytes instead of 1,184 bytes)
-    const badByteAnswer = 'ML-KEM-768 has a public key size of 999 bytes.'
-    const byteViolations = verifyFacts(badByteAnswer, sampleChunks)
-    expect(byteViolations.length).toBeGreaterThan(0)
-    expect(byteViolations[0].expected).toContain('1184 bytes')
-
-    const byteDecision = enforceGrounding(
-      badByteAnswer,
-      [
-        {
-          claimExcerpt: badByteAnswer,
-          evidenceExcerpt: 'ML-KEM-768 is a lattice-based key encapsulation mechanism',
-          chunkId: 'algo-ml-kem-768',
-        },
-      ],
-      sampleChunks
-    )
-    expect(byteDecision.approved).toBe(false)
-    expect(byteDecision.reasons).toContain('fact-contradiction')
-
-    // Misstated NIST IR 8547 deprecation (2028 instead of 2030) and disallowance (2032 instead of 2035)
-    const badIrDatesAnswer =
-      'NIST IR 8547 deprecates classical RSA in 2028. NIST IR 8547 disallows classical ECC in 2032.'
-    const irViolations = verifyFacts(badIrDatesAnswer, sampleChunks)
-    expect(irViolations.length).toBe(2)
-    expect(irViolations.map((v) => v.expected).join(' ')).toContain('2030')
-    expect(irViolations.map((v) => v.expected).join(' ')).toContain('2035')
-
-    // Accurate byte size (1,184 bytes) and NIST IR 8547 years (2030 / 2035) pass
-    const validFactAnswer =
-      'ML-KEM-768 has a public key size of 1,184 bytes. NIST IR 8547 deprecates classical algorithms in 2030. NIST IR 8547 disallows them in 2035.'
-    expect(verifyFacts(validFactAnswer, sampleChunks)).toEqual([])
-  })
-
-  it('Case D (T10 Audit Refusal Gate): returns buildTrustRefusal deterministically when an audit/compliance query has only Low/Moderate/unscored chunks', () => {
+describe('2. Refusal gate', () => {
+  it('T10 audit refusal gate: returns buildTrustRefusal deterministically when an audit/compliance query has only Low/Moderate/unscored chunks', () => {
     const auditQuery = 'Are we required by regulation to comply with PQC audit mandates?'
     expect(requiresAuthoritativeEvidence(auditQuery)).toBe(true)
 
