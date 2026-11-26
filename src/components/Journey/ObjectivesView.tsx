@@ -4,7 +4,7 @@
  * one in focus (its step bar, the Now box, optional steps), and the new-objective flow. On a phone
  * the same content stacks in one column.
  */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
   Chip,
@@ -312,6 +312,15 @@ export function ObjectivesView() {
   const [opened, setOpened] = useState(false)
   const creating = opened || params.get('new') === '1'
   const focusObjective = useJourneyStore((s) => s.focusObjective)
+  // After Cancel or Create the form unmounts with the focused control inside it; focus goes back to the button that opens it.
+  const openerRef = useRef<HTMLButtonElement>(null)
+  const returnFocus = useRef(false)
+  useEffect(() => {
+    if (!creating && returnFocus.current) {
+      returnFocus.current = false
+      openerRef.current?.focus()
+    }
+  }, [creating])
 
   const stepParam = params.get('step')
   const objectiveParam = params.get('objective')
@@ -331,6 +340,7 @@ export function ObjectivesView() {
       {creating ? (
         <NewObjectiveFlow
           onCancel={() => {
+            returnFocus.current = true
             setOpened(false)
             setParams(
               (p) => {
@@ -343,6 +353,7 @@ export function ObjectivesView() {
           }}
           onCreated={(id) => {
             focusObjective(id)
+            returnFocus.current = true
             setOpened(false)
             setParams(
               (p) => {
@@ -363,7 +374,7 @@ export function ObjectivesView() {
               ? 'Want a path? Tell us what you want to be able to do and we build the steps.'
               : 'Each role keeps its own objectives.'}
           </p>
-          <StoryButton variant="primary" onClick={() => setOpened(true)}>
+          <StoryButton ref={openerRef} variant="primary" onClick={() => setOpened(true)}>
             {objectives.length === 0 ? 'Start an objective' : 'New objective'}
           </StoryButton>
         </div>

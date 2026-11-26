@@ -575,6 +575,47 @@ describe('Your journey views', () => {
     expect(screen.getAllByTestId('where')[0]).not.toHaveTextContent('new=1')
   })
 
+  it('does not carry new=1 to another view, so the form does not come back unasked', async () => {
+    const user = userEvent.setup()
+    saveTlsObjective()
+    renderAt(<YourJourneyView />, '/learn?mode=journey&new=1')
+    expect(screen.getByTestId('new-objective')).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: 'Role map' }))
+    expect(screen.getAllByTestId('where')[0]).not.toHaveTextContent('new=1')
+    await user.click(screen.getByRole('tab', { name: 'Objectives' }))
+    expect(screen.queryByTestId('new-objective')).not.toBeInTheDocument()
+  })
+
+  it('returns focus to the opening button after Cancel', async () => {
+    const user = userEvent.setup()
+    saveTlsObjective()
+    renderAt(<YourJourneyView />, '/learn?mode=journey&new=1')
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.getByRole('button', { name: 'New objective' })).toHaveFocus()
+  })
+
+  it('returns focus to the start button after Cancel on an empty list', async () => {
+    const user = userEvent.setup()
+    renderAt(<YourJourneyView />)
+    await user.click(screen.getByRole('button', { name: 'Start an objective' }))
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.getByRole('button', { name: 'Start an objective' })).toHaveFocus()
+  })
+
+  it('returns focus to the New objective button after Create', async () => {
+    const user = userEvent.setup()
+    saveTlsObjective()
+    renderAt(<YourJourneyView />, '/learn?mode=journey&new=1')
+    await user.type(
+      screen.getByLabelText('What do you want to be able to do?'),
+      'Secure boot and firmware signing for our devices'
+    )
+    await user.click(screen.getByRole('button', { name: 'Preview' }))
+    await user.click(await screen.findByRole('button', { name: 'Create objective' }))
+    expect(screen.queryByTestId('new-objective')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'New objective' })).toHaveFocus()
+  })
+
   it('shows a step page for a self-assessed step opened from the address', () => {
     const id = saveTlsObjective()
     const last = barSteps(objective(id)).at(-1)!

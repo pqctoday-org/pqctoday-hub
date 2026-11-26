@@ -50,6 +50,8 @@ export function YourJourneyView() {
         else out.set('jview', next)
         out.delete('step')
         out.delete('objective')
+        // An opened new-objective form belongs to the Objectives view; it does not follow the learner to another view.
+        if (next !== view) out.delete('new')
         // The previewed role belongs to Role map alone.
         if (next !== 'role-map') out.delete('role')
         return out
