@@ -5,6 +5,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import '@testing-library/jest-dom'
 import { AssistantConversation } from './AssistantConversation'
+import { useAssistantAskedStore } from '@/store/useAssistantAskedStore'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useChatStore } from '@/store/useChatStore'
@@ -104,6 +105,7 @@ beforeEach(() => {
   suggestionMode.many = false
   layout.value = 'docked'
   useAssistantSessionStore.getState().reset()
+  useAssistantAskedStore.getState().clear() // earlier tests' questions are remembered on the device
   useAchievementStore.getState().resetAchievements()
   useAssistantReturnStore.getState().clear()
   useChatStore.setState({ pendingQuestion: null })
@@ -150,6 +152,23 @@ describe('empty drawer (first visit)', () => {
       .setup()
       .click(screen.getByRole('button', { name: /Which deadlines apply to banks in the EU\?/ }))
     await answered('Which deadlines apply to banks in the EU?')
+  })
+
+  it('does not offer a question again in a new conversation while the state is the same', async () => {
+    const question = 'Which deadlines apply to banks in the EU?'
+    const view = mount()
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: new RegExp(question.replace('?', '\\?')) }))
+    await answered(question)
+    view.unmount()
+    // a new visit: the conversation is gone, what was asked is remembered on the device
+    act(() => useAssistantSessionStore.getState().reset())
+    mount()
+    expect(
+      screen.queryByRole('button', { name: new RegExp(question.replace('?', '\\?')) })
+    ).toBeNull()
+    expect(screen.getByRole('group', { name: 'Suggested questions' })).toBeInTheDocument()
   })
 
   it('copies the question into the box for "Edit before asking" without sending it', async () => {

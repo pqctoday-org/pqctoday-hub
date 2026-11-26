@@ -12,7 +12,18 @@ import { useJourneyStore } from '@/store/useJourneyStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useMyWorkStore } from '@/store/useMyWorkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { focusedObjectiveOf, useSuggestions, viewingFor } from './useSuggestions'
+import { TOOL_RECORDS } from '@/data/generated/tools.generated'
+import { useAssistantAskedStore } from '@/store/useAssistantAskedStore'
+import { useAssistantSessionStore, type AssistantTurn } from '@/store/useAssistantSessionStore'
+import {
+  focusedObjectiveOf,
+  lastAnswerOf,
+  objectiveStateOf,
+  progressKey,
+  useRememberAsked,
+  useSuggestions,
+  viewingFor,
+} from './useSuggestions'
 
 const wrap =
   (at: string) =>
@@ -20,8 +31,15 @@ const wrap =
     <MemoryRouter initialEntries={[at]}>{children}</MemoryRouter>
   )
 
+const loadingTurn = (question: string): AssistantTurn => ({
+  id: `t-${question}`,
+  question,
+  status: 'loading',
+})
+
 function suggestions(at = '/', asked: string[] = []) {
-  return renderHook(() => useSuggestions(asked), { wrapper: wrap(at) }).result.current
+  act(() => useAssistantSessionStore.setState({ turns: asked.map(loadingTurn) }))
+  return renderHook(() => useSuggestions(), { wrapper: wrap(at) }).result.current
 }
 
 const OBJECTIVE_BUILT_ON = {
@@ -35,15 +53,24 @@ const OBJECTIVE_BUILT_ON = {
 function setLearner(opts: {
   persona?: 'architect' | null
   objective?: Objective | null
+  /** Several objectives, with none in focus unless `focusOn` names one. */
+  objectives?: Objective[]
+  focusOn?: string
   completions?: Record<string, number>
 }) {
-  const o = opts.objective ?? null
+  const list = opts.objectives ?? (opts.objective ? [opts.objective] : [])
   act(() => {
     usePersonaStore.setState({ selectedPersona: opts.persona ?? null })
     useJourneyStore.setState({
-      objectives: o ? { [o.id]: o } : {},
-      order: o ? [o.id] : [],
-      focus: o ? { [o.role]: o.id } : {},
+      objectives: Object.fromEntries(list.map((o) => [o.id, o])),
+      order: list.map((o) => o.id),
+      focus: opts.objectives
+        ? opts.focusOn
+          ? { architect: opts.focusOn }
+          : {}
+        : list[0]
+          ? { [list[0].role]: list[0].id }
+          : {},
       completions: Object.fromEntries(
         Object.entries(opts.completions ?? {}).map(([tag, at]) => [
           tag,
@@ -61,6 +88,8 @@ beforeEach(() => {
   act(() => {
     useModuleStore.setState({ modules: {} })
     useMyWorkStore.setState({ comments: [] })
+    useAssistantSessionStore.setState({ turns: [] })
+    useAssistantAskedStore.getState().clear()
   })
 })
 
@@ -221,5 +250,331 @@ describe("the ranker's inputs are read, never written", () => {
       const theirs = renderHook(() => useFocusedObjective()).result.current
       expect(mine?.id ?? null).toBe(theirs?.id ?? null)
     }
+  })
+})
+
+const businessTool = TOOL_RECORDS.find((t) => t.kind === 'business')!
+const stepOf = (
+  id: string,
+  n: number,
+  kind: 'module' | 'business-tool' | 'self-assessed',
+  tag: string
+) => ({
+  id,
+  position: n,
+  kind,
+  resourceTag: tag,
+  required: true,
+  origin: { type: 'match' as const },
+})
+
+describe('a question asked earlier is not offered again while the objective and progress are unchanged', () => {
+  const asking = () => {
+    const turn = (question: string): AssistantTurn =>
+      ({ id: question, question, status: 'done', answer: { state: 'not-held' } }) as never
+    return turn
+  }
+  const setTurns = (questions: string[]) =>
+    act(() => useAssistantSessionStore.setState({ turns: questions.map(asking()) }))
+
+  it('remembers a question after the conversation is gone, and offers it again when the progress changes', () => {
+    setLearner({ persona: 'architect', objective: makeObjective({ builtOn: undefined }) })
+    // the role question stays a candidate when a lesson is finished, so it shows the memory and nothing else
+    const asked = suggestions('/').find((s) => s.rule === 5)!.question
+    setTurns([asked])
+    renderHook(() => useRememberAsked(), { wrapper: wrap('/') })
+    // a new conversation: the turns are gone
+    setTurns([])
+    expect(suggestions('/').map((s) => s.question)).not.toContain(asked)
+    // the learner finishes a lesson: the same state no longer holds, so the question is offered again
+    setLearner({
+      persona: 'architect',
+      objective: makeObjective({ builtOn: undefined }),
+      completions: { 'LM-001': 1 },
+    })
+    expect(suggestions('/').map((s) => s.question)).toContain(asked)
+  })
+
+  it('offers it again when the focused objective changes', () => {
+    setLearner({ persona: 'architect', objective: makeObjective({ builtOn: undefined }) })
+    const main = suggestions('/')[0].question
+    setTurns([main])
+    renderHook(() => useRememberAsked(), { wrapper: wrap('/') })
+    setTurns([])
+    expect(suggestions('/').map((s) => s.question)).not.toContain(main)
+    setLearner({
+      persona: 'architect',
+      objective: makeObjective({ id: 'other', goal: 'Another goal', builtOn: undefined }),
+    })
+    expect(suggestions('/').map((s) => s.question)).toContain(main)
+  })
+
+  it('is remembered across a reload: only hashes are stored on the device', async () => {
+    setLearner({ persona: 'architect' })
+    const main = suggestions('/')[0].question
+    setTurns([main])
+    renderHook(() => useRememberAsked(), { wrapper: wrap('/') })
+    const raw = localStorage.getItem('pqc-assistant-asked')!
+    expect(raw).not.toBeNull()
+    expect(raw).not.toContain(main)
+    expect(JSON.parse(raw).state.entries[0]).toEqual({
+      q: expect.stringMatching(/^[0-9a-f]{8}$/),
+      s: expect.stringMatching(/^[0-9a-f]{8}$/),
+    })
+    // a reload: the page's memory is gone and the device's copy is read again
+    act(() => useAssistantAskedStore.setState({ entries: [] }))
+    localStorage.setItem('pqc-assistant-asked', raw)
+    await act(async () => {
+      await useAssistantAskedStore.persist.rehydrate()
+    })
+    setTurns([])
+    expect(suggestions('/').map((s) => s.question)).not.toContain(main)
+  })
+
+  it('reads a damaged stored value as an empty list', async () => {
+    localStorage.setItem(
+      'pqc-assistant-asked',
+      JSON.stringify({
+        state: { entries: [{ q: 'x' }, 7, { q: 'zzzzzzzz', s: '00000000' }] },
+        version: 1,
+      })
+    )
+    await act(async () => {
+      await useAssistantAskedStore.persist.rehydrate()
+    })
+    expect(useAssistantAskedStore.getState().entries).toEqual([])
+  })
+
+  it('writes only to its own store: the journey, module, work and role data stay as they are', () => {
+    setLearner({ persona: 'architect', objective: makeObjective({ builtOn: undefined }) })
+    const stores = [useJourneyStore, useModuleStore, useMyWorkStore, usePersonaStore]
+    const dataOf = () =>
+      JSON.stringify(
+        stores.map((s) =>
+          Object.fromEntries(
+            Object.entries(s.getState()).filter(([, v]) => typeof v !== 'function')
+          )
+        )
+      )
+    const spies: ReturnType<typeof vi.fn>[] = []
+    for (const store of stores) {
+      for (const [key, value] of Object.entries(store.getState())) {
+        if (typeof value !== 'function') continue
+        const spy = vi.fn(value as (...a: unknown[]) => unknown)
+        spies.push(spy)
+        ;(store as { setState: (p: object) => void }).setState({ [key]: spy })
+      }
+    }
+    setTurns(['What is TLS Basics about?'])
+    const before = dataOf()
+    renderHook(() => useRememberAsked(), { wrapper: wrap('/') })
+    expect(dataOf()).toBe(before)
+    expect(spies.filter((s) => s.mock.calls.length > 0)).toHaveLength(0)
+    expect(useAssistantAskedStore.getState().entries).toHaveLength(1)
+  })
+
+  it('has a key that changes with the objective, its steps, the role and the lessons finished', () => {
+    const o = makeObjective({ builtOn: undefined })
+    const base = progressKey('architect', o, [], [])
+    expect(progressKey('architect', o, [], [])).toBe(base)
+    expect(progressKey('executive', o, [], [])).not.toBe(base)
+    expect(progressKey('architect', null, [], [])).not.toBe(base)
+    expect(progressKey('architect', o, [], ['LM-001'])).not.toBe(base)
+    expect(progressKey('architect', { ...o, state: 'paused' }, [], [])).not.toBe(base)
+    expect(progressKey('architect', { ...o, steps: o.steps.slice(1) }, [], [])).not.toBe(base)
+  })
+})
+
+describe('the last answer', () => {
+  const done = (answer: object): AssistantTurn =>
+    ({ id: 'a', question: 'Q?', status: 'done', answer }) as never
+  const row = (tag: string, title = tag) => ({ tag, title })
+
+  it('gives the record of a direct answer or the closest source, and the first lesson of the Learn rows', () => {
+    const turn = done({
+      state: 'resources',
+      source: { label: 'Closest source', kind: 'Glossary term', title: 'ML-KEM', tag: 'GL:ml-kem' },
+      groups: [
+        { name: 'References', rows: [row('GL:ml-kem')], more: [] },
+        { name: 'Learn', rows: [row('KAT:KAT-1'), row('LM-001/s:x'), row('LM-008')], more: [] },
+      ],
+    })
+    expect(lastAnswerOf([turn])).toEqual({
+      matched: { tag: 'GL:ml-kem', title: 'ML-KEM' },
+      lesson: expect.objectContaining({ tag: 'LM-008', title: 'TLS Basics' }),
+    })
+  })
+  it('gives the record of a bare name, and nothing from a state with no rows', () => {
+    expect(
+      lastAnswerOf([
+        done({
+          state: 'name',
+          nameCard: { tag: 'ALG:ML-KEM', title: 'ML-KEM (FIPS 203)' },
+          groups: [],
+        }),
+      ])?.matched
+    ).toEqual({ tag: 'ALG:ML-KEM', title: 'ML-KEM (FIPS 203)' })
+    expect(lastAnswerOf([done({ state: 'not-held' })])).toBeNull()
+    expect(lastAnswerOf([loadingTurn('x')])).toBeNull()
+    expect(lastAnswerOf([])).toBeNull()
+  })
+  it('does not build on a page or a lesson as the matched record', () => {
+    const turn = done({
+      state: 'resources',
+      source: {
+        label: 'Closest source',
+        kind: 'Page',
+        title: 'Compliance',
+        tag: 'PAGE:compliance',
+      },
+      groups: [],
+    })
+    expect(lastAnswerOf([turn])).toEqual({ matched: null, lesson: null })
+  })
+  it('makes the main suggestion about the last answer, ahead of the page and the objective', () => {
+    setLearner({ persona: 'architect', objective: makeObjective({ builtOn: undefined }) })
+    act(() =>
+      useAssistantSessionStore.setState({
+        turns: [
+          done({
+            state: 'resources',
+            source: {
+              label: 'Closest source',
+              kind: 'Glossary term',
+              title: 'ML-KEM',
+              tag: 'GL:ml-kem',
+            },
+            groups: [{ name: 'Learn', rows: [row('LM-001')], more: [] }],
+          }),
+        ],
+      })
+    )
+    const got = renderHook(() => useSuggestions(), { wrapper: wrap('/learn/tls-basics') }).result
+      .current
+    expect(got.slice(0, 3).map((s) => s.question)).toEqual([
+      'Which lessons teach ML-KEM?',
+      'Which tools go with PQC 101?',
+      'What is TLS Basics about?',
+    ])
+  })
+})
+
+describe('no objective in focus with several active (requirement S08)', () => {
+  const a = makeObjective({
+    id: 'a',
+    goal: 'Review our TLS migration design',
+    builtOn: undefined,
+    updatedAt: 100,
+  })
+  const b = makeObjective({
+    id: 'b',
+    goal: 'Brief the architecture board',
+    builtOn: undefined,
+    updatedAt: 500,
+    steps: [stepOf('b-1', 1, 'module', 'LM-004'), stepOf('b-2', 2, 'self-assessed', 'b/outcome')],
+  })
+  it('resumes the most recently used objective, and names the other', () => {
+    setLearner({ persona: 'architect', objectives: [a, b] })
+    const got = suggestions('/')
+    expect(got[0]).toMatchObject({
+      rule: 2,
+      label: 'Resume',
+      question: 'What will I learn in Standards, Certification & Compliance Bodies?',
+    })
+    expect(got[0].basedOn).toBe('your most recently used objective, Brief the architecture board')
+    expect(got[1]).toMatchObject({
+      rule: 2,
+      label: 'Other objective',
+      question: 'What will I learn in PQC 101?',
+    })
+  })
+  it('behaves as before once one is in focus, or when only one is active', () => {
+    setLearner({ persona: 'architect', objectives: [a, b], focusOn: 'a' })
+    expect(suggestions('/')[0]).toMatchObject({
+      rule: 2,
+      label: 'Next step',
+      question: 'What will I learn in PQC 101?',
+    })
+    setLearner({ persona: 'architect', objectives: [a, { ...b, state: 'paused' }] })
+    expect(suggestions('/')[0]).toMatchObject({ rule: 2, label: 'Next step' })
+  })
+  it('is told apart from a focused objective by the state function', () => {
+    const state = useJourneyStore.getState
+    setLearner({ persona: 'architect', objectives: [a, b] })
+    expect(
+      objectiveStateOf(state().objectives, state().order, state().focus, 'architect')
+    ).toMatchObject({
+      objective: null,
+    })
+    expect(
+      objectiveStateOf(state().objectives, state().order, { architect: 'a' }, 'architect').objective
+        ?.id
+    ).toBe('a')
+  })
+})
+
+describe('rules 2 and 3 for a next step that is not a lesson', () => {
+  it('asks what a business tool does, and offers the lesson the tool belongs to', () => {
+    const home = TOOL_RECORDS.find((t) => t.kind === 'business' && t.module)
+    expect(home).toBeDefined()
+    const o = makeObjective({
+      builtOn: undefined,
+      steps: [
+        stepOf('s1', 1, 'business-tool', `BT:${home!.toolId}`),
+        stepOf('s2', 2, 'self-assessed', 'obj-t/outcome'),
+      ],
+    })
+    setLearner({ persona: 'architect', objective: o })
+    const got = suggestions('/')
+    expect(got[0]).toMatchObject({ rule: 2, question: `What does ${home!.name} do?` })
+    expect(got.filter((s) => s.rule === 3)).toHaveLength(1)
+    // the tool is found by its bare id too
+    const bare = makeObjective({
+      builtOn: undefined,
+      steps: [stepOf('s1', 1, 'business-tool', businessTool.toolId)],
+    })
+    setLearner({ persona: 'architect', objective: bare })
+    expect(suggestions('/')[0].question).toBe(`What does ${businessTool.name} do?`)
+  })
+  it('offers nothing about a step that has nothing in the catalog to ask about', () => {
+    for (const step of [
+      stepOf('s1', 1, 'self-assessed', 'obj-t/outcome'),
+      stepOf('s1', 1, 'business-tool', 'BT:not-a-tool'),
+      stepOf('s1', 1, 'module', 'LM-9999'),
+    ]) {
+      setLearner({
+        persona: 'architect',
+        objective: makeObjective({ builtOn: undefined, steps: [step] }),
+      })
+      expect(suggestions('/').filter((s) => s.rule === 2 || s.rule === 3)).toEqual([])
+    }
+  })
+})
+
+describe('what counts as just finished', () => {
+  it('is a lesson the learner recorded a moment ago, by its completion stamp', () => {
+    setLearner({ persona: 'architect', completions: { 'LM-004': Date.now() - 1000 } })
+    expect(suggestions('/')[0]).toMatchObject({ rule: 1, label: 'Recap' })
+  })
+  it('is not a lesson the Hub shows as completed that was opened again a moment ago', () => {
+    setLearner({ persona: 'architect' })
+    act(() =>
+      useModuleStore.setState({
+        modules: {
+          'standards-bodies': {
+            status: 'completed',
+            lastVisited: Date.now() - 1000,
+            timeSpent: 0,
+            completedSteps: [],
+            quizScores: {},
+          },
+        },
+      })
+    )
+    expect(suggestions('/').map((s) => s.label)).not.toContain('Recap')
+  })
+  it('is not a lesson recorded long ago', () => {
+    setLearner({ persona: 'architect', completions: { 'LM-004': Date.now() - 3 * 60 * 60 * 1000 } })
+    expect(suggestions('/').map((s) => s.label)).not.toContain('Recap')
   })
 })

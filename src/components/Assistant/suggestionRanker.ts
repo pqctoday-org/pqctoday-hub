@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+import { questionKey } from './askedKey'
 import { STARTING_SUGGESTIONS } from './copy'
 import type { AnswerSuggestion } from './Suggestions'
 
@@ -10,16 +11,19 @@ import type { AnswerSuggestion } from './Suggestions'
  * the same questions.
  *
  * Five rules, in order. Each adds its questions; the first question of the first rule that applies is the main one.
- *   1. what the learner just finished, or is viewing
- *   2. the next step of the focused objective
+ *   1. what the learner just read, finished or is viewing: the rows of the last answer, then a lesson finished a moment ago,
+ *      then the page the learner is on
+ *   2. the next step of the focused objective (with no objective in focus and several active ones: the most recently used
+ *      objective first, then the others, each with its next step)
  *   3. a lesson to take first for that step, not yet finished (a prerequisite)
  *   4. an update to a lesson in the objective
  *   5. exploring the learner's role
- * The starting questions of the copy deck follow, so there is always something to ask. A question already asked is left out.
- * Ties inside a rule go by curriculum order, then tag.
+ * The starting questions of the copy deck follow, so there is always something to ask. A question already asked is left out:
+ * one asked in this conversation, and one asked earlier while the objective and the progress were as they are now. Ties inside
+ * a rule go by curriculum order, then tag.
  *
- * Every question is a template over a lesson, a section, a record or a role, so it names a thing the Hub holds and the answer
- * engine can answer it (a test asks every lesson and section of the catalog).
+ * Every question is a template over a lesson, a section, a tool, a record or a role, so it names a thing the Hub holds and the
+ * answer engine can answer it (tests ask every lesson, section, tool and role of the catalog).
  */
 
 export type SuggestionRule = 1 | 2 | 3 | 4 | 5 | 6
@@ -41,6 +45,11 @@ export interface LessonRef {
   order: number
 }
 
+/** The thing a step of an objective points at: a lesson, or a tool. */
+export interface StepRef extends LessonRef {
+  kind: 'lesson' | 'tool'
+}
+
 export interface ViewingRef {
   /** The knowledge tag of what is on the page. */
   tag: string
@@ -58,12 +67,28 @@ export interface ChangedLesson extends LessonRef {
 export interface ObjectiveRef {
   /** The learner's own title for the objective. */
   title: string
-  /** The next step, when it is a lesson. */
-  next: LessonRef | null
-  /** Lessons listed to take first for the next step that are not finished. */
+  /** The next step, when it is a lesson or a tool. */
+  next: StepRef | null
+  /** Lessons to take first for the next step (for a tool: its own lesson) that are not finished. */
   prerequisites: readonly LessonRef[]
   /** Lessons of the objective that changed since it was built. */
   updates: readonly ChangedLesson[]
+}
+
+/** One active objective when none is in focus. */
+export interface ObjectiveChoice {
+  title: string
+  next: StepRef | null
+  /** When the objective was last used (ms). */
+  usedAt: number
+}
+
+/** What the last answer holds that a next question can build on. */
+export interface LastAnswerRef {
+  /** The record the answer matched: the record of a direct answer, a bare name, or the closest source. */
+  matched: { tag: string; title: string } | null
+  /** The first lesson in the answer's Learn resources. */
+  lesson: LessonRef | null
 }
 
 export interface SuggestionState {
@@ -71,11 +96,17 @@ export interface SuggestionState {
   now: number
   /** Questions already asked in this conversation. */
   asked: readonly string[]
-  /** The lesson the learner finished most recently, and when. */
+  /** Keys (`questionKey`) of questions asked earlier while the objective and progress were as they are now. */
+  askedKeys: readonly string[]
+  /** The last answer shown, when there is one. */
+  lastAnswer: LastAnswerRef | null
+  /** The lesson the learner finished most recently, and when the learner recorded it. */
   finished: (LessonRef & { at: number }) | null
   viewing: ViewingRef | null
   /** The focused objective, when it is active. */
   objective: ObjectiveRef | null
+  /** With no objective in focus: every active objective of the role. Used only when there are two or more. */
+  choices: readonly ObjectiveChoice[]
   /** The learner's role, with the name the Hub shows for it. */
   role: { id: string; label: string } | null
 }
@@ -85,6 +116,9 @@ export const JUST_FINISHED_MS = 30 * 60 * 1000
 
 /** The most questions offered: one main, three alternatives and four behind "More questions". */
 export const MAX_SUGGESTIONS = 8
+
+/** The longest title a question is built on; a longer one reads as a file name and is left out. */
+export const MAX_TITLE = 70
 
 /**
  * Sections whose title makes the engine read the question as a request for an opinion, so it answers with a note instead of
@@ -96,7 +130,10 @@ export const NOT_ASKABLE: ReadonlySet<string> = new Set(['LM-027/s:internals'])
 const ask = {
   about: (title: string) => `What is ${title} about?`,
   learn: (title: string) => `What will I learn in ${title}?`,
+  does: (title: string) => `What does ${title} do?`,
   practise: (title: string) => `Where can I practise ${title}?`,
+  tools: (title: string) => `Which tools go with ${title}?`,
+  teach: (title: string) => `Which lessons teach ${title}?`,
   read: (title: string) => `Where can I read about ${title}?`,
   changed: (title: string) => `What changed in ${title}?`,
   whatIs: (title: string) => `What is ${title}?`,
@@ -105,6 +142,12 @@ const ask = {
 
 const byOrder = <T extends { order: number; tag: string }>(a: T, b: T): number =>
   a.order - b.order || (a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0)
+
+/** A title a question can be built on: not too long, and not itself a question. */
+const askable = (title: string): boolean => title.length <= MAX_TITLE && !title.includes('?')
+
+const nextQuestion = (step: StepRef): string =>
+  step.kind === 'tool' ? ask.does(step.title) : ask.learn(step.title)
 
 function viewingQuestion(v: ViewingRef): { question: string; basedOn: string; why: string } {
   if (v.kind === 'section' && v.lessonTitle && !NOT_ASKABLE.has(v.tag)) {
@@ -136,12 +179,42 @@ function viewingQuestion(v: ViewingRef): { question: string; basedOn: string; wh
   }
 }
 
+/** Rule 2 for one objective: a question about its next step. */
+function nextStepSuggestion(
+  step: StepRef,
+  basedOn: string,
+  label: string,
+  why: string
+): RankedSuggestion {
+  return { rule: 2, question: nextQuestion(step), label, basedOn, why }
+}
+
 /** The questions of each rule, in the order the rules come, before asked questions are removed. */
 function candidates(state: SuggestionState): RankedSuggestion[] {
   const out: RankedSuggestion[] = []
-  const { finished, viewing, objective, role } = state
+  const { finished, viewing, objective, role, lastAnswer } = state
 
-  // 1. what the learner just finished, or is viewing
+  // 1. what the learner just read (the last answer), finished, or is viewing
+  if (lastAnswer?.matched && askable(lastAnswer.matched.title)) {
+    const m = lastAnswer.matched
+    out.push({
+      rule: 1,
+      question: ask.teach(m.title),
+      label: 'From this answer',
+      basedOn: `the answer you just read, ${m.title}`,
+      why: `Your last answer was about ${m.title}. This asks which lessons teach it, so you can go on from the answer to something to study.`,
+    })
+  }
+  if (lastAnswer?.lesson && askable(lastAnswer.lesson.title)) {
+    const l = lastAnswer.lesson
+    out.push({
+      rule: 1,
+      question: ask.tools(l.title),
+      label: 'From this answer',
+      basedOn: `a lesson in the answer you just read, ${l.title}`,
+      why: `Your last answer pointed to the lesson ${l.title}. This asks which tools go with it, so you can try what it teaches.`,
+    })
+  }
   if (finished && finished.at <= state.now && state.now - finished.at <= JUST_FINISHED_MS) {
     out.push({
       rule: 1,
@@ -159,22 +232,30 @@ function candidates(state: SuggestionState): RankedSuggestion[] {
   if (objective) {
     // 2. the next step of the focused objective
     if (objective.next) {
-      out.push({
-        rule: 2,
-        question: ask.learn(objective.next.title),
-        label: 'Next step',
-        basedOn: `next step in your objective, ${objective.title}`,
-        why: `${objective.next.title} is the next step of your objective "${objective.title}". This asks what the lesson covers before you start it.`,
-      })
+      out.push(
+        nextStepSuggestion(
+          objective.next,
+          `next step in your objective, ${objective.title}`,
+          'Next step',
+          objective.next.kind === 'tool'
+            ? `${objective.next.title} is the next step of your objective "${objective.title}". This asks what the tool does before you open it.`
+            : `${objective.next.title} is the next step of your objective "${objective.title}". This asks what the lesson covers before you start it.`
+        )
+      )
     }
     // 3. a prerequisite or blocker for that step
     for (const pre of [...objective.prerequisites].sort(byOrder)) {
+      const of = objective.next
       out.push({
         rule: 3,
         question: ask.about(pre.title),
         label: 'Prerequisite',
-        basedOn: `a lesson to take first${objective.next ? ` for ${objective.next.title}` : ''}`,
-        why: `${pre.title} is listed as a lesson to take first${objective.next ? ` for ${objective.next.title}` : ''}, and it is not finished. This asks what it covers.`,
+        basedOn: of
+          ? of.kind === 'tool'
+            ? `the lesson ${of.title} belongs to`
+            : `a lesson to take first for ${of.title}`
+          : 'a lesson to take first',
+        why: `${pre.title} is listed as a lesson to take first${of ? ` for ${of.title}` : ''}, and it is not finished. This asks what it covers.`,
       })
     }
     // 4. an update that touches the objective
@@ -187,6 +268,26 @@ function candidates(state: SuggestionState): RankedSuggestion[] {
         why: `${up.title} changed since you made your objective "${objective.title}" (${up.kindLabel.toLowerCase()}). This asks what changed.`,
       })
     }
+  } else if (state.choices.length >= 2) {
+    // 2, with no objective in focus: resume the one used most recently, and name the others (most recent first, then by title)
+    const sorted = [...state.choices].sort(
+      (a, b) => b.usedAt - a.usedAt || (a.title < b.title ? -1 : a.title > b.title ? 1 : 0)
+    )
+    sorted.forEach((c, i) => {
+      if (!c.next) return
+      out.push(
+        nextStepSuggestion(
+          c.next,
+          i === 0
+            ? `your most recently used objective, ${c.title}`
+            : `another objective of yours, ${c.title}`,
+          i === 0 ? 'Resume' : 'Other objective',
+          i === 0
+            ? `You have more than one objective and none is in focus. "${c.title}" is the one you used most recently, and ${c.next.title} is its next step. This asks about it so you can pick it up again.`
+            : `"${c.title}" is another of your objectives, and ${c.next.title} is its next step. This asks about it so you can pick that one up instead.`
+        )
+      )
+    })
   }
 
   // 5. role exploration
@@ -216,11 +317,12 @@ function candidates(state: SuggestionState): RankedSuggestion[] {
 /** The ranked questions for a state: the main one first, then the alternatives, at most `MAX_SUGGESTIONS`. */
 export function rankSuggestions(state: SuggestionState): RankedSuggestion[] {
   const asked = new Set(state.asked.map((q) => q.trim().toLowerCase()))
+  const askedKeys = new Set(state.askedKeys)
   const seen = new Set<string>()
   const out: RankedSuggestion[] = []
   for (const c of candidates(state)) {
     const key = c.question.trim().toLowerCase()
-    if (asked.has(key) || seen.has(key)) continue
+    if (asked.has(key) || askedKeys.has(questionKey(c.question)) || seen.has(key)) continue
     seen.add(key)
     out.push({ ...c, why: `Based on: ${c.basedOn}. ${c.why}` })
     if (out.length === MAX_SUGGESTIONS) break
