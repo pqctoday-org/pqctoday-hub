@@ -69,6 +69,7 @@ export const COPY = {
   wider: 'Wider',
   narrower: 'Narrower',
   resize: 'Resize the Assistant',
+  homeLesson: 'Lesson',
   sourceFrom: 'From',
   sourceClosest: 'Closest',
   copyLinkToSource: 'Copy link to the source',

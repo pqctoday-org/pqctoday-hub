@@ -9,6 +9,8 @@ import {
   type AssistantContext,
   type AssistantGroup,
   type AssistantGroupName,
+  type AssistantHomeLesson,
+  type AssistantRecordLink,
   type AssistantIntent,
   type AssistantRow,
   type AssistantRowAction,
@@ -21,6 +23,7 @@ import patternFile from './data/answer.generated.json'
 import dataFile from './data/data.generated.json'
 import { Answerer } from './engine/answerer'
 import { pageTagFor } from './pageTag'
+import { homeLessonOf, recordLinkOf } from './recordLinks'
 import type { Reading } from './engine/engine'
 
 /**
@@ -40,6 +43,11 @@ interface Loaded {
   address: (tag: string, engineLink: string) => string
   /** The knowledge tag of the page the learner is on (given as a tag or an address), or null when the page is not a record. */
   pageTag: (page: string | null | undefined) => string | null
+  /** What the knowledge file says about a record beside an answer: its home lesson and the link of its kind. */
+  about: (
+    tag: string,
+    link: string
+  ) => { homeLesson: AssistantHomeLesson | null; recordLink: AssistantRecordLink | null }
 }
 
 let loading: Promise<Loaded> | null = null
@@ -98,6 +106,10 @@ async function load(): Promise<Loaded> {
     chip,
     address,
     pageTag: (page) => pageTagFor(page, reader),
+    about: (tag, link) => ({
+      homeLesson: homeLessonOf(reader, tag, link),
+      recordLink: recordLinkOf(reader, tag),
+    }),
   }
 }
 
@@ -136,9 +148,11 @@ const GROUP_SET = new Set<string>(ASSISTANT_GROUPS)
 const NOT_HELD_REASON =
   /no such value|holds no value|links nothing|no successor recorded|successor recorded but no supporting/
 
-function toRow(raw: Raw, chip: Loaded['chip'], address: Loaded['address']): AssistantRow {
+function toRow(raw: Raw, loaded: Loaded): AssistantRow {
+  const { chip, address } = loaded
   const action = ACTIONS.has(raw.action) ? (raw.action as AssistantRowAction) : 'Go to page'
   const group: AssistantGroupName = GROUP_SET.has(raw.group) ? raw.group : 'Data pages'
+  const where = address(String(raw.tag), String(raw.link))
   return {
     kind: chip(String(raw.tag), String(raw.kind)),
     tag: String(raw.tag),
@@ -149,9 +163,10 @@ function toRow(raw: Raw, chip: Loaded['chip'], address: Loaded['address']): Assi
     extract: String(raw.extract ?? ''),
     paidReferenceOnly: raw.paidReferenceOnly === true,
     action,
-    link: address(String(raw.tag), String(raw.link)),
+    link: where,
     goLink: assistantGoLink(String(raw.tag)),
     group,
+    homeLesson: loaded.about(String(raw.tag), where).homeLesson,
   }
 }
 
@@ -160,8 +175,8 @@ function toGroups(raw: Raw[], loaded: Loaded): AssistantGroup[] {
     .filter((g) => GROUP_SET.has(g.name) && (g.rows.length || g.more.length))
     .map((g) => ({
       name: g.name as AssistantGroupName,
-      rows: (g.rows as Raw[]).map((r) => toRow(r, loaded.chip, loaded.address)),
-      more: (g.more as Raw[]).map((r) => toRow(r, loaded.chip, loaded.address)),
+      rows: (g.rows as Raw[]).map((r) => toRow(r, loaded)),
+      more: (g.more as Raw[]).map((r) => toRow(r, loaded)),
     }))
 }
 
@@ -220,6 +235,7 @@ export async function answerOnThisThread(
           extract: String(c.extract ?? ''),
           taughtIn: related(c.taughtIn),
           tryIn: related(c.tryIn),
+          recordLink: loaded.about(String(c.tag), String(c.link ?? '')).recordLink,
         },
       }
     }
@@ -233,6 +249,7 @@ export async function answerOnThisThread(
           title: String(s.title),
           tag: String(s.tag),
           goLink: assistantGoLink(String(s.tag)),
+          recordLink: loaded.about(String(s.tag), '').recordLink,
         }
       : null
 

@@ -7,6 +7,7 @@ import type { AssistantRow } from '@/services/assistant/contract'
 import { isReferenceSaved, saveReference } from '@/services/assistant/drawerSaves'
 import { CopyLinkButton } from './AnswerRowItem'
 import { COPY } from './copy'
+import { HomeLessonLink } from './HomeLessonLink'
 import {
   settleNav,
   stepFrom,
@@ -185,6 +186,7 @@ export function ResourceStepper({
               {meta}
             </p>
           )}
+          <HomeLessonLink row={row} onOpen={onAction} />
           {row.paidReferenceOnly ? (
             <p className="text-xs text-muted-foreground">{COPY.paidReference}</p>
           ) : (
