@@ -405,18 +405,39 @@ test.describe('Assistant drawer on a 390 px phone: the dock and the sheet', () =
     await seedHub(page)
   })
 
-  test('the dock asks a question, Return adds a line, Close brings back the page and its focus', async ({
+  test('the dock is one thin bar; tapping it opens the sheet with an empty, focused box; Close brings back the page', async ({
     page,
   }) => {
     await page.goto('/learn')
-    const dockBox = page.getByRole('textbox', { name: 'Ask your own question about this page' })
-    await expect(dockBox).toBeVisible({ timeout: 30_000 })
-    await dockBox.fill('What is ML-KEM?')
-    await dockBox.press('Enter')
-    // Return adds a line; only Ask sends.
-    await expect(dockBox).toHaveValue('What is ML-KEM?\n')
-    await expect(drawerOf(page)).toHaveCount(0)
-    await page.getByRole('button', { name: 'Ask', exact: true }).click()
+    const bar = page.getByRole('button', { name: 'Ask the Assistant about this page' })
+    await expect(bar).toBeVisible({ timeout: 30_000 })
+    await expect(bar).toHaveText('Ask about this page')
+
+    // One thin row: the whole dock is under 64 px, and the page's first heading is not under it.
+    const dock = bar.locator('xpath=..')
+    const dockBox = (await dock.boundingBox())!
+    expect(dockBox.height).toBeLessThan(64)
+    expect((await bar.boundingBox())!.height).toBeGreaterThanOrEqual(44)
+    const heading = page.getByRole('heading', { level: 1 }).first()
+    await heading.scrollIntoViewIfNeeded()
+    const h = (await heading.boundingBox())!
+    expect(h.y + h.height).toBeLessThanOrEqual(dockBox.y)
+
+    await bar.click()
+    const sheet0 = drawerOf(page)
+    await expect(sheet0).toBeVisible()
+    const box = sheet0.getByRole('textbox', { name: 'Your question' })
+    await expect(box).toBeFocused()
+    await expect(box).toHaveValue('')
+    // The suggested questions are in the empty Assistant.
+    await expect(sheet0.getByText('Suggested for you')).toBeVisible()
+    await expect(sheet0.getByRole('article')).toHaveCount(0)
+    await box.fill('What is ML-KEM?')
+    await box.press('Enter')
+    // Return adds a line; only Send sends.
+    await expect(box).toHaveValue('What is ML-KEM?\n')
+    await expect(sheet0.getByRole('article')).toHaveCount(0)
+    await sheet0.getByRole('button', { name: 'Send', exact: true }).click()
 
     const sheet = drawerOf(page)
     await expect(sheet).toBeVisible()

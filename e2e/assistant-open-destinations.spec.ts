@@ -28,6 +28,8 @@ const KINDS: readonly {
   open: string | RegExp
   url: RegExp
   inlineOnWide?: string
+  /** A plain page with no dialog at either width (a lesson): only the way back is checked. */
+  plainPage?: boolean
 }[] = [
   {
     kind: 'Library',
@@ -40,6 +42,13 @@ const KINDS: readonly {
     question: 'When is the CNSA 2.0 deadline?',
     open: 'Open reference: CNSA 2.0 Frequently Asked Questions',
     url: /\/library\?ref=/,
+  },
+  {
+    kind: 'Lesson',
+    question: 'When is the CNSA 2.0 deadline?',
+    open: 'Go to module: PKI',
+    url: /\/learn\/pki/,
+    plainPage: true,
   },
   {
     kind: 'Compliance',
@@ -104,7 +113,7 @@ for (const [name, viewport] of [
       await seedHub(page)
     })
 
-    for (const { kind, question, open, url, inlineOnWide } of KINDS) {
+    for (const { kind, question, open, url, inlineOnWide, plainPage } of KINDS) {
       test(`${kind}: the opened record is fully visible and usable, and the way back restores the answer`, async ({
         page,
       }) => {
@@ -119,6 +128,20 @@ for (const [name, viewport] of [
         await action.scrollIntoViewIfNeeded()
         await action.click()
         await expect(page).toHaveURL(url)
+
+        if (plainPage) {
+          // A lesson: no dialog. The way back is offered on the page, on a phone too.
+          await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({
+            timeout: 30_000,
+          })
+          const back = returnControl(page)
+          await expect(back).toBeVisible()
+          if (isPhone(page)) await expect(drawerOf(page)).toHaveCount(0)
+          await back.click()
+          await expect(page).toHaveURL(/\/learn$/)
+          if (!isPhone(page)) await expect(answerOf(drawerOf(page), question)).toBeVisible()
+          return
+        }
 
         if (inlineOnWide && !isPhone(page)) {
           // Not a dialog: the record sits in the page, beside the drawer. It must not be under it.

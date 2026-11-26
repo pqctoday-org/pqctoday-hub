@@ -364,9 +364,10 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
  * Query keys valid on EVERY internal route. `spec=<reference_id>` opens the
  * global library document drawer (SpecDrawerHost) in place on any page;
  * `try=<playground tool id>` opens a Playground tool in place
- * (TryToolModalHost, mounted in App — AlgoCtaStrip writes it).
+ * (TryToolModalHost, mounted in App — AlgoCtaStrip writes it);
+ * `glossary=<term>` opens the Glossary panel on that term (GlossaryAddressHost, mounted in App).
  */
-export const GLOBAL_QUERY_KEYS: readonly string[] = ['spec', 'try']
+export const GLOBAL_QUERY_KEYS: readonly string[] = ['spec', 'try', 'glossary']
 
 export type ValidationFailure = {
   url: string

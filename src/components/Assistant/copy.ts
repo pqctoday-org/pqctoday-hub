@@ -6,6 +6,8 @@
 export const COPY = {
   title: 'Assistant',
   placeholder: 'Ask a question about the Hub',
+  dockAsk: 'Ask about this page',
+  dockAskLabel: 'Ask the Assistant about this page',
   placeholderPhone: 'Ask your own question about this page',
   first: 'Ask anything. No sign-up or objective needed.',
   answerDefault: 'Here is what the Hub holds on this.',
@@ -51,6 +53,10 @@ export const COPY = {
   bookmarksTitle: 'Bookmarks',
   workshopTitle: 'Workshop',
   faqTitle: 'FAQ',
+  glossaryTitle: 'Glossary',
+  guideTitle: 'Page guide',
+  sourcesTitle: 'Authoritative sources',
+  faqFullPage: 'Open the full FAQ page',
 } as const
 
 /** The starting questions for the empty drawer. The engine's own suggestions replace them when it has any. */
