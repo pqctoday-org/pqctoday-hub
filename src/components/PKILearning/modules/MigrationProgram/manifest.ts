@@ -7,6 +7,7 @@ const manifest: ModuleManifest = {
     'Discovery, prioritization, rollout, validation: this is the operating model that turns a PQC mandate into shipped systems.',
   learnSections: [
     { id: 'roadmap', label: 'Program Overview' },
+    { id: 'working-together', label: 'Collaborating Across Stakeholders' },
     { id: 'deployment', label: 'Critical Success Factors' },
   ],
   workshopSteps: [

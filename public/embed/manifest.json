@@ -101,7 +101,7 @@
         "id": "arch-quantum-impact",
         "title": "Architect Quantum Impact",
         "difficulty": "beginner",
-        "duration": "30 min"
+        "duration": "35 min"
       },
       {
         "id": "automotive-pqc",
@@ -161,13 +161,13 @@
         "id": "crypto-dev-apis",
         "title": "Cryptographic APIs & Developer Languages",
         "difficulty": "intermediate",
-        "duration": "106 min"
+        "duration": "111 min"
       },
       {
         "id": "crypto-mgmt-modernization",
         "title": "Cryptographic Management Modernization",
         "difficulty": "intermediate",
-        "duration": "55 min"
+        "duration": "60 min"
       },
       {
         "id": "crypto-product-certification",
@@ -209,7 +209,7 @@
         "id": "data-asset-sensitivity",
         "title": "Data & Asset Sensitivity",
         "difficulty": "intermediate",
-        "duration": "65 min"
+        "duration": "70 min"
       },
       {
         "id": "database-encryption-pqc",
@@ -281,7 +281,7 @@
         "id": "government-defense-pqc",
         "title": "Government & Defense PQC",
         "difficulty": "advanced",
-        "duration": "60 min"
+        "duration": "65 min"
       },
       {
         "id": "healthcare-pqc",
@@ -299,7 +299,7 @@
         "id": "hsm-pqc",
         "title": "HSM & PQC Operations",
         "difficulty": "advanced",
-        "duration": "60 min"
+        "duration": "65 min"
       },
       {
         "id": "hybrid-crypto",
@@ -341,7 +341,7 @@
         "id": "migration-program",
         "title": "Migration Program Mgmt",
         "difficulty": "intermediate",
-        "duration": "30 min"
+        "duration": "35 min"
       },
       {
         "id": "mls-group-messaging",
@@ -359,7 +359,7 @@
         "id": "ops-quantum-impact",
         "title": "Ops Quantum Impact",
         "difficulty": "beginner",
-        "duration": "20 min"
+        "duration": "25 min"
       },
       {
         "id": "os-pqc",
@@ -395,7 +395,7 @@
         "id": "platform-eng-pqc",
         "title": "Platform Engineering & PQC",
         "difficulty": "advanced",
-        "duration": "90 min"
+        "duration": "97 min"
       },
       {
         "id": "pqc-101",
@@ -449,7 +449,7 @@
         "id": "pqc-risk-management",
         "title": "PQC Risk Management",
         "difficulty": "beginner",
-        "duration": "30 min"
+        "duration": "35 min"
       },
       {
         "id": "pqc-testing-validation",
@@ -514,7 +514,7 @@
         "id": "soc-implementation-pqc",
         "title": "SOC Implementation for PQC",
         "difficulty": "advanced",
-        "duration": "60 min"
+        "duration": "65 min"
       },
       {
         "id": "software-supply-chain-pqc",

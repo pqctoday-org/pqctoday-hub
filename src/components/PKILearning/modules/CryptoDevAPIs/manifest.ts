@@ -20,6 +20,7 @@ const manifest: ModuleManifest = {
     { id: 'static-code-analysis', label: 'Static Code Analysis' },
     { id: 'dynamic-analysis', label: 'Dynamic Analysis' },
     { id: 'open-source-security', label: 'Open-Source Software Security' },
+    { id: 'middleware-providers', label: 'Middleware and Providers' },
   ],
   workshopSteps: [
     { id: 'api-architecture-explorer', label: 'API Architecture Explorer' },

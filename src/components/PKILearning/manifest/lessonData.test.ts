@@ -106,8 +106,41 @@ describe('the move changed nothing a page shows', () => {
     'pqc-risk-management': { was: 'Intermediate', now: 'Beginner' },
   }
 
+  // Deliberate post-move changes (26 Nov 2026): eleven lessons gained one sourced section each, so each
+  // is longer and its content version is one higher. Each entry names the value before and after.
+  const NEW_SECTION_LESSONS: Record<
+    string,
+    { minutes: [number, number]; version: [number, number] }
+  > = {
+    'government-defense-pqc': { minutes: [60, 65], version: [15, 16] },
+    'arch-quantum-impact': { minutes: [30, 35], version: [20, 21] },
+    'crypto-dev-apis': { minutes: [106, 111], version: [19, 20] },
+    'crypto-mgmt-modernization': { minutes: [55, 60], version: [34, 35] },
+    'data-asset-sensitivity': { minutes: [65, 70], version: [23, 24] },
+    'platform-eng-pqc': { minutes: [90, 97], version: [22, 23] },
+    'migration-program': { minutes: [30, 35], version: [27, 28] },
+    'soc-implementation-pqc': { minutes: [60, 65], version: [9, 10] },
+    'ops-quantum-impact': { minutes: [20, 25], version: [16, 17] },
+    'hsm-pqc': { minutes: [60, 65], version: [30, 31] },
+    'pqc-risk-management': { minutes: [30, 35], version: [20, 21] },
+  }
+
   const now = captureLessonFacts()
   const before = golden as unknown as Record<string, unknown>
+  const expectedFacts = (key: string): unknown => {
+    const expected = structuredClone(before[key]) as Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
+    for (const [id, { minutes, version }] of Object.entries(NEW_SECTION_LESSONS)) {
+      if (key === 'catalog') {
+        expect(expected[id].duration).toBe(`${minutes[0]} min`)
+        expected[id].duration = `${minutes[1]} min`
+      }
+      if (key === 'contentVersions') {
+        expect(expected[id]).toBe(version[0])
+        expected[id] = version[1]
+      }
+    }
+    return expected
+  }
 
   it.each([
     'catalog',
@@ -119,7 +152,7 @@ describe('the move changed nothing a page shows', () => {
     'quizLabels',
     'relatedLessonLinks',
   ])('%s is identical to the pre-move snapshot', (key) => {
-    expect(now[key]).toEqual(before[key])
+    expect(now[key]).toEqual(expectedFacts(key))
   })
 
   // Deliberate post-move changes, each with the owner's answer (24 Nov 2026). Every other NICE
@@ -180,6 +213,11 @@ describe('the move changed nothing a page shows', () => {
       const meta = expected[`/learn/${id}`]
       expect(meta.structuredData?.educationalLevel).toBe(was)
       meta.structuredData!.educationalLevel = corrected
+    }
+    for (const [id, { minutes }] of Object.entries(NEW_SECTION_LESSONS)) {
+      const meta = expected[`/learn/${id}`] as { structuredData?: { timeRequired?: string } }
+      expect(meta.structuredData?.timeRequired).toBe(`PT${minutes[0]}M`)
+      meta.structuredData!.timeRequired = `PT${minutes[1]}M`
     }
     expect(now.routeMeta).toEqual(expected)
   })

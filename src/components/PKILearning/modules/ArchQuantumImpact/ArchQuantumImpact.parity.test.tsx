@@ -53,7 +53,7 @@ describe('ArchQuantumImpact render parity', () => {
       'strangler-fig',
       'trust-hardware',
     ])
-    expect(manifest.duration).toBe('30 min')
+    expect(manifest.duration).toBe('35 min')
   })
 
   it('offers Step 6 in the workshop and renders the selector there', () => {

@@ -17,6 +17,8 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
 import { Button } from '@/components/ui/button'
 import { TwoTrackSequencing } from './TwoTrackSequencing'
+import { SourcedSectionPanel } from '@/components/PKILearning/common/SourcedSection'
+import { COLLABORATION_SECTION } from '../data/collaborationSection'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -334,6 +336,11 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       id: 'two-track',
       label: 'KEM vs Signatures',
       content: <TwoTrackSequencing />,
+    },
+    {
+      id: 'working-together',
+      label: 'Collaborating Across Stakeholders',
+      content: <SourcedSectionPanel section={COLLABORATION_SECTION} />,
     },
     {
       id: 'deployment',
