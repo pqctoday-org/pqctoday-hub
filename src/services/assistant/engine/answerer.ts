@@ -196,8 +196,9 @@ export class Answerer {
     return best
   }
   statusOk(r: Resource): boolean {
-    if (!r.record_ids.length) return true
-    return r.record_ids.some((i) => [undefined, '', 'active'].includes(this.strict.records.get(i)?.status))
+    const ids = r.record_ids.length ? r.record_ids : (this.recOfLink.get(r.link) ?? [])
+    if (!ids.length) return true
+    return ids.some((i) => [undefined, '', 'active'].includes(this.strict.records.get(i)?.status))
   }
 
   // ------------------------------------------------------------ finders
