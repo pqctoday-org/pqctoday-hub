@@ -34,7 +34,9 @@ test.describe('MLS — Group Messaging module', () => {
     page.on('pageerror', (e) => errors.push(e.message))
     await suppressWhatsNew(page)
     await page.goto(ROUTE)
-    await expect(page.getByRole('heading', { name: /MLS — Group Messaging/ })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { level: 1, name: /MLS — Group Messaging/ })
+    ).toBeVisible({
       timeout: 15_000,
     })
     expect(errors).toEqual([])
@@ -59,7 +61,9 @@ test.describe('MLS — Group Messaging module', () => {
     await page.getByRole('tab', { name: 'References', exact: true }).first().click()
     // ModuleReferencesTab renders some heading or table — just confirm
     // navigation didn't blank the page.
-    await expect(page.getByRole('heading', { name: /MLS — Group Messaging/ })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { level: 1, name: /MLS — Group Messaging/ })
+    ).toBeVisible()
   })
 
   test('module is reachable from the /learn dashboard (no dangling track reference)', async ({
