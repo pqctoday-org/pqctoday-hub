@@ -963,9 +963,9 @@
   },
   "note": {
    "broad": "Broad match: the Hub has no direct answer to this. These are the closest resources.",
-   "direct": "Grouped for {label}: best first, up to 3 per group.",
-   "name": "Matched by name: one Hub record, shown above. Related resources follow, best first, up to 3 per group.",
-   "no_direct": "Grouped for {label}: best first, up to 3 per group. No direct answer: resources only.",
+   "direct": "Grouped for {label}: best first.",
+   "name": "Matched by name: one Hub record, shown above. Related resources follow, best first.",
+   "no_direct": "Grouped for {label}: best first. No direct answer: resources only.",
    "not_fact": "The Hub does not state this as a fact and gives no personal advice or prediction. These are the closest resources."
   },
   "source_line": {

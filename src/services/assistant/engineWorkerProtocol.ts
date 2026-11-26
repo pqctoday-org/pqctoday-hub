@@ -5,7 +5,8 @@ import { answerOnThisThread, warmThisThread } from './engineHost'
 
 /** What the page sends the worker. */
 export type WorkerBody =
-  { kind: 'ask'; question: string; persona: PersonaId | null } | { kind: 'warm' }
+  | { kind: 'ask'; question: string; persona: PersonaId | null; page: string | null }
+  | { kind: 'warm' }
 export type WorkerRequest = WorkerBody & { id: number }
 
 /** What the worker sends back: the answer, or that the knowledge files did not load. */
@@ -22,7 +23,7 @@ export async function handleWorkerRequest(msg: WorkerRequest): Promise<WorkerRep
     return {
       id: msg.id,
       ok: true,
-      answer: await answerOnThisThread(msg.question, { persona: msg.persona }),
+      answer: await answerOnThisThread(msg.question, { persona: msg.persona, page: msg.page }),
     }
   } catch {
     return { id: msg.id, ok: false }

@@ -50,6 +50,12 @@ export interface AssistantContext {
   industry?: string | null
   /** A region group or place (for example `EU`, `US`). Accepted now; not yet used to order rows. */
   region?: string | null
+  /**
+   * The page the learner is on: its knowledge tag (a lesson, a section, a record), or its Hub address, which the engine host reads
+   * as a tag. The engine uses it only to move the resources of that page, and those linked to it, earlier in their group.
+   * It never adds or removes a resource and never changes the kind of answer.
+   */
+  page?: string | null
 }
 
 /** One action label per row (handoff 9.7). */

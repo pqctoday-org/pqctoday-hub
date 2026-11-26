@@ -89,7 +89,12 @@ export async function answer(
   const w = getWorker()
   if (w) {
     try {
-      const reply = await send(w, { kind: 'ask', question, persona: ctx.persona ?? null })
+      const reply = await send(w, {
+        kind: 'ask',
+        question,
+        persona: ctx.persona ?? null,
+        page: ctx.page ?? null,
+      })
       return reply.ok && reply.answer ? reply.answer : notLoaded(question)
     } catch (e) {
       if (!(e instanceof WorkerUnavailable)) return notLoaded(question)
