@@ -50,7 +50,14 @@ function StatementList({
  * Workshop, as a closed one-line summary that opens into the two lists. Statements the lesson only
  * mentions are not shown. Nothing is rendered for a lesson whose text has not been read against NICE.
  */
-export function NiceCoveragePanel({ moduleId }: { moduleId: string }) {
+export function NiceCoveragePanel({
+  moduleId,
+  bare = false,
+}: {
+  moduleId: string
+  /** Drop the panel's own border, fill and top margin, so it can sit inside the one module strip (ModuleFitStrip). */
+  bare?: boolean
+}) {
   const lesson = LEARN_MODULE_BY_ID[moduleId] // eslint-disable-line security/detect-object-injection
   const [open, setOpen] = useState(false)
   const [text, setText] = useState<StatementText>()
@@ -82,7 +89,7 @@ export function NiceCoveragePanel({ moduleId }: { moduleId: string }) {
     <section
       aria-label="NICE coverage"
       data-testid="nice-coverage-panel"
-      className="mt-3 min-w-0 rounded-lg border border-border bg-card text-sm"
+      className={`min-w-0 text-sm ${bare ? '' : 'mt-3 rounded-lg border border-border bg-card'}`}
     >
       <Button
         type="button"

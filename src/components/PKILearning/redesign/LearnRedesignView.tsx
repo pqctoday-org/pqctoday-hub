@@ -17,12 +17,18 @@ import { parseFacets } from '@/data/learnFacets'
 import { PERSONA_ORDER, TOTAL_MODULE_COUNT, TRACK_COUNT } from './learnRedesign.helpers'
 import { MobileLearnScreen } from '@/components/Mobile/screens/MobileLearnScreen'
 import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
+import { YourJourneyView } from '@/components/Journey/YourJourneyView'
+import { FirstVisitPrompt } from '@/components/Journey/FirstVisitPrompt'
+import { isFirstVisit } from '@/hooks/useJourney'
 
 /** 2026-08-02: 'guided' promoted from a separate `showRouter` toggle button
- *  into a real third mode, so the page offers one row of three peers —
- *  My Path / Browse all / Guided routing — instead of a mode pair plus a
- *  floating toggle that rendered the same tree above them. */
-type Mode = 'path' | 'browse' | 'guided'
+ *  into a real third mode, so the page offers one row of peers instead of a
+ *  mode pair plus a floating toggle that rendered the same tree above them.
+ *  Release 5 adds 'journey' (Your journey, objectives and steps kept on the
+ *  device). 'path' is the persona's recommended order, now labelled
+ *  "Recommended order" so it cannot be confused with Your journey; 'browse' is
+ *  labelled "All modules". The stored ids and the ?mode= values are unchanged. */
+type Mode = 'journey' | 'path' | 'browse' | 'guided'
 
 /**
  * Redesigned /learn surface. Two modes anchored by a persistent persona lens:
@@ -32,6 +38,13 @@ type Mode = 'path' | 'browse' | 'guided'
  * Everything is computed from the persona path + the module manifest. Replaces
  * the old five-mode Dashboard, retired at /learn/legacy (now redirects here).
  */
+const MODE_BUTTONS: { id: Mode; label: string }[] = [
+  { id: 'journey', label: 'Your journey' },
+  { id: 'browse', label: 'All modules' },
+  { id: 'path', label: 'Recommended order' },
+  { id: 'guided', label: 'Guided routing' },
+]
+
 export const LearnRedesignView = () => {
   const navigate = useNavigate()
   const isMobileShell = useIsMobileShell()
@@ -66,11 +79,33 @@ export const LearnRedesignView = () => {
   // ?mode= deep-link (mypath|browse|guided) opens that view; the legacy ?view=nice opens Browse.
   const [mode, setMode] = useState<Mode>(() => {
     const m = searchParams.get('mode')
+    if (m === 'journey' || searchParams.get('view') === 'journey') return 'journey'
     if (m === 'browse') return 'browse'
     if (m === 'guided') return 'guided'
     if (m === 'mypath') return 'path'
-    return deepLinkNice || hasFacets ? 'browse' : 'path'
+    if (deepLinkNice || hasFacets) return 'browse'
+    // Learn opens on Your journey; on a first visit (no role, objective or history) it opens on All modules.
+    return isFirstVisit() ? 'browse' : 'journey'
   })
+  // A link followed while this page is open (?mode=journey, ?view=journey, ?mode=browse ...) switches
+  // the view. Adjusted during render, when the address changes, rather than in an effect.
+  const modeParam = searchParams.get('mode')
+  const viewParam = searchParams.get('view')
+  const [seenLink, setSeenLink] = useState({ modeParam, viewParam })
+  if (seenLink.modeParam !== modeParam || seenLink.viewParam !== viewParam) {
+    setSeenLink({ modeParam, viewParam })
+    const linked: Mode | null =
+      modeParam === 'journey' || viewParam === 'journey'
+        ? 'journey'
+        : modeParam === 'browse'
+          ? 'browse'
+          : modeParam === 'guided'
+            ? 'guided'
+            : modeParam === 'mypath'
+              ? 'path'
+              : null
+    if (linked && linked !== mode) setMode(linked)
+  }
 
   // Toggle mode and reflect it in ?mode= so the active mode is shareable/
   // restorable. Skip the URL write when embedded (don't touch /simulation).
@@ -82,6 +117,14 @@ export const LearnRedesignView = () => {
         (sp) => {
           const params = new URLSearchParams(sp)
           params.set('mode', next === 'path' ? 'mypath' : next)
+          // The sub-view, objective and step belong to Your journey alone.
+          if (next !== 'journey') {
+            params.delete('jview')
+            params.delete('objective')
+            params.delete('step')
+            params.delete('new')
+          }
+          if (params.get('view') === 'journey') params.delete('view')
           return params
         },
         { replace: true }
@@ -93,6 +136,7 @@ export const LearnRedesignView = () => {
   const pathSummary = usePersonaPathItems(selectedPersona)
 
   const metaLine = useMemo(() => {
+    if (mode === 'journey') return 'Your objectives, steps and role map · kept on this device'
     if (mode === 'path' && selectedPersona && pathSummary) {
       const hours = Math.max(1, Math.round(pathSummary.estimatedMinutes / 60))
       return `${PERSONAS[selectedPersona].label} · ${pathSummary.moduleCount} modules · ~${hours}h`
@@ -159,52 +203,31 @@ export const LearnRedesignView = () => {
           than being removed with the row it became the third mode here. */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="inline-flex items-center bg-muted/30 border border-border rounded-xl p-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            aria-pressed={mode === 'path'}
-            onClick={() => selectMode('path')}
-            className={`text-xs rounded-lg min-h-[44px] md:min-h-0 ${
-              mode === 'path'
-                ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
-                : 'text-muted-foreground'
-            }`}
-          >
-            My Path
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            aria-pressed={mode === 'browse'}
-            onClick={() => selectMode('browse')}
-            className={`text-xs rounded-lg min-h-[44px] md:min-h-0 ${
-              mode === 'browse'
-                ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
-                : 'text-muted-foreground'
-            }`}
-          >
-            Browse all {TOTAL_MODULE_COUNT}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            aria-pressed={mode === 'guided'}
-            onClick={() => selectMode('guided')}
-            className={`text-xs rounded-lg min-h-[44px] md:min-h-0 inline-flex items-center gap-1.5 ${
-              mode === 'guided'
-                ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
-                : 'text-muted-foreground'
-            }`}
-          >
-            <Compass size={13} aria-hidden="true" />
-            Guided routing
-          </Button>
+          {MODE_BUTTONS.map(({ id, label }) => (
+            <Button
+              key={id}
+              variant="ghost"
+              size="sm"
+              aria-pressed={mode === id}
+              onClick={() => selectMode(id)}
+              className={`text-xs rounded-lg min-h-[44px] md:min-h-0 inline-flex items-center gap-1.5 ${
+                mode === id
+                  ? 'bg-gradient-to-br from-primary to-accent text-background font-bold'
+                  : 'text-muted-foreground'
+              }`}
+            >
+              {id === 'guided' ? <Compass size={13} aria-hidden="true" /> : null}
+              {label}
+            </Button>
+          ))}
         </div>
         <span className="text-xs text-muted-foreground">{metaLine}</span>
       </div>
 
       {/* Body */}
-      {mode === 'guided' ? (
+      {mode === 'journey' ? (
+        <YourJourneyView />
+      ) : mode === 'guided' ? (
         <WhereToStartTree defaultOpen />
       ) : mode === 'path' ? (
         selectedPersona ? (
@@ -235,11 +258,14 @@ export const LearnRedesignView = () => {
           </div>
         )
       ) : (
-        <BrowseAllView
-          personaId={selectedPersona}
-          initialNiceMode={deepLinkNice}
-          initialTrack={deepLinkTrack}
-        />
+        <>
+          <FirstVisitPrompt />
+          <BrowseAllView
+            personaId={selectedPersona}
+            initialNiceMode={deepLinkNice}
+            initialTrack={deepLinkTrack}
+          />
+        </>
       )}
     </div>
   )

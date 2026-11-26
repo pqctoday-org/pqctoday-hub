@@ -175,17 +175,30 @@ const PHONE_WORKSHOP_MODULES = ['pqc-101', 'qkd', 'secrets-management-pqc']
 // Additional phone workshops enabled in v4.212.
 const ADDED_PHONE_WORKSHOP_MODULES = ['tls-basics', 'talking-about-pqc']
 
-/** The phone lesson has rendered: its section checklist is on screen. A count-of-zero
- *  assertion made before this passes on a page that has no lesson in it yet. */
+/** The phone lesson has rendered: its heading and its Learn content are on screen, and there is no
+ *  progress box. A count-of-zero assertion made before this passes on a page with no lesson in it. */
 async function settledMobileLesson(page: Page) {
   await settle(page)
-  await expect(page.getByRole('progressbar', { name: /\d+\/\d+ sections read/i })).toBeVisible({
-    timeout: 20_000,
-  })
+  await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 20_000 })
+  await expect(page.getByRole('progressbar', { name: /sections read/i })).toHaveCount(0)
+  await expect(page.getByText(/\d+\/\d+ sections read/)).toHaveCount(0)
+}
+
+/** The first "Mark section as read" tick of the lesson, brought into view (opening a collapsed
+ *  section first when the lesson folds its sections). */
+async function firstSectionTick(page: Page) {
+  const tick = page.getByRole('checkbox', { name: /^Mark section as read/ }).first()
+  if ((await tick.count()) === 0) {
+    const folded = page.locator('section[data-section-id] button[aria-expanded="false"]').first()
+    await folded.click()
+  }
+  await expect(tick).toBeAttached({ timeout: 20_000 })
+  await tick.scrollIntoViewIfNeeded()
+  return tick
 }
 
 for (const id of ADDED_PHONE_WORKSHOP_MODULES) {
-  test(`module: /learn/${id} — mobile (390x844) has working Learn / Workshop navigation and a section checklist`, async ({
+  test(`module: /learn/${id} — mobile (390x844) has working Learn / Workshop navigation and no progress box`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 })
@@ -197,8 +210,6 @@ for (const id of ADDED_PHONE_WORKSHOP_MODULES) {
     await expect(strip.getByRole('tab')).toHaveCount(2)
     await expect(page.getByRole('tablist', { name: 'Module sections' })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'More tabs' })).toHaveCount(0)
-    const sectionButtons = page.locator('ul > li > button[aria-pressed]')
-    expect(await sectionButtons.count()).toBeGreaterThanOrEqual(1)
     await strip.getByRole('tab', { name: 'Workshop', exact: true }).click()
     const workshop = page.locator('#mobile-workshop')
     await expect(workshop).toBeVisible()
@@ -267,13 +278,13 @@ for (const id of TAB_PATTERN_MODULES) {
     await expect(tabs.nth(count - 1)).toBeFocused()
   })
 
-  test(`module: /learn/${id} — mobile (390x844) has no desktop tab bar, only Learn / Workshop and a section checklist`, async ({
+  test(`module: /learn/${id} — mobile (390x844) has no desktop tab bar, only Learn / Workshop and no progress box`, async ({
     page,
   }) => {
     // The desktop tab pattern above (the "Module sections" tablist + the
     // "More tabs" overflow popover) does not exist on mobile — it's a
-    // different component. MobileModuleShell (default-on 2026-08-23) shows a
-    // section-read checklist over the same real prose. These three lessons
+    // different component. MobileModuleShell (default-on 2026-08-23) shows the
+    // same real prose with no progress box; each section has its own tick. These three lessons
     // also have a phone workshop (PHONE_WORKSHOP_MODULES below), so the shell
     // adds a two-tab "Module view" strip, Learn / Workshop.
     expect(PHONE_WORKSHOP_MODULES).toContain(id)
@@ -291,26 +302,31 @@ for (const id of TAB_PATTERN_MODULES) {
     await expect(tabs.nth(1)).toHaveText('Workshop')
     await expect(page.getByRole('tablist', { name: 'Module sections' })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'More tabs' })).toHaveCount(0)
-
-    const sectionButtons = page.locator('ul > li > button[aria-pressed]')
-    expect(await sectionButtons.count()).toBeGreaterThanOrEqual(1)
   })
 
-  test(`module: /learn/${id} — mobile section checklist toggles real read state`, async ({
+  // PQC 101 shows one section at a time and marks each read with its own Next button, so it has no
+  // end-of-section tick; the other two draw every section on the page and tick at the end of each.
+  test(`module: /learn/${id} — mobile ${id === 'pqc-101' ? 'Next marks the section and moves on' : 'section tick toggles real read state'}`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(`/learn/${id}`)
-    await settle(page)
+    await settledMobileLesson(page)
 
-    const first = page.locator('ul > li > button[aria-pressed]').first()
-    await expect(first).toBeVisible()
-    const before = await first.getAttribute('aria-pressed')
-    await first.click()
-    await expect(first).toHaveAttribute('aria-pressed', before === 'true' ? 'false' : 'true')
-    // Reflected in the progress summary, not just the button's own state.
-    await first.click()
-    await expect(first).toHaveAttribute('aria-pressed', before ?? 'false')
+    if (id === 'pqc-101') {
+      const heading = page.locator('[data-section-id] h2').first()
+      const before = (await heading.textContent()) ?? ''
+      await page.getByRole('button', { name: 'Next →' }).click()
+      await expect(heading).not.toHaveText(before)
+      return
+    }
+
+    const tick = await firstSectionTick(page)
+    const before = await tick.isChecked()
+    await tick.click()
+    await expect(tick).toBeChecked({ checked: !before })
+    await tick.click()
+    await expect(tick).toBeChecked({ checked: before })
   })
 
   test(`module: /learn/${id} — axe clean at 390x844`, async ({ page }) => {

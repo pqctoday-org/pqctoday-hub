@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
+import { RoleSwitchNotice } from '@/components/Journey/RoleSwitch'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   Info,
@@ -12,12 +13,17 @@ import {
   Search,
   UserCog,
   Bot,
-  Map,
+  Bookmark,
+  BookOpen,
+  BookOpenText,
+  BookText,
+  HelpCircle,
   ChevronDown,
   ChevronRight,
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { BrandLogo } from '../brand/BrandLogo'
 import { buttonVariants } from '../ui/button-variants'
 import { cn } from '../../lib/utils'
 // Lazy — same reasoning as the mobile shell / RightPanel below, but for data
@@ -33,11 +39,10 @@ const WhatsNewModal = React.lazy(() =>
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
 import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
-import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { FAQButton } from '../ui/FAQButton'
-import { UserManualButton } from '../ui/UserManualButton'
+import { DrawerToggleButton } from './DrawerToggleButton'
+import { TopBarDensityProvider, useTopBarDensityFor } from './topBarDensity'
+import { useDrawerPageStore } from '@/store/useDrawerPageStore'
 
 import { GuidedTour } from '../common/GuidedTour'
 import { PhaseContextBanner } from '../shared/PhaseContextBanner'
@@ -58,6 +63,8 @@ import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '../../hooks/useIsMobileShell'
+import { useAssistantLayout, drawerPaddingClass } from '../Assistant/useAssistantLayout'
+import { useAssistantReturnStore } from '../../store/useAssistantReturnStore'
 import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
 import { RouteRelated } from './RouteRelated'
@@ -68,7 +75,7 @@ import { BUILD_COMMIT, shortCommit, sourceCodeUrl } from '@/utils/sourceLink'
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
 // MainLayout is mounted on every route, so a static import here would put
 // the whole mobile shell (and everything it pulls in — RoleHomeView,
-// SourcesModal, Glossary, UserManualPanel) into every desktop visitor's
+// Glossary) into every desktop visitor's
 // eager bundle even though useIsMobileShell() is false for nearly all of
 // them. Found via the precache budget: a static import measurably grew the
 // eager payload (19.64 -> 19.66 MB) for a feature that render-guards itself
@@ -95,6 +102,13 @@ const MobileWorkshopDock = React.lazy(() =>
   import('../Mobile/shell/MobileWorkshopDock').then((m) => ({ default: m.MobileWorkshopDock }))
 )
 
+// The phone's dock and the page-return bar are small and rarely shown: lazy, like the drawer itself.
+const AssistantDock = React.lazy(() =>
+  import('../Assistant/AssistantDock').then((m) => ({ default: m.AssistantDock }))
+)
+const AssistantReturnBar = React.lazy(() =>
+  import('../Assistant/AssistantReturnBar').then((m) => ({ default: m.AssistantReturnBar }))
+)
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
 )
@@ -331,7 +345,14 @@ export const MainLayout = () => {
     selectedRegion,
     selectedIndustries,
   } = usePersonaStore()
-  const { isOpen: isPanelOpen, toggle: openPanel, open: openRightPanel } = useRightPanelStore()
+  const {
+    isOpen: isPanelOpen,
+    activeTab: panelTab,
+    toggle: openPanel,
+    open: openRightPanel,
+  } = useRightPanelStore()
+  const assistantLayout = useAssistantLayout()
+  const hasReturn = useAssistantReturnStore((s) => s.target !== null)
   const recordVisit = useHistoryStore((s) => s.recordVisit)
   // Auto-start Workshop Video Mode from `?workshop=video&autoplay=1` (Playwright recorder hook).
   useWorkshopUrlAutostart()
@@ -357,7 +378,7 @@ export const MainLayout = () => {
   }, [selectedPersona, location.pathname])
 
   // Single owner of the Playwright hook (2026-09-21): e2e/accessibility.spec.ts
-  // and e2e/rag-pipeline.spec.ts call `window.__e2e_toggle_panel(tab?)` to open
+  // and e2e/assistant-drawer.spec.ts call `window.__e2e_toggle_panel(tab?)` to open
   // the RightPanel without the FAB. RightPanel.tsx no longer assigns it — that
   // component only mounts once the panel is open (lazy, `isPanelOpen &&`), so
   // its copy could never open anything and two owners of one global made the
@@ -440,6 +461,13 @@ export const MainLayout = () => {
   // which board is actually rendering.
   const isCuriousMobileTakeover =
     selectedPersona === 'curious' && isBelowLg && location.pathname === '/' && !isMobileShell
+
+  // The phone's question dock: on Learn screens, while the Assistant sheet is closed.
+  const showAssistantDock =
+    isMobileShell &&
+    !isCuriousMobileTakeover &&
+    !isPanelOpen &&
+    (location.pathname === '/learn' || location.pathname.startsWith('/learn/'))
 
   // Navigate (force-cluster graph, design_handoff_force_cluster/IMPLEMENTATION-PLAN-2026-08-28.md
   // §2.6). Unlike isCuriousMobileTakeover, this does NOT suppress the rail/top-bar chrome
@@ -628,12 +656,48 @@ export const MainLayout = () => {
   // BEFORE deleting PKILearningView's own copies of these buttons.
   const pageIdForRoute = ROUTE_PAGE_ID[location.pathname] ?? pageIdForNestedRoute(location.pathname)
   const shareForRoute = ROUTE_SHARE[location.pathname]
+  // The desktop top bar drops its labels, then wraps, when its own width is short (the side drawer
+  // narrows it); see topBarDensity.tsx.
+  const topBarRef = useRef<HTMLDivElement>(null)
+  const topBarDensity = useTopBarDensityFor(
+    topBarRef,
+    [
+      Object.entries(pageActions ?? {})
+        .filter(([, v]) => Boolean(v))
+        .map(([k]) => k)
+        .join(','),
+      Boolean(viewTypeForRoute),
+      Boolean(pageIdForRoute),
+      roleLabel,
+    ].join('|')
+  )
+  // What this route offers the drawer's Guide and Sources views (they follow the route).
+  const sourcesDataSource = pageActions?.dataSource
+  useEffect(() => {
+    useDrawerPageStore.getState().set({
+      guidePageId: pageIdForRoute ?? null,
+      sourcesViewType: viewTypeForRoute ?? null,
+      sourcesDataSource,
+    })
+  }, [pageIdForRoute, viewTypeForRoute, sourcesDataSource])
+  // The page's guide and sources follow the route; a route that has none closes that view rather
+  // than showing an empty one. Done here, not in the lazily loaded drawer, so it never waits on it.
+  useEffect(() => {
+    if (
+      (panelTab === 'guide' && !pageIdForRoute) ||
+      (panelTab === 'sources' && !viewTypeForRoute)
+    ) {
+      useRightPanelStore.getState().close()
+    }
+  }, [panelTab, pageIdForRoute, viewTypeForRoute])
 
   return (
     <div
-      className={`h-dvh flex flex-col lg:flex-row bg-background text-foreground print:min-h-0 print:h-auto overflow-clip transition-[padding] duration-300 ${
-        isPanelOpen ? 'sm:pr-[40vw]' : ''
-      }`}
+      className={`h-dvh flex flex-col lg:flex-row bg-background text-foreground print:min-h-0 print:h-auto overflow-clip transition-[padding] duration-300 ${drawerPaddingClass(
+        isPanelOpen,
+        assistantLayout,
+        panelTab
+      )}`}
     >
       {/* Skip-to-main link — visible only on keyboard focus */}
       <a
@@ -663,7 +727,8 @@ export const MainLayout = () => {
             }
           >
             <span className="flex items-center gap-2">
-              <span className="text-lg font-bold text-gradient">PQC Today</span>
+              <BrandLogo variant="emblem" size={32} decorative />
+              <span className="font-display text-lg font-bold text-heading">PQC Today</span>
               {airplaneMode && (
                 <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
               )}
@@ -954,7 +1019,8 @@ export const MainLayout = () => {
                   airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'
                 }
               >
-                <span className="text-base font-bold text-gradient">PQC</span>
+                <BrandLogo variant="emblem" size={28} decorative />
+                <span className="font-display text-base font-bold text-heading">PQC</span>
                 {airplaneMode && (
                   <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
                 )}
@@ -977,108 +1043,99 @@ export const MainLayout = () => {
                   report: "can't scroll to the right of the top bar"). Now
                   wrapped in the same ScrollFadeContainer the mobile nav row
                   below already uses for this exact problem. */}
-              <ScrollFadeContainer
-                className="hidden lg:flex flex-1 min-w-0"
-                scrollClassName="flex items-center justify-between gap-2 flex-nowrap"
-              >
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {pageActions && (
-                    <>
-                      <span className="w-px h-4 bg-border shrink-0" aria-hidden="true" />
-                      <PageActionStrip {...pageActions} className="shrink-0" />
-                    </>
+              <TopBarDensityProvider value={topBarDensity}>
+                <ScrollFadeContainer
+                  ref={topBarRef}
+                  className="hidden lg:flex flex-1 min-w-0"
+                  scrollClassName={cn(
+                    'flex items-center justify-between gap-2',
+                    topBarDensity === 3 ? 'flex-wrap gap-y-1' : 'flex-nowrap'
                   )}
-                </div>
+                >
+                  <div
+                    className={cn(
+                      'flex items-center gap-1.5',
+                      topBarDensity === 3 ? 'flex-wrap' : 'shrink-0'
+                    )}
+                  >
+                    {pageActions && (
+                      <>
+                        <span className="w-px h-4 bg-border shrink-0" aria-hidden="true" />
+                        <PageActionStrip {...pageActions} className="shrink-0" />
+                      </>
+                    )}
+                  </div>
 
-                <div className="flex items-center gap-0.5 shrink-0 flex-nowrap justify-end">
-                  <Button
-                    variant="ghost"
-                    onClick={() => openRightPanel('chat')}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
-                    aria-label="Open PQC Assistant"
-                    title="Open PQC Assistant"
+                  <div
+                    className={cn(
+                      'flex items-center gap-0.5 justify-end',
+                      topBarDensity === 3 ? 'flex-wrap ml-auto' : 'shrink-0 flex-nowrap'
+                    )}
                   >
-                    <Bot size={13} aria-hidden="true" />
-                    <span>Assistant</span>
-                  </Button>
-                  {/* Journey — moved here from the rail's lone-icon utility dock
-                      on 2026-08-02, which is exactly what that dock's own
-                      comment prescribed ("give Journey a top-bar entry point
-                      too, then this lone-icon dock can likely go away
-                      entirely"). It sits beside Ask because both open the same
-                      right panel, just on different tabs. */}
-                  <Button
-                    variant="ghost"
-                    onClick={() => openRightPanel('history')}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
-                    aria-label="Open your Journey map"
-                    title="Open your Journey map"
-                  >
-                    <Map size={13} aria-hidden="true" />
-                    <span>Journey</span>
-                  </Button>
-                  <ShareButton
-                    title={
-                      pageActions?.shareTitle ??
-                      shareForRoute?.title ??
-                      `${currentLabel} — PQC Today`
-                    }
-                    text={pageActions?.shareText ?? shareForRoute?.text}
-                    // BUG FIX (Grade-A remediation Phase 2, top-bar Share):
-                    // most routes' whole shareable state lives in the URL
-                    // already, so omitting `url` and falling back to
-                    // ShareButton's own `window.location.href` default is
-                    // correct for them. /report is the exception — its state
-                    // lives in local/session store, not the URL — so it
-                    // registers a self-contained token URL via
-                    // `usePageActionsStore` (see ReportView.tsx). Every other
-                    // route's `pageActions.url` stays undefined, preserving
-                    // the existing bare-URL fallback exactly.
-                    url={pageActions?.url}
-                    variant="full"
-                  />
-                  <FAQButton compact />
-                  {viewTypeForRoute && (
-                    <SourcesButton
-                      viewType={viewTypeForRoute}
-                      compact
-                      dataSource={pageActions?.dataSource}
+                    <DrawerToggleButton tab="chat" icon={Bot} />
+                    <ShareButton
+                      title={
+                        pageActions?.shareTitle ??
+                        shareForRoute?.title ??
+                        `${currentLabel} — PQC Today`
+                      }
+                      text={pageActions?.shareText ?? shareForRoute?.text}
+                      // BUG FIX (Grade-A remediation Phase 2, top-bar Share):
+                      // most routes' whole shareable state lives in the URL
+                      // already, so omitting `url` and falling back to
+                      // ShareButton's own `window.location.href` default is
+                      // correct for them. /report is the exception — its state
+                      // lives in local/session store, not the URL — so it
+                      // registers a self-contained token URL via
+                      // `usePageActionsStore` (see ReportView.tsx). Every other
+                      // route's `pageActions.url` stays undefined, preserving
+                      // the existing bare-URL fallback exactly.
+                      url={pageActions?.url}
+                      variant={topBarDensity >= 1 ? 'icon' : 'full'}
+                      buttonClassName={topBarDensity >= 1 ? 'min-h-10 min-w-10' : undefined}
                     />
-                  )}
-                  <GlossaryButton compact />
-                  {pageIdForRoute && <UserManualButton pageId={pageIdForRoute} compact />}
+                    <DrawerToggleButton tab="faq" icon={HelpCircle} />
+                    <DrawerToggleButton tab="bookmarks" icon={Bookmark} />
+                    {viewTypeForRoute && <DrawerToggleButton tab="sources" icon={BookOpen} />}
+                    <DrawerToggleButton tab="glossary" icon={BookOpenText} />
+                    {pageIdForRoute && <DrawerToggleButton tab="guide" icon={BookText} />}
 
-                  <Button
-                    variant="ghost"
-                    onClick={openPalette}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
-                    aria-label="Search (⌘K)"
-                    title="Search (⌘K)"
-                  >
-                    <Search size={13} aria-hidden="true" />
-                    <span>Search</span>
-                    <kbd className="text-[9px] font-mono px-1 py-0.5 rounded border border-border/60 bg-muted/40">
-                      ⌘K
-                    </kbd>
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={openPalette}
+                      className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
+                      aria-label="Search (⌘K)"
+                      title="Search (⌘K)"
+                    >
+                      <Search size={13} aria-hidden="true" />
+                      {topBarDensity < 2 && (
+                        <>
+                          <span>Search</span>
+                          <kbd className="text-[9px] font-mono px-1 py-0.5 rounded border border-border/60 bg-muted/40">
+                            ⌘K
+                          </kbd>
+                        </>
+                      )}
+                    </Button>
 
-                  <Button
-                    variant="ghost"
-                    onClick={() => setPersonaSwitchOpen(true)}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors shrink min-w-0"
-                    aria-label={`Switch role — currently ${roleLabel}`}
-                    title="Switch your role, region, or industry"
-                    // Guided-workshop entry point for the persona prerequisite step.
-                    // Replaces the retired PersonalizationSection wizard's
-                    // "persona-edit" anchor (see PersonaSwitchModal for the rest).
-                    data-workshop-target="persona-switch-open"
-                  >
-                    <UserCog size={13} aria-hidden="true" />
-                    <span className="truncate max-w-[200px]">{roleLabel}</span>
-                    <ChevronDown size={11} aria-hidden="true" className="shrink-0" />
-                  </Button>
-                </div>
-              </ScrollFadeContainer>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setPersonaSwitchOpen(true)}
+                      className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors shrink min-w-0"
+                      aria-label={`Switch role — currently ${roleLabel}`}
+                      title="Switch your role, region, or industry"
+                      // Guided-workshop entry point for the persona prerequisite step.
+                      // Replaces the retired PersonalizationSection wizard's
+                      // "persona-edit" anchor (see PersonaSwitchModal for the rest).
+                      data-workshop-target="persona-switch-open"
+                    >
+                      <UserCog size={13} aria-hidden="true" />
+                      <span className="truncate max-w-[200px]">{roleLabel}</span>
+                      <ChevronDown size={11} aria-hidden="true" className="shrink-0" />
+                    </Button>
+                  </div>
+                </ScrollFadeContainer>
+              </TopBarDensityProvider>
 
               {/* Mobile nav row — icon-only row + "More" sheet trigger.
                 Unchanged mechanism from before the rail rebuild; only the
@@ -1178,6 +1235,7 @@ export const MainLayout = () => {
                 MobileBottomBar via its own `bottom: var(--mobile-nav-height)`
                 offset and z-mobile-dock. */}
             <MobileWorkshopDock />
+            {showAssistantDock && <AssistantDock />}
           </React.Suspense>
         )}
 
@@ -1325,18 +1383,18 @@ export const MainLayout = () => {
                   Search
                 </Button>
 
-                {/* Journey History shortcut */}
+                {/* Your journey: Learn › Your journey (the old drawer tab moved there) */}
                 <Button
                   variant="ghost"
                   type="button"
                   onClick={() => {
                     setMoreMenuOpen(false)
-                    openPanel('history')
+                    navigate('/learn?view=journey')
                   }}
                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
                 >
                   <Clock size={18} aria-hidden="true" />
-                  Journey History
+                  Your journey
                 </Button>
 
                 {/* Assistant shortcut */}
@@ -1380,6 +1438,12 @@ export const MainLayout = () => {
 
         {personaSwitchOpen && <PersonaSwitchModal onClose={() => setPersonaSwitchOpen(false)} />}
 
+        {hasReturn && (
+          <React.Suspense fallback={null}>
+            <AssistantReturnBar />
+          </React.Suspense>
+        )}
+
         {/* Scrollable content area */}
         <div
           ref={scrollContainerRef}
@@ -1395,7 +1459,9 @@ export const MainLayout = () => {
             // it already includes the safe-area inset. Adding a second
             // `+env(safe-area-inset-bottom)` here double-counted it,
             // over-padding the scroll area by up to the full inset again.
-            isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]'
+            isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]',
+            // The dock above the bar is one thin row (about 56px): keep the page's last lines clear of it.
+            showAssistantDock && 'pb-[calc(var(--mobile-nav-height)+64px)]'
           )}
         >
           {isCuriousMobileTakeover || isFullBleedContentRoute ? (
@@ -1543,6 +1609,8 @@ export const MainLayout = () => {
                       {/* "You're viewing Phase X" banner — shows when a ?phase= param is
                           present (e.g. a deep link); self-skips Assess/Report/Command Center. */}
                       <PhaseContextBanner />
+                      {/* After a role switch: "Now viewing as ..." with Undo (renders nothing otherwise). */}
+                      <RoleSwitchNotice />
                       <Outlet />
                       {/* Round 9, wave 1.1 / 1.2 — related content and the declared exit for routed pages. */}
                       <RoutePageExercise mobile={isMobileShell} />

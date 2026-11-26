@@ -8,6 +8,9 @@ import { getRailSections } from './railNav'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { usePageActionsStore } from '../../store/usePageActionsStore'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
+import { useRightPanelStore } from '../../store/useRightPanelStore'
+import { useDrawerPageStore } from '../../store/useDrawerPageStore'
+import { ROUTE_VIEW_TYPE } from '../../data/routePageMeta'
 import '@testing-library/jest-dom'
 
 // Mock the build timestamp
@@ -80,6 +83,91 @@ function getRailNav() {
 function getMobileNav() {
   return screen.getByRole('navigation', { name: /main navigation/i })
 }
+
+describe('MainLayout top bar: the Assistant drawer and Bookmarks', () => {
+  beforeEach(() => useRightPanelStore.setState({ isOpen: false, activeTab: 'chat' }))
+  afterEach(() => useRightPanelStore.setState({ isOpen: false, activeTab: 'chat' }))
+
+  it('has Assistant, Share, FAQ and Bookmarks, and no Journey button', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    expect(within(bar).getByRole('button', { name: 'Assistant' })).toBeInTheDocument()
+    expect(within(bar).getByRole('button', { name: 'Bookmarks' })).toBeInTheDocument()
+    expect(within(bar).getByRole('button', { name: 'FAQ' })).toBeInTheDocument()
+    expect(within(bar).queryByRole('button', { name: /journey/i })).toBeNull()
+  })
+
+  it('Glossary, Guide, Sources and FAQ toggle the same drawer, one view at a time', () => {
+    renderLayout('/migrate')
+    const bar = screen.getByRole('banner')
+    for (const name of ['Glossary', 'Guide', 'Sources', 'FAQ'] as const) {
+      const button = within(bar).getByRole('button', { name })
+      expect(button).toHaveAttribute('aria-pressed', 'false')
+      fireEvent.click(button)
+      expect(useRightPanelStore.getState()).toMatchObject({
+        isOpen: true,
+        activeTab: name.toLowerCase(),
+      })
+      expect(button).toHaveAttribute('aria-pressed', 'true')
+      // Only the view that is showing is pressed.
+      for (const other of ['Assistant', 'Bookmarks', 'Glossary', 'Guide', 'Sources', 'FAQ']) {
+        if (other !== name) {
+          expect(within(bar).getByRole('button', { name: other })).toHaveAttribute(
+            'aria-pressed',
+            'false'
+          )
+        }
+      }
+    }
+    // A second press of the showing view closes the drawer.
+    fireEvent.click(within(bar).getByRole('button', { name: 'FAQ' }))
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
+  })
+
+  it('a route with no guide or sources shows neither button and closes a drawer left on them', async () => {
+    useDrawerPageStore.getState().set({
+      guidePageId: null,
+      sourcesViewType: null,
+      sourcesDataSource: undefined,
+    })
+    useRightPanelStore.setState({ isOpen: true, activeTab: 'guide' })
+    renderLayout('/about')
+    await waitFor(() => expect(useRightPanelStore.getState().isOpen).toBe(false), { timeout: 5000 })
+    const bar = screen.getByRole('banner')
+    expect(within(bar).queryByRole('button', { name: 'Sources' })).toBeNull()
+  })
+
+  it('the Assistant button toggles the drawer and shows its state', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    const assistant = within(bar).getByRole('button', { name: 'Assistant' })
+    expect(assistant).toHaveAttribute('aria-pressed', 'false')
+    fireEvent.click(assistant)
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'chat' })
+    expect(assistant).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(assistant)
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
+  })
+
+  it('the Bookmarks button opens Bookmarks in the same slot; the same button closes it; Assistant switches back', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    const bookmarks = within(bar).getByRole('button', { name: 'Bookmarks' })
+    fireEvent.click(bookmarks)
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'bookmarks' })
+    fireEvent.click(within(bar).getByRole('button', { name: 'Assistant' }))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'chat' })
+    fireEvent.click(bookmarks)
+    fireEvent.click(bookmarks)
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
+  })
+
+  it('leaves the legacy search box in the bar, still opening the palette', () => {
+    renderLayout()
+    const bar = screen.getByRole('banner')
+    expect(within(bar).getByRole('button', { name: /^Search/ })).toBeInTheDocument()
+  })
+})
 
 describe('MainLayout', () => {
   afterEach(() => {
@@ -686,9 +774,8 @@ describe('MainLayout', () => {
 
     it('renders Sources on a route with a registered ViewType, omits it elsewhere', () => {
       renderLayout('/migrate')
-      expect(
-        screen.getByRole('button', { name: /view authoritative sources/i })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Sources' })).toBeInTheDocument()
+      expect(useDrawerPageStore.getState().sourcesViewType).toBe(ROUTE_VIEW_TYPE['/migrate'])
     })
 
     // Final self-review finding (2026-08-01): ux-standard.md P10 has a MUST
@@ -701,9 +788,8 @@ describe('MainLayout', () => {
     // omitting '/compliance' from ROUTE_VIEW_TYPE.
     it('omits Sources on /compliance (ux-standard.md P10 MUST NOT — provenance is inline via TrustPathPopover, not the generic Sources list)', () => {
       renderLayout('/compliance')
-      expect(
-        screen.queryByRole('button', { name: /view authoritative sources/i })
-      ).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Sources' })).not.toBeInTheDocument()
+      expect(useDrawerPageStore.getState().sourcesViewType).toBeNull()
     })
 
     // PageHeader-consolidation follow-up (2026-08-01): /openssl's own PageHeader
@@ -711,9 +797,8 @@ describe('MainLayout', () => {
     // covering it so the global Sources button doesn't regress on this route.
     it('renders Sources on /openssl (viewType carried over from its removed PageHeader call)', () => {
       renderLayout('/openssl')
-      expect(
-        screen.getByRole('button', { name: /view authoritative sources for library/i })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Sources' })).toBeInTheDocument()
+      expect(useDrawerPageStore.getState().sourcesViewType).toBe('Library')
     })
 
     // Same follow-up: BusinessToolsGrid ('/business/tools') passed
@@ -722,7 +807,8 @@ describe('MainLayout', () => {
     // own ROUTE_PAGE_ID entry rather than inheriting '/business''s.
     it('renders the Guide button on /business/tools (pageId carried over from its removed PageHeader call)', () => {
       renderLayout('/business/tools')
-      expect(screen.getByRole('button', { name: /open page guide/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Guide' })).toBeInTheDocument()
+      expect(useDrawerPageStore.getState().guidePageId).toBe('business-center')
     })
 
     // PageHeader-consolidation follow-up: bespoke shareTitle strings that used

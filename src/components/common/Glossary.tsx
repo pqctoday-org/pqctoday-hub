@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
 import { BookOpenText, Search, X, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router'
 import { loadGlossary, type GlossaryTerm } from '../../data/glossary'
@@ -24,7 +24,7 @@ const categoryColors = {
 }
 
 const TermCard = ({ term }: { term: GlossaryTerm }) => (
-  <div className="glass-panel p-4 hover:border-primary/30 transition-colors">
+  <div className="glass-panel p-4 hover:border-primary/30 transition-colors min-w-0">
     <div className="flex items-start justify-between gap-2 mb-2">
       <div className="flex items-center gap-2 flex-wrap">
         <h3 className="font-semibold text-foreground">{term.term}</h3>
@@ -36,9 +36,13 @@ const TermCard = ({ term }: { term: GlossaryTerm }) => (
         <CategoryBadge category={term.complexity} />
       </div>
     </div>
-    <p className="text-sm text-muted-foreground leading-relaxed mb-2">{term.definition}</p>
+    <p className="text-sm text-muted-foreground leading-relaxed mb-2 break-words">
+      {term.definition}
+    </p>
     {term.technicalNote && (
-      <p className="text-xs text-muted-foreground italic mb-2">💡 {term.technicalNote}</p>
+      <p className="text-xs text-muted-foreground italic mb-2 break-words">
+        💡 {term.technicalNote}
+      </p>
     )}
     {term.relatedModule && (
       <Link
@@ -56,38 +60,46 @@ const TermCard = ({ term }: { term: GlossaryTerm }) => (
   </div>
 )
 
-export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
-  isOpen,
-  onClose,
-}) => {
-  const isEmbedded = useIsEmbedded()
-  const [search, setSearch] = useState('')
+/**
+ * The glossary itself: search box, category and letter filters, and the term cards. One component
+ * for the drawer's Glossary view and for the modal panel (embedded mode), so there is one copy.
+ * `active` loads the terms and puts the cursor in the search box.
+ */
+export const GlossaryContent: React.FC<{
+  active: boolean
+  /**
+   * A term to open on (from `?glossary=<term>`): the search box starts with it, and the term whose
+   * name or acronym is exactly it comes first. An unknown term leaves the normal "no match" state.
+   */
+  focusTerm?: string
+}> = ({ active, focusTerm }) => {
+  const [search, setSearch] = useState(focusTerm ?? '')
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeLetter, setActiveLetter] = useState<string | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
-  const dialogRef = useFocusTrap(isOpen)
-  useBodyScrollLock(isOpen && !isEmbedded)
   const [glossaryTerms, setGlossaryTerms] = useState<GlossaryTerm[]>([])
 
   useEffect(() => {
-    if (isOpen) {
+    if (active) {
       loadGlossary().then(setGlossaryTerms)
       // CC-15: drive the first-jargon-decoded achievement for curious users.
       // Idempotent — recordSectionVisit guards against duplicates.
       useAchievementStore.getState().recordSectionVisit('curious:glossary-opened')
     }
-  }, [isOpen])
+  }, [active])
+
+  // While the modal slides out, AnimatePresence keeps showing the props it had when it began
+  // to leave (`active` stays true). Without this check the pending focus move would still fire
+  // and take focus back from the control that opened the glossary.
+  const isPresent = useIsPresent()
 
   // Focus search on open
   useEffect(() => {
-    if (isOpen && searchRef.current) {
+    if (active && isPresent && searchRef.current) {
       const timer = setTimeout(() => searchRef.current?.focus(), 200)
       return () => clearTimeout(timer)
     }
-  }, [isOpen])
-
-  // Esc via the shared overlay stack: closes only the topmost overlay.
-  useOverlayEscape(isOpen, onClose, { rootRef: dialogRef })
+  }, [active, isPresent])
 
   const categories = ['all', 'algorithm', 'protocol', 'standard', 'concept', 'organization']
 
@@ -101,10 +113,23 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       .sort((a, b) => a.term.localeCompare(b.term))
     if (!search) return { filteredTerms: base, partialMissing: null }
     const haystack = (t: GlossaryTerm) => [t.term, t.acronym, t.definition]
+    // The term the address names comes first (exact name or acronym, any case).
+    const wanted = focusTerm && search === focusTerm ? focusTerm.trim().toLowerCase() : ''
+    const exactFirst = (list: GlossaryTerm[]) =>
+      wanted
+        ? [
+            ...list.filter(
+              (t) => t.term.toLowerCase() === wanted || t.acronym?.toLowerCase() === wanted
+            ),
+            ...list.filter(
+              (t) => t.term.toLowerCase() !== wanted && t.acronym?.toLowerCase() !== wanted
+            ),
+          ]
+        : list
     // Every meaningful word must appear somewhere in term/acronym/definition,
     // so "purdue model for OT" finds the Purdue Model entry.
     const strict = base.filter((t) => matchesAllWords(haystack(t), search))
-    if (strict.length > 0) return { filteredTerms: strict, partialMissing: null }
+    if (strict.length > 0) return { filteredTerms: exactFirst(strict), partialMissing: null }
     // Nothing has every word: for a 3+ word query, fall back to terms that match
     // all but one word and say which word(s) were not matched.
     const partial = partialMatchFallback(base, haystack, search)
@@ -113,12 +138,112 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       filteredTerms: partial.map((p) => p.item),
       partialMissing: [...new Set(partial.flatMap((p) => p.missing))],
     }
-  }, [glossaryTerms, search, activeCategory, activeLetter])
+  }, [glossaryTerms, search, activeCategory, activeLetter, focusTerm])
 
   const availableLetters = useMemo(() => {
     const letters = new Set(glossaryTerms.map((t) => t.term[0].toUpperCase()))
     return Array.from(letters).sort()
   }, [glossaryTerms])
+
+  return (
+    <>
+      <div className="p-4 border-b border-border shrink-0">
+        {/* Search */}
+        <div className="relative mb-3">
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <input
+            ref={searchRef}
+            type="text"
+            placeholder="Search terms..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setActiveLetter(null)
+            }}
+            className="w-full bg-muted/30 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 transition-colors text-foreground placeholder:text-muted-foreground"
+            aria-label="Search glossary terms"
+          />
+        </div>
+
+        {/* Category Tabs */}
+        <div className="flex gap-1.5 flex-wrap mb-2">
+          {categories.map((cat) => (
+            <Button
+              variant="ghost"
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={clsx(
+                'px-2.5 py-1 min-h-[36px] rounded-full text-[11px] font-semibold capitalize transition-colors border',
+                activeCategory === cat
+                  ? 'bg-primary/10 text-primary border-primary/30'
+                  : 'text-muted-foreground border-border hover:border-primary/20'
+              )}
+            >
+              {cat}
+            </Button>
+          ))}
+        </div>
+
+        {/* A-Z Index */}
+        <div className="flex gap-0.5 flex-wrap">
+          {availableLetters.map((letter) => (
+            <Button
+              variant="ghost"
+              key={letter}
+              onClick={() => setActiveLetter(activeLetter === letter ? null : letter)}
+              className={clsx(
+                'w-9 h-9 rounded text-xs font-bold transition-colors',
+                activeLetter === letter
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-muted/50'
+              )}
+            >
+              {letter}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Terms List */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <p className="text-xs text-muted-foreground mb-2">
+          {filteredTerms.length} term{filteredTerms.length !== 1 ? 's' : ''}
+        </p>
+        <div role="status" aria-live="polite">
+          {partialMissing && (
+            <p className="text-xs text-warning bg-warning/10 border border-warning/30 rounded-md px-3 py-2">
+              No term contains every word. Showing terms that match all but one — not matched:{' '}
+              {partialMissing.map((w) => `"${w}"`).join(', ')}.
+            </p>
+          )}
+        </div>
+        {filteredTerms.map((term) => (
+          <TermCard key={term.term} term={term} />
+        ))}
+        {filteredTerms.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground italic">
+            No terms match your search.
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
+export const Glossary: React.FC<{
+  isOpen: boolean
+  onClose: () => void
+  focusTerm?: string
+}> = ({ isOpen, onClose, focusTerm }) => {
+  const isEmbedded = useIsEmbedded()
+  const dialogRef = useFocusTrap(isOpen)
+  useBodyScrollLock(isOpen && !isEmbedded)
+
+  // Esc via the shared overlay stack: closes only the topmost overlay.
+  useOverlayEscape(isOpen, onClose, { rootRef: dialogRef })
 
   // Not embedded (2026-08-01 bug fix — "clicking outside does not close the
   // glossary box"): rendered inline before, nested deep inside MainLayout's
@@ -174,88 +299,9 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     <X size={20} />
                   </Button>
                 </div>
-
-                {/* Search */}
-                <div className="relative mb-3">
-                  <Search
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  />
-                  <input
-                    ref={searchRef}
-                    type="text"
-                    placeholder="Search terms..."
-                    value={search}
-                    onChange={(e) => {
-                      setSearch(e.target.value)
-                      setActiveLetter(null)
-                    }}
-                    className="w-full bg-muted/30 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 transition-colors text-foreground placeholder:text-muted-foreground"
-                    aria-label="Search glossary terms"
-                  />
-                </div>
-
-                {/* Category Tabs */}
-                <div className="flex gap-1.5 flex-wrap mb-2">
-                  {categories.map((cat) => (
-                    <Button
-                      variant="ghost"
-                      key={cat}
-                      onClick={() => setActiveCategory(cat)}
-                      className={clsx(
-                        'px-2.5 py-1 min-h-[36px] rounded-full text-[11px] font-semibold capitalize transition-colors border',
-                        activeCategory === cat
-                          ? 'bg-primary/10 text-primary border-primary/30'
-                          : 'text-muted-foreground border-border hover:border-primary/20'
-                      )}
-                    >
-                      {cat}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* A-Z Index */}
-                <div className="flex gap-0.5 flex-wrap">
-                  {availableLetters.map((letter) => (
-                    <Button
-                      variant="ghost"
-                      key={letter}
-                      onClick={() => setActiveLetter(activeLetter === letter ? null : letter)}
-                      className={clsx(
-                        'w-9 h-9 rounded text-xs font-bold transition-colors',
-                        activeLetter === letter
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted/50'
-                      )}
-                    >
-                      {letter}
-                    </Button>
-                  ))}
-                </div>
               </div>
 
-              {/* Terms List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                <p className="text-xs text-muted-foreground mb-2">
-                  {filteredTerms.length} term{filteredTerms.length !== 1 ? 's' : ''}
-                </p>
-                <div role="status" aria-live="polite">
-                  {partialMissing && (
-                    <p className="text-xs text-warning bg-warning/10 border border-warning/30 rounded-md px-3 py-2">
-                      No term contains every word. Showing terms that match all but one — not
-                      matched: {partialMissing.map((w) => `"${w}"`).join(', ')}.
-                    </p>
-                  )}
-                </div>
-                {filteredTerms.map((term) => (
-                  <TermCard key={term.term} term={term} />
-                ))}
-                {filteredTerms.length === 0 && (
-                  <div className="text-center py-12 text-muted-foreground italic">
-                    No terms match your search.
-                  </div>
-                )}
-              </div>
+              <GlossaryContent active={isOpen} focusTerm={focusTerm} />
             </motion.div>
           </>
         )}

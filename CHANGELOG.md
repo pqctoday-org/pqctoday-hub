@@ -29,6 +29,36 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.226.0] - 2026-11-25
+
+The Assistant now answers from the Hub's own records and shows its source, Learn has a "Your journey" view with role paths and objectives, and lesson pages are simpler. The Assistant no longer downloads a language model or asks for a key.
+
+### Added
+
+- **Your journey in Learn** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Learn has a new "Your journey" view. Pick a role to see its path of lessons, or write a goal in your own words and the Hub proposes the lessons that cover it, with the ones to take first. Progress stays on your device.
+- **Objectives you can start from the Assistant** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: The Assistant shows your current objective and has a "Start an objective" action, so a goal can be set without leaving the page you are on.
+- **My work** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops]: Answers and records you save from the Assistant are kept in one place on your device and can be exported as a document.
+- **Notices when a lesson in your objective changes** [view:/learn] [persona:grc] [persona:developer] [persona:architect] [persona:cert-engineer] [persona:ops]: Your journey tells you when a lesson in an objective was retired or replaced, gained a section or a tool, or had a section or a tool updated, and offers the replacement where there is one.
+- **Tools say what they produce** [view:/playground] [view:/business] [persona:developer] [persona:architect] [persona:grc] [persona:ops]: 55 tools now state that they produce something you can keep (a document, a certificate, a key, a run record or a data file) and 19 state that they do not, so the Assistant can answer "which tool gives me a …".
+
+### Changed
+
+- **The Assistant answers from Hub records, with no language model** [view:/learn] [view:/library] [view:/compliance] [view:/algorithms] [view:/timeline] [view:/migrate] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Ask a question and the Assistant gives the value the Hub holds, names the record it came from, and lists the lessons, tools and pages on the subject. When the Hub does not hold the fact, it says so and shows resources only. The local model download and the option to use your own Gemini key are gone from the Assistant.
+- **Replaced documents are answered when proven** [view:/library] [persona:grc] [persona:architect] [persona:cert-engineer] [persona:researcher]: "What replaced …" is answered for 217 documents where the Hub holds proof: 154 were replaced by a newer document, and 63 are two listings of one document, which the Assistant says plainly.
+- **Simpler lesson pages** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: The floating step bar, the "Your progress" box, the "Next step" box and the "Practice in the Simulation" button are removed from lessons. Each section has its own "Mark section as read" control, and "Related modules" shows what is next on your path.
+- **Glossary, Guide, Sources and FAQ open beside the page** [view:/learn] [view:/library] [view:/compliance] [view:/algorithms] [view:/timeline] [view:/migrate] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: These four top bar buttons now work like Assistant and Bookmarks: the panel opens in the side drawer next to the page, the button shows it is open, and a second click closes it. On a narrower window the top bar buttons shrink to icons and stay in view beside the open panel.
+- **One-line Assistant bar on phones** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: On a phone, Learn pages show one thin "Ask about this page" bar instead of a pinned question panel, so more of the page is visible. The suggested question is inside the Assistant.
+- **Comments say when their lesson was revised** [view:/learn] [persona:grc] [persona:developer] [persona:architect] [persona:cert-engineer] [persona:ops]: A comment you left on a lesson section now shows "Lesson revised" when the lesson changed after your comment. The Hub records the lesson's revision, not which section changed, and the notice says so.
+- **Shorter review mark** [view:/learn] [view:/playground] [persona:curious] [persona:grc]: The top bar of a lesson or tool shows "Reviewed" and the month; select it for the full history, including whether the text was drafted with an AI model and who reviewed it.
+
+### Fixed
+
+- **Glossary terms open from the Assistant** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: A glossary term in an answer now leads to the lesson that teaches it, or to its glossary entry; before, it opened the Learn page with nothing shown. A shared link to a term opens the glossary on that term.
+- **Assistant questions count toward badges** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: The "Conversation Starter" and "Full Journey" badges count the questions you ask the Assistant. Only the number is kept, on your device.
+- **Clearer choice after a role switch** [view:/learn] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: The notice after switching role offers "Undo" or "Keep this role".
+- **Glossary pop-up keeps keyboard focus** [view:/simulation] [persona:developer] [persona:architect] [persona:ops]: Closing the glossary pop-up right after opening it returns keyboard focus to the button that opened it.
+- **Pages opened from the Assistant appear in front of it** [view:/library] [persona:executive] [persona:grc] [persona:developer] [persona:architect] [persona:researcher] [persona:cert-engineer] [persona:ops] [persona:curious]: Opening a Library document or another record from an answer no longer hides it behind the Assistant.
+
 ## [4.225.0] - 2026-11-25
 
 Every tool now belongs to a lesson and lists the NICE skills it teaches or lets you practise, short links open any resource, and the Library, Migrate, Timeline, Community and Glossary data is tagged by lesson, industry and place.

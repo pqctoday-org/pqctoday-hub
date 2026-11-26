@@ -14,14 +14,15 @@ Our E2E tests adhere to the ASR interaction pattern:
 
 ## Core Suites
 
-| Suite                    | Focus                      | ASR Bypassing Technique                                    |
-| ------------------------ | -------------------------- | ---------------------------------------------------------- |
-| `acvp-validator.spec.ts` | HSM/WASM crypto processing | Route deep-linking & `__e2e_trigger_acvp` dispatch         |
-| `accessibility.spec.ts`  | WCAG & DOM trapping traps  | `window.__e2e_toggle_panel()` to skip mount animations     |
-| `embed*.spec.ts`         | Cross-origin IFrames       | Network proxying and test harness routing without clicks   |
-| `gamification.spec.ts`   | Assessment ingestion       | Direct mock object injection to `onComplete()` overrides   |
-| `onboarding.spec.ts`     | Learning routing logic     | Zustand JSON payload injection to `localStorage` hydration |
-| `rag-pipeline.spec.ts`   | Langchain Gen-AI API       | `window.e2e_chat_send()` combined with HTTP stubbing       |
+| Suite                      | Focus                      | ASR Bypassing Technique                                      |
+| -------------------------- | -------------------------- | ------------------------------------------------------------ |
+| `acvp-validator.spec.ts`   | HSM/WASM crypto processing | Route deep-linking & `__e2e_trigger_acvp` dispatch           |
+| `accessibility.spec.ts`    | WCAG & DOM trapping traps  | `window.__e2e_toggle_panel()` to skip mount animations       |
+| `embed*.spec.ts`           | Cross-origin IFrames       | Network proxying and test harness routing without clicks     |
+| `gamification.spec.ts`     | Assessment ingestion       | Direct mock object injection to `onComplete()` overrides     |
+| `onboarding.spec.ts`       | Learning routing logic     | Zustand JSON payload injection to `localStorage` hydration   |
+| `rag-pipeline.spec.ts`     | Assistant, no network      | Every request to another host is refused; answers still come |
+| `assistant-drawer.spec.ts` | Assistant drawer           | Real clicks and keys; no hooks, no stubs                     |
 
 ## Running Tests
 

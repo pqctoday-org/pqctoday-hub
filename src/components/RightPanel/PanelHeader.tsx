@@ -1,160 +1,51 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import {
-  Bot,
-  Clock,
-  Bookmark,
-  HelpCircle,
-  X,
-  Minus,
-  GraduationCap,
-  Maximize2,
-  Minimize2,
-} from 'lucide-react'
+import { X } from 'lucide-react'
 import { Button } from '../ui/button'
-import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
+import { ObjectiveHeaderSlot } from '../Assistant/ObjectiveHeaderSlot'
 import type { RightPanelTab } from '@/types/HistoryTypes'
 
-export const RIGHT_PANEL_TABS: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
-  { id: 'chat', label: 'Assistant', icon: Bot },
-  { id: 'history', label: 'Journey', icon: Clock },
-  { id: 'workshop', label: 'Workshop', icon: GraduationCap },
-  { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark },
-  { id: 'faq', label: 'FAQ', icon: HelpCircle },
-]
 interface PanelHeaderProps {
-  idPrefix?: string
+  /** Name of what the drawer shows: the Assistant, Bookmarks or the running workshop. */
+  title: string
   activeTab: RightPanelTab
-  onTabChange: (tab: RightPanelTab) => void
-  onClose: () => void
-  onMinimize?: () => void
-  isExpanded?: boolean
-  onToggleExpanded?: () => void
+  /** On the phone sheet a Close control comes first in the tab order. On the desktop the top bar's toggle closes the drawer. */
+  onClose?: () => void
+  /** The objective area belongs to the Assistant view only. */
+  showObjective?: boolean
 }
 
+/**
+ * The drawer header. There are no tabs, and no expand or minimise buttons: what the drawer shows
+ * is chosen by the top bar's Assistant and Bookmarks buttons (or a running guided workshop).
+ */
 export const PanelHeader: React.FC<PanelHeaderProps> = ({
-  idPrefix = 'tools-drawer',
+  title,
   activeTab,
-  onTabChange,
   onClose,
-  onMinimize,
-  isExpanded,
-  onToggleExpanded,
-}) => {
-  const tabList = React.useRef<HTMLDivElement>(null)
-
-  function handleTabKey(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
-    const count = RIGHT_PANEL_TABS.length
-    let next: number
-    switch (event.key) {
-      case 'ArrowRight':
-        next = (index + 1) % count
-        break
-      case 'ArrowLeft':
-        next = (index + count - 1) % count
-        break
-      case 'Home':
-        next = 0
-        break
-      case 'End':
-        next = count - 1
-        break
-      default:
-        return
-    }
-    event.preventDefault()
-    onTabChange(RIGHT_PANEL_TABS[next].id)
-    tabList.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]').item(next)?.focus()
-  }
-
-  return (
-    <div className="px-4 md:px-12 pt-4 pb-0 border-b border-border shrink-0">
-      <div className="flex items-center justify-between gap-1 max-w-4xl mx-auto">
-        {/* min-w-0 lets this flex child actually shrink below its content
-            width instead of forcing the sibling icon cluster off the visible
-            panel (2026-08-01 bug fix: "have to increase the width of the
-            window to reach the close/minimize icon" — the tab row's natural
-            width previously always won the fight for space against the
-            close button). overflow-x-auto lets tabs scroll internally at
-            narrow widths rather than clipping.
-            bplus-programme WS7b (2026-08-07): at 1280px — an ordinary desktop
-            width, not a mobile edge case — the panel's own column is narrow
-            enough that all 5 full-label tabs don't fit (measured: 271px
-            visible of 534px total), silently hiding Bookmarks and FAQ off the
-            right edge with zero visual signal that they exist. The scroll
-            itself always worked; nothing told a visitor to look for it.
-            ScrollFadeContainer (already used elsewhere for this exact
-            problem) adds the fade hint and keyboard-scroll focusability. */}
-        <ScrollFadeContainer
-          ref={tabList}
-          className="min-w-0"
-          scrollClassName="flex items-center gap-1"
-          scrollProps={{ role: 'tablist', tabIndex: -1, 'aria-label': 'Tools drawer tabs' }}
+  showObjective = true,
+}) => (
+  <div className="shrink-0 border-b border-border px-3 py-3 md:px-4">
+    <div className="flex items-center gap-2">
+      {onClose && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="order-last ml-auto min-h-[44px] min-w-[44px] p-2"
+          aria-label="Close"
         >
-          {RIGHT_PANEL_TABS.map((tab, index) => (
-            <Button
-              variant="ghost"
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              onKeyDown={(event) => handleTabKey(event, index)}
-              className={`shrink-0 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-primary text-foreground'
-                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              }`}
-              id={`${idPrefix}-tab-${tab.id}`}
-              aria-controls={`${idPrefix}-panel-${tab.id}`}
-              tabIndex={activeTab === tab.id ? 0 : -1}
-              aria-label={tab.label}
-              aria-selected={activeTab === tab.id}
-              role="tab"
-            >
-              <tab.icon size={16} />
-              <span className="hidden sm:inline">{tab.label}</span>
-            </Button>
-          ))}
-        </ScrollFadeContainer>
-        {/* shrink-0: this cluster (expand/minimize/close) must ALWAYS stay
-            fully visible and reachable, regardless of how little room the
-            tab list above is willing to give up. */}
-        <div className="flex items-center gap-1 shrink-0">
-          {onToggleExpanded && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggleExpanded}
-              className="min-h-[44px] min-w-[44px] p-2 hidden sm:inline-flex"
-              aria-label={
-                isExpanded ? 'Shrink assistant to partial width' : 'Expand assistant to full width'
-              }
-              aria-pressed={isExpanded}
-              title={isExpanded ? 'Shrink to partial width' : 'Expand to full width'}
-            >
-              {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-            </Button>
-          )}
-          {onMinimize && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onMinimize}
-              className="min-h-[44px] min-w-[44px] p-2"
-              aria-label="Minimize assistant"
-            >
-              <Minus size={20} />
-            </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="min-h-[44px] min-w-[44px] p-2"
-            aria-label="Close assistant"
-          >
-            <X size={20} />
-          </Button>
-        </div>
-      </div>
+          <X size={20} aria-hidden="true" />
+        </Button>
+      )}
+      <h2 className="min-w-0 flex-1 truncate font-display text-base font-bold text-heading">
+        {title}
+      </h2>
     </div>
-  )
-}
+    {activeTab === 'chat' && showObjective && (
+      <div className="mt-2">
+        <ObjectiveHeaderSlot />
+      </div>
+    )}
+  </div>
+)

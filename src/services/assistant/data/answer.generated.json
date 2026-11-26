@@ -1,0 +1,1876 @@
+{
+ "cleanup": {
+  "strip_prefixes": [
+   "the ",
+   "document ",
+   "standard ",
+   "spec ",
+   "source "
+  ],
+  "strip_suffixes": [
+   " document",
+   " standard",
+   " now",
+   " today",
+   " still"
+  ]
+ },
+ "patterns": [
+  {
+   "id": "successor",
+   "query": {
+    "relation": "replaced_by",
+    "walk": "chain"
+   },
+   "rx": [
+    {
+     "src": "^what (?:has |document |standard )?(?:replaced|superseded|succeeded|obsoleted|replaces|supersedes) (?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^what (?:is|was|are) (?:the )?(?:successor|replacement|newer version|latest version|new version) (?:of|to|for) (?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^(?:has|was|is|have) (?<name>.+?) (?:been )?(?:replaced|superseded|obsoleted)(?: by anything| by something| yet)?$",
+     "field": null
+    },
+    {
+     "src": "^(?<name>.+?) (?:was |has been |is )?(?:replaced|superseded|obsoleted) by what$",
+     "field": null
+    },
+    {
+     "src": "^(?:which|what) (?:document|standard|rfc|version) (?:replaced|superseded|replaces|supersedes) (?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^what is the (?:newer|new|later|latest) (?:document|version|standard|revision) that (?:replaced|superseded|replaces|supersedes) (?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^(?:tell me |please tell me )?which (?:draft or rfc|rfc or draft|rfc or document|draft|rfc|document) (?:replaced|superseded|obsoleted) (?<name>.+)$",
+     "field": null
+    }
+   ]
+  },
+  {
+   "id": "field",
+   "query": {
+    "relation": null,
+    "walk": "field"
+   },
+   "rx": [
+    {
+     "src": "^when (?:was|were) (?<name>.+?) (?:published|released|issued)$",
+     "field": "initial_publication_date"
+    },
+    {
+     "src": "^when did (?<name>.+?) (?:come out|appear)$",
+     "field": "initial_publication_date"
+    },
+    {
+     "src": "^what is the (?:publication|release) date of (?:the )?(?<name>.+)$",
+     "field": "initial_publication_date"
+    },
+    {
+     "src": "^who (?:published|wrote|is the author of|authored) (?:the )?(?<name>.+)$",
+     "field": "authors_or_organization"
+    },
+    {
+     "src": "^which organi[sz]ation (?:wrote|published) (?:the )?(?<name>.+)$",
+     "field": "authors_or_organization"
+    },
+    {
+     "src": "^what is the (?:pqc |post-quantum )?deadline for (?:the )?(?<name>.+)$",
+     "field": "deadline"
+    },
+    {
+     "src": "^when must (?:the )?(?<name>.+?) be met$",
+     "field": "deadline"
+    },
+    {
+     "src": "^when is the (?<name>.+?) deadline$",
+     "field": "deadline"
+    },
+    {
+     "src": "^(?:who|which body|which authority) enforces (?:the )?(?<name>.+)$",
+     "field": "enforcement_body"
+    },
+    {
+     "src": "^does (?:the )?(?<name>.+?) require (?:pqc|post-quantum cryptography|quantum-safe cryptography)$",
+     "field": "requires_pqc"
+    },
+    {
+     "src": "^is post-quantum cryptography (?:mandatory|required) under (?:the )?(?<name>.+)$",
+     "field": "requires_pqc"
+    },
+    {
+     "src": "^when does (?:the )?(?<name>.+?) (?:start|begin)$",
+     "field": "StartYear"
+    },
+    {
+     "src": "^what year is (?:the )?(?<name>.+)$",
+     "field": "StartYear"
+    },
+    {
+     "src": "^which organi[sz]ation is behind (?:the )?(?<name>.+)$",
+     "field": "OrgName"
+    },
+    {
+     "src": "^who issued (?:the )?(?<name>.+)$",
+     "field": "OrgName"
+    },
+    {
+     "src": "^does (?<name>.+?) support (?:pqc|post-quantum cryptography|post-quantum crypto)$",
+     "field": "pqc_support"
+    },
+    {
+     "src": "^what (?:post-quantum|pqc) support does (?<name>.+?) have$",
+     "field": "pqc_support"
+    },
+    {
+     "src": "^is (?<name>.+?) fips(?: 140-3)? validated$",
+     "field": "fips_validated"
+    },
+    {
+     "src": "^does (?<name>.+?) have fips validation$",
+     "field": "fips_validated"
+    },
+    {
+     "src": "^what is the latest version of (?<name>.+)$",
+     "field": "latest_version"
+    },
+    {
+     "src": "^which version of (?<name>.+?) is current$",
+     "field": "latest_version"
+    },
+    {
+     "src": "^how big is (?:the |a |an )?(?<name>.+?) public key$",
+     "field": "public_key_bytes"
+    },
+    {
+     "src": "^what is the public key size of (?<name>.+)$",
+     "field": "public_key_bytes"
+    },
+    {
+     "src": "^what nist security level is (?<name>.+)$",
+     "field": "nist_security_level"
+    },
+    {
+     "src": "^which security category does (?<name>.+?) meet$",
+     "field": "nist_security_level"
+    },
+    {
+     "src": "^what does (?<name>.+?) do$",
+     "field": "Role"
+    },
+    {
+     "src": "^which standard specifies (?<name>.+)$",
+     "field": "fips_standard"
+    },
+    {
+     "src": "^what is the standard for (?<name>.+)$",
+     "field": "fips_standard"
+    }
+   ]
+  },
+  {
+   "id": "cites",
+   "query": {
+    "relation": "cites",
+    "walk": "members"
+   },
+   "rx": [
+    {
+     "src": "^which documents does (?:the )?(?<name>.+?) cite$",
+     "field": null
+    },
+    {
+     "src": "^what standards does (?:the )?(?<name>.+?) reference$",
+     "field": null
+    }
+   ]
+  },
+  {
+   "id": "steps",
+   "query": {
+    "relation": null,
+    "walk": "list_field",
+    "field": "steps"
+   },
+   "rx": [
+    {
+     "src": "^which workshop steps does (?:the )?(?<name>.+?) have$",
+     "field": null
+    },
+    {
+     "src": "^what are the hands-on steps in (?:the )?(?<name>.+)$",
+     "field": null
+    }
+   ]
+  },
+  {
+   "id": "define",
+   "query": {
+    "relation": null,
+    "walk": "none"
+   },
+   "rx": [
+    {
+     "src": "^(?:what is|what are|who is|tell me about|explain|describe|what does) (?:the )?(?<name>.+?)(?: (?<typeword>module|tool|lesson|section|use case|sector|algorithm|standard))?(?: mean| about| do)?$",
+     "field": null
+    },
+    {
+     "src": "^define (?:the )?(?<name>.+)$",
+     "field": null
+    }
+   ]
+  },
+  {
+   "id": "locate",
+   "query": {
+    "relation": "taught_in",
+    "walk": "members",
+    "records_answer_themselves": [
+     "section",
+     "module"
+    ]
+   },
+   "rx": [
+    {
+     "src": "^where can i learn about (?:the )?(?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^which (?:learn )?(?:modules|lessons) (?:cover|teach) (?:the )?(?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^which section explains (?:the )?(?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^show me the lesson on (?:the )?(?<name>.+)$",
+     "field": null
+    }
+   ]
+  }
+ ],
+ "cues": {
+  "version": 1,
+  "out_of_scope": [
+   "should",
+   "should i",
+   "best",
+   "worst",
+   "really",
+   "is it safe",
+   "am i",
+   "my company",
+   "my bank",
+   "my ",
+   "recommend",
+   "worth",
+   "how much will",
+   "will a",
+   "when will",
+   "cost",
+   "write me",
+   "write a",
+   "generate",
+   "predict",
+   "opinion",
+   "why did",
+   "who will",
+   "weather"
+  ],
+  "not_advice": [
+   "what should i know about",
+   "where should i look",
+   "should i look",
+   "should i be aware",
+   "i should know",
+   "should developers",
+   "am i aiming for in",
+   "i should open",
+   "should i use to take",
+   "if my target role is",
+   "if my role is",
+   "if i work as"
+  ],
+  "soft_out_of_scope": {
+   "should": [
+    "persona",
+    "transition",
+    "section",
+    "assessment",
+    "tool",
+    "workrole",
+    "module"
+   ],
+   "best": [
+    "persona"
+   ],
+   "worth": [
+    "industry"
+   ],
+   "should i": [
+    "section",
+    "tool",
+    "persona",
+    "workrole",
+    "transition"
+   ],
+   "recommend": [
+    "persona",
+    "workrole"
+   ],
+   "when will": [
+    "transition"
+   ]
+  },
+  "intents": {
+   "successor": [
+    "replaced",
+    "replace",
+    "superseded",
+    "supersede",
+    "successor",
+    "replacement",
+    "obsoleted",
+    "obsolete",
+    "newer version",
+    "succeeded",
+    "succeeds",
+    "took the place",
+    "takes the place",
+    "came after",
+    "took over",
+    "taken over"
+   ],
+   "steps": [
+    "workshop",
+    "hands-on",
+    "hands on",
+    "steps"
+   ],
+   "locate": [
+    "learn about",
+    "where can i learn",
+    "which module",
+    "which modules",
+    "which lesson",
+    "which lessons",
+    "which part of the site",
+    "where on this site",
+    "where can i find",
+    "where do i find",
+    "find information on",
+    "find info on",
+    "covered on this site",
+    "read about",
+    "where on the site",
+    "which page",
+    "learn modules",
+    "taught",
+    "teach",
+    "study",
+    "point me",
+    "direct me",
+    "explained",
+    "learn more",
+    "read up",
+    "where should i look",
+    "on this site",
+    "learning materials",
+    "resources for learning",
+    "which section",
+    "lesson on",
+    "covered on this",
+    "learning material",
+    "find material",
+    "find information about",
+    "part of the curriculum",
+    "where is",
+    "show me where",
+    "in learn",
+    "where in learn",
+    "where to find",
+    "on the website",
+    "where do i find"
+   ],
+   "cites": [
+    "cite",
+    "cites",
+    "cited",
+    "references",
+    "referenced",
+    "reference",
+    "publications",
+    "refer to",
+    "point to",
+    "points to",
+    "external documents"
+   ],
+   "define": [
+    "what is",
+    "what are",
+    "who is",
+    "tell me about",
+    "explain",
+    "describe",
+    "define",
+    "what does",
+    "meaning",
+    "means",
+    "overview",
+    "about",
+    "what's",
+    "whats",
+    "are known",
+    "is known",
+    "purpose",
+    "summary",
+    "summarize",
+    "summarise",
+    "contents",
+    "used for",
+    "helps",
+    "help with",
+    "for what",
+    "definition",
+    "term",
+    "specify",
+    "specifies",
+    "background",
+    "stands for",
+    "refer to",
+    "refers to",
+    "designed to",
+    "do with",
+    "known as",
+    "intended",
+    "meant to",
+    "point of",
+    "walk me through",
+    "approaching",
+    "stance",
+    "posture",
+    "bio",
+    "expect",
+    "focuses on",
+    "focus on",
+    "will i learn",
+    "learn from",
+    "description",
+    "describes",
+    "teaches",
+    "covered in",
+    "covered under",
+    "covers",
+    "functionality",
+    "test or do",
+    "can you do",
+    "can i do",
+    "rundown",
+    "exactly",
+    "details",
+    "scope",
+    "encompasses",
+    "included",
+    "inside",
+    "falls within",
+    "all about",
+    "bit about",
+    "involved",
+    "how does",
+    "address",
+    "topics",
+    "information on",
+    "documented",
+    "reported",
+    "identified",
+    "are there",
+    "found",
+    "part of",
+    "what company",
+    "which company",
+    "affect",
+    "affects",
+    "what happened",
+    "happened",
+    "defined",
+    "break down",
+    "deal with",
+    "deals with",
+    "entail",
+    "entails",
+    "outline",
+    "profile",
+    "introduce",
+    "introduction",
+    "tool does",
+    "is used",
+    "tool work",
+    "lets you do",
+    "capabilities",
+    "explore or run",
+    "nature of",
+    "what threat",
+    "encompass",
+    "falls under",
+    "who is he",
+    "who is she",
+    "explanation",
+    "what he is",
+    "what she is",
+    "known for",
+    "what the",
+    "topic",
+    "themes",
+    "subjects",
+    "the acronym",
+    "invention",
+    "figure out",
+    "position",
+    "stand on",
+    "policy",
+    "approach",
+    "view",
+    "positioned",
+    "regarding",
+    "gist",
+    "talk about",
+    "subject matter",
+    "use case for",
+    "problem does",
+    "solve",
+    "perform",
+    "specific task",
+    "who are they",
+    "what exactly is",
+    "in this context",
+    "plain english",
+    "role does",
+    "play",
+    "kind of algorithm",
+    "kind of risk",
+    "the term",
+    "represents",
+    "accomplishes",
+    "involves",
+    "consist of",
+    "consists of",
+    "happens",
+    "encompassed",
+    "fall within",
+    "falls into",
+    "coverage",
+    "domains",
+    "what can",
+    "tool do",
+    "what do you do",
+    "what do you learn",
+    "have been published",
+    "exist",
+    "i will learn",
+    "learn in"
+   ]
+  },
+  "fields": {
+   "initial_publication_date": [
+    "published",
+    "publication",
+    "come out",
+    "came out",
+    "released",
+    "release date",
+    "issued"
+   ],
+   "authors_or_organization": [
+    "author",
+    "authors",
+    "wrote",
+    "written",
+    "published by",
+    "publisher",
+    "published",
+    "organisation",
+    "organization",
+    "body",
+    "released",
+    "behind the publication",
+    "put out"
+   ],
+   "deadline": [
+    "deadline",
+    "by when",
+    "due date",
+    "comply by",
+    "must be met",
+    "by what date",
+    "what date",
+    "target date",
+    "cutoff date",
+    "cutoff",
+    "compliance date",
+    "target pqc date",
+    "by when",
+    "need to satisfy",
+    "must organizations meet",
+    "pqc timeline",
+    "to be completed",
+    "completed",
+    "due"
+   ],
+   "enforcement_body": [
+    "enforce",
+    "enforces",
+    "enforcing",
+    "enforced",
+    "enforcement",
+    "enforcer",
+    "regulator",
+    "in charge",
+    "responsible",
+    "oversees",
+    "oversee",
+    "oversees compliance"
+   ],
+   "requires_pqc": [
+    "require",
+    "requires",
+    "required",
+    "mandatory",
+    "mandate",
+    "mandates",
+    "requirement",
+    "pqc requirement",
+    "mandated",
+    "compulsory",
+    "obligatory",
+    "have to implement",
+    "have to adopt",
+    "need to adopt",
+    "must adopt",
+    "required to adopt",
+    "pqc mandate",
+    "a pqc mandate"
+   ],
+   "StartYear": [
+    "year",
+    "start",
+    "starts",
+    "begin",
+    "begins",
+    "began",
+    "when",
+    "kick off",
+    "kick",
+    "starting date",
+    "start date",
+    "beginning date",
+    "gets underway",
+    "underway"
+   ],
+   "OrgName": [
+    "organisation",
+    "organization",
+    "behind",
+    "issued by",
+    "issued",
+    "issuer",
+    "runs",
+    "responsible",
+    "entity",
+    "leading",
+    "leads",
+    "published",
+    "publishes",
+    "released",
+    "releases"
+   ],
+   "pqc_support": [
+    "support",
+    "supports",
+    "quantum-safe",
+    "quantum safe",
+    "post-quantum support",
+    "supported",
+    "compatible"
+   ],
+   "fips_validated": [
+    "fips",
+    "fips validation",
+    "validation"
+   ],
+   "latest_version": [
+    "version",
+    "release",
+    "most recent",
+    "recent",
+    "newest",
+    "latest"
+   ],
+   "public_key_bytes": [
+    "public key"
+   ],
+   "private_key_bytes": [
+    "private key"
+   ],
+   "signature_ciphertext_bytes": [
+    "signature",
+    "ciphertext"
+   ],
+   "nist_security_level": [
+    "security level",
+    "nist level",
+    "nist levels",
+    "security category",
+    "how strong",
+    "security strength",
+    "security rating",
+    "nist security rating"
+   ],
+   "fips_standard": [
+    "standard",
+    "specifies",
+    "specified",
+    "standardised",
+    "standardized",
+    "specification",
+    "defines",
+    "under which"
+   ],
+   "authority": [
+    "authority",
+    "agency",
+    "in charge",
+    "leads",
+    "regulator",
+    "leading",
+    "oversees",
+    "oversee",
+    "leads",
+    "in charge of",
+    "spearheads",
+    "directs",
+    "official body",
+    "body",
+    "heads",
+    "serves as the lead",
+    "lead post-quantum"
+   ],
+   "region": [
+    "region",
+    "part of the world",
+    "continent",
+    "grouped regionally",
+    "regionally"
+   ],
+   "migration_status": [
+    "migration status",
+    "migration",
+    "how far",
+    "where does",
+    "stand",
+    "how far along",
+    "far along",
+    "where are we",
+    "progress",
+    "stage",
+    "transition status",
+    "reached",
+    "progressed",
+    "migrating"
+   ],
+   "hq_country": [
+    "location",
+    "headquartered",
+    "headquarters",
+    "based",
+    "head office",
+    "country",
+    "located",
+    "offices",
+    "hq",
+    "city",
+    "main offices"
+   ],
+   "Organization": [
+    "work",
+    "works",
+    "employer",
+    "employs",
+    "organisation",
+    "organization",
+    "with",
+    "workplace",
+    "affiliated",
+    "affiliation",
+    "employed",
+    "institution",
+    "working"
+   ],
+   "Role": [
+    "role",
+    "position",
+    "job",
+    "title",
+    "professionally",
+    "for a living",
+    "hold"
+   ],
+   "criticality": [
+    "critical",
+    "criticality",
+    "severe",
+    "severity",
+    "serious",
+    "rating",
+    "how bad",
+    "how big of a risk",
+    "how dangerous"
+   ],
+   "pqc_replacement": [
+    "replacement",
+    "replace",
+    "replaces",
+    "pqc replacement",
+    "takes over",
+    "take over",
+    "successor",
+    "swap",
+    "substitute",
+    "alternative",
+    "migrate to",
+    "switch to",
+    "move to",
+    "adopt instead",
+    "migration target",
+    "instead of",
+    "takes the place",
+    "take the place"
+   ],
+   "playground_label": [
+    "playground",
+    "which playground",
+    "find the lesson",
+    "hosted",
+    "go to take",
+    "can i take",
+    "take the",
+    "features"
+   ],
+   "migration_priority": [
+    "migration priority",
+    "priority",
+    "urgent",
+    "urgency",
+    "how soon",
+    "soon",
+    "move to pqc",
+    "move",
+    "prioritized",
+    "prioritised"
+   ],
+   "retention_years": [
+    "retention",
+    "retained",
+    "kept",
+    "keep",
+    "keep data",
+    "how long",
+    "retention period",
+    "period",
+    "duration",
+    "retention duration"
+   ],
+   "assignee": [
+    "owner",
+    "owns",
+    "owned",
+    "assignee",
+    "holds",
+    "holder",
+    "rights",
+    "company",
+    "assigned to",
+    "whose"
+   ],
+   "priority_date": [
+    "priority date",
+    "first filed",
+    "filed",
+    "earliest",
+    "priority start",
+    "priority"
+   ],
+   "trust_tier": [
+    "trust tier",
+    "tier",
+    "trusted",
+    "trust",
+    "ranked"
+   ],
+   "source_type": [
+    "type of source",
+    "kind",
+    "classified",
+    "classification"
+   ],
+   "Source_Type": [
+    "source type",
+    "source category",
+    "category",
+    "classify",
+    "classified",
+    "as a source",
+    "kind of organisation",
+    "kind of organization",
+    "type of organisation",
+    "type of organization",
+    "category of source",
+    "type of source"
+   ],
+   "standards_body": [
+    "publishes",
+    "publisher",
+    "body",
+    "behind",
+    "owns",
+    "publishing",
+    "publish",
+    "issued",
+    "issues",
+    "issuer",
+    "put out",
+    "releases",
+    "publisher"
+   ],
+   "pqc_readiness": [
+    "ready",
+    "readiness",
+    "prepared",
+    "readiness",
+    "pqc readiness",
+    "pqc-ready",
+    "pqc ready"
+   ],
+   "goal": [
+    "goal",
+    "aim",
+    "objective",
+    "task",
+    "ask me to do",
+    "purpose",
+    "accomplish",
+    "trying to",
+    "achieve",
+    "supposed to",
+    "sets out",
+    "set out",
+    "outcome",
+    "aiming for"
+   ],
+   "hybridKem": [
+    "hybrid kem",
+    "hybrid key exchange",
+    "hybrid post-quantum key exchange",
+    "hybrid pqc key exchange",
+    "hybrid key",
+    "hybrid",
+    "hybrid key encapsulation",
+    "hybrid key encapsulation mechanism"
+   ],
+   "deployment_model": [
+    "deploy",
+    "deployed",
+    "deployment",
+    "saas",
+    "hosted",
+    "offered as",
+    "options"
+   ],
+   "certifications": [
+    "certification",
+    "certifications",
+    "certificate",
+    "certificates",
+    "certified"
+   ],
+   "algorithms_available": [
+    "pqc algorithms",
+    "algorithms",
+    "mechanisms",
+    "post-quantum mechanisms",
+    "safe algorithms",
+    "cryptographic algorithms",
+    "resistant algorithms",
+    "which algorithms",
+    "what algorithms",
+    "algorithms does",
+    "algorithms are",
+    "offers",
+    "offer"
+   ],
+   "partners": [
+    "partner",
+    "partners",
+    "partner with",
+    "works with",
+    "work with",
+    "partnered",
+    "partnering",
+    "collaborating",
+    "collaborate",
+    "collaborators",
+    "working together",
+    "together",
+    "collaborated"
+   ],
+   "products": [
+    "products",
+    "product",
+    "software",
+    "tools",
+    "implement",
+    "implements",
+    "implemented",
+    "implementing",
+    "implementation",
+    "ship",
+    "ships",
+    "adopted",
+    "adopt",
+    "built in",
+    "using",
+    "use",
+    "supports",
+    "support",
+    "include",
+    "includes"
+   ],
+   "roadmap": [
+    "roadmap",
+    "pqc roadmap",
+    "roadmap of",
+    "migration roadmap",
+    "quantum roadmap"
+   ],
+   "market_size": [
+    "market size",
+    "market",
+    "economic size",
+    "value added",
+    "how big",
+    "worth",
+    "valuation",
+    "estimated size",
+    "market valuation"
+   ],
+   "Deprecation_Date_Label": [
+    "deprecated",
+    "deprecation",
+    "retired",
+    "retire",
+    "phased out",
+    "phase out",
+    "sunset",
+    "scheduled",
+    "no longer be recommended",
+    "no longer recommended",
+    "deprecating",
+    "cutoff date",
+    "stop being approved",
+    "no longer approved",
+    "stop being"
+   ],
+   "Standardization_Date_Label": [
+    "standardised",
+    "standardized",
+    "standardisation",
+    "standardization"
+   ],
+   "collection_label": [
+    "collection",
+    "collections",
+    "group",
+    "grouped",
+    "belong",
+    "belongs",
+    "among",
+    "located",
+    "placed",
+    "sits"
+   ],
+   "maturity_level": [
+    "maturity level",
+    "level",
+    "mature",
+    "maturity"
+   ]
+  },
+  "define_prefers": {
+   "will i learn": [
+    "module"
+   ],
+   "learn in": [
+    "module"
+   ],
+   "what is covered in": [
+    "module"
+   ]
+  },
+  "same_fact_fields": [
+   [
+    "source_type",
+    "Source_Type"
+   ]
+  ],
+  "tie_ok": [
+   [
+    "pqc_support",
+    "algorithms_available"
+   ]
+  ],
+  "define_yields": [
+   "business_tools_content",
+   "source"
+  ],
+  "use_cues": [
+   "how do i use",
+   "how to use",
+   "how can i use",
+   "how should i use",
+   "when should i use",
+   "when to use",
+   "what can i do with",
+   "what can you do with",
+   "what can i use",
+   "how would someone use",
+   "why would i use",
+   "tool used",
+   "how is the",
+   "why would someone use",
+   "why i should use",
+   "why should i use",
+   "what i can use",
+   "what would i use"
+  ],
+  "define_over_unheld": [
+   "stand on",
+   "position",
+   "policy position",
+   "stand regarding",
+   "regarding",
+   "supposed to mean",
+   "supposed to be used",
+   "stand when it comes"
+  ],
+  "urgency_fields": [
+   "migration_priority"
+  ],
+  "who_fields": [
+   "authors_or_organization",
+   "enforcement_body",
+   "OrgName",
+   "Organization",
+   "standards_body",
+   "assignee"
+  ],
+  "links": {
+   "reverse": [
+    {
+     "named": "workrole",
+     "relation": "prepares_for",
+     "answer": "module",
+     "cues": [
+      "work role",
+      "nice",
+      "job role",
+      "prepare",
+      "prepares",
+      "preparing",
+      "train",
+      "trains",
+      "training",
+      "ready",
+      "tailored",
+      "geared",
+      "aligned",
+      "skills",
+      "designed",
+      "modules",
+      "courses",
+      "mapped",
+      "align",
+      "aligns",
+      "coursework"
+     ]
+    },
+    {
+     "named": "persona",
+     "relation": "suited_to",
+     "answer": "tool",
+     "cues": [
+      "tool",
+      "tools",
+      "good fit",
+      "best suited",
+      "matched",
+      "appropriate",
+      "well-suited",
+      "well suited"
+     ]
+    },
+    {
+     "named": "persona",
+     "relation": "essential_for",
+     "answer": "module",
+     "cues": [
+      "essential",
+      "essentials",
+      "core",
+      "must-take",
+      "must take",
+      "must-have",
+      "must have",
+      "must-haves",
+      "must haves",
+      "must-do",
+      "must do"
+     ]
+    },
+    {
+     "named": "persona",
+     "relation": "on_path_of",
+     "answer": "module",
+     "cues": [
+      "path",
+      "module",
+      "modules",
+      "recommended",
+      "study",
+      "curriculum"
+     ]
+    },
+    {
+     "named": "industry",
+     "relation": "in_industry",
+     "answer": "usecase",
+     "cues": [
+      "use case",
+      "use cases",
+      "usecase",
+      "usecases"
+     ]
+    },
+    {
+     "named": "industry",
+     "relation": "in_industry",
+     "answer": "standard_row",
+     "cues": [
+      "standard",
+      "standards",
+      "specification",
+      "specifications"
+     ]
+    }
+   ],
+   "forward": [
+    {
+     "named": "module",
+     "relation": "on_path_of",
+     "cues": [
+      "which persona",
+      "which personas",
+      "which roles",
+      "which role",
+      "what roles",
+      "for whom",
+      "personas",
+      "recommended for",
+      "meant for",
+      "intended for",
+      "aimed at",
+      "who should take",
+      "who should study",
+      "who is the",
+      "target roles",
+      "specific roles",
+      "who should go through",
+      "best suited for",
+      "roles should",
+      "which audience",
+      "target audience",
+      "roles recommended",
+      "designed for"
+     ]
+    },
+    {
+     "named": "tool",
+     "relation": "suited_to",
+     "cues": [
+      "which persona",
+      "which personas",
+      "which roles",
+      "which role",
+      "what roles",
+      "for whom",
+      "personas"
+     ]
+    },
+    {
+     "named": "step",
+     "relation": "part_of",
+     "cues": [
+      "which module",
+      "what module",
+      "part of",
+      "belongs to",
+      "belong",
+      "located in",
+      "module that",
+      "module containing",
+      "module for",
+      "learning module",
+      "name of the module",
+      "step belongs",
+      "where the",
+      "where do i find",
+      "where can i find",
+      "where is the",
+      "is it under"
+     ]
+    },
+    {
+     "named": "step",
+     "relation": "open_to",
+     "cues": [
+      "who can open",
+      "open to",
+      "restricted"
+     ]
+    },
+    {
+     "named": "industry",
+     "relation": "in_sector",
+     "cues": [
+      "which sector",
+      "what sector",
+      "which sectors",
+      "what sectors",
+      "sector code",
+      "sector codes",
+      "in which sector",
+      "broader sector",
+      "sector includes",
+      "the sector for",
+      "sector classification",
+      "sector that"
+     ]
+    },
+    {
+     "named": "usecase",
+     "relation": "governed_by",
+     "cues": [
+      "standard",
+      "standards",
+      "specification",
+      "specifications",
+      "govern",
+      "governs",
+      "regulating"
+     ]
+    },
+    {
+     "named": "usecase",
+     "relation": "practised_with",
+     "cues": [
+      "tool",
+      "tools",
+      "practise",
+      "practice"
+     ]
+    },
+    {
+     "named": "usecase",
+     "relation": "example_product",
+     "cues": [
+      "product",
+      "products"
+     ]
+    },
+    {
+     "named": "usecase",
+     "relation": "in_industry",
+     "cues": [
+      "industry"
+     ]
+    },
+    {
+     "named": "industrystandard",
+     "relation": "applies_to",
+     "cues": [
+      "use case",
+      "use cases"
+     ]
+    },
+    {
+     "named": "standard",
+     "relation": "implements",
+     "cues": [
+      "parameter sets",
+      "parameter set",
+      "param sets",
+      "variants",
+      "which variants"
+     ]
+    }
+   ]
+  },
+  "topic_words": [
+   "post-quantum cryptography",
+   "post quantum cryptography",
+   "post-quantum",
+   "post quantum",
+   "pqc",
+   "quantum-safe",
+   "quantum safe",
+   "quantum-resistant",
+   "quantum resistant",
+   "cryptography"
+  ]
+ },
+ "typewords": {
+  "business tool": [
+   "tool"
+  ],
+  "assessment": [
+   "assessment"
+  ],
+  "workshop step": [
+   "step"
+  ],
+  "step": [
+   "step"
+  ],
+  "module": [
+   "module"
+  ],
+  "lesson": [
+   "lesson",
+   "module",
+   "section"
+  ],
+  "section": [
+   "section"
+  ],
+  "patent": [
+   "patent"
+  ],
+  "threat": [
+   "threat"
+  ],
+  "country": [
+   "country"
+  ],
+  "vendor": [
+   "vendor"
+  ],
+  "mission": [
+   "mission"
+  ],
+  "protocol": [
+   "protocol"
+  ],
+  "tool": [
+   "tool"
+  ],
+  "standard": [
+   "document",
+   "framework",
+   "guidance",
+   "standard"
+  ],
+  "algorithm": [
+   "algorithm",
+   "transition"
+  ],
+  "role board": [
+   "roleboard"
+  ],
+  "board": [
+   "roleboard"
+  ],
+  "use case": [
+   "usecase"
+  ],
+  "sector": [
+   "sector"
+  ]
+ },
+ "words": {
+  "stop": [
+   "a",
+   "about",
+   "an",
+   "and",
+   "are",
+   "as",
+   "at",
+   "be",
+   "by",
+   "can",
+   "could",
+   "did",
+   "do",
+   "does",
+   "for",
+   "from",
+   "how",
+   "i",
+   "if",
+   "in",
+   "into",
+   "is",
+   "it",
+   "its",
+   "me",
+   "my",
+   "no",
+   "not",
+   "of",
+   "on",
+   "or",
+   "should",
+   "so",
+   "than",
+   "that",
+   "the",
+   "their",
+   "then",
+   "there",
+   "these",
+   "this",
+   "those",
+   "to",
+   "was",
+   "were",
+   "what",
+   "when",
+   "where",
+   "which",
+   "who",
+   "why",
+   "with",
+   "would",
+   "yes",
+   "you",
+   "your"
+  ],
+  "filler": [
+   "according",
+   "across",
+   "actually",
+   "addressed",
+   "aimed",
+   "aiming",
+   "aligned",
+   "along",
+   "am",
+   "any",
+   "anyone",
+   "anyway",
+   "applicable",
+   "apply",
+   "approaching",
+   "area",
+   "areas",
+   "aspiring",
+   "assigned",
+   "associated",
+   "audience",
+   "available",
+   "aware",
+   "background",
+   "become",
+   "becoming",
+   "been",
+   "being",
+   "belongs",
+   "benefit",
+   "big",
+   "bit",
+   "break",
+   "brief",
+   "briefly",
+   "build",
+   "built",
+   "called",
+   "capabilities",
+   "categorised",
+   "categorized",
+   "check",
+   "clarify",
+   "classified",
+   "classify",
+   "comes",
+   "commercial",
+   "companies",
+   "complete",
+   "concept",
+   "confirm",
+   "consider",
+   "considered",
+   "containing",
+   "contains",
+   "content",
+   "contents",
+   "context",
+   "control",
+   "could",
+   "cover",
+   "covered",
+   "covers",
+   "cryptographic",
+   "current",
+   "currently",
+   "curriculum",
+   "cybersecurity",
+   "deployments",
+   "describe",
+   "described",
+   "description",
+   "designed",
+   "detail",
+   "details",
+   "developers",
+   "discussed",
+   "do",
+   "documents",
+   "does",
+   "domain",
+   "down",
+   "each",
+   "efforts",
+   "english",
+   "entail",
+   "entails",
+   "entities",
+   "enumerate",
+   "established",
+   "establishes",
+   "estimated",
+   "every",
+   "exist",
+   "existing",
+   "exists",
+   "explain",
+   "explains",
+   "explanation",
+   "explore",
+   "fall",
+   "falls",
+   "familiar",
+   "far",
+   "field",
+   "figure",
+   "find",
+   "fit",
+   "follow",
+   "following",
+   "foundational",
+   "function",
+   "geared",
+   "get",
+   "give",
+   "given",
+   "got",
+   "governing",
+   "groups",
+   "has",
+   "have",
+   "he",
+   "held",
+   "help",
+   "helps",
+   "her",
+   "here",
+   "hey",
+   "his",
+   "home",
+   "hosted",
+   "hub",
+   "identify",
+   "implement",
+   "include",
+   "includes",
+   "including",
+   "industries",
+   "info",
+   "information",
+   "initiatives",
+   "inside",
+   "institutions",
+   "introduce",
+   "introduction",
+   "invention",
+   "involve",
+   "involved",
+   "just",
+   "key",
+   "kind",
+   "kinds",
+   "know",
+   "known",
+   "large",
+   "learners",
+   "let",
+   "lets",
+   "like",
+   "list",
+   "listed",
+   "little",
+   "locate",
+   "located",
+   "look",
+   "looking",
+   "main",
+   "make",
+   "many",
+   "material",
+   "materials",
+   "me",
+   "mean",
+   "means",
+   "meant",
+   "meet",
+   "mentioned",
+   "miss",
+   "most",
+   "much",
+   "name",
+   "nature",
+   "need",
+   "needed",
+   "newer",
+   "not",
+   "notable",
+   "now",
+   "offerings",
+   "open",
+   "organizations",
+   "other",
+   "our",
+   "outline",
+   "overall",
+   "overview",
+   "page",
+   "part",
+   "particular",
+   "plain",
+   "please",
+   "posture",
+   "primary",
+   "prioritize",
+   "profile",
+   "provide",
+   "publications",
+   "purpose",
+   "quick",
+   "ranked",
+   "real",
+   "received",
+   "recommend",
+   "regulate",
+   "regulates",
+   "relevant",
+   "represent",
+   "researchers",
+   "right",
+   "run",
+   "rundown",
+   "satisfy",
+   "seen",
+   "sense",
+   "set",
+   "setup",
+   "share",
+   "she",
+   "short",
+   "shouldn",
+   "show",
+   "simple",
+   "site",
+   "site's",
+   "size",
+   "some",
+   "someone",
+   "sort",
+   "source",
+   "space",
+   "specific",
+   "stance",
+   "stands",
+   "state",
+   "status",
+   "studying",
+   "subject",
+   "subjects",
+   "suggest",
+   "summarise",
+   "summarize",
+   "summary",
+   "tailored",
+   "take",
+   "taken",
+   "taking",
+   "target",
+   "team",
+   "teams",
+   "technical",
+   "technology",
+   "tell",
+   "terms",
+   "theme",
+   "themes",
+   "they",
+   "through",
+   "tie",
+   "titled",
+   "topic",
+   "total",
+   "toward",
+   "towards",
+   "track",
+   "tracked",
+   "tracks",
+   "trying",
+   "type",
+   "types",
+   "typically",
+   "under",
+   "understand",
+   "up",
+   "us",
+   "used",
+   "user",
+   "users",
+   "ve",
+   "verify",
+   "walk",
+   "want",
+   "watch",
+   "ways",
+   "we",
+   "website",
+   "whether",
+   "working",
+   "would",
+   "yet",
+   "you"
+  ]
+ }
+}

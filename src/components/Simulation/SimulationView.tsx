@@ -251,7 +251,7 @@ import { QuizGateModal } from './QuizGateModal'
 import toast from 'react-hot-toast'
 import { pickQuizQuestion, gateCoverageFor } from '@/simulation/quizSelection'
 import type { QuizQuestion } from '@/components/PKILearning/modules/Quiz/types'
-import pqctodayLogo from '@/assets/pqctoday-logo.png'
+import { BrandLogo } from '@/components/brand/BrandLogo'
 
 // ---- option lists (from real hub data) ----------------------------------
 const SIZE_HINTS: Record<string, string> = {
@@ -2234,11 +2234,7 @@ export function SimulationView() {
               that pushed the framework-attribution link off the right edge of a
               390px viewport with no way to scroll to it. */}
           <div className="flex shrink-0 items-center gap-2 max-md:shrink max-md:min-w-0">
-            <img
-              src={pqctodayLogo}
-              alt="PQC Today"
-              className="h-15 w-15 shrink-0 rounded-md object-contain"
-            />
+            <BrandLogo variant="emblem" size={60} />
             <div className="max-md:min-w-0">
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
               {/* 2026-08-02 — subtitle + framework attribution merged into one line
@@ -3545,11 +3541,7 @@ export function SimulationView() {
           appearing once row 1's content happens to overflow. */}
         <header className="flex shrink-0 flex-wrap items-center gap-3 bg-foreground px-4 py-2 text-background">
           <div className="flex shrink-0 items-center gap-2">
-            <img
-              src={pqctodayLogo}
-              alt="PQC Today"
-              className="h-15 w-15 shrink-0 rounded-md object-contain"
-            />
+            <BrandLogo variant="emblem" size={60} />
             <div>
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
               {/* 2026-08-02 — subtitle + framework attribution merged into one line

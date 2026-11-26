@@ -8,6 +8,8 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
 interface LearnOrderStripProps {
   moduleId: string
+  /** Drop the strip's own top margin, so it can sit inside the one module strip (ModuleFitStrip). */
+  bare?: boolean
 }
 
 /** How many next lessons show before the "+ N more" control. */
@@ -63,14 +65,14 @@ function NextLessons({ moduleId, nextIds }: { moduleId: string; nextIds: string[
   )
 }
 
-export function LearnOrderStrip({ moduleId }: LearnOrderStripProps) {
+export function LearnOrderStrip({ moduleId, bare = false }: LearnOrderStripProps) {
   const order = getLearnOrder(moduleId)
   if (!order) return null
 
   return (
     <nav
       aria-label="Where this fits"
-      className="mt-3 flex min-w-0 flex-col items-start gap-1 text-sm text-muted-foreground"
+      className={`${bare ? '' : 'mt-3 '}flex min-w-0 flex-col items-start gap-1 text-sm text-muted-foreground`}
     >
       <CategoryBadge category="global" label={`Stage ${order.stage} · ${order.stageName}`} />
       {order.takeFirst.length > 0 ? (

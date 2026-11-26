@@ -73,6 +73,10 @@ const SMOKE_SPECS = [
   // Never starts the daemon or loads the strongSwan WASM, so it is a few
   // seconds. The nightly vpn-*.spec.ts specs cover the real handshakes.
   'vpn-sim-ready.spec.ts',
+  // The core of the Assistant drawer (owner decision, 25 Nov 2026): ask and get an answer, save it,
+  // go to its page and come back with a real click, and the old model chat is not reachable. Four short
+  // tests; the whole drawer runs in assistant-drawer.spec.ts in the full suite.
+  'assistant-core.spec.ts',
 ]
 // Deliberately EXCLUDED from smoke (verified slow / load-sensitive — they hit the
 // 45s timeout on a saturated machine, so they'd make the gate flaky): onboarding,
@@ -102,6 +106,15 @@ const MOBILE_SMOKE_EXCLUDE = new Set([
   // Chromium-only by design: it pins a desktop headless-Chromium UA and the
   // live VPN controls are disabled on iOS/WebKit (the spec skips there).
   'vpn-sim-ready.spec.ts',
+  // Desktop drawer (a region beside the page); the phone sheet is covered in assistant-drawer.spec.ts.
+  'assistant-core.spec.ts',
+  // Desktop workbench only: below 1024 px AcvpSuiteWorkbench (useIsBelowLgViewport) shows the
+  // "Compact validation runner" instead, which has no "Cryptographic Validation Workbench" heading
+  // and no `acvp-result-row` table rows, so these two specs cannot pass on a phone. The compact
+  // runner itself was checked by hand at 390 px (WebKit and Chromium): an ML-DSA run on both
+  // engines completes with 516 passed, 0 failed.
+  'acvp-validator.spec.ts',
+  'acvp-mldsa-evidence.spec.ts',
 ])
 // sim-mobile-full-play WS-7: the phone Simulation play-through spec. Added
 // directly to MOBILE_SMOKE_SPECS (not SMOKE_SPECS) so it runs ONLY under

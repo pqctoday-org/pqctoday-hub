@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures/blockAnalytics'
-import { openAssistant, runAssistantQuestion } from './fixtures/runAssistantQuestion'
+import {
+  enableModelAssistantFallback,
+  openModelAssistant,
+  runModelAssistantQuestion,
+} from './fixtures/modelAssistantFallback'
 import { writeFile } from 'node:fs/promises'
 import {
   CURRENT_CORPUS_GOLDEN_QUESTIONS,
@@ -57,7 +61,7 @@ function seededChatState(model: string) {
 
 async function runQuestion(page: Page, question: CurrentCorpusGoldenQuestion) {
   const startedAt = Date.now()
-  const { answer, error } = await runAssistantQuestion(page, question.query, 10 * 60_000)
+  const { answer, error } = await runModelAssistantQuestion(page, question.query, 10 * 60_000)
   const text = answer?.content ?? ''
   const normalized = text.toLowerCase()
   const matchedTerms = question.answerTerms.filter((term) =>
@@ -89,6 +93,7 @@ test.describe('Qwen 3 vs Qwen 3.5 grounded local-model comparison', () => {
 
   for (const model of SELECTED_MODELS) {
     test(`${model} on the current-corpus golden subset`, async ({ page }, testInfo) => {
+      await enableModelAssistantFallback(page)
       await page.addInitScript(
         ({ storage }) => {
           localStorage.setItem('pqc-chat-storage', storage)
@@ -105,7 +110,7 @@ test.describe('Qwen 3 vs Qwen 3.5 grounded local-model comparison', () => {
       )
 
       await page.goto('/timeline')
-      await openAssistant(page)
+      await openModelAssistant(page)
 
       const results = []
       for (const question of QUESTIONS) results.push(await runQuestion(page, question))

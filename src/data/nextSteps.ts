@@ -3,8 +3,10 @@
  * Round 9, wave 1.2 (2026-09-19) — the declared next step out of every routed
  * item: every module, playground tool, business tool and page.
  *
- * Keyed by route. Rendered as the item's exit by NextStepCard (desktop) and
- * MobileNextStepCard (phone). The chain is module → the tool that practises
+ * Keyed by route. Rendered as the exit of playground tools, business tools and pages by
+ * NextStepCard (desktop) and MobileNextStepCard (phone). Lesson pages do not show it: their
+ * way on is the "Related modules" panel and Your journey. The module entries are kept and still
+ * pinned by nextSteps.test.ts, but no page reads them now. The chain is module → the tool that practises
  * it → the business tool that produces the phase's deliverable → the report;
  * where a link in the chain does not exist the entry points at the next module
  * in the track instead. Entries were generated from the registries

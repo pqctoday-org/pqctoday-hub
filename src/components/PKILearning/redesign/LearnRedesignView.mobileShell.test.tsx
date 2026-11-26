@@ -6,7 +6,6 @@ import { LearnRedesignView } from './LearnRedesignView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_IDS, pathModuleCount } from '@/data/learningPersonas'
 import { MODULE_TRACKS } from '../moduleData'
-import { TOTAL_MODULE_COUNT } from './learnRedesign.helpers'
 
 const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
 vi.mock('@/hooks/useIsMobileShell', () => ({
@@ -27,22 +26,23 @@ function renderLearn(path = '/learn') {
 }
 
 describe('LearnRedesignView — mobile UX layer wiring', () => {
-  it('flag off: renders the desktop redesign — its My Path / Browse all / Guided routing row', () => {
+  it('flag off: renders the desktop redesign — its Your journey / All modules / Recommended order / Guided routing row', () => {
     mockUseIsMobileShell.mockReturnValue(false)
     renderLearn()
-    expect(screen.getAllByText(/Browse all \d+/).length).toBeGreaterThan(0)
+    for (const name of ['Your journey', 'All modules', 'Recommended order', 'Guided routing']) {
+      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+    }
   })
 
-  it('flag on: renders MobileLearnScreen instead — My Path, Browse all and Guided tabs', () => {
+  it('flag on: renders MobileLearnScreen instead — Your journey, All modules, Recommended order and Guided tabs', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderLearn()
-    expect(screen.getByRole('tab', { name: 'My Path' })).toBeInTheDocument()
-    expect(
-      screen.getByRole('tab', { name: `Browse all ${TOTAL_MODULE_COUNT}` })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Your journey' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'All modules' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Recommended order' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Guided' })).toBeInTheDocument()
     // The desktop mode row (pressed buttons) is not on the phone.
-    expect(screen.queryByRole('button', { name: /Browse all \d+/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'All modules' })).not.toBeInTheDocument()
   })
 
   // The chat assistant sends readers to /learn?mode=browse&track=<name>. On a phone these links
@@ -50,7 +50,7 @@ describe('LearnRedesignView — mobile UX layer wiring', () => {
   it('flag on: the assistant’s /learn?mode=browse&track=Protocols link lists only the Protocols modules', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderLearn('/learn?mode=browse&track=Protocols')
-    expect(screen.getByRole('tab', { name: /^Browse all/ })).toHaveAttribute(
+    expect(screen.getByRole('tab', { name: 'All modules' })).toHaveAttribute(
       'aria-selected',
       'true'
     )
@@ -68,7 +68,7 @@ describe('LearnRedesignView — mobile UX layer wiring', () => {
   it('flag on: real persona data flows through to the mobile My Path body', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     usePersonaStore.getState().setPersona('executive')
-    renderLearn()
+    renderLearn('/learn?mode=mypath')
     expect(screen.getByText(/My path · Executive \/ Business Leader/)).toBeInTheDocument()
   })
 })
@@ -76,15 +76,18 @@ describe('LearnRedesignView — mobile UX layer wiring', () => {
 describe('LearnRedesignView — the open quiz and the module count', () => {
   it('labels the always-open quiz a practice quiz, not the capstone', () => {
     usePersonaStore.getState().setPersona('researcher')
-    renderLearn()
+    renderLearn('/learn?mode=mypath')
     expect(screen.getByRole('button', { name: 'Practice quiz' })).toBeInTheDocument()
   })
 
-  it.each(PERSONA_IDS)('%s: My Path states the shared module count (quiz excluded)', (p) => {
-    usePersonaStore.getState().setPersona(p)
-    renderLearn()
-    expect(
-      screen.getAllByText(new RegExp(`· ${pathModuleCount(p)} modules ·`)).length
-    ).toBeGreaterThan(0)
-  })
+  it.each(PERSONA_IDS)(
+    '%s: Recommended order states the shared module count (quiz excluded)',
+    (p) => {
+      usePersonaStore.getState().setPersona(p)
+      renderLearn('/learn?mode=mypath')
+      expect(
+        screen.getAllByText(new RegExp(`· ${pathModuleCount(p)} modules ·`)).length
+      ).toBeGreaterThan(0)
+    }
+  )
 })

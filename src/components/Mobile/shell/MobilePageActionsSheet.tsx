@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import {
   Bot,
   Map,
+  Bookmark,
   HelpCircle,
   BookOpen,
   BookOpenText,
@@ -12,8 +13,6 @@ import {
   Info,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { SourcesModal } from '@/components/ui/SourcesModal'
-import { Glossary } from '@/components/common/Glossary'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { getMobilePageActions, type MobilePageActionId } from './getMobilePageActions'
 import { useMobileWhatsNewStatus } from './mobileWhatsNew'
@@ -23,6 +22,7 @@ import { MobileSheet } from '../primitives/Sheet'
 const ICONS: Record<MobilePageActionId, typeof Bot> = {
   assistant: Bot,
   journey: Map,
+  bookmarks: Bookmark,
   faq: HelpCircle,
   sources: BookOpen,
   glossary: BookOpenText,
@@ -41,10 +41,8 @@ export interface MobilePageActionsSheetProps {
  * bar uses (getMobilePageActions). Omits a disabled row entirely rather
  * than rendering one that does nothing, per the handoff's own rule.
  *
- * Assistant/Journey reuse the existing, already-mobile-responsive RightPanel
- * (w-full below the sm breakpoint) via the same store the desktop top bar's
- * Ask/Journey buttons already write to — no new panel built. Sources and
- * Glossary reuse their real desktop content components directly. FAQ,
+ * Assistant, Bookmarks and FAQ open the drawer's full-screen sheet (RightPanel) through the same
+ * store the desktop top bar writes to; so do Sources and Glossary. Your journey goes to Learn.
  * What's new and About navigate to their real pages.
  *
  * What's new's sub-label ("N since your last visit", handoff: "'What's new'
@@ -59,13 +57,11 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const location = useLocation()
   const navigate = useNavigate()
   const openRightPanel = useRightPanelStore((s) => s.open)
-  const nextPanel = useRef<'chat' | 'history' | null>(null)
-  const [sourcesOpen, setSourcesOpen] = useState(false)
-  const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const nextPanel = useRef<'chat' | 'bookmarks' | 'faq' | 'sources' | 'glossary' | null>(null)
   const { hasUnread, count } = useMobileWhatsNewStatus()
   const markAllSeen = useVersionStore((s) => s.markAllSeen)
 
-  const { actions: rawActions, sourcesViewType } = getMobilePageActions(location.pathname)
+  const { actions: rawActions } = getMobilePageActions(location.pathname)
   const actions = rawActions.map((action) =>
     action.id === 'whatsNew' && hasUnread
       ? { ...action, sub: `${count} since your last visit` }
@@ -84,13 +80,22 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const handleSelect = (id: MobilePageActionId) => {
     switch (id) {
       case 'assistant':
-      case 'journey':
-        nextPanel.current = id === 'assistant' ? 'chat' : 'history'
+        nextPanel.current = 'chat'
+        onClose()
+        return
+      case 'bookmarks':
+        nextPanel.current = 'bookmarks'
         onClose()
         return
       case 'faq':
+        // On the phone the FAQ is a sheet over the page.
+        nextPanel.current = 'faq'
         onClose()
-        navigate('/faq')
+        return
+      case 'journey':
+        // The old Journey tab moved to Learn › Your journey.
+        onClose()
+        navigate('/learn?view=journey')
         return
       case 'whatsNew':
         onClose()
@@ -98,12 +103,12 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
         navigate('/revisions')
         return
       case 'sources':
+        nextPanel.current = 'sources'
         onClose()
-        setSourcesOpen(true)
         return
       case 'glossary':
+        nextPanel.current = 'glossary'
         onClose()
-        setGlossaryOpen(true)
         return
       case 'about':
         onClose()
@@ -141,15 +146,6 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
           })}
         </div>
       </MobileSheet>
-
-      {sourcesViewType && (
-        <SourcesModal
-          isOpen={sourcesOpen}
-          onClose={() => setSourcesOpen(false)}
-          viewType={sourcesViewType}
-        />
-      )}
-      <Glossary isOpen={glossaryOpen} onClose={() => setGlossaryOpen(false)} />
     </>
   )
 }

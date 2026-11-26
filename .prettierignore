@@ -63,6 +63,9 @@ public/compliance/**
 # and the CI verify-attestations gate.
 public/data/rag-corpus.json
 public/data/embeddings-meta.json
+# The two knowledge files are generated and hashed as built — same constraint.
+public/data/knowledge-core.json
+public/data/knowledge-text.json
 
 # OSCAL + CBOM trust-engine artefacts — same constraint as rag-corpus above.
 # scripts/generate-oscal.ts + scripts/generate-cbom.ts emit deterministic
@@ -140,3 +143,8 @@ src/data/pkcs11-v33/composite-sig/testvectors.json
 # The caller and tests remain authored/formatted; rebuild and byte checks guard these outputs.
 public/wasm/lms/
 src/wasm/lmsArtifact.generated.ts
+
+# The Assistant's answer engine and its generated data files are copied as they are written; reformatting would
+# make them differ from the copy they come from.
+src/services/assistant/engine/
+src/services/assistant/data/

@@ -40,16 +40,18 @@ for (const width of [1280, 390]) {
       )
     })
     await page.goto('/business')
-    const journey = page.getByRole('dialog', { name: 'Journey History' })
+    // The belt score, phases and milestones now sit at the top of Learn › Your journey › Role map.
+    const journey = page.getByRole('region', { name: 'Your progress' })
     const openJourney = async () => {
       if (width === 390) {
         await page.getByRole('button', { name: /^More(?: — unread updates)?$/ }).press('Enter')
         await page
           .getByTestId('mobile-page-actions-sheet')
-          .getByRole('button', { name: /^Journey/ })
+          .getByRole('button', { name: /^Your journey/ })
           .press('Enter')
+        await page.getByRole('tab', { name: 'Role map' }).click()
       } else {
-        await page.getByRole('button', { name: 'Open your Journey map' }).press('Enter')
+        await page.goto('/learn?view=journey&jview=role-map')
       }
       await expect(journey).toBeVisible()
     }

@@ -1,0 +1,29 @@
+{
+  "description": "Values of the artifact_type column in the tools file: the main thing a learner can keep from a tool. Blank when produces_artifact is false or not known.",
+  "types": [
+    {
+      "id": "document",
+      "meaning": "A written document the Hub stores for the learner, opened again from the Command Center and My work."
+    },
+    {
+      "id": "certificate",
+      "meaning": "A certificate the learner issues, recorded as a certificate or offered as a PEM download."
+    },
+    {
+      "id": "key",
+      "meaning": "A key the learner generates, recorded as a key."
+    },
+    {
+      "id": "tls-run",
+      "meaning": "A TLS handshake simulation kept in the learner's history."
+    },
+    {
+      "id": "run-record",
+      "meaning": "A run record of the tool (JSON or Markdown) the learner downloads and can store with Save to my evidence."
+    },
+    {
+      "id": "data-file",
+      "meaning": "Any other file the learner downloads (CSV, JSON, PEM, signature, bundle, log, zip), or one complete generated record copied out."
+    }
+  ]
+}

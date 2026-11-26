@@ -125,8 +125,8 @@ describe('the Learning Center guide matches the module inventory', () => {
     }
   })
 
-  it('names the three views of the Learn page', () => {
-    for (const view of ['My Path', 'Browse all', 'Guided routing']) {
+  it('names the four views of the Learn page', () => {
+    for (const view of ['Your journey', 'Recommended order', 'All modules', 'Guided routing']) {
       expect(text).toContain(view)
     }
   })

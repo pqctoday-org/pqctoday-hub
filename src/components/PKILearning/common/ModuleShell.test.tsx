@@ -157,6 +157,62 @@ describe('ModuleShell', () => {
     expect(screen.getByRole('tab', { name: 'Workshop' })).toBeInTheDocument()
   })
 
+  it('says how many workshop steps there are, and marks the "Start here" step (release 5, workshop detail)', () => {
+    const parts = [
+      { id: 's1', title: 'Step 1: One', description: 'd1', icon: FlaskConical },
+      { id: 's2', title: 'Step 2: Two', description: 'd2', icon: FlaskConical },
+    ]
+    window.history.replaceState(null, '', '/?tab=workshop')
+    renderShell(
+      <ModuleShell
+        manifest={{
+          ...base,
+          workshopSteps: [
+            { id: 's1', label: 'One' },
+            { id: 's2', label: 'Two' },
+          ],
+          startHere: { step: 's2', text: 'Start with step two' },
+        }}
+        learn={<div>L</div>}
+        workshopParts={parts}
+        renderWorkshopStep={(i) => <div>STEP BODY {i}</div>}
+      />
+    )
+    expect(screen.getByTestId('workshop-steps-line')).toHaveTextContent(
+      '2 workshop steps. Each one opens here, in the module.'
+    )
+    expect(screen.getByRole('button', { name: /Step 2: Two · Start here/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Step 1: One/ })).not.toHaveTextContent('Start here')
+  })
+
+  it('returns to where the learner started: Your journey or All modules, else the dashboard', () => {
+    const at = (state: unknown) =>
+      render(
+        <EmbedProvider>
+          <MemoryRouter initialEntries={[{ pathname: '/learn/hsm-pqc', state }]}>
+            <ModuleShell manifest={base} learn={<div>L</div>} />
+          </MemoryRouter>
+        </EmbedProvider>
+      )
+    const { unmount: leaveFirst } = at({ journeyOrigin: 'journey' })
+    expect(screen.getByRole('link', { name: /back to your journey/i })).toHaveAttribute(
+      'href',
+      '/learn?mode=journey'
+    )
+    leaveFirst()
+    const { unmount: leaveSecond } = at({ journeyOrigin: 'all-modules' })
+    expect(screen.getByRole('link', { name: /back to all modules/i })).toHaveAttribute(
+      'href',
+      '/learn?mode=browse'
+    )
+    leaveSecond()
+    at(undefined)
+    expect(screen.getByRole('link', { name: /back to dashboard/i })).toHaveAttribute(
+      'href',
+      '/learn'
+    )
+  })
+
   it('passes a nav api to function slots (goToWorkshop switches tab)', () => {
     const parts = [{ id: 's1', title: 'Step 1: One', description: 'd', icon: FlaskConical }]
     renderShell(
@@ -297,44 +353,13 @@ describe('ModuleShell', () => {
     cancel.mockRestore()
   })
 
-  it('shows the sim CTA pointing at the module phase when the persona practices it', () => {
-    // exec practices p0 (Executive Mandate); base.frameworkPhase is 'p0', so the
-    // CTA deep-links straight to that phase (?phase=p0) rather than the generic sim.
-    usePersonaStore.getState().setPersona('executive')
-    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
-    const cta = screen.getByRole('link', { name: /Practice in the Simulation/i })
-    expect(cta).toHaveAttribute('href', '/simulation?phase=p0')
-  })
-
-  it('hides the sim CTA when the active persona does NOT practice the module phase', () => {
-    // architect practices p2/p5/p6 (technical), not p0 — so an exec-mandate
-    // module shows no "Practice" CTA for an architect.
-    usePersonaStore.getState().setPersona('architect')
-    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
-    expect(
-      screen.queryByRole('link', { name: /Practice in the Simulation/i })
-    ).not.toBeInTheDocument()
-  })
-
-  it('shows the sim CTA broadly when no persona is selected (fallback)', () => {
-    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
-    expect(screen.getByRole('link', { name: /Practice in the Simulation/i })).toBeInTheDocument()
-  })
-
-  it('hides the sim CTA when the module is embedded in the sim (no loop-back)', () => {
-    usePersonaStore.getState().setPersona('executive')
-    render(
-      <EmbedProvider>
-        <MemoryRouter>
-          <EmbeddedLearnProvider>
-            <ModuleShell manifest={base} learn={<div>L</div>} />
-          </EmbeddedLearnProvider>
-        </MemoryRouter>
-      </EmbedProvider>
-    )
-    expect(
-      screen.queryByRole('link', { name: /Practice in the Simulation/i })
-    ).not.toBeInTheDocument()
+  it('shows no "Practice in the Simulation" button, for any role or none', () => {
+    for (const persona of ['executive', 'architect', 'developer', null] as const) {
+      usePersonaStore.getState().setPersona(persona)
+      const { unmount } = renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
+      expect(screen.queryByRole('link', { name: /Simulation/i })).not.toBeInTheDocument()
+      unmount()
+    }
   })
 
   it('routes mapped custody modules to the digital-assets quiz category on completion', () => {

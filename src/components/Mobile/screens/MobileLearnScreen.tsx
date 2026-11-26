@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
-import { TOTAL_MODULE_COUNT } from '@/components/PKILearning/redesign/learnRedesign.helpers'
 import { MobileMyPathView } from './MobileMyPathView'
 import { MobileBrowseAllView } from './MobileBrowseAllView'
 import { MobileGuidedRoutingView } from './MobileGuidedRoutingView'
+import { YourJourneyView } from '@/components/Journey/YourJourneyView'
+import { FirstVisitPrompt } from '@/components/Journey/FirstVisitPrompt'
+import { isFirstVisit } from '@/hooks/useJourney'
 import { MobileRoleSelection } from '../shell/MobileRoleSelection'
 import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
 
@@ -30,23 +32,32 @@ import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
  * Still on the desktop site only, by decision: the workforce (NICE) view and the algorithm and
  * standard filters. A role is not needed for Browse all or Guided; My Path asks for one.
  */
-type LearnMode = 'mypath' | 'browse' | 'guided'
+type LearnMode = 'journey' | 'browse' | 'mypath' | 'guided'
 
-const MODES: readonly LearnMode[] = ['mypath', 'browse', 'guided']
+const MODES: readonly LearnMode[] = ['journey', 'browse', 'mypath', 'guided']
 
 /**
  * The view a link asks for. A valid `mode` wins. Without one, the desktop's workforce link
  * (`?view=nice`) opens Browse all, the catalogue it sits in on the phone; anything else opens
  * My Path, as before.
  */
-function modeOf(raw: string | null, niceLink: boolean, facetLink = false): LearnMode {
+function modeOf(
+  raw: string | null,
+  niceLink: boolean,
+  facetLink: boolean,
+  journeyLink: boolean,
+  opening: LearnMode
+): LearnMode {
   if ((MODES as readonly string[]).includes(raw ?? '')) return raw as LearnMode
-  return niceLink || facetLink ? 'browse' : 'mypath'
+  if (journeyLink) return 'journey'
+  if (niceLink || facetLink) return 'browse'
+  return opening
 }
 
 const TAB_LABELS: Record<LearnMode, string> = {
-  mypath: 'My Path',
-  browse: `Browse all ${TOTAL_MODULE_COUNT}`,
+  journey: 'Your journey',
+  browse: 'All modules',
+  mypath: 'Recommended order',
   guided: 'Guided',
 }
 
@@ -55,7 +66,16 @@ export function MobileLearnScreen() {
   const [roleSwitchOpen, setRoleSwitchOpen] = useState(false)
   const [params, setParams] = useSearchParams()
   const niceLink = params.get('view') === 'nice'
-  const mode = modeOf(params.get('mode'), niceLink, params.has('stage') || params.has('area'))
+  // Learn opens on Your journey; on a first visit (no role, objective or history) it opens on All
+  // modules. Decided once, so choosing a role on the first screen does not move the learner.
+  const [opening] = useState<LearnMode>(() => (isFirstVisit() ? 'browse' : 'journey'))
+  const mode = modeOf(
+    params.get('mode'),
+    niceLink,
+    params.has('stage') || params.has('area'),
+    params.get('view') === 'journey',
+    opening
+  )
   const baseId = useId()
   const tabRefs = useRef(new Map<LearnMode, HTMLButtonElement>())
   const tabId = (m: LearnMode) => `${baseId}-tab-${m}`
@@ -71,6 +91,14 @@ export function MobileLearnScreen() {
           out.delete('track')
           out.delete('q')
         }
+        // The sub-view, objective and step belong to Your journey alone.
+        if (next !== 'journey') {
+          out.delete('jview')
+          out.delete('objective')
+          out.delete('step')
+          out.delete('new')
+        }
+        if (out.get('view') === 'journey') out.delete('view')
         return out
       },
       { replace: true }
@@ -147,13 +175,19 @@ export function MobileLearnScreen() {
 
       {MODES.map((m) => (
         <div key={m} role="tabpanel" id={panelId(m)} aria-labelledby={tabId(m)} hidden={m !== mode}>
+          {m === mode && m === 'journey' && <YourJourneyView />}
           {m === mode && m === 'mypath' && (
             <MyPathPanel
               selectedPersona={selectedPersona as PersonaId | null}
               onPickRole={() => setRoleSwitchOpen(true)}
             />
           )}
-          {m === mode && m === 'browse' && <MobileBrowseAllView />}
+          {m === mode && m === 'browse' && (
+            <>
+              <FirstVisitPrompt />
+              <MobileBrowseAllView />
+            </>
+          )}
           {m === mode && m === 'guided' && <MobileGuidedRoutingView />}
         </div>
       ))}

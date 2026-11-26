@@ -34,10 +34,9 @@ describe('PKILearning', () => {
     usePersonaStore.setState({ selectedPersona: null, hasSeenPersonaPicker: true })
   })
 
-  // With no persona selected, the redesigned /learn defaults to "My Path" (the
-  // guided cold-start). The full module catalog lives under the "Browse all" tab.
-  const goToBrowse = () =>
-    fireEvent.click(screen.getByRole('button', { name: /browse all \d+ modules/i }))
+  // On a first visit (no role, objective or history) /learn opens on "All modules", the full
+  // catalogue; with a role it opens on "Your journey". Either way the catalogue is one click away.
+  const goToBrowse = () => fireEvent.click(screen.getByRole('button', { name: 'All modules' }))
 
   it('renders the redesigned Learn header and the module catalog', () => {
     renderWithRouter()
@@ -47,7 +46,7 @@ describe('PKILearning', () => {
     // persona row was removed as a duplicate of the top bar's picker. The mode
     // toggle is this page's own chrome, so it's a stabler "landing rendered"
     // signal than a control that happened to live here.
-    expect(screen.getByRole('button', { name: 'My Path' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Your journey' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Guided routing/ })).toBeInTheDocument()
 
     // Switch to Browse to see the catalog cards
@@ -101,7 +100,7 @@ describe('PKILearning', () => {
     fireEvent.click(screen.getByText('Back to Dashboard'))
 
     // See the note above — same substitution, same reason.
-    expect(screen.getByRole('button', { name: 'My Path' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Your journey' })).toBeInTheDocument()
   })
 
   it('does not render its own back link on a catalog module route', async () => {
@@ -131,6 +130,6 @@ describe('PKILearning', () => {
     // The legacy dashboard's view-mode radiogroup (Journey/Stack/Cards/Table) is gone —
     // /learn/legacy now redirects to the redesigned dashboard at /learn.
     expect(screen.queryByRole('radiogroup', { name: /view mode/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /browse all \d+ modules/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'All modules' })).toBeInTheDocument()
   })
 })

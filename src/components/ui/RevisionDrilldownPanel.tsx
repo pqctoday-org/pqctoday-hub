@@ -146,6 +146,11 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
         </time>
       </div>
       <div className="flex flex-wrap items-center gap-2 mt-1 ml-5">
+        {typeof r.authored_by_llm === 'boolean' && (
+          <span className="text-xs text-muted-foreground">
+            {r.authored_by_llm ? 'Drafted with an AI model' : 'Not drafted with an AI model'}
+          </span>
+        )}
         <ChangeTypeBadge type={r.change_type} />
         <BypassChip revision={r} />
         {r.pr_number > 0 ? (

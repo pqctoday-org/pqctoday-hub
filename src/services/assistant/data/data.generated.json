@@ -1,0 +1,2096 @@
+{
+ "filters": {
+  "industries": [
+   {
+    "cues": [
+     "bank",
+     "banks",
+     "banking",
+     "financial",
+     "finance",
+     "insurer",
+     "insurers",
+     "insurance",
+     "fintech",
+     "payments",
+     "payment"
+    ],
+    "match": [
+     "Finance & Insurance",
+     "Finance & Banking",
+     "Payment Card Industry"
+    ]
+   },
+   {
+    "cues": [
+     "hospital",
+     "hospitals",
+     "healthcare",
+     "medical",
+     "pharma",
+     "pharmaceutical",
+     "clinic"
+    ],
+    "match": [
+     "Healthcare",
+     "Healthcare / Pharmaceutical",
+     "Healthcare & Life Sciences"
+    ]
+   },
+   {
+    "cues": [
+     "telecom",
+     "telco",
+     "telcos",
+     "telecommunications",
+     "mobile operator",
+     "5g"
+    ],
+    "match": [
+     "Telecommunications"
+    ]
+   },
+   {
+    "cues": [
+     "government",
+     "defence",
+     "defense",
+     "military",
+     "agency",
+     "agencies",
+     "national security"
+    ],
+    "match": [
+     "Government & Defense"
+    ]
+   },
+   {
+    "cues": [
+     "energy",
+     "utility",
+     "utilities",
+     "grid",
+     "power",
+     "oil",
+     "gas"
+    ],
+    "match": [
+     "Energy & Utilities",
+     "Critical Infrastructure / Energy",
+     "Critical Infrastructure"
+    ]
+   },
+   {
+    "cues": [
+     "automotive",
+     "vehicle",
+     "vehicles",
+     "car",
+     "cars",
+     "carmaker"
+    ],
+    "match": [
+     "Automotive / Connected Vehicles",
+     "Automotive"
+    ]
+   },
+   {
+    "cues": [
+     "retail",
+     "retailer",
+     "ecommerce",
+     "e-commerce",
+     "shop"
+    ],
+    "match": [
+     "Retail & E-Commerce",
+     "Retail Trade"
+    ]
+   },
+   {
+    "cues": [
+     "aviation",
+     "aerospace",
+     "airline",
+     "airlines",
+     "airport"
+    ],
+    "match": [
+     "Aerospace / Aviation",
+     "Aerospace"
+    ]
+   },
+   {
+    "cues": [
+     "crypto",
+     "cryptocurrency",
+     "blockchain",
+     "bitcoin",
+     "ethereum"
+    ],
+    "match": [
+     "Cryptocurrency / Blockchain"
+    ]
+   },
+   {
+    "cues": [
+     "cloud",
+     "datacenter",
+     "datacentre",
+     "data center",
+     "data centre"
+    ],
+    "match": [
+     "Cloud Computing / Data Centers"
+    ]
+   }
+  ],
+  "places": [
+   {
+    "cues": [
+     "eu",
+     "european union",
+     "europe",
+     "european"
+    ],
+    "match": [
+     "EU",
+     "PQC-REGION-EU",
+     "DE",
+     "FR",
+     "NL",
+     "SE",
+     "ES",
+     "PL",
+     "EE",
+     "FI"
+    ]
+   },
+   {
+    "cues": [
+     "us",
+     "usa",
+     "u.s.",
+     "united states",
+     "america",
+     "american",
+     "federal"
+    ],
+    "match": [
+     "US",
+     "PQC-REGION-US"
+    ]
+   },
+   {
+    "cues": [
+     "uk",
+     "u.k.",
+     "britain",
+     "british",
+     "united kingdom"
+    ],
+    "match": [
+     "GB",
+     "UK"
+    ]
+   },
+   {
+    "cues": [
+     "canada",
+     "canadian"
+    ],
+    "match": [
+     "CA"
+    ]
+   },
+   {
+    "cues": [
+     "australia",
+     "australian"
+    ],
+    "match": [
+     "AU"
+    ]
+   },
+   {
+    "cues": [
+     "india",
+     "indian"
+    ],
+    "match": [
+     "IN"
+    ]
+   },
+   {
+    "cues": [
+     "japan",
+     "japanese"
+    ],
+    "match": [
+     "JP"
+    ]
+   },
+   {
+    "cues": [
+     "korea",
+     "korean"
+    ],
+    "match": [
+     "KR"
+    ]
+   },
+   {
+    "cues": [
+     "china",
+     "chinese"
+    ],
+    "match": [
+     "CN"
+    ]
+   },
+   {
+    "cues": [
+     "germany",
+     "german"
+    ],
+    "match": [
+     "DE"
+    ]
+   },
+   {
+    "cues": [
+     "france",
+     "french"
+    ],
+    "match": [
+     "FR"
+    ]
+   },
+   {
+    "cues": [
+     "singapore"
+    ],
+    "match": [
+     "SG"
+    ]
+   },
+   {
+    "cues": [
+     "global",
+     "worldwide",
+     "international"
+    ],
+    "match": [
+     "PQC-REGION-GLOBAL"
+    ]
+   }
+  ],
+  "version": 1
+ },
+ "finders": {
+  "default": {
+   "follow": [],
+   "journey": false,
+   "w": {
+    "link": 1.0,
+    "name": 3.0,
+    "prior": 1.0,
+    "res": 0.6,
+    "text": 1.0,
+    "title": 1.0
+   }
+  },
+  "intents": {
+   "broad": {},
+   "business_tool": {
+    "follow": [
+     {
+      "dir": "inverse",
+      "rel": "suited_to",
+      "w": 0.5
+     }
+    ],
+    "only": {
+     "Tools": [
+      "path:/business",
+      "path:/assess",
+      "path:/report"
+     ]
+    },
+    "prior": {
+     "Tools": {
+      "path:/assess": 0.6,
+      "path:/business": 2.0
+     }
+    }
+   },
+   "compare": {
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "taught_in",
+      "w": 0.8
+     }
+    ]
+   },
+   "concept": {
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "taught_in",
+      "w": 1.0
+     },
+     {
+      "dir": "forward",
+      "rel": "practised_with",
+      "w": 0.8
+     }
+    ],
+    "journey": true,
+    "prior": {
+     "Learn": {
+      "type:module": 0.3
+     },
+     "References": {
+      "type:document": 0.5,
+      "type:standard": 0.8,
+      "type:term": 2.5
+     }
+    }
+   },
+   "currency": {
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "replaced_by",
+      "w": 2.0
+     },
+     {
+      "dir": "inverse",
+      "rel": "replaced_by",
+      "w": 1.0
+     }
+    ],
+    "prior": {
+     "References": {
+      "type:document": 1.0,
+      "type:standard": 1.0
+     }
+    },
+    "w": {
+     "reader": 4.0
+    }
+   },
+   "dates": {
+    "field_bonus": {
+     "requires_pqc": {
+      "expected": 0.6,
+      "guidance": 0.3,
+      "no": -0.6,
+      "yes": 0.6
+     }
+    },
+    "filter": true,
+    "prior": {
+     "Data pages": {
+      "type:event": 1.8,
+      "type:framework": 1.5,
+      "type:guidance": 1.5,
+      "type:transition": 1.0
+     }
+    },
+    "w": {
+     "reader": 4.0
+    }
+   },
+   "fact": {
+    "prior": {
+     "Data pages": {
+      "type:framework": 0.8,
+      "type:guidance": 0.8
+     }
+    },
+    "w": {
+     "reader": 4.0
+    }
+   },
+   "learning": {
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "taught_in",
+      "w": 1.2
+     }
+    ],
+    "journey": true,
+    "prior": {
+     "Learn": {
+      "type:module": 0.3,
+      "type:section": 0.2
+     }
+    }
+   },
+   "list": {
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "cites",
+      "w": 1.0
+     },
+     {
+      "dir": "inverse",
+      "rel": "part_of",
+      "w": 0.6
+     }
+    ],
+    "w": {
+     "reader": 4.0
+    }
+   },
+   "name": {
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "taught_in",
+      "w": 1.5
+     },
+     {
+      "dir": "forward",
+      "rel": "practised_with",
+      "w": 1.5
+     },
+     {
+      "dir": "inverse",
+      "rel": "taught_in",
+      "w": 1.0
+     }
+    ]
+   },
+   "not_fact": {},
+   "people": {
+    "prior": {
+     "Data pages": {
+      "type:person": 2.0,
+      "type:source": 0.8,
+      "type:vendor": 1.0
+     }
+    },
+    "w": {
+     "reader": 4.0
+    }
+   },
+   "planning": {
+    "only": {
+     "Tools": [
+      "path:/business/tools",
+      "path:/assess",
+      "path:/report"
+     ]
+    },
+    "pin": {
+     "Tools": [
+      "/assess",
+      "/report"
+     ]
+    },
+    "prior": {
+     "Tools": {
+      "path:/assess": 1.0,
+      "path:/business": 1.5,
+      "path:/report": 1.0
+     }
+    }
+   },
+   "products": {
+    "prior": {
+     "Data pages": {
+      "type:product": 1.5,
+      "type:vendor": 1.2
+     }
+    },
+    "w": {
+     "reader": 4.0
+    }
+   },
+   "risk": {
+    "journey": false,
+    "prior": {
+     "Data pages": {
+      "type:threat": 1.0
+     },
+     "Learn": {
+      "type:module": 0.4
+     }
+    }
+   },
+   "rules": {
+    "filter": true,
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "cites",
+      "w": 0.8
+     }
+    ],
+    "prior": {
+     "Data pages": {
+      "type:framework": 1.5,
+      "type:guidance": 1.5
+     }
+    },
+    "w": {
+     "reader": 4.0
+    }
+   },
+   "site": {
+    "prior": {
+     "Data pages": {
+      "type:page": 2.0
+     }
+    }
+   },
+   "source_document": {
+    "prior": {
+     "References": {
+      "type:document": 1.5,
+      "type:standard": 1.5
+     }
+    },
+    "w": {
+     "name": 1.2,
+     "reader": 4.0
+    }
+   },
+   "technical_tool": {
+    "follow": [
+     {
+      "dir": "forward",
+      "rel": "practised_with",
+      "w": 1.2
+     }
+    ],
+    "only": {
+     "Tools": [
+      "path:/playground",
+      "path:/openssl",
+      "path:/simulation",
+      "path:/learn"
+     ]
+    },
+    "prior": {
+     "Tools": {
+      "path:/openssl": 1.5,
+      "path:/playground": 2.0,
+      "path:/simulation": 0.8
+     }
+    }
+   }
+  },
+  "learn_after": [
+   "/learn/quiz?category="
+  ],
+  "version": 1
+ },
+ "intents": {
+  "groups": {
+   "D": "Data pages",
+   "L": "Learn",
+   "R": "References",
+   "T": "Tools"
+  },
+  "intents": {
+   "broad": {
+    "about": "a vague request with no topic: tell me something, help, what can you do",
+    "direct": false,
+    "examples": [
+     "Tell me something",
+     "Help",
+     "What can I ask you?"
+    ],
+    "label": "a broad question",
+    "number": 0,
+    "order": "role"
+   },
+   "business_tool": {
+    "about": "wants a planning, estimating, reporting or governance tool for an organisation",
+    "direct": false,
+    "examples": [
+     "Is there a tool to estimate migration cost?",
+     "Do you have a risk register template?",
+     "How can I build a business case?"
+    ],
+    "label": "a business tool",
+    "number": 10,
+    "order": [
+     "T",
+     "L",
+     "R",
+     "D"
+    ]
+   },
+   "compare": {
+    "about": "wants two or more named things compared or told apart",
+    "direct": false,
+    "examples": [
+     "Compare ML-DSA and Falcon.",
+     "ML-KEM vs HQC",
+     "What is the difference between FIPS 203 and FIPS 204?"
+    ],
+    "label": "a comparison",
+    "number": 4,
+    "order": [
+     "D",
+     "L",
+     "T",
+     "R"
+    ]
+   },
+   "concept": {
+    "about": "wants a term, algorithm, standard or idea explained",
+    "direct": false,
+    "examples": [
+     "What is ML-KEM?",
+     "Explain hybrid key exchange.",
+     "What does crypto-agility mean?"
+    ],
+    "label": "a concept",
+    "number": 1,
+    "order": [
+     "R",
+     "L",
+     "D",
+     "T"
+    ]
+   },
+   "currency": {
+    "about": "wants to know whether a document or standard is still current, what replaced it, or the latest version",
+    "direct": true,
+    "examples": [
+     "What replaced RFC 8446?",
+     "Is RFC 5246 obsolete?",
+     "What is the latest version of liboqs?"
+    ],
+    "label": "what is current",
+    "number": 5,
+    "order": [
+     "R",
+     "D",
+     "L",
+     "T"
+    ]
+   },
+   "dates": {
+    "about": "wants several dates, deadlines or a timeline, for a regulator, a region or an industry",
+    "direct": true,
+    "direct_field_rx": "(?i)date|year|deadline|_at$|month|when|timeline|start|phase|period|milestone|effective|label",
+    "examples": [
+     "What are the NIST deadlines?",
+     "Which deadlines apply to banks in the EU?",
+     "PQC milestones by 2030"
+    ],
+    "label": "a fact, a date or a rule",
+    "number": 6,
+    "order": [
+     "D",
+     "R",
+     "L",
+     "T"
+    ]
+   },
+   "fact": {
+    "about": "wants one specific value about one named thing: an owner, a size, a status, a single date",
+    "direct": true,
+    "examples": [
+     "When is the CNSA 2.0 deadline?",
+     "How big is an ML-KEM-768 public key?",
+     "Who enforces DORA?"
+    ],
+    "label": "a fact, a date or a rule",
+    "number": 2,
+    "order": [
+     "D",
+     "R",
+     "L",
+     "T"
+    ]
+   },
+   "learning": {
+    "about": "wants to find lessons or learning material on the site on a topic",
+    "direct": false,
+    "examples": [
+     "Where can I learn about hybrid certificates?",
+     "Is there a module on HSMs?",
+     "Which lesson covers crypto agility?"
+    ],
+    "label": "learning material",
+    "number": 9,
+    "order": "role"
+   },
+   "list": {
+    "about": "wants the members of a kind of thing listed",
+    "direct": false,
+    "examples": [
+     "List quantum-safe signature schemes.",
+     "Which documents does CNSA 2.0 cite?",
+     "What are the workshop steps in PQC 101?"
+    ],
+    "label": "a list",
+    "number": 3,
+    "order": [
+     "D",
+     "L",
+     "R",
+     "T"
+    ]
+   },
+   "name": {
+    "about": "the whole question is the name of one thing",
+    "direct": false,
+    "examples": [
+     "ML-KEM",
+     "FIPS 203",
+     "CNSA 2.0"
+    ],
+    "label": "a name",
+    "number": 0,
+    "order": [
+     "D",
+     "R",
+     "L",
+     "T"
+    ]
+   },
+   "not_fact": {
+    "about": "asks for a prediction, an opinion, personal advice, or something no document can state as fact",
+    "direct": false,
+    "examples": [
+     "Will ML-KEM be broken by 2030?",
+     "Is my company safe from quantum attacks?",
+     "Which algorithm is the best?"
+    ],
+    "label": "a prediction or opinion",
+    "number": 17,
+    "order": "role"
+   },
+   "people": {
+    "about": "wants to know who a person or organisation is, or who leads or works on something",
+    "direct": true,
+    "examples": [
+     "Who is Daniel J. Bernstein?",
+     "Who are the authors of Kyber?",
+     "What is the Post-Quantum Cryptography Coalition?"
+    ],
+    "label": "people or organisations",
+    "number": 15,
+    "one_of_kind": [
+     "person",
+     "vendor",
+     "source"
+    ],
+    "order": [
+     "D",
+     "R",
+     "L",
+     "T"
+    ]
+   },
+   "planning": {
+    "about": "wants to know how an organisation should start, sequence or run its post-quantum migration",
+    "direct": false,
+    "examples": [
+     "How should a bank start its PQC migration?",
+     "What is the first step of a migration roadmap?",
+     "How do we prioritise systems?"
+    ],
+    "label": "planning",
+    "number": 12,
+    "order": [
+     "T",
+     "L",
+     "R",
+     "D"
+    ]
+   },
+   "products": {
+    "about": "wants products, vendors, libraries or hardware that support something",
+    "direct": false,
+    "examples": [
+     "Which HSMs support ML-DSA?",
+     "Which vendors have FIPS validated PQC?",
+     "Does Thales support ML-KEM?"
+    ],
+    "label": "products or vendors",
+    "number": 13,
+    "order": [
+     "D",
+     "L",
+     "R",
+     "T"
+    ]
+   },
+   "risk": {
+    "about": "wants to understand the quantum threat itself: who or what is exposed, how soon, what attackers can do",
+    "direct": false,
+    "examples": [
+     "What is harvest now, decrypt later?",
+     "Which of my encryption is at risk from quantum computers?",
+     "How does Shor's algorithm threaten RSA?"
+    ],
+    "label": "quantum risk",
+    "number": 8,
+    "order": [
+     "L",
+     "R",
+     "D",
+     "T"
+    ]
+   },
+   "rules": {
+    "about": "wants what a regulation, mandate or framework requires or obliges",
+    "direct": true,
+    "examples": [
+     "What does CNSA 2.0 require?",
+     "Is PQC mandatory under DORA?",
+     "What are the PCI DSS crypto requirements?"
+    ],
+    "label": "a fact, a date or a rule",
+    "number": 7,
+    "order": [
+     "D",
+     "R",
+     "L",
+     "T"
+    ]
+   },
+   "site": {
+    "about": "asks about the website: what is new, where a page is, how to use a feature, what the site covers",
+    "direct": false,
+    "examples": [
+     "What's new?",
+     "Go to the timeline.",
+     "How do I switch my role?"
+    ],
+    "label": "the site itself",
+    "number": 16,
+    "order": [
+     "D",
+     "L",
+     "R",
+     "T"
+    ]
+   },
+   "source_document": {
+    "about": "wants to find a specific document, standard text or PDF",
+    "direct": true,
+    "examples": [
+     "Where is the FIPS 203 PDF?",
+     "Link to RFC 9180",
+     "Where can I read the NIST IR 8547 draft?"
+    ],
+    "label": "a source document",
+    "number": 14,
+    "order": [
+     "R",
+     "L",
+     "D",
+     "T"
+    ]
+   },
+   "technical_tool": {
+    "about": "wants to try something hands-on: generate keys, run a handshake, benchmark, inspect a certificate",
+    "direct": false,
+    "examples": [
+     "Where can I try ML-KEM in the browser?",
+     "Can I generate an ML-DSA key pair here?",
+     "Is there a TLS handshake simulator?"
+    ],
+    "label": "a tool",
+    "number": 11,
+    "order": [
+     "T",
+     "L",
+     "R",
+     "D"
+    ]
+   }
+  },
+  "version": 1
+ },
+ "notes": {
+  "answer_text": {
+   "default": "Here is what the Hub holds on this.",
+   "name": "One Hub record matches that name.",
+   "name_several": "Several Hub records match that name. Choose one."
+  },
+  "evidence": "Evidence: {kind}: {title} ({tag}). {revision}. Checked against the record.",
+  "failure": {
+   "data_not_loading": "The Hub could not load the data for this answer.",
+   "held": "Your question is kept in the box below. Nothing was lost. Try again, or keep browsing the Hub."
+  },
+  "note": {
+   "broad": "Broad match: the Hub has no direct answer to this. These are the closest resources.",
+   "direct": "Grouped for {label}: best first, up to 3 per group.",
+   "name": "Matched by name: one Hub record, shown above. Related resources follow, best first, up to 3 per group.",
+   "no_direct": "Grouped for {label}: best first, up to 3 per group. No direct answer: resources only.",
+   "not_fact": "The Hub does not state this as a fact and gives no personal advice or prediction. These are the closest resources."
+  },
+  "source_line": {
+   "direct": "Answer drawn from",
+   "no_direct": "Closest source"
+  },
+  "successor": {
+   "basis": "The records show: {passage}.",
+   "clip": 300,
+   "evidence": "Evidence: {kind}: {title} ({tag}). {revision}. {proof} Checked against the record.",
+   "names": "Both are revisions of one Internet-Draft, as their names show.",
+   "quote": "The source says: “{passage}”",
+   "same": "{old} and {new} are the same document; the Hub lists it as {new}",
+   "same_kinds": [
+    "same-rfc",
+    "same-document"
+   ],
+   "source": "Source: {url}.",
+   "step": "{old} to {new}: ",
+   "value": "{old} was replaced by {new}",
+   "value_next": ", then by {new}"
+  },
+  "version": 1
+ },
+ "roles": {
+  "no_role": [
+   "L",
+   "R",
+   "T",
+   "D"
+  ],
+  "roles": {
+   "architect": {
+    "order": [
+     "L",
+     "T",
+     "R",
+     "D"
+    ]
+   },
+   "cert-engineer": {
+    "order": [
+     "R",
+     "D",
+     "L",
+     "T"
+    ]
+   },
+   "curious": {
+    "order": [
+     "L",
+     "R",
+     "T",
+     "D"
+    ]
+   },
+   "developer": {
+    "order": [
+     "T",
+     "L",
+     "R",
+     "D"
+    ]
+   },
+   "executive": {
+    "order": [
+     "L",
+     "R",
+     "D",
+     "T"
+    ]
+   },
+   "grc": {
+    "order": [
+     "R",
+     "D",
+     "L",
+     "T"
+    ]
+   },
+   "ops": {
+    "order": [
+     "T",
+     "D",
+     "L",
+     "R"
+    ]
+   },
+   "researcher": {
+    "order": [
+     "R",
+     "L",
+     "D",
+     "T"
+    ]
+   }
+  },
+  "version": 1
+ },
+ "rows": {
+  "action_by_group": {
+   "Data pages": "Go to page",
+   "Learn": "Go to module",
+   "References": "Open reference",
+   "Tools": "Try it here"
+  },
+  "action_by_type": {
+   "page": "Go to page",
+   "quizcategory": "Open quiz",
+   "section": "Go to section",
+   "step": "Open workshop step",
+   "term": "Read here"
+  },
+  "kind_chip": {
+   "algorithm": "Algorithm",
+   "algorithmfamily": "Algorithm",
+   "assessment": "Assessment",
+   "country": "Jurisdiction",
+   "document": "Library document",
+   "event": "Timeline event",
+   "framework": "Compliance framework",
+   "guidance": "Compliance framework",
+   "implattack": "Implementation attack",
+   "industry": "Industry",
+   "industrystandard": "Industry standard",
+   "lesson": "Playground lesson",
+   "mission": "Simulation mission",
+   "module": "Module",
+   "page": "Page",
+   "patent": "Patent",
+   "path": "Role path",
+   "person": "Leader",
+   "persona": "Role",
+   "playground": "Playground",
+   "product": "Product",
+   "protocol": "Protocol",
+   "quizcategory": "Quiz category",
+   "requirement": "Governance requirement",
+   "roleboard": "Role board",
+   "section": "Section",
+   "sector": "Sector",
+   "source": "Trusted source",
+   "standard": "Library document",
+   "step": "Workshop step",
+   "term": "Glossary term",
+   "threat": "Threat",
+   "tool": "Tool",
+   "toolitem": "Business tool guide",
+   "transition": "Algorithm transition",
+   "usecase": "Industry use case",
+   "vendor": "Vendor",
+   "workrole": "Work role"
+  },
+  "library_origin": [
+   {
+    "match": "NIST",
+    "origin": "NIST standard"
+   },
+   {
+    "match": "IETF",
+    "origin": "IETF document"
+   },
+   {
+    "match": "Internet Engineering Task Force",
+    "origin": "IETF document"
+   },
+   {
+    "match": "NSA",
+    "origin": "NSA requirement"
+   },
+   {
+    "match": "ETSI",
+    "origin": "ETSI standard"
+   },
+   {
+    "match": "ISO",
+    "origin": "ISO standard"
+   },
+   {
+    "match": "European",
+    "origin": "EU document"
+   }
+  ],
+  "paid_standard_origins": [],
+  "source_by_family": {
+   "algorithm": "Hub algorithm catalogue",
+   "algorithms_transitions": "Hub algorithm catalogue",
+   "business_tools_content": "Hub business tools",
+   "compliance": "Hub compliance records",
+   "glossary": "Hub glossary",
+   "leader": "Hub leaders",
+   "lesson": "Hub tools",
+   "library": "Hub library",
+   "module": "Hub curriculum",
+   "patent": "Hub patent records",
+   "product": "Hub product catalogue",
+   "source": "Hub trusted sources",
+   "threat": "Hub threat analysis",
+   "timeline": "Hub timeline",
+   "tool": "Hub tools",
+   "vendor": "Hub vendor records"
+  },
+  "version": 1
+ },
+ "rules": {
+  "broad": {
+   "exact": [
+    "tell me something",
+    "help",
+    "help me",
+    "hello",
+    "hi",
+    "hey",
+    "what can i ask",
+    "what can you do",
+    "what do you know",
+    "anything",
+    "surprise me",
+    "say something",
+    "i have a question",
+    "ask me something",
+    "info",
+    "information",
+    "hmm",
+    "start",
+    "menu",
+    "options",
+    "what now"
+   ],
+   "rx": [
+    "^(?:tell|show) me (?:something|anything|a thing)\\b",
+    "^what (?:can|could) (?:i|you) (?:ask|do|say|help)\\b",
+    "^what do you (?:know|have|do|offer)\\b",
+    "^(?:i )?(?:have|got) a (?:quick )?question\\b",
+    "^(?:anything|something|whatever)\\b.{0,20}$",
+    "^(?:i )?(?:do not|don't) know (?:what|where) to (?:ask|start|begin)",
+    "^(?:what|how) (?:should|do) i (?:ask|do|start)\\??$",
+    "^(?:teach|inform|educate) me\\??$",
+    "^(?:where|how) (?:should|do|can) i (?:begin|start)\\??$",
+    "^(?:where|how) do i (?:go|begin|start) (?:from )?here\\b",
+    "\\bwhat (?:is )?(?:this|the) (?:site|website|hub|page|help tool|tool)(?: is)? (?:all )?(?:about|for|cover|covers|offer|offers)\\b",
+    "\\bwhat (?:can|does) (?:this|the) (?:site|website|hub|help tool) (?:help|cover|offer|do|provide)\\b",
+    "\\b(?:quick|brief|high[- ]level) (?:overview|summary|tour)\\b.{0,30}(?:site|website|hub|you)",
+    "^(?:main|key) (?:sections|topics|areas)\\b",
+    "\\bjust landed\\b",
+    "\\bfirst time\\b.{0,40}(?:what can|where)"
+   ]
+  },
+  "direct_shape": {
+   "source_document": [
+    "\\b(?:where (?:is|can i (?:find|read|get|download|see))|where to (?:find|read|get|download)|link to|url (?:for|of)|download|read the (?:original|standard|spec(?:ification)?|document|text))\\b"
+   ]
+  },
+  "intents": {
+   "business_tool": [
+    {
+     "rx": "\\b(?:estimate|estimator|calculator|calculate|calculation|cost|costs|roi|return on investment|business case|budget|risk register|template|templates|worksheet|scorecard|dashboard|governance|policy|policies|inventory|prioriti[sz]\\w*|maturity|stakeholder|board|executive|vendor risk|roadmap|migration plan|compliance (?:tracker|checklist|report)|assess(?:ment)?|report|reporting|checklist|audit|kpi|metrics|business impact|financial|procurement|rfp|cbom|inventory of (?:crypto|cryptographic))\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:tool|tools|template|calculator|planner|generator|worksheet|builder|tracker|wizard|framework)\\b",
+     "w": 1
+    },
+    {
+     "rx": "\\b(?:is there|do you have|any|which|what) (?:a |an |any )?(?:\\w+ ){0,2}(?:tool|template|calculator|checklist|worksheet|planner|tracker|report)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:do you (?:offer|have|provide)|is there|where can .{0,25}find|how can i (?:generate|build|create|get|track|plan)) (?:an? |any |the )?(?:\\w+ ){0,5}(?:tool|template|worksheet|scorecard|questionnaire|checklist|planner|calculator|report|generator|tracker|benchmark|summary)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:business|executive|management|board|cfo|ciso|compliance|governance|enterprise|organi[sz]ation)\\b",
+     "w": 1
+    }
+   ],
+   "compare": [
+    {
+     "rx": "\\b(?:compare|comparison|comparing|versus|vs\\.?|contrast|differences? (?:between|of|in)|differ(?:s|ent)? (?:from|between)|how does .{2,50} differ|how do .{2,50} differ|distinguish\\w*|same as|similar to|better than|worse than|rather than|instead of|pros and cons|trade-?offs?)\\b",
+     "w": 4
+    },
+    {
+     "min_names": 2,
+     "rx": "\\b(?:or)\\b",
+     "w": 1
+    },
+    {
+     "rx": "\\b(?:and)\\b.{0,40}\\b(?:differ|compare|compared|difference)",
+     "w": 3
+    },
+    {
+     "rx": "\\bwhich (?:one )?(?:is|are) (?:better|faster|smaller|larger|bigger|stronger|safer|more)\\b",
+     "w": 3
+    },
+    {
+     "min_names": 3,
+     "rx": ".",
+     "w": 2
+    }
+   ],
+   "concept": [
+    {
+     "rx": "^(?:what|how|why) .{2,80}\\b(?:work|works|called|stateless|stateful|resist|combine|differs?)\\b",
+     "w": 2
+    },
+    {
+     "rx": "^(?:what|who|which) (?:is|are|was|were)\\b",
+     "w": 2
+    },
+    {
+     "rx": "^what(?:'s| is) (?:the )?(?:meaning|definition|purpose|point|idea) of\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:explain|define|definition of|meaning of|stands? for|describe|overview of|introduction to|intro to|basics of|primer on|tell me about|about)\\b",
+     "w": 2
+    },
+    {
+     "rx": "^how (?:does|do|is|are) .{2,60} (?:work|works|function|functions|operate)\\b",
+     "w": 3
+    },
+    {
+     "rx": "^what does .{2,50} (?:mean|do|stand for)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:eli5|in (?:plain|simple) (?:english|terms|words)|for beginners|in a nutshell)\\b",
+     "w": 2
+    },
+    {
+     "rx": "^why (?:is|are|do|does) .{2,60} (?:important|matter|needed|used|useful)\\b",
+     "w": 2
+    },
+    {
+     "has_name": true,
+     "rx": "^[^?]{0,3}$",
+     "w": 0
+    }
+   ],
+   "currency": [
+    {
+     "rx": "\\b(?:replaced|replace|replaces|superseded|supersede|supersedes|successors?|replacement|obsolete|obsoleted|deprecated|withdrawn|retired|sunset|newer version|latest version|current version|newest version|still (?:current|valid|in force|active|supported|relevant|used)|up to date|out of date|outdated|latest (?:revision|edition|draft|release)|what comes after|came after|succeeded by|taken over|took over|takes over|took the place|takes the place|follow(?:s|ed) on from|supplant\\w*)\\b",
+     "w": 4
+    },
+    {
+     "rx": "^(?:is|are) .{2,60} (?:current|the latest|still)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\bwhat (?:is|are) (?:the )?(?:latest|newest|current|newer)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:newer|updated|update|latest|current|up to date|revised|new (?:edition|version|release)|published a newer)\\b",
+     "w": 2
+    },
+    {
+     "rx": "^(?:has|have|did|is there|was|were|are there)\\b.{0,60}\\b(?:newer|updated|replaced|revised|changed|superseded|new (?:edition|version|release))",
+     "w": 3
+    }
+   ],
+   "dates": [
+    {
+     "rx": "\\b(?:deadlines|milestones|key dates|dates|timeline|timelines|schedule|calendar|roadmap dates|time ?frames?|cut-?offs?|due dates|phase-?outs?|sunset dates?)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\bwhen (?:do|does|did|are|will) .{2,60}(?:apply|take effect|start|begin|come into (?:force|effect)|kick in|expire)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:by|before|until|through|until the end of) (?:the year )?20[2-4]\\d\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\bwhat (?:happens|is happening|is due|must be done|has to be done) (?:by|in|before) 20[2-4]\\d\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:which|what) (?:deadlines?|dates?|milestones?)\\b",
+     "w": 2
+    }
+   ],
+   "fact": [
+    {
+     "has_name": true,
+     "rx": "^(?:when|by when|on what date|what date|what year|which year|what month|how soon)\\b",
+     "w": 3
+    },
+    {
+     "has_name": true,
+     "rx": "\\bhow (?:big|large|long|many|much|small|tall)\\b",
+     "w": 3
+    },
+    {
+     "rx": "^(?:what|which) (?:is|are|was) the (?:\\w+ ){0,3}(?:size|length|status|version|level|category|date|year|owner|publisher|author|country|region|license|licence|type|number|count|number of|cost|price|price of|key size|signature size|public key|ciphertext|enforcement body|enforcer|regulator|deadline|currency|maturity|rating|acronym|abbreviation)\\b",
+     "w": 3
+    },
+    {
+     "named": [
+      "guidance",
+      "framework",
+      "document",
+      "standard",
+      "product",
+      "source",
+      "transition",
+      "algorithm"
+     ],
+     "rx": "^(?:who|which (?:body|organi[sz]ation|authority|agency|company|vendor))\\s+(?:enforces?|issued|issues|published|publishes|wrote|owns|runs|operates|maintains|regulates|oversees|is responsible for|is behind)\\b",
+     "w": 3
+    },
+    {
+     "has_name": true,
+     "rx": "^(?:is|are|does|do|did|has|have|was|were) .{2,70}\\b(?:fips[- ]validated|validated|mandatory|required|approved|deprecated|standardi[sz]ed|final|a draft|active|certified|supported|open source)\\b",
+     "w": 3
+    },
+    {
+     "has_name": true,
+     "rx": "\\bwhat (?:\\w+ ){0,2}(?:security level|security category|nist level|key size|signature size|public key size|ciphertext size)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\bhow (?:many|much) .{0,40}(?:bytes|bits|steps|modules|sections|lessons)\\b",
+     "w": 2
+    },
+    {
+     "has_name": true,
+     "rx": "\\b(?:size|bytes|length|publication date|release date|date of|status|version|owner|parent (?:company|organi[sz]ation)|headquarters|hq|license|licence|security level|deadline|compliance date|target date|enforcement|country|acronym|abbreviation)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:the|its|their) (?:exact |current |official |latest |target |primary )?(?:\\w+ ){0,2}(?:size|date|status|owner|level|deadline|version|length)\\b",
+     "w": 2
+    }
+   ],
+   "learning": [
+    {
+     "rx": "\\b(?:where (?:can|do|could|should) i (?:learn|study|read up|find (?:out|information|material|lessons?|modules?))|where to (?:learn|start learning|study)|learn about|learn more|learn how|want to learn|teach|study|tutorial|tutorials|course|courses|training|curriculum|lesson|lessons|module|modules|section|sections|learning (?:material|materials|path|resources?)|read up|explained (?:on|in)|covered (?:on|in)|is there (?:a|any) (?:lesson|module|course|tutorial|guide|section)|which (?:lesson|module|section|course|tutorial)s?)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\bstart learning\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\bwhere (?:do|does|can|could|would|will) (?:you|i|we|one|the site|this site|the hub) (?:\\w+ ){0,2}(?:explain|cover|teach|discuss|describe|learn|read|find (?:out|information|material|content|lessons?))",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:learning path|educational|reading materials?|explainer|briefing materials?|study guide|introductory guide|beginner|beginners|primer|crash course|lesson or|walkthrough)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:resources?|material|materials|guide|guides) (?:on|about|for|to learn)\\b",
+     "w": 2
+    }
+   ],
+   "list": [
+    {
+     "rx": "^(?:which|what) .{2,40}\\b(?:vendors?|guides?|schemes|candidates|mechanisms|leaders|simulators|modules|bodies|libraries)\\b.{0,30}\\b(?:support|are|is|published|included|tracked|available|exist)\\b",
+     "w": 3
+    },
+    {
+     "rx": "^(?:list|name|enumerate|give me (?:a )?list|show (?:me )?(?:all|every|a list))\\b",
+     "w": 4
+    },
+    {
+     "rx": "^(?:which|what) (?:\\w+ ){0,3}(?:schemes|algorithms|standards|documents|modules|tools|steps|examples|types|kinds|families|variants|members|options|categories|parameter sets|use cases|sectors|threats|attacks|workshops|lessons|sections|protocols)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:all|every|each) (?:the |of the )?(?:\\w+ ){0,2}(?:schemes|algorithms|standards|documents|modules|tools|steps|examples|types|kinds|families|variants|members|options|categories|use cases|sectors|threats|attacks|protocols)\\b",
+     "w": 3
+    },
+    {
+     "rx": "^(?:what|which) (?:are|is) (?:the )?(?:workshop )?(?:steps|modules|sections|lessons|parts|members) (?:in|of|for)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:how many|number of) .{0,30}(?:are there|exist)\\b",
+     "w": 1
+    },
+    {
+     "has_name": true,
+     "rx": "^(?:which|what) (?:\\w+ ){0,3}(?:does|do|did) .{2,50}\\b(?:cite|reference|include|contain|cover|list|link|use|require)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:quantum[- ]safe|post-quantum|pqc) (?:\\w+ ){0,2}(?:schemes|algorithms|signatures|kems)\\b",
+     "w": 1
+    },
+    {
+     "rx": "^(?:which|what) (?:are )?(?:the )?(?:main|key|available|different|common|major|standard\\w*|existing|other|tracked|published|included)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:schemes|algorithms|standards|documents|vendors|guides|briefings|mandates|simulators|candidates|bodies|leaders|guides|libraries|modules|tools|steps|variants)\\b",
+     "w": 1
+    },
+    {
+     "rx": "\\b(?:can you |could you )?list\\b",
+     "w": 3
+    }
+   ],
+   "not_fact": [
+    {
+     "rx": "\\b(?:rely on|convince|persuade|wait for|hold off|before upgrading|actually change|focus my|worth (?:waiting|focusing))\\b|\\bnext (?:\\w+ )?(?:decade|years?|quarter)\\b|\\bwill\\b.{0,50}\\bsoon\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\bwill\\b.{0,60}\\b(?:be|become|get|happen|break|broken|crack|cracked|arrive|exist|survive|fall|fail|replace|replaced|win|stay|remain|last|take|ever)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\bwhen will\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:predict|prediction|forecast|speculat\\w*|bet on|odds|chances? (?:of|that)|likelihood|probability (?:of|that))\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:best|worst|better|greatest|favou?rite|safest|most secure|ideal|perfect|top)\\b(?! practices?)",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:is|are|am) (?:it|they|that|this|my \\w+|our \\w+|we|i) (?:\\w+ ){0,2}(?:safe|secure|ready|vulnerable|protected|at risk|doomed|screwed|ok|fine|enough)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:my|our) (?:company|bank|organi[sz]ation|business|firm|team|data|systems?|network|app|application|infrastructure|bitcoin|wallet|passwords?|website|laptop|phone)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:would you|do you|should i|should we|can you) (?:recommend|suggest|advise|think|believe|trust)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:your opinion|in your view|do you think|do you believe|how worried|should i (?:worry|panic|buy|invest|trust|switch|use|choose|pick))\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:is it worth|worth (?:it|the)|am i (?:at risk|vulnerable|safe|affected)|will i be)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:end of the world|doomsday|apocalypse|panic|scared|afraid|worried)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:what if|imagine|hypothetical|suppose)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:do you (?:agree|expect|personally|prefer|like|find|trust)|how likely|likely (?:is it|that)|reliab\\w+|outlook|long[- ]term (?:market|outlook)|overblown|hype|hyped|real[- ]world usefulness|elegant|favou?rite)",
+     "w": 4
+    },
+    {
+     "rx": "\\bshould (?:we|i|you)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:next year|in (?:the )?(?:future|\\d+ years)|by (?:the year )?20[3-9]\\d|in 20[3-9]\\d)\\b",
+     "w": 1
+    }
+   ],
+   "people": [
+    {
+     "rx": "^(?:which|what) (?:authority|body|organi[sz]ation|company|group|working group|standards body|vendor)\\b.{0,40}\\b(?:oversees|maintains|owns|runs|publishes|develops|manages|is behind)\\b|\\b(?:vendor|company|organi[sz]ation) background\\b|\\bauthors? (?:contributors? )?list\\b",
+     "w": 3
+    },
+    {
+     "rx": "^who (?:is|was|are|were)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\bwho (?:wrote|invented|designed|created|founded|leads|led|runs|developed|came up with|proposed|discovered|authored|are the (?:authors?|inventors?|creators?|designers?|researchers?|people|team))\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:authors?|inventors?|creators?|designers?|researchers?|cryptographers?|team behind|people behind|founders?|leaders?|experts?|professor|ceo|cto|coalition|consortium|working group|organi[sz]ation|institute|foundation|agency)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\bwho (?:owns|maintains|manages|develops|operates|built|builds|made|makes|sells|is behind|stands behind|backs|funds|sponsors)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:owner of|owns|parent (?:company|organi[sz]ation)|company profile|leadership|background|oversight authority|oversees|who is behind|contributor page|biography|bio|profile of|which (?:company|organi[sz]ation|authority|body))\\b",
+     "w": 2
+    },
+    {
+     "has_name": true,
+     "named": [
+      "person"
+     ],
+     "rx": ".",
+     "w": 3
+    },
+    {
+     "has_name": true,
+     "named": [
+      "source"
+     ],
+     "rx": ".",
+     "w": 1
+    }
+   ],
+   "planning": [
+    {
+     "rx": "\\b(?:how (?:should|do|can|would|could|to) (?:a |an |the |our |my |we |i |you )?(?:\\w+ ){0,3}(?:start|begin|plan|prepare|approach|migrate|transition|prioriti[sz]e|sequence|roll ?out|get started|kick ?off|go about|tackle|budget|organi[sz]e|run)|where (?:do|should|to) (?:we|i|you|one) (?:start|begin)|first steps?|next steps?|first thing|getting started|get started with|migration (?:plan|strategy|roadmap|programme|program|project|journey|steps?)|roadmap|plan for|planning (?:for|a)|plan (?:the|our|my|a) migration|what (?:order|sequence)|in what order|step[- ]by[- ]step|checklist for migrating|playbook|strategy for)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:organi[sz]ation|company|bank|enterprise|agency|hospital|utility|business|team|firm|startup|government|ministry|telco|insurer|retailer)\\b.{0,50}\\b(?:start|begin|plan|prepare|migrate|transition|adopt|roll out)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:recommended (?:order|sequence|approach|steps?)|migration phases|phased|phase in|phasing|roll ?out|where (?:does|do|should|to) .{0,30}(?:start|begin)|(?:migrate|migration|upgrade|upgrading|prioriti[sz]\\w*) .{0,40}\\bfirst\\b|\\bfirst\\b.{0,40}(?:migrate|migration|upgrade|prioriti[sz]\\w*)|what (?:order|sequence))\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:what should (?:a|an|the|our|we|my|i)\\b.{0,40}(?:do|prioriti[sz]e|start|first)|prioriti[sz]e|prioriti[sz]ation)\\b",
+     "w": 3
+    }
+   ],
+   "products": [
+    {
+     "rx": "\\b(?:which|what|any|name) (?:\\w+ ){0,2}(?:hsms?|products?|vendors?|suppliers?|libraries|library|software|appliances|devices|chips?|kms|vpns?|browsers?|cloud providers?|clouds?|services|platforms|companies|brands|openssl providers?|smart ?cards?|tokens?|firewalls?|implementations?|offerings?|solutions?)\\b(?! (?:tool|template))",
+     "w": 3
+    },
+    {
+     "no_name_of": [
+      "person"
+     ],
+     "rx": "\\b(?:support|supports|supporting|offer|offers|implement|implements|ship|ships|provide|provides|certified|validated|available from|sells?|sold by|built by|made by|vendors? (?:of|with|that)|products? (?:that|with|from)|who (?:sells|offers|makes|supports))\\b",
+     "w": 2
+    },
+    {
+     "named": [
+      "vendor",
+      "product"
+     ],
+     "rx": "\\b(?:does|do|is|are) .{2,60} (?:support|supports|offer|offers|implement|implements|ship|ships|ready|compatible|available|certified)\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:libraries|library|sdks?|providers?|packages?|hsms?|hardware security modules?|smart ?cards?|secure elements?|firewalls?|vendors?|products?|appliances?|chips?|implementations?|crates?|gems?|npm|python libraries|openssl providers?)\\b",
+     "w": 2
+    },
+    {
+     "has_name": true,
+     "named": [
+      "vendor",
+      "product"
+     ],
+     "rx": ".",
+     "w": 1
+    }
+   ],
+   "risk": [
+    {
+     "rx": "\\b(?:harvest now|store now|hndl|decrypt later|cryptographically relevant|crqc|q-day|y2q|quantum (?:threats?|risks?|attacks?|attackers?|adversar\\w+|apocalypse)|quantum-?(?:enabled|capable) attack|break(?:ing)? (?:rsa|ecc|ecdsa|ecdh|aes|encryption|crypto|cryptography|signatures?|public[- ]key)|at risk (?:from|of)|vulnerable to (?:quantum|shor|attack)|exposed to (?:quantum|attack)|threatens?|harm|danger|exposure)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:risk|risks|threat|threats|attack|attacks|vulnerab\\w+|exposed|exposure|impact|consequences?|collecting|steal|stolen|break|breaks|broken)\\b",
+     "w": 1
+    },
+    {
+     "rx": "\\b(?:shor(?:'s)?|grover(?:'s)?|quantum computers?|quantum computing|quantum[- ]safe|quantum[- ]resistant|quantum[- ]vulnerable)\\b",
+     "w": 2
+    },
+    {
+     "rx": "^(?:is|are|does|do|can|could|would) .{2,60} (?:quantum[- ]safe|quantum[- ]resistant|quantum[- ]secure|vulnerable|broken|breakable|weak)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:how (?:soon|long|fast)|how close|how likely) .{0,50}(?:quantum|break|threat|attack)\\b",
+     "w": 1
+    },
+    {
+     "rx": "\\bwhy (?:do|does|should|must) .{0,40}(?:care|matter|worry|migrate|prepare)\\b",
+     "w": 2
+    }
+   ],
+   "rules": [
+    {
+     "rx": "\\b(?:requires?|required|requirements?|mandates?|mandated|mandatory|obliges?|obligations?|obliged|compulsory|demands?|stipulates?|prescribes?|compliance with|comply|complies|must (?:comply|implement|use|adopt|support)|have to (?:comply|implement|adopt)|need to (?:comply|adopt|implement)|legally|regulation says|law says|rules? (?:for|on|about)|what does .{2,50} say)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:forc(?:es|ing|e|ed)|rules?|inventory rules|validations? .{0,20}require|satisf(?:y|ies)|must .{0,30}(?:satisfy|meet|have))\\b",
+     "w": 2
+    },
+    {
+     "rx": "\\b(?:is|are|does|do) (?:pqc|post-quantum|quantum[- ]safe|quantum[- ]resistant) (?:cryptography )?(?:mandatory|required|compulsory|obligatory|needed)\\b",
+     "w": 4
+    },
+    {
+     "has_name": true,
+     "named": [
+      "guidance",
+      "framework"
+     ],
+     "rx": "\\bwhat does\\b",
+     "w": 1
+    }
+   ],
+   "site": [
+    {
+     "rx": "\\bon (?:your|the|this) (?:site|platform|website|hub)\\b|\\b(?:point me to|coverage of|do you (?:cover|have|publish)|published on (?:the|this) site|case studies|briefings?|updated recently|this week|this month|lately|migration tracker)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:what(?:'s| is) new|anything new|new (?:on|in|here)|whats new|changelog|change log|release notes?|latest (?:release|update|changes?|version of the (?:site|hub))|recent (?:changes|updates|additions)|what changed|this (?:site|website|hub|page|app|platform)|the (?:site|website|hub)|pqc today|go to|open the|take me to|navigate|where is the .{1,40}(?:page|section|tab|menu)|(?:site|website|hub) (?:cover|offer|contain|have|include)|dark mode|light mode|my role|switch (?:role|persona|my role)|persona|bookmark\\w*|settings|faq|keyboard shortcuts?|accessib\\w+|sign (?:in|up)|log ?in|account|contact|feedback|about (?:this|the) (?:site|hub|website)|how (?:do|can) i (?:use|navigate|find|switch|change|save|export|share|install))\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\bhow (?:do|can) i (?:use|navigate|get around)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:email alerts?|notifications?|subscribe|csv export|export (?:the |a )?(?:table|data|csv|list)|print|tracker location|contributor page|side by side|comparison tool|vendor comparison|where is (?:the )?\\w+ ?\\w* guide)\\b",
+     "w": 3
+    }
+   ],
+   "source_document": [
+    {
+     "rx": "^(?:which|what) (?:\\w+ ){0,2}(?:draft|specification|spec|standard|guidance|guideline|rfc|paper|report|document|whitepaper|profile|protection profile|rulebook|manual)\\b.{0,40}\\b(?:defines?|covers?|describes?|outlines?|specif\\w+|lists?|explains?|sets? out|publish\\w*)\\b|\\bcan i (?:read|see|open|get|view)\\b",
+     "w": 4
+    },
+    {
+     "rx": "\\b(?:pdf|full text|text of|the spec(?:ification)?|the document|download|link to|url for|url of|permalink|read the (?:original|standard|spec|document|text)|original (?:text|document|paper)|official (?:text|document|copy|source)|draft of|published (?:version|text)|cite|citation|bibtex|doi)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:rfc|fips|sp 800|nist ir|draft-|iso/iec|etsi|ts \\d|en \\d|itu-t|x\\.509)\\b",
+     "w": 1
+    },
+    {
+     "has_name": true,
+     "named": [
+      "document",
+      "standard"
+     ],
+     "rx": ".",
+     "w": 2
+    }
+   ],
+   "technical_tool": [
+    {
+     "rx": "\\b(?:try|try out|play with|experiment|simulate|simulator|simulation|demo|hands-?on|in the browser|in my browser|playground|sandbox|run (?:a|the|an)|generate (?:a |an )?(?:key|keys|keypair|key pair|certificate|csr|signature)|keygen|key generation|benchmark|sign (?:a|some|my)|verify (?:a|the|my)|inspect|decode|parse|test (?:my|a|the)|handshake|openssl|pkcs ?#?11|kmip|wasm|webassembly|cli|command line|api|code|sample code|example code)\\b",
+     "w": 3
+    },
+    {
+     "rx": "\\b(?:tool|tools|simulator|widget|workshop|lab|interactive|inspector|decoder|generator|visuali[sz]er)\\b",
+     "w": 1
+    },
+    {
+     "rx": "\\b(?:encrypt|decrypt|encryption|decryption)\\b",
+     "w": 1
+    },
+    {
+     "rx": "\\b(?:can i|how (?:can|do) i|where can i|is there a way to) (?:\\w+ ){0,3}(?:try|run|test|generate|simulate|experiment|play|see|visuali[sz]e|inspect)\\b",
+     "w": 3
+    }
+   ]
+  },
+  "priority": [
+   "not_fact",
+   "risk",
+   "planning",
+   "compare",
+   "currency",
+   "dates",
+   "rules",
+   "fact",
+   "products",
+   "source_document",
+   "people",
+   "business_tool",
+   "technical_tool",
+   "learning",
+   "list",
+   "site",
+   "concept"
+  ],
+  "second_ratio": 0.8,
+  "strip_prefix": [
+   "^(?:hi|hello|hey|ok|okay|so)[,!. ]+",
+   "^(?:please|kindly)[, ]+",
+   "^(?:can|could|would|will) you (?:please )?(?:tell me|let me know|show me|explain to me|help me (?:understand|find|with|to))\\s+",
+   "^(?:i(?:'d| would)? (?:like|want|need) to (?:know|understand|find out|see|learn)|i(?:'m| am) (?:curious|wondering)|i wonder|do you know|tell me|let me know|show me|give me|i need|i want)\\s+(?:about\\s+|to\\s+)?",
+   "^(?:quick question|question)[:,]?\\s*"
+  ],
+  "version": 1
+ },
+ "words": {
+  "filler": [
+   "according",
+   "across",
+   "actually",
+   "addressed",
+   "aimed",
+   "aiming",
+   "aligned",
+   "along",
+   "am",
+   "any",
+   "anyone",
+   "anyway",
+   "applicable",
+   "apply",
+   "approaching",
+   "area",
+   "areas",
+   "aspiring",
+   "assigned",
+   "associated",
+   "audience",
+   "available",
+   "aware",
+   "background",
+   "become",
+   "becoming",
+   "been",
+   "being",
+   "belongs",
+   "benefit",
+   "big",
+   "bit",
+   "break",
+   "brief",
+   "briefly",
+   "build",
+   "built",
+   "called",
+   "capabilities",
+   "categorised",
+   "categorized",
+   "check",
+   "clarify",
+   "classified",
+   "classify",
+   "comes",
+   "commercial",
+   "companies",
+   "complete",
+   "concept",
+   "confirm",
+   "consider",
+   "considered",
+   "containing",
+   "contains",
+   "content",
+   "contents",
+   "context",
+   "control",
+   "could",
+   "cover",
+   "covered",
+   "covers",
+   "cryptographic",
+   "current",
+   "currently",
+   "curriculum",
+   "cybersecurity",
+   "deployments",
+   "describe",
+   "described",
+   "description",
+   "designed",
+   "detail",
+   "details",
+   "developers",
+   "discussed",
+   "do",
+   "documents",
+   "does",
+   "domain",
+   "down",
+   "each",
+   "efforts",
+   "english",
+   "entail",
+   "entails",
+   "entities",
+   "enumerate",
+   "established",
+   "establishes",
+   "estimated",
+   "every",
+   "exist",
+   "existing",
+   "exists",
+   "explain",
+   "explains",
+   "explanation",
+   "explore",
+   "fall",
+   "falls",
+   "familiar",
+   "far",
+   "field",
+   "figure",
+   "find",
+   "fit",
+   "follow",
+   "following",
+   "foundational",
+   "function",
+   "geared",
+   "get",
+   "give",
+   "given",
+   "got",
+   "governing",
+   "groups",
+   "has",
+   "have",
+   "he",
+   "held",
+   "help",
+   "helps",
+   "her",
+   "here",
+   "hey",
+   "his",
+   "home",
+   "hosted",
+   "hub",
+   "identify",
+   "implement",
+   "include",
+   "includes",
+   "including",
+   "industries",
+   "info",
+   "information",
+   "initiatives",
+   "inside",
+   "institutions",
+   "introduce",
+   "introduction",
+   "invention",
+   "involve",
+   "involved",
+   "just",
+   "key",
+   "kind",
+   "kinds",
+   "know",
+   "known",
+   "large",
+   "learners",
+   "let",
+   "lets",
+   "like",
+   "list",
+   "listed",
+   "little",
+   "locate",
+   "located",
+   "look",
+   "looking",
+   "main",
+   "make",
+   "many",
+   "material",
+   "materials",
+   "me",
+   "mean",
+   "means",
+   "meant",
+   "meet",
+   "mentioned",
+   "miss",
+   "most",
+   "much",
+   "name",
+   "nature",
+   "need",
+   "needed",
+   "newer",
+   "not",
+   "notable",
+   "now",
+   "offerings",
+   "open",
+   "organizations",
+   "other",
+   "our",
+   "outline",
+   "overall",
+   "overview",
+   "page",
+   "part",
+   "particular",
+   "plain",
+   "please",
+   "posture",
+   "primary",
+   "prioritize",
+   "profile",
+   "provide",
+   "publications",
+   "purpose",
+   "quick",
+   "ranked",
+   "real",
+   "received",
+   "recommend",
+   "regulate",
+   "regulates",
+   "relevant",
+   "represent",
+   "researchers",
+   "right",
+   "run",
+   "rundown",
+   "satisfy",
+   "seen",
+   "sense",
+   "set",
+   "setup",
+   "share",
+   "she",
+   "short",
+   "shouldn",
+   "show",
+   "simple",
+   "site",
+   "site's",
+   "size",
+   "some",
+   "someone",
+   "sort",
+   "source",
+   "space",
+   "specific",
+   "stance",
+   "stands",
+   "state",
+   "status",
+   "studying",
+   "subject",
+   "subjects",
+   "suggest",
+   "summarise",
+   "summarize",
+   "summary",
+   "tailored",
+   "take",
+   "taken",
+   "taking",
+   "target",
+   "team",
+   "teams",
+   "technical",
+   "technology",
+   "tell",
+   "terms",
+   "theme",
+   "themes",
+   "they",
+   "through",
+   "tie",
+   "titled",
+   "topic",
+   "total",
+   "toward",
+   "towards",
+   "track",
+   "tracked",
+   "tracks",
+   "trying",
+   "type",
+   "types",
+   "typically",
+   "under",
+   "understand",
+   "up",
+   "us",
+   "used",
+   "user",
+   "users",
+   "ve",
+   "verify",
+   "walk",
+   "want",
+   "watch",
+   "ways",
+   "we",
+   "website",
+   "whether",
+   "working",
+   "would",
+   "yet",
+   "you"
+  ],
+  "stop": [
+   "a",
+   "about",
+   "an",
+   "and",
+   "are",
+   "as",
+   "at",
+   "be",
+   "by",
+   "can",
+   "could",
+   "did",
+   "do",
+   "does",
+   "for",
+   "from",
+   "how",
+   "i",
+   "if",
+   "in",
+   "into",
+   "is",
+   "it",
+   "its",
+   "me",
+   "my",
+   "no",
+   "not",
+   "of",
+   "on",
+   "or",
+   "should",
+   "so",
+   "than",
+   "that",
+   "the",
+   "their",
+   "then",
+   "there",
+   "these",
+   "this",
+   "those",
+   "to",
+   "was",
+   "were",
+   "what",
+   "when",
+   "where",
+   "which",
+   "who",
+   "why",
+   "with",
+   "would",
+   "yes",
+   "you",
+   "your"
+  ]
+ }
+}

@@ -460,11 +460,11 @@ export const pageManuals: Record<PageId, PageManual> = {
     sections: [
       {
         heading: 'Finding a Module',
-        body: 'The Learn page has three views. My Path shows a sequence tuned to the role you picked in the top bar. Browse all lists every module and can be narrowed by track, search, status and saved modules, in a grid or a list. Guided routing asks about your migration situation and points to a first module or page, with a framework crosswalk. The Practice quiz button opens the quiz.',
+        body: 'The Learn page has four views. Your journey holds your objectives, their steps and your role map, and keeps them on this device. Recommended order shows a sequence tuned to the role you picked in the top bar. All modules lists every module and can be narrowed by track, search, status and saved modules, in a grid or a list. Guided routing asks about your migration situation and points to a first module or page, with a framework crosswalk. The Practice quiz button opens the quiz.',
       },
       {
         heading: 'Module Tracks',
-        body: 'Modules are organised into nine tracks: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Governance & Risk and Industries. Browse all shows a chip for each track with its module count.',
+        body: 'Modules are organised into nine tracks: Role Guides, Foundations, Strategy, Protocols, Hardware Infrastructure, Software Infrastructure, Applications, Governance & Risk and Industries. All modules shows a chip for each track with its module count.',
       },
       {
         heading: 'Module Tabs',
@@ -480,11 +480,11 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Achievements',
-        body: 'Badges are awarded for learning activity such as workshop steps, modules and tracks, and also for using other parts of the Hub; a toast appears when you unlock one. The badge collection is shown on the Home page score card and in the Journey tab of the right-hand panel.',
+        body: 'Badges are awarded for learning activity such as workshop steps, modules and tracks, and also for using other parts of the Hub; a toast appears when you unlock one. The badge collection is shown on the Home page score card and at the top of Role map in Learn › Your journey.',
       },
     ],
     tips: [
-      'Start with the Foundations track if you are new to PQC, or pick a role first so My Path can order the modules for you.',
+      'Start with the Foundations track if you are new to PQC, or pick a role first so Your journey and Recommended order can order the modules for you.',
       'Workshop exercises that use WebAssembly cryptography run locally in your browser.',
       'The Practice quiz draws on questions across many topics, filtered by your role and the difficulty you choose.',
     ],

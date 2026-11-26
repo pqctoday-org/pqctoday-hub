@@ -57,6 +57,9 @@ function passesTier(moduleId: string, maxTier: NiceProficiencyTier): boolean {
  * main bar for the Executive, GRC and Researcher roles (Decision 1; GRC added
  * 2026-09-07 alongside the Executive/GRC persona split).
  */
+/** Router state a module opened from this catalogue carries, so the module's Back returns here. */
+const ALL_MODULES_ORIGIN = { journeyOrigin: 'all-modules' } as const
+
 export const BrowseAllView = ({
   personaId,
   initialNiceMode = false,
@@ -381,7 +384,7 @@ export const BrowseAllView = ({
                   <ModuleCard
                     key={m.id}
                     module={m}
-                    onSelectModule={(id) => navigate(`/learn/${id}`)}
+                    onSelectModule={(id) => navigate(`/learn/${id}`, { state: ALL_MODULES_ORIGIN })}
                   />
                 ))}
               </div>
@@ -400,7 +403,7 @@ export const BrowseAllView = ({
                   variant="ghost"
                   size="sm"
                   type="button"
-                  onClick={() => navigate(`/learn/${m.id}`)}
+                  onClick={() => navigate(`/learn/${m.id}`, { state: ALL_MODULES_ORIGIN })}
                   className="h-auto w-full flex items-center justify-start gap-3 px-4 py-2.5 text-left whitespace-normal rounded-none hover:bg-muted/30 transition-colors"
                 >
                   <span className="flex-1 min-w-0 text-sm font-medium text-foreground truncate">

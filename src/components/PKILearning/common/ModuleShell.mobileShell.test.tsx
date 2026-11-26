@@ -33,13 +33,7 @@ afterEach(() => {
   useModuleStore.setState({ modules: {} })
 })
 
-// id: 'hsm-pqc' — a REAL module id. LEARN_SECTIONS/MODULE_TO_TRACK are read by
-// MobileModuleShell straight off the global manifest registry (moduleData.ts),
-// exactly as desktop's own LearnSectionChecklist.tsx does — never off this
-// prop's own `learnSections`. Overriding it here with fake sections would be
-// silently ignored (confirmed while writing this test: the real HsmPqc
-// module's real 3 sections rendered regardless), so the checklist test below
-// asserts against HsmPqc's real, current section data on purpose.
+// id: 'hsm-pqc' — a REAL module id, so the shell resolves its real sections and track.
 const base: ResolvedModuleManifest = {
   id: 'hsm-pqc',
   title: 'Test Module',
@@ -77,12 +71,11 @@ describe('ModuleShell — mobile UX layer wiring', () => {
     expect(screen.queryByRole('tab', { name: 'Learn' })).not.toBeInTheDocument()
   })
 
-  it("flag on: real section checklist (HsmPqc's real 3 sections) toggles real read state", () => {
+  it('flag on: no progress box on the phone lesson page', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
-    expect(screen.getByText('0/3 sections read')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'PKCS#11 PQC Mechanisms' }))
-    expect(useModuleStore.getState().modules['hsm-pqc']?.learnSectionChecks?.pkcs11).toBe(true)
+    expect(screen.queryByText(/sections read/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('progressbar', { name: /sections read/ })).not.toBeInTheDocument()
   })
 
   // Wave C2 (2026-08-29) — RelatedModulesPanel (module↔module relations,

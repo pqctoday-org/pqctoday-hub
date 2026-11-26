@@ -295,7 +295,10 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
   // Learn
   {
     path: exact('/learn'),
-    queryKeys: ['track', 'persona', 'mode', 'stage', 'area'],
+    // `view` = journey (Your journey) or nice (the workforce view); `role` = a persona id or a NICE work-role
+    // id, which opens Role map on that role's computed path without changing the learner's own role.
+    // `new=1` (with mode=journey) opens Your journey on the new-objective form.
+    queryKeys: ['track', 'persona', 'mode', 'stage', 'area', 'view', 'role', 'new'],
     description: 'Learn catalog',
   },
   {
@@ -361,9 +364,10 @@ export const ROUTE_PATTERNS: readonly RoutePattern[] = [
  * Query keys valid on EVERY internal route. `spec=<reference_id>` opens the
  * global library document drawer (SpecDrawerHost) in place on any page;
  * `try=<playground tool id>` opens a Playground tool in place
- * (TryToolModalHost, mounted in App — AlgoCtaStrip writes it).
+ * (TryToolModalHost, mounted in App — AlgoCtaStrip writes it);
+ * `glossary=<term>` opens the Glossary panel on that term (GlossaryAddressHost, mounted in App).
  */
-export const GLOBAL_QUERY_KEYS: readonly string[] = ['spec', 'try']
+export const GLOBAL_QUERY_KEYS: readonly string[] = ['spec', 'try', 'glossary']
 
 export type ValidationFailure = {
   url: string

@@ -24,10 +24,10 @@ import { getCrqcForecast } from '../components/PKILearning/modules/QuantumThreat
 import { CNSA_2_0, NSM_10_QUANTUM_RISK_GOAL } from './regulatoryTimelines'
 
 /**
- * Persona-aware "Practice in the Simulation" CTA — which migration phases each
- * profile actually practices in the sim. A Learn module shows the CTA when the
- * active persona practices that module's `frameworkPhase` (the sim climbs the
- * same phases p0–p7 + verify-close, and every module carries one).
+ * Which migration phases each profile practices in the Simulation (the sim climbs
+ * phases p0-p7 + verify-close, and every Learn module carries one `frameworkPhase`).
+ * Lesson pages no longer show a "Practice in the Simulation" button (removed
+ * 2026-11-25); the Simulation's own role debrief still reads these sets.
  *
  * Linked to `ROLE_CROSSWALK`/`personaToRoles` (`roleCrosswalk.ts`), which is the
  * source of truth for which phases a seat actually *owns* in-sim (spec §7).
@@ -50,15 +50,10 @@ import { CNSA_2_0, NSM_10_QUANTUM_RISK_GOAL } from './regulatoryTimelines'
  * `personaConfig.test.ts` pins this relationship (owned ⊆ set, extras ⊆
  * allowlist) so it can't silently drift further.
  *
- * B+ remediation 2.5 (2026-08-10) — the broad fallback is REVERSED for the two
- * personas that have no phase set. Showing "Practice in the Simulation" on
- * every single module for researcher and curious was a call to action for a
- * migration neither of them is running; a prompt on everything is a prompt on
- * nothing. `PERSONA_SIM_PRACTICE_NONE` below names them explicitly (rather
- * than leaving it to `undefined`, which cannot distinguish "no mapping yet"
- * from "deliberately none"), and `personaPracticesModulePhase` returns false
- * for them. `null` (no persona chosen) keeps the broad fallback — we know
- * nothing about that visitor, so we suppress nothing.
+ * B+ remediation 2.5 (2026-08-10) — researcher and curious have no phase set:
+ * neither is running a migration. `PERSONA_SIM_PRACTICE_NONE` below names them
+ * explicitly (rather than leaving it to `undefined`, which cannot distinguish
+ * "no mapping yet" from "deliberately none").
  */
 export const PERSONA_SIM_PRACTICE_PHASES: Partial<Record<PersonaId, PhaseId[]>> = {
   executive: ['p0', 'p1', 'p2', 'p3', 'p4', 'p7', 'verify-close', 'foundations'],
@@ -84,8 +79,8 @@ export const PERSONA_SIM_PRACTICE_PHASES: Partial<Record<PersonaId, PhaseId[]>> 
 }
 
 /**
- * Personas for which the "Practice in the Simulation" CTA is deliberately
- * never shown, rather than merely unmapped. Neither holds a program role in
+ * Personas that deliberately have no Simulation practice phases, rather than
+ * being merely unmapped. Neither holds a program role in
  * `ROLE_CROSSWALK` — there is no seat for them at the table the sim models —
  * so pointing them at a migration rehearsal is noise. This is a *decision*
  * recorded as data; `PERSONA_SIM_PRACTICE_PHASES` leaving them undefined only
@@ -99,24 +94,6 @@ export const PERSONA_SIM_PRACTICE_NONE: readonly PersonaId[] = [
   'cert-engineer',
   'curious',
 ]
-
-/**
- * True when the active persona practices this module's phase in the sim, so the
- * "Practice in the Simulation" CTA should show. A persona listed in
- * `PERSONA_SIM_PRACTICE_NONE` never shows it (B+ remediation 2.5). No persona
- * at all still returns true — the broad fallback for an unknown visitor.
- */
-export function personaPracticesModulePhase(
-  persona: PersonaId | null,
-  frameworkPhase: PhaseId | PhaseId[]
-): boolean {
-  if (persona && PERSONA_SIM_PRACTICE_NONE.includes(persona)) return false
-  // eslint-disable-next-line security/detect-object-injection
-  const phases = persona ? PERSONA_SIM_PRACTICE_PHASES[persona] : undefined
-  if (!phases) return true
-  const modulePhases = Array.isArray(frameworkPhase) ? frameworkPhase : [frameworkPhase]
-  return modulePhases.some((p) => phases.includes(p))
-}
 
 /**
  * Nav paths shown per persona (on top of always-visible pages).

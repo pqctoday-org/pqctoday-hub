@@ -5,7 +5,18 @@ import type { UnlockedAchievement } from '@/types/AchievementTypes'
 import { logAchievementUnlocked } from '@/utils/analytics'
 import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
 
-const ACHIEVEMENT_STORE_VERSION = 2
+// v3 (2026-11): adds `assistantQuestionCount` (a single number; no question text).
+const ACHIEVEMENT_STORE_VERSION = 3
+
+/**
+ * A stored count is only ever a whole number of zero or more. Anything else (a missing field, a
+ * string, NaN, a negative, a fraction, Infinity) is repaired here, so a bad value on the device or
+ * in a restored copy can never reach a badge condition as NaN or undefined.
+ */
+export function sanitizeQuestionCount(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return 0
+  return Math.min(Math.floor(value), Number.MAX_SAFE_INTEGER)
+}
 
 interface AchievementState {
   /** All unlocked achievements */
@@ -13,6 +24,11 @@ interface AchievementState {
 
   /** Persistent counters for data not tracked elsewhere */
   playgroundOpCount: number
+  /**
+   * How many questions the visitor has asked the Assistant. Only this number is kept: never the
+   * question text, never when each was asked.
+   */
+  assistantQuestionCount: number
   sectionsVisited: string[]
   playgroundToolsUsed: string[]
   businessToolsUsed: string[]
@@ -24,6 +40,7 @@ interface AchievementState {
   unlock: (id: string) => void
   markSeen: (id: string) => void
   incrementPlaygroundOps: () => void
+  recordAssistantQuestion: () => void
   recordSectionVisit: (section: string) => void
   recordPlaygroundToolUsage: (toolId: string) => void
   recordBusinessToolUsage: (toolId: string) => void
@@ -36,6 +53,7 @@ export const useAchievementStore = create<AchievementState>()(
     (set, get) => ({
       unlocked: [],
       playgroundOpCount: 0,
+      assistantQuestionCount: 0,
       sectionsVisited: [],
       playgroundToolsUsed: [],
       businessToolsUsed: [],
@@ -64,6 +82,14 @@ export const useAchievementStore = create<AchievementState>()(
 
       incrementPlaygroundOps: () =>
         set((state) => ({ playgroundOpCount: state.playgroundOpCount + 1 })),
+
+      recordAssistantQuestion: () =>
+        set((state) => ({
+          assistantQuestionCount: Math.min(
+            sanitizeQuestionCount(state.assistantQuestionCount) + 1,
+            Number.MAX_SAFE_INTEGER
+          ),
+        })),
 
       recordSectionVisit: (section) =>
         set((state) => ({
@@ -98,6 +124,7 @@ export const useAchievementStore = create<AchievementState>()(
         set({
           unlocked: [],
           playgroundOpCount: 0,
+          assistantQuestionCount: 0,
           sectionsVisited: [],
           playgroundToolsUsed: [],
           businessToolsUsed: [],
@@ -111,6 +138,7 @@ export const useAchievementStore = create<AchievementState>()(
       partialize: (state) => ({
         unlocked: state.unlocked,
         playgroundOpCount: state.playgroundOpCount,
+        assistantQuestionCount: state.assistantQuestionCount,
         sectionsVisited: state.sectionsVisited,
         playgroundToolsUsed: state.playgroundToolsUsed,
         businessToolsUsed: state.businessToolsUsed,
@@ -130,6 +158,8 @@ export const useAchievementStore = create<AchievementState>()(
         state.unlocked = Array.isArray(state.unlocked) ? state.unlocked : []
         state.playgroundOpCount =
           typeof state.playgroundOpCount === 'number' ? state.playgroundOpCount : 0
+        // v2 -> v3: the Assistant question count starts at 0; earned badges are left as they are.
+        state.assistantQuestionCount = sanitizeQuestionCount(state.assistantQuestionCount)
         state.sectionsVisited = Array.isArray(state.sectionsVisited) ? state.sectionsVisited : []
         state.playgroundToolsUsed = Array.isArray(state.playgroundToolsUsed)
           ? state.playgroundToolsUsed
@@ -141,6 +171,16 @@ export const useAchievementStore = create<AchievementState>()(
         // over from a previous session by the old persisted-queue behaviour.
         state.toastQueue = []
         return state as unknown as AchievementState
+      },
+      // Runs on every load, also when the stored version is current (migrate does not): repair a
+      // count that was edited or damaged on the device.
+      merge: (persistedState, currentState) => {
+        const stored = (persistedState ?? {}) as Partial<AchievementState>
+        return {
+          ...currentState,
+          ...stored,
+          assistantQuestionCount: sanitizeQuestionCount(stored.assistantQuestionCount),
+        }
       },
       onRehydrateStorage: () => (_state, error) => {
         if (error) {

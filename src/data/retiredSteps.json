@@ -1,0 +1,29 @@
+{
+  "schema": "retired-steps/1",
+  "note": "A lesson or section tag the Hub no longer holds, and where a learner's step goes. `replaced-by` names the tag that took its place; `parent` names the nearest tag that still exists. Only facts the Hub already states are listed.",
+  "entries": [
+    {
+      "tag": "LM-032",
+      "name": "IoT & OT Security",
+      "to": "LM-074",
+      "relation": "replaced-by",
+      "reason": "The lesson was split in two. Saved progress moves to the device-side lesson; the control-systems side became a lesson of its own.",
+      "date": "2026-10-01"
+    },
+    {
+      "tag": "LM-042",
+      "name": "Energy & Utilities PQC",
+      "to": "LM-075",
+      "relation": "replaced-by",
+      "reason": "The lesson was split up. Its control-systems material moved to the OT lesson.",
+      "date": "2026-10-01"
+    },
+    {
+      "tag": "LM-019/s:homomorphic-encryption",
+      "to": "LM-076/s:fhe-fundamentals",
+      "relation": "replaced-by",
+      "reason": "The section moved out of Confidential Computing & TEEs into its own lesson, Homomorphic Encryption.",
+      "date": "2026-10-04"
+    }
+  ]
+}

@@ -24,10 +24,14 @@ import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
 import prettier from 'prettier'
+import { toolArtifactColumns } from './toolArtifactColumns.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const NICE_COMPONENTS = join(ROOT, 'pqc-references', 'NICE-Framework-Components-v2.2.0.json')
 const DATA = join(ROOT, 'src', 'data')
+const ARTIFACT_TYPES = JSON.parse(
+  readFileSync(join(ROOT, 'src', 'data', 'toolArtifactTypes.json'), 'utf8')
+).types.map((t) => t.id)
 const OUT = join(DATA, 'generated', 'tools.generated.ts')
 const EMBED = join(ROOT, 'public', 'embed', 'manifest.json')
 
@@ -55,6 +59,8 @@ const COLUMNS = [
   'cswp39_section_ref',
   'cswp39_sub_section',
   'work_in_progress',
+  'produces_artifact',
+  'artifact_type',
 ]
 
 const KINDS = ['playground', 'sandbox', 'business']
@@ -113,6 +119,15 @@ function lessonRows() {
 
 function fail(row, message) {
   throw new Error(`${row.tool_id || '(blank tool_id)'}: ${message}`)
+}
+
+// What a learner can keep from the tool: blank in the file means "not known" and writes nothing.
+function artifactFields(row) {
+  try {
+    return toolArtifactColumns(row, ARTIFACT_TYPES)
+  } catch (error) {
+    return fail(row, error.message)
+  }
 }
 
 function load() {
@@ -219,6 +234,7 @@ function load() {
       ...(bool(row.work_in_progress) !== undefined
         ? { workInProgress: bool(row.work_in_progress) }
         : {}),
+      ...artifactFields(row),
     }
   })
 
@@ -263,6 +279,10 @@ import type {
   BusinessToolCategory,
 } from '@/components/BusinessCenter/businessToolsRegistry'
 
+/** What a learner can keep from a tool (the artifact_type column). */
+export const TOOL_ARTIFACT_TYPES = ${JSON.stringify(ARTIFACT_TYPES)} as const
+export type ToolArtifactType = (typeof TOOL_ARTIFACT_TYPES)[number]
+
 interface ToolRecordBase {
   /** The Hub's id (sandbox tools carry the \`sbx-\` prefix). */
   toolId: string
@@ -274,6 +294,10 @@ interface ToolRecordBase {
   niceStatementsPractised?: readonly string[]
   /** Position on the page: one run across Playground and sandbox tools, its own run for business tools. */
   order: number
+  /** Whether the tool leaves the learner something to keep. Absent = not known (neither yes nor no). */
+  producesArtifact?: boolean
+  /** The main thing they keep; present only when producesArtifact is true. */
+  artifactType?: ToolArtifactType
 }
 
 interface NiceFields {
@@ -322,6 +346,9 @@ export const PLAYGROUND_TOOL_RECORDS: readonly PlaygroundToolRecord[] = ${JSON.s
 export const SANDBOX_TOOL_RECORDS: readonly SandboxToolRecord[] = ${JSON.stringify(sandbox, null, 2)} satisfies readonly SandboxToolRecord[]
 
 export const BUSINESS_TOOL_RECORDS: readonly BusinessToolRecord[] = ${JSON.stringify(business, null, 2)} satisfies readonly BusinessToolRecord[]
+
+/** The dated tools file these records came from: the revision of the tools they describe. */
+export const TOOLS_SOURCE = ${JSON.stringify(file)}
 
 export const TOOL_RECORDS: readonly ToolRecord[] = [
   ...[...PLAYGROUND_TOOL_RECORDS, ...SANDBOX_TOOL_RECORDS].sort((a, b) => a.order - b.order),

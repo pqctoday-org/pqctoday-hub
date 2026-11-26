@@ -25,6 +25,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ChoosePqcOperation } from './ChoosePqcOperation'
 import { useDeepLinkTarget } from '@/components/PKILearning/common/LearnSection'
+import { SectionReadControl } from '@/components/PKILearning/common/SectionReadControl'
 import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
 import { BUILDING_BLOCKS_SECTION } from './data/buildingBlocksSection'
 
@@ -773,6 +774,7 @@ export const PQC101Module: React.FC = () => {
         <h2 className="text-2xl font-bold text-foreground mb-6">{steps[currentStep].title}</h2>
         {/* eslint-disable-next-line security/detect-object-injection */}
         {steps[currentStep].component}
+        <SectionReadControl moduleId={MODULE_ID} sectionId={steps[currentStep].section} />
       </div>
 
       {/* Navigation */}
@@ -788,16 +790,8 @@ export const PQC101Module: React.FC = () => {
         </Button>
 
         {currentStep === steps.length - 1 ? (
-          <Button
-            variant="ghost"
-            onClick={() => markLearnSectionRead(MODULE_ID, 'next-steps')}
-            data-workshop-target="learn-stepper-complete"
-            className="px-6 py-2 min-h-[44px] md:min-h-0 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
-          >
-            {progress?.learnSectionChecks?.['next-steps']
-              ? '✓ Section marked as read'
-              : 'Mark this section as read'}
-          </Button>
+          // The last step ends in its own "Mark section as read" tick, in the panel above.
+          <span />
         ) : (
           <Button
             variant="gradient"

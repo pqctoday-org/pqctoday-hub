@@ -27,15 +27,7 @@ import {
 } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
-import {
-  Trash2,
-  Gamepad2,
-  ArrowRight,
-  ArrowLeft,
-  Wrench,
-  CheckCircle2,
-  GraduationCap,
-} from 'lucide-react'
+import { Trash2, ArrowRight, ArrowLeft, Wrench, CheckCircle2, GraduationCap } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ModuleTabBar } from './ModuleTabBar'
@@ -63,22 +55,21 @@ import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { resolveModuleQuizCategory } from '@/data/moduleQuizCategory'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
-import { NextStepCard } from '@/components/shared/NextStepCard'
 import { UnderstandingCheckCard } from '@/components/shared/UnderstandingCheckCard'
 import { StepExercise } from '@/components/shared/StepExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import { resolveModuleTools, mobilePracticeTool, TOOL_TITLE_BY_ID } from '@/data/moduleToolLinks'
 import { useModuleStore } from '@/store/useModuleStore'
-import { usePersonaStore } from '@/store/usePersonaStore'
-import { personaPracticesModulePhase } from '@/data/personaConfig'
 import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell'
 import { MOBILE_WORKSHOP_READY } from '@/data/mobileWorkshops'
 import { INFOGRAPHIC_IMAGE_REVISIONS } from '@/data/infographicImageRevisions'
-import { LearnOrderStrip } from '@/components/ui/LearnOrderStrip'
-import { NiceCoveragePanel } from '@/components/ui/NiceCoveragePanel'
+import { ModuleFitStrip } from '@/components/Journey/ModuleFitStrip'
+import { ModuleJourneyHeader } from '@/components/Journey/ModuleJourneyHeader'
+import { ModuleCommentsMount } from '@/components/Journey/mountPoints'
+import { useJourneyOrigin } from '@/components/Journey/useJourneyNav'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
  *  modules (frameworkPhase is an array) show their first/primary phase. */
@@ -87,15 +78,6 @@ function phaseChipLabel(phase: PhaseId | PhaseId[]): string | null {
   const p = FRAMEWORK_PHASES[id]
   if (!p) return null
   return p.number !== null ? `Phase ${p.number} · ${p.name}` : p.name
-}
-
-/** The sim deep-link target for a module — jumps the board to the phase this
- *  lesson teaches (?phase=), so "Practice in the Simulation" lands where it's
- *  relevant instead of the generic entry point. First phase wins for the few
- *  multi-phase modules (same choice phaseChipLabel makes). */
-function simPracticeHref(phase: PhaseId | PhaseId[]): string {
-  const id = Array.isArray(phase) ? phase[0] : phase
-  return FRAMEWORK_PHASES[id] ? `/simulation?phase=${id}` : '/simulation'
 }
 
 const difficultyChip: Record<NonNullable<ResolvedModuleManifest['difficulty']>, string> = {
@@ -202,6 +184,8 @@ interface WorkshopStepperProps {
   visibleIndices: number[]
   /** ids of steps marked `optional` in the manifest (reference steps) */
   optionalStepIds: ReadonlySet<string>
+  /** id of the manifest's "Start here" step, when it is on the active path (marked in the step list) */
+  startHereStepId?: string
   currentPart: number
   configKey: number
   onPartChange: (index: number) => void
@@ -217,6 +201,7 @@ function WorkshopStepper({
   parts,
   visibleIndices,
   optionalStepIds,
+  startHereStepId,
   currentPart,
   configKey,
   onPartChange,
@@ -276,7 +261,12 @@ function WorkshopStepper({
   ).length
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {/* Release 5, workshop detail: how many steps there are and where they open. */}
+        <p className="text-sm text-muted-foreground" data-testid="workshop-steps-line">
+          {visibleIndices.length} workshop {visibleIndices.length === 1 ? 'step' : 'steps'}. Each
+          one opens here, in the module.
+        </p>
         <Button
           variant="ghost"
           onClick={onReset}
@@ -305,9 +295,11 @@ function WorkshopStepper({
           cswp39Step={parts[currentPart].cswp39Step}
           steps={visibleIndices.map((i) => ({
             id: parts[i].id,
-            label: optionalStepIds.has(parts[i].id)
-              ? `${parts[i].title} (optional reference)`
-              : parts[i].title,
+            label: `${
+              optionalStepIds.has(parts[i].id)
+                ? `${parts[i].title} (optional reference)`
+                : parts[i].title
+            }${parts[i].id === startHereStepId ? ' · Start here' : ''}`,
           }))}
           completedSteps={completedSteps}
           onStepClick={(p) => onPartJump(visibleIndices[p])}
@@ -550,21 +542,19 @@ export const ModuleShell = ({
   // iframe embed has a Learn dashboard to go back to.
   const iframeEmbedded = useIsEmbedded()
   const showBackLink = !embedded && !iframeEmbedded
+  // Back goes to where the learner started (Your journey or All modules), else the Learn page.
+  const origin = useJourneyOrigin()
+  const back =
+    origin === 'journey'
+      ? { to: '/learn?mode=journey', label: 'Back to Your journey' }
+      : origin === 'all-modules'
+        ? { to: '/learn?mode=browse', label: 'Back to All modules' }
+        : { to: '/learn', label: 'Back to Dashboard' }
   const browseSearch = location.state?.learnBrowseSearch
   const browseHref =
     typeof browseSearch === 'string' && browseSearch.startsWith('?mode=browse&')
       ? `/learn${browseSearch}`
       : undefined
-
-  // "Practice in the Simulation" is persona-aware: relevance depends on the
-  // active profile, not the lesson's track. An exec practices the governance/
-  // program phases; an architect/ops/dev practices the technical execution &
-  // infrastructure phases (p5/p6) where TLS, HSM, 5G live (see
-  // PERSONA_SIM_PRACTICE_PHASES). No persona / researcher / curious → broad.
-  // Never shown when the module is itself embedded in the sim (a confusing loop).
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const showSimCta =
-    !embedded && personaPracticesModulePhase(selectedPersona, manifest.frameworkPhase)
 
   // Module completion (drives the handoff footer); the dual learn/workshop
   // progress bars + track momentum render once in ModuleProgressHeader above.
@@ -589,11 +579,11 @@ export const ModuleShell = ({
         <div className="flex flex-wrap items-center gap-2 mb-2">
           {showBackLink ? (
             <Link
-              to={browseHref ?? '/learn'}
+              to={browseHref ?? back.to}
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft size={16} aria-hidden="true" />
-              {browseHref ? 'Back to workshop search' : 'Back to Dashboard'}
+              {browseHref ? 'Back to workshop search' : back.label}
             </Link>
           ) : null}
           {track ? (
@@ -619,8 +609,11 @@ export const ModuleShell = ({
           ) : null}
         </div>
         <h1 className="text-3xl font-bold text-foreground">{title ?? manifest.title}</h1>
-        <LearnOrderStrip moduleId={manifest.id} />
-        <NiceCoveragePanel moduleId={manifest.id} />
+        <ModuleFitStrip moduleId={manifest.id} />
+        {/* Release 5: resume line, step bar of the objective in focus, other-role lens. */}
+        <div className="mt-3">
+          <ModuleJourneyHeader moduleId={manifest.id} />
+        </div>
         {/* UX batch 2 (2026-09-19, CC-5): on the Workshop tab the description,
             "Why this matters" and "Start here" are Learn-tab framing that pushed
             the first workshop control below the fold at 1280×800. They fold to one
@@ -678,15 +671,6 @@ export const ModuleShell = ({
           </>
         )}
       </div>
-      {showSimCta ? (
-        <Link
-          to={simPracticeHref(manifest.frameworkPhase)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/20"
-        >
-          <Gamepad2 size={16} />
-          Practice in the Simulation
-        </Link>
-      ) : null}
     </div>
   )
 
@@ -719,6 +703,7 @@ export const ModuleShell = ({
         parts={parts}
         visibleIndices={visibleIndices}
         optionalStepIds={optionalStepIds}
+        startHereStepId={startHereIndex >= 0 ? manifest.startHere?.step : undefined}
         currentPart={shownPart}
         configKey={configKey}
         onPartChange={handlePartChange}
@@ -854,6 +839,7 @@ export const ModuleShell = ({
             </TabsContent>
           )}
         </Tabs>
+        {!embedded && !iframeEmbedded ? <ModuleCommentsMount moduleId={manifest.id} /> : null}
         {/* WS22 Stage 3 (2026-08-21) — module→module relations, computed from the
           `track`/`frameworkPhase`/`taxonomy` tags the manifests already carry.
           Rendered unconditionally (not gated on completion) because the point
@@ -865,13 +851,10 @@ export const ModuleShell = ({
           content integration, user decision Q4): shown inside the Simulation's
           embed too — only the external /embed iframe still hides it. */}
         {!iframeEmbedded ? <IndustryLandscapePanel moduleId={manifest.id} /> : null}
-        {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts),
-          rendered whether or not the module is completed. Same embed rules. */}
         {/* Round 9, wave 2 — the quiz handoff, visible before completion. */}
         {!embedded && !iframeEmbedded ? (
           <UnderstandingCheckCard moduleId={manifest.id} moduleTitle={manifest.title} />
         ) : null}
-        {!embedded && !iframeEmbedded ? <NextStepCard route={`/learn/${manifest.id}`} /> : null}
         {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
           finishing a module always routes somewhere, never a dead-end "Complete".
           The sim "Practice" CTA lives in the header (persistent, curated) so it is

@@ -45,7 +45,14 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           that vouch for the binding between a public key and an identity (not sourced in the
           Library).
         </p>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+      </section>
+
+      {/* Section 1b: CA hierarchies and trust models */}
+      <section className="glass-panel p-6" data-section-id="ca-hierarchy">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <GitBranch size={20} /> CA Hierarchies
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-primary mb-1">Components</div>
             <ul className="text-xs text-muted-foreground space-y-1">
@@ -54,10 +61,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
               <li>End Entities (subscribers)</li>
             </ul>
           </div>
-          <div
-            className="bg-muted/50 rounded-lg p-3 border border-border"
-            data-section-id="ca-hierarchy"
-          >
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-success mb-1">Trust Models</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>Hierarchical (Root → Intermediate → EE)</li>

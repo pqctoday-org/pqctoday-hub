@@ -231,11 +231,12 @@ for (const { path, name } of PERSONA_ROUTES) {
   })
 }
 
-test('RightPanel chat drawer — focus is trapped inside when open', async ({ page }) => {
-  await page.goto('/')
-
-  // Open the chat panel programmatically utilizing the ASR hook pattern we injected
-  // This bypasses issues where the FAB button animation may block click listeners under high load
+/**
+ * The Assistant drawer. On a wide screen it is a region beside the page that stays usable (no focus
+ * lock); on a phone it is a full-screen modal sheet that holds focus. Both close with Escape.
+ */
+async function openAssistantByHook(page: import('@playwright/test').Page) {
+  // Opened with the page's own hook: the toggle in the top bar can be mid-animation under load.
   await page.waitForFunction(
     () =>
       typeof (window as unknown as { __e2e_toggle_panel?: () => void }).__e2e_toggle_panel ===
@@ -245,34 +246,63 @@ test('RightPanel chat drawer — focus is trapped inside when open', async ({ pa
     const fn = (window as unknown as { __e2e_toggle_panel?: () => void }).__e2e_toggle_panel
     fn?.()
   })
+}
 
-  // Panel should be visible. RightPanel is a React.lazy chunk that MainLayout
-  // only mounts once the store flips open (`{isPanelOpen && <RightPanel />}`),
-  // so the toggle above is what STARTS the chunk fetch — and under parallel
-  // workers the preview server can be busy serving another spec's wasm for
-  // several seconds. 5 s was thin for that cold path (nightly flake, 2026-09-21:
-  // failed twice in one run while the Changelog a11y test held the server, then
-  // passed alone and under load); 15 s is the budget the rest of this suite
-  // gives every lazy route chunk.
-  const panel = page.getByRole('dialog', { name: /pqc assistant/i })
-  await expect(panel).toBeVisible({ timeout: 15_000 })
+test('Assistant drawer on a wide screen — a region beside the page that Escape closes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/')
+  await openAssistantByHook(page)
 
-  // Press Tab repeatedly; focus must cycle within the panel, never reach body or nav
-  for (let i = 0; i < 6; i++) {
+  // The drawer is a lazy chunk mounted when the store flips open, so the toggle above starts its fetch;
+  // 15 s is the budget this suite gives every lazy route chunk under parallel workers.
+  const drawer = page.getByRole('region', { name: 'Assistant', exact: true })
+  await expect(drawer).toBeVisible({ timeout: 15_000 })
+  await expect(drawer).not.toHaveAttribute('aria-modal', 'true')
+  await expect(drawer.getByRole('textbox', { name: 'Your question' })).toBeFocused()
+
+  // Not a trap: the page beside it stays reachable, so Tab from the last control leaves the drawer.
+  let leftTheDrawer = false
+  for (let i = 0; i < 40 && !leftTheDrawer; i++) {
+    await page.keyboard.press('Tab')
+    leftTheDrawer = await page.evaluate(() => {
+      const el = document.activeElement
+      const region = document.querySelector('[data-assistant-layout="docked"]')
+      return Boolean(el && region && !region.contains(el))
+    })
+  }
+  expect(leftTheDrawer, 'Tab reaches the page beside the drawer').toBe(true)
+
+  // Esc closes it from the drawer.
+  await drawer.getByRole('textbox', { name: 'Your question' }).focus()
+  await page.keyboard.press('Escape')
+  await expect(drawer).toHaveCount(0, { timeout: 3000 })
+})
+
+test('Assistant sheet on a phone — a modal sheet that holds focus until it is closed', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await openAssistantByHook(page)
+  const sheet = page.getByRole('dialog', { name: 'Assistant', exact: true })
+  await expect(sheet).toBeVisible({ timeout: 15_000 })
+  await expect(sheet).toHaveAttribute('aria-modal', 'true')
+
+  // Press Tab repeatedly; focus must cycle within the sheet, never reach the page or the nav.
+  for (let i = 0; i < 8; i++) {
     await page.keyboard.press('Tab')
     const focused = await page.evaluate(() => {
       const el = document.activeElement
-      if (!el) return false
-      // Verify focused element is inside the dialog
-      const dialog = document.querySelector('[role="dialog"]')
-      return dialog ? dialog.contains(el) : false
+      const dialog = document.querySelector('[data-assistant-layout="sheet"]')
+      return Boolean(el && dialog && dialog.contains(el))
     })
     expect(focused).toBe(true)
   }
 
-  // Esc closes the panel
   await page.keyboard.press('Escape')
-  await expect(panel).not.toBeVisible({ timeout: 3000 })
+  await expect(sheet).toHaveCount(0, { timeout: 3000 })
 })
 
 test('Assess wizard inputs — all labelled', async ({ page }) => {

@@ -408,4 +408,43 @@ describe('the move changed nothing a page shows', () => {
       expect(now[key]).toEqual(intended(key))
     }
   })
+  describe('what a learner can keep from a tool', () => {
+    const artifactTypes = JSON.parse(
+      readFileSync(join(process.cwd(), 'src', 'data', 'toolArtifactTypes.json'), 'utf8')
+    ).types as { id: string; meaning: string }[]
+
+    it('has the two output columns in the newest dated file, empty or filled', () => {
+      const file = readdirSync(join(process.cwd(), 'src', 'data'))
+        .filter((f) => /^tools_\d{8}(_r\d+)?\.csv$/.test(f))
+        .sort((a, b) => key(a).localeCompare(key(b)))
+        .pop()!
+      const header = readFileSync(join(process.cwd(), 'src', 'data', file), 'utf8').split('\n')[0]
+      expect(header.split(',')).toEqual(
+        expect.arrayContaining(['produces_artifact', 'artifact_type'])
+      )
+    })
+
+    it('lists each kind once, each with a meaning', () => {
+      expect(artifactTypes.map((t) => t.id)).toEqual([
+        'document',
+        'certificate',
+        'key',
+        'tls-run',
+        'run-record',
+        'data-file',
+      ])
+      for (const t of artifactTypes) expect(t.meaning.length, t.id).toBeGreaterThan(10)
+    })
+
+    it('every record carries a kind only when it says it produces one', () => {
+      const ids = artifactTypes.map((t) => t.id)
+      for (const record of TOOL_RECORDS) {
+        if (record.producesArtifact === true) {
+          expect(ids, `${record.toolId}: artifactType`).toContain(record.artifactType)
+        } else {
+          expect(record.artifactType, `${record.toolId}: artifactType`).toBeUndefined()
+        }
+      }
+    })
+  })
 })

@@ -1,0 +1,139 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+/**
+ * Hooks over the journey store for the screens: the "done" predicate (the learner's own marks plus
+ * the Hub's completion signal for a finished lesson), the objectives of the current role and the
+ * one in focus. Nothing here writes; the store's actions do.
+ */
+import { useCallback, useEffect, useMemo } from 'react'
+import { useJourneyStore } from '@/store/useJourneyStore'
+import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { lessonByTag } from '@/services/journey/lessons'
+import { buildBuiltOn } from '@/services/journey/curriculum'
+import { NO_ROLE, type Objective } from '@/services/journey/types'
+import { nowStep, stepDone } from '@/services/journey/stepRules'
+import { objectiveTitle } from '@/services/journey/stepView'
+import type { MyWorkObjective } from '@/services/myWork/items'
+import type { UpdatesObjective } from '@/services/myWork/updates'
+
+/** True for a tag the learner marked complete, or a lesson the Hub's own progress shows finished. */
+export function useIsDone(): (tag: string) => boolean {
+  const completions = useJourneyStore((s) => s.completions)
+  const modules = useModuleStore((s) => s.modules)
+  return useCallback(
+    (tag: string) => {
+      if (tag in completions) return true
+      const lesson = lessonByTag(tag)
+      return lesson ? modules[lesson.id]?.status === 'completed' : false
+    },
+    [completions, modules]
+  )
+}
+
+/** The role key the objectives are filed under: the persona id, or `none`. */
+export function useRoleKey(): string {
+  return usePersonaStore((s) => s.selectedPersona) ?? NO_ROLE
+}
+
+/** The objectives of the current role, in the order they were made. */
+export function useRoleObjectives(): Objective[] {
+  const role = useRoleKey()
+  const adopt = useJourneyStore((s) => s.adoptRolelessObjectives)
+  // Objectives made before a role was chosen become that role's (see the store action).
+  useEffect(() => {
+    if (role !== NO_ROLE) adopt(role)
+  }, [role, adopt])
+  const objectives = useJourneyStore((s) => s.objectives)
+  const order = useJourneyStore((s) => s.order)
+  const list = useMemo(
+    () =>
+      order
+        .map((id) => objectives[id])
+        .filter((o): o is Objective => Boolean(o) && o.role === role),
+    [objectives, order, role]
+  )
+  // An objective made before the Hub recorded what it was built on is recorded now, as it stands: later changes
+  // are told from here, and nothing earlier is guessed. It is kept as it is; only the record is added.
+  const record = useJourneyStore((s) => s.recordBuiltOn)
+  useEffect(() => {
+    for (const o of list)
+      if (!o.builtOn) record(o.id, buildBuiltOn(o.steps, 'first-seen', Date.now()))
+  }, [list, record])
+  return list
+}
+
+/** The objective in focus for the current role: the one chosen, else the first active one, else null. */
+export function useFocusedObjective(): Objective | null {
+  const role = useRoleKey()
+  const list = useRoleObjectives()
+  const focusId = useJourneyStore((s) => s.focus[role]) // eslint-disable-line security/detect-object-injection
+  return useMemo(
+    () => list.find((o) => o.id === focusId) ?? list.find((o) => o.state === 'active') ?? null,
+    [list, focusId]
+  )
+}
+
+/** True when any module has progress; the store's own starter entry is "not-started" and does not count. */
+function hasOpenedAnyModule(modules: Record<string, { status: string }>): boolean {
+  return Object.values(modules).some((m) => m.status !== 'not-started')
+}
+
+/**
+ * True before the learner has chosen a role, made an objective or opened a lesson (the first visit,
+ * UX handoff 6.17). Read once when Learn opens, to pick the view it opens on.
+ */
+export function isFirstVisit(): boolean {
+  return (
+    !usePersonaStore.getState().selectedPersona &&
+    useJourneyStore.getState().order.length === 0 &&
+    !hasOpenedAnyModule(useModuleStore.getState().modules)
+  )
+}
+
+/** The same, kept up to date while mounted (the first-visit prompt hides as soon as a role is chosen). */
+export function useIsFirstVisit(): boolean {
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const objectiveCount = useJourneyStore((s) => s.order.length)
+  const touched = useModuleStore((s) => hasOpenedAnyModule(s.modules))
+  return !persona && objectiveCount === 0 && !touched
+}
+
+/**
+ * The journey's objectives in the two shapes the My work and Updates panels read. Only lesson
+ * steps are given: those are the tags the panels know how to name and compare.
+ */
+export function usePanelObjectives(): {
+  work: MyWorkObjective[]
+  updates: UpdatesObjective[]
+} {
+  const objectives = useRoleObjectives()
+  const isDone = useIsDone()
+  return useMemo(() => {
+    const now = (o: Objective) => nowStep(o, isDone)?.resourceTag
+    const work = objectives.map((o) => ({
+      id: o.id,
+      title: objectiveTitle(o),
+      // A step swapped for a replacement keeps the tags it stood for: work filed under them stays filed here.
+      steps: o.steps
+        .filter((s) => s.kind === 'module')
+        .flatMap((s) => [s.resourceTag, ...(s.formerTags ?? [])].map((tag) => ({ tag }))),
+    }))
+    const updates = objectives.map((o) => ({
+      id: o.id,
+      title: objectiveTitle(o),
+      state: o.state,
+      steps: o.steps
+        .filter((s) => s.kind === 'module')
+        .map((s) => ({
+          tag: s.resourceTag,
+          required: s.required && !s.deferred,
+          status: stepDone(s, isDone)
+            ? ('completed' as const)
+            : s.resourceTag === now(o)
+              ? ('now' as const)
+              : ('not-started' as const),
+        })),
+    }))
+    return { work, updates }
+  }, [objectives, isDone])
+}
