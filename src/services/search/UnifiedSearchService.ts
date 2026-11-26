@@ -11,20 +11,20 @@ import { pageSearchEntries } from './pageSearchEntries'
 
 /**
  * UnifiedSearchService — single MiniSearch instance + entityIndex + corpus map
- * shared by ⌘K (SearchIndex facade) and the PQC Assistant (RetrievalService).
+ * behind ⌘K (SearchIndex facade).
  *
  * Convergence goals:
- * - One corpus load per session (was two: one in SearchIndex, one in RetrievalService).
+ * - One corpus load per session (was two, one per consumer).
  * - One MiniSearch index with consistent fields and boosts.
  * - One entityIndex so direct entity lookups (acronym, refId, country, toolId,
- *   patentNumber, vendorId, …) work in both consumers.
+ *   patentNumber, vendorId, …) work from one place.
  * - No persisted index: every visit builds in memory, in slices that do not freeze
  *   the page (see STALE_INDEX_CACHE_KEY for why the saved copy was dropped).
  *
  * Public API (intentionally narrow):
  * - initialize() / initializeWithCorpus(corpus) — load + build
  * - corpus, corpusById, entityIndex, index — readonly accessors used by the
- *   Assistant pipeline (boosts, diversity caps, library guarantee).
+ *   search facades and passage readers (boosts, diversity caps, library guarantee).
  * - searchPalette(query, opts) — simple ranked results for ⌘K.
  * - corpusDate, isReady, invalidateCache().
  */
@@ -124,7 +124,7 @@ export class UnifiedSearchService {
   private _generatedAt: string | null = null
   private initPromise: Promise<void> | null = null
   private staleCacheCleanup: Promise<void> | null = null
-  /** In-flight async index build; concurrent callers (⌘K and the Assistant) share it. */
+  /** In-flight async index build; concurrent callers share it. */
   private indexBuild: Promise<void> | null = null
   /** Bumped whenever the corpus/index is replaced, so a stale async build never installs. */
   private buildGeneration = 0
@@ -261,7 +261,7 @@ export class UnifiedSearchService {
     }
   }
 
-  /** Synchronous build — for `initializeWithCorpus` (tests, the Assistant's seeded corpus). */
+  /** Synchronous build — for `initializeWithCorpus` (tests, a seeded corpus). */
   private buildIndex(): void {
     this.prepareCorpus()
     this._index = new MiniSearch<RAGChunk>(MINISEARCH_CONFIG)
@@ -378,7 +378,7 @@ export class UnifiedSearchService {
 
   /**
    * Cold-start path used by ⌘K (the SearchIndex facade). Same load and slice-by-slice
-   * build as `initialize()`, so the palette and the Assistant share one build. The
+   * build as `initialize()`, so every caller shares one build. The
    * name predates 2026-10-01, when the persisted index was dropped; it is kept so
    * callers need no change.
    */

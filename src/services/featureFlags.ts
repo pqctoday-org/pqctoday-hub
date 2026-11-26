@@ -15,34 +15,6 @@
  */
 
 /**
- * T16 — embedding-based passage retrieval at runtime.
- * On by default. The bundled embedding index improves recall without sending
- * queries to a service. Build-time or localStorage `0` is an emergency opt-out.
- */
-export const useEmbeddingRetrieval = (): boolean => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const env = (import.meta as any).env
-  if (env?.VITE_FEATURE_EMBEDDING_RETRIEVAL === '0') return false
-  try {
-    if (localStorage.getItem('pqc-feature-embedding-retrieval') === '0') return false
-  } catch {
-    // Storage unavailable: keep the safe bundled default.
-  }
-  return true
-}
-
-/**
- * Structured claim citations — asks the model to emit a machine-checkable
- * `\`\`\`citations` block (claimExcerpt + chunkId pairs) alongside its
- * prose, verified against the retrieved chunks via exact chunk-id +
- * text-containment matching (citationVerification.ts), not fuzzy
- * entity-presence matching. Always on: corpus-only mode cannot safely
- * display model output without claim-to-chunk evidence. Kept as a function
- * so existing callers retain a stable API.
- */
-export const useStructuredCitations = (): boolean => true
-
-/**
  * Mobile UX layer (design_handoff_pqc_mobile_ux, IMPLEMENTATION-PLAN.md).
  * ON by default as of 2026-08-23 — a deliberate go-live decision made
  * directly by the user, not a side effect of a merge. Every phone visitor

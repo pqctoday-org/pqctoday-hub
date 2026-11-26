@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * `/openssl?cmd=` opens the command category it names, and the PQC Assistant
- * names these categories in its links (promptBuilder.ts reads OPENSSL_CATEGORIES).
- * A typed list there had eleven of the fifteen, so `version`, `files`, `configutl`
+ * `/openssl?cmd=` opens the command category it names, so a link can name any
+ * of these categories (OPENSSL_CATEGORIES). A typed list once had eleven of the fifteen, so `version`, `files`, `configutl`
  * and `pkcs11` could not be linked.
  */
 import { describe, it, expect } from 'vitest'

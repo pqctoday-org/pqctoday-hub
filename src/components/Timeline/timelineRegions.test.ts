@@ -2,8 +2,8 @@
 /**
  * The Timeline's region filter offers the same regions the rest of the site
  * defines (the persona region and its country lists). A region missing here
- * cannot be linked: the PQC Assistant names these ids in its links
- * (promptBuilder.ts), and one of them, `mena`, was left out of that list.
+ * cannot be linked: a link names these ids, and one of them, `mena`,
+ * was once left out of that list.
  */
 import { describe, it, expect } from 'vitest'
 import { TIMELINE_REGION_LABELS } from './timelineRegions'

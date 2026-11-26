@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test'
  *   2. Typing a query returns at least one result.
  *
  * Strict tier-ordering across results is exercised at the unit level
- * (RetrievalService.tier.test.ts + UnifiedSearchService.singleton.test.ts).
+ * (UnifiedSearchService.singleton.test.ts and UnifiedSearchService.tierPalette.test.ts).
  * Pinning specific result orderings here would couple the test to the
  * current corpus snapshot; instead we assert that the palette renders
  * without regression.

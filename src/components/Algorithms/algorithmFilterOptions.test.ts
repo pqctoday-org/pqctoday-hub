@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * The filter values the Algorithms page offers are also the values the PQC
- * Assistant puts in its links (promptBuilder.ts reads them from
- * algorithmFilterOptions.ts). The page compares them with exact strings, so a
+ * The filter values the Algorithms page offers are also the values a link into
+ * the page can carry (algorithmFilterOptions.ts). The page compares them with exact strings, so a
  * value that is only nearly right — `fn=kem` for the function `KEM`, or a level
  * that is not offered — selects nothing and the reader sees an empty table.
  * These tests run the page's own filter predicates over the real data.

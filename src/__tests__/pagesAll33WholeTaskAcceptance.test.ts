@@ -9,7 +9,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { computeAssessment } from '@/hooks/assessment/orchestrator'
 import { impliedAlgorithms, CRYPTO_CATEGORY_ALGORITHMS } from '@/hooks/assessment/cryptoCategories'
@@ -112,11 +112,8 @@ import { ROUTE_META, isNoindexRoute } from '@/seo/routeMeta'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
 import { toolSearchEntries } from '@/services/search/toolSearchEntries'
 import { pageSearchEntries } from '@/services/search/pageSearchEntries'
-import {
-  RetrievalService,
-  buildTrustRefusal,
-  requiresAuthoritativeEvidence,
-} from '@/services/chat/RetrievalService'
+import { answer, forgetAssistant } from '@/services/assistant'
+import { stubKnowledgeFetch } from '@/services/assistant/testSupport'
 
 export interface PageWholeTaskReceipt {
   id: string
@@ -168,7 +165,6 @@ const EXPECTED_33_PAGE_IDS = [
 
 const receipts = new Map<string, PageWholeTaskReceipt>()
 let unifiedSearch: UnifiedSearchService
-let retrievalService: RetrievalService
 let allSearchChunks: RAGChunk[] = []
 
 function recordReceipt(receipt: PageWholeTaskReceipt): void {
@@ -183,17 +179,12 @@ beforeAll(async () => {
   allSearchChunks = [...raw.chunks, ...extraTools, ...extraPages]
 
   UnifiedSearchService.resetInstance()
-  RetrievalService.resetInstance()
 
   unifiedSearch = UnifiedSearchService.getInstance()
   unifiedSearch.initializeWithCorpus(allSearchChunks)
-
-  retrievalService = RetrievalService.getInstance()
-  retrievalService.initializeWithCorpus(allSearchChunks)
 }, 30_000)
 
 afterAll(() => {
-  RetrievalService.resetInstance()
   UnifiedSearchService.resetInstance()
 
   const orderedReceipts = EXPECTED_33_PAGE_IDS.map((id) => receipts.get(id)).filter(
@@ -1003,7 +994,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
     })
   })
 
-  it('21. revisions, 22. changelog, 23. faq, 24. about, 25. editorial, 26. sponsor, 27. terms, 28. palette, 29. assistant, 31. rightpanel, 32. nav — verifies trust signatures (11 artifacts), SBOM (229 npm packages), Terms parity, Changelog personas, RightPanel manuals, and search/assistant gates', () => {
+  it('21. revisions, 22. changelog, 23. faq, 24. about, 25. editorial, 26. sponsor, 27. terms, 28. palette, 29. assistant, 31. rightpanel, 32. nav — verifies trust signatures (11 artifacts), SBOM (229 npm packages), Terms parity, Changelog personas, RightPanel manuals, and search/assistant gates', async () => {
     // 21. revisions + 11 signed artifacts in public/data
     const topLevelSignedArtifacts = [
       'public/data/community-signals.json.sig',
@@ -1273,18 +1264,29 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
     expect(paletteHits.results.length).toBeGreaterThan(0)
     expect(paletteHits.hidden.length).toBeGreaterThan(0)
 
-    const assistantHits = retrievalService.search('ML-KEM-768 key encapsulation', 5, {
-      page: 'algorithms',
-      relevantSources: ['algorithms'],
-      persona: 'architect',
-    })
-    expect(assistantHits.length).toBeGreaterThan(0)
-    expect(requiresAuthoritativeEvidence('Are we required by audit regulations to comply?')).toBe(
-      true
-    )
-    expect(buildTrustRefusal('Are we required by audit regulations to comply?', [])).toContain(
-      "I don't have a sufficiently authoritative source"
-    )
+    // The real Assistant, over the Hub's own knowledge files (no network, nothing else fetched).
+    const fetchLog = stubKnowledgeFetch()
+    let named, concept, unknown
+    try {
+      named = await answer('FIPS 203', { persona: 'architect' })
+      concept = await answer('ML-KEM-768 key encapsulation', { persona: 'architect' })
+      unknown = await answer('qwertyzzxx blorp', { persona: 'architect' })
+    } finally {
+      vi.unstubAllGlobals()
+      forgetAssistant()
+    }
+    expect(fetchLog.urls.every((u) => u.startsWith('/data/knowledge-'))).toBe(true)
+    expect(named.state).toBe('choices')
+    expect(concept.state).toBe('resources')
+    if (concept.state !== 'resources') throw new Error('unreachable')
+    const conceptRows = concept.groups.flatMap((g) => g.rows)
+    expect(conceptRows.length).toBeGreaterThan(0)
+    expect(
+      conceptRows.every((r) => r.link.startsWith('/') && r.goLink.startsWith('/go/') && r.title)
+    ).toBe(true)
+    expect(unknown.state).toBe('broad')
+    if (unknown.state !== 'broad') throw new Error('unreachable')
+    expect(unknown.note).toContain('the Hub has no direct answer')
 
     recordReceipt({
       id: 'palette',
@@ -1316,15 +1318,23 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       id: 'assistant',
       tier: 'page',
       routeOrSurface: 'PQC Assistant',
-      canonicalSources: ['src/services/chat/RetrievalService.ts'],
-      wholeTaskChecks: ['Verified persona-boosted retrieval and multi-turn entity carry-over'],
-      boundaryAndAdverseChecks: ['Verified the T10 audit refusal gate'],
+      canonicalSources: [
+        'src/services/assistant/adapter.ts',
+        'src/services/assistant/contract.ts',
+        'src/services/knowledge/knowledgeReader.ts',
+      ],
+      wholeTaskChecks: [
+        'Verified a concept question returns grouped Hub resources and a bare record name returns the records that carry it',
+      ],
+      boundaryAndAdverseChecks: [
+        'Verified a question the Hub cannot answer returns the broad state that says there is no direct answer',
+      ],
       provenanceAndCrossLinkChecks: [
-        'Verified retrieved chunks carry the source and deep link the answer cites',
+        'Verified the Assistant fetches only the Hub knowledge files and answers with rows that point into the Hub',
       ],
       metrics: {
-        topRetrievedChunks: assistantHits.length,
-        refusalGateActive: true,
+        conceptResourceRows: conceptRows.length,
+        broadStateHasNoDirectAnswerNote: true,
       },
       status: 'PASS',
     })
