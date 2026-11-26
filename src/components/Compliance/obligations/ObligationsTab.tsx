@@ -186,7 +186,7 @@ export function ObligationsTab({
         // The zero state IS the first screen for anyone who has not taken the
         // assessment, so it carries the controls that fix it rather than
         // sending the visitor to another page to come back from.
-        <div className="rounded-xl border border-border bg-card p-6 text-center">
+        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-center">
           <ShieldCheck size={26} className="mx-auto text-muted-foreground" />
           <p className="mt-2 text-sm font-semibold text-foreground">
             Choose a context to explore potentially relevant sources
@@ -319,7 +319,7 @@ function ScopeBar({
   const inherited = inheritedCountry || inheritedSector
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
       <div className="flex flex-wrap items-center gap-3">
         <ScopeChip
           label="Region"
@@ -373,7 +373,7 @@ function ScopeBar({
 
 function ScopeChip({ label, value }: { label: string; value: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11.5px] font-semibold text-foreground">
+    <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] bg-chip text-chip-foreground font-bold">
       <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
         {label}
       </span>

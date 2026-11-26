@@ -562,7 +562,7 @@ export function MobileLibraryView() {
             <article
               key={item.referenceId}
               data-deeplink-id={item.referenceId}
-              className="glass-panel relative flex flex-col p-3.5"
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] relative flex flex-col p-3.5"
             >
               <Button
                 type="button"

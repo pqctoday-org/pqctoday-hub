@@ -249,7 +249,7 @@ function DrawerPanel({
 
         {/* panel */}
         <div
-          className="absolute right-0 top-0 flex h-full w-[540px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-200 ease-out"
+          className="absolute right-0 top-0 flex h-full w-[540px] max-w-[94vw] flex-col border-l border-border bg-card transition-transform duration-200 ease-out"
           style={{ transform: entered ? 'translateX(0)' : 'translateX(26px)' }}
         >
           {/* header */}

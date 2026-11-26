@@ -96,7 +96,7 @@ export function ArchitectStandardsView({
           profile={profile}
           message="Set your stack first — pick an industry and country so the maturity dashboard and jurisdiction map can show the standards that may be relevant to your system."
         />
-        <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between gap-4">
+        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
               Want a deeper inventory? Take the full assessment.
@@ -126,11 +126,13 @@ export function ArchitectStandardsView({
       {/* ── Top widget: Maturity dashboard ───────────────────────── */}
       <section
         data-section-id="architect-maturity"
-        className="glass-panel p-4 space-y-2 scroll-mt-20"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2 scroll-mt-20"
       >
         <header className="flex items-center gap-2">
           <Layers size={16} className="text-secondary" />
-          <h3 className="text-base font-semibold text-foreground">Crypto-Agility Maturity</h3>
+          <h3 className="text-base font-semibold font-display text-heading">
+            Crypto-Agility Maturity
+          </h3>
           <span className="text-xs text-muted-foreground">
             Where the standards matched to your profile land on the CSWP-39 5-pillar × 4-tier grid
           </span>
@@ -150,7 +152,7 @@ export function ArchitectStandardsView({
       <section data-section-id="architect-jurisdictions" className="space-y-3 scroll-mt-20">
         <header className="flex items-center gap-2">
           <GlobeLock size={16} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">Jurisdiction map</h3>
+          <h3 className="text-base font-semibold font-display text-heading">Jurisdiction map</h3>
           <span className="text-xs text-muted-foreground">
             Frameworks that may be relevant to your stack, grouped by regulatory bloc. A match on
             country and sector is not a legal finding: each entry shows its tier, so check its scope
@@ -164,9 +166,12 @@ export function ArchitectStandardsView({
             {orderedRegions.map((region) => {
               const fws = byRegion.get(region) ?? []
               return (
-                <div key={region} className="glass-panel p-3 space-y-2 min-w-0">
+                <div
+                  key={region}
+                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 space-y-2 min-w-0"
+                >
                   <div className="flex items-baseline justify-between gap-2">
-                    <h4 className="text-sm font-semibold text-foreground">{region}</h4>
+                    <h4 className="text-sm font-semibold font-display text-heading">{region}</h4>
                     <span className="text-[11px] text-muted-foreground">
                       {fws.length} framework{fws.length === 1 ? '' : 's'}
                     </span>
@@ -231,7 +236,7 @@ export function ArchitectStandardsView({
       {library.length > 0 && (
         <section data-section-id="architect-library" className="space-y-2 scroll-mt-20">
           <header className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-foreground">Standards to read</h3>
+            <h3 className="text-base font-semibold font-display text-heading">Standards to read</h3>
             <span className="text-xs text-muted-foreground">
               Library documents cited by your applicable frameworks
             </span>

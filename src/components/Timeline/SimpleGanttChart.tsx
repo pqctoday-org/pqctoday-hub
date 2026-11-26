@@ -687,7 +687,7 @@ export const SimpleGanttChart = ({
       {/* Embedded scope label (replaces the Controls toolbar when inside the sim) */}
       {embedded && scopeLabel && (
         <div className="flex items-center gap-2 px-1 text-xs text-muted-foreground">
-          <span className="rounded bg-primary/10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wide text-primary">
+          <span className="rounded bg-primary/10 px-2 py-0.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Timeline
           </span>
           <span>{scopeLabel}</span>
@@ -696,7 +696,7 @@ export const SimpleGanttChart = ({
       {/* Controls — hidden in embedded/sim mode */}
       {!embedded && (
         <>
-          <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-2 flex flex-col md:flex-row md:flex-wrap items-center gap-4 relative z-40">
+          <div className="bg-card p-2 mb-2 flex flex-col md:flex-row md:flex-wrap items-center gap-4 relative z-40 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]">
             <div className="flex items-center gap-2 w-full md:w-auto text-xs">
               <div className="flex-1 min-w-[120px]">
                 <FilterDropdown

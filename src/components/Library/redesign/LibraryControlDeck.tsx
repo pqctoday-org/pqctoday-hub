@@ -75,7 +75,7 @@ export function LibraryControlDeck({
   }
 
   return (
-    <div className="glass-panel rounded-2xl p-3">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search

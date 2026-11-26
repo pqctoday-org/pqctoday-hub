@@ -62,7 +62,7 @@ export const MobileAlgorithmList = ({
             key={`${algo.classical}-${algo.function}-${index}`}
             data-deeplink-id={rowId}
             className={clsx(
-              'glass-panel p-4 flex items-center justify-between active:scale-[0.98] transition-transform',
+              'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex items-center justify-between active:scale-[0.98] transition-transform',
               isHighlighted && 'bg-primary/15 ring-1 ring-inset ring-primary/30'
             )}
           >
@@ -91,7 +91,7 @@ export const MobileAlgorithmList = ({
 
               {/* Name */}
               <div>
-                <h3 className="font-semibold text-foreground text-sm">
+                <h3 className="font-semibold text-sm font-display text-heading">
                   {cleanName(algo.classical)}
                 </h3>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono">

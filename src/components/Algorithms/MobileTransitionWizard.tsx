@@ -169,7 +169,7 @@ export function MobileTransitionWizard({
 
       {/* Step 1 — What are you replacing? */}
       {step === 1 && (
-        <div className="glass-panel p-4 space-y-3">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
           <p className="text-sm font-medium text-foreground">What are you replacing?</p>
           {Object.entries(classicalGroups).map(([group, items]) => {
             const expanded = expandedGroups.has(group)
@@ -215,7 +215,7 @@ export function MobileTransitionWizard({
 
       {/* Step 2 — What matters most? */}
       {step === 2 && (
-        <div className="glass-panel p-4 space-y-3">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -279,7 +279,7 @@ export function MobileTransitionWizard({
           </p>
 
           {candidates.length === 0 ? (
-            <div className="glass-panel p-4 text-center text-sm text-muted-foreground">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center text-sm text-muted-foreground">
               No reviewed candidate path is recorded for {selected?.classical} (
               {selected ? GROUP_LABELS[selected.group] : ''}). That means no reviewed record, not
               that no change is required.
@@ -289,7 +289,10 @@ export function MobileTransitionWizard({
               const pqcName = row.pqc.split(/\s*\(/)[0].trim()
               const detail = pqcDetailMap.get(pqcName.toLowerCase())
               return (
-                <div key={pqcName} className="glass-panel p-4 space-y-2">
+                <div
+                  key={pqcName}
+                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2"
+                >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="text-sm font-semibold text-status-success">{pqcName}</p>

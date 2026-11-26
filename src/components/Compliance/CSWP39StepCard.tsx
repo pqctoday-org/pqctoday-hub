@@ -30,14 +30,14 @@ export const CSWP39StepCard: React.FC<CSWP39StepCardProps> = ({
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <div className="glass-panel p-4 border border-border rounded-lg">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
       <div className="flex items-start gap-3">
         <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 text-primary font-bold text-sm shrink-0">
           {step.number}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-base font-bold text-foreground">{step.title}</h3>
+            <h3 className="text-base font-bold font-display text-heading">{step.title}</h3>
             <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide px-2 py-0.5 rounded bg-muted/60">
               CSWP.39 {step.sectionRef}
             </span>

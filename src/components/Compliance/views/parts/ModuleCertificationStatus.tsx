@@ -49,12 +49,14 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records, closingNot
   return (
     <section
       data-section-id="developer-module-cert-status"
-      className="glass-panel p-4 space-y-3 scroll-mt-20"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
       aria-label="Crypto module certification status"
     >
       <header className="flex items-center gap-2 flex-wrap">
         <ShieldCheck size={16} className="text-primary" />
-        <h3 className="text-base font-semibold text-foreground">Module certification landscape</h3>
+        <h3 className="text-base font-semibold font-display text-heading">
+          Module certification landscape
+        </h3>
         <span className="text-xs text-muted-foreground">
           Current FIPS 140-3 / NIST CAVP / CC / CSPN records in the published snapshot
         </span>

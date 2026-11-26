@@ -245,7 +245,7 @@ export function AlgorithmValidationView({
         return (
           <section
             key={id}
-            className="glass-panel min-w-0 max-w-full overflow-hidden scroll-mt-28"
+            className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] min-w-0 max-w-full overflow-hidden scroll-mt-28"
             data-workshop-target={`section-validation-${id}`}
             data-deeplink-id={`validation-${id}`}
           >

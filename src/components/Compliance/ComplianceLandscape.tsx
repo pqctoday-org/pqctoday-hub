@@ -309,9 +309,11 @@ export function DeadlineTimeline({
   const stackHeight = Math.max(72, Math.min(240, stackPx))
 
   return (
-    <div className="glass-panel p-4 space-y-3">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
       <div className="flex items-center gap-2">
-        <h3 className="text-sm font-semibold text-foreground">PQC Compliance Deadlines</h3>
+        <h3 className="text-sm font-semibold font-display text-heading">
+          PQC Compliance Deadlines
+        </h3>
         {label && (
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground border border-border rounded-full px-2 py-0.5">
             <Globe size={10} aria-hidden="true" />
@@ -368,7 +370,7 @@ export function DeadlineTimeline({
                             title={`${fw.label}: ${readout.text ?? 'no date'}`}
                           />
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 whitespace-nowrap">
-                            <div className="bg-popover border border-border text-xs text-foreground px-2 py-1 rounded shadow-lg">
+                            <div className="bg-popover text-xs text-foreground px-2 py-1 rounded border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]">
                               <span className="font-semibold">{fw.label}</span>
                               <span className={`ml-1 ${urgencyTextColor(urgency)}`}>
                                 {readout.text}
@@ -520,7 +522,7 @@ function FrameworkCard({
     <div
       id={`fw-${fw.id}`}
       data-workshop-target={`compliance-framework-${fw.id}`}
-      className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300${onSelectDetail ? ' cursor-pointer' : ''} ${highlighted ? 'ring-2 ring-primary shadow-glow' : personaEmphasis ? 'border-primary/40 bg-primary/[0.03]' : ''}`}
+      className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300${onSelectDetail ? ' cursor-pointer' : ''} ${highlighted ? 'ring-2 ring-primary shadow-glow' : personaEmphasis ? 'border-primary/40 bg-primary/[0.03]' : ''}`}
       // 2026-08-02 a11y: the card was `role="button" tabIndex={0}` while
       // containing its own controls (trust-path popover, deadline chips), i.e.
       // `nested-interactive` — 56 nodes on /compliance, with those inner
@@ -540,7 +542,7 @@ function FrameworkCard({
           <ShieldAlert size={18} className="text-muted-foreground shrink-0 mt-0.5" />
         )}
         <div className="min-w-0 flex-1">
-          <h4 className="font-semibold text-foreground text-sm leading-tight flex items-center gap-1.5 flex-wrap">
+          <h4 className="font-semibold text-sm leading-tight flex items-center gap-1.5 flex-wrap font-display text-heading">
             {onSelectDetail ? (
               <Button
                 variant="ghost"
@@ -1134,7 +1136,7 @@ function FrameworkTable({
   onSelectFramework?: (fw: ComplianceFramework) => void
 }) {
   return (
-    <div className="glass-panel">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))]">
       <ScrollFadeContainer>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -1620,7 +1622,7 @@ export function ComplianceLandscape({
     <div className="space-y-4">
       {/* Summary stats — PQC and Deadlines panels are clickable filter toggles */}
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <div className="glass-panel px-4 py-2 flex items-center gap-2 select-none">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] px-4 py-2 flex items-center gap-2 select-none">
           <span className="text-2xl font-bold text-foreground">{displayedFrameworks.length}</span>
           <span className="text-muted-foreground">
             {pqcRequiredOnly || hasDeadlineOnly ? 'Shown' : 'Entries'}
@@ -1633,7 +1635,7 @@ export function ComplianceLandscape({
             setPqcRequiredOnly((v) => !v)
             setHasDeadlineOnly(false)
           }}
-          className={`glass-panel px-4 py-2 flex items-center gap-2 h-auto text-sm rounded-lg transition-all ${
+          className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] px-4 py-2 flex items-center gap-2 h-auto text-sm transition-all ${
             pqcRequiredOnly
               ? 'ring-2 ring-status-success/40 bg-status-success/5'
               : 'hover:bg-status-success/5'
@@ -1656,7 +1658,7 @@ export function ComplianceLandscape({
             setHasDeadlineOnly((v) => !v)
             setPqcRequiredOnly(false)
           }}
-          className={`glass-panel px-4 py-2 flex items-center gap-2 h-auto text-sm rounded-lg transition-all ${
+          className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] px-4 py-2 flex items-center gap-2 h-auto text-sm transition-all ${
             hasDeadlineOnly
               ? 'ring-2 ring-status-warning/40 bg-status-warning/5'
               : 'hover:bg-status-warning/5'
@@ -1686,7 +1688,7 @@ export function ComplianceLandscape({
       )}
 
       {/* Filter band — primary controls always visible; org · industry · country behind "More" */}
-      <div className="bg-card border border-border rounded-lg shadow-sm p-2 space-y-2">
+      <div className="bg-card border border-border rounded-lg p-2 space-y-2">
         {/* Primary row */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Search */}
@@ -1910,7 +1912,7 @@ export function ComplianceLandscape({
       {/* Content */}
       {viewMode === 'cards' ? (
         displayedFrameworks.length === 0 ? (
-          <div className="glass-panel p-8 text-center text-muted-foreground space-y-2">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-8 text-center text-muted-foreground space-y-2">
             <p>No entries match your current selection.</p>
             {searchFilterText.trim() && semantic.loading && (
               <p className="text-xs text-muted-foreground">

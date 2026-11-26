@@ -65,7 +65,7 @@ export const TimelineDocumentCard = ({
         }
       }}
       aria-label={`View details for ${row.title}`}
-      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 hover:bg-card/70 transition-colors bg-card/50 relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+      className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 flex flex-col h-full hover:border-secondary/50 hover:bg-card/70 transition-colors bg-card/50 relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
     >
       {row.status && (
         <div className="absolute top-3 right-3">
@@ -79,7 +79,7 @@ export const TimelineDocumentCard = ({
       </span>
 
       {/* Title */}
-      <h3 className="text-sm font-semibold text-foreground mb-2 leading-snug pr-16 line-clamp-2">
+      <h3 className="text-sm font-semibold mb-2 leading-snug pr-16 line-clamp-2 font-display text-heading">
         {row.title}
       </h3>
 

@@ -201,7 +201,7 @@ function DimensionPanel({ label, status }: DimensionPanelProps) {
   const stageLevel = status.stage ? DRAFT_STAGE_LEVEL[status.stage] : null
   const stageLabel = status.stage ? DRAFT_STAGE_SHORT[status.stage] : null
   return (
-    <div className="rounded-md border border-border bg-card/50 p-3">
+    <div className="rounded-2xl border border-border bg-card/50 p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
@@ -475,7 +475,7 @@ export function ProtocolDetailModal({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className={`glass-panel p-6 max-w-5xl w-full max-h-[88dvh] overflow-y-auto z-50 ${
+            className={`glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-5xl w-full max-h-[88dvh] overflow-y-auto z-50 ${
               isEmbedded ? '' : 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'
             }`}
             ref={dialogRef}
@@ -491,7 +491,7 @@ export function ProtocolDetailModal({
                 <div className="flex flex-wrap items-center gap-2">
                   <h2
                     id="protocol-detail-modal-title"
-                    className="text-2xl font-bold text-foreground"
+                    className="text-2xl font-bold font-display text-heading"
                   >
                     {protocol.name}
                   </h2>

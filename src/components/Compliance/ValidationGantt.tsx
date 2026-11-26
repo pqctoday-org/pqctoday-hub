@@ -93,12 +93,12 @@ export const ValidationGantt: React.FC<Props> = ({
   return (
     <section
       data-section-id="compliance-validation-gantt"
-      className="glass-panel p-4 space-y-3 scroll-mt-20"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
       aria-label="Compliance deadline timeline"
     >
       <header className="flex items-center gap-2 flex-wrap">
         <CalendarDays size={16} className="text-primary" />
-        <h3 className="text-base font-semibold text-foreground">Deadline timeline</h3>
+        <h3 className="text-base font-semibold font-display text-heading">Deadline timeline</h3>
         <span className="text-xs text-muted-foreground">
           {omitted.length > 0
             ? `Showing ${rows.length} of ${datedTotal} frameworks with a concrete year`
@@ -142,7 +142,7 @@ export const ValidationGantt: React.FC<Props> = ({
                   style={{ left: `${nowPct}%`, height: `${rows.length * 28}px` }}
                 />
                 <span
-                  className="absolute -translate-x-1/2 text-[9px] font-mono uppercase tracking-wider text-primary/70"
+                  className="absolute -translate-x-1/2 uppercase text-primary/70 text-[11px] font-extrabold tracking-[0.14em] text-heading"
                   style={{ left: `${nowPct}%`, top: 2 }}
                 >
                   now

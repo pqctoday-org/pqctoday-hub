@@ -168,19 +168,14 @@ export const GanttDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[90vw] max-w-[36rem] bg-popover text-popover-foreground shadow-2xl border border-border rounded-xl animate-in zoom-in-95 duration-200"
+            className="w-[90vw] max-w-[36rem] bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"
             aria-labelledby="gantt-phase-popover-title"
           >
             {/* Header with Phase Color */}
-            <div
-              className="p-3 border-b border-border"
-              style={{
-                background: `linear-gradient(to bottom, ${colors.glow} 0%, transparent 100%)`,
-              }}
-            >
+            <div className="p-3 border-b-4" style={{ borderBottomColor: colors.start }}>
               <div className="flex items-start gap-2">
                 {/* Badge and Title */}
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
@@ -192,7 +187,7 @@ export const GanttDetailPopover = ({
                   </div>
                   <h3
                     id="gantt-phase-popover-title"
-                    className="text-xs font-bold text-foreground leading-tight"
+                    className="text-xs font-bold leading-tight font-display text-heading"
                   >
                     {shown.title}
                   </h3>

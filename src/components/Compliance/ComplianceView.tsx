@@ -144,10 +144,10 @@ interface SectionHeaderProps {
 
 function SectionHeader({ icon, title, description }: SectionHeaderProps) {
   return (
-    <div className="mb-4 flex items-start gap-3 rounded-lg border border-border bg-muted/20 p-4">
+    <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mb-4 flex items-start gap-3 p-4">
       <div className="flex shrink-0 items-center gap-2">{icon}</div>
       <div className="min-w-0 flex-1">
-        <h2 className="text-base font-semibold text-foreground">{title}</h2>
+        <h2 className="text-base font-semibold font-display text-heading">{title}</h2>
         <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
       </div>
     </div>

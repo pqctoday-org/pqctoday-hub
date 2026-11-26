@@ -135,8 +135,8 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
   return (
     <div className="space-y-6">
       {/* Introductory context */}
-      <div className="glass-panel p-4 md:p-6">
-        <div className="flex items-start gap-3 p-4 bg-warning/12 border border-border rounded-lg">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6">
+        <div className="flex items-start gap-3 p-4 bg-warning/12 border border-border rounded-2xl">
           <AlertTriangle className="text-status-warning flex-shrink-0 mt-0.5" size={20} />
           <div className="text-sm">
             <p className="font-semibold mb-1 text-foreground">Implementation Attack Evidence</p>
@@ -153,7 +153,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
       </div>
 
       {/* Attack category + severity legend */}
-      <div className="glass-panel p-4 space-y-3">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
         <div className="flex flex-wrap gap-4 justify-center">
           {Object.entries(ATTACK_CATEGORY_META).map(([key, meta]) => {
             const Icon = meta.icon
@@ -201,13 +201,15 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
             key={profile.algorithm}
             data-deeplink-id={`attack-${attackProfileId(profile)}`}
             className={clsx(
-              'glass-panel p-5 flex flex-col gap-4 hover:border-primary/50 transition-colors border rounded-lg',
+              'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 flex flex-col gap-4 hover:border-primary/50 transition-colors',
               profile.algorithm === highlightProfile ? 'border-primary/60' : 'border-border'
             )}
           >
             {/* Header */}
             <div>
-              <h4 className="font-semibold text-foreground text-base">{profile.algorithm}</h4>
+              <h4 className="font-semibold text-base font-display text-heading">
+                {profile.algorithm}
+              </h4>
               <span className="text-xs text-muted-foreground">{profile.family}</span>
             </div>
 
@@ -249,7 +251,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
 
             {/* Countermeasures */}
             {profile.countermeasures && profile.countermeasures.length > 0 && (
-              <div className="bg-muted/40 border border-border rounded-md p-3">
+              <div className="bg-muted/40 border border-border rounded-2xl p-3">
                 <span className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-1.5">
                   Mitigation considerations
                 </span>

@@ -170,9 +170,12 @@ export function PqcCertificationTrendChart({
     view === 'products' ? FIPS_STAGES.filter((s) => s !== 'none') : FIPS_STAGES
 
   return (
-    <div className="glass-panel rounded-lg p-3" data-testid="fips-stage-chart">
+    <div
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
+      data-testid="fips-stage-chart"
+    >
       <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h3 className="text-sm font-medium text-foreground">
+        <h3 className="text-sm font-medium font-display text-heading">
           PQC progress along the FIPS 140-3 track, by month
         </h3>
         <div className="flex items-center gap-1" role="group" aria-label="Chart view">

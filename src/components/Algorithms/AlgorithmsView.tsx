@@ -734,7 +734,7 @@ export function AlgorithmsView({
       {/* Curious preview — hide the heavy comparison tables until they explicitly unlock */}
       {isCuriousPreview && (
         <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6 md:p-8">
-          <h2 className="text-xl md:text-2xl font-bold text-gradient mb-3">
+          <h2 className="text-xl md:text-2xl font-bold font-display text-heading mb-3 font-display text-heading">
             {algorithmData.length || 'Dozens of'} catalogue entries — three common starting points
           </h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">

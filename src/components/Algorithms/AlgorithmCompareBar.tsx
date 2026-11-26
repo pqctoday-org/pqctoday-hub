@@ -30,7 +30,7 @@ export function AlgorithmCompareBar({
 
   return (
     <div
-      className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-0 left-0 right-0 z-[var(--z-index-panel)] bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 border-t border-border shadow-[0_-4px_24px_rgba(0,0,0,0.1)] pb-[env(safe-area-inset-bottom)]`}
+      className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-0 left-0 right-0 z-[var(--z-index-panel)] bg-card border-t-2 border-ink pb-[env(safe-area-inset-bottom)]`}
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 overflow-x-auto hide-scrollbar">
         <div className="flex items-center gap-2 shrink-0 max-md:min-w-0 max-md:shrink max-md:overflow-x-auto max-md:no-scrollbar">

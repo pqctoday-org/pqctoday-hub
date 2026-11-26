@@ -123,10 +123,16 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
       <ProfileSummary profile={profile} editable />
       <CertRecordsSummary />
 
-      <section className="glass-panel p-4 space-y-3" aria-labelledby="cert-readiness-heading">
+      <section
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
+        aria-labelledby="cert-readiness-heading"
+      >
         <header className="flex flex-wrap items-center gap-2">
           <BadgeCheck size={16} className="text-primary" />
-          <h3 id="cert-readiness-heading" className="text-base font-semibold text-foreground">
+          <h3
+            id="cert-readiness-heading"
+            className="text-base font-semibold font-display text-heading"
+          >
             Learn the submission evidence chain
           </h3>
           <span className="text-xs text-muted-foreground">
@@ -166,11 +172,13 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
 
       <section
         data-section-id="cert-engineer-schemes"
-        className="glass-panel p-4 space-y-3 scroll-mt-20"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2 flex-wrap">
           <Landmark size={16} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">Certification schemes</h3>
+          <h3 className="text-base font-semibold font-display text-heading">
+            Certification schemes
+          </h3>
           <span className="text-xs text-muted-foreground">
             In-scope schemes with recorded PQC requirements or guidance, first
           </span>
@@ -185,7 +193,7 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
             {expecting.map((fw) => (
               <li
                 key={fw.id}
-                className="flex flex-wrap items-baseline justify-between gap-2 rounded-lg border border-border bg-card/30 p-3"
+                className="flex flex-wrap items-baseline justify-between gap-2 rounded-2xl border border-border bg-card/30 p-3"
               >
                 <Button
                   variant="ghost"
@@ -217,11 +225,13 @@ export const CertEngineerSchemesView: FC<CertEngineerSchemesViewProps> = ({
 
       <section
         data-section-id="cert-engineer-test-links"
-        className="glass-panel p-4 space-y-3 scroll-mt-20"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3 scroll-mt-20"
       >
         <header className="flex items-center gap-2 flex-wrap">
           <FlaskConical size={16} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">Test before you submit</h3>
+          <h3 className="text-base font-semibold font-display text-heading">
+            Test before you submit
+          </h3>
         </header>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {TEST_LINKS.map(({ to, label, desc }) => (

@@ -627,7 +627,7 @@ export function MobileComplianceView({
       )}
 
       {isEmpty && (section === 'obligations' || (section === 'requirements' && !reqfwParam)) && (
-        <div className="glass-panel p-4 text-center">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 text-center">
           <p className="text-[12.5px] font-semibold text-foreground">Nothing in scope yet</p>
           <p className="mt-1 text-[11px] text-muted-foreground">
             Pick a country and a sector to explore potentially relevant sources. This does not
@@ -649,7 +649,10 @@ export function MobileComplianceView({
             const meta = TIER_META[group.tier]
             const open = isTierOpen(group.tier)
             return (
-              <div key={group.tier} className="glass-panel overflow-hidden">
+              <div
+                key={group.tier}
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden"
+              >
                 <Button
                   type="button"
                   variant="ghost"
@@ -721,7 +724,7 @@ export function MobileComplianceView({
 
       {section === 'progress' && (
         <section className="flex flex-col gap-3" aria-labelledby="mobile-compliance-dates">
-          <div className="glass-panel p-3.5">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
             <h2
               id="mobile-compliance-dates"
               className="flex items-center gap-2 text-[13px] font-bold text-foreground"
@@ -747,7 +750,7 @@ export function MobileComplianceView({
               {mobileMilestones.slice(0, 20).map((item, index) => (
                 <li
                   key={`${item.framework.id}-${item.year}-${index}`}
-                  className="glass-panel flex items-start gap-3 p-3"
+                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex items-start gap-3 p-3"
                 >
                   <span className="font-mono text-[12px] font-bold text-primary">{item.year}</span>
                   <div className="min-w-0">
@@ -773,7 +776,7 @@ export function MobileComplianceView({
 
       {section === 'products' && (
         <section className="flex flex-col gap-3" aria-labelledby="mobile-compliance-evidence">
-          <div className="glass-panel p-3.5">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
             <h2
               id="mobile-compliance-evidence"
               className="flex items-center gap-2 text-[13px] font-bold text-foreground"
@@ -808,7 +811,10 @@ export function MobileComplianceView({
               'An evaluated-product document names PQC; this is not ACVP or FIPS validation.',
             ],
           ].map(([title, detail]) => (
-            <div key={title} className="glass-panel p-3">
+            <div
+              key={title}
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
+            >
               <h3 className="text-[12px] font-bold text-foreground">{title}</h3>
               <p className="mt-0.5 text-[10.5px] text-muted-foreground">{detail}</p>
             </div>
@@ -841,7 +847,7 @@ export function MobileComplianceView({
                   type="button"
                   variant="ghost"
                   onClick={() => openFramework(fw)}
-                  className="glass-panel h-auto w-full flex-col items-start gap-0 whitespace-normal rounded-xl p-3 text-left"
+                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] h-auto w-full flex-col items-start gap-0 whitespace-normal p-3 text-left"
                 >
                   <h3 className="text-[12.5px] font-bold text-foreground">{fw.label}</h3>
                   <p className="mt-0.5 text-[10.5px] text-muted-foreground">
@@ -1033,7 +1039,10 @@ export function MobileComplianceView({
                 {RECORDS_GLOSSARY.length} terms that gate the rest of this tab.
               </p>
               {RECORDS_GLOSSARY.map((t) => (
-                <div key={t.term} className="glass-panel p-3">
+                <div
+                  key={t.term}
+                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
+                >
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-[12.5px] font-bold text-foreground">{t.term}</span>
                     <span className="text-[10.5px] text-muted-foreground">{t.short}</span>
@@ -1050,7 +1059,7 @@ export function MobileComplianceView({
 
       {section === 'foryou' && (
         <section className="flex flex-col gap-3" aria-labelledby="mobile-compliance-for-you">
-          <div className="glass-panel p-3.5">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
             <h2
               id="mobile-compliance-for-you"
               className="flex items-center gap-2 text-[13px] font-bold text-foreground"
@@ -1074,7 +1083,7 @@ export function MobileComplianceView({
                 type="button"
                 variant="ghost"
                 onClick={() => openFramework(result.item)}
-                className="glass-panel h-auto w-full flex-col items-start gap-1 whitespace-normal p-3 text-left"
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] h-auto w-full flex-col items-start gap-1 whitespace-normal p-3 text-left"
               >
                 <span className="text-[12px] font-bold text-foreground">{result.item.label}</span>
                 <span className="text-[10px] font-semibold text-primary">
@@ -1098,7 +1107,7 @@ export function MobileComplianceView({
       {section === 'cswp39' && evrefRequirements.length > 0 && (
         <section
           aria-label="Linked evidence"
-          className="glass-panel mb-3 flex flex-col gap-2 p-3.5"
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] mb-3 flex flex-col gap-2 p-3.5"
         >
           <div className="flex items-start gap-2">
             <div className="min-w-0 flex-1">
@@ -1167,7 +1176,10 @@ export function MobileComplianceView({
           {CSWP39_STEPS.map((step) => {
             const open = openStep === step.id
             return (
-              <div key={step.id} className="glass-panel overflow-hidden">
+              <div
+                key={step.id}
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden"
+              >
                 <Button
                   type="button"
                   variant="ghost"

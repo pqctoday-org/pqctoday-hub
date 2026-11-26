@@ -149,7 +149,7 @@ export function ProductsTab({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
             Inventory
@@ -220,7 +220,7 @@ export function ProductsTab({
       )}
 
       {visible.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-6 text-center">
+        <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-center">
           <PackageSearch size={24} className="mx-auto text-muted-foreground" />
           <p className="mt-2 text-sm font-semibold text-foreground">Nothing matches</p>
           <p className="mt-1 text-xs text-muted-foreground">

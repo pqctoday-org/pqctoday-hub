@@ -542,7 +542,7 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
         . Draft KATs remain quarantined pending source review.
       </p>
       {/* Intro banner */}
-      <div className="flex items-start gap-3 p-4 bg-status-info border border-border rounded-lg">
+      <div className="flex items-start gap-3 p-4 bg-status-info border border-border rounded-2xl">
         <Info className="text-primary flex-shrink-0 mt-0.5" size={20} />
         <div className="text-sm">
           <p className="font-semibold mb-1 text-foreground">Known-answer and functional tests</p>
@@ -579,8 +579,8 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
       </div>
 
       {/* Key Encapsulation — ML-KEM */}
-      <div className="glass-panel p-6">
-        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+        <h4 className="text-lg font-bold mb-4 flex items-center gap-2 font-display text-heading">
           <Lock className="text-primary" size={20} />
           Key Encapsulation (ML-KEM)
           <span className="text-sm font-normal text-muted-foreground">FIPS 203</span>
@@ -593,8 +593,8 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
       </div>
 
       {/* Digital Signatures — ML-DSA + SLH-DSA */}
-      <div className="glass-panel p-6">
-        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+        <h4 className="text-lg font-bold mb-4 flex items-center gap-2 font-display text-heading">
           <Shield className="text-primary" size={20} />
           Digital Signatures (ML-DSA, SLH-DSA)
           <span className="text-sm font-normal text-muted-foreground">FIPS 204, FIPS 205</span>
@@ -608,8 +608,8 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
       </div>
 
       {/* AES Symmetric */}
-      <div className="glass-panel p-6">
-        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+        <h4 className="text-lg font-bold mb-4 flex items-center gap-2 font-display text-heading">
           <KeyRound className="text-primary" size={20} />
           AES Symmetric
           <span className="text-sm font-normal text-muted-foreground">
@@ -624,8 +624,8 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
       </div>
 
       {/* HMAC / Hash */}
-      <div className="glass-panel p-6">
-        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+        <h4 className="text-lg font-bold mb-4 flex items-center gap-2 font-display text-heading">
           <Hash className="text-primary" size={20} />
           HMAC / Hash
           <span className="text-sm font-normal text-muted-foreground">FIPS 198-1, FIPS 180-4</span>
@@ -638,8 +638,8 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
       </div>
 
       {/* Classical Signatures */}
-      <div className="glass-panel p-6">
-        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+        <h4 className="text-lg font-bold mb-4 flex items-center gap-2 font-display text-heading">
           <PenTool className="text-primary" size={20} />
           Classical Signatures
           <span className="text-sm font-normal text-muted-foreground">FIPS 186-5, RFC 8032</span>
@@ -652,8 +652,8 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
       </div>
 
       {/* Key Derivation */}
-      <div className="glass-panel p-6">
-        <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
+        <h4 className="text-lg font-bold mb-4 flex items-center gap-2 font-display text-heading">
           <Waypoints className="text-primary" size={20} />
           Key Derivation
           <span className="text-sm font-normal text-muted-foreground">RFC 8018, RFC 5869</span>
@@ -666,7 +666,7 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
       </div>
 
       {/* PKCS#11 Diagnostics — collapsible */}
-      <div className="glass-panel overflow-hidden">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden">
         <Button
           variant="ghost"
           onClick={() => setDiagOpen(!diagOpen)}
@@ -675,7 +675,9 @@ export const KATView: React.FC<KATViewProps> = ({ katParam, onUpdateParams } = {
         >
           <Terminal className="text-primary shrink-0" size={20} />
           <div className="flex-1 min-w-0 basis-40 text-left">
-            <h4 className="text-lg font-bold text-foreground break-words">PKCS#11 Diagnostics</h4>
+            <h4 className="text-lg font-bold break-words font-display text-heading">
+              PKCS#11 Diagnostics
+            </h4>
             <p className="text-xs text-muted-foreground mt-0.5">
               Activity log and key inspector for all KAT operations
             </p>

@@ -62,7 +62,7 @@ export function FrameworkConceptGraphModal({
       <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
         <FocusLock returnFocus>
           <div
-            className="w-[95vw] sm:w-[88vw] md:w-[80vw] max-w-[1200px] max-h-[88dvh] border border-border rounded-xl overflow-hidden flex flex-col bg-popover text-popover-foreground shadow-2xl animate-in zoom-in-95 duration-200"
+            className="w-[95vw] sm:w-[88vw] md:w-[80vw] max-w-[1200px] max-h-[88dvh] overflow-hidden flex flex-col bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
@@ -78,7 +78,7 @@ export function FrameworkConceptGraphModal({
                 </div>
                 <h3
                   id="framework-graph-title"
-                  className="text-lg font-bold text-foreground leading-tight"
+                  className="text-lg font-bold leading-tight font-display text-heading"
                 >
                   {title}
                 </h3>

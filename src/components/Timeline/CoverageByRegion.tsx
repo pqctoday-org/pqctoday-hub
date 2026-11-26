@@ -66,12 +66,12 @@ export const CoverageByRegion = ({ data, selectedRegion, onSelectRegion }: Props
   return (
     <section
       aria-label="Coverage by region"
-      className="mt-3 rounded-lg border border-border bg-card/50 p-3"
+      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-3 p-3"
       data-testid="timeline-coverage-by-region"
     >
       <div className="flex items-center gap-2 mb-2">
         <Globe size={13} className="text-primary" aria-hidden="true" />
-        <h2 className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+        <h2 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
           Coverage by region
         </h2>
       </div>
@@ -87,16 +87,16 @@ export const CoverageByRegion = ({ data, selectedRegion, onSelectRegion }: Props
               type="button"
               onClick={() => onSelectRegion(active ? 'All' : s.id)}
               aria-pressed={active}
-              className={`h-auto flex flex-col items-start text-left rounded-md border px-3 py-2 transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary ${
+              className={`h-auto flex flex-col items-start text-left rounded-2xl border px-3 py-2 transition-colors min-h-[44px] ${
                 active
-                  ? 'border-primary bg-primary/[0.08] hover:bg-primary/[0.12]'
+                  ? 'border-highlight-border bg-highlight hover:bg-highlight'
                   : dim
-                    ? 'border-border bg-background/50 text-muted-foreground hover:border-primary/40 hover:bg-muted/30'
-                    : 'border-border bg-background hover:border-primary/40 hover:bg-muted/30'
+                    ? 'border-border bg-card text-muted-foreground hover:bg-muted'
+                    : 'border-border bg-card hover:bg-muted'
               }`}
             >
               <div
-                className={`text-[11px] font-bold uppercase tracking-wider ${active ? 'text-primary' : 'text-foreground'}`}
+                className={`text-[11px] font-bold uppercase tracking-wider ${active ? 'text-heading' : 'text-foreground'}`}
               >
                 {s.label}
               </div>

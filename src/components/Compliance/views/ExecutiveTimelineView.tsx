@@ -263,7 +263,7 @@ function FrameworkSection({
     return (
       <div
         data-section-id={sectionId}
-        className="rounded-lg border border-dashed border-border bg-card/50 p-3 text-xs text-muted-foreground scroll-mt-20"
+        className="rounded-2xl border border-dashed border-border bg-card/50 p-3 text-xs text-muted-foreground scroll-mt-20"
       >
         <span className="font-semibold text-foreground/70">{title}: </span>
         {emptyText}

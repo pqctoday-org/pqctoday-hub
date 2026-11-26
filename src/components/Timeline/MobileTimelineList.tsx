@@ -199,7 +199,7 @@ export const MobileTimelineList = ({
           aria-pressed={viewMode === 'swipe'}
           className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
             viewMode === 'swipe'
-              ? 'bg-background text-foreground shadow-sm'
+              ? 'bg-background text-foreground'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -213,7 +213,7 @@ export const MobileTimelineList = ({
           aria-pressed={viewMode === 'compact'}
           className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
             viewMode === 'compact'
-              ? 'bg-background text-foreground shadow-sm'
+              ? 'bg-background text-foreground'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -229,11 +229,11 @@ export const MobileTimelineList = ({
           return (
             <div
               key={`compact-${country.countryName}`}
-              className="glass-panel p-4 flex flex-col gap-3"
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex flex-col gap-3"
               data-testid={`country-card-compact-${country.countryName}`}
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-6 rounded-sm overflow-hidden shadow-sm flex-shrink-0">
+                <div className="w-8 h-6 rounded-sm overflow-hidden flex-shrink-0">
                   <CountryFlag
                     code={country.flagCode}
                     width={32}
@@ -319,13 +319,13 @@ export const MobileTimelineList = ({
           return (
             <div
               key={country.countryName}
-              className="glass-panel p-4 flex flex-col gap-3"
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex flex-col gap-3"
               data-testid={`country-card-${country.countryName}`}
             >
               {/* Header: Flag + Name + Org */}
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-6 rounded-sm overflow-hidden shadow-sm flex-shrink-0">
+                  <div className="w-8 h-6 rounded-sm overflow-hidden flex-shrink-0">
                     <CountryFlag
                       code={country.flagCode}
                       width={32}
@@ -385,7 +385,7 @@ export const MobileTimelineList = ({
                       {/* Swipe Hint overlay */}
                       {showSwipeHint && currentIndex === 0 && (
                         <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
-                          <div className="bg-background/90 text-foreground text-xs px-3 py-1 rounded-full shadow-md flex items-center gap-2 border border-border/50 backdrop-blur-sm animate-pulse">
+                          <div className="bg-background/90 text-foreground text-xs px-3 py-1 rounded-full flex items-center gap-2 border border-border/50 backdrop-blur-sm animate-pulse">
                             <span>← Swipe →</span>
                           </div>
                         </div>

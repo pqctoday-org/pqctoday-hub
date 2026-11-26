@@ -181,7 +181,7 @@ const EuccWithdrawal = ({ record }: { record: ComplianceRecord }) => {
   const replacedByUrl = safeHttpUrl(replacedBy)
   return (
     <div
-      className="space-y-2 rounded-md border border-border bg-muted/40 p-3"
+      className="space-y-2 rounded-2xl border border-border bg-muted/40 p-3"
       data-testid="eucc-withdrawal"
     >
       <FieldLabel>Withdrawn</FieldLabel>
@@ -488,7 +488,7 @@ const PqcSection = ({ record }: { record: ComplianceRecord }) => {
     <div className="space-y-1">
       <h4
         className={clsx(
-          'text-xs font-semibold uppercase tracking-wider',
+          'text-xs font-semibold uppercase tracking-wider font-display text-heading',
           fromSt ? 'text-muted-foreground' : 'text-tertiary'
         )}
       >
@@ -578,7 +578,7 @@ export const ComplianceDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85dvh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+            className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85dvh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"
@@ -643,7 +643,7 @@ export const ComplianceDetailPopover = ({
                 </div>
                 <h3
                   id="popover-title"
-                  className="text-lg font-bold text-foreground leading-tight pr-8"
+                  className="text-lg font-bold leading-tight pr-8 font-display text-heading"
                 >
                   {record.productName}
                 </h3>

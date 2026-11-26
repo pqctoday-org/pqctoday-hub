@@ -44,7 +44,7 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-card p-6 text-center">
+      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 text-center">
         <CalendarClock size={24} className="mx-auto text-muted-foreground" />
         <p className="mt-2 text-sm font-semibold text-foreground">Nothing to show yet</p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -57,7 +57,7 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
         <p className="text-xs text-muted-foreground">
           {next ? (
             <>
@@ -93,7 +93,7 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
         >
           <div className="border-b border-border bg-muted/40 px-4 py-3">
             <div className="flex items-baseline gap-2">
-              <h3 className="text-sm font-bold text-foreground">{group.title}</h3>
+              <h3 className="text-sm font-bold font-display text-heading">{group.title}</h3>
               <span className="rounded-full bg-background px-2 py-0.5 text-xs font-semibold text-muted-foreground">
                 {group.entries.length}
               </span>

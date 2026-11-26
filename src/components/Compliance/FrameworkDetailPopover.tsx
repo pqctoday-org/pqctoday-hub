@@ -101,7 +101,7 @@ export const FrameworkDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[95vw] sm:w-[80vw] md:w-[60vw] max-w-[900px] max-h-[85dvh] border border-border rounded-xl overflow-hidden flex flex-col bg-popover text-popover-foreground shadow-2xl animate-in zoom-in-95 duration-200"
+            className="w-[95vw] sm:w-[80vw] md:w-[60vw] max-w-[900px] max-h-[85dvh] overflow-hidden flex flex-col bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 border-2 border-ink rounded-2xl shadow-[0_4px_0_hsl(var(--edge))]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="framework-popover-title"
@@ -144,7 +144,7 @@ export const FrameworkDetailPopover = ({
                 </div>
                 <h3
                   id="framework-popover-title"
-                  className="text-lg font-bold text-foreground leading-tight"
+                  className="text-lg font-bold leading-tight font-display text-heading"
                 >
                   {framework.label}
                 </h3>
@@ -197,7 +197,7 @@ export const FrameworkDetailPopover = ({
             <div className="overflow-y-auto p-4 space-y-4">
               {curiousPreface && (
                 <section
-                  className="glass-panel border border-primary/30 bg-primary/5 rounded-lg p-3"
+                  className="glass-panel backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] bg-primary/5 p-3"
                   aria-label="Plain-English explainer"
                 >
                   <div className="flex items-start gap-2">
@@ -366,7 +366,7 @@ export const FrameworkDetailPopover = ({
                     {linkedRequirements.map((req, i) => (
                       <div
                         key={`${req.refId}-${req.pillar}-${req.maturityLevel}-${i}`}
-                        className="border border-border rounded-lg p-3 space-y-1.5 bg-card text-xs"
+                        className="border border-border rounded-2xl p-3 space-y-1.5 bg-card text-xs"
                       >
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold capitalize">

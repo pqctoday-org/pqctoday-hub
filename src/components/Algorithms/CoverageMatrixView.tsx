@@ -317,7 +317,7 @@ export function CoverageMatrixView({
       )}
 
       <div className="space-y-1">
-        <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
+        <h3 className="flex items-center gap-2 text-base font-semibold font-display text-heading">
           <Grid3x3 size={16} className="text-primary" aria-hidden="true" />
           Capability coverage matrix
         </h3>
@@ -374,10 +374,10 @@ export function CoverageMatrixView({
           return (
             <section
               key={e}
-              className="glass-panel min-w-0 max-w-full p-3"
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] min-w-0 max-w-full p-3"
               aria-label={`${ENGINE_LABEL[e]} totals`}
             >
-              <h4 className="text-sm font-semibold text-foreground">
+              <h4 className="text-sm font-semibold font-display text-heading">
                 {ENGINE_LABEL[e] /* eslint-disable-line security/detect-object-injection */} engine
               </h4>
               <p className="text-xs text-muted-foreground">
@@ -467,8 +467,13 @@ export function CoverageMatrixView({
       </div>
 
       {/* Definitions — always visible */}
-      <section className="glass-panel p-3" aria-label="Definitions">
-        <h4 className="text-sm font-semibold text-foreground">How these numbers are computed</h4>
+      <section
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
+        aria-label="Definitions"
+      >
+        <h4 className="text-sm font-semibold font-display text-heading">
+          How these numbers are computed
+        </h4>
         <dl className="mt-1 space-y-1.5 text-xs">
           <div>
             <dt className="font-medium text-foreground">Denominator</dt>
@@ -560,7 +565,7 @@ export function CoverageMatrixView({
 
       {/* Matrix */}
       <div
-        className="glass-panel relative w-full min-w-0 max-w-full overflow-x-auto"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] relative w-full min-w-0 max-w-full overflow-x-auto"
         role="region"
         aria-label="Capability coverage matrix; scroll horizontally for all columns"
         tabIndex={0}
@@ -614,11 +619,14 @@ export function CoverageMatrixView({
       </div>
 
       {/* Open gaps register (J-7) */}
-      <section className="glass-panel overflow-hidden" aria-label="Open gaps register">
+      <section
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden"
+        aria-label="Open gaps register"
+      >
         <div className="border-b border-border bg-muted/20 p-4">
           <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
             <div className="max-w-3xl space-y-1">
-              <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <h4 className="flex items-center gap-2 text-sm font-semibold font-display text-heading">
                 <ClipboardList size={16} className="text-primary" aria-hidden="true" />
                 Open gaps register
                 <span className="font-normal text-muted-foreground" data-testid="gap-total">
@@ -825,7 +833,7 @@ function OpenGapCard({
             view === 'evidence' && 'lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)]'
           )}
         >
-          <div className="rounded-lg border border-border bg-background/50 p-3">
+          <div className="rounded-2xl border border-border bg-background/50 p-3">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
               What this means
             </p>
@@ -877,7 +885,7 @@ function OpenGapCard({
         {detailsOpen && (
           <div
             id={evidenceId}
-            className="mt-2 max-w-5xl rounded-lg border border-border bg-muted/20 p-3"
+            className="mt-2 max-w-5xl rounded-2xl border border-border bg-muted/20 p-3"
           >
             <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
               Technical evidence and investigation history

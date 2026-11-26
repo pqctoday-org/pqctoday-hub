@@ -53,7 +53,7 @@ export function TimelineMilestoneComparison() {
     <details
       open={open}
       onToggle={(event) => setOpen(event.currentTarget.open)}
-      className="my-4 rounded-xl border border-border bg-card p-3"
+      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] my-4 p-3"
     >
       <summary className="min-h-8 cursor-pointer font-semibold text-foreground">
         Compare published milestones
@@ -98,7 +98,7 @@ export function TimelineMilestoneComparison() {
                   {selected && event ? (
                     <article
                       aria-label={`${label} details`}
-                      className="min-w-0 space-y-2 break-words rounded-md border border-border p-3 text-sm"
+                      className="min-w-0 space-y-2 break-words rounded-2xl border border-border p-3 text-sm"
                     >
                       <h3 className="font-semibold text-foreground">{event.title}</h3>
                       <p>

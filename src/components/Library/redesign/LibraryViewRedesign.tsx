@@ -812,7 +812,7 @@ export function LibraryViewRedesign({
           </div>
 
           {displayedItems.length === 0 ? (
-            <div className="glass-panel flex flex-col items-center gap-4 rounded-2xl p-10 text-center text-muted-foreground">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-col items-center gap-4 p-10 text-center text-muted-foreground">
               <span>No documents match these filters.</span>
               <div className="flex flex-wrap items-center justify-center gap-2">
                 {activeFilterChips.length > 0 && (

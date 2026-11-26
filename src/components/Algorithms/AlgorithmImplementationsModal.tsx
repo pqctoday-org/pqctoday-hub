@@ -51,7 +51,7 @@ export function AlgorithmImplementationsModal({
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="glass-panel p-6 max-w-xl w-full max-h-[85dvh] overflow-y-auto"
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-xl w-full max-h-[85dvh] overflow-y-auto"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="algo-impl-modal-title"
@@ -62,7 +62,7 @@ export function AlgorithmImplementationsModal({
                   <div>
                     <h2
                       id="algo-impl-modal-title"
-                      className="text-lg font-bold text-foreground leading-tight"
+                      className="text-lg font-bold leading-tight font-display text-heading"
                     >
                       Crypto Libraries
                     </h2>
@@ -100,7 +100,7 @@ export function AlgorithmImplementationsModal({
                       <section>
                         <div className="flex items-center gap-2 mb-3">
                           <Library size={14} className="text-primary shrink-0" />
-                          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                          <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                             Libraries ({libraries.length})
                           </p>
                         </div>
@@ -117,7 +117,7 @@ export function AlgorithmImplementationsModal({
                       <section>
                         <div className="flex items-center gap-2 mb-3">
                           <BookOpen size={14} className="text-secondary shrink-0" />
-                          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                          <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                             Reference Implementations ({references.length})
                           </p>
                         </div>

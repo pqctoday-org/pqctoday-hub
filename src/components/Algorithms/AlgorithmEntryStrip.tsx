@@ -68,7 +68,7 @@ export function AlgorithmEntryStrip({
         : undefined
 
   return (
-    <div className="glass-panel p-4 mb-4 relative">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 mb-4 relative">
       <Button
         variant="ghost"
         size="sm"

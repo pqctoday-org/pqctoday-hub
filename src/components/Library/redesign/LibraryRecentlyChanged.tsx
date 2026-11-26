@@ -20,7 +20,7 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
   const shown = items.slice(0, limit)
 
   return (
-    <div className="glass-panel rounded-2xl p-3">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
       <div className="mb-2 flex items-center justify-between px-1">
         <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
           Recently changed

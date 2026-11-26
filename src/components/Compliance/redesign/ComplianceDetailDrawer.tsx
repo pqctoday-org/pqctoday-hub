@@ -158,7 +158,7 @@ export function ComplianceDetailDrawer({
         {/* Panel */}
         <div
           ref={panelRef}
-          className="relative flex h-full w-[560px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl animate-in slide-in-from-right duration-200"
+          className="relative flex h-full w-[560px] max-w-[94vw] flex-col border-l border-border bg-card animate-in slide-in-from-right duration-200"
         >
           {/* Header */}
           <div className="flex items-start gap-3 border-b border-border px-5 py-4">
@@ -169,7 +169,9 @@ export function ComplianceDetailDrawer({
                 </span>
                 <span className={pillClasses(d.pqcTone)}>{d.pqcLabel}</span>
               </div>
-              <h2 className="text-lg font-bold leading-tight text-foreground">{d.name}</h2>
+              <h2 className="text-lg font-bold leading-tight font-display text-heading">
+                {d.name}
+              </h2>
               <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Globe size={12} />
                 {d.juris}
@@ -210,7 +212,7 @@ export function ComplianceDetailDrawer({
               trustedSource ||
               framework.enforcementBody ||
               (framework.bindingStatus && bindingDataPresent())) && (
-              <section className="rounded-xl border border-border bg-muted/20 p-3.5">
+              <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
                 <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   <ShieldCheck size={13} />
                   Source &amp; trust

@@ -160,10 +160,10 @@ export const DocumentTable = ({
     periodLabel(row.startYear, row.endYear, row.openEnded)
 
   return (
-    <div className="glass-panel p-4 space-y-4">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-4">
       {/* Header bar */}
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-sm font-bold text-gradient">
+        <h3 className="text-sm font-bold font-display text-heading font-display text-heading">
           {title ?? `Documents`}
           <span className="ml-2 text-xs font-normal text-muted-foreground">
             — {rows.length} {rows.length === 1 ? 'entry' : 'entries'}
@@ -190,7 +190,7 @@ export const DocumentTable = ({
 
       {/* Table view */}
       {viewMode === 'table' && (
-        <div className="glass-panel overflow-hidden">
+        <div className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <caption className="sr-only">

@@ -116,9 +116,9 @@ export function AlgorithmComparisonPanel({
   }
 
   return (
-    <div className="glass-panel p-4 md:p-6 animate-fade-in">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold font-display text-heading">
           Comparing {algorithms.length} Algorithms
           {baseline && (
             <span className="text-muted-foreground font-normal"> vs {baseline.name} baseline</span>
@@ -475,7 +475,7 @@ function BenchmarkSection({
   return (
     <div className="mt-6 border-t border-border pt-4">
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <h4 className="text-sm font-semibold text-foreground">Live Benchmark</h4>
+        <h4 className="text-sm font-semibold font-display text-heading">Live Benchmark</h4>
 
         <div className="flex items-center gap-2">
           <label htmlFor="ops-slider" className="text-xs text-muted-foreground">
