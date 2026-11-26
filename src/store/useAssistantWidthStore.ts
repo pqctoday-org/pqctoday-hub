@@ -39,6 +39,12 @@ export function clampWidth(px: number, viewport: number = viewportWidth()): numb
   return Math.round(Math.min(maxWidthFor(viewport), Math.max(ASSISTANT_WIDTH_MIN, px)))
 }
 
+/** The stored width, or null (automatic) for anything that is not a number. */
+function readWidth(persisted: unknown): { width: number | null } {
+  const width = (persisted as { width?: unknown } | null)?.width
+  return { width: typeof width === 'number' && Number.isFinite(width) ? width : null }
+}
+
 interface AssistantWidthState {
   /** The chosen width in pixels, or null for the automatic one. */
   width: number | null
@@ -66,13 +72,13 @@ export const useAssistantWidthStore = create<AssistantWidthState>()(
       version: 1,
       storage: guardedJSONStorage(),
       partialize: (s) => ({ width: s.width }),
+      // One shape so far: a number of pixels or null.
+      migrate: (persisted) => readWidth(persisted),
       // A damaged value reads as "automatic".
-      merge: (persisted, current) => {
-        const width = (persisted as { width?: unknown } | null)?.width
-        return {
-          ...current,
-          width: typeof width === 'number' && Number.isFinite(width) ? width : null,
-        }
+      merge: (persisted, current) => ({ ...current, ...readWidth(persisted) }),
+      // A failed read leaves the automatic width.
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) console.error('The Assistant width could not be read from this device.', error)
       },
     }
   )
