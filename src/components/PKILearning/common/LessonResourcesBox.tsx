@@ -15,7 +15,7 @@
  */
 import { useEffect, useId, useMemo, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import {
   Chip,
   Eyebrow,
@@ -80,16 +80,19 @@ const isInternal = (link: string) => link.startsWith('/') && !link.startsWith('/
 /** An address inside the Hub is a router link; anything else is an ordinary link. */
 function ResourceLink({
   link,
+  to,
   className,
   children,
 }: {
   link: string
+  /** Where a router link goes when that is not the record's own address (a glossary chip opens beside the lesson). */
+  to?: React.ComponentProps<typeof Link>['to']
   className?: string
   children: React.ReactNode
 }) {
   if (isInternal(link)) {
     return (
-      <Link to={link} className={className}>
+      <Link to={to ?? link} className={className}>
         {children}
       </Link>
     )
@@ -101,13 +104,41 @@ function ResourceLink({
   )
 }
 
+const GLOSSARY_LINK = '/learn?glossary='
+
+/**
+ * The glossary term a record's own link asks for, when the link is exactly `/learn?glossary=<term>`; null for any
+ * other link. The record's link leaves the lesson for the main Learn page; the chip opens the glossary beside the
+ * lesson instead (see `glossaryBesideLesson`).
+ */
+function glossaryTermOf(link: string): string | null {
+  if (!link.startsWith(GLOSSARY_LINK)) return null
+  const params = new URLSearchParams(link.slice('/learn?'.length))
+  const keys = [...params.keys()]
+  const term = params.get('glossary')
+  return keys.length === 1 && term ? term : null
+}
+
+/** The lesson's own address with `?glossary=<term>` set: the path, the other parameters and the hash stay. */
+function glossaryBesideLesson(
+  where: { pathname: string; search: string; hash: string },
+  term: string
+) {
+  const params = new URLSearchParams(where.search)
+  params.set('glossary', term)
+  return { pathname: where.pathname, search: `?${params.toString()}`, hash: where.hash }
+}
+
 /** A term, algorithm or protocol: a chip that is a link, at least 44px tall to tap. */
 function TermChip({ item, showKind }: { item: LessonResource; showKind: boolean }) {
   const isTerm = item.kind === 'Glossary term'
+  const where = useLocation()
+  const term = isTerm ? glossaryTermOf(item.link) : null
   return (
     <li>
       <ResourceLink
         link={item.link}
+        to={term === null ? undefined : glossaryBesideLesson(where, term)}
         className={cn('group inline-flex min-h-[44px] items-center rounded-full', focusRing)}
       >
         <Chip className="group-hover:underline">

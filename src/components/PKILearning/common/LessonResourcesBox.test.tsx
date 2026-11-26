@@ -60,9 +60,9 @@ const taught = (id: string): KnowledgeLink => [id, 'taught_in', 'LM-900', 'decla
 const many = (n: number, make: (i: number) => KnowledgeRecord) =>
   Array.from({ length: n }, (_, i) => make(i + 1))
 
-function renderBox(moduleId = 'fixture-lesson') {
+function renderBox(moduleId = 'fixture-lesson', at = '/') {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[at]}>
       <LessonResourcesBox moduleId={moduleId} />
     </MemoryRouter>
   )
@@ -233,14 +233,15 @@ describe('LessonResourcesBox: closed and open groups', () => {
         records.map((r) => taught(r.id))
       )
     )
-    renderBox()
+    renderBox('fixture-lesson', '/learn/fixture-lesson')
     await screen.findByRole('button', { name: /^Terms taught here/ })
 
     const terms = await open('Terms taught here')
     expect(terms.getAttribute('aria-labelledby')).toBe(header('Terms taught here').id)
     expect(screen.getByRole('list', { name: 'Terms taught here (2)' })).toBe(terms)
+    // A glossary chip opens the glossary beside the lesson, not on the main Learn page.
     expect(within(terms).getByRole('link', { name: 'X.509' }).getAttribute('href')).toBe(
-      '/learn?glossary=X.509'
+      '/learn/fixture-lesson?glossary=X.509'
     )
     expect(
       within(terms).getByRole('link', { name: 'ML-DSA, Algorithm' }).getAttribute('href')
@@ -677,4 +678,98 @@ describe('LessonResourcesBox: the trust-hardware comparison', () => {
       expect(links).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5'])
     }
   )
+})
+
+describe('LessonResourcesBox: a glossary chip opens the glossary beside the lesson', () => {
+  beforeEach(() => {
+    load.mockReset()
+    loaded.mockReset()
+    loaded.mockReturnValue(null)
+  })
+
+  const glossaryHrefs = async (at: string, terms: string[]) => {
+    const records = terms.map((t, i) =>
+      rec(`GL:t${i}`, 'glossary', 'term', t, `/learn?glossary=${encodeURIComponent(t)}`)
+    )
+    load.mockResolvedValue(
+      readerOf(
+        records,
+        records.map((r) => taught(r.id))
+      )
+    )
+    renderBox('fixture-lesson', at)
+    await screen.findByRole('button', { name: /^Terms taught here/ })
+    const list = await open('Terms taught here')
+    return within(list)
+      .getAllByRole('link')
+      .map((a) => a.getAttribute('href'))
+  }
+
+  it('keeps the lesson path and sets the glossary parameter', async () => {
+    expect(await glossaryHrefs('/learn/stateful-signatures', ['X.509'])).toEqual([
+      '/learn/stateful-signatures?glossary=X.509',
+    ])
+  })
+
+  it('round-trips a term with a slash, a plus, spaces or non-ASCII characters', async () => {
+    const terms = ['LMS/HSS', 'C++ ABI', 'Key Encapsulation Mechanism', 'Schrödinger 量子']
+    const hrefs = await glossaryHrefs('/learn/stateful-signatures', terms)
+    expect(hrefs.map((h) => new URL(h!, 'http://hub').searchParams.get('glossary')).sort()).toEqual(
+      [...terms].sort()
+    )
+    expect(hrefs.every((h) => h!.startsWith('/learn/stateful-signatures?glossary='))).toBe(true)
+    expect(hrefs).toContain('/learn/stateful-signatures?glossary=LMS%2FHSS')
+    expect(hrefs.some((h) => h!.includes('%2B%2B'))).toBe(true)
+  })
+
+  it("keeps the lesson address's other parameters and its hash, and replaces an older glossary term", async () => {
+    expect(
+      await glossaryHrefs('/learn/arch-quantum-impact?tab=workshop&step=5&glossary=OLD#top', [
+        'KEM',
+      ])
+    ).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5&glossary=KEM#top'])
+  })
+
+  it("leaves every other row and chip with the record's own link", async () => {
+    const records = [
+      rec('LM-901', 'module', 'module', 'KMS', '/learn/kms-pqc'),
+      rec('GL:x509', 'glossary', 'term', 'X.509', '/learn?glossary=X.509'),
+      rec('ALG:ml-dsa', 'algorithm', 'algorithm', 'ML-DSA', '/algorithms?algo=ML-DSA'),
+      // A glossary record whose link is not the plain glossary address is left alone too.
+      rec('GL:odd', 'glossary', 'term', 'Odd', '/learn?glossary=Odd&x=1'),
+      rec('LIB:fips-204', 'library', 'standard', 'FIPS 204', '/library?ref=FIPS%20204'),
+    ]
+    load.mockResolvedValue(
+      new KnowledgeReader(
+        readerOf(
+          records,
+          records
+            .filter((r) => r.id !== 'LM-901')
+            .map((r): KnowledgeLink => [r.id, 'taught_in', 'LM-901', 'declared', 's'])
+        ).core
+      )
+    )
+    renderBox('kms-pqc', '/learn/kms-pqc?tab=workshop')
+    await screen.findByRole('button', { name: /^Terms taught here/ })
+    const terms = await open('Terms taught here')
+    const hrefs = Object.fromEntries(
+      within(terms)
+        .getAllByRole('link')
+        .map((a) => [a.textContent, a.getAttribute('href')])
+    )
+    expect(hrefs['X.509']).toBe('/learn/kms-pqc?tab=workshop&glossary=X.509')
+    expect(hrefs['ML-DSA, Algorithm']).toBe('/algorithms?algo=ML-DSA')
+    expect(hrefs['Odd']).toBe('/learn?glossary=Odd&x=1')
+    const documents = await open('Documents this lesson draws on')
+    expect(
+      within(documents)
+        .getByRole('link', { name: /FIPS 204/ })
+        .getAttribute('href')
+    ).toBe('/library?ref=FIPS%20204')
+    // The kept lesson and page links keep their own addresses.
+    const lessons = await open('Related lessons')
+    for (const a of within(lessons).getAllByRole('link')) {
+      expect(a.getAttribute('href')).not.toMatch(/glossary=/)
+    }
+  })
 })

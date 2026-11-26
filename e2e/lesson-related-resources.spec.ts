@@ -295,6 +295,40 @@ for (const viewport of VIEWPORTS) {
       })
     })
 
+    test('/learn/stateful-signatures: a glossary term opens the glossary beside the lesson, and Back returns to the lesson', async ({
+      page,
+    }) => {
+      await seedFirstVisit(page)
+      await page.goto('/learn/stateful-signatures?tab=learn')
+      await settle(page)
+      const box = boxOf(page)
+      await box.scrollIntoViewIfNeeded({ timeout: 30_000 })
+      const terms = await openGroup(box, 'Terms taught here')
+      const chip = terms.locator('a[href*="glossary="]').first()
+      const href = await chip.getAttribute('href')
+      // A real link on the lesson's own address, other parameters kept.
+      expect(href).toMatch(/^\/learn\/stateful-signatures\?tab=learn&glossary=/)
+      const term = new URL(href!, 'http://hub').searchParams.get('glossary')!
+      await chip.click()
+
+      // The lesson stays on screen with the glossary drawer beside it, on that term.
+      await expect(page).toHaveURL(
+        (u) =>
+          u.pathname === '/learn/stateful-signatures' && u.searchParams.get('glossary') === term
+      )
+      const drawer = page.getByRole('textbox', { name: 'Search glossary terms' })
+      await expect(drawer).toBeVisible({ timeout: 30_000 })
+      await expect(drawer).toHaveValue(term)
+      await expect(boxOf(page)).toBeAttached()
+
+      // Back returns to the lesson without the glossary parameter or the drawer.
+      await page.goBack()
+      await expect(page).toHaveURL(
+        (u) => u.pathname === '/learn/stateful-signatures' && !u.searchParams.has('glossary')
+      )
+      await expect(page.getByRole('textbox', { name: 'Search glossary terms' })).toHaveCount(0)
+    })
+
     test('/learn/pki-workshop: every group prints open, without the Show all control', async ({
       page,
     }) => {

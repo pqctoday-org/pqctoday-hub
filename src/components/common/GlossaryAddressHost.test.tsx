@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, useLocation, useNavigationType } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate, useNavigationType } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 import { GlossaryAddressHost } from './GlossaryAddressHost'
 import { GlossaryDrawerView } from '../RightPanel/DrawerViews'
 import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
@@ -28,6 +29,17 @@ vi.mock('../../data/glossary', () => ({
     },
   ],
 }))
+
+/** Two buttons: one pushes an address (as a link does), one goes Back. */
+function Nav({ to }: { to: string }) {
+  const navigate = useNavigate()
+  return (
+    <>
+      <Button onClick={() => navigate(to)}>push</Button>
+      <Button onClick={() => navigate(-1)}>back</Button>
+    </>
+  )
+}
 
 function Where() {
   const l = useLocation()
@@ -79,6 +91,43 @@ describe('GlossaryAddressHost', () => {
     await waitFor(() => expect(useRightPanelStore.getState().activeTab).toBe('glossary'))
     act(() => useRightPanelStore.getState().open('faq'))
     await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent(/^\/learn$/))
+  })
+
+  it('going Back to an address without the parameter closes the drawer the address opened', async () => {
+    render(
+      <MemoryRouter initialEntries={['/learn/stateful-signatures?tab=learn']}>
+        <GlossaryAddressHost />
+        <Where />
+        <Nav to="/learn/stateful-signatures?tab=learn&glossary=LMS%2FHSS" />
+      </MemoryRouter>
+    )
+    expect(useRightPanelStore.getState().isOpen).toBe(false)
+    // A link opens a term on the lesson's own address (a push), as a glossary chip in the lesson does.
+    await userEvent.click(screen.getByRole('button', { name: 'push' }))
+    await waitFor(() =>
+      expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'glossary' })
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'back' }))
+    await waitFor(() =>
+      expect(screen.getByTestId('where')).toHaveTextContent(
+        /^\/learn\/stateful-signatures\?tab=learn$/
+      )
+    )
+    await waitFor(() => expect(useRightPanelStore.getState().isOpen).toBe(false))
+  })
+
+  it('a link to another page without the parameter leaves the drawer as it is', async () => {
+    render(
+      <MemoryRouter initialEntries={['/learn?glossary=ML-KEM']}>
+        <GlossaryAddressHost />
+        <Where />
+        <Nav to="/library" />
+      </MemoryRouter>
+    )
+    await waitFor(() => expect(useRightPanelStore.getState().isOpen).toBe(true))
+    await userEvent.click(screen.getByRole('button', { name: 'push' }))
+    await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent(/^\/library$/))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'glossary' })
   })
 
   it('does nothing without the parameter', () => {
