@@ -11,6 +11,7 @@ const manifest: ModuleManifest = {
     { id: 'nss-csfc', label: 'National Security Systems & CSfC' },
     { id: 'federal-pki', label: 'Federal PKI & the PQC Profile' },
     { id: 'procurement', label: 'Procurement & Supply Chain' },
+    { id: 'comsec-policy', label: 'COMSEC Policies and Procedures' },
   ],
   workshopSteps: [
     { id: 'suite-comparator', label: 'CNSA 1.0 → 2.0 Comparator' },

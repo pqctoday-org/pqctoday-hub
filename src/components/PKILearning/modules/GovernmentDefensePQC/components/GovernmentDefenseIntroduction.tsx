@@ -9,6 +9,7 @@ import {
   PackageSearch,
   ArrowRight,
   AlertTriangle,
+  Radio,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -21,6 +22,8 @@ import {
   CNSA_NAMING_DRIFT,
 } from '../data/cnsaData'
 import { FEDERAL_MANDATES, FPKI_PROFILE_PAIR } from '../data/mandateData'
+import { SourcedLearnSection } from '@/components/PKILearning/common/SourcedSection'
+import { COMSEC_POLICY_SECTION } from '../data/comsecPolicySection'
 
 interface Props {
   onNavigateToWorkshop: () => void
@@ -373,6 +376,11 @@ export const GovernmentDefenseIntroduction: React.FC<Props> = ({ onNavigateToWor
           — this section covers only what is specific to federal acquisition.
         </p>
       </LearnSection>
+
+      <SourcedLearnSection
+        section={COMSEC_POLICY_SECTION}
+        icon={<Radio size={20} className="text-primary" />}
+      />
 
       <ReadingCompleteButton />
     </div>
