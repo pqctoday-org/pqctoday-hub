@@ -159,9 +159,10 @@ for (const [name, viewport] of [
       await page.goto('/learn?mode=journey')
       await expect(page.getByTestId('objective-workspace')).toBeVisible({ timeout: 30_000 })
 
-      for (const label of ['New section', 'New tool', 'Section updated', 'Tool updated']) {
+      for (const label of ['New section', 'New tool', 'Lesson revised', 'Tool updated']) {
         await expect(cards(page).getByText(label, { exact: true }).first()).toBeVisible()
       }
+      await expect(cards(page).getByText(/This section may not have changed\./)).toBeVisible()
       await expect(cards(page).getByText('Curriculum changed', { exact: true })).toHaveCount(2)
       // Each one links to the section or the tool.
       await expect(

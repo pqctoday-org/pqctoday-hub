@@ -11,6 +11,14 @@ import type { JourneyOrigin, Objective, Step, StepStatus } from './types'
 
 export type IsDone = (resourceTag: string) => boolean
 
+/**
+ * Whether a step is done: its lesson is done, or a lesson it replaced was (a retired step swapped for its
+ * replacement keeps the learner's completion; the step's `formerTags` name what it replaced).
+ */
+export function stepDone(step: Pick<Step, 'resourceTag' | 'formerTags'>, isDone: IsDone): boolean {
+  return isDone(step.resourceTag) || (step.formerTags ?? []).some(isDone)
+}
+
 /** Copy that the rules return verbatim (UX handoff copy deck, section 12). */
 export const COPY = {
   stepHint: 'Mark this step complete to unlock Next.',
@@ -42,7 +50,7 @@ export function countedSteps(obj: Objective): Step[] {
 
 /** The step marked "Now": the first counted step that is not done. Null when every counted step is done. */
 export function nowStep(obj: Objective, isDone: IsDone): Step | null {
-  return countedSteps(obj).find((s) => !isDone(s.resourceTag)) ?? null
+  return countedSteps(obj).find((s) => !stepDone(s, isDone)) ?? null
 }
 
 /** Completed, Now or Not started for every step of the bar. Exactly one step is Now while any is open. */
@@ -50,7 +58,7 @@ export function stepStatuses(obj: Objective, isDone: IsDone): Map<string, StepSt
   const now = nowStep(obj, isDone)
   const out = new Map<string, StepStatus>()
   for (const s of barSteps(obj)) {
-    out.set(s.id, isDone(s.resourceTag) ? 'completed' : s.id === now?.id ? 'now' : 'not-started')
+    out.set(s.id, stepDone(s, isDone) ? 'completed' : s.id === now?.id ? 'now' : 'not-started')
   }
   return out
 }
@@ -58,7 +66,7 @@ export function stepStatuses(obj: Objective, isDone: IsDone): Map<string, StepSt
 /** "2 of 4 required": done and total over the counted steps. */
 export function requiredProgress(obj: Objective, isDone: IsDone): { done: number; total: number } {
   const counted = countedSteps(obj)
-  return { done: counted.filter((s) => isDone(s.resourceTag)).length, total: counted.length }
+  return { done: counted.filter((s) => stepDone(s, isDone)).length, total: counted.length }
 }
 
 export interface NextControl {
@@ -90,7 +98,7 @@ export function nextControl(obj: Objective, currentStepId: string, isDone: IsDon
     }
   }
   if (last) {
-    const earlierOpen = bar.slice(0, -1).some((s) => !s.deferred && !isDone(s.resourceTag))
+    const earlierOpen = bar.slice(0, -1).some((s) => !s.deferred && !stepDone(s, isDone))
     return {
       kind: 'complete',
       enabled: true,
@@ -98,7 +106,7 @@ export function nextControl(obj: Objective, currentStepId: string, isDone: IsDon
       hint: earlierOpen ? COPY.stepLastBlocked : null,
     }
   }
-  const done = here ? isDone(here.resourceTag) : false
+  const done = here ? stepDone(here, isDone) : false
   return {
     kind: 'next',
     enabled: done,
@@ -159,7 +167,7 @@ export function completeCheck(obj: Objective, isDone: IsDone): CompleteCheck {
   const lastStep = counted[counted.length - 1] ?? null
   const confirmStep = lastStep?.kind === 'self-assessed' ? lastStep : null
   const rest = confirmStep ? counted.slice(0, -1) : counted
-  const blockers = rest.filter((s) => !isDone(s.resourceTag))
+  const blockers = rest.filter((s) => !stepDone(s, isDone))
   if (blockers.length === 0) {
     return {
       state: 'allowed',

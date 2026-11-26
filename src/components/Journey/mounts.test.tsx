@@ -16,6 +16,7 @@ import { renderAt, resetJourneyWorld, saveObjective, saveTlsObjective } from './
 import { useJourneyStore } from '@/store/useJourneyStore'
 import { useMyWorkStore } from '@/store/useMyWorkStore'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
+import { useAchievementStore } from '@/store/useAchievementStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { setAssistantEngineLoader } from '@/components/Assistant/assistantClient'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -80,6 +81,7 @@ describe('mount points hold the real panels', () => {
     const user = userEvent.setup()
     setAssistantEngineLoader(() => import('@/test/fixtures/assistantFixtureEngine'))
     useAssistantSessionStore.getState().reset()
+    useAchievementStore.getState().resetAchievements()
     useRightPanelStore.setState({ isOpen: false })
     act(() => {
       useMyWorkStore.getState().saveAnswer({
@@ -98,6 +100,8 @@ describe('mount points hold the real panels', () => {
     ])
     // The saved copy is untouched.
     expect(useMyWorkStore.getState().answers).toHaveLength(1)
+    // Asking it again is a question sent: counted once, as a number.
+    expect(useAchievementStore.getState().assistantQuestionCount).toBe(1)
     setAssistantEngineLoader()
     useAssistantSessionStore.getState().reset()
   })

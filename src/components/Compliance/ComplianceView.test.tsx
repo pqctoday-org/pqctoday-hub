@@ -115,15 +115,9 @@ vi.mock('../../utils/analytics', () => ({
   logPreviewBannerDismissed: vi.fn(),
 }))
 
-// Mock share/glossary buttons
+// Mock share button
 vi.mock('../ui/ShareButton', () => ({
   ShareButton: () => <Button>Share</Button>,
-}))
-vi.mock('../ui/GlossaryButton', () => ({
-  GlossaryButton: () => <Button>Glossary</Button>,
-}))
-vi.mock('../ui/UserManualButton', () => ({
-  UserManualButton: () => <Button>Guide</Button>,
 }))
 
 describe('ComplianceView', () => {

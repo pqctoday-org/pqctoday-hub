@@ -31,8 +31,13 @@ export interface HistoryEvent {
 }
 
 /**
- * What the drawer can show. There are no tabs: 'chat' is the Assistant, 'bookmarks' opens from the
- * top bar, 'workshop' only while a guided workshop runs, and 'faq' only as the phone's sheet.
- * (The old 'history' view moved to Learn › Your journey.)
+ * What the drawer can show. There are no tabs in the drawer itself: the top bar's buttons choose.
+ * 'chat' is the Assistant; 'bookmarks', 'glossary', 'guide' (the page's guide), 'sources' (the
+ * page's sources) and 'faq' open from the top bar, one at a time; 'workshop' only while a guided
+ * workshop runs. (The old 'history' view moved to Learn › Your journey.)
  */
-export type RightPanelTab = 'chat' | 'bookmarks' | 'faq' | 'workshop'
+export type RightPanelTab =
+  'chat' | 'bookmarks' | 'glossary' | 'guide' | 'sources' | 'faq' | 'workshop'
+
+/** The views the top bar's toggle buttons open in the drawer. */
+export type DrawerToggleTab = Exclude<RightPanelTab, 'workshop'>

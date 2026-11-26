@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useState } from 'react'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import type { RightPanelTab } from '@/types/HistoryTypes'
 
 /** Width below which even a desktop browser gets the full-screen sheet. */
 const SHEET_QUERY = '(max-width: 639px)'
@@ -42,7 +43,7 @@ export function useAssistantLayout(): 'docked' | 'sheet' {
 export function drawerPaddingClass(
   isOpen: boolean,
   layout: 'docked' | 'sheet',
-  tab: 'chat' | 'bookmarks' | 'workshop' | 'faq'
+  tab: RightPanelTab
 ): string {
   if (!isOpen || layout === 'sheet') return ''
   return tab === 'workshop' ? 'sm:pr-[40vw]' : 'pr-[400px]'

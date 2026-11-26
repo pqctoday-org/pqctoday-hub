@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
@@ -18,8 +18,17 @@ const BookmarksPanel = React.lazy(() =>
   import('./BookmarksPanel').then((m) => ({ default: m.BookmarksPanel }))
 )
 
-const FAQPage = React.lazy(() =>
-  import('@/components/FAQ/FAQPage').then((m) => ({ default: m.FAQPage }))
+const GlossaryView = React.lazy(() =>
+  import('./DrawerViews').then((m) => ({ default: m.GlossaryDrawerView }))
+)
+const GuideView = React.lazy(() =>
+  import('./DrawerViews').then((m) => ({ default: m.GuideDrawerView }))
+)
+const SourcesView = React.lazy(() =>
+  import('./DrawerViews').then((m) => ({ default: m.SourcesDrawerView }))
+)
+const FaqView = React.lazy(() =>
+  import('./DrawerViews').then((m) => ({ default: m.FaqDrawerView }))
 )
 
 const WorkshopPanel = React.lazy(() =>
@@ -83,15 +92,22 @@ export const RightPanel: React.FC = () => {
     }
   }, [isOpen, sheet])
 
-  // A drawer without a focus lock still returns focus to what opened it (the top bar's toggle).
+  // A drawer without a focus lock still returns focus: to the top bar button of the view that was
+  // showing (so Escape on Glossary lands on Glossary), else to what opened it.
   // Captured while rendering, before the drawer's own content moves focus into its input.
   const [opener] = useState<Element | null>(() =>
     typeof document === 'undefined' ? null : document.activeElement
   )
+  const tabRef = useRef(activeTab)
+  useEffect(() => {
+    tabRef.current = activeTab
+  }, [activeTab])
   useEffect(
     () => () => {
-      if (opener instanceof HTMLElement && opener.isConnected && opener !== document.body) {
-        opener.focus()
+      const button = document.querySelector<HTMLElement>(`[data-drawer-toggle="${tabRef.current}"]`)
+      const target = button?.isConnected ? button : opener
+      if (target instanceof HTMLElement && target.isConnected && target !== document.body) {
+        target.focus()
       }
     },
     [opener]
@@ -105,9 +121,15 @@ export const RightPanel: React.FC = () => {
       ? assistantTitle
       : activeTab === 'faq'
         ? COPY.faqTitle
-        : activeTab === 'workshop'
-          ? COPY.workshopTitle
-          : COPY.bookmarksTitle
+        : activeTab === 'glossary'
+          ? COPY.glossaryTitle
+          : activeTab === 'guide'
+            ? COPY.guideTitle
+            : activeTab === 'sources'
+              ? COPY.sourcesTitle
+              : activeTab === 'workshop'
+                ? COPY.workshopTitle
+                : COPY.bookmarksTitle
 
   const widthClass = sheet
     ? 'w-full'
@@ -158,9 +180,22 @@ export const RightPanel: React.FC = () => {
               )}
               {activeTab === 'faq' && (
                 <React.Suspense fallback={Spinner}>
-                  <div className="flex-1 overflow-y-auto max-md:overscroll-y-contain">
-                    <FAQPage inDrawer />
-                  </div>
+                  <FaqView />
+                </React.Suspense>
+              )}
+              {activeTab === 'glossary' && (
+                <React.Suspense fallback={Spinner}>
+                  <GlossaryView />
+                </React.Suspense>
+              )}
+              {activeTab === 'guide' && (
+                <React.Suspense fallback={Spinner}>
+                  <GuideView />
+                </React.Suspense>
+              )}
+              {activeTab === 'sources' && (
+                <React.Suspense fallback={Spinner}>
+                  <SourcesView />
                 </React.Suspense>
               )}
             </div>

@@ -23,8 +23,7 @@ const reader = new KnowledgeReader(core)
 
 /** Kinds whose address the Hub's pages do not read yet (plan step 3.3, forms still to build): kind -> records. */
 const FORMS_NOT_READ_YET: Record<string, number> = {
-  // every glossary term: its address is a form the Learn page does not read yet (counted from the file, so new terms do not break it)
-  'glossary term': core.records.filter((r) => r.kind === 'glossary term').length,
+  // (A glossary term's address, `?glossary=<term>`, is read on every page: it opens the drawer's Glossary.)
   'playground lesson': 54,
   assessment: 130,
 }

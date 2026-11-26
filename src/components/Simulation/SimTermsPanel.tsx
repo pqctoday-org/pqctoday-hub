@@ -11,12 +11,15 @@ import { useEffect, useState } from 'react'
 import { BookOpenText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Glossary } from '@/components/common/Glossary'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { GUIDED_DEFS } from './SimTour'
 
 export function SimTermsPanel({ onClose }: { onClose: () => void }) {
   const trapRef = useFocusTrap(true)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const isEmbedded = useIsEmbedded()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -64,7 +67,15 @@ export function SimTermsPanel({ onClose }: { onClose: () => void }) {
             variant="outline"
             size="sm"
             className="gap-1.5"
-            onClick={() => setGlossaryOpen(true)}
+            onClick={() => {
+              // The Glossary is the side drawer's view; an embedded simulation keeps its modal panel.
+              if (isEmbedded) {
+                setGlossaryOpen(true)
+                return
+              }
+              onClose()
+              useRightPanelStore.getState().open('glossary')
+            }}
           >
             <BookOpenText size={14} aria-hidden="true" />
             Open full PQC glossary

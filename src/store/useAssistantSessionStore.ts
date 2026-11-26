@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The running conversation of the drawer: this visit only. Nothing here is persisted or synced,
- * so what a learner typed never leaves the tab. Each answer keeps its own resources.
+ * so what a learner typed never leaves the tab. Each answer keeps its own resources. The one thing
+ * kept beyond the visit is a count of questions asked (a number in the achievement store, no text).
  */
 import { create } from 'zustand'
-import type { AssistantAnswer, AssistantContext } from '@/services/assistant/contract'
+import type { AssistantAnswer, AssistantContext, AssistantRow } from '@/services/assistant/contract'
 import { askAssistant } from '@/components/Assistant/assistantClient'
+import { useAchievementStore } from '@/store/useAchievementStore'
 
 export type AssistantTurn =
   | { id: string; question: string; status: 'loading' }
@@ -16,8 +18,21 @@ export type AssistantTurn =
       answer: Exclude<AssistantAnswer, { state: 'data-not-loaded' }>
     }
 
+/** The record or tool opened in place from an answer's row ("Read here", "Try it here"). */
+export interface AssistantViewer {
+  row: AssistantRow
+  mode: 'record' | 'tool'
+  question: string
+}
+
 interface AssistantSessionState {
   turns: AssistantTurn[]
+  /**
+   * What is open in place in the drawer. Kept here, not in the view, so the drawer can show another
+   * view (the Glossary, say) and come back to the answer and the record as they were.
+   */
+  viewer: AssistantViewer | null
+  setViewer: (viewer: AssistantViewer | null) => void
   /** The text in the input box. Kept here so a failed question can be put back. */
   draft: string
   /** The question held after the data did not load. */
@@ -34,6 +49,8 @@ let latestRequest = 0
 
 export const useAssistantSessionStore = create<AssistantSessionState>()((set, get) => ({
   turns: [],
+  viewer: null,
+  setViewer: (viewer) => set({ viewer }),
   draft: '',
   failedQuestion: null,
 
@@ -42,6 +59,12 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
   ask: async (rawQuestion, context) => {
     const question = rawQuestion.trim()
     if (!question) return
+    // The one place every question passes through (typed, suggested, "more questions", handed over
+    // by another page, a saved answer reopened). Counted once, as a number only. Sending again the
+    // question that just failed to load ("Try again") is the same question: not counted again.
+    if (question !== get().failedQuestion) {
+      useAchievementStore.getState().recordAssistantQuestion()
+    }
     const id = `turn-${Date.now()}-${++counter}`
     const request = ++latestRequest
     set((s) => ({
@@ -70,5 +93,5 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
     await get().ask(held, context)
   },
 
-  reset: () => set({ turns: [], draft: '', failedQuestion: null }),
+  reset: () => set({ turns: [], viewer: null, draft: '', failedQuestion: null }),
 }))

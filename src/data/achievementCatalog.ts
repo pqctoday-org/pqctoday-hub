@@ -289,7 +289,7 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'chat-engaged',
     title: 'Conversation Starter',
-    description: 'Sent 10+ messages to the PQC Assistant',
+    description: 'Asked the PQC Assistant 10 or more questions',
     category: 'cross-feature',
     rarity: 'common',
     icon: 'MessageCircle',
@@ -334,7 +334,7 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'full-journey',
     title: 'Full Journey',
-    description: 'Used Learn, Assess, Migrate, Playground, Simulation, and Chat',
+    description: 'Used Learn, Assess, Migrate, Playground, Simulation, and the Assistant',
     category: 'cross-feature',
     rarity: 'epic',
     icon: 'Sparkles',

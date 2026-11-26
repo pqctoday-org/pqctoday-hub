@@ -123,8 +123,11 @@ describe('an updated section', () => {
     const version = tls.contentVersion ?? 1
     const [c] = computeObjectiveChanges(o, [{ tag: sectionTag, contentVersion: version - 1 }])
     expect(c.kind).toBe('section-updated')
-    expect(CHANGE_LABEL[c.kind]).toBe('Section updated')
-    expect(c.subject).toBe(sections[0].label)
+    expect(CHANGE_LABEL[c.kind]).toBe('Lesson revised')
+    expect(c.subject).toBe(`${tls.title}: ${sections[0].label}`)
+    expect(c.detail).toBe(
+      `${tls.title} was revised since you commented on ${sections[0].label}. This section may not have changed.`
+    )
     expect(c.href).toBe(`/learn/${tls.id}?section=${sections[0].id}`)
   })
 

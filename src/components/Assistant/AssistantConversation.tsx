@@ -11,14 +11,14 @@ import type { AssistantRow } from '@/services/assistant/contract'
 import { AssistantAnswerView, QuestionBlock } from './AssistantAnswerView'
 import { AssistantInput } from './AssistantInput'
 import { RecordViewer } from './RecordViewer'
+import { isGlossaryTag, termLessonsFor, type TermLesson } from '@/services/assistant/termLessons'
+import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { Suggestions } from './Suggestions'
 import { suggestionsFor } from './suggestionSource'
 import { COPY } from './copy'
 import { describeCurrentPage } from './returnTarget'
 import { useAssistantContext } from './useAssistantContext'
 import { useAssistantLayout } from './useAssistantLayout'
-
-type Opened = { row: AssistantRow; mode: 'record' | 'tool'; question: string }
 
 /**
  * The Assistant view of the drawer: conversation, suggestions, input. It reads and clears the
@@ -28,7 +28,7 @@ export function AssistantConversation() {
   const layout = useAssistantLayout()
   const sheet = layout === 'sheet'
   const navigate = useNavigate()
-  const { pathname, search } = useLocation()
+  const { pathname, search, key } = useLocation()
   const getContext = useAssistantContext()
 
   const turns = useAssistantSessionStore((s) => s.turns)
@@ -46,7 +46,24 @@ export function AssistantConversation() {
   const listRef = useRef<HTMLDivElement>(null)
   const latestRef = useRef<HTMLDivElement>(null)
   const openerTag = useRef<string | null>(null)
-  const [opened, setOpened] = useState<Opened | null>(null)
+  const opened = useAssistantSessionStore((s) => s.viewer)
+  const setOpened = useAssistantSessionStore((s) => s.setViewer)
+  // The lessons that teach the opened glossary term, read from the knowledge model once per term.
+  const [termLessons, setTermLessons] = useState<{ tag: string; lessons: TermLesson[] } | null>(
+    null
+  )
+  const openedTag = opened?.row.tag
+  useEffect(() => {
+    if (!openedTag) return
+    let cancelled = false
+    void termLessonsFor(openedTag).then((lessons) => {
+      if (!cancelled) setTermLessons({ tag: openedTag, lessons })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [openedTag])
+  const lessonsOfOpened = termLessons && termLessons.tag === openedTag ? termLessons.lessons : []
 
   // On open, the input has focus.
   useEffect(() => {
@@ -87,7 +104,7 @@ export function AssistantConversation() {
       void ask(question, getContext())
       inputRef.current?.focus()
     },
-    [ask, getContext]
+    [ask, getContext, setOpened]
   )
 
   const edit = useCallback(
@@ -111,24 +128,31 @@ export function AssistantConversation() {
         : null
       ;(target ?? inputRef.current)?.focus()
     })
-  }, [])
+  }, [setOpened])
 
   const openPage = useCallback(
-    (row: AssistantRow) => {
-      if (row.action === 'Go to page' || row.action === 'Open reference' || opened) {
-        useAssistantReturnStore.getState().begin({
-          path: `${pathname}${search}`,
-          label: describeCurrentPage(pathname),
-          origin: `${row.action}: ${row.title}`,
-        })
-      }
+    (row: AssistantRow, to: string = row.link) => {
+      // Every row that opens another page starts the way back: "Back to your answer" on a wide
+      // screen, "Back to <page>" on a phone. (An open that stays on the same page starts none.)
+      useAssistantReturnStore.getState().begin({
+        path: `${pathname}${search}`,
+        fromKey: key,
+        label: describeCurrentPage(pathname),
+        origin: `${row.action}: ${row.title}`,
+      })
       // The phone sheet closes while a page is open; the desktop drawer stays beside the page.
       if (sheet) useRightPanelStore.getState().close()
       setOpened(null)
-      navigate(row.link)
+      navigate(to)
     },
-    [navigate, opened, pathname, search, sheet]
+    [navigate, pathname, search, key, sheet, setOpened]
   )
+
+  /** A term's own entry: the drawer shows the Glossary on that term, with the way back to this answer. */
+  const openGlossary = useCallback((row: AssistantRow) => {
+    useGlossaryDrawerStore.getState().focus(row.title, { fromAnswer: true })
+    useRightPanelStore.getState().open('glossary')
+  }, [])
 
   const onAction = useCallback(
     (row: AssistantRow, question: string) => {
@@ -137,7 +161,7 @@ export function AssistantConversation() {
       if (row.action === 'Try it here') return setOpened({ row, mode: 'tool', question })
       openPage(row)
     },
-    [openPage]
+    [openPage, setOpened]
   )
 
   const suggestions = suggestionsFor(turns.map((t) => t.question))
@@ -152,7 +176,9 @@ export function AssistantConversation() {
           variant="pinned"
           question={opened.question}
           onClose={closeViewer}
-          onOpenPage={openPage}
+          onOpenPage={(r) => (isGlossaryTag(r.tag) ? openGlossary(r) : openPage(r))}
+          lessons={lessonsOfOpened}
+          onOpenLesson={(lesson) => openPage(opened.row, lesson.link)}
         />
       )}
       {opened && !sheet && (
@@ -162,7 +188,9 @@ export function AssistantConversation() {
           variant="drawer"
           question={opened.question}
           onClose={closeViewer}
-          onOpenPage={openPage}
+          onOpenPage={(r) => (isGlossaryTag(r.tag) ? openGlossary(r) : openPage(r))}
+          lessons={lessonsOfOpened}
+          onOpenLesson={(lesson) => openPage(opened.row, lesson.link)}
         />
       )}
 

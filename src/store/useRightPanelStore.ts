@@ -49,11 +49,11 @@ export const useRightPanelStore = create<RightPanelState>()(
       name: 'pqc-right-panel',
       version: 7,
       storage: createJSONStorage(() => localStorage),
-      // The running workshop and the phone's FAQ sheet are not places to come back to: a new visit
-      // opens on the Assistant.
+      // Only the Assistant and Bookmarks are remembered. The running workshop, the FAQ, the glossary
+      // and the page's guide and sources are not places to come back to: a new visit opens on the
+      // Assistant.
       partialize: (state) => ({
-        activeTab:
-          state.activeTab === 'workshop' || state.activeTab === 'faq' ? 'chat' : state.activeTab,
+        activeTab: state.activeTab === 'bookmarks' ? 'bookmarks' : 'chat',
       }),
       migrate: (persistedState: unknown, version: number) => {
         const state = (persistedState ?? {}) as Record<string, unknown>
@@ -84,7 +84,7 @@ export const useRightPanelStore = create<RightPanelState>()(
           // Learn › Your journey; any stored tab outside the new set becomes the Assistant.
           delete state.isExpanded
         }
-        const allowed = ['chat', 'bookmarks', 'faq', 'workshop']
+        const allowed = ['chat', 'bookmarks', 'glossary', 'guide', 'sources', 'faq', 'workshop']
         if (!allowed.includes(state.activeTab as string)) state.activeTab = 'chat'
         return state
       },

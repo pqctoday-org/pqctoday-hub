@@ -2,16 +2,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import '@testing-library/jest-dom'
 import { AssistantDock } from './AssistantDock'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-
-vi.mock('./assistantClient', async () => {
-  const engine = await import('@/test/fixtures/assistantFixtureEngine')
-  return { askAssistant: engine.answer }
-})
 
 beforeEach(() => {
   useAssistantSessionStore.getState().reset()
@@ -26,47 +21,22 @@ const mount = () =>
   )
 
 describe('phone dock on Learn screens', () => {
-  it('offers one suggested question, a box for your own question about this page, and Ask', () => {
+  it('is one button, with no text box and no suggested question', () => {
     mount()
-    expect(screen.getByText('Suggested')).toBeInTheDocument()
+    expect(screen.getAllByRole('button')).toHaveLength(1)
     expect(
-      screen.getByRole('button', { name: 'What is post-quantum cryptography, in two minutes?' })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('textbox', { name: 'Ask your own question about this page' })
-    ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument()
+      screen.getByRole('button', { name: 'Ask the Assistant about this page' })
+    ).toHaveTextContent('Ask about this page')
+    expect(screen.queryByRole('textbox')).toBeNull()
+    expect(screen.queryByText('Suggested')).toBeNull()
   })
 
-  it('Return adds a new line; only Ask sends, and it opens the sheet with the question asked', async () => {
-    const user = userEvent.setup()
+  it('opens the Assistant sheet and asks nothing', async () => {
     mount()
-    const box = screen.getByRole('textbox', { name: 'Ask your own question about this page' })
-    await user.type(box, 'ML-KEM{Enter}')
-    expect(box).toHaveValue('ML-KEM\n')
-    expect(useRightPanelStore.getState().isOpen).toBe(false)
-    await user.click(screen.getByRole('button', { name: 'Ask' }))
-    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'chat' })
-    expect(useAssistantSessionStore.getState().turns.map((t) => t.question)).toEqual(['ML-KEM'])
-    expect(box).toHaveValue('')
-  })
-
-  it('an empty Ask shows a message and sends nothing', async () => {
-    mount()
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Ask' }))
-    expect(screen.getByRole('alert')).toHaveTextContent('Type a question first.')
-    expect(useRightPanelStore.getState().isOpen).toBe(false)
-    expect(useAssistantSessionStore.getState().turns).toHaveLength(0)
-  })
-
-  it('the suggested question opens the sheet and asks it at once', async () => {
     await userEvent
       .setup()
-      .click(
-        (mount(),
-        screen.getByRole('button', { name: 'What is post-quantum cryptography, in two minutes?' }))
-      )
-    expect(useRightPanelStore.getState().isOpen).toBe(true)
-    expect(useAssistantSessionStore.getState().turns).toHaveLength(1)
+      .click(screen.getByRole('button', { name: 'Ask the Assistant about this page' }))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'chat' })
+    expect(useAssistantSessionStore.getState().turns).toHaveLength(0)
   })
 })

@@ -8,6 +8,8 @@ import { AssistantConversation } from './AssistantConversation'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useChatStore } from '@/store/useChatStore'
+import { useAchievementStore } from '@/store/useAchievementStore'
+import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { setSavedAnswersPort } from '@/services/assistant/drawerSaves'
 import type { AssistantResourcesAnswer } from '@/services/assistant/contract'
@@ -27,6 +29,38 @@ vi.mock('./assistantClient', async () => {
         return fixtures.dataNotLoaded(question)
       }
       return engine.answer(question, context)
+    },
+  }
+})
+
+vi.mock('@/services/assistant/termLessons', async (orig) => ({
+  ...(await orig<typeof import('@/services/assistant/termLessons')>()),
+  termLessonsFor: async (tag: string) =>
+    tag === 'GL:ml-kem'
+      ? [
+          {
+            lessonTitle: 'Post-Quantum Algorithms',
+            link: '/learn/pqc-algorithms?section=ml-kem-fips-203',
+            tag: 'LM-088/s:ml-kem-fips-203',
+          },
+        ]
+      : [],
+}))
+
+// The starting list holds three questions today; the ranker will offer more. A flag lets one test
+// see the collapsed "More questions" list that a longer list produces.
+const suggestionMode = vi.hoisted(() => ({ many: false }))
+vi.mock('./suggestionSource', async (orig) => {
+  const real = await orig<typeof import('./suggestionSource')>()
+  return {
+    ...real,
+    suggestionsFor: (asked: readonly string[]) => {
+      const base = real.suggestionsFor(asked)
+      if (!suggestionMode.many) return base
+      return [
+        ...base,
+        ...['Q four', 'Q five', 'Q six', 'Q seven'].map((question) => ({ question })),
+      ]
     },
   }
 })
@@ -63,8 +97,10 @@ function mount(initial = '/learn') {
 beforeEach(() => {
   client.failNext = 0
   client.calls = []
+  suggestionMode.many = false
   layout.value = 'docked'
   useAssistantSessionStore.getState().reset()
+  useAchievementStore.getState().resetAchievements()
   useAssistantReturnStore.getState().clear()
   useChatStore.setState({ pendingQuestion: null })
   useRightPanelStore.setState({ isOpen: true, activeTab: 'chat' })
@@ -246,12 +282,15 @@ describe('opening a resource', () => {
     )
   })
 
-  it('Go to module navigates and leaves the desktop drawer open, with no return bar', async () => {
+  it('Go to module navigates, leaves the desktop drawer open and starts the way back', async () => {
     const user = await askConcept()
     await user.click(screen.getByRole('button', { name: 'Go to module: TLS Basics' }))
     expect(screen.getByTestId('where')).toHaveTextContent('/learn/tls-basics')
     expect(useRightPanelStore.getState().isOpen).toBe(true)
-    expect(useAssistantReturnStore.getState().target).toBeNull()
+    expect(useAssistantReturnStore.getState().target).toMatchObject({
+      path: '/learn',
+      origin: 'Go to module: TLS Basics',
+    })
   })
 
   it('Go to page sets the return and, on the phone, closes the sheet', async () => {
@@ -291,6 +330,45 @@ describe('opening a resource', () => {
     expect(useAssistantReturnStore.getState().target).toMatchObject({ path: '/learn' })
   })
 
+  it('a glossary term opens the lesson that teaches it, with the way back set', async () => {
+    const user = await askConcept()
+    await user.click(screen.getByRole('button', { name: 'Read here: ML-KEM' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Open the lesson: Post-Quantum Algorithms' })
+    )
+    expect(screen.getByTestId('where')).toHaveTextContent(
+      '/learn/pqc-algorithms?section=ml-kem-fips-203'
+    )
+    expect(useAssistantReturnStore.getState().target).toMatchObject({
+      path: '/learn',
+      origin: 'Read here: ML-KEM',
+    })
+  })
+
+  it('Open in the glossary shows the Glossary view on that term; coming back keeps the answer and the record', async () => {
+    const user = userEvent.setup()
+    const view = mount('/learn')
+    await user.type(box(), 'What is ML-KEM?{Enter}')
+    await answered('What is ML-KEM?')
+    await user.click(screen.getByRole('button', { name: 'Read here: ML-KEM' }))
+    await user.click(await screen.findByRole('button', { name: 'Open in the glossary' }))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'glossary' })
+    expect(useGlossaryDrawerStore.getState()).toMatchObject({
+      focusTerm: 'ML-KEM',
+      fromAnswer: true,
+    })
+    // The page did not change, and no return bar was started.
+    expect(screen.getByTestId('where')).toHaveTextContent('/learn')
+    expect(useAssistantReturnStore.getState().target).toBeNull()
+    // The drawer shows the Glossary instead of the Assistant; coming back shows both as they were.
+    view.unmount()
+    mount('/learn')
+    expect(screen.getByRole('region', { name: 'ML-KEM' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('article', { name: 'What is ML-KEM?', hidden: true })
+    ).toBeInTheDocument()
+  })
+
   it('on the phone, the record opens as a pinned card with Close', async () => {
     layout.value = 'sheet'
     const user = userEvent.setup()
@@ -314,5 +392,78 @@ describe('a question queued by another page', () => {
     expect(await screen.findByText('One Hub record matches that name.')).toBeInTheDocument()
     expect(screen.getByRole('article', { name: 'ML-KEM' })).toBeInTheDocument()
     expect(useChatStore.getState().pendingQuestion).toBeNull()
+  })
+})
+
+describe('counting questions for the Conversation Starter badge', () => {
+  const asked = () => useAchievementStore.getState().assistantQuestionCount
+
+  it('counts a typed question once (desktop: Return)', async () => {
+    mount()
+    await userEvent.setup().type(box(), 'ML-KEM{Enter}')
+    await answered('ML-KEM')
+    expect(asked()).toBe(1)
+  })
+
+  it('counts a typed question once (phone: the Send button)', async () => {
+    layout.value = 'sheet'
+    const user = userEvent.setup()
+    mount()
+    await user.type(box(), 'ML-KEM')
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+    await answered('ML-KEM')
+    expect(asked()).toBe(1)
+  })
+
+  it('counts a chosen suggested question once', async () => {
+    mount()
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: /Which deadlines apply to banks in the EU\?/ }))
+    await answered('Which deadlines apply to banks in the EU?')
+    expect(asked()).toBe(1)
+  })
+
+  it('counts a question from the "More questions" list once', async () => {
+    suggestionMode.many = true
+    const user = userEvent.setup()
+    mount()
+    await user.click(screen.getByRole('button', { name: 'More questions (3)' }))
+    await user.click(screen.getByRole('button', { name: 'Q seven' }))
+    await screen.findByRole('article', { name: 'Q seven' })
+    expect(client.calls).toEqual(['Q seven'])
+    expect(useAchievementStore.getState().assistantQuestionCount).toBe(1)
+  })
+
+  it('counts a question handed over by another page once', async () => {
+    act(() => useChatStore.getState().setPendingQuestion('ML-KEM'))
+    mount()
+    await screen.findByText('One Hub record matches that name.')
+    expect(asked()).toBe(1)
+  })
+
+  it('does not count an empty send, and does not count "Try again"', async () => {
+    const user = userEvent.setup()
+    client.failNext = 1
+    mount()
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+    expect(asked()).toBe(0)
+    await user.type(box(), 'ML-KEM{Enter}')
+    await screen.findByRole('alert')
+    expect(asked()).toBe(1)
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    await answered('ML-KEM')
+    expect(client.calls).toEqual(['ML-KEM', 'ML-KEM'])
+    expect(asked()).toBe(1)
+  })
+
+  it('counts each of several different questions', async () => {
+    const user = userEvent.setup()
+    mount()
+    await user.type(box(), 'ML-KEM{Enter}')
+    await answered('ML-KEM')
+    await user.type(box(), 'ML-DSA{Enter}')
+    await answered('ML-DSA')
+    expect(asked()).toBe(2)
   })
 })

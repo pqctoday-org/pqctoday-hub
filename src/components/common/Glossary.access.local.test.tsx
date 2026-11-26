@@ -14,6 +14,9 @@ function Harness() {
     </MemoryRouter>
   )
 }
+// The panel slides in and out and the search box takes focus after a short delay, so on a busy
+// machine these waits need more than the default one second.
+const SLOW = { timeout: 5000 }
 describe('Glossary modal access', () => {
   it('keeps focus inside the dialog and restores its opener on Escape', async () => {
     render(<Harness />)
@@ -22,7 +25,7 @@ describe('Glossary modal access', () => {
     fireEvent.click(opener)
     const dialog = screen.getByRole('dialog', { name: 'PQC Glossary' })
     const search = within(dialog).getByRole('textbox', { name: 'Search glossary terms' })
-    await waitFor(() => expect(search).toHaveFocus())
+    await waitFor(() => expect(search).toHaveFocus(), SLOW)
     expect(document.body.style.overflow).toBe('hidden')
     fireEvent.change(search, { target: { value: 'X25519MLKEM768' } })
     const last = await within(dialog).findByRole('link', { name: 'Related module →' })
@@ -30,8 +33,9 @@ describe('Glossary modal access', () => {
     fireEvent.keyDown(last, { key: 'Tab' })
     expect(within(dialog).getByRole('button', { name: 'Close glossary' })).toHaveFocus()
     fireEvent.keyDown(document.activeElement!, { key: 'Escape' })
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'PQC Glossary' })).not.toBeInTheDocument()
+    await waitFor(
+      () => expect(screen.queryByRole('dialog', { name: 'PQC Glossary' })).not.toBeInTheDocument(),
+      SLOW
     )
     expect(opener).toHaveFocus()
     expect(document.body.style.overflow).not.toBe('hidden')
@@ -42,7 +46,7 @@ describe('Glossary modal access', () => {
     opener.focus()
     fireEvent.click(opener)
     fireEvent.click(screen.getByRole('button', { name: 'Close glossary' }))
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument(), SLOW)
     expect(opener).toHaveFocus()
   })
 })

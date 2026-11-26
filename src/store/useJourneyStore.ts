@@ -187,7 +187,18 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v)
 }
 
-function isObjective(v: unknown): v is Objective {
+function isStep(s: unknown): boolean {
+  return (
+    isRecord(s) &&
+    typeof s.id === 'string' &&
+    typeof s.resourceTag === 'string' &&
+    typeof s.position === 'number' &&
+    typeof s.required === 'boolean'
+  )
+}
+
+/** An objective with everything but its steps checked; the steps are checked one by one (see `migrateJourneyState`). */
+function isObjectiveShell(v: unknown): v is Objective {
   if (!isRecord(v)) return false
   return (
     typeof v.id === 'string' &&
@@ -195,14 +206,6 @@ function isObjective(v: unknown): v is Objective {
     typeof v.goal === 'string' &&
     (v.state === 'active' || v.state === 'paused' || v.state === 'completed') &&
     Array.isArray(v.steps) &&
-    v.steps.every(
-      (s) =>
-        isRecord(s) &&
-        typeof s.id === 'string' &&
-        typeof s.resourceTag === 'string' &&
-        typeof s.position === 'number' &&
-        typeof s.required === 'boolean'
-    ) &&
     isRecord(v.checkpoint)
   )
 }
@@ -210,7 +213,8 @@ function isObjective(v: unknown): v is Objective {
 /**
  * Brings anything read from the device to the current shape: keeps what is valid, drops what is not,
  * never throws. Version 1 is the first version, so this also stands for "nothing stored yet" and for a
- * state that was damaged on disk. Version 2 added each objective's record of what it was built on, the ids of
+ * state that was damaged on disk. It runs on every read from the device, not only when the version changes
+ * (see `merge` in the store's options). Version 2 added each objective's record of what it was built on, the ids of
  * the curriculum changes the learner answered, and the former tags of a swapped step: all optional, so a
  * version 1 objective is kept exactly as it was and is recorded when the Hub first looks at it.
  */
@@ -220,7 +224,10 @@ export function migrateJourneyState(persisted: unknown, fromVersion: number): Pe
   const objectives: Record<string, Objective> = {}
   if (isRecord(persisted.objectives)) {
     for (const [id, value] of Object.entries(persisted.objectives)) {
-      if (isObjective(value) && value.id === id) objectives[id] = cleanObjective(value) // eslint-disable-line security/detect-object-injection
+      if (!isObjectiveShell(value) || value.id !== id) continue
+      // A step that is not well formed is dropped, not the objective it is in; an objective left with no step is dropped.
+      const steps = (value.steps as unknown[]).filter(isStep) as Step[]
+      if (steps.length > 0) objectives[id] = cleanObjective({ ...value, steps }) // eslint-disable-line security/detect-object-injection
     }
   }
   const order = Array.isArray(persisted.order)
@@ -402,7 +409,9 @@ export const useJourneyStore = create<JourneyState>()(
           if (!o || !step || o.state !== 'active') return false
           // A self-assessed step is confirmed in the complete panel, never by a mark.
           if (step.kind === 'self-assessed') return false
-          if (step.resourceTag in s.completions) return false
+          // Already done: its own lesson, or one it replaced.
+          if ([step.resourceTag, ...(step.formerTags ?? [])].some((t) => t in s.completions))
+            return false
           set((st) => ({
             completions: {
               ...st.completions,
@@ -568,6 +577,12 @@ export const useJourneyStore = create<JourneyState>()(
         completions: s.completions,
       }),
       migrate: (persisted, version) => migrateJourneyState(persisted, version),
+      // Every read is cleaned, not only a read across a version change: a stored value of this version that was
+      // damaged on the device must not stop the app (a null list of objectives would fail every screen).
+      merge: (persisted, current) => ({
+        ...current,
+        ...migrateJourneyState(persisted, JOURNEY_STORE_VERSION),
+      }),
       // A damaged value must never stop the app: a failed read leaves the empty state.
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('The journey could not be read from this device.', error)
@@ -578,3 +593,10 @@ export const useJourneyStore = create<JourneyState>()(
 
 /** The tags the learner has marked complete, for the "done" predicate of the step rules. */
 export const selectIsMarkedDone = (s: PersistedJourney) => (tag: string) => tag in s.completions
+
+// Another tab saved: read its copy, so two tabs never overwrite each other's objectives with a stale copy.
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key === JOURNEY_STORE_KEY) void useJourneyStore.persist.rehydrate()
+  })
+}

@@ -9,6 +9,12 @@ export interface AssistantReturnTarget {
   path: string
   /** Plain name of that page, for "Back to <page>" on a phone. */
   label: string
+  /**
+   * The history entry the learner was on when the row was used. The first entry after it is the
+   * row's own navigation: if that stays on the same page (a link to the page the learner is on, a
+   * hash-only link), nothing was opened and there is no return.
+   */
+  fromKey: string
   /** The accessible name of the row action that opened the page, so focus can go back to it. */
   origin?: string
 }

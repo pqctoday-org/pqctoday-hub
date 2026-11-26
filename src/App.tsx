@@ -202,6 +202,7 @@ const RevisionsView = lazyWithRetry(() =>
 import { ScrollToTop } from './components/Router/ScrollToTop'
 import { SpecDrawerHost } from './components/Library/SpecDrawerHost'
 import { TryToolModalHost } from './components/Playground/TryToolModalHost'
+import { GlossaryAddressHost } from './components/common/GlossaryAddressHost'
 import { useTheme } from './hooks/useTheme'
 import { useUrlPersonaOverride } from './hooks/useUrlPersonaOverride'
 
@@ -551,6 +552,7 @@ function App() {
           switch to the sheet layers (z-overlay / z-dialog) there instead. */}
       <SpecDrawerHost />
       <TryToolModalHost />
+      <GlossaryAddressHost />
     </BrowserRouter>
   )
 }

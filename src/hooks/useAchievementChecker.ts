@@ -6,7 +6,7 @@ import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useChatStore } from '@/store/useChatStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
-import { useAchievementStore } from '@/store/useAchievementStore'
+import { useAchievementStore, sanitizeQuestionCount } from '@/store/useAchievementStore'
 import { useEndorsementStore } from '@/store/useEndorsementStore'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
@@ -33,6 +33,7 @@ export function useAchievementChecker() {
   const myProducts = useSelectedProductIds()
 
   const playgroundOpCount = useAchievementStore((s) => s.playgroundOpCount)
+  const assistantQuestionCount = useAchievementStore((s) => s.assistantQuestionCount)
   const playgroundToolsUsed = useAchievementStore((s) => s.playgroundToolsUsed)
   const businessToolsUsed = useAchievementStore((s) => s.businessToolsUsed)
   const sectionsVisited = useAchievementStore((s) => s.sectionsVisited)
@@ -111,11 +112,16 @@ export function useAchievementChecker() {
     const totalArtifactCsrs = artifacts?.csrs?.length ?? 0
     const totalArtifactExecDocs = artifacts?.executiveDocuments?.length ?? 0
 
-    // Chat
-    let chatMessageCount = 0
+    // Conversation count: the two parts are computed on separate lines on purpose, so the old
+    // chat part can be deleted alone when that chat is removed.
+    // Part 1, the old model chat (still shipped behind a rollback switch).
+    let oldChatMessageCount = 0
     for (const conv of conversations ?? []) {
-      chatMessageCount += conv.messages?.filter((m) => m.role === 'user').length ?? 0
+      oldChatMessageCount += conv.messages?.filter((m) => m.role === 'user').length ?? 0
     }
+    // Part 2, the Assistant drawer: a number kept on the device by the achievement store.
+    const assistantQuestions = sanitizeQuestionCount(assistantQuestionCount)
+    const chatMessageCount = oldChatMessageCount + assistantQuestions
 
     // Endorsements
     const endorsementCount = Object.values(endorsementRecords).filter((r) => r?.endorsed).length
@@ -163,6 +169,7 @@ export function useAchievementChecker() {
     myFrameworks,
     myProducts,
     playgroundOpCount,
+    assistantQuestionCount,
     playgroundToolsUsed,
     businessToolsUsed,
     sectionsVisited,
