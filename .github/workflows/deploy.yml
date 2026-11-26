@@ -87,10 +87,12 @@ jobs:
         run: node --experimental-strip-types scripts/ci/leak-guard.ts --tree dist --baseline scripts/ci/leak-baseline-dist.json --mode enforce
 
       # GitHub's edge serves the previous index.html for up to 10 minutes after a
-      # deploy; keep the live boot chunks it references so it can still start.
-      # Reads the live sw.js and copies missing chunks into dist/assets/.
+      # deploy, and a returning visitor can hold the previous page for longer; keep
+      # the previous release's hashed files (boot chunks and split files) so that
+      # page can still load them. One release back, bounded, written to
+      # dist/assets/ and listed in dist/release-assets.json. Does not touch sw.js.
       # Fails open — see scripts/ci/retain-live-boot-assets.ts.
-      - name: Retain live boot chunks
+      - name: Retain the previous release's files
         run: npx tsx scripts/ci/retain-live-boot-assets.ts
 
       - name: Setup Pages
