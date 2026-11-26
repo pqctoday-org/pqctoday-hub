@@ -125,7 +125,11 @@ export const LESSON_RELATED_LINKS: Readonly<Record<string, LessonRelatedLinks>> 
         title: 'Hybrid Cryptography',
         reason: 'Composite signatures and dual-algorithm approaches',
       },
-      { to: '/learn/kms-pqc', title: 'KMS & PQC Key Management', reason: 'JWKS' },
+      {
+        to: '/learn/kms-pqc',
+        title: 'KMS & PQC Key Management',
+        reason: 'JWKS key rotation and lifecycle for PQC keys',
+      },
       {
         to: '/learn/iam-pqc',
         title: 'IAM & PQC',
@@ -313,7 +317,11 @@ export const LESSON_RELATED_LINKS: Readonly<Record<string, LessonRelatedLinks>> 
         title: 'Migration Guide',
         reason: 'Detailed migration workflows and software catalog',
       },
-      { to: '/compliance', title: 'Compliance Tracker', reason: 'NIST,' },
+      {
+        to: '/compliance',
+        title: 'Compliance Tracker',
+        reason: 'NIST, ANSSI, and BSI compliance requirements',
+      },
     ],
   },
   'crypto-dev-apis': {
@@ -853,7 +861,6 @@ export const LESSON_RELATED_LINKS: Readonly<Record<string, LessonRelatedLinks>> 
         title: 'TLS Basics & PQC',
         reason: 'How MTCs reduce TLS handshake size with PQ certificates',
       },
-      { to: '/learn/quiz', title: 'Take Quiz', reason: '' },
     ],
     pages: [],
   },
@@ -1132,7 +1139,11 @@ export const LESSON_RELATED_LINKS: Readonly<Record<string, LessonRelatedLinks>> 
     ],
     pages: [
       { to: '/assess', title: 'Risk Assessment', reason: 'Run a guided PQC readiness assessment' },
-      { to: '/compliance', title: 'Compliance Tracker', reason: 'NIST,' },
+      {
+        to: '/compliance',
+        title: 'Compliance Tracker',
+        reason: 'NIST, ANSSI, and BSI compliance requirements',
+      },
     ],
   },
   'pqc-grc': {
@@ -1397,6 +1408,11 @@ export const LESSON_RELATED_LINKS: Readonly<Record<string, LessonRelatedLinks>> 
         to: '/library?q=stateful',
         title: 'Software Library',
         reason: 'PQC-ready libraries and tools with stateful signature support',
+      },
+      {
+        to: '/library?ref=RFC-10033-Hash-Based-Signatures-State-and-Backup-Management',
+        title: 'RFC 10033: Hash-Based Signatures: State and Backup Management',
+        reason: 'Practical guidance on state, backup, and recovery for LMS/XMSS deployments',
       },
     ],
   },

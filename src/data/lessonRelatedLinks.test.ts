@@ -39,6 +39,14 @@ const all: { lesson: string; kind: 'lessons' | 'pages'; link: RelatedLink }[] = 
   ]
 )
 
+/** The links whose lesson gave no reason (the old PQC Business Case "Related Modules" list had titles only). */
+const EMPTY_BY_INTENT = new Set([
+  'pqc-business-case /learn/pqc-risk-management',
+  'pqc-business-case /learn/migration-program',
+  'pqc-business-case /learn/vendor-risk',
+  'pqc-business-case /learn/compliance-strategy',
+])
+
 const parts = (to: string) => {
   const url = new URL(to, 'https://hub.invalid')
   return {
@@ -51,13 +59,34 @@ describe('kept lesson links: what the data holds', () => {
   it('holds every link the lessons listed by hand, in two groups', () => {
     const lessons = all.filter((l) => l.kind === 'lessons').length
     const pages = all.filter((l) => l.kind === 'pages').length
-    expect({ lessons, pages }).toEqual({ lessons: 183, pages: 73 })
+    expect({ lessons, pages }).toEqual({ lessons: 182, pages: 74 })
     expect(entries.length).toBe(50)
   })
 
-  it('keeps a title on every link, and lists a link once per lesson', () => {
+  it('keeps a title on every link, and a full-sentence reason unless the reason is empty by intent', () => {
     for (const { lesson, link } of all) {
-      expect(link.title.trim(), `${lesson} -> ${link.to}`).not.toBe('')
+      expect(link.title.trim(), `${lesson} -> ${link.to}: empty title`).not.toBe('')
+      const reason = link.reason.trim()
+      if (EMPTY_BY_INTENT.has(`${lesson} ${link.to}`)) {
+        expect(reason, `${lesson} -> ${link.to} is listed as having no reason`).toBe('')
+        continue
+      }
+      expect(
+        reason,
+        `${lesson} -> ${link.to}: empty reason (list it in EMPTY_BY_INTENT if intended)`
+      ).not.toBe('')
+      expect(reason, `${lesson} -> ${link.to}: reason ends mid-sentence`).not.toMatch(/[,:;-]$/)
+      expect(
+        reason.split(/\s+/).length,
+        `${lesson} -> ${link.to}: reason is one or two words`
+      ).toBeGreaterThanOrEqual(3)
+    }
+    // Nothing is listed as empty that is not in the data.
+    for (const key of EMPTY_BY_INTENT) {
+      expect(
+        all.some((l) => `${l.lesson} ${l.link.to}` === key),
+        key
+      ).toBe(true)
     }
     for (const [lesson, v] of entries) {
       const to = [...v.lessons, ...v.pages].map((l) => l.to)
@@ -153,7 +182,7 @@ const routes = new Set(
  */
 const PAGE_PARAMS: Record<string, { params: string[]; desktop: string[]; phone?: string[] }> = {
   library: {
-    params: ['q', 'cat'],
+    params: ['q', 'cat', 'ref'],
     desktop: ['src/components/Library/redesign/LibraryViewRedesign.tsx'],
     phone: ['src/components/Mobile/screens/MobileLibraryView.tsx'],
   },
@@ -247,6 +276,30 @@ describe('kept lesson links: pages', () => {
         titles.some((t) => t.includes(value.toLowerCase())),
         `${lesson} -> ${to}: no Library document matches "${value}"`
       ).toBe(true)
+    }
+  })
+
+  it('library: a record address is a live Library record, keeps its title, and opens a document the Hub holds', () => {
+    for (const { lesson, to, value } of filters('library', 'ref')) {
+      const record = byId.get(`LIB:${value}`)
+      expect(isLive(record), `${lesson} -> ${to}: no live Library record "${value}"`).toBe(true)
+      const link = pageLinks.find((l) => l.link.to === to)!.link
+      expect(link.title, `${lesson} -> ${to}`).toBe(record!.label)
+    }
+    // The RFC 10033 link the Stateful Signatures lesson carried (it was an outside address) points at the Hub's record.
+    expect(
+      pageLinks.some(
+        (l) =>
+          l.lesson === 'stateful-signatures' &&
+          l.link.to === '/library?ref=RFC-10033-Hash-Based-Signatures-State-and-Backup-Management'
+      )
+    ).toBe(true)
+  })
+
+  it('has no address outside the Hub', () => {
+    for (const { lesson, link } of all) {
+      expect(link.to.startsWith('/'), `${lesson} -> ${link.to}`).toBe(true)
+      expect(link.to.startsWith('//'), `${lesson} -> ${link.to}`).toBe(false)
     }
   })
 

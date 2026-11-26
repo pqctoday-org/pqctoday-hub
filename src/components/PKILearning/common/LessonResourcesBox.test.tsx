@@ -9,12 +9,15 @@ import type {
   KnowledgeLink,
   KnowledgeRecord,
 } from '@/services/knowledge/knowledgeTypes'
+import { LESSON_RELATED_LINKS } from '@/data/lessonRelatedLinks'
 import { LessonResourcesBox } from './LessonResourcesBox'
 
 const load = vi.hoisted(() => vi.fn())
+const loaded = vi.hoisted(() => vi.fn(() => null))
 vi.mock('@/services/knowledge/knowledgeReader', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/services/knowledge/knowledgeReader')>()),
   loadKnowledgeReader: load,
+  loadedKnowledgeReader: loaded,
 }))
 
 const rec = (
@@ -81,6 +84,8 @@ const never = () => new Promise<KnowledgeReader>(() => undefined)
 describe('LessonResourcesBox: closed and open groups', () => {
   beforeEach(() => {
     load.mockReset()
+    loaded.mockReset()
+    loaded.mockReturnValue(null)
   })
 
   it('starts with every group closed: a header button with the title and the count, and no rows', async () => {
@@ -120,7 +125,6 @@ describe('LessonResourcesBox: closed and open groups', () => {
     // Nothing to read or tab to inside a closed group.
     expect(within(box).queryAllByRole('link')).toHaveLength(0)
     expect(within(box).queryAllByRole('list')).toHaveLength(0)
-    expect(box.textContent).not.toContain('Compare with the other trust hardware')
   })
 
   it('keeps closed content out of the accessibility tree and the tab order', async () => {
@@ -129,8 +133,8 @@ describe('LessonResourcesBox: closed and open groups', () => {
     const box = screen.getByRole('region', { name: 'Related resources' })
     for (const b of within(box).getAllByRole('button')) {
       const panel = document.getElementById(b.getAttribute('aria-controls')!)!
+      // `hidden` takes the panel out of the tab order and the accessibility tree (its rows stay in the page for print).
       expect(panel.hidden).toBe(true)
-      expect(panel.childElementCount).toBe(0)
     }
     expect(within(box).queryAllByRole('link')).toHaveLength(0)
     // Tab visits the two header buttons and then leaves the box.
@@ -324,34 +328,249 @@ describe('LessonResourcesBox: closed and open groups', () => {
     expect(screen.queryByRole('button', { name: /^Show all/ })).toBeNull()
   })
 
-  it('renders nothing when the lesson has no linked records, while the file loads, and when it fails', async () => {
+  it('keeps a lesson without kept links in place while the file loads, and draws nothing once it knows there is nothing', async () => {
+    let finish: (r: KnowledgeReader) => void = () => undefined
+    load.mockImplementation(() => new Promise<KnowledgeReader>((r) => (finish = r)))
+    const { container } = renderBox()
+    // Heading and a quiet line, no groups, nothing that could read as "(0)".
+    const box = screen.getByRole('region', { name: 'Related resources' })
+    expect(within(box).getByText('Loading terms, documents and more…')).toBeTruthy()
+    expect(within(box).queryAllByRole('button')).toHaveLength(0)
+    expect(box.textContent).not.toContain('(0)')
+    finish(readerOf([], []))
+    await waitFor(() => expect(container.innerHTML).toBe(''))
+  })
+
+  it('says in a plain line that the resources could not be loaded, for a lesson without kept links', async () => {
+    load.mockImplementation(() => Promise.reject(new Error('knowledge core: 503')))
+    renderBox()
+    const box = await screen.findByRole('region', { name: 'Related resources' })
+    expect(within(box).getByText('Related resources could not be loaded.')).toBeTruthy()
+    expect(within(box).queryByText(/Loading terms/)).toBeNull()
+    expect(within(box).queryAllByRole('button')).toHaveLength(0)
+  })
+
+  it('draws nothing once the file loads and holds nothing for the lesson', async () => {
     load.mockResolvedValue(readerOf([], []))
-    {
-      const { container, unmount } = renderBox()
-      await waitFor(() => expect(load).toHaveBeenCalled())
-      await Promise.resolve()
-      expect(container.innerHTML).toBe('')
-      unmount()
+    const { container } = renderBox()
+    await waitFor(() => expect(container.innerHTML).toBe(''))
+  })
+})
+
+describe('LessonResourcesBox: markup, keys and changing lessons', () => {
+  beforeEach(() => {
+    load.mockReset()
+    loaded.mockReset()
+    loaded.mockReturnValue(null)
+  })
+
+  const docs = (prefix: string, n: number) =>
+    many(n, (i) =>
+      rec(
+        `LIB:${prefix}${i}`,
+        'library',
+        'document',
+        `${prefix} ${i}`,
+        `/library?ref=${prefix}${i}`
+      )
+    )
+
+  /** A reader with two lessons: kms-pqc (with documents) and fixture-lesson (with other documents). */
+  function twoLessons() {
+    const a = docs('kms', 7)
+    const b = docs('fx', 8)
+    const records = [rec('LM-901', 'module', 'module', 'KMS', '/learn/kms-pqc'), ...a, ...b]
+    const links: KnowledgeLink[] = [
+      ...a.map((r): KnowledgeLink => [r.id, 'taught_in', 'LM-901', 'declared', 's']),
+      ...b.map((r) => taught(r.id)),
+    ]
+    return new KnowledgeReader(readerOf(records, links).core)
+  }
+
+  it('draws every group header as a level 3 heading holding the button', async () => {
+    load.mockResolvedValue(twoLessons())
+    renderBox('kms-pqc')
+    await screen.findByRole('button', { name: /^Documents this lesson draws on/ })
+    const headings = screen.getAllByRole('heading', { level: 3 })
+    expect(headings).toHaveLength(3)
+    for (const h of headings) expect(within(h).getAllByRole('button')).toHaveLength(1)
+    expect(screen.queryAllByRole('heading', { level: 4 })).toHaveLength(0)
+    expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(1)
+  })
+
+  it('starts closed with "Show all" reset when the same box is given another lesson', async () => {
+    load.mockResolvedValue(twoLessons())
+    const user = userEvent.setup()
+    const { rerender } = render(
+      <MemoryRouter>
+        <LessonResourcesBox moduleId="kms-pqc" />
+      </MemoryRouter>
+    )
+    await screen.findByRole('button', { name: /^Documents this lesson draws on \(7\)/ })
+    await user.click(header('Documents this lesson draws on'))
+    await user.click(screen.getByRole('button', { name: 'Show all 7' }))
+    expect(screen.getAllByRole('link', { name: /^Library document\s*kms \d/ })).toHaveLength(7)
+
+    rerender(
+      <MemoryRouter>
+        <LessonResourcesBox moduleId="fixture-lesson" />
+      </MemoryRouter>
+    )
+    const docsHeader = await screen.findByRole('button', {
+      name: /^Documents this lesson draws on \(8\)/,
+    })
+    expect(docsHeader.getAttribute('aria-expanded')).toBe('false')
+    // The new lesson's kept groups are gone (it has none) and the old lesson's rows are not shown.
+    expect(screen.queryByRole('button', { name: /^Related lessons/ })).toBeNull()
+    await user.click(docsHeader)
+    expect(screen.getByRole('button', { name: 'Show all 8' }).getAttribute('aria-expanded')).toBe(
+      'false'
+    )
+    expect(screen.getAllByRole('link', { name: /fx \d/ })).toHaveLength(5)
+    expect(screen.queryAllByRole('link', { name: /kms \d/ })).toHaveLength(0)
+  })
+
+  it("never shows one lesson's content after a slow load for it finishes after the lesson changed", async () => {
+    const resolvers: ((r: KnowledgeReader) => void)[] = []
+    load.mockImplementation(() => new Promise<KnowledgeReader>((r) => resolvers.push(r)))
+    const { rerender } = render(
+      <MemoryRouter>
+        <LessonResourcesBox moduleId="kms-pqc" />
+      </MemoryRouter>
+    )
+    rerender(
+      <MemoryRouter>
+        <LessonResourcesBox moduleId="fixture-lesson" />
+      </MemoryRouter>
+    )
+    // The first lesson's load finishes last.
+    const reader = twoLessons()
+    resolvers.at(-1)!(reader)
+    resolvers[0]!(reader)
+    const docsHeader = await screen.findByRole('button', {
+      name: /^Documents this lesson draws on \(8\)/,
+    })
+    await userEvent.setup().click(docsHeader)
+    expect(screen.queryAllByRole('link', { name: /kms \d/ })).toHaveLength(0)
+    expect(screen.queryByRole('button', { name: /^Related lessons/ })).toBeNull()
+  })
+
+  it('draws the next lesson complete on its first render when the reader is already loaded', () => {
+    loaded.mockReturnValue(twoLessons())
+    load.mockImplementation(() => new Promise<KnowledgeReader>(() => undefined))
+    renderBox('fixture-lesson')
+    // No waiting: the groups are there on the first render, with their counts.
+    expect(
+      screen.getByRole('button', { name: /^Documents this lesson draws on \(8\)$/ })
+    ).toBeTruthy()
+    expect(screen.queryByText(/Loading terms/)).toBeNull()
+  })
+
+  it('recovers when a load fails and a later lesson loads fine', async () => {
+    load.mockImplementationOnce(() => Promise.reject(new Error('knowledge core: 503')))
+    load.mockImplementation(() => Promise.resolve(twoLessons()))
+    const { rerender } = render(
+      <MemoryRouter>
+        <LessonResourcesBox moduleId="kms-pqc" />
+      </MemoryRouter>
+    )
+    // The first load failed: the kept groups stay, with no loading line and no error line.
+    await waitFor(() => expect(screen.queryByText(/Loading terms/)).toBeNull())
+    expect(screen.queryByRole('button', { name: /^Documents this lesson draws on/ })).toBeNull()
+    expect(screen.getAllByRole('button')).toHaveLength(2)
+    // The next lesson asks again and gets its groups.
+    rerender(
+      <MemoryRouter>
+        <LessonResourcesBox moduleId="fixture-lesson" />
+      </MemoryRouter>
+    )
+    await screen.findByRole('button', { name: /^Documents this lesson draws on \(8\)/ })
+    expect(load).toHaveBeenCalledTimes(2)
+  })
+
+  it('gives no two rows the same React key, for a lesson with names that repeat', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    try {
+      const recs = [
+        rec('LM-902', 'module', 'module', 'Dup', '/learn/dup-lesson'),
+        rec('GL:x', 'glossary', 'term', 'X25519MLKEM768', '/learn?glossary=x'),
+        rec('ALG:x', 'algorithm', 'algorithm', 'X25519MLKEM768', '/algorithms?algo=x'),
+        rec('LIB:a', 'library', 'standard', 'Same title', '/library?ref=a'),
+        rec('LIB:b', 'library', 'document', 'Same title', '/library?ref=b'),
+        rec('CMP:a', 'compliance', 'guidance', 'Same title', '/compliance?framework=a'),
+        rec('IL:a', 'usecase', 'usecase', 'Same title', '/u/a'),
+        rec('IL:b', 'usecase', 'usecase', 'Same title', '/u/b'),
+      ]
+      const links: KnowledgeLink[] = recs
+        .slice(1)
+        .map((r): KnowledgeLink => [r.id, 'taught_in', 'LM-902', 'declared', 's'])
+      // Linked twice: once is enough.
+      links.push(['GL:x', 'taught_in', 'LM-902', 'reviewed', 's'])
+      load.mockResolvedValue(new KnowledgeReader(readerOf(recs, links).core))
+      renderBox('dup-lesson')
+      await screen.findByRole('button', { name: /^Terms taught here \(2\)/ })
+      const user = userEvent.setup()
+      for (const b of screen.getAllByRole('button')) await user.click(b)
+      expect(
+        error.mock.calls.filter((c) => /same key|unique "key"/.test(String(c[0])))
+      ).toHaveLength(0)
+    } finally {
+      error.mockRestore()
     }
-    {
-      load.mockImplementation(never)
-      const { container, unmount } = renderBox()
-      expect(container.innerHTML).toBe('')
-      unmount()
+  })
+
+  it('gives no two kept rows the same React key in any lesson that has kept links', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    try {
+      load.mockImplementation(() => new Promise<KnowledgeReader>(() => undefined))
+      for (const lesson of Object.keys(LESSON_RELATED_LINKS)) {
+        const { unmount } = renderBox(lesson)
+        for (const b of screen.getAllByRole('button')) await userEvent.setup().click(b)
+        for (const b of screen.queryAllByRole('button', { name: /^Show all/ })) {
+          await userEvent.setup().click(b)
+        }
+        unmount()
+      }
+      expect(
+        error.mock.calls.filter((c) => /same key|unique "key"/.test(String(c[0])))
+      ).toHaveLength(0)
+    } finally {
+      error.mockRestore()
     }
-    {
-      load.mockImplementation(() => Promise.reject(new Error('knowledge core: 503')))
-      const { container } = renderBox()
-      await Promise.resolve()
-      await Promise.resolve()
-      expect(container.innerHTML).toBe('')
-    }
+  })
+
+  it('folds "Show all" back when its group is closed', async () => {
+    load.mockImplementation(() => new Promise<KnowledgeReader>(() => undefined))
+    renderBox('hybrid-crypto')
+    const user = userEvent.setup()
+    await user.click(header('Related lessons'))
+    await user.click(screen.getByRole('button', { name: 'Show all 6' }))
+    expect(screen.getAllByRole('link')).toHaveLength(6)
+    await user.click(header('Related lessons'))
+    await user.click(header('Related lessons'))
+    expect(screen.getByRole('button', { name: 'Show all 6' })).toBeTruthy()
+    expect(screen.getAllByRole('link')).toHaveLength(5)
+  })
+
+  it('keeps every group in the page for print, and keeps Show all out of print', async () => {
+    load.mockImplementation(() => new Promise<KnowledgeReader>(() => undefined))
+    renderBox('hybrid-crypto')
+    const panel = document.getElementById(header('Related lessons').getAttribute('aria-controls')!)!
+    expect(panel.hidden).toBe(true)
+    expect(panel.hasAttribute('data-resource-panel')).toBe(true)
+    expect(document.querySelector('style')!.textContent).toContain(
+      '@media print { [data-resource-panel][hidden] { display: block !important; }'
+    )
+    expect(panel.querySelectorAll('a').length).toBe(5)
+    expect(panel.querySelector('button')!.className).toContain('print:hidden')
   })
 })
 
 describe('LessonResourcesBox: the kept links', () => {
   beforeEach(() => {
     load.mockReset()
+    loaded.mockReset()
+    loaded.mockReturnValue(null)
   })
 
   it('shows Related lessons and Elsewhere on the Hub at once, before the knowledge file has loaded', async () => {
@@ -442,6 +661,8 @@ describe('LessonResourcesBox: the kept links', () => {
 describe('LessonResourcesBox: the trust-hardware comparison', () => {
   beforeEach(() => {
     load.mockReset()
+    loaded.mockReset()
+    loaded.mockReturnValue(null)
     load.mockImplementation(never)
   })
 

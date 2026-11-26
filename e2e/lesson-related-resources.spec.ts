@@ -263,3 +263,58 @@ for (const viewport of VIEWPORTS) {
     }
   })
 }
+
+for (const viewport of VIEWPORTS) {
+  test.describe(`RFC 10033 and print, ${viewport.name}`, () => {
+    test.use({ viewport: { width: viewport.width, height: viewport.height } })
+
+    test("/learn/stateful-signatures: the RFC 10033 link opens the Hub's own Library record", async ({
+      page,
+    }) => {
+      await seedFirstVisit(page)
+      await page.goto('/learn/stateful-signatures')
+      await settle(page)
+      const box = boxOf(page)
+      await box.scrollIntoViewIfNeeded({ timeout: 30_000 })
+      await openGroup(box, 'Elsewhere on the Hub')
+      const link = box
+        .getByTestId('lesson-resources-pages')
+        .locator('a[href^="/library?ref=RFC-10033"]')
+      await expect(link).toHaveCount(1)
+      await expect(link).toContainText(
+        'RFC 10033: Hash-Based Signatures: State and Backup Management'
+      )
+      await expect(link).toContainText(
+        'Practical guidance on state, backup, and recovery for LMS/XMSS deployments'
+      )
+      await link.click()
+      const opened = page.getByRole('dialog').first()
+      await expect(opened).toBeVisible({ timeout: 30_000 })
+      await expect(opened.getByText('State and Backup Management').first()).toBeVisible({
+        timeout: 30_000,
+      })
+    })
+
+    test('/learn/pki-workshop: every group prints open, without the Show all control', async ({
+      page,
+    }) => {
+      await seedFirstVisit(page)
+      await page.goto('/learn/pki-workshop')
+      await settle(page)
+      const box = boxOf(page)
+      await expect(box.locator('h3 > button').first()).toBeVisible({ timeout: 30_000 })
+      // On screen the groups are closed.
+      await expect(box.getByRole('link')).toHaveCount(0)
+      await page.emulateMedia({ media: 'print' })
+      const lists = box.locator('h3 + div ul')
+      const n = await lists.count()
+      expect(n).toBeGreaterThanOrEqual(4)
+      for (let i = 0; i < n; i++) await expect(lists.nth(i)).toBeVisible()
+      await expect(box.locator('h3 + div ul a').first()).toBeVisible()
+      await expect(box.getByRole('button', { name: /^Show all/ })).toHaveCount(0)
+      for (const b of await box.locator('h3 + div button').all()) await expect(b).toBeHidden()
+      await page.emulateMedia({ media: 'screen' })
+      await expect(box.getByRole('link')).toHaveCount(0)
+    })
+  })
+}

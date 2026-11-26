@@ -158,9 +158,11 @@ interface GroupProps {
 }
 
 /**
- * One group. It starts closed: a header button with the title and the count, and nothing else. Opening it shows the
- * first rows and, for a longer group, a "Show all N" control for the rest. The closed content is `hidden`, so it is
- * out of the tab order and the accessibility tree. Each group opens and closes on its own; nothing is remembered.
+ * One group. It starts closed: a header button with the title and the count. Opening it shows the first rows and,
+ * for a longer group, a "Show all N" control for the rest; closing it folds "Show all" back. The closed content is
+ * `hidden`, so it is out of the tab order and the accessibility tree, but it is in the page so that it prints:
+ * on paper every group prints open (its first rows, without the Show all control). Each group opens and closes on
+ * its own; nothing is remembered.
  */
 function ResourceGroup({ group, title, items, shown, layout }: GroupProps) {
   const [open, setOpen] = useState(false)
@@ -186,7 +188,10 @@ function ResourceGroup({ group, title, items, shown, layout }: GroupProps) {
           id={buttonId}
           aria-expanded={open}
           aria-controls={panelId}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            if (open) setAll(false)
+            setOpen(!open)
+          }}
           className="w-full justify-between gap-3 whitespace-normal rounded-2xl px-2 text-left font-normal no-underline hover:bg-muted hover:text-foreground"
         >
           <span>
@@ -199,49 +204,50 @@ function ResourceGroup({ group, title, items, shown, layout }: GroupProps) {
             size={18}
             aria-hidden="true"
             className={cn(
-              'shrink-0 text-heading transition-transform motion-reduce:transition-none',
+              'shrink-0 text-heading transition-transform motion-reduce:transition-none print:hidden',
               open && 'rotate-180'
             )}
           />
         </StoryButton>
       </h3>
-      <div id={panelId} hidden={!open} className="space-y-2 pb-2 pt-1">
-        {open && (
-          <>
-            <ul
-              id={listId}
-              aria-labelledby={buttonId}
-              className={
-                layout === 'chips'
-                  ? 'flex flex-wrap gap-x-1.5 gap-y-0'
-                  : 'grid gap-2 sm:grid-cols-2'
-              }
-            >
-              {visible.map((item) =>
-                layout === 'chips' ? (
-                  <TermChip key={item.id} item={item} showKind={sharedLabels.has(item.label)} />
-                ) : (
-                  <ResourceRow key={item.id} item={item} />
-                )
-              )}
-            </ul>
-            {hidden && (
-              <StoryButton
-                variant="quiet"
-                className="-ml-2"
-                aria-expanded={all}
-                aria-controls={listId}
-                onClick={() => setAll((v) => !v)}
-              >
-                {all ? 'Show fewer' : `Show all ${items.length}`}
-              </StoryButton>
-            )}
-          </>
+      <div id={panelId} hidden={!open} data-resource-panel="" className="space-y-2 pb-2 pt-1">
+        <ul
+          id={listId}
+          aria-labelledby={buttonId}
+          className={
+            layout === 'chips' ? 'flex flex-wrap gap-x-1.5 gap-y-0' : 'grid gap-2 sm:grid-cols-2'
+          }
+        >
+          {visible.map((item) =>
+            layout === 'chips' ? (
+              <TermChip key={item.id} item={item} showKind={sharedLabels.has(item.label)} />
+            ) : (
+              <ResourceRow key={item.id} item={item} />
+            )
+          )}
+        </ul>
+        {hidden && (
+          <StoryButton
+            variant="quiet"
+            className="-ml-2 print:hidden"
+            aria-expanded={all}
+            aria-controls={listId}
+            onClick={() => setAll((v) => !v)}
+          >
+            {all ? 'Show fewer' : `Show all ${items.length}`}
+          </StoryButton>
         )}
       </div>
     </div>
   )
 }
+
+/**
+ * On paper every group prints open. The page's base styles hide `[hidden]` with an important rule in the `base`
+ * layer, which no utility class can beat, so this rule joins that layer with a more specific selector.
+ */
+const PRINT_CSS =
+  '@layer base { @media print { [data-resource-panel][hidden] { display: block !important; } } }'
 
 const LESSONS_SHOWN = 5
 const PAGES_SHOWN = 5
@@ -255,11 +261,16 @@ const keptItem = (link: RelatedLink, kind: string): LessonResource => ({
 })
 
 export interface LessonResourcesBoxProps {
-  /** The lesson's module id, as in its address (`/learn/<id>`), or its tag (`LM-020`). */
+  /** The lesson's module id, as in its address (`/learn/<id>`), for example `pki-workshop`. */
   moduleId: string
 }
 
+/** The box for one lesson. It is keyed by the lesson, so a new lesson always starts with every group closed. */
 export function LessonResourcesBox({ moduleId }: LessonResourcesBoxProps) {
+  return <LessonBox key={moduleId} moduleId={moduleId} />
+}
+
+function LessonBox({ moduleId }: LessonResourcesBoxProps) {
   const headingId = useId()
   const state = useLessonResources(moduleId)
   const resources = state.status === 'ready' ? state.resources : null
@@ -278,10 +289,12 @@ export function LessonResourcesBox({ moduleId }: LessonResourcesBoxProps) {
         resources.compliance.length +
         resources.useCases.length
       : 0)
-  // Until the knowledge file is known, the box holds only the kept groups, or nothing when the lesson has none.
-  if (count === 0) return null
+  // A lesson with no kept links keeps its place while the file loads (heading and a quiet line), and says so in a
+  // plain line if the file cannot be loaded. Once the file is known and holds nothing for it, nothing is drawn.
+  if (count === 0 && state.status === 'ready') return null
   return (
     <StickerCard as="section" aria-labelledby={headingId} data-testid="lesson-resources">
+      <style>{PRINT_CSS}</style>
       <h2 id={headingId} className="mb-2 text-base font-extrabold text-heading">
         Related resources
       </h2>
@@ -331,6 +344,9 @@ export function LessonResourcesBox({ moduleId }: LessonResourcesBoxProps) {
       </div>
       {state.status === 'loading' && (
         <p className="mt-2 text-xs text-muted-foreground">Loading terms, documents and more…</p>
+      )}
+      {state.status === 'failed' && count === 0 && (
+        <p className="text-sm text-muted-foreground">Related resources could not be loaded.</p>
       )}
     </StickerCard>
   )
