@@ -27,15 +27,7 @@ import {
 } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
-import {
-  Trash2,
-  Gamepad2,
-  ArrowRight,
-  ArrowLeft,
-  Wrench,
-  CheckCircle2,
-  GraduationCap,
-} from 'lucide-react'
+import { Trash2, ArrowRight, ArrowLeft, Wrench, CheckCircle2, GraduationCap } from 'lucide-react'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ModuleTabBar } from './ModuleTabBar'
@@ -69,8 +61,6 @@ import { PersonaBlock } from '@/components/shared/PersonaBlock'
 import { IndustryLandscapePanel } from './IndustryLandscapePanel'
 import { resolveModuleTools, mobilePracticeTool, TOOL_TITLE_BY_ID } from '@/data/moduleToolLinks'
 import { useModuleStore } from '@/store/useModuleStore'
-import { usePersonaStore } from '@/store/usePersonaStore'
-import { personaPracticesModulePhase } from '@/data/personaConfig'
 import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell'
@@ -88,15 +78,6 @@ function phaseChipLabel(phase: PhaseId | PhaseId[]): string | null {
   const p = FRAMEWORK_PHASES[id]
   if (!p) return null
   return p.number !== null ? `Phase ${p.number} · ${p.name}` : p.name
-}
-
-/** The sim deep-link target for a module — jumps the board to the phase this
- *  lesson teaches (?phase=), so "Practice in the Simulation" lands where it's
- *  relevant instead of the generic entry point. First phase wins for the few
- *  multi-phase modules (same choice phaseChipLabel makes). */
-function simPracticeHref(phase: PhaseId | PhaseId[]): string {
-  const id = Array.isArray(phase) ? phase[0] : phase
-  return FRAMEWORK_PHASES[id] ? `/simulation?phase=${id}` : '/simulation'
 }
 
 const difficultyChip: Record<NonNullable<ResolvedModuleManifest['difficulty']>, string> = {
@@ -575,16 +556,6 @@ export const ModuleShell = ({
       ? `/learn${browseSearch}`
       : undefined
 
-  // "Practice in the Simulation" is persona-aware: relevance depends on the
-  // active profile, not the lesson's track. An exec practices the governance/
-  // program phases; an architect/ops/dev practices the technical execution &
-  // infrastructure phases (p5/p6) where TLS, HSM, 5G live (see
-  // PERSONA_SIM_PRACTICE_PHASES). No persona / researcher / curious → broad.
-  // Never shown when the module is itself embedded in the sim (a confusing loop).
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const showSimCta =
-    !embedded && personaPracticesModulePhase(selectedPersona, manifest.frameworkPhase)
-
   // Module completion (drives the handoff footer); the dual learn/workshop
   // progress bars + track momentum render once in ModuleProgressHeader above.
   const here = moduleStates[manifest.id]
@@ -700,15 +671,6 @@ export const ModuleShell = ({
           </>
         )}
       </div>
-      {showSimCta ? (
-        <Link
-          to={simPracticeHref(manifest.frameworkPhase)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/20"
-        >
-          <Gamepad2 size={16} />
-          Practice in the Simulation
-        </Link>
-      ) : null}
     </div>
   )
 

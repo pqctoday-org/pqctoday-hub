@@ -353,44 +353,13 @@ describe('ModuleShell', () => {
     cancel.mockRestore()
   })
 
-  it('shows the sim CTA pointing at the module phase when the persona practices it', () => {
-    // exec practices p0 (Executive Mandate); base.frameworkPhase is 'p0', so the
-    // CTA deep-links straight to that phase (?phase=p0) rather than the generic sim.
-    usePersonaStore.getState().setPersona('executive')
-    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
-    const cta = screen.getByRole('link', { name: /Practice in the Simulation/i })
-    expect(cta).toHaveAttribute('href', '/simulation?phase=p0')
-  })
-
-  it('hides the sim CTA when the active persona does NOT practice the module phase', () => {
-    // architect practices p2/p5/p6 (technical), not p0 — so an exec-mandate
-    // module shows no "Practice" CTA for an architect.
-    usePersonaStore.getState().setPersona('architect')
-    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
-    expect(
-      screen.queryByRole('link', { name: /Practice in the Simulation/i })
-    ).not.toBeInTheDocument()
-  })
-
-  it('shows the sim CTA broadly when no persona is selected (fallback)', () => {
-    renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
-    expect(screen.getByRole('link', { name: /Practice in the Simulation/i })).toBeInTheDocument()
-  })
-
-  it('hides the sim CTA when the module is embedded in the sim (no loop-back)', () => {
-    usePersonaStore.getState().setPersona('executive')
-    render(
-      <EmbedProvider>
-        <MemoryRouter>
-          <EmbeddedLearnProvider>
-            <ModuleShell manifest={base} learn={<div>L</div>} />
-          </EmbeddedLearnProvider>
-        </MemoryRouter>
-      </EmbedProvider>
-    )
-    expect(
-      screen.queryByRole('link', { name: /Practice in the Simulation/i })
-    ).not.toBeInTheDocument()
+  it('shows no "Practice in the Simulation" button, for any role or none', () => {
+    for (const persona of ['executive', 'architect', 'developer', null] as const) {
+      usePersonaStore.getState().setPersona(persona)
+      const { unmount } = renderShell(<ModuleShell manifest={base} learn={<div>L</div>} />)
+      expect(screen.queryByRole('link', { name: /Simulation/i })).not.toBeInTheDocument()
+      unmount()
+    }
   })
 
   it('routes mapped custody modules to the digital-assets quiz category on completion', () => {
