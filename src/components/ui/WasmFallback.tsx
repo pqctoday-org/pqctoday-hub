@@ -26,7 +26,9 @@ export function WasmFallback({ children }: { children: React.ReactNode }) {
             <AlertTriangle className="w-8 h-8 text-status-warning" />
           </div>
 
-          <h2 className="text-xl font-bold mb-3 tracking-tight">Advanced Cryptographic Tool</h2>
+          <h2 className="text-xl font-bold mb-3 tracking-tight font-display text-heading">
+            Advanced Cryptographic Tool
+          </h2>
 
           <p className="text-muted-foreground mb-8 text-sm">
             This module requires direct access to hardware resources using WebAssembly threads. Due

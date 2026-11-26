@@ -87,7 +87,7 @@ const Quote: React.FC<{ children: string; cite?: string }> = ({ children, cite }
 const SourceBlock: React.FC<{ source: ClaimSource }> = ({ source }) => (
   <li
     data-testid="claim-source"
-    className="space-y-1.5 rounded-md border border-border bg-muted/30 p-3 text-xs"
+    className="space-y-1.5 rounded-2xl border border-border bg-muted/30 p-3 text-xs"
   >
     <p className="font-semibold text-foreground">
       <ExternalSourceLink href={source.url}>{source.name}</ExternalSourceLink>
@@ -240,7 +240,10 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({
       data-testid="claim-card"
       data-claim-id={claim.id}
       data-state={claim.state}
-      className={cn('space-y-3 rounded-lg border border-border bg-card p-4', className)}
+      className={cn(
+        'bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] space-y-3 p-4',
+        className
+      )}
     >
       <div className="flex flex-wrap items-center gap-2">
         <ClaimStateMark state={claim.state} />

@@ -171,7 +171,7 @@ export const CuriousGuide: React.FC = () => {
             <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary">
               <Icon size={16} aria-hidden="true" />
             </span>
-            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+            <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Step {stepIndex + 1} of {STEPS.length}
             </p>
           </div>
@@ -188,7 +188,7 @@ export const CuriousGuide: React.FC = () => {
 
         <h2
           id="curious-guide-title"
-          className="text-base font-semibold text-foreground leading-snug mb-2"
+          className="text-base font-semibold leading-snug mb-2 font-display text-heading"
         >
           {step.title}
         </h2>

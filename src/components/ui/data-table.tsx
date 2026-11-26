@@ -376,7 +376,7 @@ export function DataTable<T>({
                   <th
                     key={col.id}
                     className={cn(
-                      'px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider',
+                      'px-4 py-3 text-left uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading',
                       col.sortable && 'cursor-pointer select-none hover:text-foreground',
                       col.headerClassName,
                       col.hiddenOnMobile && 'hidden md:table-cell'

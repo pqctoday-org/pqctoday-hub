@@ -110,7 +110,7 @@ export function AchievementToast() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-primary mb-0.5">
+                <p className="uppercase mb-0.5 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   {rarityLabel}
                 </p>
                 <p className="text-sm font-bold text-foreground">{achievement.title}</p>

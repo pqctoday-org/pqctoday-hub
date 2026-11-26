@@ -231,7 +231,7 @@ export const HsmKeyInspector = ({
       // an inspector, so it carries the testid and reports a count of 0 rather
       // than reading as "this tool has no key inventory at all".
       <div
-        className="glass-panel p-5 flex flex-col items-center gap-2 text-muted-foreground"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 flex flex-col items-center gap-2 text-muted-foreground"
         data-testid="hsm-key-inspector"
         data-hsm-key-count={0}
       >
@@ -244,13 +244,13 @@ export const HsmKeyInspector = ({
   return (
     <>
       <div
-        className="glass-panel p-4 space-y-3"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
         data-testid="hsm-key-inspector"
         data-hsm-key-count={keys.length}
       >
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-sm flex items-center gap-2">
+            <h3 className="font-semibold text-sm flex items-center gap-2 font-display text-heading">
               <KeyIcon size={14} className="text-primary" />
               {title}
             </h3>

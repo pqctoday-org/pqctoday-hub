@@ -45,7 +45,7 @@ export function CmsSourceGuide({
   return (
     <section
       aria-label="CMS specification roles"
-      className="rounded-lg border border-border p-3 text-[12px] leading-relaxed"
+      className="rounded-2xl border border-border p-3 text-[12px] leading-relaxed"
     >
       <h3 className="font-semibold text-foreground">
         Choose the CMS specification for your question

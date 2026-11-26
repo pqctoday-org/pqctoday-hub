@@ -412,7 +412,10 @@ export const WhatsNewModal = () => {
                     <Sparkles size={18} className="text-primary" />
                   </div>
                   <div>
-                    <h2 id="whats-new-modal-title" className="font-bold text-foreground text-base">
+                    <h2
+                      id="whats-new-modal-title"
+                      className="font-bold text-base font-display text-heading"
+                    >
                       What's New
                     </h2>
                     <span className="text-xs font-mono text-primary font-semibold">v{version}</span>

@@ -54,8 +54,8 @@ export function PersonaDefaultsBanner({
   const roleLabel = personaName ? `your ${personaName} role` : 'your role'
   const wrapperClass =
     newHiddenCount > 0
-      ? `glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs border border-status-warning/30 bg-status-warning/5 ${className}`.trim()
-      : `glass-panel inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-md text-xs ${className}`.trim()
+      ? `glass-panel backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] inline-flex flex-wrap items-center gap-2 px-3 py-1.5 text-xs bg-status-warning/5 ${className}`.trim()
+      : `glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] inline-flex flex-wrap items-center gap-2 px-3 py-1.5 text-xs ${className}`.trim()
   return (
     <div role="status" aria-live="polite" className={wrapperClass}>
       <span className="text-muted-foreground">

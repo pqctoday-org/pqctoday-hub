@@ -246,7 +246,9 @@ export function RevisionDrilldownPanel({
               <p className="text-xs text-muted-foreground capitalize">
                 {domain} · revision history
               </p>
-              <h2 className="text-sm font-semibold text-foreground truncate">{entityLabel}</h2>
+              <h2 className="text-sm font-semibold truncate font-display text-heading">
+                {entityLabel}
+              </h2>
             </div>
             <div className="flex items-center gap-1 shrink-0">
               {sharePath && (

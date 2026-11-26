@@ -31,11 +31,16 @@ export function UnderstandingCheckCard({
     <section
       aria-label="Check your understanding"
       data-testid="understanding-check"
-      className={cn('rounded-xl border border-border bg-card p-4 sm:p-5', className)}
+      className={cn(
+        'bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 sm:p-5',
+        className
+      )}
     >
       <div className="flex items-center gap-2">
         <GraduationCap size={18} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-sm font-semibold text-foreground">Check your understanding</h2>
+        <h2 className="text-sm font-semibold font-display text-heading">
+          Check your understanding
+        </h2>
       </div>
       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
         {cat.questionCount} {cat.questionCount === 1 ? 'question' : 'questions'} on {moduleTitle},

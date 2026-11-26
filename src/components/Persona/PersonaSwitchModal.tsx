@@ -164,10 +164,13 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
         // into empty space and the tiles never move, whatever the copy length.
         className="fixed inset-0 z-overlay flex items-start justify-center overflow-y-auto p-4 pt-[8vh] pointer-events-none outline-none"
       >
-        <div className="glass-panel rounded-2xl p-6 w-full max-w-lg shadow-2xl pointer-events-auto">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 w-full max-w-lg pointer-events-auto">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h2 id="persona-switch-title" className="text-base font-semibold text-foreground">
+              <h2
+                id="persona-switch-title"
+                className="text-base font-semibold font-display text-heading"
+              >
                 Switch your role
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -238,7 +241,7 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
             // the pointer — which then fired another mouseenter. Reserving the
             // space breaks that feedback loop.
             <div
-              className="mt-4 min-h-[104px] rounded-xl border border-border bg-muted/20 p-3"
+              className="mt-4 min-h-[104px] rounded-2xl border border-border bg-muted/20 p-3"
               aria-live="polite"
             >
               <p className="text-xs leading-relaxed text-muted-foreground">

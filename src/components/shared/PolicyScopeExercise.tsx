@@ -59,7 +59,7 @@ export function PolicyScopeExercise({ moduleId }: { moduleId?: string } = {}) {
     deadlineYear: 2030,
   }
   return (
-    <details className="glass-panel p-4 space-y-3">
+    <details className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
       <summary className="font-semibold cursor-pointer">
         Practice: policy scope, algorithm use and retention risk
       </summary>

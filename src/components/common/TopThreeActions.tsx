@@ -52,7 +52,7 @@ export const TopThreeActions: React.FC<Props> = ({
       className={`mb-6 ${className ?? ''}`.trim()}
       data-testid="top-three-actions"
     >
-      <Heading className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+      <Heading className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {heading}
       </Heading>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

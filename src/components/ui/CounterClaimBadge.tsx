@@ -58,7 +58,7 @@ export function CounterClaimBadge({
             <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-border">
               <div>
                 <p className="text-xs text-muted-foreground capitalize">{recordType}</p>
-                <h2 className="text-sm font-semibold text-foreground">
+                <h2 className="text-sm font-semibold font-display text-heading">
                   Authoritative-source disagreement: {recordId}
                 </h2>
               </div>

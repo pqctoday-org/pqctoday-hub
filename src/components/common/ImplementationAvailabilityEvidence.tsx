@@ -23,7 +23,7 @@ export function ImplementationAvailabilityEvidence({
   }
   return (
     <section aria-label="Vendor implementation availability" className="space-y-2">
-      <h3 className="text-sm font-semibold text-foreground">
+      <h3 className="text-sm font-semibold font-display text-heading">
         Vendor availability ({entries.length})
       </h3>
       <p className="text-xs text-muted-foreground">

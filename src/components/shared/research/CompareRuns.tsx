@@ -127,7 +127,7 @@ export const CompareRuns: FC = () => {
         </ul>
       )}
 
-      <div className="space-y-2 rounded-lg border border-border bg-background/50 p-3">
+      <div className="space-y-2 rounded-2xl border border-border bg-background/50 p-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] text-muted-foreground">Run A:</span>
           <FilterDropdown

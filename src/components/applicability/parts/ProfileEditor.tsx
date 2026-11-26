@@ -31,7 +31,7 @@ export function ProfileEditor({ profile, message }: { profile: UserProfile; mess
   }, [])
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+    <div className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
       <div className="flex items-start gap-2">
         <Info size={16} className="text-status-info mt-0.5" aria-hidden="true" />
         <p className="text-sm text-foreground">{message}</p>

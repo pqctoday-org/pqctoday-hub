@@ -487,7 +487,7 @@ const CollapsibleSection = ({
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="h-auto p-0 flex items-center gap-1.5 w-full justify-start text-left text-xs font-medium text-muted-foreground uppercase tracking-wide hover:text-foreground transition-colors"
+        className="h-auto p-0 flex items-center gap-1.5 w-full justify-start text-left uppercase hover:text-foreground transition-colors text-[11px] font-extrabold tracking-[0.14em] text-heading"
         aria-expanded={open}
       >
         {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
@@ -601,11 +601,11 @@ export const KeyAttrModal = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
     >
-      <div className="glass-panel w-full max-w-lg max-h-[85vh] overflow-y-auto p-5 space-y-4 shadow-xl z-[101] bg-background border border-border">
+      <div className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] w-full max-w-lg max-h-[85vh] overflow-y-auto p-5 space-y-4 z-[101] bg-background">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="font-semibold text-sm">{hsmKey.label}</h3>
+            <h3 className="font-semibold text-sm font-display text-heading">{hsmKey.label}</h3>
             <p className="text-xs text-muted-foreground font-mono mt-0.5">
               handle = {hsmKey.handle}
             </p>

@@ -106,7 +106,10 @@ export function SuccessionLinks({ item, onOpenRef }: SuccessionLinksProps) {
   const older = resolve(item.replacesRefs)
   if (newer.length === 0 && older.length === 0) return null
   return (
-    <div className="space-y-3 rounded-lg border border-border p-3" data-testid="library-succession">
+    <div
+      className="space-y-3 rounded-2xl border border-border p-3"
+      data-testid="library-succession"
+    >
       {newer.length > 0 && (
         <Group
           heading="Newer document"

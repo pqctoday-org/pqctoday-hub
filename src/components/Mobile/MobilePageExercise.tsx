@@ -18,7 +18,7 @@ export function MobilePageExercise({ route }: { route: string }) {
     <section
       aria-label="Try it"
       data-testid="tool-exercise"
-      className="rounded-xl border border-border bg-muted/20 p-4"
+      className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4"
     >
       <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         Try it

@@ -63,7 +63,7 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
             <div className="relative ml-auto w-full max-w-sm bg-card border-l-2 border-ink animate-in slide-in-from-right duration-300 flex flex-col h-full">
               {/* Header */}
               <div className="px-6 py-4 border-b border-border flex items-center justify-between shrink-0">
-                <h2 className="text-lg font-bold flex items-center gap-2">
+                <h2 className="text-lg font-bold flex items-center gap-2 font-display text-heading">
                   <Filter size={18} className="text-primary" />
                   Refine Results
                 </h2>
