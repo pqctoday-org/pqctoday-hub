@@ -5,7 +5,6 @@ import FocusLock from 'react-focus-lock'
 import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { useDrawerPageStore } from '@/store/useDrawerPageStore'
 import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
 import { useModelAssistantFallback } from '@/services/featureFlags'
 import { useEmbedState } from '@/embed/EmbedProvider'
@@ -70,14 +69,6 @@ export const RightPanel: React.FC = () => {
   // The guided workshop keeps its own rule: modeless only while it runs on a wide screen.
   // The phone sheet always holds focus until it is closed.
   const modeless = sheet ? false : activeTab === 'workshop' ? workshopActive && !belowLg : true
-
-  // The page's guide and sources follow the route; a route that has none closes that view rather than
-  // showing an empty one.
-  const hasGuide = useDrawerPageStore((s) => s.guidePageId !== null)
-  const hasSources = useDrawerPageStore((s) => s.sourcesViewType !== null)
-  useEffect(() => {
-    if ((activeTab === 'guide' && !hasGuide) || (activeTab === 'sources' && !hasSources)) close()
-  }, [activeTab, hasGuide, hasSources, close])
 
   // Escape closes the drawer — disabled while a guided workshop is pinned (running or video).
   useOverlayEscape(isOpen, close, { isBlocked: () => workshopActive })
