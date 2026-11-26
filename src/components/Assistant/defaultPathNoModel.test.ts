@@ -14,6 +14,8 @@ import { dirname, join, resolve } from 'path'
 
 const SRC = join(process.cwd(), 'src')
 const REMOVED_FILES = [
+  'services/chat/GeminiService.ts',
+  'services/chat/modelConfig.ts',
   'services/chat/WebLLMService.ts',
   'components/RightPanel/ChatPanelContent.tsx',
   'components/Chat/ProviderSetup.tsx',
@@ -85,7 +87,7 @@ describe('the app has no language model of its own', () => {
 
   it('nothing in the app imports a model service, a model set-up screen or the old chat panel', () => {
     const banned =
-      /(WebLLMService|ChatPanelContent|ProviderSetup|ApiKeySetup|ModelDownloadBanner|useChatSend|@mlc-ai\/web-llm)['"]/
+      /(WebLLMService|GeminiService|modelConfig|ChatPanelContent|ProviderSetup|ApiKeySetup|ModelDownloadBanner|useChatSend|@mlc-ai\/web-llm)['"]/
     for (const file of closure([entry])) {
       expect(banned.test(readFileSync(file, 'utf8')), file.replace(SRC, 'src')).toBe(false)
     }
@@ -97,6 +99,17 @@ describe('the app has no language model of its own', () => {
       .filter((f) => !f.includes(join('services', 'chat') + '/'))
       .filter((f) => banned.test(readFileSync(f, 'utf8')))
     expect(offenders.map((f) => f.replace(SRC, 'src'))).toEqual([])
+  })
+
+  it('no source file points at a model provider', () => {
+    const providers = /generativelanguage\.googleapis\.com|api\.openai\.com|api\.anthropic\.com/
+    const offenders = sourceFiles(SRC).filter((f) => providers.test(readFileSync(f, 'utf8')))
+    expect(offenders.map((f) => f.replace(SRC, 'src'))).toEqual([])
+  })
+
+  it('the content-security policy lists no model provider and no model library host', () => {
+    const config = readFileSync(join(process.cwd(), 'vite.config.ts'), 'utf8')
+    expect(config).not.toMatch(/generativelanguage|raw\.githubusercontent\.com/)
   })
 
   it('the package that ran the in-browser model is not a dependency', () => {
