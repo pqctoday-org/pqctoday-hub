@@ -11,10 +11,11 @@
     "agent-config-path",
     "internal-key",
     "decision-citation",
+    "decision-quote",
     "session-handle"
   ],
   "files": {
-    "assets/App-#.js": {
+    "assets/achievementIcons-#.js": {
       "agent-config-path": 1,
       "internal-folder": 2,
       "private-repo": 6
@@ -22,17 +23,11 @@
     "assets/index-#.js": {
       "run-id": 1
     },
-    "assets/leadersData-#.js": {
-      "internal-key": 33
-    },
     "assets/trustScoreData-#.js": {
       "evidence-cache": 1,
       "home-path": 1,
       "internal-folder": 1,
       "private-repo": 1
-    },
-    "assets/trustedSourceXrefData-#.js": {
-      "run-id": 4
     },
     "changelog.html": {
       "private-repo": 1
@@ -86,7 +81,7 @@
       "session-handle": 26
     },
     "threats/claim-status.json": {
-      "run-id": 209
+      "run-id": 169
     },
     "threats/manifest.json": {
       "evidence-cache": 1,
@@ -99,8 +94,7 @@
       "home-path": 2
     },
     "wasm/wasm-provenance.json": {
-      "decision-citation": 12,
-      "private-repo": 25
+      "decision-citation": 10
     }
   }
 }
