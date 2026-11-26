@@ -84,9 +84,16 @@ export interface ObjectiveChoice {
 }
 
 /** What the last answer holds that a next question can build on. */
+/** A link the Hub keeps from a record, and so a question about it that the engine answers directly. */
+export type RecordRelation = 'made_by' | 'makes' | 'certifies' | 'publishes'
+
 export interface LastAnswerRef {
-  /** The record the answer matched: the record of a direct answer, a bare name, or the closest source. */
-  matched: { tag: string; title: string } | null
+  /**
+   * The record the answer matched: the record of a direct answer, a bare name, or the closest source. `relation` is the link of
+   * its kind the knowledge file holds for it (a product to its maker, a vendor to its products, a certification to what it covers,
+   * a source to the documents it published); `name` is what the question calls it (a certification by its number).
+   */
+  matched: { tag: string; title: string; relation?: RecordRelation; name?: string } | null
   /** The first lesson in the answer's Learn resources. */
   lesson: LessonRef | null
 }
@@ -128,12 +135,25 @@ export const MAX_TITLE = 70
 export const NOT_ASKABLE: ReadonlySet<string> = new Set(['LM-027/s:internals'])
 
 const ask = {
-  about: (title: string) => `What is ${title} about?`,
+  // a lesson title is quoted, so a title that begins with "The" or holds a colon still reads as a title
+  about: (title: string) => `What is the lesson “${title}” about?`,
   learn: (title: string) => `What will I learn in ${title}?`,
   does: (title: string) => `What does ${title} do?`,
   practise: (title: string) => `Where can I practise ${title}?`,
   tools: (title: string) => `Which tools go with ${title}?`,
   teach: (title: string) => `Which lessons teach ${title}?`,
+  related: {
+    made_by: (name: string) => `Who makes ${name}?`,
+    makes: (name: string) => `Which products does ${name} make?`,
+    certifies: (name: string) => `What does ${name} certify?`,
+    publishes: (name: string) => `Which documents did ${name} publish?`,
+  } satisfies Record<RecordRelation, (name: string) => string>,
+  relatedWhy: {
+    made_by: 'who makes it; the Hub links each product to its maker',
+    makes: 'which products it makes; the Hub links each product to its maker',
+    certifies: 'what it certifies; the Hub links each certification to the product it covers',
+    publishes: 'which documents it published; the Hub links each document to its publisher',
+  } satisfies Record<RecordRelation, string>,
   read: (title: string) => `Where can I read about ${title}?`,
   changed: (title: string) => `What changed in ${title}?`,
   whatIs: (title: string) => `What is ${title}?`,
@@ -195,6 +215,17 @@ function candidates(state: SuggestionState): RankedSuggestion[] {
   const { finished, viewing, objective, role, lastAnswer } = state
 
   // 1. what the learner just read (the last answer), finished, or is viewing
+  const rel = lastAnswer?.matched
+  if (rel?.relation && askable(rel.name ?? rel.title)) {
+    const name = rel.name ?? rel.title
+    out.push({
+      rule: 1,
+      question: ask.related[rel.relation](name),
+      label: 'From this answer',
+      basedOn: `the answer you just read, ${rel.title}`,
+      why: `Your last answer was about ${rel.title}. This asks ${ask.relatedWhy[rel.relation]}.`,
+    })
+  }
   if (lastAnswer?.matched && askable(lastAnswer.matched.title)) {
     const m = lastAnswer.matched
     out.push({

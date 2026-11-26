@@ -70,7 +70,7 @@ describe('rule 1: what the learner just read, finished or is viewing', () => {
     expect(main).toMatchObject({
       rule: 1,
       label: 'This page',
-      question: 'What is TLS Basics about?',
+      question: 'What is the lesson “TLS Basics” about?',
     })
   })
   it('asks about the section on the page, and about its lesson when the section cannot be asked about', () => {
@@ -87,7 +87,7 @@ describe('rule 1: what the learner just read, finished or is viewing', () => {
       'Where can I read about Key Establishment?'
     )
     const odd = [...NOT_ASKABLE][0]
-    expect(rankSuggestions(view(odd))[0].question).toBe('What is TLS Basics about?')
+    expect(rankSuggestions(view(odd))[0].question).toBe('What is the lesson “TLS Basics” about?')
   })
   it('asks what a record is when the page is a record of the Hub', () => {
     const [main] = rankSuggestions({
@@ -104,7 +104,7 @@ describe('rule 1: what the learner just read, finished or is viewing', () => {
     }
     expect(questionsOf(s).slice(0, 2)).toEqual([
       'Where can I practise PKI Basics?',
-      'What is TLS Basics about?',
+      'What is the lesson “TLS Basics” about?',
     ])
   })
 })
@@ -146,9 +146,9 @@ describe('rule 3: a prerequisite for the next step', () => {
     }
     const got = rankSuggestions(state).filter((x) => x.rule === 3)
     expect(got.map((x) => x.question)).toEqual([
-      'What is Quantum Threats about?',
-      'What is PKI Basics about?',
-      'What is Hybrid Certificates about?',
+      'What is the lesson “Quantum Threats” about?',
+      'What is the lesson “PKI Basics” about?',
+      'What is the lesson “Hybrid Certificates” about?',
     ])
     expect(got[0]).toMatchObject({ label: 'Prerequisite' })
   })
@@ -320,7 +320,7 @@ describe('rule 1: the last answer', () => {
       'Which lessons teach ML-KEM?',
       'Which tools go with PQC 101?',
       'Where can I practise PKI Basics?',
-      'What is TLS Basics about?',
+      'What is the lesson “TLS Basics” about?',
     ])
   })
   it('uses whichever of the two the answer has', () => {
@@ -448,7 +448,68 @@ describe('rules 2 and 3 for a step that is a tool', () => {
       label: 'Next step',
     })
     expect(got[0].why).toContain('what the tool does')
-    expect(got[1]).toMatchObject({ rule: 3, question: 'What is PKI Basics about?' })
+    expect(got[1]).toMatchObject({ rule: 3, question: 'What is the lesson “PKI Basics” about?' })
     expect(got[1].basedOn).toBe('the lesson Board Pitch Builder belongs to')
+  })
+})
+
+describe('rule 1: the last answer, by the link of its record', () => {
+  const rel = (
+    relation: 'made_by' | 'makes' | 'certifies' | 'publishes',
+    title: string,
+    name?: string
+  ) => ({
+    ...EMPTY,
+    lastAnswer: { matched: { tag: 'X:1', title, relation, name }, lesson: null },
+  })
+  it('asks who makes a product, which products a vendor makes, what a certification covers and what a source published', () => {
+    expect(questionsOf(rel('made_by', '1Password'))[0]).toBe('Who makes 1Password?')
+    expect(questionsOf(rel('makes', 'Entrust Corporation'))[0]).toBe(
+      'Which products does Entrust Corporation make?'
+    )
+    expect(questionsOf(rel('certifies', 'ACVP #A5276: Nuvoton, NCL', 'ACVP #A5276'))[0]).toBe(
+      'What does ACVP #A5276 certify?'
+    )
+    expect(questionsOf(rel('publishes', 'IETF Datatracker'))[0]).toBe(
+      'Which documents did IETF Datatracker publish?'
+    )
+  })
+  it('comes first among the answer questions, with the record as its basis and the link as its reason', () => {
+    const got = rankSuggestions(rel('made_by', '1Password'))
+    expect(got[0]).toMatchObject({
+      rule: 1,
+      label: 'From this answer',
+      basedOn: 'the answer you just read, 1Password',
+    })
+    expect(got[0].why).toContain('the Hub links each product to its maker')
+    expect(got[1].question).toBe('Which lessons teach 1Password?')
+  })
+  it('is not offered for a record with no such link, or a title that cannot be asked about, and not again once asked', () => {
+    expect(
+      questionsOf({
+        ...EMPTY,
+        lastAnswer: { matched: { tag: 'GL:x', title: 'ML-KEM' }, lesson: null },
+      })[0]
+    ).toBe('Which lessons teach ML-KEM?')
+    expect(questionsOf(rel('made_by', 'x'.repeat(71)))[0]).not.toMatch(/^Who makes/)
+    expect(
+      questionsOf({ ...rel('made_by', '1Password'), asked: ['who makes 1password?'] })[0]
+    ).toBe('Which lessons teach 1Password?')
+  })
+})
+
+describe('the lesson question reads as a title for every lesson title', () => {
+  it('quotes the title, so a title that begins with "The" or holds a colon still reads correctly', () => {
+    const title = 'The PQC Algorithms: How They Work and How to Choose'
+    const got = rankSuggestions({
+      ...EMPTY,
+      objective: {
+        title: 'G',
+        next: null,
+        prerequisites: [{ tag: 'LM-2', title, order: 1 }],
+        updates: [],
+      },
+    })
+    expect(got[0].question).toBe(`What is the lesson “${title}” about?`)
   })
 })

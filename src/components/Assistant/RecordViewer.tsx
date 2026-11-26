@@ -7,6 +7,7 @@ import { isGlossaryTag, type TermLesson } from '@/services/assistant/termLessons
 import { isReferenceSaved, saveReference } from '@/services/assistant/drawerSaves'
 import { CopyLinkButton } from './AnswerRowItem'
 import { COPY } from './copy'
+import { HomeLessonLink } from './HomeLessonLink'
 
 export interface RecordViewerProps {
   row: AssistantRow
@@ -96,6 +97,12 @@ export function RecordViewer({
         </div>
         <h2 className="text-base font-bold text-heading">{row.title}</h2>
         <p className="text-xs text-muted-foreground">{from.join(' · ')}</p>
+        {/* A glossary term that already has its "Open the lesson" button shows its home lesson only when that is another lesson. */}
+        <HomeLessonLink
+          row={row}
+          onOpen={onOpenPage}
+          hideLesson={lesson ? lesson.tag.split('/')[0] : undefined}
+        />
         {row.paidReferenceOnly ? (
           <p className="text-sm text-foreground/90">{COPY.paidReference}</p>
         ) : (

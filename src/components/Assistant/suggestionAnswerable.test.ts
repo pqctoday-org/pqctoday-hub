@@ -9,6 +9,9 @@ import { sectionsOfLesson } from '@/services/journey/curriculum'
 import { TREE_LESSONS } from '@/services/journey/lessons'
 import { TOOL_RECORDS } from '@/data/generated/tools.generated'
 import { NOT_ASKABLE, rankSuggestions, type SuggestionState } from './suggestionRanker'
+import { KnowledgeReader } from '@/services/knowledge/knowledgeReader'
+import type { KnowledgeCore } from '@/services/knowledge/knowledgeTypes'
+import { recordLinkOf } from '@/services/assistant/recordLinks'
 import { lastAnswerOf } from './useSuggestions'
 
 /**
@@ -190,6 +193,91 @@ describe('every suggested question can be answered from the Hub', () => {
     }
     expect(questions.length).toBeGreaterThan(100)
     expect(built).toBeGreaterThan(100)
+    expect(bad).toEqual([])
+  }, 600_000)
+
+  it('answers the question about the link of a record directly, correctly, for a fixed sample of every record kind that has one', async () => {
+    const core = JSON.parse(
+      readFileSync(join(process.cwd(), 'public/data/knowledge-core.json'), 'utf8')
+    ) as KnowledgeCore
+    const reader = new KnowledgeReader(core)
+    const byId = new Map(core.records.map((r) => [r.id, r]))
+    const active = (id: string) => (byId.get(id)?.status ?? 'active') === 'active'
+    const names = (ids: string[]) => {
+      const sorted = ids
+        .filter(active)
+        .map((id) => ({ id, label: String(byId.get(id)!.label) }))
+        .sort((a, b) =>
+          a.label.toLowerCase() === b.label.toLowerCase()
+            ? a.id < b.id
+              ? -1
+              : 1
+            : a.label.toLowerCase() < b.label.toLowerCase()
+              ? -1
+              : 1
+        )
+      const shown = sorted.slice(0, 5).map((n) => n.label)
+      return shown.join('; ') + (sorted.length > 5 ? `; and ${sorted.length - 5} more` : '')
+    }
+    // the fixed sample: the records of each kind, sorted by tag, every 5th
+    const kinds: {
+      relation: string
+      pick: (r: (typeof core.records)[number]) => boolean
+      expected: (id: string) => string
+    }[] = [
+      {
+        relation: 'made_by',
+        pick: (r) => r.type === 'product',
+        expected: (id) =>
+          names(core.links.filter((l) => l[0] === id && l[1] === 'made_by').map((l) => l[2])),
+      },
+      {
+        relation: 'makes',
+        pick: (r) => r.type === 'vendor',
+        expected: (id) =>
+          names(core.links.filter((l) => l[2] === id && l[1] === 'made_by').map((l) => l[0])),
+      },
+      {
+        relation: 'certifies',
+        pick: (r) => r.type === 'certification',
+        expected: (id) =>
+          names(core.links.filter((l) => l[0] === id && l[1] === 'certifies').map((l) => l[2])),
+      },
+      {
+        relation: 'publishes',
+        pick: (r) => r.type === 'source',
+        expected: (id) =>
+          names(core.links.filter((l) => l[2] === id && l[1] === 'published_by').map((l) => l[0])),
+      },
+    ]
+    const bad: string[] = []
+    const asked: Record<string, number> = {}
+    for (const kind of kinds) {
+      const sample = core.records
+        .filter(kind.pick)
+        .map((r) => r.id)
+        .sort()
+        .filter((_, i) => i % 5 === 0)
+      for (const id of sample) {
+        const rec = byId.get(id)!
+        const link = recordLinkOf(reader, id)
+        const last = { matched: { tag: id, title: rec.label, ...link }, lesson: null }
+        if (last?.matched?.relation !== kind.relation) continue // a record without the link, or a certification not named by number
+        const [main] = rankSuggestions({ ...base, lastAnswer: last })
+        if (main.rule !== 1) continue // a title too long or itself a question is not built on
+        const a = await answer(main.question)
+        asked[kind.relation] = (asked[kind.relation] ?? 0) + 1
+        const got = a.state === 'direct' ? a.direct.value : null
+        // a name two records share is answered by asking which, never by guessing
+        const twins = core.records.filter(
+          (r) => r.label === rec.label && r.type === rec.type && active(r.id)
+        ).length
+        if (got !== kind.expected(id) && !(got === null && twins > 1))
+          bad.push(`${main.question} -> ${got} (expected ${kind.expected(id)})`)
+      }
+    }
+    expect(Object.keys(asked).sort()).toEqual(['certifies', 'made_by', 'makes', 'publishes'])
+    for (const n of Object.values(asked)) expect(n).toBeGreaterThan(20)
     expect(bad).toEqual([])
   }, 600_000)
 })

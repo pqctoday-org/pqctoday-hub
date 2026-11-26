@@ -509,13 +509,13 @@ export class Strict {
       const fam = q.family
       const sources = this.inv(start.id, rel).filter((i) => (fam === undefined || fam === null || R.get(i)!.family === fam) && (R.get(i)!.active ?? true)).sort()
       if (!sources.length) return { kind: 'unanswered', reason: 'the Hub links nothing to this', read_as: readAs, record: this.brief(start) }
-      return { kind: 'answer', read_as: readAs, record: this.brief(start), answer: this.brief(start), values: sources.map((i) => R.get(i)!.key), records: sources.map((i) => this.brief(R.get(i)!)), evidence: [] }
+      return { kind: 'answer', read_as: readAs, record: this.brief(start), answer: this.brief(start), values: sources.map((i) => R.get(i)!.key), records: sources.map((i) => this.brief(R.get(i)!)), relation: rel, evidence: [] }
     }
     if (walk === 'members') {
       if ((q.records_answer_themselves ?? []).includes(start.type)) return { kind: 'answer', read_as: readAs, record: this.brief(start), answer: this.brief(start), evidence: [] }
       const targets = this.fwd(start.id, rel).filter((t) => !q.active_only || (R.get(t)!.active ?? true)).sort()
       if (!targets.length) return { kind: 'unanswered', reason: 'the Hub links nothing to this', read_as: readAs, record: this.brief(start) }
-      return { kind: 'answer', read_as: readAs, record: this.brief(start), answer: this.brief(start), values: targets.map((t) => R.get(t)!.key), records: targets.map((t) => this.brief(R.get(t)!)), evidence: [] }
+      return { kind: 'answer', read_as: readAs, record: this.brief(start), answer: this.brief(start), values: targets.map((t) => R.get(t)!.key), records: targets.map((t) => this.brief(R.get(t)!)), relation: rel, evidence: [] }
     }
     if (rel === null || rel === undefined) {
       if (!start.definition) {

@@ -192,6 +192,23 @@
    ]
   },
   {
+   "id": "maker",
+   "query": {
+    "relation": "made_by",
+    "walk": "members"
+   },
+   "rx": [
+    {
+     "src": "^who is the (?:vendor|maker|manufacturer|producer) of (?:the )?(?<name>.+)$",
+     "field": null
+    },
+    {
+     "src": "^which (?:vendor|company|organi[sz]ation|firm) (?:makes|made|builds|sells|produces) (?:the )?(?<name>.+)$",
+     "field": null
+    }
+   ]
+  },
+  {
    "id": "steps",
    "query": {
     "relation": null,
@@ -1276,6 +1293,106 @@
       "specification",
       "specifications"
      ]
+    },
+    {
+     "named": "vendor",
+     "relation": "made_by",
+     "answer": "product",
+     "cues": [
+      "which products",
+      "what products",
+      "products does",
+      "products do",
+      "products did",
+      "products from",
+      "products by",
+      "products made by",
+      "products of",
+      "does make",
+      "do make",
+      "does sell",
+      "do sell",
+      "does offer",
+      "do offer",
+      "product line",
+      "product portfolio",
+      "portfolio"
+     ]
+    },
+    {
+     "named": "product",
+     "relation": "certifies",
+     "answer": "cert",
+     "cues": [
+      "which certifications",
+      "what certifications",
+      "certifications does",
+      "certifications do",
+      "which certificates",
+      "what certificates",
+      "certificates does",
+      "certificates do",
+      "which validations",
+      "what validations",
+      "validations does",
+      "validations do",
+      "certifications for",
+      "certificates for",
+      "validations for",
+      "certifications held",
+      "certificates held",
+      "has certifications",
+      "has certificates"
+     ]
+    },
+    {
+     "named": "vendor",
+     "relation": "issued_to",
+     "answer": "cert",
+     "cues": [
+      "which certifications",
+      "what certifications",
+      "certifications does",
+      "certifications do",
+      "which certificates",
+      "what certificates",
+      "certificates does",
+      "certificates do",
+      "which validations",
+      "what validations",
+      "validations does",
+      "validations do",
+      "certifications held",
+      "certificates held",
+      "was issued",
+      "were issued"
+     ]
+    },
+    {
+     "named": "source",
+     "relation": "published_by",
+     "answer": "library",
+     "cues": [
+      "which documents",
+      "what documents",
+      "documents does",
+      "documents did",
+      "documents has",
+      "documents have",
+      "documents published",
+      "which standards",
+      "what standards",
+      "standards does",
+      "standards did",
+      "standards has",
+      "standards published",
+      "does publish",
+      "did publish",
+      "has published",
+      "have published",
+      "do publish",
+      "publications of"
+     ]
     }
    ],
    "forward": [
@@ -1426,6 +1543,130 @@
       "param sets",
       "variants",
       "which variants"
+     ]
+    },
+    {
+     "named": "product",
+     "relation": "made_by",
+     "cues": [
+      "who makes",
+      "who made",
+      "who builds",
+      "who built",
+      "who develops",
+      "who developed",
+      "who produces",
+      "who produced",
+      "who sells",
+      "who is the maker",
+      "who is the vendor",
+      "who is the manufacturer",
+      "who is behind",
+      "made by",
+      "which company",
+      "which vendor",
+      "which organisation",
+      "which organization",
+      "which firm",
+      "company behind",
+      "vendor behind",
+      "vendor of",
+      "vendor for",
+      "maker of",
+      "manufacturer of",
+      "developer of"
+     ]
+    },
+    {
+     "named": "certification",
+     "relation": "issued_to",
+     "cues": [
+      "issued to",
+      "who holds",
+      "who owns",
+      "held by",
+      "which vendor",
+      "which company",
+      "which organisation",
+      "which organization",
+      "who received",
+      "who was it issued",
+      "belongs to"
+     ]
+    },
+    {
+     "named": "certification",
+     "relation": "certifies",
+     "cues": [
+      "certify",
+      "certifies",
+      "certified",
+      "which product",
+      "what product",
+      "certificate for",
+      "covers",
+      "what is it for",
+      "is it for"
+     ]
+    },
+    {
+     "named": "document",
+     "relation": "published_by",
+     "cues": [
+      "publisher",
+      "publishers",
+      "who publishes",
+      "who is the publisher",
+      "who released",
+      "published by"
+     ]
+    },
+    {
+     "named": "standard",
+     "relation": "published_by",
+     "cues": [
+      "publisher",
+      "publishers",
+      "who publishes",
+      "who is the publisher",
+      "who released",
+      "published by"
+     ]
+    },
+    {
+     "named": "guidance",
+     "relation": "published_by",
+     "cues": [
+      "publisher",
+      "publishers",
+      "who publishes",
+      "who is the publisher",
+      "who released",
+      "published by"
+     ]
+    },
+    {
+     "named": "framework",
+     "relation": "published_by",
+     "cues": [
+      "publisher",
+      "publishers",
+      "who publishes",
+      "who is the publisher",
+      "who released",
+      "published by"
+     ]
+    },
+    {
+     "named": "algorithm",
+     "relation": "published_by",
+     "cues": [
+      "publisher",
+      "publishers",
+      "who publishes",
+      "who is the publisher",
+      "who released",
+      "published by"
      ]
     }
    ]
