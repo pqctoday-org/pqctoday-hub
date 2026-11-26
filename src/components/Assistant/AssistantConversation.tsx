@@ -114,20 +114,21 @@ export function AssistantConversation() {
   }, [])
 
   const openPage = useCallback(
-    (row: AssistantRow) => {
-      if (row.action === 'Go to page' || row.action === 'Open reference' || opened) {
-        useAssistantReturnStore.getState().begin({
-          path: `${pathname}${search}`,
-          label: describeCurrentPage(pathname),
-          origin: `${row.action}: ${row.title}`,
-        })
-      }
+    (row: AssistantRow, to: string = row.link) => {
+      // Every row that opens another page starts the way back: "Back to your answer" on a wide
+      // screen, "Back to <page>" on a phone. (An open that stays on the same page starts none.)
+      useAssistantReturnStore.getState().begin({
+        path: `${pathname}${search}`,
+        fromKey: key,
+        label: describeCurrentPage(pathname),
+        origin: `${row.action}: ${row.title}`,
+      })
       // The phone sheet closes while a page is open; the desktop drawer stays beside the page.
       if (sheet) useRightPanelStore.getState().close()
       setOpened(null)
-      navigate(row.link)
+      navigate(to)
     },
-    [navigate, opened, pathname, search, key, sheet, setOpened]
+    [navigate, pathname, search, key, sheet, setOpened]
   )
 
   const onAction = useCallback(

@@ -246,12 +246,15 @@ describe('opening a resource', () => {
     )
   })
 
-  it('Go to module navigates and leaves the desktop drawer open, with no return bar', async () => {
+  it('Go to module navigates, leaves the desktop drawer open and starts the way back', async () => {
     const user = await askConcept()
     await user.click(screen.getByRole('button', { name: 'Go to module: TLS Basics' }))
     expect(screen.getByTestId('where')).toHaveTextContent('/learn/tls-basics')
     expect(useRightPanelStore.getState().isOpen).toBe(true)
-    expect(useAssistantReturnStore.getState().target).toBeNull()
+    expect(useAssistantReturnStore.getState().target).toMatchObject({
+      path: '/learn',
+      origin: 'Go to module: TLS Basics',
+    })
   })
 
   it('Go to page sets the return and, on the phone, closes the sheet', async () => {
