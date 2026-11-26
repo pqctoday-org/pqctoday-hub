@@ -268,7 +268,7 @@ export const ImplementationAttacksView: React.FC<ImplementationAttacksViewProps>
 
             {/* Reference links */}
             <div className="flex flex-col gap-0.5 mt-auto">
-              <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+              <span className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 References
               </span>
               {profile.references.map((ref) => (

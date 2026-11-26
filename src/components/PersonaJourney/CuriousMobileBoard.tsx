@@ -288,7 +288,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         >
           <span
             data-testid="side-card-provenance"
-            className="mb-2 inline-flex w-fit items-center rounded-full border border-border bg-background/60 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground"
+            className="mb-2 inline-flex w-fit items-center rounded-full border border-border bg-background/60 px-2 py-0.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading"
           >
             {PROVENANCE_LABEL[board.sideCard.provenance]}
           </span>

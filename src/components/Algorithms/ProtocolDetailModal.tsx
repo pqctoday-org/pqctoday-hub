@@ -203,7 +203,7 @@ function DimensionPanel({ label, status }: DimensionPanelProps) {
   return (
     <div className="rounded-2xl border border-border bg-card/50 p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <span className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           {label}
         </span>
         <span

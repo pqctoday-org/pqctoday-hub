@@ -50,7 +50,7 @@ export function RoleToolsRow({ personaId }: RoleToolsRowProps) {
     >
       <h2
         id="role-tools-title"
-        className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
+        className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display"
       >
         Tools for this role
       </h2>

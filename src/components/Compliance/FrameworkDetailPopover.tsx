@@ -212,7 +212,7 @@ export const FrameworkDetailPopover = ({
               )}
 
               <section>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                <h4 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   Description
                 </h4>
                 <p className="text-sm text-foreground leading-relaxed">{framework.description}</p>
@@ -223,7 +223,7 @@ export const FrameworkDetailPopover = ({
 
               {cswp39Note(framework.cswp39Tags) !== null && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <Tag size={12} aria-hidden="true" />
                     Crypto Posture Pillars
                   </h4>
@@ -235,7 +235,7 @@ export const FrameworkDetailPopover = ({
 
               {framework.cswp39Tags && framework.cswp39Tags.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <Tag size={12} aria-hidden="true" />
                     Crypto Posture Pillars
                   </h4>
@@ -284,7 +284,7 @@ export const FrameworkDetailPopover = ({
 
               {linkedLibrary.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <BookOpen size={12} aria-hidden="true" />
                     Linked Library Documents ({linkedLibrary.length})
                   </h4>
@@ -322,7 +322,7 @@ export const FrameworkDetailPopover = ({
 
               {linkedTimeline.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <Calendar size={12} aria-hidden="true" />
                     Linked Timeline Events ({linkedTimeline.length})
                   </h4>
@@ -358,7 +358,7 @@ export const FrameworkDetailPopover = ({
 
               {linkedRequirements.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <ListChecks size={12} aria-hidden="true" />
                     CSWP.39 Maturity Requirements ({linkedRequirements.length})
                   </h4>

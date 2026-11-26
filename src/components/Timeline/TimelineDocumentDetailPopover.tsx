@@ -214,7 +214,7 @@ export const TimelineDocumentDetailPopover = ({
             <div className="p-4 overflow-y-auto space-y-4">
               {/* Description */}
               <div>
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                <h4 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   Description
                 </h4>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -225,7 +225,7 @@ export const TimelineDocumentDetailPopover = ({
               {/* Metadata Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 w-full">
                 <div className="flex flex-row items-baseline gap-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                  <h4 className="uppercase shrink-0 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Organization:
                   </h4>
                   <p className="text-sm text-foreground truncate" title={row.org}>
@@ -234,14 +234,14 @@ export const TimelineDocumentDetailPopover = ({
                 </div>
 
                 <div className="flex flex-row items-baseline gap-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                  <h4 className="uppercase shrink-0 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Country:
                   </h4>
                   <p className="text-sm text-foreground">{row.countryName}</p>
                 </div>
 
                 <div className="flex flex-row items-center gap-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                  <h4 className="uppercase shrink-0 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Phase:
                   </h4>
                   <span
@@ -253,7 +253,7 @@ export const TimelineDocumentDetailPopover = ({
                 </div>
 
                 <div className="flex flex-row items-center gap-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                  <h4 className="uppercase shrink-0 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Type:
                   </h4>
                   <span className="inline-flex items-center gap-1 text-sm text-foreground">
@@ -265,7 +265,7 @@ export const TimelineDocumentDetailPopover = ({
                 </div>
 
                 <div className="flex flex-row items-center gap-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                  <h4 className="uppercase shrink-0 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Period:
                   </h4>
                   <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -279,7 +279,7 @@ export const TimelineDocumentDetailPopover = ({
 
                 {row.sourceDate && (
                   <div className="flex flex-row items-center gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+                    <h4 className="uppercase shrink-0 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Source Date:
                     </h4>
                     <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -324,7 +324,7 @@ export const TimelineDocumentDetailPopover = ({
                 row.trustedSourceIdStatus ||
                 row.dataQualityNotes) && (
                 <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Source Evidence
                   </p>
                   <TimelineEvidenceBadge

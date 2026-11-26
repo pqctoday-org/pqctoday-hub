@@ -317,7 +317,7 @@ function CycleView({
         <div className="grid gap-5 md:grid-cols-2">
           {/* What it requires */}
           <div>
-            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <h4 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
               What the playbook recommends
             </h4>
             <ul className="space-y-1.5">
@@ -333,7 +333,7 @@ function CycleView({
           {/* Maps to frameworks + owned by */}
           <div className="space-y-4">
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h4 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Maps to frameworks
               </h4>
               <div className="space-y-1.5">
@@ -355,7 +355,7 @@ function CycleView({
               </div>
             </div>
             <div>
-              <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h4 className="mb-2 flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Frameworks tagged for this step
                 <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground">
                   {liveFrameworks.length}
@@ -390,7 +390,7 @@ function CycleView({
               )}
             </div>
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h4 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Owned by
               </h4>
               <div className="flex flex-wrap gap-1.5">
@@ -637,7 +637,7 @@ function EvidenceView({
 
       {/* Hybrid vs pure-PQC */}
       <div>
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h3 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
           Hybrid vs pure-PQC stance
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -661,7 +661,7 @@ function EvidenceView({
 
       {/* Auditor evidence dossiers */}
       <div>
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h3 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
           Auditor evidence dossiers
         </h3>
         <div className="space-y-2">
@@ -713,7 +713,9 @@ function EvidenceView({
 function KpiCell({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
+        {label}
+      </div>
       <div className="mt-0.5 text-xl font-extrabold text-foreground">{value}</div>
       <div className="text-[11px] text-muted-foreground">{sub}</div>
     </div>

@@ -395,7 +395,7 @@ export function PersonaBoardView({
         reach from the board. See src/data/boardRelatedLinks.ts. */}
       {relatedLinks.length > 0 && (
         <div className="mt-6">
-          <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+          <h2 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
             Related on this site
           </h2>
           <ul className="mt-2 flex flex-wrap gap-2" aria-label="Related on this site">

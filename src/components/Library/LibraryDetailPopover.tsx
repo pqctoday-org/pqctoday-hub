@@ -223,7 +223,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                 {/* Description */}
                 <div>
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  <h4 className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Description
                   </h4>
                   <p className="text-sm text-foreground leading-relaxed">
@@ -398,7 +398,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 {/* Previous revisions — older editions collapsed into this tile */}
                 {item.priorRevisions && item.priorRevisions.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    <h4 className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Previous revisions ({item.priorRevisions.length})
                     </h4>
                     <ul className="space-y-2">
@@ -452,7 +452,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 {/* Metadata Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 p-3 bg-muted/20 border border-border rounded-2xl">
                   <div className="flex flex-row items-baseline gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Status:
                     </h4>
                     <p className="text-sm text-foreground font-medium">
@@ -461,7 +461,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </div>
 
                   <div className="flex flex-row items-baseline gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Authors:
                     </h4>
                     <p className="text-sm text-foreground break-words line-clamp-3">
@@ -470,7 +470,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </div>
 
                   <div className="flex flex-row items-center gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Published:
                     </h4>
                     <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -482,7 +482,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </div>
 
                   <div className="flex flex-row items-center gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Catalog updated:
                     </h4>
                     <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -493,7 +493,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                   {item.regionScope && (
                     <div className="flex flex-row items-baseline gap-2">
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                      <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                         Region:
                       </h4>
                       <p className="text-sm text-foreground">{item.regionScope?.trim()}</p>
@@ -502,7 +502,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                   {item.migrationUrgency && (
                     <div className="flex flex-row items-baseline gap-2">
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                      <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                         Urgency:
                       </h4>
                       <p className="text-sm text-foreground">{item.migrationUrgency?.trim()}</p>
@@ -511,7 +511,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                   {item.applicableIndustries && (
                     <div className="flex flex-col gap-1 mt-1 col-span-full">
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                         Industries:
                       </h4>
                       <p className="text-sm text-foreground break-words">

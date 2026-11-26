@@ -14,7 +14,7 @@ export function NextDecisionCard() {
     <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-2">
       <div className="flex items-center gap-2">
         <Lightbulb size={14} className="text-primary" aria-hidden="true" />
-        <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+        <span className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Decision this quarter
         </span>
       </div>

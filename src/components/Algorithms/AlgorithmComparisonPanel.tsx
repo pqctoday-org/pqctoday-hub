@@ -514,7 +514,7 @@ function BenchmarkSection({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-xs text-muted-foreground uppercase tracking-wider">
+              <tr className="border-b border-border uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 {opsCount > 1 && <th className="w-6 px-1 py-2" />}
                 <th className="text-left px-3 py-2">Algorithm</th>
                 <th className="text-left px-3 py-2">Engine</th>

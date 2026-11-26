@@ -644,7 +644,7 @@ function BrowseTable({
             current filters
           </caption>
           <thead>
-            <tr className="bg-muted/50 text-muted-foreground text-xs uppercase tracking-wider border-b border-border">
+            <tr className="bg-muted/50 uppercase border-b border-border text-[11px] font-extrabold tracking-[0.14em] text-heading">
               <th className="p-3 w-8" aria-label="Select for comparison" />
               {headers.map(([field, label]) => (
                 <th

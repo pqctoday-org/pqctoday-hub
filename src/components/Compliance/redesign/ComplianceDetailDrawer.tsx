@@ -213,7 +213,7 @@ export function ComplianceDetailDrawer({
               framework.enforcementBody ||
               (framework.bindingStatus && bindingDataPresent())) && (
               <section className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3.5">
-                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-2 flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   <ShieldCheck size={13} />
                   Source &amp; trust
                 </h3>
@@ -324,7 +324,7 @@ export function ComplianceDetailDrawer({
                 a reader into the module that teaches it. */}
             {(framework.learnModules ?? []).length > 0 && (
               <section>
-                <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-2.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   Learn this
                 </h3>
                 <ul className="space-y-1">
@@ -345,7 +345,7 @@ export function ComplianceDetailDrawer({
 
             {/* Traceability chain */}
             <section>
-              <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h3 className="mb-2.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Traceability chain
               </h3>
               <div className="flex flex-col items-stretch gap-0">
@@ -387,7 +387,7 @@ export function ComplianceDetailDrawer({
             {/* Dates the record states; an undated record shows one "no structured date" step */}
             {d.phases.length > 0 && (
               <section>
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-3 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   {d.phases.every((ph) => ph.label === NO_STRUCTURED_DATE_LABEL)
                     ? 'Dates this record states'
                     : 'Deadline phases'}
@@ -444,7 +444,7 @@ export function ComplianceDetailDrawer({
             {/* Related & overlapping */}
             {d.crosswalk.length > 0 && (
               <section>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   Related &amp; overlapping
                 </h3>
                 <div className="space-y-1.5">

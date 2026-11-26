@@ -22,7 +22,7 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
   return (
     <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
       <div className="mb-2 flex items-center justify-between px-1">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Recently changed
         </span>
         <span className="text-[11px] text-muted-foreground">{items.length} docs</span>
