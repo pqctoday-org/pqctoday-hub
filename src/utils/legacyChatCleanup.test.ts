@@ -48,7 +48,7 @@ describe('removeOldChatStorage', () => {
   })
 
   it('does not throw when storage throws, and still tries every key', () => {
-    const removeItem = vi.fn(() => {
+    const removeItem = vi.fn<(key: string) => void>(() => {
       throw new Error('blocked')
     })
     expect(() => removeOldChatStorage({ removeItem })).not.toThrow()
