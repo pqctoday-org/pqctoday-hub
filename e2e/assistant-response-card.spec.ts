@@ -182,7 +182,15 @@ test.describe('Response card, wide screen', () => {
     // Drag the left edge 80 px to the left.
     const handle = drawer.getByRole('separator', { name: 'Resize the Assistant' })
     await expect(handle).toHaveAttribute('aria-valuenow', '520')
-    const box = (await handle.boundingBox())!
+    // The drawer slides in: grab the handle once it has stopped moving.
+    let box = (await handle.boundingBox())!
+    for (let i = 0; i < 20; i++) {
+      await page.waitForTimeout(120)
+      const again = (await handle.boundingBox())!
+      const settled = again.x === box.x
+      box = again
+      if (settled) break
+    }
     const x = box.x + box.width / 2
     const y = box.y + box.height / 2
     await page.mouse.move(x, y)
