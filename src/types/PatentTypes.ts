@@ -138,4 +138,8 @@ export interface PatentItem {
   impactLevel: ImpactLevel
   priorityYear: number
   filingYear: number
+  /** Learn module ids the patent is named in (the `module_ids` column); empty when none. */
+  moduleIds?: string[]
+  /** Industry-landscape names the patent concerns (the `industries` column), or `Cross-Industry` alone. */
+  industries?: string[]
 }

@@ -15,7 +15,17 @@ export interface GlossaryTerm {
   /** The plain-language definition shown when the reader looks the term up by its acronym, where it is worded differently. */
   plainDefinitionAcronym?: string
   technicalNote?: string
+  /**
+   * The link a visitor follows from the term: a Learn lesson path (`/learn/...`) or another page
+   * (Library, Algorithms, Migrate, ...).
+   */
   relatedModule?: string
+  /**
+   * The Learn lesson the term belongs to, as lesson ids (`module_id`) joined by `;`, for a term whose
+   * link above leads to another page. A term that links to a lesson names that lesson there and has no
+   * value here: the lesson is stored in one place. Not shown on the page.
+   */
+  module_ids?: string
   /** Stable id from trusted_sources_*.csv when the definition is a direct status claim. */
   trustedSourceId?: string
   complexity: 'beginner' | 'intermediate' | 'advanced'
