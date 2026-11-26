@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router'
 import {
   BookOpen,
   Shield,
@@ -10,8 +9,6 @@ import {
   Lock,
   ArrowRight,
   AlertTriangle,
-  Calendar,
-  Key,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -350,96 +347,6 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
         </Button>
       </div>
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/compliance?framework=EIDAS"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <FileText size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Compliance</div>
-              <div className="text-xs text-muted-foreground">
-                eIDAS 2.0 obligations, PQC expectations &amp; GDPR Art. 32
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/assess"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-              <div className="text-xs text-muted-foreground">
-                Assess your organisation&apos;s quantum readiness
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/timeline?country=European%20Union"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Calendar size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
-              <div className="text-xs text-muted-foreground">
-                EU PQC milestones: 2026 roadmaps, 2030 high-risk, 2035 full
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/threats"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <AlertTriangle size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
-              <div className="text-xs text-muted-foreground">
-                Industry-specific quantum risks &amp; PQC replacements
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/pki-workshop"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">
-                X.509 certificates, CA chains &amp; PQC credential foundations
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Key size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">KMS & PQC Key Management</div>
-              <div className="text-xs text-muted-foreground">
-                Wallet key lifecycle, PQC rotation &amp; envelope encryption
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/iam-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">IAM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                JWT/SAML/OIDC token migration and identity provider PQC readiness
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       <ReadingCompleteButton />
     </div>
   )

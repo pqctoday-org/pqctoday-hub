@@ -612,6 +612,13 @@ export default defineConfig([
                 // Reused directly rather than reimplemented so a checkpoint
                 // can never read "passed" on mobile while desktop still shows
                 // it locked.
+                // LessonResourcesBox.tsx (common) — the lesson page's "Related resources" box, one
+                // responsive component (stacked chips and rows, 44px targets) that reads the Hub's
+                // knowledge file; the phone mounts the same file so the two cannot show different
+                // resources. The directory is un-ignored, re-blocked with `*`, then the file allowed.
+                '!@/components/PKILearning/common',
+                '@/components/PKILearning/common/*',
+                '!@/components/PKILearning/common/LessonResourcesBox',
                 '!@/components/PKILearning/redesign',
                 '@/components/PKILearning/redesign/*',
                 '!@/components/PKILearning/redesign/learnRedesign.helpers',

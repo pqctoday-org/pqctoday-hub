@@ -10,11 +10,8 @@ import {
   ShieldCheck,
   AlertTriangle,
   BookOpen,
-  ClipboardCheck,
-  Building2,
   MapPin,
   Lock,
-  Landmark,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -681,73 +678,6 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
             )
           })}
         </div>
-      </div>
-    </section>
-
-    {/* Related Resources */}
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/compliance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <BookOpen size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Compliance Tracker</div>
-            <div className="text-xs text-muted-foreground">
-              NIST, ANSSI, BSI, and Common Criteria compliance data
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/assess"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ClipboardCheck size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-            <div className="text-xs text-muted-foreground">
-              Run a guided PQC readiness assessment
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/timeline"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <CalendarRange size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Timeline</div>
-            <div className="text-xs text-muted-foreground">
-              Country-by-country regulatory timeline explorer
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-governance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Building2 size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Governance &amp; Policy</div>
-            <div className="text-xs text-muted-foreground">
-              RACI matrices, policies, and board reporting
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/standards-bodies"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Landmark size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Standards Bodies</div>
-            <div className="text-xs text-muted-foreground">
-              Who creates PQC standards, certifies products &amp; mandates compliance
-            </div>
-          </div>
-        </Link>
       </div>
     </section>
 

@@ -1,21 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import {
-  Shield,
-  Eye,
-  Bell,
-  Map,
-  Network,
-  ChevronRight,
-  ArrowRight,
-  BookOpen,
-  Lock,
-  Wrench,
-  Globe,
-} from 'lucide-react'
+import { Shield, Eye, Bell, Map, Network, ChevronRight, ArrowRight, Wrench } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { NGFW_VENDORS, INSPECTION_CHALLENGES, IDS_RULE_CATEGORIES } from '../data/networkConstants'
@@ -507,73 +494,6 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
           <SourcedSectionBody section={CONTINGENCY_RECOVERY_SECTION} />
         </CollapsibleSection>
       </div>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/tls-basics"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Lock size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">TLS & PQC Basics</div>
-              <div className="text-xs text-muted-foreground">
-                TLS 1.3 protocol mechanics and PQC integration points
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/vpn-ssh-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">VPN & SSH with PQC</div>
-              <div className="text-xs text-muted-foreground">
-                IPsec IKEv2 and OpenSSH PQC migration patterns
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Wrench size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Design patterns for algorithm-agnostic security infrastructure
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hybrid-crypto"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
-              <div className="text-xs text-muted-foreground">
-                Classical + PQC hybrid schemes for the transition period
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/web-gateway-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Globe size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Web Gateway PQC</div>
-              <div className="text-xs text-muted-foreground">
-                PQC TLS termination at reverse proxies, CDNs, and API gateways
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <VendorCoverageNotice migrateLayer="Network" />
 

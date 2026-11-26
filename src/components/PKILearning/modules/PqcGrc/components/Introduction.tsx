@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React from 'react'
-import { Link } from 'react-router'
 import {
   Gauge,
   Scale,
@@ -10,8 +9,6 @@ import {
   ShieldCheck,
   Megaphone,
   ArrowRight,
-  ClipboardCheck,
-  Landmark,
   Network,
   BarChart3,
 } from 'lucide-react'
@@ -401,54 +398,6 @@ const Step5ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
   <div className="space-y-8 w-full">
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/learn/pqc-governance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Scale size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Governance &amp; Policy</div>
-            <div className="text-xs text-muted-foreground">
-              RACI, policy hierarchy, and escalation framework
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/compliance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Landmark size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Compliance Tracker</div>
-            <div className="text-xs text-muted-foreground">Feeds the Regulatory Horizon Report</div>
-          </div>
-        </Link>
-        <Link
-          to="/assess"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ClipboardCheck size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-            <div className="text-xs text-muted-foreground">Seeds KRI baselines and exposure</div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-risk-management"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <BarChart3 size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
-            <div className="text-xs text-muted-foreground">Quantify quantum risk and registers</div>
-          </div>
-        </Link>
-      </div>
-    </section>
-
     <div className="text-center">
       <Button variant="gradient" onClick={() => onNavigateToWorkshop()} className="gap-2">
         Start Workshop <ArrowRight size={18} />

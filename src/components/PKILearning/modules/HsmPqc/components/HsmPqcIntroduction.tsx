@@ -19,7 +19,6 @@ import {
   Layers,
   Zap,
   Eye,
-  GitBranch,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -1643,74 +1642,6 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
         </div>
       </div>
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/arch-quantum-impact?tab=workshop&step=5"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Layers size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                Compare with the other trust hardware
-              </div>
-              <div className="text-xs text-muted-foreground">
-                HSMs, TPMs, Caliptra, confidential computing and DPUs side by side
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                Key management services that integrate with HSM backends
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/stateful-signatures"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
-              <div className="text-xs text-muted-foreground">
-                LMS and XMSS signing stored in HSM key stores
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/pki-workshop"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">
-                HSM-backed CA operations and PQC certificate issuance
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/qkd"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Zap size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Quantum Key Distribution</div>
-              <div className="text-xs text-muted-foreground">
-                QKD integration with HSM-based key injection pipelines
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       <VendorCoverageNotice migrateLayer="Hardware" migrateDomain="hsm" />
       <RecordDecisionLink topic="hsm-choice" />
       <ReadingCompleteButton />

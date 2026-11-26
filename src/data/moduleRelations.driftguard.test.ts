@@ -207,49 +207,55 @@ describe('module relations — the authored override replaces, never stacks', ()
   })
 })
 
-describe('module relations — the inline-authored list matches the source', () => {
+describe('module relations — no lesson carries its own hand-written related block', () => {
   const MODULES_DIR = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'modules')
 
-  /** Module directories whose component tree renders its own Related Modules block. */
-  function deriveInlineDirs(): string[] {
-    const hits = new Set<string>()
-    const walk = (dir: string, top: string) => {
+  /** A "Related modules" or "Related resources" heading, label or comment (prose that mentions them is fine). */
+  const HAND_BLOCK =
+    /(>\s*Related (modules|resources)\b|\{\/\*[\s\S]{0,12}Related (modules|resources)\b|Related (modules|resources)\s*<\/(h\d|span|div|p))/i
+
+  /**
+   * Lesson source files (tests excluded) that draw a hand-typed "Related Resources" or "Related Modules"
+   * block, in any capitalisation: the computed panel and the generated "Related resources" box are the only
+   * ones allowed. The kept links live in src/data/lessonRelatedLinks.ts.
+   */
+  function handWrittenBlocks(): string[] {
+    const hits: string[] = []
+    const walk = (dir: string) => {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const full = path.join(dir, entry.name)
-        if (entry.isDirectory()) walk(full, top)
+        if (entry.isDirectory()) walk(full)
         else if (/\.tsx?$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name)) {
-          if (/Related Modules/.test(fs.readFileSync(full, 'utf-8'))) hits.add(top)
+          if (HAND_BLOCK.test(fs.readFileSync(full, 'utf-8'))) {
+            hits.push(path.relative(MODULES_DIR, full))
+          }
         }
       }
     }
-    for (const entry of fs.readdirSync(MODULES_DIR, { withFileTypes: true })) {
-      if (entry.isDirectory()) walk(path.join(MODULES_DIR, entry.name), entry.name)
-    }
-    return [...hits].sort()
+    walk(MODULES_DIR)
+    return hits.sort()
   }
 
-  it('re-derives exactly the modules listed in AUTHORED_INLINE_RELATED', () => {
-    const dirs = deriveInlineDirs()
-    // Map each hit directory back to its manifest id.
-    const ids = dirs
-      .map((d) => {
-        const src = fs.readFileSync(path.join(MODULES_DIR, d, 'manifest.ts'), 'utf-8')
-        return /\bid:\s*'([^']+)'/.exec(src)?.[1] ?? d
-      })
-      .sort()
-    expect(
-      ids,
-      `modules rendering their own "Related Modules" block: ${ids.join(', ')} — ` +
-        `AUTHORED_INLINE_RELATED says ${[...AUTHORED_INLINE_RELATED].join(', ')}. ` +
-        'A mismatch means a module either shows two competing panels or none.'
-    ).toEqual([...AUTHORED_INLINE_RELATED].sort())
+  it('the guard catches both spellings of a typed block and ignores prose', () => {
+    expect(HAND_BLOCK.test('<h3 className="x">Related modules</h3>')).toBe(true)
+    expect(HAND_BLOCK.test('<h3>Related Resources</h3>')).toBe(true)
+    expect(HAND_BLOCK.test('{/* Related Modules */}')).toBe(true)
+    expect(HAND_BLOCK.test('<BarChart3 /> Related Resources\n        </h2>')).toBe(true)
+    expect(HAND_BLOCK.test('shows the computed "Related modules" list in the panel')).toBe(false)
   })
 
-  it('suppresses the computed panel for every inline-authored module', () => {
-    for (const id of AUTHORED_INLINE_RELATED) {
-      const result = moduleRelations(id, MANIFESTS)
-      expect(result.origin).toBe('authored-inline')
-      expect(result.entries).toEqual([])
+  it('finds no hand-written "Related Modules" or "Related Resources" block in any lesson', () => {
+    expect(
+      handWrittenBlocks(),
+      'a lesson draws its own related block next to the computed panel and the generated box; ' +
+        'remove it (and list the lesson in AUTHORED_INLINE_RELATED only if it must replace the panel)'
+    ).toEqual([])
+  })
+
+  it('lists no lesson as inline-authored, so every lesson shows the computed panel', () => {
+    expect(AUTHORED_INLINE_RELATED).toEqual([])
+    for (const m of realModules) {
+      expect(moduleRelations(m.id, MANIFESTS).origin, m.id).toBe('computed')
     }
   })
 })

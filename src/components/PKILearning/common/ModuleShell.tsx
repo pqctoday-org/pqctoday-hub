@@ -55,6 +55,7 @@ import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { resolveModuleQuizCategory } from '@/data/moduleQuizCategory'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
+import { LessonResourcesBox } from './LessonResourcesBox'
 import { UnderstandingCheckCard } from '@/components/shared/UnderstandingCheckCard'
 import { StepExercise } from '@/components/shared/StepExercise'
 import { PersonaBlock } from '@/components/shared/PersonaBlock'
@@ -846,6 +847,9 @@ export const ModuleShell = ({
           is to be found, not to be a reward; hidden in both embed contexts for
           the same reason the back link is. See src/data/moduleRelations.ts. */}
         {!embedded && !iframeEmbedded ? <RelatedModulesPanel moduleId={manifest.id} /> : null}
+        {/* Related resources: the terms, documents and use cases the Hub's knowledge file ties to this
+          lesson. Same slot and same embed rule as the panel above; it sits directly after it. */}
+        {!embedded && !iframeEmbedded ? <LessonResourcesBox moduleId={manifest.id} /> : null}
         {/* 2026-09-17 — the reverse of the landscape's learn_module_id column:
           which industries' use cases point at THIS module. 2026-09-28 (sim
           content integration, user decision Q4): shown inside the Simulation's

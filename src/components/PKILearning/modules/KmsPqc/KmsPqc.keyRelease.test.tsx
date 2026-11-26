@@ -53,12 +53,4 @@ describe('KMS: key release to an attested workload', () => {
     )
     expect(flat(curiousSummary)).toContain('aws kms used with nitro enclaves')
   })
-
-  it('links to the trust-hardware comparison from the related-resources block', () => {
-    renderIntro()
-    const links = screen
-      .getAllByRole('link', { name: /Compare with the other trust hardware/ })
-      .map((a) => a.getAttribute('href'))
-    expect(links).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5'])
-  })
 })

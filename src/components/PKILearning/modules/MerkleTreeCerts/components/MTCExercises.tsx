@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Play, BookOpen, ArrowRight } from 'lucide-react'
-import { useNavigate } from 'react-router'
+import { Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface MTCExercisesProps {
@@ -23,8 +22,6 @@ export const MTCExercises: React.FC<MTCExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopStep,
 }) => {
-  const navigate = useNavigate()
-
   const scenarios: Scenario[] = [
     {
       id: 'build-tree',
@@ -127,29 +124,6 @@ export const MTCExercises: React.FC<MTCExercisesProps> = ({
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Related modules */}
-      <div className="glass-panel p-6 border-primary/20">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BookOpen size={24} className="text-primary" />
-            <div>
-              <h3 className="font-bold text-foreground">Continue Learning</h3>
-              <p className="text-sm text-muted-foreground">
-                Explore the PKI Workshop for hands-on certificate chain building, or the Stateful
-                Hash Signatures module to see how Merkle trees are used in LMS/XMSS.
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/learn/quiz')}
-            className="btn btn-secondary flex items-center gap-2 px-4 py-2"
-          >
-            Take Quiz <ArrowRight size={14} />
-          </Button>
-        </div>
       </div>
     </div>
   )

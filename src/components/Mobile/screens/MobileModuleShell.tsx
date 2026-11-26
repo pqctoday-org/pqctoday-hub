@@ -9,6 +9,7 @@ import { MODULE_TO_TRACK } from '@/components/PKILearning/moduleData'
 import { ModuleFitStrip } from '@/components/Journey/ModuleFitStrip'
 import { ModuleJourneyHeader } from '@/components/Journey/ModuleJourneyHeader'
 import { ModuleCommentsMount } from '@/components/Journey/mountPoints'
+import { LessonResourcesBox } from '@/components/PKILearning/common/LessonResourcesBox'
 // moduleRelations() is pure data/logic (no JSX) — src/components/Mobile may
 // not import a desktop VIEW component (RelatedModulesPanel), so this renders
 // its own mobile-styled list off the same computed relations instead of
@@ -345,6 +346,8 @@ export function MobileModuleShell({
           </ul>
         </div>
       )}
+      {/* Related resources: the same box the desktop lesson shows, directly after Related modules. */}
+      <LessonResourcesBox moduleId={manifest.id} />
       <MobileUnderstandingCheckCard moduleId={manifest.id} moduleTitle={manifest.title} />
     </div>
   )

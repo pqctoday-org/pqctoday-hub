@@ -1,23 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
-import {
-  Shield,
-  ArrowRight,
-  Network,
-  Terminal,
-  Lock,
-  Ruler,
-  BookOpen,
-  FlaskConical,
-  Layers,
-  Key,
-  AlertTriangle,
-} from 'lucide-react'
+import { Shield, ArrowRight, Network, Terminal, Lock, Ruler, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface VPNSSHIntroductionProps {
@@ -487,75 +474,6 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               many years.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/tls-basics"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">TLS Basics</div>
-              <div className="text-xs text-muted-foreground">
-                Deep dive into TLS 1.3 handshakes and PQC integration
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/algorithms?highlight=ML-KEM,ML-DSA"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Key size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
-              <div className="text-xs text-muted-foreground">
-                Compare ML-KEM, ML-DSA, and classical algorithm parameters
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/library?cat=Protocols"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <FlaskConical size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Standards Library</div>
-              <div className="text-xs text-muted-foreground">
-                RFCs, NIST FIPS, and IETF drafts for PQC protocols
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hybrid-crypto"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Layers size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                <InlineTooltip term="Hybrid Cryptography">Hybrid Cryptography</InlineTooltip>
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Hybrid KEMs, composite signatures, and certificate comparison
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/network-security-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Network size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Network Security</div>
-              <div className="text-xs text-muted-foreground">
-                NGFWs, TLS inspection, IDS/IPS, and ZTNA PQC migration
-              </div>
-            </div>
-          </Link>
         </div>
       </section>
 

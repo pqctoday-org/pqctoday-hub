@@ -9,16 +9,9 @@ import {
   Package,
   Globe,
   ArrowRight,
-  Terminal,
-  FileKey,
-  Library,
-  Layers,
   AlertTriangle,
   Cpu,
-  Shield,
   Boxes,
-  HardDrive,
-  Workflow,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { CODE_SIGNING_ALGORITHMS, PACKAGE_MANAGERS, SIGSTORE_STEPS } from '../constants'
@@ -690,97 +683,6 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
             </Link>
             .
           </p>
-        </div>
-      </section>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/openssl"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Terminal size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">OpenSSL Studio</div>
-              <div className="text-xs text-muted-foreground">
-                Run ML-DSA signing and verification commands interactively
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/pki-workshop"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <FileKey size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">
-                Certificate chains, X.509 structure, and trust models
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/library?cat=Digital%20Signature"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Library size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Standards Library</div>
-              <div className="text-xs text-muted-foreground">
-                Browse FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and signing standards
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hybrid-crypto"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Layers size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
-              <div className="text-xs text-muted-foreground">
-                Composite signatures and dual-algorithm approaches
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/stateful-signatures"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
-              <div className="text-xs text-muted-foreground">
-                LMS/XMSS deep dive, state management, and CNSA 2.0 timelines
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/secure-boot-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <HardDrive size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Secure Boot</div>
-              <div className="text-xs text-muted-foreground">
-                UEFI PK/KEK migration, TPM 2.0, and ML-DSA firmware signing
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/platform-eng-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Workflow size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Platform Engineering</div>
-              <div className="text-xs text-muted-foreground">
-                CI/CD pipeline crypto, container signing, and OPA/Kyverno policy
-              </div>
-            </div>
-          </Link>
         </div>
       </section>
 

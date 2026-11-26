@@ -1,17 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router'
-import {
-  Mail,
-  ShieldCheck,
-  KeyRound,
-  FileKey,
-  AlertTriangle,
-  ArrowRight,
-  Terminal,
-  Library,
-  Layers,
-} from 'lucide-react'
+import { Mail, ShieldCheck, KeyRound, FileKey, AlertTriangle, ArrowRight } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
 import { Button } from '@/components/ui/button'
@@ -455,61 +444,6 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
             </div>
           ))}
         </div>
-      </div>
-    </section>
-
-    {/* Related Resources */}
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/openssl"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Terminal size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">OpenSSL Studio</div>
-            <div className="text-xs text-muted-foreground">
-              Run CMS signing and encryption commands interactively
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pki-workshop"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <FileKey size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-            <div className="text-xs text-muted-foreground">
-              Certificate chains, X.509 structure, and trust models
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/library?q=CMS"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Library size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Standards Library</div>
-            <div className="text-xs text-muted-foreground">
-              Browse RFC 9629, RFC 9882, and other CMS PQC standards
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/hybrid-crypto"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Layers size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
-            <div className="text-xs text-muted-foreground">
-              Composite signatures and dual-algorithm approaches
-            </div>
-          </div>
-        </Link>
       </div>
     </section>
 
