@@ -43,7 +43,7 @@ beforeEach(() => {
 
 describe('return from a page opened from an answer', () => {
   it('shows nothing until the row has opened its page', () => {
-    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
     mount()
     expect(screen.queryByRole('navigation', { name: 'Return' })).toBeNull()
     act(() => go('/go/CMP:CNSA-2'))
@@ -51,7 +51,7 @@ describe('return from a page opened from an answer', () => {
   })
 
   it('desktop: "Back to your answer" returns to the page and reopens the drawer', async () => {
-    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
     mount()
     act(() => go('/compliance'))
     const back = await screen.findByRole('button', { name: 'Back to your answer' })
@@ -71,7 +71,12 @@ describe('return from a page opened from an answer', () => {
     try {
       useAssistantReturnStore
         .getState()
-        .begin({ path: '/learn', label: 'Learn', origin: 'Go to page: CNSA 2.0' })
+        .begin({
+          path: '/learn',
+          fromKey: 'default',
+          label: 'Learn',
+          origin: 'Go to page: CNSA 2.0',
+        })
       mount()
       act(() => go('/compliance'))
       await userEvent
@@ -85,7 +90,9 @@ describe('return from a page opened from an answer', () => {
 
   it('phone: names where it goes, and does not reopen the sheet', async () => {
     layout.value = 'sheet'
-    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'TLS Basics' })
+    useAssistantReturnStore
+      .getState()
+      .begin({ path: '/learn', fromKey: 'default', label: 'TLS Basics' })
     mount()
     act(() => go('/compliance'))
     await userEvent.setup().click(await screen.findByRole('button', { name: 'Back to TLS Basics' }))
@@ -94,7 +101,7 @@ describe('return from a page opened from an answer', () => {
   })
 
   it('moves inside a modal dialog the opened page shows, so it is not left behind the backdrop', async () => {
-    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
     const dialog = document.createElement('div')
     dialog.setAttribute('role', 'dialog')
     dialog.setAttribute('aria-modal', 'true')
@@ -115,7 +122,7 @@ describe('return from a page opened from an answer', () => {
   })
 
   it('stays in the page when a modal opens and goes back to the page when it closes', async () => {
-    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
     mount()
     act(() => go('/compliance'))
     const inPage = await screen.findByRole('button', { name: 'Back to your answer' })
@@ -137,7 +144,7 @@ describe('return from a page opened from an answer', () => {
   })
 
   it('ends when the learner moves on from the opened page', async () => {
-    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
     mount()
     act(() => go('/compliance'))
     await screen.findByRole('button', { name: 'Back to your answer' })
@@ -147,12 +154,33 @@ describe('return from a page opened from an answer', () => {
   })
 
   it('stays while the opened page only changes its own address query', async () => {
-    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
     mount()
     act(() => go('/library?ref=NSA CNSA 2.0 FAQ'))
     await screen.findByRole('button', { name: 'Back to your answer' })
     act(() => go('/library?ref=NSA+CNSA+2.0+FAQ&prefs=off'))
     expect(screen.getByRole('button', { name: 'Back to your answer' })).toBeInTheDocument()
     expect(useAssistantReturnStore.getState().target).not.toBeNull()
+  })
+
+  it('an open that stays on the same page starts no return, and a later page never shows the bar', async () => {
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
+    mount()
+    // The row's link was to the page the learner is already on (here with a hash).
+    act(() => go('/learn#section'))
+    await waitFor(() => expect(useAssistantReturnStore.getState().target).toBeNull())
+    act(() => go('/playground'))
+    expect(screen.queryByRole('navigation', { name: 'Return' })).toBeNull()
+    expect(screen.queryByRole('button', { name: /^Back to / })).toBeNull()
+  })
+
+  it('a short address that resolves to the current page starts no return either', async () => {
+    useAssistantReturnStore.getState().begin({ path: '/learn', fromKey: 'default', label: 'Learn' })
+    mount()
+    act(() => go('/go/PAGE:learn'))
+    act(() => go('/learn'))
+    await waitFor(() => expect(useAssistantReturnStore.getState().target).toBeNull())
+    act(() => go('/playground'))
+    expect(screen.queryByRole('navigation', { name: 'Return' })).toBeNull()
   })
 })

@@ -28,7 +28,7 @@ export function AssistantConversation() {
   const layout = useAssistantLayout()
   const sheet = layout === 'sheet'
   const navigate = useNavigate()
-  const { pathname, search } = useLocation()
+  const { pathname, search, key } = useLocation()
   const getContext = useAssistantContext()
 
   const turns = useAssistantSessionStore((s) => s.turns)
@@ -127,7 +127,7 @@ export function AssistantConversation() {
       setOpened(null)
       navigate(row.link)
     },
-    [navigate, opened, pathname, search, sheet]
+    [navigate, opened, pathname, search, key, sheet, setOpened]
   )
 
   const onAction = useCallback(
@@ -135,6 +135,7 @@ export function AssistantConversation() {
       openerTag.current = row.tag
       if (row.action === 'Read here') return setOpened({ row, mode: 'record', question })
       if (row.action === 'Try it here') return setOpened({ row, mode: 'tool', question })
+          fromKey: key,
       openPage(row)
     },
     [openPage]
