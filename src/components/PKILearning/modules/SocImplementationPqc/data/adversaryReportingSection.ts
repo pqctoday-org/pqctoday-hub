@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const ADVERSARY_REPORTING_SECTION: SourcedSectionData = {
   id: 'adversary-capability-reporting',
   title: 'Reporting on Adversarial Capabilities and Quantum Threats',
-  lead: 'This section covers reporting on adversarial capabilities, analytical confidence, and quantum decryption timelines for security operations and threat-intelligence staff. It also examines how capability assessments and quantum cryptographic risks are communicated to decision makers.',
+  lead: 'This section introduces reporting on adversarial capabilities, analytical confidence, quantum decryption timelines, and cryptographic risk for security operations and threat-intelligence staff. It focuses on how these assessments are framed and communicated to decision makers.',
   nice: [{ id: 'S0966', statement: 'Skill in reporting on adversarial capabilities' }],
   blocks: [
     {
@@ -29,22 +29,23 @@ export const ADVERSARY_REPORTING_SECTION: SourcedSectionData = {
     },
     {
       heading: 'Quantum Cryptanalytic Capability Timelines',
-      bridge: 'The next topic is quantum cryptanalytic capability timelines.',
+      bridge: 'Next is quantum cryptanalytic capability timelines.',
       sentences: [
         {
           id: 'S0966-05',
           text: 'The EU NIS Cooperation Group roadmap cites expert estimates of a 19%-34% chance that a quantum computer could break RSA-2048 in 24 hours within the next decade, and notes that PQC is designed to be secure against quantum computers.',
           sourceId: 'EU-NIS-CG-Roadmap-v1.1',
           edition:
-            'EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1, 2025',
+            'EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1, 2025-06',
           locator: 'Section 2 Introduction and motivation, PDF p. 4',
         },
         {
           id: 'S0966-07',
-          text: 'ETSI GR QSC 004 states that quantum computing and mathematical analysis seek to minimize Z, the years to break current cryptography, which puts pressure on migrating assets to quantum-safe protection when X + Y + T > Z.',
+          text: 'The ETSI report states that researchers developing quantum computers and new mathematical analysis always seek to minimize Z (years to break current cryptography), putting increasing pressure on managing Y (years to replace the current system with a quantum-safe one).',
           sourceId: 'ETSI-GR-QSC-004',
           edition: 'Quantum-Safe Cryptography; Quantum-Safe Threat Assessment, 2017-03',
-          locator: 'Clause 7.5, PDF p. 19',
+          locator:
+            'Clause 4 Overview of approach to threat assessment, PDF p. 8; Clause 8 Summary, conclusions and recommendations, PDF p. 19',
         },
       ],
     },
@@ -71,7 +72,7 @@ export const ADVERSARY_REPORTING_SECTION: SourcedSectionData = {
           text: 'Member States should encourage public administrations and other critical infrastructures to include the quantum threat to cryptography in top-level risk management for board-level evaluation, and including it is highly recommended if they publish a national cybersecurity threat or risk report.',
           sourceId: 'EU-NIS-CG-Roadmap-v1.1',
           edition:
-            'EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1, 2025',
+            'EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1, 2025-06',
           locator: 'Section 6.2 First Steps, PDF p. 12',
         },
         {

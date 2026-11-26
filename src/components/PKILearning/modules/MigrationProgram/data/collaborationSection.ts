@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const COLLABORATION_SECTION: SourcedSectionData = {
   id: 'working-together',
   title: 'Collaborating Across Teams, Vendors, and Organizations',
-  lead: 'Post-quantum migration spans technical, operational, and organizational boundaries, requiring coordination across internal teams, external suppliers, and peer organizations. Clear governance, shared responsibilities, and ongoing communication help align timelines and avoid fragmented transitions.',
+  lead: 'This section covers how organizations coordinate post-quantum migration across internal teams, external vendors, and peer organizations. It looks at governance roles, external partner engagement, and stakeholder communication.',
   nice: [{ id: 'S0430', statement: 'Skill in collaborating with others' }],
   blocks: [
     {
@@ -39,7 +39,7 @@ export const COLLABORATION_SECTION: SourcedSectionData = {
           text: 'The EU NIS Cooperation Group roadmap says involving important stakeholders early is essential, with CTO, CISO, and CIO functions and research representatives to consider, and notes the importance of involving supervisory bodies and cooperating with regional and local authorities and critical infrastructure providers.',
           sourceId: 'EU-NIS-CG-Roadmap-v1.1',
           edition:
-            'EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1, 2025',
+            'EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1, 2025-06',
           locator: 'Section 6.2 First Steps, PDF p. 11',
         },
       ],
@@ -47,7 +47,7 @@ export const COLLABORATION_SECTION: SourcedSectionData = {
     {
       heading: 'Vendor, Cloud, and Cross-Organizational Coordination',
       bridge:
-        'Because migration depends on external products and shared infrastructure, coordination also extends to suppliers, cloud providers, and peer organizations.',
+        'The next block covers coordination with technology vendors, cloud service providers, and peer organizations.',
       sentences: [
         {
           id: 'S0430-05',
@@ -67,7 +67,7 @@ export const COLLABORATION_SECTION: SourcedSectionData = {
         },
         {
           id: 'S0430-07',
-          text: 'Agencies should engage FedRAMP-authorized cloud service providers to delineate PQC migration responsibilities, while CISA and the Department of War, in coordination with GSA, lead migration efforts for those providers and SaaS, PaaS, and IaaS solutions used at more than one agency.',
+          text: 'Under OMB Memorandum M-26-15, agencies should engage FedRAMP-authorized cloud service providers to delineate PQC migration responsibilities, while CISA and the Department of War, with GSA, lead migration for those providers and multi-agency SaaS, PaaS, and IaaS solutions.',
           sourceId: 'OMB-M-26-15',
           edition:
             'OMB Memorandum M-26-15 — Execution of the Migration to Post-Quantum Cryptography, 2026-06',
@@ -85,8 +85,7 @@ export const COLLABORATION_SECTION: SourcedSectionData = {
     },
     {
       heading: 'Ongoing Stakeholder Communication and Alignment',
-      bridge:
-        'Sustaining these partnerships over a transition depends on structured two-way communication and continuous updates.',
+      bridge: 'The final block covers ongoing stakeholder communication and alignment.',
       sentences: [
         {
           id: 'S0430-10',
@@ -98,9 +97,9 @@ export const COLLABORATION_SECTION: SourcedSectionData = {
         },
         {
           id: 'S0430-11',
-          text: 'The Singapore CSA Quantum-Safe Handbook includes stakeholder communication in continuous monitoring to keep business and technical teams informed about migration progress, operational impact, and the value of PQC adoption.',
+          text: 'In the draft Quantum-Safe Migration Handbook, continuous monitoring and reviews ensure implementation progresses according to plan and systems remain secure and compliant, while stakeholder communication keeps business and technical teams informed about migration progress, operational impact, and PQC adoption value.',
           sourceId: 'Singapore-CSA-Quantum-Safe-Handbook',
-          edition: 'Quantum-Safe Handbook and Quantum Readiness Index, 2024-06',
+          edition: 'Quantum-Safe Migration Handbook (Draft for Public Consultation), 2025-10',
           locator: 'Domain 3 / Continuous monitoring, PDF p. 39',
         },
       ],

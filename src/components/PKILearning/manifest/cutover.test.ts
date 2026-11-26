@@ -270,7 +270,7 @@ const sectionAdditions: Record<
   },
   'hsm-pqc': {
     after: 'migration',
-    sections: [{ id: 'hardware-maintenance', label: 'Hardware maintenance policies' }],
+    sections: [{ id: 'hardware-maintenance', label: 'Hardware maintenance procedures' }],
     duration: '65 min',
   },
   'pqc-risk-management': {

@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const CYBER_RESILIENCY_SECTION: SourcedSectionData = {
   id: 'cyber-resiliency-goals',
   title: 'Cyber Resiliency Goals and Objectives',
-  lead: 'This section covers cyber resiliency goals and objectives, from maintaining critical functions during disruptions to planning cryptographic transitions. Understanding these objectives helps risk, resilience, and security staff see how operational continuity connects to asset protection.',
+  lead: 'This section explores cyber resiliency goals and objectives. Understanding these concepts helps risk, resilience, and security staff approach resiliency planning for critical assets.',
   nice: [{ id: 'K1277', statement: 'Knowledge of cyber resiliency goals and objectives' }],
   blocks: [
     {
@@ -37,8 +37,7 @@ export const CYBER_RESILIENCY_SECTION: SourcedSectionData = {
     },
     {
       heading: 'Setting Recovery Objectives and Testing Plans',
-      bridge:
-        'Resiliency goals translate into measurable recovery targets, continuity measures, and regular testing.',
+      bridge: 'The next part turns to setting recovery objectives and testing plans.',
       sentences: [
         {
           id: 'K1277-08',
@@ -49,7 +48,7 @@ export const CYBER_RESILIENCY_SECTION: SourcedSectionData = {
         },
         {
           id: 'K1277-05',
-          text: 'When determining recovery time and recovery point objectives for each function, financial entities must take into account whether it is critical or important and the potential overall impact on market efficiency, ensuring agreed service levels are met in extreme scenarios.',
+          text: 'Under the Digital Operational Resilience Act (DORA), financial entities determining recovery time and recovery point objectives for each function must consider whether it is critical or important and the potential impact on market efficiency, ensuring agreed service levels are met in extreme scenarios.',
           sourceId: 'DORA-REG-2022-2554',
           edition: 'Digital Operational Resilience Act (DORA) — Regulation EU 2022/2554, 2022-12',
           locator: 'Chapter II, Article 12(6)',
@@ -65,8 +64,7 @@ export const CYBER_RESILIENCY_SECTION: SourcedSectionData = {
     },
     {
       heading: 'Planning Resiliency for Cryptographic Transitions',
-      bridge:
-        'Cryptographic updates also affect operational continuity when systems depend on long-lived data or legacy protocols.',
+      bridge: 'The next part turns to resiliency planning for cryptographic transitions.',
       sentences: [
         {
           id: 'K1277-10',

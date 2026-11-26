@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const SYSTEMS_ENGINEERING_PRACTICE_SECTION: SourcedSectionData = {
   id: 'systems-engineering-practice',
   title: 'Systems engineering principles and practices',
-  lead: 'Systems engineering principles shape how cryptographic systems are specified, built, changed, and retired across their full life cycle. For programme and systems engineers, these practices connect security requirements, component dependencies, and ongoing maintenance.',
+  lead: 'This section introduces systems engineering principles and practices across the system life cycle, covering requirements, architecture, dependencies, change control, maintenance, and retirement. It is intended for programme and systems engineers involved in cryptographic modernisation.',
   nice: [{ id: 'K0928', statement: 'Knowledge of systems engineering principles and practices' }],
   blocks: [
     {
@@ -44,7 +44,7 @@ export const SYSTEMS_ENGINEERING_PRACTICE_SECTION: SourcedSectionData = {
     {
       heading: 'Dependencies and migration design choices',
       bridge:
-        'Applying these principles to post-quantum migration centres on how components depend on one another and how transition designs affect complexity.',
+        'The next sources turn to asset dependencies and design choices during post-quantum migration.',
       sentences: [
         {
           id: 'K0928-05',
@@ -72,7 +72,7 @@ export const SYSTEMS_ENGINEERING_PRACTICE_SECTION: SourcedSectionData = {
     {
       heading: 'Change control, maintenance, and retirement',
       bridge:
-        'Once systems are deployed or transitioning, engineering discipline continues through change management, maintenance, and end-of-life planning.',
+        'The final sources address configuration change control, system maintenance, and end-of-life planning.',
       sentences: [
         {
           id: 'K0928-09',

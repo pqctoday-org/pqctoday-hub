@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const THREAT_ENVIRONMENT_SECTION: SourcedSectionData = {
   id: 'threat-environment-assessment',
   title: "Assessing an Organization's Threat Environment",
-  lead: "Security and risk teams evaluate an organization's threat environment to understand which adversaries, attack methods, and long-term risks apply to their systems. This section covers how organizations frame threat assessments, evaluate quantum-era data collection risks, and use shared threat intelligence.",
+  lead: "This section is about assessing an organization's threat environment. It covers threat assessment framing, quantum-era encrypted data risks, and shared threat intelligence.",
   nice: [{ id: 'S0804', statement: "Skill in assessing an organization's threat environment" }],
   blocks: [
     {

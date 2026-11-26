@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const VPN_ADMINISTRATION_SECTION: SourcedSectionData = {
   id: 'vpn-device-administration',
   title: 'Administering Virtual Private Network Devices',
-  lead: 'Network operations and security administrators manage Virtual Private Network (VPN) policies, credentials, and key exchanges across their infrastructure. Understanding how post-quantum key exchange integrates into these connections helps administrators plan for interoperability and transition risks.',
+  lead: 'This section covers administering Virtual Private Network (VPN) devices for network operations and security administrators. It outlines policy and credential management, post-quantum key exchange, and transition considerations to support planning for interoperability and transition risks.',
   nice: [{ id: 'T1268', statement: 'Administer Virtual Private Network (VPN) devices' }],
   blocks: [
     {
@@ -22,8 +22,8 @@ export const VPN_ADMINISTRATION_SECTION: SourcedSectionData = {
           id: 'T1268-02',
           text: 'NIST SP 800-77 Rev. 1 states that certificate-based authentication offloads much key administration to a central certificate server, while still requiring IPsec administrators to perform key management activities such as provisioning hosts with credentials.',
           sourceId: 'Guide-to-IPsec-VPNs',
-          edition: 'Guide to IPsec VPNs, 2020',
-          locator: 'Section 6.2.2, PDF p. 85',
+          edition: 'Guide to IPsec VPNs, 2020-06',
+          locator: 'Section 7.2.2.2, PDF p. 85',
         },
       ],
     },
@@ -47,7 +47,7 @@ export const VPN_ADMINISTRATION_SECTION: SourcedSectionData = {
         },
         {
           id: 'T1268-08',
-          text: 'strongSwan implements the proposed fragmentation management and, in version 6.0, implements hybrid key exchange and integrates ML-KEM.',
+          text: 'In "Post-Quantum Transition of IPsec / IKEv2 (ANSSI-FT-117)", strongSwan implements the proposed fragmentation management and, in version 6.0, implements hybrid key exchange and integrates ML-KEM.',
           sourceId: 'ANSSI-PQC-IPsec-Transition',
           edition: 'Post-Quantum Transition of IPsec / IKEv2 (ANSSI-FT-117), 2026-02',
           locator: 'Section 3.2.1 Hybridation des échanges de clés, PDF p. 14',

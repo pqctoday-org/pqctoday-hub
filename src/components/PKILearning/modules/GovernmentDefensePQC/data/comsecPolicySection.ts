@@ -14,13 +14,14 @@ export const COMSEC_POLICY_SECTION: SourcedSectionData = {
   ],
   blocks: [
     {
-      heading: 'Policy Authority and Approved Cryptography',
+      heading: 'Cryptographic Policy and Governance',
       sentences: [
         {
           id: 'K0671-01',
           text: 'CNSSP 15 describes requirements, roles, and responsibilities for using public cryptologic protocols and algorithms to protect NSS, and states that the Director of NSA will review and approve all key management plans and key specifications.',
           sourceId: 'CNSSP 15',
-          edition: 'CNSS Policy 15 — Use of Public Standards for Secure Information Sharing, 2016',
+          edition:
+            'CNSS Policy 15 — Use of Public Standards for Secure Information Sharing, 2016-10',
           locator:
             'Section I – Purpose, Paragraph 1 (PDF p. 3) and Section V – Responsibilities, Paragraph 13 (PDF p. 5)',
         },
@@ -47,7 +48,7 @@ export const COMSEC_POLICY_SECTION: SourcedSectionData = {
       sentences: [
         {
           id: 'K0671-05',
-          text: 'Manually distributed keys and key shares must be protected throughout the distribution process, and secret keys, private keys, and key shares must be wrapped, encapsulated, or distributed using appropriate physical security.',
+          text: 'The draft Recommendation for Key Management: Part 1 – General (Revision 6) states that manually distributed keys and key shares must be protected throughout distribution, and secret keys, private keys, and key shares must be wrapped, encapsulated, or distributed using appropriate physical security.',
           sourceId: 'NIST-SP-800-57-Pt1-R6',
           edition: 'Recommendation for Key Management: Part 1 – General (Revision 6), 2025-12',
           locator: 'Section 7.1.5.2.2.1 Manual Key Distribution, PDF p. 123',
@@ -58,7 +59,7 @@ export const COMSEC_POLICY_SECTION: SourcedSectionData = {
           sourceId: 'NIST-SP-800-57-Pt2-R1',
           edition:
             'Recommendation for Key Management, Part 2: Best Practices for Key Management Organizations, 2019-05',
-          locator: 'Section 4.6 Keying Material Distribution, PDF p. 50',
+          locator: 'Section 4.9 Accounting and Auditing, PDF p. 50',
         },
         {
           id: 'K0671-07',
@@ -87,7 +88,7 @@ export const COMSEC_POLICY_SECTION: SourcedSectionData = {
           id: 'K0671-12',
           text: 'The October 2026 NSA CNSA 2.0 FAQ (Version 2.2) states that a commercial product not using CNSA 2.0 algorithms cannot be used to protect NSS without specific written NSA guidance, and that CNSSP 11 NIAP validation will generally require CNSA 2.0 compliance.',
           sourceId: 'NSA CNSA 2.0 FAQ',
-          edition: 'CNSA 2.0 Frequently Asked Questions, 2022-09',
+          edition: 'CNSA 2.0 Frequently Asked Questions, version 2.2, 2026-10',
           locator: 'CNSA 2.0, PDF p. 16',
         },
         {

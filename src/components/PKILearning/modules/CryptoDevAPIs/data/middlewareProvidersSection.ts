@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const MIDDLEWARE_PROVIDERS_SECTION: SourcedSectionData = {
   id: 'middleware-providers',
   title: 'Cryptographic Middleware Interfaces and Provider Capabilities',
-  lead: 'This section examines cryptographic middleware interfaces, key management protocols, and runtime provider APIs. These topics matter to application developers and platform engineers preparing software and infrastructure for post-quantum cryptography.',
+  lead: 'This section introduces cryptographic middleware interfaces, key management protocols, and runtime provider APIs. It is designed for application developers and platform engineers working with cryptographic software.',
   nice: [
     { id: 'K0841', statement: 'Knowledge of middleware software capabilities and applications' },
   ],
@@ -37,10 +37,10 @@ export const MIDDLEWARE_PROVIDERS_SECTION: SourcedSectionData = {
         },
         {
           id: 'K0841-03',
-          text: 'The KMIP specification defines a client-server protocol for certain management operations on managed objects (including symmetric and asymmetric cryptographic keys and digital certificates) stored by a key management system, including generating cryptographic keys and registering, obtaining, destroying, and searching for objects.',
+          text: 'The KMIP version 3.0 committee specification draft defines a client-server protocol for certain management operations on managed objects (including symmetric and asymmetric cryptographic keys and digital certificates) stored by a key management system, including generating keys and registering, obtaining, destroying, and searching for objects.',
           sourceId: 'Key-Management-Interoperability-Protocol-Specification-Versi',
           edition: 'Key Management Interoperability Protocol Specification Version 3.0, 2026-05',
-          locator: 'Section 1 introduction',
+          locator: 'Front matter (Committee Specification Draft 02) and Section 1 introduction',
         },
       ],
     },
@@ -83,8 +83,7 @@ export const MIDDLEWARE_PROVIDERS_SECTION: SourcedSectionData = {
     },
     {
       heading: 'Provider Overlap and Module Validation Scope',
-      bridge:
-        'As native algorithm support evolves, platform teams also track how providers interact and how module certifications apply.',
+      bridge: 'The following claims cover provider overlap and module validation scope.',
       sentences: [
         {
           id: 'K0841-09',

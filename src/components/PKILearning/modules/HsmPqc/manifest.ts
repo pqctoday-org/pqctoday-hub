@@ -9,7 +9,7 @@ const manifest: ModuleManifest = {
     { id: 'pkcs11', label: 'PKCS#11 PQC Mechanisms' },
     { id: 'vendors', label: 'HSM Vendor Landscape' },
     { id: 'migration', label: 'Firmware Dual-Partition' },
-    { id: 'hardware-maintenance', label: 'Hardware maintenance policies' },
+    { id: 'hardware-maintenance', label: 'Hardware maintenance procedures' },
   ],
   workshopSteps: [
     { id: 'pkcs11-simulator', label: 'PKCS#11 Simulator' },

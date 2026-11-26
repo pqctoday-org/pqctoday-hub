@@ -73,7 +73,7 @@ export const INTEGRATION_DELIVERY_SECTION: SourcedSectionData = {
           text: 'India CERT-In Technical Guidelines v2.0 recommend automating the generation, analysis, and compliance validation of CBOMs and QBOMs using tooling that integrates with development and deployment workflows.',
           sourceId: 'IN-CERTIN-QBOM-Guidelines-2025',
           edition:
-            'India CERT-In Technical Guidelines on SBOM, QBOM, CBOM, AIBOM, and HBOM v2.0, 2025',
+            'India CERT-In Technical Guidelines on SBOM, QBOM, CBOM, AIBOM, and HBOM v2.0, 2025-07',
           locator: 'Section 8.4.2.5 Automation, PDF p. 51',
         },
         {
@@ -81,7 +81,7 @@ export const INTEGRATION_DELIVERY_SECTION: SourcedSectionData = {
           text: 'India CERT-In Technical Guidelines v2.0 state that established workflows must ensure CBOMs and QBOMs are updated when components, cryptographic algorithms, or quantum technologies are introduced, modified, or deprecated.',
           sourceId: 'IN-CERTIN-QBOM-Guidelines-2025',
           edition:
-            'India CERT-In Technical Guidelines on SBOM, QBOM, CBOM, AIBOM, and HBOM v2.0, 2025',
+            'India CERT-In Technical Guidelines on SBOM, QBOM, CBOM, AIBOM, and HBOM v2.0, 2025-07',
           locator: 'Section 8.4.1.13, PDF p. 50',
         },
       ],
@@ -102,7 +102,7 @@ export const INTEGRATION_DELIVERY_SECTION: SourcedSectionData = {
           id: 'K1371-07',
           text: 'The Update Framework Specification states that only target files referenced by properly signed and timely metadata are made available, and application code is not given access until security checks confirm the downloaded file matches the signed metadata.',
           sourceId: 'TUF-Specification-v1-0-37',
-          edition: 'The Update Framework Specification',
+          edition: 'The Update Framework Specification, version 1.0.37, 2026-10',
           locator: 'Section 2 Fetching',
         },
         {
@@ -124,7 +124,7 @@ export const INTEGRATION_DELIVERY_SECTION: SourcedSectionData = {
           text: 'India CERT-In Technical Guidelines v2.0 (2025-07-09) requires consumer organizations to create an internal CBOM/QBOM aligned with supplier data to accurately represent what is deployed.',
           sourceId: 'IN-CERTIN-QBOM-Guidelines-2025',
           edition:
-            'India CERT-In Technical Guidelines on SBOM, QBOM, CBOM, AIBOM, and HBOM v2.0, 2025',
+            'India CERT-In Technical Guidelines on SBOM, QBOM, CBOM, AIBOM, and HBOM v2.0, 2025-07',
           locator: 'Section 8.4.1.8, PDF page 50',
         },
       ],

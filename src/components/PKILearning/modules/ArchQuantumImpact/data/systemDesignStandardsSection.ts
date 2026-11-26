@@ -5,7 +5,7 @@ import type { SourcedSectionData } from '@/components/PKILearning/common/Sourced
 export const SYSTEM_DESIGN_STANDARDS_SECTION: SourcedSectionData = {
   id: 'system-design-standards',
   title: 'System Design Standards and Best Practices',
-  lead: 'This section introduces system design standards and best practices for enterprise and security architects. It focuses on lifecycle assurance, remote attestation, and cryptographic agility.',
+  lead: 'This section introduces system design standards and best practices for enterprise and security architects.',
   nice: [{ id: 'K0769', statement: 'Knowledge of system design standards and best practices' }],
   blocks: [
     {
