@@ -25,16 +25,19 @@ import {
   stepsFromPreview,
   type ObjectivePreview,
 } from '../services/journey/objectiveBuilder'
+import { buildBuiltOn, snapshotLesson, takeFirstTags } from '../services/journey/curriculum'
 import {
   NO_ROLE,
+  type BuiltOn,
   type Checkpoint,
   type Completion,
   type Objective,
   type RoleSwitchNote,
+  type Step,
 } from '../services/journey/types'
 
 export const JOURNEY_STORE_KEY = 'pqc-journey'
-export const JOURNEY_STORE_VERSION = 1
+export const JOURNEY_STORE_VERSION = 2
 
 /** The part of the state that is written to the device. */
 export interface PersistedJourney {
@@ -85,6 +88,31 @@ interface JourneyState extends PersistedJourney {
   unmarkStep: (objectiveId: string, stepId: string) => void
   deferStep: (objectiveId: string, stepId: string) => void
   restoreStep: (objectiveId: string, stepId: string) => void
+  /** Records what an objective is built on, once: an objective that already has the record keeps it. */
+  recordBuiltOn: (objectiveId: string, builtOn: BuiltOn) => void
+  /** The learner has seen or answered a curriculum change; it is not shown again. Idempotent. */
+  acknowledgeChange: (objectiveId: string, changeId: string) => void
+  /**
+   * The learner adds a lesson the curriculum now requires to an objective, before the step that needs it. A
+   * completed objective is also reopened when `reopen` is true. Returns false when nothing was added.
+   */
+  addRequiredStep: (
+    objectiveId: string,
+    lessonTag: string,
+    beforeTag: string,
+    options?: { reopen?: boolean; now?: number }
+  ) => boolean
+  /**
+   * The learner swaps a retired step for the lesson that replaced it. The step keeps its place and its id; the
+   * retired tag is kept on it, so comments and work filed under it stay filed under the objective. Returns false
+   * when the objective already holds the replacement.
+   */
+  swapRetiredStep: (
+    objectiveId: string,
+    stepId: string,
+    toTag: string,
+    options?: { reopen?: boolean; now?: number }
+  ) => boolean
   setCheckpoint: (objectiveId: string, patch: Partial<Checkpoint>, now?: number) => void
   /**
    * The learner chose a role after making objectives with none: those objectives become the role's
@@ -93,6 +121,62 @@ interface JourneyState extends PersistedJourney {
   adoptRolelessObjectives: (role: string) => void
   noteRoleSwitch: (from: string | null, to: string | null, now?: number) => void
   clearRoleSwitch: () => void
+}
+
+const isStringList = (v: unknown): v is string[] =>
+  Array.isArray(v) && v.every((x) => typeof x === 'string')
+
+function isBuiltOn(v: unknown): v is BuiltOn {
+  if (!isRecord(v)) return false
+  return (
+    (v.origin === 'created' || v.origin === 'first-seen') &&
+    typeof v.revision === 'string' &&
+    typeof v.at === 'number' &&
+    isRecord(v.prerequisites) &&
+    Object.values(v.prerequisites).every(isStringList) &&
+    isRecord(v.lessons) &&
+    Object.values(v.lessons).every(
+      (l) =>
+        isRecord(l) &&
+        typeof l.version === 'number' &&
+        isStringList(l.sections) &&
+        isRecord(l.tools) &&
+        Object.values(l.tools).every((t) => t === null || typeof t === 'string')
+    )
+  )
+}
+
+/**
+ * Keeps the parts of the curriculum record that are valid and drops the rest. An objective that has none is
+ * left as it is: it was made before this was recorded and is baselined when the Hub first looks at it, never
+ * wiped and never given a revision it did not have. Returns the same object when nothing needs to change.
+ */
+function cleanObjective(o: Objective): Objective {
+  let out = o
+  if (o.builtOn !== undefined && !isBuiltOn(o.builtOn)) {
+    out = { ...out }
+    delete out.builtOn
+  }
+  if (o.acknowledged !== undefined && !isStringList(o.acknowledged)) {
+    out = {
+      ...out,
+      acknowledged: Array.isArray(o.acknowledged)
+        ? (o.acknowledged as unknown[]).filter((x): x is string => typeof x === 'string')
+        : [],
+    }
+  }
+  if (o.steps.some((st) => st.formerTags !== undefined && !isStringList(st.formerTags))) {
+    out = {
+      ...out,
+      steps: out.steps.map((st) => {
+        if (st.formerTags === undefined || isStringList(st.formerTags)) return st
+        const rest = { ...st }
+        delete rest.formerTags
+        return rest
+      }),
+    }
+  }
+  return out
 }
 
 const EMPTY: PersistedJourney = { objectives: {}, order: [], focus: {}, completions: {} }
@@ -126,7 +210,9 @@ function isObjective(v: unknown): v is Objective {
 /**
  * Brings anything read from the device to the current shape: keeps what is valid, drops what is not,
  * never throws. Version 1 is the first version, so this also stands for "nothing stored yet" and for a
- * state that was damaged on disk. A later version adds its step here and keeps this one's.
+ * state that was damaged on disk. Version 2 added each objective's record of what it was built on, the ids of
+ * the curriculum changes the learner answered, and the former tags of a swapped step: all optional, so a
+ * version 1 objective is kept exactly as it was and is recorded when the Hub first looks at it.
  */
 export function migrateJourneyState(persisted: unknown, fromVersion: number): PersistedJourney {
   void fromVersion
@@ -134,7 +220,7 @@ export function migrateJourneyState(persisted: unknown, fromVersion: number): Pe
   const objectives: Record<string, Objective> = {}
   if (isRecord(persisted.objectives)) {
     for (const [id, value] of Object.entries(persisted.objectives)) {
-      if (isObjective(value) && value.id === id) objectives[id] = value // eslint-disable-line security/detect-object-injection
+      if (isObjective(value) && value.id === id) objectives[id] = cleanObjective(value) // eslint-disable-line security/detect-object-injection
     }
   }
   const order = Array.isArray(persisted.order)
@@ -210,6 +296,7 @@ export const useJourneyStore = create<JourneyState>()(
             checkpoint: { path: ['journey', 'objectives'], stepId: firstStep?.id ?? null },
             createdAt: now,
             updatedAt: now,
+            builtOn: buildBuiltOn(steps, 'created', now),
           }
           set((st) => ({
             objectives: { ...st.objectives, [id]: objective },
@@ -366,6 +453,78 @@ export const useJourneyStore = create<JourneyState>()(
               }),
             }
           }),
+
+        recordBuiltOn: (objectiveId, builtOn) =>
+          patchObjective(objectiveId, (o) => (o.builtOn ? o : { ...o, builtOn })),
+
+        acknowledgeChange: (objectiveId, changeId) =>
+          patchObjective(objectiveId, (o) =>
+            o.acknowledged?.includes(changeId)
+              ? o
+              : { ...o, acknowledged: [...(o.acknowledged ?? []), changeId] }
+          ),
+
+        addRequiredStep: (objectiveId, lessonTag, beforeTag, options = {}) => {
+          const now = options.now ?? Date.now()
+          const o = get().objectives[objectiveId] // eslint-disable-line security/detect-object-injection
+          const before = o?.steps.find((x) => x.resourceTag === beforeTag)
+          const snap = snapshotLesson(lessonTag)
+          if (!o || !before || !snap || o.steps.some((x) => x.resourceTag === lessonTag))
+            return false
+          const used = o.steps.map((x) => Number(/-s(\d+)$/.exec(x.id)?.[1] ?? 0))
+          const id = `${o.id}-s${Math.max(o.steps.length, ...used) + 1}`
+          const at = before.position
+          const added: Step = {
+            id,
+            position: at,
+            kind: 'module',
+            resourceTag: lessonTag,
+            required: true,
+            origin: { type: 'take-first', for: beforeTag },
+          }
+          patchObjective(objectiveId, (cur) => ({
+            ...touch(cur, now),
+            steps: [
+              ...cur.steps.map((x) => (x.position >= at ? { ...x, position: x.position + 1 } : x)),
+              added,
+            ].sort((a, b) => a.position - b.position),
+            builtOn: cur.builtOn && {
+              ...cur.builtOn,
+              prerequisites: {
+                ...cur.builtOn.prerequisites,
+                [beforeTag]: takeFirstTags(beforeTag),
+                [lessonTag]: takeFirstTags(lessonTag),
+              },
+              lessons: { ...cur.builtOn.lessons, [lessonTag]: snap },
+            },
+          }))
+          if (options.reopen && o.state === 'completed') get().reopenObjective(objectiveId, now)
+          return true
+        },
+
+        swapRetiredStep: (objectiveId, stepId, toTag, options = {}) => {
+          const now = options.now ?? Date.now()
+          const o = get().objectives[objectiveId] // eslint-disable-line security/detect-object-injection
+          const step = o?.steps.find((x) => x.id === stepId)
+          const snap = snapshotLesson(toTag)
+          if (!o || !step || !snap || o.steps.some((x) => x.resourceTag === toTag)) return false
+          const former = step.resourceTag
+          patchObjective(objectiveId, (cur) => ({
+            ...touch(cur, now),
+            steps: cur.steps.map((x) =>
+              x.id === stepId
+                ? { ...x, resourceTag: toTag, formerTags: [...(x.formerTags ?? []), former] }
+                : x
+            ),
+            builtOn: cur.builtOn && {
+              ...cur.builtOn,
+              prerequisites: { ...cur.builtOn.prerequisites, [toTag]: takeFirstTags(toTag) },
+              lessons: { ...cur.builtOn.lessons, [toTag]: snap },
+            },
+          }))
+          if (options.reopen && o.state === 'completed') get().reopenObjective(objectiveId, now)
+          return true
+        },
 
         setCheckpoint: (objectiveId, patch, now = Date.now()) =>
           patchObjective(objectiveId, (o) => {

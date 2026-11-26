@@ -25,6 +25,11 @@ export interface Step {
   /** The learner put this step off in this objective; it does not block completion and stays listed. */
   deferred?: boolean
   origin: StepOrigin
+  /**
+   * Tags this step stood for before the learner swapped in a replacement for a retired lesson. Comments,
+   * artifacts and completions filed under them stay filed under the objective.
+   */
+  formerTags?: string[]
 }
 
 export interface Checkpoint {
@@ -35,6 +40,32 @@ export interface Checkpoint {
   sectionTag?: string
   /** Where Back goes: where the learner started from. */
   returnTo?: string
+}
+
+/** What a lesson held when an objective was built or first seen: the base later changes are compared with. */
+export interface LessonSnapshot {
+  /** The lesson's content version. */
+  version: number
+  /** Section ids of the lesson. */
+  sections: string[]
+  /** Tool id to the tool's version; `null` for a tool the Hub gives no version (business tools, sandbox scenarios). */
+  tools: Record<string, string | null>
+}
+
+/**
+ * What an objective was built on: the curriculum revision, the prerequisites each lesson listed, and what each
+ * lesson held. `origin: 'first-seen'` marks an objective made before this was recorded: its base is the
+ * curriculum as it was when the Hub first looked, never an earlier one.
+ */
+export interface BuiltOn {
+  origin: 'created' | 'first-seen'
+  /** The dated lessons file and tools file the curriculum was read from. */
+  revision: string
+  /** Lesson tag to the lesson tags it listed as "take first". */
+  prerequisites: Record<string, string[]>
+  lessons: Record<string, LessonSnapshot>
+  /** When it was recorded (ms). */
+  at: number
 }
 
 export interface Objective {
@@ -49,6 +80,10 @@ export interface Objective {
   createdAt: number
   updatedAt: number
   completedAt?: number
+  /** Absent on an objective made before this was recorded; see `BuiltOn`. */
+  builtOn?: BuiltOn
+  /** Ids of the curriculum changes the learner has seen or answered (see `services/journey/changes.ts`). */
+  acknowledged?: string[]
 }
 
 /** A lesson or step the learner has completed. Shared by every objective that holds the same tag. */

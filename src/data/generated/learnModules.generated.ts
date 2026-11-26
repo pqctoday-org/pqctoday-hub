@@ -65,6 +65,9 @@ export interface LearnModuleRecord {
   niceRead: boolean
 }
 
+/** The dated lessons file these records came from: the revision of the curriculum they describe. */
+export const LEARN_MODULES_SOURCE = 'learn_modules_11252026_r2.csv'
+
 export const LEARN_MODULES: readonly LearnModuleRecord[] = [
   {
     id: '5g-security',

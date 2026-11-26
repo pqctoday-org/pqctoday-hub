@@ -9,6 +9,7 @@ import { useJourneyStore } from '@/store/useJourneyStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { lessonByTag } from '@/services/journey/lessons'
+import { buildBuiltOn } from '@/services/journey/curriculum'
 import { NO_ROLE, type Objective } from '@/services/journey/types'
 import { nowStep } from '@/services/journey/stepRules'
 import { objectiveTitle } from '@/services/journey/stepView'
@@ -44,13 +45,21 @@ export function useRoleObjectives(): Objective[] {
   }, [role, adopt])
   const objectives = useJourneyStore((s) => s.objectives)
   const order = useJourneyStore((s) => s.order)
-  return useMemo(
+  const list = useMemo(
     () =>
       order
         .map((id) => objectives[id])
         .filter((o): o is Objective => Boolean(o) && o.role === role),
     [objectives, order, role]
   )
+  // An objective made before the Hub recorded what it was built on is recorded now, as it stands: later changes
+  // are told from here, and nothing earlier is guessed. It is kept as it is; only the record is added.
+  const record = useJourneyStore((s) => s.recordBuiltOn)
+  useEffect(() => {
+    for (const o of list)
+      if (!o.builtOn) record(o.id, buildBuiltOn(o.steps, 'first-seen', Date.now()))
+  }, [list, record])
+  return list
 }
 
 /** The objective in focus for the current role: the one chosen, else the first active one, else null. */
@@ -104,7 +113,10 @@ export function usePanelObjectives(): {
     const work = objectives.map((o) => ({
       id: o.id,
       title: objectiveTitle(o),
-      steps: o.steps.filter((s) => s.kind === 'module').map((s) => ({ tag: s.resourceTag })),
+      // A step swapped for a replacement keeps the tags it stood for: work filed under them stays filed here.
+      steps: o.steps
+        .filter((s) => s.kind === 'module')
+        .flatMap((s) => [s.resourceTag, ...(s.formerTags ?? [])].map((tag) => ({ tag }))),
     }))
     const updates = objectives.map((o) => ({
       id: o.id,

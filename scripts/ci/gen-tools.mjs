@@ -347,6 +347,9 @@ export const SANDBOX_TOOL_RECORDS: readonly SandboxToolRecord[] = ${JSON.stringi
 
 export const BUSINESS_TOOL_RECORDS: readonly BusinessToolRecord[] = ${JSON.stringify(business, null, 2)} satisfies readonly BusinessToolRecord[]
 
+/** The dated tools file these records came from: the revision of the tools they describe. */
+export const TOOLS_SOURCE = ${JSON.stringify(file)}
+
 export const TOOL_RECORDS: readonly ToolRecord[] = [
   ...[...PLAYGROUND_TOOL_RECORDS, ...SANDBOX_TOOL_RECORDS].sort((a, b) => a.order - b.order),
   ...BUSINESS_TOOL_RECORDS,

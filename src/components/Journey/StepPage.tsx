@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router'
 import { Chip, Eyebrow, StickerCard, StoryRow, StoryButton } from '@/components/storybook'
 import { JourneyStepBar, JourneyBackLink } from './JourneyStepBar'
 import { CompletePanel } from './CompletePanel'
+import { ObjectiveChanges } from './ObjectiveChanges'
 import { StepNotesMount } from './mountPoints'
 import { useOpenStep } from './useJourneyNav'
 import { useJourneyStore } from '@/store/useJourneyStore'
@@ -16,6 +17,7 @@ import { useIsDone } from '@/hooks/useJourney'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { describeStep, finishCondition, journeyHref } from '@/services/journey/stepView'
 import { barSteps } from '@/services/journey/stepRules'
+import { retiredEntry } from '@/services/journey/retiredSteps'
 import { useState } from 'react'
 import type { Objective } from '@/services/journey/types'
 
@@ -50,6 +52,7 @@ export function StepPage({ objective, stepId }: { objective: Objective; stepId: 
           onOpenStep={(s) => openStep(objective, s)}
           onComplete={() => setCompleteOpen(true)}
         />
+        <ObjectiveChanges objective={objective} stepId={step.id} />
         {step.kind === 'self-assessed' ? (
           <div className="space-y-3">
             <p className="text-sm">
@@ -94,7 +97,9 @@ export function StepPage({ objective, stepId }: { objective: Objective; stepId: 
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">
-            This step is not in the catalogue any more. Your other steps are unaffected.
+            {retiredEntry(step.resourceTag)
+              ? 'This step was retired. What changed and what you can do about it is above. Your other steps are unaffected.'
+              : 'This step is not in the catalogue any more. Your other steps are unaffected.'}
           </p>
         )}
       </StickerCard>

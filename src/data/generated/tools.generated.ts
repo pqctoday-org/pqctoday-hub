@@ -1698,6 +1698,9 @@ export const BUSINESS_TOOL_RECORDS: readonly BusinessToolRecord[] = [
   },
 ] satisfies readonly BusinessToolRecord[]
 
+/** The dated tools file these records came from: the revision of the tools they describe. */
+export const TOOLS_SOURCE = 'tools_11252026_r10.csv'
+
 export const TOOL_RECORDS: readonly ToolRecord[] = [
   ...[...PLAYGROUND_TOOL_RECORDS, ...SANDBOX_TOOL_RECORDS].sort((a, b) => a.order - b.order),
   ...BUSINESS_TOOL_RECORDS,
