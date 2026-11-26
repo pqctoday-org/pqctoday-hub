@@ -15,7 +15,7 @@
  *
  * Nothing the learner types is sent to analytics (J5); only a count is.
  */
-import { useCallback, useId, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { MessageSquare, Pencil, Trash2, AlertTriangle } from 'lucide-react'
 import {
   StickerCard,
@@ -102,14 +102,29 @@ export function CommentBox({
   const addButton = useRef<HTMLButtonElement>(null)
   const openers = useRef(new Map<string, HTMLButtonElement | null>())
 
+  // The pending announcement timer and focus frame are kept so an unmount (or a newer announcement)
+  // cancels them: a timer left running would set state on a box that is gone.
+  const announceTimer = useRef<number | undefined>(undefined)
+  const focusFrame = useRef<number | undefined>(undefined)
+  useEffect(
+    () => () => {
+      window.clearTimeout(announceTimer.current)
+      window.cancelAnimationFrame(focusFrame.current ?? 0)
+    },
+    []
+  )
+
   const announce = (message: string) => {
     // Cleared first so the same message twice is still announced.
     setStatus('')
-    window.setTimeout(() => setStatus(message), 30)
+    window.clearTimeout(announceTimer.current)
+    announceTimer.current = window.setTimeout(() => setStatus(message), 30)
   }
   // The control may not exist yet (it is shown once the box closes), so it is looked up when the frame comes.
-  const focusLater = (find: () => HTMLElement | null | undefined) =>
-    window.requestAnimationFrame(() => find()?.focus())
+  const focusLater = (find: () => HTMLElement | null | undefined) => {
+    window.cancelAnimationFrame(focusFrame.current ?? 0)
+    focusFrame.current = window.requestAnimationFrame(() => find()?.focus())
+  }
 
   const countAfter = useCallback(
     () => useMyWorkStore.getState().comments.filter((c) => c.tag === tag).length,

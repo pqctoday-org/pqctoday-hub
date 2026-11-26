@@ -5,7 +5,7 @@
  * and J5 (no comment text reaches analytics).
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 const logEvent = vi.hoisted(() => vi.fn())
@@ -192,6 +192,64 @@ describe('CommentBox', () => {
     expect(logEvent).toHaveBeenCalled() // counts are sent...
     expect(JSON.stringify(logEvent.mock.calls)).not.toContain(MARK) // ...text never is
     expect(JSON.stringify(logEvent.mock.calls)).not.toContain('PRIVATE')
+  })
+
+  describe('timers on unmount', () => {
+    const FAKE = [
+      'setTimeout',
+      'clearTimeout',
+      'requestAnimationFrame',
+      'cancelAnimationFrame',
+    ] as const
+    afterEach(() => vi.useRealTimers())
+
+    // The box's own timers: the 30 ms announcement and the focus frame, with the ids they were given.
+    const spyOwnTimers = () => {
+      vi.useFakeTimers({ toFake: [...FAKE] })
+      const setT = vi.spyOn(window, 'setTimeout')
+      const clearT = vi.spyOn(window, 'clearTimeout')
+      const raf = vi.spyOn(window, 'requestAnimationFrame')
+      const cancelRaf = vi.spyOn(window, 'cancelAnimationFrame')
+      const announceIds = () =>
+        setT.mock.calls.flatMap((c, i) =>
+          c[1] === 30 ? [setT.mock.results[i].value as number] : []
+        )
+      const frameIds = () => raf.mock.results.map((r) => r.value as number)
+      return { clearT, cancelRaf, announceIds, frameIds }
+    }
+    const save = (text: string) => {
+      fireEvent.click(screen.getByRole('button', { name: /add a comment/i }))
+      fireEvent.change(screen.getByLabelText(/add a comment on/i), { target: { value: text } })
+      fireEvent.click(screen.getByRole('button', { name: /save comment/i }))
+    }
+
+    it('cancels the pending announcement and focus frame when the box is unmounted', () => {
+      const t = spyOwnTimers()
+      const { unmount } = render(<CommentBox tag={TAG} />)
+      save('a note')
+      // The save announced "Comment saved" (30 ms timer) and asked for focus (a frame): both pending.
+      expect(t.announceIds()).toHaveLength(1)
+      expect(t.frameIds()).toHaveLength(1)
+      const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      unmount()
+      expect(t.clearT).toHaveBeenCalledWith(t.announceIds()[0])
+      expect(t.cancelRaf).toHaveBeenCalledWith(t.frameIds()[0])
+      // Running the clock now must change nothing and raise nothing.
+      expect(() => act(() => void vi.advanceTimersByTime(500))).not.toThrow()
+      expect(errors).not.toHaveBeenCalled()
+    })
+
+    it('a second announcement replaces the pending one instead of stacking', () => {
+      const t = spyOwnTimers()
+      render(<CommentBox tag={TAG} />)
+      save('one')
+      save('two')
+      const [first, second] = t.announceIds()
+      expect(second).not.toBe(first)
+      expect(t.clearT).toHaveBeenCalledWith(first)
+      act(() => void vi.advanceTimersByTime(100))
+      expect(screen.getByTestId('comment-status')).toHaveTextContent('Comment saved')
+    })
   })
 
   it('renders nothing for a tag that is not a lesson part', () => {
