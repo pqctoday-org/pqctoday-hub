@@ -75,8 +75,15 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
     goalRef.current?.focus()
   }, [])
 
+  // Focus goes to the preview only when the learner asked for it. When the knowledge model arrives and the
+  // preview is rebuilt, focus stays where the learner is; a polite note says the list was updated.
+  const focusPreview = useRef(false)
+  const [updatedNote, setUpdatedNote] = useState('')
   useEffect(() => {
-    if (preview) resultRef.current?.focus()
+    if (preview && focusPreview.current) {
+      focusPreview.current = false
+      resultRef.current?.focus()
+    }
   }, [preview])
 
   // After a failed save, focus goes to Try again so the next key press retries.
@@ -112,12 +119,16 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
     setPreview((cur) => {
       if (!cur) return cur
       const next = buildRef.current(cur.goal, reader)
-      return JSON.stringify(next) === JSON.stringify(cur) ? cur : next
+      if (JSON.stringify(next) === JSON.stringify(cur)) return cur
+      setUpdatedNote('The preview was updated with more of what the Hub teaches.')
+      return next
     })
   }, [reader])
 
   const runPreview = () => {
     if (!goal.trim()) return
+    focusPreview.current = true
+    setUpdatedNote('')
     setPreview(build(goal, reader))
   }
   const create = (allowDuplicate = false) => {
@@ -152,6 +163,7 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
         value={goal}
         onChange={(e) => {
           setGoal(e.target.value)
+          setUpdatedNote('')
           if (preview) setPreview(null)
           setFailedWith(null)
         }}
@@ -166,6 +178,10 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
           Cancel
         </StoryButton>
       </div>
+
+      <p role="status" aria-live="polite" className="sr-only">
+        {updatedNote}
+      </p>
 
       {preview ? (
         <div

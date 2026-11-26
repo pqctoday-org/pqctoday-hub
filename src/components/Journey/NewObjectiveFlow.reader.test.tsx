@@ -87,6 +87,24 @@ describe('new objective with the knowledge model', () => {
     expect(screen.getByText(/teaches Zorbkem/)).toBeInTheDocument()
   })
 
+  it('does not move focus when the model arrives, and says so politely', async () => {
+    let arrive: (r: KnowledgeReader) => void = () => {}
+    load.mockReturnValue(new Promise<KnowledgeReader>((res) => (arrive = res)))
+    await ask('zorbkem')
+    // The learner asked for the preview, so focus is on it; they then move on to the Change the goal button.
+    expect(screen.getByTestId('preview-gap')).toHaveFocus()
+    const change = screen.getByRole('button', { name: 'Change the goal' })
+    change.focus()
+    expect(change).toHaveFocus()
+    await act(async () => arrive(fixtureReader()))
+    expect(screen.getByTestId('preview-ready')).toBeInTheDocument()
+    expect(screen.getByTestId('preview-ready')).not.toHaveFocus()
+    expect(document.activeElement).not.toBe(screen.getByTestId('preview-ready'))
+    expect(
+      screen.getByText('The preview was updated with more of what the Hub teaches.')
+    ).toHaveAttribute('aria-live', 'polite')
+  })
+
   it('uses the model for a preview asked for after it has loaded', async () => {
     load.mockResolvedValue(fixtureReader())
     renderAt(<NewObjectiveFlow onCreated={() => {}} onCancel={() => {}} />)
