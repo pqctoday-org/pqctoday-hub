@@ -90,9 +90,9 @@ We use **Google Analytics 4 (GA4)** on every visit. It starts when a page loads,
 
 To stop analytics, block them in your browser: use a content blocker that blocks Google Analytics requests (google-analytics.com), block cookies for this site, or install Google's opt-out browser add-on. For details on how Google processes analytics data, see [Google's Privacy Policy](https://policies.google.com/privacy).
 
-The Platform's **PQC Assistant** chat feature offers two modes. When using **Google Gemini Flash**, your chat messages and page context are sent to Google's servers for processing. You must provide your own Google AI API key to use this mode. Your API key is stored locally in your browser and is never transmitted to PQC Today's infrastructure. Google's use of data sent via the Gemini API is governed by [Google's Gemini API Terms of Service](https://ai.google.dev/gemini-api/terms). Alternatively, you can use the **Local LLM (WebLLM)** mode, which runs the AI model entirely in your browser — no data leaves your device.
+The Platform's **PQC Assistant** answers from the Platform's own records, on your device. It uses no language model and asks for no API key, and your questions are not sent to any outside service.
 
-Local browser storage (localStorage) keeps your learning progress, preferences, saved assessments and, if you add one, your AI provider key on your device. We do not receive it. It leaves your browser only if you share a report link or use the Gemini cloud mode described above.
+Local browser storage (localStorage) keeps your learning progress, preferences and saved assessments on your device. We do not receive it. It leaves your browser only if you share a report link.
 
 ## 11. Modifications
 

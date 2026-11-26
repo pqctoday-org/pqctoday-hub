@@ -79,12 +79,11 @@ Separate sandbox scenarios require the external sandbox runtime. They are not si
 
 ## What runs where
 
-| Runtime                    | Behaviour and boundary                                                                                                                              |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Browser-local              | The site, saved progress and browser-capable demonstrations run locally unless a clearly labelled optional service is selected.                     |
-| Optional Gemini API        | Bring-your-own-key assistance contacts Google's API only after explicit learner action. Review Google's terms and do not submit sensitive material. |
-| Optional Google Drive sync | Learners may explicitly connect Drive to synchronize supported progress. It is not required for normal use.                                         |
-| Separate sandbox           | Docker-backed scenarios run outside the public browser application and require their own local environment.                                         |
+| Runtime                    | Behaviour and boundary                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Browser-local              | The site, saved progress and browser-capable demonstrations run locally unless a clearly labelled optional service is selected. |
+| Optional Google Drive sync | Learners may explicitly connect Drive to synchronize supported progress. It is not required for normal use.                     |
+| Separate sandbox           | Docker-backed scenarios run outside the public browser application and require their own local environment.                     |
 
 API credentials are not educational content and must never be committed to the repository. See [Security](SECURITY.md), [Terms](TERMS.md) and the live [About page](https://www.pqctoday.com/about) for current boundaries.
 

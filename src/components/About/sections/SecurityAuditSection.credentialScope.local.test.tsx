@@ -27,13 +27,14 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-it('the real desktop security section discloses browser keys separately from public build identifiers and secret credentials', async () => {
+it('the real desktop security section says it holds no API key and separates public build identifiers from secret credentials', async () => {
   render(<SecurityAuditSection />)
-  const disclosure = screen.getByText(/User-supplied cloud API keys are saved in browser storage/)
+  const disclosure = screen.getByText(/The site asks for no API key and stores none/)
   await waitFor(() => expect(disclosure).toBeVisible())
   expect(disclosure).toHaveTextContent(
     'Public build-time identifiers are distinct from secret credentials'
   )
+  expect(document.body.textContent ?? '').not.toMatch(/user-supplied cloud api keys/i)
   expect(
     screen.queryByText(/all credentials.*environment|credentials.*exclusively.*environment/i)
   ).not.toBeInTheDocument()
@@ -48,7 +49,7 @@ it('the real phone Trust accordion gives the same credential classification with
     </MemoryRouter>
   )
   fireEvent.click(screen.getByRole('button', { name: /Trust & verification/ }))
-  const disclosure = screen.getByText(/User-supplied cloud API keys are saved in browser storage/)
+  const disclosure = screen.getByText(/The site asks for no API key and stores none/)
   expect(disclosure).toBeVisible()
   expect(disclosure).toHaveTextContent(
     'public build-time identifiers are distinct from secret credentials'

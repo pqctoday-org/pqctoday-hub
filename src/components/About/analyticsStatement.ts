@@ -27,4 +27,4 @@ export const EXPORT_EVENTS_CLAUSE =
 
 /** When the data kept in your browser leaves your device. */
 export const LOCAL_DATA_LEAVES_STATEMENT =
-  'We do not receive this data. It leaves your device only if you share a report link or use the Gemini cloud mode of the PQC Assistant.'
+  'We do not receive this data. It leaves your device only if you share a report link.'

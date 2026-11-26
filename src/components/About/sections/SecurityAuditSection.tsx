@@ -43,7 +43,7 @@ export function SecurityAuditSection() {
         <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">
           <ShieldCheck className="text-primary mt-0.5 shrink-0" size={18} />
           <div>
-            <p className="text-sm font-semibold text-foreground">Scope and browser key storage</p>
+            <p className="text-sm font-semibold text-foreground">Scope and browser storage</p>
             <ul className="text-xs text-muted-foreground mt-1 space-y-0.5 list-disc list-inside">
               <li>A dependency scan or lint check does not establish OWASP Top 10 compliance.</li>
               <li>
@@ -51,8 +51,8 @@ export function SecurityAuditSection() {
                 that every component avoids HTML insertion.
               </li>
               <li>
-                User-supplied cloud API keys are saved in browser storage. Public build-time
-                identifiers are distinct from secret credentials.
+                The site asks for no API key and stores none. Public build-time identifiers are
+                distinct from secret credentials.
               </li>
             </ul>
           </div>
