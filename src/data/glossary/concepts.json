@@ -916,7 +916,8 @@
     "definition": "The ability of different cryptographic implementations, libraries, and systems to work together correctly. Critical during PQC migration when classical and quantum-safe systems must coexist.",
     "relatedModule": "/migrate",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-testing-validation"
   },
   {
     "id": "hybrid-mode",
@@ -3389,7 +3390,8 @@
     "definition": "A type of math puzzle based on plotting points in a massive grid, used to build safe encryption.",
     "plainDefinition": "A type of math puzzle based on plotting points in a massive grid, used to build safe encryption.",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-101"
   },
   {
     "id": "hash-based",
@@ -3406,7 +3408,8 @@
     "definition": "Mathematical stamps that prove a message or file genuinely came from a specific person or server.",
     "plainDefinition": "Mathematical stamps that prove a message or file genuinely came from a specific person or server.",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-101"
   },
   {
     "id": "quantum-computer",

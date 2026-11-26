@@ -200,7 +200,8 @@
     "relatedModule": "/algorithms?algo=x25519",
     "complexity": "intermediate",
     "category": "algorithm",
-    "industries": "Cloud Computing / Data Centers"
+    "industries": "Cloud Computing / Data Centers",
+    "module_ids": "hybrid-crypto"
   },
   {
     "id": "x448",

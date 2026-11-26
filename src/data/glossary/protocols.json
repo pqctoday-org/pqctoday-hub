@@ -277,7 +277,8 @@
     "technicalNote": "ACME will need updates to support PQC certificate types as the Web PKI transitions to quantum-safe algorithms.",
     "relatedModule": "/library",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "module_ids": "pki-enrollment-protocols"
   },
   {
     "id": "acvp",

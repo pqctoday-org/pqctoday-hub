@@ -140,7 +140,8 @@
     "relatedModule": "/library?ref=NIST IR 8547",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "compliance-strategy"
   },
   {
     "id": "nist-sp-800-131a",
@@ -180,7 +181,8 @@
     "relatedModule": "/threats",
     "complexity": "intermediate",
     "category": "standard",
-    "industries": "Payment Card Industry"
+    "industries": "Payment Card Industry",
+    "module_ids": "pci-certification"
   },
   {
     "id": "hipaa",
@@ -852,7 +854,8 @@
     "relatedModule": "/compliance",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "fips-140-3-certification"
   },
   {
     "id": "cnsa-1-0",
