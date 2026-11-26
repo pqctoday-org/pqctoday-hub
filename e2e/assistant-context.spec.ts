@@ -203,11 +203,19 @@ test.describe('Suggested questions follow the learner', () => {
     const answer = await ask(page, drawer, first)
     await expect(answer.getByRole('tabpanel')).toBeVisible()
 
-    // the question just asked is not offered again; the next one in the rules' order is the main one
+    // the question just asked is not offered again; the main one now builds on the answer that was just read
     await expect(suggested(drawer)).toBeVisible()
     const second = await mainQuestion(drawer)
     expect(second).not.toBe(first)
-    expect(second).toBe('What will I learn in PQC 101?')
+    expect(second).toMatch(/^Which (?:lessons teach|tools go with) /)
+    // under an answer the explanation sits with the rest of the questions
+    await suggested(drawer)
+      .getByRole('button', { name: /^More questions/ })
+      .click()
+    await suggested(drawer).getByRole('button', { name: 'Why this question?' }).click()
+    await expect(suggested(drawer)).toContainText(
+      /Based on: (?:a lesson in )?the answer you just read/
+    )
     await suggested(drawer).getByRole('button').first().click()
     await expect(answerOf(drawer, second)).toBeVisible({ timeout: 30_000 })
 
@@ -217,6 +225,113 @@ test.describe('Suggested questions follow the learner', () => {
     await expect(drawer.getByTestId('objective-header-slot')).toContainText(
       'Review our TLS migration design'
     )
+  })
+
+  test('a question asked earlier is not offered again after a reload, until the progress changes', async ({
+    page,
+  }) => {
+    await seedHub(page)
+    await seedObjective(page, null)
+    await page.goto('/learn/tls-basics')
+    let drawer = await openDrawer(page)
+    const first = await mainQuestion(drawer)
+    expect(first).toBe('What is TLS Basics about?')
+    await ask(page, drawer, first)
+
+    // only hashes of the question and of the state are kept on the device
+    const stored = await page.evaluate(() => localStorage.getItem('pqc-assistant-asked'))
+    expect(stored).not.toBeNull()
+    expect(stored).not.toContain('TLS')
+    expect(JSON.parse(stored!).state.entries[0]).toEqual({
+      q: expect.stringMatching(/^[0-9a-f]{8}$/),
+      s: expect.stringMatching(/^[0-9a-f]{8}$/),
+    })
+
+    // a new visit: the conversation is gone, the memory is not
+    await page.reload()
+    drawer = await openDrawer(page)
+    await expect(suggested(drawer)).toBeVisible()
+    expect(await mainQuestion(drawer)).not.toBe(first)
+    await expect(suggested(drawer).getByText(first, { exact: true })).toHaveCount(0)
+
+    // the learner finishes a lesson, so the state is no longer the same: the question is offered again
+    await page.evaluate(() => {
+      const j = JSON.parse(localStorage.getItem('pqc-journey')!)
+      j.state.completions['LM-001'] = { tag: 'LM-001', kind: 'completed', source: 'self', at: 1 }
+      localStorage.setItem('pqc-journey', JSON.stringify(j))
+    })
+    await page.reload()
+    drawer = await openDrawer(page)
+    expect(await mainQuestion(drawer)).toBe(first)
+  })
+
+  test('after an answer, the main suggestion builds on it, with the answer named as its basis', async ({
+    page,
+  }) => {
+    await seedHub(page)
+    await page.goto('/threats')
+    const drawer = await openDrawer(page)
+    await ask(page, drawer, 'What is ML-KEM?')
+    await expect(suggested(drawer)).toBeVisible()
+    expect(await mainQuestion(drawer)).toBe('Which lessons teach ML-KEM?')
+    await suggested(drawer)
+      .getByRole('button', { name: /^More questions/ })
+      .click()
+    await suggested(drawer).getByRole('button', { name: 'Why this question?' }).click()
+    await expect(suggested(drawer)).toContainText('Based on: the answer you just read, ML-KEM.')
+    // the question it forms is answered with resources
+    await suggested(drawer).getByRole('button').first().click()
+    const next = answerOf(drawer, 'Which lessons teach ML-KEM?')
+    await expect(next.getByRole('tabpanel')).toBeVisible({ timeout: 30_000 })
+  })
+
+  test('with two objectives and none in focus, the most recently used is resumed and the other is named', async ({
+    page,
+  }) => {
+    await seedHub(page)
+    await page.addInitScript(() => {
+      if (localStorage.getItem('pqc-journey') !== null) return
+      const objective = (id: string, goal: string, tag: string, updatedAt: number) => ({
+        id,
+        role: 'architect',
+        goal,
+        state: 'active',
+        steps: [
+          {
+            id: `${id}-1`,
+            position: 1,
+            kind: 'module',
+            resourceTag: tag,
+            required: true,
+            origin: { type: 'match' },
+          },
+        ],
+        checkpoint: { path: ['journey', 'objectives'], stepId: null },
+        createdAt: 1,
+        updatedAt,
+      })
+      const a = objective('a', 'Review our TLS migration design', 'LM-001', 100)
+      const b = objective('b', 'Brief the architecture board', 'LM-008', 500)
+      localStorage.setItem(
+        'pqc-journey',
+        JSON.stringify({
+          version: 2,
+          state: { objectives: { a, b }, order: ['a', 'b'], focus: {}, completions: {} },
+        })
+      )
+    })
+    await page.goto(HOME)
+    const drawer = await openDrawer(page)
+    await expect(suggested(drawer)).toBeVisible()
+    expect(await mainQuestion(drawer)).toBe('What will I learn in TLS Basics?')
+    await suggested(drawer).getByRole('button', { name: 'Why this question?' }).click()
+    await expect(suggested(drawer)).toContainText(
+      'Based on: your most recently used objective, Brief the architecture board.'
+    )
+    await expect(
+      suggested(drawer).getByRole('button', { name: /What will I learn in PQC 101\?/ })
+    ).toBeVisible()
+    await expect(suggested(drawer)).toContainText('Other objective')
   })
 
   test('the starting questions are still there for a first visit, and the text box is never disabled', async ({
@@ -275,9 +390,14 @@ for (const theme of ['light', 'dark'] as const) {
       // Close: visible, after the width buttons, and reached with the keyboard
       const close = drawer.getByRole('button', { name: 'Close', exact: true })
       await expect(close).toBeVisible()
+      // inside the drawer, once its slide-in has finished
+      await expect
+        .poll(async () => {
+          const [b, r] = [(await close.boundingBox())!, (await drawer.boundingBox())!]
+          return b.x + b.width <= r.x + r.width + 1 && b.x >= r.x
+        })
+        .toBe(true)
       const box = (await close.boundingBox())!
-      const region = (await drawer.boundingBox())!
-      expect(box.x + box.width).toBeLessThanOrEqual(region.x + region.width + 1)
       expect(box.width).toBeGreaterThanOrEqual(36)
       expect(box.height).toBeGreaterThanOrEqual(36)
       const wider = drawer.getByRole('button', { name: 'Wider', exact: true })
