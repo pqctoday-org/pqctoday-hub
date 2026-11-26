@@ -115,7 +115,7 @@ export function ResponseCard({
   const settled = settleNav(resources.tabs, nav ?? START_NAV)
   const link = sourceLinkOf(answer)
   const shown = p.state !== 'not-held' && !p.held
-  const style = { '--assistant-step-h': sheet ? '252px' : '262px' } as CSSProperties
+  const style = { '--assistant-step-h': sheet ? '278px' : '288px' } as CSSProperties
 
   // The answer line: the direct answer, else the engine's own note (fixes a note that contradicts the fixed "Here is what ..." line).
   const header = !shown ? (

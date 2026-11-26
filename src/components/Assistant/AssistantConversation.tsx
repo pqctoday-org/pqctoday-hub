@@ -170,9 +170,7 @@ export function AssistantConversation() {
     // Back to the row action that opened it.
     requestAnimationFrame(() => {
       const target = tag
-        ? document.querySelector<HTMLElement>(
-            `[data-tag="${CSS.escape(tag)}"] button, [data-tag="${CSS.escape(tag)}"] a`
-          )
+        ? document.querySelector<HTMLElement>(`[data-tag="${CSS.escape(tag)}"] [data-row-action]`)
         : null
       ;(target ?? inputRef.current)?.focus()
     })

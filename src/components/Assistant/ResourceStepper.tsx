@@ -186,7 +186,7 @@ export function ResourceStepper({
               {meta}
             </p>
           )}
-          <HomeLessonLink row={row} onOpen={onAction} />
+          <HomeLessonLink row={row} onOpen={onAction} oneLine />
           {row.paidReferenceOnly ? (
             <p className="text-xs text-muted-foreground">{COPY.paidReference}</p>
           ) : (
@@ -211,6 +211,7 @@ export function ResourceStepper({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={actionLabel}
+              data-row-action=""
               className="inline-flex min-h-[36px] items-center justify-center rounded-full border-2 border-ink bg-primary px-3 text-sm font-bold text-primary-foreground focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid"
             >
               {row.action}
@@ -219,6 +220,7 @@ export function ResourceStepper({
             <StoryButton
               onClick={() => onAction(row)}
               aria-label={actionLabel}
+              data-row-action=""
               className="min-h-[36px] px-3"
             >
               {row.action}
