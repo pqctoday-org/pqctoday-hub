@@ -4,6 +4,7 @@ import {
   failingUrlOf,
   hasReloadedForUpdate,
   installPreloadErrorReload,
+  isNetworkFetchError,
   isStaleBuildError,
   reloadOnceForUpdate,
   UPDATE_RELOAD_KEY,
@@ -53,6 +54,15 @@ describe('isStaleBuildError', () => {
   it('does not treat an ordinary error as one', () => {
     expect(isStaleBuildError(new Error('Cannot read properties of undefined'))).toBe(false)
     expect(isStaleBuildError(undefined)).toBe(false)
+  })
+
+  it('does not treat a failed data request as a missing split file', () => {
+    expect(isStaleBuildError(new TypeError('Failed to fetch'))).toBe(false)
+    expect(isStaleBuildError(new Error('Failed to fetch snapshots: drafts=503'))).toBe(false)
+    expect(isNetworkFetchError(new TypeError('Failed to fetch'))).toBe(true)
+    expect(
+      isNetworkFetchError(new Error('Failed to fetch dynamically imported module: https://x/a.js'))
+    ).toBe(false)
   })
 
   it('reads the failing URL out of the message', () => {

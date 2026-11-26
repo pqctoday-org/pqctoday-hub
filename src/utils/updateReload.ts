@@ -37,18 +37,27 @@ export function currentBuildId(): string {
   return ''
 }
 
-/** Browser wording for "a split file could not be loaded" (Chrome, Firefox, Safari, Vite CSS). */
+/**
+ * Browser wording for "a split file could not be loaded" (Chrome, Firefox, Safari,
+ * Vite CSS). A bare "Failed to fetch" is NOT one: that is any failed network
+ * request (a data file, a sample download), and a new release is not its cause.
+ */
 export function isStaleBuildError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : typeof error === 'string' ? error : ''
   const msg = message.toLowerCase()
   return (
     msg.includes('dynamically imported module') ||
     msg.includes('importing a module script failed') ||
-    msg.includes('failed to fetch') ||
     msg.includes('loading chunk') ||
     msg.includes('loading css chunk') ||
     msg.includes('unable to preload css')
   )
+}
+
+/** A failed network request that is not a split file: retrying needs a fresh page load. */
+export function isNetworkFetchError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : typeof error === 'string' ? error : ''
+  return !isStaleBuildError(error) && message.toLowerCase().includes('failed to fetch')
 }
 
 /** The URL named by a load failure, when the message carries one. */

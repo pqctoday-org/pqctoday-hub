@@ -90,6 +90,21 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('recovered')).toBeTruthy()
   })
 
+  it('does not call a failed data request a new version, and retries it with a page load', () => {
+    render(
+      <ErrorBoundary>
+        <Boom message="Failed to fetch" />
+      </ErrorBoundary>
+    )
+    expect(screen.getByText('Something went wrong')).toBeTruthy()
+    expect(screen.queryByText(UPDATED_MESSAGE)).toBeNull()
+    // No automatic reload for an ordinary network failure.
+    expect(reloads).toBe(0)
+    expect(sessionStorage.getItem(UPDATE_RELOAD_KEY)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(reloads).toBe(1)
+  })
+
   it('renders children when nothing fails', () => {
     render(
       <ErrorBoundary>

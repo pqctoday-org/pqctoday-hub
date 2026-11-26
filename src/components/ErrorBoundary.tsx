@@ -2,6 +2,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { StickerCard, StoryButton } from '@/components/storybook'
 import {
+  isNetworkFetchError,
   isStaleBuildError,
   OFFLINE_MESSAGE,
   reloadOnceForUpdate,
@@ -75,7 +76,11 @@ export class ErrorBoundary extends Component<Props, State> {
         <StoryButton
           variant="secondary"
           className="mt-5"
-          onClick={() => this.setState({ hasError: false, error: null })}
+          onClick={() => {
+            // A failed network request is retried with a fresh page load, as before.
+            if (isNetworkFetchError(error)) reloadPage()
+            else this.setState({ hasError: false, error: null })
+          }}
         >
           Try again
         </StoryButton>
