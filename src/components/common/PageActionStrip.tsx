@@ -5,6 +5,8 @@ import { FileClock, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { useTopBarDensity } from '@/components/Layout/topBarDensity'
+import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export interface PageActionStripProps {
@@ -76,6 +78,9 @@ export const PageActionStrip = ({
   testId,
   className = '',
 }: PageActionStripProps) => {
+  // Short of room, the top bar asks for icons only (Layout/topBarDensity.tsx); the names stay.
+  const iconOnly = useTopBarDensity() >= 1
+  const compactButton = iconOnly ? 'min-h-10 min-w-10 justify-center' : ''
   const showSkeleton = dataSourceLoading && !dataSource
   const showInfo = Boolean(dataSource) || showSkeleton
   const hasAnything =
@@ -165,12 +170,15 @@ export const PageActionStrip = ({
             onClick={toggleInfo}
             aria-haspopup="dialog"
             aria-expanded={infoOpen}
-            className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
+            className={cn(
+              'flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors',
+              compactButton
+            )}
             aria-label={`Data source: ${dataSource}`}
             title={dataSource}
           >
             <FileClock size={13} aria-hidden="true" />
-            <span>Info</span>
+            {!iconOnly && <span>Info</span>}
           </Button>
           {infoOpen &&
             infoPosition &&
@@ -197,12 +205,15 @@ export const PageActionStrip = ({
         <Button
           variant="ghost"
           onClick={onExport}
-          className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
+          className={cn(
+            'flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors',
+            compactButton
+          )}
           aria-label="Export CSV"
           title="Export CSV"
         >
           <Download size={13} aria-hidden="true" />
-          <span>Export</span>
+          {!iconOnly && <span>Export</span>}
         </Button>
       )}
       {endorseUrl && (
@@ -210,9 +221,9 @@ export const PageActionStrip = ({
           endorseUrl={endorseUrl}
           resourceLabel={endorseLabel ?? title ?? 'Page'}
           resourceType={endorseResourceType ?? 'Page'}
-          variant="text"
+          variant={iconOnly ? 'icon' : 'text'}
           label="Endorse"
-          className="!text-xs !px-2 !py-1.5 !min-h-0"
+          className={cn('!text-xs !px-2 !py-1.5 !min-h-0', iconOnly && '!min-h-10 !min-w-10')}
         />
       )}
       {flagUrl && (
@@ -220,9 +231,9 @@ export const PageActionStrip = ({
           flagUrl={flagUrl}
           resourceLabel={flagLabel ?? title ?? 'Page'}
           resourceType={flagResourceType ?? 'Page'}
-          variant="text"
+          variant={iconOnly ? 'icon' : 'text'}
           label="Flag"
-          className="!text-xs !px-2 !py-1.5 !min-h-0"
+          className={cn('!text-xs !px-2 !py-1.5 !min-h-0', iconOnly && '!min-h-10 !min-w-10')}
         />
       )}
       {extra}

@@ -38,7 +38,8 @@ export const CHANGE_LABEL: Record<ChangeKind, string> = {
   'new-required-step': 'Curriculum changed',
   'new-section': 'New section',
   'new-tool': 'New tool',
-  'section-updated': 'Section updated',
+  // The Hub keeps one version per lesson, so a revised lesson is all it can say; the section is the learner's comment.
+  'section-updated': 'Lesson revised',
   'tool-updated': 'Tool updated',
 }
 
@@ -213,8 +214,8 @@ export function computeObjectiveChanges(
         push({
           id: `section-updated:${c.tag}@${version}`,
           kind: 'section-updated',
-          subject: label,
-          detail: `${lesson.title} was revised from version ${was.version} to version ${version}. You wrote a comment on ${label} before that.`,
+          subject: `${lesson.title}: ${label}`,
+          detail: `${lesson.title} was revised since you commented on ${label}. This section may not have changed.`,
           href: addressOf(c.tag),
         })
       }

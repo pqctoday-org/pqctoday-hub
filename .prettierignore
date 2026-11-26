@@ -63,6 +63,9 @@ public/compliance/**
 # and the CI verify-attestations gate.
 public/data/rag-corpus.json
 public/data/embeddings-meta.json
+# The two knowledge files are generated and hashed as built — same constraint.
+public/data/knowledge-core.json
+public/data/knowledge-text.json
 
 # OSCAL + CBOM trust-engine artefacts — same constraint as rag-corpus above.
 # scripts/generate-oscal.ts + scripts/generate-cbom.ts emit deterministic

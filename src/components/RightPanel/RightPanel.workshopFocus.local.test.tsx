@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RightPanel } from './RightPanel'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
@@ -32,10 +33,10 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals())
 function mount() {
   return render(
-    <>
+    <MemoryRouter>
       <Button>Sample resource action</Button>
       <RightPanel />
-    </>
+    </MemoryRouter>
   )
 }
 async function assertResourceFocusAllowed() {

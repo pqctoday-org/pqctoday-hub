@@ -8,6 +8,7 @@ import { AssistantConversation } from './AssistantConversation'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useChatStore } from '@/store/useChatStore'
+import { useAchievementStore } from '@/store/useAchievementStore'
 import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { setSavedAnswersPort } from '@/services/assistant/drawerSaves'
@@ -46,6 +47,24 @@ vi.mock('@/services/assistant/termLessons', async (orig) => ({
       : [],
 }))
 
+// The starting list holds three questions today; the ranker will offer more. A flag lets one test
+// see the collapsed "More questions" list that a longer list produces.
+const suggestionMode = vi.hoisted(() => ({ many: false }))
+vi.mock('./suggestionSource', async (orig) => {
+  const real = await orig<typeof import('./suggestionSource')>()
+  return {
+    ...real,
+    suggestionsFor: (asked: readonly string[]) => {
+      const base = real.suggestionsFor(asked)
+      if (!suggestionMode.many) return base
+      return [
+        ...base,
+        ...['Q four', 'Q five', 'Q six', 'Q seven'].map((question) => ({ question })),
+      ]
+    },
+  }
+})
+
 const layout = vi.hoisted(() => ({ value: 'docked' as 'docked' | 'sheet' }))
 vi.mock('./useAssistantLayout', async (orig) => ({
   ...(await orig<typeof import('./useAssistantLayout')>()),
@@ -78,8 +97,10 @@ function mount(initial = '/learn') {
 beforeEach(() => {
   client.failNext = 0
   client.calls = []
+  suggestionMode.many = false
   layout.value = 'docked'
   useAssistantSessionStore.getState().reset()
+  useAchievementStore.getState().resetAchievements()
   useAssistantReturnStore.getState().clear()
   useChatStore.setState({ pendingQuestion: null })
   useRightPanelStore.setState({ isOpen: true, activeTab: 'chat' })
@@ -371,5 +392,78 @@ describe('a question queued by another page', () => {
     expect(await screen.findByText('One Hub record matches that name.')).toBeInTheDocument()
     expect(screen.getByRole('article', { name: 'ML-KEM' })).toBeInTheDocument()
     expect(useChatStore.getState().pendingQuestion).toBeNull()
+  })
+})
+
+describe('counting questions for the Conversation Starter badge', () => {
+  const asked = () => useAchievementStore.getState().assistantQuestionCount
+
+  it('counts a typed question once (desktop: Return)', async () => {
+    mount()
+    await userEvent.setup().type(box(), 'ML-KEM{Enter}')
+    await answered('ML-KEM')
+    expect(asked()).toBe(1)
+  })
+
+  it('counts a typed question once (phone: the Send button)', async () => {
+    layout.value = 'sheet'
+    const user = userEvent.setup()
+    mount()
+    await user.type(box(), 'ML-KEM')
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+    await answered('ML-KEM')
+    expect(asked()).toBe(1)
+  })
+
+  it('counts a chosen suggested question once', async () => {
+    mount()
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: /Which deadlines apply to banks in the EU\?/ }))
+    await answered('Which deadlines apply to banks in the EU?')
+    expect(asked()).toBe(1)
+  })
+
+  it('counts a question from the "More questions" list once', async () => {
+    suggestionMode.many = true
+    const user = userEvent.setup()
+    mount()
+    await user.click(screen.getByRole('button', { name: 'More questions (3)' }))
+    await user.click(screen.getByRole('button', { name: 'Q seven' }))
+    await screen.findByRole('article', { name: 'Q seven' })
+    expect(client.calls).toEqual(['Q seven'])
+    expect(useAchievementStore.getState().assistantQuestionCount).toBe(1)
+  })
+
+  it('counts a question handed over by another page once', async () => {
+    act(() => useChatStore.getState().setPendingQuestion('ML-KEM'))
+    mount()
+    await screen.findByText('One Hub record matches that name.')
+    expect(asked()).toBe(1)
+  })
+
+  it('does not count an empty send, and does not count "Try again"', async () => {
+    const user = userEvent.setup()
+    client.failNext = 1
+    mount()
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+    expect(asked()).toBe(0)
+    await user.type(box(), 'ML-KEM{Enter}')
+    await screen.findByRole('alert')
+    expect(asked()).toBe(1)
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    await answered('ML-KEM')
+    expect(client.calls).toEqual(['ML-KEM', 'ML-KEM'])
+    expect(asked()).toBe(1)
+  })
+
+  it('counts each of several different questions', async () => {
+    const user = userEvent.setup()
+    mount()
+    await user.type(box(), 'ML-KEM{Enter}')
+    await answered('ML-KEM')
+    await user.type(box(), 'ML-DSA{Enter}')
+    await answered('ML-DSA')
+    expect(asked()).toBe(2)
   })
 })

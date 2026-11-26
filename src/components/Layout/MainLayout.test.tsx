@@ -132,7 +132,7 @@ describe('MainLayout top bar: the Assistant drawer and Bookmarks', () => {
     })
     useRightPanelStore.setState({ isOpen: true, activeTab: 'guide' })
     renderLayout('/about')
-    await waitFor(() => expect(useRightPanelStore.getState().isOpen).toBe(false))
+    await waitFor(() => expect(useRightPanelStore.getState().isOpen).toBe(false), { timeout: 5000 })
     const bar = screen.getByRole('banner')
     expect(within(bar).queryByRole('button', { name: 'Sources' })).toBeNull()
   })

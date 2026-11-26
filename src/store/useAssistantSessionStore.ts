@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The running conversation of the drawer: this visit only. Nothing here is persisted or synced,
- * so what a learner typed never leaves the tab. Each answer keeps its own resources.
+ * so what a learner typed never leaves the tab. Each answer keeps its own resources. The one thing
+ * kept beyond the visit is a count of questions asked (a number in the achievement store, no text).
  */
 import { create } from 'zustand'
 import type { AssistantAnswer, AssistantContext, AssistantRow } from '@/services/assistant/contract'
 import { askAssistant } from '@/components/Assistant/assistantClient'
+import { useAchievementStore } from '@/store/useAchievementStore'
 
 export type AssistantTurn =
   | { id: string; question: string; status: 'loading' }
@@ -57,6 +59,12 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
   ask: async (rawQuestion, context) => {
     const question = rawQuestion.trim()
     if (!question) return
+    // The one place every question passes through (typed, suggested, "more questions", handed over
+    // by another page, a saved answer reopened). Counted once, as a number only. Sending again the
+    // question that just failed to load ("Try again") is the same question: not counted again.
+    if (question !== get().failedQuestion) {
+      useAchievementStore.getState().recordAssistantQuestion()
+    }
     const id = `turn-${Date.now()}-${++counter}`
     const request = ++latestRequest
     set((s) => ({

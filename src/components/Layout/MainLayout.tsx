@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
 import { RoleSwitchNotice } from '@/components/Journey/RoleSwitch'
 import { motion, useReducedMotion } from 'framer-motion'
@@ -41,6 +41,7 @@ import { AchievementToast } from '../ui/AchievementToast'
 import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 import { ShareButton } from '../ui/ShareButton'
 import { DrawerToggleButton } from './DrawerToggleButton'
+import { TopBarDensityProvider, useTopBarDensityFor } from './topBarDensity'
 import { useDrawerPageStore } from '@/store/useDrawerPageStore'
 
 import { GuidedTour } from '../common/GuidedTour'
@@ -655,6 +656,21 @@ export const MainLayout = () => {
   // BEFORE deleting PKILearningView's own copies of these buttons.
   const pageIdForRoute = ROUTE_PAGE_ID[location.pathname] ?? pageIdForNestedRoute(location.pathname)
   const shareForRoute = ROUTE_SHARE[location.pathname]
+  // The desktop top bar drops its labels, then wraps, when its own width is short (the side drawer
+  // narrows it); see topBarDensity.tsx.
+  const topBarRef = useRef<HTMLDivElement>(null)
+  const topBarDensity = useTopBarDensityFor(
+    topBarRef,
+    [
+      Object.entries(pageActions ?? {})
+        .filter(([, v]) => Boolean(v))
+        .map(([k]) => k)
+        .join(','),
+      Boolean(viewTypeForRoute),
+      Boolean(pageIdForRoute),
+      roleLabel,
+    ].join('|')
+  )
   // What this route offers the drawer's Guide and Sources views (they follow the route).
   const sourcesDataSource = pageActions?.dataSource
   useEffect(() => {
@@ -664,6 +680,16 @@ export const MainLayout = () => {
       sourcesDataSource,
     })
   }, [pageIdForRoute, viewTypeForRoute, sourcesDataSource])
+  // The page's guide and sources follow the route; a route that has none closes that view rather
+  // than showing an empty one. Done here, not in the lazily loaded drawer, so it never waits on it.
+  useEffect(() => {
+    if (
+      (panelTab === 'guide' && !pageIdForRoute) ||
+      (panelTab === 'sources' && !viewTypeForRoute)
+    ) {
+      useRightPanelStore.getState().close()
+    }
+  }, [panelTab, pageIdForRoute, viewTypeForRoute])
 
   return (
     <div
@@ -1017,78 +1043,99 @@ export const MainLayout = () => {
                   report: "can't scroll to the right of the top bar"). Now
                   wrapped in the same ScrollFadeContainer the mobile nav row
                   below already uses for this exact problem. */}
-              <ScrollFadeContainer
-                className="hidden lg:flex flex-1 min-w-0"
-                scrollClassName="flex items-center justify-between gap-2 flex-nowrap"
-              >
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {pageActions && (
-                    <>
-                      <span className="w-px h-4 bg-border shrink-0" aria-hidden="true" />
-                      <PageActionStrip {...pageActions} className="shrink-0" />
-                    </>
+              <TopBarDensityProvider value={topBarDensity}>
+                <ScrollFadeContainer
+                  ref={topBarRef}
+                  className="hidden lg:flex flex-1 min-w-0"
+                  scrollClassName={cn(
+                    'flex items-center justify-between gap-2',
+                    topBarDensity === 3 ? 'flex-wrap gap-y-1' : 'flex-nowrap'
                   )}
-                </div>
-
-                <div className="flex items-center gap-0.5 shrink-0 flex-nowrap justify-end">
-                  <DrawerToggleButton tab="chat" icon={Bot} />
-                  <ShareButton
-                    title={
-                      pageActions?.shareTitle ??
-                      shareForRoute?.title ??
-                      `${currentLabel} — PQC Today`
-                    }
-                    text={pageActions?.shareText ?? shareForRoute?.text}
-                    // BUG FIX (Grade-A remediation Phase 2, top-bar Share):
-                    // most routes' whole shareable state lives in the URL
-                    // already, so omitting `url` and falling back to
-                    // ShareButton's own `window.location.href` default is
-                    // correct for them. /report is the exception — its state
-                    // lives in local/session store, not the URL — so it
-                    // registers a self-contained token URL via
-                    // `usePageActionsStore` (see ReportView.tsx). Every other
-                    // route's `pageActions.url` stays undefined, preserving
-                    // the existing bare-URL fallback exactly.
-                    url={pageActions?.url}
-                    variant="full"
-                  />
-                  <DrawerToggleButton tab="faq" icon={HelpCircle} />
-                  <DrawerToggleButton tab="bookmarks" icon={Bookmark} />
-                  {viewTypeForRoute && <DrawerToggleButton tab="sources" icon={BookOpen} />}
-                  <DrawerToggleButton tab="glossary" icon={BookOpenText} />
-                  {pageIdForRoute && <DrawerToggleButton tab="guide" icon={BookText} />}
-
-                  <Button
-                    variant="ghost"
-                    onClick={openPalette}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
-                    aria-label="Search (⌘K)"
-                    title="Search (⌘K)"
+                >
+                  <div
+                    className={cn(
+                      'flex items-center gap-1.5',
+                      topBarDensity === 3 ? 'flex-wrap' : 'shrink-0'
+                    )}
                   >
-                    <Search size={13} aria-hidden="true" />
-                    <span>Search</span>
-                    <kbd className="text-[9px] font-mono px-1 py-0.5 rounded border border-border/60 bg-muted/40">
-                      ⌘K
-                    </kbd>
-                  </Button>
+                    {pageActions && (
+                      <>
+                        <span className="w-px h-4 bg-border shrink-0" aria-hidden="true" />
+                        <PageActionStrip {...pageActions} className="shrink-0" />
+                      </>
+                    )}
+                  </div>
 
-                  <Button
-                    variant="ghost"
-                    onClick={() => setPersonaSwitchOpen(true)}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors shrink min-w-0"
-                    aria-label={`Switch role — currently ${roleLabel}`}
-                    title="Switch your role, region, or industry"
-                    // Guided-workshop entry point for the persona prerequisite step.
-                    // Replaces the retired PersonalizationSection wizard's
-                    // "persona-edit" anchor (see PersonaSwitchModal for the rest).
-                    data-workshop-target="persona-switch-open"
+                  <div
+                    className={cn(
+                      'flex items-center gap-0.5 justify-end',
+                      topBarDensity === 3 ? 'flex-wrap ml-auto' : 'shrink-0 flex-nowrap'
+                    )}
                   >
-                    <UserCog size={13} aria-hidden="true" />
-                    <span className="truncate max-w-[200px]">{roleLabel}</span>
-                    <ChevronDown size={11} aria-hidden="true" className="shrink-0" />
-                  </Button>
-                </div>
-              </ScrollFadeContainer>
+                    <DrawerToggleButton tab="chat" icon={Bot} />
+                    <ShareButton
+                      title={
+                        pageActions?.shareTitle ??
+                        shareForRoute?.title ??
+                        `${currentLabel} — PQC Today`
+                      }
+                      text={pageActions?.shareText ?? shareForRoute?.text}
+                      // BUG FIX (Grade-A remediation Phase 2, top-bar Share):
+                      // most routes' whole shareable state lives in the URL
+                      // already, so omitting `url` and falling back to
+                      // ShareButton's own `window.location.href` default is
+                      // correct for them. /report is the exception — its state
+                      // lives in local/session store, not the URL — so it
+                      // registers a self-contained token URL via
+                      // `usePageActionsStore` (see ReportView.tsx). Every other
+                      // route's `pageActions.url` stays undefined, preserving
+                      // the existing bare-URL fallback exactly.
+                      url={pageActions?.url}
+                      variant={topBarDensity >= 1 ? 'icon' : 'full'}
+                      buttonClassName={topBarDensity >= 1 ? 'min-h-10 min-w-10' : undefined}
+                    />
+                    <DrawerToggleButton tab="faq" icon={HelpCircle} />
+                    <DrawerToggleButton tab="bookmarks" icon={Bookmark} />
+                    {viewTypeForRoute && <DrawerToggleButton tab="sources" icon={BookOpen} />}
+                    <DrawerToggleButton tab="glossary" icon={BookOpenText} />
+                    {pageIdForRoute && <DrawerToggleButton tab="guide" icon={BookText} />}
+
+                    <Button
+                      variant="ghost"
+                      onClick={openPalette}
+                      className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
+                      aria-label="Search (⌘K)"
+                      title="Search (⌘K)"
+                    >
+                      <Search size={13} aria-hidden="true" />
+                      {topBarDensity < 2 && (
+                        <>
+                          <span>Search</span>
+                          <kbd className="text-[9px] font-mono px-1 py-0.5 rounded border border-border/60 bg-muted/40">
+                            ⌘K
+                          </kbd>
+                        </>
+                      )}
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      onClick={() => setPersonaSwitchOpen(true)}
+                      className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors shrink min-w-0"
+                      aria-label={`Switch role — currently ${roleLabel}`}
+                      title="Switch your role, region, or industry"
+                      // Guided-workshop entry point for the persona prerequisite step.
+                      // Replaces the retired PersonalizationSection wizard's
+                      // "persona-edit" anchor (see PersonaSwitchModal for the rest).
+                      data-workshop-target="persona-switch-open"
+                    >
+                      <UserCog size={13} aria-hidden="true" />
+                      <span className="truncate max-w-[200px]">{roleLabel}</span>
+                      <ChevronDown size={11} aria-hidden="true" className="shrink-0" />
+                    </Button>
+                  </div>
+                </ScrollFadeContainer>
+              </TopBarDensityProvider>
 
               {/* Mobile nav row — icon-only row + "More" sheet trigger.
                 Unchanged mechanism from before the rail rebuild; only the

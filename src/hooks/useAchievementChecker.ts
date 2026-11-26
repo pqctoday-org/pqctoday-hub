@@ -5,7 +5,7 @@ import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
-import { useAchievementStore } from '@/store/useAchievementStore'
+import { useAchievementStore, sanitizeQuestionCount } from '@/store/useAchievementStore'
 import { useEndorsementStore } from '@/store/useEndorsementStore'
 import { useSimulationStore } from '@/store/useSimulationStore'
 import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
@@ -31,6 +31,7 @@ export function useAchievementChecker() {
   const myProducts = useSelectedProductIds()
 
   const playgroundOpCount = useAchievementStore((s) => s.playgroundOpCount)
+  const assistantQuestionCount = useAchievementStore((s) => s.assistantQuestionCount)
   const playgroundToolsUsed = useAchievementStore((s) => s.playgroundToolsUsed)
   const businessToolsUsed = useAchievementStore((s) => s.businessToolsUsed)
   const sectionsVisited = useAchievementStore((s) => s.sectionsVisited)
@@ -109,9 +110,10 @@ export function useAchievementChecker() {
     const totalArtifactCsrs = artifacts?.csrs?.length ?? 0
     const totalArtifactExecDocs = artifacts?.executiveDocuments?.length ?? 0
 
-    // Chat. The old model chat that counted these questions, and its saved conversations, are
-    // gone; the Assistant keeps no saved history, so the count stays at zero.
-    const chatMessageCount = 0
+    // Conversation count: the questions asked in the Assistant drawer, a number kept on the
+    // device by the achievement store.
+    const assistantQuestions = sanitizeQuestionCount(assistantQuestionCount)
+    const chatMessageCount = assistantQuestions
 
     // Endorsements
     const endorsementCount = Object.values(endorsementRecords).filter((r) => r?.endorsed).length
@@ -158,6 +160,7 @@ export function useAchievementChecker() {
     myFrameworks,
     myProducts,
     playgroundOpCount,
+    assistantQuestionCount,
     playgroundToolsUsed,
     businessToolsUsed,
     sectionsVisited,

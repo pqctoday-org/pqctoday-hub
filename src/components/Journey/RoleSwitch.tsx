@@ -163,7 +163,7 @@ export function RoleSwitchDialog({ open, onClose }: RoleSwitchDialogProps) {
   )
 }
 
-/** After switching: "Now viewing as {role}." with Undo and Dismiss. Shows only right after a switch. */
+/** After switching: "Now viewing as {role}." with Undo and "Keep this role". Shows only right after a switch. */
 export function RoleSwitchNotice() {
   const note = useJourneyStore((s) => s.roleSwitch)
   const clear = useJourneyStore((s) => s.clearRoleSwitch)
@@ -196,7 +196,7 @@ export function RoleSwitchNotice() {
           Undo
         </StoryButton>
         <StoryButton variant="quiet" onClick={clear}>
-          Dismiss
+          Keep this role
         </StoryButton>
       </div>
     </div>
