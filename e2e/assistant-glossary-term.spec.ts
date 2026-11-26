@@ -10,6 +10,7 @@ import {
   isPhone,
   openDrawer,
   returnControl,
+  reveal,
   seedHub,
 } from './fixtures/assistantDrawer'
 
@@ -51,7 +52,9 @@ for (const [name, viewport] of [
       await page.goto('/learn')
       const drawer = await openDrawer(page)
       const answer = await ask(page, drawer, QUESTION)
-      await answer.getByRole('button', { name: 'Read here: ML-KEM', exact: true }).click()
+      await (
+        await reveal(answer, answer.getByRole('button', { name: 'Read here: ML-KEM', exact: true }))
+      ).click()
       return drawer
     }
 

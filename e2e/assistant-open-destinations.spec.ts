@@ -10,6 +10,7 @@ import {
   isPhone,
   openDrawer,
   returnControl,
+  reveal,
   seedHub,
 } from './fixtures/assistantDrawer'
 
@@ -121,11 +122,13 @@ for (const [name, viewport] of [
         await page.goto('/learn')
         const drawer = await openDrawer(page)
         const answer = await ask(page, drawer, question)
-        const action =
+        // Step through the card until the resource's action is on screen, as a learner does.
+        const action = await reveal(
+          answer,
           typeof open === 'string'
             ? answer.getByRole('button', { name: open, exact: true })
             : answer.getByRole('button', { name: open }).first()
-        await action.scrollIntoViewIfNeeded()
+        )
         await action.click()
         await expect(page).toHaveURL(url)
 
@@ -210,7 +213,9 @@ for (const [name, viewport] of [
       await page.goto('/learn')
       const drawer = await openDrawer(page)
       const answer = await ask(page, drawer, 'FIPS 203')
-      await answer.getByRole('button', { name: /^Library document/ }).click()
+      await (
+        await reveal(answer, answer.getByRole('button', { name: /^Library document/ }))
+      ).click()
       await expect(page).toHaveURL(/\/library\?ref=/)
       await expect(
         page.locator('[aria-modal="true"]:not([data-assistant-layout])').last()

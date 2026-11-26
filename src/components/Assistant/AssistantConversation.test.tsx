@@ -190,21 +190,78 @@ describe('asking', () => {
     expect(box()).toBeEnabled()
   })
 
-  it('keeps earlier answers with their own resources when a new question is asked', async () => {
+  it('opens each new answer and folds the one before it to a single line', async () => {
     const user = userEvent.setup()
     mount()
     await user.type(box(), 'When is the CNSA 2.0 deadline?{Enter}')
     await answered('When is the CNSA 2.0 deadline?')
     await user.type(box(), 'What is ML-KEM?{Enter}')
-    const first = await answered('When is the CNSA 2.0 deadline?')
     const second = await answered('What is ML-KEM?')
-    expect(
-      within(first).getByRole('group', { name: 'Hub resources in this answer' })
-    ).toBeInTheDocument()
-    expect(
-      within(second).getByRole('group', { name: 'Hub resources in this answer' })
-    ).toBeInTheDocument()
-    expect(screen.getByText('Earlier answer')).toBeInTheDocument()
+    const first = screen.getByRole('article', { name: 'When is the CNSA 2.0 deadline?' })
+    // the earlier answer is one button; only the new one has tabs
+    const folded = within(first).getByRole('button', { name: /Earlier answer/ })
+    expect(folded).toHaveAttribute('aria-expanded', 'false')
+    expect(folded).toHaveTextContent('3 resources · Learn, Compliance, Library')
+    expect(within(first).queryByRole('tablist')).toBeNull()
+    expect(within(second).getByRole('tablist', { name: 'Resource types' })).toBeInTheDocument()
+    expect(screen.getAllByRole('tablist')).toHaveLength(1)
+  })
+
+  it('opening a folded card folds the open one, and each card remembers its place', async () => {
+    const user = userEvent.setup()
+    mount()
+    await user.type(box(), 'When is the CNSA 2.0 deadline?{Enter}')
+    const cnsa = await answered('When is the CNSA 2.0 deadline?')
+    await user.click(within(cnsa).getByRole('button', { name: 'Next resource' }))
+    expect(within(cnsa).getByText('Top 5 · 2 of 3')).toBeInTheDocument()
+    await user.type(box(), 'What is ML-KEM?{Enter}')
+    await answered('What is ML-KEM?')
+
+    await user.click(within(cnsa).getByRole('button', { name: /Earlier answer/ }))
+    expect(within(cnsa).getByRole('tablist')).toBeInTheDocument()
+    expect(within(cnsa).getByText('Top 5 · 2 of 3')).toBeInTheDocument()
+    const mlkem = screen.getByRole('article', { name: 'What is ML-KEM?' })
+    expect(within(mlkem).queryByRole('tablist')).toBeNull()
+    expect(within(mlkem).getByRole('button', { name: /Earlier answer/ })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    )
+  })
+
+  it('scrolls the open card to the top of the list when its answer arrives (and when another card opens)', async () => {
+    // jsdom has no layout: give each card a position by its place in the list.
+    const top = vi.spyOn(HTMLElement.prototype, 'offsetTop', 'get').mockImplementation(function (
+      this: HTMLElement
+    ) {
+      const parent = this.parentElement
+      return parent?.getAttribute('data-testid') === 'assistant-list'
+        ? Array.from(parent.children).indexOf(this) * 500
+        : 0
+    })
+    const user = userEvent.setup()
+    mount()
+    const list = screen.getByTestId('assistant-list')
+    await user.type(box(), 'When is the CNSA 2.0 deadline?{Enter}')
+    await answered('When is the CNSA 2.0 deadline?')
+    await user.type(box(), 'What is ML-KEM?{Enter}')
+    await answered('What is ML-KEM?')
+    // the empty-state paragraph is gone, so the second card is the second child
+    expect(list.scrollTop).toBe(500)
+    const first = screen.getByRole('article', { name: 'When is the CNSA 2.0 deadline?' })
+    await user.click(within(first).getByRole('button', { name: /Earlier answer/ }))
+    expect(list.scrollTop).toBe(0)
+    top.mockRestore()
+  })
+
+  it('offers suggestions in a compact form under the open answer', async () => {
+    const user = userEvent.setup()
+    mount()
+    await user.type(box(), 'ML-KEM{Enter}')
+    await answered('ML-KEM')
+    const group = screen.getByRole('group', { name: 'Suggested questions' })
+    expect(within(group).getByText('Suggested')).toBeInTheDocument()
+    expect(within(group).getAllByRole('button')[0]).toHaveTextContent(/\?$/)
+    expect(screen.queryByText('Suggested for you')).toBeNull()
   })
 
   it('announces "Answer ready, n resources" politely', async () => {
@@ -250,6 +307,14 @@ describe('data did not load', () => {
 })
 
 describe('opening a resource', () => {
+  /** Steps with Next until the resource's action is on screen, as a learner does. */
+  async function reveal(user: ReturnType<typeof userEvent.setup>, name: string | RegExp) {
+    for (let i = 0; i < 30 && !screen.queryByRole('button', { name }); i++) {
+      await user.click(screen.getByRole('button', { name: /^Next resource/ }))
+    }
+    return screen.getByRole('button', { name })
+  }
+
   async function askConcept() {
     const user = userEvent.setup()
     mount('/learn')
@@ -284,7 +349,7 @@ describe('opening a resource', () => {
 
   it('Go to module navigates, leaves the desktop drawer open and starts the way back', async () => {
     const user = await askConcept()
-    await user.click(screen.getByRole('button', { name: 'Go to module: TLS Basics' }))
+    await user.click(await reveal(user, 'Go to module: TLS Basics'))
     expect(screen.getByTestId('where')).toHaveTextContent('/learn/tls-basics')
     expect(useRightPanelStore.getState().isOpen).toBe(true)
     expect(useAssistantReturnStore.getState().target).toMatchObject({

@@ -65,3 +65,24 @@ describe('RecordViewer: any other record', () => {
     expect(screen.queryByRole('button', { name: 'Open in the glossary' })).toBeNull()
   })
 })
+
+describe('RecordViewer: long titles and the phone sheet', () => {
+  it('lets the lesson button wrap, so a long lesson title stays inside the card', () => {
+    view({
+      row: glossaryMlKem as never,
+      lessons: [{ ...lesson, lessonTitle: 'The PQC Algorithms: How They Work and How to Choose' }],
+      onOpenLesson: () => {},
+    })
+    const button = screen.getByRole('button', { name: /^Open the lesson: The PQC Algorithms/ })
+    expect(button).toHaveClass('whitespace-normal', 'h-auto', 'max-w-full')
+  })
+
+  it('caps the pinned card at 40 percent of the sheet and scrolls inside it; the drawer card is not capped', () => {
+    const { unmount } = view({ row: fips203Row as never, variant: 'pinned' } as never)
+    const pinned = screen.getByRole('region', { name: fips203Row.title })
+    expect(pinned).toHaveClass('max-h-[40dvh]', 'overflow-y-auto', 'sticky')
+    unmount()
+    view({ row: fips203Row as never })
+    expect(screen.getByRole('region', { name: fips203Row.title })).not.toHaveClass('max-h-[40dvh]')
+  })
+})

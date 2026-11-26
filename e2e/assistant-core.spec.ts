@@ -34,7 +34,8 @@ test.describe('Assistant drawer, core', () => {
     const drawer = await openDrawer(page)
     const answer = await ask(page, drawer, FACT)
     await expect(answer.getByRole('group', { name: 'Direct answer' })).toContainText('2031')
-    await expect(answer.getByRole('group', { name: 'Hub resources in this answer' })).toBeVisible()
+    await expect(answer.getByRole('tablist', { name: 'Resource types' })).toBeVisible()
+    await expect(answer.getByRole('tabpanel')).toBeVisible()
     expect(foreign, 'the Assistant makes no request to another host').toEqual([])
   })
 

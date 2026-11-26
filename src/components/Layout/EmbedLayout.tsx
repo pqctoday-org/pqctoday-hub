@@ -31,7 +31,12 @@ import { useHostCheck } from '../../embed/useHostCheck'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
-import { useAssistantLayout, drawerPaddingClass } from '../Assistant/useAssistantLayout'
+import {
+  useAssistantLayout,
+  useAssistantDrawerWidth,
+  drawerPaddingClass,
+  drawerPaddingStyle,
+} from '../Assistant/useAssistantLayout'
 import { logEmbedPolicyApplied } from '../../utils/analytics'
 import { INDUSTRY_SLUG_TO_LABEL } from '../../data/personaConfig'
 import { useSearchParams } from 'react-router'
@@ -49,6 +54,7 @@ export const EmbedLayout = () => {
   const embedConfig = useEmbed()
   const { isOpen: isPanelOpen, activeTab: panelTab } = useRightPanelStore()
   const assistantLayout = useAssistantLayout()
+  const assistantWidth = useAssistantDrawerWidth()
 
   // Initialize persistence and auth flows
   useEmbedPersistence()
@@ -443,6 +449,7 @@ export const EmbedLayout = () => {
           assistantLayout,
           panelTab
         )}`}
+        style={drawerPaddingStyle(isPanelOpen, assistantLayout, panelTab, assistantWidth)}
       >
         {/* Left sidebar — fixed height, never scrolls with content */}
         <aside
@@ -528,6 +535,7 @@ export const EmbedLayout = () => {
         assistantLayout,
         panelTab
       )}`}
+      style={drawerPaddingStyle(isPanelOpen, assistantLayout, panelTab, assistantWidth)}
     >
       {/* Conditionally render header based on policy.features.hideNav */}
       {!embedConfig.policy.features.hideNav && (

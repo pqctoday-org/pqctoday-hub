@@ -70,10 +70,10 @@ for (const [name, viewport] of [
       const direct = answer.getByRole('group', { name: 'Direct answer' })
       await expect(direct).toContainText('2031')
       await expect(direct).toContainText('Checked against the record.')
-      await expect(answer.getByText(/^Answer drawn from:/)).toBeVisible()
-      await expect(
-        answer.getByRole('group', { name: 'Hub resources in this answer' })
-      ).toBeVisible()
+      await expect(answer.getByText(/^From: /)).toBeVisible()
+      // One card: a bar of resource types, and one resource at a time.
+      await expect(answer.getByRole('tablist', { name: 'Resource types' })).toBeVisible()
+      await expect(answer.getByRole('tabpanel')).toBeVisible()
       // A polite status line announces the answer without moving focus.
       await expect(
         drawer.getByRole('status').filter({ hasText: /^Answer ready, \d+ resource/ })
@@ -90,7 +90,7 @@ for (const [name, viewport] of [
 
       const concept = await ask(page, drawer, CONCEPT)
       await expect(concept.getByText('No direct answer: resources only.')).toBeVisible()
-      await expect(concept.getByText(/^Closest source:/)).toBeVisible()
+      await expect(concept.getByText(/^Closest: /)).toBeVisible()
 
       const card = await ask(page, drawer, NAME)
       await expect(card.getByText('One Hub record matches that name.')).toBeVisible()
@@ -109,20 +109,30 @@ for (const [name, viewport] of [
 
       const guess = await ask(page, drawer, NOT_A_FACT)
       await expect(guess.getByText(/prediction|opinion|advice/i)).toBeVisible()
-      await expect(guess.getByText(/^Answer drawn from:/)).toHaveCount(0)
+      await expect(guess.getByText(/^(From|Closest): /)).toHaveCount(0)
     })
 
-    test('each answer keeps its own resources, and an empty question is not sent', async ({
+    test('each answer is one card; the earlier one folds and keeps its own resources, and an empty question is not sent', async ({
       page,
     }) => {
       await page.goto('/learn')
       const drawer = await openDrawer(page)
       const first = await ask(page, drawer, FACT)
-      const firstRows = await first.getByRole('listitem').count()
-      expect(firstRows).toBeGreaterThan(0)
+      const firstTabs = await first.getByRole('tab').count()
+      expect(firstTabs).toBeGreaterThan(1)
       await ask(page, drawer, CONCEPT)
-      await expect(drawer.getByText('Earlier answer')).toHaveCount(1)
-      await expect(answerOf(drawer, FACT).getByRole('listitem')).toHaveCount(firstRows)
+      // Only the newest card is open; the first is one line with its summary.
+      await expect(drawer.getByRole('tablist')).toHaveCount(1)
+      const folded = answerOf(drawer, FACT).getByRole('button', { name: /^Earlier answer/ })
+      await expect(folded).toHaveAttribute('aria-expanded', 'false')
+      await expect(folded).toContainText(/\d+ resources · /)
+      // Opening it folds the other, and its resources are all still there.
+      await folded.click()
+      await expect(drawer.getByRole('tablist')).toHaveCount(1)
+      await expect(answerOf(drawer, FACT).getByRole('tab')).toHaveCount(firstTabs)
+      await expect(
+        answerOf(drawer, CONCEPT).getByRole('button', { name: /^Earlier answer/ })
+      ).toHaveAttribute('aria-expanded', 'false')
 
       const input = drawer.getByRole('textbox', { name: 'Your question' })
       await input.fill('   ')
@@ -306,8 +316,8 @@ for (const [name, viewport] of [
       await expect(answer.getByRole('button', { name: 'Saved to My work' })).toBeFocused()
       expect(await focusedName(page)).toBe('Saved to My work')
 
-      // Go to the page the answer points to.
-      await pressUntil(page, 'Shift+Tab', /^Go to page: CNSA 2\.0$/)
+      // Go to the page the answer points to: the first resource of the card comes after Save answer.
+      await pressUntil(page, 'Tab', /^Go to page: CNSA 2\.0$/)
       await page.keyboard.press('Enter')
       await expect(page).toHaveURL(/\/compliance\?framework=CNSA-2/)
       const detail = page.getByRole('dialog', { name: /CNSA 2\.0/ })
