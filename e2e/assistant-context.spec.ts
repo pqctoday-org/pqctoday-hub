@@ -199,7 +199,7 @@ test.describe('Suggested questions follow the learner', () => {
     expect(before).not.toBeNull()
 
     const first = await mainQuestion(drawer)
-    expect(first).toBe('What is TLS Basics about?')
+    expect(first).toBe('What is the lesson “TLS Basics” about?')
     const answer = await ask(page, drawer, first)
     await expect(answer.getByRole('tabpanel')).toBeVisible()
 
@@ -235,7 +235,7 @@ test.describe('Suggested questions follow the learner', () => {
     await page.goto('/learn/tls-basics')
     let drawer = await openDrawer(page)
     const first = await mainQuestion(drawer)
-    expect(first).toBe('What is TLS Basics about?')
+    expect(first).toBe('What is the lesson “TLS Basics” about?')
     await ask(page, drawer, first)
 
     // only hashes of the question and of the state are kept on the device
