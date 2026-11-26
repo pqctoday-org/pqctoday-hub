@@ -41,7 +41,10 @@ function readerOf(records: KnowledgeRecord[], links: KnowledgeLink[]): Knowledge
       inputs: [],
       input_patterns: [],
     },
-    records: [rec('LM-020', 'module', 'module', 'PKI Workshop', '/learn/pki-workshop'), ...records],
+    records: [
+      rec('LM-900', 'module', 'module', 'Fixture lesson', '/learn/fixture-lesson'),
+      ...records,
+    ],
     aliases: {},
     links,
     relations: {},
@@ -49,15 +52,15 @@ function readerOf(records: KnowledgeRecord[], links: KnowledgeLink[]): Knowledge
   return new KnowledgeReader(core)
 }
 
-const taught = (id: string): KnowledgeLink => [id, 'taught_in', 'LM-020', 'declared', 's']
+const taught = (id: string): KnowledgeLink => [id, 'taught_in', 'LM-900', 'declared', 's']
 
 const many = (n: number, make: (i: number) => KnowledgeRecord) =>
   Array.from({ length: n }, (_, i) => make(i + 1))
 
-function renderBox() {
+function renderBox(moduleId = 'fixture-lesson') {
   return render(
     <MemoryRouter>
-      <LessonResourcesBox moduleId="pki-workshop" />
+      <LessonResourcesBox moduleId={moduleId} />
     </MemoryRouter>
   )
 }
@@ -196,4 +199,108 @@ describe('LessonResourcesBox', () => {
     await Promise.resolve()
     expect(container.innerHTML).toBe('')
   })
+})
+
+describe('LessonResourcesBox: the kept links', () => {
+  beforeEach(() => {
+    load.mockReset()
+  })
+
+  it('shows Related lessons and Elsewhere on the Hub at once, before the knowledge file has loaded', () => {
+    load.mockImplementation(() => new Promise(() => undefined))
+    renderBox('kms-pqc')
+    const box = screen.getByRole('region', { name: 'Related resources' })
+    const lessons = within(box).getByRole('list', { name: /^Related lessons \(\d+\)$/ })
+    const trust = within(lessons).getByRole('link', {
+      name: /Compare with the other trust hardware/,
+    })
+    expect(trust.getAttribute('href')).toBe('/learn/arch-quantum-impact?tab=workshop&step=5')
+    expect(trust.textContent).toContain('Workshop step')
+    expect(trust.textContent).toContain('HSMs, TPMs, confidential computing and DPUs side by side')
+    const pages = within(box).getByRole('list', { name: /^Elsewhere on the Hub \(\d+\)$/ })
+    const migrate = within(pages).getByRole('link', { name: /Migration Guide/ })
+    expect(migrate.getAttribute('href')).toBe('/migrate')
+    expect(migrate.textContent).toContain('Page: Migrate')
+  })
+
+  it('shows the kept groups ahead of the generated ones', async () => {
+    const records = [
+      rec('LM-901', 'module', 'module', 'KMS', '/learn/kms-pqc'),
+      rec('LIB:x', 'library', 'standard', 'FIPS 203', '/library?ref=x'),
+    ]
+    const core = readerOf(records, [['LIB:x', 'taught_in', 'LM-901', 'declared', 's']]).core
+    load.mockResolvedValue(new KnowledgeReader(core))
+    renderBox('kms-pqc')
+    await screen.findByRole('list', { name: /^Documents this lesson draws on/ })
+    const names = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
+    expect(names).toEqual([
+      expect.stringMatching(/^Related lessons/),
+      expect.stringMatching(/^Elsewhere on the Hub/),
+      expect.stringMatching(/^Documents this lesson draws on/),
+    ])
+  })
+
+  it('shows 5 kept lessons then Show all', async () => {
+    load.mockResolvedValue(readerOf([], []))
+    renderBox('hybrid-crypto')
+    const lessons = screen.getByRole('list', { name: /^Related lessons \(6\)$/ })
+    expect(within(lessons).getAllByRole('link')).toHaveLength(5)
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Show all 6' }))
+    expect(within(lessons).getAllByRole('link')).toHaveLength(6)
+  })
+
+  it('shows a kept link with no reason as a kind and a title only', () => {
+    load.mockImplementation(() => new Promise(() => undefined))
+    renderBox('pqc-business-case')
+    const lessons = screen.getByRole('list', { name: /^Related lessons/ })
+    const link = within(lessons).getByRole('link', { name: /PQC Risk Management/ })
+    expect(link.querySelectorAll('span')).toHaveLength(2)
+    expect(link.getAttribute('href')).toBe('/learn/pqc-risk-management')
+  })
+
+  it('draws no kept group for a lesson the file does not list', async () => {
+    load.mockResolvedValue(readerOf([], []))
+    const { container } = renderBox('quiz')
+    await waitFor(() => expect(load).toHaveBeenCalled())
+    await Promise.resolve()
+    expect(container.innerHTML).toBe('')
+  })
+
+  it('says which record a chip means when a term and an algorithm share a name', async () => {
+    const recs = [
+      rec('GL:x25519', 'glossary', 'term', 'X25519MLKEM768', '/learn?glossary=x'),
+      rec('ALG:x25519', 'algorithm', 'algorithm', 'X25519MLKEM768', '/algorithms?algo=x'),
+    ]
+    load.mockResolvedValue(
+      readerOf(
+        recs,
+        recs.map((r) => taught(r.id))
+      )
+    )
+    renderBox('fixture-lesson')
+    const terms = await screen.findByRole('list', { name: /^Terms taught here/ })
+    const text = within(terms)
+      .getAllByRole('link')
+      .map((a) => a.textContent)
+    // The algorithm's chip names its kind (visibly, and for a screen reader); the glossary term's does not.
+    expect(text).toEqual(['X25519MLKEM768· Algorithm, Algorithm', 'X25519MLKEM768'])
+  })
+})
+
+describe('LessonResourcesBox: the trust-hardware comparison', () => {
+  beforeEach(() => {
+    load.mockReset()
+    load.mockImplementation(() => new Promise(() => undefined))
+  })
+
+  it.each(['confidential-computing', 'hsm-pqc', 'kms-pqc', 'secure-boot-pqc'])(
+    '%s offers one "Compare with the other trust hardware" link, to Step 6 of Architect Quantum Impact',
+    (lesson) => {
+      renderBox(lesson)
+      const links = screen
+        .getAllByRole('link', { name: /Compare with the other trust hardware/ })
+        .map((a) => a.getAttribute('href'))
+      expect(links).toEqual(['/learn/arch-quantum-impact?tab=workshop&step=5'])
+    }
+  )
 })

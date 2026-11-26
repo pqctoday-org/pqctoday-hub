@@ -21,7 +21,13 @@ const rec = (
   ...extra,
 })
 
-const taught = (from: string, to: string): KnowledgeLink => [from, 'taught_in', to, 'declared', 's']
+const taught = (from: string, to: string, basis = 'declared'): KnowledgeLink => [
+  from,
+  'taught_in',
+  to,
+  basis,
+  's',
+]
 
 function readerFor(records: KnowledgeRecord[], links: KnowledgeLink[]): KnowledgeReader {
   const core: KnowledgeCore = {
@@ -200,10 +206,74 @@ describe('lessonResources', () => {
     ])
   })
 
+  it('puts the most relevant terms first: the lesson itself, then reviewed, declared, title-derived; then by label', () => {
+    const r = readerFor(
+      [
+        lesson,
+        section,
+        rec('GL:a-title', 'glossary', 'term', { label: 'A title only' }),
+        rec('GL:b-declared', 'glossary', 'term', { label: 'B declared' }),
+        rec('GL:c-reviewed', 'glossary', 'term', { label: 'C reviewed' }),
+        rec('GL:d-section', 'glossary', 'term', { label: 'D section only' }),
+        rec('GL:e-both', 'glossary', 'term', { label: 'E section then lesson' }),
+        rec('GL:f-declared', 'glossary', 'term', { label: 'F declared' }),
+        rec('ALG:g', 'algorithm', 'algorithm', { label: 'G name match' }),
+      ],
+      [
+        taught('GL:a-title', 'LM-020', 'title'),
+        taught('GL:b-declared', 'LM-020', 'declared'),
+        taught('GL:c-reviewed', 'LM-020', 'reviewed'),
+        taught('GL:d-section', 'LM-020/s:csr', 'reviewed'),
+        taught('GL:e-both', 'LM-020/s:csr', 'reviewed'),
+        taught('GL:e-both', 'LM-020', 'declared'),
+        taught('GL:f-declared', 'LM-020', 'declared'),
+        taught('ALG:g', 'LM-020', 'name-match'),
+      ]
+    )
+    expect(lessonResources(r, 'pki-workshop').terms.map((t) => t.id)).toEqual([
+      'GL:c-reviewed',
+      'GL:b-declared',
+      'GL:e-both',
+      'GL:f-declared',
+      'GL:a-title',
+      'ALG:g',
+      'GL:d-section',
+    ])
+  })
+
+  it('lists compliance guidance and frameworks the lesson covers, apart from the documents', () => {
+    const r = readerFor(
+      [
+        lesson,
+        rec('CMP:NIS2', 'compliance', 'guidance', { label: 'NIS2' }),
+        rec('CMP:DORA', 'compliance', 'framework', { label: 'DORA' }),
+        rec('CMP:old', 'compliance', 'guidance', { label: 'Old', active: false }),
+      ],
+      [taught('CMP:NIS2', 'LM-020'), taught('CMP:DORA', 'LM-020'), taught('CMP:old', 'LM-020')]
+    )
+    const got = lessonResources(r, 'pki-workshop')
+    expect(got.compliance.map((c) => c.label)).toEqual(['DORA', 'NIS2'])
+    expect(got.compliance.map((c) => c.kind)).toEqual([
+      'Compliance framework',
+      'Compliance framework',
+    ])
+    expect(got.documents).toEqual([])
+  })
+
   it('gives empty groups for a lesson with nothing linked and for an unknown lesson', () => {
     const r = readerFor([lesson], [])
-    expect(lessonResources(r, 'pki-workshop')).toEqual({ terms: [], documents: [], useCases: [] })
-    expect(lessonResources(r, 'no-such-lesson')).toEqual({ terms: [], documents: [], useCases: [] })
+    expect(lessonResources(r, 'pki-workshop')).toEqual({
+      terms: [],
+      documents: [],
+      compliance: [],
+      useCases: [],
+    })
+    expect(lessonResources(r, 'no-such-lesson')).toEqual({
+      terms: [],
+      documents: [],
+      compliance: [],
+      useCases: [],
+    })
     expect(hasLessonResources(lessonResources(r, 'pki-workshop'))).toBe(false)
   })
 

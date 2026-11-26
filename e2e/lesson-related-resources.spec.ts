@@ -103,13 +103,97 @@ for (const viewport of VIEWPORTS) {
         await box.getByRole('button', { name: 'Show fewer' }).first().click()
         await expect(documents.getByRole('link')).toHaveCount(5)
 
-        // A document row opens its own Library record.
-        const first = documents.getByRole('link').first()
-        const href = await first.getAttribute('href')
+        // A document row opens its own Library record: the record's title is in the opened drawer or dialog.
+        const first = documents.getByRole('listitem').first()
+        const title = (await first.locator('span.block.font-bold').innerText()).trim()
+        const href = await first.getByRole('link').getAttribute('href')
         expect(href).toMatch(/^\/library\?ref=/)
-        await first.click()
+        await first.getByRole('link').click()
         await expect(page).toHaveURL(/\/library\?.*ref=/)
-        await expect(page.getByRole('heading', { name: /./ }).first()).toBeVisible()
+        const opened = page.getByRole('dialog').first()
+        await expect(opened).toBeVisible()
+        await expect(opened.getByText(title, { exact: false }).first()).toBeVisible()
+      })
+    }
+  })
+}
+
+/** Lessons that kept hand links: a filtered Library link, a protocol-matrix link, and one of the trust-hardware lessons. */
+const KEPT = [
+  { lesson: 'api-security-jwt', filtered: '/library?q=JOSE' },
+  { lesson: 'tls-basics', filtered: '/algorithms?tab=support&protocol=tls-1-3' },
+  { lesson: 'kms-pqc', filtered: '/learn/arch-quantum-impact?tab=workshop&step=5' },
+]
+
+for (const viewport of VIEWPORTS) {
+  test.describe(`kept links, ${viewport.name}`, () => {
+    test.use({ viewport: { width: viewport.width, height: viewport.height } })
+
+    for (const { lesson, filtered } of KEPT) {
+      test(`/learn/${lesson}: Related lessons and Elsewhere on the Hub`, async ({ page }) => {
+        await seedFirstVisit(page)
+        await page.goto(`/learn/${lesson}`)
+        const box = page.getByRole('region', { name: 'Related resources' })
+        await box.scrollIntoViewIfNeeded({ timeout: 30_000 })
+        await expect(box).toBeVisible({ timeout: 30_000 })
+
+        const lessons = box.getByRole('list', { name: /^Related lessons \(\d+\)$/ })
+        const pages = box.getByRole('list', { name: /^Elsewhere on the Hub \(\d+\)$/ })
+        await expect(lessons).toBeVisible()
+        await expect(pages).toBeVisible()
+        // Each kept link carries its kind and, where the lesson gave one, its reason.
+        await expect(lessons.getByRole('link').first()).toContainText(/Module|Workshop step/)
+        await expect(pages.getByRole('link').first()).toContainText('Page: ')
+
+        // Axe is clean inside the box, and every link is at least 44px tall to tap.
+        await injectAxe(page)
+        const violations = await getViolations(page, '[data-testid="lesson-resources"]', {
+          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+        })
+        expect(
+          violations
+            .filter((v) => v.impact === 'critical' || v.impact === 'serious')
+            .map((v) => v.id)
+        ).toEqual([])
+        for (const list of [lessons, pages]) {
+          for (const link of await list.getByRole('link').all()) {
+            expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(43.5)
+          }
+        }
+
+        // A lesson link opens that lesson.
+        const target = lessons.locator('a[href^="/learn/"]:not([href*="?"])').first()
+        const targetPath = await target.getAttribute('href')
+        await target.click()
+        await expect(page).toHaveURL((u) => u.pathname === targetPath)
+        await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible()
+      })
+
+      test(`/learn/${lesson}: the filtered link ${filtered} opens with its filter applied`, async ({
+        page,
+      }) => {
+        await seedFirstVisit(page)
+        await page.goto(`/learn/${lesson}`)
+        const box = page.getByRole('region', { name: 'Related resources' })
+        await box.scrollIntoViewIfNeeded({ timeout: 30_000 })
+        const link = box.locator(`a[href="${filtered}"]`)
+        await expect(link).toHaveCount(1)
+        await link.click()
+        await expect(page).toHaveURL((u) => u.pathname + u.search === filtered)
+
+        if (filtered.startsWith('/library?q=')) {
+          // The search box holds the filter and a result is about it.
+          await expect(page.getByRole('textbox', { name: /^Search/ }).first()).toHaveValue('JOSE')
+          await expect(page.getByRole('heading', { name: /JOSE/ }).first()).toBeVisible()
+        } else if (filtered.startsWith('/algorithms?')) {
+          // The protocol's own panel is open.
+          await expect(page.getByRole('dialog', { name: 'TLS 1.3' })).toBeVisible()
+        } else {
+          // The trust-hardware step of the other lesson is the step on screen.
+          await expect(
+            page.getByRole('heading', { name: 'Step 6: Trust Hardware Selector' })
+          ).toBeVisible()
+        }
       })
     }
   })

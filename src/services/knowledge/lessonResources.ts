@@ -15,13 +15,21 @@ export interface LessonResource {
   kind: string
   /** The Hub address the record opens (its own `link`). */
   link: string
+  /** The one-line reason a kept link gave (see src/data/lessonRelatedLinks.ts); absent for records from the knowledge file. */
+  reason?: string
 }
 
 export interface LessonResources {
-  /** Glossary terms, algorithms and protocols the lesson teaches, by label. */
+  /**
+   * Glossary terms, algorithms and protocols the lesson teaches, most relevant first: records linked to the lesson
+   * itself before records linked only to one of its sections or steps; then reviewed links, then declared ones, then
+   * title- or name-derived ones; then by label.
+   */
   terms: LessonResource[]
   /** Library documents the lesson draws on: standards first, then guidance, frameworks, documents, algorithms. */
   documents: LessonResource[]
+  /** Compliance frameworks and guidance the lesson covers, by label. */
+  compliance: LessonResource[]
   /** Industry use cases the lesson covers, by label. */
   useCases: LessonResource[]
 }
@@ -42,7 +50,11 @@ export const KIND_CHIP: Readonly<Record<string, string>> = {
 /** Library document types in the order the box ranks them. Anything else comes after these. */
 const DOCUMENT_RANK = ['standard', 'guidance', 'framework', 'document', 'algorithm']
 
+/** How a `taught_in` link was made, best first (the link row's basis). Anything else ranks after these. */
+const BASIS_RANK = ['reviewed', 'declared']
+
 export const TERMS_SHOWN = 12
+export const COMPLIANCE_SHOWN = 5
 export const DOCUMENTS_SHOWN = 5
 export const USE_CASES_SHOWN = 5
 
@@ -74,11 +86,12 @@ function toResource(r: KnowledgeRecord): LessonResource {
 }
 
 /** The group a record belongs to in the box, or null when the box does not show it. */
-function groupOf(r: KnowledgeRecord): 'terms' | 'documents' | 'useCases' | null {
+function groupOf(r: KnowledgeRecord): 'terms' | 'documents' | 'compliance' | 'useCases' | null {
   if (r.family === 'glossary' && r.type === 'term') return 'terms'
   if (r.family === 'algorithm' || r.family === 'algorithmfamily' || r.type === 'protocol')
     return 'terms'
   if (r.family === 'library') return 'documents'
+  if (r.family === 'compliance') return 'compliance'
   if (r.family === 'usecase') return 'useCases'
   return null
 }
@@ -122,24 +135,39 @@ function lessonAndParts(reader: KnowledgeReader, tag: string): string[] {
  * file does not know gives three empty groups.
  */
 export function lessonResources(reader: KnowledgeReader, lessonId: string): LessonResources {
-  const empty: LessonResources = { terms: [], documents: [], useCases: [] }
+  const empty: LessonResources = { terms: [], documents: [], compliance: [], useCases: [] }
   const tag = lessonTag(reader, lessonId)
   if (!tag) return empty
 
   const seen = new Set<string>()
   const terms: KnowledgeRecord[] = []
   const library: KnowledgeRecord[] = []
+  const compliance: KnowledgeRecord[] = []
   const useCases: KnowledgeRecord[] = []
+  // For a term: [0 when linked to the lesson itself, else 1, rank of the link's basis], the best over its links.
+  const termKey = new Map<string, [number, number]>()
   for (const target of lessonAndParts(reader, tag)) {
     for (const link of reader.linksOf(target).in) {
-      if (link[1] !== 'taught_in' || seen.has(link[0])) continue
+      if (link[1] !== 'taught_in') continue
       const r = reader.get(link[0])
       if (!r || !isActive(r)) continue
       const group = groupOf(r)
       if (!group) continue
+      if (group === 'terms') {
+        const basis = BASIS_RANK.indexOf(link[3])
+        const key: [number, number] = [
+          target === tag ? 0 : 1,
+          basis === -1 ? BASIS_RANK.length : basis,
+        ]
+        const best = termKey.get(r.id)
+        if (!best || key[0] < best[0] || (key[0] === best[0] && key[1] < best[1]))
+          termKey.set(r.id, key)
+      }
+      if (seen.has(r.id)) continue
       seen.add(r.id)
       if (group === 'terms') terms.push(r)
       else if (group === 'documents') library.push(r)
+      else if (group === 'compliance') compliance.push(r)
       else useCases.push(r)
     }
   }
@@ -159,11 +187,15 @@ export function lessonResources(reader: KnowledgeReader, lessonId: string): Less
   })
 
   return {
-    terms: terms.map(toResource).sort(byLabel),
+    terms: terms
+      .map((r) => ({ item: toResource(r), key: termKey.get(r.id) ?? [1, BASIS_RANK.length] }))
+      .sort((a, b) => a.key[0] - b.key[0] || a.key[1] - b.key[1] || byLabel(a.item, b.item))
+      .map(({ item }) => item),
     documents: documents.map(toResource),
+    compliance: compliance.map(toResource).sort(byLabel),
     useCases: useCases.map(toResource).sort(byLabel),
   }
 }
 
 export const hasLessonResources = (r: LessonResources): boolean =>
-  r.terms.length + r.documents.length + r.useCases.length > 0
+  r.terms.length + r.documents.length + r.compliance.length + r.useCases.length > 0
