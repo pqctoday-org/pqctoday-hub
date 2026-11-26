@@ -96,6 +96,17 @@ export class KnowledgeReader {
   }
 
   /**
+   * The record a Hub address opens, by the address alone (never by a name): the one record that owns it, or the one top-level record
+   * when several share it. Undefined when the address opens nothing the model has, or when it could mean several records.
+   */
+  recordAt(address: string): KnowledgeRecord | undefined {
+    const list = this.byLink.get(address)
+    if (!list) return undefined
+    const top = list.filter((r) => !r.parent)
+    return list.length === 1 ? list[0] : top.length === 1 ? top[0] : undefined
+  }
+
+  /**
    * What a visitor typed or followed: a tag (exact), then a former id or a name (the alias table), then an address.
    * A name that fits several records is `ambiguous`, never guessed; the same tag is never ambiguous.
    */

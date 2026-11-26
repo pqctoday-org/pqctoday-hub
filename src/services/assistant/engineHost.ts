@@ -20,6 +20,7 @@ import { buildEngineInput } from './buildEngine'
 import patternFile from './data/answer.generated.json'
 import dataFile from './data/data.generated.json'
 import { Answerer } from './engine/answerer'
+import { pageTagFor } from './pageTag'
 import type { Reading } from './engine/engine'
 
 /**
@@ -37,6 +38,8 @@ interface Loaded {
   chip: (tag: string, engineKind: string) => string
   /** Where a row opens: the engine's address, except a short `/go/` address, which becomes the record's own address. */
   address: (tag: string, engineLink: string) => string
+  /** The knowledge tag of the page the learner is on (given as a tag or an address), or null when the page is not a record. */
+  pageTag: (page: string | null | undefined) => string | null
 }
 
 let loading: Promise<Loaded> | null = null
@@ -94,6 +97,7 @@ async function load(): Promise<Loaded> {
     intents: spec.intents.intents,
     chip,
     address,
+    pageTag: (page) => pageTagFor(page, reader),
   }
 }
 
@@ -177,7 +181,7 @@ export async function answerOnThisThread(
   const loaded = await ensureLoaded()
   const persona: PersonaId | null =
     ctx.persona && loaded.roles.has(ctx.persona) ? ctx.persona : null
-  const raw = loaded.answerer.ask(question, persona) as Raw
+  const raw = loaded.answerer.ask(question, persona, null, loaded.pageTag(ctx.page)) as Raw
   const intent = raw.intent as AssistantIntent
   const base = {
     question,

@@ -154,7 +154,7 @@ export const RightPanel: React.FC = () => {
             <PanelHeader
               title={title}
               activeTab={activeTab}
-              onClose={sheet && !workshopActive ? close : undefined}
+              onClose={workshopActive ? undefined : close}
               docked={!sheet}
             />
             <div className="flex min-h-0 flex-1 flex-col">

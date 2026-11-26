@@ -14,7 +14,7 @@ import { buildResourceTabs } from './resourceTabs'
 import { isGlossaryTag, termLessonsFor, type TermLesson } from '@/services/assistant/termLessons'
 import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { Suggestions } from './Suggestions'
-import { suggestionsFor } from './suggestionSource'
+import { useRememberAsked, useSuggestions } from './useSuggestions'
 import { COPY } from './copy'
 import { describeCurrentPage } from './returnTarget'
 import { useAssistantContext } from './useAssistantContext'
@@ -212,7 +212,8 @@ export function AssistantConversation() {
     [openPage, setOpened]
   )
 
-  const suggestions = suggestionsFor(turns.map((t) => t.question))
+  const suggestions = useSuggestions()
+  useRememberAsked()
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

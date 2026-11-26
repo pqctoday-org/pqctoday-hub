@@ -73,6 +73,18 @@ describe('the answer engine in a worker', () => {
     expect(asks.map((r) => (r as { persona: string | null }).persona)).toEqual(['architect', null])
   }, 120_000)
 
+  it('sends the page with the question and gets the same answer as on this thread', async () => {
+    const q = 'What is 3GPP?'
+    const here = await answer(q, { page: 'LM-004' })
+    forgetAssistant()
+    vi.stubGlobal('Worker', StandInWorker)
+    const viaWorker = await answer(q, { page: 'LM-004' })
+    await answer(q)
+    const asks = StandInWorker.made[0].requests.filter((r) => r.kind === 'ask')
+    expect(asks.map((r) => (r as { page: string | null }).page)).toEqual(['LM-004', null])
+    expect(viaWorker).toEqual(here)
+  }, 120_000)
+
   it('goes on this thread when the worker cannot be made', async () => {
     vi.stubGlobal(
       'Worker',

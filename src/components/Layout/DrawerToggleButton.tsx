@@ -20,7 +20,7 @@ export const DRAWER_TOGGLES = {
 /**
  * One top bar button for one drawer view. Pressing it opens that view beside the page; pressing it
  * again closes the drawer; pressing another of the six switches the drawer to that view. It is shown
- * as pressed while its view is open. The same component draws all six buttons.
+ * as pressed (highlight fill and ink outline, also when the bar shows icons only) while its view is open. The same component draws all six buttons.
  */
 export function DrawerToggleButton({
   tab,
@@ -39,7 +39,8 @@ export function DrawerToggleButton({
       variant="ghost"
       onClick={() => toggle(tab)}
       className={cn(
-        'flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors aria-pressed:text-foreground aria-pressed:bg-muted/30',
+        // The open drawer's button is the Storybook highlight (fill, ink outline), so it can be found when the bar shows icons only.
+        'flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg border-2 border-transparent text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors aria-pressed:border-ink aria-pressed:bg-highlight aria-pressed:text-heading aria-pressed:hover:bg-highlight aria-pressed:hover:text-heading',
         iconOnly && 'min-h-10 min-w-10 justify-center'
       )}
       aria-label={label}

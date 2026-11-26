@@ -5,6 +5,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import '@testing-library/jest-dom'
 import { AssistantConversation } from './AssistantConversation'
+import { useAssistantAskedStore } from '@/store/useAssistantAskedStore'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useChatStore } from '@/store/useChatStore'
@@ -47,19 +48,23 @@ vi.mock('@/services/assistant/termLessons', async (orig) => ({
       : [],
 }))
 
-// The starting list holds three questions today; the ranker will offer more. A flag lets one test
-// see the collapsed "More questions" list that a longer list produces.
+// The starting list holds three questions when nothing else is known; a flag lets one test see the
+// collapsed "More questions" list that a longer list produces.
 const suggestionMode = vi.hoisted(() => ({ many: false }))
-vi.mock('./suggestionSource', async (orig) => {
-  const real = await orig<typeof import('./suggestionSource')>()
+vi.mock('./suggestionRanker', async (orig) => {
+  const real = await orig<typeof import('./suggestionRanker')>()
   return {
     ...real,
-    suggestionsFor: (asked: readonly string[]) => {
-      const base = real.suggestionsFor(asked)
+    rankSuggestions: (state: Parameters<typeof real.rankSuggestions>[0]) => {
+      const base = real.rankSuggestions(state)
       if (!suggestionMode.many) return base
       return [
         ...base,
-        ...['Q four', 'Q five', 'Q six', 'Q seven'].map((question) => ({ question })),
+        ...['Q four', 'Q five', 'Q six', 'Q seven'].map((question) => ({
+          question,
+          rule: 6 as const,
+          basedOn: 'a test',
+        })),
       ]
     },
   }
@@ -100,6 +105,7 @@ beforeEach(() => {
   suggestionMode.many = false
   layout.value = 'docked'
   useAssistantSessionStore.getState().reset()
+  useAssistantAskedStore.getState().clear() // earlier tests' questions are remembered on the device
   useAchievementStore.getState().resetAchievements()
   useAssistantReturnStore.getState().clear()
   useChatStore.setState({ pendingQuestion: null })
@@ -146,6 +152,23 @@ describe('empty drawer (first visit)', () => {
       .setup()
       .click(screen.getByRole('button', { name: /Which deadlines apply to banks in the EU\?/ }))
     await answered('Which deadlines apply to banks in the EU?')
+  })
+
+  it('does not offer a question again in a new conversation while the state is the same', async () => {
+    const question = 'Which deadlines apply to banks in the EU?'
+    const view = mount()
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: new RegExp(question.replace('?', '\\?')) }))
+    await answered(question)
+    view.unmount()
+    // a new visit: the conversation is gone, what was asked is remembered on the device
+    act(() => useAssistantSessionStore.getState().reset())
+    mount()
+    expect(
+      screen.queryByRole('button', { name: new RegExp(question.replace('?', '\\?')) })
+    ).toBeNull()
+    expect(screen.getByRole('group', { name: 'Suggested questions' })).toBeInTheDocument()
   })
 
   it('copies the question into the box for "Edit before asking" without sending it', async () => {

@@ -19,9 +19,35 @@ describe('Drawer header', () => {
     expect(screen.getByRole('heading', { name: 'Assistant' })).toBeInTheDocument()
   })
 
-  it('has no close control on the desktop: the top bar toggle closes it', () => {
+  it('has no close control when it is given no way to close', () => {
     render(inRouter(<PanelHeader title="Assistant" activeTab="chat" />))
     expect(screen.queryByRole('button', { name: 'Close' })).toBeNull()
+  })
+
+  it('beside the page, shows a Close control after the width buttons, reachable by keyboard', async () => {
+    const user = userEvent.setup()
+    const onClose = vi.fn()
+    render(inRouter(<PanelHeader title="Assistant" activeTab="chat" onClose={onClose} docked />))
+    const close = screen.getByRole('button', { name: 'Close' })
+    expect(close).toHaveAttribute('title', 'Close')
+    const names: string[] = []
+    for (let i = 0; i < 3; i++) {
+      await user.tab()
+      names.push(document.activeElement?.getAttribute('aria-label') ?? '')
+    }
+    // the width buttons come first, then Close: the order the header reads in
+    expect(names).toEqual(['Narrower', 'Wider', 'Close'])
+    expect(close).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(onClose).toHaveBeenCalledOnce()
+  })
+
+  it('shows Close in the Bookmarks and other views too, without width buttons', () => {
+    render(
+      inRouter(<PanelHeader title="Bookmarks" activeTab="bookmarks" onClose={() => {}} docked />)
+    )
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Wider' })).toBeNull()
   })
 
   it('puts Close first in the tab order on the phone sheet', async () => {
