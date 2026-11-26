@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   ArrowRight,
   Brain,
+  GitBranch,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteB
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
 import { SECURE_DELIVERY_SECTION } from '../data/secureDeliverySection'
+import { INTEGRATION_DELIVERY_SECTION } from '../data/integrationDeliverySection'
 
 // ── Local CollapsibleSection ──────────────────────────────────────────────────
 
@@ -601,6 +603,15 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           icon={<FileCode size={20} className="text-primary" />}
         >
           <SourcedSectionBody section={SECURE_DELIVERY_SECTION} />
+        </CollapsibleSection>
+      </div>
+
+      <div data-section-id="continuous-integration-delivery" className="scroll-mt-20">
+        <CollapsibleSection
+          icon={<GitBranch size={24} className="text-primary" />}
+          title={`9. ${INTEGRATION_DELIVERY_SECTION.title}`}
+        >
+          <SourcedSectionBody section={INTEGRATION_DELIVERY_SECTION} />
         </CollapsibleSection>
       </div>
 

@@ -14,6 +14,7 @@ const manifest: ModuleManifest = {
     { id: 'monitoring-posture', label: 'Crypto Posture Monitoring' },
     { id: 'migration-runway', label: 'Migration & Rollback' },
     { id: 'secure-software-delivery', label: 'Secure Software Delivery' },
+    { id: 'continuous-integration-delivery', label: 'Continuous Integration and Delivery' },
   ],
   workshopSteps: [
     { id: 'pipeline-crypto-inventory', label: 'Pipeline Crypto Inventory' },
