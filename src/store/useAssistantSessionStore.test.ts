@@ -93,6 +93,57 @@ describe('assistant session', () => {
   })
 })
 
+describe("the open card and each card's place", () => {
+  it("opens the new question's card at once, and folds the earlier one by opening another", async () => {
+    const first = store().ask('first', ctx)
+    const firstId = store().turns[0].id
+    expect(store().openTurnId).toBe(firstId)
+    client.pending[0]({ ...broadMatch, question: 'first' })
+    await first
+    const second = store().ask('second', ctx)
+    const secondId = store().turns[1].id
+    expect(store().openTurnId).toBe(secondId)
+    client.pending[1]({ ...broadMatch, question: 'second' })
+    await second
+    expect(store().openTurnId).toBe(secondId)
+    store().setOpenTurn(firstId)
+    expect(store().openTurnId).toBe(firstId)
+  })
+
+  it('opens the newest remaining card when the open one is removed because the data did not load', async () => {
+    const first = store().ask('first', ctx)
+    client.pending[0]({ ...broadMatch, question: 'first' })
+    await first
+    const firstId = store().turns[0].id
+    const second = store().ask('second', ctx)
+    client.pending[1](null)
+    await second
+    expect(store().openTurnId).toBe(firstId)
+  })
+
+  it('keeps a tab and position for each card, none by default', () => {
+    expect(store().cardNav).toEqual({})
+    store().setCardNav('a', { tab: 'learn', index: 2 })
+    store().setCardNav('b', { tab: 'library', index: 0 })
+    store().setCardNav('a', { tab: 'timeline', index: 1 })
+    expect(store().cardNav).toEqual({
+      a: { tab: 'timeline', index: 1 },
+      b: { tab: 'library', index: 0 },
+    })
+  })
+
+  it('reset clears the open card and every position', async () => {
+    const p = store().ask('first', ctx)
+    client.pending[0]({ ...broadMatch, question: 'first' })
+    await p
+    store().setCardNav('x', { tab: 'learn', index: 1 })
+    store().reset()
+    expect(store().openTurnId).toBeNull()
+    expect(store().cardNav).toEqual({})
+    expect(store().turns).toEqual([])
+  })
+})
+
 describe('counting the questions asked (for the Conversation Starter badge)', () => {
   it('counts one for each question sent, once, when it is sent', async () => {
     const p = store().ask('first', ctx)
