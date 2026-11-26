@@ -14,6 +14,7 @@ import { dirname, join, resolve } from 'path'
 
 const SRC = join(process.cwd(), 'src')
 const REMOVED_FILES = [
+  'services/chat/WebLLMService.ts',
   'components/RightPanel/ChatPanelContent.tsx',
   'components/Chat/ProviderSetup.tsx',
   'components/Chat/ApiKeySetup.tsx',
@@ -84,7 +85,7 @@ describe('the app has no language model of its own', () => {
 
   it('nothing in the app imports a model service, a model set-up screen or the old chat panel', () => {
     const banned =
-      /(ChatPanelContent|ProviderSetup|ApiKeySetup|ModelDownloadBanner|useChatSend)['"]/
+      /(WebLLMService|ChatPanelContent|ProviderSetup|ApiKeySetup|ModelDownloadBanner|useChatSend|@mlc-ai\/web-llm)['"]/
     for (const file of closure([entry])) {
       expect(banned.test(readFileSync(file, 'utf8')), file.replace(SRC, 'src')).toBe(false)
     }
@@ -96,5 +97,17 @@ describe('the app has no language model of its own', () => {
       .filter((f) => !f.includes(join('services', 'chat') + '/'))
       .filter((f) => banned.test(readFileSync(f, 'utf8')))
     expect(offenders.map((f) => f.replace(SRC, 'src'))).toEqual([])
+  })
+
+  it('the package that ran the in-browser model is not a dependency', () => {
+    const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')) as {
+      dependencies?: Record<string, string>
+      devDependencies?: Record<string, string>
+    }
+    const names = [
+      ...Object.keys(pkg.dependencies ?? {}),
+      ...Object.keys(pkg.devDependencies ?? {}),
+    ]
+    expect(names).not.toContain('@mlc-ai/web-llm')
   })
 })

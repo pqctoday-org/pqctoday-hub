@@ -434,34 +434,10 @@ export const SBOM_GROUPS: readonly SbomGroup[] = [
     category: SBOM_CATEGORIES[5],
     components: [
       {
-        name: '@mlc-ai/web-llm (in-browser Qwen 3 8B)',
-        pkg: '@mlc-ai/web-llm',
-      },
-      {
         name: '@huggingface/transformers (runs the embedding model)',
         pkg: '@huggingface/transformers',
       },
       { name: '@react-oauth/google', pkg: '@react-oauth/google' },
-      {
-        name: 'Qwen3.5-9B chat model (alternative; q4f16_1 MLC build, WebGPU)',
-        model: 'qwen35-9b-weights',
-        note: "Downloaded by the visitor's browser at run time, not part of the site bundle. No revision is pinned, so it follows the repository's default branch.",
-      },
-      {
-        name: 'Qwen3.5-9B compiled model library (WebGPU wasm)',
-        model: 'qwen35-9b-library',
-        note: 'Downloaded at run time from the mlc-ai/binary-mlc-llm-libs repository; that repository declares no license.',
-      },
-      {
-        name: 'Qwen3-8B chat model (default; q4f16_1 MLC build, WebGPU)',
-        model: 'qwen3-8b-weights',
-        note: "The assistant's default in-browser model. Downloaded by the visitor's browser at run time, not part of the site bundle. No revision is pinned, so it follows the repository's default branch.",
-      },
-      {
-        name: 'Qwen3-8B compiled model library (WebGPU wasm)',
-        model: 'qwen3-8b-library',
-        note: 'Downloaded at run time from the mlc-ai/binary-mlc-llm-libs repository; that repository declares no license.',
-      },
       {
         name: 'bge-base-en-v1.5 embedding model (quantized ONNX)',
         model: 'bge-base-embeddings',

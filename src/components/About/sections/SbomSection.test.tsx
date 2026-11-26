@@ -152,20 +152,11 @@ describe('SBOM content is the shipped build, not a hand-typed list', () => {
     )
   })
 
-  it('records the default local model (Qwen3-8B) and keeps the still-supported Qwen3.5-9B', () => {
-    const def = byName(/^Qwen3\.5-9B chat model/)
-    expect(sbomLicense(def)).toMatch(
-      /^Apache-2\.0 \(upstream model; the MLC repository declares none\)$/
+  it('lists no chat model, no compiled model library and no in-browser model runtime', () => {
+    const names = rows.map((r) => r.name)
+    expect(names.filter((n) => /Qwen|chat model|compiled model library|web-llm/i.test(n))).toEqual(
+      []
     )
-    expect(sbomHref(def)).toBe('https://huggingface.co/mlc-ai/Qwen3.5-9B-q4f16_1-MLC')
-    expect(sbomLicense(byName(/^Qwen3\.5-9B compiled model library/))).toBe('not declared')
-    expect(def.name).toMatch(/alternative/)
-    expect(byName(/^Qwen3-8B chat model/).name).toMatch(/default/)
-  })
-
-  it('records the chat model and its compiled library, with the license position stated', () => {
-    expect(sbomLicense(byName(/^Qwen3-8B chat model/))).toBe('Apache-2.0')
-    expect(sbomLicense(byName(/^Qwen3-8B compiled model library/))).toBe('not declared')
   })
 
   it('states per-bundle versions when the engine and KMIP bundles differ', () => {

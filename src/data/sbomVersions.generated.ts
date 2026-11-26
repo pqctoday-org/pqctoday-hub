@@ -8,7 +8,6 @@
 /** Direct npm dependencies, exactly as package.json pins them. */
 export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
   '@huggingface/transformers': '4.2.0',
-  '@mlc-ai/web-llm': '0.2.85',
   '@monaco-editor/react': '4.7.0',
   '@noble/curves': '2.4.0',
   '@noble/hashes': '2.4.0',
@@ -85,7 +84,6 @@ export const SBOM_PACKAGE_VERSIONS: Readonly<Record<string, string>> = {
 /** License of every npm package on the page, as package-lock.json records it (SPDX). */
 export const SBOM_PACKAGE_LICENSES: Readonly<Record<string, string>> = {
   '@huggingface/transformers': 'Apache-2.0',
-  '@mlc-ai/web-llm': 'Apache-2.0',
   '@monaco-editor/react': 'MIT',
   '@noble/curves': 'MIT',
   '@noble/hashes': 'MIT',

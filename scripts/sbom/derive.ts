@@ -471,70 +471,11 @@ export function derive(root: string, curated: Curated): Derived {
   }>(root, 'src/data/sbomModels.json')
   const modelKeys = new Set(modelFile.models.map((m) => m.key))
   const shippedModelUrls = new Map<string, string>() // sourceUrl -> what names it
-  const webllmPath = join(root, 'node_modules', '@mlc-ai', 'web-llm', 'lib', 'index.js')
-  const chatPath = join(root, 'src/services/chat/modelConfig.ts')
   const metaPath = join(root, 'public/data/embeddings-meta.json')
-  if (!existsSync(webllmPath) || !existsSync(chatPath) || !existsSync(metaPath)) {
-    bad('cannot check AI models: web-llm lib, modelConfig.ts or embeddings-meta.json is missing')
+  if (!existsSync(metaPath)) {
+    bad('cannot check AI models: public/data/embeddings-meta.json is missing')
   } else {
-    // The local models the app supports are named once, in modelConfig.ts
-    // (SUPPORTED_LOCAL_MODELS, whose entries are string literals or the exported constants above it).
-    const cfg = readFileSync(chatPath, 'utf8')
-    const consts = new Map(
-      [...cfg.matchAll(/export const (\w+)\s*=\s*'([^']+)'/g)].map((m) => [m[1], m[2]] as const)
-    )
-    // a constant may also alias an earlier one (QWEN3_LOCAL_MODEL = DEFAULT_LOCAL_MODEL)
-    for (const m of cfg.matchAll(/export const (\w+)\s*=\s*(\w+)\s*(?:as const)?\s*;?\s*$/gm)) {
-      const target = consts.get(m[2])
-      if (target !== undefined) consts.set(m[1], target)
-    }
-    const list = /export const SUPPORTED_LOCAL_MODELS\s*=\s*\[([^\]]*)\]/.exec(cfg)
-    const entries = (list?.[1] ?? '')
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean)
-    const chatIds = entries
-      .map((t) => /^'([^']+)'$/.exec(t)?.[1] ?? consts.get(t))
-      .filter((x): x is string => Boolean(x))
-    if (!list || entries.length === 0 || chatIds.length !== entries.length)
-      bad(
-        'modelConfig.ts: SUPPORTED_LOCAL_MODELS is missing or names something this check cannot resolve'
-      )
-    // DEFAULT_LOCAL_MODEL is a string literal or an exported constant above it, like the list.
-    const defRhs = /export const DEFAULT_LOCAL_MODEL\s*=\s*([^\n;]+)/
-      .exec(cfg)?.[1]
-      .replace(/\/\/.*$/, '')
-      .replace(/\s+as const\s*$/, '')
-      .trim()
-    const defaultId = defRhs ? (/^'([^']+)'$/.exec(defRhs)?.[1] ?? consts.get(defRhs)) : undefined
-    if (!defaultId)
-      bad(
-        'modelConfig.ts: DEFAULT_LOCAL_MODEL is missing or names something this check cannot resolve'
-      )
-    else if (!chatIds.includes(defaultId))
-      bad(`${defaultId}: DEFAULT_LOCAL_MODEL in modelConfig.ts is not in SUPPORTED_LOCAL_MODELS`)
-    const defaultUrls = new Set<string>() // sourceUrls of the default model's weights and library
-    const chatWeightsUrls = new Set<string>() // sourceUrls of every chat model's weights
-    const lib = readFileSync(webllmPath, 'utf8')
-    const prefix = /modelLibURLPrefix\s*=\s*"([^"]+)"/.exec(lib)?.[1]
-    const version = /modelVersion\s*=\s*"([^"]+)"/.exec(lib)?.[1]
-    for (const id of chatIds) {
-      const esc = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const m = new RegExp(
-        `model:\\s*"([^"]+)",\\s*model_id:\\s*"${esc}",\\s*model_lib:\\s*modelLibURLPrefix\\s*\\+\\s*modelVersion\\s*\\+\\s*"([^"]+)"`
-      ).exec(lib)
-      if (!m || !prefix || !version) {
-        bad(`${id}: named by modelConfig.ts but not found in the bundled @mlc-ai/web-llm config`)
-        continue
-      }
-      shippedModelUrls.set(m[1], `${id} (weights)`)
-      shippedModelUrls.set(`${prefix}${version}${m[2]}`, `${id} (model library)`)
-      chatWeightsUrls.add(m[1])
-      if (id === defaultId) {
-        defaultUrls.add(m[1])
-        defaultUrls.add(`${prefix}${version}${m[2]}`)
-      }
-    }
+    // The one model the app still loads is the embedding model its search index was built with.
     const embed = (JSON.parse(readFileSync(metaPath, 'utf8')) as { model?: string }).model
     if (embed) shippedModelUrls.set(`https://huggingface.co/${embed}`, `${embed} (embeddings)`)
     else bad('public/data/embeddings-meta.json names no embedding model')
@@ -545,61 +486,6 @@ export function derive(root: string, curated: Curated): Derived {
       if (!shippedModelUrls.has(m.sourceUrl))
         bad(`${m.key}: recorded in sbomModels.json but no shipped code names ${m.sourceUrl}`)
       if (!m.license.trim()) bad(`${m.key}: no license stated in sbomModels.json`)
-      // The free-text `role` is where the page's data says which model is "the default". The
-      // rule: a record's role contains the word "default" if and only if the record is the
-      // weights or the compiled library of DEFAULT_LOCAL_MODEL (matched by sourceUrl, the
-      // same identity used above). Nothing else may say "default" in its role.
-      if (defaultId) {
-        const marked = /\bdefault\b/i.test(m.role ?? '')
-        const isDefault = defaultUrls.has(m.sourceUrl)
-        if (isDefault && !marked)
-          bad(
-            `${m.key} (${m.id}): it belongs to ${defaultId}, the DEFAULT_LOCAL_MODEL in modelConfig.ts, but its role "${m.role ?? ''}" in sbomModels.json does not say "default"`
-          )
-        else if (!isDefault && marked)
-          bad(
-            `${m.key} (${m.id}): role "${m.role}" in sbomModels.json says "default", but DEFAULT_LOCAL_MODEL in modelConfig.ts is ${defaultId}`
-          )
-      }
-    }
-    // The rows the About page renders say it again in words: a chat-model weights row's name
-    // carries "(default;" or "(alternative;", and only the default's row carries the note
-    // "The assistant's default in-browser model." (every model row's note also says "the
-    // repository's default branch", so the bare word "default" cannot be used). Rows are tied
-    // to records through `model:` -> sbomModels.json -> sourceUrl, as for the roles above.
-    if (defaultId) {
-      const DEFAULT_NOTE = "The assistant's default in-browser model."
-      let defaultRows = 0
-      for (const g of curated.groups)
-        for (const c of g.components) {
-          if (!('model' in c) || c.model === undefined) continue
-          const rec = modelFile.models.find((x) => x.key === c.model)
-          if (!rec) continue // reported below as an unknown model source
-          const isDefaultRow = chatWeightsUrls.has(rec.sourceUrl) && defaultUrls.has(rec.sourceUrl)
-          const claimsDefault = c.name.includes('(default;')
-          const hasNote = (c.note ?? '').includes(DEFAULT_NOTE)
-          if (isDefaultRow) defaultRows++
-          if (isDefaultRow && !claimsDefault)
-            bad(
-              `"${c.name}" (${rec.id}): it is ${defaultId}, the DEFAULT_LOCAL_MODEL in modelConfig.ts, but its row name in sbomComponents.ts does not say "(default;" (e.g. "(alternative;" instead)`
-            )
-          else if (!isDefaultRow && claimsDefault)
-            bad(
-              `"${c.name}" (${rec.id}): its row name in sbomComponents.ts says "(default;", but DEFAULT_LOCAL_MODEL in modelConfig.ts is ${defaultId}`
-            )
-          if (isDefaultRow && !hasNote)
-            bad(
-              `"${c.name}" (${rec.id}): it is ${defaultId}, the DEFAULT_LOCAL_MODEL in modelConfig.ts, but its row note in sbomComponents.ts lacks "${DEFAULT_NOTE}"`
-            )
-          else if (!isDefaultRow && hasNote)
-            bad(
-              `"${c.name}" (${rec.id}): its row note in sbomComponents.ts says "${DEFAULT_NOTE}", but DEFAULT_LOCAL_MODEL in modelConfig.ts is ${defaultId}; only that model's weights row may`
-            )
-        }
-      if (defaultRows === 0)
-        bad(
-          `${defaultId}: DEFAULT_LOCAL_MODEL in modelConfig.ts has no weights row in src/data/sbomComponents.ts`
-        )
     }
   }
 
