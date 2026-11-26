@@ -12,6 +12,7 @@ const manifest: ModuleManifest = {
     { id: 'five-pillars', label: 'The Five Pillars of CPM' },
     { id: 'dual-loop', label: 'Dual-Loop Process' },
     { id: 'no-regret-roi', label: 'The No-Regret ROI' },
+    { id: 'systems-engineering-practice', label: 'Systems engineering principles' },
   ],
   workshopSteps: [
     { id: 'maturity-assessment', label: 'CPM Maturity Self-Assessment' },

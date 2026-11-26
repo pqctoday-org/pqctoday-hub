@@ -22,6 +22,8 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
+import { SourcedSectionPanel } from '@/components/PKILearning/common/SourcedSection'
+import { SYSTEMS_ENGINEERING_PRACTICE_SECTION } from '../data/systemsEngineeringPracticeSection'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -965,6 +967,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </div>
         </div>
       </section>
+
+      <SourcedSectionPanel section={SYSTEMS_ENGINEERING_PRACTICE_SECTION} />
 
       {/* Section 8: Pre-Deployment Lab Blueprint */}
       <section id="lab-blueprint" className="glass-panel p-6">
