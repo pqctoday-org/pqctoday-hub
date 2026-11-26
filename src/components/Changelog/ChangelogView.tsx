@@ -598,7 +598,7 @@ export const ChangelogView = () => {
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                 filters.added
-                  ? 'bg-success/20 border-success/50 text-success-legible'
+                  ? 'bg-success/10 border-success/50 text-success-legible'
                   : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
               )}
             >
