@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Lesson pages end with "Related modules" and then a generated "Related resources" box (terms, documents and
- * industry use cases from the Hub's knowledge file). Three real lessons, on a desktop and a phone viewport:
+ * Lesson pages end with "Related modules" and then a "Related resources" box: every group starts closed (title and
+ * count), and opens on its header button. Three real lessons, on a desktop and a phone viewport:
  * the box and its groups are there, "Show all" expands in place, a document row opens its Library record,
  * "Related modules" is there too, and no hand-typed "Related Resources" block is left.
  */
@@ -32,87 +32,140 @@ async function seedFirstVisit(page: Page) {
   })
 }
 
+type Box = ReturnType<Page['getByRole']>
+
+const boxOf = (page: Page): Box => page.getByRole('region', { name: 'Related resources' })
+
+/** Opens a group by its header button and returns its list. */
+async function openGroup(box: Box, title: string) {
+  const header = box.getByRole('button', { name: new RegExp(`^${title}`) })
+  await expect(header).toHaveAttribute('aria-expanded', 'false')
+  await header.click()
+  await expect(header).toHaveAttribute('aria-expanded', 'true')
+  return box.getByRole('list', { name: new RegExp(`^${title} \\(\\d+\\)$`) })
+}
+
+/** Lets the page finish loading before a test opens anything, so a late re-render cannot undo it. */
+async function settle(page: Page) {
+  await page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => undefined)
+}
+
+async function axeInBox(page: Page) {
+  await injectAxe(page)
+  const violations = await getViolations(page, '[data-testid="lesson-resources"]', {
+    runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
+  })
+  expect(
+    violations.filter((v) => v.impact === 'critical' || v.impact === 'serious').map((v) => v.id)
+  ).toEqual([])
+}
+
 for (const viewport of VIEWPORTS) {
   test.describe(viewport.name, () => {
     test.use({ viewport: { width: viewport.width, height: viewport.height } })
 
     for (const lesson of LESSONS) {
-      test(`/learn/${lesson}: Related resources box after Related modules, no hand-typed block`, async ({
+      test(`/learn/${lesson}: Related resources box, closed groups, then open`, async ({
         page,
       }) => {
         await seedFirstVisit(page)
         await page.goto(`/learn/${lesson}`)
+        await settle(page)
 
-        const box = page.getByRole('region', { name: 'Related resources' })
+        const box = boxOf(page)
         await box.scrollIntoViewIfNeeded({ timeout: 30_000 })
         await expect(box).toBeVisible({ timeout: 30_000 })
+        await expect(
+          box.getByRole('heading', { level: 2, name: 'Related resources' })
+        ).toBeVisible()
 
         // Related modules is on the page, and the box comes directly after it.
         const modulesHeading = page.getByRole('heading', { name: 'Related modules' })
         await expect(modulesHeading).toBeVisible()
-        const modulesY = (await modulesHeading.boundingBox())!.y
-        const boxY = (await box.boundingBox())!.y
-        expect(boxY).toBeGreaterThan(modulesY)
+        expect((await box.boundingBox())!.y).toBeGreaterThan(
+          (await modulesHeading.boundingBox())!.y
+        )
 
         // No hand-typed block (the generated heading is "Related resources", lower case).
         await expect(
           page.getByRole('heading', { name: 'Related Resources', exact: true })
         ).toHaveCount(0)
 
-        // The groups this lesson has records for.
-        const documents = box.getByRole('list', {
-          name: /^Documents this lesson draws on \(\d+\)$/,
-        })
-        await expect(documents).toBeVisible()
-        const heading = await box
-          .getByTestId('lesson-resources-documents')
-          .getByRole('heading')
-          .innerText()
-        const total = Number(/\((\d+)\)/.exec(heading)?.[1])
-        expect(total).toBeGreaterThan(5)
-        await expect(documents.getByRole('link')).toHaveCount(5)
+        // Every group starts closed: a header with the title and the count, no rows, and the box takes little room.
+        const headers = box.locator('h3 > button')
+        await expect(headers.first()).toBeVisible()
         await expect(
-          box.getByRole('list', { name: /^Industry use cases covered \(\d+\)$/ })
+          box.getByRole('button', { name: /^Documents this lesson draws on \(\d+\)$/ })
         ).toBeVisible()
+        const count = await headers.count()
+        expect(count).toBeGreaterThanOrEqual(4)
+        for (let i = 0; i < count; i++) {
+          const h = headers.nth(i)
+          await expect(h).toHaveAttribute('aria-expanded', 'false')
+          await expect(h).toHaveAttribute('aria-controls', /./)
+          expect((await h.boundingBox())!.height).toBeGreaterThanOrEqual(43.5)
+          await expect(h).toHaveText(/\(\d+\)$/)
+        }
+        await expect(box.getByRole('link')).toHaveCount(0)
+        await expect(box.getByRole('list')).toHaveCount(0)
+        expect((await box.boundingBox())!.height).toBeLessThan(count * 60 + 120)
+        await axeInBox(page)
 
-        // No serious or critical accessibility violation inside the box (names, contrast, tap targets are checked by hand).
-        await injectAxe(page)
-        const violations = await getViolations(page, '[data-testid="lesson-resources"]', {
-          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
-        })
-        expect(
-          violations
-            .filter((v) => v.impact === 'critical' || v.impact === 'serious')
-            .map((v) => v.id)
-        ).toEqual([])
+        // Keyboard: Tab visits only the headers (closed rows are not reachable), Enter opens, Space closes.
+        await headers.first().focus()
+        for (let i = 1; i < count; i++) {
+          await page.keyboard.press('Tab')
+          await expect(headers.nth(i)).toBeFocused()
+        }
+        await headers.first().focus()
+        await page.keyboard.press('Enter')
+        await expect(headers.first()).toHaveAttribute('aria-expanded', 'true')
+        await expect(box.getByRole('link').first()).toBeVisible()
+        await page.keyboard.press('Space')
+        await expect(headers.first()).toHaveAttribute('aria-expanded', 'false')
+        await expect(box.getByRole('link')).toHaveCount(0)
 
-        // Every link in the visible groups is at least 44px tall to tap.
+        // Open every group: opening one does not close another; axe is clean with all open; links are 44px tall.
+        for (let i = 0; i < count; i++) await headers.nth(i).click()
+        for (let i = 0; i < count; i++) {
+          await expect(headers.nth(i)).toHaveAttribute('aria-expanded', 'true')
+        }
+        await axeInBox(page)
         for (const link of await box.getByRole('link').all()) {
           expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(43.5)
         }
 
-        // Show all expands in place and can be folded back.
-        const showAll = box.getByRole('button', { name: `Show all ${total}` })
+        // Documents: five shown; Show all expands in place and can be folded back.
+        const documents = box.getByRole('list', {
+          name: /^Documents this lesson draws on \(\d+\)$/,
+        })
+        const total = Number(
+          /\((\d+)\)/.exec(
+            await box.getByRole('button', { name: /^Documents this lesson draws on/ }).innerText()
+          )?.[1]
+        )
+        expect(total).toBeGreaterThan(5)
+        await expect(documents.getByRole('link')).toHaveCount(5)
+        const showAll = documents.locator('xpath=following-sibling::button')
+        await expect(showAll).toHaveText(`Show all ${total}`)
         await expect(showAll).toHaveAttribute('aria-expanded', 'false')
         await showAll.click()
         await expect(documents.getByRole('link')).toHaveCount(total)
-        await expect(box.getByRole('button', { name: 'Show fewer' }).first()).toHaveAttribute(
-          'aria-expanded',
-          'true'
-        )
-        await box.getByRole('button', { name: 'Show fewer' }).first().click()
+        await expect(showAll).toHaveText('Show fewer')
+        await showAll.click()
         await expect(documents.getByRole('link')).toHaveCount(5)
 
         // A document row opens its own Library record: the record's title is in the opened drawer or dialog.
         const first = documents.getByRole('listitem').first()
         const title = (await first.locator('span.block.font-bold').innerText()).trim()
-        const href = await first.getByRole('link').getAttribute('href')
-        expect(href).toMatch(/^\/library\?ref=/)
+        expect(await first.getByRole('link').getAttribute('href')).toMatch(/^\/library\?ref=/)
         await first.getByRole('link').click()
         await expect(page).toHaveURL(/\/library\?.*ref=/)
         const opened = page.getByRole('dialog').first()
-        await expect(opened).toBeVisible()
-        await expect(opened.getByText(title, { exact: false }).first()).toBeVisible()
+        await expect(opened).toBeVisible({ timeout: 30_000 })
+        await expect(opened.getByText(title, { exact: false }).first()).toBeVisible({
+          timeout: 30_000,
+        })
       })
     }
   })
@@ -133,28 +186,24 @@ for (const viewport of VIEWPORTS) {
       test(`/learn/${lesson}: Related lessons and Elsewhere on the Hub`, async ({ page }) => {
         await seedFirstVisit(page)
         await page.goto(`/learn/${lesson}`)
-        const box = page.getByRole('region', { name: 'Related resources' })
+        await settle(page)
+        const box = boxOf(page)
         await box.scrollIntoViewIfNeeded({ timeout: 30_000 })
         await expect(box).toBeVisible({ timeout: 30_000 })
 
-        const lessons = box.getByRole('list', { name: /^Related lessons \(\d+\)$/ })
-        const pages = box.getByRole('list', { name: /^Elsewhere on the Hub \(\d+\)$/ })
-        await expect(lessons).toBeVisible()
-        await expect(pages).toBeVisible()
+        // Both kept groups are closed headers with a count, and show at once.
+        await expect(box.getByRole('button', { name: /^Related lessons \(\d+\)$/ })).toBeVisible()
+        await expect(
+          box.getByRole('button', { name: /^Elsewhere on the Hub \(\d+\)$/ })
+        ).toBeVisible()
+        const lessons = await openGroup(box, 'Related lessons')
+        const pages = await openGroup(box, 'Elsewhere on the Hub')
         // Each kept link carries its kind and, where the lesson gave one, its reason.
         await expect(lessons.getByRole('link').first()).toContainText(/Module|Workshop step/)
         await expect(pages.getByRole('link').first()).toContainText('Page: ')
 
         // Axe is clean inside the box, and every link is at least 44px tall to tap.
-        await injectAxe(page)
-        const violations = await getViolations(page, '[data-testid="lesson-resources"]', {
-          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] },
-        })
-        expect(
-          violations
-            .filter((v) => v.impact === 'critical' || v.impact === 'serious')
-            .map((v) => v.id)
-        ).toEqual([])
+        await axeInBox(page)
         for (const list of [lessons, pages]) {
           for (const link of await list.getByRole('link').all()) {
             expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(43.5)
@@ -167,6 +216,11 @@ for (const viewport of VIEWPORTS) {
         await target.click()
         await expect(page).toHaveURL((u) => u.pathname === targetPath)
         await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible()
+
+        // The next lesson starts closed again: nothing is remembered between lessons.
+        const next = boxOf(page)
+        await expect(next.locator('h3 > button').first()).toBeVisible({ timeout: 30_000 })
+        await expect(next.locator('h3 > button[aria-expanded="true"]')).toHaveCount(0)
       })
 
       test(`/learn/${lesson}: the filtered link ${filtered} opens with its filter applied`, async ({
@@ -174,8 +228,13 @@ for (const viewport of VIEWPORTS) {
       }) => {
         await seedFirstVisit(page)
         await page.goto(`/learn/${lesson}`)
-        const box = page.getByRole('region', { name: 'Related resources' })
+        await settle(page)
+        const box = boxOf(page)
         await box.scrollIntoViewIfNeeded({ timeout: 30_000 })
+        await openGroup(
+          box,
+          filtered.startsWith('/learn/') ? 'Related lessons' : 'Elsewhere on the Hub'
+        )
         const link = box.locator(`a[href="${filtered}"]`)
         await expect(link).toHaveCount(1)
         await link.click()
@@ -183,16 +242,22 @@ for (const viewport of VIEWPORTS) {
 
         if (filtered.startsWith('/library?q=')) {
           // The search box holds the filter and a result is about it.
-          await expect(page.getByRole('textbox', { name: /^Search/ }).first()).toHaveValue('JOSE')
-          await expect(page.getByRole('heading', { name: /JOSE/ }).first()).toBeVisible()
+          await expect(page.getByRole('textbox', { name: /^Search/ }).first()).toHaveValue('JOSE', {
+            timeout: 30_000,
+          })
+          await expect(page.getByRole('heading', { name: /JOSE/ }).first()).toBeVisible({
+            timeout: 30_000,
+          })
         } else if (filtered.startsWith('/algorithms?')) {
           // The protocol's own panel is open.
-          await expect(page.getByRole('dialog', { name: 'TLS 1.3' })).toBeVisible()
+          await expect(page.getByRole('dialog', { name: 'TLS 1.3' })).toBeVisible({
+            timeout: 30_000,
+          })
         } else {
           // The trust-hardware step of the other lesson is the step on screen.
           await expect(
             page.getByRole('heading', { name: 'Step 6: Trust Hardware Selector' })
-          ).toBeVisible()
+          ).toBeVisible({ timeout: 30_000 })
         }
       })
     }

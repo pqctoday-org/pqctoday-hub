@@ -133,12 +133,19 @@ export class KnowledgeReader {
 }
 
 let corePromise: Promise<KnowledgeReader> | null = null
+let loadedReader: KnowledgeReader | null = null
+
+/** The reader if the core file has already loaded, else null: for a screen that can use it at once without waiting. */
+export function loadedKnowledgeReader(): KnowledgeReader | null {
+  return loadedReader
+}
 
 /** The core file, fetched once (it is served beside the other data files) and read as one reader. */
 export function loadKnowledgeReader(url = '/data/knowledge-core.json'): Promise<KnowledgeReader> {
   corePromise ??= fetch(url).then(async (res) => {
     if (!res.ok) throw new Error(`knowledge core: ${res.status}`)
-    return new KnowledgeReader((await res.json()) as KnowledgeCore)
+    loadedReader = new KnowledgeReader((await res.json()) as KnowledgeCore)
+    return loadedReader
   })
   corePromise.catch(() => {
     corePromise = null

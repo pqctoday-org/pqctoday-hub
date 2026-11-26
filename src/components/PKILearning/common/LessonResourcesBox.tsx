@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * LessonResourcesBox — "Related resources" for one lesson. It sits directly after the "Related modules" panel on
+ * LessonResourcesBox — "Related resources" for one lesson. Every group starts closed (its title and count, as a
+ * button), so the box takes little room until the reader opens one. It sits directly after the "Related modules" panel on
  * every lesson, on the desktop and the phone, and has two sources:
  *
  *  - the links the lesson used to list by hand, kept as data (src/data/lessonRelatedLinks.ts): "Related lessons" and
@@ -13,6 +14,7 @@
  * modules" panel already points to may be listed again in "Related lessons": its reason adds what the panel's does not.
  */
 import { useEffect, useId, useMemo, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { Link } from 'react-router'
 import {
   Chip,
@@ -29,7 +31,11 @@ import {
   type RelatedLink,
 } from '@/data/lessonRelatedLinks'
 import { cn } from '@/lib/utils'
-import { loadKnowledgeReader } from '@/services/knowledge/knowledgeReader'
+import {
+  loadKnowledgeReader,
+  loadedKnowledgeReader,
+  type KnowledgeReader,
+} from '@/services/knowledge/knowledgeReader'
 import {
   COMPLIANCE_SHOWN,
   DOCUMENTS_SHOWN,
@@ -40,22 +46,33 @@ import {
   type LessonResources,
 } from '@/services/knowledge/lessonResources'
 
-/** The lesson's resources once the knowledge file has loaded; null before that, and when it cannot be loaded. */
-function useLessonResources(moduleId: string): LessonResources | null {
-  const [found, setFound] = useState<{ moduleId: string; resources: LessonResources } | null>(null)
+/** What the knowledge file says about the lesson: still loading, loaded, or not loadable. */
+type ResourcesState =
+  { status: 'loading' } | { status: 'failed' } | { status: 'ready'; resources: LessonResources }
+
+function useLessonResources(moduleId: string): ResourcesState {
+  const [reader, setReader] = useState<KnowledgeReader | null>(loadedKnowledgeReader)
+  const [failed, setFailed] = useState(false)
   useEffect(() => {
     let live = true
     // The file is shared: the page's My work panel reads it too, so this adds no second download.
     loadKnowledgeReader()
-      .then((reader) => {
-        if (live) setFound({ moduleId, resources: lessonResources(reader, moduleId) })
+      .then((r) => {
+        if (live) setReader(r)
       })
-      .catch(() => undefined)
+      .catch(() => {
+        if (live) setFailed(true)
+      })
     return () => {
       live = false
     }
-  }, [moduleId])
-  return found?.moduleId === moduleId ? found.resources : null
+  }, [])
+  const resources = useMemo(
+    () => (reader ? lessonResources(reader, moduleId) : null),
+    [reader, moduleId]
+  )
+  if (resources) return { status: 'ready', resources }
+  return failed ? { status: 'failed' } : { status: 'loading' }
 }
 
 const isInternal = (link: string) => link.startsWith('/') && !link.startsWith('//')
@@ -140,10 +157,16 @@ interface GroupProps {
   layout: 'chips' | 'rows'
 }
 
-/** One group: a labelled list that shows its first few items and a "Show all N" control for the rest. */
+/**
+ * One group. It starts closed: a header button with the title and the count, and nothing else. Opening it shows the
+ * first rows and, for a longer group, a "Show all N" control for the rest. The closed content is `hidden`, so it is
+ * out of the tab order and the accessibility tree. Each group opens and closes on its own; nothing is remembered.
+ */
 function ResourceGroup({ group, title, items, shown, layout }: GroupProps) {
   const [open, setOpen] = useState(false)
-  const headingId = useId()
+  const [all, setAll] = useState(false)
+  const buttonId = useId()
+  const panelId = useId()
   const listId = useId()
   // Two records can share a label (a glossary term and the algorithm of the same name): then the chip says which is which.
   const sharedLabels = useMemo(() => {
@@ -154,40 +177,68 @@ function ResourceGroup({ group, title, items, shown, layout }: GroupProps) {
   }, [items])
   if (items.length === 0) return null
   const hidden = items.length > shown
-  const visible = open ? items : items.slice(0, shown)
+  const visible = all ? items : items.slice(0, shown)
   return (
-    <div className="space-y-2" data-testid={`lesson-resources-${group}`}>
-      <h3 id={headingId}>
-        <Eyebrow as="span">
-          {title} <span className="font-semibold text-muted-foreground">({items.length})</span>
-        </Eyebrow>
-      </h3>
-      <ul
-        id={listId}
-        aria-labelledby={headingId}
-        className={
-          layout === 'chips' ? 'flex flex-wrap gap-x-1.5 gap-y-0' : 'grid gap-2 sm:grid-cols-2'
-        }
-      >
-        {visible.map((item) =>
-          layout === 'chips' ? (
-            <TermChip key={item.id} item={item} showKind={sharedLabels.has(item.label)} />
-          ) : (
-            <ResourceRow key={item.id} item={item} />
-          )
-        )}
-      </ul>
-      {hidden && (
+    <div data-testid={`lesson-resources-${group}`}>
+      <h3>
         <StoryButton
           variant="quiet"
-          className="-ml-2"
+          id={buttonId}
           aria-expanded={open}
-          aria-controls={listId}
+          aria-controls={panelId}
           onClick={() => setOpen((v) => !v)}
+          className="w-full justify-between gap-3 whitespace-normal rounded-2xl px-2 text-left font-normal no-underline hover:bg-muted hover:text-foreground"
         >
-          {open ? 'Show fewer' : `Show all ${items.length}`}
+          <span>
+            <Eyebrow as="span">{title}</Eyebrow>{' '}
+            <span className="text-[11px] font-semibold text-muted-foreground">
+              ({items.length})
+            </span>
+          </span>
+          <ChevronDown
+            size={18}
+            aria-hidden="true"
+            className={cn(
+              'shrink-0 text-heading transition-transform motion-reduce:transition-none',
+              open && 'rotate-180'
+            )}
+          />
         </StoryButton>
-      )}
+      </h3>
+      <div id={panelId} hidden={!open} className="space-y-2 pb-2 pt-1">
+        {open && (
+          <>
+            <ul
+              id={listId}
+              aria-labelledby={buttonId}
+              className={
+                layout === 'chips'
+                  ? 'flex flex-wrap gap-x-1.5 gap-y-0'
+                  : 'grid gap-2 sm:grid-cols-2'
+              }
+            >
+              {visible.map((item) =>
+                layout === 'chips' ? (
+                  <TermChip key={item.id} item={item} showKind={sharedLabels.has(item.label)} />
+                ) : (
+                  <ResourceRow key={item.id} item={item} />
+                )
+              )}
+            </ul>
+            {hidden && (
+              <StoryButton
+                variant="quiet"
+                className="-ml-2"
+                aria-expanded={all}
+                aria-controls={listId}
+                onClick={() => setAll((v) => !v)}
+              >
+                {all ? 'Show fewer' : `Show all ${items.length}`}
+              </StoryButton>
+            )}
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -210,7 +261,8 @@ export interface LessonResourcesBoxProps {
 
 export function LessonResourcesBox({ moduleId }: LessonResourcesBoxProps) {
   const headingId = useId()
-  const resources = useLessonResources(moduleId)
+  const state = useLessonResources(moduleId)
+  const resources = state.status === 'ready' ? state.resources : null
   const kept = relatedLinksOf(moduleId)
   const lessons = useMemo(
     () => kept.lessons.map((l) => keptItem(l, lessonLabelOf(l.to))),
@@ -226,13 +278,14 @@ export function LessonResourcesBox({ moduleId }: LessonResourcesBoxProps) {
         resources.compliance.length +
         resources.useCases.length
       : 0)
+  // Until the knowledge file is known, the box holds only the kept groups, or nothing when the lesson has none.
   if (count === 0) return null
   return (
     <StickerCard as="section" aria-labelledby={headingId} data-testid="lesson-resources">
-      <h2 id={headingId} className="mb-4 text-base font-extrabold text-heading">
+      <h2 id={headingId} className="mb-2 text-base font-extrabold text-heading">
         Related resources
       </h2>
-      <div className="space-y-5">
+      <div className="space-y-1">
         <ResourceGroup
           group="lessons"
           title="Related lessons"
@@ -276,6 +329,9 @@ export function LessonResourcesBox({ moduleId }: LessonResourcesBoxProps) {
           layout="rows"
         />
       </div>
+      {state.status === 'loading' && (
+        <p className="mt-2 text-xs text-muted-foreground">Loading terms, documents and more…</p>
+      )}
     </StickerCard>
   )
 }
