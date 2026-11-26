@@ -26,7 +26,7 @@ const records = [
   rec({ id: 'PRD:q', type: 'product' }),
   rec({ id: 'VND-1', type: 'vendor' }),
   rec({ id: 'CERT:a', type: 'certification', label: 'ACVP #A1: Thing Inc., Thing' }),
-  rec({ id: 'CERT:cc', type: 'certification', label: 'Common Criteria #cc-thing: Thing' }),
+  rec({ id: 'CERT:cc', type: 'certification', label: 'Common Criteria #cc1: Thing' }),
   rec({ id: 'CERT:long', type: 'certification', label: `${'x'.repeat(41)} #1: Thing` }),
   rec({ id: 'SRC:s', type: 'source' }),
   rec({ id: 'LIB:d', type: 'document' }),
