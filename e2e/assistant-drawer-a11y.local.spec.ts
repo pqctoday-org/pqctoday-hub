@@ -139,6 +139,8 @@ for (const theme of ['light', 'dark'] as const) {
         }
 
         // The record viewer: a record read inside the drawer.
+        // The newer answers folded it: open it again.
+        await concept.getByRole('button', { name: /^Earlier answer/ }).click()
         await concept.getByRole('tab', { name: /^Glossary, / }).click()
         await concept
           .getByRole('button', { name: /^Read here:/ })

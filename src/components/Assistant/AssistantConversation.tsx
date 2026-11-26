@@ -108,7 +108,11 @@ export function AssistantConversation() {
         spacer.style.height = '0px'
         const contentEnd =
           spacer.offsetTop + parseFloat(getComputedStyle(list).paddingBottom || '0')
-        spacer.style.height = `${Math.max(0, card.offsetTop + list.clientHeight - contentEnd)}px`
+        // Only for a card with controls in it: a scrolling list with nothing to focus fails the keyboard rule.
+        const room = card.querySelector('button, a[href]')
+          ? Math.max(0, card.offsetTop + list.clientHeight - contentEnd)
+          : 0
+        spacer.style.height = `${room}px`
       }
       list.scrollTop = card.offsetTop
     }

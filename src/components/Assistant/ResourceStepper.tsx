@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Check } from 'lucide-react'
 import { Chip, Eyebrow, StoryButton } from '@/components/storybook'
 import { cn } from '@/lib/utils'
@@ -114,8 +114,24 @@ export function ResourceStepper({
   onAction,
 }: ResourceStepperProps) {
   const at = settleNav(tabs, nav)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const tab = tabs.find((t) => t.key === at.tab)
   const row = tab?.rows[at.index]
+  const shownTag = row?.tag
+  // The text area scrolls when a long extract does not fit; then it can be reached with the keyboard too.
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const update = () => {
+      if (el.scrollHeight > el.clientHeight + 1) el.setAttribute('tabindex', '0')
+      else el.removeAttribute('tabindex')
+    }
+    update()
+    if (typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [shownTag])
   if (!tab || !row) return null
 
   const prev = stepFrom(tabs, at, -1)
@@ -150,7 +166,10 @@ export function ResourceStepper({
         data-tag={row.tag}
         className="flex min-h-0 flex-1 flex-col rounded-2xl border border-border bg-card"
       >
-        <div className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pt-2">
+        <div
+          ref={scrollRef}
+          className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pt-2 focus-visible:outline-3 focus-visible:outline-offset-[-3px] focus-visible:outline-ring focus-visible:outline-solid"
+        >
           <div className="flex flex-wrap items-center gap-1.5">
             <Chip>{row.kind}</Chip>
             {row.status && <Chip className="bg-highlight text-heading">{row.status}</Chip>}

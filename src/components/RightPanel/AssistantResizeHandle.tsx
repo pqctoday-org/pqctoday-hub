@@ -12,7 +12,12 @@ import { useAssistantWidth } from '../Assistant/useAssistantLayout'
  */
 export function AssistantResizeHandle() {
   const { width, min, max, setWidth, reset } = useAssistantWidth()
-  const drag = useRef<{ startX: number; startWidth: number; frame: number | null } | null>(null)
+  const drag = useRef<{
+    startX: number
+    startWidth: number
+    frame: number | null
+    latest: number
+  } | null>(null)
 
   useEffect(
     () => () => {
@@ -25,7 +30,7 @@ export function AssistantResizeHandle() {
     (e: React.PointerEvent<HTMLDivElement>) => {
       if (e.button !== 0) return
       e.currentTarget.setPointerCapture?.(e.pointerId)
-      drag.current = { startX: e.clientX, startWidth: width, frame: null }
+      drag.current = { startX: e.clientX, startWidth: width, frame: null, latest: width }
       e.preventDefault()
     },
     [width]
@@ -36,6 +41,7 @@ export function AssistantResizeHandle() {
       const d = drag.current
       if (!d) return
       const next = d.startWidth + (d.startX - e.clientX)
+      d.latest = next
       if (d.frame != null) cancelAnimationFrame(d.frame)
       d.frame = requestAnimationFrame(() => {
         d.frame = null
@@ -45,15 +51,20 @@ export function AssistantResizeHandle() {
     [setWidth]
   )
 
-  const endDrag = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    const d = drag.current
-    if (!d) return
-    if (d.frame != null) cancelAnimationFrame(d.frame)
-    drag.current = null
-    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId)
-    }
-  }, [])
+  const endDrag = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const d = drag.current
+      if (!d) return
+      if (d.frame != null) cancelAnimationFrame(d.frame)
+      // The last move may still be waiting for its frame: apply it now, so the drag ends where the pointer did.
+      setWidth(d.latest)
+      drag.current = null
+      if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId)
+      }
+    },
+    [setWidth]
+  )
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'ArrowLeft') setWidth(width + ASSISTANT_WIDTH_KEY_STEP)
