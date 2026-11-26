@@ -20,7 +20,8 @@
     "complexity": "beginner",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "etsi",
@@ -31,7 +32,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "place": "PQC-REGION-EUROPE",
-    "industries": "Telecommunications"
+    "industries": "Telecommunications",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "ietf",
@@ -40,7 +42,8 @@
     "definition": "Internet Engineering Task Force, developing PQC integration into internet protocols like TLS, SSH, and IKEv2.",
     "relatedModule": "/library",
     "complexity": "intermediate",
-    "category": "organization"
+    "category": "organization",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "anssi",
@@ -51,7 +54,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "FR;PQC-REGION-EUROPE"
+    "place": "FR;PQC-REGION-EUROPE",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "bsi",
@@ -62,7 +66,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "DE"
+    "place": "DE",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "3gpp",
@@ -83,7 +88,8 @@
     "complexity": "beginner",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "cisa",
@@ -94,7 +100,8 @@
     "complexity": "beginner",
     "category": "organization",
     "industries": "Critical Infrastructure / Energy; Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "enisa",
@@ -105,7 +112,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "PQC-REGION-EU"
+    "place": "PQC-REGION-EU",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "gsma",
@@ -115,7 +123,8 @@
     "relatedModule": "/threats",
     "complexity": "intermediate",
     "category": "organization",
-    "industries": "Telecommunications"
+    "industries": "Telecommunications",
+    "module_ids": "5g-security"
   },
   {
     "id": "ca-browser-forum",
@@ -124,7 +133,8 @@
     "relatedModule": "/library",
     "complexity": "intermediate",
     "category": "organization",
-    "industries": "IT Industry / Software"
+    "industries": "IT Industry / Software",
+    "module_ids": "pki-workshop"
   },
   {
     "id": "ncsc",
@@ -135,7 +145,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "GB"
+    "place": "GB",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "oscca",
@@ -146,7 +157,8 @@
     "complexity": "advanced",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "CN"
+    "place": "CN",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "iso-iec-jtc-1",
@@ -156,7 +168,8 @@
     "complexity": "advanced",
     "category": "organization",
     "industries": "IT Industry / Software",
-    "place": "PQC-REGION-GLOBAL"
+    "place": "PQC-REGION-GLOBAL",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "euroqci",
@@ -195,7 +208,8 @@
     "relatedModule": "/library",
     "complexity": "intermediate",
     "category": "organization",
-    "industries": "IT Industry / Software"
+    "industries": "IT Industry / Software",
+    "module_ids": "crypto-dev-apis"
   },
   {
     "id": "asd",
@@ -206,7 +220,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "AU"
+    "place": "AU",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "cccs",
@@ -217,7 +232,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "CA"
+    "place": "CA",
+    "module_ids": "compliance-strategy"
   },
   {
     "id": "cryptrec",
@@ -228,7 +244,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "JP"
+    "place": "JP",
+    "module_ids": "compliance-strategy"
   },
   {
     "id": "kpqc",
@@ -238,7 +255,8 @@
     "relatedModule": "/timeline",
     "complexity": "intermediate",
     "category": "organization",
-    "place": "KR"
+    "place": "KR",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "itu-t",
@@ -249,7 +267,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Telecommunications",
-    "place": "PQC-REGION-GLOBAL"
+    "place": "PQC-REGION-GLOBAL",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "nccoe",
@@ -260,7 +279,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Cross-Industry",
-    "place": "US"
+    "place": "US",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "bis",
@@ -281,7 +301,8 @@
     "relatedModule": "/timeline",
     "complexity": "advanced",
     "category": "organization",
-    "place": "CN"
+    "place": "CN",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "ietf-plants-working-group",
@@ -432,7 +453,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "government-defense-pqc"
   },
   {
     "id": "dod",
@@ -443,7 +465,8 @@
     "complexity": "beginner",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "government-defense-pqc"
   },
   {
     "id": "oasis",
@@ -452,7 +475,8 @@
     "definition": "Organization for the Advancement of Structured Information Standards, a nonprofit consortium that develops open standards — including KMIP, already in this glossary, which now extends to PQC key types.",
     "relatedModule": "/migrate",
     "complexity": "intermediate",
-    "category": "organization"
+    "category": "organization",
+    "module_ids": "standards-bodies"
   },
   {
     "id": "niap",
@@ -463,7 +487,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "cc-eucc-certification"
   },
   {
     "id": "w3c",

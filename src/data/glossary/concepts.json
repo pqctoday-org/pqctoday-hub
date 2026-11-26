@@ -26,7 +26,8 @@
     "definition": "The hypothetical future date when a quantum computer becomes powerful enough to break current public-key cryptography (RSA, ECC).",
     "relatedModule": "/threats",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "quantum-threats"
   },
   {
     "id": "harvest-now-decrypt-later",
@@ -37,7 +38,8 @@
     "plainDefinitionAcronym": "Harvest Now, Decrypt Later — attackers steal encrypted data today to crack it when quantum computers arrive.",
     "relatedModule": "/threats",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "quantum-threats"
   },
   {
     "id": "encryption",
@@ -120,7 +122,8 @@
     "technicalNote": "Key problems: Learning With Errors (LWE), Module-LWE, Ring-LWE. Offer good performance and key sizes.",
     "relatedModule": "/algorithms?tab=detailed&quickview=none&family=Lattice",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "hash-based-signatures",
@@ -137,7 +140,8 @@
     "definition": "PQC algorithms based on the hardness of decoding random linear error-correcting codes. Used by Classic McEliece and HQC.",
     "relatedModule": "/algorithms?tab=detailed&quickview=none&family=Code-based",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "security-level",
@@ -147,7 +151,8 @@
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
     "category": "concept",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "key-exchange",
@@ -184,7 +189,8 @@
     "relatedModule": "/threats?industry=Hardware%20Security%20Modules",
     "complexity": "intermediate",
     "category": "concept",
-    "industries": "Hardware Security Modules"
+    "industries": "Hardware Security Modules",
+    "module_ids": "hsm-pqc"
   },
   {
     "id": "entanglement",
@@ -250,7 +256,8 @@
     "technicalNote": "Unlike Diffie-Hellman key exchange, KEMs are asymmetric: the sender encapsulates, the receiver decapsulates. This is the core operation of ML-KEM.",
     "relatedModule": "/playground",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "learning-with-errors",
@@ -260,7 +267,8 @@
     "technicalNote": "Variants include Ring-LWE (structured, faster) and Module-LWE (used in ML-KEM/ML-DSA, balancing security and performance).",
     "relatedModule": "/algorithms",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "ntru-lattice",
@@ -269,7 +277,8 @@
     "definition": "A lattice-based cryptographic family using polynomial rings, providing the mathematical basis for FN-DSA (Falcon). One of the earliest PQC proposals (1996).",
     "relatedModule": "/algorithms?highlight=FN-DSA,NTRU%2B",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "hybrid-key-exchange",
@@ -279,7 +288,8 @@
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
     "category": "concept",
-    "industries": "Cross-Industry"
+    "industries": "Cross-Industry",
+    "module_ids": "hybrid-crypto"
   },
   {
     "id": "composite-certificate",
@@ -342,7 +352,8 @@
     "definition": "An X.509 certificate that carries both classical and post-quantum public keys during the transition period. Legacy interoperability depends on the design: a composite certificate is understood only by upgraded systems, while other designs let a verifier that has not migrated rely on the classical part.",
     "relatedModule": "/migrate?domain=certs",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "hybrid-crypto"
   },
   {
     "id": "scada",
@@ -372,7 +383,8 @@
     "relatedModule": "/threats?industry=Finance%20%26%20Banking",
     "complexity": "advanced",
     "category": "concept",
-    "industries": "Finance & Banking"
+    "industries": "Finance & Banking",
+    "module_ids": "emv-payment-pqc"
   },
   {
     "id": "drm",
@@ -382,7 +394,8 @@
     "relatedModule": "/threats?industry=Media%20%2F%20Entertainment%20%2F%20DRM",
     "complexity": "beginner",
     "category": "concept",
-    "industries": "Media / Entertainment / DRM"
+    "industries": "Media / Entertainment / DRM",
+    "module_ids": "media-drm-pqc"
   },
   {
     "id": "kms",
@@ -392,7 +405,8 @@
     "relatedModule": "/migrate?domain=kms",
     "complexity": "intermediate",
     "category": "concept",
-    "industries": "Cross-Industry"
+    "industries": "Cross-Industry",
+    "module_ids": "kms-pqc"
   },
   {
     "id": "tpm",
@@ -402,7 +416,8 @@
     "relatedModule": "/migrate?domain=hsm",
     "complexity": "intermediate",
     "category": "concept",
-    "industries": "Semiconductors / Secure Elements"
+    "industries": "Semiconductors / Secure Elements",
+    "module_ids": "secure-boot-pqc"
   },
   {
     "id": "endorsement-key",
@@ -547,7 +562,8 @@
     "definition": "Over-the-Air updates, the process of remotely delivering firmware or software to devices. Signature verification must be quantum-safe to prevent forgery.",
     "relatedModule": "/threats",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "iot-pqc"
   },
   {
     "id": "ehr",
@@ -557,7 +573,8 @@
     "relatedModule": "/threats?industry=Healthcare%20%2F%20Pharmaceutical",
     "complexity": "beginner",
     "category": "concept",
-    "industries": "Healthcare / Pharmaceutical"
+    "industries": "Healthcare / Pharmaceutical",
+    "module_ids": "healthcare-pqc"
   },
   {
     "id": "sbom",
@@ -692,7 +709,8 @@
     "technicalNote": "PQC algorithms like FN-DSA require careful floating-point implementation to resist side-channel attacks. Constant-time implementations are essential.",
     "relatedModule": "/algorithms?tab=validation&section=attacks",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-implementation-security"
   },
   {
     "id": "certificate-chain",
@@ -709,7 +727,8 @@
     "technicalNote": "PQC migration requires updating roots of trust (TPM, secure boot firmware, root CA certificates) to quantum-safe algorithms.",
     "relatedModule": "/migrate",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "secure-boot-pqc"
   },
   {
     "id": "key-rotation",
@@ -719,7 +738,8 @@
     "relatedModule": "/migrate",
     "complexity": "beginner",
     "category": "concept",
-    "industries": "Cross-Industry"
+    "industries": "Cross-Industry",
+    "module_ids": "kms-pqc"
   },
   {
     "id": "non-repudiation",
@@ -828,7 +848,8 @@
     "relatedModule": "/algorithms",
     "complexity": "advanced",
     "category": "concept",
-    "industries": "Cloud Computing / Data Centers"
+    "industries": "Cloud Computing / Data Centers",
+    "module_ids": "homomorphic-encryption"
   },
   {
     "id": "zero-knowledge-proof",
@@ -868,7 +889,8 @@
     "definition": "Privacy Enhanced Mail, a Base64-encoded format for storing cryptographic objects (certificates, keys, CSRs). Recognized by \"-----BEGIN CERTIFICATE-----\" headers.",
     "relatedModule": "/openssl",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pki-workshop"
   },
   {
     "id": "derivation-path",
@@ -903,7 +925,8 @@
     "technicalNote": "Recommended by BSI and ANSSI for the transition; NIST leaves the choice to each application, and the UK NCSC treats it as an interim option. Applied to key exchange, signatures, and certificates, with different constructions for each, so properties such as legacy compatibility differ between designs.",
     "relatedModule": "/migrate",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "hybrid-crypto"
   },
   {
     "id": "qtsp",
@@ -2846,7 +2869,8 @@
     "technicalNote": "Source: NIST SP 800-57 Part 1 Rev 5 Table 2 (RSA-2048 = 112 bits). Quantum resource estimates: Gidney & Ekerå 2021 (RSA) and Roetteler et al. 2017 (ECC).",
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "quantum-threats"
   },
   {
     "id": "hypertree",
@@ -3159,7 +3183,8 @@
     "complexity": "intermediate",
     "category": "concept",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "exec-quantum-impact"
   },
   {
     "id": "cve",
@@ -3212,7 +3237,8 @@
     "technicalNote": "Distinct from a Side-Channel Attack, which passively observes normal operation rather than disturbing it.",
     "relatedModule": "/algorithms?tab=validation&section=attacks",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-implementation-security"
   },
   {
     "id": "quantum-supremacy",
@@ -3343,7 +3369,8 @@
     "relatedModule": "/compliance",
     "complexity": "intermediate",
     "category": "concept",
-    "place": "US"
+    "place": "US",
+    "module_ids": "fips-140-3-certification"
   },
   {
     "id": "cryptographic-and-security-testing-laboratory",
@@ -3370,7 +3397,8 @@
     "definition": "Digital signatures built from hash functions. They help check who signed data and whether it changed; they do not hide the data.",
     "plainDefinition": "Digital signatures built from hash functions. They help check who signed data and whether it changed; they do not hide the data.",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "digital-signatures",
@@ -3386,7 +3414,8 @@
     "definition": "A new type of computer that uses quantum physics. For certain specific problems it can be far faster than a standard computer, but it is not faster at everything.",
     "plainDefinition": "A new type of computer that uses quantum physics. For certain specific problems it can be far faster than a standard computer, but it is not faster at everything.",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-101"
   },
   {
     "id": "classical-cryptography",
@@ -3394,6 +3423,7 @@
     "definition": "The traditional math-based encryption we use today, like RSA or ECC.",
     "plainDefinition": "The traditional math-based encryption we use today, like RSA or ECC.",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "module_ids": "pqc-101"
   }
 ]

@@ -15,7 +15,8 @@
     "relatedModule": "/library?ref=FIPS 203",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "fips-204",
@@ -24,7 +25,8 @@
     "relatedModule": "/library?ref=FIPS 204",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "fips-205",
@@ -33,7 +35,8 @@
     "relatedModule": "/library?ref=FIPS 205",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "slh-dsa"
   },
   {
     "id": "fips-140-3",
@@ -43,7 +46,8 @@
     "complexity": "intermediate",
     "category": "standard",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "fips-140-3-certification"
   },
   {
     "id": "cnsa-2-0",
@@ -54,7 +58,8 @@
     "complexity": "intermediate",
     "category": "standard",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "government-defense-pqc"
   },
   {
     "id": "common-criteria",
@@ -155,7 +160,8 @@
     "relatedModule": "/library?ref=NIST SP 800-208",
     "complexity": "advanced",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "stateful-signatures"
   },
   {
     "id": "rfc-9629",
@@ -163,7 +169,8 @@
     "definition": "IETF standard defining how to use Key Encapsulation Mechanisms (KEMs) in the Cryptographic Message Syntax (CMS) for encrypted messaging.",
     "relatedModule": "/library?ref=RFC 9629",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "module_ids": "email-signing"
   },
   {
     "id": "pci-dss",
@@ -184,7 +191,8 @@
     "complexity": "intermediate",
     "category": "standard",
     "industries": "Healthcare / Pharmaceutical",
-    "place": "US"
+    "place": "US",
+    "module_ids": "healthcare-pqc"
   },
   {
     "id": "iec-62443",
@@ -194,7 +202,8 @@
     "complexity": "advanced",
     "category": "standard",
     "industries": "Critical Infrastructure / Energy; Internet of Things (IoT)",
-    "place": "PQC-REGION-GLOBAL"
+    "place": "PQC-REGION-GLOBAL",
+    "module_ids": "ot-pqc"
   },
   {
     "id": "slsa",
@@ -224,7 +233,8 @@
     "relatedModule": "/library?ref=NIST SP 800-227",
     "complexity": "advanced",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "nist-ir-8545",
@@ -233,7 +243,8 @@
     "relatedModule": "/library?ref=NIST IR 8545",
     "complexity": "advanced",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-candidates"
   },
   {
     "id": "rfc-9370",
@@ -242,7 +253,8 @@
     "technicalNote": "Allows adding ML-KEM alongside classical Diffie-Hellman in a single IKEv2 handshake without breaking backward compatibility.",
     "relatedModule": "/library?ref=RFC 9370",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "module_ids": "vpn-ssh-pqc"
   },
   {
     "id": "rfc-9881",
@@ -250,7 +262,8 @@
     "definition": "IETF standard defining how to use ML-DSA digital signatures in X.509 certificates and Certificate Revocation Lists (CRLs).",
     "relatedModule": "/library?ref=RFC 9881",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "module_ids": "pki-workshop"
   },
   {
     "id": "rfc-9882",
@@ -258,7 +271,8 @@
     "definition": "IETF standard defining the use of ML-DSA signatures in the Cryptographic Message Syntax (CMS), enabling PQC-signed messages and documents.",
     "relatedModule": "/library?ref=RFC 9882",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "module_ids": "email-signing"
   },
   {
     "id": "iso-iec-18013-5",
@@ -710,7 +724,8 @@
     "complexity": "advanced",
     "category": "standard",
     "industries": "Cross-Industry",
-    "place": "US"
+    "place": "US",
+    "module_ids": "crypto-agility"
   },
   {
     "id": "nis2",
@@ -795,7 +810,8 @@
     "relatedModule": "/library?ref=NIST-IR-8528",
     "complexity": "advanced",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-candidates"
   },
   {
     "id": "ca-b-forum-sc-081v3",
@@ -826,7 +842,8 @@
     "complexity": "intermediate",
     "category": "standard",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "government-defense-pqc"
   },
   {
     "id": "fips-140-2",
@@ -846,7 +863,8 @@
     "complexity": "intermediate",
     "category": "standard",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "government-defense-pqc"
   },
   {
     "id": "nist-sp-800-56a",
@@ -907,7 +925,8 @@
     "relatedModule": "/library",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-101"
   },
   {
     "id": "nist-ir-8309",
@@ -916,7 +935,8 @@
     "relatedModule": "/library",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-candidates"
   },
   {
     "id": "nist-ir-8413",
@@ -926,7 +946,8 @@
     "relatedModule": "/library",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-candidates"
   },
   {
     "id": "pkcs-1",
@@ -942,7 +963,8 @@
     "definition": "The Cryptographic Message Syntax standard for signing and encrypting arbitrary data, superseded by and largely synonymous with IETF CMS — the basis for S/MIME and code-signing signature formats.",
     "relatedModule": "/openssl",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "module_ids": "email-signing"
   },
   {
     "id": "pkcs-8",

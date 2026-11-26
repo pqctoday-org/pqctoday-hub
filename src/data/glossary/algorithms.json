@@ -7,7 +7,8 @@
     "technicalNote": "Broken by quantum computers via Shor's algorithm. Being replaced by Key Encapsulation Mechanisms (KEMs) such as ML-KEM.",
     "relatedModule": "/algorithms?algo=dh-diffie-hellman",
     "complexity": "beginner",
-    "category": "algorithm"
+    "category": "algorithm",
+    "module_ids": "quantum-threats"
   },
   {
     "id": "rsa",
@@ -17,7 +18,8 @@
     "technicalNote": "Common key sizes: 2048, 3072, 4096 bits. Being replaced by ML-DSA for signatures and ML-KEM for key exchange.",
     "relatedModule": "/algorithms?highlight=RSA",
     "complexity": "beginner",
-    "category": "algorithm"
+    "category": "algorithm",
+    "module_ids": "quantum-threats"
   },
   {
     "id": "dsa",
@@ -39,7 +41,8 @@
     "technicalNote": "Common curves: P-256, P-384, P-521, secp256k1 (Bitcoin), Curve25519.",
     "relatedModule": "/algorithms?highlight=ECDH,ECDSA",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "module_ids": "quantum-threats"
   },
   {
     "id": "ml-kem",
@@ -51,7 +54,8 @@
     "complexity": "intermediate",
     "category": "algorithm",
     "industries": "Cross-Industry",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "ml-dsa",
@@ -63,7 +67,8 @@
     "complexity": "intermediate",
     "category": "algorithm",
     "industries": "Cross-Industry",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "slh-dsa",
@@ -75,7 +80,8 @@
     "complexity": "advanced",
     "category": "algorithm",
     "industries": "Cross-Industry",
-    "place": "US"
+    "place": "US",
+    "module_ids": "slh-dsa"
   },
   {
     "id": "fn-dsa",
@@ -86,7 +92,8 @@
     "complexity": "advanced",
     "category": "algorithm",
     "industries": "Cross-Industry",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "frodokem",
@@ -94,7 +101,8 @@
     "definition": "A conservative lattice-based KEM algorithm based on the \"plain\" Learning With Errors problem, offering strong security guarantees at the cost of larger key sizes.",
     "relatedModule": "/algorithms?highlight=FrodoKEM",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "module_ids": "pqc-candidates"
   },
   {
     "id": "hqc",
@@ -135,7 +143,8 @@
     "relatedModule": "/openssl",
     "complexity": "advanced",
     "category": "algorithm",
-    "industries": "IT Industry / Software"
+    "industries": "IT Industry / Software",
+    "module_ids": "stateful-signatures"
   },
   {
     "id": "aes",
@@ -262,7 +271,8 @@
     "relatedModule": "/algorithms?highlight=ML-KEM",
     "complexity": "beginner",
     "category": "algorithm",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "dilithium",
@@ -272,7 +282,8 @@
     "relatedModule": "/algorithms?highlight=ML-DSA",
     "complexity": "beginner",
     "category": "algorithm",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "falcon",
@@ -282,7 +293,8 @@
     "relatedModule": "/algorithms?highlight=FN-DSA",
     "complexity": "intermediate",
     "category": "algorithm",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-algorithms"
   },
   {
     "id": "sphincs",
@@ -292,7 +304,8 @@
     "relatedModule": "/algorithms?highlight=SLH-DSA",
     "complexity": "intermediate",
     "category": "algorithm",
-    "place": "US"
+    "place": "US",
+    "module_ids": "slh-dsa"
   },
   {
     "id": "bike",
@@ -302,7 +315,8 @@
     "relatedModule": "/algorithms?highlight=BIKE",
     "complexity": "advanced",
     "category": "algorithm",
-    "place": "US"
+    "place": "US",
+    "module_ids": "pqc-candidates"
   },
   {
     "id": "sha-3",
@@ -321,7 +335,8 @@
     "technicalNote": "Used in SLH-DSA-SHAKE parameter sets and as a key derivation mechanism in several PQC algorithms.",
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "module_ids": "pqc-hw-acceleration"
   },
   {
     "id": "eddsa",
@@ -361,7 +376,8 @@
     "relatedModule": "/algorithms?highlight=ECDH%20P-256,ECDSA%20P-256",
     "complexity": "intermediate",
     "category": "algorithm",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "module_ids": "hybrid-crypto"
   },
   {
     "id": "p-384",
@@ -372,7 +388,8 @@
     "complexity": "intermediate",
     "category": "algorithm",
     "industries": "Government & Defense",
-    "place": "US"
+    "place": "US",
+    "module_ids": "hybrid-crypto"
   },
   {
     "id": "ascon",
