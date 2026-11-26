@@ -65,8 +65,7 @@ describe('sanitizeDeepLink', () => {
 
 // ── Per-route key sets ──────────────────────────────────────────────────────
 // Pins EXACTLY the params each page reads (canonical forms only). Changing a
-// page's URL contract must change this table, the grammar and promptBuilder's
-// page guide together.
+// page's URL contract must change this table and the grammar together.
 const EXPECTED_KEYS: Record<string, readonly string[]> = {
   '/timeline': [
     'event',

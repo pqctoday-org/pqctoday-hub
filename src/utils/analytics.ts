@@ -434,35 +434,7 @@ function sanitizeQuery(q: string): string {
     .slice(0, 80)
 }
 
-// --- Chat / RAG quality tracking ---
-
-export const logChatFeedback = (
-  feedback: 'helpful' | 'unhelpful',
-  _query: string,
-  sourceCount: number
-) => {
-  // Feedback records a rating and source count, never the question text.
-  logEvent('Chat', `Feedback ${feedback === 'helpful' ? 'Helpful' : 'Unhelpful'}`)
-  logEvent('Chat', 'Feedback Sources', String(sourceCount))
-}
-
-export const logChatQuery = (page: string) => {
-  logEvent('Chat', 'Query', page)
-}
-
-export const logChatRetry = (type: 'retry' | 'edit') => {
-  logEvent('Chat', type === 'retry' ? 'Retry' : 'Edit & Resend')
-}
-
-export const logChatChunksUsed = (page: string, sources: string[], count: number) => {
-  logEvent('Chat', 'RAG Chunks', `${page}:${count}`)
-  const unique = [...new Set(sources)]
-  unique.slice(0, 5).forEach((src) => logEvent('Chat', 'RAG Source', src))
-}
-
-export const logChatCacheHit = (page: string) => {
-  logEvent('Chat', 'Cache Hit', page)
-}
+// --- Chat tracking ---
 
 export const logChatOpened = () => {
   logEvent('Chat', 'Opened')

@@ -76,9 +76,7 @@ export function DataPrivacySection() {
                   site is served as static files from GitHub Pages.{' '}
                   <strong className="text-foreground">Google Analytics 4</strong> runs on every
                   visit (anonymous usage data, sets cookies; see below). Other data is sent
-                  externally only when you use specific opt-in features:{' '}
-                  <strong className="text-foreground">Gemini AI</strong> (chat messages sent to
-                  Google when using cloud mode) and{' '}
+                  externally only when you use a specific opt-in feature:{' '}
                   <strong className="text-foreground">Google Drive sync</strong> (learning progress;
                   built into the code but not currently available). See sections below and the{' '}
                   <a href="/terms" className="text-primary hover:underline">

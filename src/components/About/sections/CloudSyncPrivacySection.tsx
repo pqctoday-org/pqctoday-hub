@@ -55,9 +55,8 @@ export function CloudSyncPrivacySection() {
           <li className="flex items-start gap-2.5">
             <span className="text-status-success mt-1 shrink-0">&#9679;</span>
             <span>
-              <strong className="text-foreground">No API keys are synced.</strong> Your Gemini or
-              other AI provider API keys are explicitly excluded from the sync payload and remain
-              local to your device at all times.
+              <strong className="text-foreground">No API keys are synced.</strong> The site asks for
+              no API key and stores none, so there is none to include in the sync payload.
             </span>
           </li>
           <li className="flex items-start gap-2.5">

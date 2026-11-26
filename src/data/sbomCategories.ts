@@ -13,7 +13,7 @@ export const SBOM_CATEGORIES = [
   'Cryptography & PQC',
   'Rust WASM Bindings',
   'Rust Crypto Crates',
-  'Local AI & Embeddings',
+  'Search Embeddings',
   'State Management',
   'Analytics',
   'Notifications',

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The category list is what the page filters by and what `?cat=` takes — and
- * what the PQC Assistant names in its links (promptBuilder.ts). It once stopped
- * at seven while the data had an eighth, "Skeptic/Critic", which the assistant
- * could then not link.
+ * what a link into the page can name. It once stopped at seven while the data
+ * had an eighth, "Skeptic/Critic", which could then not be linked.
  */
 import { describe, it, expect } from 'vitest'
 import { LEADER_CATEGORIES, leaderMatchesCategory } from './leadersConstants'

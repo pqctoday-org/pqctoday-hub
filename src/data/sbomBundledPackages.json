@@ -6,7 +6,6 @@
     "node_modules/@huggingface/transformers",
     "node_modules/@iconify/utils",
     "node_modules/@mermaid-js/parser",
-    "node_modules/@mlc-ai/web-llm",
     "node_modules/@monaco-editor/loader",
     "node_modules/@monaco-editor/react",
     "node_modules/@noble/ciphers",

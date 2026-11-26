@@ -5,7 +5,7 @@ import { useRightPanelStore } from '@/store/useRightPanelStore'
 
 /**
  * Hook that opens the chat panel and queues a question for the PQC Assistant.
- * The question is sent automatically once the panel is open and the API key is configured.
+ * The Assistant picks the question up as soon as the panel is open.
  */
 export function useAskAssistant() {
   const setPendingQuestion = useChatStore((s) => s.setPendingQuestion)

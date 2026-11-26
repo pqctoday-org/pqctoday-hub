@@ -11,7 +11,6 @@ import type {
   AssessmentStatus,
 } from '@/store/useAssessmentStore'
 import type { AssessmentInput, AssessmentResult, TimelineMilestone } from '@/hooks/assessmentTypes'
-import type { ChatProvider, Conversation } from '@/types/ChatTypes'
 import type { MigrateTab, MigrateViewMode } from '@/store/useMigrateSelectionStore'
 
 /** Magic string identifying a valid PQC Today snapshot file. */
@@ -163,18 +162,6 @@ export interface MigrateData {
   tab: MigrateTab
 }
 
-/**
- * Persisted slice of useChatStore (excludes apiKey for security).
- */
-export interface ChatData {
-  conversations: Conversation[]
-  activeConversationId: string | null
-  model: string
-  provider: ChatProvider | null
-  localModel: string
-  localContextWindow: number
-}
-
 /** Persisted Migration-Simulation run (mirrors useSimulationStore's partialize). */
 export interface SimulationData {
   size: string
@@ -237,7 +224,6 @@ export interface AppSnapshot {
     tlsLearning: TLSData
     opensslStudio: OpenSSLData
     migrate: MigrateData
-    chat?: ChatData
     /** Migration-Simulation run (added v2 — optional for back-compat). */
     simulation?: SimulationData
   }

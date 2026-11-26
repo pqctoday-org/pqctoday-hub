@@ -17,7 +17,6 @@ import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useDisclaimerStore } from '@/store/useDisclaimerStore'
 import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { useHSMMode } from '@/store/useHSMMode'
-import { useChatStore } from '@/store/useChatStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { CLOUD_SYNC_WATCHED_STORES } from '@/store/syncWatchedStores'
 import {
@@ -35,11 +34,6 @@ const DEBOUNCE_MS = 2000
  * Collect all store state into a SyncDocument, excluding sensitive fields.
  */
 function collectStores(): Record<string, unknown> {
-  const chatState = useChatStore.getState()
-  // Strip API key — never sync secrets
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { apiKey: _apiKey, ...chatSafe } = chatState
-
   return {
     moduleStore: useModuleStore.getState(),
     assessmentStore: useAssessmentStore.getState(),
@@ -58,7 +52,6 @@ function collectStores(): Record<string, unknown> {
     airplaneModeStore: useAirplaneModeStore.getState(),
     hsmMode: useHSMMode.getState(),
     bookmarkStore: useBookmarkStore.getState(),
-    chatStore: chatSafe,
     cloudSyncStore: {
       enabled: useCloudSyncStore.getState().enabled,
       lastSyncedAt: useCloudSyncStore.getState().lastSyncedAt,
@@ -118,16 +111,8 @@ function restoreStores(stores: Record<string, unknown>) {
   safeRestore(useAirplaneModeStore as unknown as AnyStore, stores['airplaneModeStore'])
   safeRestore(useHSMMode as unknown as AnyStore, stores['hsmMode'])
   safeRestore(useBookmarkStore as unknown as AnyStore, stores['bookmarkStore'])
-
-  // Restore chat store but preserve the existing apiKey — never overwrite with synced data
-  const existingApiKey = useChatStore.getState().apiKey
-  const chatData = stores['chatStore']
-  if (chatData && typeof chatData === 'object') {
-    ;(useChatStore as unknown as AnyStore).setState({
-      ...(chatData as object),
-      apiKey: existingApiKey,
-    })
-  }
+  // A document written before the old chat was removed may carry a chat part (conversations,
+  // provider, model). It is ignored: nothing of it is restored.
 }
 
 /**

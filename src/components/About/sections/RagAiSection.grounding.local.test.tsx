@@ -1,43 +1,25 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
-import { finalizeGroundedResponse } from '@/services/chat/responseFinalization'
+import { describe, expect, it } from 'vitest'
 import { RagAiSection } from './RagAiSection'
 
-afterEach(() => vi.unstubAllGlobals())
-
-describe('Assistant grounding disclosure', () => {
-  it('acknowledges the extractive fallback for an uncited draft instead of promising universal rejection', () => {
-    const draft = 'PQC 101 introduces post-quantum cryptography fundamentals.'
-    const result = finalizeGroundedResponse(
-      draft,
-      [],
-      [
-        {
-          id: 'sample-pqc-101',
-          title: 'PQC 101',
-          source: 'modules',
-          content: draft,
-          category: 'learning',
-          metadata: {},
-        },
-      ]
-    )
-    expect(result.mode).toBe('extractive')
-    expect(result.decision.approved).toBe(false)
-    expect(result.content).toContain('PQC 101')
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
+describe('Assistant disclosure on the About page', () => {
+  it('says the Assistant answers from the Hub records with no language model, key or download', () => {
     render(<RagAiSection />)
     fireEvent.click(screen.getByRole('button', { name: /PQC Assistant/ }))
-    expect(screen.getByText(/These checks reduce risk/).textContent).toMatch(
-      /do not guarantee that every statement is supported or semantically correct/
-    )
-    expect(screen.getByText(/These checks reduce risk/).textContent).toMatch(
-      /a model can still draw on its training knowledge/
-    )
-    expect(screen.getByText(/These checks reduce risk/).textContent).toMatch(
-      /Check the cited passages before relying on an answer for a decision/
-    )
-    expect(screen.queryByText(/Unsupported drafts are retried once/)).toBeNull()
+    const text = document.body.textContent ?? ''
+    expect(text).toMatch(/answers from the Hub.s own records/)
+    expect(text).toMatch(/There is no language model behind it/)
+    expect(text).toMatch(/nothing to download and no API key/)
+    expect(text).toMatch(/not sent to Google or to any other outside service/)
+    expect(text).toMatch(/check it before relying on an answer for a decision/)
+  })
+
+  it('no longer promises a cloud mode, a local model, a key or a download', () => {
+    render(<RagAiSection />)
+    fireEvent.click(screen.getByRole('button', { name: /PQC Assistant/ }))
+    const text = document.body.textContent ?? ''
+    expect(text).not.toMatch(/Gemini|Qwen|WebGPU|cloud mode|local mode|AI Studio|WebLLM/i)
+    expect(text).not.toMatch(/provide your own/i)
   })
 })

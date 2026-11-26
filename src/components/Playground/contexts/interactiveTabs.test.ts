@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * `/playground/interactive?tab=` opens the tab it names, and the PQC Assistant
- * names these ids in its links (promptBuilder.ts reads INTERACTIVE_TAB_IDS). The
- * ids must be the tabs the lab actually has: an id with no tab would be accepted
+ * `/playground/interactive?tab=` opens the tab it names, so a link can name any of these
+ * ids (INTERACTIVE_TAB_IDS). The ids must be the tabs the lab actually has: an id with no tab would be accepted
  * and silently show nothing, and a tab missing from the list could not be linked.
  */
 import { describe, it, expect } from 'vitest'

@@ -25,12 +25,12 @@ describe('persistence watch-list registry', () => {
     }
   })
 
-  it('pins the cloud-sync watch set (18 stores — the useSyncEffect list)', () => {
-    expect(CLOUD_SYNC_WATCHED_STORES.length).toBe(18)
+  it('pins the cloud-sync watch set (17 stores — the useSyncEffect list)', () => {
+    expect(CLOUD_SYNC_WATCHED_STORES.length).toBe(17)
   })
 
-  it('pins the embed watch set (16 stores — the useEmbedPersistence list)', () => {
-    expect(EMBED_WATCHED_STORES.length).toBe(16)
+  it('pins the embed watch set (15 stores — the useEmbedPersistence list)', () => {
+    expect(EMBED_WATCHED_STORES.length).toBe(15)
   })
 
   it('the embed set is a strict subset of the cloud-sync set', () => {

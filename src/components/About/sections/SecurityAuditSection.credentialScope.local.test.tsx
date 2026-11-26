@@ -4,8 +4,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { SecurityAuditSection } from './SecurityAuditSection'
 import { MobileAboutView } from '@/components/Mobile/screens/MobileAboutView'
-import { useChatStore } from '@/store/useChatStore'
-import { GoogleDriveService } from '@/services/storage/GoogleDriveService'
 
 vi.mock('@/hooks/useTheme', () => ({ useTheme: () => ({ theme: 'dark', setTheme: vi.fn() }) }))
 vi.mock('@/embed/EmbedProvider', () => ({ useIsEmbedded: () => false }))
@@ -23,33 +21,20 @@ beforeEach(() => {
 const FIXTURE_KEY = 'synthetic-browser-key-for-local-test-only'
 const STORAGE_KEY = 'pqc-chat-storage'
 afterEach(() => {
-  useChatStore.getState().setApiKey(null)
   localStorage.removeItem(STORAGE_KEY)
   expect(noNetwork).not.toHaveBeenCalled()
   vi.unstubAllEnvs()
   vi.unstubAllGlobals()
 })
 
-it('the actual store persists a user-supplied fixture in browser storage independently of a public build identifier', () => {
-  localStorage.removeItem(STORAGE_KEY)
-  vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'synthetic-public-client-id')
-  expect(GoogleDriveService.isConfigured()).toBe(true)
-  useChatStore.getState().setApiKey(FIXTURE_KEY)
-  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}')
-  expect(saved.state.apiKey).toBe(FIXTURE_KEY)
-  vi.stubEnv('VITE_GOOGLE_CLIENT_ID', '')
-  expect(GoogleDriveService.isConfigured()).toBe(false)
-  expect(useChatStore.getState().apiKey).toBe(FIXTURE_KEY)
-  expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}').state.apiKey).toBe(FIXTURE_KEY)
-})
-
-it('the real desktop security section discloses browser keys separately from public build identifiers and secret credentials', async () => {
+it('the real desktop security section says it holds no API key and separates public build identifiers from secret credentials', async () => {
   render(<SecurityAuditSection />)
-  const disclosure = screen.getByText(/User-supplied cloud API keys are saved in browser storage/)
+  const disclosure = screen.getByText(/The site asks for no API key and stores none/)
   await waitFor(() => expect(disclosure).toBeVisible())
   expect(disclosure).toHaveTextContent(
     'Public build-time identifiers are distinct from secret credentials'
   )
+  expect(document.body.textContent ?? '').not.toMatch(/user-supplied cloud api keys/i)
   expect(
     screen.queryByText(/all credentials.*environment|credentials.*exclusively.*environment/i)
   ).not.toBeInTheDocument()
@@ -58,14 +43,13 @@ it('the real desktop security section discloses browser keys separately from pub
 })
 
 it('the real phone Trust accordion gives the same credential classification without showing a stored fixture', () => {
-  useChatStore.getState().setApiKey(FIXTURE_KEY)
   render(
     <MemoryRouter>
       <MobileAboutView />
     </MemoryRouter>
   )
   fireEvent.click(screen.getByRole('button', { name: /Trust & verification/ }))
-  const disclosure = screen.getByText(/User-supplied cloud API keys are saved in browser storage/)
+  const disclosure = screen.getByText(/The site asks for no API key and stores none/)
   expect(disclosure).toBeVisible()
   expect(disclosure).toHaveTextContent(
     'public build-time identifiers are distinct from secret credentials'

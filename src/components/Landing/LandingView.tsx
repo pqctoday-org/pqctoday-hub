@@ -164,8 +164,8 @@ const BackupRestoreSection = () => (
           <div className="min-w-0">
             <h4 className="text-sm font-semibold text-foreground">Export Backup</h4>
             <p className="text-xs text-muted-foreground leading-snug">
-              Downloads all progress — modules, assessment, persona, quiz mastery, chat history,
-              artifacts, and settings.
+              Downloads all progress — modules, assessment, persona, quiz mastery, artifacts, and
+              settings.
             </p>
           </div>
         </motion.button>

@@ -72,7 +72,7 @@ test.describe('Assistant drawer, core', () => {
     await expect(answerOf(drawerOf(page), FACT)).toBeVisible()
   })
 
-  test('the old model chat is not reachable in the normal path', async ({ page }) => {
+  test('there is no model chat: no set-up, no key, no model request', async ({ page }) => {
     const requested: string[] = []
     page.on('request', (request) => requested.push(request.url()))
     const drawer = await openDrawer(page)
@@ -82,11 +82,6 @@ test.describe('Assistant drawer, core', () => {
     expect(await drawer.innerText()).not.toMatch(
       /API key|WebLLM|Gemini|local model|language model/i
     )
-    expect(
-      await page.evaluate(() => localStorage.getItem('pqc-feature-model-assistant'))
-    ).toBeNull()
-    expect(
-      requested.filter((u) => /ChatPanelContent|web-?llm|\/mlc|generativelanguage/i.test(u))
-    ).toEqual([])
+    expect(requested.filter((u) => /web-?llm|\/mlc|generativelanguage/i.test(u))).toEqual([])
   })
 })

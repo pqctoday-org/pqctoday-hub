@@ -385,29 +385,14 @@ export function TermsView() {
             .
           </p>
           <p>
-            The Platform&apos;s <strong>PQC Assistant</strong> chat feature offers two modes. When
-            using <strong>Google Gemini Flash</strong>, your chat messages and page context are sent
-            to Google&apos;s servers for processing. You must provide your own Google AI API key to
-            use this mode. Your API key is stored locally in your browser and is never transmitted
-            to PQC Today&apos;s infrastructure. Google&apos;s use of data sent via the Gemini API is
-            governed by{' '}
-            <a
-              href="https://ai.google.dev/gemini-api/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent hover:underline inline-flex items-center gap-1"
-            >
-              Google&apos;s Gemini API Terms of Service
-              <ExternalLink size={12} aria-hidden="true" />
-            </a>
-            . Alternatively, you can use the <strong>Local LLM (WebLLM)</strong> mode, which runs
-            the AI model entirely in your browser &mdash; no data leaves your device.
+            The Platform&apos;s <strong>PQC Assistant</strong> answers from the Platform&apos;s own
+            records, on your device. It uses no language model and asks for no API key, and your
+            questions are not sent to any outside service.
           </p>
           <p>
-            Local browser storage (localStorage) keeps your learning progress, preferences, saved
-            assessments and, if you add one, your AI provider key on your device. We do not receive
-            it. It leaves your browser only if you share a report link or use the Gemini cloud mode
-            described above.
+            Local browser storage (localStorage) keeps your learning progress, preferences and saved
+            assessments on your device. We do not receive it. It leaves your browser only if you
+            share a report link.
           </p>
         </Section>
 

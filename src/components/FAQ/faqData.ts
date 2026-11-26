@@ -770,9 +770,9 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/compliance',
       },
       {
-        question: 'How does the PQC Assistant chatbot work?',
+        question: 'How does the PQC Assistant work?',
         answer:
-          'The PQC Assistant retrieves relevant Hub content to support answers with citations and deep links. In Local LLM (WebLLM) mode, inference runs in your browser and your chat prompts are not sent to an external AI inference service; model files still need network downloads before local use. If you choose the Gemini cloud mode and provide your Google AI API key, chat messages, retrieved Hub context and page context are sent to Google for processing. Local storage of the key does not make that cloud inference local. Choose the mode deliberately and check its data-use terms before entering sensitive information. Source citations help you verify an answer; they do not themselves prove it correct. The About and Terms pages describe both modes.',
+          "The PQC Assistant answers from the Hub's own records, on your device. It finds the records that match your question and shows the closest one first, with its source and a link into the Hub. It uses no language model, so there is nothing to download and no API key to enter, and your question is not sent to any outside service. It does not write answers of its own, and it can pick a record that is not the one you meant, so open the source it names before you rely on it. The About page describes it.",
         deepLink: '/about',
       },
       {

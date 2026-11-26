@@ -9,7 +9,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { computeAssessment } from '@/hooks/assessment/orchestrator'
 import { impliedAlgorithms, CRYPTO_CATEGORY_ALGORITHMS } from '@/hooks/assessment/cryptoCategories'
@@ -112,13 +112,8 @@ import { ROUTE_META, isNoindexRoute } from '@/seo/routeMeta'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
 import { toolSearchEntries } from '@/services/search/toolSearchEntries'
 import { pageSearchEntries } from '@/services/search/pageSearchEntries'
-import {
-  RetrievalService,
-  buildTrustRefusal,
-  requiresAuthoritativeEvidence,
-} from '@/services/chat/RetrievalService'
-import { verifyFacts } from '@/services/chat/factVerification'
-import { finalizeGroundedResponse } from '@/services/chat/responseFinalization'
+import { answer, forgetAssistant } from '@/services/assistant'
+import { stubKnowledgeFetch } from '@/services/assistant/testSupport'
 
 export interface PageWholeTaskReceipt {
   id: string
@@ -170,7 +165,6 @@ const EXPECTED_33_PAGE_IDS = [
 
 const receipts = new Map<string, PageWholeTaskReceipt>()
 let unifiedSearch: UnifiedSearchService
-let retrievalService: RetrievalService
 let allSearchChunks: RAGChunk[] = []
 
 function recordReceipt(receipt: PageWholeTaskReceipt): void {
@@ -185,17 +179,12 @@ beforeAll(async () => {
   allSearchChunks = [...raw.chunks, ...extraTools, ...extraPages]
 
   UnifiedSearchService.resetInstance()
-  RetrievalService.resetInstance()
 
   unifiedSearch = UnifiedSearchService.getInstance()
   unifiedSearch.initializeWithCorpus(allSearchChunks)
-
-  retrievalService = RetrievalService.getInstance()
-  retrievalService.initializeWithCorpus(allSearchChunks)
 }, 30_000)
 
 afterAll(() => {
-  RetrievalService.resetInstance()
   UnifiedSearchService.resetInstance()
 
   const orderedReceipts = EXPECTED_33_PAGE_IDS.map((id) => receipts.get(id)).filter(
@@ -1005,7 +994,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
     })
   })
 
-  it('21. revisions, 22. changelog, 23. faq, 24. about, 25. editorial, 26. sponsor, 27. terms, 28. palette, 29. assistant, 31. rightpanel, 32. nav — verifies trust signatures (11 artifacts), SBOM (230 npm packages), Terms parity, Changelog personas, RightPanel manuals, and search/assistant gates', () => {
+  it('21. revisions, 22. changelog, 23. faq, 24. about, 25. editorial, 26. sponsor, 27. terms, 28. palette, 29. assistant, 31. rightpanel, 32. nav — verifies trust signatures (11 artifacts), SBOM (229 npm packages), Terms parity, Changelog personas, RightPanel manuals, and search/assistant gates', async () => {
     // 21. revisions + 11 signed artifacts in public/data
     const topLevelSignedArtifacts = [
       'public/data/community-signals.json.sig',
@@ -1117,7 +1106,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       status: 'PASS',
     })
 
-    // 24. about (SBOM 230 npm packages + 381 total CycloneDX components + 11 signed artifacts)
+    // 24. about (SBOM 229 npm packages + 11 signed artifacts)
     const directNpmCount = Object.keys(SBOM_PACKAGE_VERSIONS).length
     const transitiveNpmCount = SBOM_BUNDLED_TRANSITIVE.count
     expect(directNpmCount).toBeGreaterThan(40)
@@ -1127,7 +1116,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       fs.readFileSync(path.resolve('public/data/pqctoday-sbom.cdx.json'), 'utf8')
     ) as { components: Array<{ purl?: string; type: string }> }
     const cdxNpmCount = cdxSbom.components.filter((c) => c.purl?.startsWith('pkg:npm/')).length
-    expect(cdxNpmCount).toBe(230)
+    expect(cdxNpmCount).toBe(229)
 
     const sbomRows = SBOM_GROUPS.flatMap((g) => g.components)
     for (const c of sbomRows) {
@@ -1170,7 +1159,7 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
         'public/data/pqctoday-sbom.cdx.json',
       ],
       wholeTaskChecks: [
-        'Verified 230 npm packages (51 direct + 179 transitive) in CycloneDX SBOM and 16 Data Foundation rows',
+        'Verified 229 npm packages (50 direct + 179 transitive) in CycloneDX SBOM and 16 Data Foundation rows',
       ],
       boundaryAndAdverseChecks: [
         'Verified 0 unresolved ("?") versions or blank licenses across all SBOM_GROUPS rows',
@@ -1275,34 +1264,29 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
     expect(paletteHits.results.length).toBeGreaterThan(0)
     expect(paletteHits.hidden.length).toBeGreaterThan(0)
 
-    const assistantHits = retrievalService.search('ML-KEM-768 key encapsulation', 5, {
-      page: 'algorithms',
-      relevantSources: ['algorithms'],
-      persona: 'architect',
-    })
-    expect(assistantHits.length).toBeGreaterThan(0)
+    // The real Assistant, over the Hub's own knowledge files (no network, nothing else fetched).
+    const fetchLog = stubKnowledgeFetch()
+    let named, concept, unknown
+    try {
+      named = await answer('FIPS 203', { persona: 'architect' })
+      concept = await answer('ML-KEM-768 key encapsulation', { persona: 'architect' })
+      unknown = await answer('qwertyzzxx blorp', { persona: 'architect' })
+    } finally {
+      vi.unstubAllGlobals()
+      forgetAssistant()
+    }
+    expect(fetchLog.urls.every((u) => u.startsWith('/data/knowledge-'))).toBe(true)
+    expect(named.state).toBe('choices')
+    expect(concept.state).toBe('resources')
+    if (concept.state !== 'resources') throw new Error('unreachable')
+    const conceptRows = concept.groups.flatMap((g) => g.rows)
+    expect(conceptRows.length).toBeGreaterThan(0)
     expect(
-      verifyFacts('ML-KEM-768 has a public key size of 999 bytes.', assistantHits).length
-    ).toBeGreaterThan(0)
-    expect(requiresAuthoritativeEvidence('Are we required by audit regulations to comply?')).toBe(
-      true
-    )
-    expect(buildTrustRefusal('Are we required by audit regulations to comply?', [])).toContain(
-      "I don't have a sufficiently authoritative source"
-    )
-
-    const verifiedResponse = finalizeGroundedResponse(
-      'ML-KEM-768 is standardized in FIPS 203.',
-      [
-        {
-          claimExcerpt: 'ML-KEM-768 is standardized in FIPS 203.',
-          evidenceExcerpt: assistantHits[0].content.slice(0, 40),
-          chunkId: assistantHits[0].id,
-        },
-      ],
-      assistantHits
-    )
-    expect(['verified', 'extractive']).toContain(verifiedResponse.mode)
+      conceptRows.every((r) => r.link.startsWith('/') && r.goLink.startsWith('/go/') && r.title)
+    ).toBe(true)
+    expect(unknown.state).toBe('broad')
+    if (unknown.state !== 'broad') throw new Error('unreachable')
+    expect(unknown.note).toContain('the Hub has no direct answer')
 
     recordReceipt({
       id: 'palette',
@@ -1335,23 +1319,22 @@ describe('All 33 Active Pages — Purpose-Specific Whole-Task Verification', () 
       tier: 'page',
       routeOrSurface: 'PQC Assistant',
       canonicalSources: [
-        'src/services/chat/RetrievalService.ts',
-        'src/services/chat/groundingPolicy.ts',
-        'src/services/chat/factVerification.ts',
-        'src/services/chat/responseFinalization.ts',
+        'src/services/assistant/adapter.ts',
+        'src/services/assistant/contract.ts',
+        'src/services/knowledge/knowledgeReader.ts',
       ],
       wholeTaskChecks: [
-        'Verified persona-boosted retrieval, multi-turn entity carry-over, enforceGrounding(), and finalizeGroundedResponse()',
+        'Verified a concept question returns grouped Hub resources and a bare record name returns the records that carry it',
       ],
       boundaryAndAdverseChecks: [
-        'Verified single-entity hallucination rejection (>=1 ungrounded entity), byte-size/IR-8547 fact checks, and T10 audit refusal gate',
+        'Verified a question the Hub cannot answer returns the broad state that says there is no direct answer',
       ],
       provenanceAndCrossLinkChecks: [
-        'Verified citedChunkIds filtering and appendGroundedDeepLinks() injection',
+        'Verified the Assistant fetches only the Hub knowledge files and answers with rows that point into the Hub',
       ],
       metrics: {
-        topRetrievedChunks: assistantHits.length,
-        refusalGateActive: true,
+        conceptResourceRows: conceptRows.length,
+        broadStateHasNoDirectAnswerNote: true,
       },
       status: 'PASS',
     })

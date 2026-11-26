@@ -5,6 +5,7 @@ import { detectPlatform, getNativePlatform, isNativeApp } from './embed/platform
 import './styles/index.css'
 import AppRoot from './AppRoot'
 import { initGA, logEmbedSession, logEmbedError } from './utils/analytics'
+import { runLegacyChatCleanup } from './utils/legacyChatCleanup'
 import { registerSW } from 'virtual:pwa-register'
 import type { VendorTheme } from './embed/vendorPolicy'
 
@@ -262,6 +263,9 @@ function handleEmbedError(err: unknown): void {
 // ---------------------------------------------------------------------------
 // Boot router — selects boot path based on platform detection
 // ---------------------------------------------------------------------------
+
+// Quietly drop what the old model chat left in this browser (stored key and chats, downloaded model files).
+runLegacyChatCleanup()
 
 const platform = detectPlatform()
 // Use native OS name (ios/android) when available for CSS specificity; fall back to 'capacitor'
