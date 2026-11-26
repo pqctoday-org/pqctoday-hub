@@ -76,7 +76,6 @@
   "src/data/certificationXrefData.test.ts",
   "src/data/complianceData.test.ts",
   "src/data/docEnrichments.duplicateIds.test.ts",
-  "src/data/frameworkFines.test.ts",
   "src/data/jurisdictionsData.regionBlocs.test.ts",
   "src/data/leadersData.test.ts",
   "src/data/libraryData.test.ts",
