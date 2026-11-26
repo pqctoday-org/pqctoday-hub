@@ -68,7 +68,9 @@ visitor configures themselves:
   version had an optional cloud mode with a user-supplied API key and an
   in-browser model; both were removed. On every page load the site now deletes
   any key, saved conversation and chat setting an earlier visit had stored,
-  and, once, the model files that visit had downloaded to the device.
+  and, once and on a best-effort basis (up to three tries if the
+  browser reports an unexpected error), the model files that visit had
+  downloaded to the device.
 - The optional Google Drive cloud-sync feature keeps its OAuth access token in
   browser memory only (never persisted, never sent to any PQC Today
   infrastructure) and explicitly excludes API keys from the synced payload —

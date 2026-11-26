@@ -2,6 +2,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
   MODEL_FILES_CLEANUP_DONE_KEY,
+  MODEL_FILES_TRIES_KEY,
   OLD_CHAT_STORAGE_KEYS,
   removeOldChatStorage,
   removeOldModelFiles,
@@ -201,19 +202,68 @@ describe('removeOldModelFiles', () => {
     expect(storage.data.has(MODEL_FILES_CLEANUP_DONE_KEY)).toBe(false)
   })
 
-  it('survives a rejecting file-system call and does not record it as done', async () => {
+  it.each(['SecurityError', 'NotAllowedError', 'TypeError'])(
+    'a browser that will never let us look (%s) counts as nothing to delete and records it',
+    async (name) => {
+      const storage = memoryStorage()
+      const c = fakeCaches(['webllm/model'])
+      const done = await removeOldModelFiles({
+        caches: c,
+        getOpfsRoot: async () => {
+          throw Object.assign(new Error('denied'), { name })
+        },
+        storage,
+      })
+      expect(done).toBe(true)
+      expect(c.set.size).toBe(0)
+      expect(storage.data.get(MODEL_FILES_CLEANUP_DONE_KEY)).toBe('1')
+    }
+  )
+
+  it('a cache call that is refused for security reasons also counts as nothing to delete', async () => {
     const storage = memoryStorage()
-    const c = fakeCaches(['webllm/model'])
     const done = await removeOldModelFiles({
-      caches: c,
-      getOpfsRoot: async () => {
-        throw Object.assign(new Error('denied'), { name: 'SecurityError' })
+      caches: {
+        delete: async () => {
+          throw Object.assign(new Error('insecure'), { name: 'SecurityError' })
+        },
       },
       storage,
     })
-    expect(done).toBe(false)
-    expect(c.set.size).toBe(0)
+    expect(done).toBe(true)
+    expect(storage.data.get(MODEL_FILES_CLEANUP_DONE_KEY)).toBe('1')
+  })
+
+  it('a transient failure is retried on later visits, at most 3 times in all, then recorded', async () => {
+    const storage = memoryStorage()
+    const env = () => ({
+      getOpfsRoot: async () => {
+        throw Object.assign(new Error('locked'), { name: 'NoModificationAllowedError' })
+      },
+      storage,
+    })
+    expect(await removeOldModelFiles(env())).toBe(false)
     expect(storage.data.has(MODEL_FILES_CLEANUP_DONE_KEY)).toBe(false)
+    expect(await removeOldModelFiles(env())).toBe(false)
+    expect(storage.data.has(MODEL_FILES_CLEANUP_DONE_KEY)).toBe(false)
+    expect(await removeOldModelFiles(env())).toBe(false)
+    expect(storage.data.get(MODEL_FILES_CLEANUP_DONE_KEY)).toBe('1')
+    // A fourth visit does nothing at all.
+    const getOpfsRoot = vi.fn()
+    expect(await removeOldModelFiles({ getOpfsRoot, storage })).toBe(true)
+    expect(getOpfsRoot).not.toHaveBeenCalled()
+  })
+
+  it('a damaged try counter does not stop the clean-up from being recorded eventually', async () => {
+    const storage = memoryStorage({ [MODEL_FILES_TRIES_KEY]: 'banana' })
+    const env = {
+      getOpfsRoot: async () => {
+        throw new Error('odd')
+      },
+      storage,
+    }
+    await removeOldModelFiles(env)
+    expect(storage.data.get(MODEL_FILES_TRIES_KEY)).toBe('1')
   })
 
   it('survives storage that throws', async () => {
@@ -228,5 +278,27 @@ describe('removeOldModelFiles', () => {
     await expect(
       removeOldModelFiles({ caches: fakeCaches(['webllm/wasm']), storage })
     ).resolves.toBe(true)
+  })
+})
+
+describe('removeOldModelFiles with the real browser environment', () => {
+  it('still deletes the old caches when localStorage cannot be read, and records nothing', async () => {
+    const deleted: string[] = []
+    vi.stubGlobal('caches', {
+      delete: async (n: string) => {
+        deleted.push(n)
+        return true
+      },
+    })
+    const spy = vi.spyOn(window, 'localStorage', 'get').mockImplementation(() => {
+      throw new Error('blocked')
+    })
+    try {
+      await expect(removeOldModelFiles()).resolves.toBe(true)
+      expect(deleted).toEqual(['webllm/model', 'webllm/config', 'webllm/wasm'])
+    } finally {
+      spy.mockRestore()
+      vi.unstubAllGlobals()
+    }
   })
 })

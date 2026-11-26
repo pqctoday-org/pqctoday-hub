@@ -15,8 +15,11 @@
  *   - the folder `webllm` inside the origin-private file system folder `tvmjs-opfs-store` (the
  *     store the last versions of the old chat chose for the large model files).
  * The Hub's own caches, the search embedding model cache and the service worker caches are never
- * touched. A visitor whose browser lacks these interfaces, or where a call fails, is simply left
- * alone; the page never waits for any of this.
+ * touched. A visitor whose browser lacks these interfaces, or refuses them (private windows,
+ * blocked site data), has nothing to delete and is recorded as done. An unexpected failure is tried
+ * again on a later visit, at most 3 visits in all. If the browser will not even let the page store
+ * the record, the deletes run again on each load: three cache deletes and one folder lookup, run
+ * when the browser is idle. The page never waits for any of this.
  */
 
 /** Browser-storage entries the old chat wrote; both are removed on every load. */
@@ -31,6 +34,13 @@ export const OLD_MODEL_OPFS_FOLDER = 'webllm'
 
 /** Written once the model-file clean-up has finished, so it does not repeat. */
 export const MODEL_FILES_CLEANUP_DONE_KEY = 'pqc-old-model-files-removed'
+
+/** How many visits have tried the clean-up and met an unexpected failure; at 3 it is recorded as done. */
+export const MODEL_FILES_TRIES_KEY = 'pqc-old-model-files-tries'
+export const MODEL_FILES_MAX_TRIES = 3
+
+/** Errors that mean this browser will never let the page look: there is nothing to delete here. */
+const NEVER_ALLOWED = new Set(['SecurityError', 'NotAllowedError', 'TypeError', 'NotFoundError'])
 
 /** Removes the old chat's stored entries. Never throws, whatever the stored value looks like. */
 export function removeOldChatStorage(storage?: Pick<Storage, 'removeItem'>): void {
@@ -64,7 +74,15 @@ function defaultEnv(): ModelFileCleanupEnv {
       typeof navigator !== 'undefined' && typeof navigator.storage?.getDirectory === 'function'
         ? () => navigator.storage.getDirectory() as unknown as Promise<DirectoryLike>
         : undefined,
-    storage: localStorage,
+    storage: safeStorage(),
+  }
+}
+
+function safeStorage(): Pick<Storage, 'getItem' | 'setItem'> | undefined {
+  try {
+    return localStorage
+  } catch {
+    return undefined // blocked site data: the deletes still run, only the record is impossible
   }
 }
 
@@ -92,8 +110,8 @@ export async function removeOldModelFiles(env?: ModelFileCleanupEnv): Promise<bo
     for (const name of OLD_MODEL_CACHE_NAMES) {
       try {
         await e.caches.delete(name)
-      } catch {
-        complete = false
+      } catch (err) {
+        if (!NEVER_ALLOWED.has(errorName(err))) complete = false
       }
     }
   }
@@ -110,12 +128,25 @@ export async function removeOldModelFiles(env?: ModelFileCleanupEnv): Promise<bo
         // Not empty, or already gone: leave it.
       }
     } catch (err) {
-      // Never created, or already deleted: nothing to remove. Anything else is retried later.
-      if (errorName(err) !== 'NotFoundError') complete = false
+      // Never created, already deleted, or a browser that will not let us look: nothing to remove.
+      // Anything else is retried on a later visit.
+      if (!NEVER_ALLOWED.has(errorName(err))) complete = false
     }
   }
 
-  if (complete) {
+  let record = complete
+  if (!complete) {
+    // An unexpected failure: count this try, and give up for good after the third.
+    try {
+      const before = Number.parseInt(e.storage?.getItem(MODEL_FILES_TRIES_KEY) ?? '', 10)
+      const tries = (Number.isFinite(before) && before > 0 ? before : 0) + 1
+      e.storage?.setItem(MODEL_FILES_TRIES_KEY, String(tries))
+      record = tries >= MODEL_FILES_MAX_TRIES
+    } catch {
+      // No counter possible: it runs again next time.
+    }
+  }
+  if (record) {
     try {
       e.storage?.setItem(MODEL_FILES_CLEANUP_DONE_KEY, '1')
     } catch {

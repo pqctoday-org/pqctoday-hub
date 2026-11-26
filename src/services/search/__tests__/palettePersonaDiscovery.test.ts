@@ -88,7 +88,7 @@ describe('Role-scoped discovery in the Command Palette (UnifiedSearchService)', 
       persona: 'curious',
       query: 'Harvest Now Decrypt Later HNDL definition',
       expectedIdPrefixOrSource: 'glossary',
-      expectedRoutePrefix: '/',
+      expectedRoutePrefix: '/threats',
     },
   ]
 
