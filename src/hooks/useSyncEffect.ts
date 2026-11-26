@@ -7,7 +7,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
-import { useAchievementStore } from '@/store/useAchievementStore'
+import { useAchievementStore, sanitizeQuestionCount } from '@/store/useAchievementStore'
 import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useThemeStore } from '@/store/useThemeStore'
@@ -78,6 +78,20 @@ function safeRestore(store: AnyStore, data: unknown) {
 }
 
 /**
+ * The achievement slice of a synced document, with the Assistant question count repaired: a
+ * document from before the count existed restores it as 0, and a damaged value never lands.
+ */
+export function restoredAchievementState(data: unknown): unknown {
+  if (!data || typeof data !== 'object') return data
+  return {
+    ...(data as Record<string, unknown>),
+    assistantQuestionCount: sanitizeQuestionCount(
+      (data as Record<string, unknown>)['assistantQuestionCount']
+    ),
+  }
+}
+
+/**
  * Restore all stores from a SyncDocument (merge — does not replace actions).
  */
 function restoreStores(stores: Record<string, unknown>) {
@@ -90,7 +104,10 @@ function restoreStores(stores: Record<string, unknown>) {
     useComplianceSelectionStore as unknown as AnyStore,
     stores['complianceSelectionStore']
   )
-  safeRestore(useAchievementStore as unknown as AnyStore, stores['achievementStore'])
+  safeRestore(
+    useAchievementStore as unknown as AnyStore,
+    restoredAchievementState(stores['achievementStore'])
+  )
   safeRestore(useMigrationWorkflowStore as unknown as AnyStore, stores['migrationWorkflowStore'])
   safeRestore(useTLSStore as unknown as AnyStore, stores['tlsStore'])
   safeRestore(useThemeStore as unknown as AnyStore, stores['themeStore'])
