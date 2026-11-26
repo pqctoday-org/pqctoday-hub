@@ -10,6 +10,7 @@ import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useChatStore } from '@/store/useChatStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { setSavedAnswersPort } from '@/services/assistant/drawerSaves'
+import type { AssistantResourcesAnswer } from '@/services/assistant/contract'
 
 const client = vi.hoisted(() => ({ failNext: 0, calls: [] as string[] }))
 vi.mock('./assistantClient', async () => {
@@ -262,6 +263,31 @@ describe('opening a resource', () => {
     await user.click(await screen.findByRole('button', { name: 'Go to page: CNSA 2.0' }))
     expect(screen.getByTestId('where')).toHaveTextContent('/compliance')
     expect(useRightPanelStore.getState().isOpen).toBe(false)
+    expect(useAssistantReturnStore.getState().target).toMatchObject({ path: '/learn' })
+  })
+
+  it('Open reference to a Library record sets the return, like Go to page', async () => {
+    const { conceptMlKem, fips203Row } = await import('@/test/fixtures/assistantAnswers')
+    const row = { ...fips203Row, action: 'Open reference' as const, link: '/library?ref=FIPS-203' }
+    act(() =>
+      useAssistantSessionStore.setState({
+        turns: [
+          {
+            id: 'seeded',
+            question: 'What is ML-KEM?',
+            status: 'done',
+            answer: {
+              ...conceptMlKem,
+              groups: [{ name: 'References', rows: [row], more: [] }],
+            } as AssistantResourcesAnswer,
+          },
+        ],
+      })
+    )
+    const user = userEvent.setup()
+    mount('/learn')
+    await user.click(await screen.findByRole('button', { name: `Open reference: ${row.title}` }))
+    expect(screen.getByTestId('where')).toHaveTextContent('/library?ref=FIPS-203')
     expect(useAssistantReturnStore.getState().target).toMatchObject({ path: '/learn' })
   })
 

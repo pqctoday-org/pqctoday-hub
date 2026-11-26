@@ -145,4 +145,14 @@ describe('return from a page opened from an answer', () => {
     expect(screen.queryByRole('button', { name: 'Back to your answer' })).toBeNull()
     expect(useAssistantReturnStore.getState().target).toBeNull()
   })
+
+  it('stays while the opened page only changes its own address query', async () => {
+    useAssistantReturnStore.getState().begin({ path: '/learn', label: 'Learn' })
+    mount()
+    act(() => go('/library?ref=NSA CNSA 2.0 FAQ'))
+    await screen.findByRole('button', { name: 'Back to your answer' })
+    act(() => go('/library?ref=NSA+CNSA+2.0+FAQ&prefs=off'))
+    expect(screen.getByRole('button', { name: 'Back to your answer' })).toBeInTheDocument()
+    expect(useAssistantReturnStore.getState().target).not.toBeNull()
+  })
 })

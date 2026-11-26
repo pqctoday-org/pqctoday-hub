@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -109,5 +109,39 @@ describe('hidden rollback switch', () => {
   it('offers no screen to turn it on', () => {
     mount()
     expect(screen.queryByText(/model|provider|api key|download/i)).toBeNull()
+  })
+})
+
+describe('the docked drawer and a dialog the page opens', () => {
+  const addDialog = () => {
+    const dialog = document.createElement('div')
+    dialog.setAttribute('role', 'dialog')
+    dialog.setAttribute('aria-modal', 'true')
+    document.body.appendChild(dialog)
+    return dialog
+  }
+
+  it('steps behind the page dialog while it is open and comes back when it closes', async () => {
+    mount()
+    const region = screen.getByRole('region', { name: 'Assistant' })
+    expect(region).toHaveClass('z-panel')
+    expect(region).not.toHaveClass('z-panel-behind')
+
+    const dialog = addDialog()
+    await waitFor(() => expect(region).toHaveClass('z-panel-behind'))
+    expect(region).not.toHaveClass('z-panel')
+
+    dialog.remove()
+    await waitFor(() => expect(region).toHaveClass('z-panel'))
+  })
+
+  it('does not step behind for its own dialog on the phone: the sheet stays on top', async () => {
+    layout.value = 'sheet'
+    mount()
+    const sheet = screen.getByRole('dialog', { name: 'Assistant' })
+    const dialog = addDialog()
+    await new Promise((r) => setTimeout(r, 50))
+    expect(sheet).toHaveClass('z-dialog')
+    dialog.remove()
   })
 })

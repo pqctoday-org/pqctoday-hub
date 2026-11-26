@@ -153,6 +153,8 @@
   /* Z-index scale — centralised stacking order */
   --z-index-wip-badge: 51;
   --z-index-panel: 60;
+  /* The docked Assistant drawer while a page dialog is open: the dialog (z-50 and up) is above it. */
+  --z-index-panel-behind: 40;
   --z-index-tour: 60;
   --z-index-nav-backdrop: 69;
   --z-index-nav: 70;

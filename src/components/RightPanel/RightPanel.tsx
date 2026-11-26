@@ -11,6 +11,7 @@ import { useEmbedState } from '@/embed/EmbedProvider'
 import { AssistantConversation } from '../Assistant/AssistantConversation'
 import { COPY } from '../Assistant/copy'
 import { useAssistantLayout } from '../Assistant/useAssistantLayout'
+import { usePageModal } from '../Assistant/usePageModal'
 import { PanelHeader } from './PanelHeader'
 
 const BookmarksPanel = React.lazy(() =>
@@ -44,6 +45,11 @@ export const RightPanel: React.FC = () => {
   const belowLg = useIsBelowLgViewport()
   const layout = useAssistantLayout()
   const sheet = layout === 'sheet'
+  // A dialog the page opens (a record's detail drawer, say) is the learner's focus: while one is
+  // open the docked drawer steps behind it, so the record is fully visible and usable. The drawer
+  // comes back, with its answer, when the dialog closes or "Back to your answer" is used.
+  const pageDialogOpen = usePageModal(isOpen && !sheet) !== null
+  const stepBehind = !sheet && pageDialogOpen
   const modelFallback = useModelAssistantFallback()
   const embedState = useEmbedState()
   const assistantTitle = embedState.isEmbedded
@@ -118,7 +124,7 @@ export const RightPanel: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`fixed top-0 right-0 bottom-0 ${sheet ? 'z-dialog' : 'z-panel'} bg-background shadow-2xl flex flex-col overflow-hidden print:hidden border-l border-border ${sheet ? '' : 'rounded-l-xl'} ${widthClass}`}
+            className={`fixed top-0 right-0 bottom-0 ${sheet ? 'z-dialog' : stepBehind ? 'z-panel-behind' : 'z-panel'} bg-background shadow-2xl flex flex-col overflow-hidden print:hidden border-l border-border ${sheet ? '' : 'rounded-l-xl'} ${widthClass}`}
             role={isDialog ? 'dialog' : 'region'}
             aria-modal={isDialog ? (modeless ? false : sheet || undefined) : undefined}
             aria-label={title}

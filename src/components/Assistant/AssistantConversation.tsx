@@ -115,7 +115,7 @@ export function AssistantConversation() {
 
   const openPage = useCallback(
     (row: AssistantRow) => {
-      if (row.action === 'Go to page' || opened) {
+      if (row.action === 'Go to page' || row.action === 'Open reference' || opened) {
         useAssistantReturnStore.getState().begin({
           path: `${pathname}${search}`,
           label: describeCurrentPage(pathname),

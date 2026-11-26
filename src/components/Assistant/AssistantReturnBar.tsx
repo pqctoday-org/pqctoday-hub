@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useSyncExternalStore } from 'react'
+import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowLeft } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router'
@@ -8,43 +8,10 @@ import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { COPY } from './copy'
 import { useAssistantLayout } from './useAssistantLayout'
-
-/**
- * The modal dialog that currently covers the page, if any. A page the learner was sent to can open
- * its own detail dialog on arrival; its backdrop sits over the page chrome, and a screen reader
- * treats everything outside a modal dialog as unavailable. The Assistant's own sheet is not counted.
- */
-function currentModal(): HTMLElement | null {
-  const modals = document.querySelectorAll<HTMLElement>(
-    '[aria-modal="true"]:not([data-assistant-layout])'
-  )
-  return modals.length > 0 ? modals[modals.length - 1] : null
-}
-
-function subscribeToModals(onChange: () => void): () => void {
-  let frame = 0
-  const schedule = () => {
-    if (!frame)
-      frame = requestAnimationFrame(() => {
-        frame = 0
-        onChange()
-      })
-  }
-  const observer = new MutationObserver(schedule)
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['aria-modal'],
-  })
-  return () => {
-    observer.disconnect()
-    if (frame) cancelAnimationFrame(frame)
-  }
-}
+import { usePageModal } from './usePageModal'
 
 function useCoveringModal(active: boolean): HTMLElement | null {
-  const modal = useSyncExternalStore(subscribeToModals, currentModal, () => null)
+  const modal = usePageModal()
   return active ? modal : null
 }
 
@@ -93,7 +60,9 @@ export function AssistantReturnBar() {
       if (here !== target.path) land(here)
       return
     }
-    if (here !== landedPath) clear()
+    // The page rewriting its own address (adding a preference, tidying the record's name) or the
+    // learner changing a filter or closing the record is still that page. Another page ends it.
+    if (pathname !== landedPath.split(/[?#]/)[0]) clear()
   }, [target, landedPath, pathname, search, land, clear])
 
   if (!target || landedPath === null) return null
