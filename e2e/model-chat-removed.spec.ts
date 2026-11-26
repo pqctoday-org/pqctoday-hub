@@ -13,9 +13,9 @@ const KEY = 'AIza-synthetic-key-for-this-test-only'
 const OLD_CHAT_STORAGE = {
   state: {
     apiKey: KEY,
-    provider: 'gemini',
-    model: 'gemini-3.8-flash',
-    localModel: 'Qwen3-8B-q4f16_1-MLC',
+    provider: 'old-cloud-provider', // stand-in value, not a product name
+    model: 'old-cloud-model', // stand-in value, not a product name
+    localModel: 'old-local-model', // stand-in value, not a product name
     localContextWindow: 4096,
     conversations: [
       {

@@ -184,9 +184,9 @@ describe('AppSnapshot ↔ the removed model chat', () => {
       },
     ],
     activeConversationId: 'conv-1',
-    model: 'gemini-3.8-flash',
-    provider: 'gemini',
-    localModel: 'Qwen3-8B-q4f16_1-MLC',
+    model: 'old-cloud-model', // stand-in value, not a product name
+    provider: 'old-cloud-provider', // stand-in value, not a product name
+    localModel: 'old-local-model', // stand-in value, not a product name
     localContextWindow: 4096,
     apiKey: 'AIza-synthetic-test-key',
   }
@@ -213,7 +213,7 @@ describe('AppSnapshot ↔ the removed model chat', () => {
     const state = useChatStore.getState() as unknown as Record<string, unknown>
     expect(Object.keys(state).sort()).toEqual(['pendingQuestion', 'setPendingQuestion'])
     const stored = localStorage.getItem('pqc-chat-storage') ?? ''
-    expect(stored).not.toMatch(/AIza-synthetic-test-key|conv-1|gemini|Qwen/)
+    expect(stored).not.toMatch(/AIza-synthetic-test-key|conv-1|old-cloud|old-local/)
   })
 
   it('an older backup whose chat part is damaged also imports cleanly', () => {

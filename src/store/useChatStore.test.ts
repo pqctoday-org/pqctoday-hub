@@ -8,9 +8,9 @@ const STORAGE_KEY = 'pqc-chat-storage'
 const OLD_SNAPSHOT = {
   state: {
     apiKey: 'AIza-synthetic-test-key',
-    provider: 'gemini',
-    model: 'gemini-3.8-flash',
-    localModel: 'Qwen3-8B-q4f16_1-MLC',
+    provider: 'old-cloud-provider', // stand-in value, not a product name
+    model: 'old-cloud-model', // stand-in value, not a product name
+    localModel: 'old-local-model', // stand-in value, not a product name
     localContextWindow: 4096,
     conversations: [
       {
@@ -82,7 +82,7 @@ describe('useChatStore', () => {
 
       const stored = localStorage.getItem(STORAGE_KEY) ?? ''
       expect(stored).not.toContain('AIza-synthetic-test-key')
-      expect(stored).not.toMatch(/apiKey|provider|localModel|gemini|Qwen|conv-1|FIPS 203/)
+      expect(stored).not.toMatch(/apiKey|provider|localModel|old-cloud|old-local|conv-1|FIPS 203/)
       expect(JSON.parse(stored)).toEqual({ state: {}, version: 15 })
     })
 
