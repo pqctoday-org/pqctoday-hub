@@ -163,7 +163,7 @@ export const DocumentTable = ({
     <div className="glass-panel p-4 space-y-4">
       {/* Header bar */}
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-sm font-bold font-display text-heading font-display text-heading">
+        <h3 className="text-sm font-bold font-display text-heading">
           {title ?? `Documents`}
           <span className="ml-2 text-xs font-normal text-muted-foreground">
             — {rows.length} {rows.length === 1 ? 'entry' : 'entries'}

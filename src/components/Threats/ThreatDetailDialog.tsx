@@ -133,7 +133,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
             <div>
               <h2
                 id="threat-dialog-title"
-                className="text-xl font-bold font-display text-heading flex items-center gap-2 font-display text-heading"
+                className="text-xl font-bold font-display text-heading flex items-center gap-2"
               >
                 <ShieldAlert className="w-5 h-5 text-primary" />
                 {threat.threatId}

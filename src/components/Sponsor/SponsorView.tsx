@@ -173,7 +173,7 @@ function Hero() {
           Sponsor program
         </span>
       </div>
-      <h1 className="text-3xl md:text-5xl font-bold mb-4 font-display text-heading flex items-center justify-center gap-3 flex-wrap font-display text-heading">
+      <h1 className="text-3xl md:text-5xl font-bold mb-4 font-display text-heading flex items-center justify-center gap-3 flex-wrap">
         <Heart className="w-7 h-7 md:w-10 md:h-10 text-primary shrink-0" aria-hidden="true" />
         Sponsor PQC Today
       </h1>

@@ -547,7 +547,7 @@ export const WhatsNewModal = () => {
                                       {entry.title}
                                     </span>
                                     {entry.body && (
-                                      <span className="ml-1 opacity-70">
+                                      <span className="ml-1 font-normal">
                                         —{' '}
                                         {entry.body.length > 100
                                           ? entry.body.slice(0, 97) + '...'
@@ -698,7 +698,7 @@ export const WhatsNewModal = () => {
                               {moduleChanges.renamed.map((r) => (
                                 <li key={r.to} className="text-xs text-muted-foreground py-0.5">
                                   <span className="text-foreground">{moduleTitle(r.to)}</span>
-                                  <span className="ml-1 opacity-70">
+                                  <span className="ml-1 font-normal">
                                     — id changed from {r.from}
                                   </span>
                                 </li>
@@ -716,7 +716,7 @@ export const WhatsNewModal = () => {
                               {moduleChanges.retired.map((id) => (
                                 <li key={id} className="text-xs text-muted-foreground py-0.5">
                                   <span className="text-foreground">{moduleTitle(id)}</span>
-                                  <span className="ml-1 opacity-70">
+                                  <span className="ml-1 font-normal">
                                     — retired. Your progress is kept.
                                   </span>
                                 </li>

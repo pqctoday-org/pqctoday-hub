@@ -991,7 +991,7 @@ const CompactStepList: React.FC<{
                   ? 'bg-card border-border shadow-sm'
                   : i < step
                     ? 'bg-card/40 border-border/60 opacity-80'
-                    : 'bg-card/20 border-border/40 opacity-45'
+                    : 'bg-muted/30 border-dashed border-border'
               }`}
             >
               <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">

@@ -55,9 +55,7 @@ export function RevisionsView() {
       <header className="space-y-2">
         <div className="flex items-center gap-2">
           <GitMerge className="w-5 h-5 text-primary" aria-hidden="true" />
-          <h1 className="font-display text-heading text-2xl font-bold font-display text-heading">
-            Content Revisions
-          </h1>
+          <h1 className="font-display text-heading text-2xl font-bold">Content Revisions</h1>
         </div>
         <p className="text-sm text-muted-foreground">
           This feed shows recorded changes to Hub content and data. Entries show the authorship,

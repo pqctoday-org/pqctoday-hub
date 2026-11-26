@@ -285,7 +285,7 @@ export const ThreatsTable = ({
                               protocol={protocolLens}
                               className="mt-1"
                             />
-                            <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider truncate">
+                            <div className="text-xs text-muted-foreground mt-1 uppercase tracking-wider truncate">
                               Source: {item.mainSource}
                             </div>
                           </td>

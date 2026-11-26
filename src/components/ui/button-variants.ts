@@ -36,6 +36,15 @@ export const buttonVariants = cva(
         tile: 'h-auto min-h-[88px] w-full px-4 py-3 flex-col items-start justify-start text-left whitespace-normal gap-1 rounded-2xl!',
       },
     },
+    // The phone minimum height is 44px for the pill variants, so an icon-size button grows
+    // to 44px on both sides and stays round, instead of becoming an oval.
+    compoundVariants: [
+      {
+        variant: ['default', 'destructive', 'outline', 'secondary', 'gradient'],
+        size: 'icon',
+        className: 'max-md:min-w-[44px]',
+      },
+    ],
     defaultVariants: {
       variant: 'default',
       size: 'default',

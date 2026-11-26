@@ -175,10 +175,10 @@ export function LibraryFacetRail({
               >
                 {opt.label}
                 {opt.id === 'All' ? (
-                  <span className="ml-1 opacity-70">{counts.all}</span>
+                  <span className="ml-1 font-normal">{counts.all}</span>
                 ) : (
                   lifecycleCounts && (
-                    <span className="ml-1 opacity-70">{lifecycleCounts.get(opt.id) ?? 0}</span>
+                    <span className="ml-1 font-normal">{lifecycleCounts.get(opt.id) ?? 0}</span>
                   )
                 )}
               </Button>

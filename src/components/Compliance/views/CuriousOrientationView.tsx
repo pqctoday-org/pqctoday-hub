@@ -64,7 +64,7 @@ export const CuriousOrientationView: FC<CuriousOrientationViewProps> = () => {
     >
       <header className="flex items-center gap-2 mb-3">
         <Compass size={18} className="text-primary" />
-        <h2 className="text-lg md:text-xl font-bold font-display text-heading font-display text-heading">
+        <h2 className="text-lg md:text-xl font-bold font-display text-heading">
           Does this affect me?
         </h2>
       </header>

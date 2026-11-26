@@ -28,13 +28,8 @@ const TEXT_ON_ALL_FILLS = [
  * to still be a real exception (it must fail), so the list cannot go stale.
  */
 const AVOID: { mode: Mode; fg: string; bg: string; reason: string }[] = [
-  {
-    mode: 'light',
-    fg: 'warning-legible',
-    bg: 'highlight',
-    reason:
-      'addendum section 8: warning text is borderline on the pale-violet highlight; keep it off that fill',
-  },
+  // Empty: --warning-legible (light) was borderline on the pale-violet highlight (4.45:1);
+  // darkening it to 26% lightness made every pair pass, so no exception remains.
 ]
 const isAvoided = (mode: Mode, fg: string, bg: string) =>
   AVOID.some((a) => a.mode === mode && a.fg === fg && a.bg === bg)
@@ -163,6 +158,10 @@ describe.each(MODES)('Storybook Blue contrast, %s mode', (mode) => {
         expect(tokenRatio(mode, 'ink', bg)).toBeGreaterThanOrEqual(3)
       })
     for (const bg of ['background', 'card', 'highlight'])
+      it(`--highlight-border (selected state) on --${bg}`, () => {
+        expect(tokenRatio(mode, 'highlight-border', bg)).toBeGreaterThanOrEqual(3)
+      })
+    for (const bg of ['background', 'card', 'highlight'])
       it(`--ring focus ring on --${bg}`, () => {
         expect(tokenRatio(mode, 'ring', bg)).toBeGreaterThanOrEqual(3)
       })
@@ -190,13 +189,6 @@ describe('Storybook Blue contrast: the two repaired tokens (addendum section 8, 
     expect(hs(t.dark['tertiary-legible'])).toBe('270 91%')
     expect(hs(t.light['info-legible'])).toBe('217 91%')
   })
-})
-
-describe('Storybook Blue contrast: documented exceptions stay real', () => {
-  for (const a of AVOID)
-    it(`${a.mode} --${a.fg} on --${a.bg} is still an exception (${a.reason})`, () => {
-      expect(tokenRatio(a.mode, a.fg, a.bg)).toBeLessThan(4.5)
-    })
 })
 
 describe('Storybook Blue contrast: data palettes on the new grounds (addendum section 8)', () => {

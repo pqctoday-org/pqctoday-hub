@@ -36,7 +36,7 @@ export function CitedText({ children, linkClassName }: CitedTextProps) {
           <Link
             key={i}
             to={seg.href}
-            className={linkClassName ?? 'text-primary hover:underline'}
+            className={linkClassName ?? 'text-primary underline underline-offset-[0.15em]'}
             title={`Open ${seg.text} in the library`}
             // The label this often sits inside is itself a click target (it
             // toggles a checkbox); without this, following the link would also

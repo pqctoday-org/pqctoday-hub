@@ -71,7 +71,7 @@ export const VideoControlBar: React.FC<VideoControlBarProps> = ({
       }`}
       data-workshop-overlay="control-bar"
     >
-      <div className="flex items-center gap-1 rounded-full bg-card/95 px-3 py-1.5 glass-panel rounded-2xl">
+      <div className="flex items-center gap-1 rounded-full bg-card/95 px-3 py-1.5 glass-panel">
         <Button
           variant="ghost"
           size="sm"

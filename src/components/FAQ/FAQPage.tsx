@@ -217,7 +217,7 @@ export function FAQPage({ inDrawer = false }: { inDrawer?: boolean } = {}) {
   if (directAnswer) {
     return (
       <div className="mx-auto max-w-4xl space-y-5 px-4 py-8">
-        <h1 className="font-display text-heading text-2xl font-bold font-display text-heading">
+        <h1 className="font-display text-heading text-2xl font-bold">
           PQC Frequently Asked Questions
         </h1>
         <Link to="/faq" className="text-sm text-primary underline">

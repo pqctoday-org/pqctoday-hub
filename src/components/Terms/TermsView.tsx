@@ -61,9 +61,7 @@ export function TermsView() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Scale className="text-primary shrink-0" size={28} aria-hidden="true" />
-          <h1 className="text-2xl font-bold font-display text-heading font-display text-heading">
-            Terms of Service
-          </h1>
+          <h1 className="text-2xl font-bold font-display text-heading">Terms of Service</h1>
         </div>
         <p className="text-muted-foreground text-sm">
           Legal terms governing the use of PQC Today and its embedded cryptographic software

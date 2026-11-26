@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Reads the colour tokens out of src/styles/index.css and computes WCAG 2.x
 // contrast ratios for them. Used by tokens.contrast.test.ts, which holds the
-// Storybook Blue style addendum (sections 7 and 10) as an automated check.
+// Storybook Blue contrast rules as an automated check.
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 

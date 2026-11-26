@@ -209,7 +209,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         {/* Left-edge scroll hint — mobile only, fades in once scrolled right of 0 */}
         <div
           className={cn(
-            'pointer-events-none absolute left-0 top-0 flex h-10 w-10 items-center justify-start bg-card rounded-l-full transition-opacity duration-200 sm:hidden',
+            'pointer-events-none absolute left-0 top-0 flex h-10 w-8 items-center justify-start border-2 border-ink bg-card pl-1.5 rounded-l-full transition-opacity duration-200 sm:hidden',
             showLeftFade ? 'opacity-100' : 'opacity-0'
           )}
           aria-hidden="true"
@@ -219,7 +219,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         {/* Right-edge scroll hint — mobile only, fades out when scrolled to end */}
         <div
           className={cn(
-            'pointer-events-none absolute right-0 top-0 flex h-10 w-10 items-center justify-end bg-card rounded-r-full transition-opacity duration-200 sm:hidden',
+            'pointer-events-none absolute right-0 top-0 flex h-10 w-8 items-center justify-end border-2 border-ink bg-card pr-1.5 rounded-r-full transition-opacity duration-200 sm:hidden',
             showFade ? 'opacity-100' : 'opacity-0'
           )}
           aria-hidden="true"
@@ -267,7 +267,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
             : undefined
         }
         className={cn(
-          `inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-full px-3 py-1.5 text-sm font-bold transition-colors disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-highlight data-[state=active]:text-heading min-h-[44px] md:min-h-0 ${focusRing}`,
+          `inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-full px-3 py-1.5 text-sm font-bold transition-colors disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-highlight data-[state=active]:text-heading data-[state=active]:shadow-[inset_0_0_0_2px_hsl(var(--highlight-border))] min-h-[44px] md:min-h-0 ${focusRing}`,
           className
         )}
         data-state={isActive ? 'active' : 'inactive'}

@@ -63,7 +63,7 @@ export function ExploreView({
     <div className="max-w-5xl mx-auto py-4 md:py-8 px-2">
       {/* Header */}
       <div className={`text-center mb-8 md:mb-12 ${simEmbed ? 'hidden' : ''}`}>
-        <h1 className="text-xl md:text-4xl font-bold font-display text-heading flex items-center justify-center gap-2 md:gap-3 mb-3 font-display text-heading">
+        <h1 className="text-xl md:text-4xl font-bold font-display text-heading flex items-center justify-center gap-2 md:gap-3 mb-3">
           <Compass className="w-5 h-5 md:w-9 md:h-9 text-primary shrink-0" aria-hidden="true" />
           Explore PQC Today
         </h1>
