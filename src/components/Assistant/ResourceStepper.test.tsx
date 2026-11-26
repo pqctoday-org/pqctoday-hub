@@ -87,6 +87,13 @@ function show(start: CardNav = START_NAV, onAction = vi.fn()) {
 const footerLabel = () => screen.getByText(/ · \d+ of \d+$/)
 
 describe('ResourceStepper', () => {
+  it('keeps the action row below the text area, not sticky (a sticky bar floats over the text in a short list)', () => {
+    show({ tab: 'library', index: 0 })
+    const action = screen.getByRole('button', { name: 'Read here: A document' })
+    expect(action.parentElement).not.toHaveClass('sticky')
+    expect(action.parentElement).toHaveClass('shrink-0')
+  })
+
   it('shows one resource at a time, with one dot per resource and the position in the footer', () => {
     show()
     expect(built.tabs.map((t) => t.key)).toEqual(['top', 'learn', 'compliance', 'library'])

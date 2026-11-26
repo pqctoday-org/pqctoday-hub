@@ -350,6 +350,44 @@ test.describe('Response card, phone', () => {
   })
 })
 
+for (const height of [844, 667]) {
+  test(`phone, Read here open at 390x${height}: the action row never sits on the text, and the text is readable`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height })
+    await seedHub(page)
+    await page.goto('/learn')
+    const drawer = await openDrawer(page)
+    const answer = await ask(page, drawer, CONCEPT)
+    await answer.getByRole('button', { name: 'Read here: ML-KEM', exact: true }).click()
+    await expect(drawer.getByRole('region', { name: 'ML-KEM', exact: true })).toBeVisible()
+
+    const panel = answer.getByRole('tabpanel')
+    const text = panel.locator('> div').first()
+    const actions = panel.locator('> div').last()
+    await expect(actions.getByRole('button', { name: 'Read here: ML-KEM' })).toBeVisible()
+    // The list is short here: the pinned record takes up to 40 percent of the sheet.
+    await expect
+      .poll(async () => {
+        const list = (await listOf(drawer).boundingBox())!
+        const t = (await text.boundingBox())!
+        return t.y >= list.y - 1 && t.y + t.height <= list.y + list.height + 1
+      })
+      .toBe(true)
+    const t = (await text.boundingBox())!
+    const a = (await actions.boundingBox())!
+    // The action row starts where the text ends: the two boxes do not intersect.
+    expect(a.y).toBeGreaterThanOrEqual(t.y + t.height - 1)
+    // And the text itself is in the order title, source, extract, tag.
+    const title = (await panel.getByRole('heading').boundingBox())!
+    const extract = (await panel
+      .getByText(/^Module-Lattice-Based Key Encapsulation/)
+      .boundingBox())!
+    expect(extract.y).toBeGreaterThan(title.y)
+    expect(extract.y + extract.height).toBeLessThanOrEqual(a.y + 1)
+  })
+}
+
 /** A focused objective and a second one, as an earlier visit would have stored them. */
 async function seedObjectives(page: Page) {
   const step = (id: string, n: number, tag: string) => ({

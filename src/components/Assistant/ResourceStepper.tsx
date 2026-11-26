@@ -201,7 +201,8 @@ export function ResourceStepper({
             {row.tag}
           </Eyebrow>
         </div>
-        <div className="sticky bottom-0 flex flex-wrap items-center gap-1 rounded-b-2xl bg-card px-2 pb-1.5 pt-1">
+        {/* Not `sticky`: the nearest scrolling ancestor is the conversation list, so a sticky bar floated over the text whenever that list was shorter than the card. The bar is already below the text area, which scrolls on its own. */}
+        <div className="flex shrink-0 flex-wrap items-center gap-1 rounded-b-2xl bg-card px-2 pb-1.5 pt-1">
           {external ? (
             <a
               href={row.link}

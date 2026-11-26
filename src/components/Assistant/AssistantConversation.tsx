@@ -102,6 +102,15 @@ export function AssistantConversation() {
     const card = openId ? cardRefs.current[openId] : null
     const spacer = spacerRef.current
     if (!list || !card) return
+    // Where the list should be scrolled to: the open card's top. On the phone, with a record pinned
+    // above, the list is short, so the card is scrolled to its resource instead, which is what the
+    // learner just acted on.
+    const target = () => {
+      const panel = viewerOpen && sheet ? card.querySelector('[role="tabpanel"]') : null
+      if (!panel) return card.offsetTop
+      const lead = panel.getBoundingClientRect().top - card.getBoundingClientRect().top
+      return card.offsetTop + Math.max(0, lead - 8)
+    }
     const place = () => {
       if (spacer) {
         // The content ends where the (empty) spacer starts, plus the list's own bottom padding.
@@ -110,11 +119,11 @@ export function AssistantConversation() {
           spacer.offsetTop + parseFloat(getComputedStyle(list).paddingBottom || '0')
         // Only for a card with controls in it: a scrolling list with nothing to focus fails the keyboard rule.
         const room = card.querySelector('button, a[href]')
-          ? Math.max(0, card.offsetTop + list.clientHeight - contentEnd)
+          ? Math.max(0, target() + list.clientHeight - contentEnd)
           : 0
         spacer.style.height = `${room}px`
       }
-      list.scrollTop = card.offsetTop
+      list.scrollTop = target()
     }
     place()
     // The card can still settle for a frame or two (fonts, the loading line giving way to the answer):
@@ -122,14 +131,14 @@ export function AssistantConversation() {
     let frames = 0
     let handle = 0
     const settle = () => {
-      if (Math.abs(list.scrollTop - card.offsetTop) > 1 && frames++ < 10) {
+      if (Math.abs(list.scrollTop - target()) > 1 && frames++ < 10) {
         place()
         handle = requestAnimationFrame(settle)
       }
     }
     handle = requestAnimationFrame(settle)
     return () => cancelAnimationFrame(handle)
-  }, [openId, latest?.status, viewerOpen])
+  }, [openId, latest?.status, viewerOpen, sheet])
 
   // A failure notice sits at the end of the list: show it.
   useEffect(() => {
