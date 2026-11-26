@@ -217,3 +217,130 @@ test.describe('Screens of the four views', () => {
     }
   }
 })
+
+/* The top bar's own toggles stay in view, with any drawer view open or closed. */
+const TOGGLE_NAMES = ['Assistant', 'Bookmarks', 'Glossary', 'Guide', 'Sources', 'FAQ'] as const
+const TOGGLE_TABS: Record<(typeof TOGGLE_NAMES)[number], string> = {
+  Assistant: 'chat',
+  Bookmarks: 'bookmarks',
+  Glossary: 'glossary',
+  Guide: 'guide',
+  Sources: 'sources',
+  FAQ: 'faq',
+}
+
+/** The bar that holds the toggles, and whether all six sit inside its visible box with nothing to scroll to. */
+const barFits = (page: Page) =>
+  page.evaluate((tabs) => {
+    const first = document.querySelector<HTMLElement>('[data-drawer-toggle="chat"]')
+    const bar = first?.closest<HTMLElement>('.overflow-x-auto')
+    if (!bar) return { found: false } as const
+    const box = bar.getBoundingClientRect()
+    const inside = tabs.map((tab) => {
+      const el = document.querySelector<HTMLElement>(`[data-drawer-toggle="${tab}"]`)
+      if (!el) return `${tab}: missing`
+      const r = el.getBoundingClientRect()
+      const ok =
+        r.width > 0 &&
+        r.left >= box.left - 1 &&
+        r.right <= box.right + 1 &&
+        r.top >= box.top - 1 &&
+        r.bottom <= box.bottom + 1
+      return ok
+        ? 'ok'
+        : `${tab}: outside the bar (${Math.round(r.left)}-${Math.round(r.right)} of ${Math.round(box.left)}-${Math.round(box.right)})`
+    })
+    return {
+      found: true,
+      scrollLeft: bar.scrollLeft,
+      noScroll: bar.scrollWidth <= bar.clientWidth + 1,
+      inside,
+    } as const
+  }, Object.values(TOGGLE_TABS))
+
+for (const size of [
+  { width: 1280, height: 800 },
+  { width: 1024, height: 768 },
+]) {
+  test.describe(`Top bar toggles at ${size.width} px`, () => {
+    test.use({ viewport: size, serviceWorkers: 'block' })
+
+    test.beforeEach(async ({ page }) => {
+      await seedHub(page)
+    })
+
+    for (const name of TOGGLE_NAMES) {
+      test(`with ${name} open, all six toggles are in the bar without scrolling, ${name} is pressed, one click closes it`, async ({
+        page,
+      }) => {
+        test.setTimeout(60_000)
+        await page.goto('/library')
+        // Wait for the page itself: its own action buttons (Info, Export, Endorse, Flag, Cite) join the bar.
+        await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({
+          timeout: 30_000,
+        })
+        await expect(page.getByRole('button', { name: 'Export CSV' })).toBeVisible({
+          timeout: 30_000,
+        })
+        const bar = page.getByRole('banner')
+        await bar.getByRole('button', { name, exact: true }).click()
+        await expect(bar.getByRole('button', { name, exact: true })).toHaveAttribute(
+          'aria-pressed',
+          'true'
+        )
+        await page.waitForTimeout(500)
+        const fit = await barFits(page)
+        expect(fit.found).toBe(true)
+        if (fit.found) {
+          expect(fit.scrollLeft).toBe(0)
+          expect(fit.noScroll, 'the bar has nothing to scroll to').toBe(true)
+          expect(fit.inside).toEqual(Array(6).fill('ok'))
+        }
+        for (const other of TOGGLE_NAMES) {
+          const box = (await bar.getByRole('button', { name: other, exact: true }).boundingBox())!
+          expect(box.width).toBeGreaterThanOrEqual(24)
+        }
+        if (SHOTS && name === 'Glossary' && size.width === 1280) {
+          await page.screenshot({ path: `${SHOTS}/topbar-glossary-open-1280-light.png` })
+        }
+        if (SHOTS && name === 'Assistant' && size.width === 1024) {
+          await page.screenshot({ path: `${SHOTS}/topbar-assistant-open-1024-light.png` })
+        }
+        // One click on the pressed button closes the view.
+        await bar.getByRole('button', { name, exact: true }).click()
+        await expect(bar.getByRole('button', { name, exact: true })).toHaveAttribute(
+          'aria-pressed',
+          'false'
+        )
+      })
+    }
+  })
+}
+
+test.describe('Top bar toggles with room to spare', () => {
+  test.use({ viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' })
+
+  test('at 1440 px with no drawer open, the labels are shown', async ({ page }) => {
+    await seedHub(page)
+    await page.goto('/library')
+    await expect(page.getByRole('button', { name: 'Export CSV' })).toBeVisible({ timeout: 30_000 })
+    const bar = page.getByRole('banner')
+    for (const name of TOGGLE_NAMES) {
+      await expect(bar.getByRole('button', { name, exact: true })).toHaveText(name)
+    }
+    const fit = await barFits(page)
+    expect(fit.found && fit.noScroll).toBe(true)
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/topbar-closed-1440-light.png` })
+  })
+
+  test('dark theme, Glossary open at 1280 px', async ({ page }) => {
+    test.skip(!SHOTS, 'set E2E_SHOT_DIR to save it')
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await seedHub(page, { theme: 'dark' })
+    await page.goto('/library')
+    await expect(page.getByRole('button', { name: 'Export CSV' })).toBeVisible({ timeout: 30_000 })
+    await page.getByRole('banner').getByRole('button', { name: 'Glossary', exact: true }).click()
+    await page.waitForTimeout(800)
+    await page.screenshot({ path: `${SHOTS}/topbar-glossary-open-1280-dark.png` })
+  })
+})
