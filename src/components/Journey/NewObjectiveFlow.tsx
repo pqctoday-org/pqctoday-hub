@@ -22,6 +22,8 @@ import {
   stepsFromPreview,
   type ObjectivePreview,
 } from '@/services/journey/objectiveBuilder'
+import { resolveNamed } from '@/services/journey/objectiveNamed'
+import { loadKnowledgeReader, type KnowledgeReader } from '@/services/knowledge/knowledgeReader'
 import { lessonByTag } from '@/services/journey/lessons'
 import { describeStep, finishCondition, objectiveTitle } from '@/services/journey/stepView'
 import { requiredProgress, barSteps } from '@/services/journey/stepRules'
@@ -59,6 +61,8 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
   const createObjective = useJourneyStore((s) => s.createObjective)
   const [goal, setGoal] = useState(initialGoal)
   const [preview, setPreview] = useState<ObjectivePreview | null>(null)
+  // The knowledge model, loaded once when the flow opens. Until it arrives, or if it never does, the preview reads the words only.
+  const [reader, setReader] = useState<KnowledgeReader | null>(null)
   // Set when the device did not keep the objective: how it was being created, for Try again.
   const [failedWith, setFailedWith] = useState<{ allowDuplicate: boolean } | null>(null)
   const retryRef = useRef<HTMLButtonElement>(null)
@@ -80,9 +84,41 @@ export function NewObjectiveFlow({ onCreated, onCancel, initialGoal = '' }: NewO
     if (failedWith) retryRef.current?.focus()
   }, [failedWith])
 
+  const build = (text: string, r: KnowledgeReader | null) =>
+    buildPreview({
+      goal: text,
+      persona,
+      industry,
+      existing,
+      isDone,
+      named: r ? resolveNamed(r, text) : undefined,
+    })
+  const buildRef = useRef(build)
+  useEffect(() => {
+    buildRef.current = build
+  })
+  useEffect(() => {
+    let live = true
+    loadKnowledgeReader()
+      .then((r) => live && setReader(r))
+      .catch(() => undefined)
+    return () => {
+      live = false
+    }
+  }, [])
+  // When the model arrives, a preview already on screen is rebuilt with it (and left alone if nothing changes).
+  useEffect(() => {
+    if (!reader) return
+    setPreview((cur) => {
+      if (!cur) return cur
+      const next = buildRef.current(cur.goal, reader)
+      return JSON.stringify(next) === JSON.stringify(cur) ? cur : next
+    })
+  }, [reader])
+
   const runPreview = () => {
     if (!goal.trim()) return
-    setPreview(buildPreview({ goal, persona, industry, existing, isDone }))
+    setPreview(build(goal, reader))
   }
   const create = (allowDuplicate = false) => {
     if (!preview) return
@@ -247,8 +283,13 @@ function PreviewBody({ preview, objective }: { preview: ObjectivePreview; object
   const first =
     barSteps(objective).find((s) => s.resourceTag === preview.firstStepTag) ??
     barSteps(objective).find((s) => s.kind === 'self-assessed')
-  const why = (s: ObjectivePreview['steps'][number]) =>
-    s.origin.type === 'take-first' ? `take first for ${titleOf(s.origin.for)}` : 'matches your goal'
+  const why = (s: ObjectivePreview['steps'][number]) => {
+    if (s.origin.type === 'take-first') return `take first for ${titleOf(s.origin.for)}`
+    const r = preview.reasons?.[s.tag]?.[0]
+    if (!r) return 'matches your goal'
+    const part = r.sectionLabel && r.sectionLabel !== r.recordLabel ? ` (${r.sectionLabel})` : ''
+    return `teaches ${r.recordLabel}${part}`
+  }
   return (
     <div className="space-y-3 text-sm">
       <p>

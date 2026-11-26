@@ -111,6 +111,86 @@ describe('the new-objective preview', () => {
     ).toBe('ready')
   })
 
+  describe('a goal that names a standard: PKCS#11', () => {
+    const tagOnly = ['LM-083', 'LM-084', 'LM-085', 'LM-087']
+    for (const goal of ['learn pkcs11', 'learn PKCS#11']) {
+      it(`requires the lessons that name it in their text, not the ones only tagged with it ("${goal}")`, () => {
+        const p = buildPreview({ ...base, goal })
+        const required = p.steps.filter((s) => s.required).map((s) => s.tag)
+        expect(required).toContain('LM-015') // HSM & PQC Operations: names it in the description
+        expect(required).toContain('LM-021') // Cryptographic APIs & Developer Languages: same
+        for (const tag of tagOnly) expect(required).not.toContain(tag)
+        // no prerequisite is added on behalf of a lesson that is only tagged
+        for (const s of p.steps) {
+          if (s.origin.type === 'take-first') expect(tagOnly).not.toContain(s.origin.for)
+        }
+        // the required lessons are the two matches and their own take-first lessons
+        const matchTags = p.steps.filter((s) => s.required && s.origin.type === 'match')
+        expect(matchTags.map((s) => s.tag).sort()).toEqual(['LM-015', 'LM-021'])
+        for (const s of p.steps) {
+          if (s.required && s.origin.type === 'take-first') {
+            expect(['LM-015', 'LM-021']).toContain(s.origin.for)
+          }
+        }
+      })
+    }
+
+    it('lists tag-only lessons at most as optional, after the lessons that name it', () => {
+      const p = buildPreview({ ...base, goal: 'learn pkcs11' })
+      const optional = p.steps.filter((s) => !s.required).map((s) => s.tag)
+      // a lesson that only mentions it in a long description comes before a tag-only one
+      for (const tag of tagOnly) {
+        if (optional.includes(tag)) {
+          const namers = optional.filter((t) => !tagOnly.includes(t))
+          expect(namers.every((t) => optional.indexOf(t) < optional.indexOf(tag))).toBe(true)
+        }
+      }
+    })
+  })
+
+  it('keeps "mapped" and the required steps telling the same story', () => {
+    const goals = [
+      'learn pkcs11',
+      'understand ML-KEM',
+      'migrate TLS to hybrid key exchange',
+      'FIPS 140-3 validation for my HSM',
+      'prepare for CNSA 2.0',
+      'KMIP key management',
+      'Review our TLS migration design',
+    ]
+    for (const goal of goals) {
+      const p = buildPreview({ ...base, goal })
+      const required = p.steps.filter((s) => s.required).map((s) => s.tag)
+      for (const tag of p.mapped) expect(required, `${goal}: ${tag}`).toContain(tag)
+    }
+  })
+
+  it('does not call a standard named only in lesson tags "too broad"', () => {
+    expect(buildPreview({ ...base, goal: 'prepare for CNSA 2.0' }).state).toBe('ready')
+  })
+
+  it('does not let subject words such as "secure" and "PQC" choose the lessons when the goal names a subject', () => {
+    const p = buildPreview({ ...base, persona: null, goal: 'secure 5G with PQC' })
+    expect(p.state).toBe('ready')
+    expect(p.mapped.map((t) => lessonByTag(t)?.id)).toEqual(['5g-security'])
+  })
+
+  it("reads a lesson's longer page title: X.509 certificates lead to the PKI lesson", () => {
+    const p = buildPreview({ ...base, persona: null, goal: 'X.509 certificates with PQC' })
+    expect(p.mapped.map((t) => lessonByTag(t)?.id)).toContain('pki-workshop')
+    const matches = p.steps.filter((s) => s.required && s.origin.type === 'match')
+    expect(matches.map((s) => lessonByTag(s.tag)?.id)).toEqual(['pki-workshop'])
+  })
+
+  it('keeps a goal about digital assets on its own lesson', () => {
+    const p = buildPreview({
+      ...base,
+      persona: null,
+      goal: 'digital assets and blockchain wallets',
+    })
+    expect(p.mapped.map((t) => lessonByTag(t)?.id)).toEqual(['digital-assets'])
+  })
+
   it('is deterministic: the same inputs give the same preview', () => {
     const a = buildPreview({ ...base, goal: 'Secure boot and firmware signing for our devices' })
     const b = buildPreview({ ...base, goal: 'Secure boot and firmware signing for our devices' })
