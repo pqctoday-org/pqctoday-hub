@@ -33,15 +33,12 @@ test.describe('Assistant answers from the Hub records, with no network beyond th
     const drawer = await openDrawer(page)
 
     const supported = await ask(page, drawer, 'What is ML-KEM?')
-    await expect(supported.getByText(/^Closest source:/)).toBeVisible()
-    // Every resource names its kind and its place in the Hub, and links to a Hub page.
-    const rows = supported.getByRole('listitem')
-    expect(await rows.count()).toBeGreaterThan(0)
+    await expect(supported.getByText(/^Closest: /)).toBeVisible()
+    // The resource shown names its kind and its place in the Hub, and links to a Hub page.
+    const shown = supported.getByRole('tabpanel')
+    await expect(shown).toBeVisible()
     await expect(
-      rows
-        .first()
-        .locator('p')
-        .filter({ hasText: /^(LM-|GL:|LIB:|ALG:|TOOL:|PAGE:|CMP:)/ })
+      shown.locator('p').filter({ hasText: /^(LM-|GL:|LIB:|ALG:|TOOL:|PAGE:|CMP:)/ })
     ).toBeVisible()
     await expect(
       supported
@@ -54,7 +51,10 @@ test.describe('Assistant answers from the Hub records, with no network beyond th
     // A follow-up gets its own answer, and the first keeps its own resources.
     const followUp = await ask(page, drawer, 'What is ML-DSA?')
     await expect(followUp).not.toHaveText(await supported.innerText())
-    await expect(answerOf(drawer, 'What is ML-KEM?').getByRole('listitem').first()).toBeVisible()
+    // The first answer folds to one line and keeps its resources: opening it shows them again.
+    const earlier = answerOf(drawer, 'What is ML-KEM?')
+    await earlier.getByRole('button', { name: /^Earlier answer/ }).click()
+    await expect(earlier.getByRole('tabpanel')).toBeVisible()
 
     // Words the records do not know are answered with the closest resources and no claim.
     const unknown = await ask(page, drawer, 'zxqvjwkpfrx zjqblwmvrqp zkvfhtjg')

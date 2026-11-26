@@ -2,15 +2,16 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 
 /**
- * Helpers for the Assistant drawer: a 400 px region beside the page on a wide screen, a full-screen
- * modal sheet on a phone. The drawer answers from the Hub's own records; nothing here sets up a
+ * Helpers for the Assistant drawer: a region beside the page on a wide screen (520 px, or 400 px below
+ * 1,280 px), a full-screen modal sheet below 1,024 px. The drawer answers from the Hub's own records; nothing here sets up a
  * model, a key or a download.
  */
 
 export const WIDE = { width: 1280, height: 800 } as const
 export const PHONE = { width: 390, height: 844 } as const
 
-export const isPhone = (page: Page): boolean => (page.viewportSize()?.width ?? 1280) < 640
+/** True when the drawer is the full-screen sheet: below the 1,024 px breakpoint. */
+export const isPhone = (page: Page): boolean => (page.viewportSize()?.width ?? 1280) < 1024
 
 export interface SeedOptions {
   /** The learner's role; `null` is a first visit. Default: security architect. */
@@ -113,6 +114,29 @@ export async function ask(page: Page, drawer: Locator, question: string): Promis
   await expect(answer).toBeVisible({ timeout: 30_000 })
   await expect(answer.getByText('Looking in the Hub records.')).toHaveCount(0, { timeout: 30_000 })
   return answer
+}
+
+/**
+ * Steps through an answer's resources with Next, as a learner does, until `target` (a locator inside
+ * `answer`) is on screen, and returns it. Fails when the end of the answer is reached without it.
+ */
+export async function reveal(answer: Locator, target: Locator): Promise<Locator> {
+  const next = answer.getByRole('button', { name: /^(Next resource|No more resources)/ })
+  for (let i = 0; i < 100; i++) {
+    if (await target.first().isVisible()) return target.first()
+    if ((await next.getAttribute('aria-disabled')) === 'true') break
+    await next.click()
+  }
+  await expect(target.first(), 'the resource is somewhere in the answer').toBeVisible()
+  return target.first()
+}
+
+/** Selects a resource type of an answer by its tab, e.g. `/^Library, \d+ resources?$/`. */
+export async function openTab(answer: Locator, name: RegExp | string): Promise<Locator> {
+  const tab = answer.getByRole('tab', { name })
+  await tab.click()
+  await expect(tab).toHaveAttribute('aria-selected', 'true')
+  return answer.getByRole('tabpanel')
 }
 
 /** The page's own name for "where I came from" is its heading; used to read the phone's return label. */

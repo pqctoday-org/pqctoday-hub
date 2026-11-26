@@ -70,7 +70,10 @@ export function RecordViewer({
     <section
       aria-label={row.title}
       className={
-        pinned ? 'sticky top-0 z-10 px-3 pt-3 md:px-4' : 'flex-1 overflow-y-auto px-3 py-3 md:px-4'
+        pinned
+          ? // On a phone the pinned card takes at most 40 percent of the sheet and scrolls inside.
+            'sticky top-0 z-10 max-h-[40dvh] shrink-0 overflow-y-auto overscroll-contain px-3 pb-2 pt-3 md:px-4'
+          : 'flex-1 overflow-y-auto px-3 py-3 md:px-4'
       }
     >
       <StickerCard padding="default" className="space-y-3">
@@ -124,7 +127,11 @@ export function RecordViewer({
               {term ? (
                 <>
                   {lesson && (
-                    <StoryButton variant="secondary" onClick={() => onOpenLesson?.(lesson)}>
+                    <StoryButton
+                      variant="secondary"
+                      onClick={() => onOpenLesson?.(lesson)}
+                      className="h-auto max-w-full whitespace-normal py-2 text-left"
+                    >
                       Open the lesson: {lesson.lessonTitle}
                     </StoryButton>
                   )}

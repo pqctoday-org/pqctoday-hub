@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useId, useState } from 'react'
+import { useState } from 'react'
 import { BookmarkPlus, Check } from 'lucide-react'
 import { Chip, Eyebrow, StickerCard, StoryButton } from '@/components/storybook'
-import { eyebrowClass } from '@/components/storybook/variants'
-import { cn } from '@/lib/utils'
 import type { AssistantRow } from '@/services/assistant/contract'
 import { isAnswerSaved, saveAnswer } from '@/services/assistant/drawerSaves'
-import { AnswerRowItem } from './AnswerRowItem'
 import {
   choiceAsRow,
   evidenceLine,
   nameCardAsRow,
-  prepareAnswer,
   rowTagsOf,
+  shortSourceLine,
   sourceLineText,
   sourceTagOf,
   type PreparedAnswer,
@@ -53,18 +50,36 @@ export function NoteBlock({ note }: { note: string }) {
   )
 }
 
+/** The direct answer, compact: the value in a violet card, and the evidence on one line (the whole line is its title). */
 export function DirectAnswerBlock({ direct }: { direct: NonNullable<PreparedAnswer['direct']> }) {
+  const evidence = evidenceLine(direct)
   return (
-    <StickerCard tone="highlight" padding="default" role="group" aria-label={COPY.directAnswer}>
+    <StickerCard
+      tone="highlight"
+      padding="none"
+      className="px-2.5 py-1.5"
+      role="group"
+      aria-label={COPY.directAnswer}
+    >
       <Eyebrow as="p">{COPY.directAnswer}</Eyebrow>
-      <p className="mt-1 text-base font-bold text-heading">{direct.value}</p>
-      <p className="mt-2 text-xs text-foreground/80">{evidenceLine(direct)}</p>
+      <p className="text-sm font-bold leading-snug text-heading">{direct.value}</p>
+      <p className="truncate text-xs text-foreground/80" title={evidence}>
+        {evidence}
+      </p>
     </StickerCard>
   )
 }
 
+/** "From: <kind>: <title> (<tag>)" or "Closest: ..." on one line; the whole line is its title. */
 export function SourceLineBlock({ source }: { source: NonNullable<PreparedAnswer['source']> }) {
-  return <p className="text-xs font-semibold text-foreground">{sourceLineText(source)}</p>
+  return (
+    <p
+      className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground"
+      title={sourceLineText(source)}
+    >
+      {shortSourceLine(source)}
+    </p>
+  )
 }
 
 export function NameCardBlock({
@@ -125,43 +140,7 @@ export function NameChoicesBlock({
   )
 }
 
-export function ResourceGroupsBlock({
-  groups,
-  hiddenCount,
-  onAction,
-}: {
-  groups: PreparedAnswer['groups']
-  hiddenCount: number
-  onAction: (row: AssistantRow) => void
-}) {
-  const [showAll, setShowAll] = useState(false)
-  const base = useId()
-  if (groups.length === 0) return null
-  return (
-    <div role="group" aria-label={COPY.resourcesIntro} className="space-y-3">
-      {groups.map((g) => (
-        <div key={g.name} className="space-y-1.5">
-          <h3 id={`${base}-${g.name}`} className={eyebrowClass}>
-            {g.name}
-          </h3>
-          <ul aria-labelledby={`${base}-${g.name}`} className="space-y-2">
-            {g.rows.map((r) => (
-              <AnswerRowItem key={r.tag} row={r} onAction={onAction} />
-            ))}
-            {showAll &&
-              g.more.map((r) => <AnswerRowItem key={r.tag} row={r} onAction={onAction} />)}
-          </ul>
-        </div>
-      ))}
-      {hiddenCount > 0 && (
-        <StoryButton variant="quiet" aria-expanded={showAll} onClick={() => setShowAll((v) => !v)}>
-          {showAll ? COPY.hideMore : COPY.showMore(hiddenCount)}
-        </StoryButton>
-      )}
-    </div>
-  )
-}
-
+/** Draws inside a wrapping row: the button, and a notice on its own line when the save failed. */
 export function SaveAnswerBlock({ answer }: { answer: RenderableAnswer }) {
   const draft = {
     question: answer.question,
@@ -183,14 +162,14 @@ export function SaveAnswerBlock({ answer }: { answer: RenderableAnswer }) {
     }
   }
   return (
-    <div className="space-y-1">
+    <>
       <StoryButton
         variant="quiet"
         onClick={onSave}
         // Not `disabled`: a button that is disabled while it has focus drops keyboard focus to the page.
         aria-disabled={saved || undefined}
         aria-live="polite"
-        className="gap-1.5"
+        className="min-h-[36px] shrink-0 gap-1.5"
       >
         {saved ? (
           <Check size={14} aria-hidden="true" />
@@ -200,11 +179,11 @@ export function SaveAnswerBlock({ answer }: { answer: RenderableAnswer }) {
         {saved ? COPY.saved : COPY.saveAnswer}
       </StoryButton>
       {failed && (
-        <p role="alert" className="text-xs text-status-error">
+        <p role="alert" className="basis-full text-xs text-status-error">
           {COPY.saveFailed}
         </p>
       )}
-    </div>
+    </>
   )
 }
 
@@ -214,44 +193,5 @@ export function NotHeldBlock({ text, note }: { text: string; note: string }) {
       <p className="text-sm font-semibold text-foreground">{text}</p>
       <p className="text-xs text-muted-foreground">{note}</p>
     </div>
-  )
-}
-
-// ── The whole answer ──────────────────────────────────────────────────────────
-
-export interface AssistantAnswerViewProps {
-  answer: RenderableAnswer
-  onAction: (row: AssistantRow) => void
-  className?: string
-}
-
-/**
- * One answer, drawn from fixed blocks in a fixed order. Every answer keeps its own resources.
- * Order: question, answer text, passage box, note, direct answer, source line, name card, groups,
- * save. Suggestions and the input belong to the conversation, below the latest answer.
- */
-export function AssistantAnswerView({ answer, onAction, className }: AssistantAnswerViewProps) {
-  const p = prepareAnswer(answer)
-  return (
-    <article aria-label={answer.question} className={cn('space-y-3', className)}>
-      <QuestionBlock question={answer.question} />
-      {p.state === 'not-held' ? (
-        <NotHeldBlock text={p.answerText} note={p.note} />
-      ) : p.held ? (
-        <NotHeldBlock text={COPY.notHeld} note={COPY.notHeldHint} />
-      ) : (
-        <>
-          <AnswerTextBlock text={p.answerText} />
-          {p.passage && <PassageBlock {...p.passage} />}
-          <NoteBlock note={p.note} />
-          {p.direct && <DirectAnswerBlock direct={p.direct} />}
-          {p.source && <SourceLineBlock source={p.source} />}
-          {p.nameCard && <NameCardBlock card={p.nameCard} onAction={onAction} />}
-          {p.choices.length > 0 && <NameChoicesBlock choices={p.choices} onAction={onAction} />}
-          <ResourceGroupsBlock groups={p.groups} hiddenCount={p.hiddenCount} onAction={onAction} />
-          <SaveAnswerBlock answer={answer} />
-        </>
-      )}
-    </article>
   )
 }

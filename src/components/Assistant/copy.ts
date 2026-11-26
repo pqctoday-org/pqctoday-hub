@@ -31,8 +31,6 @@ export const COPY = {
   saveReference: 'Save to My work',
   backToAnswer: 'Back to your answer',
   close: 'Close',
-  showMore: (n: number) => `Show ${n} more ${n === 1 ? 'record' : 'records'}`,
-  hideMore: 'Show fewer records',
   moreQuestions: (n: number) => `More questions (${n})`,
   copyLink: 'Copy link',
   linkCopied: 'Link copied',
