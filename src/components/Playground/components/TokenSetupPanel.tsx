@@ -148,7 +148,7 @@ export const TokenSetupPanel = () => {
 
   return (
     <div className="glass-panel p-4 space-y-4">
-      <h3 className="font-semibold text-sm flex items-center gap-2">
+      <h3 className="font-semibold text-sm flex items-center gap-2 font-display text-heading">
         <Shield size={14} className="text-primary" /> Token Setup
         {sessionOpen && (
           <span className="ml-1 text-xs font-normal text-status-success flex items-center gap-1">

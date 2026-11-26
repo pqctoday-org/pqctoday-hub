@@ -118,7 +118,7 @@ export function AlgorithmComparisonPanel({
   return (
     <div className="glass-panel p-4 md:p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold font-display text-heading">
           Comparing {algorithms.length} Algorithms
           {baseline && (
             <span className="text-muted-foreground font-normal"> vs {baseline.name} baseline</span>
@@ -475,7 +475,7 @@ function BenchmarkSection({
   return (
     <div className="mt-6 border-t border-border pt-4">
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <h4 className="text-sm font-semibold text-foreground">Live Benchmark</h4>
+        <h4 className="text-sm font-semibold font-display text-heading">Live Benchmark</h4>
 
         <div className="flex items-center gap-2">
           <label htmlFor="ops-slider" className="text-xs text-muted-foreground">
@@ -514,7 +514,7 @@ function BenchmarkSection({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-xs text-muted-foreground uppercase tracking-wider">
+              <tr className="border-b border-border uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 {opsCount > 1 && <th className="w-6 px-1 py-2" />}
                 <th className="text-left px-3 py-2">Algorithm</th>
                 <th className="text-left px-3 py-2">Engine</th>

@@ -172,7 +172,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
   const missingExtra = missingNames.length > 3 ? ` +${missingNames.length - 3} more` : ''
 
   return (
-    <div id={`zone-${zone}`} className={`glass-panel p-4 border-2 rounded-lg ${style.border}`}>
+    <div id={`zone-${zone}`} className={`glass-panel p-4 border-2 ${style.border}`}>
       <div className="flex items-start gap-3">
         <div
           className={`flex items-center justify-center w-9 h-9 rounded-lg font-bold text-[10px] tracking-wider shrink-0 ${style.activeBg} ${style.text}`}

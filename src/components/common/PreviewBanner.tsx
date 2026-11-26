@@ -71,7 +71,7 @@ export const PreviewBanner: React.FC<Props> = ({ pageContext, dismissKey, varian
     <>
       <div
         role="status"
-        className="glass-panel border border-primary/20 rounded-xl px-4 py-3 mb-6 flex items-start gap-3 flex-wrap sm:flex-nowrap"
+        className="glass-panel rounded-2xl px-4 py-3 mb-6 flex items-start gap-3 flex-wrap sm:flex-nowrap"
       >
         {variant === 'suggestion' ? (
           <BookOpen size={15} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />

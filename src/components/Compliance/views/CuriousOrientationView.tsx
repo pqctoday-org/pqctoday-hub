@@ -64,7 +64,9 @@ export const CuriousOrientationView: FC<CuriousOrientationViewProps> = () => {
     >
       <header className="flex items-center gap-2 mb-3">
         <Compass size={18} className="text-primary" />
-        <h2 className="text-lg md:text-xl font-bold text-gradient">Does this affect me?</h2>
+        <h2 className="text-lg md:text-xl font-bold font-display text-heading">
+          Does this affect me?
+        </h2>
       </header>
       <p className="text-sm text-foreground/85 leading-relaxed mb-3">
         Rules about cryptography come in different kinds, and only some of them name an algorithm.
@@ -99,7 +101,7 @@ export const CuriousOrientationView: FC<CuriousOrientationViewProps> = () => {
       </ul>
       {ruleMakers.length > 0 && (
         <div className="mb-4">
-          <h3 className="mb-1.5 text-sm font-semibold text-foreground">
+          <h3 className="mb-1.5 text-sm font-semibold font-display text-heading">
             Who makes the rules, and when they start
           </h3>
           <ul className="space-y-1">

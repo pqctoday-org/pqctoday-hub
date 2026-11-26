@@ -1,20 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
-import {
-  Shield,
-  Radio,
-  Key,
-  Lock,
-  Server,
-  ArrowRight,
-  BarChart3,
-  Calendar,
-  Globe,
-  Cpu,
-  Car,
-} from 'lucide-react'
+import { Shield, Radio, Key, Lock, Server, ArrowRight } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -451,84 +438,6 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </Button>
       </section>
 
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/algorithms"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <BarChart3 size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
-              <div className="text-xs text-muted-foreground">
-                Compare key sizes, security levels &amp; performance
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/threats?industry=Telecommunications"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Shield size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
-              <div className="text-xs text-muted-foreground">
-                Industry-specific quantum risks &amp; PQC replacements
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/timeline"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Calendar size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
-              <div className="text-xs text-muted-foreground">
-                NIST milestones, country deadlines &amp; standardization
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/tls-basics"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Globe size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">TLS Basics</div>
-              <div className="text-xs text-muted-foreground">
-                How TLS 1.3 works and where PQC fits in
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/iot-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Cpu size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">IoT & Embedded Device PQC</div>
-              <div className="text-xs text-muted-foreground">
-                PQC for constrained devices &amp; industrial protocols
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/automotive-pqc"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Car size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Automotive PQC</div>
-              <div className="text-xs text-muted-foreground">
-                V2X, AUTOSAR &amp; connected vehicle PQC migration
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
       <VendorCoverageNotice migrateLayer="Network" />
       <ReadingCompleteButton />
     </div>

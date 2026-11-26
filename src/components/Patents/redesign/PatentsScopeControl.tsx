@@ -27,7 +27,7 @@ export function PatentsScopeControl({
 }: PatentsScopeControlProps) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-      <span className="shrink-0 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+      <span className="shrink-0 font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
         Corpus scope
       </span>
       <div role="radiogroup" aria-label="Corpus scope" className="flex items-center gap-1.5">

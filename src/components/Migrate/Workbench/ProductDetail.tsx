@@ -165,7 +165,7 @@ export function ProductDetail({
   return (
     <div className="flex flex-col gap-3 border-t border-border bg-muted/20 px-3 py-3 text-xs">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+        <span className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Verification status
         </span>
         <Pill tone={verification.tone}>{verification.label}</Pill>
@@ -199,7 +199,7 @@ export function ProductDetail({
       </div>
 
       <div>
-        <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+        <p className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           PQC capabilities
         </p>
         {supportDetail && <p className="font-medium text-foreground">{supportDetail}</p>}
@@ -223,7 +223,7 @@ export function ProductDetail({
 
       {(product.latestVersion || product.releaseDate || familyMembers.length > 0) && (
         <div>
-          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Release
           </p>
           {(product.latestVersion || product.releaseDate) && (
@@ -246,7 +246,7 @@ export function ProductDetail({
 
       {product.license && (
         <div>
-          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             License and distribution
           </p>
           <p className="leading-relaxed text-foreground/80">{product.license}</p>
@@ -259,7 +259,7 @@ export function ProductDetail({
         hasStageNote ||
         product.fipsValidated) && (
         <div>
-          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Certifications
           </p>
           {certs.length > 0 && <CertBadges certs={certs} />}
@@ -363,7 +363,7 @@ export function ProductDetail({
 
       {(hasCpe || hasPurl) && (
         <div>
-          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Identifiers
           </p>
           <div className="flex flex-wrap items-center gap-3">
@@ -397,7 +397,7 @@ export function ProductDetail({
         <div>
           <p
             id={`related-resources-${product.productId}`}
-            className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground"
+            className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading"
           >
             Related resources
           </p>
@@ -430,7 +430,7 @@ export function ProductDetail({
 
       {learningModuleIds.length > 0 && (
         <div>
-          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          <p className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Learn this
           </p>
           <ul className="flex flex-wrap gap-1.5">

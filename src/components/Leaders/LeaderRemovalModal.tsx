@@ -21,7 +21,7 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
       {/* Backdrop */}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
-        className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+        className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50 print:hidden"
         onClick={onClose}
       />
 
@@ -39,7 +39,10 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
                 <div className="p-2 rounded-lg bg-status-error/20">
                   <ShieldX size={20} className="text-status-error" />
                 </div>
-                <h2 id="leader-removal-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="leader-removal-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   Request Removal
                 </h2>
               </div>

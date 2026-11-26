@@ -11,9 +11,6 @@ import {
   Building2,
   Scale,
   Network,
-  ClipboardCheck,
-  BookOpen,
-  Briefcase,
   Landmark,
   ShieldCheck,
   Gauge,
@@ -625,86 +622,6 @@ const Step3ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
   <div className="space-y-8 w-full">
-    {/* Related Resources */}
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/assess"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ClipboardCheck size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-            <div className="text-xs text-muted-foreground">
-              Run a guided PQC readiness assessment
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/compliance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <BookOpen size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Compliance Tracker</div>
-            <div className="text-xs text-muted-foreground">
-              NIST, <InlineTooltip term="ANSSI">ANSSI</InlineTooltip>, and{' '}
-              <InlineTooltip term="BSI">BSI</InlineTooltip> compliance requirements
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/crypto-agility"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Shield size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-            <div className="text-xs text-muted-foreground">
-              Architecture patterns for algorithm-agile systems
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-risk-management"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <BarChart3 size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
-            <div className="text-xs text-muted-foreground">
-              Quantify quantum risk and build risk registers
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-business-case"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Briefcase size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC Business Case</div>
-            <div className="text-xs text-muted-foreground">
-              Build executive-ready justification for PQC investment
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/standards-bodies"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Landmark size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Standards Bodies</div>
-            <div className="text-xs text-muted-foreground">
-              Who creates PQC standards, certifies products, and mandates compliance
-            </div>
-          </div>
-        </Link>
-      </div>
-    </section>
-
     {/* CTA */}
     <div className="text-center">
       <Button variant="gradient" onClick={onNavigateToWorkshop} className="gap-2">

@@ -6,7 +6,7 @@ import { PersonaPageNote } from '@/components/shared/PersonaPageNote'
 
 // Bump this date whenever a substantive edit is made to this file.
 const EFFECTIVE_DATE = 'October 4, 2026'
-const LAST_UPDATED = 'November 16, 2026'
+const LAST_UPDATED = 'November 26, 2026'
 
 const TOC_SECTIONS = [
   { number: 1, slug: 'acceptance', title: 'Acceptance of Terms' },
@@ -45,7 +45,7 @@ function Section({
       tabIndex={-1}
       className="glass-panel p-6 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
     >
-      <h2 className="text-lg font-semibold text-foreground mb-4">
+      <h2 className="text-lg font-semibold mb-4 font-display text-heading">
         {number}. {title}
       </h2>
       <div className="space-y-3 text-sm leading-relaxed text-secondary">{children}</div>
@@ -61,7 +61,7 @@ export function TermsView() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Scale className="text-primary shrink-0" size={28} aria-hidden="true" />
-          <h1 className="text-2xl font-bold text-gradient">Terms of Service</h1>
+          <h1 className="text-2xl font-bold font-display text-heading">Terms of Service</h1>
         </div>
         <p className="text-muted-foreground text-sm">
           Legal terms governing the use of PQC Today and its embedded cryptographic software
@@ -77,7 +77,7 @@ export function TermsView() {
       </div>
 
       <nav aria-label="Table of contents" className="glass-panel p-4 mb-6">
-        <h2 className="text-sm font-semibold text-foreground mb-2">Contents</h2>
+        <h2 className="text-sm font-semibold mb-2 font-display text-heading">Contents</h2>
         <ol className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm list-decimal list-inside">
           {TOC_SECTIONS.map((s) => (
             <li key={s.slug}>
@@ -385,29 +385,14 @@ export function TermsView() {
             .
           </p>
           <p>
-            The Platform&apos;s <strong>PQC Assistant</strong> chat feature offers two modes. When
-            using <strong>Google Gemini Flash</strong>, your chat messages and page context are sent
-            to Google&apos;s servers for processing. You must provide your own Google AI API key to
-            use this mode. Your API key is stored locally in your browser and is never transmitted
-            to PQC Today&apos;s infrastructure. Google&apos;s use of data sent via the Gemini API is
-            governed by{' '}
-            <a
-              href="https://ai.google.dev/gemini-api/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent hover:underline inline-flex items-center gap-1"
-            >
-              Google&apos;s Gemini API Terms of Service
-              <ExternalLink size={12} aria-hidden="true" />
-            </a>
-            . Alternatively, you can use the <strong>Local LLM (WebLLM)</strong> mode, which runs
-            the AI model entirely in your browser &mdash; no data leaves your device.
+            The Platform&apos;s <strong>PQC Assistant</strong> answers from the Platform&apos;s own
+            records, on your device. It uses no language model and asks for no API key, and your
+            questions are not sent to any outside service.
           </p>
           <p>
-            Local browser storage (localStorage) keeps your learning progress, preferences, saved
-            assessments and, if you add one, your AI provider key on your device. We do not receive
-            it. It leaves your browser only if you share a report link or use the Gemini cloud mode
-            described above.
+            Local browser storage (localStorage) keeps your learning progress, preferences and saved
+            assessments on your device. We do not receive it. It leaves your browser only if you
+            share a report link.
           </p>
         </Section>
 

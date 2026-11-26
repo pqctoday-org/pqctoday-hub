@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router'
 import {
   DollarSign,
   TrendingUp,
@@ -8,10 +7,8 @@ import {
   Calculator,
   Presentation,
   ArrowRight,
-  ClipboardCheck,
   Scale,
   BarChart3,
-  Building2,
   KeyRound,
   FileSignature,
   Layers,
@@ -567,83 +564,6 @@ const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> 
         </div>
       </div>
     </section>
-
-    {/* Related Resources */}
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/assess"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ClipboardCheck size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-            <div className="text-xs text-muted-foreground">
-              Run a guided PQC readiness assessment to feed into your business case
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/threats"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <ShieldAlert size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Threat Landscape</div>
-            <div className="text-xs text-muted-foreground">
-              Explore industry-specific quantum threats and attack vectors
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/compliance"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Scale size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Compliance Tracker</div>
-            <div className="text-xs text-muted-foreground">
-              Review PQC compliance deadlines and regulatory requirements
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/migrate"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Building2 size={18} className="text-primary shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Migration Workbench</div>
-            <div className="text-xs text-muted-foreground">
-              Browse PQC-ready products to estimate migration costs
-            </div>
-          </div>
-        </Link>
-      </div>
-    </section>
-
-    {/* Related Modules */}
-    <div className="glass-panel p-4">
-      <h3 className="text-sm font-semibold text-foreground mb-3">Related Modules</h3>
-      <div className="flex flex-wrap gap-2">
-        {[
-          { path: '/learn/pqc-risk-management', label: 'PQC Risk Management' },
-          { path: '/learn/migration-program', label: 'Migration Program' },
-          { path: '/learn/vendor-risk', label: 'Vendor Risk' },
-          { path: '/learn/compliance-strategy', label: 'Compliance Strategy' },
-        ].map((m) => (
-          <Link
-            key={m.path}
-            to={m.path}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-primary hover:text-primary/80 bg-primary/10 border border-primary/20 transition-colors"
-          >
-            <ArrowRight size={10} />
-            {m.label}
-          </Link>
-        ))}
-      </div>
-    </div>
 
     {/* CTA */}
     <div className="text-center">

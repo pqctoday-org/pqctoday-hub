@@ -74,7 +74,7 @@ export function FrameworkDeadlineCard({
 
   return (
     <div
-      className="relative rounded-lg border border-border bg-card p-3 space-y-2 overflow-hidden"
+      className="relative rounded-2xl border border-border bg-card p-3 space-y-2 overflow-hidden"
       title={result.reason}
     >
       {showGraphIcon && (

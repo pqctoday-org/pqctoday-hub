@@ -30,7 +30,7 @@ import { LeaderKeyResources } from '@/components/common/LeaderKeyResources'
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
   Private: 'bg-secondary/10 text-secondary border-secondary/20',
-  Academic: 'bg-success/15 text-success border-success/30',
+  Academic: 'bg-success/15 text-success-legible border-success/30',
 }
 
 /** Humanizes the real ISO verifiedDate field ("2026-07-09" -> "Jul 2026").
@@ -299,7 +299,7 @@ export function MobileCommunityView() {
             // title), which inherited nowrap and would run off the right
             // edge instead of wrapping (2026-08-24, same defect class found
             // and fixed on Threats/Patents).
-            className="glass-panel h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
+            className="glass-panel rounded-2xl h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
           >
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-[14px] font-bold text-foreground">{leader.name}</h2>
@@ -347,7 +347,7 @@ export function MobileCommunityView() {
               {leader.verifiedDate && (
                 <>
                   <span>·</span>
-                  <span className="flex items-center gap-1 text-success">
+                  <span className="flex items-center gap-1 text-success-legible">
                     <ShieldCheck size={11} aria-hidden="true" />
                     profile checked {humanizeDate(leader.verifiedDate)}
                   </span>
@@ -498,7 +498,7 @@ export function MobileCommunityView() {
               {selected.verifiedDate && (
                 <>
                   <span>·</span>
-                  <span className="flex items-center gap-1 text-success">
+                  <span className="flex items-center gap-1 text-success-legible">
                     <ShieldCheck size={11} aria-hidden="true" />
                     profile checked {humanizeDate(selected.verifiedDate)}
                   </span>

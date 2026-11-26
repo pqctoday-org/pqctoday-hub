@@ -76,7 +76,7 @@ const StatusBadge = ({ status }: { status: ComplianceStatus }) => {
 }
 
 const FieldLabel = ({ children }: { children: ReactNode }) => (
-  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+  <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
     {children}
   </h4>
 )
@@ -181,7 +181,7 @@ const EuccWithdrawal = ({ record }: { record: ComplianceRecord }) => {
   const replacedByUrl = safeHttpUrl(replacedBy)
   return (
     <div
-      className="space-y-2 rounded-md border border-border bg-muted/40 p-3"
+      className="space-y-2 rounded-2xl border border-border bg-muted/40 p-3"
       data-testid="eucc-withdrawal"
     >
       <FieldLabel>Withdrawn</FieldLabel>
@@ -488,7 +488,7 @@ const PqcSection = ({ record }: { record: ComplianceRecord }) => {
     <div className="space-y-1">
       <h4
         className={clsx(
-          'text-xs font-semibold uppercase tracking-wider',
+          'text-xs font-semibold uppercase tracking-wider font-display text-heading',
           fromSt ? 'text-muted-foreground' : 'text-tertiary'
         )}
       >
@@ -566,7 +566,7 @@ export const ComplianceDetailPopover = ({
     <>
       {/* Backdrop */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 backdrop-blur-sm embed-backdrop`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-scrim/60 backdrop-blur-sm embed-backdrop`}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -578,7 +578,7 @@ export const ComplianceDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85dvh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+            className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85dvh] overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground glass-panel rounded-2xl"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"
@@ -643,7 +643,7 @@ export const ComplianceDetailPopover = ({
                 </div>
                 <h3
                   id="popover-title"
-                  className="text-lg font-bold text-foreground leading-tight pr-8"
+                  className="text-lg font-bold leading-tight pr-8 font-display text-heading"
                 >
                   {record.productName}
                 </h3>
@@ -657,7 +657,7 @@ export const ComplianceDetailPopover = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
                 {/* Type */}
                 <div className="space-y-1">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Type
                   </h4>
                   <p className="text-sm text-foreground">{recordTypeDescription(record.type)}</p>
@@ -665,7 +665,7 @@ export const ComplianceDetailPopover = ({
 
                 {/* Category */}
                 <div className="space-y-1">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Category
                   </h4>
                   <p className="text-sm text-foreground">{record.productCategory}</p>
@@ -674,7 +674,7 @@ export const ComplianceDetailPopover = ({
                 {/* Lab */}
                 {record.lab && (
                   <div className="space-y-1">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Evaluation Lab
                     </h4>
                     <p className="text-sm text-foreground">{record.lab}</p>
@@ -684,7 +684,7 @@ export const ComplianceDetailPopover = ({
                 {/* Cert Level */}
                 {record.certificationLevel && (
                   <div className="space-y-1">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Certification Level
                     </h4>
                     <p className="text-sm text-foreground whitespace-normal break-words">
@@ -730,7 +730,7 @@ export const ComplianceDetailPopover = ({
 
                 {/* Date */}
                 <div className="space-y-1">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     {record.type === 'ESV' ? 'Latest validation' : 'Certification Date'}
                   </h4>
                   <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -742,7 +742,7 @@ export const ComplianceDetailPopover = ({
                 {/* CC Portal archived-list date */}
                 {record.ccArchivedDate && (
                   <div className="space-y-1">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Archived
                     </h4>
                     <p className="text-sm text-foreground">
@@ -753,7 +753,7 @@ export const ComplianceDetailPopover = ({
 
                 {/* Source */}
                 <div className="space-y-1">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Source
                   </h4>
                   <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -774,7 +774,7 @@ export const ComplianceDetailPopover = ({
                 {/* Classical Algorithms Section */}
                 {record.classicalAlgorithms && (
                   <div className="space-y-1">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Classical Algorithms
                     </h4>
                     <p className="text-sm text-muted-foreground">{record.classicalAlgorithms}</p>
@@ -791,7 +791,7 @@ export const ComplianceDetailPopover = ({
                 record.securityTargetUrls ||
                 record.additionalDocuments) && (
                 <div className="space-y-3 pt-2 border-t border-border">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Documentation
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

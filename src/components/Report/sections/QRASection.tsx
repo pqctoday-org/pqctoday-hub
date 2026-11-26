@@ -46,14 +46,22 @@ import { UnresolvedEstimatesNotice } from '@/components/common/UnresolvedEstimat
 
 /** Heatmap band → colour tokens (higher severity = warmer). */
 const BAND_STYLES: Record<QRAHeatmapCell['band'], { bar: string; text: string; chip: string }> = {
-  low: { bar: 'bg-success', text: 'text-success', chip: 'bg-success/10 text-success' },
+  low: {
+    bar: 'bg-success',
+    text: 'text-success-legible',
+    chip: 'bg-success/10 text-success-legible',
+  },
   medium: { bar: 'bg-warning', text: 'text-warning', chip: 'bg-warning/10 text-warning' },
   high: {
     bar: 'bg-destructive',
     text: 'text-destructive',
     chip: 'bg-destructive/10 text-destructive',
   },
-  critical: { bar: 'bg-critical', text: 'text-critical', chip: 'bg-critical/10 text-critical' },
+  critical: {
+    bar: 'bg-critical',
+    text: 'text-destructive-legible',
+    chip: 'bg-critical/10 text-destructive-legible',
+  },
 }
 
 const BAND_LABEL: Record<QRAHeatmapCell['band'], string> = {
@@ -300,7 +308,7 @@ function RegulatoryGaps({ gaps }: { gaps: ReturnType<typeof buildQRA>['regulator
       <div className="space-y-3">
         <CrqcWindow />
         <p className="text-sm text-muted-foreground inline-flex items-center gap-2">
-          <CheckCircle2 size={16} className="text-success" aria-hidden="true" />
+          <CheckCircle2 size={16} className="text-success-legible" aria-hidden="true" />
           Among the selected frameworks retained by the profile filter, none is recorded as
           explicitly requiring PQC yet. Verify scope and current source text before relying on this
           result.
@@ -412,7 +420,7 @@ export function QRASection({
           <section aria-labelledby="qra-exec">
             <h3
               id="qra-exec"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <ClipboardList size={16} className="text-primary" aria-hidden="true" />
               Executive Summary
@@ -423,7 +431,7 @@ export function QRASection({
           <section aria-labelledby="qra-heatmap">
             <h3
               id="qra-heatmap"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <Grid3x3 size={16} className="text-primary" aria-hidden="true" />
               Answer-derived attention map
@@ -434,7 +442,7 @@ export function QRASection({
           <section aria-labelledby="qra-ownership">
             <h3
               id="qra-ownership"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <Users size={16} className="text-primary" aria-hidden="true" />
               Program Ownership
@@ -445,7 +453,7 @@ export function QRASection({
           <section aria-labelledby="qra-backlog">
             <h3
               id="qra-backlog"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <ListChecks size={16} className="text-primary" aria-hidden="true" />
               Prioritised Backlog
@@ -460,7 +468,7 @@ export function QRASection({
           <section aria-labelledby="qra-reggaps">
             <h3
               id="qra-reggaps"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <Scale size={16} className="text-primary" aria-hidden="true" />
               Requirements to verify
@@ -471,7 +479,7 @@ export function QRASection({
           <section aria-labelledby="qra-compliance">
             <h3
               id="qra-compliance"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <FileCheck2 size={16} className="text-primary" aria-hidden="true" />
               Selected source mapping

@@ -151,7 +151,9 @@ export const CommandCenterStrategicPlan: React.FC<CommandCenterStrategicPlanProp
     <div className="glass-panel p-4 sm:p-6 space-y-4">
       <div className="flex items-center gap-2">
         <Info size={16} className="text-primary shrink-0" />
-        <h3 className="text-lg font-bold text-gradient">CSWP.39 Crypto Agility Strategic Plan</h3>
+        <h3 className="text-lg font-bold font-display text-heading">
+          CSWP.39 Crypto Agility Strategic Plan
+        </h3>
       </div>
       <p className="text-xs text-muted-foreground">
         Click any zone to jump to its artifacts. Counts show how many artifact types in that zone

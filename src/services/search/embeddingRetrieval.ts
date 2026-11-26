@@ -211,8 +211,7 @@ export async function cosineSearchByChunkId(
 /**
  * Select the K source passages most semantically aligned with a claim.
  * Used by the corpus generator at build time to populate
- * `chunk.prov.source_passages`, and at runtime by RetrievalService to
- * choose citation excerpts.
+ * `chunk.prov.source_passages`.
  *
  * `candidatePool` should be the chunk IDs of plausible sources (typically
  * the chunks belonging to the same `source_doc` as the claim's chunk).

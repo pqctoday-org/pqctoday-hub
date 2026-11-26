@@ -13,7 +13,9 @@ export function CloudSyncPrivacySection() {
     >
       <div className="flex items-center gap-3 mb-4">
         <Cloud className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold">Google Drive Sync &mdash; Privacy Terms</h2>
+        <h2 className="text-xl font-semibold font-display text-heading">
+          Google Drive Sync &mdash; Privacy Terms
+        </h2>
       </div>
       <div className="prose prose-invert max-w-none text-sm text-muted-foreground space-y-3">
         <p>
@@ -55,9 +57,8 @@ export function CloudSyncPrivacySection() {
           <li className="flex items-start gap-2.5">
             <span className="text-status-success mt-1 shrink-0">&#9679;</span>
             <span>
-              <strong className="text-foreground">No API keys are synced.</strong> Your Gemini or
-              other AI provider API keys are explicitly excluded from the sync payload and remain
-              local to your device at all times.
+              <strong className="text-foreground">No API keys are synced.</strong> The site asks for
+              no API key and stores none, so there is none to include in the sync payload.
             </span>
           </li>
           <li className="flex items-start gap-2.5">

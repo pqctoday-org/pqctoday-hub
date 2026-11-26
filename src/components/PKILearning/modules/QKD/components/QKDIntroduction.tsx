@@ -2,18 +2,7 @@
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
-import {
-  Shield,
-  Radio,
-  Zap,
-  AlertTriangle,
-  Key,
-  Server,
-  Globe,
-  ArrowRight,
-  BarChart3,
-  Satellite,
-} from 'lucide-react'
+import { Shield, Radio, Zap, AlertTriangle, Key, Server, Globe, Satellite } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -586,59 +575,6 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         <p className="text-sm text-muted-foreground">
           Explore the full interactive deployment database in the Workshop tab.
         </p>
-      </section>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <BarChart3 size={20} /> Related Resources
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Link
-            to="/learn/hybrid-crypto"
-            className="bg-muted/50 rounded-lg p-3 border border-border hover:border-primary/30 transition-colors group"
-          >
-            <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-              Hybrid Cryptography <ArrowRight size={14} />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Learn how classical + PQC hybrid KEMs work with hands-on HKDF key derivation.
-            </p>
-          </Link>
-          <Link
-            to="/learn/hsm-pqc"
-            className="bg-muted/50 rounded-lg p-3 border border-border hover:border-primary/30 transition-colors group"
-          >
-            <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-              HSM & PQC Operations <ArrowRight size={14} />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Deep dive into HSM PKCS#11 v3.2 operations and PQC firmware migration.
-            </p>
-          </Link>
-          <Link
-            to="/learn/5g-security"
-            className="bg-muted/50 rounded-lg p-3 border border-border hover:border-primary/30 transition-colors group"
-          >
-            <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-              5G Security <ArrowRight size={14} />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Explore 3GPP security architecture — QKD could secure future telecom backbones.
-            </p>
-          </Link>
-          <Link
-            to="/threats"
-            className="bg-muted/50 rounded-lg p-3 border border-border hover:border-primary/30 transition-colors group"
-          >
-            <div className="text-sm font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-              Threat Dashboard <ArrowRight size={14} />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Understand the quantum threats that motivate both PQC and QKD adoption.
-            </p>
-          </Link>
-        </div>
       </section>
 
       {/* CTA */}

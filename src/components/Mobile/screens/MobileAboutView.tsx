@@ -237,9 +237,9 @@ export function MobileAboutView() {
                         Latest recorded report: {lastAudited}. This dated production npm dependency
                         scan and static-code review concerns an earlier application version; it does
                         not establish current vulnerability status or OWASP Top 10 compliance. HTML
-                        insertion requires controls at each use. User-supplied cloud API keys are
-                        saved in browser storage; public build-time identifiers are distinct from
-                        secret credentials.
+                        insertion requires controls at each use. The site asks for no API key and
+                        stores none; public build-time identifiers are distinct from secret
+                        credentials.
                       </Row>
                     </>
                   )}
@@ -340,12 +340,10 @@ export function MobileAboutView() {
                   {group.id === 'assistant' && (
                     <>
                       <Row title="PQC Assistant">
-                        Uses Retrieval-Augmented Generation to deliver grounded, sourced answers —
-                        searches a curated knowledge corpus, retrieves the most relevant passages,
-                        and grounds the model's response with deep links back to the exact page.
-                        Runs in cloud mode (Gemini) with your own free API key, or fully local
-                        in-browser (Qwen3-8B) — local mode works even in airplane mode and nothing
-                        leaves your device.
+                        Answers from the Hub's own records, on your device: it finds the closest
+                        records and shows them with their sources and a link to the exact page. It
+                        uses no language model, no API key and no model download, and your question
+                        is not sent anywhere.
                       </Row>
                       {!isEmbedded && (
                         <Row title="Community">
@@ -434,7 +432,7 @@ function Row({ title, badge, children }: { title: string; badge?: string; childr
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-border bg-muted/30 p-2 text-center">
-      <div className="text-[15px] font-extrabold text-gradient">{value.toLocaleString()}</div>
+      <div className="text-[15px] font-extrabold text-heading">{value.toLocaleString()}</div>
       <div className="text-sim-chip text-muted-foreground">{label}</div>
     </div>
   )

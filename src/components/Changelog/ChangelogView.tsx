@@ -61,7 +61,7 @@ const SECTION_CONFIG = {
     Icon: Plus,
     borderClass: 'border-success',
     bgClass: 'bg-success/10',
-    textClass: 'text-success',
+    textClass: 'text-success-legible',
   },
   changed: {
     label: 'Improvements',
@@ -419,7 +419,7 @@ export const ChangelogView = () => {
               <FileText className="text-primary" size={24} aria-hidden="true" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gradient">Changelog</h1>
+              <h1 className="text-2xl font-bold font-display text-heading">Changelog</h1>
               <p className="text-sm text-muted-foreground">
                 Current version:{' '}
                 <span className="font-mono text-primary font-bold">v{version}</span>
@@ -437,7 +437,7 @@ export const ChangelogView = () => {
         </div>
       </motion.div>
 
-      <PersonaPageNote route="/changelog" />
+      <PersonaPageNote route="/changelog" className="mb-6" />
 
       {/* Sponsor thanks — real, wired to src/data/sponsors.ts (the same
           registry that drives the /migrate "Sponsor" badge). Renders nothing
@@ -463,7 +463,7 @@ export const ChangelogView = () => {
                 href={s.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2.5 py-1 rounded-full text-xs border border-border bg-muted/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+                className="px-2.5 py-1 rounded-full text-xs hover:text-primary transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
               >
                 {s.name}
               </a>
@@ -478,7 +478,7 @@ export const ChangelogView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel px-4 py-3 mb-6"
+          className="glass-panel rounded-2xl px-4 py-3 mb-6"
         >
           <div className="flex flex-wrap items-center gap-2">
             <div
@@ -596,7 +596,7 @@ export const ChangelogView = () => {
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
                 filters.added
-                  ? 'bg-success/20 border-success/50 text-success'
+                  ? 'bg-success/10 border-success/50 text-success-legible'
                   : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
               )}
             >
@@ -805,16 +805,16 @@ export const ChangelogView = () => {
               <div
                 className={clsx(
                   'glass-panel p-6 transition-shadow duration-500',
-                  groupHighlighted && 'ring-2 ring-primary shadow-glow'
+                  groupHighlighted && 'ring-2 ring-primary'
                 )}
               >
                 {/* Date header */}
                 <div className="mb-4 pb-3 border-b border-border">
                   <div className="flex items-baseline gap-3 flex-wrap">
-                    <h2 className="text-xl font-semibold text-foreground">
+                    <h2 className="text-xl font-semibold font-display text-heading">
                       {formatDate(group.date)}
                     </h2>
-                    <span className="text-xs font-mono text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-full border border-border">
+                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-chip text-chip-foreground font-bold">
                       {versionLabel}
                     </span>
                     {group.versions.some((entry) => entry.version === version) && (

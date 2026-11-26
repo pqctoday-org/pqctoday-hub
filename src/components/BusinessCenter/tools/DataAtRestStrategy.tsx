@@ -249,7 +249,7 @@ export const DataAtRestStrategy: React.FC = () => {
       <header className="flex items-start gap-3">
         <Database size={24} className="text-primary shrink-0 mt-0.5" />
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Data-at-Rest Strategy</h2>
+          <h2 className="text-lg font-semibold font-display text-heading">Data-at-Rest Strategy</h2>
           <p className="text-sm text-muted-foreground">
             Phase 5 — Activity 5.6. Decide a per-data-store strategy: re-wrap the existing AES-256
             data key (DEK) under a new wrapping key, re-encrypt with a fresh AES-256 DEK,
@@ -262,8 +262,8 @@ export const DataAtRestStrategy: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
           Data stores · {storeCount} store{storeCount === 1 ? '' : 's'}
         </h3>
         <p className="text-xs text-muted-foreground">
@@ -285,7 +285,7 @@ export const DataAtRestStrategy: React.FC = () => {
               key={row.id}
               role="group"
               aria-label={row.name || 'New data store'}
-              className="glass-panel border border-border rounded-lg p-3 space-y-3"
+              className="glass-panel glass-panel-row p-3 space-y-3"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="block">
@@ -400,7 +400,7 @@ export const DataAtRestStrategy: React.FC = () => {
 
               <p
                 role="status"
-                className="rounded-md border border-border p-3 text-sm text-foreground"
+                className="rounded-2xl border border-border p-3 text-sm text-foreground"
               >
                 {sampleDecision(row)}
               </p>

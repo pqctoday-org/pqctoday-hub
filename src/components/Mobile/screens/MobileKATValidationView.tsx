@@ -275,7 +275,7 @@ function KATTile({ config, hsm }: { config: KATTileConfig; hsm: ReturnType<typeo
   const done = results.length === config.specs.length && !running
 
   return (
-    <div className="rounded-lg border border-border bg-card p-3">
+    <div className="rounded-2xl border border-border bg-card p-3">
       <div className="flex items-center justify-between gap-2">
         <span className="text-[12.5px] font-bold text-foreground">{config.name}</span>
         <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold text-primary">
@@ -427,7 +427,7 @@ function SLHDSATile({ hsm }: { hsm: ReturnType<typeof useHSM> }) {
   }, [hsm, spec, markRunStart])
 
   return (
-    <div className="rounded-lg border border-border bg-card p-3">
+    <div className="rounded-2xl border border-border bg-card p-3">
       <div className="flex items-center justify-between gap-2">
         <span className="text-[12.5px] font-bold text-foreground">SLH-DSA</span>
         <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold text-primary">

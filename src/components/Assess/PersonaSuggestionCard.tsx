@@ -106,7 +106,7 @@ export const PersonaSuggestionCard: React.FC = () => {
   }
 
   return (
-    <div className="glass-panel border border-primary/30 bg-primary/5 rounded-lg p-4 mb-4">
+    <div className="glass-panel bg-primary/5 p-4 mb-4">
       <div className="flex items-start gap-3 flex-wrap">
         <Sparkles size={16} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
         <div className="flex-1 min-w-0">

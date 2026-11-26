@@ -12,7 +12,6 @@ import {
   RefreshCw,
   Lock,
 } from 'lucide-react'
-import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { LearnSection } from '@/components/PKILearning/common/LearnSection'
@@ -694,61 +693,6 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
       </CollapsibleSection>
 
       <VendorCoverageNotice migrateLayer="Database" />
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <KeyRound size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                Manage DEK and CMK lifecycles with PQC key wrapping
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hsm-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                Hardware-backed TDE master key storage and ML-KEM support
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <RefreshCw size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Algorithm-agnostic encryption layers for future-proof databases
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/secrets-management-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Secrets Management</div>
-              <div className="text-xs text-muted-foreground">
-                Vault-based dynamic secrets and PQC BYOK patterns
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       {/* CTA */}
       <div className="text-center">

@@ -18,7 +18,7 @@ export const ScopeTransparencyBanner = ({
   const [open, setOpen] = useState(false)
 
   return (
-    <div className={cn('rounded-lg border border-border bg-muted/30 p-3', className)}>
+    <div className={cn('rounded-2xl border border-border bg-muted/30 p-3', className)}>
       <Button
         type="button"
         variant="ghost"

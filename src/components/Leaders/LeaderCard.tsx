@@ -55,7 +55,7 @@ export const LeaderCard = ({
             <img
               src={leader.imageUrl}
               alt=""
-              className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 shadow-glow"
+              className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
               onError={() => setHasError(true)}
             />
           ) : (
@@ -64,7 +64,7 @@ export const LeaderCard = ({
             </div>
           )}
           {leader.country && (
-            <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border shadow-sm">
+            <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border">
               <CountryFlag code={FLAG_CODE_MAP[leader.country] ?? 'un'} width={16} height={11} />
             </div>
           )}
@@ -109,7 +109,7 @@ export const LeaderCard = ({
         </div>
       </div>
 
-      <h2 className="text-xl font-bold mb-1">{leader.name}</h2>
+      <h2 className="text-xl font-bold mb-1 font-display text-heading">{leader.name}</h2>
       {/* Collapsed cards keep one line per role / organization and three lines
           of bio; an expanded card shows them in full. */}
       {leader.title && (

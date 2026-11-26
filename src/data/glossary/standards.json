@@ -14,7 +14,8 @@
     "definition": "The NIST standard defining ML-KEM (Module-Lattice-Based Key Encapsulation Mechanism), published August 2024.",
     "relatedModule": "/library?ref=FIPS 203",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "fips-204",
@@ -22,7 +23,8 @@
     "definition": "The NIST standard defining ML-DSA (Module-Lattice-Based Digital Signature Algorithm), published August 2024.",
     "relatedModule": "/library?ref=FIPS 204",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "fips-205",
@@ -30,7 +32,8 @@
     "definition": "The NIST standard defining SLH-DSA (Stateless Hash-Based Digital Signature Algorithm), published August 2024.",
     "relatedModule": "/library?ref=FIPS 205",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "fips-140-3",
@@ -50,7 +53,8 @@
     "relatedModule": "/timeline",
     "complexity": "intermediate",
     "category": "standard",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "common-criteria",
@@ -60,7 +64,8 @@
     "technicalNote": "The Common Criteria Recognition Arrangement (CCRA) is an arrangement between government participants: national Certification Bodies (e.g., BSI for Germany, ANSSI for France, NIAP for the US) authorise CC certificates, and other participants plan to recognise them within the arrangement's scope (collaborative Protection Profiles, or assurance up to EAL 2). Recognition is not an endorsement or guarantee of a product. EUCC is a separate EU scheme based on the Common Criteria, adopted under the Cybersecurity Act.",
     "relatedModule": "/learn/cc-eucc-certification",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "eucc",
@@ -71,7 +76,8 @@
     "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "PQC-REGION-EU"
+    "place": "PQC-REGION-EU",
+    "industries": "Cross-Industry"
   },
   {
     "id": "eidas-2-0",
@@ -91,7 +97,8 @@
     "relatedModule": "/compliance",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "PQC-REGION-EU"
+    "place": "PQC-REGION-EU",
+    "industries": "Cross-Industry"
   },
   {
     "id": "pkcs-12",
@@ -108,7 +115,8 @@
     "relatedModule": "/algorithms?highlight=FN-DSA-512,FN-DSA-1024",
     "trustedSourceId": "nist-csrc",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "fips-186-5",
@@ -116,7 +124,8 @@
     "definition": "The NIST Digital Signature Standard defining RSA, ECDSA, and EdDSA. Being deprecated in favor of PQC signature algorithms per NIST IR 8547.",
     "relatedModule": "/library?ref=FIPS 186-5",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-ir-8547",
@@ -125,7 +134,8 @@
     "technicalNote": "Covers RSA, ECDSA, EdDSA, finite-field and elliptic-curve DH and MQV at every key size of 112 bits of security or more. It recommends ML-KEM-768 as the default ML-KEM parameter set and allows a hybrid key-establishment scheme to be FIPS 140-validated when one input is approved.",
     "relatedModule": "/library?ref=NIST IR 8547",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-sp-800-131a",
@@ -135,7 +145,8 @@
     "relatedModule": "/library?ref=NIST-SP-800-131A-Rev3",
     "complexity": "intermediate",
     "category": "standard",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "nist-sp-800-208",
@@ -143,7 +154,8 @@
     "definition": "NIST recommendation for stateful hash-based signature schemes LMS and XMSS, used for firmware signing and secure boot.",
     "relatedModule": "/library?ref=NIST SP 800-208",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "rfc-9629",
@@ -211,7 +223,8 @@
     "definition": "NIST Special Publication providing recommendations for Key Encapsulation Mechanism (KEM) implementation, including guidance on parameter selection and secure use of ML-KEM.",
     "relatedModule": "/library?ref=NIST SP 800-227",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-ir-8545",
@@ -219,7 +232,8 @@
     "definition": "NIST Internal Report documenting the selection of HQC as an additional KEM standard, providing a code-based alternative to lattice-based ML-KEM.",
     "relatedModule": "/library?ref=NIST IR 8545",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "rfc-9370",
@@ -272,7 +286,8 @@
     "definition": "NIST Special Publication 800-57: Recommendation for Key Management. Part 1 Rev. 5 (May 2020) describes four key-management phases (pre-operational, operational, post-operational and destroyed), the key states within them, and cryptoperiod guidance. Revision 6 is an initial public draft (December 2025).",
     "complexity": "intermediate",
     "category": "standard",
-    "relatedModule": "/learn/kms-pqc"
+    "relatedModule": "/learn/kms-pqc",
+    "place": "US"
   },
   {
     "id": "pkcs-11",
@@ -301,7 +316,8 @@
     "technicalNote": "All three DRBGs are built on symmetric primitives (hash functions, HMAC, block ciphers), which Shor's algorithm does not break; whether a given DRBG is adequate against quantum attack depends on the primitive and security strength chosen (Rev. 1 CTR_DRBG also allows three-key TDEA). That is engineering judgment, not a NIST statement. CTR_DRBG is the default in OpenSSL. Rev. 2 is not yet a draft: NIST published a pre-draft call for comments on 2025-09-04 (closed 2025-11-04) announcing plans for a new DRBG construction based on SHAKE extendable-output functions; no draft text has been published.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "sp-800-90b",
@@ -310,7 +326,8 @@
     "technicalNote": "The NIST Entropy Source Validation (ESV) program under CMVP uses SP 800-90B to certify hardware entropy sources. The NIST EntropyAssessment tool on GitHub implements the min-entropy assessment methods.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "sp-800-90c",
@@ -319,7 +336,8 @@
     "technicalNote": "Completes the SP 800-90 series. Specifies how to combine multiple independent entropy sources for defense-in-depth, using XOR and conditioning functions to ensure combined output retains entropy even if one source is compromised.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "bip-360",
@@ -369,7 +387,8 @@
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard",
-    "industries": "Cross-Industry"
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "iso-27005",
@@ -390,7 +409,8 @@
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "gdpr",
@@ -401,7 +421,8 @@
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "PQC-REGION-EU"
+    "place": "PQC-REGION-EU",
+    "industries": "Cross-Industry"
   },
   {
     "id": "pipl",
@@ -411,7 +432,8 @@
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "CN"
+    "place": "CN",
+    "industries": "Cross-Industry"
   },
   {
     "id": "ccpa",
@@ -421,7 +443,8 @@
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "beginner",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "industries": "Cross-Industry"
   },
   {
     "id": "lgpd",
@@ -431,7 +454,8 @@
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "BR"
+    "place": "BR",
+    "industries": "Cross-Industry"
   },
   {
     "id": "pdpa",
@@ -441,7 +465,8 @@
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "SG"
+    "place": "SG",
+    "industries": "Cross-Industry"
   },
   {
     "id": "dora",
@@ -525,7 +550,8 @@
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "intermediate",
     "category": "standard",
-    "place": "US"
+    "place": "US",
+    "industries": "Insurance"
   },
   {
     "id": "42-cfr-part-2",
@@ -544,7 +570,8 @@
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "advanced",
     "category": "standard",
-    "industries": "Healthcare / Pharmaceutical"
+    "industries": "Healthcare / Pharmaceutical",
+    "place": "US"
   },
   {
     "id": "arinc-653",
@@ -574,7 +601,8 @@
     "relatedModule": "/learn/aerospace-pqc",
     "complexity": "advanced",
     "category": "standard",
-    "industries": "Aerospace / Aviation"
+    "industries": "Aerospace / Aviation",
+    "place": "PQC-REGION-EU;US"
   },
   {
     "id": "international-traffic-in-arms-regulations",
@@ -681,7 +709,8 @@
     "relatedModule": "/library?ref=NIST CSWP 39",
     "complexity": "advanced",
     "category": "standard",
-    "industries": "Cross-Industry"
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "nis2",
@@ -723,7 +752,8 @@
     "definition": "AICPA audit framework evaluating a service provider's controls against the Trust Services Criteria (security, availability, processing integrity, confidentiality, privacy). Cryptographic-control adequacy is evaluated within the security criterion.",
     "complexity": "beginner",
     "category": "standard",
-    "relatedModule": "/learn/custody-governance"
+    "relatedModule": "/learn/custody-governance",
+    "industries": "Cross-Industry"
   },
   {
     "id": "iso-iec-27001",
@@ -733,7 +763,8 @@
     "complexity": "beginner",
     "category": "standard",
     "relatedModule": "/learn/compliance-strategy",
-    "place": "PQC-REGION-GLOBAL"
+    "place": "PQC-REGION-GLOBAL",
+    "industries": "Cross-Industry"
   },
   {
     "id": "stig",
@@ -743,7 +774,8 @@
     "complexity": "intermediate",
     "category": "standard",
     "relatedModule": "/learn/compliance-strategy",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "cspn",
@@ -753,7 +785,8 @@
     "complexity": "intermediate",
     "category": "standard",
     "relatedModule": "/learn/cc-eucc-certification",
-    "industries": "IT Industry / Software"
+    "industries": "IT Industry / Software",
+    "place": "FR"
   },
   {
     "id": "nist-ir-8528",
@@ -761,7 +794,8 @@
     "definition": "NIST Internal Report (October 2024) that down-selected the PQC signature on-ramp to 14 second-round candidates across four mathematical families: MPC-in-the-Head, multivariate, isogeny, and lattice. Superseded by NIST IR 8610 (May 2026), which closed the second round and advanced nine candidates to the third round.",
     "relatedModule": "/library?ref=NIST-IR-8528",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "ca-b-forum-sc-081v3",
@@ -769,7 +803,8 @@
     "definition": "CA/Browser Forum ballot (April 2025) that phases TLS certificate maximum validity from 398 days down to 200d (2026), 100d (2027), and 47d by March 2029. Forces every public-trust TLS deployment onto automated CLM.",
     "relatedModule": "/learn/crypto-mgmt-modernization",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "industries": "Cross-Industry"
   },
   {
     "id": "omb-m-23-02",
@@ -799,7 +834,8 @@
     "definition": "The predecessor to FIPS 140-3 for validating cryptographic modules. NIST's CMVP stopped accepting new FIPS 140-2 submissions in 2021; many previously validated modules remain listed during a multi-year transition to FIPS 140-3.",
     "relatedModule": "/compliance",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "cnsa-1-0",
@@ -809,7 +845,8 @@
     "relatedModule": "/timeline",
     "complexity": "intermediate",
     "category": "standard",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "nist-sp-800-56a",
@@ -817,7 +854,8 @@
     "definition": "Recommendation for Pair-Wise Key-Establishment Using Discrete Logarithm Cryptography — the NIST standard specifying Diffie-Hellman and elliptic-curve (ECDH) key-agreement schemes.",
     "relatedModule": "/library",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-sp-800-56b",
@@ -825,7 +863,8 @@
     "definition": "Recommendation for Pair-Wise Key-Establishment Using Integer Factorization Cryptography — the NIST standard specifying RSA-based key-transport and key-agreement schemes.",
     "relatedModule": "/library",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-sp-800-56c",
@@ -833,7 +872,8 @@
     "definition": "Recommendation for Key-Derivation Methods in Key-Establishment Schemes — the NIST standard specifying the two-step (extract-then-expand) key-derivation approach used to turn a shared secret from SP 800-56A/B, or a PQC KEM, into usable keying material.",
     "relatedModule": "/library",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-sp-800-186",
@@ -841,7 +881,8 @@
     "definition": "Recommendation for Discrete Logarithm-based Cryptography: Elliptic Curve Domain Parameters — the NIST standard specifying the NIST curves (P-256, P-384, P-521) used throughout TLS, X.509, and other classical or hybrid cryptography.",
     "relatedModule": "/library",
     "complexity": "advanced",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "rfc-8391",
@@ -865,7 +906,8 @@
     "definition": "Report on Post-Quantum Cryptography (April 2016) — NIST's original report announcing the PQC standardization project and surveying the state of quantum-resistant cryptography at the time.",
     "relatedModule": "/library",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-ir-8309",
@@ -873,7 +915,8 @@
     "definition": "Status Report on the Second Round of the NIST PQC Standardization Process (July 2020), narrowing the KEM and signature candidates to the finalists and alternates that became ML-KEM, ML-DSA, FN-DSA, and SLH-DSA.",
     "relatedModule": "/library",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "nist-ir-8413",
@@ -882,7 +925,8 @@
     "technicalNote": "SIKE was withdrawn after a 2022 cryptanalytic break; HQC was later selected via NIST IR 8545, already in this glossary.",
     "relatedModule": "/library",
     "complexity": "intermediate",
-    "category": "standard"
+    "category": "standard",
+    "place": "US"
   },
   {
     "id": "pkcs-1",

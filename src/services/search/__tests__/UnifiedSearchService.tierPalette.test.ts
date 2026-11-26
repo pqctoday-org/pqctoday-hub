@@ -3,10 +3,9 @@
  * UnifiedSearchService.searchPalette — tier-aware ordering + Authoritative-
  * only toggle (§14.3 step 2 + step 5 of trust-engine-explainability).
  *
- * Mirrors the chat-path contract in RetrievalService.tierOrdering.test.ts —
- * after this code change, the ⌘K palette applies the same tier multiplier
- * and exposes an `authoritativeOnly` filter that restricts results to
- * Authoritative + High tiers.
+ * The ⌘K palette applies the trust-tier multiplier and exposes an
+ * `authoritativeOnly` filter that restricts results to Authoritative + High
+ * tiers.
  */
 import { describe, it, expect, beforeEach } from 'vitest'
 import { UnifiedSearchService } from '../UnifiedSearchService'

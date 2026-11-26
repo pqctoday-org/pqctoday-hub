@@ -13,7 +13,7 @@ export function InteractiveExecutionNotice({
     <div
       role="status"
       aria-label="Selected execution mode"
-      className="mb-4 rounded-lg border border-border bg-muted/20 p-3 text-xs"
+      className="mb-4 rounded-2xl border border-border bg-muted/20 p-3 text-xs"
     >
       <p className="font-semibold text-foreground">
         {executionMode === 'mock'

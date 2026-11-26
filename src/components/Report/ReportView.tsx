@@ -51,7 +51,7 @@ function MaturityTierChip() {
   if (!tier) return null
   return (
     <div className="mb-4 -mt-2 flex justify-center sm:justify-start">
-      <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border border-border bg-muted/30 text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-chip text-chip-foreground font-bold">
         <span
           aria-hidden="true"
           className="inline-block w-2 h-2 rounded-full"
@@ -379,7 +379,9 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
                 heading (PageHeader owns that) — matters when simEmbed
                 (WP5.7) since this branch renders regardless of simEmbed and
                 an embedded pane must stay headless. */}
-            <h2 className="text-xl font-bold text-foreground mb-2">Generating your report…</h2>
+            <h2 className="text-xl font-bold mb-2 font-display text-heading">
+              Generating your report…
+            </h2>
             <p className="text-sm text-muted-foreground">
               Running the 10-stage scoring pipeline. This takes 0.5–2 seconds on most machines.
             </p>
@@ -406,9 +408,9 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
               Inside the simulation (simEmbed) the pane stays headless — h2,
               as WP5.7 required. */}
           {simEmbed ? (
-            <h2 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h2>
+            <h2 className="text-2xl font-bold mb-3 font-display text-heading">No Report Yet</h2>
           ) : (
-            <h1 className="text-2xl font-bold text-foreground mb-3">No Report Yet</h1>
+            <h1 className="text-2xl font-bold mb-3 font-display text-heading">No Report Yet</h1>
           )}
           <p className="text-muted-foreground mb-6">
             {isCurious
@@ -442,7 +444,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
             <Link
               to="/assess"
               onClick={() => logReportCta('start-assessment')}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-primary-foreground font-bold transition-all duration-200 bg-primary border-2 border-ink hover:bg-primary/90"
             >
               <ClipboardCheck size={18} />
               Start Assessment
@@ -492,7 +494,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           className="mb-4"
         >
           {sharedView.sample ? (
-            <div className="glass-panel p-3 border-l-4 border-l-primary flex flex-wrap items-center gap-3">
+            <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-primary flex flex-wrap items-center gap-3">
               <FileBarChart size={16} className="text-primary shrink-0" />
               <span className="text-sm text-foreground flex-1 min-w-[12rem]">
                 This is a sample report for a fictional US bank. Run your own assessment to see
@@ -501,7 +503,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
               <Link
                 to="/assess"
                 onClick={() => logReportCta('start-assessment')}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-primary-foreground text-sm font-bold transition-opacity bg-primary border-2 border-ink hover:bg-primary/90"
               >
                 <ClipboardCheck size={16} />
                 Start Assessment
@@ -509,7 +511,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
               </Link>
             </div>
           ) : (
-            <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
+            <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-primary flex items-center gap-3">
               <FileBarChart size={16} className="text-primary shrink-0" />
               <span className="text-sm text-foreground">
                 Viewing a shared report. This is a read-only snapshot — your own assessment is
@@ -529,7 +531,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           animate={{ opacity: 1, y: 0 }}
           className="mb-4"
         >
-          <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center gap-3">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-warning flex items-center gap-3">
             <AlertCircle size={16} className="text-warning shrink-0" />
             <span className="text-sm text-foreground">
               This is an older share link — an approximate view recomputed from what it carries,
@@ -548,7 +550,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
           animate={{ opacity: 1, y: 0 }}
           className="mb-4"
         >
-          <div className="glass-panel p-3 border-l-4 border-l-warning flex items-center justify-between gap-3">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-warning flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm">
               <AlertCircle size={16} className="text-warning shrink-0" />
               <span className="text-foreground">
@@ -558,7 +560,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
             <Link
               to="/assess"
               onClick={() => logReportCta('complete-assessment')}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-secondary to-primary text-primary-foreground rounded-lg hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200 shrink-0"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-foreground rounded-full transition-all duration-200 shrink-0 bg-primary border-2 border-ink hover:bg-primary/90"
             >
               Complete Assessment
               <ArrowRight size={12} />

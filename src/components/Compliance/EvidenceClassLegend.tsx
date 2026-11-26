@@ -21,10 +21,7 @@ const EVIDENCE_CLASSES = [
 
 export function EvidenceClassLegend({ compact = false }: { compact?: boolean }) {
   return (
-    <aside
-      className="rounded-xl border border-border bg-muted/20 p-3"
-      aria-labelledby="evidence-class-legend-heading"
-    >
+    <aside className="glass-panel p-3" aria-labelledby="evidence-class-legend-heading">
       <h3
         id="evidence-class-legend-heading"
         className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"

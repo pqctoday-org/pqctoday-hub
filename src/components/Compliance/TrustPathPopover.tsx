@@ -116,7 +116,7 @@ export function TrustPathPopover({ path, standardLabel }: TrustPathPopoverProps)
               width: POPOVER_WIDTH,
               visibility: pos ? 'visible' : 'hidden',
             }}
-            className="z-50 glass-panel rounded-lg border border-border p-3 shadow-lg text-xs space-y-2"
+            className="glass-panel rounded-2xl z-50 p-3 text-xs space-y-2"
           >
             <div className="flex items-center justify-between">
               <p className="font-semibold text-muted-foreground uppercase tracking-wide text-[10px]">

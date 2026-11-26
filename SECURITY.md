@@ -63,19 +63,22 @@ visitor configures themselves:
 - `NVD_API_KEY` (used by local/offline data-maintenance scripts to query the
   NVD API) is **not** `VITE_`-prefixed and is never read by any browser-side
   code — it only ever exists in a Node process on a maintainer's machine.
-- The PQC Assistant's optional "Bring Your Own [Gemini API] Key" cloud mode
-  stores the user-supplied key in the browser's own `localStorage`
-  (`useChatStore`) and calls the Gemini API directly from the browser. The
-  local (WebLLM) mode needs no key and sends nothing anywhere. Neither key nor
-  chat content ever passes through a PQC Today server, because none exists.
+- The PQC Assistant answers from the Hub's own records, on the device. It uses
+  no language model, asks for no key and sends nothing anywhere. An earlier
+  version had an optional cloud mode with a user-supplied API key and an
+  in-browser model; both were removed. On every page load the site now deletes
+  any key, saved conversation and chat setting an earlier visit had stored,
+  and, once and on a best-effort basis (up to three tries if the
+  browser reports an unexpected error), the model files that visit had
+  downloaded to the device.
 - The optional Google Drive cloud-sync feature keeps its OAuth access token in
   browser memory only (never persisted, never sent to any PQC Today
   infrastructure) and explicitly excludes API keys from the synced payload —
   see the About page's `#cloud-sync-privacy` section.
 - The app ships a real `Content-Security-Policy` (see `vite.config.ts`'s
   `server`/`preview` headers) restricting `connect-src` to a named allowlist
-  (Google APIs/OAuth/Gemini, NIST CSRC, ANSSI, BSI, Common Criteria portal,
-  Hugging Face, jsDelivr, raw.githubusercontent.com, and the local sandbox
+  (Google APIs/OAuth, NIST CSRC, ANSSI, BSI, Common Criteria portal,
+  Hugging Face for the search embedding model, jsDelivr, and the local sandbox
   ports) rather than allowing arbitrary outbound requests.
 
 ## Cryptographic Disclaimer

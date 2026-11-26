@@ -137,7 +137,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50"
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
@@ -156,7 +156,10 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
                     <Users size={18} className="text-primary" />
-                    <h2 id="persona-info-modal-title" className="text-lg font-bold text-foreground">
+                    <h2
+                      id="persona-info-modal-title"
+                      className="text-lg font-bold font-display text-heading"
+                    >
                       How This Step Is Personalized
                     </h2>
                   </div>
@@ -197,8 +200,8 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                           key={p.id}
                           className={
                             isActive
-                              ? 'glass-panel p-3 border-l-4 border-l-primary'
-                              : 'rounded-lg border border-border p-3'
+                              ? 'glass-panel glass-panel-row p-3 border-l-4 border-l-primary'
+                              : 'rounded-2xl border border-border p-3'
                           }
                         >
                           <div className="flex items-center gap-2 mb-2">
@@ -239,7 +242,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                   <div className="mt-5 pt-4 border-t border-border">
                     <div className="flex items-center gap-2 mb-3">
                       <Sparkles size={16} className="text-primary" />
-                      <h3 className="text-sm font-semibold text-foreground">
+                      <h3 className="text-sm font-semibold font-display text-heading">
                         How Your Preferences Affect This Step
                       </h3>
                     </div>

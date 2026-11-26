@@ -250,7 +250,7 @@ export const HsmKeyInspector = ({
       >
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-sm flex items-center gap-2">
+            <h3 className="font-semibold text-sm flex items-center gap-2 font-display text-heading">
               <KeyIcon size={14} className="text-primary" />
               {title}
             </h3>

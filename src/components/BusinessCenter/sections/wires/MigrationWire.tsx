@@ -26,10 +26,12 @@ export const MigrationWire: React.FC<MigrationWireProps> = ({ metrics }) => {
 
   if (done === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-border bg-muted/20 p-3 flex items-start gap-3">
+      <div className="rounded-2xl border border-dashed border-border bg-muted/20 p-3 flex items-start gap-3">
         <Route size={18} className="text-muted-foreground shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-semibold text-foreground">Migration workflow not started</h4>
+          <h4 className="text-sm font-semibold font-display text-heading">
+            Migration workflow not started
+          </h4>
           <p className="text-xs text-muted-foreground mt-0.5">
             The 4-phase workflow (Assess → Comply → Migrate → Timeline) tracks your cross-page
             progress. Open the Migrate page to begin.

@@ -361,7 +361,10 @@ for (const [name, viewport] of [
       await expect(returnControl(page)).toHaveCount(0)
     })
 
-    test('the old model chat is not in the normal path', async ({ page, baseURL }) => {
+    test('there is no model chat: no set-up, no key, no model request', async ({
+      page,
+      baseURL,
+    }) => {
       const requested: string[] = []
       page.on('request', (request) => requested.push(request.url()))
       const foreign = trackForeignRequests(page, baseURL!)
@@ -375,13 +378,8 @@ for (const [name, viewport] of [
       await expect(page.getByRole('button', { name: 'Send message' })).toHaveCount(0)
       const words = await drawer.innerText()
       expect(words).not.toMatch(/API key|WebLLM|Gemini|local model|language model|download/i)
-      // The switch that brings it back is off, and the chunk that holds it was never fetched.
-      expect(
-        await page.evaluate(() => localStorage.getItem('pqc-feature-model-assistant'))
-      ).toBeNull()
-      expect(
-        requested.filter((u) => /ChatPanelContent|web-?llm|\/mlc|generativelanguage/i.test(u))
-      ).toEqual([])
+      // No model, model library or model provider was ever requested.
+      expect(requested.filter((u) => /web-?llm|\/mlc|generativelanguage/i.test(u))).toEqual([])
       expect(foreign).toEqual([])
       // The page hook that opened the old chat opens this drawer instead.
       await page.keyboard.press('Escape')

@@ -21,7 +21,7 @@ export function AirplaneModeBanner() {
         <Plane size={20} className="text-primary shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-sm font-semibold text-foreground">Airplane Mode</h3>
+            <h3 className="text-sm font-semibold font-display text-heading">Airplane Mode</h3>
             <Button
               variant="ghost"
               type="button"
@@ -62,15 +62,10 @@ export function AirplaneModeBanner() {
                 Requires internet
               </p>
               <ul className="text-xs text-muted-foreground space-y-0.5">
-                <li>AI Chat (Gemini cloud mode)</li>
-                <li>AI Chat (local mode — first-time model download)</li>
                 <li>Google Drive sync</li>
                 <li>Compliance live refresh (NIST/CAVP/CC)</li>
                 <li>External links (RFCs, standards bodies)</li>
               </ul>
-              <p className="text-[10px] text-muted-foreground mt-1">
-                If you downloaded a local AI model before going offline, local chat still works.
-              </p>
             </div>
           </div>
         </div>

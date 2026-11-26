@@ -144,7 +144,7 @@ function GraduateCTA() {
   if (!showGraduate) return null
 
   return (
-    <div className="mt-4 p-4 glass-panel border-primary/20 bg-primary/5 rounded-xl space-y-3">
+    <div className="glass-panel mt-4 p-4 bg-primary/5 space-y-3">
       <div className="flex items-center gap-2">
         <Sparkles size={16} className="text-primary shrink-0" />
         <p className="text-sm font-semibold text-foreground">Ready to specialize?</p>
@@ -261,7 +261,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
           </div>
           <div className="flex-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-              <p className="text-xs font-mono uppercase tracking-widest text-primary">
+              <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Learning Journey
                 {personaLabel && (
                   <span className="ml-2 normal-case tracking-normal text-secondary font-medium">
@@ -282,7 +282,10 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
                 </Button>
               </span>
             </div>
-            <h2 id="scorecard-heading" className="text-lg font-bold mb-1.5">
+            <h2
+              id="scorecard-heading"
+              className="text-lg font-bold mb-1.5 font-display text-heading"
+            >
               Earn your first belt
             </h2>
             <p className="text-sm text-muted-foreground mb-4 max-w-md">
@@ -322,7 +325,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
         <div className="flex items-center gap-4">
           <BeltSwatch belt={belt} size="md" />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-0.5">
+            <p className="uppercase mb-0.5 text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Learning Journey
               {personaLabel && (
                 <span className="ml-2 normal-case tracking-normal text-secondary font-medium">
@@ -332,7 +335,7 @@ function ScoreCardBody({ embedded }: { embedded: boolean }) {
             </p>
             <div className="flex items-baseline gap-2 flex-wrap">
               <span
-                className="text-2xl font-bold text-gradient"
+                className="text-2xl font-bold text-heading"
                 aria-label={`Awareness score: ${score} out of 100`}
               >
                 {score}

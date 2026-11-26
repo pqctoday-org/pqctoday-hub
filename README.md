@@ -79,12 +79,11 @@ Separate sandbox scenarios require the external sandbox runtime. They are not si
 
 ## What runs where
 
-| Runtime                    | Behaviour and boundary                                                                                                                              |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Browser-local              | The site, saved progress and browser-capable demonstrations run locally unless a clearly labelled optional service is selected.                     |
-| Optional Gemini API        | Bring-your-own-key assistance contacts Google's API only after explicit learner action. Review Google's terms and do not submit sensitive material. |
-| Optional Google Drive sync | Learners may explicitly connect Drive to synchronize supported progress. It is not required for normal use.                                         |
-| Separate sandbox           | Docker-backed scenarios run outside the public browser application and require their own local environment.                                         |
+| Runtime                    | Behaviour and boundary                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Browser-local              | The site, saved progress and browser-capable demonstrations run locally unless a clearly labelled optional service is selected. |
+| Optional Google Drive sync | Learners may explicitly connect Drive to synchronize supported progress. It is not required for normal use.                     |
+| Separate sandbox           | Docker-backed scenarios run outside the public browser application and require their own local environment.                     |
 
 API credentials are not educational content and must never be committed to the repository. See [Security](SECURITY.md), [Terms](TERMS.md) and the live [About page](https://www.pqctoday.com/about) for current boundaries.
 
@@ -110,13 +109,13 @@ None of those labels turns a local demonstration into an ACVP, CAVP, CMVP, Commo
 
 ### Current committed snapshot
 
-Release **4.226.0** · source-data snapshot through **2026-11-25**. These figures are derived from the committed registries and current CSV lineages; they are not live counts.
+Release **4.227.0** · source-data snapshot through **2026-11-25**. These figures are derived from the committed registries and current CSV lineages; they are not live counts.
 
 - **Learn:** 85 instructional modules and 1,277 quiz questions.
 - **Core references:** 130 algorithm records, 198 timeline events and 1,670 active Library records.
 - **Educational catalogues:** 965 active products, 189 active compliance references, 75 active threat records and 361 active community profiles.
 - **Main glossary:** 653 terms.
-- **Assistant corpus:** 20,205 chunks across 47 source collections; 99.97% carry a Hub deep link.
+- **Assistant corpus:** 20,204 chunks across 47 source collections; 99.97% carry a Hub deep link.
 
 Edit the source registries, not this table, then run `npm run gen:readme-facts`.
 <!-- END GENERATED README FACTS -->

@@ -27,7 +27,9 @@
     "technicalNote": "Vulnerable to Shor's algorithm on a large quantum computer. FIPS 186-4 specified prime lengths (L) of 1024, 2048 and 3072 bits. The 2030/2035 transition table for digital signatures in NIST IR 8547 lists ECDSA, EdDSA and RSA, not DSA; OMB M-26-15 lists DSA among quantum-vulnerable algorithms.",
     "relatedModule": "/algorithms",
     "complexity": "beginner",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "elliptic-curve-cryptography",
@@ -47,7 +49,9 @@
     "technicalNote": "Variants: ML-KEM-512, ML-KEM-768 and ML-KEM-1024 target NIST security categories 1, 3 and 5 (FIPS 203). Categories are reference attack-cost levels, not exact proven bit strengths; \"128/192/256-bit\" is informal shorthand for comparable AES key-search cost. ML-KEM establishes a shared secret; it does not encrypt data or wrap a chosen key by itself.",
     "relatedModule": "/playground",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "ml-dsa",
@@ -57,7 +61,9 @@
     "technicalNote": "Variants: ML-DSA-44, ML-DSA-65, ML-DSA-87 corresponding to security levels 2, 3, 5.",
     "relatedModule": "/playground",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "slh-dsa",
@@ -67,7 +73,9 @@
     "technicalNote": "12 variants: combinations of SHA-256/SHAKE, 128/192/256-bit security, and fast/small trade-offs.",
     "relatedModule": "/algorithms?highlight=SLH-DSA",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "fn-dsa",
@@ -76,7 +84,9 @@
     "technicalNote": "Variants: FN-DSA-512 (Level 1) and FN-DSA-1024 (Level 5). Known for very small signatures but requires careful floating-point implementation.",
     "relatedModule": "/algorithms?highlight=FN-DSA",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "frodokem",
@@ -92,7 +102,9 @@
     "definition": "Hamming Quasi-Cyclic, a code-based KEM selected by NIST as an additional standard. Uses error-correcting codes for security.",
     "relatedModule": "/learn/pqc-101",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "classic-mceliece",
@@ -111,7 +123,8 @@
     "relatedModule": "/learn/stateful-signatures",
     "complexity": "advanced",
     "category": "algorithm",
-    "industries": "Government & Defense; IT Industry / Software"
+    "industries": "Government & Defense; IT Industry / Software",
+    "place": "US"
   },
   {
     "id": "lms-hss",
@@ -168,7 +181,7 @@
     "definition": "Elliptic Curve Diffie-Hellman, a classical key agreement protocol. Quantum-vulnerable and being replaced by ML-KEM.",
     "complexity": "intermediate",
     "category": "algorithm",
-    "relatedModule": "/learn/5g-security"
+    "relatedModule": "/learn/tls-basics"
   },
   {
     "id": "x25519",
@@ -194,7 +207,8 @@
     "definition": "A high-performance digital signature algorithm using the Edwards curve Curve25519. Used in SSH, TLS, and Solana.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry"
   },
   {
     "id": "ed448",
@@ -247,7 +261,8 @@
     "technicalNote": "Kyber was selected from the NIST PQC competition Round 3. It was renamed to ML-KEM for the final standard.",
     "relatedModule": "/algorithms?highlight=ML-KEM",
     "complexity": "beginner",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "dilithium",
@@ -256,7 +271,8 @@
     "technicalNote": "Dilithium was selected from the NIST PQC competition Round 3. It was renamed to ML-DSA for the final standard.",
     "relatedModule": "/algorithms?highlight=ML-DSA",
     "complexity": "beginner",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "falcon",
@@ -265,7 +281,8 @@
     "technicalNote": "Falcon uses fast Fourier transforms over NTRU lattices. NIST plans to use the FN-DSA name when FIPS 206 is published.",
     "relatedModule": "/algorithms?highlight=FN-DSA",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "sphincs",
@@ -274,7 +291,8 @@
     "technicalNote": "SPHINCS+ relies only on the security of its underlying hash function, making it a strong fallback if lattice assumptions are broken.",
     "relatedModule": "/algorithms?highlight=SLH-DSA",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "bike",
@@ -283,7 +301,8 @@
     "definition": "Bit Flipping Key Encapsulation, a code-based KEM that was a NIST PQC Round 4 candidate. Uses quasi-cyclic moderate-density parity-check codes.",
     "relatedModule": "/algorithms?highlight=BIKE",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "sha-3",
@@ -292,7 +311,8 @@
     "technicalNote": "SHA-3 provides an independent alternative to SHA-2 with different mathematical foundations. Used in SLH-DSA parameter sets.",
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "shake",
@@ -319,7 +339,8 @@
     "technicalNote": "Widely used in TLS 1.3, WireGuard, and SSH as an alternative to AES-GCM. Efficient in software without hardware AES acceleration.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry"
   },
   {
     "id": "triple-des",
@@ -350,7 +371,8 @@
     "relatedModule": "/algorithms?highlight=ECDH%20P-384,ECDSA%20P-384",
     "complexity": "intermediate",
     "category": "algorithm",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "ascon",
@@ -359,7 +381,8 @@
     "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
     "category": "algorithm",
-    "industries": "Internet of Things (IoT)"
+    "industries": "Internet of Things (IoT)",
+    "place": "US"
   },
   {
     "id": "ripemd-160",
@@ -378,7 +401,8 @@
     "relatedModule": "/library?ref=draft-yang-tls-hybrid-sm2-mlkem-03",
     "complexity": "advanced",
     "category": "algorithm",
-    "place": "CN"
+    "place": "CN",
+    "industries": "Cross-Industry"
   },
   {
     "id": "pbkdf2",
@@ -396,7 +420,8 @@
     "technicalNote": "In TLS 1.3, this combined group supplies concatenated shared secrets to the TLS key schedule. The negotiated cipher suite selects its HKDF hash: TLS_AES_128_GCM_SHA256 uses SHA-256, while TLS_AES_256_GCM_SHA384 uses SHA-384. The group name does not force SHA-256 or specify the certificate-signature algorithm. Check support and actual negotiation for the application and peer in use. Reference: https://www.rfc-editor.org/rfc/rfc9846#section-7.1.",
     "relatedModule": "/learn/tls-basics",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry"
   },
   {
     "id": "sntrup761",
@@ -405,7 +430,8 @@
     "technicalNote": "Available in OpenSSH since version 9.0 as sntrup761x25519-sha512. Being superseded by mlkem768x25519-sha256 in newer OpenSSH versions.",
     "relatedModule": "/learn/vpn-ssh-pqc",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry"
   },
   {
     "id": "winternitz-one-time-signature",
@@ -436,7 +462,9 @@
     "technicalNote": "CTR_DRBG (AES-based) is the most widely deployed, used by OpenSSL and the Linux kernel. All three mechanisms are built on approved hash or block-cipher primitives (SP 800-90A Rev. 1 also permits three-key TDEA in CTR_DRBG). Their strength depends on the underlying primitive and key or output size, the entropy of the seed and reseeding; this is not a blanket quantum-safety label, and output is only as unpredictable as its seed.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "ecc",
@@ -444,9 +472,11 @@
     "acronym": "ECC",
     "definition": "Elliptic Curve Cryptography — a public-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. Offers smaller key sizes than RSA for equivalent classical security, but like RSA it is fully broken by Shor's algorithm on a CRQC.",
     "technicalNote": "Common curves: P-256, P-384, P-521 (NIST), Curve25519 (X25519/Ed25519). ECC is used extensively in TLS, SSH, code signing, and PKI. NIST SP 800-186 specifies the approved curves. NIST IR 8547 plans to deprecate ECC-based signatures and key establishment after 2030 and disallow them after 2035 under NIST standards. For US national security systems, CNSA 2.0 specifies ML-KEM-1024 and ML-DSA-87, and NSA expects their cryptography to be quantum resistant by 31 December 2031.",
-    "relatedModule": "/learn/crypto-agility",
+    "relatedModule": "/learn/pqc-101",
     "complexity": "intermediate",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "lms",
@@ -456,7 +486,9 @@
     "technicalNote": "LMS is stateful: each leaf holds one LM-OTS key that must sign at most one message, and the signer must record the used key in non-volatile memory before exporting the signature (SP 800-208). Signing two different messages with one one-time key makes forgery feasible. An LMS public key is 24 + m bytes, where m is the hash output length in bytes (56 bytes for SHA-256); private keys can be made very small (RFC 8554). PKCS#11 v3.2 has no LMS mechanism: it defines CKM_HSS_KEY_PAIR_GEN and CKM_HSS, and an HSS key with one level has essentially LMS formats.",
     "relatedModule": "/learn/stateful-signatures",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "hawk",
@@ -464,7 +496,8 @@
     "definition": "A lattice-based signature scheme that NIST advanced to the third round of its additional-signature process in May 2026; its team withdrew it on 29 July 2026, so it is no longer a candidate. It was designed as an integer-only alternative to FN-DSA (Falcon) and avoids the floating-point operations that complicate Falcon implementations.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "mayo",
@@ -473,7 +506,8 @@
     "technicalNote": "MAYO-2 lost ~30 bits of security in the 2025 Ran wedge attack. Reparameterisation to odd-characteristic fields restores the original target.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "uov",
@@ -483,7 +517,8 @@
     "technicalNote": "The 2025 Ran wedge attack pushed 3 of 4 UOV parameter sets below their declared security level. Odd-characteristic-field reparameterisation is the proposed fix.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "sqisign",
@@ -492,7 +527,8 @@
     "technicalNote": "Cousin scheme SIKE was broken in 2022 by the Castryck–Decru attack. SQIsign avoids the structural exploit but constant-time signing is still an open implementation challenge.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "faest",
@@ -501,7 +537,8 @@
     "technicalNote": "Security reduces to the one-wayness of AES, which is among the best-studied symmetric primitives. Signatures are kilobytes — large versus multivariate or isogeny candidates.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "mqom",
@@ -510,7 +547,8 @@
     "definition": "An MPC-in-the-Head signature candidate in the NIST on-ramp whose security reduces to the hardness of solving systems of multivariate quadratic equations.",
     "relatedModule": "/learn/pqc-candidates",
     "complexity": "advanced",
-    "category": "algorithm"
+    "category": "algorithm",
+    "place": "US"
   },
   {
     "id": "sdith",

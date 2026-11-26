@@ -17,7 +17,7 @@ export function LicenseSection() {
     >
       <div className="flex items-center gap-3 mb-4">
         <Shield className="text-secondary" size={24} />
-        <h2 className="text-xl font-semibold">Open Source License</h2>
+        <h2 className="text-xl font-semibold font-display text-heading">Open Source License</h2>
       </div>
       <div className="prose prose-invert max-w-none">
         <p className="text-muted-foreground">

@@ -58,8 +58,6 @@ updates:
       # updates ignore these rules entirely — so nothing here delays a CVE fix.
       # To take a 0.x minor: bump it by hand in its own PR, with its changelog
       # read and (for pyodide) `npm run sync:pyodide-runtime` committed.
-      - dependency-name: '@mlc-ai/web-llm'
-        update-types: ['version-update:semver-minor']
       - dependency-name: '@noble/post-quantum'
         update-types: ['version-update:semver-minor']
       - dependency-name: '@oqs/liboqs-js'

@@ -71,7 +71,7 @@ export function SortControl<T extends string = SortOption>({
         <div
           role="listbox"
           aria-label="Sort by"
-          className="absolute top-full right-0 mt-1 w-40 bg-popover border border-border rounded-lg shadow-xl overflow-hidden z-50"
+          className="absolute top-full right-0 mt-1 w-40 bg-popover overflow-hidden z-50 glass-panel rounded-2xl"
         >
           {items.map((option) => (
             <Button

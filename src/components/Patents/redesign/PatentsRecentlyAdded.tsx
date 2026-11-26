@@ -30,7 +30,7 @@ export function PatentsRecentlyAdded({ items, onOpen, limit = 16 }: PatentsRecen
   return (
     <div className="glass-panel rounded-2xl p-3">
       <div className="mb-2 flex items-center justify-between px-1">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Latest grants and publications
         </span>
         <span className="text-[11px] text-muted-foreground">
@@ -47,18 +47,26 @@ export function PatentsRecentlyAdded({ items, onOpen, limit = 16 }: PatentsRecen
             className="flex h-auto w-[215px] shrink-0 snap-start flex-col items-start justify-start gap-1 rounded-xl border border-border bg-card/40 p-2.5 text-left font-normal hover:border-primary/40 hover:bg-card"
           >
             <span className="flex items-center gap-1.5">
-              <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+              <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 {item.publicationKind === 'published_application' ? 'Application' : 'Granted'}
               </span>
               <span className="font-mono text-[10px] text-muted-foreground">
                 {formatPatentDate(item.issueDate)}
               </span>
             </span>
-            <span className="w-full truncate font-mono text-[11px] font-semibold text-primary">
+            <span
+              className="w-full truncate font-mono text-[11px] font-semibold text-primary"
+              title={item.patentNumber}
+            >
               {item.patentNumber}
             </span>
-            <span className="line-clamp-1 w-full text-[12px] text-foreground">{item.title}</span>
-            <span className="line-clamp-1 w-full text-[11px] text-muted-foreground">
+            <span className="line-clamp-1 w-full text-[12px] text-foreground" title={item.title}>
+              {item.title}
+            </span>
+            <span
+              className="line-clamp-1 w-full text-[11px] text-muted-foreground"
+              title={item.assignee}
+            >
               {item.assignee}
             </span>
           </Button>

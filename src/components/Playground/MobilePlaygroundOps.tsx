@@ -66,7 +66,9 @@ function CapabilityWarning({
       <div className="flex items-start gap-3">
         <AlertTriangle size={20} className="text-status-warning shrink-0 mt-0.5" />
         <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-foreground">Limited Device Support</h2>
+          <h2 className="text-sm font-semibold font-display text-heading">
+            Limited Device Support
+          </h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
             The Playground requires SharedArrayBuffer and sufficient memory for WebAssembly crypto
             operations. Your device may not support these features or may experience slow
@@ -93,7 +95,7 @@ function LaunchNotice() {
   const reason = algorithmLaunchPhoneReason('interactive', search, true)
   if (!reason) return null
   return (
-    <div role="alert" className="glass-panel mx-3 my-2 p-3 flex items-start gap-2">
+    <div role="alert" className="glass-panel rounded-2xl mx-3 my-2 p-3 flex items-start gap-2">
       <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
       <p className="text-xs text-foreground leading-relaxed">{reason}</p>
     </div>

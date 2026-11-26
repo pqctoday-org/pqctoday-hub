@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Storybook Blue shared building blocks (style addendum section 6). Every colour is
+// Storybook Blue shared building blocks (sticker cards, pill buttons, chips). Every colour is
 // a token from src/styles/index.css; the only shadow is the flat offset edge.
 import { cva } from 'class-variance-authority'
 

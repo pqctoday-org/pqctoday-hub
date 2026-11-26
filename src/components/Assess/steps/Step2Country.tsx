@@ -22,7 +22,7 @@ const Step2Country = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             Which jurisdiction applies to your organization?
           </h3>
           <p className="text-sm text-muted-foreground">

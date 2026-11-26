@@ -101,7 +101,7 @@
     "id": "qubit",
     "term": "Qubit",
     "definition": "The basic unit of quantum information, analogous to a classical bit but capable of existing in superposition of 0 and 1 simultaneously.",
-    "relatedModule": "/learn/pqc-101",
+    "relatedModule": "/learn/quantum-threats",
     "complexity": "beginner",
     "category": "concept"
   },
@@ -146,7 +146,8 @@
     "technicalNote": "Level 1: comparable to breaking AES-128. Level 5: comparable to breaking AES-256. Most deployments use Level 3.",
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "place": "US"
   },
   {
     "id": "key-exchange",
@@ -277,7 +278,8 @@
     "technicalNote": "Deployed today as X25519MLKEM768 in Chrome, Firefox, and major cloud providers. RFC 10024 defines the TLS 1.3 integration. This makes key agreement hybrid only; authentication stays single-algorithm unless the certificates are changed separately.",
     "relatedModule": "/algorithms",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "composite-certificate",
@@ -389,7 +391,8 @@
     "definition": "Key Management System, software for generating, storing, rotating, and auditing cryptographic keys. Must be upgraded to support PQC key sizes and algorithms.",
     "relatedModule": "/migrate?domain=kms",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "tpm",
@@ -480,7 +483,8 @@
     "technicalNote": "QKD (e.g., BB84 protocol) uses photons to detect eavesdropping. Unlike PQC, it requires dedicated fiber or satellite links and cannot run on standard networks.",
     "relatedModule": "/learn/qkd",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "qber",
@@ -524,7 +528,8 @@
     "technicalNote": "Trusted nodes are a practical necessity but a security concern: compromising any node reveals all keys routed through it. This is a major architectural limitation of current QKD networks.",
     "relatedModule": "/learn/qkd",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "cryptographic-inventory",
@@ -638,7 +643,8 @@
     "definition": "An X.509 certificate extension that restricts the purposes for which a certificate can be used — for example, Code Signing (OID 1.3.6.1.5.5.7.3.3), Server Authentication, or Client Authentication.",
     "relatedModule": "/learn/code-signing",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "software-supply-chain",
@@ -712,7 +718,8 @@
     "technicalNote": "PQC migration involves key rotation from classical to hybrid or pure PQC keys across all cryptographic infrastructure.",
     "relatedModule": "/migrate",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "non-repudiation",
@@ -869,7 +876,8 @@
     "definition": "A hierarchical path notation (e.g., m/44'/0'/0'/0/0) used in HD wallets to deterministically derive child keys from a master key following BIP32/BIP44 standards.",
     "relatedModule": "/learn/digital-assets",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cryptocurrency / Blockchain"
   },
   {
     "id": "quantum-error-correction",
@@ -932,7 +940,8 @@
     "technicalNote": "Tools like SandboxAQ AQtive Guard and IBM Guardium automate crypto discovery to build a Cryptographic Bill of Materials (CBOM).",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "rlp",
@@ -960,9 +969,10 @@
     "acronym": "HNFL",
     "definition": "An attack strategy against digital signatures: once quantum computers can break the signing algorithm, an adversary can forge new signed artifacts without capturing anything first. Archived signatures are affected too: whether they can still be trusted depends on whether evidence of when they were made has been preserved. Also called Trust Now, Forge Later (TNFL); the two terms are interchangeable and used equally across the platform.",
     "technicalNote": "While HNDL targets confidentiality (encrypted data), HNFL / TNFL targets authenticity and integrity — firmware updates, certificates, and legal documents signed with RSA/ECDSA become forgeable. HNFL (Harvest Now, Forge Later) and TNFL (Trust Now, Forge Later) name the same risk: the Applied Quantum framework and the simulation use TNFL; the learning content uses HNFL.",
-    "relatedModule": "/learn/pqc-101",
+    "relatedModule": "/learn/quantum-threats",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "trust-now-forge-later",
@@ -970,9 +980,10 @@
     "acronym": "TNFL",
     "definition": "The same risk as Harvest Now, Forge Later (HNFL): data signed and trusted today can be forged once a quantum computer can break the signing algorithm. TNFL and HNFL are interchangeable — the Applied Quantum framework and the simulation use TNFL; the learning content uses HNFL.",
     "technicalNote": "Targets authenticity and integrity (signatures, certificates, firmware, legal documents) rather than confidentiality. See also Harvest Now, Forge Later (HNFL).",
-    "relatedModule": "/learn/pqc-101",
+    "relatedModule": "/learn/quantum-threats",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "cipher-suite",
@@ -999,7 +1010,8 @@
     "technicalNote": "The four phases and the key states within them are defined in NIST SP 800-57 Part 1 Rev. 5 (May 2020); the seven-stage breakdown used here is a teaching framework, not NIST terminology. Revision 6 is an initial public draft (December 2025). PQC migration adds complexity — organizations must plan parallel classical and PQC key lifecycles during the transition period.",
     "relatedModule": "/learn/custody-lifecycle-ops",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "merkle-tree",
@@ -1070,7 +1082,8 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
     "category": "concept",
-    "industries": "Government Identity & Travel Documents"
+    "industries": "Government Identity & Travel Documents",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "relying-party",
@@ -1090,7 +1103,8 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
     "category": "concept",
-    "place": "PQC-REGION-EU"
+    "place": "PQC-REGION-EU",
+    "industries": "Government Identity & Travel Documents"
   },
   {
     "id": "entropy",
@@ -1129,7 +1143,8 @@
     "technicalNote": "A quantum process is the noise source; like any noise source it still needs a stochastic model, health tests and an SP 800-90B entropy assessment, and a product's claims rest on its own certificate. For example, CMVP Entropy Validation Certificate #E63 covers ID Quantique's Quantis IID QRNG chips (physical noise source; checked 2026-09-24). A simulated QRNG is not evidence about a QRNG.",
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "min-entropy",
@@ -1268,7 +1283,8 @@
     "definition": "A user interface panel or software application that allows operators to monitor and control industrial processes. HMIs sit at Purdue Level 2, typically using RSA-2048 or TLS 1.2.",
     "relatedModule": "/learn/ot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Critical Infrastructure / Energy"
   },
   {
     "id": "electronic-control-unit",
@@ -1287,7 +1303,8 @@
     "definition": "A quantifiable metric used to measure progress toward organizational objectives. In PQC programs, KPIs track inventory completion, migration progress, vendor readiness, compliance gaps, and budget utilization.",
     "relatedModule": "/learn/pqc-governance",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "raci-matrix",
@@ -1297,7 +1314,8 @@
     "technicalNote": "In PQC governance, a typical RACI covers activities like crypto inventory, algorithm selection, vendor assessment, testing, and deployment across roles such as CISO, CTO, Enterprise Architect, and Compliance Officer.",
     "relatedModule": "/learn/pqc-governance",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "total-cost-of-ownership",
@@ -1306,7 +1324,8 @@
     "definition": "The complete cost of a technology investment over its lifetime, including acquisition, deployment, training, maintenance, and operational expenses. Critical for PQC migration business case development.",
     "relatedModule": "/learn/pqc-business-case",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "return-on-investment",
@@ -1315,7 +1334,8 @@
     "definition": "A financial metric comparing the benefit generated with the cost invested, usually (benefit − cost) ÷ cost over a stated period. For PQC migration the benefit is estimated from breach avoidance savings, compliance penalty avoidance and operational efficiency gains, and the cost is the migration investment. Net benefit (benefit minus cost) is a different quantity; the period, discounting and assumptions behind each benefit must be stated for the figure to mean anything.",
     "relatedModule": "/learn/pqc-business-case",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "data-asset-sensitivity",
@@ -1324,7 +1344,8 @@
     "technicalNote": "Sensitivity is distinct from classification labels (e.g. Confidential) — it is a risk-facing score that combines data type, retention period, regulatory scope, and cryptographic exposure.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "data-retention-period",
@@ -1333,7 +1354,8 @@
     "technicalNote": "HNDL Risk Year = CRQC Arrival Year − Retention Period. Assets with HNDL Risk Year ≤ current year are in the critical migration band.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "asset-inventory",
@@ -1342,7 +1364,8 @@
     "technicalNote": "A cryptographic asset inventory (sometimes called a CBOM — Cryptography Bill of Materials) records each asset's type, sensitivity tier, retention period, owning team, and current algorithm so migration priority can be calculated systematically.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "cbom",
@@ -1353,7 +1376,8 @@
     "technicalNote": "A CBOM enables automated discovery of quantum-vulnerable algorithms (RSA, ECC, DH) and drives migration roadmap prioritisation. NIST SP 1800-38 and CISA guidance recommend CBOM as the first step in PQC readiness.",
     "relatedModule": "/learn/cbom",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "sensitivity-scoring",
@@ -1362,7 +1386,8 @@
     "technicalNote": "Example weightings (illustrative, not a standard): data type (30%), regulatory requirements (25%), cryptographic exposure (25%), retention period (20%). Each organisation chooses its own dimensions, weights and thresholds; a score above whatever critical threshold the organisation sets moves an asset up in migration planning, alongside other factors such as dependencies and migration effort.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "hndl-risk-window",
@@ -1371,7 +1396,8 @@
     "technicalNote": "Formula: HNDL Risk Year = CRQC Arrival Year − Data Retention Years. If this value is ≤ the current year, data is already inside the risk window. The CRQC arrival year is an assumption the person using the model chooses, not a measured date; published expert estimates vary widely, so test several scenarios and treat any single year as a modelling input rather than a consensus forecast.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "fair-model",
@@ -1381,7 +1407,8 @@
     "technicalNote": "For PQC, FAIR enables CFOs to compare the cost of migrating now versus the expected financial loss from a post-CRQC breach of harvested data. Key inputs: probability of CRQC by year X, value of data at risk, probability of adversary having collected it.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "threat-event-frequency",
@@ -1390,7 +1417,8 @@
     "definition": "A FAIR model component: how often, within a stated time period, a threat agent is expected to act against an asset. TEF is a frequency, not a probability; the chance that such an action becomes a loss is the separate Vulnerability factor. For quantum threats, TEF reflects how often an adversary holding a capable CRQC would be expected to act against a specific organisation's harvested data, an uncertain quantity that has to be stated as an explicit assumption.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "annualized-loss-expectancy",
@@ -1399,7 +1427,8 @@
     "definition": "A FAIR and traditional risk management metric representing the expected financial loss from a risk over a one-year period. Calculated as Annual Rate of Occurrence × Single Loss Expectancy. Used in PQC business cases to justify migration investment.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "ephi",
@@ -1410,7 +1439,8 @@
     "relatedModule": "/learn/healthcare-pqc",
     "complexity": "intermediate",
     "category": "concept",
-    "industries": "Healthcare / Pharmaceutical"
+    "industries": "Healthcare / Pharmaceutical",
+    "place": "US"
   },
   {
     "id": "risk-treatment",
@@ -1418,7 +1448,8 @@
     "definition": "The process of selecting and implementing options to address an identified risk. The four options are commonly summarised as Mitigate (implement controls), Accept (tolerate the risk), Transfer (insurance/outsource) and Avoid (cease the activity); ISO/IEC 27005 names them risk modification, risk retention, risk sharing and risk avoidance. For quantum risk, \"Mitigate\" means migrating to PQC; \"Accept\" is a documented decision made within the organisation's risk appetite and based on the data's confidentiality lifetime and exposure, and it does not undo any data an adversary has already captured.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "pqc-migration-priority",
@@ -1427,7 +1458,8 @@
     "technicalNote": "Example guidance (illustrative, not a standard): high-priority assets (Critical sensitivity + current HNDL window + regulatory mandate) belong in the earliest migration phases, with timing set by the organisation's own deadlines and migration effort; a 12–18 month target is one example, not a rule. Low-priority assets (Low sensitivity + short retention + no mandate) can follow in later roadmap phases.",
     "relatedModule": "/learn/data-asset-sensitivity",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "provider-model",
@@ -1446,7 +1478,8 @@
     "technicalNote": "In TLS 1.3, hybrid key exchange combines X25519 (classical ECDH) with ML-KEM-768 into the X25519MLKEM768 key share. The resulting secret stays secure as long as at least one component is unbroken and the combiner is sound; implementation flaws can still weaken a connection, and TLS certificate authentication is not made hybrid by the key share.",
     "relatedModule": "/learn/crypto-agility",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "vendor-pqc-readiness",
@@ -1455,7 +1488,8 @@
     "technicalNote": "An illustrative scorecard might weight PQC algorithm support (30%), FIPS 140-3 validation status (25%), migration tooling (20%), contractual commitments (15%), and timeline certainty (10%); these weights are an authored example, not a published standard or survey result, and each organisation should set its own. Low vendor readiness is itself a supply chain risk.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "supply-chain-cryptographic-risk",
@@ -1521,7 +1555,8 @@
     "technicalNote": "Completing PQC migration limits the exposure of data protected after that date, but it does not protect traffic or stored ciphertext that an adversary has already captured under classical algorithms. Reducing exposure therefore means (a) migrating early enough that less sensitive data is captured under classical protection and (b) ensuring captured data reaches end-of-life, or loses its sensitivity, before a CRQC arrives. Long-lived assets (health records, intellectual property, identity credentials) have the widest windows.",
     "relatedModule": "/learn/pqc-risk-management",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "sgx",
@@ -1575,7 +1610,8 @@
     "definition": "A TEE-derived encryption key used to persist data outside the enclave boundary. In Intel SGX the key is bound to the platform and to enclave identity values chosen by a key policy: with the MRENCLAVE policy only that particular enclave can re-derive it, while with the MRSIGNER policy another enclave with the same signer and security version can derive it as well.",
     "relatedModule": "/learn/confidential-computing",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "cosign",
@@ -1615,7 +1651,8 @@
     "definition": "A continuous measure of an organization's cryptographic health — the proportion of systems using quantum-safe algorithms versus quantum-vulnerable ones. Tracked via Prometheus metrics, SIEM queries, and CBOM scans. Degrades over time as new classical-algorithm resources are provisioned without PQC config.",
     "relatedModule": "/learn/platform-eng-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "algorithm-drift",
@@ -1623,7 +1660,8 @@
     "definition": "The gradual re-introduction of quantum-vulnerable algorithms into infrastructure after initial PQC migration — caused by CA fallback, operator error, or default IaC configurations. Detected via Prometheus alert rules and SIEM queries targeting classical algorithm identifiers.",
     "relatedModule": "/learn/platform-eng-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "tls-termination",
@@ -1981,7 +2019,8 @@
     "technicalNote": "JCPROV is used through PKCS#11-style calls and has no provider registration. The JCA route is the Luna JSP: register LunaProvider, then use the standard classes; Thales says its ML-KEM and ML-DSA samples need JDK 24 or 25 and later. Whether a key can leave the module depends on its CKA_EXTRACTABLE and CKA_SENSITIVE attributes and the module policy.",
     "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "oqsprovider",
@@ -2050,7 +2089,8 @@
     "technicalNote": "Common Secret Zero approaches: (1) Cloud IAM role binding (instance identity). (2) Vault AppRole with RoleID + SecretID. (3) TPM-based attestation (most secure). (4) SPIFFE/SPIRE workload identity. For PQC: the TLS channel carrying Secret Zero requires ML-KEM protection to prevent HNDL capture of all downstream secrets.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "advanced",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "dynamic-secrets",
@@ -2088,7 +2128,8 @@
     "technicalNote": "Common sprawl vectors: (1) .env files committed to git. (2) Secrets in CI/CD YAML. (3) Hardcoded in Dockerfiles or K8s manifests. (4) Exported to S3 / GCS buckets. (5) Shared via Slack or Confluence. Remediation: secret scanning tools (GitLeaks, TruffleHog, GitHub Secret Scanning) + secrets centralisation into a secrets manager. PQC relevance: sprawled secrets stored encrypted with RSA/AES-128 are HNDL targets.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "byok",
@@ -2098,7 +2139,8 @@
     "technicalNote": "BYOK implementations differ by provider. AWS KMS imports key material under an RSA wrapping key (RSA_2048, RSA_3072 or RSA_4096), or an SM2 wrapping key in the China Regions, and cannot import key material into ML-DSA or ML-KEM KMS keys. Azure Key Vault BYOK transfers a key wrapped with CKM_RSA_AES_KEY_WRAP under an RSA-HSM key exchange key of 2048, 3072 or 4096 bits. Google Cloud KMS key import wraps key material for transfer using RSA-based import methods. Google Cloud KMS quantum-safe key import, in Preview, wraps imported key material with HPKE using X-Wing, ML-KEM-768 or ML-KEM-1024 with HKDF-SHA256 and AES-256-GCM. Google documents quantum-safe key import for the SOFTWARE protection level only. Where the wrap is RSA, it is the PQC-vulnerable step of BYOK; ML-KEM is not an import wrapping option for AWS KMS or Azure Key Vault. Post-import, the customer key wraps DEKs using AES-256 which is quantum-safe.",
     "relatedModule": "/learn/kms-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "envelope-encryption",
@@ -2117,7 +2159,8 @@
     "technicalNote": "Key products: HashiCorp Vault (open source + enterprise), AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server, CyberArk Conjur. Core capabilities: versioning, rotation triggers (AWS Lambda), access policies (IAM or Vault policies), audit logs, replication. PQC considerations: hybrid key exchange on the TLS connection to a secrets API needs both the service endpoint and the client to support it (AWS lists hybrid post-quantum key exchange as launched on Secrets Manager's FIPS and non-FIPS endpoints in commercial and US GovCloud Regions, which clients must be updated to offer). Signing algorithms are product-specific; Vault's documented identity-token algorithms are RS256/384/512, ES256/384/512 and EdDSA, with no post-quantum option listed.",
     "relatedModule": "/learn/secrets-management-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cloud Computing / Data Centers"
   },
   {
     "id": "deep-packet-inspection",
@@ -2127,7 +2170,8 @@
     "technicalNote": "PQC impact on DPI: ML-KEM-768 hybrid key exchanges produce significantly larger TLS ClientHello messages (2–4× increase). ML-DSA certificates are 2–5× larger than ECDSA. Many inline DPI appliances have fixed packet buffer sizes that will need firmware/hardware upgrades. Network taps must accommodate increased session state for hybrid key exchanges.",
     "relatedModule": "/learn/network-security-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "tls-inspection",
@@ -2215,7 +2259,8 @@
     "technicalNote": "SQL Server Always Encrypted uses two keys: Column Master Key (CMK, stored in Key Vault or certificate store) + Column Encryption Key (CEK, stored in database metadata, encrypted by CMK). Oracle TDE column encryption uses similar hierarchy. PostgreSQL pgcrypto provides column encryption via SQL functions. PQC note: an RSA-protected CMK is the quantum-vulnerable step. A KEM alone does not wrap keys; migration needs a key provider and client driver that document a PQC-capable KEM, KDF and key-wrap profile.",
     "relatedModule": "/learn/database-encryption-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "always-encrypted",
@@ -2355,7 +2400,8 @@
     "technicalNote": "Federation protocols: SAML 2.0 (XML-based, enterprise), OIDC (JSON-based, modern web), WS-Federation (Microsoft legacy). Federation trust anchors: SAML metadata signing certificates (RSA-2048/ECDSA, 3-year TTL typical). PQC migration: federation metadata must be re-signed with ML-DSA-65 certificates, and metadata signing certificates published via HTTPS with ML-DSA-secured TLS. eduGAIN, InCommon, and Azure AD B2B federation are high-priority PQC migration targets.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "uefi",
@@ -2408,7 +2454,8 @@
     "technicalNote": "Typical PC firmware assignments (TCG PC Client Platform Firmware Profile): PCR[0] = SRTM, BIOS and embedded drivers, PCR[4] = UEFI boot manager code, PCR[7] = Secure Boot policy; PCRs 8-15 are left to the operating system. A PCR holds a digest, never a key. Extend uses the PCR bank's hash (for example SHA-256); the quantum-vulnerable operation is the TPM Quote, where an attestation key signs PCR values with RSA or ECDSA. TPM 2.0 library version 185 defines ML-DSA attestation keys; check the manufacturer's documentation for whether a given TPM implements them.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "measured-boot",
@@ -2494,7 +2541,7 @@
     "term": "OpenSSL Provider",
     "definition": "A dynamically loadable module that extends OpenSSL with additional cryptographic algorithm implementations. In OpenSSL 3.x, all algorithm implementations are providers — the default provider supplies standard algorithms, and third-party providers (like oqsprovider) add PQC algorithms.",
     "technicalNote": "OpenSSL 3.5+ supplies ML-KEM and ML-DSA in its default provider; additional implementations may use third-party providers. Native OpenSSL 3.6 example, with sample-cert.pem and its matching sample-key.pem already prepared: openssl s_server -tls1_3 -groups X25519MLKEM768 -cert sample-cert.pem -key sample-key.pem. X25519MLKEM768 is one combined key-establishment group; a colon-separated list such as X25519:P-256 offers alternatives rather than combining them. Available groups depend on the build and providers. Check the negotiated group and cipher suite: library support alone does not establish that an application and its peer can negotiate a hybrid connection. Hybrid key establishment does not make the certificate PQC-signed. This native CLI example does not establish browser WASM command support. References: https://docs.openssl.org/3.6/man3/SSL_CTX_set1_curves/ and https://docs.openssl.org/3.6/man1/openssl-s_server/.",
-    "relatedModule": "/learn/os-pqc",
+    "relatedModule": "/learn/crypto-dev-apis",
     "complexity": "intermediate",
     "category": "concept",
     "industries": "IT Industry / Software"
@@ -2506,7 +2553,8 @@
     "technicalNote": "A PQC compliance gap analysis typically covers: (1) algorithm inventory vs. approved algorithms, (2) certificate lifecycle vs. regulatory deadlines, (3) vendor PQC readiness vs. contractual obligations, (4) data retention periods vs. HNDL exposure windows. Multi-jurisdiction organizations must reconcile overlapping requirements.",
     "relatedModule": "/learn/pqc-risk-management",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "quantum-risk-exposure",
@@ -2515,7 +2563,8 @@
     "technicalNote": "Quantum risk exposure is typically assessed across four dimensions: Quantum Exposure (HNDL/HNFL window overlap), Migration Complexity (infrastructure depth and algorithm diversity), Regulatory Pressure (compliance deadline proximity), and Organizational Readiness (crypto-agility maturity and team capability).",
     "relatedModule": "/learn/exec-quantum-impact",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "board-fiduciary-duty",
@@ -2523,7 +2572,8 @@
     "definition": "The legal obligation of corporate board members and executives to exercise due care in protecting organizational assets, including digital assets threatened by quantum computing. Failure to plan for known cryptographic risks may constitute a breach of fiduciary responsibility.",
     "relatedModule": "/learn/exec-quantum-impact",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "pqc-migration-budget",
@@ -2532,7 +2582,8 @@
     "technicalNote": "Key cost drivers: HSM firmware upgrades or replacement (cost depends on the vendor, model, cluster size and support contract), certificate re-issuance across the PKI hierarchy, application code changes for larger key/signature sizes, re-certification costs (FIPS 140-3, Common Criteria), and potential performance infrastructure upgrades to handle increased computational and bandwidth requirements. Any dollar amount is an estimate for a stated estate and vendor quote, not a typical figure.",
     "relatedModule": "/learn/exec-quantum-impact",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "key-size-impact",
@@ -2541,7 +2592,8 @@
     "technicalNote": "Practical impacts: JWT tokens may exceed HTTP header limits, a TLS handshake can need extra network round trips when its messages no longer fit the sender's initial congestion window (this depends on the groups, signature algorithms and certificate chain chosen), certificate chains grow by an amount that depends on the algorithms and chain contents (an ML-DSA-65 signature alone is 3,309 bytes, against roughly 70 bytes for ECDSA P-256), PKCS#11 buffer sizes need adjustment, and database column widths for stored keys must be expanded. Performance budgets for latency-sensitive applications (payments, IoT) require careful re-evaluation.",
     "relatedModule": "/learn/dev-quantum-impact",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "middlebox-compatibility",
@@ -2577,7 +2629,8 @@
     "technicalNote": "Fleet migration phases: (1) inventory and dependency mapping, (2) canary deployment to 1–5% of fleet, (3) staged rollout with health checks, (4) enforcement with monitoring, (5) legacy algorithm sunset. Configuration management tools (Ansible, Terraform, Chef) must be updated to manage PQC-specific parameters like hybrid key exchange groups and larger certificate chains.",
     "relatedModule": "/learn/ops-quantum-impact",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "certificate-rotation-at-scale",
@@ -2614,7 +2667,8 @@
     "technicalNote": "Tools like CryptoNext COMPASS and pqc-flow operate in passive mode — zero packets are injected, making them safe for production environments including OT/ICS. Observable data includes ClientHello cipher suites, server certificate algorithms, key exchange group identifiers, and SSH algorithm negotiation. Cannot validate whether a remote endpoint actively supports PQC — only detects what is being used in current flows.",
     "relatedModule": "/learn/pqc-testing-validation",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "active-scanning",
@@ -2706,7 +2760,7 @@
     "definition": "Cryptographic function that derives one or more secret keys from a shared secret, password, or master key. PQC handshakes use HKDF (RFC 5869) to expand the KEM-output shared secret into traffic keys and resumption keys.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/5g-security"
+    "relatedModule": "/learn/tls-basics"
   },
   {
     "id": "pki",
@@ -2810,7 +2864,8 @@
     "technicalNote": "CKA_WRAP_WITH_TRUSTED adds a restriction on which wrapping keys may be used; it does not override CKA_EXTRACTABLE=CK_FALSE. A separate vendor backup interface has its own rules and must not be inferred from C_WrapKey policy.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/hybrid-crypto"
+    "relatedModule": "/learn/hybrid-crypto",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "cka-sensitive",
@@ -2819,7 +2874,8 @@
     "technicalNote": "Combined with CKA_EXTRACTABLE=CK_FALSE to give a key that can be used but never read out.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/hsm-pqc"
+    "relatedModule": "/learn/hsm-pqc",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "cka-token",
@@ -2827,7 +2883,8 @@
     "definition": "PKCS#11 attribute marking an object as persistent on the token (CK_TRUE) versus a temporary session object (CK_FALSE) that disappears when the session closes.",
     "complexity": "beginner",
     "category": "concept",
-    "relatedModule": "/learn/hsm-pqc"
+    "relatedModule": "/learn/hsm-pqc",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "c-generatekeypair",
@@ -2845,7 +2902,8 @@
     "technicalNote": "The wrapped key's CKA_EXTRACTABLE must be CK_TRUE for C_WrapKey to succeed.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/hsm-pqc"
+    "relatedModule": "/learn/hsm-pqc",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "c-encapsulatekey",
@@ -2853,7 +2911,8 @@
     "definition": "PKCS#11 v3.2 function for KEM encapsulation: given a recipient's public key it produces a ciphertext plus a freshly derived shared-secret key object — used for ML-KEM (FIPS 203).",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/hsm-pqc"
+    "relatedModule": "/learn/hsm-pqc",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "ckm-aes-kw",
@@ -2862,7 +2921,8 @@
     "technicalNote": "CKM_AES_KWP (RFC 5649) is the padded variant for wrapping keys whose length is not a multiple of 8 bytes.",
     "complexity": "intermediate",
     "category": "concept",
-    "relatedModule": "/learn/kms-pqc"
+    "relatedModule": "/learn/kms-pqc",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "cpc-code",
@@ -2953,7 +3013,9 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "advanced",
     "category": "concept",
-    "acronym": "WSCD"
+    "acronym": "WSCD",
+    "industries": "Government Identity & Travel Documents; Hardware Security Modules; Semiconductors / Secure Elements",
+    "place": "PQC-REGION-EU"
   },
   {
     "id": "wallet-secure-cryptographic-application",
@@ -2971,7 +3033,8 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
     "category": "concept",
-    "acronym": "CSC API"
+    "acronym": "CSC API",
+    "industries": "Legal / Notary / eSignature"
   },
   {
     "id": "unlinkability",
@@ -2988,7 +3051,8 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "beginner",
     "category": "concept",
-    "place": "PQC-REGION-EU"
+    "place": "PQC-REGION-EU",
+    "industries": "Cross-Industry"
   },
   {
     "id": "trusted-list",
@@ -2997,7 +3061,8 @@
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
     "category": "concept",
-    "place": "PQC-REGION-EU"
+    "place": "PQC-REGION-EU",
+    "industries": "Legal / Notary / eSignature"
   },
   {
     "id": "eidas-trust-framework",
@@ -3014,7 +3079,8 @@
     "definition": "A Hardware Security Module operated by a provider rather than held on the user's device. The EUDI ARF supports both local WSCD and remote WSCD (HSM) models.",
     "relatedModule": "/learn/digital-id",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Hardware Security Modules"
   },
   {
     "id": "mso-mdoc",
@@ -3048,7 +3114,8 @@
     "technicalNote": "LDAP channels are typically secured with StartTLS or LDAPS (LDAP over TLS), so LDAP's own PQC exposure is really the TLS layer beneath it: the handshake needs hybrid ML-KEM key exchange, and any client-certificate authentication needs an ML-DSA-capable CA chain. LDAP simple binds that send credentials in the clear (no TLS) remain a separate, non-quantum risk.",
     "relatedModule": "/learn/iam-pqc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "openssl",
@@ -3068,7 +3135,8 @@
     "technicalNote": "For a PQC migration, GRC is what turns a cryptographic inventory (a CBOM) into board-level risk reporting, tracks migration milestones against regulatory deadlines, and provides the audit trail that a program actually happened rather than merely being claimed.",
     "relatedModule": "/learn/pqc-grc",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "waf",
@@ -3100,7 +3168,8 @@
     "definition": "A standardized identifier system for publicly known cybersecurity vulnerabilities, maintained by MITRE with CISA sponsorship, so a single CVE ID can be cross-referenced across advisories, scanners, and databases like the NVD.",
     "relatedModule": "/learn/vendor-risk",
     "complexity": "beginner",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "vex",
@@ -3163,7 +3232,8 @@
     "relatedModule": "/learn/entropy-randomness",
     "complexity": "advanced",
     "category": "concept",
-    "place": "US"
+    "place": "US",
+    "industries": "Cross-Industry"
   },
   {
     "id": "known-answer-test",
@@ -3174,7 +3244,8 @@
     "relatedModule": "/learn/acvp-lab-workflow",
     "complexity": "advanced",
     "category": "concept",
-    "place": "US"
+    "place": "US",
+    "industries": "Cross-Industry"
   },
   {
     "id": "cryptographic-algorithm-self-test",
@@ -3185,7 +3256,8 @@
     "relatedModule": "/learn/hsm-pqc",
     "complexity": "advanced",
     "category": "concept",
-    "place": "US"
+    "place": "US",
+    "industries": "Cross-Industry"
   },
   {
     "id": "pairwise-consistency-test",
@@ -3237,7 +3309,8 @@
     "technicalNote": "Source: Common Criteria for Information Technology Security Evaluation, Part 1: Introduction and general model (CC:2022 Revision 1, November 2022), clause 3.68 (p. 22), 5.2.2.3 (p. 30), 6.3.3.2 (p. 39) and Annex B.2.1 (p. 125). Clause 10.1 (p. 66) says a PP is intended to describe a general TOE type, so it may be used as a Security Target template for any TOE of that type.",
     "relatedModule": "/learn/cc-eucc-certification",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "security-target",
@@ -3247,7 +3320,8 @@
     "technicalNote": "Source: Common Criteria for Information Technology Security Evaluation, Part 1: Introduction and general model (CC:2022 Revision 1, November 2022), clause 3.82 (p. 24), 5.2.2.3 (p. 30), 12.1 (p. 89) and Annex D.2.1 (p. 149). Before and during the evaluation the ST specifies what is to be evaluated; after the evaluation it specifies what was evaluated.",
     "relatedModule": "/learn/cc-eucc-certification",
     "complexity": "intermediate",
-    "category": "concept"
+    "category": "concept",
+    "industries": "Cross-Industry"
   },
   {
     "id": "target-of-evaluation",

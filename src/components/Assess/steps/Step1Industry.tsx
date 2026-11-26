@@ -16,7 +16,7 @@ const Step1Industry = ({ hideHeading = false }: EmbeddedStepProps = {}) => {
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">What industry are you in?</h3>
+          <h3 className="text-xl font-bold font-display text-heading">What industry are you in?</h3>
           <p className="text-sm text-muted-foreground">
             Quantum risk varies significantly by sector. Select the industry that best describes
             your organization.

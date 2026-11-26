@@ -361,7 +361,7 @@ export function MobileAlgorithmsView() {
         ))}
       </div>
 
-      <section className="mb-5 rounded-xl border border-border bg-card p-4">
+      <section className="glass-panel mb-5 p-4">
         <p className="mb-1 text-[13px] font-bold text-foreground">What actually changes: size</p>
         <p className="mb-3 text-[10.5px] text-muted-foreground">
           Same shared scale across both groups, so keys and signatures compare directly.
@@ -397,7 +397,7 @@ export function MobileAlgorithmsView() {
       </section>
 
       {securityRows.length > 0 && (
-        <section className="mb-5 rounded-xl border border-border bg-card p-4">
+        <section className="glass-panel mb-5 p-4">
           <p className="mb-1 text-[13px] font-bold text-foreground">
             What actually changes: security margin
           </p>

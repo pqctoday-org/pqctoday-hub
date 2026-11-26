@@ -91,7 +91,7 @@ export const MobileAlgorithmList = ({
 
               {/* Name */}
               <div>
-                <h3 className="font-semibold text-foreground text-sm">
+                <h3 className="font-semibold text-sm font-display text-heading">
                   {cleanName(algo.classical)}
                 </h3>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono">

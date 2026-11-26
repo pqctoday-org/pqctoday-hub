@@ -169,15 +169,15 @@ function Hero() {
     <section className="text-center mb-12 md:mb-16">
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6">
         <Sparkles size={14} className="text-primary" aria-hidden="true" />
-        <span className="text-xs font-medium text-primary uppercase tracking-wider">
+        <span className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Sponsor program
         </span>
       </div>
-      <h1 className="text-3xl md:text-5xl font-bold mb-4 text-gradient flex items-center justify-center gap-3 flex-wrap">
+      <h1 className="text-3xl md:text-5xl font-bold mb-4 font-display text-heading flex items-center justify-center gap-3 flex-wrap">
         <Heart className="w-7 h-7 md:w-10 md:h-10 text-primary shrink-0" aria-hidden="true" />
         Sponsor PQC Today
       </h1>
-      <p className="text-base md:text-lg text-secondary max-w-2xl mx-auto mb-2">
+      <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-2">
         Help fund the independent reference platform for post-quantum cryptography migration.
       </p>
       <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-8">
@@ -219,17 +219,17 @@ function Hero() {
 function MarketContext() {
   return (
     <section className="glass-panel p-6 md:p-8 mb-8">
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-2 font-display text-heading">
         <Globe className="text-primary shrink-0" size={22} aria-hidden="true" />
         Why this matters now
       </h2>
-      <p className="text-sm md:text-base text-secondary leading-relaxed mb-3">
+      <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-3">
         Government policies, technical recommendations and sector requirements create different PQC
         planning obligations. CNSA 2.0 applies to US National Security Systems; other organizations
         must identify their own authority, use case and milestone. Long-lived data also calls for a
         harvest-now-decrypt-later risk assessment alongside those requirements.
       </p>
-      <p className="text-sm md:text-base text-secondary leading-relaxed">
+      <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
         Sponsorship funds educational resources that help CISOs, architects, compliance officers and
         PKI engineers compare vendors, libraries, HSMs and migration capabilities. It does not
         purchase a favorable listing or prove a product capability. Readers can inspect sources in
@@ -242,7 +242,7 @@ function MarketContext() {
 function SponsorAudiences() {
   return (
     <section className="mb-12">
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-6 text-center">
+      <h2 className="text-xl md:text-2xl font-bold mb-6 text-center font-display text-heading">
         Who sponsors PQC Today
       </h2>
       <div className="grid md:grid-cols-3 gap-4">
@@ -254,9 +254,11 @@ function SponsorAudiences() {
                 <div className="p-2 rounded-lg bg-primary/10">
                   <Icon className="text-primary" size={22} aria-hidden="true" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">{audience.title}</h3>
+                <h3 className="text-lg font-semibold font-display text-heading">
+                  {audience.title}
+                </h3>
               </div>
-              <p className="text-sm text-secondary mb-4">{audience.description}</p>
+              <p className="text-sm text-muted-foreground mb-4">{audience.description}</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {audience.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-start gap-2">
@@ -297,7 +299,7 @@ function TierCard({ tier, mode }: { tier: Tier; mode: BillingMode }) {
       }`}
     >
       <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-        <h3 className="text-lg font-semibold text-foreground">{tier.name}</h3>
+        <h3 className="text-lg font-semibold font-display text-heading">{tier.name}</h3>
         {tier.badge && (
           <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
             {tier.badge}
@@ -305,12 +307,12 @@ function TierCard({ tier, mode }: { tier: Tier; mode: BillingMode }) {
         )}
       </div>
       <div className="mb-4">
-        <p className="text-3xl font-bold text-gradient">
+        <p className="text-3xl font-bold text-heading">
           {price.amount}
           <span className="text-base font-medium text-muted-foreground ml-1">{price.suffix}</span>
         </p>
       </div>
-      <p className="text-sm text-secondary mb-4">{tier.description}</p>
+      <p className="text-sm text-muted-foreground mb-4">{tier.description}</p>
       <ul className="space-y-2 text-sm text-muted-foreground mb-6 flex-1">
         {tier.benefits.map((benefit) => (
           <li key={benefit} className="flex items-start gap-2">
@@ -374,7 +376,7 @@ function Tiers() {
       tabIndex={-1}
       className="mb-12 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
     >
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2 text-center">
+      <h2 className="text-xl md:text-2xl font-bold mb-2 text-center font-display text-heading">
         Sponsorship tiers
       </h2>
       <p className="text-sm text-muted-foreground text-center mb-6">
@@ -394,16 +396,16 @@ function Tiers() {
 
 function EditorialPromise() {
   return (
-    <section className="glass-panel p-6 md:p-8 mb-12 border-primary/30">
+    <section className="glass-panel p-6 md:p-8 mb-12">
       <div className="flex items-start gap-4">
         <div className="p-3 rounded-lg bg-primary/10 shrink-0">
           <ShieldCheck className="text-primary" size={28} aria-hidden="true" />
         </div>
         <div className="flex-1">
-          <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 font-display text-heading">
             The editorial-independence promise
           </h2>
-          <p className="text-sm md:text-base text-secondary leading-relaxed mb-3">
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-3">
             Sponsorship of PQC Today does <strong>not</strong> influence inclusion in, ordering of,
             or assessments within <code className="text-accent">/migrate</code>,{' '}
             <code className="text-accent">/compliance</code>, vendor-mapping data, or any other
@@ -432,11 +434,11 @@ function EditorialPromise() {
 function Goal() {
   return (
     <section className="glass-panel p-6 md:p-8 mb-12">
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-2 font-display text-heading">
         <Briefcase className="text-primary shrink-0" size={22} aria-hidden="true" />
         Where your sponsorship goes
       </h2>
-      <p className="text-sm md:text-base text-secondary leading-relaxed mb-6">
+      <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">
         Our goal is <strong className="text-foreground">$15,000/month</strong> in recurring GitHub
         Sponsors revenue, additive to any custom direct sponsorship agreements. Reaching it funds:
       </p>
@@ -473,7 +475,9 @@ function Goal() {
 function ContactCTA() {
   return (
     <section className="text-center py-8">
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">Ready to sponsor?</h2>
+      <h2 className="text-xl md:text-2xl font-bold mb-2 font-display text-heading">
+        Ready to sponsor?
+      </h2>
       <p className="text-sm text-muted-foreground mb-6 max-w-xl mx-auto">
         Sponsor directly through GitHub for the Supporter, Sponsor, and Patron tiers, or reach out
         to discuss a custom vendor or enterprise sponsorship.

@@ -1,19 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
-import {
-  Repeat,
-  Layers,
-  FileSearch,
-  Route,
-  Building2,
-  ArrowRight,
-  ClipboardCheck,
-  BookOpen,
-  FlaskConical,
-  PackageCheck,
-} from 'lucide-react'
+import { Repeat, Layers, FileSearch, Route, Building2, ArrowRight } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
@@ -299,74 +287,6 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
       </section>
 
       <SourcedSectionPanel section={SYSTEMS_ENGINEERING_SECTION} />
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/assess"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <ClipboardCheck size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-              <div className="text-xs text-muted-foreground">
-                Run a guided PQC readiness assessment
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/migrate"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Route size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Guide</div>
-              <div className="text-xs text-muted-foreground">
-                Detailed migration workflows and software catalog
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/compliance"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Compliance Tracker</div>
-              <div className="text-xs text-muted-foreground">
-                NIST, <InlineTooltip term="ANSSI">ANSSI</InlineTooltip>, and{' '}
-                <InlineTooltip term="BSI">BSI</InlineTooltip> compliance requirements
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/quantum-threats"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <FlaskConical size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Quantum Threats</div>
-              <div className="text-xs text-muted-foreground">
-                Why migration matters &mdash; the quantum threat explained
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/code-signing"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <PackageCheck size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Code Signing</div>
-              <div className="text-xs text-muted-foreground">
-                Agile supply chain security with ML-DSA &amp; Sigstore
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       {/* CTA */}
       <div className="text-center">

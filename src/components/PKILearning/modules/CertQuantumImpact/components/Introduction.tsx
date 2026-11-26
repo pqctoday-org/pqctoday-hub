@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
-import { ShieldCheck, Clock, Scale, FlaskConical, AlertTriangle, FileCheck2 } from 'lucide-react'
+import { ShieldCheck, Clock, Scale, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -216,63 +215,6 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/crypto-product-certification"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <ShieldCheck size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                Cryptographic Product Certification
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Standards, evaluation criteria, and certification schemes
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/fips-140-3-certification"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <FileCheck2 size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">FIPS 140-3 Certification</div>
-              <div className="text-xs text-muted-foreground">
-                CMVP boundaries, MIP queue, ESV, and submission routes
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/acvp-lab-workflow"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <FlaskConical size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">ACVP Lab Workflow</div>
-              <div className="text-xs text-muted-foreground">
-                PQC vector sets, seed-driven AFT keyGen, and harness discipline
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/cc-eucc-certification"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Common Criteria &amp; EUCC</div>
-              <div className="text-xs text-muted-foreground">
-                EUCC ACM v2, eIDAS QSCDs, and NIAP Policy #33
-              </div>
-            </div>
-          </Link>
         </div>
       </section>
 

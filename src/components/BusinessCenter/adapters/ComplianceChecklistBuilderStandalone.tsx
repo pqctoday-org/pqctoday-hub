@@ -513,7 +513,7 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
 
       <section className="glass-panel p-4 space-y-3" aria-labelledby="cc-add-frameworks">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 id="cc-add-frameworks" className="text-sm font-semibold text-foreground">
+          <h2 id="cc-add-frameworks" className="text-sm font-semibold font-display text-heading">
             Add frameworks to this checklist
           </h2>
           <span className="text-xs text-muted-foreground">

@@ -15,34 +15,6 @@
  */
 
 /**
- * T16 — embedding-based passage retrieval at runtime.
- * On by default. The bundled embedding index improves recall without sending
- * queries to a service. Build-time or localStorage `0` is an emergency opt-out.
- */
-export const useEmbeddingRetrieval = (): boolean => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const env = (import.meta as any).env
-  if (env?.VITE_FEATURE_EMBEDDING_RETRIEVAL === '0') return false
-  try {
-    if (localStorage.getItem('pqc-feature-embedding-retrieval') === '0') return false
-  } catch {
-    // Storage unavailable: keep the safe bundled default.
-  }
-  return true
-}
-
-/**
- * Structured claim citations — asks the model to emit a machine-checkable
- * `\`\`\`citations` block (claimExcerpt + chunkId pairs) alongside its
- * prose, verified against the retrieved chunks via exact chunk-id +
- * text-containment matching (citationVerification.ts), not fuzzy
- * entity-presence matching. Always on: corpus-only mode cannot safely
- * display model output without claim-to-chunk evidence. Kept as a function
- * so existing callers retain a stable API.
- */
-export const useStructuredCitations = (): boolean => true
-
-/**
  * Mobile UX layer (design_handoff_pqc_mobile_ux, IMPLEMENTATION-PLAN.md).
  * ON by default as of 2026-08-23 — a deliberate go-live decision made
  * directly by the user, not a side effect of a merge. Every phone visitor
@@ -94,32 +66,3 @@ export const useExecDecisionMode = (): boolean => {
   }
   return true
 }
-
-/**
- * The old language-model chat, kept for one release as a rollback only.
- *
- * Off by default. There is no setting for visitors: if the new Assistant has a serious fault, one
- * line in the build brings the old chat back for everyone without a revert.
- *
- * Switch on at build time: `VITE_FEATURE_MODEL_ASSISTANT=1` (the build setting wins: `0` keeps it
- * off even when a browser key says otherwise).
- * Switch on in one browser: localStorage `pqc-feature-model-assistant` = `1`.
- */
-export const MODEL_ASSISTANT_STORAGE_KEY = 'pqc-feature-model-assistant'
-
-export const isModelAssistantFallback = (): boolean => {
-  const build = import.meta.env.VITE_FEATURE_MODEL_ASSISTANT
-  if (build === '1') return true
-  if (build === '0') return false
-  try {
-    return (
-      typeof localStorage !== 'undefined' &&
-      localStorage.getItem(MODEL_ASSISTANT_STORAGE_KEY) === '1'
-    )
-  } catch {
-    // Storage unavailable: the default stays off.
-    return false
-  }
-}
-
-export const useModelAssistantFallback = (): boolean => isModelAssistantFallback()

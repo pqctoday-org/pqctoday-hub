@@ -7,7 +7,7 @@ export function ThreatResponsePractice({ threatId }: { threatId: string }) {
   return (
     <section
       aria-label="Payment signature evidence and practice"
-      className="space-y-2 rounded-lg border border-border bg-muted/20 p-3 text-xs"
+      className="glass-panel space-y-2 p-3 text-xs"
     >
       <h3 className="font-semibold text-foreground">Payment signature evidence and practice</h3>
       <p className="text-muted-foreground">

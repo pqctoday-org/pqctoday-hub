@@ -13,13 +13,7 @@ import {
   Building2,
   ArrowRight,
   ChevronRight,
-  BookOpen,
-  Wrench,
-  Route,
   Shield,
-  KeySquare,
-  Database,
-  Brain,
 } from 'lucide-react'
 import {
   KEY_SIZE_COMPARISONS,
@@ -941,111 +935,6 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
           </div>
         </CollapsibleSection>
       </div>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/hsm-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">HSM &amp; PQC Operations</div>
-              <div className="text-xs text-muted-foreground">
-                PKCS#11 v3.2 mechanisms, firmware migration, and FIPS validation
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/arch-quantum-impact?tab=workshop&step=5"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Route size={18} className="text-primary shrink-0" aria-hidden="true" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                Compare with the other trust hardware
-              </div>
-              <div className="text-xs text-muted-foreground">
-                HSMs, TPMs, confidential computing and DPUs side by side
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Wrench size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Design patterns for algorithm-agnostic cryptographic infrastructure
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/hybrid-crypto"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
-              <div className="text-xs text-muted-foreground">
-                Classical + PQC hybrid schemes for the transition period
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/migrate"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Route size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Guide</div>
-              <div className="text-xs text-muted-foreground">
-                Software catalog and migration workflows
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/secrets-management-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <KeySquare size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Secrets Management</div>
-              <div className="text-xs text-muted-foreground">
-                Vault, cloud secrets engines, and PQC rotation policies
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/database-encryption-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Database size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Database Encryption</div>
-              <div className="text-xs text-muted-foreground">
-                TDE, column-level encryption, and BYOK key management
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/ai-security-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Brain size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">AI Security &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                AI model security, data pipeline encryption, and PQC for ML workloads
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <VendorCoverageNotice migrateLayer="Security Stack" migrateDomain="kms" />
 

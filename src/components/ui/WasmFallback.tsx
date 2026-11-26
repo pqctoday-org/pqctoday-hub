@@ -20,13 +20,15 @@ export function WasmFallback({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-[calc(100vh-64px)] items-center justify-center p-6 bg-background/50">
-      <Card className="max-w-md w-full shadow-lg border-primary/20">
+      <Card className="max-w-md w-full">
         <CardContent className="pt-8 pb-8 px-8 flex flex-col items-center text-center">
           <div className="w-16 h-16 rounded-full bg-status-warning/10 flex items-center justify-center mb-6">
             <AlertTriangle className="w-8 h-8 text-status-warning" />
           </div>
 
-          <h2 className="text-xl font-bold mb-3 tracking-tight">Advanced Cryptographic Tool</h2>
+          <h2 className="text-xl font-bold mb-3 tracking-tight font-display text-heading">
+            Advanced Cryptographic Tool
+          </h2>
 
           <p className="text-muted-foreground mb-8 text-sm">
             This module requires direct access to hardware resources using WebAssembly threads. Due

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * The fixed value sets the Threats page's URL takes — `?class=`, `?mode=`,
- * `?threattab=` — are also what the PQC Assistant puts in its links
- * (promptBuilder.ts reads them from threatsUrlParams.ts). A typed list left out
+ * `?threattab=` — are also what a link into the page can carry
+ * (threatsUrlParams.ts). A typed list left out
  * `class=both`, which the page accepts and 81 threats carry.
  */
 import { describe, it, expect } from 'vitest'

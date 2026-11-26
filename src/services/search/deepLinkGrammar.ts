@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Deep-link grammar — single source of truth for valid `chunk.deepLink` URLs
- * emitted by the RAG corpus generator and consumed by the PQC Assistant.
+ * emitted by the RAG corpus generator.
  *
  * Used by:
  * - the corpus generator (build-time validator)
  * - scripts/corpus-invariants.test.ts (vitest gate)
- * - src/services/chat/promptBuilder.ts (prose grammar block in system prompt
- *   should mirror these patterns; see RoutePattern.docExample)
+ * - the unit tests that check Hub links against the grammar
  *
  * A deep-link is valid iff it matches at least one RoutePattern. The matcher
  * checks the path against `path`, then verifies every query key appears in

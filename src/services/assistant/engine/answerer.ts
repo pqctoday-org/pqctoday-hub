@@ -150,6 +150,48 @@ class ResIndex {
   }
 }
 
+/** A status that does not retire a record: no status at all (undefined or null), an empty one, or "active". */
+export function isActiveStatus(s: string | null | undefined): boolean { return s === undefined || s === null || s === '' || s === 'active' }
+
+/** The link with its path in lower case and without a trailing slash (a link to another site is left as it is). */
+function pagePath(link: string): string {
+  if (!link.startsWith('/')) return link
+  const q = link.indexOf('?')
+  const head = q < 0 ? link : link.slice(0, q)
+  const tail = q < 0 ? '' : link.slice(q)
+  const h = head.indexOf('#')
+  const path = h < 0 ? head : head.slice(0, h)
+  const frag = h < 0 ? '' : head.slice(h)
+  return (path.replace(/\/+$/, '') || '/').toLowerCase() + frag + tail
+}
+
+/** The link with its path normalised (`pagePath`) and every alias parameter written as its canonical one, so that two spellings the Hub opens as one page compare equal (the id wins when both are present). */
+export function canonicalLink(raw: string, aliases: { path: string; alias: string; canonical: string }[]): string {
+  const link = pagePath(raw)
+  const q = link.indexOf('?')
+  if (q < 0) return link
+  const base = link.slice(0, q)
+  let rest = link.slice(q + 1)
+  const path = base.split('#')[0].replace(/\/+$/, '') || '/'
+  for (const al of aliases) {
+    if (path !== al.path) continue
+    const h = rest.indexOf('#')
+    const query = h < 0 ? rest : rest.slice(0, h)
+    const frag = h < 0 ? '' : rest.slice(h)
+    const parts = query.split('&')
+    const hasCanon = parts.some((p) => p.startsWith(al.canonical + '=') && p !== al.canonical + '=')
+    const hasAlias = parts.some((p) => p.startsWith(al.alias + '='))
+    const out: string[] = []
+    for (let p of parts) {
+      if (hasAlias && p === al.canonical + '=') continue
+      if (p.startsWith(al.alias + '=')) { if (hasCanon) continue; p = al.canonical + p.slice(al.alias.length) }
+      out.push(p)
+    }
+    rest = out.join('&') + frag
+  }
+  return base + '?' + rest
+}
+
 export class Answerer {
   strict: Strict
   engine: Engine
@@ -157,6 +199,7 @@ export class Answerer {
   res: ResIndex
   resByLink = new Map<string, Resource>()
   recOfLink = new Map<string, string[]>()
+  recOfKey = new Map<string, string[]>()
   linkOfRec = new Map<string, string>()
   private raw = new Map<string, Result>()
   private personaPaths: Map<string, string[]> | null = null
@@ -176,7 +219,13 @@ export class Answerer {
     this.res = new ResIndex(cat.resources)
     for (const r of cat.resources) this.resByLink.set(r.link, r)
     for (const r of model.records) if (r.link) { this.linkOfRec.set(r.id, r.link); const a = this.recOfLink.get(r.link); if (a) a.push(r.id); else this.recOfLink.set(r.link, [r.id]) }
+    for (const [link, ids] of this.recOfLink) { const k = this.linkKey(link); const a = this.recOfKey.get(k); if (a) a.push(...ids); else this.recOfKey.set(k, [...ids]) }
+    // a page record of the link comes first (as in the catalogue); the sort is stable
+    for (const ids of this.recOfLink.values()) ids.sort((a, b) => Number(this.strict.records.get(a)!.type !== 'page') - Number(this.strict.records.get(b)!.type !== 'page'))
   }
+  /** The key a link is looked up by in the records that own it: its canonical spelling without a fragment. */
+  linkKey(link: string): string { return canonicalLink(link, this.data.link_aliases ?? []).split('#')[0] }
+  recordsOfLink(link: string): string[] { return this.recOfKey.get(this.linkKey(link)) ?? [] }
   rec(id: string): Rec { return this.strict.records.get(id)! }
   answerRaw(q: string): Result { let r = this.raw.get(q); if (!r) { r = this.strict.answer(q); this.raw.set(q, r) } return r }
   tagOf(id: string): string { const r = this.strict.records.get(id); return r && r.type === 'tool' && r.link ? 'TOOL:' + r.link.replace(/\/+$/, '').split('/').pop() : id }
@@ -195,16 +244,27 @@ export class Answerer {
     }
     return best
   }
+  private onlyLinks = new Map<string, string[]>()
+  /** The links of every resource that a restricted group of the intent allows (cached per intent). */
+  restricted(intent: string, cfg: any): string[] {
+    let out = this.onlyLinks.get(intent)
+    if (!out) {
+      out = this.cat.resources.filter((r) => (cfg.only[r.group] ?? []).length && this.allowed({ type: r.type, link: r.link }, cfg.only[r.group])).map((r) => r.link)
+      this.onlyLinks.set(intent, out)
+    }
+    return out
+  }
   statusOk(r: Resource): boolean {
-    if (!r.record_ids.length) return true
-    return r.record_ids.some((i) => [undefined, '', 'active'].includes(this.strict.records.get(i)?.status))
+    const ids = r.record_ids.length ? r.record_ids : this.recordsOfLink(r.link)
+    if (!ids.length) return true
+    return ids.some((i) => isActiveStatus(this.strict.records.get(i)?.status))
   }
 
   // ------------------------------------------------------------ finders
   cfg(intent: string): any {
     const row = this.data.finders.intents[intent] ?? {}
     const d = this.data.finders.default
-    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {} }
+    return { w: { ...d.w, ...(row.w ?? {}) }, prior: row.prior ?? {}, only: row.only ?? {}, follow: row.follow ?? d.follow, journey: row.journey ?? d.journey, pin: row.pin ?? {}, filter: !!row.filter, field_bonus: row.field_bonus ?? {}, name_types: row.name_types ?? [], follow_fields: row.follow_fields ?? [] }
   }
   contentWords(reading: Reading): string[] {
     const namesToks = new Set(reading.names.flatMap((n) => tokens(n.text)))
@@ -222,9 +282,18 @@ export class Answerer {
   }
   followed(reading: Reading, cfg: any): Map<string, number> {
     const o = new Map<string, number>()
-    for (const rid of reading.named_ids) for (const f of cfg.follow) {
-      const tgt = f.dir === 'forward' ? this.strict.forward.get(rid + '\u0000' + f.rel) ?? [] : this.strict.inverse.get(rid + '\u0000' + f.rel) ?? []
-      for (const t of tgt.slice(0, 12)) { const l = this.linkOfRec.get(t); if (l && (this.rec(t).active ?? true)) o.set(l, Math.max(o.get(l) ?? 0, f.w)) }
+    for (const rid of reading.named_ids) {
+      for (const f of cfg.follow) {
+        const tgt = f.dir === 'forward' ? this.strict.forward.get(rid + '\u0000' + f.rel) ?? [] : this.strict.inverse.get(rid + '\u0000' + f.rel) ?? []
+        for (const t of tgt.slice(0, 12)) { const l = this.linkOfRec.get(t); if (l && isActiveStatus(this.rec(t).status)) o.set(l, Math.max(o.get(l) ?? 0, f.w)) }
+      }
+      // a record field that lists other records by id is a typed link too (an algorithm's `products`)
+      for (const f of cfg.follow_fields) {
+        const raw = (this.rec(rid).fields ?? {})[f.field] || []          // an empty string, 0 and null list nothing
+        const vals: unknown[] = Array.isArray(raw) ? raw : [raw]
+        const w = f.w / Math.sqrt(Math.max(1, vals.length))          // the more products an algorithm lists, the less each link says (every listed id counts, active or not)
+        for (const v of vals) { const t = this.strict.records.get(f.prefix + String(v)); const l = t ? this.linkOfRec.get(t.id) : undefined; if (l && t && isActiveStatus(t.status)) o.set(l, Math.max(o.get(l) ?? 0, w)) }
+      }
     }
     return o
   }
@@ -254,6 +323,9 @@ export class Answerer {
     for (const h of hits) if (!links.has(h.link)) links.set(h.link, h.score / top)
     for (const [ln] of [...resScores.entries()].sort((a, b) => b[1] - a[1]).slice(0, extra)) if (!links.has(ln)) links.set(ln, 0)
     for (const ln of [...named.keys(), ...follow.keys(), ...readers.keys(), ...(Object.values(cfg.pin) as string[][]).flat()]) if (!links.has(ln)) links.set(ln, 0)
+    // a group the intent restricts to a small set of pages (`only`): every page of that set that shares a word with the question is a
+    // candidate, not only those among the best matches of the whole Hub
+    for (const ln of this.restricted(intent, cfg)) if ((resScores.get(ln) ?? 0) > 0 && !links.has(ln)) links.set(ln, 0)
     const pool = new Map<string, Item>()
     const sw = [...words].sort()
     const denom = Math.max(1e-9, sw.reduce((a, w) => a + this.res.idf(w), 0))
@@ -268,7 +340,7 @@ export class Answerer {
   }
   score(item: Item, cfg: any, filt: Map<string, number> | null): number {
     const w = cfg.w
-    let v = w.text * item.text + w.res * item.res + w.title * item.title_overlap + w.name * (item.named ? 1.0 : 0.0) + w.link * item.follow + w.prior * this.prior(item, cfg.prior) + (w.reader ?? 0.0) * (item.reader ?? 0.0)
+    let v = w.text * item.text + w.res * item.res + w.title * item.title_overlap + w.name * (item.named && (!cfg.name_types.length || cfg.name_types.includes(item.type)) ? 1.0 : 0.0) + w.link * item.follow + w.prior * this.prior(item, cfg.prior) + (w.reader ?? 0.0) * (item.reader ?? 0.0)
     if (filt !== null) v += filt.get(item.link) ?? 0.0
     return v
   }
@@ -277,7 +349,7 @@ export class Answerer {
     const out = new Map<string, number>()
     if (!(f.industries.length || f.places.length)) return out
     for (const rec of this.model.records) {
-      if (!['guidance', 'framework'].includes(rec.type) || ![undefined, '', 'active'].includes(rec.status)) continue
+      if (!['guidance', 'framework'].includes(rec.type) || !isActiveStatus(rec.status)) continue
       const d = this.cat.dims[rec.id]
       if (!rec.link || !d) continue
       let bonus = 0.0
@@ -356,8 +428,15 @@ export class Answerer {
   journey(reading: Reading & { question: string }, out: Record<string, Item[]>, perGroup: number): void {
     const cur = this.cat.curriculum
     if (!cur) return
-    const labels = new Set(reading.names.map((n) => n.text))
-    for (const rid of reading.named_ids) { const r = this.rec(rid); if (['term', 'algorithm', 'standard', 'protocol'].includes(r.type)) labels.add(r.label) }
+    // only a name that means a concept (a term, algorithm, standard or protocol) leads to the concept's lessons; a name that is only a vendor,
+    // a page or a tool ("post quantum", "algorithms") does not
+    const concept = ['term', 'algorithm', 'standard', 'protocol']
+    const nameToks = new Set(reading.names.flatMap((n) => tokens(n.text)))
+    const other = this.contentWords(reading).filter((w) => !nameToks.has(w))
+    // a name for the whole subject of the Hub ("pqc") does not lead the journey when the question asks about something more specific
+    const generic = other.length ? new Set((this.data.finders.generic_names as string[]).map((x) => x.toLowerCase())) : new Set<string>()
+    const labels = new Set(reading.names.filter((n) => !generic.has(n.text.toLowerCase()) && n.ids.some((i) => concept.includes(this.rec(i).type))).map((n) => n.text))
+    for (const rid of reading.named_ids) { const r = this.rec(rid); if (concept.includes(r.type) && !generic.has(r.label.toLowerCase())) labels.add(r.label) }
     const scores = new Map(this.search.resources(reading.clean, 60).map((h) => [h.link, h.score]))
     const picks = this.learnForConcept([...labels].sort(), cur, scores, Math.max(1, perGroup - 1))
     if (!picks.length) return
@@ -413,7 +492,7 @@ export class Answerer {
     if (res.kind !== 'answer' || res.tier === 2 || res.from_fields) return null
     const rec = this.strict.records.get((res.record ?? {}).id ?? '')
     // A retired record answers one question only: what replaced it, and only when the link is proven (the reader's chain).
-    if (!rec || (![undefined, '', 'active'].includes(rec.status) && !successor)) return null
+    if (!rec || (!isActiveStatus(rec.status) && !successor)) return null
     if ((res.records ?? []).length > 1) return null
     let value = res.value
     if ((value === null || value === undefined || value === '') && res.values && res.values.length) value = res.values.map(String).join('; ')
@@ -423,7 +502,7 @@ export class Answerer {
     if (spec.direct_field_rx && res.field && !new RegExp(spec.direct_field_rx.replace(/^\(\?i\)/, ''), spec.direct_field_rx.startsWith('(?i)') ? 'i' : '').test(String(res.field))) return null
     if (spec.one_of_kind && reading.names.length && reading.names[0].ids.filter((i) => spec.one_of_kind.includes(this.rec(i).type)).length > 1) return null
     for (const n of reading.names.slice(0, 1)) {
-      const twins = n.ids.filter((i) => this.rec(i).family === rec.family && this.rec(i).type === rec.type && [undefined, '', 'active'].includes(this.rec(i).status))
+      const twins = n.ids.filter((i) => this.rec(i).family === rec.family && this.rec(i).type === rec.type && isActiveStatus(this.rec(i).status))
       if (twins.length > 1 && !(res.records && res.records.length > 1)) return null
     }
     let ev = this.evidence(rec, res)
@@ -475,7 +554,7 @@ export class Answerer {
     let rest = reading.clean
     for (const n of reading.names) rest = rest.replace(new RegExp(escRx(n.text), 'gi'), ' ')
     if (!shape.some((rx) => rx.test(rest)) || ['answer', 'clarify'].includes(this.answerRaw(reading.question).kind)) return null
-    const ids = new Set(reading.named_ids.filter((i) => ['document', 'standard'].includes(this.rec(i).type) && [undefined, '', 'active'].includes(this.rec(i).status)))
+    const ids = new Set(reading.named_ids.filter((i) => ['document', 'standard'].includes(this.rec(i).type) && isActiveStatus(this.rec(i).status)))
     if (ids.size !== 1 || reading.names.length !== 1) return null
     const rec = this.rec([...ids][0])
     const ev = this.evidence(rec, {})
@@ -577,6 +656,11 @@ export class Answerer {
   ask(question: string, role: string | null = null, forceIntent: string | null = null): Item {
     let reading: Reading & { question: string; forced?: boolean } = this.engine.read(question) as any
     if (forceIntent) reading = { ...reading, intent: forceIntent, intents: [forceIntent], forced: true }
+    if (reading.intent === 'name' && reading.name_match) {
+      // a retired record is never a name card or a choice: the name keeps the records that are live; when none is, the question is read as a named thing alone and answered by the finders
+      const live = reading.name_match.filter((i) => isActiveStatus(this.rec(i).status))
+      reading = live.length ? { ...reading, name_match: live } : { ...reading, intent: 'concept', intents: ['concept'], name_match: null, confidence: 0.3 }
+    }
     const intent = reading.intent
     const spec = this.data.intents.intents[intent]
     const N = this.data.notes

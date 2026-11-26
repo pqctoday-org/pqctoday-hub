@@ -66,7 +66,7 @@ export const MobilePlaygroundView = () => {
         <div className="inline-flex items-center justify-center p-3 rounded-xl bg-secondary/10 border border-secondary/20">
           <FlaskConical size={28} className="text-secondary" />
         </div>
-        <h2 className="text-xl font-bold text-foreground">Interactive Playground</h2>
+        <h2 className="text-xl font-bold font-display text-heading">Interactive Playground</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
           This is an information view of the workbench’s capabilities, not an operation result. The
           active workbench shows its selected execution mode; mock outputs are demonstrations. Open
@@ -97,7 +97,9 @@ export const MobilePlaygroundView = () => {
                   <Icon size={18} className="text-primary" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-foreground">{feature.title}</h3>
+                  <h3 className="text-sm font-semibold font-display text-heading">
+                    {feature.title}
+                  </h3>
                   <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                     {feature.description}
                   </p>
@@ -110,12 +112,14 @@ export const MobilePlaygroundView = () => {
 
       {/* Tech Stack Note */}
       <div className="glass-panel p-4 space-y-2">
-        <h2 className="text-sm font-semibold text-foreground">Implementation references</h2>
+        <h2 className="text-sm font-semibold font-display text-heading">
+          Implementation references
+        </h2>
         <div className="flex flex-wrap gap-2">
           {['OpenSSL 3.6.3 WASM', 'liboqs', 'PKCS#11 v3.2', 'Web Crypto API'].map((tech) => (
             <span
               key={tech}
-              className="px-2.5 py-1 rounded-full bg-muted/50 border border-border text-xs text-muted-foreground"
+              className="px-2.5 py-1 rounded-full text-xs bg-chip text-chip-foreground font-bold"
             >
               {tech}
             </span>

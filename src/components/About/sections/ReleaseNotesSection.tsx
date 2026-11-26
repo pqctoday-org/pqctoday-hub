@@ -23,7 +23,9 @@ export function ReleaseNotesSection() {
             <FileText className="w-5 h-5 md:w-6 md:h-6" />
           </div>
           <div>
-            <h2 className="text-base md:text-xl font-semibold">Release Notes</h2>
+            <h2 className="text-base md:text-xl font-semibold font-display text-heading">
+              Release Notes
+            </h2>
             <p className="text-xs md:text-sm text-muted-foreground">
               What&apos;s new in v{version} — features, fixes, and improvements
             </p>
@@ -43,7 +45,7 @@ export function ReleaseNotesSection() {
           </Button>
           <Link
             to="/changelog"
-            className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold text-xs md:text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+            className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-full text-primary-foreground font-bold text-xs md:text-sm transition-all duration-200 bg-primary border-2 border-ink hover:bg-primary/90"
           >
             View
             <span className="hidden sm:inline"> Changelog</span>

@@ -290,7 +290,7 @@ export const ComplianceRow = ({
               id={`pqc-tooltip-${index}`}
               role="tooltip"
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-overlay transition-opacity whitespace-normal',
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover rounded text-xs text-center z-overlay transition-opacity whitespace-normal glass-panel rounded-2xl',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
                 showPqcTooltip
                   ? 'opacity-100 pointer-events-auto'
@@ -377,7 +377,7 @@ export const ComplianceRow = ({
               id={`classical-tooltip-${index}`}
               role="tooltip"
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-overlay transition-opacity whitespace-normal',
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover rounded text-xs text-center z-overlay transition-opacity whitespace-normal glass-panel rounded-2xl',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
                 showClassicalTooltip
                   ? 'opacity-100 pointer-events-auto'
@@ -799,7 +799,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     <div className="space-y-6">
       {!isEsvTab && (
         <div className="space-y-2">
-          <h3 className="text-sm font-semibold">PQC Support</h3>
+          <h3 className="text-sm font-semibold font-display text-heading">PQC Support</h3>
           <div className="flex flex-wrap gap-2">
             {PQC_ALGOS.map((algo) => (
               <Button
@@ -820,7 +820,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       )}
 
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold">Source</h3>
+        <h3 className="text-sm font-semibold font-display text-heading">Source</h3>
         <div className="flex flex-wrap gap-2">
           {uniqueSources.map((src) => (
             <Button
@@ -840,7 +840,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       </div>
 
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold">Categories</h3>
+        <h3 className="text-sm font-semibold font-display text-heading">Categories</h3>
         <div className="flex flex-wrap gap-2">
           {uniqueCategories.map((cat) => (
             <Button
@@ -861,7 +861,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
 
       {!isEsvTab && (
         <div className="space-y-2">
-          <h3 className="text-sm font-semibold">Migrate Category (CSC)</h3>
+          <h3 className="text-sm font-semibold font-display text-heading">
+            Migrate Category (CSC)
+          </h3>
           <div className="flex flex-wrap gap-2">
             {uniqueMigrateCategories.map((mc) => (
               <Button
@@ -1139,7 +1141,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       <div className="rounded-md border border-border overflow-hidden bg-card/50 relative min-h-[400px]">
         {/* Loading Overlay */}
         {(isFiltering || isRefreshing) && (
-          <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-[1px] flex items-center justify-center flex-col gap-3">
+          <div className="absolute inset-0 z-50 bg-scrim/60 backdrop-blur-[1px] flex items-center justify-center flex-col gap-3">
             <RefreshCw size={32} className="animate-spin text-primary" />
             <div className="flex flex-col items-center gap-1">
               <span className="text-sm font-medium text-foreground">
@@ -1214,7 +1216,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               onClick={() => setShowSourceMenu(false)}
                               aria-hidden="true"
                             />
-                            <div className="absolute left-0 top-full mt-1 w-48 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                            <div className="absolute left-0 top-full mt-1 w-48 max-w-[calc(100vw-2rem)] bg-popover z-50 p-2 space-y-1 glass-panel rounded-2xl">
                               <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                                 Select Source
                               </div>
@@ -1341,7 +1343,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                 onClick={() => setShowCategoryMenu(false)}
                                 aria-hidden="true"
                               />
-                              <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                              <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover z-50 p-2 space-y-1 max-h-80 overflow-y-auto glass-panel rounded-2xl">
                                 <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                                   Product Categories
                                 </div>
@@ -1420,7 +1422,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                                 onClick={() => setShowMigrateCatMenu(false)}
                                 aria-hidden="true"
                               />
-                              <div className="absolute left-0 top-full mt-1 w-72 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                              <div className="absolute left-0 top-full mt-1 w-72 max-w-[calc(100vw-2rem)] bg-popover z-50 p-2 space-y-1 max-h-80 overflow-y-auto glass-panel rounded-2xl">
                                 <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                                   Migrate Category (CSC)
                                 </div>
@@ -1516,7 +1518,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               onClick={() => setShowVendorMenu(false)}
                               aria-hidden="true"
                             />
-                            <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col">
+                            <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover z-50 p-2 space-y-1 max-h-80 overflow-y-auto flex flex-col glass-panel rounded-2xl">
                               <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                                 Select Vendor
                               </div>
@@ -1615,7 +1617,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               onClick={() => setShowFilterMenu(false)}
                               aria-hidden="true"
                             />
-                            <div className="absolute right-0 top-full mt-1 w-48 bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1">
+                            <div className="absolute right-0 top-full mt-1 w-48 bg-popover z-50 p-2 space-y-1 glass-panel rounded-2xl">
                               <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
                                 PQC Algorithms
                               </div>

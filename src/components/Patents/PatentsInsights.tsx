@@ -247,8 +247,8 @@ export function PieCard({
   })
 
   return (
-    <div className="glass-panel rounded-lg p-4 flex flex-col gap-3">
-      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+    <div className="glass-panel p-4 flex flex-col gap-3">
+      <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {title}
       </div>
       {hint && <p className="text-[10px] text-muted-foreground -mt-2">{hint}</p>}
@@ -304,10 +304,10 @@ export function Section({
   action?: React.ReactNode
 }) {
   return (
-    <div className="glass-panel rounded-lg p-4 space-y-3">
+    <div className="glass-panel p-4 space-y-3">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <h3 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
             {title}
           </h3>
           {hint && <p className="text-[10px] text-muted-foreground mt-0.5">{hint}</p>}

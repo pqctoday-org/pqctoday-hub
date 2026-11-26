@@ -145,11 +145,8 @@ describe('Tessera accelerator note', () => {
       .getAllByRole('link')
       .map((a) => a.getAttribute('href'))
       .filter((h) => h === '/learn/arch-quantum-impact?tab=workshop&step=5')
-    // one beside the Tessera note and one in the related-modules block
-    expect(hrefs).toHaveLength(2)
-    expect(
-      screen.getAllByRole('link', { name: /Compare with the other trust hardware/ })
-    ).toHaveLength(1)
+    // one beside the Tessera note; the lesson's own copy in the Related resources box is kept as data
+    expect(hrefs).toHaveLength(1)
     expect(flat(ragSummary)).toContain(
       "Tessera's accelerator comes from an open hardware design with no silicon or product in the sources read"
     )

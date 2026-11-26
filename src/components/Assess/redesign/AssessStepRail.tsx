@@ -64,7 +64,7 @@ export const AssessStepRail: React.FC<AssessStepRailProps> = ({ flow, mode, onSw
 
   return (
     <aside className="w-full lg:sticky lg:top-4 lg:w-[236px] lg:shrink-0">
-      <div className="glass-panel p-3.5">
+      <div className="glass-panel rounded-2xl p-3.5">
         {/* Header: tappable progress toggle on mobile; static on lg+. */}
         <Button
           variant="ghost"

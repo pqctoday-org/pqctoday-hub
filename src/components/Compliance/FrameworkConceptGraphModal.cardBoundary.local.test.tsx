@@ -126,7 +126,7 @@ describe('graph modal keeps its events away from the card behind it', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Close concept graph' }))
     expect(onClose).toHaveBeenCalledTimes(1)
     // eslint-disable-next-line testing-library/no-node-access -- the backdrop is an aria-hidden layer with no role or text to query
-    const backdrop = document.body.querySelector('[aria-hidden="true"].bg-black\\/60')
+    const backdrop = document.body.querySelector('[aria-hidden="true"].bg-scrim\\/60')
     expect(backdrop).not.toBeNull()
     fireEvent.click(backdrop as Element)
     expect(onClose).toHaveBeenCalledTimes(2)

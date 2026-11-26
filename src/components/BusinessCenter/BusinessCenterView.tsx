@@ -124,7 +124,7 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
     <div className="space-y-6">
       <div className="glass-panel p-6 md:p-8 text-center">
         <LayoutDashboard size={44} className="mx-auto mb-4 text-muted-foreground" />
-        <h2 className="text-xl font-semibold text-foreground mb-2">
+        <h2 className="text-xl font-semibold mb-2 font-display text-heading">
           Welcome to your PQC Command Center
         </h2>
         <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">{intro.lede}</p>
@@ -144,7 +144,7 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
             <Link
               key={item.q}
               to={item.to}
-              className="glass-panel p-4 hover:border-primary/40 transition-colors group"
+              className="glass-panel glass-panel-row p-4 hover:border-primary/40 transition-colors group"
             >
               <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
                 {item.q}
@@ -158,7 +158,7 @@ function WelcomeState({ onExploreZones }: { onExploreZones: () => void }) {
 
       {topTools.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Start with these tools
           </p>
           <div
@@ -283,7 +283,7 @@ function PhaseToolsView({ onClearPhase }: { onClearPhase: () => void }) {
           <div className="text-[10px] font-semibold text-primary uppercase tracking-widest mb-1">
             Phase view
           </div>
-          <h2 className="text-lg font-semibold text-foreground">{phaseLabel}</h2>
+          <h2 className="text-lg font-semibold font-display text-heading">{phaseLabel}</h2>
           <p className="text-sm text-muted-foreground mt-0.5">{phase.tagline}</p>
         </div>
         <Button

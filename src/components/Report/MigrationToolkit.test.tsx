@@ -206,18 +206,18 @@ describe('MigrationToolkit support label', () => {
     ]
     renderToolkit({ infrastructure: ['Hardware'], industry: '' })
     const label = screen.getByText('PSK')
-    expect(label).toHaveClass('text-info')
+    expect(label).toHaveClass('text-info-legible')
     expect(label).not.toHaveClass('text-warning')
     expect(label).toHaveAttribute('title', expect.stringMatching(/pre-shared key/))
     // The other tiers keep their colours and labels.
     expect(screen.getByText('Partial')).toHaveClass('text-warning')
-    expect(screen.getByText('Yes')).toHaveClass('text-success')
+    expect(screen.getByText('Yes')).toHaveClass('text-success-legible')
   })
 
   it('shows the label "PSK" even when the support text carries more after the prefix', () => {
     state.software = [withSupport('psk-2', 'PSK only - no post-quantum algorithm')]
     renderToolkit({ infrastructure: ['Hardware'], industry: '' })
-    expect(screen.getByText('PSK')).toHaveClass('text-info')
+    expect(screen.getByText('PSK')).toHaveClass('text-info-legible')
     expect(screen.queryByText(/no post-quantum algorithm/)).not.toBeInTheDocument()
   })
 })

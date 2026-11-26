@@ -142,7 +142,7 @@ export function SbomSection({ openFromLink = false }: { openFromLink?: boolean }
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-3 md:p-6 items-start">
               {groups.map((group) => (
                 <div key={group.category} className="break-inside-avoid">
-                  <h3 className="text-lg font-semibold text-primary mb-3">
+                  <h3 className="text-lg font-semibold mb-3 font-display text-heading">
                     {group.category}
                     {group.note && (
                       <>

@@ -29,7 +29,7 @@ export function DataPrivacySection() {
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <Lock className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold flex-1">Data Privacy</h2>
+        <h2 className="text-xl font-semibold flex-1 font-display text-heading">Data Privacy</h2>
         <ChevronDown
           size={20}
           className={clsx(
@@ -76,9 +76,7 @@ export function DataPrivacySection() {
                   site is served as static files from GitHub Pages.{' '}
                   <strong className="text-foreground">Google Analytics 4</strong> runs on every
                   visit (anonymous usage data, sets cookies; see below). Other data is sent
-                  externally only when you use specific opt-in features:{' '}
-                  <strong className="text-foreground">Gemini AI</strong> (chat messages sent to
-                  Google when using cloud mode) and{' '}
+                  externally only when you use a specific opt-in feature:{' '}
                   <strong className="text-foreground">Google Drive sync</strong> (learning progress;
                   built into the code but not currently available). See sections below and the{' '}
                   <a href="/terms" className="text-primary hover:underline">
@@ -105,7 +103,7 @@ export function DataPrivacySection() {
               <div className="mt-6 pt-5 border-t border-border">
                 <div className="flex items-center gap-2 mb-3">
                   <BarChart2 size={16} className="text-primary flex-shrink-0" />
-                  <h3 className="text-sm font-semibold text-foreground">
+                  <h3 className="text-sm font-semibold font-display text-heading">
                     Anonymous usage analytics
                   </h3>
                 </div>

@@ -110,7 +110,7 @@ export function TryToolModalHost() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={close}
-            className={`fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm print:hidden ${mobileShell ? 'z-overlay' : 'z-50'}`}
+            className={`fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm print:hidden ${mobileShell ? 'z-overlay' : 'z-50'}`}
           />
           <div
             data-testid="try-tool-modal-layer"

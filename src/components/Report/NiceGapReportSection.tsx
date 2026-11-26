@@ -37,11 +37,11 @@ const CA_COLORS: Partial<Record<NiceCompetencyAreaId, string>> = {
   'CA-CRYPTO': 'bg-primary/10 text-primary',
   'CA-RISK': 'bg-warning/10 text-warning',
   'CA-GOVCOMP': 'bg-destructive/10 text-destructive',
-  'CA-NETDEF': 'bg-success/10 text-success',
+  'CA-NETDEF': 'bg-success/10 text-success-legible',
   'CA-IDENT': 'bg-primary/15 text-primary',
   'CA-DATASEC': 'bg-warning/15 text-warning',
   'CA-SYSARCH': 'bg-muted-foreground/15 text-muted-foreground',
-  'CA-SECPROG': 'bg-success/15 text-success',
+  'CA-SECPROG': 'bg-success/15 text-success-legible',
 }
 
 // ---------------------------------------------------------------------------
@@ -102,7 +102,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
 
       {/* Section A: Competency Gaps */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 font-display text-heading">
           <GraduationCap size={16} className="text-primary shrink-0" />
           Competency Areas to Develop
         </h3>
@@ -168,7 +168,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
       {/* Section B: Work Roles */}
       {report.workRoleRecommendations.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 font-display text-heading">
             <Briefcase size={16} className="text-primary shrink-0" />
             Work Roles to Hire or Upskill
           </h3>
@@ -212,7 +212,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
       {/* Section C: Learning Sequence */}
       {report.learningSequence.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 font-display text-heading">
             <ArrowRight size={16} className="text-primary shrink-0" />
             Recommended Learning Sequence
           </h3>
@@ -223,7 +223,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
                 <Link
                   key={step.moduleId}
                   to={`/learn/${step.moduleId}`}
-                  className="flex items-center gap-3 glass-panel px-3 py-2.5 hover:bg-muted/30 transition-colors group"
+                  className="glass-panel rounded-2xl flex items-center gap-3 px-3 py-2.5 hover:bg-muted/30 transition-colors group"
                 >
                   <span className="text-xs font-mono text-muted-foreground w-5 shrink-0 text-right">
                     {idx + 1}

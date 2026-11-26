@@ -23,7 +23,7 @@ const priorityConfig = {
   Critical: { color: 'text-destructive', bg: 'bg-destructive/10' },
   High: { color: 'text-warning', bg: 'bg-warning/10' },
   Medium: { color: 'text-primary', bg: 'bg-primary/10' },
-  Low: { color: 'text-success', bg: 'bg-success/10' },
+  Low: { color: 'text-success-legible', bg: 'bg-success/10' },
 } as const
 
 interface MigrationToolkitProps {
@@ -183,7 +183,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
           <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">
             <Link
               to={noInfraSelected ? '/assess' : '/migrate'}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-primary-foreground text-sm font-bold transition-all duration-200 bg-primary border-2 border-ink hover:bg-primary/90"
             >
               {noInfraSelected ? 'Go to Assessment' : 'Explore Tools'}
               <ArrowRight size={14} />
@@ -288,7 +288,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
               <tbody key={layer}>
                 <tr>
                   <td colSpan={5} className="pt-4 pb-1">
-                    <h4 className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                    <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       {layer}
                     </h4>
                   </td>
@@ -326,9 +326,9 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                           className={clsx(
                             'text-xs',
                             item.pqcSupport.toLowerCase().startsWith('yes')
-                              ? 'text-success'
+                              ? 'text-success-legible'
                               : isPsk
-                                ? 'text-info'
+                                ? 'text-info-legible'
                                 : item.pqcSupport.toLowerCase().startsWith('partial') ||
                                     item.pqcSupport.toLowerCase().startsWith('limited') ||
                                     item.pqcSupport.toLowerCase().startsWith('planned') ||

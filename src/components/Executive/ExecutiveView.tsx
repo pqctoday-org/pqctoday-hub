@@ -24,7 +24,7 @@ const RISK_LEVEL_STYLES: Record<string, string> = {
   critical: 'text-destructive bg-destructive/10 border-destructive/20',
   high: 'text-warning bg-warning/10 border-warning/20',
   medium: 'text-status-info bg-status-info',
-  low: 'text-success bg-success/10 border-success/20',
+  low: 'text-success-legible bg-success/10 border-success/20',
 }
 
 // KPI Card Component
@@ -48,7 +48,7 @@ const KPICard = ({
   const colorMap = {
     red: 'text-destructive bg-destructive/10 border-destructive/20',
     amber: 'text-warning bg-warning/10 border-warning/20',
-    green: 'text-success bg-success/10 border-success/20',
+    green: 'text-success-legible bg-success/10 border-success/20',
     blue: 'text-status-info bg-status-info',
   }
 
@@ -72,7 +72,9 @@ const KPICard = ({
             <span className="text-lg text-muted-foreground font-normal">/{total}</span>
           )}
         </div>
-        <div className="text-xs text-muted-foreground uppercase tracking-wider">{label}</div>
+        <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
+          {label}
+        </div>
       </Link>
     </motion.div>
   )
@@ -103,7 +105,7 @@ export const ExecutiveView: React.FC = () => {
             <BarChart3 className="text-primary" size={28} />
           </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2 print:text-foreground print:text-2xl">
+        <h1 className="text-3xl md:text-4xl font-bold font-display text-heading mb-2 print:text-foreground print:text-2xl">
           PQC Readiness Summary
         </h1>
         <p className="text-muted-foreground print:text-muted-foreground">
@@ -145,7 +147,7 @@ export const ExecutiveView: React.FC = () => {
                 <Activity size={24} />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-foreground">Your Organization</h2>
+                <h2 className="text-lg font-bold font-display text-heading">Your Organization</h2>
                 <p className="text-sm text-muted-foreground">
                   {industry ? `${industry} sector` : 'Based on your PQC Readiness Assessment'}
                   {metrics.assessedAt && (
@@ -177,7 +179,7 @@ export const ExecutiveView: React.FC = () => {
               )}
               <div className="text-center">
                 <div className="text-3xl font-bold text-foreground">{metrics.orgRiskScore}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider">
+                <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Risk Score
                 </div>
               </div>
@@ -216,7 +218,9 @@ export const ExecutiveView: React.FC = () => {
               <Activity className="text-primary" size={24} />
             </div>
             <div className="flex-1">
-              <h2 className="text-base font-bold text-foreground mb-1">No assessment on file</h2>
+              <h2 className="text-base font-bold mb-1 font-display text-heading">
+                No assessment on file
+              </h2>
               <p className="text-sm text-muted-foreground">
                 The data below reflects industry-wide baselines. Complete the 5-minute PQC Readiness
                 Assessment to replace these with metrics specific to your organization.
@@ -278,7 +282,7 @@ export const ExecutiveView: React.FC = () => {
         transition={{ delay: 0.3 }}
         className="glass-panel p-6 mb-8 border-l-4 border-l-warning print:border print:border-border print:mb-4"
       >
-        <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2 font-display text-heading">
           <AlertTriangle className="text-warning" size={20} />
           Risk Summary
         </h2>
@@ -294,7 +298,7 @@ export const ExecutiveView: React.FC = () => {
         transition={{ delay: 0.4 }}
         className="glass-panel p-6 mb-8 print:border print:border-border print:mb-4"
       >
-        <h2 className="text-lg font-bold text-foreground mb-4">
+        <h2 className="text-lg font-bold mb-4 font-display text-heading">
           {lastResult ? 'Recommended Actions' : 'Top Priority Actions'}
         </h2>
         <div className="overflow-x-auto">

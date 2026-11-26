@@ -104,7 +104,7 @@ export function DeadlineTimelineGate({
 
   if (persona === 'curious') {
     return (
-      <div className="flex items-start gap-2 p-3 rounded-lg border border-border bg-card text-sm">
+      <div className="flex items-start gap-2 p-3 rounded-2xl border border-border bg-card text-sm">
         <Clock size={14} className="text-muted-foreground mt-0.5 shrink-0" aria-hidden="true" />
         <p className="text-muted-foreground" data-testid="deadline-timeline-narrative">
           {narrative}

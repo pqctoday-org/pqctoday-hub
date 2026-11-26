@@ -121,7 +121,7 @@ export const CrqcCapabilityStrip: React.FC<{
 
   return (
     <section
-      className="glass-panel p-4 mb-4 border border-border"
+      className="glass-panel glass-panel-row p-4 mb-4"
       aria-labelledby="crqc-strip-heading"
       data-testid="crqc-capability-strip"
     >
@@ -131,7 +131,7 @@ export const CrqcCapabilityStrip: React.FC<{
           <div>
             <h2
               id="crqc-strip-heading"
-              className="text-base font-bold text-foreground flex items-center gap-2 flex-wrap"
+              className="text-base font-bold flex items-center gap-2 flex-wrap font-display text-heading"
             >
               CRQC Capability Watch
               <span className="text-[10px] font-medium px-1.5 py-0.5 rounded border border-warning/30 bg-warning/10 text-warning uppercase tracking-wide">
@@ -170,7 +170,7 @@ export const CrqcCapabilityStrip: React.FC<{
 
       {/* Headline strip — always visible */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
-        <div className="rounded-lg border border-border bg-muted/30 p-3">
+        <div className="rounded-2xl border border-border bg-muted/30 p-3">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
               CRQC expert survey
@@ -182,7 +182,7 @@ export const CrqcCapabilityStrip: React.FC<{
           <div className="text-2xl font-bold text-warning">{forecast.headline}</div>
           <div className="text-xs text-muted-foreground mt-0.5">{forecast.label}</div>
         </div>
-        <div className="rounded-lg border border-border bg-muted/30 p-3">
+        <div className="rounded-2xl border border-border bg-muted/30 p-3">
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
             Migration deadlines (not forecasts)
           </div>
@@ -200,7 +200,7 @@ export const CrqcCapabilityStrip: React.FC<{
               : `Calculators on this page use a ${forecast.rangeLabel}, which has already begun.`}
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-muted/30 p-3">
+        <div className="rounded-2xl border border-border bg-muted/30 p-3">
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
             Demonstrated hardware snapshot
           </div>

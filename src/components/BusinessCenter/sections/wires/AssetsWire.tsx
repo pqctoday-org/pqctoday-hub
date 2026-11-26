@@ -92,11 +92,11 @@ export const AssetsWire: React.FC<AssetsWireProps> = ({ metrics }) => {
 
   if (products.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-border bg-muted/20 p-4 space-y-3">
+      <div className="glass-panel border-dashed p-4 space-y-3">
         <div className="flex items-start gap-3">
           <Boxes size={20} className="text-muted-foreground shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold text-foreground">
+            <h4 className="text-sm font-semibold font-display text-heading">
               No infrastructure components selected yet
             </h4>
             <p className="text-xs text-muted-foreground mt-1">

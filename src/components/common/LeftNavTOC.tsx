@@ -65,7 +65,7 @@ export const LeftNavTOC: React.FC<LeftNavTOCProps> = ({
       data-workshop-target={`${targetPrefix}-rail`}
     >
       {title && (
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-2">
+        <h3 className="uppercase px-2 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
           {title}
         </h3>
       )}

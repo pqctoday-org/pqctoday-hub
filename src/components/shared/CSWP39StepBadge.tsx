@@ -34,7 +34,7 @@ export function CSWP39StepBadge({ stepId, hint }: CSWP39StepBadgeProps) {
     <Link
       to={`/business#step-${stepId}`}
       title={tooltip}
-      className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors no-underline"
+      className="inline-flex items-center gap-1 uppercase px-2 py-0.5 rounded border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors no-underline text-[11px] font-extrabold tracking-[0.14em] text-heading"
     >
       CSWP.39 · Step {number} · {label}
     </Link>

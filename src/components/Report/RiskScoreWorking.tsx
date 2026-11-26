@@ -128,7 +128,7 @@ export function RiskScoreWorking({
           <span>How this was calculated</span>
         </Button>
         {open && (
-          <div className="mt-2 rounded-lg border border-border bg-muted/20 p-3 text-xs">
+          <div className="mt-2 rounded-2xl border border-border bg-muted/20 p-3 text-xs">
             {additive ? (
               <>
                 <p>
@@ -196,7 +196,7 @@ export function RiskScoreWorking({
       </Button>
 
       {open && (
-        <div className="mt-2 rounded-lg border border-border bg-muted/20 p-3">
+        <div className="mt-2 rounded-2xl border border-border bg-muted/20 p-3">
           <p className="mb-2 text-[11px] leading-relaxed text-muted-foreground">
             Four category scores, each weighted for{' '}
             {working.weightSource === 'industry' ? (

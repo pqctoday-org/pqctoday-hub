@@ -396,7 +396,7 @@ export function MobileAssessView() {
             type="button"
             variant="ghost"
             onClick={() => chooseTrack('quick')}
-            className="h-auto flex-col items-start gap-1 rounded-xl border border-border bg-card p-4 text-left"
+            className="h-auto flex-col items-start gap-1 rounded-2xl border border-border bg-card p-4 text-left"
           >
             <span className="text-[13.5px] font-extrabold text-foreground">
               {TRACK_INFO.quick.label}
@@ -409,7 +409,7 @@ export function MobileAssessView() {
             type="button"
             variant="ghost"
             onClick={() => chooseTrack('comprehensive')}
-            className="h-auto flex-col items-start gap-1 rounded-xl border border-border bg-card p-4 text-left"
+            className="h-auto flex-col items-start gap-1 rounded-2xl border border-border bg-card p-4 text-left"
           >
             <span className="text-[13.5px] font-extrabold text-foreground">
               {TRACK_INFO.comprehensive.label}
@@ -448,7 +448,7 @@ export function MobileAssessView() {
         )}
         <Link
           to="/report"
-          className="mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gradient-to-r from-secondary to-primary px-5 text-[12.5px] font-bold text-primary-foreground"
+          className="mt-2 inline-flex h-10 items-center justify-center rounded-full px-5 text-[12.5px] font-bold text-primary-foreground bg-primary border-2 border-ink hover:bg-primary/90"
         >
           View report
         </Link>

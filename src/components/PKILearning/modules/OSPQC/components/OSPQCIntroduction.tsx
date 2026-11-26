@@ -1,19 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
-import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import {
-  Monitor,
-  Settings,
-  Key,
-  Package,
-  Shield,
-  ArrowRight,
-  BookOpen,
-  Route,
-  Server,
-  HardDrive,
-} from 'lucide-react'
+import { Monitor, Settings, Key, Package, Shield, ArrowRight } from 'lucide-react'
 import {
   OS_VENDORS,
   OS_VENDOR_STATUS_LABELS,
@@ -474,87 +462,6 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
           </div>
         </div>
       </LearnSection>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/learn/hsm-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Shield size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">HSM &amp; PQC Operations</div>
-              <div className="text-xs text-muted-foreground">
-                PKCS#11 v3.2 mechanisms, firmware migration, and FIPS validation
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Key size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">
-                KMS &amp; PQC Key Management
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Envelope encryption, hybrid key wrapping, and KMS provider roadmaps
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-dev-apis"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Server size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Dev APIs</div>
-              <div className="text-xs text-muted-foreground">
-                OpenSSL EVP, PKCS#11, CNG, and JCA/JCE PQC migration patterns
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/crypto-agility"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <BookOpen size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">
-                Algorithm-agnostic design patterns for OS-level cryptography
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/migrate?domain=platform"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Route size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Workbench</div>
-              <div className="text-xs text-muted-foreground">
-                OS vendor products and PQC migration status
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/secure-boot-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <HardDrive size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Secure Boot &amp; Firmware</div>
-              <div className="text-xs text-muted-foreground">
-                UEFI PK/KEK migration, TPM 2.0, and ML-DSA firmware signing
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       <VendorCoverageNotice migrateLayer="OS" />
 

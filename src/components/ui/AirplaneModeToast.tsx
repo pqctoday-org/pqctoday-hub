@@ -64,7 +64,7 @@ export function AirplaneModeToast() {
           aria-live="polite"
           className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-20 left-4 right-4 z-airplane-toast print:hidden`}
         >
-          <div className="glass-panel rounded-xl px-4 py-3 shadow-lg border border-border flex items-center gap-3 max-w-sm mx-auto">
+          <div className="glass-panel rounded-2xl px-4 py-3 flex items-center gap-3 max-w-sm mx-auto">
             {toast.icon === 'plane' ? (
               <Plane size={18} className="text-primary shrink-0" />
             ) : (

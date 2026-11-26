@@ -6,7 +6,6 @@ import {
   logEvent,
   logPatentView,
   logPatentSearch,
-  logChatFeedback,
   logPatentFilter,
   logPatentFilterClear,
   logPatentSort,
@@ -329,24 +328,6 @@ describe('analytics', () => {
       expect(
         JSON.stringify([vi.mocked(ReactGA.event).mock.calls, vi.mocked(ReactGA.send).mock.calls])
       ).not.toContain('lattice')
-    })
-
-    it('feedback keeps ratings and counts without sending prompt text', () => {
-      const question = 'fictional-bank-private-planning-question'
-      logChatFeedback('helpful', question, 3)
-      expect(ReactGA.event).toHaveBeenCalledWith({
-        category: 'Chat',
-        action: 'Feedback Helpful',
-        label: undefined,
-      })
-      expect(ReactGA.event).toHaveBeenCalledWith({
-        category: 'Chat',
-        action: 'Feedback Sources',
-        label: '3',
-      })
-      expect(
-        JSON.stringify([vi.mocked(ReactGA.event).mock.calls, vi.mocked(ReactGA.send).mock.calls])
-      ).not.toContain(question)
     })
 
     it('logPatentFilter encodes key:value', () => {

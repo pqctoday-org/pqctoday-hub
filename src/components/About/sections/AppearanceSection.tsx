@@ -14,7 +14,7 @@ export function AppearanceSection() {
       transition={{ delay: 0.5 }}
       className="glass-panel p-4 md:p-6 flex flex-col items-center justify-center gap-4"
     >
-      <h2 className="text-lg font-semibold">Appearance</h2>
+      <h2 className="text-lg font-semibold font-display text-heading">Appearance</h2>
       <p className="text-sm text-muted-foreground text-center max-w-md">
         Choose your preferred color scheme.
       </p>

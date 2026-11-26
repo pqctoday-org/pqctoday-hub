@@ -11,20 +11,13 @@ interface PanelHeaderProps {
   activeTab: RightPanelTab
   /** On the phone sheet a Close control comes first in the tab order. On the desktop the top bar's toggle closes the drawer. */
   onClose?: () => void
-  /** The objective area belongs to the Assistant view only. */
-  showObjective?: boolean
 }
 
 /**
  * The drawer header. There are no tabs, and no expand or minimise buttons: what the drawer shows
  * is chosen by the top bar's Assistant and Bookmarks buttons (or a running guided workshop).
  */
-export const PanelHeader: React.FC<PanelHeaderProps> = ({
-  title,
-  activeTab,
-  onClose,
-  showObjective = true,
-}) => (
+export const PanelHeader: React.FC<PanelHeaderProps> = ({ title, activeTab, onClose }) => (
   <div className="shrink-0 border-b border-border px-3 py-3 md:px-4">
     <div className="flex items-center gap-2">
       {onClose && (
@@ -42,7 +35,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
         {title}
       </h2>
     </div>
-    {activeTab === 'chat' && showObjective && (
+    {activeTab === 'chat' && (
       <div className="mt-2">
         <ObjectiveHeaderSlot />
       </div>

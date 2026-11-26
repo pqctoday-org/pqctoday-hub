@@ -110,7 +110,7 @@ export const AddToCollection: FC<{ record: RecordStateSource }> = ({ record }) =
           Add to collection
         </Button>
       ) : (
-        <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3">
+        <div className="space-y-2 rounded-2xl border border-border bg-muted/30 p-3">
           <p className="text-[12px] text-muted-foreground">
             The collection keeps this record&apos;s revision, lifecycle, successor and last-verified
             date as they are today, so you can see later what changed. It stays in your browser.

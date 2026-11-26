@@ -21,7 +21,7 @@ export function CryptoBuffSection() {
         <div className="flex items-center gap-3 mb-4">
           <BookOpen className="text-primary shrink-0" size={24} />
           <div>
-            <h2 className="text-xl font-semibold">Cryptography Buff</h2>
+            <h2 className="text-xl font-semibold font-display text-heading">Cryptography Buff</h2>
             <p className="text-xs text-muted-foreground">Curated websites and essential reading</p>
           </div>
         </div>
@@ -142,7 +142,9 @@ export function CryptoBuffSection() {
         transition={{ delay: 0.46 }}
         className="glass-panel p-4 md:p-6 text-center"
       >
-        <h3 className="text-lg font-semibold mb-2">AI Technology Acknowledgment</h3>
+        <h3 className="text-lg font-semibold mb-2 font-display text-heading">
+          AI Technology Acknowledgment
+        </h3>
         <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
           This site is developed, documented, validated and deployed using advanced AI technologies
           including Google Antigravity, ChatGPT, Claude AI, Perplexity, and Gemini Pro. While the

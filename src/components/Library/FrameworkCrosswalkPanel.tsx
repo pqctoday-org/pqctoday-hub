@@ -126,7 +126,7 @@ export function FrameworkCrosswalkPanel({ item }: FrameworkCrosswalkPanelProps) 
         against it.
       </p>
       {/* #2 Framework crosswalk (App. G) */}
-      <div className="glass-panel p-3">
+      <div className="glass-panel rounded-2xl p-3">
         <Button
           variant="ghost"
           onClick={() => setCrosswalkOpen((o) => !o)}
@@ -236,7 +236,7 @@ export function FrameworkCrosswalkPanel({ item }: FrameworkCrosswalkPanelProps) 
       </div>
 
       {/* #3 Protocol-coverage matrix + #4 App. H long-tail flag */}
-      <div className="glass-panel p-3">
+      <div className="glass-panel rounded-2xl p-3">
         <Button
           variant="ghost"
           onClick={() => setCoverageOpen((o) => !o)}

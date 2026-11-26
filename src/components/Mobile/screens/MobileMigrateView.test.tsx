@@ -496,7 +496,7 @@ describe('MobileMigrateView', () => {
       fireEvent.click(screen.getByText('Vendors').closest('button')!)
       const card = screen
         .getByText(vendorDisplayName(vendorId))
-        .closest<HTMLElement>('div.rounded-xl')!
+        .closest<HTMLElement>('div.rounded-2xl')!
       fireEvent.click(
         within(card)
           .getByText(/products? in catalog/)
@@ -840,7 +840,7 @@ describe('MobileMigrateView', () => {
 
       it('tapping a vendor card writes ?vendor=', () => {
         renderMobile('/migrate?tab=roadmaps')
-        const card = screen.getAllByText(vendorName)[0].closest<HTMLElement>('div.rounded-xl')!
+        const card = screen.getAllByText(vendorName)[0].closest<HTMLElement>('div.rounded-2xl')!
         fireEvent.click(within(card).getAllByRole('button')[0])
         expect(search()).toContain(`vendor=${vendorId}`)
       })

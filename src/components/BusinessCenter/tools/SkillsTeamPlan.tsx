@@ -148,7 +148,7 @@ export const SkillsTeamPlan: React.FC = () => {
         />
       )}
       <header>
-        <h2 className="text-lg font-semibold">Skills &amp; Team Plan</h2>
+        <h2 className="text-lg font-semibold font-display text-heading">Skills &amp; Team Plan</h2>
         <p className="text-sm text-muted-foreground">
           Size and source a fictional migration team. Delivery and coordination allocations add to
           the same headline shown in the export.

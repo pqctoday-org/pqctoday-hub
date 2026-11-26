@@ -42,8 +42,11 @@ export function DisclaimerModal() {
       role="alert"
       aria-labelledby="disclaimer-title"
     >
-      <div className="glass-panel bg-card grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 border-primary/30 px-4 py-3 md:gap-x-5">
-        <h2 id="disclaimer-title" className="flex min-w-0 items-center gap-2 text-sm font-bold">
+      <div className="glass-panel rounded-2xl bg-card grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 px-4 py-3 md:gap-x-5">
+        <h2
+          id="disclaimer-title"
+          className="flex min-w-0 items-center gap-2 text-sm font-bold font-display text-heading"
+        >
           <Construction size={16} className="shrink-0 text-primary" aria-hidden="true" />
           Welcome to PQC Today
         </h2>

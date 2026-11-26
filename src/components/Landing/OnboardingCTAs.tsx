@@ -118,7 +118,7 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
 
   return (
     <div className="glass-panel p-4 sm:p-6">
-      <h3 className="text-sm font-mono uppercase tracking-widest text-muted-foreground mb-4 text-center">
+      <h3 className="uppercase mb-4 text-center text-[11px] font-extrabold tracking-[0.14em] text-heading">
         Where would you like to start?
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -127,9 +127,9 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
           variant="outline"
           onClick={handleVideoTour}
           disabled={!flowInfo}
-          className="flex flex-col items-center gap-2 h-auto py-4 px-4 text-left hover:border-primary/50 hover:bg-muted/30 transition-all"
+          className="flex flex-col items-center gap-2 h-auto border border-border py-4 px-4 text-left hover:bg-muted transition-colors"
         >
-          <div className="p-2 rounded-lg bg-primary/10 text-primary">
+          <div className="p-2 rounded-full bg-chip text-chip-foreground">
             <Play size={18} aria-hidden="true" />
           </div>
           <div className="text-center">
@@ -142,9 +142,9 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
         <Button
           variant="outline"
           onClick={() => openPanel('workshop')}
-          className="flex flex-col items-center gap-2 h-auto py-4 px-4 text-left hover:border-primary/50 hover:bg-muted/30 transition-all"
+          className="flex flex-col items-center gap-2 h-auto border border-border py-4 px-4 text-left hover:bg-muted transition-colors"
         >
-          <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+          <div className="p-2 rounded-full bg-chip text-chip-foreground">
             <LayoutGrid size={18} aria-hidden="true" />
           </div>
           <div className="text-center">
@@ -157,9 +157,9 @@ export const OnboardingCTAs = ({ persona, region }: OnboardingCTAsProps) => {
         <Button
           variant="outline"
           onClick={() => navigate(startCta.to)}
-          className="flex flex-col items-center gap-2 h-auto py-4 px-4 text-left hover:border-primary/50 hover:bg-muted/30 transition-all"
+          className="flex flex-col items-center gap-2 h-auto border border-border py-4 px-4 text-left hover:bg-muted transition-colors"
         >
-          <div className="p-2 rounded-lg bg-accent/10 text-accent">
+          <div className="p-2 rounded-full bg-chip text-chip-foreground">
             <BookOpen size={18} aria-hidden="true" />
           </div>
           <div className="text-center">

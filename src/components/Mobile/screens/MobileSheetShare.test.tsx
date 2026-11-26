@@ -168,7 +168,7 @@ describe('mobile item sheets share their clean canonical link', () => {
       vendorId
     renderAt('/migrate', <MobileMigrateView />)
     fireEvent.click(screen.getByText('Vendors').closest('button')!)
-    const card = screen.getByText(vendorName).closest<HTMLElement>('div.rounded-xl')!
+    const card = screen.getByText(vendorName).closest<HTMLElement>('div.rounded-2xl')!
     fireEvent.click(
       within(card)
         .getByText(/products? in catalog/)

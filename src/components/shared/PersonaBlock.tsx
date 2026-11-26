@@ -24,7 +24,7 @@ export function PersonaBlock({ route, className }: PersonaBlockProps) {
   // eslint-disable-next-line security/detect-object-injection -- PersonaId from the typed union
   const listed = PERSONA_IDS.filter((p) => blocks[p])
   if (listed.length === 0) return null
-  const box = cn('rounded-lg border border-border bg-muted/20 p-3', className)
+  const box = cn('glass-panel p-4', className)
   if (selectedPersona) {
     // eslint-disable-next-line security/detect-object-injection -- PersonaId from the typed union
     const text = blocks[selectedPersona]
@@ -32,7 +32,7 @@ export function PersonaBlock({ route, className }: PersonaBlockProps) {
     return (
       <section aria-label="For your role" data-testid="persona-block" className={box}>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-foreground">For your role:</span>{' '}
+          <span className="font-bold text-heading">For your role:</span>{' '}
           <LinkedText>{text}</LinkedText>
         </p>
       </section>
@@ -40,12 +40,14 @@ export function PersonaBlock({ route, className }: PersonaBlockProps) {
   }
   return (
     <section aria-label="For your role" data-testid="persona-block" className={box}>
-      <p className="text-sm font-semibold text-foreground">For your role</p>
+      <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-heading">
+        For your role
+      </p>
       <dl className="mt-1.5 grid gap-1 text-sm leading-relaxed text-muted-foreground sm:grid-cols-[max-content_1fr] sm:gap-x-3">
         {listed.map((id) => (
           <div key={id} className="contents">
             {/* eslint-disable-next-line security/detect-object-injection -- id from PERSONA_IDS */}
-            <dt className="font-medium text-foreground">{PERSONAS[id].label}</dt>
+            <dt className="font-bold text-heading">{PERSONAS[id].label}</dt>
             <dd className="m-0">
               {/* eslint-disable-next-line security/detect-object-injection -- id from PERSONA_IDS */}
               <LinkedText>{blocks[id] ?? ''}</LinkedText>

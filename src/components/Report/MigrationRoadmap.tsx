@@ -35,7 +35,7 @@ const EFFORT_CONFIG: Record<string, { label: string; color: string; bg: string; 
   {
     low: {
       label: 'Low',
-      color: 'text-success',
+      color: 'text-success-legible',
       bg: 'bg-success/15',
       border: 'border-l-success',
     },
@@ -229,7 +229,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
       <div className={clsx('mt-4', !open && 'hidden print:block')}>
         {milestoneGroups.length > 0 && (
           <div
-            className="mb-4 rounded-lg border border-border bg-muted/20 p-3"
+            className="mb-4 rounded-2xl border border-border bg-muted/20 p-3"
             data-testid="scoped-milestones"
           >
             <p className="mb-2 text-xs font-semibold text-foreground">

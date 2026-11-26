@@ -45,7 +45,7 @@ function SizeBudget({
   const hasBudget = Number.isSafeInteger(budget)
   const remainder = budget - bytes
   return (
-    <div className="mt-4 space-y-3 rounded-md border border-border bg-muted/20 p-3">
+    <div className="mt-4 space-y-3 rounded-2xl border border-border bg-muted/20 p-3">
       <p className="text-sm text-muted-foreground">
         Compare one raw {reference.output} with the receiving buffer. Allow separately for protocol
         framing, container encoding and other fields.

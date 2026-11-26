@@ -943,49 +943,6 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
       </div>
     </section>
 
-    {/* Related Resources */}
-    <section className="glass-panel p-6 border-secondary/20">
-      <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Link
-          to="/learn/compliance-strategy"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
-          <div>
-            <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
-            <div className="text-xs text-muted-foreground">
-              Map standards-body mandates to your regulatory obligations
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pqc-101"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <BookOpen size={18} className="text-primary shrink-0" aria-hidden="true" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PQC 101</div>
-            <div className="text-xs text-muted-foreground">
-              Foundational concepts behind NIST&apos;s standardization process
-            </div>
-          </div>
-        </Link>
-        <Link
-          to="/learn/pki-workshop"
-          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-        >
-          <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
-          <div>
-            <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-            <div className="text-xs text-muted-foreground">
-              Hands-on implementation of NIST-standardized PQ algorithms
-            </div>
-          </div>
-        </Link>
-      </div>
-    </section>
-
     <div className="text-center">
       <Button variant="gradient" size="lg" onClick={onNavigateToWorkshop}>
         Start Workshop <ArrowRight size={18} />

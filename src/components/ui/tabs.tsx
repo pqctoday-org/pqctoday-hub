@@ -3,6 +3,7 @@ import * as React from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { focusRing } from '@/components/storybook/variants'
 
 interface TabsContextValue {
   value: string
@@ -199,7 +200,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
             onKeyDown?.(e)
           }}
           className={cn(
-            'inline-flex h-10 items-center rounded-md bg-muted p-1 text-muted-foreground overflow-x-auto no-scrollbar w-full',
+            'inline-flex h-10 items-center rounded-full border-2 border-ink bg-card p-1 text-muted-foreground overflow-x-auto no-scrollbar w-full',
             isOverflowing ? 'justify-start' : 'justify-center',
             className
           )}
@@ -208,7 +209,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         {/* Left-edge scroll hint — mobile only, fades in once scrolled right of 0 */}
         <div
           className={cn(
-            'pointer-events-none absolute left-0 top-0 flex h-10 w-10 items-center justify-start bg-gradient-to-r from-muted to-transparent rounded-l-md transition-opacity duration-200 sm:hidden',
+            'pointer-events-none absolute left-0 top-0 flex h-10 w-8 items-center justify-start border-2 border-ink bg-card pl-1.5 rounded-l-full transition-opacity duration-200 sm:hidden',
             showLeftFade ? 'opacity-100' : 'opacity-0'
           )}
           aria-hidden="true"
@@ -218,7 +219,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         {/* Right-edge scroll hint — mobile only, fades out when scrolled to end */}
         <div
           className={cn(
-            'pointer-events-none absolute right-0 top-0 flex h-10 w-10 items-center justify-end bg-gradient-to-l from-muted to-transparent rounded-r-md transition-opacity duration-200 sm:hidden',
+            'pointer-events-none absolute right-0 top-0 flex h-10 w-8 items-center justify-end border-2 border-ink bg-card pr-1.5 rounded-r-full transition-opacity duration-200 sm:hidden',
             showFade ? 'opacity-100' : 'opacity-0'
           )}
           aria-hidden="true"
@@ -266,7 +267,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
             : undefined
         }
         className={cn(
-          'inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm min-h-[44px] md:min-h-0',
+          `inline-flex items-center justify-center whitespace-nowrap shrink-0 rounded-full px-3 py-1.5 text-sm font-bold transition-colors disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-highlight data-[state=active]:text-heading data-[state=active]:shadow-[inset_0_0_0_2px_hsl(var(--highlight-border))] min-h-[44px] md:min-h-0 ${focusRing}`,
           className
         )}
         data-state={isActive ? 'active' : 'inactive'}

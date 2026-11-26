@@ -39,7 +39,9 @@ const Step9OrgScale = ({ hideHeading = false, hideHints = false }: EmbeddedStepP
     <div className="space-y-6">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">What is your organizational scale?</h3>
+          <h3 className="text-xl font-bold font-display text-heading">
+            What is your organizational scale?
+          </h3>
           <p className="text-sm text-muted-foreground">
             Migration scope and team capacity directly affect timelines and effort.
           </p>
@@ -70,7 +72,9 @@ const Step9OrgScale = ({ hideHeading = false, hideHints = false }: EmbeddedStepP
       )}
 
       <div className="space-y-2">
-        <h4 className="text-sm font-semibold text-foreground">Systems using cryptography</h4>
+        <h4 className="text-sm font-semibold font-display text-heading">
+          Systems using cryptography
+        </h4>
         <div
           className="grid grid-cols-1 sm:grid-cols-2 gap-2"
           role="radiogroup"
@@ -97,7 +101,7 @@ const Step9OrgScale = ({ hideHeading = false, hideHints = false }: EmbeddedStepP
       </div>
 
       <div className="space-y-2">
-        <h4 className="text-sm font-semibold text-foreground">Engineering team size</h4>
+        <h4 className="text-sm font-semibold font-display text-heading">Engineering team size</h4>
         <div
           className="grid grid-cols-1 sm:grid-cols-2 gap-2"
           role="radiogroup"

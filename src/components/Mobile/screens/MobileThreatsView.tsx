@@ -147,7 +147,11 @@ const URGENCY_CONFIG: Record<Urgency, { label: string; color: string; bg: string
     bg: 'bg-destructive/10 border-destructive/20',
   },
   urgent: { label: 'URGENT', color: 'text-warning', bg: 'bg-warning/10 border-warning/20' },
-  planning: { label: 'PLANNING', color: 'text-success', bg: 'bg-success/10 border-success/20' },
+  planning: {
+    label: 'PLANNING',
+    color: 'text-success-legible',
+    bg: 'bg-success/10 border-success/20',
+  },
 }
 
 // Only the levels some row has — same rule as the desktop filter.
@@ -592,7 +596,7 @@ export function MobileThreatsView() {
           </p>
         </section>
       ) : (
-        <section className="mb-4 rounded-xl border border-border bg-muted/20 p-4">
+        <section className="glass-panel mb-4 p-4">
           <p className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">
             Mosca planning model
           </p>
@@ -607,7 +611,7 @@ export function MobileThreatsView() {
 
       <UnresolvedEstimatesNotice detail="oneFigure" className="mb-4" />
 
-      <section className="mb-4 rounded-xl border border-border bg-card p-4">
+      <section className="glass-panel mb-4 p-4">
         <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           CRQC year (Z)
         </p>
@@ -927,7 +931,7 @@ export function MobileThreatsView() {
                       <Link
                         to={std.deepLink}
                         title={std.title}
-                        className="inline-flex min-h-11 items-center gap-1 rounded-full border border-border bg-muted/40 px-3 text-[11.5px] font-medium text-foreground"
+                        className="inline-flex min-h-11 items-center gap-1 rounded-full px-3 text-[11.5px] bg-chip text-chip-foreground font-bold"
                       >
                         {std.id}
                       </Link>
@@ -1065,7 +1069,10 @@ function ThreatCardMobile({
   const clsDef = THREAT_CLASS_DEFS[cls]
 
   return (
-    <article data-deeplink-id={threat.threatId} className="glass-panel flex flex-col gap-2 p-3.5">
+    <article
+      data-deeplink-id={threat.threatId}
+      className="glass-panel rounded-2xl flex flex-col gap-2 p-3.5"
+    >
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="font-mono text-[10.5px] text-muted-foreground">{threat.threatId}</span>
         <ThreatRecordTypeBadge threat={threat} />

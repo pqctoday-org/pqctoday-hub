@@ -64,11 +64,13 @@ export function CSWP39SectionsNav({ onZoneSelect }: CSWP39SectionsNavProps) {
             {CSWP39_SECTIONS.map((section) => (
               <div
                 key={section.id}
-                className="rounded-md border border-border p-3 bg-background/40"
+                className="rounded-2xl border border-border p-3 bg-background/40"
               >
                 <div className="flex items-baseline gap-2">
                   <span className="text-sm font-bold text-primary">{section.ref}</span>
-                  <h4 className="text-sm font-semibold text-foreground">{section.title}</h4>
+                  <h4 className="text-sm font-semibold font-display text-heading">
+                    {section.title}
+                  </h4>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1.5">{section.summary}</p>
 

@@ -73,7 +73,7 @@ export function GrcApplicabilityView({
       </div>
 
       <section className="glass-panel p-4 space-y-2" aria-labelledby="grc-reasoning-lesson">
-        <h3 id="grc-reasoning-lesson" className="text-base font-semibold text-foreground">
+        <h3 id="grc-reasoning-lesson" className="text-base font-semibold font-display text-heading">
           Applicability reasoning lesson
         </h3>
         <p className="text-xs text-muted-foreground">
@@ -91,7 +91,7 @@ export function GrcApplicabilityView({
       <section data-section-id="grc-updates" className="glass-panel p-4 space-y-2 scroll-mt-20">
         <header className="flex items-center gap-2">
           <Calendar size={16} className="text-status-info" />
-          <h3 className="text-base font-semibold text-foreground">Recent revisions</h3>
+          <h3 className="text-base font-semibold font-display text-heading">Recent revisions</h3>
           <span className="text-xs text-muted-foreground">
             Compliance-CSV changes from the latest two revisions
           </span>
@@ -103,7 +103,9 @@ export function GrcApplicabilityView({
       <section data-section-id="grc-frameworks" className="space-y-2 scroll-mt-20">
         <header className="flex items-center gap-2">
           <ShieldAlert size={16} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">Applicability review queue</h3>
+          <h3 className="text-base font-semibold font-display text-heading">
+            Applicability review queue
+          </h3>
           <span className="text-xs text-muted-foreground">
             Sorted by data confidence (lowest first) — compare each catalogue summary with its
             source and identify what you would verify
@@ -116,7 +118,7 @@ export function GrcApplicabilityView({
             {sorted.map((r) => (
               <li
                 key={r.item.id}
-                className="glass-panel p-3 flex items-start justify-between gap-3"
+                className="glass-panel rounded-2xl p-3 flex items-start justify-between gap-3"
               >
                 <div className="min-w-0 flex-1">
                   <Button
@@ -197,7 +199,9 @@ export function GrcApplicabilityView({
         <section data-section-id="grc-derived" className="space-y-2 scroll-mt-20">
           <header className="flex items-center gap-2">
             <Link2 size={16} className="text-secondary" />
-            <h3 className="text-base font-semibold text-foreground">Derived via cross-walk</h3>
+            <h3 className="text-base font-semibold font-display text-heading">
+              Derived via cross-walk
+            </h3>
             <span className="text-xs text-muted-foreground">
               Frameworks reached via NIST IR 8477 relationships from your applicable set
             </span>
@@ -206,7 +210,7 @@ export function GrcApplicabilityView({
             {derivedFrameworks.map((d: DerivedResult) => (
               <li
                 key={d.standardId}
-                className="glass-panel p-2.5 flex items-center justify-between gap-2"
+                className="glass-panel rounded-2xl p-2.5 flex items-center justify-between gap-2"
               >
                 <span className="text-sm text-foreground truncate min-w-0">{d.standardLabel}</span>
                 <TrustPathPopover path={d.bestPath} standardLabel={d.standardLabel} />
@@ -221,7 +225,7 @@ export function GrcApplicabilityView({
         <section data-section-id="grc-library" className="space-y-2 scroll-mt-20">
           <header className="flex items-center gap-2">
             <BookOpen size={16} className="text-secondary" />
-            <h3 className="text-base font-semibold text-foreground">Source library</h3>
+            <h3 className="text-base font-semibold font-display text-heading">Source library</h3>
             <span className="text-xs text-muted-foreground">
               Documents cited by your applicable frameworks
             </span>
@@ -241,7 +245,9 @@ export function GrcApplicabilityView({
         <section data-section-id="grc-timeline" className="space-y-2 scroll-mt-20">
           <header className="flex items-center gap-2">
             <Calendar size={16} className="text-status-info" />
-            <h3 className="text-base font-semibold text-foreground">Cited timeline events</h3>
+            <h3 className="text-base font-semibold font-display text-heading">
+              Cited timeline events
+            </h3>
           </header>
           <ul className="space-y-1 min-w-0">
             {timeline.slice(0, 5).map((r, i) => (

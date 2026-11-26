@@ -45,7 +45,7 @@ describe('My work and update receipts stay out of Drive sync, embed snapshots an
   it('the watch lists hold neither store', () => {
     const keys = WATCHED_STORES.map((e) => e.key)
     expect(keys.filter((k) => /MyWork|Updates|Journey/i.test(k))).toEqual([])
-    expect(WATCHED_STORES.length).toBe(18)
+    expect(WATCHED_STORES.length).toBe(17)
   })
 
   it.each(SYNC_AND_SNAPSHOT_FILES)('%s does not name the stores or their storage keys', (rel) => {

@@ -65,7 +65,7 @@ function CategoryInfoButton({ category }: { category: AchievementCategory }) {
         <Info size={10} />
       </Button>
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-50 w-52 rounded-md border border-border bg-card p-2 shadow-lg text-[10px] text-muted-foreground leading-relaxed">
+        <div className="absolute left-0 top-full mt-1 z-50 w-52 bg-card p-2 text-[10px] text-muted-foreground leading-relaxed glass-panel rounded-2xl">
           <p className="font-semibold text-foreground mb-0.5">{CATEGORY_LABELS[category]} badges</p>
           {/* eslint-disable-next-line security/detect-object-injection */}
           <p>{CATEGORY_INFO[category]}</p>
@@ -107,7 +107,7 @@ export function AchievementBadgeGrid() {
   return (
     <div className="mt-3 pt-3 border-t border-border/50">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+        <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Achievements
         </p>
         <p className="text-[10px] text-muted-foreground">

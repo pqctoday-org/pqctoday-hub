@@ -19,7 +19,7 @@ export function RetiredThreatNotice({
   return (
     <div
       role="status"
-      className="mb-4 flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-sm text-foreground"
+      className="mb-4 flex items-start gap-2 rounded-2xl border border-border bg-muted/30 p-3 text-sm text-foreground"
     >
       <Archive size={16} className="mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true" />
       <p className="flex-1 leading-relaxed">{retiredThreatMessage(retired)}</p>

@@ -93,7 +93,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
   const content = (
     <>
       {/* Backdrop — dims background, existing mousedown handler closes on outside click */}
-      <div className="fixed inset-0 embed-backdrop bg-black/60 z-50" aria-hidden="true" />
+      <div className="fixed inset-0 embed-backdrop bg-scrim/60 z-50" aria-hidden="true" />
 
       {/* A-002: Focus trap for accessibility */}
       <FocusLock returnFocus>
@@ -129,7 +129,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 onClose()
               }
             }}
-            className="w-full max-h-[90dvh] md:max-h-[85dvh] rounded-t-2xl md:w-[80vw] md:max-w-[1200px] md:rounded-xl border border-border overflow-hidden flex flex-col bg-popover text-popover-foreground shadow-2xl pointer-events-auto"
+            className="w-full max-h-[90dvh] md:max-h-[85dvh] rounded-t-2xl md:w-[80vw] md:max-w-[1200px] md:rounded-xl overflow-hidden flex flex-col bg-popover text-popover-foreground pointer-events-auto glass-panel rounded-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="popover-title"
@@ -161,7 +161,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </div>
                   <h3
                     id="popover-title"
-                    className="text-lg font-bold text-foreground leading-tight"
+                    className="text-lg font-bold leading-tight font-display text-heading"
                   >
                     {item.documentTitle?.trim()}
                   </h3>
@@ -223,7 +223,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                 {/* Description */}
                 <div>
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  <h4 className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     Description
                   </h4>
                   <p className="text-sm text-foreground leading-relaxed">
@@ -256,7 +256,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     }))
                     .filter((g) => g.items.length > 0)
                   return (
-                    <div className="glass-panel p-3">
+                    <div className="glass-panel rounded-2xl p-3">
                       <Button
                         variant="ghost"
                         onClick={() => setCswp39Open((o) => !o)}
@@ -398,14 +398,14 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 {/* Previous revisions — older editions collapsed into this tile */}
                 {item.priorRevisions && item.priorRevisions.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    <h4 className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Previous revisions ({item.priorRevisions.length})
                     </h4>
                     <ul className="space-y-2">
                       {item.priorRevisions.map((rev) => (
                         <li
                           key={rev.referenceId}
-                          className="glass-panel p-2.5 flex items-start justify-between gap-2"
+                          className="glass-panel rounded-2xl p-2.5 flex items-start justify-between gap-2"
                         >
                           <div className="min-w-0">
                             <p
@@ -450,9 +450,9 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
               <div className="space-y-4 order-1 md:order-2 md:sticky md:top-0">
                 {/* Metadata Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 p-3 bg-muted/20 border border-border rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 p-3 bg-muted/20 border border-border rounded-2xl">
                   <div className="flex flex-row items-baseline gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Status:
                     </h4>
                     <p className="text-sm text-foreground font-medium">
@@ -461,7 +461,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </div>
 
                   <div className="flex flex-row items-baseline gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Authors:
                     </h4>
                     <p className="text-sm text-foreground break-words line-clamp-3">
@@ -470,7 +470,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </div>
 
                   <div className="flex flex-row items-center gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Published:
                     </h4>
                     <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -482,7 +482,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </div>
 
                   <div className="flex flex-row items-center gap-2">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       Catalog updated:
                     </h4>
                     <div className="flex items-center gap-1.5 text-foreground text-sm">
@@ -493,7 +493,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                   {item.regionScope && (
                     <div className="flex flex-row items-baseline gap-2">
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                      <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                         Region:
                       </h4>
                       <p className="text-sm text-foreground">{item.regionScope?.trim()}</p>
@@ -502,7 +502,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                   {item.migrationUrgency && (
                     <div className="flex flex-row items-baseline gap-2">
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                      <h4 className="uppercase shrink-0 w-20 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                         Urgency:
                       </h4>
                       <p className="text-sm text-foreground">{item.migrationUrgency?.trim()}</p>
@@ -511,7 +511,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
                   {item.applicableIndustries && (
                     <div className="flex flex-col gap-1 mt-1 col-span-full">
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                         Industries:
                       </h4>
                       <p className="text-sm text-foreground break-words">
@@ -531,7 +531,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                       target="_blank"
                       rel="noopener noreferrer"
                       title={sourceAction.description}
-                      className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 text-sm font-bold rounded-lg transition-all duration-200"
+                      className="inline-flex items-center justify-center gap-2 w-full min-h-[44px] rounded-full border-2 border-ink bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none transition-colors"
                     >
                       <ExternalLink size={16} />
                       {sourceAction.label}
@@ -542,14 +542,14 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
             </div>
 
             {/* Mobile Sticky Footer */}
-            <div className="md:hidden sticky bottom-0 left-0 right-0 p-3 bg-popover/90 backdrop-blur-md border-t border-border flex items-center justify-between gap-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 z-10 w-[calc(100%+1px)] -ml-[0.5px]">
+            <div className="md:hidden sticky bottom-0 left-0 right-0 p-3 bg-popover border-t-2 border-ink flex items-center justify-between gap-2 shrink-0 z-10 w-[calc(100%+1px)] -ml-[0.5px]">
               {sourceAction.href && (
                 <a
                   href={sourceAction.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={sourceAction.description}
-                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 truncate"
+                  className="flex-1 flex items-center justify-center gap-2 min-h-[44px] rounded-full border-2 border-ink bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none transition-colors truncate"
                 >
                   <ExternalLink size={16} className="shrink-0" />
                   <span className="truncate">{sourceAction.label}</span>

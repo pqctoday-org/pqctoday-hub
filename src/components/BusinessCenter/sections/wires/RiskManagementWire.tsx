@@ -58,10 +58,10 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
 
   if (status === 'not-started') {
     return (
-      <div className="rounded-lg border border-dashed border-border bg-muted/20 p-3 flex items-start gap-3">
+      <div className="rounded-2xl border border-dashed border-border bg-muted/20 p-3 flex items-start gap-3">
         <Activity size={18} className="text-muted-foreground shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-semibold text-foreground">No assessment run yet</h4>
+          <h4 className="text-sm font-semibold font-display text-heading">No assessment run yet</h4>
           <p className="text-xs text-muted-foreground mt-0.5">
             A sample risk assessment helps organise risk inputs and framework review prompts.
           </p>
@@ -79,7 +79,9 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
       <div className="rounded-lg border border-status-warning/30 bg-status-warning/5 p-3 flex items-start gap-3">
         <Activity size={18} className="text-status-warning shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-semibold text-foreground">Assessment in progress</h4>
+          <h4 className="text-sm font-semibold font-display text-heading">
+            Assessment in progress
+          </h4>
           <p className="text-xs text-muted-foreground mt-0.5">
             Resume the wizard to complete the sample risk inputs and framework review prompts.
           </p>
@@ -102,7 +104,7 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
       : null
 
   return (
-    <div className="rounded-lg border border-border bg-card/50 p-3 flex items-center gap-3 flex-wrap max-md:flex-col max-md:items-start">
+    <div className="rounded-2xl border border-border bg-card/50 p-3 flex items-center gap-3 flex-wrap max-md:flex-col max-md:items-start">
       <Activity size={18} className="text-primary shrink-0" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
@@ -197,7 +199,7 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
 
   if (metrics.trackedFrameworks.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-border bg-muted/10 p-3">
+      <div className="rounded-2xl border border-dashed border-border bg-muted/10 p-3">
         <div className="flex items-start gap-2">
           <Calendar size={16} className="text-muted-foreground shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground inline-flex items-center gap-1 flex-wrap">

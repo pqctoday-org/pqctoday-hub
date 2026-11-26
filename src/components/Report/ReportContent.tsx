@@ -471,7 +471,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       clear affordance back to the full report. Hidden in print. */}
                     {activePhaseDef && (
                       <div
-                        className="glass-panel p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-primary"
+                        className="glass-panel rounded-2xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-primary"
                         data-testid="report-phase-header"
                       >
                         <div className="flex items-start gap-2 text-sm">
@@ -502,7 +502,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 
                     {/* Summary / full report toggle (shown when persona hides sections) */}
                     {hasSummaryMode && !showFullReport && (
-                      <div className="glass-panel p-3 flex items-center justify-between print:hidden">
+                      <div className="glass-panel rounded-2xl p-3 flex items-center justify-between print:hidden">
                         <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                           <Briefcase size={14} className="text-primary" />
                           Showing summary view
@@ -517,7 +517,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                       </div>
                     )}
                     {hasSummaryMode && showFullReport && (
-                      <div className="glass-panel p-3 flex items-center justify-between print:hidden">
+                      <div className="glass-panel rounded-2xl p-3 flex items-center justify-between print:hidden">
                         <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                           <Briefcase size={14} className="text-primary" />
                           Showing full technical report
@@ -911,7 +911,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         )
                         if (hidden.length === 0) return null
                         return (
-                          <div className="glass-panel p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-muted-foreground/30">
+                          <div className="glass-panel rounded-2xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-muted-foreground/30">
                             <div className="text-xs text-muted-foreground leading-relaxed">
                               <span className="font-medium text-foreground">
                                 {hidden.length} section{hidden.length !== 1 ? 's' : ''} hidden

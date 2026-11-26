@@ -143,7 +143,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-start justify-center bg-black/60 px-4 pt-[12vh]">
+    <div className="fixed inset-0 z-[70] flex items-start justify-center bg-scrim/60 px-4 pt-[12vh]">
       <Button
         variant="ghost"
         onClick={onClose}
@@ -156,7 +156,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           role="dialog"
           aria-modal="true"
           aria-label="Command palette"
-          className="relative glass-panel w-[640px] max-w-full overflow-hidden rounded-2xl shadow-glow"
+          className="glass-panel relative w-[640px] max-w-full overflow-hidden"
         >
           {/* Search row */}
           <div className="flex items-center gap-2.5 border-b border-border px-4">

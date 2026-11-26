@@ -6,7 +6,6 @@ import { useOverlayEscape } from '@/hooks/useOverlayEscape'
 import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
-import { useModelAssistantFallback } from '@/services/featureFlags'
 import { useEmbedState } from '@/embed/EmbedProvider'
 import { AssistantConversation } from '../Assistant/AssistantConversation'
 import { COPY } from '../Assistant/copy'
@@ -35,12 +34,6 @@ const WorkshopPanel = React.lazy(() =>
   import('./WorkshopPanel').then((m) => ({ default: m.WorkshopPanel }))
 )
 
-// The old model chat. Reached only through the hidden rollback switch, and loaded only then: the
-// default path never fetches this file or the model services it imports.
-const LegacyChatPanel = React.lazy(() =>
-  import('./ChatPanelContent').then((m) => ({ default: m.ChatPanelContent }))
-)
-
 const Spinner = (
   <div className="flex-1 flex items-center justify-center">
     <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -59,7 +52,6 @@ export const RightPanel: React.FC = () => {
   // comes back, with its answer, when the dialog closes or "Back to your answer" is used.
   const pageDialogOpen = usePageModal(isOpen && !sheet) !== null
   const stepBehind = !sheet && pageDialogOpen
-  const modelFallback = useModelAssistantFallback()
   const embedState = useEmbedState()
   const assistantTitle = embedState.isEmbedded
     ? (embedState.policy?.features?.assistantTitle ?? COPY.title)
@@ -157,17 +149,9 @@ export const RightPanel: React.FC = () => {
               title={title}
               activeTab={activeTab}
               onClose={sheet && !workshopActive ? close : undefined}
-              showObjective={!modelFallback}
             />
             <div className="flex min-h-0 flex-1 flex-col">
-              {activeTab === 'chat' &&
-                (modelFallback ? (
-                  <React.Suspense fallback={Spinner}>
-                    <LegacyChatPanel />
-                  </React.Suspense>
-                ) : (
-                  <AssistantConversation />
-                ))}
+              {activeTab === 'chat' && <AssistantConversation />}
               {activeTab === 'workshop' && (
                 <React.Suspense fallback={Spinner}>
                   <WorkshopPanel />

@@ -566,14 +566,14 @@ export function AlgorithmsView({
       {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
       {(filterStatus === 'candidate' || filterStatus === 'Candidate') && (
         <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
-          <Info size={16} className="text-info shrink-0 mt-0.5" />
+          <Info size={16} className="text-info-legible shrink-0 mt-0.5" />
           <p className="text-xs text-foreground/85 leading-relaxed">
             These are NIST Additional Signatures Round 3 candidates, not yet standardised. To
             understand the standardisation lifecycle — the four math families, the cryptanalysis
             events, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC) — see the{' '}
             <Link
               to="/learn/pqc-candidates"
-              className="text-info hover:underline font-semibold inline-flex items-center gap-1"
+              className="text-info-legible hover:underline font-semibold inline-flex items-center gap-1"
             >
               PQC Candidates &amp; Standardisation Lifecycle <ArrowRight size={11} />
             </Link>{' '}
@@ -734,7 +734,7 @@ export function AlgorithmsView({
       {/* Curious preview — hide the heavy comparison tables until they explicitly unlock */}
       {isCuriousPreview && (
         <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6 md:p-8">
-          <h2 className="text-xl md:text-2xl font-bold text-gradient mb-3">
+          <h2 className="text-xl md:text-2xl font-bold font-display text-heading mb-3">
             {algorithmData.length || 'Dozens of'} catalogue entries — three common starting points
           </h2>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">

@@ -70,7 +70,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
 
   return (
     <div className="mt-4 pt-4 border-t border-border space-y-4">
-      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+      <h4 className="uppercase flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
         <Tag size={12} aria-hidden="true" />
         Extracted study notes
       </h4>
@@ -84,7 +84,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
       {/* Phase Classification Rationale */}
       {phaseClassification && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+          <p className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Phase Rationale
           </p>
           <p className="text-sm text-foreground leading-relaxed italic border-l-2 border-primary/30 pl-3">
@@ -98,7 +98,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
         <div className="flex flex-wrap gap-3">
           {mandateLevel && (
             <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+              <p className="uppercase mb-1 flex items-center gap-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 <AlertTriangle size={10} aria-hidden="true" />
                 Reported mandate characterization
               </p>
@@ -111,7 +111,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
           )}
           {migrationUrgency && (
             <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+              <p className="uppercase mb-1 flex items-center gap-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 <Clock size={10} aria-hidden="true" />
                 Reported migration urgency
               </p>
@@ -128,7 +128,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
       {/* Sector / Industry Applicability */}
       {sectorApplicability && sectorApplicability.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+          <p className="uppercase mb-1.5 flex items-center gap-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             <Building2 size={10} aria-hidden="true" />
             Possible sector relevance
           </p>
@@ -148,7 +148,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
       {/* Phase Transition Narrative */}
       {phaseTransition && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+          <p className="uppercase mb-1 flex items-center gap-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             <GitBranch size={10} aria-hidden="true" />
             Phase Transition
           </p>
@@ -159,7 +159,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
       {/* Historical Significance */}
       {historicalSignificance && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+          <p className="uppercase mb-1 flex items-center gap-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             <Star size={10} aria-hidden="true" />
             Historical Significance
           </p>
@@ -170,7 +170,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
       {/* Implementation Timeline Dates */}
       {implementationDates && implementationDates.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+          <p className="uppercase mb-1.5 flex items-center gap-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             <CalendarClock size={10} aria-hidden="true" />
             Dates mentioned in the source
           </p>
@@ -190,7 +190,7 @@ export function TimelineAnalysisPanel({ enrichment }: TimelineAnalysisPanelProps
       {/* Successor Events & Dependencies */}
       {successorDependencies && (
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
+          <p className="uppercase mb-1 flex items-center gap-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             <Link2 size={10} aria-hidden="true" />
             Dependencies & Successors
           </p>

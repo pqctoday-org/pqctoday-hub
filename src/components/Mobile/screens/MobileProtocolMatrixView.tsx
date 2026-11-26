@@ -271,7 +271,7 @@ export function MobileProtocolMatrixView() {
             type="button"
             variant="ghost"
             onClick={() => openProtocol(row)}
-            className="h-auto flex-col items-start gap-1.5 whitespace-normal rounded-lg border border-border bg-card p-3 text-left"
+            className="h-auto flex-col items-start gap-1.5 whitespace-normal rounded-2xl border border-border bg-card p-3 text-left"
           >
             <span className="text-[12.5px] font-bold text-foreground">{row.name}</span>
             <div className="flex flex-wrap gap-1">
@@ -425,7 +425,7 @@ export function MobileProtocolMatrixView() {
             })}
             {(selected.implementationAvailability?.length ?? 0) > 0 && (
               <section aria-label="Vendor implementation availability" className="space-y-2">
-                <h3 className="text-sm font-semibold text-foreground">
+                <h3 className="text-sm font-semibold font-display text-heading">
                   Vendor availability ({selected.implementationAvailability?.length})
                 </h3>
                 <p className="text-xs text-muted-foreground">

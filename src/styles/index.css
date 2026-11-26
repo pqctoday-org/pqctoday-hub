@@ -87,7 +87,7 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
-  /* Storybook Blue tokens (style addendum section 4). Defined per mode in
+  /* Storybook Blue tokens. Defined per mode in
      :root and .dark below; these make them Tailwind colours (`bg-ink`,
      `border-ink`, `text-heading`, `bg-highlight`, `bg-chip`, `bg-ribbon`, ...). */
   --color-ink: hsl(var(--ink));
@@ -99,6 +99,8 @@
   --color-chip-foreground: hsl(var(--chip-foreground));
   --color-ribbon: hsl(var(--ribbon));
   --color-logo-tile: hsl(var(--logo-tile));
+  /* Overlay behind modals and drawers: use as `bg-scrim/60`. */
+  --color-scrim: hsl(var(--scrim));
   --color-caution: hsl(var(--caution));
   --color-caution-foreground: hsl(var(--caution-foreground));
 
@@ -142,7 +144,7 @@
   --color-embed-table-row: var(--embed-table-row-bg, var(--color-background));
   --color-embed-text: var(--embed-text-color, var(--color-foreground));
 
-  /* Storybook Blue type (style addendum section 3). Nunito is the text face and
+  /* Storybook Blue type. Nunito is the text face and
      the default; Fredoka is the display face, used through `font-display`. */
   --font-family-sans: 'Nunito', Arial, sans-serif;
   /* Tailwind v4 `font-sans` utility + preflight default. Mirrors
@@ -307,7 +309,7 @@
      still fail and is patched at the call site with the `-legible` variants.
      Dark mode is deliberately untouched — it already passes. */
 
-    /* STORYBOOK BLUE, 2026-11-25 (style addendum 24 Nov 2026, section 4). The
+    /* STORYBOOK BLUE, 2026-11-25. The
        brand's own palette: ground #F8FAFC, warm ink #2A2620, card #FDFEFF (never
        pure white), teal #066474, violet #6E42F0. Values are HSL channels computed
        from those hex codes; the hex code is the source of truth. */
@@ -367,8 +369,11 @@
     /* 2026-11-13: darker with the darker --accent, so its /10-/20 tints
        clear 4.5:1 (worst 4.72:1 on /20; the /15 tint was 4.39:1). */
     --accent-legible: 153 60% 26%;
-    --success-legible: 142.1 76.2% 26%;
-    --warning-legible: 38 92% 30%;
+    /* 2026-11-25: 26% measured 3.6:1 on the success/30 tint and 30% measured 4.0:1 on
+       the warning/20 tint (protocol chips). 21% and 26% give 4.9:1 on those tints and
+       more on the ground, card and muted. */
+    --success-legible: 142.1 76.2% 21%;
+    --warning-legible: 38 92% 26%;
     /* a11y (WS9, 2026-08-02): 53% lightness gave 4.39:1 on the light page
        background — just under the 4.5:1 WCAG AA floor, so `.text-status-info`
        failed axe at 12px. 50% gives 4.83:1. This token exists precisely to be
@@ -453,17 +458,18 @@
     --graph-vendor: 180 60% 30%;
     --stack-mix-base: white;
 
-    /* Storybook Blue tokens (light). Names and uses: style addendum section 4. */
+    /* Storybook Blue tokens (light): outline, heading, offset edge, selected fill and border, chip, ribbon, caution. */
     --ink: 36 13.5% 14.5%; /* #2A2620 outlines of sticker cards, pills, chips, inputs */
     --heading: 188.7 90.2% 23.9%; /* #066474 headings, eyebrow labels, wordmark */
     --edge: 202.5 31.4% 80%; /* #BCD0DC offset edge under sticker cards and primary buttons */
     --highlight: 255 92.3% 94.9%; /* #ECE6FE selected or current item */
-    --highlight-border: 254.7 76.8% 86.5%; /* #CFC2F7 */
+    --highlight-border: 255 70% 64%; /* violet; 3:1 or more on the card, ground and highlight fill so a selected item is seen */
     --chip: 189.6 39.7% 87.6%; /* #D3E8EC chips and icon badges */
     --chip-foreground: 189 87% 18%; /* #064A56 */
     --ribbon: 201.8 45.8% 90.6%; /* #DCEAF2 eyebrow pills on the main ground */
     --caution: 40 51.7% 88.6%; /* #F1E7D3 the caution pill */
     --caution-foreground: 33.6 24.8% 19.8%; /* #3F3426 */
+    --scrim: 36 13.5% 14.5%; /* overlay behind modals and drawers (the ink colour) */
     /* The tile the brand logo sits on: the pale ground #F8FAFC the light logo was drawn on.
        Dark mode uses the dark logo on its own navy (see .dark). */
     --logo-tile: 210 40% 98%;
@@ -471,7 +477,7 @@
 
   /* Dark Mode Overrides */
   .dark {
-    /* STORYBOOK BLUE dark set, 2026-11-25 (style addendum section 5). PROPOSED:
+    /* STORYBOOK BLUE dark set, 2026-11-25. PROPOSED:
        the brand defines no dark palette; the owner approves these after looking
        at real pages. Deep teal-black ground #0E1B20, card #13252B, soft teal
        primary #6CCAD3, no pure black or white. */
@@ -536,7 +542,7 @@
     /* Storybook Blue 2026-11-25: 36.3% measured 4.3:1 on the new muted and
        highlight fills (4.8:1 on the card). 40% (lightness only) gives 5.2:1 on
        those and 5.8:1 on the card. */
-    --success-legible: 142.1 76.2% 40%;
+    --success-legible: 142.1 76.2% 43%;
     /* Critical — brighter magenta-red for dark mode legibility. */
     --critical: 335 90% 58%;
     --critical-foreground: 210 40% 98%;
@@ -588,12 +594,13 @@
     --heading: 184.3 53% 74.1%; /* #9ADBE0 */
     --edge: 190.1 76.3% 18.2%; /* #0B4652 deep teal under cards */
     --highlight: 247 36.8% 22.9%; /* #2A2550 */
-    --highlight-border: 249.4 40.8% 49%; /* #5A4AB0 */
+    --highlight-border: 250 55% 65%; /* 3:1 or more on the card, ground and highlight fill */
     --chip: 191.1 38.8% 19.2%; /* #1E3D44 */
     --chip-foreground: 185.6 50.6% 83.3%; /* #BFE6EA */
     --ribbon: 196.7 39.1% 18%; /* #1C3640 */
     --caution: 39.4 38.1% 16.5%; /* #3A2F1A */
     --caution-foreground: 37.9 75.7% 77.5%; /* #F1D19A */
+    --scrim: 197 45% 5%; /* overlay behind modals and drawers: deeper than the ground */
     --logo-tile: 222 74% 10.6%; /* #07132F the dark logo's own navy ground */
   }
 
@@ -740,7 +747,17 @@
       --heading: 188.7 90.2% 23.9%;
       --edge: 202.5 31.4% 80%;
       --highlight: 255 92.3% 94.9%;
-      --highlight-border: 254.7 76.8% 86.5%;
+      --highlight-border: 255 70% 64%;
+      /* Print forces the light values of the text-legible colours too, so dark mode
+         printed on white keeps its contrast. */
+      --primary-legible: 189 90% 25%;
+      --accent-legible: 153 60% 26%;
+      --success-legible: 142.1 76.2% 21%;
+      --warning-legible: 38 92% 26%;
+      --info-legible: 217 91% 44%;
+      --destructive-legible: 0 84.2% 34%;
+      --tertiary-legible: 270 95% 50%;
+      --critical: 340 85% 38%;
       --chip: 189.6 39.7% 87.6%;
       --chip-foreground: 189 87% 18%;
       --ribbon: 201.8 45.8% 90.6%;
@@ -858,9 +875,17 @@
     padding-top: env(safe-area-inset-top);
   }
 
+  /* Sticker card: ink outline, large radius, flat offset edge.
+     A card inside another card, or one given `glass-panel-row`, is a plain bordered row. */
   .glass-panel {
-    @apply bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl;
-    -webkit-backdrop-filter: blur(0.75rem);
+    @apply bg-card border-2 border-ink rounded-3xl;
+    box-shadow: 0 6px 0 hsl(var(--edge));
+  }
+
+  .glass-panel .glass-panel,
+  .glass-panel-row {
+    @apply border border-border rounded-2xl;
+    box-shadow: none;
   }
 
   /* Brand logo: the light and dark images are both in the page; the theme class picks one. */
@@ -880,16 +905,18 @@
     outline: 1px solid hsl(var(--border));
   }
 
+  /* Kept as a name for existing call sites: a heading-coloured title, no gradient. */
   .text-gradient {
-    @apply bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent;
+    @apply text-heading;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-secondary to-primary text-black font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5;
+    @apply bg-primary text-primary-foreground font-bold py-3 px-6 rounded-full border-2 border-ink transition-colors duration-200 hover:bg-primary/90;
+    box-shadow: 0 4px 0 hsl(var(--edge));
   }
 
   .btn-secondary {
-    @apply bg-transparent border border-primary text-primary font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:bg-primary/10 hover:translate-y-0.5;
+    @apply bg-card text-card-foreground border-2 border-ink font-bold py-3 px-6 rounded-full transition-colors duration-200 hover:bg-muted;
   }
 
   /* Make all select dropdown options opaque for readability */
@@ -1254,4 +1281,13 @@
 code:not(pre code) {
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+/* In the utilities layer, with two classes of specificity, so it beats Tailwind's own `text-success`. */
+@layer utilities {
+  /* `--success` is the dark green fill in both modes, so plain `text-success` is 2.3:1 on
+     the dark page; in dark mode it takes the legible green. */
+  .dark .text-success {
+    color: hsl(var(--success-legible));
+  }
 }

@@ -1,21 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
-import { Link } from 'react-router'
-import {
-  Atom,
-  Calculator,
-  Search,
-  Clock,
-  Shield,
-  PenLine,
-  ArrowRight,
-  BarChart3,
-  Target,
-  Calendar,
-  ClipboardCheck,
-  Coins,
-} from 'lucide-react'
+import { Atom, Calculator, Search, Clock, Shield, PenLine, ArrowRight } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
@@ -476,73 +462,6 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <strong>Re-issuance Deadline = CRQC Year &minus; Re-issuance Time</strong>. Use the Step
             5 workshop to calculate your credential migration window.
           </p>
-        </div>
-      </section>
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/threats"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Target size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Threat Dashboard</div>
-              <div className="text-xs text-muted-foreground">
-                Industry-specific quantum risks &amp; PQC replacements
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/algorithms"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <BarChart3 size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
-              <div className="text-xs text-muted-foreground">
-                Compare key sizes, security levels &amp; performance
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/timeline"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Calendar size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Migration Timeline</div>
-              <div className="text-xs text-muted-foreground">
-                NIST milestones, country deadlines &amp; standardization
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/assess"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <ClipboardCheck size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Risk Assessment</div>
-              <div className="text-xs text-muted-foreground">
-                Assess your organization&apos;s quantum readiness
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/digital-assets"
-            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
-          >
-            <Coins size={16} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Digital Assets</div>
-              <div className="text-xs text-muted-foreground">
-                Blockchain &amp; cryptocurrency quantum vulnerabilities
-              </div>
-            </div>
-          </Link>
         </div>
       </section>
 

@@ -85,7 +85,7 @@ export function PhaseCompletionToast() {
           transition={{ duration: 0.3, ease: 'easeOut' }}
           role="status"
           aria-live="polite"
-          className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-4 left-4 z-[90] max-w-sm glass-panel border border-primary/30 p-4 shadow-lg`}
+          className={`${isEmbedded ? 'absolute' : 'fixed'} glass-panel bottom-4 left-4 z-[90] max-w-sm p-4`}
         >
           <Button
             variant="ghost"

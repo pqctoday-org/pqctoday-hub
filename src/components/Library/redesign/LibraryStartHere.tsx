@@ -28,7 +28,7 @@ export function LibraryStartHere({ persona, onOpen }: LibraryStartHereProps) {
     <section
       aria-label={`Start here — picked for ${personaLabel}`}
       data-testid="library-start-here"
-      className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/[0.07] to-secondary/[0.05] p-3.5"
+      className="rounded-3xl border-2 border-highlight-border bg-highlight p-3.5 shadow-[0_6px_0_hsl(var(--edge))]"
     >
       <div className="mb-2.5 flex items-center gap-1.5">
         <Star size={15} className="text-primary" aria-hidden="true" />

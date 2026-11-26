@@ -19,7 +19,7 @@ export function MobileUnderstandingCheckCard({
     <section
       aria-label="Check your understanding"
       data-testid="understanding-check"
-      className="rounded-xl border border-border bg-card p-3.5"
+      className="glass-panel p-3.5"
     >
       <div className="flex items-center gap-2">
         <GraduationCap size={15} className="shrink-0 text-primary" aria-hidden="true" />

@@ -47,7 +47,7 @@ export function WorkshopSearchMatches({
   const expanded = expandedSearch === term
   const shown = expanded ? results : results.slice(0, VISIBLE_LIMIT)
   return (
-    <section aria-labelledby={headingId} className="space-y-2 rounded-xl border border-border p-3">
+    <section aria-labelledby={headingId} className="space-y-2 rounded-2xl border border-border p-3">
       <h2 id={headingId} className="font-semibold">
         Matching workshop steps
       </h2>

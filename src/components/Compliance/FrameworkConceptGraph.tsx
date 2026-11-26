@@ -326,7 +326,9 @@ export function FrameworkConceptGraph({
         className="border-t border-border p-4 space-y-3"
         aria-label="Recorded relationships and generated context"
       >
-        <h4 className="text-sm font-semibold">Relationships in this view</h4>
+        <h4 className="text-sm font-semibold font-display text-heading">
+          Relationships in this view
+        </h4>
         <p className="text-xs text-muted-foreground">
           These are recorded Hub mappings and generated context links for learning. A relationship
           label, reference or model confidence index does not establish legal equivalence,
@@ -339,7 +341,7 @@ export function FrameworkConceptGraph({
             return (
               <li
                 key={edge.id}
-                className="rounded-lg border border-border p-3 space-y-1 text-xs break-words"
+                className="rounded-2xl border border-border p-3 space-y-1 text-xs break-words"
               >
                 <p>
                   <span className="font-medium">From:</span> {from}

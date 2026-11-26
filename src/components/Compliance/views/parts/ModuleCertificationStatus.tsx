@@ -54,7 +54,9 @@ export const ModuleCertificationStatus: React.FC<Props> = ({ records, closingNot
     >
       <header className="flex items-center gap-2 flex-wrap">
         <ShieldCheck size={16} className="text-primary" />
-        <h3 className="text-base font-semibold text-foreground">Module certification landscape</h3>
+        <h3 className="text-base font-semibold font-display text-heading">
+          Module certification landscape
+        </h3>
         <span className="text-xs text-muted-foreground">
           Current FIPS 140-3 / NIST CAVP / CC / CSPN records in the published snapshot
         </span>

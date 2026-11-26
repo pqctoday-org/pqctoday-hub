@@ -74,7 +74,7 @@ export const LiveHSMToggle = ({
 
   if (hsm.phase === 'loading') {
     return (
-      <div className={`glass-panel p-3 ${className}`}>
+      <div className={`glass-panel rounded-2xl p-3 ${className}`}>
         <div className="flex items-center gap-2">
           <Loader2 size={14} className="text-primary animate-spin shrink-0" />
           <div>
@@ -93,7 +93,7 @@ export const LiveHSMToggle = ({
   if (hsm.phase === 'error') {
     return (
       <div
-        className={`glass-panel p-3 border border-status-error/30 bg-status-error/5 ${className}`}
+        className={`glass-panel rounded-2xl border-destructive-legible p-3 bg-status-error/5 ${className}`}
       >
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-start gap-2 min-w-0">
@@ -123,7 +123,7 @@ export const LiveHSMToggle = ({
   if (hsm.phase === 'session_open') {
     return (
       <div
-        className={`glass-panel p-3 border border-status-success/20 bg-status-success/5 ${className}`}
+        className={`glass-panel rounded-2xl border-success-legible p-3 bg-status-success/5 ${className}`}
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
@@ -153,7 +153,7 @@ export const LiveHSMToggle = ({
   // ── Idle — show engine selector + enable prompt ──────────────────────────────
 
   return (
-    <div className={`glass-panel p-3 ${className}`}>
+    <div className={`glass-panel rounded-2xl p-3 ${className}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2 min-w-0 flex-1">
           <Shield size={14} className="text-primary shrink-0 mt-0.5" />

@@ -54,7 +54,7 @@ export function DiscoverySection({
         </p>
 
         {algorithmUnknown ? (
-          <div className="glass-panel p-3 border-l-4 border-l-warning">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-warning">
             <p className="text-sm text-foreground font-medium">
               You told us your cryptography isn&apos;t inventoried yet.
             </p>
@@ -65,14 +65,16 @@ export function DiscoverySection({
           </div>
         ) : (
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-2">Your starting inventory</h4>
+            <h4 className="text-sm font-semibold mb-2 font-display text-heading">
+              Your starting inventory
+            </h4>
             {specific || categories ? (
               <>
                 <div className="flex flex-wrap gap-1.5">
                   {(specific ?? categories ?? []).map((item) => (
                     <span
                       key={item}
-                      className="text-xs px-2 py-1 rounded-full bg-muted/30 text-foreground border border-border"
+                      className="text-xs px-2 py-1 rounded-full bg-chip text-chip-foreground font-bold"
                     >
                       {item}
                     </span>

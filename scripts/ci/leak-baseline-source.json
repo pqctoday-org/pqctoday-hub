@@ -122,7 +122,7 @@
       "session-handle": 26
     },
     "public/threats/claim-status.json": {
-      "run-id": 189
+      "run-id": 169
     },
     "public/threats/manifest.json": {
       "evidence-cache": 1,
@@ -135,11 +135,7 @@
       "home-path": 2
     },
     "public/wasm/wasm-provenance.json": {
-      "decision-citation": 12,
-      "private-repo": 25
-    },
-    "scripts/ci/check-tool-version-bump.ts": {
-      "private-repo": 1
+      "decision-citation": 10
     },
     "scripts/ci/trust-artifacts.json": {
       "private-repo": 1
@@ -344,9 +340,6 @@
     "src/data/moduleStandardsOrdering.driftguard.test.ts": {
       "private-repo": 3
     },
-    "src/data/pqcAlgorithmsData.ts": {
-      "private-repo": 1
-    },
     "src/data/pqc_software_category_priority_matrix.csv": {
       "private-repo": 63
     },
@@ -357,11 +350,8 @@
       "home-path": 1
     },
     "src/data/roiBaselines.ts": {
-      "evidence-cache": 4,
-      "private-repo": 5
-    },
-    "src/data/role_board_ctas_#.csv": {
-      "decision-citation": 1
+      "evidence-cache": 3,
+      "private-repo": 4
     },
     "src/data/role_board_variants_#.csv": {
       "decision-citation": 1
@@ -375,9 +365,6 @@
     },
     "src/data/validation/vector-manifest.json": {
       "private-repo": 3
-    },
-    "src/services/chat/factVerification.ts": {
-      "private-repo": 1
     },
     "src/services/search/embeddingRetrieval.ts": {
       "private-repo": 1

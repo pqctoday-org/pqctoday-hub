@@ -12,10 +12,6 @@ import {
   Wrench,
   Scale,
   ArrowRight,
-  Cpu,
-  GitBranch,
-  Key,
-  Clock,
   Route,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -944,61 +940,6 @@ export const OTPQCIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWor
         </div>
       </div>
 
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {[
-            {
-              to: '/learn/iot-pqc',
-              icon: Cpu,
-              title: 'IoT & Embedded Device PQC',
-              sub: 'Constrained devices, smart-meter fleets and LPWAN',
-            },
-            {
-              to: '/learn/stateful-signatures',
-              icon: GitBranch,
-              title: 'Stateful Signatures',
-              sub: 'LMS and XMSS state management in depth',
-            },
-            {
-              to: '/learn/secure-boot-pqc',
-              icon: FileSignature,
-              title: 'Secure Boot PQC',
-              sub: 'Bootloader verification of PQC firmware signatures',
-            },
-            {
-              to: '/learn/hsm-pqc',
-              icon: Key,
-              title: 'HSM & PQC',
-              sub: 'Where OT signing keys and their state should live',
-            },
-            {
-              to: '/learn/vpn-ssh-pqc',
-              icon: DoorOpen,
-              title: 'VPN & SSH PQC',
-              sub: 'Hybrid key exchange for remote access and overlays',
-            },
-            {
-              to: '/learn/migration-program',
-              icon: Clock,
-              title: 'Migration Program',
-              sub: 'Multi-year programme governance for critical infrastructure',
-            },
-          ].map((r) => (
-            <Link
-              key={r.to}
-              to={r.to}
-              className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-            >
-              <r.icon size={18} className="text-primary shrink-0" aria-hidden="true" />
-              <div>
-                <div className="text-sm font-medium text-foreground">{r.title}</div>
-                <div className="text-xs text-muted-foreground">{r.sub}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
       <VendorCoverageNotice migrateLayer="AppServers" />
 
       <ReadingCompleteButton />

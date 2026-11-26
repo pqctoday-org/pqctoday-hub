@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Convergence integration test — validates that ⌘K palette mode and the
- * Assistant share one MiniSearch instance + one entityIndex (the goal of the
- * UnifiedSearchService refactor) and that both modes can find chunks via
- * the new entityIndex aliases (toolId, refId, quantumRelevance, etc.).
+ * Integration test — validates that the ⌘K palette reads one MiniSearch instance + one
+ * entityIndex and can find chunks via the entityIndex aliases (toolId, refId,
+ * quantumRelevance, etc.).
  *
  * Loads the published rag-corpus.json directly so this is a real
  * end-to-end check, not a mock-driven one.
@@ -13,33 +12,27 @@ import fs from 'fs'
 import path from 'path'
 
 import { UnifiedSearchService } from './UnifiedSearchService'
-import { RetrievalService } from '../chat/RetrievalService'
 import type { RAGChunk } from '@/types/ChatTypes'
 
 let unified: UnifiedSearchService
-let assistant: RetrievalService
 
 beforeAll(() => {
   const corpusPath = path.join(process.cwd(), 'public', 'data', 'rag-corpus.json')
   const data = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
   const corpus: RAGChunk[] = data.chunks ?? data
 
-  // Reset both singletons so this test is order-independent
-  RetrievalService.resetInstance()
+  // Reset the singleton so this test is order-independent
   UnifiedSearchService.resetInstance()
 
   unified = UnifiedSearchService.getInstance()
   unified.initializeWithCorpus(corpus)
-
-  assistant = RetrievalService.getInstance()
 })
 
 describe('UnifiedSearchService — convergence', () => {
-  it('palette and assistant share one MiniSearch instance', () => {
+  it('the palette reads one ready MiniSearch instance', () => {
     expect(unified.isReady).toBe(true)
     expect(unified.index).not.toBeNull()
-    // Assistant reads through the unified service; same singleton, same index.
-    // We verify by initializing through Assistant and confirming index identity.
+    expect(UnifiedSearchService.getInstance().index).toBe(unified.index)
     expect(unified.corpus.length).toBeGreaterThan(1000)
   })
 
@@ -114,11 +107,6 @@ describe('UnifiedSearchService — convergence', () => {
     const aliased = unified.entityIndex.get('anssi') ?? []
     const glossaryHit = results.find((r) => r.source === 'glossary' && aliased.includes(r.id))
     expect(glossaryHit).toBeDefined()
-  })
-
-  it('palette and assistant agree that the corpus is loaded', () => {
-    // Both surfaces report the same generatedAt
-    expect(unified.corpusDate).toBe(assistant.corpusDate)
   })
 
   it('palette covers all corpus sources (no source is invisible)', () => {

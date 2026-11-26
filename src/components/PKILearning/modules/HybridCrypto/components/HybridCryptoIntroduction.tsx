@@ -7,14 +7,7 @@ import {
   Layers,
   Lock,
   ArrowRight,
-  Cpu,
-  Library,
-  Terminal,
-  FlaskConical,
-  KeyRound,
-  PackageCheck,
   Globe,
-  Radio,
   Fingerprint,
   ExternalLink,
   ShieldCheck,
@@ -1475,121 +1468,6 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
       <HybridInCryptoApis />
 
       <SourcedSectionPanel section={PROTOCOL_DESIGN_SECTION} />
-
-      {/* Related Resources */}
-      <section className="glass-panel p-6 border-secondary/20">
-        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Link
-            to="/algorithms?tab=detailed&q=hybrid"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Cpu size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Algorithm Explorer</div>
-              <div className="text-xs text-muted-foreground">
-                Compare hybrid algorithm key sizes &amp; performance
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/openssl"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Terminal size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">OpenSSL Studio</div>
-              <div className="text-xs text-muted-foreground">
-                Try hybrid key gen &amp; cert commands directly
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/library?q=composite"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Library size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Standards Library</div>
-              <div className="text-xs text-muted-foreground">
-                Read composite signature &amp; KEM RFC drafts
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/quantum-threats"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <FlaskConical size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Quantum Threats</div>
-              <div className="text-xs text-muted-foreground">
-                Why hybrid? Understand the quantum threat first
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/tls-basics"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Globe size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">TLS Basics</div>
-              <div className="text-xs text-muted-foreground">
-                Interactive TLS 1.3 handshake simulator with hybrid KEM negotiation
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/api-security-jwt"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <KeyRound size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">API Security &amp; JWT</div>
-              <div className="text-xs text-muted-foreground">
-                Hybrid JOSE tokens with ML-DSA signing &amp; ML-KEM encryption
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/code-signing"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <PackageCheck size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Code Signing</div>
-              <div className="text-xs text-muted-foreground">
-                Hybrid &amp; composite signatures for software supply chain
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/kms-pqc"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <KeyRound size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">
-                Key lifecycle management for hybrid &amp; PQC key pairs
-              </div>
-            </div>
-          </Link>
-          <Link
-            to="/learn/qkd"
-            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
-          >
-            <Radio size={18} className="text-primary shrink-0" />
-            <div>
-              <div className="text-sm font-medium text-foreground">Quantum Key Distribution</div>
-              <div className="text-xs text-muted-foreground">
-                Physical-layer key exchange complementing hybrid PQC schemes
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
 
       {/* CTA */}
       <div className="text-center">

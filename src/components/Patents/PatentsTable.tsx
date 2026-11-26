@@ -295,7 +295,7 @@ function AddFilterPopover({
       </Button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 z-50 w-52 rounded-lg border border-border bg-card shadow-lg overflow-hidden">
+        <div className="absolute top-full left-0 mt-1 z-50 w-52 bg-card overflow-hidden glass-panel rounded-2xl">
           {!activeCat ? (
             <div className="py-1 max-h-72 overflow-auto">
               {availableDefs.length === 0 ? (

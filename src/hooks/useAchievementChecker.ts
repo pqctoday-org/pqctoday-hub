@@ -3,7 +3,6 @@ import { useMemo, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
-import { useChatStore } from '@/store/useChatStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useAchievementStore, sanitizeQuestionCount } from '@/store/useAchievementStore'
@@ -28,7 +27,6 @@ export function useAchievementChecker() {
   const quizMastery = useModuleStore((s) => s.quizMastery)
 
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
-  const conversations = useChatStore((s) => s.conversations)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const myProducts = useSelectedProductIds()
 
@@ -112,16 +110,10 @@ export function useAchievementChecker() {
     const totalArtifactCsrs = artifacts?.csrs?.length ?? 0
     const totalArtifactExecDocs = artifacts?.executiveDocuments?.length ?? 0
 
-    // Conversation count: the two parts are computed on separate lines on purpose, so the old
-    // chat part can be deleted alone when that chat is removed.
-    // Part 1, the old model chat (still shipped behind a rollback switch).
-    let oldChatMessageCount = 0
-    for (const conv of conversations ?? []) {
-      oldChatMessageCount += conv.messages?.filter((m) => m.role === 'user').length ?? 0
-    }
-    // Part 2, the Assistant drawer: a number kept on the device by the achievement store.
+    // Conversation count: the questions asked in the Assistant drawer, a number kept on the
+    // device by the achievement store.
     const assistantQuestions = sanitizeQuestionCount(assistantQuestionCount)
-    const chatMessageCount = oldChatMessageCount + assistantQuestions
+    const chatMessageCount = assistantQuestions
 
     // Endorsements
     const endorsementCount = Object.values(endorsementRecords).filter((r) => r?.endorsed).length
@@ -165,7 +157,6 @@ export function useAchievementChecker() {
     sessionTracking,
     quizMastery,
     assessmentStatus,
-    conversations,
     myFrameworks,
     myProducts,
     playgroundOpCount,

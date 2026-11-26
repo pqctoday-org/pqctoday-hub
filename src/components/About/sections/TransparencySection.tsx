@@ -17,7 +17,9 @@ export function TransparencySection() {
     >
       <div className="flex items-center gap-3 mb-4">
         <Construction className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold flex-1">Transparency &amp; Disclaimer</h2>
+        <h2 className="text-xl font-semibold flex-1 font-display text-heading">
+          Transparency &amp; Disclaimer
+        </h2>
       </div>
       <div className="prose prose-invert max-w-none">
         <p className="text-muted-foreground">

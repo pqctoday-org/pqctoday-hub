@@ -209,10 +209,11 @@ function over(
 
 const FILLS = ['primary', 'secondary', 'success', 'accent', 'destructive']
 
-it('secondary buttons keep the AA-safe /90 purple hover instead of the failing /80 tint', () => {
+it('secondary buttons use the chip fill and keep a /90 hover instead of a fainter tint', () => {
+  // The chip pair (chip-foreground on chip) is about 9:1 in light and dark, so /90 stays far above AA.
   const classes = buttonVariants({ variant: 'secondary' })
-  expect(classes).toContain('hover:bg-secondary/90')
-  expect(classes).not.toContain('hover:bg-secondary/80')
+  expect(classes).toContain('hover:bg-chip/90')
+  expect(classes).not.toContain('hover:bg-chip/80')
 })
 
 describe('coloured fills keep their label at AA in both themes', () => {

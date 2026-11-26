@@ -125,7 +125,7 @@ export const ThreatCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
       className={clsx(
-        'group glass-panel relative flex h-full overflow-hidden p-0 scroll-mt-20 transition-all hover:border-secondary/50',
+        'glass-panel glass-panel-row group relative flex h-full overflow-hidden p-0 scroll-mt-20 transition-all hover:border-secondary/50',
         dimmed && 'opacity-40 hover:opacity-100'
       )}
     >

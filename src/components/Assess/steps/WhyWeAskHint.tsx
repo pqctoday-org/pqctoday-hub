@@ -52,7 +52,7 @@ export const WhyWeAskHint: React.FC<{ stepKey: string }> = ({ stepKey }) => {
           Why we ask
         </Button>
       ) : (
-        <div className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed glass-panel p-2 rounded-md">
+        <div className="glass-panel rounded-2xl flex items-start gap-2 text-xs text-muted-foreground leading-relaxed p-2">
           <HelpCircle size={12} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
           <p className="flex-1">{rationale}</p>
           <Button
