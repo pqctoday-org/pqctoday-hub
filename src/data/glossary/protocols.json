@@ -146,7 +146,8 @@
     "technicalNote": "Multiple IETF RFCs define PQC integration: RFC 9629 (KEM in CMS), RFC 9882 (ML-DSA in CMS), RFC 9814 (SLH-DSA in CMS).",
     "relatedModule": "/library?ref=RFC 9629",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Cross-Industry"
   },
   {
     "id": "openpgp",
@@ -189,7 +190,8 @@
     "technicalNote": "The Privacy CA encapsulates a secret against the EK public key; only a TPM holding the matching EK private key can decapsulate and release the credential.",
     "relatedModule": "/learn/secure-boot-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "bb84",
@@ -276,7 +278,8 @@
     "relatedModule": "/library?ref=NIST-ACVP",
     "complexity": "intermediate",
     "category": "protocol",
-    "industries": "Government & Defense"
+    "industries": "Government & Defense",
+    "place": "US"
   },
   {
     "id": "pq3",
@@ -497,7 +500,8 @@
     "definition": "Narrowband IoT, a cellular connectivity standard for low-power wide-area (LPWA) devices. Offers 62.5 kbps uplink bandwidth, making PQC handshake overhead a significant concern.",
     "relatedModule": "/learn/iot-pqc",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT); Telecommunications"
   },
   {
     "id": "connection-coalescing",
@@ -539,7 +543,8 @@
     "relatedModule": "/learn/iot-pqc",
     "complexity": "advanced",
     "category": "protocol",
-    "place": "PQC-REGION-GLOBAL"
+    "place": "PQC-REGION-GLOBAL",
+    "industries": "Critical Infrastructure / Energy; Internet of Things (IoT)"
   },
   {
     "id": "iccp-tase-2",
@@ -614,7 +619,8 @@
     "technicalNote": "ARPC is the issuer-to-card counterpart of ARQC. Together they form a mutual authentication mechanism. Both are symmetric, so the quantum question is about cipher, key length and key management for each deployment, not an automatic quantum-safe label.",
     "relatedModule": "/learn/emv-payment-pqc",
     "complexity": "advanced",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Payment Card Industry"
   },
   {
     "id": "3-d-secure",
@@ -706,7 +712,7 @@
     "term": "RFC 9794",
     "definition": "IETF Informational RFC (June 2025) that defines terminology for post-quantum/traditional (PQ/T) hybrid schemes, so that protocols, standards and organisations use the word \"hybrid\" consistently. It is a reference terminology guide and does not set protocol rules.",
     "technicalNote": "Defines terms such as PQ/T hybrid scheme, PQ/T hybrid KEM, PQ/T hybrid digital signature, PQ/T hybrid composite scheme, PQ/T hybrid combiner, PQ/T parallel PKI and multi-certificate authentication. Its Security Considerations section says the document itself does not have a security impact on Internet protocols and that the security considerations for each hybrid protocol belong in that protocol's own specification (for TLS 1.3 key exchange, RFC 9954). A test rule such as \"both components must complete, no silent downgrade\" is test practice, not an RFC 9794 requirement.",
-    "relatedModule": "/learn/pqc-testing-validation",
+    "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "protocol"
   },
@@ -779,7 +785,8 @@
     "technicalNote": "Often deployed alongside ACME (web-facing) and CMP (enterprise / 3GPP) as part of an automated CLM stack. PQC migration of EST mostly inherits from the underlying TLS and CSR algorithm choices.",
     "relatedModule": "/learn/pki-enrollment-protocols",
     "complexity": "intermediate",
-    "category": "protocol"
+    "category": "protocol",
+    "industries": "Internet of Things (IoT)"
   },
   {
     "id": "psk",

@@ -30,7 +30,8 @@
     "relatedModule": "/timeline",
     "complexity": "intermediate",
     "category": "organization",
-    "place": "PQC-REGION-EUROPE"
+    "place": "PQC-REGION-EUROPE",
+    "industries": "Telecommunications"
   },
   {
     "id": "ietf",
@@ -68,7 +69,7 @@
     "term": "3GPP",
     "acronym": "3GPP",
     "definition": "The partnership project that develops specifications for mobile telecommunications including 5G security architecture.",
-    "relatedModule": "/learn/5g-security",
+    "relatedModule": "/learn/standards-bodies",
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Telecommunications"
@@ -247,7 +248,8 @@
     "relatedModule": "/library",
     "complexity": "intermediate",
     "category": "organization",
-    "industries": "Telecommunications"
+    "industries": "Telecommunications",
+    "place": "PQC-REGION-GLOBAL"
   },
   {
     "id": "nccoe",
@@ -256,7 +258,9 @@
     "definition": "NIST National Cybersecurity Center of Excellence, collaborating with industry to develop practical PQC migration guidance and reference architectures.",
     "relatedModule": "/migrate",
     "complexity": "intermediate",
-    "category": "organization"
+    "category": "organization",
+    "industries": "Cross-Industry",
+    "place": "US"
   },
   {
     "id": "bis",
@@ -316,7 +320,8 @@
     "complexity": "beginner",
     "category": "organization",
     "relatedModule": "/learn/standards-bodies",
-    "place": "SG"
+    "place": "SG",
+    "industries": "Critical Infrastructure / Energy; Government & Defense"
   },
   {
     "id": "itsm-cccs",
@@ -326,7 +331,8 @@
     "complexity": "intermediate",
     "category": "organization",
     "relatedModule": "/learn/standards-bodies",
-    "place": "CA"
+    "place": "CA",
+    "industries": "Cross-Industry"
   },
   {
     "id": "mas",
@@ -358,7 +364,8 @@
     "complexity": "beginner",
     "category": "organization",
     "relatedModule": "/learn/standards-bodies",
-    "place": "KR"
+    "place": "KR",
+    "industries": "Government & Defense"
   },
   {
     "id": "disa",
@@ -378,7 +385,8 @@
     "definition": "Industry consortium that publishes the TPM (Trusted Platform Module) and DICE (Device Identifier Composition Engine) specifications. PQC-relevant work covers TPM 2.0 PQC algorithm additions and attestation-quote signing.",
     "complexity": "intermediate",
     "category": "organization",
-    "relatedModule": "/learn/secure-boot-pqc"
+    "relatedModule": "/learn/secure-boot-pqc",
+    "industries": "Semiconductors / Secure Elements"
   },
   {
     "id": "iso",
@@ -389,7 +397,8 @@
     "relatedModule": "/learn/standards-bodies",
     "complexity": "beginner",
     "category": "organization",
-    "place": "PQC-REGION-GLOBAL"
+    "place": "PQC-REGION-GLOBAL",
+    "industries": "Cross-Industry"
   },
   {
     "id": "iec",
@@ -400,7 +409,8 @@
     "relatedModule": "/learn/standards-bodies",
     "complexity": "beginner",
     "category": "organization",
-    "place": "PQC-REGION-GLOBAL"
+    "place": "PQC-REGION-GLOBAL",
+    "industries": "Cross-Industry"
   },
   {
     "id": "ieee",
@@ -480,7 +490,7 @@
     "term": "PCI SSC",
     "acronym": "PCI SSC",
     "definition": "PCI Security Standards Council, the payment-card-industry body (founded by the major card brands) that maintains PCI DSS and is issuing PQC migration guidance for payments.",
-    "relatedModule": "/learn/emv-payment-pqc",
+    "relatedModule": "/learn/pci-certification",
     "complexity": "intermediate",
     "category": "organization",
     "industries": "Payment Card Industry"
