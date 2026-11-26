@@ -306,6 +306,22 @@ describe('role switch with preview and undo (A05)', () => {
     expect(screen.queryByTestId('role-switch-notice')).not.toBeInTheDocument()
   })
 
+  it('"Keep this role" closes the notice and leaves the new role in place', async () => {
+    const user = userEvent.setup()
+    saveTlsObjective('architect')
+    renderAt(
+      <>
+        <RoleSwitchDialog open onClose={() => {}} />
+        <RoleSwitchNotice />
+      </>
+    )
+    await user.click(screen.getByRole('radio', { name: /Executive/ }))
+    await user.click(screen.getByRole('button', { name: 'Switch to Executive / Business Leader' }))
+    await user.click(screen.getByRole('button', { name: 'Keep this role' }))
+    expect(screen.queryByTestId('role-switch-notice')).not.toBeInTheDocument()
+    expect(usePersonaStore.getState().selectedPersona).toBe('executive')
+  })
+
   it('does not switch until a different role is picked, and Cancel changes nothing', async () => {
     const user = userEvent.setup()
     renderAt(<RoleSwitchDialog open onClose={() => {}} />)

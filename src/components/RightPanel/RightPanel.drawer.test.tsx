@@ -8,6 +8,7 @@ import { RightPanel } from './RightPanel'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { MODEL_ASSISTANT_STORAGE_KEY } from '@/services/featureFlags'
+import { usePageModal } from '../Assistant/usePageModal'
 
 const legacy = vi.hoisted(() => ({ loaded: 0 }))
 const layout = vi.hoisted(() => ({ value: 'docked' as 'docked' | 'sheet' }))
@@ -15,6 +16,10 @@ const layout = vi.hoisted(() => ({ value: 'docked' as 'docked' | 'sheet' }))
 vi.mock('./ChatPanelContent', () => {
   legacy.loaded += 1
   return { ChatPanelContent: () => <p>Old model chat</p> }
+})
+vi.mock('../Assistant/usePageModal', async (orig) => {
+  const actual = await orig<typeof import('../Assistant/usePageModal')>()
+  return { ...actual, usePageModal: vi.fn(actual.usePageModal) }
 })
 vi.mock('./BookmarksPanel', () => ({ BookmarksPanel: () => <p>Saved items</p> }))
 vi.mock('../Assistant/useAssistantLayout', async (orig) => ({
@@ -135,12 +140,23 @@ describe('the docked drawer and a dialog the page opens', () => {
     await waitFor(() => expect(region).toHaveClass('z-panel'))
   })
 
-  it('does not step behind for its own dialog on the phone: the sheet stays on top', async () => {
+  it('watches for page dialogs only beside the page, never for the phone sheet', async () => {
+    const watched = vi.mocked(usePageModal)
+    // Docked: the drawer watches (the argument is "enabled").
+    watched.mockClear()
+    const { unmount: unmountDocked } = mount()
+    expect(watched.mock.calls.some(([enabled]) => enabled === true)).toBe(true)
+    unmountDocked()
+
+    // Sheet: it never subscribes, and adding a dialog does not change its layer.
     layout.value = 'sheet'
+    watched.mockClear()
     mount()
     const sheet = screen.getByRole('dialog', { name: 'Assistant' })
     const dialog = addDialog()
     await new Promise((r) => setTimeout(r, 50))
+    expect(watched.mock.calls.length).toBeGreaterThan(0)
+    expect(watched.mock.calls.every(([enabled]) => enabled === false)).toBe(true)
     expect(sheet).toHaveClass('z-dialog')
     dialog.remove()
   })

@@ -98,7 +98,7 @@ describe('the four kinds of change to a lesson, in words', () => {
     expect(screen.getByRole('status')).toHaveTextContent('is marked seen')
   })
 
-  it('names "Tool updated" and "Section updated"', () => {
+  it('names "Tool updated" and "Lesson revised", and says the section may not have changed', () => {
     seed([...prereqs, TLS], (o) => {
       o.builtOn!.lessons[TLS].tools['tls-simulator'] = '0.9.0'
       o.builtOn!.lessons[TLS].version = 0
@@ -115,7 +115,9 @@ describe('the four kinds of change to a lesson, in words', () => {
     })
     show()
     expect(screen.getByText('Tool updated')).toBeInTheDocument()
-    expect(screen.getByText('Section updated')).toBeInTheDocument()
+    expect(screen.getByText('Lesson revised')).toBeInTheDocument()
+    expect(screen.queryByText('Section updated')).toBeNull()
+    expect(screen.getByText(/This section may not have changed\./)).toBeInTheDocument()
     expect(screen.getByText(/was version 0\.9\.0/)).toBeInTheDocument()
   })
 

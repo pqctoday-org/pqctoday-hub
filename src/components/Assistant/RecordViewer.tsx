@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Check, X } from 'lucide-react'
 import { Chip, Eyebrow, StickerCard, StoryButton } from '@/components/storybook'
 import type { AssistantRow } from '@/services/assistant/contract'
+import { isGlossaryTag, type TermLesson } from '@/services/assistant/termLessons'
 import { isReferenceSaved, saveReference } from '@/services/assistant/drawerSaves'
 import { CopyLinkButton } from './AnswerRowItem'
 import { COPY } from './copy'
@@ -17,6 +18,10 @@ export interface RecordViewerProps {
   onClose: () => void
   /** Open the record's own page. */
   onOpenPage: (row: AssistantRow) => void
+  /** Where the knowledge model says a glossary term is taught (empty until read, or when it holds none). */
+  lessons?: TermLesson[]
+  /** Open a lesson, section or workshop step that teaches the term. */
+  onOpenLesson?: (lesson: TermLesson) => void
 }
 
 /**
@@ -30,6 +35,8 @@ export function RecordViewer({
   question,
   onClose,
   onOpenPage,
+  lessons = [],
+  onOpenLesson,
 }: RecordViewerProps) {
   const returnRef = useRef<HTMLButtonElement>(null)
   const [saved, setSaved] = useState(() => isReferenceSaved(row.tag))
@@ -55,6 +62,9 @@ export function RecordViewer({
   }
 
   const pinned = variant === 'pinned'
+  // A glossary term leads to the lesson that teaches it; its own glossary entry is the quiet second action.
+  const term = isGlossaryTag(row.tag)
+  const lesson = term && onOpenLesson ? lessons[0] : undefined
 
   return (
     <section
@@ -111,9 +121,25 @@ export function RecordViewer({
                   COPY.saveReference
                 )}
               </StoryButton>
-              <StoryButton variant="secondary" onClick={() => onOpenPage(row)}>
-                Open full page
-              </StoryButton>
+              {term ? (
+                <>
+                  {lesson && (
+                    <StoryButton variant="secondary" onClick={() => onOpenLesson?.(lesson)}>
+                      Open the lesson: {lesson.lessonTitle}
+                    </StoryButton>
+                  )}
+                  <StoryButton
+                    variant={lesson ? 'quiet' : 'secondary'}
+                    onClick={() => onOpenPage(row)}
+                  >
+                    Open in the glossary
+                  </StoryButton>
+                </>
+              ) : (
+                <StoryButton variant="secondary" onClick={() => onOpenPage(row)}>
+                  Open full page
+                </StoryButton>
+              )}
             </>
           )}
           <CopyLinkButton link={row.goLink} title={row.title} />

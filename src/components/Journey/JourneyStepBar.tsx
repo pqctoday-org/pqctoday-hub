@@ -24,6 +24,7 @@ import {
   isReadingAhead,
   nextControl,
   previousStep,
+  stepDone,
   stepStatuses,
 } from '@/services/journey/stepRules'
 import { describeStep, objectiveTitle } from '@/services/journey/stepView'
@@ -62,7 +63,7 @@ export function JourneyStepBar({
   const next = nextControl(objective, currentStepId, isDone)
   const prev = previousStep(objective, currentStepId)
   const following = followingStep(objective, currentStepId)
-  const currentDone = isDone(current.resourceTag)
+  const currentDone = stepDone(current, isDone)
   const canMark =
     objective.state === 'active' &&
     current.kind !== 'self-assessed' &&

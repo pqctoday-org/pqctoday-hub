@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import {
   Bot,
@@ -13,8 +13,6 @@ import {
   Info,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { SourcesModal } from '@/components/ui/SourcesModal'
-import { Glossary } from '@/components/common/Glossary'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { getMobilePageActions, type MobilePageActionId } from './getMobilePageActions'
 import { useMobileWhatsNewStatus } from './mobileWhatsNew'
@@ -44,8 +42,7 @@ export interface MobilePageActionsSheetProps {
  * than rendering one that does nothing, per the handoff's own rule.
  *
  * Assistant, Bookmarks and FAQ open the drawer's full-screen sheet (RightPanel) through the same
- * store the desktop top bar writes to. Your journey goes to Learn. Sources and
- * Glossary reuse their real desktop content components directly. FAQ,
+ * store the desktop top bar writes to; so do Sources and Glossary. Your journey goes to Learn.
  * What's new and About navigate to their real pages.
  *
  * What's new's sub-label ("N since your last visit", handoff: "'What's new'
@@ -60,13 +57,11 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const location = useLocation()
   const navigate = useNavigate()
   const openRightPanel = useRightPanelStore((s) => s.open)
-  const nextPanel = useRef<'chat' | 'bookmarks' | 'faq' | null>(null)
-  const [sourcesOpen, setSourcesOpen] = useState(false)
-  const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const nextPanel = useRef<'chat' | 'bookmarks' | 'faq' | 'sources' | 'glossary' | null>(null)
   const { hasUnread, count } = useMobileWhatsNewStatus()
   const markAllSeen = useVersionStore((s) => s.markAllSeen)
 
-  const { actions: rawActions, sourcesViewType } = getMobilePageActions(location.pathname)
+  const { actions: rawActions } = getMobilePageActions(location.pathname)
   const actions = rawActions.map((action) =>
     action.id === 'whatsNew' && hasUnread
       ? { ...action, sub: `${count} since your last visit` }
@@ -108,12 +103,12 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
         navigate('/revisions')
         return
       case 'sources':
+        nextPanel.current = 'sources'
         onClose()
-        setSourcesOpen(true)
         return
       case 'glossary':
+        nextPanel.current = 'glossary'
         onClose()
-        setGlossaryOpen(true)
         return
       case 'about':
         onClose()
@@ -151,15 +146,6 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
           })}
         </div>
       </MobileSheet>
-
-      {sourcesViewType && (
-        <SourcesModal
-          isOpen={sourcesOpen}
-          onClose={() => setSourcesOpen(false)}
-          viewType={sourcesViewType}
-        />
-      )}
-      <Glossary isOpen={glossaryOpen} onClose={() => setGlossaryOpen(false)} />
     </>
   )
 }

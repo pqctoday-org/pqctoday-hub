@@ -5,6 +5,7 @@
  */
 import { lessonByTag } from './lessons'
 import { retiredEntry, retiredName } from './retiredSteps'
+import { stepDone } from './stepRules'
 import type { Objective, Step } from './types'
 
 export interface StepView {
@@ -98,7 +99,7 @@ export function stepReason(o: Objective, step: Step, isDone: (tag: string) => bo
   const bar = o.steps.filter((s) => s.required).sort((a, b) => a.position - b.position)
   const at = bar.findIndex((s) => s.id === step.id)
   const before = at > 0 ? bar[at - 1] : undefined
-  if (before && isDone(before.resourceTag)) return `You finished ${describeStep(before, o).title}.`
+  if (before && stepDone(before, isDone)) return `You finished ${describeStep(before, o).title}.`
   if (step.origin.type === 'take-first') {
     const forLesson = lessonByTag(step.origin.for)
     if (forLesson) return `Take first for ${forLesson.title}.`

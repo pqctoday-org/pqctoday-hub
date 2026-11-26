@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { ChevronLeft, Search, User, MoreHorizontal, BookText, MessageCircle } from 'lucide-react'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -7,10 +6,9 @@ import { PERSONAS } from '@/data/learningPersonas'
 import { NAV_PATH_LABELS } from '@/data/personaConfig'
 import { Button } from '@/components/ui/button'
 import { ShareButton } from '@/components/ui/ShareButton'
-import { UserManualPanel } from '@/components/common/UserManualPanel'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useCommandPaletteStore } from '@/store/useCommandPaletteStore'
-import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { ROUTE_SHARE } from '@/data/routePageMeta'
 import { FOR_YOU_GROUP_LABELS } from '@/components/Layout/railNav'
 import { cn } from '@/lib/utils'
@@ -45,7 +43,7 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
   const openAssistant = useRightPanelStore((s) => s.open)
   const pageActions = usePageActionsStore((s) => s.current)
   const { hasUnread } = useMobileWhatsNewStatus()
-  const [guideOpen, setGuideOpen] = useState(false)
+  const openRightPanel = useRightPanelStore((s) => s.open)
 
   const isHome = location.pathname === '/'
   const pageIdForRoute = pageIdForMobileRoute(location.pathname)
@@ -142,7 +140,7 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={() => setGuideOpen(true)}
+                onClick={() => openRightPanel('guide')}
                 aria-label="Guide"
                 className={mobileIconButton}
               >
@@ -192,14 +190,6 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
           </div>
         </div>
       </header>
-
-      {pageIdForRoute && (
-        <UserManualPanel
-          isOpen={guideOpen}
-          onClose={() => setGuideOpen(false)}
-          pageId={pageIdForRoute}
-        />
-      )}
     </>
   )
 }

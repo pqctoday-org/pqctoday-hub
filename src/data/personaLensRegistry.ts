@@ -73,6 +73,7 @@ export const PERSONA_LENS_REGISTRY: Record<string, PersonaLensEntry> = {
   '/learn': {
     lens: 'per-persona-config',
     configKeys: ['PERSONA_DEFAULT_ROLE'],
+    configModule: 'src/data/niceFramework.ts',
     note:
       'Your journey shows the path of the work role each persona maps to. ' +
       'MODULE_INDUSTRY_RELEVANCE (an industry-relevance map, unrelated to persona) was removed ' +

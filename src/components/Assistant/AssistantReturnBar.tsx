@@ -45,7 +45,7 @@ export function AssistantReturnBar() {
   const landedPath = useAssistantReturnStore((s) => s.landedPath)
   const land = useAssistantReturnStore((s) => s.land)
   const clear = useAssistantReturnStore((s) => s.clear)
-  const { pathname, search } = useLocation()
+  const { pathname, search, key } = useLocation()
   const navigate = useNavigate()
   const layout = useAssistantLayout()
   const covering = useCoveringModal(Boolean(target) && landedPath !== null)
@@ -57,13 +57,18 @@ export function AssistantReturnBar() {
     const here = `${pathname}${search}`
     if (pathname.startsWith('/go/')) return
     if (landedPath === null) {
-      if (here !== target.path) land(here)
+      // Still on the entry the row was used on: its navigation has not arrived yet.
+      if (key === target.fromKey) return
+      // The row's own navigation stayed on the page the learner was on (a link to this page, or a
+      // hash-only link): nothing was opened, so there is nothing to return from.
+      if (here === target.path || pathname === target.path.split(/[?#]/)[0]) clear()
+      else land(here)
       return
     }
     // The page rewriting its own address (adding a preference, tidying the record's name) or the
     // learner changing a filter or closing the record is still that page. Another page ends it.
     if (pathname !== landedPath.split(/[?#]/)[0]) clear()
-  }, [target, landedPath, pathname, search, land, clear])
+  }, [target, landedPath, pathname, search, key, land, clear])
 
   if (!target || landedPath === null) return null
 

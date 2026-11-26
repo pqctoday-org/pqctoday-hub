@@ -9,7 +9,7 @@ import { StatusChip, StoryButton, StoryRow } from '@/components/storybook'
 import { JourneyDialog } from './JourneyDialog'
 import { useJourneyStore } from '@/store/useJourneyStore'
 import { useIsDone } from '@/hooks/useJourney'
-import { barSteps, completeCheck } from '@/services/journey/stepRules'
+import { barSteps, completeCheck, stepDone } from '@/services/journey/stepRules'
 import { describeStep, finishCondition } from '@/services/journey/stepView'
 import type { Objective, Step } from '@/services/journey/types'
 
@@ -62,7 +62,7 @@ export function CompletePanel({
           .map((s) => {
             const view = describeStep(s, objective)
             const isLast = s.id === check.confirmStep?.id
-            const done = isDone(s.resourceTag)
+            const done = stepDone(s, isDone)
             return (
               <StoryRow as="li" key={s.id} className="flex items-center justify-between gap-3">
                 <span className="min-w-0 text-sm font-semibold">{view.title}</span>
