@@ -13,6 +13,10 @@
       "plainDefinitionAcronym": { "type": "string" },
       "technicalNote": { "type": "string" },
       "relatedModule": { "type": "string" },
+      "module_ids": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(;[a-z0-9]+(-[a-z0-9]+)*)*$"
+      },
       "complexity": { "enum": ["beginner", "intermediate", "advanced"] },
       "category": { "enum": ["algorithm", "protocol", "standard", "concept", "organization"] }
     },
