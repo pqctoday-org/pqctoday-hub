@@ -16,7 +16,10 @@ const { config, roots, noop } = vi.hoisted(() => ({
   roots: [] as (HTMLElement | null)[],
   noop: vi.fn(),
 }))
-vi.mock('../../embed/EmbedProvider', () => ({ useEmbed: () => config }))
+vi.mock('../../embed/EmbedProvider', () => ({
+  useEmbed: () => config,
+  useIsEmbedded: () => true,
+}))
 vi.mock('../../embed/routePresets', () => ({ getActivePresets: () => ['learn', 'timeline'] }))
 vi.mock('../../embed/useEmbedPersistence', () => ({ useEmbedPersistence: () => {} }))
 vi.mock('../../embed/useHostCheck', () => ({ useHostCheck: () => true }))
