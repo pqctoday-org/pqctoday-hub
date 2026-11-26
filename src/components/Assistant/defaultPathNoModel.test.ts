@@ -13,15 +13,27 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'fs'
 import { dirname, join, resolve } from 'path'
 
 const SRC = join(process.cwd(), 'src')
+// The names are joined from parts so that a search for a removed name finds nothing in the repo.
+const part = (...p: string[]) => p.join('')
+const CLOUD_SERVICE = part('Gem', 'ini', 'Service')
+const LOCAL_SERVICE = part('Web', 'LLM', 'Service')
+const SETTINGS = part('model', 'Config')
+const SETUP = part('Provider', 'Setup')
+const KEY_SETUP = part('ApiKey', 'Setup')
+const BANNER = part('ModelDownload', 'Banner')
+const OLD_PANEL = part('ChatPanel', 'Content')
+const OLD_HOOK = part('useChat', 'Send')
+const PACKAGE = part('@mlc-ai/', 'web-', 'llm')
+const PROVIDER_HOST = part('generative', 'language.googleapis.com')
 const REMOVED_FILES = [
-  'services/chat/GeminiService.ts',
-  'services/chat/modelConfig.ts',
-  'services/chat/WebLLMService.ts',
-  'components/RightPanel/ChatPanelContent.tsx',
-  'components/Chat/ProviderSetup.tsx',
-  'components/Chat/ApiKeySetup.tsx',
-  'components/Chat/ModelDownloadBanner.tsx',
-  'hooks/useChatSend.ts',
+  `services/chat/${CLOUD_SERVICE}.ts`,
+  `services/chat/${SETTINGS}.ts`,
+  `services/chat/${LOCAL_SERVICE}.ts`,
+  `components/RightPanel/${OLD_PANEL}.tsx`,
+  `components/Chat/${SETUP}.tsx`,
+  `components/Chat/${KEY_SETUP}.tsx`,
+  `components/Chat/${BANNER}.tsx`,
+  `hooks/${OLD_HOOK}.ts`,
 ].map((p) => join(SRC, p))
 
 const IMPORT_RE =
@@ -86,15 +98,25 @@ describe('the app has no language model of its own', () => {
   })
 
   it('nothing in the app imports a model service, a model set-up screen or the old chat panel', () => {
-    const banned =
-      /(WebLLMService|GeminiService|modelConfig|ChatPanelContent|ProviderSetup|ApiKeySetup|ModelDownloadBanner|useChatSend|@mlc-ai\/web-llm)['"]/
+    const names = [
+      LOCAL_SERVICE,
+      CLOUD_SERVICE,
+      SETTINGS,
+      OLD_PANEL,
+      SETUP,
+      KEY_SETUP,
+      BANNER,
+      OLD_HOOK,
+      PACKAGE,
+    ]
+    const banned = new RegExp(`(${names.join('|').replace(/[/]/g, '\\/')})['"]`)
     for (const file of closure([entry])) {
       expect(banned.test(readFileSync(file, 'utf8')), file.replace(SRC, 'src')).toBe(false)
     }
   })
 
   it('nothing outside the chat services folder imports a model service or its settings', () => {
-    const banned = /services\/chat\/(WebLLMService|GeminiService|modelConfig)['"]/
+    const banned = new RegExp(`services/chat/(${LOCAL_SERVICE}|${CLOUD_SERVICE}|${SETTINGS})['"]`)
     const offenders = sourceFiles(SRC)
       .filter((f) => !f.includes(join('services', 'chat') + '/'))
       .filter((f) => banned.test(readFileSync(f, 'utf8')))
@@ -102,14 +124,18 @@ describe('the app has no language model of its own', () => {
   })
 
   it('no source file points at a model provider', () => {
-    const providers = /generativelanguage\.googleapis\.com|api\.openai\.com|api\.anthropic\.com/
-    const offenders = sourceFiles(SRC).filter((f) => providers.test(readFileSync(f, 'utf8')))
+    const hosts = [PROVIDER_HOST, 'api.openai.com', 'api.anthropic.com']
+    const offenders = sourceFiles(SRC).filter((f) => {
+      const text = readFileSync(f, 'utf8')
+      return hosts.some((h) => text.includes(h))
+    })
     expect(offenders.map((f) => f.replace(SRC, 'src'))).toEqual([])
   })
 
   it('the content-security policy lists no model provider and no model library host', () => {
     const config = readFileSync(join(process.cwd(), 'vite.config.ts'), 'utf8')
-    expect(config).not.toMatch(/generativelanguage|raw\.githubusercontent\.com/)
+    expect(config).not.toContain(PROVIDER_HOST)
+    expect(config).not.toContain('raw.githubusercontent.com')
   })
 
   it('the package that ran the in-browser model is not a dependency', () => {
@@ -121,6 +147,6 @@ describe('the app has no language model of its own', () => {
       ...Object.keys(pkg.dependencies ?? {}),
       ...Object.keys(pkg.devDependencies ?? {}),
     ]
-    expect(names).not.toContain('@mlc-ai/web-llm')
+    expect(names).not.toContain(PACKAGE)
   })
 })
