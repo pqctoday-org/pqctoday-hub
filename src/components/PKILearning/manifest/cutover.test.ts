@@ -167,16 +167,20 @@ const sectionAdditions: Record<
   },
   'platform-eng-pqc': {
     after: 'migration-runway',
-    sections: [{ id: 'secure-software-delivery', label: 'Secure Software Delivery' }],
-    duration: '90 min',
+    sections: [
+      { id: 'secure-software-delivery', label: 'Secure Software Delivery' },
+      { id: 'continuous-integration-delivery', label: 'Continuous Integration and Delivery' },
+    ],
+    duration: '97 min',
   },
   'data-asset-sensitivity': {
     after: 'methodology',
     sections: [
       { id: 'stored-data-key-recovery', label: 'Stored Data & Key Recovery' },
       { id: 'cia-quantum-threat', label: 'CIA & the Quantum Threat' },
+      { id: 'cyber-resiliency-goals', label: 'Cyber Resiliency Goals' },
     ],
-    duration: '65 min',
+    duration: '70 min',
   },
   'pqc-101': {
     after: 'quantum-threat',
@@ -190,8 +194,9 @@ const sectionAdditions: Record<
       { id: 'static-code-analysis', label: 'Static Code Analysis' },
       { id: 'dynamic-analysis', label: 'Dynamic Analysis' },
       { id: 'open-source-security', label: 'Open-Source Software Security' },
+      { id: 'middleware-providers', label: 'Middleware and Providers' },
     ],
-    duration: '106 min',
+    duration: '111 min',
   },
   'kms-pqc': {
     after: 'cloud-responsibility',
@@ -230,6 +235,48 @@ const sectionAdditions: Record<
     after: 'pqc-blockchain',
     sections: [{ id: 'air-gapped-vault-design', label: 'Air-Gapped Vault Design' }],
     duration: '55 min',
+  },
+  'government-defense-pqc': {
+    after: 'procurement',
+    sections: [{ id: 'comsec-policy', label: 'COMSEC Policies and Procedures' }],
+    duration: '65 min',
+  },
+  'arch-quantum-impact': {
+    after: 'how-to-act',
+    sections: [{ id: 'system-design-standards', label: 'System Design Standards' }],
+    duration: '35 min',
+  },
+  'crypto-mgmt-modernization': {
+    after: 'no-regret-roi',
+    sections: [{ id: 'systems-engineering-practice', label: 'Systems engineering principles' }],
+    duration: '60 min',
+  },
+  'migration-program': {
+    after: 'roadmap',
+    sections: [{ id: 'working-together', label: 'Collaborating Across Stakeholders' }],
+    duration: '35 min',
+  },
+  'soc-implementation-pqc': {
+    after: 'how-to-act',
+    sections: [
+      { id: 'adversary-capability-reporting', label: 'Reporting Adversarial Capabilities' },
+    ],
+    duration: '65 min',
+  },
+  'ops-quantum-impact': {
+    after: 'how-to-act',
+    sections: [{ id: 'vpn-device-administration', label: 'Administering VPN Devices' }],
+    duration: '25 min',
+  },
+  'hsm-pqc': {
+    after: 'migration',
+    sections: [{ id: 'hardware-maintenance', label: 'Hardware maintenance policies' }],
+    duration: '65 min',
+  },
+  'pqc-risk-management': {
+    after: 'heatmap',
+    sections: [{ id: 'threat-environment-assessment', label: 'Threat Environment Assessment' }],
+    duration: '35 min',
   },
 }
 const withSectionDuration = <T extends { id: string; duration?: string }>(m: T): T =>
