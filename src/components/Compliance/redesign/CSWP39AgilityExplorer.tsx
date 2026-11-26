@@ -133,13 +133,13 @@ export function CSWP39AgilityExplorer({
   return (
     <div className="space-y-4" id="cswp39-cross-walk">
       {/* Compact hero */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="glass-panel flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <RefreshCw size={20} />
           </span>
           <div>
-            <h2 className="text-base font-bold text-foreground">
+            <h2 className="text-base font-bold font-display text-heading">
               Operational playbook based on NIST CSWP 39
             </h2>
             <p className="text-xs text-muted-foreground">
@@ -306,9 +306,9 @@ function CycleView({
       </p>
 
       {/* Selected-step detail */}
-      <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="glass-panel p-5">
         <div className="mb-1 flex flex-wrap items-center gap-2">
-          <h3 className="text-base font-bold text-foreground">{sel.title}</h3>
+          <h3 className="text-base font-bold font-display text-heading">{sel.title}</h3>
           <span className={pillClasses(selTone)}>{sel.cpmPillar}</span>
           <span className="font-mono text-[11px] text-muted-foreground">{sel.sectionRef}</span>
         </div>
@@ -317,7 +317,7 @@ function CycleView({
         <div className="grid gap-5 md:grid-cols-2">
           {/* What it requires */}
           <div>
-            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <h4 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
               What the playbook recommends
             </h4>
             <ul className="space-y-1.5">
@@ -333,7 +333,7 @@ function CycleView({
           {/* Maps to frameworks + owned by */}
           <div className="space-y-4">
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h4 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Maps to frameworks
               </h4>
               <div className="space-y-1.5">
@@ -355,7 +355,7 @@ function CycleView({
               </div>
             </div>
             <div>
-              <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h4 className="mb-2 flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Frameworks tagged for this step
                 <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground">
                   {liveFrameworks.length}
@@ -390,7 +390,7 @@ function CycleView({
               )}
             </div>
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h4 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Owned by
               </h4>
               <div className="flex flex-wrap gap-1.5">
@@ -469,10 +469,10 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
 
       {/* You are here + to reach next */}
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="glass-panel p-5">
           <div className="mb-2 flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${TONES[TIER_TONE[cur.tone]].solidBg}`} />
-            <h3 className="text-sm font-bold text-foreground">
+            <h3 className="text-sm font-bold font-display text-heading">
               Exploring tier {tier} · {cur.name}
             </h3>
           </div>
@@ -492,8 +492,10 @@ function MaturityView({ tier, onTierChange }: { tier: number; onTierChange: (t: 
             </p>
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-border bg-muted/10 p-5">
-            <h3 className="mb-2 text-sm font-bold text-foreground">Explore next · {next!.name}</h3>
+          <div className="glass-panel border-dashed p-5">
+            <h3 className="mb-2 text-sm font-bold font-display text-heading">
+              Explore next · {next!.name}
+            </h3>
             <ul className="space-y-1.5">
               {next!.howToReach.map((a, i) => (
                 <li key={i} className="flex items-start gap-2 text-xs text-foreground/90">
@@ -555,13 +557,13 @@ function EvidenceView({
   return (
     <div className="space-y-5">
       {/* Extracted candidate mappings need source and applicability review. */}
-      <section className="rounded-2xl border border-border bg-card p-5">
+      <section className="glass-panel p-5">
         <div className="mb-4 flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Database size={18} />
           </span>
           <div>
-            <h3 className="text-sm font-bold text-foreground">
+            <h3 className="text-sm font-bold font-display text-heading">
               Candidate governance mappings — {maturityRequirements.length} extracted records from{' '}
               {uniqueSources} sources
             </h3>
@@ -573,7 +575,7 @@ function EvidenceView({
             </p>
           </div>
         </div>
-        <div className="mb-4 grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/30 p-4 sm:grid-cols-3">
+        <div className="bg-card border border-border rounded-2xl mb-4 grid grid-cols-1 gap-4 p-4 sm:grid-cols-3">
           <KpiCell
             label="Hub grid population"
             value={`${kpi.coverage}%`}
@@ -635,12 +637,12 @@ function EvidenceView({
 
       {/* Hybrid vs pure-PQC */}
       <div>
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h3 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
           Hybrid vs pure-PQC stance
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {HYBRID_ROWS.map((h) => (
-            <div key={h.regime} className="rounded-xl border border-border bg-card p-4">
+            <div key={h.regime} className="glass-panel p-4">
               <div className="mb-1.5 flex items-center justify-between gap-2">
                 <span className="text-sm font-bold text-foreground">{h.regime}</span>
                 <span className={pillClasses(h.tone)}>{h.stance}</span>
@@ -656,7 +658,7 @@ function EvidenceView({
 
       {/* Auditor evidence dossiers */}
       <div>
-        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <h3 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
           Auditor evidence dossiers
         </h3>
         <div className="space-y-2">
@@ -708,7 +710,9 @@ function EvidenceView({
 function KpiCell({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
+        {label}
+      </div>
       <div className="mt-0.5 text-xl font-extrabold text-foreground">{value}</div>
       <div className="text-[11px] text-muted-foreground">{sub}</div>
     </div>

@@ -245,7 +245,7 @@ export function AlgorithmFilters({
   }
 
   return (
-    <div className="glass-panel p-3 md:p-4 space-y-3">
+    <div className="glass-panel rounded-2xl p-3 md:p-4 space-y-3">
       {/* Row 1 — primary controls, always visible */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Search (primary) */}

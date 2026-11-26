@@ -43,18 +43,18 @@ function CodeRenderer(props: HTMLAttributes<HTMLElement> & { inline?: boolean })
 
 const MD_COMPONENTS: Components = {
   h1: ({ children }) => (
-    <h1 className="text-xl font-bold text-foreground mt-6 mb-3 first:mt-0">{children}</h1>
+    <h1 className="text-xl font-bold mt-6 mb-3 first:mt-0 font-display text-heading">{children}</h1>
   ),
   h2: ({ children }) => (
-    <h2 className="text-lg font-semibold text-primary mt-6 mb-2 pb-1 border-b border-border">
+    <h2 className="text-lg font-semibold mt-6 mb-2 pb-1 border-b border-border font-display text-heading">
       {children}
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="text-base font-semibold text-foreground mt-5 mb-2">{children}</h3>
+    <h3 className="text-base font-semibold mt-5 mb-2 font-display text-heading">{children}</h3>
   ),
   h4: ({ children }) => (
-    <h4 className="text-sm font-semibold text-foreground/90 mt-4 mb-1.5 uppercase tracking-wide">
+    <h4 className="text-sm font-semibold mt-4 mb-1.5 uppercase tracking-wide font-display text-heading">
       {children}
     </h4>
   ),
@@ -112,7 +112,7 @@ const MD_COMPONENTS: Components = {
   ),
   code: CodeRenderer,
   pre: ({ children }) => (
-    <pre className="bg-muted/60 border border-border rounded-md p-3 my-3 text-xs font-mono overflow-x-auto">
+    <pre className="bg-muted/60 border border-border rounded-2xl p-3 my-3 text-xs font-mono overflow-x-auto">
       {children}
     </pre>
   ),

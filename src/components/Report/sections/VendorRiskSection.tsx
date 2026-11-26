@@ -49,7 +49,7 @@ const VENDOR_MODEL_COPY: Record<VendorModel, { label: string; framing: string }>
 }
 
 const PQC_COMMITMENT_STYLE: Record<string, { label: string; className: string }> = {
-  Active: { label: 'Active PQC support', className: 'text-success' },
+  Active: { label: 'Active PQC support', className: 'text-success-legible' },
   Partial: { label: 'Partial PQC support', className: 'text-warning' },
   Announced: { label: 'PQC roadmap announced', className: 'text-warning' },
   None: { label: 'No PQC commitment yet', className: 'text-destructive' },
@@ -92,7 +92,7 @@ export function VendorRiskSection({
       <div className="space-y-4">
         {modelCopy ? (
           <div>
-            <span className="inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-wide">
+            <span className="inline-flex px-2 py-0.5 rounded-full bg-primary/10 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               {modelCopy.label}
             </span>
             <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
@@ -109,7 +109,7 @@ export function VendorRiskSection({
 
         {relevantSoftware.length > 0 ? (
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-2">
+            <h4 className="text-sm font-semibold mb-2 font-display text-heading">
               Catalog examples to investigate
             </h4>
             <p className="mb-2 text-xs leading-relaxed text-muted-foreground">

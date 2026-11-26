@@ -93,7 +93,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
       {/* Backdrop */}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
-        className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+        className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50 print:hidden"
         onClick={onClose}
       />
 
@@ -111,7 +111,10 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
                 <div className="p-2 rounded-lg bg-primary/20">
                   <Award size={20} className="text-primary" />
                 </div>
-                <h2 id="leader-consent-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="leader-consent-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   I Consent to Be Listed in the PQC Community
                 </h2>
               </div>
@@ -181,7 +184,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
                     )}
                   </Button>
                 </div>
-                <pre className="text-xs text-muted-foreground bg-muted/30 border border-border rounded-lg p-3 whitespace-pre-wrap leading-relaxed select-all">
+                <pre className="text-xs text-muted-foreground bg-muted/30 border border-border rounded-2xl p-3 whitespace-pre-wrap leading-relaxed select-all">
                   {LEADER_TEMPLATE}
                 </pre>
               </div>

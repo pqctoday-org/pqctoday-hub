@@ -23,7 +23,7 @@ export function RagAiSection() {
       >
         <BrainCircuit className="text-primary shrink-0" size={24} />
         <div className="flex-1">
-          <h2 className="text-xl font-semibold">PQC Assistant</h2>
+          <h2 className="text-xl font-semibold font-display text-heading">PQC Assistant</h2>
           <p className="text-xs text-muted-foreground">
             Answers from the Hub&apos;s own records · no language model
           </p>

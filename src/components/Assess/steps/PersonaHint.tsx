@@ -20,7 +20,7 @@ export const PersonaHint = ({ stepKey }: { stepKey: string }) => {
         : hint.hint
 
   return (
-    <div className="glass-panel p-3 border-l-4 border-l-primary/50 mt-3">
+    <div className="glass-panel rounded-2xl p-3 border-l-4 border-l-primary/50 mt-3">
       <div className="flex items-start gap-2">
         <Info size={14} className="text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground leading-relaxed">

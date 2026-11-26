@@ -361,7 +361,7 @@ export const BusinessToolsGrid = () => {
           phase or audience filter. */}
       {isUnfilteredView && (
         <div className="glass-panel p-4">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             {startHere.heading}
           </p>
           <div className="flex flex-wrap items-center gap-2">

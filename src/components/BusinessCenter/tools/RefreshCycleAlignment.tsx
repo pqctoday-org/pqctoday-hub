@@ -255,7 +255,9 @@ export const RefreshCycleAlignment: React.FC = () => {
       <header className="flex items-start gap-3">
         <CalendarClock size={24} className="text-primary shrink-0 mt-0.5" />
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Refresh-Cycle Alignment</h2>
+          <h2 className="text-lg font-semibold font-display text-heading">
+            Refresh-Cycle Alignment
+          </h2>
           <p className="text-sm text-muted-foreground">
             Phase 4 — Roadmap &amp; Governance (Activity 4.3)
             {cswp39Ref && (
@@ -297,8 +299,8 @@ export const RefreshCycleAlignment: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Planning horizon</h3>
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">Planning horizon</h3>
         <div className="block">
           <label htmlFor="refresh-horizon" className="text-xs font-medium text-muted-foreground">
             Planning horizon (years) — end:{' '}
@@ -335,8 +337,8 @@ export const RefreshCycleAlignment: React.FC = () => {
         )}
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
           Refresh programs · {rowCount} program{rowCount === 1 ? '' : 's'}
         </h3>
         <p className="text-xs text-muted-foreground">

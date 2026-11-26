@@ -26,7 +26,7 @@ const Block: FC<{ title: string; intro: string; children: ReactNode; testId: str
   testId,
 }) => (
   <section className="space-y-2 border-t border-border pt-3" data-testid={testId}>
-    <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+    <h3 className="text-sm font-semibold font-display text-heading">{title}</h3>
     <p className="max-w-3xl text-xs text-muted-foreground">{intro}</p>
     {children}
   </section>
@@ -44,7 +44,7 @@ export const ResearchWorkspacePanel: FC = () => {
     <section
       ref={ref}
       id={PANEL_ID}
-      className="mb-6 scroll-mt-20 space-y-3 rounded-xl border border-border bg-card p-4"
+      className="glass-panel mb-6 scroll-mt-20 space-y-3 p-4"
       data-testid={PANEL_ID}
       aria-labelledby={`${PANEL_ID}-title`}
     >

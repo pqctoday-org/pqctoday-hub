@@ -13,7 +13,9 @@ export function CloudSyncPrivacySection() {
     >
       <div className="flex items-center gap-3 mb-4">
         <Cloud className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold">Google Drive Sync &mdash; Privacy Terms</h2>
+        <h2 className="text-xl font-semibold font-display text-heading">
+          Google Drive Sync &mdash; Privacy Terms
+        </h2>
       </div>
       <div className="prose prose-invert max-w-none text-sm text-muted-foreground space-y-3">
         <p>

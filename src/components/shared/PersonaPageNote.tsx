@@ -32,10 +32,10 @@ export function PersonaPageNote({ route, className }: PersonaPageNoteProps) {
       <section
         aria-label="What this means for you"
         data-testid="persona-page-note"
-        className={cn('rounded-lg border border-border bg-muted/20 p-3', className)}
+        className={cn('glass-panel p-4', className)}
       >
         <p className="text-sm leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-foreground">What this means for you:</span>{' '}
+          <span className="font-bold text-heading">What this means for you:</span>{' '}
           {/* eslint-disable-next-line security/detect-object-injection -- selectedPersona is the typed PersonaId union */}
           {notes[selectedPersona]}
         </p>
@@ -47,14 +47,16 @@ export function PersonaPageNote({ route, className }: PersonaPageNoteProps) {
     <section
       aria-label="What this means for you"
       data-testid="persona-page-note"
-      className={cn('rounded-lg border border-border bg-muted/20 p-3', className)}
+      className={cn('glass-panel p-4', className)}
     >
-      <p className="text-sm font-semibold text-foreground">What this means for you</p>
+      <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-heading">
+        What this means for you
+      </p>
       <dl className="mt-1.5 grid gap-1 text-sm leading-relaxed text-muted-foreground sm:grid-cols-[max-content_1fr] sm:gap-x-3">
         {PERSONA_IDS.map((id) => (
           <div key={id} className="contents">
             {/* eslint-disable-next-line security/detect-object-injection -- id comes from the PERSONA_IDS const tuple */}
-            <dt className="font-medium text-foreground">{PERSONAS[id].label}</dt>
+            <dt className="font-bold text-heading">{PERSONAS[id].label}</dt>
             {/* eslint-disable-next-line security/detect-object-injection -- id comes from the PERSONA_IDS const tuple */}
             <dd className="m-0">{notes[id]}</dd>
           </div>

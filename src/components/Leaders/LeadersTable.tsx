@@ -90,7 +90,7 @@ export const LeadersTable = ({
   }
 
   const thClass =
-    'px-3 py-2.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors select-none'
+    'px-3 py-2.5 text-left uppercase cursor-pointer hover:text-foreground transition-colors select-none text-[11px] font-extrabold tracking-[0.14em] text-heading'
 
   return (
     <div className="glass-panel overflow-hidden">

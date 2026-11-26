@@ -148,7 +148,7 @@ const BackupRestoreSection = () => (
           whileInView="visible"
           viewport={{ once: true }}
           aria-label="Export backup — download all progress and settings"
-          className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
+          className="glass-panel rounded-2xl p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
           onClick={() => {
             try {
               UnifiedStorageService.downloadSnapshot()
@@ -158,11 +158,11 @@ const BackupRestoreSection = () => (
             }
           }}
         >
-          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+          <div className="p-2 shrink-0 rounded-full bg-chip text-chip-foreground">
             <Save size={18} aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <h4 className="text-sm font-semibold text-foreground">Export Backup</h4>
+            <h4 className="text-sm font-semibold font-display text-heading">Export Backup</h4>
             <p className="text-xs text-muted-foreground leading-snug">
               Downloads all progress — modules, assessment, persona, quiz mastery, artifacts, and
               settings.
@@ -177,7 +177,7 @@ const BackupRestoreSection = () => (
           whileInView="visible"
           viewport={{ once: true }}
           aria-label="Import backup — restore from a previously exported backup file"
-          className="glass-panel p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
+          className="glass-panel rounded-2xl p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
           onClick={() => {
             const input = document.createElement('input')
             input.type = 'file'
@@ -198,11 +198,11 @@ const BackupRestoreSection = () => (
             input.click()
           }}
         >
-          <div className="p-2 rounded-lg bg-secondary/10 text-secondary shrink-0">
+          <div className="p-2 shrink-0 rounded-full bg-chip text-chip-foreground">
             <Upload size={18} aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <h4 className="text-sm font-semibold text-foreground">Import Backup</h4>
+            <h4 className="text-sm font-semibold font-display text-heading">Import Backup</h4>
             <p className="text-xs text-muted-foreground leading-snug">
               Restore from a previously exported backup file to resume all progress and settings.
             </p>
@@ -502,7 +502,7 @@ export const LandingView = () => {
         <UpdatedSinceLastVisit className="mx-auto mb-8 max-w-3xl text-left" />
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <BrandLogo variant="full" size={160} className="mx-auto mb-6" />
-          <p className="text-sm font-mono uppercase tracking-widest text-primary-legible mb-4">
+          <p className="uppercase mb-4 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Prepare for the Quantum Era
           </p>
         </motion.div>
@@ -512,9 +512,9 @@ export const LandingView = () => {
           animate="visible"
           variants={fadeUp}
           custom={1}
-          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+          className="font-display text-heading text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
         >
-          The quantum era is <span className="text-gradient">here.</span>
+          The quantum era is <span className="text-heading">here.</span>
           <br />
           <span className="text-muted-foreground text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal mt-2 block">
             Your transformation journey starts now.
@@ -663,7 +663,7 @@ export const LandingView = () => {
             { value: String(LEARN_MODULE_COUNT), label: 'Learning Modules' },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4 text-center">
-              <div className="text-2xl md:text-3xl font-bold text-gradient">{stat.value}</div>
+              <div className="text-2xl md:text-3xl font-bold text-heading">{stat.value}</div>
               <div className="text-xs sm:text-sm text-muted-foreground mt-1 leading-tight">
                 {stat.label}
               </div>

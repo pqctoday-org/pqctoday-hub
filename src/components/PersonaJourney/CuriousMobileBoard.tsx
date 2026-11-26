@@ -101,21 +101,21 @@ const ROUTED_BOTTOM_TABS: RoutedTabDef[] = [
  */
 const TONE_CLASS: Record<string, { panel: string; label: string; punchline: string }> = {
   bad: {
-    panel: 'border-critical/40 bg-critical/5',
-    label: 'text-critical',
-    punchline: 'text-critical',
+    panel: 'bg-critical/5',
+    label: 'text-destructive-legible',
+    punchline: 'text-destructive-legible',
   },
   warn: {
-    panel: 'border-warning/40 bg-warning/5',
+    panel: 'bg-warning/5',
     label: 'text-warning',
     punchline: 'text-warning',
   },
   info: {
-    panel: 'border-primary/40 bg-primary/5',
+    panel: 'bg-primary/5',
     label: 'text-primary',
     punchline: 'text-primary',
   },
-  accent: { panel: 'border-accent/50 bg-accent/5', label: 'text-accent', punchline: 'text-accent' },
+  accent: { panel: 'bg-accent/5', label: 'text-accent', punchline: 'text-accent' },
 }
 
 function RoutedBottomTab({ path, label, icon: Icon, testId }: RoutedTabDef) {
@@ -239,7 +239,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
                 className={cn(
                   'h-auto shrink-0 snap-start rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors',
                   selected
-                    ? 'border-primary/50 bg-primary/10 text-primary'
+                    ? 'bg-primary/10 text-primary'
                     : 'border-border bg-muted/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'
                 )}
               >
@@ -252,7 +252,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
           {board.heroEyebrow}
         </p>
-        <h1 className="text-gradient mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">
+        <h1 className="font-display text-heading mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">
           {board.headline}
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{board.sub}</p>
@@ -282,7 +282,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         <section data-testid="hndl-card" className={cn('glass-panel mt-6 p-4', tone.panel)}>
           <span
             data-testid="side-card-provenance"
-            className="mb-2 inline-flex w-fit items-center rounded-full border border-border bg-background/60 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground"
+            className="mb-2 inline-flex w-fit items-center rounded-full border border-border bg-background/60 px-2 py-0.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading"
           >
             {PROVENANCE_LABEL[board.sideCard.provenance]}
           </span>
@@ -344,7 +344,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
         <>
           <div
             data-testid="more-menu-backdrop"
-            className="fixed inset-0 z-nav-backdrop bg-black/60"
+            className="fixed inset-0 z-nav-backdrop bg-scrim/60"
             onClick={() => setMoreOpen(false)}
             aria-hidden="true"
           />
@@ -352,7 +352,7 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
             role="dialog"
             aria-modal="true"
             aria-label="More"
-            className="fixed inset-x-0 bottom-0 z-modal rounded-t-2xl border-t border-border bg-card p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-modal rounded-t-2xl border-t border-border bg-card p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
           >
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-medium text-foreground">More</span>

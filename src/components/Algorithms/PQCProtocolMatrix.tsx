@@ -1064,7 +1064,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
         <div className="glass-panel p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Star size={15} className="text-status-warning shrink-0" />
-            <h2 className="text-sm font-semibold text-foreground">
+            <h2 className="text-sm font-semibold font-display text-heading">
               Reviewed deployment evidence (PQC Today synthesis)
             </h2>
           </div>
@@ -1109,7 +1109,9 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex-1 space-y-2">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <h2 className="text-lg font-semibold text-foreground">PQC Protocol Support Matrix</h2>
+              <h2 className="text-lg font-semibold font-display text-heading">
+                PQC Protocol Support Matrix
+              </h2>
               <span
                 className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground"
                 title={`Snapshot date — last manual update to the matrix data file (${PROTOCOL_MATRIX_LAST_UPDATED})`}
@@ -1237,7 +1239,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
           </span>
         </div>
         {showStageHelp && (
-          <div className="mt-1 space-y-1.5 rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
+          <div className="mt-1 space-y-1.5 rounded-2xl border border-border bg-card p-3 text-xs text-muted-foreground">
             <p className="font-semibold text-foreground">
               PQC Today&apos;s IETF maturity synthesis — earliest → latest
             </p>
@@ -1282,7 +1284,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       </div>
 
       {/* Filter & sort toolbar — single row, no inline labels (dropdowns self-describe) */}
-      <div className="glass-panel flex flex-wrap items-center gap-2 p-2">
+      <div className="glass-panel rounded-2xl flex flex-wrap items-center gap-2 p-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search
             size={14}
@@ -1440,7 +1442,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
                   Hybrid Sig
                 </th>
                 <th
-                  className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                  className="px-3 py-2 text-left uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading"
                   title="Libraries — open-source (blue) and commercial (accent)"
                 >
                   Libraries
@@ -1698,7 +1700,7 @@ export function PQCProtocolMatrix({ embedded = false }: PQCProtocolMatrixProps =
       {!isHeatmap && TRANSPORT_ISSUES.length > 0 && (
         <div className="glass-panel space-y-3 p-4">
           <div className="flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+            <h2 className="flex items-center gap-2 text-lg font-semibold font-display text-heading">
               <Zap size={18} className="text-status-warning" />
               Transport-Layer Blockers ({TRANSPORT_ISSUES.length})
             </h2>

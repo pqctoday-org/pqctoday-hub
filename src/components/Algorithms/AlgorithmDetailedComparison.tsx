@@ -227,9 +227,11 @@ function CompareView({
   const hidden = comparisonAlgos.slice(phoneLimit)
   if (comparisonAlgos.length < 2) {
     return (
-      <div className="glass-panel border-dashed border-2 border-border p-10 flex flex-col items-center justify-center text-center">
+      <div className="glass-panel border-dashed border-2 p-10 flex flex-col items-center justify-center text-center">
         <GitCompare size={40} className="text-muted-foreground/50 mb-3" />
-        <h4 className="text-base font-semibold text-foreground mb-1">Pick algorithms to compare</h4>
+        <h4 className="text-base font-semibold mb-1 font-display text-heading">
+          Pick algorithms to compare
+        </h4>
         <p className="text-sm text-muted-foreground max-w-sm mb-4">
           Select at least two algorithms of the same function type in Browse to see a transposed
           side-by-side comparison against a classical baseline.
@@ -249,7 +251,7 @@ function CompareView({
           Edit picks
         </Button>
       </div>
-      <div className="md:hidden overflow-x-auto rounded-lg border border-border bg-card p-3">
+      <div className="md:hidden overflow-x-auto rounded-2xl border border-border bg-card p-3">
         <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
           Swipe across up to {phoneLimit} picks. Compare function, maturity, security level and
           serialized sizes first; performance depends on the implementation and device.
@@ -271,8 +273,8 @@ function CompareView({
           }}
         >
           {shown.map((algo) => (
-            <article key={algo.id} className="rounded-md border border-border bg-background p-3">
-              <h4 className="text-sm font-semibold text-foreground">{algo.name}</h4>
+            <article key={algo.id} className="bg-card border border-border rounded-2xl p-3">
+              <h4 className="text-sm font-semibold font-display text-heading">{algo.name}</h4>
               <p className="mt-0.5 text-[11px] text-muted-foreground">{algo.family}</p>
               <dl className="mt-3 space-y-2 text-xs">
                 <Fact label="Maturity">{statusTierLabel(algo.statusTier)}</Fact>
@@ -325,7 +327,7 @@ function SelectionBar({
   onCompare: () => void
 }) {
   return (
-    <div className="glass-panel p-3 flex items-center justify-between gap-3 flex-wrap">
+    <div className="glass-panel rounded-2xl p-3 flex items-center justify-between gap-3 flex-wrap">
       <span className="text-sm text-muted-foreground">
         {count > selectionLimit ? (
           <>
@@ -361,7 +363,7 @@ function SelectionBar({
 const EmptyState = () => (
   <div className="glass-panel p-12 flex flex-col items-center justify-center text-center">
     <SearchX size={48} className="text-muted-foreground/50 mb-4" />
-    <h4 className="text-lg font-semibold text-foreground mb-2">No algorithms match</h4>
+    <h4 className="text-lg font-semibold mb-2 font-display text-heading">No algorithms match</h4>
     <p className="text-sm text-muted-foreground max-w-md">
       Try adjusting your filters or search query to see results.
     </p>
@@ -642,7 +644,7 @@ function BrowseTable({
             current filters
           </caption>
           <thead>
-            <tr className="bg-muted/50 text-muted-foreground text-xs uppercase tracking-wider border-b border-border">
+            <tr className="bg-muted/50 uppercase border-b border-border text-[11px] font-extrabold tracking-[0.14em] text-heading">
               <th className="p-3 w-8" aria-label="Select for comparison" />
               {headers.map(([field, label]) => (
                 <th

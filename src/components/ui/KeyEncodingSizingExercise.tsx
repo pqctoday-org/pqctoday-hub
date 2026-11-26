@@ -45,7 +45,7 @@ export function KeyEncodingSizingExercise() {
   }
 
   return (
-    <details className="rounded-lg border border-border bg-card p-3 text-sm">
+    <details className="glass-panel p-3 text-sm">
       <summary className="cursor-pointer font-semibold">Measure a public key buffer</summary>
       <p className="my-2 text-muted-foreground">
         The sample API expects the complete RSA public key as DER SubjectPublicKeyInfo (SPKI).

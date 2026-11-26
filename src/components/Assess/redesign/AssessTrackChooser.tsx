@@ -82,7 +82,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
       </div>
 
       {/* FULL TRACK */}
-      <div className="glass-panel relative flex flex-col border-primary/35 p-5">
+      <div className="glass-panel relative flex flex-col p-5">
         <div className="absolute -top-2.5 right-5 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-primary-foreground">
           Most complete
         </div>
@@ -144,7 +144,7 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
           {REFERENCE_ESTATES.map((estate) => (
-            <div key={estate.id} className="rounded-lg border border-border bg-card/50 p-3">
+            <div key={estate.id} className="rounded-2xl border border-border bg-card/50 p-3">
               <p className="text-[13px] font-semibold text-foreground">{estate.label}</p>
               <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
                 {estate.summary}

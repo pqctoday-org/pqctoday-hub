@@ -438,7 +438,7 @@ export const MigrationVerification: React.FC = () => {
       <header className="flex items-start gap-3">
         <ClipboardCheck size={24} className="text-primary shrink-0 mt-0.5" />
         <div>
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-lg font-semibold font-display text-heading">
             Migration Verification &amp; Program Closure
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -449,8 +449,8 @@ export const MigrationVerification: React.FC = () => {
       </header>
 
       {/* 1 — Verification recorder */}
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
           Verification records · {verifiedTotal}/{state.records.length} evidence complete
         </h3>
         <p className="text-xs text-muted-foreground">
@@ -497,7 +497,7 @@ export const MigrationVerification: React.FC = () => {
                 key={r.id}
                 role="group"
                 aria-label={r.system.trim() || 'Unnamed system'}
-                className="glass-panel border border-border rounded-lg p-3 space-y-2"
+                className="glass-panel glass-panel-row p-3 space-y-2"
               >
                 <div className="flex items-center gap-2">
                   <Input
@@ -601,8 +601,8 @@ export const MigrationVerification: React.FC = () => {
       </section>
 
       {/* 2 — Decommissioning log */}
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
           Decommissioning log (classical material)
         </h3>
         <p className="text-xs text-muted-foreground">
@@ -712,8 +712,10 @@ export const MigrationVerification: React.FC = () => {
       </section>
 
       {/* 3 — Closure & BAU handover */}
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Closure &amp; BAU handover</h3>
+      <section className="glass-panel p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
+          Closure &amp; BAU handover
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="sm:col-span-3">
             <label

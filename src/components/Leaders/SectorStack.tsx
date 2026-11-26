@@ -24,14 +24,8 @@ export const SectorStack = ({
     const unique = Array.from(new Set(rawSectors)).sort()
 
     return unique.map((sector, index) => {
-      const colors = [
-        'from-primary/20 to-info/20 border-primary/50 text-primary',
-        'from-secondary/20 to-secondary/10 border-secondary/50 text-secondary',
-        'from-accent/20 to-accent/10 border-accent/50 text-accent',
-      ]
-
-      const theme = colors[index % colors.length]
-      const [bgGradient, bgParams, borderColor, iconColor] = theme.split(' ')
+      const iconColors = ['text-primary-legible', 'text-secondary', 'text-accent-legible']
+      const iconColor = iconColors[index % iconColors.length]
 
       const sectorLeaders = items.filter((t) => t.type === sector)
 
@@ -40,9 +34,6 @@ export const SectorStack = ({
         label: sector,
         icon: getSectorIcon(sector, 24),
         description: `${sectorLeaders.length} leaders identified`,
-        color: `${bgGradient} ${bgParams}`,
-        borderColor,
-        activeColor: 'bg-card border-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)]',
         iconColor,
         count: sectorLeaders.length,
       }
@@ -58,8 +49,8 @@ export const SectorStack = ({
 
   return (
     <div className="w-full mb-10">
-      <div className="flex flex-col gap-3 p-6 bg-card border border-border rounded-2xl shadow-2xl relative">
-        <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-primary/20 via-primary/20 to-muted-foreground/20 -translate-x-1/2 z-0 hidden md:block" />
+      <div className="flex flex-col gap-3 p-6 bg-card rounded-2xl relative border-2 border-ink shadow-[0_4px_0_hsl(var(--edge))]">
+        <div className="absolute left-1/2 top-10 bottom-10 w-px bg-border -translate-x-1/2 z-0 hidden md:block" />
 
         {partitions.map((layer, index) => {
           const isActive = activeLayer === layer.id
@@ -74,23 +65,19 @@ export const SectorStack = ({
               className="transition-all duration-500 ease-in-out relative flex flex-col opacity-100"
             >
               <div
-                className={`group relative z-10 w-full rounded-xl transition-all duration-300 ease-in-out ${isActive ? layer.activeColor : `bg-gradient-to-r ${layer.color} border ${layer.borderColor} hover:scale-[1.01] hover:brightness-110`} ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}`}
+                className={`group relative z-10 w-full rounded-2xl border transition-colors duration-300 ease-in-out ${isActive ? 'border-highlight-border bg-highlight' : 'border-border bg-card hover:bg-muted'} ${isFaded ? 'opacity-40' : 'opacity-100'}`}
                 style={{ transformOrigin: 'center' }}
               >
-                <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-                  <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/5 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
-                </div>
-
                 <Button
                   variant="ghost"
                   type="button"
                   onClick={() => handleSelect(layer.id)}
                   aria-expanded={isActive}
-                  className="relative z-10 flex h-auto w-full cursor-pointer flex-col items-center justify-between whitespace-normal rounded-xl p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 md:flex-row md:px-8"
+                  className="relative z-10 flex h-auto w-full cursor-pointer flex-col items-center justify-between whitespace-normal rounded-2xl p-4 text-left focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:outline-solid md:flex-row md:px-8"
                 >
                   <div className="flex items-center gap-4 w-full md:w-auto">
                     <div
-                      className={`flex items-center justify-center w-12 h-12 rounded-lg bg-background/50 backdrop-blur border border-border/30 shadow-inner transition-colors ${
+                      className={`flex items-center justify-center w-12 h-12 rounded-full bg-chip transition-colors ${
                         isActive
                           ? layer.iconColor
                           : 'text-muted-foreground group-hover:text-foreground'

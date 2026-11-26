@@ -184,7 +184,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
           profile={profile}
           message="Choose an industry and country to compare the dates associated with that educational scenario."
         />
-        <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between gap-4">
+        <div className="glass-panel p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
               For a fleet inventory and rotation plan, take the full assessment.
@@ -218,7 +218,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
       >
         <header className="flex items-center gap-2">
           <Clock size={16} className="text-secondary" />
-          <h3 className="text-base font-semibold text-foreground">Rotation clock</h3>
+          <h3 className="text-base font-semibold font-display text-heading">Rotation clock</h3>
           <span className="text-xs text-muted-foreground">
             Your applicable frameworks bucketed by how soon they bind
           </span>
@@ -271,7 +271,9 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
       >
         <header className="flex items-center gap-2">
           <Wrench size={16} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">Toolchain quick jumps</h3>
+          <h3 className="text-base font-semibold font-display text-heading">
+            Toolchain quick jumps
+          </h3>
           <span className="text-xs text-muted-foreground">
             Where to actually do the rotation work
           </span>
@@ -299,12 +301,12 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
       <section data-section-id="ops-framework-table" className="space-y-2 scroll-mt-20">
         <header className="flex items-center gap-2">
           <CalendarClock size={16} className="text-secondary" />
-          <h3 className="text-base font-semibold text-foreground">Framework deadlines</h3>
+          <h3 className="text-base font-semibold font-display text-heading">Framework deadlines</h3>
           <span className="text-xs text-muted-foreground">
             Top {Math.min(applicable.length, 10)} applicable to your profile
           </span>
         </header>
-        <div className="glass-panel p-2">
+        <div className="glass-panel rounded-2xl p-2">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -356,7 +358,7 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
       <section data-section-id="ops-evidence" className="space-y-2 scroll-mt-20">
         <div className="flex items-center gap-2">
           <FileCheck size={16} className="shrink-0 text-primary" aria-hidden="true" />
-          <h3 className="text-base font-semibold text-foreground">
+          <h3 className="text-base font-semibold font-display text-heading">
             Evidence you will be asked for
           </h3>
         </div>

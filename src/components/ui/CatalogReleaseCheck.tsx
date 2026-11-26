@@ -10,7 +10,7 @@ export function CatalogReleaseCheck({ version }: { version: string }) {
   if (!recorded) return null
 
   return (
-    <details className="space-y-2 rounded-md border border-border p-3 text-sm">
+    <details className="space-y-2 rounded-2xl border border-border p-3 text-sm">
       <summary className="cursor-pointer font-semibold">Compare your deployed version</summary>
       <p>
         Catalogue release <strong>{recorded}</strong>

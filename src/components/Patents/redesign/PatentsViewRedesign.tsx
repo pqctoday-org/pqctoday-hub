@@ -592,7 +592,7 @@ export function PatentsViewRedesign({
       )}
 
       {/* Control deck */}
-      <div className="glass-panel space-y-3 rounded-2xl p-3 sm:p-4">
+      <div className="glass-panel rounded-2xl space-y-3 p-3 sm:p-4">
         <PatentsScopeControl
           pqcOnly={pqcOnly}
           onChange={handlePqcOnlyChange}
@@ -639,7 +639,7 @@ export function PatentsViewRedesign({
             onPresetChange={handlePresetChange}
             onColumnsChange={handleColumnsChange}
           />
-          <div className="glass-panel h-[60dvh] overflow-hidden rounded-2xl">
+          <div className="glass-panel h-[60dvh] overflow-hidden">
             <PatentsTable
               patents={displayPatents}
               selectedId={selectedPatent}
@@ -657,7 +657,7 @@ export function PatentsViewRedesign({
         </TabsContent>
 
         <TabsContent value="search" className="mt-4">
-          <div className="glass-panel rounded-2xl p-4">
+          <div className="glass-panel p-4">
             <PatentSearchPanel
               patents={displayPatents}
               onSelectPatent={handleSearchSelect}

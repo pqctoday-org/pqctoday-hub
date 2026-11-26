@@ -162,7 +162,7 @@ export const LibraryCitationExport: FC<LibraryCitationExportProps> = ({
             role="dialog"
             aria-label="Export citations"
             style={{ position: 'fixed', top: pos.top, left: pos.left, zIndex: 9999 }}
-            className="glass-panel w-64 p-3 space-y-3 shadow-xl"
+            className="glass-panel rounded-2xl w-64 p-3 space-y-3"
             data-testid="library-cite-menu"
           >
             {row('filtered', filteredCount, 'Documents shown by the current filter')}

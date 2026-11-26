@@ -61,7 +61,7 @@ export const BusinessToolRoute = () => {
   if (!tool) {
     return (
       <section className="mx-auto max-w-2xl space-y-4 px-4 py-12 text-center">
-        <h1 className="text-3xl font-bold text-foreground">Business tool not found</h1>
+        <h1 className="text-3xl font-bold font-display text-heading">Business tool not found</h1>
         <p className="text-muted-foreground">
           No supported business tool matches this address. It may have moved or the link may be
           incomplete.
@@ -96,7 +96,7 @@ export const BusinessToolRoute = () => {
             Every business tool route rendered it as a breadcrumb span and the
             tool body opens with an h2, so all 37 tools failed axe
             `page-has-heading-one`. Same row, same size. */}
-        <h1 className="text-sm font-medium text-foreground">
+        <h1 className="text-sm font-medium font-display text-heading">
           <span className="font-normal text-muted-foreground">{tool.category} / </span>
           {tool.name}
         </h1>
@@ -145,7 +145,7 @@ export const BusinessToolRoute = () => {
           the way it is"; a generated document the user cannot defend is worse
           than no document. Both lines come from the registry, so a new tool
           cannot ship without them. */}
-      <section className="rounded-lg border border-border bg-muted/20 p-3">
+      <section className="glass-panel p-3">
         <p className="text-sm leading-relaxed text-muted-foreground">
           <span className="font-semibold text-foreground">What this is for:</span>{' '}
           {tool.description}.
@@ -204,7 +204,7 @@ export const BusinessToolRoute = () => {
           search, or the tools grid was an island — only 2 of 37 tools carry
           in-app links of their own. Keyed off the tool's zone via the existing
           ZONE_STEP_CONTRIBUTORS map. (Audit 2026-08-10, W3-2.) */}
-      <div className="glass-panel p-4 border border-border">
+      <div className="glass-panel p-4">
         <RecommendedResourcesPanel stepId={primaryStepForZone(tool.cswp39Zone)} />
       </div>
       {/* Round 9, wave 1.2 (2026-09-19) — the declared exit (src/data/nextSteps.ts):

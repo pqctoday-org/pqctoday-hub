@@ -236,7 +236,9 @@ export const ComplianceImpactSection = ({
       </Link>
     </div>
     <div className="mt-4 pt-4 border-t border-border">
-      <h4 className="text-sm font-semibold text-foreground mb-2">Profile-driven applicability</h4>
+      <h4 className="text-sm font-semibold mb-2 font-display text-heading">
+        Profile-driven applicability
+      </h4>
       <p className="text-xs text-muted-foreground mb-3">
         Frameworks, threats, library docs, and milestones the engine identifies as applicable to
         your industry and country. This list does not depend on the frameworks you selected above

@@ -66,7 +66,7 @@ export const KeyStoreView = ({
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+          <h2 className="text-lg font-bold flex items-center gap-2 font-display text-heading">
             <KeyIcon size={18} className="text-primary" /> Key Store
           </h2>
           {keyStore.length > 0 && (

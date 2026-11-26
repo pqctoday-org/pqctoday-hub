@@ -96,12 +96,12 @@ export const FrameworkDetailPopover = ({
 
   const content = (
     <>
-      <div className="fixed inset-0 z-overlay bg-black/60" onClick={onClose} aria-hidden="true" />
+      <div className="fixed inset-0 z-overlay bg-scrim/60" onClick={onClose} aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[95vw] sm:w-[80vw] md:w-[60vw] max-w-[900px] max-h-[85dvh] border border-border rounded-xl overflow-hidden flex flex-col bg-popover text-popover-foreground shadow-2xl animate-in zoom-in-95 duration-200"
+            className="w-[95vw] sm:w-[80vw] md:w-[60vw] max-w-[900px] max-h-[85dvh] overflow-hidden flex flex-col bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 glass-panel rounded-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="framework-popover-title"
@@ -144,7 +144,7 @@ export const FrameworkDetailPopover = ({
                 </div>
                 <h3
                   id="framework-popover-title"
-                  className="text-lg font-bold text-foreground leading-tight"
+                  className="text-lg font-bold leading-tight font-display text-heading"
                 >
                   {framework.label}
                 </h3>
@@ -197,7 +197,7 @@ export const FrameworkDetailPopover = ({
             <div className="overflow-y-auto p-4 space-y-4">
               {curiousPreface && (
                 <section
-                  className="glass-panel border border-primary/30 bg-primary/5 rounded-lg p-3"
+                  className="glass-panel rounded-2xl bg-primary/5 p-3"
                   aria-label="Plain-English explainer"
                 >
                   <div className="flex items-start gap-2">
@@ -212,7 +212,7 @@ export const FrameworkDetailPopover = ({
               )}
 
               <section>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                <h4 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   Description
                 </h4>
                 <p className="text-sm text-foreground leading-relaxed">{framework.description}</p>
@@ -223,7 +223,7 @@ export const FrameworkDetailPopover = ({
 
               {cswp39Note(framework.cswp39Tags) !== null && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <Tag size={12} aria-hidden="true" />
                     Crypto Posture Pillars
                   </h4>
@@ -235,7 +235,7 @@ export const FrameworkDetailPopover = ({
 
               {framework.cswp39Tags && framework.cswp39Tags.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <Tag size={12} aria-hidden="true" />
                     Crypto Posture Pillars
                   </h4>
@@ -284,7 +284,7 @@ export const FrameworkDetailPopover = ({
 
               {linkedLibrary.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <BookOpen size={12} aria-hidden="true" />
                     Linked Library Documents ({linkedLibrary.length})
                   </h4>
@@ -322,7 +322,7 @@ export const FrameworkDetailPopover = ({
 
               {linkedTimeline.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <Calendar size={12} aria-hidden="true" />
                     Linked Timeline Events ({linkedTimeline.length})
                   </h4>
@@ -358,7 +358,7 @@ export const FrameworkDetailPopover = ({
 
               {linkedRequirements.length > 0 && (
                 <section>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                  <h4 className="uppercase mb-2 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                     <ListChecks size={12} aria-hidden="true" />
                     CSWP.39 Maturity Requirements ({linkedRequirements.length})
                   </h4>
@@ -366,7 +366,7 @@ export const FrameworkDetailPopover = ({
                     {linkedRequirements.map((req, i) => (
                       <div
                         key={`${req.refId}-${req.pillar}-${req.maturityLevel}-${i}`}
-                        className="border border-border rounded-lg p-3 space-y-1.5 bg-card text-xs"
+                        className="border border-border rounded-2xl p-3 space-y-1.5 bg-card text-xs"
                       >
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold capitalize">

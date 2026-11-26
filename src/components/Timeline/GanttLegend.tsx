@@ -22,7 +22,7 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
 
   return (
     <div className={`glass-panel p-4 ${className}`}>
-      <h3 className="text-sm font-bold text-foreground mb-4 border-b border-border pb-2">
+      <h3 className="text-sm font-bold mb-4 border-b border-border pb-2 font-display text-heading">
         Phase Color Code
       </h3>
 

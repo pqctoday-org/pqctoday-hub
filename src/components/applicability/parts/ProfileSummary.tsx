@@ -54,7 +54,7 @@ export function ProfileSummary({ profile, editable }: { profile: UserProfile; ed
 
   if (!editable) {
     return (
-      <div className="rounded-lg border border-border bg-card p-3 flex flex-wrap items-center gap-2 text-sm">
+      <div className="rounded-2xl border border-border bg-card p-3 flex flex-wrap items-center gap-2 text-sm">
         <Globe size={14} className="text-muted-foreground" aria-hidden="true" />
         <span className="text-muted-foreground">Showing applicability for:</span>
         <span className="font-medium text-foreground">{profile.industry || 'Any industry'}</span>
@@ -67,7 +67,7 @@ export function ProfileSummary({ profile, editable }: { profile: UserProfile; ed
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card p-3 flex flex-wrap items-center gap-2 text-sm">
+    <div className="rounded-2xl border border-border bg-card p-3 flex flex-wrap items-center gap-2 text-sm">
       <Globe size={14} className="text-muted-foreground" aria-hidden="true" />
       <span className="text-muted-foreground">Showing applicability for:</span>
       <FilterDropdown

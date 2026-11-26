@@ -44,7 +44,7 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
         <div className="flex items-center gap-3">
           <Info className="text-primary" size={24} />
           <div>
-            <h2 className="text-2xl font-semibold">About PQC Today</h2>
+            <h2 className="text-2xl font-semibold font-display text-heading">About PQC Today</h2>
             <p className="text-xs text-muted-foreground font-mono">v{version}</p>
           </div>
         </div>
@@ -55,7 +55,7 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
         <p className="text-[11px] tracking-widest uppercase text-muted-foreground mb-3">
           PQCToday &mdash; Public Vision
         </p>
-        <h3 className="text-lg font-medium text-foreground leading-snug mb-4">
+        <h3 className="text-lg font-medium leading-snug mb-4 font-display text-heading">
           Preparing the world for the quantum cryptographic transition
         </h3>
         <p className="text-sm text-muted-foreground leading-relaxed border-l-2 border-primary/40 pl-4 mb-4">
@@ -103,7 +103,9 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
 
             {/* What we are building */}
             <div>
-              <h3 className="text-sm font-semibold text-foreground mb-2">What we are building</h3>
+              <h3 className="text-sm font-semibold mb-2 font-display text-heading">
+                What we are building
+              </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-2">
                 PQCToday is a neutral, community-governed platform providing independent education,
                 hands-on simulation, and migration guidance for the global post-quantum cryptography
@@ -143,13 +145,13 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
 
             {/* Founding principles */}
             <div>
-              <h3 className="text-sm font-semibold text-foreground mb-3">
+              <h3 className="text-sm font-semibold mb-3 font-display text-heading">
                 Our founding principles
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden">
                 {PRINCIPLES.map(({ label, text }) => (
                   <div key={label} className="bg-card p-3">
-                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wider text-primary mb-1">
+                    <p className="sm:text-xs uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       {label}
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
@@ -162,7 +164,9 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
 
             {/* What we are not */}
             <div>
-              <h3 className="text-sm font-semibold text-foreground mb-3">What we are not</h3>
+              <h3 className="text-sm font-semibold mb-3 font-display text-heading">
+                What we are not
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {NOT_ITEMS.map(({ label, text }) => (
                   <div key={label} className="bg-muted/30 rounded-lg p-3">
@@ -191,7 +195,9 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
 
             {/* Who this is for */}
             <div>
-              <h3 className="text-sm font-semibold text-foreground mb-2">Who this is for</h3>
+              <h3 className="text-sm font-semibold mb-2 font-display text-heading">
+                Who this is for
+              </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-2">
                 Every organisation that processes sensitive data has a quantum exposure problem
                 &mdash; whether they know it yet or not. Governments. Banks. Hospitals. Telecoms.
@@ -211,7 +217,7 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
 
             {/* Open source foundation */}
             <div>
-              <h3 className="text-sm font-semibold text-foreground mb-2">
+              <h3 className="text-sm font-semibold mb-2 font-display text-heading">
                 The open source foundation
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-2">
@@ -232,7 +238,7 @@ export function VisionSection({ defaultExpanded = false }: { defaultExpanded?: b
 
             {/* The timeline is not optional */}
             <div>
-              <h3 className="text-sm font-semibold text-foreground mb-2">
+              <h3 className="text-sm font-semibold mb-2 font-display text-heading">
                 The timeline is not optional
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-2">

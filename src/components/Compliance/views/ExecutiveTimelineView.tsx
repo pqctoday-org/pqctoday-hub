@@ -263,7 +263,7 @@ function FrameworkSection({
     return (
       <div
         data-section-id={sectionId}
-        className="rounded-lg border border-dashed border-border bg-card/50 p-3 text-xs text-muted-foreground scroll-mt-20"
+        className="rounded-2xl border border-dashed border-border bg-card/50 p-3 text-xs text-muted-foreground scroll-mt-20"
       >
         <span className="font-semibold text-foreground/70">{title}: </span>
         {emptyText}
@@ -272,7 +272,7 @@ function FrameworkSection({
   }
   return (
     <div data-section-id={sectionId} className="space-y-2 scroll-mt-20">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-1">
+      <h3 className="uppercase px-1 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
         {title} ({frameworks.length})
       </h3>
       {frameworks.map((r) => (
@@ -291,7 +291,7 @@ function FrameworkSection({
 function ExecutiveDerivedSection({ results }: { results: DerivedResult[] }) {
   return (
     <div data-section-id="frameworks-derived" className="space-y-2 scroll-mt-20">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-1 flex items-center gap-1.5">
+      <h3 className="uppercase px-1 flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
         <Link2 size={12} className="text-accent" />
         Related via IR 8477 ({results.length})
       </h3>

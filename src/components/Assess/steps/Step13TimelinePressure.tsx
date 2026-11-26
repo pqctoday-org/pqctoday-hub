@@ -98,7 +98,9 @@ const Step13TimelinePressure = ({
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">Do you have a migration deadline?</h3>
+          <h3 className="text-xl font-bold font-display text-heading">
+            Do you have a migration deadline?
+          </h3>
           <p className="text-sm text-muted-foreground">
             Timeline pressure affects how aggressively migration must be prioritized.
           </p>

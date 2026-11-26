@@ -6,11 +6,10 @@ import { HistoricalProductNotice } from '@/components/ui/HistoricalProductNotice
 /** Same-record evidence only; never an inventory choice or current availability claim. */
 export function HistoricalProductDetail({ record }: { record: HistoricalProductRecord }) {
   return (
-    <section
-      aria-label="Historical product record"
-      className="rounded-xl border border-border bg-card p-3"
-    >
-      <h2 className="text-base font-bold">{record.product.softwareName}</h2>
+    <section aria-label="Historical product record" className="glass-panel p-3">
+      <h2 className="text-base font-bold font-display text-heading">
+        {record.product.softwareName}
+      </h2>
       <HistoricalProductNotice record={record} />
       <ProductDetail product={record.product} readOnly />
     </section>

@@ -15,6 +15,14 @@ import { ReportTimelineStrip } from '../ReportTimelineStrip'
 import { CollapsibleSection } from './reportContentShared'
 import { RiskScoreWorking } from '../RiskScoreWorking'
 
+// The risk level colours only the left bar; the card keeps its ink outline.
+const RISK_LEFT_BAR: Record<string, string> = {
+  'border-success': 'border-l-success',
+  'border-warning': 'border-l-warning',
+  'border-destructive': 'border-l-destructive',
+  'border-critical': 'border-l-critical',
+}
+
 export const CountryTimelineSection = ({
   country,
   defaultOpen,
@@ -65,7 +73,7 @@ export const RiskScoreSection = ({
       title="Educational Priority Index"
       icon={<ShieldAlert className={config.color} size={20} />}
       defaultOpen={defaultOpen}
-      className={clsx('border-l-4', config.border)}
+      className={clsx('border-l-4', RISK_LEFT_BAR[config.border])}
       infoTip="riskScore"
     >
       <RiskGauge score={result.riskScore} level={result.riskLevel} />
@@ -79,7 +87,7 @@ export const RiskScoreSection = ({
             className={clsx(
               'text-xs font-mono px-2 py-0.5 rounded-full',
               result.riskScore < previousRiskScore
-                ? 'bg-success/10 text-success'
+                ? 'bg-success/10 text-success-legible'
                 : 'bg-destructive/10 text-destructive'
             )}
           >
@@ -109,8 +117,8 @@ export const RiskScoreSection = ({
         <GlossaryAutoWrap>{result.narrative}</GlossaryAutoWrap>
       </p>
       {result.boosts && result.boosts.length > 0 && result.preBoostScore !== undefined && (
-        <div className="mt-4 p-3 rounded-lg border border-border bg-muted/20 print:bg-transparent">
-          <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
+        <div className="mt-4 p-3 rounded-2xl border border-border bg-muted/20 print:bg-transparent">
+          <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Situational boosts raised this score from {result.preBoostScore} to {result.riskScore}
           </p>
           <ul className="space-y-1">

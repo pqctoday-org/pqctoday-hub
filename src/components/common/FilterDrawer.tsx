@@ -54,16 +54,16 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
           >
             {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-black/60"
+              className="absolute inset-0 bg-scrim/60"
               onClick={() => setIsOpen(false)}
               role="presentation"
             />
 
             {/* Side panel */}
-            <div className="relative ml-auto w-full max-w-sm bg-card border-l border-border shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col h-full">
+            <div className="relative ml-auto w-full max-w-sm bg-card border-l-2 border-ink animate-in slide-in-from-right duration-300 flex flex-col h-full">
               {/* Header */}
               <div className="px-6 py-4 border-b border-border flex items-center justify-between shrink-0">
-                <h2 className="text-lg font-bold flex items-center gap-2">
+                <h2 className="text-lg font-bold flex items-center gap-2 font-display text-heading">
                   <Filter size={18} className="text-primary" />
                   Refine Results
                 </h2>

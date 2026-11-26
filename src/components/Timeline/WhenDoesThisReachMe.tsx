@@ -60,7 +60,9 @@ export function WhenDoesThisReachMe({ data, countryName }: Props) {
     <section className="mb-4 rounded-xl border border-primary/25 bg-primary/5 p-4">
       <div className="mb-2 flex items-center gap-2">
         <CalendarClock size={17} className="shrink-0 text-primary" aria-hidden="true" />
-        <h2 className="text-base font-bold text-foreground">What is recorded for {countryName}?</h2>
+        <h2 className="text-base font-bold font-display text-heading">
+          What is recorded for {countryName}?
+        </h2>
       </div>
 
       <p className="text-sm leading-relaxed text-muted-foreground">

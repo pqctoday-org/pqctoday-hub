@@ -42,7 +42,7 @@ const PERSONA_ORDER: PersonaId[] = [
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="grid grid-cols-1 gap-0.5 border-t border-border py-2 sm:grid-cols-[10rem_1fr] sm:gap-3">
-      <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <dt className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {label}
       </dt>
       <dd className="text-sm leading-relaxed text-foreground/90">{value}</dd>
@@ -65,7 +65,9 @@ export function PersonalizationSection() {
     >
       <div className="mb-4 flex items-center gap-3">
         <SlidersHorizontal className="shrink-0 text-primary" size={24} aria-hidden="true" />
-        <h2 className="flex-1 text-xl font-semibold">How this hub adapts to you</h2>
+        <h2 className="flex-1 text-xl font-semibold font-display text-heading">
+          How this hub adapts to you
+        </h2>
       </div>
 
       <p className="text-sm leading-relaxed text-muted-foreground">
@@ -167,7 +169,9 @@ export function PersonalizationSection() {
           too; this is the second door the review asked for, from the page that
           raises the question. */}
       <div className="mt-5 border-t border-border pt-4">
-        <h3 className="text-sm font-semibold text-foreground">How a claim earns its place here</h3>
+        <h3 className="text-sm font-semibold font-display text-heading">
+          How a claim earns its place here
+        </h3>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
           Where recorded, source links and provenance metadata help you inspect a claim. Coverage
           varies by dataset, and missing source or review metadata does not establish that a claim

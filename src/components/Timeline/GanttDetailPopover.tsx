@@ -156,7 +156,7 @@ export const GanttDetailPopover = ({
     <>
       {/* Backdrop */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-scrim/60`}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -168,19 +168,14 @@ export const GanttDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[90vw] max-w-[36rem] bg-popover text-popover-foreground shadow-2xl border border-border rounded-xl animate-in zoom-in-95 duration-200"
+            className="w-[90vw] max-w-[36rem] bg-popover text-popover-foreground animate-in zoom-in-95 duration-200 glass-panel rounded-2xl"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"
             aria-labelledby="gantt-phase-popover-title"
           >
             {/* Header with Phase Color */}
-            <div
-              className="p-3 border-b border-border"
-              style={{
-                background: `linear-gradient(to bottom, ${colors.glow} 0%, transparent 100%)`,
-              }}
-            >
+            <div className="p-3 border-b-4" style={{ borderBottomColor: colors.start }}>
               <div className="flex items-start gap-2">
                 {/* Badge and Title */}
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
@@ -192,7 +187,7 @@ export const GanttDetailPopover = ({
                   </div>
                   <h3
                     id="gantt-phase-popover-title"
-                    className="text-xs font-bold text-foreground leading-tight"
+                    className="text-xs font-bold leading-tight font-display text-heading"
                   >
                     {shown.title}
                   </h3>
@@ -304,7 +299,7 @@ export const GanttDetailPopover = ({
                   {primaryEvent && (
                     <>
                       <div className="col-span-2">
-                        <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                        <span className="block uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                           Issued by
                         </span>
                         <span className="text-foreground" data-testid="gantt-popover-org">
@@ -315,7 +310,7 @@ export const GanttDetailPopover = ({
                         </span>
                       </div>
                       <div className="col-span-2">
-                        <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                        <span className="block uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                           Country
                         </span>
                         <span className="text-foreground">{primaryEvent.countryName}</span>
@@ -323,13 +318,13 @@ export const GanttDetailPopover = ({
                     </>
                   )}
                   <div>
-                    <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                    <span className="block uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       Start
                     </span>
                     <span className="font-mono text-foreground">{shown.startYear}</span>
                   </div>
                   <div>
-                    <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                    <span className="block uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       End
                     </span>
                     <span className="font-mono text-foreground">
@@ -342,7 +337,7 @@ export const GanttDetailPopover = ({
                       width. */}
                   {sourceUrl && (
                     <div>
-                      <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                      <span className="block uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                         Source
                       </span>
                       <a
@@ -359,7 +354,7 @@ export const GanttDetailPopover = ({
                   )}
                   {sourceDate && (
                     <div>
-                      <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                      <span className="block uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                         Date
                       </span>
                       <div className="flex items-center gap-1.5 text-foreground">
@@ -387,7 +382,7 @@ export const GanttDetailPopover = ({
                 (primaryEvent.confidenceScore !== undefined ||
                   primaryEvent.trustedSourceIdStatus) && (
                   <div className="pt-3 border-t border-border">
-                    <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs mb-1.5">
+                    <span className="block uppercase mb-1.5 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       Electronic evidence
                     </span>
                     <TimelineEvidenceBadge

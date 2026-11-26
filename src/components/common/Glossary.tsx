@@ -24,7 +24,7 @@ const categoryColors = {
 }
 
 const TermCard = ({ term }: { term: GlossaryTerm }) => (
-  <div className="glass-panel p-4 hover:border-primary/30 transition-colors min-w-0">
+  <div className="glass-panel glass-panel-row p-4 hover:border-primary/30 transition-colors min-w-0">
     <div className="flex items-start justify-between gap-2 mb-2">
       <div className="flex items-center gap-2 flex-wrap">
         <h3 className="font-semibold text-foreground">{term.term}</h3>

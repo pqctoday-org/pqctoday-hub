@@ -80,7 +80,7 @@ export function Cswp39SectionBadge({ sectionRef, subSection }: Cswp39SectionBadg
       {open && parent && (
         <span
           role="tooltip"
-          className="absolute left-0 top-full mt-1 z-50 w-72 p-3 rounded-lg border border-border bg-background shadow-lg text-left"
+          className="absolute left-0 top-full mt-1 z-50 w-72 p-3 bg-background text-left glass-panel rounded-2xl"
         >
           <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
             NIST CSWP.39 {parent.ref}

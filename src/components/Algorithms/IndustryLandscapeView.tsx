@@ -617,7 +617,7 @@ function UseCaseCard({
   )
   return (
     <div
-      className="rounded-lg border border-border bg-card p-4"
+      className="glass-panel p-4"
       data-use-case={uc.useCaseId}
       data-deeplink-id={`usecase-${uc.useCaseId}`}
     >
@@ -1366,7 +1366,7 @@ export function IndustryLandscapeView() {
           </div>
 
           {mechanismDef && (
-            <div className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-sm">
+            <div className="mb-4 rounded-2xl border border-border bg-muted/30 p-3 text-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium text-foreground">{mechanismDef.family}</span>
                 <span className="text-xs text-muted-foreground">
@@ -1543,7 +1543,7 @@ export function IndustryLandscapeView() {
               {(usage.get(constructionDef.id)?.direct.length ?? 0) === 0 &&
                 (usage.get(constructionDef.id)?.standards.length ?? 0) > 0 && (
                   <div
-                    className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-xs"
+                    className="mb-4 rounded-2xl border border-border bg-muted/30 p-3 text-xs"
                     data-testid="construction-standard-links"
                   >
                     <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -1726,7 +1726,7 @@ export function IndustryLandscapeView() {
             }
             return (
               <>
-                <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/30 p-4">
+                <div className="glass-panel mb-4 flex flex-wrap items-center gap-3 p-4">
                   <IndIcon size={26} className="text-primary" />
                   <h3
                     ref={industryHeadingRef}

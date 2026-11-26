@@ -24,7 +24,7 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50 print:hidden"
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden">
@@ -41,7 +41,10 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-5">
-                  <h2 id="algorithm-info-modal-title" className="text-lg font-bold text-foreground">
+                  <h2
+                    id="algorithm-info-modal-title"
+                    className="text-lg font-bold font-display text-heading"
+                  >
                     About This Data
                   </h2>
                   <Button
@@ -58,7 +61,7 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     <Zap size={14} className="text-primary shrink-0" />
-                    <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                    <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       Performance Data
                     </p>
                   </div>
@@ -103,8 +106,8 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                 </div>
 
                 {/* Quick Reference */}
-                <div className="mb-6 bg-muted/30 border border-border rounded-lg p-4">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                <div className="bg-card border border-border rounded-2xl mb-6 p-4">
+                  <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Quick Reference
                   </p>
                   <div className="space-y-2 text-xs text-muted-foreground">
@@ -130,7 +133,7 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     <HardDrive size={14} className="text-primary shrink-0" />
-                    <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                    <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       Size Data
                     </p>
                   </div>
@@ -157,7 +160,7 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     <FlaskConical size={14} className="text-primary shrink-0" />
-                    <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                    <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       Verify It Yourself
                     </p>
                   </div>
@@ -201,7 +204,7 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                 <div className="mb-4">
                   <div className="flex items-center gap-2 mb-3">
                     <Database size={14} className="text-primary shrink-0" />
-                    <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                    <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                       Data Sources
                     </p>
                   </div>

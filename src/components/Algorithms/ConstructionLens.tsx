@@ -218,7 +218,7 @@ export function ConstructionDiagram({ c }: { c: CryptoConstruction }) {
   const groups = instantiationsOf(c)
   return (
     <figure
-      className="mt-3 rounded-lg border border-border bg-muted/20 p-3"
+      className="mt-3 rounded-2xl border border-border bg-muted/20 p-3"
       data-testid={`construction-diagram-${c.id}`}
       aria-label={`How ${c.label} works`}
     >
@@ -319,7 +319,7 @@ export function ConstructionCard({
   const viaIds = [...new Set((usage?.inside ?? []).map((i) => i.via))]
   return (
     <div
-      className="mb-4 rounded-lg border border-border bg-muted/30 p-3 text-sm"
+      className="mb-4 rounded-2xl border border-border bg-muted/30 p-3 text-sm"
       data-testid={`construction-card-${c.id}`}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -514,11 +514,10 @@ export function TransitionMap({
       </div>
     ) : null
   return (
-    <section
-      className="mb-6 rounded-lg border border-border bg-card p-3"
-      data-testid="transition-map"
-    >
-      <h3 className="mb-2 text-sm font-medium text-foreground">The transition at a glance</h3>
+    <section className="glass-panel mb-6 p-3" data-testid="transition-map">
+      <h3 className="mb-2 text-sm font-medium font-display text-heading">
+        The transition at a glance
+      </h3>
       <div className="space-y-3">
         {arrowRows('replaced')}
         {arrowRows('extended')}
@@ -599,7 +598,7 @@ export function ConstructionsOverview({
   if (used.length === 0) return null
   return (
     <section className="mb-6" data-testid="constructions-overview">
-      <h3 className="mb-2 text-sm font-medium text-foreground">
+      <h3 className="mb-2 text-sm font-medium font-display text-heading">
         Which industries use which constructions
       </h3>
       <p className="mb-2 text-[11px] text-muted-foreground">
@@ -775,7 +774,7 @@ export function AlgorithmExplanationBlock({ family }: { family: string }) {
         {e.whyItMattersForPqc}
       </p>
       <figure
-        className="mt-2 rounded-lg border border-border bg-muted/20 p-3"
+        className="mt-2 rounded-2xl border border-border bg-muted/20 p-3"
         aria-label={`How ${family} works`}
         data-testid={`algorithm-diagram-${family}`}
       >

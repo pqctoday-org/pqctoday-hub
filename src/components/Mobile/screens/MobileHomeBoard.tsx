@@ -37,21 +37,21 @@ type SideCardTone = PersonaJourneyBoard['sideCard']['tone']
  *  presentation only, not a copy of anyone's hand-authored content. */
 const TONE_CLASS: Record<SideCardTone, { panel: string; label: string; punchline: string }> = {
   bad: {
-    panel: 'border-destructive/40 bg-destructive/5',
+    panel: 'bg-destructive/5',
     label: 'text-destructive',
     punchline: 'text-destructive',
   },
   warn: {
-    panel: 'border-warning/40 bg-warning/5',
+    panel: 'bg-warning/5',
     label: 'text-warning',
     punchline: 'text-warning',
   },
   info: {
-    panel: 'border-primary/40 bg-primary/5',
+    panel: 'bg-primary/5',
     label: 'text-primary',
     punchline: 'text-primary',
   },
-  accent: { panel: 'border-accent/40 bg-accent/5', label: 'text-accent', punchline: 'text-accent' },
+  accent: { panel: 'bg-accent/5', label: 'text-accent', punchline: 'text-accent' },
 }
 
 export interface MobileHomeBoardProps {
@@ -174,10 +174,8 @@ export function MobileHomeBoard({
                 onSelectVariant?.(v.id)
               }}
               className={cn(
-                'h-11 shrink-0 snap-start rounded-full border px-4 text-[11.5px] font-semibold',
-                selected
-                  ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-card text-foreground'
+                'h-11 shrink-0 snap-start rounded-full border-2 border-ink px-4 text-[11.5px] font-bold',
+                selected ? 'bg-highlight text-heading' : 'bg-chip text-chip-foreground'
               )}
             >
               {v.chipLabel}
@@ -236,10 +234,8 @@ export function MobileHomeBoard({
           <li
             key={chip}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11.5px]',
-              i === 0
-                ? 'border-accent/30 bg-accent/10 text-accent-legible'
-                : 'border-border bg-muted/30 text-muted-foreground'
+              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-bold',
+              i === 0 ? 'bg-accent/10 text-accent-legible' : 'bg-chip text-chip-foreground'
             )}
           >
             {i === 0 && <Check size={11} aria-hidden="true" />}
@@ -257,11 +253,15 @@ export function MobileHomeBoard({
   ) : (
     <>
       {/* Side card */}
-      <section className={cn('glass-panel mt-5 flex flex-col gap-2.5 p-3.5', tone.panel)}>
-        <span className="w-fit rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+      <section
+        className={cn('glass-panel rounded-2xl mt-5 flex flex-col gap-2.5 p-3.5', tone.panel)}
+      >
+        <span className="w-fit rounded-full bg-chip px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-chip-foreground">
           {PROVENANCE_LABEL[board.sideCard.provenance]}
         </span>
-        <h2 className={cn('text-[14px] font-bold', tone.label)}>{board.sideCard.title}</h2>
+        <h2 className={cn('font-display text-[15px] font-semibold', tone.label)}>
+          {board.sideCard.title}
+        </h2>
         <dl className="flex flex-col gap-1.5">
           {board.sideCard.rows.map((row) => (
             <div
@@ -343,7 +343,7 @@ export function MobileHomeBoard({
                   }}
                   className={cn(
                     'h-auto w-full flex-col items-start whitespace-normal rounded-[11px] border p-3 text-left',
-                    i === 2 ? 'border-accent/50 bg-accent/5' : 'border-border bg-card'
+                    i === 2 ? 'border-highlight-border bg-highlight' : 'border-border bg-card'
                   )}
                 >
                   {body}
@@ -353,7 +353,7 @@ export function MobileHomeBoard({
                   key={card.title}
                   className={cn(
                     'rounded-[11px] border p-3',
-                    i === 2 ? 'border-accent/50 bg-accent/5' : 'border-border bg-card'
+                    i === 2 ? 'border-highlight-border bg-highlight' : 'border-border bg-card'
                   )}
                 >
                   {body}
@@ -382,7 +382,7 @@ export function MobileHomeBoard({
                 type="button"
                 variant="ghost"
                 onClick={() => navigate(l.to)}
-                className="h-auto rounded-full border border-border bg-muted/30 px-3 py-1 text-[11px] text-muted-foreground"
+                className="h-auto rounded-full px-3 py-1 text-[11px] bg-chip text-chip-foreground font-bold"
               >
                 {l.name}
                 <span className="sr-only">
@@ -419,7 +419,7 @@ export function MobileHomeBoard({
 
         {/* Your next step — the one thing this board asks of a sponsor. */}
         <section
-          className="glass-panel mt-4 flex flex-col gap-2.5 border-primary/40 bg-primary/5 p-3.5"
+          className="glass-panel rounded-2xl mt-4 flex flex-col gap-2.5 bg-primary/5 p-3.5"
           aria-labelledby={nextHeadingId}
           data-testid="exec-next-step"
         >
@@ -474,7 +474,7 @@ export function MobileHomeBoard({
                     type="button"
                     variant="ghost"
                     onClick={() => navigate(`/learn/${moduleId}`)}
-                    className="h-auto rounded-full border border-border bg-muted/30 px-2.5 py-1 text-[10.5px] font-semibold text-muted-foreground"
+                    className="h-auto rounded-full px-2.5 py-1 text-[10.5px] bg-chip text-chip-foreground font-bold"
                   >
                     {chip}
                   </Button>
@@ -553,7 +553,7 @@ export function MobileHomeBoard({
                   type="button"
                   variant="ghost"
                   onClick={() => navigate(`/learn/${moduleId}`)}
-                  className="h-auto rounded-full border border-border bg-muted/30 px-2.5 py-1 text-[10.5px] font-semibold text-muted-foreground"
+                  className="h-auto rounded-full px-2.5 py-1 text-[10.5px] bg-chip text-chip-foreground font-bold"
                 >
                   {chip}
                 </Button>
@@ -561,7 +561,7 @@ export function MobileHomeBoard({
             )
           })}
           {board.capstoneChip && (
-            <li className="rounded-full border border-accent/40 bg-accent/10 px-2.5 py-1 text-[10.5px] font-semibold text-accent">
+            <li className="rounded-full bg-accent/10 px-2.5 py-1 text-[10.5px] font-bold text-accent-legible">
               {board.capstoneChip.label}
             </li>
           )}

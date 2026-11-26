@@ -749,8 +749,8 @@ export const LeadersGrid = ({
           has, so the guidance is also the shortest route to acting on it —
           the directory becomes a reading list rather than a phone book. */}
       {selectedPersona && (PERSONA_LEADER_GUIDANCE[selectedPersona]?.length ?? 0) > 0 && (
-        <div className="rounded-lg border border-border bg-muted/20 p-3">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <div className="rounded-2xl border border-border bg-muted/20 p-3">
+          <p className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Where to start as {PERSONAS[selectedPersona].label}
           </p>
           <ul className="space-y-2">
@@ -822,7 +822,7 @@ export const LeadersGrid = ({
       />
 
       {/* Controls Bar */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-card p-2 flex flex-col md:flex-row items-center gap-3 glass-panel rounded-2xl">
         {/* Mobile: Category dropdown (hidden on lg where pills show) */}
         <div className="flex items-center gap-2 w-full lg:hidden text-xs">
           <div className="flex-1 min-w-[150px]">
@@ -1042,9 +1042,7 @@ export const LeadersGrid = ({
             onSelectLayer={(l) => filters.set({ layer: l })}
             items={filteredLeaders}
             expandedContent={
-              <div className="p-4 md:p-6 bg-background rounded-lg border border-border mt-4">
-                {renderCardGrid(visibleLeaders)}
-              </div>
+              <div className="glass-panel p-4 md:p-6 mt-4">{renderCardGrid(visibleLeaders)}</div>
             }
           />
           {/* No layer chosen: every matching person is listed under the stack

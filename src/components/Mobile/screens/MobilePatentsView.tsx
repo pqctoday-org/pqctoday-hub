@@ -326,7 +326,7 @@ export function MobilePatentsView() {
       )}
 
       <div className="mb-3 grid grid-cols-2 gap-2.5">
-        <div className="glass-panel p-3">
+        <div className="glass-panel rounded-2xl p-3">
           <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
             Patents in scope
           </p>
@@ -339,7 +339,7 @@ export function MobilePatentsView() {
           onClick={() => setFilterParam('impact', highImpactOnly ? null : 'High')}
           aria-pressed={highImpactOnly}
           className={cn(
-            'glass-panel h-auto flex-col items-start p-3 text-left',
+            'glass-panel rounded-2xl h-auto flex-col items-start p-3 text-left',
             highImpactOnly && 'border-primary bg-primary/5'
           )}
         >
@@ -459,7 +459,7 @@ export function MobilePatentsView() {
               // it here the title <h2> below inherited nowrap and ran off
               // the right edge uncut rather than wrapping (2026-08-24, real
               // production feedback).
-              className="glass-panel h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
+              className="glass-panel rounded-2xl h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
             >
               <div className="flex flex-wrap items-center gap-1.5">
                 <h2 className="text-[13px] font-bold leading-snug text-foreground">{p.title}</h2>

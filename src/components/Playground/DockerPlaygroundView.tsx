@@ -81,8 +81,8 @@ export const DockerPlaygroundView = () => {
   }, [])
 
   const intro = (
-    <header className="rounded-lg border border-border bg-muted/20 p-4">
-      <h1 className="text-xl font-bold text-foreground">PQC Docker Sandbox</h1>
+    <header className="rounded-2xl border border-border bg-muted/20 p-4">
+      <h1 className="text-xl font-bold font-display text-heading">PQC Docker Sandbox</h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         Run full-fidelity post-quantum integration scenarios against containerized applications and
         infrastructure. The public page explains the workflow and requirements; exercises need a
@@ -158,7 +158,7 @@ export const DockerPlaygroundView = () => {
         </div>
         <div className="hidden lg:contents">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shrink-0">
-            <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+            <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2 font-display text-heading">
               <Server className="text-primary" aria-hidden="true" />
               Enterprise Docker Simulation
             </h2>

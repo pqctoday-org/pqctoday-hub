@@ -311,7 +311,9 @@ export function DeadlineTimeline({
   return (
     <div className="glass-panel p-4 space-y-3">
       <div className="flex items-center gap-2">
-        <h3 className="text-sm font-semibold text-foreground">PQC Compliance Deadlines</h3>
+        <h3 className="text-sm font-semibold font-display text-heading">
+          PQC Compliance Deadlines
+        </h3>
         {label && (
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground border border-border rounded-full px-2 py-0.5">
             <Globe size={10} aria-hidden="true" />
@@ -368,7 +370,7 @@ export function DeadlineTimeline({
                             title={`${fw.label}: ${readout.text ?? 'no date'}`}
                           />
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 whitespace-nowrap">
-                            <div className="bg-popover border border-border text-xs text-foreground px-2 py-1 rounded shadow-lg">
+                            <div className="bg-popover text-xs text-foreground px-2 py-1 rounded glass-panel rounded-2xl">
                               <span className="font-semibold">{fw.label}</span>
                               <span className={`ml-1 ${urgencyTextColor(urgency)}`}>
                                 {readout.text}
@@ -540,7 +542,7 @@ function FrameworkCard({
           <ShieldAlert size={18} className="text-muted-foreground shrink-0 mt-0.5" />
         )}
         <div className="min-w-0 flex-1">
-          <h4 className="font-semibold text-foreground text-sm leading-tight flex items-center gap-1.5 flex-wrap">
+          <h4 className="font-semibold text-sm leading-tight flex items-center gap-1.5 flex-wrap font-display text-heading">
             {onSelectDetail ? (
               <Button
                 variant="ghost"
@@ -1620,7 +1622,7 @@ export function ComplianceLandscape({
     <div className="space-y-4">
       {/* Summary stats — PQC and Deadlines panels are clickable filter toggles */}
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <div className="glass-panel px-4 py-2 flex items-center gap-2 select-none">
+        <div className="glass-panel rounded-2xl px-4 py-2 flex items-center gap-2 select-none">
           <span className="text-2xl font-bold text-foreground">{displayedFrameworks.length}</span>
           <span className="text-muted-foreground">
             {pqcRequiredOnly || hasDeadlineOnly ? 'Shown' : 'Entries'}
@@ -1633,7 +1635,7 @@ export function ComplianceLandscape({
             setPqcRequiredOnly((v) => !v)
             setHasDeadlineOnly(false)
           }}
-          className={`glass-panel px-4 py-2 flex items-center gap-2 h-auto text-sm rounded-lg transition-all ${
+          className={`glass-panel rounded-2xl px-4 py-2 flex items-center gap-2 h-auto text-sm transition-all ${
             pqcRequiredOnly
               ? 'ring-2 ring-status-success/40 bg-status-success/5'
               : 'hover:bg-status-success/5'
@@ -1656,7 +1658,7 @@ export function ComplianceLandscape({
             setHasDeadlineOnly((v) => !v)
             setPqcRequiredOnly(false)
           }}
-          className={`glass-panel px-4 py-2 flex items-center gap-2 h-auto text-sm rounded-lg transition-all ${
+          className={`glass-panel rounded-2xl px-4 py-2 flex items-center gap-2 h-auto text-sm transition-all ${
             hasDeadlineOnly
               ? 'ring-2 ring-status-warning/40 bg-status-warning/5'
               : 'hover:bg-status-warning/5'
@@ -1686,7 +1688,7 @@ export function ComplianceLandscape({
       )}
 
       {/* Filter band — primary controls always visible; org · industry · country behind "More" */}
-      <div className="bg-card border border-border rounded-lg shadow-sm p-2 space-y-2">
+      <div className="bg-card border border-border rounded-lg p-2 space-y-2">
         {/* Primary row */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Search */}

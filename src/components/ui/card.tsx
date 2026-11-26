@@ -7,7 +7,9 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     <div
       ref={ref}
       className={cn(
-        'glass-panel text-foreground shadow-sm', // 'glass-panel' is defined in index.css layer
+        // Sticker card: ink outline, large radius, flat offset edge. 'glass-panel' stays as the
+        // hook for print rules and tests; its look is defined once in index.css.
+        'glass-panel text-foreground',
         className
       )}
       {...props}
@@ -32,7 +34,10 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({ className, as: Tag = 'h3', ...props }, ref) => (
     <Tag
       ref={ref}
-      className={cn('text-2xl font-semibold leading-none tracking-tight', className)}
+      className={cn(
+        'font-display text-2xl font-semibold leading-none tracking-tight text-heading',
+        className
+      )}
       {...props}
     />
   )

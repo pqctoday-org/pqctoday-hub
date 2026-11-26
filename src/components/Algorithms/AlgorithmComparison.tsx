@@ -258,7 +258,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 
   return (
     <div className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+      <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 font-display text-heading">
         <Shield className="text-primary" />
         Algorithm Transition
       </h2>
@@ -283,7 +283,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
           <div className="md:hidden flex flex-col gap-4 mb-4">
             {showFullTable ? (
               <>
-                <div className="bg-muted/30 p-3 rounded-lg border border-border flex items-center justify-between">
+                <div className="bg-muted/30 p-3 rounded-2xl border border-border flex items-center justify-between">
                   <span className="text-sm font-medium text-muted-foreground mr-2 shrink-0">
                     Sort by:
                   </span>
@@ -334,7 +334,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
           </div>
 
           {/* Desktop View */}
-          <div className="hidden md:block glass-panel overflow-hidden">
+          <div className="glass-panel hidden md:block overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse table-fixed">
                 <caption className="sr-only">
@@ -729,7 +729,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           <div className="flex flex-wrap items-center gap-3">
                             <span
                               className={clsx(
-                                'text-xs px-2 py-1 rounded border font-medium shadow-sm whitespace-normal text-center',
+                                'text-xs px-2 py-1 rounded border font-medium whitespace-normal text-center',
                                 algo.deprecationDate.includes('Deprecated')
                                   ? 'bg-status-warning border-status-warning text-status-warning'
                                   : algo.deprecationDate.includes('Disallowed')

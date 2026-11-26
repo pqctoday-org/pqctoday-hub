@@ -39,13 +39,13 @@ export function LinkToUsButton({ variant = 'inline' }: LinkToUsButtonProps) {
           variant="ghost"
           type="button"
           onClick={() => setIsOpen(true)}
-          className="glass-panel p-3 flex items-center gap-3 hover:border-accent/50 transition-colors text-left w-full"
+          className="glass-panel rounded-2xl p-3 flex items-center gap-3 hover:border-accent/50 transition-colors text-left w-full"
         >
-          <div className="p-2 rounded-lg bg-accent/10 text-accent shrink-0">
+          <div className="p-2 shrink-0 rounded-full bg-chip text-chip-foreground">
             <Code2 size={18} aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <h4 className="text-sm font-semibold text-foreground">Link to Us</h4>
+            <h4 className="text-sm font-semibold font-display text-heading">Link to Us</h4>
             <p className="text-xs text-muted-foreground leading-snug">
               Get an embed code to link to PQC Today from your website, blog, or README.
             </p>
@@ -105,7 +105,7 @@ function LinkToUsModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-black/60 p-4">
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-scrim/60 p-4">
       <div
         ref={panelRef}
         className="glass-panel p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"
@@ -114,7 +114,7 @@ function LinkToUsModal({ onClose }: { onClose: () => void }) {
       >
         <div className="flex items-center gap-3 mb-4">
           <Code2 className="text-accent" size={24} />
-          <h2 className="text-xl font-semibold">Link to Us</h2>
+          <h2 className="text-xl font-semibold font-display text-heading">Link to Us</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
           Copy any snippet below to link to PQC Today from your website, blog, or README.
@@ -144,7 +144,7 @@ function LinkToUsModal({ onClose }: { onClose: () => void }) {
                   )}
                 </Button>
               </div>
-              <pre className="text-xs bg-muted/30 border border-border rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all text-muted-foreground font-mono">
+              <pre className="text-xs bg-muted/30 border border-border rounded-2xl p-3 overflow-x-auto whitespace-pre-wrap break-all text-muted-foreground font-mono">
                 {snippet.code}
               </pre>
               {snippet.label === 'Badge (dark)' && (

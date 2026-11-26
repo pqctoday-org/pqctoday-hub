@@ -42,7 +42,7 @@ export function AlgorithmImplementationsModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50 print:hidden"
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden">
@@ -62,7 +62,7 @@ export function AlgorithmImplementationsModal({
                   <div>
                     <h2
                       id="algo-impl-modal-title"
-                      className="text-lg font-bold text-foreground leading-tight"
+                      className="text-lg font-bold leading-tight font-display text-heading"
                     >
                       Crypto Libraries
                     </h2>
@@ -100,7 +100,7 @@ export function AlgorithmImplementationsModal({
                       <section>
                         <div className="flex items-center gap-2 mb-3">
                           <Library size={14} className="text-primary shrink-0" />
-                          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                          <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                             Libraries ({libraries.length})
                           </p>
                         </div>
@@ -117,7 +117,7 @@ export function AlgorithmImplementationsModal({
                       <section>
                         <div className="flex items-center gap-2 mb-3">
                           <BookOpen size={14} className="text-secondary shrink-0" />
-                          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                          <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                             Reference Implementations ({references.length})
                           </p>
                         </div>

@@ -109,15 +109,15 @@ export function ResearcherFieldWatchCard() {
 
   return (
     <div
-      className="glass-panel flex h-full flex-col gap-3 border-primary/40 bg-primary/5 p-5"
+      className="glass-panel flex h-full flex-col gap-3 bg-primary/5 p-5"
       data-testid="field-watch-card"
     >
-      <span className="inline-flex w-fit items-center rounded-full border border-border bg-muted/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+      <span className="inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-chip text-chip-foreground">
         Illustrative — this user&rsquo;s inputs
       </span>
 
       <div>
-        <h2 className="text-lg font-bold text-primary">{SIDE_CARD.title}</h2>
+        <h2 className="text-lg font-bold font-display text-heading">{SIDE_CARD.title}</h2>
         {releaseLabel && (
           <p className="text-xs text-muted-foreground" data-testid="field-watch-window">
             In the {FIELD_WATCH_WINDOW_DAYS} days to {releaseLabel}

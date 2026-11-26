@@ -226,7 +226,7 @@ export const VendorRoadmapPanel = ({
         <div role="group" aria-labelledby={sourceHeadingId} className="space-y-1">
           <h3
             id={sourceHeadingId}
-            className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground"
+            className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display"
           >
             Analysis source
           </h3>
@@ -242,9 +242,9 @@ export const VendorRoadmapPanel = ({
         <section
           aria-labelledby={otherHeadingId}
           data-testid="analysis-other-source"
-          className="space-y-2 rounded-lg border border-border bg-muted/20 p-3"
+          className="glass-panel space-y-2 p-3"
         >
-          <h3 id={otherHeadingId} className="text-xs font-semibold text-foreground">
+          <h3 id={otherHeadingId} className="text-xs font-semibold font-display text-heading">
             Analysis from another source
           </h3>
           <p className="text-[11px] text-muted-foreground">

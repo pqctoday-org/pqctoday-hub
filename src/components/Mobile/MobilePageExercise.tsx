@@ -15,11 +15,7 @@ export function MobilePageExercise({ route }: { route: string }) {
   const [picked, setPicked] = useState<Record<number, number>>({})
   if (!list || list.length === 0) return null
   return (
-    <section
-      aria-label="Try it"
-      data-testid="tool-exercise"
-      className="rounded-xl border border-border bg-muted/20 p-4"
-    >
+    <section aria-label="Try it" data-testid="tool-exercise" className="glass-panel p-4">
       <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         Try it
       </p>

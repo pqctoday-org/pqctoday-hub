@@ -79,7 +79,7 @@ export const TimelineDocumentCard = ({
       </span>
 
       {/* Title */}
-      <h3 className="text-sm font-semibold text-foreground mb-2 leading-snug pr-16 line-clamp-2">
+      <h3 className="text-sm font-semibold mb-2 leading-snug pr-16 line-clamp-2 font-display text-heading">
         {row.title}
       </h3>
 

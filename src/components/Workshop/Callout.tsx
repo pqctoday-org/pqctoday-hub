@@ -65,7 +65,7 @@ export const Callout: React.FC<CalloutProps> = ({ selector, label, arrow = 'left
         {arrow === 'left' && (
           <span className="block w-3 h-3 border-l-2 border-b-2 border-primary -rotate-45" />
         )}
-        <div className="rounded-md bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium shadow-lg">
+        <div className="rounded-md bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium">
           {label}
         </div>
         {arrow === 'right' && (

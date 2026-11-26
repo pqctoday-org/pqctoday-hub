@@ -29,7 +29,7 @@ export function SectionInfoModal({ isOpen, onClose, sectionId }: SectionInfoModa
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50 print:hidden"
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden">
@@ -45,7 +45,10 @@ export function SectionInfoModal({ isOpen, onClose, sectionId }: SectionInfoModa
             >
               {/* Header — pinned above scroll */}
               <div className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0 border-b border-border/50">
-                <h2 id="section-info-modal-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="section-info-modal-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   {info.title}
                 </h2>
                 <Button
@@ -68,7 +71,7 @@ export function SectionInfoModal({ isOpen, onClose, sectionId }: SectionInfoModa
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Sliders size={14} className="text-primary shrink-0" />
-                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                      <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                         Wizard Inputs
                       </p>
                     </div>
@@ -95,7 +98,7 @@ export function SectionInfoModal({ isOpen, onClose, sectionId }: SectionInfoModa
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Brain size={14} className="text-primary shrink-0" />
-                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                      <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                         Scoring Principles
                       </p>
                     </div>
@@ -117,7 +120,7 @@ export function SectionInfoModal({ isOpen, onClose, sectionId }: SectionInfoModa
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Users size={14} className="text-primary shrink-0" />
-                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                      <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                         Persona Effects
                       </p>
                     </div>
@@ -144,7 +147,7 @@ export function SectionInfoModal({ isOpen, onClose, sectionId }: SectionInfoModa
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Database size={14} className="text-primary shrink-0" />
-                      <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                      <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                         Data Sources
                       </p>
                     </div>

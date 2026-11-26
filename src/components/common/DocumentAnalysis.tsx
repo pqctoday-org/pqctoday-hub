@@ -120,7 +120,7 @@ function DimensionLeaders({
 }) {
   return (
     <div>
-      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+      <h5 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
         Leaders in PQC Today
       </h5>
       <div className="flex flex-wrap gap-2 mt-1">
@@ -155,7 +155,7 @@ function DimensionLeaders({
 function DimensionText({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+      <h5 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {label}
       </h5>
       <p className="text-sm text-foreground leading-relaxed">{value}</p>
@@ -174,7 +174,7 @@ function DimensionTags({
 }) {
   return (
     <div>
-      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+      <h5 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {label}
       </h5>
       <div className="flex flex-wrap gap-1">
@@ -197,7 +197,7 @@ function DimensionTags({
 function DimensionBullets({ label, items }: { label: string; items: string[] }) {
   return (
     <div>
-      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+      <h5 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {label}
       </h5>
       <ul className="space-y-1 pl-4">
@@ -222,7 +222,7 @@ function DimensionLinks({
 }) {
   return (
     <div>
-      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+      <h5 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
         {label}
       </h5>
       <div className="flex flex-wrap gap-1">
@@ -344,7 +344,7 @@ export const DocumentAnalysis = ({ enrichment, relatedLeaders }: DocumentAnalysi
   if (!hasAnyDimension) return null
 
   return (
-    <div className="glass-panel p-3">
+    <div className="glass-panel rounded-2xl p-3">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
@@ -465,7 +465,7 @@ export const DocumentAnalysis = ({ enrichment, relatedLeaders }: DocumentAnalysi
 
               {enrichment.regionsAndBodies && (
                 <div>
-                  <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                  <h5 className="uppercase mb-1 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Regions & Bodies
                   </h5>
                   <div className="space-y-1.5">

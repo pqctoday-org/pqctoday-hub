@@ -34,12 +34,12 @@ export const CaptionBar: React.FC<CaptionBarProps> = ({ text, visible }) => {
       >
         <div
           className={`relative rounded-md bg-card/95 border px-6 py-3 shadow-2xl transition-shadow duration-300 ${
-            ttsEnabled ? 'border-primary/40 shadow-glow ring-2 ring-primary/30' : 'border-border'
+            ttsEnabled ? 'border-primary/40 ring-2 ring-primary/30' : 'border-border'
           }`}
         >
           {ttsEnabled && (
             <div
-              className="absolute -top-2 -right-2 flex items-center justify-center w-7 h-7 rounded-full bg-primary border border-primary/40 shadow-glow animate-pulse"
+              className="absolute -top-2 -right-2 flex items-center justify-center w-7 h-7 rounded-full bg-primary border border-primary/40 animate-pulse"
               aria-label="Voice mode active"
             >
               <Volume2 size={14} className="text-primary-foreground" />

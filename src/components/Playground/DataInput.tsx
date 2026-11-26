@@ -97,7 +97,7 @@ export const DataInput: React.FC<DataInputProps> = ({
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
               viewMode === 'ascii'
-                ? 'bg-background text-foreground shadow-sm'
+                ? 'bg-background text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
@@ -110,7 +110,7 @@ export const DataInput: React.FC<DataInputProps> = ({
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
               viewMode === 'hex'
-                ? 'bg-background text-foreground shadow-sm'
+                ? 'bg-background text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >

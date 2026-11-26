@@ -119,7 +119,7 @@ export function AboutNextStepCTA() {
       <div className="flex items-start gap-3 min-w-0">
         <div className="shrink-0 mt-0.5">{spec.icon}</div>
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-foreground">{spec.title}</h3>
+          <h3 className="text-base font-semibold font-display text-heading">{spec.title}</h3>
           <p className="text-sm text-muted-foreground mt-1">{spec.body}</p>
         </div>
       </div>

@@ -84,7 +84,7 @@ function RequirementCard({ req }: { req: MaturityRequirement }) {
   const catCls = categoryColor[req.category] ?? 'bg-muted text-muted-foreground'
 
   return (
-    <div className="border border-border rounded-lg p-3 space-y-2 bg-card text-xs">
+    <div className="border border-border rounded-2xl p-3 space-y-2 bg-card text-xs">
       <div className="flex items-start gap-2 flex-wrap">
         <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold shrink-0 ${catCls}`}>
           {req.category}
@@ -250,7 +250,7 @@ export function MaturityEvidenceGrid({
       <div className="relative overflow-x-auto rounded-lg border border-border">
         <div
           aria-hidden="true"
-          className="md:hidden pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-card to-transparent"
+          className="md:hidden pointer-events-none absolute inset-y-0 right-0 w-1 rounded-full bg-edge"
         />
         <table className="w-full text-xs min-w-[520px]">
           <thead>
@@ -318,7 +318,7 @@ export function MaturityEvidenceGrid({
       {selected && cellRequirements.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <h4 className="text-sm font-semibold text-foreground">
+            <h4 className="text-sm font-semibold font-display text-heading">
               {PILLARS.find((p) => p.id === selected.pillar)?.label} · Tier {selected.tier}{' '}
               {MATURITY_LEVEL_LABELS[selected.tier]}
             </h4>

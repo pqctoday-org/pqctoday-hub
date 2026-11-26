@@ -26,7 +26,7 @@ export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModa
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50"
           />
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
             <FocusLock returnFocus>
@@ -48,7 +48,7 @@ export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModa
                     </span>
                     <h2
                       id="workgroup-modal-title"
-                      className="text-lg font-semibold text-foreground truncate"
+                      className="text-lg font-semibold truncate font-display text-heading"
                     >
                       {workgroup.shortName}
                     </h2>
@@ -67,7 +67,7 @@ export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModa
                 {/* Scrollable body */}
                 <div className="overflow-y-auto flex-1 px-4 md:px-5 py-5 space-y-5">
                   {/* Full name */}
-                  <h3 className="text-sm font-semibold text-foreground leading-snug">
+                  <h3 className="text-sm font-semibold leading-snug font-display text-heading">
                     {workgroup.name}
                   </h3>
 
@@ -90,7 +90,9 @@ export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModa
 
                   {/* Focus Areas */}
                   <div>
-                    <h4 className="text-xs font-semibold text-foreground mb-2">Focus Areas</h4>
+                    <h4 className="text-xs font-semibold mb-2 font-display text-heading">
+                      Focus Areas
+                    </h4>
                     <div className="flex flex-wrap gap-2">
                       {workgroup.focusAreas.map((area) => (
                         <span
@@ -105,7 +107,7 @@ export function WorkgroupDetailModal({ workgroup, onClose }: WorkgroupDetailModa
 
                   {/* Key Members */}
                   <div>
-                    <h4 className="text-xs font-semibold text-foreground mb-1.5 flex items-center gap-1.5">
+                    <h4 className="text-xs font-semibold mb-1.5 flex items-center gap-1.5 font-display text-heading">
                       <Users size={12} className="text-primary" />
                       Key Members
                     </h4>

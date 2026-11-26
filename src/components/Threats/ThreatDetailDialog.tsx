@@ -117,7 +117,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
       <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
         {/* Isolated backdrop */}
         <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[-1]"
+          className="absolute inset-0 bg-scrim/60 backdrop-blur-sm z-[-1]"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -127,13 +127,13 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
           role="dialog"
           aria-modal="true"
           aria-labelledby="threat-dialog-title"
-          className="bg-card border border-border rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col relative"
+          className="bg-card w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col relative glass-panel rounded-2xl"
         >
           <div className="p-6 border-b border-border flex justify-between items-start sticky top-0 bg-card z-10 shrink-0">
             <div>
               <h2
                 id="threat-dialog-title"
-                className="text-xl font-bold text-gradient flex items-center gap-2"
+                className="text-xl font-bold font-display text-heading flex items-center gap-2 font-display text-heading"
               >
                 <ShieldAlert className="w-5 h-5 text-primary" />
                 {threat.threatId}
@@ -184,7 +184,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
               </div>
 
               <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
-                <h3 className="text-sm font-semibold text-primary mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-semibold mb-2 flex items-center gap-2 font-display text-heading">
                   <Cpu size={14} /> Candidate response
                 </h3>
                 <SpecifiedOrNot value={threat.pqcReplacement} />
@@ -487,7 +487,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                       key={std.id}
                       to={std.deepLink}
                       title={std.title}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-muted/40 text-foreground border border-border hover:bg-muted/70 transition-colors"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
                     >
                       <Library size={11} />
                       {std.id}
@@ -536,7 +536,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({
                 </div>
                 <Link
                   to="/assess"
-                  className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-secondary to-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity shrink-0 md:min-h-0"
+                  className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-foreground rounded-full transition-opacity shrink-0 md:min-h-0 bg-primary border-2 border-ink hover:bg-primary/90"
                 >
                   Run Assessment
                   <ArrowRight size={12} />

@@ -152,13 +152,13 @@ export function ComplianceDetailDrawer({
           type="button"
           variant="ghost"
           aria-label="Close detail"
-          className="absolute inset-0 h-full w-full rounded-none bg-black/60 hover:bg-black/60"
+          className="absolute inset-0 h-full w-full rounded-none bg-scrim/60 hover:bg-scrim/60"
           onClick={onClose}
         />
         {/* Panel */}
         <div
           ref={panelRef}
-          className="relative flex h-full w-[560px] max-w-[94vw] flex-col border-l border-border bg-card shadow-2xl animate-in slide-in-from-right duration-200"
+          className="relative flex h-full w-[560px] max-w-[94vw] flex-col border-l border-border bg-card animate-in slide-in-from-right duration-200"
         >
           {/* Header */}
           <div className="flex items-start gap-3 border-b border-border px-5 py-4">
@@ -169,7 +169,9 @@ export function ComplianceDetailDrawer({
                 </span>
                 <span className={pillClasses(d.pqcTone)}>{d.pqcLabel}</span>
               </div>
-              <h2 className="text-lg font-bold leading-tight text-foreground">{d.name}</h2>
+              <h2 className="text-lg font-bold leading-tight font-display text-heading">
+                {d.name}
+              </h2>
               <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Globe size={12} />
                 {d.juris}
@@ -210,8 +212,8 @@ export function ComplianceDetailDrawer({
               trustedSource ||
               framework.enforcementBody ||
               (framework.bindingStatus && bindingDataPresent())) && (
-              <section className="rounded-xl border border-border bg-muted/20 p-3.5">
-                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <section className="glass-panel p-3.5">
+                <h3 className="mb-2 flex items-center gap-1.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   <ShieldCheck size={13} />
                   Source &amp; trust
                 </h3>
@@ -322,7 +324,7 @@ export function ComplianceDetailDrawer({
                 a reader into the module that teaches it. */}
             {(framework.learnModules ?? []).length > 0 && (
               <section>
-                <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-2.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   Learn this
                 </h3>
                 <ul className="space-y-1">
@@ -343,7 +345,7 @@ export function ComplianceDetailDrawer({
 
             {/* Traceability chain */}
             <section>
-              <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <h3 className="mb-2.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                 Traceability chain
               </h3>
               <div className="flex flex-col items-stretch gap-0">
@@ -385,7 +387,7 @@ export function ComplianceDetailDrawer({
             {/* Dates the record states; an undated record shows one "no structured date" step */}
             {d.phases.length > 0 && (
               <section>
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-3 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   {d.phases.every((ph) => ph.label === NO_STRUCTURED_DATE_LABEL)
                     ? 'Dates this record states'
                     : 'Deadline phases'}
@@ -442,7 +444,7 @@ export function ComplianceDetailDrawer({
             {/* Related & overlapping */}
             {d.crosswalk.length > 0 && (
               <section>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-2 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                   Related &amp; overlapping
                 </h3>
                 <div className="space-y-1.5">

@@ -60,7 +60,7 @@ export function CbomImportPanel({ options, selected, onApply }: Props) {
   }
 
   return (
-    <section className="mb-4 rounded-lg border border-border bg-muted/20 p-3">
+    <section className="glass-panel mb-4 p-3">
       <div className="flex flex-wrap items-center gap-2">
         <FileUp size={15} className="shrink-0 text-primary" aria-hidden="true" />
         <p className="flex-1 text-sm font-medium text-foreground">

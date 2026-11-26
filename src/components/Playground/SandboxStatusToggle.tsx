@@ -104,7 +104,7 @@ export const SandboxStatusToggle: React.FC<SandboxStatusToggleProps> = ({ classN
         <div
           role="dialog"
           aria-label="Sandbox access"
-          className="glass-panel absolute right-0 top-full z-50 mt-2 w-80 p-4 border-primary/20 space-y-3 shadow-glow"
+          className="glass-panel absolute right-0 top-full z-50 mt-2 w-80 p-4 space-y-3"
         >
           <div className="flex items-start gap-2">
             <Container className="w-5 h-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />

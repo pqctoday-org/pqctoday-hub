@@ -64,7 +64,7 @@ export function LeadersExecutivePanel({
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">
           <Building2 size={16} className="text-primary" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-foreground">
+          <h2 className="text-sm font-semibold font-display text-heading">
             Representation in this directory
           </h2>
         </div>
@@ -99,7 +99,9 @@ export function LeadersExecutivePanel({
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">
           <Compass size={16} className="text-primary" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-foreground">Why each group matters to you</h2>
+          <h2 className="text-sm font-semibold font-display text-heading">
+            Why each group matters to you
+          </h2>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
           Counts use each profile's primary category across the full dataset. The directory can show

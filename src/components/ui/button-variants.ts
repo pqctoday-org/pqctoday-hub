@@ -1,33 +1,39 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { cva } from 'class-variance-authority'
+import { focusRing } from '../storybook/variants'
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  `inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 ${focusRing}`,
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-border bg-transparent hover:bg-muted/20 hover:text-foreground',
+        // Storybook Blue: pill buttons with an ink outline. The primary carries the flat
+        // offset edge; the others do not. Phone height is at least 44px.
+        default:
+          'rounded-full font-bold border-2 border-ink bg-primary text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
+        destructive:
+          'rounded-full font-bold border-2 border-ink bg-destructive text-destructive-foreground hover:bg-destructive/90 max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
+        outline:
+          'rounded-full font-bold border-2 border-ink bg-card text-card-foreground hover:bg-muted max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
         // a11y (WS9, 2026-08-02): this paired `bg-secondary` with `text-foreground`
         // — near-white on light lavender in dark mode, 2.63:1, well under the
-        // 4.5:1 WCAG AA floor, so every secondary button's label failed axe. Every
-        // other `bg-secondary` surface in the codebase already uses
-        // `text-secondary-foreground`; this variant was the outlier.
-        // /80 blends the light-mode purple against the page to ~3.9:1 with
-        // white text. /90 stays above 4.5:1 while preserving the hover cue.
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90',
-        ghost: 'hover:bg-muted/20 hover:text-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+        // 4.5:1 WCAG AA floor. Secondary buttons now take the chip fill, whose
+        // paired foreground token is measured against it.
+        secondary:
+          'rounded-full font-bold border-2 border-ink bg-chip text-chip-foreground hover:bg-chip/90 max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
+        ghost: 'rounded-lg hover:bg-muted/20 hover:text-foreground',
+        link: 'rounded-lg text-primary underline-offset-4 hover:underline',
+        // Kept as a name for the many call sites that ask for the call-to-action look;
+        // it is the primary button (no gradient).
         gradient:
-          'bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200',
+          'rounded-full font-bold border-2 border-ink bg-primary text-primary-foreground shadow-[0_4px_0_hsl(var(--edge))] hover:bg-primary/90 active:translate-y-[3px] active:shadow-none max-md:min-h-[44px] [&.h-auto]:rounded-2xl [&.h-auto]:whitespace-normal',
       },
       size: {
         default: 'h-10 px-4 py-2',
-        sm: 'h-10 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
+        sm: 'h-10 px-3',
+        lg: 'h-11 px-8',
         icon: 'h-11 w-11 touch-manipulation',
-        tile: 'h-auto min-h-[88px] w-full px-4 py-3 flex-col items-start justify-start text-left whitespace-normal gap-1 rounded-lg',
+        tile: 'h-auto min-h-[88px] w-full px-4 py-3 flex-col items-start justify-start text-left whitespace-normal gap-1 rounded-2xl!',
       },
     },
     defaultVariants: {

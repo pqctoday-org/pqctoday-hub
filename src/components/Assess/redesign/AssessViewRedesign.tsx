@@ -618,7 +618,7 @@ export const AssessViewRedesign: React.FC<{
         currentStep === 0 &&
         assessmentStatus !== 'complete' &&
         !industry && (
-          <div className="mb-4 rounded-lg border border-border bg-muted/20 p-3">
+          <div className="mb-4 rounded-2xl border border-border bg-muted/20 p-3">
             <p className="text-sm text-muted-foreground">
               <span className="font-medium text-foreground">
                 No estate of your own to describe?

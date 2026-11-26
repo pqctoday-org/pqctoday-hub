@@ -29,7 +29,7 @@ export function Cnsa20Panel() {
       <div className="flex items-start gap-2">
         <ShieldCheck size={20} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
         <div>
-          <h3 className="text-base md:text-lg font-bold text-foreground">
+          <h3 className="text-base md:text-lg font-bold font-display text-heading">
             CNSA 2.0 lens — U.S. National Security Systems
           </h3>
           <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
@@ -49,7 +49,7 @@ export function Cnsa20Panel() {
 
       {/* #2 — Standards-pipeline / CNSA 2.0 transition timeline */}
       <div className="mt-5">
-        <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+        <h4 className="flex items-center gap-1.5 text-sm font-semibold font-display text-heading">
           <CalendarClock size={15} className="text-primary" aria-hidden="true" />
           CNSA 2.0 transition timeline
         </h4>
@@ -72,7 +72,7 @@ export function Cnsa20Panel() {
       {/* #3 — Hybrid / composite guidance */}
       <div className="mt-5 grid gap-3 md:grid-cols-2">
         <div className="rounded border border-border bg-card/50 p-3">
-          <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+          <h4 className="flex items-center gap-1.5 text-sm font-semibold font-display text-heading">
             <GitMerge size={15} className="text-status-info" aria-hidden="true" />
             When to use a composite (PQC + classical)
           </h4>
@@ -81,7 +81,7 @@ export function Cnsa20Panel() {
           </p>
         </div>
         <div className="rounded border border-border bg-card/50 p-3">
-          <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+          <h4 className="flex items-center gap-1.5 text-sm font-semibold font-display text-heading">
             <Scale size={15} className="text-status-success" aria-hidden="true" />
             When to use pure ML-KEM / ML-DSA
           </h4>
@@ -93,7 +93,7 @@ export function Cnsa20Panel() {
 
       {/* #4 — Jurisdictional stance summary (per-row tags live in the table) */}
       <div className="mt-4 rounded border border-border bg-card/50 p-3">
-        <h4 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+        <h4 className="flex items-center gap-1.5 text-sm font-semibold font-display text-heading">
           <Scale size={15} className="text-primary" aria-hidden="true" />
           Jurisdictional position, at a glance
         </h4>

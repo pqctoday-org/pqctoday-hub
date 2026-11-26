@@ -404,10 +404,10 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
 
   return (
     <>
-      <div className="glass-panel overflow-hidden border border-border shadow-sm rounded-lg">
+      <div className="glass-panel overflow-hidden">
         {/* A-003: Added aria-controls for expand/collapse buttons */}
         <div className="px-4 py-2 flex items-center justify-between bg-muted/20 border-b border-border">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <span className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Document Tree
           </span>
           <div className="flex gap-2">

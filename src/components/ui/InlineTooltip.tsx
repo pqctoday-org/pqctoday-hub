@@ -240,7 +240,7 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
               transform: 'translateX(-50%)',
               ...tooltipStyle,
             }}
-            className="w-72 p-3 rounded-lg border border-border bg-background shadow-lg print:hidden"
+            className="w-72 p-3 rounded-2xl border-2 border-ink bg-card print:hidden"
           >
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-semibold text-sm text-foreground">{entry.term}</span>

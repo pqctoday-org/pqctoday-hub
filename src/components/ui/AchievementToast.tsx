@@ -9,11 +9,12 @@ import type { AchievementRarity } from '@/types/AchievementTypes'
 import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 
+// The rarity is always stated in words (RARITY_LABELS); the fill only echoes it.
 const RARITY_STYLES: Record<AchievementRarity, string> = {
-  common: 'border-border',
-  uncommon: 'border-primary/40',
-  rare: 'border-primary/60 shadow-lg shadow-primary/15',
-  epic: 'border-primary shadow-lg shadow-primary/25',
+  common: 'bg-card',
+  uncommon: 'bg-card',
+  rare: 'bg-chip',
+  epic: 'bg-highlight',
 }
 
 const RARITY_LABELS: Record<AchievementRarity, string> = {
@@ -100,14 +101,14 @@ export function AchievementToast() {
           aria-live="polite"
           aria-label={`Achievement unlocked: ${achievement.title}`}
         >
-          <div className={`glass-panel p-4 border ${rarityStyle}`}>
+          <div className={`glass-panel p-4 ${rarityStyle}`}>
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-primary/20 shrink-0">
                 {IconComponent && <IconComponent size={20} className="text-primary" />}
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-primary mb-0.5">
+                <p className="uppercase mb-0.5 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   {rarityLabel}
                 </p>
                 <p className="text-sm font-bold text-foreground">{achievement.title}</p>

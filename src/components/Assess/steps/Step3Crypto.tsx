@@ -56,7 +56,7 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
     label: 'Symmetric Encryption',
     icon: ShieldCheck,
     borderColor: 'border-success',
-    iconColor: 'text-success',
+    iconColor: 'text-success-legible',
   },
   {
     id: 'Hash & MAC',
@@ -110,7 +110,7 @@ const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepPro
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             {stepContent.title ?? 'What cryptography do you use today?'}
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -211,8 +211,8 @@ const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepPro
               const algos = algosByCategory[cat.id] ?? []
               if (algos.length === 0) return null
               return (
-                <div key={cat.id} className="glass-panel p-3 space-y-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                <div key={cat.id} className="glass-panel rounded-2xl p-3 space-y-2">
+                  <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     {cat.label} — specific algorithms
                     <span className="normal-case font-normal ml-1 text-muted-foreground">
                       (none selected = all included)

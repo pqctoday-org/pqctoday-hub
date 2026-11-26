@@ -37,7 +37,7 @@ export const ExecutiveGrcSplitNotice: React.FC = () => {
 
   return (
     <div
-      className="glass-panel p-3 mb-4 print:hidden"
+      className="glass-panel rounded-2xl p-3 mb-4 print:hidden"
       role="status"
       aria-label="Executive and GRC are now separate roles"
     >

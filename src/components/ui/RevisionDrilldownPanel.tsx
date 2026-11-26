@@ -235,18 +235,20 @@ export function RevisionDrilldownPanel({
         aria-label={`Revision history for ${entityLabel}`}
       >
         {/* backdrop */}
-        <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
+        <div className="absolute inset-0 bg-scrim/60" onClick={onClose} aria-hidden="true" />
         {/* panel */}
         <div
           ref={panelRef}
-          className="relative z-10 w-full max-w-md bg-card border-l border-border flex flex-col h-full shadow-xl"
+          className="relative z-10 w-full max-w-md bg-card border-l-2 border-ink flex flex-col h-full"
         >
           <header className="flex items-center justify-between gap-2 px-4 py-3 border-b border-border">
             <div className="min-w-0">
               <p className="text-xs text-muted-foreground capitalize">
                 {domain} · revision history
               </p>
-              <h2 className="text-sm font-semibold text-foreground truncate">{entityLabel}</h2>
+              <h2 className="text-sm font-semibold truncate font-display text-heading">
+                {entityLabel}
+              </h2>
             </div>
             <div className="flex items-center gap-1 shrink-0">
               {sharePath && (

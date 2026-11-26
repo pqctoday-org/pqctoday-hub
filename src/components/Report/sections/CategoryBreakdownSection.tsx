@@ -46,10 +46,10 @@ export const CategoryBreakdown = ({
   }
 
   const getScoreColor = (score: number) => {
-    if (score <= 25) return 'text-success'
+    if (score <= 25) return 'text-success-legible'
     if (score <= 55) return 'text-warning'
     if (score <= 75) return 'text-destructive'
-    return 'text-critical'
+    return 'text-destructive-legible'
   }
 
   return (
@@ -165,7 +165,7 @@ export const FrameworkRiskLensSection = ({ frameworkRisk }: { frameworkRisk: Fra
           ['Feasibility', frameworkRisk.feasibility, 'Ease of migration (higher = easier)'],
         ] as const
       ).map(([label, val, note]) => (
-        <div key={label} className="rounded-lg border border-border bg-card p-3">
+        <div key={label} className="rounded-2xl border border-border bg-card p-3">
           <div className="text-2xl font-extrabold text-foreground">{val}</div>
           <div className="text-sm font-semibold text-foreground">{label}</div>
           <div className="text-xs text-muted-foreground">{note}</div>

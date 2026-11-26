@@ -68,7 +68,7 @@ const StepCredentialLifetime = ({
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             How long must your digital signatures &amp; certificates remain trusted?
           </h3>
           <p className="text-sm text-muted-foreground">

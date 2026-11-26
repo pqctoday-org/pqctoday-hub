@@ -207,7 +207,7 @@ function CIGateSnippet() {
     <section data-section-id="developer-ci-gate" className="glass-panel p-4 space-y-3 scroll-mt-20">
       <header className="flex items-center gap-2 flex-wrap">
         <Terminal size={16} className="text-primary" />
-        <h3 className="text-base font-semibold text-foreground">
+        <h3 className="text-base font-semibold font-display text-heading">
           Inspect inventory evidence in CI
         </h3>
         <span className="text-xs text-muted-foreground">
@@ -224,7 +224,7 @@ function CIGateSnippet() {
           {copied ? 'Copied' : 'Copy YAML'}
         </Button>
       </header>
-      <pre className="text-xs font-mono bg-muted/30 border border-border rounded-md p-3 overflow-x-auto leading-relaxed text-foreground/90">
+      <pre className="text-xs font-mono bg-muted/30 border border-border rounded-2xl p-3 overflow-x-auto leading-relaxed text-foreground/90">
         <code>{CI_GATE_YAML}</code>
       </pre>
       <p className="text-xs text-muted-foreground">
@@ -339,7 +339,7 @@ export function DeveloperImplementationView({
           profile={profile}
           message="Set your stack first — pick an industry and country so we can match required algorithms to library implementations and test vectors."
         />
-        <div className="rounded-lg border border-border bg-card p-4 flex items-center justify-between gap-4">
+        <div className="glass-panel p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">
               Want algorithm-level recommendations? Take the full assessment.
@@ -373,7 +373,7 @@ export function DeveloperImplementationView({
       >
         <header className="flex items-center gap-2">
           <FlaskConical size={16} className="text-secondary" />
-          <h3 className="text-base font-semibold text-foreground">Algorithm coverage</h3>
+          <h3 className="text-base font-semibold font-display text-heading">Algorithm coverage</h3>
           <span className="text-xs text-muted-foreground">
             Post-quantum families that show up across your applicable standards
           </span>
@@ -419,7 +419,9 @@ export function DeveloperImplementationView({
       >
         <header className="flex items-center gap-2">
           <Code2 size={16} className="text-primary" />
-          <h3 className="text-base font-semibold text-foreground">Implementation jump bar</h3>
+          <h3 className="text-base font-semibold font-display text-heading">
+            Implementation jump bar
+          </h3>
           <span className="text-xs text-muted-foreground">Open the tools you actually use</span>
         </header>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -454,7 +456,7 @@ export function DeveloperImplementationView({
       >
         <header className="flex items-center gap-2">
           <ExternalLink size={16} className="text-secondary" />
-          <h3 className="text-base font-semibold text-foreground">
+          <h3 className="text-base font-semibold font-display text-heading">
             Standards → implementation docs
           </h3>
           <span className="text-xs text-muted-foreground">
@@ -472,7 +474,7 @@ export function DeveloperImplementationView({
                 (fw.libraryRefs ?? []).includes(it.referenceId)
               )
               return (
-                <li key={fw.id} className="rounded-lg border border-border bg-card/30 p-3 min-w-0">
+                <li key={fw.id} className="rounded-2xl border border-border bg-card/30 p-3 min-w-0">
                   <div className="flex items-baseline justify-between gap-2 mb-1.5">
                     <Button
                       variant="ghost"

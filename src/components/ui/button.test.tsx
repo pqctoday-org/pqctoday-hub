@@ -25,8 +25,8 @@ describe('Button', () => {
 
   it.each([
     ['destructive', 'bg-destructive'],
-    ['outline', 'border-border'],
-    ['secondary', 'bg-secondary'],
+    ['outline', 'border-ink'],
+    ['secondary', 'bg-chip'],
     ['ghost', 'hover:bg-muted/20'],
     ['link', 'underline-offset-4'],
   ] as const)('variant=%s applies its distinguishing class', (variant, token) => {

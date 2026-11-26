@@ -19,7 +19,7 @@ export function CommunitySection() {
       <div className="flex items-center gap-3 mb-2">
         <MessageSquare className="text-primary shrink-0" size={24} />
         <div>
-          <h2 className="text-xl font-semibold">Community</h2>
+          <h2 className="text-xl font-semibold font-display text-heading">Community</h2>
           <p className="text-xs text-muted-foreground">
             Join the conversation on GitHub Discussions
           </p>

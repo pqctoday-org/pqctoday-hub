@@ -55,7 +55,7 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 embed-backdrop bg-scrim/60 backdrop-blur-sm z-50"
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
@@ -71,7 +71,10 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-5">
-                <h2 id="scoring-modal-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="scoring-modal-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   How Your Score Works
                 </h2>
                 <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close">
@@ -81,7 +84,7 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
 
               {/* Dimensions */}
               <div className="space-y-3 mb-6">
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Four Dimensions
                 </p>
                 {dimensions.map((dim) => (
@@ -100,7 +103,7 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
 
               {/* Belt Ranks with threshold requirements */}
               <div className="mb-6">
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Belt Ranks &amp; Requirements
                 </p>
                 <div className="space-y-3">

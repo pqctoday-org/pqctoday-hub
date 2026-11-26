@@ -22,13 +22,15 @@ export function SecurityAuditSection() {
       <div className="flex items-center gap-3 mb-6">
         <ShieldCheck className="text-primary" size={24} />
         <div>
-          <h2 className="text-xl font-semibold">Recorded Security Review</h2>
+          <h2 className="text-xl font-semibold font-display text-heading">
+            Recorded Security Review
+          </h2>
           <p className="text-xs text-muted-foreground">Latest recorded report: {lastAudited}</p>
         </div>
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">
+        <div className="flex items-start gap-3 p-3 rounded-2xl bg-muted/50 border border-border">
           <ShieldCheck className="text-primary mt-0.5 shrink-0" size={18} />
           <div>
             <p className="text-sm font-semibold text-foreground">Dated review snapshot</p>
@@ -40,7 +42,7 @@ export function SecurityAuditSection() {
           </div>
         </div>
 
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">
+        <div className="flex items-start gap-3 p-3 rounded-2xl bg-muted/50 border border-border">
           <ShieldCheck className="text-primary mt-0.5 shrink-0" size={18} />
           <div>
             <p className="text-sm font-semibold text-foreground">Scope and browser storage</p>

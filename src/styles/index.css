@@ -99,6 +99,8 @@
   --color-chip-foreground: hsl(var(--chip-foreground));
   --color-ribbon: hsl(var(--ribbon));
   --color-logo-tile: hsl(var(--logo-tile));
+  /* Overlay behind modals and drawers: use as `bg-scrim/60`. */
+  --color-scrim: hsl(var(--scrim));
   --color-caution: hsl(var(--caution));
   --color-caution-foreground: hsl(var(--caution-foreground));
 
@@ -464,6 +466,7 @@
     --ribbon: 201.8 45.8% 90.6%; /* #DCEAF2 eyebrow pills on the main ground */
     --caution: 40 51.7% 88.6%; /* #F1E7D3 the caution pill */
     --caution-foreground: 33.6 24.8% 19.8%; /* #3F3426 */
+    --scrim: 36 13.5% 14.5%; /* overlay behind modals and drawers (the ink colour) */
     /* The tile the brand logo sits on: the pale ground #F8FAFC the light logo was drawn on.
        Dark mode uses the dark logo on its own navy (see .dark). */
     --logo-tile: 210 40% 98%;
@@ -594,6 +597,7 @@
     --ribbon: 196.7 39.1% 18%; /* #1C3640 */
     --caution: 39.4 38.1% 16.5%; /* #3A2F1A */
     --caution-foreground: 37.9 75.7% 77.5%; /* #F1D19A */
+    --scrim: 197 45% 5%; /* overlay behind modals and drawers: deeper than the ground */
     --logo-tile: 222 74% 10.6%; /* #07132F the dark logo's own navy ground */
   }
 
@@ -858,9 +862,17 @@
     padding-top: env(safe-area-inset-top);
   }
 
+  /* Sticker card: ink outline, large radius, flat offset edge (style addendum section 6).
+     A card inside another card, or one given `glass-panel-row`, is a plain bordered row. */
   .glass-panel {
-    @apply bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl;
-    -webkit-backdrop-filter: blur(0.75rem);
+    @apply bg-card border-2 border-ink rounded-3xl;
+    box-shadow: 0 6px 0 hsl(var(--edge));
+  }
+
+  .glass-panel .glass-panel,
+  .glass-panel-row {
+    @apply border border-border rounded-2xl;
+    box-shadow: none;
   }
 
   /* Brand logo: the light and dark images are both in the page; the theme class picks one. */
@@ -880,16 +892,18 @@
     outline: 1px solid hsl(var(--border));
   }
 
+  /* Kept as a name for existing call sites: a heading-coloured title, no gradient. */
   .text-gradient {
-    @apply bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent;
+    @apply text-heading;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-secondary to-primary text-black font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:opacity-90 hover:-translate-y-0.5;
+    @apply bg-primary text-primary-foreground font-bold py-3 px-6 rounded-full border-2 border-ink transition-colors duration-200 hover:bg-primary/90;
+    box-shadow: 0 4px 0 hsl(var(--edge));
   }
 
   .btn-secondary {
-    @apply bg-transparent border border-primary text-primary font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:bg-primary/10 hover:translate-y-0.5;
+    @apply bg-card text-card-foreground border-2 border-ink font-bold py-3 px-6 rounded-full transition-colors duration-200 hover:bg-muted;
   }
 
   /* Make all select dropdown options opaque for readability */

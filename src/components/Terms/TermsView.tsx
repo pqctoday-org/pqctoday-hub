@@ -45,7 +45,7 @@ function Section({
       tabIndex={-1}
       className="glass-panel p-6 scroll-mt-20 focus-visible:ring-2 focus-visible:ring-primary"
     >
-      <h2 className="text-lg font-semibold text-foreground mb-4">
+      <h2 className="text-lg font-semibold mb-4 font-display text-heading">
         {number}. {title}
       </h2>
       <div className="space-y-3 text-sm leading-relaxed text-secondary">{children}</div>
@@ -61,7 +61,9 @@ export function TermsView() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Scale className="text-primary shrink-0" size={28} aria-hidden="true" />
-          <h1 className="text-2xl font-bold text-gradient">Terms of Service</h1>
+          <h1 className="text-2xl font-bold font-display text-heading font-display text-heading">
+            Terms of Service
+          </h1>
         </div>
         <p className="text-muted-foreground text-sm">
           Legal terms governing the use of PQC Today and its embedded cryptographic software
@@ -77,7 +79,7 @@ export function TermsView() {
       </div>
 
       <nav aria-label="Table of contents" className="glass-panel p-4 mb-6">
-        <h2 className="text-sm font-semibold text-foreground mb-2">Contents</h2>
+        <h2 className="text-sm font-semibold mb-2 font-display text-heading">Contents</h2>
         <ol className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm list-decimal list-inside">
           {TOC_SECTIONS.map((s) => (
             <li key={s.slug}>

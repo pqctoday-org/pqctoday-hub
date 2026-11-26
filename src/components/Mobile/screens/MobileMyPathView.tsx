@@ -159,7 +159,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
       )}
 
       {tier === 'essentials' ? (
-        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3.5">
+        <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-3.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[12.5px] font-bold text-foreground">
               Essentials — the core {progress.essentialsTotal} modules
@@ -184,7 +184,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                     {done ? (
                       <CheckCircle2
                         size={16}
-                        className="shrink-0 text-success"
+                        className="shrink-0 text-success-legible"
                         aria-hidden="true"
                       />
                     ) : (
@@ -264,7 +264,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                           {done ? (
                             <CheckCircle2
                               size={16}
-                              className="shrink-0 text-success"
+                              className="shrink-0 text-success-legible"
                               aria-hidden="true"
                             />
                           ) : (
@@ -304,7 +304,10 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                           ) : (
                             <CheckSquare
                               size={14}
-                              className={cn('shrink-0', isPassed ? 'text-success' : 'text-accent')}
+                              className={cn(
+                                'shrink-0',
+                                isPassed ? 'text-success-legible' : 'text-accent'
+                              )}
                               aria-hidden="true"
                             />
                           )}

@@ -21,7 +21,7 @@ export function AirplaneModeBanner() {
         <Plane size={20} className="text-primary shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-sm font-semibold text-foreground">Airplane Mode</h3>
+            <h3 className="text-sm font-semibold font-display text-heading">Airplane Mode</h3>
             <Button
               variant="ghost"
               type="button"

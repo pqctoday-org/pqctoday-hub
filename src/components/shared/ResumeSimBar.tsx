@@ -84,7 +84,7 @@ export function ResumeSimBar() {
 
   return (
     <div
-      className="sticky top-0 z-[60] flex items-center gap-3 bg-foreground px-4 py-2 text-background shadow-md print:hidden"
+      className="sticky top-0 z-[60] flex items-center gap-3 bg-foreground px-4 py-2 text-background print:hidden"
       role="region"
       aria-label="Simulation in progress"
     >

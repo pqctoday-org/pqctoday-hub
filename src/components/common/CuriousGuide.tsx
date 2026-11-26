@@ -100,7 +100,7 @@ export const CuriousGuide: React.FC = () => {
   if (!opened) {
     return (
       <div
-        className="fixed bottom-4 right-4 z-overlay flex items-center gap-1 rounded-full border border-primary/30 bg-card/95 py-1 pl-3 pr-1 shadow-lg backdrop-blur"
+        className="fixed bottom-4 right-4 z-overlay flex items-center gap-1 rounded-full border-2 border-ink bg-card py-1 pl-3 pr-1"
         data-testid="curious-guide-offer"
       >
         <Button
@@ -163,7 +163,7 @@ export const CuriousGuide: React.FC = () => {
         role="dialog"
         aria-labelledby="curious-guide-title"
         aria-describedby="curious-guide-body"
-        className="fixed bottom-4 right-4 z-overlay w-[min(360px,calc(100vw-2rem))] glass-panel border border-primary/30 shadow-2xl rounded-2xl p-5"
+        className="glass-panel fixed bottom-4 right-4 z-overlay w-[min(360px,calc(100vw-2rem))] p-5"
         data-testid="curious-guide"
       >
         <div className="flex items-start justify-between gap-2 mb-3">
@@ -171,7 +171,7 @@ export const CuriousGuide: React.FC = () => {
             <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/15 text-primary">
               <Icon size={16} aria-hidden="true" />
             </span>
-            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+            <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
               Step {stepIndex + 1} of {STEPS.length}
             </p>
           </div>
@@ -188,7 +188,7 @@ export const CuriousGuide: React.FC = () => {
 
         <h2
           id="curious-guide-title"
-          className="text-base font-semibold text-foreground leading-snug mb-2"
+          className="text-base font-semibold leading-snug mb-2 font-display text-heading"
         >
           {step.title}
         </h2>

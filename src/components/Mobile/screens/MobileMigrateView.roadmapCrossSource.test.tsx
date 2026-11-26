@@ -109,7 +109,7 @@ function openVendors() {
 }
 
 function card(vendorId: string): HTMLElement {
-  return screen.getByText(NAMES[vendorId]).closest<HTMLElement>('div.rounded-xl')!
+  return screen.getByText(NAMES[vendorId]).closest<HTMLElement>('div.rounded-2xl')!
 }
 
 function openSheet(vendorId: string): HTMLElement {

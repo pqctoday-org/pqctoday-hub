@@ -29,7 +29,7 @@ export function DataPrivacySection() {
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <Lock className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold flex-1">Data Privacy</h2>
+        <h2 className="text-xl font-semibold flex-1 font-display text-heading">Data Privacy</h2>
         <ChevronDown
           size={20}
           className={clsx(
@@ -103,7 +103,7 @@ export function DataPrivacySection() {
               <div className="mt-6 pt-5 border-t border-border">
                 <div className="flex items-center gap-2 mb-3">
                   <BarChart2 size={16} className="text-primary flex-shrink-0" />
-                  <h3 className="text-sm font-semibold text-foreground">
+                  <h3 className="text-sm font-semibold font-display text-heading">
                     Anonymous usage analytics
                   </h3>
                 </div>

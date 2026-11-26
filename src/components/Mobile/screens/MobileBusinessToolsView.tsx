@@ -189,7 +189,7 @@ export function MobileBusinessToolsView() {
       )}
 
       {!search.trim() && !category && advancedFilters.length === 0 && (
-        <section className="mb-4 rounded-xl border border-border bg-card p-3.5">
+        <section className="glass-panel mb-4 p-3.5">
           <h2 className="text-[12px] font-bold text-foreground">{startHere.heading}</h2>
           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
             {startHere.guidance}
@@ -225,7 +225,7 @@ export function MobileBusinessToolsView() {
           audit R4.3) — the mechanism itself was never actually built. Real
           goodAnswer + CSWP badge, no link. */}
       {DROPPED_TOOLS.map((tool) => (
-        <div key={tool.id} className="mt-2.5 rounded-xl border border-dashed border-border p-3.5">
+        <div key={tool.id} className="mt-2.5 rounded-2xl border border-dashed border-border p-3.5">
           <div className="flex items-center gap-2">
             <span className="text-[12px] font-bold text-foreground">{tool.name}</span>
             <Cswp39SectionBadge
@@ -265,7 +265,10 @@ export function MobileBusinessToolsView() {
 function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () => void }) {
   const Icon = tool.icon
   return (
-    <article className="glass-panel flex flex-col gap-1.5 p-3.5" data-business-result={tool.id}>
+    <article
+      className="glass-panel rounded-2xl flex flex-col gap-1.5 p-3.5"
+      data-business-result={tool.id}
+    >
       <Button
         type="button"
         variant="ghost"
@@ -319,7 +322,7 @@ function ToolDetailSheetBody({
         </p>
       </div>
 
-      <div className="rounded-xl border border-border bg-muted/20 p-3">
+      <div className="rounded-2xl border border-border bg-muted/20 p-3">
         <p className="text-[12px] leading-relaxed text-foreground/90">
           <span className="font-semibold text-foreground">What a good answer looks like:</span>{' '}
           {tool.goodAnswer}
@@ -327,7 +330,7 @@ function ToolDetailSheetBody({
       </div>
 
       {tool.workedExample && (
-        <div className="rounded-xl border border-border p-3">
+        <div className="rounded-2xl border border-border p-3">
           <p className="text-[12px] leading-relaxed text-foreground/90">
             <span className="font-semibold text-foreground">Worked example:</span>{' '}
             {tool.workedExample}

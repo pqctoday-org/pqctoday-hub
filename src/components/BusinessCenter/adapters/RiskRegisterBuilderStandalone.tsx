@@ -282,7 +282,7 @@ export function RiskRegisterBuilderStandalone() {
         </div>
       )}
       {!sampleBank && (
-        <details className="rounded-lg border border-border p-3 text-xs text-muted-foreground">
+        <details className="rounded-2xl border border-border p-3 text-xs text-muted-foreground">
           <summary className="cursor-pointer font-medium text-foreground">
             How automatic starting ratings work
           </summary>

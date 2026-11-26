@@ -31,7 +31,7 @@ function StatementList({
   if (ids.length === 0) return null
   return (
     <div className="min-w-0">
-      <h3 className="text-sm font-semibold text-foreground">{heading}</h3>
+      <h3 className="text-sm font-semibold font-display text-heading">{heading}</h3>
       <ul className="mt-1 space-y-1">
         {ids.map((id) => (
           <li key={id} className="min-w-0 text-sm text-foreground/80">
@@ -117,7 +117,7 @@ export function NiceCoveragePanel({
           <StatementList heading="Practise (in the Workshop)" ids={practised} text={text} />
           {areas.length > 0 ? (
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-foreground">Competency areas</h3>
+              <h3 className="text-sm font-semibold font-display text-heading">Competency areas</h3>
               <p className="mt-1 text-foreground/80">{areas.join(' · ')}</p>
             </div>
           ) : null}

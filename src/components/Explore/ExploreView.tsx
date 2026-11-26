@@ -63,7 +63,7 @@ export function ExploreView({
     <div className="max-w-5xl mx-auto py-4 md:py-8 px-2">
       {/* Header */}
       <div className={`text-center mb-8 md:mb-12 ${simEmbed ? 'hidden' : ''}`}>
-        <h1 className="text-xl md:text-4xl font-bold text-gradient flex items-center justify-center gap-2 md:gap-3 mb-3">
+        <h1 className="text-xl md:text-4xl font-bold font-display text-heading flex items-center justify-center gap-2 md:gap-3 mb-3 font-display text-heading">
           <Compass className="w-5 h-5 md:w-9 md:h-9 text-primary shrink-0" aria-hidden="true" />
           Explore PQC Today
         </h1>
@@ -157,7 +157,7 @@ export function ExploreView({
 
       {/* Advanced unlock prompt for curious persona */}
       {showUnlockPrompt && (
-        <div className="mt-8 glass-panel p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="glass-panel mt-8 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="p-2.5 rounded-lg bg-primary/10 shrink-0">
             <Unlock size={20} className="text-primary" aria-hidden="true" />
           </div>

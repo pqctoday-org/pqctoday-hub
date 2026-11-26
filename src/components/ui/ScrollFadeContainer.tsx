@@ -88,8 +88,8 @@ const ScrollFadeContainer = React.forwardRef<HTMLDivElement, ScrollFadeContainer
         </div>
         <div
           className={cn(
-            'pointer-events-none absolute right-0 top-0 h-full w-10',
-            'bg-gradient-to-l from-background to-transparent',
+            'pointer-events-none absolute right-0 top-0 h-full w-1 rounded-full',
+            'bg-edge',
             'transition-opacity duration-200',
             showFade ? 'opacity-100' : 'opacity-0'
           )}

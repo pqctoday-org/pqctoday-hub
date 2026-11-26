@@ -76,7 +76,7 @@ export function CryptoAgilityDefinitions() {
             {CSWP39_APPENDIX_B_DEFINITIONS.map((entry) => (
               <li
                 key={entry.source}
-                className="rounded-md border border-border bg-muted/40 p-3 space-y-1.5"
+                className="rounded-2xl border border-border bg-muted/40 p-3 space-y-1.5"
               >
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="text-xs font-semibold text-foreground">{entry.source}</div>
@@ -90,10 +90,10 @@ export function CryptoAgilityDefinitions() {
         </section>
 
         <section
-          className="space-y-2 rounded-md border border-border bg-muted/40 p-3"
+          className="bg-card border border-border rounded-2xl space-y-2 p-3"
           aria-label="Hub teaching synthesis"
         >
-          <h3 className="text-xs font-semibold text-foreground">
+          <h3 className="text-xs font-semibold font-display text-heading">
             {CSWP39_RELATED_TEACHING_SYNTHESIS.title}
           </h3>
           <p className="text-sm text-foreground leading-relaxed">

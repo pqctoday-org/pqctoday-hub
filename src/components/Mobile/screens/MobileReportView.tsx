@@ -118,7 +118,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
           </Link>
           <Link
             to="/assess"
-            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary px-5 text-[12.5px] font-bold text-primary-foreground"
+            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full px-5 text-[12.5px] font-bold text-primary-foreground bg-primary border-2 border-ink hover:bg-primary/90"
           >
             <ClipboardCheck size={14} aria-hidden="true" />
             Start Assessment
@@ -158,7 +158,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
           </p>
           <Link
             to="/assess"
-            className="mt-2 inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary px-4 text-[12px] font-bold text-primary-foreground"
+            className="mt-2 inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-4 text-[12px] font-bold text-primary-foreground bg-primary border-2 border-ink hover:bg-primary/90"
           >
             <ClipboardCheck size={14} aria-hidden="true" />
             Start Assessment
@@ -178,8 +178,10 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
       )}
 
       {!['developer', 'ops', 'researcher'].includes(selectedPersona ?? '') && (
-        <section className="mb-3 rounded-xl border border-border p-3">
-          <h2 className="text-sm font-semibold">Inspect the report&apos;s figures</h2>
+        <section className="mb-3 rounded-2xl border border-border p-3">
+          <h2 className="text-sm font-semibold font-display text-heading">
+            Inspect the report&apos;s figures
+          </h2>
           <p className="my-2 text-xs text-muted-foreground">
             {sharedView?.sample
               ? 'Download this fictional worked example'
@@ -263,7 +265,7 @@ export function MobileReportView({ sharedView }: MobileReportViewProps = {}) {
       </h2>
       <div className="flex flex-col gap-2">
         {result.recommendedActions.map((a) => (
-          <div key={a.priority} className="glass-panel flex items-start gap-2.5 p-3">
+          <div key={a.priority} className="glass-panel rounded-2xl flex items-start gap-2.5 p-3">
             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] font-bold text-primary">
               {a.priority}
             </span>

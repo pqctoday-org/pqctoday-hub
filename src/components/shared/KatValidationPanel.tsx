@@ -143,13 +143,13 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
   const hasReferenceSample = evidenceClasses.includes('nist-acvp-reference-sample')
 
   return (
-    <section aria-label={label} className="glass-panel p-5 space-y-4 border border-border">
+    <section aria-label={label} className="glass-panel p-5 space-y-4">
       {/* Header row */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <ShieldCheck size={18} className="text-primary shrink-0" aria-hidden="true" />
           <div>
-            <h3 className="font-semibold text-foreground text-sm">{label}</h3>
+            <h3 className="font-semibold text-sm font-display text-heading">{label}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">{authorityNote}</p>
           </div>
         </div>

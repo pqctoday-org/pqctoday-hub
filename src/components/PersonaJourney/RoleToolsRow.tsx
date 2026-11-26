@@ -50,7 +50,7 @@ export function RoleToolsRow({ personaId }: RoleToolsRowProps) {
     >
       <h2
         id="role-tools-title"
-        className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
+        className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display"
       >
         Tools for this role
       </h2>
@@ -69,7 +69,7 @@ export function RoleToolsRow({ personaId }: RoleToolsRowProps) {
           <li key={t.key}>
             <Link
               to={t.to}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
             >
               {t.kind === 'Playground' ? (
                 <Wrench size={12} aria-hidden="true" />

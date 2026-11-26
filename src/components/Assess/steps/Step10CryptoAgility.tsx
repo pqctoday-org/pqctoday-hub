@@ -61,7 +61,7 @@ const Step10CryptoAgility = ({
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             {stepContent.title ?? 'How easily can you swap cryptographic algorithms?'}
           </h3>
           <p className="text-sm text-muted-foreground">

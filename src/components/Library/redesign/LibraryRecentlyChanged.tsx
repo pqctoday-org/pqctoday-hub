@@ -22,7 +22,7 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
   return (
     <div className="glass-panel rounded-2xl p-3">
       <div className="mb-2 flex items-center justify-between px-1">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Recently changed
         </span>
         <span className="text-[11px] text-muted-foreground">{items.length} docs</span>
@@ -45,7 +45,7 @@ export function LibraryRecentlyChanged({ items, onOpen, limit = 16 }: LibraryRec
                 />
                 <span
                   className={`font-mono text-[9.5px] font-bold uppercase tracking-[0.1em] ${
-                    isNew ? 'text-success' : 'text-primary'
+                    isNew ? 'text-success-legible' : 'text-primary'
                   }`}
                 >
                   {item.status}

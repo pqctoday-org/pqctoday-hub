@@ -101,7 +101,7 @@ export const ThreatActionsMenu = ({
               zIndex: 9999,
               minWidth: 180,
             }}
-            className="flex flex-col gap-0.5 rounded-lg border border-border bg-popover p-1 shadow-xl"
+            className="flex flex-col gap-0.5 bg-popover p-1 glass-panel rounded-2xl"
             onClick={(e) => {
               e.stopPropagation()
               setIsOpen(false)
