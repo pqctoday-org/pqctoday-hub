@@ -122,7 +122,7 @@ export function LibraryDocumentCard({
       <LibraryReviewProcess item={item} compact />
       <CmsSourceGuide item={item} compact />
       {needsScopeVerification(item) && (
-        <p className="mt-1 text-[10.5px] font-medium text-warning-foreground">
+        <p className="mt-1 text-[10.5px] font-medium text-warning-legible">
           Scope-sensitive — verify the official source.
         </p>
       )}

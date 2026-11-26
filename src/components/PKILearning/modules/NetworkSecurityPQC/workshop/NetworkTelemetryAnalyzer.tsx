@@ -199,7 +199,7 @@ export const NetworkTelemetryAnalyzer: React.FC = () => {
                 <span className="font-bold font-mono text-lg">{requiredSegments}</span>
               </div>
               <div
-                className={`p-3 rounded border ${requiresExtraRTT ? 'bg-warning/10 border-warning/30 text-foreground' : 'bg-success/10 border-success/30 text-success-foreground'}`}
+                className={`p-3 rounded border ${requiresExtraRTT ? 'bg-warning/10 border-warning/30 text-foreground' : 'bg-success/10 border-success/30 text-success-legible'}`}
               >
                 <span className="text-xs block mb-1">Added Latency Penalty</span>
                 <span className="font-bold font-mono text-lg">
