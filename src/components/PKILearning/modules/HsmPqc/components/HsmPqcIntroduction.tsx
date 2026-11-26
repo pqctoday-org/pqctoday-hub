@@ -19,6 +19,7 @@ import {
   Layers,
   Zap,
   Eye,
+  Wrench,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -33,6 +34,8 @@ import { ResponsiveTable } from '@/components/ui/ResponsiveTable'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { RecordDecisionLink } from '@/components/PKILearning/RecordDecisionLink'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { SourcedSectionBody } from '@/components/PKILearning/common/SourcedSection'
+import { HARDWARE_MAINTENANCE_SECTION } from '../data/hardwareMaintenanceSection'
 
 interface HsmPqcIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -1625,6 +1628,15 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
           </div>
         </div>
       </CollapsibleSection>
+
+      <div data-section-id="hardware-maintenance" className="scroll-mt-20">
+        <CollapsibleSection
+          icon={<Wrench size={24} className="text-primary" />}
+          title={HARDWARE_MAINTENANCE_SECTION.title}
+        >
+          <SourcedSectionBody section={HARDWARE_MAINTENANCE_SECTION} />
+        </CollapsibleSection>
+      </div>
 
       {/* Try Workshop CTA */}
       <div className="glass-panel p-6 border-primary/20">
