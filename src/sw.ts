@@ -79,6 +79,30 @@ function withCOIHeaders(response: Response, url?: URL): Response {
   })
 }
 
+// ── App shell, network first ───────────────────────────────────────────────
+// How long to wait for the network before showing the precached shell. Offline,
+// fetch() fails at once; this bound is for a connection that is up but stalled.
+const SHELL_NETWORK_TIMEOUT_MS = 4000
+
+/**
+ * The live app shell, or null when it cannot be had in time (offline, stalled
+ * connection, HTTP error, or a non-HTML answer). `cache: 'no-cache'` makes the
+ * browser revalidate instead of reusing its own copy from the last 10 minutes.
+ */
+async function fetchFreshShell(): Promise<Response | null> {
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), SHELL_NETWORK_TIMEOUT_MS)
+  try {
+    const res = await fetch('/index.html', { cache: 'no-cache', signal: ctrl.signal })
+    const type = res.headers.get('content-type') ?? ''
+    return res.ok && type.includes('text/html') ? res : null
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 // ── Fetch handler ──────────────────────────────────────────────────────────
 // Single handler: all caching logic + COI headers on every response.
 self.addEventListener('fetch', (event) => {
@@ -116,8 +140,16 @@ self.addEventListener('fetch', (event) => {
       const isStandaloneDoc =
         /^\/migrate-proofs\/.+\.html$/.test(url.pathname) || /^\/licenses(\/|$)/.test(url.pathname)
 
-      // Navigation (SPA): serve index.html from precache for all routes
+      // Navigation (SPA): the app shell for all routes. NETWORK FIRST, precache as
+      // the offline fallback. Serving the precached shell first meant that right
+      // after a release a returning visitor got the PREVIOUS release's page, which
+      // then asked for split files the new release had removed ("Failed to fetch
+      // dynamically imported module"). The shell is one small file; the boot chunks
+      // and everything else it references still come from the precache / runtime
+      // caches below, so a page that loads still works offline.
       if (request.mode === 'navigate' && !isStandaloneDoc) {
+        const fresh = await fetchFreshShell()
+        if (fresh) return withCOIHeaders(fresh, url)
         const cached = await precache.matchPrecache('/index.html')
         if (cached) return withCOIHeaders(cached, url)
       }

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { lazy, type ComponentType } from 'react'
+import { reloadOnceForUpdate } from './updateReload'
 
 const RELOAD_KEY = 'chunk-reload-attempted'
 
@@ -20,9 +21,11 @@ function retryImport<T>(importFn: () => Promise<T>, retries = 3, delay = 1000): 
         // fires at most once per session until an import actually succeeds —
         // a chunk that still fails after the reload throws instead of
         // looping, which reaches the ErrorBoundary.
-        if (!sessionStorage.getItem(RELOAD_KEY)) {
+        // The shared guard (updateReload.ts) also covers the vite:preloadError
+        // listener and the route error boundary, so the three together reload
+        // the page at most once per failure window.
+        if (!sessionStorage.getItem(RELOAD_KEY) && reloadOnceForUpdate(error)) {
           sessionStorage.setItem(RELOAD_KEY, '1')
-          window.location.reload()
         }
         throw error
       }
