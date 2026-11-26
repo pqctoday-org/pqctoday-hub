@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
 import { BookOpenText, Search, X, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router'
 import { loadGlossary, type GlossaryTerm } from '../../data/glossary'
@@ -88,13 +88,18 @@ export const GlossaryContent: React.FC<{
     }
   }, [active])
 
+  // While the modal slides out, AnimatePresence keeps showing the props it had when it began
+  // to leave (`active` stays true). Without this check the pending focus move would still fire
+  // and take focus back from the control that opened the glossary.
+  const isPresent = useIsPresent()
+
   // Focus search on open
   useEffect(() => {
-    if (active && searchRef.current) {
+    if (active && isPresent && searchRef.current) {
       const timer = setTimeout(() => searchRef.current?.focus(), 200)
       return () => clearTimeout(timer)
     }
-  }, [active])
+  }, [active, isPresent])
 
   const categories = ['all', 'algorithm', 'protocol', 'standard', 'concept', 'organization']
 

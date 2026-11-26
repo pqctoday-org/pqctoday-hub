@@ -150,14 +150,11 @@ test('learning module progress persists across page reload and fits mobile 390x8
   )
   expect(overflow, '/learn/pki-enrollment-protocols mobile overflow').toBeLessThanOrEqual(1)
 
-  const sectionToggle = page.locator('ul > li > button[aria-pressed]').first()
-  await expect(sectionToggle, 'a section progress toggle on the phone layout').toBeVisible()
-  await sectionToggle.click()
-  await expect(sectionToggle).toHaveAttribute('aria-pressed', 'true')
+  // Each section carries its own "Mark section as read" control; the mark is the progress.
+  const markRead = () => page.getByRole('checkbox', { name: /^Mark section as read:/ }).first()
+  await expect(markRead(), 'a section "mark as read" control on the phone layout').toBeVisible()
+  await markRead().check()
+  await expect(markRead()).toBeChecked()
   await page.reload()
-  await expect(page.locator('ul > li > button[aria-pressed]').first()).toHaveAttribute(
-    'aria-pressed',
-    'true',
-    { timeout: 20_000 }
-  )
+  await expect(markRead()).toBeChecked({ timeout: 20_000 })
 })
