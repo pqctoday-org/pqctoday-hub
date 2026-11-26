@@ -37,6 +37,7 @@ export function SectionReadControl({ moduleId, sectionId }: SectionReadControlPr
   return (
     <div
       data-testid="section-read-control"
+      data-section-control={sectionId}
       className="mt-6 flex justify-end border-t border-border pt-3"
     >
       <label

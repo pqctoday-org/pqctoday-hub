@@ -36,6 +36,7 @@ import {
 import { useActiveLearnPathId, useLearnModuleId } from './useLearnPath'
 import { OffPathBadge, OptionalReferenceBadge } from './LearnPathPicker'
 import { SectionReadControl, SECTION_READ_ATTR } from './SectionReadControl'
+import { planSectionControls } from './sectionControlPlan'
 import { createRoot, type Root } from 'react-dom/client'
 import { requiredLearnSectionIdsFor } from '../manifest/learnPathScope'
 
@@ -188,8 +189,9 @@ export const useSectionAnchors = (): void => {
 /**
  * Gives each required, plain anchored section its "Mark section as read" control at the end.
  * Sections drawn by LearnStepper or LearnSection carry their own control (`data-section-read="own"`)
- * and are skipped. The control is a small separate React root mounted into a host appended to the
- * section: it reads and writes the module store only, so it needs no context from the page.
+ * and are skipped. Where the control goes is decided by `planSectionControls` (one per section, after
+ * its body, never in a heading row). The control is a small separate React root mounted into a host in
+ * the section: it reads and writes the module store only, so it needs no context from the page.
  */
 const useSectionReadControls = (): void => {
   const moduleId = useLearnModuleId()
@@ -198,17 +200,14 @@ const useSectionReadControls = (): void => {
     if (!moduleId) return
     const required = new Set(requiredLearnSectionIdsFor(moduleId, activePath))
     const mounted: { host: HTMLElement; root: Root }[] = []
-    const els = document.querySelectorAll<HTMLElement>('[data-section-id], section[id]')
-    els.forEach((el) => {
-      const id = el.dataset.sectionId ?? el.id
-      if (!id || !required.has(id) || el.hasAttribute(SECTION_READ_ATTR)) return
+    for (const { id, parent, before } of planSectionControls(document, required)) {
       const host = document.createElement('div')
       host.setAttribute(SECTION_READ_ATTR, 'injected')
-      el.appendChild(host)
+      parent.insertBefore(host, before)
       const root = createRoot(host)
       root.render(<SectionReadControl moduleId={moduleId} sectionId={id} />)
       mounted.push({ host, root })
-    })
+    }
     return () => {
       // Unmounted after the current render pass: a root cannot be unmounted while React is rendering.
       queueMicrotask(() => {

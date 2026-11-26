@@ -61,7 +61,7 @@ for (const width of [1280, 390]) {
       .locator('..')
     await reading.getByRole('button', { name: /Your Next Steps$/ }).click()
     await expect(reading.getByRole('button', { name: 'Why PQC?', exact: true })).toBeVisible()
-    await page.getByRole('button', { name: 'Mark this section as read' }).click()
+    await page.getByRole('checkbox', { name: 'Mark section as read: Your Next Steps' }).check()
     await expect(
       reading.getByRole('button', { name: 'Your Next Steps (read)', exact: true })
     ).toBeVisible()
