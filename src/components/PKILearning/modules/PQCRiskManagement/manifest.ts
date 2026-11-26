@@ -9,6 +9,7 @@ const manifest: ModuleManifest = {
     { id: 'crqc', label: 'Why PQC Risk Management' },
     { id: 'register', label: 'Key Concepts' },
     { id: 'heatmap', label: 'Executive Perspective' },
+    { id: 'threat-environment-assessment', label: 'Threat Environment Assessment' },
   ],
   workshopSteps: [
     { id: 'crqc-scenario-planner', label: 'CRQC Scenario Planner' },
