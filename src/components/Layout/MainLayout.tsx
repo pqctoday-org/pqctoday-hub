@@ -1430,8 +1430,8 @@ export const MainLayout = () => {
             // `+env(safe-area-inset-bottom)` here double-counted it,
             // over-padding the scroll area by up to the full inset again.
             isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]',
-            // The dock above the bar is about 120px tall: keep the page's last lines clear of it.
-            showAssistantDock && 'pb-[calc(var(--mobile-nav-height)+120px)]'
+            // The dock above the bar is one thin row (about 56px): keep the page's last lines clear of it.
+            showAssistantDock && 'pb-[calc(var(--mobile-nav-height)+64px)]'
           )}
         >
           {isCuriousMobileTakeover || isFullBleedContentRoute ? (
