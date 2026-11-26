@@ -62,12 +62,12 @@ export const SampleQuestionsModal = ({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel p-6 max-w-3xl w-full max-h-[85dvh] overflow-y-auto"
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-3xl w-full max-h-[85dvh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold">Sample Questions</h2>
+                  <h2 className="text-2xl font-bold font-display text-heading">Sample Questions</h2>
                   <p className="text-sm text-muted-foreground mt-1">
                     Click to copy &middot; Double-click to send directly to chat
                   </p>
@@ -86,7 +86,9 @@ export const SampleQuestionsModal = ({
               <div className="space-y-5">
                 {Object.entries(SAMPLE_QUESTIONS).map(([category, questions]) => (
                   <div key={category}>
-                    <h3 className="text-sm font-semibold text-primary mb-2">{category}</h3>
+                    <h3 className="text-sm font-semibold mb-2 font-display text-heading">
+                      {category}
+                    </h3>
                     <div className="flex flex-wrap gap-2">
                       {questions.map((q) => (
                         <Button
@@ -95,7 +97,7 @@ export const SampleQuestionsModal = ({
                           onClick={() => handleCopy(q)}
                           onDoubleClick={() => handleDoubleClick(q)}
                           title="Click to copy, double-click to send"
-                          className="group inline-flex items-center gap-1.5 px-3 py-1.5 h-auto rounded-full text-xs bg-muted/30 hover:bg-primary/10 active:bg-primary/10 border border-border hover:border-primary/30 active:border-primary/30 text-muted-foreground hover:text-foreground active:text-foreground transition-colors cursor-pointer"
+                          className="group inline-flex items-center gap-1.5 px-3 py-1.5 h-auto rounded-full text-xs active:bg-primary/10 active:border-primary/30 active:text-foreground transition-colors cursor-pointer bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
                         >
                           <span>{q}</span>
                           {copiedQuestion === q ? (

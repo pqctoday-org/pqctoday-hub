@@ -156,7 +156,7 @@ export function DecisionEditor({ initialTopic }: { initialTopic?: DecisionTopic 
       </div>
 
       {draft && (
-        <div className="space-y-2 rounded-lg border border-border p-3">
+        <div className="space-y-2 rounded-2xl border border-border p-3">
           <div className="space-y-1">
             <label htmlFor="adr-title" className="text-[11px] font-medium text-muted-foreground">
               Title

@@ -66,7 +66,7 @@ export const PlaygroundToolRoute = () => {
   if (!tool) {
     return (
       <section className="mx-auto max-w-2xl space-y-4 py-12 text-center">
-        <h1 className="text-3xl font-bold text-foreground">Crypto Lab tool not found</h1>
+        <h1 className="text-3xl font-bold font-display text-heading">Crypto Lab tool not found</h1>
         <p className="text-muted-foreground">
           No supported Crypto Lab tool matches this address. It may have moved or the link may be
           incomplete.
@@ -176,7 +176,7 @@ export const PlaygroundToolRoute = () => {
           tools' "What this is for" section so both tool families open the same way. */}
       <section
         aria-label="What you will do"
-        className="rounded-lg border border-border bg-muted/20 p-3"
+        className="bg-card border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
       >
         <p className="text-sm leading-relaxed text-muted-foreground">
           <span className="font-semibold text-foreground">What you will do:</span>{' '}

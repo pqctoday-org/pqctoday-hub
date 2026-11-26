@@ -12,13 +12,13 @@ import { buttonVariants } from '@/components/ui/button-variants'
  */
 export function ExecutiveAboutSummary() {
   return (
-    <div className="glass-panel p-4 md:p-6 border-primary/30">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6">
       <div className="flex items-start gap-3">
         <div className="p-2 rounded-lg bg-primary/10 shrink-0">
           <Briefcase className="text-primary" size={22} aria-hidden="true" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-semibold text-foreground mb-1">
+          <h2 className="text-lg font-semibold mb-1 font-display text-heading">
             For risk & governance leaders
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed mb-4">

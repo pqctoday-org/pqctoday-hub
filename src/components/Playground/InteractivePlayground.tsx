@@ -149,7 +149,7 @@ export const InteractivePlayground = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
         {/* Wave A (2026-09-18): h1 — this component is the whole
             /playground/interactive page and rendered no level-one heading. */}
-        <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+        <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2 font-display text-heading">
           <Play className="text-secondary" aria-hidden="true" />
           Interactive Playground
         </h1>
@@ -250,7 +250,7 @@ export const InteractivePlayground = () => {
             className={clsx(
               'whitespace-nowrap',
               activeTab === 'keystore'
-                ? 'bg-primary/20 text-primary shadow-sm'
+                ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
@@ -272,7 +272,7 @@ export const InteractivePlayground = () => {
             className={clsx(
               'whitespace-nowrap',
               activeTab === 'data'
-                ? 'bg-primary/20 text-primary shadow-sm'
+                ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
@@ -291,7 +291,7 @@ export const InteractivePlayground = () => {
             className={clsx(
               'whitespace-nowrap',
               activeTab === 'kem_ops'
-                ? 'bg-primary/20 text-primary shadow-sm'
+                ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
@@ -313,7 +313,7 @@ export const InteractivePlayground = () => {
             className={clsx(
               'whitespace-nowrap',
               activeTab === 'symmetric'
-                ? 'bg-primary/20 text-primary shadow-sm'
+                ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
@@ -335,7 +335,7 @@ export const InteractivePlayground = () => {
             className={clsx(
               'whitespace-nowrap',
               activeTab === 'hashing'
-                ? 'bg-primary/20 text-primary shadow-sm'
+                ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
@@ -354,7 +354,7 @@ export const InteractivePlayground = () => {
             className={clsx(
               'whitespace-nowrap',
               activeTab === 'sign_verify'
-                ? 'bg-primary/20 text-primary shadow-sm'
+                ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
@@ -376,7 +376,7 @@ export const InteractivePlayground = () => {
             className={clsx(
               'whitespace-nowrap',
               activeTab === 'logs'
-                ? 'bg-primary/20 text-primary shadow-sm'
+                ? 'bg-primary/20 text-primary'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
@@ -386,7 +386,7 @@ export const InteractivePlayground = () => {
         </div>
         <div
           className={clsx(
-            'pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-muted to-transparent rounded-r-xl transition-opacity duration-200 sm:hidden',
+            'pointer-events-none absolute right-0 top-0 bottom-0 w-10 rounded-r-xl transition-opacity duration-200 sm:hidden bg-primary/5',
             showTabFade ? 'opacity-100' : 'opacity-0'
           )}
           aria-hidden="true"
@@ -398,7 +398,7 @@ export const InteractivePlayground = () => {
         role="tabpanel"
         id="playground-tabpanel"
         aria-labelledby={`tab-${activeTab}`}
-        className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative"
+        className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-2xl border border-border p-3 md:p-6 relative"
       >
         <h2 className="sr-only">Cryptographic workbench</h2>
         {activeTab === 'data' && <DataTab />}

@@ -65,7 +65,7 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
 
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-3.5">
-      <div className="glass-panel p-5 sm:p-6">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 sm:p-6">
         {/* Tag row */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <span className={pillClasses(domain.tone)}>{domain.label}</span>
@@ -127,7 +127,7 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
       </div>
 
       {/* Footer control deck — sticky to the bottom on mobile for thumb reach. */}
-      <div className="glass-panel sticky bottom-0 z-10 flex flex-wrap items-center gap-3 px-4 py-3 lg:static">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] sticky bottom-0 z-10 flex flex-wrap items-center gap-3 px-4 py-3 lg:static">
         <Button
           variant="outline"
           onClick={() =>

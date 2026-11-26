@@ -109,8 +109,8 @@ export const RiskScoreSection = ({
         <GlossaryAutoWrap>{result.narrative}</GlossaryAutoWrap>
       </p>
       {result.boosts && result.boosts.length > 0 && result.preBoostScore !== undefined && (
-        <div className="mt-4 p-3 rounded-lg border border-border bg-muted/20 print:bg-transparent">
-          <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
+        <div className="mt-4 p-3 rounded-2xl border border-border bg-muted/20 print:bg-transparent">
+          <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Situational boosts raised this score from {result.preBoostScore} to {result.riskScore}
           </p>
           <ul className="space-y-1">

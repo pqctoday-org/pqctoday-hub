@@ -155,7 +155,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   // Selected mode: all bookmarked products are hidden
   if (useSelectedMode && selectedProducts.length === 0) {
     return (
-      <div className="glass-panel p-6">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
         {titleRow}
         <div className="text-center py-6 mt-4">
           <p className="text-sm text-muted-foreground mb-3">
@@ -172,7 +172,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   // Recommended mode: no infra selected, or no matches
   if (!useSelectedMode && selectedProducts.length === 0) {
     return (
-      <div className="glass-panel p-6">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6">
         {titleRow}
         <div className="text-center py-6 mt-4">
           <p className="text-sm text-muted-foreground mb-3">
@@ -183,7 +183,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
           <div className="flex flex-wrap items-center justify-center gap-3 print:hidden">
             <Link
               to={noInfraSelected ? '/assess' : '/migrate'}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-primary-foreground text-sm font-bold transition-all duration-200 bg-primary border-2 border-ink hover:bg-primary/90"
             >
               {noInfraSelected ? 'Go to Assessment' : 'Explore Tools'}
               <ArrowRight size={14} />
@@ -200,7 +200,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   }
 
   return (
-    <div className="glass-panel p-6 print:border print:border-border">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 print:border print:border-border">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
@@ -288,7 +288,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
               <tbody key={layer}>
                 <tr>
                   <td colSpan={5} className="pt-4 pb-1">
-                    <h4 className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                    <h4 className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading font-display">
                       {layer}
                     </h4>
                   </td>

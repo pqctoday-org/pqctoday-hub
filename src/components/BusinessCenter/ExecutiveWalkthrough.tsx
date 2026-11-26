@@ -27,7 +27,7 @@ export function ExecutiveWalkthrough({ onJumpToZoneMap }: { onJumpToZoneMap: () 
   if (steps.length === 0) return null
 
   return (
-    <div className="glass-panel p-5 md:p-6 mb-6 relative">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 md:p-6 mb-6 relative">
       <Button
         variant="ghost"
         size="sm"
@@ -37,7 +37,7 @@ export function ExecutiveWalkthrough({ onJumpToZoneMap }: { onJumpToZoneMap: () 
       >
         <X size={14} />
       </Button>
-      <h2 className="text-base font-bold text-foreground mb-1">Board pack in 3 steps</h2>
+      <h2 className="text-base font-bold mb-1 font-display text-heading">Board pack in 3 steps</h2>
       <p className="text-sm text-muted-foreground mb-4 max-w-lg">
         The fastest path to a board-ready package — build these in order, or{' '}
         <Button
@@ -58,7 +58,7 @@ export function ExecutiveWalkthrough({ onJumpToZoneMap }: { onJumpToZoneMap: () 
               key={tool.id}
               to={`/business/tools/${tool.id}`}
               onClick={dismiss}
-              className="glass-panel p-4 hover:border-primary/40 transition-colors group flex flex-col gap-2"
+              className="glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-4 hover:border-primary/40 transition-colors group flex flex-col gap-2"
             >
               <div className="flex items-center gap-2">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[11px] font-bold text-primary">

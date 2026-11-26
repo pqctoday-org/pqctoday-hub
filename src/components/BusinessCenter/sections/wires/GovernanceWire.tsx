@@ -233,7 +233,7 @@ function ContextChipsBlock({ metrics }: { metrics: BusinessMetrics }) {
   const hasContext = metrics.industry || metrics.country
   if (!hasContext) {
     return (
-      <div className="rounded-lg border border-dashed border-border bg-muted/10 p-3">
+      <div className="rounded-2xl border border-dashed border-border bg-muted/10 p-3">
         <div className="flex items-start gap-2">
           <Briefcase size={16} className="text-muted-foreground shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground inline-flex items-center gap-1 flex-wrap">

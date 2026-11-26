@@ -146,7 +146,10 @@ export function MobileAboutView() {
           const isOpen = openGroup === group.id
           const Icon = group.icon
           return (
-            <div key={group.id} className="glass-panel overflow-hidden">
+            <div
+              key={group.id}
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden"
+            >
               <Button
                 type="button"
                 variant="ghost"
@@ -434,7 +437,7 @@ function Row({ title, badge, children }: { title: string; badge?: string; childr
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-border bg-muted/30 p-2 text-center">
-      <div className="text-[15px] font-extrabold text-gradient">{value.toLocaleString()}</div>
+      <div className="text-[15px] font-extrabold text-heading">{value.toLocaleString()}</div>
       <div className="text-sim-chip text-muted-foreground">{label}</div>
     </div>
   )

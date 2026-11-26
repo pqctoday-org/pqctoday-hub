@@ -53,7 +53,9 @@ const Step7UseCases = ({ hideHeading = false, hideHints = false }: EmbeddedStepP
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">Where do you use cryptography?</h3>
+          <h3 className="text-xl font-bold font-display text-heading">
+            Where do you use cryptography?
+          </h3>
           <p className="text-sm text-muted-foreground">
             Select all cryptographic use cases in your organization. This helps prioritize which
             migrations are most urgent.
@@ -93,7 +95,7 @@ const Step7UseCases = ({ hideHeading = false, hideHints = false }: EmbeddedStepP
       <div className="space-y-4">
         {industryUseCases.length > 0 && (
           <>
-            <div className="glass-panel p-3 border-l-4 border-l-primary">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-primary">
               <div className="flex items-center gap-2">
                 <Info size={14} className="text-primary shrink-0" />
                 <p className="text-xs text-muted-foreground">

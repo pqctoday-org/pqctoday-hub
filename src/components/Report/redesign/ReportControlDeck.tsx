@@ -35,9 +35,9 @@ export function ReportControlDeck({ fullTrack, shared = false }: ReportControlDe
   if (shared) return null
 
   return (
-    <div className="glass-panel flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl p-3 print:hidden">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex flex-wrap items-center gap-x-4 gap-y-2 p-3 print:hidden">
       <span className="flex items-center gap-1.5">
-        <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Track
         </span>
         <span
@@ -60,7 +60,7 @@ export function ReportControlDeck({ fullTrack, shared = false }: ReportControlDe
       <span aria-hidden="true" className="hidden h-5 w-px bg-border sm:block" />
 
       <span className="flex flex-wrap items-center gap-1.5">
-        <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Viewing as
         </span>
         <span role="radiogroup" aria-label="Viewing the report as" className="flex flex-wrap gap-1">

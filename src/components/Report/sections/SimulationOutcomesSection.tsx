@@ -125,7 +125,7 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
           <section aria-labelledby="sim-outcomes-readiness">
             <h4
               id="sim-outcomes-readiness"
-              className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground"
+              className="mb-2 flex items-center gap-1.5 text-sm font-semibold font-display text-heading"
             >
               <ShieldCheck size={14} className="text-primary" aria-hidden="true" />
               Readiness &amp; compliance at commit
@@ -158,7 +158,7 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
           <section aria-labelledby="sim-outcomes-phases">
             <h4
               id="sim-outcomes-phases"
-              className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground"
+              className="mb-2 flex items-center gap-1.5 text-sm font-semibold font-display text-heading"
             >
               <ListChecks size={14} className="text-primary" aria-hidden="true" />
               Phase maturity
@@ -170,7 +170,7 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
             <section aria-labelledby="sim-outcomes-objectives">
               <h4
                 id="sim-outcomes-objectives"
-                className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground"
+                className="mb-2 flex items-center gap-1.5 text-sm font-semibold font-display text-heading"
               >
                 <ListChecks size={14} className="text-primary" aria-hidden="true" />
                 Transformation objectives, with dates
@@ -183,7 +183,7 @@ export function SimulationOutcomesSection({ defaultOpen = false }: { defaultOpen
             <section aria-labelledby="sim-outcomes-grade">
               <h4
                 id="sim-outcomes-grade"
-                className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground"
+                className="mb-2 flex items-center gap-1.5 text-sm font-semibold font-display text-heading"
               >
                 <Award size={14} className="text-primary" aria-hidden="true" />
                 Run grade

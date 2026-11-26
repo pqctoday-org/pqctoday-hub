@@ -165,7 +165,7 @@ function CoveragePanel({ summary }: { summary: CbomReportSummary }) {
           {types.map(([type, count]) => (
             <span
               key={type}
-              className="text-xs px-2 py-1 rounded-full bg-muted/30 text-foreground border border-border"
+              className="text-xs px-2 py-1 rounded-full bg-chip text-chip-foreground font-bold"
             >
               {TYPE_LABEL[type] ?? type}: {count}
             </span>
@@ -180,7 +180,9 @@ function AlgorithmList({ summary }: { summary: CbomReportSummary }) {
   if (summary.algorithms.length === 0) return null
   return (
     <div>
-      <h4 className="text-sm font-semibold text-foreground mb-2">Algorithms in this CBOM</h4>
+      <h4 className="text-sm font-semibold mb-2 font-display text-heading">
+        Algorithms in this CBOM
+      </h4>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -281,7 +283,7 @@ export function CbomSection({ defaultOpen = false }: { defaultOpen?: boolean }) 
         </div>
       ) : !summary ? (
         <div className="space-y-4">
-          <div className="glass-panel p-3 border-l-4 border-l-warning">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-warning">
             <p className="text-sm text-foreground font-medium">
               You have a saved CBOM (&quot;{latest.title}&quot;, saved{' '}
               {formatDate(latest.createdAt)}) — but it predates structured reporting on this page.
@@ -311,7 +313,7 @@ export function CbomSection({ defaultOpen = false }: { defaultOpen?: boolean }) 
           <section aria-labelledby="cbom-compliance">
             <h4
               id="cbom-compliance"
-              className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5"
+              className="text-sm font-semibold mb-2 flex items-center gap-1.5 font-display text-heading"
             >
               {summary.quantumVulnerableCount > 0 ? (
                 <ShieldAlert size={14} className="text-status-error" />
@@ -326,7 +328,7 @@ export function CbomSection({ defaultOpen = false }: { defaultOpen?: boolean }) 
           <section aria-labelledby="cbom-coverage">
             <h4
               id="cbom-coverage"
-              className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1.5"
+              className="text-sm font-semibold mb-2 flex items-center gap-1.5 font-display text-heading"
             >
               <Layers size={14} className="text-primary" />
               Component coverage

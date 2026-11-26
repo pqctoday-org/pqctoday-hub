@@ -206,10 +206,10 @@ export function SandboxScenarioEmbed({ scenarioId: scenarioIdProp }: { scenarioI
 
   return (
     <div className="space-y-4">
-      <div className="glass-panel rounded-lg p-4">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="text-lg font-semibold font-display text-heading">
               <span className="mr-2" aria-hidden="true">
                 {scenario.emoji}
               </span>

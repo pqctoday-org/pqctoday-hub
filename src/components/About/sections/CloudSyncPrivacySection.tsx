@@ -9,11 +9,13 @@ export function CloudSyncPrivacySection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="glass-panel p-4 md:p-6"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
     >
       <div className="flex items-center gap-3 mb-4">
         <Cloud className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold">Google Drive Sync &mdash; Privacy Terms</h2>
+        <h2 className="text-xl font-semibold font-display text-heading">
+          Google Drive Sync &mdash; Privacy Terms
+        </h2>
       </div>
       <div className="prose prose-invert max-w-none text-sm text-muted-foreground space-y-3">
         <p>

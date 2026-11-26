@@ -68,7 +68,7 @@ const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedSt
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             {stepContent.title ?? 'How sensitive is your data?'}
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -88,7 +88,7 @@ const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedSt
 
       {!hideHints && <PersonaHint stepKey="sensitivity" />}
 
-      <div className="glass-panel p-4 border-l-4 border-l-warning mb-4">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 border-l-4 border-l-warning mb-4">
         <div className="flex items-start gap-2">
           <Info size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
@@ -125,7 +125,7 @@ const Step4Sensitivity = ({ hideHeading = false, hideHints = false }: EmbeddedSt
         {/* ── Industry-specific data types ── */}
         {industrySensitivities.length > 0 && (
           <>
-            <div className="glass-panel p-3 border-l-4 border-l-primary">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-primary">
               <div className="flex items-center gap-2">
                 <Info size={14} className="text-primary shrink-0" />
                 <p className="text-xs text-muted-foreground">

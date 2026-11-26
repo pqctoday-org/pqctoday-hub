@@ -102,12 +102,12 @@ export function DataFoundationSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25 }}
-      className="glass-panel p-4 md:p-6"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
     >
       <div className="flex items-center gap-3 mb-2">
         <Database className="text-primary shrink-0" size={24} />
         <div>
-          <h2 className="text-xl font-semibold">Platform Data</h2>
+          <h2 className="text-xl font-semibold font-display text-heading">Platform Data</h2>
           <p className="text-xs text-muted-foreground">Curated datasets powering every page</p>
         </div>
       </div>
@@ -116,9 +116,9 @@ export function DataFoundationSection() {
         {dataFoundation.map(({ dataset, records, sources }) => (
           <div
             key={dataset}
-            className="p-3 rounded-lg border border-border bg-muted/30 text-center"
+            className="p-3 rounded-2xl border border-border bg-muted/30 text-center"
           >
-            <div className="text-lg font-bold text-gradient">{records}</div>
+            <div className="text-lg font-bold text-heading">{records}</div>
             <div className="text-xs font-medium text-foreground mt-1">{dataset}</div>
             <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{sources}</div>
           </div>
@@ -127,7 +127,7 @@ export function DataFoundationSection() {
 
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-gradient">
+          <span className="text-2xl font-bold text-heading">
             {totalRecords > 0 ? `${totalRecords.toLocaleString()}+` : '5,000+'}
           </span>
           <span className="text-sm text-muted-foreground">total curated records</span>

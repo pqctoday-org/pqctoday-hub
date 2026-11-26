@@ -209,12 +209,14 @@ export function ArtifactDrawer({
       <div
         className={`${isEmbedded ? 'absolute' : 'fixed'} inset-y-0 right-0 w-full ${
           isFullPage ? 'sm:w-screen lg:w-screen' : 'sm:w-[600px] lg:w-[720px]'
-        } z-50 bg-background border-l border-border shadow-xl flex flex-col animate-in slide-in-from-right duration-200 transition-[width] duration-200`}
+        } z-50 bg-background border-l-2 border-ink flex flex-col animate-in slide-in-from-right duration-200 transition-[width] duration-200`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold text-foreground truncate">{headerTitle}</h2>
+            <h2 className="text-lg font-semibold truncate font-display text-heading">
+              {headerTitle}
+            </h2>
             <p className="text-xs text-muted-foreground">{headerSubtitle}</p>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -310,7 +312,7 @@ export function ArtifactDrawer({
               }
             >
               {mode === 'edit' && (
-                <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border">
+                <div className="mb-4 p-3 rounded-2xl bg-muted/30 border border-border">
                   <p className="text-xs text-muted-foreground">
                     Editing opens the original builder. Save inside the builder to overwrite the
                     current version — your existing version is shown in View mode.

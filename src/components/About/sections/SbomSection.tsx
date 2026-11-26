@@ -80,7 +80,7 @@ export function SbomSection({ openFromLink = false }: { openFromLink?: boolean }
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.33 }}
-      className="glass-panel p-4 md:p-6"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
     >
       <h2>
         <Button
@@ -142,7 +142,7 @@ export function SbomSection({ openFromLink = false }: { openFromLink?: boolean }
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-3 md:p-6 items-start">
               {groups.map((group) => (
                 <div key={group.category} className="break-inside-avoid">
-                  <h3 className="text-lg font-semibold text-primary mb-3">
+                  <h3 className="text-lg font-semibold mb-3 font-display text-heading">
                     {group.category}
                     {group.note && (
                       <>

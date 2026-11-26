@@ -146,7 +146,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="glass-panel p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="persona-info-modal-title"
@@ -156,7 +156,10 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
                     <Users size={18} className="text-primary" />
-                    <h2 id="persona-info-modal-title" className="text-lg font-bold text-foreground">
+                    <h2
+                      id="persona-info-modal-title"
+                      className="text-lg font-bold font-display text-heading"
+                    >
                       How This Step Is Personalized
                     </h2>
                   </div>
@@ -197,8 +200,8 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                           key={p.id}
                           className={
                             isActive
-                              ? 'glass-panel p-3 border-l-4 border-l-primary'
-                              : 'rounded-lg border border-border p-3'
+                              ? 'glass-panel bg-card backdrop-blur-none border border-border rounded-2xl shadow-none p-3 border-l-4 border-l-primary'
+                              : 'rounded-2xl border border-border p-3'
                           }
                         >
                           <div className="flex items-center gap-2 mb-2">
@@ -239,7 +242,7 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
                   <div className="mt-5 pt-4 border-t border-border">
                     <div className="flex items-center gap-2 mb-3">
                       <Sparkles size={16} className="text-primary" />
-                      <h3 className="text-sm font-semibold text-foreground">
+                      <h3 className="text-sm font-semibold font-display text-heading">
                         How Your Preferences Affect This Step
                       </h3>
                     </div>

@@ -258,7 +258,7 @@ export const InfraModernizationPlanner: React.FC = () => {
       <header className="flex items-start gap-3">
         <Server size={24} className="text-primary shrink-0 mt-0.5" />
         <div>
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-lg font-semibold font-display text-heading">
             Infrastructure Modernization Planner
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -269,8 +269,8 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">PKI Modernization</h3>
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">PKI Modernization</h3>
         <p className="text-[11px] text-muted-foreground rounded-md border border-border bg-muted/30 p-2">
           <span className="font-semibold text-foreground">Why these defaults:</span> the
           framework&apos;s PKI modernization guidance (activity 6.1) recommends shortening root CA
@@ -360,8 +360,10 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">HSM &amp; KMS Upgrade Schedule</h3>
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
+          HSM &amp; KMS Upgrade Schedule
+        </h3>
         <p className="text-xs text-muted-foreground">
           In this planning check, the CA depends on the upgraded HSM. Enter the target dates and
           compare the sequence. A date records a plan; verify access to the required mechanism and
@@ -462,8 +464,8 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
           Network &amp; Middleboxes · {protocolCount} protocol{protocolCount === 1 ? '' : 's'}{' '}
           selected
         </h3>
@@ -501,8 +503,8 @@ export const InfraModernizationPlanner: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Capacity Plan</h3>
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">Capacity Plan</h3>
         <p className="text-[11px] text-muted-foreground rounded-md border border-border bg-muted/30 p-2">
           The worksheet flags a stated CPU impact of at least 20% and a storage multiplier of at
           least 2× for further review. Use a value or an ascending range per field. Measure capacity

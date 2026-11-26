@@ -115,7 +115,7 @@ export function MobileCommandCenterView() {
         <div className="mb-1">
           <h1 className="sr-only">Command Center</h1>
         </div>
-        <div className="mt-3 glass-panel p-4 text-center">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] mt-3 p-4 text-center">
           <LayoutDashboard
             size={32}
             className="mx-auto mb-3 text-muted-foreground"
@@ -128,7 +128,7 @@ export function MobileCommandCenterView() {
           {intro.showGuidedOverview && (
             <Link
               to="/simulation?run=exec"
-              className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary px-4 text-[11.5px] font-bold text-primary-foreground"
+              className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[11.5px] font-bold text-primary-foreground bg-primary border-2 border-ink hover:bg-primary/90"
             >
               <PlayCircle size={13} aria-hidden="true" />
               New here? Watch the guided overview
@@ -137,7 +137,11 @@ export function MobileCommandCenterView() {
         </div>
         <div className="mt-3 flex flex-col gap-2">
           {intro.questions.map((item) => (
-            <Link key={item.q} to={item.to} className="glass-panel p-3">
+            <Link
+              key={item.q}
+              to={item.to}
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3"
+            >
               <p className="text-[12.5px] font-bold text-foreground">{item.q}</p>
               <p className="mt-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
                 {item.desc}
@@ -167,7 +171,7 @@ export function MobileCommandCenterView() {
                 <Link
                   key={tool.id}
                   to={`/business/tools/${tool.id}`}
-                  className="glass-panel flex items-center gap-2.5 p-3"
+                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex items-center gap-2.5 p-3"
                 >
                   <tool.icon className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
                   <p className="text-[12px] font-semibold text-foreground">{tool.name}</p>
@@ -203,7 +207,10 @@ export function MobileCommandCenterView() {
           const hintTier = zoneHintTier(zoneId, metrics, stepTiers)
           const missing = missingForNextZoneTier(zoneId, metrics, stepTiers)
           return (
-            <div key={zoneId} className="glass-panel overflow-hidden">
+            <div
+              key={zoneId}
+              className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] overflow-hidden"
+            >
               <Button
                 type="button"
                 variant="ghost"

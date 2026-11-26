@@ -32,7 +32,7 @@ export const HndlHnflWindowsSection = ({
 )
 
 export const HndlNotQuantifiedWarning = () => (
-  <div className="glass-panel p-4 border-l-4 border-l-warning flex items-start gap-3">
+  <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 border-l-4 border-l-warning flex items-start gap-3">
     <AlertTriangle size={18} className="text-warning shrink-0 mt-0.5" />
     <div>
       <p className="text-sm font-semibold text-foreground">HNDL Window Not Modelled</p>
@@ -46,7 +46,7 @@ export const HndlNotQuantifiedWarning = () => (
 )
 
 export const HnflNotQuantifiedWarning = () => (
-  <div className="glass-panel p-4 border-l-4 border-l-destructive flex items-start gap-3">
+  <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 border-l-4 border-l-destructive flex items-start gap-3">
     <AlertTriangle size={18} className="text-destructive shrink-0 mt-0.5" />
     <div>
       <p className="text-sm font-semibold text-foreground">Signature Window Not Modelled</p>

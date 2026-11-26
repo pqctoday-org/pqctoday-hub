@@ -165,7 +165,7 @@ export const FrameworkRiskLensSection = ({ frameworkRisk }: { frameworkRisk: Fra
           ['Feasibility', frameworkRisk.feasibility, 'Ease of migration (higher = easier)'],
         ] as const
       ).map(([label, val, note]) => (
-        <div key={label} className="rounded-lg border border-border bg-card p-3">
+        <div key={label} className="rounded-2xl border border-border bg-card p-3">
           <div className="text-2xl font-extrabold text-foreground">{val}</div>
           <div className="text-sm font-semibold text-foreground">{label}</div>
           <div className="text-xs text-muted-foreground">{note}</div>

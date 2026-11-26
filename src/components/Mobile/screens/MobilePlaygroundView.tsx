@@ -191,7 +191,7 @@ export function MobilePlaygroundView() {
             ))}
           </div>
           {roleJourney && (
-            <div className="mt-2.5 rounded-lg border border-border bg-muted/25 p-3">
+            <div className="mt-2.5 rounded-2xl border border-border bg-muted/25 p-3">
               <p className="text-[11.5px] leading-relaxed text-muted-foreground">
                 {roleJourney.rationale}
               </p>
@@ -343,7 +343,10 @@ function ToolCardMobile({
   const unmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
 
   return (
-    <article className="glass-panel relative flex flex-col p-3.5" data-playground-result={tool.id}>
+    <article
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] relative flex flex-col p-3.5"
+      data-playground-result={tool.id}
+    >
       <Button
         type="button"
         variant="ghost"
@@ -459,7 +462,7 @@ function ToolDetailSheetBody({
       {relatedModuleId && relatedModuleTitle && (
         <Link
           to={tool.moduleLink}
-          className="flex items-center gap-2.5 rounded-xl border border-border p-3"
+          className="flex items-center gap-2.5 rounded-2xl border border-border p-3"
         >
           <GraduationCap className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
           <span className="min-w-0">
@@ -493,7 +496,7 @@ function ToolDetailSheetBody({
       )}
 
       {unmet.length > 0 && (
-        <div className="flex items-start gap-2.5 rounded-xl border border-border bg-muted/40 p-3">
+        <div className="flex items-start gap-2.5 rounded-2xl border border-border bg-muted/40 p-3">
           <Monitor className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           <div className="min-w-0">
             <p className="text-[12px] font-semibold text-foreground">

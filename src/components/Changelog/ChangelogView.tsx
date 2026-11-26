@@ -411,7 +411,7 @@ export const ChangelogView = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-panel p-6 mb-6"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-6"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -419,7 +419,9 @@ export const ChangelogView = () => {
               <FileText className="text-primary" size={24} aria-hidden="true" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gradient">Changelog</h1>
+              <h1 className="text-2xl font-bold font-display text-heading font-display text-heading">
+                Changelog
+              </h1>
               <p className="text-sm text-muted-foreground">
                 Current version:{' '}
                 <span className="font-mono text-primary font-bold">v{version}</span>
@@ -450,7 +452,7 @@ export const ChangelogView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.03 }}
-          className="glass-panel p-4 mb-6"
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 mb-6"
         >
           <div className="flex items-center gap-2 mb-2 text-sm font-medium text-foreground">
             <Heart size={14} className="text-primary shrink-0" aria-hidden="true" />
@@ -463,7 +465,7 @@ export const ChangelogView = () => {
                 href={s.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-2.5 py-1 rounded-full text-xs border border-border bg-muted/30 text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+                className="px-2.5 py-1 rounded-full text-xs hover:text-primary transition-colors bg-chip text-chip-foreground font-bold border-2 border-ink hover:bg-highlight hover:text-heading"
               >
                 {s.name}
               </a>
@@ -478,7 +480,7 @@ export const ChangelogView = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel px-4 py-3 mb-6"
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] px-4 py-3 mb-6"
         >
           <div className="flex flex-wrap items-center gap-2">
             <div
@@ -528,7 +530,7 @@ export const ChangelogView = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="glass-panel p-4 mb-6"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 mb-6"
       >
         <div className="relative mb-3">
           <Search
@@ -734,7 +736,7 @@ export const ChangelogView = () => {
       )}
 
       {groupedByDate.length === 0 && (
-        <div className="glass-panel my-4 space-y-2 p-4 text-sm">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] my-4 space-y-2 p-4 text-sm">
           <p role="status">No releases match these filters.</p>
           {searchQuery && (
             <Button
@@ -804,17 +806,17 @@ export const ChangelogView = () => {
 
               <div
                 className={clsx(
-                  'glass-panel p-6 transition-shadow duration-500',
-                  groupHighlighted && 'ring-2 ring-primary shadow-glow'
+                  'glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 transition-shadow duration-500',
+                  groupHighlighted && 'ring-2 ring-primary'
                 )}
               >
                 {/* Date header */}
                 <div className="mb-4 pb-3 border-b border-border">
                   <div className="flex items-baseline gap-3 flex-wrap">
-                    <h2 className="text-xl font-semibold text-foreground">
+                    <h2 className="text-xl font-semibold font-display text-heading">
                       {formatDate(group.date)}
                     </h2>
-                    <span className="text-xs font-mono text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-full border border-border">
+                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-chip text-chip-foreground font-bold">
                       {versionLabel}
                     </span>
                     {group.versions.some((entry) => entry.version === version) && (

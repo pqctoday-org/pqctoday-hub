@@ -104,7 +104,7 @@ export function CompactLearningBar({
     // <summary> so the section is legible even closed; only the bookmarks
     // row, progress bar, and CTA are behind the toggle (no duplicated text).
     return (
-      <details className="glass-panel group [&[open]>summary>svg.chev]:rotate-180">
+      <details className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] group [&[open]>summary>svg.chev]:rotate-180">
         <summary className="p-4 cursor-pointer list-none select-none flex items-center gap-3">
           {header}
           <ChevronDown
@@ -132,7 +132,7 @@ export function CompactLearningBar({
   }
 
   return (
-    <div className="glass-panel p-4 space-y-3">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
       {bookmarksRow}
       <div className="flex items-center gap-4">
         <GraduationCap size={20} className="text-primary shrink-0" />

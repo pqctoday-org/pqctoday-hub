@@ -23,7 +23,7 @@ export function EnterpriseSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.38 }}
-      className="glass-panel p-4 md:p-6"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
     >
       <Button
         variant="ghost"
@@ -33,7 +33,7 @@ export function EnterpriseSection() {
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <Building2 className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold flex-1">Enterprise</h2>
+        <h2 className="text-xl font-semibold flex-1 font-display text-heading">Enterprise</h2>
         <ChevronDown
           size={20}
           className={clsx(
@@ -57,7 +57,7 @@ export function EnterpriseSection() {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Container size={18} className="text-primary flex-shrink-0" />
-                  <h3 className="text-base font-semibold text-foreground">
+                  <h3 className="text-base font-semibold font-display text-heading">
                     Sandbox — Advanced Scenario Testing
                   </h3>
                 </div>
@@ -110,7 +110,9 @@ export function EnterpriseSection() {
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <AppWindow size={18} className="text-primary flex-shrink-0" />
-                  <h3 className="text-base font-semibold text-foreground">Embedding Mode</h3>
+                  <h3 className="text-base font-semibold font-display text-heading">
+                    Embedding Mode
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   PQC Today offers a powerful{' '}

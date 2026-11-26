@@ -412,7 +412,7 @@ export function QRASection({
           <section aria-labelledby="qra-exec">
             <h3
               id="qra-exec"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <ClipboardList size={16} className="text-primary" aria-hidden="true" />
               Executive Summary
@@ -423,7 +423,7 @@ export function QRASection({
           <section aria-labelledby="qra-heatmap">
             <h3
               id="qra-heatmap"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <Grid3x3 size={16} className="text-primary" aria-hidden="true" />
               Answer-derived attention map
@@ -434,7 +434,7 @@ export function QRASection({
           <section aria-labelledby="qra-ownership">
             <h3
               id="qra-ownership"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <Users size={16} className="text-primary" aria-hidden="true" />
               Program Ownership
@@ -445,7 +445,7 @@ export function QRASection({
           <section aria-labelledby="qra-backlog">
             <h3
               id="qra-backlog"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <ListChecks size={16} className="text-primary" aria-hidden="true" />
               Prioritised Backlog
@@ -460,7 +460,7 @@ export function QRASection({
           <section aria-labelledby="qra-reggaps">
             <h3
               id="qra-reggaps"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <Scale size={16} className="text-primary" aria-hidden="true" />
               Requirements to verify
@@ -471,7 +471,7 @@ export function QRASection({
           <section aria-labelledby="qra-compliance">
             <h3
               id="qra-compliance"
-              className="text-sm font-semibold text-foreground mb-2 inline-flex items-center gap-2"
+              className="text-sm font-semibold mb-2 inline-flex items-center gap-2 font-display text-heading"
             >
               <FileCheck2 size={16} className="text-primary" aria-hidden="true" />
               Selected source mapping

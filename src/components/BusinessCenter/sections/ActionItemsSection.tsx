@@ -73,8 +73,11 @@ export function ActionItemsSection({ metrics, cap }: ActionItemsSectionProps) {
 
   if (allItems.length === 0) {
     return (
-      <div className="glass-panel p-6" data-testid="action-items-hero">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-4">
+      <div
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6"
+        data-testid="action-items-hero"
+      >
+        <h2 className="flex items-center gap-2 text-lg font-semibold mb-4 font-display text-heading">
           <ListChecks size={20} className="text-primary" />
           Your next steps
         </h2>
@@ -90,8 +93,11 @@ export function ActionItemsSection({ metrics, cap }: ActionItemsSectionProps) {
   }
 
   return (
-    <div className="glass-panel p-6" data-testid="action-items-hero">
-      <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-1">
+    <div
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6"
+      data-testid="action-items-hero"
+    >
+      <h2 className="flex items-center gap-2 text-lg font-semibold mb-1 font-display text-heading">
         <ListChecks size={20} className="text-primary" />
         Your next steps
       </h2>

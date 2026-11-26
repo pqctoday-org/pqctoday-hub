@@ -299,7 +299,7 @@ export function MobileCommunityView() {
             // title), which inherited nowrap and would run off the right
             // edge instead of wrapping (2026-08-24, same defect class found
             // and fixed on Threats/Patents).
-            className="glass-panel h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
+            className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
           >
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-[14px] font-bold text-foreground">{leader.name}</h2>

@@ -20,7 +20,7 @@ export function DataPrivacySection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.37 }}
-      className="glass-panel p-4 md:p-6"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
     >
       <Button
         variant="ghost"
@@ -29,7 +29,7 @@ export function DataPrivacySection() {
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <Lock className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold flex-1">Data Privacy</h2>
+        <h2 className="text-xl font-semibold flex-1 font-display text-heading">Data Privacy</h2>
         <ChevronDown
           size={20}
           className={clsx(
@@ -105,7 +105,7 @@ export function DataPrivacySection() {
               <div className="mt-6 pt-5 border-t border-border">
                 <div className="flex items-center gap-2 mb-3">
                   <BarChart2 size={16} className="text-primary flex-shrink-0" />
-                  <h3 className="text-sm font-semibold text-foreground">
+                  <h3 className="text-sm font-semibold font-display text-heading">
                     Anonymous usage analytics
                   </h3>
                 </div>

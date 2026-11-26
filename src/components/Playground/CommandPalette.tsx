@@ -156,7 +156,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           role="dialog"
           aria-modal="true"
           aria-label="Command palette"
-          className="relative glass-panel w-[640px] max-w-full overflow-hidden rounded-2xl shadow-glow"
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] relative w-[640px] max-w-full overflow-hidden"
         >
           {/* Search row */}
           <div className="flex items-center gap-2.5 border-b border-border px-4">

@@ -18,9 +18,9 @@ interface ReportVerdictBlockProps {
 export function ReportVerdictBlock({ persona, result }: ReportVerdictBlockProps) {
   const verdict = reportVerdict(persona, result)
   return (
-    <div className="glass-panel rounded-2xl p-4 print:border-0 print:p-0">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 print:border-0 print:p-0">
       <div className="mb-1.5 flex items-center gap-2">
-        <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="font-mono uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
           Verdict
         </span>
         <span className="inline-flex items-center gap-1 rounded-full bg-secondary/10 px-2 py-0.5 text-[11px] font-semibold text-secondary print:hidden">

@@ -153,7 +153,7 @@ const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedSte
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         {!hideHeading && (
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             Which compliance frameworks apply to you?
           </h3>
         )}
@@ -186,7 +186,7 @@ const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedSte
       )}
 
       {importComplianceSelection && myFrameworks.length > 0 && (
-        <div className="glass-panel p-3 border-l-4 border-l-secondary">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-secondary">
           <div className="flex items-center gap-2">
             <Import size={14} className="text-secondary shrink-0" />
             <p className="text-xs text-muted-foreground">
@@ -227,7 +227,7 @@ const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedSte
 
       <div className="space-y-5">
         {industry && (
-          <div className="glass-panel p-3 border-l-4 border-l-primary">
+          <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 border-l-4 border-l-primary">
             <div className="flex items-center gap-2">
               <Info size={14} className="text-primary shrink-0" />
               <p className="text-xs text-muted-foreground">
@@ -323,7 +323,7 @@ const Step5Compliance = ({ hideHeading = false, hideHints = false }: EmbeddedSte
         })}
 
         {/* Free-text business-context disclosure (Phase 3) */}
-        <div className="glass-panel p-3">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3">
           <Button
             variant="ghost"
             onClick={() => setContextOpen((v) => !v)}

@@ -18,9 +18,12 @@ const STEPS: { id: CSWP39StepId; number: number; title: string }[] = [
  */
 export function ReportCswp39Nav() {
   return (
-    <section className="glass-panel p-4 mb-6 print:hidden" aria-labelledby="cswp39-nav-heading">
+    <section
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 mb-6 print:hidden"
+      aria-labelledby="cswp39-nav-heading"
+    >
       <div className="flex items-baseline justify-between gap-3 flex-wrap mb-3">
-        <h2 id="cswp39-nav-heading" className="text-base font-semibold text-foreground">
+        <h2 id="cswp39-nav-heading" className="text-base font-semibold font-display text-heading">
           CSWP.39 view of this report
         </h2>
         <p className="text-xs text-muted-foreground">

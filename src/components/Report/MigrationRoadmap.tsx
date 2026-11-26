@@ -191,7 +191,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
   const currentYear = new Date().getFullYear()
 
   return (
-    <div className="glass-panel p-6 print:border print:border-border print:break-inside-auto">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 print:border print:border-border print:break-inside-auto">
       <div className="flex items-center justify-between w-full print:hidden gap-2">
         <Button
           variant="ghost"
@@ -229,7 +229,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
       <div className={clsx('mt-4', !open && 'hidden print:block')}>
         {milestoneGroups.length > 0 && (
           <div
-            className="mb-4 rounded-lg border border-border bg-muted/20 p-3"
+            className="mb-4 rounded-2xl border border-border bg-muted/20 p-3"
             data-testid="scoped-milestones"
           >
             <p className="mb-2 text-xs font-semibold text-foreground">

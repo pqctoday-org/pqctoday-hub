@@ -64,7 +64,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden"
+              className="glass-panel backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden"
               role="dialog"
               aria-modal="true"
               aria-labelledby="methodology-modal-title"
@@ -72,7 +72,10 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
             >
               {/* Header — pinned above scroll */}
               <div className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0 border-b border-border/50">
-                <h2 id="methodology-modal-title" className="text-lg font-bold text-foreground">
+                <h2
+                  id="methodology-modal-title"
+                  className="text-lg font-bold font-display text-heading"
+                >
                   How This Report Works
                 </h2>
                 <Button
@@ -110,7 +113,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
 
                 {/* Four Risk Categories */}
                 <div className="space-y-3 mb-6">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                  <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Four Risk Categories
                   </p>
                   {CATEGORIES.map((cat) => (
@@ -126,7 +129,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
 
                 {/* HNDL & HNFL */}
                 <div className="mb-6">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     HNDL &amp; HNFL Risk Windows
                   </p>
                   <div className="flex items-start gap-3">
@@ -155,7 +158,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
 
                 {/* I Don't Know Responses */}
                 <div className="mb-6">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     &ldquo;I Don&apos;t Know&rdquo; Responses
                   </p>
                   <div className="flex items-start gap-3">
@@ -224,7 +227,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
 
                 {/* Persona-Aware Reports */}
                 <div className="mb-6">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Persona-Aware Reports
                   </p>
                   <div className="flex items-start gap-3">
@@ -270,7 +273,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
 
                 {/* How Actions Are Prioritized */}
                 <div className="mb-6">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     How Actions Are Prioritized
                   </p>
                   <div className="flex items-start gap-3">
@@ -290,7 +293,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
                 </div>
 
                 <div className="mb-6 rounded-lg border border-warning/30 bg-warning/5 px-4 py-3">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-2">
+                  <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Limits of this report
                   </p>
                   <ul className="ml-4 list-disc space-y-1 text-xs leading-relaxed text-muted-foreground">
@@ -315,7 +318,7 @@ export function ReportMethodologyModal({ isOpen, onClose }: ReportMethodologyMod
 
                 {/* Cross-Module References */}
                 <div className="mb-4">
-                  <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     Cross-Module References
                   </p>
                   <div className="flex items-start gap-3">

@@ -209,7 +209,7 @@ const Step11Infrastructure = ({
       {/* Header with sync toggle */}
       <div className="flex items-center justify-between gap-3">
         {!hideHeading && (
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             {stepContent.title ?? 'What infrastructure handles your cryptography?'}
           </h3>
         )}
@@ -244,7 +244,7 @@ const Step11Infrastructure = ({
 
       {!hideHints && <PersonaHint stepKey="infra" />}
 
-      <div className="glass-panel p-4 border-l-4 border-l-warning">
+      <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 border-l-4 border-l-warning">
         <div className="flex items-start gap-2">
           <Info size={16} className="text-warning shrink-0 mt-0.5" />
           <p className="text-xs text-muted-foreground">
@@ -328,9 +328,12 @@ const Step11Infrastructure = ({
             if (cats.length === 0) return null
             const selectedCats = infrastructureSubCategories[layerId] ?? []
             return (
-              <div key={layerId} className="glass-panel p-3 space-y-2">
+              <div
+                key={layerId}
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] p-3 space-y-2"
+              >
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                     {layer.label} — sub-categories
                     {syncedMode ? (
                       <span className="normal-case font-normal ml-1 text-primary/60">
@@ -429,7 +432,7 @@ const Step11Infrastructure = ({
       {/* ── Crypto Toolchain (libraries + automation) ─────────────────── */}
       <div className="border-t border-border pt-5 mt-2 space-y-4">
         <div>
-          <h4 className="text-base font-bold text-foreground">
+          <h4 className="text-base font-bold font-display text-heading">
             Which crypto libraries and automation are in your stack?
           </h4>
           <p className="text-xs text-muted-foreground mt-1">
@@ -439,7 +442,7 @@ const Step11Infrastructure = ({
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+          <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Crypto libraries
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -467,7 +470,7 @@ const Step11Infrastructure = ({
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+          <p className="uppercase mb-2 text-[11px] font-extrabold tracking-[0.14em] text-heading">
             Crypto / cert automation
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -498,7 +501,7 @@ const Step11Infrastructure = ({
       {/* ── Vendor Dependency ─────────────────────────────────────────── */}
       <div className="border-t border-border pt-5 mt-2 space-y-3">
         <div>
-          <h4 className="text-base font-bold text-foreground">
+          <h4 className="text-base font-bold font-display text-heading">
             How do you manage cryptographic dependencies?
           </h4>
           {inferredVendorDependency && importProductSelection && (

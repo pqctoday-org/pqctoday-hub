@@ -231,7 +231,7 @@ export function buildMarkdown(s: ScopingState, industry: string): string {
 function DataSourcesPanel() {
   const [open, setOpen] = useState(false)
   return (
-    <div className="glass-panel border border-border rounded-lg">
+    <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))]">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
@@ -463,7 +463,9 @@ export const InitialScopingAssessment: React.FC = () => {
       <header className="flex items-start gap-3">
         <ClipboardList size={24} className="text-primary shrink-0 mt-0.5" />
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Initial Scoping Assessment</h2>
+          <h2 className="text-lg font-semibold font-display text-heading">
+            Initial Scoping Assessment
+          </h2>
           <p className="text-sm text-muted-foreground">
             Phase 0 rapid first-cut: your top {MAX_SYSTEMS} systems triaged by priority and owner, a
             rough estate-size estimate, and your top {MAX_VENDORS} vendor dependencies.
@@ -475,10 +477,10 @@ export const InitialScopingAssessment: React.FC = () => {
 
       <section
         aria-labelledby="scoping-systems"
-        className="glass-panel border border-border rounded-lg p-4 space-y-3"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
       >
         <div className="flex items-center justify-between">
-          <h3 id="scoping-systems" className="text-sm font-semibold text-foreground">
+          <h3 id="scoping-systems" className="text-sm font-semibold font-display text-heading">
             Systems under review
           </h3>
           <span className="text-[10px] text-muted-foreground">
@@ -622,7 +624,7 @@ export const InitialScopingAssessment: React.FC = () => {
         </section>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-2">
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2">
         <label
           htmlFor="scoping-estate-instances"
           className="text-sm font-semibold text-foreground block"
@@ -694,7 +696,7 @@ export const InitialScopingAssessment: React.FC = () => {
         )}
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-2">
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2">
         <RowList
           label={`Top vendor dependencies`}
           rows={state.vendors}

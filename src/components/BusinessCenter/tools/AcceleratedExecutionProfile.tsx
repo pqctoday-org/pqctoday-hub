@@ -203,7 +203,9 @@ export const AcceleratedExecutionProfile: React.FC = () => {
       <header className="flex items-start gap-3">
         <Zap size={24} className="text-primary shrink-0 mt-0.5" />
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Accelerated Execution Profile</h2>
+          <h2 className="text-lg font-semibold font-display text-heading">
+            Accelerated Execution Profile
+          </h2>
           <p className="text-sm text-muted-foreground">
             Phase 4 — Activity 4.7. A pre-drafted contingency package activated if the quantum
             timeline accelerates: triggers, a compressed sequence, pre-approved risk acceptances, an
@@ -229,8 +231,8 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </header>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
           1. Trigger conditions · {triggerCount} selected
         </h3>
         <p className="text-xs text-muted-foreground">
@@ -272,8 +274,8 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">2. Compressed sequence</h3>
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">2. Compressed sequence</h3>
         <div className="block">
           <label
             htmlFor="aep-compressed-sequence"
@@ -293,10 +295,10 @@ export const AcceleratedExecutionProfile: React.FC = () => {
       </section>
 
       <section
-        className="glass-panel border border-border rounded-lg p-4 space-y-3"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3"
         aria-labelledby="aep-schedule-check"
       >
-        <h3 id="aep-schedule-check" className="text-sm font-semibold">
+        <h3 id="aep-schedule-check" className="text-sm font-semibold font-display text-heading">
           Check the shortened schedule
         </h3>
         <p className="text-xs text-muted-foreground">
@@ -332,8 +334,10 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </p>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">3. Pre-approved risk acceptances</h3>
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
+          3. Pre-approved risk acceptances
+        </h3>
         <div className="block">
           <label
             htmlFor="aep-risk-acceptances"
@@ -352,8 +356,10 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">4. Emergency resource request</h3>
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">
+          4. Emergency resource request
+        </h3>
         <div className="block">
           <label
             htmlFor="aep-resource-request"
@@ -372,8 +378,8 @@ export const AcceleratedExecutionProfile: React.FC = () => {
         </div>
       </section>
 
-      <section className="glass-panel border border-border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">5. Activation authority</h3>
+      <section className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-3">
+        <h3 className="text-sm font-semibold font-display text-heading">5. Activation authority</h3>
         <div className="block">
           <label
             htmlFor="aep-activation-authority"

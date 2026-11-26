@@ -159,7 +159,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
       )}
 
       {tier === 'essentials' ? (
-        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3.5">
+        <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-3.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[12.5px] font-bold text-foreground">
               Essentials — the core {progress.essentialsTotal} modules

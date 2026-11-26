@@ -125,7 +125,7 @@ export const AssessDone: React.FC<AssessDoneProps> = ({
         {diagnosticsOpen && (
           <div id="assess-done-diagnostics" className="space-y-4 border-t border-border p-4 pt-4">
             <div>
-              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <div className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Indicative program maturity
               </div>
               <p className="text-[13px] text-foreground">
@@ -148,7 +148,7 @@ export const AssessDone: React.FC<AssessDoneProps> = ({
 
             {twoTrack && (
               <div>
-                <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <div className="mb-1 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Two-track sequencing
                 </div>
                 <p className="mb-2 text-xs leading-relaxed text-muted-foreground">
@@ -156,11 +156,11 @@ export const AssessDone: React.FC<AssessDoneProps> = ({
                 </p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {[twoTrack.trackA, twoTrack.trackB].map((t) => (
-                    <div key={t.id} className="rounded-lg border border-border p-3">
+                    <div key={t.id} className="rounded-2xl border border-border p-3">
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-semibold text-foreground">{t.label}</span>
                         {t.id === twoTrack.leadTrack && (
-                          <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                          <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                             Lead
                           </span>
                         )}

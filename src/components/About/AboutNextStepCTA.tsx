@@ -113,13 +113,13 @@ export function AboutNextStepCTA() {
 
   return (
     <div
-      className="glass-panel p-5 md:p-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between print:hidden"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 md:p-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between print:hidden"
       data-section-id="about-next-step"
     >
       <div className="flex items-start gap-3 min-w-0">
         <div className="shrink-0 mt-0.5">{spec.icon}</div>
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-foreground">{spec.title}</h3>
+          <h3 className="text-base font-semibold font-display text-heading">{spec.title}</h3>
           <p className="text-sm text-muted-foreground mt-1">{spec.body}</p>
         </div>
       </div>

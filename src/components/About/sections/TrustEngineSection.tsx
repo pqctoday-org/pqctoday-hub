@@ -14,7 +14,7 @@ function RevisionAuditCollapsible() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.35 }}
-      className="glass-panel p-4 md:p-6"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
     >
       <Button
         variant="ghost"
@@ -25,7 +25,7 @@ function RevisionAuditCollapsible() {
       >
         <GitMerge className="text-primary shrink-0" size={24} />
         <div className="flex-1">
-          <h2 className="text-xl font-semibold">Content Audit Trail</h2>
+          <h2 className="text-xl font-semibold font-display text-heading">Content Audit Trail</h2>
           <p className="text-xs text-muted-foreground">
             Every recorded data update, with its reviewer, how it was approved and the records it
             touched
@@ -79,7 +79,7 @@ export function TrustEngineSection() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.05 }}
-      className="glass-panel p-4 md:p-6"
+      className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 md:p-6"
     >
       <Button
         variant="ghost"
@@ -89,7 +89,7 @@ export function TrustEngineSection() {
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
         <ShieldCheck className="text-primary shrink-0" size={24} />
-        <h2 className="text-xl font-semibold flex-1">Trust Engine</h2>
+        <h2 className="text-xl font-semibold flex-1 font-display text-heading">Trust Engine</h2>
         <ChevronDown
           size={18}
           className={clsx(
@@ -121,7 +121,9 @@ export function TrustEngineSection() {
                 source until the next pass — the freshness dimension of the score reflects that.
               </p>
 
-              <h3 className="text-base font-semibold mt-5">How a record actually gets updated</h3>
+              <h3 className="text-base font-semibold mt-5 font-display text-heading">
+                How a record actually gets updated
+              </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 Nothing on PQC Today updates itself. Every change — a new standard, a corrected
                 date, a re-checked certification — moves through the same six steps, whichever
@@ -216,7 +218,9 @@ export function TrustEngineSection() {
                 read exactly how a score was computed.
               </p>
 
-              <h3 className="text-base font-semibold mt-5">What you see on records</h3>
+              <h3 className="text-base font-semibold mt-5 font-display text-heading">
+                What you see on records
+              </h3>
               <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground list-none pl-0">
                 <li className="flex items-start gap-2.5">
                   <span className="text-primary mt-1 shrink-0">&#9679;</span>
@@ -281,7 +285,9 @@ export function TrustEngineSection() {
                 </li>
               </ul>
 
-              <h3 className="text-base font-semibold mt-5">How to verify a claim yourself</h3>
+              <h3 className="text-base font-semibold mt-5 font-display text-heading">
+                How to verify a claim yourself
+              </h3>
               <ol className="mt-3 space-y-2.5 text-sm text-muted-foreground list-decimal pl-5">
                 <li>
                   Click the trust badge on any record. The tooltip itemises the eight dimensions and
@@ -298,7 +304,9 @@ export function TrustEngineSection() {
                 </li>
               </ol>
 
-              <h3 className="text-base font-semibold mt-5">Help us keep it accurate</h3>
+              <h3 className="text-base font-semibold mt-5 font-display text-heading">
+                Help us keep it accurate
+              </h3>
               <p className="text-sm text-muted-foreground mt-2">
                 Two buttons live on records across the site:
               </p>
@@ -324,7 +332,9 @@ export function TrustEngineSection() {
                 Both flows are public — anyone can see who flagged or endorsed what.
               </p>
 
-              <h3 className="text-base font-semibold mt-5">Independence</h3>
+              <h3 className="text-base font-semibold mt-5 font-display text-heading">
+                Independence
+              </h3>
               <p className="text-sm text-muted-foreground mt-2">
                 No vendor pays for trust-score placement. If a sponsor&rsquo;s product appears on
                 the platform, the sponsorship is shown as a{' '}

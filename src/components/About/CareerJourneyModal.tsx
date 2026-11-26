@@ -87,13 +87,13 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative glass-panel w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+            className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] relative w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 md:p-4 border-b border-border">
               <h2
                 id="career-journey-title"
-                className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+                className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-primary/5 font-display text-heading"
               >
                 My Career Journey
               </h2>
@@ -117,7 +117,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
                   exit={{ opacity: 0, x: -20 }}
                   className="w-full h-full flex flex-col items-center justify-center p-4 md:p-6 lg:p-8"
                 >
-                  <div className="relative w-full max-w-lg aspect-square mb-4 md:mb-6 overflow-hidden rounded-lg shadow-2xl border border-border bg-muted/20">
+                  <div className="relative w-full max-w-lg aspect-square mb-4 md:mb-6 overflow-hidden rounded-lg border border-border bg-muted/20">
                     <img
                       src={PANELS[currentIndex].src}
                       alt={PANELS[currentIndex].title}
@@ -126,7 +126,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
                   </div>
 
                   <div className="text-center max-w-2xl px-2">
-                    <h3 className="text-base md:text-lg font-bold text-foreground mb-1 md:mb-2 leading-tight">
+                    <h3 className="text-base md:text-lg font-bold mb-1 md:mb-2 leading-tight font-display text-heading">
                       {PANELS[currentIndex].title}
                     </h3>
                     <p className="text-xs md:text-sm text-muted-foreground italic leading-relaxed">

@@ -52,7 +52,7 @@ const Step6Migration = ({ hideHeading = false, hideHints = false }: EmbeddedStep
     <div className="space-y-4">
       {!hideHeading && (
         <>
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-xl font-bold font-display text-heading">
             {stepContent.title ?? (
               <>
                 What is your <InlineTooltip term="PQC">PQC</InlineTooltip> migration status?

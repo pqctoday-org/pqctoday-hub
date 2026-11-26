@@ -141,7 +141,10 @@ export function CyberInsuranceLensSection() {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <ShieldAlert size={16} className="text-primary" aria-hidden="true" />
-          <h2 id="insurance-lens-heading" className="text-base font-semibold text-foreground">
+          <h2
+            id="insurance-lens-heading"
+            className="text-base font-semibold font-display text-heading"
+          >
             Cyber Insurance Lens
           </h2>
         </div>
@@ -160,7 +163,7 @@ export function CyberInsuranceLensSection() {
 
       {/* Collapsed summary strip */}
       {!expanded && (
-        <div className="glass-panel px-4 py-3 flex flex-wrap items-center gap-6 text-xs text-muted-foreground">
+        <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] px-4 py-3 flex flex-wrap items-center gap-6 text-xs text-muted-foreground">
           <span>
             Industry:{' '}
             <span className="text-foreground font-medium">{model.inputsUsed.industryLabel}</span>
@@ -206,10 +209,10 @@ export function CyberInsuranceLensSection() {
           {/* 2×2 panels */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Panel 1: ALE curve */}
-            <div className="glass-panel p-4">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp size={14} className="text-primary" aria-hidden="true" />
-                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Annual Loss Expectancy (2026–2035)
                 </p>
               </div>
@@ -274,8 +277,8 @@ export function CyberInsuranceLensSection() {
             </div>
 
             {/* Panel 2: Premium impact */}
-            <div className="glass-panel p-4 flex flex-col">
-              <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 flex flex-col">
+              <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Projected Premium Uplift
               </p>
               <div className="flex-1 flex flex-col items-center justify-center gap-2">
@@ -305,8 +308,8 @@ export function CyberInsuranceLensSection() {
             </div>
 
             {/* Panel 3: Coverage gap grid */}
-            <div className="glass-panel p-4">
-              <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4">
+              <p className="uppercase mb-3 text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Policy Coverage Gaps
               </p>
               <div className="space-y-2">
@@ -355,8 +358,8 @@ export function CyberInsuranceLensSection() {
             </div>
 
             {/* Panel 4: Sensitivity sliders */}
-            <div className="glass-panel p-4 space-y-4">
-              <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+            <div className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-4">
+              <p className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                 Sensitivity Controls
               </p>
               <SliderRow

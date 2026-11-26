@@ -102,7 +102,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
 
       {/* Section A: Competency Gaps */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 font-display text-heading">
           <GraduationCap size={16} className="text-primary shrink-0" />
           Competency Areas to Develop
         </h3>
@@ -112,7 +112,10 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
             const caColor = CA_COLORS[gap.competencyAreaId] ?? 'bg-muted text-foreground'
             const ca = NICE_COMPETENCY_AREAS[gap.competencyAreaId]
             return (
-              <div key={gap.competencyAreaId} className="glass-panel p-4 space-y-2">
+              <div
+                key={gap.competencyAreaId}
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-2"
+              >
                 <div className="flex items-start justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`text-xs font-mono px-2 py-0.5 rounded ${caColor}`}>
@@ -168,7 +171,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
       {/* Section B: Work Roles */}
       {report.workRoleRecommendations.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 font-display text-heading">
             <Briefcase size={16} className="text-primary shrink-0" />
             Work Roles to Hire or Upskill
           </h3>
@@ -178,7 +181,10 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {report.workRoleRecommendations.map((role) => (
-              <div key={role.workRoleId} className="glass-panel p-4 space-y-1.5">
+              <div
+                key={role.workRoleId}
+                className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-4 space-y-1.5"
+              >
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-mono text-muted-foreground">{role.niceCode}</span>
                   <span className="text-sm font-medium text-foreground">{role.title}</span>
@@ -212,7 +218,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
       {/* Section C: Learning Sequence */}
       {report.learningSequence.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 font-display text-heading">
             <ArrowRight size={16} className="text-primary shrink-0" />
             Recommended Learning Sequence
           </h3>
@@ -223,7 +229,7 @@ export const NiceGapReportSection: React.FC<NiceGapReportSectionProps> = ({ resu
                 <Link
                   key={step.moduleId}
                   to={`/learn/${step.moduleId}`}
-                  className="flex items-center gap-3 glass-panel px-3 py-2.5 hover:bg-muted/30 transition-colors group"
+                  className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-2xl shadow-[0_6px_0_hsl(var(--edge))] flex items-center gap-3 px-3 py-2.5 hover:bg-muted/30 transition-colors group"
                 >
                   <span className="text-xs font-mono text-muted-foreground w-5 shrink-0 text-right">
                     {idx + 1}

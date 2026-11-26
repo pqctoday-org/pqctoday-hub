@@ -60,7 +60,7 @@ const KPICard = ({
     >
       <Link
         to={link}
-        className="glass-panel p-5 flex flex-col items-center text-center hover:border-primary/30 transition-colors block"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-5 flex flex-col items-center text-center hover:border-primary/30 transition-colors block"
       >
         {/* eslint-disable-next-line security/detect-object-injection */}
         <div className={clsx('p-3 rounded-full mb-3 border', colorMap[color])}>
@@ -72,7 +72,9 @@ const KPICard = ({
             <span className="text-lg text-muted-foreground font-normal">/{total}</span>
           )}
         </div>
-        <div className="text-xs text-muted-foreground uppercase tracking-wider">{label}</div>
+        <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
+          {label}
+        </div>
       </Link>
     </motion.div>
   )
@@ -103,7 +105,7 @@ export const ExecutiveView: React.FC = () => {
             <BarChart3 className="text-primary" size={28} />
           </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2 print:text-foreground print:text-2xl">
+        <h1 className="text-3xl md:text-4xl font-bold font-display text-heading mb-2 print:text-foreground print:text-2xl font-display text-heading">
           PQC Readiness Summary
         </h1>
         <p className="text-muted-foreground print:text-muted-foreground">
@@ -135,7 +137,7 @@ export const ExecutiveView: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel p-6 mb-8 print:border print:border-border print:mb-4"
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 print:border print:border-border print:mb-4"
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
@@ -145,7 +147,7 @@ export const ExecutiveView: React.FC = () => {
                 <Activity size={24} />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-foreground">Your Organization</h2>
+                <h2 className="text-lg font-bold font-display text-heading">Your Organization</h2>
                 <p className="text-sm text-muted-foreground">
                   {industry ? `${industry} sector` : 'Based on your PQC Readiness Assessment'}
                   {metrics.assessedAt && (
@@ -177,7 +179,7 @@ export const ExecutiveView: React.FC = () => {
               )}
               <div className="text-center">
                 <div className="text-3xl font-bold text-foreground">{metrics.orgRiskScore}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider">
+                <div className="uppercase text-[11px] font-extrabold tracking-[0.14em] text-heading">
                   Risk Score
                 </div>
               </div>
@@ -209,14 +211,16 @@ export const ExecutiveView: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel p-6 mb-8 border-l-4 border-l-primary print:hidden"
+          className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 border-l-4 border-l-primary print:hidden"
         >
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="p-3 rounded-full bg-primary/10 self-start sm:self-auto shrink-0">
               <Activity className="text-primary" size={24} />
             </div>
             <div className="flex-1">
-              <h2 className="text-base font-bold text-foreground mb-1">No assessment on file</h2>
+              <h2 className="text-base font-bold mb-1 font-display text-heading">
+                No assessment on file
+              </h2>
               <p className="text-sm text-muted-foreground">
                 The data below reflects industry-wide baselines. Complete the 5-minute PQC Readiness
                 Assessment to replace these with metrics specific to your organization.
@@ -276,9 +280,9 @@ export const ExecutiveView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="glass-panel p-6 mb-8 border-l-4 border-l-warning print:border print:border-border print:mb-4"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 border-l-4 border-l-warning print:border print:border-border print:mb-4"
       >
-        <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
+        <h2 className="text-lg font-bold mb-3 flex items-center gap-2 font-display text-heading">
           <AlertTriangle className="text-warning" size={20} />
           Risk Summary
         </h2>
@@ -292,9 +296,9 @@ export const ExecutiveView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="glass-panel p-6 mb-8 print:border print:border-border print:mb-4"
+        className="glass-panel bg-card backdrop-blur-none border-2 border-ink rounded-3xl shadow-[0_6px_0_hsl(var(--edge))] p-6 mb-8 print:border print:border-border print:mb-4"
       >
-        <h2 className="text-lg font-bold text-foreground mb-4">
+        <h2 className="text-lg font-bold mb-4 font-display text-heading">
           {lastResult ? 'Recommended Actions' : 'Top Priority Actions'}
         </h2>
         <div className="overflow-x-auto">
