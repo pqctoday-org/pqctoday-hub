@@ -8,6 +8,7 @@ import { AssistantConversation } from './AssistantConversation'
 import { useAssistantSessionStore } from '@/store/useAssistantSessionStore'
 import { useAssistantReturnStore } from '@/store/useAssistantReturnStore'
 import { useChatStore } from '@/store/useChatStore'
+import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { setSavedAnswersPort } from '@/services/assistant/drawerSaves'
 import type { AssistantResourcesAnswer } from '@/services/assistant/contract'
@@ -30,6 +31,20 @@ vi.mock('./assistantClient', async () => {
     },
   }
 })
+
+vi.mock('@/services/assistant/termLessons', async (orig) => ({
+  ...(await orig<typeof import('@/services/assistant/termLessons')>()),
+  termLessonsFor: async (tag: string) =>
+    tag === 'GL:ml-kem'
+      ? [
+          {
+            lessonTitle: 'Post-Quantum Algorithms',
+            link: '/learn/pqc-algorithms?section=ml-kem-fips-203',
+            tag: 'LM-088/s:ml-kem-fips-203',
+          },
+        ]
+      : [],
+}))
 
 const layout = vi.hoisted(() => ({ value: 'docked' as 'docked' | 'sheet' }))
 vi.mock('./useAssistantLayout', async (orig) => ({
@@ -292,6 +307,45 @@ describe('opening a resource', () => {
     await user.click(await screen.findByRole('button', { name: `Open reference: ${row.title}` }))
     expect(screen.getByTestId('where')).toHaveTextContent('/library?ref=FIPS-203')
     expect(useAssistantReturnStore.getState().target).toMatchObject({ path: '/learn' })
+  })
+
+  it('a glossary term opens the lesson that teaches it, with the way back set', async () => {
+    const user = await askConcept()
+    await user.click(screen.getByRole('button', { name: 'Read here: ML-KEM' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Open the lesson: Post-Quantum Algorithms' })
+    )
+    expect(screen.getByTestId('where')).toHaveTextContent(
+      '/learn/pqc-algorithms?section=ml-kem-fips-203'
+    )
+    expect(useAssistantReturnStore.getState().target).toMatchObject({
+      path: '/learn',
+      origin: 'Read here: ML-KEM',
+    })
+  })
+
+  it('Open in the glossary shows the Glossary view on that term; coming back keeps the answer and the record', async () => {
+    const user = userEvent.setup()
+    const view = mount('/learn')
+    await user.type(box(), 'What is ML-KEM?{Enter}')
+    await answered('What is ML-KEM?')
+    await user.click(screen.getByRole('button', { name: 'Read here: ML-KEM' }))
+    await user.click(await screen.findByRole('button', { name: 'Open in the glossary' }))
+    expect(useRightPanelStore.getState()).toMatchObject({ isOpen: true, activeTab: 'glossary' })
+    expect(useGlossaryDrawerStore.getState()).toMatchObject({
+      focusTerm: 'ML-KEM',
+      fromAnswer: true,
+    })
+    // The page did not change, and no return bar was started.
+    expect(screen.getByTestId('where')).toHaveTextContent('/learn')
+    expect(useAssistantReturnStore.getState().target).toBeNull()
+    // The drawer shows the Glossary instead of the Assistant; coming back shows both as they were.
+    view.unmount()
+    mount('/learn')
+    expect(screen.getByRole('region', { name: 'ML-KEM' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('article', { name: 'What is ML-KEM?', hidden: true })
+    ).toBeInTheDocument()
   })
 
   it('on the phone, the record opens as a pinned card with Close', async () => {

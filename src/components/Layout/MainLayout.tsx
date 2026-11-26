@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router'
 import { RoleSwitchNotice } from '@/components/Journey/RoleSwitch'
 import { motion, useReducedMotion } from 'framer-motion'
@@ -14,6 +14,10 @@ import {
   UserCog,
   Bot,
   Bookmark,
+  BookOpen,
+  BookOpenText,
+  BookText,
+  HelpCircle,
   ChevronDown,
   ChevronRight,
   type LucideIcon,
@@ -35,11 +39,9 @@ const WhatsNewModal = React.lazy(() =>
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
 import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
-import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { FAQButton } from '../ui/FAQButton'
-import { UserManualButton } from '../ui/UserManualButton'
+import { DrawerToggleButton } from './DrawerToggleButton'
+import { useDrawerPageStore } from '@/store/useDrawerPageStore'
 
 import { GuidedTour } from '../common/GuidedTour'
 import { PhaseContextBanner } from '../shared/PhaseContextBanner'
@@ -61,7 +63,6 @@ import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
 import { useIsMobileShell } from '../../hooks/useIsMobileShell'
 import { useAssistantLayout, drawerPaddingClass } from '../Assistant/useAssistantLayout'
-import { useDrawerToggle } from '../Assistant/useDrawerToggle'
 import { useAssistantReturnStore } from '../../store/useAssistantReturnStore'
 import { RouteNextStep } from './RouteNextStep'
 import { RoutePageExercise } from './RoutePageExercise'
@@ -73,7 +74,7 @@ import { BUILD_COMMIT, shortCommit, sourceCodeUrl } from '@/utils/sourceLink'
 // Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
 // MainLayout is mounted on every route, so a static import here would put
 // the whole mobile shell (and everything it pulls in — RoleHomeView,
-// SourcesModal, Glossary, UserManualPanel) into every desktop visitor's
+// Glossary) into every desktop visitor's
 // eager bundle even though useIsMobileShell() is false for nearly all of
 // them. Found via the precache budget: a static import measurably grew the
 // eager payload (19.64 -> 19.66 MB) for a feature that render-guards itself
@@ -349,7 +350,6 @@ export const MainLayout = () => {
     toggle: openPanel,
     open: openRightPanel,
   } = useRightPanelStore()
-  const toggleDrawer = useDrawerToggle()
   const assistantLayout = useAssistantLayout()
   const hasReturn = useAssistantReturnStore((s) => s.target !== null)
   const recordVisit = useHistoryStore((s) => s.recordVisit)
@@ -655,6 +655,15 @@ export const MainLayout = () => {
   // BEFORE deleting PKILearningView's own copies of these buttons.
   const pageIdForRoute = ROUTE_PAGE_ID[location.pathname] ?? pageIdForNestedRoute(location.pathname)
   const shareForRoute = ROUTE_SHARE[location.pathname]
+  // What this route offers the drawer's Guide and Sources views (they follow the route).
+  const sourcesDataSource = pageActions?.dataSource
+  useEffect(() => {
+    useDrawerPageStore.getState().set({
+      guidePageId: pageIdForRoute ?? null,
+      sourcesViewType: viewTypeForRoute ?? null,
+      sourcesDataSource,
+    })
+  }, [pageIdForRoute, viewTypeForRoute, sourcesDataSource])
 
   return (
     <div
@@ -1022,17 +1031,7 @@ export const MainLayout = () => {
                 </div>
 
                 <div className="flex items-center gap-0.5 shrink-0 flex-nowrap justify-end">
-                  <Button
-                    variant="ghost"
-                    onClick={() => toggleDrawer('chat')}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors aria-pressed:text-foreground aria-pressed:bg-muted/30"
-                    aria-label="Assistant"
-                    aria-pressed={isPanelOpen && panelTab === 'chat'}
-                    title="Assistant"
-                  >
-                    <Bot size={13} aria-hidden="true" />
-                    <span>Assistant</span>
-                  </Button>
+                  <DrawerToggleButton tab="chat" icon={Bot} />
                   <ShareButton
                     title={
                       pageActions?.shareTitle ??
@@ -1053,27 +1052,11 @@ export const MainLayout = () => {
                     url={pageActions?.url}
                     variant="full"
                   />
-                  <FAQButton compact />
-                  <Button
-                    variant="ghost"
-                    onClick={() => toggleDrawer('bookmarks')}
-                    className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors aria-pressed:text-foreground aria-pressed:bg-muted/30"
-                    aria-label="Bookmarks"
-                    aria-pressed={isPanelOpen && panelTab === 'bookmarks'}
-                    title="Bookmarks"
-                  >
-                    <Bookmark size={13} aria-hidden="true" />
-                    <span>Bookmarks</span>
-                  </Button>
-                  {viewTypeForRoute && (
-                    <SourcesButton
-                      viewType={viewTypeForRoute}
-                      compact
-                      dataSource={pageActions?.dataSource}
-                    />
-                  )}
-                  <GlossaryButton compact />
-                  {pageIdForRoute && <UserManualButton pageId={pageIdForRoute} compact />}
+                  <DrawerToggleButton tab="faq" icon={HelpCircle} />
+                  <DrawerToggleButton tab="bookmarks" icon={Bookmark} />
+                  {viewTypeForRoute && <DrawerToggleButton tab="sources" icon={BookOpen} />}
+                  <DrawerToggleButton tab="glossary" icon={BookOpenText} />
+                  {pageIdForRoute && <DrawerToggleButton tab="guide" icon={BookText} />}
 
                   <Button
                     variant="ghost"

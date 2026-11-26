@@ -248,6 +248,17 @@ describe('deep-link grammar per-route key sets', () => {
     }
   })
 
+  it('allows `glossary` on every internal route', () => {
+    expect(GLOBAL_QUERY_KEYS).toContain('glossary')
+    for (const url of [
+      '/learn?glossary=ML-KEM',
+      '/library?glossary=ML-KEM',
+      '/compliance?glossary=X',
+    ]) {
+      expect(validateDeepLink(url), url).toBeNull()
+    }
+  })
+
   it('allows `spec` on every internal route', () => {
     expect(GLOBAL_QUERY_KEYS).toContain('spec')
     for (const url of [

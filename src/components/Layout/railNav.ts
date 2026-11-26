@@ -175,7 +175,7 @@ export function getRowTreatment(
 
 /** Icon per rail-eligible path. Deliberately excludes '/openssl' (RAIL_HIDDEN_PATHS —
  * never rendered as a row for any persona) and '/faq'/'/changelog'/'/terms' (not in
- * NAV_PATH_LABELS — reached via footer/FAQButton instead, not the rail). */
+ * NAV_PATH_LABELS — reached via footer and the FAQ drawer's full-page link instead, not the rail). */
 export const RAIL_ICON_MAP: Record<string, LucideIcon> = {
   '/': Home,
   '/simulation': Gamepad2,

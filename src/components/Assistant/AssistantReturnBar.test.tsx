@@ -69,14 +69,12 @@ describe('return from a page opened from an answer', () => {
     drawer.appendChild(opener)
     document.body.appendChild(drawer)
     try {
-      useAssistantReturnStore
-        .getState()
-        .begin({
-          path: '/learn',
-          fromKey: 'default',
-          label: 'Learn',
-          origin: 'Go to page: CNSA 2.0',
-        })
+      useAssistantReturnStore.getState().begin({
+        path: '/learn',
+        fromKey: 'default',
+        label: 'Learn',
+        origin: 'Go to page: CNSA 2.0',
+      })
       mount()
       act(() => go('/compliance'))
       await userEvent

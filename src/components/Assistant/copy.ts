@@ -53,6 +53,10 @@ export const COPY = {
   bookmarksTitle: 'Bookmarks',
   workshopTitle: 'Workshop',
   faqTitle: 'FAQ',
+  glossaryTitle: 'Glossary',
+  guideTitle: 'Page guide',
+  sourcesTitle: 'Authoritative sources',
+  faqFullPage: 'Open the full FAQ page',
 } as const
 
 /** The starting questions for the empty drawer. The engine's own suggestions replace them when it has any. */

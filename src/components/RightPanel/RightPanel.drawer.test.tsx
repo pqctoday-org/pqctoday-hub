@@ -144,9 +144,9 @@ describe('the docked drawer and a dialog the page opens', () => {
     const watched = vi.mocked(usePageModal)
     // Docked: the drawer watches (the argument is "enabled").
     watched.mockClear()
-    const docked = mount()
+    const { unmount: unmountDocked } = mount()
     expect(watched.mock.calls.some(([enabled]) => enabled === true)).toBe(true)
-    docked.unmount()
+    unmountDocked()
 
     // Sheet: it never subscribes, and adding a dialog does not change its layer.
     layout.value = 'sheet'

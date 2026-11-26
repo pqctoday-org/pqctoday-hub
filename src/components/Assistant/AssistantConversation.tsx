@@ -11,14 +11,14 @@ import type { AssistantRow } from '@/services/assistant/contract'
 import { AssistantAnswerView, QuestionBlock } from './AssistantAnswerView'
 import { AssistantInput } from './AssistantInput'
 import { RecordViewer } from './RecordViewer'
+import { isGlossaryTag, termLessonsFor, type TermLesson } from '@/services/assistant/termLessons'
+import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { Suggestions } from './Suggestions'
 import { suggestionsFor } from './suggestionSource'
 import { COPY } from './copy'
 import { describeCurrentPage } from './returnTarget'
 import { useAssistantContext } from './useAssistantContext'
 import { useAssistantLayout } from './useAssistantLayout'
-
-type Opened = { row: AssistantRow; mode: 'record' | 'tool'; question: string }
 
 /**
  * The Assistant view of the drawer: conversation, suggestions, input. It reads and clears the
@@ -46,7 +46,24 @@ export function AssistantConversation() {
   const listRef = useRef<HTMLDivElement>(null)
   const latestRef = useRef<HTMLDivElement>(null)
   const openerTag = useRef<string | null>(null)
-  const [opened, setOpened] = useState<Opened | null>(null)
+  const opened = useAssistantSessionStore((s) => s.viewer)
+  const setOpened = useAssistantSessionStore((s) => s.setViewer)
+  // The lessons that teach the opened glossary term, read from the knowledge model once per term.
+  const [termLessons, setTermLessons] = useState<{ tag: string; lessons: TermLesson[] } | null>(
+    null
+  )
+  const openedTag = opened?.row.tag
+  useEffect(() => {
+    if (!openedTag) return
+    let cancelled = false
+    void termLessonsFor(openedTag).then((lessons) => {
+      if (!cancelled) setTermLessons({ tag: openedTag, lessons })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [openedTag])
+  const lessonsOfOpened = termLessons && termLessons.tag === openedTag ? termLessons.lessons : []
 
   // On open, the input has focus.
   useEffect(() => {
@@ -87,7 +104,7 @@ export function AssistantConversation() {
       void ask(question, getContext())
       inputRef.current?.focus()
     },
-    [ask, getContext]
+    [ask, getContext, setOpened]
   )
 
   const edit = useCallback(
@@ -111,7 +128,7 @@ export function AssistantConversation() {
         : null
       ;(target ?? inputRef.current)?.focus()
     })
-  }, [])
+  }, [setOpened])
 
   const openPage = useCallback(
     (row: AssistantRow, to: string = row.link) => {
@@ -131,15 +148,20 @@ export function AssistantConversation() {
     [navigate, pathname, search, key, sheet, setOpened]
   )
 
+  /** A term's own entry: the drawer shows the Glossary on that term, with the way back to this answer. */
+  const openGlossary = useCallback((row: AssistantRow) => {
+    useGlossaryDrawerStore.getState().focus(row.title, { fromAnswer: true })
+    useRightPanelStore.getState().open('glossary')
+  }, [])
+
   const onAction = useCallback(
     (row: AssistantRow, question: string) => {
       openerTag.current = row.tag
       if (row.action === 'Read here') return setOpened({ row, mode: 'record', question })
       if (row.action === 'Try it here') return setOpened({ row, mode: 'tool', question })
-          fromKey: key,
       openPage(row)
     },
-    [openPage]
+    [openPage, setOpened]
   )
 
   const suggestions = suggestionsFor(turns.map((t) => t.question))
@@ -154,7 +176,9 @@ export function AssistantConversation() {
           variant="pinned"
           question={opened.question}
           onClose={closeViewer}
-          onOpenPage={openPage}
+          onOpenPage={(r) => (isGlossaryTag(r.tag) ? openGlossary(r) : openPage(r))}
+          lessons={lessonsOfOpened}
+          onOpenLesson={(lesson) => openPage(opened.row, lesson.link)}
         />
       )}
       {opened && !sheet && (
@@ -164,7 +188,9 @@ export function AssistantConversation() {
           variant="drawer"
           question={opened.question}
           onClose={closeViewer}
-          onOpenPage={openPage}
+          onOpenPage={(r) => (isGlossaryTag(r.tag) ? openGlossary(r) : openPage(r))}
+          lessons={lessonsOfOpened}
+          onOpenLesson={(lesson) => openPage(opened.row, lesson.link)}
         />
       )}
 

@@ -4,7 +4,7 @@
  * so what a learner typed never leaves the tab. Each answer keeps its own resources.
  */
 import { create } from 'zustand'
-import type { AssistantAnswer, AssistantContext } from '@/services/assistant/contract'
+import type { AssistantAnswer, AssistantContext, AssistantRow } from '@/services/assistant/contract'
 import { askAssistant } from '@/components/Assistant/assistantClient'
 
 export type AssistantTurn =
@@ -16,8 +16,21 @@ export type AssistantTurn =
       answer: Exclude<AssistantAnswer, { state: 'data-not-loaded' }>
     }
 
+/** The record or tool opened in place from an answer's row ("Read here", "Try it here"). */
+export interface AssistantViewer {
+  row: AssistantRow
+  mode: 'record' | 'tool'
+  question: string
+}
+
 interface AssistantSessionState {
   turns: AssistantTurn[]
+  /**
+   * What is open in place in the drawer. Kept here, not in the view, so the drawer can show another
+   * view (the Glossary, say) and come back to the answer and the record as they were.
+   */
+  viewer: AssistantViewer | null
+  setViewer: (viewer: AssistantViewer | null) => void
   /** The text in the input box. Kept here so a failed question can be put back. */
   draft: string
   /** The question held after the data did not load. */
@@ -34,6 +47,8 @@ let latestRequest = 0
 
 export const useAssistantSessionStore = create<AssistantSessionState>()((set, get) => ({
   turns: [],
+  viewer: null,
+  setViewer: (viewer) => set({ viewer }),
   draft: '',
   failedQuestion: null,
 
@@ -70,5 +85,5 @@ export const useAssistantSessionStore = create<AssistantSessionState>()((set, ge
     await get().ask(held, context)
   },
 
-  reset: () => set({ turns: [], draft: '', failedQuestion: null }),
+  reset: () => set({ turns: [], viewer: null, draft: '', failedQuestion: null }),
 }))
