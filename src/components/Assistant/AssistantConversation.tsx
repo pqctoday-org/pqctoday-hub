@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { StoryButton } from '@/components/storybook'
 import { useChatStore } from '@/store/useChatStore'
@@ -14,7 +14,7 @@ import { buildResourceTabs } from './resourceTabs'
 import { isGlossaryTag, termLessonsFor, type TermLesson } from '@/services/assistant/termLessons'
 import { useGlossaryDrawerStore } from '@/store/useGlossaryDrawerStore'
 import { Suggestions } from './Suggestions'
-import { suggestionsFor } from './suggestionSource'
+import { useSuggestions } from './useSuggestions'
 import { COPY } from './copy'
 import { describeCurrentPage } from './returnTarget'
 import { useAssistantContext } from './useAssistantContext'
@@ -212,7 +212,8 @@ export function AssistantConversation() {
     [openPage, setOpened]
   )
 
-  const suggestions = suggestionsFor(turns.map((t) => t.question))
+  const askedQuestions = useMemo(() => turns.map((t) => t.question), [turns])
+  const suggestions = useSuggestions(askedQuestions)
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

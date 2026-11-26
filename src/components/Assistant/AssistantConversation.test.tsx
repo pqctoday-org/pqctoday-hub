@@ -47,19 +47,23 @@ vi.mock('@/services/assistant/termLessons', async (orig) => ({
       : [],
 }))
 
-// The starting list holds three questions today; the ranker will offer more. A flag lets one test
-// see the collapsed "More questions" list that a longer list produces.
+// The starting list holds three questions when nothing else is known; a flag lets one test see the
+// collapsed "More questions" list that a longer list produces.
 const suggestionMode = vi.hoisted(() => ({ many: false }))
-vi.mock('./suggestionSource', async (orig) => {
-  const real = await orig<typeof import('./suggestionSource')>()
+vi.mock('./suggestionRanker', async (orig) => {
+  const real = await orig<typeof import('./suggestionRanker')>()
   return {
     ...real,
-    suggestionsFor: (asked: readonly string[]) => {
-      const base = real.suggestionsFor(asked)
+    rankSuggestions: (state: Parameters<typeof real.rankSuggestions>[0]) => {
+      const base = real.rankSuggestions(state)
       if (!suggestionMode.many) return base
       return [
         ...base,
-        ...['Q four', 'Q five', 'Q six', 'Q seven'].map((question) => ({ question })),
+        ...['Q four', 'Q five', 'Q six', 'Q seven'].map((question) => ({
+          question,
+          rule: 6 as const,
+          basedOn: 'a test',
+        })),
       ]
     },
   }
